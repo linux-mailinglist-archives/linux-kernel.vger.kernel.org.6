@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-387942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204CE9B5838
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:07:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4939B5836
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:07:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A84BB21549
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:07:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D4E1C22B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A217B67A;
-	Wed, 30 Oct 2024 00:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qw5JAiph"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A056C1FB4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23461FDD;
 	Wed, 30 Oct 2024 00:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b36o4e5v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E385A41
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730246835; cv=none; b=JmS5vqnkdd22LSc1Ja6VznWY3br4+ICtWN9kfhRA8bDrfqVHY+0dbyDY40YVNqZK+qtc4APhyEQtlVCDCfhUs5roiTPrLE0Om3NRt+DA2r8rYEcIF8zbgckJMRSBjRkAX6tB2iNfn/Bp3McSVXtjFmz9lR2KO05HsdM3TQqDuog=
+	t=1730246833; cv=none; b=oZNYrThYzMQfRY24zFVp+1CkAkiq3sdfPhsxwNHm6qs3JjttkjrwVHzJPTF26Tt6k1eNn+Adv+4wdOKowzzXNxRt9wTevCTuuHQjCn5H2/1EmcQxtybYxmFO3Gkf3/U1RjfVg8k+4eGadDb2xi7JSvYoJ5QHp/bynLa9eCdzHH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730246835; c=relaxed/simple;
-	bh=S37voPQVDW68N9rTKPE3PrA1vjsOcLJcpFUAj8ajGPI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ab2MzY+3HywmYAJl5GvecKJ3lcQB9w7yCTko7Y2WmF1BKhIOIQarfNctN4EgHhO6Zz8eukjZcggl39qLFlBF3gD1ia7AEcZtggk5tOKQLjYaeBPn9HFq6ZFwR76gXqBqebXR/tAEmbwrGXeE1BKSPA5kns/SUnV2xqR+V0RSwNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qw5JAiph; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4613162181dso33703981cf.3;
-        Tue, 29 Oct 2024 17:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730246832; x=1730851632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1uI1LGMbJbLYFsIhRBi1cS/8+vbTbIoNQWToq8qf8C0=;
-        b=Qw5JAiph9lRWTP9OHan9430a95slTwePWJ51J11yXNYgnD+74afNFcc4VbVdfpDVj1
-         u4qriWz+Box90xs4Nmh1373sSAPOE6A24OHqr9bXWC/iCrbHxyu0hnwU/5+an7Wom04J
-         0Ri1yVohBqgJzQTO8vbOTMKKLdiZS5CvIOjP/r++8EviwHAoQTRYHunz7pb0hagxeFWD
-         CCG+Q5mjtUq/SpCkI+x5xdwYATSXo30KyinBtT03duMeXeW+PVaFwwecPj5T7YMew9Ln
-         tnYSNTdPuQU3RTYRAi0HznSEdDM1epFH1VP97gqjPlpIGDM7/GXfjECOFXqt9ivuNnYn
-         jpMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730246832; x=1730851632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1uI1LGMbJbLYFsIhRBi1cS/8+vbTbIoNQWToq8qf8C0=;
-        b=F7i103BjJvAyDFLV+6E49+OaqYgga0mssUXu7nFASUMNIOO7qP9UlRJpT4dUoqb56F
-         23JTpquyy86G6M92qgJcK7X54nFQnOQUFZbgdfiLfXVHBVY8itF270atEuL5d1Keu+Vv
-         K6/xgk7xegPCe1sU4SLhQGzN5PIpaJAqRTmrfvjIJvdy+boSBBimvfngPmtoDp7Aj+Rh
-         S2hhQNNOwtJmwOb4ZKk0FTBZfc/e5niv9MCYiwYHd5Hl2p4hxYyHpMBokP1GFt9297ul
-         5oaa23UeO3T0ac89/5oIwe7JKMkGhUnfiY3vKONxgNgrmWZ+5pkUjhwAXeNevSHDvFKx
-         tyJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBT9bS/NuMsGWYMty1COFaA+VC8tUCbp/ERcwm2N2+X29Q/iX39N+RIgwcH6AAKMc1S0BxxOHs@vger.kernel.org, AJvYcCVL+lTotKNMp1uXDCcrV4BTQXcy8N4c6XyDLeWGB2dUIYp6sbD/O/PDa1L06Ij/2DGAf9yVX6k7LegK6gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc/V2WFYGgA8+svRr7AXfRGJYPGeAvw4EHDSH9nCJnCyaTXXZb
-	js0QLicvmzUxJzbcj3PkurWrH41nK18bQ7fUHDbCpN0WRlgnGjXFaFMIgejV+WITjpLbiJEHpIK
-	q7x0pf9TxmGPEt53D8abpDvfNntQ=
-X-Google-Smtp-Source: AGHT+IEyJngScPS5OHIxi6FIdyEq17NJ5SRuD59LnStEz4kNTb9/OOaPPalri+LndQzJ2YR12dvQPd5oUNPLvZ3nRIA=
-X-Received: by 2002:a05:622a:15d4:b0:460:f34c:12b6 with SMTP id
- d75a77b69052e-4613c11c0a3mr215403631cf.44.1730246832406; Tue, 29 Oct 2024
- 17:07:12 -0700 (PDT)
+	s=arc-20240116; t=1730246833; c=relaxed/simple;
+	bh=W0Q8oy+uE6LFTuwBobrrjFcWcYm1au6UP3Gpe20Go3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NrPEsMPFcLW4t4Jmrs0jryswWQXZnYgugvOZYo6Yl5M/IJf2LXX0HWYWJnZEJTNlVkoi8cXAp6YD3OqkG0vXVRBHdR/3h+y+09R+2ZLObFEpgfyGHoJsOj40G6YzSkvNub/HWDUbdmRhNjqUo8uij85vrqszh8VfG+j2ju8qUoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b36o4e5v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C60C4CEE3;
+	Wed, 30 Oct 2024 00:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730246832;
+	bh=W0Q8oy+uE6LFTuwBobrrjFcWcYm1au6UP3Gpe20Go3g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=b36o4e5vIadgZoA/cSsuDTDHx5mTcpoCAID2/rnHvYs7XYhTMIYDobHwWnX+LEHWG
+	 7Z2hbe7KCalqaF7n9nc2OxGUy8jesEEmO1yP01KGjLefznUpoM1VtS2J4jqZAEAq5p
+	 NcKiciscRdjAIeyR1E+bmZi3I/ExQL400ec1oe8v1STnG+YpnOlt+w9ty9N0WVoP1I
+	 BRE00gLEw5PnhAgxuJNQyTQGBEb58kAL+FyciYQV2EnVyOOfP2+11iiaKhCfFnL6eh
+	 0RzcKKKScu7Gi8ypBabLi+0ibUP7KWPiP501u8GCWQ73CFNkZq8gDCkr4xCb1oX1Fq
+	 YmEQJMvjhozhw==
+Date: Tue, 29 Oct 2024 14:07:11 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	sched-ext@meta.com
+Subject: [RFC PATCH sched/urgent] sched: Task still delay-dequeued after
+ switched from fair
+Message-ID: <ZyF4rw_nvfpHfouv@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023012734.766789-1-rosenp@gmail.com> <20241029160323.532e573c@kernel.org>
- <CAKxU2N-5rZ3vi-bgkWA5CMorKEOv6+_a0sVDUz15o8Z7+GFLvQ@mail.gmail.com> <b4f4eace-117f-4d55-bcf7-6718d70cbf88@intel.com>
-In-Reply-To: <b4f4eace-117f-4d55-bcf7-6718d70cbf88@intel.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 29 Oct 2024 17:07:01 -0700
-Message-ID: <CAKxU2N8V7EydvrNDgps2-RzCg=gJvc-uHBQ8GFon4MzFKzG8jA@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: broadcom: use ethtool string helpers
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Justin Chen <justin.chen@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra <manishc@marvell.com>, 
-	Doug Berger <opendmb@gmail.com>, Sabrina Dubroca <sd@queasysnail.net>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Oct 29, 2024 at 4:55=E2=80=AFPM Jacob Keller <jacob.e.keller@intel.=
-com> wrote:
->
->
->
-> On 10/29/2024 4:43 PM, Rosen Penev wrote:
-> > On Tue, Oct 29, 2024 at 4:03=E2=80=AFPM Jakub Kicinski <kuba@kernel.org=
-> wrote:
-> >>
-> >> On Tue, 22 Oct 2024 18:27:34 -0700 Rosen Penev wrote:
-> >>> @@ -3220,13 +3212,13 @@ static void bnx2x_get_strings(struct net_devi=
-ce *dev, u32 stringset, u8 *buf)
-> >>>                       start =3D 0;
-> >>>               else
-> >>>                       start =3D 4;
-> >>> -             memcpy(buf, bnx2x_tests_str_arr + start,
-> >>> -                    ETH_GSTRING_LEN * BNX2X_NUM_TESTS(bp));
-> >>> +             for (i =3D start; i < BNX2X_NUM_TESTS(bp); i++)
-> >>> +                     ethtool_puts(&buf, bnx2x_tests_str_arr[i]);
-> >>
-> >> I don't think this is equivalent.
-> > What's wrong here?
->
-> I was trying to figure that out too...
->
-> I guess the memcpy does everything all at once and this does it via
-> iteration...?
->
-> memcpy would actually result in copying the padding between strings in
-> the bnx2x_tests_str_arr, while the ethtool_puts turns into strscpy which
-> doesn't pad the tail of the buffer with zeros?
-I'll remove the change in the next version.
+On the current tip/sched/urgent, the following can be easily triggered by
+running `tools/testing/selftests/sched_ext/runner -t reload_loop`:
 
-Still doesn't make much sense.
->
-> >>
-> >> Also, please split bnx2x to a separate patch, the other drivers in thi=
-s
-> >> patch IIUC are small embedded ones, the bnx2x is an "enterprise
-> >> product".
-> >> --
-> >> pw-bot: cr
->
+  p->se.sched_delayed
+  WARNING: CPU: 0 PID: 1686 at kernel/sched/fair.c:13191 switched_to_fair+0x7a/0x80
+  ...
+  Sched_ext: maximal (disabling)
+  RIP: 0010:switched_to_fair+0x7a/0x80
+  Code: a6 fe ff 5b 41 5e c3 cc cc cc cc cc 4c 89 f7 5b 41 5e e9 49 7f fe ff c6 05 53 c0 80 02 01 48 c7 c7 27 4a e6 82 e8 c6 8f fa ff <0f> 0b eb a2 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+  RSP: 0018:ffffc90001253d40 EFLAGS: 00010086
+  RAX: 0000000000000013 RBX: ffff888103a6d380 RCX: 0000000000000027
+  RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffff888237c1b448
+  RBP: 0000000000030380 R08: 0000000000001fff R09: ffffffff8368e000
+  R10: 0000000000005ffd R11: 0000000000000004 R12: ffffc90001253d58
+  R13: ffffffff82eda0c0 R14: ffff888237db0380 R15: ffff888103a6d380
+  FS:  0000000000000000(0000) GS:ffff888237c00000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00007fa289417000 CR3: 0000000003e58000 CR4: 0000000000750eb0
+  PKRU: 55555554
+  Call Trace:
+   <TASK>
+   scx_ops_disable_workfn+0x71b/0x930
+   kthread_worker_fn+0x105/0x2a0
+   kthread+0xe8/0x110
+   ret_from_fork+0x33/0x40
+   ret_from_fork_asm+0x1a/0x30
+   </TASK>
+
+The problem is that when tasks are switched from fair to ext, it can remain
+delay-dequeued triggering the above warning when the task goes back to fair.
+I can work around with the following patch but it doesn't seem like the
+right way to handle it. Shouldn't e.g. fair->switched_from() cancel delayed
+dequeue?
+
+Thanks.
+
+---
+ kernel/sched/ext.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 65334c13ffa5..601aad1a2625 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5205,8 +5205,12 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 	while ((p = scx_task_iter_next_locked(&sti))) {
+ 		const struct sched_class *old_class = p->sched_class;
+ 		struct sched_enq_and_set_ctx ctx;
++		int deq_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+ 
+-		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
++		if (p->se.sched_delayed)
++			deq_flags |= DEQUEUE_SLEEP | DEQUEUE_DELAYED;
++
++		sched_deq_and_put_task(p, deq_flags, &ctx);
+ 
+ 		p->scx.slice = SCX_SLICE_DFL;
+ 		p->sched_class = __setscheduler_class(p->policy, p->prio);
 
