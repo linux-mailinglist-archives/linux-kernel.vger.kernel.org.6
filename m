@@ -1,161 +1,152 @@
-Return-Path: <linux-kernel+bounces-388753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6056E9B63FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:24:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCABA9B63FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF4E283003
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B171F2435F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5842B1E47BC;
-	Wed, 30 Oct 2024 13:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FE01E47CE;
+	Wed, 30 Oct 2024 13:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HT/q1EmJ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuhZ5kq8"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8A017579;
-	Wed, 30 Oct 2024 13:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCA517579;
+	Wed, 30 Oct 2024 13:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294634; cv=none; b=nX6QE/QUeCBymzBJOc6/tiwOI89x4vHY49lfAUKD8Ld4F4WXCyd3NcL6oBHj9ZhMzqJ4c0WIwl6tY8Cf21Y/TgzjzMINeMXTyCHYkkAklvuM3P433jx87Ap8C6qZR511tn7uMpmebUb6rfZaP4G06UKOz46Pm74Xez6tD1YL/pk=
+	t=1730294683; cv=none; b=bEiWSNJRMw5Q1eeGhQVQZVUdleJn0IzRzniaRduMHgt+tgJSQUbVPAy9yMqsNBmAOpg7o1NOVAeNQaGV1w5miQXKVtrdxEYck/5edO2ImA6FGKHl11JMCztk87z0DL2ZxsqJeNCvA7h7IYd0Pwbzwjw36Nthwo7UxFSosZFgB2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294634; c=relaxed/simple;
-	bh=lzXY+yCdfPlj98msG/MiyYCkRskAcL9FLvH7GLyCceQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJ5qTCaud5jTHnWlMEv9aBPaoKRiM+KXAZerbBe9RynceW6+IhNsW7h13TjJVAAL3cbDHoVTCnTs+5DZl4teUFtfsDtlK7eBVqdWUca7lzKHYCFu8X+JqKMCm/dMM9SF2IHy1C6v32fRm0lJsPLIlYowmu3N0HTLZJzvbLaT2OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HT/q1EmJ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1730294683; c=relaxed/simple;
+	bh=9upia9eBhbxQjlK2aUQDN8k83XS07xkN1JVkNJ3tfio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i9QVWg3mm9CUsdo2UOwuFVjl3UPRCbgx8GAFLUIPkWIGuHqZt9rYZ6xqV/XlXNSntrgjNZaxvbFK0D6kwXFbNL2g1oTv1h19Cxvoo1qstgVffZvqaR6nNTJEphE0wYmFH5K97m4/FaxpDOdZf505QMo8byFQTB/uyY4i9xU5usM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OuhZ5kq8; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdda5cfb6so64191065ad.3;
-        Wed, 30 Oct 2024 06:23:52 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7eda47b7343so4244651a12.0;
+        Wed, 30 Oct 2024 06:24:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730294632; x=1730899432; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=oRByv3KDH+KfzMWMhdV9lilvV/e1T2nv/m5OlVLfpWk=;
-        b=HT/q1EmJaDNbK7aoWf/iF+kL6065daq/F2ur2Cd5kRwHIJ1vEXN8+Hiui+4VwP5rxX
-         e3sQdMWB85YPUY+raXgEnBySRkmIA8F1mhFotHCi7LtVA/lS64SXyQzzOdACfK5Qv/E0
-         q6SMu+FNknSOoA76yorqeZsHd7h1TKx5IqyI0hH+dwUtHMM4fB1adMn/JnHivHsb3SWn
-         1gjD2Bd+b78+iT4MLD2w/s6rWXQpqlvns6u7W1TTBjkFM952sZJliXukPEZfoYN0z+8f
-         KdtZUtDyBVV1m0zrmFFOZCcaFWxmbraZqm6coO+IizUEZ1cnr4/vbO8HbbZJ6OONuXOy
-         LeIg==
+        d=gmail.com; s=20230601; t=1730294681; x=1730899481; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bKT8U+Ir2Cw4EGV5p8at38Hbk5ntbf+As5d+x2XbNPQ=;
+        b=OuhZ5kq8jH8CqAUWge9JZ0kLfvR5JWgvUsmb731K0fjlW5vJQMjrx34tJggLVicToL
+         ps1brB9XHJP8SCHUt9syKQJrG9rmBwZXgwUzieNiwmB9y/yxlRMdvLHE31rFt5jUwHkE
+         wM4+O6wPlTMkXyjNc9plG4SdVW7/OM2UFjO4twVkiTVRRbKsTDANdFBjdErQRuSeLb9L
+         NS4/jTxlf1sZt1nIIxdoQobTzzsFUDuWrY8BDNG3vJlDFiyKnp7+5tPSjIGvFDtwN+R1
+         cXHvYlUI7czqGgcje7EVsINdz5AentF9AStHC2mrPcmnfSaGxINQLekIN6ymdTCToTno
+         8XMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730294632; x=1730899432;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oRByv3KDH+KfzMWMhdV9lilvV/e1T2nv/m5OlVLfpWk=;
-        b=XCFS1jJypxrmVhLc1Fn3nB/5cpkwEbbL7BX/++3mQmSLynFYRuawNBabNt0KDrKYfH
-         0Wgrmh3yNsJvUGsXaNYv9WvgaLv8sOU31mu6m32e2DDKSq/AtJZSS6qicCoGuSBfCmpn
-         8ComyZ2Ogh+kYNGV2PuhAKS+uWZNKiFP3Fm9gecpb7MznJv0SYa7Ha7ZvvRPNjPxSzN0
-         f1f9Ra2zv1Bm6aIRBBniJyXHsQFQN7Qk8Cl7YkepsDP0rCq1gceFdjvgTHwpsILtKv45
-         Fn6c+W+9kaF3wUwyZ9F9KedHZm7k2E4Pr8TWo0fmaCRDp4wpVRqIql4Htfc80g9bTQ92
-         ECtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVwDo6We9f4/9xQyg0VVT5S1CqgERLaj4ISNBdYWv51lzIA6dynPypF9BKboowf0oZnhrc+6RP7f8m37Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC8oasDH52PRGpa/YMMFITNBILpMOybYBMj7friUZ/i6XrwFA6
-	AwPCPOrJAFmpksCFR7xr7ZNWZnjNw37C8UFjfo9cz1kTDglX0Vn0FsLF1w==
-X-Google-Smtp-Source: AGHT+IG+3ttp/NbflmcNwKhussepwCYakjMESjT2qsF2VXPxHu/n5KcWVuYMA56fDF4iIrgW5A85Sg==
-X-Received: by 2002:a17:903:946:b0:20c:e6e4:9d9f with SMTP id d9443c01a7336-210c6cd38eemr228013225ad.40.1730294631691;
-        Wed, 30 Oct 2024 06:23:51 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc012eeasm81646845ad.172.2024.10.30.06.23.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 06:23:50 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5d037bb8-6e59-4da3-b8c6-b199c102fd31@roeck-us.net>
-Date: Wed, 30 Oct 2024 06:23:49 -0700
+        d=1e100.net; s=20230601; t=1730294681; x=1730899481;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bKT8U+Ir2Cw4EGV5p8at38Hbk5ntbf+As5d+x2XbNPQ=;
+        b=Hd/IapQoXHvtocAFwfo9qUEOcxAo+n1sHYx79u4+GSQsrYHvkHmVKbOBd9hkt3gvad
+         to3w7Fw8g4Ac0+u7ZROJRF6T0zf1VUphsqeZ34ZdMoHVm0q2iKce+4mRQIxU3FNg7+xf
+         dH8tadX4KFKodyQ4WMsT68dftSio79E/uHFBdBXc3U1My5SfC/5tBVImn4GGhfxfK2k+
+         vVfDz/JVQuQdITW3It6HVi8aAsvLVy6JOhExHIPOBRIjgXMG+lxDFGe4G2oSoE68t9Q9
+         EVphxTza4OALcJTToF3KUtR5yo0onX8v3l8cPuRgiGwkhPjLZkcjJz2KTAz1V2f+sahk
+         VGEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCa08m1jgLkZv0XNyudAWPlDkNoQZHljI2o5EsxlLcsce/6P/DrFHn/7jl+0ssjudIV81iUa3jYKFGeLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu+2l6FqmIBCDOi6eR7NeYt9fNa3Sx4pl1CHPye+OhT4w3ZBSD
+	bHKwqfbSYZFPf67BWRNA1n1ugY1cFgBcyZcQ00BBCCDfeaKVS3Gi
+X-Google-Smtp-Source: AGHT+IHA5X00UE4/R3EXjGVYhmUcKmKOhChmtXag6PpNg14uYFjeAGEkFSa4N1U6oUSqoJtztzbSdw==
+X-Received: by 2002:a17:90a:fe0a:b0:2e2:d5fc:2847 with SMTP id 98e67ed59e1d1-2e8f11bad33mr19014421a91.30.1730294680996;
+        Wed, 30 Oct 2024 06:24:40 -0700 (PDT)
+Received: from feng.cse.unsw.EDU.AU (dyn-dhcp-166.cse.unsw.EDU.AU. [129.94.175.166])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa36672sm1683676a91.14.2024.10.30.06.24.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 06:24:40 -0700 (PDT)
+From: Tuo Li <islituo@gmail.com>
+To: ayush.sawal@chelsio.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	almasrymina@google.com,
+	dtatulea@nvidia.com,
+	jacob.e.keller@intel.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Tuo Li <islituo@gmail.com>
+Subject: [PATCH] chcr_ktls: fix a possible null-pointer dereference in chcr_ktls_dev_add()
+Date: Thu, 31 Oct 2024 00:23:52 +1100
+Message-ID: <20241030132352.154488-1-islituo@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] docs: ABI: Fix spelling mistake in
- pretimeout_avaialable_governors
-To: Colin Ian King <colin.i.king@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241030102624.3085369-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241030102624.3085369-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/30/24 03:26, Colin Ian King wrote:
-> There is a spelling mistake, pretimeout_avaialable_governors should
-> be pretimeout_available_governors. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+There is a possible null-pointer dereference related to the wait-completion
+synchronization mechanism in the function chcr_ktls_dev_add().
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Consider the following execution scenario:
 
-> ---
->   Documentation/ABI/testing/sysfs-class-watchdog | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-watchdog b/Documentation/ABI/testing/sysfs-class-watchdog
-> index 94fb74615951..70eabccf0557 100644
-> --- a/Documentation/ABI/testing/sysfs-class-watchdog
-> +++ b/Documentation/ABI/testing/sysfs-class-watchdog
-> @@ -76,7 +76,7 @@ Description:
->   		timeout when the pretimeout interrupt is delivered.  Pretimeout
->   		is an optional feature.
->   
-> -What:		/sys/class/watchdog/watchdogn/pretimeout_avaialable_governors
-> +What:		/sys/class/watchdog/watchdogn/pretimeout_available_governors
->   Date:		February 2017
->   Contact:	Wim Van Sebroeck <wim@iguana.be>
->   Description:
+  chcr_ktls_cpl_act_open_rpl()   //641
+    u_ctx = adap->uld[CXGB4_ULD_KTLS].handle;   //686
+    if (u_ctx) {  //687
+    complete(&tx_info->completion);  //704
+
+The variable u_ctx is checked by an if statement at Line 687, which means
+it can be NULL. Then, complete() is called at Line 704, which will wake
+up wait_for_completion_xxx().
+
+Consider the wait_for_completion_timeout() in chcr_ktls_dev_add():
+
+  chcr_ktls_dev_add()  //412
+    u_ctx = adap->uld[CXGB4_ULD_KTLS].handle;  //432
+    wait_for_completion_timeout(&tx_info->completion, 30 * HZ); //551
+    xa_erase(&u_ctx->tid_list, tx_info->tid);  //580
+
+The variable u_ctx is dereferenced without being rechecked at Line 580
+after the wait_for_completion_timeout(), which can introduce a null-pointer
+dereference. Besides, the variable u_ctx is also checked at Line 442 in
+chcr_ktls_dev_add(), which indicates that u_ctx is likely to be NULL in
+some execution contexts.
+
+To fix this possible null-pointer dereference, a NULL check is put ahead of
+the call to xa_erase().
+
+This potential bug was discovered using an experimental static analysis
+tool developed by our team. The tool deduces complete() and
+wait_for_completion() pairs using alias analysis. It then applies data
+flow analysis to detect null-pointer dereferences across synchronization
+points.
+
+Fixes: 65e302a9bd57 ("cxgb4/ch_ktls: Clear resources when pf4 device is removed") 
+Signed-off-by: Tuo Li <islituo@gmail.com>
+---
+ drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c b/drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c
+index e8e460a92e0e..524c8e032bc8 100644
+--- a/drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c
++++ b/drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c
+@@ -577,7 +577,8 @@ static int chcr_ktls_dev_add(struct net_device *netdev, struct sock *sk,
+ 	cxgb4_remove_tid(&tx_info->adap->tids, tx_info->tx_chan,
+ 			 tx_info->tid, tx_info->ip_family);
+ 
+-	xa_erase(&u_ctx->tid_list, tx_info->tid);
++	if (u_ctx)
++		xa_erase(&u_ctx->tid_list, tx_info->tid);
+ 
+ put_module:
+ 	/* release module refcount */
+-- 
+2.43.0
 
 
