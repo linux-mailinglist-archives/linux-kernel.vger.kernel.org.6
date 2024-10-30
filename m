@@ -1,133 +1,132 @@
-Return-Path: <linux-kernel+bounces-388124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6293A9B5AE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:54:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE999B5AF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 256F0283916
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF901C21E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB403198A0D;
-	Wed, 30 Oct 2024 04:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0E9198E9E;
+	Wed, 30 Oct 2024 04:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FKEByTDY"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8ZZ4u7x"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1753F82899;
-	Wed, 30 Oct 2024 04:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1629D82899;
+	Wed, 30 Oct 2024 04:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730264075; cv=none; b=TyxasBAt3cl90LM+S1tS5Jq0EBGfMlZJ0AGQIJVtkENfch1RWoT+JrRZ6V00Q4Wimwby+YpjIP3s/pNfUQppWDIoGvuVZA+l7ycrPZNdwz6NmDe41HnXZu1IW6HygBsk8w28FBfgDWipBePBSUbd+9ukD4HiAp0wNclrnjQyl80=
+	t=1730264189; cv=none; b=eScySO8RvYQpstTye74KM61aRiDnTv1nPp8MUPNy3c/RI6sGXNn1snD/+9miKv8KVuHbtySW4SgAiEpD7hOOaoZLBvPYrBN7ImkeTSLI51XHBc81PTbdEVIinSMXUq6Wq9NiPVF51Jn/JHw5JVnugENRp/AtvZEFqOWp/NulmOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730264075; c=relaxed/simple;
-	bh=wlXwWBhkokDz6umu5vrGR/bq+03UBF7BVjl4Smmzuyw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uU59mCmKZ3xw+9jW/rfAqM8KVtynDyl66MOJC3D0mLHelduY4sUWJdgKwPOQeZeE7veputfCmBAttzHNlouZxLlVX4V+wcoT6KltjXKZYBM92go6wXNDA+QK7LouMhkwcdOlCWH3StFVwYbl3Dsrd+MLjR74XuNhQXnqKmnvTK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FKEByTDY; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49U4sR8B060578;
-	Tue, 29 Oct 2024 23:54:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730264067;
-	bh=NF1ozKFoQkWPI0e7AdbdJLTmdxko1lP62hOtfBf8zzk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=FKEByTDYstGw2/SsbzV4sJpKQUQv/Pm0bszpsMlTT1KB5pB2sxNdkLz3w5IEfabeU
-	 6PlrpEiyIrRe+YPsDrbGSO9SLPgro/WwxutnpWiJkkgFVFfVwVF5tMarroFiSqD0zC
-	 nQNt7oFIOONAy31jDtYWw7IaiZ14LfHKxpkG8HRM=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49U4sQto118844
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 29 Oct 2024 23:54:27 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
- Oct 2024 23:54:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 29 Oct 2024 23:54:26 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4sMU1064291;
-	Tue, 29 Oct 2024 23:54:23 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <j-keerthy@ti.com>,
-        Anurag Dutta
-	<a-dutta@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-Subject: Re: (subset) [PATCH 0/4] MCSPI clock ID fixes for J7200/J721E/J721S2/J784S4
-Date: Wed, 30 Oct 2024 10:24:17 +0530
-Message-ID: <173021674663.3859929.6398782356598128564.b4-ty@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241023104532.3438851-1-a-dutta@ti.com>
-References: <20241023104532.3438851-1-a-dutta@ti.com>
+	s=arc-20240116; t=1730264189; c=relaxed/simple;
+	bh=cNJqd8Gq9dL3pl8c/7s75ZXuAo5G6dnq2OXzKit73e4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Asq6OEv6fv/QRiwcGYfc1JvZlpAOtxyrC55ZEwAr1COQgmCsWVVQVc96O1Yco4+Zqd+9PgmECTGJTCdkYiZJPGXTLjC/6psQbORvHNXz5UY3CoklgSkKVBdyo+ODO61xy5aR3yzWu8CmeO4hQ2ZTn6Mfzm56ZLY46n454Vaikpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8ZZ4u7x; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso4452577a91.1;
+        Tue, 29 Oct 2024 21:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730264185; x=1730868985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/3WJHo98bQyOK7leaV/ie37wgoCMdI8fncgr0igqgGk=;
+        b=P8ZZ4u7x14XNdF14Sgjl5IycLld/XjIHqw8Pt8ZxdCL0y7aEqX0w73IllXxcP7x57Y
+         ac8DOPqYawlTtPtKaUicSwEHqlFh88LXJ2mbhkiUCzb2VS2oiYI9T6rxbWfV1k1xtWQI
+         JQZqG8zd0XNGH9t11Fcqnl0BvgByMM3jyhqI45e/2kv+QZytEbTS8EfGbk0zALXiuJ6R
+         VmOyDWbwgNobofswfUqbJKvc3FnIuxMWIZn34ee8uS9SIMZutEOFKSFScS5bvCqccYvx
+         9aAtz7aEHP2jwfLRl3V0FO+dyn3XPOUTotyUYMbr2EeZ42lks5r3vEDMceAIRLp780Lz
+         IpfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730264185; x=1730868985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/3WJHo98bQyOK7leaV/ie37wgoCMdI8fncgr0igqgGk=;
+        b=NiuMBIVqioWAJ49s+u0Psm/8HJyIW4Twqx7vIGkVl3f0BP2+vEeqcEa3ZU8oTvJUQd
+         JmxVQTUfzRGefEOxVAb9iwEmr5811dIx6oabie0sL19EzRF8ENlZKs8+E5Op0RjFf3Yn
+         uxHZVhgtopzL8TvkYLoSGHa3Lke3WkSyLaTU9asQDST1NEcK7JAMOyRGSX7MOGYQpOJE
+         5uaq4sb336GnPjo+qXEvHssJsWFL6yLvsmW8fsafFZV/g/A/pYk4o2NTBfWO1S7Pepqu
+         fnTL820OHiCoAZodtDlbutH70UOyRQ5eyOBPX1ODAcJq7YMHBb9UGq4iV+bNZJ2PbKKk
+         jjLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxIKCmuWpQzRDqn+EC8eFXzvNLYRuCqZr/IH9b2WWKc34ldr+8vbV+8XnFDEzC+xXo7mj62VQrVO7A@vger.kernel.org, AJvYcCXL3ozt7NoXdzMqzCR3RnogchyhsGjdS/tyIRSaa+riczdSkYbvBUDiCvkUDHMglcyLm/KAAtjTE9hCTlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdGSpb8DKuNMqPV5U5SB05G5OKJFjgrIseL4VAtTj2bcZGdJGQ
+	eerW8ZrSrjK1RwQGFuCJdAVhxW9V6YPVMYQrKQT13MZdqyaNFFZz
+X-Google-Smtp-Source: AGHT+IH/Ox+EL92Eo+EnWlruc+lsJlrafTmbrepl9MCFSVVpK9W9JEiJ5LDD8lEUh+7dHEpokEI1JA==
+X-Received: by 2002:a17:90a:1b8e:b0:2e1:e19f:609b with SMTP id 98e67ed59e1d1-2e8f1088115mr16221063a91.24.1730264185412;
+        Tue, 29 Oct 2024 21:56:25 -0700 (PDT)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf441a4sm74657285ad.18.2024.10.29.21.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 21:56:24 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: dchinner@redhat.com,
+	cem@kernel.org
+Cc: chandanbabu@kernel.org,
+	djwong@kernel.org,
+	zhangjiachen.jaycee@bytedance.com,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH v2] xfs: fix the entry condition of exact EOF block allocation optimization
+Date: Wed, 30 Oct 2024 12:56:17 +0800
+Message-ID: <20241030045617.2920173-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Anurag Dutta,
+When we call create(), lseek() and write() sequentially, offset != 0
+cannot be used as a judgment condition for whether the file already
+has extents.
 
-On Wed, 23 Oct 2024 16:15:28 +0530, Anurag Dutta wrote:
-> This series fixes the clock IDs for MCSPI instances across:
-> 1) Main and Wakeup domains in j7200
-> 2) Wakeup domain in j721e
-> 3) Main and wakeup domain in j721s2
+Furthermore, when xfs_bmap_adjacent() has not given a better blkno,
+it is not necessary to use exact EOF block allocation.
 
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+Changelog:
+- V2: Fix the entry condition
+- V1: https://lore.kernel.org/linux-xfs/ZyFJm7xg7Msd6eVr@dread.disaster.area/T/#t
+---
+ fs/xfs/libxfs/xfs_bmap.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-> 4) Main domain in j784s4
-
-J784s4 bits dont apply cleanly anymore. Please respin.
-
-> 
-> In j7200, kernel crashes were observed due to incorrect clock IDs.
-> In j721e/j721s2/j784s4, there was only a mismatch of clock IDs w.r.t
-> documentation, however it did not trigger a crash. The clock IDs can be
-> verified from the below links.
-> 
-> [...]
-
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
-
-[1/4] arm64: dts: ti: k3-j7200: Fix clock ids for MCSPI instances
-      commit: 3a47e381670f130870caef6e1155ac531b17b032
-[2/4] arm64: dts: ti: k3-j721e: Fix clock IDs for MCSPI instances
-      commit: ab09a68f3be04b2f9d1fc7cfc0e2225025cb9421
-[3/4] arm64: dts: ti: k3-j721s2: Fix clock IDs for MCSPI instances
-      commit: 891874f015e98f67ab2fda76f2e859921e136621
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
+diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+index 36dd08d13293..c1e5372b6b2e 100644
+--- a/fs/xfs/libxfs/xfs_bmap.c
++++ b/fs/xfs/libxfs/xfs_bmap.c
+@@ -3531,12 +3531,14 @@ xfs_bmap_btalloc_at_eof(
+ 	int			error;
+ 
+ 	/*
+-	 * If there are already extents in the file, try an exact EOF block
+-	 * allocation to extend the file as a contiguous extent. If that fails,
+-	 * or it's the first allocation in a file, just try for a stripe aligned
+-	 * allocation.
++	 * If there are already extents in the file, and xfs_bmap_adjacent() has
++	 * given a better blkno, try an exact EOF block allocation to extend the
++	 * file as a contiguous extent. If that fails, or it's the first
++	 * allocation in a file, just try for a stripe aligned allocation.
+ 	 */
+-	if (ap->offset) {
++	if (ap->prev.br_startoff != NULLFILEOFF &&
++	     !isnullstartblock(ap->prev.br_startblock) &&
++	     xfs_bmap_adjacent_valid(ap, ap->blkno, ap->prev.br_startblock)) {
+ 		xfs_extlen_t	nextminlen = 0;
+ 
+ 		/*
+-- 
+2.41.1
 
 
