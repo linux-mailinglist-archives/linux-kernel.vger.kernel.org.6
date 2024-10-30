@@ -1,130 +1,86 @@
-Return-Path: <linux-kernel+bounces-388313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D679C9B5D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:24:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345C89B5DC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:27:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FF51C210C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED59B284391
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BBF1E0E15;
-	Wed, 30 Oct 2024 08:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgQVSADj"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1931E1A17;
+	Wed, 30 Oct 2024 08:25:25 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203271E0DE6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CBB1E1302;
+	Wed, 30 Oct 2024 08:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730276656; cv=none; b=pYefvpMOBzqhEN15CSHKOrZ544cELBJH/gXoj1wWnCHIn1i55bKp1z5n9mtpnFhtLymQgDkJUSvdo/VAq9N8q3ZOkPO+MNiriZo2nuneYpW9hbcCiJAfEmiNS30pM8kIYr3Qyrg9ZafdYgxfOC3whaAvlmyEim82hDwApBql/FU=
+	t=1730276724; cv=none; b=t/0xFiUHmjmts+krSBq+SrRV6F8pJyVHnluHCMTSCzMov428PwxOvytBcAZNbM+iK98TA5UTWYwUUQrE4khhouOvccjMReGfqStAK76IJ9qQov+A3xwsQknaJd3aybqqB1eimv2J1goLMCOOSCv3QyljcM6h2gBsrVcQ0PTLjQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730276656; c=relaxed/simple;
-	bh=Qhpkm4WTteAyftmrwtnK9R8dd+A2hUuNmx/G1bGXkYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k5pKuAldj82cfswLfBVoUgcT1/MMDO5BREwRiuzQ6+hnnpHbakAEXbx0kHsbgztlU1vw/xMwfUEjWiQw53nqnrxH0ofvAhBuRZto8uOnkS/5ryQZdNOsonr5K7QFST9GuyZ0e6GX6XdU+dUPt2f9/h+cdCAvY1a+h/+5YJvPk7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dgQVSADj; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso773675766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:24:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730276651; x=1730881451; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4IzTjonjvv4fhPKtE1bAMZ0z1TTpZMKWkER0B3kjnaU=;
-        b=dgQVSADjzU7mFlrNo7V7ohi1dVUSo9j0YZkEIVkrmbHwsmwCyoQyG+o1jRET2VBPw2
-         5icY86ol+yKWQLY57/M9HSKAuj2VrHvD7SAzohfYwM2WM62kH6McCpMsOXx+Ks9CliJs
-         hwY6M0hXkO6OiKm5mYmCPcv9KO7rGejkh5Vx5TLwd/FjuDA9DGdNMiWXW9BwQQvYM2YI
-         Byf3YzE+qiOn09q/wIAvxq5P/aousxtLIynAOuKAivoEWjA+6KSdn2pCB9KFoCw7dgA7
-         xQmU89ldGLqaS20MjX6wgLbaNNnoEx3ZYVkjFybNzyhhb+FKqzzVGHLD5kNfNA+3b98B
-         fM4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730276651; x=1730881451;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4IzTjonjvv4fhPKtE1bAMZ0z1TTpZMKWkER0B3kjnaU=;
-        b=gYWxpwQu33UX8oo5ktvNDUeespMQaaTKMkeKcUuOX04i2DK6cQu3yT6kNEvSdtxULe
-         tXrvn/XJmYdrTuAZ1VrdXfxrSzbDt42GUxySLXwCygYZOJR7ZYvug4c4C3Mx/M7eMHvr
-         l5LyOui78XSJPIzhw+GR9yB8jT3Wvny5ePYZ7HN5hzA1Va7qW6s05L3NTnyBScrsnbZu
-         7SS46Df1PoxTz3flczpThSStChQ7Aa4s/0cojIUgdYs9J9OIVelUD6LsROYP/4q22x24
-         c+mWTMgBk4lP4dtE37r5BMoEtIiHtVK0fL8k74ywq6q9RcModPz9X+qbXlkdYHvT6mz4
-         xU3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXjDGunk2ZDx9qyMnIHN+wQwQvsnefDujI2jlBa0bXR+U7c84uENpBWf6DCDg6BnWJsv7OVNrLj9E7xtpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHgHpTbTS27Usoy9S/jxjc+G4bY7Bed8qluo81y0AHfKPXn65o
-	w62KyMJEHetAqvBPemnTTd2TuwaFST/4dO31y6DEXbYi/iDPuBlPonoLf9ZpxWE=
-X-Google-Smtp-Source: AGHT+IH5x1e9E410/aCJcWrSKGwzP+rL5H/qoPDmLBUylFSzYy/PDgopa4w/bjGtxcjDtfhlYRn7IQ==
-X-Received: by 2002:a17:906:794c:b0:a99:e505:2089 with SMTP id a640c23a62f3a-a9de61ce120mr1423660466b.45.1730276651447;
-        Wed, 30 Oct 2024 01:24:11 -0700 (PDT)
-Received: from [192.168.0.157] ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b13309sm14733219f8f.3.2024.10.30.01.24.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 01:24:11 -0700 (PDT)
-Message-ID: <039d4e57-30e7-40e8-9501-cc4b18c6bb30@linaro.org>
-Date: Wed, 30 Oct 2024 08:24:09 +0000
+	s=arc-20240116; t=1730276724; c=relaxed/simple;
+	bh=hLyCM5XhFjDsLAnrJbD8LQ+pkt2xuRAIzJSeR30EK1U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KqdQulP4VB9bubar51JTIbYyO2CJGScwx4wzHPG3amZH2wIrX38RkcK2TC5+oNixxjlo0AKlPud6JtBqc7XliU/9sOUK5Om8GZ9RJlUMkDkHKQTAE5AKSfc+Hl504aFMDZBKWUZr2W49wjEI39YeeSUVim6C/XCBWsKyn1sfAyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdgBT4Qs7z1jw9K;
+	Wed, 30 Oct 2024 16:23:45 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6AE4F180019;
+	Wed, 30 Oct 2024 16:25:17 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 30 Oct
+ 2024 16:25:16 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <Pierre.Gondois@arm.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] cpufreq: CPPC: Fix possible null-ptr-deref for cppc_get_cpu_cost()
+Date: Wed, 30 Oct 2024 16:24:49 +0800
+Message-ID: <20241030082449.2629861-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/11] scsi: ufs: exynos: gs101: remove
- EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL
-To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
-Cc: andre.draszik@linaro.org, kernel-team@android.com,
- willmcvicker@google.com, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- ebiggers@kernel.org
-References: <20241025131442.112862-1-peter.griffin@linaro.org>
- <20241025131442.112862-4-peter.griffin@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241025131442.112862-4-peter.griffin@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
+cpufreq_cpu_get_raw() may return NULL if the cpu is not in
+policy->cpus cpu mask and it will cause null pointer dereference,
+so check NULL for cppc_get_cpu_cost().
 
+Fixes: 740fcdc2c20e ("cpufreq: CPPC: Register EM based on efficiency class information")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On 10/25/24 2:14 PM, Peter Griffin wrote:
-> This flag is not required for gs101 SoC.
-> 
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index 2b8708475ac7..67fa97bbeae7 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -487,6 +487,9 @@ static int cppc_get_cpu_cost(struct device *cpu_dev, unsigned long KHz,
+ 	int step;
+ 
+ 	policy = cpufreq_cpu_get_raw(cpu_dev->id);
++	if (!policy)
++		return 0;
++
+ 	cpu_data = policy->driver_data;
+ 	perf_caps = &cpu_data->perf_caps;
+ 	max_cap = arch_scale_cpu_capacity(cpu_dev->id);
+-- 
+2.34.1
 
-nitpick, use imperative
-
-Auto clk control works fine for gs101, remove
-EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL flag.
-
-(or something along these lines)
-
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  drivers/ufs/host/ufs-exynos.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-> index 939d08bce545..d685d3e93ea1 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -2142,8 +2142,7 @@ static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
->  				  UFSHCD_QUIRK_BROKEN_OCS_FATAL_ERROR |
->  				  UFSHCI_QUIRK_SKIP_MANUAL_WB_FLUSH_CTRL |
->  				  UFSHCD_QUIRK_SKIP_DEF_UNIPRO_TIMEOUT_SETTING,
-> -	.opts			= EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL |
-> -				  EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR |
-> +	.opts			= EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR |
->  				  EXYNOS_UFS_OPT_UFSPR_SECURE |
->  				  EXYNOS_UFS_OPT_TIMER_TICK_SELECT,
->  	.drv_init		= exynosauto_ufs_drv_init,
 
