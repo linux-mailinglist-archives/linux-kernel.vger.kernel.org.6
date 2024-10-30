@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-388251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B409B5CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:16:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908B29B5CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BE231C22523
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:16:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2607EB224AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A831D89EF;
-	Wed, 30 Oct 2024 07:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341561D3578;
+	Wed, 30 Oct 2024 07:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QjYM80Y9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uXHkZFXq"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EA785931;
-	Wed, 30 Oct 2024 07:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B28185931
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730272583; cv=none; b=uY8EYSPzDNxxdSnGNEG3OMARcU9q1N4map9VgmMuFIr0GQitQklc8O+SrDfekDY0as0wJlz+pUZoEXIuqUFppAtnoNSE/092IX+4hz2XWWr3Jq9PMpS+SqthvUtOI3+x9VoYRy7kbISinEp65A1nbJyvyg02b5WN7VQ9taOK3/4=
+	t=1730272743; cv=none; b=oGzN/zsaUkA+kDdGRhoWW+Vc1fTD2VtAS3R3Qim7FGjo5pOoosBRHQoK/GcJKmtExlSvq9pKy+xM8qcr/T2RTDMQtUEK8QdDf0DPlfaKpExrz59oaQWYGWTKaaPrXpLVJularxOZRmkIEAzIcJM0FB3seP0ovd/rNShtQ1kJL80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730272583; c=relaxed/simple;
-	bh=WOyrbsXuAYwmwdR7weFcLlOFsoKiRkfzZhQK+EJTbd0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hYvZ5Z+LsgT+u4+LH8mQtm49TKWOkX5gJl/twHnvPhelSgdTIEi0nDiGnIOZrYdubFgh84XTUmpi9JtWVQgXMgmF7xbTEiPj2HKadUa3Pi0NcSBIjAbFxlhsiFBxhOIXOVDf9mQ5ONGZnhZYc2I+3EIGINY9GHi9/BdEizMbvjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QjYM80Y9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730272581; x=1761808581;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=WOyrbsXuAYwmwdR7weFcLlOFsoKiRkfzZhQK+EJTbd0=;
-  b=QjYM80Y9OT+DTrsgmhTX0fjUNdGwc56Hl8oDLivyLVRyngC5Yxpm83Nh
-   A3Jhl8G2CWwZCBNRbI+X3wdM9425OO6jC63dw5ZZd/IWZMt3qbxxGkWXM
-   ErsLHsxLsyHOnLEydZCgoUAbF94bVLstozaS7GS+VtGXL73szm9yT+fjI
-   yC6hYuVyh6OjxuprfKuCQQ8MXPxfLn5C6HVr7ZBJe0Wv5XRnvQHObZswF
-   94NKeWaI/bEbfZc1cWFkPBnZJArJ7tlDwLvKCy0TmStoZrKVgNZZgePWu
-   +bf92rDP24jy+We16cmCric8yov0Ej2hIeiq/zHz8CLlKPLaAQ54QLwMn
-   A==;
-X-CSE-ConnectionGUID: iTGcN6HxTGqdbwPAky5pKg==
-X-CSE-MsgGUID: Ovc43BpUQ+SmPtFc2yzsBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="30169961"
-X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="30169961"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 00:16:20 -0700
-X-CSE-ConnectionGUID: XwtR8J7IQDuT7JfP5qtmaQ==
-X-CSE-MsgGUID: +aqmj1CrQe24f6nmMhOwgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="82386709"
-Received: from ubik.fi.intel.com (HELO localhost) ([10.237.72.184])
-  by orviesa006.jf.intel.com with ESMTP; 30 Oct 2024 00:16:07 -0700
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel
- <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>, Xin Li
- <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh
- Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, Tony
- Luck <tony.luck@intel.com>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Alexey Kardashevskiy <aik@amd.com>,
- Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
- Ingo Molnar <mingo@kernel.org>, Pawan Gupta
- <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon
- <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
- Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross
- <jgross@suse.com>, Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook
- <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, Jason Gunthorpe
- <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du
- <changbin.du@huawei.com>, Huang Shijie <shijie@os.amperecomputing.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Namhyung Kim
- <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-efi@vger.kernel.org, alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH v5 00/16] Enable Linear Address Space Separation support
-In-Reply-To: <ZyEX4cp-iiwiF_yX@casper.infradead.org>
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
- <ZyEX4cp-iiwiF_yX@casper.infradead.org>
-Date: Wed, 30 Oct 2024 09:16:05 +0200
-Message-ID: <87plnit616.fsf@ubik.fi.intel.com>
+	s=arc-20240116; t=1730272743; c=relaxed/simple;
+	bh=GRFuDEnjDgd4OvoRG285WDJtwuTF8sf2Dvf2JM1Qzcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pq2s+X++PAKNlfjqUtsLZn2NHfqa5YmOhw/uWiOzSLpKHtb4yiFIVdUv3G0gmXTBqUr6mN1GCiNPmnJPWwOR1ijCvDrSbJgsLuqFVRU7ovV11HT8yNvFdnPwNMUbBc0YggWGgiGPqW/7XPvlfcoGa3HBU7lkR8bMEtlJ2vTEgj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uXHkZFXq; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ca388d242so59299305ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:19:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730272741; x=1730877541; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2HfyfhF6z0IsAsG7O1iQKmomQevqTeSun6SJPILAuAM=;
+        b=uXHkZFXqX77GhcG9bKQ/636UdZw45BxhQKW7dNrCZGkH1e7lD8+BxJM/Yc97+nL+H/
+         zSy7Rwz+PdBsfnjvgGwcAJgu+iRkgGLLa6P74LlhwjzglS2zrttpJy6dW+IlkTAz0BQw
+         tkfYHR+qmhPr7Qhdl1cYFES7WEIp/yLPaubLij4PyRhMF0EGZLi5DBe+TBaSZOP6xsdM
+         XWhYvZuI0l27nLC4oNx3azm8SA78oOOZTXrrJaK+k4MD0qunSRTM5KiB5eWDU+WNwlAo
+         0V/GoxnRt2Pr/CNYT7DgFwexU+dKQa6ht5hGjoayrkruuBW46Cbt2Ik0NgX6dWJF8KXG
+         Vukg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730272741; x=1730877541;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2HfyfhF6z0IsAsG7O1iQKmomQevqTeSun6SJPILAuAM=;
+        b=WO7q+Jy27oHDbgsF++iOFnbyHHthJBF0xJrbdbIvsplyg4H2+j8Id4RrgluKbrS9wt
+         hKPhHX6v3W5b+6fR7ywyzdDAuUMMmPwKdCMlqa7AwbRJ5hSOWQAE/9Nlsba3otn9NfQC
+         +3rEarP2j+SpljIbAeNmWL/PKmhaFHSdU60dI3z2VZ7YAdEmB1uajwe8DWwyV+ILtN5L
+         T1BoRll0hzsbHUCJnx3302xgWpIDFlihdGMRPZVkZ4rWNtIL36zDqPLwt610kh6A3K9k
+         TeFz4S+49x65cv2QL0fLaLb1Eni0aSCD7aHEoyl6WU0+nyYpY/S3HBUUNSV2zT9tpjbk
+         /hvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnSgu2JHcu2kCCIt8n1OBi2WRozTIURreEt3e0YN2QuzpTmQRKNCi8tEZZmVFuYvJrB5dk314heFEw+zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeKLbsgcWe3FSSYVg0XgH6IlMfe4aG8F/u8SOYn7VHKYKI4n0G
+	9d2su3/jDop4oQ3UQAxfDm7Gm4OTOCY3ohhJSnbw8EX/FGooSwGdUOI8iKrttw==
+X-Google-Smtp-Source: AGHT+IHTdvrxjuDcs8dqC3K9rXQG1LndTCbbKrjV+g4Yj/M49myE6Ugo2CkOqvAophLbqnU9pTQ4Xw==
+X-Received: by 2002:a17:903:2445:b0:20b:775f:506d with SMTP id d9443c01a7336-210c6c123f3mr211614765ad.34.1730272740962;
+        Wed, 30 Oct 2024 00:19:00 -0700 (PDT)
+Received: from thinkpad ([36.255.17.104])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf441bdsm75242015ad.52.2024.10.30.00.18.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 00:19:00 -0700 (PDT)
+Date: Wed, 30 Oct 2024 12:48:51 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org,
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	johan+linaro@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v7 6/7] PCI: qcom: Disable ASPM L0s and remove BDF2SID
+ mapping config for X1E80100 SoC
+Message-ID: <20241030071851.sdm3fu6ecaddoiit@thinkpad>
+References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
+ <20241017030412.265000-7-quic_qianyu@quicinc.com>
+ <ZxJrUQDGMDw3wI3Q@hovoldconsulting.com>
+ <91395c5e-22a0-4117-a4b5-4985284289ab@quicinc.com>
+ <250bce05-a095-4eb3-a445-70bbf4366526@quicinc.com>
+ <ZyHc-TkRtKxLU5-p@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZyHc-TkRtKxLU5-p@hovoldconsulting.com>
 
-Matthew Wilcox <willy@infradead.org> writes:
+On Wed, Oct 30, 2024 at 08:15:05AM +0100, Johan Hovold wrote:
+> On Wed, Oct 30, 2024 at 01:54:59PM +0800, Qiang Yu wrote:
+> > On 10/24/2024 2:42 PM, Qiang Yu wrote:
+> > > On 10/18/2024 10:06 PM, Johan Hovold wrote:
+> 
+> > >> Also say something about how L0s is broken so that it is more clear what
+> > >> the effect of this patch is. On sc8280xp enabling L0s lead to
+> > >> correctable errors for example.
+> 
+> > > Need more time to confirm the exact reason about disabling L0s.
+> > > Will update if get any progress
+> 
+> > I confirmed with HW team and SW team. L0s is not supported on X1E80100, 
+> > it is not fully verified. So we don't want to enable it.
+> 
+> Thanks for checking. A word about what can happen if not disabling it
+> may still be in place (e.g. the link state transition stats in debugfs
+> on x1e80100 looked pretty erratic with L0s enabled IIRC).
+> 
+> Also, are there any Qualcomm platforms that actually support L0s?
+> Perhaps we should just disable it everywhere?
+> 
 
-> On Mon, Oct 28, 2024 at 06:07:48PM +0200, Alexander Shishkin wrote:
-> I lack the wit to read & understand these patches to answer this
-> question, so I'll just ask it:
+Most of the mobile chipsets from Qcom support L0s. It is not supported only on
+the compute ones. So we cannot disable it everywhere.
 
-I was hoping they are readable and straightforward. Please, do point out
-things that are not so, or not explained well enough, I'll fix them.
+Again, it is not the hw issue but the PHY init sequence not tuned support L0s.
 
-> What happens when the kernel does a NULL pointer dereference (due to a
-> bug)?  It's not an attempt to access userspace, but it should result in
-> a good bug report.  Normally this would be outside a STAC/CLAC region,
-> but I suppose technically it could be within one.
+- Mani
 
-Outside of STAC/CLAC there will be a message, see 13/16 or [0].  It
-doesn't have helpful things like "if (address < PAGE_SIZE) printk("NULL
-ptr deref\n);", but since it prints the address, I assumed it was
-sufficient. Does this sound reasonable? Or is it preferrable to make it
-look exactly like the !LASS NULL dereference?
-
-Inside STAC/CLAC it should trigger a regular page fault and all the
-error messages that result from it.
-
-[0] https://lore.kernel.org/all/20241028160917.1380714-14-alexander.shishkin@linux.intel.com/
-
-Thanks,
---
-Alex
+-- 
+மணிவண்ணன் சதாசிவம்
 
