@@ -1,124 +1,102 @@
-Return-Path: <linux-kernel+bounces-389172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC1B9B6980
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:48:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEF59B6982
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF8031C21016
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:48:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48EB2B20E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9685215012;
-	Wed, 30 Oct 2024 16:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BAD215012;
+	Wed, 30 Oct 2024 16:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpnFElbe"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kNVqVLon"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDA6768FC;
-	Wed, 30 Oct 2024 16:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA7E768FC;
+	Wed, 30 Oct 2024 16:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730306878; cv=none; b=l2MMgW2mJyfUWWa3yLeKclSa2t/uSL8xmwAjAUYL6bI8ULzFSpP6GxwnDfW5BQCLOB53ZMdIf4oxmqMGEOGXfcNtPHTBjhrzlXHe/j4+4EGyHZLa9hoVk0ky8WcnnlZ9OAT7uR20JU3pjr3kn98PJ2/sxq0RJ6gyaTy5o6njAWE=
+	t=1730306923; cv=none; b=hs00SsLnAU89tEor8YuemOR7Vsz53p+nPkBc3zpdutqGVOUrrCN/YkPWaSWar6/2JxOfQ+/tvog+zkU3YUK0WbXWJPGTuHGFNIBP1aHeODrcphUeJ/ZVQUTq2agHtVZ+i90FrXCzCW8CjREdbdSFNOl9TgQZn83aIMdN1arpQvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730306878; c=relaxed/simple;
-	bh=D2oJYtwG9EKSoZ7I5siUsipoREy99xEvaxJ67nyWbRU=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=H6A6BzVEkhwBvFrF5EUWqx4dAFVR8B0PX5RYNMiYOfxRy+xyNSiDwcoLi8cO7grqZFuYOkZju2A/BNJHjXH0rn8+OU0Fei1Q4wErjy9LDxInPe4+nHPUYWIHNmsBY8xUGbdlo6LHW4TwwuDPwCunF+VppsMyGpk/KVVM4XNbK6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpnFElbe; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so67046f8f.2;
-        Wed, 30 Oct 2024 09:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730306875; x=1730911675; darn=vger.kernel.org;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pyAZDfpaHEPPobXVP0C8mBTxkDr4yKYduYhVIQw6zIQ=;
-        b=YpnFElbexnAoI4p3nm+oEnOGznhVnG70iHajdfyBa0oxavF4ooeYk8qU4A9ryLUESL
-         tbso8zUvEnmgAoFa801y+1QUzgYXkA3kpn+wEoTQU70hPD+/3VjXnXogTS/+YdExqr8m
-         fOgbnyDtY27NvD4A6wkJBOqK85lSMb6du9GLchaufOp0es7oCnkpUlL12pdUfCez4DMC
-         pzm976YB9X2/Yo5MTWEQ57odkaUCONykKLZzP7t4UyKhdLNbQl0SJ4eLmXfu1MhKRMXp
-         XL1DNjoZXXsxBYTdkgxbSDwtX3tGAEAlpmYRo70XoeVQPYzAfiKfVyZ0ZhcUjjgLIvGG
-         T3Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730306875; x=1730911675;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pyAZDfpaHEPPobXVP0C8mBTxkDr4yKYduYhVIQw6zIQ=;
-        b=MG18yXkc9mz6O9rCyNpquT9Ikp3EsBR9YTzEnyk5rq/3/nXiZmMjkyBJTYaikmRA38
-         y0HNZ3tB2Fp1j7ILFRiwgJDCBxnfVDOVWl4f8138r16HIQTIhuVTq8SaoZBNKcCJzXMp
-         lSYeicM2XGzWmhLm5G8BEtAHMwBNcv9bNbSU6ARsMgHakxLG+hkWkB8gHRccTbZgAqFk
-         YbS93heRuQLMSbqWjfuPbNJFRAa7b+YRZGaotz2fhTCw3+RtUvZxmVuYezI1uj275xzd
-         c/Or2ftArpmx1nxRccLnwF2oAzZmaSORr4IrRLZb7t2NMK+Xo0bqJ4WMQum4a73JtrO9
-         pHyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR+4yob1g5g09XHn4NCGU56dJhYUprdklsjjWA8v6apMSIcW1WFFG/aEETOUFlYlHt1uuBhEm4gPQOkQkO@vger.kernel.org, AJvYcCXHQq52B3FL0UwOWMWSci5cc+kSo9DvQJz0GxRDPvl9bBCeNvAeC4k8PJZhpD3YhKRXOPAycT4OyR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIBWL4YoLtwODHSOaebereRuis2JQybvA+u7XLgyjVnO4llran
-	htFfEmgaiIv+I2MMeKc2zt/MER4x07iqEgVoRrRdNVcuSlwxzkLx
-X-Google-Smtp-Source: AGHT+IG57LVIgndXcx5SWpD+2PATOaWbuFrMV4s6ZZHtymFNkj3j2HhNOX8+RKbSuV0gHdI/styCyg==
-X-Received: by 2002:adf:edd1:0:b0:37d:332e:d6ab with SMTP id ffacd0b85a97d-38061228332mr15422792f8f.43.1730306874368;
-        Wed, 30 Oct 2024 09:47:54 -0700 (PDT)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3b57bsm15915247f8f.26.2024.10.30.09.47.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 09:47:53 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730306923; c=relaxed/simple;
+	bh=OBZmHBudip3zXUknqoGitvdU6AC7b/2cAig9kwB1/2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UxRe2mEJWxLvVy+fSbn8P2GxjXlcTH6LEWyHzauoq093Gm/quGImu54To7Si5dpBqEjQSeTLoDVxFXmQytEDch1k7VRbhHBis2U889etQm583AuZEIMKX8YquGM+G1XzZWj87H7kuveCQwmh6DblbCUzH41XrfsXZHm+levXmKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kNVqVLon; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F185240E019C;
+	Wed, 30 Oct 2024 16:48:37 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6T5WaCF-JBm2; Wed, 30 Oct 2024 16:48:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730306913; bh=07+wM8crly0l/u2I08N35CPwLLjTiQBMrnF6VyHmhqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kNVqVLonBjJTb36uJ6ncx4lv6w0VtUxnKwsuGnJDGoRuTGLF+Flg1hoAX06Wb4VnP
+	 j46WzzEk1fB8Aq2nZYvajx08dKFgC/+r4FZ8jgV4+qs3KJ6/tiJEhAofV9ySkMR/GD
+	 iZtCfhhlFBE0qLLndnikAMEkEth6+tv9b12zP/DJOE2xVSXTTTTjGL7u9i/eKcQCFH
+	 DJFxXB2+G/5feXtRXe8TyhdvOiaht9sdI0UTKJpzTemj2OXMAJPLw4MWSlPqJL0dd2
+	 KcH/6IR/ZyPEEGujfElISY7LPo7fvatyZMXvPG4L8fA855fnTM1FfQvri84ZpRgKYn
+	 htCNtT4uEKz2fG1g1uAoWZREY06CdmVa1OIyGQlKwq+qiMNdyR5qHfzYNPKAGUmLOJ
+	 95LzqdFAf+SadwhG2z2gfUcU5aVWUX5q4AdUqpdCi4kZmPuDrxZ3Si6VX5/adhSy9H
+	 KTKzyqQB9USu86nXhaPnyOxT7ZteV/hsSzl54+N4HLbq1idLZ+okXyG48tYbMEpYi+
+	 Mw/aeIoXYeRvfwlaDttU0n/YPfZ8HUkO+dV7Dr1p1E4AaKMAMKnxzGM715H14AjfLv
+	 IXFUw8PtbCs/2ntoG8iTHz3pVn7V5Hv0mCDwpAp23QerL0r0gf9ucHVm9qHIvClI+e
+	 ONi9xabQmAOpju4WlJdcJk80=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2C9740E0208;
+	Wed, 30 Oct 2024 16:48:18 +0000 (UTC)
+Date: Wed, 30 Oct 2024 17:48:11 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Naik, Avadhut" <avadnaik@amd.com>
+Cc: Avadhut Naik <avadhut.naik@amd.com>, x86@kernel.org,
+	linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com,
+	qiuxu.zhuo@intel.com, tglx@linutronix.de, mingo@redhat.com,
+	rostedt@goodmis.org, mchehab@kernel.org, yazen.ghannam@amd.com,
+	john.allen@amd.com
+Subject: Re: [PATCH v7 1/5] x86/mce: Add wrapper for struct mce to export
+ vendor specific info
+Message-ID: <20241030164811.GEZyJjS9KJDgMYRdib@fat_crate.local>
+References: <20241022194158.110073-1-avadhut.naik@amd.com>
+ <20241022194158.110073-2-avadhut.naik@amd.com>
+ <20241030133227.GDZyI1a5rheucn86qc@fat_crate.local>
+ <685c039c-06a5-4876-a918-bd1c810397a9@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241030162013.2100253-3-andriy.shevchenko@linux.intel.com>
-References: <20241030162013.2100253-1-andriy.shevchenko@linux.intel.com> <20241030162013.2100253-3-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 2/2] iio: adc: pac1921: Check for error code from devm_mutex_init() call
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 30 Oct 2024 17:47:52 +0100
-Message-ID: <173030687241.39393.12307342500543400932@njaxe.localdomain>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <685c039c-06a5-4876-a918-bd1c810397a9@amd.com>
 
-Quoting Andy Shevchenko (2024-10-30 17:19:19)
-> Even if it's not critical, the avoidance of checking the error code
-> from devm_mutex_init() call today diminishes the point of using devm
-> variant of it. Tomorrow it may even leak something. Add the missed
-> check.
->=20
-> Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/iio/adc/pac1921.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-> index f6f8f9122a78..385e86ecc441 100644
-> --- a/drivers/iio/adc/pac1921.c
-> +++ b/drivers/iio/adc/pac1921.c
-> @@ -1132,7 +1132,9 @@ static int pac1921_probe(struct i2c_client *client)
->                 return dev_err_probe(dev, PTR_ERR(priv->regmap),
->                                      "Cannot initialize register map\n");
-> =20
-> -       devm_mutex_init(dev, &priv->lock);
-> +       ret =3D devm_mutex_init(dev, &priv->lock);
-> +       if (ret)
-> +               return ret;
-> =20
->         priv->dv_gain =3D PAC1921_DEFAULT_DV_GAIN;
->         priv->di_gain =3D PAC1921_DEFAULT_DI_GAIN;
-> --=20
-> 2.43.0.rc1.1336.g36b5255a03ac
->=20
+On Wed, Oct 30, 2024 at 11:35:17AM -0500, Naik, Avadhut wrote:
+> Will fix this.
 
-Totally agree, thanks!
+You don't have to - I'll fix up while applying.
 
-Acked-by: Matteo Martelli <matteomartelli3@gmail.com>
+This was just for your future info.
 
-Best regards,
-Matteo Martelli
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
