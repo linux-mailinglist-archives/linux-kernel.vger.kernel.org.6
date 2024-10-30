@@ -1,167 +1,182 @@
-Return-Path: <linux-kernel+bounces-388618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153349B6223
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:43:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B33C9B6229
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384821C2165E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019E81F21F46
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA87A1E5722;
-	Wed, 30 Oct 2024 11:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29B41E7C07;
+	Wed, 30 Oct 2024 11:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A45EYlJc"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VbesGsbN"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3191E5721
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93C81E6338;
+	Wed, 30 Oct 2024 11:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288618; cv=none; b=VqV1tfhEKSWb8q31ZpUt0+AcWs5KaqUFGqTO/mbS/w+rtH8DaLPZ2EEuIm5WNluiMI/Vz1lytO+oK/AgzYbBDDwF4wMKB0ihVq/X8e6fzSbe3RQuBQ6GtcN37tOM/kHNZB6W23l+3CSWDmtMwvoEIdKxnb2PA0cAfvIE3HsYsXc=
+	t=1730288726; cv=none; b=FqPUJk/+8s8EUe3HqBEE4qc5Ln40G69jteopw+l8EkJfCwF+LTZPkTiGKvPjN1s2iOXY3npc/K8MeU62wCzdCNRmPMK8z8S1WDtw7J5zz6ii0G2KMzM0uli0ZHujhwcAmuVyigbsjq/PSgFGXknFWn/O41aUctbsiUPgtcUrhAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288618; c=relaxed/simple;
-	bh=awtTvZ6vGGiqZV76rgTqJGMGn1AnY6x/PGmQuLA8i2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jldbuX5BEIoAiqUvQpIew0RsCHcEtWEI8fHhkAJ2m1H8GpEy8k/fBlk+HkXvoxyZXwoM0oBoeQAE+t0mBpg6pjx8zk+JLb6MfKGUhXi9kzTQLmae3FNu/fIgfYlSACpmbu7gO0QtUbxsC0+9/K3ayAlyDPnXpp8ij650HQH7RTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A45EYlJc; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d50fad249so4782594f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730288614; x=1730893414; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=US0yqIHM+wRkkYQYKiUsTGgnwwJfvhEFr231dY8Uk74=;
-        b=A45EYlJcZDrX8Telrln+ka5q9jPr/EAtr5/Vxql18ae4sdWhqeyphBetxyOOoE+NEI
-         7yogELnSlzJLhejRhozWQGg7//2UMW1yWy41GAprw/aAE5VKkNRxobEv+CmGv4g6ttBQ
-         v5Sa4h+rafnmsYyp/ZqUxYnsrUOPOH8ph6eginF3KXrQJ+1a3KCkNZ5iOjHjvuTT+ZNb
-         Z3jeM1G9enrL1EYS7BAsY4Msv3WearrO3VszGLeo10d+FzNuLXBArbfeTp2O3FKW8i2C
-         SAmbnD2w7eBzx0J9/0CV2Y+5XFyRTPAl6GyWHGGeQvAUvBq3OrNEwfkat5Xk7cIacLgG
-         l/Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730288614; x=1730893414;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=US0yqIHM+wRkkYQYKiUsTGgnwwJfvhEFr231dY8Uk74=;
-        b=xUDLc+RppxSsg8/y1X9udCwBVmU2dXE/p9lLrr4VIk3p4pEo/4+qOXMd8pBOZreUDT
-         Vqpt8YEB2UUcmfezWznGLLdh10AsJPv48kkJDA2QH438F5eAAXKN65Y8+h9LtEa1pwzZ
-         bhacb99WY6m51rrWd/f5eZgfe/kQ2q0tb6P7Y8R9SDW7mEb3NekseE9fwjUmg4ClzSLM
-         Wd0rgyGKhWkZU8nubo7JDlIJ4EZa+BHjBWheMiTIEn6q/UxMuEM0BSwO1i8f3tAwYUgv
-         Mq2+m9HU9SbMbzFZtj9WVd/ABglhLVtNJjWnhwrlFWuj7wckuk5m1R4wAfu4gCAxItDv
-         xiVg==
-X-Gm-Message-State: AOJu0YzIw8QbMkfamsfrbRTQNto6Va4jVW1ft4TE/I0iL3sET0n7VCwk
-	Khkjv3sXwqwrNlACHGwhf0uzKFDKIBrLqzMSxNLgrv7514JhmUWOIfw2L3aMcGQ=
-X-Google-Smtp-Source: AGHT+IGIhLE24+WH0MJH0WafO8vc5VrsGWBcKbyDZeZys1Kqo9nQUthgjWXQYsw3R2227quKB8H4Eg==
-X-Received: by 2002:adf:ff86:0:b0:37d:4818:f8b1 with SMTP id ffacd0b85a97d-380611e493bmr10119383f8f.39.1730288614175;
-        Wed, 30 Oct 2024 04:43:34 -0700 (PDT)
-Received: from [192.168.68.111] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b70d50sm15216661f8f.76.2024.10.30.04.43.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 04:43:33 -0700 (PDT)
-Message-ID: <a75f6b72-ea52-46a4-8790-13a4084d53b9@linaro.org>
-Date: Wed, 30 Oct 2024 11:43:32 +0000
+	s=arc-20240116; t=1730288726; c=relaxed/simple;
+	bh=UA4TA2i33UI/rHtmLpgmwMPZuDfjANw1Iv7FTWXZ1x4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UsVJdl0eBc6wMM2FwLNomkWDr2D0R4moR1NLCuGAgKzY3F0TVHZAJ6ISbMlV9k2IaMObyZYa4lU7/kIlVV3QWKy7S7aCYiQYZpgep02AKYPA5jMJWHoBi7fL7gLdQYRqND9zF12yxd94/u4K25NFTQseqvyQpYCxdG9+BWnwtYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VbesGsbN; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UBjFcx070698;
+	Wed, 30 Oct 2024 06:45:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730288715;
+	bh=v6koZlLfiM2wPFeyFxSJklnjDBVuQcqo4Tb2erh4niE=;
+	h=From:To:CC:Subject:Date;
+	b=VbesGsbNfDOJlzPbOAms9yUJ1aog0/6vg/8OIEJ52pYB1MPF57F/hNmLdm4O0WcN5
+	 McGORCVhwJA7CLovKTvpXv38F4oDUNGUrRjYqIz4+8Bs8U88ceJ5SxQSNzH4KIZjBl
+	 E2aCD2yhTIpXulTk+9emmZe/MpGBlBQHH8DEQN98=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49UBjF8d007881
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 30 Oct 2024 06:45:15 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
+ Oct 2024 06:45:14 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 30 Oct 2024 06:45:14 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UBjEnq048831;
+	Wed, 30 Oct 2024 06:45:14 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49UBjDa8025747;
+	Wed, 30 Oct 2024 06:45:14 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <vigneshr@ti.com>, <nm@ti.com>
+CC: <conor+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kristo@kernel.org>, <srk@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        <danishanwar@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am642-evm: Add dt overlay to disable icssg for Linux
+Date: Wed, 30 Oct 2024 17:14:58 +0530
+Message-ID: <20241030114458.1358800-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] nvmem: core: improve range check for
- nvmem_cell_write()
-To: Jennifer Berringer <jberring@redhat.com>,
- Sebastian Reichel <sre@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Maxime Ripard <mripard@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20241024154050.3245228-1-jberring@redhat.com>
- <20241024154050.3245228-2-jberring@redhat.com>
- <5b6901d9-f404-43b9-87eb-577124efa3f3@linaro.org>
- <b22ce4a7-8480-4d4a-b2c3-0d70c3e05c00@redhat.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <b22ce4a7-8480-4d4a-b2c3-0d70c3e05c00@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Add k3-am642-evm-icssg1-disable.dtso overlay file that disables
+icssg1-eth from Linux so that icssg peripherals can be used by
+RTOS or some other OS running on R5 core.
 
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+---
+ arch/arm64/boot/dts/ti/Makefile               |  7 +--
+ .../dts/ti/k3-am642-evm-icssg1-disable.dtso   | 49 +++++++++++++++++++
+ 2 files changed, 53 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am642-evm-icssg1-disable.dtso
 
-On 29/10/2024 21:31, Jennifer Berringer wrote:
-> On 10/29/24 13:55, Srinivas Kandagatla wrote:
->> if (!nvmem || nvmem->read_only || len != cell->bytes)
->>      return -EINVAL;
->>
->> Does this work?
->>
->> --srini
-> 
-> I decided against this because it seems potentially useful to allow len to be less than cell->bytes when bit_offset is nonzero. I assumed that was the purpose of the original "cell->bit_offset == 0".
-> 
-I don't think we support this case.
-
-The reason why this check was initially added is,
-
-If we have bit_offset as non zero or nbits set, cell->bytes is can be 
-different to the actual space that is available in the cell, Ex: 2 bits 
-with offset of 7 might end up taking 2 bytes. So the existing check is 
-correct as it is and valid for cases where the bit_offset is 0.
-
-In this particular case the right solution to the issue is to add more 
-sanity checks in case bit_offset is non zero.
-
-
-This change should help, can you pl  try it.
-
----------------------------->cut<-----------------------------
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 90c46f6e465d..e6d91a9a9dc5 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -1780,6 +1780,9 @@ static int __nvmem_cell_entry_write(struct 
-nvmem_cell_entry *cell, void *buf, si
-                 return -EINVAL;
-
-         if (cell->bit_offset || cell->nbits) {
-+               if (BITS_TO_BYTES(cell->nbits) != len)
-+                       return -EINVAL;
+diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+index 6bd06bd76b68..0fd95b7df5a8 100644
+--- a/arch/arm64/boot/dts/ti/Makefile
++++ b/arch/arm64/boot/dts/ti/Makefile
+@@ -76,6 +76,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am642-evm.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-nand.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-icssg1-dualemac.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-icssg1-dualemac-mii.dtbo
++dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-icssg1-disable.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am642-evm-pcie0-ep.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am642-phyboard-electra-rdk.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am642-sk.dtb
+@@ -235,8 +236,8 @@ k3-am62p5-sk-microtips-mf103hie-lcd2-dtbs := k3-am62p5-sk.dtb \
+ 	k3-am62p5-sk-microtips-mf103hie-lcd2.dtbo
+ k3-am642-evm-icssg1-dualemac-dtbs := \
+ 	k3-am642-evm.dtb k3-am642-evm-icssg1-dualemac.dtbo
+-k3-am642-evm-icssg1-dualemac-mii-dtbs := \
+-	k3-am642-evm.dtb k3-am642-evm-icssg1-dualemac-mii.dtbo
++k3-am642-evm-icssg1-disable-dtbs := \
++	k3-am642-evm.dtb k3-am642-evm-icssg1-disable.dtbo
+ k3-am642-evm-pcie0-ep-dtbs := \
+ 	k3-am642-evm.dtb k3-am642-evm-pcie0-ep.dtbo
+ k3-am642-tqma64xxl-mbax4xxl-sdcard-dtbs := \
+@@ -323,7 +324,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
+ 	k3-am62p5-sk-microtips-mf101hie-panel.dtb \
+ 	k3-am62p5-sk-microtips-mf103hie-lcd2.dtb \
+ 	k3-am642-evm-icssg1-dualemac.dtb \
+-	k3-am642-evm-icssg1-dualemac-mii.dtb \
++	k3-am642-evm-icssg1-disable.dtb \
+ 	k3-am642-evm-pcie0-ep.dtb \
+ 	k3-am642-tqma64xxl-mbax4xxl-sdcard.dtb \
+ 	k3-am642-tqma64xxl-mbax4xxl-wlan.dtb \
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-icssg1-disable.dtso b/arch/arm64/boot/dts/ti/k3-am642-evm-icssg1-disable.dtso
+new file mode 100644
+index 000000000000..dc04e2999e97
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm-icssg1-disable.dtso
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: GPL-2.0-only OR MIT
++/**
++ * DT overlay for enabling 2nd ICSSG1 port on AM642 EVM
++ *
++ * Copyright (C) 2020-2024 Texas Instruments Incorporated - https://www.ti.com/
++ */
 +
-                 buf = nvmem_cell_prepare_write_buffer(cell, buf, len);
-                 if (IS_ERR(buf))
-                         return PTR_ERR(buf);
----------------------------->cut<-----------------------------
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include "k3-pinctrl.h"
++
++&oc_sram {
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	r5f0_0_sram: r5f0_0_sram@0 {
++		reg = <0x0 0x180000>;
++	};
++};
++
++&main_r5fss0_core0 {
++	sram = <&r5f0_0_sram>;
++};
++
++&cpsw_port2 {
++	status = "disabled";
++};
++
++&icssg0 {
++	status = "disabled";
++};
++
++&icssg1 {
++	status = "disabled";
++};
++
++&ospi0 {
++	status = "disabled";
++};
++
++&mdio_mux_1 {
++	status = "disabled";
++};
++
++&icssg1_eth {
++	status = "disabled";
++};
+-- 
+2.34.1
 
-thanks,
-srini
-
-
-
-> For example, if a cell entry has the following field values
->      { .bit_offset = 4, .nbits = 8, .bytes = 2, ...}
-> then it would make sense to call nvmem_cell_write() with len=1 in order to write 8 bits. To allow that, I used "len > cell->bytes" instead of "!=" later in this function:
-> 
->>> @@ -1780,9 +1779,13 @@ static int __nvmem_cell_entry_write(struct nvmem_cell_entry *cell, void *buf, si
->>>            return -EINVAL;
->>>          if (cell->bit_offset || cell->nbits) {
->>> +        if (len > cell->bytes)
->>> +            return -EINVAL;
->>>            buf = nvmem_cell_prepare_write_buffer(cell, buf, len);
->>>            if (IS_ERR(buf))
->>>                return PTR_ERR(buf);
->>> +    } else if (len != cell->bytes) {
->>> +        return -EINVAL;
->>>        }
-> 
-> If you disagree with my reasoning then yes, your suggestion works and I can use that instead of what I wrote. None of the current in-tree callers of this function rely on that possibility I described.
-> 
-> Thank you for the feedback.
-> 
-> -Jennifer
-> 
 
