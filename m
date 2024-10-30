@@ -1,115 +1,123 @@
-Return-Path: <linux-kernel+bounces-389142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6560D9B690B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:20:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2389B6905
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29EF0286320
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7921F21A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7DF215034;
-	Wed, 30 Oct 2024 16:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ut6NdegY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A36214422;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036BB433D5;
 	Wed, 30 Oct 2024 16:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgzIJJBm"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E3621314C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730305222; cv=none; b=ergZoxfpzLQ/MYAdy8kKQXp+YSTQdXjb2WURCShpF9+mnLTcUzvkvMpTLpL6EP2V6z6DMNes/66F2UZjh7zG2En8awz9hUxNXuQq4P0aHwhndbEUHXCajei0QeZNotHns+jWe8Vvu0br+wglvk53v9sJm1tyBfHAqk3sXJZNCYQ=
+	t=1730305219; cv=none; b=MgygrqZ2mF5RTFfY8V4Mob4jZWbF2EKOmp5KuaJgkkdUpbZKTB2RRl3hYLXttfKDsB14UKltJEMuKDTDegwc8Ja0KudORKIz6HQJCGqNsVKgzsNGL+8S9YvsL32LvdiUSKf6tA6bpKvzu9e/CA9e6tbTAMsN1LjxIhG74+zOddc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730305222; c=relaxed/simple;
-	bh=gq65YC2ykZCricT7yy2SZsU7hVBxbLZf9QS6ITu3/HY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=shKLkE/HYfTgf2j4keU9z7ZdnjuFL0CUuwtt+D46pM00Wfz0nb+Bqb2pVAjzV+NpZxX4YVuE5K1RkO7vNDsaDmjtU2IBo9q/SI6YzvyQFf/cpe/Dn2aRCt/EJishSRWwNEk6kNXYnIML/wkNRJSGMDI7TyMhqJeSe2FIN96Br94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ut6NdegY; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730305221; x=1761841221;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gq65YC2ykZCricT7yy2SZsU7hVBxbLZf9QS6ITu3/HY=;
-  b=Ut6NdegYM8ea1d5ZHXgdymf/r2ldh1Tc8DUVjM5liq6IF8e75az4mvLK
-   SWTLQFoWcnn6c4uJVJc24u7LlVBJDpdixGTWaX5gF/IxEh72BWfg6sQab
-   WZI04QvQW6ig2aQjs6nqm1OzE1VRtT7LKkEBVCZq4B8QxyqcyG2f4ePAF
-   jNJuQjqhhwexQPylT1YKTrP0B5tnkJGPaJxqd+RyL2EUZgtxRfnogJXDo
-   ZeM/rK/hWimkobsIh4rgS1FEFvOAdjcgWtaWiZgzbKSEqmpm69ypa0LQq
-   7EMQJGm5CemdrwKtCzrVEFQXVpaaoCaCy1msrFLNfiuT/2nQo7t2SbpqH
-   A==;
-X-CSE-ConnectionGUID: ocjc6wBNSB+r59ajz/IiFQ==
-X-CSE-MsgGUID: MUA8IqMKR0+D3qK0ZSiQ5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="30230408"
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="30230408"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:20:18 -0700
-X-CSE-ConnectionGUID: H88prCWESV+Ls/PowtpH3w==
-X-CSE-MsgGUID: X4zhELxOQ0CNI0eLPUHU7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="82459068"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 30 Oct 2024 09:20:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 0EE3A2A0; Wed, 30 Oct 2024 18:20:15 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Subject: [PATCH v1 2/2] iio: adc: pac1921: Check for error code from devm_mutex_init() call
-Date: Wed, 30 Oct 2024 18:19:19 +0200
-Message-ID: <20241030162013.2100253-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241030162013.2100253-1-andriy.shevchenko@linux.intel.com>
-References: <20241030162013.2100253-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1730305219; c=relaxed/simple;
+	bh=ZoeeM23AhOsJoaMIxiszSC2XcIlVdHVidjykxIDzU+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QpopAdIbsllP24S0Fh7wxe6ymXLmQM9gOSI9+LlLvWFVizpVKy72E6df9z/au6Sz52VDHqBs7UqWSW8ZFFgetgbn3i7CmrM6ch8cnrpHXyfKOu5GYjlVDBoduU8yuFeW+MP6a1UitxNWkD6k/ifygLxByUTK/X1Wa6wjtTRTdXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgzIJJBm; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ea1407e978so29784947b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730305216; x=1730910016; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZoeeM23AhOsJoaMIxiszSC2XcIlVdHVidjykxIDzU+g=;
+        b=wgzIJJBmetnUTiaEpB0vGoDtoba6KdUiLsHJNufG8BHenu+SWD2JrRPU4vHJj5A2xP
+         tccLoWLfpZ2iN2iU2Ba3xtdQekKhANuufNPYmie/fpKAMw925gg6mro0MMJWd+d6t6Zm
+         BC3asm2oM0ZATcGplLYSvBxhMq7ClV9tXBKSQRvWsC2IMyhEWRfqHq4b9OFWJDGEyVub
+         3xONaS3lffnQPnZFKvVUGxrWcunCoRnn0wylhMOb0e4ZbXk3a20bjboiG/P8Of36yk/q
+         tMbqcp0vxS9UMI+dOV8INjE7bYoXOsvjf4faP3LCl3n4K6mP5lo96L31GgIptqPlPx5w
+         MUDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730305216; x=1730910016;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZoeeM23AhOsJoaMIxiszSC2XcIlVdHVidjykxIDzU+g=;
+        b=SxJ3v3HjzG/iD1aymkIn7FtJhHZ0RaLO1IkzNHW0CDcN6iZ7WAQVmIwVJTA+MFs+7U
+         Fy0QaHRGDVN7KyN43Tt55UtgIwB6hzNRuPzfBCh83OSlVn1AG4te9keSKTX6zB2ODl2D
+         JkIzzzEOUOOmA3BNqv0PBiDbzN0L0kWb8nmejjyuY+A5G0BQGTpGVwrkIWWESvO+TSnc
+         O573h6+Na6FluYQK6nsUS3uEtN2t/vq3Jel7oAGe1J7q36eTIMb4CZMk3Iy9oeG23YeX
+         t0Qm8ZTf5tidiIX7rEaYkPf4DA1tS7RivKFvGgDi0EDTeOazHwB0SK+Kj9GXFjZtJU3N
+         1I9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWHFBsBctU6lldofEm8UOuCZCPxWLFCC8eBAbiwJLX/jVk1Y31YHzQa+b0pgxQGGm09nKWR2iVziw/IxKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2ZYXj6ZzvNQGINO6xPEv6UMjLzro1lH9pA4eghFnyYpcGM6tB
+	YYq2nu9JxKbzHv5rxLauxCQ9++OHfClerjqqjfFJ0QmNT7WbeRtOmtgz1qUfZVykgx3cA1S9Ten
+	I/KvKUQCVNy1MzOYzci3ZN6gzm2zn1SWB7h0oaT4wg681gX4X
+X-Google-Smtp-Source: AGHT+IEAL+ig1I6YxHPWKDxM+c+9tJ2nZijR/HzL7xEopbO7n014y/uWJwP5fAjn2UqJzH/+xfmkQd4UvLAFkD0MR6U=
+X-Received: by 2002:a05:690c:60c1:b0:6e3:36cc:eb74 with SMTP id
+ 00721157ae682-6e9d8afa635mr194581497b3.32.1730305216352; Wed, 30 Oct 2024
+ 09:20:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241030125512.2884761-1-quic_sibis@quicinc.com>
+In-Reply-To: <20241030125512.2884761-1-quic_sibis@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 30 Oct 2024 17:19:39 +0100
+Message-ID: <CAPDyKFoY8CnxF7JXzkT9_WXyM-TJhW4kmTw=H8NEzch32N1_7Q@mail.gmail.com>
+Subject: Re: [PATCH V5 0/6] firmware: arm_scmi: Misc Fixes
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, johan@kernel.org, 
+	jassisinghbrar@gmail.com, dmitry.baryshkov@linaro.org, 
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	konradybcio@kernel.org, linux-pm@vger.kernel.org, tstrudel@google.com, 
+	rafael@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Even if it's not critical, the avoidance of checking the error code
-from devm_mutex_init() call today diminishes the point of using devm
-variant of it. Tomorrow it may even leak something. Add the missed
-check.
+On Wed, 30 Oct 2024 at 13:55, Sibi Sankar <quic_sibis@quicinc.com> wrote:
+>
+> The series addresses the kernel warnings reported by Johan at [1] and are
+> are required to X1E cpufreq device tree changes to land.
+>
+> [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+>
+> Duplicate levels:
+> arm-scmi arm-scmi.0.auto: Level 2976000 Power 218062 Latency 30us Ifreq 2976000 Index 10
+> arm-scmi arm-scmi.0.auto: Level 3206400 Power 264356 Latency 30us Ifreq 3206400 Index 11
+> arm-scmi arm-scmi.0.auto: Level 3417600 Power 314966 Latency 30us Ifreq 3417600 Index 12
+> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> arm-scmi arm-scmi.0.auto: Level 4012800 Power 528848 Latency 30us Ifreq 4012800 Index 15
+>
+> ^^ exist because SCP reports duplicate values for the highest sustainable
+> freq for perf domains 1 and 2. These are the only freqs that appear as
+> duplicates and will be fixed with a firmware update. FWIW the warnings
+> that we are addressing in this series will also get fixed by a firmware
+> update but they still have to land for devices already out in the wild.
+>
+> V4:
+> * Rework debugfs node creation patch [Ulf/Dmitry]
+> * Reduce report level to dev_info and tag it with FW_BUG [Johan/Dmitry]
+> * Add cc stable and err logs to patch 1 commit message [Johan]
 
-Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/adc/pac1921.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Patch4 and patch5 applied for fixes to my pmdomain tree - and by
+adding a stable tag to them, thanks!
 
-diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-index f6f8f9122a78..385e86ecc441 100644
---- a/drivers/iio/adc/pac1921.c
-+++ b/drivers/iio/adc/pac1921.c
-@@ -1132,7 +1132,9 @@ static int pac1921_probe(struct i2c_client *client)
- 		return dev_err_probe(dev, PTR_ERR(priv->regmap),
- 				     "Cannot initialize register map\n");
- 
--	devm_mutex_init(dev, &priv->lock);
-+	ret = devm_mutex_init(dev, &priv->lock);
-+	if (ret)
-+		return ret;
- 
- 	priv->dv_gain = PAC1921_DEFAULT_DV_GAIN;
- 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Potentially I could help to take the other patches too, to keep things
+together, but in that case I need confirmation that's okay to do so.
 
+[...]
+
+Kind regards
+Uffe
 
