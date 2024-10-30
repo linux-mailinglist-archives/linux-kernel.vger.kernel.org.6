@@ -1,126 +1,157 @@
-Return-Path: <linux-kernel+bounces-389708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5169B704D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:08:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C25E9B7050
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06B4F1C214C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:08:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F5A81C21463
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23A51E32B0;
-	Wed, 30 Oct 2024 23:07:58 +0000 (UTC)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551D121730A;
+	Wed, 30 Oct 2024 23:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFYxGTcm"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CEB1C461C;
-	Wed, 30 Oct 2024 23:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1501BD9EA;
+	Wed, 30 Oct 2024 23:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730329678; cv=none; b=KnZzC0iBp+jTpzMLQfxzmDPb1rJ7VjO4Ho0+H288LxdwaBUyKR2bNkPGcUe5xjQNBL90RquKzNpCoGHERDS2kacSmHFQ27AMFtCbM2zkSoF6UJvp25UpcIM3pNT2qP7p2YYKHWW2S7nbHu+3miuJPurkwOu20Im/WKy/Op3A9qI=
+	t=1730329807; cv=none; b=aHgbtSkpg10hAlnnjmVuxWO0vdni24jHJDneG6sbm7pqsBYXiYvvPIhCzfhzGcFWSMbZuELtnC5/cLKYn8A9K61UaiVCg8lh87YyifBMZwMz/3BhF60cBPonjqhS0ZNjhG30fVoVjq3g7fZhjxi3qlH/LfzF4xKH2UTJKxU+wEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730329678; c=relaxed/simple;
-	bh=k04NMNMXrqvRSgu6BgTwsk5XZckCcyxM4DuTyrBThII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iww5Tg2+FFnckzBHywQ+pqdXL8A6QHvQIFNSVgi3Cyd/0RQl2U0nI/+Gq8MBDohYrKOEx9ieFIvGRRFyZMWZr/YB4Z12MjMcOjtAsEAPbIwgIAdXUpcbzz5OwvXORuxhrEGYU388xnFfWqgTzTsYbNz7nOqU1ulEQ0D1PbnS3sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1730329807; c=relaxed/simple;
+	bh=auAiNbXfgIKCEEDea46U230t6q8u6kIkwuEuHfBdFBA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fxtJGDxPSdAmZipJyKRZX8GGhit5iSfXlcdl3xCm3/fJ2K6Z2jox1ryAP4nAeJo9ztC6i0Db4ZMJUSCcEurSEgdlE5zC4PKt6s9+YTMebM5tNMgE36JSNfubBOSmU9K7w45wRrwERb9Tujstn4YLwwyzpV6fowspHiGcn4DrhmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFYxGTcm; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4a46f36158cso92896137.2;
-        Wed, 30 Oct 2024 16:07:56 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so2752395e9.2;
+        Wed, 30 Oct 2024 16:10:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730329804; x=1730934604; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+5WzI5HxfSBqQEgFz9hVmlgATX39LKoP9nE0o2zk+Jc=;
+        b=mFYxGTcm27MW8a9dZC//n812f1EGKcW1pIdO4UVIarEjvk554RFZDXxLo3XNvGwx2q
+         tOzprMt3vE/O6/z6b4bQHefXbGHQQwHXT0AhIG0ZM0aKnmBRppHi89TSIvZx5TrWx264
+         0fkyig+Z9G8FrZ7pUGstQ94wwZmlB5433xnmO+yNi8EGYv9L8wtNapCtZ9jIApvfPOl9
+         1UAZyTsS1I8/fQGu9zOysMPp1lNTSjD5KrxYIp5UqEh/NZ5hP1CGEyo4gLCnGEymMT13
+         bUct6c2mA4ZNIXxXVtxJnZpxg2gfkce3FkQgQP5erdjFABrXcvqI2PWAqTctsSe3+EE1
+         AjWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730329675; x=1730934475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0+cw5OG7++HvTkMSlH1pqCx2RaNzRtRQbppMdg7fFUU=;
-        b=WNKePoOyvCS7+OEqP/VwPHuES8pZrnak4jBcG8ZIxHHAaij16zLZ4es6IPqjXE/9iD
-         9obz3nnoJOVlFH2MWRAy9dzrl16IjFX8mtW6Zcr8AhnaKL5nAtl+7Xy8kpk8vLfQSvHF
-         fJpvyu6tuPKs9rF1K7TbVki7zuBWOPjMVQU7k6iQJA9OGnDmuTixJJ890byXC3Xk0i2r
-         fgAiq4QyutsjXVTPUKlHi9oPlJlzNKlpOZ/AxFxZEs8oeTULBcLlznt0ONfQ8y7sTkmA
-         PGMQc0o1b4R4oDvGgX6QKF7dzoLFscIGbBXSaFn8SBLO2Oxd4apV1gIa8uk0IqIplm5u
-         G2Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWybKhio3wzbNyJuPIYPUPy7xXk1P1Izb/tWVO8aNJ5MTgPlFt0G8fG50wOtgHnUfe1hi8XNxSBPPY=@vger.kernel.org, AJvYcCXWP0+iu3WQghF+Mx9yeA5FwKj0cF2PK757bd09MucxB/htLohUhp357lZtrG6b5oUBalOHE22Swok3NsEX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcZ/IpW8l9dmT19/zcxe90xBbUy3cUeuIEQ8sqV9jbbhmuMC6C
-	qr+ne8YCHEQNY/PoYUTh77/1JUAr1EUBUmG+HCAcLLAtK8T1/gGEmMhanzuCue3/v8qYquo8oSI
-	lkbHRt75CDqEaZVK22qv5D2Ad5VU=
-X-Google-Smtp-Source: AGHT+IGMklRUceOybb5U8CHA0gtern1luq2xaMrw4Yb+ytFY1QGuLZnSOWQsuvsCXLhJuiQT5lwa8DbpcFqiKvGY8/M=
-X-Received: by 2002:a05:6122:922:b0:50d:9c60:830c with SMTP id
- 71dfb90a1353d-5105d041fd0mr5485812e0c.7.1730329675518; Wed, 30 Oct 2024
- 16:07:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730329804; x=1730934604;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+5WzI5HxfSBqQEgFz9hVmlgATX39LKoP9nE0o2zk+Jc=;
+        b=huwJ6Y1WgYzSw4r5JyHfdi9TGJUTVfc0iyzFOaY55vloHt0WAghOrKaI0mU0b3O8Wv
+         EJi1KEW1691Xhv+I3GJz9OId7Jebgp2T7M8DZpaNcQM2IItXA0wLNLKMU2G8nE3e41r4
+         w9iYX9BmDPH0x1vYtK6Inlh9YdSHYthCBdCZiM0pEbAmnT550y0sMwcqTGE4R4QxnPWt
+         NEiJu/xW86j7li1toCj41mCfaCFNdn3uqdTUcPgtV2c+b8zTj1MZWXYyNKhzTAI2yizw
+         M08YfyQQ5Hu7w9Hr6OTX2XPSYHlGJom+On/ZGILwi3yoZu9QcHCOvwc4NhAtC1QwBgzE
+         C4Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCyY7uYoLRjfDFLMKjegmiu2zrOxHMZeAiAK9iIPD00EnkQBvSlsmQEDwbRR1Tm0aai42QInAGjn/4@vger.kernel.org, AJvYcCXljq5vTcSApJGZJRdH+FYw5vxdqEkjjHe6CEslGo78q1fsEXEb0hudkK2NH81XZfqULjqfM+GqUMqDP98I@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD6ZjTPFfyRcFeOdZKYjl5T7QJTmmsYKgvlfVfMLehhyXZ9Y8A
+	aS8HXZuUuqnws17l9YhqAhTAEV8yz2dPz7AP8akgAKmysgT48lhA2s4gX3sZ
+X-Google-Smtp-Source: AGHT+IEj/yV4fDw3OYd3zmVyJk3KOhBcxME+PIhT0t8qvtCMrWrYOD40bDOhxipMsz7DyOLFNjb0ZA==
+X-Received: by 2002:a05:600c:214d:b0:431:b42a:2978 with SMTP id 5b1f17b1804b1-431b42a2d0emr70698115e9.9.1730329803609;
+        Wed, 30 Oct 2024 16:10:03 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-fbf3-0656-23c1-5ba1.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:fbf3:656:23c1:5ba1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e848csm34819375e9.3.2024.10.30.16.10.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 16:10:02 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v4 0/2] iio: light: veml6070: add integration time
+Date: Thu, 31 Oct 2024 00:09:56 +0100
+Message-Id: <20241031-veml6070-integration-time-v4-0-c66da6788256@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030130308.1066299-1-mcanal@igalia.com> <20241030130308.1066299-5-mcanal@igalia.com>
-In-Reply-To: <20241030130308.1066299-5-mcanal@igalia.com>
-From: Barry Song <baohua@kernel.org>
-Date: Thu, 31 Oct 2024 12:07:44 +1300
-Message-ID: <CAGsJ_4zMppHY29XXepOVTdEu2-1U6mGyZ8FqXZfP_in+2T3NAA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] mm: huge_memory: Use strscpy() instead of strcpy()
-To: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang <ioworker0@gmail.com>, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMS8ImcC/33OTQqDMBAF4KuUrJuSTKKRrnqP0kWaTHTAnxIlt
+ Ih3bxQK0oXLN/C+NzMbMRKO7HqaWcREIw19Dvp8Yq6xfY2cfM4MBGgppOYJu7YURnDqJ6yjnXK
+ BT9QhN5W3QaO1HgLL/VfEQO/Nvj9ybmichvjZppJcrz/VHKhJcsFVIYyXxhcl2FvdWWovbujYq
+ ibYSXD0X4Is+UKBAXQi4PNfUnupOpLUKnljHZYQdCX20rIsX21bJ8pWAQAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730329801; l=2740;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=auAiNbXfgIKCEEDea46U230t6q8u6kIkwuEuHfBdFBA=;
+ b=xVpLBN1JVnKOJHl09uieorMsbNja4Izs68vIjs2FDbs93KUHdRw6iCPZDwtCy+nW2Zk2fl2cF
+ 40gTfwkGkTLAOHiZyUxR5t4A/Tj+DubHAFUxCK3g/2VGdWoOkuqz/UJ
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, Oct 31, 2024 at 2:03=E2=80=AFAM Ma=C3=ADra Canal <mcanal@igalia.com=
-> wrote:
->
-> Replace strcpy() with strscpy() in mm/huge_memory.c
->
-> strcpy() has been deprecated because it is generally unsafe, so help to
-> eliminate it from the kernel source.
->
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> ---
->  mm/huge_memory.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f92068864469..8f41a694433c 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -989,7 +989,7 @@ static int __init setup_thp_anon(char *str)
->
->         if (!str || strlen(str) + 1 > PAGE_SIZE)
->                 goto err;
-> -       strcpy(str_dup, str);
-> +       strscpy(str_dup, str);
+This series adds a missing feature in the veml6070 driver to select the
+integration time, which also depends on an external restistor that has
+been added to the corresponding bindings.
 
-What is the difference between strcpy and strscpy without a size parameter?
+The datasheet provides a Refresh time vs Rset graph (figure 7), which
+does not clearly specify the minimum and maximum values for Rset. The
+manufacuter has confirmed that no values under 75 kohms should be used
+to keep linearity, and the graph does not go beyond 1200 kohms, which is
+also the biggest Rset used in the application note. The default value of
+270 kohms is the one currently used in the driver to calculate the UVI.
 
-we have already a check and goto err. strcpy() is entirely safe.
-         if (!str || strlen(str) + 1 > PAGE_SIZE)
-                 goto err;
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v4:
+- Add vendor prefix to rset-ohms property (bindings and driver).
+- Drop default values for out-of-range rset and fail the probe instead.
+- Link to v3: https://lore.kernel.org/r/20241028-veml6070-integration-time-v3-0-dd7ace62f480@gmail.com
 
-My understanding is that we don't need this patch.
+Changes in v3:
+- veml6075.yaml: simplify property handling (describe it completely at
+  the top and add block for the devices that do not support it).
+- veml6070.c: use int instead of u32 for the integration times.
+- veml6070.c: refactor default rset value assignment.
+- veml6070.c: drop comment about default Rset and IT.
+- veml6070.c: use units from units.h
+- Link to v2: https://lore.kernel.org/r/20241024-veml6070-integration-time-v2-0-d53272ec0feb@gmail.com
 
->
->         always =3D huge_anon_orders_always;
->         madvise =3D huge_anon_orders_madvise;
-> @@ -4175,7 +4175,7 @@ static ssize_t split_huge_pages_write(struct file *=
-file, const char __user *buf,
->
->                 tok =3D strsep(&buf, ",");
->                 if (tok) {
-> -                       strcpy(file_path, tok);
-> +                       strscpy(file_path, tok);
->                 } else {
->                         ret =3D -EINVAL;
->                         goto out;
-> --
-> 2.46.2
->
+Changes in v2:
+- Rebase onto iio/testing and drop applied patches.
+- veml6075.yaml: use documented -ohms, top-level definition and
+  per-device restriction.
+- veml6075.yaml: add default value.
+- veml6075.yaml: fix typo in commit message.
+- veml6070.c: adjust rset property name and convert from ohms to kohms
+  to avoid overflows and work with the same units as in the datasheet.
+- veml6070.c: change default to 270 kohms (already used as default
+  value to calculate UVI).
+- veml6070.c: calculate UVI according to the current integration time.
+- veml6070.c: re-calculate measurement time (i.e. msleep()) with the
+  current integration time.
+- Link to v1: https://lore.kernel.org/r/20241017-veml6070-integration-time-v1-0-3507d17d562a@gmail.com
 
-Thanks
-barry
+---
+Javier Carrasco (2):
+      dt-bindings: iio: light: veml6075: document vishay,rset-ohms
+      iio: light: veml6070: add support for integration time
+
+ .../bindings/iio/light/vishay,veml6075.yaml        |  18 +++
+ drivers/iio/light/veml6070.c                       | 131 +++++++++++++++++++--
+ 2 files changed, 141 insertions(+), 8 deletions(-)
+---
+base-commit: e2687d0723257db5025a4cf8cefbd80bed1e2681
+change-id: 20241014-veml6070-integration-time-78daf4eaad2f
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
