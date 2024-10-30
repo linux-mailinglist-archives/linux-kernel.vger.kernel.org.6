@@ -1,67 +1,52 @@
-Return-Path: <linux-kernel+bounces-388499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1109B606D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FD79B6070
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0AC21C212CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:48:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9103F1C21483
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AA71E04B6;
-	Wed, 30 Oct 2024 10:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j2Wzx280"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309451E4938;
+	Wed, 30 Oct 2024 10:47:31 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2B71E3DFD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304541E4106;
+	Wed, 30 Oct 2024 10:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730285250; cv=none; b=fZOXJIwbpGJHhNjA2NSny5JcbifRz5/HU1NYJa3vvFmwQTWreOHJPxTpOUpi04ZPgeh+T86pCo8kxPI6uzN7u2p5QrJ6WmxVILwDkjik4AuIe5vYPnZPlGUYRfnbjdC5K9GpD3PfWkhQcI4YUM2MjpbXYdPSMXSj83/l/gZ1sOg=
+	t=1730285250; cv=none; b=DP14gJEZABZGjjUh+XMuISrFR+wLJIc3/iirfSKOr9jPgXOYeYg1QfJUX+lmjXdudslbCHLDGndSuc+tt8eUxJMfJI1n51U3tToIravnqN5OUFo4HE5osHZCxOdatrdVRzlarTDa2B9OHmgtIS1W5i7dSIIziMXDwtu8sHoDjNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730285250; c=relaxed/simple;
-	bh=deaieWFiVONpNRlAhKMPRKsF7JDojpQ/DZGVZJ9W5Dg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=paWkddUkrOMUcPRW7C6+INn7eogAUFIV6U8AThi47n127eJmFyjGE6/mrgVcQosUz6R9pHMKhwMyTQO/kEtD+cZLw+yHkaLUl6JE8FQMl4CrGcydwqLqK0C63fOh2ZiB1AuOBtAXsS9X0i4AvjKaiONeAqoVQgU6P0waonqD5Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j2Wzx280; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id C87FBC0009;
-	Wed, 30 Oct 2024 10:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730285245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=khZM5fFii6r1q+Z9uZi3Zgk6G9+0lCTuTox0qCES4xo=;
-	b=j2Wzx280k2XQM968sbuT1U2dYsnCPm2HLQU44ngdEJm5ohLBShOcnDn0Q8BiPY4sDbgywE
-	vQ0iBf2JEtODkaqrQVeN2/BgUMxAfCjO5MG06L6KxFxBqhR8LpJRNiDcdsclMgTZh4hn3e
-	I8dZbmyPUNWZoxXuR50KbLCpc2XnpGplT3QV9fclVnA/T5umEx3j5Dvet1COyfBQKpGele
-	xaMxoqjVViK93DS3kgwOCpSU1NE3s2Yv3XOx3J6Jt2LoRX/Tyepf5p4aM3ojMnCZsbSTTl
-	HZK+QqgIL/fo3mR6lyGQB89GBkcz9ndKpELVpfAlIPVmzPMtbKX7xz0PNXge3g==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH 3/5] mtd: rawnand: davinci: Order headers alphabetically
-Date: Wed, 30 Oct 2024 11:47:15 +0100
-Message-ID: <20241030104717.88688-4-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241030104717.88688-1-bastien.curutchet@bootlin.com>
-References: <20241030104717.88688-1-bastien.curutchet@bootlin.com>
+	bh=EW+mkHJHcbV839TsV9lhvu+rZylbTlyo/ECp9aziYto=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YNj7W8PgNjEJbUmYebIsUWDWhY3WHsqN8BZl4CgaiJjjcgCNu4P1U7kP6gk02b7ldpWx0AjRJvPW7tAl2SRBZeVudVb7X3LKIiIkV0BTyVxI1Cfu9UOOW7j/4e7V5B1/vzaeVZrfALcJedbd3baqc5vHFYf0kSrBda+skP0xYAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 30 Oct
+ 2024 18:47:18 +0800
+Received: from aspeedtech.com (192.168.10.152) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Wed, 30 Oct 2024 18:47:18 +0800
+From: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+To: <patrick@stwcx.xyz>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-watchdog@vger.kernel.org>
+CC: <Peter.Yin@quantatw.com>, <Patrick_NC_Lin@wiwynn.com>,
+	<Bonnie_Lo@wiwynn.com>, <DELPHINE_CHIU@wiwynn.com>, <bmc-sw@aspeedtech.com>,
+	<chnguyen@amperecomputing.com>
+Subject: [PATCH v3 0/2] Update ASPEED WDT bootstatus
+Date: Wed, 30 Oct 2024 18:47:15 +0800
+Message-ID: <20241030104717.168324-1-chin-ting_kuo@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,40 +54,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Type: text/plain
 
-Order headers alphabetically for better readability.
+This patch series inherits the patch submitted by Peter.
+https://patchwork.kernel.org/project/linux-watchdog/patch/20240430143114.1323686-2-peteryin.openbmc@gmail.com/
+Besides, the boot status modififed in the WDT driver
+obeys the rules proposed in the OpenBMC.
+https://github.com/openbmc/docs/blob/master/designs/bmc-reboot-cause-update.md#proposed-design
+Moreover, WDT SW restart mechanism is supported by HW
+since AST2600 platform and is also included in this
+patch series.
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/mtd/nand/raw/davinci_nand.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in v2:
+  - Support SW restart on AST2600 by default without
+    adding any dts property.
 
-diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 392678143a36..3c0efbdd789e 100644
---- a/drivers/mtd/nand/raw/davinci_nand.c
-+++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -10,15 +10,15 @@
-  *   Dirk Behme <Dirk.Behme@gmail.com>
-  */
- 
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
- #include <linux/err.h>
- #include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
--#include <linux/slab.h>
- #include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
- 
- #define NRCSR_OFFSET		0x00
- #define NANDFCR_OFFSET		0x60
+Changes in v3:
+  - Get watchdog controller index by dividing register
+    base offset by register size.
+
+Chin-Ting Kuo (2):
+  watchdog: aspeed: Update bootstatus handling
+  watchdog: aspeed: Add support for SW restart
+
+ drivers/watchdog/aspeed_wdt.c | 154 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 146 insertions(+), 8 deletions(-)
+
 -- 
-2.47.0
+2.34.1
 
 
