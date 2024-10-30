@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-388312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D9E9B5D8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:23:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D679C9B5D93
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E61283357
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FF51C210C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCBC1E0E10;
-	Wed, 30 Oct 2024 08:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BBF1E0E15;
+	Wed, 30 Oct 2024 08:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EajETXJv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgQVSADj"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94BA1DFE16;
-	Wed, 30 Oct 2024 08:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203271E0DE6
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730276570; cv=none; b=cnZtMfaqlQ70GJfz+0rwe2uG5S4d+aYa8SahNuR/+2UtWjfv/jYEdbpfMCZNrqgy9TzMsrnZWots9XqWsqImDiq5AzLTxReols7Jak238y4i7sPi/myA95fUuF4Uo098MP10gSRuqldvzr0QtSmpplKsBe7xMjYk4E3DWUymeBM=
+	t=1730276656; cv=none; b=pYefvpMOBzqhEN15CSHKOrZ544cELBJH/gXoj1wWnCHIn1i55bKp1z5n9mtpnFhtLymQgDkJUSvdo/VAq9N8q3ZOkPO+MNiriZo2nuneYpW9hbcCiJAfEmiNS30pM8kIYr3Qyrg9ZafdYgxfOC3whaAvlmyEim82hDwApBql/FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730276570; c=relaxed/simple;
-	bh=3M44dfapTogOZEkofhgJIny5tBNB1l5zW1bJlM7opcA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hf+y1MIDu4HsJ2e54rOaN8dFnVkr0AELrkjXj6JYZqfX02iBahdvRdNRrZvXZ0pXnP0OW90Bw2DtP5BEBHBuDPx5WBVAQBuSHq/3WAxW+RpkJI0gB1toyb0SgsOc4JtENDxjoqySGbahCD6PJNDehbRn4x4XsV5kqD6AxlikFZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EajETXJv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B242C4CEE4;
-	Wed, 30 Oct 2024 08:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730276570;
-	bh=3M44dfapTogOZEkofhgJIny5tBNB1l5zW1bJlM7opcA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EajETXJv8qf83oZumJdFmDKi1YuSTYcVJboRizdPM4kOF08PVYpgHsDuiL2irCxT/
-	 BcSNBlc4YlEGpAEN/+4GoZlrBtwoH0KRLcyBjwsKvfuoaw/xsgo4owrb9KK8q+V/g6
-	 Z45ExAUnwgBqaTjQmEWR2ZhdSAHI7RtsctQYQwGBjmUns1pDAhXykzfVRm8LWniZyI
-	 X626kEDouUsB/m4IuSDkecMChNtbfRLZgDM1vSvW47yIMO4cscfzTXic4mVZysjNXP
-	 5e+zvgw2NDrdleYej6e4LakesMFMiEzkpUQhRvLmoQiGmmCM45+QhMVihPwfxm0t0d
-	 iXSaje5ZYKoFw==
-Received: from 82-132-233-180.dab.02.net ([82.132.233.180] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t63yZ-008Bje-9r;
-	Wed, 30 Oct 2024 08:22:47 +0000
-Date: Wed, 30 Oct 2024 08:22:39 +0000
-Message-ID: <87iktat2y8.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>
-Subject: Re: [PATCH v2] KVM: arm64: Get rid of userspace_irqchip_in_use
-In-Reply-To: <CAJHc60xQNeTwSBuPhrKO_JBuikqZ7R=BM5rkWht3YwieVXwkHg@mail.gmail.com>
-References: <20241028234533.942542-1-rananta@google.com>
-	<868qu63mdo.wl-maz@kernel.org>
-	<CAJHc60x3sGdi2_mg_9uxecPYwZMBR11m1oEKPEH4RTYaF8eHdQ@mail.gmail.com>
-	<865xpa3fwe.wl-maz@kernel.org>
-	<CAJHc60xQNeTwSBuPhrKO_JBuikqZ7R=BM5rkWht3YwieVXwkHg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1730276656; c=relaxed/simple;
+	bh=Qhpkm4WTteAyftmrwtnK9R8dd+A2hUuNmx/G1bGXkYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k5pKuAldj82cfswLfBVoUgcT1/MMDO5BREwRiuzQ6+hnnpHbakAEXbx0kHsbgztlU1vw/xMwfUEjWiQw53nqnrxH0ofvAhBuRZto8uOnkS/5ryQZdNOsonr5K7QFST9GuyZ0e6GX6XdU+dUPt2f9/h+cdCAvY1a+h/+5YJvPk7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dgQVSADj; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso773675766b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:24:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730276651; x=1730881451; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4IzTjonjvv4fhPKtE1bAMZ0z1TTpZMKWkER0B3kjnaU=;
+        b=dgQVSADjzU7mFlrNo7V7ohi1dVUSo9j0YZkEIVkrmbHwsmwCyoQyG+o1jRET2VBPw2
+         5icY86ol+yKWQLY57/M9HSKAuj2VrHvD7SAzohfYwM2WM62kH6McCpMsOXx+Ks9CliJs
+         hwY6M0hXkO6OiKm5mYmCPcv9KO7rGejkh5Vx5TLwd/FjuDA9DGdNMiWXW9BwQQvYM2YI
+         Byf3YzE+qiOn09q/wIAvxq5P/aousxtLIynAOuKAivoEWjA+6KSdn2pCB9KFoCw7dgA7
+         xQmU89ldGLqaS20MjX6wgLbaNNnoEx3ZYVkjFybNzyhhb+FKqzzVGHLD5kNfNA+3b98B
+         fM4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730276651; x=1730881451;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IzTjonjvv4fhPKtE1bAMZ0z1TTpZMKWkER0B3kjnaU=;
+        b=gYWxpwQu33UX8oo5ktvNDUeespMQaaTKMkeKcUuOX04i2DK6cQu3yT6kNEvSdtxULe
+         tXrvn/XJmYdrTuAZ1VrdXfxrSzbDt42GUxySLXwCygYZOJR7ZYvug4c4C3Mx/M7eMHvr
+         l5LyOui78XSJPIzhw+GR9yB8jT3Wvny5ePYZ7HN5hzA1Va7qW6s05L3NTnyBScrsnbZu
+         7SS46Df1PoxTz3flczpThSStChQ7Aa4s/0cojIUgdYs9J9OIVelUD6LsROYP/4q22x24
+         c+mWTMgBk4lP4dtE37r5BMoEtIiHtVK0fL8k74ywq6q9RcModPz9X+qbXlkdYHvT6mz4
+         xU3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXjDGunk2ZDx9qyMnIHN+wQwQvsnefDujI2jlBa0bXR+U7c84uENpBWf6DCDg6BnWJsv7OVNrLj9E7xtpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHgHpTbTS27Usoy9S/jxjc+G4bY7Bed8qluo81y0AHfKPXn65o
+	w62KyMJEHetAqvBPemnTTd2TuwaFST/4dO31y6DEXbYi/iDPuBlPonoLf9ZpxWE=
+X-Google-Smtp-Source: AGHT+IH5x1e9E410/aCJcWrSKGwzP+rL5H/qoPDmLBUylFSzYy/PDgopa4w/bjGtxcjDtfhlYRn7IQ==
+X-Received: by 2002:a17:906:794c:b0:a99:e505:2089 with SMTP id a640c23a62f3a-a9de61ce120mr1423660466b.45.1730276651447;
+        Wed, 30 Oct 2024 01:24:11 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b13309sm14733219f8f.3.2024.10.30.01.24.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 01:24:11 -0700 (PDT)
+Message-ID: <039d4e57-30e7-40e8-9501-cc4b18c6bb30@linaro.org>
+Date: Wed, 30 Oct 2024 08:24:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/11] scsi: ufs: exynos: gs101: remove
+ EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL
+To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
+Cc: andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
+References: <20241025131442.112862-1-peter.griffin@linaro.org>
+ <20241025131442.112862-4-peter.griffin@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241025131442.112862-4-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 82.132.233.180
-X-SA-Exim-Rcpt-To: rananta@google.com, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, stable@vger.kernel.org, syzkaller@googlegroups.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Wed, 30 Oct 2024 00:16:48 +0000,
-Raghavendra Rao Ananta <rananta@google.com> wrote:
->=20
-> On Tue, Oct 29, 2024 at 11:47=E2=80=AFAM Marc Zyngier <maz@kernel.org> wr=
-ote:
-> >
-> > On Tue, 29 Oct 2024 17:06:09 +0000,
-> > Raghavendra Rao Ananta <rananta@google.com> wrote:
-> > >
-> > > On Tue, Oct 29, 2024 at 9:27=E2=80=AFAM Marc Zyngier <maz@kernel.org>=
- wrote:
-> > > >
-> > > > On Mon, 28 Oct 2024 23:45:33 +0000,
-> > > > Raghavendra Rao Ananta <rananta@google.com> wrote:
-> > > > >
-> > > > Did you have a chance to check whether this had any negative impact=
- on
-> > > > actual workloads? Since the entry/exit code is a bit of a hot spot,
-> > > > I'd like to make sure we're not penalising the common case (I only
-> > > > wrote this patch while waiting in an airport, and didn't test it at
-> > > > all).
-> > > >
-> > > I ran the kvm selftests, kvm-unit-tests and booted a linux guest to
-> > > test the change and noticed no failures.
-> > > Any specific test you want to try out?
-> >
-> > My question is not about failures (I didn't expect any), but
-> > specifically about *performance*, and whether checking the flag
-> > without a static key can lead to any performance drop on the hot path.
-> >
-> > Can you please run an exit-heavy workload (such as hackbench, for
-> > example), and report any significant delta you could measure?
->=20
-> Oh, I see. I ran hackbench and micro-bench from kvm-unit-tests (which
-> also causes a lot of entry/exits), on Ampere Altra with kernel at
-> v6.12-rc1, and see no significant difference in perf.
 
-Thanks for running this stuff.
 
-> timer_10ms                          231040.0                          902=
-.0
-> timer_10ms                         234120.0                            91=
-4.0
+On 10/25/24 2:14 PM, Peter Griffin wrote:
+> This flag is not required for gs101 SoC.
+> 
 
-This seems to be the only case were we are adversely affected by this
-change. In the grand scheme of thins, that's noise. But this gives us
-a clear line of sight for the removal of the in-kernel interrupts back
-to userspace.
+nitpick, use imperative
 
-Thanks,
+Auto clk control works fine for gs101, remove
+EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL flag.
 
-	M.
+(or something along these lines)
 
---=20
-Without deviation from the norm, progress is not possible.
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  drivers/ufs/host/ufs-exynos.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+> index 939d08bce545..d685d3e93ea1 100644
+> --- a/drivers/ufs/host/ufs-exynos.c
+> +++ b/drivers/ufs/host/ufs-exynos.c
+> @@ -2142,8 +2142,7 @@ static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
+>  				  UFSHCD_QUIRK_BROKEN_OCS_FATAL_ERROR |
+>  				  UFSHCI_QUIRK_SKIP_MANUAL_WB_FLUSH_CTRL |
+>  				  UFSHCD_QUIRK_SKIP_DEF_UNIPRO_TIMEOUT_SETTING,
+> -	.opts			= EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL |
+> -				  EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR |
+> +	.opts			= EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR |
+>  				  EXYNOS_UFS_OPT_UFSPR_SECURE |
+>  				  EXYNOS_UFS_OPT_TIMER_TICK_SELECT,
+>  	.drv_init		= exynosauto_ufs_drv_init,
 
