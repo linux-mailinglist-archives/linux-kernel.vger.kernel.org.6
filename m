@@ -1,388 +1,224 @@
-Return-Path: <linux-kernel+bounces-388798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B5E9B6488
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:45:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB109B6470
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087A9282348
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FD71C211B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F461EABDD;
-	Wed, 30 Oct 2024 13:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED5F1EBA01;
+	Wed, 30 Oct 2024 13:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="crKWKW6l"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="OuDdLqxg"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11021088.outbound.protection.outlook.com [52.101.65.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C851EE036
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295887; cv=none; b=BR5b0WgLy94cdkP//NLuUbgcSnZOL+HOQeUfKQyzQ2hg2fqtCxjN84nCYCiAJewWPJh9NpcYGCFMggkmAej0ong6CkqQUD2i85kW7SXsY34mtIzREEfsXV6hUA0YP5/LmFkt1drWsjS760IOAWYcLqqAib+CStHLVkTh/OSCJ7w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295887; c=relaxed/simple;
-	bh=0ttDZj2ZkhjsaK1OSdKhg8Gk7/t274r5Lr3eaZacvx8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dvNFlxnGEmD+S3NJry/iKTw5GpFaST9bKZejTF/deCKV8xJeXN6Fbsd1514m1nBG85uhBsfPCwgB4gOy1AbRJUR/G0GiJRzp6FyrJS88M/Z5nv/uGiBtWQoBVLPi+tWToZmevFVxuzru1r4S9BbjRjqr/J6QHrGJAz9PHntSWk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=crKWKW6l; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43169902057so61890005e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:44:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623F33D551;
+	Wed, 30 Oct 2024 13:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730295879; cv=fail; b=XM1+zIGC+R5lQ5md16wQo9AY6Qij2LbwjIF4MoaMDjRUBO7uqyDItwXm0QEdbBxd31wektROVVVEjC4qPXAa5Xad5UU1yVHPgsJsRwOGxrQOplAnnQO5Evm1JpkUY9tEy7J1gtg6i6SFdct3cjZLrCNyNg80glzIUziZswmsUzM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730295879; c=relaxed/simple;
+	bh=m3vULvpIiluuka7cZuaeSTGvwcqfuH762jQ9nDD/1BU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uR8vrKfcDdLdCgYkVAwjtaEnK+C2wcxHusFEqTv+20u55bNYTBJW44kWyW8B2N/of+iUXww3Xf3r3GYaeNcXXh/VtUjpMTulXO9b8WZIsPKchoIUIYj/Nsgu+TtgZoRGP885MVBG9JnVC808FqPfY9tZ6oC+yyfjeZ44gGDVI6E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=OuDdLqxg; arc=fail smtp.client-ip=52.101.65.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k8JptEcx/jmBzqxYVsArCCnPzSCM1trYx3LUe1nXBBoAhr1EvCi+pWskNRwSCB0YmF7hYtsf2vdaCEjZNsN56m6DKgia26QjgdsIgU6an/Q8R68ClT3bMg7tLI0i9oG87v+Q6XFcMxaPX5nzwz2OTlsr4NHNwsbBWlUpN4+84IeRJGea4kGUsuDFXwq/SHdjFvN/nZi4fIfaPOSMZPtnE4MXlPAKHzUG/pv5lwJhXb/gJOUbhGGUZAqhO4mB+QILCI6EvMXmhDxAdKTfjTibOjHrRckOIeU02gx4BIiejor9ErcaINhHgVx8SKdZcUts6TGuFduQ1kPxey6RR2tgog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m3vULvpIiluuka7cZuaeSTGvwcqfuH762jQ9nDD/1BU=;
+ b=vtKaAIvD1QmoQGaUAnW64ZGfCDu3Y75NoRC4ifPTDtix0UjRuqQwq7AoPSvgE6kwRTQgS+gSJEsrYyEftOJSSLM3iK8iUxxQXwM487QKkJOF6YcN+RyDau7sfu8jpLzJslCULVtsGFjrDLXQhDfnePTZYgKg/IVfxlxn7aYyhhyDrlue5q5X8plfqNNCNE/DK23FZ+MYbYUgme9B1RcmIzfN5UIms/y2JZlVWhJLaTh82TnMgvBdwXrWb/BqI0stYqzNUhwuULWg6v+F13rCD8XB9U7b7xdiRn8VwmzQ4wKZlcvxOx+rFZjKYsSG93K7pVn5CTO0m8UQPlAM0MDUmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=solid-run.com; dmarc=pass action=none
+ header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730295882; x=1730900682; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6/zZXJm1iv61pxbZuPv42modR1pl77w3Mk/LfpLxIz0=;
-        b=crKWKW6l51z4fW0N7DEeEm6Ec5Eec6DEs8fCmuYEuBZY/DEQKeyckg0fAZ6129ucxN
-         6SPowolOgosrZKIYg6G6wsM1FXNwNaIwBDqnNKkkfdOK4IJiMoySzw7RMKkOu1eQV784
-         molvM+Lv90UN0zLUQolAjNRTxDsR+l+U07jCOPuPWHDvXNa+cdrvJFWgNvT0dJJYNav0
-         7LD7HOhXQbwqabW7VkG0wjD65tqeQJkBW0hdxOs9BCiA9MOvG8vhK1QhMSiS+1pBR5oH
-         3nQ1za+zIaxA1CXvABXqxuj+LtmbpRwqQhhloyxXOn0zw704QkKF/tGL8wONKho1rl/Y
-         F8Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730295882; x=1730900682;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6/zZXJm1iv61pxbZuPv42modR1pl77w3Mk/LfpLxIz0=;
-        b=iAs+/dOf2nbHj1vl8pX5TfAFNUDeHmgP0LSOsvkdsQiFtDZZINmrld89UIqcgNBlwN
-         64DuQgLc66WimT0kKxFR3tTLL4LT4Qk+DFrXEjRP1HTzZ4osjF33+9bJZYVwnmO9pCSe
-         lg3s2BoOoMS47+xoFEP+5F2xoJ+NhtOBcMh3oiURtlbZ7z/E0KMYSyAoby2GablWNtmi
-         pCBVCXidjJgY2R8gvpqWJhAAQvJr5bePFNgEru/0cD9yhwEWo84/D+OPEMdsbw8h99rm
-         BEuom7eraSt87+Sv3tbZTs/HTIIDQvEF+eS70lUlUGEAlKL8Fn9Wm4SE3FdDWWCOSrGi
-         5l6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVqq5vTUN7GUP5icUIPcAt2OUy72OnqULoRlqw8uJV+RPtQfr9fHsFsEhyNrxJF2mM1dNdJ56cyNs+y2nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ2C9jdhrRe4bVJRKWEq2UyOhL65/ddSZbTa80e8vnRgj1J0fc
-	uepHxG1VwF4RwJvmAXkU39P6xxm4ZBRNIWa2GONYtjv9gmtj7amHk0iMts98nX0=
-X-Google-Smtp-Source: AGHT+IH17rOSoL/+Lmy1UYoEUw7+laWLknanbEqrYmHEt8FE6IyYxVCDW16e7fLc+z+VlUPugQo25Q==
-X-Received: by 2002:a05:600c:1f82:b0:430:57f2:bae2 with SMTP id 5b1f17b1804b1-431bb9d14afmr24830055e9.23.1730295881538;
-        Wed, 30 Oct 2024 06:44:41 -0700 (PDT)
-Received: from [192.168.1.62] (2a02-842a-d52e-6101-6f8f-5617-c4b6-8627.rev.sfr.net. [2a02:842a:d52e:6101:6f8f:5617:c4b6:8627])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d693sm22135175e9.24.2024.10.30.06.44.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 06:44:41 -0700 (PDT)
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Wed, 30 Oct 2024 14:44:28 +0100
-Subject: [PATCH v4 4/5] iio: adc: ad7380: add support for adaq4370-4 and
- adaq4380-4
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m3vULvpIiluuka7cZuaeSTGvwcqfuH762jQ9nDD/1BU=;
+ b=OuDdLqxgypY6HZYKB/kNFHxszxcT7q0wOqOQR4KB7d6OgyZuK+KXxbdaYc9hafsNkUisLqntYDKiKqD5u0oJz+/pVhJORKBTxQ31GUo/1ig4GAN6e5nAeyeIrtfALg+qWUHM+QMpkNREiNwSnyuPlrd9cE1fbbiz8sVybhUO8tY=
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
+ by VI1PR04MB9956.eurprd04.prod.outlook.com (2603:10a6:800:1e1::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.29; Wed, 30 Oct
+ 2024 13:44:30 +0000
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529%4]) with mapi id 15.20.8093.027; Wed, 30 Oct 2024
+ 13:44:28 +0000
+From: Josua Mayer <josua@solid-run.com>
+To: Adrian Hunter <adrian.hunter@intel.com>, Haibo Chen <haibo.chen@nxp.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+CC: Mikhail Anikin <mikhail.anikin@solid-run.com>, Jon Nettleton
+	<jon@solid-run.com>, Yazan Shhady <yazan.shhady@solid-run.com>, Rabeeh Khoury
+	<rabeeh@solid-run.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "s32@nxp.com"
+	<s32@nxp.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] mmc: host: sdhci-esdhc-imx: update esdhc sysctl
+ dtocv bitmask
+Thread-Topic: [PATCH v2 2/2] mmc: host: sdhci-esdhc-imx: update esdhc sysctl
+ dtocv bitmask
+Thread-Index: AQHbKtDp4sya86G/gE+AHlUXZYUbu7KfTgqA
+Date: Wed, 30 Oct 2024 13:44:28 +0000
+Message-ID: <61fa7a34-fa77-4a7e-b6cb-45fb5e671249@solid-run.com>
+References: <20241030-imx-emmc-reset-v2-0-b3a823393974@solid-run.com>
+ <20241030-imx-emmc-reset-v2-2-b3a823393974@solid-run.com>
+In-Reply-To: <20241030-imx-emmc-reset-v2-2-b3a823393974@solid-run.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=solid-run.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR04MB7586:EE_|VI1PR04MB9956:EE_
+x-ms-office365-filtering-correlation-id: 835f4d51-9280-4213-1068-08dcf8e8f99d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?ZklJdjFzMkJvQXA5dCtMZko3dldybWlWRlJ3Y2h3ejJMVGJZOXdCZVV5aFdq?=
+ =?utf-8?B?amtwdTRzZ0pVQXlsbFB2cDRJMHNWQTF1QUhDdzJMbkl3ai8vTFdheEtmVjEx?=
+ =?utf-8?B?Y29uVTNBRitEUStLN1puWWFIOXpRTW5vVWNNT1BIOTI2ai80NWJWZG1BVW9k?=
+ =?utf-8?B?TE5uVy9yTUE2d2l0dmF1NnNoTzNBdXVWa3J6V3pZK0NkcFFUSVc3Y0hQY0Nx?=
+ =?utf-8?B?OFVrUFFyMDF0ZmZYT3NoVFl3QmZkbko3R01xbmRKOFFyUUVQcnhOc2RCeHcv?=
+ =?utf-8?B?SzhDYy9WY0Q3QVJtYjVDeXI2OUVtak10V3JCWE45SHVqeXFMMHR1YnRyd0NV?=
+ =?utf-8?B?NXByL3BsZ3A4RUdmWW5WTkt1MlF3RUFNUmYyWGxTaWpGd2JoOXZ0YjU1cmVn?=
+ =?utf-8?B?SXo2enNTRlljcCs2TmtqVDVYaWpvajk3RGo1UlNtOXhqZEFXNXF3UUU1Y2ZP?=
+ =?utf-8?B?eE10bW5od1VkVnd1c0VzOEE3dDFPWWdQaTN1UWZVVDRjWEVqcTdleUkzaTQv?=
+ =?utf-8?B?VVJXU1JacXNjUnJ1Y3JzOVd1MVUyMVZPYytQeU9aNHZSc2Qrc2h0VjY0N2ww?=
+ =?utf-8?B?U01CaVV1SFJQU3F2NGNpMUNCWWlOWnJ0b3k5aG9VV2kwS1A2dzFEaDN2RmJK?=
+ =?utf-8?B?aGcyOWFVbXFNMkZOdnVmOUVvYjVMRDhvTytJaTlmcllvZTlJYXJia1gxZThT?=
+ =?utf-8?B?NlpZTkM2alBZSm9Wc0ZITUxDYkJFL0xoNHpsL0kwUmIxdjZuUnoxanJhcWY2?=
+ =?utf-8?B?TFFUSURreFdveFRzWmhYTVkrTHZMMGtNYVd1a1hlekVCQ0dxbnVhRVByZ3g2?=
+ =?utf-8?B?TFpUSFF3ditvVGUzNnZuQzlZRXltQnBrVTA4R3dTOWVtSCtnUHN2S0tXWEhu?=
+ =?utf-8?B?UlNUUlg2ZWloOVFiay95UEdSQXoweU1FT3c4YldzRGtTUUpVNUlhYjZteEwr?=
+ =?utf-8?B?VHdrQ1dVYU5KRDVKOElheWFaRFRJT1o4cEwxT1h4QWVkUm1OVndqa01oSDNY?=
+ =?utf-8?B?eHFrQlR0elZWOWFFRVdNZmFOcGk0aG9FZWRWcFQrQzZBME92ekFXcnZMZXJG?=
+ =?utf-8?B?aGp3MlRFSGI4WDZRYVpNMXRwdE14aUlWd1gzS1MrYU5hZjdyT2Q0R3BjL1hh?=
+ =?utf-8?B?TWNla3ErTi90ckp4UVZrUUhvVUdzZCt6NnVFS1hCRGRsdnRHUkJ5M045SjlG?=
+ =?utf-8?B?M1NaN2VRMlNEaHZwaUNCMjdSWm84SkRhcXc5NjY5aDE3c09PSktXYmJIcURa?=
+ =?utf-8?B?K0F5NFB1M0tXM2lqa3E2K1J5Y3VJUGpYcGlIbGsrSTgxdy9DbE91YmdqejNZ?=
+ =?utf-8?B?TFNCa285MTFsQ3BKMElKSUlJUHZuRDZQeWRqSHdxSFFsMlhBRldzVWtqWUhE?=
+ =?utf-8?B?RDZBSmw3OTVTYjE2ME1NTmJQRlQrYmhRTWRzdTFTMEVGdzJUY0diUmhKNThS?=
+ =?utf-8?B?WjhXam04TFVaZjI5ZDZHcU8vbS9QUGZTQzFNbmx4MnpBVVhkOTZBYzZ6MWdv?=
+ =?utf-8?B?b2cyZGgzMEdYWlBoUmV0V1lzSFZMTlIyOFJJdGNxc0JIelErL2o4OEtIRTZP?=
+ =?utf-8?B?eFlMeGxxcTByOWZ2S0JkT2F0c2ExajByeDlLNnRTa3BtL0szanltbTUzZDZ4?=
+ =?utf-8?B?N29tSHpvZ25yTE5waFoxR0NVSDdzbkpQcE5HRFJINU1DUnBMTWpCeStrQ1Qw?=
+ =?utf-8?B?ckpKT3hIak9RR24vMXBLL1g1cWZiUktCWkZHWlYzaHRIdTgxZnp3QkxUc1lF?=
+ =?utf-8?B?YmZIZ3dXYUpMQXl0cS9GSlMvOXlQdzlLZkVnUFdpdEFxUzM3WTk0VXBKTFd0?=
+ =?utf-8?Q?pTcu91NUtoLwNaG5dOFFQfnmEVbGok6d5uOMQ=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RnpEYnJkeTRnVXJETTcyajBybGVLU2pOdE9XMkt2QTIxSDhNcjh0azhBTGNU?=
+ =?utf-8?B?OUxDdGlSOGEwZkhQUEthb2NrN1RZUThGa1VCYUdpNGFNcWpTQUdnQm1kdTEr?=
+ =?utf-8?B?MERrNTBKU3Z0c1liQ3hCeDlNTm1xazR5OFNBaUFJeWNrWVdhR01JTDZSY1hq?=
+ =?utf-8?B?MHkrV3U2emIySGZySmFRVXZUVXUzek9YWVFCUlNKaEJEY0J6NERhTWFjZnBt?=
+ =?utf-8?B?djhQc0RvTmZNMEhlMXdkOFBDbm5zbGZJQnhBWFhBTk1WMHdXZTUyU3JIbFlr?=
+ =?utf-8?B?NWlTeCtGQXc2OEdkRXBwUXdwUUdNd3dTbk5JK2dsRmVmcDQxcWVzQUxwU3Bj?=
+ =?utf-8?B?NjNxa09lZUdrU1FWeW1KeDFVOTRwWWVMRWdybUNBV0x2MFlvUmk4Qnpqc1hx?=
+ =?utf-8?B?R0JITm5OTWR4TVJHcG9zRkdXL1BUZmdBZEJTQWpuL1dNeXFLZ2xOWjNHQUVD?=
+ =?utf-8?B?RkZscURlcU0vMjQ2TmZUZFFMZlFJM1ZJQXRqYnY3dERDL0RMNFFIdFY3SFds?=
+ =?utf-8?B?YTRYTnJYOVZLclVGOFFxODA1cDVBQVppd1pWSEFyNlNiNlV5OU8vME4rczNM?=
+ =?utf-8?B?YkZEeXF4aHBnWTIvUGs4TGhZZkRkcytnSm5YVXhzR0ZLWDJHYkJESlFEU0cv?=
+ =?utf-8?B?RG9mbEpMajhCUld4TDNPcjJUVWtjMlp4MHBUMEJzeGZhWGhsSlBIaHVLRURm?=
+ =?utf-8?B?Yk0rSDA5eG1qVHp2aTU0QURPN0ZXWGpJSm00c2VBajkwN2hUTTI5R3d1aTVV?=
+ =?utf-8?B?ZTlKaFBxeDloQ0NnWFdGVTVkR1IrNmFVK3pvVUlTWlgrd1R6VzkxQkJtMEEv?=
+ =?utf-8?B?c3ViKzRhQ3FZNjVpS1Axd1RpOXpCZlM2VkFNQm1CVHh0d0tkeEhXQTVhU2li?=
+ =?utf-8?B?ZEhIbmZ3b3lIRWhpNHhUSTRIK0FZZzNuT0x3bWJqUFZuT29xY1MrZkxZNUox?=
+ =?utf-8?B?cW14SnBnWjZIbmdISlZIbVd5NVNXWERId1h0Y1RuVVVZRjBGdXU1eVpsRlMy?=
+ =?utf-8?B?NUlKOERUUzZYWGI5ZzJQcTR5SGFXRUU3QzdTNGtDYWs5OU5JY1ZCcVFBZG15?=
+ =?utf-8?B?eElEcHoxTlBJWW1Gckl3dGg5QWVqT1p5UDZvdTBqQUw3WFpueVRwbnRkWlBp?=
+ =?utf-8?B?eGtueUJsVUg5ekVSanNSN2FFRmJjZUQvYnpZWStvZ1ZRY01zanpBQWF4dGR1?=
+ =?utf-8?B?L0xCRWFJU2dkMmcyV084RlJRM3NpNmxHVXE2MXh6a0tmVUJOTU51R0tQbDhG?=
+ =?utf-8?B?bndsWUc1Yk5vWXl1bkZiY1Z5RGRJSVlWRnI4cDBMUzJZSW8zdnoxZzcveW9X?=
+ =?utf-8?B?YUNkeFZyRTcvamNkSE14WnRBLzZRazUveEtsZHdZMkx0WmY0U3ZwY0JieDQ4?=
+ =?utf-8?B?MThpYW4wMVZpK1BkNzdYdnJDb3B6Z2NScU00dURLT1NyQWU5SWRaUW54Vlh0?=
+ =?utf-8?B?M095alZ3M0k5SWxUWEp4ZmpLSW9LeGZmNnBVVnp6a1o4YkFscVdreGx5Wlhs?=
+ =?utf-8?B?ZE1OSTIzQTZ5OVZoTXRXL0RaMVdmTXRPTVYzRDZhRWZ4S0d2QXptaDZhR2Ur?=
+ =?utf-8?B?cERzQkk0SXFqa0xwL3pqZmkyaXFKRWtBemxKWC9XM2Y3dkgwR0k2c1hCM1Mv?=
+ =?utf-8?B?K2gwa0Nidk5MRHk1dU81Mm1qZnFta1VZQThjdWdWQmxhdnBoSHVqVmQwZlFB?=
+ =?utf-8?B?WjdoRTM0TVdmdWVxZUhKQWMxejVSSzU4L1RBaGZtQ0hacy81bEc5YkFhN0Za?=
+ =?utf-8?B?OGJuU0UxeDdRSERCZndsM0syaEpHazIwalFjK01lZ0VqOFJ4UjRQSERjZG9B?=
+ =?utf-8?B?WThBYzhCZXNzblhYVWhXQWVQVEdUdXFrUXBZcHcxNURtVVQzVU1ySjZDM0VX?=
+ =?utf-8?B?Zm5CdkN2NHZINU9BanFuQ3ZDY1BGQzc1dU9DUXhRc0NDQXB0M081SHNZK1NO?=
+ =?utf-8?B?MnJ3SUIvZ1BNQzZHTGRnVFhSWnk0UVJJL0Z0U1kxQ1E1dDF3cVlFMkF6VFRw?=
+ =?utf-8?B?dGlSdHp5TFl3Q0JVVTVtcGErOE5MZ05EVENZRjFxTFpNbkp5NStrcTVHK2Nw?=
+ =?utf-8?B?NVEyYVBRdTkvcnNkQmZrTUR3K3ZXZzdKeHdndUNYbHRETlZZRmxrS3JwZ3Vq?=
+ =?utf-8?Q?euF8=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <27FFC0D53578024888FBCD748921436C@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241030-ad7380-add-adaq4380-4-support-v4-4-864ff02babae@baylibre.com>
-References: <20241030-ad7380-add-adaq4380-4-support-v4-0-864ff02babae@baylibre.com>
-In-Reply-To: <20241030-ad7380-add-adaq4380-4-support-v4-0-864ff02babae@baylibre.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Julien Stephan <jstephan@baylibre.com>
-X-Mailer: b4 0.14.2
+X-OriginatorOrg: solid-run.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 835f4d51-9280-4213-1068-08dcf8e8f99d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 13:44:28.3542
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jjhuAhUk1mWnH09vQbOD4uYTWXjo2e/MBbYxEGUcnNYvxLwrb1EoPp71rk8uuv/PwGfe+r+FmY/oxzSHkkO2/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9956
 
-adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS) are quad-channel precision data
-acquisition signal chain μModule solutions compatible with the ad738x
-family, with the following differences:
-
-- pin selectable gain in front of each 4 adc
-- internal reference is 3V derived from refin-supply (5V)
-- additional supplies
-
-This implies that IIO_CHAN_INFO_SCALE can not be shared by type for
-these new devices.
-
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
----
- drivers/iio/adc/ad7380.c | 130 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 126 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-index 206c894953f057acca20805fb30185cb7ab8a902..4f32cb22f140442b831dc9a4f275e88e4ab2388e 100644
---- a/drivers/iio/adc/ad7380.c
-+++ b/drivers/iio/adc/ad7380.c
-@@ -13,6 +13,8 @@
-  * ad7381-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/ad7381-4.pdf
-  * ad7383/4-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/ad7383-4-ad7384-4.pdf
-  * ad7386/7/8-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/ad7386-4-7387-4-7388-4.pdf
-+ * adaq4370-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4370-4.pdf
-+ * adaq4380-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4380-4.pdf
-  */
- 
- #include <linux/align.h>
-@@ -22,11 +24,14 @@
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/kernel.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/spi/spi.h>
-+#include <linux/units.h>
-+#include <linux/util_macros.h>
- 
- #include <linux/iio/buffer.h>
- #include <linux/iio/iio.h>
-@@ -36,6 +41,8 @@
- #define MAX_NUM_CHANNELS		8
- /* 2.5V internal reference voltage */
- #define AD7380_INTERNAL_REF_MV		2500
-+/* 3.3V internal reference voltage for ADAQ */
-+#define ADAQ4380_INTERNAL_REF_MV	3300
- 
- /* reading and writing registers is more reliable at lower than max speed */
- #define AD7380_REG_WR_SPEED_HZ		10000000
-@@ -82,6 +89,7 @@
-  * supports only 1 SDO line (standard SPI transaction)
-  */
- #define AD7380_NUM_SDO_LINES		1
-+#define AD7380_DEFAULT_GAIN_MILLI	1000
- 
- struct ad7380_timing_specs {
- 	const unsigned int t_csh_ns;	/* CS minimum high time */
-@@ -92,10 +100,12 @@ struct ad7380_chip_info {
- 	const struct iio_chan_spec *channels;
- 	unsigned int num_channels;
- 	unsigned int num_simult_channels;
-+	bool has_hardware_gain;
- 	bool has_mux;
- 	const char * const *supplies;
- 	unsigned int num_supplies;
- 	bool external_ref_only;
-+	bool adaq_internal_ref_only;
- 	const char * const *vcm_supplies;
- 	unsigned int num_vcm_supplies;
- 	const unsigned long *available_scan_masks;
-@@ -187,11 +197,12 @@ static const struct iio_scan_type ad7380_scan_type_16_u[] = {
- 	},
- };
- 
--#define AD7380_CHANNEL(index, bits, diff, sign) {				\
-+#define _AD7380_CHANNEL(index, bits, diff, sign, gain) {			\
- 	.type = IIO_VOLTAGE,							\
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |				\
-+		((gain) ? BIT(IIO_CHAN_INFO_SCALE) : 0) |			\
- 		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),			\
--	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |			\
-+	.info_mask_shared_by_type = ((gain) ? 0 : BIT(IIO_CHAN_INFO_SCALE)) |	\
- 		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
- 	.info_mask_shared_by_type_available =					\
- 		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
-@@ -205,6 +216,12 @@ static const struct iio_scan_type ad7380_scan_type_16_u[] = {
- 	.num_ext_scan_type = ARRAY_SIZE(ad7380_scan_type_##bits##_##sign),	\
- }
- 
-+#define AD7380_CHANNEL(index, bits, diff, sign)		\
-+	_AD7380_CHANNEL(index, bits, diff, sign, false)
-+
-+#define ADAQ4380_CHANNEL(index, bits, diff, sign)	\
-+	_AD7380_CHANNEL(index, bits, diff, sign, true)
-+
- #define DEFINE_AD7380_2_CHANNEL(name, bits, diff, sign)	\
- static const struct iio_chan_spec name[] = {		\
- 	AD7380_CHANNEL(0, bits, diff, sign),		\
-@@ -221,6 +238,15 @@ static const struct iio_chan_spec name[] = {		\
- 	IIO_CHAN_SOFT_TIMESTAMP(4),			\
- }
- 
-+#define DEFINE_ADAQ4380_4_CHANNEL(name, bits, diff, sign)	\
-+static const struct iio_chan_spec name[] = {			\
-+	ADAQ4380_CHANNEL(0, bits, diff, sign),			\
-+	ADAQ4380_CHANNEL(1, bits, diff, sign),			\
-+	ADAQ4380_CHANNEL(2, bits, diff, sign),			\
-+	ADAQ4380_CHANNEL(3, bits, diff, sign),			\
-+	IIO_CHAN_SOFT_TIMESTAMP(4),				\
-+}
-+
- #define DEFINE_AD7380_8_CHANNEL(name, bits, diff, sign)	\
- static const struct iio_chan_spec name[] = {		\
- 	AD7380_CHANNEL(0, bits, diff, sign),		\
-@@ -239,6 +265,7 @@ DEFINE_AD7380_2_CHANNEL(ad7380_channels, 16, 1, s);
- DEFINE_AD7380_2_CHANNEL(ad7381_channels, 14, 1, s);
- DEFINE_AD7380_4_CHANNEL(ad7380_4_channels, 16, 1, s);
- DEFINE_AD7380_4_CHANNEL(ad7381_4_channels, 14, 1, s);
-+DEFINE_ADAQ4380_4_CHANNEL(adaq4380_4_channels, 16, 1, s);
- /* pseudo differential */
- DEFINE_AD7380_2_CHANNEL(ad7383_channels, 16, 0, s);
- DEFINE_AD7380_2_CHANNEL(ad7384_channels, 14, 0, s);
-@@ -257,6 +284,10 @@ static const char * const ad7380_supplies[] = {
- 	"vcc", "vlogic",
- };
- 
-+static const char * const adaq4380_supplies[] = {
-+	"ldo", "vcc", "vlogic", "vs-p", "vs-n", "refin",
-+};
-+
- static const char * const ad7380_2_channel_vcm_supplies[] = {
- 	"aina", "ainb",
- };
-@@ -347,6 +378,11 @@ static const int ad7380_oversampling_ratios[] = {
- 	1, 2, 4, 8, 16, 32,
- };
- 
-+/* Gains stored as fractions of 1000 so they can be expressed by integers. */
-+static const int ad7380_gains[] = {
-+	300, 600, 1000, 1600,
-+};
-+
- static const struct ad7380_chip_info ad7380_chip_info = {
- 	.name = "ad7380",
- 	.channels = ad7380_channels,
-@@ -516,6 +552,32 @@ static const struct ad7380_chip_info ad7388_4_chip_info = {
- 	.timing_specs = &ad7380_4_timing,
- };
- 
-+static const struct ad7380_chip_info adaq4370_4_chip_info = {
-+	.name = "adaq4370-4",
-+	.channels = adaq4380_4_channels,
-+	.num_channels = ARRAY_SIZE(adaq4380_4_channels),
-+	.num_simult_channels = 4,
-+	.supplies = adaq4380_supplies,
-+	.num_supplies = ARRAY_SIZE(adaq4380_supplies),
-+	.adaq_internal_ref_only = true,
-+	.has_hardware_gain = true,
-+	.available_scan_masks = ad7380_4_channel_scan_masks,
-+	.timing_specs = &ad7380_4_timing,
-+};
-+
-+static const struct ad7380_chip_info adaq4380_4_chip_info = {
-+	.name = "adaq4380-4",
-+	.channels = adaq4380_4_channels,
-+	.num_channels = ARRAY_SIZE(adaq4380_4_channels),
-+	.num_simult_channels = 4,
-+	.supplies = adaq4380_supplies,
-+	.num_supplies = ARRAY_SIZE(adaq4380_supplies),
-+	.adaq_internal_ref_only = true,
-+	.has_hardware_gain = true,
-+	.available_scan_masks = ad7380_4_channel_scan_masks,
-+	.timing_specs = &ad7380_4_timing,
-+};
-+
- struct ad7380_state {
- 	const struct ad7380_chip_info *chip_info;
- 	struct spi_device *spi;
-@@ -526,6 +588,7 @@ struct ad7380_state {
- 	bool seq;
- 	unsigned int vref_mv;
- 	unsigned int vcm_mv[MAX_NUM_CHANNELS];
-+	unsigned int gain_milli[MAX_NUM_CHANNELS];
- 	/* xfers, message an buffer for reading sample data */
- 	struct spi_transfer normal_xfer[2];
- 	struct spi_message normal_msg;
-@@ -876,8 +939,15 @@ static int ad7380_read_raw(struct iio_dev *indio_dev,
- 		 *    * (2 × VREF) / 2^N, for differential chips
- 		 *    * VREF / 2^N, for pseudo-differential chips
- 		 * where N is the ADC resolution (i.e realbits)
-+		 *
-+		 * The gain is stored as a fraction of 1000 and, as we need to
-+		 * divide vref_mv by the gain, we invert the gain/1000 fraction.
- 		 */
--		*val = st->vref_mv;
-+		if (st->chip_info->has_hardware_gain)
-+			*val = mult_frac(st->vref_mv, MILLI,
-+					 st->gain_milli[chan->scan_index]);
-+		else
-+			*val = st->vref_mv;
- 		*val2 = scan_type->realbits - chan->differential;
- 
- 		return IIO_VAL_FRACTIONAL_LOG2;
-@@ -1059,7 +1129,19 @@ static int ad7380_probe(struct spi_device *spi)
- 				     "Failed to enable power supplies\n");
- 	fsleep(T_POWERUP_US);
- 
--	if (st->chip_info->external_ref_only) {
-+	if (st->chip_info->adaq_internal_ref_only) {
-+		/*
-+		 * ADAQ chips use fixed internal reference but still
-+		 * require a specific reference supply to power it.
-+		 * "refin" is already enabled with other power supplies
-+		 * in bulk_get_enable().
-+		 */
-+
-+		st->vref_mv = ADAQ4380_INTERNAL_REF_MV;
-+
-+		/* these chips don't have a register bit for this */
-+		external_ref_en = false;
-+	} else if (st->chip_info->external_ref_only) {
- 		ret = devm_regulator_get_enable_read_voltage(dev, "refin");
- 		if (ret < 0)
- 			return dev_err_probe(dev, ret,
-@@ -1103,6 +1185,42 @@ static int ad7380_probe(struct spi_device *spi)
- 		st->vcm_mv[i] = ret / 1000;
- 	}
- 
-+	for (i = 0; i < MAX_NUM_CHANNELS; i++)
-+		st->gain_milli[i] = AD7380_DEFAULT_GAIN_MILLI;
-+
-+	if (st->chip_info->has_hardware_gain) {
-+		device_for_each_child_node_scoped(dev, node) {
-+			unsigned int channel, gain;
-+			int gain_idx;
-+
-+			ret = fwnode_property_read_u32(node, "reg", &channel);
-+			if (ret)
-+				return dev_err_probe(dev, ret,
-+						     "Failed to read reg property\n");
-+
-+			if (channel >= st->chip_info->num_channels - 1)
-+				return dev_err_probe(dev, -EINVAL,
-+						     "Invalid channel number %i\n",
-+						     channel);
-+
-+			ret = fwnode_property_read_u32(node, "adi,gain-milli",
-+						       &gain);
-+			if (ret && ret != -EINVAL)
-+				return dev_err_probe(dev, ret,
-+						     "Failed to read gain for channel %i\n",
-+						     channel);
-+			if (ret != -EINVAL) {
-+				/*
-+				 * Match gain value from dt to one of supported
-+				 * gains
-+				 */
-+				gain_idx = find_closest(gain, ad7380_gains,
-+							ARRAY_SIZE(ad7380_gains));
-+				st->gain_milli[channel] = ad7380_gains[gain_idx];
-+			}
-+		}
-+	}
-+
- 	st->regmap = devm_regmap_init(dev, NULL, st, &ad7380_regmap_config);
- 	if (IS_ERR(st->regmap))
- 		return dev_err_probe(dev, PTR_ERR(st->regmap),
-@@ -1185,6 +1303,8 @@ static const struct of_device_id ad7380_of_match_table[] = {
- 	{ .compatible = "adi,ad7386-4", .data = &ad7386_4_chip_info },
- 	{ .compatible = "adi,ad7387-4", .data = &ad7387_4_chip_info },
- 	{ .compatible = "adi,ad7388-4", .data = &ad7388_4_chip_info },
-+	{ .compatible = "adi,adaq4370-4", .data = &adaq4370_4_chip_info },
-+	{ .compatible = "adi,adaq4380-4", .data = &adaq4380_4_chip_info },
- 	{ }
- };
- 
-@@ -1203,6 +1323,8 @@ static const struct spi_device_id ad7380_id_table[] = {
- 	{ "ad7386-4", (kernel_ulong_t)&ad7386_4_chip_info },
- 	{ "ad7387-4", (kernel_ulong_t)&ad7387_4_chip_info },
- 	{ "ad7388-4", (kernel_ulong_t)&ad7388_4_chip_info },
-+	{ "adaq4370-4", (kernel_ulong_t)&adaq4370_4_chip_info },
-+	{ "adaq4380-4", (kernel_ulong_t)&adaq4380_4_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(spi, ad7380_id_table);
-
--- 
-2.47.0
-
+QW0gMzAuMTAuMjQgdW0gMTQ6Mzcgc2NocmllYiBKb3N1YSBNYXllcjoNCj4gTlhQIEVTREhDIHN1
+cHBvcnRzIHNldHRpbmcgZGF0YSB0aW1lb3V0IHVzaW5nIHVTREhDeF9TWVNfQ1RSTCByZWdpc3Rl
+cg0KPiBEVE9DViBiaXRzIChiaXRzIDE2LTE5KS4NCj4gQ3VycmVudGx5IHRoZSBkcml2ZXIgYWNj
+ZXNzZXMgdGhvc2UgYml0cyBieSAzMi1iaXQgd3JpdGUgdXNpbmcNCj4gU0RIQ0lfVElNRU9VVF9D
+T05UUk9MICgweDJFKSBkZWZpbmVkIGluIGRyaXZlcnMvbW1jL2hvc3Qvc2RoY2kuaC4NCj4gVGhp
+cyBpcyBvZmZzZXQgYnkgdHdvIGJ5dGVzIHJlbGF0aXZlIHRvIHVTREhDeF9TWVNfQ1RSTCAoMHgy
+QykuDQo+IFRoZSBkcml2ZXIgYWxzbyBkZWZpbmVzIEVTREhDX1NZU19DVFJMX0RUT0NWX01BU0sg
+YXMgZmlyc3QgNCBiaXRzLCB3aGljaA0KPiBpcyBjb3JyZWN0IHJlbGF0aXZlIHRvIFNESENJX1RJ
+TUVPVVRfQ09OVFJPTCBidXQgbm90IHJlbGF0aXZlIHRvDQo+IHVTREhDeF9TWVNfQ1RSTC4gVGhl
+IGRlZmluaXRpb24gY2FycnlpbmcgY29udHJvbCByZWdpc3RlciBpbiBpdHMgbmFtZSBpcw0KPiB0
+aGVyZWZvcmUgaW5jb25zaXN0ZW50Lg0KPg0KPiBVcGRhdGUgdGhlIGJpdG1hc2sgZGVmaW5pdGlv
+biBmb3IgYml0cyAxNi0xOSB0byBiZSBjb3JyZWN0IHJlbGF0aXZlIHRvDQo+IGNvbnRyb2wgcmVn
+aXN0ZXIgYmFzZS4NCj4gVXBkYXRlIHRoZSBlc2RoY19zZXRfdGltZW91dCBmdW5jdGlvbiB0byBz
+ZXQgdGltZW91dCB2YWx1ZSBhdCBjb250cm9sDQo+IHJlZ2lzdGVyIGJhc2UsIG5vdCB0aW1lb3V0
+IG9mZnNldC4NCj4NCj4gVGhpcyBzb2x2ZXMgYSBwdXJlbHkgY29zbWV0aWMgcHJvYmxlbS4NCj4N
+Cj4gU2lnbmVkLW9mZi1ieTogSm9zdWEgTWF5ZXIgPGpvc3VhQHNvbGlkLXJ1bi5jb20+DQo+IC0t
+LQ0KPiAgZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1lc2RoYy1pbXguYyB8IDQgKystLQ0KPiAgMSBm
+aWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktZXNkaGMtaW14LmMgYi9kcml2ZXJzL21tYy9o
+b3N0L3NkaGNpLWVzZGhjLWlteC5jDQo+IGluZGV4IGE4MzBkOWE5NDkwNDA4ZDMxNDhiOTI3YmYx
+YWNjNzE5YTEzZTg5NzUuLjEwMWZlYWJiMjRmYjQxYmQxMGEyZTc5NmY0ZjNmOGQ0MzU3ZGMyNDUg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktZXNkaGMtaW14LmMNCj4gKysr
+IGIvZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1lc2RoYy1pbXguYw0KPiBAQCAtMzAsMTAgKzMwLDEw
+IEBADQo+ICAjaW5jbHVkZSAic2RoY2ktZXNkaGMuaCINCj4gICNpbmNsdWRlICJjcWhjaS5oIg0K
+PiAgDQo+IC0jZGVmaW5lIEVTREhDX1NZU19DVFJMX0RUT0NWX01BU0sJMHgwZg0KPiAgI2RlZmlu
+ZQlFU0RIQ19DVFJMX0QzQ0QJCQkweDA4DQo+ICAjZGVmaW5lIEVTREhDX0JVUlNUX0xFTl9FTl9J
+TkNSCQkoMSA8PCAyNykNCj4gICNkZWZpbmUgRVNESENfU1lTX0NUUkwJCQkweDJjDQo+ICsjZGVm
+aW5lIEVTREhDX1NZU19DVFJMX0RUT0NWX01BU0sJR0VOTUFTSygxOSwgMTYpDQo+ICAjZGVmaW5l
+IEVTREhDX1NZU19DVFJMX0lQUF9SU1RfTglCSVQoMjMpDQo+ICAvKiBWRU5ET1IgU1BFQyByZWdp
+c3RlciAqLw0KPiAgI2RlZmluZSBFU0RIQ19WRU5ET1JfU1BFQwkJMHhjMA0KPiBAQCAtMTM4Nyw3
+ICsxMzg3LDcgQEAgc3RhdGljIHZvaWQgZXNkaGNfc2V0X3RpbWVvdXQoc3RydWN0IHNkaGNpX2hv
+c3QgKmhvc3QsIHN0cnVjdCBtbWNfY29tbWFuZCAqY21kKQ0KPiAgDQo+ICAJLyogdXNlIG1heGlt
+dW0gdGltZW91dCBjb3VudGVyICovDQo+ICAJZXNkaGNfY2xyc2V0X2xlKGhvc3QsIEVTREhDX1NZ
+U19DVFJMX0RUT0NWX01BU0ssDQo+IC0JCQllc2RoY19pc191c2RoYyhpbXhfZGF0YSkgPyAweEYg
+OiAweEUsDQo+ICsJCQllc2RoY19pc191c2RoYyhpbXhfZGF0YSkgPyAweDBGMDAwMCA6IDB4MEUw
+MDAwLA0KPiAgCQkJU0RIQ0lfVElNRU9VVF9DT05UUk9MKTsNCl5eIFRoZXJlIGlzIGEgbWlzdGFr
+ZSBoZXJlLCBpbnRlbmRlZDogRVNESENfU1lTX0NUUkwNCihJIGNoYW5nZWQgdGhhdCBsYXN0IHNl
+Y29uZCB3aGlsZSB3cml0aW5nIGNvbW1pdCBkZXNjcmlwdGlvbiA6KCApDQo+ICB9DQo+ICANCj4N
+Cg==
 
