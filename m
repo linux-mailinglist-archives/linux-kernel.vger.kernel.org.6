@@ -1,289 +1,127 @@
-Return-Path: <linux-kernel+bounces-389137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5F99B68FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:16:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1629D9B68FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:19:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E10EC1F21E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAB428271B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAA9213EEC;
-	Wed, 30 Oct 2024 16:16:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18DB2141B7;
+	Wed, 30 Oct 2024 16:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TbklLI9T"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0C11E47AE;
-	Wed, 30 Oct 2024 16:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5023E1E47AE;
+	Wed, 30 Oct 2024 16:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304998; cv=none; b=ivuCpF0zXE2itxmaBbJ9MDOqPxg8dPE1xroaX4qLFxvMW29yhMHxdkIr7A1sTl73eS+gnh0fA0+Cf3aUF9/Z9M9gRWP1HrmwQmm77HYPm0Lkxv+9mpgGDQya3cPJlQ9jn9Pw4nQ63+Qs6/S2heAL+Hryx9456MdnRTvKqe1Ch+M=
+	t=1730305155; cv=none; b=nOkzrvJF2HOx3LjyxtrbDGwY3wwHTr7kroKqfKhOmC2TtzB84IeAPu2blpwMQGDFbMtw6j0y7TI4qwkswz1CfjufWNFDCKFgFgnYqaWcbZs+9Gvy36Md3hroGL0RX96Zb3vw+3qaIlVe2ahMMmBWQMKsOhi0ZCirZZWoWk3OuNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304998; c=relaxed/simple;
-	bh=aqDYmaw+KNVR5HjU71s9yAZRVNg3X5jMvykPat0LzI4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R9dnEJ+ATAIFoMHwDLnnxKf5//+qK/iCv6bh3AzgAOnvSeOovOj/K6Xe+emyZspshzBpGzAR7W/c7tBPtSMkltfvL3JKqePawpbjZCZNoj7MlriJI6aZ22Hsn7izDZkracj9oIZ4IMLDzjqtoEpa4CuHa69L3D/Dp/WyiSR2UIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdsdB5CCXz6K6Gy;
-	Thu, 31 Oct 2024 00:14:06 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 36F341400D3;
-	Thu, 31 Oct 2024 00:16:32 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 17:16:30 +0100
-Date: Wed, 30 Oct 2024 16:16:28 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Dave Jiang <dave.jiang@intel.com>
-CC: Shiju Jose <shiju.jose@huawei.com>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bp@alien8.de"
-	<bp@alien8.de>, "tony.luck@intel.com" <tony.luck@intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "jassisinghbrar@gmail.com"
-	<jassisinghbrar@gmail.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
-	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
-	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
- Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH v14 07/14] cxl/memfeature: Add CXL memory device patrol
- scrub control feature
-Message-ID: <20241030161628.00001fdc@Huawei.com>
-In-Reply-To: <67b569b0-1cd5-44e0-8465-064b41a1afd8@intel.com>
-References: <20241025171356.1377-1-shiju.jose@huawei.com>
-	<20241025171356.1377-8-shiju.jose@huawei.com>
-	<3a007a70-136b-4a45-8dd2-d33725ea96bc@intel.com>
-	<e6aed765394b4822ad5a70018c87ef1f@huawei.com>
-	<67b569b0-1cd5-44e0-8465-064b41a1afd8@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730305155; c=relaxed/simple;
+	bh=Nckac5vAtB0LygOEXU3idMYwsLOU9AILN8PwmIR2DtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XF64Q+4nU+m6usuHmuOUbjPnLzlZ9CdV5kjLdj6I+ljJb9iYzq28Yqbra+10wK0HM/dph6vxGHkzCwkTIi5cRFmuIFyENfpHagaiBdgnNHnHuZl9T/TDfVz+ytvLziBBp4m1sb/ddqUiiQKfP/wI8YiSLQTf2glsCzo1ssXr2/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TbklLI9T; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDw8kT013425;
+	Wed, 30 Oct 2024 16:19:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=6C4D8xUZG8WRxij2h8xKKNS0r4KZPt7g2jSwTOeK9
+	0s=; b=TbklLI9TA/3tEpLDIpXKXzIOAc4tWtACyPjyVPnHVWMvUwy5TKnFnCo+j
+	v1fj+t8zNUq50b+e+ArFjxruNgYMBP9azM/tB/XKbR7z4Cz37M8dSs6IfxhwmDPW
+	nvwpZFFZMU++Jn9rOGObjvy8aeaAhHXlqPXpcrUl/q97e7uS3GzOT85Cw7kDd+fo
+	zAqttaPrQIFglJZuOafZiHeNJ4iK/Uyjdv2r5aVJ6Bmg35aAylEIotPRVKT+7ZEl
+	eWpy+30s6jY7h7q6Gr2+pJ6TJeEqXvwg78cmCVh9uW9Rz2CVYkFc3SS8Y6E0iqOB
+	3TCQKlbaimuS0LM9gPvoFm2Oo0QRQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65kj6x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 16:19:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49UFoMiK028211;
+	Wed, 30 Oct 2024 16:19:11 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hb4y0wv6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 16:19:11 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49UGJ7eJ47776182
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 16:19:07 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5E9B12004B;
+	Wed, 30 Oct 2024 16:19:07 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8F44720040;
+	Wed, 30 Oct 2024 16:19:06 +0000 (GMT)
+Received: from p-imbrenda.ibmuc.com (unknown [9.171.78.172])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 30 Oct 2024 16:19:06 +0000 (GMT)
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
+        frankja@linux.ibm.com, seiden@linux.ibm.com, hca@linux.ibm.com,
+        agordeev@linux.ibm.com, gor@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [PATCH v1 1/1] s390/kvm: initialize uninitialized flags variable
+Date: Wed, 30 Oct 2024 17:19:06 +0100
+Message-ID: <20241030161906.85476-1-imbrenda@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: n0DhsfomksrXfYjWaklAesb0ujJhztk6
+X-Proofpoint-GUID: n0DhsfomksrXfYjWaklAesb0ujJhztk6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=748
+ impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300127
 
-On Tue, 29 Oct 2024 11:32:47 -0700
-Dave Jiang <dave.jiang@intel.com> wrote:
+The flags variable was being used uninitialized.
+Initialize it to 0 as expected.
 
-> On 10/29/24 10:00 AM, Shiju Jose wrote:
-> > 
-> >   
-> >> -----Original Message-----
-> >> From: Dave Jiang <dave.jiang@intel.com>
-> >> Sent: 29 October 2024 16:32
-> >> To: Shiju Jose <shiju.jose@huawei.com>; linux-edac@vger.kernel.org; linux-
-> >> cxl@vger.kernel.org; linux-acpi@vger.kernel.org; linux-mm@kvack.org; linux-
-> >> kernel@vger.kernel.org
-> >> Cc: bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
-> >> mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
-> >> Cameron <jonathan.cameron@huawei.com>; gregkh@linuxfoundation.org;
-> >> sudeep.holla@arm.com; jassisinghbrar@gmail.com; alison.schofield@intel.com;
-> >> vishal.l.verma@intel.com; ira.weiny@intel.com; david@redhat.com;
-> >> Vilas.Sridharan@amd.com; leo.duran@amd.com; Yazen.Ghannam@amd.com;
-> >> rientjes@google.com; jiaqiyan@google.com; Jon.Grimm@amd.com;
-> >> dave.hansen@linux.intel.com; naoya.horiguchi@nec.com;
-> >> james.morse@arm.com; jthoughton@google.com; somasundaram.a@hpe.com;
-> >> erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
-> >> gthelen@google.com; wschwartz@amperecomputing.com;
-> >> dferguson@amperecomputing.com; wbs@os.amperecomputing.com;
-> >> nifan.cxl@gmail.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
-> >> <prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
-> >> kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
-> >> Linuxarm <linuxarm@huawei.com>
-> >> Subject: Re: [PATCH v14 07/14] cxl/memfeature: Add CXL memory device patrol
-> >> scrub control feature
-> >>
-> >>
-> >>
-> >> On 10/25/24 10:13 AM, shiju.jose@huawei.com wrote:  
-> >>> From: Shiju Jose <shiju.jose@huawei.com>
-> >>>
-> >>> CXL spec 3.1 section 8.2.9.9.11.1 describes the device patrol scrub
-> >>> control feature. The device patrol scrub proactively locates and makes
-> >>> corrections to errors in regular cycle.
-> >>>
-> >>> Allow specifying the number of hours within which the patrol scrub
-> >>> must be completed, subject to minimum and maximum limits reported by the  
-> >> device.  
-> >>> Also allow disabling scrub allowing trade-off error rates against
-> >>> performance.
-> >>>
-> >>> Add support for patrol scrub control on CXL memory devices.
-> >>> Register with the EDAC device driver, which retrieves the scrub
-> >>> attribute descriptors from EDAC scrub and exposes the sysfs scrub
-> >>> control attributes to userspace. For example, scrub control for the
-> >>> CXL memory device "cxl_mem0" is exposed in  
-> >> /sys/bus/edac/devices/cxl_mem0/scrubX/.  
-> >>>
-> >>> Additionally, add support for region-based CXL memory patrol scrub control.
-> >>> CXL memory regions may be interleaved across one or more CXL memory
-> >>> devices. For example, region-based scrub control for "cxl_region1" is
-> >>> exposed in /sys/bus/edac/devices/cxl_region1/scrubX/.
-> >>>
-> >>> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >>> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >>> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> >>> ---
-> >>>  Documentation/edac/edac-scrub.rst |  74 ++++++
-> >>>  drivers/cxl/Kconfig               |  18 ++
-> >>>  drivers/cxl/core/Makefile         |   1 +
-> >>>  drivers/cxl/core/memfeature.c     | 381 ++++++++++++++++++++++++++++++
-> >>>  drivers/cxl/core/region.c         |   6 +
-> >>>  drivers/cxl/cxlmem.h              |   7 +
-> >>>  drivers/cxl/mem.c                 |   4 +
-> >>>  7 files changed, 491 insertions(+)
-> >>>  create mode 100644 Documentation/edac/edac-scrub.rst  create mode
-> >>> 100644 drivers/cxl/core/memfeature.c
-> >>>
-> >>> diff --git a/Documentation/edac/edac-scrub.rst
-> >>> b/Documentation/edac/edac-scrub.rst
-> >>> new file mode 100644
-> >>> index 000000000000..4aad4974b208
-> >>> --- /dev/null
-> >>> +++ b/Documentation/edac/edac-scrub.rst
-> >>> @@ -0,0 +1,74 @@
-> >>> +.. SPDX-License-Identifier: GPL-2.0
-> >>> +  
-> > [...]
-> >   
-> >>> +static int cxl_mem_ps_get_attrs(struct cxl_memdev_state *mds,
-> >>> +				struct cxl_memdev_ps_params *params) {
-> >>> +	size_t rd_data_size = sizeof(struct cxl_memdev_ps_rd_attrs);
-> >>> +	size_t data_size;
-> >>> +	struct cxl_memdev_ps_rd_attrs *rd_attrs __free(kfree) =
-> >>> +						kmalloc(rd_data_size,  
-> >> GFP_KERNEL);  
-> >>> +	if (!rd_attrs)
-> >>> +		return -ENOMEM;
-> >>> +
-> >>> +	data_size = cxl_get_feature(mds, cxl_patrol_scrub_uuid,
-> >>> +				    CXL_GET_FEAT_SEL_CURRENT_VALUE,
-> >>> +				    rd_attrs, rd_data_size);
-> >>> +	if (!data_size)
-> >>> +		return -EIO;
-> >>> +
-> >>> +	params->scrub_cycle_changeable =  
-> >> FIELD_GET(CXL_MEMDEV_PS_SCRUB_CYCLE_CHANGE_CAP_MASK,  
-> >>> +						   rd_attrs->scrub_cycle_cap);
-> >>> +	params->enable =  
-> >> FIELD_GET(CXL_MEMDEV_PS_FLAG_ENABLED_MASK,  
-> >>> +				   rd_attrs->scrub_flags);
-> >>> +	params->scrub_cycle_hrs =  
-> >> FIELD_GET(CXL_MEMDEV_PS_CUR_SCRUB_CYCLE_MASK,  
-> >>> +					    rd_attrs->scrub_cycle_hrs);
-> >>> +	params->min_scrub_cycle_hrs =  
-> >> FIELD_GET(CXL_MEMDEV_PS_MIN_SCRUB_CYCLE_MASK,  
-> >>> +						rd_attrs->scrub_cycle_hrs);
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static int cxl_ps_get_attrs(struct device *dev, void *drv_data,  
-> >>
-> >> Would a union be better than a void *drv_data for all the places this is used as a
-> >> parameter? How many variations of this are there?
-> >>
-> >> DJ  
-> > Hi Dave,
-> > 
-> > Can you give more info on this given this is a generic callback for the scrub control and each
-> > implementation will have its own context struct (for eg. struct cxl_patrol_scrub_context here
-> > for CXL scrub control), which in turn will be passed in and out as opaque data.  
-> 
-> Mainly I'm just seeing a lot of calls with (void *). Just asking if we want to make it a union that contains 'struct cxl_patrol_scrub_context' and etc.
+For some reason neither gcc nor clang reported a warning.
 
-You could but then every new driver would need to include
-changes in the edac core to add it's own entry to that union.
+Fixes: ce2b276ebe51 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
+Reported-by: Janosch Frank <frankja@linux.ibm.com>
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+---
+ arch/s390/kvm/kvm-s390.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not sure that's a good way to go for opaque driver specific context.
-
-This particular function though can use
-a struct cxl_patrol_scrub_context * anyway as it's not part of the
-core interface, but rather one called only indirectly
-by functions that are passed a void * but know it is a
-struct clx_patrol_scrub_context *.
-
-Jonathan
-
-
-> 
-> > 
-> > Thanks,
-> > Shiju  
-> >>  
-> >>> +			    struct cxl_memdev_ps_params *params) {
-> >>> +	struct cxl_patrol_scrub_context *cxl_ps_ctx = drv_data;
-> >>> +	struct cxl_memdev *cxlmd;
-> >>> +	struct cxl_dev_state *cxlds;
-> >>> +	struct cxl_memdev_state *mds;
-> >>> +	u16 min_scrub_cycle = 0;
-> >>> +	int i, ret;
-> >>> +
-> >>> +	if (cxl_ps_ctx->cxlr) {
-> >>> +		struct cxl_region *cxlr = cxl_ps_ctx->cxlr;
-> >>> +		struct cxl_region_params *p = &cxlr->params;
-> >>> +
-> >>> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
-> >>> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
-> >>> +
-> >>> +			cxlmd = cxled_to_memdev(cxled);
-> >>> +			cxlds = cxlmd->cxlds;
-> >>> +			mds = to_cxl_memdev_state(cxlds);
-> >>> +			ret = cxl_mem_ps_get_attrs(mds, params);
-> >>> +			if (ret)
-> >>> +				return ret;
-> >>> +
-> >>> +			if (params->min_scrub_cycle_hrs > min_scrub_cycle)
-> >>> +				min_scrub_cycle = params-
-> >>> min_scrub_cycle_hrs;
-> >>> +		}
-> >>> +		params->min_scrub_cycle_hrs = min_scrub_cycle;
-> >>> +		return 0;
-> >>> +	}
-> >>> +	cxlmd = cxl_ps_ctx->cxlmd;
-> >>> +	cxlds = cxlmd->cxlds;
-> >>> +	mds = to_cxl_memdev_state(cxlds);
-> >>> +
-> >>> +	return cxl_mem_ps_get_attrs(mds, params); }
-> >>> +  
-> > [...]  
-> >>  
-> >   
-> 
-> 
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index a5750c14bb4d..8b3afda99397 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -4729,8 +4729,8 @@ static int vcpu_post_run_addressing_exception(struct kvm_vcpu *vcpu)
+ 
+ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
+ {
++	unsigned int flags = 0;
+ 	unsigned long gaddr;
+-	unsigned int flags;
+ 	int rc = 0;
+ 
+ 	gaddr = current->thread.gmap_teid.addr * PAGE_SIZE;
+-- 
+2.47.0
 
 
