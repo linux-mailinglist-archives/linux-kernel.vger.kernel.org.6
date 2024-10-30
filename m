@@ -1,178 +1,104 @@
-Return-Path: <linux-kernel+bounces-388071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276DF9B5A1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:51:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D956B9B5A21
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D341F2333E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17B551C22280
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6701946A8;
-	Wed, 30 Oct 2024 02:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDED019342A;
+	Wed, 30 Oct 2024 02:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JfbT+1xi"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4D64437;
-	Wed, 30 Oct 2024 02:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LntpQzLc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE24D4437
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730256667; cv=none; b=UDnk2oeCu8igh7lkxy5GWHMDmAf+bficDMOifZW3ZGyis4tTdBobJfXrpweOKZ2yjdlmDru0WcmEopsdgDzSE6bqMBJ5QM1z3aAvVkxnHOGtW0mFpZwQn/+6zejwnItgolOLexo06M9VwGC0PJR7mn4jMggddICcRUIn+sMnxxI=
+	t=1730256874; cv=none; b=LsBxcgfkiU7krDrti3l6rMGFTuyHJPcloQDwQ6wclhxpUqRQT43buxF1iVyuGeG6r5Dj65jL71ezjeOOVtbM3030RXw2TE+DXHrShyvWeXAuFuSrXzGWnRabVSx3KXEJPhdpegBxWN6ZqPsI3bTkN/ypCZzAfEEaRJG2b7/Nqvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730256667; c=relaxed/simple;
-	bh=9hPKqNQjyusRoKaJAkDgVlScXaFG/rUGQKYmVM9MmLM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aED5bSRYEHMAJeGmL2CjtTZNwKKnPDmijHlCLxePFXguh/QsSCQujm+MW4GvvISdkK1+vAn1EC8lEBJenioD7iamswKw3adHFhxFg+MPEG3YHAxIpooYe/VU8bo3tAVAcB9HlqxaJNPoCTKblMYg3LCkuvRH9Vg4MMeDU2t3Uxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JfbT+1xi; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=0CaPG
-	GT5Nb49Lgi2Fhlg+7izeIcy26jCF0+UBWrjnmk=; b=JfbT+1xijGs6miiyCn0nz
-	6pXVX+GiU72HFboIOkjktudVBO1jrqWGf+3vJ7kP4eP91xszXGpbQXEMr8JCFq4V
-	9Htq+/+7foc1iiyK63tN09Xp8oSgatRjKy7onYWXGlLiEZKhqV7ESiVCqG/g3LAk
-	ZLf8lM9ns9zFFqyh/FA3L8=
-Received: from localhost.localdomain (unknown [111.48.69.246])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3_wIMnyFnWR+xEA--.876S2;
-	Wed, 30 Oct 2024 10:50:53 +0800 (CST)
-From: zhouyuhang <zhouyuhang1010@163.com>
-To: brauner@kernel.org,
-	shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	zhouyuhang <zhouyuhang@kylinos.cn>
-Subject: [PATCH v3] selftests: clone3: Use the capget and capset syscall directly
-Date: Wed, 30 Oct 2024 10:50:45 +0800
-Message-Id: <20241030025045.1156941-1-zhouyuhang1010@163.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1730256874; c=relaxed/simple;
+	bh=ItLN/nhAc0kcHHAUxgaiSlGdG2tzUPBzkdXwKtbCZZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hivZW/ub9Nb8yiWZUOt5jeISun8yTMs2F7xQSAwkEbceTSXtdUVipEFXgYTNGRjd5KVOyQSpHkl0ahi/dPcg3yZInBc5MPZY9m8F09QQKdAllElbiIfht6FXv4kmawTKogDLL0w5OslhDrgaZ8wMQKHrC2FhhncmzvKq+JdZ31g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LntpQzLc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730256870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9MajDa86shltyihCJs2RWiiHVZZLIphX6dVVnM3/Ivw=;
+	b=LntpQzLc7hvErYxLiPzCoNeN0hPftz+ZjYKE/XtfUX19IdZsl41UeACVFSaNKLc64VHJT8
+	Yk91axlqncEYwU9gSTQ2bosClBX4QaxWMzyHuJpUzIDSQahB/GPicHnO+zYHuFkGzpoD/v
+	ABRXggtxyeEqbtbbRPKPpmgdlJmIXhI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-232-oqLcKpGVNSKeFJnwoe99ow-1; Tue,
+ 29 Oct 2024 22:54:24 -0400
+X-MC-Unique: oqLcKpGVNSKeFJnwoe99ow-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 367F6195608A;
+	Wed, 30 Oct 2024 02:54:23 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.14])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 58B4A19560A2;
+	Wed, 30 Oct 2024 02:54:20 +0000 (UTC)
+Date: Wed, 30 Oct 2024 10:54:16 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+	dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
+	lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 0/2] x86/mm/sme: fix the kdump kernel breakage on SME
+ system when CONFIG_IMA_KEXEC=y
+Message-ID: <ZyGf2PZtf4H+dE9u@MiWiFi-R3L-srv>
+References: <20240911081615.262202-1-bhe@redhat.com>
+ <20241029182306.04c3451808c8b76e5e96fdb4@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_wIMnyFnWR+xEA--.876S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4kWr4kJrWkJryxuF48JFb_yoW5KF18pa
-	ykJrsxKrs5Wr1xGFWFywsruFnYkF95Xw47Jr1UAw1jkr1akr4xtF4FkFyqq3Wj9ayDu3yY
-	qa18KayxZFyDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07juFALUUUUU=
-X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiYAKIJmchlfLjjgAAsA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029182306.04c3451808c8b76e5e96fdb4@linux-foundation.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: zhouyuhang <zhouyuhang@kylinos.cn>
+On 10/29/24 at 06:23pm, Andrew Morton wrote:
+> On Wed, 11 Sep 2024 16:16:13 +0800 Baoquan He <bhe@redhat.com> wrote:
+> 
+> > Currently, distros like Fedora/RHEL have enabled CONFIG_IMA_KEXEC by
+> > default. This makes kexec/kdump kernel always fail to boot up on SME
+> > platform because of a code bug. By debugging, the root cause is found
+> > out and bug is fixed with this patchset.
+> 
+> [1/1] is a cleanup.  [2/2] fixes a bug which appears to go all the way
+> back to 5.10.  The bugfix patch has a dependency on the cleanup, which
+> is unfortunate.
+> 
+> We could add the Fixes: to [1/1] and add cc:stable to both patches so
+> they get backported into -stable kernels together.  But I think it's
+> nicer to just concentrate on the single bugfix patch (with Fixes: and
+> cc:stable) and do the cleanup later, in the usual fashion.
 
-The libcap commit aca076443591 ("Make cap_t operations thread safe.")
-added a __u8 mutex at the beginning of the struct _cap_struct, it changes
-the offset of the members in the structure that breaks the assumption
-made in the "struct libcap" definition in clone3_cap_checkpoint_restore.c.
-This will cause the test case to fail with the following output:
+Totally agree, thanks a lot.
 
- #  RUN           global.clone3_cap_checkpoint_restore ...
- # clone3() syscall supported
- # clone3_cap_checkpoint_restore.c:151:clone3_cap_checkpoint_restore:Child has PID 130508
- cap_set_proc: Operation not permitted
- # clone3_cap_checkpoint_restore.c:160:clone3_cap_checkpoint_restore:Expected set_capability() (-1) == 0 (0)
- # clone3_cap_checkpoint_restore.c:161:clone3_cap_checkpoint_restore:Could not set CAP_CHECKPOINT_RESTORE
- # clone3_cap_checkpoint_restore: Test terminated by assertion
- #          FAIL  global.clone3_cap_checkpoint_restore
+> 
+> So can I suggest a resend please?
 
-Changing to using capget and capset syscall directly here can fix this error,
-just like what the commit 663af70aabb7 ("bpf: selftests: Add helpers to directly
-use the capget and capset syscall") does.
-
-Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
----
- .../clone3/clone3_cap_checkpoint_restore.c    | 58 +++++++++----------
- 1 file changed, 27 insertions(+), 31 deletions(-)
-
-diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-index 3c196fa86c99..8b61702bf721 100644
---- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-+++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-@@ -27,6 +27,13 @@
- #include "../kselftest_harness.h"
- #include "clone3_selftests.h"
- 
-+/*
-+ * Prevent not being defined in the header file
-+ */
-+#ifndef CAP_CHECKPOINT_RESTORE
-+#define CAP_CHECKPOINT_RESTORE 40
-+#endif
-+
- static void child_exit(int ret)
- {
- 	fflush(stdout);
-@@ -87,47 +94,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
- 	return ret;
- }
- 
--struct libcap {
--	struct __user_cap_header_struct hdr;
--	struct __user_cap_data_struct data[2];
--};
--
- static int set_capability(void)
- {
--	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
--	struct libcap *cap;
--	int ret = -1;
--	cap_t caps;
--
--	caps = cap_get_proc();
--	if (!caps) {
--		perror("cap_get_proc");
-+	struct __user_cap_data_struct data[2];
-+	struct __user_cap_header_struct hdr = {
-+		.version = _LINUX_CAPABILITY_VERSION_3,
-+	};
-+	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
-+	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
-+	int ret;
-+
-+	ret = capget(&hdr, data);
-+	if (ret) {
-+		perror("capget");
- 		return -1;
- 	}
- 
- 	/* Drop all capabilities */
--	if (cap_clear(caps)) {
--		perror("cap_clear");
--		goto out;
--	}
--
--	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
--	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-+	memset(&data, 0, sizeof(data));
- 
--	cap = (struct libcap *) caps;
-+	data[0].effective |= cap0;
-+	data[0].permitted |= cap0;
- 
--	/* 40 -> CAP_CHECKPOINT_RESTORE */
--	cap->data[1].effective |= 1 << (40 - 32);
--	cap->data[1].permitted |= 1 << (40 - 32);
-+	data[1].effective |= cap1;
-+	data[1].permitted |= cap1;
- 
--	if (cap_set_proc(caps)) {
--		perror("cap_set_proc");
--		goto out;
-+	ret = capset(&hdr, data);
-+	if (ret) {
-+		perror("capset");
-+		return -1;
- 	}
--	ret = 0;
--out:
--	if (cap_free(caps))
--		perror("cap_free");
- 	return ret;
- }
- 
--- 
-2.27.0
+Will send a standalone patch to fix the bug, and send clean up patch
+after the fix patch is settled.
 
 
