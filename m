@@ -1,221 +1,156 @@
-Return-Path: <linux-kernel+bounces-387999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2294C9B5904
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:18:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C45E9B5907
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:20:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0C71F2409B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC141C22B40
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81A513A24A;
-	Wed, 30 Oct 2024 01:18:41 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4527213BAD7;
+	Wed, 30 Oct 2024 01:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CCzLcApt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DCC146D40;
-	Wed, 30 Oct 2024 01:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4DD42A8B;
+	Wed, 30 Oct 2024 01:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730251121; cv=none; b=cd29cLLtcXeXcRjWAZG1c7bIxHjMB2VMCdnUXHqaFmDBhKzz6BeFBe6LFCV0wQa/JxW7PvWO+6uZU/K70bboQiFFiQUwPmADZgT3HFp8KcrP0o+LbBU75F9MkE7hFOi6OMupeUL09d6VuQ+VHNM/TQv+QqTzqEPRedyhAO4KYjQ=
+	t=1730251246; cv=none; b=UpSKQHlIp0PWB1qxRQGDsw2cyn6AWuNMAcTRSEjEnkm5+J2LxvkwmKmV91E7CdmdM5H6yN+UZPa8Yqauf1FsBwhlQPkrXTveZShnrT7kPLZEhtREwBNIEewGQwv1HKVMrSOnNJM3VAMLH+D+JZzeu3VX16nw7bK0Xod4jfIlTao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730251121; c=relaxed/simple;
-	bh=sckwR4OmF0CBfThZAlWBnbWu/aRsXOAMexIRzo4IdcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Wku0lidfxT6FxHW8fdHrA5g+qtQVKZ2juAa0wNBmpPnI5ECEgBm/DOJGiZXZ2S3cQUaWBW68g2vBxThivkvJoRFi4c6WgS80Ffr6Y6eRNt2WLTNyDTpPH/wLLsr3eahvegJdTWPvK0wlO9/NUN7Ys/a1OSDfHLHLXiqpj2+AbI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XdTjf6MhHzpXW7;
-	Wed, 30 Oct 2024 09:16:38 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 85035180064;
-	Wed, 30 Oct 2024 09:18:34 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Oct 2024 09:18:33 +0800
-Message-ID: <17c39722-8d76-7e62-1c0d-d2df7e3385d5@huawei.com>
-Date: Wed, 30 Oct 2024 09:18:33 +0800
+	s=arc-20240116; t=1730251246; c=relaxed/simple;
+	bh=wZDiMAaOhKiJUYkYEtwy19sskMyJZD0MGmAeOQbFpJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=geYCLm0BPp6tyMsvmLrPzIhIx9wHIgtFZBuwou1KrS8jrTd2of7eO5epkSe+r6ORPX0325kJUNUhFRCfMSzHBvFs44mCmHCcN1Ivo/r33gbyJKBmY9B15ZSBXup7R9Po0PMJaTZpa4Syu8VeMVNOwQLp81DFwKVPceGPV8q8umg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CCzLcApt; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730251244; x=1761787244;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wZDiMAaOhKiJUYkYEtwy19sskMyJZD0MGmAeOQbFpJU=;
+  b=CCzLcAptPu5YC1R+K8L1Bu30P0SJ9zIIanzeF930EH59gXRLVkzNUfAV
+   Dk2cMiE/Y7KPlHwONBweXKsm/YMFDtJN+vHyNofp6et/sDhzAmKkP5KYn
+   AdNMUOpc4NFOZem6Pyr9mRwVIY5PKxzuKsgeia/BeeGWKKOMDg7EtXV4J
+   tSK+rB6IgMBFWppZw53vW2kThGAv4GboL+3IgnLfG7I8D4sbyfnTZHvvj
+   pEVVnrPETBETKyKgkZ9XUtsNkXlXvhNBD3m+urxFgr4aQWqF6Jl91MbEN
+   DqPV0+fR38NU4uuVEQbzl7DgmpJgdlVWHiPmv/BazsgLse8rXM9Zijqf3
+   Q==;
+X-CSE-ConnectionGUID: QOXhr11qR3qJmnNbq8y/lA==
+X-CSE-MsgGUID: +Sx9e+K5TkqDM6MzdwjTpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="32776934"
+X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
+   d="scan'208";a="32776934"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 18:20:42 -0700
+X-CSE-ConnectionGUID: 7w0w8aZDTJqMuAYRh5XFng==
+X-CSE-MsgGUID: XTZgTvcVS7SeqeGzux2ZdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
+   d="scan'208";a="82062035"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 29 Oct 2024 18:20:39 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5xO0-000eMm-33;
+	Wed, 30 Oct 2024 01:20:36 +0000
+Date: Wed, 30 Oct 2024 09:20:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
+	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	=?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Varshini Rajendran <varshini.rajendran@microchip.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
+ newer SoC families
+Message-ID: <202410300915.VPL8EQQu-lkp@intel.com>
+References: <20241029125843.2384307-1-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH 1/3] kprobes: Annotate structs with __counted_by()
-Content-Language: en-US
-To: Nathan Chancellor <nathan@kernel.org>, Masami Hiramatsu
-	<mhiramat@kernel.org>
-CC: <naveen@kernel.org>, <anil.s.keshavamurthy@intel.com>,
-	<davem@davemloft.net>, <kees@kernel.org>, <gustavoars@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-hardening@vger.kernel.org>
-References: <20240813115334.3922580-1-ruanjinjie@huawei.com>
- <20240813115334.3922580-2-ruanjinjie@huawei.com>
- <20241022205557.GA3004519@thelio-3990X>
- <20241029211254.GA4146593@thelio-3990X>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20241029211254.GA4146593@thelio-3990X>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029125843.2384307-1-csokas.bence@prolan.hu>
+
+Hi Bence,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on broonie-spi/for-next]
+[also build test ERROR on soc/for-next linus/master v6.12-rc5 next-20241029]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Cs-k-s-Bence/spi-atmel-quadspi-Create-atmel_qspi_ops-to-support-newer-SoC-families/20241029-210231
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20241029125843.2384307-1-csokas.bence%40prolan.hu
+patch subject: [PATCH] spi: atmel-quadspi: Create `atmel_qspi_ops` to support newer SoC families
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20241030/202410300915.VPL8EQQu-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410300915.VPL8EQQu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410300915.VPL8EQQu-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/spi/atmel-quadspi.c: In function 'atmel_qspi_transfer':
+>> drivers/spi/atmel-quadspi.c:446:68: error: 'struct spi_device' has no member named 'master'
+     446 |         struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->master);
+         |                                                                    ^~
 
 
+vim +446 drivers/spi/atmel-quadspi.c
 
-On 2024/10/30 5:12, Nathan Chancellor wrote:
-> On Tue, Oct 22, 2024 at 01:56:01PM -0700, Nathan Chancellor wrote:
->> Hi,
->>
->> On Tue, Aug 13, 2024 at 07:53:32PM +0800, Jinjie Ruan wrote:
->>> Add the __counted_by compiler attribute to the flexible array member
->>> stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
->>> CONFIG_FORTIFY_SOURCE.
->>>
->>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->>> ---
->>>  kernel/kprobes.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
->>> index da59c68df841..e6f7b0d3b29c 100644
->>> --- a/kernel/kprobes.c
->>> +++ b/kernel/kprobes.c
->>> @@ -92,7 +92,7 @@ struct kprobe_insn_page {
->>>  	struct kprobe_insn_cache *cache;
->>>  	int nused;
->>>  	int ngarbage;
->>> -	char slot_used[];
->>> +	char slot_used[] __counted_by(nused);
->>>  };
->>>  
->>>  #define KPROBE_INSN_PAGE_SIZE(slots)			\
->>> -- 
->>> 2.34.1
->>>
->>
->> This change was not properly tested. In next-20241022, where this
->> changes appears as commit 0888460c9050 ("kprobes: Annotate structs with
->> __counted_by()"), I get a fortify failure because ->nused is initialized
->> after the call to memset(). For example, with Debian's powerpc64le
->> configuration (which is just the first configuration I happened to see
->> this warning in, I don't think it is architecture specific):
->>
->>   $ curl -LSso .config https://github.com/nathanchance/llvm-kernel-testing/raw/096eeab130a9077206d3ddd6f0c6e39187113869/configs/debian/powerpc64le.config
->>
->>   $ make -skj"$(nproc)" ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- LLVM=1 olddefconfig zImage.epapr
->>
->>   $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20230707-182910/ppc64le-rootfs.cpio.zst | zstd -d >rootfs.cpio
->>
->>   $ qemu-system-ppc64 \
->>       -display none \
->>       -nodefaults \
->>       -device ipmi-bmc-sim,id=bmc0 \
->>       -device isa-ipmi-bt,bmc=bmc0,irq=10 \
->>       -machine powernv \
->>       -kernel arch/powerpc/boot/zImage.epapr \
->>       -initrd rootfs.cpio \
->>       -m 2G \
->>       -serial mon:stdio
->>   ...
->>   [    0.000000] Linux version 6.12.0-rc4-next-20241022 (nathan@n3-xlarge-x86) (ClangBuiltLinux clang version 19.1.2 (https://github.com/llvm/llvm-project.git 7ba7d8e2f7b6445b60679da826210cdde29eaf8b), ClangBuiltLinux LLD 19.1.2 (https://github.com/llvm/llvm-project.git 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)) #1 SMP Tue Oct 22 20:24:37 UTC 2024
->>   ...
->>   [    0.138628] ------------[ cut here ]------------
->>   [    0.138816] memset: detected buffer overflow: 512 byte write of buffer size 0
->>   [    0.140141] WARNING: CPU: 0 PID: 1 at lib/string_helpers.c:1033 __fortify_report+0x60/0x80
->>   [    0.142208] Modules linked in:
->>   [    0.142722] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc4-next-20241022 #1
->>   [    0.143379] Hardware name: IBM PowerNV (emulated by qemu) POWER10 0x801200 opal:v7.1 PowerNV
->>   [    0.143810] NIP:  c000000000900920 LR: c00000000090091c CTR: 0000000000000000
->>   [    0.144098] REGS: c000000002acf290 TRAP: 0700   Not tainted  (6.12.0-rc4-next-20241022)
->>   [    0.144457] MSR:  9000000002029033 <SF,HV,VEC,EE,ME,IR,DR,RI,LE>  CR: 24800280  XER: 00000000
->>   [    0.145048] CFAR: c00000000014e414 IRQMASK: 0
->>   [    0.145048] GPR00: c00000000090091c c000000002acf530 c0000000017bf0e0 0000000000000041
->>   [    0.145048] GPR04: c0000000025911f8 c0000000ffffefff 0000000000000003 0000000000000001
->>   [    0.145048] GPR08: 0000000000000003 0000000000000004 0000000000000000 9000000002001033
->>   [    0.145048] GPR12: 0000000000800000 c00000000289e000 c000000000010eb8 0000000000000000
->>   [    0.145048] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->>   [    0.145048] GPR20: 0000000000000000 0000000000000000 0000000000000000 c0000000027fba70
->>   [    0.145048] GPR24: 61c8864680b583eb 0000000000000000 0000000000001000 0000000000000000
->>   [    0.145048] GPR28: c000000002a83400 c00000000262de68 c00000000262de30 c000000002acf5b0
->>   [    0.147696] NIP [c000000000900920] __fortify_report+0x60/0x80
->>   [    0.147934] LR [c00000000090091c] __fortify_report+0x5c/0x80
->>   [    0.148277] Call Trace:
->>   [    0.148465] [c000000002acf530] [c00000000090091c] __fortify_report+0x5c/0x80 (unreliable)
->>   [    0.148855] [c000000002acf590] [c000000000900958] __fortify_panic+0x18/0x40
->>   [    0.149133] [c000000002acf5b0] [c0000000002e3508] __get_insn_slot+0x308/0x320
->>   [    0.149413] [c000000002acf620] [c0000000000586c4] arch_prepare_kprobe+0x1e4/0x270
->>   [    0.149699] [c000000002acf6b0] [c0000000002e496c] register_kprobe+0x4cc/0x8e0
->>   [    0.149975] [c000000002acf930] [c0000000020154ac] arch_init_kprobes+0x30/0x54
->>   [    0.150262] [c000000002acf960] [c0000000020411bc] init_kprobes+0x80/0x120
->>   [    0.150524] [c000000002acf9d0] [c000000000010630] do_one_initcall+0x120/0x3e0
->>   [    0.150798] [c000000002acfd50] [c000000002005cb8] do_pre_smp_initcalls+0x70/0x114
->>   [    0.151082] [c000000002acfd90] [c000000002005b70] kernel_init_freeable+0x14c/0x224
->>   [    0.151365] [c000000002acfde0] [c000000000010eec] kernel_init+0x3c/0x250
->>   [    0.151622] [c000000002acfe50] [c00000000000de3c] ret_from_kernel_user_thread+0x14/0x1c
->>   [    0.151935] --- interrupt: 0 at 0x0
->>   [    0.152433] Code: 3cc2fffc 70630001 3c62ffa0 78841f48 38c6f388 38636489 7c86202a 3cc2ff9c 38c62f30 7cc8305e 4b84d9e1 60000000 <0fe00000> 38210060 e8010010 7c0803a6
->>   [    0.153155] ---[ end trace 0000000000000000 ]---
->>   ...
->>
->> Even if the current ->nused assignment is moved before the call to
->> memset(), the failure still occurs because 1 is clearly wrong for the
->> size of memset(), which is 512 bytes for this configuration. Could this
->> instance of memset() be avoided by using kzalloc() for the kip
->> allocation? Could also take the opportunity to use struct_size(). The
->> following diff fixes this issue for me but I did not do any further
->> testing. If this does not work for some reason and there is no other
->> obvious solution, I think this change should be reverted.
-> 
-> Ping? I still see this on next-20241029. I can also reproduce it with a
-> tip of tree GCC.
+   442	
+   443	static int atmel_qspi_transfer(struct spi_mem *mem,
+   444				       const struct spi_mem_op *op, u32 offset)
+   445	{
+ > 446		struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->master);
+   447	
+   448		/* Skip to the final steps if there is no data */
+   449		if (!op->data.nbytes)
+   450			return atmel_qspi_wait_for_completion(aq,
+   451							      QSPI_SR_CMD_COMPLETED);
+   452	
+   453		/* Dummy read of QSPI_IFR to synchronize APB and AHB accesses */
+   454		(void)atmel_qspi_read(aq, QSPI_IFR);
+   455	
+   456		/* Send/Receive data */
+   457		if (op->data.dir == SPI_MEM_DATA_IN)
+   458			memcpy_fromio(op->data.buf.in, aq->mem + offset,
+   459				      op->data.nbytes);
+   460		else
+   461			memcpy_toio(aq->mem + offset, op->data.buf.out,
+   462				    op->data.nbytes);
+   463	
+   464		/* Release the chip-select */
+   465		atmel_qspi_write(QSPI_CR_LASTXFER, aq, QSPI_CR);
+   466	
+   467		return atmel_qspi_wait_for_completion(aq, QSPI_SR_CMD_COMPLETED);
+   468	}
+   469	
 
-Hi, Nathan,
-
-Could you send the patch to fix this?
-
-> 
->> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
->> index 98d71a5acb72..6adb0cc4e45c 100644
->> --- a/kernel/kprobes.c
->> +++ b/kernel/kprobes.c
->> @@ -95,10 +95,6 @@ struct kprobe_insn_page {
->>  	char slot_used[] __counted_by(nused);
->>  };
->>  
->> -#define KPROBE_INSN_PAGE_SIZE(slots)			\
->> -	(offsetof(struct kprobe_insn_page, slot_used) +	\
->> -	 (sizeof(char) * (slots)))
->> -
->>  static int slots_per_page(struct kprobe_insn_cache *c)
->>  {
->>  	return PAGE_SIZE/(c->insn_size * sizeof(kprobe_opcode_t));
->> @@ -175,7 +171,7 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
->>  		goto retry;
->>  
->>  	/* All out of space.  Need to allocate a new page. */
->> -	kip = kmalloc(KPROBE_INSN_PAGE_SIZE(slots_per_page(c)), GFP_KERNEL);
->> +	kip = kzalloc(struct_size(kip, slot_used, slots_per_page(c)), GFP_KERNEL);
->>  	if (!kip)
->>  		goto out;
->>  
->> @@ -185,10 +181,8 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
->>  		goto out;
->>  	}
->>  	INIT_LIST_HEAD(&kip->list);
->> -	memset(kip->slot_used, SLOT_CLEAN, slots_per_page(c));
->> -	kip->slot_used[0] = SLOT_USED;
->>  	kip->nused = 1;
->> -	kip->ngarbage = 0;
->> +	kip->slot_used[0] = SLOT_USED;
->>  	kip->cache = c;
->>  	list_add_rcu(&kip->list, &c->pages);
->>  	slot = kip->insns;
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
