@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-388098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046B09B5A83
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:52:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E589B5A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E2A1C22E69
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:52:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA631C21321
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5731991AE;
-	Wed, 30 Oct 2024 03:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72E5197A8E;
+	Wed, 30 Oct 2024 03:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJoTboqH"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aDn53dxU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBA919341F;
-	Wed, 30 Oct 2024 03:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7B828F7;
+	Wed, 30 Oct 2024 03:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730260350; cv=none; b=acBWACzSljqsU0FP3jQyZ7uggVbEjVSPTpuEfrj85y4gSUlSORW0grv8TKXnz8aFaA+JJx+82WM5eCNAI35yCSQoWEbEO2Um9LPPMJZ5eiG9YcZPZitY8LDNQ5YYND+29kAAkLZ9k2a3tGsi+Va3gOLr7CL2gjBSMkNHCCYEXns=
+	t=1730260305; cv=none; b=LpHZ45CQvQ0FWvqzjGLwMl1MTuzS8L+CVyOBJstlVNcBV9BE9jDWYkHuuD1IncJ536knsUU1rDm5HeYkDXi+azOLZxArXQyjo4kQEsUYlxd6izpDN8pjYrQsK7Nu5LczZ1mjAIPv7pta1H+z8XKnMyuFiv13QJX55bgay5APyEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730260350; c=relaxed/simple;
-	bh=I7kpKQmp+LA7SA7EyORv8B9GG6XIXMl8zBoQd8WMleQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DNsaJBUAuR4OJHOrmQStUJksL9G6nTcCyqY9egMiGd3CKb8gYEcmP00uqo+dQlD/7hoc+XcQ+sDTaw6KxFvt93xSozBMiRGBGjJQT6Amu6mnbCCunjgvkYOJXSEHB/PoY3I5e9lnK6RG6wy7vO2oPaiqbcSzrLWFUcMYt2OtWdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJoTboqH; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e5a0177531so4768156a91.2;
-        Tue, 29 Oct 2024 20:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730260346; x=1730865146; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbwvVTwOy+SO0yRgFOz9kS/o1vQ7kE8X5/o9C5j2WJ4=;
-        b=CJoTboqHlLpQS+nugV/bTL+OftwTNOQyDKzUhdXfi14GNo5gOtZObhy5mmlduGJB8K
-         diHF8IVc2eZhpV6ImG8OkpjVUAdyOkE2EIgQVxbOFFiU0hf1MD0P/BTgTAWfBhDusIpc
-         /UtOJePp19FRaRWAYUvZHyFXnccs54+aROaTMNjGjm8GLyo4DdQwybYkV3S9wzIT7pTj
-         OIU7Pb8IbakELK6bZ/V5nWZzT6nwYtPRcaipkbq7dUaxPiJNRRr3fJCJTHqv8jeAXBjX
-         uVKldKBmqN4kK1BKIBbxFlVZOj5WY/clrOUXj6e+mqc41j8Bkj4LnIcxxiEN0Vwinjys
-         Bl3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730260346; x=1730865146;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LbwvVTwOy+SO0yRgFOz9kS/o1vQ7kE8X5/o9C5j2WJ4=;
-        b=LqwrrRhFF4jIyV4TpPswdI95jnG4KXqpj80znwHDP88upkElAhOlSC5G5I7Xu9g0gj
-         N7ElFRRjY0uvuO8qvkWfRr7K2dDyLQSdair9x0MeW0Xobh7FzoeSPdWJoxZsOt0vPA7x
-         6QETb3kinI1LJzYRyXD5e70xBcqb+8z9gDmGy1kyoqgQsjJniuwrGHMFKDK4NSRzjCPL
-         b5ejewJ2y0FbfztUSSr7G046TllTP3p3JStafQl2qw0VBZYKBXv2ed5wEZwG/Ig0nE5Y
-         WV+wMyRFVM7UMa71Qa6hzBbtoPPlGnoSWZTZJ+0XLlmLnPyWI80RjzTl6Jxhz+mZUiDm
-         F4vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbscA5IeWKzJHlwVVoNld9EPT+/G0dW2TP9849z2HRJPfpJjO1xv1hHy9Yov0UsTn4Qn5coqb+KwdC@vger.kernel.org, AJvYcCX4FzU7l8P6RYq/Exu0AVIRUgT89RXcoS/PPkkR8iuAzTQ8VxYttLCk/dWFXFAnylwcGbX3Lp71+xajWdxX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg4iKIDxC9AmtHeHVAN1tZd2aAvkJGtUGFgi/TRkwLuVG596NL
-	XbT58gWCAs5UCem1y4rzS+MIx98twcCKLaXISRtONjQjqcBv9BXX6XVgiw==
-X-Google-Smtp-Source: AGHT+IHyC/i13QPcOKD2CFv23b+jdVC2FHNMqnX9p8U1AHLFjS2zjB6luXhurheF98UBB3QUMm+kZQ==
-X-Received: by 2002:a17:90a:b111:b0:2e2:d16e:8769 with SMTP id 98e67ed59e1d1-2e8f106926emr15758945a91.15.1730260346047;
-        Tue, 29 Oct 2024 20:52:26 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbe07cesm525438a91.43.2024.10.29.20.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 20:52:25 -0700 (PDT)
-Date: Wed, 30 Oct 2024 11:50:54 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@gmail.com>
-Subject: Re: [PATCH] riscv: dts: sophgo: fix pinctrl base-address
-Message-ID: <ihmors43w3ttfun7c4fj75ahh2hnhafdxhlmocbxfwttigj3fq@wxud2d2srisn>
-References: <20241028-fix-address-v1-1-dcbe21e59ccf@bootlin.com>
+	s=arc-20240116; t=1730260305; c=relaxed/simple;
+	bh=YYEdGyvHapdH6+urF5Oux0dkU/eP2cs22NvNSpI0yGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sQWudfZDJKIdcbemQZ9nG4JfRlMbk1+DXEZDPoSs7euOMtPujZYRFsKus8wAi4RCj9OAlrgSV/2zFJCMHx/jfM9JO6vB256926wksUpOdCcfcEHV1qxOSFvo7nI+j01c4mws6inngUsBc6o/xnlvKIgdJM1EOqKisJIyWYKkoq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aDn53dxU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730260296;
+	bh=6wsNVS3QJIKHN/XDPgf/6Kmvha5nzhZNmINi0ham8RE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aDn53dxUOv4Ma6kz8AO3RM/wItWj2ZXeVfM0dTOyi/VivoO2tKDYRjRSsOo37lmjz
+	 kS6yQkuVzP2mZ1IXgKpFCbZ6w2hSpDPRSCcdfOigyW2f54DLM5/i0LqolDnNUaikEG
+	 v54HWoI76v6pvEoQ2jqNCD/na1VBto/bRBFnL4UKucHH/fi9MevQCMdiR18MJmNpo2
+	 VLDasRyUrkHygC0a/WSz21obL9Yquma9vfFDLLs7Ioucdpy8sVZF1L2v4bEaGyjiVU
+	 RoSH0Em4FQDMvr3TY+Kkp3T8UOLB6OXTEXaIRDPMbtI2FBBMURP+Fk0DmTu0UeEG7+
+	 zFtmwAVuTarEQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XdY8R6FlKz4wb7;
+	Wed, 30 Oct 2024 14:51:35 +1100 (AEDT)
+Date: Wed, 30 Oct 2024 14:51:35 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Joerg Roedel <joro@8bytes.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Dave Airlie <airlied@redhat.com>
+Cc: DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the iommu tree
+Message-ID: <20241030145135.7851a2ae@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028-fix-address-v1-1-dcbe21e59ccf@bootlin.com>
+Content-Type: multipart/signed; boundary="Sig_/fw2GqG3kOCLjZTUbllDNwjT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Oct 28, 2024 at 11:43:24AM +0100, Thomas Bonnefille wrote:
-> Fix the base-address of the pinctrl controller to match its register
-> address.
-> 
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+--Sig_/fw2GqG3kOCLjZTUbllDNwjT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 93b61555f509 ("riscv: dts: sophgo: Add initial SG2002 SoC device tree")
+Hi all,
 
+The following commits are also in other trees as a different commits
+(but the same patches):
+
+  0c069019f33d ("media: nvidia: tegra: Use iommu_paging_domain_alloc()")
+  ba1057ab5d01 ("drm/nouveau/tegra: Use iommu_paging_domain_alloc()")
+
+These are commits
+
+  bf7835facc09 ("drm/nouveau/tegra: Use iommu_paging_domain_alloc()")
+
+in the drm tree and
+
+  93ee2d7ce266 ("media: nvidia: tegra: Use iommu_paging_domain_alloc()")
+
+in the v4l-dvb tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fw2GqG3kOCLjZTUbllDNwjT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmchrUcACgkQAVBC80lX
+0GxEGAf+MvQGB9j2ChxjLi3itY0LABtv+Cd3eQu5CQ0Xa3s3dXnHSsRCxizH83it
+KAuZcG3NDSkHsNV1o78cgRLsKOfXR95lR7xuLlcVMaPEZtMYfJJUOpkHukIeXQAt
+WxKyGdYk09ZOnyrDUyuJxY9mJxk7Kycx/ah1CXGSV4vV4QzfRbMsNse6YKGdTMHU
+C73jOlfokuBtVF4DelUnipg1Kwg0FNNEih9ljDCfoJHGOMsNQEec3sBQQDAWiYm9
+Dfbcur8kPJuAaTDtWaqMBPrPpIDgDSr6TFPswK0dU4SYSJ9AgWWysYn0hVrrVo9D
+wjsmDEZBoq8njw+vDjDshA9e/daWKw==
+=q/IT
+-----END PGP SIGNATURE-----
+
+--Sig_/fw2GqG3kOCLjZTUbllDNwjT--
 
