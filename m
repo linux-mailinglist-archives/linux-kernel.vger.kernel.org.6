@@ -1,210 +1,143 @@
-Return-Path: <linux-kernel+bounces-388967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931499B66B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:59:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A7D9B66BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 061AEB228C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:59:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41FE1B238D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687781F4295;
-	Wed, 30 Oct 2024 14:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DFE1F5850;
+	Wed, 30 Oct 2024 15:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Rj8xdqco"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNhX93z8"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F111E8850
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4056F1F1308;
+	Wed, 30 Oct 2024 15:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300386; cv=none; b=Mt7YSF28v1RUQvAdL6iRfk1Y/hlnUs8eIgWLNnif0eXd2RqfucEsoJ1FjzbhhhYn4ngB5J2o3g645qJrSca3GPwz324FjsJfgeIw+wKM+9gGQS3Q0mP0E8QirLZD0Ck7RcZzzNj7HKOA+cTpH+9oTa0zudwAbVPAXiLYtAM0ErI=
+	t=1730300407; cv=none; b=ijc29YGpfIDUOsJ8q83u4qMFgw8JZlCHLR65TqBIkF0od4LB+9tQsOS8PzESHZp6IYC6oWm0/mzmJa4Ue53IK66wMabgzT5qBSJ6wre4s+2Cmm2AmCMDcjf9DatTNW3AelUKSl7fK9FL5KFkzKO8I1i1SPHnl4kq+4DfCYipcXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300386; c=relaxed/simple;
-	bh=xgTGTLCEi3J05i1dd/M/kJiy/4dDsFFhU1eqm56yAXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0lVRsXpQXpgBoMXiwPR5lJBWPAbezUmeeT0K86pRTCsi7OBkgeEm0GaFsmsattcS8zdspbmVyEjHJ4zlp8NkON6Y14tjWOx3kKWM5RrvcppJ2tU/MR2mbpkXwf76W1pdfH9FQZmJ1KS0fSZZZ7eyrFt79zPFcp0DQ4lru3WNzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Rj8xdqco; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cbceb48613so43199746d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:59:44 -0700 (PDT)
+	s=arc-20240116; t=1730300407; c=relaxed/simple;
+	bh=oi+p0UaAbcbSXTT3OAwkhFoHLKNlpq/uQ4oKcVjlTF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HKJCxMIN5guiuKmGIHrmAvkYAbUjwCkMQvjEhdYacLf5nrCblM70DjxivtFwP11YuthlfzCjkE/0WH+BOGG/GuM2W4nRXJAPTb+xWHai5ZXCeboOcXQdWFhy2v3HGRYRw3vF/uaWKVW0IUKgWeEmOzC8jH4vWitmhYuStQ5RWo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YNhX93z8; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43169902057so62733955e9.0;
+        Wed, 30 Oct 2024 08:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1730300383; x=1730905183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1CRNigufEv4srYMK7CzZ+n/1hKhvYmg+07IbXIIY6zQ=;
-        b=Rj8xdqco40tFZFQkwoYWFKbwTgPH0fCkaO14XwFGGdKrE5plUpPvNoLvLdStl4uXF9
-         y80ki0jpSy2lCUcOxa5ukN1UZpEeN/QcFciRONgNWvGTwtB4zGrGAkax0vZn2kMM/N8u
-         DAKT1Sl2pmAeGvVHRZQjHnyh7oXWpUwzNGqSYQG2GwFrsvjkyduMWQH0+kZ88hI0aBEz
-         PdLze5bsbq1zr59huFTucQqiJihQjMT5mxbk4RK/lt+f25ljcs9PGmWAcZuZHZgCGBr6
-         5qESX5OhRKRVCJgHh0lQcwxL0Dh3Q2ZVX+PtljxFrbW9DXdshYAk5UpaPjMrH3j1gxTV
-         z0kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730300383; x=1730905183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730300403; x=1730905203; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1CRNigufEv4srYMK7CzZ+n/1hKhvYmg+07IbXIIY6zQ=;
-        b=L2r+Ht45OSepJB9LoU4iT15Lh35uJDBXX3vN4gJqVXWAEoS8DW/aqtOm/me66DGjSq
-         MSwtezLpSHL8dMRebjck1CoBDpVJBrHoJIdKgllytD9yKJOFqEMQHYzobTBY1yDSYsz8
-         RZ872tSC1Qe5UB3tnEUUkC7ye2umBN7lYA+MNShb/sXpn7CLHG0VqQa7/pahgmrAolqR
-         kfJj0/7vXBe2JQupPcEU73cQAlcSKt68Cup8p63KPzzhI5tqfeBR2kyl/RKR+h6W2SuX
-         Ms4im74IC2cywaHz9Vu0hwJ9qNRDttQXNxDuyIWVI4Bm9TIox/AcMLDfY5Lwg1XYFhJX
-         62Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMhKOUdAxKEEI6f1dfeh4X3e/1Dvf11G3WToxeorDpn6f9LMllvocd5cnPjJRUfKfoAVXQX00k3uAIhgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfzRvS0JNZDlEb6SvSNdE/hzo2wSzKFX5Jbicokxf/rapCoJ6B
-	zT/lztulHN1HZOVwWybyk58g0spZiMn6f5coKv5mNQLVG2ocqQerfORMgK+s+qs=
-X-Google-Smtp-Source: AGHT+IEV7l+Y+OcHF3D5iHR7Q3RlAhw7sBOVYB5E6ILrTizIrARGpPbdx8snNJXXQLRSYzX4Yuru7A==
-X-Received: by 2002:a0c:f409:0:b0:6cb:c6d2:3567 with SMTP id 6a1803df08f44-6d345fae094mr34561776d6.3.1730300383356;
-        Wed, 30 Oct 2024 07:59:43 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d179a09498sm52532166d6.93.2024.10.30.07.59.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 07:59:43 -0700 (PDT)
-Date: Wed, 30 Oct 2024 10:59:48 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
-	dave.jiang@intel.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
-	lenb@kernel.org, osalvador@suse.de, gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org, rppt@kernel.org
-Subject: Re: [PATCH v4 1/3] memory: implement
- memory_block_advise/probe_max_size
-Message-ID: <ZyJJ5Pvfj4Spcyo7@PC2K9PVX.TheFacebook.com>
-References: <20241029202041.25334-1-gourry@gourry.net>
- <20241029202041.25334-2-gourry@gourry.net>
- <55df76a9-afa3-4dc0-a7f9-ff9b6f139448@redhat.com>
+        bh=iB2BbgH3O/pZn9GHva0yEd7H2+eN1brmYySZkc0FRto=;
+        b=YNhX93z8VqaJNGLjp/FYZW8md4nh2JXseuAfxLxNPv+XXeQYHR39oH12o/uNlgaA0G
+         K2YB5I7BPil+VooV8FxPHD3ThaLMe14fHltGA5fW7/0tG0TRxRyXrsSa12x19vfIuTtx
+         MHTBdqLxL2X6euhyw0nOvRgPmyLePJHETeuqRw3YOCv6JV9XcIORZw3/9W5fzb58kvXB
+         Eq5QQN4tjfw2AFA4/3/3Va6PdWn3+aMDSrco50Os39eg0u/B0FT9bVCL2IW/i+pLKyWy
+         al6vm6b3Xva1iIwco6jMdCrpuzcHMDVxZDP5xCu7NgZSTOSyBNrMh/Oo2nLaWCVQQXRf
+         s7MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730300403; x=1730905203;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iB2BbgH3O/pZn9GHva0yEd7H2+eN1brmYySZkc0FRto=;
+        b=oKvwEG0Dw99gceDtao4wkL4jm8gybRbqnYQPYs+2UMPPWleM+2qrAK5ieLg2k9ollG
+         lPYTFvci+fyaq45sqCscpr5UYW7G3ihRCkRrW20W9673SUE+9+ky33ExeRRPHjU6PlYg
+         GlD2XgVXUSqTfYj3ty/+JCPgwerpxfWe8OS4KqC2Gin1dj1ZFtIyPUplfah2hqZXHTg6
+         /crIguvX/w9fFVHONKT/wHD0sTXw1OHNoaISv9PVYRouqvW2VOvw1R9v67HotQNvI4yH
+         sP6xxYyZVFUMTkZ4jz8xl52mHpSclAJlC5BCphUe7ouIl9iae/h6wwXq4J4P7FJf/JJC
+         Yilg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOQkazNErNOnoST5UbBEpSdeSOWLadfF720qSu54jBoCbtqoAN87577nTvCRyZo1PEUt8=@vger.kernel.org, AJvYcCVoD2KxH1kfj7Pnj66/GD/QEULz0tfk85bYNFXvnHGU2JuGlTQRVLftU+ww+f1wndxi4GPnuCvREMPtQkpX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd1/0eoBOWqJl2vIJBPFjUr+xyrUSyL/FLdarPOWu7Q/7w4qtq
+	9NS0yoFlHLY6cBW/6CvSRvT2u6AW+SvHBlc4FGmmresmi2m8U/ZbBrTV6IvkH3xaTzT8pt3OH85
+	2zXHd9WhBKbdEP8Y4ond6BNBqd28=
+X-Google-Smtp-Source: AGHT+IGbdD9XkGELUxPU2xXBDJ5pZ7pFApkwCRDH2KPXtQTXM7qdOqXzI16WAuOmidLvDlYhZjgd+XtOmODaugd5HbE=
+X-Received: by 2002:a5d:564d:0:b0:37d:39f8:a77a with SMTP id
+ ffacd0b85a97d-381b7056ba4mr2600263f8f.8.1730300403240; Wed, 30 Oct 2024
+ 08:00:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55df76a9-afa3-4dc0-a7f9-ff9b6f139448@redhat.com>
+References: <CADKFtnT59wzKxob03OOOfvVh67MQkpWvzvfmzv3D-_bGeM=rJA@mail.gmail.com>
+ <20241029002814.505389-1-jrife@google.com>
+In-Reply-To: <20241029002814.505389-1-jrife@google.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 30 Oct 2024 07:59:51 -0700
+Message-ID: <CAADnVQJeWj2t9XSRxK5NU99GJsOBnropoOOohDNPj7N2xZFGEQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 4/4] tracing: Add might_fault() check in
+ __DO_TRACE() for syscall
+To: Jordan Rife <jrife@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Michael Jeanson <mjeanson@efficios.com>, Namhyung Kim <namhyung@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Yonghong Song <yhs@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 11:25:33AM +0100, David Hildenbrand wrote:
-> On 29.10.24 21:20, Gregory Price wrote:
-> > Hotplug memory sources may have opinions on what the memblock size
-> > should be - usually for alignment purposes.  For example, CXL memory
-> > extents can be 256MB with a matching alignment. If this size/alignment
-> > is smaller than the block size, it can result in stranded capacity.
-> > 
-> > Implement memory_block_advise_max_size for use prior to allocator init,
-> > for software to advise the system on the max block size.
-> > 
-> > Implement memory_block_probe_max_size for use by arch init code to
-> > calculate the best block size. Use of advice is architecture defined.
-> > 
-> > The probe value can never change after first probe. Calls to advise
-> > after probe will return -EBUSY to aid debugging.
-> > 
-> > On systems without hotplug, always return -ENODEV and 0 respectively.
-> > 
-> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> > Signed-off-by: Gregory Price <gourry@gourry.net>
-> > ---
-> >   drivers/base/memory.c  | 48 ++++++++++++++++++++++++++++++++++++++++++
-> >   include/linux/memory.h | 10 +++++++++
-> >   2 files changed, 58 insertions(+)
-> > 
-> > diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> > index 67858eeb92ed..099a972c52dc 100644
-> > --- a/drivers/base/memory.c
-> > +++ b/drivers/base/memory.c
-> > @@ -110,6 +110,54 @@ static void memory_block_release(struct device *dev)
-> >   	kfree(mem);
-> >   }
-> > +/**
-> > + * memory_block_advise_max_size() - advise memory hotplug on the max suggested
-> > + *				    block size, usually for alignment.
-> > + * @size: suggestion for maximum block size. must be aligned on power of 2.
-> > + *
-> > + * Early boot software (pre-allocator init) may advise archs on the max block
-> > + * size. This value can only decrease after initialization, as the intent is
-> > + * to identify the largest supported alignment for all sources.
-> > + *
-> > + * Use of this value is arch-defined, as is min/max block size.
-> > + *
-> > + * Return: 0 on success
-> > + *	   -EINVAL if size is 0 or not pow2 aligned
-> > + *	   -EBUSY if value has already been probed
-> > + */
-> > +static size_t memory_block_advised_sz;
-> 
-> Nit: if everything is called "size", call this "size" as well.
-> 
+On Mon, Oct 28, 2024 at 5:28=E2=80=AFPM Jordan Rife <jrife@google.com> wrot=
+e:
+>
+>
+> 1. Applied my patch from [1] to prevent any failures resulting from the
+>    as-of-yet unpatched BPF code that uses call_rcu(). This lets us
 
-Mostly shortened here because
+...
 
-	if (memory_block_advised_sz)
-		memory_block_advised_size = min(size, memory_block_advised_size);
+> [1]: https://lore.kernel.org/bpf/20241023145640.1499722-1-jrife@google.co=
+m/
+> [2]: https://lore.kernel.org/bpf/67121037.050a0220.10f4f4.000f.GAE@google=
+.com/
+> [3]: https://syzkaller.appspot.com/x/repro.syz?x=3D153ef887980000
+>
+>
+> [  687.323615][T16276] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [  687.325235][T16276] BUG: KFENCE: use-after-free read in __traceiter_sy=
+s_enter+0x30/0x50
+> [  687.325235][T16276]
+> [  687.327193][T16276] Use-after-free read at 0xffff88807ec60028 (in kfen=
+ce-#47):
+> [  687.328404][T16276]  __traceiter_sys_enter+0x30/0x50
+> [  687.329338][T16276]  syscall_trace_enter+0x1ea/0x2b0
+> [  687.330021][T16276]  do_syscall_64+0x1ec/0x250
+> [  687.330816][T16276]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> [  687.331826][T16276]
+> [  687.332291][T16276] kfence-#47: 0xffff88807ec60000-0xffff88807ec60057,=
+ size=3D88, cache=3Dkmalloc-96
+> [  687.332291][T16276]
+> [  687.334265][T16276] allocated by task 16281 on cpu 1 at 683.953385s (3=
+.380878s ago):
+> [  687.335615][T16276]  tracepoint_add_func+0x28a/0xd90
+> [  687.336424][T16276]  tracepoint_probe_register_prio_may_exist+0xa2/0xf=
+0
+> [  687.337416][T16276]  bpf_probe_register+0x186/0x200
+> [  687.338174][T16276]  bpf_raw_tp_link_attach+0x21f/0x540
+> [  687.339233][T16276]  __sys_bpf+0x393/0x4fa0
+> [  687.340042][T16276]  __x64_sys_bpf+0x78/0xc0
+> [  687.340801][T16276]  do_syscall_64+0xcb/0x250
+> [  687.341623][T16276]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-is over 80 characters lol.  Happy to change if you have strong feelings.
-
-
-> > +static bool memory_block_advised_size_queried;
-> > +int memory_block_advise_max_size(size_t size)
-> 
-> Not that memory_block_size_bytes() uses "unsigned long". I don't think it
-> matters here. Or could it on 32bit? (I assume that code will not really
-> matter on 32bit)
-> 
-
-ack
-
-> > +{
-> > +	if (!size || !is_power_of_2(size))
-> > +		return -EINVAL;
-> > +
-> > +	if (memory_block_advised_size_queried)
-> > +		return -EBUSY;
-> > +
-> > +	if (memory_block_advised_sz)
-> > +		memory_block_advised_sz = min(size, memory_block_advised_sz);
-> > +	else
-> > +		memory_block_advised_sz = size;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * memory_block_advised_max_size() - query advised max hotplug block size.
-> > + *
-> > + * After the first call, the value can never change. Callers looking for the
-> > + * actual block size should use memory_block_size_bytes. This interface is
-> > + * intended for use by arch-init when initializing the hotplug block size.
-> > + *
-> > + * Return: advised size in bytes, or 0 if never set.
-> > + */
-> > +size_t memory_block_advised_max_size(void)
-> > +{
-> > +	memory_block_advised_size_queried = true;
-> > +	return memory_block_advised_sz;> +}
-> > +
-> 
-> I wonder if both should.could be "__init" ? So they could only be called
-> from __init ... which sounds like the tight thing to do?
-> 
-
-Was thinking the same thing in another thread, will go ahead and change it.
-
-> Acked-by: David Hildenbrand <david@redhat.com>
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+I think the stack trace points out that the patch [1] isn't really fixing i=
+t.
+UAF is on access to bpf_link in __traceiter_sys_enter
+while your patch [1] and all attempts to "fix" were delaying bpf_prog.
+The issue is not reproducing anymore due to luck.
 
