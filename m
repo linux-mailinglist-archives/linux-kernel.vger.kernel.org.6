@@ -1,104 +1,175 @@
-Return-Path: <linux-kernel+bounces-388942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51859B6677
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:51:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E334A9B6679
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:51:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80F791F2127E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DD82814EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD681F4712;
-	Wed, 30 Oct 2024 14:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806121F471A;
+	Wed, 30 Oct 2024 14:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hChgAx3v"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hvLZ8HSs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kvmxu5JV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8981F4FA2
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9EC26AD4;
+	Wed, 30 Oct 2024 14:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299779; cv=none; b=qLyllfSLlcQwFhYNxoH3XpZU+B5Bm+7q5RJU/+swiJGZhUMn4H5PGX4WyQLGOtydcU9w/hdwwepmvnwumb9zfgkEJHW1jeNXZ28pAeyIOUDCV6vP5l1gZRUcZ88lnuj1lmZQqE3uwpS3sk4LWbdAb5nPokH2c+HtCa6/t/+pSPI=
+	t=1730299795; cv=none; b=fEGbbGdmDreSAOkZPhe+OEhU3y1zOiMggHf5URemEHsjuhhFPoepYBWOxD366mVoytk3wgiNe3zeidiRSqoYP+TddJwYVhUJHi4zVmUSZwfS7Ndr2sY+ZqjDqvrUtI5whatvjCp1D3KGVwUDOHqCnPcGUN7GdKbsx9LWYNE5SUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299779; c=relaxed/simple;
-	bh=58fkI0DxBTuYu41ZNeXJTYW9hWb+IBRT0RkNSze6a4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oqWbydVtRzBVO977u2i5+DCu02x0V1Z2yWynYWOEdk5soPlnkOeOCrfI3m8rhfoxEusnV5QvM/+e58m2/5fJDCdYNxxdCNdyyIROiL9NPnuSVQODB9olL8nAbimUdeU3Tj2fZxNSlcB+pS2SsNPklpmmH4K4aG34/AxW4+FraJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hChgAx3v; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730299774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1730299795; c=relaxed/simple;
+	bh=NcxMU4S7X+EKySzWCB0SikmEKncE6APZpnVBX7sZ9F8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=CInlWQFcEynFYz0lAoH2JzMqiApW+3vCP/oqylicyvpBjS6UPsXaXrZ/EySU00I5bPtw0EGgZUCQgTXvG08D+bpPZSFhbxYY7sQT3cOL91VaT3w15sI6MPLQ+tZvkEzasbjg8JEQ0ekoqYm2aUI+/lvNqFTJa2U/bNcjYy6tON8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hvLZ8HSs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kvmxu5JV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 30 Oct 2024 14:49:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730299791;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=H1w/iqqQqeWdeidkDYmAvBZgSRrIyIu8DOwMPAJKc5Y=;
-	b=hChgAx3vpxAGTC+OhSh6VQuCWJeMJr+0JC1YgvQs6qW6kvU5WF6nXBZ98DDucWqYkFvPkT
-	F8TPGR9+POiRaVmvmQnWW3KABiWHhd2eHu0ra11vSqHySg4IdE4cMK03hMllBb4rkXzCm/
-	urjRWKw09rxXAhEPe72OlmQuYLc7t+M=
-Date: Wed, 30 Oct 2024 22:49:16 +0800
+	bh=Dv4J/KuaHF/yG3OPBdAKJ8i882g+dgZgJ8KwobcCXuI=;
+	b=hvLZ8HSselp+du6ve9K/cMOmIcGyLjI8qQny5lHkS3RB5r/a3ltDHUUptJCc2XsF/1ece6
+	pwd6a/tCIuHuxpYiZhxOZjAtAdWaIuWKG++Nqho2e5X8a40pGdU+tog2nM1I8e9K8zt6eJ
+	PFFulqisqeYhvToBC6GiHg+yNhpfRNmfWC7LBMl06A7arLrxurCGqNzW/S+WxVAAukkCVi
+	VCPMoncLS9AHvZy8tVX5aYToExfn3plZUOUnMYKszxYm3GNvHC8eZ8u3gXDOjpnC32wWZW
+	mYm9bPr/83aO/HtYg50EMI7Oi9JQtczWo4aJF3ZOhIZLupHhCtj2g5XiUXNRwQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730299791;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dv4J/KuaHF/yG3OPBdAKJ8i882g+dgZgJ8KwobcCXuI=;
+	b=Kvmxu5JVbEWmGJQ5Iq+TktoL0Sim1/1Ou9j7MDIQgZyUaG4ZUC8k04oLkAENQxufbCYY33
+	femgxYaOvCTKoJCg==
+From: "tip-bot2 for Gregory CLEMENT" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] irqchip/mips-gic: Prevent indirect access to clusters
+ without CPU cores
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Aleksandar Rikalo <arikalo@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20241028175935.51250-14-arikalo@gmail.com>
+References: <20241028175935.51250-14-arikalo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <173029979090.3137.10502719543917785749.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
+The following commit has been merged into the irq/core branch of tip:
 
-On 2024/10/21 21:08, Neil Armstrong wrote:
-> Hi,
->
-> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
->> The assignment of the of_node to the aux bridge needs to mark the
->> of_node as reused as well, otherwise resource providers like pinctrl will
->> report a gpio as already requested by a different device when both pinconf
->> and gpios property are present.
->> Fix that by using the device_set_of_node_from_dev() helper instead.
->>
->>
->> [...]
-> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
+Commit-ID:     d1cb1437b785f312d63f447e2e79ff768e7ccc29
+Gitweb:        https://git.kernel.org/tip/d1cb1437b785f312d63f447e2e79ff768e7ccc29
+Author:        Gregory CLEMENT <gregory.clement@bootlin.com>
+AuthorDate:    Mon, 28 Oct 2024 18:59:35 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 30 Oct 2024 15:41:32 +01:00
 
+irqchip/mips-gic: Prevent indirect access to clusters without CPU cores
 
-It's quite impolite to force push patches that still under reviewing,
-this prevent us to know what exactly its solves.
+It is possible to have zero CPU cores in a cluster; in such cases, it is
+not possible to access the GIC, and any indirect access leads to an
+exception.
 
-This also prevent us from finding a better solution.
+Prevent access to such clusters by checking the number of cores in the
+cluster at all places which issue indirect cluster access.
 
-> [1/1] drm/bridge: Fix assignment of the of_node of the parent to aux bridge
->        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/85e444a68126a631221ae32c63fce882bb18a262
->
--- 
-Best regards,
-Sui
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20241028175935.51250-14-arikalo@gmail.com
+---
+ drivers/irqchip/irq-mips-gic.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
+index f42f69b..bca8053 100644
+--- a/drivers/irqchip/irq-mips-gic.c
++++ b/drivers/irqchip/irq-mips-gic.c
+@@ -141,7 +141,8 @@ static bool gic_irq_lock_cluster(struct irq_data *d)
+ 	cl = cpu_cluster(&cpu_data[cpu]);
+ 	if (cl == cpu_cluster(&current_cpu_data))
+ 		return false;
+-
++	if (mips_cps_numcores(cl) == 0)
++		return false;
+ 	mips_cm_lock_other(cl, 0, 0, CM_GCR_Cx_OTHER_BLOCK_GLOBAL);
+ 	return true;
+ }
+@@ -507,6 +508,9 @@ static void gic_mask_local_irq_all_vpes(struct irq_data *d)
+ 	struct gic_all_vpes_chip_data *cd;
+ 	int intr, cpu;
+ 
++	if (!mips_cps_multicluster_cpus())
++		return;
++
+ 	intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
+ 	cd = irq_data_get_irq_chip_data(d);
+ 	cd->mask = false;
+@@ -520,6 +524,9 @@ static void gic_unmask_local_irq_all_vpes(struct irq_data *d)
+ 	struct gic_all_vpes_chip_data *cd;
+ 	int intr, cpu;
+ 
++	if (!mips_cps_multicluster_cpus())
++		return;
++
+ 	intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
+ 	cd = irq_data_get_irq_chip_data(d);
+ 	cd->mask = true;
+@@ -687,8 +694,10 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int virq,
+ 	if (!gic_local_irq_is_routable(intr))
+ 		return -EPERM;
+ 
+-	for_each_online_cpu_gic(cpu, &gic_lock)
+-		write_gic_vo_map(mips_gic_vx_map_reg(intr), map);
++	if (mips_cps_multicluster_cpus()) {
++		for_each_online_cpu_gic(cpu, &gic_lock)
++			write_gic_vo_map(mips_gic_vx_map_reg(intr), map);
++	}
+ 
+ 	return 0;
+ }
+@@ -982,7 +991,7 @@ static int __init gic_of_init(struct device_node *node,
+ 				change_gic_trig(i, GIC_TRIG_LEVEL);
+ 				write_gic_rmask(i);
+ 			}
+-		} else {
++		} else if (mips_cps_numcores(cl) != 0) {
+ 			mips_cm_lock_other(cl, 0, 0, CM_GCR_Cx_OTHER_BLOCK_GLOBAL);
+ 			for (i = 0; i < gic_shared_intrs; i++) {
+ 				change_gic_redir_pol(i, GIC_POL_ACTIVE_HIGH);
+@@ -990,6 +999,9 @@ static int __init gic_of_init(struct device_node *node,
+ 				write_gic_redir_rmask(i);
+ 			}
+ 			mips_cm_unlock_other();
++
++		} else {
++			pr_warn("No CPU cores on the cluster %d skip it\n", cl);
+ 		}
+ 	}
+ 
 
