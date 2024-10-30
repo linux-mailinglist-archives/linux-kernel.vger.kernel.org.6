@@ -1,109 +1,223 @@
-Return-Path: <linux-kernel+bounces-388632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883579B6258
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:53:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE4F9B6259
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37AB0282EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F291F21B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2927F1E573B;
-	Wed, 30 Oct 2024 11:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FC41E6DEE;
+	Wed, 30 Oct 2024 11:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QKgiv0fm"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="cSmHCIOU"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859191E572E;
-	Wed, 30 Oct 2024 11:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65C53370;
+	Wed, 30 Oct 2024 11:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730289229; cv=none; b=Ct+DgAssog5DSim3QBJy4Io0YTCZmKSmCn/fqpmxegiS04fYy6voKKOGFXGMAvtF+Ub3kgPiIJcP2qZpTYCz3oesM5/D3xRdJOO0mAa4t27qeaTXQW8s8rabZT5qKpe761slmBqJyhkBefBmVIt8AFjS3PyAM1ezEKIj01n8Wh0=
+	t=1730289242; cv=none; b=KlfO5Q1N4FxQXMX/w6xd1LSCVhO+zxamKB+ozT5gI/0kewldDyFVZ+YeJtuFUYqsKtdJuEdfDrrGXgP0KFTUPiU73Yoys01NpCFDTPQoclbSOOXr51er10gzoPMDTgufounUi73LalLVo2teTcltupyjZePAEfahy3WWlVpL2+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730289229; c=relaxed/simple;
-	bh=mVDCoFWka0cDCNzavVR/DBPbCdODScXLc1aExcFNkvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ps91u4ehIZ47OUcS4vYZcgxFFrfn7FyJwsm2Yw6T47l9mEqDPxT+g8ITqKx3USG1EbfLy432SnPQjiItgB3NLar03I1WhZrRqmVfmFJgudk7iNIUOiANQUOWhDlyzUeo6+dChb78WKu/ebEq73dS/6CgMHVl0tsqqf2j3cdYUsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QKgiv0fm; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 59EE940E0208;
-	Wed, 30 Oct 2024 11:53:45 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dcQiH4xAIOwM; Wed, 30 Oct 2024 11:53:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730289219; bh=nyIL7XvIq62okOAaDeM08lcSaEjVO1a3J5nnJHbF0Y4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QKgiv0fmSCIbUe4yE0/0g/qnL0gZE80cQUYWz9p6g26bzNaES0jOowIKXsWMBoo4E
-	 MgH0ZmWT6Ybcp114Cq6Y8KRrApMweqo5FLJ1izO0xznQY9WGMv3o7xmt4aKGQbI3n/
-	 IK9p4+keQPFwNZc6UmI5bgWmpxWXWspwHA0uYhCSTLR4CTEQx+YGex0G7pN14tH8lV
-	 QnQpqRfkmZVn/MgXJJczr2UvvAl0CeuL4FXX4lb3D3lnYGnYG8sp3dwsYs/Lrxk4qi
-	 yWOd1mC39xxWPrKiqsE4zxhVljsE2401dsOH01dT9BIdUa1KBuWflumVuu/vZpW9QP
-	 iQHpM7vKre5aTgi0AFIustFsud/neJKoi5lRlO4fhDIpPQBUPYc+F1amw7D2DBU14K
-	 RvfTk4J9RfD2xKJXBciVjRLRGmt3MPA2hPOudyYzrzBlZyoy5BjVUj/4aM6oBNQsuB
-	 osXvx0Gen/wMHvPvd4MfIT8Er1ZEp53kClJU1KtMGEpB8GqbliS0KPKVQmuHtLhcar
-	 DVpXt2dn/v7UNenNj0n8rXB1Z1US15Wvu7V3vGCkvlG76gSgXtPfnTrGLPDgTkQzty
-	 HqPCrEGN2vU4EW42TLy7odCismejrOitF5zgzNPru3q2naZmXzSyflF18MY8PhJBje
-	 SInFGyTJUFape6xG3MILzVXA=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AA81A40E0191;
-	Wed, 30 Oct 2024 11:53:29 +0000 (UTC)
-Date: Wed, 30 Oct 2024 12:53:28 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	imx@lists.linux.dev, York Sun <york.sun@nxp.com>
-Subject: Re: [PATCH v2] EDAC: MAINTAINERS: change FSL DDR EDAC maintainer to
- Frank Li
-Message-ID: <20241030115328.GDZyIeOEwKGi586acR@fat_crate.local>
-References: <20241003193348.102234-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1730289242; c=relaxed/simple;
+	bh=ILLcoEoTLUm3cTHoGIXKplpQxL+l5de/PTN9J5SNpWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TVc2o3xb8AhYr2/agydnJjaoRpuLhv3tQfjR7vvF9bEeQoglmB4TSvPotcXafIDW5yq8lR1QJ2Ym7ml5jfyFJKpjV8vIkbZW1w4OO+60UOW+xLkOleo+KEcCxiPmjbezdXEDl/c8e1w/ARwHG3ehWZKi/M9LMUB5S8bPsOBQFAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=cSmHCIOU; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1730289219; x=1730894019; i=wahrenst@gmx.net;
+	bh=MWgQKaEJsBWQZzZRi7igT98SmnXpUOoVlYgKJAFqdSY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=cSmHCIOUCj++5LC7QhLejuOpztGP6jWT/gxtBDFUumvabHlm/Y2gG+Hd2jd4/Q62
+	 qxVsIyOj3++GVRcY9V2sDz6ym16Vr9wgLUt/QTvuIEuTGXSVjs6LzAJSQjxBElRKI
+	 THUuTv4B5ZPER87my1uGE9U8vuCc1y3LEY3HrMG/iMCE4tFFSuoZS24pwJfZNfguI
+	 AYyh2af6sgy+LhKtkxZI9WwTFRYs1HWwURffRMUbLiRbrSAkdXvG8IOTk0XMKmnIZ
+	 rFEyTcxBiAFWFSzndp9KfqIc76gvSNPo1BegWudSLbGTNxeLK3Pv5+vPnD55Ezzg1
+	 gMf285AT9i4RsM8kGg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MLi8m-1tNmdv1jhg-00RLek; Wed, 30
+ Oct 2024 12:53:39 +0100
+Message-ID: <9e239176-b1f2-45ef-a731-636f5a78aaa2@gmx.net>
+Date: Wed, 30 Oct 2024 12:53:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241003193348.102234-1-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] soc: imx: Add SoC device register for i.MX9
+To: alice.guo@oss.nxp.com, alexander.stein@ew.tq-group.com,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com
+Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, "alice.guo" <alice.guo@nxp.com>
+References: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:nAU/v9tnjeYaZL9gXJfznUoO/fGQeGzQLDk/lF7wlo2mLonJGd8
+ t3ckT9k1biAyNLgNra5/5wtPNnTm8gyTPWUlP7Ch7cDp8P8SqYKy8/yDlque1t9yHCjuimA
+ mDINeeHSDyJB/T+4wYW0W1jwaILpOEXXwa9oe2rFXysQ6er7tNs081a3dq4Dyn4ZpdhX6O0
+ kMbDQz2zLUXbM9lel5hHQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BkUbYhaiXek=;btPbuJ7l9uQvmb9M0f39zfxZrgj
+ DEofWF3td4ONEWcaus8DgpUWv9xtX+VFnPbjEWUIpyfHrPfG6GBLM7SFgVsUzikqpNmmpvWIx
+ 6phsJqVAU7VL1kvP+XwW4eIczmx7PDLRBcEv7bHAzgDZktQGcWMQWf66fZqbFJKnDT5RN46hV
+ 9MyJ6vbd1GV3LOZJDTqhyq4j1SCYJZn9FnBa9AhJ3f+eDBEDNxnx3wnLuttf2aiRaDoam0/Vy
+ jT4YEgb9TkFfdgNPM6NA2sEirS/czPjXWzV6Rk+G4n/KuUkfbpMGKp47w/KYc9nmQ8UTpD1Ma
+ SJyQ8VjFdwiWYX0KvDt0QFKent+De1GoP3fLZE0ttEAd2/d/ztamJqe5FSFnK69zXQCpFMeam
+ Ezv4tzeFTQfhSmDXf52Ybtshl9grM31NURhHGDkVe2AyxKLAfvzE9mGmiSNLmw26Q99/FphPx
+ pJGS+AXQYeDyG4I5nKPTFfWoEwwaa/PYi7kiizBKKvgc3wFD1YgZyJl82PCoSO7U36UrO5dyU
+ DplX1exVT/pmjh3KnyTRnopz57985EMzO/5AmHkoApLIthcQtJpsNvi1vww8qvisOwmMq0JMB
+ 8wkPAQ3cWqGbjWqhzqX0GUgXW7O9lxhPKytMg07x1Jj0NVn3WrGK8l6hMZ9n+F3VaDPHxdSXB
+ aao65i4aR/ftTarXObooCyodMK6XK8/TEEmGGbvbpTQElzjRO4ScRZRZKzda3fFlXUYLLBdc8
+ SbyEvINex49v3VS5LEo7zHeNLRwYvhwx6TG1TGX3kvxHSTY3R7GAS2EH9iYHqecxOSQMp6AF4
+ tPp2NFpcJ/SMHzKq4Hq//Vsg==
 
-On Thu, Oct 03, 2024 at 09:33:48PM +0200, Krzysztof Kozlowski wrote:
-> Last email from York Sun is from 2019, so move him to Credits.  Frank Li
-> volounteered to keep maintaining the driver.
-> 
-> Suggested-by: Borislav Petkov <bp@alien8.de>
-> Cc: Frank Li <Frank.li@nxp.com>
-> Cc: York Sun <york.sun@nxp.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+Hi Alice,
+
+Am 30.10.24 um 10:13 schrieb alice.guo@oss.nxp.com:
+> From: "alice.guo" <alice.guo@nxp.com>
+>
+> i.MX9 SoCs have SoC ID, SoC revision number and chip unique identifier
+> which are provided by the corresponding ARM trusted firmware API. This
+> patch intends to use SMC call to obtain these information and then
+> register i.MX9 SoC as a device.
+>
+> Signed-off-by: alice.guo <alice.guo@nxp.com>
 > ---
-> 
-> Changesi in v2:
-> 1. Switch to Frank Li, do not orphan the driver.
-> ---
->  CREDITS     | 4 ++++
->  MAINTAINERS | 3 ++-
->  2 files changed, 6 insertions(+), 1 deletion(-)
+>
+> Changes for v2:
+>   - refine error log print
+> Changes for v3:
+>   - return -EINVAL when arm_smccc_smc failed
+>   - fix the build warning caused by pr_err("%s: SMC failed: %d\n", __func__, res.a0);
+>   - drop the pr_err in imx9_soc_init
+>   - free the memory in the reverse order of allocation
+>   - use of_match_node instead of of_machine_is_compatible
+>
+>   drivers/soc/imx/Makefile   |   2 +-
+>   drivers/soc/imx/soc-imx9.c | 106 +++++++++++++++++++++++++++++++++++++
+>   2 files changed, 107 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/soc/imx/soc-imx9.c
+>
+> diff --git a/drivers/soc/imx/Makefile b/drivers/soc/imx/Makefile
+> index 3ad321ca608a..ca6a5fa1618f 100644
+> --- a/drivers/soc/imx/Makefile
+> +++ b/drivers/soc/imx/Makefile
+> @@ -3,4 +3,4 @@ ifeq ($(CONFIG_ARM),y)
+>   obj-$(CONFIG_ARCH_MXC) += soc-imx.o
+>   endif
+>   obj-$(CONFIG_SOC_IMX8M) += soc-imx8m.o
+> -obj-$(CONFIG_SOC_IMX9) += imx93-src.o
+> +obj-$(CONFIG_SOC_IMX9) += imx93-src.o soc-imx9.o
+> diff --git a/drivers/soc/imx/soc-imx9.c b/drivers/soc/imx/soc-imx9.c
+> new file mode 100644
+> index 000000000000..823395584533
+> --- /dev/null
+> +++ b/drivers/soc/imx/soc-imx9.c
+> @@ -0,0 +1,106 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +#include <linux/arm-smccc.h>
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/slab.h>
+> +#include <linux/sys_soc.h>
+> +
+> +#define IMX_SIP_GET_SOC_INFO	0xc2000006
+> +#define SOC_ID(x)		(((x) & 0xFFFF) >> 8)
+> +#define SOC_REV_MAJOR(x)	((((x) >> 28) & 0xF) - 0x9)
+> +#define SOC_REV_MINOR(x)	(((x) >> 24) & 0xF)
+> +
+> +static int imx9_soc_device_register(void)
+> +{
+> +	struct soc_device_attribute *attr;
+> +	struct arm_smccc_res res;
+> +	struct soc_device *sdev;
+> +	u32 soc_id, rev_major, rev_minor;
+> +	u64 uid127_64, uid63_0;
+> +	int err;
+> +
+> +	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
+> +	if (!attr)
+> +		return -ENOMEM;
+> +
+> +	err = of_property_read_string(of_root, "model", &attr->machine);
+> +	if (err) {
+> +		pr_err("%s: missing model property: %d\n", __func__, err);
+> +		goto attr;
+> +	}
+> +
+> +	attr->family = kasprintf(GFP_KERNEL, "Freescale i.MX");
+> +
+> +	/*
+> +	 * Retrieve the soc id, rev & uid info:
+> +	 * res.a1[31:16]: soc revision;
+> +	 * res.a1[15:0]: soc id;
+> +	 * res.a2: uid[127:64];
+> +	 * res.a3: uid[63:0];
+> +	 */
+> +	arm_smccc_smc(IMX_SIP_GET_SOC_INFO, 0, 0, 0, 0, 0, 0, 0, &res);
+> +	if (res.a0 != SMCCC_RET_SUCCESS) {
+> +		pr_err("%s: SMC failed: 0x%lx\n", __func__, res.a0);
+> +		err = -EINVAL;
+> +		goto family;
+> +	}
+> +
+> +	soc_id = SOC_ID(res.a1);
+> +	rev_major = SOC_REV_MAJOR(res.a1);
+> +	rev_minor = SOC_REV_MINOR(res.a1);
+> +
+> +	attr->soc_id = kasprintf(GFP_KERNEL, "i.MX%2x", soc_id);
+> +	attr->revision = kasprintf(GFP_KERNEL, "%d.%d", rev_major, rev_minor);
+> +
+> +	uid127_64 = res.a2;
+> +	uid63_0 = res.a3;
+> +	attr->serial_number = kasprintf(GFP_KERNEL, "%016llx%016llx", uid127_64, uid63_0);
+> +
+> +	sdev = soc_device_register(attr);
+> +	if (IS_ERR(sdev)) {
+> +		err = PTR_ERR(sdev);
+> +		pr_err("%s failed to register SoC as a device: %d\n", __func__, err);
+> +		goto serial_number;
+> +	}
+> +
+> +	return 0;
+> +
+> +serial_number:
+> +	kfree(attr->serial_number);
+> +	kfree(attr->revision);
+> +	kfree(attr->soc_id);
+> +family:
+> +	kfree(attr->family);
+> +attr:
+> +	kfree(attr);
+> +	return err;
+> +}
+> +
+> +static const struct of_device_id imx9_soc_match[] = {
+> +	{ .compatible = "fsl,imx93", },
+> +	{ .compatible = "fsl,imx95", },
+What happend to fsl,imx91 ?
 
-Applied, thanks.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Best regards
 
