@@ -1,97 +1,170 @@
-Return-Path: <linux-kernel+bounces-388031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5DD9B5980
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:47:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC809B5985
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928BC284085
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BE3284A39
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305EB1917F4;
-	Wed, 30 Oct 2024 01:46:33 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3544313B29F;
+	Wed, 30 Oct 2024 01:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cVsRemNU"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AED413C69E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D29B18E37B;
+	Wed, 30 Oct 2024 01:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252792; cv=none; b=DsBoYLFaJr4HRRBYKHn8BHoD31hDGV6hAeeusrTVYYqStlp+fvRo2jgbfqB+9Ccqt74aUbbgkiOVb0/HK/d6eJhQjk0bOiNLfj94IN/UaqmRQ0qoKm1LJsEcEFru6Tg2/Dh2jfrZYgvigPcuHgNTJ6pK5ZcwYlNdtKKCPGQOgbU=
+	t=1730252803; cv=none; b=mh9+rfM5NGzLKTcVRMbe8UllrLYVgnE6mAbfKJSmVSVGI4jp07IviTWTLo5IUTZ6dSejgqkCezGk9/R3en1jfS/ntbQb9OjbwIDddTQaa1+rN6W9pm7eZ1UVVd/6Vi0ekMFbpWn3rx4F52himRO/dY+4sIl/26VQrOXC822QjaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252792; c=relaxed/simple;
-	bh=XC5HNICbv6pmgebkhDml05HvhHBj957/HQO463iP89k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Tujp9suaP4o9WwZXhASC7Id3R1jm32mcuTdL66It01zqTyLj0BbpcbqCw7RRjROIURanb6xUh1sdVBMhEdro3+RmPBC79gusAsaxD5mHN9naV6ChiFJQ/Zno8aF22cgx7ekFOcLH2cY3BnGYdcR6HXuK1OkHeDXgsfPJy8YFisg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdVGt3WHlz1HLpC;
-	Wed, 30 Oct 2024 09:41:58 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9703D1401E9;
-	Wed, 30 Oct 2024 09:46:26 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Oct 2024 09:46:25 +0800
-Message-ID: <986c6fc8-b88c-347c-f599-283b34cf34b8@huawei.com>
-Date: Wed, 30 Oct 2024 09:46:24 +0800
+	s=arc-20240116; t=1730252803; c=relaxed/simple;
+	bh=7pum3/JkD0BwlxJPHGGkWM5clHm8rPDq6SZ4bCR2v4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EEmuUWYyNzVbU4nBbXNVa29y7KRRlOg/V9emtJKr8blAICXAyu41sqiCXHnKfFUmkxICI8UsUxYjSuzzn5dagkVeHbxMD6HYHgRZdkppIv0zrFWdf1DrTyv1xrK57jnSUlM4ox7GOvJfWs+9W3fSraFwDkULT2J9ZyXaXAtWOes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cVsRemNU; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso4376433a91.1;
+        Tue, 29 Oct 2024 18:46:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730252801; x=1730857601; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bxFMjfk3ggTn0moJ8sPpGVsqjY/2TWidvbtEhX4CnB4=;
+        b=cVsRemNUT/4Rb5OvkiD/uDtbAnWZWVGE4aIJGEf4Hd2V68jhk+Rx5AEffgd+aLIH8U
+         TAwhot+czAADbrxZZnKp9NzhwzkEIUwEvlER+ZtbeeoblGd1Y7910q6dEq4zak0qZ9bU
+         4EoehDZjHcJmPDjwwEgWZsfXV3tc50auCSzujQyylWqCv77r6rR5WTVhVOzzWvuHuYcd
+         lbr9QQ9X1cNLdOLnekNU/Md4LACAD1vN/u+XWGLjV9sHFk9+r9Nix97J5MApNd0JaIXF
+         jiLCsBYYQAbCp2qspfrAUb5L4h1TbkU5bIh/My9fTfrKTFW5z8DDVDR4MTrft59pACUq
+         DGRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730252801; x=1730857601;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bxFMjfk3ggTn0moJ8sPpGVsqjY/2TWidvbtEhX4CnB4=;
+        b=J9o8eE8Tthp3YklzEclS02+weMAGh8AxefVOyKtOOFm4zCxzzsLU1rkYLxvLgXu04z
+         Rajsb5mUccPQ4U/vKj1W2hzSlub0W7s5Bu1Aiz/Zk1/a5HTfMFE+lPyj4kfvCjt2+4tB
+         Jk0bYafZIx2VeZIZ77gvRpmanpPubPFd/n8pZS6gK4yMLClI3WlbCkGeuU+ABOiZmQw0
+         el90ABOCEILNco/9mCx/+rRObkpszLVpvc0+J3W6sAFNuMnWM5WhSt//u1eiDVtsMP3X
+         mDjG5ZOYeOeZHGe3uMBedxVVafGXZFoexoHGM8r0ZPFwCSQ9dGzvyqOYs1ggz679x2y8
+         52dA==
+X-Forwarded-Encrypted: i=1; AJvYcCURUkLvdOBBxvr8b/nvT2NVJS6sRbiB1lMG6nlS7KcByuyG2XgHoXmsK3T2QLE3u7CYaUnbYeaMFrjDOcI=@vger.kernel.org, AJvYcCWJ4YAwjPdz1kZ8oKMaLrTjKWvZ2w2sHJn3dBm7t3QxTyxBlmzdZ/PlAJup7GgHPOHegG+Z8V4fpYk0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3iFUn55kV0jt8yqZu6FPfAO5+l8GYaVjVZJzq0NWFk7d+svlX
+	wdeGocCBYNMYrhP8tgO842K1VT1aU0v3CfEsM06p0863d8TjJ4ly
+X-Google-Smtp-Source: AGHT+IFZaj6aH2mDsjSI9GjYLL9VJVuI4bzhbZhrUs/Yck/v3RydR1pivAyoeT2NdQVzHEfQvCmzpQ==
+X-Received: by 2002:a17:90b:4b06:b0:2e2:cd62:549c with SMTP id 98e67ed59e1d1-2e8f10867cemr16377916a91.22.1730252800759;
+        Tue, 29 Oct 2024 18:46:40 -0700 (PDT)
+Received: from [172.19.1.43] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa57cc3sm380550a91.32.2024.10.29.18.46.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 18:46:40 -0700 (PDT)
+Message-ID: <d6bf5b0d-7036-4636-a15e-41db6f665323@gmail.com>
+Date: Wed, 30 Oct 2024 09:46:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] x86: Remove unused _TIF_SINGLESTEP
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ mjchen@nuvoton.com, peng.fan@nxp.com, sudeep.holla@arm.com, arnd@arndb.de,
+ conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
+ dmitry.torokhov@gmail.com
+References: <20241022063158.5910-1-mjchen0829@gmail.com>
+ <20241022063158.5910-2-mjchen0829@gmail.com>
+ <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
+ <871e9a4c-7a3c-4a24-8829-a079983033da@gmail.com>
+ <ef407e89-950f-4874-9dca-474d107f6a52@kernel.org>
+ <984781ba-9f4c-4179-84d5-4ab8bbe4c3c6@gmail.com>
+ <9b0a508e-d9ae-45ab-882f-5bc1f03e13db@kernel.org>
+ <5d9e89aa-db10-4367-8417-9fcc1a3bb37a@gmail.com>
+ <844798ab-2910-458e-a9c5-dc69f5c8e368@kernel.org>
 Content-Language: en-US
-To: "H. Peter Anvin" <hpa@zytor.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<xin3.li@intel.com>, <krisman@collabora.com>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241030012438.358269-1-ruanjinjie@huawei.com>
- <D75E52D0-2C84-410A-BF59-4E0CDFF67237@zytor.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <D75E52D0-2C84-410A-BF59-4E0CDFF67237@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+From: Ming-Jen Chen <mjchen0829@gmail.com>
+In-Reply-To: <844798ab-2910-458e-a9c5-dc69f5c8e368@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-
-On 2024/10/30 9:44, H. Peter Anvin wrote:
-> On October 29, 2024 6:24:38 PM PDT, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
->> Since following commit, _TIF_SINGLESTEP is not used by x86 anymore,
->> remove it.
+On 2024/10/29 下午 09:19, Krzysztof Kozlowski wrote:
+> On 29/10/2024 03:00, Ming-Jen Chen wrote:
+>>>>>>>> +
+>>>>>>>> +  per-scale:
+>>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>>>> +    description: Row Scan Cycle Pre-scale Value (1 to 256).
+>>>>>>> Missing constraints
+>>>>>>>
+>>>>>>>> +
+>>>>>>>> +  per-scalediv:
+>>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>>>> +    description: Per-scale divider (1 to 256).
+>>>>>>> Missing constraints
+>>>>>>>
+>>>>>>> Both properties are unexpected... aren't you duplicating existing
+>>>>>>> properties?
+>>>>>> pre-scale:
+>>>>>> This value configures the IC register for the row scan cycle
+>>>>>> pre-scaling, with valid values ranging from 1 to 256
+>>>>>> per-scalediv:(I will change pre-scalediv to pre-scale-div)
+>>>>> Please look for matching existing properties first.
+>>>> I will change it to the following content:
+>>>>
+>>>> nuvoton,scan-time:
+>>> Why? What about my request?
+>> I utilized|grep|  to search for relevant properties in the|input/|  folder using keywords such as|scan|,|time|,|period|,|freq|, and|interval|.
+>> While I found some similar properties, I did not locate any that completely meet my requirements.
 >>
->> Fixes: 6342adcaa683 ("entry: Ensure trap after single-step on system call return")
+>> For example, I found|"scanning_period"|, which is described as "Time between scans. Each step is 1024 us. Valid 1-256."
+>> I would like to confirm if you are suggesting that I use|scanning_period|  and explain my specific use case in the description,
+>> for example:
+> Description of these properties did not tell me much about their purpose
+> and underlying hardware, so I don't know which fits here. It looks like
+> you want to configure clock... but then wording confuses me -
+> "per-scale". What is "per"? Isn't it usually "pre"?
+>
+> So in general I don't know what to recommend you because your patch is
+> really unclear.
+>
+> Please also wrap emails according to mailing lists standards. And use
+> proper line separation of sentences. It's really hard to understand your
+> email.
 
-This commit, sorry, the message is not so clear.
+I apologize for any confusion caused by my previous responses regarding 
+this issue.
+It seems that our discussion has reached a bit of a bottleneck.
 
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->> arch/x86/include/asm/thread_info.h | 1 -
->> 1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
->> index 12da7dfd5ef1..734db7221613 100644
->> --- a/arch/x86/include/asm/thread_info.h
->> +++ b/arch/x86/include/asm/thread_info.h
->> @@ -110,7 +110,6 @@ struct thread_info {
->> #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
->> #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
->> #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
->> -#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
->> #define _TIF_SSBD		(1 << TIF_SSBD)
->> #define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
->> #define _TIF_SPEC_L1D_FLUSH	(1 << TIF_SPEC_L1D_FLUSH)
-> 
-> "Following commit"?
-> 
+I have a suggestion that I hope you might agree with: I would like to 
+upload version 2 of the code.
+In this version, I will rewrite the properties, although it may not 
+resolve their underlying issues.
+I will also continue to keep our current discussion ongoing in version 2.
+
+Thank you for your understanding, and I look forward to your thoughts on 
+this approach
+
+
+>
+>> nuvoton,scanning-period:
+>>       type:  uint32
+>>       description:  | Set the scan time for each key, specified in terms of keypad IP clock
+>> cycles. The valid range is from 1 to 256.      minimum:  1
+>>       maximum:  256 Could you please confirm if this approach aligns with your suggestion,
+>>    or if you have any other recommended existing properties?
+> Why this would be board dependent?
+>
+> Best regards,
+> Krzysztof
+>
 
