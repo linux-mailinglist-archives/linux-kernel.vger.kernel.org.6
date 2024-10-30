@@ -1,213 +1,268 @@
-Return-Path: <linux-kernel+bounces-387967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8BC9B5889
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:23:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EBF9B588D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C2691C22B9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:23:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C851F24F3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA94B11CA0;
-	Wed, 30 Oct 2024 00:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE9B14A90;
+	Wed, 30 Oct 2024 00:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XJAOdKba"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgMH5OhM"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEAF15E96
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B50DDCD;
+	Wed, 30 Oct 2024 00:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730247832; cv=none; b=h+Dn2YL9i1mvzkXX2GLbNloR1tug1xaq15L+5DNiv923y3nkDbxsSS0RC7taaZGl8YnIbUBEpenFLAoOZa8HFece6f3gt6XTfK92UgjHmOjgasDX1+3PMvdfZZ2yOJKN5Lltp5/uQUBwhBtZ/FJJkY2rD+X1q3S88Om2rf2WCZU=
+	t=1730247878; cv=none; b=K/AVNyx2BJY1l/0JmFRCvBWDq1exVM0Svjc0RjPzw5KiSJcwUCRt04cVYoI+Nmv7suIfuBcPZaH6j4ckQzTRxwB+lFTp0zDFYTtFP+A3M6IdGyUCj+ihoJOxNtwL1lAxEJpUXenmwQKibEM4pXd7Jkgi+wVeziJqJvoUyr/HlBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730247832; c=relaxed/simple;
-	bh=GHfETdSyjX6krjvZ1dZY7pSrOLnViSj7Ze1+c6iEIuE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zeba7bryGK4o2F0KTnN/+UH7eVRLXhFAUERQYqK5r11tN6yEIMOUcRbP1/YpyaXKPwGLFAQFgKhYZyCvJA6gnW3vl9t+K5xlriLWRlTwZTuPz2Ox77zE6vr+JBFHno3GqTIN3L6tluALtth3L6P5FbRO/PEzDive+qmB4nfo4uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XJAOdKba; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730247828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rzjco5Yp88oO9yhhTyX9hZkpJ8eqlDl8kNCtlxrNZFY=;
-	b=XJAOdKbafkjaw2lNJWsTYQI0PYx6W4lSO5VS1ShNP76yi82svZ5RMu8nJ+1fjXZqWRl3cj
-	tLN+Kg6uX9vKVlivWAT+l/vGWN5nbv57eeuRRotp3VGg/BR2MO5fcZ4h4e5QEYBorZ6e+i
-	eKq133r1zd/WPcAkV0R4laVZRfFc6ok=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-198-z0ZnbXe_PAes8HpY0Fu6jw-1; Tue, 29 Oct 2024 20:23:47 -0400
-X-MC-Unique: z0ZnbXe_PAes8HpY0Fu6jw-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-71e6c5fbebfso6557455b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:23:47 -0700 (PDT)
+	s=arc-20240116; t=1730247878; c=relaxed/simple;
+	bh=PrElOmEssvK26oznLQMInvfhKRnqn8lwkgHhxR6Go9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RUB83UfBscmLut3NPR6AC626AUn7lQpUH0Va5WKaEzl+UyQX14/6DdLmFDacA/agCGYDWpgoD5rMgNm622iShcYOjqNv6s9/vVWXtZWMurjrEL8ZLui8xfU7jXUqShxXlyW0ob4RRqIT9bkoDVHiqCPhJjAI1tBMzqDN/S48Gws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgMH5OhM; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99ea294480so421785066b.2;
+        Tue, 29 Oct 2024 17:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730247874; x=1730852674; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZpksF7f/yfbrJdjziEbXmkVW9JxR3yvcKKkC3H24NQ=;
+        b=KgMH5OhM5kgNTMd6uswwhWaEN3CgGO/VKLYaKgs6CWInhfKG3WVGEoWndA+8VOWHF9
+         lXZRbN0lFsLd8yYteer3B5piPEW3I2fjUgMzR/tAkh9lJS7shbmZVxgvTzOcl9gxOJ2K
+         xh8oSouj+oVhJyu86FenLO1qZplOCNn4NEpzv1K1pWV+F4bG8sWadZSjLf2glVO6Booe
+         bYLke/00uhdb+plbJnCjpeNYAKOEr5wR38NiK0g8YlL7ZDqnPVFkWwCnfNSCbNlBVr74
+         0jdcIrqGArYYQCFKLAgh6Ovzi4hDsU0CUHebPkb0ByT7DDyLp+5zncSxWpbFrS96hUgk
+         iCvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730247825; x=1730852625;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rzjco5Yp88oO9yhhTyX9hZkpJ8eqlDl8kNCtlxrNZFY=;
-        b=QOC6Vk1CJcxksH7c6Cl0QeD+e67DRbeqU5j6piXhQKu4MjRKqdT+Zc+9SjxcalyTFE
-         Je9s2ms7gpptpZPrcttbuxTJ7skfrtObj3bExXvFkuwbNJH8fpCkArKoWI5FiSXJvWdw
-         fec1ZH3Q3dLA5BE9pJf2E5QEhOvJbaR7HuNcym2LAvIwiPHoZlDsqUqqrORHCskT5AN9
-         U2yn7l/7WdpgBwMGnqqEyuYMV8GIDgoPLQ55n7jXRkJknKJSqM7do2xPmMsrD0zkFsc3
-         FT8s2vmNX/n7H4vnVYexvt9Irp9ba8SHnNI9zcQ3tuDSfaopo0cDuQQoKKXLNbfztFXp
-         5nKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXhX0rsfLn62hn7vo7xSAsuBkGSK2s56Rap7eclfdT37DwQjzR7ZztxY5H5Gs39uzgGKw3i0CbDeIjfTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKpPY1jua1CNeq0GBCuaYK3dXScn349T0of9EHsnlobg05uxKH
-	KPRfOhuWK/ghB4wKTxRfkiaAOvKGcMpSgZGestnLWIpQ3YnSUNEeWgUPAHZ6yHbYD87E0f3cBxM
-	8JyhDtwHD5kx4Me3Ped3RO8Gcvwkn1Gtyq1XYTDcDcpVZ0GCzmeXlu30iwJXl/fBG+WYDsruw
-X-Received: by 2002:a05:6a00:2315:b0:71e:5f2c:c019 with SMTP id d2e1a72fcca58-72062fb2169mr19297953b3a.9.1730247825092;
-        Tue, 29 Oct 2024 17:23:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDVeC+K/m1JudRIxQdtRApAx35LcqTPMPDCcyu4TrmSrIJs0qyIuUY63xL0+Wlk1AbrDcLww==
-X-Received: by 2002:a05:6a00:2315:b0:71e:5f2c:c019 with SMTP id d2e1a72fcca58-72062fb2169mr19297927b3a.9.1730247824651;
-        Tue, 29 Oct 2024 17:23:44 -0700 (PDT)
-Received: from [192.168.68.55] ([180.233.125.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a3bd53sm8173830b3a.185.2024.10.29.17.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 17:23:44 -0700 (PDT)
-Message-ID: <32211eb5-eed5-4c71-b62a-362d32e1af47@redhat.com>
-Date: Wed, 30 Oct 2024 10:23:39 +1000
+        d=1e100.net; s=20230601; t=1730247874; x=1730852674;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MZpksF7f/yfbrJdjziEbXmkVW9JxR3yvcKKkC3H24NQ=;
+        b=AW+4EzcrK9Cr6BHFOW+twHAxYwtPuzl+esDqnQaKzSEMu7TRCOoglq2Mjcv5M6HpC+
+         edp/NcEYzcr1J+mA4ZV4k4FsXRs6A9Okl/lnh0CP3oB7uZFVrmFxT7nVqtU5BkHfwPM4
+         nFYjiQmFOlJVyuMYiLIlpswpZ+pONHv+vSNHU+JV/kD+vgpuyBv9DMzMCLviC2JSjBeq
+         TVuTp9e8oXimOBy/obEnGHGFthpAuow/jz1qju77rIOTWoMBMbojXP7Qbz1EGxGZzssf
+         hYvn7DjbnfG+PheLZEyahqz9gGT80uO20TNW1/L2RrGOI+FoBm9632YOw15p5JdYYKOn
+         x2/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0U8xyWzZHY5/f8AQl2VQi1p3kaFTwunJEcN+kclRsRl6Yy0hBMJ/fPl4+6uL5xbwNp2B/BVH4rPeq@vger.kernel.org, AJvYcCWgnbL7cd9MI5SIndZSLd4Sob1b3SOVAX7X12oWsrFgcPExTh2u6GkVK2dUC0RqdNC3+k71FloFfnDr@vger.kernel.org, AJvYcCWq0LFTaRKQb4HQx5y0FBUE+vul9hFfCcUtspKA/qe+nOJMLC5gVjqNo+tQVUYLJfPiuWthn5HXAG7ssItR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+bH4d4hkOrdIvhz8kfQpSDOnKKTYRalLGTrCE3xOyHup5QU1d
+	pfaBaHlplNPoe9F2MuLmer0Ev/vL5NC4vyyoTPr4/zTgKU+ZO2yQlexy6A==
+X-Google-Smtp-Source: AGHT+IEj5xqVmWcWQW4+UVsLcEMosfXnQ35TQdWIrCkiMIpaIqL+uVtw/O5bGLbqlp5wckOVIfX0AQ==
+X-Received: by 2002:a05:6402:2345:b0:5ca:1598:15ad with SMTP id 4fb4d7f45d1cf-5cbbf8899ccmr12723651a12.3.1730247874289;
+        Tue, 29 Oct 2024 17:24:34 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:89e7:cc9d:3a72:92f3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec81adsm519159366b.27.2024.10.29.17.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 17:24:33 -0700 (PDT)
+Date: Wed, 30 Oct 2024 01:24:30 +0100
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+	anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/13] iio: chemical: bme680: add power management
+Message-ID: <ZyF8vtLiVUEHojl4@vamoirid-laptop>
+References: <20241021195316.58911-1-vassilisamir@gmail.com>
+ <20241021195316.58911-14-vassilisamir@gmail.com>
+ <20241027103013.06daac42@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: rsi: Add automatic arm-cca-guest module loading
-To: Jeremy Linton <jeremy.linton@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: steven.price@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com,
- will@kernel.org, sami.mujawar@arm.com, linux-kernel@vger.kernel.org
-References: <20241029141114.7207-1-jeremy.linton@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241029141114.7207-1-jeremy.linton@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241027103013.06daac42@jic23-huawei>
 
-Hi Jeremy,
-
-On 10/30/24 12:11 AM, Jeremy Linton wrote:
-> The TSM module provides both guest identification as well as
-> attestation when a guest is run in CCA mode. Lets assure by creating a
-> dummy platform device that the module is automatically loaded during
-> boot. Once it is in place it can be used earlier in the boot process
-> to say decrypt a LUKS rootfs.
+On Sun, Oct 27, 2024 at 10:30:13AM +0000, Jonathan Cameron wrote:
+> On Mon, 21 Oct 2024 21:53:16 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 > 
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> ---
->   arch/arm64/include/asm/rsi.h                    |  2 ++
->   arch/arm64/kernel/rsi.c                         | 15 +++++++++++++++
->   drivers/virt/coco/arm-cca-guest/arm-cca-guest.c |  7 +++++++
->   3 files changed, 24 insertions(+)
+> > Add runtime power management to the device. To facilitate this, add also
+> > a struct dev* inside the bme680_data structure to have the device
+> > accesible from the data structure.
+> 
+> Needs an update as you are now getting that from the regmap.
+> 
 > 
 
-I don't understand how the TSM module is automatically loaded and arm_cca_guest_init()
-is triggered because of the newly introduced platform device. Could you please provide
-more details? Apart from it, some nick-picks as below.
+Hi Jonathan,
 
-> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
-> index 188cbb9b23f5..1b14a4c4257a 100644
-> --- a/arch/arm64/include/asm/rsi.h
-> +++ b/arch/arm64/include/asm/rsi.h
-> @@ -10,6 +10,8 @@
->   #include <linux/jump_label.h>
->   #include <asm/rsi_cmds.h>
->   
-> +#define ARMV9_RSI_PDEV_NAME "arm-cca-dev"
-> +
+Thanks for noticing, I will fix it for next version.
 
-Maybe 'ARMV9' can be avoided since RSI is the specific feature to ARMv9.
-Besides, we already had @rsi_present there. So I would suggest to rename
-it to RSI_PDEV_NAME
+> > 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ---
+> >  drivers/iio/chemical/bme680.h      |   2 +
+> >  drivers/iio/chemical/bme680_core.c | 126 +++++++++++++++++++++++++++--
+> >  2 files changed, 121 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
+> > index e5d82a6d5b59..74e97e35e35a 100644
+> > --- a/drivers/iio/chemical/bme680.h
+> > +++ b/drivers/iio/chemical/bme680.h
+> > @@ -2,6 +2,7 @@
+> >  #ifndef BME680_H_
+> >  #define BME680_H_
+> >  
+> > +#include <linux/pm.h>
+> >  #include <linux/regmap.h>
+> >  
+> >  #define BME680_REG_CHIP_ID			0xD0
+> > @@ -82,6 +83,7 @@
+> >  #define BME680_CALIB_RANGE_3_LEN               5
+> >  
+> >  extern const struct regmap_config bme680_regmap_config;
+> > +extern const struct dev_pm_ops bme680_dev_pm_ops;
+> 
+> You seem to have missed the changes that use this in the i2c and spi drivers.
+> 
+> 
 
->   DECLARE_STATIC_KEY_FALSE(rsi_present);
->   
->   void __init arm64_rsi_init(void);
-> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-> index 3031f25c32ef..ad963eb12921 100644
-> --- a/arch/arm64/kernel/rsi.c
-> +++ b/arch/arm64/kernel/rsi.c
-> @@ -8,6 +8,7 @@
->   #include <linux/psci.h>
->   #include <linux/swiotlb.h>
->   #include <linux/cc_platform.h>
-> +#include <linux/platform_device.h>
->   
->   #include <asm/io.h>
->   #include <asm/mem_encrypt.h>
-> @@ -140,3 +141,17 @@ void __init arm64_rsi_init(void)
->   	static_branch_enable(&rsi_present);
->   }
->   
-> +static struct platform_device rsi_dev = {
-> +	.name = ARMV9_RSI_PDEV_NAME,
-> +	.id = -1
-> +};
-> +
+You are totally right.
 
-         .id = PLATFORM_DEVID_NONE,
+> >  static const char bme680_oversampling_ratio_show[] = "1 2 4 8 16";
+> >  
+> >  static IIO_CONST_ATTR(oversampling_ratio_available,
+> > @@ -1091,6 +1125,39 @@ static irqreturn_t bme680_trigger_handler(int irq, void *p)
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> > +static int bme680_buffer_preenable(struct iio_dev *indio_dev)
+> > +{
+> > +	struct bme680_data *data = iio_priv(indio_dev);
+> > +	struct device *dev = regmap_get_device(data->regmap);
+> > +
+> > +	pm_runtime_get_sync(dev);
+> > +	return 0;
+> > +}
+> > +
+> > +static int bme680_buffer_postdisable(struct iio_dev *indio_dev)
+> > +{
+> > +	struct bme680_data *data = iio_priv(indio_dev);
+> > +	struct device *dev = regmap_get_device(data->regmap);
+> > +
+> > +	pm_runtime_mark_last_busy(dev);
+> > +	pm_runtime_put_autosuspend(dev);
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct iio_buffer_setup_ops bme680_buffer_setup_ops = {
+> > +	.preenable = bme680_buffer_preenable,
+> > +	.postdisable = bme680_buffer_postdisable,
+> > +};
+> > +
+> > +static void bme680_pm_disable(void *data)
+> > +{
+> > +	struct device *dev = data;
+> > +
+> > +	pm_runtime_get_sync(dev);
+> > +	pm_runtime_put_noidle(dev);
+> This dance is to get the device powered up on runtime pm tear down
+> I think?  Whilst we sometimes do this, why is it needed in this particular driver?
+> 
 
-> +static int __init rsi_init(void)
-> +{
-> +	if (is_realm_world())
-> +		if (platform_device_register(&rsi_dev))
-> +			pr_err("failed to register rsi platform device");
-> +	return 0;
-> +}
-> +
+Actually this one is not needed indeed, I was using it to test that the
+device was coming up but it is not really needed. And the whole disable
+sequence is perfectly handled by the devm_pm_runtime_enable so it is not
+even needed at all actually.
 
-Those two checks can be connected with '&&' and '\n' seems missed in the
-error message.
+> > +	pm_runtime_disable(dev);
+> > +}
+> > +
+> >  int bme680_core_probe(struct device *dev, struct regmap *regmap,
+> >  		      const char *name)
+> >  {
+> > @@ -1164,15 +1231,60 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
+> >  	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> >  					      iio_pollfunc_store_time,
+> >  					      bme680_trigger_handler,
+> > -					      NULL);
+> > +					      &bme680_buffer_setup_ops);
+> >  	if (ret)
+> >  		return dev_err_probe(dev, ret,
+> >  				     "iio triggered buffer setup failed\n");
+> >  
+> > +	/* Enable runtime PM */
+> > +	pm_runtime_get_noresume(dev);
+> > +	pm_runtime_set_autosuspend_delay(dev, BME680_STARTUP_TIME_US * 100);
+> > +	pm_runtime_use_autosuspend(dev);
+> > +	pm_runtime_set_active(dev);
+> > +	ret = devm_pm_runtime_enable(dev);
+> 
+> Take a look at what this unwinds in the devm handler. You don't need to do
+> as much (or possibly anything) yourself.
+> 
+> 
 
-         if (is_realm_world() && platform_device_register(&rsi_dev))
-             pr_err("Failed to register RSI platform device\n");
+Well, in general what I see that could probably be dropped here is the
+extra add_action_or_reset because of the devm_*. About the functions
+get_noresume() and put(), I feel that they could be dropped as well
+because the device registration will happen well before the autosuspend
+delay, but does it make sense to depend on something like this?
 
-> +arch_initcall(rsi_init)
-> diff --git a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-> index 488153879ec9..e7ef3b83d5d9 100644
-> --- a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-> +++ b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-> @@ -6,6 +6,7 @@
->   #include <linux/arm-smccc.h>
->   #include <linux/cc_platform.h>
->   #include <linux/kernel.h>
-> +#include <linux/mod_devicetable.h>
->   #include <linux/module.h>
->   #include <linux/smp.h>
->   #include <linux/tsm.h>
-> @@ -219,6 +220,12 @@ static void __exit arm_cca_guest_exit(void)
->   }
->   module_exit(arm_cca_guest_exit);
->   
-> +static const struct platform_device_id arm_cca_match[] = {
-> +	{ ARMV9_RSI_PDEV_NAME, 0},
-> +	{ }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(platform, arm_cca_match);
+Cheers,
+Vasilis
 
-
-/* Comments here to explain why @arm_cca_dev_ids[] is needed */
-static const struct platform_device_id arm_cca_dev_ids[] = {
-        ...
-};
-
-MODULE_DEVICE_TABLE(platform, arm_cca_dev_ids);
-
->   MODULE_AUTHOR("Sami Mujawar <sami.mujawar@arm.com>");
->   MODULE_DESCRIPTION("Arm CCA Guest TSM Driver");
->   MODULE_LICENSE("GPL");
-
-Thanks,
-Gavin
-
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	pm_runtime_put(dev);
+> > +
+> > +	ret = devm_add_action_or_reset(dev, bme680_pm_disable, dev);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	return devm_iio_device_register(dev, indio_dev);
+> >  }
+> >  EXPORT_SYMBOL_NS_GPL(bme680_core_probe, IIO_BME680);
+> >  
+> > +static int bme680_runtime_suspend(struct device *dev)
+> > +{
+> > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > +	struct bme680_data *data = iio_priv(indio_dev);
+> > +
+> > +	return regulator_bulk_disable(BME680_NUM_SUPPLIES, data->supplies);
+> > +}
+> > +
+> > +static int bme680_runtime_resume(struct device *dev)
+> > +{
+> > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > +	struct bme680_data *data = iio_priv(indio_dev);
+> > +	int ret;
+> > +
+> > +	ret = regulator_bulk_enable(BME680_NUM_SUPPLIES, data->supplies);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	fsleep(BME680_STARTUP_TIME_US);
+> > +
+> > +	ret = bme680_chip_config(data);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return bme680_gas_config(data);
+> > +}
+> > +
+> > +EXPORT_RUNTIME_DEV_PM_OPS(bme680_dev_pm_ops, bme680_runtime_suspend,
+> > +			  bme680_runtime_resume, NULL);
+> > +
+> >  MODULE_AUTHOR("Himanshu Jha <himanshujha199640@gmail.com>");
+> >  MODULE_DESCRIPTION("Bosch BME680 Driver");
+> >  MODULE_LICENSE("GPL v2");
+> 
 
