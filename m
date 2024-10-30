@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-388007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE629B591E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:27:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7B29B5921
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BA11C22EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:27:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FF51C23584
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C143C1494DB;
-	Wed, 30 Oct 2024 01:27:34 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F38B14E2E2;
+	Wed, 30 Oct 2024 01:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bopgHmqz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494A0142E7C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33AF171CD;
+	Wed, 30 Oct 2024 01:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730251654; cv=none; b=Kf72J8cWjMFeyQY94fMpT8heS8nMBSTKIyNobTgmXeLCugOej5r2Ro72kg9DHfuvWDM/1gGqhDy0gSyuwlGXx8bfE9AfnIpFPj4rXBoHh0nr8FMwYNPEDhNxfn+sIjnL4f9Qy16gcq9BPGsLyrJYrwxgWLJWOd09tplqKl+ycaI=
+	t=1730251756; cv=none; b=t49h4jGYXQjcWy7kHvuTBI0TSY/bMledG4plhyWomEyoPvk5O6U6GWZ3wTALWaN9xn70dDJ3NSIw1Lxkd35r9BuIfe5tJJ2pgg4ZDEFxGPu3ovobagqHX5uvYBQ+ht0fnKmsSsID79L8/cTG/Ld+arb4hY9gcwEZ/7uYx5vQRVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730251654; c=relaxed/simple;
-	bh=VXjTSmpa35j95jRHzL3JtFZVPcnX8EbOQoLeiASouaQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mcw4yEe1mje1cXqQ48RuDNU0r16W1FCGlSTqzgPAJOUXUF2fSWQuT7offO/HddBy+EBwFtWpa2Rsuz2l1ogGIuDa+vMdOdmUO1o9MJ2Xh+mbhkCt/2u5/Niwyy/xgPhLxu4tuLIM+y+83AXoZcu10DmjioPW/pX6/t9RdskuV3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XdTx16sBBz20qyQ;
-	Wed, 30 Oct 2024 09:26:29 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id D2BA31402E1;
-	Wed, 30 Oct 2024 09:27:28 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 30 Oct
- 2024 09:27:28 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <chenhuacai@kernel.org>, <kernel@xen0n.name>, <hejinyang@loongson.cn>,
-	<yangtiezhu@loongson.cn>, <jiaxun.yang@flygoat.com>,
-	<loongarch@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] LoongArch: Remove unused _TIF_SINGLESTEP
-Date: Wed, 30 Oct 2024 09:26:58 +0800
-Message-ID: <20241030012658.358931-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730251756; c=relaxed/simple;
+	bh=/mbcRi/mDsk7KQzprNAsgLYx1eJqyekh4W+UXNMCY6U=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jBk7HyBSi360sekgfKvbuSkeupE9Ceiqkvirq3rE7JFG4k4bE7EB8W3jNv99/I2MfMNxX+3hrQPiE5L5SgJ73MaBLni1kyVkQY3ul996KK12P0X2/DzBjaCEk3Bv3aQuIY11IaXXxT5nz4dYM4bWKGjUpEPPt+1nJzAWF2nTrG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bopgHmqz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9297C4CECD;
+	Wed, 30 Oct 2024 01:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730251755;
+	bh=/mbcRi/mDsk7KQzprNAsgLYx1eJqyekh4W+UXNMCY6U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bopgHmqzM+C4j0EAo9ReKH2Oh2sdeLwPy+6RW9G04/QfDBuujceqDGQmkvjE7gt1c
+	 efga9nGuNDMqo+/AenelSy8VQ3LVFtUQn02otvZMfbKyBbrbxa/W52YXq3LNioFHB+
+	 PgmWu+cFEiMUBi+zb4/VIJoIwhykHTNtC4LR3GzM=
+Date: Tue, 29 Oct 2024 18:29:14 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jakob Koschel
+ <jakobkoschel@gmail.com>, Mike Rapoport <rppt@kernel.org>, David
+ Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>,
+ "Brian Johannesmeyer" <bjohannesmeyer@gmail.com>, Cristiano Giuffrida
+ <c.giuffrida@vu.nl>, "Bos, H.J." <h.j.bos@vu.nl>, Alexey Dobriyan
+ <adobriyan@gmail.com>, Yang Li <yang.lee@linux.alibaba.com>, Baoquan He
+ <bhe@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>, Yan Zhen
+ <yanzhen@vivo.com>
+Subject: Re: [PATCH v1 1/1] fs/proc/kcore.c: fix coccinelle reported ERROR
+ instances
+Message-Id: <20241029182914.9006075cf5844bc8e679f72c@linux-foundation.org>
+In-Reply-To: <20241029054651.86356-2-mtodorovac69@gmail.com>
+References: <20241029054651.86356-2-mtodorovac69@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Since following commit, _TIF_SINGLESTEP is not used by LoongArch,
-remove it.
+On Tue, 29 Oct 2024 06:46:52 +0100 Mirsad Todorovac <mtodorovac69@gmail.com> wrote:
 
-Fixes: 803b0fc5c3f2 ("LoongArch: Add process management")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- arch/loongarch/include/asm/thread_info.h | 1 -
- 1 file changed, 1 deletion(-)
+> Coccinelle complains about the nested reuse of the pointer `iter' with different
+> pointer type:
+> 
+> ./fs/proc/kcore.c:515:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
+> ./fs/proc/kcore.c:534:23-27: ERROR: invalid reference to the index variable of the iterator on line 499
+> ./fs/proc/kcore.c:550:40-44: ERROR: invalid reference to the index variable of the iterator on line 499
+> ./fs/proc/kcore.c:568:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
+> ./fs/proc/kcore.c:581:28-32: ERROR: invalid reference to the index variable of the iterator on line 499
+> ./fs/proc/kcore.c:599:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
+> ./fs/proc/kcore.c:607:38-42: ERROR: invalid reference to the index variable of the iterator on line 499
+> ./fs/proc/kcore.c:614:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
+> 
+> Replacing `struct kcore_list *iter' with `struct kcore_list *tmp' doesn't change the
+> scope and the functionality is the same and coccinelle seems happy.
 
-diff --git a/arch/loongarch/include/asm/thread_info.h b/arch/loongarch/include/asm/thread_info.h
-index 8bf0e6f51546..11184d723ef9 100644
---- a/arch/loongarch/include/asm/thread_info.h
-+++ b/arch/loongarch/include/asm/thread_info.h
-@@ -101,7 +101,6 @@ register unsigned long current_stack_pointer __asm__("$sp");
- #define _TIF_32BIT_REGS		(1<<TIF_32BIT_REGS)
- #define _TIF_32BIT_ADDR		(1<<TIF_32BIT_ADDR)
- #define _TIF_LOAD_WATCH		(1<<TIF_LOAD_WATCH)
--#define _TIF_SINGLESTEP		(1<<TIF_SINGLESTEP)
- #define _TIF_LSX_CTX_LIVE	(1<<TIF_LSX_CTX_LIVE)
- #define _TIF_LASX_CTX_LIVE	(1<<TIF_LASX_CTX_LIVE)
- #define _TIF_USEDLBT		(1<<TIF_USEDLBT)
--- 
-2.34.1
+Well that's dumb of it.  Still, the code is presently a bit weird and
+we don't mind working around such third-party issues.
+
+> NOTE: There was an issue with using `struct kcore_list *pos' as the nested iterator.
+>       The build did not work!
+
+It worked for me.  What's wrong with that?
+
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+>  		 * the previous entry, search for a matching entry.
+>  		 */
+>  		if (!m || start < m->addr || start >= m->addr + m->size) {
+> -			struct kcore_list *iter;
+> +			struct kcore_list *tmp;
+
+`tmp' is a really poor identifier :(
+
+Let's try `pos':
+
+--- a/fs/proc/kcore.c~fs-proc-kcorec-fix-coccinelle-reported-error-instances-fix
++++ a/fs/proc/kcore.c
+@@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct ki
+ 		 * the previous entry, search for a matching entry.
+ 		 */
+ 		if (!m || start < m->addr || start >= m->addr + m->size) {
+-			struct kcore_list *tmp;
++			struct kcore_list *pos;
+ 
+ 			m = NULL;
+-			list_for_each_entry(tmp, &kclist_head, list) {
+-				if (start >= tmp->addr &&
+-				    start < tmp->addr + tmp->size) {
+-					m = tmp;
++			list_for_each_entry(pos, &kclist_head, list) {
++				if (start >= pos->addr &&
++				    start < pos->addr + pos->size) {
++					m = pos;
+ 					break;
+ 				}
+ 			}
+_
 
 
