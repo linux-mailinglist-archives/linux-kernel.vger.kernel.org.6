@@ -1,135 +1,106 @@
-Return-Path: <linux-kernel+bounces-388336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEC39B5E16
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:42:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631DD9B5E17
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145881F23AFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A70284A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AEC1E1A20;
-	Wed, 30 Oct 2024 08:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04611E1A12;
+	Wed, 30 Oct 2024 08:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LQqqRtlH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="XA00ENYD"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D4E1990C5;
-	Wed, 30 Oct 2024 08:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE6B1990C5;
+	Wed, 30 Oct 2024 08:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730277758; cv=none; b=fbwgrf2xy4HA3NLY67IacMHTNFfJpFfFXzeXPH3JbLt27JLXxkSneLbFqWD76bOrK51EzQkEN8OVrWzT1zwckTxbI5M8yjJcpsAIhTxjXIN4lE3NO9vvaLiJ6ru9jjYTIxThFGJc0f/IdEhPJzfQvjcQlLqN/BDgCv9HvpzKqMs=
+	t=1730277838; cv=none; b=e23c1uz7m6gpc0oNWygswTYWXy+VHspZqbn1kAjiVeZbNJHFOd7/evz8t2nTHPBpLl9FOqTHXGmVdhwQJNgC8oiGXB0k9kc8mQfIpGEGCG7/BBix7aFLvd5cAVugBOS3UovyOnjIw2rJlr1MG3BXRzremOk20xj3/O+2UB2yGLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730277758; c=relaxed/simple;
-	bh=rD045AXbDGXk5YlOnxuclO0/yqk4Mc2QaasO79S+fW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qzO42cJ4u9pOpDcNSBlIVaJl6nfyLRhcnQAri5Wi0heBB3uGWNJ6saxXtFvmvWn/2BedpoJtD5CkZMjHDCMzzBJTOec7OdHvNVbpanA4jwn6wXzBKRybeWizodPsRiJiWrpAbwWX3AZ5k8aiml5WJeaEL9/lQXk+qtxJfZ/VkHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LQqqRtlH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TKgrSQ025601;
-	Wed, 30 Oct 2024 08:42:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MSvP7/3RNM+CGuEImEY5eY8ngBdgWS6T4On0LyxkaKI=; b=LQqqRtlHGlHypp5b
-	ybJK5HRvmQWDoLjBnmpPe9Myu8F8Uov9BmpVPBzJoM/ZAvpcWwTSCSZNz7jGa46U
-	ehY08g2OeQkxz7IuC8N3iV90ut5f814W9vjC2MIt3pT2VGvY84imZ0GeyL+0fBBY
-	yaEyVoNR8C3T9cXFliquLH6JpDgT+kOAYpnlnMqdWDK688bg2WDLLjEOWIzaMEXy
-	teyODgZgyQjjZq/Ki1p4IKkxE1gy2pOwmOPLKKXklu5USEFphycJg510hyRkhH6g
-	mHu+e/M80u+6F3Ec2VVN3kqdBsx3PW++SuTr0U5Cdoj4Wkbwm3aYczAud/oLLNou
-	LVaOZQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgukbjy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 08:42:27 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U8gQ9R031549
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 08:42:26 GMT
-Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 01:42:22 -0700
-Message-ID: <645c9887-4df2-4ab2-a048-ba79a97b8d2f@quicinc.com>
-Date: Wed, 30 Oct 2024 16:42:19 +0800
+	s=arc-20240116; t=1730277838; c=relaxed/simple;
+	bh=nON4sMqSAvd9n8ClRLG37QnCL3NBJJRIXO1tYAucTZc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TyD94GBJrfta+fjBR5e7VZyfhnPIoBKJsKvNZdXi5+vcvp29YdAVJo/S1g5takqsq49ufwapAs6VY6KZvOD0wOV1vE8yEQVj3euL5j+emsSjqCjx2FyX9ESUbhbT7z8/sdg28VHK4v/uKhAeDAdywFlYLzYHVXDl0aFQiGJpQUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=XA00ENYD; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49U8hgeX73761067, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1730277822; bh=nON4sMqSAvd9n8ClRLG37QnCL3NBJJRIXO1tYAucTZc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=XA00ENYDcchY15J824PGOCtZ5gcb24VLSi2zGEGNbFLjLml7bwaa0996b1lPOxr4p
+	 QC4Oxw3sVx/SfqvhZ/DNKMbgRsUPinO6TdzC9U10PcoZ2uA87r/gddWWEINmRNF3lj
+	 KKsRWOJFeco5LJOfcVn3gKEPsgN3sH2EjhwpvGlj5ZZe8upjNfEZC8cdl1VeIQV7mo
+	 igcO0TG2qM8ZLPyhNhs69BjXsYdbT1EdxpnhYu7y0qpe6BRfudW8eB9rVrjAeT2xGN
+	 Ujbg7XICRjHNWBQkU5G+U2zy6NYIOszONxBOb/GJ1aTZMm3kjTR5SE1ujg02nhuUl+
+	 vx0e7FDx/IY0g==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49U8hgeX73761067
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 16:43:42 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 30 Oct 2024 16:43:42 +0800
+Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 30 Oct
+ 2024 16:43:41 +0800
+From: Hilda Wu <hildawu@realtek.com>
+To: <marcel@holtmann.org>
+CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <max.chou@realtek.com>,
+        <alex_lu@realsil.com.cn>, <kidman@realtek.com>,
+        <howardchung@google.com>, <apusaka@chromium.org>,
+        <yinghsu@chromium.org>, <johnlai@google.com>
+Subject: [PATCH v3] Bluetooth: btrtl: Decrease HCI_OP_RESET timeout from 10 s to 2 s
+Date: Wed, 30 Oct 2024 16:43:34 +0800
+Message-ID: <20241030084334.2740513-1-hildawu@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: qcs615: add the SCM node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <robimarko@gmail.com>,
-        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-References: <20241025030732.29743-1-quic_qqzhou@quicinc.com>
- <20241025030732.29743-4-quic_qqzhou@quicinc.com>
- <flk7n534gfqyivlbl72qco4k5d3c6ravevumjfoh6464pe3qg4@r7ns6zr2i3bv>
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-In-Reply-To: <flk7n534gfqyivlbl72qco4k5d3c6ravevumjfoh6464pe3qg4@r7ns6zr2i3bv>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rDhdqv0yAmW8i4-a-bXxV1gUrAbklpUy
-X-Proofpoint-GUID: rDhdqv0yAmW8i4-a-bXxV1gUrAbklpUy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410300067
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
+The original timeout setting for HCI Reset on shutdown is 10 seconds.
+HCI Reset shouldn't take 10 seconds to complete so instead use the
+default timeout for commands.
 
+Signed-off-by: Hilda Wu <hildawu@realtek.com>
+---
+V2 -> V3: Update commit message
+V1 -> V2: Modify commit message and summary
+---
+---
+ drivers/bluetooth/btrtl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-在 10/25/2024 2:02 PM, Dmitry Baryshkov 写道:
-> On Fri, Oct 25, 2024 at 08:37:31AM +0530, Qingqing Zhou wrote:
->> Add the SCM node for QCS615 platform. It is an interface to
->> communicate to the secure firmware.
->>
->> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index ac4c4c751da1..027c5125f36b 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -278,6 +278,13 @@
->>  		reg = <0 0x80000000 0 0>;
->>  	};
->>  
->> +	firmware {
->> +		scm {
->> +			compatible = "qcom,scm-qcs615", "qcom,scm";
->> +			qcom,dload-mode = <&tcsr 0x13000>;
-> 
-> No CRYPTO clock?
-NO, response from Qualcomm clock team is "the current QCS615 RPMH code does not have the clock support for CE clock", so we don't configure clocks here.
-> 
->> +		};
->> +	};
->> +
->>  	camnoc_virt: interconnect-0 {
->>  		compatible = "qcom,qcs615-camnoc-virt";
->>  		#interconnect-cells = <2>;
->> -- 
->> 2.17.1
->>
-> 
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 2d95b3ea046d..7128a8a0ba25 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -1371,7 +1371,7 @@ int btrtl_shutdown_realtek(struct hci_dev *hdev)
+ 	/* According to the vendor driver, BT must be reset on close to avoid
+ 	 * firmware crash.
+ 	 */
+-	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_INIT_TIMEOUT);
++	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_CMD_TIMEOUT);
+ 	if (IS_ERR(skb)) {
+ 		ret = PTR_ERR(skb);
+ 		bt_dev_err(hdev, "HCI reset during shutdown failed");
+-- 
+2.34.1
 
 
