@@ -1,157 +1,145 @@
-Return-Path: <linux-kernel+bounces-388135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507849B5B26
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:17:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236AC9B5B29
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E44661C20C3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:17:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B041C284194
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E849199932;
-	Wed, 30 Oct 2024 05:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1ED199926;
+	Wed, 30 Oct 2024 05:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECljN6qE"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8XnQ+1/"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ABE33E7;
-	Wed, 30 Oct 2024 05:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B1433E7;
+	Wed, 30 Oct 2024 05:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730265416; cv=none; b=GljaWHogbHzzQrV38VqoFiIwG/bFhF54kcxAMKQ90auDULT3N/IPz+WU0V9l7swC22g+qHr1E+xuqdjrUa0GAPzdddMk1rK6AKMXv5NvoZE4X/BrgkOWDvT7+fq8HsT0bW389M/KrbpqJwQ5zpN+bhNHMB7/DO+9u7Ci/xrf2FQ=
+	t=1730265484; cv=none; b=Xaqxe3/+3zyocj5+JFWICJRLcvBf0tYZYoYBiEzGeI5dEdV6DQB8j70PDFYaOHf2gyARno3HUXasy5urrxXsPg5rz1KVZdZ+aL9H79SR5YRLiesVpcjfp8LlAsBpSLGs9gJ9/8kLXpcW1xjTACWoiJ99RorDgEIk5sbEKW0iMWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730265416; c=relaxed/simple;
-	bh=4Ng+sAjoGKPc64iH0Yjl/NQmTniY/TRLqMyzQ0hldhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=du8bJRDqhir5mTNoz9ti6ZKc3/FonI1qtmF2moSTAgfGmIbZUrakRijIDZVMr1+aJk5zsZIIR6DmHUFaG512htf3z7LRhN4rKUpGrqabW47erWUC986THamGD9GZdadIjiR4KRzyL5hp5iGE25TpLO997LqQw7ZRqbK7Brdu2kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ECljN6qE; arc=none smtp.client-ip=209.85.221.173
+	s=arc-20240116; t=1730265484; c=relaxed/simple;
+	bh=24lXcsrnftnmOsMR79zaIp9ysIVZ8O9xPBJSn2Jr+is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CMAixjIQabYUq4SzVs/MnhcfESHGUmNquh6I7Ok4Q43p0pvOvX6k9te32nilZWoWid49yLFWzSE8sH0tj1iyGGMFtMWnsBkkPxSU9zxdT9/imJVoJR+SvPAuBe3UEyt0ZePflfUYW9Jsh8NkrS+F0lhZ1x02oxYgX+5FW/38pKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8XnQ+1/; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-50d4a6ef70aso1939519e0c.3;
-        Tue, 29 Oct 2024 22:16:54 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2e8c8915eso4813922a91.3;
+        Tue, 29 Oct 2024 22:18:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730265414; x=1730870214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730265482; x=1730870282; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A3t0O0GmcqTq9xrptWk5P2Qqwk7hlGCeWrvNQml6CD0=;
-        b=ECljN6qE7jO4fOm/XV7ajxkAr1yfZWiqs5nii5GV4ROpuff4i82vo9f4LgtNwMBS/s
-         n7JgvYwOUn2oDb8KQaDBczATgl1C1KOixzZjcPyJDT6H+GdLPwidr9ozAp86RY6JOeIm
-         8GTO2g+WAysL81HgOCyeD/4DP+MRmkTAcuRBctGuYF5yFp2ZZASnRBc+2AA6NUAUeLQT
-         MDOItI6Nhm6lFVhO8z2glkoi1tgId8IqaCLCtUDi3plTY0ZesBfjh9ELrw5aK94y620A
-         JD7ceo4JSgjFvmslzVVIDW19m6PyWZkjxQB0y21qgqEpFnQo/vL18Y2+0NyB2IntqJhA
-         hg5g==
+        bh=24lXcsrnftnmOsMR79zaIp9ysIVZ8O9xPBJSn2Jr+is=;
+        b=O8XnQ+1/ukuvQP3EmxuzwtWVWIq3Hi5fG420UcNiY1DKaGvbSbcaa3xqvYHkiVTdQ9
+         3MPTXgYnN3LuPuBnjdU9nwpPbqhddizYnFCY8U4kThMmnByX45Z8q1YMwulLKfrB8D56
+         gZsfv/QYVu4a8j3kQx6WyGKsHjZDo2dAoDEBjcScyIJtVn755KEeWJrk6fIV6mYc74jN
+         AlJgauGn6FiKOQLhIsJZUf/+NzBn5XeMpS/8+QurtAaNGZJpu+JJl8l+wReayng8lmgk
+         oFyXqiRK+pvh6H+qJCD7w8ce0J3/Os02xqQhf26+F5cqIY1HyNqsehgo9en8/P2XGl1E
+         CahA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730265414; x=1730870214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730265482; x=1730870282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A3t0O0GmcqTq9xrptWk5P2Qqwk7hlGCeWrvNQml6CD0=;
-        b=uIVGkCux7ovwAUyNudGJuVs8LRwtdV5UKAw3XXgEQ+3MwO3CAI+3TmS8zZ4gBT2SrR
-         0OYvLeSdRMWvIl6ao8ti9N/p3bAxahTUKwB/H/Dpv0FtbJlvGniF204q49MvOPDaZDDZ
-         wdpQJZ0P9yPeGQ04rENzFiw3xyDxOCp+0xI/WLSIpl4cXUBfSu9cod8cIA0b2ni8K66+
-         eRUobDnmx7fn9vnOcqX8aLjkMjl/BiYEYP4do+7wSmrRQQJ+8BJa48hNShzIBtHzRlJ/
-         Cz4FC0wYMGR3Gqhn2KA/WR7tEOhi9/n45RDmKklR437opVCNkcjf/AdzHkYE8tdoN8+J
-         dunQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/0gEaZYMhPmyGq1JPPHm6nj6wSxnrtakLJ/xG49OYBe68TejaRhONb+sPc7dn941gQ3AFcMEZpcrSeozSxFN4@vger.kernel.org, AJvYcCU1mwWa9mIpYMvS/YmWymrY+HbXZMQSMxmthzyRvfWaQjgVGmc6wb8Z3wX7DvPUtiC2MGlVAf/T9UzWdYQd9BU=@vger.kernel.org, AJvYcCW1Q9MRcB9rB2f3Ad+EbcedFzz4NFAaqKEzrCJ+8L03b+44Nvp31X48El4hheqyRdYmNwqRPw/StyoQEqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJEAry//6YVX/JPOlouefrq4iiEJF/WE2yWbnrVCs+r3T3PPHZ
-	Uh/BAImXI0+qyMLrqBjE3eUsSoCZCw+yNl4TUZFFbNFCHoGv3oitwqglrQ==
-X-Google-Smtp-Source: AGHT+IEnOcZXGUTKVaYXyJaAMXPkvTr53n/gkKo0Ltw7Rw2vEnrdj4C744uk532l9yr1uO9p9u0mTw==
-X-Received: by 2002:a05:6122:1796:b0:50d:160e:de73 with SMTP id 71dfb90a1353d-5101503520fmr12493138e0c.6.1730265413811;
-        Tue, 29 Oct 2024 22:16:53 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d2ab5f9sm484066385a.70.2024.10.29.22.16.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 22:16:53 -0700 (PDT)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id C9BAA1200043;
-	Wed, 30 Oct 2024 01:16:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 30 Oct 2024 01:16:52 -0400
-X-ME-Sender: <xms:RMEhZzgW6ULsvv5dCUpCmQPST-Tnj_Zd_rEPXBa_6y_H0_bvFFapWg>
-    <xme:RMEhZwDiyjrAwlZODv8s4aEA5vXWnlTwa9uK_hPUgx-8kpeU_sdjBoMH1LRDK-lUz
-    vnHQnc7Pcw_54Ogjw>
-X-ME-Received: <xmr:RMEhZzGSzp6djL3Mc_a1BSibs7wEN3W2mPt59RgohMx41mk6kHR6ANWXuTM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekvddgkeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudeipdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegurghvihgughhofiesghhoohhglhgvrdgtoh
-    hmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhho
-    shgvrdgvgihpohhsihhtohekleesghhmrghilhdrtghomhdprhgtphhtthhopegsrhgvnh
-    gurghnrdhhihhgghhinhhssehlihhnuhigrdguvghvpdhrtghpthhtoheprhhmohgrrhes
-    ghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilh
-    drtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthho
-    pegsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegsjhhorh
-    hnfegpghhhsehprhhothhonhhmrghilhdrtghomh
-X-ME-Proxy: <xmx:RMEhZwSxW72_o-vt9G1-syqfPoQN-duNA8VaCUYnFVHqOxkBX611xA>
-    <xmx:RMEhZwy7B-Ux8YHm0g7HvXHs_Ptl7Xb4GhyuIuG3vfqoDvEqlE2kXA>
-    <xmx:RMEhZ24ITs6sD1P3B4jQ8KGJwmeGiauraYvDmnSkNhMjjstVb_bX_g>
-    <xmx:RMEhZ1z80Y6cJHktE9s61gsizLo8HufjDIpYsENepIWHOBSnzwmUzg>
-    <xmx:RMEhZwjoo-2oxWH9ef2IMZwENSkDL_KL9nw89p52h8B4iQMvJyiu3TAs>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 01:16:52 -0400 (EDT)
-Date: Tue, 29 Oct 2024 22:16:51 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Gow <davidgow@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	=?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Matt Gilbride <mattgilbride@google.com>, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] rust: macros: add macro to easily run KUnit tests
-Message-ID: <ZyHBQzR_17qfcpng@Boquns-Mac-mini.local>
-References: <20241030045719.3085147-2-davidgow@google.com>
- <20241030045719.3085147-6-davidgow@google.com>
- <ZyHACjac2gk4M5MX@Boquns-Mac-mini.local>
+        bh=24lXcsrnftnmOsMR79zaIp9ysIVZ8O9xPBJSn2Jr+is=;
+        b=Th6/bnAJ+JEIO6A/sIieuGf3eI2GNH1oi3CiZRuqiLQHhPgBU4z7bYHEeXFvKa3iCv
+         kKKXTaCLl89UzZt3pu9LFZ/fjZ7S3T3h8d1UC9AdzgHmkaow/NE5Rsu2lUpIcNWBvhdG
+         tqidA4IejlEeTFwWDJ1/7+N/BnD1Y+MUwwpm8sMnKcx1A2R8+9kfV+0OxPk62b+sYxO3
+         dO89cY88va6QwvNlz+6hLTnQPlBr4RrseMkMgd2Pv7vVe9p468n4IpSqOJlRsuyKQAXD
+         tsaHzvanrtsQuRTkYKuCrHVE70a/mzGoWSmQ35f78VQl239r0m8EnS5ivq+gDENZ1L0c
+         E6BA==
+X-Forwarded-Encrypted: i=1; AJvYcCUV/yr7qQTCG66tewlqh3TPiYJUKLQaAK/Y8vGF1MzKIzve/1Y58e5qOyrIai7SwQqv0csaCGXDgxWPlN0=@vger.kernel.org, AJvYcCV5lzIy4piCN/RgSYgd8fnW8HDcQaQ0rYvFjW8OxyvCATlCnBZXoJWV5RQ4TZTxu8xPjIzfZhpFgJt+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ZU7gVtZhpfvgrM+eGKb6BYWm19Lyv8GRaJyag9vvuwY6SmZe
+	gpUkWjF9XUHsQ1vFxpsP+5D7YbqYtqCiCRr3808rLyDnSY4p6PncFP11W2hwIDDBo7xzKe90eht
+	hyr1fWiGHKuHKwcqPNjQ+y1zQ+YxnyOUB
+X-Google-Smtp-Source: AGHT+IEo3RLpfNdFjre93O+XF9fqC6nGsT2rG0gs8cMFUx0GjxYOtAcP1mK68iFwIsu4qooKb7XgcccUynR2hOHs+No=
+X-Received: by 2002:a17:90b:1d91:b0:2e5:e269:1b5a with SMTP id
+ 98e67ed59e1d1-2e8f11e9145mr13693271a91.41.1730265481537; Tue, 29 Oct 2024
+ 22:18:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyHACjac2gk4M5MX@Boquns-Mac-mini.local>
+References: <20241028025337.6372-6-ki.chiang65@gmail.com> <20241028105451.0e2e92a7@foxbook>
+In-Reply-To: <20241028105451.0e2e92a7@foxbook>
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+Date: Wed, 30 Oct 2024 13:17:51 +0800
+Message-ID: <CAHN5xi2XLnp+VhM-6QxWeMvZ_uQRSqaeHSqEjab+rSNZ9E98pw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] xhci: Correct handling of one-TRB isoc TD on Etron
+ xHCI host
+To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, mathias.nyman@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 10:11:38PM -0700, Boqun Feng wrote:
-[...]
-> > +
-> > +    let new_body: TokenStream = vec![body.stream(), kunit_macros.parse().unwrap()]
-> > +        .into_iter()
-> > +        .collect();
-> > +
-> > +    // Remove the `#[test]` macros.
-> > +    let new_body = new_body.to_string().replace("#[test]", "");
-> 
-> Yeah, I want to see how you do it this time ;-) So if you do a
-> `.to_string()` on a `TokenStream`, you lose all the span [1] information
-> ("span information" is a term invited by me, hope I get it right ;-))
+Hi,
 
-Not important: I meant I am not a procdure macro expert, hope "span
-information" is what is used when discussing span preservation ;-)
+Thank you for the review.
 
-Regards,
-Boqun
+Micha=C5=82 Pecio <michal.pecio@gmail.com> =E6=96=BC 2024=E5=B9=B410=E6=9C=
+=8828=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=885:54=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> Hi,
+>
+> That's a bug I'm familiar with.
+>
+> > Unplugging a USB3.0 webcam while streaming results in errors
+> > like this
+>
+> Not only unplugging but also any random error due to EMI or bad cable.
+>
+> > If an error is detected while processing an one-TRB isoc TD,
+> > the Etron xHC generates two transfer events for the TRB that
+> > the error was detected on. The first event is "USB Transcation
+> > Error", and the second event is "Success".
+>
+> IIRC, it wasn't just Transaction Errors but any sort of error, like
+> Babble or Bandwidth Overrun. But not sure about Missed Service, etc.
+>
+> And IIRC I confirmed that it was *not* the case on Short Packet.
 
-> e.g. if there is a compile error in the test code, the compiler cannot
-> report the exact line of the error, it can only report there is an
-> error.
-> 
-[...]
+Yes, it is not.
+
+>
+> Also, I'm 99% sure the problem is not limited to one-TRB TDs, but
+> it occurs every time there is an error on the last TRB of any TD.
+
+Yes, this can happen, I didn't account for this scenario.
+
+>
+> > As a solution, we can set the flag after the first error event
+> > and don't print the error message after the second event if the
+> > flag is set.
+>
+> Yes, but I think it would be better to use error_mid_td instead of
+> last_td_was_short, so that the TD is only freed on the final event,
+> not on the first one.
+>
+> The spec is clear that we should only free TRBs when the xHC is done
+> with them. Maybe it wouldn't be a problem in this case, and it surely
+> wouldn't be worse than what happens with Etron today, but IMO it could
+> be a real (even if rare) problem in other cases when this flag is used,
+> so I would rather remove the flag and handle short packets as per spec.
+
+Thank you for the explanation and suggestion. Maybe I should start
+trying to use error_mid_td to solve this problem.
+
+>
+> Regards,
+> Michal
+
+Thanks,
+Kuangyi Chiang
 
