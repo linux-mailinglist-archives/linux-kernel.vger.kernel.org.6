@@ -1,178 +1,96 @@
-Return-Path: <linux-kernel+bounces-388482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A1C9B603C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:34:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9918F9B6045
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8E5AB2130A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E8E2B23117
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40861E3779;
-	Wed, 30 Oct 2024 10:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j0O2LsEN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B801E3784;
+	Wed, 30 Oct 2024 10:35:12 +0000 (UTC)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1900D1E377A;
-	Wed, 30 Oct 2024 10:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6C729CE7;
+	Wed, 30 Oct 2024 10:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284436; cv=none; b=TpgH7VUJHXf69dqR3ylodJOA74hp8uifV5krOPVhiRpKQAYFrD0Iy3Mt97rvhLwHflDamcb10jt9CByb6lwbyEajSktdG10n/wFnqDyDfKMWoTKystBiIOspj4uAgOK+a9FSTJMqsOYQTyRaaW1ls+FuHR+uFmzLdU+0RioJdr8=
+	t=1730284511; cv=none; b=tqUPg8+MxHQZxzleBAB8q60odE5+x7KwkoGnCCv6R9vb7RT/fY3CZpym3D57ETncddKcVn74Mh0xROTdYJUFDqOZnInwnDutrYt8vAXsbXwQ9z/wknim8yZ53+uZTQHXlG7u8wFd36wYcD+6SpXz7eU37dck4UZXDZpartmkvGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284436; c=relaxed/simple;
-	bh=jw62Z5cUSu57Xnh9KUwNg9pJ+iuHmClIUEj6+M2N+3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tfPmKObY2ZMZc7TjdmtpIIWxpEcX0O4/FjdJgJU0+gA0kZu8CNk/zttN5W5DjW74Clzz8nHNMErTkRhOuarGhNZ0ARBIn2EsXISJC1KFxW+tSBO9aCI/8u3q98ftO8yExRJlJfsoaNudbJMAzdWIxGMX4vEq0S6YuQ1qvB9G1zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j0O2LsEN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UAXbXY020894;
-	Wed, 30 Oct 2024 10:33:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zLzBMv0Rkg00i7HVkcGGnpFFmL3Ph5CdG9HHpzdsPC4=; b=j0O2LsENzTEjp7m3
-	OwX6S2hKeYxiK2offq9t934pksLOkwuX4aLUx4FdW6rc9G3aeyTORkygr3DXl5w9
-	gBhMLl1c73OreqBpsPSnn8g2JpUsPQRVNXqiooy43FkeKMLVDlAevS2uRKaC41VI
-	sYSsz/R3ICb6dDcJrk8LbGg/2gbxV/esj/SnYT98cduIXldDxIQzg7MPm6aQMp+x
-	SAtcyILngIusdeAShVpOyOdTKo5XLUU9EoMoHeb0URmktMxBkfxGhD01JyvKPNTS
-	7tKkGxegtPW6124PW4i0k4yuudInNwHwUtdXfoRhiv3NaRItmUH+Zj5kwt5DEO3X
-	ipKu5g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqcquq4r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 10:33:49 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UAXnuM005413
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 10:33:49 GMT
-Received: from [10.231.207.28] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 03:33:43 -0700
-Message-ID: <563e7080-68a9-4735-995a-72baf2e35d49@quicinc.com>
-Date: Wed, 30 Oct 2024 18:33:41 +0800
+	s=arc-20240116; t=1730284511; c=relaxed/simple;
+	bh=Dh/ygCMs9EkmyJgZCXuDVA/pwti7uq3qYxM6qQs6dmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2zXFe5zS/gim6M6/54TqZ6ZQyLn9ASiDT4fwCmlAERqISYkD9SlMYoYH2ANtt7kfvCP5vd2ANPFdKSYUDNW2naMm4HGWLi0jPBU43XjlWk/ml6qRfHqHr4Jbi79IGT9gCA6I9xxkXbcVOyy7xo7Ql98BM5tZmNc9sNc/FvWsu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so8598662a12.0;
+        Wed, 30 Oct 2024 03:35:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730284508; x=1730889308;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GifnlPtN7NiyeZMSkjEx+dbPyN49ofS66QMTyEeTgtw=;
+        b=DvAljSiS9Z5O3Bv6yi++MA9IrkVyDIM3sEJpZV9xorATLgzja2I9LDS2kB12Vg4G5X
+         Pq31lbP8KxBfQJedgMfh0OeTG6nmNKqDk6ifvp0qQb3g1VYb8QZQllHrymCiZJuO8D4A
+         Nazyca3qnWAx+A1RTtaWzjddfq0UugAeLOnLSmJXwUjnhe1OQ4tf8dA2b+1lH5nx+rkQ
+         aVQXhHrBRTUYVahJa7kv+hToNFwrBG0A+cnlq1Zitcs4THn2P15qiucMJB/STrXfkVY4
+         L2ssDfGGy0GOqAM5G0JkNFEJl+bvunRJ7Y7AAlRh7XS65XIWLlXOYNNNV28rUqixqEn+
+         rkjA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6nC3/6m1bo+HOeVvU8nui3tWD3hrgQOIa/bdHqb7s3NRdgpBdLHBEwKe00u7X3Ns0Iave0Dom8VG1UNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPJ+UDpdEJlJoRwK95x3QkTwqoGeL8yoeUTMmDo5oeFGbfxMpn
+	3L1rsuOLWsJkMdZT1FhND+9m5FBk67YxMOmQqt4JHJTyCOulEzU6
+X-Google-Smtp-Source: AGHT+IF71lZKKH1Wi7ha9ca6zPk452ASkUG+FwwI2pKLbi61y6FlJ0tkir1WgK+psYexHGdJGCQKxg==
+X-Received: by 2002:a05:6402:4403:b0:5c9:584d:17e2 with SMTP id 4fb4d7f45d1cf-5cd54a7718fmr1809727a12.3.1730284507741;
+        Wed, 30 Oct 2024 03:35:07 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb629f338sm4590147a12.35.2024.10.30.03.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 03:35:07 -0700 (PDT)
+Date: Wed, 30 Oct 2024 03:35:04 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Radu Bulie <radu-andrei.bulie@nxp.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next 3/3] net: dpaa_eth: extract hash using __be32
+ pointer in rx_default_dqrr()
+Message-ID: <20241030-lemon-flamingo-from-uranus-35f6db@leitao>
+References: <20241029164317.50182-1-vladimir.oltean@nxp.com>
+ <20241029164317.50182-4-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs615-ride: Enable PMIC
- peripherals
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
- <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-2-f0778572ee41@quicinc.com>
- <j4ggfrynyoriseef5r5x6uwgo6cespll2np7uitc64yagoa6pz@r3ro2cpqrrry>
- <38cceae8-5203-4057-bd8b-f20fe3656474@quicinc.com>
- <CAA8EJprYHjYVM58e7i7Sxj64DSth4hhW_cUZ3hGqX7u0ecZFQg@mail.gmail.com>
-Content-Language: en-US
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-In-Reply-To: <CAA8EJprYHjYVM58e7i7Sxj64DSth4hhW_cUZ3hGqX7u0ecZFQg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MwRTFt_cmggySsdospp3lmrcLuCNDEnP
-X-Proofpoint-GUID: MwRTFt_cmggySsdospp3lmrcLuCNDEnP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
- phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
- mlxlogscore=976 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029164317.50182-4-vladimir.oltean@nxp.com>
 
-
-
-On 10/28/2024 5:41 PM, Dmitry Baryshkov wrote:
-> On Mon, 28 Oct 2024 at 10:40, Tingguo Cheng <quic_tingguoc@quicinc.com> wrote:
->>
->>
->>
->> On 10/28/2024 4:23 PM, Dmitry Baryshkov wrote:
->>> On Mon, Oct 28, 2024 at 04:03:25PM +0800, Tingguo Cheng wrote:
->>>> Enable PMIC and PMIC peripherals for qcs615-ride board.
->>>>
->>>> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/qcs615-ride.dts | 15 +++++++++++++++
->>>>    1 file changed, 15 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> index ee6cab3924a6d71f29934a8debba3a832882abdd..37358f080827bbe4484c14c5f159e813810c2119 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> @@ -6,6 +6,7 @@
->>>>
->>>>    #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->>>>    #include "qcs615.dtsi"
->>>> +#include "pm8150.dtsi"
->>>>    / {
->>>>       model = "Qualcomm Technologies, Inc. QCS615 Ride";
->>>>       compatible = "qcom,qcs615-ride", "qcom,qcs615";
->>>> @@ -210,6 +211,20 @@ &rpmhcc {
->>>>       clocks = <&xo_board_clk>;
->>>>    };
->>>>
->>>> +&pon {
->>>> +    /delete-property/ mode-bootloader;
->>>> +    /delete-property/ mode-recovery;
->>>
->>> Why?
->> Because boot modes will be supported on PSCI module from another patch,
->> reboot-modes are required to remove from PMIC side.
+On Tue, Oct 29, 2024 at 06:43:17PM +0200, Vladimir Oltean wrote:
+> Sparse provides the following output:
 > 
-> => commit message, please.
+> warning: cast to restricted __be32
 > 
-okay, will upload v4 with other comments fixing together.
->>>
->>>> +};
->>>> +
->>>> +&pon_pwrkey {
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>> +&pon_resin {
->>>> +    linux,code = <KEY_VOLUMEDOWN>;
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>>    &uart0 {
->>>>       status = "okay";
->>>>    };
->>>>
->>>> --
->>>> 2.34.1
->>>>
->>>
->>
->> --
->> Thank you & BRs
->> Tingguo
->>
+> This is a harmless warning due to the fact that we dereference the hash
+> stored in the FD using an incorrect type annotation. Suppress the
+> warning by using the correct __be32 type instead of u32. No functional
+> change.
 > 
-> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
--- 
-Thank you & BRs
-Tingguo
-
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
