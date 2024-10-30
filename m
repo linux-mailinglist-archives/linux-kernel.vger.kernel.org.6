@@ -1,161 +1,165 @@
-Return-Path: <linux-kernel+bounces-389033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4F99B67C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:27:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FFE9B67CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF67283109
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20EF31C209AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC29215027;
-	Wed, 30 Oct 2024 15:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF742213EF9;
+	Wed, 30 Oct 2024 15:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="AhIA4s8M"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMQeShE/"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46A62144D2
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FE5213ED9;
+	Wed, 30 Oct 2024 15:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301913; cv=none; b=s2+8lyPkhCKudlRiGgR1xwq1fTOzPJe1tUKBAbbJLN3jourRe+44xwuZJJvHw4/2u6UA+wYxRPOJTP4kUFG9g5y28pn9V2M1r8JevObMk0Wm1pMHl1BSQZ9qbPhjZPXt+OUuZRg4iIgMGT9KKsu8RdtMrJPw3dKubODy1F/8QRc=
+	t=1730302061; cv=none; b=jobC/ctMwK5td73rDXawL6PfWsHWF9f1YN67EPBv/QmZPkdjTjqrUbpjmN98736Us26fahtZrc3Vb3yfPbwx1NnkFWBc33L1TeSMLIjxmOEX5NOxYYvTUls+qOkqdtge2Ut+D3R3jXjM58V+UGIOaB6M9PuH0IFFAj+vb2n3/Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301913; c=relaxed/simple;
-	bh=NEIgB2tFlQkG+JrX4hQVS8M95TFQSsPnWmdZLvR/njQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1/LThIvqMdM6Rxki676TFY+VjiJt7eCUpLiaFEfymUd+RluOkajZ/LSVmpI//odMILj+0jjDoPsPE3O44scnV7QO3qROM5tVIJeVb/wteXfu0yciPua20BNJs4llQ+6Z6svc1PZcPRA6aO6qRT8uJnMjptCxNAxrd5L4aZiy0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=AhIA4s8M; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460b04e4b1cso46635211cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:25:10 -0700 (PDT)
+	s=arc-20240116; t=1730302061; c=relaxed/simple;
+	bh=dp7Rt1x5se7IjoicRuuvaRIcwU8RIWWuCWECT6ZmwLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=omSTnONCqM8qzMNEfeXpEYjkDarezIeBRLgvTv1FvFabVEtjwihZwXW6yYgLxl3vActxMNph0U1dJa43tZB3c3xG9nklR7m35ckNcjCF8dmlK8vN5ji+nq4WKX27EM66NXv4PfsB8hLLST/6u50LSyqxsKbGpCt8ojyFGbSOl4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMQeShE/; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7eab7622b61so9398a12.1;
+        Wed, 30 Oct 2024 08:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1730301910; x=1730906710; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7YLqxwpXuJNQygjoc5/hn+2+ADZpj/AHIhIEEnWpyXU=;
-        b=AhIA4s8MqbgWg+ZbRSzG+38DHbbAMKeSwtiPDf925OIgvJqOrGMQneQQtiY9POPQJF
-         SwZ6ffTIme+H0/mzempof9BRw2AtR1yxNemfrprls9Wtcd+K4qnXqeliX+jEbpgc+WBU
-         ILNstDkhBvL7gFhILPVzv7FngIcSZb5vPk0+VDATMM+yLIOFcGDmn1toMdf08YSd9m4H
-         /s8uFfTH2fliMYZE4SDFkcagM0RousZX7LeQUHPck5SGfIFa6gkjfyMF6rBR5WxvNEAl
-         QbD+tDKUWsNjyXkupOaP5XIOJPHV4dJnBQEYCcDXVzfOt5lr9wcvU90PdKd0Mry79P7r
-         veXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730301910; x=1730906710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730302059; x=1730906859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7YLqxwpXuJNQygjoc5/hn+2+ADZpj/AHIhIEEnWpyXU=;
-        b=c54AEucIZ1nKTBDDGL8IonqHCcLVFPFKsObeP1AjvcFGufiEoK2AaJW0amjrfH/+3c
-         Ih7UhaZdSTXl2Sot4uVtBwWDDDp60LBY3gjSlrNzLIp0ruiNUIHdAdoit/oL0HyUPSxM
-         bvqBWxO0VxcAqWwp7ZsBDvuS7G9gWXU5EWGRmmDeZJS9faXnT9NoDqPQQ7vCz/sHMwit
-         UR5YUiBD0neirkICILE+vvhSyI17cKFjIxBBFnMpU/N1hJqxO3sGRkv+pS6I50b7vih3
-         DeVHJCHiHMdKLUBjt1aQ5i3IhaV8z4lLVfMIIiEr/3g+L/dQjhmSJbqoe8eVh8K19SnJ
-         gylQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtsii97xTS34BITDLSkO/u36pfAEUVRCs59l9fwHAd//vrzZpXrdCnm0ll76eWFfqwkMB2jh5zR7BPIgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMKHGpRq77EDmFk+3l4uIDn2Ofye3lCd9leJ+Fcf0JQ4sM2Lbw
-	9r+5LBpowOJdWqdBg4dTDjFvH1URJ9rePIbE8CFmiHNiQceCKuZRy03PivaCTd4=
-X-Google-Smtp-Source: AGHT+IFdUZSjkUbpmwREg45uzgHne+Gkj526u++YBcKniEz4ijMYyFG+sSVSPyJ6DJno6yiyLbeAAg==
-X-Received: by 2002:a05:622a:34a:b0:461:e77:d6be with SMTP id d75a77b69052e-4613bff1f08mr234444901cf.20.1730301908427;
-        Wed, 30 Oct 2024 08:25:08 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46132297c39sm55537921cf.50.2024.10.30.08.25.06
+        bh=aYjqPUvHlnFE6/zLSAetb7FzSywGnSPHf/K1ifJ2bww=;
+        b=bMQeShE/qAjX1pcSNa6Kz7fwUKRw6fLsjJnYTtW89nWe5teULa2EcDU4qw9qq+NpU2
+         5JD+MWuiQuu2dqUnr1mv2VDll7f94GKrZFVWbNZoMqCxsp7ypOfwrO2MHyNPV3d1dvyd
+         VjGQUs+WtmuqSumCRoFlK3rZ4/4V0SG5cQvf68KHegtPtgXegt9XYGLJur0/E673JmmD
+         pbIe+91NYFHRI659kIlC9jUlUCoGQkRtZgc417ECTI6/kPcjX1EmwpFB4e1J8caNpaha
+         8a9MYPnoJJ6qZCg8DwxdNYkb38C/scAoeWEEl/D05+L00hE65LOwy8j86b4hK+JBExRA
+         aH4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730302059; x=1730906859;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aYjqPUvHlnFE6/zLSAetb7FzSywGnSPHf/K1ifJ2bww=;
+        b=eQBt9zM4gAeXUlmvrXX6orMOMmljs86cOjJko1xlCpJu/M3Ge8Pjqp+xKEM3L3Hz/Y
+         lVzHCiPIXSqGfNelzW/LQiptZePdi2MGROMPKZMUraYcTXOrUX1whpk+eqAXa3y3oEm7
+         htxZbbKq7hms3WcYUcmk9/1MAfev5vx21FcWIS2tywAK3B5FYerMWGwEN0QrNCoSMLPI
+         v4XryZdWvUs6YwulUtqvEgX3o7MOmc6Y3eOjYH5KLwydOwJGZp+c4I16X6Yi6ZK6QPMk
+         tWmupBA7XJCYWiLeqTetfiVvLGdedZRX9t5D8GxamsD6lLTx0EZJ0lW+W3o2iO6ZaELU
+         JaXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXpU4tj8rYzPgUctwmhgcgdXduoy60g+wPDwEhKtebb4CyjCYgnGWbsOc6haqEA4Cy6p57+Jq2jrAvAls=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4qeU9/kj7P+7RjOttGTYs2kewwGv7QIfl1AJtC9B3dVPjpD9c
+	uP9j7pXG0CdruaLT12FmKXJR7I71JowXhG5An4TgnKhHisVXu4yl
+X-Google-Smtp-Source: AGHT+IFzlwxdcUfGEH/hWPbCNqI1qzjDtssH7En8lQwGybFEPaZUZiCCAyCMQjeLVe0jDMWvkuwrNg==
+X-Received: by 2002:a05:6a20:e30b:b0:1d8:abf3:58be with SMTP id adf61e73a8af0-1d9a8402d5emr19824526637.21.1730302057200;
+        Wed, 30 Oct 2024 08:27:37 -0700 (PDT)
+Received: from vishnu-pc ([117.248.51.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0d089sm9637735b3a.99.2024.10.30.08.27.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 08:25:08 -0700 (PDT)
-Date: Wed, 30 Oct 2024 11:25:13 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
-	dave.jiang@intel.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
-	lenb@kernel.org, osalvador@suse.de, gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org, rppt@kernel.org
-Subject: Re: [PATCH v4 3/3] acpi,srat: give memory block size advice based on
- CFMWS alignment
-Message-ID: <ZyJP2c-wHADaE8ox@PC2K9PVX.TheFacebook.com>
-References: <20241029202041.25334-1-gourry@gourry.net>
- <20241029202041.25334-4-gourry@gourry.net>
- <c47337ea-f20e-44eb-95e8-c29b2db849a7@redhat.com>
+        Wed, 30 Oct 2024 08:27:36 -0700 (PDT)
+From: Vishnu Sanal T <t.v.s10123@gmail.com>
+To: linux-pm@vger.kernel.org
+Cc: trenn@suse.com,
+	shuah@kernel.org,
+	jwyatt@redhat.com,
+	jkacur@redhat.com,
+	linux-kernel@vger.kernel.org,
+	Vishnu Sanal T <t.v.s10123@gmail.com>
+Subject: [PATCH v2] implement set_enabled functions on powercap.c
+Date: Wed, 30 Oct 2024 20:57:07 +0530
+Message-ID: <20241030152706.179779-2-t.v.s10123@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241019124233.194140-2-t.v.s10123@gmail.com>
+References: <20241019124233.194140-2-t.v.s10123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c47337ea-f20e-44eb-95e8-c29b2db849a7@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 11:40:08AM +0100, David Hildenbrand wrote:
-> On 29.10.24 21:20, Gregory Price wrote:
-> > Capacity is stranded when CFMWS regions are not aligned to block size.
-> > On x86, block size increases with capacity (2G blocks @ 64G capacity).
-> > 
-> > Use CFMWS base/size to report memory block size alignment advice.
-> > 
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Signed-off-by: Gregory Price <gourry@gourry.net>
-> > ---
-> >   drivers/acpi/numa/srat.c | 19 +++++++++++++++++--
-> >   1 file changed, 17 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> > index 44f91f2c6c5d..a24aff38c465 100644
-> > --- a/drivers/acpi/numa/srat.c
-> > +++ b/drivers/acpi/numa/srat.c
-> > @@ -14,6 +14,7 @@
-> >   #include <linux/errno.h>
-> >   #include <linux/acpi.h>
-> >   #include <linux/memblock.h>
-> > +#include <linux/memory.h>
-> >   #include <linux/numa.h>
-> >   #include <linux/nodemask.h>
-> >   #include <linux/topology.h>
-> > @@ -338,12 +339,26 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
-> >   {
-> >   	struct acpi_cedt_cfmws *cfmws;
-> >   	int *fake_pxm = arg;
-> > -	u64 start, end;
-> > +	u64 start, end, align, size;
-> >   	int node;
-> >   	cfmws = (struct acpi_cedt_cfmws *)header;
-> >   	start = cfmws->base_hpa;
-> > -	end = cfmws->base_hpa + cfmws->window_size;
-> > +	size = cfmws->window_size;
-> > +	end = cfmws->base_hpa + size;
-> > +
-> > +	/* Align memblock size to CFMW regions if possible */
-> > +	for (align = SZ_64T; align >= SZ_256M; align >>= 1) {
-> > +		if (IS_ALIGNED(start, align) && IS_ALIGNED(size, align))
-> > +			break;
-> > +	}
-> 
-> Are there maybe some nice tricks bi-tricks to avoid the loop and these
-> hardcoded limits? :)
-> 
-> align = 1UL << __ffs(start | end));
-> 
-> Assuming "unsigned long" is sufficient in this code (64bit) and "start |
-> end" will never be 0.
->
+Implement the functions sysfs_set_enabled, powercap_set_enabled,
+and powercap_zone_set_enabled on powercap.c.
 
-This will work, if start | end is < 256MB, the ACPI table is invalid by
-definition since either the block itself is <256MB or the size is 0 (which
-is nonsense).  So yeah i can simplify here. 
+Signed-off-by: Vishnu Sanal T <t.v.s10123@gmail.com>
+---
+Changes in v2:
 
-Ack. will push v5 once i get KLP to clear another warning.
+- simplify the implementation of sysfs_set_enabled using system()
+  function.
+---
+ tools/power/cpupower/lib/powercap.c | 31 +++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/tools/power/cpupower/lib/powercap.c b/tools/power/cpupower/lib/powercap.c
+index 94a0c69e55ef..a2c0c33b7729 100644
+--- a/tools/power/cpupower/lib/powercap.c
++++ b/tools/power/cpupower/lib/powercap.c
+@@ -70,6 +70,17 @@ static int sysfs_get_enabled(char *path, int *mode)
+ 	return ret;
+ }
  
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
++static int sysfs_set_enabled(char *path, int mode)
++{
++	char command[SYSFS_PATH_MAX + 10];
++
++	char yes_no = (char)(mode + '0');
++
++	sprintf(command, "echo -n %c > %s", yes_no, path);
++
++	return system(command);
++}
++
+ int powercap_get_enabled(int *mode)
+ {
+ 	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
+@@ -77,12 +88,11 @@ int powercap_get_enabled(int *mode)
+ 	return sysfs_get_enabled(path, mode);
+ }
+ 
+-/*
+- * TODO: implement function. Returns dummy 0 for now.
+- */
+ int powercap_set_enabled(int mode)
+ {
+-	return 0;
++	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
++
++	return sysfs_set_enabled(path, mode);
+ }
+ 
+ /*
+@@ -180,8 +190,17 @@ int powercap_zone_get_enabled(struct powercap_zone *zone, int *mode)
+ 
+ int powercap_zone_set_enabled(struct powercap_zone *zone, int mode)
+ {
+-	/* To be done if needed */
+-	return 0;
++	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP;
++
++	if ((strlen(PATH_TO_POWERCAP) + strlen(zone->sys_name)) +
++	    strlen("/enabled") + 1 >= SYSFS_PATH_MAX)
++		return -1;
++
++	strcat(path, "/");
++	strcat(path, zone->sys_name);
++	strcat(path, "/enabled");
++
++	return sysfs_set_enabled(path, mode);
+ }
+ 
+ 
+-- 
+2.47.0
+
 
