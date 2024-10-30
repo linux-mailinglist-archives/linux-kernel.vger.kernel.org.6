@@ -1,281 +1,269 @@
-Return-Path: <linux-kernel+bounces-388818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757A99B64D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 576DF9B64DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02CBD1F21F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD55F1F2223E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBDF1E8844;
-	Wed, 30 Oct 2024 13:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0F71EF0B4;
+	Wed, 30 Oct 2024 13:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRrWfpHI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RaH471zt"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2566013FEE;
-	Wed, 30 Oct 2024 13:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B1113FEE;
+	Wed, 30 Oct 2024 13:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730296453; cv=none; b=sWigQGd3YqD3Fz1EjxriB7Kbr0YwKsdOzDiXm7c33sXaOOUudi9eAJdXR+49b8xtmBijg5s/zJ6kVDabeAldjrER+ydxN8psfqW4os714DJb4GD2db5L+GcB6YY6sUR1deSfcNc5b+aI6cTqH3BmxYhqrh+PudBcLl7c3uXaP0U=
+	t=1730296513; cv=none; b=TZ5jvja/g0fERsGhca/oz8pYol5t6lShO3LfDlC6SvH1i605GIuevsicr57AWnuB8ZCChcVPEiOgwPAnjqy+5OxJOAWLIiQxrqNlgxYLiYV+QaCNtNTAgc5UEtVal9eXmI3PK9U+NZcXjkxxJ2OJG5jqDR1x0IfEsqW2YqbO0fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730296453; c=relaxed/simple;
-	bh=PhXYYAn+2LT8w0L4LGY0S9YENmYHSpGxQ6PQjfy3S0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMX0ANgG2FOSzDJKIPR/423wNRdOUMgCZgmyzfSju9AC/kBnZ4UuF1PN4m1XhP0CB7D3gzC99MMe5/46z5Wj6PjDFfI9oiHNa9lSbYtbpYP6OtOPajyezJ55UGsbtNPMRfZBdv6Gjt4+aFZpnO5vSlek77aFA+vr26gX57mC4HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRrWfpHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF98C4CECE;
-	Wed, 30 Oct 2024 13:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730296452;
-	bh=PhXYYAn+2LT8w0L4LGY0S9YENmYHSpGxQ6PQjfy3S0w=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=iRrWfpHI1cpj16s7bdO00D1EDQY9ZR0HXUyhoQ9o5LF1XXlAOWFX/qhNzU+gKAChw
-	 2lKx9I4zTpddP/WC9aDfRv+aXDpvKTS6RYkuvjyHLl7Qcc5reyA6xs4nSRZfppxtQv
-	 nd3uqfHm1oieKfFR9bwbAnrK00QHO40TN7SMrBJn+zzUPDl3RsNXYx2RGoqIhu9WIj
-	 I1NR+K8o4q4L9+ez4RrH+QRibW8I/xZXH1f712hUYoJO2eZ9zOcPMShMFpctb0/irP
-	 niejR/jT/el1EBfyNKm+09NrBkkWR6L1B6CMVq2i4xns+1FY19dJmRNB0ejxX5dkh9
-	 ePR6+Dwxunu5A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2D4FDCE09DB; Wed, 30 Oct 2024 06:54:12 -0700 (PDT)
-Date: Wed, 30 Oct 2024 06:54:12 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Cheng-Jui Wang =?utf-8?B?KOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>
-Cc: "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dianders@chromium.org" <dianders@chromium.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"frederic@kernel.org" <frederic@kernel.org>,
-	wsd_upstream <wsd_upstream@mediatek.com>,
-	Bobule Chang =?utf-8?B?KOW8teW8mOe+qSk=?= <bobule.chang@mediatek.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"kernel-team@meta.com" <kernel-team@meta.com>,
-	"joel@joelfernandes.org" <joel@joelfernandes.org>,
-	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
-Subject: Re: [PATCH v3 rcu 3/3] rcu: Finer-grained grace-period-end checks in
- rcu_dump_cpu_stacks()
-Message-ID: <9e90d04e-081b-4730-890b-295ed52747de@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <92193018-8624-495e-a685-320119f78db1@paulmck-laptop>
- <20241016161931.478592-3-paulmck@kernel.org>
- <c3218fbe-7bb1-4fd6-8b00-beee244ffeae@paulmck-laptop>
- <b2b0bceacbd080e13b3aa7ad05569a787df4646d.camel@mediatek.com>
- <adb044e2-8f62-4367-9a22-30515f5647b1@paulmck-laptop>
- <d0adc7d14da0f21909eef68acf19fc5706a4b1af.camel@mediatek.com>
+	s=arc-20240116; t=1730296513; c=relaxed/simple;
+	bh=TXrFoqiLIVQIm9dtPctzF9SKQnoSn+OVC4M4CCMrhB0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ti4y6lE99rTdslTVWM5N3SIQY+BzpCAcq7I1ZODDOD8BQ1+3sqvQWK2z2WBhvwtpwL87HOlnPiEoPm72T99xUYpaNOJ4C8RDSEuuQ5VCkIoZ9tm5iRkfmEbVDwZwTSAxTrFDM7qUYaUqcXtM67PhQr54Lk9hjcR0eIKMcWAKlfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RaH471zt; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 664A81C0010;
+	Wed, 30 Oct 2024 13:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730296501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JmPbpWhdpXF+y4ZSTK549aUGaPsOlGl6m9rI7bDobw0=;
+	b=RaH471ztX/rSBP8dwI04RvvW9KXD4zzhCLeQtr4HgA+VnZDrLx2Jv6x2GeuvJvft6TnGTE
+	yvloTWKkqrqS5LiqHKEZCufEXXmDB2huVVfWKGhgFXI79rDgDFLIEbDvnRk44724C2t2Rt
+	V5gY5YuQ3d5IHB0a7UlcPy6CTTonRBlJhMtlCGqAifq8Kf3d2/K15cpAQmbpKyhcRiMUCl
+	ZqBOP84YUJGlyyyDKVlIktUmacGh37WKeQwFZpkmdRv1IaCYAkkxg2mudbmWuC3Rcxz4g6
+	3xUhMAZk76fkeD9W10AAfq4s0Vr55zpx+kPgG5i0dkyAlKIkBB7aYE+Qt/5zUA==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next v19 00/10] net: Make timestamping selectable
+Date: Wed, 30 Oct 2024 14:54:42 +0100
+Message-Id: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d0adc7d14da0f21909eef68acf19fc5706a4b1af.camel@mediatek.com>
+X-B4-Tracking: v=1; b=H4sIAKM6ImcC/43TzYrcMAwA4FcZct4US5H801PfoyyLncjdQJsMm
+ XTYZZl3rzK0JMvY0GNs+YslSx/NRZZRLs3X00ezyHW8jPOkHxCeTk3/Gqcf0o6DLjRosAMD0Ga
+ J6+9FXs7r+WWSdZK3te0yOs/Oi6fU6MnzInl8u7PfGw1qt6jmWXdex8s6L+/3/13tff+vHIry1
+ bamdRBz7tElI/wtzfP6c5y+9POvu3h1uwJAZcWpQg7FucAgZB4V/08hg2DLileFwWTCTEQ5PSr
+ hoGBFCdtdmC0AU8gIjwqYnSFTKQwYdUyOKJF7H2IoOHBwECsOqJNBE4KMEQZfcPDgdKbioDrYc
+ 0ZKNgaggtPtDmMtr04dK0OkgTQ9ygWHdseaypNrK2jnuGSzFQ0ovTnwwYFafVidhNF4i6xcV3D
+ s7jjDFWfrZB4ccKfF0fwLjjs6tfpsvRwlJh8GSkifJ+Lp9D/HE3fgMptBX7xwjX0WQKeq4mzDI
+ EMgn7tkvXefndvt9geA2ixEXAQAAA==
+To: Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
+ Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
+ donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Shannon Nelson <shannon.nelson@amd.com>, 
+ Alexandra Winter <wintera@linux.ibm.com>, 
+ Kory Maincent <kory.maincent@bootlin.com>, 
+ Jacob Keller <jacob.e.keller@intel.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, Oct 30, 2024 at 03:55:56AM +0000, Cheng-Jui Wang (王正睿) wrote:
-> On Tue, 2024-10-29 at 09:29 -0700, Paul E. McKenney wrote:
-> > External email : Please do not click links or open attachments until you have verified the sender or the content.
-> > 
-> > 
-> > On Tue, Oct 29, 2024 at 02:20:51AM +0000, Cheng-Jui Wang (王正睿) wrote:
-> > > On Mon, 2024-10-28 at 17:22 -0700, Paul E. McKenney wrote:
-> > > > The result is that the current leaf rcu_node structure's ->lock is
-> > > > acquired only if a stack backtrace might be needed from the current CPU,
-> > > > and is held across only that CPU's backtrace. As a result, if there are
-> > > 
-> > > After upgrading our device to kernel-6.11, we encountered a lockup
-> > > scenario under stall warning.
-> > > I had prepared a patch to submit, but I noticed that this series has
-> > > already addressed some issues, though it hasn't been merged into the
-> > > mainline yet. So, I decided to reply to this series for discussion on
-> > > how to fix it before pushing. Here is the lockup scenario We
-> > > encountered:
-> > > 
-> > > Devices: arm64 with only 8 cores
-> > > One CPU holds rnp->lock in rcu_dump_cpu_stack() while trying to dump
-> > > other CPUs, but it waits for the corresponding CPU to dump backtrace,
-> > > with a 10-second timeout.
-> > > 
-> > >    __delay()
-> > >    __const_udelay()
-> > >    nmi_trigger_cpumask_backtrace()
-> > >    arch_trigger_cpumask_backtrace()
-> > >    trigger_single_cpu_backtrace()
-> > >    dump_cpu_task()
-> > >    rcu_dump_cpu_stacks()  <- holding rnp->lock
-> > >    print_other_cpu_stall()
-> > >    check_cpu_stall()
-> > >    rcu_pending()
-> > >    rcu_sched_clock_irq()
-> > >    update_process_times()
-> > > 
-> > > However, the other 7 CPUs are waiting for rnp->lock on the path to
-> > > report qs.
-> > > 
-> > >    queued_spin_lock_slowpath()
-> > >    queued_spin_lock()
-> > >    do_raw_spin_lock()
-> > >    __raw_spin_lock_irqsave()
-> > >    _raw_spin_lock_irqsave()
-> > >    rcu_report_qs_rdp()
-> > >    rcu_check_quiescent_state()
-> > >    rcu_core()
-> > >    rcu_core_si()
-> > >    handle_softirqs()
-> > >    __do_softirq()
-> > >    ____do_softirq()
-> > >    call_on_irq_stack()
-> > > 
-> > > Since the arm64 architecture uses IPI instead of true NMI to implement
-> > > arch_trigger_cpumask_backtrace(), spin_lock_irqsave disables
-> > > interrupts, which is enough to block this IPI request.
-> > > Therefore, if other CPUs start waiting for the lock before receiving
-> > > the IPI, a semi-deadlock scenario like the following occurs:
-> > > 
-> > > CPU0                    CPU1                    CPU2
-> > > -----                   -----                   -----
-> > > lock_irqsave(rnp->lock)
-> > >                         lock_irqsave(rnp->lock)
-> > >                         <can't receive IPI>
-> > > <send ipi to CPU 1>
-> > > <wait CPU 1 for 10s>
-> > >                                                 lock_irqsave(rnp->lock)
-> > >                                                 <can't receive IPI>
-> > > <send ipi to CPU 2>
-> > > <wait CPU 2 for 10s>
-> > > ...
-> > > 
-> > > 
-> > > In our scenario, with 7 CPUs to dump, the lockup takes nearly 70
-> > > seconds, causing subsequent useful logs to be unable to print, leading
-> > > to a watchdog timeout and system reboot.
-> > > 
-> > > This series of changes re-acquires the lock after each dump,
-> > > significantly reducing lock-holding time. However, since it still holds
-> > > the lock while dumping CPU backtrace, there's still a chance for two
-> > > CPUs to wait for each other for 10 seconds, which is still too long.
-> > > So, I would like to ask if it's necessary to dump backtrace within the
-> > > spinlock section?
-> > > If not, especially now that lockless checks are possible, maybe it can
-> > > be changed as follows?
-> > > 
-> > > -                     if (!(data_race(rnp->qsmask) & leaf_node_cpu_bit(rnp, cpu)))
-> > > -                             continue;
-> > > -                     raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> > > -                     if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu)) {
-> > > +                     if (data_race(rnp->qsmask) & leaf_node_cpu_bit(rnp, cpu)) {
-> > >                               if (cpu_is_offline(cpu))
-> > >                                       pr_err("Offline CPU %d blocking current GP.\n", cpu);
-> > >                               else
-> > >                                       dump_cpu_task(cpu);
-> > >                               }
-> > >                       }
-> > > -                     raw_spin_unlock_irqrestore_rcu_node(rnp,
-> > > flags);
-> > > 
-> > > Or should this be considered an arm64 issue, and they should switch to
-> > > true NMI, otherwise, they shouldn't use
-> > > nmi_trigger_cpumask_backtrace()?
-> > 
-> > Thank you for looking into this!
-> > 
-> > We do assume that nmi_trigger_cpumask_backtrace() uses true NMIs, so,
-> > yes, nmi_trigger_cpumask_backtrace() should use true NMIs, just like
-> > the name says.  ;-)
-> 
-> In the comments of following patch, the arm64 maintainers have
-> differing views on the use of nmi_trigger_cpumask_backtrace(). I'm a
-> bit confused and unsure which perspective is more reasonable.
-> 
-> https://lore.kernel.org/all/20230906090246.v13.4.Ie6c132b96ebbbcddbf6954b9469ed40a6960343c@changeid/
+Up until now, there was no way to let the user select the hardware
+PTP provider at which time stamping occurs. The stack assumed that PHY time
+stamping is always preferred, but some MAC/PHY combinations were buggy.
 
-I clearly need to have a chat with the arm64 maintainers, and thank
-you for checking.
+This series updates the default MAC/PHY default timestamping and aims to
+allow the user to select the desired hwtstamp provider administratively.
 
-> > /*
-> >  * NOTE: though nmi_trigger_cpumask_backtrace() has "nmi_" in the
-> name,
-> >  * nothing about it truly needs to be implemented using an NMI, it's
-> >  * just that it's _allowed_ to work with NMIs. If ipi_should_be_nmi()
-> >  * returned false our backtrace attempt will just use a regular IPI.
-> >  */
-> 
-> > Alternatively, arm64 could continue using nmi_trigger_cpumask_backtrace()
-> > with normal interrupts (for example, on SoCs not implementing true NMIs),
-> > but have a short timeout (maybe a few jiffies?) after which its returns
-> > false (and presumably also cancels the backtrace request so that when
-> > the non-NMI interrupt eventually does happen, its handler simply returns
-> > without backtracing).  This should be implemented using atomics to avoid
-> > deadlock issues.  This alternative approach would provide accurate arm64
-> > backtraces in the common case where interrupts are enabled, but allow
-> > a graceful fallback to remote tracing otherwise.
-> > 
-> > Would you be interested in working this issue, whatever solution the
-> > arm64 maintainers end up preferring?
-> 
-> The 10-second timeout is hard-coded in nmi_trigger_cpumask_backtrace().
-> It is shared code and not architecture-specific. Currently, I haven't
-> thought of a feasible solution. I have also CC'd the authors of the
-> aforementioned patch to see if they have any other ideas.
+Changes in v19:
+- Rebase on net-next
+- Link to v18: https://lore.kernel.org/r/20241023-feature_ptp_netnext-v18-0-ed948f3b6887@bootlin.com
 
-It should be possible for arm64 to have an architecture-specific hook
-that enables them to use a much shorter timeout.  Or, to eventually
-switch to real NMIs.
+Changes in v18:
+- Few changes in the tsconfig-set ethtool command.
+- Add tsconfig-set-reply ethtool netlink socket.
+- Add missing netlink tsconfig documentation
+- Link to v17: https://lore.kernel.org/r/20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com
 
-> Regarding the rcu stall warning, I think the purpose of acquiring `rnp-
-> >lock` is to protect the rnp->qsmask variable rather than to protect
-> the `dump_cpu_task()` operation, right?
+Changes in v17:
+- Fix a documentation nit.
+- Add a missing kernel_ethtool_tsinfo update from a new MAC driver.
+- Link to v16: https://lore.kernel.org/r/20240705-feature_ptp_netnext-v16-0-5d7153914052@bootlin.com
 
-As noted below, it is also to prevent false-positive stack dumps.
+Changes in v16:
+- Add a new patch to separate tsinfo into a new tsconfig command to get
+  and set the hwtstamp config.
+- Used call_rcu() instead of synchronize_rcu() to free the hwtstamp_provider
+- Moved net core changes of patch 12 directly to patch 8.
+- Link to v15: https://lore.kernel.org/r/20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com
 
-> Therefore, there is no need to call dump_cpu_task() while holding the
-> lock.
-> When holding the spinlock, we can store the CPUs that need to be dumped
-> into a cpumask, and then dump them all at once after releasing the
-> lock.
-> Here is my temporary solution used locally based on kernel-6.11.
-> 
-> +	cpumask_var_t mask;
-> +	bool mask_ok;
-> 
-> +	mask_ok = zalloc_cpumask_var(&mask, GFP_ATOMIC);
-> 	rcu_for_each_leaf_node(rnp) {
-> 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> 		for_each_leaf_node_possible_cpu(rnp, cpu)
-> 			if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu))
-> {
-> 				if (cpu_is_offline(cpu))
-> 					pr_err("Offline CPU %d blocking
-> current GP.\n", cpu);
-> +				else if (mask_ok)
-> +					cpumask_set_cpu(cpu, mask);
-> 				else
-> 					dump_cpu_task(cpu);
-> 			}
-> 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> 	}
-> +	if (mask_ok) {
-> +		if (!trigger_cpumask_backtrace(mask)) {
-> +			for_each_cpu(cpu, mask)
-> +				dump_cpu_task(cpu);
-> +		}
-> +		free_cpumask_var(mask);
-> +	}
-> 
-> After applying this, I haven't encountered the lockup issue for five
-> days, whereas it used to occur about once a day.
+Changes in v15:
+- Fix uninitialized ethtool_ts_info structure.
+- Link to v14: https://lore.kernel.org/r/20240604-feature_ptp_netnext-v14-0-77b6f6efea40@bootlin.com
 
-We used to do it this way, and the reason that we changed was to avoid
-false-positive (and very confusing) stack dumps in the surprisingly
-common case where the act of dumping the first stack caused the stalled
-grace period to end.
+Changes in v14:
+- Add back an EXPORT_SYMBOL() missing.
+- Link to v13: https://lore.kernel.org/r/20240529-feature_ptp_netnext-v13-0-6eda4d40fa4f@bootlin.com
 
-So sorry, but we really cannot go back to doing it that way.
+Changes in v13:
+- Add PTP builtin code to fix build errors when building PTP as a module.
+- Fix error spotted by smatch and sparse.
+- Link to v12: https://lore.kernel.org/r/20240430-feature_ptp_netnext-v12-0-2c5f24b6a914@bootlin.com
 
-							Thanx, Paul
+Changes in v12:
+- Add missing return description in the kdoc.
+- Fix few nit.
+- Link to v11: https://lore.kernel.org/r/20240422-feature_ptp_netnext-v11-0-f14441f2a1d8@bootlin.com
+
+Changes in v11:
+- Add netlink examples.
+- Remove a change of my out of tree marvell_ptp patch in the patch series.
+- Remove useless extern.
+- Link to v10: https://lore.kernel.org/r/20240409-feature_ptp_netnext-v10-0-0fa2ea5c89a9@bootlin.com
+
+Changes in v10:
+- Move declarations to net/core/dev.h instead of netdevice.h
+- Add netlink documentation.
+- Add ETHTOOL_A_TSINFO_GHWTSTAMP netlink attributes instead of a bit in
+  ETHTOOL_A_TSINFO_TIMESTAMPING bitset.
+- Send "Move from simple ida to xarray" patch standalone.
+- Add tsinfo ntf command.
+- Add rcu_lock protection mechanism to avoid memory leak.
+- Fixed doc and kdoc issue.
+- Link to v9: https://lore.kernel.org/r/20240226-feature_ptp_netnext-v9-0-455611549f21@bootlin.com
+
+Changes in v9:
+- Remove the RFC prefix.
+- Correct few NIT fixes.
+- Link to v8: https://lore.kernel.org/r/20240216-feature_ptp_netnext-v8-0-510f42f444fb@bootlin.com
+
+Changes in v8:
+- Drop the 6 first patch as they are now merged.
+- Change the full implementation to not be based on the hwtstamp layer
+  (MAC/PHY) but on the hwtstamp provider which mean a ptp clock and a
+  phc qualifier.
+- Made some patch to prepare the new implementation.
+- Expand netlink tsinfo instead of a new ts command for new hwtstamp
+  configuration uAPI and for dumping tsinfo of specific hwtstamp provider.
+- Link to v7: https://lore.kernel.org/r/20231114-feature_ptp_netnext-v7-0-472e77951e40@bootlin.com
+
+Changes in v7:
+- Fix a temporary build error.
+- Link to v6: https://lore.kernel.org/r/20231019-feature_ptp_netnext-v6-0-71affc27b0e5@bootlin.com
+
+Changes in v6:
+- Few fixes from the reviews.
+- Replace the allowlist to default_timestamp flag to know which phy is
+  using old API behavior.
+- Rename the timestamping layer enum values.
+- Move to a simple enum instead of the mix between enum and bitfield.
+- Update ts_info and ts-set in software timestamping case.
+
+Changes in v5:
+- Update to ndo_hwstamp_get/set. This bring several new patches.
+- Add few patches to make the glue.
+- Convert macb to ndo_hwstamp_get/set.
+- Add netlink specs description of new ethtool commands.
+- Removed netdev notifier.
+- Split the patches that expose the timestamping to userspace to separate
+  the core and ethtool development.
+- Add description of software timestamping.
+- Convert PHYs hwtstamp callback to use kernel_hwtstamp_config.
+
+Changes in v4:
+- Move on to ethtool netlink instead of ioctl.
+- Add a netdev notifier to allow packet trapping by the MAC in case of PHY
+  time stamping.
+- Add a PHY whitelist to not break the old PHY default time-stamping
+  preference API.
+
+Changes in v3:
+- Expose the PTP choice to ethtool instead of sysfs.
+  You can test it with the ethtool source on branch feature_ptp of:
+  https://github.com/kmaincent/ethtool
+- Added a devicetree binding to select the preferred timestamp.
+
+Changes in v2:
+- Move selected_timestamping_layer variable of the concerned patch.
+- Use sysfs_streq instead of strmcmp.
+- Use the PHY timestamp only if available.
+
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Kory Maincent (10):
+      net: Make dev_get_hwtstamp_phylib accessible
+      net: Make net_hwtstamp_validate accessible
+      ptp: Add phc source and helpers to register specific PTP clock or get information
+      net: Add the possibility to support a selected hwtstamp in netdevice
+      net: netdevsim: ptp_mock: Convert to netdev_ptp_clock_register
+      net: macb: Convert to netdev_ptp_clock_register
+      net: ptp: Move ptp_clock_index() to builtin symbol
+      net: ethtool: tsinfo: Add support for reading tsinfo for a specific hwtstamp provider
+      net: ethtool: Add support for tsconfig command to get/set hwtstamp config
+      netlink: specs: Enhance tsinfo netlink attributes and add a tsconfig set command
+
+ Documentation/netlink/specs/ethtool.yaml     |  70 +++++
+ Documentation/networking/ethtool-netlink.rst |  83 +++++-
+ Documentation/networking/timestamping.rst    |  38 ++-
+ drivers/net/ethernet/cadence/macb_ptp.c      |   2 +-
+ drivers/net/netdevsim/netdev.c               |  19 +-
+ drivers/net/phy/phy_device.c                 |  11 +
+ drivers/ptp/Makefile                         |   5 +
+ drivers/ptp/ptp_clock.c                      |  39 ++-
+ drivers/ptp/ptp_clock_consumer.c             | 182 ++++++++++++
+ drivers/ptp/ptp_mock.c                       |   4 +-
+ drivers/ptp/ptp_private.h                    |   7 +
+ include/linux/ethtool.h                      |   4 +
+ include/linux/net_tstamp.h                   |  18 ++
+ include/linux/netdevice.h                    |   5 +
+ include/linux/ptp_clock_kernel.h             | 188 +++++++++++++
+ include/linux/ptp_mock.h                     |   4 +-
+ include/uapi/linux/ethtool_netlink.h         |  30 +-
+ include/uapi/linux/net_tstamp.h              |  11 +
+ net/core/dev.h                               |   3 +
+ net/core/dev_ioctl.c                         |  49 +++-
+ net/core/timestamping.c                      |  50 +++-
+ net/ethtool/Makefile                         |   2 +-
+ net/ethtool/common.c                         |  33 +++
+ net/ethtool/common.h                         |   3 +
+ net/ethtool/netlink.c                        |  26 +-
+ net/ethtool/netlink.h                        |   8 +-
+ net/ethtool/ts.h                             |  52 ++++
+ net/ethtool/tsconfig.c                       | 406 +++++++++++++++++++++++++++
+ net/ethtool/tsinfo.c                         | 239 +++++++++++++++-
+ 29 files changed, 1532 insertions(+), 59 deletions(-)
+---
+base-commit: 3c3db3a945f183e4e2693a730305d8a77473bdbd
+change-id: 20231011-feature_ptp_netnext-3f278578e84b
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
