@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-388590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC739B61D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:33:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F76E9B61EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CBA284390
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534F31C21D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C731E8824;
-	Wed, 30 Oct 2024 11:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F6F1F1301;
+	Wed, 30 Oct 2024 11:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="gLpQ7Sbv"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WHb6oIUO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F571E573C;
-	Wed, 30 Oct 2024 11:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8101EF952;
+	Wed, 30 Oct 2024 11:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287772; cv=none; b=hkdDX5NC0arMOPCJc51Csczl86/vVpGNjW6UgJdmZPfL3vL2c16PS/D8iJldg5EcAcPz20ejvoQPV5TdGeRkQNNbgK+IYHBhSL5b9+A9/SZ+cXX5cuTgQkaViGexB7Iee0Goi3R53i7Jdw9SQvpnaKeal8ejCM/YnNWp6LQSvis=
+	t=1730287937; cv=none; b=HwnixElgwoa825E/HolyW34YG/9b5yEGiABS8wNr+0vqyoLwS1X1BIVGbNx8700PfN/4zwDQfxNyAC+N2Ey/3j+MgC4NGXu2Fa/+/7qD5JGQV5zb2ycVjuWB8IQw60/ixlzgwSb4+kv3lBhc/gZMkCrgvl+2y0SicN3jujW5Czw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287772; c=relaxed/simple;
-	bh=OdiodqtV6Avo+i8+OT0sDy0pcJozv9USwEYhUYIAdsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NGkSEDZsbV+6/FuKhnVwkHr5i3EYm7/LerubmiivjR8mZYRILlE7uYF23qTavfhdfSPicn0yH26gXayG0sl8VHgWc8kYx2QN1yxql/cgcpq1rimMBTDQNnU9eL0ug4N6CfMYwcoCB+hHWyxKoP9GvZWMMUN9xlwfIRo2z1nvsu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=gLpQ7Sbv; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=0sJmDHzF3+9NwA0bdKyhFbpw9KxO7Gt5iyWJOMeiOw4=; t=1730287769;
-	x=1730719769; b=gLpQ7Sbvt4Xyny4I8n9lZNnIDVDQSVnIEQiNToXnf0fmtWSw+FwkiBSIqyAZ8
-	FciRe7Pt++yCV1tloMJX/WaJyT+Mgrqz4S3tMjkVq+KXwjaHvqb4nuV8TJsqwkoKEWS3GCI+QC6K1
-	lNyIj3Zr7Bnx46AGW6ryq3hRHuyA+9IIR83V2FnH+zfYuc9bm+WHauRnVcQvEsQ/SqAcaVWGs3Aln
-	t98wl6JkphwV5ID4Hx65Hno1ez1MN56nchPeZVub2oh9eXY5FxmtoeOk27AqNaH53E8jpCzyamOO3
-	Svriz+2ifc2PFnwL+QEXCReoZOGShqIL2zZrXTiVXC+1V+ib8w==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t66t9-0002YK-Sz; Wed, 30 Oct 2024 12:29:24 +0100
-Message-ID: <0a988691-8c18-4dca-ac78-94e36a9b8b37@leemhuis.info>
-Date: Wed, 30 Oct 2024 12:29:22 +0100
+	s=arc-20240116; t=1730287937; c=relaxed/simple;
+	bh=w6H7Qq42d5eP8LdVc2TdnqklE3NAyDo0h846LZs1ff4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T5wb1l1fSPokktKatG+TEpt5fIDBISR/+hbdbPsocC4a7VdXPRI9rRJj8YsayRptFmmZP7L43zQEnjFEea+uPeds3UkaollXwjy3x/mMkdmWZCK41xatpntVO2bYttpSsxJ8OrUWyF+aft5gw//L/JaoKg2vHFava1LHlVkWNIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WHb6oIUO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U4msrZ027408;
+	Wed, 30 Oct 2024 11:31:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eOlC8HDfJ7U71PYiyPB7unuvlzouylxbI0NzZJCY39o=; b=WHb6oIUOBDKD0AvU
+	MC6BTJhP5meNs9Y3bn+QHSm4gHOfHUQaZvZWRE2yXSqWDhEtDAuQwS81ICGdHR1k
+	Z6ukYv9LdFWdUd4M/pE6ilRVMtNGfp5G84A0ibCJ6V2yKGXQkIB4KezA3u6AqQfT
+	Nc9DlQU7qYPr9UWhHFbaBKbJn1u4+kw/qZgzXOn/f9oOGlSdZabAKz5hMLhJ2HQ3
+	LGzShfcHtVyV++aGkitwmYqGUNmwlZhW+KAFGj5rD2nuB5BFzirLlsnAQyXA9UGs
+	qHuaCzOkvHz9uzvkrn0g/B4GmI7QL6sBXVsFUxR/fzkrduRBgds6UtjLqb9+oAkF
+	ehv8IA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p33483-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 11:31:57 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UBVtK7027520
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 11:31:56 GMT
+Received: from [10.214.66.253] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 04:31:08 -0700
+Message-ID: <e7a8e786-d67d-4ee7-a4d1-d9d02fd08bda@quicinc.com>
+Date: Wed, 30 Oct 2024 17:00:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,191 +64,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btmtk: Remove resetting mt7921 before
- downloading the fw
-To: =?UTF-8?B?Q2hyaXMgTHUgKOmZuOeomuazkyk=?= <Chris.Lu@mediatek.com>,
- "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
- =?UTF-8?B?SGFvIFFpbiAo56em5rWpKQ==?= <Hao.Qin@mediatek.com>
-Cc: "marcel@holtmann.org" <marcel@holtmann.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
- =?UTF-8?B?RGVyZW4gV3UgKOatpuW+t+S7gSk=?= <Deren.Wu@mediatek.com>,
- "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
- "johan.hedberg@gmail.com" <johan.hedberg@gmail.com>,
- =?UTF-8?B?U3RldmUgTGVlICjmnY7oppboqqAp?= <steve.lee@mediatek.com>,
- "marc.payne@mdpsys.co.uk" <marc.payne@mdpsys.co.uk>,
- "tiwai@suse.de" <tiwai@suse.de>, Sean Wang <Sean.Wang@mediatek.com>,
- =?UTF-8?B?QWFyb24gSG91ICjkvq/kv4rku7Ap?= <Aaron.Hou@mediatek.com>
-References: <20240822052310.25220-1-hao.qin@mediatek.com>
- <ZuB3omUkdUHLggYu@mdpsys.co.uk>
- <790e542aa9d08c7efeee6ef298fce2a87d8035e4.camel@mediatek.com>
- <ZuneSM4SvyUFX86j@mdpsys.co.uk>
- <9bfbbf24ac2480d94d3455f7e33e4b5502b38ced.camel@mediatek.com>
- <CABBYNZKYsL9jcF2n9TsA1BjU-CjXOdXu7MDLP9Sz_Ly8hBAf1w@mail.gmail.com>
- <c01e6dfa730dd10a7d4dba60fe31e82b9c296b37.camel@mediatek.com>
- <Zuyk1c6Gkxx3G0PB@mdpsys.co.uk>
- <f9e8688ebe559e10c019d0cbab4e8b1f5a7d2339.camel@mediatek.com>
- <ff502f63-2d87-4dee-a893-cce53353df8b@leemhuis.info>
- <87iktk4d9l.wl-tiwai@suse.de>
- <75f671b6-ce2a-4404-b662-2c9c7d28a598@leemhuis.info>
- <d0f70e662f5e9329cff43f92a5c191601cc599f1.camel@mediatek.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <d0f70e662f5e9329cff43f92a5c191601cc599f1.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1730287769;48930201;
-X-HE-SMSGID: 1t66t9-0002YK-Sz
+Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: re-enable context caching in smmu
+ reset operation
+To: Will Deacon <will@kernel.org>
+CC: <robdclark@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <iommu@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
+ <20241008125410.3422512-2-quic_bibekkum@quicinc.com>
+ <20241024125241.GD30704@willie-the-truck>
+ <092db44e-f254-4abd-abea-e9a64e70df12@quicinc.com>
+ <20241029124708.GA4241@willie-the-truck>
+Content-Language: en-US
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <20241029124708.GA4241@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yI_kZ8z9PhJ4xMO0zQsOvTIwldSf4Fn1
+X-Proofpoint-ORIG-GUID: yI_kZ8z9PhJ4xMO0zQsOvTIwldSf4Fn1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300090
 
-On 30.10.24 12:03, Chris Lu (陸稚泓) wrote:
+
+
+On 10/29/2024 6:17 PM, Will Deacon wrote:
+> On Fri, Oct 25, 2024 at 07:51:22PM +0530, Bibek Kumar Patro wrote:
+>>
+>>
+>> On 10/24/2024 6:22 PM, Will Deacon wrote:
+>>> On Tue, Oct 08, 2024 at 06:24:06PM +0530, Bibek Kumar Patro wrote:
+>>>> Default MMU-500 reset operation disables context caching in
+>>>> prefetch buffer. It is however expected for context banks using
+>>>> the ACTLR register to retain their prefetch value during reset
+>>>> and runtime suspend.
+>>>>
+>>>> Replace default MMU-500 reset operation with Qualcomm specific reset
+>>>> operation which envelope the default reset operation and re-enables
+>>>> context caching in prefetch buffer for Qualcomm SoCs.
+>>>>
+>>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>>>> ---
+>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 45 ++++++++++++++++++++--
+>>>>    1 file changed, 42 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> index 087fb4f6f4d3..0cb10b354802 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> @@ -16,6 +16,16 @@
+>>>>
+>>>>    #define QCOM_DUMMY_VAL	-1
+>>>>
+>>>> +/*
+>>>> + * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
+>>>> + * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
+>>>> + * buffer). The remaining bits are implementation defined and vary across
+>>>> + * SoCs.
+>>>> + */
+>>>> +
+>>>> +#define CPRE			(1 << 1)
+>>>> +#define CMTLB			(1 << 0)
+>>>> +
+>>>>    static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
+>>>>    {
+>>>>    	return container_of(smmu, struct qcom_smmu, smmu);
+>>>> @@ -396,11 +406,40 @@ static int qcom_smmu_def_domain_type(struct device *dev)
+>>>>    	return match ? IOMMU_DOMAIN_IDENTITY : 0;
+>>>>    }
+>>>>
+>>>> +static int qcom_smmu500_reset(struct arm_smmu_device *smmu)
+>>>> +{
+>>>> +	int ret;
+>>>> +	u32 val;
+>>>> +	int i;
+>>>> +
+>>>> +	ret = arm_mmu500_reset(smmu);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	/*
+>>>> +	 * arm_mmu500_reset() disables CPRE which is re-enabled here.
+>>>> +	 * The errata for MMU-500 before the r2p2 revision requires CPRE to be
+>>>> +	 * disabled. The arm_mmu500_reset function disables CPRE to accommodate all
+>>>> +	 * RTL revisions. Since all Qualcomm SoCs are on the r2p4 revision, where
+>>>> +	 * the CPRE bit can be enabled, the qcom_smmu500_reset function re-enables
+>>>> +	 * the CPRE bit for the next-page prefetcher to retain the prefetch value
+>>>> +	 * during reset and runtime suspend operations.
+>>>> +	 */
+>>>> +
+>>>> +	for (i = 0; i < smmu->num_context_banks; ++i) {
+>>>> +		val = arm_smmu_cb_read(smmu, i, ARM_SMMU_CB_ACTLR);
+>>>> +		val |= CPRE;
+>>>> +		arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_ACTLR, val);
+>>>> +	}
+>>>
+>>> If CPRE only needs to be disabled prior to r2p2, then please teach the
+>>> MMU-500 code about that instead of adding qualcomm-specific logic here.
+>>>
+>>
+>> Doing this on MMU-500 code would make it generic and reflect for SoC of all
+>> the vendors on this platform.
+>> We can make sure that it won't cause any problems in Qualcomm SoCs as we
+>> have been enabling this since for some years now and could not
+>> observe/reproduce any issues around these errata.
 > 
-> Let me recap and update the status of this problem.
-
-Many thx!
-
-> Marc feedback that he has some problem with MT7921AUN usb module.
-> Originally, we thought it was caused by the change "Fixes:
-> ccfc8948d7e4d9 ("Bluetooth: btusb: mediatek: reset the controller before downloading the fw")". The change is mainly for MT7922, we found some problem with MT7921 on specific platform internally. As a result, Hao sent another patch to remove MT7921 from that rule(Bluetooth: btmtk: Remove resetting mt7921 before downloading the fw).
+> Unless you can explain definitively hy that's the case, I still don't
+> think we should be second-guessing the core SMMU driver code in the
+> Qualcomm backend.
 > 
-> However, Marc also mentioned that BT is able to work if changing back
-> to an old firmware bin. Based on the clue, we found it was caused by a
-> firmware change that specific MT7921 model will not able to setup
-> successfully. (In fact, we didn't expect that MT7921AUN can be get by
-> normal user.)
+>> But we won't be able to guarantee the same behavior in SoC for other vendors
+>> where these errata might still be applicable as per [1] and [2].
+>> So as per my understanding it's safe to include in Qualcomm specific
+>> implementation and not changing the default behavior in all other vendors'
+>> SoC even if they are not prior to r2p2 revision [3].
 > 
-> Since we can't predict which model user use and Luiz also suggests
-> MediaTek to fix it if that model can work before, we have prepared a
-> solution. I've verified the solution locally that MT7921AUN model can
-> work normally on Ubuntu PC. It will be a firmware modification. We plan
-> to submit new firmware with this modification in 2024 Nov.
-
-Great, but due to the kernel's "no regressions" rule this is mostly
-irrelevant, as the regression must be fixed in a way that does not
-require users to change their firmware.
-
-So is any such solution in sight? Or should we just revert
-ccfc8948d7e4d9 and any related follow up patches for now? Or would that
-just cause regressions for other users?
-
-Ciao, Thorsten
-
-> On Wed, 2024-10-30 at 10:21 +0100, Thorsten Leemhuis wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->> 
->> 
->> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
->> for once, to make this easily accessible to everyone.
->> 
->> I'm a bit lost here, but maybe I'm missing something.
->> 
->> Luiz, can you help out here? Is there a reason why this patch is not
->> making any process?
->> 
->> Chris Lu and/or Hao Qin: Can you maybe help out as well as well and
->> help
->> with resolving some open questions that might or might not be
->> relevant
->> (see below).
->> 
->> From Takashi reply, the bugzilla ticket he linked to, and the mail
->> from
->> the MediaTek folks
->> (
->> https://lore.kernel.org/lkml/12a344e25b31ec00fe8b57814d43fcb166e71be5.camel@mediatek.com/
->> ) it from the outside looks like this patch should really be merged
->> rather sooner that later as it fixes regressions for some people.
->> Afaics it should get a "Fixes: ccfc8948d7e4d9 ("Bluetooth: btusb:
->> mediatek: reset the controller before downloading the fw")" tag, as
->> it's
->> afaics that commit that causes the regression that is known since
->> more
->> than three months now
->> (https://lore.kernel.org/all/ZsTh7Jyug7MbZsLE@mdpsys.co.uk/ ).
->> 
->> But note, it seems it does not fix the regression completely
->> according
->> to Marc's testing.
->> https://lore.kernel.org/all/ZuCB98DSdtKCgxaL@mdpsys.co.uk/
->> 
->> Marc: Is that still how things are with current mainline?
->> 
->> Ciao, Thorsten
->> 
->> 
->> On 22.10.24 12:56, Takashi Iwai wrote:
->> > On Mon, 14 Oct 2024 11:29:40 +0200,
->> > Linux regression tracking (Thorsten Leemhuis) wrote:
->> > > 
->> > > On 20.09.24 08:27, Chris Lu (陸稚泓) wrote:
->> > > > On Thu, 2024-09-19 at 23:25 +0100, marc.payne@mdpsys.co.uk
->> > > > wrote:
->> > > > > 
->> > > > > External email : Please do not click links or open
->> > > > > attachments until
->> > > > > you have verified the sender or the content.
->> > > > >  Hi Chris and Luiz,
->> > > > > 
->> > > > > What were your thoughts on the findings in my email dated
->> > > > > 18th
->> > > > > September?
->> > > > 
->> > > > Thanks for your suggestion.
->> > > > 
->> > > > I've prepared the same environment (Kernel v6.11 + MT7921AUN
->> > > > dongle) to
->> > > > reproduce the issue, collected necessary logs locally and also
->> > > > initiated an internal discussion to clarify the root cause of
->> > > > this
->> > > > symptom. We'll review the changes between two firmware
->> > > > (20230526/20231109) if it's a bug or not.
->> > > > 
->> > > > It may take some time to investigate. I'll let you know if
->> > > > there is any
->> > > > progress.
->> > > 
->> > > Just wondering: Chris Lu, and Marc, what's the status here? From
->> > > here it
->> > > looks like there was no progress to fix this regression for a
->> > > while, but
->> > > it's easy to miss something, that's why I ask.
->> > > 
->> > > Ciao, Thorsten
->> > 
->> > FWIW, the similar bug was reported for the recent 6.11.x kernel on
->> > openSUSE Tumbleweed, and this patch was confirmed to work around
->> > the
->> > crash at boot:
->> >   
->> > https://urldefense.com/v3/__https://bugzilla.suse.com/show_bug.cgi?id=1231599__;!!CTRNKA9wMg0ARbw!jYyH2oubBEtIKXmKl9cI2rrmK-7kSdaiIJQ8xH4NZa5i5YCTQDHaoOxCBhMgdAAY6ROIPAoPwbOV-LNeMRJBlR6u-As$
->> > 
->> > It'd be great if you can go ahead and merge the proper fix to the
->> > upstream.
->> > 
->> > Let me know if you have another patch to test.  Then I can create a
->> > test kernel package and ask the bug reporter for testing.
->> > 
->> > 
->> > thanks,
->> > 
->> > Takashi
->> > 
->> 
->> 
+> If you want to gate the errata workarounds on policy, then please follow
+> what we do for the CPU: add a Kconfig option (e.g.
+> ARM_SMMU_WORKAROUND_BROKEN_CPRE) which defaults to "on" (assuming that
+> the relevant errata aren't all "rare") and update silicon-errata.rst
+> accordingly.
 > 
-> ************* MEDIATEK Confidentiality Notice ********************
-> The information contained in this e-mail message (including any 
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be 
-> conveyed only to the designated recipient(s). Any use, dissemination, 
-> distribution, printing, retaining or copying of this e-mail (including its 
-> attachments) by unintended recipient(s) is strictly prohibited and may 
-> be unlawful. If you are not an intended recipient of this e-mail, or believe 
-> that you have received this e-mail in error, please notify the sender 
-> immediately (by replying to this e-mail), delete any and all copies of 
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+> Then you can choose to disable them in your .config if you're happy to
+> pick up the pieces.
+
+This seems to be a good idea to me . I am thinking of this approach 
+based on your suggestion,
+i.e. we can bind the original workaround in
+arm_mmu500_reset implementation within ARM_SMMU_WORKAROUND_BROKEN_CPRE
+config (defualts to on, CPRE would be disabled) and in QCOM SoCs default 
+it to off
+(when ARM_SMMU_QCOM=Y -> switch ARM_SMMU_WORKAROUND_BROKEN_CPRE=N).
+
+In silicon-errata.rst would updating ARM_SMMU_WORKAROUND_BROKEN_CPRE be 
+okay , as the config names are based on erratum number.
+
+Thanks & regards,
+Bibek
+
+
+
 > 
+> As an aside, I'm happy with the rest of the series now.
+> 
+> Will
 
 
