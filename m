@@ -1,520 +1,474 @@
-Return-Path: <linux-kernel+bounces-388341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E1E9B5E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:47:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 094D19B5E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:48:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA07E1C21385
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CB5D1C212D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359251E1C0F;
-	Wed, 30 Oct 2024 08:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="igPK1lxx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAA815B0F7;
-	Wed, 30 Oct 2024 08:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730278030; cv=fail; b=Mjb+tb9sfDcZUrjYCWEhjOY8ihrmASKGAArIzPDQ+Wz4Ma/zYSM5PV6/TFiNdxdmXk8ou33e/0ReWaXw3mgGabiRt/wjZQ0AECxxjWC5n+3FoQDgRg5CTGY6oWtV4PNh11Lb/A9qA+nVxpvdRScBTwoC7O6U8MxmPwRBFRs6OVE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730278030; c=relaxed/simple;
-	bh=NcIi/ZfWBnITvItECHQr1gKh6VAwo7HuxEIYNH182g0=;
-	h=Subject:To:CC:References:From:Message-ID:Date:In-Reply-To:
-	 Content-Type:MIME-Version; b=rVSl1kGLnI/mAbfLsypL9XMHiUYxDSBNX2iTDX1n4dbIx/TK0dDIvyD4/B3KzuJiCIYmOAnoymMSb224TF45OF6jndZ7l83SGRuNtb/LpAfGmXtHAOPFTP9C0Hi4cEc+8gW83yW0rQpf/EE6TsBxUMYC818WooGjLBHYAJOykYQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=igPK1lxx; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730278027; x=1761814027;
-  h=subject:to:cc:references:from:message-id:date:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=NcIi/ZfWBnITvItECHQr1gKh6VAwo7HuxEIYNH182g0=;
-  b=igPK1lxxAAZ5xLiW/ZWWXYCI4A6M07eCKIxE8Ffm/NSBpK4j/JYZQ21I
-   0VzVielTi6LHrfAcFemxDWGdKnrjG7amDt4yhxEPiV7+n9nj3cZNwpBGi
-   vkmC9Ofl1cynQKkZc571mznhGraGbEvZ1A69U3B4B14Fwk+hlIZzaCOWt
-   RSCGtro8nlJHkPeNfGmCkZG3hMtJo+VzXfs7ffEV2OGMeMZKaditWHV1U
-   IvJyrR2XoOhpHw4b07lxhrNWZXNlEtOOSZL20r6CsPItOi0IhCMgTfoyY
-   Mt2aeJ497Ogmyw3p5oGf5WLRg0hqyfbBZ/fLaGa4nbjUa7HtotMZeRcn0
-   Q==;
-X-CSE-ConnectionGUID: SdqSddWATUSooBRN2y+nBA==
-X-CSE-MsgGUID: lxy9ZZwTRWS9on3xdwqt5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="30179221"
-X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="30179221"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 01:47:06 -0700
-X-CSE-ConnectionGUID: 49rYw79rRD+r91cR6Slgrw==
-X-CSE-MsgGUID: KNY7hLx1TlKvLxJonnsUwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="86847420"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Oct 2024 01:47:05 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 30 Oct 2024 01:47:05 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 30 Oct 2024 01:47:05 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.47) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 30 Oct 2024 01:47:03 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LYt8VMQDf+Nv/lwq0SKvW0fo0MKQGXNHlQhhR85LqgYNskmojk6QDCFGVhS/ziz+7OqQHSv3zO/npOpfB24DTLb7B+M2HzvpttMQ4QUXlm6hOwzm1Q8waER673nS3idPDE3ZRuGX/yjA87rm9k2p3cHpvrvw8ilBC5PHVr+F03wfDHU9gHgdVgjYlxzsfx/s4bBTLudiaO7p+a6XXIisuMNQmaJiNJLLljEUMUK7f3WWYWa2NjjbH0xshAWCh286EhuwTlJW438O/VPDNDbLOss9A4fejyYuZCGDJknwD48X63LqSZ3uN3ktZ+eai8F2i1xGMIQn3TV/J+urwHj+Vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HISlVkUD7b5x0nXpQ1cmNOV6RZjosiyjAtbeyNgWf+8=;
- b=cO3OMHerN+/dTP8H6tpqBdxtI0FmttLMy7DR+IANQ9CifOMERKgN85GM90Q0nUVi72qnhSPs9ZwCiKHScu6vjt+o9nVA7CP4HZzKBhwDmroX6ij+X2NSYBHloLVwmh1og1MwihQL4i0lOj/Ujn7e82QyuhO3otUUGBjBAuFrn+4zmrGx/PoQOmS97ufhq9s2ufLIe/NLKvKPCSPWn4iCbySh/Z4dAN98oRrMG2a96Xow91epftyhRR5tgspWuVkVhe8YTcRMepRJjjCmUUaM/DP6g/lavh0aypw6mqu09SqmIDg9WWnxQwfdl4O69Ez+nOSgt7OUW+1Fvghpd1nfFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH0PR11MB5949.namprd11.prod.outlook.com (2603:10b6:510:144::6)
- by IA1PR11MB6291.namprd11.prod.outlook.com (2603:10b6:208:3e5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Wed, 30 Oct
- 2024 08:46:56 +0000
-Received: from PH0PR11MB5949.namprd11.prod.outlook.com
- ([fe80::1c5d:e556:f779:e861]) by PH0PR11MB5949.namprd11.prod.outlook.com
- ([fe80::1c5d:e556:f779:e861%5]) with mapi id 15.20.8093.025; Wed, 30 Oct 2024
- 08:46:56 +0000
-Subject: Re: [PATCH iwl-next v6 2/2] igc: Link queues to NAPI instances
-To: Joe Damato <jdamato@fastly.com>, <netdev@vger.kernel.org>
-CC: <jacob.e.keller@intel.com>, <kurt@linutronix.de>,
-	<vinicius.gomes@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"Przemek Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, "Alexei Starovoitov" <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, "Jesper Dangaard Brouer" <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, "moderated list:INTEL ETHERNET DRIVERS"
-	<intel-wired-lan@lists.osuosl.org>, open list <linux-kernel@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>
-References: <20241029201218.355714-1-jdamato@fastly.com>
- <20241029201218.355714-3-jdamato@fastly.com>
-From: "Lifshits, Vitaly" <vitaly.lifshits@intel.com>
-Message-ID: <0514fcdd-abb7-185c-9304-6a8ed9f8275e@intel.com>
-Date: Wed, 30 Oct 2024 10:46:47 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
-In-Reply-To: <20241029201218.355714-3-jdamato@fastly.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0004.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:2::13) To PH0PR11MB5949.namprd11.prod.outlook.com
- (2603:10b6:510:144::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF571E1C2F;
+	Wed, 30 Oct 2024 08:48:06 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A309915B0F7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730278086; cv=none; b=o7KgruZvgevYH5PruyjPX0Dbu+i2I2mEuydqNOBuzHTRTr2SMujgB3l28xryAyDILuVnyiHphi+kfUAyncWg/FX9PZQ+v89BL7qgJDba0yWMvdrP+y8Ry5UMUdJ11yPHGUdfdgmOF1PiLNsYmk3yFsqIRZEsvNp2tUl9Lzkv3UQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730278086; c=relaxed/simple;
+	bh=4C3F2ipFnREUGUzumsUL8Bg4Uy6lKTO/zKqXvSG+hzc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Df3RWAHYzG12qoYkWhXgiQPrwNOoCfmiu/a9EoAeizbrEhqcCyeXRpYsfluoBa2c8Nj4sRillFqr9yqjT0oWkVGlWv5vji7YYC6LXEeKFaH0L7cbCjUrQdkWpGUO7rjS0n+dfnzTlbQ9mdHxT2ud9tBBe4W06nKJMSmycMoQWY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Axjq++8iFnZ94dAA--.38144S3;
+	Wed, 30 Oct 2024 16:47:58 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMAxlsC58iFnnQUpAA--.23935S3;
+	Wed, 30 Oct 2024 16:47:55 +0800 (CST)
+Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Jianmin Lv <lvjianmin@loongson.cn>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, lixianglai@loongson.cn,
+ WANG Xuerui <kernel@xen0n.name>
+References: <20241021080418.644342-1-maobibo@loongson.cn>
+ <CAAhV-H4anpgfiAnPgm9h-m9pKCW0KUio+E72r1Q3F_0vm+zMRg@mail.gmail.com>
+ <8c55c680-48c8-0ba3-c2a1-56dc72929a8d@loongson.cn>
+ <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
+ <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn>
+ <CAAhV-H6+rE_7P_C0MaWzXToVcPqZQX0YMPnhyZV7Pp6aQ01mCQ@mail.gmail.com>
+ <39330bb8-d267-ef02-e082-388c7bfa3b43@loongson.cn>
+ <CAAhV-H5jGZz2MeCSuLmJb5b-ugaaj3EECD7Z3mvtHW=OQrhLBw@mail.gmail.com>
+ <8d2ab78b-6706-c78d-ffad-835ceef7372c@loongson.cn>
+ <CAAhV-H7bwJwGSyBqY3XZynzGaqamKv3BJjxrqPJ-foaP4dFbAw@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <f2b7283b-9db3-c961-fa11-f1aeff489479@loongson.cn>
+Date: Wed, 30 Oct 2024 16:47:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR11MB5949:EE_|IA1PR11MB6291:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3e6d66e-003d-4940-de51-08dcf8bf68a4
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?TjBtcVlxMHJ3dlpkZnVsUFQ3NXZTRzhRSmVlWUJVMU9KcUZBVVVMZzhJWXRz?=
- =?utf-8?B?b3Y4N1ExaGNSZWNhU1lOclZsS2FFOEkvUFcrcFI3eU1ZOGU4UGVUTzNBa0ZN?=
- =?utf-8?B?Nm8yTXpvbDF3L2g0c3JqMTZWTFdIQjk0UG5RTjZ3L1V1VnVWN3ZsWnM1WW1Q?=
- =?utf-8?B?UUp4WXE3UFBVeU93a0JnbTlZRmh6RmhxYVZxN1dNMEhCTXhIVnRkVEE2bTlk?=
- =?utf-8?B?cWRQWjkrN2Z0OVRHNDlqS3puM3NwVjg4OFgxWGtzK3NTeUtiN1NBUjJUM0lq?=
- =?utf-8?B?Z3J2aVQzQUEyT1hjR2dYR2lza21EekZMUHlCVkd2L2dLOXZqVjFObllWQWR6?=
- =?utf-8?B?RFc2bjkrSENTTXpQeG5Xa1NDWGJySGtXdExWZGFaNU5MOEtMMVpHZzY2ZWxP?=
- =?utf-8?B?WHBHVkx5T3dwT00rNnc5akUzaTRuU3dJTmgxZVYxNUNlRXJQcmdxNk8wdGVs?=
- =?utf-8?B?SjhEMjlRTTNlcnhzc3pZNWNiczlxekFjeG1OMlpEaTk1SGZpckRuZFp3Nm9n?=
- =?utf-8?B?ejlXVUxmZ3BnMHF6WU1zQTV3NTBJejhUSVJwcDVtOTY5QkZ3Tm9EM05vdmdO?=
- =?utf-8?B?Rmo0Zm5aaVl4V28wK29ISGRvL3d2d1JmR3lrRzhjNDk3Lzk4dENrS2tONGNk?=
- =?utf-8?B?QXN1YnhNZzBTWkV4ZzJPNllPcUpFTG5vR1cxYjRlL3NwQ3FKcnhxYkcxNGIr?=
- =?utf-8?B?RW16T2J5ejR3dHF1cjZUVWdVR09DZXBuNjhHYzh5OWJwS0lRTWJXTFFOZUFN?=
- =?utf-8?B?NkxJNmV3R04xUXFEaXlnWTJPUFJTM1lGaUtyQ2dkbWk0b3M2cDhzNFAvdHRv?=
- =?utf-8?B?TDhKU2p1TGhzUk5vbE9mRE1URk5rZ3lxM0pteTRQUStYMWwydWltMUVIOS9I?=
- =?utf-8?B?eStJR3BBQXYyUDluNlJoeVBsSGlEUHd1VndEZHdmNmdzZ29DWHE5T25jSlkw?=
- =?utf-8?B?NytiM0xFN0RTRTZzcC9qSFF3WWlIQVJJTzRhVG1DVUNHS2prdDg2RnhnMExr?=
- =?utf-8?B?K2EydU03US83aytDRlFoMGw3SXdhYmJjanYydDZlMit3NUlydXJHK2lZK25M?=
- =?utf-8?B?VUVjaWpJZzhHVkpWbUFTY1UvcU1IdURJa2tFcW9KbHBKTUtrdm5VWWNKWmJ5?=
- =?utf-8?B?eVdCMXhDTVBOdGtkK3dGWGtnN2t2RTc4WmdEYUc3eXk3cVdJSExhcHJlN0N3?=
- =?utf-8?B?SHhObHFhcGgvNXppRWNuT050a1F0dUNRZTQ5L3hCVVZlVG5uVTM4WFRITW9D?=
- =?utf-8?B?K2hhQjJxYWtxcVk2RVBCai9uelFVV2U1TVZwNFkyOUR0S3NnWDhhZkw0ZFNk?=
- =?utf-8?B?WE5PcVoxNUJSOXpXYUk2K1RmR2tUaGFxQkxnblhPb3BmbWg2QjlENFc2L00y?=
- =?utf-8?B?c2R6NmlaNUZ2b2pacmJlbkVNdkhPYzRicVhKbW9odkdIVitsbEZOOUR6VXh3?=
- =?utf-8?B?ZFFLMWRtRWI3MHZyUUlBM29DQTY1WDlLWjVzMVdpeVR4cWVxY24vSkVYcXFD?=
- =?utf-8?B?SVFHWGtjWDBjNDI4UzBqdStValZXcDBScmFFR2h2K1pIb2NkVmNsdUkyVzVq?=
- =?utf-8?B?K2VpSVVkbW9jTkRIUWVXU1BZdjFVNHJHV1IybC8wUjB1SDBrZTJMTmRJKy9k?=
- =?utf-8?B?SEF6VEh2ckFtcUNjVmNsemhMT1lTSW81UnFIam1CSTRSbitJTDlNU0xpaGtW?=
- =?utf-8?B?bjUrTnU4emg3ZWovZXFkQUxCa2VOWng2ZDVhTjAxR0F4dlRDZmJQOWNlMnZY?=
- =?utf-8?Q?NxQ/VX7kLbt8ICns6xBoQodTSX7eZH/zVkH6CsU?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5949.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c2F6UXhxamVQZVpwNEU4NmNKbUQvQWZrcENFakRIM3Q2R3JsZkpSU3BmODlG?=
- =?utf-8?B?TFFFd0hSejduaXN3b1FKd2JUUldCVHVUcTBlMUpINExuTUlQN0U4ZGNDQXlZ?=
- =?utf-8?B?SzNsSWpkSDhtdEsyVXBwS2N2bVEzd2ZHVGljWFJ1blhvNGlaZ25wR1hUeDR0?=
- =?utf-8?B?NzVoVG9WZWVqR2E5UGFBL3FVV2lmd09KcEhVRkNxZGVHZFdxMlBJUE1TWnpv?=
- =?utf-8?B?RXZrWGYwdmU5aE5oWjJVUjk1UEFiaDJsVEkzNmJET1UwMDBBZ2NYbXp1UHBs?=
- =?utf-8?B?L2tXZDJtU2VhK0dNOHZ2d0FpMG1SYnhDYlJLd1M5eHp1Q2tCYS9pVzArUjdw?=
- =?utf-8?B?TGUzQXRiR1ZWT2VRTHBXRjA3RHliVzlkK3RvcXZDN0RDajVhZDFrWjF0bEEv?=
- =?utf-8?B?MkVZMnlJUk91cU5SalMza2F4KzM1QVBwUm9OSFM1UENiSFd2RFRVbll6OWY3?=
- =?utf-8?B?dnU5M0c2L3VwcUxyZDNaWEFWWHlxQTNEdTVmUXNGWC9oYjIySUtacURQZ052?=
- =?utf-8?B?bEE2dnV1Yzd2V2c4VUJ6U3JCLzRVdTlKcjgxdlBLRW9OZTRUQmkwcXdPeEFi?=
- =?utf-8?B?RVEwMjB4R2ZXSjhKeDY5WDM2OW1yanBtWG12eUNwS0pQSG1mWitVdHFOd2JR?=
- =?utf-8?B?N2kySjNpNTdDT1VIRCt4ZytHV3JQRjFveWRkSU1wK2ZwMVRRZW14Tk5jNnJE?=
- =?utf-8?B?N2ZaMDExZ0hSbkZXMTBBbC9QVzNucDIxN1pwbDRYWjBKZ1R3blJ6bWtYdVZu?=
- =?utf-8?B?VE82QTZQNWZkY1dvbTN4eXhvSEdPQVRrU3VzSjR3STBIeU5Qd3RxYit3b0N1?=
- =?utf-8?B?SUlRR25wNXVXMmhqZFV1b0VkdXYyUGgxQnlwSWNoSFBjZFFuWEVUQlVOcVBK?=
- =?utf-8?B?VnRyQisxOFRlTVhEZEIySlZwc0hkc1pINEl4TC9Wdk9iWUlSVnJBN0RjL2sr?=
- =?utf-8?B?dDdoMDJCVmNyY3hwZ3dDSHZyeWNqZ3lGbm8wWmZVajRoKzdoeXA1clNBN2VW?=
- =?utf-8?B?Tmp5NG8rcnJiZzN6SXU5TXlnMnUrS0lqK3NmcVI0K0ZIK05JWnNxVzV2YVgr?=
- =?utf-8?B?M2R3RUJYNzFOeEdIck5lT2Q5TERWSTQvTTQ4Yzd4NEdXRUwwOTMrY0d3U1VG?=
- =?utf-8?B?OEZEYjRJSnJkcWo1eUg4U1lSdEtoZDNabzJ3OXZWOXpvc1VYTFM0VEJCbTVl?=
- =?utf-8?B?dGFYREIyNGhQT1RpMzV1MllaMlJpNlRDOUZnbnM5cUo1eWxvUzZHRXpiZ1RS?=
- =?utf-8?B?M0ZROWdUUlk1OU1kL1dYb0dOZEVycURqL0NWczZiaWlIRHlzSFdzYXNwTnFR?=
- =?utf-8?B?dXNGRjhjRnJDRXNhVzhFYmRuMnJlcEh6azBjQ1RiWkxLVzBZZGIza3pMcXAr?=
- =?utf-8?B?ZEFad1E3cGJCejdUbHQyVjZjSSt1cVRsMVplTXBsRkxibkZBTmxSQVptNWlO?=
- =?utf-8?B?UFcxM3pnSktoUExqekJrMnE1RVd3VHF2Ymd3WmlMNDBCKzl5UkMzb0JSS3FU?=
- =?utf-8?B?REl3K2lheFhRcDNZUVVZQmtaQk0vVjM2YmwxMjJYR0VrQUhnQ3ZESUZkS2cx?=
- =?utf-8?B?Ly9wK0J5YkVGV2N2ZE9SUFR4YlA2bDNGSm83TUFVQy94L0dva0EvYWV2WHN2?=
- =?utf-8?B?d3dZS2pZWit3eWc4eWJrQWNkQjNaUE1jR0h1am52b3ljQ1NVeFFpamRIYjdS?=
- =?utf-8?B?M0FtTXJBU2lFcTlWdkYvY1hVRmZ4dTJHbFVnOUF0VGJsSDd3WGZScmF3NUI5?=
- =?utf-8?B?V1RwZlBpNCtocTZwc2dzWFBTUUhLbGdwck1JamU5VHNBOExPcitmQXJiL3lo?=
- =?utf-8?B?RUJtNVJNenA5UzY2S3pGdUhDakJhZkVjL3dvYTRVdS8xNUtFZGtBSEIweUlX?=
- =?utf-8?B?d09nZmxsandlZDB2em1LZVBNSnZFUnAzRVlpWWJzSUJ1ckZxZjd3YWZiaFha?=
- =?utf-8?B?SGhRREttcEJHWmRqMHdJc3hlSlNJZUV2cjJ0bHk2V2E0N1QzZHN2LzVGZmxu?=
- =?utf-8?B?THpPOHBpY0hmajl4NFZmRWlnWFBxYWlES1dJdEs2UUxRU09zRUhwWUxWMnFY?=
- =?utf-8?B?TXJ1RThaWXltRkVQSnJaMFl6UkU2YzQ5ZWVQWkZGQUw3RDk5TnhJSHNzTzVP?=
- =?utf-8?B?Yld5YWR5aXdLM1VMa1Q4NlFTRTdmZXNNcExoQ2tMMFNPUHhSZ09aTzh6clVI?=
- =?utf-8?B?WVE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3e6d66e-003d-4940-de51-08dcf8bf68a4
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5949.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 08:46:55.9216
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +yjOaVcPU5X7cdjMwozSbcvEsY7Py2OYC4AfT/B/1SwEmdo6LOWBpxtfj+rNf0EuFYCBzFSaZAM/K9o5iPKSrP1wTZle6wJ/r8qSiFyWN7g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6291
-X-OriginatorOrg: intel.com
+In-Reply-To: <CAAhV-H7bwJwGSyBqY3XZynzGaqamKv3BJjxrqPJ-foaP4dFbAw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxlsC58iFnnQUpAA--.23935S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9fXoW3uFyDAF15ZF4xXw1DJF1fGrX_yoW8XFWUCo
+	W5Jr17Jr18Jr1UJr1DG34DJr1UJw1UJr1UAr9rAr1UXF1Utw1UAr1UJr1UXF47Gr1UGr1U
+	GryUJr1UArW7Jrn8l-sFpf9Il3svdjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUYB7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
+	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280
+	aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
+	xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+	xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+	C2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
+	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+	WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+	CTnIWIevJa73UjIFyTuYvjxU2DUUUUUUU
 
 
 
-On 10/29/2024 10:12 PM, Joe Damato wrote:
-> Link queues to NAPI instances via netdev-genl API so that users can
-> query this information with netlink. Handle a few cases in the driver:
->    1. Link/unlink the NAPIs when XDP is enabled/disabled
->    2. Handle IGC_FLAG_QUEUE_PAIRS enabled and disabled
-> 
-> Example output when IGC_FLAG_QUEUE_PAIRS is enabled:
-> 
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                           --dump queue-get --json='{"ifindex": 2}'
-> 
-> [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
->   {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
->   {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
->   {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
->   {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
->   {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
->   {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
->   {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
-> 
-> Since IGC_FLAG_QUEUE_PAIRS is enabled, you'll note that the same NAPI ID
-> is present for both rx and tx queues at the same index, for example
-> index 0:
-> 
-> {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-> {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
-> 
-> To test IGC_FLAG_QUEUE_PAIRS disabled, a test system was booted using
-> the grub command line option "maxcpus=2" to force
-> igc_set_interrupt_capability to disable IGC_FLAG_QUEUE_PAIRS.
-> 
-> Example output when IGC_FLAG_QUEUE_PAIRS is disabled:
-> 
-> $ lscpu | grep "On-line CPU"
-> On-line CPU(s) list:      0,2
-> 
-> $ ethtool -l enp86s0  | tail -5
-> Current hardware settings:
-> RX:		n/a
-> TX:		n/a
-> Other:		1
-> Combined:	2
-> 
-> $ cat /proc/interrupts  | grep enp
->   144: [...] enp86s0
->   145: [...] enp86s0-rx-0
->   146: [...] enp86s0-rx-1
->   147: [...] enp86s0-tx-0
->   148: [...] enp86s0-tx-1
-> 
-> 1 "other" IRQ, and 2 IRQs for each of RX and Tx, so we expect netlink to
-> report 4 IRQs with unique NAPI IDs:
-> 
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                           --dump napi-get --json='{"ifindex": 2}'
-> [{'id': 8196, 'ifindex': 2, 'irq': 148},
->   {'id': 8195, 'ifindex': 2, 'irq': 147},
->   {'id': 8194, 'ifindex': 2, 'irq': 146},
->   {'id': 8193, 'ifindex': 2, 'irq': 145}]
-> 
-> Now we examine which queues these NAPIs are associated with, expecting
-> that since IGC_FLAG_QUEUE_PAIRS is disabled each RX and TX queue will
-> have its own NAPI instance:
-> 
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                           --dump queue-get --json='{"ifindex": 2}'
-> [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
->   {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
->   {'id': 0, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
->   {'id': 1, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
-> 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
+On 2024/10/30 下午4:34, Huacai Chen wrote:
+> On Wed, Oct 30, 2024 at 4:25 PM maobibo <maobibo@loongson.cn> wrote:
+>>
+>>
+>>
+>> On 2024/10/30 下午4:12, Huacai Chen wrote:
+>>> On Tue, Oct 29, 2024 at 7:49 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2024/10/29 下午6:36, Huacai Chen wrote:
+>>>>> On Mon, Oct 28, 2024 at 8:38 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>
+>>>>>> Hi Huacai,
+>>>>>>
+>>>>>> On 2024/10/22 上午9:31, Huacai Chen wrote:
+>>>>>>> On Tue, Oct 22, 2024 at 9:17 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 2024/10/21 下午10:32, Huacai Chen wrote:
+>>>>>>>>> Hi, Bibo,
+>>>>>>>>>
+>>>>>>>>> This version still doesn't touch the round-robin method, but it
+>>>>>>>>> doesn't matter, I think I misunderstood something since V1...
+>>>>>>>> I do not understand why round-robin method need be modified, SRAT may be
+>>>>>>>> disabled with general function disable_srat(). Then round-robin method
+>>>>>>>> is required.
+>>>>>>> I don't mean round-robin should be modified, I mean I misunderstand round-robin.
+>>>>>>>
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Please correct me if I'm wrong: For cpus without ACPI_MADT_ENABLED, in
+>>>>>>>>> smp_prepare_boot_cpu() the round-robin node ids only apply to
+>>>>>>>>> cpu_to_node(), but __cpuid_to_node[] still record the right node ids.
+>>>>>>>>> early_cpu_to_node() returns NUMA_NO_NODE not because
+>>>>>>>>> __cpuid_to_node[] records NUMA_NO_NODE, but because cpu_logical_map()
+>>>>>>>>> < 0.
+>>>>>>>>>
+>>>>>>>>> If the above is correct, we don't need so complicated, because the
+>>>>>>>>> correct and simplest way is:
+>>>>>>>>> https://lore.kernel.org/loongarch/6b2b3e89-5a46-2d20-3dfb-7aae33839f49@loongson.cn/T/#m950eead5250e5992cc703bbe69622348cecfa465
+>>>>>>>>>
+>>>>>>>> It works also. Only that LoongArch kernel parsing about SRAT/MADT is
+>>>>>>>> badly. If you do not mind, I do not mind neither. It is not my duty for
+>>>>>>>> kernel side.
+>>>>>>> Yes, I don't mind, please use that simplest way.
+>>>>>> There is another problem with the simple way. eiointc reports error when
+>>>>>> cpu is online. The error message is:
+>>>>>>       Loongson-64bit Processor probed (LA464 Core)
+>>>>>>       CPU2 revision is: 0014c010 (Loongson-64bit)
+>>>>>>       FPU2 revision is: 00000001
+>>>>>>       eiointc: Error: invalid nodemap!
+>>>>>>       CPU 2 UP state irqchip/loongarch/eiointc:starting (100) failed (-1)
+>>>>>>
+>>>>>> The problem is that node_map of eiointc is problematic,
+>>>>>>
+>>>>>>
+>>>>>> static int cpu_to_eio_node(int cpu)
+>>>>>> {
+>>>>>>             return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
+>>>>>> }
+>>>>>>
+>>>>>> static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+>>>>>>                                    u64 node_map)
+>>>>>> {
+>>>>>>             int i;
+>>>>>>
+>>>>>>             node_map = node_map ? node_map : -1ULL;
+>>>>>>             for_each_possible_cpu(i) {
+>>>>>>                     if (node_map & (1ULL << (cpu_to_eio_node(i)))) {
+>>>>>>                             node_set(cpu_to_eio_node(i), priv->node_map);
+>>>>>>              ...
+>>>>>> The cause is that for possible not present cpu, *cpu_logical_map(cpu)*
+>>>>>> is -1, cpu_to_eio_node(i) will be equal to -1, so node_map of eiointc is
+>>>>>> problematic.
+>>>>> The error message seems from eiointc_router_init(), but it is a little
+>>>>> strange. Physical hot-add should be before logical hot-add. So
+>>>>> acpi_map_cpu() is before cpu_up(). acpi_map_cpu() calls
+>>>>> set_processor_mask() to setup logical-physical mapping, so in
+>>>>> eiointc_router_init() which is called by cpu_up(), cpu_logical_map()
+>>>>> should work well.
+>>>>>
+>>>>> Maybe in your case a whole node is hot-added? I don't think the
+>>>>> eiointc design can work with this case...
+>>>>>
+>>>>>>
+>>>>>> So cpu_logical_map(cpu) should be set during MADT parsing even if it is
+>>>>>> not enabled at beginning, it should not be set at hotplug runtime.
+>>>>> This will cause the logical cpu number be not continuous after boot.
+>>>>> Physical numbers have no requirement, but logical numbers should be
+>>>>> continuous.
+>>>> I do not understand such requirement about logical cpu should be
+>>>> continuous. You can check logical cpu allocation method on other
+>>>> architectures, or what does the requirement about logical cpu continuous
+>>>> come from.
+>>> 1, In an internal conference, it is said that non-continuous cpu
+>>> numbers make users think our processors have bugs.
+>>> 2, See prefill_possible_map(), it assumes logical numbers continuous
+>>> cpu_possible_mask and cpu_present_mask, which make it convenient for
+>>> "nr_cpus=xxx".
+>>> 3, Can you show me an example in a real machine that "processor" in
+>>> /proc/cpuinfo non-continues after boot and before soft hotplug?
+>> It is really wasting my time to discuss with you. You does not
+>> investigating implementation of other architectures, fully thinking in
+>> yourself way.
+> Totally wrong, I have implemented what you need, but you should make
+> other colleagues (not me) agree with your idea.
+> https://github.com/chenhuacai/linux/commit/d8dcf2844d5878b3ac5a42d074e781fe2ebfbae7
+So do you mean we should internal discuss inside and post outside? You 
+can not decide this since you do not know. And actual code writer (lv 
+jianjin) does not reply to you still :(
 
-Reviewed-by: Vitaly Lifshits <vitaly.lifshits@intel.com>
+> 
+> Imagine that the cpu_possible_mask is 0b11111111, cpu_present_mask is
+> 0b10101010 (non-continuous), how to make "nr_cpus=3" work in a simple
+> way?
+if (bitmap_weight(cpu_present_mask) >=  nr_cpus))
+    then new cpu fails to add.
+> 
+>>
+>> Does the real machines support real cpu hotplug and memory hotplug?
+> ACPI_MADT_ENABLED is designed for virtual machines only?
+It is the HW board problem, the HW does not support cpu hotplug, neither 
+memory hotplug and PCIE hotplug. HW board does not support.
 
-> ---
->   v6:
->     - Rename __igc_do_resume to __igc_resume and rename the boolean
->       argument "need_rtnl" to "rpm" as seen in igb, as per Vitaly's
->       feedback to make the code look more like commit ac8c58f5b535 ("igb:
->       fix deadlock caused by taking RTNL in RPM resume path").
+Regards
+Bibo Mao
+
 > 
->   v5:
->     - Rename igc_resume to __igc_do_resume and pass in a boolean
->       "need_rtnl" to signal whether or not rtnl should be held before
->       caling __igc_open. Call this new function from igc_runtime_resume
->       and igc_resume passing in false (for igc_runtime_resume) and true
->       (igc_resume), respectively. This is done to avoid reintroducing a
->       bug fixed in commit: 6f31d6b: "igc: Refactor runtime power
->       management flow" where rtnl is held in runtime_resume causing a
->       deadlock.
+> Huacai
 > 
->   v4:
->     - Add rtnl_lock/rtnl_unlock in two paths: igc_resume and
->       igc_io_error_detected. The code added to the latter is inspired by
->       a similar implementation in ixgbe's ixgbe_io_error_detected.
-> 
->   v3:
->     - Replace igc_unset_queue_napi with igc_set_queue_napi(adapater, i,
->       NULL), as suggested by Vinicius Costa Gomes
->     - Simplify implemention of igc_set_queue_napi as suggested by Kurt
->       Kanzenbach, with a tweak to use ring->queue_index
-> 
->   v2:
->     - Update commit message to include tests for IGC_FLAG_QUEUE_PAIRS
->       disabled
->     - Refactored code to move napi queue mapping and unmapping to helper
->       functions igc_set_queue_napi and igc_unset_queue_napi
->     - Adjust the code to handle IGC_FLAG_QUEUE_PAIRS disabled
->     - Call helpers to map/unmap queues to NAPIs in igc_up, __igc_open,
->       igc_xdp_enable_pool, and igc_xdp_disable_pool
-> 
->   drivers/net/ethernet/intel/igc/igc.h      |  2 +
->   drivers/net/ethernet/intel/igc/igc_main.c | 56 +++++++++++++++++++----
->   drivers/net/ethernet/intel/igc/igc_xdp.c  |  2 +
->   3 files changed, 51 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
-> index eac0f966e0e4..b8111ad9a9a8 100644
-> --- a/drivers/net/ethernet/intel/igc/igc.h
-> +++ b/drivers/net/ethernet/intel/igc/igc.h
-> @@ -337,6 +337,8 @@ struct igc_adapter {
->   	struct igc_led_classdev *leds;
->   };
->   
-> +void igc_set_queue_napi(struct igc_adapter *adapter, int q_idx,
-> +			struct napi_struct *napi);
->   void igc_up(struct igc_adapter *adapter);
->   void igc_down(struct igc_adapter *adapter);
->   int igc_open(struct net_device *netdev);
-> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> index 7964bbedb16c..9a5ece12e9d4 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> @@ -4948,6 +4948,22 @@ static int igc_sw_init(struct igc_adapter *adapter)
->   	return 0;
->   }
->   
-> +void igc_set_queue_napi(struct igc_adapter *adapter, int vector,
-> +			struct napi_struct *napi)
-> +{
-> +	struct igc_q_vector *q_vector = adapter->q_vector[vector];
-> +
-> +	if (q_vector->rx.ring)
-> +		netif_queue_set_napi(adapter->netdev,
-> +				     q_vector->rx.ring->queue_index,
-> +				     NETDEV_QUEUE_TYPE_RX, napi);
-> +
-> +	if (q_vector->tx.ring)
-> +		netif_queue_set_napi(adapter->netdev,
-> +				     q_vector->tx.ring->queue_index,
-> +				     NETDEV_QUEUE_TYPE_TX, napi);
-> +}
-> +
->   /**
->    * igc_up - Open the interface and prepare it to handle traffic
->    * @adapter: board private structure
-> @@ -4955,6 +4971,7 @@ static int igc_sw_init(struct igc_adapter *adapter)
->   void igc_up(struct igc_adapter *adapter)
->   {
->   	struct igc_hw *hw = &adapter->hw;
-> +	struct napi_struct *napi;
->   	int i = 0;
->   
->   	/* hardware has been reset, we need to reload some things */
-> @@ -4962,8 +4979,11 @@ void igc_up(struct igc_adapter *adapter)
->   
->   	clear_bit(__IGC_DOWN, &adapter->state);
->   
-> -	for (i = 0; i < adapter->num_q_vectors; i++)
-> -		napi_enable(&adapter->q_vector[i]->napi);
-> +	for (i = 0; i < adapter->num_q_vectors; i++) {
-> +		napi = &adapter->q_vector[i]->napi;
-> +		napi_enable(napi);
-> +		igc_set_queue_napi(adapter, i, napi);
-> +	}
->   
->   	if (adapter->msix_entries)
->   		igc_configure_msix(adapter);
-> @@ -5192,6 +5212,7 @@ void igc_down(struct igc_adapter *adapter)
->   	for (i = 0; i < adapter->num_q_vectors; i++) {
->   		if (adapter->q_vector[i]) {
->   			napi_synchronize(&adapter->q_vector[i]->napi);
-> +			igc_set_queue_napi(adapter, i, NULL);
->   			napi_disable(&adapter->q_vector[i]->napi);
->   		}
->   	}
-> @@ -6021,6 +6042,7 @@ static int __igc_open(struct net_device *netdev, bool resuming)
->   	struct igc_adapter *adapter = netdev_priv(netdev);
->   	struct pci_dev *pdev = adapter->pdev;
->   	struct igc_hw *hw = &adapter->hw;
-> +	struct napi_struct *napi;
->   	int err = 0;
->   	int i = 0;
->   
-> @@ -6056,8 +6078,11 @@ static int __igc_open(struct net_device *netdev, bool resuming)
->   
->   	clear_bit(__IGC_DOWN, &adapter->state);
->   
-> -	for (i = 0; i < adapter->num_q_vectors; i++)
-> -		napi_enable(&adapter->q_vector[i]->napi);
-> +	for (i = 0; i < adapter->num_q_vectors; i++) {
-> +		napi = &adapter->q_vector[i]->napi;
-> +		napi_enable(napi);
-> +		igc_set_queue_napi(adapter, i, napi);
-> +	}
->   
->   	/* Clear any pending interrupts. */
->   	rd32(IGC_ICR);
-> @@ -7342,7 +7367,7 @@ static void igc_deliver_wake_packet(struct net_device *netdev)
->   	netif_rx(skb);
->   }
->   
-> -static int igc_resume(struct device *dev)
-> +static int __igc_resume(struct device *dev, bool rpm)
->   {
->   	struct pci_dev *pdev = to_pci_dev(dev);
->   	struct net_device *netdev = pci_get_drvdata(pdev);
-> @@ -7385,7 +7410,11 @@ static int igc_resume(struct device *dev)
->   	wr32(IGC_WUS, ~0);
->   
->   	if (netif_running(netdev)) {
-> +		if (!rpm)
-> +			rtnl_lock();
->   		err = __igc_open(netdev, true);
-> +		if (!rpm)
-> +			rtnl_unlock();
->   		if (!err)
->   			netif_device_attach(netdev);
->   	}
-> @@ -7393,9 +7422,14 @@ static int igc_resume(struct device *dev)
->   	return err;
->   }
->   
-> +static int igc_resume(struct device *dev)
-> +{
-> +	return __igc_resume(dev, false);
-> +}
-> +
->   static int igc_runtime_resume(struct device *dev)
->   {
-> -	return igc_resume(dev);
-> +	return __igc_resume(dev, true);
->   }
->   
->   static int igc_suspend(struct device *dev)
-> @@ -7440,14 +7474,18 @@ static pci_ers_result_t igc_io_error_detected(struct pci_dev *pdev,
->   	struct net_device *netdev = pci_get_drvdata(pdev);
->   	struct igc_adapter *adapter = netdev_priv(netdev);
->   
-> +	rtnl_lock();
->   	netif_device_detach(netdev);
->   
-> -	if (state == pci_channel_io_perm_failure)
-> +	if (state == pci_channel_io_perm_failure) {
-> +		rtnl_unlock();
->   		return PCI_ERS_RESULT_DISCONNECT;
-> +	}
->   
->   	if (netif_running(netdev))
->   		igc_down(adapter);
->   	pci_disable_device(pdev);
-> +	rtnl_unlock();
->   
->   	/* Request a slot reset. */
->   	return PCI_ERS_RESULT_NEED_RESET;
-> @@ -7458,7 +7496,7 @@ static pci_ers_result_t igc_io_error_detected(struct pci_dev *pdev,
->    *  @pdev: Pointer to PCI device
->    *
->    *  Restart the card from scratch, as if from a cold-boot. Implementation
-> - *  resembles the first-half of the igc_resume routine.
-> + *  resembles the first-half of the __igc_resume routine.
->    **/
->   static pci_ers_result_t igc_io_slot_reset(struct pci_dev *pdev)
->   {
-> @@ -7497,7 +7535,7 @@ static pci_ers_result_t igc_io_slot_reset(struct pci_dev *pdev)
->    *
->    *  This callback is called when the error recovery driver tells us that
->    *  its OK to resume normal operation. Implementation resembles the
-> - *  second-half of the igc_resume routine.
-> + *  second-half of the __igc_resume routine.
->    */
->   static void igc_io_resume(struct pci_dev *pdev)
->   {
-> diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c b/drivers/net/ethernet/intel/igc/igc_xdp.c
-> index e27af72aada8..4da633430b80 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_xdp.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
-> @@ -84,6 +84,7 @@ static int igc_xdp_enable_pool(struct igc_adapter *adapter,
->   		napi_disable(napi);
->   	}
->   
-> +	igc_set_queue_napi(adapter, queue_id, NULL);
->   	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
->   	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
->   
-> @@ -133,6 +134,7 @@ static int igc_xdp_disable_pool(struct igc_adapter *adapter, u16 queue_id)
->   	xsk_pool_dma_unmap(pool, IGC_RX_DMA_ATTR);
->   	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
->   	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
-> +	igc_set_queue_napi(adapter, queue_id, napi);
->   
->   	if (needs_reset) {
->   		napi_enable(napi);
-> 
+>>
+>> Regards
+>> Bibo Mao
+>>>
+>>>
+>>>
+>>>
+>>> Huacai
+>>>>
+>>>> Regards
+>>>> Bibo Mao
+>>>>
+>>>>>
+>>>>> Huacai
+>>>>>
+>>>>>>
+>>>>>> Regards
+>>>>>> Bibo Mao
+>>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> Huacai
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Bibo Mao
+>>>>>>>>>
+>>>>>>>>> Huacai
+>>>>>>>>>
+>>>>>>>>> On Mon, Oct 21, 2024 at 4:04 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>>>>>>>>
+>>>>>>>>>> On LoongArch system, there are two places to set cpu numa node. One
+>>>>>>>>>> is in arch specified function smp_prepare_boot_cpu(), the other is
+>>>>>>>>>> in generic function early_numa_node_init(). The latter will overwrite
+>>>>>>>>>> the numa node information.
+>>>>>>>>>>
+>>>>>>>>>> With hot-added cpu without numa information, cpu_logical_map() fails
+>>>>>>>>>> to its physical cpuid at beginning since it is not enabled in ACPI
+>>>>>>>>>> MADT table. So function early_cpu_to_node() also fails to get its
+>>>>>>>>>> numa node for hot-added cpu, and generic function
+>>>>>>>>>> early_numa_node_init() will overwrite with incorrect numa node.
+>>>>>>>>>>
+>>>>>>>>>> APIs topo_get_cpu() and topo_add_cpu() is added here, like other
+>>>>>>>>>> architectures logic cpu is allocated when parsing MADT table. When
+>>>>>>>>>> parsing SRAT table or hot-add cpu, logic cpu is acquired by searching
+>>>>>>>>>> all allocated logical cpu with matched physical id. It solves such
+>>>>>>>>>> problems such as:
+>>>>>>>>>>        1. Boot cpu is not the first entry in MADT table, the first entry
+>>>>>>>>>> will be overwritten with later boot cpu.
+>>>>>>>>>>        2. Physical cpu id not presented in MADT table is invalid, in later
+>>>>>>>>>> SRAT/hot-add cpu parsing, invalid physical cpu detected is added
+>>>>>>>>>>        3. For hot-add cpu, its logic cpu is allocated in MADT table parsing,
+>>>>>>>>>> so early_cpu_to_node() can be used for hot-add cpu and cpu_to_node()
+>>>>>>>>>> is correct for hot-add cpu.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>>>>>>>>> ---
+>>>>>>>>>> v1 ... v2:
+>>>>>>>>>>        1. Like other architectures, allocate logic cpu when parsing MADT table.
+>>>>>>>>>>        2. Add invalid or duplicated physical cpuid parsing with SRAT table or
+>>>>>>>>>> hot-add cpu DSDT information.
+>>>>>>>>>> ---
+>>>>>>>>>>       arch/loongarch/include/asm/smp.h |  3 ++
+>>>>>>>>>>       arch/loongarch/kernel/acpi.c     | 24 ++++++++++------
+>>>>>>>>>>       arch/loongarch/kernel/setup.c    | 47 ++++++++++++++++++++++++++++++++
+>>>>>>>>>>       arch/loongarch/kernel/smp.c      |  9 +++---
+>>>>>>>>>>       4 files changed, 70 insertions(+), 13 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
+>>>>>>>>>> index 3383c9d24e94..c61b75937a77 100644
+>>>>>>>>>> --- a/arch/loongarch/include/asm/smp.h
+>>>>>>>>>> +++ b/arch/loongarch/include/asm/smp.h
+>>>>>>>>>> @@ -119,4 +119,7 @@ static inline void __cpu_die(unsigned int cpu)
+>>>>>>>>>>       #define cpu_logical_map(cpu)   0
+>>>>>>>>>>       #endif /* CONFIG_SMP */
+>>>>>>>>>>
+>>>>>>>>>> +int topo_add_cpu(int physid);
+>>>>>>>>>> +int topo_get_cpu(int physid);
+>>>>>>>>>> +
+>>>>>>>>>>       #endif /* __ASM_SMP_H */
+>>>>>>>>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+>>>>>>>>>> index f1a74b80f22c..84d9812d5f38 100644
+>>>>>>>>>> --- a/arch/loongarch/kernel/acpi.c
+>>>>>>>>>> +++ b/arch/loongarch/kernel/acpi.c
+>>>>>>>>>> @@ -78,10 +78,10 @@ static int set_processor_mask(u32 id, u32 flags)
+>>>>>>>>>>                      return -ENODEV;
+>>>>>>>>>>
+>>>>>>>>>>              }
+>>>>>>>>>> -       if (cpuid == loongson_sysconf.boot_cpu_id)
+>>>>>>>>>> -               cpu = 0;
+>>>>>>>>>> -       else
+>>>>>>>>>> -               cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
+>>>>>>>>>> +
+>>>>>>>>>> +       cpu = topo_add_cpu(cpuid);
+>>>>>>>>>> +       if (cpu < 0)
+>>>>>>>>>> +               return -EEXIST;
+>>>>>>>>>>
+>>>>>>>>>>              if (!cpu_enumerated)
+>>>>>>>>>>                      set_cpu_possible(cpu, true);
+>>>>>>>>>> @@ -203,8 +203,6 @@ void __init acpi_boot_table_init(void)
+>>>>>>>>>>                      goto fdt_earlycon;
+>>>>>>>>>>              }
+>>>>>>>>>>
+>>>>>>>>>> -       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
+>>>>>>>>>> -
+>>>>>>>>>>              /*
+>>>>>>>>>>               * Process the Multiple APIC Description Table (MADT), if present
+>>>>>>>>>>               */
+>>>>>>>>>> @@ -257,7 +255,7 @@ void __init numa_set_distance(int from, int to, int distance)
+>>>>>>>>>>       void __init
+>>>>>>>>>>       acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
+>>>>>>>>>>       {
+>>>>>>>>>> -       int pxm, node;
+>>>>>>>>>> +       int pxm, node, cpu;
+>>>>>>>>>>
+>>>>>>>>>>              if (srat_disabled())
+>>>>>>>>>>                      return;
+>>>>>>>>>> @@ -286,6 +284,11 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
+>>>>>>>>>>                      return;
+>>>>>>>>>>              }
+>>>>>>>>>>
+>>>>>>>>>> +       cpu = topo_get_cpu(pa->apic_id);
+>>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
+>>>>>>>>>> +       if (cpu < 0)
+>>>>>>>>>> +               return;
+>>>>>>>>>> +
+>>>>>>>>>>              early_numa_add_cpu(pa->apic_id, node);
+>>>>>>>>>>
+>>>>>>>>>>              set_cpuid_to_node(pa->apic_id, node);
+>>>>>>>>>> @@ -324,12 +327,17 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id, int *pcpu
+>>>>>>>>>>       {
+>>>>>>>>>>              int cpu;
+>>>>>>>>>>
+>>>>>>>>>> -       cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
+>>>>>>>>>> +       cpu = topo_get_cpu(physid);
+>>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
+>>>>>>>>>>              if (cpu < 0) {
+>>>>>>>>>>                      pr_info(PREFIX "Unable to map lapic to logical cpu number\n");
+>>>>>>>>>>                      return cpu;
+>>>>>>>>>>              }
+>>>>>>>>>>
+>>>>>>>>>> +       num_processors++;
+>>>>>>>>>> +       set_cpu_present(cpu, true);
+>>>>>>>>>> +       __cpu_number_map[physid] = cpu;
+>>>>>>>>>> +       __cpu_logical_map[cpu] = physid;
+>>>>>>>>>>              acpi_map_cpu2node(handle, cpu, physid);
+>>>>>>>>>>
+>>>>>>>>>>              *pcpu = cpu;
+>>>>>>>>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+>>>>>>>>>> index 00e307203ddb..649e98640076 100644
+>>>>>>>>>> --- a/arch/loongarch/kernel/setup.c
+>>>>>>>>>> +++ b/arch/loongarch/kernel/setup.c
+>>>>>>>>>> @@ -65,6 +65,8 @@ EXPORT_SYMBOL(cpu_data);
+>>>>>>>>>>
+>>>>>>>>>>       struct loongson_board_info b_info;
+>>>>>>>>>>       static const char dmi_empty_string[] = "        ";
+>>>>>>>>>> +static int possible_cpus;
+>>>>>>>>>> +static bool bsp_added;
+>>>>>>>>>>
+>>>>>>>>>>       /*
+>>>>>>>>>>        * Setup information
+>>>>>>>>>> @@ -346,10 +348,55 @@ static void __init bootcmdline_init(char **cmdline_p)
+>>>>>>>>>>              *cmdline_p = boot_command_line;
+>>>>>>>>>>       }
+>>>>>>>>>>
+>>>>>>>>>> +int topo_get_cpu(int physid)
+>>>>>>>>>> +{
+>>>>>>>>>> +       int i;
+>>>>>>>>>> +
+>>>>>>>>>> +       for (i = 0; i < possible_cpus; i++)
+>>>>>>>>>> +               if (cpu_logical_map(i) == physid)
+>>>>>>>>>> +                       break;
+>>>>>>>>>> +
+>>>>>>>>>> +       if (i == possible_cpus)
+>>>>>>>>>> +               return -ENOENT;
+>>>>>>>>>> +
+>>>>>>>>>> +       return i;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +int topo_add_cpu(int physid)
+>>>>>>>>>> +{
+>>>>>>>>>> +       int cpu;
+>>>>>>>>>> +
+>>>>>>>>>> +       if (!bsp_added && (physid == loongson_sysconf.boot_cpu_id)) {
+>>>>>>>>>> +               bsp_added = true;
+>>>>>>>>>> +               return 0;
+>>>>>>>>>> +       }
+>>>>>>>>>> +
+>>>>>>>>>> +       cpu = topo_get_cpu(physid);
+>>>>>>>>>> +       if (cpu >= 0) {
+>>>>>>>>>> +               pr_warn("Adding duplicated physical cpuid 0x%x\n", physid);
+>>>>>>>>>> +               return -EEXIST;
+>>>>>>>>>> +       }
+>>>>>>>>>> +
+>>>>>>>>>> +       if (possible_cpus >= nr_cpu_ids)
+>>>>>>>>>> +               return -ERANGE;
+>>>>>>>>>> +
+>>>>>>>>>> +       __cpu_logical_map[possible_cpus] = physid;
+>>>>>>>>>> +       cpu = possible_cpus++;
+>>>>>>>>>> +       return cpu;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static void __init topo_init(void)
+>>>>>>>>>> +{
+>>>>>>>>>> +       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
+>>>>>>>>>> +       __cpu_logical_map[0] = loongson_sysconf.boot_cpu_id;
+>>>>>>>>>> +       possible_cpus++;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>>       void __init platform_init(void)
+>>>>>>>>>>       {
+>>>>>>>>>>              arch_reserve_vmcore();
+>>>>>>>>>>              arch_reserve_crashkernel();
+>>>>>>>>>> +       topo_init();
+>>>>>>>>>>
+>>>>>>>>>>       #ifdef CONFIG_ACPI
+>>>>>>>>>>              acpi_table_upgrade();
+>>>>>>>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+>>>>>>>>>> index 9afc2d8b3414..a3f466b89179 100644
+>>>>>>>>>> --- a/arch/loongarch/kernel/smp.c
+>>>>>>>>>> +++ b/arch/loongarch/kernel/smp.c
+>>>>>>>>>> @@ -291,10 +291,9 @@ static void __init fdt_smp_setup(void)
+>>>>>>>>>>                      if (cpuid >= nr_cpu_ids)
+>>>>>>>>>>                              continue;
+>>>>>>>>>>
+>>>>>>>>>> -               if (cpuid == loongson_sysconf.boot_cpu_id)
+>>>>>>>>>> -                       cpu = 0;
+>>>>>>>>>> -               else
+>>>>>>>>>> -                       cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
+>>>>>>>>>> +               cpu = topo_add_cpu(cpuid);
+>>>>>>>>>> +               if (cpu < 0)
+>>>>>>>>>> +                       continue;
+>>>>>>>>>>
+>>>>>>>>>>                      num_processors++;
+>>>>>>>>>>                      set_cpu_possible(cpu, true);
+>>>>>>>>>> @@ -302,7 +301,7 @@ static void __init fdt_smp_setup(void)
+>>>>>>>>>>                      __cpu_number_map[cpuid] = cpu;
+>>>>>>>>>>                      __cpu_logical_map[cpu] = cpuid;
+>>>>>>>>>>
+>>>>>>>>>> -               early_numa_add_cpu(cpu, 0);
+>>>>>>>>>> +               early_numa_add_cpu(cpuid, 0);
+>>>>>>>>>>                      set_cpuid_to_node(cpuid, 0);
+>>>>>>>>>>              }
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+>>>>>>>>>> --
+>>>>>>>>>> 2.39.3
+>>>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>
+>>>>
+>>
+
 
