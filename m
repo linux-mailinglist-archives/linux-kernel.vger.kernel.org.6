@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-388549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4279B6119
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:09:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F2E9B611B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03E0284211
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC24F1F211E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1758D1E47AE;
-	Wed, 30 Oct 2024 11:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFF51E3DF3;
+	Wed, 30 Oct 2024 11:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AakKTLIW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kFt6riOe"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867D21E2833
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB60E1E3DEC
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286550; cv=none; b=VX3ngRRVwDKplHAshxg4cboDIOiaATzyst8qLbwS9muR5jqzhT5VEwKvUYJL7xXVpaNTPW1xHkcLt3gzTe9PsPzlscHsjbQ91EUQcP2ZrBw95Vu+STphD2r9uV7uFyNOxxk4tD7qTGOhGNUxmCNmn1oeAm/WihshF1RYYUETknM=
+	t=1730286571; cv=none; b=o1Oa33Z9BRmGaSUVi+IkhfF9FaGyf49/zSzDk4OwnJUo/fs3aJLkATCyakwMRRAR8Gg0ZrHdRBSWWlGTblcqBtKiVWmVEBbNQna10+Im33iY+sQFVvl5W+QQd35yxCFFoQCFkr3UEUTxcOeZqGiNcsmjGBK5SzrxiEgOwUFmT7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286550; c=relaxed/simple;
-	bh=4S5x0bvrZAOnJSXqbrtJSSqpf+S3NcFFvryeJ9Msr1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1TSMnd7dbqJ4I+oowY6cgBanMkRliJTm1ydHqIFZT5Dpquq2vImIIeFhldaaNBbyeO+k+Wk+GizyC9TL/fQnoKCoMecW+xyu4IjURZ5pT+tVqrUFZwiQWW703qyV1pSAuiJZGtuZO1KhSfkjjayKDSroaFjpdfHyUROeywOG9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AakKTLIW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730286547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z4gl0k9RMOgJbQRtMcfUOVUiznRtYig67HlXgTPy7Dw=;
-	b=AakKTLIW4yi1OzWaCbQxul8qhiGDQ32OPJhi2Epym+V/F7I5a7yNZm+3hLArEId+HGMcHs
-	CUARZhc8GKZF85z/O3NhRaRq/n+DgxjFzJiDxFfARkuN/obqgv6c6F1HwBUmEJG4qGXmW2
-	4tYRIuc7T/vGLeT0gFm7nc6s9235G/Q=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-VRRpXADHOcORiPwiXaomag-1; Wed,
- 30 Oct 2024 07:09:04 -0400
-X-MC-Unique: VRRpXADHOcORiPwiXaomag-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7A73C19560B4;
-	Wed, 30 Oct 2024 11:09:01 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.140])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75A4A300018D;
-	Wed, 30 Oct 2024 11:08:52 +0000 (UTC)
-Date: Wed, 30 Oct 2024 19:08:48 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-	yi1.lai@intel.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2 3/3] block: model freeze & enter queue as lock for
- supporting lockdep
-Message-ID: <ZyITwN0ihIFiz9M2@fedora>
-References: <20241025003722.3630252-1-ming.lei@redhat.com>
- <20241025003722.3630252-4-ming.lei@redhat.com>
- <ZyHV7xTccCwN8j7b@ly-workstation>
- <ZyHchfaUe2cEzFMm@fedora>
- <ZyHzb8ExdDG4b8lo@ly-workstation>
- <CAFj5m9+bL23T7mMwR7g_8umTzkNJa14n8AhR3_g6QjB2YCcc5A@mail.gmail.com>
- <ZyIM0dWzxC9zBIuf@ly-workstation>
+	s=arc-20240116; t=1730286571; c=relaxed/simple;
+	bh=mQaUzwaxnnqV45/x8tEAI39WnNj925wRWeOEbSeY/uI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BG74QH+4Kc5pcc4c2XzIX8et83T1qTQGQfu521BQtcCtRiRZcpjjGyYhbVZ9L8TWqYeUVz1h0FXA81lQPq287lFONCsmsKzN4IOyHgk6KgrJQWxyX7sgEIXCVGznLCFIRUIb3zqCj+RiL+La7tMJvHc/1y03CgopzNxvGXe+DsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kFt6riOe; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so8458107e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:09:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730286568; x=1730891368; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mQaUzwaxnnqV45/x8tEAI39WnNj925wRWeOEbSeY/uI=;
+        b=kFt6riOeslgr9ibbQBWoLzlp+k9h2TAaHmfwjEbqd7uQkrp2UPvOrWbZA+PNOqmsYf
+         WyGQsJ1zh8xfgBntHkr9xUujqEFQ584rgvqViPHgZTwYx428K4cVSFSj5Xcmq0/lopgp
+         i4E8c6iX939GWxXBJ2YkdRRrU74/DTQ54ikp3BAQRMh4zsdLZcp7wD6WBpvVQisLPEHO
+         6MiobcaF0aYkXesNsWnUsyOCXPBOWiO6Nv7elYBSmbGjFYgNCcUuf5C1qQneCR3QkfsF
+         xtwfLlVznGE/DWDHu6sKcXmXH/M5CubWSgUPhSj3x8CyC6AH0Ki/z3yWRJB4uHuuKn/q
+         nFXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730286568; x=1730891368;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mQaUzwaxnnqV45/x8tEAI39WnNj925wRWeOEbSeY/uI=;
+        b=SrUKvqoNtyAIfeTE5ChpV4BX1EsNOmhmBCVc2UJaRZsvJmHssrB/na5+o4lUzxK8Hj
+         v8Ut2O56/Bk0coVYvr/f9zmJDijKFm8EG5eeNcVGxBas2n0twWiiS59TohA+i26ZymB7
+         ijDX869zpVhoh5+eml/3eAlW4VUtQ4O0k3ExO8Uj79nSMsCb/GvVfl/pABokWin6Xcv2
+         i6rU6C1VQOP0tkMbHhRdxD3NLjvi+7O8BFz2pUye0gWA8cOlLeRIjjESLLVR/9ThGr6+
+         /YcYeLRpvH+KVzAosPO+GVdHpGjqrL9d8L+Dmg+/+JdHKCTBWa/yYrQVwnBrCoAnI2Cg
+         cZhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLLeexSMsrd7TA4QSMdzFBUiw+DbmL2RCOwvFh9JKIbzxxePO4wBzMwM6u/fIV500O3gvwJUZA1oPVwi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0sET51b8YpLiJtAcBvE3GFphb2eU5DpvC9DtmsC91VshJZDGT
+	d6I6ihniEDnbuKTH/n+PWKEzczxGoZXe+FanlOH33WfdLenA7fTrRdIx+WsOnC0=
+X-Google-Smtp-Source: AGHT+IFQvNMe1Knd6pNleviaqJovBHa2NbBVLssU/HpGHKZatxe8p94FQpXjkdGNR+UdreZfcJSkiQ==
+X-Received: by 2002:a05:6512:6801:b0:53c:7652:6c9e with SMTP id 2adb3069b0e04-53c76526f55mr415631e87.53.1730286567743;
+        Wed, 30 Oct 2024 04:09:27 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca704sm18186125e9.41.2024.10.30.04.09.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 04:09:27 -0700 (PDT)
+Message-ID: <7cc95e52-7509-44eb-8e30-d518283e7d87@linaro.org>
+Date: Wed, 30 Oct 2024 11:09:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
+ newer SoC families
+To: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>,
+ linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: Varshini Rajendran <varshini.rajendran@microchip.com>,
+ Mark Brown <broonie@kernel.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+References: <20241030084445.2438750-1-csokas.bence@prolan.hu>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241030084445.2438750-1-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZyIM0dWzxC9zBIuf@ly-workstation>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-
-On Wed, Oct 30, 2024 at 06:39:13PM +0800, Lai, Yi wrote:
-> On Wed, Oct 30, 2024 at 05:50:15PM +0800, Ming Lei wrote:
-> > On Wed, Oct 30, 2024 at 4:51 PM Lai, Yi <yi1.lai@linux.intel.com> wrote:
-> > >
-> > > On Wed, Oct 30, 2024 at 03:13:09PM +0800, Ming Lei wrote:
-> > > > On Wed, Oct 30, 2024 at 02:45:03PM +0800, Lai, Yi wrote:
-> > ...
-> > > >
-> > > > It should be addressed by the following patch:
-> > > >
-> > > > https://lore.kernel.org/linux-block/ZyEGLdg744U_xBjp@fedora/
-> > > >
-> > >
-> > > I have applied proposed fix patch on top of next-20241029. Issue can
-> > > still be reproduced.
-> > >
-> > > It seems the dependency chain is different from Marek's log and mine.
-> > 
-> > Can you post the new log since q->q_usage_counter(io)->fs_reclaim from
-> > blk_mq_init_sched is cut down by the patch?
-> >
-> 
-> New possible deadlock log after patch applied:
-
-This one looks like one real deadlock, any memory allocation with
-q->sysfs_lock held has such risk.
-
-There is another similar report related with queue sysfs store operation:
-
-https://lore.kernel.org/linux-scsi/ZxG38G9BuFdBpBHZ@fedora/
- 
 
 
 
-Thanks,
-Ming
+On 10/30/24 8:44 AM, Csókás, Bence wrote:
+> Refactor the code to introduce an ops struct, to prepare for merging
+> support for later SoCs, such as SAMA7G5. This code was based on the
+> vendor's kernel (linux4microchip). Cc'ing original contributors.
 
+I think it's fine to split sama7g5 addition in smaller steps. But please
+add the sama7g5 support in the same patch set, otherwise this patch
+doesn't make sense on its own.
+
+Also, if you think you significantly changed the code of authors, I
+think it's fine to overwrite the authorship. Otherwise, try to keep the
+authorship and specify your contributions above your S-o-b tag.
+
+Cheers,
+ta
 
