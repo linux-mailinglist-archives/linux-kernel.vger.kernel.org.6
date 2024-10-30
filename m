@@ -1,152 +1,256 @@
-Return-Path: <linux-kernel+bounces-389210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D70A9B6A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:03:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA579B6A20
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521DB2816B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:03:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93ABC1F2136B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C458D22ADFC;
-	Wed, 30 Oct 2024 16:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE9D218320;
+	Wed, 30 Oct 2024 16:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YjpHq0m/"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNX5OTQM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E48222A495;
-	Wed, 30 Oct 2024 16:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0EA214415;
+	Wed, 30 Oct 2024 16:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307260; cv=none; b=BDXlZCYOnkEwaj0FepYi7hQEdR39eNhYfFKYZmkSz01/r3vzJ9PeWS7R49bMcdxc44FzY9zopjaTAZBW+K/xVbWc8pitRJJZihiyFByf6HNpVN50jphUDA92D18TiAABrRZRMVEvyutI2HmvEtALrRgN+PoPSQa8noZy/kGTjzs=
+	t=1730307304; cv=none; b=XO/mnd4c2PLga48Jii+f92eJdpMfdeQMC2ZrIlwys41s4INfWYcF5QVidflyeRz+Tw/9I25a7J96SLsPjCHw197rrvCBTiH/PDJE6TWC8zogVeD2RfvUA4UBIXDCf4e8YX2VYoLbT0vgXbsHmnS4Eh+Nfjxj/nvI0na3FNFEvyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307260; c=relaxed/simple;
-	bh=EMjeSvfOC5IkeddTk73wHP7CNIy5Wf4vXWrjzp14ZzA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aWjzkxksUNvPWWr+lNT7TQUDaeeKm1X1u0lLqB8AusMkHFzJXScnacxLGvC071jsssgaEBq//mCSi/uwlPoWI1OMgoxTHIayPstkQFmB6deV1P2VCdbnTW6JPgxXCPpNebZ1J/IpJW0sVfKSb4SzS5GwgaexgrYOPa33qRSnO9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YjpHq0m/; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B655FC000B;
-	Wed, 30 Oct 2024 16:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730307255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SvmAMGax6dNwCZy8+Fe42XCwON0HoTKAXTO/9PqlEtM=;
-	b=YjpHq0m/GxEuDroMzfEDPgg+YUwnojLZ8Rq74FKOypdQiJf7iCKwQfASsGvcydXS0VqW7F
-	zJ14yG1WcrEKd6xEbWLFNJkczPIGQZuso6zQvuwFzMZ5G4uF7W0+MxyZRyglteULdkxC4i
-	E0Tq4Eft30snvBIRTzZawHMsKyRYst2JxZoCD9ZjHnJfqa0PCv186Dd36lnN2avhzDiSYg
-	oaGue/7w2znr+OhM2ywZ3824K9EtpZCATZmcKEB8WOk3G52zyXRgAX6BXw1zJGegDEHtvz
-	t2J3Oe8uO2yDqIOtastSjp2OXiKLvNDBLC7v1m58u/LAI+PxjhAA29fJ45Rg3Q==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 30 Oct 2024 17:53:20 +0100
-Subject: [PATCH RFC net-next v2 18/18] net: pse-pd: pd692x0: Add support
- for PSE PI priority feature
+	s=arc-20240116; t=1730307304; c=relaxed/simple;
+	bh=FRMaysyJlopNPUOC0Ykzd1k5bKHrzJM5YjN8B17Xt+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Mc3vfEGEl/r94suCGHCroxU8rI9uy8gyd2JhPCURce/+lMV6mCYCfu6ZPFeycmS4zCJc37lhj0e5nS+8+bNqd35Y1Uu8LiTSj2ndVRVUKlALN2LnUaoeEnl1073rSdpC9MvVMrFw8bMX11K/A9EIx7tfnIDAepxuPuVZA5vklT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNX5OTQM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D4AC4CECE;
+	Wed, 30 Oct 2024 16:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730307303;
+	bh=FRMaysyJlopNPUOC0Ykzd1k5bKHrzJM5YjN8B17Xt+E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=FNX5OTQM9O2wnnn6qBm4s0oPfWxcycl7RBrr1C7l68NDY/KX5AKcmjeUaIlBlcu5b
+	 z2rht4MLV5uHortvCwP9YWy5mZOsHJHKF8yi6X49/gnxf56iJByiGbf8bEqmGkYmyN
+	 MVv6yvRBQp5vZv7OQpFImdV/Wp7MO00y1F8hBh3SXCmTS95wiQXNYdr/Ah84tV8ppc
+	 HIQI/m70v6NJsOSd3wCEZTjWlB0MCPqZbE85RECgpvGdq+AT5JZwWwinCXNVXb9lmx
+	 npIoa5F2FT0tLRTmn4rmyXpLXImk087P0iqJEjhEU4XPugI6spd0nt2QT/nGsuGYZI
+	 1Dx/MkcknjlLQ==
+Date: Wed, 30 Oct 2024 11:55:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+Cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v4 5/7] PCI/IOV: Check that VF BAR fits within the
+ reservation
+Message-ID: <20241030165501.GA1205366@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-feature_poe_port_prio-v2-18-9559622ee47a@bootlin.com>
-References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
-In-Reply-To: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
- Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
- Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <zbazqug3u77eiydb7p6p6gexwowrjcdl52cszczuww4xow7ebc@tke7k5hewrn5>
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Wed, Oct 30, 2024 at 12:43:19PM +0100, Michał Winiarski wrote:
+> On Mon, Oct 28, 2024 at 11:56:04AM -0500, Bjorn Helgaas wrote:
+> > On Fri, Oct 25, 2024 at 11:50:36PM +0200, Michał Winiarski wrote:
+> > > VF MMIO resource reservation, either created by system firmware and
+> > > inherited by Linux PCI subsystem or created by the subsystem itself,
+> > > should contain enough space to fit the BAR of all SR-IOV Virtual
+> > > Functions that can potentially be created (total VFs supported by the
+> > > device).
+> > 
+> > I don't think "VF resource reservation ... should contain enough
+> > space" is really accurate or actionable.  It would be *nice* if the PF
+> > BAR is large enough to accommodate the largest supported VF BARs for
+> > all possible VFs, but if it doesn't, it's not really an error.  It's
+> > just a reflection of the fact that resource space is limited.
+> 
+> From PCI perspective, you're right, IOV resources are optional, and it's
+> not really an error for PF device itself.
+> From IOV perspective - we do need those resources to be able to create
+> VFs.
+> 
+> All I'm trying to say here, is that the context of the change is the
+> "success" case, where the VF BAR reservation was successfully assigned,
+> and the PF will be able to create VFs.
+> The case where there were not enough resources for VF BAR (and PF won't
+> be able to create VFs) remains unchanged.
+> 
+> > > However, that assumption only holds in an environment where VF BAR size
+> > > can't be modified.
+> > 
+> > There's no reason to assume anything about how many VF BARs fit.  The
+> > existing code should avoid enabling the requested nr_virtfn VFs if the
+> > PF doesn't have enough space -- I think that's what the "if
+> > (res->parent)" is supposed to be checking.
+> > 
+> > The fact that you need a change here makes me suspect that we're
+> > missing some resource claim (and corresponding res->parent update)
+> > elsewhere when resizing the VF BAR.
+> 
+> My understanding is that res->parent is only expressing that the
+> resource is assigned.
+> We don't really want to change that, the resource is still there and is
+> assigned - we just want to make sure that VF enabling fails if the
+> caller wants to enable more VFs than possible for current resource size.
+> 
+> Let's use an example. A device with a single BAR.
+> initial_vf_bar_size = X
+> total_vfs = 4
+> supported_vf_resizable_bar_sizes = X, 2X, 4X
 
-This patch extends the PSE callbacks by adding support for the newly
-introduced pi_set_prio() callback, enabling the configuration of PSE PI
-priorities. The current port priority is now also included in the status
-information returned to users.
+In addition, IIUC we're assuming the PF BAR size is 4X, since the
+conclusion is that 4 VF BARs of size X fill it completely.
 
-Reviewed-by: Kyle Swenson <kyle.swenson@est.tech>
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- drivers/net/pse-pd/pd692x0.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> With that - the initial underlying resource looks like this:
+>             +----------------------+
+>             |+--------------------+|
+>             ||                    ||
+>             |+--------------------+|
+>             |+--------------------+|
+>             ||                    ||
+>             |+--------------------+|
+>             |+--------------------+|
+>             ||                    ||
+>             |+--------------------+|
+>             |+--------------------+|
+>             ||                    ||
+>             |+--------------------+|
+>             +----------------------+
+> Its size is 4X, and it contains BAR for 4 VFs.
+> "resource_size >= vf_bar_size * num_vfs" is true for any num_vfs
+> Let's assume that there are enough resources to assign it.
+> 
+> Patch 4/7 allows to resize the entire resource (in addition to changing
+> the VF BAR size), which means that after calling:
+> pci_resize_resource() with size = 2X, the underlying resource will look
+> like this:
+>             +----------------------+ 
+>             |+--------------------+| 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             |+--------------------+| 
+>             |+--------------------+| 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             |+--------------------+| 
+>             |+--------------------+| 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             |+--------------------+| 
+>             |+--------------------+| 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             ||                    || 
+>             |+--------------------+| 
+>             +----------------------+ 
+> Its size is 8X, and it contains BAR for 4 VFs.
+> "resource_size >= vf_bar_size * num_vfs" is true for any num_vfs
 
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 0af7db80b2f8..018b6559049f 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -685,6 +685,8 @@ static int pd692x0_ethtool_get_status(struct pse_controller_dev *pcdev,
- 	if (ret < 0)
- 		return ret;
- 	status->c33_avail_pw_limit = ret;
-+	/* PSE core priority start at 0 */
-+	status->c33_prio = buf.data[2] - 1;
- 
- 	memset(&buf, 0, sizeof(buf));
- 	msg = pd692x0_msg_template_list[PD692X0_MSG_GET_PORT_CLASS];
-@@ -1061,6 +1063,25 @@ static int pd692x0_pi_set_current_limit(struct pse_controller_dev *pcdev,
- 	return pd692x0_sendrecv_msg(priv, &msg, &buf);
- }
- 
-+static int pd692x0_pi_set_prio(struct pse_controller_dev *pcdev, int id,
-+			       unsigned int prio)
-+{
-+	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
-+	struct pd692x0_msg msg, buf = {0};
-+	int ret;
-+
-+	ret = pd692x0_fw_unavailable(priv);
-+	if (ret)
-+		return ret;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_PORT_PARAM];
-+	msg.sub[2] = id;
-+	/* Controller priority from 1 to 3 */
-+	msg.data[4] = prio + 1;
-+
-+	return pd692x0_sendrecv_msg(priv, &msg, &buf);
-+}
-+
- static const struct pse_controller_ops pd692x0_ops = {
- 	.setup_pi_matrix = pd692x0_setup_pi_matrix,
- 	.ethtool_get_status = pd692x0_ethtool_get_status,
-@@ -1070,6 +1091,7 @@ static const struct pse_controller_ops pd692x0_ops = {
- 	.pi_get_voltage = pd692x0_pi_get_voltage,
- 	.pi_get_current_limit = pd692x0_pi_get_current_limit,
- 	.pi_set_current_limit = pd692x0_pi_set_current_limit,
-+	.pi_set_prio = pd692x0_pi_set_prio,
- };
- 
- #define PD692X0_FW_LINE_MAX_SZ 0xff
-@@ -1486,6 +1508,8 @@ static int pd692x0_i2c_probe(struct i2c_client *client)
- 	priv->pcdev.ops = &pd692x0_ops;
- 	priv->pcdev.dev = dev;
- 	priv->pcdev.types = ETHTOOL_PSE_C33;
-+	priv->pcdev.port_prio_supp_modes = BIT(ETHTOOL_PSE_PORT_PRIO_DYNAMIC);
-+	priv->pcdev.pis_prio_max = 2;
- 	ret = devm_pse_controller_register(dev, &priv->pcdev);
- 	if (ret)
- 		return dev_err_probe(dev, ret,
+With the assumption that the PF BAR size is 4X, these VFs would no
+longer fit.  I guess that's basically what you say here:
 
--- 
-2.34.1
+> It does require an extra 4X of MMIO resources, so this can fail in
+> resource constrained environment, even though the original 4X resource
+> was able to be assigned.
+> 
+> The following patch 6/7 allows to change VF BAR size without touching
+> the underlying reservation size.
+> After calling pci_iov_vf_bar_set_size() to 4X and enabling a single VF,
+> the underlying resource will look like this:
+>             +----------------------+ 
+>             |+--------------------+| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             ||░░░░░░░░░░░░░░░░░░░░|| 
+>             |+--------------------+| 
+>             +----------------------+ 
+> Its size is 4X, but since pci_iov_vf_bar_set_size() was called, it is no
+> longer able to accomodate 4 VFs.
+> "resource_size >= vf_bar_size * num_vfs" is only true for num_vfs = 1
+> and any attempts to create more than 1 VF should fail.
+> We don't need to worry about being MMIO resource constrained, no extra
+> MMIO resources are needed.
 
+IIUC this series only resizes VF BARs.  Those VF BARs are carved out
+of a PF BAR, and this series doesn't touch the PF BAR resizing path.
+I guess the driver might be able to increase the PF BAR size if
+necessary, and then increase the VF BAR size.
+
+It sounds like this patch is really a bug fix independent of VF BAR
+resizing.  If we currently allow enabling more VFs than will fit in a
+PF BAR, that sounds like a bug.
+
+So if we try to enable too many VFs, sriov_enable() should fail.  I
+still don't see why this check should change the res->parent test,
+though.
+
+> > > Add an additional check that verifies that VF BAR for all enabled VFs
+> > > fits within the underlying reservation resource.
+> > > 
+> > > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> > > ---
+> > >  drivers/pci/iov.c | 8 ++++++--
+> > >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> > > index 79143c1bc7bb4..5de828e5a26ea 100644
+> > > --- a/drivers/pci/iov.c
+> > > +++ b/drivers/pci/iov.c
+> > > @@ -645,10 +645,14 @@ static int sriov_enable(struct pci_dev *dev, int nr_virtfn)
+> > >  
+> > >  	nres = 0;
+> > >  	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> > > +		int vf_bar_sz = pci_iov_resource_size(dev,
+> > > +						      pci_resource_to_iov(i));
+> > >  		bars |= (1 << pci_resource_to_iov(i));
+> > >  		res = &dev->resource[pci_resource_to_iov(i)];
+> > > -		if (res->parent)
+> > > -			nres++;
+> > > +		if (!res->parent || vf_bar_sz * nr_virtfn > resource_size(res))
+> > > +			continue;
+> > > +
+> > > +		nres++;
+> > >  	}
+> > >  	if (nres != iov->nres) {
+> > >  		pci_err(dev, "not enough MMIO resources for SR-IOV\n");
+> > > -- 
+> > > 2.47.0
+> > > 
 
