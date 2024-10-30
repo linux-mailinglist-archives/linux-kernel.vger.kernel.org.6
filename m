@@ -1,127 +1,78 @@
-Return-Path: <linux-kernel+bounces-388003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440209B590F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:23:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171599B5910
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3D29B229FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B8D1F24070
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1513B16F27E;
-	Wed, 30 Oct 2024 01:22:55 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4AD147C71;
+	Wed, 30 Oct 2024 01:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="brrR1smL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5746584A3E;
-	Wed, 30 Oct 2024 01:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E1384A3E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730251374; cv=none; b=ljevnGEUZA13dPthZSXeMw6FiVS9go+S7MZB/K3zJd3MG7XD4+pcVY4Y6u6RDAcL8JNZKK0k8Spdnj9hi22//8FGhJLvqtml70i5VzjNeCL7XSrp1OUaUxZmWVdIjGglKkdbWP6j4h1MhMwzxDyuOP4B1OwJ/m4FZZHg8hZ+QDE=
+	t=1730251388; cv=none; b=MWqxah9lRuzkFM3iRrZ4v7cz0DSjtS+ghgbpl6eDmBV4a0wU94+yzL0f1hqUsdFWNzt1kXkiBJXvt9RSi4aspCH6W7nTUB75N9s42ipxYhhPrb7HYHl3WXSS5eIe7tEh2HCJVwSvmVAbWXPWCItvp8D+eU4omtCL28jxEAvj5No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730251374; c=relaxed/simple;
-	bh=97+S575orT/2QSEHr98c/w/6t/tQtnbAN57KRjPZzsA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=iVugFzuD4pg7urPhLA3FD+zqZfmeNd06OhhNCA4+jdTEGbsirZEjrIT8BlqTcYHw+hERXsq2+2rUSNkVA3L+qWnaUjhWF1mioNEfsMfBWl9qSxZ7sX3t5UCZ7orBkJlC+5ypSXap3jAajL6QtikWf9UbQ1kB3Tdb0EEG2NFzO48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XdTrX0qYwz4f3jqC;
-	Wed, 30 Oct 2024 09:22:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id ABEE21A0196;
-	Wed, 30 Oct 2024 09:22:48 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCngYVmiiFnyxhOAQ--.6526S3;
-	Wed, 30 Oct 2024 09:22:48 +0800 (CST)
-Subject: Re: [PATCH v2 2/7] md: don't wait faulty rdev in
- md_wait_for_blocked_rdev()
-To: Yu Kuai <yukuai1@huaweicloud.com>, song@kernel.org,
- mariusz.tkaczyk@intel.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241011011630.2002803-1-yukuai1@huaweicloud.com>
- <20241011011630.2002803-3-yukuai1@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <7e069314-4f6d-d291-8650-a37e95268d9b@huaweicloud.com>
-Date: Wed, 30 Oct 2024 09:22:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730251388; c=relaxed/simple;
+	bh=9bbL58ucddYOxopOJZWP6bpXOgmfcOxllpK9hPeF74c=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QUne0OYzFt1pElo+h0N3QLqv+Pq5Kj2fshr5Ga9l8qE5GEsbBmtMMWy7xOBHpUTRc3DOY82Dsg0OM/NQntSoqp3HwvsJVgBF9rVOh1uSd9foiWIpSsAdut+pX3bp41P8X9vkrAjZPhPD01JTJaFgxQTFcWtcpaZ/FIftbPF4+A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=brrR1smL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284B0C4CECD;
+	Wed, 30 Oct 2024 01:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730251387;
+	bh=9bbL58ucddYOxopOJZWP6bpXOgmfcOxllpK9hPeF74c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=brrR1smLI2xheqOjuQcdgtzKlJE20MygXvcdbzMzl9VuwNx6hdnuZaiLfV4BsrKEc
+	 mfkMdNfQU6KiBgrt2hDARIH9ZZj9i6k3bQrcf1zjuyqDDdaG1UtnyCHm4ts5K6xwyR
+	 xwNZpDp/GxwtZyXb5ADIAJcVxsfgDtQS9BtbpnIk=
+Date: Tue, 29 Oct 2024 18:23:06 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+ dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
+ lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 0/2] x86/mm/sme: fix the kdump kernel breakage on SME
+ system when CONFIG_IMA_KEXEC=y
+Message-Id: <20241029182306.04c3451808c8b76e5e96fdb4@linux-foundation.org>
+In-Reply-To: <20240911081615.262202-1-bhe@redhat.com>
+References: <20240911081615.262202-1-bhe@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20241011011630.2002803-3-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCngYVmiiFnyxhOAQ--.6526S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF48GFWxtFWrXrWUuw4kWFg_yoW8GFyDpa
-	9Y9Fy5Gr48Cr1jg3W7XF12kFyFgw4UKrWxCry3A34UZa98Xr93KFsYy3s8Wr18CrZI9r45
-	Xa15Ga9xZa45uF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
-	73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Wed, 11 Sep 2024 16:16:13 +0800 Baoquan He <bhe@redhat.com> wrote:
 
-ÔÚ 2024/10/11 9:16, Yu Kuai Ð´µÀ:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> md_wait_for_blocked_rdev() is called for write IO while rdev is
-> blocked, howerver, rdev can be faulty after choosing this rdev to write,
-> and faulty rdev should never be accessed anymore, hence there is no point
-> to wait for faulty rdev to be unblocked.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/md.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 179ee4afe937..37d1469bfc82 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -9762,9 +9762,7 @@ EXPORT_SYMBOL(md_reap_sync_thread);
->   void md_wait_for_blocked_rdev(struct md_rdev *rdev, struct mddev *mddev)
->   {
->   	sysfs_notify_dirent_safe(rdev->sysfs_state);
-> -	wait_event_timeout(rdev->blocked_wait,
-> -			   !test_bit(Blocked, &rdev->flags) &&
-> -			   !test_bit(BlockedBadBlocks, &rdev->flags),
-> +	wait_event_timeout(rdev->blocked_wait, rdev_blocked(rdev),
+> Currently, distros like Fedora/RHEL have enabled CONFIG_IMA_KEXEC by
+> default. This makes kexec/kdump kernel always fail to boot up on SME
+> platform because of a code bug. By debugging, the root cause is found
+> out and bug is fixed with this patchset.
 
-Just found that there is a stupid mistake that I should use:
+[1/1] is a cleanup.  [2/2] fixes a bug which appears to go all the way
+back to 5.10.  The bugfix patch has a dependency on the cleanup, which
+is unfortunate.
 
-!rdev_blocked(rdev)
+We could add the Fixes: to [1/1] and add cc:stable to both patches so
+they get backported into -stable kernels together.  But I think it's
+nicer to just concentrate on the single bugfix patch (with Fixes: and
+cc:stable) and do the cleanup later, in the usual fashion.
 
-Tests can't find this mistake because wait_event_timeout() is used,
-and caller will break out if rdev is unblocked.
-
-Song, since this is still is md-6.13. Do you want to to send a fix, or
-update this version?
-
-Thanks,
-Kuai
-
->   			   msecs_to_jiffies(5000));
->   	rdev_dec_pending(rdev, mddev);
->   }
-> 
-
+So can I suggest a resend please?
 
