@@ -1,173 +1,161 @@
-Return-Path: <linux-kernel+bounces-388362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5F79B5E6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:06:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F1B9B5E74
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48948284399
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7331C21088
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95C41E1C2D;
-	Wed, 30 Oct 2024 09:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC1C1E200F;
+	Wed, 30 Oct 2024 09:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="QunG6r9Y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R2HMVRLO"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wOmAsvyC"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740271D14FD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1151E1A20
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730279164; cv=none; b=gXKCTI0zTVYXhWrG/HxmwmvjOCpVBEVANSK5Jb6aVtAFUnru8nuiInUaedOgz9zTsEUE5CTaty4yPQr+p/DRvL9X3P2Ybo3fXc5ADOW/KzuwoSacI4cvtymX2zffND4/faj/IHMoeevJ+7fX2O9eotCx5uASfONpN4amhWoAILg=
+	t=1730279319; cv=none; b=MSD9fNiAfiIGBSxorTuuIFsX7jBJpwDM7BiQYwZyW4TV+YmytFxFt0nzjaVZKDZ6OlJtgR8/JxpwrOQCqmjrqBPmb0G0eAV8j/ra0T2FwEAMv1giWDF8YcIBm4De8SZ4/ije3o/SrpquH/xQJH7Oewt8ehplmH+LdRp5scw1h0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730279164; c=relaxed/simple;
-	bh=ZZxRaZVnt2nPYJGGjL4kGTBYOspXUmfXAMHRfo3hkns=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=QgixC+AEvggIGSbWwbAuYKGqQpDCYs6LB/o1Kh6zz1IO90b7jzDDsoknfjsqDzaAUjjb/XMAzjmhUgIvnJZGLvn708YZwy5xXQDQmXsjk8Oqz0ULwhYfnYuFhKoOgwHpemJEA4kyPWEo3yyf/AUQQB+UtpIEaK13LYq2dbiBIpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=QunG6r9Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=R2HMVRLO; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id A02681380206;
-	Wed, 30 Oct 2024 05:05:59 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Wed, 30 Oct 2024 05:05:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1730279159;
-	 x=1730365559; bh=4RrBTD10h5kAqDyvKF9/qsl96Pvp6WfhJjPxSJBS5qs=; b=
-	QunG6r9YK1xbZPqXk6hgK3NemTDS/RjM2Pwhl6W8xtj/x2HeNjOaEg91ihqeQU84
-	K6RraylgJgKTKoyU4P2AbdkUQMoItbYROaybzi0avcl/3uCJa2Lx8hpnUzBJ5+EZ
-	50wUskvHBDElCZ5rzuFs0PBm+9y440Bc268AdIv/C2zw94dyCgga0ap+iqjAnPN+
-	kba/4MLPzbK+ASWhHJPHgvL/4UVLd6ElZbHh1eAc+UOqdUq4jCL2ItLgPvdcqlMF
-	BRSyKZa89HEKGr2cqXRqdnmY5DMGEUA8AWPYgZAJlJMHlLglOpjVr//WKsgqT8DJ
-	52e8V2qeNwe5ohg7utZ7qQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730279159; x=
-	1730365559; bh=4RrBTD10h5kAqDyvKF9/qsl96Pvp6WfhJjPxSJBS5qs=; b=R
-	2HMVRLOHr5n9s6Tk3nMse5fvbxcruJ4mHIzoRa/9mC9YNfozN/Ku3oXJ1RVGhZax
-	WtlP4M8Ag3guJWZqFcOm7VtFeMsT9v+WoXRkXVM9yBCVZo/R5t9PwmfjA5t3fpRw
-	hen32LO8ZtHJN+tNhQJXzAxKyPmWc5PKYr5hQt4w0pwN6+lH9Tkml9hEh2Cpfm5t
-	sPgSMt/87ACt1gZdoG8EKG+FOxeMBxF2bePLnw619HD2GfxwLdaSCeYxt4EykKR1
-	Q/uP0Q+eqc+VYQal1DSTsyUdULX+T3vxvsIeJ9NLZgH2Qq/4gQniJ7Alh/znNfIO
-	ymSl332YVweMfnaMEaboQ==
-X-ME-Sender: <xms:9vYhZ9Qqv0NpAcsR9kYB4QnFGZfif5wXwbiwOKYE_j7lcl_luTSxwA>
-    <xme:9vYhZ2zQRTR7MvgxVrYyuFGp7LBV-w5BCRBQ8F0laqxVhoUanGOXdqm6VLS2Y1Hyt
-    0Mcpe4TYVqEVVvXFJQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekvddguddvjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdflihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgse
-    hflhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpeejheefuddvtdfggfdvffek
-    teehhfelgfdvvedvkeeuffefkeehheegvefhveetjeenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghho
-    rghtrdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhu
-    ohhrvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhonhhgrghrtghhsehlih
-    hsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhoohhnghhsohhnqdhkvghrnhgv
-    lheslhhishhtshdrlhhoohhnghhnihigrdgtnhdprhgtphhtthhopegthhgvnhhhuhgrtg
-    griheslhhoohhnghhsohhnrdgtnhdprhgtphhtthhopehlihiguhgvfhgvnhhgsehlohho
-    nhhgshhonhdrtghnpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlseigvghntdhnrdhnrghmvg
-X-ME-Proxy: <xmx:9vYhZy0e6706Q3BP1ewFrOQJMqFYiKQ-EJqUsPppGjC12HxMObmvFw>
-    <xmx:9vYhZ1Czlzb01zuJi3diiR2GZTSbx3v4OjTW6515tgXLmv0D-QQMOw>
-    <xmx:9vYhZ2j9tHOQlqDompGiSfUNOJ92xfLHUTV4iJvsjU7XnK_yiPyMGQ>
-    <xmx:9vYhZ5rxgSxm8bEhHEa85XpMuynRylSh9jPbapTp_nsjMrEwMpJB0A>
-    <xmx:9_YhZ6hNtLRLkzvCSH2P0OgX9iWuZC05aqLDyodAhHRLjoOVsQPDqgli>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6697D1C20066; Wed, 30 Oct 2024 05:05:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730279319; c=relaxed/simple;
+	bh=Jk0UXxShi8z2/f18nwm1muRUeNcR5njK4N+6odlBPYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z242FX+2lbOaVYYQs2LFvxbCwl0DoL4opZPFBBqnVISFRem0gTPwlbscmgsAj+XlpyXia3JWSLV3+glDMcehOz6Zd4xxRppV9O1OTyNDF0YVuyzZXEPtFmhLKCQlCtVMZoZQxqt+Bv5g2/n4Jb3MX8jD6ih0s4t20w39NzBVbqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wOmAsvyC; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so62101385e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730279315; x=1730884115; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jfSruwmm+EhXu2+6CoTrjQzFc7XhuI6YW/TgDUPgZq0=;
+        b=wOmAsvyCUCdYJmAXE1B0LBiBJb/u4e4DKCLxZ5jYd5xzWQ5EBWXpcCBLVadIbxd6cU
+         hgcrHqP+kJ7b6LxfzXEgdt7o/2xywpWabEnxNvjei3QYnK4lBac6CdOGh5JeKzE0x8XG
+         6lr42H83wZZ+qBM5zlNdZMPtJWML6ooDfQPVs7tPkvekxQGdjP3OIyL5U57+OZaqJlW/
+         RZjg3FJOUNmtJaCekDX66e/+B2aLIqMCbhx+eql7xJQt4CWQlybT0/K47NUKthBDdwb3
+         AIRtFWlnraMW6ijmL48fPu+XK+o+GOXG3Gcby3H2eIfxod+uNwfwyWabD7t3HORoTsb7
+         a9DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730279315; x=1730884115;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jfSruwmm+EhXu2+6CoTrjQzFc7XhuI6YW/TgDUPgZq0=;
+        b=QBXDtGAmlrJNYMIG1vMt+xr+ZMgDv+iI4tDi3vAHmu8A+j6VR7xkIS9h4kne1nnfU9
+         XpSR5vXWI7np8a34QylNVZyvseOkt2xITeW8lUtkVPDaGBUpx4Sit9nEWJv3LGtJfpWH
+         nkYWz+VBP1ZzbfW0+AkDfS6GdGEF+wB3hEvqytpCLRHV8LvXlNy7UxTwF44LnDNwmTB6
+         xVTXQgL/eUgu/+kbtb795NDVpjSK5bPLFM0cPXuRahnc5aKgN+0xZod034NUZEDDCLnp
+         5TEYY/kCDcOXEJ6LXPqRl7qDuLVn/+ZQn6kElUyYXXEmbEx75k8gt5kX208QVWDDlGQt
+         o94Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWeQYxuXLR45BLQeeRrdiLiDn3fbubCEhrr1QlwSj9nxVff+zMpx0TDidJDZgLfpbz1T6trsm77sf3VNag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb1E9XO+/oI+fVvvQdSpxgjqAna0/ZeLxx9uGr8d5Kei0+2w1/
+	hjrRpnWlIhxaya0MZ+cuhyk7xurmVpnH3HvOdAgCu6yltrpWnBoutKYxHJFb1JI=
+X-Google-Smtp-Source: AGHT+IGD4iPjU+Pkh0lZx916PTWhGIipRT1xfez/Mrkm0VvypRRrWcsZWadAIqR4bRvqK/U4Zm60wA==
+X-Received: by 2002:a05:600c:458f:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-4319ad02659mr126496625e9.25.1730279315276;
+        Wed, 30 Oct 2024 02:08:35 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3b956sm14734821f8f.36.2024.10.30.02.08.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 02:08:34 -0700 (PDT)
+Message-ID: <3f758642-b319-4c00-bde2-2ac62936cf8f@linaro.org>
+Date: Wed, 30 Oct 2024 09:08:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 30 Oct 2024 09:05:38 +0000
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@loongson.cn>,
- "Huacai Chen" <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, "Xuefeng Li" <lixuefeng@loongson.cn>,
- "Guo Ren" <guoren@kernel.org>, "Xuerui Wang" <kernel@xen0n.name>,
- linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn
-Message-Id: <4b6df6db-2f2e-4128-a969-c9dff3345c84@app.fastmail.com>
-In-Reply-To: <20241030081110.3431220-1-chenhuacai@loongson.cn>
-References: <20241030081110.3431220-1-chenhuacai@loongson.cn>
-Subject: Re: [PATCH] LoongArch: Disable KASAN if PGDIR_SIZE is too large for cpu_vabits
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/11] scsi: ufs: exynos: gs101: remove unused phy
+ attribute fields
+To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
+Cc: andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
+References: <20241025131442.112862-1-peter.griffin@linaro.org>
+ <20241025131442.112862-6-peter.griffin@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241025131442.112862-6-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-=E5=9C=A82024=E5=B9=B410=E6=9C=8830=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8A=
-=E5=8D=888:11=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> If PGDIR_SIZE is too large for cpu_vabits, KASAN_SHADOW_END will
-> overflow UINTPTR_MAX because KASAN_SHADOW_START/KASAN_SHADOW_END are
-> aligned up by PGDIR_SIZE. And then the overflowed KASAN_SHADOW_END loo=
-ks
-> like a user space address.
->
-> For example, PGDIR_SIZE of CONFIG_4KB_4LEVEL is 2^39, which is too lar=
-ge
-> for Loongson-2K series whose cpu_vabits =3D 39.
->
-> Since CONFIG_4KB_4LEVEL is completely legal for CPUs with cpu_vabits <=3D
-> 39, we just disable KASAN via early return in kasan_init(). Otherwise =
-we
-> get a boot failure.
->
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+On 10/25/24 2:14 PM, Peter Griffin wrote:
+> Now that exynos_ufs_specify_phy_time_attr() checks the appropriate
+> EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR flag. Remove the unused fields
+> in gs101_uic_attr.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-
-I was hit by this issue as well.
-
-Thanks
-- Jiaxun
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
 > ---
->  arch/loongarch/mm/kasan_init.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_=
-init.c
-> index 4a0d1880dd71..6bdcc8751d4e 100644
-> --- a/arch/loongarch/mm/kasan_init.c
-> +++ b/arch/loongarch/mm/kasan_init.c
-> @@ -262,6 +262,17 @@ void __init kasan_init(void)
->  	u64 i;
->  	phys_addr_t pa_start, pa_end;
->=20
-> +	/*
-> +	 * If PGDIR_SIZE is too large for cpu_vabits, KASAN_SHADOW_END will
-> +	 * overflow UINTPTR_MAX and then looks like a user space address.
-> +	 * For example, PGDIR_SIZE of CONFIG_4KB_4LEVEL is 2^39, which is too
-> +	 * large for Loongson-2K series whose cpu_vabits =3D 39.
-> +	 */
-> +	if (KASAN_SHADOW_END < vm_map_base) {
-> +		pr_warn("PGDIR_SIZE too large for cpu_vabits, KernelAddressSanitize=
-r=20
-> disabled.\n");
-> +		return;
-> +	}
-> +
->  	/*
->  	 * PGD was populated as invalid_pmd_table or invalid_pud_table
->  	 * in pagetable_init() which depends on how many levels of page
-> --=20
-> 2.43.5
+>  drivers/ufs/host/ufs-exynos.c | 20 --------------------
+>  1 file changed, 20 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+> index a1a2fdcb8a40..9d668d13fe94 100644
+> --- a/drivers/ufs/host/ufs-exynos.c
+> +++ b/drivers/ufs/host/ufs-exynos.c
+> @@ -2068,26 +2068,6 @@ static const struct exynos_ufs_drv_data exynos_ufs_drvs = {
+>  
+>  static struct exynos_ufs_uic_attr gs101_uic_attr = {
+>  	.tx_trailingclks		= 0xff,
+> -	.tx_dif_p_nsec			= 3000000,	/* unit: ns */
+> -	.tx_dif_n_nsec			= 1000000,	/* unit: ns */
+> -	.tx_high_z_cnt_nsec		= 20000,	/* unit: ns */
+> -	.tx_base_unit_nsec		= 100000,	/* unit: ns */
+> -	.tx_gran_unit_nsec		= 4000,		/* unit: ns */
+> -	.tx_sleep_cnt			= 1000,		/* unit: ns */
 
---=20
-- Jiaxun
+Okay with the removal of the above. All are set in
+exynos_ufs_specify_phy_time_attr(), which returns early if
+EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR is set.
+
+> -	.tx_min_activatetime		= 0xa,
+> -	.rx_filler_enable		= 0x2,
+
+Okay with these. They are used just in exynos_ufs_config_phy_time_attr
+which is guarded by EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR.
+
+> -	.rx_dif_p_nsec			= 1000000,	/* unit: ns */
+> -	.rx_hibern8_wait_nsec		= 4000000,	/* unit: ns */
+> -	.rx_base_unit_nsec		= 100000,	/* unit: ns */
+> -	.rx_gran_unit_nsec		= 4000,		/* unit: ns */
+> -	.rx_sleep_cnt			= 1280,		/* unit: ns */
+> -	.rx_stall_cnt			= 320,		/* unit: ns */
+
+Okay with the removal of the above. All are set in
+exynos_ufs_specify_phy_time_attr(), which returns early if
+EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR is set.
+
+> -	.rx_hs_g1_sync_len_cap		= SYNC_LEN_COARSE(0xf),
+> -	.rx_hs_g2_sync_len_cap		= SYNC_LEN_COARSE(0xf),
+> -	.rx_hs_g3_sync_len_cap		= SYNC_LEN_COARSE(0xf),
+> -	.rx_hs_g1_prep_sync_len_cap	= PREP_LEN(0xf),
+> -	.rx_hs_g2_prep_sync_len_cap	= PREP_LEN(0xf),
+> -	.rx_hs_g3_prep_sync_len_cap	= PREP_LEN(0xf),
+
+Okay for these as well, all are set in exynos_ufs_config_phy_cap_attr()
+which is guarded by EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR.
+
+
+>  	.pa_dbg_opt_suite1_val		= 0x90913C1C,
+>  	.pa_dbg_opt_suite1_off		= PA_GS101_DBG_OPTION_SUITE1,
+>  	.pa_dbg_opt_suite2_val		= 0xE01C115F,
 
