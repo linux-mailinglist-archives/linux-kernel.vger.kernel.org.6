@@ -1,170 +1,132 @@
-Return-Path: <linux-kernel+bounces-388602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33819B61F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:36:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F4B9B61F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432341F21957
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42457B23D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5BA1E47DE;
-	Wed, 30 Oct 2024 11:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6851E5729;
+	Wed, 30 Oct 2024 11:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="b3mMI8Ei";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q6f4hN1U"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XjLDP5HO"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137E71E503D;
-	Wed, 30 Oct 2024 11:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353A01E503D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288137; cv=none; b=e9WaVRL5FGs0tyReLPmuqDgYSvN97Y/nR2PgEUeKg22FctbSmZvAFrsfZe3lf4TRXjM8Iviy6uZO6FM3kwk0TTmejdnl38PMol/5hxbt575EMD2TR0KXK6O5kArDwdiPgMwLhiSxWo7Dt4pmH+3hquJadJ1oHocEOj/27ywiQyE=
+	t=1730288131; cv=none; b=QNV+Mu+Q3/T+7pbrdK0tJgIlQWAKGjCKVrIk+7MiqsHMj4MWASFTCVe+WChOV3/NLhMr0sF00Cs/9zn0+iFEH8RQuoIwP/MyIGuTZ3xFAB/h7Ff3I+EDbRKI1sX3XQZcXkRXqC72D0GalV2KzHR2Uy4BF7DdaJeWLzlCMfPbnJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288137; c=relaxed/simple;
-	bh=4/HKLoMnJL8VA9tvsnVG9JT+o9c8eutbm9zGxEnDrZg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HDinVZ8dGIUt+jFmfcMwn8F1cZQTClfEpSnzHJc7zsUPap03Dshoe0edtlfvP4zWr0YuRCPl59nQBPqWOCm+lrA5nXPOErnnhPhjsKSWvx5f4XlJF+0LdDwhJQz3KtLuA1JpIbjluFW3t0Tw1Ybcu+Pi3DhYkBj+jWEDVuEGunw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=b3mMI8Ei; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q6f4hN1U; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E1E2811401C0;
-	Wed, 30 Oct 2024 07:35:33 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Wed, 30 Oct 2024 07:35:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1730288133;
-	 x=1730374533; bh=4/HKLoMnJL8VA9tvsnVG9JT+o9c8eutbm9zGxEnDrZg=; b=
-	b3mMI8EiwX1EQSUDrhzYECAeYrO2osrE/TNW54w7UpUvuTsv8X7zs6tsb46nWGFQ
-	dWbySYriIN4A7XpJJSmWlin1Q8VT2qoqJz5vX2xzlDVU298VQEjxT1cbRSwW3zrS
-	zcufY1SrmCCImxx3su8zUnWmtgS60H29lebOg7WovjHiMIx2pLUR1uSvU1nIZ3BV
-	rKg5/oTf242FAlLUGggg8ayTm0hcPHz8cZJ9vk2nP6FxkeF+4EzN67EZ3TLY+Y0S
-	EDQhzVG/rLFUSLp5ftqp3kMGFm/fOer5XwnXe/LN0ZyvicILn9D8/4XXuzikSGBQ
-	fGrq0XS/lAdZLGWfkgKR0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730288133; x=
-	1730374533; bh=4/HKLoMnJL8VA9tvsnVG9JT+o9c8eutbm9zGxEnDrZg=; b=Q
-	6f4hN1UjYgw2oVuViUqZXOJzUYY2vojdL1spPgO4UZQ7dRGlcf99nzefijQ55pLk
-	X8bXoixmF4c9I8nZG5ySWcWlRRCTqYdr6xWqR3fn6w4fXg3oaCdamtvIHVIg3E2P
-	O+92T5Fx+kwE7FWUBvVbrkhSMruuCH8NUiNROcaCwSxgnxszObd9ffpyEu7z6Cv+
-	o4vw05b9ot/v0VzPCV/ipoyFyC7IDz8EyRwKWqX79lh6ydyn32c0CEwn9DkGtqAk
-	lImWz5ZZR5QI4RREoTRJdbSkIxQjUn3s77xQcdEnUvZnM7TvffCU1lB/9zA9glGC
-	FJpkB9yf5w/7NahL2fjAQ==
-X-ME-Sender: <xms:BBoiZw4V106WuRGLxj6HHDFCr0ZbY51jWHrNvxbRzpphg9YCNa5C_Q>
-    <xme:BBoiZx6nXKP8hJMAd1haSnLETrQ2XCXrajk-OEprdELnBux_BOpnXkPG_geAZE7oT
-    9VOQ9SxsOjBnAtokNU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepffekveettdeuveefhfekhfdu
-    gfegteejffejudeuheeujefgleduveekuddtueehnecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhope
-    dvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhp
-    hhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpd
-    hrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdp
-    rhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpth
-    htoheprghrihhkrghlohesghhmrghilhdrtghomhdprhgtphhtthhopehfrghntggvrhdr
-    lhgrnhgtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepihhlhigrrdhlihhpnhhith
-    hskhhihiesghhmrghilhdrtghomhdprhgtphhtthhopehhrghukhgvsehhrghukhgvqdhm
-    rdguvgdprhgtphhtthhopegujhhorhgujhgvrdhtohguohhrohhvihgtsehhthgvtghgrh
-    houhhprdgtohhm
-X-ME-Proxy: <xmx:BBoiZ_dzoNfBS8LQKXBGKSZygeTWuvrWcWmovj9208UCgP3DQ7Jhvg>
-    <xmx:BBoiZ1K2GFZd9yXr7GlynTS02fhYVF41S6f3Sh63wZCOrWm986paJQ>
-    <xmx:BBoiZ0IRL0ga6IujUSv3jlO7W7NI2X1WDwxxEadcs2Oz02kgDd_vtg>
-    <xmx:BBoiZ2xBSquYgNtrXL4Q8o3mhep5l_9y8q6HzcWTzLU9c8jhnb2RGQ>
-    <xmx:BRoiZxZ-SfabdBvmD9Nsm-zY4i02rCtKGXDpcrC_xWiIxUXzdCGjuRUn>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A884A1C20066; Wed, 30 Oct 2024 07:35:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730288131; c=relaxed/simple;
+	bh=1fyz08x/Kfb96WrpapF+TWctlqmSXy+pjOmTfAbWKgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwptJkUTGtWj8V2iktgri1XaTR0RJlmxtQNWchPytiGsirEmHIuL44B24C4jGu8BdlDDcqMjSKoBaSgUrOdw0bi+K1FmocV79pXqsfo2IMc6JU2qKYm5CvOKbH/HhyBiYPZKNgma7Ci+lfN2pvz13wfgGEg/N0aeNKNtVK2qSzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XjLDP5HO; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a4031f69fso877477466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730288126; x=1730892926; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P6sR+aml3UxyTUx7NT7wVuDjaBfNaFGGHSlzNTNXs/8=;
+        b=XjLDP5HONNG9cLow71h+Nn5VS6utY8Am4mjYDywzDczSXwtXh+0NjqpmbZA3+C7CkB
+         FMLJEDMtZHaIATi+yL7Mq3+LkTSsFOHiNHkNrwBnJtgzJq7zFIqq9S/LX+QaXHumatc5
+         arebOkkiAq0KlGi2btCjpsCfJSHtBrTzUpjycGvrCbgAnywxsY5VM1San14DYXVmhO6O
+         fbEJzG0X0p9Tk2SMZpUqpXhx4tQ9EJ9ZBX16pzBK1mjrdMRO+yiq4FzaewL1+NMLqew3
+         v0SXlYt3T8b5WNB7R+8ostMEy0knf3PgskyatvCdjhr0yUdXIhPuXyXOA99Ixy2Lcsjg
+         NRoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730288126; x=1730892926;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P6sR+aml3UxyTUx7NT7wVuDjaBfNaFGGHSlzNTNXs/8=;
+        b=fd1azfMytZypMF7g4nNIkWvKQOgIhbUHxfVKifAvHmxqqC8iF7UCrycS5n4okTcf+e
+         FocAWRTkOy31YxFyuk+OXTLUMOWIZlI7xH9MG5fCDk5XFGxLYJpcpXxXEWZQYuxUFh1d
+         +nXOTcEleNqishZi6afDNYnkSW5/9xek6XVaNfbaLCoiUGmS0PYBplNaKH//yHAqcW65
+         PGfezWj70DzEEdpxvWwAb/7nmagI5mhPr/eQMMK0eApoJt8TAvoQ3t39THcJLKwSkB8w
+         ezn6j7m/nor8SVpDn+d0PDSRKrGOWoDBkRRI1zMAvjKgHjln6kyr/jn9orkxRUk1BTW3
+         i1/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU/GY5HuiFbb/za8XdeCOw391PlrluLDUf8jiiE3DrEomzLxhb0EWPP0kE2LANCBluhhGx6Ze2GPd0Qnh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaGMmgqHecM1GjkGrOwmehal2RKJhrQe2fblX8WYvDCe/PaQxQ
+	6/xLE2o8EtMngSNa7epUyDWxyRjSoxetoS1PsTmTFMCH+SD30JIKBH+i5itRXS0=
+X-Google-Smtp-Source: AGHT+IF1UTGG2OAepUDBUpyfkcQLgws5vfUoxVF55Jzoc7e5WgTf3wnHDi9okD0LZFzSuEMoKEAu+w==
+X-Received: by 2002:a17:906:f597:b0:a99:ebcc:bfbe with SMTP id a640c23a62f3a-a9de5d992f1mr1459936866b.27.1730288126292;
+        Wed, 30 Oct 2024 04:35:26 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f298319sm556719966b.105.2024.10.30.04.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 04:35:26 -0700 (PDT)
+Date: Wed, 30 Oct 2024 12:35:25 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: hannes@cmpxchg.org, nphamcs@gmail.com, shakeel.butt@linux.dev,
+	roman.gushchin@linux.dev, muchun.song@linux.dev, tj@kernel.org,
+	lizefan.x@bytedance.com, mkoutny@suse.com, corbet@lwn.net,
+	lnyng@meta.com, akpm@linux-foundation.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
+Message-ID: <ZyIZ_Sq9D_v5v43l@tiehlicka>
+References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 30 Oct 2024 11:35:09 +0000
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Aleksandar Rikalo" <arikalo@gmail.com>,
- "Gregory CLEMENT" <gregory.clement@bootlin.com>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- "Gregory CLEMENT" <gregory.clement@bootlin.com>,
- "Theo Lebrun" <theo.lebrun@bootlin.com>, "Arnd Bergmann" <arnd@arndb.de>,
- devicetree@vger.kernel.org,
- "Djordje Todorovic" <djordje.todorovic@htecgroup.com>,
- "Chao-ying Fu" <cfu@wavecomp.com>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Greg Ungerer" <gerg@kernel.org>, "Hauke Mehrtens" <hauke@hauke-m.de>,
- "Ilya Lipnitskiy" <ilya.lipnitskiy@gmail.com>,
- linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "Marc Zyngier" <maz@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "Tiezhu Yang" <yangtiezhu@loongson.cn>
-Message-Id: <378f8b70-12d9-4ec3-a1e5-35bd992bfc90@app.fastmail.com>
-In-Reply-To: <29d7688e-5fac-4821-8764-bdc760112370@app.fastmail.com>
-References: <20241028175935.51250-1-arikalo@gmail.com>
- <20241028175935.51250-11-arikalo@gmail.com>
- <avz4crm2yrk3fg7r4qxkgkt3ka5hmk54v2wtcms453tsnewu5w@jzjxmyd4b7yg>
- <CAGQJe6p6QgSQKByVQ8G+HpWbdEHnfNb8vRureOrS2VZa6Lk74A@mail.gmail.com>
- <29d7688e-5fac-4821-8764-bdc760112370@app.fastmail.com>
-Subject: Re: [PATCH v8 10/13] dt-bindings: mips: cpu: Add property for broken HCI
- information
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
 
+On Mon 28-10-24 14:05:05, Joshua Hahn wrote:
+[...]
+> Changelog
+> v3:
+>   * Removed check for whether CGRP_ROOT_HUGETLB_ACCOUNTING is on, since
+>     this check is already handled by lruvec_stat_mod (and doing the
+>     check in hugetlb.c actually breaks the build if MEMCG is not
+>     enabled.
+[...]
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 190fa05635f4..fbb10e52d7ea 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1925,6 +1925,7 @@ void free_huge_folio(struct folio *folio)
+>  				     pages_per_huge_page(h), folio);
+>  	hugetlb_cgroup_uncharge_folio_rsvd(hstate_index(h),
+>  					  pages_per_huge_page(h), folio);
+> +	lruvec_stat_mod_folio(folio, NR_HUGETLB, -pages_per_huge_page(h));
+>  	mem_cgroup_uncharge(folio);
+>  	if (restore_reserve)
+>  		h->resv_huge_pages++;
+> @@ -3093,6 +3094,7 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+>  
+>  	if (!memcg_charge_ret)
+>  		mem_cgroup_commit_charge(folio, memcg);
+> +	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
+>  	mem_cgroup_put(memcg);
+>  
+>  	return folio;
 
+I do not see any specific checks for CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING
+in these paths. I guess you wanted to say that you rely on
+mem_cgroup_commit_charge setting memcg pointer which then __lruvec_stat_mod_folio
+relies on when updating stats.
 
-=E5=9C=A82024=E5=B9=B410=E6=9C=8829=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
-=E5=8D=884:11=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> =E5=9C=A82024=E5=B9=B410=E6=9C=8829=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
-=E5=8D=8812:21=EF=BC=8CAleksandar Rikalo=E5=86=99=E9=81=93=EF=BC=9A
-> [...]
->>
->>> Is this property applicable for all MIPS vendors? There is no vendor
->>> prefix here, so this is generic for this architecture, right?
->
-> I'd say the best vendor prefix is mti in this case.
->
-> CM3 IP block is supplied by MIPS Technology, it is not a part of MIPS
-> architecture spec.
-
-I just tried to revise this problem and I think a better approach would
-be picking my CM binding [1] patch and add this as a property to CM bind=
-ing.
-
-You don't need to pick rest of that series, this binding alone is suffic=
-ient,
-and it's already being reviewed.
-
-Thanks
-[1]: https://lore.kernel.org/all/20240612-cm_probe-v2-5-a5b55440563c@fly=
-goat.com/
->
-> Thanks
-> --=20
-> - Jiaxun
-
---=20
-- Jiaxun
+I suspect this all is done because you want a global counter to be
+updated as well, right? Changelog doesn't say anything about that
+though. Why is this needed when /proc/meminfo already describes the
+global hugetlb usage?
+-- 
+Michal Hocko
+SUSE Labs
 
