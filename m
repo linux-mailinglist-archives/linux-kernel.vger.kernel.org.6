@@ -1,194 +1,397 @@
-Return-Path: <linux-kernel+bounces-389037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FA19B67C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:28:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 814F49B677A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DD31C20FC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A420C1C204AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9450217452;
-	Wed, 30 Oct 2024 15:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2325E219494;
+	Wed, 30 Oct 2024 15:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lPjADyxu"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4VaVnmI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEBC213ECB
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF8F218D7B;
+	Wed, 30 Oct 2024 15:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301955; cv=none; b=Tn0wsrneLRcQjAN1WE5aAqjB3Hr4pYB9weoyflPi6jylkg6iKW2rYwcRIruxLVDZ1EVyJsXyZ9dfahVNApQkC/a3JdGd5z+7Rj7WkrJOl/cd+HEKtpas9EuRcXYO6nJDuFW72/mI3SnJT+i/h5BIpp3dXiIha3FD1Y/W+fZJ080=
+	t=1730301252; cv=none; b=iqca9lAI83ovKa6FSPkUAIkcynFJqBpUnE+rJzEDV3TGci5D1Jz1D01p+x/NAUyjjithLlFRvFpd0DmROqeqp52N+eBPwOZKRtQOxEgVbCXkoLy38NmLrSL4mQCNvO56DB86WG3k1CELDyooc/l3ETr1UJjlB2yJTRQ0exmsYTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301955; c=relaxed/simple;
-	bh=8E32x75lCrtV/w1t1rzOYa0pZAKOafPl72BulaYj7SA=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=gbEdd2Lb9wfGqMoGN+pOC4Vba8O7ZWVnWGHMhrHpbw5t+TwLS5yX4O7j5NX9cgVTEcLqKq/9WybVAXXMjjisc5EMr8abdPYQsjjn1a4vCoj1x4sdbsSD4blU+ML+yBkrXmpEY8c4sQEaXpc7vU4jxlYfVSbziWx6Gbzvdu5CDsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lPjADyxu; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=k7Ui+RJB68mM8gJ9CNv96KrJtDsj2TyL1J3cQNlTEpk=; b=lPjADyxuluDRY7Hox/Zdyj1fje
-	24XclypEXGxgngZvduw9Dh/NMlnucbZvJh2MlMi3QpXve6nzNUJJmbkDRK/tM6lQGxRBGZoM3/eS0
-	gUmat7ExuHZves7rjUzDKBneNvxdWMF0Eehhcv5nJYg/eecRWOiYZxymxA32nh3KH+6y58iUFv92f
-	0ojSDRHcCcs/wunUbetx2L5e2Jc3w3sL9BIhNS6q0EkKcipm5dCnWK2GQqGV66eWG1atAoCr4PMp6
-	mNrLjnH41TSKC6D8JINIWaED/hzro5mlA8q4dQm6Hv9G/zYcAOHoYhNmVP9WkaWlH1OYKUfJvVBhT
-	K8tBmD5w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6AZt-0000000AI2E-3UAk;
-	Wed, 30 Oct 2024 15:25:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 0311930625D; Wed, 30 Oct 2024 16:25:43 +0100 (CET)
-Message-Id: <20241030152142.928034708@infradead.org>
-User-Agent: quilt/0.65
-Date: Wed, 30 Oct 2024 16:13:01 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: mingo@kernel.org
-Cc: peterz@infradead.org,
- juri.lelli@redhat.com,
- vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,
- rostedt@goodmis.org,
- bsegall@google.com,
- mgorman@suse.de,
- vschneid@redhat.com,
- tj@kernel.org,
- void@manifault.com,
- linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 6/6] sched: Cleanup sched_delayed handling for class switches
-References: <20241030151255.300069509@infradead.org>
+	s=arc-20240116; t=1730301252; c=relaxed/simple;
+	bh=Tou6h56yAf8zPXrsCYXLKq3TAhdexORUkVzCl7QijME=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PGaimDvQtrGou9clBthBagYvI/0nUB18DS50gqQJkU+Z8Bwc5FPCWDdNeRYZ/KZL2nOVUnLHjS0AtnVsgXdMyUehU+BFtBbefRwCe0qI4ax7XdDFL8frGimIxQ0CaMEjZeUEvTJurvKhLdICo/Mtfw2JuY1wqgrjfAI0f2PiAwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4VaVnmI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4BACC4CED1;
+	Wed, 30 Oct 2024 15:14:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730301251;
+	bh=Tou6h56yAf8zPXrsCYXLKq3TAhdexORUkVzCl7QijME=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=h4VaVnmIky+hiiKr9zeB9+Uf2F83BYfpIDUK/675btqMGfzMBduAm96m26BXz31P3
+	 5D7N0uheBlG1EkiNAmKwPs7a3KD4Io2CKqGYS5p8mXNOKcjdAz8JbJ4UBRmuqn30aN
+	 IoJffimX9q0yCGEHGD+BpiM7EQQg8IdYwgaWOl1tOJzz9lMTD35/n8QfBIJaUXtAvX
+	 km8vrnoDksYXodN3tq0Ucs+nkCcb0Y/T5YPZ+sEWV1V+jtxhp7CDSx1cDmdN3U+W/9
+	 c9EhxHATtTP07AhHig1te53HVJqGXJZGCXo1OEk6WPN/uu7DMHKAOEQxy1Y6d0J14K
+	 vAhDVgYxRyK/w==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH v1 15/17] vfio/mlx5: Explicitly use number of pages instead of allocated length
+Date: Wed, 30 Oct 2024 17:13:01 +0200
+Message-ID: <3e91721157afc02c04beaec97247dafe251f5d2c.1730298502.git.leon@kernel.org>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <cover.1730298502.git.leon@kernel.org>
+References: <cover.1730298502.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Use the new sched_class::switching_from() method to dequeue delayed
-tasks before switching to another class.
+From: Leon Romanovsky <leonro@nvidia.com>
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+allocated_length is a multiple of page size and number of pages,
+so let's change the functions to accept number of pages. It opens
+us a venue to combine receive and send paths together with code
+readability improvement.
+
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 ---
- kernel/sched/core.c     |   12 ++++++++----
- kernel/sched/ext.c      |   12 ++++--------
- kernel/sched/fair.c     |    7 +++++++
- kernel/sched/syscalls.c |    3 ---
- 4 files changed, 19 insertions(+), 15 deletions(-)
+ drivers/vfio/pci/mlx5/cmd.c  | 32 ++++++++++-----------
+ drivers/vfio/pci/mlx5/cmd.h  | 10 +++----
+ drivers/vfio/pci/mlx5/main.c | 56 +++++++++++++++++++++++-------------
+ 3 files changed, 57 insertions(+), 41 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7139,9 +7139,6 @@ void rt_mutex_setprio(struct task_struct
- 	if (prev_class != next_class)
- 		queue_flag |= DEQUEUE_CLASS;
+diff --git a/drivers/vfio/pci/mlx5/cmd.c b/drivers/vfio/pci/mlx5/cmd.c
+index 41a4b0cf4297..fdc3e515741f 100644
+--- a/drivers/vfio/pci/mlx5/cmd.c
++++ b/drivers/vfio/pci/mlx5/cmd.c
+@@ -318,8 +318,7 @@ static int _create_mkey(struct mlx5_core_dev *mdev, u32 pdn,
+ 			struct mlx5_vhca_recv_buf *recv_buf,
+ 			u32 *mkey)
+ {
+-	size_t npages = buf ? DIV_ROUND_UP(buf->allocated_length, PAGE_SIZE) :
+-				recv_buf->npages;
++	size_t npages = buf ? buf->npages : recv_buf->npages;
+ 	int err = 0, inlen;
+ 	__be64 *mtt;
+ 	void *mkc;
+@@ -375,7 +374,7 @@ static int mlx5vf_dma_data_buffer(struct mlx5_vhca_data_buffer *buf)
+ 	if (mvdev->mdev_detach)
+ 		return -ENOTCONN;
  
--	if (prev_class != next_class && p->se.sched_delayed)
--		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
--
- 	scoped_guard (sched_change, p, queue_flag) {
- 		/*
- 		 * Boosting condition are:
-@@ -10530,8 +10527,15 @@ struct sched_change_ctx sched_change_beg
+-	if (buf->dmaed || !buf->allocated_length)
++	if (buf->dmaed || !buf->npages)
+ 		return -EINVAL;
  
- 	lockdep_assert_rq_held(rq);
+ 	ret = dma_map_sgtable(mdev->device, &buf->table.sgt, buf->dma_dir, 0);
+@@ -444,7 +443,7 @@ static int mlx5vf_add_migration_pages(struct mlx5_vhca_data_buffer *buf,
  
--	if ((flags & DEQUEUE_CLASS) && p->sched_class->switching_from)
-+	if ((flags & DEQUEUE_CLASS) && p->sched_class->switching_from) {
-+		/*
-+		 * switching_from_fair() assumes CLASS implies NOCLOCK; fixing
-+		 * this assumption would mean switching_from() would need to be
-+		 * able to change flags.
-+		 */
-+		SCHED_WARN_ON(!(flags & DEQUEUE_NOCLOCK));
- 		p->sched_class->switching_from(rq, p, flags);
-+	}
- 
- 	struct sched_change_ctx ctx = {
- 		.p = p,
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -4485,7 +4485,7 @@ static void scx_ops_disable_workfn(struc
- 
- 	scx_task_iter_start(&sti);
- 	while ((p = scx_task_iter_next_locked(&sti))) {
--		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
-+		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
- 		const struct sched_class *old_class = p->sched_class;
- 		const struct sched_class *new_class =
- 			__setscheduler_class(p->policy, p->prio);
-@@ -4493,9 +4493,7 @@ static void scx_ops_disable_workfn(struc
- 		if (old_class != new_class)
- 			queue_flags |= DEQUEUE_CLASS;
- 
--		if (old_class != new_class && p->se.sched_delayed)
--			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
--
-+		update_rq_clock(task_rq(p));
- 		scoped_guard (sched_change, p, queue_flags) {
- 			p->sched_class = new_class;
- 		}
-@@ -5202,7 +5200,7 @@ static int scx_ops_enable(struct sched_e
- 	percpu_down_write(&scx_fork_rwsem);
- 	scx_task_iter_start(&sti);
- 	while ((p = scx_task_iter_next_locked(&sti))) {
--		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
-+		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
- 		const struct sched_class *old_class = p->sched_class;
- 		const struct sched_class *new_class =
- 			__setscheduler_class(p->policy, p->prio);
-@@ -5210,9 +5208,7 @@ static int scx_ops_enable(struct sched_e
- 		if (old_class != new_class)
- 			queue_flags |= DEQUEUE_CLASS;
- 
--		if (old_class != new_class && p->se.sched_delayed)
--			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
--
-+		update_rq_clock(task_rq(p));
- 		scoped_guard (sched_change, p, DEQUEUE_SAVE | DEQUEUE_MOVE) {
- 			p->scx.slice = SCX_SLICE_DFL;
- 			p->sched_class = new_class;
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -13175,6 +13175,12 @@ static void attach_task_cfs_rq(struct ta
- 	attach_entity_cfs_rq(se);
+ 		if (ret)
+ 			goto err;
+-		buf->allocated_length += filled * PAGE_SIZE;
++		buf->npages += filled;
+ 		/* clean input for another bulk allocation */
+ 		memset(page_list, 0, filled * sizeof(*page_list));
+ 		to_fill = min_t(unsigned int, to_alloc,
+@@ -460,8 +459,7 @@ static int mlx5vf_add_migration_pages(struct mlx5_vhca_data_buffer *buf,
  }
  
-+static void switching_from_fair(struct rq *rq, struct task_struct *p, int flags)
-+{
-+	if ((flags & DEQUEUE_CLASS) && p->se.sched_delayed)
-+		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
-+}
-+
- static void switched_from_fair(struct rq *rq, struct task_struct *p, int flags)
+ struct mlx5_vhca_data_buffer *
+-mlx5vf_alloc_data_buffer(struct mlx5_vf_migration_file *migf,
+-			 size_t length,
++mlx5vf_alloc_data_buffer(struct mlx5_vf_migration_file *migf, u32 npages,
+ 			 enum dma_data_direction dma_dir)
  {
- 	detach_task_cfs_rq(p);
-@@ -13592,6 +13598,7 @@ DEFINE_SCHED_CLASS(fair) = {
+ 	struct mlx5_vhca_data_buffer *buf;
+@@ -473,9 +471,8 @@ mlx5vf_alloc_data_buffer(struct mlx5_vf_migration_file *migf,
  
- 	.reweight_task		= reweight_task_fair,
- 	.prio_changed		= prio_changed_fair,
-+	.switching_from		= switching_from_fair,
- 	.switched_from		= switched_from_fair,
- 	.switched_to		= switched_to_fair,
+ 	buf->dma_dir = dma_dir;
+ 	buf->migf = migf;
+-	if (length) {
+-		ret = mlx5vf_add_migration_pages(buf,
+-				DIV_ROUND_UP_ULL(length, PAGE_SIZE));
++	if (npages) {
++		ret = mlx5vf_add_migration_pages(buf, npages);
+ 		if (ret)
+ 			goto end;
  
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -701,9 +701,6 @@ int __sched_setscheduler(struct task_str
- 	if (prev_class != next_class)
- 		queue_flags |= DEQUEUE_CLASS;
+@@ -501,8 +498,8 @@ void mlx5vf_put_data_buffer(struct mlx5_vhca_data_buffer *buf)
+ }
  
--	if (prev_class != next_class && p->se.sched_delayed)
--		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
--
- 	scoped_guard (sched_change, p, queue_flags) {
+ struct mlx5_vhca_data_buffer *
+-mlx5vf_get_data_buffer(struct mlx5_vf_migration_file *migf,
+-		       size_t length, enum dma_data_direction dma_dir)
++mlx5vf_get_data_buffer(struct mlx5_vf_migration_file *migf, u32 npages,
++		       enum dma_data_direction dma_dir)
+ {
+ 	struct mlx5_vhca_data_buffer *buf, *temp_buf;
+ 	struct list_head free_list;
+@@ -517,7 +514,7 @@ mlx5vf_get_data_buffer(struct mlx5_vf_migration_file *migf,
+ 	list_for_each_entry_safe(buf, temp_buf, &migf->avail_list, buf_elm) {
+ 		if (buf->dma_dir == dma_dir) {
+ 			list_del_init(&buf->buf_elm);
+-			if (buf->allocated_length >= length) {
++			if (buf->npages >= npages) {
+ 				spin_unlock_irq(&migf->list_lock);
+ 				goto found;
+ 			}
+@@ -531,7 +528,7 @@ mlx5vf_get_data_buffer(struct mlx5_vf_migration_file *migf,
+ 		}
+ 	}
+ 	spin_unlock_irq(&migf->list_lock);
+-	buf = mlx5vf_alloc_data_buffer(migf, length, dma_dir);
++	buf = mlx5vf_alloc_data_buffer(migf, npages, dma_dir);
  
- 		if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
-
+ found:
+ 	while ((temp_buf = list_first_entry_or_null(&free_list,
+@@ -712,7 +709,7 @@ int mlx5vf_cmd_save_vhca_state(struct mlx5vf_pci_core_device *mvdev,
+ 	MLX5_SET(save_vhca_state_in, in, op_mod, 0);
+ 	MLX5_SET(save_vhca_state_in, in, vhca_id, mvdev->vhca_id);
+ 	MLX5_SET(save_vhca_state_in, in, mkey, buf->mkey);
+-	MLX5_SET(save_vhca_state_in, in, size, buf->allocated_length);
++	MLX5_SET(save_vhca_state_in, in, size, buf->npages * PAGE_SIZE);
+ 	MLX5_SET(save_vhca_state_in, in, incremental, inc);
+ 	MLX5_SET(save_vhca_state_in, in, set_track, track);
+ 
+@@ -734,8 +731,11 @@ int mlx5vf_cmd_save_vhca_state(struct mlx5vf_pci_core_device *mvdev,
+ 	}
+ 
+ 	if (!header_buf) {
+-		header_buf = mlx5vf_get_data_buffer(migf,
+-			sizeof(struct mlx5_vf_migration_header), DMA_NONE);
++		header_buf = mlx5vf_get_data_buffer(
++			migf,
++			DIV_ROUND_UP(sizeof(struct mlx5_vf_migration_header),
++				     PAGE_SIZE),
++			DMA_NONE);
+ 		if (IS_ERR(header_buf)) {
+ 			err = PTR_ERR(header_buf);
+ 			goto err_free;
+diff --git a/drivers/vfio/pci/mlx5/cmd.h b/drivers/vfio/pci/mlx5/cmd.h
+index df421dc6de04..7d4a833b6900 100644
+--- a/drivers/vfio/pci/mlx5/cmd.h
++++ b/drivers/vfio/pci/mlx5/cmd.h
+@@ -56,7 +56,7 @@ struct mlx5_vhca_data_buffer {
+ 	struct sg_append_table table;
+ 	loff_t start_pos;
+ 	u64 length;
+-	u64 allocated_length;
++	u32 npages;
+ 	u32 mkey;
+ 	enum dma_data_direction dma_dir;
+ 	u8 dmaed:1;
+@@ -217,12 +217,12 @@ int mlx5vf_cmd_alloc_pd(struct mlx5_vf_migration_file *migf);
+ void mlx5vf_cmd_dealloc_pd(struct mlx5_vf_migration_file *migf);
+ void mlx5fv_cmd_clean_migf_resources(struct mlx5_vf_migration_file *migf);
+ struct mlx5_vhca_data_buffer *
+-mlx5vf_alloc_data_buffer(struct mlx5_vf_migration_file *migf,
+-			 size_t length, enum dma_data_direction dma_dir);
++mlx5vf_alloc_data_buffer(struct mlx5_vf_migration_file *migf, u32 npages,
++			 enum dma_data_direction dma_dir);
+ void mlx5vf_free_data_buffer(struct mlx5_vhca_data_buffer *buf);
+ struct mlx5_vhca_data_buffer *
+-mlx5vf_get_data_buffer(struct mlx5_vf_migration_file *migf,
+-		       size_t length, enum dma_data_direction dma_dir);
++mlx5vf_get_data_buffer(struct mlx5_vf_migration_file *migf, u32 npages,
++		       enum dma_data_direction dma_dir);
+ void mlx5vf_put_data_buffer(struct mlx5_vhca_data_buffer *buf);
+ struct page *mlx5vf_get_migration_page(struct mlx5_vhca_data_buffer *buf,
+ 				       unsigned long offset);
+diff --git a/drivers/vfio/pci/mlx5/main.c b/drivers/vfio/pci/mlx5/main.c
+index 242c23eef452..a1dbee3be1e0 100644
+--- a/drivers/vfio/pci/mlx5/main.c
++++ b/drivers/vfio/pci/mlx5/main.c
+@@ -308,6 +308,7 @@ static struct mlx5_vhca_data_buffer *
+ mlx5vf_mig_file_get_stop_copy_buf(struct mlx5_vf_migration_file *migf,
+ 				  u8 index, size_t required_length)
+ {
++	u32 npages = DIV_ROUND_UP(required_length, PAGE_SIZE);
+ 	struct mlx5_vhca_data_buffer *buf = migf->buf[index];
+ 	u8 chunk_num;
+ 
+@@ -315,12 +316,11 @@ mlx5vf_mig_file_get_stop_copy_buf(struct mlx5_vf_migration_file *migf,
+ 	chunk_num = buf->stop_copy_chunk_num;
+ 	buf->migf->buf[index] = NULL;
+ 	/* Checking whether the pre-allocated buffer can fit */
+-	if (buf->allocated_length >= required_length)
++	if (buf->npages >= npages)
+ 		return buf;
+ 
+ 	mlx5vf_put_data_buffer(buf);
+-	buf = mlx5vf_get_data_buffer(buf->migf, required_length,
+-				     DMA_FROM_DEVICE);
++	buf = mlx5vf_get_data_buffer(buf->migf, npages, DMA_FROM_DEVICE);
+ 	if (IS_ERR(buf))
+ 		return buf;
+ 
+@@ -373,7 +373,8 @@ static int mlx5vf_add_stop_copy_header(struct mlx5_vf_migration_file *migf,
+ 	u8 *to_buff;
+ 	int ret;
+ 
+-	header_buf = mlx5vf_get_data_buffer(migf, size, DMA_NONE);
++	header_buf = mlx5vf_get_data_buffer(migf, DIV_ROUND_UP(size, PAGE_SIZE),
++					    DMA_NONE);
+ 	if (IS_ERR(header_buf))
+ 		return PTR_ERR(header_buf);
+ 
+@@ -388,7 +389,7 @@ static int mlx5vf_add_stop_copy_header(struct mlx5_vf_migration_file *migf,
+ 	to_buff = kmap_local_page(page);
+ 	memcpy(to_buff, &header, sizeof(header));
+ 	header_buf->length = sizeof(header);
+-	data.stop_copy_size = cpu_to_le64(migf->buf[0]->allocated_length);
++	data.stop_copy_size = cpu_to_le64(migf->buf[0]->npages * PAGE_SIZE);
+ 	memcpy(to_buff + sizeof(header), &data, sizeof(data));
+ 	header_buf->length += sizeof(data);
+ 	kunmap_local(to_buff);
+@@ -437,15 +438,20 @@ static int mlx5vf_prep_stop_copy(struct mlx5vf_pci_core_device *mvdev,
+ 
+ 	num_chunks = mvdev->chunk_mode ? MAX_NUM_CHUNKS : 1;
+ 	for (i = 0; i < num_chunks; i++) {
+-		buf = mlx5vf_get_data_buffer(migf, inc_state_size, DMA_FROM_DEVICE);
++		buf = mlx5vf_get_data_buffer(
++			migf, DIV_ROUND_UP(inc_state_size, PAGE_SIZE),
++			DMA_FROM_DEVICE);
+ 		if (IS_ERR(buf)) {
+ 			ret = PTR_ERR(buf);
+ 			goto err;
+ 		}
+ 
+ 		migf->buf[i] = buf;
+-		buf = mlx5vf_get_data_buffer(migf,
+-				sizeof(struct mlx5_vf_migration_header), DMA_NONE);
++		buf = mlx5vf_get_data_buffer(
++			migf,
++			DIV_ROUND_UP(sizeof(struct mlx5_vf_migration_header),
++				     PAGE_SIZE),
++			DMA_NONE);
+ 		if (IS_ERR(buf)) {
+ 			ret = PTR_ERR(buf);
+ 			goto err;
+@@ -553,7 +559,8 @@ static long mlx5vf_precopy_ioctl(struct file *filp, unsigned int cmd,
+ 	 * We finished transferring the current state and the device has a
+ 	 * dirty state, save a new state to be ready for.
+ 	 */
+-	buf = mlx5vf_get_data_buffer(migf, inc_length, DMA_FROM_DEVICE);
++	buf = mlx5vf_get_data_buffer(migf, DIV_ROUND_UP(inc_length, PAGE_SIZE),
++				     DMA_FROM_DEVICE);
+ 	if (IS_ERR(buf)) {
+ 		ret = PTR_ERR(buf);
+ 		mlx5vf_mark_err(migf);
+@@ -673,8 +680,8 @@ mlx5vf_pci_save_device_data(struct mlx5vf_pci_core_device *mvdev, bool track)
+ 
+ 	if (track) {
+ 		/* leave the allocated buffer ready for the stop-copy phase */
+-		buf = mlx5vf_alloc_data_buffer(migf,
+-			migf->buf[0]->allocated_length, DMA_FROM_DEVICE);
++		buf = mlx5vf_alloc_data_buffer(migf, migf->buf[0]->npages,
++					       DMA_FROM_DEVICE);
+ 		if (IS_ERR(buf)) {
+ 			ret = PTR_ERR(buf);
+ 			goto out_pd;
+@@ -917,11 +924,14 @@ static ssize_t mlx5vf_resume_write(struct file *filp, const char __user *buf,
+ 				goto out_unlock;
+ 			break;
+ 		case MLX5_VF_LOAD_STATE_PREP_HEADER_DATA:
+-			if (vhca_buf_header->allocated_length < migf->record_size) {
++		{
++			u32 npages = DIV_ROUND_UP(migf->record_size, PAGE_SIZE);
++
++			if (vhca_buf_header->npages < npages) {
+ 				mlx5vf_free_data_buffer(vhca_buf_header);
+ 
+-				migf->buf_header[0] = mlx5vf_alloc_data_buffer(migf,
+-						migf->record_size, DMA_NONE);
++				migf->buf_header[0] = mlx5vf_alloc_data_buffer(
++					migf, npages, DMA_NONE);
+ 				if (IS_ERR(migf->buf_header[0])) {
+ 					ret = PTR_ERR(migf->buf_header[0]);
+ 					migf->buf_header[0] = NULL;
+@@ -934,6 +944,7 @@ static ssize_t mlx5vf_resume_write(struct file *filp, const char __user *buf,
+ 			vhca_buf_header->start_pos = migf->max_pos;
+ 			migf->load_state = MLX5_VF_LOAD_STATE_READ_HEADER_DATA;
+ 			break;
++		}
+ 		case MLX5_VF_LOAD_STATE_READ_HEADER_DATA:
+ 			ret = mlx5vf_resume_read_header_data(migf, vhca_buf_header,
+ 							&buf, &len, pos, &done);
+@@ -944,12 +955,13 @@ static ssize_t mlx5vf_resume_write(struct file *filp, const char __user *buf,
+ 		{
+ 			u64 size = max(migf->record_size,
+ 				       migf->stop_copy_prep_size);
++			u32 npages = DIV_ROUND_UP(size, PAGE_SIZE);
+ 
+-			if (vhca_buf->allocated_length < size) {
++			if (vhca_buf->npages < npages) {
+ 				mlx5vf_free_data_buffer(vhca_buf);
+ 
+-				migf->buf[0] = mlx5vf_alloc_data_buffer(migf,
+-							size, DMA_TO_DEVICE);
++				migf->buf[0] = mlx5vf_alloc_data_buffer(
++					migf, npages, DMA_TO_DEVICE);
+ 				if (IS_ERR(migf->buf[0])) {
+ 					ret = PTR_ERR(migf->buf[0]);
+ 					migf->buf[0] = NULL;
+@@ -1031,8 +1043,11 @@ mlx5vf_pci_resume_device_data(struct mlx5vf_pci_core_device *mvdev)
+ 	}
+ 
+ 	migf->buf[0] = buf;
+-	buf = mlx5vf_alloc_data_buffer(migf,
+-		sizeof(struct mlx5_vf_migration_header), DMA_NONE);
++	buf = mlx5vf_alloc_data_buffer(
++		migf,
++		DIV_ROUND_UP(sizeof(struct mlx5_vf_migration_header),
++			     PAGE_SIZE),
++		DMA_NONE);
+ 	if (IS_ERR(buf)) {
+ 		ret = PTR_ERR(buf);
+ 		goto out_buf;
+@@ -1149,7 +1164,8 @@ mlx5vf_pci_step_device_state_locked(struct mlx5vf_pci_core_device *mvdev,
+ 					MLX5VF_QUERY_INC | MLX5VF_QUERY_CLEANUP);
+ 		if (ret)
+ 			return ERR_PTR(ret);
+-		buf = mlx5vf_get_data_buffer(migf, size, DMA_FROM_DEVICE);
++		buf = mlx5vf_get_data_buffer(migf,
++				DIV_ROUND_UP(size, PAGE_SIZE), DMA_FROM_DEVICE);
+ 		if (IS_ERR(buf))
+ 			return ERR_CAST(buf);
+ 		/* pre_copy cleanup */
+-- 
+2.46.2
 
 
