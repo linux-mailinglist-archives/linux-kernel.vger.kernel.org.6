@@ -1,271 +1,208 @@
-Return-Path: <linux-kernel+bounces-388441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62829B5FBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:08:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790D19B5FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059321C214D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:08:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86E0B2189E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107B11E260B;
-	Wed, 30 Oct 2024 10:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD341E260E;
+	Wed, 30 Oct 2024 10:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="hfL46OIM"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PFUL8SIi"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB43194151;
-	Wed, 30 Oct 2024 10:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C92194151;
+	Wed, 30 Oct 2024 10:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730282931; cv=none; b=HmOJq1NJW3IPmm+UEiCB5/VM0MnV0ffV7EQk6933aiGCyaFcdbWTJpo0bz0XIeynggn8VOXj0vP+syYpNgaBcCfvjVJIJzNufkfPr1N/mkgsrXsfPpJ+nSjNVWy2QguIU+NFawZN2Xpue43+DQWqjp3gS6THqi+uwTrZKP25mz8=
+	t=1730283033; cv=none; b=ipqDLLq7M0VH4UVmHJf6+5CGJ24gom2I3YCGDWy35ivugt2GLaXS90K1ie1+Cv1IkiQXAJZ42JoHr9EAS/1AJUiWSMQ0acUJupu8kgg148+pvRIS9++nKqCKLCT+7tEonkE+nfH34C3RVb+h3/Bd3WB5OIegWv49dIqVanlYiY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730282931; c=relaxed/simple;
-	bh=GJjkKtJLGg2c+fpkv6w0zC/tfBrQdQJ3rxaYasuqh38=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FhEI6MdN1PkS1QWuP62/gwpH8D431buAGZVUjnP4mGrN0zWLS8DrI/76Pwvy1z6FHjSVHFUXE/IbmP0yKRNdNdXwocbQry2piMIuJOO6tjAYnsS2QvOeofTcbIwIHEctUVxsSg/5PsizxTWWXybVwG3/e7j7V4EPnn6gbwAWKd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=hfL46OIM; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=aoyqYRRkHEEL8sSP+v1UFQCenPsx/7LS5sbiYM0jCV0=;
-  b=hfL46OIM18PcKRsLAxYyS/WxSYD8Ro3TW3AC0/4WXC5MaBxvvy+xN3hB
-   XXKqxYjLwiNlpZgkf+JWhmsYWK7BgcT/4K8e7Q9O+WPv8+wVPmJnMqayd
-   2CiTPAnV5k+TOXBKKvU4T9jqFrdIeEZWEX8LNSQ8d/SXcNL9gx/rvEpSo
-   8=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.11,244,1725314400"; 
-   d="scan'208";a="191419412"
-Received: from 089-101-193071.ntlworld.ie (HELO hadrien) ([89.101.193.71])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 11:08:44 +0100
-Date: Wed, 30 Oct 2024 10:08:43 +0000 (GMT)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-cc: R Sundar <prosunofficial@gmail.com>, 
-    Tony Nguyen <anthony.l.nguyen@intel.com>, intel-wired-lan@lists.osuosl.org, 
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    karol.kolacinski@intel.com, arkadiusz.kubalewski@intel.com, 
-    jacob.e.keller@intel.com, kernel test robot <lkp@intel.com>, 
-    Julia Lawall <julia.lawall@inria.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-    davem@davemloft.net, Eric Dumazet <edumazet@google.com>, 
-    Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-    Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH linux-next] ice: use string choice helpers
-In-Reply-To: <ca4f7990-16c4-42ef-b0ae-12e64a100f5e@intel.com>
-Message-ID: <498a3d58-55e0-4349-bd92-8ce16c6016@inria.fr>
-References: <20241027141907.503946-1-prosunofficial@gmail.com> <ca4f7990-16c4-42ef-b0ae-12e64a100f5e@intel.com>
+	s=arc-20240116; t=1730283033; c=relaxed/simple;
+	bh=i4GE77iCf1S6gY67Vn5TV97o355YitLy44ad9O0SH2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTcCbqCL6UWVefUOM/ylye21GgWrb5wWWQz0iiqeAT38XBtBMhB506QylXJTz5U+dz/OWt/HYPwhrh+M+jJzvXTEn82fogXtNrAygCxdVbpiAnPpqdPyBlH+T7PjF71Dniw/UWxfHFG7d7dNjl/iq4ACGhBf4FFajtc985rRAgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PFUL8SIi; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C492D40E019C;
+	Wed, 30 Oct 2024 10:10:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jfjINq8O0L2C; Wed, 30 Oct 2024 10:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730283022; bh=8Aon9BgNC50dX50N7nMgOjmUoYAVReOI8W6mo7U0dCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PFUL8SIic5GaUicFyA5suH7Yn3zXh5JAfuLtkquvjXXD0iYbdRcEp1mgOXmq40+KF
+	 TGfSgzEg2MscpcygdivT1p802Ep8RUFG65sASdcM6v5Bq/KJhhSfjlFsYF4hC0HTMM
+	 peopAU27ffbUIVG8t154Dx73EIbV7zy70B/4yhYCtI/9wW+J3l87lkqxrRCjHd2yWs
+	 xAH4HFEHgMngqcwEqVLwagHmgNCyIGOhbvHnB/tH2PWqgvYx186ff9tuFyZbNL2GR5
+	 kd5EIq16gLZkyfHdF+j10nJzzNHnmZFWzAE+4iGAaAFdhRNIT/mHhU76i/nvL7U7Bk
+	 +2zyF2syCbcsMOxfHtP32oGsgjnNvRFJpAY3f+rXjMWWpzg2nYdf6t3oL/545/VoUd
+	 JDkHiCq+vetsVJewDqdJxx+JWmgafumcVAQREBGDEQPkIp8sopq4ICWRqIlgvJMvGo
+	 NpaUnV5G0oBS1/2CHlHI3lMKSlK/as0bMXeOiK0XjpC3X0+tDBaMFqSzm++JTyfhD7
+	 nINH8PPPDVEryytrw5Xr9ETCj61KpPot+Afosh63QsAPsajtAfbikht39yM+5FZt0M
+	 /Ry1HZalAM69I1U8Rq6CnLVm2kU92XeWh0oXC9vV+pxU7ZG+tjZTJ+blDSFCgUaGy/
+	 4sUCaSs5AinjPj4UJtJicQeg=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E9E9740E0191;
+	Wed, 30 Oct 2024 10:10:10 +0000 (UTC)
+Date: Wed, 30 Oct 2024 11:10:05 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v14 01/13] x86/sev: Carve out and export SNP guest
+ messaging init routines
+Message-ID: <20241030101005.GAZyIF_bKVpe9gpHrn@fat_crate.local>
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-2-nikunj@amd.com>
+ <20241029174357.GWZyEe3VwJr3xYHXoT@fat_crate.local>
+ <733831ed-8622-de7d-a2e6-8f6c9ad4bc96@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <733831ed-8622-de7d-a2e6-8f6c9ad4bc96@amd.com>
 
+On Wed, Oct 30, 2024 at 10:14:45AM +0530, Nikunj A. Dadhania wrote:
+> >> Carve out common SNP guest messaging buffer allocations and message
+> >> initialization routines to core/sev.c and export them. These newly added
+> >> APIs set up the SNP message context (snp_msg_desc), which contains all the
+> >> necessary details for sending SNP guest messages.
+> 
+> This explains how it is being done, which I think is useful. However, if you
+> think otherwise, I can remove.
 
+Useful why? It should be visible from the diff itself. Why do you have to
+explain your diff?
 
-On Mon, 28 Oct 2024, Przemek Kitszel wrote:
+If you feel the need to have to explain it, then *maybe* it needs splitting or
+simplifying or whatnot.
 
-> On 10/27/24 15:19, R Sundar wrote:
-> > Use string choice helpers for better readability.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Reported-by: Julia Lawall <julia.lawall@inria.fr>
-> > Closes: https://lore.kernel.org/r/202410121553.SRNFzc2M-lkp@intel.com/
-> > Signed-off-by: R Sundar <prosunofficial@gmail.com>
-> > ---
->
-> thanks, this indeed covers all "enabled/disabled" cases, so:
-> Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
->
-> for future submissions for Intel Ethernet drivers please use the
-> iwl-next (or iwl-net) target trees.
->
-> There are also other cases that we could cover ON/OFF etc
+> >> At present, the SEV guest platform data structure is used to pass the
+> >> secrets page physical address to SEV guest driver. Since the secrets page
+> >> address is locally available to the initialization routine, use the cached
+> >> address. Remove the unused SEV guest platform data structure.
+> 
+> In the above paragraph I tried to explains why I have removed
+> sev_guest_platform_data.
 
-I counted the number of occurrences of various cases.  Here are the
-results for at least 5 occurrences.  I converted everything to lowercase
-and put the two strings in alphabetical order.
+Probably ok.
 
-julia
+> People have different styles of writing, as long as we are capturing the
+> required information, IMHO, it should be fine.
 
-" " "\n   ": 5
-" (full)" "": 5
-" (last)" "": 5
-" csc" "": 5
-" recoverable" "": 5
-"" ".5": 5
-"" "1": 5
-"" ":" systemlow: 5
-"" "\"": 5
-"" "_backup": 5
-"" "auto-": 5
-"" "non": 5
-"" "t": 5
-"" # x " ": 5
-"->" "<-": 5
-"070701" "070702": 5
-"2.4g" "5g": 5
-"2g" dpk->bp[path][kidx].band == 1 ? "5g" : "6g": 5
-"80m" dpk->bp[path][kidx].bw == rtw89_channel_width_40 ? "40m" : "20m": 5
-"aborted" "completed": 5
-"active" "disabled": 5
-"anode" "sectors": 5
-"assert" "deassert": 5
-"attach" "detach": 5
-"basic rate" "edr rate": 5
-"bulk" "isoc": 5
-"client" "server": 5
-"closed" "open": 5
-"correctable" "uncorrectable": 5
-"dedicated" "shared": 5
-"fcp" "nvme": 5
-"fixed" "roll": 5
-"full duplex" "half duplex": 5
-"full" "high": 5
-"gsi" "smi": 5
-"hit" "not hit": 5
-"ht20" "ht40": 5
-"init" "rt": 5
-"ips off" "ips on": 5
-"lps off" "lps on": 5
-"mc" "uc": 5
-"migration" "recovery": 5
-"none" "tx": 5
-"off!!" "on!!": 5
-"pause" "resume": 5
-"rf_1t1r" "rf_2t2r": 5
-"running" "stopped": 5
-"set" "unset": 5
-"veb" "vepa": 5
-kern_emerg kern_info: 5
-" " "\n": 6
-" -- kernel too old?" "": 6
-" and " "": 6
-" flr" "": 6
-" iaa" "": 6
-" int" "": 6
-" pcd" "": 6
-" periodic" "": 6
-" x4" "": 6
-"" ")": 6
-"" "*not* ": 6
-"" ", ibss": 6
-"" ".": 6
-"" ":": 6
-"" "_flip": 6
-"" "amps, ": 6
-"" "i": 6
-"" "no": 6
-"" "pkgpwrl1, ": 6
-"" "pkgpwrl2, ": 6
-"" "prochot, ": 6
-"" "thermstatus, ": 6
-"" "vr-therm, ": 6
-"(not available)" "(success)": 6
-"1" "2": 6
-"20m" "40m": 6
-"32" "64": 6
-"???" "dma write": 6
-"active/passive" "passive only": 6
-"analog" "digital": 6
-"aura" "pool": 6
-"beacon" "probe response": 6
-"c-vlan" "vlan": 6
-"cancelled" "initiated": 6
-"capture" "playback": 6
-"cc1" "cc2": 6
-"decoder" "encoder": 6
-"downlink" "uplink": 6
-"exmode" "prmode": 6
-"found" "lost": 6
-"gdt" "ldt": 6
-"get" "set": 6
-"group" "user": 6
-"host" "peripheral": 6
-"ipv4" "ipv6": 6
-"is" "not": 6
-"kill" "on": 6
-"ns" "us": 6
-"reading" "writing": 6
-"recv" "send": 6
-" ..." "": 7
-" overflow" "": 7
-" suspend" "": 7
-"" ", nowayout": 7
-"" "...": 7
-"" "c": 7
-"" (#x " "): 7
-"" column_sep: 7
-"active" "idle": 7
-"add" "del": 7
-"add" "remove": 7
-"autodetected" "insmod option": 7
-"capture" "output": 7
-"ce" "ue": 7
-"dual" "single": 7
-"enter" "exit": 7
-"fail:" "pass:": 7
-"gate" "ungate": 7
-"intx" "msi": 7
-"private" "shared": 7
-"read error" "write error": 7
-"read from" "write to": 7
-"ro" "rw": 7
-kern_debug kern_err: 7
-" async" "": 8
-" fatal" "": 8
-" sof" "": 8
-" x16" "": 8
-"" "a": 8
-"" "b": 8
-"10" "100": 8
-"40m" "80m": 8
-"active" "passive": 8
-"bypass" "ram b": 8
-"connected" "disconnected": 8
-"dcs" "generic": 8
-"done" "failed": 8
-"dst" "src": 8
-"entering" "leaving": 8
-"failed" "ok": 8
-"failed" "pass": 8
-"fast" "slow": 8
-"hard" "soft": 8
-"invalid" "valid": 8
-"kernel" "user": 8
-"local" "remote": 8
-"primary" "secondary": 8
-"ram" "unknown": 8
-"restart" "start": 8
-"runtime" "system": 8
-" err" "": 9
-"" "-": 9
-"" "/s": 9
-"" ": ": 9
-"" "[": 9
-"" "]": 9
-"" "d": 9
-"2.4" "5.2": 9
-"absent" "present": 9
-"fail" "pass": 9
-"locked" "unlocked": 9
-"offline" "online": 9
-"r" "w": 9
-"struct" "union": 9
-"failed" "success": 53
-"" "un": 55
-"down" "up": 56
-"high" "low": 57
-"" "s": 65
-"full" "half": 84
-"" ",": 86
-"not supported" "supported": 91
-"" "not ": 96
+"... as long we are not writing what the patch does - which is visible from
+the diff itself, it should be fine." is what I would say.
+
+> Let me try to repharse the commit message again:
+> 
+> x86/sev: Carve out and export SNP guest messaging init routines
+> 
+> Currently, the sev-guest driver is the only user of SNP guest messaging.
+> All routines for initializing SNP guest messaging are implemented within
+> the sev-guest driver and are not available during early boot. In
+> prepratation for adding Secure TSC guest support, carve out APIs to
+> allocate and initialize guest messaging descriptor context and make it part
+> of coco/sev/core.c. As there is no user of sev_guest_platform_data anymore,
+> remove the structure.
+
+Yap, better.
+
+Btw, you can even use AI for help rephrasing it:
+
+-> Please simpliify this code change description by concentrating only on why
+the change is being done:
+
+<insert commit message here>
+
+ChatGPT: "This change is being made to allow the Secure TSC guest feature to
+access SNP guest messaging routines earlier in the boot process. By moving
+common SNP message initialization routines to a central location (core/sev.c)
+and exporting them, these routines become accessible for early boot needs.
+Additionally, since the secrets page address is now accessible within the
+initialization, the redundant SEV guest platform data structure has been
+removed."
+
+-> Do the same as the above but write it in imperative tone
+
+ChatGPT: "Enable Secure TSC guest support by moving the SNP guest messaging
+routines to core/sev.c, making them available during early boot. Export these
+routines to set up the SNP message context (snp_msg_desc) needed for guest
+messaging. Use the cached secrets page address in the initialization routine,
+and remove the unused SEV guest platform data structure."
+
+I think that's a good help to use at least as a starter for the final commit
+message.
+
+To sum up: I'd like the commit message to contain enough information to know
+*why* a change has been done. No rambling about what the patch does.
+
+> > ld: vmlinux.o: in function `snp_init_crypto':
+> > /home/boris/kernel/2nd/linux/arch/x86/coco/sev/core.c:2700:(.text+0x1fa3): undefined reference to `aesgcm_expandkey'
+> > make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
+> > make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1166: vmlinux] Error 2
+> > make[1]: *** Waiting for unfinished jobs....
+> > make: *** [Makefile:224: __sub-make] Error 2
+> > 
+> > I'll stop here until you fix those.
+> 
+> Sorry for this, I had sev-guest driver as in-built module in my config, so wasn't
+> able to catch this in my per patch build script. The corresponding fix is in the 
+> following patch[1], during patch juggling it had landed there:
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 2852fcd82cbd..6426b6d469a4 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1556,6 +1556,7 @@ config AMD_MEM_ENCRYPT
+>  	select ARCH_HAS_CC_PLATFORM
+>  	select X86_MEM_ENCRYPT
+>  	select UNACCEPTED_MEMORY
+> +	select CRYPTO_LIB_AESGCM
+
+Right, that is debatable. AMD memory encryption support cannot really depend
+on a crypto library - you can get it without it too - just won't get secure
+TSC but for simplicity's sake let's leave it that way for now.
+
+Because looking at this:
+
+config AMD_MEM_ENCRYPT          
+        bool "AMD Secure Memory Encryption (SME) support"
+        depends on X86_64 && CPU_SUP_AMD
+        depends on EFI_STUB 
+        select DMA_COHERENT_POOL
+        select ARCH_USE_MEMREMAP_PROT
+        select INSTRUCTION_DECODER
+        select ARCH_HAS_CC_PLATFORM
+        select X86_MEM_ENCRYPT
+        select UNACCEPTED_MEMORY
+        select CRYPTO_LIB_AESGCM
+
+that symbol is pulling in a lot of other stuff. I guess it is ok for now...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
