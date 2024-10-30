@@ -1,45 +1,39 @@
-Return-Path: <linux-kernel+bounces-388596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C899B61E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:34:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054AF9B61EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D15B28170F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AB31C21CF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853531EF093;
-	Wed, 30 Oct 2024 11:32:13 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A1F1E5737;
-	Wed, 30 Oct 2024 11:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311181E492C;
+	Wed, 30 Oct 2024 11:33:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19051E32C5;
+	Wed, 30 Oct 2024 11:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287932; cv=none; b=cL5NtUMTeR+xFYvDalva+fmQfXj+1JwAgoPaqfqKcIl5dDTQlNlNZ4N00OkiXKIGsdBmdQBgyhasskVLJotFZFhGPcCtzN4qeqvRZOgzyB6bTuOmgMpYJfD22BgNDxs4KrkP2YJ+az6ozMDdbR2B2xGPg4HlWggTnINuKEjzp/s=
+	t=1730287997; cv=none; b=o9doOB8/vgA2NPHf9fnYooTsNf+qUF/8m+QXrWg6KObud3Qti9U5PdG0jNcoHcwW9D9k/VN9/U5QFbKSizOD40EGAidBW2SXkTwEHqH+KpkyMP++Fp67+KHyua5+cPomGPmGxHOgY/URFGJoPwMy0lE/j4b8LQGqJI22mdrrhn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287932; c=relaxed/simple;
-	bh=EYK+QPVFPOOzoh3+loCCfe6W6qgl2V6UuS0Rs1sugg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u0GNR1fEP4DPfih19Gb2PY4J4gsYgGIs/MjejvB2ybsEpZbo7UpMbRZFrqrmIyvGeEpUm521SaFQrQRhx6tXtyapRPs4/Z3joMHsIFwekCXqx76YCbWiVtF0c/ImXvk9mGDFKRsnUDgfXkXuslpMN/8jogOrDIswbjgHkvKONqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdlL41MBVz1jvlv;
-	Wed, 30 Oct 2024 19:30:36 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E5E41A0188;
-	Wed, 30 Oct 2024 19:32:08 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Oct 2024 19:32:07 +0800
-Message-ID: <3150691a-c4f9-440e-a1f5-19f01c4a21ff@huawei.com>
-Date: Wed, 30 Oct 2024 19:32:07 +0800
+	s=arc-20240116; t=1730287997; c=relaxed/simple;
+	bh=9B/VVbiId1lYYO5sgVk3wUfVIDhtcgA4odTw4h0xYKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OO8EGN9aPTB6erjr7GCd1ZnyGSuLHHSVEbqpYb9y+90/ebtUxP5Vp0gFgeIVCyUoaK8R7x4jKxo9df/WA4UZVL6k0qrk7xHBF5ZicCTFnnrheDvyAHH5YoxrAgScAnc4sFP2LFWk3cU9quDTZJBEBl9v4j6pzeE2lqPhsXEctYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C76A8113E;
+	Wed, 30 Oct 2024 04:33:43 -0700 (PDT)
+Received: from [10.57.58.72] (unknown [10.57.58.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AAB93F66E;
+	Wed, 30 Oct 2024 04:33:13 -0700 (PDT)
+Message-ID: <6847bb0d-805f-4bf6-bb22-635d5f8e9d6b@arm.com>
+Date: Wed, 30 Oct 2024 11:34:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,56 +41,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 10/10] mm: page_frag: add an entry in MAINTAINERS for
- page_frag
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <davem@davemloft.net>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Linux-MM <linux-mm@kvack.org>
-References: <20241028115850.3409893-1-linyunsheng@huawei.com>
- <20241028115850.3409893-11-linyunsheng@huawei.com>
- <20241028162743.75bfd8a1@kernel.org>
- <06933039-a330-4ed9-9db1-9c75cd7ae9b7@huawei.com>
- <20241029073359.758d9b84@kernel.org>
+Subject: Re: [PATCH v2 1/1] PM: EM: Add min/max available performance state
+ limits
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ dietmar.eggemann@arm.com
+References: <20241029094452.495439-1-lukasz.luba@arm.com>
+ <20241029094452.495439-2-lukasz.luba@arm.com>
+ <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
+ <6cdb2f8b-62e0-455c-a3a5-ed5359a2e941@arm.com>
+ <61afac10-b434-4e39-8c49-c220add4bd8e@arm.com>
+ <CAJZ5v0jk+0vfn88+gaunezgtb6TLVagqav=9sM-D169Q69MF5w@mail.gmail.com>
 Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <20241029073359.758d9b84@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAJZ5v0jk+0vfn88+gaunezgtb6TLVagqav=9sM-D169Q69MF5w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024/10/29 22:33, Jakub Kicinski wrote:
-> On Tue, 29 Oct 2024 17:40:08 +0800 Yunsheng Lin wrote:
->> On 2024/10/29 7:27, Jakub Kicinski wrote:
->>> On Mon, 28 Oct 2024 19:58:50 +0800 Yunsheng Lin wrote:  
->>>> +M:	Yunsheng Lin <linyunsheng@huawei.com>  
->>>
->>> Why is this line still here? You asked for a second opinion
->>> and you got one from Paolo.  
+
+
+On 10/30/24 11:23, Rafael J. Wysocki wrote:
+> On Wed, Oct 30, 2024 at 11:00 AM Lukasz Luba <lukasz.luba@arm.com> wrote:
 >>
->> Because of the reason below?
->> https://lore.kernel.org/all/159495c8-71be-4a11-8c49-d528e8154841@huawei.com/
+>> On 10/30/24 08:48, Lukasz Luba wrote:
+>>> Hi Rafael,
+>>>
+>>> On 10/29/24 18:29, Rafael J. Wysocki wrote:
+>>>> On Tue, Oct 29, 2024 at 10:43 AM Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>>>>
+>>
+>> [snip]
+>>
+>>>>> +EXPORT_SYMBOL_GPL(em_update_performance_limits);
+>>>>
+>>>> It would be good to have at least one caller of this function in the
+>>>> tree.
+>>>
+>>> Yes, I know, but we had delays with the SCMI cpufreq to get the
+>>> notifications support, which are sent from FW...
+>>>
+>>> The patch using this API was part of v1 but with assumption that
+>>> those SCMI notifications are merged.
+>>>
+>>> The patch v1 for the SCMI cpufreq driver [1].
+>>>
+>>> In that v1 cover letter I mentioned that the 2nd patch depends
+>>> on notifications [2].
+>>>
+>>> I will have to work with Cristian on that notification in SCMI
+>>> then this API will be used. I can see that it stuck for a while
+>>> in v5. Let me sort that out (probably not in this merge window
+>>> though).
+>>
+>> Just to link the effort which has been started into that direction:
+>>
+>> https://lore.kernel.org/lkml/ab36709d-a181-4621-a8e5-0ef38b80186b@arm.com/
 > 
-> What is the reason in that link? You try to argue that the convention
-> doesn't exist or that your case is different? The maintainer tells you
-> their opinion in context of the posting.
-
-I just argue that it seems natural and reasonable that someone being willing
-and able to turn page_frag into a subsystem or library might become the
-co-maintainer if she/he is also willing to co-maintain it.
-
+> OK, then this can be queued up as a prerequisite for the upcoming changes.
 > 
-> It seems like you're more motivated by getting into MAINTAINERS than
-> by the work itself :/
-For the 'MAINTAINERS ' part, I guess we all want some acknowledge in some
-way for the work if that is the 'motivated ' you are referring to.
+> I would, however, mention that in the patch changelog and add a Link:
+> tag pointing to the above.
+> 
 
-For the 'work itself' part, my previous work of supporting frag API, unifying
-frag & non-frag API for page_pool, removing page frag implementation in vhost_net
-and recent trying of fixing IOMMU crash problem all seem to be motivated more by
-getting into MAINTAINERS in your eyes?
-
-With all due respect, it would be good to have less of speculation like
-above and focus on more technical discussion.
+Thank you Rafael!
 
