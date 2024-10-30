@@ -1,185 +1,124 @@
-Return-Path: <linux-kernel+bounces-388622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77C49B6231
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5531C9B6238
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275231F21EDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01ACE1F223A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441231E5719;
-	Wed, 30 Oct 2024 11:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC1F1E6DE0;
+	Wed, 30 Oct 2024 11:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0xhIJoO"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSBOKeT4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1861E571F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEB41DC759;
+	Wed, 30 Oct 2024 11:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288855; cv=none; b=UGm6fOi/zNqcnDjGWSnHAoMEC6HC33JjwAyc6K0TnO5cDbeYCfHPRa3hSjIcYSIDosLvyP3c+0BeDIT61o41OmxcLaH4IeOGHAIHpy2adEl5JRbdV6R95YG5DCQL8QzKKfSPlz8Aw3zvVgGlokKEoKBzk5a1RHSJaUzsn7A7EqE=
+	t=1730288916; cv=none; b=rLcXAtW4ROamfHFaC5harQ8AwdoWg7aUj65+Zqe1EHBdw9DMys7RsIUfkFyI4ONN+5PZ1Xk6ecSSvcRxZVdtKzy5pstF8OQHOfUP6uuBgIjLle79FdlKRWubwY+E08g0++Cw16Ca531IUEI6oo4xWqvm+VYyKWK/5KjkjRQauos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288855; c=relaxed/simple;
-	bh=jjowhWeb58M8dkbWfz1/39wWSagqvOzeCM5x/j9GsWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MOUz1JPIr4dOfNiXeLPcQa08GzfTujwGYoWX+i6iB0Ss7UiWhWiKTQKkrCZ23izqFeA2L/RggjAw5A/8llkY8hAkzCyMV4LxMr7hr/gJEtfDfNHf2kS5BAhPhzDkUNigJksVfAPPQQ4gI3oTZyWNftfdCNeabuz7taJwjWVxouI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0xhIJoO; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9abe139088so965137166b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:47:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730288852; x=1730893652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+iPeoiKgqWsihw7QOhYcfHs+xFsoMwxQZ4v+dLUj0kU=;
-        b=j0xhIJoOq7emEDmE0KxWkA9dSKnxgDq8Rnuy1xlhmIdVK7mZTNWF0nt7RcKYv2DcRa
-         ORGydZQZpmVuFScQMcCFh+m3BoMXN7dAsTVvB2glMRlDK2cXMa9e122vARCbF+4VSWV0
-         Vb3ddocPFRIAfzzZ+VSGbOPKkK0W0BidtALmpHe6EMhcDfW7LjBb/byqqpDu7ysrQXD+
-         PdOEtSEa2Lprx+CQiCR6Jl6CgvT4GIGXaSrVo9Jvu8/7ZFUTZ82J89GCwsEnnwmfN1/y
-         o19YXkQ+49ZFArW9OuH4/uHVUQ5Bstw7xuc+jauWDRMgtYRit+O78tyIpLzdDuM99yAs
-         pzYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730288852; x=1730893652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+iPeoiKgqWsihw7QOhYcfHs+xFsoMwxQZ4v+dLUj0kU=;
-        b=brwqgdXJR9wOsMdQL3nJdmhIo361bHjPoBGBS3O8OB/LXWTUM4kxSdYtxWnD2M6Vsk
-         LdDxP4R4KUDQDNel/zuZZyYkspkBbkCM/Kt6ZQLye/3rhNB8G2edZ48DfE6V6b/UKm9Y
-         rW6zXruPR11K/IHW63AZf6lq48WeAHSrBAkj6GAhyvzmgTjXmU1EnUNRbQh44lQSbH+f
-         Rj8MYol56aKgz7AEsufctOCd6SaJHdL3aHsVMQvOlF/ooD6lSL4LVh1/wmw1hF030KpN
-         /3IvWScRXkTcTYe91GwqBS3To84c7Rh1hc+bfwMEvKxMsJcxnB7zs6O6Xlke6tfKb4lu
-         i3Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxg/i2pLb1uMMSON4zUmDmuBZIkAH4fJrty8gC3zQPRlgXMv6uyM1Au5h93Q5kGOhAZFuEC1neshcCcjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcydsGP4Tq1fhQIzs+k8Md7nzy8qy+RZ/LR2ausCsccwjO87oq
-	bVVQLEDVq8zh2O6tk1LBxFV/4yIo20m3ZjNQaQIV6SA0L7/fbgoETL7aK8YThACICQ4L3E5Rbxi
-	vFJPlSbn9cMoWU+idnFwdDRJIAtY=
-X-Google-Smtp-Source: AGHT+IHOhf0jCKXNjWWUFbLvQ8OX9sG6XrtUY0Z+2vfScEF3jOf24p7/NPgnSEG0lkw4bOS9pecA20ZITnp24rCfHHw=
-X-Received: by 2002:a17:907:7d8b:b0:a9a:5b4:b19e with SMTP id
- a640c23a62f3a-a9de5ee15damr1543532666b.32.1730288851169; Wed, 30 Oct 2024
- 04:47:31 -0700 (PDT)
+	s=arc-20240116; t=1730288916; c=relaxed/simple;
+	bh=vQdaZWTismRSR1RwA+QoQPnrWdtdxnycqAXlRNG5AkE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=XK9ThWPPEj0mybkL6l1EgzIqhmqwhCgsUV+XefpJqafWiRixqqrmETfAIbhRmY09KN7y3sturgFma8AgjZbck26T48qWDEbV0KuBV1yNyyy7Cn1I0qw1wyMaPPShuINAbVAFXWHEy/ADn6uMQ6gB8uBdAb/FF4CXQ4zhAubzpQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSBOKeT4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 166A6C4CEE5;
+	Wed, 30 Oct 2024 11:48:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730288914;
+	bh=vQdaZWTismRSR1RwA+QoQPnrWdtdxnycqAXlRNG5AkE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=fSBOKeT4rskvYGzrKk+t6aHGUIJ025NhddV3on3sW/l4LJ1ggN/M7zjLk3W8RThkW
+	 cJz3xCqdANv6RQDLv0VNZAxvMQ21OjgR7WI7M5WtfKbh8X6hNS2lghtxoJqwq1f+4t
+	 AfpLrauefNC2u0a4C2yDnR+rtBKk5SCOwK/ForLraNhHLxDgi/WTk7Cb9AsTE6AQdf
+	 KGDM/jv1OeqR8+nkZ+RRIMez5KmRBoqtQlEgpX5cOulMcwU7y0ax6zPAgI/Rpczl/4
+	 gRfK8E9qLuM+p41dVyCGsKQSiOVSEgWDyLLCO79QEpHSHgb9HS+Jc68X9Zlk1t9UEl
+	 vAGgUOmXH0ocQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Jens Glathe via B4 Relay
+ <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,  Konrad Dybcio
+ <konradybcio@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
+  jens.glathe@oldschoolsolutions.biz,  linux-arm-msm@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  Merck Hung
+ <merckhung@gmail.com>,  Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>,
+    ath11k@lists.infradead.org
+Subject: Re: [PATCH v6 0/3] arm64: dts: qcom: sc8280xp-blackrock: dt
+ definition for Windows Dev Kit 2023
+References: <20241030-jg-blackrock-for-upstream-v6-0-7cd7f7d8d97c@oldschoolsolutions.biz>
+Date: Wed, 30 Oct 2024 13:48:30 +0200
+In-Reply-To: <20241030-jg-blackrock-for-upstream-v6-0-7cd7f7d8d97c@oldschoolsolutions.biz>
+	(Jens Glathe via's message of "Wed, 30 Oct 2024 12:02:00 +0100")
+Message-ID: <87r07xzu9d.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029161341.14063-1-marc.c.dionne@gmail.com> <20241029174518.60fa703fc9cb304d6e69e9a0@linux-foundation.org>
-In-Reply-To: <20241029174518.60fa703fc9cb304d6e69e9a0@linux-foundation.org>
-From: Marc Dionne <marc.c.dionne@gmail.com>
-Date: Wed, 30 Oct 2024 08:47:19 -0300
-Message-ID: <CAB9dFdtd3paOGdYU8qJM5grD3pEFMiiCXk=fmPFW7k6s6yOBpQ@mail.gmail.com>
-Subject: Re: [PATCH v2] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Oct 29, 2024 at 9:45=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 29 Oct 2024 13:13:41 -0300 Marc Dionne <marc.c.dionne@gmail.com> =
-wrote:
->
-> > From: Marc Dionne <marc.dionne@auristor.com>
-> >
-> > The number of slabs can easily exceed the hard coded MAX_SLABS in the
-> > slabinfo tool, causing it to overwrite memory and crash.
-> >
-> > Increase the value of MAX_SLABS, and check if that has been exceeded fo=
-r
-> > each new slab, instead of at the end when it's already too late.  Also
-> > move the check for MAX_ALIASES into the loop body.
->
-> Thanks.
->
-> > --- a/tools/mm/slabinfo.c
-> > +++ b/tools/mm/slabinfo.c
-> > @@ -21,7 +21,7 @@
-> >  #include <regex.h>
-> >  #include <errno.h>
-> >
-> > -#define MAX_SLABS 500
-> > +#define MAX_SLABS 1000
->
-> That isn't a very large increase.
+Jens Glathe via B4 Relay
+<devnull+jens.glathe.oldschoolsolutions.biz@kernel.org> writes:
 
-Fair point, given how quickly it has grown, maybe something like 4k
-would give more headroom.
+> "Microsoft Windows Dev Kit 2023" aka "Blackrock" aka "Project Volterra"
+>
+> Device tree for the Microsoft Windows Dev Kit 2023. This work
+> is based on the initial work of Merck Hung <merckhung@gmail.com>.
+>
+> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
+> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
+>
+> Supported features:
+> - USB type-c and type-a ports
+> - minidp connector
+> - built-in r8152 Ethernet adapter
+> - PCIe devices
+> - nvme
+> - ath11k WiFi (WCN6855)
+> - WCN6855 Bluetooth
+> - A690 GPU
+> - ADSP and CDSP
+> - GPIO keys
+> - Audio definition (works via USB)
+>
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>
+> Original work: https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
+>
+> This dt is more or less deducted from the Thinkpad X13s.
+> It contains a lot of guesswork, and also a lot of research on
+> what works with the Windows Dev Kit.
+>
+> The WiFi definition references qcom,ath11k-calibration-variant = "MS_Volterra"
+> which is unfortunately not yet in the linux-firmware. The ath11k driver finds
+> the default one for 
+> "bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2|18,qmi-board-id=255"
+> when the entry with the variant is not found which is quite sub-optimal. I 
+> have placed a pr on github/qca-swiss-army-knife:
+> https://github.com/qca/qca-swiss-army-knife/pull/9 that provides an amended 
+> board-2.bin and a board-2.json to generate it. 
 
->
-> >  #define MAX_ALIASES 500
-> >  #define MAX_NODES 1024
-> >
-> > @@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
-> >                               p--;
-> >                       alias->ref =3D strdup(p);
-> >                       alias++;
-> > +                     if (alias - aliasinfo > MAX_ALIASES)
-> > +                             fatal("Too many aliases\n");
-> >                       break;
-> >                  case DT_DIR:
-> >                       if (chdir(de->d_name))
-> > @@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
-> >                       if (slab->name[0] =3D=3D ':')
-> >                               alias_targets++;
-> >                       slab++;
-> > +                     if (slab - slabinfo > MAX_SLABS)
-> > +                             fatal("Too many slabs\n");
-> >                       break;
->
-> This could be improved - if the number of slabs is exactly equal to
-> MAX_SLABS we'll unnecessarily report an error.  Wouldn't this
-> alteration be better?
+qca-swiss-army-knife is only for scripts or similar, not for board
+files. For ath11k board files it's best to file a bug in bugzilla:
 
-Actually the issue is rather that we'll accept MAX_SLABS + 1 when we
-shouldn't, so yes the checks should be >=3D, or could also be just =3D=3D,
-sorry.
+https://wireless.docs.kernel.org/en/latest/en/users/drivers/ath11k/bugreport.html
 
->
-> --- a/tools/mm/slabinfo.c~tools-mm-fix-slabinfo-crash-when-max_slabs-is-e=
-xceeded-fix
-> +++ a/tools/mm/slabinfo.c
-> @@ -1228,6 +1228,8 @@ static void read_slab_dir(void)
->                                 continue;
->                 switch (de->d_type) {
->                    case DT_LNK:
-> +                       if (alias - aliasinfo >=3D MAX_ALIASES)
-> +                               fatal("Too many aliases\n");
->                         alias->name =3D strdup(de->d_name);
->                         count =3D readlink(de->d_name, buffer, sizeof(buf=
-fer)-1);
->
-> @@ -1240,10 +1242,10 @@ static void read_slab_dir(void)
->                                 p--;
->                         alias->ref =3D strdup(p);
->                         alias++;
-> -                       if (alias - aliasinfo > MAX_ALIASES)
-> -                               fatal("Too many aliases\n");
->                         break;
->                    case DT_DIR:
-> +                       if (slab - slabinfo >=3D MAX_SLABS)
-> +                               fatal("Too many slabs\n");
->                         if (chdir(de->d_name))
->                                 fatal("Unable to access slab %s\n", slab-=
->name);
->                         slab->name =3D strdup(de->d_name);
-> @@ -1305,8 +1307,6 @@ static void read_slab_dir(void)
->                         if (slab->name[0] =3D=3D ':')
->                                 alias_targets++;
->                         slab++;
-> -                       if (slab - slabinfo > MAX_SLABS)
-> -                               fatal("Too many slabs\n");
->                         break;
->                    default :
->                         fatal("Unknown file type %lx\n", de->d_type);
-> _
->
+For ath11k discussions we have a mailing list, adding it now:
+
+https://wireless.docs.kernel.org/en/latest/en/users/drivers/ath11k/mailinglist.html
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
