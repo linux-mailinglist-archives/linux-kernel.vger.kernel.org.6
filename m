@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-388571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C7A9B615B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:22:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F3D9B6161
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:23:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8EB61C213AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:22:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087612840EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E411E5706;
-	Wed, 30 Oct 2024 11:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19088156F54;
+	Wed, 30 Oct 2024 11:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7PcodcQ"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGbeZX9E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3B81E47DA;
-	Wed, 30 Oct 2024 11:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E824D8A7;
+	Wed, 30 Oct 2024 11:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287350; cv=none; b=Y8jRDJkKdLjcMloRzAm1nLrYw/ErziNW/Y2XRf+Zud+8f525Y1F4jU+usOqj6Oih8bbRExWNfpeRKaFyL6YARjHC71VPddDj9H3P7lo67KoitrIhQtGedJhFy46ctzyJ4eR8SFDyE2brT0JApSL8LNpGLLpUUrX8KAs+is83ERE=
+	t=1730287399; cv=none; b=p3XUGrMcbgfbEsP3a5gOUoKBVd3JWIWvjGUflPyJ8paKkr18GpO7y7btLHCiHP+2jYSzTDwROc+HIhmAG4bQrErP93Cm2pc5MrZh5KTc8nNUJUJrZCeucEYr4pu9jNIDhrKv6gENp2kfsxHdtCqNeU9EQAdCgm9ZdmtfvvNpS1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287350; c=relaxed/simple;
-	bh=n2iplPjm9XVyYu/bIZQ3GFCLf5aplGAXKvE3gH9GFeM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JxdTvuWiaKlc9AfVwjYjlrOHc9eR5ok7rjF9SH1lgsPTGk0FZvahyKRVnA9EV6C7AlppZg0cBlUl9ORl9qfjOmEIsikLjjzqnlZcQw2R5dAWJsGV9N8HQjZ9oJXt/Z5yZA+Xdckdj7xiFPDlqNPVoyW3X0Eb7YLLqWQMQepLJng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j7PcodcQ; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so5255940a91.1;
-        Wed, 30 Oct 2024 04:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730287347; x=1730892147; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ab4y9BHGnfTk1McHTPviZagt9jXM/NpQRi2KPJuE/1c=;
-        b=j7PcodcQNTk4Cv/ynSIdyIVRkkUmHXTfS4VHyJwndsTry7qDIJkQhPZiSCh5xAgLwO
-         zphRbs4HoVjhjj+U4neXGW1/vx/bD3OLr7gw5zrbB2Pz9/LpdTRTyE0OtXAMB8MuDc0D
-         +BAeJKX7MKlU5D1PQI5AUek7Dq7C+/b5gkZFeAolDI2qnvoQBe3IqBMHQE0iFGcpd88P
-         6lu0U79PH6A2M0IzSmP52upVdXZoMd8LUXGI6aHETfhj9bjjm7UqqzmGjammY12Kz5gm
-         XFexwwE5pLBL2OQlFRNH3zF3W46gsL13XrhcQAhAfMBxagWedJ68mpspFtJL0pI9GRa5
-         X8Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730287347; x=1730892147;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ab4y9BHGnfTk1McHTPviZagt9jXM/NpQRi2KPJuE/1c=;
-        b=dx90A91qd8cjJrX3C9OtM5FSSrmggVcaYTN2tJCFvn/B5Yv8XLw7cNx0vXA5l7Uxkn
-         chL9hHWNQKD5Fbv8B4sz9t5ZsIN3TwTaEsY/cbDxt6XASRKCgRCjRr0rt81J5Q/RGGWn
-         079Lg9rsiAiuj789a2zlLQAmDSzKfrbdgKoLaYwM+Rbv45I2352he+zRgIoEaNjZNAkw
-         3HiAcEiOkNg3PUzirGOzoqFbu7MKBZVtC+nC8rXnUlq0opAYzViiZ55XqipARTjTeWBg
-         g3W0KvFlKhoMc4Su2Kqm0QxhvL5Xd6Si3569dqhpW/IZ9yJ88t5hmA//rZdXuS19E9GU
-         gpEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXd2s1NjJDrqfwDH7gyTz+CMLARZJ7uv3O6NHaW9U8mK0perUFrKbu75/+l5JPa4lCsMXGAR2WN4v+lWoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfl9Ohs9n8CRz9mOjNdv5FCsJU65gkKWx6ELaoUdTX+wCmzR3U
-	qI01OPvZ2fZRxeRHS5ZiZtLob92ivOAmdEK/j3PK9rl7d8LYen+C
-X-Google-Smtp-Source: AGHT+IG4PXReU9WyKwrfpIjaiKmpV1277h3IlOtoWfo5yG76wSqpq2MHWZGZKS6nYhj86qw9Z2yerQ==
-X-Received: by 2002:a17:90a:600e:b0:2d8:840b:9654 with SMTP id 98e67ed59e1d1-2e8f11b96e9mr16972752a91.34.1730287347257;
-        Wed, 30 Oct 2024 04:22:27 -0700 (PDT)
-Received: from localhost.localdomain ([2402:7500:469:ce01:7b68:43c3:e54e:a61f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fabf82asm1402645a91.51.2024.10.30.04.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 04:22:27 -0700 (PDT)
-From: Victor Shih <victorshihgli@gmail.com>
-To: ulf.hansson@linaro.org,
-	adrian.hunter@intel.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	benchuanggli@gmail.com,
-	HL.Liu@genesyslogic.com.tw,
-	Greg.tu@genesyslogic.com.tw,
-	Victor Shih <victorshihgli@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Subject: [PATCH V1] mmc: sdhci-uhs2: remove unnecessary variables
-Date: Wed, 30 Oct 2024 19:22:16 +0800
-Message-Id: <20241030112216.4057-2-victorshihgli@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241030112216.4057-1-victorshihgli@gmail.com>
-References: <20241030112216.4057-1-victorshihgli@gmail.com>
+	s=arc-20240116; t=1730287399; c=relaxed/simple;
+	bh=ZELZTzUNqo0r6dZrQS3xkAeDQuEaYVCCa8D/LddOGWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SEgcNZoPVF6DDfhlJ+UzHA+4tTpadt+vFJu/MDlGRXYjYkMkKIdNTp3qfEyyFNdYxC3ih7k0Lp0Te/VM3v9YH6xhzw0k1wRRKWQo2d9auyFf+E82uwNiPeKbxWtnQJCHfDBY2V8FPuwpps5cMFdgO2jYEmSZ3ERmDxMIt/ecvzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGbeZX9E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBCBC4CEE7;
+	Wed, 30 Oct 2024 11:23:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730287399;
+	bh=ZELZTzUNqo0r6dZrQS3xkAeDQuEaYVCCa8D/LddOGWg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cGbeZX9EN1J3qsM4AAtPIN9HLwtII22J+bicmUkKdNoCqTC7kBczPwtQS23D5Tklx
+	 +JBxetXSg9mTVcrMkfwcAwEXgG8jhASBcSpyHSYUq3J+4IZX0RRN7kBjB03n7Y4doq
+	 bpZYBt9+B5pb2RgJMJ9qIGU0GKmCGD3jlB16qUdEyV3PsXMR4ZZXqZ97X9iMykDcAj
+	 Z0CIGRoKULl4b+m6qkWm0cWNnXv9zXcsmTBPkYK4ekDuLoyX5XRJpiebDaji3QVc0n
+	 BjphU5nRf5D3rrP0Gjz+gCeEdxCvhLcg1w6aAV6IHif1r3CVo5HGetry6kYGjIoJV6
+	 EEGFyn0JgnOLg==
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-27beb2496f4so2306462fac.1;
+        Wed, 30 Oct 2024 04:23:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW3pInNz7AR+lTRKJPXzKCQTjk01IPuiQzs3Hbyv12YsuHgKW2k5k5TW2kmhs9asVbOZVSGM0NSPt0TPg0=@vger.kernel.org, AJvYcCWgDsA5RO4lLVz3We/ne/ij1CITLm6bBikz51K/T2L13pSZnpIYTzJQdZj8NS9o0ZYTReoRSeJcmA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmyNzMmDJpVnKYo4iG4gewoQLBHyIaOQVTZrwGGf4WAau6muny
+	M+KYxxCNwdQVkID35BzNHFCTPoCfHTZnlFb56C5pzXC4NvgLiN6qeTc9i8rzjHRELBjW28fBajF
+	5ZOiO2CMr6/NZqymxueWNBUiM4UA=
+X-Google-Smtp-Source: AGHT+IHCcWzbBvzQZ78Xsrj4J41Cv8KkkFQU9rrK6ytLjSa1GuXNRtwhVDyN2RGzYyIdPv0n4BIGocz5VnkSr6tUzvI=
+X-Received: by 2002:a05:6870:469e:b0:277:ca2f:905 with SMTP id
+ 586e51a60fabf-29051d432c4mr12996048fac.29.1730287398214; Wed, 30 Oct 2024
+ 04:23:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241029094452.495439-1-lukasz.luba@arm.com> <20241029094452.495439-2-lukasz.luba@arm.com>
+ <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
+ <6cdb2f8b-62e0-455c-a3a5-ed5359a2e941@arm.com> <61afac10-b434-4e39-8c49-c220add4bd8e@arm.com>
+In-Reply-To: <61afac10-b434-4e39-8c49-c220add4bd8e@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 30 Oct 2024 12:23:05 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jk+0vfn88+gaunezgtb6TLVagqav=9sM-D169Q69MF5w@mail.gmail.com>
+Message-ID: <CAJZ5v0jk+0vfn88+gaunezgtb6TLVagqav=9sM-D169Q69MF5w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] PM: EM: Add min/max available performance state limits
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, dietmar.eggemann@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Victor Shih <victor.shih@genesyslogic.com.tw>
+On Wed, Oct 30, 2024 at 11:00=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> =
+wrote:
+>
+> On 10/30/24 08:48, Lukasz Luba wrote:
+> > Hi Rafael,
+> >
+> > On 10/29/24 18:29, Rafael J. Wysocki wrote:
+> >> On Tue, Oct 29, 2024 at 10:43=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.=
+com> wrote:
+> >>>
+>
+> [snip]
+>
+> >>> +EXPORT_SYMBOL_GPL(em_update_performance_limits);
+> >>
+> >> It would be good to have at least one caller of this function in the
+> >> tree.
+> >
+> > Yes, I know, but we had delays with the SCMI cpufreq to get the
+> > notifications support, which are sent from FW...
+> >
+> > The patch using this API was part of v1 but with assumption that
+> > those SCMI notifications are merged.
+> >
+> > The patch v1 for the SCMI cpufreq driver [1].
+> >
+> > In that v1 cover letter I mentioned that the 2nd patch depends
+> > on notifications [2].
+> >
+> > I will have to work with Cristian on that notification in SCMI
+> > then this API will be used. I can see that it stuck for a while
+> > in v5. Let me sort that out (probably not in this merge window
+> > though).
+>
+> Just to link the effort which has been started into that direction:
+>
+> https://lore.kernel.org/lkml/ab36709d-a181-4621-a8e5-0ef38b80186b@arm.com=
+/
 
-There are unnecessary variables in the sdhci_uhs2_send_command()
-that will generate a warning when building the kernel.
+OK, then this can be queued up as a prerequisite for the upcoming changes.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410252107.y9EgrTbA-lkp@intel.com/
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
----
- drivers/mmc/host/sdhci-uhs2.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
+I would, however, mention that in the patch changelog and add a Link:
+tag pointing to the above.
 
-diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-index c488c6d56015..43820eb5a7ea 100644
---- a/drivers/mmc/host/sdhci-uhs2.c
-+++ b/drivers/mmc/host/sdhci-uhs2.c
-@@ -684,7 +684,6 @@ static void __sdhci_uhs2_send_command(struct sdhci_host *host, struct mmc_comman
- 
- static bool sdhci_uhs2_send_command(struct sdhci_host *host, struct mmc_command *cmd)
- {
--	int flags;
- 	u32 mask;
- 	unsigned long timeout;
- 
-@@ -714,30 +713,6 @@ static bool sdhci_uhs2_send_command(struct sdhci_host *host, struct mmc_command
- 
- 	sdhci_uhs2_set_transfer_mode(host, cmd);
- 
--	if ((cmd->flags & MMC_RSP_136) && (cmd->flags & MMC_RSP_BUSY)) {
--		WARN_ONCE(1, "Unsupported response type!\n");
--		/*
--		 * This does not happen in practice because 136-bit response
--		 * commands never have busy waiting, so rather than complicate
--		 * the error path, just remove busy waiting and continue.
--		 */
--		cmd->flags &= ~MMC_RSP_BUSY;
--	}
--
--	if (!(cmd->flags & MMC_RSP_PRESENT))
--		flags = SDHCI_CMD_RESP_NONE;
--	else if (cmd->flags & MMC_RSP_136)
--		flags = SDHCI_CMD_RESP_LONG;
--	else if (cmd->flags & MMC_RSP_BUSY)
--		flags = SDHCI_CMD_RESP_SHORT_BUSY;
--	else
--		flags = SDHCI_CMD_RESP_SHORT;
--
--	if (cmd->flags & MMC_RSP_CRC)
--		flags |= SDHCI_CMD_CRC;
--	if (cmd->flags & MMC_RSP_OPCODE)
--		flags |= SDHCI_CMD_INDEX;
--
- 	timeout = jiffies;
- 	if (host->data_timeout)
- 		timeout += nsecs_to_jiffies(host->data_timeout);
--- 
-2.25.1
-
+> > [1]
+> > https://lore.kernel.org/lkml/20240403162315.1458337-3-lukasz.luba@arm.c=
+om/
+> > [2]
+> > https://lore.kernel.org/lkml/20240403162315.1458337-1-lukasz.luba@arm.c=
+om/
+> > [3]
+> > https://lore.kernel.org/lkml/20240603192654.2167620-1-quic_sibis@quicin=
+c.com/
+> >
 
