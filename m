@@ -1,242 +1,170 @@
-Return-Path: <linux-kernel+bounces-388317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036279B5DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:28:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111609B5DD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:28:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270EE1C20AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:28:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340061C2122A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A55A1E22EE;
-	Wed, 30 Oct 2024 08:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9643B1E0E14;
+	Wed, 30 Oct 2024 08:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DL01gQuw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q0A+LHSk"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7833B1D63E3;
-	Wed, 30 Oct 2024 08:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676921E0E12
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730276823; cv=none; b=EnXCv7H7Fqsi02aYwXfzPtaAkv6rpAzSMa/ZsPs6VCnZzMrnTf8A8NDxMdBTxu3J1dk41ZFE7du3BLKbmR/17QD0j5cC/mDRPou6uoiFciI/SYHK5CG6gA3xYPakKtah6VbqvfFefFxZ8wRenFjd5qNKGYWtH6u8l+HlOAtkHLM=
+	t=1730276888; cv=none; b=GXONv9kgDJsvnm3/r26Z+F9yTWmjOQKmaHl9USmqk97ssoUcWCvQVWg45DGdVNXY+hSpRWUoftbCVVGHCNXgQd8KhYX3YpootUIGCOEiFgT1Y2KihUG14DmkfUPg/+rxGunX7NICljdoeIgvdIgex7wQh1QDy687wftTgrv0l+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730276823; c=relaxed/simple;
-	bh=6frQp3vk78rTDMfy8Ob6GL6/RN0Pbs9go6Vr1MnLeJI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mJi9GZwHb6/ilzXcgcJ3sX15jfjvkOlFWeRDpoFD4TbPp9tD8ZDFnDL7pN+KST0MIAH7UF+Bmk4Fekygdnrg9K0XCdJRM4FkdpSWsAhfjv+bg+j7jSJvmm9PT4vPIBTBXNVlOWX2WcmNKxzgsy38HldWy8XmWsvQpVkRqV2KSlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DL01gQuw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U2d19X029979;
-	Wed, 30 Oct 2024 08:26:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=ZWAlq7eMmj/69ECPPqlCPOTGR7kzM4ZEmM3iBTILJ
-	2U=; b=DL01gQuwC6yGxt+aDQNDrzdm4H6swiDt1uKF4T8/MxA4rwl7sKTesQ0Z2
-	l8pNiHQ2ZheI27XRkAHoFOySX/uzfpZdUtAJfEsetcTkticQkeXqCQfPeFTh2P9N
-	UHgW/8kC6602DFAXcG58n659TBkluKWkHSjssKyxb9dIRo0f1xsaJDvmDfILfcGz
-	MZSDK4RD2wamYJsspB0zG2TOBR3eUjKRrxu4nDe1jHBEbCf5owj/UJKfQh9h9Io1
-	rvSLyr2TNF284CdowU/BxJYmbRYyMKU+WTPH24yBook+2/7gKHNQhaEdD2T2TtPu
-	50aglxzAutHQ8bTkYfiSTscQNmgGA==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42js0h7h0f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 08:26:59 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49U6MaEx017386;
-	Wed, 30 Oct 2024 08:26:58 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42harsfccm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 08:26:58 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49U8Qtt457541066
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 08:26:55 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0386420043;
-	Wed, 30 Oct 2024 08:26:55 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D3E0B20040;
-	Wed, 30 Oct 2024 08:26:53 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 30 Oct 2024 08:26:53 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
-Subject: [PATCH v1] s390/uvdevice: Support longer secret lists
-Date: Wed, 30 Oct 2024 09:26:53 +0100
-Message-ID: <20241030082653.3303713-1-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rf0bZ5YQjua-XV-ped88rw-qpJOoXWXU
-X-Proofpoint-ORIG-GUID: rf0bZ5YQjua-XV-ped88rw-qpJOoXWXU
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1730276888; c=relaxed/simple;
+	bh=2EJQviS+R0eeRdt1aLK6bINveA2q82bII4Ab8JdcMJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D6AmiZVhc/1J8iS0oeuCZ/otFBMsp8GJ73ymZZETwHkjM1iwmZ4ZDl/Yw0+W66G8gYRwSICNxWcxVmKmIyPHplB7NKj5MxKxtrJT7pTnA+6T46OxRQJWicMHhwEbQG1r+3OzPLJ2Q0KTAQRHxHO+4dSoGp3WdlbRpdTXV7ufI4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q0A+LHSk; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso61931921fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730276883; x=1730881683; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tBYL9vmtVYAL0EFLZkcBgrxKAFI5YLz3NtbAqMnDtEY=;
+        b=q0A+LHSkZgKRpQ0YsO/IS27P75R1MQGURPshorq5S1qWWvA8rWZHDqpus1rXxu8t+Q
+         ZoH1aIaCWnMw0VnUOJ/qOC4U58yOWIJA+HmI5q/jpvX8nomJbXN+5nfXSq9tUptDjKC/
+         vFN6jXxfNw2CRYiXPDIVED7XRY/KAR7bROaUtZbTEv8FfiNg+WXJ8fKjQ9GmIJBEcE9O
+         F70G26H9Lo3UXNpmf6suiFsvUXl96R9LTM3g6+HxH5BHPVqGx4Vc+KJf7v3Av2iG0cuT
+         ddRdLWBhZsB/RK8oinX7He3YRo5ApMWzKtop08GvdRPZibE8YoSjoMl/BeosAXpZsAKO
+         keJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730276883; x=1730881683;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tBYL9vmtVYAL0EFLZkcBgrxKAFI5YLz3NtbAqMnDtEY=;
+        b=V88B1HnOmsbkU3RwMlJqDWZvLKO4LW/JAWzbqSnjj4P/VwsTpdNuB35pkvzR644uMG
+         wvSvOO2FBtgNWHWdl78KxJRqAEtzP+CbeiR1BhcXcZ04mlqWXvP6UgUTHGAzzhqPttw3
+         5X/6AQ7b3TO81Qg+UoZrpNNpzY2/7fPEX59zRUiF5na3/yL3meHThMMFo9rFXf2Q9LyE
+         b/8stZ15hPVwOLI5BBIKZMpAoF1gOiW5yt2Qp7ZAkNiN7tXZu6yYH73mQsalZ8+aefNd
+         P5o3khtf5JQsbOc0L67QYxYv1Ts8hXwc5M8+T13lgxB9XfhAoN2d9nRcXQc9wI3mi50R
+         kb/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUAmnT06OjfH23y9UB/gtx6cu13PsjPHJKwgTKHm0HrZlQd7kS6rtqMnh9wd8/DKw2TOp1VHzCntH72QH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz30/uBge3p6nbj2pQrc6y7qtla8fTuwONouIga6JU/+5xhuFEa
+	W7JQ96Xge4VfNY4g5Vb4IzeGIU90C9iKoZ9Px4HG7wkMAtK7zdbKhqMxA0uRd3Y=
+X-Google-Smtp-Source: AGHT+IHLXshujnLj55pap6bOslh51Qbc83Y5ZvmdLqv/90zLHoTuLWDGQOvp4ELrigrr0rv56OxcoA==
+X-Received: by 2002:a2e:a99b:0:b0:2fb:5bb8:7c00 with SMTP id 38308e7fff4ca-2fd058fb962mr13655171fa.2.1730276883393;
+        Wed, 30 Oct 2024 01:28:03 -0700 (PDT)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d5fcsm13934505e9.28.2024.10.30.01.28.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 01:28:03 -0700 (PDT)
+Date: Wed, 30 Oct 2024 09:28:01 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Guillaume Stols <gstols@baylibre.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
+Message-ID: <iajs2rk7odutqwoih4h6besd4b4nnksap6om5r7i2cw5arqcip@rvztnliokuk3>
+References: <20241029-pwm-export-pwm_get_state_hw-v2-0-03ba063a3230@baylibre.com>
+ <20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- phishscore=0 impostorscore=0 adultscore=0 clxscore=1015 mlxlogscore=616
- bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300063
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="n5xp3y2il3quy7aj"
+Content-Disposition: inline
+In-Reply-To: <20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230@baylibre.com>
 
-Enable the list IOCTL to provide lists longer than on page (85 entries).
-The list IOCTL accepts argument length up to 8 pages in page granularity
-and will fill the argument up to this length with entries until the list
-ends. User space unaware of this enhancement will still receive one page
-of data and an uv_rc 0x0100.
 
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
+--n5xp3y2il3quy7aj
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
+MIME-Version: 1.0
 
-Janosch picked the rest of this series[1].
-This is an alternate approach on how to forward the enhanced list UVC
-to userspace without adding a new IOCTL by looping through the list UVCs in kernel space
-instead of in userspace. This allows a much cleaner API and
-streamlined implementation for both, kernel and userspace.
+On Tue, Oct 29, 2024 at 04:18:50PM -0500, David Lechner wrote:
+> Replace the call to pwm_get_state() with a call to pwm_get_state_hw() in
+> the ad7606 driver. This allows reading the sampling_frequency attribute
+> to return the rate the hardware is actually running at rather than the
+> rate that was requested. These may differ when the hardware isn't
+> capable of running at exactly the requested frequency.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>=20
+> I went ahead and made this patch since it is trivial, but it would be
+> nice to get a Tested-by from Guillaume to make sure it actually works
+> as expected.
+> ---
+>  drivers/iio/adc/ad7606.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index 8b2046baaa3e..1581eb31b8f9 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -762,11 +762,9 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
+>  		*val =3D st->oversampling;
+>  		return IIO_VAL_INT;
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+> -		/*
+> -		 * TODO: return the real frequency intead of the requested one once
+> -		 * pwm_get_state_hw comes upstream.
+> -		 */
+> -		pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
+> +		ret =3D pwm_get_state_hw(st->cnvst_pwm, &cnvst_pwm_state);
+> +		if (ret < 0)
+> +			return ret;
+>  		*val =3D DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC, cnvst_pwm_state.period);
+>  		return IIO_VAL_INT;
+>  	}
 
-This patch is based on series [1] without PATCH 5.
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
 
-[1] https://lore.kernel.org/lkml/20241024062638.1465970-1-seiden@linux.ibm.com/
+There is a slight inconsistency compared to ad7606_set_sampling_freq():
 
- arch/s390/include/uapi/asm/uvdevice.h |  1 +
- drivers/s390/char/uvdevice.c          | 74 ++++++++++++++++++++-------
- 2 files changed, 56 insertions(+), 19 deletions(-)
+ad7606_set_sampling_freq uses
 
-diff --git a/arch/s390/include/uapi/asm/uvdevice.h b/arch/s390/include/uapi/asm/uvdevice.h
-index 4947f26ad9fb..c584250d4a35 100644
---- a/arch/s390/include/uapi/asm/uvdevice.h
-+++ b/arch/s390/include/uapi/asm/uvdevice.h
-@@ -71,6 +71,7 @@ struct uvio_uvdev_info {
- #define UVIO_ATT_ADDITIONAL_MAX_LEN	0x8000
- #define UVIO_ADD_SECRET_MAX_LEN		0x100000
- #define UVIO_LIST_SECRETS_LEN		0x1000
-+#define UVIO_LIST_SECRETS_MAX_LEN	0x8000
- #define UVIO_RETR_SECRET_MAX_LEN	0x2000
- 
- #define UVIO_DEVICE_NAME "uv"
-diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
-index 1f90976293e8..9829cf3810a2 100644
---- a/drivers/s390/char/uvdevice.c
-+++ b/drivers/s390/char/uvdevice.c
-@@ -297,6 +297,45 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
- 	return ret;
- }
- 
-+/*
-+ * Do the actual secret list creation. Calls the list-UVC until there is no more
-+ * space in the user buffer, or the list ends.
-+ */
-+static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
-+{
-+	u8 __user *user_secrets = (u8 __user *)uv_ioctl->argument_addr;
-+	struct uv_secret_list *list = zpage;
-+	size_t len = UVIO_LIST_SECRETS_LEN;
-+	u16 num_secrets_stored = 0;
-+	size_t user_off = 0;
-+	size_t list_off = 0;
-+
-+	do {
-+		if (user_off + len > uv_ioctl->argument_len)
-+			break;
-+		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
-+				&uv_ioctl->uv_rrc);
-+		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
-+		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
-+			break;
-+		if (copy_to_user(user_secrets + user_off, (u8 *)list + list_off,
-+				 len))
-+			return -EFAULT;
-+
-+		user_off += len;
-+		num_secrets_stored += list->num_secr_stored;
-+		/* The 2nd,3rd,.. secret list pages will not contain the list header again */
-+		list_off = offsetof(struct uv_secret_list, secrets);
-+		len = UVIO_LIST_SECRETS_LEN - list_off;
-+	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA);
-+
-+	/* Merge headers */
-+	list->num_secr_stored = num_secrets_stored;
-+	if (copy_to_user(user_secrets, list, list_off))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- /** uvio_list_secrets() - perform a List Secret UVC
-  * @uv_ioctl: ioctl control block
-  *
-@@ -308,6 +347,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  *
-  * The argument specifies the location for the result of the UV-Call.
-  *
-+ * Argument len must be a multiple of a page; 1-8 pages allowed.
-+ * The list secrets IOCTL will call the list UVC multiple times and fill
-+ * the provided user-buffer with list elements until either the list ends or
-+ * the buffer is full. The list header is merged over all list header from the
-+ * individual UVCs.
-+ *
-  * If the List Secrets UV facility is not present, UV will return invalid
-  * command rc. This won't be fenced in the driver and does not result in a
-  * negative return value.
-@@ -318,31 +363,22 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  */
- static int uvio_list_secrets(struct uvio_ioctl_cb *uv_ioctl)
- {
--	void __user *user_buf_arg = (void __user *)uv_ioctl->argument_addr;
--	struct uv_cb_guest_addr uvcb = {
--		.header.len = sizeof(uvcb),
--		.header.cmd = UVC_CMD_LIST_SECRETS,
--	};
--	void *secrets = NULL;
--	int ret = 0;
-+	void *zpage = NULL;
-+	int rc;
- 
--	if (uv_ioctl->argument_len != UVIO_LIST_SECRETS_LEN)
-+	if (uv_ioctl->argument_len == 0 ||
-+	    uv_ioctl->argument_len % UVIO_LIST_SECRETS_LEN != 0 ||
-+	    uv_ioctl->argument_len > UVIO_LIST_SECRETS_MAX_LEN)
- 		return -EINVAL;
- 
--	secrets = kvzalloc(UVIO_LIST_SECRETS_LEN, GFP_KERNEL);
--	if (!secrets)
-+	zpage = (void *)get_zeroed_page(GFP_KERNEL);
-+	if (!zpage)
- 		return -ENOMEM;
- 
--	uvcb.addr = (u64)secrets;
--	uv_call_sched(0, (u64)&uvcb);
--	uv_ioctl->uv_rc = uvcb.header.rc;
--	uv_ioctl->uv_rrc = uvcb.header.rrc;
--
--	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
--		ret = -EFAULT;
-+	rc = uvio_get_list(zpage, uv_ioctl);
- 
--	kvfree(secrets);
--	return ret;
-+	free_page((unsigned long)zpage);
-+	return rc;
- }
- 
- /** uvio_lock_secrets() - perform a Lock Secret Store UVC
--- 
-2.45.2
+	cnvst_pwm_state.period =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
 
+=2E So if cnvst_pwm_state.period happens to be 3 ns then reading
+the freq value yields 333333333, but if you feed freq=3D333333333 into
+ad7606_set_sampling_freq() it sets period =3D 4.
+
+To fix that you'd better use a plain / here in ad7606_read_raw().
+(Note that with using round-closest for both there are still corner
+cases, e.g. period =3D 31796 ns yields freq =3D 31450.496917851302 but
+setting freq =3D 31450 yields 31796.50238473768 and so 31797.)
+
+Best regards
+Uwe
+
+--n5xp3y2il3quy7aj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmch7g8ACgkQj4D7WH0S
+/k5cyAf9ELnSckQLX02VlSjt88Fhbhbb+mCKMOBryiijJlYNtGhk+dfI5Yqyv6mf
+WM50/KzHu4CqA6owAQuhfqzL4og2AiOJN3QazfHKK1Dtltll/135JgUptuwu+W5n
+n9BS/HNMXCJa/TcMtHXvPbo4FgLdG1gvuXyV+/Ic5iPga+9AWTv++0PxxIENEjFK
+yN/cy7bOuvrtTwCgZ/i1DTKh3h2/IDADYoxgTWtWxJ4qKLy2a6yROYBFyAR5jE7d
+KsY2s855/TWYIRj0MCp6aOLSjo+sO1Eve5zjdzxz6kAilWwPe60BMScL7PTYevVL
+6tL+ZU4J7tKazH3J9Y6alWU+W/OZMg==
+=Gx0C
+-----END PGP SIGNATURE-----
+
+--n5xp3y2il3quy7aj--
 
