@@ -1,167 +1,208 @@
-Return-Path: <linux-kernel+bounces-389255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB58F9B6AA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:16:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44399B6AAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:17:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E96A1F21A5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E9C71F26125
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273872178F2;
-	Wed, 30 Oct 2024 17:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7FC21832D;
+	Wed, 30 Oct 2024 17:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5bDGg72"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="JawHfHZc"
+Received: from mail-oa1-f98.google.com (mail-oa1-f98.google.com [209.85.160.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C68E21503C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035EB2170CB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307975; cv=none; b=AR7pen8wBf4hnood+4CNIc4BOwujQhc8a0pOZR1++qPYFmrPv8hYc0+n2bgYFmgIC98ge7CeAQA+MKKKajZsV1m/DjjGVOciHrznHCVk7v68tejYxPnC+ydbBZl50FTgpEnQvx2A54FCfB1dlGrxRuWbrOOvNcdrMmQ2uVcCTNQ=
+	t=1730308042; cv=none; b=HtQVs4hl3UekSyidNjeWAzYlGUSuLw+ugZgGcVg8JzW2yslfj23uy8EaM0tc0sGJS0TtA1ofAvrDR1w6/hfghxocs4ueh5noX98k0Om+KKpqTdtM1cxPyBlIvZZmxpyfdm82/5lNEmNAyn1ZgbVLcYGv14Ade/tyCDCw0I/dzmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307975; c=relaxed/simple;
-	bh=fi1CN2Em012OBWMWm3Pp+0sSMC4kSe/r/f7lFOlLS3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IOfCwGEEHck9uOu3vKdgVIJ0AloZYrGmx7mnFHRbcFz7leFJ7BanoGZLh0nr8ofeSVO/FQbh2VVIP1tYSdsljakCj5d6rewPOcVCrmzgsMjnAZWhfgd7766eo4FYivHVPnIkTL4zTzotuaJ+LIXIy5x1O9X0+29XZ8gSPxw/FAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5bDGg72; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD2DC4CECE;
-	Wed, 30 Oct 2024 17:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730307975;
-	bh=fi1CN2Em012OBWMWm3Pp+0sSMC4kSe/r/f7lFOlLS3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T5bDGg72faajp85+E9hG6UH6DiqINP4EtMCcX+eLWuDEJsTDLAKuef27kjg9UbOba
-	 ZQv1R7qx5Kwm3VeDJQxTy3PYmUeTgCZWGRe7SIyGcArS/i1sQAkqvJyR7fGzC/JzPF
-	 NZoZmBeekIcpjwK36nfbPElNYwseT3Uo4YvXn11qGDow5ahd+sc2jHEUzCkgTr7I3c
-	 cmWr2oykkTVfSm++Ig9WpKKSxArafQT4vlMY0kyLRnb1LxBHEZQdFrRIJjhfdcg3Fx
-	 zA9J9FaTY7V8LtfHvSy0sg8mwNTlHT7JBRrJ3NIEROAP8hHQ32k+Yz6A8B+BEAFP1T
-	 nrFEqAIDbNsxQ==
-Date: Wed, 30 Oct 2024 18:06:11 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 21/26] posix-timers: Handle ignored list on delete and
- exit
-Message-ID: <ZyJng49tJutCM62d@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.514196709@linutronix.de>
+	s=arc-20240116; t=1730308042; c=relaxed/simple;
+	bh=sscV9c36s+nmYEYc5d7ETnwRVHtNENWYWlf4AeFX+zg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Fv1aTHTG1gOS96Ci/McHHtjHOa/7MHVR2ORZTVawrEt2+B9KAjYFSJ64JXBr1nUVM8ELt5wZsdcO0X5nd7C6sWsUcKK0jLMwOzv9S2JU38+YyfZ1gsMI2WVRiLlycyagxOLEasSbmoM1hJV6+y0IAf2DsAxaOtzFY6B9R/YPXBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=JawHfHZc; arc=none smtp.client-ip=209.85.160.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-oa1-f98.google.com with SMTP id 586e51a60fabf-28c5f01eea5so10626fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1730308038; x=1730912838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RbWXoubdOFjc0J90dYCjMPhouSyIa4++HhnBIkRskoA=;
+        b=JawHfHZcTtKnyld/0z2+jIuBs8ajmXjoINzJSbI48EB1V2zKpWLSYKoG24eMwq1Pxh
+         pmo/efce7ublymZepZ5Yp+W5Bi86wC3luMNzEW0SQAnsbm50AkEPpW/9517u+YGB3QVH
+         lXk1+o2f99JwpHqeTNm+ltg+PU+MmXRKkyQp7dJ7cDt14mq40AJryBwhdPEIxad1LMBs
+         dg0HUNDshOFrpOMkqnsavyZ465zqWKGNlFYEMzc04+LWcq0Ll3E8KOaaSr6OU6rWoFuR
+         K/6OhHzdbD5Ne2psH/DSsG/RaiYtQvUdgb1pdzWS6ZLeQ79gvj0mXOD+gXD1FZJZiXbD
+         fNJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730308038; x=1730912838;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RbWXoubdOFjc0J90dYCjMPhouSyIa4++HhnBIkRskoA=;
+        b=Ak3TghGbL3+dZTyFnd6It39LtkzG5aNzhlnLRhNs9YoxLmL2s4K1vaeteOgUDqbAye
+         sdPCn8iqFVdJ/fhvpMZxOSJhBsTr+GQrSpwfMz2qX6rAVhqdEKZb6DIrFhccRGPyTYrS
+         EnGqosAxerRvtUnwE4Syha0xM7CDb1kkcqSts364ZppRpYbnvJ8xUYTQfD4fadEbI9Qq
+         LKZZ3vpJ2165bfY/iSjd/ldYddsEga1p7IRpoXqii6anKDO34qGGooeY8YZFPvud6v2Z
+         PH8rgy31OVEMGba1WVNnUHeOKmA1vamavglyMP0mn6A1e/mIWqPgJ69sa3eJVmME3IfX
+         nMrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzT3lTamDMy0f82XVKKkJFsSMzFzU3Wpa8lnm65e9i4fG1a5fX+uSH1p7EYY/M1BEBE6wYPNHGGD1p+rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQJlMtZM4KvQPZevTOolUfTT6DIUmFmLVM0chjo2Sd4/8Xf5Vy
+	IBS1arDHv5J6DbYOvdlK4bCA5xHMmcxryi55O1j7/fu4dgGmRA6umoChU1ge4mnIW43KPZWTW/5
+	qSnOZhWtbtZjnEHB4KeE6srQNrCPpJaHP2jkTkk6lM7wqykxj
+X-Google-Smtp-Source: AGHT+IFZ1ja9hOm6xMDtpK+g/fuGzrKd8ri+RB3+ls3i5NMQT1baHJAWIH9aQoyhyCOGJDr0RPF9+sujZcx7
+X-Received: by 2002:a05:6870:b513:b0:27b:56b1:9ded with SMTP id 586e51a60fabf-29051b6d026mr4285823fac.5.1730308038088;
+        Wed, 30 Oct 2024 10:07:18 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 586e51a60fabf-29035d10eccsm264258fac.2.2024.10.30.10.07.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 10:07:18 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id DF5EC3406B0;
+	Wed, 30 Oct 2024 11:07:16 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id D28C1E40BBB; Wed, 30 Oct 2024 11:06:46 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Parav Pandit <parav@nvidia.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mlx5: only schedule EQ comp tasklet if necessary
+Date: Wed, 30 Oct 2024 11:06:18 -0600
+Message-ID: <20241030170619.3126428-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CY8PR12MB7195672F740581A045ADBF8CDC542@CY8PR12MB7195.namprd12.prod.outlook.com>
+References: <CY8PR12MB7195672F740581A045ADBF8CDC542@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083836.514196709@linutronix.de>
 
-Le Tue, Oct 01, 2024 at 10:42:29AM +0200, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> To handle posix timer signals on sigaction(SIG_IGN) properly, the timers
-> will be queued on a separate ignored list.
-> 
-> Add the necessary cleanup code for timer_delete() and exit_itimers().
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  include/linux/posix-timers.h |    4 +++-
->  kernel/time/posix-timers.c   |   20 ++++++++++++++++++++
->  2 files changed, 23 insertions(+), 1 deletion(-)
-> ---
-> --- a/include/linux/posix-timers.h
-> +++ b/include/linux/posix-timers.h
-> @@ -152,7 +152,8 @@ static inline void posix_cputimers_init_
->  
->  /**
->   * struct k_itimer - POSIX.1b interval timer structure.
-> - * @list:		List head for binding the timer to signals->posix_timers
-> + * @list:		List node for binding the timer to tsk::signal::posix_timers
-> + * @ignored_list:	List node for tracking ignored timers in tsk::signal::ignored_posix_timers
->   * @t_hash:		Entry in the posix timer hash table
->   * @it_lock:		Lock protecting the timer
->   * @kclock:		Pointer to the k_clock struct handling this timer
-> @@ -176,6 +177,7 @@ static inline void posix_cputimers_init_
->   */
->  struct k_itimer {
->  	struct hlist_node	list;
-> +	struct hlist_node	ignored_list;
->  	struct hlist_node	t_hash;
->  	spinlock_t		it_lock;
->  	const struct k_clock	*kclock;
-> --- a/kernel/time/posix-timers.c
-> +++ b/kernel/time/posix-timers.c
-> @@ -1031,6 +1031,18 @@ int common_timer_del(struct k_itimer *ti
->  	return 0;
->  }
->  
-> +/*
-> + * If the deleted timer is on the ignored list, remove it and
-> + * drop the associated reference.
-> + */
-> +static inline void posix_timer_cleanup_ignored(struct k_itimer *tmr)
-> +{
-> +	if (!hlist_unhashed(&tmr->ignored_list)) {
-> +		hlist_del_init(&tmr->ignored_list);
-> +		posixtimer_putref(tmr);
-> +	}
-> +}
-> +
->  static inline int timer_delete_hook(struct k_itimer *timer)
->  {
->  	const struct k_clock *kc = timer->kclock;
-> @@ -1063,6 +1075,7 @@ SYSCALL_DEFINE1(timer_delete, timer_t, t
->  
->  	spin_lock(&current->sighand->siglock);
->  	hlist_del(&timer->list);
-> +	posix_timer_cleanup_ignored(timer);
->  	spin_unlock(&current->sighand->siglock);
->  	/*
->  	 * A concurrent lookup could check timer::it_signal lockless. It
-> @@ -1114,6 +1127,8 @@ static void itimer_delete(struct k_itime
->  	}
->  	hlist_del(&timer->list);
->  
-> +	posix_timer_cleanup_ignored(timer);
-> +
->  	/*
->  	 * Setting timer::it_signal to NULL is technically not required
->  	 * here as nothing can access the timer anymore legitimately via
-> @@ -1146,6 +1161,11 @@ void exit_itimers(struct task_struct *ts
->  	/* The timers are not longer accessible via tsk::signal */
->  	while (!hlist_empty(&timers))
->  		itimer_delete(hlist_entry(timers.first, struct k_itimer, list));
-> +
-> +	/* Mop up timers which are on the ignored list */
-> +	hlist_move_list(&tsk->signal->ignored_posix_timers, &timers);
-> +	while (!hlist_empty(&timers))
-> +		posix_timer_cleanup_ignored(hlist_entry(timers.first, struct k_itimer, list));
+Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
+to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
+whose completions don't need to be processed in tasklet context, this
+adds unnecessary overhead. In a heavy TCP workload, we see 4% of CPU
+time spent on the tasklet_trylock() in tasklet_action_common(), with a
+smaller amount spent on the atomic operations in tasklet_schedule(),
+tasklet_clear_sched(), and locking the spinlock in mlx5_cq_tasklet_cb().
+TCP completions are handled by mlx5e_completion_event(), which schedules
+NAPI to poll the queue, so they don't need tasklet processing.
 
-The ignored timers should have all been removed on timer_delete() and
-itimer_delete(), right?
+Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
+overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
+to be processed in tasklet context, so it can schedule the tasklet. CQs
+that need tasklet processing have their interrupt comp handler set to
+mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
+don't need tasklet processing won't schedule the tasklet. To avoid
+scheduling the tasklet multiple times during the same interrupt, only
+schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
+queue was empty before the new CQ was pushed to it.
 
-So should it be instead:
+The additional branch in mlx5_add_cq_to_tasklet(), called for each EQE,
+may add a small cost for the userspace Infiniband CQs whose completions
+are processed in tasklet context. But this seems worth it to avoid the
+tasklet overhead for CQs that don't need it.
 
-   WARN_ON_ONCE(!hlist_empty(&tsk->signal->ignored_posix_timers))
+Note that the mlx4 driver works the same way: it schedules the tasklet
+in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
 
-?
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Reviewed-by: Parav Pandit <parav@nvidia.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/cq.c | 5 +++++
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c | 5 +----
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Thanks.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cq.c b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+index 4caa1b6f40ba..25f3b26db729 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+@@ -69,22 +69,27 @@ void mlx5_cq_tasklet_cb(struct tasklet_struct *t)
+ static void mlx5_add_cq_to_tasklet(struct mlx5_core_cq *cq,
+ 				   struct mlx5_eqe *eqe)
+ {
+ 	unsigned long flags;
+ 	struct mlx5_eq_tasklet *tasklet_ctx = cq->tasklet_ctx.priv;
++	bool schedule_tasklet = false;
+ 
+ 	spin_lock_irqsave(&tasklet_ctx->lock, flags);
+ 	/* When migrating CQs between EQs will be implemented, please note
+ 	 * that you need to sync this point. It is possible that
+ 	 * while migrating a CQ, completions on the old EQs could
+ 	 * still arrive.
+ 	 */
+ 	if (list_empty_careful(&cq->tasklet_ctx.list)) {
+ 		mlx5_cq_hold(cq);
++		schedule_tasklet = list_empty(&tasklet_ctx->list);
+ 		list_add_tail(&cq->tasklet_ctx.list, &tasklet_ctx->list);
+ 	}
+ 	spin_unlock_irqrestore(&tasklet_ctx->lock, flags);
++
++	if (schedule_tasklet)
++		tasklet_schedule(&tasklet_ctx->task);
+ }
+ 
+ /* Callers must verify outbox status in case of err */
+ int mlx5_create_cq(struct mlx5_core_dev *dev, struct mlx5_core_cq *cq,
+ 		   u32 *in, int inlen, u32 *out, int outlen)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+index 859dcf09b770..3fd2091c11c8 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -112,14 +112,14 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+ 	struct mlx5_eq_comp *eq_comp =
+ 		container_of(nb, struct mlx5_eq_comp, irq_nb);
+ 	struct mlx5_eq *eq = &eq_comp->core;
+ 	struct mlx5_eqe *eqe;
+ 	int num_eqes = 0;
+-	u32 cqn = -1;
+ 
+ 	while ((eqe = next_eqe_sw(eq))) {
+ 		struct mlx5_core_cq *cq;
++		u32 cqn;
+ 
+ 		/* Make sure we read EQ entry contents after we've
+ 		 * checked the ownership bit.
+ 		 */
+ 		dma_rmb();
+@@ -142,13 +142,10 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+ 			break;
+ 	}
+ 
+ 	eq_update_ci(eq, 1);
+ 
+-	if (cqn != -1)
+-		tasklet_schedule(&eq_comp->tasklet_ctx.task);
+-
+ 	return 0;
+ }
+ 
+ /* Some architectures don't latch interrupts when they are disabled, so using
+  * mlx5_eq_poll_irq_disabled could end up losing interrupts while trying to
+-- 
+2.45.2
 
->  }
->  
->  SYSCALL_DEFINE2(clock_settime, const clockid_t, which_clock,
-> 
 
