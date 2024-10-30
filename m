@@ -1,210 +1,237 @@
-Return-Path: <linux-kernel+bounces-388770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2668B9B642B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:33:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D88F9B642D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9B91F22477
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:33:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16D9281AA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C81E7C3B;
-	Wed, 30 Oct 2024 13:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC51F1EABAD;
+	Wed, 30 Oct 2024 13:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kQk9UYHB"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XMksxIRK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5455F3FB31;
-	Wed, 30 Oct 2024 13:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD201401B;
+	Wed, 30 Oct 2024 13:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295177; cv=none; b=b3Gyyajsyn1EtS2ZsT6FWqH4+vcFYLCn+xy+PStnkljRqT2o2JfTItXC+vqYrdXNIAuIM0C+fTGL8HdVXF8sUb6A37+12BbLo1/MqvGp3kB1Fd8TfTcQ/HwidNz+uPDOkHZIEhypWbXhV8f86IUMqv8gJ1NR0j7Kwm3K4na5Qtc=
+	t=1730295228; cv=none; b=dziqmEpDSqomr57br6obYjLYkipCD4IRlls6O0dx4PkcjTP21CVywo83HQ7eEGsKUBzjDOdxq7tJNVeoR02/1hTNtlva2Zt5v256xF7EF54D2Efq1xxjoVV9jqErNkaKVvo8av1yLEykH+ISxk6jiPWivkgrPg3rZEfK3oRk89k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295177; c=relaxed/simple;
-	bh=JuJGGbUyMfw/WGeLkAnhDnD/P9fXPIrb7LuOlDybwzg=;
+	s=arc-20240116; t=1730295228; c=relaxed/simple;
+	bh=fA4Vc4kMl+nKRo8aRDn5Rp/ZNNJK2iXiS9et+ri6ATc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJcOEpWEgtqw3O2xmdLS0BPhdedkYrZpgKnGiV0rfUAtvW1ajajXQzuAPIJf4YY2vU3DU7m6Ttxzqv7pqNHlDo2DH5GRp2nP5Qq7Vqo6iFvnV/lBJd1eWtDGlFmDM3XyuzTitcUSHuGriCJlRuCqla6GnXt54+n9dLu1t0goUHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kQk9UYHB; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 20CBA40E0191;
-	Wed, 30 Oct 2024 13:32:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1k9kVbCppEif; Wed, 30 Oct 2024 13:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730295166; bh=uisbDX9mYhfxWZr7rzArxjasxG+HKkFeR2Cbs8jZP4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQk9UYHBBlGORP2bFWpYk15SniW7fkrukGEhBEUcCcM6yaUeRsarxslwrlPa7/6Xo
-	 3ZrSd4YF40hdWgNwPxS/7ZmQ5DIGK69AP2FvvbI1NKvz74SJxeUKWXBqBQQnfCfO26
-	 Jh1cCn8tn5aDWP2VUNInYw6MYGWX/BhuA1CI+q+IMSZ4Itgp9EK58E0gMYD9bcqvRw
-	 +koejIV3t5jWXvdQSXVpGqsdvStfzljhfslGr7ACUqQm1QTwmGKb4PfU6QP4RhbdEY
-	 hob+bBqbEJWkyKEVzHaZtUQFoXeGznflNnW1IJE/cKWQnQNWd2Z4UgFecurgpNH0FW
-	 lEhBrfz1eYz9icN0VdNy17VKqLbGpSutd9r/239nFT+kYo1h/ijjE6gi3byRUnOOn+
-	 YfoMWNLMRTeTprYwWLwvoXwhfYVi2avfQqEYgidQVsYTMMYIqccpEENAqZCkRMAQAg
-	 /5f8744cfUZ1uHMJc4dpdOS4P4ep7ttpOtmPqdGyeGLoSiahFqft20U+vCfAftRaqm
-	 lwCU/sYJSiATbL9S4MYbhZeRv576XeMfXWZ1p/KiGEixkOjaP0a8SLe2N091S3scDn
-	 f8ozxNYsYlJzECX0Qmav0b90sHD0opakIP8/lszoeRD74lUDw/9XT7y1lZEaM9lFMG
-	 4ukX8c/wA4we7tN8WpITEOxc=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 955DE40E019C;
-	Wed, 30 Oct 2024 13:32:33 +0000 (UTC)
-Date: Wed, 30 Oct 2024 14:32:27 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: x86@kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, qiuxu.zhuo@intel.com, tglx@linutronix.de,
-	mingo@redhat.com, rostedt@goodmis.org, mchehab@kernel.org,
-	yazen.ghannam@amd.com, john.allen@amd.com
-Subject: Re: [PATCH v7 1/5] x86/mce: Add wrapper for struct mce to export
- vendor specific info
-Message-ID: <20241030133227.GDZyI1a5rheucn86qc@fat_crate.local>
-References: <20241022194158.110073-1-avadhut.naik@amd.com>
- <20241022194158.110073-2-avadhut.naik@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFq78gZhTtR1wvtR4wwQzweBzwYYXj4xpunmTrzJP0v+L4w2GELOCihBTlOkyo4pPdV02l7X16bqIHj8aipCf/AXqceE62/EmBh0COinwA14I8HzVvh+PbT8qQEqvxNK1/bkb+hVK/1KJLpABrMU07IkY6Yk6Pr9ssHC65HV5FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XMksxIRK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U2d5dh030110;
+	Wed, 30 Oct 2024 13:33:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=rIN9NEJdpGA1ijQ9VvtPh7aO1g5PzQ
+	xogRMddlUsnUg=; b=XMksxIRKpVClldO1sswFvm3W7qEYoC1DZC4u9Xot5yssHh
+	0xwhxxn1xYCq/jHdUbH/ZcWFVKsVbr7fT8V75KJKD08DJLd9BDTcz/8CKi/9+1Fv
+	y2z3oYKeG5tF09/9WDw4rLlHGXeAfNIosAtWFe1Y+MAr9IpOTognso/Kqqwkw5Q1
+	KMU/jMwHcWVwqo2IWPpslVGUyzieYEbJy+jSEFI9LoYsAeZSXJPJkRLGjLWC2zCa
+	XIFL4tuxxC0607O8yX9qj0aL4HYsIYGBbpN+A30epyVz7wq/XEbYJS610/wg/rJP
+	a8tHp94xwLI77Zg2zhrr/FDRUbzlSYq2aHhYjnFA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42js0h8yq9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 13:33:31 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49UDXUxF014422;
+	Wed, 30 Oct 2024 13:33:30 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42js0h8yq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 13:33:30 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDLV3u024535;
+	Wed, 30 Oct 2024 13:33:29 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hcyjfxm6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 13:33:29 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49UDXSH257868608
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 13:33:28 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E5752004B;
+	Wed, 30 Oct 2024 13:33:28 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 69A382004D;
+	Wed, 30 Oct 2024 13:33:26 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.39.21.224])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 30 Oct 2024 13:33:26 +0000 (GMT)
+Date: Wed, 30 Oct 2024 19:03:13 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: mpe@ellerman.id.au, christophe.leroy@csgroup.eu,
+        naveen.n.rao@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] arch/powerpc/kvm: Fix doorbells for nested KVM
+ guests on PowerNV
+Message-ID: <rbx6n7cqmslnj4re44hb6hdqcuhfbqvmxo5ebsrk2dqia3hj2w@jljlwne2nzvf>
+References: <20240627180342.110238-1-gautam@linux.ibm.com>
+ <20240627180342.110238-3-gautam@linux.ibm.com>
+ <D2GQSGNWNGX4.2R8TH3M64POGJ@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022194158.110073-2-avadhut.naik@amd.com>
+In-Reply-To: <D2GQSGNWNGX4.2R8TH3M64POGJ@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OsRhtwN3hjjbeoIWhQDmj4n-gf4gJK2B
+X-Proofpoint-ORIG-GUID: q9JbYBXF1S6NMphUjl4TMaGARfrZW6cO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ phishscore=0 impostorscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
+ bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300103
 
-On Tue, Oct 22, 2024 at 07:36:27PM +0000, Avadhut Naik wrote:
-> Currently, exporting new additional machine check error information
-> involves adding new fields for the same at the end of the struct mce.
-> This additional information can then be consumed through mcelog or
-> tracepoint.
+On Thu, Jul 04, 2024 at 10:10:05PM +1000, Nicholas Piggin wrote:
+> On Fri Jun 28, 2024 at 4:03 AM AEST, Gautam Menghani wrote:
+> > commit 6398326b9ba1("KVM: PPC: Book3S HV P9: Stop using vc->dpdes")
+> > introduced an optimization to use only vcpu->doorbell_request for SMT
+> > emulation for Power9 and above guests, but the code for nested guests 
+> > still relies on the old way of handling doorbells, due to which an L2
+> > guest cannot be booted with XICS with SMT>1. The command to repro
+> > this issue is:
+> >
+> > qemu-system-ppc64 \
+> > 	-drive file=rhel.qcow2,format=qcow2 \
+> > 	-m 20G \
+> > 	-smp 8,cores=1,threads=8 \
+> > 	-cpu  host \
+> > 	-nographic \
+> > 	-machine pseries,ic-mode=xics -accel kvm
+> >
+> > Fix the plumbing to utilize vcpu->doorbell_request instead of vcore->dpdes 
+> > on P9 and above.
+> >
+> > Fixes: 6398326b9ba1 ("KVM: PPC: Book3S HV P9: Stop using vc->dpdes")
+> > Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> > ---
+> >  arch/powerpc/kvm/book3s_hv.c        |  9 ++++++++-
+> >  arch/powerpc/kvm/book3s_hv_nested.c | 20 ++++++++++++++++----
+> >  2 files changed, 24 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> > index cea28ac05923..0586fa636707 100644
+> > --- a/arch/powerpc/kvm/book3s_hv.c
+> > +++ b/arch/powerpc/kvm/book3s_hv.c
+> > @@ -4178,6 +4178,9 @@ static int kvmhv_vcpu_entry_p9_nested(struct kvm_vcpu *vcpu, u64 time_limit, uns
+> >  	}
+> >  	hvregs.hdec_expiry = time_limit;
+> >  
+> > +	// clear doorbell bit as hvregs already has the info
+> > +	vcpu->arch.doorbell_request = 0;
+> > +
+> >  	/*
+> >  	 * When setting DEC, we must always deal with irq_work_raise
+> >  	 * via NMI vs setting DEC. The problem occurs right as we
+> > @@ -4694,6 +4697,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u64 time_limit,
+> >  	struct kvm_nested_guest *nested = vcpu->arch.nested;
+> >  	unsigned long flags;
+> >  	u64 tb;
+> > +	bool doorbell_pending;
+> >  
+> >  	trace_kvmppc_run_vcpu_enter(vcpu);
+> >  
+> > @@ -4752,6 +4756,9 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u64 time_limit,
+> >  	 */
+> >  	smp_mb();
+> >  
+> > +	doorbell_pending = !cpu_has_feature(CPU_FTR_ARCH_300) &&
+> > +				vcpu->arch.doorbell_request;
 > 
-> However, as new MSRs are being added (and will be added in the future)
-> by CPU vendors on their newer CPUs with additional machine check error
-> information to be exported, the size of struct mce will balloon on some
-> CPUs, unnecessarily, since those fields are vendor-specific. Moreover,
-> different CPU vendors may export the additional information in varying
-> sizes.
+> Hmm... is the feature test flipped here?
+
+Sorry for responding late, I got involved in some other things. 
+Yes I think I got that part wrong, I guess it should've been
+
+doorbell_pending = !cpu_has_feature(CPU_FTR_HVMODE) &&
+                        vcpu->arch.doorbell_request;
+
+The objective of introducing this is to avoid returning to L1 midway
+when L0 is about to run L2. The issue is that if L1 does H_ENTER_NESTED
+and there is a doorbell for L2, this condition in kvmhv_run_single_vcpu
+will cause L0 to abort and go back to L1:
+
+	} else if (vcpu->arch.pending_exceptions ||
+		   vcpu->arch.doorbell_request ||
+		   xive_interrupt_pending(vcpu)) {
+		vcpu->arch.ret = RESUME_HOST;
+		goto out;
+	}
+
+Earlier, vc->dpdes was used to pass around doorbell state, that's why
+this condition did not cause problems, until 
+6398326b9ba1 ("KVM: PPC: Book3S HV P9: Stop using vc->dpdes")
+
 > 
-> The problem particularly intensifies since struct mce is exposed to
-> userspace as part of UAPI. It's bloating through vendor-specific data
-> should be avoided to limit the information being sent out to userspace.
+> > +
+> >  	if (!nested) {
+> >  		kvmppc_core_prepare_to_enter(vcpu);
+> >  		if (test_bit(BOOK3S_IRQPRIO_EXTERNAL,
+> > @@ -4769,7 +4776,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u64 time_limit,
+> >  				lpcr |= LPCR_MER;
+> >  		}
+> >  	} else if (vcpu->arch.pending_exceptions ||
+> > -		   vcpu->arch.doorbell_request ||
+> > +		   doorbell_pending ||
+> >  		   xive_interrupt_pending(vcpu)) {
+> >  		vcpu->arch.ret = RESUME_HOST;
+> >  		goto out;
+> > diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
+> > index 05f5220960c6..b34eefa6b268 100644
+> > --- a/arch/powerpc/kvm/book3s_hv_nested.c
+> > +++ b/arch/powerpc/kvm/book3s_hv_nested.c
+> > @@ -32,7 +32,10 @@ void kvmhv_save_hv_regs(struct kvm_vcpu *vcpu, struct hv_guest_state *hr)
+> >  	struct kvmppc_vcore *vc = vcpu->arch.vcore;
+> >  
+> >  	hr->pcr = vc->pcr | PCR_MASK;
+> > -	hr->dpdes = vc->dpdes;
+> > +	if (cpu_has_feature(CPU_FTR_ARCH_300))
+> > +		hr->dpdes = vcpu->arch.doorbell_request;
+> > +	else
+> > +		hr->dpdes = vc->dpdes;
+> >  	hr->hfscr = vcpu->arch.hfscr;
+> >  	hr->tb_offset = vc->tb_offset;
+> >  	hr->dawr0 = vcpu->arch.dawr0;
 > 
-> Add a new structure mce_hw_err to wrap the existing struct mce. The same
-> will prevent its ballooning since vendor-specifc data, if any, can now be
+> Great find.
+> 
+> Nested is all POWER9 and later only, so I think you can just
+> change to using doorbell_request always.
 
-Unknown word [vendor-specifc] in commit message.
+Noted.
 
-Please introduce a spellchecker into your patch creation workflow.
+> 
+> And probably don't have to do anything for book3s_hv.c unless
+> I'm mistaken about the feature test.
+>
 
-Also:
+As pointed out above, the intention was to avoid the "else if" part in
+kvmhv_run_single_vcpu(). Please do  point out if I missed something here.
 
-The tip-tree preferred ordering of variable declarations at the
-beginning of a function is reverse fir tree order::
-
-	struct long_struct_name *descriptive_name;
-	unsigned long foo, bar;
-	unsigned int tmp;
-	int ret;
-
-The above is faster to parse than the reverse ordering::
-
-	int ret;
-	unsigned int tmp;
-	unsigned long foo, bar;
-	struct long_struct_name *descriptive_name;
-
-And even more so than random ordering::
-
-	unsigned long foo, bar;
-	int ret;
-	struct long_struct_name *descriptive_name;
-	unsigned int tmp;
-
-diff ontop of yours:
-
----
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 3611366d56b7..28e28b69d84d 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1030,11 +1030,11 @@ static noinstr int mce_timed_out(u64 *t, const char *msg)
-  */
- static void mce_reign(void)
- {
--	int cpu;
- 	struct mce_hw_err *err = NULL;
- 	struct mce *m = NULL;
- 	int global_worst = 0;
- 	char *msg = NULL;
-+	int cpu;
- 
- 	/*
- 	 * This CPU is the Monarch and the other CPUs have run
-@@ -1291,8 +1291,8 @@ __mc_scan_banks(struct mce_hw_err *err, struct pt_regs *regs,
- {
- 	struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
- 	struct mca_config *cfg = &mca_cfg;
--	struct mce *m = &err->m;
- 	int severity, i, taint = 0;
-+	struct mce *m = &err->m;
- 
- 	for (i = 0; i < this_cpu_read(mce_num_banks); i++) {
- 		arch___clear_bit(i, toclear);
-@@ -1419,8 +1419,8 @@ static void kill_me_never(struct callback_head *cb)
- 
- static void queue_task_work(struct mce_hw_err *err, char *msg, void (*func)(struct callback_head *))
- {
--	struct mce *m = &err->m;
- 	int count = ++current->mce_count;
-+	struct mce *m = &err->m;
- 
- 	/* First call, save all the details */
- 	if (count == 1) {
-diff --git a/arch/x86/kernel/cpu/mce/genpool.c b/arch/x86/kernel/cpu/mce/genpool.c
-index 504d89724ecd..d0be6dda0c14 100644
---- a/arch/x86/kernel/cpu/mce/genpool.c
-+++ b/arch/x86/kernel/cpu/mce/genpool.c
-@@ -73,9 +73,9 @@ struct llist_node *mce_gen_pool_prepare_records(void)
- 
- void mce_gen_pool_process(struct work_struct *__unused)
- {
--	struct mce *mce;
--	struct llist_node *head;
- 	struct mce_evt_llist *node, *tmp;
-+	struct llist_node *head;
-+	struct mce *mce;
- 
- 	head = llist_del_all(&mce_event_llist);
- 	if (!head)
-diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
-index c65a5c4e2f22..313fe682db33 100644
---- a/arch/x86/kernel/cpu/mce/inject.c
-+++ b/arch/x86/kernel/cpu/mce/inject.c
-@@ -502,9 +502,9 @@ static void prepare_msrs(void *info)
- 
- static void do_inject(void)
- {
-+	unsigned int cpu = i_mce.extcpu;
- 	struct mce_hw_err err;
- 	u64 mcg_status = 0;
--	unsigned int cpu = i_mce.extcpu;
- 	u8 b = i_mce.bank;
- 
- 	i_mce.tsc = rdtsc_ordered();
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Gautam
 
