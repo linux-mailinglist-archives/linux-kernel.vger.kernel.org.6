@@ -1,156 +1,178 @@
-Return-Path: <linux-kernel+bounces-389301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199B89B6B1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:36:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD969B6B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA181F21A7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B49E1F219B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8432D213136;
-	Wed, 30 Oct 2024 17:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZlFrTJ4"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39AC21500E;
+	Wed, 30 Oct 2024 17:35:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC96C1EF95A;
-	Wed, 30 Oct 2024 17:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112E2199FB1;
+	Wed, 30 Oct 2024 17:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730309731; cv=none; b=MgnJZ+M6/sI6xti9XuKOlMut4tYd4uN5eUcmRK0czb2X/tswKJHbd0LHjwaVoi6zBhJwqSmYozES9kDGzxspD5v6R2CkepG47d91MR9mCOwhbEmg3u4BAUtXvD+4BuygJoQF9QhMN9QJRrZUzLVOm6oyfcdFs+obnIEVKSuDBTA=
+	t=1730309754; cv=none; b=lsxoQjomCx8B08uLYlbyOjrCS2kEfEHvZVd19SwBmDzbqjWFTSqXZQR5/MmLVK/hnVVI9xVyx8kqhufbskm4dBPAZlceW/+4BuhFLZYZyVRnoydeypV3MYD3WXEF1qHmDZNQgeWe2Xd0gO02IFPZtIqYOT+ofW9G93efxqEKi10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730309731; c=relaxed/simple;
-	bh=hN96yDzjFZnW0iLyGa0XM7KqV9VA85GMqGjCMXwqqhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mqMQ9ETDH0JwN/4aOBS+kULL8gThiv3+vehnhOjdWFsD4mu3BI32lgk+puxzMmg6UkdE3yj7+qeVVml8+Op9S2HrxTpZ9vHnvCGvIGBDMnX2lmcx50AH085ExxhhgEN0rxcORm5mrunmZA6Z14u/nVaUfhFxPlOwuyQ3dqlNT7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZlFrTJ4; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e5a0177531so34146a91.2;
-        Wed, 30 Oct 2024 10:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730309729; x=1730914529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BiP+OVHkwJ2WwEc50c1zL6X+ty2T+Id/9XryhgE+LVs=;
-        b=QZlFrTJ4/x1XoNI2NR7+s7HYkA5wjEMaRyYGzb7hz7kET0F5VeO+OUZB6lnMw1e4tp
-         VrtesHdWjnCVzXCM4YK7OIAnuXdhnjQ4uUiFPevSmDslLeKDK8O3Qtq1UXHKAn6rhZ7L
-         vgbeYHpeAQDHGDo9UYUBuvSY82WC4BP+C8O3dkovdxYpKp7EJEW3dU9WjMmjxIk8zFio
-         j9nc5sS7McavPRawn09qkkdU7HvFjgXcH+qupc896ER0JQ4FyjgiSDr+dN2CVuHR+8YJ
-         +o57FINxJb8nNAfzg9TIiGGgegp4orAJCFhm8DnQjB2+EjxxfsHHOSaQ79ooiL4QFEo/
-         XKjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730309729; x=1730914529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BiP+OVHkwJ2WwEc50c1zL6X+ty2T+Id/9XryhgE+LVs=;
-        b=YyDSWd51mMp5/arTJWtVzNB9q7lctBpjoqKsioD5FDstJg7jergk2pJuXqU+fo20N8
-         aes5eXl0G2qhYSbrCMrb6Eekg2ch8xbSN+uWb/AcsClDn6TokA1TCwoo9yjeQI82jSeV
-         8zkf8oewHV+xAkfQfPr8JOfEkl3vp8DO3F0//T+2O5ezGl4dmbbDKLnoCn3EqaWU/L46
-         toQUWhMan6IDLoqK9Pxq8mTKe4RXnbupFxUwqk7lRi9mVxKzNHhBVJIV0ailq0ADGZNk
-         srb+Oy0wrA0US7kb4U7oRQKJ09nkDKwckBydk70vuiA0jwF2hqDBN2cmNcWcaIkVR0Th
-         UXXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbL1xgIg/MtCl70MRVd6wl4px1Ume5ZwCSxIzOf8FvATjX03NKXd/2hV/pE60fwkeiL9HJiZfDiE/prNxlMAoB@vger.kernel.org, AJvYcCWRXJku8WWp/jY3oVMiSeGJqJVxtHfZ9bfEJG2IKuxzhvHN0sPCbtEteJpszuEzWuvHE9ItTSuAaDRLmIw1@vger.kernel.org, AJvYcCWhYrW54rx6Bxdpi6h1ZS1xti7x8x+S3HWmpCkBgaB9VjlfxBftUTo3WqyGCxfP0WchOMoMfyVNqRTjJKttZUl2/Ps8@vger.kernel.org, AJvYcCXRVD8Jg12diRlMGd6MgMwEVmIFplOczG1WHIfZpgfmVK8AvsKCxPK0uVMbfJVLNJY8hSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyXeueLd/8tvXc16vmjJbDy5WULzlGhz9DtV0FrUlWveLPXNUU
-	nWGUSbhPz4uEdP/J1P3WuDHxC/QGXcp+LSCf5u33s5FRhrWSxnH4M2kspp5Dxrb5mt4Hbdnsl0B
-	rGYZZmBEwNCwv7wKyIOhGe8DDk2ZHwA==
-X-Google-Smtp-Source: AGHT+IH95yXMclFnAHy8QB+eHNc4rmInj2I+LJ/8aDsx3EJqpaOzdT6/yEgEZy6tveL6Lgr1C9KElhWkO7Mhr4OuAnE=
-X-Received: by 2002:a17:90b:1d0c:b0:2e2:d7db:41fc with SMTP id
- 98e67ed59e1d1-2e8f10683a4mr18135770a91.10.1730309729183; Wed, 30 Oct 2024
- 10:35:29 -0700 (PDT)
+	s=arc-20240116; t=1730309754; c=relaxed/simple;
+	bh=BSasaU0mrz2wv1Rydn4ifPh2TNdENmALykPY4CNm9YU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UOd/m2qH7cljB5sEs334KoaWWCFBx8zunNv4rRs6RJqoH5Wzpqf0kUyhJ9pvwEEfbv8yExqrNg78QgEjjeSvPMMGPmxfwDmyIL+Lv/y7Isw0PH6yYUZodVh/qwZX6LEikTxTfkpjxFdwfcW2pUk+bwnZjsGHq4thG/jBVqpBg9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdvPw5nbcz6K5VP;
+	Thu, 31 Oct 2024 01:34:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7DEBC1401F3;
+	Thu, 31 Oct 2024 01:35:47 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 18:35:46 +0100
+Date: Wed, 30 Oct 2024 17:35:45 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: Matteo Martelli <matteomartelli3@gmail.com>, Jonathan Cameron
+	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+	<Michael.Hennerich@analog.com>, Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>, Paul
+ Cercueil <paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mips@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v5 2/5] iio: consumers: copy/release available info from
+ producer to fix race
+Message-ID: <20241030173545.00000374@Huawei.com>
+In-Reply-To: <ZyJHFp6vbQ7deLFs@black.fi.intel.com>
+References: <20241021-iio-read-avail-release-v5-0-b168713fab33@gmail.com>
+	<20241021-iio-read-avail-release-v5-2-b168713fab33@gmail.com>
+	<ZyJHFp6vbQ7deLFs@black.fi.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029002208.1947947-1-dolinux.peng@gmail.com>
- <20241029002208.1947947-2-dolinux.peng@gmail.com> <CAEf4BzbVjkhtQPcsDOLX_aR_vvB1nCQj357EQ5xwey8486=Niw@mail.gmail.com>
- <CAErzpmuHJ-qZqzS11GPK5_=UsuxtPk1gbexbhJ7nj59M-NzSHA@mail.gmail.com>
-In-Reply-To: <CAErzpmuHJ-qZqzS11GPK5_=UsuxtPk1gbexbhJ7nj59M-NzSHA@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 30 Oct 2024 10:35:17 -0700
-Message-ID: <CAEf4BzaXHrjoEWmEcvK62bqKuT3de__+juvGctR3=e8avRWpMQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] libbpf: Sort btf_types in ascending order by name
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Oct 30, 2024 at 8:13=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> On Wed, Oct 30, 2024 at 5:58=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Mon, Oct 28, 2024 at 5:22=E2=80=AFPM Donglin Peng <dolinux.peng@gmai=
-l.com> wrote:
-> > >
-> > > To enhance the searching performance of btf_find_by_name_kind, we
-> > > can sort the btf_types in ascending order based on their names.
-> > > This allows us to implement a binary search method.
-> > >
-> > > Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
-> > > Signed-off-by: Eduard Zingerman <eddyz87@gmail.com>
-> > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> > > ---
-> > > v4:
-> > >  - Divide the patch into two parts: kernel and libbpf
-> > >  - Use Eduard's code to sort btf_types in the btf__dedup function
-> > >  - Correct some btf testcases due to modifications of the order of bt=
-f_types.
-> > > ---
-> > >  tools/lib/bpf/btf.c                           | 115 +++++--
-> > >  tools/testing/selftests/bpf/prog_tests/btf.c  | 296 +++++++++-------=
---
-> > >  .../bpf/prog_tests/btf_dedup_split.c          |  64 ++--
-> > >  3 files changed, 268 insertions(+), 207 deletions(-)
-> > >
-> >
-> > I don't think we should do any extra sorting by default. Maybe we need
-> > some extra API to explicitly re-sort underlying types. But then again,
->
-> How do you feel about adding a new feature to the '--btf_features' option=
-,
-> which could be used to control sorting?
+On Wed, 30 Oct 2024 16:47:50 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-This is pahole question, and yes, having a --btf_features makes sense to me=
-.
+> On Mon, Oct 21, 2024 at 02:54:15PM +0200, Matteo Martelli wrote:
+> > Consumers need to call the producer's read_avail_release_resource()
+> > callback after reading producer's available info. To avoid a race
+> > condition with the producer unregistration, change inkern
+> > iio_channel_read_avail() so that it copies the available info from the
+> > producer and immediately calls its release callback with info_exists
+> > locked.
+> > 
+> > Also, modify the users of iio_read_avail_channel_raw() and
+> > iio_read_avail_channel_attribute() to free the copied available buffers
+> > after calling these functions. To let users free the copied buffer with
+> > a cleanup pattern, also add a iio_read_avail_channel_attr_retvals()
+> > consumer helper that is equivalent to iio_read_avail_channel_attribute()
+> > but stores the available values in the returned variable.  
+> 
+> ...
+> 
+> > +static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
+> > +					    struct iio_chan_spec const *chan,
+> > +					    const int *vals, long mask)
+> > +{
+> > +	kfree(vals);
+> > +}
+> > +
+> >  static int dpot_dac_write_raw(struct iio_dev *indio_dev,
+> >  			      struct iio_chan_spec const *chan,
+> >  			      int val, int val2, long mask)
+> > @@ -125,6 +132,7 @@ static int dpot_dac_write_raw(struct iio_dev *indio_dev,
+> >  static const struct iio_info dpot_dac_info = {
+> >  	.read_raw = dpot_dac_read_raw,
+> >  	.read_avail = dpot_dac_read_avail,
+> > +	.read_avail_release_resource = dpot_dac_read_avail_release_res,
+> >  	.write_raw = dpot_dac_write_raw,
+> >  };  
+> 
+> I have a problem with this approach. The issue is that we allocate
+> memory in one place and must clear it in another. This is not well
+> designed thingy in my opinion.
 
->
-> > why just by type name? What if type names are equal, what do we use to
-> > disambiguate. None of this is considered in this patch.
->
-> If there are multiple btf_types with identical names in a btf file,
-> they will have different kinds. These btf_types will be grouped
+It is a tricky corner and we've not yet come up with a better
+solution :(  I think one of the earlier versions did just always copy
+and the reviews suggested that was painful given we are fixing a tiny
+percentage of devices.  Hence we ended up with what is effectively
+an optional copy if the provider knows the data is volatile.
 
-Not necessarily, you can easily have types of the same kind with the
-same name. But this changes nothing, I'd still define fuller search
-criteria.
+So there are two 'potential' copies here and we need to be careful
+to separate them for purposes of discussion.
+A) Copy in provider if it has volatile available data.  In that
+   case the copy is done in a call to it via read_avail, and release
+   via a call to read_avail_release_resource().  So to my mind locally
+   the same as any acquire / release pair.
+B) Copy in the core for the case where we need the lifetime to persist.
+   That is a effectively a kmemdup() call so we could call back to the
+   core to release it but it would just be a kfree() wrapper.
+ 
+(A) Only occurs in a tiny subset of drivers, most use non volatile data
+    for read avail (constant, or constant after probe).
+(B) Only occurs for consumer drivers that directly use the avail data.
+    There are very few of those and no other sane way of solving this
+    because we can't hold a lock into the provider for an unknown
+    (long) time.
 
-> together after being sorted according to their names. We can
-> determine the range of the group and verify the btf_types within
-> that range by their kind to obtain the appropriate btf_type.
->
-> >
-> > pw-bot: cr
-> >
-> > > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > > index 3c131039c523..5290e9d59997 100644
-> > > --- a/tools/lib/bpf/btf.c
-> > > +++ b/tools/lib/bpf/btf.c
-> > > @@ -1,6 +1,9 @@
-> > >  // SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> > >  /* Copyright (c) 2018 Facebook */
-> > >
 
-[...]
+> I was thinking a bit of the solution and
+> at least these two comes to my mind:
+> 
+> 1) having a special callback for .read_avail_with_copy (choose better
+> name) that will dump the data to the intermediate buffer and clean it
+> after all;
+
+So we have that allocate the data in the provider and hand it to the
+consumer which then frees it with kfree() in all cases?
+
+Note that's what we do for the inkern interfaces (the ones consumer
+drivers have to use), just in the core not the providers because that
+corner is hard to close any other way. In this rare case we end up
+potentially copying twice.
+
+For the special cases where the buffer isn't passed on beyond
+functions that are part of the IIO core, we avoid the need for that
+(potentially second, probably only) copy because we can always
+ensure the release call is made.  Note this is the common case
+by far. It's the pretty printing done by the core to present this
+data to sysfs etc, or to find out the max value for some consumer
+that doesn't need the whole set.
+
+> 
+> 2) introduce a new type (or bit there), like IIO_AVAIL_LIST_ALLOC.
+
+The special handling that will need seems likely to be no more
+obvious than the handling we have here.  I'm not really
+sure how it would work.
+
+> 
+> In any case it looks fragile and not scalable. I propose to drop this
+> and think again.
+> 
+> Yes, yes, I'm fully aware about the problem you are trying to solve and
+> agree on the report, I think this solution is not good enough.
+
+I'll back this out of my tree for now so the discussion can carry on.
+
+Jonathan
+
 
