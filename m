@@ -1,171 +1,168 @@
-Return-Path: <linux-kernel+bounces-388375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BBD9B5EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:21:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC8A9B5EC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8E01F2222A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34072284085
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019901E22F2;
-	Wed, 30 Oct 2024 09:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948A91E22F5;
+	Wed, 30 Oct 2024 09:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="iKerIc9h"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GUfZKJt4"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8391CCEC2;
-	Wed, 30 Oct 2024 09:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12255192D79;
+	Wed, 30 Oct 2024 09:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730280098; cv=none; b=or4MnFKj8AGrtRi0hQBkPAkRJpxjI90ZSxfa0JdSu97oxwKh69oWi4yptOzqJ8i3+shdHRi9YHqQIB9VQJ8C3DLLtOdeAb4VkHJOH+CNg8OcSn1MKw18pxzdkXurNEn8RRnJaAXDOs6CxyFT8rQZ3849B2bxa/9rAsfMYVboQQ8=
+	t=1730280223; cv=none; b=Sb7QbsnnrsBEjx4Zgue0Vq6IPVh9GcR8j8WGLmE2KSHFYXI+lW8uA1Ee9qQeOnPraYtFqVm0CqYvoopkdb7aErlsQF8YNCCULrrseD9l45X2x2KaKdZ5TySq+DpXKGG2kRtvOSma7dH9ICDjDMXmDvFe3o4ZcNtpbWz8rMukE/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730280098; c=relaxed/simple;
-	bh=70tMDv49mQQjzweTGiK5PaokWjLpZ+/2+rBKiIwJMo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kh5nSRlYTasK6e6dCZrRla3+NF1hwZgl4PpsXuGf05CVfUC6VbKEVKVarAF3og8iZZJLisMr3Zkqem0QlNf7Ty6K41/sG211aVXtSupu0J08qvI9AtYx1oRLdKBc+rKOBlWMkXSc4qs7VqZfoBLo6OqYnYfBgqCaJu2Vcv6Y3lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=iKerIc9h; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=nXB58CuEgVXls1f+iMFYqhB7nNGt0EfBseEbWcPVD0k=; t=1730280095;
-	x=1730712095; b=iKerIc9h/4TCbx+IgaBSL08J8KwC956EtM5befWSQGWM/jYS/NRbYY98zreO8
-	22Ps/ENumEkjbPShmGV42yYRy6jRxjwsmU3Ky4KjAr1m9QnTCHaHY60dNV8zHWy4rdgPhOLR6rOmY
-	tKxmFxxTgJ/B+n9mzek2qXIfocmdtV2Fckg3W9FfggW6DSz9sCjsWtmLN1ETxy0bnTaiLkccofM7A
-	5Hs9Foc5mklsOZOVbzmNyurPPT+BHKnyZK3JIhykQCD1E+hFr8qCslZbiixPsVLJ17WiYwaYpUhaK
-	uR9zjQS64sS0LRbPN/xHaCpVzHLjjUKhxIed4hybxewXby2MTg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t64tK-0006fj-Q4; Wed, 30 Oct 2024 10:21:26 +0100
-Message-ID: <75f671b6-ce2a-4404-b662-2c9c7d28a598@leemhuis.info>
-Date: Wed, 30 Oct 2024 10:21:25 +0100
+	s=arc-20240116; t=1730280223; c=relaxed/simple;
+	bh=GRS7RqK+vg/opnKhU6HnMr81dM3bjA1pgnAF5w22634=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZ1hJb+gdFewMYuCDL3dmRp/AO0EBUd4wgxuZ9SxcrldHrLjPVm4QuPZI7M20q0QwnvOBRrIZ3hM3y/Bv/oYwj2lD0+ezz6/vFQ/7NgJJnXBw94K4gBIkJgBOOaNO/H7gZZ9nRFGRAihde1CHaHOA6vkXSWE6jtZetRDzzEw1s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GUfZKJt4; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U2dDm0003625;
+	Wed, 30 Oct 2024 09:23:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=h2QyrifHMzH2OclDL/eDVhaglcA9L6
+	ksjE5JpdclRwI=; b=GUfZKJt44k/8X711P74wYRfR9AZa6D/OzlQ+G3wbiUXJ6t
+	X8ShV0n0b3bxVaD2zlzalIMneUR+03VlWA9eICcQ/UyR4x79wKBG9hm2riqri1Gn
+	nDzmb7xBcFORsXS/kjpXACAqUM7eC9ynNrS/VN8zCYno64saB81frrLtMN6thPbd
+	4x5tVL1VA0H+fTjuv7msWGLgZLbE8/AMABqepwJk3QkquSIllxCRF1n9FmgU5wmB
+	vlzLBXtKwFV+9OwIqEMAihBQklAJN63kmyS2iT+uRpHYhVSs5jQDQyIi/LvjVehM
+	Izl0h+L6cbNB1duNVBfSRpag9RQZmil/AkDUKfRQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j3nsx921-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 09:23:31 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49U9NVo4015023;
+	Wed, 30 Oct 2024 09:23:31 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j3nsx91w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 09:23:31 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49U8tfXw015831;
+	Wed, 30 Oct 2024 09:23:30 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hdf1f0ft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 09:23:30 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49U9NQvp57540930
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 09:23:26 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7603420043;
+	Wed, 30 Oct 2024 09:23:26 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 361BC20040;
+	Wed, 30 Oct 2024 09:23:26 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 30 Oct 2024 09:23:26 +0000 (GMT)
+Date: Wed, 30 Oct 2024 10:23:24 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+Subject: Re: [PATCH v3 3/7] s390/physmem_info: query diag500(STORAGE LIMIT)
+ to support QEMU/KVM memory devices
+Message-ID: <20241030092324.6264-E-hca@linux.ibm.com>
+References: <20241025141453.1210600-1-david@redhat.com>
+ <20241025141453.1210600-4-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btmtk: Remove resetting mt7921 before
- downloading the fw
-To: "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
- =?UTF-8?B?Q2hyaXMgTHUgKOmZuOeomuazkyk=?= <Chris.Lu@mediatek.com>,
- =?UTF-8?B?SGFvIFFpbiAo56em5rWpKQ==?= <Hao.Qin@mediatek.com>
-Cc: "marc.payne@mdpsys.co.uk" <marc.payne@mdpsys.co.uk>,
- "marcel@holtmann.org" <marcel@holtmann.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
- =?UTF-8?B?RGVyZW4gV3UgKOatpuW+t+S7gSk=?= <Deren.Wu@mediatek.com>,
- "johan.hedberg@gmail.com" <johan.hedberg@gmail.com>,
- =?UTF-8?B?U3RldmUgTGVlICjmnY7oppboqqAp?= <steve.lee@mediatek.com>,
- Sean Wang <Sean.Wang@mediatek.com>, =?UTF-8?B?QWFyb24gSG91ICjkvq/kv4rku7Ap?=
- <Aaron.Hou@mediatek.com>, Takashi Iwai <tiwai@suse.de>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <20240822052310.25220-1-hao.qin@mediatek.com>
- <ZuB3omUkdUHLggYu@mdpsys.co.uk>
- <790e542aa9d08c7efeee6ef298fce2a87d8035e4.camel@mediatek.com>
- <ZuneSM4SvyUFX86j@mdpsys.co.uk>
- <9bfbbf24ac2480d94d3455f7e33e4b5502b38ced.camel@mediatek.com>
- <CABBYNZKYsL9jcF2n9TsA1BjU-CjXOdXu7MDLP9Sz_Ly8hBAf1w@mail.gmail.com>
- <c01e6dfa730dd10a7d4dba60fe31e82b9c296b37.camel@mediatek.com>
- <Zuyk1c6Gkxx3G0PB@mdpsys.co.uk>
- <f9e8688ebe559e10c019d0cbab4e8b1f5a7d2339.camel@mediatek.com>
- <ff502f63-2d87-4dee-a893-cce53353df8b@leemhuis.info>
- <87iktk4d9l.wl-tiwai@suse.de>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <87iktk4d9l.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1730280095;14c4c226;
-X-HE-SMSGID: 1t64tK-0006fj-Q4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025141453.1210600-4-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 7PV8sDhpy2m3WwtMDwIzKVS974As3b8o
+X-Proofpoint-GUID: CoroKk4SrxJOF8YMxe_DpfevRiAUCXDD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=753 clxscore=1015 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300072
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
-
-I'm a bit lost here, but maybe I'm missing something.
-
-Luiz, can you help out here? Is there a reason why this patch is not
-making any process?
-
-Chris Lu and/or Hao Qin: Can you maybe help out as well as well and help
-with resolving some open questions that might or might not be relevant
-(see below).
-
-From Takashi reply, the bugzilla ticket he linked to, and the mail from
-the MediaTek folks
-(https://lore.kernel.org/lkml/12a344e25b31ec00fe8b57814d43fcb166e71be5.camel@mediatek.com/
-) it from the outside looks like this patch should really be merged
-rather sooner that later as it fixes regressions for some people.
-Afaics it should get a "Fixes: ccfc8948d7e4d9 ("Bluetooth: btusb:
-mediatek: reset the controller before downloading the fw")" tag, as it's
-afaics that commit that causes the regression that is known since more
-than three months now
-(https://lore.kernel.org/all/ZsTh7Jyug7MbZsLE@mdpsys.co.uk/ ).
-
-But note, it seems it does not fix the regression completely according
-to Marc's testing.
-https://lore.kernel.org/all/ZuCB98DSdtKCgxaL@mdpsys.co.uk/
-
-Marc: Is that still how things are with current mainline?
-
-Ciao, Thorsten
-
-
-On 22.10.24 12:56, Takashi Iwai wrote:
-> On Mon, 14 Oct 2024 11:29:40 +0200,
-> Linux regression tracking (Thorsten Leemhuis) wrote:
->>
->> On 20.09.24 08:27, Chris Lu (陸稚泓) wrote:
->>> On Thu, 2024-09-19 at 23:25 +0100, marc.payne@mdpsys.co.uk wrote:
->>>>  	 
->>>> External email : Please do not click links or open attachments until
->>>> you have verified the sender or the content.
->>>>  Hi Chris and Luiz,
->>>>
->>>> What were your thoughts on the findings in my email dated 18th
->>>> September?
->>>
->>> Thanks for your suggestion.
->>>
->>> I've prepared the same environment (Kernel v6.11 + MT7921AUN dongle) to
->>> reproduce the issue, collected necessary logs locally and also
->>> initiated an internal discussion to clarify the root cause of this
->>> symptom. We'll review the changes between two firmware
->>> (20230526/20231109) if it's a bug or not.
->>>
->>> It may take some time to investigate. I'll let you know if there is any
->>> progress.
->>
->> Just wondering: Chris Lu, and Marc, what's the status here? From here it
->> looks like there was no progress to fix this regression for a while, but
->> it's easy to miss something, that's why I ask.
->>
->> Ciao, Thorsten
+On Fri, Oct 25, 2024 at 04:14:48PM +0200, David Hildenbrand wrote:
+> To support memory devices under QEMU/KVM, such as virtio-mem,
+> we have to prepare our kernel virtual address space accordingly and
+> have to know the highest possible physical memory address we might see
+> later: the storage limit. The good old SCLP interface is not suitable for
+> this use case.
 > 
-> FWIW, the similar bug was reported for the recent 6.11.x kernel on
-> openSUSE Tumbleweed, and this patch was confirmed to work around the
-> crash at boot:
->   https://bugzilla.suse.com/show_bug.cgi?id=1231599
+> In particular, memory owned by memory devices has no relationship to
+> storage increments, it is always detected using the device driver, and
+> unaware OSes (no driver) must never try making use of that memory.
+> Consequently this memory is located outside of the "maximum storage
+> increment"-indicated memory range.
 > 
-> It'd be great if you can go ahead and merge the proper fix to the
-> upstream.
+> Let's use our new diag500 STORAGE_LIMIT subcode to query this storage
+> limit that can exceed the "maximum storage increment", and use the
+> existing interfaces (i.e., SCLP) to obtain information about the initial
+> memory that is not owned+managed by memory devices.
 > 
-> Let me know if you have another patch to test.  Then I can create a
-> test kernel package and ask the bug reporter for testing.
+> If a hypervisor does not support such memory devices, the address exposed
+> through diag500 STORAGE_LIMIT will correspond to the maximum storage
+> increment exposed through SCLP.
 > 
+> To teach kdump on s390 to include memory owned by memory devices, there
+> will be ways to query the relevant memory ranges from the device via a
+> driver running in special kdump mode (like virtio-mem already implements
+> to filter /proc/vmcore access so we don't end up reading from unplugged
+> device blocks).
 > 
-> thanks,
+> Update setup_ident_map_size(), to clarify that there can be more than
+> just online and standby memory.
 > 
-> Takashi
-> 
+> Tested-by: Mario Casquero <mcasquer@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/s390/boot/physmem_info.c        | 47 +++++++++++++++++++++++++++-
+>  arch/s390/boot/startup.c             |  7 +++--
+>  arch/s390/include/asm/physmem_info.h |  3 ++
+>  3 files changed, 54 insertions(+), 3 deletions(-)
 
+Looks like I couldn't convince you to implement a query subcode.
+But anyway, let's move on.
+
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
+
+However, I would like to see an Ack or review from Alexander Gordeev
+or Vasily Gorbik for this patch.
 
