@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-388639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6AFF9B6268
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:00:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9A09B626B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B6F1C20C95
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:00:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F06D1F21D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCCC1E7C22;
-	Wed, 30 Oct 2024 12:00:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DF51E8841;
+	Wed, 30 Oct 2024 12:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wwu1UdnX"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89051E7C11
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DFA1E3DF0
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730289620; cv=none; b=Nu5UEq2Hn6L7eENGiKp1XHrJAJoWurEU/DUuJSbiPSvl98wfsMRlLOpMpkBT+aZlfr6ms6203hrivatRjqs4PKfPy9omCX2p8rid0JRFkBSP9F8mfa5YuOwP4lNhd2mGsmUNCjMn67JXB6ozj75Vq/p0GsQCHCz0gKOPsHFi4ng=
+	t=1730289629; cv=none; b=BhmwCYe0s50llw0wIyX+3LgnwHEti/NGUiuW5d7LGuTChJ2aVDztcb1T+XLclkEiX0/+e5d2rvcYt08CKctG0j68xMZnZh83j5y3x7rV99aVZJTO0Nte44EJG7DCLCWaLgny6K0mVgNHgFmsCYXVji3xz5kjOsO4CKD7qigMLu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730289620; c=relaxed/simple;
-	bh=aOVRAC8R1qXRCSp/+qZGxavDrOBiH8hXf0EABOYA3lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iheQGXmr4m56eaITBFhsMrtEowPIKxKYpe7usqSLxGKQpon7YYDjVIeeqrrUo2fnYnZm7OYYKPyzaEfA+wsidVMrWaflV4LiyiYpG8g+Hn7KhfSOC/wSMr97ibzpiUYmKFf7Dtx3iI2tD1UG0I57SpafpbYs/JPWxQfmMC+gmZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3683C4CEE3;
-	Wed, 30 Oct 2024 12:00:14 +0000 (UTC)
-Date: Wed, 30 Oct 2024 12:00:12 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>, Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>
-Subject: Re: [PATCH hotfix 6.12 v4 4/5] mm: refactor arch_calc_vm_flag_bits()
- and arm64 MTE handling
-Message-ID: <ZyIfzELjiqrDMhk_@arm.com>
-References: <cover.1730224667.git.lorenzo.stoakes@oracle.com>
- <ec251b20ba1964fb64cf1607d2ad80c47f3873df.1730224667.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1730289629; c=relaxed/simple;
+	bh=nM38MNJvKA1mecfRM7u5vCbSbJQllP2Ezo9yQDCPKDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eZmfPCDA/H/XF2p2URNjtNHDQlVOvcprHutHIeoDr8OAmQlXmxieUXuQDParyLU/h6KYL7lBAjPjmjphKr+DkyWJbg/3nmGXRyYK9pMClGIjUhB//opSi6Hn2tXpt3DIae2n4uKpucgAobrS6JaGeFCfI/ko+JXzRWZ1gZFbUEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wwu1UdnX; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so4599195f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730289624; x=1730894424; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=heM+XH6baATko105nYV8E2040lmy0LhxFZdot+CyuRw=;
+        b=wwu1UdnXlNqqfLKebzkbOvo+TJ1bD0rSwmONnuKARwoq3V2ZViDauVnWlFv8lDx9EZ
+         wddmg0pR5LwJjoCuUaoz6qwoW5cSRm3+6S4zoqTjFWtFPgJex8dA7yvPjD5l4vCPLHIO
+         ljfmXFaYgSvNkqFIyj4qMDDxPL1rylBzjP3JdLIXXG9LzxSUcDF2jsGo9j1S/GvHcXLZ
+         y1vYILv1yZnWq6eKS8MougYlWZ+n2deKA9HMa62+ugHRYKNxgPTuJhkvBXj/fh5fbsxo
+         AU2ShtFYSBskyrUT1ndAvldyckmFh+MVmWC4CrVGW/3WSJbZRYExJiyB2yyMRx5kms4m
+         bYsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730289624; x=1730894424;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=heM+XH6baATko105nYV8E2040lmy0LhxFZdot+CyuRw=;
+        b=FrfRZ5HgprYIYF21wv44hBlCwBZ7CAFYB34DR9Zp5u0tkMG+6ckizysupumIpFVJQb
+         Osu1pULciqi1fNbVAm5jBTYQs40bLukrQOJ3YFuqHmyaUmafRPNhVMT2hTyUYWoIor6z
+         UqHYljW+DM7G+NMZtQU3m3NUvzDM97fWSj0Bdp4mWd8+lyKGsQYqrbOYyCN9AUSdKle3
+         Dtp2vrwstJQ6HE044zEbSbavmf/2BRgTE0wjjsXZnnKjycyinScDMJXkOwtMgL++cvRN
+         Xcd3XfOcJUwqUbjatXMMx3PAM6Dy44fOrV/AGUGSFPKgtJnFxmh+8WouPxhZ5UgUJJrs
+         TqEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkuKVqWkE6zY0P8A30LzLrMO5biqirC+pevErAjfMwhlX3oBOUFxrsT6f89bTTtMV4B96psmZ069/JWa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL0658D1APR33L2fdYRiqo6osmGf58jPNoAVrubEFfq2nv6TdX
+	rsniJcj1TRFbmzkbeJsTocunIZoQ+7DQSXvK07Qu5WlNMYQsdZyzBH0MUjQ7glg=
+X-Google-Smtp-Source: AGHT+IHdqyep7BVt0uyn5JbTz0KBCY80ohOEAxNDfe2YT8nR9HTsXFBe91fCaeMmIZfL9ezJQQxpbg==
+X-Received: by 2002:adf:ec8f:0:b0:374:b35e:ea6c with SMTP id ffacd0b85a97d-381b70ed1c3mr2049217f8f.40.1730289624347;
+        Wed, 30 Oct 2024 05:00:24 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9480e5sm19330995e9.16.2024.10.30.05.00.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 05:00:23 -0700 (PDT)
+Message-ID: <b5dcd5df-7215-4679-a6be-c45d525e8051@linaro.org>
+Date: Wed, 30 Oct 2024 12:00:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec251b20ba1964fb64cf1607d2ad80c47f3873df.1730224667.git.lorenzo.stoakes@oracle.com>
-X-TUID: 0+WlLMvWRpmU
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/11] scsi: ufs: exynos: fix hibern8 notify callbacks
+To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
+Cc: andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
+References: <20241025131442.112862-1-peter.griffin@linaro.org>
+ <20241025131442.112862-11-peter.griffin@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241025131442.112862-11-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 06:11:47PM +0000, Lorenzo Stoakes wrote:
-> Currently MTE is permitted in two circumstances (desiring to use MTE having
-> been specified by the VM_MTE flag) - where MAP_ANONYMOUS is specified, as
-> checked by arch_calc_vm_flag_bits() and actualised by setting the
-> VM_MTE_ALLOWED flag, or if the file backing the mapping is shmem, in which
-> case we set VM_MTE_ALLOWED in shmem_mmap() when the mmap hook is activated
-> in mmap_region().
-> 
-> The function that checks that, if VM_MTE is set, VM_MTE_ALLOWED is also set
-> is the arm64 implementation of arch_validate_flags().
-> 
-> Unfortunately, we intend to refactor mmap_region() to perform this check
-> earlier, meaning that in the case of a shmem backing we will not have
-> invoked shmem_mmap() yet, causing the mapping to fail spuriously.
-> 
-> It is inappropriate to set this architecture-specific flag in general mm
-> code anyway, so a sensible resolution of this issue is to instead move the
-> check somewhere else.
-> 
-> We resolve this by setting VM_MTE_ALLOWED much earlier in do_mmap(), via
-> the arch_calc_vm_flag_bits() call.
-> 
-> This is an appropriate place to do this as we already check for the
-> MAP_ANONYMOUS case here, and the shmem file case is simply a variant of the
-> same idea - we permit RAM-backed memory.
-> 
-> This requires a modification to the arch_calc_vm_flag_bits() signature to
-> pass in a pointer to the struct file associated with the mapping, however
-> this is not too egregious as this is only used by two architectures anyway
-> - arm64 and parisc.
-> 
-> So this patch performs this adjustment and removes the unnecessary
-> assignment of VM_MTE_ALLOWED in shmem_mmap().
-> 
-> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-> Reported-by: Jann Horn <jannh@google.com>
-> Fixes: deb0f6562884 ("mm/mmap: undo ->mmap() when arch_validate_flags() fails")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Thanks for respinning this. FTR,
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+On 10/25/24 2:14 PM, Peter Griffin wrote:
+> v1 of the patch which introduced the ufshcd_vops_hibern8_notify() callback
+> used a bool instead of an enum. In v2 this was updated to an enum based on
+> the review feedback in [1].
+> 
+> ufs-exynos hibernate calls have always been broken upstream as it follows
+> the v1 bool implementation.
+> 
+> [1] https://patchwork.kernel.org/project/linux-scsi/patch/001f01d23994$719997c0$54ccc740$@samsung.com/
 
-> @@ -151,13 +152,13 @@ calc_vm_prot_bits(unsigned long prot, unsigned long pkey)
->   * Combine the mmap "flags" argument into "vm_flags" used internally.
->   */
->  static inline unsigned long
-> -calc_vm_flag_bits(unsigned long flags)
-> +calc_vm_flag_bits(struct file *file, unsigned long flags)
->  {
->  	return _calc_vm_trans(flags, MAP_GROWSDOWN,  VM_GROWSDOWN ) |
->  	       _calc_vm_trans(flags, MAP_LOCKED,     VM_LOCKED    ) |
->  	       _calc_vm_trans(flags, MAP_SYNC,	     VM_SYNC      ) |
->  	       _calc_vm_trans(flags, MAP_STACK,	     VM_NOHUGEPAGE) |
-> -	       arch_calc_vm_flag_bits(flags);
-> +		arch_calc_vm_flag_bits(file, flags);
+you can use the Link tag, Link: blabla [1]
 
-Nitpick (but please ignore, Andrew picked them up already): one space
-alignment off.
+A Fixes tag and maybe Cc to stable? Or maybe you chose to not backport
+it intentionally, in which case you have to add:
+Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
 
--- 
-Catalin
+In order to avoid scripts queuing your patch. It contains "fix" in the
+subject, there's a high probability to be queued to stable.
+
+With these addressed:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
