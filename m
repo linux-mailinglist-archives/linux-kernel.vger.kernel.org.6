@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-388686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7E59B6315
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:30:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F03C9B6317
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82D0A282038
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:30:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 969A5B212D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176181E1023;
-	Wed, 30 Oct 2024 12:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054D91E5734;
+	Wed, 30 Oct 2024 12:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pa/qy1E4"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="J2fIeowd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4496F1990CD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D934D8A7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730291426; cv=none; b=WieHfKRY520uM1NTmlijFYfGKPESQPiH95zqv8vHNukTFB6Uvk1nV3l7KuY4o+vhyy+yCNbEPiAM3CGtsVKvUu0Y4Rspa/uw7yFrzVj464ne/fjHfdcxIaW6VWEGWzuMWCSOv/Feryj9Y41Cdj91DqruI7NYyphyf8iqXpAKY6g=
+	t=1730291487; cv=none; b=WCkMwutcXzzdgmpJFRL67aFYTNyOxlLqVxY6U2LOLNcbk8d5J4zONdMSj/CtJ9uqV5TT6SrksMa9GfN9c37pPX1ckHlZwHrK+JkCP0ZU497AlLFiykoOYg7kuhLn2mMNYpLX/apJBrYJvy7jMCDmIzVD1ECiWD2uaRD5k2oeR0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730291426; c=relaxed/simple;
-	bh=ax3BM6l4Yla/lY9UnazzdU5p6XWuA40aFii9GjRu8y8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RFTVKnHZncgl3Nqe+gdLc1cw/KQLb7zU+kus4MpUA+3gQn2KWMUoS5AHdWo2+KD7HvpAsPwD8gvbnLHyewqW0BsUTerdJPvkqla99mx6kVdLqscBGmlkRoB+PBpgdP9QDUGbZClcFwl3OqGZ0PjnAdlMYfJ66eqm/7fwW5yHyd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=pa/qy1E4; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8AA051083;
-	Wed, 30 Oct 2024 13:30:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730291419;
-	bh=ax3BM6l4Yla/lY9UnazzdU5p6XWuA40aFii9GjRu8y8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=pa/qy1E4vKkbbGvYtMImDrKVGofB8eGlhpMwHcWI7kkk5QsheeV8FPh5XlbeuzOAD
-	 +TPmUySO6ai5clZ0vvCaX5ZDbKOZ5W/me8LIQsKdb4zoFvzDPTRnUbFgel09cLg5G/
-	 hy51lBz5lWwsNhSGTW1bA35WHy9y/21dbPzpGMJo=
-Message-ID: <ba1eb42c-118f-4afb-bf14-befad68a5945@ideasonboard.com>
-Date: Wed, 30 Oct 2024 14:30:18 +0200
+	s=arc-20240116; t=1730291487; c=relaxed/simple;
+	bh=7HgRtPNS8CUkBTCpmmeomtOUpIWKob4wQYR+p7sTdZE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=oTxSJyLPfgqOjj/vW4sZAgwIEDFXn326YGhFx1ZOlQrc4JA7YI7B52BSkcspgKp5Ro0jR4pPLBK6l7npLxsmDkKiKiCf/iIXjnbA2mFpCIDgdyz7aQ2krIvIwcr1ZUWY1SwA8JEs8xbds3rIENaMxDXr7mmDVQUQXQS87QENpkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=J2fIeowd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730291475;
+	bh=7HgRtPNS8CUkBTCpmmeomtOUpIWKob4wQYR+p7sTdZE=;
+	h=Date:To:Cc:From:Subject:From;
+	b=J2fIeowdPu0wKw7clbC+LOJp1MXyYTIh+4ISDeeCgQEQaoalOo4jSxDplFWA8Xvt7
+	 Mn1eiht4VIGV0ce9wADf32t8V8QXMWnscP/hdPRSzIHc8Naxrl8ApN3wTL4mnvPZ42
+	 B/h/OdRKCC4Vyfjd2Cs73uc2iO9+mLTDwX6/vm5o+pkOfz2tcrF24H3G3iGm/4R7fF
+	 MW5j/Oga/EgplOOFmGRtWHT2VB+Wo3r50BWAaEcKRRGBbv0FRTOhsgYtCfJcMo/0tB
+	 qqHYXJLNZcuJnavmI/MPCyB7P63PMWa+c0ji2m/ekb1fjQSUM9VTvhzAZNpCs42lHe
+	 Av0dY8xe8g/Kg==
+Received: from [192.168.50.250] (unknown [171.76.83.143])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2449C17E35D3;
+	Wed, 30 Oct 2024 13:31:14 +0100 (CET)
+Message-ID: <b7107a1c-d170-44d9-96c2-4f7051d0721f@collabora.com>
+Date: Wed, 30 Oct 2024 18:01:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,161 +55,253 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/8] drm: zynqmp_dp: IRQ cleanups and debugfs support
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- David Airlie <airlied@gmail.com>, Michal Simek <michal.simek@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, "Sagar, Vishal" <vishal.sagar@amd.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org
-References: <20240809193600.3360015-1-sean.anderson@linux.dev>
- <5e9769dd-459a-4ff3-aebb-bb7057192733@linux.dev>
- <a023bd66-8f42-4f27-9aa2-5097b2574562@ideasonboard.com>
- <e959a01f-b466-4076-8219-a6c83a7194c0@linux.dev>
- <07766e5e-6009-4b8e-8a50-30ba0fe763f5@linux.dev>
- <20cf573c-d05f-444c-9463-f342a750f6cb@ideasonboard.com>
 Content-Language: en-US
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20cf573c-d05f-444c-9463-f342a750f6cb@ideasonboard.com>
+To: dri-devel <dri-devel@lists.freedesktop.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+From: Vignesh Raman <vignesh.raman@collabora.com>
+Subject: INFO: task testdisplay:2546 blocked for more than 122 seconds
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Sean,
+Hi,
 
-On 28/10/2024 17:04, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 25/10/2024 17:58, Sean Anderson wrote:
->> Hi Tomi,
->>
->> On 10/3/24 10:53, Sean Anderson wrote:
->>> On 10/2/24 10:50, Tomi Valkeinen wrote:
->>>> Hi,
->>>>
->>>> On 01/10/2024 21:31, Sean Anderson wrote:
->>>>> On 8/9/24 15:35, Sean Anderson wrote:
->>>>>> This series cleans up the zyqnmp_dp IRQ and locking situation. Once
->>>>>> that's done, it adds debugfs support. The intent is to enable 
->>>>>> compliance
->>>>>> testing or to help debug signal-integrity issues.
->>>>
->>>> I think the patches 1-7 look fine, and I think I can pick those 
->>>> already to drm-misc if you're ok with that.
->>>>
->>>> I'm a bit unsure about patch 8, probably mainly because I don't have 
->>>> experience with the compliance testing.
->>>>
->>>> How have you tested this? With some DP analyzer/tester, I presume?
->>>
->>> For my test setup I used an oscilloscope hooked up to the displayport
->>> output using a fixture that broke the signals out to SMA. Since the
->>> oscilloscope cannot emulate a sink, I first had the output connected to
->>> a monitor. Then I disabled HPD and reconnected the output to my fixture.
->>> This process is described in more detail in the documentation.
->>>
->>>> I think none of this (patch 8) is needed by almost anybody.
->>>
->>> Well, I found it very useful for debugging a signal integrity issue I
->>> was having. Once I could have a look at the signals it was very clear
->>> what the problem was.
->>>
->>>> Even among zynqmp_dp developers I assume it's very rare to have the
->>>> hardware for this. I wonder if it would make sense to have the debugfs
->>>> and related code behind a compile option (which would be nice as the
->>>> code wouldn't even compiled in), or maybe a module parameter (which
->>>> would be nice as then "anyone" can easily enable it for compliance
->>>> testing). What do you think?
->>>
->>> Other drivers with these features just enabled it unconditionally, so I
->>> didn't bother with any special config.
->>>
->>>> I also somehow recall that there was some discussion earlier about
->>>> how/if other drivers support compliance testing. But I can't find the
->>>> discussion. Do you remember if there was such discussion, and what was
->>>> the conclusion? With a quick look, everything in the debugfs looks
->>>> generic, not xilinx specific.
->>>
->>> The last it got discussed was back in [1], but I never got any further
->>> response. I agree that some of this is generic, and could probably be
->>> reworked into some internal helpers. But I don't have the bandwidth at
->>> the moment to do that work.
->>>
->>> --Sean
->>>
->>> [1] http://lore.kernel.org/dri-devel/ 
->>> cda22b0c-8d7c-4ce2-9a7c-3b5ab540fa1f@linux.dev
->>
->> Does this all make sense to you? At the moment I don't believe I have any
->> changes I need to resend for (although this series is archived in 
->> patchwork [1]
->> for some reason).
->>
->> --Sean
->>
->> [1] https://patchwork.kernel.org/project/dri-devel/list/? 
->> series=878338&archive=both
-> 
-> I was hoping to get tested-by from amd, as I can't test this properly, 
-> but it's probably pointless to wait.
-> 
-> The biggest hesitation I have is what I mentioned earlier: this adds a 
-> lot of code which is not for normal use. It would be nice to split this 
-> into a separate file, maybe behind a compile option, but I fear that'll 
-> require a more restructuring of the driver.
-> 
-> So, I think it's fine, I'll apply this tomorrow.
-> 
->   Tomi
-> 
+Below issue was seen with drm-ci testing,
 
-Thanks, pushed.
+Pipeline: https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/65859386
+Linux version: 6.12-rc2
+Branch: drm-misc-next
 
-  Tomi
+DEBUG - Begin test testdisplay
+[ 1229.996702] INFO: task testdisplay:2546 blocked for more than 122 
+seconds.
+[ 1229.997303]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 1229.997764] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 1229.998816]
+                Showing all locks held in the system:
+[ 1229.998824] 1 lock held by khungtaskd/29:
+[ 1229.998830]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 1229.998870] 1 lock held by dmesg/66:
+[ 1229.998875] 3 locks held by kworker/1:0/495:
+[ 1229.998881] 2 locks held by kms_concurrent/1623:
+[ 1229.998886]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 1229.998915]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 1229.998937] 1 lock held by testdisplay/2546:
+[ 1229.998943]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
 
+[ 1229.998968] =============================================
+
+[ 1352.876639] INFO: task testdisplay:2546 blocked for more than 245 
+seconds.
+[ 1352.877238]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 1352.877707] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 1352.878582]
+                Showing all locks held in the system:
+[ 1352.878587] 1 lock held by khungtaskd/29:
+[ 1352.878591]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 1352.878613] 1 lock held by dmesg/66:
+[ 1352.878618] 4 locks held by kworker/1:0/495:
+[ 1352.878622] 2 locks held by kms_concurrent/1623:
+[ 1352.878626]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 1352.878647]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 1352.878665] 1 lock held by testdisplay/2546:
+[ 1352.878669]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 1352.878689] =============================================
+
+[ 1475.756731] INFO: task testdisplay:2546 blocked for more than 368 
+seconds.
+[ 1475.757311]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 1475.757863] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 1475.758884]
+                Showing all locks held in the system:
+[ 1475.758890] 1 lock held by khungtaskd/29:
+[ 1475.758895]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 1475.758921] 1 lock held by dmesg/66:
+[ 1475.758927] 3 locks held by kworker/1:0/495:
+[ 1475.758933] 2 locks held by kms_concurrent/1623:
+[ 1475.758938]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 1475.758963]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 1475.758985] 1 lock held by testdisplay/2546:
+[ 1475.758990]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 1475.759016] =============================================
+
+[ 1598.636617] INFO: task testdisplay:2546 blocked for more than 491 
+seconds.
+[ 1598.637199]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 1598.637638] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 1598.638466]
+                Showing all locks held in the system:
+[ 1598.638471] 1 lock held by khungtaskd/29:
+[ 1598.638476]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 1598.638498] 1 lock held by dmesg/66:
+[ 1598.638502] 2 locks held by kworker/1:0/495:
+[ 1598.638507] 2 locks held by kms_concurrent/1623:
+[ 1598.638511]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 1598.638531]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 1598.638561] 1 lock held by testdisplay/2546:
+[ 1598.638565]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 1598.638586] =============================================
+
+[ 1721.516713] INFO: task testdisplay:2546 blocked for more than 614 
+seconds.
+[ 1721.517446]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 1721.518039] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 1721.519117]
+                Showing all locks held in the system:
+[ 1721.519124] 1 lock held by khungtaskd/29:
+[ 1721.519130]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 1721.519160] 1 lock held by dmesg/66:
+[ 1721.519167] 3 locks held by kworker/1:0/495:
+[ 1721.519173] 2 locks held by kms_concurrent/1623:
+[ 1721.519179]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 1721.519207]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 1721.519231] 1 lock held by testdisplay/2546:
+[ 1721.519237]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 1721.519267] =============================================
+
+[ 1844.396721] INFO: task testdisplay:2546 blocked for more than 737 
+seconds.
+[ 1844.397422]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 1844.397950] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 1844.398996]
+                Showing all locks held in the system:
+[ 1844.399004] 1 lock held by khungtaskd/29:
+[ 1844.399010]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 1844.399041] 1 lock held by dmesg/66:
+[ 1844.399048] 4 locks held by kworker/1:0/495:
+[ 1844.399053] 2 locks held by kms_concurrent/1623:
+[ 1844.399058]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 1844.399084]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 1844.399108] 1 lock held by testdisplay/2546:
+[ 1844.399113]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 1844.399141] =============================================
+
+[ 1967.276701] INFO: task testdisplay:2546 blocked for more than 860 
+seconds.
+[ 1967.277282]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 1967.277735] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 1967.278559]
+                Showing all locks held in the system:
+[ 1967.278576] 1 lock held by khungtaskd/29:
+[ 1967.278580]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 1967.278602] 1 lock held by dmesg/66:
+[ 1967.278606] 2 locks held by kworker/1:0/495:
+[ 1967.278610] 2 locks held by kms_concurrent/1623:
+[ 1967.278614]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 1967.278633]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 1967.278650] 1 lock held by testdisplay/2546:
+[ 1967.278654]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 1967.278674] =============================================
+
+[ 2090.156642] INFO: task testdisplay:2546 blocked for more than 983 
+seconds.
+[ 2090.157632]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 2090.158241] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 2090.159102]
+                Showing all locks held in the system:
+[ 2090.159107] 1 lock held by khungtaskd/29:
+[ 2090.159111]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 2090.159133] 1 lock held by dmesg/66:
+[ 2090.159137] 3 locks held by kworker/1:0/495:
+[ 2090.159141] 2 locks held by kms_concurrent/1623:
+[ 2090.159145]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 2090.159165]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 2090.159182] 1 lock held by testdisplay/2546:
+[ 2090.159189]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 2090.159209] =============================================
+
+[ 2213.036658] INFO: task testdisplay:2546 blocked for more than 1105 
+seconds.
+[ 2213.037250]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 2213.037744] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 2213.038593]
+                Showing all locks held in the system:
+[ 2213.038598] 1 lock held by khungtaskd/29:
+[ 2213.038602]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 2213.038624] 1 lock held by dmesg/66:
+[ 2213.038629] 3 locks held by kworker/1:0/495:
+[ 2213.038633] 2 locks held by kms_concurrent/1623:
+[ 2213.038637]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 2213.038657]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 2213.038674] 1 lock held by testdisplay/2546:
+[ 2213.038678]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 2213.038699] =============================================
+
+[ 2335.916691] INFO: task testdisplay:2546 blocked for more than 1228 
+seconds.
+[ 2335.917751]       Not tainted 6.12.0-rc2-g13339fa4b45f #1
+[ 2335.918166] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
+disables this message.
+[ 2335.919035]
+                Showing all locks held in the system:
+[ 2335.919040] 1 lock held by khungtaskd/29:
+[ 2335.919044]  #0: ffffffff93d5b2c0 (rcu_read_lock){....}-{1:2}, at: 
+debug_show_all_locks+0x36/0x1c0
+[ 2335.919066] 1 lock held by dmesg/66:
+[ 2335.919071] 3 locks held by kworker/1:0/495:
+[ 2335.919075] 2 locks held by kms_concurrent/1623:
+[ 2335.919079]  #0: ffffa9fe00b4fd20 
+(crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_mode_atomic_ioctl+0x11b/0xc90
+[ 2335.919099]  #1: ffff8cc9c140caf0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: modeset_lock+0x5c/0x1c0
+[ 2335.919116] 1 lock held by testdisplay/2546:
+[ 2335.919120]  #0: ffff8cc9c0a1f0b0 (crtc_ww_class_mutex){+.+.}-{3:3}, 
+at: drm_modeset_lock+0x1e/0x30
+
+[ 2335.919140] =============================================
+
+Regards,
+Vignesh
 
