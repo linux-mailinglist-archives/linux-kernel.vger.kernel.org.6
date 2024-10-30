@@ -1,131 +1,323 @@
-Return-Path: <linux-kernel+bounces-389169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779419B6979
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5CB9B697C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A94791C219F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B017C1C219FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4349F214422;
-	Wed, 30 Oct 2024 16:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABA42144B5;
+	Wed, 30 Oct 2024 16:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nFJ/Pnzu"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aKq3cCm8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92B2199381
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E75768FC;
+	Wed, 30 Oct 2024 16:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730306745; cv=none; b=KSbQr/NTw0oBLrRyaa1NCzdbFAoiuAx9iGq2U5fR/uD1H7+uhE1AsIpUb2UsFlMSx1zI5miSWfRyrlBmSzAwSiLBDYHqtbN/MCKHyIB/rjFE+heCwtFM5B0CriURzoswp40aL5j5dFRxqIEsTAoBdJHWgtkTGLgoFp0ISCscAfE=
+	t=1730306788; cv=none; b=kcZK6j63SaUg9qt0KDzoBobkbmdPY8eZNoCd42djeUrVm1upWzswCPDszwiioWsM9irivgiNsa31LU1mdvc4P6jtZuDwFp4hkxNs6F5nKE2qDljiQKjwM/Ro/8zhPf+J2ZuhwgzekYsbOYJY8J9jWxIWyytY3WiD0sw4ZHbnY/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730306745; c=relaxed/simple;
-	bh=hcFBMSRwI7XyLVXiwju9iNxMgHCXtPSFdswCTiWGT8A=;
+	s=arc-20240116; t=1730306788; c=relaxed/simple;
+	bh=kkCKvFjpUCVV69H1kfwrpgpFazlpD0ZkPP3c2tJJ1tg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ECFXEZDO8bkmDTvRQ+0YwB57ZUEduqU0vnz43RPv2eYdm0zWlkQWl7fQasp2SiQfQ1LmxkUskUJcaev6jCGzPQoJ0ThsWQDIzPOpwy3IDEtCBmvZ1FjEI/AtBAfgshjGy21+bRd9zGD0Bd3aBi6e/+v30WFh0kKnmnSQJLnFMX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nFJ/Pnzu; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f2119a4d-7ba3-4f11-91d7-54aac51ef950@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730306737;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2IImZ1cZVsIXJIGIFBIuoTjHne0xPtt9XDcxUzdxcbs=;
-	b=nFJ/PnzuiZtjPkvI0PKl64gdNlEDUbL7oSAq78a1QvDclqZGoe1La2Ah6XdSp1vzNooun7
-	bCwWvVAvHmL8gchTeI60zfM3b/WoGPP/2zLD0EmFLUI0Odu5eYChun3lBUKye2a73LAIIs
-	yadQopyWqNnFMUSZFHBPqPAtYd1KtN8=
-Date: Thu, 31 Oct 2024 00:45:24 +0800
+	 In-Reply-To:Content-Type; b=d4UeDKAM0oJw7y3Adpeo/6+dihl7iqZWjOmBoP/mLobMGzInz+7URSDtmzx6WoPkhGJymeqVrMOIpjEwp/7R7ToTe5WL4q0WIVhGAM1JqzukE4ms+L5MFOR40LdRfymeUlMjf+3jfyhxYAwdoAxNNtbRhjMEgL7ghX3jrByxbfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aKq3cCm8; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730306785; x=1761842785;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kkCKvFjpUCVV69H1kfwrpgpFazlpD0ZkPP3c2tJJ1tg=;
+  b=aKq3cCm8Qfyofv33tOobtuPqk5YsKVORGziaV4oWSBf8dui+2O91IGaY
+   ee46XxOcXqwgoRDtm26mD85D3we3JWPgJNAJwgZwCM2f62prThR3p3Yk+
+   CwFSCsTh6gUPgG2i+ixnGxnuDQxxLxGl7SzKaFSMguKFdJ4wzm67zSjhi
+   1s0WAvX3srLrIV1dia1uPWCpk4pz53XQHVLfq+uwNKlxNB2as4NtvsQA1
+   mnvZUTc45IY0GQD5TCRDirIRtuvGRrKKdjfJ2NM7zb/9p7dHzwbj6P9Dh
+   y/dNHnCzaZ8t0LuAv4ETjWu1zCIPq5GRibnu3SD7PtVFRbAZZw351Ufdx
+   g==;
+X-CSE-ConnectionGUID: wt/O2aquQtq96/i97ClxuQ==
+X-CSE-MsgGUID: BXrcFWUASJqEFxia4Q4qZg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40592506"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="40592506"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:46:23 -0700
+X-CSE-ConnectionGUID: yB+rFLQpRhmf61Ein+LMbw==
+X-CSE-MsgGUID: FAVjUsqvTqeuOf+OyGtp+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="87150911"
+Received: from nnlnb-sb-019.ccr.corp.intel.com (HELO [10.125.108.160]) ([10.125.108.160])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:46:17 -0700
+Message-ID: <35faf0e5-9f54-44e8-ae65-ce1dc91b9cbd@intel.com>
+Date: Wed, 30 Oct 2024 09:46:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <ux2lfkaeoyakulhllitxraduqjldtxrcmpgsis3us7msixiguq@ff5gfhtkakh2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 07/14] cxl/memfeature: Add CXL memory device patrol
+ scrub control feature
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Shiju Jose <shiju.jose@huawei.com>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "bp@alien8.de" <bp@alien8.de>, "tony.luck@intel.com" <tony.luck@intel.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>,
+ "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+ "dave@stgolabs.net" <dave@stgolabs.net>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+ "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+ "alison.schofield@intel.com" <alison.schofield@intel.com>,
+ "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+ "ira.weiny@intel.com" <ira.weiny@intel.com>,
+ "david@redhat.com" <david@redhat.com>,
+ "Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
+ "leo.duran@amd.com" <leo.duran@amd.com>,
+ "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+ "rientjes@google.com" <rientjes@google.com>,
+ "jiaqiyan@google.com" <jiaqiyan@google.com>,
+ "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+ "james.morse@arm.com" <james.morse@arm.com>,
+ "jthoughton@google.com" <jthoughton@google.com>,
+ "somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
+ "erdemaktas@google.com" <erdemaktas@google.com>,
+ "pgonda@google.com" <pgonda@google.com>,
+ "duenwen@google.com" <duenwen@google.com>,
+ "gthelen@google.com" <gthelen@google.com>,
+ "wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+ "dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+ "wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+ "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+ tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)"
+ <prime.zeng@hisilicon.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ "kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
+ wanghuiqiang <wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>
+References: <20241025171356.1377-1-shiju.jose@huawei.com>
+ <20241025171356.1377-8-shiju.jose@huawei.com>
+ <3a007a70-136b-4a45-8dd2-d33725ea96bc@intel.com>
+ <e6aed765394b4822ad5a70018c87ef1f@huawei.com>
+ <67b569b0-1cd5-44e0-8465-064b41a1afd8@intel.com>
+ <20241030161628.00001fdc@Huawei.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <ux2lfkaeoyakulhllitxraduqjldtxrcmpgsis3us7msixiguq@ff5gfhtkakh2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20241030161628.00001fdc@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
 
-On 2024/10/18 23:43, Dmitry Baryshkov wrote:
-> On Fri, Oct 18, 2024 at 03:49:34PM +0300, Abel Vesa wrote:
->> The assignment of the of_node to the aux bridge needs to mark the
->> of_node as reused as well, otherwise resource providers like pinctrl will
->> report a gpio as already requested by a different device when both pinconf
->> and gpios property are present.
->> Fix that by using the device_set_of_node_from_dev() helper instead.
+
+On 10/30/24 9:16 AM, Jonathan Cameron wrote:
+> On Tue, 29 Oct 2024 11:32:47 -0700
+> Dave Jiang <dave.jiang@intel.com> wrote:
+> 
+>> On 10/29/24 10:00 AM, Shiju Jose wrote:
+>>>
+>>>   
+>>>> -----Original Message-----
+>>>> From: Dave Jiang <dave.jiang@intel.com>
+>>>> Sent: 29 October 2024 16:32
+>>>> To: Shiju Jose <shiju.jose@huawei.com>; linux-edac@vger.kernel.org; linux-
+>>>> cxl@vger.kernel.org; linux-acpi@vger.kernel.org; linux-mm@kvack.org; linux-
+>>>> kernel@vger.kernel.org
+>>>> Cc: bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+>>>> mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
+>>>> Cameron <jonathan.cameron@huawei.com>; gregkh@linuxfoundation.org;
+>>>> sudeep.holla@arm.com; jassisinghbrar@gmail.com; alison.schofield@intel.com;
+>>>> vishal.l.verma@intel.com; ira.weiny@intel.com; david@redhat.com;
+>>>> Vilas.Sridharan@amd.com; leo.duran@amd.com; Yazen.Ghannam@amd.com;
+>>>> rientjes@google.com; jiaqiyan@google.com; Jon.Grimm@amd.com;
+>>>> dave.hansen@linux.intel.com; naoya.horiguchi@nec.com;
+>>>> james.morse@arm.com; jthoughton@google.com; somasundaram.a@hpe.com;
+>>>> erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
+>>>> gthelen@google.com; wschwartz@amperecomputing.com;
+>>>> dferguson@amperecomputing.com; wbs@os.amperecomputing.com;
+>>>> nifan.cxl@gmail.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
+>>>> <prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
+>>>> kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
+>>>> Linuxarm <linuxarm@huawei.com>
+>>>> Subject: Re: [PATCH v14 07/14] cxl/memfeature: Add CXL memory device patrol
+>>>> scrub control feature
+>>>>
+>>>>
+>>>>
+>>>> On 10/25/24 10:13 AM, shiju.jose@huawei.com wrote:  
+>>>>> From: Shiju Jose <shiju.jose@huawei.com>
+>>>>>
+>>>>> CXL spec 3.1 section 8.2.9.9.11.1 describes the device patrol scrub
+>>>>> control feature. The device patrol scrub proactively locates and makes
+>>>>> corrections to errors in regular cycle.
+>>>>>
+>>>>> Allow specifying the number of hours within which the patrol scrub
+>>>>> must be completed, subject to minimum and maximum limits reported by the  
+>>>> device.  
+>>>>> Also allow disabling scrub allowing trade-off error rates against
+>>>>> performance.
+>>>>>
+>>>>> Add support for patrol scrub control on CXL memory devices.
+>>>>> Register with the EDAC device driver, which retrieves the scrub
+>>>>> attribute descriptors from EDAC scrub and exposes the sysfs scrub
+>>>>> control attributes to userspace. For example, scrub control for the
+>>>>> CXL memory device "cxl_mem0" is exposed in  
+>>>> /sys/bus/edac/devices/cxl_mem0/scrubX/.  
+>>>>>
+>>>>> Additionally, add support for region-based CXL memory patrol scrub control.
+>>>>> CXL memory regions may be interleaved across one or more CXL memory
+>>>>> devices. For example, region-based scrub control for "cxl_region1" is
+>>>>> exposed in /sys/bus/edac/devices/cxl_region1/scrubX/.
+>>>>>
+>>>>> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>>>> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>>>> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+>>>>> ---
+>>>>>  Documentation/edac/edac-scrub.rst |  74 ++++++
+>>>>>  drivers/cxl/Kconfig               |  18 ++
+>>>>>  drivers/cxl/core/Makefile         |   1 +
+>>>>>  drivers/cxl/core/memfeature.c     | 381 ++++++++++++++++++++++++++++++
+>>>>>  drivers/cxl/core/region.c         |   6 +
+>>>>>  drivers/cxl/cxlmem.h              |   7 +
+>>>>>  drivers/cxl/mem.c                 |   4 +
+>>>>>  7 files changed, 491 insertions(+)
+>>>>>  create mode 100644 Documentation/edac/edac-scrub.rst  create mode
+>>>>> 100644 drivers/cxl/core/memfeature.c
+>>>>>
+>>>>> diff --git a/Documentation/edac/edac-scrub.rst
+>>>>> b/Documentation/edac/edac-scrub.rst
+>>>>> new file mode 100644
+>>>>> index 000000000000..4aad4974b208
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/edac/edac-scrub.rst
+>>>>> @@ -0,0 +1,74 @@
+>>>>> +.. SPDX-License-Identifier: GPL-2.0
+>>>>> +  
+>>> [...]
+>>>   
+>>>>> +static int cxl_mem_ps_get_attrs(struct cxl_memdev_state *mds,
+>>>>> +				struct cxl_memdev_ps_params *params) {
+>>>>> +	size_t rd_data_size = sizeof(struct cxl_memdev_ps_rd_attrs);
+>>>>> +	size_t data_size;
+>>>>> +	struct cxl_memdev_ps_rd_attrs *rd_attrs __free(kfree) =
+>>>>> +						kmalloc(rd_data_size,  
+>>>> GFP_KERNEL);  
+>>>>> +	if (!rd_attrs)
+>>>>> +		return -ENOMEM;
+>>>>> +
+>>>>> +	data_size = cxl_get_feature(mds, cxl_patrol_scrub_uuid,
+>>>>> +				    CXL_GET_FEAT_SEL_CURRENT_VALUE,
+>>>>> +				    rd_attrs, rd_data_size);
+>>>>> +	if (!data_size)
+>>>>> +		return -EIO;
+>>>>> +
+>>>>> +	params->scrub_cycle_changeable =  
+>>>> FIELD_GET(CXL_MEMDEV_PS_SCRUB_CYCLE_CHANGE_CAP_MASK,  
+>>>>> +						   rd_attrs->scrub_cycle_cap);
+>>>>> +	params->enable =  
+>>>> FIELD_GET(CXL_MEMDEV_PS_FLAG_ENABLED_MASK,  
+>>>>> +				   rd_attrs->scrub_flags);
+>>>>> +	params->scrub_cycle_hrs =  
+>>>> FIELD_GET(CXL_MEMDEV_PS_CUR_SCRUB_CYCLE_MASK,  
+>>>>> +					    rd_attrs->scrub_cycle_hrs);
+>>>>> +	params->min_scrub_cycle_hrs =  
+>>>> FIELD_GET(CXL_MEMDEV_PS_MIN_SCRUB_CYCLE_MASK,  
+>>>>> +						rd_attrs->scrub_cycle_hrs);
+>>>>> +
+>>>>> +	return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static int cxl_ps_get_attrs(struct device *dev, void *drv_data,  
+>>>>
+>>>> Would a union be better than a void *drv_data for all the places this is used as a
+>>>> parameter? How many variations of this are there?
+>>>>
+>>>> DJ  
+>>> Hi Dave,
+>>>
+>>> Can you give more info on this given this is a generic callback for the scrub control and each
+>>> implementation will have its own context struct (for eg. struct cxl_patrol_scrub_context here
+>>> for CXL scrub control), which in turn will be passed in and out as opaque data.  
 >>
->> Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
->> Cc: stable@vger.kernel.org      # 6.8
->> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->> ---
->> Changes in v2:
->> - Re-worded commit to be more explicit of what it fixes, as Johan suggested
->> - Used device_set_of_node_from_dev() helper, as per Johan's suggestion
->> - Added Fixes tag and cc'ed stable
->> - Link to v1: https://lore.kernel.org/r/20241017-drm-aux-bridge-mark-of-node-reused-v1-1-7cd5702bb4f2@linaro.org
->> ---
->>   drivers/gpu/drm/bridge/aux-bridge.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
+>> Mainly I'm just seeing a lot of calls with (void *). Just asking if we want to make it a union that contains 'struct cxl_patrol_scrub_context' and etc.
+> 
+> You could but then every new driver would need to include
+> changes in the edac core to add it's own entry to that union.
+> 
+> Not sure that's a good way to go for opaque driver specific context.
+> 
+> This particular function though can use
+> a struct cxl_patrol_scrub_context * anyway as it's not part of the
+> core interface, but rather one called only indirectly
+> by functions that are passed a void * but know it is a
+> struct clx_patrol_scrub_context *.
+
+Thanks Jonathan. That's basically what I wanted to know. 
+
+> 
+> Jonathan
+> 
+> 
 >>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
-Technically speaking, your driver just move the burden to its caller.
-Because this driver requires its user call drm_aux_bridge_register()
-to create an AUX child device manually, you need it call ida_alloc()
-to generate a unique id.
-
-Functions symbols still have to leak to other subsystems, which is
-not really preserve coding sharing.
-
-What's worse, the action that allocating unique device id traditionally
-is the duty of driver core. Why breaks (so called) perfect device driver
-model by moving that out of core. Especially in the DT world that the
-core knows very well how to populate device instance and manage the
-reference counter.
-
-HPD handling is traditionally belongs to connector, create standalone
-driver like this one *abuse* to both Maxime's simple bridge driver and
-Laurent's display-connector bridge driver or drm_bridge_connector or
-whatever. Why those work can't satisfy you? At least, their drivers
-are able to passing the mode setting states to the next bridge.
-
-Basically those AUX drivers implementation abusing the definition of
-bridge, abusing the definition of connector and abusing the DT.
-Its just manually populate instances across drivers.
-
-  
-
--- 
-Best regards,
-Sui
+>>>
+>>> Thanks,
+>>> Shiju  
+>>>>  
+>>>>> +			    struct cxl_memdev_ps_params *params) {
+>>>>> +	struct cxl_patrol_scrub_context *cxl_ps_ctx = drv_data;
+>>>>> +	struct cxl_memdev *cxlmd;
+>>>>> +	struct cxl_dev_state *cxlds;
+>>>>> +	struct cxl_memdev_state *mds;
+>>>>> +	u16 min_scrub_cycle = 0;
+>>>>> +	int i, ret;
+>>>>> +
+>>>>> +	if (cxl_ps_ctx->cxlr) {
+>>>>> +		struct cxl_region *cxlr = cxl_ps_ctx->cxlr;
+>>>>> +		struct cxl_region_params *p = &cxlr->params;
+>>>>> +
+>>>>> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
+>>>>> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
+>>>>> +
+>>>>> +			cxlmd = cxled_to_memdev(cxled);
+>>>>> +			cxlds = cxlmd->cxlds;
+>>>>> +			mds = to_cxl_memdev_state(cxlds);
+>>>>> +			ret = cxl_mem_ps_get_attrs(mds, params);
+>>>>> +			if (ret)
+>>>>> +				return ret;
+>>>>> +
+>>>>> +			if (params->min_scrub_cycle_hrs > min_scrub_cycle)
+>>>>> +				min_scrub_cycle = params-
+>>>>> min_scrub_cycle_hrs;
+>>>>> +		}
+>>>>> +		params->min_scrub_cycle_hrs = min_scrub_cycle;
+>>>>> +		return 0;
+>>>>> +	}
+>>>>> +	cxlmd = cxl_ps_ctx->cxlmd;
+>>>>> +	cxlds = cxlmd->cxlds;
+>>>>> +	mds = to_cxl_memdev_state(cxlds);
+>>>>> +
+>>>>> +	return cxl_mem_ps_get_attrs(mds, params); }
+>>>>> +  
+>>> [...]  
+>>>>  
+>>>   
+>>
+>>
+> 
+> 
 
 
