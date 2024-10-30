@@ -1,143 +1,93 @@
-Return-Path: <linux-kernel+bounces-387988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1D99B58CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:45:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787419B58D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401261C22BB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9EBF1C21F0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB2D1DFDE;
-	Wed, 30 Oct 2024 00:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7556222F19;
+	Wed, 30 Oct 2024 00:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S8Veyza5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMnT1SV1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3F4C70
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18344C70;
+	Wed, 30 Oct 2024 00:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730249120; cv=none; b=P1mLq4gU0WjjonpS9aOXwHa+jopOi++rDhkpb6aTtEPo6IrQMeib7RfC1EzaISbohbFgYByw3o6uLXNP5Kj+RLsTRaMZxL5t3Dde5ONQAd0NagSOPWRku1kgdHdtIbyhpYp5+w2hB7t7LsLhUfYx6EdVy/6mby45PVoXgdHgC2o=
+	t=1730249328; cv=none; b=SiC+dOQyMTjZHSF34oWuc/AMnNjMC+6khQaXBAESqbNSH2EI7u+Dp6Iya7OVEfADEyXzmmCwnhxqgBCR1d0qcp6Zpgr/XTHMX+KNVKu5ajSG/FDKPSA6zklYEOB4oZeIks4nqYAmkJMIuzXKPBcfcRRSq6WsSPa7hpzMtFg4kGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730249120; c=relaxed/simple;
-	bh=i9U/vrsCfNzszfB9K4Ybs/sfBuAGg5mqtaoJVVoZZGg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kGuSzmR5XkW0rGCs5ce3wITiiFxkIXZgddzKySaKAtesDYk8JSNRw4vmQXPkiEwDTeiRFtXUdqj94DZ5Rxn4j0NsYrTuhqTj+LJ12OgJ9kyjE6ydGpV+qDt8c/cPhLK+XRkkzbtKi7d5FZYrZyS/c1gZU3qidvE2mdierZ6PQVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S8Veyza5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C07DC4CECD;
-	Wed, 30 Oct 2024 00:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730249119;
-	bh=i9U/vrsCfNzszfB9K4Ybs/sfBuAGg5mqtaoJVVoZZGg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S8Veyza5n90EQD3okN0qAC+/UxS4gbEXBTUL1MzzW45keJUBajctrx5gPHZPzzWmu
-	 nvGwNNO621jnDjuEh65BDPt+Pwylr0U1A+jf1I/MPfXTmUa214d9nkErnXz+7PVVFo
-	 9Wq3o2b+ipPue7Bb6WVyVTZWFDQucUqZuxa+9GWs=
-Date: Tue, 29 Oct 2024 17:45:18 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Marc Dionne <marc.c.dionne@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Marc Dionne
- <marc.dionne@auristor.com>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2] tools/mm: Fix slabinfo crash when MAX_SLABS is
- exceeded
-Message-Id: <20241029174518.60fa703fc9cb304d6e69e9a0@linux-foundation.org>
-In-Reply-To: <20241029161341.14063-1-marc.c.dionne@gmail.com>
-References: <20241029161341.14063-1-marc.c.dionne@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730249328; c=relaxed/simple;
+	bh=97w9E5ZcD4Tld5FFeLVUkMm+FoGOknYL9VY1icR2+OU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IErxMllW9AL5KZJbLpIurUD8s698PJxbhqD4n8a8xccjBuB7T3iOfA1LsMxuSeF7aE9sgUjoCoJpuPjhuQAXU+97wj+gMX3RmPu8NsKYi7qBetUtLHCR1S8/91wEjbf7CzOwIJTvA8TDnPUBgMhIc8mo5q3vGjgnsTNQMKY3CHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMnT1SV1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4468AC4CECD;
+	Wed, 30 Oct 2024 00:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730249328;
+	bh=97w9E5ZcD4Tld5FFeLVUkMm+FoGOknYL9VY1icR2+OU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GMnT1SV1C3tVwJG+j3WErsYbxElkeiSuFj0vBPnf/Rps4WHjTbpeqiPHyehXXSIWw
+	 zEIXVI6nPqBhNxbo+ka/kbDpJnulq+qazLfuRo3qgA8mevs6xre9bzjS5BjxaSu7Uv
+	 hqZCfwZWaUr6AlGuFTGsV9Gad4fpr50D6bmsM1YZ39CPxd8D/brqjzgTWvciq9/rzY
+	 5GBO+sTn1XrN8PzhWeA6QAhkhxfgBeujbBCvzcCrnMOTjLSutDRQwYHXT2SSbLBuRp
+	 X8L6JUasAn+aRL4LEgFPe70b3UuY9+07Bm2kd98LMTVMvyUo9yHsfoxCnGZrzMra3Q
+	 xSHeWqFcyLb0w==
+Date: Tue, 29 Oct 2024 14:48:47 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: [GIT PULL] cgroup: Fixes for v6.12-rc5
+Message-ID: <ZyGCb34Fcj3yoVL2@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 29 Oct 2024 13:13:41 -0300 Marc Dionne <marc.c.dionne@gmail.com> wrote:
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-> From: Marc Dionne <marc.dionne@auristor.com>
-> 
-> The number of slabs can easily exceed the hard coded MAX_SLABS in the
-> slabinfo tool, causing it to overwrite memory and crash.
-> 
-> Increase the value of MAX_SLABS, and check if that has been exceeded for
-> each new slab, instead of at the end when it's already too late.  Also
-> move the check for MAX_ALIASES into the loop body.
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-Thanks.
+are available in the Git repository at:
 
-> --- a/tools/mm/slabinfo.c
-> +++ b/tools/mm/slabinfo.c
-> @@ -21,7 +21,7 @@
->  #include <regex.h>
->  #include <errno.h>
->  
-> -#define MAX_SLABS 500
-> +#define MAX_SLABS 1000
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.12-rc5-fixes
 
-That isn't a very large increase.
+for you to fetch changes up to 3cc4e13bb1617f6a13e5e6882465984148743cf4:
 
->  #define MAX_ALIASES 500
->  #define MAX_NODES 1024
->  
-> @@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
->  				p--;
->  			alias->ref = strdup(p);
->  			alias++;
-> +			if (alias - aliasinfo > MAX_ALIASES)
-> +				fatal("Too many aliases\n");
->  			break;
->  		   case DT_DIR:
->  			if (chdir(de->d_name))
-> @@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
->  			if (slab->name[0] == ':')
->  				alias_targets++;
->  			slab++;
-> +			if (slab - slabinfo > MAX_SLABS)
-> +				fatal("Too many slabs\n");
->  			break;
+  cgroup: Fix potential overflow issue when checking max_depth (2024-10-14 13:39:25 -1000)
 
-This could be improved - if the number of slabs is exactly equal to
-MAX_SLABS we'll unnecessarily report an error.  Wouldn't this
-alteration be better?  
+----------------------------------------------------------------
+cgroup: Fixes for v6.12-rc5
 
---- a/tools/mm/slabinfo.c~tools-mm-fix-slabinfo-crash-when-max_slabs-is-exceeded-fix
-+++ a/tools/mm/slabinfo.c
-@@ -1228,6 +1228,8 @@ static void read_slab_dir(void)
- 				continue;
- 		switch (de->d_type) {
- 		   case DT_LNK:
-+			if (alias - aliasinfo >= MAX_ALIASES)
-+				fatal("Too many aliases\n");
- 			alias->name = strdup(de->d_name);
- 			count = readlink(de->d_name, buffer, sizeof(buffer)-1);
- 
-@@ -1240,10 +1242,10 @@ static void read_slab_dir(void)
- 				p--;
- 			alias->ref = strdup(p);
- 			alias++;
--			if (alias - aliasinfo > MAX_ALIASES)
--				fatal("Too many aliases\n");
- 			break;
- 		   case DT_DIR:
-+			if (slab - slabinfo >= MAX_SLABS)
-+				fatal("Too many slabs\n");
- 			if (chdir(de->d_name))
- 				fatal("Unable to access slab %s\n", slab->name);
- 			slab->name = strdup(de->d_name);
-@@ -1305,8 +1307,6 @@ static void read_slab_dir(void)
- 			if (slab->name[0] == ':')
- 				alias_targets++;
- 			slab++;
--			if (slab - slabinfo > MAX_SLABS)
--				fatal("Too many slabs\n");
- 			break;
- 		   default :
- 			fatal("Unknown file type %lx\n", de->d_type);
-_
+- cgroup_bpf_release_fn() could saturate system_wq with
+  cgrp->bpf.release_work which can then form a circular dependency leading
+  to deadlocks. Fix by using a dedicated workqueue. The system_wq's max
+  concurrency limit is being increased separately.
 
+- Fix theoretical off-by-one bug when enforcing max cgroup hierarchy depth.
+
+----------------------------------------------------------------
+Chen Ridong (1):
+      cgroup/bpf: use a dedicated workqueue for cgroup bpf destruction
+
+Xiu Jianfeng (1):
+      cgroup: Fix potential overflow issue when checking max_depth
+
+ kernel/bpf/cgroup.c    | 19 ++++++++++++++++++-
+ kernel/cgroup/cgroup.c |  4 ++--
+ 2 files changed, 20 insertions(+), 3 deletions(-)
+
+--
+tejun
 
