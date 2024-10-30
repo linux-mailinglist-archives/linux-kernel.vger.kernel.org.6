@@ -1,53 +1,74 @@
-Return-Path: <linux-kernel+bounces-388756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8647C9B6401
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:26:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35209B6404
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19F7B22CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7366A282A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523161E7C11;
-	Wed, 30 Oct 2024 13:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54401E9060;
+	Wed, 30 Oct 2024 13:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KyAF95dK"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JpKRxxMr"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E6C1E32B7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783C71E32B7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294754; cv=none; b=qruIOl4tFPXWkjER5/GKwW9N8SVxl6NjSuzq0zOw/1tG3Fu81/dx/hRtu+ket5bLzpe5bWknj19w0d7m+ikw02uZDIqvrT2l80gVN3JPAszTqyllhLD9RqfGpCdHSxSGniGSsx+OTzmW2enKg12tUNLNxnChF9sQZ38t10U9VDI=
+	t=1730294777; cv=none; b=fnF7yL8xcd0djQeajVSTPurX9J17XWcr26OwULdIX7jJ5isAMZuQdTMcf2ahL1sX9nVtDy30wacmmRWnsY8ofaI4ssRyLba/EXSD8Emtifg4IU9JI/qaxRgI6BBOP+mCxe91oT6WJW8BMOMeZXp0IguDXjAjHSQhj2SghumKyBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294754; c=relaxed/simple;
-	bh=pvbXgR9Xm7QX5Wa1OLsladlfCU7PiLKDysLpnvQUIAM=;
+	s=arc-20240116; t=1730294777; c=relaxed/simple;
+	bh=+lEE3ZvScNViSL9a6fOzXq+QZdhBaSX2eQfMf90vbOQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=josjI92MM/HuJLu7wG+zMJlENKK19ANkJe/5NgFnHY47sSojzudJhZJoBp+ldi10pMEtMuXIhpSKL4xQl7pNKo7dYPMhQoPyybjkocTYyPtm5EcRyQiuUiNDSXnx5uQ5cCBo1R7qmL9Pcots+Ut3kydb/KQPPulLoJ5qaMv0L1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KyAF95dK; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Us9rkUfj+iE/u81ryKmhTooVo1HWmg71Ma4F5AMwC6Q=; b=KyAF95dK1Nks5OhjcOsFn2SV4I
-	vhtp4D4K1TQjQavDtp5Akcb51zdOeyGXlCRb3RsZgGjDFIZr/EphZ5z9Pi8o+Q76rO00oSifV/+7P
-	ct+pS9pMtYXneLOPfzlhbMU56PazAq5oWReh9nE/LxFEU6rpf066k6JANziPaUpyys9lt9pX2kJBH
-	ZKXCd71qwryyoBi/gumwjpmnghcNyC9LWnrumDZrIGLLzPBYW5CXQLb8KpEKrzAzZreJ8RLv4bVPk
-	aScWVUr8EiP99kV6nXFs+3i2jYvjnfZgBc9Hfz7DmxeXbnQMXHoZMCD298NaAe1Q5nRqV/EMcKKDe
-	pl+vhmmg==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t68hg-00H6BY-7O; Wed, 30 Oct 2024 14:25:40 +0100
-Message-ID: <8f432835-1e45-4e2e-b053-10d25a23d5fb@igalia.com>
-Date: Wed, 30 Oct 2024 10:25:33 -0300
+	 In-Reply-To:Content-Type; b=LodsA4OhCdpPh10cMLcIbY06t2a18sLUsv+5HuwQ/3vtE7/hOMUiIkZxyMUFzhoWxkc0Lqoa601tDPF/mEPcHocP4jxP99SoT4xSnawfqzpO2dgzdDxdMovXKxI5QilWkXR4X5BRV0ehfLENj7PrBgjVmdlv/Xi9dt/qQFJ/qhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JpKRxxMr; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83a9be2c0e6so251034039f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730294773; x=1730899573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xX6fm9VCsSgt5EDlA5wRKTyZ1JmOIbQx/7X6jBDtd8=;
+        b=JpKRxxMrbniqoBNjxSaJfU7K+YPVWP9NUCxsCAM4fqbY2HeS4Wlf0VsPiRwhHaHHgK
+         XyzVaEfwOwLPg/xf4Kcqm0voOsTUNhNxCS112l5vDHoFbQ3fFmvr4XuX3lGH+QYpCoQq
+         /zn1NKHUwNDwVMW3g6RR+SYayj7HY8TSgt3tkI8s+sO2fJEF1JvwUAgL38U1PRLa8pyU
+         mZuGq/xYqD4PScV4+xXkDc1liB0kfEYe4SuRJKLy8xvfePaB8q0SJwzQjJrgbkhxD7Jx
+         NTqzBeFkEl4rgJzlWC6T+qyoAM+OYHuMNn1PMMJUOSey1n+SJCx9mC2ktdpJkdVTE/EL
+         cFpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730294773; x=1730899573;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/xX6fm9VCsSgt5EDlA5wRKTyZ1JmOIbQx/7X6jBDtd8=;
+        b=pKW8//JM7DyItftOQvQgDGeC+llMwp7f18nQeGd7mTNRmDRPTU+YApqKcHthoC4O0B
+         FsXGnqZoI/8ihgEFXk45XRh2IlHqm83Wvz9DdwtN/4QxMqiZN1+fWAQsXvwyC+lC9zxX
+         3P5lw/baYWA765hi0KN+nwzJenHwWXUb6pt5yoerxPQUzKVBlrccdcD6U2HozVlPQ/Ou
+         2zW9OQvusmiYKUr2+BXN9WikbkNK/v1YU6FT7vgG9DLmeVjb+2BmUrLN745FQoaREAhz
+         WA+KPBIucJUYFEMNOuLb5AwnZXl4XukwiaJ1coisYmS/H4QdQOyf01SXhWeVDdE1YgcN
+         YVNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVz3KDKkokh63ald9SKmLZPGdIGn1PB/L41V17oaGfZtZXuw0FtE/9966g+lva8X38SDSKW38yjD+rOw0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnmUTLCRLZha9qyCytEI5JezjxYsLrfxvjJUI25SsYSoaZbt7M
+	NP5+dyss6U2x2oTad4NlQfAQhJ4+YyNE+Jn3COQxVp8a3W4hX4hH4HOkULGwtqsJsdqOVrjkEsH
+	i
+X-Google-Smtp-Source: AGHT+IEsVlii3mRo5W+vm4gIyoAnXb3fZiNSsyAm6sxq7zo11o0EclueM9ju723DPueM+/HbQGuJ0Q==
+X-Received: by 2002:a05:6602:13d5:b0:82a:a76a:1779 with SMTP id ca18e2360f4ac-83b1c46f9a3mr1190724339f.8.1730294773512;
+        Wed, 30 Oct 2024 06:26:13 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc727813a0sm2924292173.143.2024.10.30.06.26.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 06:26:12 -0700 (PDT)
+Message-ID: <34fe7b21-41cf-4524-87e4-20f1944460b6@kernel.dk>
+Date: Wed, 30 Oct 2024 07:26:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,70 +76,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/v3d: Drop allocation of object without mountpoint
-To: matthias.bgg@kernel.org, Melissa Wen <mwen@igalia.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Matthias Brugger <matthias.bgg@gmail.com>
-References: <20241029-v3d-v2-1-c0d3dd328d1b@gmail.com>
+Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Ruyi Zhang <ruyi.zhang@samsung.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peiwei.li@samsung.com
+References: <CGME20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad@epcas5p2.samsung.com>
+ <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
+ <20241012091026.1824-1-ruyi.zhang@samsung.com>
+ <5d288a05-c3c8-450a-9e25-abac89eb0951@kernel.dk>
+ <cdc6a0c4-5ad8-4ad6-9dca-49fa5e44f8dd@gmail.com>
+ <09958a6f-4e24-4a18-b6b3-7ea10ea96beb@kernel.dk>
+ <8890fa84-7fd3-4198-86d6-9da79e7cad07@gmail.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20241029-v3d-v2-1-c0d3dd328d1b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <8890fa84-7fd3-4198-86d6-9da79e7cad07@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Matthias,
+On 10/29/24 7:29 PM, Pavel Begunkov wrote:
+> On 10/25/24 00:25, Jens Axboe wrote:
+>> On 10/24/24 12:10 PM, Pavel Begunkov wrote:
+>>> On 10/24/24 18:31, Jens Axboe wrote:
+>>>> On Sat, Oct 12, 2024 at 3:30?AM Ruyi Zhang <ruyi.zhang@samsung.com> wrote:
+>>> ...
+>>>>>> I don't think there is any difference, it'd be a matter of
+>>>>>> doubling the number of in flight timeouts to achieve same
+>>>>>> timings. Tell me, do you really have a good case where you
+>>>>>> need that (pretty verbose)? Why not drgn / bpftrace it out
+>>>>>> of the kernel instead?
+>>>>>
+>>>>>    Of course, this information is available through existing tools.
+>>>>>    But I think that most of the io_uring metadata has been exported
+>>>>>    from the fdinfo file, and the purpose of adding the timeout
+>>>>>    information is the same as before, easier to use. This way,
+>>>>>    I don't have to write additional scripts to get all kinds of data.
+>>>>>
+>>>>>    And as far as I know, the io_uring_show_fdinfo function is
+>>>>>    only called once when the user is viewing the
+>>>>>    /proc/xxx/fdinfo/x file once. I don't think we normally need to
+>>>>>    look at this file as often, and only look at it when the program
+>>>>>    is abnormal, and the timeout_list is very long in the extreme case,
+>>>>>    so I think the performance impact of adding this code is limited.
+>>>>
+>>>> I do think it's useful, sometimes the only thing you have to poke at
+>>>> after-the-fact is the fdinfo information. At the same time, would it be
+>>>
+>>> If you have an fd to print fdinfo, you can just well run drgn
+>>> or any other debugging tool. We keep pushing more debugging code
+>>> that can be extracted with bpf and other tools, and not only
+>>> it bloats the code, but potentially cripples the entire kernel.
+>>
+>> While that is certainly true, it's also a much harder barrier to entry.
+>> If you're already setup with eg drgn, then yeah fdinfo is useless as you
+>> can grab much more info out by just using drgn.
+> 
+> drgn is simple, not that harder than patching fdinfo, we can add
+> liburing/scripts, and push it there so that don't need rewriting
+> it each time.
 
-On 29/10/24 08:24, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <matthias.bgg@gmail.com>
-> 
-> Function drm_gem_shmem_create_with_mnt() creates an object
-> without using the mountpoint if gemfs is NULL.
-> 
-> Drop the else branch calling drm_gem_shmem_create().
-> 
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+It's not that drgn it's hard to use, it's not, but that people aren't
+necessarily aware of it. Once you've used it, yeah it's trivial. But for
+the cases where you are stuck in prod and you haven't used anything like
+that, it's a bit of a stretch to get there. Once it's part of your usual
+arsenal of tools, not an issue at all.
 
-Applied to misc/kernel.git (drm-misc-next).
+Adding something to liburing/scripts/ would indeed be awesome.
 
-Best Regards,
-- Maíra
+>> I'm fine punting this to "needs more advanced debugging than fdinfo".
+>> It's just important we get closure on these patches, so they don't
+>> linger forever in no man's land.
+> 
+> The only option I see is to dump first ~5 and stop there, but
+> I still think the tooling option is better.
 
-> ---
-> Changes in v2:
-> - Fix indentation
-> - Link to v1: https://lore.kernel.org/r/20241028-v3d-v1-1-907bee355edf@gmail.com
-> ---
->   drivers/gpu/drm/v3d/v3d_bo.c | 9 ++-------
->   1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
-> index 7055f7c7bcfe5700aee10b09ecc0005197323b01..73ab7dd31b17b249b7688dcc9833fd161211b6d9 100644
-> --- a/drivers/gpu/drm/v3d/v3d_bo.c
-> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
-> @@ -157,13 +157,8 @@ struct v3d_bo *v3d_bo_create(struct drm_device *dev, struct drm_file *file_priv,
->   	struct v3d_bo *bo;
->   	int ret;
->   
-> -	/* Let the user opt out of allocating the BOs with THP */
-> -	if (v3d->gemfs)
-> -		shmem_obj = drm_gem_shmem_create_with_mnt(dev, unaligned_size,
-> -							  v3d->gemfs);
-> -	else
-> -		shmem_obj = drm_gem_shmem_create(dev, unaligned_size);
-> -
-> +	shmem_obj = drm_gem_shmem_create_with_mnt(dev, unaligned_size,
-> +						  v3d->gemfs);
->   	if (IS_ERR(shmem_obj))
->   		return ERR_CAST(shmem_obj);
->   	bo = to_v3d_bo(&shmem_obj->base);
-> 
-> ---
-> base-commit: dec9255a128e19c5fcc3bdb18175d78094cc624d
-> change-id: 20241028-v3d-1d2546ed92d7
-> 
-> Best regards,
+Let's just not do it at all, I think a partial dump is likely to be
+potentially useless. And you can't cat it again and expect something
+different if things are stuck.
 
+-- 
+Jens Axboe
 
