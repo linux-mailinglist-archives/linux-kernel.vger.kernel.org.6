@@ -1,125 +1,232 @@
-Return-Path: <linux-kernel+bounces-388473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD77B9B6027
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:32:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583939B6039
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59FE9B216A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BBF81C226DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574CA1E3770;
-	Wed, 30 Oct 2024 10:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB211E3785;
+	Wed, 30 Oct 2024 10:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mgzygzOJ"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCJNAHsK"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9851E2016
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4871E32B7;
+	Wed, 30 Oct 2024 10:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284332; cv=none; b=XB0fL6p7bAd29zZ62McN6q0WktskuxAguI2Yv9I7Lioy0UtitXlTAS27x/tGDCVYo+z0FwvxdAvQyeJhbKQAKjolLatFVN6nmTjmvC3zBUkIPMkjsbOCiMcrZsXrSgojyd4xruc3eH6nVldGTkppjPOu5pGI+anpRh39l+FkUKc=
+	t=1730284383; cv=none; b=Mnhf6hOVMMQUnjoxKBI4szpg49+7UEXRGFfA6C2aUIkL6wDxroFtp1oexNrghuXGqI4CoSPcJ0mrvB7ZddZyXJCwkmiHJt96mWUhF2JZHd8MZ03Yh721op0CyGAnFoID8xTNo6fBacTKX2VINBKQA8Apc68ubeAXgKKtLtArtTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284332; c=relaxed/simple;
-	bh=CU1cu24+i45K2ONyDBFElC17mZkV4BvGmiF2jOuAeeI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OVd8Bj+5OsSnSAG0LfUjDu7pa7sIxBXtzrIwxpmBXSVFkF6Y7kk1Irmg8OycsuuqFOdM/+FTrfI599hugHt7lVt69JpfG4AVWen90ogkM0kUBMPTxpE4A0Hy/N4C2joF2zn30IAmpuZSUZjUFruqPGNXY78LHLkn1v8KNUqv9nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mgzygzOJ; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so63941911fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:32:10 -0700 (PDT)
+	s=arc-20240116; t=1730284383; c=relaxed/simple;
+	bh=lD2G8vLB+s4Fdwlswb1NADkCClyIt175699FyF+UkD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Os7sBhhR1Z4nOxKae6WxHvkQMM4j9devkLBMq7r008RfCn+oTMlA76fWjynmBKLA+jtFTAPT2DaIWpjekysRKviKA6z9N2XXNCJxssTgS9B1J1evv7gKWh6LBwVRdwezdYq1tVBZxu98qnd06ncxS2t6Dw0i5qtfKLnMQkosB1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCJNAHsK; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso975050866b.2;
+        Wed, 30 Oct 2024 03:33:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730284329; x=1730889129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6e62zABhJgu0xsmWlRUsEgJ/DIZADPy+MDY7G9xqvTM=;
-        b=mgzygzOJcIWje4b2Bs50E75/j68lD9kPzL+Pqb3r17f5wXtsuBzZIC1ROZEeFONqRU
-         39c30p1hqmGWer+wsufR0oQkX81CaEyUL5sEDXHp/WrhX33+T2XXm6EUfCzKq21WwJQb
-         P27/JjoQEBZ6r+5pdbf2bH2jj/15J2nP+4WsLXwO5hOpvvEaEmi1vD5zeRFQEVr3sqdb
-         CdF4PwQLuyAvBaLYH0Aqp4FBiO6SqWrtt6w6wg+k1lsP7p3uDjDR3JrT8fALD304kMOG
-         W9MFs80PC2bdPPH0i/NBZGzqrhVJK0fQ6oWGK5ykWFYopkTYwV0+aeuYoBZq7zisM233
-         NFQw==
+        d=gmail.com; s=20230601; t=1730284379; x=1730889179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sqXpApSaq9z4kEfno9SWP+axiJEGg7lOjQcw9jShE5k=;
+        b=gCJNAHsKjlYtzi2vspQAjTKoKqNGcSEv1ezaGXu81OVxvwIr4WWs9d2xjRY1GIBFYW
+         hn93aGcoWB3038S79qbZkbYOn0lvAL2ruTSeXA7MC801YzV2cc5NuufTw/fqeR05tQ33
+         8lGKEcN8ydyDRsstmOjyuzy1bVhafCsqZ31/wcxUdYFUciOdVnbG/Sw09b0+Hee7D+KF
+         yVcg58UFmuAbQA3Sgf7k7yk+jQ6itqiC5aSqmulcHEpIz0RZOcqdEz5IiBjr3pYiV94f
+         zyYp6g0KvtJFjGAtG0fzFPs8SlrBZ62evpjqKRLV0agsoKWYAKKuYXTHmqxz9Fp2tsFV
+         rwHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730284329; x=1730889129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6e62zABhJgu0xsmWlRUsEgJ/DIZADPy+MDY7G9xqvTM=;
-        b=mMQpYdD6UeiBCKsyrlt9LBVYSot7WoVsHww3RjFP9Ly6PI+aF3SPpP2jNWZ8JJhyUt
-         QiuRyI/GJeKPwBmVIEkQDKvbIUlhpPP00fn3U5+M4hzn7oFhVqE9LIUKvZdxwYYnzP71
-         nfts36QsW+yqKoL+vUtbi8v5ztDzqeGZJWCsmrM76dnIeAcVV12I9vfQuSePHxE8jrj8
-         kvv9VYqLse9ffCZdGQiDByrLCdWoiZYjAYARztYtVfNgfb74x61UQWgrnvZ7rh0B5bkM
-         INZ1IUueX4n48w2C7/4yK5MuU10KJ77EpYbJxDh8n2KAgjByIKGY1umxSoFli1vjK3iN
-         0qnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViKrNSVqw4T/dz4mIXBqbAGHpb1IsydsmV6mRYdK4W2VTLyNK4G+UWGCqfpWhlLtktVmG9CAtDqoBzu5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRI+rTHNm/JlfHBJvLPr9deFk1DLbN95l2oKHz22QH5XNviBh9
-	cLJfCT7f9JMnRcdyYhtoIiUgfRi/ZSmrDCaqEvtQxYu82CG71vrfi+/nIWMj7uw=
-X-Google-Smtp-Source: AGHT+IHN0Q+Mdq7fYa0Zn8cYYpDEzpyE0X1QlkitrR+30fjLy2hEruXPOPZRkaCk7IohqcOaFpkJEA==
-X-Received: by 2002:a2e:bea5:0:b0:2fa:dcb6:fa7a with SMTP id 38308e7fff4ca-2fd0590bdc8mr13523571fa.11.1730284327314;
-        Wed, 30 Oct 2024 03:32:07 -0700 (PDT)
-Received: from [192.168.0.157] ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca747sm17059915e9.45.2024.10.30.03.32.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 03:32:06 -0700 (PDT)
-Message-ID: <c553db69-6bb8-44f8-b571-21c631fcaee8@linaro.org>
-Date: Wed, 30 Oct 2024 10:32:05 +0000
+        d=1e100.net; s=20230601; t=1730284379; x=1730889179;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sqXpApSaq9z4kEfno9SWP+axiJEGg7lOjQcw9jShE5k=;
+        b=nP3fRHvq93SWKxlUGcl+u9Y6KsAvJ/I3c2i98kIZeYEk8ydMVl5AEbm1yLaX9wdyd5
+         NUPQZ5iXIrfuRtO9EM1PksXwKQDB2+Yc1n5qkjW21GOlTXNuQujuIHGJC5RPC2Dnkc5D
+         G/goQFt4xh9Cj88Zr0v2u665Z3HC9pC4/AhEdzRr8bv8kGdgWnUflqa97rJVp89/ANBv
+         A1zIcUKWAjr+6tJMwPeIwZ/doCLjPIqi47DDcgySOMPxLbbJykrKEcjPqAJN7FMoExs5
+         5yQ2ZTlRtgBhFXOcsqlvlJrlN/ix/Ss8Pqq1Fxp4FLmSpzzaMKROiu1mTXEqbDPhK531
+         IykQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU46/5ITWo5By67otP24bFZ0Z+h4QrA6OD8bmQ7u0i/v7+6w9i7sSUtfYifVrUI3jg4oOEXdZqHdFNyZ24=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxeb4uibNBR+oWr79YgXMOovFFXrAj5IvP8O0ALfCBnJo0vzSn3
+	ua3Jggh5hHJtYiMotJOSh0eiufy55irFVjTFJe9uFILsnrEMgSxA
+X-Google-Smtp-Source: AGHT+IGLvSmLJ/TmkoRPP82DnWy5nxXzkBa8lz5d0ru2At6NU0LtMQ8rQCXEQsjp4PkOyzFW9D7irw==
+X-Received: by 2002:a17:907:2daa:b0:a9a:33c:f6e4 with SMTP id a640c23a62f3a-a9de61669b5mr1458266766b.40.1730284378989;
+        Wed, 30 Oct 2024 03:32:58 -0700 (PDT)
+Received: from eichest-laptop.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1e1a6b81sm558178466b.43.2024.10.30.03.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 03:32:58 -0700 (PDT)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: hongxing.zhu@nxp.com,
+	l.stach@pengutronix.de,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	francesco.dolcini@toradex.com,
+	Frank.li@nxp.com
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: [PATCH v4] PCI: imx6: Add suspend/resume support for i.MX6QDL
+Date: Wed, 30 Oct 2024 11:32:45 +0100
+Message-ID: <20241030103250.83640-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/11] scsi: ufs: exynos: add gs101_ufs_drv_init() hook
- and enable WriteBooster
-To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
-Cc: andre.draszik@linaro.org, kernel-team@android.com,
- willmcvicker@google.com, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- ebiggers@kernel.org
-References: <20241025131442.112862-1-peter.griffin@linaro.org>
- <20241025131442.112862-8-peter.griffin@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241025131442.112862-8-peter.griffin@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
+The suspend/resume functionality is currently broken on the i.MX6QDL
+platform, as documented in the NXP errata (ERR005723):
+https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf
 
-On 10/25/24 2:14 PM, Peter Griffin wrote:
-> Factor out the common code into a new exynos_ufs_shareability() function
-> and provide a dedicated gs101_drv_init() hook.
-> 
-> This allows us to enable WriteBooster capability (UFSHCD_CAP_WB_EN) in a
-> way that doesn't effect other SoCs supported in this driver.
-> 
-> WriteBooster improves write speeds by enabling a pseudo SLC cache. Using
-> the `fio seqwrite` test we can achieve speeds of 945MB/s with this feature
-> enabled (until the cache is exhausted) before dropping back to ~260MB/s
-> (which are the speeds we see without the WriteBooster feature enabled).
-> 
-> Assuming the UFSHCD_CAP_WB_EN capability is set by the host then
-> WriteBooster can also be enabled and disabled via sysfs so it is possible
-> for the system to only enable it when extra write performance is required.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+This patch addresses the issue by sharing most of the suspend/resume
+sequences used by other i.MX devices, while avoiding modifications to
+critical registers that disrupt the PCIe functionality. It targets the
+same problem as the following downstream commit:
+https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Unlike the downstream commit, this patch also resets the connected PCIe
+device if possible. Without this reset, certain drivers, such as ath10k
+or iwlwifi, will crash on resume. The device reset is also done by the
+driver on other i.MX platforms, making this patch consistent with
+existing practices.
 
-While reviewing this patch I noticed few cleanups can be made. I sent
-them here:
-https://lore.kernel.org/linux-scsi/20241030102715.3312308-1-tudor.ambarus@linaro.org/
+Without this patch, suspend/resume will fail on i.MX6QDL devices if a
+PCIe device is connected. Upon resuming, the kernel will hang and
+display an error. Here's an example of the error encountered with the
+ath10k driver:
+ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
 
-Feel free to include them in your set if you're going to respin. Or not,
-if you don't want to tie your head with cleanup patches. I can respin
-them on top of yours later on.
+Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+---
+Changes in v4:
+- Improve commit message (Bjorn)
+- Fix style issue on comments (Bjorn)
+- s/msi/MSI (Bjorn)
+
+Changes in v3:
+- Added a new flag to the driver data to indicate that the suspend/resume
+  is broken on the i.MX6QDL platform. (Frank)
+- Fix comments to be more relevant (Mani)
+- Use imx_pcie_assert_core_reset in suspend (Mani)
+
+ drivers/pci/controller/dwc/pci-imx6.c | 57 +++++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 808d1f1054173..c8d5c90aa4d45 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -82,6 +82,11 @@ enum imx_pcie_variants {
+ #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
+ #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
+ #define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
++/*
++ * Because of ERR005723 (PCIe does not support L2 power down) we need to
++ * workaround suspend resume on some devices which are affected by this errata.
++ */
++#define IMX_PCIE_FLAG_BROKEN_SUSPEND		BIT(9)
+ 
+ #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
+ 
+@@ -1237,9 +1242,19 @@ static int imx_pcie_suspend_noirq(struct device *dev)
+ 		return 0;
+ 
+ 	imx_pcie_msi_save_restore(imx_pcie, true);
+-	imx_pcie_pm_turnoff(imx_pcie);
+-	imx_pcie_stop_link(imx_pcie->pci);
+-	imx_pcie_host_exit(pp);
++	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
++		/*
++		 * The minimum for a workaround would be to set PERST# and to
++		 * set the PCIE_TEST_PD flag. However, we can also disable the
++		 * clock which saves some power.
++		 */
++		imx_pcie_assert_core_reset(imx_pcie);
++		imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
++	} else {
++		imx_pcie_pm_turnoff(imx_pcie);
++		imx_pcie_stop_link(imx_pcie->pci);
++		imx_pcie_host_exit(pp);
++	}
+ 
+ 	return 0;
+ }
+@@ -1253,14 +1268,32 @@ static int imx_pcie_resume_noirq(struct device *dev)
+ 	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_SUPPORTS_SUSPEND))
+ 		return 0;
+ 
+-	ret = imx_pcie_host_init(pp);
+-	if (ret)
+-		return ret;
+-	imx_pcie_msi_save_restore(imx_pcie, false);
+-	dw_pcie_setup_rc(pp);
++	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
++		ret = imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
++		if (ret)
++			return ret;
++		ret = imx_pcie_deassert_core_reset(imx_pcie);
++		if (ret)
++			return ret;
++		/*
++		 * Using PCIE_TEST_PD seems to disable MSI and powers down the
++		 * root complex. This is why we have to setup the rc again and
++		 * why we have to restore the MSI register.
++		 */
++		ret = dw_pcie_setup_rc(&imx_pcie->pci->pp);
++		if (ret)
++			return ret;
++		imx_pcie_msi_save_restore(imx_pcie, false);
++	} else {
++		ret = imx_pcie_host_init(pp);
++		if (ret)
++			return ret;
++		imx_pcie_msi_save_restore(imx_pcie, false);
++		dw_pcie_setup_rc(pp);
+ 
+-	if (imx_pcie->link_is_up)
+-		imx_pcie_start_link(imx_pcie->pci);
++		if (imx_pcie->link_is_up)
++			imx_pcie_start_link(imx_pcie->pci);
++	}
+ 
+ 	return 0;
+ }
+@@ -1485,7 +1518,9 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 	[IMX6Q] = {
+ 		.variant = IMX6Q,
+ 		.flags = IMX_PCIE_FLAG_IMX_PHY |
+-			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE,
++			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE |
++			 IMX_PCIE_FLAG_BROKEN_SUSPEND |
++			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
+ 		.dbi_length = 0x200,
+ 		.gpr = "fsl,imx6q-iomuxc-gpr",
+ 		.clk_names = imx6q_clks,
+-- 
+2.43.0
+
 
