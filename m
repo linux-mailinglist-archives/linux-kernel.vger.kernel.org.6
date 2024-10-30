@@ -1,152 +1,123 @@
-Return-Path: <linux-kernel+bounces-388041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1881C9B59A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:54:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0EE9B59B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923DB1F2456F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:54:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0D41F230D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65D61885A4;
-	Wed, 30 Oct 2024 01:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZOmQ4E0G"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163CC5914C;
+	Wed, 30 Oct 2024 02:01:35 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFA11BC3F;
-	Wed, 30 Oct 2024 01:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BD833CFC
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730253253; cv=none; b=DBSSay57YBuDIlsxiY7FJLhtJHgADksvbBjJ24NYgxqZjPWx17UPO0VlYYhwRy+MjBYtRbjAtSANn/JExcePVxAUUeAYTMizDvNvVnZMeWvxc+JcCuNGKhB4fAIkTfWfVVEefjhdwDXIpP1VYTlGN7YqqICJJ7lRcGpoLd5tsgE=
+	t=1730253694; cv=none; b=vFRE8u2uYtjFOXKCNE3ntxgHOlzZ+IGyWPnOcJAunmqbefJQaGJv347gH8j3jzx3hgYb1IPmOlYvVomiG4NATE0AFLz99AmFO0P4i60sWDPado1KUIyjUfFqhWpqku54/0jzaFUg4n9Ol+qiGCxuxgWQo1pi7xDiVeQQU5U7obI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730253253; c=relaxed/simple;
-	bh=wn4kpuFmeCG27j7Q5f1Et34O77xDdiyk5WPJjNIG1Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X5YHDHNRHSYyjd0PK/+m8pT4zc2RrdRH1BE7M4qbvCHyMBglIVLjH3eI+xwFf+EGpSCLrf64zPzNmkzASpNXO1ht8rqaZPwW9E7JsvuIh4JSfjCo5IVpugdrgnUXvsSUeXn7cGqJs3ehOUc/hard7bS8i+l5GCDwrmrZtKiBQNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZOmQ4E0G; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730253246; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=QVuP8bL2UthKGyf2UbcF1p2yjun+l2O30gXmPUgnGX4=;
-	b=ZOmQ4E0GuzjdBFAZMcM+7Cz7W8Gc7kGMh2td12w+LThHhidBblj+EVUe6ScSSmu1NA+GMBYl2vB643VTVq3j6g/orJOIssHrF4F51pMYDlqabkp7KyHVct/boDdvzS4+qG8ORU7nTEgr9fZCurY6oH5NsBupQQFwd1S0R0yd2Es=
-Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIC1TDj_1730253241 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 30 Oct 2024 09:54:04 +0800
-Message-ID: <d62d775e-08e3-4a2d-88a8-437a4c04ebd3@linux.alibaba.com>
-Date: Wed, 30 Oct 2024 09:54:00 +0800
+	s=arc-20240116; t=1730253694; c=relaxed/simple;
+	bh=aCpz4UlzW/ElG551a/NoFOk7ru0S7h81BJ0tx8nrhF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sQKGBOZJ0WDz4hT9aCvmTUf34HdxrJlkIeuVbq/OBe6IS/9kGNHYOzvxahK8IHO4vvmTGJcitICKbyCljCGFJGDHEEJZ/PMQr1Xa3ebplFntrrHKQ7EZUC/CzUDiXGDBxpgEfT/DdRVQQxyXL2uySW6rEaSnlQG93ogVBp4gWYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdVgd1nzKz1jw8D;
+	Wed, 30 Oct 2024 09:59:57 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id B14381A0188;
+	Wed, 30 Oct 2024 10:01:28 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 30 Oct 2024 10:01:27 +0800
+Message-ID: <560d2026-5785-b6b1-eb7d-3afed714d47f@huawei.com>
+Date: Wed, 30 Oct 2024 10:01:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 1/3] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
- robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
- rafael@kernel.org, wangkefeng.wang@huawei.com, tanxiaofei@huawei.com,
- mawupeng1@huawei.com, tony.luck@intel.com, linmiaohe@huawei.com,
- naoya.horiguchi@nec.com, james.morse@arm.com, tongtiangen@huawei.com,
- gregkh@linuxfoundation.org, will@kernel.org, jarkko@kernel.org,
- linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20241028081142.66028-2-xueshuai@linux.alibaba.com>
- <20241029204848.GA1229628@yaz-khff2.amd.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241029204848.GA1229628@yaz-khff2.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v4] drm/ttm/tests: Fix memory leak in
+ ttm_tt_simple_create()
+Content-Language: en-US
+To: <christian.koenig@amd.com>, <ray.huang@amd.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
+	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
+	<quic_jjohnson@quicinc.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241026020758.3846669-1-ruanjinjie@huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20241026020758.3846669-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
+Gentle ping.
 
-
-在 2024/10/30 04:48, Yazen Ghannam 写道:
-> On Mon, Oct 28, 2024 at 04:11:40PM +0800, Shuai Xue wrote:
->> Synchronous error was detected as a result of user-space process accessing
->> a 2-bit uncorrected error. The CPU will take a synchronous error exception
->> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
->> memory_failure() work which poisons the related page, unmaps the page, and
->> then sends a SIGBUS to the process, so that a system wide panic can be
->> avoided.
->>
->> However, no memory_failure() work will be queued when abnormal synchronous
->> errors occur. These errors can include situations such as invalid PA,
->> unexpected severity, no memory failure config support, invalid GUID
->> section, etc. In such case, the user-space process will trigger SEA again.
->> This loop can potentially exceed the platform firmware threshold or even
->> trigger a kernel hard lockup, leading to a system reboot.
->>
->> Fix it by performing a force kill if no memory_failure() work is queued
->> for synchronous errors.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> ---
->>   drivers/acpi/apei/ghes.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
->> index ada93cfde9ba..f2ee28c44d7a 100644
->> --- a/drivers/acpi/apei/ghes.c
->> +++ b/drivers/acpi/apei/ghes.c
->> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
->>   		}
->>   	}
->>   
->> +	/*
->> +	 * If no memory failure work is queued for abnormal synchronous
->> +	 * errors, do a force kill.
->> +	 */
->> +	if (sync && !queued) {
->> +		pr_err("%s:%d: hardware memory corruption (SIGBUS)\n",
->> +			current->comm, task_pid_nr(current));
+On 2024/10/26 10:07, Jinjie Ruan wrote:
+> modprobe ttm_device_test and then rmmod ttm_device_test, the following
+> memory leaks occurs:
 > 
-> I think it would help to include the GHES_PFX to indicate where this
-> message is coming from. The pr_fmt() macro could also be introduced
-> instead.
-
-Yes, GHES_PFX is a effective prefix and will be consistent to other 
-message in GHES driver. Will add it in next version.
-
-What do you mean about pr_fmt()?
-
+> The ttm->pages allocated in ttm_tt_init() is not freed after calling
+> ttm_tt_simple_create(), which cause the memory leak:
 > 
-> Also, you may want to include the HW_ERR prefix. Not all kernel messages
-> related to hardware errors have this prefix today. But maybe that should
-> be changed so there is more consistent messaging.
+> 	unreferenced object 0xffffff80caf27750 (size 8):
+> 	  comm "kunit_try_catch", pid 2242, jiffies 4295055735
+> 	  hex dump (first 8 bytes):
+> 	    c0 1e 3d c3 fe ff ff ff                          ..=.....
+> 	  backtrace (crc 3d11615a):
+> 	    [<000000007f57312a>] kmemleak_alloc+0x34/0x40
+> 	    [<000000008c6c4c7e>] __kmalloc_node_noprof+0x304/0x3e4
+> 	    [<00000000679c1182>] __kvmalloc_node_noprof+0x1c/0x144
+> 	    [<000000006aed0a3d>] ttm_tt_init+0x138/0x28c [ttm]
+> 	    [<000000005c331998>] drm_gem_shmem_free+0x60/0x534 [drm_shmem_helper]
+> 	    [<0000000022b4f375>] kunit_try_run_case+0x13c/0x3ac
+> 	    [<00000000c525d725>] kunit_generic_run_threadfn_adapter+0x80/0xec
+> 	    [<000000002db94a1f>] kthread+0x2e8/0x374
+> 	    [<000000002c457ad7>] ret_from_fork+0x10/0x20
+> 	......
 > 
-
-Do we really need a HW_ERR prefix? The other case which use HW_ERR 
-prefix are for hardware registers. The messages which send SIGBUS does
-not include HW_ERR, e.g. in kill_proc(), kill_procs().
-
-     pr_err("%#lx: Sending SIGBUS to %s:%d due to hardware memory 
-corruption\n",...
-     pr_err("%#lx: forcibly killing %s:%d because of failure to unmap 
-corrupted page\n",...
-
-
-> Thanks,
-> Yazen
-
-Thanks for valuable comments.
-
-Best Regards,
-Shuai
-
+> Fix it by calling ttm_tt_fini() in the exit function.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: e6f7c641fae3 ("drm/ttm/tests: Add tests for ttm_tt")
+> Reviewed-by: Nirmoy Das <nirmoy.das@intel.com>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v4:
+> - Split out to be alone.
+> v3:
+> - s/fllowing/following/
+> v2:
+> - Add Reviewed-by.
+> ---
+>  drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
+> index b91c13f46225..9ff216ec58ef 100644
+> --- a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
+> +++ b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
+> @@ -54,6 +54,7 @@ static struct ttm_tt *ttm_tt_simple_create(struct ttm_buffer_object *bo, u32 pag
+>  
+>  static void ttm_tt_simple_destroy(struct ttm_device *bdev, struct ttm_tt *ttm)
+>  {
+> +	ttm_tt_fini(ttm);
+>  	kfree(ttm);
+>  }
+>  
 
