@@ -1,238 +1,149 @@
-Return-Path: <linux-kernel+bounces-388195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB38E9B5BDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:39:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88D69B5BDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AEC61C209DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2221F21D84
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850DA1D4336;
-	Wed, 30 Oct 2024 06:39:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8AC1D31AE;
-	Wed, 30 Oct 2024 06:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FBE1D86E8;
+	Wed, 30 Oct 2024 06:39:23 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1791D7984
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730270359; cv=none; b=t6MG4sATucrtIrsBDCCEYU/4TR1t1KJMVRpRcqO2oE5DUYIZtsx1VOyEgJjgpi2LPuHgPhh/w/ByJks0zKl1OaJvNczho/vP5dE+sSmQf4+kYt7mHgZuQmdCrT+kEWeeimxOq82+5Z9XWdpcVHuiTzmuzAPmGZX7/X0I2rYkWdo=
+	t=1730270362; cv=none; b=Iv4MRo2M45T5uDOVCHNlWLVqhlmKCYYhYGGOMWPUJ2Wwtg3jk0OuVyiVX78PHeQfJ5vrkYLIoqJ5dQ6WEkbIzoN4EU1sgnxyFG1fxg2PU83mT2YHq9eaCv+JAwF0+uTYstee8lyAqwIawbGTp/dtTbZOgsvVStdTWZzkKj+5f3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730270359; c=relaxed/simple;
-	bh=3nyyNH5v2uLVnFdxFFD+XNXeHYcJOF9QmL11NuXz+wU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tkIsdD1f/kRirqW97I03TzyQ3/XuQ9qjOwdPb/Xj/dv/54LBM/GWvjeLU/V7KNeoSkfG0iOYA2VmLtCABglZ+ggaj25HS4O4v2DS+UjhRYicYoOsiRKFwobHrqY9KlxfOfcuLdDGJhz6kylSL7gsR0GcNXzIDSwvsVphbRqc/yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxquGR1CFnA6kdAA--.62511S3;
-	Wed, 30 Oct 2024 14:39:13 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMDxPEeP1CFntLooAA--.23618S2;
-	Wed, 30 Oct 2024 14:39:12 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mm@kvack.org,
-	kasan-dev@googlegroups.com,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	WANG Xuerui <kernel@xen0n.name>
-Subject: [PATCH v2] mm: define general function pXd_init()
-Date: Wed, 30 Oct 2024 14:39:05 +0800
-Message-Id: <20241030063905.2434824-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1730270362; c=relaxed/simple;
+	bh=Iz4PJvwnoVM+lZc3cunWDx14lz8EsUiZH5MfThPDmWA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OU1XtjLnSccslu65Po5ZjB33mjm5khH/nFCyxvswrHulHyNeXz/Y5VH+AVhNlHHJGw83F5tsB0ZvTyb/bI4qrRRI7PW1Ei7nUpfGUW0cnq9LWJsWX0H4xpomQDzW4fYmmeKZaxjYRawV25ouxdviQZ3YEHW6zn3VfjXWdJLx3fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83acb657f91so585186339f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:39:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730270360; x=1730875160;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WiNmaXT0ZrpACBW2FPB0Q3K0IGuXSBjbvppvGxGVBSA=;
+        b=gzvqOGYf2iMj7ax/vygqZJOX9trWQJWGyCI1YIvavmglGz1oDwtVPbPome6BE3/c7N
+         NGqA+okiuXA8/OruZ2h/8ISgC+5DXZQGFccVTgRAl4c45SwfRRwntwR8Wboy9ALgKhAd
+         eSTuF4Tl4eC1bvU5hmXEvucl1hyRhbkevpYBXkCag5L2dLiPDFrxt/6HKRLjlOWvm8iN
+         Rky3+uB66sH+eyNkX7m0FY2t70ofUSEG5zTH7EfrklDd0/k2dj4mC+vE7O1tAN7gYASd
+         cUdwXMMJDC0jV+myWXVpEJ6pT2t7JveNTcm+ZY8T8hGuhTTPh12O/5mkG2d4yZP88DVl
+         O9gQ==
+X-Gm-Message-State: AOJu0YznPi5YElC2Q50L5Oo3jyxARJkvpT9OVKzejV/2DwBda+E5s4TR
+	tH4TeQEfnFrsrxe+wtxjf5q97XryD3ciQLmkcddkEiQnesZNVNKAs6YWMimhMR67/4eRXKjBuCE
+	KkaYqe3xecIW3slG3hrlChjhvydZYq9ZQzHiuPn/8d8+EbKrGmvkck9I=
+X-Google-Smtp-Source: AGHT+IHO4Lo+2+dAx19U7UrqbjqjR/eCh9jhvxYMQZNNLHMAFwtenNWND4v6kLrazosXZafTaymz2kzwhrp1Z7tR2CNrbVWt9u//
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxPEeP1CFntLooAA--.23618S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-Received: by 2002:a05:6e02:1a8f:b0:3a3:b3f4:af42 with SMTP id
+ e9e14a558f8ab-3a4ed28ee11mr140077265ab.7.1730270359862; Tue, 29 Oct 2024
+ 23:39:19 -0700 (PDT)
+Date: Tue, 29 Oct 2024 23:39:19 -0700
+In-Reply-To: <0000000000003c68f3061fd2c285@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6721d497.050a0220.35b515.0001.GAE@google.com>
+Subject: Re: [syzbot] [PATCH] usb: raw_gadget: Fix a KMSAN double free bug in raw_release
+From: syzbot <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Function pud_init(), pmd_init() and kernel_pte_init() are duplicated
-defined in file kasan.c and sparse-vmemmap.c as weak functions. Move
-them to generic header file pgtable.h, architecture can redefine them.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+***
+
+Subject: [PATCH] usb: raw_gadget: Fix a KMSAN double free bug in raw_release
+Author: marcus.yu.56@gmail.com
+
+#syz test
+
+syzkaller reported a double free bug
+(https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c) in
+raw_release. Specifically, if there are concurrent calls to raw_release
+and dev->gadget_registered is false, there will be racing kref_put
+calls causing dev_free to be invoked twice.
+
+The fix is to check ref count and put under lock so that kref_put is
+called at most once.
+
+The "unregister" path is safe because checking dev->gadget_registered
+and then flipping it to false under lock guarantees that this branch is
+taken at most once.
+
+Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
+Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
+Fixes: f2c2e717642c ("usb: gadget: add raw-gadget interface")
 ---
-v1 ... v2:
-  1. Add general function definition about kernel_pte_init().
----
- arch/loongarch/include/asm/pgtable.h |  3 +++
- arch/mips/include/asm/pgtable-64.h   |  2 ++
- include/linux/mm.h                   |  3 ---
- include/linux/pgtable.h              | 21 +++++++++++++++++++++
- mm/kasan/init.c                      | 12 ------------
- mm/sparse-vmemmap.c                  | 12 ------------
- 6 files changed, 26 insertions(+), 27 deletions(-)
+ drivers/usb/gadget/legacy/raw_gadget.c | 27 ++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
-index 20714b73f14c..df5889d995f9 100644
---- a/arch/loongarch/include/asm/pgtable.h
-+++ b/arch/loongarch/include/asm/pgtable.h
-@@ -267,8 +267,11 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
-  * Initialize a new pgd / pud / pmd table with invalid pointers.
-  */
- extern void pgd_init(void *addr);
-+#define pud_init pud_init
- extern void pud_init(void *addr);
-+#define pmd_init pmd_init
- extern void pmd_init(void *addr);
-+#define kernel_pte_init kernel_pte_init
- extern void kernel_pte_init(void *addr);
+diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
+index 112fd18d8c99..3da022aae830 100644
+--- a/drivers/usb/gadget/legacy/raw_gadget.c
++++ b/drivers/usb/gadget/legacy/raw_gadget.c
+@@ -445,7 +445,6 @@ static int raw_release(struct inode *inode, struct file *fd)
+ 	int ret = 0;
+ 	struct raw_dev *dev = fd->private_data;
+ 	unsigned long flags;
+-	bool unregister = false;
  
- /*
-diff --git a/arch/mips/include/asm/pgtable-64.h b/arch/mips/include/asm/pgtable-64.h
-index 401c1d9e4409..45c8572a0462 100644
---- a/arch/mips/include/asm/pgtable-64.h
-+++ b/arch/mips/include/asm/pgtable-64.h
-@@ -316,7 +316,9 @@ static inline pmd_t *pud_pgtable(pud_t pud)
-  * Initialize a new pgd / pud / pmd table with invalid pointers.
-  */
- extern void pgd_init(void *addr);
-+#define pud_init pud_init
- extern void pud_init(void *addr);
-+#define pmd_init pmd_init
- extern void pmd_init(void *addr);
- 
- /*
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 61fff5d34ed5..651bdc1bef48 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3818,9 +3818,6 @@ void *sparse_buffer_alloc(unsigned long size);
- struct page * __populate_section_memmap(unsigned long pfn,
- 		unsigned long nr_pages, int nid, struct vmem_altmap *altmap,
- 		struct dev_pagemap *pgmap);
--void pud_init(void *addr);
--void pmd_init(void *addr);
--void kernel_pte_init(void *addr);
- pgd_t *vmemmap_pgd_populate(unsigned long addr, int node);
- p4d_t *vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node);
- pud_t *vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node);
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index e8b2ac6bd2ae..adee214c21f8 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -90,6 +90,27 @@ static inline unsigned long pud_index(unsigned long address)
- #define pgd_index(a)  (((a) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
- #endif
- 
-+#ifndef kernel_pte_init
-+static inline void kernel_pte_init(void *addr)
-+{
-+}
-+#define kernel_pte_init kernel_pte_init
-+#endif
-+
-+#ifndef pmd_init
-+static inline void pmd_init(void *addr)
-+{
-+}
-+#define pmd_init pmd_init
-+#endif
-+
-+#ifndef pud_init
-+static inline void pud_init(void *addr)
-+{
-+}
-+#define pud_init pud_init
-+#endif
-+
- #ifndef pte_offset_kernel
- static inline pte_t *pte_offset_kernel(pmd_t *pmd, unsigned long address)
- {
-diff --git a/mm/kasan/init.c b/mm/kasan/init.c
-index ac607c306292..ced6b29fcf76 100644
---- a/mm/kasan/init.c
-+++ b/mm/kasan/init.c
-@@ -106,10 +106,6 @@ static void __ref zero_pte_populate(pmd_t *pmd, unsigned long addr,
+ 	spin_lock_irqsave(&dev->lock, flags);
+ 	dev->state = STATE_DEV_CLOSED;
+@@ -453,20 +452,24 @@ static int raw_release(struct inode *inode, struct file *fd)
+ 		spin_unlock_irqrestore(&dev->lock, flags);
+ 		goto out_put;
  	}
- }
+-	if (dev->gadget_registered)
+-		unregister = true;
++	if (!dev->gadget_registered) {
++		if (kref_read(&dev->count)) {
++			/* Matches dev_new() in raw_open(). */
++			kref_put(&dev->count, dev_free);
++		}
++		spin_unlock_irqrestore(&dev->lock, flags);
++		return ret;
++	}
+ 	dev->gadget_registered = false;
+ 	spin_unlock_irqrestore(&dev->lock, flags);
  
--void __weak __meminit kernel_pte_init(void *addr)
--{
--}
--
- static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
- 				unsigned long end)
- {
-@@ -145,10 +141,6 @@ static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
- 	return 0;
- }
+-	if (unregister) {
+-		ret = usb_gadget_unregister_driver(&dev->driver);
+-		if (ret != 0)
+-			dev_err(dev->dev,
+-				"usb_gadget_unregister_driver() failed with %d\n",
+-				ret);
+-		/* Matches kref_get() in raw_ioctl_run(). */
+-		kref_put(&dev->count, dev_free);
+-	}
++	ret = usb_gadget_unregister_driver(&dev->driver);
++	if (ret != 0)
++		dev_err(dev->dev,
++			"usb_gadget_unregister_driver() failed with %d\n",
++			ret);
++	/* Matches kref_get() in raw_ioctl_run(). */
++	kref_put(&dev->count, dev_free);
  
--void __weak __meminit pmd_init(void *addr)
--{
--}
--
- static int __ref zero_pud_populate(p4d_t *p4d, unsigned long addr,
- 				unsigned long end)
- {
-@@ -187,10 +179,6 @@ static int __ref zero_pud_populate(p4d_t *p4d, unsigned long addr,
- 	return 0;
- }
- 
--void __weak __meminit pud_init(void *addr)
--{
--}
--
- static int __ref zero_p4d_populate(pgd_t *pgd, unsigned long addr,
- 				unsigned long end)
- {
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index c0388b2e959d..cec67c5f37d8 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -184,10 +184,6 @@ static void * __meminit vmemmap_alloc_block_zero(unsigned long size, int node)
- 	return p;
- }
- 
--void __weak __meminit kernel_pte_init(void *addr)
--{
--}
--
- pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, int node)
- {
- 	pmd_t *pmd = pmd_offset(pud, addr);
-@@ -201,10 +197,6 @@ pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, int node)
- 	return pmd;
- }
- 
--void __weak __meminit pmd_init(void *addr)
--{
--}
--
- pud_t * __meminit vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node)
- {
- 	pud_t *pud = pud_offset(p4d, addr);
-@@ -218,10 +210,6 @@ pud_t * __meminit vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node)
- 	return pud;
- }
- 
--void __weak __meminit pud_init(void *addr)
--{
--}
--
- p4d_t * __meminit vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node)
- {
- 	p4d_t *p4d = p4d_offset(pgd, addr);
-
-base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+ out_put:
+ 	/* Matches dev_new() in raw_open(). */
 -- 
-2.39.3
+2.47.0
 
 
