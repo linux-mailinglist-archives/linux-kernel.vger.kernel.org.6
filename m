@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-389146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9949B691D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E919B6923
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:28:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0984C1C2137B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:27:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD341C2137F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C1D21443B;
-	Wed, 30 Oct 2024 16:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54C7214408;
+	Wed, 30 Oct 2024 16:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MftT5/hD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PaYyuMUT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2C921440F;
-	Wed, 30 Oct 2024 16:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404C01F4700;
+	Wed, 30 Oct 2024 16:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730305625; cv=none; b=KOaK4h/amIhbbdFvhNCrS/SH4KiMQTFQjC9SroOosdeBI21kkSh/MFyvGVHDb5H4lZI7m9vszkmokatnx4lZlp4eEgf52zTbLcyqs5YGUFCIaF96cHAEZJmkKYNUTvhhJm4jL213FGlUD7qx0fIF/1i0aVktpnZAyJZiQD0aiuE=
+	t=1730305681; cv=none; b=Mg6BjGW5djwNANI1DxVbQSt7NQOnW40WXWjkG5Bn7cnHRopcdcQOTgtO76HQnifUvg4ZqIsMsWWn6336pkmDedGbKo1XirwuNCYzUk6cIVTMl7yrgOpzyUVowIPjb9VkVvkmcmvxvbROiG+JHRyh+MxDeVtwkP2Ew4Kn3dKFAQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730305625; c=relaxed/simple;
-	bh=nON8JGjhzMmgUqSJeQKjBGrRpfhwPugcBp633E+LVv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=COMOK7OyUuf7rJMDgrKiVnED/5lEKWW/XeYDJQbw+GR3bykz12waxHPvBT3aDMCyPz4ytBDUy3lpewSAkN/KX9ZmjKV68Rfd/B3Jjzf5h/DRd/y/s+a4Mux1renT67QvE/iMtZxJ2ev3gdXoW79c7aKU0/S/iKlubqyL665s9FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MftT5/hD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478B2C4CECE;
-	Wed, 30 Oct 2024 16:27:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730305625;
-	bh=nON8JGjhzMmgUqSJeQKjBGrRpfhwPugcBp633E+LVv0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=MftT5/hDlYV56Gb9WkIKQj4azgGIRymZruVabMtcAZX2QdCheHAWm6Btw0oTI3Fmv
-	 ksm4szS6HhEnbPwAIOIgrXgQtmxf7ecA54fXGh6FfwuYyySDfSfu+Doh8vdAagvYJ6
-	 M2diYMSN1/ZCR0JNXl+3vlTgM6EXzh9fLpUjF+vKCofcS+dX4ZDuvmcIhNfSf3AWPR
-	 5O62YbM23Ro5HwRa7CmyYM2Cl9nb2oDIAXLl6PuXztI6/IcwoWKQBX+9tjzoPbSsLD
-	 JlSNxIVQIUN7TjKO8DkwxNcAW/Dgv7x0P7tRP3hutLLaleMLNSqPxN0YQOblgCEZBe
-	 mJC8EWUGBsDqQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E245BCE0D99; Wed, 30 Oct 2024 09:27:04 -0700 (PDT)
-Date: Wed, 30 Oct 2024 09:27:04 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org, urezki@gmail.com,
-	quic_neeraju@quicinc.com, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
-	hernan.poncedeleon@huaweicloud.com
-Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
- and semantic tags
-Message-ID: <374137f4-de9e-43a5-a777-31984dc17cfb@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240930105710.383284-1-jonas.oberhauser@huaweicloud.com>
- <20240930105710.383284-6-jonas.oberhauser@huaweicloud.com>
- <ZyApMteRMxZbpBta@Boquns-Mac-mini.local>
- <cd97e045-dfa4-4ffe-9df0-f7abeec848e7@paulmck-laptop>
- <3b796ef4-735a-44df-a9b1-671df49fd44e@huaweicloud.com>
- <ZyJEBc1qwFHwQQT2@Boquns-Mac-mini.local>
+	s=arc-20240116; t=1730305681; c=relaxed/simple;
+	bh=YapAEOo9WUhqkrcilX9GGul5Pc60jS1Np0QltkjGLZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=utw9EUXy7itWx9KfMPeXAaKl4NTFWX/kOWBD8og/geXaZbs879m8Eik3yN/4w8nYSIeHEgTa8Mh4JUxGGolEN/LWXl1glVlefFKdNRetShMnB6nPAnEnchNxxT5rDuTsnpNws4Do4hNHRKrJ2F6xCgLvjDt3+RQQYoeq5QGqR5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PaYyuMUT; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730305679; x=1761841679;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YapAEOo9WUhqkrcilX9GGul5Pc60jS1Np0QltkjGLZk=;
+  b=PaYyuMUT8IQwmz2fGukhArT9Edd3AtC61M/TzpT+IwtJlhlYy9KU7Ouv
+   nay/E5hauGs5R7Swl2DP6XHkkRAqRTH8ZTlSvVMnQEllG4QFWId6V+Bmw
+   zaXLvu6yH7UplSDyysmY6bKxzwmJw6vA4nDeNpFXorfS2yKlOJ8B7g+qY
+   wKRP9oF0GYdpxvJNMsPZvMSFRaThgYIxHtGLsb4/8CammlLdIdc3wiNVv
+   F2VUT5BnduRD9brk++T2PRCSv9dEFB3sfrXM48RV8PCPgWSSyZBVzZ6hR
+   iGTqNKmvL83SllXbYK9my+b05qeCTomEsh1XteFhyZSZs4sPMGXp1w7D0
+   Q==;
+X-CSE-ConnectionGUID: mvwh/d6PTx60jSckoQOqMg==
+X-CSE-MsgGUID: f0S6A/GrSl6Wo6cOmHCtDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30166942"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30166942"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:27:59 -0700
+X-CSE-ConnectionGUID: oAlqyCWUS7ioDloAwnDYlA==
+X-CSE-MsgGUID: C1D5emNQTdmCxB77faLgCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="113217111"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 30 Oct 2024 09:27:57 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 9212F1CF; Wed, 30 Oct 2024 18:27:55 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] ACPI: battery: Check for error code from devm_mutex_init() call
+Date: Wed, 30 Oct 2024 18:27:54 +0200
+Message-ID: <20241030162754.2110946-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyJEBc1qwFHwQQT2@Boquns-Mac-mini.local>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 07:34:45AM -0700, Boqun Feng wrote:
-> On Wed, Oct 30, 2024 at 12:38:26PM +0100, Jonas Oberhauser wrote:
-> > 
-> > 
-> > Am 10/30/2024 um 12:41 AM schrieb Paul E. McKenney:
-> > > On Mon, Oct 28, 2024 at 05:15:46PM -0700, Boqun Feng wrote:
-> > > > On Mon, Sep 30, 2024 at 12:57:10PM +0200, Jonas Oberhauser wrote:
-> > > > > Not all tags that are always there syntactically also provide semantic
-> > > > > membership in the corresponding set. For example, an 'acquire tag on a
-> > > > 
-> > > > Maybe:
-> > > > 
-> > > > Not all annotated accesses provide the same semantic as their syntactic
-> > > > tags...
-> > > > 
-> > > > ?
-> > > 
-> > > Jonas, are you OK with this change?  If so, I can apply it on my next
-> > > rebase.
-> > 
-> > I'm ok with an extra s after semantics and a minor rephrase:
-> > 
-> > Not all annotated accesses provide the semantics their syntactic
-> > tags would imply
-> > 
-> > What do you think @Boqun ?
-> 
-> Yes, of course! This looks good to me.
+Even if it's not critical, the avoidance of checking the error code
+from devm_mutex_init() call today diminishes the point of using devm
+variant of it. Tomorrow it may even leak something. Add the missed
+check.
 
-Very good!
+Fixes: 0710c1ce5045 ("ACPI: battery: initialize mutexes through devm_ APIs")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/acpi/battery.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-This is in the commit that you (Jonas) will fix, correct?  If so, could
-you please make this update as well?  Otherwise, Murphy being who he is,
-I will end up changing this and then overwriting my change with your
-updated commit.  ;-)
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index 66662712e288..70f706d7634f 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -1226,8 +1226,12 @@ static int acpi_battery_add(struct acpi_device *device)
+ 	strscpy(acpi_device_name(device), ACPI_BATTERY_DEVICE_NAME);
+ 	strscpy(acpi_device_class(device), ACPI_BATTERY_CLASS);
+ 	device->driver_data = battery;
+-	devm_mutex_init(&device->dev, &battery->lock);
+-	devm_mutex_init(&device->dev, &battery->sysfs_lock);
++	result = devm_mutex_init(&device->dev, &battery->lock);
++	if (result)
++		return result;
++	result = devm_mutex_init(&device->dev, &battery->sysfs_lock);
++	if (result)
++		return result;
+ 	if (acpi_has_method(battery->device->handle, "_BIX"))
+ 		set_bit(ACPI_BATTERY_XINFO_PRESENT, &battery->flags);
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-							Thanx, Paul
 
