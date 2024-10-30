@@ -1,113 +1,72 @@
-Return-Path: <linux-kernel+bounces-389534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033919B6E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:51:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37E79B6D90
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3557B1C23379
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F22D1F22A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EC0215024;
-	Wed, 30 Oct 2024 20:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DF21D1721;
+	Wed, 30 Oct 2024 20:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOoVF7LL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCPw7GXI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C0D217657;
-	Wed, 30 Oct 2024 20:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43F71BD9D4;
+	Wed, 30 Oct 2024 20:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730321390; cv=none; b=WG2VXiwaxbbwosJh1pIWlXlkL91hXjTWN7fv3tmKi54IrZAqhIW8UH+5XmBKgzjFBuxDCWzhR0Olass18UgTLINH2ptj8ZJGIm4tO1jV4F8LSMEdaMJ+6LMfxq+PKDRqlOuddSs2D/FHwfgYJ5CuvLa98AHD1gVv0YToLKOmlOs=
+	t=1730319839; cv=none; b=mykqttRGIzoCb0TPZp60bFYLbeFMLPgB5bsg7NfNQmIJgWQmJStpyGy2EzyuYsBk5zSfl0aijy5epynhTMenvUZEvvQQznhXAFTEUV57ammwBjVhTE+p4kMRxqxs2YfqlYcnMA+4VvoeRJZ9Xcqu9x08xxiLsZSpCReBlRgBu7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730321390; c=relaxed/simple;
-	bh=qJdTcgpxMWoOYJiUsP4GiG9tUqa01DGZ7YOgoBaVGYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KBJTV7YStkqSp7imVksZwabPkiicylrpWYbjBsoYbMgQ1tHM3CBxzdK+lf4vQRIGXRCFZNK8XiCUofvKuCPCLsCIJ9ykUI8B3nG8g6e2eAaJc53OIPTm3hQDU0VO6kSg71sm/ATEqIIwR9qfM6438eeZhIr1A+fRDZ/4Jg4B0rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOoVF7LL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2757FC4CED3;
-	Wed, 30 Oct 2024 20:49:47 +0000 (UTC)
+	s=arc-20240116; t=1730319839; c=relaxed/simple;
+	bh=Q9syJ6R0wjduA4DUlaRWARzhz7ENcnTrcqvXhyZe1WU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=YKfOiaA8Cqqqq2rataU1WFJGbh3v2bfvEM+0dd9bSEkyH06w8VtkQ02IgRkiH2Nne0BfK9X+6PK/9+rf9B2T1uRg7SE+5ELo2+MCj938Pbzf271fYN2bgpXIuqENwujWPREBN4ZFFKzUCaquDkQepldIBF6Sk2eBRqt51IANOas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCPw7GXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A37C4CECE;
+	Wed, 30 Oct 2024 20:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730321389;
-	bh=qJdTcgpxMWoOYJiUsP4GiG9tUqa01DGZ7YOgoBaVGYE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MOoVF7LLTAGPZR8k2y9yUPTSo3ePcHSsIQKKysT8QUfGtY3lQVdYZqVM+iITuloim
-	 E7+DHneXNINFM3j7VlFWRmnGc3PyugIbOXZn3HOW5OuZ+JTup64mFLx/RYvpVC3tYd
-	 46qFpapz61zxbnJQTiIH6BJB/ix0X5AZ2cd0ZR6SruXvngyNixxOHkgHgN2JDjbyQf
-	 40BTfLzImQ7zA6ViT1dH8CjN8RBP++xbxwf/3fDZv7B7xB5oWn9brXkpUrV9lo91xN
-	 QODVwZPQJYvp165YgXvA8QAIdZ2SQlJXRTlygDB0e7HeyskrYT+kV6ScZTOyMBtuid
-	 Y6zZhINpalTnw==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 30 Oct 2024 20:23:51 +0000
-Subject: [PATCH 2/2] arm64/sme: Flush foreign register state in
- do_sme_acc()
+	s=k20201202; t=1730319838;
+	bh=Q9syJ6R0wjduA4DUlaRWARzhz7ENcnTrcqvXhyZe1WU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=rCPw7GXIVbrF9q+Cuhn+tg9C/7zY6VEBfGdfCPSKksS65sgxzVXTjPMSkloUwzxDP
+	 BThQQrBYNBfopz1nVyl8iP26wF4gjxRc+922Bdc1TiYP5C5YXL753xiAOaOxSGxzfz
+	 MLXBvj6cn8D2KTyp22UKvEbQ+b+PzNvP4Fbtdve4lycKgv+47WEgI0ovFmQ6gTjaT2
+	 SUN5/KsGcQGQOk7k9lAiJnxMLlxi/bAgwW+oJ1xov4yoGkp88hGNIPW2keg5QMXX7Z
+	 pbxTU+/0olBONELb657oQyKL/kPZ2hyMh/db8FKuikCZ//gZjacCbhQL4dxAEiMIAa
+	 8V850AOgHLNqQ==
+Message-ID: <72f5d3bd9e8a6aec59ef547bfd0d7bce.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-arm64-fpsimd-foreign-flush-v1-2-bd7bd66905a2@kernel.org>
-References: <20241030-arm64-fpsimd-foreign-flush-v1-0-bd7bd66905a2@kernel.org>
-In-Reply-To: <20241030-arm64-fpsimd-foreign-flush-v1-0-bd7bd66905a2@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1522; i=broonie@kernel.org;
- h=from:subject:message-id; bh=qJdTcgpxMWoOYJiUsP4GiG9tUqa01DGZ7YOgoBaVGYE=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnIpvnUTblL/oeizk6bN46HjZA0iw8vzEUtYmdpw9l
- fgVjsx+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZyKb5wAKCRAk1otyXVSH0O0ZB/
- 9Y9TutGjpVTwnaB7MGwyaYlS45T1zetmUTPlUgk5Bzrrtxnik4kWCWtMbUweX/06JhukK8Mo25LHu+
- IWlwyj0MO9SREDJUnqgGsAeJwCLx+Zg1mduJpZynDnFSwuCdEPM2cWtUu+LMvmG5MM05wquiL96F6Y
- EoQ50JgPqJV3ssrk+StMixv8AsUsRJ3EcECzuWQF34WlHFILUocL7cTz1i1yP5T3ykAQy0dy/knPu3
- wg1GhMzCp7m1ouVUHjLlJOSHBZjzO7KwS+fjTjDJU3zO5K/oSwd70BUm/CVBykNnZDDaafQnleB30X
- pMa33MLb0Sh+c5uvS/mgWDsXmFUW/H
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241029032828.238706-1-changhuang.liang@starfivetech.com>
+References: <20241029032828.238706-1-changhuang.liang@starfivetech.com>
+Subject: Re: [PATCH] clk: starfive: jh7110-pll: Mark the probe function as __init
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Changhuang Liang <changhuang.liang@starfivetech.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Changhuang Liang <changhuang.liang@starfivetech.com>, Emil Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+Date: Wed, 30 Oct 2024 13:23:56 -0700
+User-Agent: alot/0.10
 
-When do_sme_acc() runs with foreign FP state it does not do any updates of
-the task structure, relying on the next return to userspace to reload the
-register state appropriately, but leaves the task's last loaded CPU
-untouched. This means that if the task returns to userspace on the last
-CPU it ran on then the checks in fpsimd_bind_task_to_cpu() will incorrectly
-determine that the register state on the CPU is current and suppress reload
-of the floating point register state before returning to userspace. This
-will result in spurious warnings due to SME access traps occuring for the
-task after TIF_SME is set.
+Quoting Changhuang Liang (2024-10-28 20:28:28)
+> Mark the jh7110_pll_probe function as __init.
+>=20
+> There's no need to support hotplugging in the jh7110-pll driver. We use
+> builtin_platform_driver_probe, the probe function will only be called at
+> startup.
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
 
-Call fpsimd_flush_task_state() to invalidate the last loaded CPU
-recorded in the task, forcing detection of the task as foreign.
-
-Fixes: 8bd7f91c03d8 ("arm64/sme: Implement traps and syscall handling for SME")Reported-by: Mark Rutlamd <mark.rutland@arm.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
- arch/arm64/kernel/fpsimd.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index 6d21971ae5594f32947480cfa168db400a69a283..1eaa670cbffa448c1aced8c8b37040492e18a21f 100644
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -1460,6 +1460,8 @@ void do_sme_acc(unsigned long esr, struct pt_regs *regs)
- 		sme_set_vq(vq_minus_one);
- 
- 		fpsimd_bind_task_to_cpu();
-+	} else {
-+		fpsimd_flush_task_state(current);
- 	}
- 
- 	put_cpu_fpsimd_context();
-
--- 
-2.39.2
-
+Applied to clk-next
 
