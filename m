@@ -1,148 +1,108 @@
-Return-Path: <linux-kernel+bounces-388694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AFA9B632C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:37:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72089B632E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD81DB2143E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC363282A6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0871E882B;
-	Wed, 30 Oct 2024 12:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E5E1E882F;
+	Wed, 30 Oct 2024 12:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TldWA8YT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="rkhoYq2w"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CAA1E1301;
-	Wed, 30 Oct 2024 12:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B011E4928;
+	Wed, 30 Oct 2024 12:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730291857; cv=none; b=YAKi3UVOv7iQ3ZqQOu9aRgXNvQttekyorbizv1Fk52dmz/BSchNV+QY2hx2yuW73iK4xPz4hH/vYBEL34MnxZFuKK4N7lFbms4Dm2+ISwuw9qfhw4sb3WbdPg1FWB/ouWSZ325HMdxiEkCJjNxLnmbQ6cMOkcszfNNghnX0IXV4=
+	t=1730291881; cv=none; b=ldRQc8/DVhS2z1hCdh0cTn85pDgI593WNiZSKKMz9FeTxOfgZbRvk7QupWI5aPtrcXIQMp2v+CabcbyhYdDtQWEMEuOb1H3LLsrkNzRyklKeNzQb/4kDKlUvJA6aIZiR8fXgPTGvuJWBydaMtbCVrIhNksBU+5T2CqfIZ41kqT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730291857; c=relaxed/simple;
-	bh=iQ5MWg6guKwc54quNaLMTdgp1XfHAz9Kqtg3TI+nJrk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GxklLGWGnjhTAnl9tHIyfdMGkunOIrzEyOPmFieTu63dQtK0bflYvnISqozgMsQoIKMr95eoBnxVrU6GIXEw5U4p6Upu0qvYFssptw1qNZ7VUZAUkFyMwjFafbUmt9h/P5DNz5P5+Kg4Zzpm7SCk8thLcRjd+JI39UpgWu55DUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TldWA8YT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2568C4CEE3;
-	Wed, 30 Oct 2024 12:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730291857;
-	bh=iQ5MWg6guKwc54quNaLMTdgp1XfHAz9Kqtg3TI+nJrk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TldWA8YTm6BRMU+Oi1vrsYUKDDlOK745njA6aZ71oGQmL0pP5h/HmhBUkpaZP0Jc9
-	 tHZn3TB3FWVGPONOKT01zdkbpEkFSYM/M8963gK9wqMQMbSnqqZnNr3IHiuO09AQL9
-	 CuQIhT4dWlIKqYojo+8ENR2f06AsqbxR3s5eTMuHi/QWqy6n1875leqn9mgq7MuOnk
-	 NTXo8a3SwQzi7lCjjW7uGct3GnHoMUj0+BUZFdZVuk1tsgpMrZxMQa9qDZVYZ1IU+D
-	 RW+AAAncR1n3oXHQ5MbuM4JUSYVfO/AV51ikheJ/vluK4Qhaco/gVQMrZLi0IoU2bM
-	 /zyecQk2UxKQw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Len Brown <lenb@kernel.org>,
-	Jarred White <jarredwhite@linux.microsoft.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] [v3] acpi: allow building without CONFIG_HAS_IOPORT
-Date: Wed, 30 Oct 2024 12:36:41 +0000
-Message-Id: <20241030123701.1538919-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241030123701.1538919-1-arnd@kernel.org>
-References: <20241030123701.1538919-1-arnd@kernel.org>
+	s=arc-20240116; t=1730291881; c=relaxed/simple;
+	bh=1cxDQrDX+MgLwWrT/qj9xtMoo3zBblGDpJ6YsnHfvtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=obi+UwEQzxyk7gWo4WaxH3DWj/VnVUp91nIkicqxCt/Ju/W/Kviw5L6Oc5wip2Sg/SukygkktGEhf4YZSCdGMi8PZrgXaUwUhtOL9F1GC/+ZiWF3Nwc0VR+8DsTmzkVlTBT4jKu7SqC8RdSGvfDfIV7xPzo2wLMLhzFKAwp+OZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=rkhoYq2w; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 48E56A079B;
+	Wed, 30 Oct 2024 13:37:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=8Tt0KmwBKy/brL1yb3XR
+	sgRfkqeOXAgFzAXAMIUDuIo=; b=rkhoYq2wiq4yOyIxugIPnDQW7aGSusB4MJ0a
+	xclfnc9qmJznHvVOCoGxDo0tnsBUN+tzP0LSdPu7pxb3MZYONMDalqyW5xp1U8zT
+	PBvbDSEMtsNKzQFxN7BwuXVo7w8fKYJOQ18DLQB1I8g0ilSBw6WdBx2e6pXkAdiB
+	HhzVhFEFY6zIhcCpJfWAgEwQgsOQMKaevpBOdPtY0tRsHG6yqiA7q/QCa6cuuCzG
+	P8xxL1GQprsVm9EKum/mygh3rmVOn/n4JPcsZ7ZyuQ7y/4RA59JIzWeKQmiWcoE5
+	01z3zhRWo29sTOiJAY5O8o3Rx0ZMgSGLiLCrB2TJdustAYMQLk0OHzDItwIEdFs2
+	lnwglRaSDgd2QR9XMLy2n1Tnid9G5JKV15DBg3OgNh3YTooChMhtGasuZIVJOIyw
+	ntxUW0povSR6nAriqFgfLDGxn2fYioVdsyUiw/5eXjBlrtmqZ+E0umteQkMiwzbx
+	tG0jCj7/nmTjzb6LvIq4nBrZqT9CEsqfwpvd1N/NLnkwtNXEblJzo0kf7o3LpKfX
+	tWGbUtIb2jqKCMf3C7yCK72Li/sKb++2Mkf9qfp91Q6WgntSk6LWDkLIrIyCQ3mt
+	Zn4N/UF2CsOvBTVliC4jHP2x1RQoJemF5Wp8y8qgzeodwaGZDgNofyTeOlYEyEEp
+	VL48g0U=
+Message-ID: <2b310b54-c215-40fa-b6d4-81faf75a8c9e@prolan.hu>
+Date: Wed, 30 Oct 2024 13:37:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
+ newer SoC families
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, <linux-spi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Varshini Rajendran <varshini.rajendran@microchip.com>, Mark Brown
+	<broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, "Alexandre
+ Belloni" <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>
+References: <20241030084445.2438750-1-csokas.bence@prolan.hu>
+ <7cc95e52-7509-44eb-8e30-d518283e7d87@linaro.org>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <7cc95e52-7509-44eb-8e30-d518283e7d87@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855667761
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi,
 
-CONFIG_HAS_IOPORT will soon become optional and cause a build time
-failure when it is disabled but a driver calls inb()/outb(). At the
-moment, all architectures that can support ACPI have port I/O, but this
-is not necessarily the case in the future on non-x86 architectures.
-The result is a set of errors like:
+On 2024. 10. 30. 12:09, Tudor Ambarus wrote:
+> I think it's fine to split sama7g5 addition in smaller steps. But please
+> add the sama7g5 support in the same patch set, otherwise this patch
+> doesn't make sense on its own.
 
-drivers/acpi/osl.c: In function 'acpi_os_read_port':
-include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
+Well, actually, we're using SAMA5D2. My goal was just to somewhat 
+harmonize upstream with the vendor kernel so that we may contribute 
+other patches that we have made on top of the latter, or in the future, 
+take patches from upstream and apply it to our vendor kernel-based tree. 
+This patch was only meant to lay the groundworks for future SAMA7G5 
+support. I can of course send the "other half" of the original patch if 
+needed, but I wouldn't want it to hold up this refactor.
 
-Nothing should actually call these functions in this configuration,
-and if it does, the result would be undefined behavior today, possibly
-a NULL pointer dereference.
+> Also, if you think you significantly changed the code of authors, I
+> think it's fine to overwrite the authorship. Otherwise, try to keep the
+> authorship and specify your contributions above your S-o-b tag.
 
-Change the low-level functions to return a proper error code when
-HAS_IOPORT is disabled.
+I don't know if it counts as "significantly changed", I split out parts 
+of a patch that were relevant for our device, and made small adjustments 
+to make it correctly apply to master. I didn't find a descriptive enough 
+tag for this, so I just went with Cc:, but if so desired, I could change 
+it to a S-o-b, Co-authored-by, Suggested-by etc.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v3: fix the returned value and add a comment
----
- drivers/acpi/cppc_acpi.c |  6 ++++--
- drivers/acpi/osl.c       | 12 ++++++++++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index 1a40f0514eaa..3757424b715f 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -1017,7 +1017,8 @@ static int cpc_read(int cpu, struct cpc_register_resource *reg_res, u64 *val)
- 	*val = 0;
- 	size = GET_BIT_WIDTH(reg);
- 
--	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
-+	if (IS_ENABLED(CONFIG_HAS_IOPORT) &&
-+	    reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
- 		u32 val_u32;
- 		acpi_status status;
- 
-@@ -1091,7 +1092,8 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
- 
- 	size = GET_BIT_WIDTH(reg);
- 
--	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
-+	if (IS_ENABLED(CONFIG_HAS_IOPORT) &&
-+	    reg->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
- 		acpi_status status;
- 
- 		status = acpi_os_write_port((acpi_io_address)reg->address,
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index 78a81969d90e..8ab1802c164b 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -642,6 +642,15 @@ acpi_status acpi_os_read_port(acpi_io_address port, u32 *value, u32 width)
- {
- 	u32 dummy;
- 
-+	if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
-+		/*
-+		 * set all-1 result as if reading from non-existing
-+		 * I/O port
-+		 */
-+		*value = GENMASK(width, 0);
-+		return AE_NOT_IMPLEMENTED;
-+	}
-+
- 	if (value)
- 		*value = 0;
- 	else
-@@ -665,6 +674,9 @@ EXPORT_SYMBOL(acpi_os_read_port);
- 
- acpi_status acpi_os_write_port(acpi_io_address port, u32 value, u32 width)
- {
-+	if (!IS_ENABLED(CONFIG_HAS_IOPORT))
-+		return AE_NOT_IMPLEMENTED;
-+
- 	if (width <= 8) {
- 		outb(value, port);
- 	} else if (width <= 16) {
--- 
-2.39.5
+Bence
 
 
