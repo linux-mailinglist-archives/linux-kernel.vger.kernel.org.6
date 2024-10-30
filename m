@@ -1,141 +1,149 @@
-Return-Path: <linux-kernel+bounces-388886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1C69B65B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:26:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA489B65C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2DD2825F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:26:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF002825F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E67F1EF953;
-	Wed, 30 Oct 2024 14:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuLuhEk4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007221F4714;
+	Wed, 30 Oct 2024 14:27:29 +0000 (UTC)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942951E411D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C1E1F1318;
+	Wed, 30 Oct 2024 14:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298397; cv=none; b=b5Y1i9dRRA+hhZsc85CGNmusM73tKt2Lzpe48Kd7WzC8kETqpBqlobmM+47omxcu9Dtcj8dOF4lqPshM8bfW94gSAWcTYPLjax7rtrWTM/NHHTHiZPchPIbibrqV/pMphe/hLXVGKVcxzC9J2qDqpVhSdVa6w6pHkQ41uhtnsro=
+	t=1730298448; cv=none; b=WH1fbLC+bBcG1EVzd5aXnziT1hiRq38JGeZ/rH8d6pInDiuPSNqq0MRUjJM790xS8j9LaeXtvVi1woLMx+x5zi2ERbkI8xFuQyGPfmiAtJUfEKpDE06t3SCjKMlPjGceu22oBnDjfmDNcO+LVGW3w1F1+cGnVsjOblxUdGATS7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298397; c=relaxed/simple;
-	bh=pp7hrh0Se/FRucahKzWEUREqzoDLBXglYMYxwuT/S1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YVAhr07fWMUyLtWYcbHP6KzZSaXcw0OHkzmBrXMhbXU942n+n0JTTkNEIo/Fz2GFFhzkM9dhZB4sokn/LMnjH08fQFvGZCp4j4q4ighoryDWIVgzgliZImVvRGADjZYSsH32Hr26hB1QX/0K8h8+NyL0mcu4uSQqFt/Vm/8IZAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuLuhEk4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCD2C4CECE;
-	Wed, 30 Oct 2024 14:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730298397;
-	bh=pp7hrh0Se/FRucahKzWEUREqzoDLBXglYMYxwuT/S1Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YuLuhEk4g9VwFxKCkZzN1DLIH/pvpYizdk8+R9pP1CmvI4iYqdB5pwYfCPZ9ng1w3
-	 vV8uAQ0fP9E5KW7dqK+75OBpiZZpnuS5RNemiugQwHZZ1h+MbhZFOQI5alp9C88ta/
-	 1TLuye98iPGPfAvIh3SQdGtJDoNj9scklPUu0J+TO/4KSkJkPeQ9Oq8xOLv2Iu0j9m
-	 k24h+6wqwwCQkgnI0I9dg6mkBX/zWOqhNNDm4JI7/xOMDbdKDalBBvDGNrbZzx6hyJ
-	 crHi0R92MRloTfR9gvUE8LS3ReedA00d4avEiBwAW5vK4mYLtX3TbeXTXK/Tnrz962
-	 k4aBwpC5cIJLQ==
-Message-ID: <1aab934c-d28e-4ee8-a857-ffc2ef739488@kernel.org>
-Date: Wed, 30 Oct 2024 15:26:32 +0100
+	s=arc-20240116; t=1730298448; c=relaxed/simple;
+	bh=fdTlufCbZhiUYgshLzgCtmAceM3onaTjAgEf6R64lN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JKOi/KGOQGeA9B8OFvobmDFKA/oFfbFxypX2FSqrouuBZ2SzXN1yzKR6K10V6NmrBFrvpo9T5TUvtymTYgczk2ZbUjqPZhXSS5Q2iIkOYM6xddyTnO3f9PUo/9Fi0SGPB7WRS3Yw99ZjzXZWiievHlbOvGv82SEHBAPd6CTj6RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7eb0bc007edso3438576a12.3;
+        Wed, 30 Oct 2024 07:27:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730298445; x=1730903245;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ALb0tBs4NDBt4u3K1Ou6MF9SiXOV/Onh0/EFY/ivrUI=;
+        b=UQcbluAHG2wg/M1j5MpWEhCpCfbg1v0NEnQa/9tfViEyNMNgnxQRXKz6esOEpyFNUa
+         RlvefZ212lgwMbpqPRVLrnP9tg7WPSx2I2brHABICnYGkvXmbHZCG6RszQmqEMowtuGT
+         sltV+S6VbFRB3dXf9vLNazQdNFeMnUBDTjYPOac2NFQVgs4JYmpAmiin/PMenMpml/C9
+         QxfNr/HSf4MjgQtj348xP15NrRbr5ciuLh5Durpm5HLwWyk0H2c3YFfrnYOJQAF+NDPJ
+         i8zGy3a0QkG/nYOImD9acIHbJT/F/y1a4stGgc4anCp25dEWCFc3qw091F9U5rwiPWsa
+         B61w==
+X-Forwarded-Encrypted: i=1; AJvYcCUlYO8D6AL8lJ76AvTdklfB+os45vyIeN5d6z4ffVf53HeP0cQDDQOkfpX5s9jr3INQ6zXrIA8iblF7+DY=@vger.kernel.org, AJvYcCWVdWYShCwnwii4YB0BfdTWlYA5bnz+rgyhSW21SKMXUhB5K343q54CQeRXI0PuSjykHJ7P99IfYi7MTZ+T+LgF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvj0dk5ucZ9jJRa3n9kyGYCytC/NefU67SCGqm2G6CmLrzPpbS
+	PWNd3Qkdedr1EjavTOqsuy8RgnVI2kh1rV0sF5tBEDafPuCpem4BiPlXi5k=
+X-Google-Smtp-Source: AGHT+IF7CE5jtvVBGnU/qez672fRz6aDeNOCseUmK9IyiVNs1IRC6vimUzOVgVduDPxsQ1l8jiXnMA==
+X-Received: by 2002:a05:6a21:3941:b0:1d9:69cd:ae22 with SMTP id adf61e73a8af0-1d9a8431ab7mr16966490637.30.1730298443893;
+        Wed, 30 Oct 2024 07:27:23 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0b82asm9311008b3a.111.2024.10.30.07.27.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 07:27:23 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	shuah@kernel.org,
+	horms@kernel.org,
+	sdf@fomichev.me,
+	almasrymina@google.com,
+	willemb@google.com,
+	petrm@nvidia.com
+Subject: [PATCH net-next v6 00/12] selftests: ncdevmem: Add ncdevmem to ksft
+Date: Wed, 30 Oct 2024 07:27:10 -0700
+Message-ID: <20241030142722.2901744-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] mtd: rawnand: davinci: Add clock resource
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Herve Codina <herve.codina@bootlin.com>,
- Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20241030104717.88688-1-bastien.curutchet@bootlin.com>
- <20241030104717.88688-5-bastien.curutchet@bootlin.com>
- <3035aa2e-dbab-4224-a5db-d18e37003d5e@kernel.org>
- <58a1b909-7ed7-40a4-8845-b8327a1d740c@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <58a1b909-7ed7-40a4-8845-b8327a1d740c@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/10/2024 13:20, Bastien Curutchet wrote:
-> Hi Krzysztof,
-> 
-> On 10/30/24 12:17 PM, Krzysztof Kozlowski wrote:
->> On 30/10/2024 11:47, Bastien Curutchet wrote:
->>> NAND controller has a reference clock but the driver doesn't use it.
->>>
->>> Add a struct clock in the struct davinci_nand_info so it can be used
->>> to compute timings.
->>>
->>> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
->>> ---
->>>   drivers/mtd/nand/raw/davinci_nand.c | 9 +++++++++
->>
->> Where are the bindings?
->>
-> 
-> The NAND controller bindings are in 
-> Documentation/devicetree/bindings/mtd/davinci-nand.txt but this clock is 
-> defined in the AEMIF bindings in 
-> Documentation/devicetree/bindings/memory-controllers/ti-aemif.txt
+The goal of the series is to simplify and make it possible to use
+ncdevmem in an automated way from the ksft python wrapper.
 
-Mention this in commit msg so you get one reviewer question less...
+ncdevmem is slowly mutated into a state where it uses stdout
+to print the payload and the python wrapper is added to
+make sure the arrived payload matches the expected one.
 
-Best regards,
-Krzysztof
+v6:
+- fix compilation issue in 'Unify error handling' patch (Jakub)
+
+v5:
+- properly handle errors from inet_pton() and socket() (Paolo)
+- remove unneeded import from python selftest (Paolo)
+
+v4:
+- keep usage example with validation (Mina)
+- fix compilation issue in one patch (s/start_queues/start_queue/)
+
+v3:
+- keep and refine the comment about ncdevmem invocation (Mina)
+- add the comment about not enforcing exit status for ntuple reset (Mina)
+- make configure_headersplit more robust (Mina)
+- use num_queues/2 in selftest and let the users override it (Mina)
+- remove memory_provider.memcpy_to_device (Mina)
+- keep ksft as is (don't use -v validate flags): we are gonna
+  need a --debug-disable flag to make it less chatty; otherwise
+  it times out when sending too much data; so leaving it as
+  a separate follow up
+
+v2:
+- don't remove validation (Mina)
+- keep 5-tuple flow steering but use it only when -c is provided (Mina)
+- remove separate flag for probing (Mina)
+- move ncdevmem under drivers/net/hw, not drivers/net (Jakub)
+
+Cc: Mina Almasry <almasrymina@google.com>
+
+Stanislav Fomichev (12):
+  selftests: ncdevmem: Redirect all non-payload output to stderr
+  selftests: ncdevmem: Separate out dmabuf provider
+  selftests: ncdevmem: Unify error handling
+  selftests: ncdevmem: Make client_ip optional
+  selftests: ncdevmem: Remove default arguments
+  selftests: ncdevmem: Switch to AF_INET6
+  selftests: ncdevmem: Properly reset flow steering
+  selftests: ncdevmem: Use YNL to enable TCP header split
+  selftests: ncdevmem: Remove hard-coded queue numbers
+  selftests: ncdevmem: Run selftest when none of the -s or -c has been
+    provided
+  selftests: ncdevmem: Move ncdevmem under drivers/net/hw
+  selftests: ncdevmem: Add automated test
+
+ .../selftests/drivers/net/hw/.gitignore       |   1 +
+ .../testing/selftests/drivers/net/hw/Makefile |   9 +
+ .../selftests/drivers/net/hw/devmem.py        |  45 +
+ .../selftests/drivers/net/hw/ncdevmem.c       | 773 ++++++++++++++++++
+ tools/testing/selftests/net/.gitignore        |   1 -
+ tools/testing/selftests/net/Makefile          |   8 -
+ tools/testing/selftests/net/ncdevmem.c        | 570 -------------
+ 7 files changed, 828 insertions(+), 579 deletions(-)
+ create mode 100644 tools/testing/selftests/drivers/net/hw/.gitignore
+ create mode 100755 tools/testing/selftests/drivers/net/hw/devmem.py
+ create mode 100644 tools/testing/selftests/drivers/net/hw/ncdevmem.c
+ delete mode 100644 tools/testing/selftests/net/ncdevmem.c
+
+-- 
+2.47.0
 
 
