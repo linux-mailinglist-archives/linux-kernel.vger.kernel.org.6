@@ -1,94 +1,157 @@
-Return-Path: <linux-kernel+bounces-388180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B4A9B5BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:22:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2E99B5BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F10ED1C210CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147761C20FEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058071D1308;
-	Wed, 30 Oct 2024 06:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355DF1D1304;
+	Wed, 30 Oct 2024 06:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gT6tMBXZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MkQ4HCbx"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2079.outbound.protection.outlook.com [40.107.223.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D4A1974FE;
-	Wed, 30 Oct 2024 06:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730269320; cv=none; b=R04Y81BKJ8tRBq1Rda4RxtHkHwl96yIbUX107d0eCktX/fVwaEu9cJhHZA1VYaaZTjkwC5PhU+zPU028FHJReqqEkJodgbt+8t2MNv0Tqw0dd/AspQH1KB0y5k6WPKyZYaI3vFSS33yJDSe4w2StyQIRBHTv+0mJX+mGQY/DR4A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730269320; c=relaxed/simple;
-	bh=c1vbI+0Nm6A51Yq28Zq6LF1zof5ko5uSHSBIZKEfhys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZou8I2nUMACrrNdZce5q2kWk8RXHKAlYamZD3UcomSU0Hlt3eYbwBw29Ds8Ojub6Dt+Mg0/YMQ1Ro5D9mU1lofbyBs8whP+nWsswIeJ3cWMF4pODTwrf76G+yUOObqLhNTAiGxLCr+yKNff7f3Lxm5GZmQPhel50/nagL7E9k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gT6tMBXZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B79C4CEE4;
-	Wed, 30 Oct 2024 06:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730269319;
-	bh=c1vbI+0Nm6A51Yq28Zq6LF1zof5ko5uSHSBIZKEfhys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gT6tMBXZd/djWCdKwzozufEJaR7mWtqoZ5kTfjL4OVYotoTsz1OWeh1lGnRhp3HtM
-	 BAPn9iGIUlCaBJRvseR5mrBp6xstImFynCgCqRydLDLYYQvRSIwioRTLzNlPS+o58X
-	 mdiH3KDopbjftkoIWpXZtwxavIMh7uev9Os1zQTEgx9s11Ul8FvTcKAEr0PhBU6BqD
-	 dgY8tQ58LcnVDM5rrLGjo/KdGCrb9KRN9+h+7bLXc0vZmeLFfnuHZrS+tBjxreHkLK
-	 iipmIYhYT12U5dVaeOOdqyWPepirScrmsyp/P368N3GYYJhLXU2tIVhAC/EGO+Epvo
-	 HA5U0pkSWkbdw==
-Date: Wed, 30 Oct 2024 07:21:56 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
-	Francesco Dolcini <francesco.dolcini@toradex.com>, Parth Pancholi <parth.pancholi@toradex.com>, 
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: usb: add TUSB73x0 PCIe
-Message-ID: <g23hvybxed4ztz5sn6htdwonbwbspmfmtdbjbymwgiljaxc244@g4hylxid2k5x>
-References: <20241029072444.8827-1-francesco@dolcini.it>
- <20241029072444.8827-2-francesco@dolcini.it>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A5F19BA6;
+	Wed, 30 Oct 2024 06:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730269550; cv=fail; b=dz7US/y1AQhfkl8kHBNdplMKJdP71W0fkCNYGnNJGxXzhxVR2GqGLX+pUGt3NufWLhrDLQ6ZntUn8anY67b2NyEO5n5Z/dIkZnSj/JQPrRmM8mg4XD64LUc9yrdw6Hvu30rv2SPh0DRSrFDwy2crIDwApYJgEvzWuG7digEVDCI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730269550; c=relaxed/simple;
+	bh=JkJrSp+9bSw1GW8ODOwKqlGXsNkSz+KC49GUHhuDFz4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pth4Gmc7XVUBmnED52tyWKBnJ599eF/4fpa3pHsb+r8E9O474r6GB2TVG/ZqyCEkSU7BMEPu8TwbXbzYArASi7JGPRcTzFK2vv4p/3JdnX8w+F2LeJfgsIFR46ngqujOHYhDrADlSHBJpqD3M0rR/pHyQS+Sev+bFvlJJWLiOqo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MkQ4HCbx; arc=fail smtp.client-ip=40.107.223.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mr04A0cxI/qO1IYQTWvqhew3Q8u2r06X7Q6sxgVkMIobNiCTpocKlLjyLXQR0H6W+L8oaVa3xa8nEEHlfFUiRmoqsCtqeyEM+6NZ/lIjRQWRiFZOI6rW72wm6cUu/6n1HEx/V8Wo1gFfg4tdkHS4U2DEvGImyiPfka9YySDXDhsqpbA/Bi/vVPPdcxeFIsL7D0WLIgTisVIFPl2TNpFnSrvO/5jGmQGygf5BGMgEsgHFoN/2EK/eOHv/4gtrUaJLa5aYrnZtDXDuyXljEixp8efGTPovNQr0cL+5z1qOG45zBbZQST2YihLm4rLhNRVKyYUgHTElcg5tQTUfx1OfhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KM9EiVroMALcUxodR2rRdxFvVaaT3eOp/EHuyeyuut0=;
+ b=U/n+Emjz2SCn6ATDhbkNwbdea8Gd26u3JtrgK6BqNyoUcezXhW/Jc8KxFTglyVL5+LSGjf+I+zF/QkOCBO8OQrMVAVXoZiEnXMXA5+QK16nsLfkMAPlyTEj/535Rt8xt422qYYDPXAStnEZEIOja83pWwSgOHM6XM/ekgIAw9+K+nPdouH4zGp+fo7KsaFzaCekldYc1mHzxnF+d+vmDCZxClKkbZkJp+TEpjyGgok0G4aY1wfv7wV1o+6ZTs3nKhz+6A8iaDCJbAEgIRSTlv3HfPIEaqAu8kkwbEJcN9NC2ytogPYL/+kMP66OSB99gWYtbJhFtvockQFBnhkeKAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KM9EiVroMALcUxodR2rRdxFvVaaT3eOp/EHuyeyuut0=;
+ b=MkQ4HCbxH/HbywLMj9t3XKr1AGgRyDNHZyrmB/+BFXjR6+jVuoBN88R1mS16XUwjL6R2/bUo+koQp7i90aeObsD9BCqKAbFt5hHoshNVGGy92JusAcEqcHWhw8uS51WP+eXQp4+BINZn/O/bhhHqYb/pSWLOvl5wRa66QVDsocY=
+Received: from BL0PR02CA0060.namprd02.prod.outlook.com (2603:10b6:207:3d::37)
+ by SJ0PR12MB5675.namprd12.prod.outlook.com (2603:10b6:a03:42d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
+ 2024 06:25:39 +0000
+Received: from BL6PEPF0001AB4F.namprd04.prod.outlook.com
+ (2603:10b6:207:3d:cafe::59) by BL0PR02CA0060.outlook.office365.com
+ (2603:10b6:207:3d::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.17 via Frontend
+ Transport; Wed, 30 Oct 2024 06:25:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BL6PEPF0001AB4F.mail.protection.outlook.com (10.167.242.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8114.16 via Frontend Transport; Wed, 30 Oct 2024 06:25:39 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Oct
+ 2024 01:25:37 -0500
+Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 30 Oct 2024 01:25:34 -0500
+From: Suraj Gupta <suraj.gupta2@amd.com>
+To: <radhey.shyam.pandey@amd.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <michal.simek@amd.com>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <git@amd.com>, <harini.katakam@amd.com>
+Subject: [PATCH net 0/2] net: xilinx: axienet: Fix kernel crash in dmaengine transmit path
+Date: Wed, 30 Oct 2024 11:55:31 +0530
+Message-ID: <20241030062533.2527042-1-suraj.gupta2@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029072444.8827-2-francesco@dolcini.it>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: suraj.gupta2@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4F:EE_|SJ0PR12MB5675:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c3b840f-2d39-4dba-9f4f-08dcf8abac68
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?i2Wt5b9+6krWJhWl8bAP49uof6FCh5+Z5IqM2Dwot91ppaYulEvwklMhvrx1?=
+ =?us-ascii?Q?UrX91wyeCal/OTL7rnk71RPfoPLOHjraa/RUjSUHG2SXDMXcaIeMJ4vY11sE?=
+ =?us-ascii?Q?SQlwNQuFxy8FuCLgQ0fwsN40YBM4mksI5/gP1lTZaQ450UjXDWuWNcosQQNL?=
+ =?us-ascii?Q?LX1vHb/mrWvpDKd0Xi/EzNF11I21sYy9LZjLZlwzBiaNd+CJXH5nn37ig3ZA?=
+ =?us-ascii?Q?dd/v7A60wUvXGD3oXq/SKjffveKXt7U+PhG9INHO3ouR3Y/52Q10cK3qA83Q?=
+ =?us-ascii?Q?EgtEiAlXiZF2UHAHUP5yOwlirJOdDJCOLTPFhajxAcs0zFn4uVXCLnTrS+Qm?=
+ =?us-ascii?Q?wVFlKRU4AP73wwxC0VQz0Xb3ASmA5u6e1BUC40nE8cmL0rcPa1/45xz2BPo6?=
+ =?us-ascii?Q?vDjvxzgg+5YpqEyM+VxN+GmLKm6RQcSQRzEnlnMYxp+DkJctWXwakVvxC6Zl?=
+ =?us-ascii?Q?uuP7kLtRZaTIwBnOpqCDEBWBk+Qr+BF0b1X9mSRBfOb/zuT9OQWRlogu4dII?=
+ =?us-ascii?Q?b88Q4UYdO3iuP9Q99ZeHbNDjf/FeYJzHX6xycrepu5OwGf496jgferuhtHmO?=
+ =?us-ascii?Q?T0Tc77/q5RPpV5pntBs9Xwlt+fexJzgjUrDMa2QhTORQ/ME2NUwN00mEUwKF?=
+ =?us-ascii?Q?y7Du9/p3BdgAsj+dGfY3jqK6YVWv5Vq73IiDKFplfiHsk1pKsa6xoeU1ZHI2?=
+ =?us-ascii?Q?dU318x9X1X74Mo0HfKGMNG2we7QLFPMDZa+++0c4U1oZy6xE9pZRTP0bgkG8?=
+ =?us-ascii?Q?d/TVLx4BKcWhMLRTngpy3IaQLMxvHdSdIP/oCFViMQKM/61rkYXZieBsc087?=
+ =?us-ascii?Q?cQB4oW6YQEed9KEpnq/pF2mfUAJhhPop/+ye5kTwgxjkPEhhZN1Q7rNdKrYC?=
+ =?us-ascii?Q?c7YmffemgGaw7SeauBuCGWLAMh9IkdYorQB4Rzf/cMRQyjAS6Insal+vzeB7?=
+ =?us-ascii?Q?oUxJ+K2OIPgKQQZ8a7quJsuQ8oi2Oq5PRSqG3Q/Qp+7BAT9pk7WarD6qvfyh?=
+ =?us-ascii?Q?kUmPjVf7psMg5J48/yRiczwgfZeE2xAEbOzTdXgPLJLOR6LgT3+NwuNSJoSD?=
+ =?us-ascii?Q?i/Q2ulXtiSkaGy012bEDGyiXeRHHCbEA2jz4TPJnVUbSbVdY2N/YZ3hfqbuk?=
+ =?us-ascii?Q?Aeh4BNzHpUF+BYRygLU5IEugAYX28eF/Q76G/3k2iC6QzBmQPsvr1QzGtB1p?=
+ =?us-ascii?Q?Yt/rJMjR03xIt0MPJy4Ucc4snftHlp3pVCWJPzu9Sml3ywXP5KzHXauNqkeQ?=
+ =?us-ascii?Q?6OdEuDctRta8JqkOmQvbxtimU7fXf9vBmf3OPphe2O3LNnx0LKjEaLCLJptu?=
+ =?us-ascii?Q?cZjGq5hv5flVRxBv8y/Ygpid9kI0j82tLaHdkf5PrnSsax4JlMV7zOs2xkP5?=
+ =?us-ascii?Q?vhNKkcA0z4YYmJz3VvawyIJLi828B/D4naulQw7YcjQJyNP9HWO6fRCU9qfN?=
+ =?us-ascii?Q?MoRUUU8F0tE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 06:25:39.4776
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c3b840f-2d39-4dba-9f4f-08dcf8abac68
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB4F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5675
 
-On Tue, Oct 29, 2024 at 08:24:43AM +0100, Francesco Dolcini wrote:
-> From: Parth Pancholi <parth.pancholi@toradex.com>
-> 
-> Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
-> host controller. The controller supports software configuration
-> through PCIe registers, such as controlling the PWRONx polarity
-> via the USB control register (E0h).
-> 
-> Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
-> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
-> v5:
->  - s/ti,tusb7320-pwron-active-high/ti,pwron-active-high/
-> v4:
->  - add $ref: usb-xhci.yaml
->  - description: wrap to 80 columns, add that the two variants use the
->    same device ID
->  - revise the example, based on comment from Rob and taking
->    marvell,prestera.yaml as an example (this binding was reviewed and
->    amended by Rob in the past).
-> v3: use lowercase hex in compatible
-> v2: rename property to ti,tusb7320-pwron-active-high and change type to flag
+This series fixes kernel crash in dmaengine transmit path. To fix it,
+enqueue Tx packets in dql before starting dmaengine and check if queue is
+not stopped.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Suraj Gupta (2):
+  net: xilinx: axienet: Enqueue Tx packets in dql before dmaengine
+    starts
+  net: xilinx: axienet: Check if Tx queue enabled
 
-Best regards,
-Krzysztof
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+-- 
+2.25.1
 
 
