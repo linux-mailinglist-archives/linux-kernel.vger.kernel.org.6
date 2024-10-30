@@ -1,155 +1,111 @@
-Return-Path: <linux-kernel+bounces-389494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D199B6DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:35:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE259B6DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452FC1C20F92
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A324E1F22AEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8681EBFEF;
-	Wed, 30 Oct 2024 20:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AB7205AC7;
+	Wed, 30 Oct 2024 20:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCTwIZne"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="sQv71v5s"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9877D199FB1;
-	Wed, 30 Oct 2024 20:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5CD1DE3BD;
+	Wed, 30 Oct 2024 20:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730320523; cv=none; b=VfVZcHQSrw7yCi9e6yK7KubRYKAJI5oXSVdzbxbozgRkqi0iR7RnABTE6gc4c+/Nb6e7V6vjphDNnfkheEZMHVYqTlOt9Lhx3lymKWuf5Qap8jfhcEFW/4+E5GIXn7Jk8N8elYW+DfYLcbIJzRGi6HjPKOFu3myubWhp6SDOLfM=
+	t=1730320651; cv=none; b=NZ+xEhcsbiapItsJPPOprmGCD5G10FYOm8t0DvKWH210OK0bhSNZldm9yiKN/2iXVSDQ1q3GfRIbVumhkDOqpunXkAx8Mcod7K5GYg+mHSZRLFTzez0U4vmgN0IoZXIltK9c+rBIvAk5FSKLL6Z5bP48H+tt+r2u7ArNwJOyO7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730320523; c=relaxed/simple;
-	bh=43ROIMQBtkT2b268XPhwFJi+beswuD92eF7qUKl5Q/4=;
+	s=arc-20240116; t=1730320651; c=relaxed/simple;
+	bh=2/1ioMZjr5MSZefM6ixUjSp6domEpY+fUhQGJH2J0VU=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QhqdbxTJlrLl5SVbApCdCCLK/9OMWq+xpeWxids8qi9aWYQ2P2LMQ6opmbGdKJGomGDWq8WyIj+Sq0/n5MRSea6cKhXbyGdF16Zo2vB/9RW5s9UL2zwz3CEWrR9/LW3oTzoE7UKbAwkYFexNuugtUh/ZL1ydNoCVmNSORak0k3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCTwIZne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CAB1C4CECE;
-	Wed, 30 Oct 2024 20:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730320523;
-	bh=43ROIMQBtkT2b268XPhwFJi+beswuD92eF7qUKl5Q/4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YCTwIZne2Hfvnx7M6XgPeK7vJ6cHDOaFj3Lj0xEYYQXD0Q4mLjvXlgzg1I7OybtXU
-	 w7rkuKRA8szqfRNB3eS18YQ2Lba2U2JZ4Vx5r8VwMwTOIS98b/Rb2DvSPIKHtw0Qj9
-	 /L57aRPc3juIidentFXooBoQDE5v2FQeS3tFNz4I+jGjZX2A8V/D3HeyxxvsA9zxYB
-	 FHgVwf+dH8/WmZR9lHRC8Pi1L9hGLfjQEEXYqzH/MPOl4yTX76saAW7pbj2jaqj8AM
-	 b2lDsFlZzYH0RWYBEq7rP5s4koPx2Tlkmx7r8D5C/n0Pf/VmPZmA5Zqx6vZA3wq78J
-	 HN8f3hlRoEnAg==
-Date: Wed, 30 Oct 2024 20:35:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- anshulusr@gmail.com, gustavograzs@gmail.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 13/13] iio: chemical: bme680: add power management
-Message-ID: <20241030203514.349d8142@jic23-huawei>
-In-Reply-To: <ZyF8vtLiVUEHojl4@vamoirid-laptop>
-References: <20241021195316.58911-1-vassilisamir@gmail.com>
-	<20241021195316.58911-14-vassilisamir@gmail.com>
-	<20241027103013.06daac42@jic23-huawei>
-	<ZyF8vtLiVUEHojl4@vamoirid-laptop>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=e64scmFtZdp/lPA1G6W1cLwxd4bGyeloynz+Wo2aJaFLqwPm2UNBX9FqpMUjKMfiz1f5s9ZUGmmrUehcvGOyN4VHllBrdmfsrVu8HSkZUKRzzcv1apfQpng8NlKngpx3f7nJZweLWjMtj7m0L9vfH1MJQycMBfq51CuhRa9ZD1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=sQv71v5s; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=DpNcxLmfCPp/1kR/oU+eyuV4/OGMKcYGghtRFeKEkdI=; b=sQv71v5sC8eeEUXCosVVVskwYk
+	oWLhHYAXgXJ1NGT/tsIxFxT/r+93g1VmGgC2ubey1jk/n/iUbYJ3C5LdybY5Yn8OdKyyF2+mCqpVO
+	3Fddtz4RVRmiha8GXMY2/j5RIUMj/OSpnjdTP9pBHNnBEAXaMEkXK10vES/na5KJFrU0XLcVrzg0X
+	7afL85pjxYQjRsckFqqszJJOytKCwG7PvO7lFjmJUX3q5bGXIzPrj42eOg5rLAOz3oFzqbodlOxs/
+	f85VPIGrAtW5goaxqmDYXkIWBszy6XfgQuAcWdm0r2K5Rw9tJQJKZyVqvfC2xfiVpeAWRQIU6S3Fs
+	CahACanw==;
+Date: Wed, 30 Oct 2024 21:37:13 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mithil Bavishi <bavishimithil@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v1 4/6] arm/dts: Add initial support for Galaxy Tab 2
+ 7.0
+Message-ID: <20241030213713.45223f64@akair>
+In-Reply-To: <20241030194136.297648-5-bavishimithil@gmail.com>
+References: <20241030194136.297648-1-bavishimithil@gmail.com>
+	<20241030194136.297648-5-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+Am Wed, 30 Oct 2024 19:41:34 +0000
+schrieb Mithil Bavishi <bavishimithil@gmail.com>:
 
-> > > +
-> > >  int bme680_core_probe(struct device *dev, struct regmap *regmap,
-> > >  		      const char *name)
-> > >  {
-> > > @@ -1164,15 +1231,60 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
-> > >  	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-> > >  					      iio_pollfunc_store_time,
-> > >  					      bme680_trigger_handler,
-> > > -					      NULL);
-> > > +					      &bme680_buffer_setup_ops);
-> > >  	if (ret)
-> > >  		return dev_err_probe(dev, ret,
-> > >  				     "iio triggered buffer setup failed\n");
-> > >  
-> > > +	/* Enable runtime PM */
-> > > +	pm_runtime_get_noresume(dev);
-> > > +	pm_runtime_set_autosuspend_delay(dev, BME680_STARTUP_TIME_US * 100);
-> > > +	pm_runtime_use_autosuspend(dev);
-> > > +	pm_runtime_set_active(dev);
-> > > +	ret = devm_pm_runtime_enable(dev);  
-> > 
-> > Take a look at what this unwinds in the devm handler. You don't need to do
-> > as much (or possibly anything) yourself.
-> > 
-> >   
-> 
-> Well, in general what I see that could probably be dropped here is the
-> extra add_action_or_reset because of the devm_*. About the functions
-> get_noresume() and put(), I feel that they could be dropped as well
-> because the device registration will happen well before the autosuspend
-> delay, but does it make sense to depend on something like this?
+> Create a device tree for the 3 inch variants (P3100, P3110, P3113)
+>=20
+> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+> ---
+>  arch/arm/boot/dts/ti/omap/Makefile            |  1 +
+>  .../dts/ti/omap/omap4-samsung-espresso7.dts   | 70
+> +++++++++++++++++++ 2 files changed, 71 insertions(+)
+>  create mode 100644
+> arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dts
+>=20
+  DTC     arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dtb
+arch/arm/boot/dts/ti/omap/twl6032.dtsi:67.37-70.4: ERROR
+(phandle_references):
+/ocp/interconnect@48000000/segment@0/target-module@70000/i2c@0/twl@48/usb-c=
+omparator:
+Reference to non-existent node or label "ldosb"
 
-If you haven't enabled runtime pm yet all you need to do is set up the
-current state  Shouldn't need the get etc as you don't care if it powers
-down here anyway as you aren't talking to the device.
-> 
-> Cheers,
-> Vasilis
-> 
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	pm_runtime_put(dev);
-> > > +
-> > > +	ret = devm_add_action_or_reset(dev, bme680_pm_disable, dev);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > >  	return devm_iio_device_register(dev, indio_dev);
-> > >  }
-> > >  EXPORT_SYMBOL_NS_GPL(bme680_core_probe, IIO_BME680);
-> > >  
-> > > +static int bme680_runtime_suspend(struct device *dev)
-> > > +{
-> > > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> > > +	struct bme680_data *data = iio_priv(indio_dev);
-> > > +
-> > > +	return regulator_bulk_disable(BME680_NUM_SUPPLIES, data->supplies);
-> > > +}
-> > > +
-> > > +static int bme680_runtime_resume(struct device *dev)
-> > > +{
-> > > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> > > +	struct bme680_data *data = iio_priv(indio_dev);
-> > > +	int ret;
-> > > +
-> > > +	ret = regulator_bulk_enable(BME680_NUM_SUPPLIES, data->supplies);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	fsleep(BME680_STARTUP_TIME_US);
-> > > +
-> > > +	ret = bme680_chip_config(data);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	return bme680_gas_config(data);
-> > > +}
-> > > +
-> > > +EXPORT_RUNTIME_DEV_PM_OPS(bme680_dev_pm_ops, bme680_runtime_suspend,
-> > > +			  bme680_runtime_resume, NULL);
-> > > +
-> > >  MODULE_AUTHOR("Himanshu Jha <himanshujha199640@gmail.com>");
-> > >  MODULE_DESCRIPTION("Bosch BME680 Driver");
-> > >  MODULE_LICENSE("GPL v2");  
-> >   
+  also defined at arch/arm/boot/dts/ti/omap/twl6030.dtsi:83.37-86.4
+  also defined at
+  arch/arm/boot/dts/ti/omap/omap4-samsung-espresso-common.dtsi:616.21-618.3
+  ERROR: Input tree has errors, aborting (use -f to force output)
 
+I think you accidently submitted a wrong/outdated version. You had
+removed the twl6030.dtsi include in pmOS after I pointed that out to
+you in an issue there. Any further review is futile.
+
+From:
+https://gitlab.com/postmarketOS/pmaports/-/issues/2825:
+>Mighty
+>@MightyM17
+>=C2=B7 4 months ago
+>Reporter
+>Oh, there's a hanging include "twl6030.dtsi" thats causing us trouble,
+>I'll port the usb regs and comparator to twl6032.dtsi and it should
+>work fine.
+
+that is a clear sign that somehow an old version seems to pop up.
+
+Regards,
+Andreas
 
