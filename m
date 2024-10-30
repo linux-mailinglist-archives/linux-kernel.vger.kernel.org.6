@@ -1,105 +1,108 @@
-Return-Path: <linux-kernel+bounces-389114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8837D9B68C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:02:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD449B68E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98EF1C20B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ECE61C21AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3B52141AD;
-	Wed, 30 Oct 2024 16:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFBA214420;
+	Wed, 30 Oct 2024 16:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grT93DND"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CO9E9tDx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E84A36126;
-	Wed, 30 Oct 2024 16:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1015A433D5;
+	Wed, 30 Oct 2024 16:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304138; cv=none; b=X2RNuPFeojheiJ/gvFOlcmrA/BYBWLV3Jm0b396YY1t6vKaS6uNm6rHFfkAK4SqG+eK6vXK7pGel+bfRFpUUaeoDZmpbPNDUL+p4hq8S7Jy+CE7ZjWUJLBo6jhdBj1PyJ50AybNcQdRSQXZvcj3VhsR4bHZgz2UaTtoJ4VnqWZo=
+	t=1730304484; cv=none; b=bCFXciWi+uXrhjNY6s8BKTSlCLZVsEzw6rtliH2i9Z6n49LhyxIr+9hX7AbfqsZK3XZdRheiEjAxpny1KD7wCi5VlqdX26MbJrO60tElLbrWL5CGfkK8zbcBjRJO+PX/FJxVdKUTt5q3acgX99K9hVwg0lyTNoMHGcoE2GMRhsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304138; c=relaxed/simple;
-	bh=ObLb9xVnLmTxDk4I8X448bZDNJQZC+3IyOwYYRurdMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mjOORt8i+AemyY9gq88IeL3TCuR50PDjEqbxNKrQ8lTAkI75+oTL1Xrk9FrTPOxwEB3im9ZzVXrYkBZn5FfaHTmneMWRdPDmAuW4VG5qEgidpz8gENORcGDNz10PGPSQuhO9qHvKO5eLziMPATOwDA9n4faVnQfJS1CkffBDw+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grT93DND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97A9C4CECE;
-	Wed, 30 Oct 2024 16:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730304137;
-	bh=ObLb9xVnLmTxDk4I8X448bZDNJQZC+3IyOwYYRurdMU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=grT93DNDl8Vs7yKEC9ZqUrx2yZJcqpQBBwBSb7heHfpPYw7bgkatgF+Bdrd9d/hlY
-	 jM7KePkP6IQsEaoduUgU5HfNDEgh5/OQu+axL9ettEb0HP34p84vHrhXuokKi8le03
-	 WrNAVZ7SqOE9+6Q/Ywxky9l5Z1pvfloEtSQBGHRSR5wIrtLw3bb3zRZvhTceqfvcMM
-	 TgAsjLosVcVHqnjoLG4pl3t+cuqlSP4rT3FRVuMjeH/YPbC2HRKfoof1ER5f7rmOCK
-	 ArCDLJbSlVs8Uc0Va+VmrPAfSg+Y0FI4p/PFsBVZJD3HMX/c+9WHpA3qV/0FLYhySN
-	 5lSTFemMJHicA==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org,
-	oleg@redhat.com
-Cc: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mingo@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jolsa@kernel.org,
-	paulmck@kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH perf/core] uprobes: fix WARN() inside hprobe_consume()
-Date: Wed, 30 Oct 2024 09:02:08 -0700
-Message-ID: <20241030160208.2115179-1-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1730304484; c=relaxed/simple;
+	bh=dN6/EfUjzLbl6wnJHhWh2GGFGEvnCDY56lOMQ6JTL3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bTTqwy4JkntrkpZGm4pY98BtSIJ6E7+jYgto5EUczXH4ITB8uBxl2xt0ZT8/60kZx2txJjg+jJXt3h53cuAnPIdg6QHhcf2L/F7EdgiAWyWQd9MZKWaUI2JmZ5OD/iP0kRhk+PBBYIEwPZjdJh35Tf+fbfmIpsdAtbI+PGh+sus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CO9E9tDx; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730304482; x=1761840482;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dN6/EfUjzLbl6wnJHhWh2GGFGEvnCDY56lOMQ6JTL3s=;
+  b=CO9E9tDxKweZH5lssTGh51YM8k1Xh359WwAGaMQHYFgMKAzRTxiVt0+o
+   cDDg5KTZZU5dNeVcTE6rWHZqUwdaTnmIdzuhuGD6y2Y3GyLPR7Z4eJkZ2
+   LDI9iG+iuWMUVN95wKU2HjTNfS3Ri0MxTDe0BYKrYG5jRPcChhlhKbfmQ
+   TlSk9sPKIyTzXb/3mr/KgxOVj4InZ8RdsijahgQogR3q9jzZ5rixE0TpQ
+   x122T/Jp0or/CRj4FQ9qxnJKjieKw9uyk0MNMpNIjHFTaBFBPbpY8B3bt
+   LlnD25sWFlTuR0b2FJiRUNpMp3+4BvP16WFe29qnpV4fQUtoIZcAdMF6H
+   A==;
+X-CSE-ConnectionGUID: OM+00Kl9TrWnbwDZwvdiXQ==
+X-CSE-MsgGUID: 4YHa62i9Qlenp34ewp2XIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29432032"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="29432032"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:08:01 -0700
+X-CSE-ConnectionGUID: d+cMCHTzTOOwJ5xLAJBUhA==
+X-CSE-MsgGUID: YHfdmT5GR/aKfrkSlwgl0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="82523845"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 30 Oct 2024 09:08:00 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3C21D1FD; Wed, 30 Oct 2024 18:07:58 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v1 0/4] iio: acpi: always initialise data in iio_get_acpi_device_name_and_data()
+Date: Wed, 30 Oct 2024 18:02:16 +0200
+Message-ID: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Use proper `*hstate` to print unexpected hprobe state. And drop unused
-local `state` variable.
+Dan reported that data might be used uninitialised in some cases.
+Let's initialise it to NULL (patch 1). With that, update one driver
+to drop an unneeded anymore check (patch 2). Another driver (patch 4)
+gain almost a dead code — feel free to not apply it.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202410302020.1jHBLfss-lkp@intel.com/
-Fixes: 72a27524a493 ("uprobes: SRCU-protect uretprobe lifetime (with timeout)")
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- kernel/events/uprobes.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+While at it, one more cleanup to kxcjk-1013 (patch 3) is added.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 998a9726b80f..f2beb4b3f5c5 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -704,8 +704,6 @@ static void hprobe_init_stable(struct hprobe *hprobe, struct uprobe *uprobe)
-  */
- static inline struct uprobe *hprobe_consume(struct hprobe *hprobe, enum hprobe_state *hstate)
- {
--	enum hprobe_state state;
--
- 	*hstate = xchg(&hprobe->state, HPROBE_CONSUMED);
- 	switch (*hstate) {
- 	case HPROBE_LEASED:
-@@ -715,7 +713,7 @@ static inline struct uprobe *hprobe_consume(struct hprobe *hprobe, enum hprobe_s
- 	case HPROBE_CONSUMED:	/* uprobe was finalized already, do nothing */
- 		return NULL;
- 	default:
--		WARN(1, "hprobe invalid state %d", state);
-+		WARN(1, "hprobe invalid state %d", *hstate);
- 		return NULL;
- 	}
- }
+Jonathan, dunno if you want to rebase at this stage (probably not),
+but if you do, feel free to fold the patches 1-2 to the initial code.
+The rest seems to me like the independent patches.
+
+Andy Shevchenko (4):
+  iio: acpi: Fill data with NULL when
+    iio_get_acpi_device_name_and_data() fails
+  iio: accel: kxcjk-1013: Drop duplicate NULL check in kxcjk1013_probe()
+  iio: accel: kxcjk-1013: Deduplicate ODR startup time array
+  iio: light: isl29018: Check if name is valid in isl29018_probe()
+
+ drivers/iio/accel/kxcjk-1013.c  | 28 +++++-----------------------
+ drivers/iio/industrialio-acpi.c |  6 +++++-
+ drivers/iio/light/isl29018.c    |  2 ++
+ 3 files changed, 12 insertions(+), 24 deletions(-)
+
 -- 
-2.43.5
+2.43.0.rc1.1336.g36b5255a03ac
 
 
