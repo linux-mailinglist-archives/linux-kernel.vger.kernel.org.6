@@ -1,143 +1,143 @@
-Return-Path: <linux-kernel+bounces-387994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C239B58F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:05:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E265D9B58F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FEA01F24180
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:05:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82072B22B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9715112C544;
-	Wed, 30 Oct 2024 01:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ACD12C530;
+	Wed, 30 Oct 2024 01:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g9yqBDQP"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R9llZ6AT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78EB3C14;
-	Wed, 30 Oct 2024 01:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61433C14;
+	Wed, 30 Oct 2024 01:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730250336; cv=none; b=TugpjQhKXTL3dd9qXQFWFquuyitQjhyYjKyojVzrfzmfGS0oeOQ1pSi+ZxJv9/IoF9WcKFEQOXt/NuSe0VVbyZS9+A8/stPtfcg4btkLRij8e1s+TKNFH/EaqTuGN9eJjD0ebIyid2FnIRVIrXnbds7oGhltEY2AJGqanGyX8E4=
+	t=1730250479; cv=none; b=J94LI0JxLAt9ofxQSVIY9JN/w3yZbzfUAo8eOFNy2QR7CLmR7MMfzbQkRQsLVAZPS7fY0K+lE/MlIyYD7RwRUJQ2kP/bmOiKBXTk8+KD+nz8GMdnMZlY9U4DHjtbeoyikR1Yz8NfyiREU/WH4OHC7mM1kmE4u2vbeM9NY5XHgxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730250336; c=relaxed/simple;
-	bh=O3eyHCxMcdQ467ALRIumPj1rNupJxrZMOTcaSjzwyvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XLPo5YOg6rIxR+1X85aOioCtNybE+w66jCT03mfOlBNRCxTbIFl/FuJCWpzkK1wx3xZ4T7nU+kfx/k6e3ZgVV7EV8+oAEZd3Jp2hSDEdH3iiiDd9+Y+iIBMUi/jDEJuH3QrYKqnj35O66JBxUlcYOuG3gupgV+sLeJ9FhP0gRJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=g9yqBDQP; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730250326;
-	bh=rJ+zeOXAOkv0gwsLv1luKB4UBmUC3jKRnaMznn+sZ54=;
-	h=Date:From:To:Cc:Subject:From;
-	b=g9yqBDQPWwHheAUZ1cogWboY7xJXsw0x2PmCquxMdLczVOBfdPD73Ost6vd7EQpcF
-	 2fmWJ1esTB317UqFZQ6c6MbFa72Z/uAir43LY2oMfy43sw5H/+vSQd8WtgCpQOosoU
-	 gQUj40PmZ+2q8kIL/Xxd0kMUCyvu+sZsE7rN56uWWy3u7U4HCyQ6MgpCMF+S+8ktHs
-	 WBYeIZnYLKLZi7K61dsJ92CnsXNYrR4uj96oqZ5WzF5OS90hjNmaJHTbWeoibGJXPy
-	 XWliswlp3jibsoaqpSF58fn3p2puWWx6SkwKiWCx12UMzu8/H2z3ZMaSOENShyNBO8
-	 XXQ1mGBuV/dpg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XdTSj0Xl7z4xFt;
-	Wed, 30 Oct 2024 12:05:23 +1100 (AEDT)
-Date: Wed, 30 Oct 2024 12:05:24 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Arkadiusz Kubalewski
- <arkadiusz.kubalewski@intel.com>, Jacob Keller <jacob.e.keller@intel.com>,
- Karol Kolacinski <karol.kolacinski@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tony Nguyen <anthony.l.nguyen@intel.com>,
- Yochai Hagvi <yochai.hagvi@intel.com>, Yue Haibing <yuehaibing@huawei.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20241030120524.1ee1af18@canb.auug.org.au>
+	s=arc-20240116; t=1730250479; c=relaxed/simple;
+	bh=ft4XDgKObfVvH/ORChaY+8sasFqA77XcHTdg0Bm6rxo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=feYLXBfcmHh7ravZVXNIV2efoSVUcEX8gEm2Nmit7V7ahxJilSBCq2jaJe3ttHeOBhs+v0B/OV5MYr/LcUJsCOEn7Zm0ecm5qZWdxrROIMzS4aqXJVT0DT6RWLgx3F+ZTt4dCBnUpMkh5OfUyk0DcuBOdf3bOVLGRkWQwKOx6ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R9llZ6AT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TKRPmh012841;
+	Wed, 30 Oct 2024 01:07:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4W4RiRXPI3/u9cd+TQ3a5K
+	jFeAh3VtcAoOhqF4AgpK4=; b=R9llZ6ATLzU5aoFlqx0ONbYADA47fkJFTpsuo/
+	Nc7+JsUUWuCNXmmkoWE1onpx9MVNOW+GIS5SpQgeGKHlZgnak8bixb2KOhjHrS71
+	bQwKKWGXu8T0prAX3JVSbEmnMIbKOOiz5PN9oZmT3Ngw1+LryO42Aw2ehlNxVYJ5
+	1Z27oLh6kJzWpyNxeEcpmZdtt4C5oCYBfVdbRzlHjZH/D/wYuwBb+lYyOTJycz94
+	ly6b8TuF7POalgiE5UEoVZlhEsCLhwRrCIUHOS7D0EAa/up4J1mJ9toSf5X+w0Bz
+	2VoRa+2TnGTD31DXZjF9wJuwl+QQ4o4rUQj7bF5lrbtAqiKA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k6rpgh7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 01:07:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U17g6H014328
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 01:07:42 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 29 Oct 2024 18:07:42 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        <freedreno@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <robdclark@gmail.com>, <swboyd@chromium.org>, <airlied@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <quic_jesszhan@quicinc.com>,
+        <lyude@redhat.com>, <simona@ffwll.ch>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child nodes
+Date: Tue, 29 Oct 2024 18:07:22 -0700
+Message-ID: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qQcC7M9W10_+AKldn1crROG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aIoafsZEh5UdIL9g_gMRhUSRNXWQyrgE
+X-Proofpoint-GUID: aIoafsZEh5UdIL9g_gMRhUSRNXWQyrgE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ clxscore=1011 mlxlogscore=999 priorityscore=1501 spamscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410300007
 
---Sig_/qQcC7M9W10_+AKldn1crROG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+of_i2c_register_devices() adds all child nodes of a given i2c bus
+however in certain device trees of_alias_from_compatible() and
+of_property_read_u32() can fail as the child nodes of the device
+might not be valid i2c client devices. One such example is the
+i2c aux device for the DRM MST toplogy manager which uses the
+display controller device node to add the i2c adaptor [1] leading
+to an error spam like below
 
-Hi all,
+i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Add protection against invalid child nodes before trying to register
+i2c devices for all child nodes.
 
-  drivers/net/ethernet/intel/ice/ice_ptp_hw.h
+[1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
 
-between commit:
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+ drivers/i2c/i2c-core-of.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-  6e58c3310622 ("ice: fix crash on probe for DPLL enabled E810 LOM")
+diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+index a6c407d36800..62a2603c3092 100644
+--- a/drivers/i2c/i2c-core-of.c
++++ b/drivers/i2c/i2c-core-of.c
+@@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+ {
+ 	struct device_node *bus, *node;
+ 	struct i2c_client *client;
++	u32 addr;
++	char temp[16];
+ 
+ 	/* Only register child devices if the adapter has a node pointer set */
+ 	if (!adap->dev.of_node)
+@@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+ 		if (of_node_test_and_set_flag(node, OF_POPULATED))
+ 			continue;
+ 
++		if (of_property_read_u32(node, "reg", &addr) ||
++		    of_alias_from_compatible(node, temp, sizeof(temp)))
++			continue;
++
+ 		client = of_i2c_register_device(adap, node);
+ 		if (IS_ERR(client)) {
+ 			dev_err(&adap->dev,
+-- 
+2.34.1
 
-from the net tree and commits:
-
-  e4291b64e118 ("ice: Align E810T GPIO to other products")
-  ebb2693f8fbd ("ice: Read SDP section from NVM for pin definitions")
-  ac532f4f4251 ("ice: Cleanup unused declarations")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-index 6cedc1a906af,656daff3447e..000000000000
---- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-+++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-@@@ -400,11 -402,10 +402,11 @@@ int ice_phy_cfg_rx_offset_e82x(struct i
-  int ice_phy_cfg_intr_e82x(struct ice_hw *hw, u8 quad, bool ena, u8 thresh=
-old);
- =20
-  /* E810 family functions */
-- int ice_read_sma_ctrl_e810t(struct ice_hw *hw, u8 *data);
-- int ice_write_sma_ctrl_e810t(struct ice_hw *hw, u8 data);
-- int ice_read_pca9575_reg_e810t(struct ice_hw *hw, u8 offset, u8 *data);
-- bool ice_is_pca9575_present(struct ice_hw *hw);
-+ int ice_read_sma_ctrl(struct ice_hw *hw, u8 *data);
-+ int ice_write_sma_ctrl(struct ice_hw *hw, u8 data);
-+ int ice_read_pca9575_reg(struct ice_hw *hw, u8 offset, u8 *data);
-+ int ice_ptp_read_sdp_ac(struct ice_hw *hw, __le16 *entries, uint *num_ent=
-ries);
- +int ice_cgu_get_num_pins(struct ice_hw *hw, bool input);
-  enum dpll_pin_type ice_cgu_get_pin_type(struct ice_hw *hw, u8 pin, bool i=
-nput);
-  struct dpll_pin_frequency *
-  ice_cgu_get_pin_freq_supp(struct ice_hw *hw, u8 pin, bool input, u8 *num);
-
---Sig_/qQcC7M9W10_+AKldn1crROG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmchhlQACgkQAVBC80lX
-0GzxWQf/Z3ukUS5tXbrpV+AFp0cF9uL7oxqvq3A/tmSCOBBFnBT8GrbSPyn9Iggq
-RBgNBOnMX3dc3gCxF62IQphDRwMm/OXHtW568uRhJPdMKC/BVtXXD9/GbUo907il
-IwqOBo9Bhk9iZrFnr00kYTwMfj4f5lyLcfxW9lInXioyGttMhDnotthzwrTxNHsZ
-HPB7vHmK0nVLxdEXHM52jdnzQdDpfYYnkRsThm8lSujvvJaulgeew0teZkc7Yr7e
-986Wa5x1kNd24bbX1Ma3RxkAUsLB2WIqBit36maNIHgyCk+Hi8NWvVrwfpFI10do
-vmFQ+s2oOKvDF4n4/NBMaCb08l8QMQ==
-=n2/n
------END PGP SIGNATURE-----
-
---Sig_/qQcC7M9W10_+AKldn1crROG--
 
