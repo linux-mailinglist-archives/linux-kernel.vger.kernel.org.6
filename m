@@ -1,271 +1,184 @@
-Return-Path: <linux-kernel+bounces-388924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9E09B663D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:42:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC249B662E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A61A281B37
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 722401C208ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC511F4739;
-	Wed, 30 Oct 2024 14:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0831EF93E;
+	Wed, 30 Oct 2024 14:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="FUD5SGOR";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="FUD5SGOR"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2068.outbound.protection.outlook.com [40.107.21.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpaBYszs"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52551E7C12;
-	Wed, 30 Oct 2024 14:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.68
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299326; cv=fail; b=c6yocrABHCuRswmwPu76ip6NvIxHf+pUwQFY8UH3J2fQSOF4pI3nxCoFX9o6QKLuj1gNKk8Ts3rH5iilf0qfi1KynRxEdvrhGgI5/a+Sz9xjxbRquTc6FSckp84qGh0YyWviviSFFArFso7QjlFowiXP0+7yjjl1klgugOgAIlc=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299326; c=relaxed/simple;
-	bh=iZEnt8HxjXDouIGHeV46n1XPh34w3ITmR1rtH4qPgu0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4zpj3qPmr47OwBClyACftXqK8ovqAiT834Kfufcw+2plc9jn3VU+di7Bv97kFbgjubSjozJPUQffSdBc2BI19JI5SsLBLwbWHSifu9XDMaa/BkZ5hJsqzd/eBKI99FuHHiuffcDcKyuO/ygqLhpDJJNiGFkkAFe0nXk8Se/rLI=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=FUD5SGOR; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=FUD5SGOR; arc=fail smtp.client-ip=40.107.21.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=TKSpYOOlAB2K3O+XzlMeaq9yVH7t2WZpzeu1NY790KNce8v2h7gpYu+Mt6nyBOLnHLtk2ZsJirCJ8r0aE4mhCJY+s24gY1s4rPPBbv4qHvq+wTeL7QV9PoLWJd/Zy0LJ4tK0NJwrp791ngSF1MYLdCgYs+eYzdzv4NpOFMT+/C/Gw52kDfbczfaqHHLezYJjLbofLx7s1kjNm8Xh9am0LVMKk0vuxvyVH2y7unbLH6eSZjLqMVdshsfdgtZeyMazljhKIyqoOZJmcnXybm48tksrH+DhIzJE3OydJh7vIRho/vajskdyGSaJj9KVWUbsLKFPvrJY3XWphW/ejUqBqg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wOoeFSRMmvV/bLyUqkFGmW+yr8sINZZ5RmHKf0w/VUY=;
- b=hAPpbt2V36cr2GtMuEvd/ZXrQtdqGCBEuAXFASz6qi9zXiO2ghMh/wNSUk/U8mjlLiKOXcREHyKjfCdRR68W79KhaE31zi2m0nU2KjNuzZNFV8MvNhtzznqGOT0E6P4sMsTMp0mOeZlKaYfqXfEqDuUWRgp+lpa+T7CU3a9EuAUbFm3ALyjkN362p+236Hs2uoR19qFRonZfZGxQr2PCadOQf2HgN7TyYfvi2W2hzIjvYhj70DkGHa8VmWRE5l1wZTpDd+60HEdGCMgKqWkjYMIQNESKOVQIrJ+MhZUm576CT8wBn02I1TeqP9lwovzV1VRwlN8ALgjNjY4CTkPfyQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wOoeFSRMmvV/bLyUqkFGmW+yr8sINZZ5RmHKf0w/VUY=;
- b=FUD5SGORTDkETi/QBQ7QIPlmYtSWL5li+BFgpLN1DR16ts2u1BHACmFpvy2S6+4IVdEEiPwivYau88vXWsLik6fmnLFscF3wkniETfHE8JTni/416RXyITLRHHt/Ob1d4TRT5LYqNIdtaSxXZQ0ZZ0uhWNNAY1xp0vZHc3TuWYw=
-Received: from AM6P192CA0017.EURP192.PROD.OUTLOOK.COM (2603:10a6:209:83::30)
- by GV1PR08MB7779.eurprd08.prod.outlook.com (2603:10a6:150:57::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Wed, 30 Oct
- 2024 14:41:55 +0000
-Received: from AM2PEPF0001C70E.eurprd05.prod.outlook.com
- (2603:10a6:209:83:cafe::1c) by AM6P192CA0017.outlook.office365.com
- (2603:10a6:209:83::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20 via Frontend
- Transport; Wed, 30 Oct 2024 14:41:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM2PEPF0001C70E.mail.protection.outlook.com (10.167.16.202) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8114.16
- via Frontend Transport; Wed, 30 Oct 2024 14:41:54 +0000
-Received: ("Tessian outbound 373849c2df5a:v490"); Wed, 30 Oct 2024 14:41:53 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: ef26de1dba8d737e
-X-TessianGatewayMetadata: tDP04WpmrMRGBpcHCJfOgHahJGhQoxuEBhngoeWTOJ1RWqx+kP7lLOE48SxfDt0QDhBwMWPznhNI9Gv57v2iQaLyXH/raykyRwyViWjXL4w/QGXQHiih8N9XF8JGuCLXXoFhlBi1vq7CODY0jZ7V4g==
-X-CR-MTA-TID: 64aa7808
-Received: from L501b5dd3a0fa.1
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id C70D1A51-A05C-4EED-B237-74650FA6D698.1;
-	Wed, 30 Oct 2024 14:41:46 +0000
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L501b5dd3a0fa.1
-    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-    Wed, 30 Oct 2024 14:41:46 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A+mQMuHC82U09CHW+hbBk6A9puRO9IQvQRczZi9XQ+FPS9I0g7KEV16jfrS0NlSxE8wtZyHi7SgpnkFe7dnmPWTk7XSJxqLxkl4p8j/fS1HEVUz2s575IUi7Uw5f5jH6lind/Sl2BDRMKUFTbBK8qm6hIKAxcgPRfgPhUgaFhqoJ+HoM98oJJK5++kQ2CD0QuTleMRN6K23sAD+sjyEYeG+QkJRSb8fOQSRjZhXoL8mK39UOd0laLjuXehBbktsbhbFtvDfkPiubFDQIwhU7+jrK+bcEl35OM3D6mYRv7l2u4EVC+7CmuteS23bbcjpAYN/NMja91nAux3RYiLjMZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wOoeFSRMmvV/bLyUqkFGmW+yr8sINZZ5RmHKf0w/VUY=;
- b=lO3hF90w0vsd8LSEZdokVAHXqe2MmOLw5EXpG9AqdxgWsvMMxSvwlEY1k5PKnVGIJWzGjb/e0KFhgV6o5P3/UY02NeUt0FHG91ITNkM4F5mDz64u4oPAmRRdYJrSZa4putZEFUZBJrvmrd5IAiRI2Uc3MeP2HJiYxuAfHb+UJ9cp6CgJjSMgKAue9u6yYsspGkRgT5WAo75cEbjVxbVG0ZhkVZ247oxT4sbSsLP2GILtiXgmXa4M6Y3aeJsOpdIs/YbGiJzd6W9u5UL0z+lC6KyGrRA7WVpJOITxVCIyA9d9XhGMePkST2WVxDrV7TOBcnaX8sebx3SxD/Qd1YmRvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 40.67.248.234) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wOoeFSRMmvV/bLyUqkFGmW+yr8sINZZ5RmHKf0w/VUY=;
- b=FUD5SGORTDkETi/QBQ7QIPlmYtSWL5li+BFgpLN1DR16ts2u1BHACmFpvy2S6+4IVdEEiPwivYau88vXWsLik6fmnLFscF3wkniETfHE8JTni/416RXyITLRHHt/Ob1d4TRT5LYqNIdtaSxXZQ0ZZ0uhWNNAY1xp0vZHc3TuWYw=
-Received: from AS8PR04CA0058.eurprd04.prod.outlook.com (2603:10a6:20b:312::33)
- by AM9PR08MB6130.eurprd08.prod.outlook.com (2603:10a6:20b:2d8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Wed, 30 Oct
- 2024 14:41:43 +0000
-Received: from AM2PEPF0001C711.eurprd05.prod.outlook.com
- (2603:10a6:20b:312:cafe::19) by AS8PR04CA0058.outlook.office365.com
- (2603:10a6:20b:312::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.23 via Frontend
- Transport; Wed, 30 Oct 2024 14:41:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 40.67.248.234)
- smtp.mailfrom=arm.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 40.67.248.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=40.67.248.234; helo=nebula.arm.com; pr=C
-Received: from nebula.arm.com (40.67.248.234) by
- AM2PEPF0001C711.mail.protection.outlook.com (10.167.16.181) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8114.16 via Frontend Transport; Wed, 30 Oct 2024 14:41:43 +0000
-Received: from AZ-NEU-EX03.Arm.com (10.251.24.31) by AZ-NEU-EX03.Arm.com
- (10.251.24.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Oct
- 2024 14:41:04 +0000
-Received: from arm.com (10.1.35.33) by mail.arm.com (10.251.24.31) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
- Transport; Wed, 30 Oct 2024 14:41:03 +0000
-Date: Wed, 30 Oct 2024 14:41:02 +0000
-From: Yury Khrustalev <yury.khrustalev@arm.com>
-To: Mark Brown <broonie@kernel.org>
-CC: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, Deepak Gupta
-	<debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, "H.J. Lu"
-	<hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Juri Lelli" <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, <jannh@google.com>, Wilco Dijkstra
-	<wilco.dijkstra@arm.com>, <linux-kselftest@vger.kernel.org>,
-	<linux-api@vger.kernel.org>, Kees Cook <kees@kernel.org>, Shuah Khan
-	<skhan@linuxfoundation.org>
-Subject: Re: [PATCH RFT v11 0/8] fork: Support shadow stacks in clone3()
-Message-ID: <ZyJFfngdWBXidczc@arm.com>
-References: <20241005-clone3-shadow-stack-v11-0-2a6a2bd6d651@kernel.org>
- <9843cdfb-6cc6-40b1-94b3-768c48351945@sirena.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BC6B672;
+	Wed, 30 Oct 2024 14:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730299290; cv=none; b=AzlWqi7J7i5Ib248OPgo8NyNp1/B58xMv8wGdrhLrURCx4cGKZjS58OJzba8w/ioLUrVHmiKkLreKrpfNnVytOcV6+upUsOU+Ucga6p67vl/K9I0ePEXeAiw222q0NED2Dm8hY16kIw7/T5DcwbLXWmQ9/+IEetlzzRTHzPtSPU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730299290; c=relaxed/simple;
+	bh=cMntFuay/+OuCHddp1vPDruFIwvBjcus6L1u3WPvA34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSoeeVajW4So8rxTbcgXdrXG8Gco6n97RD6UT25emNrcf+qVDnr/kIoYIRKe6ylWSD61XREwQ446IoWCqS1gpwb5KfstkZy2E0mMybR4CqK5ZPXF2Vgeaf9FeRAAzhoopoemARsHlfPfmxCJ7PzdGWX0XEEulJx7TJhSQgvkuOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpaBYszs; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ede82dbb63so2431640a12.2;
+        Wed, 30 Oct 2024 07:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730299288; x=1730904088; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VqINzm/Uq9ITTZ9RS871UPqEpz7DSchwIIh/S/Jb1NU=;
+        b=EpaBYszsOlr2uUg+H0llsfIoJ6xmNV0IP+cNV8XQ04uFsOkbqYWIIrI4YXGLUSE9ZL
+         PNkiDWatxYKb+NgIMrPULxLTsbWi/Z0f9ssrPLA2wu/fWCRTvKwq9lQ6/TghFZZOt1We
+         fGDqAHmhOHncp3pLhJiGWPhBBBY5t2w2Tnn6hlW15gPQwNqLj6j169R8ordVy9cp1eES
+         Ii7tQW8fXjeEEJ58vRHUObuYqr2XeXfgJIt86rmgZWkoBBKHOjnnXQNDGFyf2+kjxUky
+         PdWIjmVs6oFfqHKIB5eRWiiu1v4xkUJVZa+duatXUQMyp953Z5hbQVSA+VoFa8DrsCMy
+         1jMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730299288; x=1730904088;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqINzm/Uq9ITTZ9RS871UPqEpz7DSchwIIh/S/Jb1NU=;
+        b=nZdgxDChl2OMAqkSqZpe0l6kjO6rcHQcwT2wHqiHXqbNZlEOQOoRl3tCyTpx7jqGf5
+         PHdQXmPih2QXRotdaE6y6rVm+ktFwLoxT7/qYJZNQ2URQdH4DwocO4csTOiiFeCsKPUW
+         N69vDC/XOil08nIXDNmF2Ascze70F6PyprEhkbLS99rUAzv5EZgP49xnh7LEYJjKHwV1
+         R3MuK4HJjtEIv+x16ITV5MXiwAWLLVLaJBJSZDmBa7VevN8oKYB5JbOpT8l29WkY+T47
+         Al/y9RFuKTjaED51ZsbhCSNCLxyva/WLxXMc80LtVcnnB35q09O10MT/cpVTDGAGymzU
+         oEJA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7ilwl2YFI5EPrkx4OVatJltZCxnOrTacNsaexdE6VPJJ95wkK0EEkYWfuHgAI7KoVZlB9eeR/Xl1eQlbembrMKAehsQ==@vger.kernel.org, AJvYcCXf3pCGUK5qoPxOSL2JQ7KeNnHKAGgDhKdCWFDiR5HaDwfiqgrgI2gOSoVeTwpHkGu28R0sfp+R/0+ZkDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxR5c2POhhVODPKFYyoDzMoZfcqiWsh8wLu1qRZsVbv5bsAEGy
+	4lIruJTLNOUF+pXDuCZ2+22IbN+W6jrZaXAgrR+clX8myz3LOofwbPWvjw==
+X-Google-Smtp-Source: AGHT+IEd98Viu8Exlkn5qwqv5xTZzZAEGmGXHxNMd06bUge0Zgu09Af5vy6BPe1aYOgIC4425YYRNg==
+X-Received: by 2002:a05:6a21:680d:b0:1d5:10c1:49c1 with SMTP id adf61e73a8af0-1d9a83a3dabmr20522814637.9.1730299287692;
+        Wed, 30 Oct 2024 07:41:27 -0700 (PDT)
+Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057950457sm9593155b3a.95.2024.10.30.07.41.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 07:41:27 -0700 (PDT)
+Date: Wed, 30 Oct 2024 11:41:24 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
+	LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v11 0/5] Dell AWCC platform_profile support
+Message-ID: <nx53tryrtpewjlxvckrcsnormfr6toy27fsj55kr7zxus6onsm@jojeyg22clgp>
+References: <20241030000904.7205-2-kuurtb@gmail.com>
+ <f972eabf-58b5-3b0b-ea5f-930894ac840b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <9843cdfb-6cc6-40b1-94b3-768c48351945@sirena.org.uk>
-X-EOPAttributedMessage: 1
-X-MS-TrafficTypeDiagnostic:
-	AM2PEPF0001C711:EE_|AM9PR08MB6130:EE_|AM2PEPF0001C70E:EE_|GV1PR08MB7779:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e6a908f-355d-49be-a175-08dcf8f0ffc8
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?qTwLu1Kh36K1SuLQ3J2uI6yZd3LVvyBp/nTJmuz71P0XtxiYxy96xmTPFR3G?=
- =?us-ascii?Q?oNWIRKgPrb90zcb5c06CRnIT7GUE5LWkft3IRJwAgt21/CWK/ww+szu4QoMo?=
- =?us-ascii?Q?TpDITheLLU73QtJvxrGuRqrVmdAbUhCywF8EtNHmsRmv7siQMi/0owlp8wrk?=
- =?us-ascii?Q?O3kwDxfEexvQTba0f3EiAahOLru5DBgbQ7x5R53t8PEnv0RC3zYz8l66MOPr?=
- =?us-ascii?Q?ug9CRgNPfe6BTIYCPSnO7cVtO9qudFlx7UV7tegGPth6vN1kbMtpCDz5NuDu?=
- =?us-ascii?Q?+rnnOAGRsLylo6boMRwsxynu/ANZ5Tsqa2OgFQaNgR9/jrI2/Wjo/jdxS9sM?=
- =?us-ascii?Q?zSJfvB2gW7JjijGzJwcttTtz7ySSd1MP4/Ra/ea++vDcdlxmVF1dyku067jM?=
- =?us-ascii?Q?iigOZoMaIuI221+Ytae/bU2VLu+Bk9PZvIzhHtmo43ydq5Rp5hh5pQ3TwuLG?=
- =?us-ascii?Q?cGfh/qnsia2x1Kv8WA2vzTWVorP3M6UyPncJkpzd+RvEY5n+o16wGNPFUuzq?=
- =?us-ascii?Q?DOT9VBX27An52MNb3PYn/SfGAm+HL694NwQjgDHEHpLrZgTLhzAG+TD/6sif?=
- =?us-ascii?Q?VmYQZ0LYFK6sr192KxNUs6Mr9pQ6iylAAfKg/mMrserZlQsQVz3HZXO9vsiS?=
- =?us-ascii?Q?z4Auqt0MCSKsRYst7Alqa7+RM1qDtIkWNKFgVgqHZ1TUcSSm/ezeUOLk12oS?=
- =?us-ascii?Q?vHusCH9IlulaX1ni4XBNHYFi3LnPXHvO1iZyfOzoH3JQJ1kvUUJjEpvqG2Ii?=
- =?us-ascii?Q?6vhDxq/jsrDzjxm1voJCQJO3GxkCTwg2CW3s5gLLfg9mnad8IExdCSv7jV2N?=
- =?us-ascii?Q?+cep4SZwKXH3yV/UI0i0VzZucb67pnyF89PhE9lK/yWESvztU+OvvmiZYxsK?=
- =?us-ascii?Q?Tkz9woVq42NbTiA1K8zEp5v9htNrn3+NXfBXGCyzxCjBhxAu6zFDls5v2kCY?=
- =?us-ascii?Q?eLLyIzaN8ZOBBodhCrEboJY1sHvrggky+BRpmlSfxnBLptxnICX74nMMQiT+?=
- =?us-ascii?Q?MZDquXEkylup/QjU8WbM7Pt+AkifU7po4lz0GhCU2WAoxSoVvAAw8vOS3tyX?=
- =?us-ascii?Q?C15tw6nSRzOe0VlFRMTvqn07KLiWTMhF1D5sKpas7yYFd9qGiBVUjx+V7y5j?=
- =?us-ascii?Q?BZIBpTNYJNntKzTxzcEEruVKX/AXXR3RQ7hrJfs3mvX4VmnbxO6ilmBJig2e?=
- =?us-ascii?Q?tYf7iIBDv7I2cH5fTcKEeDGJAWIssUCklPGhXsO9hTAqLdkYwtltebPTW2H5?=
- =?us-ascii?Q?XIAS1sXo1qYYKu5/bhSKrHM4/GNO3mYdtscCskTgfbzP4yfaGHFozLswt/ID?=
- =?us-ascii?Q?oOpxs1mQ5GLZc/PkWYgVIhK1hq5wHiFgZm2V8YUSVwagnL1s23BTzA6wvGWW?=
- =?us-ascii?Q?LFbhN1kPT7xgfD55mvYS2/sLChflNPm5Ieg7Db4L/cbQ2mPjgw=3D=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:40.67.248.234;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:nebula.arm.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR08MB6130
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:20b:312::33];domain=AS8PR04CA0058.eurprd04.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM2PEPF0001C70E.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	16c54dd8-69d9-4663-fd15-08dcf8f0f8df
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|35042699022;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Kz4Y51/iWqpBfdkSQ1fj3n5Q94KLWFShTz00HjwopfICSgDX+vlp/iEHuC87?=
- =?us-ascii?Q?6zFzhjKhPe1hetmN1AZOi4NOiuwsEKUmm6BOXb8E6WClb/NbjcGmZQcgTAF3?=
- =?us-ascii?Q?v03mSdCP+7WSrz091/HckrBoeMuFV90u/UjpCK4imdGNLmc3LJHn3yCYDckW?=
- =?us-ascii?Q?kOuxKHWhywhR1xqB9/texoggMeJnyeM/GUXoRTbc8nwAeVHDpUjl63/pWE/7?=
- =?us-ascii?Q?FACmykq8b9RCjMCUs+nFTDsd6+TbLkV1lRKC0eu+SNIa+ldwZj6N9QLgSj9W?=
- =?us-ascii?Q?aXLqDFN7xS3PDXMllI0ARSqs+OuUIXx1oaIoBlmjS1Ps/UsiPYaIdy7xpL1K?=
- =?us-ascii?Q?rHGvoJpPMjriBJ4nFDc3a9i7HHoLNw5PAXv1obJ80lPv8wVM9qR4T/tfXTyi?=
- =?us-ascii?Q?XZsYPQS5Z2kTrOCYo+yM22jkC3vi2Qt4V2jS1dGL1Dwwmh7enPcvomnlY7R4?=
- =?us-ascii?Q?Lxu3XroDfdwM0wlZt5OyVaz5AJzDwMl6s00VdpiKKB3OEkEElP4xigMtBjNz?=
- =?us-ascii?Q?csojcw+4H4GeA4ioMJJn2ff3SY2y4pPAge4TmETF3FNrgaRBHNr9lVbPJhmI?=
- =?us-ascii?Q?lXweyh0QAsr6jCQRKGT6RVJQ/j3SMEH0raLStiJd7IinGI4kgNy6/OQ9aCw1?=
- =?us-ascii?Q?85jiepuENFpP0lvIEdrfDHYwDa0bB9LU5YcgNt3mrMOgPEjj1e1M104qQcc3?=
- =?us-ascii?Q?Io8C0AMuoqnOyAltgw0a6B+EnhvAxB0OzG2abC/KJCf0IpoutQ/rhbk5RHRo?=
- =?us-ascii?Q?q51lKE5PNrAzOHo218m5HdZ60xwqElElOV+k1h7abqGKC96HX72344Oy/Wle?=
- =?us-ascii?Q?Uz0nyvQGuKdskVDHT1q2O67KO+BEu7oH2b+dDgDDUrT2/ZiN8gQqnNBjsHHq?=
- =?us-ascii?Q?HH2WtErorPjVn7DpnAbc4XsPc0NgN3w4fGIefXwvIZCPxCOGlfk8o/WVfA3E?=
- =?us-ascii?Q?TrlQ8IXnkeSr8GcpCQI0hzgtTLkF+D4Ig25WIUCKf+m50rIHIjUStkFJq49o?=
- =?us-ascii?Q?/IDhQXtTjHiIqEZXPF9PjEs2V6Zjn5YO6IHVZBBnmxuSp9lVI1GP7kgjE6T3?=
- =?us-ascii?Q?lnpJDMg6RL5H/v00EitOfMc62/ABzBNWog12esQvzdxVqRLE9sTdnKFp9Y9B?=
- =?us-ascii?Q?8LNd5zXqNqYHqPbpx0AuVpHY9wido5K90wAQzphm/aSmO2vt93IixUK/gpUF?=
- =?us-ascii?Q?GZ1PNo77rueMj67Mw6zp0iOWau8Uka1E58AIAxjlBSQLBZfdcp3zezolA+6o?=
- =?us-ascii?Q?8GrI2diy+fUGNH1dp/xG4MMYONUklxMpl7OAcLYsSUusiCjdSnArNQYxksQZ?=
- =?us-ascii?Q?AlQvsjCXv0PRsprSutD7DACyh1ZTRIdBhy+7qpRUAqFiqOyUUPV5+DbgyOJJ?=
- =?us-ascii?Q?wnfF1vbqkB5PYlmHmQjER0UWYoLOSokjpO+KEFkX1tsAwfd6Iw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(35042699022);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 14:41:54.6164
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e6a908f-355d-49be-a175-08dcf8f0ffc8
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM2PEPF0001C70E.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB7779
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f972eabf-58b5-3b0b-ea5f-930894ac840b@linux.intel.com>
 
-On Wed, Oct 30, 2024 at 02:08:59PM +0000, Mark Brown wrote:
-> On Sat, Oct 05, 2024 at 11:31:27AM +0100, Mark Brown wrote:
-> > The kernel has recently added support for shadow stacks, currently
-> > x86 only using their CET feature but both arm64 and RISC-V have
-> > equivalent features (GCS and Zicfiss respectively), I am actively
-> > working on GCS[1].  With shadow stacks the hardware maintains an
-> > additional stack containing only the return addresses for branch
-> > instructions which is not generally writeable by userspace and ensures
-> > that any returns are to the recorded addresses.  This provides some
-> > protection against ROP attacks and making it easier to collect call
-> > stacks.  These shadow stacks are allocated in the address space of the
-> > userspace process.
+On Wed, Oct 30, 2024 at 02:10:24PM +0200, Ilpo Järvinen wrote:
+> On Tue, 29 Oct 2024, Kurt Borja wrote:
 > 
-> Does anyone have any thoughts on this?  I reworked things to specify the
-> address for the shadow stack pointer rather than the extent of the stack
-> as Rick and Yuri suggested, otherwise the only change from the prior
-> version was rebasing onto the arm64 GCS support since that's queued in
-> -next.  I think the only substantial question is picking the ABI for
-> specifying the shadow stack.
+> > This patch adds platform_profile support for Dell devices which implement
+> > WMAX thermal interface, that are meant to be controlled by Alienware Command
+> > Center (AWCC). These devices may include newer Alienware M-Series, Alienware
+> > X-Series and Dell's G-Series.
+> > 
+> > Tested on an Alienware x15 R1.
+> > ---
+> > v11:
+> >  - Minor changes on patch 4/5
+> > v10:
+> >  - `thermal` and `gmode` quirks are now manually selected because some
+> >    models with the WMAX interface don't have the necessary thermal
+> >    methods.
+> >  - Added force_platform_profile and force_gmode patch for a better user
+> >    experience
+> > v9:
+> >  - Minor changes on patch 3/4
+> > v8:
+> >  - Aesthetic and readibility fixes on patch 3/4
+> >  - Better commit message for patch 3/4
+> > v7:
+> >  - Platform profile implementation refactored in order to efficently
+> >    autodetect available thermal profiles
+> >  - Added GameShiftStatus method to documentation
+> >  - Implemented GameShiftStatus switch for devices that support it 
+> > v6:
+> >  - Removed quirk thermal_ustt.
+> >  - Now quirk thermal can take canonical thermal profile _tables_ defined
+> >    in enum WMAX_THERMAL_TABLES
+> >  - Added autodetect_thermal_profile
+> >  - Proper removal of thermal profile
+> > v5:
+> >  - Better commit messages
+> >  - insize renamed to in_size in alienware_wmax_command() to match other
+> >    arguments.
+> >  - Kudos in documentation now at the end of the file
+> > v4:
+> >  - Fixed indentation on previous code
+> >  - Removed unnecessary (acpi_size) and (u32 *) casts
+> >  - Return -EIO on ACPI_FAILURE
+> >  - Appropiate prefixes given to macros
+> >  - 0xFFFFFFFF named WMAX_FAILURE_CODE
+> >  - Added support for a new set of thermal codes. Old ones now have USTT
+> >    in their names
+> >  - A new quirk has been added to differantiate between the two sets.
+> >    thermal and thermal_ustt are mutually exclusive
+> >  - Added documentation for WMAX interface
+> > v3:
+> >  - Removed extra empty line
+> >  - 0x0B named WMAX_ARG_GET_CURRENT_PROF
+> >  - Removed casts to the same type on functions added in this patch
+> >  - Thermal profile to WMAX argument is now an static function and makes
+> >    use of in-built kernel macros
+> >  - Platform profile is now removed only if it was created first
+> >  - create_platform_profile is now create_thermal_profile to avoid
+> >    confusion
+> >  - profile_get and profile_set functions renamed too to match the above
+> > v2:
+> >  - Moved functionality to alienware-wmi driver
+> >  - Added thermal and gmode quirks to add support based on dmi match
+> >  - Performance profile is now GMODE for devices that support it
+> >  - alienware_wmax_command now is insize agnostic to support new thermal
+> >    methods
+> > 
+> > Kurt Borja (5):
+> >   alienware-wmi: fixed indentation and clean up
+> >   alienware-wmi: alienware_wmax_command() is now input size agnostic
+> >   alienware-wmi: added platform profile support
+> >   alienware-wmi: added force module parameters
+> >   alienware-wmi: WMAX interface documentation
+> > 
+> >  Documentation/wmi/devices/alienware-wmi.rst | 388 ++++++++++++++++
+> >  MAINTAINERS                                 |   1 +
+> >  drivers/platform/x86/dell/Kconfig           |   1 +
+> >  drivers/platform/x86/dell/alienware-wmi.c   | 477 ++++++++++++++++----
+> >  4 files changed, 791 insertions(+), 76 deletions(-)
+> >  create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+> 
+> Huge thanks to you both Kurt and Armin for all the work done to improve 
+> this series! :-)
+> 
+> I've applied this series to the review-ilpo branch now.
+> 
+> -- 
+>  i.
 
-I will need more time to review this as both my primary and shadow stacks
-are full with other work. At a glance, I cannot offer any informed opinion
-for choosing ABI atm. Apologies for the delay.
+Huge thanks to you both :). I learnt a lot.
 
-Kind regards,
-Yury
+Regards,
+Kurt
 
+> 
 
