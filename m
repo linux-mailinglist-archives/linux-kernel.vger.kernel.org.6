@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-388574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB639B6164
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:23:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 138449B6168
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421D71F21C81
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05E21F21F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9F91E47BF;
-	Wed, 30 Oct 2024 11:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514F01E47D9;
+	Wed, 30 Oct 2024 11:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CeBC6LFB"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufAlKkUA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623EE1E47A4
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1283156F54;
+	Wed, 30 Oct 2024 11:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287416; cv=none; b=qTkFg/+ZwmFkmWZlc6s9RNSHoB08dRyFHWu8vAgMbVAFdoV9dqjlxNVt50NHsQJzF4YNuxwWzw1E0IFB0293QIziGIw1NvVZ/4TrO5eH1wTN2L1pwJGLFF56htTgt54lkJ0g/17j2YjWYspJPLfm7GWpc4kkrUfGZeR+hNjCsdY=
+	t=1730287543; cv=none; b=k+7aYQWQiyXLMrI3cNIfeS+mLZOk5Wy5EitAG1edoEogD+Q4VlzHBxkCpQ33DZrISoq0qT7YKdq40+uz0IiQS0PvklpFgAcf4M5hLfQkh6r1hlE5c7HpbpHGb/0XOHvRydbbJ3YO/enZ2N6+bq0maxrQRC6d5zpNRvLRJI5r6AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287416; c=relaxed/simple;
-	bh=zHgIwEWfPk4yyvPCEPt5Azic6gPbJHaNqF2Poifr9rs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kr26c8Q7NMZNudWT4cs18zi6tp20qzZ2JA/DDg5w3pvZ26NOxLE+oJgDhzLGS9f/RwI1iFodWMQWliOwb/KRZ0QXWRjiByT+AtqVS9BagKZ1WpXv9dAwy15OHazjCsGUcfQVbU5hyFsTbgktfj1FggW5rXiw2l/Byl72HQlOs64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CeBC6LFB; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f8490856so6077301e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730287412; x=1730892212; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wfR1CwiWgHND2Gsj8zReFr51weqymmRbQbInKm0uI9k=;
-        b=CeBC6LFBKaJ16PRXHNyrCq1BiV7k2jdIqjNpUvt0+xk2lXbhNBbQeicoQR2sbSdtwo
-         MHip/VwLfxhU4kdlDjjZA1LWw0BQGbaIGVy/OC2/o9sjIca/wXj4eb2v+Gc+tujc4nN6
-         YoV7csrSVTaVGMp6hfmMm3LluRqMlXQ7eW3KU0eHI69Voha8dTB8tpFhrV1QukUeMsvi
-         25dB32IgY4t162i9kKVXzB3qbUKkADQiP9Y9NTssfrr51ApcbCE8m3EecNFtjrHUDH9m
-         OCp4+x/KVaqArdraXk+yJDmA9imnjU05p3+zQ0szJXh/0WyPVDoV4aiSNUoLhBYFJx/0
-         jCzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730287412; x=1730892212;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfR1CwiWgHND2Gsj8zReFr51weqymmRbQbInKm0uI9k=;
-        b=arOohWcA9Syd0RN6odW8EL9Z2QrIEM968TgQ6i8ltj2KY7hLPzq4TU25ZJA2AU8HQ7
-         3u2LI0ZQX6ED91b+ZMRBUSyV59o4Rpr0vIbzyiU8T39oeYUCzDydJw/MxfjR9XmsCtsz
-         VK6YBU1Av+KBK2FwAMtLiRmCTtqj2GGtssBzwKT2g9gaY5bkgFk4wB6tOKXYsdz+Qfaj
-         VkD6tugc7FXrrWQvHADsnmJaY979Ni9vflfQ502TO2uhet/JhjczrT4u9kmxUJkADmR2
-         VXHfuXUuxlmt12w35eSvHr6EyWCKtIe5uDUznpROniXPkBq4n5x8z/fws7CuAA2dx3od
-         Z6Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTS2Is5lh+h5hXIfxY+b9zh/mtRcLXFHm1iiXfjH5vNGZ3JvqDd0o/z+14Dh3QZjk0FGroU1i5iyTILKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR8JvPn8Kb7WrcxQsW++yAC9zoF31LPQS7Zd96wBZ7ETMe14lz
-	+NXyux6pZ1sd3HGUAaTRLldtrnza37xJFsotKQLIT01ITyYzL5uktCaY51Rjhc4=
-X-Google-Smtp-Source: AGHT+IHFi2VTNyFiaZV+LcQXM7FIAG/G39oW0UZ1SN9GGWF/bKTG4Q4CtRRvHoAZoaRoZWs4e3EpGA==
-X-Received: by 2002:a05:6512:ba1:b0:539:fd33:abd2 with SMTP id 2adb3069b0e04-53b348d6148mr6291979e87.25.1730287412407;
-        Wed, 30 Oct 2024 04:23:32 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bb838e351sm224601e87.99.2024.10.30.04.23.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 04:23:31 -0700 (PDT)
-Date: Wed, 30 Oct 2024 13:23:30 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Imran Shaik <quic_imrashai@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
- QCS8300
-Message-ID: <ixnqjfb6l7cz4qp23zevtbwws72rjo25cfgvntyiauzdg2yisw@vr2t4qy4k6iq>
-References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
- <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
- <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
- <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
- <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
- <fff416f9-4ea7-4117-87b0-986087f8e142@quicinc.com>
- <9bd4c63b-7c68-4e40-9995-9d569eed15b5@kernel.org>
- <f7551a7a-885c-4f74-8f74-10f1c0ebe6ad@quicinc.com>
- <46c19729-b31e-42e3-a6dd-6b43b27348d8@kernel.org>
+	s=arc-20240116; t=1730287543; c=relaxed/simple;
+	bh=pNa+VsBVYyKIrBAGRVMBxaWvEJvSkXNDNmc5rWOx9YM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kwDY1MNcTSm2dAH6x75cIBc4GN+zpftioRWMyaPjStUhJ9Qud8imzp/g7WNV0psUQdyFItZPEOwdRXThn0EqFpNJHG0sr79UGO5vQhBtAkfdVkNhgdH3CPKsvBFNBZtYB6JMQDKotGMZtpyg/RLokDWcPC5RKVyh1pLBF/5xMEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufAlKkUA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D551C4CEE7;
+	Wed, 30 Oct 2024 11:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730287543;
+	bh=pNa+VsBVYyKIrBAGRVMBxaWvEJvSkXNDNmc5rWOx9YM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ufAlKkUAhCGPj/auQF6rHYED8CFspclfKoB94a1VTC1cJGnkDFMT5ORqK1lWTv88e
+	 9Bfo/G9Q3nAb9Jm1YTxj7vB3xiaf9lxaWm1MSxQ2iVKPyPNv3z3Fg7HRhu0oPP8Snc
+	 Nm86ZopAxQki9Opnce+PwMKtlI8HHFRPAX4LyHRuA3emzRrTYMnpSj1vASCxQ/ilce
+	 UyJS8lRdMuEfhgZjZLh8eCyeXgHgwoJu39VQaexeHGLpUe9JdpCptuB/XCHiD+e2HW
+	 hgKaYwWK7v0fmg4yIOI52e5Yf9uQl3ac9miMUAodgpxmMSD0xVCUDEMqti6D3JSxes
+	 lKyHUwCbnoaeA==
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-84fd057a993so2061402241.3;
+        Wed, 30 Oct 2024 04:25:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOizf2QYypZvFWcmBxuhRgOSD7TFIU26MkD+/tQl9G2S2AGdGlFQYU2cB3rv+prYbxsI5xupRfz2EeTwc=@vger.kernel.org, AJvYcCWBJI2qFYFV1Z6g6jnII0hICKkAsA0uDSuMK/RHCrZpYlBfUEoiJ2eCZzTinmKXzzR7Ngpw7SfpyD9Gj98=@vger.kernel.org, AJvYcCXwFrbfebpP70uvtUdq4Jd7s6KGeL4n0HREM4bstjVeQmT0efgwQSrusG+kkE6i7cKZjA7fAbhsVPovbHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiL23V+uQ90dD4QEZeTLObjlWnpn45iUK5bHYuQ+tK9IQYVpRw
+	IJp+35w8jE1LZoq1lkKCv5qDZo2zjrVhzg8wpuTuo2LRaeXlmrtL/5JCdkS96u4CLfUthXQVfRN
+	4+30xjDI6TDmUvHq9zdPH5b+43k4=
+X-Google-Smtp-Source: AGHT+IFcj4ArYSXy6RowfeL0PKK8BGT1Y7OSex/rX6l5UUiTFAxTX0iZ0k+liK3/QVIlTGgMUBgbDIP+9OeBwQ9oGPI=
+X-Received: by 2002:a05:6102:943:b0:4a5:ba3b:665e with SMTP id
+ ada2fe7eead31-4a8cfb8287emr14789540137.13.1730287542275; Wed, 30 Oct 2024
+ 04:25:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <46c19729-b31e-42e3-a6dd-6b43b27348d8@kernel.org>
+References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu> <20241021-imx214-v2-1-fbd23e99541e@apitzsch.eu>
+In-Reply-To: <20241021-imx214-v2-1-fbd23e99541e@apitzsch.eu>
+From: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Date: Wed, 30 Oct 2024 12:25:25 +0100
+X-Gmail-Original-Message-ID: <CAPybu_0o+csbkyS7bbMUjB+VSUwj2DK_STy=wubCT_frH0DzgA@mail.gmail.com>
+Message-ID: <CAPybu_0o+csbkyS7bbMUjB+VSUwj2DK_STy=wubCT_frH0DzgA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/13] media: i2c: imx214: Fix link frequency
+To: git@apitzsch.eu
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 08:30:59AM +0100, Krzysztof Kozlowski wrote:
-> On 30/10/2024 07:59, Imran Shaik wrote:
-> > 
-> > 
-> > On 10/29/2024 3:06 PM, Krzysztof Kozlowski wrote:
-> >> On 29/10/2024 10:23, Imran Shaik wrote:
-> >>>
-> >>>
-> >>> On 10/28/2024 12:35 PM, Krzysztof Kozlowski wrote:
-> >>>> On 28/10/2024 06:15, Imran Shaik wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
-> >>>>>> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
-> >>>>>>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
-> >>>>>>> QCS8300 has few additional clocks and minor differences. Hence, reuse
-> >>>>>>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
-> >>>>>>
-> >>>>>> IIUC, these clocks are not valid for SA8775p. How do we deal with such
-> >>>>>> cases for other Qualcomm SoCs?
-> >>>>>>
-> >>>>>
-> >>>>> These newly added clocks are not applicable to SA8755P. In the
-> >>>>> gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P,
-> >>>>> ensuring they are not registered to the CCF.
-> >>>>
-> >>>> I meant bindings. And existing practice.
-> >>>>
-> >>>
-> >>> In the bindings, the same approach is followed in other Qualcomm SoCs as
-> >>> well, where additional clocks are added to the existing identical SoC’s
-> >>> bindings.
-> >>>
-> >>> https://lore.kernel.org/r/20240818204348.197788-2-danila@jiaxyga.com
-> >>
-> >> Exactly, defines are very different, so no, it is not the same approach.
-> >>
-> > 
-> > I believe the QCS8300 approach is same as that of SM8475. In the SM8475 
-> > SoC, GPLL2 and GPLL3 are the additional clock bindings compared to the 
-> > SM8450. Similarly, in the QCS8300, the GPU_CC_*_ACCU_SHIFT_CLK clock 
-> > bindings are additional to the SA8775P.
-> > 
-> > We are also following this approach across all SoCs in the downstream 
-> > msm-kernel as well.
-> > 
-> > Please let me know if I am missing anything here.
-> 
-> Not sure, please take the same approach as SM8475, not a different one.
+Hi Andre
 
-Just for my understanding, are you proposing to prefix the
-platform-specific defines with platform name (like it was done for
-SM8475)?
+On Mon, Oct 21, 2024 at 12:14=E2=80=AFAM Andr=C3=A9 Apitzsch via B4 Relay
+<devnull+git.apitzsch.eu@kernel.org> wrote:
+>
+> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+>
+> The driver defines IMX214_DEFAULT_LINK_FREQ 480000000, and then
+> IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10),
+> which works out as 384MPix/s. (The 8 is 4 lanes and DDR.)
+>
+> Parsing the PLL registers with the defined 24MHz input. We're in single
+> PLL mode, so MIPI frequency is directly linked to pixel rate.  VTCK ends
+> up being 1200MHz, and VTPXCK and OPPXCK both are 120MHz.  Section 5.3
+> "Frame rate calculation formula" says "Pixel rate
+> [pixels/s] =3D VTPXCK [MHz] * 4", so 120 * 4 =3D 480MPix/s, which basical=
+ly
+> agrees with my number above.
+>
+> 3.1.4. MIPI global timing setting says "Output bitrate =3D OPPXCK * reg
+> 0x113[7:0]", so 120MHz * 10, or 1200Mbit/s. That would be a link
+> frequency of 600MHz due to DDR.
+> That also matches to 480MPix/s * 10bpp / 4 lanes / 2 for DDR.
+>
+I think your calculations are correct and the value should be 600M...
+but if we land this change, there will be boards that will stop
+working until they update their dts.
+Not sure if we allow that.
 
--- 
-With best wishes
-Dmitry
+Can we move this change to the last one of the series and add something lik=
+e:
+
+diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+index 2aca3d88a0a7..8b4ded4cb5ce 100644
+--- a/drivers/media/i2c/imx214.c
++++ b/drivers/media/i2c/imx214.c
+@@ -1281,13 +1281,9 @@ static int imx214_parse_fwnode(struct device
+*dev, struct imx214 *imx214)
+                if (bus_cfg.link_frequencies[i] =3D=3D IMX214_DEFAULT_LINK_=
+FREQ)
+                        break;
+
+-       if (i =3D=3D bus_cfg.nr_of_link_frequencies) {
+-               dev_err_probe(dev, -EINVAL,
+-                             "link-frequencies %d not supported,
+Please review your DT\n",
++       if (i =3D=3D bus_cfg.nr_of_link_frequencies)
++               dev_warn(dev, "link-frequencies %d not supported,
+Please review your DT. Continuing anyway\n",
+                              IMX214_DEFAULT_LINK_FREQ);
+-               ret =3D -EINVAL;
+-               goto done;
+-       }
+
+
+
+> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> ---
+>  drivers/media/i2c/imx214.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 4962cfe7c83d62425aeccb46a400fa93146f14ea..5d411452d342fdb177619cd1c=
+9fd9650d31089bb 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -24,7 +24,7 @@
+>  #define IMX214_MODE_STREAMING          0x01
+>
+>  #define IMX214_DEFAULT_CLK_FREQ        24000000
+> -#define IMX214_DEFAULT_LINK_FREQ 480000000
+> +#define IMX214_DEFAULT_LINK_FREQ 600000000
+>  #define IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10=
+)
+>  #define IMX214_FPS 30
+>  #define IMX214_MBUS_CODE MEDIA_BUS_FMT_SRGGB10_1X10
+>
+> --
+> 2.47.0
+>
+>
 
