@@ -1,202 +1,94 @@
-Return-Path: <linux-kernel+bounces-389668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B539B6F8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:47:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F4E9B6F90
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CFA1F22772
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6311F21EDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226B521895A;
-	Wed, 30 Oct 2024 21:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E837215C62;
+	Wed, 30 Oct 2024 21:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lsPxMLfj"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EKYDfn3V"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFDE1F4713
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D740C1CF7BB;
+	Wed, 30 Oct 2024 21:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730324565; cv=none; b=nUX7epoM99xjukripIIbO/IOLLm4HNBsiksZvKy+PObNBWfVGDLmJ4EkJ5z2Y4QwHMo+Wgl+idnn1VMhZDLhHVb3W9wk68cBBF9SffbyOQugsPJbK7Me4bB01r7SB2BQsp295IEiSDjtZh/2btOtjRwl9OkmUr81j6Z9UKzQJSQ=
+	t=1730324820; cv=none; b=AWvpNkaEqRArjjEbLmaVvEYFubkY3e/UzuAkCaxRcSBWUaqb8+PbisGEJgGVfehkMHSjnisqkanBr8UOPmAhJ9UWi1BHMSPQ8Acc6Nfpcp5waYauH2e+lJVMHg9AUhhSW2WdfmGon2Pt7R7+8/3ROcts6nF67GMN/xP/ekSptx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730324565; c=relaxed/simple;
-	bh=rucg5whNbj0MIf+KsFVqBycgNaOxrJPN8Sa8dKhqJn0=;
+	s=arc-20240116; t=1730324820; c=relaxed/simple;
+	bh=dYnaVemO5OPTP+WAPRmhR/5ZR2REs2aQhH/k1Bn2TOk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJpE/lzNlwjh+VQ4Rg0FYzZLILzrYExy4/NDcB5YuGsI6vQ5hPh0u7kbabWEUWqgIRBx64kaBT9ag4QHPKFsz3S/ixMqz32I+mWNCToTKrymWQoh7hQq7EBRJ2dWkEVR16hLEkv0iiUJdZTS53ybo8B8yOWjM499gQ33kqB+1js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lsPxMLfj; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2e2d09decso1099315a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730324562; x=1730929362; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BdQ8I1/iVHZTqbEU+uI3XwCIW70vWl0AHAkkkOUHa4=;
-        b=lsPxMLfjdqektbm+albSHd1yo/8FqT7xiv9N1GLeNw/v8+SLsNrn2xkGk27y0taG0i
-         wGTm7xRMqMHtMKZn89uMHRi7fbTX4NMKAOhKKpyq3KRVSFIt4yDNNY6MfdAZDmfp/0ot
-         q/BZP7p2MTHXRU/3L9p0MzhxvC87mAYttH4GgY3t0dHsyHf405DXJhHthdTF65KgGtjc
-         PSUBl1Rpe6o0/S8hFZPrDFbW1LHOj0fO78y6NYawPVxvigOLifO7QZBFKubIFqgPXWRB
-         xWO9oecgBfSrJ6At8GEHsrnRvYpJLT3L/D5gKQnPSu+cajYHMVxWCShCfyQng+gBlgsK
-         RT4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730324562; x=1730929362;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2BdQ8I1/iVHZTqbEU+uI3XwCIW70vWl0AHAkkkOUHa4=;
-        b=UlOWcHLdxFnwcjuXsxCtRQsLvZBlYGjVVRxdQCjzpRd9iVoignNr1rRglXHkmZCEOG
-         fhs/e/kJ3zh4FzSUHhAzW+h27Ff+rDckA/Ps1LGeQT47gkWsq5TZFm3YNOdCKEzLySI1
-         I8D4zXnUJGGbqljyKUTgV1DcNQ5t59opY6e219T2p/K5UM/UA58ZZHoitmpeavw9hP2G
-         VeXoIS/hPAh21UnOS/TcySMixv0tpTS6iCLFMQMnMUOypUjEKVrjozPOflPcmcoUdI0v
-         394X1ivb5tSVe/pKgf9di70T/PnrV6IqKkW8YPIjFi+WAUnXabEC4K8bDiN16y5/t6+K
-         edhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWndjDIkiSn1ONQM7TtKqwC29c6cHCCSQXGw6A29S3u02HwTcQURzZuphV09VwsxdX373Cf3jCG1iKXigQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrOW6L2MuPfsKdu5JpQw1AR7S58QOD0uo41FpTflX2k/s/vYTM
-	ELMu8aPXPd3ajyNvfEq7Lo6VObRcTC3IixQD+rzh+grt37amHYTRpRQlHV3Zcko=
-X-Google-Smtp-Source: AGHT+IFy/kVyXGrqtNtAvxVjR4gsi2Os3+luFSdpZIwpcWZFvkvKwsZgpNzjHfWBEiMYl3HDGVYUug==
-X-Received: by 2002:a17:90b:51cc:b0:2e2:af80:8f7a with SMTP id 98e67ed59e1d1-2e93e0fd8f4mr220918a91.20.1730324562278;
-        Wed, 30 Oct 2024 14:42:42 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbe0252sm2400168a91.45.2024.10.30.14.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 14:42:41 -0700 (PDT)
-Date: Wed, 30 Oct 2024 14:42:39 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH RFT v11 2/8] Documentation: userspace-api: Add shadow
- stack API documentation
-Message-ID: <ZyKoT00lI3d2rpYc@debug.ba.rivosinc.com>
-References: <20241005-clone3-shadow-stack-v11-0-2a6a2bd6d651@kernel.org>
- <20241005-clone3-shadow-stack-v11-2-2a6a2bd6d651@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pt/9or9crq2buu696AW4a2t+FBO7CyxdoCwoyJadVMQcu94/ZPlNpXumTxH7sOo2fdjH+KAvfkOWj+AyoJL+baizTQhSfGBDXI/2dJAV0tSteTg8LZr3T6QNioa8JvVv8vMmjXLD/vO+tIlmbRCgajlL352JuOnbKDVfo0Y7Ib0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EKYDfn3V; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Eaav/kHiULYtRFO7qGHqUzM2GyuXCQUp8En/mARPwCQ=; b=EKYDfn3Vh58p9C5n1lAe40Lvqf
+	ucFYM5n2r+44VJfBuIUPFlcpOTPfwsyXCjnQX9eaegFSdB4v4LkAe5m1ur3BuhS9bT5jjp3qf0Ffk
+	kpaQjznr4/fcD0MP0DPukyvCULZA2pTqtP9rT+KPXq9goFjH8pZaBjua6XOujBirCyjE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t6GWd-00BjVC-67; Wed, 30 Oct 2024 22:46:47 +0100
+Date: Wed, 30 Oct 2024 22:46:47 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next 2/5] net: phy: mediatek: Move LED helper
+ functions into mtk phy lib
+Message-ID: <7cb014a6-ec64-4482-b85c-44f29760d186@lunn.ch>
+References: <20241030103554.29218-1-SkyLake.Huang@mediatek.com>
+ <20241030103554.29218-3-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241005-clone3-shadow-stack-v11-2-2a6a2bd6d651@kernel.org>
+In-Reply-To: <20241030103554.29218-3-SkyLake.Huang@mediatek.com>
 
-On Sat, Oct 05, 2024 at 11:31:29AM +0100, Mark Brown wrote:
->There are a number of architectures with shadow stack features which we are
->presenting to userspace with as consistent an API as we can (though there
->are some architecture specifics). Especially given that there are some
->important considerations for userspace code interacting directly with the
->feature let's provide some documentation covering the common aspects.
->
->Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
->Reviewed-by: Kees Cook <kees@kernel.org>
->Tested-by: Kees Cook <kees@kernel.org>
->Acked-by: Shuah Khan <skhan@linuxfoundation.org>
->Signed-off-by: Mark Brown <broonie@kernel.org>
->---
-> Documentation/userspace-api/index.rst        |  1 +
-> Documentation/userspace-api/shadow_stack.rst | 41 ++++++++++++++++++++++++++++
-> 2 files changed, 42 insertions(+)
->
->diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
->index 274cc7546efc2a042d2dc00aa67c71c52372179a..c39709bfba2c5682d0d1a22444db17c17bcf01ce 100644
->--- a/Documentation/userspace-api/index.rst
->+++ b/Documentation/userspace-api/index.rst
->@@ -59,6 +59,7 @@ Everything else
->
->    ELF
->    netlink/index
->+   shadow_stack
->    sysfs-platform_profile
->    vduse
->    futex2
->diff --git a/Documentation/userspace-api/shadow_stack.rst b/Documentation/userspace-api/shadow_stack.rst
->new file mode 100644
->index 0000000000000000000000000000000000000000..c576ad3d7ec12f0f75bffa4e2bafd0c9d7230c9f
->--- /dev/null
->+++ b/Documentation/userspace-api/shadow_stack.rst
->@@ -0,0 +1,41 @@
->+=============
->+Shadow Stacks
->+=============
->+
->+Introduction
->+============
->+
->+Several architectures have features which provide backward edge
->+control flow protection through a hardware maintained stack, only
->+writeable by userspace through very limited operations.  This feature
->+is referred to as shadow stacks on Linux, on x86 it is part of Intel
->+Control Enforcement Technology (CET), on arm64 it is Guarded Control
->+Stacks feature (FEAT_GCS) and for RISC-V it is the Zicfiss extension.
->+It is expected that this feature will normally be managed by the
->+system dynamic linker and libc in ways broadly transparent to
->+application code, this document covers interfaces and considerations.
->+
->+
->+Enabling
->+========
->+
->+Shadow stacks default to disabled when a userspace process is
->+executed, they can be enabled for the current thread with a syscall:
->+
->+ - For x86 the ARCH_SHSTK_ENABLE arch_prctl()
+> +void mtk_phy_leds_state_init(struct phy_device *phydev)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < 2; ++i)
+> +		phydev->drv->led_hw_control_get(phydev, i, NULL);
+> +}
 
-I know when you started out, gcs and risc-v shadow stack patches were
-only catching up. But now that gcs patches are in -next and risc-v
-patches have also reached some maturity. And considering this generic
-generic shadow stack documentation, may be it's worth to mention
-arch agnostic prctls here for shadow stack (that will be used by arm64
-and riscv)? What do you think?
+This does appear to be the same as what it is replacing, but it also
+seems odd.
 
->+
->+It is expected that this will normally be done by the dynamic linker.
->+Any new threads created by a thread with shadow stacks enabled will
->+themselves have shadow stacks enabled.
->+
->+
->+Enablement considerations
->+=========================
->+
->+- Returning from the function that enables shadow stacks without first
->+  disabling them will cause a shadow stack exception.
-nit:
-s/shadow stack exception/arch specific exception indicating control flow
-violation
+Why is an init function doing a get? I assume it is to do with setting
+priv->led_state? But led_state is not used in setting *rules, which is
+what led_hw_control_get() is all about. So maybe in a follow up patch,
+move the actual init code out of led_hw_control_get()?
 
->+ This includes
->+  any syscall wrapper or other library functions, the syscall will need
->+  to be inlined.
->+- A lock feature allows userspace to prevent disabling of shadow stacks.
->+- Those that change the stack context like longjmp() or use of ucontext
->+  changes on signal return will need support from libc.
->
->-- 
->2.39.2
->
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
