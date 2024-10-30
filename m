@@ -1,138 +1,169 @@
-Return-Path: <linux-kernel+bounces-389561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B489B6E71
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:11:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970849B6E79
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCCE1F21973
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7926F1C2122F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C29D2139A4;
-	Wed, 30 Oct 2024 21:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49625217442;
+	Wed, 30 Oct 2024 21:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NnqyD99o"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkEQfGIc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E43F14F90
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7772A14F90;
+	Wed, 30 Oct 2024 21:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730322657; cv=none; b=Y5mrFUEQmHpMvJZB6Pc0BLv8SkC9suPTD56vjtSbimxaVdUfaGcHbnDiapWxcPoMNCVuze571h41F46beGE+QcbltkmYxnflibWGV0FFg8Qdku0io9bGAsCTuG/04Ch2JqI/DYCLt5CsrjMMtsoYgSA4LNkpyKpcb2KsbVsGZhU=
+	t=1730322663; cv=none; b=btWfmSMr/y/PexnDcYKHsXtpXNtvOoMcmH7dgHgxrKly+fMraUK6qrpxsWQ313DbTQMV5OALmVP0x83nwoalXy3KJjQjwLfy4/HuLM/nNpLdOq9np4X3wU7q0UG+A6Vvs9Vp9kxEpKadfk2HM7DfXIQI6kp0bVMugfl3HGZ/uxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730322657; c=relaxed/simple;
-	bh=Yv64QlET2EPMrWiN3Hx3EoPUYscpfQCW7OcH/MAi+rs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SpdQ6QF0Xt7WjkiSh5RvAALgQ36aO8KUXH/gK/+mKWnkfe2xkXmPuWW7deKwzaLGCkXKZqVa5TPzQNR6jL/RFf1KZ3r3VoKDcu+on0lVuEvO8jzj+E8IUBpiqfa+kfm691APP8pM21PGtCM6lEvCHhx1MNpJFrEzkmMl+hg+UwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NnqyD99o; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cbe9e8bbb1so2051916d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730322654; x=1730927454; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yv64QlET2EPMrWiN3Hx3EoPUYscpfQCW7OcH/MAi+rs=;
-        b=NnqyD99oF4jdubTlGN6rqWb6YeQEGgrc+/ioq0JnK/WLA9AnmpnbJauX9JxngdMNO5
-         XqZwqvEqAfVyaMK6fEtE3tIVNrAbLC4JgX7V/rScbL/l0CBCPsHgisHPqLStB7g25avK
-         RBLn9B/id6a2G4Tvo3LBvC2nGFucCbOrXo71yEMkornlQTfp9Q+esXS6rgFKTk3RnlSH
-         wb5P3XKT7Qbzx9QnCfMfzjEI1M3jXchWeogP2OHdfwCLRdf6wpNx1wws6DpAZBwZ4O5v
-         tJNwS7ZBCPiwWY48kXzbpC4o45O34KEne4UHyousPon+rMc15paN0LFeFQyHs6kTNCBj
-         GXww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730322654; x=1730927454;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yv64QlET2EPMrWiN3Hx3EoPUYscpfQCW7OcH/MAi+rs=;
-        b=oUq8Mp0PE2U/3mknupZlFEC2v9S17OWlvID0i/q364KqYuvpBAw1kS8Z8WGswOn7O5
-         al73Noo8QkjBHUyKKOhC+kM4EZmoYqHL9mVYvfDSP11fgNdrnRwBgEEWrHqrDaY5AfTd
-         ed1rVjmBs0VAouN5heuymfRPKC3nqzkqLeZxVhx2QheUNBLsN7T7l5ra4M5KSBy56g8M
-         EN6QyLK1x7LQHK0iZQSqa3dRM6Uc1qIlSCLn6aH1FlSFx1Bg668vyL67n7OFRm7R8EPy
-         3A7dW7qi0XoLRckjyFiLR6oc1tz1h46uU/ZieySi7BMEVhZbQI1Po0y1ZvLu3TX4DGcg
-         hA5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUP6V3GpRNcGVMDix9jSiha0ZFGmpPOWw+c6dh00D04+e1/vWHX59d4NM9vWRE0g5jIR0NQASmFpYOPpbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhoPam6LvdIpApISkGooNtKRR5w+XyDPmc2nyMBwCRF+LDKZ8A
-	y0qfwxq2tIqRHsiSQx8ljrmeFs2eVRPmvADSo+n3G3biZjnaMHtrZMS0wNKECBHDw8z2J2tRkdb
-	UAU8EAIrtgZYFmK4lqTOjyxjPON/VIDeh7NBp
-X-Google-Smtp-Source: AGHT+IFSS2YttB6l2HQFCMEWaOmu1/SVUYpulUyhAF2c1/XqkoK6fuxeN+Gt2NutPLnZPmax2rGmjblrytR5r69cBr4=
-X-Received: by 2002:ad4:524f:0:b0:6d1:8599:5d85 with SMTP id
- 6a1803df08f44-6d185995f3fmr202244166d6.48.1730322653802; Wed, 30 Oct 2024
- 14:10:53 -0700 (PDT)
+	s=arc-20240116; t=1730322663; c=relaxed/simple;
+	bh=49YpfPgybjyunYRlnfXehdPEI1xELY9QE5/uJT2eRPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OKdXsIS+svbrCFi7nUIkBnbKoaGi7E13i1aa1umAF0RR/uqCBe5bCk9ZqMOqoyWQecBz7Nm09ymc5GW6juw/Q3fF9w2GsLeWihun5XJXkr/vDMJs2cyJHpRCr/q2cFSqQOhS3rpF3Ev6t+VTd0xSju95xYR+tas00Vn9LY+dPyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkEQfGIc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB149C4CECE;
+	Wed, 30 Oct 2024 21:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730322663;
+	bh=49YpfPgybjyunYRlnfXehdPEI1xELY9QE5/uJT2eRPQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=pkEQfGIccHm/wjiCrCCWe/fH7mfNqtwdKRguI2XyD+0KsDUZwN+Z3GEyLkB72KLSy
+	 ulaBG27WfSdkBPsSCq9Yjp/3JTK5hLojfRSklS9RUiQPlAcnN7CviYKk/XyzFK0ByX
+	 Ip+k/evjUE7lioJxM7T4DzxFai1kidYxX7YiT7IXRP34r0U25bFA99l8ZHQOmfqDpU
+	 1YHV4iYYti/4gl4juv7KbZgDYPOhzdN4tgMBXwvF191SrIvWNuZizINVQBdIJ1KUlB
+	 zAB3Bq3cuJ15LzgOUrz0K+qEuKnNH6URIYvoC6qQ0lGtlTrzqYvfrsPzuyf4NmCutU
+	 +Q30d8ivn5xlA==
+Date: Wed, 30 Oct 2024 16:11:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Srujana Challa <schalla@marvell.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Kalle Valo <kvalo@kernel.org>, Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jie Wang <jie.wang@intel.com>,
+	Michal Witwicki <michal.witwicki@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Adam Guerin <adam.guerin@intel.com>,
+	Damian Muszynski <damian.muszynski@intel.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Nithin Dabilpuram <ndabilpuram@marvell.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Benjamin Berg <benjamin.berg@intel.com>,
+	Breno Leitao <leitao@debian.org>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org, qat-linux@intel.com,
+	linux-crypto@vger.kernel.org, linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v6 00/10] Remove pcim_iomap_regions_request_all()
+Message-ID: <20241030211100.GA1220400@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027001444.3233-1-21cnbao@gmail.com> <33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
- <CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
- <e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com> <CAGsJ_4wx-JH8T5wNjJURKvpQ4hUueMeF9Q6cu9WaFhEc7AEG2A@mail.gmail.com>
- <d88867ba-32e6-4b28-961e-756389d345ca@gmail.com> <CAGsJ_4xyEg-hsAcDMM11f3K=FS28-Xp7sy4uo0fzCS5xR2EArg@mail.gmail.com>
- <03b37d84-c167-48f2-9c18-24268b0e73e2@gmail.com>
-In-Reply-To: <03b37d84-c167-48f2-9c18-24268b0e73e2@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 30 Oct 2024 14:10:17 -0700
-Message-ID: <CAJD7tkbO0SVUfhHQ46rONy45e8FmoWESegtTLz561aPy2N-Uhw@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
- for nearly full memcg
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, David Hildenbrand <david@redhat.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>, 
-	"Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241030112743.104395-1-pstanner@redhat.com>
 
-[..]
-> >>> A crucial component is still missing=E2=80=94managing the compression=
- and decompression
-> >>> of multiple pages as a larger block. This could significantly reduce
-> >>> system time and
-> >>> potentially resolve the kernel build issue within a small memory
-> >>> cgroup, even with
-> >>> swap thrashing.
-> >>>
-> >>> I=E2=80=99ll send an update ASAP so you can rebase for zswap.
-> >>
-> >> Did you mean https://lore.kernel.org/all/20241021232852.4061-1-21cnbao=
-@gmail.com/?
-> >> Thats wont benefit zswap, right?
-> >
-> > That's right. I assume we can also make it work with zswap?
->
-> Hopefully yes. Thats mainly why I was looking at that series, to try and =
-find
-> a way to do something similar for zswap.
+On Wed, Oct 30, 2024 at 12:27:33PM +0100, Philipp Stanner wrote:
+> Changes in v6:
+>   - Add Ilpo's RB to patch #1
+>   - Rephrase error log messages in patch #6. (Ilpo)
+> 
+> Changes in v5:
+>   - Add Acked-by's from Alexander and Bharat (the latter sent off-list,
+>     because of some issue with receiving the previous patch sets).
+> 
+> Changes in v4:
+>   - Add Acked-by's from Giovanni and Kalle.
+> 
+> Changes in v3:
+>   - Add missing full stops to commit messages (Andy).
+> 
+> Changes in v2:
+>   - Fix a bug in patch №4 ("crypto: marvell ...") where an error code
+>     was not set before printing it. (Me)
+>   - Apply Damien's Reviewed- / Acked-by to patches 1, 2 and 10. (Damien)
+>   - Apply Serge's Acked-by to patch №7. (Serge)
+>   - Apply Jiri's Reviewed-by to patch №8. (Jiri)
+>   - Apply Takashi Iwai's Reviewed-by to patch №9. (Takashi)
+> 
+> 
+> Hi all,
+> 
+> the PCI subsystem is currently working on cleaning up its devres API. To
+> do so, a few functions will be replaced with better alternatives.
+> 
+> This series removes pcim_iomap_regions_request_all(), which has been
+> deprecated already, and accordingly replaces the calls to
+> pcim_iomap_table() (which were only necessary because of
+> pcim_iomap_regions_request_all() in the first place) with calls to
+> pcim_iomap().
+> 
+> Would be great if you can take a look whether this behaves as you
+> intended for your respective component.
+> 
+> Cheers,
+> Philipp
+> 
+> Philipp Stanner (10):
+>   PCI: Make pcim_request_all_regions() a public function
+>   ata: ahci: Replace deprecated PCI functions
+>   crypto: qat - replace deprecated PCI functions
+>   crypto: marvell - replace deprecated PCI functions
+>   intel_th: pci: Replace deprecated PCI functions
+>   wifi: iwlwifi: replace deprecated PCI functions
+>   ntb: idt: Replace deprecated PCI functions
+>   serial: rp2: Replace deprecated PCI functions
+>   ALSA: korg1212: Replace deprecated PCI functions
+>   PCI: Remove pcim_iomap_regions_request_all()
+> 
+>  .../driver-api/driver-model/devres.rst        |  1 -
+>  drivers/ata/acard-ahci.c                      |  6 +-
+>  drivers/ata/ahci.c                            |  6 +-
+>  drivers/crypto/intel/qat/qat_420xx/adf_drv.c  | 11 +++-
+>  drivers/crypto/intel/qat/qat_4xxx/adf_drv.c   | 11 +++-
+>  .../marvell/octeontx2/otx2_cptpf_main.c       | 14 +++--
+>  .../marvell/octeontx2/otx2_cptvf_main.c       | 13 ++--
+>  drivers/hwtracing/intel_th/pci.c              |  9 ++-
+>  .../net/wireless/intel/iwlwifi/pcie/trans.c   | 16 ++---
+>  drivers/ntb/hw/idt/ntb_hw_idt.c               | 13 ++--
+>  drivers/pci/devres.c                          | 59 +------------------
+>  drivers/tty/serial/rp2.c                      | 12 ++--
+>  include/linux/pci.h                           |  3 +-
+>  sound/pci/korg1212/korg1212.c                 |  6 +-
+>  14 files changed, 76 insertions(+), 104 deletions(-)
 
-I would prefer for these things to be done separately. We still need
-to evaluate the compression/decompression of large blocks. I am mainly
-concerned about having to decompress a large chunk to fault in one
-page.
-
-The obvious problems are fault latency, and wasted work having to
-consistently decompress the large chunk to take one page from it. We
-also need to decide if we'd rather split it after decompression and
-compress the parts that we didn't swap in separately.
-
-This can cause problems beyond the fault latency. Imagine the case
-where the system is under memory pressure, so we fallback to order-0
-swapin to avoid reclaim. Now we want to decompress a chunk that used
-to be 64K.
-
-We need to allocate 64K of contiguous memory for a temporary
-allocation to be able to fault a 4K page. Now we either need to:
-- Go into reclaim, which we were trying to avoid to begin with.
-- Dip into reserves to allocate the 64K as it's a temporary
-allocation. This is probably risky because under memory pressure, many
-CPUs may be doing this concurrently.
+Applied to pci/devm for v6.13, thanks!
 
