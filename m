@@ -1,121 +1,176 @@
-Return-Path: <linux-kernel+bounces-389538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF6529B6E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:55:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C929B6E31
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 797C8B2167F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B7F282134
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1E4213136;
-	Wed, 30 Oct 2024 20:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182CB213136;
+	Wed, 30 Oct 2024 20:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z5bPi4aG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3JtQJax"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0FB19CC24;
-	Wed, 30 Oct 2024 20:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6471BD9DF;
+	Wed, 30 Oct 2024 20:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730321742; cv=none; b=drH6NdO4McTZObjSGjXiur1DyxSCQoAqzj6mHnr2aJYEAzt1gjK/sBSLBUXufkOYeJd3yFJScL3tEoTNj/Srood1qX/CgqyX+Ocfpvxn1+pJ1cLSPZqjEX/CJEqNhaiqlmY7iGvhjBf8c0QaO+IkfMF8q5U73tZdEAi9IKQNDw4=
+	t=1730321826; cv=none; b=rRIL4Jn/Yg6xAr8AsK8qUpiUh15h9CaxA+Rfj76OhFcfDORcFpwf2GuoL3Gm+EFnt7lKf44w7U+eZvNJauRG5rlYK0QtCuqCaiimy7mZ1ETmvxq2DB2Gfo9IePhZT/DWqq1WeKxL4JnwpyyBFc9diC1JIxIZHPZT/HW9VEC10Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730321742; c=relaxed/simple;
-	bh=UTtlS48Hah5u7GdMzBlAhIwEqhmJZ1vHStfGamKkCnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=D0g1hVaRc7HuvEdJxqmX0DMMKxtzN4ZiSDX392Jd5AL+JN53ZYPOzT9DP8pkvrgldnQ+CtVW9Z/V4HxE4eFVzrjmTBIeem9tCNyJJSxEyNDFZpt861V5HobqJ6XpjMU1qG4s0HmU1D15JpVSRsxrEeC30+cmgQiLFkDjSky1eTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z5bPi4aG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UCFS7l002341;
-	Wed, 30 Oct 2024 20:55:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cq83RRr5iVH8Pk8KHhiMY95wpAhRPW9zl0sq+dBSCfY=; b=Z5bPi4aGSnSZvzRD
-	LfUZwu4p29jNuqJ5JNeKOoQPes8Mg9QPIa07XPCmbrmwvrKDi8LZup0jdZZwCDom
-	Lw5XD4i3eZ+5kmlCEcs+2VZr4/DVG44E0FFNR1lp26nLs1m1fmjLMa8ohba89uDb
-	s6f7J6+WMR0LXbL8rg1+whyTwJn4tOAlie1H8m53XIWpjgkd0LmpHarBCfc0sLfi
-	tCFZKzF0LPloa8bunSDwnlElW2UUYXXHuFIHIc7pggk3fNW3vMcJ4sGwparSYYTI
-	L7nhTOHTQZ+/u07FhKDlpaW6LcEf2GNv44P4f2FHH2rs5HD4cT4fuhHgeo9gXQd/
-	Rcnh1g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmn59c63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 20:55:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UKtVEa015633
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 20:55:31 GMT
-Received: from [10.48.242.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 13:55:30 -0700
-Message-ID: <eb39e027-7ab4-4062-a895-cac28d37a8a6@quicinc.com>
-Date: Wed, 30 Oct 2024 13:55:29 -0700
+	s=arc-20240116; t=1730321826; c=relaxed/simple;
+	bh=XPLETH6IvogiR50LRg6ev0FzS09rdHbQJGqQIAlUxgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rSxvD4gfMhthYYx0Q0XAqvJ9ReeXKy6ygl3k+YQZ51IU8o2l8QxmXj161nn0k11WRERSa8ITv1XoaEbgD0LoMw4GeU1NPMdnroRqxWVMGqInCnHkF9TlEZna7R/ssIdPlZXQ4xvvVf0FH7wL8aQpdUaVybooSembj6flcuCBvME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3JtQJax; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9470BC4CECE;
+	Wed, 30 Oct 2024 20:57:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730321825;
+	bh=XPLETH6IvogiR50LRg6ev0FzS09rdHbQJGqQIAlUxgM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=k3JtQJaxR5Yk2wmxCZsDMiosrnNJmzWeCK7TqABeoRViZBcgxSR/Aj8Vb7FWRk1zG
+	 lxwqpBuqAYnnxDiaM8rCrhtZGb86GXYELynmh4xutm0dndQ3iBvycoAJw4+H8e6V7F
+	 ZRjtU1j9MqXPqxAykncoxHfLxYdv5OQipURElOwL2mjO21q2ICwVnTavLIx37ISErZ
+	 4jtVLwQDzAmKCx6DpFF94BwdToPDVGrzRJvelwX7Q8+aMM6PzysovbUrD5Osg01YO+
+	 Zs56hWd5drU+1q7H46BkMxfUq5qfTrQMwPgGFb6nUsfBrS8BK3Fpyd6wWrsHobhiYF
+	 F0BMRSSiCRMgw==
+Date: Wed, 30 Oct 2024 15:57:03 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Hua Qian Li <huaqian.li@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: Re: [PATCH v6 0/7] soc: ti: Add and use PVU on K3-AM65 for DMA
+ isolation
+Message-ID: <20241030205703.GA1219329@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] wifi: rtw89: 8852a: remove redundant else statement
-To: Colin Ian King <colin.i.king@gmail.com>,
-        Ping-Ke Shih
-	<pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-        <linux-wireless@vger.kernel.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241030131416.3091954-1-colin.i.king@gmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20241030131416.3091954-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
-X-Proofpoint-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=733
- priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300164
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1725901439.git.jan.kiszka@siemens.com>
 
-On 10/30/2024 6:14 AM, Colin Ian King wrote:
-> The cascaded if statements covers all 16 bit values in the comparisons
-> of dgain and the last else statement is not reachable and hence
-> dead code. Remove it.
+On Mon, Sep 09, 2024 at 07:03:53PM +0200, Jan Kiszka wrote:
+> Changes in v6:
+>  - make restricted DMA memory-region available to all pci-keystone
+>    devices, moving property to unconditional section (patch 2)
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c | 2 --
->  1 file changed, 2 deletions(-)
+> Changes in v5:
+>  - resolve review comments on pci-host bindings
+>  - reduce DMA memory regions to 1 - swiotlb does not support more
+>  - move activation into overlay (controlled via firmware)
+>  - use ks_init_vmap helper instead of loop in
+>    rework ks_init_restricted_dma
+>  - add more comments to pci-keystone
+>  - use 2 chained TLBs of PVU to support maximum of swiotlb (320 MB)
 > 
-> diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-> index 9db8713ac99b..f3568c4d0af6 100644
-> --- a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-> +++ b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-> @@ -2248,8 +2248,6 @@ static s8 _dpk_dgain_mapping(struct rtw89_dev *rtwdev, u16 dgain)
->  		offset = -9;
->  	else if (dgain <= 0x155)
+> Changes in v4:
+>  - reorder patch queue, moving all DTS changes to the back
+>  - limit activation to IOT2050 Advanced variants
+>  - move DMA pool to allow firmware-based expansion it up to 512M
+> 
+> Changes in v3:
+>  - fix ti,am654-pvu.yaml according to review comments
+>  - address review comments on ti,am65-pci-host.yaml
+>  - differentiate between different compatibles in ti,am65-pci-host.yaml
+>  - move pvu nodes to k3-am65-main.dtsi
+>  - reorder patch series, pulling bindings and generic DT bits to the front
+> 
+> Changes in v2:
+>  - fix dt_bindings_check issues (patch 1)
+>  - address first review comments (patch 2)
+>  - extend ti,am65-pci-host bindings for PVU (new patch 3)
+> 
+> Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+> against DMA-based attacks of external PCI devices. The AM65 is without
+> an IOMMU, but it comes with something close to it: the Peripheral
+> Virtualization Unit (PVU).
+> 
+> The PVU was originally designed to establish static compartments via a
+> hypervisor, isolate those DMA-wise against each other and the host and
+> even allow remapping of guest-physical addresses. But it only provides
+> a static translation region, not page-granular mappings. Thus, it cannot
+> be handled transparently like an IOMMU.
+> 
+> Now, to use the PVU for the purpose of isolated PCI devices from the
+> Linux host, this series takes a different approach. It defines a
+> restricted-dma-pool for the PCI host, using swiotlb to map all DMA
+> buffers from a static memory carve-out. And to enforce that the devices
+> actually follow this, a special PVU soc driver is introduced. The driver
+> permits access to the GIC ITS and otherwise waits for other drivers that
+> detect devices with constrained DMA to register pools with the PVU.
+> 
+> For the AM65, the first (and possibly only) driver where this is
+> introduced is the pci-keystone host controller. Finally, this series
+> provides a DT overlay for the IOT2050 Advanced devices (all have
+> MiniPCIe or M.2 extension slots) to make use of this protection scheme.
+> Application of this overlay will be handled by firmware.
+> 
+> Due to the cross-cutting nature of these changes, multiple subsystems
+> are affected. However, I wanted to present the whole thing in one series
+> to allow everyone to review with the complete picture in hands. If
+> preferred, I can also split the series up, of course.
 
-should you drop the test and unconditionally return -12 here?
+I'm not sure where this ended up.
 
->  		offset = -12;
-> -	else
-> -		offset = 0x0;
->  
->  	return offset;
->  }
+The pci-keystone.c patch looks OK to me, and I don't see any comments
+from the PCI folks who normally take care of host controller drivers.
 
+I guess it depends on the soc PVU driver, so I'll ack the keystone
+part and whoever takes the soc part can include it.
+
+> CC: Bjorn Helgaas <bhelgaas@google.com>
+> CC: "Krzysztof Wilczyński" <kw@linux.com>
+> CC: linux-pci@vger.kernel.org
+> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> 
+> Jan Kiszka (7):
+>   dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
+>   dt-bindings: PCI: ti,am65: Extend for use with PVU
+>   soc: ti: Add IOMMU-like PVU driver
+>   PCI: keystone: Add support for PVU-based DMA isolation on AM654
+>   arm64: dts: ti: k3-am65-main: Add PVU nodes
+>   arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
+>   arm64: dts: ti: iot2050: Add overlay for DMA isolation for devices
+>     behind PCI RC
+> 
+>  .../bindings/pci/ti,am65-pci-host.yaml        |  28 +-
+>  .../bindings/soc/ti/ti,am654-pvu.yaml         |  51 ++
+>  arch/arm64/boot/dts/ti/Makefile               |   5 +
+>  arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  38 +-
+>  ...am6548-iot2050-advanced-dma-isolation.dtso |  33 ++
+>  drivers/pci/controller/dwc/pci-keystone.c     | 108 ++++
+>  drivers/soc/ti/Kconfig                        |   4 +
+>  drivers/soc/ti/Makefile                       |   1 +
+>  drivers/soc/ti/ti-pvu.c                       | 500 ++++++++++++++++++
+>  include/linux/ti-pvu.h                        |  16 +
+>  10 files changed, 777 insertions(+), 7 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-dma-isolation.dtso
+>  create mode 100644 drivers/soc/ti/ti-pvu.c
+>  create mode 100644 include/linux/ti-pvu.h
+> 
+> -- 
+> 2.43.0
+> 
 
