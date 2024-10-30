@@ -1,87 +1,101 @@
-Return-Path: <linux-kernel+bounces-389689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878629B6FEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:40:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BD09B6FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B645C1C20F55
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BAD1F21E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F551E3776;
-	Wed, 30 Oct 2024 22:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82A2217448;
+	Wed, 30 Oct 2024 22:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="oFtFiI+g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="00GX5QV+"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A4E1925AE
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 22:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472331BD9EB;
+	Wed, 30 Oct 2024 22:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730328011; cv=none; b=cvxM77XjE4riT51DMPxRqQ7XOAI2L5qSd1zpBkzTeUOT91gADLprYbup0bMNxoTJHZiMMtpm+4VPQKkofuFQEzPNPjcuUdY7gNJNs2XMOKGkFZMCDo+VFfE3Op0zbzfRp8OQzUjgmnPHwztgrtX/NXoUi2TSdJ7fAYyeD4pO+og=
+	t=1730328151; cv=none; b=Ob6WOsJw6jmHCkJ1Ghv3kX0lz6nORb4HUANLeyEkhQ3xDuNdU8g+3tLhYkAvgXnPQqGz6D40uvHlXJXHOXDzxC4lwKRlQKcbENPY3+1AlhiuIEQZ2EZCuUDyLGKki+oTGAAXpfHBIMZvUE2r3b/8i6b9iLxi5KKAeywzZC3WzFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730328011; c=relaxed/simple;
-	bh=kmCaiCfNFt5CSiEveVa8DQBup2LvPrDutJeolCsC3M8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=KU1YSZykpm7wml8/W7RpOBDC04VsArY34owL6DwzCIKg1aAR9lZ+R/awynjyvT1j+b/D/Sq5dq0qmf+lJ8Yp56cMRrf0woACsmSxJbw9IclMwWnW4XnjIRg0hoqOuzEE+XAvzLCdr5ZEsrdCOqyUtyKlUvEoLGiBjRZpRyN6zE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=oFtFiI+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2871DC4CECE;
-	Wed, 30 Oct 2024 22:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730328010;
-	bh=kmCaiCfNFt5CSiEveVa8DQBup2LvPrDutJeolCsC3M8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oFtFiI+gpzy/m62bJXxU3w7RSV8rT2AdnnEXeM8Ivol9gyRxSuLbDP89Wh35G4Et1
-	 dq9HZ3zK17/mJbsx2q09n/7GOA/Na+1/wWw+S6tiA2Ogw6LaxARNNh8nzDmGfrcK62
-	 RsDi9zouag5yRTWN9YzvoMRF661bhOmFQsZXB/b4=
-Date: Wed, 30 Oct 2024 15:40:09 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Marc Dionne <marc.c.dionne@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Vlastimil Babka
- <vbabka@suse.cz>, Marc Dionne <marc.dionne@auristor.com>
-Subject: Re: [PATCH v3] tools/mm: Fix slabinfo crash when MAX_SLABS is
- exceeded
-Message-Id: <20241030154009.16b693b53b3c00d2439fd854@linux-foundation.org>
-In-Reply-To: <20241030133208.41061-1-marc.c.dionne@gmail.com>
-References: <20241030133208.41061-1-marc.c.dionne@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730328151; c=relaxed/simple;
+	bh=DT9pXJgvQX5AoW7dMqWsYEaIWt1s6GH3Zy1zRV6DS2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mhm8sbcM+7aiIpUDsUnvi7QGeAHY3vXrayivWNKCcfq4nbLUGBuZxCskf9bKWD5sZjew1IyV1jpuyIn4xXs/qN++bs1rPGQ9edmdcDnxfctnkIaCVSpdHkYRgfQrOL79IqgAVMwIkTEQ9XyQDH1eNkFKJa4N58/42jxmYKXd0o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=00GX5QV+; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=/W1gnm6AuW6BiVpiHLFOI6HfP0cwzclLuehGNTmJEiQ=; b=00GX5QV+tX1qkKGx+RyXSzKDho
+	Kux6Mjn7iGMuDxARmDJm0d5PuUapZC/Fnwq4sQf2idXitSJCTmFVK6aAk/hTOtIfPuJZUHY226XDd
+	w4XrFQmvzUM3OTv6QjO+S8R6QF9Rl2QtFsWLbo5aRyfZbvxoQ6hrFnxVO10nCaodXsdcFSaxeIlQ8
+	+YLrPqjE6RH4WG1j+dzm7EqT+GO2FUiff2Ewikwp0P8oSgFglSRX4/wGkJ8EQmt8Psmsy+NdTlSf9
+	uRXlumfQIe8zGBBmWGo+kJzVtb7V5erNALFp1lg7+1B93TZA8nRljUJxx+8SLqeu56aZnQYqrHMns
+	aAeMDHAg==;
+Date: Wed, 30 Oct 2024 23:42:19 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mithil Bavishi <bavishimithil@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] arm/dts: Add common device tree for Samsung
+ Galaxy Tab 2 series
+Message-ID: <20241030234219.2d918b34@akair>
+In-Reply-To: <20241030211215.347710-3-bavishimithil@gmail.com>
+References: <20241030211215.347710-1-bavishimithil@gmail.com>
+	<20241030211215.347710-3-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 30 Oct 2024 10:32:08 -0300 Marc Dionne <marc.c.dionne@gmail.com> wrote:
+Hi Mithil,
 
-> From: Marc Dionne <marc.dionne@auristor.com>
-> 
-> The number of slabs can easily exceed the hard coded MAX_SLABS in the
-> slabinfo tool, causing it to overwrite memory and crash.
-> 
-> Increase the value of MAX_SLABS, and check if that has been exceeded for
-> each new slab, instead of at the end when it's already too late.  Also
-> move the check for MAX_ALIASES into the loop body.
-> 
-> @@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
->  				p--;
->  			alias->ref = strdup(p);
->  			alias++;
-> +			if (alias - aliasinfo == MAX_ALIASES)
-> +				fatal("Too many aliases\n");
+Am Wed, 30 Oct 2024 21:12:11 +0000
+schrieb Mithil Bavishi <bavishimithil@gmail.com>:
 
-Again, this is not correct.  It has a potential off-by-one error.
+> +	twl: twl@48 {
+> +		reg = <0x48>;
+> +		#clock-cells = <1>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <
+> +			&twl6030_pins
+> +			&twl6030_wkup_pins
+> +		>;
+> +
+> +		/* SPI = 0, IRQ# = 7, 4 = active high
+> level-sensitive */
+> +		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /*
+> IRQ_SYS_1N cascaded to gic */
+> +		interrupt-parent = <&gic>;
+> +		ti,system-power-controller;
 
-If at this point, (alias - aliasinfo == MAX_ALIASES), we *do not know*
-whether there are "Too many aliases".  Because the parsing might have
-reached the end of input, in which case we're fine.
+this has to be system-power-controller;
 
-A fix for this is to check for an invalid `alias' immediately before we
-use it, as I described in the previous email.
+And you have it correctly here:
+https://gitlab.postmarketos.org/postmarketOS/pmaports/-/blob/master/device/community/linux-postmarketos-omap/0002-arm-dts-Add-common-dtsi-for-espresso.patch?ref_type=heads#L532
 
+so, please double-check if you are trying to mainline the right branch.
+No need to respin just for this line. There is still a lot other stuff
+to fix here but I want to make sure we are looking at the right thing.
+
+Regards,
+Andreas
 
