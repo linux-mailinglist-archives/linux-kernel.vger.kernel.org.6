@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-388755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546D29B63FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:25:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8647C9B6401
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDEC1B229EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:25:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19F7B22CE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99511E47B6;
-	Wed, 30 Oct 2024 13:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523161E7C11;
+	Wed, 30 Oct 2024 13:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPkpOGUK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KyAF95dK"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDAF22315
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E6C1E32B7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294735; cv=none; b=Fb4+L7kINq2ogC4jA5j1fkW/atW940Niel4sEysr+9xH+0WSQiT3vJBVzaN7ORICy/ffmWjsRtjUMF54znJuxHFC2gS4kwvvpHUsYUpnmP8kq2V5uQE+eCD33sf4OOEkDJju8B2hB5OqwSC9iZpYmdfWF+aiAjSUdDwwpd5wLVU=
+	t=1730294754; cv=none; b=qruIOl4tFPXWkjER5/GKwW9N8SVxl6NjSuzq0zOw/1tG3Fu81/dx/hRtu+ket5bLzpe5bWknj19w0d7m+ikw02uZDIqvrT2l80gVN3JPAszTqyllhLD9RqfGpCdHSxSGniGSsx+OTzmW2enKg12tUNLNxnChF9sQZ38t10U9VDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294735; c=relaxed/simple;
-	bh=DYyWWFhYRCAfnaQMpfQegjXrle2h88tfxIyelrqqD2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tKc0HnyAiNIZ7VnMOY4I/dbQ+ZaKRR4lkpUiW5rN4SFlZ8lh9Pz8rCkm4bvmJYcip6lWq4MMRkmqtVwAJQkp2UUIdI84Mnq4b560hBWuwog1dspUsCyrOJkaThHDLuwR4q0WMuLZBJSibqgm17b52Wha9yG9iwTvV69+PhnOxkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPkpOGUK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CBDC4CEE5
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730294734;
-	bh=DYyWWFhYRCAfnaQMpfQegjXrle2h88tfxIyelrqqD2A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sPkpOGUKP6YRh9qfnzWsuHdIo+HhAPqh83da8CmdT3vl2MIhKvanEItM9VPPvh/Yj
-	 zdRdokMDa7L086/V4UuHi8lQHXvxxhggYmUUfHbcRsaKn5VEidObhdNoww6jCLAdLT
-	 vEntsBo7IrZVxuVFsb/F99mnmULAI/CVALZI65eK2Pf0mvOcu35lo7GYQ5+ZTtpDpH
-	 s+bDWsGYKK016o4/uzyhsujDiRnI4fIVaDruNJG+tPJQAI/uThymOQDrcHH73XmToV
-	 Mc88tIfHrNVGaDZhTK0OKUbwp27JF8nUSQsRTOBiZFT2u0+IMqXwEh2m9rhmloq6pJ
-	 93izJYRh9gi8g==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539fe02c386so879587e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:25:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVcCk9eSJNdL77C3XaXjVmFjesidWpTtfslpyvPw2kzQmNWcmwPcKiWH6WLhdv9Fz3RtkEAlIZ5jbalr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNehnmNMzI/GCbe+JKZihPbfOwjvBQuqSwjiVYtLEUazuCujhF
-	/nOXZtiZXXeugiNRvh64OHSPWbcF1z814wdgOeYcllCw+A57YvKtgrFPLHGgldKL96zexibUaO2
-	UlyLexKy1d3RO94+I2tgJ9BhCZqI=
-X-Google-Smtp-Source: AGHT+IFa5NPZ4ZduUGr0zqQdLHnPC3Jah7Z4BcbBu/1AywhN6VuZsTUgtXoBp4uZWrclnlDPgyarxQIkykReYK8kL0M=
-X-Received: by 2002:a05:6512:33c3:b0:539:f1d2:725b with SMTP id
- 2adb3069b0e04-53b493d4205mr1736060e87.4.1730294733142; Wed, 30 Oct 2024
- 06:25:33 -0700 (PDT)
+	s=arc-20240116; t=1730294754; c=relaxed/simple;
+	bh=pvbXgR9Xm7QX5Wa1OLsladlfCU7PiLKDysLpnvQUIAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=josjI92MM/HuJLu7wG+zMJlENKK19ANkJe/5NgFnHY47sSojzudJhZJoBp+ldi10pMEtMuXIhpSKL4xQl7pNKo7dYPMhQoPyybjkocTYyPtm5EcRyQiuUiNDSXnx5uQ5cCBo1R7qmL9Pcots+Ut3kydb/KQPPulLoJ5qaMv0L1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KyAF95dK; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Us9rkUfj+iE/u81ryKmhTooVo1HWmg71Ma4F5AMwC6Q=; b=KyAF95dK1Nks5OhjcOsFn2SV4I
+	vhtp4D4K1TQjQavDtp5Akcb51zdOeyGXlCRb3RsZgGjDFIZr/EphZ5z9Pi8o+Q76rO00oSifV/+7P
+	ct+pS9pMtYXneLOPfzlhbMU56PazAq5oWReh9nE/LxFEU6rpf066k6JANziPaUpyys9lt9pX2kJBH
+	ZKXCd71qwryyoBi/gumwjpmnghcNyC9LWnrumDZrIGLLzPBYW5CXQLb8KpEKrzAzZreJ8RLv4bVPk
+	aScWVUr8EiP99kV6nXFs+3i2jYvjnfZgBc9Hfz7DmxeXbnQMXHoZMCD298NaAe1Q5nRqV/EMcKKDe
+	pl+vhmmg==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t68hg-00H6BY-7O; Wed, 30 Oct 2024 14:25:40 +0100
+Message-ID: <8f432835-1e45-4e2e-b053-10d25a23d5fb@igalia.com>
+Date: Wed, 30 Oct 2024 10:25:33 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030101803.2037606-10-ardb+git@google.com>
- <20241030101803.2037606-17-ardb+git@google.com> <861pzx3gll.wl-maz@kernel.org>
-In-Reply-To: <861pzx3gll.wl-maz@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 30 Oct 2024 14:25:21 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFysNcRiH6nFt3UMhJCuCr6VXZ5XM1Pd9x4gjLS6=ASHg@mail.gmail.com>
-Message-ID: <CAMj1kXFysNcRiH6nFt3UMhJCuCr6VXZ5XM1Pd9x4gjLS6=ASHg@mail.gmail.com>
-Subject: Re: [RFC PATCH 7/8] arm64/mm: Use reduced VA sizes (36/39/42 bits)
- only for user space
-To: Marc Zyngier <maz@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/v3d: Drop allocation of object without mountpoint
+To: matthias.bgg@kernel.org, Melissa Wen <mwen@igalia.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Matthias Brugger <matthias.bgg@gmail.com>
+References: <20241029-v3d-v2-1-c0d3dd328d1b@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20241029-v3d-v2-1-c0d3dd328d1b@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Oct 2024 at 13:44, Marc Zyngier <maz@kernel.org> wrote:
->
-> On Wed, 30 Oct 2024 10:18:11 +0000,
-> Ard Biesheuvel <ardb+git@google.com> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > The advantage of a reduced virtual address space size is its impact on
-> > the number of translation levels, which affects TLB pressure. The
-> > working set of translations covering the kernel side is negligible
-> > compared to user space, where each process has its own set of page
-> > tables, and so most of the same benefit can be obtained by reducing the
-> > VA size only for user space.
-> >
-> > As a preparatory step towards implementing this, drop all the reduced VA
-> > space sizes in Kconfig, and replace it with a configurable userland VA
-> > space size that is reflected in TASK_SIZE. This will be taken advantage
-> > of in a subsequent patch to actually reduce the number of translations
-> > used by the MMU for translating user space virtual addresses.
->
-> I think this may have an impact on KVM's walking of the userspace page
-> tables to determine whether we are trying to install a block mapping,
-> which assumes that the start level and the number of VA bits are the
-> same as the kernel (see get_user_mapping_size()).
->
-> Probably nothing too complicated, but something to look into.
->
+Hi Matthias,
 
-With the crude hack I used, things should just work, unless KVM reads
-back the value of TTBR0_EL1.
+On 29/10/24 08:24, matthias.bgg@kernel.org wrote:
+> From: Matthias Brugger <matthias.bgg@gmail.com>
+> 
+> Function drm_gem_shmem_create_with_mnt() creates an object
+> without using the mountpoint if gemfs is NULL.
+> 
+> Drop the else branch calling drm_gem_shmem_create().
+> 
+> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-But once that bit is implemented properly, it is definitely something
-to be aware of. Thanks.
+Applied to misc/kernel.git (drm-misc-next).
+
+Best Regards,
+- Maíra
+
+> ---
+> Changes in v2:
+> - Fix indentation
+> - Link to v1: https://lore.kernel.org/r/20241028-v3d-v1-1-907bee355edf@gmail.com
+> ---
+>   drivers/gpu/drm/v3d/v3d_bo.c | 9 ++-------
+>   1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
+> index 7055f7c7bcfe5700aee10b09ecc0005197323b01..73ab7dd31b17b249b7688dcc9833fd161211b6d9 100644
+> --- a/drivers/gpu/drm/v3d/v3d_bo.c
+> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
+> @@ -157,13 +157,8 @@ struct v3d_bo *v3d_bo_create(struct drm_device *dev, struct drm_file *file_priv,
+>   	struct v3d_bo *bo;
+>   	int ret;
+>   
+> -	/* Let the user opt out of allocating the BOs with THP */
+> -	if (v3d->gemfs)
+> -		shmem_obj = drm_gem_shmem_create_with_mnt(dev, unaligned_size,
+> -							  v3d->gemfs);
+> -	else
+> -		shmem_obj = drm_gem_shmem_create(dev, unaligned_size);
+> -
+> +	shmem_obj = drm_gem_shmem_create_with_mnt(dev, unaligned_size,
+> +						  v3d->gemfs);
+>   	if (IS_ERR(shmem_obj))
+>   		return ERR_CAST(shmem_obj);
+>   	bo = to_v3d_bo(&shmem_obj->base);
+> 
+> ---
+> base-commit: dec9255a128e19c5fcc3bdb18175d78094cc624d
+> change-id: 20241028-v3d-1d2546ed92d7
+> 
+> Best regards,
+
 
