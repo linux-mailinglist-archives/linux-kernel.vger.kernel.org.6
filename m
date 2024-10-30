@@ -1,140 +1,202 @@
-Return-Path: <linux-kernel+bounces-389667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52A59B6F85
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:47:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B539B6F8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478F1B25B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CFA1F22772
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A083D217678;
-	Wed, 30 Oct 2024 21:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226B521895A;
+	Wed, 30 Oct 2024 21:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="G19eUbNI"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lsPxMLfj"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDCE218593
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFDE1F4713
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730324529; cv=none; b=GAajAVuThhIl0s6Dm32nooixZwB+WTR/vy1S3/ZzuRt6gmbO8KUbb76B9e3/9hF3c7ljOX8aE8AKsaHXaXdDAXfGjr1GGrYO7euInOs0UU6sa0dV1bOUmr3ft0HPnOjtiuQzwCzdxPWHBPxaOOgZ05kIfEJnakZu6BbBa1tSH3U=
+	t=1730324565; cv=none; b=nUX7epoM99xjukripIIbO/IOLLm4HNBsiksZvKy+PObNBWfVGDLmJ4EkJ5z2Y4QwHMo+Wgl+idnn1VMhZDLhHVb3W9wk68cBBF9SffbyOQugsPJbK7Me4bB01r7SB2BQsp295IEiSDjtZh/2btOtjRwl9OkmUr81j6Z9UKzQJSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730324529; c=relaxed/simple;
-	bh=3IF75E+Ltb7Wl2+HT/FBTCEnpt0zNNY2aCBPxy6ySGk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e3tbLfJmVx6r0+dgQowr970d6W3kFTHkts/RGeQU2O/QhS2PMAaNw9KL4iuBrlEAMoXdaC2/EIasLbIq4PNXCZVuQByo7KxLLsScJCyO7DlYH8G8l2TNlu2tQKhi7Kl76zpxqA2F/p9f1OiGGP1WopD7opWfm5NCq42OvFvEQwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=G19eUbNI; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460d1145cd8so2037941cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:42:06 -0700 (PDT)
+	s=arc-20240116; t=1730324565; c=relaxed/simple;
+	bh=rucg5whNbj0MIf+KsFVqBycgNaOxrJPN8Sa8dKhqJn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJpE/lzNlwjh+VQ4Rg0FYzZLILzrYExy4/NDcB5YuGsI6vQ5hPh0u7kbabWEUWqgIRBx64kaBT9ag4QHPKFsz3S/ixMqz32I+mWNCToTKrymWQoh7hQq7EBRJ2dWkEVR16hLEkv0iiUJdZTS53ybo8B8yOWjM499gQ33kqB+1js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lsPxMLfj; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2e2d09decso1099315a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:42:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1730324526; x=1730929326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=eMX/BaaHOgpc5GJXv4RiRPj9cA2BEokb25Zs5fuxKps=;
-        b=G19eUbNIh7UJD4HLeMvc4a6IgAxfhHNMj/4eSrScRIlJ/yNmB0ZzYmRHgnPCNiYTVQ
-         /HjFx4wQ5GoE1Gr+E6yCiTbrQQx1YmIjJQ07vtAAEMj4tJyPRr7AaGaEIb7m0bgqMpMy
-         phTHFn4/yFmg1pr/VAm4VDE+AxcsoDeunchWI=
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730324562; x=1730929362; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2BdQ8I1/iVHZTqbEU+uI3XwCIW70vWl0AHAkkkOUHa4=;
+        b=lsPxMLfjdqektbm+albSHd1yo/8FqT7xiv9N1GLeNw/v8+SLsNrn2xkGk27y0taG0i
+         wGTm7xRMqMHtMKZn89uMHRi7fbTX4NMKAOhKKpyq3KRVSFIt4yDNNY6MfdAZDmfp/0ot
+         q/BZP7p2MTHXRU/3L9p0MzhxvC87mAYttH4GgY3t0dHsyHf405DXJhHthdTF65KgGtjc
+         PSUBl1Rpe6o0/S8hFZPrDFbW1LHOj0fO78y6NYawPVxvigOLifO7QZBFKubIFqgPXWRB
+         xWO9oecgBfSrJ6At8GEHsrnRvYpJLT3L/D5gKQnPSu+cajYHMVxWCShCfyQng+gBlgsK
+         RT4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730324526; x=1730929326;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1730324562; x=1730929362;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eMX/BaaHOgpc5GJXv4RiRPj9cA2BEokb25Zs5fuxKps=;
-        b=KpsuzcdQu27UM0POpePtdFqdVeHm5SUocFnqQd/+Q3TacBLJ59LbRu+w4lG7DVM5Uo
-         xoqv2nKHvzPdIPVRVwmOR/d03sBtVLA+mq/cqx6IKT5bt5uzVH6syr74XylX4sau/qpS
-         eqeQntCaJPUzOREKVwQ1DA8uwnnArj/87y2uZXZAXMTNXWvG9I3dFScXr2ZrphuBTdz5
-         6SCDALOSVib7irjdwChsX/xFAm88tESmiIPEbdntDC94lDP6L+FJZXoOX28qjxiAO+ti
-         gJ9gF0sZW6JmT6lSxVk9LQzRMfJPQoxY5fx7HCP6XllBfrLMU2xY3yyqnwMFcBZIYSeb
-         izug==
-X-Forwarded-Encrypted: i=1; AJvYcCVM8ilegUdefFVLwSfEiACRbW7BAa8DPCrh111hPByaY+QD5xQxrKUQ41ocfASOwj/KZM97YRHoK7Y5dJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4p53RjjqmowU5wmPSmkowxktqUa8bfuhc4g1l7jEk9bja3VzJ
-	bY3N+FadBBrZInskjB/5Ka3QlXb629HOa4tX5kWxS/0j94rA2vwSBkKU3n8GVA==
-X-Google-Smtp-Source: AGHT+IGgIL/Wr4pD9zqKpaIZ4WFgT1qOmn0vY5i/bzox7eTgF+mN7MYgIlavELrlKhdDlTMFZ4DlMw==
-X-Received: by 2002:a05:622a:189b:b0:460:90e3:249c with SMTP id d75a77b69052e-4613bfcfc24mr251145581cf.9.1730324526035;
-        Wed, 30 Oct 2024 14:42:06 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad086e55sm672551cf.7.2024.10.30.14.42.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 14:42:05 -0700 (PDT)
-Message-ID: <c5476931-9784-4ebc-980b-7371e6a2457a@broadcom.com>
-Date: Wed, 30 Oct 2024 14:42:00 -0700
+        bh=2BdQ8I1/iVHZTqbEU+uI3XwCIW70vWl0AHAkkkOUHa4=;
+        b=UlOWcHLdxFnwcjuXsxCtRQsLvZBlYGjVVRxdQCjzpRd9iVoignNr1rRglXHkmZCEOG
+         fhs/e/kJ3zh4FzSUHhAzW+h27Ff+rDckA/Ps1LGeQT47gkWsq5TZFm3YNOdCKEzLySI1
+         I8D4zXnUJGGbqljyKUTgV1DcNQ5t59opY6e219T2p/K5UM/UA58ZZHoitmpeavw9hP2G
+         VeXoIS/hPAh21UnOS/TcySMixv0tpTS6iCLFMQMnMUOypUjEKVrjozPOflPcmcoUdI0v
+         394X1ivb5tSVe/pKgf9di70T/PnrV6IqKkW8YPIjFi+WAUnXabEC4K8bDiN16y5/t6+K
+         edhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWndjDIkiSn1ONQM7TtKqwC29c6cHCCSQXGw6A29S3u02HwTcQURzZuphV09VwsxdX373Cf3jCG1iKXigQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrOW6L2MuPfsKdu5JpQw1AR7S58QOD0uo41FpTflX2k/s/vYTM
+	ELMu8aPXPd3ajyNvfEq7Lo6VObRcTC3IixQD+rzh+grt37amHYTRpRQlHV3Zcko=
+X-Google-Smtp-Source: AGHT+IFy/kVyXGrqtNtAvxVjR4gsi2Os3+luFSdpZIwpcWZFvkvKwsZgpNzjHfWBEiMYl3HDGVYUug==
+X-Received: by 2002:a17:90b:51cc:b0:2e2:af80:8f7a with SMTP id 98e67ed59e1d1-2e93e0fd8f4mr220918a91.20.1730324562278;
+        Wed, 30 Oct 2024 14:42:42 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbe0252sm2400168a91.45.2024.10.30.14.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 14:42:41 -0700 (PDT)
+Date: Wed, 30 Oct 2024 14:42:39 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+	Kees Cook <kees@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH RFT v11 2/8] Documentation: userspace-api: Add shadow
+ stack API documentation
+Message-ID: <ZyKoT00lI3d2rpYc@debug.ba.rivosinc.com>
+References: <20241005-clone3-shadow-stack-v11-0-2a6a2bd6d651@kernel.org>
+ <20241005-clone3-shadow-stack-v11-2-2a6a2bd6d651@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: rng: add binding for BCM74110 RNG
-To: Markus Mayer <mmayer@broadcom.com>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Aurelien Jarno <aurelien@aurel32.net>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Golle <daniel@makrotopia.org>,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>
-Cc: Device Tree Mailing List <devicetree@vger.kernel.org>,
- Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20241030213400.802264-1-mmayer@broadcom.com>
- <20241030213400.802264-2-mmayer@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241030213400.802264-2-mmayer@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241005-clone3-shadow-stack-v11-2-2a6a2bd6d651@kernel.org>
 
-On 10/30/24 14:33, Markus Mayer wrote:
-> Add a binding for the random number generator used on the BCM74110.
-> 
-> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
-> ---
->   .../bindings/rng/brcm,bcm74110.yaml           | 35 +++++++++++++++++++
->   1 file changed, 35 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml
+On Sat, Oct 05, 2024 at 11:31:29AM +0100, Mark Brown wrote:
+>There are a number of architectures with shadow stack features which we are
+>presenting to userspace with as consistent an API as we can (though there
+>are some architecture specifics). Especially given that there are some
+>important considerations for userspace code interacting directly with the
+>feature let's provide some documentation covering the common aspects.
+>
+>Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+>Reviewed-by: Kees Cook <kees@kernel.org>
+>Tested-by: Kees Cook <kees@kernel.org>
+>Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+>Signed-off-by: Mark Brown <broonie@kernel.org>
+>---
+> Documentation/userspace-api/index.rst        |  1 +
+> Documentation/userspace-api/shadow_stack.rst | 41 ++++++++++++++++++++++++++++
+> 2 files changed, 42 insertions(+)
+>
+>diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
+>index 274cc7546efc2a042d2dc00aa67c71c52372179a..c39709bfba2c5682d0d1a22444db17c17bcf01ce 100644
+>--- a/Documentation/userspace-api/index.rst
+>+++ b/Documentation/userspace-api/index.rst
+>@@ -59,6 +59,7 @@ Everything else
+>
+>    ELF
+>    netlink/index
+>+   shadow_stack
+>    sysfs-platform_profile
+>    vduse
+>    futex2
+>diff --git a/Documentation/userspace-api/shadow_stack.rst b/Documentation/userspace-api/shadow_stack.rst
+>new file mode 100644
+>index 0000000000000000000000000000000000000000..c576ad3d7ec12f0f75bffa4e2bafd0c9d7230c9f
+>--- /dev/null
+>+++ b/Documentation/userspace-api/shadow_stack.rst
+>@@ -0,0 +1,41 @@
+>+=============
+>+Shadow Stacks
+>+=============
+>+
+>+Introduction
+>+============
+>+
+>+Several architectures have features which provide backward edge
+>+control flow protection through a hardware maintained stack, only
+>+writeable by userspace through very limited operations.  This feature
+>+is referred to as shadow stacks on Linux, on x86 it is part of Intel
+>+Control Enforcement Technology (CET), on arm64 it is Guarded Control
+>+Stacks feature (FEAT_GCS) and for RISC-V it is the Zicfiss extension.
+>+It is expected that this feature will normally be managed by the
+>+system dynamic linker and libc in ways broadly transparent to
+>+application code, this document covers interfaces and considerations.
+>+
+>+
+>+Enabling
+>+========
+>+
+>+Shadow stacks default to disabled when a userspace process is
+>+executed, they can be enabled for the current thread with a syscall:
+>+
+>+ - For x86 the ARCH_SHSTK_ENABLE arch_prctl()
 
-This file should be named, brcm,bcm74110-rng.yaml, I believe.
---
-Florian
+I know when you started out, gcs and risc-v shadow stack patches were
+only catching up. But now that gcs patches are in -next and risc-v
+patches have also reached some maturity. And considering this generic
+generic shadow stack documentation, may be it's worth to mention
+arch agnostic prctls here for shadow stack (that will be used by arm64
+and riscv)? What do you think?
+
+>+
+>+It is expected that this will normally be done by the dynamic linker.
+>+Any new threads created by a thread with shadow stacks enabled will
+>+themselves have shadow stacks enabled.
+>+
+>+
+>+Enablement considerations
+>+=========================
+>+
+>+- Returning from the function that enables shadow stacks without first
+>+  disabling them will cause a shadow stack exception.
+nit:
+s/shadow stack exception/arch specific exception indicating control flow
+violation
+
+>+ This includes
+>+  any syscall wrapper or other library functions, the syscall will need
+>+  to be inlined.
+>+- A lock feature allows userspace to prevent disabling of shadow stacks.
+>+- Those that change the stack context like longjmp() or use of ucontext
+>+  changes on signal return will need support from libc.
+>
+>-- 
+>2.39.2
+>
 
