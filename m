@@ -1,123 +1,159 @@
-Return-Path: <linux-kernel+bounces-388852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090D19B6534
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:06:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6318B9B6537
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55841F2590E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:06:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 955D71C220B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CD61EF93E;
-	Wed, 30 Oct 2024 14:05:43 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0721EF923;
+	Wed, 30 Oct 2024 14:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LzP2bmj9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66341EF082;
-	Wed, 30 Oct 2024 14:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304611EE02F;
+	Wed, 30 Oct 2024 14:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730297143; cv=none; b=mGOumXbwBl72kWT9Mixs1HRwc71QtjXxne2zfUt8RprcI5pETocXe5ok+2e3wE9EGlDuKbhdYszU/f0aKiKej00pZwU9ieDMF308VejWFywYXoqUs3w0lMKHQyGjLAy5rWQU1uOyyL4ym0KBRl+8ot7MSPWvnMwrHnE/xMxxr+Y=
+	t=1730297167; cv=none; b=bn1yyVM/c7PRCI7u6wWVo+wseMfS+X0Xautb0oQ6ve6qoV+Siu9r6BL28wvSU5R8lfiVPXaHdFWCfaRTawsUz1mhJkbyAWeiFbM7B/UjaV/chinufWjnUzH8P8gz9GqzTah0Dn404zP0jOBvRTEnpaBIOD6S2m4E86CAKTxbD4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730297143; c=relaxed/simple;
-	bh=T9ndz9x9yf6p+48jr9FN1ckrPa3Z+mgOLevKiNplWgw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h8FfZW7Fpk6ie0izCIWq5Qf9kEqxYx+ZAPPLrkD1Qfss5TaxNxswCc2qpLt2t5mZlgzEzaVj2CkmCw752SswqpGHaz9AKDvR5HQ7VAJ+c1bXK1ysioM8ksBRiJ0m8LTgzec+tUeQAzKQaM0vqitxf3+fvAcbk9doNG9U1jrgSPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdpk81W2Lz6K6hs;
-	Wed, 30 Oct 2024 22:03:12 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 68104140593;
-	Wed, 30 Oct 2024 22:05:37 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 15:05:36 +0100
-Date: Wed, 30 Oct 2024 14:05:35 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Kees Cook
-	<kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	<linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH v5 08/27] cxl/mem: Read dynamic capacity configuration
- from the device
-Message-ID: <20241030140535.000009ca@Huawei.com>
-In-Reply-To: <20241029-dcd-type2-upstream-v5-8-8739cb67c374@intel.com>
-References: <20241029-dcd-type2-upstream-v5-0-8739cb67c374@intel.com>
-	<20241029-dcd-type2-upstream-v5-8-8739cb67c374@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730297167; c=relaxed/simple;
+	bh=GrmqlZoNz0TpM8NpGoFe5fj7IqEdF5q25++QH0auuBg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tSDAOGgCzDoXWeC7CwA/fnsrtRizB0i9oupuX+7Nvuyh5C5DYQkXmCUj8WRoQ9XWtcLisiBU7v1ZgPpKTFTxzY8B7ZO7wiWJ6BnIrUTANrPAbie8kduzWjn9lh9w41UY+LCsaP9DTULTiZNeNoxOdaJz51KHl77l3ltb8JSVTmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LzP2bmj9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D57ABC4CED1;
+	Wed, 30 Oct 2024 14:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730297166;
+	bh=GrmqlZoNz0TpM8NpGoFe5fj7IqEdF5q25++QH0auuBg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LzP2bmj9AU3xmjif/OR1xSgemSO8y2JeqioNRTfxa/Lbzlf/Eh9+hUMaGhz4mFnV+
+	 J0doz+2H2b5iWoHqvkpMwZEacYe+YMVqB6Xp49/dtZFB59jKDpbUrgATImW5U7h1BB
+	 zZ/QWDLYJ2/XpcljqWkQ7DFTVQbhdHiWwYDOeIfj/uMEY6pzZmhOlIZvor7spf/GDj
+	 v4Y6ne/7qjIWMP7b3qilD9WRrLlbFR2Sb/GX58yqC81vmVggcivhWuQQWOe9rrMlgz
+	 wv59/toTTGeD3E01qWwIC5D6AfZ+h1SelSp1R2vvlMJgbvyD2UCNLvc6gRefHcRyhp
+	 0ILKJo7UF83kg==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so9310791fa.0;
+        Wed, 30 Oct 2024 07:06:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUrweV4YYyBapi/duR1wfqinpOFs3eV/0B7BK481kRrENyc2WKc+Th5k+CE58Ri6ly7W8ddPtsXWfWYudKEgjY=@vger.kernel.org, AJvYcCVgt8WYUTVRkJT0z4o2JXTNFBjXjQKeQ4hcQT7NlKI4yEnB/3cEzNcmknkPjy0jAyTBnpDQTrK4XZhc@vger.kernel.org, AJvYcCWcxoE7LtHcV5f3HqzPMuVK7DaIyW8yC1Fb25fs8VaenxBlaDPj9wcO6rLnvsuAhSEnHKbt+NE5xIb1OL4W@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8eCSlAP8uKZ0nHLT3ztYhLGE9s+QXFjLcfrFmma/XzA3ySAdu
+	DQE9wHlVeA1EX72FRSqNxcU/lcJHAkWgcZomAGSIcjVnXWqfw+JSV4CGldLObjY+UvYjV6RALGA
+	YR+bPBclx6FEsGrYy4CAvv6QATQ==
+X-Google-Smtp-Source: AGHT+IHraIDvgEshI6B9Lhwn0jf1bScQv1+cJh9BmMoQ68/u5a9ivzRXYW10ns73NHalIqSCwJ3femN7Utb8XdqZF+8=
+X-Received: by 2002:a05:6512:a93:b0:53b:48f2:459b with SMTP id
+ 2adb3069b0e04-53c316319a7mr876648e87.23.1730297165207; Wed, 30 Oct 2024
+ 07:06:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
+ <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
+ <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
+ <CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com>
+ <CANiq72kaidDJ=81+kibMNr9jNxg467HjOm9C_4G7WRvaiddGvg@mail.gmail.com>
+ <CAL_Jsq+T6T_3p2C62U3v4aSjm_oc-Ycjxi_ckF0ufh=JJDz=rg@mail.gmail.com> <CAH5fLggCDiKUu_dvJZeJr8UD5RvUpqRJbdYKf1F3_MvCdOVK6g@mail.gmail.com>
+In-Reply-To: <CAH5fLggCDiKUu_dvJZeJr8UD5RvUpqRJbdYKf1F3_MvCdOVK6g@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 30 Oct 2024 09:05:51 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL+b-f5K24qTxyA09c_QPeb07s4Hb=s1VqrdksBB4BQ=Q@mail.gmail.com>
+Message-ID: <CAL_JsqL+b-f5K24qTxyA09c_QPeb07s4Hb=s1VqrdksBB4BQ=Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Saravana Kannan <saravanak@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 29 Oct 2024 15:34:43 -0500
-ira.weiny@intel.com wrote:
+On Wed, Oct 30, 2024 at 3:15=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Tue, Oct 29, 2024 at 8:35=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
+te:
+> >
+> > On Tue, Oct 29, 2024 at 1:57=E2=80=AFPM Miguel Ojeda
+> > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > >
+> > > On Tue, Oct 29, 2024 at 7:48=E2=80=AFPM Alice Ryhl <aliceryhl@google.=
+com> wrote:
+> > > >
+> > > > One option is to define a trait for integers:
+> >
+> > Yeah, but that doesn't feel like something I should do here. I imagine
+> > other things might need the same thing. Perhaps the bindings for
+> > readb/readw/readl for example. And essentially the crate:num already
+> > has the trait I need. Shouldn't the kernel mirror that? I recall
+> > seeing some topic of including crates in the kernel?
+>
+> You can design the trait to look similar to traits in external crates.
+> We did that for FromBytes/AsBytes.
+>
+> I assume you're referring to the PrimInt trait [1]? That trait doesn't
+> really let you get rid of the catch-all case, and it's not even
+> unreachable due to the u128 type.
 
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> Devices which optionally support Dynamic Capacity (DC) are configured
-> via mailbox commands.  CXL 3.1 requires the host to issue the Get DC
-> Configuration command in order to properly configure DCDs.  Without the
-> Get DC Configuration command DCD can't be supported.
-> 
-> Implement the DC mailbox commands as specified in CXL 3.1 section
-> 8.2.9.9.9 (opcodes 48XXh) to read and store the DCD configuration
-> information.  Disable DCD if DCD is not supported.  Leverage the Get DC
-> Configuration command supported bit to indicate if DCD is supported.
-> 
-> Linux has no use for the trailing fields of the Get Dynamic Capacity
-> Configuration Output Payload (Total number of supported extents, number
-> of available extents, total number of supported tags, and number of
-> available tags).  Avoid defining those fields to use the more useful
-> dynamic C array.
-> 
-> Cc: Li, Ming <ming4.li@intel.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-I'll assume you'll fix the typo the bot found.
+It was num::Integer which seems to be similar.
 
-> +
-> +/* See CXL 3.1 Table 8-164 get dynamic capacity config Output Payload */
-> +struct cxl_mbox_get_dc_config_out {
-> +	u8 avail_region_count;
-> +	u8 regions_returned;
-> +	u8 rsvd[6];
-> +	/* See CXL 3.1 Table 8-165 */
-> +	struct cxl_dc_region_config {
-> +		__le64 region_base;
-> +		__le64 region_decode_length;
-> +		__le64 region_length;
-> +		__le64 region_block_size;
-> +		__le32 region_dsmad_handle;
-> +		u8 flags;
-> +		u8 rsvd[3];
-> +	} __packed region[] __counted_by(regions_retunred);
-returned
+>
+> [1]: https://docs.rs/num-traits/0.2.19/num_traits/int/trait.PrimInt.html
+>
+> > > +1, one more thing to consider is whether it makes sense to define a
+> > > DT-only trait that holds all the types that can be a device property
+> > > (like `bool` too, not just the `Integer`s).
+> > >
+> > > Then we can avoid e.g. `property_read_bool` and simply do it in `prop=
+erty_read`.
+> >
+> > Is there no way to say must have traitA or traitB?
+>
+> No. What should it do if you pass it something that implements both trait=
+s?
+>
+> If you want a single function name, you'll need one trait.
 
-> +	/* Trailing fields unused */
-> +} __packed;
+I'm not sure I want that actually.
+
+DT boolean is a bit special. A property not present is false.
+Everything else is true. For example, 'prop =3D <0>' or 'prop =3D
+"string"' are both true. I'm moving things in the kernel to be
+stricter so that those cases are errors. I recently introduced
+(of|device)_property_present() for that reason. There's no type
+information stored in DT.  At the DT level, it's all just byte arrays.
+However, we now have all the type information for properties within
+the schema. So eventually, I want to use that to warn on accessing
+properties with the wrong type.
+
+For example, I think I don't want this to work:
+
+if dev.property_read(c_str!("test,i16-array"))? {
+    // do something
+}
+
+But instead have:
+
+if dev.property_present(c_str!("test,i16-array")) {
+    // do something
+}
+
+To actually warn on property_read_bool, I'm going to have to rework
+the underlying C implementation to separate device_property_present
+and device_property_read_bool implementations.
+
+Rob
 
