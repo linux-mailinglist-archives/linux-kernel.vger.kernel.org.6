@@ -1,111 +1,165 @@
-Return-Path: <linux-kernel+bounces-389129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7339B68E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8489B68CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C4E285344
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF641C216CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A8121501F;
-	Wed, 30 Oct 2024 16:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VxN/BVz9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646BA2141DC;
+	Wed, 30 Oct 2024 16:03:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D233214415;
-	Wed, 30 Oct 2024 16:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A4F1F426F;
+	Wed, 30 Oct 2024 16:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304486; cv=none; b=bPWMtrC/DbILwNcyK4zNe1nsVZdRy9UB3WQ3tUmmkfHjDK8peHPkefCpLT5xzLKyUMyOE7fIR3Tx9ZFI+MKaaYXdEBB/DBsQ/GOmSeCZpD4mHP7hp5xTkIWImAC/Grgx2eON7svjDRdyCxlY6Et1x6pSdZkQF5S0VnJ+5mtZPnU=
+	t=1730304237; cv=none; b=CvEiOqA0YwrEVNbGj7qbX+03KgmQjur/BoLNrLvjhsaTK3RbgxY9SvqiPEb84/oE0sMj2YgjbZfeDwRs87zsQov/W2jHp0iulxkZypGl+rLjYzLxpdVThirwZp8+RLrS99Ilxrhn45AFY3yKyuU/b/818u4rHhRhf3k6JJPOK6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304486; c=relaxed/simple;
-	bh=/I07EL93xI7rksnSSU4yB8BeX/oY+UcVmAMhO1n1Wbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DSEF6W3s1Qef7MktaJtYzZ4xZKPFzywnfng7JB1cPpS2Ybu9hNT18xN7w1D5HD5VJA3AgGR8RWtK+5ydhVD7Qw3scUol2NSEBxdlWDntQmVSbVEOWf3pbqUGWu0aya3bf+Ibqc/QeUllWZyyrdpFqWORq5+eb8oPnLLfMjNeeNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VxN/BVz9; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730304485; x=1761840485;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/I07EL93xI7rksnSSU4yB8BeX/oY+UcVmAMhO1n1Wbo=;
-  b=VxN/BVz9U/5MeCKLcUry687Rujjv7uA9KWByPDvsF7X9GUD8OTm62ezX
-   qWFv5nnTC1W/1KQiiXj8RppHg4yyvrO6JeTzp0PoYxBQ5K9o00a5dhSHK
-   AikVroORQdS/66Wq37wn7ZK3YUiZbSHSZoN3HOg83oCZpjlEntf6VweeV
-   AUdB4dP7ahpZ0LJBIjNNhDOuVm1YxMymM16PCzSffH/ElD3RBGiCh8Q2m
-   VTHVAaDob1jvNz+K/FL99orfy1cg4rWZ+xeH898iyk8uRY2zyxb3nYxlu
-   7cxS78mO4IdzjYf/SPfEdMQ2An9b1qh6LDpnF6ti4ClATGSy7R9TrGhRt
-   Q==;
-X-CSE-ConnectionGUID: sSOtmGlEScqSUBlpYq463g==
-X-CSE-MsgGUID: kG4+N+CCRD2vTpNjKveL0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29432042"
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="29432042"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:08:02 -0700
-X-CSE-ConnectionGUID: jgASKnkcRO+9AJN9sua+yw==
-X-CSE-MsgGUID: uA8GKIUMTUScsZ8ceuvrsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="82523851"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 30 Oct 2024 09:08:00 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 826B0341; Wed, 30 Oct 2024 18:07:58 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH v1 4/4] iio: light: isl29018: Check if name is valid in isl29018_probe()
-Date: Wed, 30 Oct 2024 18:02:20 +0200
-Message-ID: <20241030160756.2099326-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
-References: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1730304237; c=relaxed/simple;
+	bh=MIFL21hA3B+jSnmLceMUs1JbFhcBmdo1m9jwxnwcY7U=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nOXNY4hy0gZSFEgMnR8HK6UGUV1J59z4l6PpxTqFcoIuW5wQi4tagFEhANOgL+2oEybzb+gtg2R6ilYZdpWzGAkIxCNTg1Oh3sBF8Qfa9VP8JHci34Hs1HEMKxut3AtTNyF2+BM214iTjo1m3NvUDupFT7iUQKTKjZPW/hoRvKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdsHn1SJpz6GBVS;
+	Wed, 30 Oct 2024 23:59:01 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7F4E01400D3;
+	Thu, 31 Oct 2024 00:03:52 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 17:03:51 +0100
+Date: Wed, 30 Oct 2024 16:03:49 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v2 12/14] cxl/pci: Add error handler for CXL PCIe port
+ RAS errors
+Message-ID: <20241030160349.000040d4@Huawei.com>
+In-Reply-To: <20241025210305.27499-13-terry.bowman@amd.com>
+References: <20241025210305.27499-1-terry.bowman@amd.com>
+	<20241025210305.27499-13-terry.bowman@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Theoretically the name can be invalid if device has an ACPI handle
-but hadn't been matched via ACPI ID table. This should never happen,
-but let's make code very slightly more robust as some other drivers do.
+On Fri, 25 Oct 2024 16:03:03 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Fixes: dc4ecaf21c4a ("staging: iio: light: isl29018: add ACPI support")
-Depends-on: 14686836fb69 ("iio: light: isl29018: Replace a variant of iio_get_acpi_device_name_and_data()")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/light/isl29018.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Introduce correctable and uncorrectable CXL PCIe port handlers.
+> 
+> Use the PCIe port's device object to find the matching port or
+> downstream port in the CXL topology. The matching port or downstream
+> port will include the cached RAS register block.
+> 
+> Invoke the existing __cxl_handle_ras() with the RAS registers as a
+> parameter. __cxl_handle_ras() will log the RAS errors (if present)
+> and clear the RAS status.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+>  drivers/cxl/core/pci.c | 59 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index bb2fd7d04c4f..adb184d346ae 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -772,6 +772,65 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
+>  	writel(aer_cmd, aer_base + PCI_ERR_ROOT_COMMAND);
+>  }
+>  
+> +static int match_uport(struct device *dev, const void *data)
+> +{
+> +	struct device *uport_dev = (struct device *)data;
+> +	struct cxl_port *port;
+> +
+> +	if (!is_cxl_port(dev))
+> +		return 0;
+> +
+> +	port = to_cxl_port(dev);
+> +
+> +	return port->uport_dev == uport_dev;
+> +}
+> +
+> +static void __iomem *cxl_pci_port_ras(struct pci_dev *pdev)
+> +{
+> +	struct cxl_port *port __free(put_cxl_port) = NULL;
+> +	void __iomem *ras_base = NULL;
+> +
+> +	if (!pdev)
+> +		return NULL;
+> +
+> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
+> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM)) {
+> +		struct cxl_dport *dport;
+> +
+> +		port = find_cxl_port(&pdev->dev, &dport);
 
-diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
-index cbe34026bda6..938fc19cfe59 100644
---- a/drivers/iio/light/isl29018.c
-+++ b/drivers/iio/light/isl29018.c
-@@ -723,6 +723,8 @@ static int isl29018_probe(struct i2c_client *client)
- 		name = iio_get_acpi_device_name_and_data(&client->dev, &ddata);
- 		dev_id = (intptr_t)ddata;
- 	}
-+	if (!name)
-+		return -ENODEV;
- 
- 	mutex_init(&chip->lock);
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Scope of port is messy as the constructor and destructor
+are not well associated. I'd drag a copy into each leg so they can
+remain closer to each other.
+Or don't use __free() as it's not adding much here.
+
+> +		ras_base = dport ? dport->regs.ras : NULL;	
+> +	} else if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM) {
+> +		struct device *port_dev;
+> +
+> +		port_dev = bus_find_device(&cxl_bus_type, NULL, &pdev->dev,
+> +					   match_uport);
+> +		if (!port_dev)
+> +			return NULL;
+> +
+> +		port = to_cxl_port(port_dev);
+> +		ras_base = port ? port->uport_regs.ras : NULL;
+> +	}
+> +
+> +	return ras_base;
+> +}
+> +
+> +static void cxl_port_cor_error_detected(struct pci_dev *pdev)
+> +{
+> +	void __iomem *ras_base = cxl_pci_port_ras(pdev);
+> +
+> +	__cxl_handle_cor_ras(&pdev->dev, ras_base);
+> +}
+> +
+> +static bool cxl_port_error_detected(struct pci_dev *pdev)
+> +{
+> +	void __iomem *ras_base = cxl_pci_port_ras(pdev);
+> +	bool ue;
+> +
+> +	ue = __cxl_handle_ras(&pdev->dev, ras_base);
+> +
+> +	return ue;
+> +}
+> +
+>  void cxl_uport_init_ras_reporting(struct cxl_port *port)
+>  {
+>  	/* uport may have more than 1 downstream EP. Check if already mapped. */
 
 
