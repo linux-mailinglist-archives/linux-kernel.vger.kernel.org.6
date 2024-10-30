@@ -1,350 +1,627 @@
-Return-Path: <linux-kernel+bounces-389548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465A69B6E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:00:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF6E9B6E44
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 947B6B21F76
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:00:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA2F282039
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973821BD9EB;
-	Wed, 30 Oct 2024 21:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBkfyf9v"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EA8213ECD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD8F20E31C;
 	Wed, 30 Oct 2024 21:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVOmN5SL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28EA1BD9EB;
+	Wed, 30 Oct 2024 21:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730322031; cv=none; b=YXda8e7DXGtHLmsIRUkpiGU/WgpdKkyoFqmczoJUtBIr/GPXVzPI+ItnGHaEDyhmBzIrI/NOymx6k3PkrUk0rj9mKRH4vBGOmM6HQL/Bcj9XkUBnLDl9Z8YqER6SHe3rHB8XL0eK2OJp6WcNV3Pio8z+mpW26tncYDq02bvn63c=
+	t=1730322026; cv=none; b=QSOgWRCBmRbVHleAX6vYsvfpkGQNMDGjnweFhl7t8fydUwbEEeR3aTDDwjLe0ojQVzAJOYYor624u/FR4AOBLn8V3HNWP9MtZ4MFOknHwaJhf5boipQ006VCI3vRGT2Vij7SCWdAF5PALJy/z57dceoGSliMaE+pmAcez4/jsz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730322031; c=relaxed/simple;
-	bh=lyQCKkp48yFiQHrb2X1TI5cHtzSw6UvtKRxCJxEmqTc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G+r4poRic9I9ZeYu9q7Gp1FXJn9JFzgqo4MmOhO4AeCEtN+aIY4cHZaMuwtgzgsNL0HsN6zpwLGSUW1Rri6xiSva7RGsmDlxgM0y6LcMixTyfkPmiVluuktdjLYYpBjXhJ1z0bxX9YS6tu9Allw+uRcIQjA8HAi+gLbkHx2GL4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBkfyf9v; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e8607c2aso284805e87.3;
-        Wed, 30 Oct 2024 14:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730322026; x=1730926826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iTOYM8hLDlIhNM0EHGK2WLZ+VwRTD0dUszdaQDhEWfg=;
-        b=kBkfyf9vSkc99LVgZoDV15oFRVfooozWv4rcIbYV0QNy724wF3djPRQwJ4ix7t+UTq
-         DFXhH2Ef4pm5zED22NmQaJ56tXU5ti7nv0PKVoGrfjM7yOuvQov2Vv3A2VbdoH2sb0+c
-         ThNXhVOzCmBtVzaCfT7/1PLF3PqfbF6N9yb/hvBYoMuGT12LzUip/FN9vmq4lp/WPWXa
-         Oc4If3+juFxdsdIes9o5XMdbjVo+PiekTT+6IjEuB2aXOuZPjw3VXkii3K4hCU/69GLU
-         G2ow9JBg3HDf7C+KQhhSE7R19v0sclT6ZnBBEzk5KwSUykm6Bmf+KsxyaBtHkajW02pY
-         Tg1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730322026; x=1730926826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iTOYM8hLDlIhNM0EHGK2WLZ+VwRTD0dUszdaQDhEWfg=;
-        b=KrwE4b1AGl5TP+fpizQo8jWzwXoTi+YG/NE2cjmzF1AAC6mrfvBMiIh/Ul+aLY8Ksz
-         IzhWIogMja4KH9Zu2RrB7XMPj6rxoPY7Sl+k3hKBlL+3/95zihaqZhJtDGBrpUvSPazV
-         4cPSwKE4dROLO+ThRi0ecT+6f0xVdhQ5TCTIxFabCxTONrhhaOZfE2J6nl4DV4niL7/z
-         I+5fME2oD0tP8NOQfBZt8RQtUPXS9nTOgYUaAyNMgccok2Gtq3Vrc8Bc7gujbbjSV4g1
-         nu7a/IYvtih5Z5jhxCVeT68r+OzJkUnGew91Z0WerRGe9yBaBtqDzU+5sd52sTl6g4jo
-         HhKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYRsquBGDEP28rCINnVpF6BVSdOQBgiUqvX/LyFaDYP6sxeFukKQSSHLPci1nOpiNFbnJI6IRykrn5g2ya@vger.kernel.org, AJvYcCW/yE8K2z6phOfgedrSEVI/SWmYs2ItJ6z6/beVPZctOjnGsgdNyuDvXtllTWBpLS+zlaJGRACD5GPViiKguw==@vger.kernel.org, AJvYcCWJFgi9uOXqS9frKKDY+uvfFAtbZrW8iVM/FFWnCcQzdSuzgV1arlflAGoUmGfFid5eNv/ac69PkuBc+ZsA+/4=@vger.kernel.org, AJvYcCWXWKnTnkg+oanfRooWP2krQ/RRFddkjBr7AKobfe45w8+PgFOiCHTBLnRhC42rPxtBe3zR0pZn+tUTeec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ+OVazX0mspmmrr8H+60/uA57Rk8pJXg27jS3E/pT2U0mzSYy
-	dIPe18EmgKSu4t2J2umW+jMB5N5U9GEzGvH4VBaF3e9B6E1sXHq0efVuWpLX63re0OJSdE6JFje
-	5ws7J1Gu+Bev8qkN3DL7e18a/Sa4=
-X-Google-Smtp-Source: AGHT+IHn69gcm0LSFxKIg/7imMG1C0qqBwjxlIZpTicJxl6ADiw9oYIxwLzxcFDeC3RuDvF9v4sdvvjyMFy3q2DLgyM=
-X-Received: by 2002:a05:6512:1082:b0:539:fcf9:6332 with SMTP id
- 2adb3069b0e04-53b348e554bmr8823799e87.33.1730322025610; Wed, 30 Oct 2024
- 14:00:25 -0700 (PDT)
+	s=arc-20240116; t=1730322026; c=relaxed/simple;
+	bh=Y6ysv2k+BH2dTSZSiE4N+FmjfTTGzWnshyJjrzYt8aI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BApzFq6f+AMU7xdsdrRepHyASqeknaQkC9U9AAJu7rZ+nz3a0wLDuBHWNp40p4KwiOi1EpFoIL9pxVzyboCpH3yPwK5LTjCtEiQs+YOtKCxFbXg7dap4NSBcUHbpquEub/4OvkIv1Ht1jKv3/jSC/F2eTIeRwsM62DqVRjr7jVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVOmN5SL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509C2C4CED1;
+	Wed, 30 Oct 2024 21:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730322026;
+	bh=Y6ysv2k+BH2dTSZSiE4N+FmjfTTGzWnshyJjrzYt8aI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XVOmN5SLbyMwSC4uqrjIfHrTuDe3e7Lh5NeXEPkr/eCJz0zamenJn10PDS37W6S7d
+	 w1xTXnZ4vVTUGsHBTYtwKwO4Nnef1HFPIW+AYPeu806aLuesrFcNlop57ykOr/8fZ/
+	 9kcmN8wU8WQKAZD4V0j8BrNeV1kuEfOXL0AquDYmZjWeKSZOT/PZ88WOdT/VXPbG6d
+	 D0yJnflTXMBmnJu5iFiNaEK5B0da8DUO4BR6wXh6xPaH8By8RwVMKNIgny2+64Ty+0
+	 /9EFPV9F+WPIlicaP1ZrDqM1tfNUGdfGdwDlYrIj3Y6p8KoYvndDNKgcEtTcO7pd52
+	 zIhVxt3aLaPxA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Suma Hegde <suma.hegde@amd.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] platform/x86/amd/hsmp: move hsmp_msg_desc_table[] to hsmp.c
+Date: Wed, 30 Oct 2024 22:00:03 +0100
+Message-Id: <20241030210019.2858358-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
-In-Reply-To: <20241030170106.1501763-21-samitolvanen@google.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Wed, 30 Oct 2024 21:59:48 +0100
-Message-ID: <CA+icZUWTdgM7HQrnR_NzgZZQE3aXXk+tAqD3srNd1Eyjr5d7EA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/19] Implement DWARF modversions
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 6:01=E2=80=AFPM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> Hi,
->
-> Here's v5 of the DWARF modversions series. The main motivation is
-> modversions support for Rust, which is important for distributions
-> like Android that are about to ship Rust kernel modules. Per Luis'
-> request [1], v2 dropped the Rust specific bits from the series and
-> instead added the feature as an option for the entire kernel to
-> make it easier to evaluate the benefits of this approach, and to
-> get better test coverage. Matt is addressing Rust modversion_info
-> compatibility issues in a separate patch set [2] that depends on this
-> series, and actually allows modversions to be enabled with Rust.
->
-> Short background: Unlike C, Rust source code doesn't have sufficient
-> information about the final ABI, as the compiler has considerable
-> freedom in adjusting structure layout, for example, which makes
-> using a source code parser like genksyms a non-starter. Based on
-> earlier feedback, this series uses DWARF debugging information for
-> computing versions. DWARF is an established and a relatively stable
-> format, which includes all the necessary ABI details, and adding a
-> CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
-> reasonable trade-off as most distributions already enable it.
->
-> The first patch moves the genksyms CRC32 implementation to a shared
-> header file to avoid code duplication and the next 15 patches add
-> gendwarfksyms, a tool for computing symbol versions from DWARF. When
-> passed a list of exported symbols and object files, the tool
-> generates an expanded type string for each symbol and computes symbol
-> CRCs similarly to genksyms. gendwarfksyms is written in C and uses
-> libdw to process DWARF. Patch 17 ensures that debugging information
-> is present where we need it, patch 18 adds gendwarfksyms as an
-> alternative to genksyms, and the last patch adds documentation.
->
-> v5 is based on v6.12-rc5 and for your convenience the series is also
-> available here:
->
-> https://github.com/samitolvanen/linux/commits/gendwarfksyms-v5
->
-> If you also want to test the series with Rust modules, this branch
-> adds Matt's latest modversion_info series:
->
-> https://github.com/samitolvanen/linux/commits/rustmodversions-v5
->
-> Sami
->
->
-> [1] https://lore.kernel.org/lkml/ZnIZEtkkQWEIGf9n@bombadil.infradead.org/
-> [2] https://lore.kernel.org/lkml/20240925233854.90072-1-mmaurer@google.co=
-m/
->
-> ---
->
-> v5:
-> - Rebased on v6.12-rc5.
->
-> - Fixed an issue with limiting structure expansion, and applied
->   Petr's clean-up. (Patch 10)
->
-> - Dropped an unnecessary return statement in error path. (Patch
->   12)
->
-> - Addressed several other smaller issues Petr brought up. (Patches
->   13, 14, and 15)
->
-> - Added a KBUILD_GENDWARFKSYMS_STABLE flag to enable --stable for
->   the entire kernel build. (Patch 18)
->
+From: Arnd Bergmann <arnd@arndb.de>
 
-Hi Sami,
+After the file got split, there are now W=1 warnings for users that
+include it without referencing hsmp_msg_desc_table:
 
-perfect timing: Nathan uploaded SLIM LLVM toolchain v19.1.3
+In file included from arch/x86/include/asm/amd_hsmp.h:6,
+                 from drivers/platform/x86/amd/hsmp/plat.c:12:
+arch/x86/include/uapi/asm/amd_hsmp.h:91:35: error: 'hsmp_msg_desc_table' defined but not used [-Werror=unused-const-variable=]
+   91 | static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
+      |                                   ^~~~~~~~~~~~~~~~~~~
 
-KBUILD_GENDWARFKSYMS_STABLE is to be set manually?
-What value is recommended?
+The array was never meant to be used by userspace code, but was
+left in the header as a reference for userspace programmers.
 
-Thanks.
--Sedat-
+Move the contents of the array into the one file that actually needs
+it, and instead leave the URL of the new location in the uapi header
+in case anyone is looking for it.
 
-> - Updated documentation to include KBUILD flags. (Patch 19)
->
-> - Picked up Reviewed-by tags from v4.
->
-> v4: https://lore.kernel.org/lkml/20241008183823.36676-21-samitolvanen@goo=
-gle.com/
-> - Rebased on v6.12-rc2, which now includes all the prerequisites.
->
-> - Dropped unnecessary name_only parameter for symbols.c::for_each
->   and cleaned up error handling. (Patch 3)
->
-> - Fixed anonymous scope handling to ensure unnamed DIEs don't get
->   names. (Patch 4)
->
-> - Added non-variant children to variant_type output, and included
->   DW_AT_discr_value attributes for variants. (Patch 9)
->
-> - Added another symbol pointer test case. (Patch 16)
->
-> - Picked up (Acked|Reviewed)-by tags from v3.
->
->
-> v3: https://lore.kernel.org/lkml/20240923181846.549877-22-samitolvanen@go=
-ogle.com/
-> - Updated SPX license headers.
->
-> - Squashed the first two patches in v2 and tried to reduce churn as
->   much as reasonable.
->
-> - Dropped patch 18 from v2 ("x86/asm-prototypes: Include
->   <asm/ptrace.h>") as it's addressed by a separate patch.
->
-> - Changed the error handling code to immediately terminate instead
->   of propagating the errors back to main, which cleaned up the code
->   quite a bit.
->
-> - Switched to the list and hashtable implementations in scripts and
->   dropped the remaining tools/include dependencies. Added a couple
->   missing list macros. (patch 1)
->
-> - Moved the genksyms CRC32 implementation to scripts/include and
->   dropped the duplicate code. (patches 2 and 14)
->
-> - Switched from ad-hoc command line parsing to getopt_long (patch 3).
->
-> - Added structure member and function parameter names to the DIE
->   output to match genksyms behavior, and tweaked the symtypes format
->   to be more parser-friendly in general based on Petr's suggestions.
->
-> - Replaced the declaration-only struct annotations with more generic
->   kABI stability rules that allow source code annotations to be used
->   where #ifndef __GENKSYMS__ was previously used.  Added support for
->   rules that can be used to exclude enumerators from versioning.
->   (patch 16)
->
-> - Per Miroslav's suggestion, added an option to hide structure
->   members from versioning when they're added to existing alignment
->   holes, for example. (patch 16)
->
-> - Per Greg's request, added documentation and example macros for the
->   --stable features, and a couple of test cases. (patches 15, 16, and
->   20)
->
-> - Fixed making symtypes files, which need to depend on .o files with
->   gendwarfksyms. (patch 19)
->
-> - Addressed several other smaller issues that Petr and Masahiro
->   kindly pointed out during the v2 review.
->
->
-> v2: https://lore.kernel.org/lkml/20240815173903.4172139-21-samitolvanen@g=
-oogle.com/
-> - Per Luis' request, dropped Rust-specific patches and added
->   gendwarfksyms as an alternative to genksyms for the entire
->   kernel.
->
-> - Added support for missing DWARF features needed to handle
->   also non-Rust code.
->
-> - Changed symbol address matching to use the symbol table
->   information instead of relying on addresses in DWARF.
->
-> - Added __gendwarfksyms_ptr patches to ensure the compiler emits
->   the necessary type information in DWARF even for symbols that
->   are defined in other TUs.
->
-> - Refactored debugging output and moved the more verbose output
->   behind --dump* flags.
->
-> - Added a --symtypes flag for generating a genksyms-style
->   symtypes output based on Petr's feedback, and refactored
->   symbol version calculations to be based on symtypes instead
->   of raw --dump-dies output.
->
-> - Based on feedback from Greg and Petr, added --stable flag and
->   support for reserved data structure fields and declaration-onl
->   structures. Also added examples for using these features.
->
-> - Added a GENDWARFKSYMS option and hooked up kbuild support
->   for both C and assembly code. Note that with gendwarfksyms,
->   we have to actually build a temporary .o file for calculating
->   assembly modversions.
->
-> v1: https://lore.kernel.org/lkml/20240617175818.58219-17-samitolvanen@goo=
-gle.com/
->
-> ---
->
-> Sami Tolvanen (19):
->   scripts: move genksyms crc32 implementation to a common include
->   tools: Add gendwarfksyms
->   gendwarfksyms: Add address matching
->   gendwarfksyms: Expand base_type
->   gendwarfksyms: Add a cache for processed DIEs
->   gendwarfksyms: Expand type modifiers and typedefs
->   gendwarfksyms: Expand subroutine_type
->   gendwarfksyms: Expand array_type
->   gendwarfksyms: Expand structure types
->   gendwarfksyms: Limit structure expansion
->   gendwarfksyms: Add die_map debugging
->   gendwarfksyms: Add symtypes output
->   gendwarfksyms: Add symbol versioning
->   gendwarfksyms: Add support for kABI rules
->   gendwarfksyms: Add support for reserved and ignored fields
->   gendwarfksyms: Add support for symbol type pointers
->   export: Add __gendwarfksyms_ptr_ references to exported symbols
->   kbuild: Add gendwarfksyms as an alternative to genksyms
->   Documentation/kbuild: Add DWARF module versioning
->
->  Documentation/kbuild/gendwarfksyms.rst      |  276 +++++
->  Documentation/kbuild/index.rst              |    1 +
->  include/linux/export.h                      |   15 +
->  kernel/module/Kconfig                       |   31 +
->  scripts/Makefile                            |    3 +-
->  scripts/Makefile.build                      |   41 +-
->  scripts/gendwarfksyms/.gitignore            |    2 +
->  scripts/gendwarfksyms/Makefile              |   12 +
->  scripts/gendwarfksyms/cache.c               |   44 +
->  scripts/gendwarfksyms/die.c                 |  166 +++
->  scripts/gendwarfksyms/dwarf.c               | 1109 +++++++++++++++++++
->  scripts/gendwarfksyms/examples/kabi.h       |  141 +++
->  scripts/gendwarfksyms/examples/kabi_ex0.c   |   86 ++
->  scripts/gendwarfksyms/examples/kabi_ex1.c   |   89 ++
->  scripts/gendwarfksyms/examples/kabi_ex2.c   |   98 ++
->  scripts/gendwarfksyms/examples/kabi_rules.c |   56 +
->  scripts/gendwarfksyms/examples/symbolptr.c  |   33 +
->  scripts/gendwarfksyms/gendwarfksyms.c       |  185 ++++
->  scripts/gendwarfksyms/gendwarfksyms.h       |  288 +++++
->  scripts/gendwarfksyms/kabi.c                |  263 +++++
->  scripts/gendwarfksyms/symbols.c             |  339 ++++++
->  scripts/gendwarfksyms/types.c               |  477 ++++++++
->  scripts/genksyms/genksyms.c                 |   77 +-
->  scripts/include/crc32.h                     |   93 ++
->  24 files changed, 3840 insertions(+), 85 deletions(-)
->  create mode 100644 Documentation/kbuild/gendwarfksyms.rst
->  create mode 100644 scripts/gendwarfksyms/.gitignore
->  create mode 100644 scripts/gendwarfksyms/Makefile
->  create mode 100644 scripts/gendwarfksyms/cache.c
->  create mode 100644 scripts/gendwarfksyms/die.c
->  create mode 100644 scripts/gendwarfksyms/dwarf.c
->  create mode 100644 scripts/gendwarfksyms/examples/kabi.h
->  create mode 100644 scripts/gendwarfksyms/examples/kabi_ex0.c
->  create mode 100644 scripts/gendwarfksyms/examples/kabi_ex1.c
->  create mode 100644 scripts/gendwarfksyms/examples/kabi_ex2.c
->  create mode 100644 scripts/gendwarfksyms/examples/kabi_rules.c
->  create mode 100644 scripts/gendwarfksyms/examples/symbolptr.c
->  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.c
->  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.h
->  create mode 100644 scripts/gendwarfksyms/kabi.c
->  create mode 100644 scripts/gendwarfksyms/symbols.c
->  create mode 100644 scripts/gendwarfksyms/types.c
->  create mode 100644 scripts/include/crc32.h
->
->
-> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-> --
-> 2.47.0.163.g1226f6d8fa-goog
->
+Fixes: e47c018a0ee6 ("platform/x86/amd/hsmp: Move platform device specific code to plat.c")
+Suggested-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/lkml/046687d8-1e2d-435b-adcb-26897bfd29f7@redhat.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/x86/include/uapi/asm/amd_hsmp.h | 255 ++-------------------------
+ drivers/platform/x86/amd/hsmp/hsmp.c | 245 +++++++++++++++++++++++++
+ 2 files changed, 255 insertions(+), 245 deletions(-)
+
+diff --git a/arch/x86/include/uapi/asm/amd_hsmp.h b/arch/x86/include/uapi/asm/amd_hsmp.h
+index e5d182c7373c..dfa6aa985ac4 100644
+--- a/arch/x86/include/uapi/asm/amd_hsmp.h
++++ b/arch/x86/include/uapi/asm/amd_hsmp.h
+@@ -1,5 +1,15 @@
+ /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ 
++/*
++ * See hsmp_msg_desc_table[] in:
++ * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/amd/hsmp.c
++ *
++ * for some information on number of input- and output arguments
++ * for the various functions.
++ *
++ * Please find the supported list of messages and message definition
++ * in the HSMP chapter of respective family/model PPR.
++ */
+ #ifndef _UAPI_ASM_X86_AMD_HSMP_H_
+ #define _UAPI_ASM_X86_AMD_HSMP_H_
+ 
+@@ -81,251 +91,6 @@ struct hsmp_msg_desc {
+ 	enum hsmp_msg_type type;
+ };
+ 
+-/*
+- * User may use these comments as reference, please find the
+- * supported list of messages and message definition in the
+- * HSMP chapter of respective family/model PPR.
+- *
+- * Not supported messages would return -ENOMSG.
+- */
+-static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
+-	/* RESERVED */
+-	{0, 0, HSMP_RSVD},
+-
+-	/*
+-	 * HSMP_TEST, num_args = 1, response_sz = 1
+-	 * input:  args[0] = xx
+-	 * output: args[0] = xx + 1
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_SMU_VER, num_args = 0, response_sz = 1
+-	 * output: args[0] = smu fw ver
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_PROTO_VER, num_args = 0, response_sz = 1
+-	 * output: args[0] = proto version
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_SOCKET_POWER, num_args = 0, response_sz = 1
+-	 * output: args[0] = socket power in mWatts
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_SET_SOCKET_POWER_LIMIT, num_args = 1, response_sz = 0
+-	 * input: args[0] = power limit value in mWatts
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_GET_SOCKET_POWER_LIMIT, num_args = 0, response_sz = 1
+-	 * output: args[0] = socket power limit value in mWatts
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_SOCKET_POWER_LIMIT_MAX, num_args = 0, response_sz = 1
+-	 * output: args[0] = maximuam socket power limit in mWatts
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_SET_BOOST_LIMIT, num_args = 1, response_sz = 0
+-	 * input: args[0] = apic id[31:16] + boost limit value in MHz[15:0]
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_SET_BOOST_LIMIT_SOCKET, num_args = 1, response_sz = 0
+-	 * input: args[0] = boost limit value in MHz
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_GET_BOOST_LIMIT, num_args = 1, response_sz = 1
+-	 * input: args[0] = apic id
+-	 * output: args[0] = boost limit value in MHz
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_PROC_HOT, num_args = 0, response_sz = 1
+-	 * output: args[0] = proc hot status
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_SET_XGMI_LINK_WIDTH, num_args = 1, response_sz = 0
+-	 * input: args[0] = min link width[15:8] + max link width[7:0]
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_SET_DF_PSTATE, num_args = 1, response_sz = 0
+-	 * input: args[0] = df pstate[7:0]
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/* HSMP_SET_AUTO_DF_PSTATE, num_args = 0, response_sz = 0 */
+-	{0, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_GET_FCLK_MCLK, num_args = 0, response_sz = 2
+-	 * output: args[0] = fclk in MHz, args[1] = mclk in MHz
+-	 */
+-	{0, 2, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_CCLK_THROTTLE_LIMIT, num_args = 0, response_sz = 1
+-	 * output: args[0] = core clock in MHz
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_C0_PERCENT, num_args = 0, response_sz = 1
+-	 * output: args[0] = average c0 residency
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_SET_NBIO_DPM_LEVEL, num_args = 1, response_sz = 0
+-	 * input: args[0] = nbioid[23:16] + max dpm level[15:8] + min dpm level[7:0]
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_GET_NBIO_DPM_LEVEL, num_args = 1, response_sz = 1
+-	 * input: args[0] = nbioid[23:16]
+-	 * output: args[0] = max dpm level[15:8] + min dpm level[7:0]
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_DDR_BANDWIDTH, num_args = 0, response_sz = 1
+-	 * output: args[0] = max bw in Gbps[31:20] + utilised bw in Gbps[19:8] +
+-	 * bw in percentage[7:0]
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_TEMP_MONITOR, num_args = 0, response_sz = 1
+-	 * output: args[0] = temperature in degree celsius. [15:8] integer part +
+-	 * [7:5] fractional part
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_DIMM_TEMP_RANGE, num_args = 1, response_sz = 1
+-	 * input: args[0] = DIMM address[7:0]
+-	 * output: args[0] = refresh rate[3] + temperature range[2:0]
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_DIMM_POWER, num_args = 1, response_sz = 1
+-	 * input: args[0] = DIMM address[7:0]
+-	 * output: args[0] = DIMM power in mW[31:17] + update rate in ms[16:8] +
+-	 * DIMM address[7:0]
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_DIMM_THERMAL, num_args = 1, response_sz = 1
+-	 * input: args[0] = DIMM address[7:0]
+-	 * output: args[0] = temperature in degree celsius[31:21] + update rate in ms[16:8] +
+-	 * DIMM address[7:0]
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_SOCKET_FREQ_LIMIT, num_args = 0, response_sz = 1
+-	 * output: args[0] = frequency in MHz[31:16] + frequency source[15:0]
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_CCLK_CORE_LIMIT, num_args = 1, response_sz = 1
+-	 * input: args[0] = apic id [31:0]
+-	 * output: args[0] = frequency in MHz[31:0]
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_RAILS_SVI, num_args = 0, response_sz = 1
+-	 * output: args[0] = power in mW[31:0]
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_SOCKET_FMAX_FMIN, num_args = 0, response_sz = 1
+-	 * output: args[0] = fmax in MHz[31:16] + fmin in MHz[15:0]
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_IOLINK_BANDWITH, num_args = 1, response_sz = 1
+-	 * input: args[0] = link id[15:8] + bw type[2:0]
+-	 * output: args[0] = io bandwidth in Mbps[31:0]
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_XGMI_BANDWITH, num_args = 1, response_sz = 1
+-	 * input: args[0] = link id[15:8] + bw type[2:0]
+-	 * output: args[0] = xgmi bandwidth in Mbps[31:0]
+-	 */
+-	{1, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_SET_GMI3_WIDTH, num_args = 1, response_sz = 0
+-	 * input: args[0] = min link width[15:8] + max link width[7:0]
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_SET_PCI_RATE, num_args = 1, response_sz = 1
+-	 * input: args[0] = link rate control value
+-	 * output: args[0] = previous link rate control value
+-	 */
+-	{1, 1, HSMP_SET},
+-
+-	/*
+-	 * HSMP_SET_POWER_MODE, num_args = 1, response_sz = 0
+-	 * input: args[0] = power efficiency mode[2:0]
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_SET_PSTATE_MAX_MIN, num_args = 1, response_sz = 0
+-	 * input: args[0] = min df pstate[15:8] + max df pstate[7:0]
+-	 */
+-	{1, 0, HSMP_SET},
+-
+-	/*
+-	 * HSMP_GET_METRIC_TABLE_VER, num_args = 0, response_sz = 1
+-	 * output: args[0] = metrics table version
+-	 */
+-	{0, 1, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_METRIC_TABLE, num_args = 0, response_sz = 0
+-	 */
+-	{0, 0, HSMP_GET},
+-
+-	/*
+-	 * HSMP_GET_METRIC_TABLE_DRAM_ADDR, num_args = 0, response_sz = 2
+-	 * output: args[0] = lower 32 bits of the address
+-	 * output: args[1] = upper 32 bits of the address
+-	 */
+-	{0, 2, HSMP_GET},
+-};
+-
+ /* Metrics table (supported only with proto version 6) */
+ struct hsmp_metric_table {
+ 	__u32 accumulation_counter;
+diff --git a/drivers/platform/x86/amd/hsmp/hsmp.c b/drivers/platform/x86/amd/hsmp/hsmp.c
+index 82d8ba2e1204..5d21bc8b2fd7 100644
+--- a/drivers/platform/x86/amd/hsmp/hsmp.c
++++ b/drivers/platform/x86/amd/hsmp/hsmp.c
+@@ -37,6 +37,251 @@
+ 
+ static struct hsmp_plat_device hsmp_pdev;
+ 
++/*
++ * User may use these comments as reference, please find the
++ * supported list of messages and message definition in the
++ * HSMP chapter of respective family/model PPR.
++ *
++ * Not supported messages would return -ENOMSG.
++ */
++static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
++	/* RESERVED */
++	{0, 0, HSMP_RSVD},
++
++	/*
++	 * HSMP_TEST, num_args = 1, response_sz = 1
++	 * input:  args[0] = xx
++	 * output: args[0] = xx + 1
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_SMU_VER, num_args = 0, response_sz = 1
++	 * output: args[0] = smu fw ver
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_PROTO_VER, num_args = 0, response_sz = 1
++	 * output: args[0] = proto version
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_SOCKET_POWER, num_args = 0, response_sz = 1
++	 * output: args[0] = socket power in mWatts
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_SET_SOCKET_POWER_LIMIT, num_args = 1, response_sz = 0
++	 * input: args[0] = power limit value in mWatts
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_GET_SOCKET_POWER_LIMIT, num_args = 0, response_sz = 1
++	 * output: args[0] = socket power limit value in mWatts
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_SOCKET_POWER_LIMIT_MAX, num_args = 0, response_sz = 1
++	 * output: args[0] = maximuam socket power limit in mWatts
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_SET_BOOST_LIMIT, num_args = 1, response_sz = 0
++	 * input: args[0] = apic id[31:16] + boost limit value in MHz[15:0]
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_SET_BOOST_LIMIT_SOCKET, num_args = 1, response_sz = 0
++	 * input: args[0] = boost limit value in MHz
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_GET_BOOST_LIMIT, num_args = 1, response_sz = 1
++	 * input: args[0] = apic id
++	 * output: args[0] = boost limit value in MHz
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_PROC_HOT, num_args = 0, response_sz = 1
++	 * output: args[0] = proc hot status
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_SET_XGMI_LINK_WIDTH, num_args = 1, response_sz = 0
++	 * input: args[0] = min link width[15:8] + max link width[7:0]
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_SET_DF_PSTATE, num_args = 1, response_sz = 0
++	 * input: args[0] = df pstate[7:0]
++	 */
++	{1, 0, HSMP_SET},
++
++	/* HSMP_SET_AUTO_DF_PSTATE, num_args = 0, response_sz = 0 */
++	{0, 0, HSMP_SET},
++
++	/*
++	 * HSMP_GET_FCLK_MCLK, num_args = 0, response_sz = 2
++	 * output: args[0] = fclk in MHz, args[1] = mclk in MHz
++	 */
++	{0, 2, HSMP_GET},
++
++	/*
++	 * HSMP_GET_CCLK_THROTTLE_LIMIT, num_args = 0, response_sz = 1
++	 * output: args[0] = core clock in MHz
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_C0_PERCENT, num_args = 0, response_sz = 1
++	 * output: args[0] = average c0 residency
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_SET_NBIO_DPM_LEVEL, num_args = 1, response_sz = 0
++	 * input: args[0] = nbioid[23:16] + max dpm level[15:8] + min dpm level[7:0]
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_GET_NBIO_DPM_LEVEL, num_args = 1, response_sz = 1
++	 * input: args[0] = nbioid[23:16]
++	 * output: args[0] = max dpm level[15:8] + min dpm level[7:0]
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_DDR_BANDWIDTH, num_args = 0, response_sz = 1
++	 * output: args[0] = max bw in Gbps[31:20] + utilised bw in Gbps[19:8] +
++	 * bw in percentage[7:0]
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_TEMP_MONITOR, num_args = 0, response_sz = 1
++	 * output: args[0] = temperature in degree celsius. [15:8] integer part +
++	 * [7:5] fractional part
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_DIMM_TEMP_RANGE, num_args = 1, response_sz = 1
++	 * input: args[0] = DIMM address[7:0]
++	 * output: args[0] = refresh rate[3] + temperature range[2:0]
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_DIMM_POWER, num_args = 1, response_sz = 1
++	 * input: args[0] = DIMM address[7:0]
++	 * output: args[0] = DIMM power in mW[31:17] + update rate in ms[16:8] +
++	 * DIMM address[7:0]
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_DIMM_THERMAL, num_args = 1, response_sz = 1
++	 * input: args[0] = DIMM address[7:0]
++	 * output: args[0] = temperature in degree celsius[31:21] + update rate in ms[16:8] +
++	 * DIMM address[7:0]
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_SOCKET_FREQ_LIMIT, num_args = 0, response_sz = 1
++	 * output: args[0] = frequency in MHz[31:16] + frequency source[15:0]
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_CCLK_CORE_LIMIT, num_args = 1, response_sz = 1
++	 * input: args[0] = apic id [31:0]
++	 * output: args[0] = frequency in MHz[31:0]
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_RAILS_SVI, num_args = 0, response_sz = 1
++	 * output: args[0] = power in mW[31:0]
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_SOCKET_FMAX_FMIN, num_args = 0, response_sz = 1
++	 * output: args[0] = fmax in MHz[31:16] + fmin in MHz[15:0]
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_IOLINK_BANDWITH, num_args = 1, response_sz = 1
++	 * input: args[0] = link id[15:8] + bw type[2:0]
++	 * output: args[0] = io bandwidth in Mbps[31:0]
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_XGMI_BANDWITH, num_args = 1, response_sz = 1
++	 * input: args[0] = link id[15:8] + bw type[2:0]
++	 * output: args[0] = xgmi bandwidth in Mbps[31:0]
++	 */
++	{1, 1, HSMP_GET},
++
++	/*
++	 * HSMP_SET_GMI3_WIDTH, num_args = 1, response_sz = 0
++	 * input: args[0] = min link width[15:8] + max link width[7:0]
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_SET_PCI_RATE, num_args = 1, response_sz = 1
++	 * input: args[0] = link rate control value
++	 * output: args[0] = previous link rate control value
++	 */
++	{1, 1, HSMP_SET},
++
++	/*
++	 * HSMP_SET_POWER_MODE, num_args = 1, response_sz = 0
++	 * input: args[0] = power efficiency mode[2:0]
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_SET_PSTATE_MAX_MIN, num_args = 1, response_sz = 0
++	 * input: args[0] = min df pstate[15:8] + max df pstate[7:0]
++	 */
++	{1, 0, HSMP_SET},
++
++	/*
++	 * HSMP_GET_METRIC_TABLE_VER, num_args = 0, response_sz = 1
++	 * output: args[0] = metrics table version
++	 */
++	{0, 1, HSMP_GET},
++
++	/*
++	 * HSMP_GET_METRIC_TABLE, num_args = 0, response_sz = 0
++	 */
++	{0, 0, HSMP_GET},
++
++	/*
++	 * HSMP_GET_METRIC_TABLE_DRAM_ADDR, num_args = 0, response_sz = 2
++	 * output: args[0] = lower 32 bits of the address
++	 * output: args[1] = upper 32 bits of the address
++	 */
++	{0, 2, HSMP_GET},
++};
++
+ /*
+  * Send a message to the HSMP port via PCI-e config space registers
+  * or by writing to MMIO space.
+-- 
+2.39.5
+
 
