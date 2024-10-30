@@ -1,201 +1,433 @@
-Return-Path: <linux-kernel+bounces-389416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1D29B6CC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:11:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5419B6CC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B32DB23CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8E71C21657
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C104D1D07B1;
-	Wed, 30 Oct 2024 19:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979341E231C;
+	Wed, 30 Oct 2024 19:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="SHsL1Unv"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021080.outbound.protection.outlook.com [52.101.62.80])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A+qe6+Xu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137E11BD9DB;
-	Wed, 30 Oct 2024 19:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730315016; cv=fail; b=tvqoOE2aY78iB/YirqYul3APcESP7c3SYkjpZx5lOgiCoyxrKd54he4Wh6PbRtK+wA9GyWGdCOy5YXXmQHFnYMGS+vFFENWjmncKLMNSCIuWn2lfDUAnxq5j98GEr6yIiGh6aWbLdfBiHQlliLGb3xFi9GyjSupkqK/L7CjX/1I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730315016; c=relaxed/simple;
-	bh=WIuqEaVxG2BY74on+bIDMLScfIfpZFQY0LxGrKMy8R8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=T3o437IVsilm49su8TnUkWRC2Nw8MqS92SbBwPqHmOeO382n0ZQXnE7ceUvhoQNxhJYykt5yNSS2NwQeualpm0C0XbL0hdqUGw5lO1Pmj5AAfNYiBzfTyN1V27Mk+yXObZenS660ob+iaGNTn7m4XGn4yzeCwFUQfygFebnGR+A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=SHsL1Unv; arc=fail smtp.client-ip=52.101.62.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C+H4ccrL+Z3NMaHRg3qz+8EAutp1phwaK/TfKnm/J0A7K9AeWQrVak/j+8F1GauwPsu7GP7+NGldLYQEl3qSCH6FQMUpAdvBYWc3xzy4p4fG2QuR6+8rApZLlY4xohYch/beJ7i4uHuUhAyBZqjAyy+FtSk1zeJquiCgmgY6qccm9GLqJscVQVg0bEbbvxd8acx2/cH1+x10CW7UnUsOWEfB9hu+OOuDaijbqi2srm9nKXrAjzsdg9QZXkk4tHyju3NFsWulHafSF53PorLr5H7BNt+aX50B3dXKfUEqlBw6hRrIPuWeckTZXTzJpJ979QAvkjFgR9LwGBYsHJKBrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WIuqEaVxG2BY74on+bIDMLScfIfpZFQY0LxGrKMy8R8=;
- b=Qp9eP9ZKfSpkzZuOYhx4XHsW4LYmKDQf2Trl5W1k5ZH8bBT2ne/49+tQfPPnz5GnM5kZ2ydLnEdHzAYo+yNhXaGVa9IuMA0/Hml1xS2ORgyYT9sTNPfOLsJj0q8hng6AFAnm0DkzetQnM9NMsC1uiKT59g0vUG7tMgsXra44ZYU/RXhUqLPtWiUuCTbKKf0X6KCwGpr/P4yfm1X3B4JNWnAjK91nvV2E/sRNQc4nk6pthQLIDEIvcEXnFMUtn6j1gU/xph5iqgQieGW45GTiXEaLLlg4i9M2XSFJYQ2DDUHtUwtB8Ti55os308A8HMHynaMB2OVM7WS0nm9DmXhRYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WIuqEaVxG2BY74on+bIDMLScfIfpZFQY0LxGrKMy8R8=;
- b=SHsL1Unv2rlbHJJHd+pFrslE29jwF+DV1bISkoavDm/k6aEDdAeVkpEKLlm3lfxvfiWo/xd1LqSDFzwLCvVVro/wJddgyNmbHLmkkdGOLCuR0tobTFjRlZQFsQ14nXysACJoWrnJWqDp7l6tfAArFFZqMrgAQXSL+L5J7iUa1ak=
-Received: from SA1PR21MB1317.namprd21.prod.outlook.com (2603:10b6:806:1f0::9)
- by SN3PEPF00013D79.namprd21.prod.outlook.com (2603:10b6:82c:400:0:4:0:7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.3; Wed, 30 Oct
- 2024 19:03:32 +0000
-Received: from SA1PR21MB1317.namprd21.prod.outlook.com
- ([fe80::67ed:774d:42d4:f6ef]) by SA1PR21MB1317.namprd21.prod.outlook.com
- ([fe80::67ed:774d:42d4:f6ef%4]) with mapi id 15.20.8137.002; Wed, 30 Oct 2024
- 19:03:31 +0000
-From: Dexuan Cui <decui@microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>, KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Vitaly
- Kuznetsov <vkuznets@redhat.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "open list:Hyper-V/Azure CORE AND DRIVERS"
-	<linux-hyperv@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-CC: "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] Drivers: hv: kvp/vss: Avoid accessing a ringbuffer not
- initialized yet
-Thread-Topic: [PATCH] Drivers: hv: kvp/vss: Avoid accessing a ringbuffer not
- initialized yet
-Thread-Index: AQHbKlyHss5KWmFug0aMZtYQWKCj3bKfoGAQ
-Date: Wed, 30 Oct 2024 19:03:31 +0000
-Message-ID:
- <SA1PR21MB131794D6AF620CB201958EFCBF542@SA1PR21MB1317.namprd21.prod.outlook.com>
-References: <20240909164719.41000-1-decui@microsoft.com>
- <SN6PR02MB4157630C523459A75C83C498D44B2@SN6PR02MB4157.namprd02.prod.outlook.com>
-In-Reply-To:
- <SN6PR02MB4157630C523459A75C83C498D44B2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=f2ddb8d8-b0cc-4ed7-8c4d-806213566d4b;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-10-30T18:35:53Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB1317:EE_|SN3PEPF00013D79:EE_
-x-ms-office365-filtering-correlation-id: 23664f89-f1dc-4f6f-c1c2-08dcf9158c0a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?KK9Dg6maNEBEr7EMEoiIbazNNVtA18S7jMb76tPw0Il4Nux3OqJE6I9bhztp?=
- =?us-ascii?Q?zkceu8eyb3BNPBoWKHYvMtMDC6rUi6weolXzw43o+PLDG51TZpZ5hYqtjUtF?=
- =?us-ascii?Q?jk3aL6btgtMyFgcwkvIkvs+bPUxEPoVbkcAmZ0Av1z9XkmXQpYCrfG73iIdN?=
- =?us-ascii?Q?+wwucNXb6ugdyXo5p0cAyb4CG4p57/5epv/UOlTu3wAHGPWMk7arHVnDVPLq?=
- =?us-ascii?Q?7pkacaw4jAflAkOfoSMt6Pvs4NPAPNNTBe+9j6b9EQjfpCdoCxpFxh8gQh/C?=
- =?us-ascii?Q?SCsysCtClIklIfkEfDMVIOn1oxb4eTNz+fH9prFpOG0AXbcjlkWpaYICSteA?=
- =?us-ascii?Q?GdnF26I4Raxly7bMjFR5XeVzxnhmGSMgMKOOaLFQuLm73F22VboRlvBsrv00?=
- =?us-ascii?Q?OnRDVnDDKDIVX/8dJkT1b/qnu5LzOVF+zXH/Dgq5Nf9hhg0VxrH+tix2+jPX?=
- =?us-ascii?Q?iwXffjV3vzbQCIBo380iHloKMqNL+e9aZflBohNkIOhk8dV2jJrj0YZFB2FJ?=
- =?us-ascii?Q?4PzMIodDlWheHoXQQlkiziIcqN7TDxBbAIduTg3DHjU55T1lT3oLTw9YE477?=
- =?us-ascii?Q?b2qPgGUi8j9KH7QYrYLWtXZCA5GjmdXoRYweUqWx5wdVaVt/mSACy/INTrZ8?=
- =?us-ascii?Q?gAbnETTmsxD0Lmfr24DuAgrxN7MUFPAX6f0KoLj4OAWjmvRc/Cnn/CGK73LZ?=
- =?us-ascii?Q?nuHcU4LLxdALOdwfXW9SMO8A5GCPYgWd+JnjEWCw9tb01024Cw/mBPFzc4K4?=
- =?us-ascii?Q?RQwJH53deO964KoDyywiDVjzBQiv3V6PTGcDmLmetvP+H4f+/nlkoAjwPA/k?=
- =?us-ascii?Q?d8jixI4aE1ppEjLqwdbQ49nuwwQyMHesVni55SptqK3darNJB/BVRLsiYWKV?=
- =?us-ascii?Q?kC+o63sc+fZN1P3OGZfQCxAhSHsBKEAm0jGSnC8AdZ521GNrr6bgfDmB9V+x?=
- =?us-ascii?Q?QH1hHFwnn+SdKwUBeTeZd+7hC5SZHgVSLT8RjojO0z2ig4nzM1dRQZfqYqY3?=
- =?us-ascii?Q?qxlzn4sDsk8Rpg5F5tkRf/GjC041WvvwwXsI9ys+DqO9ecUbUQ5Oj+hr8DFJ?=
- =?us-ascii?Q?ahLYIrDaDLUWsNtQDaPbo8a8YjzC3/y8Lirdase8MLEyuyXITas7wUFYBEDp?=
- =?us-ascii?Q?moT/VNOhV3lDPxJdqNB2JKlvk4S+l1HjkCAhnce7Vh+cmS9Q8BEuhA9Jdmac?=
- =?us-ascii?Q?Smo5u4mcXJT1WUiM5uGJFiWat5DbLzY6hfuhOLNw6XdVfyvdVNHxx4NE+nvG?=
- =?us-ascii?Q?YTzGaOPhSp4Xsk/LfltVItnGLG47GHk6ZghVwt970j6Rsd/3mf7xB6kC2Rw3?=
- =?us-ascii?Q?NHR8BiH7trmSEdGk98CmFuGKBKMispnMERRctacV+INCrqM6IZp1KfDlGSqq?=
- =?us-ascii?Q?KwxoSfk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR21MB1317.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?N1Vle94V7bWU61jUQhoEu0rp1ckBocDX3uvlJGJICeZqo8Q1P47xv+mgjhyY?=
- =?us-ascii?Q?quT9fFWL4F2ksMfK/CD2DWmNVPa1SZJ+Wii+UoYRluG7ssUtvJ6S02QMYH1A?=
- =?us-ascii?Q?L0PyxC2JpIqOaKOlIWdUqzrIwqHwENxtQnXKm2SFD7O/32sA5Yo/BlRvEH1s?=
- =?us-ascii?Q?TsBsiAQZLsWdlx78ehMK1l8yw/ynT/+ZgI4D2VozWkEmCyZRcAOssSGzctuq?=
- =?us-ascii?Q?PebpkRsXeZEUSBGM4MMIaU1CpcXUnvemyAkngBCIbZz+/3HELzwTqXcfscME?=
- =?us-ascii?Q?TCTkxME48p9CcNXH/jtb7frDB9QwJ83f99mGiwMd6sLL2NMqQ/Z6Juem3195?=
- =?us-ascii?Q?tzccWALSgPVVqwYewIgH/K7gOeySjbSnGttvSDt0PBAtNGuShqRzgdiN9m/P?=
- =?us-ascii?Q?MCcnY8B41pA9t22N1tvOUlwFsfRS4kDr6ztUtbmsnksZSObjZLQ5t67LV4rt?=
- =?us-ascii?Q?p7Udz8VWgjDX99sW10P9M/mmifUPk5NTo8dwLwyJF1peflcPe1Bpobl30U59?=
- =?us-ascii?Q?xbbCRSWAf3u/Xf2o+0Q0JERT/VWMXPoeASO4R/Q3B/+yKzLWOnmW3rZfaD5J?=
- =?us-ascii?Q?OJy8LZvCTh72OKjBrxHxDNtiuzNfwJeTA/tojqMUf6yNUMh967EBoqn8L2Ey?=
- =?us-ascii?Q?muNEU61jLYM8nXdSNnBgv4fAMQKXag+g80lQieBmNuqro2iagjbQv/ZbThjm?=
- =?us-ascii?Q?00DiqFchMSbuB7AylLsklWoLqHQO0N9JMhckkAlLQPhNP5w+MthN8B+xTrPQ?=
- =?us-ascii?Q?ZTqq4Z1Z1r8bogZnLZ0PDG3CG4w+ZAk52tkQYEEXbSXvbfDQkjcUNOp/p3jD?=
- =?us-ascii?Q?l7Of7xoKe3VNXdKHVNMAoBNL6+5fC0GAdab9BYcdKkilIYQRT7A/Ef/IeKaZ?=
- =?us-ascii?Q?O6gm29l5u2n5rtudV3CbofwBhuLEJL4zuS6DF79WJe2TwGS57KHEWHxMZlNU?=
- =?us-ascii?Q?Q2L19YdW4I4tQ7oUUW8vv83EhNacGa5JY9YTkXb4Nj5AcYLfDgzWJOcxqUL9?=
- =?us-ascii?Q?nWu5/JLNx73NbMCicXpCf+5hACMCckuHB18BS1SAn6IPdwo6kczdSGT/NqOV?=
- =?us-ascii?Q?B0rhJb8YhwN4Vq92J4YVHgzHu0bELPMoLSqR8LzD0qD6O1jFSzAIZQO7aKZ2?=
- =?us-ascii?Q?torl3drwjBhmiVBhmWe3Sih5b987alkvh6retEjHNacmpyzxj18z8OTa3lDS?=
- =?us-ascii?Q?CNPJp5zRxOpTiJcGn2Q5zbZSXqXtPIEX6iXNB6PR/qNo78quEmTeex6jC5ND?=
- =?us-ascii?Q?fQbjGpQREq8s789gi3tMx0drqRsrMfDusF/XZqOj7V3HzNtj6wqi888SN283?=
- =?us-ascii?Q?umyOWGaMADgB05qHbnOwOqhIjTH4BRgKt1bqria2UNaPizvThKUsta7zarkn?=
- =?us-ascii?Q?jHPkDzO1tOXKkF5GrZsCI7V7c+ZAS4qK+0q4L6sRzYNKpVdBbvb+WFIPxNWp?=
- =?us-ascii?Q?SQuJVAtkSbrZIgnU/m4FQ/krzEz1Kw1mctJk2UzuA9ALQjs0yb7WTR9l9+2+?=
- =?us-ascii?Q?vL1Bd6i+ZHj3U0Wg8y9Bxmg3QXn/mdCcp/Y2BYH5OZZ+2u++HqYSFQrLec3p?=
- =?us-ascii?Q?1mddfJDw30XQ8Apsklqr/hP200CvU2VNT0KLbYzboCLQFdAvmm5NB7Vmh4ch?=
- =?us-ascii?Q?bbvouDpRZG8JgepchENlyASfyb1CssmXTpokIy/Op6BG?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2731BD9DB;
+	Wed, 30 Oct 2024 19:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730315070; cv=none; b=GjIfkax/nYXcRdNti9YzIw9Av8YfJbKArn54U134cyQtz2FJzxDJJM0qGTlgdNNoveNOZDjGwhqp3h6oMSxM+YWEMgmGjxZ/MjjWyRioGWYzPFwfhXDI37ZYJ9nbWJH8n8gBl9Ymd4to2aRcVQhatWbs/WKhYLHL5qlCFd0lS5Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730315070; c=relaxed/simple;
+	bh=nPW3eOpnP2bgPLLpIpBZgsEARxTtQVQLzV+Dtvq6kjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Yh+5wlztgjRhR5rB0VFsRtGJZ8PM5ubGDShAfKrcdKBmMpkHTZDN6FgWdQL98PpkzePnxjHuZk2TtALYTE4bwQ6zo9VjGBwPiyfWwIeIsp/8DOUWeTQ5ZOugpq2NWqWJcUKVJ4iYKhSvY9O0niiTpQS1m4Q9+LuxNZXhdHBTnec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A+qe6+Xu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UE2BLT027381;
+	Wed, 30 Oct 2024 19:04:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CiP61866JdksHemSG4W1R2zZYCtRBxqCUfJzk9a3aXs=; b=A+qe6+XuAovINi+s
+	Vpcafo0r7BREZMsBjsqaelFBMheRtV83fRSueEgFpbpIrE2vF5AtoYTphM0CZZQb
+	ZsSXxlr0MRoLSYN/6Uoz8ew4wAIdc8DX+B+ZxWfvP+1c4vLLsHi/bNkU0Lp1+LF5
+	3ywvUw8/1lk2ZfYThWl/Omv32YAZoomwJUpv+3BiDtkjgFJ81mYyqRMasW0EmN52
+	1jrotsspHT9ANAEzx2/hMlEs5Fbae7dIl4iYKGQz0u0wExm9Xp1WQTe5L6TXKAjQ
+	FvYgM9HUfVXiOBtLCMppG6fdjl4RjZObs8JqCS6QFjSIgzFIAFce1MJ4qAiVKdTC
+	8Q844Q==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p34cs1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 19:04:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UJ4Jvc003289
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 19:04:19 GMT
+Received: from [10.48.242.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 12:04:18 -0700
+Message-ID: <4d273cac-8955-4850-bd8a-0bad318c1e4f@quicinc.com>
+Date: Wed, 30 Oct 2024 12:04:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB1317.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23664f89-f1dc-4f6f-c1c2-08dcf9158c0a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 19:03:31.8876
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LwafogYfzocMy4odoqsGECF0/0I+0L3g1++86F2/e5Enb/egGVUR/6GYWHHkI7EaHn3A9SwiC+kBDiTOD04Mxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN3PEPF00013D79
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 1/5] dt-bindings: net: wireless: ath12k: describe
+ WSI properties for QCN9274
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241029173050.2188150-1-quic_rajkbhag@quicinc.com>
+ <20241029173050.2188150-2-quic_rajkbhag@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20241029173050.2188150-2-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rYxZO48zMyEqS7vgGKVI_E1F5oTWUVcd
+X-Proofpoint-ORIG-GUID: rYxZO48zMyEqS7vgGKVI_E1F5oTWUVcd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300150
 
-> From: Michael Kelley <mhklinux@outlook.com>
-> Sent: Tuesday, October 29, 2024 4:45 PM
-> [...]
-> An alternate approach occurs to me. util_probe() does these three
-> things in order:
->=20
-> 1) Allocates the receive buffer
-> 2) Calls the util_init() function, which for KVP and VSS creates the char=
- dev
-> 3) Sets up the VMBus channel, including calling vmbus_open()
->=20
-> What if the order of #2 and #3 were swapped in util_probe()? I
-> don't immediately see any interdependency between #2 and #3
-> for KVP and VSS, nor for Shutdown and Timesync. With the swap,
-> the VMBus channel would be fully open by the time the /dev entry
-> appears and the user space daemon can do anything.
->=20
-> I haven't though too deeply about this, so maybe there's a problem
-> somewhere. But if not, it seems a lot cleaner.
->=20
-> Michael
+On 10/29/2024 10:30 AM, Raj Kumar Bhagat wrote:
+> QCN9274 device has WSI support. WSI stands for WLAN Serial Interface.
+> It is used for the exchange of specific control information across
+> radios based on the doorbell mechanism. This WSI connection is
+> essential to exchange control information among these devices
+> 
+> Hence, describe WSI interface supported in QCN9274 with the following
+> properties:
+> 
+>  - qcom,wsi-group-id: It represents the identifier assigned to the WSI
+>    connection. All the ath12k devices connected to same WSI connection
+>    have the same wsi-group-id.
+> 
+>  - qcom,wsi-master: Indicates if this device is the WSI master.
+> 
+>  - ports: This is a graph ports schema that has two ports: TX (port@0)
+>    and RX (port@1). This represents the actual WSI connection among
+>    multiple devices.
+> 
+> Also, describe the ath12k device property
+> "qcom,ath12k-calibration-variant". This is a common property among
+> ath12k devices.
+> 
+> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+> ---
+>  .../bindings/net/wireless/qcom,ath12k.yaml    | 241 +++++++++++++++++-
+>  1 file changed, 232 insertions(+), 9 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> index 1b5884015b15..42bcd73dd159 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> @@ -1,5 +1,6 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  # Copyright (c) 2024 Linaro Limited
+> +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>  %YAML 1.2
+>  ---
+>  $id: http://devicetree.org/schemas/net/wireless/qcom,ath12k.yaml#
+> @@ -18,10 +19,17 @@ properties:
+>    compatible:
+>      enum:
+>        - pci17cb,1107  # WCN7850
+> +      - pci17cb,1109  # QCN9274
+>  
+>    reg:
+>      maxItems: 1
+>  
+> +  qcom,ath12k-calibration-variant:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: |
+> +      string to uniquely identify variant of the calibration data for designs
+> +      with colliding bus and device ids
+> +
+>    vddaon-supply:
+>      description: VDD_AON supply regulator handle
+>  
+> @@ -49,21 +57,100 @@ properties:
+>    vddpcie1p8-supply:
+>      description: VDD_PCIE_1P8 supply regulator handle
+>  
+> +  wsi:
+> +    type: object
+> +    description: |
+> +      The ath12k devices (QCN9274) feature WSI support. WSI stands for
+> +      WLAN Serial Interface. It is used for the exchange of specific
+> +      control information across radios based on the doorbell mechanism.
+> +      This WSI connection is essential to exchange control information
+> +      among these devices.
+> +
+> +      Diagram to represent one WSI connection (one WSI group) among
+> +      three devices.
+> +
+> +               +-------+        +-------+        +-------+
+> +               | pcie2 |        | pcie3 |        | pcie1 |
 
-I think #3 depends on #2, e.g. hv_kvp_init() sets the channel's
-preferred max_pkt_size, which is tested later in __vmbus_open().
+is there a reason to not have these in some order?
 
-Another example of dependency is: hv_timesync_init() initializes
-host_ts.lock and adj_time_work, which are used by
-timesync_onchannelcallback() -> adj_guesttime().
-Note: the channel callback can be already running before
-vmbus_open() returns.
+> +               |       |        |       |        |       |
+> +        +----->|  wsi  |------->|  wsi  |------->|  wsi  |-----+
+> +        |      | grp 0 |        | grp 0 |        | grp 2 |     |
 
-Thanks,
-Dexuan
+s/grp 2/grp 0/???                                          ^ typo?
+
+> +        |      +-------+        +-------+        +-------+     |
+> +        +------------------------------------------------------+
+> +
+> +      Diagram to represent two WSI connections (two separate WSI groups)
+> +      among four devices.
+> +
+> +           +-------+    +-------+          +-------+    +-------+
+> +           | pcie2 |    | pcie3 |          | pcie1 |    | pcie0 |
+
+again seems strange to not have any logical (to me) order
+
+> +           |       |    |       |          |       |    |       |
+> +       +-->|  wsi  |--->|  wsi  |--+   +-->|  wsi  |--->|  wsi  |--+
+> +       |   | grp 0 |    | grp 0 |  |   |   | grp 1 |    | grp 1 |  |
+> +       |   +-------+    +-------+  |   |   +-------+    +-------+  |
+> +       +---------------------------+   +---------------------------+
+> +
+> +    properties:
+> +      qcom,wsi-group-id:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          It represents the identifier assigned to the WSI connection. All
+> +          the ath12k devices connected to same WSI connection have the
+> +          same wsi-group-id.
+> +
+> +      qcom,wsi-master:
+> +        type: boolean
+> +        description:
+> +          Indicates if this device is the WSI master.
+> +
+> +      ports:
+> +        $ref: /schemas/graph.yaml#/properties/ports
+> +        description:
+> +          These ports are used to connect multiple WSI supported devices to
+> +          form the WSI group.
+> +
+> +        properties:
+> +          port@0:
+> +            $ref: /schemas/graph.yaml#/properties/port
+> +            description:
+> +              This is the TX port of WSI interface. It is attached to the RX
+> +              port of the next device in the WSI connection.
+> +
+> +          port@1:
+> +            $ref: /schemas/graph.yaml#/properties/port
+> +            description:
+> +              This is the RX port of WSI interface. It is attached to the TX
+> +              port of the previous device in the WSI connection.
+> +
+> +    required:
+> +      - qcom,wsi-group-id
+> +      - ports
+> +
+> +    additionalProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> -  - vddaon-supply
+> -  - vddwlcx-supply
+> -  - vddwlmx-supply
+> -  - vddrfacmn-supply
+> -  - vddrfa0p8-supply
+> -  - vddrfa1p2-supply
+> -  - vddrfa1p8-supply
+> -  - vddpcie0p9-supply
+> -  - vddpcie1p8-supply
+>  
+>  additionalProperties: false
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - pci17cb,1107
+> +    then:
+> +      required:
+> +        - vddaon-supply
+> +        - vddwlcx-supply
+> +        - vddwlmx-supply
+> +        - vddrfacmn-supply
+> +        - vddrfa0p8-supply
+> +        - vddrfa1p2-supply
+> +        - vddrfa1p8-supply
+> +        - vddpcie0p9-supply
+> +        - vddpcie1p8-supply
+> +
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/qcom,rpmh.h>
+> @@ -97,3 +184,139 @@ examples:
+>              };
+>          };
+>      };
+> +
+> +  - |
+
+in the description above you have two different diagrams:
+- one that shows 3 pcie* devices in a single group with apparently one port
+per device
+- one that shows 4 pcie* devices split into two groups of two, again with
+apparently one port per device
+
+but in the representation that follows you describe three pcie* devices, each
+with two distinct ports, all 6 of which are part of group 0.
+
+can we have diagrams that match the actual bindings. does the real product
+actually have 6 ports in one group?
+
+> +    pcie1 {
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +
+> +        pcie@0 {
+> +            device_type = "pci";
+> +            reg = <0x0 0x0 0x0 0x0 0x0>;
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            ranges;
+> +
+> +            wifi1@0 {
+> +                compatible = "pci17cb,1109";
+> +                reg = <0x0 0x0 0x0 0x0 0x0>;
+> +
+> +                qcom,ath12k-calibration-variant = "RDP433_1";
+> +
+> +                wsi {
+> +                    qcom,wsi-group-id = <0>;
+> +
+> +                    ports {
+> +                        #address-cells = <1>;
+> +                        #size-cells = <0>;
+> +
+> +                        port@0 {
+> +                            reg = <0>;
+> +
+> +                            wifi1_wsi_tx: endpoint {
+> +                                remote-endpoint = <&wifi2_wsi_rx>;
+> +                            };
+> +                        };
+> +
+> +                        port@1 {
+> +                            reg = <1>;
+> +
+> +                            wifi1_wsi_rx: endpoint {
+> +                                remote-endpoint = <&wifi3_wsi_tx>;
+> +                            };
+> +                        };
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +    pcie2 {
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +
+> +        pcie@0 {
+> +            device_type = "pci";
+> +            reg = <0x0 0x0 0x0 0x0 0x0>;
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            ranges;
+> +
+> +            wifi2@0 {
+> +                compatible = "pci17cb,1109";
+> +                reg = <0x0 0x0 0x0 0x0 0x0>;
+> +
+> +                qcom,ath12k-calibration-variant = "RDP433_2";
+> +
+> +                wsi {
+> +                    qcom,wsi-group-id = <0>;
+> +
+> +                    ports {
+> +                        #address-cells = <1>;
+> +                        #size-cells = <0>;
+> +
+> +                        port@0 {
+> +                            reg = <0>;
+> +
+> +                            wifi2_wsi_tx: endpoint {
+> +                                remote-endpoint = <&wifi3_wsi_rx>;
+> +                            };
+> +                        };
+> +
+> +                        port@1 {
+> +                            reg = <1>;
+> +
+> +                            wifi2_wsi_rx: endpoint {
+> +                                remote-endpoint = <&wifi1_wsi_tx>;
+> +                            };
+> +                        };
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +    pcie3 {
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +
+> +        pcie@0 {
+> +            device_type = "pci";
+> +            reg = <0x0 0x0 0x0 0x0 0x0>;
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            ranges;
+> +
+> +            wifi3@0 {
+> +                compatible = "pci17cb,1109";
+> +                reg = <0x0 0x0 0x0 0x0 0x0>;
+> +
+> +                qcom,ath12k-calibration-variant = "RDP433_3";
+> +
+> +                wsi {
+> +                    qcom,wsi-group-id = <0>;
+> +
+> +                    ports {
+> +                        #address-cells = <1>;
+> +                        #size-cells = <0>;
+> +
+> +                        port@0 {
+> +                            reg = <0>;
+> +
+> +                            wifi3_wsi_tx: endpoint {
+> +                                remote-endpoint = <&wifi1_wsi_rx>;
+> +                            };
+> +                        };
+> +
+> +                        port@1 {
+> +                            reg = <1>;
+> +
+> +                            wifi3_wsi_rx: endpoint {
+> +                                remote-endpoint = <&wifi2_wsi_tx>;
+> +                            };
+> +                        };
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+
 
