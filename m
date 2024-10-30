@@ -1,296 +1,197 @@
-Return-Path: <linux-kernel+bounces-389440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F3F9B6D25
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:54:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599389B6D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351B61C21826
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19CC0281FF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005D01D0DF2;
-	Wed, 30 Oct 2024 19:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6A71D0DF6;
+	Wed, 30 Oct 2024 19:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gt5ZLZsX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="QkeR0ho0"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BD21D07A2;
-	Wed, 30 Oct 2024 19:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EF61D0400;
+	Wed, 30 Oct 2024 19:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730318046; cv=none; b=OV6IUTAa1JXkt6OdzS8maNLIRPXBYV5gZZZ4x6jDkalHEEhFboyPnB9BINhJEWO5/2RiVzNihhM+hMGVnffgc1tlp+jtFLnb36pqjeiYkM9JJAdHUbGBAlWY6JYVgWhuhg35d1B1zykSRPdQar1AZ6uLVwZFdh0GPJRwXobPVX8=
+	t=1730318089; cv=none; b=WJk478GE32GkZCJT1ReJoLRfdTMG4lwCfW5wKuHq7JtM9MbpG27ljwws6jd5VHYa1FdgzPogZ2uHn6/K58umQEJ9q4FzFubASnVkui6bajvx14pRpxiBsMlRMaPQfrnXIym4bqRi8uHXl4cIQ1LrBHWSCTRMMC44L7auN/UZ+1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730318046; c=relaxed/simple;
-	bh=6dgFv0ScZrtTIDtWns7r3IG7FX5zk+FYzLYFQLcuGqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uo5lehf2+lJ30fNpZmUvf1/fajc/l3e4sVRMYCQvlickCTmQUi40p1lJpBC7ccKQKNSzvPToujTqOwVsCaJ7k6ez8MNKgY14UBQjdKAJQUx/hrgNekaNKTRcXpmdpPktlThjjXh9m29cfmHabw9Eza6tVT7bD2Nj+elx0TJXnTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gt5ZLZsX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A881EC4CED3;
-	Wed, 30 Oct 2024 19:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730318045;
-	bh=6dgFv0ScZrtTIDtWns7r3IG7FX5zk+FYzLYFQLcuGqk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gt5ZLZsXcgHmv/c/pccmqH1QKWVp4l3/4yyZEdeO8+BBqBeLkV82X9r9rG0EwU1Z9
-	 snisbAnIJpI1pqqIXTmkZ4c1qdiKYe+ZFa40Fe1gUs//Jx5vJ/Okv+n5uqKbfDsZs+
-	 /4L0XkklQ0nEijn33Zjkrj/gl05xWWzuTEq7JsBKIlf/6QMCXthDRVrv6PWfuw79uF
-	 KPP3hdQN5OdR+uTDROurC7hjHe98/q48UmsWScw/nxHH219qSHQysL5x+9P105cLWR
-	 MtpD2RUm8qGxu1e/SVGDgUg/FSMxHbDPt+JBULWbWfIiBZFYagu8OpSKKRAM0ihpib
-	 5S21u19ta/OqQ==
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7180cc146d8so91941a34.0;
-        Wed, 30 Oct 2024 12:54:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdFZXPMsFvLlGRIQyMChMUAuuiqI0CsKMe7+SB6yH6H4Iwc1Jlt89t1LPixENXkrwWpWX/SdupPwaeSb4=@vger.kernel.org, AJvYcCWasKpnSm8YVSgaFZZaTuDIXPVdfS1LFNpA1GXz/Jg36toQgcU49CsU6QSH1oQRzTsDss00zKeD5Gw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX+9T8k2razrlUChoD4CNff1Ohnv5XYYz34C/D2gKClMx90bLP
-	IhiomNcZEMNQLSBVIHdZcd6ZIkBntvfRyCPQ59adn/+fKOIjeVJXX1Jezfj36lsvxiExaoSnjzG
-	V0kRaUHH67/bumMVnLalLOn8/idE=
-X-Google-Smtp-Source: AGHT+IHAP0IXH1cTeJej5GFb0EKHw585EkuL1Jg2TTCm09EUI1wB7fOJUMzdgLpH1LTeobOnFSE4Z34nK9iVaqAQ+OI=
-X-Received: by 2002:a05:6871:3a0c:b0:25e:1711:90e3 with SMTP id
- 586e51a60fabf-2946467a3c8mr4859696fac.2.1730318044935; Wed, 30 Oct 2024
- 12:54:04 -0700 (PDT)
+	s=arc-20240116; t=1730318089; c=relaxed/simple;
+	bh=7CUkA23AZPCfTzQLS3Bz9YTLbnWwqRi1mw79plUJKN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dbBEVHp/AH+b4+FRgPQlwSBuQSiF8m9Lyv5i6HkQZwp7FoKXIJ7qKUsjrlVf4rLobm9zA1nInHQl3zwuXRg5FSC6btxuvr9Aqt7F4AGp1kqlHg7dtsEH4s9TDvJQXlLnLV8VxHWAES90eyQ+OWwtZMntHVa0jXjMMd+H1pC+WQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=QkeR0ho0; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730318078; x=1730922878; i=w_armin@gmx.de;
+	bh=PFU4SjWjbeevuteMXAX7h8kGOiLDJRs3Rl+fjuBo1lo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=QkeR0ho0T7lnVRmiPyAiwbt2FQ3N9z+ujW8qeHjezFFANVWA4QdJhA+GahO83VBd
+	 uaoD1ObO7u3YuzsH9oKCX2bY15KTgJGLnw4tJZwHtEpP77q93aBT0TZCDSa1l+Orb
+	 wm0He3fz/nks9V2ebYZ9zEdrNMCx1Vo6w53iP/bcEh7sJ1s8VyGJXJjwxHfEYDcv1
+	 KzpTZAPRD0x2POcNVRyXPFc/G6xo9CREBkruz5gi/jSjd+3dPJfxQqhoXSlN22EcR
+	 b5WnXBxGQaprbT+D7P8v9ElHCGfkJJ1PQyF6qkzJkCWsPdUxYDGCNks/zEg+X3oEe
+	 mCrw7WE14FaTw/z0Tw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M59GG-1t7Khe2RRU-00Ef64; Wed, 30
+ Oct 2024 20:54:38 +0100
+Message-ID: <2e9fb24e-9652-4087-963e-cbcf3b1f2c56@gmx.de>
+Date: Wed, 30 Oct 2024 20:54:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029101507.7188-1-patryk.wlazlyn@linux.intel.com>
- <20241029101507.7188-3-patryk.wlazlyn@linux.intel.com> <e332a243-5a98-49ed-81be-b6db305d5dc5@intel.com>
- <35946efe3b8b8b686ba4ea0ed5c9f15c50ca6ef8.camel@linux.intel.com> <000fd68e-2b24-4eb3-b2d7-e4856b403212@intel.com>
-In-Reply-To: <000fd68e-2b24-4eb3-b2d7-e4856b403212@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 30 Oct 2024 20:53:53 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0j+Qc+5PtPdsDy5B0iAGWOxYbKdUOkVmL_jPNVO8fNK=g@mail.gmail.com>
-Message-ID: <CAJZ5v0j+Qc+5PtPdsDy5B0iAGWOxYbKdUOkVmL_jPNVO8fNK=g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] x86/smp: Allow forcing the mwait hint for play
- dead loop
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, len.brown@intel.com, dave.hansen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 0/5] Dell AWCC platform_profile support
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Kurt Borja <kuurtb@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ platform-driver-x86@vger.kernel.org
+References: <20241030000904.7205-2-kuurtb@gmail.com>
+ <f972eabf-58b5-3b0b-ea5f-930894ac840b@linux.intel.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <f972eabf-58b5-3b0b-ea5f-930894ac840b@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:no9bA3ayeFNTSPO9XwDKymQHeenkCSlqtO5L2CbjrilBQbVo8pR
+ 6AmSFa2uOBKsu8PRKkQXRn0rmzZFnIYXkSjjDDt0mPo+Kdh6fJsnGPEgNw4aa8u6v0rjo3k
+ fR6tH2TpWJqo2IyyRNFkq3iyvR/PZwjErAMPczuaIe6QerEb8meKIjTAX0WvUT4WUjhKBPY
+ YYaBCL9hBnCoZlXbNWgtw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Yh1ULmK6Fr8=;13G6yfm09gslF39xt/AenmZwkYA
+ ZUSrUWw9yqYnDrE9LxhkHgwW7vaX/jxFgYNCzb8uaBGuPgZRmmw0s78QqJsaiEEIZVvqATOHB
+ oRV9jHE7G/H8q3f8CshBHyDNlLmf0yuqc2FQC4fPW17atwENLakuDFXRRWlSr2uhe04bDTOeR
+ JQ2GXX7oK8J4C/jlXZRUntFvnPVjpG4GEuNTGITQf/D0+Eqrcx8TDEIq0sXUtg2oxqV3IKZpJ
+ dXCHy+WGNJbmr/Opz9ThTT4Cqfl4WNZ+mg1SmOmx1ktpDtvLqQ46E6cfpLhlRMKxHJhQVCgbj
+ odjz5vBWqeMakhoTUk6UHRkw4iwaDDhFkgCSJBybzx6+XZNcIyfYwGvhiQezsKEq2vcRubG+5
+ 2k6xompdAD31Ja4/6FpHw49V1z0CwPk4xn4gCFv2Rtre2q8MJWVaHLbOQ591vgyBh5YXOWg+l
+ m6HH5U02ueTcI688rVwKZqA2QoqxWmP1ky+AGQOx4ExIb+D7Yw2WV/pchTs+pFQfjvgio6Wdm
+ gADIWvlUvHiMFdyt+c8DsD+GDOe/QnU5eOANijpEewT03QcJt1PobDuc8sU7jFF8pb6+GOzsA
+ Rhhm9xuahgz5C32sx2HipLc/Wlq6XQi4Xri2Ho4vdnhYqlW0y/PEBO6X83/Mg/A587WJOA3qE
+ Ps66tpJ7QvmwV2WBgFZIS6pEMC4ya+DFtOz3rugBrjXiIJ/7RHgeK063vVwXDvbb+GEHmNYZR
+ X5OVTX+Z01J5NMLWlhElsqjgLOXIRBG22lx15xiPJ2JM9EzSEYjkexI71tfzkr3pW5gyQ6tRS
+ 3qSaQBgwMkI+59zGe9OqT1Qg==
 
-On Wed, Oct 30, 2024 at 8:32=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 10/30/24 02:58, Artem Bityutskiy wrote:
-> > On Tue, 2024-10-29 at 11:30 -0700, Dave Hansen wrote:
-> > 1. Could we at least set up a few rules here?  Like, say what the hints
-> > are, what values can they have?
-> >
-> > The hints are 8-bit values, lower 4 bits define "sub-state", higher 4 b=
-its
-> > define the state.
-> >
-> > The state value (higher 4 bits) correspond to the state enumerated by C=
-PUID leaf
-> > 5 (Value 0 is C0, value 1 is C1, etc). The sub-state value is an opaque=
- number.
-> >
-> > The hint is provided to the mwait instruction via EAX.
->
-> OK, so can you distill that down to something succinct and get it in a
-> comment above the new function, please?
->
-> > 2. Where do they come from?
-> >
-> > Hardware C-states are defined by the specific platform (e.g., C1, C1E, =
-CC6,
-> > PC6). Then they are "mapped" to the SDM C-states (C0, C1, C2, etc). The=
- specific
-> > platform defines the hint values.
-> >
-> > Intel typically provides the hint values in the EDS (External Design
-> > Specification) document. It is typically non-public.
-> >
-> > Intel also discloses the hint values for open-source projects like Linu=
-x, and
-> > then Intel engineers submit them to the intel_idle driver.
-> >
-> > Some of the hints may also be found via ACPI _CST table.
->
-> What about the mwait_play_dead() loop that calculates the hint?  Doesn't
-> that derive the hint from CPUID?
->
-> > 3. Can this get called more than once?
-> >
-> > It is not supposed to. The idea is that if a driver like intel_idle is =
-used, it
-> > can call 'set_mwait_play_dead_hint()' and provide the most optimal hint=
- number
-> > for the offline code.
->
-> There are two important nuggets in there:
->
-> First, an idle driver can but is not required to set the hint.  This
-> would be good comment material.
->
-> Second, only one thing is supposed to set the hint.  This is a good
-> thing to WARN() about.
->
-> > 4. Does it _need_ to be set?
-> >
-> > No. It is more of an optimization. But it is an important optimization =
-which may
-> > result in saving a lot of money in a datacenter.
-> >
-> > Typically using a "wrong" hint value is non-fatal, at least I did not s=
-ee it
-> > being fatal so far. The CPU will map it to some hardware C-state reques=
-t, but
-> > which one - depends on the "wrong" value and the CPU. It just may be su=
-b-
-> > optimal.
->
-> OK, so this tells me we *don't* want some kind of:
->
->         WARN_ON(play_dead_mwait_hint =3D=3D PLAY_DEAD_MWAIT_HINT_UNSET);
->
-> warning.
->
-> > 5. What's the behavior when it is not set?
-> >
-> > The offline code will fall-back to the generic non-architectural algori=
-thm,
-> > which provides correct results for all server platforms I dealt with si=
-nce 2017.
-> > It should provide the correct hint for most client platforms, as far as=
- I am
-> > aware.
-> >
-> > Sierra Forest Xeon is the first platform where the generic algorithm pr=
-ovides a
-> > sub-optimal value 0x21. It is not fatal, just sub-optimal.
->
-> What is the non-architectural algorithm?  Which Linux code are you
-> referring to?
->
-> > Note: I am working with Intel firmware team on having the FW "re-mappin=
-g" hint
-> > 0x21 to hint 0x23, so that "unaware" Linux kernel also ends up with req=
-uesting
-> > the deepest C-state for an offline CPU.
->
-> That would be great as well.  Thanks for doing that!
->
-> > 6. Who is responsible for calling this?
-> >
-> > The idea for now is that the intel_idle driver calls it.
-> >
-> > But in theory, in the future, any driver/platform code may call it if i=
-t "knows"
-> > what's the most optimal hint, I suppose. I do not have a good example t=
-hough.
->
-> So let's look at how this works:
->
-> void native_play_dead(void)
-> {
-> ...
->         mwait_play_dead();
->         if (cpuidle_play_dead())
->                 hlt_play_dead();
-> }
->
-> This _existing_ code has three different ways of playing dead (in this
-> order of preference):
->
->  1. mwait
->  2. cpuidle
->  3. hlt
->
-> It has (at least) two different mechanisms for telling which of these to
-> call:
->
->   1. mwait has a bunch of built-in logic that will ensure the CPU
->      should use for playing dead.  If not, it does nothing and returns.
->   2. cpuidle_play_dead() (only used by acpi_idle_driver as far as I can
->      tell) will return an error if it does not support playing dead
->
-> If 1 and 2 fail, then hlt_play_dead() gets called.
->
-> But the really fun part of this is that idle driver is *called* here.
+Am 30.10.24 um 13:10 schrieb Ilpo J=C3=A4rvinen:
 
-Currently, cpuidle_play_dead() is for the cases when MWAIT is not supported=
-.
+> On Tue, 29 Oct 2024, Kurt Borja wrote:
+>
+>> This patch adds platform_profile support for Dell devices which impleme=
+nt
+>> WMAX thermal interface, that are meant to be controlled by Alienware Co=
+mmand
+>> Center (AWCC). These devices may include newer Alienware M-Series, Alie=
+nware
+>> X-Series and Dell's G-Series.
+>>
+>> Tested on an Alienware x15 R1.
+>> ---
+>> v11:
+>>   - Minor changes on patch 4/5
+>> v10:
+>>   - `thermal` and `gmode` quirks are now manually selected because some
+>>     models with the WMAX interface don't have the necessary thermal
+>>     methods.
+>>   - Added force_platform_profile and force_gmode patch for a better use=
+r
+>>     experience
+>> v9:
+>>   - Minor changes on patch 3/4
+>> v8:
+>>   - Aesthetic and readibility fixes on patch 3/4
+>>   - Better commit message for patch 3/4
+>> v7:
+>>   - Platform profile implementation refactored in order to efficently
+>>     autodetect available thermal profiles
+>>   - Added GameShiftStatus method to documentation
+>>   - Implemented GameShiftStatus switch for devices that support it
+>> v6:
+>>   - Removed quirk thermal_ustt.
+>>   - Now quirk thermal can take canonical thermal profile _tables_ defin=
+ed
+>>     in enum WMAX_THERMAL_TABLES
+>>   - Added autodetect_thermal_profile
+>>   - Proper removal of thermal profile
+>> v5:
+>>   - Better commit messages
+>>   - insize renamed to in_size in alienware_wmax_command() to match othe=
+r
+>>     arguments.
+>>   - Kudos in documentation now at the end of the file
+>> v4:
+>>   - Fixed indentation on previous code
+>>   - Removed unnecessary (acpi_size) and (u32 *) casts
+>>   - Return -EIO on ACPI_FAILURE
+>>   - Appropiate prefixes given to macros
+>>   - 0xFFFFFFFF named WMAX_FAILURE_CODE
+>>   - Added support for a new set of thermal codes. Old ones now have UST=
+T
+>>     in their names
+>>   - A new quirk has been added to differantiate between the two sets.
+>>     thermal and thermal_ustt are mutually exclusive
+>>   - Added documentation for WMAX interface
+>> v3:
+>>   - Removed extra empty line
+>>   - 0x0B named WMAX_ARG_GET_CURRENT_PROF
+>>   - Removed casts to the same type on functions added in this patch
+>>   - Thermal profile to WMAX argument is now an static function and make=
+s
+>>     use of in-built kernel macros
+>>   - Platform profile is now removed only if it was created first
+>>   - create_platform_profile is now create_thermal_profile to avoid
+>>     confusion
+>>   - profile_get and profile_set functions renamed too to match the abov=
+e
+>> v2:
+>>   - Moved functionality to alienware-wmi driver
+>>   - Added thermal and gmode quirks to add support based on dmi match
+>>   - Performance profile is now GMODE for devices that support it
+>>   - alienware_wmax_command now is insize agnostic to support new therma=
+l
+>>     methods
+>>
+>> Kurt Borja (5):
+>>    alienware-wmi: fixed indentation and clean up
+>>    alienware-wmi: alienware_wmax_command() is now input size agnostic
+>>    alienware-wmi: added platform profile support
+>>    alienware-wmi: added force module parameters
+>>    alienware-wmi: WMAX interface documentation
+>>
+>>   Documentation/wmi/devices/alienware-wmi.rst | 388 ++++++++++++++++
+>>   MAINTAINERS                                 |   1 +
+>>   drivers/platform/x86/dell/Kconfig           |   1 +
+>>   drivers/platform/x86/dell/alienware-wmi.c   | 477 ++++++++++++++++---=
+-
+>>   4 files changed, 791 insertions(+), 76 deletions(-)
+>>   create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+> Huge thanks to you both Kurt and Armin for all the work done to improve
+> this series! :-)
+>
+> I've applied this series to the review-ilpo branch now.
 
-> The driver that is also responsible for overriding the mwait hint.
+Nice.
 
-So no, intel_idle is not called there because it only uses MWAIT.
+Would it be possible to apply a small fixup to patch 4?
+Because pr_warn("force_gmode requieres platform profile support") seems to=
+ be missing a newline.
 
-> So this series opts to have the boot code plumb the hint back into a
-> basically undocumented global variable while also assuming that the
-> system is *going* to use mwait.  It then does *nothing* with the
-> callback just adjacent to the code it wants to modify.
->
-> Seems rather spaghetti-like to me.
->
-> To make it worse, go look at da6fa7ef67f0 ("x86/smpboot: Don't use
-> mwait_play_dead() on AMD systems").  It hacks AMD-specific code in
-> mwait_play_dead() just to force the cpuidle code to get called.
->
-> What if we did this?  First, introduce a helper:
->
->         bool mwait_play_dead_with_hint(u32 hint)
->
-> and then restructure native_play_dead() to look like this:
->
-> static mwait_play_dead_generic(void)
-> {
->         u32 hint =3D get_deepest_mwait_hint();
->
->         return mwait_play_dead_with_hint(hint);
-> }
->
-> void native_play_dead(void)
-> {
->         bool used;
->
->         used =3D cpuidle_play_dead();
->         if (used)
->                 return;
->
->         used =3D mwait_play_dead_generic();
->         if (used)
->                 return;
->
->         hlt_play_dead();
-> }
->
-> If the cpuidle drivers want to use mwait with a different hint, they
-> override the *EXISTING* drv->states[].enter_dead() functionality and
-> call mwait_play_dead_with_hint() with their new hint.  Then they don't
-> need to pass anything _over_ to the mwait code.
->
-> Wouldn't something like that makes this all much more straightforward?
+Thanks,
+Armin Wolf
 
-Well, except for one detail which is this beautiful thing in mwait_play_dea=
-d():
-
-if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT) {
-    /*
-     * Kexec is about to happen. Don't go back into mwait() as
-     * the kexec kernel might overwrite text and data including
-     * page tables and stack. So mwait() would resume when the
-     * monitor cache line is written to and then the CPU goes
-     * south due to overwritten text, page tables and stack.
-     *
-     * Note: This does _NOT_ protect against a stray MCE, NMI,
-     * SMI. They will resume execution at the instruction
-     * following the HLT instruction and run into the problem
-     * which this is trying to prevent.
-     */
-    WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
-    while(1)
-         native_halt();
-
-clearly referred to as a kexec() hack, which cannot be done in
-cpuidle_play_dead() because the cpuidle driver doesn't know how to get
-to md->control.
-
-And even if it did, it is kind of not its business to deal with this stuff.
 
