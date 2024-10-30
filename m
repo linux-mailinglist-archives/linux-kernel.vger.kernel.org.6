@@ -1,170 +1,97 @@
-Return-Path: <linux-kernel+bounces-389175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275599B6989
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:49:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F179B698D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB831C21106
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:49:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355061C2099A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD8A21502F;
-	Wed, 30 Oct 2024 16:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646E2215026;
+	Wed, 30 Oct 2024 16:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Dzr+tNNu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Uzd895sY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0072144C4;
-	Wed, 30 Oct 2024 16:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAF62144A4;
+	Wed, 30 Oct 2024 16:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730306974; cv=none; b=kfBFtsYjzHtN/D+gUzEHEilzFlhK1KSkzogU8xjQusEmL3QjKxrzJwXI+mm15TidodrwZJQMel3Euyiyzp9+IqJsA5fJtIT8Ny3sPtaEynRpSEzcMOsdGqQFxaStQnIGrRcWMIWpivIXH6ckTmjJqDfm6k8dPcXYNSmuotYNYyw=
+	t=1730307024; cv=none; b=JirrXh8vIdfsY1RU2vFWUUcGXBZU+g0GR0gVhw80s7PgXJVccvsYRDWZnKjiX03jdFsEiLAyzZTtjydT2ysQn60G0iQoObEEGjFfwK3pn980lHAfvSkcGq4wcasTx6ovSb99U1XmbUKJikc6ze+qyu8u5zT8c6YwE7u4i/vl7n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730306974; c=relaxed/simple;
-	bh=RkVeWxeRRkmjJB4/R7UwIT9Q1ckLvtqNuXSUaE0JnBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JPec4y9hZD7lyE9y/qt9yKjTPAB820piO8LOsqWZMKsPotA1TqRHbDC2YeLadbmkKLaNvrClVgsLFv8RV4DoX1yH+bU31gmxq6BMHeHIPidH9iq93OJOXbKWZGj3TcP+yNxsFec/KR3jn9FtoQZk/smUsCGXtsz21/M5Yu7LNvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Dzr+tNNu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDw8OD013373;
-	Wed, 30 Oct 2024 16:49:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=KZ6C4b
-	GdYZUKbQoFAev6EjLz2yF6JNszEp8+h5mO/4w=; b=Dzr+tNNufTYPEu1dQYorW5
-	dK/D6fZITiadDV9BMVF1AG27hir1YVtc/gdNGJU23+WMbxnlZdAxz6L5GarfzTxw
-	qnYx68Agj/yZYYdrva5TpVHqYDA4et5S4qzTeS3ms47QQlyr2FR0V/8Clgih+CD2
-	oazy+hJphs/3RDNDdFC3V09lFa12aIQc7UR0DMdjap+wL4y3o5cJhbylyuEHLwjd
-	PrdT0zpL3wmzSeyPdP4+NhkL2wvPXMqZssLb+lgKwsawKuyTrOH2liSxOOAdna28
-	SqDj+Cv9dMH68rRdFJQMhyFfecx49oDQguRdn3X/SScBn+L7rvP3bxhE6dk0pEaw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65knun-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 16:49:22 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49UGnMiH014907;
-	Wed, 30 Oct 2024 16:49:22 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65knuj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 16:49:22 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49UGEWDl018808;
-	Wed, 30 Oct 2024 16:49:21 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hc8k8ttu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 16:49:21 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49UGnHmj58720682
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 16:49:17 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2EDAD2004B;
-	Wed, 30 Oct 2024 16:49:17 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4805720040;
-	Wed, 30 Oct 2024 16:49:16 +0000 (GMT)
-Received: from [9.171.2.34] (unknown [9.171.2.34])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 30 Oct 2024 16:49:16 +0000 (GMT)
-Message-ID: <67a85d88-6705-4e8e-ba48-7b945aca4d8f@linux.ibm.com>
-Date: Wed, 30 Oct 2024 17:49:15 +0100
+	s=arc-20240116; t=1730307024; c=relaxed/simple;
+	bh=i+riZExPC4Bzx82/6vEcQbpgyzoXnl5tP4Zu38hTmx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fqq4XZelCAHoOp9jekaO4UuMPlO6p6YYz04oTFwHZ7YebOku/rkQoIGFjv6i4JzM/8QtWN+sYmfpA8YsQiYposzuy6O9sGOe7Wan1QoGXgPe2Yzm7+PenwTS5QJ6841yb1cbXFkMthzbaT6I4psuRaBopsdaIcMcB1inpqYwSBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Uzd895sY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2E01B40E0208;
+	Wed, 30 Oct 2024 16:50:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TtMLYRbXGK7z; Wed, 30 Oct 2024 16:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730307016; bh=kse0K2kJU6T6AL0bA4i1n8JgYNPNQBVrO2byuZlpEfc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uzd895sYaEdC8s/Qr1FnPhTtqFdXd/m6WnpULp99sf+L5wIEfrcVNRPVJ2H3qfxz3
+	 nMg6dI1Z0bD2+4N+5rF7YT4BR0mP8j3OhI94bMgo2AmsNG7u6egZXX8mGvKmku1+HT
+	 7yNnKN9PG4csud82Dl6MJDgzqJLwuAKgcA2+5RnDNFx/uzXtfmJQ+mJXQ4XNTgeR8+
+	 bPH1M3G43T+QHRHK8QEekRi/H7V0nJyMOkT22ljQknSGj5q1wBvs+JHXU8ix0mOU4y
+	 YD84CigugNXHvkHO1Xz6PrHnCKoR+QeguRcPp9MMseLPcEr0TUR6YTEFQxCmS+QTvw
+	 7iZBPgZbdB//KG2RhSMorKLmvSFvmoFssf6dJaxpCFFkxPqlXP0CeXkY0a9smBmo8D
+	 wuTYN/qXDpZSbYvZUS3GwPnvGU7nNTB/dMXnSsOyJHPmiVAZcSZODzxehH0/AHMRPY
+	 3u0oOISMIxCR9ROMlSziRrX81CauTdqgEQYFNtFeFgQk/NP4EuX5QnfpoLavvQCNld
+	 HbDs/lcOEa+DX/D7JpcRnBhjQTxcwyhHxK91hfiQY40aDSx2LprrA1+vJf0qe199LL
+	 PCPe5oa2vUf28Iu4l/4Cw2JRVnD6N8uIgRJr9aoDO4IqtB/xbK/9cpdbA+fHrNBZxi
+	 M9tTJoLnKuPSzKboNKijW6gg=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5057640E0191;
+	Wed, 30 Oct 2024 16:50:03 +0000 (UTC)
+Date: Wed, 30 Oct 2024 17:50:02 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Avadhut Naik <avadhut.naik@amd.com>, x86@kernel.org,
+	linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com,
+	qiuxu.zhuo@intel.com, tglx@linutronix.de, mingo@redhat.com,
+	rostedt@goodmis.org, mchehab@kernel.org, john.allen@amd.com
+Subject: Re: [PATCH v7 5/5] EDAC/mce_amd: Add support for FRU Text in MCA
+Message-ID: <20241030165002.GFZyJjuifxBLUDKyL6@fat_crate.local>
+References: <20241022194158.110073-1-avadhut.naik@amd.com>
+ <20241022194158.110073-6-avadhut.naik@amd.com>
+ <20241030161550.GFZyJbthMO_2Wxe3bV@fat_crate.local>
+ <20241030163147.GA1379143@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] virtio-mem: s390 support
-To: Heiko Carstens <hca@linux.ibm.com>, David Hildenbrand <david@redhat.com>,
-        Eric Farman <farman@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>
-References: <20241025141453.1210600-1-david@redhat.com>
- <20241030093453.6264-H-hca@linux.ibm.com>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <20241030093453.6264-H-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qom_Th8fefJ6KQNAeS0Ea6VlUPdeBuG0
-X-Proofpoint-GUID: lghy8jOAyVd359QXEI4RS9zRmCQXmgAp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300131
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241030163147.GA1379143@yaz-khff2.amd.com>
 
+On Wed, Oct 30, 2024 at 12:31:47PM -0400, Yazen Ghannam wrote:
+> The entire struct mce_hw_err gets exposed through the mce tracepoint in
+> patch 3 of this set.
 
+Bah, crap. Lemme go back and take a second stab at this.
 
-Am 30.10.24 um 10:34 schrieb Heiko Carstens:
-> On Fri, Oct 25, 2024 at 04:14:45PM +0200, David Hildenbrand wrote:
->> Let's finally add s390 support for virtio-mem; my last RFC was sent
->> 4 years ago, and a lot changed in the meantime.
->>
->> The latest QEMU series is available at [1], which contains some more
->> details and a usage example on s390 (last patch).
->>
->> There is not too much in here: The biggest part is querying a new diag(500)
->> STORAGE_LIMIT hypercall to obtain the proper "max_physmem_end".
-> 
-> ...
-> 
->> David Hildenbrand (7):
->>    Documentation: s390-diag.rst: make diag500 a generic KVM hypercall
->>    Documentation: s390-diag.rst: document diag500(STORAGE LIMIT)
->>      subfunction
->>    s390/physmem_info: query diag500(STORAGE LIMIT) to support QEMU/KVM
->>      memory devices
->>    virtio-mem: s390 support
->>    lib/Kconfig.debug: default STRICT_DEVMEM to "y" on s390
->>    s390/sparsemem: reduce section size to 128 MiB
->>    s390/sparsemem: provide memory_add_physaddr_to_nid() with CONFIG_NUMA
->>
->>   Documentation/virt/kvm/s390/s390-diag.rst | 35 +++++++++++++----
->>   arch/s390/boot/physmem_info.c             | 47 ++++++++++++++++++++++-
->>   arch/s390/boot/startup.c                  |  7 +++-
->>   arch/s390/include/asm/physmem_info.h      |  3 ++
->>   arch/s390/include/asm/sparsemem.h         | 10 ++++-
->>   drivers/virtio/Kconfig                    | 12 +++---
->>   lib/Kconfig.debug                         |  2 +-
->>   7 files changed, 98 insertions(+), 18 deletions(-)
-> 
-> I'll apply the whole series as soon as there are ACKs for the third
-> patch, and from the KVM guys for the whole series.
-> Christian, Janosch, Claudio?
+-- 
+Regards/Gruss,
+    Boris.
 
-Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-for the series.
-
-@Eric Farman,
-Was someone from your team planning to look into this (testing, review whatever)?
+https://people.kernel.org/tglx/notes-about-netiquette
 
