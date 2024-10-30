@@ -1,165 +1,88 @@
-Return-Path: <linux-kernel+bounces-389739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281789B709D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:41:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBEE9B709A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F5C1F22567
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A441C20A3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA89215029;
-	Wed, 30 Oct 2024 23:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74450217446;
+	Wed, 30 Oct 2024 23:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qgg/Bc8R"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KzprbEYD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB81C2141CA;
-	Wed, 30 Oct 2024 23:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903371C4612;
+	Wed, 30 Oct 2024 23:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730331702; cv=none; b=HnjFE1Zg2ROEZn8otOslmundojKVULSXkdo8YVLZ//1uCfTMoOObjnM+BxiLThCkyOUzh6KlOhE6mgsU+OTCPOZsRd5JrQiwNzef1y1AmMSl8WZmdIXqVUyQsnwO7GI/MnhAgMk+YttYhJ6pnMJpiHrF2iacP7NnlERBlygbJag=
+	t=1730331684; cv=none; b=R1BsczbyLyWtAkeky0AamtijmdKZpzKj7qG88m4zjn86HXdBTp1vEOfL7tn8RvFjU3uG02mETB0kfwVZ1cD0yUJVOd0Z3pYIYCQjV8veNTxWb6sloGr0sEZoTc76EaP53MMzpV47saLTOdfcQkEP+WsKDD/UNCNGrpoLwE8ZzlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730331702; c=relaxed/simple;
-	bh=M0DDN+40heMq1MUyTEiggbwfVdfQi32sS1lu41JVgR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aReKudVo+0aUjP0y7U16poXCYjzJ+OGouSwnY87kL/sWhL29JWBkwP+UYErYRf/ifQf6gXwH6aeAULhcjgGY3CyTG4w85NgwVzsgacgmUr47MHF8JSlmA5MYH2NM5vm2WNUIffMLAnKFS1pT0J9k/UJTGueICt/tIPoQp9uU+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qgg/Bc8R; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfNc8107073;
-	Wed, 30 Oct 2024 18:41:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730331683;
-	bh=56mwxKqWIevGkZXhU/haryWJFMgZit1fhV8XrDFsqio=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Qgg/Bc8R5KjC8BWc1AZrdWzdx1M4rGmY8IZzuAS/fh0zC3R/Cr1reOwdMzklwTYYN
-	 kK4mv4EQHBOse+u0+m4CnKhM6Rm7tLQx3Ba/oshhO4WwI0a7Ly4gkkeMrcPyz+bDL0
-	 EPVmFlXbK/BNHPUGaiMsEdzCnnMd53Iws7CM6wTw=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfNKW107369;
-	Wed, 30 Oct 2024 18:41:23 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
- Oct 2024 18:41:23 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 30 Oct 2024 18:41:23 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfMbj096597;
-	Wed, 30 Oct 2024 18:41:22 -0500
-Message-ID: <b0f15446-2e31-4776-84ec-99d96f65ef48@ti.com>
-Date: Wed, 30 Oct 2024 18:41:22 -0500
+	s=arc-20240116; t=1730331684; c=relaxed/simple;
+	bh=bbGa8L383lbBHyiX3dMUYYHXFwaxWhrTdBBmLqW48J8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=gIiHSzo0f5r4TuQCcxSYnYPZUZYVGALetDz7cayf1U+TKhaoI4OM1uwIkPoNQInj1FCTAVlWP+hpIGPy3bJntxYEnuiSvDRASND3kClaFTDqLo5S8dNx/qyXvOoKMIMaL84buEEowRlblqa2H26FLxr6U9IS4VqdhfgKy4g3Wok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KzprbEYD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C40C4E68E;
+	Wed, 30 Oct 2024 23:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730331684;
+	bh=bbGa8L383lbBHyiX3dMUYYHXFwaxWhrTdBBmLqW48J8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KzprbEYDbxB04AfEtJScziuD6t4EHGGSEhCsnxN8O4l6QWKNUXdr7Z2UyYJqP34dg
+	 Gv7/T4XGD1ziHIKkJA0Jpt/ax0qa2gOv14famm7QpvDe/56jO5X/MOq2sFSKhyPmO7
+	 fFpWpdDYMvLRzlh8ztA/3+aPso7SxopvzMtSbFwc=
+Date: Wed, 30 Oct 2024 16:41:23 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mm@kvack.org, kasan-dev@googlegroups.com,
+ Alexander Potapenko <glider@google.com>, Andrey Konovalov
+ <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo
+ Frascino <vincenzo.frascino@arm.com>, WANG Xuerui <kernel@xen0n.name>
+Subject: Re: [PATCH v2] mm: define general function pXd_init()
+Message-Id: <20241030164123.ff63a1c0e7666ad1a4f8944e@linux-foundation.org>
+In-Reply-To: <20241030063905.2434824-1-maobibo@loongson.cn>
+References: <20241030063905.2434824-1-maobibo@loongson.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] gpio: omap: Add omap_gpio_disable/enable_irq calls
-To: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski
-	<brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bin Liu <b-liu@ti.com>
-References: <20241030225900.59844-1-jm@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20241030225900.59844-1-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi all,
+On Wed, 30 Oct 2024 14:39:05 +0800 Bibo Mao <maobibo@loongson.cn> wrote:
 
-Please ignore this patch, will resend this patch
-with fixed recipients in the "to" list.
+> --- a/arch/loongarch/include/asm/pgtable.h
+> +++ b/arch/loongarch/include/asm/pgtable.h
+> @@ -267,8 +267,11 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
+>   * Initialize a new pgd / pud / pmd table with invalid pointers.
+>   */
+>  extern void pgd_init(void *addr);
+> +#define pud_init pud_init
+>  extern void pud_init(void *addr);
+> +#define pmd_init pmd_init
+>  extern void pmd_init(void *addr);
+> +#define kernel_pte_init kernel_pte_init
+>  extern void kernel_pte_init(void *addr);
 
-Apologies for the noise.
+Nitlet: don't we usually put the #define *after* the definition?
 
-~ Judith
+void foo(void);
+#define foo() foo()
+
+?
 
 
-On 10/30/24 5:59 PM, Judith Mendez wrote:
-> Add omap_gpio_disable_irq and omap_gpio_enable_irq
-> calls in gpio-omap.
-> 
-> Currently, kernel cannot disable gpio interrupts in
-> case of a irq storm, so add omap_gpio_disable/enable_irq
-> so that interrupts can be disabled/enabled.
-> 
-> Signed-off-by: Bin Liu <b-liu@ti.com>
-> [Judith: Add commit message]
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
-> Changes since v1 RESEND:
-> - split patch from series [0]
-> - Add disable/enable calls without wrapper functions
-> [0] https://lore.kernel.org/linux-omap/20241011173356.870883-1-jm@ti.com/
-> 
-> Tested on am335x BeagleBone Black
-> ---
->   drivers/gpio/gpio-omap.c | 26 ++++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 76d5d87e9681e..137aabada26f9 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -711,6 +711,28 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
->   	raw_spin_unlock_irqrestore(&bank->lock, flags);
->   }
->   
-> +static void omap_gpio_disable_irq(struct irq_data *d)
-> +{
-> +	struct gpio_bank *bank = omap_irq_data_get_bank(d);
-> +	unsigned int offset = d->hwirq;
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&bank->lock, flags);
-> +	omap_set_gpio_irqenable(bank, offset, 0);
-> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
-> +}
-> +
-> +static void omap_gpio_enable_irq(struct irq_data *d)
-> +{
-> +	struct gpio_bank *bank = omap_irq_data_get_bank(d);
-> +	unsigned int offset = d->hwirq;
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&bank->lock, flags);
-> +	omap_set_gpio_irqenable(bank, offset, 1);
-> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
-> +}
-> +
->   static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
->   {
->   	struct gpio_bank *bank = omap_irq_data_get_bank(d);
-> @@ -723,6 +745,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
->   	.irq_shutdown = omap_gpio_irq_shutdown,
->   	.irq_mask = omap_gpio_mask_irq,
->   	.irq_unmask = omap_gpio_unmask_irq,
-> +	.irq_disable = omap_gpio_disable_irq,
-> +	.irq_enable = omap_gpio_enable_irq,
->   	.irq_set_type = omap_gpio_irq_type,
->   	.irq_set_wake = omap_gpio_wake_enable,
->   	.irq_bus_lock = omap_gpio_irq_bus_lock,
-> @@ -737,6 +761,8 @@ static const struct irq_chip omap_gpio_irq_chip_nowake = {
->   	.irq_shutdown = omap_gpio_irq_shutdown,
->   	.irq_mask = omap_gpio_mask_irq,
->   	.irq_unmask = omap_gpio_unmask_irq,
-> +	.irq_disable = omap_gpio_disable_irq,
-> +	.irq_enable = omap_gpio_enable_irq,
->   	.irq_set_type = omap_gpio_irq_type,
->   	.irq_bus_lock = omap_gpio_irq_bus_lock,
->   	.irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
 
 
