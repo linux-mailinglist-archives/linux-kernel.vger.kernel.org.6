@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-389145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21329B691B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:27:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9949B691D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34261C21296
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:27:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0984C1C2137B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9842C214408;
-	Wed, 30 Oct 2024 16:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C1D21443B;
+	Wed, 30 Oct 2024 16:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDsVR9Va"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MftT5/hD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2576A1E573B;
-	Wed, 30 Oct 2024 16:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2C921440F;
+	Wed, 30 Oct 2024 16:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730305625; cv=none; b=XrpHW+hg5YhZYobKbXMVDqYOt3WeWFmx6QnqSxsZXRTci7aglGsJJOEEqG0luXP1soUSZ2HIzlM4aPxL1F0ZKAVMKwYtbyAFtnhQgzrqve2G07L0C2uPPY1EADKg6/5jhb3RqyPrEMiCx7kkNMlTugqpki9N9Kiml1NZfBE1keU=
+	t=1730305625; cv=none; b=KOaK4h/amIhbbdFvhNCrS/SH4KiMQTFQjC9SroOosdeBI21kkSh/MFyvGVHDb5H4lZI7m9vszkmokatnx4lZlp4eEgf52zTbLcyqs5YGUFCIaF96cHAEZJmkKYNUTvhhJm4jL213FGlUD7qx0fIF/1i0aVktpnZAyJZiQD0aiuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730305625; c=relaxed/simple;
-	bh=Z5gVZhp6D1TES0aWQFSn9gb/GoSlCRKexfne6oHSOpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ET4Yeq/fuQDcyNw2j7CD1BQ3bOFV8jUc8aJx2CUT6zqouw8GIKCDGAS2UCPlbOLkd1AjEU6A+hO1U0iDb3z097T+FLwfQJsVAj1D5gVLXvrrTytjY06qOF3PH0hkE4SikWzNOwzkFRSKJjEakXT2FVTNsteE537Atj8qvvmGWQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDsVR9Va; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso1000809566b.1;
-        Wed, 30 Oct 2024 09:27:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730305621; x=1730910421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mL6g494dCDURUvV6Gm9V0WqHA34f4AywV8P7ZaT7UX0=;
-        b=eDsVR9VaRsHvdvejjUgsD3Ojm2QEzfWtmgvykWIUUn5owRO9aedF2kopdC2hy8lB4W
-         /z2Z0ECMrSu4xTG17O3iG62l6GfjeWUJxiuHf3l1qOtpHjKprLf8ktsVdzLS1QQ7WF7p
-         9NT34nkfhv4trPEry/9lrABG+Skglx6zQ291TVI5c/RRn8WGs+vLwpY30/T/I/dRcrsM
-         G7B/YHySzuR5f6IU3GuzUQf3jponH90tsLlA99mB0noVqZMAl1YqRyHTosWqBTXcEJju
-         fVJdFgchFDYfs8848ufVX8XX9rsBM+2EjTfhRqM7Mvi1+dUpaVXewiCcaf3MjAx+9y/M
-         I9tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730305621; x=1730910421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mL6g494dCDURUvV6Gm9V0WqHA34f4AywV8P7ZaT7UX0=;
-        b=EaUnoM5WLwPmXE7yRK7Rmu3M5tUweV9kEybYQpNymAfp7LMCYfWRyXuFD1e7Qus6jA
-         zYF5mnPqQlBcV7U6vaOI/8RPVhVXKDWoifTqEgtMa2TnPkpMosUhdw+srZwBi/vG/fxL
-         K4cK7GpERomWA1U/pa0qMEcOQkbRToqIgbMIUbK6FfGMc8manVXlrqUALRnQWbdo5jDU
-         81eC8gG/iPrOiMPSSYatjelzS3xYIWwJccRA4wv8JRNGgpN6zQoYcGxgxJecS99XPajB
-         jOz1Sf9+MKevR8uR/WgntYQM7ft+BJX20AxBJQnE694RBn7JkkAYPSL7u86tuICQpdnC
-         CreA==
-X-Forwarded-Encrypted: i=1; AJvYcCWl7m97G9+E3iInH2P/e5DT3ZvPXDIvFJJY8sg3Ap6r0foHtqU0RGB/4Uhpsgj95HAsVsSn0mw2aazAuvnk@vger.kernel.org, AJvYcCWscII5GXsvDa7y4sgHB54bWYNVCVN0B9RFyhsB8ZKK+zbaYW3zYBaHa9BBZMhtvh5Jv9u5amdQXbkD@vger.kernel.org, AJvYcCXEWp6jBmjQA58XU30vTe92EpPgk1injz8C9KSkLtmImyjgAWh0RAs51XiqGNSi6WDRwDHVLqTDZPlo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWla6y/1z8zZKNWFcjrbfKTnCp2sitoiBf4ssKSCcZWmDbEbjW
-	PrDblLMsbDyCsFQVuIV2edb5aSJHxwEIlo0VMZ/08QH1T/A6OtLBhMD47mrAndlapXChQTNM3+H
-	mDiF/UEEviEaMI1RjMILfIh6CIQg=
-X-Google-Smtp-Source: AGHT+IH8F2i/ZAHGzrQ8NhWG3ucD3fmiMWqQjjUVUnSlco3GAnI5OvGB4ZoHFE246UsXhzy2aZ/j03PTX7uQUlQKbIQ=
-X-Received: by 2002:a17:907:2d89:b0:a99:33dd:d8a0 with SMTP id
- a640c23a62f3a-a9de5ff9ad3mr1357100466b.38.1730305621259; Wed, 30 Oct 2024
- 09:27:01 -0700 (PDT)
+	bh=nON8JGjhzMmgUqSJeQKjBGrRpfhwPugcBp633E+LVv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COMOK7OyUuf7rJMDgrKiVnED/5lEKWW/XeYDJQbw+GR3bykz12waxHPvBT3aDMCyPz4ytBDUy3lpewSAkN/KX9ZmjKV68Rfd/B3Jjzf5h/DRd/y/s+a4Mux1renT67QvE/iMtZxJ2ev3gdXoW79c7aKU0/S/iKlubqyL665s9FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MftT5/hD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478B2C4CECE;
+	Wed, 30 Oct 2024 16:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730305625;
+	bh=nON8JGjhzMmgUqSJeQKjBGrRpfhwPugcBp633E+LVv0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=MftT5/hDlYV56Gb9WkIKQj4azgGIRymZruVabMtcAZX2QdCheHAWm6Btw0oTI3Fmv
+	 ksm4szS6HhEnbPwAIOIgrXgQtmxf7ecA54fXGh6FfwuYyySDfSfu+Doh8vdAagvYJ6
+	 M2diYMSN1/ZCR0JNXl+3vlTgM6EXzh9fLpUjF+vKCofcS+dX4ZDuvmcIhNfSf3AWPR
+	 5O62YbM23Ro5HwRa7CmyYM2Cl9nb2oDIAXLl6PuXztI6/IcwoWKQBX+9tjzoPbSsLD
+	 JlSNxIVQIUN7TjKO8DkwxNcAW/Dgv7x0P7tRP3hutLLaleMLNSqPxN0YQOblgCEZBe
+	 mJC8EWUGBsDqQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E245BCE0D99; Wed, 30 Oct 2024 09:27:04 -0700 (PDT)
+Date: Wed, 30 Oct 2024 09:27:04 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org, urezki@gmail.com,
+	quic_neeraju@quicinc.com, frederic@kernel.org,
+	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
+	hernan.poncedeleon@huaweicloud.com
+Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
+ and semantic tags
+Message-ID: <374137f4-de9e-43a5-a777-31984dc17cfb@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240930105710.383284-1-jonas.oberhauser@huaweicloud.com>
+ <20240930105710.383284-6-jonas.oberhauser@huaweicloud.com>
+ <ZyApMteRMxZbpBta@Boquns-Mac-mini.local>
+ <cd97e045-dfa4-4ffe-9df0-f7abeec848e7@paulmck-laptop>
+ <3b796ef4-735a-44df-a9b1-671df49fd44e@huaweicloud.com>
+ <ZyJEBc1qwFHwQQT2@Boquns-Mac-mini.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-topic-input-upstream-als31300-v4-0-494297c9e50a@linaro.org>
- <20241030-topic-input-upstream-als31300-v4-3-494297c9e50a@linaro.org>
-In-Reply-To: <20241030-topic-input-upstream-als31300-v4-3-494297c9e50a@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 30 Oct 2024 18:26:24 +0200
-Message-ID: <CAHp75Vf8ZO3ZJ0V8QGXMN1VXeA4=nUEjOJmJbpGWF_OdkGP8xQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] iio: magnetometer: add Allegro MicroSystems
- ALS31300 3-D Linear Hall Effect driver
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, Andy Shevchenko <andy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyJEBc1qwFHwQQT2@Boquns-Mac-mini.local>
 
-On Wed, Oct 30, 2024 at 5:30=E2=80=AFPM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
+On Wed, Oct 30, 2024 at 07:34:45AM -0700, Boqun Feng wrote:
+> On Wed, Oct 30, 2024 at 12:38:26PM +0100, Jonas Oberhauser wrote:
+> > 
+> > 
+> > Am 10/30/2024 um 12:41 AM schrieb Paul E. McKenney:
+> > > On Mon, Oct 28, 2024 at 05:15:46PM -0700, Boqun Feng wrote:
+> > > > On Mon, Sep 30, 2024 at 12:57:10PM +0200, Jonas Oberhauser wrote:
+> > > > > Not all tags that are always there syntactically also provide semantic
+> > > > > membership in the corresponding set. For example, an 'acquire tag on a
+> > > > 
+> > > > Maybe:
+> > > > 
+> > > > Not all annotated accesses provide the same semantic as their syntactic
+> > > > tags...
+> > > > 
+> > > > ?
+> > > 
+> > > Jonas, are you OK with this change?  If so, I can apply it on my next
+> > > rebase.
+> > 
+> > I'm ok with an extra s after semantics and a minor rephrase:
+> > 
+> > Not all annotated accesses provide the semantics their syntactic
+> > tags would imply
+> > 
+> > What do you think @Boqun ?
+> 
+> Yes, of course! This looks good to me.
 
-...
+Very good!
 
-> +       ret =3D devm_mutex_init(dev, &data->mutex);
-> +       if (ret)
-> +               return ret;
+This is in the commit that you (Jonas) will fix, correct?  If so, could
+you please make this update as well?  Otherwise, Murphy being who he is,
+I will end up changing this and then overwriting my change with your
+updated commit.  ;-)
 
-Thanks!
-
-FWIW, I'm about to send the last three patches to fix them all.
-Currently sent to IIO, GPIO subsystems.
-
---=20
-With Best Regards,
-Andy Shevchenko
+							Thanx, Paul
 
