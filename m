@@ -1,165 +1,173 @@
-Return-Path: <linux-kernel+bounces-389254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972D29B6A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:15:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18FD9B6AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C4F2828F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30BB31F244D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A9E22CC5F;
-	Wed, 30 Oct 2024 17:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAE3217447;
+	Wed, 30 Oct 2024 17:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPnvIuuT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RQIayQFv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1EF22ADFD;
-	Wed, 30 Oct 2024 17:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9D12144CA
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307891; cv=none; b=kdFoMWMWXUXMgZQMp1vAytyuUk8tLeAzzYed6lAl5bH/kAFQeGM+7k8rGa02pn5TMCuSTymeiJVq5iOtuCrS5wDscj6l4zuzCvjlEFoYolQKsWCTjxG/AUjeHMN9kWvodxOJ0d3+xu05P9EBi2Cqk4HkRwdKXEZ3mjJzaHhEWTA=
+	t=1730307991; cv=none; b=m0kBpcAAGW6Fx3vZLAQ8YrcfvxIZ45zLn5QDE2roXwgFl7zqW2PmC7kKrELRWgzUr09qyQ4NlqXqb5VhquowWmXZKHBIDKyVDk2aPiAyHajwv+VQ0mlj7PMmoxlM7hvLD6w0rMzyMzvKQytsBCRxOeuIzjPWlcJuW5pPKJXd8/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307891; c=relaxed/simple;
-	bh=F9Pr/Oo+xoM6rBNWj4TUXotKSeXlLKjDZ0TcVUnAkZk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=I8/cSLdYqcjl+4JlxQi/mSglEOuYIfSF3UG+o3a2M4tO+AnwDXG1USCNaRmD6TyfQxtIigTE/xECMAdSPq8QH1cKEldsvZfmLYnrhkJI8NNGDu4WBi/TxoYqGOB2/dTHp/X52RpGfvOjtJMT8jsCQxqHmrLrRrA+I84R64am3mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPnvIuuT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2707BC4CED2;
-	Wed, 30 Oct 2024 17:04:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730307891;
-	bh=F9Pr/Oo+xoM6rBNWj4TUXotKSeXlLKjDZ0TcVUnAkZk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=QPnvIuuTQIPej4r3eeYpF52cq2e7H1rX9pCQNfZl+LOKTAqY2dqepCh0c22gWfmdf
-	 8aDUkUZEwVMevTt2G2hab/ftEIBTN2XHMHprfXXgkQIEIrpy0DPUKNJK16QKNDdRCt
-	 Zm0i0zCW4jCPBF8fwSdYFGDmS6xLPXLlzVhvsSdCcp0TpbM8C4X+pdAPIGKWI3mAff
-	 RXdam7q2IsjC/YnOItE7WJJar9/4GRhdptKsqi0NxU8IcPVjkDwyL/7JoHIesy6lnm
-	 w8nXiNTJ8QHhAFlMRhiW2s6ZNPrVPHLTJwcf5TE64yTp0rUVCEPDKMqFuQd6O742kR
-	 OFEjZNKihxaiA==
-Date: Wed, 30 Oct 2024 12:04:50 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1730307991; c=relaxed/simple;
+	bh=+Pq/Keqee/A6Rq5iMayhtYjlRnMtWU/O8UEky+x1zk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ouNfv8+2nmMFfdQUlKKSszK9KLRFNslbL7woXx2gaPRAVAW2KsNfyY3xHjMknmcd/L8N8cl96JPLkj+YKEAbtR8kGPXVnuR5Xi/wo8tDZ2j9ZZdRdvoaj1KdxPMpdZqOKHhhyZ01YS4dEtNA0/Wnw2DWYQ0yn4KmFQLlfhCPA1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RQIayQFv; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730307988; x=1761843988;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+Pq/Keqee/A6Rq5iMayhtYjlRnMtWU/O8UEky+x1zk8=;
+  b=RQIayQFvLVqHY/j5x69l4Tasj3+zzWFQcmcsHscY/kCZIdb/i44f4orF
+   z8Uxf3v7Sk7vKsUixRUuLpPS+Jy95++jpHDFq5eaYACjVMEBLvl3LMKrm
+   PejR0D3MwO37+Y6xbUQcxPfUOXPFM0QRwkW3tp75eG39w357rIhIhOmmG
+   8Hht5DR9SZouCDhTg/VI8eD6AFPYtq6U4X0JhNnDl81RSvwdC7IV33Svj
+   4HCXmigqxbtJ4N+YMrtWO5fKZ6ua+yhmft6VHDwl0LLuIsT1WPXAIG+gt
+   W4pov9okMQYl3GRjuoGR2lDj/nfy+2OmlRvKBlmP14awXrPIkFPd/muze
+   g==;
+X-CSE-ConnectionGUID: xJGmy1ovTc+Hvy2xBesE8g==
+X-CSE-MsgGUID: mcJZ+3R/TymE1k8etVNszA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="41391348"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="41391348"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 10:06:27 -0700
+X-CSE-ConnectionGUID: DWvKgUhFRReM3EWwNk/L0A==
+X-CSE-MsgGUID: pgO9+UqtTKKrVrcpU+k21g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="87526236"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 30 Oct 2024 10:06:24 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6C9E-000f6q-31;
+	Wed, 30 Oct 2024 17:06:20 +0000
+Date: Thu, 31 Oct 2024 01:06:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
+Message-ID: <202410310046.qSHsY4dH-lkp@intel.com>
+References: <20241029225116.3998487-1-joel@joelfernandes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, kernel@pengutronix.de, 
- devicetree@vger.kernel.org
-In-Reply-To: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
-References: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
-Message-Id: <173030775265.1269185.10225063190371444924.robh@kernel.org>
-Subject: Re: [PATCH 0/4] ARM64: dts: intel: agilex5: add nodes and new
- board
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029225116.3998487-1-joel@joelfernandes.org>
+
+Hi Joel,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on tip/sched/core]
+[also build test ERROR on linus/master v6.12-rc5 next-20241030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Joel-Fernandes-Google/dl_server-Reset-DL-server-params-when-rd-changes/20241030-065241
+base:   tip/sched/core
+patch link:    https://lore.kernel.org/r/20241029225116.3998487-1-joel%40joelfernandes.org
+patch subject: [PATCH] dl_server: Reset DL server params when rd changes
+config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20241031/202410310046.qSHsY4dH-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410310046.qSHsY4dH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410310046.qSHsY4dH-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/sched/build_policy.c:19:
+   In file included from include/linux/sched/isolation.h:5:
+   In file included from include/linux/cpuset.h:17:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from kernel/sched/build_policy.c:60:
+>> kernel/sched/deadline.c:1631:40: error: no member named 'rd' in 'struct rq'
+    1631 |         struct root_domain *rd = cpu_rq(cpu)->rd;
+         |                                  ~~~~~~~~~~~  ^
+   1 warning and 1 error generated.
 
 
-On Wed, 30 Oct 2024 13:10:11 +0100, Steffen Trumtrar wrote:
-> This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
-> 
-> An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
-> Currently only QSPI and network are functional as all other hardware
-> currently lacks mainline support.
-> 
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> ---
-> Steffen Trumtrar (4):
->       arm64: dts: agilex5: add gpio0
->       arm64: dts: agilex5: add gmac nodes
->       dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
->       arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
-> 
->  .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
->  arch/arm64/boot/dts/intel/Makefile                 |   1 +
->  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 341 +++++++++++++++++++++
->  .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 146 +++++++++
->  4 files changed, 489 insertions(+)
-> ---
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
-> 
-> Best regards,
-> --
-> Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> 
-> 
-> 
+vim +1631 kernel/sched/deadline.c
 
+  1626	
+  1627	void dl_server_start(struct sched_dl_entity *dl_se)
+  1628	{
+  1629		struct rq *rq = dl_se->rq;
+  1630		int cpu = cpu_of(rq);
+> 1631		struct root_domain *rd = cpu_rq(cpu)->rd;
+  1632	
+  1633		/*
+  1634		 * XXX: the apply do not work fine at the init phase for the
+  1635		 * fair server because things are not yet set. We need to improve
+  1636		 * this before getting generic.
+  1637		 */
+  1638		if (!dl_server(dl_se) || dl_se->last_rd != rd) {
+  1639			u64 runtime =  50 * NSEC_PER_MSEC;
+  1640			u64 period = 1000 * NSEC_PER_MSEC;
+  1641	
+  1642			dl_se->last_rd = rd;
+  1643			dl_server_apply_params(dl_se, runtime, period, 1);
+  1644	
+  1645			if (!dl_server(dl_se)) {
+  1646				dl_se->dl_server = 1;
+  1647				dl_se->dl_defer = 1;
+  1648				setup_new_dl_entity(dl_se);
+  1649			}
+  1650		}
+  1651	
+  1652		if (!dl_se->dl_runtime)
+  1653			return;
+  1654	
+  1655		enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
+  1656		if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+  1657			resched_curr(dl_se->rq);
+  1658	}
+  1659	
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y intel/socfpga_agilex5_axe5_eagle.dtb' for 20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de:
-
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /: compatible: 'oneOf' conditional failed, one must be fixed:
-	'arrow,socfpga-agilex5-axe5-eagle' is not one of ['intel,n5x-socdk', 'intel,socfpga-agilex-n6000', 'intel,socfpga-agilex-socdk']
-	'intel,socfpga-agilex5' was expected
-	from schema $id: http://devicetree.org/schemas/arm/intel,socfpga.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: reset-names: 'oneOf' conditional failed, one must be fixed:
-	['stmmaceth', 'stmmaceth-ocp'] is too long
-	'ahb' was expected
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10810000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: reset-names: 'oneOf' conditional failed, one must be fixed:
-	['stmmaceth', 'stmmaceth-ocp'] is too long
-	'ahb' was expected
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10820000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: reset-names: 'oneOf' conditional failed, one must be fixed:
-	['stmmaceth', 'stmmaceth-ocp'] is too long
-	'ahb' was expected
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10830000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: tca9544@70: $nodename:0: 'tca9544@70' does not match '^(i2c-?)?mux'
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: tca9544@70: Unevaluated properties are not allowed ('#address-cells', '#size-cells' were unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/nand-controller@10b80000: failed to match any schema with compatible: ['cdns,hp-nfc']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/sysmgr@10d12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/sysmgr@10d12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: flash@0: Unevaluated properties are not allowed ('cdns,block-size', 'cdns,page-size' were unexpected)
-	from schema $id: http://devicetree.org/schemas/mtd/jedec,spi-nor.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: leds: 'hps0', 'hps1' do not match any of the regexes: '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: gpio-keys: 'hps_pb0', 'hps_pb1', 'hps_sw0', 'hps_sw1' do not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)-[a-z0-9-]+|[a-z0-9-]+-(button|event|key|switch))$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-
-
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
