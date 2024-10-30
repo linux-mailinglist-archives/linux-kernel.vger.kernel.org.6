@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-388454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C069B5FE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:20:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECB99B5FDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836C02817E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253491F2283F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56DA1E572A;
-	Wed, 30 Oct 2024 10:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DBB1E32BB;
+	Wed, 30 Oct 2024 10:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3bbbHwrT"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QRfPMiXb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0EB1E5016
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3094B1E2319;
+	Wed, 30 Oct 2024 10:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730283521; cv=none; b=ObbDopxZ7PCkwKwNx+xxsLqFh6tNBOPS7eFqEMZf99LJeX5NNAXv6hykDfR9DOjQoqBT43bvbNVNcqrjCrQqgvnIoNa6sq1TOTItt6G0rAJwodIwga+L+BLNa4N+8Fp6IIz1oBrDt6abXUn7siIwlA0fv6dlDEPDaU6uhgUFAGo=
+	t=1730283507; cv=none; b=DHigkjXz4cSFxGX1foJIGpBSqvIASY7eIBzy38CwouWIWlQF/56/mFsGAcToSd9RaE+ii+fDSMaE4lui5PDevs61F5Ftp0tJw0SzHwQbSu5X1rQngFpo4/ZZzZyRK012tunQrHVpEm9Xz34OUfbhHsi14EEbQivbS3/Wel9CEjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730283521; c=relaxed/simple;
-	bh=RPurPv0asBGPwsLFH371fmYej/KST3NPJ6PSd9ncPeg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aSyXmNZvA9GEADMnr9X+BhVgPYXgiTr6LhfmMXu5SxIQ2gsmcBZ9/XbHnvvxILQKpUX6ZFOBWXdrv/tP9NAsa5UTRNYyDkxdE1TufCmZW8iFrIYTAg9XwGxBfrxDwtEfbXQG9yykMI+r8MYkfE1RY+dglX+RkrH00gzkbwhED9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3bbbHwrT; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e370139342so120135097b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730283518; x=1730888318; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0lkeE3D8+J4OcDtDEGiGIXOA7IIy99qfhKrBIJpYyvY=;
-        b=3bbbHwrThLJAB5HRcd65d41fnnF7CD53YLam9nipce6GwRuiDh/obheaJSKA2Gkg2k
-         kYGJfqy1SEo3mHA/g6l6ZPwOer2NMFILx3TXH2ksyf87AVEjND7O+b2JPufrNPSh6lST
-         u8pfgr69z3hXJoXp6VChprFtzJoZT0XAs0F2wvZuLoG69/Cb5MCjISXG1WWBi6cvd99y
-         3w5JHHkap2fpYWnXlVZUmZktBkg7j6UMGovD2IAjcTELieDI46tgE5ZGn0lYdgzIjge/
-         VESgLNfnKJ/u3XaI/PykSyyRQ4G9FnVg9lztu2WaUudtZ0Mo0ntYxK7gWTApZzJ7+a36
-         a0dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730283518; x=1730888318;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0lkeE3D8+J4OcDtDEGiGIXOA7IIy99qfhKrBIJpYyvY=;
-        b=Ztwl9yWwskDe3iC60zj1NcHmIGnLgPyHJTNAcuiJVW+y9iBtHgx7VQPUdBvGP6fPNu
-         e8DqbFy0mqs+Kab5uDEwrfTHjkzvj+PPWWq7ep3vUtqLrwK5yRmXN3kSm3NrekUETJr0
-         K5gKY8hRxRmNnjmEhLWf/vh2X6+nKRWRm+r4sEOYmMvGAFEyDM1H5JJoFPpXQdvys5wN
-         gP3VMC0Ob7s5u8iMNnIldQ5MUvq09H5de706pyh3nyb3AJ407XO1h6oC6iJ0j/IwUF1+
-         KCASGIi43g1wfwNb+X4AocTdODVpT/qu7CAC3T9Y9PzybNJ79D7iWRAMaZZqHB/lNl5x
-         I4vw==
-X-Gm-Message-State: AOJu0YwcDSV6ZFwVzRTidYJNz1i0RVZwO1uZLHmreCec6iYUK3pn6lvU
-	IFjRb2KGPrQmLGORxyjUbYQHbRQjsdZeSJl7Qo9QfEtoFnEDNBpoabcyVno1CieLygdgbQ==
-X-Google-Smtp-Source: AGHT+IGYWIKtsISSLmZozooMwTQpsr6uP8eXuzu1h8K7n8sXmZ2Z4/5RcAprTfRvs8MnaiExmLO2GGiB
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a05:690c:6383:b0:6e2:ad08:4924 with SMTP id
- 00721157ae682-6e9d8aacb2dmr10859077b3.4.1730283518114; Wed, 30 Oct 2024
- 03:18:38 -0700 (PDT)
-Date: Wed, 30 Oct 2024 11:18:09 +0100
-In-Reply-To: <20241030101803.2037606-10-ardb+git@google.com>
+	s=arc-20240116; t=1730283507; c=relaxed/simple;
+	bh=pIZSgVBZoGsma32kCIjCsfYl1up3iXfBigKifYHJFzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qmm2MaiYWw3hyptkQJ0kupO9pSSrT6j37g1QWRHoTKOCYqzrE+RTDZ2STcffakStU2qFnxUDepK5G5WGrHmEEyEocALlJSL6Mt4nbknFU0+uhear7b+i905CyozCyOHRf3ec9NvaSbijYnbglUTH3PHyh/cjMVlJ2Hjkm3B0lpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QRfPMiXb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UA6mmY014001;
+	Wed, 30 Oct 2024 10:18:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LorPk2tnTgKVbzoXRQEjKhPGcCO7bzXOz7gGLsK2SF0=; b=QRfPMiXb6md/6mdF
+	elL7HuMOSve0sfF/6qt6THSqKRbXW2LD1xm9javWKTVQNZOeprrIuSdgJxtkWUZg
+	xqUXQcqJVpFdEmY1dY/Q9JzI02/CPsGJdUm7vkF2Iuw5VBLOQldtac4CNJJB/PLT
+	ZY1Ftk9yozhwQu/rmNLVMhDN6R6dmYwhRwh0IogtQ1MCG9t/Cv/7PHQWjgKN8MYU
+	M//Nig76VUKS1Aen6OyYAY0BpzTQPuuQMf4uq+mQ8HDyO5q49hhCPZFJDvob6h/H
+	dmgZ9tkucAJiaHXT/fXbtRJXrS4+6+DMlK5QCwJYWToTpQlMJLYS2Do03I+MCE5B
+	QQs4/Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqe63gx8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 10:18:17 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UAIGdL032205
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 10:18:16 GMT
+Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 03:18:13 -0700
+Message-ID: <1bc7432e-8032-4af1-8551-75ca53811a18@quicinc.com>
+Date: Wed, 30 Oct 2024 18:18:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241030101803.2037606-10-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2720; i=ardb@kernel.org;
- h=from:subject; bh=KrPhtIjOJOdsjzLuM0pYgTBMlukJZDWck1DRFJ4KhOY=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIV2J/fEK9kaevBx3Dv2e4nzmCa9FlknPUUlkW5NUe/yEu
- OU974iOUhYGMQ4GWTFFFoHZf9/tPD1RqtZ5lizMHFYmkCEMXJwCMBGlXwz/PU99XLJ41767Ozwz
- bmYfFnoUeIDj3XOLCeJnjs6eP+302ccM/xTyTxXuvDnz4OW0kshvCzneJLwXODqh6kHH7x95bku TGpkB
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241030101803.2037606-15-ardb+git@google.com>
-Subject: [RFC PATCH 5/8] arm64/Kconfig: Drop support for 47-bit virtual addressing
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Kees Cook <keescook@chromium.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: bluetooth: Add qca6698 compatible string
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Balakrishna Godavarthi
+	<quic_bgodavar@quicinc.com>,
+        Rocky Liao <quic_rjliao@quicinc.com>
+CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241030094728.1714034-1-quic_chejiang@quicinc.com>
+ <331435ea-87ac-4fae-bf0b-3e6ae19dc3dc@kernel.org>
+Content-Language: en-US
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+In-Reply-To: <331435ea-87ac-4fae-bf0b-3e6ae19dc3dc@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9B_N646mXawUCccUYf_6jdzvo6W1MX1a
+X-Proofpoint-ORIG-GUID: 9B_N646mXawUCccUYf_6jdzvo6W1MX1a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=965 malwarescore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300080
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Krzysztof,
 
-Drop the separate 47-bit virtual address space configuration, which is
-identical in practice to 52-bit VA configuration on all 16k pages
-capable hardware currently in the field. For future hardware that does
-implement support for 52-bit virtual addressing, this mode can be chosen
-at boot by passing 'arm64.nolva' on the kernel command line.
+We have a new chip(qca6698) to attach on sa8775p-ride board. 
 
-This reduces the number of configurations that need to be supported and
-validated.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/arm64/Kconfig | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 099b1a825b9f..7df7d24c767d 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -380,7 +380,6 @@ config PGTABLE_LEVELS
- 	default 2 if ARM64_16K_PAGES && ARM64_VA_BITS_36
- 	default 2 if ARM64_64K_PAGES && ARM64_VA_BITS_42
- 	default 3 if ARM64_4K_PAGES && ARM64_VA_BITS_39
--	default 3 if ARM64_16K_PAGES && ARM64_VA_BITS_47
- 	default 3 if ARM64_64K_PAGES
- 	default 4 if ARM64_16K_PAGES
- 	default 5 if ARM64_4K_PAGES
-@@ -412,12 +411,12 @@ config KASAN_SHADOW_OFFSET
- 	hex
- 	depends on KASAN_GENERIC || KASAN_SW_TAGS
- 	default 0xdfff800000000000 if (ARM64_VA_BITS_48 || (ARM64_VA_BITS_52 && !ARM64_16K_PAGES)) && !KASAN_SW_TAGS
--	default 0xdfffc00000000000 if (ARM64_VA_BITS_47 || ARM64_VA_BITS_52) && ARM64_16K_PAGES && !KASAN_SW_TAGS
-+	default 0xdfffc00000000000 if ARM64_VA_BITS_52 && ARM64_16K_PAGES && !KASAN_SW_TAGS
- 	default 0xdffffe0000000000 if ARM64_VA_BITS_42 && !KASAN_SW_TAGS
- 	default 0xdfffffc000000000 if ARM64_VA_BITS_39 && !KASAN_SW_TAGS
- 	default 0xdffffff800000000 if ARM64_VA_BITS_36 && !KASAN_SW_TAGS
- 	default 0xefff800000000000 if (ARM64_VA_BITS_48 || (ARM64_VA_BITS_52 && !ARM64_16K_PAGES)) && KASAN_SW_TAGS
--	default 0xefffc00000000000 if (ARM64_VA_BITS_47 || ARM64_VA_BITS_52) && ARM64_16K_PAGES && KASAN_SW_TAGS
-+	default 0xefffc00000000000 if ARM64_VA_BITS_52 && ARM64_16K_PAGES && KASAN_SW_TAGS
- 	default 0xeffffe0000000000 if ARM64_VA_BITS_42 && KASAN_SW_TAGS
- 	default 0xefffffc000000000 if ARM64_VA_BITS_39 && KASAN_SW_TAGS
- 	default 0xeffffff800000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
-@@ -1354,10 +1353,6 @@ config ARM64_VA_BITS_42
- 	bool "42-bit"
- 	depends on PAGE_SIZE_64KB
- 
--config ARM64_VA_BITS_47
--	bool "47-bit"
--	depends on PAGE_SIZE_16KB
--
- config ARM64_VA_BITS_48
- 	bool "48-bit"
- 	depends on PAGE_SIZE_16KB
-@@ -1397,7 +1392,6 @@ config ARM64_VA_BITS
- 	default 36 if ARM64_VA_BITS_36
- 	default 39 if ARM64_VA_BITS_39
- 	default 42 if ARM64_VA_BITS_42
--	default 47 if ARM64_VA_BITS_47
- 	default 48 if ARM64_VA_BITS_48
- 	default 52 if ARM64_VA_BITS_52
- 
--- 
-2.47.0.163.g1226f6d8fa-goog
+On 10/30/2024 6:00 PM, Krzysztof Kozlowski wrote:
+> On 30/10/2024 10:47, Cheng Jiang wrote:
+>> Add QCA6698 qcom,qca6698-bt compatible strings.
+>>
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>> Changes in v2:
+>> - Add the compatibility for qcom,qca6698-bt
+>>
+>> ---
+>>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
+>>  1 file changed, 2 insertions(+)
+> 
+> Please wait with v2, v3 and so on.
+> 
+> Where is any user of this? Nothing in commit msg explains why this patch
+> is needed without users.
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
