@@ -1,149 +1,74 @@
-Return-Path: <linux-kernel+bounces-389358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945339B6BF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BED9B6BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589ED282062
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59431281E43
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2864C1C7B85;
-	Wed, 30 Oct 2024 18:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C351C9EB4;
+	Wed, 30 Oct 2024 18:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m8A9+mrA"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qEDqJv58"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9B21BD9DB;
-	Wed, 30 Oct 2024 18:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE781BD9DA;
+	Wed, 30 Oct 2024 18:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730312272; cv=none; b=cn6drrL8xqJ8JoIRg3kC+QHcgSwkZqmIhiTuyTo9aWDDBI3i0PeFy/Hr5yoLQidKTv2d+sn+XYc2Tgky3I9q6iqm62YXsbxWuErDDygKqhWJyuFRKjh65pNsx2XkSS1EXgLWZ3AHyMfzqB9L5/Clg24kmJjMr4ac1do3l+q+6vQ=
+	t=1730312351; cv=none; b=SdWlLdJ8yHFRiGh3O8ICOyViNpPBHj2DU7MWV/2JjJwz4+wYYJavnmbDtMEEhFw5ZA43B8lMrS4QxHme5ZsNHPplC5OTv8guKfgVjO7xkHvOVWxJGE1kfChN/Q8PWckH/uxnXieE0T/X5OCFBNG0l+L6LLUWu7WWZ6GaJ1WDV2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730312272; c=relaxed/simple;
-	bh=JQ/9P5SeV/Q+Tp83AVedSQbdDe89werZDEcT9MXp4Y8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t8N6a3DX8EgzyxlGDyuD7H6LTzJOYmv2z9adYTWI8L+wMU0JU6o0mnrmiys7a1XwDFhLhflcl8+YVNAlRt97oyqusUFigh888M3tafs1IfJv+aSPdaRs8mTzjIAD1bn2OYB5ogSjiMKQx2hAKbeJzyJB+vVS4s66Rgvg+8itDlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m8A9+mrA; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E1181240002;
-	Wed, 30 Oct 2024 18:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730312261;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=06tOOHd19QuPRfEvfQXspwA+6KLAkL5zimvRvbwQg8E=;
-	b=m8A9+mrAjl/Aj3gcQEM+Gs7ZjaYbcPkepQpEue/BIWjmVOiFNsBlZbCVwsBDK0roLmjC/u
-	gYApbs7kEtV4pIC+ibNMleSNeoAlpgYdRSKiYffe10cf/gFN12xeH7n/+STRUb1Ut2akDj
-	ikF9Uo2A8Gifzs7LJB/hRWNfqP/Cm8E3ngOtDjCF46TxKuNohJAyrKTMghD48Z7Y6xzZHg
-	sHW/SL+a/7gjRJzParROwKtI/+Fy7IjnbpCdjsxXPmpa7pHafOrlNKajUhHz0qymz1VGwZ
-	Wo44Wo4BDEB1EeeBeGzCWb0gAbZg4QcApVVJ3mLW6eIjZxZGQJvwnsf9VHo7+w==
-Date: Wed, 30 Oct 2024 19:17:38 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard
- Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Simon
- Horman <horms@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>, Siddharth
- Vadapalli <s-vadapalli@ti.com>, Md Danish Anwar <danishanwar@ti.com>,
- Govindarajan Sriramakrishnan <srk@ti.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH net v2] net: ethernet: ti: am65-cpsw: Fix multi queue Rx
- on J7
-Message-ID: <20241030191738.5bd12ccc@fedora.home>
-In-Reply-To: <20241030-am65-cpsw-multi-rx-j7-fix-v2-1-bc54087b0856@kernel.org>
-References: <20241030-am65-cpsw-multi-rx-j7-fix-v2-1-bc54087b0856@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730312351; c=relaxed/simple;
+	bh=oQ3Da+AnWsEKrBsfzfkvdAfz2gS6MD7adn3DpmVSJ6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGFmg71iReUx9FVIHNMEdAiedYicrN4zzmBDHOLhxuYMwldK/7vWSLoZ3Zanu5dXdHbuseb2UPT0DJO5xVmTrT5bG1QX5eDMp3m5PNVBUkzE2Koht9IEFF7CXzSHLbhlppnSqKeq1wkLFJGYH0hCnISbEtxrjuyO5CA3SERM1zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qEDqJv58; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oQ3Da+AnWsEKrBsfzfkvdAfz2gS6MD7adn3DpmVSJ6A=; b=qEDqJv58HqvVup+BbATh4r1PiX
+	NFObIX5rgIYowKvbNs4r9Zfo8MSowLlaZBqRdPoPGRhfXKU3uEsFt/gxErCP8yKW0qQoZKP2TuEBS
+	yEYwnbHpv5dGoMcyLbJtSEBs4eUruMLxVXL4iy859nQUnz+UmT4vR+c+vUxVcOaiavvzqO1i6iOUg
+	qSlnqrM8EBCV6482Xwi/BzWi/W1nDvKLn9LlNQ7cOul1GETve7iPiERK+QPH0xq/82E0Hp+wCT4TP
+	8Y8Y8EdwLeqRYosyeCOggfhOUv8/VqNDe34AKN1J5wIZfx/Ewe9s3WksJyFxVHX0R5how1MjGiA6f
+	1Wzc/8FQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6DHe-00000009WYm-19qq;
+	Wed, 30 Oct 2024 18:19:06 +0000
+Date: Wed, 30 Oct 2024 18:19:06 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] xattr: remove redundant check on variable err
+Message-ID: <20241030181906.GI1350452@ZenIV>
+References: <20241030180140.3103156-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030180140.3103156-1-colin.i.king@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello Roger,
+On Wed, Oct 30, 2024 at 06:01:40PM +0000, Colin Ian King wrote:
+> Curretly in function generic_listxattr the for_each_xattr_handler loop
+> checks err and will return out of the function if err is non-zero.
+> It's impossible for err to be non-zero at the end of the function where
+> err is checked again for a non-zero value. The final non-zero check is
+> therefore redundant and can be removed.
 
-On Wed, 30 Oct 2024 15:53:58 +0200
-Roger Quadros <rogerq@kernel.org> wrote:
-
-> On J7 platforms, setting up multiple RX flows was failing
-> as the RX free descriptor ring 0 is shared among all flows
-> and we did not allocate enough elements in the RX free descriptor
-> ring 0 to accommodate for all RX flows.
-> 
-> This issue is not present on AM62 as separate pair of
-> rings are used for free and completion rings for each flow.
-> 
-> Fix this by allocating enough elements for RX free descriptor
-> ring 0.
-> 
-> However, we can no longer rely on desc_idx (descriptor based
-> offsets) to identify the pages in the respective flows as
-> free descriptor ring includes elements for all flows.
-> To solve this, introduce a new swdata data structure to store
-> flow_id and page. This can be used to identify which flow (page_pool)
-> and page the descriptor belonged to when popped out of the
-> RX rings.
-
-[...]
-
-> @@ -339,7 +339,7 @@ static int am65_cpsw_nuss_rx_push(struct am65_cpsw_common *common,
->  	struct device *dev = common->dev;
->  	dma_addr_t desc_dma;
->  	dma_addr_t buf_dma;
-> -	void *swdata;
-> +	struct am65_cpsw_swdata *swdata;
-
-There's a reverse xmas-tree issue here, where variables should be
-declared from the longest line to the shortest.
-
-[...]
-
->  static void am65_cpsw_nuss_rx_cleanup(void *data, dma_addr_t desc_dma)
->  {
-> -	struct am65_cpsw_rx_flow *flow = data;
-> +	struct am65_cpsw_rx_chn *rx_chn = data;
->  	struct cppi5_host_desc_t *desc_rx;
-> -	struct am65_cpsw_rx_chn *rx_chn;
-> +	struct am65_cpsw_swdata *swdata;
->  	dma_addr_t buf_dma;
->  	u32 buf_dma_len;
-> -	void *page_addr;
-> -	void **swdata;
-> -	int desc_idx;
-> +	struct page *page;
-> +	u32 flow_id;
-
-Here as well
-
-[...]
-
->  	rx_chn->rx_chn = k3_udma_glue_request_rx_chn(dev, "rx", &rx_cfg);
-> @@ -2455,10 +2441,12 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
->  		flow = &rx_chn->flows[i];
->  		flow->id = i;
->  		flow->common = common;
-> +		flow->irq = -EINVAL;
-
-I've tried to follow the code and I don't get that assignment for the
-irq field, does it really have to do with the current change or is it
-another issue that's being fixed ?
-
-Sorry if I missed the point here.
-
-Thanks,
-
-Maxime
+I'd suggest taking err itself into the loop body, while we are at it...
 
