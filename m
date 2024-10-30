@@ -1,143 +1,123 @@
-Return-Path: <linux-kernel+bounces-388470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236A89B6015
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:27:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4429F9B6020
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF661F227E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:27:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE8C7B21ADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0801E3DC2;
-	Wed, 30 Oct 2024 10:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B077F1E32D4;
+	Wed, 30 Oct 2024 10:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LlnoAH+Z"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPBom++I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F8F1E32C5
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0784C4DA03;
+	Wed, 30 Oct 2024 10:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284044; cv=none; b=qtfrZonMO4IphGwcnDMCYUf02uZ3ayeWs52+f/CuGDJiVc2hw4R2DabjqM1YWGyQFgmc3E4vYOrS7qRXFmr7g7NuvA2pp+jOA9nlHmqrsX1ef3isc1GmAnE8jGnEC/800EyBvc4k5HJRFWK7C7pIrPmEUmwdxSK2ny6bb2rRwbw=
+	t=1730284212; cv=none; b=LUnjbOlc4ruK4pV06tL1FbUI70LJMuEC/wEt1Nr6NWqkdWYo4wYHqeXke+uPOupKOOvDb2lISay2IrOAYCR2LlQbSSd5QkAc/aZGqqj9JeqRMPiGDvYZSbfUnQvW3x80K/EWnDYp2uwsntfoO1fXWFcr510gDEge2+cXEupcN3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284044; c=relaxed/simple;
-	bh=1vewpM2bAPjZCI45gCVSZFD94dAv/0fVsZ5NW3TKMs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pWbvLXW+wtGmlOcfsixvpv6CniUXOwWcwRRU1oWGrTQluBbK7Pak9XRx0eS+8Bad3uFTKI43ZMmqMlQvug2enXcJ+NXJiKFlSzql52MQfPAwXNOEDVJP7SxqMkFQ/jxcPwn5IRSfrCGvnnbs/tr7JPQwbbFKEjAXPm+NHgXmkps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LlnoAH+Z; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431481433bdso61775775e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730284040; x=1730888840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xa7O9twJ6bmDbN5DQRcWJq8Kwm2U8nXjdv5M+G4ksMQ=;
-        b=LlnoAH+Zr12rWPRfaGt0135iQMN+F/1iMrJgpj6xSP1N0PNSvIEJ9WpJbk49EXnqMv
-         KijHrS8sPEjMLH9bI3f1tY6hLUChyxg7edemXwphT07CR7qWF0g9f5/eLEMYd6NEOuUT
-         MW0wowM4hJIGzwyVWvnYma7URKN2vH9pCCtqVKmur1pwWxuMu75KxOc4KS4oJ82R6y1M
-         YTKOP0ttjO2DprOW0oqQt/vGx9n0EZP6jkILUUunxYYkAVcscDkTMc2R2WlJZpNABOqu
-         GCt5ZBpEjVSnhGRo5kLxPhQ2Tx+0pVwFcGm8lQdy6acOwgDyhaliwO8pfJLh6rXVksnp
-         NH6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730284040; x=1730888840;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xa7O9twJ6bmDbN5DQRcWJq8Kwm2U8nXjdv5M+G4ksMQ=;
-        b=F/i82y9kFndAswlT4tb1/Xn8bwxqmc1XsKxRZioAmwL601YyfbqNgZs+3Q8uCK9qcd
-         RsqtdkT7ZHcEmnlum4YOimYdwwa8OtBXdkyeU9O2MDYtQpcBUxOXffGqUN023icFetue
-         Cf3FX0bOtIp6syRD8PdRByKDtyn3g29iyP0wEtvHNI46Wa8iFMv6kPVI0ykqATV1KmMV
-         Jd5qTyUowBEBYlJy1zTCWyBTEA5+Q4ho5vQ5UjCO/3fzNrJwGzhZ0EgnCOMRWXJeariT
-         irV6JdlZmKMf00RAvYi2yjRHM4gtvLGVZkKrQeacu+8nek2RWxF2XzOwNdnisU0P+BMG
-         sNMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULqkYtiJYDCEzjjJKKj6rN5+wX0C9FFX47SN75og+04/OPQSasFfUykI1W5rhgFBvsxZ4tomjZiWcmNSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLoROoWu2mzn2BSpGg9hvShdrMrGIjdfQnWXketlB3sPbGZJlL
-	W6pjr+LU3JJfSK9lQkREnE0tywwCuFt70PHxgZ8nJit7FCnNzV8BEzEm4BETXiA=
-X-Google-Smtp-Source: AGHT+IH3P/SUi2QfbJPyZVVflVQvstXkhGR0+ne23A7qXQP4p7DSlsWKQ60Mu7VBfsVT8CMLgRehCg==
-X-Received: by 2002:a7b:c354:0:b0:431:7c78:b885 with SMTP id 5b1f17b1804b1-431aa80f822mr75969765e9.4.1730284040266;
-        Wed, 30 Oct 2024 03:27:20 -0700 (PDT)
-Received: from ta2.c.googlers.com.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947b2bsm17074345e9.25.2024.10.30.03.27.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 03:27:19 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: alim.akhtar@samsung.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: krzk@kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 2/2] scsi: ufs: exynos: remove superfluous function parameter
-Date: Wed, 30 Oct 2024 10:27:15 +0000
-Message-ID: <20241030102715.3312308-2-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-In-Reply-To: <20241030102715.3312308-1-tudor.ambarus@linaro.org>
-References: <20241030102715.3312308-1-tudor.ambarus@linaro.org>
+	s=arc-20240116; t=1730284212; c=relaxed/simple;
+	bh=fEyGQG5p+/Axzk94LPtg9MyYLs8WiA+7sDPOBdC8nuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mP1wFkJoo8C+Ogn3rNbzuzLxQIH8CWPYRnP2Zs7GBqChLpWMXC8Z31Kl1HbFrNXwIt3t6aITP3RjaskMYyzQVSIsjH00DmC/HryirGqlEhgzpEAuWXyJVMW+R7RpXdE5SguUQrgvI/0eTUgP7dMgloKlfVHg6JEiClW+lRXc0gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPBom++I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E7CC4CEE3;
+	Wed, 30 Oct 2024 10:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730284211;
+	bh=fEyGQG5p+/Axzk94LPtg9MyYLs8WiA+7sDPOBdC8nuY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iPBom++Ip3zXbNr4S9qX5JpImsDxqHoTocohiCaoOx5wNTJbiARb4bC/qMG+xkcKl
+	 4bo9Z5yrvUKpiXeTjblCmlZFumY+okw/Vt7mCFA55EdghPH5Za2gM3Pd4VOqUoihoM
+	 RC1xYCQrttOvZlsb/YnO8yx8rwmJMkz4dkArPco2y1Naytv1uKPyxf+rLmFiNnWqL4
+	 hLvcUJg2ZZj271QMiXn3eMmS3Gk3eUI74tYuVqsgFHmT1D26eR4bwwRZoXeSi29m2C
+	 o24VUlOK0cedEcwP3X/B28lsMehPiZZsJvfrGYvPA5SwkdJ/67vIoYA0QMo/YjPKne
+	 u3uClG+jbjG3A==
+Date: Wed, 30 Oct 2024 11:30:09 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, quic_jesszhan@quicinc.com, mchehab@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
+	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	arnd@arndb.de, nfraprado@collabora.com, thierry.reding@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
+Subject: Re: [PATCH v4 03/13] drm/bridge: fsl-ldb: Use clk_round_rate() to
+ validate "ldb" clock rate
+Message-ID: <20241030-hypersonic-tremendous-tuatara-2bbeb0@houat>
+References: <20241028023740.19732-1-victor.liu@nxp.com>
+ <20241028023740.19732-4-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="jdfa4z4pqzuvoooj"
+Content-Disposition: inline
+In-Reply-To: <20241028023740.19732-4-victor.liu@nxp.com>
 
-The pointer to device can be obtained from ufs->hba->dev,
-remove superfluous function parameter.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/ufs/host/ufs-exynos.c | 4 ++--
- drivers/ufs/host/ufs-exynos.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+--jdfa4z4pqzuvoooj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 03/13] drm/bridge: fsl-ldb: Use clk_round_rate() to
+ validate "ldb" clock rate
+MIME-Version: 1.0
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index db89ebe48bcd..7e381ab1011d 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -198,7 +198,7 @@ static inline void exynos_ufs_ungate_clks(struct exynos_ufs *ufs)
- 	exynos_ufs_ctrl_clkstop(ufs, false);
- }
- 
--static int exynosauto_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
-+static int exynosauto_ufs_drv_init(struct exynos_ufs *ufs)
- {
- 	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
- 
-@@ -1424,7 +1424,7 @@ static int exynos_ufs_init(struct ufs_hba *hba)
- 	exynos_ufs_fmp_init(hba, ufs);
- 
- 	if (ufs->drv_data->drv_init) {
--		ret = ufs->drv_data->drv_init(dev, ufs);
-+		ret = ufs->drv_data->drv_init(ufs);
- 		if (ret) {
- 			dev_err(dev, "failed to init drv-data\n");
- 			goto out;
-diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
-index 1646c4a9bb08..9670dc138d1e 100644
---- a/drivers/ufs/host/ufs-exynos.h
-+++ b/drivers/ufs/host/ufs-exynos.h
-@@ -182,7 +182,7 @@ struct exynos_ufs_drv_data {
- 	unsigned int quirks;
- 	unsigned int opts;
- 	/* SoC's specific operations */
--	int (*drv_init)(struct device *dev, struct exynos_ufs *ufs);
-+	int (*drv_init)(struct exynos_ufs *ufs);
- 	int (*pre_link)(struct exynos_ufs *ufs);
- 	int (*post_link)(struct exynos_ufs *ufs);
- 	int (*pre_pwr_change)(struct exynos_ufs *ufs,
--- 
-2.47.0.199.ga7371fff76-goog
+On Mon, Oct 28, 2024 at 10:37:30AM +0800, Liu Ying wrote:
+> Multiple display modes could be read from a display device's EDID.
+> Use clk_round_rate() to validate the "ldb" clock rate for each mode
+> in drm_bridge_funcs::mode_valid() to filter unsupported modes out.
+>=20
+> Also, since this driver doesn't directly reference pixel clock, use
+> clk_round_rate() to validate the pixel clock rate against the "ldb"
+> clock if the "ldb" clock and the pixel clock are sibling in clock
+> tree.  This is not done in display controller driver because
+> drm_crtc_helper_funcs::mode_valid() may not decide to do the
+> validation or not if multiple encoders are connected to the CRTC,
+> e.g., i.MX93 LCDIF may connect with MIPI DSI controller, LDB and
+> parallel display output simultaneously.
+>=20
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+> Note that this patch depends on a patch in shawnguo/imx/fixes:
+> https://patchwork.kernel.org/project/linux-arm-kernel/patch/2024101703114=
+6.157996-1-marex@denx.de/
 
+I still believe that the root cause of this issue is your clock tree and
+driver setup, and since I've asked for explanations and didn't get any,
+I don't really see how we can move forward here.
+
+Maxime
+
+--jdfa4z4pqzuvoooj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZyIKrAAKCRAnX84Zoj2+
+dk5eAYDDyKjKmenLlLXrE7PF5+02MCRjxjyPZUPeFcxn9WqZwrqLx6hAeRNfTD1I
+fBz39NEBgPedANzTVocrGaKTqjaLuKN1UWpfFGVqf9OjORjTtsRTq+Rg7VBMH8ER
+7Vm4WtqjxQ==
+=QcTM
+-----END PGP SIGNATURE-----
+
+--jdfa4z4pqzuvoooj--
 
