@@ -1,66 +1,86 @@
-Return-Path: <linux-kernel+bounces-389724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B012E9B7078
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:28:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54209B708B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66BE91F21E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:28:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20EE1C20A62
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B8C217643;
-	Wed, 30 Oct 2024 23:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051761E2605;
+	Wed, 30 Oct 2024 23:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="MFOqAO6X"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hWsBf2z0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E541C461C;
-	Wed, 30 Oct 2024 23:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7457519CC24
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 23:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730330901; cv=none; b=HUxR58CoIyWYE8DyIMUOA3f3hmKoL1QVD5a+CS5O8/pndfr+5X1Mcub14gzTKoO6jrIrVXYwEZKl894x5xT1l4y3dgLwYgEgOkpmt32ydklqOcVYk9dA4qzQOHUQj3yhNEyEKcdv2OiOltyHIcTcLql+Jol8mo3YVfkFFix+Mtw=
+	t=1730331187; cv=none; b=Jr/M86KDaLN9cS3xyBQVY5YjnXYpAwA4oX1uOD+7c/I5coydPrZ3+Pym1SY1XsM8JLPSwMDqU/a6gVFi+BhhDEfc7F7N5dHrwpqEow6cxpi9rW22mZhDM7MaU/oQqLcAFb8/A5cfPkup6mVy8yJJOwtE+BFrYZ9/NVI7r/nwWeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730330901; c=relaxed/simple;
-	bh=j2WxG1gi9sX9Q9XHaunLYPDXuZFPxo2eTPeWaKuZNcw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eE+nEDggt5Rvgm509vUie7Zn3gDVTXnSstxiYtoxpXRwGlfG578MSt77cWJoBzxxJ1SK3wiCvoawj83fZ779wDk1Srg6LaVWPlpePrb+mNneeue2EMG9WeN3yL/XgbXdQEXxw/021eZcTDwZfhxriIhBBbqgnrEpXo3tnnf6BEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=MFOqAO6X; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=A1dLRRt6Gpz+f3YNGF2cRhz0EDeBb4t+Te4s+RjcUeE=; b=MFOqAO6XqjGyvEm7AbuJN82usY
-	sWvcCd1Q6neva+KTQ1AiEfgOtBadaU+TllYnrDqwmsK/nhylFD2DzvtTq1r2ImPIMKs3KOQshyNIh
-	28ixTccW9GNKQ9PN5/Imb+fwC6Ct8mxF2136WwQtkRwR2hqOuUXsZ3gsFVibPO+xGcQpH2rte8AK5
-	wLPf2UYlPvpI0RqQ94DeuSV6nh5V+M8GxZZ3z8mCykGcHwwpxTtolbCJ0coBHnjlz2NJmWRSPKf8s
-	BfS32TcZKku51OVq4cpkYSd3zCi8kRSv1P46WHxKejRqlOnK1shgWMwu5bBRAzP+j0y1LchZFKouF
-	6d1xJcvQ==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Conor Dooley <conor+dt@kernel.org>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 3/3] ARM: imx_v6_v7_defconfig: Enable drivers for Kobo Clara 2E
-Date: Thu, 31 Oct 2024 00:27:46 +0100
-Message-Id: <20241030232746.2644502-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241030232746.2644502-1-andreas@kemnade.info>
-References: <20241030232746.2644502-1-andreas@kemnade.info>
+	s=arc-20240116; t=1730331187; c=relaxed/simple;
+	bh=qi2UnnxJp8299leWppoI0G9jTaDMl4oofuewHXnqfmk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QjMkpbKSm1v/ZmaYEPO2G5juIg1jp9lcQxKQgq5mjPey6RHvZO21r74/aEvAB0+cF2o03H/P8MvWIN1w4ad1k4YIl9nGYfdG4xS1xCrOAYJEhF3d/v4+hccOnsORblsEPbmURSeOjQrWF9T2VOsKWz+XSSDSzhYnA0M3/emBMp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hWsBf2z0; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730331184; x=1761867184;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qi2UnnxJp8299leWppoI0G9jTaDMl4oofuewHXnqfmk=;
+  b=hWsBf2z0EZUpChqj4319Gx8EE/J4tnJdXh6+lLFMw5kWK8iEFwyd90WZ
+   ff27UVug8/+oeLU7v97IFWnAoqCRODij8kMkZ0AF6jeTyJPOLohn3lrWV
+   TVsBVdTu5FcTJaAW5ICz2J4SsnbagWFhfQQJCEzaYbSh+Vnb47kEiVYdt
+   7OjNiuoaQlHepPQN93DtGkw5+7tg7TmrcRJEZOVARK1iFCauVHDC/bfa8
+   cw6QU1ljNo19+mM+r/lojJb5qxONAutUl1OrCLK8uyzA9ov07yv7mcLXx
+   p0AVaNmXHOdCe6F4r9M7kVcFTQuVNsII+MgjxMJsHR8dGGjZ0kCqHOyqF
+   w==;
+X-CSE-ConnectionGUID: 0IoDBidPQvyKqwoLQm78NA==
+X-CSE-MsgGUID: OfEd4GZISDi7ODZt1RFqVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40631960"
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="40631960"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 16:33:03 -0700
+X-CSE-ConnectionGUID: 8upHZT16SySZEJyhX3dTfw==
+X-CSE-MsgGUID: t1CvAVN4TH+Xe9tZ2lE3gg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="119920337"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by orviesa001.jf.intel.com with ESMTP; 30 Oct 2024 16:33:02 -0700
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Xin Li <xin3.li@intel.com>,
+	Alexander Shishkin <alexander.shishkin@intel.com>,
+	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] x86/cpufeature: Add feature dependency checks
+Date: Wed, 30 Oct 2024 23:31:18 +0000
+Message-Id: <20241030233118.615493-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,34 +89,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable drivers used on Kobo Clara 2E
+Currently, the cpuid-deps[] table is only exercised when a particular
+feature gets explicitly disabled and clear_cpu_cap() is called. However,
+some of these listed dependencies might already be missing during boot.
+These types of errors shouldn't generally happen in production
+environments but they could sometimes sneak through, especially when
+VMs and Kconfigs are in the mix.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Unexpected failures can occur when the kernel tries to use such a
+feature. Rather than debug such scenarios, it would be better to
+disable the feature upfront.
+
+Add a simple boot time check for missing feature dependencies and
+disable any feature whose dependencies are not met.
+
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
- arch/arm/configs/imx_v6_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+I considered merging filter_feature_dependencies() and filter_cpuid_features()
+but they operate on slightly different structures namely, struct
+cpuid_dependent_feature and struct cpuid_dep. Operating on them in the same
+function didn't seem worthwhile. Please let me know if someone feels otherwise.
 
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 333ef55476a30..0beecdde55f58 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -68,6 +68,7 @@ CONFIG_BT=y
- CONFIG_BT_BNEP=m
- CONFIG_BT_HCIUART=y
- CONFIG_BT_HCIUART_LL=y
-+CONFIG_BT_NXPUART=m
- CONFIG_CFG80211=y
- CONFIG_CFG80211_WEXT=y
- CONFIG_MAC80211=y
-@@ -253,6 +254,7 @@ CONFIG_MFD_ROHM_BD71828=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_ANATOP=y
- CONFIG_REGULATOR_BD71815=y
-+CONFIG_REGULATOR_BD71828=y
- CONFIG_REGULATOR_DA9052=y
- CONFIG_REGULATOR_DA9062=y
- CONFIG_REGULATOR_DA9063=y
+v2: Use cpu_has() instead of boot_cpu_has() (Sean)
+
+RFC-v1: https://lore.kernel.org/lkml/20240822202226.862398-1-sohil.mehta@intel.com/
+---
+
+ arch/x86/include/asm/cpufeature.h |  1 +
+ arch/x86/kernel/cpu/common.c      |  4 ++++
+ arch/x86/kernel/cpu/cpuid-deps.c  | 10 ++++++++++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 0b9611da6c53..8821336a6c73 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -148,6 +148,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 
+ extern void setup_clear_cpu_cap(unsigned int bit);
+ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
++void filter_feature_dependencies(struct cpuinfo_x86 *c);
+ 
+ #define setup_force_cpu_cap(bit) do {			\
+ 							\
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index f1040cb64841..b7491e57a74e 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1610,6 +1610,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 
+ 		c->cpu_index = 0;
+ 		filter_cpuid_features(c, false);
++		filter_feature_dependencies(c);
+ 
+ 		if (this_cpu->c_bsp_init)
+ 			this_cpu->c_bsp_init(c);
+@@ -1862,6 +1863,9 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	/* Filter out anything that depends on CPUID levels we don't have */
+ 	filter_cpuid_features(c, true);
+ 
++	/* Filter out features that don't have their dependencies met */
++	filter_feature_dependencies(c);
++
+ 	/* If the model name is still unset, do table lookup. */
+ 	if (!c->x86_model_id[0]) {
+ 		const char *p;
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index 8bd84114c2d9..8bea5c5e4fd2 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -146,3 +146,13 @@ void setup_clear_cpu_cap(unsigned int feature)
+ {
+ 	do_clear_cpu_cap(NULL, feature);
+ }
++
++void filter_feature_dependencies(struct cpuinfo_x86 *c)
++{
++	const struct cpuid_dep *d;
++
++	for (d = cpuid_deps; d->feature; d++) {
++		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends))
++			do_clear_cpu_cap(c, d->feature);
++	}
++}
 -- 
-2.39.5
+2.34.1
 
 
