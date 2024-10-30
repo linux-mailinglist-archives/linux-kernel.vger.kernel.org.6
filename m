@@ -1,87 +1,182 @@
-Return-Path: <linux-kernel+bounces-388212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968489B5C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:56:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112DB9B5C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0D46B22982
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:56:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6399DB21FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAFA1DA617;
-	Wed, 30 Oct 2024 06:56:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831541DC1A2;
+	Wed, 30 Oct 2024 06:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUdUB5M5"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9011D12E1
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B221865E0;
+	Wed, 30 Oct 2024 06:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730271365; cv=none; b=la9jlCm4V+jIPtirDk2vERYuWWWaU5ALFdAY1Wy3MFNI3SfB+SvXku/aE1+S6RMe0mCphRpv/1axT73ZdVzSC7XDpSaDjnb3ZAu065kxZMrWnwk+BlzZ7vnWo2hc3NGj3fYpZbjyd1MicyQHrQ2/ZOwLuwtrh8aK5yyylw672m4=
+	t=1730271439; cv=none; b=NfAeLxSxNa7dv1t/MxOLdM+2VW9slbW4Fz6ilDMncKtwF1p3DFSkULheqBjKS7yMTIXAVrQv9+YB41ycYjPiAlIYavBcPYoRd7jbWHfCRPW8WaUgZk9lWhjl13zTMrgWuaUK6J6bSO2x9+PdiOfFX/xugGOzRMhQ/K8WPMefi7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730271365; c=relaxed/simple;
-	bh=QYiVchEbFSndvTo1xaMQfUmAV/dLWDYZ6vAla5kLcYA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O/jGK6qgqmghUs9zmIO8agubOT1+H07TfWgSAmGsgJoU8nDfXIS92GaB98FdBr3vy/LXrJxoCjQqBsQeEiwN2aQy44izt1XOQg0k3MOUNWsTFYa3QIxt5mRFWb/LkA8Kb5CMVTG27Nc5LCy7wYI5XoeoSvvkxOz0F/89RULkBc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4eb49864dso42289225ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:56:03 -0700 (PDT)
+	s=arc-20240116; t=1730271439; c=relaxed/simple;
+	bh=LKGwHh0BFEdIgbVWglg/WXDn9wwNB2S1krhabVnAQ1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrOQfS0EuKzqPzWKiEaTqCHXEOLrGDi4BN8BSmJ5KfzyFjnOp/067S0JBXzJMrwnSeZfEy4J04A+4ea4xxhuo6WSpOCGp/eIJQNRi66QafEMLCqR1MR+wUx7a8KfwrsRD3dcI3safK6FGznim84aWZfg4zYsefz6APsWTLsgoTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUdUB5M5; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso12306451a12.3;
+        Tue, 29 Oct 2024 23:57:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730271436; x=1730876236; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7uUm0aeOry/s+B1yaF21vBZ5QgCEzbZhQViRgGI83yM=;
+        b=KUdUB5M5kordIP5iZOzdcH3ju21IJtz7WMkSHX4nELkSqP+cyRXyaubxKTvsKu7Yp6
+         y4BYpDRWy8UuqFdjiU3lx9hSgV1nWEwbo1AXZ2d8rXnnWSOomu4jOxxnyYorYOl51ZiH
+         2r+5k+22yLPhOfhmNoIjchIsox2Pa22x/r54Irf/7fYYcGhU6ONUAafDzx3OYl/HJxnO
+         kBuKQzGxy0TdEozSt2wkkIzNkxnbRCJyDxuRr9S2A+Vn7RjbT7W1BGmiak/v6qFMkCpU
+         zLWNPcs72vrZxmRCLzJAgMJnEHVNnA6w1zPmC7TlwKIcWkLXPNuvnuXLEfQD9B5qn2JI
+         USnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730271362; x=1730876162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1730271436; x=1730876236;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hjVEHCDDgZ+Rmd/w/y/N+RiQAwXyNItPbp/MN8LCa9k=;
-        b=D85dhoosLeiEU48yOyR4f7CFl7qvNUHuul+//ZN0YUCa3vnEj1UBAI3ZMujxGPAUgI
-         mQI+9DrEwGGe4qGTWcDOydJIrLCLONMCcW3R5s+tBfFik7TFhLVBFwZ7EMP3NEMde1ce
-         3UmwPkXrCByc3vqTwyLYY6V0oCtuy6O6+mZzWhq8+sU60UPHRaIdCZj8edkSZ4MWmuWU
-         mec2GxUf3OLuXGsC8O6WeXbdMuA6R0kGw1iPuqF0K5VG8/LfX8xRxi2pxROkcDocyR5r
-         nNU1A7we8Ocsfu6gey897mTw1oH2LdUAzOfxNWbHub1TfPn6550cTLX5sM7D7ru7KTSg
-         TroA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYHi0RgX3Wt6jhGfVpHM4bPCFD46zO+zchnCYbXApweD7Mh0dXw5CPlR6KIt60SgcEQAkykJ0vjFbLWIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIIlpImoE+7nodw1c43uveJME3COqDt441wT7PLOBU971yQ98C
-	iCdn744+FLDJ0Szto8fgpvBDcBRRPqUSr8A9IW1FgQCLZpB9BvcgBoJRrxTTUVx09jR4JLl3GdK
-	o5Kpsv2umc3sEXL/A66UCtBuNnj/R7Wn2R6KmW/T+3QjF5f0bYqQb2Jw=
-X-Google-Smtp-Source: AGHT+IHgZVAM6el8QSFrDEm4FaXJRgZfWuJ8lfeSVbLZlqcXmaD4TYlYvIRkc/1NzBabbloUUEYCQOp+e/H9W6JHGrE3aqrfMe2V
+        bh=7uUm0aeOry/s+B1yaF21vBZ5QgCEzbZhQViRgGI83yM=;
+        b=IAhrb8JPGV4FA3tkgnyIOkh36F2bTlGNSTJIFpjbUV8Lf7XBcb24CEUbjlQyWOx4YU
+         NO1v8hoBvN3OgVOqfr76x0e16MSG+p6Us5rZadwS4LAFPp09oN7yRndKyc8jwHmSVH2O
+         OkA7EsBa5bLy0G2a3jrVHeBtVnMgBJw5LAAWMahHz/6BJHpgN69q1oOfFNwhubUp6Stt
+         G4ne2Epny0TfNfsILCjDaZDA1EKNhK2d0ubF6aEpF+ZAy1+r2/H6z0wrbjqqiZnDmFOP
+         /qb5CnwfVzTzZXvsshrKf3n5ZhpwAQAXE1/2oTRzKNSI2KONbSuYP4loI4KwLlS+yFcn
+         +aqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnVGjcvirvEUCaCrRX5ebDl8Cqjaa3JXJ6iTDeSMPt1H+EqS8e6S1MvFsviesyU3+HdBrZ/J8m8/ecPoxH@vger.kernel.org, AJvYcCX93QsBW0vRoY9VCbg1t/CbOv/Z7cXLdVqxUqItMTPuANilPRLM2BUVOsKAJmL7CVOWZUVufEVbTbUm@vger.kernel.org, AJvYcCXUOAW2vkN+/+vErfuDfP/DuEjG46bhO5o1OaPG7m7hEqksFVmHxm3oofXYM4SWS3xOH/yeWnwWoyUaWF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIuoRUxoUPLO9/wNtgi7tN9kLjZppwrmAKDLo4mJgCTDCzxiv1
+	zdKgqUTqin2i52QVShR0xMKOOwX3AWTwSYyWtdbEgIv9yXHqVzBI
+X-Google-Smtp-Source: AGHT+IEspBs33RogwkJx37UgWAkcoVEx/D0maB02IAVcNSTs16SJxZeo5MNVrvQBVAlV5LHRyzbH5w==
+X-Received: by 2002:a17:907:1c24:b0:a9a:7f84:940b with SMTP id a640c23a62f3a-a9de5c91b71mr1178124866b.10.1730271435595;
+        Tue, 29 Oct 2024 23:57:15 -0700 (PDT)
+Received: from ux-UP-WHL01 (mailgw01.goodix.com. [45.117.96.243])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f02706asm536290566b.47.2024.10.29.23.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 23:57:15 -0700 (PDT)
+Date: Wed, 30 Oct 2024 14:57:07 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, dmitry.torokhov@gmail.com,
+	hbarnor@chromium.org, conor.dooley@microchip.com, jikos@kernel.org,
+	bentiss@kernel.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
+Message-ID: <ZyHYw40duPrm0ZeF@ux-UP-WHL01>
+References: <20241025114642.40793-2-charles.goodix@gmail.com>
+ <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3>
+ <CAD=FV=X1F3QC=eSXcCn-78iQBzHMzT3z9Sis3yXKW_Bzun3+EA@mail.gmail.com>
+ <CAL_JsqLwOekE1mz+3g8NTE3o4GhE9PWwR1Jfk_tL0RYKQmCg-A@mail.gmail.com>
+ <CAD=FV=VHMfc2kJo2N3jkB9BR0H7SN2g9JqoDkZuZOOuq0OV6gw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219b:b0:3a0:9b27:7d52 with SMTP id
- e9e14a558f8ab-3a4ed33de2emr138689595ab.20.1730271362553; Tue, 29 Oct 2024
- 23:56:02 -0700 (PDT)
-Date: Tue, 29 Oct 2024 23:56:02 -0700
-In-Reply-To: <ZyHUlDvkl0Umhs-y@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6721d882.050a0220.3c8d68.00af.GAE@google.com>
-Subject: Re: [syzbot] [usb?] KASAN: invalid-free in dev_free
-From: syzbot <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com>
-To: linux-kernel.vger.kernel.org@gmail.com, linux-kernel@vger.kernel.org, 
-	marcus.yu.56@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=VHMfc2kJo2N3jkB9BR0H7SN2g9JqoDkZuZOOuq0OV6gw@mail.gmail.com>
 
-Hello,
+On Fri, Oct 25, 2024 at 09:19:14AM -0700, Doug Anderson wrote:
+> Hi,
+> 
+> On Fri, Oct 25, 2024 at 8:59 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Fri, Oct 25, 2024 at 10:29 AM Doug Anderson <dianders@chromium.org> wrote:
+> > >
+> > > Charles,
+> > >
+> > > On Fri, Oct 25, 2024 at 5:03 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > >
+> > > > > +properties:
+> > > > > +  compatible:
+> > > > > +    enum:
+> > > > > +      - goodix,gt7986u-spi
+> > > >
+> > > > Compatible is already documented and nothing here explains why we should
+> > > > spi variant.
+> > > >
+> > > > > +
+> > > > > +  reg:
+> > > > > +    maxItems: 1
+> > > > > +
+> > > > > +  interrupts:
+> > > > > +    maxItems: 1
+> > > > > +
+> > > > > +  reset-gpios:
+> > > > > +    maxItems: 1
+> > > > > +
+> > > > > +  goodix,hid-report-addr:
+> > > >
+> > > > I do not see this patch addressing previous review. Sending something
+> > > > like this as v1 after long discussions also does not help.
+> > >
+> > > Krzysztof is right that it's better to wait until we get consensus on
+> > > the previous discussion before sending a new patch. I know you were
+> > > just trying to help move things forward, but because of the way the
+> > > email workflow works, sending a new version tends to fork the
+> > > discussion into two threads and adds confusion.
+> > >
+> > > I know Krzysztof and Rob have been silent during our recent
+> > > discussion, but it's also a long discussion. I've been assuming that
+> > > they will take some time to digest and reply in a little bit. If they
+> > > didn't, IMO it would have been reasonable to explicitly ask them for
+> > > feedback in the other thread after giving a bit of time.
+> >
+> > If the firmware creates fundamentally different interfaces, then
+> > different compatibles makes sense. If the same driver handles both bus
+> > interfaces, then 1 compatible should be fine. The addition of '-spi'
+> > to the compatible doesn't give any indication of a different
+> > programming model. I wouldn't care except for folks who will see it
+> > and just copy it when their only difference is the bus interface and
+> > we get to have the same discussion all over again. So if appending
+> > '-spi' is the only thing you can come up with, make it abundantly
+> > clear so that others don't blindly copy it. The commit msg is useful
+> > for convincing us, but not for that purpose.
+> 
+> OK, makes sense. Charles: Can you think of any better description for
+> this interface than "goodix,gt7986u-spi"? I suppose you could make it
+> super obvious that it's running different firmware with
+> "goodix,gt7986u-spifw" and maybe that would be a little better.
+> 
+> I think what Rob is asking for to make it super obvious is that in the
+> "description" of the binding you mention that in this case we're
+> running a substantially different firmware than GT7986U touchscreens
+> represented by the "goodix,gt7986u" binding and thus is considered a
+> distinct device.
+> 
+> At this point, IMO you could wait until Monday in case Krzysztof wants
+> to add his $0.02 worth and then you could send a "v2" patch addressing
+> the comments so far, though of course you could continue to reply to
+> this thread if you have further questions / comments.
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thank you for your explanation, I understand your point. I want to clarify
+that the gt7986u-spi and gt7986u indeed use two entirely different drivers
+and two distinct firmware.
 
-Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
-Tested-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+Using "goodix,gt7986u-spi" could indeed cause confusion. How about modifying
+it to "goodix,gt7986u-losto" by adding a special code?
 
-Tested on:
+Additionally, I would like to confirm: when submitting the v2 patch, should
+it be based on this thread or the previous discussion thread?
 
-commit:         c67e9601 usb: core: use sysfs_emit() instead of sprint..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=1758e2a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4a2bb21f91d75c65
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11056540580000
-
-Note: testing is done by a robot and is best-effort only.
+Best regards,
+Charles
+ 
 
