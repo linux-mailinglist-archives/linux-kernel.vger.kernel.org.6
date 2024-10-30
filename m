@@ -1,167 +1,153 @@
-Return-Path: <linux-kernel+bounces-388319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BFB9B5DD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:28:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 439059B5DEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 281CD1F24423
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:28:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0357528436B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733AF1E1A32;
-	Wed, 30 Oct 2024 08:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD951E1A12;
+	Wed, 30 Oct 2024 08:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wJOpCx1G"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHjwf91M"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803661E0E10
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA65114F90;
+	Wed, 30 Oct 2024 08:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730276899; cv=none; b=E/g3Of/ggn+rbot8pJeswqZvHUM4hT3jIxKbvqoaBmXj0q4NXXfMVx9vYu6/qk/XUREG/U3c2THbOnDAPrObZlJ81lAmjRZxHkGwzPZ+mSOB+Ps+sXGHZVgcFxqyaog9ywXplIbB5QdKOKnOnHUy8/ZbYeKjPyFtSuJxPXF+2cg=
+	t=1730277051; cv=none; b=YINPAZRjdZgjj3IRQMZ53I7xi6iXJAzBsdy6Pbrlm6T4K54n7tKQz3ReTcBLOShXH+X8MkLgSqs+/kQAddSbfrRzE30frJ7bdZYqFMWSkQbnaDJHz3hzSA+bPAWXTYbOF88Fmt20DdkCplSi+GbiWdiD9qiaRw4aE/6SjQHjrl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730276899; c=relaxed/simple;
-	bh=intKQltl8qe04sX6ih8WJjx4/6q7A5aJSvz7oVoo5PQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mQEitHKuuwIjkfAg29Ox4xj4/HHNsj51wMJt4cwjDj+3bkek5sOz1Elbpxj/pFcRlWTwVQMgdrgO4OGNqMHBtn7A8FT0Up6GBWA7QDHv7Wshe/gQh1MR8sEkcXQegyLhrk2Pcgt7AnhgucDYrCVreqhNshFHBCcKzQzrjEs8sAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wJOpCx1G; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso59679875e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:28:17 -0700 (PDT)
+	s=arc-20240116; t=1730277051; c=relaxed/simple;
+	bh=kaltN+RuaBtKA+njTIOTqNhKc1ILmMjKsnquuYPjYb4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iiaQn1oBnWypIBAYv7bwtGgGZRYK++KWXbxS/H80wgn3ksfYaliJMw/2/hIaAxrZ6g6fhBUbJkg3x3NGFKBlthedW+bfgI5EWAzIZglfnJB3mbOMQCn5vDJG9tSjORQwX1QbK1H3PJMxJT43VYbv5zt7lX6F+Bq9b332c4EpXT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHjwf91M; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2972abc807so6172157276.3;
+        Wed, 30 Oct 2024 01:30:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730276896; x=1730881696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UL2HqkuSmHQ7OPeQE/93gQ+LDrEwS9SDaauaieTM4CQ=;
-        b=wJOpCx1Gaf8LTArqtp2fT6X+gmETexc+s9V98CpqALLzROINVQ7PV9/CjxJt6h9rFZ
-         ipiJi4zQ0FsCZv3jfXY+SjUfDzS6g+I/SgFF8jwTBJlmYl5XHBUGiasLTLdOFeMlkm2R
-         HFBRPfbzPOh1eVRnaq+wfJiei4iPe5KPMfFAnb5+/OjQ8j/58rDX5G6k+J+5wLqpPruE
-         bj3qyVa/00LWMvgi3lBA4vpFKMVDNQO0q5+RcrEca+0GmBlacnqewODf7OG6jXHCHHRs
-         spYq1/Ldcqd5fT6U9lQrgdKUdSdLilUplA+1yRVTyrvghVJXm+QT/BXhDVfHVo9PBZfo
-         H6+g==
+        d=gmail.com; s=20230601; t=1730277049; x=1730881849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=83QsD+0SmOIU2ZSbEm0g75qhVVIQnebcpG7P/LY0U3o=;
+        b=EHjwf91MtE6JMHX9Ebi1m61WjVZvdJmB+3zHLskYVQNrOGDil7hZiAcc4GVHAd6Pas
+         5eaO0lQQfdtj859uCfrCCDDmSUGOtAkOAWgxeTQ1SdE/V6nQ2ZzGGNiGrNNYoKpXGHfQ
+         j1BEoVLl5NPI/D1dHI5jqvUClIJ3GQeL5y/ZLD+p7tCxMvySDcxhSCkk8rO7FPjdbRTJ
+         BGAQAvwjWrkefaxJOmse/N2R0OIJys79ttCbgFBZ7qB+SlLOkoXPUQoK3VVnKAxs2peu
+         /K13ysnTZIV0m1BpipkM02pLVHBFA0w8iWjHwlpeNll3kSdAAWUJg66O/wkUGV4omBVh
+         Rqzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730276896; x=1730881696;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UL2HqkuSmHQ7OPeQE/93gQ+LDrEwS9SDaauaieTM4CQ=;
-        b=a3X7qofZ0BC9dq/j12Fp3/sAb+GjYj9JdV9i5ifhB3agqu7oWnX1N6TEjlpsTRkIDk
-         QWiEpoLrf60IC3wigc++3hW4G8ZuPQeY3EEJxy4TnpxxnyiC62jLaXM9igEL9JvqOgAQ
-         /aG4GU0LL0toUIYcvr5OLn++KPFN3n2pSTIe4NPMUXVhKA1xWU2uk6AIFWOlHjNRHlR1
-         S9W+qeNOkV526Cxi/ekOI1z2B0AKDTmwJ3vSbbHnXgLq6joX+8jjGThIXSttN33g9HEv
-         FgzAqUIWsqSbuldoTk6Ns8z+7ENcwWrSBZVM0o49wGKmTuDsU8dyQ1J2pO0uzmam/f66
-         t5jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrA6kF+785pD0icRwThhZmhn2ro+xlF6BjoWljgr+AD1BokV6i6nSYS8cW99eLklU3z9qWHiZS8UNRpvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc0tqKDdOs3pdDf62unD1FqOJclwDJs2zvR2uRC4Qxekjw9/nu
-	NUwDpJC5wqhrbPcFFZ9Mjoa+zGAts8yNvruSDgV45Lb+jYkmsxfh74HcIsFFfMU=
-X-Google-Smtp-Source: AGHT+IF2VwBune3eYE6REO5H1xO9vZLSDRXCcz1HESbflFaHLwuvzmPQ13IVdJ+0j1WTo7gHVfIs0g==
-X-Received: by 2002:a05:600c:524c:b0:426:5e91:3920 with SMTP id 5b1f17b1804b1-4319ad24a7fmr142258435e9.29.1730276895897;
-        Wed, 30 Oct 2024 01:28:15 -0700 (PDT)
-Received: from [192.168.0.140] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8549sm13853315e9.10.2024.10.30.01.28.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 01:28:15 -0700 (PDT)
-Message-ID: <7b57ccc2-7060-4adf-b896-8992ec05125c@linaro.org>
-Date: Wed, 30 Oct 2024 10:28:14 +0200
+        d=1e100.net; s=20230601; t=1730277049; x=1730881849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=83QsD+0SmOIU2ZSbEm0g75qhVVIQnebcpG7P/LY0U3o=;
+        b=jhtqIFe3mbzqvtbJKl2ld8fna/N2XxDbd9VnWsry+6TrHVaRunbg3mb1/c6cTx6EJv
+         szk6j8Hk6nqR3NnoyuqsBEulggWL8W70MFlOh1UYLWsU4EDZeamCxu1JexPMWnxpgz8E
+         gB+CzoSzlT5iGS8fmyyt5CtcuSBUz0nF9wcNPLk/nDIk8xpxOCOomQLTw+cyrIIpmNur
+         c+xf9+OAVjoAMH0Cmg/DbUzbc+S8PK1vLFhJlany1Z+q9UxQAFo8nbuFaoDtavXucnrX
+         cTI74MpSSy6SVpoul9nCbMyo4FX26d7ENxYBtQKFHDHM/ooa/pdPzE7ngDTvPtqAKqY5
+         PZrg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7xnoX3QHKM8BfrdZQ6kCyMmpV9XORVR5Z5nw8lMaUjUcTyP0ksCUTVVNGWGsrvqpmlbHadnpqE8pL@vger.kernel.org, AJvYcCUKOQRmyBco+TUNRLB9/5HncvM9JrzY9GpfLf6Cz/tUFVcwsZjGM2A0hmq7+FBZICPtOwR1pdmuuF8jF6hY1qY=@vger.kernel.org, AJvYcCUiH6SOhc9QxVCoQfcSqfZXcTtBqGblOoZT/hRAhrBaF0Mi4+KbxndZF4R+WLSuecxx/KNvdKC63T+v@vger.kernel.org, AJvYcCVRndUBZx4ULbzi5/XKSIfXl4+GX6PiY496AWkySkIUNFTmByL5UWo8LlKfXY9Yti0qJbYS2JC2ziVJ@vger.kernel.org, AJvYcCVYo5kZOQ6kHg6XYmYEcLz+7sSixrg49qf3vcFfNMTaJ2/aNtRd6PQXP9NpkF69pTG1+3dbBp0v1qw=@vger.kernel.org, AJvYcCVfdg/TcpLk+2+Y4VJbciae/J88tpWANkysluUaOFdL1K27ddq+pux7dGldq5pZwn+xsAZVILN2N6+zXw==@vger.kernel.org, AJvYcCW1eJc578bgGWqhk9N987kqvapowvrwrYAZXjqPRo1PjxqfecQ7sYrs6pCByS7D+mLhQdxM0QOyewxVWp8=@vger.kernel.org, AJvYcCWhMVHWaA3z8CAB2jKAUiBC/I9BqnVzCzmjGb0gvi8wD/PQMqRddAeFpPVtVMFFn39o6gnPdJv0@vger.kernel.org, AJvYcCWqEbZxVo+obMyLaNjQFvKfxb+g+ZKNaAGTDXk+HhrLu75NizClGuKuHaqXcEYnvvHFNrlDcyJ67i9P@vger.kernel.org, AJvYcCXRBQ1u0uqMoro+5Q9nmYeRPumVVfUJp7KM
+ w5A6EHLfWbylMuWkmx3PS8z+Bakm0H9Ea/ZSJiTrqjbyXT5W@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK2JYi9nzaEbVbDnfg7hcEIE+NclBxRic87I2vcJ5u0YRYe+k/
+	MhtxdOBC8Pffqqyq2weB2MyuE4aR5VWir9japz4jThdLfycmFhByb42PoVt+q9SDM4igTvX1OFo
+	Gbb7NVpxfObYXN/1+2j8sMApt/mk=
+X-Google-Smtp-Source: AGHT+IGXNYy381QkNndFOp7Kep7v+AsfnJYrtU85o86EwyuP7sESCo7RFZ/IU1mfbniSwKfrtjlalqvrFol9fGaaTOU=
+X-Received: by 2002:a05:6902:1144:b0:e30:da6f:ccb4 with SMTP id
+ 3f1490d57ef6-e30da6fce98mr354099276.43.1730277048550; Wed, 30 Oct 2024
+ 01:30:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
-To: Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org, konradybcio@kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com,
- evgreen@chromium.org
-References: <20241028163403.522001-1-eugen.hristev@linaro.org>
- <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org>
- <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
- <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024-eminent-dancing-narwhal-8f25dd-mkl@pengutronix.de>
+ <CAOoeyxV4K=jR+tofeQtsMB7+smuu+Ghas5Tqfx4JvhuVK8dXrA@mail.gmail.com> <20241025-modest-hasty-angelfish-1e9193-mkl@pengutronix.de>
+In-Reply-To: <20241025-modest-hasty-angelfish-1e9193-mkl@pengutronix.de>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Wed, 30 Oct 2024 16:30:37 +0800
+Message-ID: <CAOoeyxU9VwsM=mRZy5AtjH=V3iSGQxkKw18qL+yeUxkh1OVHgQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/9] Add Nuvoton NCT6694 MFD devices
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Dear Marc,
 
+I am trying to register interrupt controller for the MFD deivce.
+I need to queue work to call handle_nested_irq() in the callback
+of the interrupt pipe, right?
 
-On 10/30/24 02:40, Stephen Boyd wrote:
-> Quoting Eugen Hristev (2024-10-29 06:12:12)
->> On 10/28/24 19:56, Stephen Boyd wrote:
->>> Quoting Eugen Hristev (2024-10-28 09:34:03)
->>>> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
->>>> index 3acca067c72b..152947a922c0 100644
->>>> --- a/include/soc/qcom/tcs.h
->>>> +++ b/include/soc/qcom/tcs.h
-> [....]
->>>>    /* Construct a Bus Clock Manager (BCM) specific TCS command */
->>>>    #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)             \
->>>> -       (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |                \
->>>> -       ((valid) << BCM_TCS_CMD_VALID_SHFT) |                   \
->>>> -       ((cpu_to_le32(vote_x) &                                 \
->>>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
->>>> -       ((cpu_to_le32(vote_y) &                                 \
->>>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
->>>> +       (le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
->>>> +       le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |       \
->>>> +       le32_encode_bits(vote_x,        \
->>>> +                       BCM_TCS_CMD_VOTE_X_MASK) |              \
->>>> +       le32_encode_bits(vote_y,        \
->>>> +                       BCM_TCS_CMD_VOTE_Y_MASK))
->>>
->>> Why is cpu_to_le32() inside BCM_TCS_CMD at all? Is struct tcs_cmd::data
->>> supposed to be marked as __le32?
->>>
->>> Can the whole u32 be constructed and turned into an __le32 after setting
->>> all the bit fields instead of using le32_encode_bits() multiple times?
->>
->> I believe no. The fields inside the constructed TCS command should be
->> little endian. If we construct the whole u32 and then convert it from
->> cpu endinaness to little endian, this might prove to be incorrect as it
->> would swap the bytes at the u32 level, while originally, the bytes for
->> each field that was longer than 1 byte were swapped before being added
->> to the constructed u32.
->> So I would say that the fields inside the constructed item are indeed
->> le32, but the result as a whole is an u32 which would be sent to the
->> hardware using an u32 container , and no byte swapping should be done
->> there, as the masks already place the fields at the required offsets.
->> So the tcs_cmd.data is not really a le32, at least my acception of it.
->> Does this make sense ?
->>
-> 
-> Sort of? But I thought that the RPMh hardware was basically 32-bit
-> little-endian registers. That's why write_tcs_*() APIs in
-> drivers/soc/qcom/rpmh-rsc.c use writel() and readl(), right? The
-> cpu_to_le32() code that's there today is doing nothing, because the CPU
-> is little-endian 99% of the time. It's likely doing the wrong thing on
-> big-endian machines. Looking at commit 6311b6521bcc ("drivers: qcom: Add
-> BCM vote macro to header") it seems to have picked the macro version
-> from interconnect vs. clk subsystem. And commit b5d2f741077a
-> ("interconnect: qcom: Add sdm845 interconnect provider driver") used
-> cpu_to_le32() but I can't figure out why.
-> 
-> If the rpmh-rsc code didn't use writel() or readl() I'd believe that the
-> data member is simply a u32 container. But those writel() and readl()
-> functions are doing a byte swap, which seems to imply that the data
-> member is a native CPU endian u32 that needs to be converted to
-> little-endian. Sounds like BCM_TCS_CMD() should just pack things into a
-> u32 and we can simply remove the cpu_to_l32() stuff in the macro?
+Best regards,
+Ming
 
-This review [1] from Evan Green on the original patch submission 
-requested the use of cpu_to_le32
-
-So that's how it ended up there.
-
-
-[1] 
-https://lore.kernel.org/linux-kernel//20180806225252.GQ30024@minitux/T/#mab6b799b3f9b51725c804a65f3580ef8894205f2
-
+Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=8825=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:33=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On 25.10.2024 16:22:01, Ming Yu wrote:
+> > Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=
+=8824=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=887:57=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+> > > On 24.10.2024 16:59:13, Ming Yu wrote:
+> > > > This patch series introduces support for Nuvoton NCT6694, a periphe=
+ral
+> > > > expander based on USB interface. It models the chip as an MFD drive=
+r
+> > > > (1/9), GPIO driver(2/9), I2C Adapter driver(3/9), CANfd driver(4/9)=
+,
+> > > > WDT driver(5/9), HWMON driver(6/9), IIO driver(7/9), PWM driver(8/9=
+),
+> > > > and RTC driver(9/9).
+> > > >
+> > > > The MFD driver implements USB device functionality to issue
+> > > > custom-define USB bulk pipe packets for NCT6694. Each child device =
+can
+> > > > use the USB functions nct6694_read_msg() and nct6694_write_msg() to=
+ issue
+> > > > a command. They can also register a handler function that will be c=
+alled
+> > > > when the USB device receives its interrupt pipe.
+> > >
+> > > What about implementing a proper IRQ demux handler instead?
+>
+> > I think the currently planned IRQ process meets expectations.
+> > Is there anything that needs improvement?
+>
+> You can register the IRQs of the MFD device with the Linux kernel. This
+> way the devices can request a threaded IRQ handler directly via the
+> kernel function, instead of registering the callback.
+>
+> With a threaded IRQ handler you can directly call the
+> nct6694_read_msg(), nct6694_write_msg() without the need to start a
+> workqueue from the callback.
+>
+> Marc
+>
+> --
+> Pengutronix e.K.                 | Marc Kleine-Budde          |
+> Embedded Linux                   | https://www.pengutronix.de |
+> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
