@@ -1,144 +1,210 @@
-Return-Path: <linux-kernel+bounces-388767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987B79B6423
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2668B9B642B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:33:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678822816C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:32:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9B91F22477
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BB71EABBE;
-	Wed, 30 Oct 2024 13:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C81E7C3B;
+	Wed, 30 Oct 2024 13:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDNKfbfI"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kQk9UYHB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961F03FB31
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5455F3FB31;
+	Wed, 30 Oct 2024 13:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295134; cv=none; b=tCVlfLqoj4dmrSaaESlWczybkpnaZsSKJXCOi+3Ar8SIxpwnvbs+U0VJ4Oepe75sZ7Yd16y7fGj7uoLWsGLnbijo7YBFVIOeGtAvj4JjbmZfqqyIYAGuBQcmkn0UEfc1Nq1nxkNskw6mgenq0irEnFei6DWGy84C5MfPf3EcqTQ=
+	t=1730295177; cv=none; b=b3Gyyajsyn1EtS2ZsT6FWqH4+vcFYLCn+xy+PStnkljRqT2o2JfTItXC+vqYrdXNIAuIM0C+fTGL8HdVXF8sUb6A37+12BbLo1/MqvGp3kB1Fd8TfTcQ/HwidNz+uPDOkHZIEhypWbXhV8f86IUMqv8gJ1NR0j7Kwm3K4na5Qtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295134; c=relaxed/simple;
-	bh=Re8Arxx6x5qOB4LQGkXCJaMRkFudlsmyB2e/oy/1A1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CvKy94HM5AOTyuIcZCl6Zm8P7JEDlCSwIvj+wbwsRRtEbTPhq90O4LWfCAVmVo2C3PvIolJ048KFESxOP/kUphqsO9ttitfvOqRJCZwQ7FelslzrN2dZN40Lvyti45QTiSl5N8gYsIZTpKe0FYUJII9PbvLwBh+5+ulr1mXlHx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDNKfbfI; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b15467f383so482049085a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:32:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730295131; x=1730899931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ns5nWhr0PT4Sc6/u0VDcTbhfTPo6/0aZkcTxVWdIZRo=;
-        b=GDNKfbfI0kLJw+J6xxVjRBvbsH8FvmKbMyo+F0CjIrY2iuu8eViipA32nK4cMjNR2u
-         v7a6v/rG1K7e8cczVzVNJW5NChf+PAk5hOy1ZSQI9Wv3sAqZ3zuuK2ltqWW4kfmWpBbl
-         XKpkpLOHT/JvOGnsTTr4ieNs1USk/de8Njjyo3u745AgvsH+ox1rfP6KlHv683/MuRb5
-         1sl5hCPWWgEgAcx7qokhL5WOi4Ls8fs+ZXBye0YWYYixX99DdG3ymsQdt71hdqqiLLep
-         elBRTEyryTDWuJCLdOhX2tpy/c0mtjP+xRpSuUAr0nVchaCHjyjQ+/dwgPiDiddjipT9
-         +ELw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730295131; x=1730899931;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ns5nWhr0PT4Sc6/u0VDcTbhfTPo6/0aZkcTxVWdIZRo=;
-        b=OZSMFpahKBJArQ+2IVgCrSrRPjiWmAS52/DnFnf8uOnVswzbcxi98q8PwsLXEXqLuT
-         quuGIK4o/JWoBuE5/QJAy8Vm5tVKnoEofaG5DbQA1drwJcyQ0VbfsYzo+l+5zif/YsbX
-         ftV3En/n/lzuito/qTE0/O/D+aPcw7MT8ThyBnWOjn0gkzG/MgDs0zQhlCfO9an5xPlA
-         pVVMW7hToCP31Cb9VwAXL9uqNFfEdmqQSNs+cWOnntSsAiZnLQFnYizqrTbPqt0Eb491
-         OAI3Mf68Xcm2K+dcViuIBjGi3wC2L3Bnm6xr0fJujCiNrBHj1lHDQ0L4qExwZmO9xmng
-         DezA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhxfOwY242QMHvbE49UiZmdd7uyRaYT7WdqTQy+sBP0RMqJh4TDfaDirF+sJNRULOrvw//fqoHNrafUyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4jLNDg3KPiFXpPolMWVkXIhd2wJfdb0FPRrVrKj1l23QLa0Wp
-	UmnEjNMpF+FFfraLskclPZNVQoWKXJ0l12mJpTKrZqGpUfEHD4B+
-X-Google-Smtp-Source: AGHT+IHDeLO3HDuzQWG5QFgMmTLs8z3uetA7y8Qy6YtIjbeSmpntV0NS1nysmvuJx6ZNotSlChVO1w==
-X-Received: by 2002:a05:620a:3182:b0:7b1:3754:7d82 with SMTP id af79cd13be357-7b193f74527mr2102137485a.66.1730295131265;
-        Wed, 30 Oct 2024 06:32:11 -0700 (PDT)
-Received: from hemlock.fiveisland.rocks (dhcp-213-15-2-159.pbband.net. [159.2.15.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d2aab9csm513495785a.61.2024.10.30.06.32.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 06:32:10 -0700 (PDT)
-From: Marc Dionne <marc.c.dionne@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: [PATCH v3] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
-Date: Wed, 30 Oct 2024 10:32:08 -0300
-Message-ID: <20241030133208.41061-1-marc.c.dionne@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730295177; c=relaxed/simple;
+	bh=JuJGGbUyMfw/WGeLkAnhDnD/P9fXPIrb7LuOlDybwzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJcOEpWEgtqw3O2xmdLS0BPhdedkYrZpgKnGiV0rfUAtvW1ajajXQzuAPIJf4YY2vU3DU7m6Ttxzqv7pqNHlDo2DH5GRp2nP5Qq7Vqo6iFvnV/lBJd1eWtDGlFmDM3XyuzTitcUSHuGriCJlRuCqla6GnXt54+n9dLu1t0goUHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kQk9UYHB; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 20CBA40E0191;
+	Wed, 30 Oct 2024 13:32:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1k9kVbCppEif; Wed, 30 Oct 2024 13:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730295166; bh=uisbDX9mYhfxWZr7rzArxjasxG+HKkFeR2Cbs8jZP4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kQk9UYHBBlGORP2bFWpYk15SniW7fkrukGEhBEUcCcM6yaUeRsarxslwrlPa7/6Xo
+	 3ZrSd4YF40hdWgNwPxS/7ZmQ5DIGK69AP2FvvbI1NKvz74SJxeUKWXBqBQQnfCfO26
+	 Jh1cCn8tn5aDWP2VUNInYw6MYGWX/BhuA1CI+q+IMSZ4Itgp9EK58E0gMYD9bcqvRw
+	 +koejIV3t5jWXvdQSXVpGqsdvStfzljhfslGr7ACUqQm1QTwmGKb4PfU6QP4RhbdEY
+	 hob+bBqbEJWkyKEVzHaZtUQFoXeGznflNnW1IJE/cKWQnQNWd2Z4UgFecurgpNH0FW
+	 lEhBrfz1eYz9icN0VdNy17VKqLbGpSutd9r/239nFT+kYo1h/ijjE6gi3byRUnOOn+
+	 YfoMWNLMRTeTprYwWLwvoXwhfYVi2avfQqEYgidQVsYTMMYIqccpEENAqZCkRMAQAg
+	 /5f8744cfUZ1uHMJc4dpdOS4P4ep7ttpOtmPqdGyeGLoSiahFqft20U+vCfAftRaqm
+	 lwCU/sYJSiATbL9S4MYbhZeRv576XeMfXWZ1p/KiGEixkOjaP0a8SLe2N091S3scDn
+	 f8ozxNYsYlJzECX0Qmav0b90sHD0opakIP8/lszoeRD74lUDw/9XT7y1lZEaM9lFMG
+	 4ukX8c/wA4we7tN8WpITEOxc=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 955DE40E019C;
+	Wed, 30 Oct 2024 13:32:33 +0000 (UTC)
+Date: Wed, 30 Oct 2024 14:32:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: x86@kernel.org, linux-edac@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, qiuxu.zhuo@intel.com, tglx@linutronix.de,
+	mingo@redhat.com, rostedt@goodmis.org, mchehab@kernel.org,
+	yazen.ghannam@amd.com, john.allen@amd.com
+Subject: Re: [PATCH v7 1/5] x86/mce: Add wrapper for struct mce to export
+ vendor specific info
+Message-ID: <20241030133227.GDZyI1a5rheucn86qc@fat_crate.local>
+References: <20241022194158.110073-1-avadhut.naik@amd.com>
+ <20241022194158.110073-2-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022194158.110073-2-avadhut.naik@amd.com>
 
-From: Marc Dionne <marc.dionne@auristor.com>
+On Tue, Oct 22, 2024 at 07:36:27PM +0000, Avadhut Naik wrote:
+> Currently, exporting new additional machine check error information
+> involves adding new fields for the same at the end of the struct mce.
+> This additional information can then be consumed through mcelog or
+> tracepoint.
+> 
+> However, as new MSRs are being added (and will be added in the future)
+> by CPU vendors on their newer CPUs with additional machine check error
+> information to be exported, the size of struct mce will balloon on some
+> CPUs, unnecessarily, since those fields are vendor-specific. Moreover,
+> different CPU vendors may export the additional information in varying
+> sizes.
+> 
+> The problem particularly intensifies since struct mce is exposed to
+> userspace as part of UAPI. It's bloating through vendor-specific data
+> should be avoided to limit the information being sent out to userspace.
+> 
+> Add a new structure mce_hw_err to wrap the existing struct mce. The same
+> will prevent its ballooning since vendor-specifc data, if any, can now be
 
-The number of slabs can easily exceed the hard coded MAX_SLABS in the
-slabinfo tool, causing it to overwrite memory and crash.
+Unknown word [vendor-specifc] in commit message.
 
-Increase the value of MAX_SLABS, and check if that has been exceeded for
-each new slab, instead of at the end when it's already too late.  Also
-move the check for MAX_ALIASES into the loop body.
+Please introduce a spellchecker into your patch creation workflow.
 
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+Also:
+
+The tip-tree preferred ordering of variable declarations at the
+beginning of a function is reverse fir tree order::
+
+	struct long_struct_name *descriptive_name;
+	unsigned long foo, bar;
+	unsigned int tmp;
+	int ret;
+
+The above is faster to parse than the reverse ordering::
+
+	int ret;
+	unsigned int tmp;
+	unsigned long foo, bar;
+	struct long_struct_name *descriptive_name;
+
+And even more so than random ordering::
+
+	unsigned long foo, bar;
+	int ret;
+	struct long_struct_name *descriptive_name;
+	unsigned int tmp;
+
+diff ontop of yours:
+
 ---
- tools/mm/slabinfo.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 3611366d56b7..28e28b69d84d 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1030,11 +1030,11 @@ static noinstr int mce_timed_out(u64 *t, const char *msg)
+  */
+ static void mce_reign(void)
+ {
+-	int cpu;
+ 	struct mce_hw_err *err = NULL;
+ 	struct mce *m = NULL;
+ 	int global_worst = 0;
+ 	char *msg = NULL;
++	int cpu;
+ 
+ 	/*
+ 	 * This CPU is the Monarch and the other CPUs have run
+@@ -1291,8 +1291,8 @@ __mc_scan_banks(struct mce_hw_err *err, struct pt_regs *regs,
+ {
+ 	struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
+ 	struct mca_config *cfg = &mca_cfg;
+-	struct mce *m = &err->m;
+ 	int severity, i, taint = 0;
++	struct mce *m = &err->m;
+ 
+ 	for (i = 0; i < this_cpu_read(mce_num_banks); i++) {
+ 		arch___clear_bit(i, toclear);
+@@ -1419,8 +1419,8 @@ static void kill_me_never(struct callback_head *cb)
+ 
+ static void queue_task_work(struct mce_hw_err *err, char *msg, void (*func)(struct callback_head *))
+ {
+-	struct mce *m = &err->m;
+ 	int count = ++current->mce_count;
++	struct mce *m = &err->m;
+ 
+ 	/* First call, save all the details */
+ 	if (count == 1) {
+diff --git a/arch/x86/kernel/cpu/mce/genpool.c b/arch/x86/kernel/cpu/mce/genpool.c
+index 504d89724ecd..d0be6dda0c14 100644
+--- a/arch/x86/kernel/cpu/mce/genpool.c
++++ b/arch/x86/kernel/cpu/mce/genpool.c
+@@ -73,9 +73,9 @@ struct llist_node *mce_gen_pool_prepare_records(void)
+ 
+ void mce_gen_pool_process(struct work_struct *__unused)
+ {
+-	struct mce *mce;
+-	struct llist_node *head;
+ 	struct mce_evt_llist *node, *tmp;
++	struct llist_node *head;
++	struct mce *mce;
+ 
+ 	head = llist_del_all(&mce_event_llist);
+ 	if (!head)
+diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
+index c65a5c4e2f22..313fe682db33 100644
+--- a/arch/x86/kernel/cpu/mce/inject.c
++++ b/arch/x86/kernel/cpu/mce/inject.c
+@@ -502,9 +502,9 @@ static void prepare_msrs(void *info)
+ 
+ static void do_inject(void)
+ {
++	unsigned int cpu = i_mce.extcpu;
+ 	struct mce_hw_err err;
+ 	u64 mcg_status = 0;
+-	unsigned int cpu = i_mce.extcpu;
+ 	u8 b = i_mce.bank;
+ 
+ 	i_mce.tsc = rdtsc_ordered();
 
-diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
-index cfaeaea71042..bf770101929a 100644
---- a/tools/mm/slabinfo.c
-+++ b/tools/mm/slabinfo.c
-@@ -21,7 +21,7 @@
- #include <regex.h>
- #include <errno.h>
- 
--#define MAX_SLABS 500
-+#define MAX_SLABS 2000
- #define MAX_ALIASES 500
- #define MAX_NODES 1024
- 
-@@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
- 				p--;
- 			alias->ref = strdup(p);
- 			alias++;
-+			if (alias - aliasinfo == MAX_ALIASES)
-+				fatal("Too many aliases\n");
- 			break;
- 		   case DT_DIR:
- 			if (chdir(de->d_name))
-@@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
- 			if (slab->name[0] == ':')
- 				alias_targets++;
- 			slab++;
-+			if (slab - slabinfo == MAX_SLABS)
-+				fatal("Too many slabs\n");
- 			break;
- 		   default :
- 			fatal("Unknown file type %lx\n", de->d_type);
-@@ -1310,10 +1314,6 @@ static void read_slab_dir(void)
- 	slabs = slab - slabinfo;
- 	actual_slabs = slabs;
- 	aliases = alias - aliasinfo;
--	if (slabs > MAX_SLABS)
--		fatal("Too many slabs\n");
--	if (aliases > MAX_ALIASES)
--		fatal("Too many aliases\n");
- }
- 
- static void output_slabs(void)
 -- 
-2.47.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
