@@ -1,222 +1,197 @@
-Return-Path: <linux-kernel+bounces-388870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081739B6575
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:17:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBD69B6577
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF7CB2131D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA522831FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD74D1F130A;
-	Wed, 30 Oct 2024 14:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3576E1EF93C;
+	Wed, 30 Oct 2024 14:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KfXZC4gJ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2053.outbound.protection.outlook.com [40.107.237.53])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h23ivYsr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080181F12FA;
-	Wed, 30 Oct 2024 14:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730297803; cv=fail; b=XkDJ0Gpj0i9RhZc9uMesyUwUa0fDlpeLmSAFOZcEMEPcYT/YYaFXuI2pm71j/cZtW5Fim2xnDkJFwlnFRsJb3G/46vNLtSIEAK3PqHu7FHeZjtW0pDznOf6UuKKsis53gsdttYL3SehsveWq3SHVpF3pn8ROj9b6qFoGFIAOF1Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730297803; c=relaxed/simple;
-	bh=bqPgKFkRAhot4N8+Di2c4AOu5jYmADw6sErj1JFlcCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GfOPvDKaSpBo/xROeyh+fMR9iTzHlALHFjcSFZ2z83y//+1pWe9x12FrtunbpFHgZR/Lxq9JLoRfrhj3VRCPtEopLgRlikr4D14urHh/mDZtaKYPH/075qBfgdAAtwrZ3L56x/Wd0YRjcVgYVyeIWiLm6ndyPlmfRqdMxanx8y8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KfXZC4gJ; arc=fail smtp.client-ip=40.107.237.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rwbY0ISFvKOhwBxJDhePkiVx7Y2aqebM+6ETbB2/KrwxW1g5dxyjHQPTIeysSKh8gOLs0nmhZRA46XFU1+8bGQdPwOuG2sevUxmIVxrfiZpS54h4cwIbNPU6lLY3aYU7c8GXaI62HESz4jieziiWpJQoxTzw2hPHq2/e4phZdJg0SGBqImxu9PzNiMnMg0GhEy9rtVIrGxhtcu2twB+jg8G+D8tDe9QsKJ4SFvQpqP+iH3WD8hOfMPFHCs7orxVLVb8IRl+K4Nfa1W3rjYoMLPtCU/9l1h8jvbonHmBJtjvJLHvAFTErTsJamhSilLgErUu4l+nfoAS0PNagySLonw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mc8zC1rmPBe1pL8jpXIVgx4Z1OfYghH5qkGgFsLw7k0=;
- b=nS6+R1Tk9Why4j9M0gRHJo7OPXs1tSjBKXn/MRsxiqFXtLvLuDt3RKjAE/MK6Gq1dIBc0F1v4XQn7PHDYS27NunABCOgOgYRUBRG3kfU+32iLAbUj9k/dRbL7BMGJtAr442pxZK73iozWrKnwe+3LntkutPfXWYYe9JRIo97gpGSPLDRQdofQiezCF578mevsyUZD0kvjMgYQVJSiIAM6x4YuG0bDV4/+kEUJlxtyFK0eoFx/Ei3weGxOu6TOvf5Dp00C6AvdlTwsLEVpwtNGT2uQGGetZ5WEVo7wdo0Qs3tGri+dkI6iSqx26NNgl/LOgt7L+9mc+ZUkaeWHIwguA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mc8zC1rmPBe1pL8jpXIVgx4Z1OfYghH5qkGgFsLw7k0=;
- b=KfXZC4gJOvzWLaZFU2l6sRDHi27jtzO+Q6DjzUtuA5UxmfCVG2coqung25k42HIy/+ompGPbzHowPF7PShOpfkj1lTGVv3MwRWV2UesseB5SNQjECBTQQvdEylM+8R/uagdTPJmhUHMcpTaP8PRf/uyccYciFbk/2SGOAFnK/Bs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- LV2PR12MB5848.namprd12.prod.outlook.com (2603:10b6:408:173::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
- 2024 14:16:39 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8093.023; Wed, 30 Oct 2024
- 14:16:39 +0000
-Date: Wed, 30 Oct 2024 10:16:35 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 06/10] x86/mce: Break up __mcheck_cpu_apply_quirks()
-Message-ID: <20241030141635.GB1288714@yaz-khff2.amd.com>
-References: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
- <20241025024602.24318-1-qiuxu.zhuo@intel.com>
- <20241025024602.24318-7-qiuxu.zhuo@intel.com>
- <20241029213920.GB1229628@yaz-khff2.amd.com>
- <CY8PR11MB71344FF8D9EA706AFA74618A89542@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CY8PR11MB71344FF8D9EA706AFA74618A89542@CY8PR11MB7134.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BL1PR13CA0110.namprd13.prod.outlook.com
- (2603:10b6:208:2b9::25) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06C91EC018
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730297822; cv=none; b=nrker0C43z6uJVvVNsPD/UaYzM/xqjyvNob8z6hgjwY9zJiU5yL/UUedC82ka+acId48h4ADMQkcxZWzaHgrFgr7RAuM65/VDCWIBQUqDC3lqHfCW7+xaQZ+mov99mc5/RPjHS9gzbraKWQZ92yLrewlFDzn3nu19fLUpsBaTAI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730297822; c=relaxed/simple;
+	bh=emBaMnXHFsEFJaNPDftsqZ+5Gk4w9RSC62uoAF8ptfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jv5RD7wwU6xsa7gmViwq0+bWOa6oCjP7Qivj5hZsnbGGR5sgr1+VaLzZ/qbXuL1r2FMbpxTqVgyH++D4dE9TWbfUSxc1nUZwjRlJ4CtTDaw9ppKagiw5Kp87iNVAg7/vUN/ybn9a4RrMJHhyNiC6WoQfxjhydBBJW6BUvqLF4+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h23ivYsr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730297818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2kVt6Jf0mlrFlKgj91AyuwPJLKq+gBRTfZHaemWVr3Y=;
+	b=h23ivYsrQLOCcELXaxR4BsTjThw4qUwtZXR0RyBTwgdB3fB4K8WRSOtYw8aYMjl/rEavOu
+	vBJ1bhPxXPqoMi+coR72JzP6WkITwUowJnxFzIZSjQnmHHXF6e9bFFV0h3FIu9FBos0SGO
+	vlQCzhntanVUft8CwGmrjf/WvV4tnDE=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-275-UFk4oVCMOnGvK4P6HpXpRQ-1; Wed, 30 Oct 2024 10:16:56 -0400
+X-MC-Unique: UFk4oVCMOnGvK4P6HpXpRQ-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a99efc7d881so439803766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:16:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730297815; x=1730902615;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2kVt6Jf0mlrFlKgj91AyuwPJLKq+gBRTfZHaemWVr3Y=;
+        b=d7Xp5eI8zvSyOJ5AfMW6TmdUa9wNgOHEs9aGTDR32pyMXQjsjR8zJmQWImoN+o1/L7
+         eaXLjj+PJn8A384A0G6GB+AKQCsl1kbj537JhcgGhVBZn8ruY/DA+pJHb9MhM67uJ/EG
+         J8ce570GUnNDCUUPGDhXPmoDRCBsFtVD0nHOusnjwqh/7QPhlP0HkHv+wR1wR6NToSWr
+         gRMHLtbzRt7uGis+7fXNy+zro9S4UF8+Ps85M6ogeH5iYsypddLhQtlwWQW4uiKwKZre
+         6m5d+ce4LMnV5LqnB++acTJCE4tKk1DvZUvJ8OIpQWCLG+y+QTggzuCANXxgu7NXcevX
+         IrCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZcu8mAKlfXw0XhnSuoqIloSymbVDmYykylLVjbodUmpdWHQ9DyqTWuK824AbCeSeOpZLVFf5C6loKeq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3u+0ErhUA4WYVgchS+hVq0Vs2BicFfxuajoVtzVLe+y9lX1M5
+	mjiquD4efzulOPrkaUIXRd8gRij/ryChmUeIwLVGKsFi5+w8sErX6jpUaxLCDsx9j5lywAzFDs0
+	d1DkwzVrcFWmG+Rb6dyqGOaFmGX2AK7E7QgADjAll/tcmo1YETxv1rgTOV2hfGw==
+X-Received: by 2002:a17:907:9611:b0:a9a:eca:f7c4 with SMTP id a640c23a62f3a-a9de6199b4bmr1567152166b.54.1730297815180;
+        Wed, 30 Oct 2024 07:16:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IERlYVhvULgkJGMdtzuVMS0R74v+lxpi11wCzSuhqdKM6DR//Na3xUdI0tEKUGJ/zSd+AHpHQ==
+X-Received: by 2002:a17:907:9611:b0:a9a:eca:f7c4 with SMTP id a640c23a62f3a-a9de6199b4bmr1567148666b.54.1730297814701;
+        Wed, 30 Oct 2024 07:16:54 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f2994ddsm567904766b.110.2024.10.30.07.16.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 07:16:54 -0700 (PDT)
+Message-ID: <5bee1158-537f-4fb2-bde3-e86b5dce3fee@redhat.com>
+Date: Wed, 30 Oct 2024 15:16:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|LV2PR12MB5848:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2e837138-03e6-4cfa-6771-08dcf8ed7854
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N1IvK1F3S1FGNytrcVVHMHNkcXpEdmVxYjQ5S3BucDJ2a2R2Q0xoUUVJOURx?=
- =?utf-8?B?UFBLdldUaXhaL0svVXdveHZtVUlLTkc2SE1JUmlSRnc2NWU1dGJiajM2cHVV?=
- =?utf-8?B?aXRNVklXNzV0eWpMTjNlWTlBK1RMNzJ2UDhDTzlBY0dsSktERCtRd2xxckRO?=
- =?utf-8?B?R2JTcnpOa3BrVzkrdHlzak1IN1RvVzlPQmxyOVhWY2p0bVhCVDVOd1o2OUhZ?=
- =?utf-8?B?TUNnTlRKRnJ5ZTJnUG83Z2l1VUxZcDNZQlFRYk1lUTgrNVRWU0NsbXovSlFD?=
- =?utf-8?B?OWFXOHNqVFNxeno1ZjFRRWFTM0p0WHFEWHRhbnIxQ2t4QXAydmpEV3Y3UzZo?=
- =?utf-8?B?dHpnWUNSdGt5YkFQbkFEckxCRjljU2hEZWh2VjZNckI1TUc0ZGlGOHVvNWtJ?=
- =?utf-8?B?K0FDV2k5eDZ1M2dzZjNMMnNSTXc3dlJHcGhxWDVWMTZBTmwydzZBU1FwajZw?=
- =?utf-8?B?L2dyRzJzMVd6dGZSMUJDeGtuVmhkbzdVL2x6bUlHTjR0QytJaktxV0lQODFi?=
- =?utf-8?B?RHJpYnFqV01abXlpNnhZSURURkQrZ1FJMW5ZeW5yRFJZSkFoSzFRaHB4ZDZv?=
- =?utf-8?B?WTRUMnNEUURjMC9VcDRYMTVKNDFkZERvcEtzNTZwZlNsSVNUN2lqd1lFTS9k?=
- =?utf-8?B?NiszSG03NjNWbGZiNHp2VEdPRWVHRWttc2JTS0IrdHY5VHplT2VNajhRUTVB?=
- =?utf-8?B?aTErR1V6akdqQ1gxZEswSjVZS1RXUkZDTjhjR0l0L25uQ0FvaWx0NmR3L2dn?=
- =?utf-8?B?QVlDK3Q2L2FEdnppKy9FOFk4OGNyTTI4anpGeCtLaVNva0JUKzR5NU90ZzRr?=
- =?utf-8?B?dkQyZzZaakxyczVLSklDbmFHckRyd3RNTHk1TkdySldyYlZPcEFJSmlDQUxl?=
- =?utf-8?B?QjFTeEdRRUtNMWZvelhJNmRRNW5mb09Md2k5UU5odjNIODVjQTNudHVuY2hM?=
- =?utf-8?B?ZFdYL21vTDJENThYQ2hsczNpZFJpQkNYcXgrZWp3MDFEZ3FrSnRjdEhwZHJr?=
- =?utf-8?B?L0dZQ3lFTjFROEhya1JOTjErZXZ1eUxOMUFPUWtSblM2Zi9SdTRKNFFSbjVp?=
- =?utf-8?B?VUpleUVjSTVlNWticlBHYTN0WndYbXBvZ2h3VStCdlpyZ2FieVdkQXJkbW4y?=
- =?utf-8?B?TWpFU2dLSmpLYy9IcDZNcHl0SUV1ZnJJbG9lR3BzNDdLNmZJa01Wa3VKSWVn?=
- =?utf-8?B?ZjFHems4SmJmb2JJcHE2WlpndTdYOVE3QkYwL3IxZHE5NE9pRGlkdVF6djY3?=
- =?utf-8?B?VkRkbklGRWtnRjdZcURRR2F6WHJST2VVUGRadm9YS0NMM3JSRDdYQ3pPY29F?=
- =?utf-8?B?aVhoQzFTdlZDL2U4aWt5aGppOUFrYjY3NkJtYlFKcDVFSDF6WDV6MmJubmRT?=
- =?utf-8?B?dU8zek82VEcwR3N3aE9xZE5zNDdwQ2lySlpqa0pGVEg4bHpBWHJwU1U0S1FN?=
- =?utf-8?B?aGVtays5elBmNm5icHd5SWRhTHRsa1BNT3J0ZTV6SG9MVzNjREE1TXA3WVhW?=
- =?utf-8?B?am56ZlFIdmtZaWtOWmJHZ0Fic3I5cGRyamRVTzN4b2ZwdnM2aGNiUFV6bE9q?=
- =?utf-8?B?Q1hCZXYwUEwxb2sydkxadnVReVhxd0lpSERaYTdtNmJnS3VJWm1ySWFuc0gy?=
- =?utf-8?B?OTU0ZFdQVFFteGVlZDlDMEI3SlBCbzVtZGV6dlFYbVR1L2FKYytRWkJ4ZmhI?=
- =?utf-8?B?R2lqZ2ZXV0tlU3hRQURBUzBLSDl6Rjc4ZGVLVmluWktqbTB1MzVMS0FLUDkr?=
- =?utf-8?Q?Cy4SwoGmNfJuQ8dWteQkG+pl43ZWMRIWgXhHDNY?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UmVvb3NRbXhOdjM0cUIxREpCZWs1RWxaaGxXMXo0Ukgya3RoSmNjRlRCenlV?=
- =?utf-8?B?NTk1cElCOU5LVEtmaEhKcmRhOVlSeCsxMUdEWldlMEhjQUZZS3RiMUU5TXE1?=
- =?utf-8?B?N1hyeTcva0xTWCsrTmpZNmZrR0hDUzhhVGFiaXY2Y2k0QnFJRlZmTDIrc1V5?=
- =?utf-8?B?Qlh2SXJrNHZDc2FNUzJtcnlhWlA0am1RK2RCMW03bGl1UDJiTUtwVVk3SkJ0?=
- =?utf-8?B?Mk9odWtzbWtiTlF1c2dTVDZBNG1NVXZrREdxTjlEZHpiTDRxaG02a3JaT3Jy?=
- =?utf-8?B?U3VNVHQreTQvdCtONm4vN1VEdGQ0dmdMSzVxR3NwdmZqYXJORVVKTG1qQnpO?=
- =?utf-8?B?YW5jZXF0bi9pei9VTFNxa1g5VDZKTFcxWDY4SzR2c25KNXhZWGRSbUpLVzRF?=
- =?utf-8?B?aTBHNXAzYStCSkdlVUVZVkJOMVBDSnR2ZkFhQnAwSW91MHEvZDNhbmNVeE5K?=
- =?utf-8?B?cnp5OEsxVytHeEpGQXNxSWxmTzM4TlovRnZ3NFlLN3UrQzBwODFkTUpyWDBp?=
- =?utf-8?B?Q3lweWo2K0ZmM3V2eEpvM1hvZGZZLzRWTXpVcFVRSDRDcTFPUWQrQjdZcHk4?=
- =?utf-8?B?UmNPRCtJekphMllJNEFoTHFMS0ZhZjk0blAxeVY2VFNSakpud0VMQnlucHpN?=
- =?utf-8?B?WmFHSFpiaS9HaVhzMmR5QjRaZ09DUEZRTlF5Q3JPbTFqRHpjMXIwaE5wdlFN?=
- =?utf-8?B?TWNycHgxdmxHVDNGNkllRnhrZytBbFNnSlVzbUhLQVBSZmpGWVRuYnVmZm10?=
- =?utf-8?B?dzFIbmhRQ09tejZxdkR5MHIveHVqWFFYNTFUQVc1cVdCRWlFSEtKN2ZlVmNN?=
- =?utf-8?B?aEorVzUwT3NOOThQRFBLSndhRTh0TVBHa3dicndIWGcyMUFzNEhWeWt4SjJx?=
- =?utf-8?B?bXJQTjFzelZnRnkxWFBhdjdGblhWQ2xGRWJmYzVyQnFyS0N1TW1IQ3ZZUlRG?=
- =?utf-8?B?bmV0cHhsVmpmK3BjYVdlTHZ0OUpFN292UitxeEMvSEZKbXc5RnlCL2taQUwv?=
- =?utf-8?B?TWhCN09OcDB6NnRBRUQ4Q1dEeGhEQnlNNVZIU0xlV1BIL2dtODEyTGtvdmlS?=
- =?utf-8?B?UThtRnVmcWlrQ2kxeTdVWHM3Y1A1TXJYeHZvVy91bVZocFh4dlFGMU0wb2g4?=
- =?utf-8?B?TkhTTURtNFBxUUVBRzlJSUNzVU03bk9wMWpNSUhHQkFCMlh6bGh3VndMUGlK?=
- =?utf-8?B?MmRHTXdXTFRXLzM3TG91ODBCU3RBTXlmcndDL0M2Z0tNS0ZNZm1CQ0dPMzlC?=
- =?utf-8?B?ZnVSTmY0OFRNSUtsU3Q1eEpVRWVZazRiY2ZSTERQb2liUFA2RmxwekMzb1pP?=
- =?utf-8?B?cUhrOU8rSkxwak0rL25pS2d2TTVGVTJLY2NTKzc1dThvYmJOd1BHR29Tckwy?=
- =?utf-8?B?VUI4U3crMGIrOERqYTQ2VTZTdWd0Q3MrWCt6SHB3Q1dJMnlNL3VubUlVRXF0?=
- =?utf-8?B?VDVScnF6a2U1cU9lT1pwZ2lSYTFQaXBNZDlidjkvUTZjRkZGNHY2N0NGR0pC?=
- =?utf-8?B?UVp2dkwwNTlqbHRXeEtCVnpGZFR0eklCQlAySnV0d0czMGg4WktzTFkrVkVG?=
- =?utf-8?B?clREY0gvWitLN0ZINWZNOFdBWDhtQlVHNUlPR3BSYktxSFhQQUZaOTFaYldy?=
- =?utf-8?B?amlDWDRiVml3TzY0TUkxWFVHbENhcDVMTUNSYVVOZWNUV2xGL0NkQVozaGQw?=
- =?utf-8?B?QkVhZVo4YjNhTjRjVzFSQ0J4UHN3UG40OHVMZEdsbjN2R3JBanFVZXZnV3E0?=
- =?utf-8?B?Y3FSS0g2RWpJbTlPemFaaDgwRFVLZXJQMjJ2amJhMzBLR04zeE9MSlh1Qk1u?=
- =?utf-8?B?REtORzdMeXdZYU5QWEtrVEwzaGFuK0lOeUpwc3RZSFRSU0kzd3U5VmVaWVYx?=
- =?utf-8?B?VjFVM2k5VnVJUVZoak02dEoxNVYvY1VmbDF3cFR6d2dXUDFRRGtnRWpIb3JW?=
- =?utf-8?B?Q2VhRzRNQ3NzSWhqWEhkSzhaNVR4UUFXMjgxd2NyVjI0OEhvbTU0dFRRY2Jz?=
- =?utf-8?B?WHNrYzM2cnZGTlozVU9wajdydjJWbHBqbmZTQ01YQWZqSG1pVHZZNGlGcE1M?=
- =?utf-8?B?ckVSL2RsNXdhWkk0ekYzOE1TS2ROSVNrRTB1N1g2MFljdmxKWW5QVlJ4Qjd0?=
- =?utf-8?Q?tuqW8AFnBSqoKzOGGF8+0iuYp?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e837138-03e6-4cfa-6771-08dcf8ed7854
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 14:16:39.1147
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BIXaiYgnqA5f3VGLy44drKMZEBTbJ+4obyRNlPjYrkKRESKs/kcq/Tp1XJasxKyZwAbI9CQ+TsZW/JFUdh3qJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5848
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86/amd/hsmp: mark hsmp_msg_desc_table[] as
+ maybe_unused
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Arnd Bergmann <arnd@kernel.org>, Suma Hegde <suma.hegde@amd.com>
+Cc: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, "H. Peter Anvin"
+ <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, platform-driver-x86@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20241028163553.2452486-1-arnd@kernel.org>
+ <8aa437c2-43be-4ecf-88c4-f733b1e7f243@linux.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <8aa437c2-43be-4ecf-88c4-f733b1e7f243@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 01:39:43AM +0000, Zhuo, Qiuxu wrote:
+Hi,
 
-[...]
+On 29-Oct-24 1:55 PM, Ilpo Järvinen wrote:
+> On Mon, 28 Oct 2024, Arnd Bergmann wrote:
+> 
+> + Hans
+> 
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> After the file got split, there are now W=1 warnings for users that
+>> include it without referencing hsmp_msg_desc_table:
+>>
+>> In file included from arch/x86/include/asm/amd_hsmp.h:6,
+>>                  from drivers/platform/x86/amd/hsmp/plat.c:12:
+>> arch/x86/include/uapi/asm/amd_hsmp.h:91:35: error: 'hsmp_msg_desc_table' defined but not used [-Werror=unused-const-variable=]
+>>    91 | static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
+>>       |                                   ^~~~~~~~~~~~~~~~~~~
+>>
+>> Mark it as __attribute__((maybe_unused)) to shut up the warning but
+>> keep it in the file in case it is used from userland. The __maybe_unused
+>> shorthand unfurtunately isn't available in userspace, so this has to
+> 
+> unfortunately
+> 
+>> be the long form.
+>>
+>> Fixes: e47c018a0ee6 ("platform/x86/amd/hsmp: Move platform device specific code to plat.c")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>> Ideally this array wouldn't be part of the UAPI at all, since it is
+>> not really a interface, but it's hard to know what part  of the header
+>> is actually used outside of the kernel.
+> 
+> Sadly this slipped through during review even if it was brought up by 
+> somebody back then. The (rather weak) reasoning for having it as a part of 
+> UAPI was seemingly accepted uncontested :-(.
+> 
+>> ---
+>>  arch/x86/include/uapi/asm/amd_hsmp.h | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/include/uapi/asm/amd_hsmp.h b/arch/x86/include/uapi/asm/amd_hsmp.h
+>> index e5d182c7373c..4a7cace06204 100644
+>> --- a/arch/x86/include/uapi/asm/amd_hsmp.h
+>> +++ b/arch/x86/include/uapi/asm/amd_hsmp.h
+>> @@ -88,7 +88,8 @@ struct hsmp_msg_desc {
+>>   *
+>>   * Not supported messages would return -ENOMSG.
+>>   */
+>> -static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
+>> +static const struct hsmp_msg_desc hsmp_msg_desc_table[]
+>> +				__attribute__((unused)) = {
+> 
+> It seems that the main goal why it was put into UAPI was "to give the user 
+> some reference about proper num_args and response_size for each message":
+> 
+> https://lore.kernel.org/all/CAPhsuW5V0BJT+YSwv1U=hRG0k9zBWXeRd=E1n4U5hvcnwEV3mQ@mail.gmail.com/
+> 
+> Are we actually expecting userspace to benefit from this in C form?
+> Suma? Hans?
 
-Thanks Qiuxu.
+I can see how having this available in the uapi header as documentation
+of sorts is somewhat useful.
+
+OTOH I do agree that this array should probably not be used by userspace.
+
+And there is only 1 way to find out if it is actually used (which I do not
+expect) and that is to just drop it and find out (and to be willing to
+revert the change if it breaks things).
+
+So we can either move the array in its entirety to the c-code consuming it,
+which I think would be best; or we can go with Arnd's patch + add
+
+#ifdef __KERNEL__ 
+
+around the array so that it is there for people reading the header, but
+it is no longer exposed as uapi.
+
+Regards,
+
+Hans
+
+
+
+
+
 
 > 
-> > > +static void apply_quirks_intel(struct cpuinfo_x86 *c) {
-> > > +	struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
-> > > +	struct mca_config *cfg = &mca_cfg;
-> > 
-> > Is there a benefit to this pointer? We use mca_cfg.FIELD in most other places.
+>>  	/* RESERVED */
+>>  	{0, 0, HSMP_RSVD},
 > 
-> This could make the diff smaller for easier review, and I also believe that fewer direct
-> uses of global variables in functions are better. Additionally, there are multiple uses of
-> 'mca_cfg' in the function, the local variable 'cfg' is shorter and more convenient to use.
->
-
-I don't think it would make the diff smaller here since the code is
-already being moved.
-
-Though you could say this is a separate logical change compared to just
-moving the code as-is.
-
-Also, I don't think the "shorter, more convenient" idea holds. It's not
-that much shorter. And there are already cases of using the global
-variables "mca_cfg" and "mce_flags".
-
-Why is "...fewer direct uses of global variables in functions..." better?
-
-> [ Certainly, if the global variable 'mca_cfg' is only used once in the function, directly
->   using it might be more convenient. ]
->
-
-There is one such case in your patch.
-
-> Just from my perspective, no strong preference. 😊
 > 
-
-Same here. I just figured this suggestion would be another possible
-cleanup. :)
-
-Thanks,
-Yazen
 
 
