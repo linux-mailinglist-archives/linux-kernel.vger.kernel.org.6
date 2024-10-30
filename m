@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-389253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7799B6A99
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:15:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972D29B6A9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35991F216A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:15:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C4F2828F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8BB22ADF9;
-	Wed, 30 Oct 2024 17:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A9E22CC5F;
+	Wed, 30 Oct 2024 17:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiAdPcLy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPnvIuuT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877C322ADE4;
-	Wed, 30 Oct 2024 17:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1EF22ADFD;
+	Wed, 30 Oct 2024 17:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307890; cv=none; b=Kb0oTXnP6L12aqNfZX80ZSJpx4yrBu+/K5uRFGB1hlBF450RPV2Ly/hnvA8LbyYMEXSvUIdam7SrBobV+EKhTQSrN+Jgntnb+pLRHqgoAIAB/YRec2McZJ8zWDsQm7BdZSoHthtOD4le0XQxwhXQ68osxO5/H99ByzGpE3vA0n4=
+	t=1730307891; cv=none; b=kdFoMWMWXUXMgZQMp1vAytyuUk8tLeAzzYed6lAl5bH/kAFQeGM+7k8rGa02pn5TMCuSTymeiJVq5iOtuCrS5wDscj6l4zuzCvjlEFoYolQKsWCTjxG/AUjeHMN9kWvodxOJ0d3+xu05P9EBi2Cqk4HkRwdKXEZ3mjJzaHhEWTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307890; c=relaxed/simple;
-	bh=hlQJtBZeGNfc14au6EbGe4mUML0LVwnAGHKUANIlHi4=;
+	s=arc-20240116; t=1730307891; c=relaxed/simple;
+	bh=F9Pr/Oo+xoM6rBNWj4TUXotKSeXlLKjDZ0TcVUnAkZk=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=eZsHWoO944TZBq7IkeqtZ2lQ2LJfMk1PGoIczaXmze+y8gBKQ0ptdk6vPr4Te/S8zHDktoKnbEOMzsubV4LwgkXq6N3huWAz8rxnbGM1CrkpX+dXXaUGHmZR0nMchymGnb3ddtGeJLtcXL9zb6P7FyY1FTVQgxmSzPg7Z2APr/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiAdPcLy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9074C4CECE;
-	Wed, 30 Oct 2024 17:04:49 +0000 (UTC)
+	 Message-Id:Subject; b=I8/cSLdYqcjl+4JlxQi/mSglEOuYIfSF3UG+o3a2M4tO+AnwDXG1USCNaRmD6TyfQxtIigTE/xECMAdSPq8QH1cKEldsvZfmLYnrhkJI8NNGDu4WBi/TxoYqGOB2/dTHp/X52RpGfvOjtJMT8jsCQxqHmrLrRrA+I84R64am3mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPnvIuuT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2707BC4CED2;
+	Wed, 30 Oct 2024 17:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730307890;
-	bh=hlQJtBZeGNfc14au6EbGe4mUML0LVwnAGHKUANIlHi4=;
+	s=k20201202; t=1730307891;
+	bh=F9Pr/Oo+xoM6rBNWj4TUXotKSeXlLKjDZ0TcVUnAkZk=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=DiAdPcLyAbKFeZufen6GaZyl103DpyD2ASWZMOFfR0BOMv2e+u+86ljSpfZvVZTKW
-	 Ll7FWhFG+DKwuos2eSFUKnUug1XEpN6kFZC8vYs5pGryZmpGs8sYYYvk0c4NRJfm8S
-	 NC0dcIVfsLhsfZpTtOKDTvbvNTp0V+6sA7MFi3wTkzdgyciEHSWcOW5sbd8fmr3xdd
-	 kIuhCc5DUHIgB4NyeeKZnJSXkWldWBeFoGg8Y7KrMbPs6ohHRYfCzSPEKNRqyjDZtZ
-	 bXNw1SLDzioWcXdzydSr8c1OO3lV09jd2ONLgm4q96y8/efk28zhaptGXrU5xFsWgx
-	 3wG/sCFuRw3MA==
-Date: Wed, 30 Oct 2024 12:04:48 -0500
+	b=QPnvIuuTQIPej4r3eeYpF52cq2e7H1rX9pCQNfZl+LOKTAqY2dqepCh0c22gWfmdf
+	 8aDUkUZEwVMevTt2G2hab/ftEIBTN2XHMHprfXXgkQIEIrpy0DPUKNJK16QKNDdRCt
+	 Zm0i0zCW4jCPBF8fwSdYFGDmS6xLPXLlzVhvsSdCcp0TpbM8C4X+pdAPIGKWI3mAff
+	 RXdam7q2IsjC/YnOItE7WJJar9/4GRhdptKsqi0NxU8IcPVjkDwyL/7JoHIesy6lnm
+	 w8nXiNTJ8QHhAFlMRhiW2s6ZNPrVPHLTJwcf5TE64yTp0rUVCEPDKMqFuQd6O742kR
+	 OFEjZNKihxaiA==
+Date: Wed, 30 Oct 2024 12:04:50 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,132 +50,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Merck Hung <merckhung@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Kalle Valo <kvalo@kernel.org>, devicetree@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20241030-jg-blackrock-for-upstream-v6-0-7cd7f7d8d97c@oldschoolsolutions.biz>
-References: <20241030-jg-blackrock-for-upstream-v6-0-7cd7f7d8d97c@oldschoolsolutions.biz>
-Message-Id: <173030775190.1269155.1213030473924284384.robh@kernel.org>
-Subject: Re: [PATCH v6 0/3] arm64: dts: qcom: sc8280xp-blackrock: dt
- definition for Windows Dev Kit 2023
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, kernel@pengutronix.de, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
+References: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
+Message-Id: <173030775265.1269185.10225063190371444924.robh@kernel.org>
+Subject: Re: [PATCH 0/4] ARM64: dts: intel: agilex5: add nodes and new
+ board
 
 
-On Wed, 30 Oct 2024 12:02:00 +0100, Jens Glathe wrote:
-> "Microsoft Windows Dev Kit 2023" aka "Blackrock" aka "Project Volterra"
+On Wed, 30 Oct 2024 13:10:11 +0100, Steffen Trumtrar wrote:
+> This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
 > 
-> Device tree for the Microsoft Windows Dev Kit 2023. This work
-> is based on the initial work of Merck Hung <merckhung@gmail.com>.
+> An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
+> Currently only QSPI and network are functional as all other hardware
+> currently lacks mainline support.
 > 
-> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
-> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
-> 
-> Supported features:
-> - USB type-c and type-a ports
-> - minidp connector
-> - built-in r8152 Ethernet adapter
-> - PCIe devices
-> - nvme
-> - ath11k WiFi (WCN6855)
-> - WCN6855 Bluetooth
-> - A690 GPU
-> - ADSP and CDSP
-> - GPIO keys
-> - Audio definition (works via USB)
-> 
-> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> 
-> Original work: https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
-> 
-> This dt is more or less deducted from the Thinkpad X13s.
-> It contains a lot of guesswork, and also a lot of research on
-> what works with the Windows Dev Kit.
-> 
-> The WiFi definition references qcom,ath11k-calibration-variant = "MS_Volterra"
-> which is unfortunately not yet in the linux-firmware. The ath11k driver finds
-> the default one for
-> "bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2|18,qmi-board-id=255"
-> when the entry with the variant is not found which is quite sub-optimal. I
-> have placed a pr on github/qca-swiss-army-knife:
-> https://github.com/qca/qca-swiss-army-knife/pull/9 that provides an amended
-> board-2.bin and a board-2.json to generate it.
-> 
-> pcie2 (nvme) is intentionally specified as max-link-speed = <4>. The
-> interface is capable of it, most current nvme ssds are capable of it,
-> but the physical slot isn't. This leads to a silent downgrade to <3> instead
-> of the "device is limited by bus, capable of..." message.
-> 
-> It is in use and under development since May 2023, pretty stable now.
-> 
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 > ---
-> Changes in v6:
-> - added missing acked-by tag from Krzysztof
-> - removed aspm-no-l0s from the PCIe ports as suggested by Johan
-> - corrected max-link-speed to <4> on PCIe2 as suggested by Johan
-> - changed WLAN variant description to "MS_Volterra", added Kalle Valo
->   for approval / guidance
-> - trimmed the supply statements on hsphy and other pcie ports for what
->   is known and defined on the Thinkpad X13s
-> - Link to v5: https://lore.kernel.org/r/20241030-jg-blackrock-for-upstream-v5-0-830c938437ad@oldschoolsolutions.biz
+> Steffen Trumtrar (4):
+>       arm64: dts: agilex5: add gpio0
+>       arm64: dts: agilex5: add gmac nodes
+>       dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
+>       arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
 > 
-> Changes in v5:
-> - removed s-o-b from Merck Hung as suggested by Bjorn Andersson. The credits
->   for the original work are in the cover letter and in the dts commit
-> - removed Venus codec from the list of supported features. It is, but that
->   part is not in this patch set.
-> - Link to v4: https://lore.kernel.org/r/20241027-jg-blackrock-for-upstream-v4-0-703b254fc95f@oldschoolsolutions.biz
-> 
-> Changes in v4:
-> - removed the redundant regulator definitions
-> - changed the pinctrl property order
-> - use microsoft instead of MICROSOFT as subdirectory and device name component
-> - amend spacing in audio nodes
-> - change external connector dp1 for mini-dp to DP-3 for consistency
-> - Link to v3: https://lore.kernel.org/r/20241013-jg-blackrock-for-upstream-v3-0-839d3483a8e7@oldschoolsolutions.biz
-> 
-> Changes in v3:
-> - tried to heed all advice and comments given - thank you
-> - re-ordered patches to definition before use
-> - added "microsoft,blackrock" as compatible in QSEECOM driver
-> - removed the qseecom node
-> - ordered nodes alphabetically {address, node name, label}
-> - amended indentation
-> - consistently used blackrock as identifier / directory name
-> - sorted identifiers by the same order for multiple instances
-> - added some explanation re WiFi
-> - added definition for PMU on the WCN6855
-> - added some explanation for pcie2 max-link-speed
-> - Link to v2: https://lore.kernel.org/r/20240920-jg-blackrock-for-upstream-v2-0-9bf2f1b2191c@oldschoolsolutions.biz
-> 
-> Changes in v2:
-> - removed whitespaces and breaks
-> - added compatibility binding
-> - added feature list
-> - reformatted Signed-off list
-> - Link to v1: https://lore.kernel.org/r/5f5487e1-e458-4a3a-af02-c52e50ca1964@oldschoolsolutions.biz
-> 
+>  .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
+>  arch/arm64/boot/dts/intel/Makefile                 |   1 +
+>  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 341 +++++++++++++++++++++
+>  .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 146 +++++++++
+>  4 files changed, 489 insertions(+)
 > ---
-> Jens Glathe (3):
->       dt-bindings: arm: qcom: Add Microsoft Windows Dev Kit 2023
->       firmware: qcom: scm: Allow QSEECOM for Windows Dev Kit 2023
->       arm64: dts: qcom: sc8280xp-blackrock: dt definition for WDK2023
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
->  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
->  .../boot/dts/qcom/sc8280xp-microsoft-blackrock.dts | 1373 ++++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.c                   |    1 +
->  4 files changed, 1376 insertions(+)
-> ---
-> base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
-> change-id: 20240920-jg-blackrock-for-upstream-7c7aca20e832
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
 > 
 > Best regards,
 > --
-> Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Steffen Trumtrar <s.trumtrar@pengutronix.de>
 > 
 > 
 > 
@@ -195,24 +111,52 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/sc8280xp-microsoft-blackrock.dtb' for 20241030-jg-blackrock-for-upstream-v6-0-7cd7f7d8d97c@oldschoolsolutions.biz:
+New warnings running 'make CHECK_DTBS=y intel/socfpga_agilex5_axe5_eagle.dtb' for 20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de:
 
-arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: usb@a4f8800: usb@a400000:phy-names: 'oneOf' conditional failed, one must be fixed:
-	'usb2-port0' is not one of ['usb2-phy', 'usb3-phy']
-	'usb2-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
-	'usb3-port0' is not one of ['usb2-phy', 'usb3-phy']
-	'usb3-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: usb@a400000: phy-names: 'oneOf' conditional failed, one must be fixed:
-	'usb2-port0' is not one of ['usb2-phy', 'usb3-phy']
-	'usb2-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
-	'usb3-port0' is not one of ['usb2-phy', 'usb3-phy']
-	'usb3-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
-	from schema $id: http://devicetree.org/schemas/usb/snps,dwc3.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: wcn6855-pmu: 'vddpmumx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: wcn6855-pmu: 'vddpmucx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /: compatible: 'oneOf' conditional failed, one must be fixed:
+	'arrow,socfpga-agilex5-axe5-eagle' is not one of ['intel,n5x-socdk', 'intel,socfpga-agilex-n6000', 'intel,socfpga-agilex-socdk']
+	'intel,socfpga-agilex5' was expected
+	from schema $id: http://devicetree.org/schemas/arm/intel,socfpga.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: reset-names: 'oneOf' conditional failed, one must be fixed:
+	['stmmaceth', 'stmmaceth-ocp'] is too long
+	'ahb' was expected
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10810000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: reset-names: 'oneOf' conditional failed, one must be fixed:
+	['stmmaceth', 'stmmaceth-ocp'] is too long
+	'ahb' was expected
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10820000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: reset-names: 'oneOf' conditional failed, one must be fixed:
+	['stmmaceth', 'stmmaceth-ocp'] is too long
+	'ahb' was expected
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10830000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: tca9544@70: $nodename:0: 'tca9544@70' does not match '^(i2c-?)?mux'
+	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: tca9544@70: Unevaluated properties are not allowed ('#address-cells', '#size-cells' were unexpected)
+	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/nand-controller@10b80000: failed to match any schema with compatible: ['cdns,hp-nfc']
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/sysmgr@10d12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/sysmgr@10d12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: flash@0: Unevaluated properties are not allowed ('cdns,block-size', 'cdns,page-size' were unexpected)
+	from schema $id: http://devicetree.org/schemas/mtd/jedec,spi-nor.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: leds: 'hps0', 'hps1' do not match any of the regexes: '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: gpio-keys: 'hps_pb0', 'hps_pb1', 'hps_sw0', 'hps_sw1' do not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)-[a-z0-9-]+|[a-z0-9-]+-(button|event|key|switch))$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
 
 
 
