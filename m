@@ -1,137 +1,98 @@
-Return-Path: <linux-kernel+bounces-389341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14CC9B6B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:04:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADDB9B6B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E08811C23AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3ED6282169
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659E91C3F38;
-	Wed, 30 Oct 2024 18:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F08E1B373A;
+	Wed, 30 Oct 2024 18:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CTTeITRu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmoHDf9C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2682B1A2631;
-	Wed, 30 Oct 2024 18:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0289A1BD9F6;
+	Wed, 30 Oct 2024 18:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730311464; cv=none; b=VurfOaPfReLbgEP0HYqp7G3f9FEsO/ebHnefHpUkTIqBkWNxHHT2LQAWy4nQH08pGJ6lUYdp9LAjHmNOQr0TMSNuMjoDOORt/WmvUGNqUqoikJwiCgM1mWb7aNTqWK81Q6mroNQH1bwl3B0ZWCf7q2GrDEH2nmO2Y91fkFjktnE=
+	t=1730311442; cv=none; b=bHOc81MvsjQz+7d6H7AkUKQOYtLS84LUm09fpt9sExFWa7MhSc3/7ndK58lEV2SaZO9VNL2yPnPYwq+TzNuG0ijTMR0UByL4oWavfME6JdzKSo3B2YjrmxGVxfpIquA6gg9Vahgxst+XgzumMVOdAAWbeykamhzZjlM5Ei4pgWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730311464; c=relaxed/simple;
-	bh=N4EtCGrUSbiHq3d0qexQPfpUHDIKafJ2o4deRd9ADzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jkGEbZF5bi64wzfXp+EeFfgev5dg+YXlw0nOYzvuXxjA4yeo2vrotjhXOqasH45NeY01vRYblzRH+LVZLkxPDyVHL+JfIjysxKzXTyIRsDtWeDtFllYbzLLDOhH0/NnyjOU1OAA++qOnYQta6jLwHPgGvzTRo+v5JAdSqSMFkpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CTTeITRu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U9vYcB011869;
-	Wed, 30 Oct 2024 18:03:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+At+jGkIkDW68Ig5ypjuyWm7IJ31jPRdRJ2lXR0rBl0=; b=CTTeITRuRUj/INZn
-	1UMzNL8mBQi2SPe/KEyBQNZ3b0kjNpKoUkOKqCIDmoGa7Rnd7lAzDiTP6H3z6wZA
-	57DsRs9XPiWDLNmRDtPLvp08hg4IpyzNBhyPOQ0j01WmT+NGuCLRmIDxRLXJ6Sl0
-	NqBiuV3seqOQ9UTcDlP9LE5ffBZ+iqZzn+P06/1MuaWv+9SlfYKXPgN1wLSi2Tfo
-	AI9cq22e/eDfKsbg1PGnn9qUBQqNmdNMN3KJhgQnil9pNKLSAnSPHiYorMr0NZpe
-	JGBPwiLaNN5wq0L3wRmbRhySK6T0BDraqSThAR4cxjAVq+1NeNECqbWpa/yEv3w9
-	G7Vjbw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqcqvyfk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 18:03:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UI3mGo017094
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 18:03:48 GMT
-Received: from [10.216.35.255] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 11:03:42 -0700
-Message-ID: <2aa768a4-b0e9-4b2f-8d74-736a88cf81cd@quicinc.com>
-Date: Wed, 30 Oct 2024 23:33:39 +0530
+	s=arc-20240116; t=1730311442; c=relaxed/simple;
+	bh=1ujuCik89KZA+F/0Akuxc+0TXH1ObBwAk8w3VBpa7dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GnM9cFjv5SYiumHkHj6wkUf0CArNVBKw3U/kS32DgY+tKSd3m3OOv0Fe7Mr4SuRWLZkHeoAaU51TXbOLXaqxVcNFGUsnQqMCia/yyk98NtHh1Z4EOnAadvlMGu7plM/8TMHHldaFtMhAo2pGLWiMsq83tWHWK3DbGpDuH1HrZy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmoHDf9C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D35C4CECE;
+	Wed, 30 Oct 2024 18:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730311441;
+	bh=1ujuCik89KZA+F/0Akuxc+0TXH1ObBwAk8w3VBpa7dc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UmoHDf9CuXcQhLEEXmhn8YC3BC4/85A74T2PnUxTXfHmrdkF4VjUWYSkhoKrgBDqZ
+	 QJjsWFpIgoWDdgOayjv4wa4tJu4mUUQgZjMsVvTMgK3GU2h0eJQwhtHo0oH/UTMinl
+	 GEtkgr7SCDlaNU7mWUaR2Aq7h0pGpVUcrz2yNMDigRDC849zaaz0iFK7vWz0m7I2Qx
+	 TOlEtgGIZI+XW7KU85hu+IzdO4MOAO6m/iCclzY3yZ97u8kySAg85sf7++VGjWiSaQ
+	 7pfNIU6/9o1Qt9yI+30EsevgnIoYwzSAM+b1CefMvuriq0EfeD4zhgmGGWdjRLo/I/
+	 6vvRk+jms5k7g==
+Received: by pali.im (Postfix)
+	id B44C49D2; Wed, 30 Oct 2024 19:03:53 +0100 (CET)
+Date: Wed, 30 Oct 2024 19:03:53 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Bharath SM <bharathsm.hsk@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] cifs: Change translation of STATUS_DELETE_PENDING to
+ -EBUSY
+Message-ID: <20241030180353.w75vgf5uxoh3sid3@pali>
+References: <20241005154817.20676-1-pali@kernel.org>
+ <20241028104229.29736-1-pali@kernel.org>
+ <CAGypqWxRv+3q3gXqGtKH+5rb+pPwNrCz-933xOk29eku38qosg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/11] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock
- controller driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
- <20241019-qcs615-mm-clockcontroller-v1-8-4cfb96d779ae@quicinc.com>
- <omn34rwurlxrjckb5d6xb2brg6zwcizonmqyfckvngk5msrfav@b3i2bdjk5vw7>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <omn34rwurlxrjckb5d6xb2brg6zwcizonmqyfckvngk5msrfav@b3i2bdjk5vw7>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KWrR1kyKUunE9PWKLs18ZnYkiaBmlu4v
-X-Proofpoint-GUID: KWrR1kyKUunE9PWKLs18ZnYkiaBmlu4v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
- phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
- mlxlogscore=781 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300142
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGypqWxRv+3q3gXqGtKH+5rb+pPwNrCz-933xOk29eku38qosg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-
-
-On 10/19/2024 1:58 AM, Dmitry Baryshkov wrote:
->> +static struct gdsc gx_gdsc = {
->> +	.gdscr = 0x100c,
->> +	.en_rest_wait_val = 0x2,
->> +	.en_few_wait_val = 0x2,
->> +	.clk_dis_wait_val = 0x2,
->> +	.pd = {
->> +		.name = "gx_gdsc",
-> .power_on = gdsc_gx_do_nothing_enable ? Or is it controlled directly on
-> this platform?
+On Wednesday 30 October 2024 11:06:30 Bharath SM wrote:
+> On Mon, Oct 28, 2024 at 4:12 PM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > STATUS_DELETE_PENDING error is returned when trying to open a file which is
+> > in delete pending state. Linux SMB client currently translates this error
+> > to -ENOENT. So Linux application trying to open a file which still exists
+> > will receive -ENOENT error. This is confusing as -ENONET means that
+> > directory entry does not exist.
+> >
+> > File on SMB server can be in delete pending state for an indefinite long
+> > period. Moreover it does not have to final state before the real deleting,
+> > as any SMB client who still have opened handle to such file can revert file
+> > from delete pending state back to normal state. And therefore client can
+> > cancel any scheduled file removal.
+> >
+> > So change translation of STATUS_DELETE_PENDING error to -EBUSY. -EBUSY is
+> > used also for STATUS_SHARING_VIOLATION error which is similar case, when
+> > opening a file was disallowed by server due to concurrent usage.
+> >
 > 
+> My worry is that, change in error code mapping might break some
+> applications compatibility.
 
-On QCS615 the GPU clocks are directly controlled by high level OS.
+Do you have any specific example in mind where this can happen?
 
->> +	},
->> +	.pwrsts = PWRSTS_OFF_ON,
->> +	.flags = POLL_CFG_GDSCR,
->> +};
->> +
-
--- 
-Thanks & Regards,
-Taniya Das.
+I was thinking about it and I cannot imagine how this change could break
+application compatibility. I do not know how can application think that
+-ENOENT error from open() or stat() syscall should be handled as file
+exists. This is direct contradiction of the -ENOENT meaning.
 
