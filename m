@@ -1,217 +1,121 @@
-Return-Path: <linux-kernel+bounces-389536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03A19B6E26
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:52:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6529B6E2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46C31C23278
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:52:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 797C8B2167F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACDE1FF606;
-	Wed, 30 Oct 2024 20:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1E4213136;
+	Wed, 30 Oct 2024 20:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhS3zy3w"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z5bPi4aG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BBC1CBE9D;
-	Wed, 30 Oct 2024 20:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0FB19CC24;
+	Wed, 30 Oct 2024 20:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730321512; cv=none; b=UkbcENgEGh8S1Pr4gvFDkgmGo1ReqHQMnazJvoBrJCELSSo7UFMi46bqPQlcMB786QrhHC9/YPIz13mj0ecEgmOFsaJhulX5q0y+CPUGx8qReXhFAf2lT+jOnI0+pl+/dXlCYso5eQ6AUkSyvP4+6UZKInUTxPZ1lDD2MbZGhdU=
+	t=1730321742; cv=none; b=drH6NdO4McTZObjSGjXiur1DyxSCQoAqzj6mHnr2aJYEAzt1gjK/sBSLBUXufkOYeJd3yFJScL3tEoTNj/Srood1qX/CgqyX+Ocfpvxn1+pJ1cLSPZqjEX/CJEqNhaiqlmY7iGvhjBf8c0QaO+IkfMF8q5U73tZdEAi9IKQNDw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730321512; c=relaxed/simple;
-	bh=oBhmGXIzoWMrEGOBvgCoKpinjlkHJVkkvHT6rk+OfDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VH07R2JOVvm4Cj5PS1sLNFWA5kyNVAdlcfgCkM8bW2WEm6I54GRg5NaFbqry4uN3LvAWJM7tnCfOk6iNqvrSHtsJeQZj6qVr81NUeSuT/1Ykzb/8UEz/F3e7vgYp0Bbb+JMajRlpuUBzk1c5Z7xAw50NxHNetqdI96NDwQ/Hris=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VhS3zy3w; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7eda47b7343so255791a12.0;
-        Wed, 30 Oct 2024 13:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730321509; x=1730926309; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vIDzkbaRW84oze4Y/ABSAauGRkTZdpvmjx0lVai7SMU=;
-        b=VhS3zy3w0fklcFJyHMFFvChYodOFrIENiXBFfmYmX8SzO96iJj54wefgsWclCOhEM3
-         rxtfZsNURSC8ypd3BgjUECZwKqQakjK1dQNLR1uQnr2vLm/uwrd28AN17sl+pXQ0k4AJ
-         lmMeCk+WEJpzN5hbtoHqN2KYda7nMTJEuNq1A4nY7z902dOirUArJbbI4Qx/nh5Z9een
-         WCbzxmsafrYY/Vp7lsix4NHcmRCuj9lspGJHbpZcsaS7U7G5KZdHSQXp/PB4H7HR2qJo
-         9+KE0ncJCmP7gNDXtR/oLlXlV8jBJvPgMefRdae0hJmH75Ta07f5JW139Q4OFERF/vy2
-         pmqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730321509; x=1730926309;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vIDzkbaRW84oze4Y/ABSAauGRkTZdpvmjx0lVai7SMU=;
-        b=WSPr7dQENAalBgkjnv19ti1pCfFXbiroteutpYMZz3j5oHhl6hnl6YTJn36VZbGppr
-         CNusenTarbbVtkpsPA38zgT7VnQiwkxjTLSeNpj9/Z8Qpot1dOQKaP5FmLsTEGYiCeO/
-         5Ft8K7v2tBOn+Qwkzp4/fz/3ik4Vi18IrAgtBPoCnTh5pKW/oeGw8Tj79j3vk1mT8pI+
-         qj03mfPn3YbI/XwRnanSi4nhttcXTvge2C00x6wiU02/ZQLgLNWZ3pzquZPVpnlAmyRg
-         8sYn9SbGinz+ZK/nT/B1ooyZyub3xRCLjykoUebSk3TjrvD3Oc5HyHHwWq/8o7d2zHoJ
-         j9hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUah904ahfF4lnE/+iIS3Rxor0Q6j2rHI6hS9G3x+uLYxlPX+MeC7PdF3q0psRU419arkYSWJ9vZHnuguU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOaJx+Cv+DOQb3kuHXvRWTsZl2iFwH+aT7XnSjZ/YlHWETr7mk
-	678iFmhnpd2pFzS/rCMI6KEpIkuhxod6TPQQAvtsRxcrpPj6ukd9NABAAbyb
-X-Google-Smtp-Source: AGHT+IEvYLKOdk+3JJQHk6lC9vpHW0BipavnlkXj8PXYB97QvRmZRl9rprLdq6TfCIo1NMRb31Owjw==
-X-Received: by 2002:a05:6a21:e96:b0:1d2:eaca:4fa8 with SMTP id adf61e73a8af0-1d9a84d9df9mr25626864637.35.1730321509079;
-        Wed, 30 Oct 2024 13:51:49 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fc00856sm2329635a91.54.2024.10.30.13.51.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 13:51:48 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Sudarsana Kalluru <skalluru@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: bnx2x: use ethtool string helpers
-Date: Wed, 30 Oct 2024 13:51:47 -0700
-Message-ID: <20241030205147.7442-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730321742; c=relaxed/simple;
+	bh=UTtlS48Hah5u7GdMzBlAhIwEqhmJZ1vHStfGamKkCnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D0g1hVaRc7HuvEdJxqmX0DMMKxtzN4ZiSDX392Jd5AL+JN53ZYPOzT9DP8pkvrgldnQ+CtVW9Z/V4HxE4eFVzrjmTBIeem9tCNyJJSxEyNDFZpt861V5HobqJ6XpjMU1qG4s0HmU1D15JpVSRsxrEeC30+cmgQiLFkDjSky1eTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z5bPi4aG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UCFS7l002341;
+	Wed, 30 Oct 2024 20:55:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Cq83RRr5iVH8Pk8KHhiMY95wpAhRPW9zl0sq+dBSCfY=; b=Z5bPi4aGSnSZvzRD
+	LfUZwu4p29jNuqJ5JNeKOoQPes8Mg9QPIa07XPCmbrmwvrKDi8LZup0jdZZwCDom
+	Lw5XD4i3eZ+5kmlCEcs+2VZr4/DVG44E0FFNR1lp26nLs1m1fmjLMa8ohba89uDb
+	s6f7J6+WMR0LXbL8rg1+whyTwJn4tOAlie1H8m53XIWpjgkd0LmpHarBCfc0sLfi
+	tCFZKzF0LPloa8bunSDwnlElW2UUYXXHuFIHIc7pggk3fNW3vMcJ4sGwparSYYTI
+	L7nhTOHTQZ+/u07FhKDlpaW6LcEf2GNv44P4f2FHH2rs5HD4cT4fuhHgeo9gXQd/
+	Rcnh1g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmn59c63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 20:55:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UKtVEa015633
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 20:55:31 GMT
+Received: from [10.48.242.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 13:55:30 -0700
+Message-ID: <eb39e027-7ab4-4062-a895-cac28d37a8a6@quicinc.com>
+Date: Wed, 30 Oct 2024 13:55:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] wifi: rtw89: 8852a: remove redundant else statement
+To: Colin Ian King <colin.i.king@gmail.com>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+        <linux-wireless@vger.kernel.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241030131416.3091954-1-colin.i.king@gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20241030131416.3091954-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
+X-Proofpoint-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=733
+ priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300164
 
-The latter is the preferred way to copy ethtool strings.
+On 10/30/2024 6:14 AM, Colin Ian King wrote:
+> The cascaded if statements covers all 16 bit values in the comparisons
+> of dgain and the last else statement is not reachable and hence
+> dead code. Remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+> index 9db8713ac99b..f3568c4d0af6 100644
+> --- a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+> +++ b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+> @@ -2248,8 +2248,6 @@ static s8 _dpk_dgain_mapping(struct rtw89_dev *rtwdev, u16 dgain)
+>  		offset = -9;
+>  	else if (dgain <= 0x155)
 
-Avoids manually incrementing the pointer. Cleans up the code quite well.
+should you drop the test and unconditionally return -12 here?
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v1: split off from main broadcom patch.
- .../ethernet/broadcom/bnx2x/bnx2x_ethtool.c   | 66 ++++++++-----------
- 1 file changed, 29 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-index adf7b6b94941..65d65aabf16a 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-@@ -39,34 +39,34 @@ static const struct {
- 	int size;
- 	char string[ETH_GSTRING_LEN];
- } bnx2x_q_stats_arr[] = {
--/* 1 */	{ Q_STATS_OFFSET32(total_bytes_received_hi), 8, "[%s]: rx_bytes" },
-+/* 1 */	{ Q_STATS_OFFSET32(total_bytes_received_hi), 8, "[%d]: rx_bytes" },
- 	{ Q_STATS_OFFSET32(total_unicast_packets_received_hi),
--						8, "[%s]: rx_ucast_packets" },
-+						8, "[%d]: rx_ucast_packets" },
- 	{ Q_STATS_OFFSET32(total_multicast_packets_received_hi),
--						8, "[%s]: rx_mcast_packets" },
-+						8, "[%d]: rx_mcast_packets" },
- 	{ Q_STATS_OFFSET32(total_broadcast_packets_received_hi),
--						8, "[%s]: rx_bcast_packets" },
--	{ Q_STATS_OFFSET32(no_buff_discard_hi),	8, "[%s]: rx_discards" },
-+						8, "[%d]: rx_bcast_packets" },
-+	{ Q_STATS_OFFSET32(no_buff_discard_hi),	8, "[%d]: rx_discards" },
- 	{ Q_STATS_OFFSET32(rx_err_discard_pkt),
--					 4, "[%s]: rx_phy_ip_err_discards"},
-+					 4, "[%d]: rx_phy_ip_err_discards"},
- 	{ Q_STATS_OFFSET32(rx_skb_alloc_failed),
--					 4, "[%s]: rx_skb_alloc_discard" },
--	{ Q_STATS_OFFSET32(hw_csum_err), 4, "[%s]: rx_csum_offload_errors" },
--	{ Q_STATS_OFFSET32(driver_xoff), 4, "[%s]: tx_exhaustion_events" },
--	{ Q_STATS_OFFSET32(total_bytes_transmitted_hi),	8, "[%s]: tx_bytes" },
-+					 4, "[%d]: rx_skb_alloc_discard" },
-+	{ Q_STATS_OFFSET32(hw_csum_err), 4, "[%d]: rx_csum_offload_errors" },
-+	{ Q_STATS_OFFSET32(driver_xoff), 4, "[%d]: tx_exhaustion_events" },
-+	{ Q_STATS_OFFSET32(total_bytes_transmitted_hi),	8, "[%d]: tx_bytes" },
- /* 10 */{ Q_STATS_OFFSET32(total_unicast_packets_transmitted_hi),
--						8, "[%s]: tx_ucast_packets" },
-+						8, "[%d]: tx_ucast_packets" },
- 	{ Q_STATS_OFFSET32(total_multicast_packets_transmitted_hi),
--						8, "[%s]: tx_mcast_packets" },
-+						8, "[%d]: tx_mcast_packets" },
- 	{ Q_STATS_OFFSET32(total_broadcast_packets_transmitted_hi),
--						8, "[%s]: tx_bcast_packets" },
-+						8, "[%d]: tx_bcast_packets" },
- 	{ Q_STATS_OFFSET32(total_tpa_aggregations_hi),
--						8, "[%s]: tpa_aggregations" },
-+						8, "[%d]: tpa_aggregations" },
- 	{ Q_STATS_OFFSET32(total_tpa_aggregated_frames_hi),
--					8, "[%s]: tpa_aggregated_frames"},
--	{ Q_STATS_OFFSET32(total_tpa_bytes_hi),	8, "[%s]: tpa_bytes"},
-+					8, "[%d]: tpa_aggregated_frames"},
-+	{ Q_STATS_OFFSET32(total_tpa_bytes_hi),	8, "[%d]: tpa_bytes"},
- 	{ Q_STATS_OFFSET32(driver_filtered_tx_pkt),
--					4, "[%s]: driver_filtered_tx_pkt" }
-+					4, "[%d]: driver_filtered_tx_pkt" }
- };
- 
- #define BNX2X_NUM_Q_STATS ARRAY_SIZE(bnx2x_q_stats_arr)
-@@ -3184,32 +3184,24 @@ static u32 bnx2x_get_private_flags(struct net_device *dev)
- static void bnx2x_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
- {
- 	struct bnx2x *bp = netdev_priv(dev);
--	int i, j, k, start;
--	char queue_name[MAX_QUEUE_NAME_LEN+1];
-+	const char *str;
-+	int i, j, start;
- 
- 	switch (stringset) {
- 	case ETH_SS_STATS:
--		k = 0;
- 		if (is_multi(bp)) {
- 			for_each_eth_queue(bp, i) {
--				memset(queue_name, 0, sizeof(queue_name));
--				snprintf(queue_name, sizeof(queue_name),
--					 "%d", i);
--				for (j = 0; j < BNX2X_NUM_Q_STATS; j++)
--					snprintf(buf + (k + j)*ETH_GSTRING_LEN,
--						ETH_GSTRING_LEN,
--						bnx2x_q_stats_arr[j].string,
--						queue_name);
--				k += BNX2X_NUM_Q_STATS;
-+				for (j = 0; j < BNX2X_NUM_Q_STATS; j++) {
-+					str = bnx2x_q_stats_arr[j].string;
-+					ethtool_sprintf(&buf, str, i);
-+				}
- 			}
- 		}
- 
--		for (i = 0, j = 0; i < BNX2X_NUM_STATS; i++) {
-+		for (i = 0; i < BNX2X_NUM_STATS; i++) {
- 			if (HIDE_PORT_STAT(bp) && IS_PORT_STAT(i))
- 				continue;
--			strcpy(buf + (k + j)*ETH_GSTRING_LEN,
--				   bnx2x_stats_arr[i].string);
--			j++;
-+			ethtool_puts(&buf, bnx2x_stats_arr[i].string);
- 		}
- 
- 		break;
-@@ -3220,13 +3212,13 @@ static void bnx2x_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
- 			start = 0;
- 		else
- 			start = 4;
--		memcpy(buf, bnx2x_tests_str_arr + start,
--		       ETH_GSTRING_LEN * BNX2X_NUM_TESTS(bp));
-+		for (i = start; i < BNX2X_NUM_TESTS_SF; i++)
-+			ethtool_puts(&buf, bnx2x_tests_str_arr[i]);
- 		break;
- 
- 	case ETH_SS_PRIV_FLAGS:
--		memcpy(buf, bnx2x_private_arr,
--		       ETH_GSTRING_LEN * BNX2X_PRI_FLAG_LEN);
-+		for (i = 0; i < BNX2X_PRI_FLAG_LEN; i++)
-+			ethtool_puts(&buf, bnx2x_private_arr[i]);
- 		break;
- 	}
- }
--- 
-2.47.0
+>  		offset = -12;
+> -	else
+> -		offset = 0x0;
+>  
+>  	return offset;
+>  }
 
 
