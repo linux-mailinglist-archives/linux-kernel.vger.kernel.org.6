@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-389316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94E79B6B4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:49:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1769B6B4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF2E283D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4109B28303E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D94D1C7B68;
-	Wed, 30 Oct 2024 17:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED81A1BD9D9;
+	Wed, 30 Oct 2024 17:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nr5PzKo7"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtdRKT0o"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D75B1BD9DD;
-	Wed, 30 Oct 2024 17:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2D51BD9DD;
+	Wed, 30 Oct 2024 17:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730310525; cv=none; b=Ke8ao9i20D4F0lLy1DnKANX6FAqn+Jwl+xP0cFLgD4/sslnNDX9ZUUZwQv2p5go2N5oecYDJpQnBd7W0R92RfIzxedOCxeeXTV5NAXSprZS1Enq1w3900fqEKaD3Mon63POsRx5aA48k9/otkSjdsFbwdK1ypFrcBf29s/XwqEs=
+	t=1730310569; cv=none; b=rsDzn7hHm7eiyXuA18sGTYKtcPA9sGUMAbr+bYDjOG3v3riKNugNZed+SrQByPKEj7KJYue3/t5J06LUFEYqT/4pNqvt8BmfP+/fm9DaeDQ36ivPOYTDJ6lzFlpDxMMwP9sKAF7owzFE/JvTFx0FyK7pnwkS3JEpuVP0mXSz87k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730310525; c=relaxed/simple;
-	bh=S/CnkymRqaJT3ioMxi9DFh/1tiGv8xRkdVInnQUNGAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=vABFi9OWf9hln/ARvNSD4RPI53hMO7Jam4n2RRaHhvmeafjbvJte/CXfTnXwJ1a8rPi4CqCmcvhmCWuZJ2HpsI3hULSE3jqNChAcAJJABhE1N/vFn2uqZiO22OTAi2xzrNnwoXNPc2TBbzQbXP27eHaKcEPp/HZntP8HvhNP/x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nr5PzKo7; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1730310569; c=relaxed/simple;
+	bh=GAZfApuun/WBM9hWKbBWrJplY1pQnpd5AbvrAfACmCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AxpJVc2ukrenoa0v7ISrCEmpT2S8A32ybxT74ewOvMOBXgmUoe7TbwtdKvI6ldo4SEb/G4z3KB+DSbVqy1CNnh4IitzFAZ/bi7tfTIF/qxvCGxq/O7A3q9awCYmhQHXWGU05Uvt0XVw/WjM7SRvjwn5XYdCViZBv0wPDTvtuvTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtdRKT0o; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso603281fa.1;
-        Wed, 30 Oct 2024 10:48:42 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so9476266b.0;
+        Wed, 30 Oct 2024 10:49:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730310521; x=1730915321; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3c8WANbuwNQmIFyGiM0fFg9azajzbhCZ4zzBYom44vk=;
-        b=Nr5PzKo7lU/+i0ASAbL2EZHJ+HIT9AgM/lTggm5bc9OoV9DHYkO6M/e0v2NOnJh0VI
-         x5ogQJjyJwUsz+iU4bd4z34Tvdnf/K8LGbUjYsGyrCO4egxBLWV+YxX/5FMltwsv3Es8
-         qmlz20oOBGK+GiQFuELjgBm8ipv9SfCT5C64ezriWg2rTCstVyogeE7Rnsk1PRlkvoTy
-         WXwbVyaBKs9fsznU/N+ERS4iT5wkcWVYf5a1JOiQU9Hg+NaLqSbTX4P7Twg9uOSPQv5W
-         lTT0328hRjLR6LVVN8DQPxQVNjjTlZlLS6YXzstSwISR0odpnSWAMwYZDjmuwWFf+Oy4
-         mKLA==
+        d=gmail.com; s=20230601; t=1730310565; x=1730915365; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cs3z5H8OfPpGCjxObwmP+XcGRDtkoeJFhbDKmfanh24=;
+        b=UtdRKT0onUUSijzHSMKz2Sl1OtWKSGIJZhLKYVo3/b8q+G6XHOumQ9xGAoWiW5vloD
+         CVcbDzvHiiMgr0qvtmH07HO01agA2rhmtYkNXK6La8PNxBJLD+Ki3OKleC5ziIDJStug
+         cGV4FPdesYvC/KgpzXzQDKaVTgCXY2A8kK2vVrkpXEFJ039FbSRyOjNqX8Zn38V7Cy5e
+         Jr2xkUIGZ+dj0ghrJCuXODaLmNFIEBABbsL2Pfd11GJpUYUF8c5kg5JEA48BwlQmxmFu
+         Jj4YWPF6Ata7JgnM70RfHpmf8bCuAd9Zdn1HUrYzzZPq+XfLg1Hwtl0O3syNU9MQR9pK
+         tG4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730310521; x=1730915321;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3c8WANbuwNQmIFyGiM0fFg9azajzbhCZ4zzBYom44vk=;
-        b=LGRNhuIS8ORoRfdGl2WzdKlgwwPVWil+X5xhfYOYyAvp/XCcT39wrCkxpiolxQ262D
-         pqiMVW8XQhjJRdUo921kGR+UKOPrSPqi5CRY0O1bwfzRvYSEJoTMiFbCcYCikjs/aw36
-         D5kKmEuDOtR4EF9Q1dDEsE761cjstX/bfKz4yZ9WhJMkqj1B0Hl5GQSvytoXnpflo34z
-         Sth4xwiREi80YWoTqmTI7vfJqm8epdPC+K3fi1Kl1N46nU7Oc00f/RqK4tgYzR5L6y+W
-         JTVQ8nDANpQ2Ph7/pUG6KsmVYGVEIFP/alG7SUWPJYCuwWrpcuPHtotdJ0zPFEyb3bCq
-         vB5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUW6x69MBc4Tdh2b4EiJhiPEe4n6SbxBYWo7ZR3jcjt1fwBBA32PvG/+rZ/2ywFLcQmimebE/Ez4ZEG@vger.kernel.org, AJvYcCXaE0JU93PrAye1nS9NsYIRhQyKhRAs9q89gguUDvelNewx/5sCTF2srNLeAVztv2CzrScjzHSABssDCNOt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzksAx+QB5wOCnYMTx9s7CLoZmdWgsm7JbEESbpAqJLwXHSKGfK
-	levWc75RIqeSoRCSxvCyCTv9njjvMnKRyqYZNjDSfOHs9hKqVGbzx8JUUA==
-X-Google-Smtp-Source: AGHT+IF936HZvLKS36ZaGc+lnPVpTe4gcKZT85VFBeyPb+8M3ZNRhuEEpARe78myz2xA5w8VsI1TWQ==
-X-Received: by 2002:a2e:d09:0:b0:2fa:d7ea:a219 with SMTP id 38308e7fff4ca-2fcbe08857emr105624461fa.37.1730310520853;
-        Wed, 30 Oct 2024 10:48:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730310565; x=1730915365;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cs3z5H8OfPpGCjxObwmP+XcGRDtkoeJFhbDKmfanh24=;
+        b=L0Vrs7rPbUAYQkA3xdzf4LelX7qIN0X/EhxmLHDCRT3tVNOmd7QgIzPpD+4XrorfFt
+         M1txx5cTpTccQEn2VSBDD6wDIirUADUhKjucPfhj+xI2GPYbr/jKfTI6WaiEHSD+dIAa
+         GCMuJkNWVOkDJV+H4mxnpixFJjzboqCPzgP8WPtQjrGY/tkr4hDMCz9CwzmuSEsTRy9a
+         bn5lOuA4tfVCbuxOUC1zHN8RGlEe3Cf2uHNrIYDb8bCaU6gd/3FobVdv0Vl7YNJKkRfH
+         kYDXK7GWDS9CMp8/HjcpStOsw+GV09vQrkRkKIg1v/RFMDfRPpO/f+hvQsRcETL28sw7
+         pUAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJJbkICM/WymSZcPYjeIidZ+5hFOZjArBNNn6+iJFwmpSh18AYGOz/8zkP1Jukt67kQceghHwxiFDLQgG6@vger.kernel.org, AJvYcCVzKZXvoQn2YGbyRxvMFB4n8YoLDhv7ATcMWauZax/Lk7p1lT63s9rPeaVw+pH/GCgUVy/E+u3/piI4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNDVn3ul5VUK7j9L+FfAKqSHtMkZlNC40RtePF2hOCKW8uxoYE
+	idesE+I7f4PYWa8MwaGjUFAur68nnkOsl70DvoDkTDJGouVNNGcZ
+X-Google-Smtp-Source: AGHT+IHD5f1I0hVjw4pIe4XnGiwCH5azKiu1sv5qB8tVdjTSV8ZEo9Du6ea9XN4bKxBsUPhREn/cNg==
+X-Received: by 2002:a17:906:f58a:b0:a99:6036:90a with SMTP id a640c23a62f3a-a9e508cf502mr31698866b.14.1730310565004;
+        Wed, 30 Oct 2024 10:49:25 -0700 (PDT)
 Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a088adesm587224766b.222.2024.10.30.10.48.39
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f29950asm582718866b.122.2024.10.30.10.49.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 10:48:40 -0700 (PDT)
-Date: Wed, 30 Oct 2024 18:48:38 +0100
+        Wed, 30 Oct 2024 10:49:24 -0700 (PDT)
+Date: Wed, 30 Oct 2024 18:49:22 +0100
 From: Stanislav Jakubek <stano.jakubek@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -75,8 +76,9 @@ To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
 	Chunyan Zhang <zhang.lyra@gmail.com>
 Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: sound: sprd,pcm-platform: convert to YAML
-Message-ID: <9fc646b70a73e7a6c513771d69b0edcd140f09d7.1730310275.git.stano.jakubek@gmail.com>
+Subject: [PATCH 2/2] dt-bindings: sound: sprd,sc9860-mcdt: convert to YAML
+Message-ID: <140ee384c1c351ffa3abefa8dd3246d1625dda8d.1730310275.git.stano.jakubek@gmail.com>
+References: <9fc646b70a73e7a6c513771d69b0edcd140f09d7.1730310275.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,31 +87,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <9fc646b70a73e7a6c513771d69b0edcd140f09d7.1730310275.git.stano.jakubek@gmail.com>
 
-Convert the Spreadtrum DMA plaform bindings to DT schema.
-Adjust filename to match compatible.
+Convert the Spreadtrum Multi-Channel Data Transfer controller bindings
+to DT schema. Adjust filename to match compatible.
 
 Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 ---
- .../bindings/sound/sprd,pcm-platform.yaml     | 56 +++++++++++++++++++
- .../devicetree/bindings/sound/sprd-pcm.txt    | 23 --------
- 2 files changed, 56 insertions(+), 23 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/sprd,pcm-platform.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/sprd-pcm.txt
+ .../bindings/sound/sprd,sc9860-mcdt.yaml      | 47 +++++++++++++++++++
+ .../devicetree/bindings/sound/sprd-mcdt.txt   | 19 --------
+ 2 files changed, 47 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/sprd,sc9860-mcdt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/sprd-mcdt.txt
 
-diff --git a/Documentation/devicetree/bindings/sound/sprd,pcm-platform.yaml b/Documentation/devicetree/bindings/sound/sprd,pcm-platform.yaml
+diff --git a/Documentation/devicetree/bindings/sound/sprd,sc9860-mcdt.yaml b/Documentation/devicetree/bindings/sound/sprd,sc9860-mcdt.yaml
 new file mode 100644
-index 000000000000..c15c01bbb884
+index 000000000000..3b66bedeff97
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/sprd,pcm-platform.yaml
-@@ -0,0 +1,56 @@
++++ b/Documentation/devicetree/bindings/sound/sprd,sc9860-mcdt.yaml
+@@ -0,0 +1,47 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/sound/sprd,pcm-platform.yaml#
++$id: http://devicetree.org/schemas/sound/sprd,sc9860-mcdt.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Spreadtrum DMA platform
++title: Spreadtrum Multi-Channel Data Transfer controller
++
++description:
++  The Multi-channel data transfer controller is used for sound stream
++  transmission between the audio subsystem and other AP/CP subsystem. It
++  supports 10 DAC channels and 10 ADC channels, and each channel can be
++  configured with DMA mode or interrupt mode.
 +
 +maintainers:
 +  - Orson Zhai <orsonzhai@gmail.com>
@@ -118,76 +127,57 @@ index 000000000000..c15c01bbb884
 +
 +properties:
 +  compatible:
-+    const: sprd,pcm-platform
++    const: sprd,sc9860-mcdt
 +
-+  dmas:
-+    maxItems: 10
++  reg:
++    maxItems: 1
 +
-+  dma-names:
-+    items:
-+      - const: normal_p_l
-+      - const: normal_p_r
-+      - const: normal_c_l
-+      - const: normal_c_r
-+      - const: voice_c
-+      - const: fast_p
-+      - const: loop_c
-+      - const: loop_p
-+      - const: voip_c
-+      - const: voip_p
++  interrupts:
++    maxItems: 1
 +
 +required:
 +  - compatible
-+  - dmas
-+  - dma-names
++  - reg
++  - interrupts
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    platform {
-+      compatible = "sprd,pcm-platform";
-+      dmas = <&agcp_dma 1 1>, <&agcp_dma 2 2>,
-+             <&agcp_dma 3 3>, <&agcp_dma 4 4>,
-+             <&agcp_dma 5 5>, <&agcp_dma 6 6>,
-+             <&agcp_dma 7 7>, <&agcp_dma 8 8>,
-+             <&agcp_dma 9 9>, <&agcp_dma 10 10>;
-+      dma-names = "normal_p_l", "normal_p_r",
-+                  "normal_c_l", "normal_c_r",
-+                  "voice_c", "fast_p",
-+                  "loop_c", "loop_p",
-+                  "voip_c", "voip_p";
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    mcdt@41490000 {
++      compatible = "sprd,sc9860-mcdt";
++      reg = <0x41490000 0x170>;
++      interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
 +    };
 +...
-diff --git a/Documentation/devicetree/bindings/sound/sprd-pcm.txt b/Documentation/devicetree/bindings/sound/sprd-pcm.txt
+diff --git a/Documentation/devicetree/bindings/sound/sprd-mcdt.txt b/Documentation/devicetree/bindings/sound/sprd-mcdt.txt
 deleted file mode 100644
-index fbbcade2181d..000000000000
---- a/Documentation/devicetree/bindings/sound/sprd-pcm.txt
+index 274ba0acbfd6..000000000000
+--- a/Documentation/devicetree/bindings/sound/sprd-mcdt.txt
 +++ /dev/null
-@@ -1,23 +0,0 @@
--* Spreadtrum DMA platform bindings
+@@ -1,19 +0,0 @@
+-Spreadtrum Multi-Channel Data Transfer Binding
+-
+-The Multi-channel data transfer controller is used for sound stream
+-transmission between audio subsystem and other AP/CP subsystem. It
+-supports 10 DAC channel and 10 ADC channel, and each channel can be
+-configured with DMA mode or interrupt mode.
 -
 -Required properties:
--- compatible: Should be "sprd,pcm-platform".
--- dmas: Specify the list of DMA controller phandle and DMA request line ordered pairs.
--- dma-names: Identifier string for each DMA request line in the dmas property.
--  These strings correspond 1:1 with the ordered pairs in dmas.
+-- compatible: Should be "sprd,sc9860-mcdt".
+-- reg: Should contain registers address and length.
+-- interrupts: Should contain one interrupt shared by all channel.
 -
 -Example:
 -
--	audio_platform:platform@0 {
--		compatible = "sprd,pcm-platform";
--		dmas = <&agcp_dma 1 1>, <&agcp_dma 2 2>,
--		     <&agcp_dma 3 3>, <&agcp_dma 4 4>,
--		     <&agcp_dma 5 5>, <&agcp_dma 6 6>,
--		     <&agcp_dma 7 7>, <&agcp_dma 8 8>,
--		     <&agcp_dma 9 9>, <&agcp_dma 10 10>;
--		dma-names = "normal_p_l", "normal_p_r",
--			"normal_c_l", "normal_c_r",
--			"voice_c", "fast_p",
--			"loop_c", "loop_p",
--			"voip_c", "voip_p";
--	};
+-mcdt@41490000 {
+-	compatible = "sprd,sc9860-mcdt";
+-	reg = <0 0x41490000 0 0x170>;
+-	interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+-};
 -- 
 2.43.0
 
