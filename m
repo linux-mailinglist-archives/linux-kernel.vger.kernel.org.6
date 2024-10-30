@@ -1,153 +1,219 @@
-Return-Path: <linux-kernel+bounces-388554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697549B6128
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:13:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 436C69B612B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBBFB2841B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:13:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 659001C215D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8C61E47B6;
-	Wed, 30 Oct 2024 11:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDC71E47A3;
+	Wed, 30 Oct 2024 11:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6oCTjVU"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMGUsiBz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346531DDA31;
-	Wed, 30 Oct 2024 11:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CEA1DDA31
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286786; cv=none; b=igidvpAjyqRsP7g8vjJ2PAq9eKBsDfjgjuNxu+7HQaeaqmjxM64ZNhObAEFvT08/LivPtKbN5YdNnWOzPc3tKHCy+dZkMyy0DwqDtGSNg2A3+5HkU11Is0w581f9ztHvms7AJrlIXN8SUZ4bShUdMOkf8TnqvCdz/8bieBOkmqU=
+	t=1730286852; cv=none; b=UejIqrqcDI08EMuys4jUzRnf3G4hzgy9m5vkBFYLkqWFfz+cbJVRFi2bgg8ghLkmuoIJpglw09SytrLWhTP+5/5S6Tq2BFwvXyvuz/s5HXyHfd4dndFNJl4eCFF1OKYSAsIv6EdzC8JLMnUmxogvk9yshIhApNZRc4U2hyF4014=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286786; c=relaxed/simple;
-	bh=fCeONLvHegGSfcw9Ky8jaNUZK0p1bHTKuZ3C1akz+tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I/arPV6H/cI7X/iZ4MKW42WP3onFgDT9HDunhtwvIRYf7RQmBsvT5rddm3Ouv+eXTCLSbxIJcyRQvlyR6NH8g37NZcnUZdU+jPudMjZswf4v5S3us5elppLMMevxT649Dj84ZRNDO8+ia0aZs9cHbQzRrrV34O0hRT+vSTv5OKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6oCTjVU; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e70c32cd7so5124662b3a.1;
-        Wed, 30 Oct 2024 04:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730286783; x=1730891583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ymRlvy1aQPoMurranzuEhc83ceu3SVzS1IDAUzBuNJY=;
-        b=j6oCTjVUib255WSr5Ls3OoFvsvVkWIAPPb1ZKLNaKsUVtbNtBRTEtl6NBRBT1ILsVr
-         n5GM9Ecgb/SyEoL3gmVtK9UNP1gWgIuYBp0iPYAot860+ydWk+B1JrEP3yzgGMkHDZzX
-         cQRf/HSAYn8s6lQ7+mAYl9ape0ho4snCscIsbVU3SUSUsqyQBANx/yyBxga5T/sz/0Bf
-         wRtPEasa5ZBYWzgwRBUc1YEkJ8/HkHjrea1c9C2vKRdCjfeELcGwgYAUscYEFqAn+i9K
-         NeGCG8Qefizsun7RVycWX8lTrYQibuK2F3pysw5AYq7x4LCLV4Sxsjvi6Nz/WCt+Cte+
-         C9dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730286783; x=1730891583;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ymRlvy1aQPoMurranzuEhc83ceu3SVzS1IDAUzBuNJY=;
-        b=jdLbYuaTdp6dnDQ+TawwGELfq6FrnW5EJAIYU65DFjZoSMF4pxM4fY7vtb8hVwjaJB
-         AhLlbo4VslKNFbk9TyC+FwvdQ7ldPza5gR4RAFL/cFlIDFKXKjQhXA69GsCo1CiYkrnn
-         qMsv8qyK2GFQQv02M42rx6NWfPxt4hCwfGntIHnqMvJPudns46PUc9ll7kIIY1v9tkMN
-         d4+AMJ1DXIIN/kh2tq7cCN808Fi0n+gYbB3KEGsG3icRzjwbPXqow/sWri9wlYwOmNbg
-         JWP63A789l3f3vgumi35zG/t7c3SVgaz0sG/ostVEjyd+9KkB8aI/08j3Xo1qchnDES4
-         gcqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJqZ/MPHXPR9ijJuVa7F8/p3xXCsByIvjAmCvtz3YLDBX/cNdDfw76mlIsKiOuj0nRI9hR0MI/ifgi5LI=@vger.kernel.org, AJvYcCX7o6PjFplFJV6pGZfgWrQ1NN0I5LEL72rdX8QSTQhF+haa83K2ggGYo4eBCIKnqchBv0vqDRiwIQKpYyVWahA/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5zC1YwUSIzd7BsjQRYfdE6JYJHHkSI8zsrR+I7mcjqPmSO7Gf
-	S1eRRL7RK0/Ny+/B/JDKOK/g3IP/UFI1Zqn37/OLzkuxBZAdzRAWvUDfXw==
-X-Google-Smtp-Source: AGHT+IFu590Lq0TECetYlxh+A+zx5xw+jixfRaS4gaHnOxwLCVbOJeI7mB2J/qtdx99nB4yMsMjyYA==
-X-Received: by 2002:a05:6a00:992:b0:717:8ee0:4ea1 with SMTP id d2e1a72fcca58-72062ae79f3mr23973439b3a.0.1730286783297;
-        Wed, 30 Oct 2024 04:13:03 -0700 (PDT)
-Received: from [172.23.160.204] ([183.134.211.52])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0b961sm8987011b3a.121.2024.10.30.04.12.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 04:13:02 -0700 (PDT)
-Message-ID: <3bc02b33-421e-4c95-8f69-33ec89782621@gmail.com>
-Date: Wed, 30 Oct 2024 19:12:54 +0800
+	s=arc-20240116; t=1730286852; c=relaxed/simple;
+	bh=epJkqfQnN8GvDah3KyLDapzleTyWUAgUNd9i42Dwz2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rlxPG8TkwXFOnSysuyqljUn8jz7s3zVqDMkRBAnzHlxuqZHjvYc9Zu4s8MkmzE2oUK9IwbqrlFD4BOIeiR5w4lPNGxObWuX18vcNXeU9Lr7jyn19C7r8wxXuBVRQdGD1aJ80CX/hDB5T0J41JAED2CYFUPJ3CnKnQyTrE3hzYpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMGUsiBz; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730286850; x=1761822850;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=epJkqfQnN8GvDah3KyLDapzleTyWUAgUNd9i42Dwz2I=;
+  b=ZMGUsiBzay7yHoetTSIi9fDkON+nXzcnqHoGHRx0FyehnLEBpsgFQsJ8
+   ApBJaawX1npir16KAim6BZnDEbtc65KsQONUWkvcxl0H/hdCnlAqinazr
+   aAD11R8gJLpvbxjyXCMZhFht/b9BaQL32FbxunndsTfxH+GyCbg3YdQT6
+   TfVqxMIWMC9DbKlocoa1BEOo3zpIPq90JVbJiBAYkNlupY24/rccvUSSU
+   4/9lOkF6QFrk0Hsrjwhx9tzS2dVnhUuKxfGPTn4Jo0xnNGKum1kXkz2hq
+   IwYfv9MBRpwijalIfcoO1ESDUQkC2vKG5Xqz/+M2k939WLQiWB66Z8UBm
+   w==;
+X-CSE-ConnectionGUID: DivSTabwQwGnLPN5jPSaXQ==
+X-CSE-MsgGUID: oEOD/bu+T8GXnNjWdRUEmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29823673"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29823673"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 04:14:09 -0700
+X-CSE-ConnectionGUID: 5rlRU9fhQZS0AlsKGnMFSQ==
+X-CSE-MsgGUID: k0mU+RedQlizu1rzEo6hkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="105598237"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 30 Oct 2024 04:14:06 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t66eK-000em0-1Z;
+	Wed, 30 Oct 2024 11:14:04 +0000
+Date: Wed, 30 Oct 2024 19:14:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ignat Korchagin <ignat@cloudflare.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Baoquan He <bhe@redhat.com>
+Subject: fs/proc/vmcore.c:458:42: warning: unused variable 'vmcore_mmap_ops'
+Message-ID: <202410301936.GcE8yUos-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] selftests/bpf: Fix compile error when MPTCP not
- support
-To: Matthieu Baerts <matttbe@kernel.org>, Mat Martineau
- <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev
-References: <20241030100108.2443371-1-chen.dylane@gmail.com>
- <abb72d1b-3347-4493-9a18-43c1655b7449@kernel.org>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <abb72d1b-3347-4493-9a18-43c1655b7449@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-在 2024/10/30 18:49, Matthieu Baerts 写道:
-> Hi Tao Chen,
-> 
-> Thank you for having shared this patch.
-> 
-> On 30/10/2024 11:01, Tao Chen wrote:
->> Fix compile error when MPTCP feature not support, though eBPF core check
->> already done which seems invalid in this situation, the error info like:
->> progs/mptcp_sock.c:49:40: error: no member named 'is_mptcp' in 'struct
->> tcp_sock'
->>     49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ?
->>
->> The filed created in new definitions with eBPF core feature to solve
->> this build problem, and test case result still ok in MPTCP kernel.
->>
->> 176/1   mptcp/base:OK
->> 176/2   mptcp/mptcpify:OK
->> 176     mptcp:OK
->> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
->>
->> Fixes: 8039d353217c ("selftests/bpf: Add MPTCP test base")
-> 
-> The commit you mentioned here is more than 2 years old, and as far as I
-> can see, nobody else reported this compilation issue. I guess that's
-> because people used tools/testing/selftests/bpf/config file as expected
-> to populate the kernel config, and I suppose you didn't, right?
->
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c1e939a21eb111a6d6067b38e8e04b8809b64c4e
+commit: c41bd2514184d75db087fe4c1221237fb7922875 kexec: drop dependency on ARCH_SUPPORTS_KEXEC from CRASH_DUMP
+date:   11 months ago
+config: riscv-randconfig-r054-20241030 (https://download.01.org/0day-ci/archive/20241030/202410301936.GcE8yUos-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410301936.GcE8yUos-lkp@intel.com/reproduce)
 
-Hi Matt, thank you for your reply, as you said, i did not use 
-tools/testing/selftests/bpf/config to compile kernel, i will use this 
-helpful
-feature.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410301936.GcE8yUos-lkp@intel.com/
 
-> I don't think other BPF selftests check for missing kernel config if
-> they are specified in the 'config' file, but even if it is the case, I
-> think it would be better to skip all the MPTCP tests, and not try to
-> have them checking something that doesn't exist: no need to validate
-> these tests if the expected kernel config has not been enabled.
-> 
+All warnings (new ones prefixed by >>):
 
-If i use the kernel not support MPTCP, the compile error still exists, 
-and i can not build the bpf test successfully. Maybe skill the test case 
-seems better when kernel not support. Now that bpf_core_field_exists 
-check already used in the code, i think it is better to use new 
-definition mode.
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:743:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     743 |         insb(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:104:53: note: expanded from macro 'insb'
+     104 | #define insb(addr, buffer, count) __insb(PCI_IOBASE + (addr), buffer, count)
+         |                                          ~~~~~~~~~~ ^
+   In file included from fs/proc/vmcore.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:751:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     751 |         insw(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:105:53: note: expanded from macro 'insw'
+     105 | #define insw(addr, buffer, count) __insw(PCI_IOBASE + (addr), buffer, count)
+         |                                          ~~~~~~~~~~ ^
+   In file included from fs/proc/vmcore.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:759:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     759 |         insl(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
+     106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
+         |                                          ~~~~~~~~~~ ^
+   In file included from fs/proc/vmcore.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:768:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     768 |         outsb(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
+     118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
+         |                                            ~~~~~~~~~~ ^
+   In file included from fs/proc/vmcore.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:777:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     777 |         outsw(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
+     119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
+         |                                            ~~~~~~~~~~ ^
+   In file included from fs/proc/vmcore.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:786:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     786 |         outsl(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
+     120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
+         |                                            ~~~~~~~~~~ ^
+   In file included from fs/proc/vmcore.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:1115:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+    1115 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+         |                                                   ~~~~~~~~~~ ^
+>> fs/proc/vmcore.c:458:42: warning: unused variable 'vmcore_mmap_ops' [-Wunused-const-variable]
+     458 | static const struct vm_operations_struct vmcore_mmap_ops = {
+         |                                          ^~~~~~~~~~~~~~~
+   15 warnings generated.
 
-> But again, please correct me if I'm wrong, but I don't think there is
-> anything to change here to fix your compilation issue: simply make sure
-> to use this tools/testing/selftests/bpf/config file to generate your
-> kernel config, no?
-> 
-> Cheers,
-> Matt
 
+vim +/vmcore_mmap_ops +458 fs/proc/vmcore.c
+
+9cb218131de1c5 Michael Holzheu 2013-09-11  457  
+9cb218131de1c5 Michael Holzheu 2013-09-11 @458  static const struct vm_operations_struct vmcore_mmap_ops = {
+9cb218131de1c5 Michael Holzheu 2013-09-11  459  	.fault = mmap_vmcore_fault,
+9cb218131de1c5 Michael Holzheu 2013-09-11  460  };
+9cb218131de1c5 Michael Holzheu 2013-09-11  461  
+
+:::::: The code at line 458 was first introduced by commit
+:::::: 9cb218131de1c59dca9063b2efe876f053f316af vmcore: introduce remap_oldmem_pfn_range()
+
+:::::: TO: Michael Holzheu <holzheu@linux.vnet.ibm.com>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
 
 -- 
-Best Regards
-Dylane Chen
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
