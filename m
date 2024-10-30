@@ -1,306 +1,249 @@
-Return-Path: <linux-kernel+bounces-388074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E589B5A28
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:01:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93D69B5A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA38284614
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:01:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 277D3B22258
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A999195FF0;
-	Wed, 30 Oct 2024 03:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E6A19259A;
+	Wed, 30 Oct 2024 03:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="b6+0UX+q"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UtTfJl4z"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71654194C6C;
-	Wed, 30 Oct 2024 03:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730257298; cv=none; b=JB1cFfp5IuHswVElYFyY58OSehfITtRpRX4oL9Ksh33cwBF5/HW8IvBl7SyFwj3uNVo8MwsLrhfu6zNLH6AARbD7cV+Zcu6QngoKgVZj2pfg8vHit+FuIJsoUEt+DSB7vRFLMPYWAuwvX08ofXV3P6Vr92RSsl+NuZ7EX2zg6gM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730257298; c=relaxed/simple;
-	bh=eHKt1ejtyxCeaYuNJSSChn4McHmTlLEYS6+ZFzPkxt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D9w9xRiwdIsaYmQkjo0MQ6ayrNk3Nzhkh5eq0JbmPqLY94p7oeXUddpyLMcKbcPMErQqqGys1iExWV4SrstWeZFkGk6ADGXbD/ZbjYp90hBpwUmcRsmjIol0realkGF36E1T1qkXO1xUhnq0qzXPhYEfcx2SRRRsKjLphFeC2J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=b6+0UX+q; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1730257281; x=1730862081; i=quwenruo.btrfs@gmx.com;
-	bh=PhRt9JEfCXhfGE49yUgcnbBzA3W7CnN2KqcBK9GAmrE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=b6+0UX+qNMTlREeYfbYP/bXLSCagonUcn3o+YD7tZyIXu4gWmwp6gYtlqJXvDj+/
-	 vGCj1SYB/fTx0npJrMsN/QfhA9pG8jOrfMVgSSTSbbv2M2MQOHrNkJ0E8JnOxSDcs
-	 /P0jcnxbF+t3tNnUh6UYaYxlhpR/8OaSoIIY78OMba+tf1N6OT8eOGxImSiF6sn7W
-	 soo1QnAkZSVPdxPJcwCoEw8CfXkrcB4pNoOMyKCsZ9rgxiTACbPoopJ8DFn1wpTPh
-	 X9RzntOJor3l1hNw51tmiPgI1ETmh5n35Fj8u/E2zu9oUBbUWHj+jxwzW+IKcB4t8
-	 9JBqafJ9qjPcveuyhg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MiJV6-1tl7Cw1Wo2-00aFUZ; Wed, 30
- Oct 2024 04:01:20 +0100
-Message-ID: <4d0603d4-1503-4e8f-bfe2-ed205b598072@gmx.com>
-Date: Wed, 30 Oct 2024 13:31:15 +1030
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BB79454
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730257291; cv=fail; b=KwZmZ0K6Q8luLz0nW0h39YqAdj5MHQl9SyxAaSQL9hymeWhDGynRADZM0Kjx8GCXEB3NMujfwliKQxUbMk6Fi6sEmsnjMLHAwciIzGx2QRh43qHXSCHyvdj+aWh6WwHGzJGGBeU92XiSxyZhhXGeadHrwXN2quM7LfTnnxc65fg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730257291; c=relaxed/simple;
+	bh=Lr581pLFgp/MiYAPVCyGUBJPvsazJbSRcq4lgLWZOpo=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ebPiANA2+0cDuq0XFiwT9eI/81P5AvTJmC1nDge8l5+K1F9031nPmxfFWGLGII34OZ4gpG/6YCBHdlanjO2AZ7eYUAN1I18vVrt07KPzXIbHOYXbWoQekJk5ttWe77VaRSIo8HLLltut1mWM4c3ZNScEnPZTDfqSJ7mzwJV4BU8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UtTfJl4z; arc=fail smtp.client-ip=40.107.236.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ERFq5HpELdEvFeHRkX1fDaaKNPWxSKGgwfzd84nXVGV2jBLsfhpwtCVrSyT1fYJlFBN+Yw5fnlFfZNBgW9DIiEXm9qX6j/AhokSGMeJ67Rz8lZXreB+diOaYsWSkackRBI1IWU7tdEZnkMpozHNKGH4OERnzHiP7ejJufDoA/bExY2H3hFtx4dbN63uheHqq/cgy5yErco2H+JJ0G+HQ6c+rZk3yynlabqZ/aWscykiaE8wZ62G20ir2/oKQdAO/QVziNKWejdjCOg4GliE3DjBdTv7IQoWRFm8eKv3PCzqaV25XjqFQe7g5KoUn9lm0HbL3EJN/scca/dm3wh5uaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jL08yHeylUs0GdLn4moveH2FIqZLD6DzHQASfZmcSMI=;
+ b=Hpuw1SS/xPhhZnujEaps5q94NJXqecOvNVmmNpEFR+MAcHVtIp6CyWzclX2c97yIPF/tFgYsrzNjYJ2RdJN6MvKRXgAO2onxYzrNdeBBNslUcSPMGyiclyIiwFtt4T3q/5U+S4sKjMhyiyXdLxj+y17YnWW3hDwRUkJpj+2ojqhhVp43v20/obYg5oMyETXitDXIEbUwAz+TAtUGngkGuBbAhZVJ3mYulL9EDY6jTVOOTrjY7zml3ZEWq5nXbT5bUa3Ei4t0FnKDlKAywoFrSP8NF9iWF3q1qM1TR7J/61e+jLpqTkkVLZ6KFBCZ8VjgxMweTThcR2ZE638iiShfug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jL08yHeylUs0GdLn4moveH2FIqZLD6DzHQASfZmcSMI=;
+ b=UtTfJl4zfJaWbjcu+JRiFN9IG+Ouaac6cIi7V4tvkBoFU3gm8rvFkmBGbeV+Ki5223MDgfZl7gNPwG8Cf9BDPUiHUgVCCHz3CnDIIkl1bdi4E9dqxAt2LgxQdmE/kDp0AIePInjioqEbdSpI53OBKWvskXJGPbJPp1R3tsc3VN/kNuoXQJFnKC/HInyrSzMx7YnO2m4sD1MESy5pgNmnzq0QShmMzWSGEnWClCuqmiaxpZFr9Jes3sPb7Bp3AWs0mpT18R7UZGV2wuw2WjH+5YgxO+Wtm1Vuoj17rf+P9poJxYxaFCIKyqruo/rFzlLY427Rv7wxMHyn6XckN4safQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM8PR12MB5462.namprd12.prod.outlook.com (2603:10b6:8:24::11) by
+ BN5PR12MB9463.namprd12.prod.outlook.com (2603:10b6:408:2a9::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.32; Wed, 30 Oct 2024 03:01:21 +0000
+Received: from DM8PR12MB5462.namprd12.prod.outlook.com
+ ([fe80::1be8:1c01:29ba:579]) by DM8PR12MB5462.namprd12.prod.outlook.com
+ ([fe80::1be8:1c01:29ba:579%7]) with mapi id 15.20.8093.023; Wed, 30 Oct 2024
+ 03:01:21 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	linux-mm@kvack.org,
+	John Hubbard <jhubbard@nvidia.com>,
+	linux-stable@vger.kernel.org,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Peter Xu <peterx@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Dongwon Kim <dongwon.kim@intel.com>,
+	Hugh Dickins <hughd@google.com>,
+	Junxiao Chang <junxiao.chang@intel.com>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm/gup: restore the ability to pin more than 2GB at a time
+Date: Tue, 29 Oct 2024 20:01:16 -0700
+Message-ID: <20241030030116.670307-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.47.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0P220CA0022.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:41b::33) To DM8PR12MB5462.namprd12.prod.outlook.com
+ (2603:10b6:8:24::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] btrfs: simplify regions mark and keep start unchanged
- in err handling
-To: iamhswang@gmail.com, linux-btrfs@vger.kernel.org
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, wqu@suse.com,
- boris@bur.io, linux-kernel@vger.kernel.org,
- Haisu Wang <haisuwang@tencent.com>
-References: <20241025065448.3231672-1-haisuwang@tencent.com>
- <20241025065448.3231672-3-haisuwang@tencent.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20241025065448.3231672-3-haisuwang@tencent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rQxYgu5j4/Q8v5WCsfUd5CEp9ATChV2FKoSHe3FveRZfsjiWZWV
- mYX52ujUmlKxjC3I92EK4P8faLRAJBPNmJADS0JtNmquqGBV133NhnVdVKTL8437hVKPH6s
- T8Q2Hu6TnRkypBid81J5seGBej9Bn8vP1XNW1twsQZ+CyP6QSBMf0tRGn4+dh9kIt+XrIRN
- cKhexgOK5C9nRt3aZ7YgQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Uo+YEF0tym8=;zEN2LPs7DhU5LHxTzhxWUcM9d+x
- Bv9+wt+8aSA3PQ1qBKWfzwAC5p0FSnwuEwapEmiK0oq1yWXBL74woSWyPakp7mD6RV33QQYkG
- 0L1wMZOHRaI+wjUpwuU0ULzGqf9jEo1kCk93gR5yydCTATNW5NdpzMtLlb0P3ggUdWz+lg6C9
- VUFOMb7kmDDnX6rVw9u8887qONfLlT/Tv08iFnyIUQeUAy+ND6ZqRCxFU5BiJQKmujlyblqle
- GuKXJPw+fT5BDYs7deIlQJFH3yHUah7Wg+UyBSOa/Sin3Lowsern9b2V+/9dkjSinZUGANwr8
- x8wknaXyduOsGM+4/x7sGVxihqCVU6L5pIt8V6mzPuxQ25SlpJufmzQrebTUkgFRIX6p/H6XT
- Qy8k/upAkXz2rl7qGqFm6ZCY9+KCIFUHg4SlxXdh9L14x6FIFhjCxtpfUnJNKcV6IrjhsrWkd
- SSqKpUhkJhKPyhwEV0HIqYRrMkIsr3Z/mX9XxtHhYgYUBVrq0UUGsLd0EM8zWU0aOHn5MAfY1
- IkCmhfnMbZdMWBBQctfV/5F9bdSn7AHlICgSllUX/RK2DChQf2S+NyYP/Cq8wsmHOmkgu2jhH
- mILdKSMOT/8D24yW8f4I2bpZk4a8UHcsU67UFiS6O07TRj/ikik3i33ZKOvq7m+H42mKlIhda
- TxYJpSGjSMwETS0TlwaXePyPuaj8j1rFjkfrV21GfMq8XJzXjnf7z17sXpC6wnQom9q8x+/zz
- ZBTxIQVw1SaMReEALOSNn7fBowKquKhUlecyd/5wtNOQNelZ6oeyyKhrF04QZlQxIJHD010yr
- UHFpySUSwewnfG4frL3Rgu0AYv2N/hSga9Y3r22Q0WZoE=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5462:EE_|BN5PR12MB9463:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ec510dd-ab0c-4fa5-bf06-08dcf88f2215
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xR9eDEcT7XaNy+WoTkkK24SUpfbEIo2CQBmVMF9Qa+rEtepBlsCUnh/xxwhq?=
+ =?us-ascii?Q?dsTZThIWdpE2PCwbodxFTN7bWLOwbdxzuUxpMeGxID9fq2H+j2xoSAV4Rhmo?=
+ =?us-ascii?Q?+QaSAnx4n4UHuNhWtvJARAESfFyIJK2bLl8sKKolup08pkis8PJZZqj54+Lv?=
+ =?us-ascii?Q?/dN/ks6WAmb5j16clQqVSZ8ve2Y6hYghm3laQdbxv0knUKqamXg5BCatmGn4?=
+ =?us-ascii?Q?iDIrMuLA+A4B26QFF3krV4NthM66PRwtxtLqV/ANAfzVZn5HxA+YKRrTiKKZ?=
+ =?us-ascii?Q?mEY/N/I25FSzJVCX0M6jNDSO8yi0ygJ8F4uDGsCACHKYzsmmDCDTh9m64cjW?=
+ =?us-ascii?Q?aItmybIZd1/YoSwM/95I8Lw3Qdq2ZK0wxoNzw3LNaSB3HsIkKq9Pl8Kqt9RR?=
+ =?us-ascii?Q?CPwYqmx/F0sp0auceyTQ0jqXNZTghk1E9FaFH+O5mvmdBOY4G/LwUEJ3YBSj?=
+ =?us-ascii?Q?JwMf1okHrI0TnKSAxRqzXxSKCcteLVJ0enNl8sqlDd9dKV/djfr6qfmUiyKx?=
+ =?us-ascii?Q?eYg2JAhdSRAM7rA6Vdpel0aXP3Ta45UsFZAvi5HwHJb5BxU20b+yK4XeGR8s?=
+ =?us-ascii?Q?S3Lals0oNl8Sov8yvU4mJqXoCFSMDMBTtPqROI8WX8++dI5TYjyfb1psEZkU?=
+ =?us-ascii?Q?e6u2Tgn0X811fgjG2woPUaYA0cD1p+83L+oCJIoBsO7RSTw9RUqVVwZNRG8L?=
+ =?us-ascii?Q?TIU1AM1yVJR20oub/N/iqUwoqVJ3eft5H3t1dfK6OlgVGz0t5rlRBNhIBPsD?=
+ =?us-ascii?Q?tQ2sJKkhrguA2+nXI3B8J90n/A9rIMdAqaSVBq4lyWYj8t1Xxdlmv361pEZY?=
+ =?us-ascii?Q?mhT4pXOzGBm9vWnslxuNHFWqz8rg81uHymFNxupQ+TwZIdvqJUhMxdXzbMb+?=
+ =?us-ascii?Q?MiLiTTGvWU7rWdPRqRlRKqoyLSVjKPrk99P8bXZ+gKX9AlMkT77OpTWnBYZg?=
+ =?us-ascii?Q?sIUEGnD09/FlhrAeT1dyUTfHBa3rzYwd5O8xf72fBuiRWpdD9zTX87/w1UDM?=
+ =?us-ascii?Q?mSRrYVj0ImE6o6S5i5xdhyItpEWkZqj0Hs3200V58S+tpRXh4jn6CLFbEAuF?=
+ =?us-ascii?Q?k4no8kxXfjSYLTVOa0F5dCnTKjLOu+d0PqeEaDXoarB4xn7Xhf5C2hb0Cuww?=
+ =?us-ascii?Q?pNz0ouO3JPzx06PXDxT8uSNwOXuQVq/irq2dPvNw/gebM3mPC3BySK/nq8uF?=
+ =?us-ascii?Q?f6n8sYmD86SQ/kY2RswcuRK5XwSN+2mcLRx7Ctf7DSnW8ODe9vtb288zOMIS?=
+ =?us-ascii?Q?Fp4+OpKEEM+sRFhJvWqym8+ngZC/+13huf1mmPlXqN5NdFao1yMrnxTNVn1y?=
+ =?us-ascii?Q?gyaDN8hxqhIox+7aMqBKmBuo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5462.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?v5WEi9BEgNdVC4mFlr4SEQ4mKEuVKmEM3fsKlemR2Ov8tXpvDGXnQoTd2Y6h?=
+ =?us-ascii?Q?JD8WC4SdtQ1QPwCaiV1dlFwGgj4rD0R2QCBTHBhyk7RZ7FAlCJ8yYWbsmrJq?=
+ =?us-ascii?Q?nUxgt4eZnimatMD7Bl260VucjMpYIxZS6fLHA8BwhXwvht3B6yk0NJjR22YD?=
+ =?us-ascii?Q?YbVDnQuhTpAqz0WKrYH74+C4Ry0Vag+gHdlZ3pgidPVGkm9FSI9nvNxAj7yL?=
+ =?us-ascii?Q?74kB3W62XeRgsqPJowTte62lyl6qFyUMuTTQfJe1pc2hYSUoc0NfjEuxgZ2f?=
+ =?us-ascii?Q?DuNUV9woYkaW4zpEvZay1fPb56928+OUlqunCA3lLGT7j3PeyXTLrUfrYYlv?=
+ =?us-ascii?Q?VvKur+pm6/+9QZGQ92a8NW47M1we5yxIWkyuQMvl/vrvMRVbt9SH0MMAe9er?=
+ =?us-ascii?Q?EtXH7R8TZqPfNgmRqh0rTGIhyhSyCDj8MfQZS1fvUGNFRUObn/li64iYaE+O?=
+ =?us-ascii?Q?GuBGiIZqCwaQzU2ZR6W8lIt5SbCjnVTlAUdUyZOJ5PJiA4cCf4VwgNDcLeIS?=
+ =?us-ascii?Q?J5JmCt7RMP+nW4wJevz5IdOdUME+3EJtvoRo5KpukVzNsRDIyiISvzQESZrc?=
+ =?us-ascii?Q?5Vf5sfzZLfvEZwMAVkrfzhfdPqB+fL39uJqrqhO4Ok2/7F/l7uOx13AFVeQX?=
+ =?us-ascii?Q?tNZCG20dySyTgsd0rrmmsAWeOci5ssfyD7V0VjqLHE6s0U30B6mSKDMgu3Q5?=
+ =?us-ascii?Q?bluSEhkBphYlO3d1by9AmSIC+QSHCY5msnsHnlf/GNa8FsTTYAP1Kx3Rce29?=
+ =?us-ascii?Q?bl08kwXMHHwfjIne6jvMBDJIIL0eLaU7Iva6e2CkcdBbTygdeRVx7tNWzcsE?=
+ =?us-ascii?Q?3+x4AF5s5aNjLVOHpocuE+nMwO5z6JQ1WmRcTq8RQa9l+oBYk5CLYyR665oV?=
+ =?us-ascii?Q?N2X48F6dBuords0w5DPOXRwSzWXdmi1kLzYl07pDZQpFvdDRUShXE0cH+UEQ?=
+ =?us-ascii?Q?0kzd0dNyhTxMsYikqaM6xsW+t+BIOMW0+YTO3faLZ/zu+G84qZgQ6d6p7v6O?=
+ =?us-ascii?Q?DZ6ezx4qc3f2WpKa4WQOrmBvdEuB4BUpMzkrz1QMFWUPYbEAhat3jBtjA0rR?=
+ =?us-ascii?Q?udsyl9BgEOUE7WOzLiWXCRfbkYav3z69GReQEyfZkO051sFooxLPxf/a7SNT?=
+ =?us-ascii?Q?Kv6zLAXeQ347WMTYVusbeu6wVFJGJfGg+IHT66yaUNPII6qcfOahokL69qN/?=
+ =?us-ascii?Q?iospmv2Dm0GmwZ4X6E/lmXU/UAzuU3yQ2rzuGWHmX2BTHG6sxixNO+QTdNfA?=
+ =?us-ascii?Q?Teqtn9RBmy8brH1Fr7d+4uBsEAl/X6vAtXRh5n+PllmLYt99OJ+/iOn64Cle?=
+ =?us-ascii?Q?4G57ARmuycUHJJqiMxbJbS/LlhuMKBrmMj7MTt+DVjxMthso/0IV6Jq3RQl4?=
+ =?us-ascii?Q?SjQrNNDHXT6BRShD87UEEyb6/OjXQu1tfzxdoMpfUKpB+JBwEcVPeOo3JxZ4?=
+ =?us-ascii?Q?c6n30KPT3pWDx7aRyqC4e+aZL1hYNqstAd6Q1zxfRRETAYk7m7BxOiIWF7mJ?=
+ =?us-ascii?Q?1cTmL8oZfI3Ngnp3QgKqusMbODf/1NkluAQo79xkhzVjIeEBPu068As4nXqP?=
+ =?us-ascii?Q?NZVAs/soZkX2UXOq0JutubZ+RNJlODFL+7iK8wf9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ec510dd-ab0c-4fa5-bf06-08dcf88f2215
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5462.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 03:01:21.8577
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +G3jj0OMARuzViLxc4tnJqKAU/VbrOZLahOzhuMtVAcATlg7oao5/g/fwekJai3zAYiPsnu7jO97XWia7SSn4Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9463
 
+commit 53ba78de064b ("mm/gup: introduce
+check_and_migrate_movable_folios()") created a new constraint on the
+pin_user_pages*() API family: a potentially large allocation must now
+occur, internally.
 
+A user-visible consequence has now appeared: user space can no longer
+pin more than 2GB of memory anymore on x86_64. That's because, on a 4KB
+PAGE_SIZE system, when user space tries to (indirectly, via a device
+driver that calls pin_user_pages()) pin 2GB, this requires an allocation
+of a folio pointers array of MAX_PAGE_ORDER size, which is the limit for
+kmalloc().
 
-=E5=9C=A8 2024/10/25 17:24, iamhswang@gmail.com =E5=86=99=E9=81=93:
-> From: Haisu Wang <haisuwang@tencent.com>
->
-> Simplify the regions mark by using cur_alloc_size only to present
-> the reserved but may failed to alloced extent. Remove the ram_size
-> as well since it is always consistent to the cur_alloc_size in the
-> context. Advanced the start mark in normal path until extent succeed
-> alloced and keep the start unchanged in error handling path.
->
-> PASSed the fstest generic/475 test for a hundred times with quota
-> enabled. And a modified generic/475 test by removing the sleep time
-> for a hundred times. About one tenth of the tests do enter the error
-> handling path due to fail to reserve extent.
->
+Fix this (restore the original behavior), by using replacing
+kmalloc_array() with kvmalloc_array(), which falls back to vmalloc() for
+larger allocations.
 
-Although this patch is already merged into for-next, it looks like the
-next patch will again change the error handling, mostly render the this
-one useless:
+Fixes: 53ba78de064b ("mm/gup: introduce check_and_migrate_movable_folios()")
+Cc: linux-stable@vger.kernel.org
 
-https://lore.kernel.org/linux-btrfs/2a0925f0264daf90741ed0a7ba7ed4b4888cf7=
-78.1728725060.git.wqu@suse.com/
+Cc: Vivek Kasireddy <vivek.kasireddy@intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Gerd Hoffmann <kraxel@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Dongwon Kim <dongwon.kim@intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Junxiao Chang <junxiao.chang@intel.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
 
-The newer patch will change the error handling to a simpler one, so
-instead of 3 regions, there will be only 2.
+This applies to mm-hotfixes-unstable (only), because it relies on my
+earlier patch to this exact same location: commit 255231c75dcd mm/gup:
+stop leaking pinned pages in low memory conditions.
 
-There will be no change needed from your side, I will update my patches
-to solve the conflicts, just in case if you find the error handling is
-different in the future.
+thanks,
+John Hubbard
 
-Thanks,
-Qu
+ mm/gup.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> Suggested-by: Qu Wenruo <wqu@suse.com>
-> Signed-off-by: Haisu Wang <haisuwang@tencent.com>
-> ---
->   fs/btrfs/inode.c | 32 ++++++++++++++------------------
->   1 file changed, 14 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 3646734a7e59..7e67a6d50be2 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -1359,7 +1359,6 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   	u64 alloc_hint =3D 0;
->   	u64 orig_start =3D start;
->   	u64 num_bytes;
-> -	unsigned long ram_size;
->   	u64 cur_alloc_size =3D 0;
->   	u64 min_alloc_size;
->   	u64 blocksize =3D fs_info->sectorsize;
-> @@ -1367,7 +1366,6 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   	struct extent_map *em;
->   	unsigned clear_bits;
->   	unsigned long page_ops;
-> -	bool extent_reserved =3D false;
->   	int ret =3D 0;
->
->   	if (btrfs_is_free_space_inode(inode)) {
-> @@ -1421,8 +1419,7 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   		struct btrfs_ordered_extent *ordered;
->   		struct btrfs_file_extent file_extent;
->
-> -		cur_alloc_size =3D num_bytes;
-> -		ret =3D btrfs_reserve_extent(root, cur_alloc_size, cur_alloc_size,
-> +		ret =3D btrfs_reserve_extent(root, num_bytes, num_bytes,
->   					   min_alloc_size, 0, alloc_hint,
->   					   &ins, 1, 1);
->   		if (ret =3D=3D -EAGAIN) {
-> @@ -1453,9 +1450,7 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   		if (ret < 0)
->   			goto out_unlock;
->   		cur_alloc_size =3D ins.offset;
-> -		extent_reserved =3D true;
->
-> -		ram_size =3D ins.offset;
->   		file_extent.disk_bytenr =3D ins.objectid;
->   		file_extent.disk_num_bytes =3D ins.offset;
->   		file_extent.num_bytes =3D ins.offset;
-> @@ -1463,14 +1458,14 @@ static noinline int cow_file_range(struct btrfs_=
-inode *inode,
->   		file_extent.offset =3D 0;
->   		file_extent.compression =3D BTRFS_COMPRESS_NONE;
->
-> -		lock_extent(&inode->io_tree, start, start + ram_size - 1,
-> +		lock_extent(&inode->io_tree, start, start + cur_alloc_size - 1,
->   			    &cached);
->
->   		em =3D btrfs_create_io_em(inode, start, &file_extent,
->   					BTRFS_ORDERED_REGULAR);
->   		if (IS_ERR(em)) {
->   			unlock_extent(&inode->io_tree, start,
-> -				      start + ram_size - 1, &cached);
-> +				      start + cur_alloc_size - 1, &cached);
->   			ret =3D PTR_ERR(em);
->   			goto out_reserve;
->   		}
-> @@ -1480,7 +1475,7 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   						     1 << BTRFS_ORDERED_REGULAR);
->   		if (IS_ERR(ordered)) {
->   			unlock_extent(&inode->io_tree, start,
-> -				      start + ram_size - 1, &cached);
-> +				      start + cur_alloc_size - 1, &cached);
->   			ret =3D PTR_ERR(ordered);
->   			goto out_drop_extent_cache;
->   		}
-> @@ -1501,7 +1496,7 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   			 */
->   			if (ret)
->   				btrfs_drop_extent_map_range(inode, start,
-> -							    start + ram_size - 1,
-> +							    start + cur_alloc_size - 1,
->   							    false);
->   		}
->   		btrfs_put_ordered_extent(ordered);
-> @@ -1519,7 +1514,7 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   		page_ops =3D (keep_locked ? 0 : PAGE_UNLOCK);
->   		page_ops |=3D PAGE_SET_ORDERED;
->
-> -		extent_clear_unlock_delalloc(inode, start, start + ram_size - 1,
-> +		extent_clear_unlock_delalloc(inode, start, start + cur_alloc_size - 1=
-,
->   					     locked_folio, &cached,
->   					     EXTENT_LOCKED | EXTENT_DELALLOC,
->   					     page_ops);
-> @@ -1529,7 +1524,7 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   			num_bytes -=3D cur_alloc_size;
->   		alloc_hint =3D ins.objectid + ins.offset;
->   		start +=3D cur_alloc_size;
-> -		extent_reserved =3D false;
-> +		cur_alloc_size =3D 0;
->
->   		/*
->   		 * btrfs_reloc_clone_csums() error, since start is increased
-> @@ -1545,7 +1540,7 @@ static noinline int cow_file_range(struct btrfs_in=
-ode *inode,
->   	return ret;
->
->   out_drop_extent_cache:
-> -	btrfs_drop_extent_map_range(inode, start, start + ram_size - 1, false)=
-;
-> +	btrfs_drop_extent_map_range(inode, start, start + cur_alloc_size - 1, =
-false);
->   out_reserve:
->   	btrfs_dec_block_group_reservations(fs_info, ins.objectid);
->   	btrfs_free_reserved_extent(fs_info, ins.objectid, ins.offset, 1);
-> @@ -1599,13 +1594,12 @@ static noinline int cow_file_range(struct btrfs_=
-inode *inode,
->   	 * to decrement again the data space_info's bytes_may_use counter,
->   	 * therefore we do not pass it the flag EXTENT_CLEAR_DATA_RESV.
->   	 */
-> -	if (extent_reserved) {
-> +	if (cur_alloc_size) {
->   		extent_clear_unlock_delalloc(inode, start,
->   					     start + cur_alloc_size - 1,
->   					     locked_folio, &cached, clear_bits,
->   					     page_ops);
->   		btrfs_qgroup_free_data(inode, NULL, start, cur_alloc_size, NULL);
-> -		start +=3D cur_alloc_size;
->   	}
->
->   	/*
-> @@ -1614,11 +1608,13 @@ static noinline int cow_file_range(struct btrfs_=
-inode *inode,
->   	 * space_info's bytes_may_use counter, reserved in
->   	 * btrfs_check_data_free_space().
->   	 */
-> -	if (start < end) {
-> +	if (start + cur_alloc_size < end) {
->   		clear_bits |=3D EXTENT_CLEAR_DATA_RESV;
-> -		extent_clear_unlock_delalloc(inode, start, end, locked_folio,
-> +		extent_clear_unlock_delalloc(inode, start + cur_alloc_size,
-> +					     end, locked_folio,
->   					     &cached, clear_bits, page_ops);
-> -		btrfs_qgroup_free_data(inode, NULL, start, end - start + 1, NULL);
-> +		btrfs_qgroup_free_data(inode, NULL, start + cur_alloc_size,
-> +				end - start - cur_alloc_size + 1, NULL);
->   	}
->   	return ret;
->   }
+diff --git a/mm/gup.c b/mm/gup.c
+index 4637dab7b54f..346186788a49 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -21,6 +21,7 @@
+ #include <linux/pagevec.h>
+ #include <linux/sched/mm.h>
+ #include <linux/shmem_fs.h>
++#include <linux/vmalloc.h>
+ 
+ #include <asm/mmu_context.h>
+ #include <asm/tlbflush.h>
+@@ -2439,7 +2440,7 @@ static long check_and_migrate_movable_pages(unsigned long nr_pages,
+ 	struct folio **folios;
+ 	long i, ret;
+ 
+-	folios = kmalloc_array(nr_pages, sizeof(*folios), GFP_KERNEL);
++	folios = kvmalloc_array(nr_pages, sizeof(*folios), GFP_KERNEL);
+ 	if (!folios) {
+ 		unpin_user_pages(pages, nr_pages);
+ 		return -ENOMEM;
+@@ -2450,7 +2451,7 @@ static long check_and_migrate_movable_pages(unsigned long nr_pages,
+ 
+ 	ret = check_and_migrate_movable_folios(nr_pages, folios);
+ 
+-	kfree(folios);
++	kvfree(folios);
+ 	return ret;
+ }
+ #else
+
+base-commit: b70a32bbebeae216a3e846e01965880b309ca173
+-- 
+2.47.0
 
 
