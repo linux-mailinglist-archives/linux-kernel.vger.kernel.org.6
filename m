@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-388598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F76E9B61EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:35:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B169B61D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534F31C21D88
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11AD128439B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F6F1F1301;
-	Wed, 30 Oct 2024 11:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WHb6oIUO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEE41E571B;
+	Wed, 30 Oct 2024 11:31:06 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8101EF952;
-	Wed, 30 Oct 2024 11:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5881DC06B;
+	Wed, 30 Oct 2024 11:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287937; cv=none; b=HwnixElgwoa825E/HolyW34YG/9b5yEGiABS8wNr+0vqyoLwS1X1BIVGbNx8700PfN/4zwDQfxNyAC+N2Ey/3j+MgC4NGXu2Fa/+/7qD5JGQV5zb2ycVjuWB8IQw60/ixlzgwSb4+kv3lBhc/gZMkCrgvl+2y0SicN3jujW5Czw=
+	t=1730287866; cv=none; b=LTI1YkOIQ8tm+kzIGBzomOtJh6GUv/8lFezYh+UOJewDEQOxJDWJ//ed+cit442xvJ4MPq82Z5mFZGnRziYzEpc025nmVrsQWN94OfxQxqpfhcWXt9O1vLZaxqykTMdO3z+yS/ZcXGeYjQEz3S4j/l8xPlVF6MXGtyHfyMkCGks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287937; c=relaxed/simple;
-	bh=w6H7Qq42d5eP8LdVc2TdnqklE3NAyDo0h846LZs1ff4=;
+	s=arc-20240116; t=1730287866; c=relaxed/simple;
+	bh=/V4I5KK9EnbYCxoSwhRFeioalYUVCW0qgVUR5YoNqC8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T5wb1l1fSPokktKatG+TEpt5fIDBISR/+hbdbPsocC4a7VdXPRI9rRJj8YsayRptFmmZP7L43zQEnjFEea+uPeds3UkaollXwjy3x/mMkdmWZCK41xatpntVO2bYttpSsxJ8OrUWyF+aft5gw//L/JaoKg2vHFava1LHlVkWNIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WHb6oIUO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U4msrZ027408;
-	Wed, 30 Oct 2024 11:31:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eOlC8HDfJ7U71PYiyPB7unuvlzouylxbI0NzZJCY39o=; b=WHb6oIUOBDKD0AvU
-	MC6BTJhP5meNs9Y3bn+QHSm4gHOfHUQaZvZWRE2yXSqWDhEtDAuQwS81ICGdHR1k
-	Z6ukYv9LdFWdUd4M/pE6ilRVMtNGfp5G84A0ibCJ6V2yKGXQkIB4KezA3u6AqQfT
-	Nc9DlQU7qYPr9UWhHFbaBKbJn1u4+kw/qZgzXOn/f9oOGlSdZabAKz5hMLhJ2HQ3
-	LGzShfcHtVyV++aGkitwmYqGUNmwlZhW+KAFGj5rD2nuB5BFzirLlsnAQyXA9UGs
-	qHuaCzOkvHz9uzvkrn0g/B4GmI7QL6sBXVsFUxR/fzkrduRBgds6UtjLqb9+oAkF
-	ehv8IA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p33483-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 11:31:57 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UBVtK7027520
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 11:31:56 GMT
-Received: from [10.214.66.253] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 04:31:08 -0700
-Message-ID: <e7a8e786-d67d-4ee7-a4d1-d9d02fd08bda@quicinc.com>
-Date: Wed, 30 Oct 2024 17:00:13 +0530
+	 In-Reply-To:Content-Type; b=ujACaw/ZVeJiCxgD60wUrLYZEnqb73fwwmn/lVosf5kPmO1GiSc5jMMwcUPB+spMXPi1ye2rey5soBowDKoWKps6GMT227f00QKV2llVObEQK4yoXNpA0jZME6qDmv7FRsf84OGsGMaToMe/sWid5+j1IGPVqpa8c0bPDEPUbLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdlJm37Sjz1jvlv;
+	Wed, 30 Oct 2024 19:29:28 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 64B021A0188;
+	Wed, 30 Oct 2024 19:31:00 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 30 Oct 2024 19:31:00 +0800
+Message-ID: <1eac33ae-e8e1-4437-9403-57291ba4ced6@huawei.com>
+Date: Wed, 30 Oct 2024 19:30:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,163 +47,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: re-enable context caching in smmu
- reset operation
-To: Will Deacon <will@kernel.org>
-CC: <robdclark@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
- <20241008125410.3422512-2-quic_bibekkum@quicinc.com>
- <20241024125241.GD30704@willie-the-truck>
- <092db44e-f254-4abd-abea-e9a64e70df12@quicinc.com>
- <20241029124708.GA4241@willie-the-truck>
+Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
+ has already unbound
+To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <zhangkun09@huawei.com>, <fanghaiqing@huawei.com>,
+	<liuyonglong@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
+ Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew
+ Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
+ Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
+	<kernel-team@cloudflare.com>
+References: <20241022032214.3915232-1-linyunsheng@huawei.com>
+ <20241022032214.3915232-4-linyunsheng@huawei.com>
+ <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
+ <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
+ <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
+ <cf1911c5-622f-484c-9ee5-11e1ac83da24@huawei.com> <878qu7c8om.fsf@toke.dk>
 Content-Language: en-US
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-In-Reply-To: <20241029124708.GA4241@willie-the-truck>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yI_kZ8z9PhJ4xMO0zQsOvTIwldSf4Fn1
-X-Proofpoint-ORIG-GUID: yI_kZ8z9PhJ4xMO0zQsOvTIwldSf4Fn1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
- phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300090
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <878qu7c8om.fsf@toke.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-
-
-On 10/29/2024 6:17 PM, Will Deacon wrote:
-> On Fri, Oct 25, 2024 at 07:51:22PM +0530, Bibek Kumar Patro wrote:
->>
->>
->> On 10/24/2024 6:22 PM, Will Deacon wrote:
->>> On Tue, Oct 08, 2024 at 06:24:06PM +0530, Bibek Kumar Patro wrote:
->>>> Default MMU-500 reset operation disables context caching in
->>>> prefetch buffer. It is however expected for context banks using
->>>> the ACTLR register to retain their prefetch value during reset
->>>> and runtime suspend.
+On 2024/10/29 21:58, Toke Høiland-Jørgensen wrote:
+> Yunsheng Lin <linyunsheng@huawei.com> writes:
+> 
+>>>> I would prefer the waiting too if simple waiting fixed the test cases that
+>>>> Youglong and Haiqing were reporting and I did not look into the rabbit hole
+>>>> of possible caching in networking.
 >>>>
->>>> Replace default MMU-500 reset operation with Qualcomm specific reset
->>>> operation which envelope the default reset operation and re-enables
->>>> context caching in prefetch buffer for Qualcomm SoCs.
+>>>> As mentioned in commit log and [1]:
+>>>> 1. ipv4 packet defragmentation timeout: this seems to cause delay up to 30
+>>>>    secs, which was reported by Haiqing.
+>>>> 2. skb_defer_free_flush(): this may cause infinite delay if there is no
+>>>>    triggering for net_rx_action(), which was reported by Yonglong.
 >>>>
->>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
->>>> ---
->>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 45 ++++++++++++++++++++--
->>>>    1 file changed, 42 insertions(+), 3 deletions(-)
+>>>> For case 1, is it really ok to stall the driver unbound up to 30 secs for the
+>>>> default setting of defragmentation timeout?
 >>>>
->>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> index 087fb4f6f4d3..0cb10b354802 100644
->>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> @@ -16,6 +16,16 @@
->>>>
->>>>    #define QCOM_DUMMY_VAL	-1
->>>>
->>>> +/*
->>>> + * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
->>>> + * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
->>>> + * buffer). The remaining bits are implementation defined and vary across
->>>> + * SoCs.
->>>> + */
->>>> +
->>>> +#define CPRE			(1 << 1)
->>>> +#define CMTLB			(1 << 0)
->>>> +
->>>>    static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
->>>>    {
->>>>    	return container_of(smmu, struct qcom_smmu, smmu);
->>>> @@ -396,11 +406,40 @@ static int qcom_smmu_def_domain_type(struct device *dev)
->>>>    	return match ? IOMMU_DOMAIN_IDENTITY : 0;
->>>>    }
->>>>
->>>> +static int qcom_smmu500_reset(struct arm_smmu_device *smmu)
->>>> +{
->>>> +	int ret;
->>>> +	u32 val;
->>>> +	int i;
->>>> +
->>>> +	ret = arm_mmu500_reset(smmu);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	/*
->>>> +	 * arm_mmu500_reset() disables CPRE which is re-enabled here.
->>>> +	 * The errata for MMU-500 before the r2p2 revision requires CPRE to be
->>>> +	 * disabled. The arm_mmu500_reset function disables CPRE to accommodate all
->>>> +	 * RTL revisions. Since all Qualcomm SoCs are on the r2p4 revision, where
->>>> +	 * the CPRE bit can be enabled, the qcom_smmu500_reset function re-enables
->>>> +	 * the CPRE bit for the next-page prefetcher to retain the prefetch value
->>>> +	 * during reset and runtime suspend operations.
->>>> +	 */
->>>> +
->>>> +	for (i = 0; i < smmu->num_context_banks; ++i) {
->>>> +		val = arm_smmu_cb_read(smmu, i, ARM_SMMU_CB_ACTLR);
->>>> +		val |= CPRE;
->>>> +		arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_ACTLR, val);
->>>> +	}
+>>>> For case 2, it is possible to add timeout for those kind of caching like the
+>>>> defragmentation timeout too, but as mentioned in [2], it seems to be a normal
+>>>> thing for this kind of caching in networking:
 >>>
->>> If CPRE only needs to be disabled prior to r2p2, then please teach the
->>> MMU-500 code about that instead of adding qualcomm-specific logic here.
->>>
+>>> Both 1 and 2 seem to be cases where the netdev teardown code can just
+>>> make sure to kick the respective queues and make sure there's nothing
+>>> outstanding (for (1), walk the defrag cache and clear out anything
+>>> related to the netdev going away, for (2) make sure to kick
+>>> net_rx_action() as part of the teardown).
 >>
->> Doing this on MMU-500 code would make it generic and reflect for SoC of all
->> the vendors on this platform.
->> We can make sure that it won't cause any problems in Qualcomm SoCs as we
->> have been enabling this since for some years now and could not
->> observe/reproduce any issues around these errata.
+>> It would be good to be more specific about the 'kick' here, does it mean
+>> taking the lock and doing one of below action for each cache instance?
+>> 1. flush all the cache of each cache instance.
+>> 2. scan for the page_pool owned page and do the finegrained flushing.
 > 
-> Unless you can explain definitively hy that's the case, I still don't
-> think we should be second-guessing the core SMMU driver code in the
-> Qualcomm backend.
-> 
->> But we won't be able to guarantee the same behavior in SoC for other vendors
->> where these errata might still be applicable as per [1] and [2].
->> So as per my understanding it's safe to include in Qualcomm specific
->> implementation and not changing the default behavior in all other vendors'
->> SoC even if they are not prior to r2p2 revision [3].
-> 
-> If you want to gate the errata workarounds on policy, then please follow
-> what we do for the CPU: add a Kconfig option (e.g.
-> ARM_SMMU_WORKAROUND_BROKEN_CPRE) which defaults to "on" (assuming that
-> the relevant errata aren't all "rare") and update silicon-errata.rst
-> accordingly.
-> 
-> Then you can choose to disable them in your .config if you're happy to
-> pick up the pieces.
+> Depends on the context. The page pool is attached to a device, so it
+> should be possible to walk the skb frags queue and just remove any skbs
+> that refer to that netdevice, or something like that.
 
-This seems to be a good idea to me . I am thinking of this approach 
-based on your suggestion,
-i.e. we can bind the original workaround in
-arm_mmu500_reset implementation within ARM_SMMU_WORKAROUND_BROKEN_CPRE
-config (defualts to on, CPRE would be disabled) and in QCOM SoCs default 
-it to off
-(when ARM_SMMU_QCOM=Y -> switch ARM_SMMU_WORKAROUND_BROKEN_CPRE=N).
+I am not sure if netdevice is still the same when passing through all sorts
+of software netdevice, checking if it is the page_pool owned page seems safer?
 
-In silicon-errata.rst would updating ARM_SMMU_WORKAROUND_BROKEN_CPRE be 
-okay , as the config names are based on erratum number.
-
-Thanks & regards,
-Bibek
-
-
+The scaning/flushing seems complicated and hard to get it right if it is
+depending on internal detail of other subsystem's cache implementation.
 
 > 
-> As an aside, I'm happy with the rest of the series now.
-> 
-> Will
+> As for the lack of net_rx_action(), this is related to the deferred
+> freeing of skbs, so it seems like just calling skb_defer_free_flush() on
+> teardown could be an option.
 
+That was my initial thinking about the above case too if we know which percpu
+sd to be passed to skb_defer_free_flush() or which cpu to trigger its
+net_rx_action().
+But it seems hard to tell which cpu napi is running in before napi is disabled,
+which means skb_defer_free_flush() might need to be called for every cpu with
+softirq disabled, as skb_defer_free_flush() calls napi_consume_skb() with
+budget being 1 or call kick_defer_list_purge() for each CPU.
+
+> 
+>>>> "Eric pointed out/predicted there's no guarantee that applications will
+>>>> read / close their sockets so a page pool page may be stuck in a socket
+>>>> (but not leaked) forever."
+>>>
+>>> As for this one, I would put that in the "well, let's see if this
+>>> becomes a problem in practice" bucket.
+>>
+>> As the commit log in [2], it seems it is already happening.
+>>
+>> Those cache are mostly per-cpu and per-socket, and there may be hundreds of
+>> CPUs and thousands of sockets in one system, are you really sure we need
+>> to take the lock of each cache instance, which may be thousands of them,
+>> and do the flushing/scaning of memory used in networking, which may be as
+>> large as '24 GiB' mentioned by Jesper?
+> 
+> Well, as above, the two issues you mentioned are per-netns (or possibly
+> per-CPU), so those seem to be manageable to do on device teardown if the
+> wait is really a problem.
+
+As above, I am not sure if it is still the same netns if the skb is passing
+through all sorts of software netdevice?
+
+> 
+> But, well, I'm not sure it is? You seem to be taking it as axiomatic
+> that the wait in itself is bad. Why? It's just a bit memory being held
+> on to while it is still in use, and so what?
+
+Actually, I thought about adding some sort of timeout or kicking based on
+jakub's waiting patch too.
+
+But after looking at more caching in the networking, waiting and kicking/flushing
+seems harder than recording the inflight pages, mainly because kicking/flushing
+need very subsystem using page_pool owned page to provide a kicking/flushing
+mechanism for it to work, not to mention how much time does it take to do all
+the kicking/flushing.
+
+It seems rdma subsystem uses a similar mechanism:
+https://lwn.net/Articles/989087/
+
+> 
+> -Toke
+> 
+> 
+> 
 
