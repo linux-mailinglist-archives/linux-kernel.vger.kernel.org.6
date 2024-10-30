@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-388277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF059B5D08
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:37:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68B59B5D0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83751C20B55
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCFC1F23A54
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961521E0DD6;
-	Wed, 30 Oct 2024 07:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0F71DFD8E;
+	Wed, 30 Oct 2024 07:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQ44T0Of"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xw+WphWp"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F885931;
-	Wed, 30 Oct 2024 07:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484941DF723
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730273801; cv=none; b=YlmxGF73z4VndlSZYIE0MMBEh5ufUrndYjg0fuo4U46QkRjESQzZcNcieRMz+8EPtq4dNKUR/fwKbptrOK5jLRdvZ7wTW4vwnLQtFhzmGQ0SmXziDujWLGIy/DoWFt4+nozFErNahJT998DSs5PlR4n0LMrr86o9DAi6NtSGJ/w=
+	t=1730273933; cv=none; b=XLHiriAtK7IYcQsdhhjOgirZnqxwSwrMlw5nJoInB/utLN1W9NojXZCLwPIYpsRwopCLEuK/QrlsKEXMZ2ZFFWHZdDUROi8q+jyYVOY8d/gq+CSvoo2T5xnBBH0ExSut7i+SjU9G+l6OaOjSByiRgVX1Gf9ajKAfqOK9sWe0bE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730273801; c=relaxed/simple;
-	bh=j2+oBpfnOxfoZv3A2oAIAab8c4yY5+hmdm19bV/Pioo=;
+	s=arc-20240116; t=1730273933; c=relaxed/simple;
+	bh=CIfyIWKyAZopCYXAVJs0OQjdB+bx4WxORWZhQJacI6g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lubO7PVbZILVfk9BA/EUe6V4X/ffH2nQVaRIoAwBuhjAjPkcp797MjdXeJ9TCu0Civ0F780rvCbj3TE/uvfle1+71uFJgZIzVbNN3aMBF3bH0tUm+CtPmsT003viZIy2Xd0HGTX6XwdUvfG4rws1Q4IvFjOW3EivKtYZZF6LT3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQ44T0Of; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63923C4CEE4;
-	Wed, 30 Oct 2024 07:36:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730273799;
-	bh=j2+oBpfnOxfoZv3A2oAIAab8c4yY5+hmdm19bV/Pioo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GQ44T0OfRUNMMz553RO/cNPlyOLavlBQMszjMUkwX6544yFSwFJz4vC6VGGC7ocZc
-	 1Uw2Ag0VbiWhZd/ZIiItoCpuPR7qxjFaBVCcGauzKq9lOxWR4wM7eYtjz7W3BOHUyI
-	 ytessGfyB4GbX3JI/fMNsYEL1ckIEh1D9EviCgC7ByzrhFtX9AwqvwsygNl1m3Ov5G
-	 B4hPn3z03ywVd5xCuX/r5SS8emvM75BHOHbVfu/I3h4e+kv0iPeAS6ogrghIISBpgW
-	 GaPNaQTIkO66LEsLyMgycbkL5wImixMOK4gIoyw8quo6RDFcZl07+X5JrJVpQu2uD7
-	 XEm8ZO2qxQ2lQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t63GE-000000007b9-1i1P;
-	Wed, 30 Oct 2024 08:36:59 +0100
-Date: Wed, 30 Oct 2024 08:36:58 +0100
-From: Johan Hovold <johan@kernel.org>
-To: jens.glathe@oldschoolsolutions.biz
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Merck Hung <merckhung@gmail.com>
-Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
- definition for WDK2023
-Message-ID: <ZyHiGlDnC8uqk_LG@hovoldconsulting.com>
-References: <20241030-jg-blackrock-for-upstream-v5-0-830c938437ad@oldschoolsolutions.biz>
- <20241030-jg-blackrock-for-upstream-v5-3-830c938437ad@oldschoolsolutions.biz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nOJpOSY+sZTD781Zkf2U6NSRg/c27CrTgAgOgv6sKpooWknQJtELbWU/gKTjR+MQbXCqxiJuYidP9rAps/NkGwzE2VGPpCOa3hhd4fws26gzAnlgj9bUqPgRbcK8UQyOn0BepBbr91AF0ksjJVOe0uX9VPJ43Tkkqn7k+0xoa20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xw+WphWp; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d49a7207cso4441572f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730273929; x=1730878729; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LhuDhEZJkU9JsxAhgAFW3kJci0MRgq1vPLOeXgFWtYk=;
+        b=Xw+WphWpaaVpbkAT9sR8WlI0NKwpkeUg0wdbJkSrmH3ycxUEmCf8739/qim8tnxVYj
+         /OgRazOYtUTR2YTantULEXzSvw8aMfQqFmzQpZk7vHti/mvjDgffKxi8N+dafyn3wkIi
+         rsGmhzVvM1uCff6MbtTk7dYwrJbHRowtO15CPnhDSOTc36u+0P0oFAB6e+Acc743RzFH
+         66TyAk6llaM7AdxmlV1OLH52GNh5MUYw9UfULYtgAKfEw6W3uLN/7aiEJi9f4QY7s7JU
+         8/iXmv5XPtqSwW5tf5v/IAMDw/SheW4IRl73aK1AMIrp2sOcMOtBFF9tqOOcbdA26RQX
+         wzPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730273929; x=1730878729;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LhuDhEZJkU9JsxAhgAFW3kJci0MRgq1vPLOeXgFWtYk=;
+        b=e0sG2h1W78L7ovuuqHa58z5GYsSARB5pu90BgRZOwipeXvu+Ds/Vu7ojaN2luO4uep
+         38BiyboYNwAw6Ck1eUc8Lk1Xbyfh+NNa5GrS3xNYktIenJqNknRSn0oRagfKMkSBNkDa
+         GLODS5sY6p8DQoYRQl0BPT6v90elNsWhQI01uCiz2pytvXvcabCHrz3a2x++KP70cOku
+         KHWLbXEjfyC3em6dMzzo1BctVSn4Hx1PU2YkCEPxYEG0Qnj3uE6ZzZpao+Eibeeeg9Es
+         LqgKN1UCcRfU9BHi5DzVgWSuQAkOYHISMmSFN843wkP1G/XtTiZnnpCTyDeCDmole3ZL
+         K8HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe/hEa03/V9e1d3Nho0qlVjQIhccL0NTv1aeXPRjhj7sqxBdAK30GqdjKEGr0PB/FrL/hj97SRLtKafdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/9hHl8pvD5Dou4G4gJKiNeToTQUUKDaVYD4TpOZOF/CgfwPMC
+	o7cCids8ielRZ/GJn4ybT0PTXKlEyvoXLNCahY7SGwMUUCftZXeo1/iXci2LZGM=
+X-Google-Smtp-Source: AGHT+IGI33jQx6+cHtP7k238HF/+0YJfRR/AYslQCtaxx4oYHXtWzKb8smj2QVp0Aloib/BJCoOhMg==
+X-Received: by 2002:a05:6000:1f06:b0:37d:481e:8e29 with SMTP id ffacd0b85a97d-38061159039mr9314149f8f.25.1730273929282;
+        Wed, 30 Oct 2024 00:38:49 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9d008sm14509226f8f.107.2024.10.30.00.38.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 00:38:48 -0700 (PDT)
+Date: Wed, 30 Oct 2024 10:38:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
+	~lkcamp/patches@lists.sr.ht, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] staging: rtl8723bs: change remaining printk to proper
+ api
+Message-ID: <0d397004-0bfa-46a5-a184-dd85f15f1533@stanley.mountain>
+References: <20241029221544.112800-1-rodrigo.gobbi.7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,108 +83,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030-jg-blackrock-for-upstream-v5-3-830c938437ad@oldschoolsolutions.biz>
+In-Reply-To: <20241029221544.112800-1-rodrigo.gobbi.7@gmail.com>
 
-On Wed, Oct 30, 2024 at 08:09:21AM +0100, Jens Glathe via B4 Relay wrote:
+On Tue, Oct 29, 2024 at 07:15:44PM -0300, Rodrigo Gobbi wrote:
+> As part of TODO file for future work, use dyn debug api for
+> remaining printk statements.
+> 
+> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+> ---
 
-> +&pcie2a {
-> +	aspm-no-l0s;
+Looks good.  Thanks.
 
-There is no such property in the binding (or driver) and L0s is disabled
-for all controllers on sc8280xp.
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-(I think I used a property like this in an early version of the patches
-that ultimately disabled L0s however).
+regards,
+dan carpenter
 
-> +	max-link-speed = <16>;
-
-That's pretty fast. And not supported as this would indicate PCIe
-Gen16...
-
-> +
-> +	perst-gpios = <&tlmm 143 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 145 GPIO_ACTIVE_LOW>;
-> +
-> +	vddpe-3v3-supply = <&vreg_nvme>;
-> +	vdda-supply = <&vreg_l7d>;
-> +
-> +	pinctrl-0 = <&pcie2a_default>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie2a_phy {
-> +	vdda-phy-supply = <&vreg_l4d>;
-> +	vdda-pll-supply = <&vreg_l6d>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie4 {
-> +	aspm-no-l0s;
-
-As above.
-
-> +	max-link-speed = <2>;
-> +
-> +	perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
-> +
-> +	vddpe-3v3-supply = <&vreg_wlan>;
-> +	vdda-supply = <&vreg_l7d>;
-> +
-> +	pinctrl-0 = <&pcie4_default>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie4_port0 {
-> +	wifi@0 {
-> +		compatible = "pci17cb,1103";
-> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +
-> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
-> +		vddaon-supply = <&vreg_pmu_aon_0p8>;
-> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
-> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-> +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
-> +
-> +		qcom,ath11k-calibration-variant = "volterra";
-
-IIRC the other calibration variants use all upper case here. And is
-Volterra sufficient? No vendor prefix or similar needed?
-
-I think you need to get this acked by the ath11k maintainer (Kalle Valo)
-first.
-
-> +	};
-> +};
-
-> +&remoteproc_adsp {
-> +	firmware-name = "qcom/sc8280xp/microsoft/blackrock/qcadsp8280.mbn";
-
-Shouldn't these paths reflect the DMI values as on the X13s?
-
-> +&usb_0_hsphy {
-> +	vdda-pll-supply = <&vreg_l9d>;
-> +	vdda-phy-supply = <&vreg_l4d>;
-
-The binding does not include a vdda-phy supply (same for the other HS
-PHYs).
-
-Where did this come from?
-
-> +	vdda18-supply = <&vreg_l1c>;
-> +	vdda33-supply = <&vreg_l7d>;
-> +
-> +	status = "okay";
-> +};
-
-Johan
 
