@@ -1,137 +1,143 @@
-Return-Path: <linux-kernel+bounces-388708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CBF9B6365
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A91639B6368
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:53:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A271F218EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFE01F21BB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AD51E907F;
-	Wed, 30 Oct 2024 12:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HYbVbyAc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B029A1EABBB;
+	Wed, 30 Oct 2024 12:52:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC5D4D8A7;
-	Wed, 30 Oct 2024 12:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51DA4D8A7;
+	Wed, 30 Oct 2024 12:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730292757; cv=none; b=PSEGXYsBzZuBA0bY1+K5XWF/B9wRZbxvyC4h5/Er4j6w74jmItRIfq/0wtdVY9in3WUIL3VTPXA4/oB/6P2nqeWXwyLX6YXns9EQI73wsour+jfvKJqEjKs/3MJD8AmhTuBxHxWnni/BAOEZgp7uhznQEFjd1VwbmnToourK6CU=
+	t=1730292767; cv=none; b=Y3JV3jAPWtCR8ugTt7w9m627t+6PLnEAI+43oIB4KcXEOzZYpneMBHuZfKNiGOMUyJKj8b9yiyNAJ6CTYgEDHNKTIWBbHB9hb2tTbj66DSPPkTWk82nJoLi8LxqCcW8NG3bz+fYUzmeyDoBrf8CVsUgvIYmhGz2G78srvMtrvF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730292757; c=relaxed/simple;
-	bh=HkTtFEmRjRrNgjKwK8sYfvOwh/wBJWkklEMNCRDk+r4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MqYXEZgtbus3RifJ4XTs+Xo2LJxXHwAk1x7pO9Y+xwipsOM9ion72UUepo+A/NsSBF9dsT1U627MV804z+GsgB+Z7HqA0B//ZplhjAjsFn6G55K4z8tgel5WFahmaFut6BsbSGQ+ye4WI6gdScDaWxJWXhBv2TjREP4jBtAgwG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HYbVbyAc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UAiOVV008871;
-	Wed, 30 Oct 2024 12:52:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gF+3gfp5dbT+G1Ph7dID7VDXTSrRr3ClgxYxPHb04fY=; b=HYbVbyAch/WMPDr2
-	iQGaTkS1tpHhiKQRsP6zgv9yruuy78iK9OODcoUqykcmNnclCmDkBLOfDLciWhsE
-	+pGL7qsX60lR/CW84A6voo3Q6ZVShNFO+aZC25aVNy3eT3h7al5K2/lLLVC1Zg2v
-	lgtylT0dhFq6XshnBKcJLG5o7AkfhCLlT2W2xym5hlr79P51kKtzw7yVbpjKmfCP
-	NFMfOKkRo0uCDA7ByZUboqZ21HJQ+QpLIa3vzVpSi7bma4sVGj0jVY1B0faBMYun
-	JPipyGkLjER+61ZUQF0oJ5hqAt91fV5sm8jNrMHqcwMGeXvBGTsViAnBb3qVr9JR
-	D8xHuQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42jxa8bud0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 12:52:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UCqO1s023019
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 12:52:24 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 05:52:18 -0700
-Message-ID: <a1c14b44-c11a-9855-45a1-9a30fe40c01f@quicinc.com>
-Date: Wed, 30 Oct 2024 18:22:15 +0530
+	s=arc-20240116; t=1730292767; c=relaxed/simple;
+	bh=6FmvHYArbP9A5eMkduasERmZjhT6W53BfofWfnRc/y8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NOAQDTQASnYMmEUnWpzmJMmn212gNR00Q7FT9F0B0CIk7IoTm9HcoNN/4gx8il/szkcXsdzY3HrqD0bBU0yQh//SkHLeBAas9ICC9gBiwQo1Tx7EsfeP7h7XtJ3j9KTQMj9V/aQtTKLEedXUDaEtIfIyvsiVM4zWjHaU33o9IAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdn604437z6K6YJ;
+	Wed, 30 Oct 2024 20:50:16 +0800 (CST)
+Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
+	by mail.maildlp.com (Postfix) with ESMTPS id 969AB140429;
+	Wed, 30 Oct 2024 20:52:41 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 30 Oct 2024 13:52:41 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Wed, 30 Oct 2024 13:52:41 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "tony.luck@intel.com" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"Jonathan Cameron" <jonathan.cameron@huawei.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "jassisinghbrar@gmail.com"
+	<jassisinghbrar@gmail.com>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
+	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
+	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
+	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
+	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
+	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
+	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
+	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
+	<gthelen@google.com>, "wschwartz@amperecomputing.com"
+	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
+	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
+	<wbs@os.amperecomputing.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+	tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
+	"Roberto Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v14 07/14] cxl/memfeature: Add CXL memory device patrol
+ scrub control feature
+Thread-Topic: [PATCH v14 07/14] cxl/memfeature: Add CXL memory device patrol
+ scrub control feature
+Thread-Index: AQHbJwFiEsGT6VLXSEWw7XeCpRer7rKeH9CAgAEnCgA=
+Date: Wed, 30 Oct 2024 12:52:41 +0000
+Message-ID: <35c697489f2b486482ddc42d435861e4@huawei.com>
+References: <20241025171356.1377-1-shiju.jose@huawei.com>
+ <20241025171356.1377-8-shiju.jose@huawei.com>
+ <20241029201527.GTZyFCX_foMR_GouGN@fat_crate.local>
+In-Reply-To: <20241029201527.GTZyFCX_foMR_GouGN@fat_crate.local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V4 3/4] pmdomain: core: Fix debugfs node creation failure
-Content-Language: en-US
-To: Johan Hovold <johan@kernel.org>
-CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
-        <ulf.hansson@linaro.org>, <jassisinghbrar@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <konradybcio@kernel.org>,
-        <linux-pm@vger.kernel.org>, <tstrudel@google.com>, <rafael@kernel.org>,
-        Johan
- Hovold <johan+linaro@kernel.org>
-References: <20241023102148.1698910-1-quic_sibis@quicinc.com>
- <20241023102148.1698910-4-quic_sibis@quicinc.com>
- <ZxuixxBzQZUdIW1c@hovoldconsulting.com>
- <72a0b7b5-4209-f969-0726-e411b5a74e01@quicinc.com>
- <ZxunIcSZDoO3ph64@hovoldconsulting.com>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <ZxunIcSZDoO3ph64@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gmUKxpxBdrgdJWBnvcj7Leuq-A80ZKjX
-X-Proofpoint-ORIG-GUID: gmUKxpxBdrgdJWBnvcj7Leuq-A80ZKjX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
- malwarescore=0 impostorscore=0 phishscore=0 mlxlogscore=959 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300101
 
-
-
-On 10/25/24 19:41, Johan Hovold wrote:
-> On Fri, Oct 25, 2024 at 07:36:16PM +0530, Sibi Sankar wrote:
->> On 10/25/24 19:23, Johan Hovold wrote:
-> 
->>> Also seems to do the trick:
->>>
->>> Tested-by: Johan Hovold <johan+linaro@kernel.org>
->>>
->>> But perhaps you could consider starting enumerating the duplicate
->>> domains from 2 (or 1) instead of 0?:
->>>
->>> NCC_1                           on                              0
->>> NCC_0                           on                              0
->>> NCC                             on                              0
->>
->> We are just trying to make sure node names are unique and
->> can't ensure the pd-name correctness since ida starts its
->> number generation from 0 and I didn't want to shape the
->> fix just to cater to our specific case. The firmware fix
->> will be in charge of ensuring pd-name correctness.
-> 
-> Ah, it's a global number space? I didn't really look at the
-> implementation...
-
-Thanks for testing out the patch. Yes it was a global number
-space but we are changing the implementation again in the next
-re-spin. Please try that out instead.
-
--Sibi
-
-> 
-> Johan
+DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEJvcmlzbGF2IFBldGtvdiA8
+YnBAYWxpZW44LmRlPg0KPlNlbnQ6IDI5IE9jdG9iZXIgMjAyNCAyMDoxNQ0KPlRvOiBTaGlqdSBK
+b3NlIDxzaGlqdS5qb3NlQGh1YXdlaS5jb20+DQo+Q2M6IGxpbnV4LWVkYWNAdmdlci5rZXJuZWwu
+b3JnOyBsaW51eC1jeGxAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj5hY3BpQHZnZXIua2VybmVs
+Lm9yZzsgbGludXgtbW1Aa3ZhY2sub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0K
+PnRvbnkubHVja0BpbnRlbC5jb207IHJhZmFlbEBrZXJuZWwub3JnOyBsZW5iQGtlcm5lbC5vcmc7
+DQo+bWNoZWhhYkBrZXJuZWwub3JnOyBkYW4uai53aWxsaWFtc0BpbnRlbC5jb207IGRhdmVAc3Rn
+b2xhYnMubmV0OyBKb25hdGhhbg0KPkNhbWVyb24gPGpvbmF0aGFuLmNhbWVyb25AaHVhd2VpLmNv
+bT47IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOw0KPnN1ZGVlcC5ob2xsYUBhcm0uY29tOyBq
+YXNzaXNpbmdoYnJhckBnbWFpbC5jb207IGRhdmUuamlhbmdAaW50ZWwuY29tOw0KPmFsaXNvbi5z
+Y2hvZmllbGRAaW50ZWwuY29tOyB2aXNoYWwubC52ZXJtYUBpbnRlbC5jb207IGlyYS53ZWlueUBp
+bnRlbC5jb207DQo+ZGF2aWRAcmVkaGF0LmNvbTsgVmlsYXMuU3JpZGhhcmFuQGFtZC5jb207IGxl
+by5kdXJhbkBhbWQuY29tOw0KPllhemVuLkdoYW5uYW1AYW1kLmNvbTsgcmllbnRqZXNAZ29vZ2xl
+LmNvbTsgamlhcWl5YW5AZ29vZ2xlLmNvbTsNCj5Kb24uR3JpbW1AYW1kLmNvbTsgZGF2ZS5oYW5z
+ZW5AbGludXguaW50ZWwuY29tOw0KPm5hb3lhLmhvcmlndWNoaUBuZWMuY29tOyBqYW1lcy5tb3Jz
+ZUBhcm0uY29tOyBqdGhvdWdodG9uQGdvb2dsZS5jb207DQo+c29tYXN1bmRhcmFtLmFAaHBlLmNv
+bTsgZXJkZW1ha3Rhc0Bnb29nbGUuY29tOyBwZ29uZGFAZ29vZ2xlLmNvbTsNCj5kdWVud2VuQGdv
+b2dsZS5jb207IGd0aGVsZW5AZ29vZ2xlLmNvbTsNCj53c2Nod2FydHpAYW1wZXJlY29tcHV0aW5n
+LmNvbTsgZGZlcmd1c29uQGFtcGVyZWNvbXB1dGluZy5jb207DQo+d2JzQG9zLmFtcGVyZWNvbXB1
+dGluZy5jb207IG5pZmFuLmN4bEBnbWFpbC5jb207IHRhbnhpYW9mZWkNCj48dGFueGlhb2ZlaUBo
+dWF3ZWkuY29tPjsgWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29uLmNvbT47IFJvYmVy
+dG8NCj5TYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29tPjsga2FuZ2thbmcuc2hlbkBmdXR1
+cmV3ZWkuY29tOw0KPndhbmdodWlxaWFuZyA8d2FuZ2h1aXFpYW5nQGh1YXdlaS5jb20+OyBMaW51
+eGFybQ0KPjxsaW51eGFybUBodWF3ZWkuY29tPg0KPlN1YmplY3Q6IFJlOiBbUEFUQ0ggdjE0IDA3
+LzE0XSBjeGwvbWVtZmVhdHVyZTogQWRkIENYTCBtZW1vcnkgZGV2aWNlIHBhdHJvbA0KPnNjcnVi
+IGNvbnRyb2wgZmVhdHVyZQ0KPg0KPk9uIEZyaSwgT2N0IDI1LCAyMDI0IGF0IDA2OjEzOjQ4UE0g
+KzAxMDAsIHNoaWp1Lmpvc2VAaHVhd2VpLmNvbSB3cm90ZToNCj4+IGRpZmYgLS1naXQgYS9Eb2N1
+bWVudGF0aW9uL2VkYWMvZWRhYy1zY3J1Yi5yc3QNCj4+IGIvRG9jdW1lbnRhdGlvbi9lZGFjL2Vk
+YWMtc2NydWIucnN0DQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAw
+MDAwLi40YWFkNDk3NGIyMDgNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL0RvY3VtZW50YXRp
+b24vZWRhYy9lZGFjLXNjcnViLnJzdA0KPj4gQEAgLTAsMCArMSw3NCBAQA0KPj4gKy4uIFNQRFgt
+TGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQo+PiArDQpbLi4uXQ0KPj4gKzENCj4+ICtyb290
+QGxvY2FsaG9zdDp+IyBlY2hvIDAgPg0KPj4gKy9zeXMvYnVzL2VkYWMvZGV2aWNlcy9jeGxfcmVn
+aW9uMC9zY3J1YjAvZW5hYmxlX2JhY2tncm91bmQNCj4+ICtyb290QGxvY2FsaG9zdDp+IyBjYXQN
+Cj4+ICsvc3lzL2J1cy9lZGFjL2RldmljZXMvY3hsX3JlZ2lvbjAvc2NydWIwL2VuYWJsZV9iYWNr
+Z3JvdW5kDQo+PiArMA0KPg0KPlRoaXMgZmlsZSdzIGFkZGl0aW9uIGJlbG9uZ3MgdG8gc29tZSBF
+REFDIHBhdGNoIGluIHRoZSBzZXJpZXMsIG5vdCBoZXJlLg0KSSB3aWxsIGRvLg0KPg0KPkl0IGNv
+dWxkIGJlIGEgc2VwYXJhdGUsIGxhc3QgcGF0Y2ggaW4gdGhlIHNlcmllcyB0b28sIG9uY2UgZXZl
+cnl0aGluZyBpcyBzZXR0bGVkLg0KPg0KPlRoeC4NCj4NCj4tLQ0KPlJlZ2FyZHMvR3J1c3MsDQo+
+ICAgIEJvcmlzLg0KDQpUaGFua3MsDQpTaGlqdQ0K
 
