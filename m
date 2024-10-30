@@ -1,154 +1,123 @@
-Return-Path: <linux-kernel+bounces-388116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8B99B5AD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCB89B5AD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5482F1F24D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213931F24BBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D4B197543;
-	Wed, 30 Oct 2024 04:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D17195803;
+	Wed, 30 Oct 2024 04:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n+hIZAP+"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iKKFJFPK"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F2518FC7F;
-	Wed, 30 Oct 2024 04:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA49374F1;
+	Wed, 30 Oct 2024 04:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730263587; cv=none; b=JflRWWsjvcnMMT9SLVRvTQ5PXfKfaYQYRix/8G6M1TeaMWmMtCZvOCaxLiaNlIEBS9v4VhhzHS+Y3SwkNo13BCk0TZ6qAAPa4anTigHJp1eM4ySpTElTYuvbCqibMR969ysc0qfmNgtUH0XUWReSf8wXxb6xXhyOqQt48684QK0=
+	t=1730263837; cv=none; b=Qk+emSSqRsARHa0GVI1jXRuL+J3X1IWYQpAUeU7DkSe7VhhtVdOG4ozGnNKclqKAtMffv+TGo8/d7M/1s3R4cishN87y6L1NhFrqtJ7DYhLDlweNwHBwhUdb3dqLQ6eMtujfE/6k1J7fKaFF70VjVvprobAdL87CYplzbdCw3xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730263587; c=relaxed/simple;
-	bh=6QffawzmxJnaIqBSgqTQ3MnT6c9kD0vzT8QJz9k1yU8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FZoisTRUtbkF3rtB3JqbX78MZ7Ka47GTVcY6j0BM0p3eTiNjFRfc8eMOhqL13jklg5FIq9FVsS4PxnM+qGJF/8/vnZC7VSf5UZFxJnjULBJZ1aiCsIucbOOd/mqQruhtYvWBg3/YULGmcqbhX7tpml/OXDYcOwgJlizhl5/Gvj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n+hIZAP+; arc=none smtp.client-ip=198.47.23.248
+	s=arc-20240116; t=1730263837; c=relaxed/simple;
+	bh=ppXvsVXeA+nKRwqNQXHi3APPbvVXYRDjvNHhtvxdRhU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M34TdCmqf1cjNFFO5aHKFX4lxSbSaWYB52OizSqtI+Hr91Rjkt8CtEiaO8PK0DXz9Qnfs7EbQQYhXKFMcys/JjDzut/FcWptVgzG2k4ETFX2v5EoG1MRocxbK0tEOrgvoCEOjJ2dUr5sWWsMrFhvdhtnIMNmDgpIsPyiDQz5Hog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iKKFJFPK; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49U4kEUp089459;
-	Tue, 29 Oct 2024 23:46:14 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49U4oLXR059213;
+	Tue, 29 Oct 2024 23:50:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730263574;
-	bh=jzLNZuN60N9bR5+YQqu9raEKZmtLRlqAM+KawBR1f0g=;
-	h=From:To:CC:Subject:Date;
-	b=n+hIZAP+oZABrfGZj8BsJHTYQdG4S0tReAJsZgI7RrslhlR8BWxVRUtNiQj8YGPk/
-	 Ig4BH/OFoVu9dDjX2yL0CFDWBLyZKWkjryODb8Ldu5n4FeylMUabLTQdsnMmXC3hz1
-	 Squ/7Xx0HkYLsqWQTmb7x7qYeT2mw0+fMaWYzLiw=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49U4kEcT011362
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 29 Oct 2024 23:46:14 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
- Oct 2024 23:46:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+	s=ti-com-17Q1; t=1730263821;
+	bh=YmeylMQuOayChRfW0IDabRowok9NC3hm9gjKzsrLg44=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=iKKFJFPKNgg+ClxApux7NwKL2cElGwNjvGliBMUhs98FRnCEXGes1SfXe2lrEuo03
+	 QL5Yn+tnZOCPTdnpTwwYxD6/RtJnooE9WaJBJUR1itZZ9Z1o1vpe67kjPuwcA0PYjr
+	 vZE0+BnULwDQilzi90P3hRxr6pb8yRCwKK4r89gw=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4oLEH084473;
+	Tue, 29 Oct 2024 23:50:21 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
  (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
+ Oct 2024 23:50:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 29 Oct 2024 23:46:14 -0500
-Received: from lcpd911.dhcp.ti.com (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4kAHe056490;
-	Tue, 29 Oct 2024 23:46:11 -0500
-From: Dhruva Gole <d-gole@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Dhruva Gole <d-gole@ti.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Bryan Brattlof <bb@ti.com>,
+ Frontend Transport; Tue, 29 Oct 2024 23:50:20 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4oG3q002974;
+	Tue, 29 Oct 2024 23:50:17 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>,
         Wadim Egorov
 	<w.egorov@phytec.de>
-Subject: [PATCH v2] arm64: dts: ti: k3-am62: use opp_efuse_table for opp-table syscon
-Date: Wed, 30 Oct 2024 10:15:53 +0530
-Message-ID: <20241030044553.3225383-1-d-gole@ti.com>
-X-Mailer: git-send-email 2.34.1
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <d.schultz@phytec.de>, <nm@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-am62-phycore-som: Add M4F remoteproc nodes
+Date: Wed, 30 Oct 2024 10:20:13 +0530
+Message-ID: <173021674669.3859929.16997677774746918158.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20240911124251.702590-1-w.egorov@phytec.de>
+References: <20240911124251.702590-1-w.egorov@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add another entry in the wkup_conf for the syscon node, and then use
-that for the syscon in opp-table.
+Hi Wadim Egorov,
 
-Marking entire wkup_conf as "syscon", "simple-mfd" is wrong and needs to
-be addressed similar to how other child-nodes in wkup_conf are implemented
-in the same file.
+On Wed, 11 Sep 2024 14:42:49 +0200, Wadim Egorov wrote:
+> The AM62x SoCs of the TI K3 family have a Cortex M4F core in the MCU
+> domain. This core can be used by non safety applications as a remote
+> processor. When used as a remote processor with virtio/rpmessage IPC,
+> two carveout reserved memory nodes are needed. The first region is used
+> as a DMA pool for the rproc device, and the second region will furnish
+> the static carveout regions for the firmware memory.
+> 
+> [...]
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Since the driver fixes for ti-cpufreq.c have made it in -next [1],
-The DT fixes for SK-AM62x can be supported with support for legacy
-style DT as well. This has been tested on SK-AM62x [2]
+[1/3] arm64: dts: ti: k3-am62-phycore-som: Add M4F remoteproc nodes
+      commit: 703545f04465134e41654dd32c583af424c0ba54
+[2/3] arm64: dts: ti: k3-am64-phycore-som: Add M4F remoteproc nodes
+      commit: a13f11477e5bf249e67b9a147a6ec88667ab459a
+[3/3] arm: arm64: dts: ti: k3-am642-phyboard-electra-rdk: Enable trickle charger
+      commit: 62898d47a6265b5e37a7e253067230f05c0a3165
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/cpufreq/ti-cpufreq.c?id=1724ae88efcbcd0daeb203ffeb4a2c0e59f2ddf7
-[2] https://gist.github.com/DhruvaG2000/40b80cc04a9ac90c86445d6e67ece4cb
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Changelog:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Changes in v2:
-- Deleted PATCH to Make the AM625 efuse_offset 0, because with [1] we no
-  longer break backward compatibility and hence need to preserve the old
-  offset.
-- Link to v1:
-  https://lore.kernel.org/linux-arm-kernel/20240902093222.2828345-3-d-gole@ti.com/
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
----
- arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 7 ++++++-
- arch/arm64/boot/dts/ti/k3-am625.dtsi       | 2 +-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-index e0afafd532a5..b2b65e31c7cf 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-@@ -10,7 +10,7 @@
- &cbass_wakeup {
- 	wkup_conf: syscon@43000000 {
- 		bootph-all;
--		compatible = "syscon", "simple-mfd";
-+		compatible = "simple-bus";
- 		reg = <0x00 0x43000000 0x00 0x20000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -22,6 +22,11 @@ chipid: chipid@14 {
- 			reg = <0x14 0x4>;
- 		};
- 
-+		opp_efuse_table: syscon@18 {
-+			compatible = "ti,am62-opp-efuse-table", "syscon";
-+			reg = <0x18 0x4>;
-+		};
-+
- 		cpsw_mac_syscon: ethernet-mac-syscon@200 {
- 			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
- 			reg = <0x200 0x8>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am625.dtsi b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-index c3d1db47dc9f..c249883a8a8d 100644
---- a/arch/arm64/boot/dts/ti/k3-am625.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-@@ -108,7 +108,7 @@ cpu3: cpu@3 {
- 	a53_opp_table: opp-table {
- 		compatible = "operating-points-v2-ti-cpu";
- 		opp-shared;
--		syscon = <&wkup_conf>;
-+		syscon = <&opp_efuse_table>;
- 
- 		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
-
-base-commit: dec9255a128e19c5fcc3bdb18175d78094cc624d
--- 
-2.34.1
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
