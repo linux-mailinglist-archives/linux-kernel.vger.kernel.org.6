@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-388701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA0C9B6346
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:46:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C069B6358
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A4428228F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B4E91C20D0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B911E8859;
-	Wed, 30 Oct 2024 12:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1371EABC0;
+	Wed, 30 Oct 2024 12:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mlfo7gDM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="UxbVmpXW"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A75D22315;
-	Wed, 30 Oct 2024 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B51E9066;
+	Wed, 30 Oct 2024 12:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730292372; cv=none; b=ICCEeMjrSKwp8QDDLQTz8Ul6scufLRkXApCFqUtbhOQlqR23/oJW432khKQzRhKJU44w+xzJGOx/7CwqLFtYPAUzbpc0Z+yRf0ZA+MR0GL9mLtFOqGR3qd4dgwWv8y4aye3adVV5uw2v4aVNL3nFrNtv2xEYriQrRyvDdc151Vg=
+	t=1730292587; cv=none; b=tTBqZdEbrR6j1L0WV7aTvrbcOhp/wn9myBG0TKQ41+VmI7zMf/vLPnnQ3SObAXUxNib8+KZSeq2WwNNb5gaW0B3EWrIXWMvnIWgYe87vsFdynU1jQkUGlhHc8rhruVblYSNNLDzGL6HN/LiSTcBAu0DPFBBKeHW1gEjswYBiS5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730292372; c=relaxed/simple;
-	bh=bXjN3jxZTpXTs9jd7bP8iqE6qhrpgO3mfDc+0GYcu10=;
+	s=arc-20240116; t=1730292587; c=relaxed/simple;
+	bh=+YCnTpHf4kgqcsvGPEJmRwKHA8R5k5OeoiGplCCzf7Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kig8w5r0/jMGNfzpGPbXse7LIYdLyUV5z8xutHL5nyk22bibUCovOKbXfoxm+WWn/ti9+b8sc1yaGB8paXoFSAA5qBdXrexvl0evx1uZsVNw8O8NCpLOWgeMk90fSBLjVUab9EiWfWjjVPLACkjTOWd043FcV7xhaW1oMiCuFK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mlfo7gDM; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730292370; x=1761828370;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bXjN3jxZTpXTs9jd7bP8iqE6qhrpgO3mfDc+0GYcu10=;
-  b=Mlfo7gDMnJSvzZmR9gf+LHdqvr1DhUXJuh+XSiuqeRCx67l6CcdpiYVF
-   3J6NQvFbJaop4tm0GWMvyzIMcrZTi+Wc9aL803lLlRVMIvD4Laya7bp/Y
-   TPfwnQ2FGUt4ZDTm0V27q6gYZ3amfR1bwJ2tKy8SmHTxF/cLtCVOrP1un
-   tXxh8okc72IwX0EJOdht4z2YCpM2kDOjGtA3IKCfXhlc76NVAyo8nS1oP
-   59JUswkbEg/QBgCkkp4sh5YG9glY8VyhkSaDEDprT5FaowKCa1Cp+bat8
-   Zr6x6s4voT+wexO2srwjG58C8eI8Q00tR7MMo0yxlLz5OlgVF27u9e+iU
-   A==;
-X-CSE-ConnectionGUID: uw5d4xQQQ5qSN40rm8ouIg==
-X-CSE-MsgGUID: ad4FWkWwS/KUfngwUWj8CA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30138492"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30138492"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 05:46:07 -0700
-X-CSE-ConnectionGUID: htBDIDUOS1uoNltIdnDP+Q==
-X-CSE-MsgGUID: b4snr80zRT6qcx7IskSAbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="83115085"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 05:46:03 -0700
-Message-ID: <9507bd21-e0ad-4bb0-b3f1-747201e28280@intel.com>
-Date: Wed, 30 Oct 2024 14:45:58 +0200
+	 In-Reply-To:Content-Type; b=OwPtEP3D/a3ACyOXZS2HVEF7dK4/AyQzb7VLQfdEEomhe6oS+Wz9o41KmnN58L7qj/wMkMw8u5ZvVbt358Yhv9Zw6qkgwitjzfxDke2GpKYJhYWjgfsw/BeqqrEz3yQsIn5ofkeUQig1lHEeQsLzi6uuc1Xt8nVL0jQS790QoDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=UxbVmpXW; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730292502; x=1730897302; i=metux@gmx.de;
+	bh=+YCnTpHf4kgqcsvGPEJmRwKHA8R5k5OeoiGplCCzf7Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=UxbVmpXWvyWFMdu+GATuiw1ytz1oNpvm5GNdgPbapjupaP25dsmWNYV/SdmkFCpE
+	 VX+3bwgCyi7J1vZWt8hxBFNjCqYXAs/90EF5MTi5XI4T3wPAud49gsLSmSGWAgCFH
+	 L/MlMEdcnBrC3Z6I/Y0EX4qgIzoVFOZM2ueUS8NENLEQofE14R0wXa31OvlhCEm1F
+	 9lgOEB79j/9vjsYX9KbXu2T/UCUxO61Yl+VZqyc98kF/0soDrfczquDVKjoNkb+Qg
+	 C3a2MT2iG3Shr2kXGTjhv+n6z7zTnhYsIVyC7TaB+61rRJr4ZYE9Z0EHkdrRrpF0j
+	 0MTyH7Gn6TRMn1XJ3Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.178] ([95.114.207.188]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MUXpK-1tExqH3yV6-00WDT5; Wed, 30
+ Oct 2024 13:48:22 +0100
+Message-ID: <d769ffcf-95e6-4db9-8f80-fe8a7dae0441@gmx.de>
+Date: Wed, 30 Oct 2024 13:48:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,82 +57,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] mmc: sdhci-uhs2: remove unnecessary variables
-To: Victor Shih <victorshihgli@gmail.com>, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
- Greg.tu@genesyslogic.com.tw, kernel test robot <lkp@intel.com>,
- Ben Chuang <ben.chuang@genesyslogic.com.tw>,
- Victor Shih <victor.shih@genesyslogic.com.tw>
-References: <20241030112216.4057-1-victorshihgli@gmail.com>
- <20241030112216.4057-2-victorshihgli@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241030112216.4057-2-victorshihgli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: lore.kernel.org getting senile ? [WAS: [PATCH 1/2] MAINTAINERS:
+ Remove Huawei due to compilance requirements.
+To: Vladimir Vladimirovich Putin <vladimir_putin_rus@kremlin.ru>,
+ torvalds@linux-foundation.org
+Cc: aospan@netup.ru, conor.dooley@microchip.com, ddrokosov@sberdevices.ru,
+ dmaengine@vger.kernel.org, dushistov@mail.ru, fancer.lancer@gmail.com,
+ geert@linux-m68k.org, gregkh@linuxfoundation.org,
+ hoan@os.amperecomputing.com, ink@jurassic.park.msu.ru, jeffbai@aosc.io,
+ kexybiscuit@aosc.io, linux-alpha@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-fpga@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ manivannan.sadhasivam@linaro.org, mattst88@gmail.com,
+ netdev@vger.kernel.org, nikita@trvn.ru, ntb@lists.linux.dev,
+ patches@lists.linux.dev, richard.henderson@linaro.org, s.shtylyov@omp.ru,
+ serjk@netup.ru, shc_work@mail.ru, torvic9@mailbox.org,
+ tsbogend@alpha.franken.de, v.georgiev@metrotek.ru, wangyuli@uniontech.com,
+ wsa+renesas@sang-engineering.com, xeb@mail.ru,
+ LKML <linux-kernel@vger.kernel.org>, phoronix@phoronix.com,
+ redaktion@golem.de
+References: <CAHk-=whNGNVnYHHSXUAsWds_MoZ-iEgRMQMxZZ0z-jY4uHT+Gg@mail.gmail.com>
+ <20241024140353.384881-1-vladimir_putin_rus@kremlin.ru>
+ <20241024140353.384881-2-vladimir_putin_rus@kremlin.ru>
+Content-Language: tl
+From: metux <metux@gmx.de>
+In-Reply-To: <20241024140353.384881-2-vladimir_putin_rus@kremlin.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1/p4ha3marvAu2CXeYNmBSD+weQhVbztKCP0nISPKnffRdbsPI3
+ zPctzMmHLcQZTqlh2zjZzgis1SjXx91Sovsuto7k7PtiaIGSg5OcFzLBWgRcu14kWBAZy2V
+ 6iBOO6GAd+WQX6yFBtItp11ISEXll6ojoO2a1WoqxVo2LnaaL9WPMNYPLxG752dUTxTITZF
+ LcInJHKfb0M4bP+h7xstA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4vaZnIPP94U=;1c9up5UAbh4Ag/QzXUXNQvA2l0p
+ 44Ceg39Q9FQgjnuFRb4ctiEQZ6+ThY3ohI4R7ghaxJvwW9GLmQklj8ELuO6HJZM3haO1kBQuj
+ lPf9DjnCWUfcGZ6Ecr8v4m+aEFlTj6r1/zlhPs8EVJwnS4Pe706PuXTBJpkg5WIn7GxOQO2JW
+ XajGhvRcjBrJhZNk7taO4FNBbp5dLDGkB6UepQiBXV68RMT6oTpFOwswwn3/eBeat+lHalNB/
+ gw+WciTtplBXIMbtRlqxaAJboJIHQLy0eXfzWRe/U26hY4FalvSL6RW63w2giJVSyCEe63Xf2
+ pnU7T294h4NAY+Lk1Uh+0usTGhMn+kqSHhbyz6XuQ9SUym/02iNMzOAUQU4B9rMEU5q6ZVIUd
+ 0PZ3f2zoM/AhE/8kfql73M86UBv0ANHdx6CqwXixMw8ZaIdo+GaFI0OcAUT9fQKIyYZczFTBp
+ AGABaZ971CQOkfqz9ZNcYAdXDG9laz6+7WLmruYJKXEeAyGdx7twTMJrs8FULcTe1ZOzQm3ZB
+ DT9XeRboVEyBNz53wj4/qAD1UsQODVRq/XAMxGruSGXdp9S8U1GLjLvbeblVDHTp4i143RIfc
+ UOHfXVzYXn7bC0uCHBJq1Wwe+j/PPMUEteRmxPqlOJxW/zJnk/+MhQ+nsjD3nQeqM4mO62C+8
+ cGyUVjqqCH9JFck+CUdFeZs+muR6CcuaNof+jRlxFMXiRxLHv+44RU3hyg04PrdKE21G5zjmC
+ EK9fu4IcYIpfrqOOb5TemzZQb0+1b1bsoLkyszrXyxOXZlQryGt702z9+snDKhQG4NhdmMGOd
+ ZwypTOh+SvzsGp5g+0qej1rGVGE9aJPkSwI0X0drGzsuc=
 
-On 30/10/24 13:22, Victor Shih wrote:
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> 
-> There are unnecessary variables in the sdhci_uhs2_send_command()
-> that will generate a warning when building the kernel.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202410252107.y9EgrTbA-lkp@intel.com/
-> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+On 24.10.24 16:03, Vladimir Vladimirovich Putin wrote:
+> Huawei Corp was added to the US Entity List[1] on 08/20/2020.
+>
+> The Entity List is a trade restriction list published by the United
+> States Department of Commerce's Bureau of Industry and Security (BIS),
+> consisting of certain foreign persons, entities, or governments.
+> It is published as Supplement 4 of Part 744 of the Code
+> of Federal Regulations. [2]
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Interesting to see that this message got removed from lore.kernel.org.
 
-> ---
->  drivers/mmc/host/sdhci-uhs2.c | 25 -------------------------
->  1 file changed, 25 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-> index c488c6d56015..43820eb5a7ea 100644
-> --- a/drivers/mmc/host/sdhci-uhs2.c
-> +++ b/drivers/mmc/host/sdhci-uhs2.c
-> @@ -684,7 +684,6 @@ static void __sdhci_uhs2_send_command(struct sdhci_host *host, struct mmc_comman
->  
->  static bool sdhci_uhs2_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->  {
-> -	int flags;
->  	u32 mask;
->  	unsigned long timeout;
->  
-> @@ -714,30 +713,6 @@ static bool sdhci_uhs2_send_command(struct sdhci_host *host, struct mmc_command
->  
->  	sdhci_uhs2_set_transfer_mode(host, cmd);
->  
-> -	if ((cmd->flags & MMC_RSP_136) && (cmd->flags & MMC_RSP_BUSY)) {
-> -		WARN_ONCE(1, "Unsupported response type!\n");
-> -		/*
-> -		 * This does not happen in practice because 136-bit response
-> -		 * commands never have busy waiting, so rather than complicate
-> -		 * the error path, just remove busy waiting and continue.
-> -		 */
-> -		cmd->flags &= ~MMC_RSP_BUSY;
-> -	}
-> -
-> -	if (!(cmd->flags & MMC_RSP_PRESENT))
-> -		flags = SDHCI_CMD_RESP_NONE;
-> -	else if (cmd->flags & MMC_RSP_136)
-> -		flags = SDHCI_CMD_RESP_LONG;
-> -	else if (cmd->flags & MMC_RSP_BUSY)
-> -		flags = SDHCI_CMD_RESP_SHORT_BUSY;
-> -	else
-> -		flags = SDHCI_CMD_RESP_SHORT;
-> -
-> -	if (cmd->flags & MMC_RSP_CRC)
-> -		flags |= SDHCI_CMD_CRC;
-> -	if (cmd->flags & MMC_RSP_OPCODE)
-> -		flags |= SDHCI_CMD_INDEX;
-> -
->  	timeout = jiffies;
->  	if (host->data_timeout)
->  		timeout += nsecs_to_jiffies(host->data_timeout);
+Google still has it in it's index, and marc.info still has the whole threa=
+d.
 
+The internet doesn't forget.
+
+
+=2D-mtx
 
