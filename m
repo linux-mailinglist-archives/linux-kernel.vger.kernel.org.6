@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-389104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339F09B6890
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:57:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4C19B6891
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4DB286716
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:57:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E725B21317
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FE52141A2;
-	Wed, 30 Oct 2024 15:57:03 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFBC2141A9;
+	Wed, 30 Oct 2024 15:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlrdZHFI"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2425D1F426F;
-	Wed, 30 Oct 2024 15:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D7C213EEC;
+	Wed, 30 Oct 2024 15:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303822; cv=none; b=oXMEd6adNJa6oUSrwLBornyAfx3QvGqcck1ScOWgEtfInW1eoqUGZhetQScWIGSfaHO0TWtxA5GB58/Xv7zHzSEES7xtHmCdiViHs9j0FDjL+loTUm21DPBsS2XvPNb4wPx/Vnec8teUPFlA6NlAKZPuxGp6lijqNegvAK0XhM4=
+	t=1730303853; cv=none; b=osjVMHtO83fGWPd4PUOuFp8noWKEeoDpS+vM3354k5N+g2id0pL29kGsgmudvcbBYJUaPHJFqkDM/JZCIS21v6D5eGK6O0SfNfhuoIuiaD1ydzzzzf/25ICOrsZKgpCh+X8SwP1m7/ZgUisKoX2WsDlE6PYwFxmUYnWnvGwKEQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303822; c=relaxed/simple;
-	bh=lcdcICWIZgCkqKauCNeaI97hVgNLtvxkqm7Mte9DYXI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eUSH8o0HB9SZGemg6iV1O4pqHhHDtjbpGTwg0Tr9Ts+YnzlrQA7u/pBoOfyLvgZvjANvSaGSLc6CrJDTIHBy5FKbw70dVFAAZFwpxgvj0rkH0xMwvPkexlBiH8idGecD2+YsDJZop0cu6Sc7LewpvhU9Lik1TlJSquG40TA9fBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdsBZ015Dz6K5yj;
-	Wed, 30 Oct 2024 23:54:30 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 71259140158;
-	Wed, 30 Oct 2024 23:56:55 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 16:56:54 +0100
-Date: Wed, 30 Oct 2024 15:56:53 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 10/14] cxl/pci: Map CXL PCIe upstream switch port RAS
- registers
-Message-ID: <20241030155653.000079e9@Huawei.com>
-In-Reply-To: <20241025210305.27499-11-terry.bowman@amd.com>
-References: <20241025210305.27499-1-terry.bowman@amd.com>
-	<20241025210305.27499-11-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730303853; c=relaxed/simple;
+	bh=kNn6yVtxGO/Yo8W9cIjthmdVONNF455zFnORPlULS4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NMke1XPw8vEiC/aCxWdDIyQHhjoZKqD0ykc7L4VSITwPhEpxrexQ8yx0RsHpREV6XQRr2l1U17NaliQFjdGdv7ZJolT0bcEVhkaWoK1aiI3AhgXDmqDllsLOQLOTeyHmg4rNRaQ1/u2qYkl3LlKopni69zPjfv3ev2Lv9NPCClI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlrdZHFI; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cf6eea3c0so11795ad.0;
+        Wed, 30 Oct 2024 08:57:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730303851; x=1730908651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKBQQRyBnijRoqoRqmBb6hQgU1uV8yL5Bv3ozKPB0u4=;
+        b=GlrdZHFIsKvf9mqLT/56vjuIDXEHwJfTfEWV5LPZ7nE2eafICXvpPXXC1XjeZ9lhL3
+         cN9b9ixsP30uFDieyAVTdYyaLTvukRclaZz42bjHsb8R3dAqV91XqOMBZRoAEO4aqf+l
+         4fy0qjwWgD5Kv47bJEzlUaf1L/420zRogHzwETplUhcIjBfnJinZAxmCnIWGPN+/INZP
+         4yszA2EUTp6Uhnv/Qj2h78XcQASJgYzjirDu3myW5eqpVJHzaOV8kOXUrvXocEnEFyUE
+         fsxmPLTFdN4fAe7f75zvi901sfAWMTAGYzvIDuYegyuxtFw85Ypk86N03vfblYH0GwNK
+         jx1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730303851; x=1730908651;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jKBQQRyBnijRoqoRqmBb6hQgU1uV8yL5Bv3ozKPB0u4=;
+        b=MtDbkJxYukyLdRFjAYSwsXaHVTwH1KcJQymdtolhk1Au93GNMdK/DRZCibb1azPGdJ
+         ubGDq8Y1UXkse8PsXwx38Nqh6YyyAVnldRZQ3ogoDaBmrm15e9I3m0M79SW6PLQtoTj3
+         boP+9wqdQqGD2hyfkabdQHKgNVTaBP+xCPHfO0R72wS88fh5EK4UnzHFNXlkZ+OvoPZ8
+         tLY1hXyZxge+kb4A6f0hWuQ5jMwpWPExLhzlUlqkrm0Udm+foRTmf2VPxDr7XKfQaEBy
+         Kt2hGzKFPBZEII9PdAe2gFIM98FmI+Uzr7qlNA6jaNC546xBcn6uhOUwy8BsKQUU8klq
+         A+7w==
+X-Forwarded-Encrypted: i=1; AJvYcCX7e4PpyxBSQmbRqwSmevWVXNTaGQt78yq+sIpoj9XknfvhPNEt7Rt12NriXpXSbvkegj7yatysbK/RwqI=@vger.kernel.org, AJvYcCXuJUHm3Zp+D014m7AKkAqhYc3Hwzk0oXqgyZzCloLUcuzasCCTKKXCs5xL7MI9eeb+PZa4O+72dh/Mwtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjqsm1j3QR4SFzavInm3niCQOrGHkMyBWqEwr7o4U3o2GxQXNr
+	Y6jcLALMTu0OrK1D0lB5d3LYJOsgndsCLMeohmGWDPBCMN4vaoih
+X-Google-Smtp-Source: AGHT+IHfeBY1wLOHJcfuuZr4MGMWUhM8UccQKJCNVpY56jJ/Pe6fPK5w13eoK8CnBVK1TJPXN4y+8A==
+X-Received: by 2002:a17:903:191:b0:20c:5909:cc48 with SMTP id d9443c01a7336-210c6c3453fmr205801475ad.40.1730303851061;
+        Wed, 30 Oct 2024 08:57:31 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:40f2:e:4b75:b7f1:6e21:98e0:5a37])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02dbb4sm82346195ad.183.2024.10.30.08.57.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 08:57:30 -0700 (PDT)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: lgirdwood@gmail.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	daniel.baluta@nxp.com,
+	kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Suraj Sonawane <surajsonawane0215@gmail.com>
+Subject: [PATCH] sound: fix uninit-value in sof_ipc4_pcm_dai_link_fixup_rate
+Date: Wed, 30 Oct 2024 21:27:05 +0530
+Message-Id: <20241030155705.31327-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Oct 2024 16:03:01 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
+Fix an issue detected by the Smatch tool:
 
-> Add logic to map CXL PCIe upstream switch port (USP) RAS registers.
-> 
-> Introduce 'struct cxl_regs' member into 'struct cxl_port' to store a
-> pointer to the upstream port's mapped RAS registers.
-> 
-> The upstream port may have multiple downstream endpoints. Before
-> mapping AER registers check if the registers are already mapped.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> ---
->  drivers/cxl/core/pci.c | 17 +++++++++++++++++
->  drivers/cxl/cxl.h      |  4 ++++
->  drivers/cxl/mem.c      |  3 +++
->  3 files changed, 24 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 0bb61e39cf8f..53ca773557f3 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -773,6 +773,23 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
->  	writel(aer_cmd, aer_base + PCI_ERR_ROOT_COMMAND);
->  }
->  
-> +void cxl_uport_init_ras_reporting(struct cxl_port *port)
-> +{
-> +	/* uport may have more than 1 downstream EP. Check if already mapped. */
-> +	if (port->uport_regs.ras) {
-> +		dev_warn(&port->dev, "RAS is already mapped\n");
-As before, warn seems inappropriate from the comment.
-> +		return;
-> +	}
-> +
-> +	port->reg_map.host = &port->dev;
-> +	if (cxl_map_component_regs(&port->reg_map, &port->uport_regs,
-> +				   BIT(CXL_CM_CAP_CAP_ID_RAS))) {
-> +		dev_err(&port->dev, "Failed to map RAS capability.\n");
-> +		return;
-> +	}
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_uport_init_ras_reporting, CXL);
-> +
+sound/soc/sof/ipc4-pcm.c:615 sof_ipc4_pcm_dai_link_fixup_rate()
+error: uninitialized symbol 'be_rate'.
+sound/soc/sof/ipc4-pcm.c:636 sof_ipc4_pcm_dai_link_fixup_rate()
+error: uninitialized symbol 'be_rate'.
+
+These errors occurred because the variable 'be_rate' is declared but
+may not be assigned a value before it is used. Specifically, if the
+loop that assigns values to 'be_rate' does not execute (for example,
+when 'num_input_formats' is zero), 'be_rate' remains uninitialized,
+leading to potential undefined behavior.
+
+To resolve this issue, initialize 'be_rate' to 0 at the point of
+declaration. This ensures that 'be_rate' has a defined value before
+it is used in subsequent calculations, preventing any warnings or
+undefined behavior in cases where the loop does not run.
+
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+ sound/soc/sof/ipc4-pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sof/ipc4-pcm.c b/sound/soc/sof/ipc4-pcm.c
+index 4df2be3d3..d08419859 100644
+--- a/sound/soc/sof/ipc4-pcm.c
++++ b/sound/soc/sof/ipc4-pcm.c
+@@ -600,7 +600,7 @@ static int sof_ipc4_pcm_dai_link_fixup_rate(struct snd_sof_dev *sdev,
+ 	unsigned int fe_rate = params_rate(params);
+ 	bool fe_be_rate_match = false;
+ 	bool single_be_rate = true;
+-	unsigned int be_rate;
++	unsigned int be_rate = 0;
+ 	int i;
+ 
+ 	/*
+-- 
+2.34.1
 
 
