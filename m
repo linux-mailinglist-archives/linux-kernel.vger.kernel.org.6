@@ -1,208 +1,127 @@
-Return-Path: <linux-kernel+bounces-388468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467C29B600F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:27:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8CA9B6012
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD401F21F36
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:27:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88DDC1F2224E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2341E1C2B;
-	Wed, 30 Oct 2024 10:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6A41E3770;
+	Wed, 30 Oct 2024 10:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MciYac+2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vGTdlSus"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAEB1E284E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6861E2854
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284020; cv=none; b=XoTUUePxFl5jkNMWzKX0Xt2yIz6LBAz6ZyQ+KnO/4OItEdUx+HNqI6S26hw8lKvFQz+FbHPO6axJZUyCayYzZVsBe7E3343R0AKA4jfFgDEc0gR27WfgK8j17KKMIkgUo7V7/oyLVMqyEksdBgXXFZbttRFmAUhs3w8Dym8mCJU=
+	t=1730284043; cv=none; b=SLPyhviCB8lzi46id4Spbkj9dcuunRDn7qcORQYdff/r/NQeyDFU+RntdPx6/zoKNKP5tpOpkh5nRCx2SRZQDu+Mb14hpEt/y+saxLMiRm/ANWI3C2LnIhAPooZcrQx6BNF3WKKRXdv+LqJSKW39tEs4sS4sFF9aOeRSW/HLZIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284020; c=relaxed/simple;
-	bh=enkQ8wGw2YmUqnOlwAoHiWN/YGXdL6fsjKLid6ZtMzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kHHareMa+ujb877jsvIr/Padmre5GY49quD9u0DIKR/gv91xV/BeFlbXLO2bXdnbXXr5kXEWzUPNUVcvjbY2MvoixXV/A6GF22LTMUH/xxHjOH14RSQlwXR7gDsl8dLof7r4xmRWH38EYcehBM6wg/pFdBY1PaKxuigONaevwYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MciYac+2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730284017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UAn5PtOTVly2a1DSq3FAj2+pYreXlzFZTwZTDVZFw+Y=;
-	b=MciYac+28K/jL3Wgw0hlyvdXn0QjRmhCWwOX7eauZVaQWXZvIVdRgmi5Eu5gV03P2GJqCB
-	NkUbh5a/1+zVJzi7F0o7t4ZvzBqjrgUzkbudV/iBLvnqztKJSqWNx5+GDiz8zb6aIsv9+C
-	ezpwx5of3S+CP4DcWMWzHYW5gk0QaaI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-PLxGZ6I9Pc2P5Q2SzFYQyg-1; Wed, 30 Oct 2024 06:26:55 -0400
-X-MC-Unique: PLxGZ6I9Pc2P5Q2SzFYQyg-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d52ca258eso3464336f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:26:55 -0700 (PDT)
+	s=arc-20240116; t=1730284043; c=relaxed/simple;
+	bh=otYYs/V9Tlx1rti601czH6DoyxFLRyvqBqFlV9pex/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nrvg4fcf2UDESxx/7vP/fdbknmhLOYLZMVh7nkeJ9qAtyLgx2sh4EEO5G6Wgy/Y2MrOTEsFnAORatv8oXjWXfzsO92qFp+FSweuUy8QQ7GrqLwD2RdVSQtMBxjPFGJVGtKmRsl3cF8SyH7Zj8kGwuChLXvx3rS4k2hDyOyBlcOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vGTdlSus; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431ac30d379so25439705e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730284039; x=1730888839; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XbYElkal5d6+0YzyWk0lUEIt8HVlxkiQ8cX9u9pIHz4=;
+        b=vGTdlSusEHEfc7Dpk7MtEloADs7n5ec/urUmH7gJcoWJaPnTmoobp7BS3JP9JH8DSG
+         MZBvYlaILKdS4QxvPkeXtEQr9xuAMGSGjuczrgYnEN6iyCuo9V8BvEx2dq1e6qeQvB6C
+         T5dDs5l5mSfKjeKEYK6MLdGW5+SeuEB2Jx3SKLB1fBWmcdYMGLxv0YH1/4JO5cINEFVp
+         qWyXeYXKLK+wpLotq2ehSP2LuiShb9D+IyEgTPjiXpzanv8PZMH9Q6Y0l8ZWkd0iT8ax
+         +1XudRNaLNaNd4y0/+r33bFzKPXIsg2ElXbqVLEeHyiAdqF9A3Klei6CfyVQXhAT9dqa
+         zYRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730284014; x=1730888814;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UAn5PtOTVly2a1DSq3FAj2+pYreXlzFZTwZTDVZFw+Y=;
-        b=Mr66P5gRCSS1FibRw8SgfPvRLJO3VHFmNz5MZjAShkSA6pkxVWsuNs6TghR7n0Ac2b
-         KiG0/dixD5fBFMN1ikKU6n/8ho2Zp5WvGw80cGbd2xWXgas02sPe+/TNi4FYu4MlYZaU
-         fTxHJD55uI0BRxW4PxZooj1mTCF8H2nSgb3zmZo7oz/5c9Y6fmdPY4KdSlnlvn/FMfTb
-         9mB7ZYDwZ/eY054uf9xSGUsvjx3B/wlNdCBW2F6v0Ffs3fdECDwfVBPmv+sx0wvHHAxe
-         lDtW8yl19C9QaZMDqrdQWfcsJFxv7PQZhyAjBrYPTSsYUK0G4hsIvEXPaN0Q4ufWGuIS
-         juwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+AT9wbZMbU2TsqBx4MroK/jplmuWKLpK3X/EYN90p0KKHd1FtNENwl/qjC1TgSAXTsL9v5CexC6JwR5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5rFmLvDZdNxHseGSicTAL+RntNlwNe1Kfx3VXYBEx2TSybzAQ
-	fG11ycyb5VKYsv7rUendJ8kGh15jtj5/rGcG+kID8li8A3CWc2mBAA9LaauBihiaCo7m98J48jo
-	mt7Uut4dVabBy9UFjSDzDDNelT+xLw7CyJsBBdxlXrxZphS3/MYd6X4BTFygFpw==
-X-Received: by 2002:a5d:48c4:0:b0:374:b71f:72c9 with SMTP id ffacd0b85a97d-381b70762e8mr2234162f8f.16.1730284014541;
-        Wed, 30 Oct 2024 03:26:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhT/7VLXcmPTmel+O5szvYG/3aiGbWANU4AxCfbzCuMCvUvYX6/ZhW7mmaRxnmxOVhlaDgLQ==
-X-Received: by 2002:a5d:48c4:0:b0:374:b71f:72c9 with SMTP id ffacd0b85a97d-381b70762e8mr2234137f8f.16.1730284014109;
-        Wed, 30 Oct 2024 03:26:54 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c733:7c00:d067:e327:4f99:7546? (p200300cbc7337c00d067e3274f997546.dip0.t-ipconnect.de. [2003:cb:c733:7c00:d067:e327:4f99:7546])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b92f11sm14925113f8f.101.2024.10.30.03.26.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 03:26:53 -0700 (PDT)
-Message-ID: <4fae9fa2-dc43-4a1a-af18-ec1c9c82fbf7@redhat.com>
-Date: Wed, 30 Oct 2024 11:26:52 +0100
+        d=1e100.net; s=20230601; t=1730284039; x=1730888839;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XbYElkal5d6+0YzyWk0lUEIt8HVlxkiQ8cX9u9pIHz4=;
+        b=FP3D3zUC7Vr0FPzc9zvgcPoKboohvJkpZCP3t/8fjyzaWEFGE88f/varxMzXOojTIM
+         YQvXNt9NTxC+FH9/bYzUPq8lR3v9AqPBv6McecIxUfENjYtIemFtchx8gzeCEOpIrmc8
+         smQttqdPiRwRj1zS1wODfOeW4iTJEWHMHgg3XJMqK0fhB0S/cjpZfvxWDbYR6KXe28gS
+         WBJmHEDrfoL4vO6joCJ6CWb6wSb38hD9YrsKi38+nypFukJ9L2fY+BZRtHz2xL4Y51+4
+         uqDG/D8H6lZYe7aUoniR0VFyOqsoVxiqN5E5LsQhef3XCNNHX+q7TYGtVjQ17OxGk59g
+         u89A==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ0CLTQ4OS4R3+2ai5wN1YolYNNCz5AY4cCUrVQte7zm/GurhFmUMGTtZTmHBa65uwYvRAx6JJl+AxmI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEHDcT3sDFwIYDmofDcWWHMm2l/eotJ/+SP5fTxgtxtSMOKlFv
+	JOP8vEt6H1v2jM2kr3MXLZSmRsjkKhPkuVyG7v8YjjmllKKv+TP4TmhbXQv/+f4=
+X-Google-Smtp-Source: AGHT+IEBXlayGHv2GLllRn++oS/33OaG/rbc8trQcavkqXJ8lRHX4Tn/XZiU8Jv9/cKndo3pJPqlbA==
+X-Received: by 2002:a05:600c:1390:b0:431:5d4f:73a3 with SMTP id 5b1f17b1804b1-4319acb226amr104551115e9.18.1730284039298;
+        Wed, 30 Oct 2024 03:27:19 -0700 (PDT)
+Received: from ta2.c.googlers.com.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947b2bsm17074345e9.25.2024.10.30.03.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 03:27:18 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: alim.akhtar@samsung.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: krzk@kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH 1/2] scsi: ufs: exynos: remove empty drv_init method
+Date: Wed, 30 Oct 2024 10:27:14 +0000
+Message-ID: <20241030102715.3312308-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] x86: probe memory block size advisement value
- during mm init
-To: Gregory Price <gourry@gourry.net>, x86@kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org
-Cc: linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
- dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
- dave.jiang@intel.com, ira.weiny@intel.com, alison.schofield@intel.com,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- rafael@kernel.org, lenb@kernel.org, osalvador@suse.de,
- gregkh@linuxfoundation.org, akpm@linux-foundation.org, rppt@kernel.org
-References: <20241029202041.25334-1-gourry@gourry.net>
- <20241029202041.25334-3-gourry@gourry.net>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241029202041.25334-3-gourry@gourry.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29.10.24 21:20, Gregory Price wrote:
-> Systems with hotplug may provide an advisement value on what the
-> memblock size should be.  Probe this value when the rest of the
-> configuration values are considered.
-> 
-> The new heuristic is as follows
-> 
-> 1) set_memory_block_size_order value if already set (cmdline param)
-> 2) minimum block size if memory is less than large block limit
-> 3) if no hotplug advice: Max block size if system is bare-metal,
->     otherwise use end of memory alignment.
-> 4) if hotplug advice: lesser of advice and end of memory alignment.
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> ---
->   arch/x86/mm/init_64.c | 16 ++++++++++------
->   1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index ff253648706f..01876629f21f 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1452,16 +1452,20 @@ static unsigned long probe_memory_block_size(void)
->   	}
->   
->   	/*
-> -	 * Use max block size to minimize overhead on bare metal, where
-> -	 * alignment for memory hotplug isn't a concern.
-> +	 * When hotplug alignment is not a concern, maximize blocksize
-> +	 * to minimize overhead. Otherwise, align to the lesser of advice
-> +	 * alignment and end of memory alignment.
->   	 */
-> -	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
-> +	bz = memory_block_advised_max_size();
-> +	if (!bz) {
->   		bz = MAX_BLOCK_SIZE;
-> -		goto done;
-> -	}
-> +		if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> +			goto done;
-> +	} else
-> +		bz = max(min(bz, MAX_BLOCK_SIZE), MIN_MEMORY_BLOCK_SIZE);
+Remove empty method. When the method is not set, the call is not made,
+saving a few cycles.
 
-Nit: coding style want you to use
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+ drivers/ufs/host/ufs-exynos.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-if () {
-
-} else {
-
-}
-
-
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index 9ec318ef52bf..db89ebe48bcd 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -198,11 +198,6 @@ static inline void exynos_ufs_ungate_clks(struct exynos_ufs *ufs)
+ 	exynos_ufs_ctrl_clkstop(ufs, false);
+ }
+ 
+-static int exynos7_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
+-{
+-	return 0;
+-}
+-
+ static int exynosauto_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
+ {
+ 	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
+@@ -2036,7 +2031,6 @@ static const struct exynos_ufs_drv_data exynos_ufs_drvs = {
+ 				  EXYNOS_UFS_OPT_BROKEN_RX_SEL_IDX |
+ 				  EXYNOS_UFS_OPT_SKIP_CONNECTION_ESTAB |
+ 				  EXYNOS_UFS_OPT_USE_SW_HIBERN8_TIMER,
+-	.drv_init		= exynos7_ufs_drv_init,
+ 	.pre_link		= exynos7_ufs_pre_link,
+ 	.post_link		= exynos7_ufs_post_link,
+ 	.pre_pwr_change		= exynos7_ufs_pre_pwr_change,
 -- 
-Cheers,
-
-David / dhildenb
+2.47.0.199.ga7371fff76-goog
 
 
