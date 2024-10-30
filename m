@@ -1,539 +1,334 @@
-Return-Path: <linux-kernel+bounces-388827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3407E9B64F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:58:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05289B64FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6F71F23664
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:58:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18F09B21988
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BC11F8938;
-	Wed, 30 Oct 2024 13:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDBD1F943F;
+	Wed, 30 Oct 2024 13:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="MtJRZEKx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LBmdRAnv"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="os7VyfR3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2571F5834;
-	Wed, 30 Oct 2024 13:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A85A1F9433
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730296522; cv=none; b=mjFDdlzwily8ZHrNZ+XLEhkQKxGoetl23LqAHtn8haDC7As9Jv1Cee7dqf8LKBdlcntokDbFF2w7pu6S/jm2fjEpUI6Mg5lOVFluteplyTg4DV4UkfhSJHKxDTyvug6xDFvM2MVokV6KCOD4FAXF1rfBF1njp5spHVaIn7NMLqI=
+	t=1730296530; cv=none; b=ZguI4hzqy3F2ejppxC9YIptWmuE7nbS3Psb/SJMBQILNDnke3YLyEBUB7SY/6FvreHeJXfMolJNpOimuCakW8kfR79gNiQSQKBIgbjb7gNOTTwxk0tgefqM5UArgc9SoKW2u9grmIj2I4tCl0SNwdjCO/HDU+ra6YSs4RnmVH5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730296522; c=relaxed/simple;
-	bh=iM0/1TsjySmpzoK29E7ZhX5iSPVldsSzoIsHTov5EaA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=VLepDC4BI50sEwrSBhobcaqILYpau0MXdcOlMZUHTs40BuX2zuV6pvVD5Z1gOzKcWaaNC6g9z2gT36OxZ3muvf+LXm8/utjj5KAhHqZnyCvqRT88tBb45Im656YlI53UL3k3H1115U4TAULbKHs8P0+yBxflOgG77XtUkUnGtPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=MtJRZEKx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LBmdRAnv; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 9FAB92540119;
-	Wed, 30 Oct 2024 09:55:16 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-08.internal (MEProxy); Wed, 30 Oct 2024 09:55:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1730296516;
-	 x=1730382916; bh=w5foPMucCDoCKxtR0O1ytzXoIj/AgQRy+uRoTORaXTo=; b=
-	MtJRZEKxySlT3PDTFKjlkB6r+FAp7UmttBejzrwbUtH2rRlopsFyLLc7A+Zj8e8A
-	wrU65L5XmpR2qU6FBPoX+NbzRn9RTGwvRGx+9uNJjOXGfjDzR822ZFwpDo4m96Ye
-	0jNxJAoybofkZddKLCxhG0BeZqAdxzfesUQV8B1vCIoTS5zXyTY+kfLf+YnMiU3A
-	B6/A/fYYHHBRGTWk+PwSregC0j31xAYnP7tQih+ZoMtxksI8W+73UVd0hLjKtM6L
-	74GlXc6rSfWCKYdD32hs8E+RP4e0NeuIFtdQ9dITMsFVMAayLezwaUdOT5OTLYnN
-	DQ9AZHM6I6MU/pHbmlHW+Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730296516; x=
-	1730382916; bh=w5foPMucCDoCKxtR0O1ytzXoIj/AgQRy+uRoTORaXTo=; b=L
-	BmdRAnvLAvSHi4B3KTmgeyiQUlR7bNv/vOIEWTlQQZtKGteHlk/GsifzqTu+Zg/Y
-	05Jsr/ZCJ3dBiW4kA7rwfXS/jNJ6JZcTJRH81RTXNzSctL1H0gkIv+gwituydoHE
-	afeKg1cEp+phBnfsiU+wxvH5RV2NNgrVxOEHniZ62qutIdRFhzLLu43dWx49ocH3
-	CJQIPcC4FsoPpMhF/oZzO7ytwwbKfmmjwtA7sNaf5ty9Nn0z7278iAuftTFd7ELd
-	fkJvKnapxaD4kGzyowbsaJ9Rl7rBBccTxLfT8MRFQAD7Lab1fedQPHIQ9oNnfWdY
-	rB5vVmu4greB3t0VYYvxA==
-X-ME-Sender: <xms:xDoiZwib2eyCqyNHKbf9zlnaCi16PyTlp1Oob1pfAuBYV6Qxgu4fUA>
-    <xme:xDoiZ5BORn2gWRq7Ihs4VXsXV0-uAwOh7dkAI0d0Z2zfjbhZkOm44em8pvWkX5Ayr
-    c6djT7GjmUomiIbj40>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
-    hvqeenucggtffrrghtthgvrhhnpeehtedugfelgeeltdevvedtleffhfetgfdtjefhkefg
-    udejfeeuueefvdejuddutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrihhordhlihhmohhntghivg
-    hllhhosegrmhgurdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrdgthhgrrhihsehg
-    mhgrihhlrdgtohhmpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhlphho
-    rdhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhug
-    gvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhu
-    thesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehplhgrthhfohhrmhdq
-    ughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:xDoiZ4ErpcWqPDKp59c8kBuHc67sHADcy9-5OzGjgGa1box-nDwWyQ>
-    <xmx:xDoiZxTYOMpojBoUA1lkgOy6r_pF3r_5d0_P83GoKO6OmDzBgMGxJA>
-    <xmx:xDoiZ9y8CfOO_x98k5DxgeiqdsM49uOIOdVoKbiXdTTMUGzZwHw-oQ>
-    <xmx:xDoiZ_6tiZ7kgs9LDUNCuz8Gw00aN7mBsXZi5ULM1ORCC3AYvYuDEQ>
-    <xmx:xDoiZ8ycIOelkxeuTGylLO9BV_qF7m4KQSMhE5N5h7_Fa8QibP6r4VV5>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 13E933360079; Wed, 30 Oct 2024 09:55:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730296530; c=relaxed/simple;
+	bh=MCIPO2WWCl6z50WUOcoIR956yDnVdBpaw3Ufai4FAps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MsULaRcqJIDEu0q02dNn3EhjPiFxLUawOHUU53og1qQyF7UWusqKz2UU2FmHY99S+qAJwmpy2pDzdHYtYfnLi0OfRIDSWg7nqt6vVlrWyjloZMNDTbaOJtbia/IeITW3m+h8b6yryQpA68kmqRWhY361S2HCGh0WFNQGwnwNi6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=os7VyfR3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A46EC4CECE;
+	Wed, 30 Oct 2024 13:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730296529;
+	bh=MCIPO2WWCl6z50WUOcoIR956yDnVdBpaw3Ufai4FAps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=os7VyfR38vYGzNFuqWED+ZxmiBx7uj32zklclkVfrvOQSM2MoTSS2fz/EiAuGyUFZ
+	 8QD+AEqkFMFCmGddUcMPTqymLMqk7Q0vv+Re3u/eStGTmHxv82Cs5qmeaydozA5Cl1
+	 t71pO/N6KuARZ12EAX3LE7W7sjQTiWe5aKrkIGo+w7RKoiPS7et2/SQIY4ieDOCQts
+	 lCxCBDmu8m8KoivzmXFAmieBUdyVvJwE+UspP5x4co//QXLZacT0ZydSlRbUSNkloz
+	 KhFenfDvxCzMEHGMJ6WuR/vPOr/iGa1dp0qke9FFmb7anwFOO0JyLayu2VLAiGGF7D
+	 +3ounxLmG28Eg==
+Date: Wed, 30 Oct 2024 14:55:26 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 17/26] posix-timers: Embed sigqueue in struct k_itimer
+Message-ID: <ZyI6zrXDmAQlvc-B@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083836.279523831@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 30 Oct 2024 14:54:55 +0100
-From: "Luke Jones" <luke@ljones.dev>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org,
- "Jiri Kosina" <jikos@kernel.org>, platform-driver-x86@vger.kernel.org,
- "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com,
- "Mario Limonciello" <superm1@kernel.org>,
- "Mario Limonciello" <mario.limonciello@amd.com>
-Message-Id: <46cd22c7-e63a-4dde-aa97-f76ac9bb6b8e@app.fastmail.com>
-In-Reply-To: <33f4f13f-c5ed-ac89-9243-4356976cc042@linux.intel.com>
-References: <20240930000046.51388-1-luke@ljones.dev>
- <20240930000046.51388-9-luke@ljones.dev>
- <33f4f13f-c5ed-ac89-9243-4356976cc042@linux.intel.com>
-Subject: Re: [PATCH v6 8/9] platform/x86: asus-armoury: add core count control
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241001083836.279523831@linutronix.de>
 
-Hello,
+Le Tue, Oct 01, 2024 at 10:42:23AM +0200, Thomas Gleixner a écrit :
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> To cure the SIG_IGN handling for posix interval timers, the preallocated
+> sigqueue needs to be embedded into struct k_itimer to prevent life time
+> races of all sorts.
+> 
+> Now that the prerequisites are in place, embed the sigqueue into struct
+> k_itimer and fixup the relevant usage sites.
+> 
+> Aside of preparing for proper SIG_IGN handling, this spares an extra
+> allocation.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  fs/proc/base.c               |    4 +--
+>  include/linux/posix-timers.h |   23 +++++++++++++++--
+>  kernel/signal.c              |    9 +++++-
+>  kernel/time/posix-timers.c   |   57 ++++++++++++++++++++++++++-----------------
+>  4 files changed, 65 insertions(+), 28 deletions(-)
+> ---
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2553,8 +2553,8 @@ static int show_timer(struct seq_file *m
+>  
+>  	seq_printf(m, "ID: %d\n", timer->it_id);
+>  	seq_printf(m, "signal: %d/%px\n",
+> -		   timer->sigq->info.si_signo,
+> -		   timer->sigq->info.si_value.sival_ptr);
+> +		   timer->sigq.info.si_signo,
+> +		   timer->sigq.info.si_value.sival_ptr);
+>  	seq_printf(m, "notify: %s/%s.%d\n",
+>  		   nstr[notify & ~SIGEV_THREAD_ID],
+>  		   (notify & SIGEV_THREAD_ID) ? "tid" : "pid",
+> --- a/include/linux/posix-timers.h
+> +++ b/include/linux/posix-timers.h
+> @@ -39,6 +39,8 @@ static inline int clockid_to_fd(const cl
+>  
+>  #ifdef CONFIG_POSIX_TIMERS
+>  
+> +#include <linux/signal_types.h>
+> +
+>  /**
+>   * cpu_timer - Posix CPU timer representation for k_itimer
+>   * @node:	timerqueue node to queue in the task/sig
+> @@ -166,7 +168,7 @@ static inline void posix_cputimers_init_
+>   * @it_pid:		The pid of the process/task targeted by the signal
+>   * @it_process:		The task to wakeup on clock_nanosleep (CPU timers)
+>   * @rcuref:		Reference count for life time management
+> - * @sigq:		Pointer to preallocated sigqueue
+> + * @sigq:		Embedded sigqueue
+>   * @it:			Union representing the various posix timer type
+>   *			internals.
+>   * @rcu:		RCU head for freeing the timer.
+> @@ -190,7 +192,7 @@ struct k_itimer {
+>  		struct pid		*it_pid;
+>  		struct task_struct	*it_process;
+>  	};
+> -	struct sigqueue		*sigq;
+> +	struct sigqueue		sigq;
+>  	rcuref_t		rcuref;
+>  	union {
+>  		struct {
+> @@ -218,6 +220,23 @@ static inline void posixtimer_putref(str
+>  	if (rcuref_put(&tmr->rcuref))
+>  		posixtimer_free_timer(tmr);
+>  }
+> +
+> +static inline void posixtimer_sigqueue_getref(struct sigqueue *q)
+> +{
+> +	struct k_itimer *tmr = container_of(q, struct k_itimer, sigq);
+> +
+> +	WARN_ON_ONCE(!rcuref_get(&tmr->rcuref));
+> +}
+> +
+> +static inline void posixtimer_sigqueue_putref(struct sigqueue *q)
+> +{
+> +	struct k_itimer *tmr = container_of(q, struct k_itimer, sigq);
+> +
+> +	posixtimer_putref(tmr);
+> +}
+> +#else  /* CONFIG_POSIX_TIMERS */
+> +static inline void posixtimer_sigqueue_getref(struct sigqueue *q) { }
+> +static inline void posixtimer_sigqueue_putref(struct sigqueue *q) { }
+>  #endif /* !CONFIG_POSIX_TIMERS */
+>  
+>  #endif
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -460,8 +460,10 @@ static struct sigqueue *__sigqueue_alloc
+>  
+>  static void __sigqueue_free(struct sigqueue *q)
+>  {
+> -	if (q->flags & SIGQUEUE_PREALLOC)
+> +	if (q->flags & SIGQUEUE_PREALLOC) {
+> +		posixtimer_sigqueue_putref(q);
+>  		return;
+> +	}
+>  	if (q->ucounts) {
+>  		dec_rlimit_put_ucounts(q->ucounts, UCOUNT_RLIMIT_SIGPENDING);
+>  		q->ucounts = NULL;
+> @@ -1981,7 +1983,7 @@ static inline struct task_struct *posixt
+>  
+>  int posixtimer_send_sigqueue(struct k_itimer *tmr)
+>  {
+> -	struct sigqueue *q = tmr->sigq;
+> +	struct sigqueue *q = &tmr->sigq;
+>  	int sig = q->info.si_signo;
+>  	struct task_struct *t;
+>  	unsigned long flags;
+> @@ -2040,9 +2042,12 @@ int posixtimer_send_sigqueue(struct k_it
+>  
+>  	ret = 0;
+>  	if (unlikely(!list_empty(&q->list))) {
+> +		/* This holds a reference count already */
+>  		result = TRACE_SIGNAL_ALREADY_PENDING;
+>  		goto out;
+>  	}
+> +
+> +	posixtimer_sigqueue_getref(q);
+>  	posixtimer_queue_sigqueue(q, t, tmr->it_pid_type);
+>  	result = TRACE_SIGNAL_DELIVERED;
+>  out:
+> --- a/kernel/time/posix-timers.c
+> +++ b/kernel/time/posix-timers.c
+> @@ -251,12 +251,13 @@ static void common_hrtimer_rearm(struct
+>  
+>  /*
+>   * This function is called from the signal delivery code. It decides
+> - * whether the signal should be dropped and rearms interval timers.
+> + * whether the signal should be dropped and rearms interval timers.  The
+> + * timer can be unconditionally accessed as there is a reference held on
+> + * it.
+>   */
+>  bool posixtimer_deliver_signal(struct kernel_siginfo *info, struct sigqueue *timer_sigq)
+>  {
+> -	struct k_itimer *timr;
+> -	unsigned long flags;
+> +	struct k_itimer *timr = container_of(timer_sigq, struct k_itimer, sigq);
+>  	bool ret = false;
+>  
+>  	/*
+> @@ -264,12 +265,14 @@ bool posixtimer_deliver_signal(struct ke
+>  	 * timr::it_lock. Keep interrupts disabled.
+>  	 */
+>  	spin_unlock(&current->sighand->siglock);
+> +	spin_lock(&timr->it_lock);
+>  
+> -	timr = lock_timer(info->si_tid, &flags);
+> -	if (!timr)
+> -		goto out;
+> -
+> -	if (timr->it_signal_seq != info->si_sys_private)
+> +	/*
+> +	 * Check if the timer is still alive or whether it got modified
+> +	 * since the signal was queued. In either case, don't rearm and
+> +	 * drop the signal.
+> +	 */
+> +	if (!timr->it_signal || timr->it_signal_seq != info->si_sys_private)
+>  		goto out_unlock;
 
-On Thu, 17 Oct 2024, at 4:41 PM, Ilpo J=C3=A4rvinen wrote:
-> On Mon, 30 Sep 2024, Luke D. Jones wrote:
->
->> Implement Intel core enablement under the asus-armoury module using t=
-he
->> fw_attributes class.
->>=20
->> This allows users to enable or disable preformance or efficiency cores
->> depending on their requirements. After change a reboot is required.
->>=20
->> Signed-off-by: Luke D. Jones <luke@ljones.dev>
->> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>  drivers/platform/x86/asus-armoury.c        | 227 +++++++++++++++++++=
-++
->>  drivers/platform/x86/asus-armoury.h        |  28 +++
->>  include/linux/platform_data/x86/asus-wmi.h |   4 +
->>  3 files changed, 259 insertions(+)
->>=20
->> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x=
-86/asus-armoury.c
->> index 09e0cbf24f25..caaa55219946 100644
->> --- a/drivers/platform/x86/asus-armoury.c
->> +++ b/drivers/platform/x86/asus-armoury.c
->> @@ -40,6 +40,24 @@
->>  #define ASUS_MINI_LED_2024_STRONG 0x01
->>  #define ASUS_MINI_LED_2024_OFF 0x02
->> =20
->> +#define ASUS_POWER_CORE_MASK GENMASK(15, 8)
->> +#define ASUS_PERF_CORE_MASK GENMASK(7, 0)
->
-> Align GENMASK()s.
+It could be:
 
-That is how clang-format put them using the .clang-format in the repo. I=
-'m not keen on maintaining style manually as it inevitably develops inco=
-nsistency.
+if (timr->it_signal_seq != info->si_sys_private ||
+    WARN_ON_ONCE(!timr->it_signal))
+   goto out_unlock;
 
->> +
->> +enum cpu_core_type {
->> +	CPU_CORE_PERF =3D 0,
->> +	CPU_CORE_POWER,
->> +};
->> +
->> +enum cpu_core_value {
->> +	CPU_CORE_DEFAULT =3D 0,
->> +	CPU_CORE_MIN,
->> +	CPU_CORE_MAX,
->> +	CPU_CORE_CURRENT,
->> +};
->> +
->> +#define CPU_PERF_CORE_COUNT_MIN 4
->> +#define CPU_POWR_CORE_COUNT_MIN 0
->> +
->>  /* Default limits for tunables available on ASUS ROG laptops */
->>  #define NVIDIA_BOOST_MIN 5
->>  #define NVIDIA_BOOST_MAX 25
->> @@ -85,6 +103,13 @@ struct rog_tunables {
->>  	u32 dgpu_tgp_min;
->>  	u32 dgpu_tgp_max;
->>  	u32 dgpu_tgp;
->> +
->> +	u32 cur_perf_cores;
->> +	u32 min_perf_cores;
->> +	u32 max_perf_cores;
->> +	u32 cur_power_cores;
->> +	u32 min_power_cores;
->> +	u32 max_power_cores;
->>  };
->> =20
->>  static const struct class *fw_attr_class;
->> @@ -143,6 +168,8 @@ static struct kobj_attribute pending_reboot =3D _=
-_ATTR_RO(pending_reboot);
->>  static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
->>  {
->>  	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
->> +	       !strcmp(attr->attr.name, "cores_performance") ||
->> +	       !strcmp(attr->attr.name, "cores_efficiency") ||
->>  	       !strcmp(attr->attr.name, "panel_hd_mode");
->>  }
->> =20
->> @@ -579,6 +606,200 @@ static ssize_t apu_mem_possible_values_show(str=
-uct kobject *kobj, struct kobj_at
->>  }
->>  ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM=
- (in GB) for the APU to use");
->> =20
->> +static int init_max_cpu_cores(void)
->> +{
->> +	u32 cores;
->> +	int err;
->> +
->> +	if (!asus_wmi_is_present(ASUS_WMI_DEVID_CORES_MAX))
->> +		return 0;
->> +
->> +
->> +	err =3D asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores=
-);
->> +	if (err)
->> +		return err;
->> +
->> +	cores &=3D ~ASUS_WMI_DSTS_PRESENCE_BIT;
->
-> This looks deadcode.
+Because if the timer has been deleted, the current seq should be different from
+the queued seq.
 
-The asus_wmi_is_present can be removed and is now.
+Thanks.
 
->
->> +	asus_armoury.rog_tunables->max_power_cores =3D FIELD_GET(ASUS_POWER=
-_CORE_MASK, cores);
->> +	asus_armoury.rog_tunables->max_perf_cores =3D FIELD_GET(ASUS_PERF_C=
-ORE_MASK, cores);
->> +
->> +	cores =3D 0;
->
-> Is this needed, you're doing get after all?
-
-I guess not since it is overwritten by call below.
-
->
->> +	err =3D asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
->> +	if (err) {
->> +		pr_err("Could not get CPU core count: error %d", err);
->> +		return err;
->> +	}
->> +
->> +	asus_armoury.rog_tunables->cur_perf_cores =3D FIELD_GET(ASUS_PERF_C=
-ORE_MASK, cores);
->> +	asus_armoury.rog_tunables->cur_power_cores =3D FIELD_GET(ASUS_POWER=
-_CORE_MASK, cores);
->> +
->> +	asus_armoury.rog_tunables->min_perf_cores =3D CPU_PERF_CORE_COUNT_M=
-IN;
->> +	asus_armoury.rog_tunables->min_power_cores =3D CPU_POWR_CORE_COUNT_=
-MIN;
->> +
->> +	return 0;
->> +}
->> +
->> +static ssize_t cores_value_show(struct kobject *kobj, struct kobj_at=
-tribute *attr, char *buf,
->> +				enum cpu_core_type core_type, enum cpu_core_value core_value)
->> +{
->> +	u32 cores;
->> +
->> +	switch (core_value) {
->> +	case CPU_CORE_DEFAULT:
->> +	case CPU_CORE_MAX:
->> +		if (core_type =3D=3D CPU_CORE_PERF)
->> +			return sysfs_emit(buf, "%d\n",
->> +					  asus_armoury.rog_tunables->max_perf_cores);
->> +		else
->> +			return sysfs_emit(buf, "%d\n",
->> +					  asus_armoury.rog_tunables->max_power_cores);
->> +	case CPU_CORE_MIN:
->> +		if (core_type =3D=3D CPU_CORE_PERF)
->> +			return sysfs_emit(buf, "%d\n",
->> +					  asus_armoury.rog_tunables->min_perf_cores);
->> +		else
->> +			return sysfs_emit(buf, "%d\n",
->> +					  asus_armoury.rog_tunables->min_power_cores);
->> +	default:
->> +		break;
->> +	}
->> +
->> +	if (core_type =3D=3D CPU_CORE_PERF)
->> +		cores =3D asus_armoury.rog_tunables->cur_perf_cores;
->> +	else
->> +		cores =3D asus_armoury.rog_tunables->cur_power_cores;
->> +
->> +	return sysfs_emit(buf, "%d\n", cores);
->> +}
->> +
->> +static ssize_t cores_current_value_store(struct kobject *kobj, struc=
-t kobj_attribute *attr,
->> +					 const char *buf, enum cpu_core_type core_type)
->> +{
->> +	int result, err;
->> +	u32 new_cores, perf_cores, powr_cores, out_val, min, max;
->
-> Please be consistent with the struct field naming and use "power_cores=
-".
-
-Ack.
-
-Luke.
->
-> --=20
->  i.
->
->> +
->> +	result =3D kstrtou32(buf, 10, &new_cores);
->> +	if (result)
->> +		return result;
->> +
->> +	if (core_type =3D=3D CPU_CORE_PERF) {
->> +		perf_cores =3D new_cores;
->> +		powr_cores =3D out_val =3D asus_armoury.rog_tunables->cur_power_co=
-res;
->> +		min =3D asus_armoury.rog_tunables->min_perf_cores;
->> +		max =3D asus_armoury.rog_tunables->max_perf_cores;
->> +	} else {
->> +		perf_cores =3D asus_armoury.rog_tunables->cur_perf_cores;
->> +		powr_cores =3D out_val =3D new_cores;
->> +		min =3D asus_armoury.rog_tunables->min_power_cores;
->> +		max =3D asus_armoury.rog_tunables->max_power_cores;
->> +	}
->> +
->> +	if (new_cores < min || new_cores > max)
->> +		return -EINVAL;
->> +
->> +	out_val =3D 0;
->> +	out_val |=3D FIELD_PREP(ASUS_PERF_CORE_MASK, perf_cores);
->> +	out_val |=3D FIELD_PREP(ASUS_POWER_CORE_MASK, powr_cores);
->> +
->> +	mutex_lock(&asus_armoury.mutex);
->> +	err =3D asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, out_val, &resul=
-t);
->> +	mutex_unlock(&asus_armoury.mutex);
->> +
->> +	if (err) {
->> +		pr_warn("Failed to set CPU core count: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	if (result > 1) {
->> +		pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
->> +		return -EIO;
->> +	}
->> +
->> +	pr_info("CPU core count changed, reboot required\n");
->> +	sysfs_notify(kobj, NULL, attr->attr.name);
->> +	asus_set_reboot_and_signal_event();
->> +
->> +	return 0;
->> +}
->> +
->> +static ssize_t cores_performance_min_value_show(struct kobject *kobj,
->> +						struct kobj_attribute *attr, char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MI=
-N);
->> +}
->> +
->> +static ssize_t cores_performance_max_value_show(struct kobject *kobj,
->> +						struct kobj_attribute *attr, char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MA=
-X);
->> +}
->> +
->> +static ssize_t cores_performance_default_value_show(struct kobject *=
-kobj,
->> +						    struct kobj_attribute *attr, char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_DE=
-FAULT);
->> +}
->> +
->> +static ssize_t cores_performance_current_value_show(struct kobject *=
-kobj,
->> +						    struct kobj_attribute *attr, char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_CU=
-RRENT);
->> +}
->> +
->> +static ssize_t cores_performance_current_value_store(struct kobject =
-*kobj,
->> +						     struct kobj_attribute *attr,
->> +						     const char *buf, size_t count)
->> +{
->> +	int err;
->> +
->> +	err =3D cores_current_value_store(kobj, attr, buf, CPU_CORE_PERF);
->> +	if (err)
->> +		return err;
->> +
->> +	return count;
->> +}
->> +ATTR_GROUP_CORES_RW(cores_performance, "cores_performance",
->> +		    "Set the max available performance cores");
->> +
->> +static ssize_t cores_efficiency_min_value_show(struct kobject *kobj,=
- struct kobj_attribute *attr,
->> +					       char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_M=
-IN);
->> +}
->> +
->> +static ssize_t cores_efficiency_max_value_show(struct kobject *kobj,=
- struct kobj_attribute *attr,
->> +					       char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_M=
-AX);
->> +}
->> +
->> +static ssize_t cores_efficiency_default_value_show(struct kobject *k=
-obj,
->> +						   struct kobj_attribute *attr, char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_D=
-EFAULT);
->> +}
->> +
->> +static ssize_t cores_efficiency_current_value_show(struct kobject *k=
-obj,
->> +						   struct kobj_attribute *attr, char *buf)
->> +{
->> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_C=
-URRENT);
->> +}
->> +
->> +static ssize_t cores_efficiency_current_value_store(struct kobject *=
-kobj,
->> +						    struct kobj_attribute *attr, const char *buf,
->> +						    size_t count)
->> +{
->> +	int err;
->> +
->> +	err =3D cores_current_value_store(kobj, attr, buf, CPU_CORE_POWER);
->> +	if (err)
->> +		return err;
->> +
->> +	return count;
->> +}
->> +ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
->> +		    "Set the max available efficiency cores");
->> +
->>  /* Simple attribute creation */
->>  ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PP=
-T_PL1_SPL, cpu_default,
->>  		       cpu_min, cpu_max, 1, "Set the CPU slow package limit");
->> @@ -635,6 +856,8 @@ static const struct asus_attr_group armoury_attr_=
-groups[] =3D {
->>  	{ &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
->>  	{ &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
->>  	{ &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
->> +	{ &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
->> +	{ &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
->> =20
->>  	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
->>  	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
->> @@ -752,6 +975,7 @@ static void init_rog_tunables(struct rog_tunables=
- *rog)
->>  	 * "ROG Flow X16 GV601VV_GV601VV_00185149B".
->>  	 * The bulk of these defaults are gained from users reporting what
->>  	 * ASUS Armoury Crate in Windows provides them.
->> +	 * This should be turned in to a tabe eventually.
->>  	 */
->>  	product =3D dmi_get_system_info(DMI_PRODUCT_NAME);
->> =20
->> @@ -836,6 +1060,9 @@ static int __init asus_fw_init(void)
->>  		return -ENOMEM;
->> =20
->>  	init_rog_tunables(asus_armoury.rog_tunables);
->> +	err =3D init_max_cpu_cores();
->> +	if (err)
->> +		return err;
->> =20
->>  	err =3D asus_fw_attr_add();
->>  	if (err)
->> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x=
-86/asus-armoury.h
->> index e08459cad942..04b88f7d2421 100644
->> --- a/drivers/platform/x86/asus-armoury.h
->> +++ b/drivers/platform/x86/asus-armoury.h
->> @@ -167,6 +167,34 @@ static ssize_t enum_type_show(struct kobject *ko=
-bj, struct kobj_attribute *attr,
->>  		.name =3D _fsname, .attrs =3D _attrname##_attrs               \
->>  	}
->> =20
->> +/* CPU core attributes need a little different in setup */
->> +#define ATTR_GROUP_CORES_RW(_attrname, _fsname, _dispname)          =
-    \
->> +	__ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", 1);        \
->> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);    \
->> +	static struct kobj_attribute attr_##_attrname##_current_value =3D \
->> +		__ASUS_ATTR_RW(_attrname, current_value);               \
->> +	static struct kobj_attribute attr_##_attrname##_default_value =3D \
->> +		__ASUS_ATTR_RO(_attrname, default_value);               \
->> +	static struct kobj_attribute attr_##_attrname##_min_value =3D     \
->> +		__ASUS_ATTR_RO(_attrname, min_value);                   \
->> +	static struct kobj_attribute attr_##_attrname##_max_value =3D     \
->> +		__ASUS_ATTR_RO(_attrname, max_value);                   \
->> +	static struct kobj_attribute attr_##_attrname##_type =3D          \
->> +		__ASUS_ATTR_RO_AS(type, int_type_show);                 \
->> +	static struct attribute *_attrname##_attrs[] =3D {                \
->> +		&attr_##_attrname##_current_value.attr,                 \
->> +		&attr_##_attrname##_default_value.attr,                 \
->> +		&attr_##_attrname##_min_value.attr,                     \
->> +		&attr_##_attrname##_max_value.attr,                     \
->> +		&attr_##_attrname##_scalar_increment.attr,              \
->> +		&attr_##_attrname##_display_name.attr,                  \
->> +		&attr_##_attrname##_type.attr,                          \
->> +		NULL                                                    \
->> +	};                                                              \
->> +	static const struct attribute_group _attrname##_attr_group =3D {  \
->> +		.name =3D _fsname, .attrs =3D _attrname##_attrs             \
->> +	}
->> +
->>  /*
->>   * ROG PPT attributes need a little different in setup as they
->>   * require rog_tunables members.
->> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/lin=
-ux/platform_data/x86/asus-wmi.h
->> index 88bf250dc8ca..cc21e4272460 100644
->> --- a/include/linux/platform_data/x86/asus-wmi.h
->> +++ b/include/linux/platform_data/x86/asus-wmi.h
->> @@ -137,6 +137,10 @@
->>  /* dgpu on/off */
->>  #define ASUS_WMI_DEVID_DGPU		0x00090020
->> =20
->> +/* Intel E-core and P-core configuration in a format 0x0[E]0[P] */
->> +#define ASUS_WMI_DEVID_CORES		0x001200D2
->> + /* Maximum Intel E-core and P-core availability */
->> +#define ASUS_WMI_DEVID_CORES_MAX	0x001200D3
->>  #define ASUS_WMI_DEVID_DGPU_BASE_TGP	0x00120099
->>  #define ASUS_WMI_DEVID_DGPU_SET_TGP	0x00120098
->>  #define ASUS_WMI_DEVID_APU_MEM		0x000600C1
->>
+>  
+>  	if (timr->it_interval && timr->it_status == POSIX_TIMER_REQUEUE_PENDING) {
+> @@ -285,8 +288,10 @@ bool posixtimer_deliver_signal(struct ke
+>  	ret = true;
+>  
+>  out_unlock:
+> -	unlock_timer(timr, flags);
+> -out:
+> +	spin_unlock(&timr->it_lock);
+> +	/* Drop the reference which was acquired when the signal was queued */
+> +	posixtimer_putref(timr);
+> +
+>  	spin_lock(&current->sighand->siglock);
+>  
+>  	/* Don't expose the si_sys_private value to userspace */
+> @@ -404,17 +409,17 @@ static struct pid *good_sigevent(sigeven
+>  	}
+>  }
+>  
+> -static struct k_itimer * alloc_posix_timer(void)
+> +static struct k_itimer *alloc_posix_timer(void)
+>  {
+>  	struct k_itimer *tmr = kmem_cache_zalloc(posix_timers_cache, GFP_KERNEL);
+>  
+>  	if (!tmr)
+>  		return tmr;
+> -	if (unlikely(!(tmr->sigq = sigqueue_alloc()))) {
+> +
+> +	if (unlikely(!posixtimer_init_sigqueue(&tmr->sigq))) {
+>  		kmem_cache_free(posix_timers_cache, tmr);
+>  		return NULL;
+>  	}
+> -	clear_siginfo(&tmr->sigq->info);
+>  	rcuref_init(&tmr->rcuref, 1);
+>  	return tmr;
+>  }
+> @@ -429,7 +434,8 @@ static void k_itimer_rcu_free(struct rcu
+>  void posixtimer_free_timer(struct k_itimer *tmr)
+>  {
+>  	put_pid(tmr->it_pid);
+> -	sigqueue_free(tmr->sigq);
+> +	if (tmr->sigq.ucounts)
+> +		dec_rlimit_put_ucounts(tmr->sigq.ucounts, UCOUNT_RLIMIT_SIGPENDING);
+>  	call_rcu(&tmr->rcu, k_itimer_rcu_free);
+>  }
+>  
+> @@ -491,13 +497,13 @@ static int do_timer_create(clockid_t whi
+>  			goto out;
+>  		}
+>  		new_timer->it_sigev_notify     = event->sigev_notify;
+> -		new_timer->sigq->info.si_signo = event->sigev_signo;
+> -		new_timer->sigq->info.si_value = event->sigev_value;
+> +		new_timer->sigq.info.si_signo = event->sigev_signo;
+> +		new_timer->sigq.info.si_value = event->sigev_value;
+>  	} else {
+>  		new_timer->it_sigev_notify     = SIGEV_SIGNAL;
+> -		new_timer->sigq->info.si_signo = SIGALRM;
+> -		memset(&new_timer->sigq->info.si_value, 0, sizeof(sigval_t));
+> -		new_timer->sigq->info.si_value.sival_int = new_timer->it_id;
+> +		new_timer->sigq.info.si_signo = SIGALRM;
+> +		memset(&new_timer->sigq.info.si_value, 0, sizeof(sigval_t));
+> +		new_timer->sigq.info.si_value.sival_int = new_timer->it_id;
+>  		new_timer->it_pid = get_pid(task_tgid(current));
+>  	}
+>  
+> @@ -506,8 +512,8 @@ static int do_timer_create(clockid_t whi
+>  	else
+>  		new_timer->it_pid_type = PIDTYPE_TGID;
+>  
+> -	new_timer->sigq->info.si_tid   = new_timer->it_id;
+> -	new_timer->sigq->info.si_code  = SI_TIMER;
+> +	new_timer->sigq.info.si_tid = new_timer->it_id;
+> +	new_timer->sigq.info.si_code = SI_TIMER;
+>  
+>  	if (copy_to_user(created_timer_id, &new_timer_id, sizeof (new_timer_id))) {
+>  		error = -EFAULT;
+> @@ -591,7 +597,14 @@ static struct k_itimer *__lock_timer(tim
+>  	 *  1) Set timr::it_signal to NULL with timr::it_lock held
+>  	 *  2) Release timr::it_lock
+>  	 *  3) Remove from the hash under hash_lock
+> -	 *  4) Call RCU for removal after the grace period
+> +	 *  4) Put the reference count.
+> +	 *
+> +	 * The reference count might not drop to zero if timr::sigq is
+> +	 * queued. In that case the signal delivery or flush will put the
+> +	 * last reference count.
+> +	 *
+> +	 * When the reference count reaches zero, the timer is scheduled
+> +	 * for RCU removal after the grace period.
+>  	 *
+>  	 * Holding rcu_read_lock() accross the lookup ensures that
+>  	 * the timer cannot be freed.
+> 
 
