@@ -1,117 +1,501 @@
-Return-Path: <linux-kernel+bounces-388364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E419B5E77
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:09:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD1C9B5E79
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 074EBB21770
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DD31F225E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E90E1E200F;
-	Wed, 30 Oct 2024 09:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R9c+h65K"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988721E1A36
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B501A1E1C2B;
+	Wed, 30 Oct 2024 09:10:49 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3F1192D79
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730279343; cv=none; b=TlPHsQGywOaF2Ap4Bm3v+CaNAzQ2EfIgsL3Qb8CnkXj7TgTuA8LSVzSj76s3+ReeLdTjNfjnKPNB+aZP5wCUGjJmI/7xtp/Y+tYyVMh7tbRSsM09zHh+SXyA/ymK3ufVHrZnJFbQLahkWbvjjvW+e50XePlo8Ii3w/Mg3rt+8AE=
+	t=1730279448; cv=none; b=Y94EVfDHVWSs4hD81xju9zjLSntvH+sNJgvCkyQ7z7OseSeMwtVhr68/t6+HsltOprjwyQwD2UyaVoNdc3b4QSsefI37VACoSm3Tt/E3ZWWXOsZctwJUPWDXdgsOdcxrrHSpmMfowwi0Be+P0RjO/nrPbzfHdjN2rKySdPNwHZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730279343; c=relaxed/simple;
-	bh=d3Q+Yytwfe4ckVzNFhYv5nqhXE0KaEIAWOYK18fEHsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUgBVIqqWKxB02E8bj73qtT6R1Pflp+QODbUJMYhlShJDMjWnOpsA3Kv7mDkqa7xmaRFd/zo2HPtJPMIFUkuICMJ7HyioWPfKRaY0MC5KBS5d/oNSCEfxon66TK0ENuoD8fgYyDNE7xDlQgc10f7YYz78rjGO5zM2PGEehTgCjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R9c+h65K; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-210e5369b7dso27328985ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730279341; x=1730884141; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/PW7dWJigQBbEpDGe2vAuK8PqZgGZIhZvDH6evlQM/o=;
-        b=R9c+h65KmyeLejilQiW4PYGRz7Vd6UcKvgbp1pSkAOHmTwQsm/bRkS3xFitiobMzPn
-         X8/bynSfOkTaxcIT0c/YxtG8QypqOmBnmji2ISg+cMN5ZQj199f8ZxZUpDFkCOg9C6sk
-         u8noe6ckfchWmCLXeytMxLC82M2Gbpoc8oQWRkmOyT1f5/ii3YoUGfwUiG/aJ1qIiu3A
-         ZrA8md00hy6KSaQSRyHe64MuFxNw0DofITlj0P1rt50y0lKH18h8oVbQQobg+Z8wYFwT
-         JiBa6FEgbUqQmjAhk+zWjpTICRHGQIzBokGWBrZVUBkj7+iWAZrDaq125In4etWI8OY9
-         89Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730279341; x=1730884141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/PW7dWJigQBbEpDGe2vAuK8PqZgGZIhZvDH6evlQM/o=;
-        b=hp/0GpIYTVh1dDV8e8Vg/spYDIFhGPU1rQ4n6n+HbvBPUNKWY/Sqp3iaM9z0nh/B6o
-         ZXD4IJvt67/XTd0L/Bl96D6wODoRn9tvd+i9TzgzV+kxuD+UgG7wVb5VBbzHvi5OaLZ5
-         FiAE9Hg9uZTK+aETwKQ1enmKg7YyjfhDkfx9shJ+OR+aLrmsXWQ11tF7p9nnfxZ32vGI
-         RskaVAxtlUtnhwt99Rnwg6Zwf4HJCnvOWp0/3lC9mOSKeU7LXw9wymW+z4p6IxWOah6C
-         5OA+pJeZevZK9loQ90/Onjr6JIpPr940MaqwJzhd+7DCO1NJXB3uYP4vXcngI/rYL52o
-         1p9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVncdU2ctN6yzfqB1o7mx1h2bDGos64bCgN2Sp0tLZHLMcJzPdVSTtHHmGR1nNcn2qTQK/HV53zHJowW5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl7uZ19CD/CFOSgnzhVFx3DbzkvQ3fQDDUPV3ff0RVjHT7X0si
-	vQQLpBgYkkuUZIdHSMHFEUx3ujIBws6kzELvQnOjOhWRHkGDG/nhplpP8QBHzpI=
-X-Google-Smtp-Source: AGHT+IE/UTz5fNaLTsQYnxAU24zjHRKEz6dWEitgwhKr6IH5FPDOdIQ5v2Yn/2Hrhm8Qg250XXdSJg==
-X-Received: by 2002:a05:6a21:4d8b:b0:1d9:1f2f:fbdb with SMTP id adf61e73a8af0-1d9a83ffa57mr20414711637.25.1730279340928;
-        Wed, 30 Oct 2024 02:09:00 -0700 (PDT)
-Received: from localhost ([122.172.85.97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205791e97bsm8755658b3a.34.2024.10.30.02.08.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 02:09:00 -0700 (PDT)
-Date: Wed, 30 Oct 2024 14:38:57 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: rafael@kernel.org, Pierre.Gondois@arm.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: CPPC: Fix possible null-ptr-deref for
- cppc_get_cpu_cost()
-Message-ID: <20241030090857.xbnpfnpi4hp4emkk@vireshk-i7>
-References: <20241030082449.2629861-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1730279448; c=relaxed/simple;
+	bh=Q03Zb8s69ujIzqajvNxeG+INAeVIXQoPtMXR3jp/sPo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CLU6pNHCL3YUz+IUXEiI6ptxQmxHZ2iHltr9Fbx9beypD3WxrrvP8YZwZA9WW7vac3RG+WW39ilcX4eGLedHfbbVkjRUIZCj/486EQi42MKphso29hO2HwUzFPFG09kPv+p+ANIWYFsRRepr8gzdmBy8zxxCvhsMOnSuMgiGzT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxquAR+CFnJuodAA--.61922S3;
+	Wed, 30 Oct 2024 17:10:41 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMCxS+AN+CFnOhcpAA--.3166S3;
+	Wed, 30 Oct 2024 17:10:39 +0800 (CST)
+Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Jianmin Lv <lvjianmin@loongson.cn>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, lixianglai@loongson.cn,
+ WANG Xuerui <kernel@xen0n.name>
+References: <20241021080418.644342-1-maobibo@loongson.cn>
+ <CAAhV-H4anpgfiAnPgm9h-m9pKCW0KUio+E72r1Q3F_0vm+zMRg@mail.gmail.com>
+ <8c55c680-48c8-0ba3-c2a1-56dc72929a8d@loongson.cn>
+ <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
+ <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn>
+ <CAAhV-H6+rE_7P_C0MaWzXToVcPqZQX0YMPnhyZV7Pp6aQ01mCQ@mail.gmail.com>
+ <39330bb8-d267-ef02-e082-388c7bfa3b43@loongson.cn>
+ <CAAhV-H5jGZz2MeCSuLmJb5b-ugaaj3EECD7Z3mvtHW=OQrhLBw@mail.gmail.com>
+ <8d2ab78b-6706-c78d-ffad-835ceef7372c@loongson.cn>
+ <CAAhV-H7bwJwGSyBqY3XZynzGaqamKv3BJjxrqPJ-foaP4dFbAw@mail.gmail.com>
+ <f2b7283b-9db3-c961-fa11-f1aeff489479@loongson.cn>
+ <CAAhV-H4tJJqhJcrERJRVHg_FW4OOEV-OuHkX6PTP9L_ADKgfDg@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <4172a465-a326-e3fa-ddba-5752a38f7237@loongson.cn>
+Date: Wed, 30 Oct 2024 17:10:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030082449.2629861-1-ruanjinjie@huawei.com>
+In-Reply-To: <CAAhV-H4tJJqhJcrERJRVHg_FW4OOEV-OuHkX6PTP9L_ADKgfDg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxS+AN+CFnOhcpAA--.3166S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9fXoW3ZFy3ArykKFy3AFy5Kw1ktFc_yoW8Ary7Jo
+	W5Jr17Jr18Jr1UJr1DJ34DJr1UJw1UJr1UJryDJr1UXF1Utw1UJr1UJr1UJF4UJr1UGr1U
+	JryUJr1UArW7Jrn8l-sFpf9Il3svdjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUYB7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
+	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280
+	aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
+	xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+	xVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+	C2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
+	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+	WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+	CTnIWIevJa73UjIFyTuYvjxU2DUUUUUUU
 
-On 30-10-24, 16:24, Jinjie Ruan wrote:
-> cpufreq_cpu_get_raw() may return NULL if the cpu is not in
-> policy->cpus cpu mask and it will cause null pointer dereference,
-> so check NULL for cppc_get_cpu_cost().
+
+
+On 2024/10/30 下午4:59, Huacai Chen wrote:
+> On Wed, Oct 30, 2024 at 4:48 PM maobibo <maobibo@loongson.cn> wrote:
+>>
+>>
+>>
+>> On 2024/10/30 下午4:34, Huacai Chen wrote:
+>>> On Wed, Oct 30, 2024 at 4:25 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2024/10/30 下午4:12, Huacai Chen wrote:
+>>>>> On Tue, Oct 29, 2024 at 7:49 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 2024/10/29 下午6:36, Huacai Chen wrote:
+>>>>>>> On Mon, Oct 28, 2024 at 8:38 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>>>
+>>>>>>>> Hi Huacai,
+>>>>>>>>
+>>>>>>>> On 2024/10/22 上午9:31, Huacai Chen wrote:
+>>>>>>>>> On Tue, Oct 22, 2024 at 9:17 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> On 2024/10/21 下午10:32, Huacai Chen wrote:
+>>>>>>>>>>> Hi, Bibo,
+>>>>>>>>>>>
+>>>>>>>>>>> This version still doesn't touch the round-robin method, but it
+>>>>>>>>>>> doesn't matter, I think I misunderstood something since V1...
+>>>>>>>>>> I do not understand why round-robin method need be modified, SRAT may be
+>>>>>>>>>> disabled with general function disable_srat(). Then round-robin method
+>>>>>>>>>> is required.
+>>>>>>>>> I don't mean round-robin should be modified, I mean I misunderstand round-robin.
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> Please correct me if I'm wrong: For cpus without ACPI_MADT_ENABLED, in
+>>>>>>>>>>> smp_prepare_boot_cpu() the round-robin node ids only apply to
+>>>>>>>>>>> cpu_to_node(), but __cpuid_to_node[] still record the right node ids.
+>>>>>>>>>>> early_cpu_to_node() returns NUMA_NO_NODE not because
+>>>>>>>>>>> __cpuid_to_node[] records NUMA_NO_NODE, but because cpu_logical_map()
+>>>>>>>>>>> < 0.
+>>>>>>>>>>>
+>>>>>>>>>>> If the above is correct, we don't need so complicated, because the
+>>>>>>>>>>> correct and simplest way is:
+>>>>>>>>>>> https://lore.kernel.org/loongarch/6b2b3e89-5a46-2d20-3dfb-7aae33839f49@loongson.cn/T/#m950eead5250e5992cc703bbe69622348cecfa465
+>>>>>>>>>>>
+>>>>>>>>>> It works also. Only that LoongArch kernel parsing about SRAT/MADT is
+>>>>>>>>>> badly. If you do not mind, I do not mind neither. It is not my duty for
+>>>>>>>>>> kernel side.
+>>>>>>>>> Yes, I don't mind, please use that simplest way.
+>>>>>>>> There is another problem with the simple way. eiointc reports error when
+>>>>>>>> cpu is online. The error message is:
+>>>>>>>>        Loongson-64bit Processor probed (LA464 Core)
+>>>>>>>>        CPU2 revision is: 0014c010 (Loongson-64bit)
+>>>>>>>>        FPU2 revision is: 00000001
+>>>>>>>>        eiointc: Error: invalid nodemap!
+>>>>>>>>        CPU 2 UP state irqchip/loongarch/eiointc:starting (100) failed (-1)
+>>>>>>>>
+>>>>>>>> The problem is that node_map of eiointc is problematic,
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> static int cpu_to_eio_node(int cpu)
+>>>>>>>> {
+>>>>>>>>              return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
+>>>>>>>> }
+>>>>>>>>
+>>>>>>>> static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+>>>>>>>>                                     u64 node_map)
+>>>>>>>> {
+>>>>>>>>              int i;
+>>>>>>>>
+>>>>>>>>              node_map = node_map ? node_map : -1ULL;
+>>>>>>>>              for_each_possible_cpu(i) {
+>>>>>>>>                      if (node_map & (1ULL << (cpu_to_eio_node(i)))) {
+>>>>>>>>                              node_set(cpu_to_eio_node(i), priv->node_map);
+>>>>>>>>               ...
+>>>>>>>> The cause is that for possible not present cpu, *cpu_logical_map(cpu)*
+>>>>>>>> is -1, cpu_to_eio_node(i) will be equal to -1, so node_map of eiointc is
+>>>>>>>> problematic.
+>>>>>>> The error message seems from eiointc_router_init(), but it is a little
+>>>>>>> strange. Physical hot-add should be before logical hot-add. So
+>>>>>>> acpi_map_cpu() is before cpu_up(). acpi_map_cpu() calls
+>>>>>>> set_processor_mask() to setup logical-physical mapping, so in
+>>>>>>> eiointc_router_init() which is called by cpu_up(), cpu_logical_map()
+>>>>>>> should work well.
+>>>>>>>
+>>>>>>> Maybe in your case a whole node is hot-added? I don't think the
+>>>>>>> eiointc design can work with this case...
+>>>>>>>
+>>>>>>>>
+>>>>>>>> So cpu_logical_map(cpu) should be set during MADT parsing even if it is
+>>>>>>>> not enabled at beginning, it should not be set at hotplug runtime.
+>>>>>>> This will cause the logical cpu number be not continuous after boot.
+>>>>>>> Physical numbers have no requirement, but logical numbers should be
+>>>>>>> continuous.
+>>>>>> I do not understand such requirement about logical cpu should be
+>>>>>> continuous. You can check logical cpu allocation method on other
+>>>>>> architectures, or what does the requirement about logical cpu continuous
+>>>>>> come from.
+>>>>> 1, In an internal conference, it is said that non-continuous cpu
+>>>>> numbers make users think our processors have bugs.
+>>>>> 2, See prefill_possible_map(), it assumes logical numbers continuous
+>>>>> cpu_possible_mask and cpu_present_mask, which make it convenient for
+>>>>> "nr_cpus=xxx".
+>>>>> 3, Can you show me an example in a real machine that "processor" in
+>>>>> /proc/cpuinfo non-continues after boot and before soft hotplug?
+>>>> It is really wasting my time to discuss with you. You does not
+>>>> investigating implementation of other architectures, fully thinking in
+>>>> yourself way.
+>>> Totally wrong, I have implemented what you need, but you should make
+>>> other colleagues (not me) agree with your idea.
+>>> https://github.com/chenhuacai/linux/commit/d8dcf2844d5878b3ac5a42d074e781fe2ebfbae7
+>> So do you mean we should internal discuss inside and post outside? You
+>> can not decide this since you do not know. And actual code writer (lv
+>> jianjin) does not reply to you still :(
+> "Non-continuous number is unacceptable" is an internal decision, if
+> you want to break this decision, you should let other colleagues
+> agree, otherwise that is the real thing wastes your time.
+If so I will not touch any kernel code any more, please write the patch 
+to fix it to keep your maintainer position stable. Is that ok for you?
+
+
 > 
-> Fixes: 740fcdc2c20e ("cpufreq: CPPC: Register EM based on efficiency class information")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/cpufreq/cppc_cpufreq.c | 3 +++
->  1 file changed, 3 insertions(+)
+>>
+>>>
+>>> Imagine that the cpu_possible_mask is 0b11111111, cpu_present_mask is
+>>> 0b10101010 (non-continuous), how to make "nr_cpus=3" work in a simple
+>>> way?
+>> if (bitmap_weight(cpu_present_mask) >=  nr_cpus))
+>>      then new cpu fails to add.
+> No,  I means cpu_possible_mask = 0b11111111, cpu_present_mask =
+> 0b10101010 after MADT parsing, if you need to make "nr_cpus=3" work,
+> you should modify them to cpu_possible_mask = 0b10101000,
+> cpu_present_mask = 0b10101000 before smp_init(). But it is difficult
+> to implement the modification.
 > 
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 2b8708475ac7..67fa97bbeae7 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -487,6 +487,9 @@ static int cppc_get_cpu_cost(struct device *cpu_dev, unsigned long KHz,
->  	int step;
->  
->  	policy = cpufreq_cpu_get_raw(cpu_dev->id);
-> +	if (!policy)
-> +		return 0;
-> +
->  	cpu_data = policy->driver_data;
->  	perf_caps = &cpu_data->perf_caps;
->  	max_cap = arch_scale_cpu_capacity(cpu_dev->id);
+>>>
+>>>>
+>>>> Does the real machines support real cpu hotplug and memory hotplug?
+>>> ACPI_MADT_ENABLED is designed for virtual machines only?
+>> It is the HW board problem, the HW does not support cpu hotplug, neither
+>> memory hotplug and PCIE hotplug. HW board does not support.
+> So we cannot see non-continuous CPU numbers just because all HW boards
+> have problems that don't support CPU hotplug, even on x86?
+> 
+> Huacai
+> 
+>>
+>> Regards
+>> Bibo Mao
+>>
+>>>
+>>> Huacai
+>>>
+>>>>
+>>>> Regards
+>>>> Bibo Mao
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> Huacai
+>>>>>>
+>>>>>> Regards
+>>>>>> Bibo Mao
+>>>>>>
+>>>>>>>
+>>>>>>> Huacai
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Regards
+>>>>>>>> Bibo Mao
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Huacai
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Bibo Mao
+>>>>>>>>>>>
+>>>>>>>>>>> Huacai
+>>>>>>>>>>>
+>>>>>>>>>>> On Mon, Oct 21, 2024 at 4:04 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>>>>>>>>>>
+>>>>>>>>>>>> On LoongArch system, there are two places to set cpu numa node. One
+>>>>>>>>>>>> is in arch specified function smp_prepare_boot_cpu(), the other is
+>>>>>>>>>>>> in generic function early_numa_node_init(). The latter will overwrite
+>>>>>>>>>>>> the numa node information.
+>>>>>>>>>>>>
+>>>>>>>>>>>> With hot-added cpu without numa information, cpu_logical_map() fails
+>>>>>>>>>>>> to its physical cpuid at beginning since it is not enabled in ACPI
+>>>>>>>>>>>> MADT table. So function early_cpu_to_node() also fails to get its
+>>>>>>>>>>>> numa node for hot-added cpu, and generic function
+>>>>>>>>>>>> early_numa_node_init() will overwrite with incorrect numa node.
+>>>>>>>>>>>>
+>>>>>>>>>>>> APIs topo_get_cpu() and topo_add_cpu() is added here, like other
+>>>>>>>>>>>> architectures logic cpu is allocated when parsing MADT table. When
+>>>>>>>>>>>> parsing SRAT table or hot-add cpu, logic cpu is acquired by searching
+>>>>>>>>>>>> all allocated logical cpu with matched physical id. It solves such
+>>>>>>>>>>>> problems such as:
+>>>>>>>>>>>>         1. Boot cpu is not the first entry in MADT table, the first entry
+>>>>>>>>>>>> will be overwritten with later boot cpu.
+>>>>>>>>>>>>         2. Physical cpu id not presented in MADT table is invalid, in later
+>>>>>>>>>>>> SRAT/hot-add cpu parsing, invalid physical cpu detected is added
+>>>>>>>>>>>>         3. For hot-add cpu, its logic cpu is allocated in MADT table parsing,
+>>>>>>>>>>>> so early_cpu_to_node() can be used for hot-add cpu and cpu_to_node()
+>>>>>>>>>>>> is correct for hot-add cpu.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>> v1 ... v2:
+>>>>>>>>>>>>         1. Like other architectures, allocate logic cpu when parsing MADT table.
+>>>>>>>>>>>>         2. Add invalid or duplicated physical cpuid parsing with SRAT table or
+>>>>>>>>>>>> hot-add cpu DSDT information.
+>>>>>>>>>>>> ---
+>>>>>>>>>>>>        arch/loongarch/include/asm/smp.h |  3 ++
+>>>>>>>>>>>>        arch/loongarch/kernel/acpi.c     | 24 ++++++++++------
+>>>>>>>>>>>>        arch/loongarch/kernel/setup.c    | 47 ++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>        arch/loongarch/kernel/smp.c      |  9 +++---
+>>>>>>>>>>>>        4 files changed, 70 insertions(+), 13 deletions(-)
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
+>>>>>>>>>>>> index 3383c9d24e94..c61b75937a77 100644
+>>>>>>>>>>>> --- a/arch/loongarch/include/asm/smp.h
+>>>>>>>>>>>> +++ b/arch/loongarch/include/asm/smp.h
+>>>>>>>>>>>> @@ -119,4 +119,7 @@ static inline void __cpu_die(unsigned int cpu)
+>>>>>>>>>>>>        #define cpu_logical_map(cpu)   0
+>>>>>>>>>>>>        #endif /* CONFIG_SMP */
+>>>>>>>>>>>>
+>>>>>>>>>>>> +int topo_add_cpu(int physid);
+>>>>>>>>>>>> +int topo_get_cpu(int physid);
+>>>>>>>>>>>> +
+>>>>>>>>>>>>        #endif /* __ASM_SMP_H */
+>>>>>>>>>>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+>>>>>>>>>>>> index f1a74b80f22c..84d9812d5f38 100644
+>>>>>>>>>>>> --- a/arch/loongarch/kernel/acpi.c
+>>>>>>>>>>>> +++ b/arch/loongarch/kernel/acpi.c
+>>>>>>>>>>>> @@ -78,10 +78,10 @@ static int set_processor_mask(u32 id, u32 flags)
+>>>>>>>>>>>>                       return -ENODEV;
+>>>>>>>>>>>>
+>>>>>>>>>>>>               }
+>>>>>>>>>>>> -       if (cpuid == loongson_sysconf.boot_cpu_id)
+>>>>>>>>>>>> -               cpu = 0;
+>>>>>>>>>>>> -       else
+>>>>>>>>>>>> -               cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       cpu = topo_add_cpu(cpuid);
+>>>>>>>>>>>> +       if (cpu < 0)
+>>>>>>>>>>>> +               return -EEXIST;
+>>>>>>>>>>>>
+>>>>>>>>>>>>               if (!cpu_enumerated)
+>>>>>>>>>>>>                       set_cpu_possible(cpu, true);
+>>>>>>>>>>>> @@ -203,8 +203,6 @@ void __init acpi_boot_table_init(void)
+>>>>>>>>>>>>                       goto fdt_earlycon;
+>>>>>>>>>>>>               }
+>>>>>>>>>>>>
+>>>>>>>>>>>> -       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
+>>>>>>>>>>>> -
+>>>>>>>>>>>>               /*
+>>>>>>>>>>>>                * Process the Multiple APIC Description Table (MADT), if present
+>>>>>>>>>>>>                */
+>>>>>>>>>>>> @@ -257,7 +255,7 @@ void __init numa_set_distance(int from, int to, int distance)
+>>>>>>>>>>>>        void __init
+>>>>>>>>>>>>        acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
+>>>>>>>>>>>>        {
+>>>>>>>>>>>> -       int pxm, node;
+>>>>>>>>>>>> +       int pxm, node, cpu;
+>>>>>>>>>>>>
+>>>>>>>>>>>>               if (srat_disabled())
+>>>>>>>>>>>>                       return;
+>>>>>>>>>>>> @@ -286,6 +284,11 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
+>>>>>>>>>>>>                       return;
+>>>>>>>>>>>>               }
+>>>>>>>>>>>>
+>>>>>>>>>>>> +       cpu = topo_get_cpu(pa->apic_id);
+>>>>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
+>>>>>>>>>>>> +       if (cpu < 0)
+>>>>>>>>>>>> +               return;
+>>>>>>>>>>>> +
+>>>>>>>>>>>>               early_numa_add_cpu(pa->apic_id, node);
+>>>>>>>>>>>>
+>>>>>>>>>>>>               set_cpuid_to_node(pa->apic_id, node);
+>>>>>>>>>>>> @@ -324,12 +327,17 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id, int *pcpu
+>>>>>>>>>>>>        {
+>>>>>>>>>>>>               int cpu;
+>>>>>>>>>>>>
+>>>>>>>>>>>> -       cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
+>>>>>>>>>>>> +       cpu = topo_get_cpu(physid);
+>>>>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
+>>>>>>>>>>>>               if (cpu < 0) {
+>>>>>>>>>>>>                       pr_info(PREFIX "Unable to map lapic to logical cpu number\n");
+>>>>>>>>>>>>                       return cpu;
+>>>>>>>>>>>>               }
+>>>>>>>>>>>>
+>>>>>>>>>>>> +       num_processors++;
+>>>>>>>>>>>> +       set_cpu_present(cpu, true);
+>>>>>>>>>>>> +       __cpu_number_map[physid] = cpu;
+>>>>>>>>>>>> +       __cpu_logical_map[cpu] = physid;
+>>>>>>>>>>>>               acpi_map_cpu2node(handle, cpu, physid);
+>>>>>>>>>>>>
+>>>>>>>>>>>>               *pcpu = cpu;
+>>>>>>>>>>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+>>>>>>>>>>>> index 00e307203ddb..649e98640076 100644
+>>>>>>>>>>>> --- a/arch/loongarch/kernel/setup.c
+>>>>>>>>>>>> +++ b/arch/loongarch/kernel/setup.c
+>>>>>>>>>>>> @@ -65,6 +65,8 @@ EXPORT_SYMBOL(cpu_data);
+>>>>>>>>>>>>
+>>>>>>>>>>>>        struct loongson_board_info b_info;
+>>>>>>>>>>>>        static const char dmi_empty_string[] = "        ";
+>>>>>>>>>>>> +static int possible_cpus;
+>>>>>>>>>>>> +static bool bsp_added;
+>>>>>>>>>>>>
+>>>>>>>>>>>>        /*
+>>>>>>>>>>>>         * Setup information
+>>>>>>>>>>>> @@ -346,10 +348,55 @@ static void __init bootcmdline_init(char **cmdline_p)
+>>>>>>>>>>>>               *cmdline_p = boot_command_line;
+>>>>>>>>>>>>        }
+>>>>>>>>>>>>
+>>>>>>>>>>>> +int topo_get_cpu(int physid)
+>>>>>>>>>>>> +{
+>>>>>>>>>>>> +       int i;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       for (i = 0; i < possible_cpus; i++)
+>>>>>>>>>>>> +               if (cpu_logical_map(i) == physid)
+>>>>>>>>>>>> +                       break;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       if (i == possible_cpus)
+>>>>>>>>>>>> +               return -ENOENT;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       return i;
+>>>>>>>>>>>> +}
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +int topo_add_cpu(int physid)
+>>>>>>>>>>>> +{
+>>>>>>>>>>>> +       int cpu;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       if (!bsp_added && (physid == loongson_sysconf.boot_cpu_id)) {
+>>>>>>>>>>>> +               bsp_added = true;
+>>>>>>>>>>>> +               return 0;
+>>>>>>>>>>>> +       }
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       cpu = topo_get_cpu(physid);
+>>>>>>>>>>>> +       if (cpu >= 0) {
+>>>>>>>>>>>> +               pr_warn("Adding duplicated physical cpuid 0x%x\n", physid);
+>>>>>>>>>>>> +               return -EEXIST;
+>>>>>>>>>>>> +       }
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       if (possible_cpus >= nr_cpu_ids)
+>>>>>>>>>>>> +               return -ERANGE;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +       __cpu_logical_map[possible_cpus] = physid;
+>>>>>>>>>>>> +       cpu = possible_cpus++;
+>>>>>>>>>>>> +       return cpu;
+>>>>>>>>>>>> +}
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +static void __init topo_init(void)
+>>>>>>>>>>>> +{
+>>>>>>>>>>>> +       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
+>>>>>>>>>>>> +       __cpu_logical_map[0] = loongson_sysconf.boot_cpu_id;
+>>>>>>>>>>>> +       possible_cpus++;
+>>>>>>>>>>>> +}
+>>>>>>>>>>>> +
+>>>>>>>>>>>>        void __init platform_init(void)
+>>>>>>>>>>>>        {
+>>>>>>>>>>>>               arch_reserve_vmcore();
+>>>>>>>>>>>>               arch_reserve_crashkernel();
+>>>>>>>>>>>> +       topo_init();
+>>>>>>>>>>>>
+>>>>>>>>>>>>        #ifdef CONFIG_ACPI
+>>>>>>>>>>>>               acpi_table_upgrade();
+>>>>>>>>>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+>>>>>>>>>>>> index 9afc2d8b3414..a3f466b89179 100644
+>>>>>>>>>>>> --- a/arch/loongarch/kernel/smp.c
+>>>>>>>>>>>> +++ b/arch/loongarch/kernel/smp.c
+>>>>>>>>>>>> @@ -291,10 +291,9 @@ static void __init fdt_smp_setup(void)
+>>>>>>>>>>>>                       if (cpuid >= nr_cpu_ids)
+>>>>>>>>>>>>                               continue;
+>>>>>>>>>>>>
+>>>>>>>>>>>> -               if (cpuid == loongson_sysconf.boot_cpu_id)
+>>>>>>>>>>>> -                       cpu = 0;
+>>>>>>>>>>>> -               else
+>>>>>>>>>>>> -                       cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
+>>>>>>>>>>>> +               cpu = topo_add_cpu(cpuid);
+>>>>>>>>>>>> +               if (cpu < 0)
+>>>>>>>>>>>> +                       continue;
+>>>>>>>>>>>>
+>>>>>>>>>>>>                       num_processors++;
+>>>>>>>>>>>>                       set_cpu_possible(cpu, true);
+>>>>>>>>>>>> @@ -302,7 +301,7 @@ static void __init fdt_smp_setup(void)
+>>>>>>>>>>>>                       __cpu_number_map[cpuid] = cpu;
+>>>>>>>>>>>>                       __cpu_logical_map[cpu] = cpuid;
+>>>>>>>>>>>>
+>>>>>>>>>>>> -               early_numa_add_cpu(cpu, 0);
+>>>>>>>>>>>> +               early_numa_add_cpu(cpuid, 0);
+>>>>>>>>>>>>                       set_cpuid_to_node(cpuid, 0);
+>>>>>>>>>>>>               }
+>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+>>>>>>>>>>>> --
+>>>>>>>>>>>> 2.39.3
+>>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>>>
+>>>>
+>>
 
-Applied. Thanks.
-
--- 
-viresh
 
