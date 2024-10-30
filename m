@@ -1,148 +1,161 @@
-Return-Path: <linux-kernel+bounces-389032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7119B67C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:27:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4F99B67C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:27:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247EBB2241D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF67283109
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD1F2144D8;
-	Wed, 30 Oct 2024 15:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC29215027;
+	Wed, 30 Oct 2024 15:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCY+f7Hz"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="AhIA4s8M"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7982144A6;
-	Wed, 30 Oct 2024 15:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46A62144D2
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301869; cv=none; b=iARNJkxEVbTfN4f2+rZq5iPfGTmUr48e08Lcnmo4lbgHNJCLpvi2TFYJQx9MdVcdHxHgWflJl2EMzkbwyC8PUlJFcWdv7Nu5JKB6QCfNPgeNYbJP2NRouHOiusgkp7FB+ZDGv3+LlLbwUd21HClhqc7KajI2n5/AvcLrszVW52Y=
+	t=1730301913; cv=none; b=s2+8lyPkhCKudlRiGgR1xwq1fTOzPJe1tUKBAbbJLN3jourRe+44xwuZJJvHw4/2u6UA+wYxRPOJTP4kUFG9g5y28pn9V2M1r8JevObMk0Wm1pMHl1BSQZ9qbPhjZPXt+OUuZRg4iIgMGT9KKsu8RdtMrJPw3dKubODy1F/8QRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301869; c=relaxed/simple;
-	bh=n999IZOA4rDYc27Hp0H+miRj5tRQoBGIlyVHQmeFAb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bYGOWeH8rdOb2gz/VB15/Lkvb0PDv/VKR1RACqf/8fNaOBAzGkBR1p9iJOAnolSMh6FO54ipVmhA+foTMLAGwfsgJnliwZTID0KUfgKguv8HcUmz0ieoJVrvc9K0sXuQpmqioL79FgNkYd33F+mHlEfqfRAjSPm8Ca8pKCW/OVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCY+f7Hz; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso992316566b.1;
-        Wed, 30 Oct 2024 08:24:26 -0700 (PDT)
+	s=arc-20240116; t=1730301913; c=relaxed/simple;
+	bh=NEIgB2tFlQkG+JrX4hQVS8M95TFQSsPnWmdZLvR/njQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C1/LThIvqMdM6Rxki676TFY+VjiJt7eCUpLiaFEfymUd+RluOkajZ/LSVmpI//odMILj+0jjDoPsPE3O44scnV7QO3qROM5tVIJeVb/wteXfu0yciPua20BNJs4llQ+6Z6svc1PZcPRA6aO6qRT8uJnMjptCxNAxrd5L4aZiy0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=AhIA4s8M; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460b04e4b1cso46635211cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:25:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730301865; x=1730906665; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lH03TetyHfAgyaa2uTodt4n0nCoJG2QadBNpvOTrh70=;
-        b=UCY+f7HziinpdOPcW2+WnKgKq0s6+ba5YaGcivNsd0NT/YBJQAvOt05Hg1i1SpelAR
-         ZmiIHAYM+x4f55wIFsbo/YQrPsnYHgYgvBtpixW2ukTDPti5f93U2ryM3/Sp96KOftF8
-         IZ5zNtNWF4cpw5lue2ZBkxaFTsuRmWNWSTryhJFcODfamFIVpIgDMgqUQieRisEG1f+l
-         XftghNUJm0znNrphrdNEUJp4OBdT3pFcHLTPgoj3uzsqFuttkdXCI3kGSJLXQiMMDoi0
-         G6nKv4207U+Mk5ENVfqdgZz8dRxHmo4YyLaqUTTE55MGc0tkgq8GmpMKqJvcGcUH8lr5
-         PP9g==
+        d=gourry.net; s=google; t=1730301910; x=1730906710; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7YLqxwpXuJNQygjoc5/hn+2+ADZpj/AHIhIEEnWpyXU=;
+        b=AhIA4s8MqbgWg+ZbRSzG+38DHbbAMKeSwtiPDf925OIgvJqOrGMQneQQtiY9POPQJF
+         SwZ6ffTIme+H0/mzempof9BRw2AtR1yxNemfrprls9Wtcd+K4qnXqeliX+jEbpgc+WBU
+         ILNstDkhBvL7gFhILPVzv7FngIcSZb5vPk0+VDATMM+yLIOFcGDmn1toMdf08YSd9m4H
+         /s8uFfTH2fliMYZE4SDFkcagM0RousZX7LeQUHPck5SGfIFa6gkjfyMF6rBR5WxvNEAl
+         QbD+tDKUWsNjyXkupOaP5XIOJPHV4dJnBQEYCcDXVzfOt5lr9wcvU90PdKd0Mry79P7r
+         veXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730301865; x=1730906665;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lH03TetyHfAgyaa2uTodt4n0nCoJG2QadBNpvOTrh70=;
-        b=U0yHcE8X1DYp18hpIHHzSWLniOu6hyeLyLoucv9zUO1gfcXZ6JYSukUTsHjKNXRI/4
-         8/tS7CSjau6teCeygWgNHgU+9nSncJKpwk3KzeHVg6BNu2/SQz+DvL2QehTNBCaGevCU
-         TfrK1ITJjNh6D6JF4ERfps45zKXrlp80M/ox5TkoSJnfgK+khH06r6vJgHeXPKHcQnHQ
-         c38qrVSG0BpzMw5Ct3S744xTGLBwG1ic0rU6bMetpFPJqk3hXMOHK2YzYqfAvsZPtHrG
-         SF8xN201C2GfjqiGPLeDADb82sQU++janJdNpx3wZP3QTSWiBnZ0zKkUCp3J6iE6AeGl
-         QzmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdOzvY/u3vm6TRNkjULjx/L3aFQPWcLAK6fk7VTtmFRwhUGdkYvshc4NGYTQ9SuVC4WhY=@vger.kernel.org, AJvYcCUzgMGQrke3fnF3ek926oG/DLptGT9bfmH10hWC+7WoXjgpmE1Kih/Ceus0oB5+OprPY2hIT4knypmUgLE+@vger.kernel.org, AJvYcCWVwuMB7Xl7DEV8qV7t11FfWEaImSo0TNX5dHS5CoGaWyTxgecwraG8fNbp+qQZzzzCjWsR0d5qLqH3l9LDBmna@vger.kernel.org, AJvYcCXNyNJxAOxD3yiRcFHUe8o4x3uzLPXb4kK9dmeU9LHzquyvK7lfxj3GrfryDPQHoczB2h2DrE2qSrDGxztuNtzts4eg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFXYTotpkPcftODwaFVuiUj6yC0j0GWlJeqAzUTxiu6AzJk/Pa
-	xQfIdl/n9TjVsDuyzB7yt8Djuej2dYZKQo7462gSq9AbYNdtn1rE95vCQUmTSjDiF0HtQ9FwaHb
-	nX1Od1GnvqtVhZmnfjpK3GI5OCNU=
-X-Google-Smtp-Source: AGHT+IEOif/f/Zl1LrJt+2Gcyo6SzzYJtNymmKKu1iahMKcKCBKKgoSUjNWuEBzxjc1lnPieK9zMO7mK1eUPJ+v9MGg=
-X-Received: by 2002:a17:907:9722:b0:a99:403e:2578 with SMTP id
- a640c23a62f3a-a9e3a57531amr379536766b.5.1730301865101; Wed, 30 Oct 2024
- 08:24:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730301910; x=1730906710;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7YLqxwpXuJNQygjoc5/hn+2+ADZpj/AHIhIEEnWpyXU=;
+        b=c54AEucIZ1nKTBDDGL8IonqHCcLVFPFKsObeP1AjvcFGufiEoK2AaJW0amjrfH/+3c
+         Ih7UhaZdSTXl2Sot4uVtBwWDDDp60LBY3gjSlrNzLIp0ruiNUIHdAdoit/oL0HyUPSxM
+         bvqBWxO0VxcAqWwp7ZsBDvuS7G9gWXU5EWGRmmDeZJS9faXnT9NoDqPQQ7vCz/sHMwit
+         UR5YUiBD0neirkICILE+vvhSyI17cKFjIxBBFnMpU/N1hJqxO3sGRkv+pS6I50b7vih3
+         DeVHJCHiHMdKLUBjt1aQ5i3IhaV8z4lLVfMIIiEr/3g+L/dQjhmSJbqoe8eVh8K19SnJ
+         gylQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtsii97xTS34BITDLSkO/u36pfAEUVRCs59l9fwHAd//vrzZpXrdCnm0ll76eWFfqwkMB2jh5zR7BPIgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMKHGpRq77EDmFk+3l4uIDn2Ofye3lCd9leJ+Fcf0JQ4sM2Lbw
+	9r+5LBpowOJdWqdBg4dTDjFvH1URJ9rePIbE8CFmiHNiQceCKuZRy03PivaCTd4=
+X-Google-Smtp-Source: AGHT+IFdUZSjkUbpmwREg45uzgHne+Gkj526u++YBcKniEz4ijMYyFG+sSVSPyJ6DJno6yiyLbeAAg==
+X-Received: by 2002:a05:622a:34a:b0:461:e77:d6be with SMTP id d75a77b69052e-4613bff1f08mr234444901cf.20.1730301908427;
+        Wed, 30 Oct 2024 08:25:08 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46132297c39sm55537921cf.50.2024.10.30.08.25.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 08:25:08 -0700 (PDT)
+Date: Wed, 30 Oct 2024 11:25:13 -0400
+From: Gregory Price <gourry@gourry.net>
+To: David Hildenbrand <david@redhat.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
+	dave.jiang@intel.com, ira.weiny@intel.com,
+	alison.schofield@intel.com, dave.hansen@linux.intel.com,
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
+	lenb@kernel.org, osalvador@suse.de, gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org, rppt@kernel.org
+Subject: Re: [PATCH v4 3/3] acpi,srat: give memory block size advice based on
+ CFMWS alignment
+Message-ID: <ZyJP2c-wHADaE8ox@PC2K9PVX.TheFacebook.com>
+References: <20241029202041.25334-1-gourry@gourry.net>
+ <20241029202041.25334-4-gourry@gourry.net>
+ <c47337ea-f20e-44eb-95e8-c29b2db849a7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029002208.1947947-1-dolinux.peng@gmail.com>
- <20241029002208.1947947-4-dolinux.peng@gmail.com> <CAEf4BzYZgAPZSQTTk20s8vUwDMipe+0HRyKNnQchM+C10-1qOQ@mail.gmail.com>
-In-Reply-To: <CAEf4BzYZgAPZSQTTk20s8vUwDMipe+0HRyKNnQchM+C10-1qOQ@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 30 Oct 2024 23:24:13 +0800
-Message-ID: <CAErzpmsuf0e9O4p1srdadoCwn7zNN6rEb8wt5yEOT0FByx5RJw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] libbpf: Using binary search to improve the
- performance of btf__find_by_name_kind
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c47337ea-f20e-44eb-95e8-c29b2db849a7@redhat.com>
 
-On Wed, Oct 30, 2024 at 6:15=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Mon, Oct 28, 2024 at 5:22=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.=
-com> wrote:
-> >
-> > Currently, we are only using the linear search method to find the type =
-id
-> > by the name, which has a time complexity of O(n). This change involves
-> > sorting the names of btf types in ascending order and using binary sear=
-ch,
-> > which has a time complexity of O(log(n)).
-> >
-> > Another change is the search direction, where we search the BTF first a=
-nd
-> > then its base.
-> >
-> > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+On Wed, Oct 30, 2024 at 11:40:08AM +0100, David Hildenbrand wrote:
+> On 29.10.24 21:20, Gregory Price wrote:
+> > Capacity is stranded when CFMWS regions are not aligned to block size.
+> > On x86, block size increases with capacity (2G blocks @ 64G capacity).
+> > 
+> > Use CFMWS base/size to report memory block size alignment advice.
+> > 
+> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Gregory Price <gourry@gourry.net>
 > > ---
-> >  tools/lib/bpf/btf.c | 159 ++++++++++++++++++++++++++++++++++++++------
-> >  1 file changed, 140 insertions(+), 19 deletions(-)
-> >
+> >   drivers/acpi/numa/srat.c | 19 +++++++++++++++++--
+> >   1 file changed, 17 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+> > index 44f91f2c6c5d..a24aff38c465 100644
+> > --- a/drivers/acpi/numa/srat.c
+> > +++ b/drivers/acpi/numa/srat.c
+> > @@ -14,6 +14,7 @@
+> >   #include <linux/errno.h>
+> >   #include <linux/acpi.h>
+> >   #include <linux/memblock.h>
+> > +#include <linux/memory.h>
+> >   #include <linux/numa.h>
+> >   #include <linux/nodemask.h>
+> >   #include <linux/topology.h>
+> > @@ -338,12 +339,26 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+> >   {
+> >   	struct acpi_cedt_cfmws *cfmws;
+> >   	int *fake_pxm = arg;
+> > -	u64 start, end;
+> > +	u64 start, end, align, size;
+> >   	int node;
+> >   	cfmws = (struct acpi_cedt_cfmws *)header;
+> >   	start = cfmws->base_hpa;
+> > -	end = cfmws->base_hpa + cfmws->window_size;
+> > +	size = cfmws->window_size;
+> > +	end = cfmws->base_hpa + size;
+> > +
+> > +	/* Align memblock size to CFMW regions if possible */
+> > +	for (align = SZ_64T; align >= SZ_256M; align >>= 1) {
+> > +		if (IS_ALIGNED(start, align) && IS_ALIGNED(size, align))
+> > +			break;
+> > +	}
+> 
+> Are there maybe some nice tricks bi-tricks to avoid the loop and these
+> hardcoded limits? :)
+> 
+> align = 1UL << __ffs(start | end));
+> 
+> Assuming "unsigned long" is sufficient in this code (64bit) and "start |
+> end" will never be 0.
 >
-> same complaints as with kernel-side implementation
->
-> I'm not sure if this is the right approach, overall. I can see how
-> pre-sorting might be useful if done by pahole. But then I'd say we
-> should record some bit somewhere in btf_header claiming that this is
-> sorted BTF, and then if that bit is set and we confirmed (on the
-> kernel side) that sorting is indeed correct (and if not, reject, don't
-> silently ignore), then we can use that sorting to our advantage.
 
-Thank you, I also agree. we could utilize a bit of the flags within the
-btf_header structure to indicate if the btf file has been sorted.
+This will work, if start | end is < 256MB, the ACPI table is invalid by
+definition since either the block itself is <256MB or the size is 0 (which
+is nonsense).  So yeah i can simplify here. 
 
->
-> I don't think libbpf should unconditionally sort or check sorting in
-> the way that you implemented.
-
->
-> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > index 5290e9d59997..cbf88a6b92e5 100644
-> > --- a/tools/lib/bpf/btf.c
-> > +++ b/tools/lib/bpf/btf.c
-> > @@ -94,6 +94,10 @@ struct btf {
-> >          *   - for split BTF counts number of types added on top of bas=
-e BTF.
-> >          */
-> >         __u32 nr_types;
-> > +       /* number of types in this BTF instance which are sorted by nam=
-e:
-> > +        *   - doesn't include special [0] void type;
-> > +        */
-> > +       __u32 nr_types_sorted;
-> >         /* if not NULL, points to the base BTF on top of which the curr=
-ent
-> >          * split BTF is based
-> >          */
->
-> [...]
+Ack. will push v5 once i get KLP to clear another warning.
+ 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
