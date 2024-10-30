@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-388037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4379B5995
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF969B59A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:50:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78281283F6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:49:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE832864E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6F513212B;
-	Wed, 30 Oct 2024 01:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEEA193081;
+	Wed, 30 Oct 2024 01:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mEFizGtK"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R311AVpD"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83C3398E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210E813B29F;
+	Wed, 30 Oct 2024 01:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252963; cv=none; b=lclUVuC1ZnCbKE/GlMTs+rYaw18oID5HoaNEEV6yuCzd5B0+23dV0ajBVlNkFLtxEUpWYauXS/KFq2ZlBSmJOmqNTMciuJaVRo+GeoKr2YoTiEMNIh6ajk2MTvfQkTbRpQN9T7vSSQ8WTG849o47Ki2ulB2CNdh9454DrEaXOA0=
+	t=1730253011; cv=none; b=XgB5MJ2Yaip2W4C1sEVuxO3pIhEcvqo4YapV/Hg/maJhbV9LXIe3YPVE2E5ntVG7iCuZloU/yOxlxPeIMBoUZY8xWIVt9AW50hdug/l/ckhp9BEzlsiXu5I0FjhWPbNgSqPXjCnEszValP4VnzVUyBwoIsch3Id3QLa50zxRaJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252963; c=relaxed/simple;
-	bh=x0ed5fyvDn11llPZvaG/AmyPvXdzuyLMLtZ8rEnJtaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fynEGDTorRX5OFOEc3o9g0s05RONhnMyBUKkxJ/vrVsikPQXk2SqH/O6wrA58BIp2/e2Wp2WqPv4X2JGKR1gctOJoppbbO7TRxWMFWmqo7Osjc60xVQUjsUKVyKorrRp2078w9lRe6KVcHiE94I15aaZQZUPifg+LqbUnhkFygQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mEFizGtK; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e5cec98cceso51064067b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730252960; x=1730857760; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vQfV3QO9KjfChtLzJsZNfhkclfq5Ha2/eewFg3kibJg=;
-        b=mEFizGtKQkP70OwPzuBUgc70dKzbhxn+D262/glgrkBrBA2l5n7pXPlSyQA0HZXdLk
-         8BCrjed9cC8Rr5t5X3ihWmhp1EUyRAqS7ShSF959BTMxujis3gphIPc4tLeLPVJevOa8
-         AX51BTANIMHtrKUcch9CFH1KY2Emj2ljn0LSZzB4YLb8Pwza7fEXopmc2+RGjrueU+BS
-         YECBvhO040wBgpapHlbhSTL5ZYnSREOVhdAz8LYlGihTNFBjLhD2ay4wOPPPvu4wuqsv
-         cKJSf01vIJjHHwAuLwgWtVo5QjJmScU926hQQ8JWJ5q+RhdK3zfDUygj9ZDLNCa9knr7
-         1X/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730252960; x=1730857760;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vQfV3QO9KjfChtLzJsZNfhkclfq5Ha2/eewFg3kibJg=;
-        b=UbBOqHOCPg7ffqDIhl8JCsL9DJitJQriDahJTOOEK4wPLY1IHAwZv4BL3ITT7qFxBr
-         UhAWwGFitFoVEPJyFDO5cyTUIYWS9tYJHciYjky4liztg5t0j8+/xDxHuXc2RzQWyNDp
-         c4pCfCs22vw9tjXZeg0cB0xDRuK3OMISyg+sA07BXVSCSUPyrmpkOu8YFdW2ZaQCTfdD
-         VIFS/GAqGN34gWNG8UiSTD1846iFamNVb2tsVVNBM9+1OU7xuAgvf6cDwS6+IHq+AiM1
-         kI61Re5bi3TGrRvpertDmq0MAPKtggG5aPKiYk6CO3gA4B/a3t5DMWIH4dMPrKyLw+ZG
-         vkDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtK3UksArhJGekxh8olgINqkT4qJsrMuTGRBfEyOOfJr8/hnyswJ0mEWTc5x13s1BjE0/aYqV7B/up+mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNqFrLcLAVZW137Jwi9waDy5EDSKjy5b58Wmjjz9kwAkwB1jSq
-	mw8C3veb6ZFJcoJCOC3ySB+Br99m9E7nyHYdKxnROfqsISiZbFMSUeSQ+9zXtuqY3JLKlZXNYgF
-	5Ob198JHhW7RZebaJYAmd6/FVXrmksBXLKGXKCQ==
-X-Google-Smtp-Source: AGHT+IFAd9OlkY1/IfgnYCIVx3fRmdHwRO/F3PUZW4uFE6vgj8FUomr2ncttaV4zBKegVHV0ggfRqOb9u7zb2JD2Bls=
-X-Received: by 2002:a05:690c:87:b0:6db:b5b2:53c with SMTP id
- 00721157ae682-6e9d8ab3cbcmr150957977b3.32.1730252960419; Tue, 29 Oct 2024
- 18:49:20 -0700 (PDT)
+	s=arc-20240116; t=1730253011; c=relaxed/simple;
+	bh=y6+bM0zEOiH5MPMkoFS9BwHieAQZ9fNfXnP4ex+lu34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M8m10SkqFqkZvApdlxUdBWGJN3s1XxIB3Rl3tqJxqz2aqMh2wKrMVZpIEP9NvYhduc/YPFCmL5i45w2lHEiW34BU+sQaGD8eS2EjjUw4wHqrWVOEDKGKSMVzelxKnd/s+ERLtPlndLBU1Rq+f5VkNs4f0DLYtIc8eXZsOhkDYa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R311AVpD; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b545a75b-868b-4238-94c9-d647b4da27e2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730253006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5fASV8AOO8/1SMF1wEDZo6V3RiSsMj7qVwz3D1JJ4NY=;
+	b=R311AVpD6h39kuoBfQMZcou/TW+9M7Ha6QZbtAoMphNYN9MH0oXmGkIAvOKWCM9ZOrcPEF
+	Gjpnl216h1Ku7/fV2KC4gZvBBmk93nr+2pKh6BY8jFhAuGTUWBDpHQruAvfuy8/XQ9eypr
+	pGzGw+jnfvbeLMUijB0Y0hpPbqejZRQ=
+Date: Wed, 30 Oct 2024 09:49:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022124148.1952761-1-shiyongbang@huawei.com>
- <20241022124148.1952761-2-shiyongbang@huawei.com> <wu2kwdqce7jovidzxhublmpgdhzq4uby65quo7ks44tfjhtgd2@qtfogva3exyg>
- <c418e93a-7305-4ca6-85c1-42bd458f4e7b@huawei.com>
-In-Reply-To: <c418e93a-7305-4ca6-85c1-42bd458f4e7b@huawei.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 30 Oct 2024 03:49:11 +0200
-Message-ID: <CAA8EJppvnAcj5ESHe3t2QBvTGZTpiUUS3K+tJ+4_3Pkuijga0g@mail.gmail.com>
-Subject: Re: [PATCH V2 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, 
-	liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com, 
-	libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: linux: Goodbye from a Linux community volunteer
+To: Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>,
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev, Andy Shevchenko <andy@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Kory Maincent <kory.maincent@bootlin.com>,
+ Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+ Paul Burton <paulburton@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Arnd Bergmann <arnd@arndb.de>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ linux-mips@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ linux-pci@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
+ Vladimir Oltean <olteanv@gmail.com>, Keguang Zhang
+ <keguang.zhang@gmail.com>, Yanteng Si <siyanteng@loongson.cn>,
+ netdev@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+ linux-hwmon@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+ linux-edac@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-serial@vger.kernel.org
+Cc: Andrew Halaney <ajhalaney@gmail.com>, Nikita Travkin <nikita@trvn.ru>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+ Alexander Shiyan <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>,
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Evgeniy Dushistov <dushistov@mail.ru>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+ Nikita Shubin <nikita.shubin@maquefel.me>,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 29 Oct 2024 at 16:15, Yongbang Shi <shiyongbang@huawei.com> wrote:
+
+
+
+在 2024/10/24 12:27, Serge Semin 写道:
+> Yoshihiro, Keguang, Yanteng, Kory, Cai and everybody I was lucky to meet in the
+> kernel mailing lists, but forgot to mention here. Thank you for the time spent
+> for our cooperative work on making the Linux kernel better. It was a pleasure to
+> meet you here.
+I am also deeply delighted to meet you here. In the process of 
+collaborating with you,
+I have gained a lot and am really full of gratitude.
 >
-> > On Tue, Oct 22, 2024 at 08:41:45PM +0800, Yongbang Shi wrote:
-> >> From: baihan li <libaihan@huawei.com>
+> Hope we'll meet someday in more pleasant circumstances and drink a
+> couple or more beers together. But now it's time to say good bye.
+Let's spend more of our spare time on enjoying life.
 
-> >> +}
-> >> +
-> >> +enum dpcd_revision {
-> >> +    DPCD_REVISION_10 = 0x10,
-> >> +    DPCD_REVISION_11,
-> >> +    DPCD_REVISION_12,
-> >> +    DPCD_REVISION_13,
-> >> +    DPCD_REVISION_14,
-> > Any reason for ignoring defines in drm_dp.h?
+Thanks,
+Yanteng
 >
-> Hi Dmitry,
-> I tried it but still can't find it, if you know, can you tell me which macro I can use?
+> Best Regards,
+> -Serge(y)
+>
 
-# define DP_DPCD_REV_10                     0x10
-# define DP_DPCD_REV_11                     0x11
-etc
-
-> Thanks,
-> Baihan
-
-
--- 
-With best wishes
-Dmitry
 
