@@ -1,475 +1,217 @@
-Return-Path: <linux-kernel+bounces-389362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691F99B6C02
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:22:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634739B6BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA3E1C23469
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:22:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A4D1F21F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFFE1CDA24;
-	Wed, 30 Oct 2024 18:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494EE1C9EDA;
+	Wed, 30 Oct 2024 18:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGJHVSPP"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DOgphJ4u"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CC51C7B68;
-	Wed, 30 Oct 2024 18:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19DA1C4616;
+	Wed, 30 Oct 2024 18:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730312525; cv=none; b=AfY8WyzO/6wZY/F2e1ZTkxn3pK8Ija+ZDGSVBrDHdAnl9wvd6v7PbfboiXjnUR0Ur9gjU/nhImEhavrWaoMjaf+0E8MischNqIuoeZVpC0vGqCB5gw9MM5B3SPJjyyOc7D7nE7EtWm0UgLh/4Q2Vx0VSuqYKvIQ+KBSBeHLka/Q=
+	t=1730312473; cv=none; b=gPIrJQHtZcn+2kzNNNvwI4PhyMxIgIIw3t6dFXbJm7BCrCZ58bsWzmGb4iM7hp1UtUyXcs3jKAekOCT54Pf5QsjA2oYOJqofagqNu22MY+lw9AH1l9aTxebJ0QcjvipHyHn3icuMzpDtiM/le7RbrVRYDtGNMak1n04NMplnclM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730312525; c=relaxed/simple;
-	bh=r3Pn7i/2ydcwsFF9NdbJfG1QjGwV3zk0jWvh9EKgtYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rn2vukszGfG/4vXCvukwVUAGWG9eHgmdCQSc44Bi3UjHR+Ogtv2ihScbrXHnhuGydh31lIkax0F5qrmcp6jDQvWV+Kgt8jcyzaemRN8e7SU14Wy6HjegHdFOtjQiiEwiUt8D0SylICElFrXgWcDS/K6Yxj+rP2hNZlKMYJCOjeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGJHVSPP; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9acafdb745so25791266b.0;
-        Wed, 30 Oct 2024 11:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730312521; x=1730917321; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XpV+8ASolFfSxpBtygT6FdU6yWA+qcVKoRSCRnzKFQw=;
-        b=gGJHVSPPZSROJWJw4t3FDm1fjSZ8LGGvjmgd4TyKn44NEGHIks9JzqiDKONMrtiGtz
-         zWugD2qKJ0LgVyoj0flXeU4+npO4Rkun7cC5i1hHNfAyY8mkqqtPnysw6SV+KnUMLv6C
-         LgPnHwQojHBRunlW13xoOWm4zGnv7CfCbyO4ZRBd4aH0MvuOJXGStr3C9BdR85mVSbw7
-         fLSPQWVHe3edwhv0Rzz0LUozPU1if02gjVZ/AIUo4gqHexfgmg3YoqwL/Pp2NtNZhENw
-         ktuOuC5pedK6UkjC9hR8etQ60pUZs/IFNTryZkNEDYndJBHvl/YctZljZ3JjAQZyaqzR
-         6uig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730312521; x=1730917321;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XpV+8ASolFfSxpBtygT6FdU6yWA+qcVKoRSCRnzKFQw=;
-        b=K6/DMddEcoTbgsPDpyoMnbY5klsXZ4WMq18C645CRfTcCiCKocEj1xcqHkF6wndqwN
-         /s7FCjc9D6k/6hvfVVqhBzxZte2uUl0HUoDMIsAFaSN3cXYowErVjf9BJ97SlvmEIvjK
-         ObBbHcDRJjrl/MZCA/7BCNCXIqrr1SAQNwINSLt21Ewq5csW/hJn+qhl86l9UvmQ/2sN
-         bjlo6yp56XYz0P/G9L5V9gNuDa0E8w+PSEEL+wZ7lM30sjFbd0/Lv4HVNR+WvlkyAu6Y
-         +O+lo+c/Yg2H/O0caR4eQ9upvVIRmC+yEaPo0GJyDkRVnSYeO2QWU3qhg3UxPCSRyIBE
-         4OVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDQM8YJM8qqgCBlBTDh2MML7osmtoXjiKN4rZN51SOcXZatUcTnCdnZw81/qrT/UyxCchkBE87jb59@vger.kernel.org, AJvYcCWoeokefPNB4VECWQkzxGJxtrPumtSxOePNUymPa8d3Zc0PlyHEckc5YRjYE6oN4GX6H2Mo1CPJsvSD1k3K7A==@vger.kernel.org, AJvYcCXS+HJz+ByJ97SoqJmJaS2VQq98g6MQb7SgxEkd+m+uW1/urNa14b+Ez0Qf9U1JUXrqE6Y2IPzacIXx9jC/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCBJ0zKB5DC9n8OT74cDNCtLXZB2lbivsbQtvDQLOHq6WtUtlH
-	69VHsTs+HY21vJYNdr2ALce50H04FE6AeV8b+ED7YrJ4QuPxq4Q=
-X-Google-Smtp-Source: AGHT+IEDCuaGve5sRyZ+CNuDzm3eNy1YkPNEwh41AMCociQOoET50xx+6rp4PtgCqsDqXZ4x3TfF8A==
-X-Received: by 2002:a17:907:98b:b0:a9a:1ef0:837b with SMTP id a640c23a62f3a-a9e40bccaa7mr317973666b.10.1730312520450;
-        Wed, 30 Oct 2024 11:22:00 -0700 (PDT)
-Received: from localhost.. (adsl-178-39-53-103.adslplus.ch. [178.39.53.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f2982ecsm586588466b.106.2024.10.30.11.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 11:22:00 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bryan.Kemp@dell.com,
-	tudor.laurentiu.oss@gmail.com,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Subject: [PATCH v1 1/1] arm64: dts: qcom: x1e80100-dell-xps13-9345: Introduce retimer support
-Date: Wed, 30 Oct 2024 19:19:36 +0100
-Message-ID: <20241030182153.16256-2-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241030182153.16256-1-alex.vinarskis@gmail.com>
-References: <20241030182153.16256-1-alex.vinarskis@gmail.com>
+	s=arc-20240116; t=1730312473; c=relaxed/simple;
+	bh=XAlAAQuCCo4hw3RB/nLNvUcS3LFHrYtwoU9Pg4fGpCI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HFlxopE2SRIZ2+h9nB82jgK1ckrNODAY3qNDkaH9Ib+2CetqrOHVfZO+HKIk3SDWa2YUK+ILT+tJFTC04KfTjg+OuKo33J02pO/im9uRPGG6EurdVfxh/MJSJod3NgPfEg6XTTwG9TaFHMZ30C8nJqRu1sNfkZs0qVhIJEHZoU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DOgphJ4u; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UHTrkL025454;
+	Wed, 30 Oct 2024 18:20:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Ee6E7+
+	ennRHMEZMdBfnyZdFvi8P6NNf/X8zOfEfVALE=; b=DOgphJ4unvTk1vVIAahDcx
+	PGfKwW7t9eYgWLR0TGjHArjFUu0ntcR9Q5Kilk7FJc7MFyc56lr5mzf/CP9m8qX5
+	2YxCy+TU9pn94LtfDnEay/M5w5AmwtTSprqm6stfOa2YucdVGKgIItN4X4ma9R6M
+	C+3qDSMxzmyxDy/2Y2t9CEc/Li+HJY3p9cR/Xqyk0RWSoY5o8ezae+rSbylaRO/N
+	Goj5M25n6ctbhpNWbgTILAIocvHW6JAKOoVLGR2REjZiggdsXYUv0hBqgufGWM7u
+	5k1afAk6OefdT3WBHRhLtzJPkmxJvngEQf8wuBweUL53hE4+4aF+xp/v2PpiNpPg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42kqnarr19-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 18:20:16 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49UIIh5C032073;
+	Wed, 30 Oct 2024 18:20:15 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42kqnarr15-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 18:20:15 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49UFj9v7013520;
+	Wed, 30 Oct 2024 18:20:14 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hbrn199h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 18:20:14 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49UIKAsR54722894
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 18:20:10 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4031520043;
+	Wed, 30 Oct 2024 18:20:10 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E09DF20040;
+	Wed, 30 Oct 2024 18:20:08 +0000 (GMT)
+Received: from [9.152.222.93] (unknown [9.152.222.93])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 30 Oct 2024 18:20:08 +0000 (GMT)
+Message-ID: <b89bcb68-d010-4041-aacf-15b934675705@linux.ibm.com>
+Date: Wed, 30 Oct 2024 19:20:08 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/19] x86/vdso: Enable sframe generation in VDSO
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <ebc4e4a51af47cd1e9a1c515407410e1f69d224f.1730150953.git.jpoimboe@kernel.org>
+From: Jens Remus <jremus@linux.ibm.com>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <ebc4e4a51af47cd1e9a1c515407410e1f69d224f.1730150953.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: vjGwUuf-Mv_eIdBx_pALhJ5m8BxM9DLb
+X-Proofpoint-ORIG-GUID: 6rV1BhVlk8IjXc0_g1tqdwJ3hYzcPF8z
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 adultscore=0 clxscore=1015 impostorscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300141
 
-Describe x2 Parade PS8830 retimers for left and right USB Type-C ports
-respectively. Adjust graphs between connectors and the PHYs accordingly,
-add the voltage regulators. Dell XPS 13" 9345's DSDT describes 3rd
-retimer, but its not actually present.
+On 28.10.2024 22:47, Josh Poimboeuf wrote:
+> Enable sframe generation in the VDSO library so kernel and user space
+> can unwind through it.
 
-Regulators are _assumed_ to be correct, since:
-* tlmm pins match DSDT definition.
-* tlmm and pmic gpios were tested and confirmed to be powering
-  off/resetting respective retimers.
-* USB3.0 now works correctly in both orientation, pre and post suspend.
+...
 
-Derived from:
-arm64: dts: qcom: x1e80100-t14s: Add external DP support
+Applying similar changes to s390 and using the current binutils release without SFrame support on s390 results in build errors.
 
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
----
- .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 293 +++++++++++++++++-
- 1 file changed, 283 insertions(+), 10 deletions(-)
+AFAIK the kernel has a minimum binutils requirement of 2.25 [1] and the assembler option "--gsframe was introduced with 2.40.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-index 05624226faf9..b112092fbb9f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-@@ -89,7 +89,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss0_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss0_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss0_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss0_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -118,7 +126,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss1_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss1_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss1_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss1_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -166,6 +182,102 @@ vreg_nvme: regulator-nvme {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&pmc8380_5_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
- 	vreg_vph_pwr: regulator-vph-pwr {
- 		compatible = "regulator-fixed";
- 
-@@ -492,9 +604,60 @@ keyboard@5 {
- 
- &i2c3 {
- 	clock-frequency = <400000>;
--	status = "disabled";
--	/* PS8830 Retimer @0x8 */
--	/* Unknown device @0x9 */
-+	status = "okay";
-+
-+	/* Right-side USB Type-C port */
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x08>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK3>;
-+		clock-names = "xo";
-+
-+		vdd-supply = <&vreg_rtmr0_1p15>;
-+		vdd33-supply = <&vreg_rtmr0_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr0_3p3>;
-+		vddar-supply = <&vreg_rtmr0_1p15>;
-+		vddat-supply = <&vreg_rtmr0_1p15>;
-+		vddio-supply = <&vreg_rtmr0_1p8>;
-+
-+		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&rtmr0_default>;
-+		pinctrl-names = "default";
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss0_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss0_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss0_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c5 {
-@@ -505,9 +668,61 @@ &i2c5 {
- 
- &i2c7 {
- 	clock-frequency = <400000>;
--	status = "disabled";
--	/* PS8830 Retimer @0x8 */
--	/* Unknown device @0x9 */
-+	status = "okay";
-+
-+	/* Left-side USB Type-C port */
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x8>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK4>;
-+		clock-names = "xo";
-+
-+		vdd-supply = <&vreg_rtmr1_1p15>;
-+		vdd33-supply = <&vreg_rtmr1_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr1_3p3>;
-+		vddar-supply = <&vreg_rtmr1_1p15>;
-+		vddat-supply = <&vreg_rtmr1_1p15>;
-+		vddio-supply = <&vreg_rtmr1_1p8>;
-+
-+		reset-gpios = <&tlmm 176 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&rtmr1_default>;
-+		pinctrl-names = "default";
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss1_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss1_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss1_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
-+				};
-+			};
-+
-+		};
-+	};
- };
- 
- &i2c8 {
-@@ -634,6 +849,36 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pm8550_gpios {
-+	rtmr0_default: rtmr0-reset-n-active-state {
-+		pins = "gpio10";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+
-+	rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
-+		pins = "gpio11";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+};
-+
-+&pmc8380_5_gpios {
-+	rtmr0_1p15_reg_en: rtmr0-1p15-reg-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+};
-+
-+&pm8550ve_9_gpios {
-+	rtmr0_1p8_reg_en: rtmr0-1p8-reg-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+};
-+
- &qupv3_0 {
- 	status = "okay";
- };
-@@ -762,6 +1007,34 @@ wake-n-pins {
- 		};
- 	};
- 
-+	rtmr1_1p15_reg_en: rtmr1-1p15-reg-en-state {
-+		pins = "gpio188";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_1p8_reg_en: rtmr1-1p8-reg-en-state {
-+		pins = "gpio175";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_3p3_reg_en: rtmr1-3p3-reg-en-state {
-+		pins = "gpio186";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_default: rtmr1-reset-n-active-state {
-+		pins = "gpio176";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	tpad_default: tpad-default-state {
- 		disable-pins {
- 			pins = "gpio38";
-@@ -839,7 +1112,7 @@ &usb_1_ss0_dwc3_hs {
- };
- 
- &usb_1_ss0_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+	remote-endpoint = <&retimer_ss0_ss_in>;
- };
- 
- &usb_1_ss1_hsphy {
-@@ -871,5 +1144,5 @@ &usb_1_ss1_dwc3_hs {
- };
- 
- &usb_1_ss1_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+	remote-endpoint = <&retimer_ss1_ss_in>;
- };
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+> index c9216ac4fb1e..75ae9e093a2d 100644
+> --- a/arch/x86/entry/vdso/Makefile
+> +++ b/arch/x86/entry/vdso/Makefile
+> @@ -47,13 +47,15 @@ quiet_cmd_vdso2c = VDSO2C  $@
+>   $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
+>   	$(call if_changed,vdso2c)
+>   
+> +SFRAME_CFLAGS := $(call as-option,-Wa$(comma)-gsframe,)
+
+I have the impression this test might not work as expected. On s390 the assembler accepts option --gsframe and only generates an error when the assembler code actually contains any CFI directives:
+
+$ cat test-nocfi.a
+         la      %r1,42
+$ as --gsframe test-nocfi.a
+$ echo $?
+0
+
+$ cat test-cfi.a
+         .cfi_startproc
+         .cfi_endproc
+$ as --gsframe test-cfi.a
+test-cfi.a: Assembler messages:
+test-cfi.a: Error: .sframe not supported for target
+$ echo $?
+1
+
+But the following assembler code triggers an error:
+
+$ cat test-sframe.a
+         .cfi_sections .sframe
+         .cfi_startproc
+         .cfi_endproc
+$ as test-sframe.a
+test-sframe.a: Assembler messages:
+test-sframe.a: Error: .sframe not supported for target
+$ echo $?
+1
+
+Maybe the following would be an alternative test in the Makefile?
+
+SFRAME_CFLAGS := $(call as-instr,.cfi_sections .sframe\n.cfi_startproc\n.cfi_endproc,-DCONFIG_AS_SFRAME=1)
+ifneq ($(SFRAME_CFLAGS),)
+        SFRAME_CFLAGS += -Wa,--gsframe
+endif
+
+> diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
+> index b1aa3fcd5bca..1a49492817a1 100644
+> --- a/arch/x86/include/asm/dwarf2.h
+> +++ b/arch/x86/include/asm/dwarf2.h
+> @@ -12,8 +12,11 @@
+>   	 * For the vDSO, emit both runtime unwind information and debug
+>   	 * symbols for the .dbg file.
+>   	 */
+> -
+> +#ifdef __x86_64__
+
+#if defined(__x86_64__) && defined(CONFIG_AS_SFRAME)
+
+> +	.cfi_sections .eh_frame, .debug_frame, .sframe
+> +#else
+>   	.cfi_sections .eh_frame, .debug_frame
+> +#endif
+>   
+>   #define CFI_STARTPROC		.cfi_startproc
+>   #define CFI_ENDPROC		.cfi_endproc
+
+[1]: https://docs.kernel.org/process/changes.html
+
+Regards,
+Jens
 -- 
-2.45.2
+Jens Remus
+Linux on Z Development (D3303) and z/VSE Support
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
