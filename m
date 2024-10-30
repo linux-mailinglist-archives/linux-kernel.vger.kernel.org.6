@@ -1,134 +1,98 @@
-Return-Path: <linux-kernel+bounces-389267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BCF9B6ABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:19:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF679B6AB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:18:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33C11F2622D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000101C206AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AB521A71B;
-	Wed, 30 Oct 2024 17:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27A9219CA9;
+	Wed, 30 Oct 2024 17:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOB6Hy9Q"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNXeP6SX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E93B21A4D6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E196219CAE;
+	Wed, 30 Oct 2024 17:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730308263; cv=none; b=TfUVyIBeO5GJ1wGwy9hYhO2iBLKyh5Kll1WDuLE2/2t9i9/4dhiOiA//Iky/Pqr2q/eki+yFJ213wIh4paLVLfSRJdXfmYZG+AEaxeWvDcTvO0llGv9mUUw52+8IBNQxT3tgMuJEqPMVj/cVgxNZGf4OSwzogJMfDbeIQ4oIrXk=
+	t=1730308255; cv=none; b=cdgQAOXlW1c48eFKbopoUwgQ0Trvse2g+U+RAEPDYF6T4MvoHJ4GqeE6d0W0jbdUYMeBnwwMCRZ3byuBQuU4+CbjNa/d5qU7RXj4ikD2TXs9pTmKV1GWWVuMzT8AYVleQ1cPQwBmb2exic66A/fLh/2Lt4SRwITGs2S6zSCvIFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730308263; c=relaxed/simple;
-	bh=OndDXqKtEJ3cA9GTwb1q2oE8eowa7SIjG7xCrUy6/yc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iZwdB2luKzr+BJYVvvdtZSbhkRecJF0uBIpuiueqUYJjYm9F03/ganIhbLxmx5TqcaF8TuM8lpcbfD/pobbMZOKE56qIBOAtcMS/yNG+3wrl4GZfEIP2nDmXliEft5q8sOPBjHNOhV/z3/lxTrDcluWX10ZuKxmNUBLwz1UiLeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YOB6Hy9Q; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso97325101fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730308259; x=1730913059; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pJvO6m6VfJq7jLiXQGCAJ+rgJ6VzC5FKvl/I4BvuxQc=;
-        b=YOB6Hy9QRfknjVIi4jep+E2t0gX9awKWmmaBdaf0z01ocmSDNk8hsGJsWaEWY/itmC
-         xLIEvb6H7a1bh5qPgtXgJ7Ea5xiUASzFQqC6K/WPqUhyWudYk2QdK6ocfqtgNWFIzKtK
-         dTbUjXFIgAe85dwqg1tGPTbDTKn9Ss2qGVEMEjY5MMnH7TjkBIoRVRze92HursCC313x
-         u/opqCxRyKjfSayI9n1m3pTxnj8n+YfOT2Thhw6AJYUMP4Qrw5MwJMWuOwdFIkpIwO66
-         k1ZIcAPQiyMUpVcTpiB2jfL5LiBg9e3sSJPxxnDrV+sInnFpiAJUhbVdbhx2MxXDsu20
-         eCHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730308259; x=1730913059;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pJvO6m6VfJq7jLiXQGCAJ+rgJ6VzC5FKvl/I4BvuxQc=;
-        b=r+6LcCQYof7ofJnwLoSqYxm/qmriNRPTBVkos2Xp/90RDIY61W6RtsIDhO03XTQYbl
-         pC2lkV5Jy5LYVRAb/uTCSweFDV/Je/2LwEy4LEbFbSM9OIorInNTD4v1rg2LkwsVlpDJ
-         5lUkYBbbM/loa+j2vj+3H68KqsP9VObyjaYFnTDCgKgzSWVnJgIf/vHvf0O5GNaQFACM
-         4tBiKSxKkImO8RO69nT9B62QKAc/x6QoDULz9nTVBJuSscaoMem3zqvNn+2lXPkNrTSW
-         jnh9vSBfmjXyUzUvNzK29Q8663cwcqceRh46hWwnWR7ZmBcjcqXUHLKoPFPbNv1tq/C/
-         Z86w==
-X-Forwarded-Encrypted: i=1; AJvYcCUS4w8tqSYzW3Zlbs6j02tu1llJ1SbC6VRm4x3lRcYuyrVX2b0PsFZSoCG4X9RXotQhJ9ck/6DX+hcpPcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdSvyLp3gWMp1Powubk0izw6thfIc+7NzrknE+q1g7QQm6immK
-	uhPOl6sKI8i1XUkjtU2Hv6m+dGSRGkqRoRlCVF74cPU8v99PT0ze
-X-Google-Smtp-Source: AGHT+IE9t0eBimyH7UiH84hK6DgH1SFcaijILVkX0wzzcYM83S6LqN3c4d1isUuteAfU8x3BfYI/tg==
-X-Received: by 2002:a05:651c:514:b0:2fb:5206:1675 with SMTP id 38308e7fff4ca-2fcbdff1ffdmr135616061fa.27.1730308258955;
-        Wed, 30 Oct 2024 10:10:58 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-fbf3-0656-23c1-5ba1.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:fbf3:656:23c1:5ba1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9a9faesm26828985e9.35.2024.10.30.10.10.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 10:10:58 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 30 Oct 2024 18:10:45 +0100
-Subject: [PATCH 2/2] drivers: soc: atmel: use automatic cleanup for
- device_node in atmel_soc_device_init()
+	s=arc-20240116; t=1730308255; c=relaxed/simple;
+	bh=ca3vfwRVxz8HR6hgXtbC1AS1aZ+zuvqCi4svlgqeCWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0X+Q6PjO0hgrKuKqkSxHBef1ExXhkVrAccWfkYFNp4hw6+txyOdoD+1a6f34nOCROrU2M+9edQq68KocwCYwOra3tiw+m+rQhrOfgcqkRXfbExXAnQDP/kQFEJEz1YSHZhjCk9XfGsROMkGqcoL37cBrzs2jDVRq/TKcv3OpGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNXeP6SX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0604CC4CECE;
+	Wed, 30 Oct 2024 17:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730308254;
+	bh=ca3vfwRVxz8HR6hgXtbC1AS1aZ+zuvqCi4svlgqeCWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dNXeP6SX8hI3T+FtiH1wngFf1zAURzcXFYkjCRiF9O6dwpIl4VLrunPRCfZChiCQO
+	 JMLrWWTPAY3G31ZkFFjU86EiaO/SPBB1ByfXhr4/Q3ONCKX1dVg822ieYDAXfEibSY
+	 gsSB7wmq0+6d/KYZKpCQy/PQvZWhbgDEsQswnPa+Uxdp1KAM7YDcfEiDVwhWQXa40a
+	 dmdvDtAR5x59D/w/Yov7fk6jixyu4ruz7WsAn/3Q8WdtE+SWVYurOHP0erVQ42GNRs
+	 Vl1pnkVkjP27FjeRTAebcDPILlalWWw5BdgMG3pKASrsWkYIx9vDdCXm3SqjtYwJ8i
+	 Yf6NOtxJWdtBQ==
+Date: Wed, 30 Oct 2024 17:10:49 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Suraj Sonawane <surajsonawane0215@gmail.com>
+Cc: lgirdwood@gmail.com, peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com,
+	daniel.baluta@nxp.com, kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev, perex@perex.cz, tiwai@suse.com,
+	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sound: fix uninit-value in
+ sof_ipc4_pcm_dai_link_fixup_rate
+Message-ID: <28112e29-e326-40d7-a550-d3466f454658@sirena.org.uk>
+References: <20241030155705.31327-1-surajsonawane0215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-soc-atmel-soc-cleanup-v1-2-32b9e0773b14@gmail.com>
-References: <20241030-soc-atmel-soc-cleanup-v1-0-32b9e0773b14@gmail.com>
-In-Reply-To: <20241030-soc-atmel-soc-cleanup-v1-0-32b9e0773b14@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730308255; l=989;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=OndDXqKtEJ3cA9GTwb1q2oE8eowa7SIjG7xCrUy6/yc=;
- b=4PSAgRDXw7LxIptekOdlnHv1UbgiZ5LgxiPU3wDfeyUAV/VockQb3gdRTkZabAt/nKdictWHL
- ZmQj0gg9UejBJkOLxrq5kpZ/MLBrGlreE1U+n05iRMIZ+vjHKy76MjC
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ga2wZhdiu8rFg1Tl"
+Content-Disposition: inline
+In-Reply-To: <20241030155705.31327-1-surajsonawane0215@gmail.com>
+X-Cookie: I feel partially hydrogenated!
 
-Switch to a more robust approach to automatically release the node when
-it goes out of scope, dropping the need for explicit calls to
-of_node_put().
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/soc/atmel/soc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+--Ga2wZhdiu8rFg1Tl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/soc/atmel/soc.c b/drivers/soc/atmel/soc.c
-index 64b1ad063073..298b542dd1c0 100644
---- a/drivers/soc/atmel/soc.c
-+++ b/drivers/soc/atmel/soc.c
-@@ -399,15 +399,12 @@ static const struct of_device_id at91_soc_allowed_list[] __initconst = {
- 
- static int __init atmel_soc_device_init(void)
- {
--	struct device_node *np = of_find_node_by_path("/");
-+	struct device_node *np __free(device_node) = of_find_node_by_path("/");
- 
--	if (!of_match_node(at91_soc_allowed_list, np)) {
--		of_node_put(np);
-+	if (!of_match_node(at91_soc_allowed_list, np))
- 		return 0;
--	}
- 
- 	at91_soc_init(socs);
--	of_node_put(np);
- 
- 	return 0;
- }
+On Wed, Oct 30, 2024 at 09:27:05PM +0530, Suraj Sonawane wrote:
+> Fix an issue detected by the Smatch tool:
 
--- 
-2.43.0
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
+--Ga2wZhdiu8rFg1Tl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmciaJgACgkQJNaLcl1U
+h9APzgf/fL3lMz/XXfWEBQ/iT0vfIFKAZ47WPnv6HT2WN7alwh4+3oMMjf22j4qJ
++ma+KvxEp4lv+OnY5aEOWZu+qFpcX2DuDfcwtTRPV60IUKM2KUDWYZ4VUsiRP+Dt
+N5dbKJ48/G/tZtD1whLnvcMdzKgsr6skNR8fxMYi6WcNlOjX4dUJoKj0vAEcGeIV
+iiVIlD23U4PZe3iABYGgvfXMto5+IaHNPPz00gNUF28NpTE1BKeJhqd3frsj8iSi
+N7gB58DVs7pqFFvZX1H9UaIdZ8KU/kP6HHsq0VDy6RQX7z39KrCuDkcFeMDzcIRG
+qmCGISo5uGoFCX7dpTKf/ZilT7+06w==
+=7Egp
+-----END PGP SIGNATURE-----
+
+--Ga2wZhdiu8rFg1Tl--
 
