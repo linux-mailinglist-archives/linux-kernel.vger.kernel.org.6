@@ -1,196 +1,136 @@
-Return-Path: <linux-kernel+bounces-388166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2849B5B78
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:53:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0C89B5B7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51AC28430A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEF928395B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359091D0E19;
-	Wed, 30 Oct 2024 05:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3B01D0E19;
+	Wed, 30 Oct 2024 05:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSGGm8zF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TMYV8BqI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7881E2C95;
-	Wed, 30 Oct 2024 05:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4730E2C95
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730267597; cv=none; b=FsylXrQYIAKAj7JOYX0XTr0crWgziKgCeXyYOlq8WPXDfR1X+c9MkJX3Y+dm+U/WmXPBybUa8ebU7VeIxuUloqf1u60INV+Wbil5Aqx9ya4FhuvkpG5ruOTwh84Qqow/LP5n98hsFNTREOyT9uI05CyoIulR4Cx8OWtBJ3OMiY0=
+	t=1730267699; cv=none; b=HxFib3grpaFtPwgCrjMVEWjdsLnHcJKkxfYq5k1OcU1eh1Q7KqsRzEbthcszq25J6NV+ugJGeLk4JZAf4II/wBd5QDIQCj9y+fzEh/YWhsZUTJJyF2CbRjy65N1pFLTQf0KlIAFviBcz7htblz8L0H+Pq17m62eCQgDV6HTDdg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730267597; c=relaxed/simple;
-	bh=augGohFjpk+jSI2qAwFC1uxFG7NPGCKrTeaRhwy1o6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhlXKEGk32Pw4OackeFNdZw2I6laAqFa1bMre0jMu4AuG/Tv/WgPiz+YTPBgBem60FKoV6nVHyeHBvje93jydDpkcGmcVV7909WelnmEvHxWYoixTwI0crLPhPuoc0/esSFy2slRiT8TVzvdxm2EifHA67P3pOtFdjRNtUbZorY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSGGm8zF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB2CC4CEE4;
-	Wed, 30 Oct 2024 05:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730267597;
-	bh=augGohFjpk+jSI2qAwFC1uxFG7NPGCKrTeaRhwy1o6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TSGGm8zF6fqIUqaYjprVYMefRcTuAtwv8QziTXwT+DlvBcKfYCS/X6zvdDtdI+avt
-	 j4vawGQy7ip9PAq8935QoVmN4/YzVS/R2Rmq1x/BosUjmotSpKRdwTl4VKSeY+5A2J
-	 JFf31tuw2OeF0Bf6PM61xbW0EKzoJR3m4LR1ZvSN57aDZLQh2mXrRYusA3RsCU2nvn
-	 5dd4MPOr0e/h2F9jtUbPo+mBYMqi7LasnwEI9fPzuyW1xiu/jQWUth1DPDJpFoNtFB
-	 N8fjhNvsQzDlFk/A0nPvYOng+fUlM7gV8V45l6CdKpYKo4gM7Q8sWG3wXmzz10LZhE
-	 DxiSDi3d44HYg==
-Date: Tue, 29 Oct 2024 22:53:14 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-Message-ID: <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
+	s=arc-20240116; t=1730267699; c=relaxed/simple;
+	bh=6q9V6oqtxM8JFtBy0BdqCGAK55IJJtLaOB0i6A/1BBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=YVKbOUr3l6QPVZNAgI5yGG76Ff3TBntxu26ymjYxXkaFS+kmQtcmIXB9cmDkSr0wfF5pEWTGgPnaVgczVmYl+KumPnuk7dLQcJMA8KBdOFHQMZtdwjcsYuStYVsa9Vp7nWZNY1foUa31qvNzmgTFKAm/RPe0xANUHJ80jtSRRtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TMYV8BqI; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730267698; x=1761803698;
+  h=date:from:to:cc:subject:message-id;
+  bh=6q9V6oqtxM8JFtBy0BdqCGAK55IJJtLaOB0i6A/1BBQ=;
+  b=TMYV8BqIYh1W5S+g3lyJDJv1ysZYNFGLZRc2I4lAot4HbRTq/mQPKTnP
+   Q0wbSQ1StInps43j/k7NRgHYIoe1CwP9UlJxJNuk5aa/nLsDKinOEM8O1
+   lBEAYjRZbTL8eKdKu7A+i98VJaobWRHPr43TzGGqMDAK6ifPa4/0gsOgy
+   5JpN4gN3l4Tkybm0AzES/s9dV+rJGQkFvwBzvzecMa1M2B/4cO/iPnXNz
+   KhmA4u1uCxe3NvOhorvUN/kZAqDkdZnmdb4l0ePaX9K0z/8sXWrtMSScn
+   BNOI06qjq6e5VDWUjYxFdkjHknoL9/pBBajaoMpRdFriPvDlQXOe97Ypl
+   Q==;
+X-CSE-ConnectionGUID: iKjLxZzaQa+Ne77q1FGzrg==
+X-CSE-MsgGUID: 3TAPqk9lSI+JUnjXLMaEoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="30062581"
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="30062581"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 22:54:57 -0700
+X-CSE-ConnectionGUID: UiMft75eQxmQn8f51IxI4g==
+X-CSE-MsgGUID: 2YOrqBsTQ1qO1Xhuabd7nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="81837149"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 29 Oct 2024 22:54:55 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t61fR-000eZC-1y;
+	Wed, 30 Oct 2024 05:54:53 +0000
+Date: Wed, 30 Oct 2024 13:54:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ fce9642c765a18abd1db0339a7d832c29b68456a
+Message-ID: <202410301340.1PSpXLI5-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
 
-On Tue, Oct 29, 2024 at 04:32:40PM -0700, Andrii Nakryiko wrote:
-> It feels like this patch is trying to do too much. There is both new
-> UAPI introduction, and SFrame format definition, and unwinder
-> integration, etc, etc. Do you think it can be split further into more
-> focused smaller patches?
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: fce9642c765a18abd1db0339a7d832c29b68456a  x86/amd_nb: Fix compile-testing without CONFIG_AMD_NB
 
-True, let me see if I can split it up.
+elapsed time: 738m
 
-> > +
-> > +                       if ((eppnt->p_flags & PF_X) && k < start_code)
-> > +                               start_code = k;
-> > +
-> > +                       if ((eppnt->p_flags & PF_X) && k + eppnt->p_filesz > end_code)
-> > +                               end_code = k + eppnt->p_filesz;
-> > +                       break;
-> > +               }
-> > +               case PT_GNU_SFRAME:
-> > +                       sframe_phdr = eppnt;
-> 
-> if I understand correctly, there has to be only one sframe, is that
-> right? Should we validate that?
+configs tested: 44
+configs skipped: 128
 
-Yes, there shouldn't be more than one PT_GNU_SFRAME for the executable
-itself.  I can validate that.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> > +                       break;
-> >                 }
-> >         }
-> >
-> > +       if (sframe_phdr)
-> > +               sframe_add_section(load_addr + sframe_phdr->p_vaddr,
-> > +                                  start_code, end_code);
-> > +
-> 
-> no error checking?
+tested configs:
+alpha        allnoconfig    gcc-14.1.0
+alpha       allyesconfig    clang-20
+arc         allmodconfig    clang-20
+arc          allnoconfig    gcc-14.1.0
+arc         allyesconfig    clang-20
+arm         allmodconfig    clang-20
+arm          allnoconfig    gcc-14.1.0
+arm         allyesconfig    clang-20
+arm64       allmodconfig    clang-20
+arm64        allnoconfig    gcc-14.1.0
+csky         allnoconfig    gcc-14.1.0
+hexagon     allmodconfig    clang-20
+hexagon      allnoconfig    gcc-14.1.0
+hexagon     allyesconfig    clang-20
+i386        allmodconfig    clang-19
+i386         allnoconfig    clang-19
+i386        allyesconfig    clang-19
+i386           defconfig    clang-19
+loongarch   allmodconfig    gcc-14.1.0
+loongarch    allnoconfig    gcc-14.1.0
+m68k        allmodconfig    gcc-14.1.0
+m68k         allnoconfig    gcc-14.1.0
+m68k        allyesconfig    gcc-14.1.0
+microblaze  allmodconfig    gcc-14.1.0
+microblaze   allnoconfig    gcc-14.1.0
+microblaze  allyesconfig    gcc-14.1.0
+mips         allnoconfig    gcc-14.1.0
+nios2        allnoconfig    gcc-14.1.0
+openrisc     allnoconfig    clang-20
+parisc       allnoconfig    clang-20
+powerpc      allnoconfig    clang-20
+riscv        allnoconfig    clang-20
+s390         allnoconfig    clang-20
+sh           allnoconfig    gcc-14.1.0
+um          allmodconfig    clang-20
+um           allnoconfig    clang-20
+um          allyesconfig    clang-20
+x86_64       allnoconfig    clang-19
+x86_64      allyesconfig    clang-19
+x86_64         defconfig    clang-19
+x86_64             kexec    clang-19
+x86_64             kexec    gcc-12
+x86_64          rhel-8.3    gcc-12
+xtensa       allnoconfig    gcc-14.1.0
 
-Good point.  I remember discussing this with some people at Cauldon/LPC,
-I just forgot to do it!
-
-Right now it does all the validation at unwind, which could really slow
-things down unnecessarily if the sframe isn't valid.
-
-> > +#ifdef CONFIG_HAVE_UNWIND_USER_SFRAME
-> > +
-> > +#define INIT_MM_SFRAME .sframe_mt = MTREE_INIT(sframe_mt, 0),
-> > +
-> > +extern void sframe_free_mm(struct mm_struct *mm);
-> > +
-> > +/* text_start, text_end, file_name are optional */
-> 
-> what file_name? was that an extra argument that got removed?
-
-Indeed, that was for some old code.
-
-> >         case PR_RISCV_SET_ICACHE_FLUSH_CTX:
-> >                 error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
-> >                 break;
-> > +       case PR_ADD_SFRAME:
-> > +               if (arg5)
-> > +                       return -EINVAL;
-> > +               error = sframe_add_section(arg2, arg3, arg4);
-> 
-> wouldn't it be better to make this interface extendable from the get
-> go? Instead of passing 3 arguments with fixed meaning, why not pass a
-> pointer to an extendable binary struct like seems to be the trend
-> nowadays with nicely extensible APIs. See [0] for one such example
-> (specifically, struct procmap_query). Seems more prudent, as we'll
-> most probably will be adding flags, options, extra information, etc)
-> 
->   [0] https://lore.kernel.org/linux-mm/20240627170900.1672542-3-andrii@kernel.org/
-
-This ioctl interface was admittedly hacked together.  I was hoping
-somebody would suggest something better :-)  I'll take a look.
-
-> > +static int find_fde(struct sframe_section *sec, unsigned long ip,
-> > +                   struct sframe_fde *fde)
-> > +{
-> > +       struct sframe_fde __user *first, *last, *found = NULL;
-> > +       u32 ip_off, func_off_low = 0, func_off_high = -1;
-> > +
-> > +       ip_off = ip - sec->sframe_addr;
-> 
-> what if ip_off is larger than 4GB? ELF section can be bigger than 4GB, right?
-
-That's baked into sframe v2.
-
-> and also, does it mean that SFrame doesn't support executables with
-> text bigger than 4GB?
-
-Yes, but is that a realistic concern?
-
-> > +       } else {
-> > +               struct vm_area_struct *vma, *text_vma = NULL;
-> > +               VMA_ITERATOR(vmi, mm, 0);
-> > +
-> > +               for_each_vma(vmi, vma) {
-> > +                       if (vma->vm_file != sframe_vma->vm_file ||
-> > +                           !(vma->vm_flags & VM_EXEC))
-> > +                               continue;
-> > +
-> > +                       if (text_vma) {
-> > +                               pr_warn_once("%s[%d]: multiple EXEC segments unsupported\n",
-> > +                                            current->comm, current->pid);
-> 
-> is this just something that fundamentally can't be supported by SFrame
-> format? Or just an implementation simplification?
-
-It's a simplification I suppose.
-
-> It's not illegal to have an executable with multiple VM_EXEC segments,
-> no? Should this be a pr_warn_once() then?
-
-I don't know, is it allowed?  I've never seen it in practice.  The
-pr_warn_once() is not reporting that it's illegal but rather that this
-corner case actually exists and maybe needs to be looked at.
-
--- 
-Josh
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
