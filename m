@@ -1,161 +1,113 @@
-Return-Path: <linux-kernel+bounces-388665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C107B9B62C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:15:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3429B62C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B950B23F49
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:15:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8536B241FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156921E885D;
-	Wed, 30 Oct 2024 12:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431A61E7C0C;
+	Wed, 30 Oct 2024 12:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lNjIEzTI"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UOyBYSLg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="92LZUgWS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DBA1E7C1D;
-	Wed, 30 Oct 2024 12:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAED61E4928
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730290505; cv=none; b=a9d0Aib7oh84mA9YP9HBLjxDIAq+l6cjQ6RCoGF2k+bnFqJWUOuv/tEHa/z2eiWPge1USpgdcqpxT/NXUueQlGazGvTyoQ8G+T0P7IdkDPgENjSN6IE4XeKVzX07D/CKFY8H42iN8mmK40R4XKmWjQziJSgxV9cBxfOXB02UFD4=
+	t=1730290543; cv=none; b=UGdVD8Aow2bq/e3EPEnn4B8RTaX4jEiU3kbk0RgOR1syBVQgzpvjAXuHUqGPI1sRTCoFMBwUQDXsSJrHT1PHp+cHqAc54gP/HxO+444eXdPag2k6dc9iKXJon5suUgEBUaV3K9M5iKrZVe2xeFgkUfwv4zjjBcLSHDHCrUQ9qQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730290505; c=relaxed/simple;
-	bh=U7yrooYPgfoJ8DXXEy3+qGTnaeyv5NSw22xvBQrzcEU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f9Gfcp5hYspxk+SDwCYlVEAmHMoiVtHn1Fm0Mbo3ifUOeOc5tFOrKljuM+b93PqfzmmU3iar2iVqtRRstSvYXVuY5xfT1SGebtP0UNJGj24qLlP285EjMAg4WbT10yoSnN+Ng8hQ0hVVAfNZvyWHMmkrEqwGv/+s9pEUmIbtTVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lNjIEzTI; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UCEs3Q046386;
-	Wed, 30 Oct 2024 07:14:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730290494;
-	bh=hEqQ1qpqZb8TB5oDmGeSGKH2Lagktizrv4yzLYIgTBU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lNjIEzTIbDhnyrTf1dUnb4rJACF9W4x7JZjhaqz5ZsWwabRkE3joy0qPjZ/OzxL5e
-	 kQW20q2kUtZokTigcBbPiWmxDWWu7l4iBUYKAE6QeG5KMVOSWCc1DS2XHurL6HfthY
-	 GAQAMXOA8kS+LQr4Ea4P+grv0CgMxqWGbTfNu57U=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49UCEsEM105209
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 30 Oct 2024 07:14:54 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
- Oct 2024 07:14:54 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 30 Oct 2024 07:14:54 -0500
-Received: from [10.250.202.81] ([10.250.202.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UCEo2g024212;
-	Wed, 30 Oct 2024 07:14:51 -0500
-Message-ID: <3fc3c670-ce63-4a27-9d12-1c6c996cf914@ti.com>
-Date: Wed, 30 Oct 2024 14:14:50 +0200
+	s=arc-20240116; t=1730290543; c=relaxed/simple;
+	bh=T+B/ZaMD5FsUy3FtRIiqS+1Ki8qeR0PL+NMNNh6EHSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dKmMDIjLi2RLaJXG7agoe9yzCkBMzXZ5l/vYfdPNFctTtixr2lHi+fCrJ+7cSNu6iBOcVRZ9S0nNYw7YW40wF3Y85HvwhYvoUzYJjf+of8G2w/CopVnsiQAhpl4xKCNni7AYS827FCEHJeoFLdOvPQVPm7DwpnNZmYmqjpn2WOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UOyBYSLg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=92LZUgWS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 30 Oct 2024 13:15:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730290539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BPG2br2Sq4Y836MTVVhKgsi4hka1K43VnQrzOI2sxVk=;
+	b=UOyBYSLg2gmrTyFQA49OLegbYa0hiAkb9IBOT7b0YM3Y3iPw66Gj1kWOczULdwt2jZdRja
+	WxFM/+m/gZ3vHDKIGgi/fVYkfre7QG/Am8+6VL9/zZLEesZE9Wd1Ejnv0Pk/kpPn4x4WVi
+	/TRwZeqwpOTs+yu/wSaBo/My3wu0qmZggYAFUZgrPL+pJYMn8eRC6IQHKZUVQgvFJkUYbh
+	LesrpjB0CV+y1sgH+E13aFJsZz81DMfgRftirV4nhQmOcVcX2qLupCz0Mj2btRyet8wksr
+	/weWwb/TT9ZLCSAUp4Zs9K+Q4mlfuKDmPrhRIDv9vHjMS87KIadhDaFrEhbX2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730290539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BPG2br2Sq4Y836MTVVhKgsi4hka1K43VnQrzOI2sxVk=;
+	b=92LZUgWSu3QPugH4D7yuSgqbTr92RRq/nD4L0Z1SHzZGVKU/vV/wsH8kqATj+5Mw0QNEOv
+	3M8AwkZJSfJeO3Dg==
+From: Nam Cao <namcao@linutronix.de>
+To: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH 05/21] can: bcm: Don't initialized an unused hrtimer
+Message-ID: <20241030121533.ioTNvYpX@linutronix.de>
+References: <cover.1729864615.git.namcao@linutronix.de>
+ <4e7dc11aa9ffb116678574889cda35b3cd5b7385.1729864615.git.namcao@linutronix.de>
+ <203a1560-76c9-4c47-b1b8-b44ddf40cd16@hartkopp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/17] dt-bindings: net: wireless: cc33xx: Add
- ti,cc33xx.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20241029172354.4027886-1-michael.nemanov@ti.com>
- <20241029172354.4027886-2-michael.nemanov@ti.com>
- <936b19eb-cde7-4be8-98cf-e60e32b335cd@kernel.org>
- <8024aa1c-5bd1-40d8-b0c3-14b5fcd992e2@ti.com>
- <bda36285-dc70-4dff-85ed-9c04c0f7ba44@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <bda36285-dc70-4dff-85ed-9c04c0f7ba44@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <203a1560-76c9-4c47-b1b8-b44ddf40cd16@hartkopp.net>
 
-On 10/30/2024 1:09 PM, Krzysztof Kozlowski wrote:
-> On 30/10/2024 11:59, Nemanov, Michael wrote:
->>>
->>> Your changelog does not explain these three. "Fixed compatibility" is
->>> way too vague, especially that you do not fix anything here.
->>>
->>
->> I was trying to address the feedback from previous patch. You said:
->>
->>>>>> +static const struct of_device_id cc33xx_sdio_of_match_table[] = {
->>>>>> +	{ .compatible = "ti,cc3300", .data = &cc33xx_data },
->>>>>> +	{ .compatible = "ti,cc3301", .data = &cc33xx_data },
->>>>>> +	{ .compatible = "ti,cc3350", .data = &cc33xx_data },
->>>>>> +	{ .compatible = "ti,cc3351", .data = &cc33xx_data },
->>>>>> +	{ }
->>>>>> +};
->>>>>
->>>>>
->>>>> Eh? What happened here? So devices are compatibles thus make them
->>>>> compatible in the bindings.
->>>>>
->>>>
->>>> I thought this is the right way to do it (originally taken from [1]).
->>>> How can I solve it via DT bindings?
->>>
->>> It's all over the bindings (also example-schema). Use fallback and oneOf.
->>>
->>
->> Looking at [2] and [3] as an example I tried to do the same (make cc33xx
->> driver compatible with all chip variants).
->> How should have I done it?
+On Wed, Oct 30, 2024 at 11:49:49AM +0100, Oliver Hartkopp wrote:
+> On 28.10.24 08:29, Nam Cao wrote:
+> > The hrtimer "thrtimer" is not used for TX. But this timer is initialized
+> > regardless.
+> > 
+> > Remove the hrtimer_init() for the unused hrtimer and change bcm_remove_op()
+> > to make sure hrtimer_cancel() is not called with the uninitialized hrtimer.
 > 
-> qcom-wdt is quite a different device. It's true you should have here
-> oneOf, but for a purpose. oneOf without purpose does not make sense, right?
+> NAK.
 > 
-> I think other TI bindings would serve you as an example. Or this one:
+> There are several other occurrences of thrtimer that are not covered by
+> RX/TX distinction, where the second timer is canceled.
 > 
-> https://elixir.bootlin.com/linux/v6.3-rc6/source/Documentation/devicetree/bindings/sound/nvidia,tegra210-ope.yaml#L31
+> This one-time init and cancel of an unused hrtimer costs nearly nothing and
+> is not even in any hot path.
 > 
-> 
-> Best regards,
-> Krzysztof
-> 
+> So this incomplete patch only adds complexity and potential error cases in
+> some 20 y/o code for nothing.
 
-OK.
-So I should make one of the variants the base and declare others as 
-compatible? i.e:
+The "real" motivation is preparing to use hrtimer_setup() instead of
+hrtimer_init() [1] and deleting hrtimer_init() [2]. The new function
+mandates a callback function, and since the TX thrtimer doesn't have a
+callback function, hrtimer_setup() cannot be used.
 
---Bindings--
+Your concerns are also valid. So I can drop this patch, and use a dummy
+function to make hrtimer_setup() happy, like how it's done for the rt2x00
+driver [3]. It will make the driver a bit ugly, but it's obvious that it
+won't cause any regression.
 
-   compatible:
-     oneOf:
-       - const: ti,cc3300
-       - items:
-           - enum:
-               - ti,cc3301
-               - ti,cc3350
-               - ti,cc3351
-           - const: ti,cc3300
+Best regards,
+Nam
 
-
---Driver--
-
-static const struct of_device_id cc33xx_sdio_of_match_table[] = {
-	{ .compatible = "ti,cc3300", .data = &cc33xx_data },
-	{ }
-};
-
-
+[1] https://lore.kernel.org/lkml/e4ce3a3a28625d54ef93e47bfb02f7ffb741758a.1729865232.git.namcao@linutronix.de/
+[2] https://lore.kernel.org/lkml/7bde2762d82d30dab184c7a747e76afc41208da0.1729865740.git.namcao@linutronix.de/
+[3] https://lore.kernel.org/lkml/49f2bce487f56eb2a3ff572ea6d7de0a43560c0f.1729865232.git.namcao@linutronix.de/
 
