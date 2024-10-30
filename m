@@ -1,194 +1,373 @@
-Return-Path: <linux-kernel+bounces-389712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97C19B7059
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:11:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8093A9B705B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9A1B210FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:11:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1975A28229E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF722144A7;
-	Wed, 30 Oct 2024 23:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VopkGahq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E404217640;
+	Wed, 30 Oct 2024 23:13:22 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603281BD9EA;
-	Wed, 30 Oct 2024 23:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC001BD9EA;
+	Wed, 30 Oct 2024 23:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730329860; cv=none; b=AYvxQgJf2xkOb5Ao7KlW44Qm7F0vsaF415o78tdWnk1bvOmVHuY349Ooyy6D1TUJtolZWi8f+r51AIVJ+XIO/L+u7OJ9X3Rrqp1AmtaBycT+1OAdcFXgRvZe+RxiuDbOb5Gxnn6UlW2OBZmwGXr4X8gKgJpuPIv6X6rm4eknA5k=
+	t=1730330001; cv=none; b=SlvOvUu2KIBoR84w3mWm3Fn+mtho7x2KYLxLbTMRsYjVjOvBgez1xfnLw63XmVgwCQ/WvSm/J0z1PvNA75ylg+NDP2Q8hThd8F8R80a7Fh41ISJIMVwmUbQVzBEfZmrrr3GUwgNKIwBp9oAV31qYZ2gjOdTieZmTBwOGodjvZ2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730329860; c=relaxed/simple;
-	bh=NobT7qYPgQUDHyh4P5cTe3irZqg7DEUQJbR+GUeX5ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Icr2CowZgCn6Ho9gK/hkXyNfw2Z3kApIAeYd+ia3iygb7Y951T3Wshlstanni7nK6Zqv3d4KwUsUyobQkMv1/5oP98QxJiymTzLgn1jAFtmvwRnf+lQux2vUOhGzGg5ILk6cXMW4rPo2aZP40RVAh+Ld6y+JLT5SwOWGCycEN7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VopkGahq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBEFCC4CECE;
-	Wed, 30 Oct 2024 23:10:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730329860;
-	bh=NobT7qYPgQUDHyh4P5cTe3irZqg7DEUQJbR+GUeX5ac=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=VopkGahqXCNlTpf7AI+7gIpoBrYuq5ssZSU6uX7UiPnzc+PKC3X1lD6A0oOUF1hTG
-	 atTVsEIE4NoncDheeKu3q6HeLfIqW42kgs2C6u6hsNiKRcfBN9BLc1N7YNSIIZrx/b
-	 lIA25iKdM8Lx9H6QByYehMSl4DlZReZ1aHCd5u6pjCju1Jq80p4ic5TDonx53vZQ4A
-	 4TXtwICbCJn2D0sjy2ALwSr61qLqhpP1D4ZCXseKUEBRwyhmUHGdV4TFQuKMQ0OAfI
-	 QG2Bj/OP+4xoLAapTH//iQaowQ+XgHS1tODxxNrnV1ecO1j/92QCCYMBrWczW+SnAN
-	 k7JPIztZkQOnw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 82F26CE0864; Wed, 30 Oct 2024 16:10:58 -0700 (PDT)
-Date: Wed, 30 Oct 2024 16:10:58 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, sfr@canb.auug.org.au, bigeasy@linutronix.de,
-	longman@redhat.com, boqun.feng@gmail.com, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
+	s=arc-20240116; t=1730330001; c=relaxed/simple;
+	bh=zxSs+rSGb0r81Z2kGNDUOIkCOzHErKH7r5YrALj04Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H5cCmaEXaVlWrytRlmxVZreZvOnkgfIfSpvUEmUJX1vFopERk1U3bxz8g30g/TIF1Z+51k/ccpg4R2Hzf+KqW3QfA6xh4YVoeM2eFwjDrzqh8pxa1aN6aUh2wjY1iJ/Uqb1WsU5XTDOoiTFUo4zgWQu0grevc5/S5aH39tOBeNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD931C4CECE;
+	Wed, 30 Oct 2024 23:13:17 +0000 (UTC)
+Date: Wed, 30 Oct 2024 19:13:16 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alice Ryhl <aliceryhl@google.com>, Russell King <linux@armlinux.org.uk>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard
+ Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, "=?UTF-8?B?Qmo=?=
+ =?UTF-8?B?w7Zybg==?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak
+ <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-arm-kernel@lists.infradead.org, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
+ <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
+ Dooley <conor.dooley@microchip.com>, Samuel Holland
+ <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
+ <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
+ <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev, Palmer Dabbelt <palmer@rivosinc.com>
+Subject: Re: [PATCH v12 4/5] jump_label: adjust inline asm to be consistent
+Message-ID: <20241030191316.2a27ff1b@rorschach.local.home>
+In-Reply-To: <20241030-tracepoint-v12-4-eec7f0f8ad22@google.com>
+References: <20241030-tracepoint-v12-0-eec7f0f8ad22@google.com>
+	<20241030-tracepoint-v12-4-eec7f0f8ad22@google.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyK0YPgtWExT4deh@elver.google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 11:34:08PM +0100, Marco Elver wrote:
-> On Wed, Oct 30, 2024 at 10:48PM +0100, Vlastimil Babka wrote:
-> > On 10/30/24 22:05, Paul E. McKenney wrote:
-> > > Hello!
-> > 
-> > Hi!
-> > 
-> > > The next-20241030 release gets the splat shown below when running
-> > > scftorture in a preemptible kernel.  This bisects to this commit:
-> > > 
-> > > 560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING")
-> > > 
-> > > Except that all this is doing is enabling lockdep to find the problem.
-> > > 
-> > > The obvious way to fix this is to make the kmem_cache structure's
-> > > cpu_slab field's ->lock be a raw spinlock, but this might not be what
-> > > we want for real-time response.
-> > 
-> > But it's a local_lock, not spinlock and it's doing local_lock_irqsave(). I'm
-> > confused what's happening here, the code has been like this for years now.
-> > 
-> > > This can be reproduced deterministically as follows:
-> > > 
-> > > tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration 2 --configs PREEMPT --kconfig CONFIG_NR_CPUS=64 --memory 7G --trust-make --kasan --bootargs "scftorture.nthreads=64 torture.disable_onoff_at_boot csdlock_debug=1"
-> > > 
-> > > I doubt that the number of CPUs or amount of memory makes any difference,
-> > > but that is what I used.
-> > > 
-> > > Thoughts?
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > [   35.659746] =============================
-> > > [   35.659746] [ BUG: Invalid wait context ]
-> > > [   35.659746] 6.12.0-rc5-next-20241029 #57233 Not tainted
-> > > [   35.659746] -----------------------------
-> > > [   35.659746] swapper/37/0 is trying to lock:
-> > > [   35.659746] ffff8881ff4bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x49/0x1b0
-> > > [   35.659746] other info that might help us debug this:
-> > > [   35.659746] context-{2:2}
-> > > [   35.659746] no locks held by swapper/37/0.
-> > > [   35.659746] stack backtrace:
-> > > [   35.659746] CPU: 37 UID: 0 PID: 0 Comm: swapper/37 Not tainted 6.12.0-rc5-next-20241029 #57233
-> > > [   35.659746] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-> > > [   35.659746] Call Trace:
-> > > [   35.659746]  <IRQ>
-> > > [   35.659746]  dump_stack_lvl+0x68/0xa0
-> > > [   35.659746]  __lock_acquire+0x8fd/0x3b90
-> > > [   35.659746]  ? start_secondary+0x113/0x210
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  lock_acquire+0x19b/0x520
-> > > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
-> > > [   35.659746]  ? __pfx_lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx_lock_release+0x10/0x10
-> > > [   35.659746]  ? lock_release+0x20f/0x6f0
-> > > [   35.659746]  ? __pfx_lock_release+0x10/0x10
-> > > [   35.659746]  ? lock_release+0x20f/0x6f0
-> > > [   35.659746]  ? kasan_save_track+0x14/0x30
-> > > [   35.659746]  put_cpu_partial+0x52/0x1b0
-> > > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
-> > > [   35.659746]  ? __pfx_scf_handler_1+0x10/0x10
-> > > [   35.659746]  __flush_smp_call_function_queue+0x2d2/0x600
-> > 
-> > How did we even get to put_cpu_partial directly from flushing smp calls?
-> > SLUB doesn't use them, it uses queue_work_on)_ for flushing and that
-> > flushing doesn't involve put_cpu_partial() AFAIK.
-> > 
-> > I think only slab allocation or free can lead to put_cpu_partial() that
-> > would mean the backtrace is missing something. And that somebody does a slab
-> > alloc/free from a smp callback, which I'd then assume isn't allowed?
-> 
-> Tail-call optimization is hiding the caller. Compiling with
-> -fno-optimize-sibling-calls exposes the caller. This gives the full
-> picture:
-> 
-> [   40.321505] =============================
-> [   40.322711] [ BUG: Invalid wait context ]
-> [   40.323927] 6.12.0-rc5-next-20241030-dirty #4 Not tainted
-> [   40.325502] -----------------------------
-> [   40.326653] cpuhp/47/253 is trying to lock:
-> [   40.327869] ffff8881ff9bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x48/0x1a0
-> [   40.330081] other info that might help us debug this:
-> [   40.331540] context-{2:2}
-> [   40.332305] 3 locks held by cpuhp/47/253:
-> [   40.333468]  #0: ffffffffae6e6910 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
-> [   40.336048]  #1: ffffffffae6e9060 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
-> [   40.338607]  #2: ffff8881002a6948 (&root->kernfs_rwsem){++++}-{4:4}, at: kernfs_remove_by_name_ns+0x78/0x100
-> [   40.341454] stack backtrace:
-> [   40.342291] CPU: 47 UID: 0 PID: 253 Comm: cpuhp/47 Not tainted 6.12.0-rc5-next-20241030-dirty #4
-> [   40.344807] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [   40.347482] Call Trace:
-> [   40.348199]  <IRQ>
-> [   40.348827]  dump_stack_lvl+0x6b/0xa0
-> [   40.349899]  dump_stack+0x10/0x20
-> [   40.350850]  __lock_acquire+0x900/0x4010
-> [   40.360290]  lock_acquire+0x191/0x4f0
-> [   40.364850]  put_cpu_partial+0x51/0x1a0
-> [   40.368341]  scf_handler+0x1bd/0x290
-> [   40.370590]  scf_handler_1+0x4e/0xb0
-> [   40.371630]  __flush_smp_call_function_queue+0x2dd/0x600
-> [   40.373142]  generic_smp_call_function_single_interrupt+0xe/0x20
-> [   40.374801]  __sysvec_call_function_single+0x50/0x280
-> [   40.376214]  sysvec_call_function_single+0x6c/0x80
-> [   40.377543]  </IRQ>
-> [   40.378142]  <TASK>
-> 
-> And scf_handler does indeed tail-call kfree:
-> 
-> 	static void scf_handler(void *scfc_in)
-> 	{
-> 	[...]
-> 		} else {
-> 			kfree(scfcp);
-> 		}
-> 	}
+On Wed, 30 Oct 2024 16:04:27 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-So I need to avoid calling kfree() within an smp_call_function() handler?
+> To avoid duplication of inline asm between C and Rust, we need to
+> import the inline asm from the relevant `jump_label.h` header into Rust.
+> To make that easier, this patch updates the header files to expose the
+> inline asm via a new ARCH_STATIC_BRANCH_ASM macro.
+> 
+> The header files are all updated to define a ARCH_STATIC_BRANCH_ASM that
+> takes the same arguments in a consistent order so that Rust can use the
+> same logic for every architecture.
+> 
+> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com> # RISC-V
 
-							Thanx, Paul
+Still missing an ack from the ARM maintainer (32 bit, just added) and loongarch.
+
+I'll wait till Monday, if I don't hear anything against these patches
+I'll pull them in.
+
+-- Steve
+
+
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  arch/arm/include/asm/jump_label.h       | 14 +++++----
+>  arch/arm64/include/asm/jump_label.h     | 20 ++++++++-----
+>  arch/loongarch/include/asm/jump_label.h | 16 +++++++----
+>  arch/riscv/include/asm/jump_label.h     | 50 ++++++++++++++++++---------------
+>  arch/x86/include/asm/jump_label.h       | 35 +++++++++--------------
+>  5 files changed, 73 insertions(+), 62 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/jump_label.h b/arch/arm/include/asm/jump_label.h
+> index e4eb54f6cd9f..a35aba7f548c 100644
+> --- a/arch/arm/include/asm/jump_label.h
+> +++ b/arch/arm/include/asm/jump_label.h
+> @@ -9,13 +9,17 @@
+>  
+>  #define JUMP_LABEL_NOP_SIZE 4
+>  
+> +/* This macro is also expanded on the Rust side. */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1:\n\t"					\
+> +	WASM(nop) "\n\t"				\
+> +	".pushsection __jump_table,  \"aw\"\n\t"	\
+> +	".word 1b, " label ", " key "\n\t"		\
+> +	".popsection\n\t"				\
+> +
+>  static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+>  {
+> -	asm goto("1:\n\t"
+> -		 WASM(nop) "\n\t"
+> -		 ".pushsection __jump_table,  \"aw\"\n\t"
+> -		 ".word 1b, %l[l_yes], %c0\n\t"
+> -		 ".popsection\n\t"
+> +	asm goto(ARCH_STATIC_BRANCH_ASM("%c0", "%l[l_yes]")
+>  		 : :  "i" (&((char *)key)[branch]) :  : l_yes);
+>  
+>  	return false;
+> diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/jump_label.h
+> index a0a5bbae7229..424ed421cd97 100644
+> --- a/arch/arm64/include/asm/jump_label.h
+> +++ b/arch/arm64/include/asm/jump_label.h
+> @@ -19,10 +19,14 @@
+>  #define JUMP_TABLE_ENTRY(key, label)			\
+>  	".pushsection	__jump_table, \"aw\"\n\t"	\
+>  	".align		3\n\t"				\
+> -	".long		1b - ., %l["#label"] - .\n\t"	\
+> -	".quad		%c0 - .\n\t"			\
+> -	".popsection\n\t"				\
+> -	:  :  "i"(key) :  : label
+> +	".long		1b - ., " label " - .\n\t"	\
+> +	".quad		" key " - .\n\t"		\
+> +	".popsection\n\t"
+> +
+> +/* This macro is also expanded on the Rust side. */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1:	nop\n\t"				\
+> +	JUMP_TABLE_ENTRY(key, label)
+>  
+>  static __always_inline bool arch_static_branch(struct static_key * const key,
+>  					       const bool branch)
+> @@ -30,8 +34,8 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
+>  	char *k = &((char *)key)[branch];
+>  
+>  	asm goto(
+> -		"1:	nop					\n\t"
+> -		JUMP_TABLE_ENTRY(k, l_yes)
+> +		ARCH_STATIC_BRANCH_ASM("%c0", "%l[l_yes]")
+> +		:  :  "i"(k) :  : l_yes
+>  		);
+>  
+>  	return false;
+> @@ -43,9 +47,11 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
+>  						    const bool branch)
+>  {
+>  	char *k = &((char *)key)[branch];
+> +
+>  	asm goto(
+>  		"1:	b		%l[l_yes]		\n\t"
+> -		JUMP_TABLE_ENTRY(k, l_yes)
+> +		JUMP_TABLE_ENTRY("%c0", "%l[l_yes]")
+> +		:  :  "i"(k) :  : l_yes
+>  		);
+>  	return false;
+>  l_yes:
+> diff --git a/arch/loongarch/include/asm/jump_label.h b/arch/loongarch/include/asm/jump_label.h
+> index 29acfe3de3fa..8a924bd69d19 100644
+> --- a/arch/loongarch/include/asm/jump_label.h
+> +++ b/arch/loongarch/include/asm/jump_label.h
+> @@ -13,18 +13,22 @@
+>  
+>  #define JUMP_LABEL_NOP_SIZE	4
+>  
+> -#define JUMP_TABLE_ENTRY				\
+> +/* This macro is also expanded on the Rust side. */
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+>  	 ".pushsection	__jump_table, \"aw\"	\n\t"	\
+>  	 ".align	3			\n\t"	\
+> -	 ".long		1b - ., %l[l_yes] - .	\n\t"	\
+> -	 ".quad		%0 - .			\n\t"	\
+> +	 ".long		1b - ., " label " - .	\n\t"	\
+> +	 ".quad		" key " - .		\n\t"	\
+>  	 ".popsection				\n\t"
+>  
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1:	nop				\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
+>  {
+>  	asm goto(
+> -		"1:	nop			\n\t"
+> -		JUMP_TABLE_ENTRY
+> +		ARCH_STATIC_BRANCH_ASM("%0", "%l[l_yes]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : l_yes);
+>  
+>  	return false;
+> @@ -37,7 +41,7 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
+>  {
+>  	asm goto(
+>  		"1:	b	%l[l_yes]	\n\t"
+> -		JUMP_TABLE_ENTRY
+> +		JUMP_TABLE_ENTRY("%0", "%l[l_yes]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : l_yes);
+>  
+>  	return false;
+> diff --git a/arch/riscv/include/asm/jump_label.h b/arch/riscv/include/asm/jump_label.h
+> index 1c768d02bd0c..87a71cc6d146 100644
+> --- a/arch/riscv/include/asm/jump_label.h
+> +++ b/arch/riscv/include/asm/jump_label.h
+> @@ -16,21 +16,28 @@
+>  
+>  #define JUMP_LABEL_NOP_SIZE 4
+>  
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+> +	".pushsection	__jump_table, \"aw\"	\n\t"	\
+> +	".align		" RISCV_LGPTR "		\n\t"	\
+> +	".long		1b - ., " label " - .	\n\t"	\
+> +	"" RISCV_PTR "	" key " - .		\n\t"	\
+> +	".popsection				\n\t"
+> +
+> +/* This macro is also expanded on the Rust side. */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"	.align		2		\n\t"	\
+> +	"	.option push			\n\t"	\
+> +	"	.option norelax			\n\t"	\
+> +	"	.option norvc			\n\t"	\
+> +	"1:	nop				\n\t"	\
+> +	"	.option pop			\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch(struct static_key * const key,
+>  					       const bool branch)
+>  {
+>  	asm goto(
+> -		"	.align		2			\n\t"
+> -		"	.option push				\n\t"
+> -		"	.option norelax				\n\t"
+> -		"	.option norvc				\n\t"
+> -		"1:	nop					\n\t"
+> -		"	.option pop				\n\t"
+> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
+> -		"	.align		" RISCV_LGPTR "		\n\t"
+> -		"	.long		1b - ., %l[label] - .	\n\t"
+> -		"	" RISCV_PTR "	%0 - .			\n\t"
+> -		"	.popsection				\n\t"
+> +		ARCH_STATIC_BRANCH_ASM("%0", "%l[label]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : label);
+>  
+>  	return false;
+> @@ -38,21 +45,20 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
+>  	return true;
+>  }
+>  
+> +#define ARCH_STATIC_BRANCH_JUMP_ASM(key, label)		\
+> +	"	.align		2		\n\t"	\
+> +	"	.option push			\n\t"	\
+> +	"	.option norelax			\n\t"	\
+> +	"	.option norvc			\n\t"	\
+> +	"1:	j	" label "		\n\t" \
+> +	"	.option pop			\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch_jump(struct static_key * const key,
+>  						    const bool branch)
+>  {
+>  	asm goto(
+> -		"	.align		2			\n\t"
+> -		"	.option push				\n\t"
+> -		"	.option norelax				\n\t"
+> -		"	.option norvc				\n\t"
+> -		"1:	j		%l[label]		\n\t"
+> -		"	.option pop				\n\t"
+> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
+> -		"	.align		" RISCV_LGPTR "		\n\t"
+> -		"	.long		1b - ., %l[label] - .	\n\t"
+> -		"	" RISCV_PTR "	%0 - .			\n\t"
+> -		"	.popsection				\n\t"
+> +		ARCH_STATIC_BRANCH_JUMP_ASM("%0", "%l[label]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : label);
+>  
+>  	return false;
+> diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+> index cbbef32517f0..3f1c1d6c0da1 100644
+> --- a/arch/x86/include/asm/jump_label.h
+> +++ b/arch/x86/include/asm/jump_label.h
+> @@ -12,35 +12,28 @@
+>  #include <linux/stringify.h>
+>  #include <linux/types.h>
+>  
+> -#define JUMP_TABLE_ENTRY				\
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+>  	".pushsection __jump_table,  \"aw\" \n\t"	\
+>  	_ASM_ALIGN "\n\t"				\
+>  	".long 1b - . \n\t"				\
+> -	".long %l[l_yes] - . \n\t"			\
+> -	_ASM_PTR "%c0 + %c1 - .\n\t"			\
+> +	".long " label " - . \n\t"			\
+> +	_ASM_PTR " " key " - . \n\t"			\
+>  	".popsection \n\t"
+>  
+> +/* This macro is also expanded on the Rust side. */
+>  #ifdef CONFIG_HAVE_JUMP_LABEL_HACK
+> -
+> -static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+> -{
+> -	asm goto("1:"
+> -		"jmp %l[l_yes] # objtool NOPs this \n\t"
+> -		JUMP_TABLE_ENTRY
+> -		: :  "i" (key), "i" (2 | branch) : : l_yes);
+> -
+> -	return false;
+> -l_yes:
+> -	return true;
+> -}
+> -
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1: jmp " label " # objtool NOPs this \n\t"	\
+> +	JUMP_TABLE_ENTRY(key " + 2", label)
+>  #else /* !CONFIG_HAVE_JUMP_LABEL_HACK */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1: .byte " __stringify(BYTES_NOP5) "\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +#endif /* CONFIG_HAVE_JUMP_LABEL_HACK */
+>  
+>  static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
+>  {
+> -	asm goto("1:"
+> -		".byte " __stringify(BYTES_NOP5) "\n\t"
+> -		JUMP_TABLE_ENTRY
+> +	asm goto(ARCH_STATIC_BRANCH_ASM("%c0 + %c1", "%l[l_yes]")
+>  		: :  "i" (key), "i" (branch) : : l_yes);
+>  
+>  	return false;
+> @@ -48,13 +41,11 @@ static __always_inline bool arch_static_branch(struct static_key * const key, co
+>  	return true;
+>  }
+>  
+> -#endif /* CONFIG_HAVE_JUMP_LABEL_HACK */
+> -
+>  static __always_inline bool arch_static_branch_jump(struct static_key * const key, const bool branch)
+>  {
+>  	asm goto("1:"
+>  		"jmp %l[l_yes]\n\t"
+> -		JUMP_TABLE_ENTRY
+> +		JUMP_TABLE_ENTRY("%c0 + %c1", "%l[l_yes]")
+>  		: :  "i" (key), "i" (branch) : : l_yes);
+>  
+>  	return false;
+> 
+
 
