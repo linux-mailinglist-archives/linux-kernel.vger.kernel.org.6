@@ -1,227 +1,239 @@
-Return-Path: <linux-kernel+bounces-388834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5759B650D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:00:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4029C9B6515
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:01:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49AE41C21EDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000A9281143
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260A11EE02F;
-	Wed, 30 Oct 2024 14:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FE61F1315;
+	Wed, 30 Oct 2024 14:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDsUK8eA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kRQ6vm3k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609A61E2603;
-	Wed, 30 Oct 2024 14:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA971EF94E;
+	Wed, 30 Oct 2024 14:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730296841; cv=none; b=TymtnmvAqW/THdgwfM/FVhbTOJjX5sBANlw8WKKRQGT45HgHb/h5CY8rCxRzn20GejOXt8/VB1nqglB6FNSVlqwX3IhzvmD7K+ArYYkV2j7PZVO4BVT6JjGCCDGik+zaQoLww2Rr3Z2XYxlcEtMt0I9EbcT6ERoVQWMF2R3Xwh0=
+	t=1730296880; cv=none; b=Q8fv/w0gzBBAxzp6Ms0cTM1+eFpi5nOsxc8zth5rgZSTlbS+nN7zWFrLc/69C8G6GzCJNdtgP/keMGU1um9TgEQRH8PSX9U/dqwXDTdk9pLKd/0/8bfPOOeJpB050DBjWbQIVjwTExST6w5/aKNzIDiIb9kvRzS86ry3Ccg9R1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730296841; c=relaxed/simple;
-	bh=4xBqS8UTsumo7sGyTT7vfpP96F4lC1cYm0w4yWSX7zQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YsvMM0lntExokh7ynN27QJX8A9ywzv/tlBlJIPQeKyZHo9QdrwXgYskp3+hywf+4HxxAEvSN3BfZx1tW79v+WPggSePOUMng7/GYOVIxy97fvtrw06CeikpfmwBonZ820QblR6ga12l520yRCLDTadNRoFoEpB3SLihZsRTcNKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDsUK8eA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC0CC4CECF;
-	Wed, 30 Oct 2024 14:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730296840;
-	bh=4xBqS8UTsumo7sGyTT7vfpP96F4lC1cYm0w4yWSX7zQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YDsUK8eAdEsACnU9mIV8HbYnP8wkxIOSR3Vn68cpFuqqS3mfLD22VnYOUU65whf38
-	 eOHHjWkoZzSulomYwoq+BzoGmbsmazvZvnCa/MI8awi93bdCq4RbmVjWwA46nVsugS
-	 GrPKVWeLOotxUxisEdY6caHNP1cFS0LnpePVZhfTXcSAdZmQ0mlDbqBbzN3XHL+B8P
-	 jT8DuY2eq+lEapIage4t5O/o7+RQhmGYyXCinSRlqNPJhJCcD8np1qkfKeSNkBY4gB
-	 oSAVRMhcPko8CeQzdd5N9C6QQjCEw8t494jvRVwTNzmWBiPW+EVXal8XB9AkVHQl+D
-	 /zAnb0GGloYsQ==
-Message-ID: <6f1ae409-93d4-422d-b44b-9d10cd82f3e6@kernel.org>
-Date: Wed, 30 Oct 2024 15:00:34 +0100
+	s=arc-20240116; t=1730296880; c=relaxed/simple;
+	bh=YIhTsercrbzL7x0w06FHLQISue1sNjFdKSssjAjGdqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBOCIbtN4NiGdMxYTBowpNTl9PzuhIqHTsUxZ29X5mCyIxdtQ/v33LdLytkLO4aiLkVkGuc8JSUhXbwrE9zNg0H2plhETyJO5U+Hf5Jy+1wxcFly7oz+4GFfv2jqTkuvgyEICOCyLhLduNGn9lcUibtrrB6i94fDdW/vGAAP+mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kRQ6vm3k; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730296876; x=1761832876;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YIhTsercrbzL7x0w06FHLQISue1sNjFdKSssjAjGdqw=;
+  b=kRQ6vm3kk2r5V1ZILNOAsabLdYexIAdZDf7N8M/WDS6QtEKxJzDfIfjh
+   paZp8UkxWYp+YiUv5r9t20tqtTGqYMitjjE0I2ZRZ+pO6fyBXRDTA4wk8
+   qPfqnLaVLpWvifHIUnX+YlmYtQHZMSaEZV29Lg5MTzYtB9REkkDboSr2k
+   dfSnxoyW7iE3q13iv8vWYd2Bmqn4A4L1nG0vmKNDBc9rzAMFPpeMYzYzl
+   LY3CJwgWUDd/dliUgqM1Nb+Gu8Nc4KtZWvWTO5lbvKBBY/21X70B6qCwX
+   AHHMHrrlKmlWXeow/OtEMs/Pft6rzBpl7ccS3uUng1VBrRXJDRxTdf9yC
+   g==;
+X-CSE-ConnectionGUID: 1nskTdLHQPyhhWgvQIyNsw==
+X-CSE-MsgGUID: onDg7ezQRguPbiZCVatVJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29416464"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="29416464"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 07:01:15 -0700
+X-CSE-ConnectionGUID: XO4nsi38RbOjeSgf09lQ9Q==
+X-CSE-MsgGUID: M/qK/mcFRLO3gGzk/0zsnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="87111576"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 30 Oct 2024 07:01:12 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t69G1-000euW-1b;
+	Wed, 30 Oct 2024 14:01:09 +0000
+Date: Wed, 30 Oct 2024 22:00:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Johannes Thumshirn <jth@kernel.org>,
+	John Garry <john.g.garry@oracle.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, axboe@kernel.dk, song@kernel.org,
+	yukuai3@huawei.com, hch@lst.de, martin.petersen@oracle.com,
+	hare@suse.de, Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH] btrfs: handle bio_split() error
+Message-ID: <202410302118.6igPxwWv-lkp@intel.com>
+References: <20241029091121.16281-1-jth@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: agilex5: initial support for Arrow
- AXE5-Eagle
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
- Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de
-References: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
- <20241030-v6-12-topic-socfpga-agilex5-v1-4-b2b67780e60e@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241030-v6-12-topic-socfpga-agilex5-v1-4-b2b67780e60e@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029091121.16281-1-jth@kernel.org>
 
-On 30/10/2024 13:10, Steffen Trumtrar wrote:
-> The Arrow AXE5-Eagle is an Intel Agilex5 SoCFPGA based board with:
-> 
->    - 1x PCIe Gen4.0 edge connector
->    - 4-port USB HUB
->    - 2x 1Gb Ethernet
->    - microSD
->    - HDMI output
->    - 2x 10Gb SFP+ cages
-> 
-> As most devices aren't supported mainline yet, this is only the initial
-> support for the board.
-> 
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> ---
->  arch/arm64/boot/dts/intel/Makefile                 |   1 +
->  .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 146 +++++++++++++++++++++
->  2 files changed, 147 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/intel/Makefile b/arch/arm64/boot/dts/intel/Makefile
-> index d39cfb723f5b6674a821dfdafb21b12668bb1e0e..3e87d548c532b1a9e38f4489c037c5c4db3a50b8 100644
-> --- a/arch/arm64/boot/dts/intel/Makefile
-> +++ b/arch/arm64/boot/dts/intel/Makefile
-> @@ -3,5 +3,6 @@ dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += socfpga_agilex_n6000.dtb \
->  				socfpga_agilex_socdk.dtb \
->  				socfpga_agilex_socdk_nand.dtb \
->  				socfpga_agilex5_socdk.dtb \
-> +				socfpga_agilex5_axe5_eagle.dtb \
->  				socfpga_n5x_socdk.dtb
->  dtb-$(CONFIG_ARCH_KEEMBAY) += keembay-evm.dtb
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..bd5bd8f680c9ade49ac174108beed6828c5a925d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
-> @@ -0,0 +1,146 @@
-> +// SPDX-License-Identifier:     GPL-2.0
-> +/*
-> + * Copyright (C) 2024, Arrow Electronics, Inc.
-> + */
-> +#include "socfpga_agilex5.dtsi"
-> +
-> +/ {
-> +	model = "SoCFPGA Agilex5 Arrow AXE5-Eagle";
-> +	compatible = "arrow,socfpga-agilex5-axe5-eagle", "intel,socfpga-agilex";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		hps0 {
+Hi Johannes,
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
+kernel test robot noticed the following build warnings:
 
-I think you are sending some downstream code. I am not sure if Agilex
-was corrected, but usually starting from upstream code is better choice.
+[auto build test WARNING on kdave/for-next]
+[also build test WARNING on linus/master v6.12-rc5 next-20241030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +			label = "hps_led0";
-> +			gpios = <&porta 6 GPIO_ACTIVE_HIGH>;
-> +		};
-> +
-> +		hps1 {
-> +			label = "hps_led1";
-> +			gpios = <&porta 7 GPIO_ACTIVE_HIGH>;
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		hps_sw0 {
+url:    https://github.com/intel-lab-lkp/linux/commits/Johannes-Thumshirn/btrfs-handle-bio_split-error/20241029-171227
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241029091121.16281-1-jth%40kernel.org
+patch subject: [PATCH] btrfs: handle bio_split() error
+config: x86_64-randconfig-121-20241030 (https://download.01.org/0day-ci/archive/20241030/202410302118.6igPxwWv-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410302118.6igPxwWv-lkp@intel.com/reproduce)
 
-So this is copy of old arm stuff. Still needs to be fixed, see DTS
-coding style.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410302118.6igPxwWv-lkp@intel.com/
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
+sparse warnings: (new ones prefixed by >>)
+>> fs/btrfs/bio.c:694:29: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted blk_status_t [assigned] [usertype] ret @@     got long @@
+   fs/btrfs/bio.c:694:29: sparse:     expected restricted blk_status_t [assigned] [usertype] ret
+   fs/btrfs/bio.c:694:29: sparse:     got long
+   fs/btrfs/bio.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
 
-...
+vim +694 fs/btrfs/bio.c
 
-> +&i2c1 {
-> +	status = "okay";
-> +
-> +	tca9544@70 {
+   659	
+   660	static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
+   661	{
+   662		struct btrfs_inode *inode = bbio->inode;
+   663		struct btrfs_fs_info *fs_info = bbio->fs_info;
+   664		struct bio *bio = &bbio->bio;
+   665		u64 logical = bio->bi_iter.bi_sector << SECTOR_SHIFT;
+   666		u64 length = bio->bi_iter.bi_size;
+   667		u64 map_length = length;
+   668		bool use_append = btrfs_use_zone_append(bbio);
+   669		struct btrfs_io_context *bioc = NULL;
+   670		struct btrfs_io_stripe smap;
+   671		blk_status_t ret;
+   672		int error;
+   673	
+   674		if (!bbio->inode || btrfs_is_data_reloc_root(inode->root))
+   675			smap.rst_search_commit_root = true;
+   676		else
+   677			smap.rst_search_commit_root = false;
+   678	
+   679		btrfs_bio_counter_inc_blocked(fs_info);
+   680		error = btrfs_map_block(fs_info, btrfs_op(bio), logical, &map_length,
+   681					&bioc, &smap, &mirror_num);
+   682		if (error) {
+   683			ret = errno_to_blk_status(error);
+   684			goto fail;
+   685		}
+   686	
+   687		map_length = min(map_length, length);
+   688		if (use_append)
+   689			map_length = btrfs_append_map_length(bbio, map_length);
+   690	
+   691		if (map_length < length) {
+   692			bbio = btrfs_split_bio(fs_info, bbio, map_length);
+   693			if (IS_ERR(bbio)) {
+ > 694				ret = PTR_ERR(bbio);
+   695				goto fail;
+   696			}
+   697			bio = &bbio->bio;
+   698		}
+   699	
+   700		/*
+   701		 * Save the iter for the end_io handler and preload the checksums for
+   702		 * data reads.
+   703		 */
+   704		if (bio_op(bio) == REQ_OP_READ && is_data_bbio(bbio)) {
+   705			bbio->saved_iter = bio->bi_iter;
+   706			ret = btrfs_lookup_bio_sums(bbio);
+   707			if (ret)
+   708				goto fail;
+   709		}
+   710	
+   711		if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
+   712			if (use_append) {
+   713				bio->bi_opf &= ~REQ_OP_WRITE;
+   714				bio->bi_opf |= REQ_OP_ZONE_APPEND;
+   715			}
+   716	
+   717			if (is_data_bbio(bbio) && bioc &&
+   718			    btrfs_need_stripe_tree_update(bioc->fs_info, bioc->map_type)) {
+   719				/*
+   720				 * No locking for the list update, as we only add to
+   721				 * the list in the I/O submission path, and list
+   722				 * iteration only happens in the completion path, which
+   723				 * can't happen until after the last submission.
+   724				 */
+   725				btrfs_get_bioc(bioc);
+   726				list_add_tail(&bioc->rst_ordered_entry, &bbio->ordered->bioc_list);
+   727			}
+   728	
+   729			/*
+   730			 * Csum items for reloc roots have already been cloned at this
+   731			 * point, so they are handled as part of the no-checksum case.
+   732			 */
+   733			if (inode && !(inode->flags & BTRFS_INODE_NODATASUM) &&
+   734			    !test_bit(BTRFS_FS_STATE_NO_DATA_CSUMS, &fs_info->fs_state) &&
+   735			    !btrfs_is_data_reloc_root(inode->root)) {
+   736				if (should_async_write(bbio) &&
+   737				    btrfs_wq_submit_bio(bbio, bioc, &smap, mirror_num))
+   738					goto done;
+   739	
+   740				ret = btrfs_bio_csum(bbio);
+   741				if (ret)
+   742					goto fail;
+   743			} else if (use_append ||
+   744				   (btrfs_is_zoned(fs_info) && inode &&
+   745				    inode->flags & BTRFS_INODE_NODATASUM)) {
+   746				ret = btrfs_alloc_dummy_sum(bbio);
+   747				if (ret)
+   748					goto fail;
+   749			}
+   750		}
+   751	
+   752		btrfs_submit_bio(bio, bioc, &smap, mirror_num);
+   753	done:
+   754		return map_length == length;
+   755	
+   756	fail:
+   757		btrfs_bio_counter_dec(fs_info);
+   758		/*
+   759		 * We have split the original bbio, now we have to end both the current
+   760		 * @bbio and remaining one, as the remaining one will never be submitted.
+   761		 */
+   762		if (map_length < length) {
+   763			struct btrfs_bio *remaining = bbio->private;
+   764	
+   765			ASSERT(bbio->bio.bi_pool == &btrfs_clone_bioset);
+   766			ASSERT(remaining);
+   767	
+   768			btrfs_bio_end_io(remaining, ret);
+   769		}
+   770		btrfs_bio_end_io(bbio, ret);
+   771		/* Do not submit another chunk */
+   772		return true;
+   773	}
+   774	
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-> +		compatible = "nxp,pca9544";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <0x70>;
-> +		status = "okay";
-> +	};
-
-
-Best regards,
-Krzysztof
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
