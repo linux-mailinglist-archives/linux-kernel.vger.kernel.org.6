@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-389351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE0A9B6BE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:12:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9919B6BE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63ADEB2273E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:11:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6E528128B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAD01CCB45;
-	Wed, 30 Oct 2024 18:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BE21C7B85;
+	Wed, 30 Oct 2024 18:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZFKIJMn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4cLZCA2"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6121213137;
-	Wed, 30 Oct 2024 18:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC45782899;
+	Wed, 30 Oct 2024 18:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730311833; cv=none; b=TRb9sA3SRdE7d8N9V1piyUgjPKssYtv5N8M83n8f/88SLBGNbqfYKg85eujDuFEJYoT23akxFYNJGeE3rne0cefTtKUrqIp4GFNG1lGIjmqARUozKmvS9RL8fFvLEmjRspH+VfzafgwI+mLiCwfPn6+txjXBpLplOyWtx7sbSs8=
+	t=1730312045; cv=none; b=JCTW+2rNq8bTrPsdK3kROBKcGyUlxkJI2CVtyvWurk2zHolwujPjXpcwKTIKJxmZ7aTTnXJFsi1qbMkHUfsfhBZX1QqNQIof2dkd5XXcxTRydQWhIPzl+K8AzVRIaYJIVaWX/j2UcxovZcQ0HPRQVq6j6NYMZy2Y9BiE2zItyEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730311833; c=relaxed/simple;
-	bh=PUSWypS9RPlliztjPuKrypjSxl4XFZNOoSoJofJ+sX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUnHIOhJdudfOFo+4lF8K0Kt7XiBt/ILHZ/n9Hxzm9+9JU5ZHgRsPm/SqAT5x+87JQZ1kG9FtFoqAKuzN4xQXQ+I2a7QurAs6mDWgU9hSLMw/4BOA+wszcuATUn41TjXmWoN/5wnpvUHY+kI3Ql0Hdx296iZ7BQ2VEg5hP2DVsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZFKIJMn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10ABC4CED1;
-	Wed, 30 Oct 2024 18:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730311833;
-	bh=PUSWypS9RPlliztjPuKrypjSxl4XFZNOoSoJofJ+sX0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gZFKIJMnYVyNIvUEnvLYifNu+y+jzl1Wz0YI1ofnDId92z1griWtJC43eteIaDLVd
-	 maGJzQud9s7pIMOyLHkWMJWebPOlHO8TVSbKBIv9Wm4LUHy+JHMeBcDwruRzJzPZor
-	 OrEJ2wIdc7W2NJ1zxf6TQycLUvScYtXwMrUzxK3SBi+GZV//1iWVjzECrK9C46xoDK
-	 /yaamwjW+q0JnuCZU9YbYLoJzZdBueCTrN3FGhPVHDSDNMfZ9zB3yPSA8xnw1xw5yr
-	 iYvtoh0fpbEKrCqLF1SRBRD5FcrUl5eYP0VHLmw4935aPBOE3RH+juVn4iDuQt1FTp
-	 7hu8QbRH1Lhxg==
-Date: Wed, 30 Oct 2024 18:10:28 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Andre.Przywara@arm.com
-Subject: Re: [PATCH] arm64/signal: Avoid corruption of SME state when
- entering signal handler
-Message-ID: <618074b8-c685-40bb-b7d3-f309b30cd25a@sirena.org.uk>
-References: <20241023-arm64-fp-sme-sigentry-v1-1-249ff7ec3ad0@kernel.org>
- <ZyJuEBC1wFPrTLAS@J2N7QTR9R3>
+	s=arc-20240116; t=1730312045; c=relaxed/simple;
+	bh=vQGLDvC//5UuLZbwpNz4mLj0QnQoieLrUg1Mu9HqxcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FUxfbaiL4RQjMnbT3DJd02aRj2e0dS3qVr+nF7yO9KnJYl3BiEZa4vk7pFppTan1eqpFbCYLxE1i7wgVrZW1z12E1suprGs1qmM5MQIz3F5+v2FN//b/z6aLpMNdPRnCt9nV/AG0sxwgIwTQE1noarvt3/XpGyOiIfWLfkbQXpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4cLZCA2; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-207115e3056so1572705ad.2;
+        Wed, 30 Oct 2024 11:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730312043; x=1730916843; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ul+Pl/Ozs6/5C7BWBiHw1ape364+5ol2TGx5LB/4/YM=;
+        b=H4cLZCA2JiE9r/hO68VDdSUBZuIHvJmbZRkwolmD3w+g8BXjvdnmglC1LM+R3dm11G
+         WRdURLoAeIQC+tvI9YwWMgymrZngb/lc0zWDsfV82BTi0ZfJAAzCXGYsCyK6sj1eRHDW
+         sJFWPOBBW+Zbru9Hjg10Jw7Yt2xz0r//S5tmUaH+SI2rbHJSmyE8kH3qONy2iCJPsSYt
+         1LUYenjGVHdRUH/wMU0xZxfUkZ4m8h/jrjHuSTSGb3y2OgLGQxyQYcvvLEItZeTUxvsn
+         6j+t0B/b53Jr0CtTLk7sTxWmy8idpWAfVGQNcZ9lCEqlLmmI3kpF7/lGfUQJYwp4usii
+         cWLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730312043; x=1730916843;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ul+Pl/Ozs6/5C7BWBiHw1ape364+5ol2TGx5LB/4/YM=;
+        b=nGwxJdIWGkAKlNrzMZbRPdr9Q3vsRZk2ATiQheMGm2Sg1CpAfYTeJm47nATZXxzInu
+         QOkMHRUKvhSs7BSCu1mncTXUvzG7yqFjY2shG9t5IFzdoWMZF6R46VBrthCgsxKH3TLc
+         m0wvj9LKMr9FQT+jq8DNVjMlMw64OTsiZRd2Pfk0TC7Uk+D3YwCOyD6deojabBYxk9ZN
+         a5/BCzgFP89Le3NPbzyhxrZAifo7iLLaNp8MUN0uV00mSs5nBJRr8mA4lU4Zg/4WI5FF
+         Ddkyb6TTxs1m40XWUbQm4pKoPBm/kS9KxPiVv6C2q98i2GAin6/gIVUi013HBvhENjtd
+         pprg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWMTvqRFwOiDQ9LkyQiqFBMgYCMF1v0IK5noJEFjHqxfTtgAbKu2XStV1BCL9NHi42JYhMd4sbhACJ9FtQGla1+gC1UQ==@vger.kernel.org, AJvYcCXEWXnK4WKpmhwFPX/HKVhirXQepyA3/q/RSeN9RwzbakklvAhQlHoE4nSd38xR6kJl7dtDdcg982zQ230=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl/PrFeM8u4LfZi3HFfwZd5eP8LVPhNHPKIpmHmK6Jr8V6H56g
+	O6MEH9YcdBJRkmu1HG1oIRVIcuBviBXqeJNANyZKrQBXBzVXr5s0j+1Q4tGC
+X-Google-Smtp-Source: AGHT+IHgE0ywhJTY9zhWwvJY8jXxHbSPMZdLGZz7bNASiTOqjHI5h5BUD68Flfm6Yaa7QXnMylCOVw==
+X-Received: by 2002:a17:902:f547:b0:20d:2848:2bee with SMTP id d9443c01a7336-210c6892da8mr225121135ad.16.1730312043205;
+        Wed, 30 Oct 2024 11:14:03 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6d2b1sm83605455ad.85.2024.10.30.11.14.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 11:14:02 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	w_armin@gmx.de,
+	pali@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dell.Client.Kernel@dell.com
+Subject: [PATCH 1/2] dell-smbios-base: Extends support to Alienware products
+Date: Wed, 30 Oct 2024 15:12:45 -0300
+Message-ID: <20241030181244.3272-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tzY2Rc5DUyHGb0DA"
-Content-Disposition: inline
-In-Reply-To: <ZyJuEBC1wFPrTLAS@J2N7QTR9R3>
-X-Cookie: I feel partially hydrogenated!
+Content-Transfer-Encoding: 8bit
 
+Fixes the following error:
 
---tzY2Rc5DUyHGb0DA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+dell_smbios: Unable to run on non-Dell system
 
-On Wed, Oct 30, 2024 at 05:34:16PM +0000, Mark Rutland wrote:
+Which is triggered after dell-wmi driver fails to initialize on
+Alienware systems, as it depends on dell-smbios.
 
-> I originally just had a few comments on the commit message, but I
-> believe I've found a logic issue in this patch, and more general issue
-> throughout our FPSIMD/SVE/SME manipulation -- more details below.
+This effectively adds dell-wmi and dell-smbios support to Alienware
+products.
 
-I'm fairly sure there's at least one other issue lurking somewhere with
-TIF_SVE tearing, yes.  I've not been able to get that to reproduce, and
-I've probably stared at this code too much to see it by pure inspection
-however it looks like you might've spotted the issue here.
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ drivers/platform/x86/dell/dell-smbios-base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> On Wed, Oct 23, 2024 at 10:31:24PM +0100, Mark Brown wrote:
+diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
+index 73e41eb69..01c72b91a 100644
+--- a/drivers/platform/x86/dell/dell-smbios-base.c
++++ b/drivers/platform/x86/dell/dell-smbios-base.c
+@@ -576,6 +576,7 @@ static int __init dell_smbios_init(void)
+ 	int ret, wmi, smm;
+ 
+ 	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
++	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Alienware", NULL) &&
+ 	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
+ 		pr_err("Unable to run on non-Dell system\n");
+ 		return -ENODEV;
+-- 
+2.47.0
 
-> It would be nice to have the signature of the failure as well, e.g.
-
-> | This is intermittently detected by the fp-stress test, which
-> | intermittently reports "ZA-VL-*-*: Bad SVCR: 0".
-
-That's a common one for timing reasons, but it does also manifest with
-other outputs (eg, if we turn off ZA while trying to execute
-instructions that access ZA).
-
-> I don't think this is correct in the TIF_FOREIGN_FPSTATE case. We don't
-> unbind the saved state from another CPU it might still be resident on,
-> and so IIUC there's a race whereby the updates to the saved state can
-> end up discarded:
-
-=2E..
-
-> ... and either:
-
-> * A subsequent return to userspace will see TIF_FOREIGN_FPSTATE is
->   clear and not restore the in-memory state.
-
-> * A subsequent context-switch will see TIF_FOREIGN_FPSTATE is clear an=20
->   save the (stale) HW state again.
-
-> It looks like we have a similar pattern all over the place, e.g.  in
-> do_sve_acc():
-
-Yes, indeed - I think that's a separate bug caused by the recalcuation
-of TIF_FOREIGN_FPSTATE.
-
-> This is going to need a careful audit and a proper series of
-> fixes that can be backported to stable.
-
-It feels like a separate thing at any rate.  We can do a simple and
-robust but performance impacting fix by having fpsimd_thread_switch()
-only ever set TIF_FOREIGN_FPSTATE, never clear it.  That'd cause extra
-reloads in the case where we switch to a thread but stay in kernel mode
-which probably happens often enough to be palatable.
-
-Otherwise I'm not sure it's *too* hard, TIF_FOREIGN_FPSTATE is a bit of
-a giveaway for places that could have issues.
-
---tzY2Rc5DUyHGb0DA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcidpQACgkQJNaLcl1U
-h9DgCQf/aKq9znkcNdaaX99tyQKmAGH0Ab+cyf8R0/hXJzUa13y5F+gTf+/NDjYO
-Z94a5ttBE5fllSBD/GpqF3OOGXqKlfW4BBVLEU1LCgpprvXfb9TtUna6gIxIQKwE
-78yNEk7yd08AKgvUbAoUsUsG/L+0tSB4PMcAE9KisCueQAsikV/zMenetiwOQ4MS
-XdsJ0VYLpFarFB2wie+UTaMeuwtNCWlWzrkO9oL0YTbiUB8OWXgSuzhsRXNY+aKq
-b1hHEifXqMThHgXH8napkaDP95yRHV+97X+pgZjPyOnZnvBXs9cxepoKbFo+ZLJ0
-JMf0C4jXPRlsMcyLz238xdpuE1XJow==
-=mZzF
------END PGP SIGNATURE-----
-
---tzY2Rc5DUyHGb0DA--
 
