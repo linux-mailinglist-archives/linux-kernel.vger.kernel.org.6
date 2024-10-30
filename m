@@ -1,156 +1,125 @@
-Return-Path: <linux-kernel+bounces-389247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4B09B6A86
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:14:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06309B6A8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A370C2813FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312271F25DBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2922A4A1;
-	Wed, 30 Oct 2024 17:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B25F22AD87;
+	Wed, 30 Oct 2024 17:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpQXzE6G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHPN8+8n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B093E1BD9F8;
-	Wed, 30 Oct 2024 17:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76682215C62;
+	Wed, 30 Oct 2024 17:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307755; cv=none; b=RMD5CGb/kbKZ78/A7+p7mgNi1gsXX8WeNrSlFZNvK0SMbiBzvtJl8St3VEjN1MkwdDm6CY/UsnOJJxKipe38SQZ7p5xzcbZaf1FAUYn6LFXB7KDXdjoYS7HXsAy18DoBKHuTNQaafAP41jDftYDdLKP5ru4v6PL0mhPkpg+5n/M=
+	t=1730307794; cv=none; b=ZB12nVq6G46eh6VJjQ+UeooI+ggC08w4n5VmXzr6k0+Crhmu4C39h/37AZMYuwY6esboyVjt7sw5vMRGWDK/rR3awHjjKB0Txqt8dUq2HTsgcV1B1hgvfvuurm0rgOFcDGOD0FT1fe2tjU1dGN9ui187y5EmTnK4wfSYug4Zbt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307755; c=relaxed/simple;
-	bh=jN7ufuRsDHj2hnXvEktu0zRiCMTOU1pCOkwbJZt1a4E=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q69Iq9IjFGB4H7n8YW+eijfunw36dcQ+11HgXgsw4S4YPnEP9erT/An9akitc4aYEbiCU3/M0L9zy2WpzZThZYoPSIHR1JesrTRVQPQORQKXR+Ay+eMdDzVicZlCon6DNZnO/zSblGHX2zi7+7nkcP4ou6DH2muA5MXLhOP2guM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpQXzE6G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AECC4CECE;
-	Wed, 30 Oct 2024 17:02:35 +0000 (UTC)
+	s=arc-20240116; t=1730307794; c=relaxed/simple;
+	bh=xaLOjVrI4UuOoIHBUz4HZ9I1PFZXA40k3S1zbQTvOro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pyr+PJP+bqDocf5gnXX7TnRIA8B95TOwK9jCUklpQSSgIGhHRaVZRbgvMOX/JAedfNFnzo/p3/TuaQgevL9zZqppA8J4pX6CnM0SIJWHp72OpLlbGGDonb8szcizdqZvWgAFCy0vW+WdxG2BC1ltDLtS4QRUrixNc273MeQrCBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHPN8+8n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FDCC4CECE;
+	Wed, 30 Oct 2024 17:03:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730307755;
-	bh=jN7ufuRsDHj2hnXvEktu0zRiCMTOU1pCOkwbJZt1a4E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RpQXzE6GodATaou2ro8yzFVZ4GZkKOqncf8OdXmZ9KD3G133jUnkzKZmfgyO4orSt
-	 7464y1xKHL5lasMexQBEPtwqSwVVDUqhKPPG8mc3CQZ6/st3TRsyXeHTiKSCRfRgro
-	 rEKH/YOWSNcvfZMcZXH5mIl6gFO9TkOWd8bBERAhz5ACD22+aWwUiAduUeuF0LF87F
-	 5+D/BJ4O69rWZkeiavHod4xrZW/R9wZJYNf0IkCsKpoQo6cwT3Z9g3uXEMcDfQdbFj
-	 as2YAMqV3KQmBO5CmxXB2gvBxgcjPeou5Q2FTMAWyiw0SUPJPvymeE6PxI6zEVYLnD
-	 ucPw6fv2qRGtQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t6C5Y-008Kmh-TJ;
-	Wed, 30 Oct 2024 17:02:33 +0000
-Date: Wed, 30 Oct 2024 17:02:32 +0000
-Message-ID: <86y1251q3b.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: <andersson@kernel.org>,
-	<konradybcio@kernel.org>,
-	<krzk+dt@kernel.org>,
-	<robh+dt@kernel.org>,
-	<dmitry.baryshkov@linaro.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<conor+dt@kernel.org>,
-	<abel.vesa@linaro.org>,
-	<srinivas.kandagatla@linaro.org>,
-	<quic_jjohnson@quicinc.com>,
-	<jens.glathe@oldschoolsolutions.biz>
-Subject: Re: [PATCH V3 0/3] X1E001DE Snapdragon Devkit for Windows
-In-Reply-To: <20241025123227.3527720-1-quic_sibis@quicinc.com>
-References: <20241025123227.3527720-1-quic_sibis@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1730307794;
+	bh=xaLOjVrI4UuOoIHBUz4HZ9I1PFZXA40k3S1zbQTvOro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LHPN8+8nKtpCllz/g2EPsz88AegVBlVNxYu7A/iZd+VBjYe50uYaDnla3TLGW4S72
+	 ambRMrlE5Z6lEoqxQX7OMTYTUT2txic9VV/qA6n+JlDyyEdRZZf7kTtHqqoLTcpJiY
+	 bicHMeYZWffaVBIQv0mZ9M1/zMEwBZr+tQYaJIDIC9i6mJVAOgn8KzpsthPiGBaU4q
+	 Ptiu5i9BbNXt7C9AEGeye3gmxjyy3IOwrnMsw9UW6NdHDZjQjl5ERvhWT1XaO/Dg0s
+	 Pit/vq4sHbWQczf6oJbmPvtEfIhB0KO0cc3vCc4gLK1SkL01XwpgfAhzaI4hffOc5c
+	 R4VO6N50128zQ==
+Date: Wed, 30 Oct 2024 17:03:06 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v2 11/18] regulator: Add support for power
+ budget description
+Message-ID: <578d2348-9a17-410e-b7c8-772c0d82c10f@sirena.org.uk>
+References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
+ <20241030-feature_poe_port_prio-v2-11-9559622ee47a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: quic_sibis@quicinc.com, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org, quic_jjohnson@quicinc.com, jens.glathe@oldschoolsolutions.biz
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="prXmSPGW9RUQhXiM"
+Content-Disposition: inline
+In-Reply-To: <20241030-feature_poe_port_prio-v2-11-9559622ee47a@bootlin.com>
+X-Cookie: I feel partially hydrogenated!
 
-On Fri, 25 Oct 2024 13:32:24 +0100,
-Sibi Sankar <quic_sibis@quicinc.com> wrote:
-> 
-> Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001DE
-> is the speed binned variant of X1E80100 that supports turbo boost up to
-> 4.3 Ghz. The initial support includes the following:
-> 
-> -DSPs
-> -Ethernet (RTL8125BG) over the pcie 5 instance.
-> -NVme
-> -Wifi
-> -USB-C ports
-> 
-> V3:
-> * Asked around and looked at the firmware, couldn't find a codename so
->   will keep it as DEVKIT. Will update it if someone from the community
->   finds something else.
 
-My machine has the following information as part of its DMI tables:
+--prXmSPGW9RUQhXiM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Handle 0x0005, DMI type 1, 27 bytes
-System Information
-	Manufacturer: Qualcomm
-	Product Name: Snapdragon-Devkit
-	Version: 2.1
-	Serial Number: 5
-	UUID: 63b5fc8b-9c50-89aa-fd0f-3fcef93dc291
-	Wake-up Type: Power Switch
-	SKU Number: 6
-	Family: SCP_HAMOA
+On Wed, Oct 30, 2024 at 05:53:13PM +0100, Kory Maincent wrote:
 
-So I guess that Snapdragon-Devkit is another possible name. But given
-that it is a bit of a mouthful, devkit, Devkit, or any other variation
-on the case would work for me.
+> +/**
+> + * regulator_get_power_budget - get regulator total power budget
+> + * @regulator: regulator source
+> + *
+> + * Return: Power budget of the regulator in mW.
+> + */
+> +int regulator_get_power_budget(struct regulator *regulator)
+> +{
+> +	return regulator->rdev->constraints->pw_budget;
+> +}
 
-> * Update type c roles as reported by ucsi. [Dmitry]
-> * Update THUNDERCOMM to Thundercomm. [Dmitry]
-> * Update regulator names and sort Order. [Dmitry]
-> * Add x1e001DE devkit to the safe list.
-> * Mark regulator-nmve as boot enabled.
-> 
-> 
-> V2:
-> * Fix Ghz -> GHz  [Jeff]
-> * Pick up Ab tag from Rob.
-> * Use Vendor in ADSP/CDSP firmware path [Dmitry]
-> * Fix reserved gpios [Dmitry]
-> * Only port0 supports DRD update the dt accordingly [Dmitry]
-> 
-> Sibi Sankar (3):
->   dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
->   firmware: qcom: uefisecapp: Allow X1E Devkit devices
->   arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |   6 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  | 814 ++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.c              |   1 +
->  4 files changed, 822 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+This is going to go badly with multiple consumers...
 
-FWIW, I'm running this as part of my KVM test rig with minor changes
-to expose the SMMU and allow the ITS on pcie5, and things work as well
-as you can expect. FWIW:
+> +static inline int regulator_get_power_budget(struct regulator *regulator)
+> +{
+> +	return 0;
+> +}
 
-Acked-by: Marc Zyngier <maz@kernel.org>
-Tested-by: Marc Zyngier <maz@kernel.org>
+We should probably default to INT_MAX here and in the case where we do
+have support, that way consumers will fail gracefully when no budget is
+specified.
 
-	M.
+--prXmSPGW9RUQhXiM
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Without deviation from the norm, progress is not possible.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmciZskACgkQJNaLcl1U
+h9AnVQf/dquldrMtKE+BySk6azhTqAAT6WH3XqoGfpYdYax1H6llEMjkX0stqKkb
+yLZPvq+oPk9vtvrfTRoN7QI9o/4o4c1PVNkF/iUSaosJfVCXniOH6rsVYZpbQp4P
+v/YEyQ9lw9DWEATwkMf3xXFGvwcPCiLI44ZxaeFu9eIUK9QoyRFVzY3ajfaSCmLs
+028OklZvbhhL1NThsGZw+b9C4JvE4bjYp16V/sih8BRfeY6eTw60Km5jYTnR+CMI
+Qbmgw25vYYnKMEeKuac8GDYOevJ8yBoUnd/DkBPcCyj0khS3HftFozMjp4/I0rlU
+Hdf0yLQTNlvF2ux77cavWyi8YSLkdQ==
+=seAF
+-----END PGP SIGNATURE-----
+
+--prXmSPGW9RUQhXiM--
 
