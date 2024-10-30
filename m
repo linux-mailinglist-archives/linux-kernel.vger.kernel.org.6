@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-389054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACE09B67F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E03479B6805
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B431F221C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 954801F225D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE02C213147;
-	Wed, 30 Oct 2024 15:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A152139A8;
+	Wed, 30 Oct 2024 15:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EN8R9VwB"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOW/D+Eb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AACB672;
-	Wed, 30 Oct 2024 15:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C114138F91;
+	Wed, 30 Oct 2024 15:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730302456; cv=none; b=axh4fpG65jKQEBEr94lcxY6St6o/jRhCS1W1KZnBAhoNQLDEG8ib9tEkZIIJuyRWVyf18JVxvRzc6WEJBdRU/9UhW/nHVGS8Hx8u1U8cRFbVvd92k40iokeOMRx3SEHuU6mPPfYinNMAW2WMMagX8/O4umzpsUBCxaMSPNa6RdE=
+	t=1730302828; cv=none; b=tLoM5qF3iWUxLQ2sfN0yT9EMDLn56T470WHOI1/MzFlKQKeacwNqb021PwncOfghPD43wM+5/ZtEC/urKeSxTFTkjs2W0pHHi6mLe7uqEx/eianTtOZQrvNQ7yDAQoAu1MtZ7LJ+NpKWMYb7wjICXZfLkIhaj1zSKCXV8/o0cvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730302456; c=relaxed/simple;
-	bh=vMjjsd/Xuzoj5kq9WRECUQGsxjzpcUg17A7b2x4rqnI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BbxeHrmsuzvxsUhg2YHqKjPDcmOLGC2qfLGg7vhL7OvmuSHYneUD1RwP375/cckBI0ERdY9uZzRgV1Yh9qGN4CGzR8mpkaREFblXS/krsStf9JqVbqt+F/wyfJZK8mTCq0ZbrZC96+s7t8BFA3QSFameRsPRb5yTPrPAgIqq8VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EN8R9VwB; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbcc2bd800so9701966d6.0;
-        Wed, 30 Oct 2024 08:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730302453; x=1730907253; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+HsO/rND4GDvVu41dLnUKGBz8GF67TRaGpWDgwnI7lM=;
-        b=EN8R9VwBntCTMAX4woFo/sqJ/mj9qHzlAhDov9uludkPDm8KXhiYrv+Yt+oWLN9YKb
-         /I8Q0+7B4FCEXgPw0XRpsr/tsTRn9mCtVHMcVcu1umAAChux2AzHnJKSaJ7fvY0WOAI7
-         x/Pm4EQFsuhjuQLpXgjIiVg1FlHk+JM1dKA8XyASczmE2wXo+hzdV1l3KItqHUD1YnWu
-         A1yXDWfH6zd++pWTZEVexij1nqgLQvQKqsjuNgV0NzK1B38Ky6ZMzMjYusw9/8yB8OgI
-         eYNjX1K44PBV+3N3uTm4IJYsYFwNza/Dz2uFMYG+yR4uJ5bwBoufqXX6HBqlhZ4yiMJm
-         xbVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730302453; x=1730907253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+HsO/rND4GDvVu41dLnUKGBz8GF67TRaGpWDgwnI7lM=;
-        b=e7p+c50TM6Z88eyOF8SCy/Lclo/+8YZXR4JdEBGwWrK5bpvd5wNmij2eUNgxHxRZHv
-         QIuPqIZkjwDUnmEyAgiGYjCRuTu7vJqn1od5ZJp/iaDqOxBehaPae6oPM8uxxjP42v0Y
-         Yt+d6HdklKMusu604ATC1Er6aLa5Y9JtaCCRPt2TMvGelIxU7NpL2ckiMG1sZNOm9Ocd
-         wRoQh1mlTG4SvI4a0eBjE7lc/6T/xzpY7ri1Nswk92x1Y01Z0c4ETJJA83fPR3/FDNSz
-         yMTFlUX5Hi+x9Yh+5v9XOubgL7c0kqRCUQUB/mw3rBU0yJJ+2dWOFmqAy5DayxZSEzaf
-         0kow==
-X-Forwarded-Encrypted: i=1; AJvYcCW8/Rg0V6XxTfLMaDXmCGifTVxDPbaWK13453wYfXA2Re9YqMLKhYWoxE4ZEwFjTi11lKbFcvwAZZ6QpI4=@vger.kernel.org, AJvYcCWp+xlf73xvHAw54enCWMsReOAd32E8Xg27lns6VkZ2vxfxuyBIfNrxkNlwuoQCorkWg7w/rslI04Vw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxJ22Dt7lggDpX0vALd5TMg/pW8knDY05vr6hcQjiq1craWjVF
-	Vcl0Y6GjX32SN/OXQOK3rxq42wIfRTfuNYZ40F5lo0dFDuA/C4yqxSNatJ9FNpMLdFsFybQLmRQ
-	p49pgCXQaQ3QOLzucgsIVPINqRnLibEld
-X-Google-Smtp-Source: AGHT+IGqwVpgGBmnDo2J6rVE4cgq6yKqDtypjpudcXXrLwTuLF3wFm0ONT6UYpuujeYmA95coXDlTmcRhbLIp4OsiTI=
-X-Received: by 2002:a05:6214:5002:b0:6cb:c892:8c17 with SMTP id
- 6a1803df08f44-6d34852cd13mr51324306d6.22.1730302453178; Wed, 30 Oct 2024
- 08:34:13 -0700 (PDT)
+	s=arc-20240116; t=1730302828; c=relaxed/simple;
+	bh=Bl+5Ay3FFAKvbhH35eUMEt83qx9zkSG64B9jfI7uxUM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FVPf673RpJ7Af3aF/WqofAWlxTVaQ0bFqECnYxWbmOAPCejc5haXnygmGNHjItqL5HIq6Me7FVretV/fPL3FUevdwsFUJdcGSo1usjNHbzcLD39oODljUdnMNMjSeCiYA8xp/R75pdAERKweOokQs7J/UFz6f601q3QdMZ/xVaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOW/D+Eb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F60BC4CECE;
+	Wed, 30 Oct 2024 15:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730302828;
+	bh=Bl+5Ay3FFAKvbhH35eUMEt83qx9zkSG64B9jfI7uxUM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qOW/D+EbmBVAn7zk80NEXzG8+OmGSsRUnuuO5kc7a373sZbp/9JOtuhn8iwKC9d93
+	 RTNm7dSttbfV/68DueQWTmBZcGyqm5iEJbHT9xqTQiQfMEuFmfeOnDSuYWrlCFu9IG
+	 7oNHtYRDrj4W1QUdwddUEMXKoDJVnOxXcuk/WJxr1LsDFlh3zY6fNfJzt1wZMN9thQ
+	 9MwNkmckzyGdyKPtYsVrXdJXipUMZ2CQzSSOb0J6y68haSxRl97BeL9/D4nXCVlTSU
+	 vDZKc8uvM+x6HqDgA7+6t1WfT2Q9fwvuRYe+MEZxSB4bIAo/9e1G4N0qDUQIl4WtjI
+	 B4+3+0VhYQEnQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/9] arm64: Support 2024 dpISA extensions
+Date: Wed, 30 Oct 2024 15:34:45 +0000
+Message-Id: <20241030-arm64-2024-dpisa-v2-0-b6601a15d2a5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026080535.444903-1-akinobu.mita@gmail.com>
- <20241026080535.444903-3-akinobu.mita@gmail.com> <ijdk5uuurnfd2shnwwj2nm64bno6lmrhdyqp42pzjc3i2e5cyh@v5ljkrsgo6ac>
- <CAC5umyitFp7oGR-eYXMVaS8bY1AGe3QwEuSPoEz3DxWwH=dUsA@mail.gmail.com>
- <e29e2c9e-60c1-4f32-ab71-e74f331e1921@kernel.org> <CAC5umyhCw+62Y+h3Jvh3=0Ocs8XJsSu_vaiPpO_g=65Jo4vUFg@mail.gmail.com>
- <e4985609-0642-4ff4-b074-8c5a34f88a24@kernel.org>
-In-Reply-To: <e4985609-0642-4ff4-b074-8c5a34f88a24@kernel.org>
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Thu, 31 Oct 2024 00:34:02 +0900
-Message-ID: <CAC5umyhrNCA4BHqC_k_tSaSOANcvP_vt485650xtFTPwJ+6snQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: pwm-fan: add
- retain-state-shutdown property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Billy Tsai <billy_tsai@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABVSImcC/22NQQ6CMBBFr0Jm7ZhpbaS64h6GRZUBJiolU0M0h
+ LtbiEuX7yf/vRkSq3CCczGD8iRJ4pDB7gq49WHoGKXJDJasM0Qegz6PDlfEZpQU0NPJUOlC2To
+ P+TYqt/LelJc6cy/pFfWzFSazrj+Z/SObDBKGg2/IX3Mt+OrOOvBjH7WDelmWL8HYHB6xAAAA
+X-Change-ID: 20241008-arm64-2024-dpisa-8091074a7f48
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1867; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=Bl+5Ay3FFAKvbhH35eUMEt83qx9zkSG64B9jfI7uxUM=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnIlNhsrSy+xHNERieWXqP1j/YLwVf78bhUbTyAurw
+ QfZkv3WJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZyJTYQAKCRAk1otyXVSH0BrECA
+ CB6c/mPpV22NP6+WBfhlhYwKlwBchS7yWzpSBftwPoSuYGS0t4BoON04mg80CKZZ77jSxS2kBkPehz
+ kyddpgAq8Ox3wQxlE98z5L7tyQZEantMU8PD3ETBZw6aQaXKuBT4YeYFwvl2sKRnzw47NzWA27z1/k
+ dNbgFlS22UXo5xRxEVqY50qFuR95vOWZULgDA5NaLG7Nj0Yg9iQVo44Fbk2GanuB1+P0UB4JVdVdRY
+ rW7AC78fY5NRsevuhLVA7AsNj82qqf4f/3LQGAu5cHIZvTxYqpa780AgZCaAZTqpGBUSJdHbyJhDR8
+ kFD1bJxDlLQyReI4OogHPtyEHlgN96
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-2024=E5=B9=B410=E6=9C=8831=E6=97=A5(=E6=9C=A8) 0:18 Krzysztof Kozlowski <kr=
-zk@kernel.org>:
->
-> On 28/10/2024 15:57, Akinobu Mita wrote:
-> >>>>
-> >>>> You described the desired Linux feature or behavior, not the actual
-> >>>> hardware. The bindings are about the latter, so instead you need to
-> >>>> rephrase the property and its description to match actual hardware
-> >>>> capabilities/features/configuration etc.
-> >>>
-> >>> Is this description okay?
-> >>> (Reused the description of retain-state-shutdown in leds-gpio.yaml)
-> >>>
-> >>> description:
-> >>>   Retain the state of the PWM on shutdown. Useful in BMC systems, for
-> >>>   example, when the BMC is rebooted while the host remains up, the fa=
-n
-> >>>   will not stop.
-> >>
-> >> Nothing improved in the property. You still say what the system should
-> >> do. This is user-space choice, not DT.
-> >
-> > It seems better to implement it as a device attribute.
->
-> I don't know about that. To repeat: if you say what system is supposed
-> to be doing, it is a policy. Describe the hardware and its configuration
-> and maybe this would be suitable for DT.
+The 2024 architecture release includes a number of data processing
+extensions, mostly SVE and SME additions with a few others.  These are
+all very straightforward extensions which add instructions but no
+architectural state so only need hwcaps and exposing of the ID registers
+to KVM guests and userspace.
 
-Billy, could you please write a proper description for this property?
-I'm not the right person for this.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Filter KVM guest visible bitfields in ID_AA64ISAR3_EL1 to only those
+  we make writeable.
+- Link to v1: https://lore.kernel.org/r/20241028-arm64-2024-dpisa-v1-0-a38d08b008a8@kernel.org
+
+---
+Mark Brown (9):
+      arm64/sysreg: Update ID_AA64PFR2_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ISAR3_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64FPFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ZFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64SMFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ISAR2_EL1 to DDI0601 2024-09
+      arm64/hwcap: Describe 2024 dpISA extensions to userspace
+      KVM: arm64: Allow control of dpISA extensions in ID_AA64ISAR3_EL1
+      kselftest/arm64: Add 2024 dpISA extensions to hwcap test
+
+ Documentation/arch/arm64/elf_hwcaps.rst   |  51 ++++++
+ arch/arm64/include/asm/hwcap.h            |  17 ++
+ arch/arm64/include/uapi/asm/hwcap.h       |  17 ++
+ arch/arm64/kernel/cpufeature.c            |  35 ++++
+ arch/arm64/kernel/cpuinfo.c               |  17 ++
+ arch/arm64/kvm/sys_regs.c                 |   6 +-
+ arch/arm64/tools/sysreg                   |  87 +++++++++-
+ tools/testing/selftests/arm64/abi/hwcap.c | 273 +++++++++++++++++++++++++++++-
+ 8 files changed, 493 insertions(+), 10 deletions(-)
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241008-arm64-2024-dpisa-8091074a7f48
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
