@@ -1,126 +1,164 @@
-Return-Path: <linux-kernel+bounces-388142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27E09B5B3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:35:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61339B5B4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:37:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49F71C210AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C9928543B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6701CF5EC;
-	Wed, 30 Oct 2024 05:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082B31CF5EF;
+	Wed, 30 Oct 2024 05:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="iBvnjoKY"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4h/Vdxi"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB4E1CF289;
-	Wed, 30 Oct 2024 05:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D71CF293;
+	Wed, 30 Oct 2024 05:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730266531; cv=none; b=Jrncrvt+8TZkbplwjFLjO/0w6eSdKWd9thdz+23t8ut/olbSiwVQ0rfT+IRA5TbkJJ1tM5dmT2pGfDCFnf0AlkzgkK/FFSuNG+73lBJEC4QFK6mFZqOTFeSAfBXqIk7eHbUkXZqdpfcWzEKxnlZ9EdZZUrDx9Z05WxLWvucNm2E=
+	t=1730266600; cv=none; b=bzQAUI6B/1kT900S9SNHXX92gc0HY4j9IoenX+D92ljlLk91oE0bz9irbaZQfnAbROKiVpGVd5BUHc8m8D7wnBL27oZPbnQfuejFuFndTtBDUzhm4IutrFOWIy1/iwUaz4Jb2KrVS06QtNO1AFFouoBVnLNheV2RX1Q9SNjFucE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730266531; c=relaxed/simple;
-	bh=iNv76ZzAMBPTV4l1YgFD0Bej4qjTGYw2zGCKkGf5dtk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HxsusLOWFjyLqJSbft2BCLnSQSdxO0Ovj3v/fk5wUzyM5rZiaX3qW16+7yzOOV7c7Pbns1ge3xsK4i8yO+EE8TGOYaIYxIVgO8Li7a1COu6v2hhm4kMe8cIF2lsC+bRZFyr5dpHsTRAjLkyYDm93l/iPZFI1dl7yoyHCZiL2m5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=iBvnjoKY; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730266522;
-	bh=fTiOGMiECd5augAVpcP0FAu96xmTgJEVxQ1j0YsCjtE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iBvnjoKYWd263kXfDZH/Sh3Gw+wTz+mRV6lTEiTnUbqNaziGATw0mFF/3EToCY/PD
-	 udF0Al/to8Vm7A/g41rEuux1jQmB83t1Kr6C9ZcQq4Xq/UaQGqAjDuqJV9oYMQ82jV
-	 DVKSCXTurLYVR3+ooGcH3Sq/8S1VGrbDhpePRLxQaDxfhTLlnj2C0cZONLKusDrrK8
-	 Up/XjvkE6J4cyUVYfviZrBdnHI4CfI/7Nodpb4xfjVNDjDyDZi2/hCfSA9SdvnllD2
-	 wZb6ggjadgnszxDjHOe9PnHOTusOlD1OemAGIwvANBqjeV8PiDciNgQEVMkU1dnQnL
-	 n0M/8hQTWodXw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XdbS75X7wz4x8f;
-	Wed, 30 Oct 2024 16:35:19 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
- Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno
- Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] modules: Support extended MODVERSIONS info
-In-Reply-To: <CAGSQo03L--HDUBeo3xEUANbBcSf4GK5GUNGmHSBzL+ixpRGuqA@mail.gmail.com>
-References: <20241023-extended-modversions-v7-0-339787b43373@google.com>
- <20241023-extended-modversions-v7-1-339787b43373@google.com>
- <874j50juyp.fsf@mail.lhotse>
- <CAGSQo03L--HDUBeo3xEUANbBcSf4GK5GUNGmHSBzL+ixpRGuqA@mail.gmail.com>
-Date: Wed, 30 Oct 2024 16:35:10 +1100
-Message-ID: <878qu6dugh.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1730266600; c=relaxed/simple;
+	bh=pb2WEI6e0Y9CXRnhptznPXv/5BI4xkMtWblg/9X3dW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fartj5W0AuyCyX98KeQtCP5FOijagm92sVVOEyhLMNikUr7ciqnN6JNFRrH0zETGUmF2sXawHJANew6lJFOt5ycxnkJWnDGxn6M9jNSih57Zk6VfRYVP/dVQZL3yANeKohbBwgh8DJp27ioFLnYAdYkUJgilwdxtpz1hx4VVofw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4h/Vdxi; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e601b6a33aso3643981b6e.0;
+        Tue, 29 Oct 2024 22:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730266597; x=1730871397; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5JB/cGgUoF+EaDvRZAGIK3OwHiKrJHGT5IlWD3Oxlrk=;
+        b=H4h/VdxicuYW17Kt7EQAaLPxPUgOadvteHP6RyKozgtgVXNEEXZEXtxqcBvcucjds1
+         RxoirmYjBc15BOiEUI1ErEVN+JVz3ddEmDKe4qGYF2SnhmOrV254bHRrKCGXT81gYRB2
+         9IPOxK/2ZXDXTm8PhiMoDWmCwqCE97kXR0jtaXWHjyPipl3i7HuCh/L/N9/mWEDY1hPM
+         HjA5y8za7oCnNOnE52bkdFpGTb23BdQCJXuBX3kE6uuYWcJGGEaYHjcPe838gsVzoHae
+         uHkUnFcf62gXHo+NhFa0ytphNkS+vZEdSHc0zp4c9NFJlx9cLiNA+cCPPDOltlVo/FLz
+         RCXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730266597; x=1730871397;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5JB/cGgUoF+EaDvRZAGIK3OwHiKrJHGT5IlWD3Oxlrk=;
+        b=raYXf1iz/KePMOGZ0pNFr160twyZsipnHnj49P7j7rKVAoW2XUm7Asnz/BsF45FG3j
+         9arAbgMayvbfJL48But2fCGq6zXWR38mzMNotXd3odJro8Zo52boCnp7d/HYqETrGDUJ
+         T/FSKUZFMa2VcnAWKOZ68mkqvX2bTTxjBS4BrfLclRFcgyKxg88uKh8X/asRZHKIRk5d
+         CbPlsdOlwG5DzSxEeOWa+ax1dt3yFJW9iJEhwc4N6xPigCwvP3PIgXaMxil3FSSCgPzm
+         MwH1pMShfB0ZpLvkINrnugYCKtsJCRqzyQfjXa7DTczC/227cDA/2b+PyfSkr28GrUq3
+         N1Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCvIDSyUV8nKDSkvpGi7XhslWh1JW7pJoA9silPqw+Cw59o9yfHvqcPBTQPQv/MWg7BGj3BNRjh6caj1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEP2A+MDIeKyh3p9S0zuFsGTjN4VUD08JDP3x/xV9LgEZmkne0
+	FBNrGwAOT2Z2zKr4AwGl3ckHPpCRitOiHRjgsju7vgZr3WxciYvHbcsr+A==
+X-Google-Smtp-Source: AGHT+IH4FirAelcYwz6Otzk0LxXXB4G8PXfXbrPJ8o3q22jWDCJ8ZAFjpdGAFz8nJtPeZGloDI4FmA==
+X-Received: by 2002:a05:6808:1918:b0:3e6:ad7:9a38 with SMTP id 5614622812f47-3e63844158emr12362178b6e.24.1730266596775;
+        Tue, 29 Oct 2024 22:36:36 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7edc8661098sm8516595a12.8.2024.10.29.22.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 22:36:36 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	andrew+netdev@lunn.ch,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v6 0/6] net: stmmac: Refactor FPE as a separate module
+Date: Wed, 30 Oct 2024 13:36:09 +0800
+Message-Id: <cover.1730263957.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Matthew Maurer <mmaurer@google.com> writes:
->> Sorry I realise it's version 7, but although the above looks correct it's
->> kind of dense.
->>
->> I think the below would also work and is (I think) easier to follow, and
->> is more obviously similar to the existing code. I'm sure your version is
->> faster, but I don't think it's that performance critical.
->>
->> static void dedotify_ext_version_names(char *str_seq, unsigned long size)
->> {
->>         char *end = str_seq + size;
->>         char *p = str_seq;
->>
->>         while (p < end) {
->>                 if (*p == '.')
->>                         memmove(p, p + 1, end - p - 1);
->>
->>                 p += strlen(p) + 1;
->>         }
->> }
->>
->> The tail of str_seq will be filled with nulls as long as the last string
->> was null terminated.
->
-> As you alluded to, what you're providing is potentially O(n^2) in the
-> number of symbols a module depends on - the existing code is O(n).
-> If leading dots on names are rare, this is probably fine. If they're
-> common, this will potentially make loading modules with a large number
-> of imported symbols actually take a measurable amount of additional
-> time.
+Refactor FPE implementation by moving common code for DWMAC4 and
+DWXGMAC into a separate FPE module.
 
-It should only be a single symbol these days, .TOC., for both big and
-little endian builds.
+FPE implementation for DWMAC4 and DWXGMAC differs only for:
+1) Offset address of MAC_FPE_CTRL_STS and MTL_FPE_CTRL_STS
+2) FPRQ(Frame Preemption Residue Queue) field in MAC_RxQ_Ctrl1
+3) Bit offset of Frame Preemption Interrupt Enable
 
-But maybe someone out there is still building their kernel ELFv1, in
-which case every function will begin with '.'.
+Tested on DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
 
-I still don't think it will be measurable, but n^2 is asking for
-trouble.
+Changes in v6:
+  1. Introduce stmmac_fpe_supported() to improve compatibility
+  2. Remove redundant fpesel check
+  3. Remove redundant parameters of stmmac_fpe_configure()
 
-So forget it, just use your version, you've already written it anyway.
-Sorry for the noise.
+  V5:
+    https://patchwork.kernel.org/project/netdevbpf/list/?series=903628&state=%2A&archive=both
 
-cheers
+Changes in v5:
+  1. Fix build errors reported by kernel test robot:
+  https://lore.kernel.org/oe-kbuild-all/202410260025.sME33DwY-lkp@intel.com/
+
+Changes in v4:
+  1. Update FPE IRQ handling
+  2. Check fpesel bit and stmmac_fpe_reg pointer to guarantee that driver
+  does not crash on a certain platform that FPE is to be implemented
+
+Changes in v3:
+  1. Drop stmmac_fpe_ops and refactor FPE functions to generic version to
+  avoid function pointers
+  2. Drop the _SHIFT macro definitions
+
+Changes in v2:
+  1. Split patches to easily review
+  2. Use struct as function param to keep param list short
+  3. Typo fixes in commit message and title
+
+Furong Xu (6):
+  net: stmmac: Introduce separate files for FPE implementation
+  net: stmmac: Rework macro definitions for gmac4 and xgmac
+  net: stmmac: Refactor FPE functions to generic version
+  net: stmmac: xgmac: Rename XGMAC_RQ to XGMAC_FPRQ
+  net: stmmac: xgmac: Complete FPE support
+  net: stmmac: xgmac: Enable FPE for tc-mqprio/tc-taprio
+
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h  |   1 -
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  11 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  | 150 -------
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  26 --
+ .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |   6 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |  31 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |   7 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  20 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  11 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |   8 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.c  | 405 ++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.h  |  45 ++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 165 +------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   |   4 +-
+ 15 files changed, 480 insertions(+), 412 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
+
+-- 
+2.34.1
+
 
