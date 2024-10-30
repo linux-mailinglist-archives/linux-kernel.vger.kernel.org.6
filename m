@@ -1,305 +1,331 @@
-Return-Path: <linux-kernel+bounces-389683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648DA9B6FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:22:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777F09B6FD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46DA1F22362
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:22:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34089283DA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0901E3776;
-	Wed, 30 Oct 2024 22:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940DE205AC7;
+	Wed, 30 Oct 2024 22:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tATKwgS3"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyfocfDc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590391946A0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 22:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47CB1946A0;
+	Wed, 30 Oct 2024 22:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730326920; cv=none; b=hRWKfOVuKYOdxy3+J50upr31v+l2y79Bc0YWZqWWzNwpBP+aDDolJwA0B5TR7g2f0VWhDCr3ZLNkhRGiqDXG32TWhX73TekmjQQyryMmfSvR2boY3Wp98CQVNHzv8WAybGKRUXFl7xsAKXrW6rCi86G3kFAmgb3QEx7mgMjSmog=
+	t=1730327301; cv=none; b=MYNqLZsfZ1KvTBeyIesbySCgiXNqbOVaSzTReqFWXioq56DWBfWmZREpXzsBx6SS7pQAdo8/BjvbQjb3EJa+Rn6UArLwo7+HjNEATtbqJrklGRRI36Omq3AIbuL6Qt8maI5tCjJO38l9xg1jlhyTNWx3abXcermCZNeWLBSLiYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730326920; c=relaxed/simple;
-	bh=jvGe0HDxcO7364fcG+8/C+TC2l46IF/D+VoDUdr90vA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z+3G/UzDejWdV+MhKxrk5Ad/8r7034xVE6xnhYWg1IG4bWkxi/ulE6QhhHSbk1Px437HqFlyOFpXG6zs6eLbk6nubIFMvvZUCrGLKf14F1DyLdPaKREwEYkfTwWG78CJRgINKPrKf6+zbTU9HhlqmMLv228NyQQlwGAAMOGpgcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tATKwgS3; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so30305ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730326917; x=1730931717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nRGsAQXc6hKMsPfCCaVeG8sxm+0YkudS/vlbw2qGOas=;
-        b=tATKwgS3OtKB82iYoKP0pH/ecu+GQth3wXHPMr/Fj8rCKTpbXsj0+6Hd812HL4gFCq
-         LiPtyIy3MM6ljJOWSnRUgvTx1Ko8Y8Ai+nq+QwMQ+8Xo88VJgwjzGO84duiom8s6yvwH
-         gwyMBblwvxSevpgljnNvZ/14ahPpRUrBLZV0fM/Yt7klSUy7sF6494TBoE5AVQE9xrbU
-         NeuDMxysmg+hObWETDA99kQWXfTUo/Ya9ZtiEkYI5alEmrI6QievayAMPkePZBiv3REG
-         nGmy/TCe3mSlMZQ9qR4Ja5QqrdyFRaAxK7zIRQrtxPudgFAgniy5E40xtPJd3dQasCp7
-         Z8KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730326917; x=1730931717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRGsAQXc6hKMsPfCCaVeG8sxm+0YkudS/vlbw2qGOas=;
-        b=PkPu5sN7iyT8wEbj45ONwLf9N2Qvhvn3lf2lUI02WXYVQ3Ml42IOEtrm3QLhYTfvRp
-         T7haarL9tNS3WM0uyiOzqg21MdU323eeEwAw3RePBVoPsZRPEt4MXJYYU8GC51Zd4ZFV
-         j4oZrL3lTi5ZikeoKY/CHQxVWyxCt2St1aX9HEbyq0/76PH5v04BAa/CoRk1y5xN2+P7
-         QjgynNV7+jXNuX2vifeWTIKFAKNfKKXZvYkbbm2RXG/d0ZSu1ule7oQwWrDruO8ebCvB
-         PXl8uX/TaVhwE6ZNJbJr19xq7fIEouFVEUiDOaPG+k8vEeNxM4Z5Q61qI4dye3F2n40Q
-         O0vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWv+/2vGFtOxT2hlnsHrg8l7Qt+au1sOwsG5zSXtGc89J5Y/XHd761AbDoMQiFVxv4Hm/HOwYCsXt+6tUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIcv/i7SZRc8VSrLI4kGH5KNC4YgWiPv4NHx/EaQWIh3IitZ1X
-	VeUcyBEvyJc7SHv2OQ1FU5Opkd00z4+wbPeM3TF/HGIPC6XkpxM0pIzYsAfiHnCTx6z/FIzOwKd
-	ibHoz3rTGG806Xgiap5+qQa5YvMGvkDFOTiJlHHd8yhglMU2d9vZq
-X-Gm-Gg: ASbGnctyncN7XUoqP55uVt6doP3ItHbazh1l97umQ/NGhWDwJEmjvFW0P9zoO7T6urR
-	7FyMHlaNGSuzpxVSL5M2lw/LrKaYaHpNOwfsRDVpk0NyJMtYa/UeaUWMYoyj1Iw==
-X-Google-Smtp-Source: AGHT+IFatAgmgzH3oP3UBwbrJsVRXuI16XO6/VLcrjvSG0jRbuu3VzG9dFdiSUHhrYiO10e9acpKNCyDo2qZqOSY3AA=
-X-Received: by 2002:a05:6e02:1907:b0:3a1:a8a3:50f0 with SMTP id
- e9e14a558f8ab-3a6a93d176fmr523525ab.13.1730326917179; Wed, 30 Oct 2024
- 15:21:57 -0700 (PDT)
+	s=arc-20240116; t=1730327301; c=relaxed/simple;
+	bh=lujB1h+8Q2UbsPZY5HJXumwMpKUUWxBvKX76ZsUvwa4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ljFTu4LekIMA8Ul7inhlO8UK533OK2H6yxlvk28iSctd3QCXqXEkmAr8v/wM+eOr3Bv+VqnRxbPp7JaWraJ7eB4kdqUDgqJE7PS+zh6obK5Mpp3PCVK4UKl62SHv2UlPpWEWySXTqakehqP3rSeLGeviOf9ICJz4vT3XVwiuc4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyfocfDc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3359C4CECE;
+	Wed, 30 Oct 2024 22:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730327301;
+	bh=lujB1h+8Q2UbsPZY5HJXumwMpKUUWxBvKX76ZsUvwa4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RyfocfDcM2+5h+GN0sm4cO95gXRNyNSNK98fZbB2zliafXRl6+Kdz1COifoyeFxbf
+	 8EFeVwJDA+rsKP31hgLnto6BEoc8ChENNs8KvtbkVPiidumZdT7lkT7wnXj7x0NLcK
+	 dUYEAI4ek+AYj5I2YKlZsfVemJ5Ko0tNER6+AHMzPuO2RNBTfYGknGEkHn6y1UWjjH
+	 97kjHQMSXqwAljIj+TIqXqCYdlv/GMM9bNdV7YdtunTIVO84gbgFf76fVEpl3SL1AP
+	 An3XwWYSYr3DkUQDCrFLY6tIJEmqVj0ZMsbTYBFLWkYM3PGcRovSh82wlquaKfYNKm
+	 iYTmetHs5W2jQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH bpf-next v3 1/2] bpf: Add open coded version of kmem_cache iterator
+Date: Wed, 30 Oct 2024 15:28:18 -0700
+Message-ID: <20241030222819.1800667-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029224431.167623-1-irogers@google.com> <ZyKjabJ9zHRcx-rl@x1>
-In-Reply-To: <ZyKjabJ9zHRcx-rl@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 30 Oct 2024 15:21:42 -0700
-Message-ID: <CAP-5=fWGzDO7RZDzaSY5MZxQMnG8GWyLmQV87+6Hr5+z0DS7zw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/19] Python module cleanup
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 2:21=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Tue, Oct 29, 2024 at 03:44:12PM -0700, Ian Rogers wrote:
-> > This patch:
-> >  - removes workarounds for Python 2 module support due to long
-> >    deprecation and challenges in developing new code;
-> >  - constifies variables and parameters to functions;
-> >  - removes python.c stub code which existed due to missing functions
-> >    that are defined in the builtin-* files, in general the builtin-*
-> >    code is moved into util;
-> >  - remove bench and test perf C code from the python module;
-> >  - adds parse_events to the python perf module.
-> >  - improves upon some of the existing python perf module functins.
->
-> I'll review later or tomorrow, but it passes preliminary testing modulo
-> a build test, see below:
->
-> root@number:/home/acme/git/perf-tools-next# export PYTHONPATH=3D/tmp/buil=
-d/perf-tools-next/python/
-> root@number:/home/acme/git/perf-tools-next# strace -o /tmp/perf.openat.tx=
-t -e openat tools/perf/python/twatch.py
-> <SNIP libperf debug messages>
-> cpu: 18, pid: 6023, tid: 6023 { type: fork, pid: 6023, ppid: 6023, tid: 7=
-07358, ptid: 6023, time: 94073002926291}
-> cpu: 21, pid: 6023, tid: 707358 { type: comm, pid: 6023, tid: 707358, com=
-m: StreamT~s #1565 }
-> cpu: 21, pid: 6023, tid: 707358 { type: comm, pid: 6023, tid: 707358, com=
-m: StreamT~s #1565 }
-> cpu: 9, pid: 624123, tid: 624123 { type: fork, pid: 624123, ppid: 624123,=
- tid: 707359, ptid: 624123, time: 94073240462968}
-> cpu: 23, pid: 624123, tid: 707359 { type: comm, pid: 624123, tid: 707359,=
- comm: StreamT~ns #509 }
-> cpu: 23, pid: 624123, tid: 707359 { type: comm, pid: 624123, tid: 707359,=
- comm: StreamT~ns #509 }
-> cpu: 10, pid: 5800, tid: 707326 { type: exit, pid: 5800, ppid: 5554, tid:=
- 707326, ptid: 5554, time: 94073371926048}
-> ^CTraceback (most recent call last):
->   File "/home/acme/git/perf-tools-next/tools/perf/python/twatch.py", line=
- 61, in <module>
->     main()
->   File "/home/acme/git/perf-tools-next/tools/perf/python/twatch.py", line=
- 33, in main
->     evlist.poll(timeout =3D -1)
-> KeyboardInterrupt
->
-> root@number:/home/acme/git/perf-tools-next#
-> root@number:/home/acme/git/perf-tools-next# grep perf.cpy /tmp/perf.opena=
-t.txt
-> openat(AT_FDCWD, "/tmp/build/perf-tools-next/python/perf.cpython-312-x86_=
-64-linux-gnu.so", O_RDONLY|O_CLOEXEC) =3D 3
-> root@number:/home/acme/git/perf-tools-next# perf -v
-> perf version 6.12.rc3.g8f126aaf577f
-> root@number:/home/acme/git/perf-tools-next#
-> logout
-> acme@number:~$ cd git/perf-tools-next/
-> acme@number:~/git/perf-tools-next$
-> acme@number:~/git/perf-tools-next$ git log --oneline -5
-> 8f126aaf577fc14c (HEAD -> perf-tools-next) perf python: Correctly throw I=
-ndexError
-> c43f13fa5302c897 perf python: Add __str__ and __repr__ functions to evsel
-> ec01eeed20cae234 perf python: Add __str__ and __repr__ functions to evlis=
-t
-> 33ba8db9526a525e perf python: Add parse_events function
-> e9d5ea61dd9ac48a perf build: Remove test library from python shared objec=
-t
-> acme@number:~/git/perf-tools-next$
->
-> =E2=AC=A2 [acme@toolbox perf-tools-next]$ git log --oneline -1 ; time mak=
-e -C tools/perf build-test
-> 8f126aaf577fc14c (HEAD -> perf-tools-next) perf python: Correctly throw I=
-ndexError
-> make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-> - tarpkg: ./tests/perf-targz-src-pkg .
->                  make_static: cd . && make LDFLAGS=3D-static NO_PERF_READ=
-_VDSO32=3D1 NO_PERF_READ_VDSOX32=3D1 NO_JVMTI=3D1 NO_LIBTRACEEVENT=3D1 NO_L=
-IBELF=3D1 -j28  DESTDIR=3D/tmp/tmp.lNgk7LV5IW
->               make_with_gtk2: cd . && make GTK2=3D1 -j28  DESTDIR=3D/tmp/=
-tmp.l1z8oz3HTv
->             make_no_libbpf_O: cd . && make NO_LIBBPF=3D1 FEATURES_DUMP=3D=
-/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=3D=
-/tmp/tmp.0rqszvPdKm DESTDIR=3D/tmp/tmp.wBzOcarpDh
-> cd . && make NO_LIBBPF=3D1 FEATURES_DUMP=3D/home/acme/git/perf-tools-next=
-/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=3D/tmp/tmp.0rqszvPdKm DESTDIR=3D=
-/tmp/tmp.wBzOcarpDh
->   BUILD:   Doing 'make -j28' parallel build
-> Warning: Kernel ABI header differences:
->   diff -u tools/include/uapi/linux/const.h include/uapi/linux/const.h
->   diff -u tools/include/uapi/linux/bits.h include/uapi/linux/bits.h
->   diff -u tools/include/linux/bits.h include/linux/bits.h
->   diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr=
--index.h
->   diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm=
-/kvm.h
->   diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/u=
-api/asm/unistd.h
->   diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/c=
-putype.h
->   diff -u tools/include/linux/unaligned.h include/linux/unaligned.h
->   diff -u tools/perf/util/hashmap.h tools/lib/bpf/hashmap.h
-> Makefile.config:687: Warning: Disabled BPF skeletons as libbpf is require=
-d
-> Makefile.config:979: No libllvm 13+ found, slower source file resolution,=
- please install llvm-devel/llvm-dev
-> Makefile.config:1161: No openjdk development package found, please instal=
-l JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
->
->   GEN     /tmp/tmp.0rqszvPdKm/common-cmds.h
-> <SNIP>
->  CC      /tmp/tmp.0rqszvPdKm/util/env.o
->   CC      /tmp/tmp.0rqszvPdKm/tests/hists_link.o
->   CC      /tmp/tmp.0rqszvPdKm/builtin-timechart.o
->   CC      /tmp/tmp.0rqszvPdKm/tests/hists_filter.o
->   CC      /tmp/tmp.0rqszvPdKm/bench/numa.o
-> util/env.c: In function =E2=80=98perf_env__arch_strerrno=E2=80=99:
-> util/env.c:479:38: error: implicit declaration of function =E2=80=98arch_=
-syscalls__strerrno_function=E2=80=99 [-Wimplicit-function-declaration]
->   479 |                 env->arch_strerrno =3D arch_syscalls__strerrno_fu=
-nction(perf_env__arch(env));
->       |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~
-> util/env.c:479:36: error: assignment to =E2=80=98const char * (*)(int)=E2=
-=80=99 from =E2=80=98int=E2=80=99 makes pointer from integer without a cast=
- [-Wint-conversion]
->   479 |                 env->arch_strerrno =3D arch_syscalls__strerrno_fu=
-nction(perf_env__arch(env));
->       |                                    ^
-> make[6]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:1=
-05: /tmp/tmp.0rqszvPdKm/util/env.o] Error 1
-> make[6]: *** Waiting for unfinished jobs....
+Add a new open coded iterator for kmem_cache which can be called from a
+BPF program like below.  It doesn't take any argument and traverses all
+kmem_cache entries.
 
-Thanks, build testing shows some other errors so I'll clean them all up in =
-v5.
+  struct kmem_cache *pos;
 
-Thanks,
-Ian
+  bpf_for_each(kmem_cache, pos) {
+      ...
+  }
 
-> > v4. Rebase. Fix the parse events evsel to be embedded in a
-> >     pyrf_evsel. Add __str__/__repr__ functions to evlist and
-> >     evsel. Throw an exception for a bad evlist index.
-> > v3. Move is_directory_at to patch 6 rather than patch 7, respond to
-> >     review feedback on the list from Namhyung.
-> > v2. Add the bottom 4 bullet points - 13 more patches.
-> >
-> > Ian Rogers (19):
-> >   perf python: Remove python 2 scripting support
-> >   perf python: Constify variables and parameters
-> >   perf python: Remove unused #include
-> >   perf script: Move scripting_max_stack out of builtin
-> >   perf kvm: Move functions used in util out of builtin
-> >   perf script: Move find_scripts to browser/scripts.c
-> >   perf stat: Move stat_config into config.c
-> >   perf script: Move script_spec code to trace-event-scripting.c
-> >   perf script: Move script_fetch_insn to trace-event-scripting.c
-> >   perf script: Move perf_sample__sprintf_flags to
-> >     trace-event-scripting.c
-> >   perf env: Move arch errno function to only use in env
-> >   perf lock: Move common lock contention code to new file
-> >   perf bench: Remove reference to cmd_inject
-> >   perf kwork: Make perf_kwork_add_work a callback
-> >   perf build: Remove test library from python shared object
-> >   perf python: Add parse_events function
-> >   perf python: Add __str__ and __repr__ functions to evlist
-> >   perf python: Add __str__ and __repr__ functions to evsel
-> >   perf python: Correctly throw IndexError
-> >
-> >  tools/perf/Makefile.perf                      |   7 +-
-> >  tools/perf/bench/inject-buildid.c             |  13 +-
-> >  tools/perf/builtin-kvm.c                      |  61 ----
-> >  tools/perf/builtin-kwork.c                    |   3 +-
-> >  tools/perf/builtin-lock.c                     | 137 +------
-> >  tools/perf/builtin-script.c                   | 303 +---------------
-> >  tools/perf/builtin-stat.c                     |  27 --
-> >  tools/perf/builtin-trace.c                    |   1 -
-> >  tools/perf/builtin.h                          |   6 -
-> >  .../scripts/python/Perf-Trace-Util/Context.c  |  20 +-
-> >  tools/perf/tests/stat.c                       |  16 +-
-> >  tools/perf/trace/beauty/arch_errno_names.sh   |   3 +-
-> >  tools/perf/ui/browsers/scripts.c              | 177 ++++++++-
-> >  tools/perf/util/Build                         |   2 +
-> >  tools/perf/util/bpf_kwork.c                   |   2 +-
-> >  tools/perf/util/bpf_kwork_top.c               |   2 +-
-> >  tools/perf/util/bpf_lock_contention.c         |   2 +-
-> >  tools/perf/util/cgroup.c                      |   2 +-
-> >  tools/perf/util/config.c                      |  27 ++
-> >  tools/perf/util/dlfilter.c                    |   3 +-
-> >  tools/perf/util/env.c                         |   2 +
-> >  tools/perf/util/env.h                         |   2 -
-> >  tools/perf/util/evsel.c                       |  19 +-
-> >  tools/perf/util/evsel.h                       |   2 +-
-> >  tools/perf/util/kvm-stat.c                    |  70 ++++
-> >  tools/perf/util/kvm-stat.h                    |   3 +
-> >  tools/perf/util/kwork.h                       |   6 +-
-> >  tools/perf/util/lock-contention.c             | 170 +++++++++
-> >  tools/perf/util/lock-contention.h             |  37 +-
-> >  tools/perf/util/path.c                        |  10 +
-> >  tools/perf/util/path.h                        |   1 +
-> >  tools/perf/util/python.c                      | 338 ++++++++----------
-> >  .../scripting-engines/trace-event-python.c    |  63 +---
-> >  tools/perf/util/stat.h                        |   3 +-
-> >  tools/perf/util/trace-event-scripting.c       | 176 +++++++++
-> >  tools/perf/util/trace-event.h                 |   5 +-
-> >  36 files changed, 854 insertions(+), 867 deletions(-)
-> >  create mode 100644 tools/perf/util/kvm-stat.c
-> >  create mode 100644 tools/perf/util/lock-contention.c
-> >
-> > --
-> > 2.47.0.163.g1226f6d8fa-goog
-> >
+As it needs to grab slab_mutex, it should be called from sleepable BPF
+programs only.
+
+Also update the existing iterator code to use the open coded version
+internally as suggested by Andrii.
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+v2)
+ * prevent restart after the last element  (Martin)
+ * update existing code to use the open coded version (Andrii)
+
+ kernel/bpf/helpers.c         |   3 +
+ kernel/bpf/kmem_cache_iter.c | 151 +++++++++++++++++++++++++----------
+ 2 files changed, 110 insertions(+), 44 deletions(-)
+
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 2e82f8d3a76fb9ca..395221e53832e10e 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -3112,6 +3112,9 @@ BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
+ BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
+ BTF_ID_FLAGS(func, bpf_get_kmem_cache)
++BTF_ID_FLAGS(func, bpf_iter_kmem_cache_new, KF_ITER_NEW | KF_SLEEPABLE)
++BTF_ID_FLAGS(func, bpf_iter_kmem_cache_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPABLE)
++BTF_ID_FLAGS(func, bpf_iter_kmem_cache_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+ BTF_KFUNCS_END(common_btf_ids)
+ 
+ static const struct btf_kfunc_id_set common_kfunc_set = {
+diff --git a/kernel/bpf/kmem_cache_iter.c b/kernel/bpf/kmem_cache_iter.c
+index ebc101d7da51b57c..3ae2158d767f4526 100644
+--- a/kernel/bpf/kmem_cache_iter.c
++++ b/kernel/bpf/kmem_cache_iter.c
+@@ -8,16 +8,116 @@
+ 
+ #include "../../mm/slab.h" /* kmem_cache, slab_caches and slab_mutex */
+ 
++/* open-coded version */
++struct bpf_iter_kmem_cache {
++	__u64 __opaque[1];
++} __attribute__((aligned(8)));
++
++struct bpf_iter_kmem_cache_kern {
++	struct kmem_cache *pos;
++} __attribute__((aligned(8)));
++
++#define KMEM_CACHE_POS_START  ((void *)1L)
++
++__bpf_kfunc_start_defs();
++
++__bpf_kfunc int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it)
++{
++	struct bpf_iter_kmem_cache_kern *kit = (void *)it;
++
++	BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
++	BUILD_BUG_ON(__alignof__(*kit) != __alignof__(*it));
++
++	kit->pos = KMEM_CACHE_POS_START;
++	return 0;
++}
++
++__bpf_kfunc struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it)
++{
++	struct bpf_iter_kmem_cache_kern *kit = (void *)it;
++	struct kmem_cache *prev = kit->pos;
++	struct kmem_cache *next;
++	bool destroy = false;
++
++	if (!prev)
++		return NULL;
++
++	mutex_lock(&slab_mutex);
++
++	if (list_empty(&slab_caches)) {
++		mutex_unlock(&slab_mutex);
++		return NULL;
++	}
++
++	if (prev == KMEM_CACHE_POS_START)
++		next = list_first_entry(&slab_caches, struct kmem_cache, list);
++	else if (list_last_entry(&slab_caches, struct kmem_cache, list) == prev)
++		next = NULL;
++	else
++		next = list_next_entry(prev, list);
++
++	/* boot_caches have negative refcount, don't touch them */
++	if (next && next->refcount > 0)
++		next->refcount++;
++
++	/* Skip kmem_cache_destroy() for active entries */
++	if (prev && prev != KMEM_CACHE_POS_START) {
++		if (prev->refcount > 1)
++			prev->refcount--;
++		else if (prev->refcount == 1)
++			destroy = true;
++	}
++
++	mutex_unlock(&slab_mutex);
++
++	if (destroy)
++		kmem_cache_destroy(prev);
++
++	kit->pos = next;
++	return next;
++}
++
++__bpf_kfunc void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it)
++{
++	struct bpf_iter_kmem_cache_kern *kit = (void *)it;
++	struct kmem_cache *s = kit->pos;
++	bool destroy = false;
++
++	if (s == NULL || s == KMEM_CACHE_POS_START)
++		return;
++
++	mutex_lock(&slab_mutex);
++
++	/* Skip kmem_cache_destroy() for active entries */
++	if (s->refcount > 1)
++		s->refcount--;
++	else if (s->refcount == 1)
++		destroy = true;
++
++	mutex_unlock(&slab_mutex);
++
++	if (destroy)
++		kmem_cache_destroy(s);
++}
++
++__bpf_kfunc_end_defs();
++
+ struct bpf_iter__kmem_cache {
+ 	__bpf_md_ptr(struct bpf_iter_meta *, meta);
+ 	__bpf_md_ptr(struct kmem_cache *, s);
+ };
+ 
++union kmem_cache_iter_priv {
++	struct bpf_iter_kmem_cache it;
++	struct bpf_iter_kmem_cache_kern kit;
++};
++
+ static void *kmem_cache_iter_seq_start(struct seq_file *seq, loff_t *pos)
+ {
+ 	loff_t cnt = 0;
+ 	bool found = false;
+ 	struct kmem_cache *s;
++	union kmem_cache_iter_priv *p = seq->private;
+ 
+ 	mutex_lock(&slab_mutex);
+ 
+@@ -43,8 +143,9 @@ static void *kmem_cache_iter_seq_start(struct seq_file *seq, loff_t *pos)
+ 	mutex_unlock(&slab_mutex);
+ 
+ 	if (!found)
+-		return NULL;
++		s = NULL;
+ 
++	p->kit.pos = s;
+ 	return s;
+ }
+ 
+@@ -55,63 +156,24 @@ static void kmem_cache_iter_seq_stop(struct seq_file *seq, void *v)
+ 		.meta = &meta,
+ 		.s = v,
+ 	};
++	union kmem_cache_iter_priv *p = seq->private;
+ 	struct bpf_prog *prog;
+-	bool destroy = false;
+ 
+ 	meta.seq = seq;
+ 	prog = bpf_iter_get_info(&meta, true);
+ 	if (prog && !ctx.s)
+ 		bpf_iter_run_prog(prog, &ctx);
+ 
+-	if (ctx.s == NULL)
+-		return;
+-
+-	mutex_lock(&slab_mutex);
+-
+-	/* Skip kmem_cache_destroy() for active entries */
+-	if (ctx.s->refcount > 1)
+-		ctx.s->refcount--;
+-	else if (ctx.s->refcount == 1)
+-		destroy = true;
+-
+-	mutex_unlock(&slab_mutex);
+-
+-	if (destroy)
+-		kmem_cache_destroy(ctx.s);
++	bpf_iter_kmem_cache_destroy(&p->it);
+ }
+ 
+ static void *kmem_cache_iter_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+-	struct kmem_cache *s = v;
+-	struct kmem_cache *next = NULL;
+-	bool destroy = false;
++	union kmem_cache_iter_priv *p = seq->private;
+ 
+ 	++*pos;
+ 
+-	mutex_lock(&slab_mutex);
+-
+-	if (list_last_entry(&slab_caches, struct kmem_cache, list) != s) {
+-		next = list_next_entry(s, list);
+-
+-		WARN_ON_ONCE(next->refcount == 0);
+-
+-		/* boot_caches have negative refcount, don't touch them */
+-		if (next->refcount > 0)
+-			next->refcount++;
+-	}
+-
+-	/* Skip kmem_cache_destroy() for active entries */
+-	if (s->refcount > 1)
+-		s->refcount--;
+-	else if (s->refcount == 1)
+-		destroy = true;
+-
+-	mutex_unlock(&slab_mutex);
+-
+-	if (destroy)
+-		kmem_cache_destroy(s);
+-
+-	return next;
++	return bpf_iter_kmem_cache_next(&p->it);
+ }
+ 
+ static int kmem_cache_iter_seq_show(struct seq_file *seq, void *v)
+@@ -143,6 +205,7 @@ BTF_ID_LIST_GLOBAL_SINGLE(bpf_kmem_cache_btf_id, struct, kmem_cache)
+ 
+ static const struct bpf_iter_seq_info kmem_cache_iter_seq_info = {
+ 	.seq_ops		= &kmem_cache_iter_seq_ops,
++	.seq_priv_size		= sizeof(union kmem_cache_iter_priv),
+ };
+ 
+ static void bpf_iter_kmem_cache_show_fdinfo(const struct bpf_iter_aux_info *aux,
+-- 
+2.47.0.163.g1226f6d8fa-goog
+
 
