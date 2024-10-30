@@ -1,180 +1,129 @@
-Return-Path: <linux-kernel+bounces-389364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A71D9B6C0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:25:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDDB9B6C10
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60901F22374
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:25:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115A31F22374
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857811CBE9B;
-	Wed, 30 Oct 2024 18:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0CD1CC15C;
+	Wed, 30 Oct 2024 18:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrTJF2RG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUJn1DBJ"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DF11BD9DF;
-	Wed, 30 Oct 2024 18:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F151BD9DF;
+	Wed, 30 Oct 2024 18:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730312710; cv=none; b=DuwF5y/a/ELSM4rcDn2BlDAXtsBPI1Oo41UiW8dtrC9l/tmE5MkiycaoI4l1TQwXgTeXVI0mHZJydxrsDSNUoIUTyXR0yfpDu7eW27m/aj/PaX4QIWz5tQHfEaZ3aRmc+0qy+WeQE4CiEhutwJIPHJp6XhucHIE4NQRH5nOXwGc=
+	t=1730312752; cv=none; b=U37rjr9hSiS1Cbmh0mo2K7eoOUWe/aMyrZ3b9Y37ojVFVBP+9/G6L/1oaOxc+MF+QNodz3FoFpR6nUQfiqFBIlUm/xJIhYkb+W3ZQEMKQYMeB3UL1CL0uWv3MO9x7u4OTrg//zKw4NsdzoasxUbrPOzHGOf4p/E4G9sl2gs4WEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730312710; c=relaxed/simple;
-	bh=xtHHaVHjQlJsAq8PH+DEgcvsognlHgDHLIjv3oQ2wlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVgotLEVySnNwu3qZ14MZp8HhA+wUM0eIinyBu11NTkqcsg7GfWv53N3k55lYqHxengXdIhthKeOibkxzh3Z3OmrNahOsrFb8aqfra0T1iiCamtvMSCevMoAnPQXVoewlxySfv/AOM3YRSeQlLt+47ri5ljgEw7H4k6vNAm7Uyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrTJF2RG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D8FC4CECE;
-	Wed, 30 Oct 2024 18:25:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730312709;
-	bh=xtHHaVHjQlJsAq8PH+DEgcvsognlHgDHLIjv3oQ2wlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GrTJF2RGKuIXFDebsRtqeyL7zNcUh8IKtqpdL+hpaSxhZoQOXJF53fosdiIFI9YmB
-	 Mnuc7JRBtF8uQR/aMBAb32ukMXWR/bpqok0mPjjMu7zOOC0FjXt8qLE0tVevg8AbnY
-	 zRnhM+3PFkjSCZJwGoBbdcsfQLxIiSEf+ylQ1vCx2DRjRLDNlCgIiZtyoWJ1uUpFuF
-	 7QackYg/Iz77Pa41wRDlaQcty0urU+V8aG0PoGcmMrx83l4M88zjlayf0A3kU+UcPw
-	 Quqt+AJLwopq6XH4urDYoK+6Za2oKYLTrXisSJ4PiXFETFT68aFac9MCHrZ23V4hZ+
-	 vGCaEs1uLyWqw==
-Date: Wed, 30 Oct 2024 11:25:07 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-Message-ID: <20241030182507.wpjdsvnitn7k2q2p@treble.attlocal.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <20241029135617.GB14555@noisy.programming.kicks-ass.net>
- <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
- <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
- <20241029183440.fbwoistveyxneezt@treble.attlocal.net>
- <74afc8d4-621a-4876-a8cf-6165a913e4b3@efficios.com>
- <20241030174752.gwzk6q6n2f3sg52a@treble.attlocal.net>
+	s=arc-20240116; t=1730312752; c=relaxed/simple;
+	bh=NHxp+POG47JxZdOeOYq5ZodzrSlAFfIp+98+cQE2Qas=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jyj8ixyyK6N7Mjx8ePpALdPzUzeA5eOkAZgL6SVil3kHPfWUQXCeR7vRCZo7b6mf0kFKBap/sE7xt0JEmdb95b/ilbJnS+HYQyrh78KJzV9VsqtT8JBK39qtvjPnzF+E0mZqGMCv8q5EQ1Q2td6smEEeSwX/fsLxPtgig6q4JL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUJn1DBJ; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e59dadebso197420e87.0;
+        Wed, 30 Oct 2024 11:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730312748; x=1730917548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mn1i7qoZ8NMfOBLftMvEfbMqW6KLf/BKi0sKeBQxk/k=;
+        b=lUJn1DBJTBRKSkzuAFyJZFuMdtv3pRf3AqodR67271eU0eLUkG7rU/KnNV8dnvnJTz
+         P1bQ2njdgrRos7yv9NPqXicoXkizevuegEZIT6WwItd+2zGoX/B06Rk0TofCZmqwl8sq
+         zG8ZVwGVjqr0Jw6LOsmclqSsXK4QYY5h/DVj3oj6S7Z1RF6YjmY2aXTs8aoStIMbVT7Y
+         ePT3qmGWXwfF8CVWm2ilfREsR2mXiwt9ZvM0kq7Hwq4SCQGoaS1BzC5yu70tBwVvJUrz
+         Hbr6ejlobcH0lRPJrXt27RTzLgnhKFsOQuQHkzovXdn/N1DFJ4j6L0cHqAU9znj3Pj+c
+         uWRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730312748; x=1730917548;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mn1i7qoZ8NMfOBLftMvEfbMqW6KLf/BKi0sKeBQxk/k=;
+        b=LpE23Aombs6j3Nym56L02j8Lo5mnnY86PVJdguEaJ9ouWwqBRQasqSNm2hYx+0Jqi7
+         z2X807YVrdr1PmmcBCK9qcyb1HN8Awu8YwMZ1gbk5H3M3FsbGvfc0fJn/7Bws4Y5lQQ+
+         mX/hr/7lyYhME7L3mnioxNehPPkxJxiF34lJS5AWSdjR88WyoEYf24YP2OQHfwdi7kRi
+         DC2XP1iS+OsS2TnmmgIS1WeuXpz2/AeUESCjIH71Fwyb47Xl1AFP1YU2cYJw2zFwAH0B
+         d4I+TBRqYQl0P0lAtTavB9jbF/CFfBnaPOvh+TFdHd6bNun4YAUEqjFzZuOJpbY0Yil+
+         2IgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ2xMXqry4KjDu5ZWxze4Chjp/1hHZCBY5sL0JcbH0RdfY9/UKcNJUo86Ldomz7AixIgHOmWl0G1NRmoMg@vger.kernel.org, AJvYcCW26ioAArzniWDApTGSlyukBvBemGsHmy8j5iOdOtwxjysDLVCaY0ldBtDaZUxBuvfg+u/P1vUSZaoWzUTp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqCVmfShYtPT6Q2W77uNQWxao/FLIzLmoiKT8S97WOBKriuPrq
+	i5CIX4+5cRXNhhanBx/8lwjHHYjY3EaczFr80snxFZNwSd5d983AiLcEbVGp
+X-Google-Smtp-Source: AGHT+IGHVr7esO5Qax4uXPQVscjJOvQZjbcTjf2xBgTiQKVFHFL1ZaLzbdEEyUyAUWRnEv5syp3e+Q==
+X-Received: by 2002:a05:6512:b14:b0:539:96a1:e4cf with SMTP id 2adb3069b0e04-53b3490f291mr8622627e87.32.1730312748174;
+        Wed, 30 Oct 2024 11:25:48 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47aa8sm16041634f8f.51.2024.10.30.11.25.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 11:25:47 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] xattr: remove redundant check on variable err
+Date: Wed, 30 Oct 2024 18:25:47 +0000
+Message-Id: <20241030182547.3103729-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241030174752.gwzk6q6n2f3sg52a@treble.attlocal.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 10:47:55AM -0700, Josh Poimboeuf wrote:
-> On Wed, Oct 30, 2024 at 09:44:14AM -0400, Mathieu Desnoyers wrote:
-> > What you want here is to move the point where you clear the task
-> > cookie to _after_ completion of stack unwind. There are a few ways
-> > this can be done:
-> > 
-> > A) Clear the task cookie in the task_work() right after the
-> >    unwind_user_deferred() is completed. Downside: if some long task work
-> >    happen to be done after the stack walk, a new unwind_user_deferred()
-> >    could be issued again and we may end up looping forever taking stack
-> >    unwind and never actually making forward progress.
-> > 
-> > B) Clear the task cookie after the exit_to_user_mode_loop is done,
-> >    before returning to user-space, while interrupts are disabled.
-> 
-> Problem is, if another tracer calls unwind_user_deferred() for the first
-> time, after the task work but before the task cookie gets cleared, it
-> will see the cookie is non-zero and will fail to schedule another task
-> work.  So its callback never gets called.
+Curretly in function generic_listxattr the for_each_xattr_handler loop
+checks err and will return out of the function if err is non-zero.
+It's impossible for err to be non-zero at the end of the function where
+err is checked again for a non-zero value. The final non-zero check is
+therefore redundant and can be removed. Also move the declaration of
+err into the loop.
 
-How about we:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+V2: Move declaration of err into the loop as per Al Viro's suggestion
+---
+ fs/xattr.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-  - clear task cookie on entry or exit from user space
-
-  - use a different variable (rather than clearing of task cookie) to
-    communicate whether task work is pending
-
-  - keep track of which callbacks have been called for this cookie
-
-something like so?
-
-int unwind_user_deferred(struct unwind_callback *callback, u64 *ctx_cookie, void *data)
-{
-	struct unwind_task_info *info = &current->unwind_task_info;
-	unsigned int work_pending = work_pending;
-	u64 cookie = info->ctx_cookie;
-	int idx = callback->idx;
-
-	if (WARN_ON_ONCE(in_nmi()))
-		return -EINVAL;
-
-	if (!current->mm)
-		return -EINVAL;
-
-	guard(irqsave)();
-
-	if (cookie && (info->pending_callbacks & (1 << idx))) {
-		/* callback already scheduled */
-		goto done;
-	}
-
-	/*
-	 * If this is the first call from any caller since the most recent
-	 * entry from user space, initialize the task context cookie.
-	 */
-	if (!cookie) {
-		u64 cpu = raw_smp_processor_id();
-		u64 ctx_ctr;
-
-		__this_cpu_inc(unwind_ctx_ctr);
-		ctx_ctr = __this_cpu_read(unwind_ctx_ctr);
-
-		cookie = ctx_to_cookie(cpu, ctx_ctr);
-		info->ctx_cookie = cookie;
-
-	} else {
-		if (cookie == info->last_cookies[idx]) {
-			/*
-			 * The callback has already been called with this unwind,
-			 * nothing to do.
-			 */
-			goto done;
-		}
-
-		if (info->pending_callbacks & (1 << idx)) {
-			/* callback already scheduled */
-			goto done;
-		}
-	}
-
-	info->pending_callbacks |= (1 << idx);
-	info->privs[idx] = data;
-	info->last_cookies[idx] = cookie;
-
-	if (!info->task_pending) {
-		info->task_pending = 1; /* cleared by unwind_user_task_work() */
-		task_work_add(current, &info->work, TWA_RESUME);
-	}
-
-done:
-	if (ctx_cookie)
-		*ctx_cookie = cookie;
-	return 0;
-}
-
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 05ec7e7d9e87..fd4e3ab8034d 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -1005,9 +1005,10 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ {
+ 	const struct xattr_handler *handler, * const *handlers = dentry->d_sb->s_xattr;
+ 	ssize_t remaining_size = buffer_size;
+-	int err = 0;
+ 
+ 	for_each_xattr_handler(handlers, handler) {
++		int err;
++
+ 		if (!handler->name || (handler->list && !handler->list(dentry)))
+ 			continue;
+ 		err = xattr_list_one(&buffer, &remaining_size, handler->name);
+@@ -1015,7 +1016,7 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ 			return err;
+ 	}
+ 
+-	return err ? err : buffer_size - remaining_size;
++	return buffer_size - remaining_size;
+ }
+ EXPORT_SYMBOL(generic_listxattr);
+ 
 -- 
-Josh
+2.39.5
+
 
