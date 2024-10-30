@@ -1,154 +1,336 @@
-Return-Path: <linux-kernel+bounces-389319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A909B6B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:50:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FCA9B6B58
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6771F21885
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BFB81F21E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7069F199E9D;
-	Wed, 30 Oct 2024 17:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5041BC09A;
+	Wed, 30 Oct 2024 17:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ldmCdFys"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSfeG0Rq"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910BE1BD9D9
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26561BD9DD;
+	Wed, 30 Oct 2024 17:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730310637; cv=none; b=akIvNv5aVMKrggbWtdBhmrUlEaBgFGHSOEJFB38kU2YxE5Ntd5WYfI5710kFp0GJx5/EUz+cBPB/4y4XLgc6+roGlb9H2ZePtX8Z0XB1OLjPbhIUmFhzoD15G1s8VdzDLgvypU94Rv8eCLG0lHfKRap+kI9bvzTiQs5xvElc0VA=
+	t=1730310671; cv=none; b=ThQTgjq31dJnyHdGg3C2hq/ctHBGMxchraKkiepuWvHb+PCtwz33lZL7EoOoq+haRHzQO/fmErhTFbfDtwuWq7kSGypGddv87cgaOcOf5ni11zmuYo7GxkWAjqicWoBwQdtHaysrVE5nQHAoepE5kfucud4y0U03Auhl38v/ciY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730310637; c=relaxed/simple;
-	bh=4H6B1quzDZP3bn3/pVmog4+PlbPtHG+BAM9Z2MVujDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EOqJbCTY+S7q9em0nDy/Zw/nS8kGWi06F1DZLhUH6OxMXrNy5l14I0a6ueOIqTSjnaDiXNVVHwiLs3p8YFZqmbPniAl/y9uYtqQYQSK1otQ/HaQZHw5IwjIg9R6GoiH8YtlT3R3n9cV+sFN9OhvD68R8cG77nw8u/1N8WAymt3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ldmCdFys; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e13375d3so117890e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:50:35 -0700 (PDT)
+	s=arc-20240116; t=1730310671; c=relaxed/simple;
+	bh=POS7B+2UmGCT58tmhcQ34TAhYGQICIh64jfrggu4bCw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBqZvLksdEPaCQ04D4CGRt0P2rHTegiSfW0eApCwA2DQr0BCb4ixhLanbM4qsUDVNIITofXmirWfDR6KWPMrfKOjZOL4L4qfvfEtqYoliEQ7RlAiCETnYRXbngRTrpl01kp940FEe6F4rwHVqEeFLtsjFpsqSsGMZEkb3L/h7z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSfeG0Rq; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e30e5b1dbdaso45642276.3;
+        Wed, 30 Oct 2024 10:51:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730310632; x=1730915432; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eViS5GExJs7/C8t7zeY7Kx13rGb7WxwrhKFvKq8t8Io=;
-        b=ldmCdFysPamc5Xgo3Smn/x3d+hNhB8Wwx9XKFD5nD1rDa3Kl5akmtMDD7n+bYX9K9n
-         W+pTpjVs/UoxrP+oRp42KhX3VatkCDUujAXZfzUIyk9bb7sZvSYP8rvbiqLsk9TZXHyS
-         XV/mb6bL0eYHAXCVVMR6t2H4jUuslYklRWFzc=
+        d=gmail.com; s=20230601; t=1730310668; x=1730915468; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vjd1UA4VGq0MmOBEsoo5W+9ryin2yV9rE8tVjf4h6xE=;
+        b=aSfeG0RquL79OCc76sNFUmr4dGFqB3SDSPKgVxWUzy9grjqHA+W2NyvxQk/NWraj+M
+         g2582tHyzf0jHSjV5240JFTDid3zVcqqTk1MElvar94PpzphYhNqHRs8Q1M1HAnnflmA
+         f6woPuX/z62LccRZXaDU4sWrTc/wqGW+Z36yPwQmkRBn0q+BczsjXk8BUJdN2S0Giitu
+         2yYeb5Ft/lWaIEOl7ORiOZt9GOC+vUC9lLKN8c2YjQjrf4QF52tZ61INsGDXkl/15VDk
+         RJ5o4EJLbkpBz/9nnnQZGS/i2q0T2eQA54h8oKd0h9a2ITzh4SpC6J9Q/M7FKYci0ESI
+         VMSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730310632; x=1730915432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eViS5GExJs7/C8t7zeY7Kx13rGb7WxwrhKFvKq8t8Io=;
-        b=oNOKXi1TgocVXWAmpv2bvhVYSt2pWxbR0iDC6B9tqW1Y4jwZwAdz1IG5I1hRFMDLiJ
-         I9rBJOetdE5eUdM0dhHYexbU7AodNGbBMzoyup1jGDi2RoUV3/P4A1pzC9J5Gz6bL+0U
-         KxtOEDJW1cEwxEHmeSzkOimotH1CJPNKDbdCxL59NmKOl2kZK0wdz7ehUNFG1/jITxQk
-         nx4x96G/+zeBkTNsriByFCbF57WoY37+x2Vd0z5ZT883KvrfEEHwA7ZEvSHHVChG1Asj
-         aRcyizkGNsLj8Y/vR7evxvVTIvyxVQXsLPvUcVxAgnQ3p0H/H4N5bosjnGRy6mpn0Cto
-         0VRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXC4jxc2MF8L4yPmDXES7/qD6BPcsO/m0Cw/MLaoWKC1QvIcGlv6NJ4r3cTswNk5XRIklH+MWIFVM+f/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyxeQ0tgRqBY82xk/LIeQnvtkzRvr1h97oXYYXUuaEPkBTO539
-	MkSKtiIc+mWpJIecDofSDjr9y2cT6Lc1uSeJ4x6rOs7ns2bxrI6fso5tXBl/bcz0sM8NyDdQhN1
-	Mqg==
-X-Google-Smtp-Source: AGHT+IFEl7iaja393A1d4YQ2mhet+yJHDXYIenAVTglibUFfYl+KvhSWtAOfOv+aYZ1oNhmJCf6+TA==
-X-Received: by 2002:a05:6512:3f1d:b0:53a:423:6eac with SMTP id 2adb3069b0e04-53c79c9705fmr291349e87.0.1730310632155;
-        Wed, 30 Oct 2024 10:50:32 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bb818ffadsm304185e87.50.2024.10.30.10.50.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 10:50:30 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so367251fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:50:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWvj8hzW2IcCiC+RsPqRT7rC4UdgplwrmFzdCG6YwTAuEYP0HSjr6ZIU2f1nCINWIYg48w/QUpJz7O+QkM=@vger.kernel.org
-X-Received: by 2002:a05:651c:50c:b0:2fb:58d1:d9a3 with SMTP id
- 38308e7fff4ca-2fdec5f8336mr2759001fa.18.1730310629695; Wed, 30 Oct 2024
- 10:50:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730310668; x=1730915468;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vjd1UA4VGq0MmOBEsoo5W+9ryin2yV9rE8tVjf4h6xE=;
+        b=k2MaaaaF9UjmyAiyxjG2hnvWXXrRgNBmcCcf2+M1UAaFFxzTBlqsg8xiWHDrSKE0EY
+         c7azYmrVdGOSmzd/bM7p1dv7T5sBTIFljwd4R99gXpL4lS48aretchfixka2bdfaKHcA
+         gnvdWyFffvA9AtKLknId/OP29sDzaN2xrDS8a+w4wLQGceDEQ9bFrkDEJkiQEB54By0I
+         GnO38Nitphv2E5xa4kTK8bLETXw6FUDfgsC8ugx+gOI5PbIeeCjTiULEkxxA5BdefOoo
+         C7gsqK6X8BjYptn4hx3YPmNF9OWCHYjqehF3kXtHCB4J1McXz2RGPTt/nHaSCwXViaE3
+         uxIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZt9OYorTHAQeJvhRZt29PKmP/BHmO+3a2fgTbg0mZBJtCZht1i/qGI0BBB4nmCLpiG97l6pXYGwLV@vger.kernel.org, AJvYcCXdzYv/C5V95VgBa4GPy1Zf64fnn7urpPBgAX12ElIHEggzLpgfq0nQZJZI1kz9HcLa7hlTA5/ZQQk83ZDT@vger.kernel.org, AJvYcCXfjGf4U+dwPlcYsEoDh7/qzTjHHRcEISUSjYSQd9A+3OFKw45SmWZlrRmt1NP/Dj77TCcs+ERBgI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjKMNb2eKb3hdCbWD2sYshut1kse0I2OjAvC/CKSzdPxhj17oY
+	KoPjy4p6pQru6Ho7/rcJuK/UoRb5QvX1Mw8aAqblDqXVQA1Bhp8g
+X-Google-Smtp-Source: AGHT+IF49viZLlNmCGZYukwrxpU5CVcPPngvvPYQ6NEcV7cP0EzmVdHDeL6AvsXCVVF7yCJOZDBNgQ==
+X-Received: by 2002:a05:6902:c13:b0:e28:6b10:51b4 with SMTP id 3f1490d57ef6-e3087bfd66fmr16472157276.46.1730310667694;
+        Wed, 30 Oct 2024 10:51:07 -0700 (PDT)
+Received: from fan ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e307a01fae9sm2427251276.42.2024.10.30.10.51.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 10:51:07 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Wed, 30 Oct 2024 10:50:40 -0700
+To: ira.weiny@intel.com
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 13/27] cxl/mem: Expose DCD partition capabilities in
+ sysfs
+Message-ID: <ZyJx8FNXpy5SWaP2@fan>
+References: <20241029-dcd-type2-upstream-v5-0-8739cb67c374@intel.com>
+ <20241029-dcd-type2-upstream-v5-13-8739cb67c374@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026035928.183454-1-tejasvipin76@gmail.com>
- <CAD=FV=Vps5vWD72O_kYhuKudduYed41+tZrVRB6x+FiaZrm-EA@mail.gmail.com> <c389ea3e-70cb-46c5-8cf1-878a99f771ec@gmail.com>
-In-Reply-To: <c389ea3e-70cb-46c5-8cf1-878a99f771ec@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 30 Oct 2024 10:50:14 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WmPmroitmYL3a4pdw8ai2LiQpJ6=zYh0kUdqcp6463Rw@mail.gmail.com>
-Message-ID: <CAD=FV=WmPmroitmYL3a4pdw8ai2LiQpJ6=zYh0kUdqcp6463Rw@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: leadtek-ltk050h3146w: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029-dcd-type2-upstream-v5-13-8739cb67c374@intel.com>
 
-Hi,
+On Tue, Oct 29, 2024 at 03:34:48PM -0500, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> To properly configure CXL regions on Dynamic Capacity Devices (DCD),
+> user space will need to know the details of the DC partitions available.
+> 
+> Expose dynamic capacity capabilities through sysfs.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+> Changes:
+> [Fan: Use proper str_false_true() call]
 
-On Wed, Oct 30, 2024 at 12:24=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.co=
-m> wrote:
->
-> On 10/29/24 12:24 AM, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Fri, Oct 25, 2024 at 9:00=E2=80=AFPM Tejas Vipin <tejasvipin76@gmail=
-.com> wrote:
-> >>
-> >> @@ -418,79 +398,42 @@ static const struct ltk050h3146w_desc ltk050h314=
-6w_data =3D {
-> >>                 MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
-> >>  };
-> >>
-> >> -static int ltk050h3146w_a2_select_page(struct ltk050h3146w *ctx, int =
-page)
-> >> +static void ltk050h3146w_a2_select_page(struct mipi_dsi_multi_context=
- *dsi_ctx, int page)
-> >>  {
-> >> -       struct mipi_dsi_device *dsi =3D to_mipi_dsi_device(ctx->dev);
-> >> -       u8 d[3] =3D { 0x98, 0x81, page };
-> >> +       u8 d[4] =3D { 0xff, 0x98, 0x81, page };
-> >>
-> >> -       return mipi_dsi_dcs_write(dsi, 0xff, d, ARRAY_SIZE(d));
-> >> +       mipi_dsi_dcs_write_buffer_multi(dsi_ctx, d, ARRAY_SIZE(d));
-> >
-> > FWIW: the above might be slightly better as:
-> >
-> > mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xff, 0x98, 0x81, page);
-> >
-> > That would make it more documenting that the 0xff is the "cmd", has
-> > fewer lines of code, and also gets the array marked as "static const"
-> > which might make the compiler slightly more efficient. ;-)
-> >
-> > Not really a huge deal, though.
-> >
->
-> I did try this initially, but got an error because of page not being a
-> compile time constant. Not sure how I should handle this.
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-Ha, that makes sense! It can't be "static const" because that means
-that there's one storage location that's never changing and that's
-just not true. I tried to see if there was some way to make the
-mipi_dsi_dcs_write_seq_multi() smarter and have it detect if
-everything is constant but I couldn't find any way to do that. The
-__builtin_constant_p() trick doesn't seem to work with more than one
-number.
+Fan
+> [Jonathan: minor cleanups]
+> [Bagas: Clean up documentation language]
+> ---
+>  Documentation/ABI/testing/sysfs-bus-cxl |  45 ++++++++++++
+>  drivers/cxl/core/memdev.c               | 124 ++++++++++++++++++++++++++++++++
+>  2 files changed, 169 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
+> index 3f5627a1210a16aca7c18d17131a56491048a0c2..ff3ae83477f0876c0ee2d3955d27a11fa9d16d83 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-cxl
+> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
+> @@ -54,6 +54,51 @@ Description:
+>  		identically named field in the Identify Memory Device Output
+>  		Payload in the CXL-2.0 specification.
+>  
+> +What:		/sys/bus/cxl/devices/memX/dcY/size
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.
+> +		dcY/size is the size of each of those partitions.
+> +
+> +What:		/sys/bus/cxl/devices/memX/dcY/read_only
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.
+> +		dcY/read_only indicates true if the region is exported
+> +		read_only from the device.
+> +
+> +What:		/sys/bus/cxl/devices/memX/dcY/shareable
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.
+> +		dcY/shareable indicates true if the region is exported
+> +		shareable from the device.
+> +
+> +What:		/sys/bus/cxl/devices/memX/dcY/qos_class
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.  For CXL host
+> +		platforms that support "QoS Telemmetry" this attribute conveys
+> +		a comma delimited list of platform specific cookies that
+> +		identifies a QoS performance class for the persistent partition
+> +		of the CXL mem device. These class-ids can be compared against
+> +		a similar "qos_class" published for a root decoder. While it is
+> +		not required that the endpoints map their local memory-class to
+> +		a matching platform class, mismatches are not recommended as
+> +		there are platform specific performance related side-effects
+> +		that may result. First class-id is displayed.
+>  
+>  What:		/sys/bus/cxl/devices/memX/pmem/qos_class
+>  Date:		May, 2023
+> diff --git a/drivers/cxl/core/memdev.c b/drivers/cxl/core/memdev.c
+> index 84fefb76dafabc22e6e1a12397381b3f18eea7c5..857a9dd88b20291116d20b9c0bbe9e7961f4491f 100644
+> --- a/drivers/cxl/core/memdev.c
+> +++ b/drivers/cxl/core/memdev.c
+> @@ -2,6 +2,7 @@
+>  /* Copyright(c) 2020 Intel Corporation. */
+>  
+>  #include <linux/io-64-nonatomic-lo-hi.h>
+> +#include <linux/string_choices.h>
+>  #include <linux/firmware.h>
+>  #include <linux/device.h>
+>  #include <linux/slab.h>
+> @@ -449,6 +450,121 @@ static struct attribute *cxl_memdev_security_attributes[] = {
+>  	NULL,
+>  };
+>  
+> +static ssize_t show_size_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%#llx\n", mds->dc_region[pos].decode_len);
+> +}
+> +
+> +static ssize_t show_read_only_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%s\n",
+> +			  str_true_false(mds->dc_region[pos].read_only));
+> +}
+> +
+> +static ssize_t show_shareable_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%s\n",
+> +			  str_true_false(mds->dc_region[pos].shareable));
+> +}
+> +
+> +static ssize_t show_qos_class_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%d\n", mds->dc_perf[pos].qos_class);
+> +}
+> +
+> +#define CXL_MEMDEV_DC_ATTR_GROUP(n)						\
+> +static ssize_t dc##n##_size_show(struct device *dev,				\
+> +				 struct device_attribute *attr,			\
+> +				 char *buf)					\
+> +{										\
+> +	return show_size_dcN(to_cxl_memdev(dev), buf, (n));			\
+> +}										\
+> +struct device_attribute dc##n##_size = {					\
+> +	.attr	= { .name = "size", .mode = 0444 },				\
+> +	.show	= dc##n##_size_show,						\
+> +};										\
+> +static ssize_t dc##n##_read_only_show(struct device *dev,			\
+> +				      struct device_attribute *attr,		\
+> +				      char *buf)				\
+> +{										\
+> +	return show_read_only_dcN(to_cxl_memdev(dev), buf, (n));		\
+> +}										\
+> +struct device_attribute dc##n##_read_only = {					\
+> +	.attr	= { .name = "read_only", .mode = 0444 },			\
+> +	.show	= dc##n##_read_only_show,					\
+> +};										\
+> +static ssize_t dc##n##_shareable_show(struct device *dev,			\
+> +				     struct device_attribute *attr,		\
+> +				     char *buf)					\
+> +{										\
+> +	return show_shareable_dcN(to_cxl_memdev(dev), buf, (n));		\
+> +}										\
+> +struct device_attribute dc##n##_shareable = {					\
+> +	.attr	= { .name = "shareable", .mode = 0444 },			\
+> +	.show	= dc##n##_shareable_show,					\
+> +};										\
+> +static ssize_t dc##n##_qos_class_show(struct device *dev,			\
+> +				      struct device_attribute *attr,		\
+> +				      char *buf)				\
+> +{										\
+> +	return show_qos_class_dcN(to_cxl_memdev(dev), buf, (n));		\
+> +}										\
+> +struct device_attribute dc##n##_qos_class = {					\
+> +	.attr	= { .name = "qos_class", .mode = 0444 },			\
+> +	.show	= dc##n##_qos_class_show,					\
+> +};										\
+> +static struct attribute *cxl_memdev_dc##n##_attributes[] = {			\
+> +	&dc##n##_size.attr,							\
+> +	&dc##n##_read_only.attr,						\
+> +	&dc##n##_shareable.attr,						\
+> +	&dc##n##_qos_class.attr,						\
+> +	NULL									\
+> +};										\
+> +static umode_t cxl_memdev_dc##n##_attr_visible(struct kobject *kobj,		\
+> +					       struct attribute *a,		\
+> +					       int pos)				\
+> +{										\
+> +	struct device *dev = kobj_to_dev(kobj);					\
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);				\
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);	\
+> +										\
+> +	/* Not a memory device */						\
+> +	if (!mds)								\
+> +		return 0;							\
+> +	return a->mode;								\
+> +}										\
+> +static umode_t cxl_memdev_dc##n##_group_visible(struct kobject *kobj)		\
+> +{										\
+> +	struct device *dev = kobj_to_dev(kobj);					\
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);				\
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);	\
+> +										\
+> +	/* Not a memory device or partition not supported */			\
+> +	return mds && n < mds->nr_dc_region;					\
+> +}										\
+> +DEFINE_SYSFS_GROUP_VISIBLE(cxl_memdev_dc##n);					\
+> +static struct attribute_group cxl_memdev_dc##n##_group = {			\
+> +	.name = "dc"#n,								\
+> +	.attrs = cxl_memdev_dc##n##_attributes,					\
+> +	.is_visible = SYSFS_GROUP_VISIBLE(cxl_memdev_dc##n),			\
+> +}
+> +CXL_MEMDEV_DC_ATTR_GROUP(0);
+> +CXL_MEMDEV_DC_ATTR_GROUP(1);
+> +CXL_MEMDEV_DC_ATTR_GROUP(2);
+> +CXL_MEMDEV_DC_ATTR_GROUP(3);
+> +CXL_MEMDEV_DC_ATTR_GROUP(4);
+> +CXL_MEMDEV_DC_ATTR_GROUP(5);
+> +CXL_MEMDEV_DC_ATTR_GROUP(6);
+> +CXL_MEMDEV_DC_ATTR_GROUP(7);
+> +
+>  static umode_t cxl_memdev_visible(struct kobject *kobj, struct attribute *a,
+>  				  int n)
+>  {
+> @@ -525,6 +641,14 @@ static struct attribute_group cxl_memdev_security_attribute_group = {
+>  };
+>  
+>  static const struct attribute_group *cxl_memdev_attribute_groups[] = {
+> +	&cxl_memdev_dc0_group,
+> +	&cxl_memdev_dc1_group,
+> +	&cxl_memdev_dc2_group,
+> +	&cxl_memdev_dc3_group,
+> +	&cxl_memdev_dc4_group,
+> +	&cxl_memdev_dc5_group,
+> +	&cxl_memdev_dc6_group,
+> +	&cxl_memdev_dc7_group,
+>  	&cxl_memdev_attribute_group,
+>  	&cxl_memdev_ram_attribute_group,
+>  	&cxl_memdev_pmem_attribute_group,
+> 
+> -- 
+> 2.47.0
+> 
 
-So I think what you have is fine then. If this becomes common I guess
-we can make an alternative version of mipi_dsi_dcs_write_seq_multi()
-that just uses "const" instead of "static const".
-
-I'll plan to apply your patch next week unless someone beats me to it.
-
--Doug
+-- 
+Fan Ni
 
