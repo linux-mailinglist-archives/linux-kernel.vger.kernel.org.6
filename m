@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-388010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B429B5928
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8239B9B592A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB421F23AF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BF51F23CAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B209812F5A5;
-	Wed, 30 Oct 2024 01:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="FVSjLAYv"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD23823DD;
+	Wed, 30 Oct 2024 01:33:09 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2098.outbound.protection.partner.outlook.cn [139.219.146.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F4D1799F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730251902; cv=none; b=ncAyro338nLHmNB0v5/xYOC9YghtKEgVF7fuBq9ty65xvjeTKFBmqORMp2ww4nw36fzH/vik8DglQ5haXbtsHpawroO+7qI1tUFyeY0V5y2pD8+/662NBpfvyvfHEAixU/WYdwYFtXIRtoiaXeT7O5NoWIjGsOiW4xa3zBYVgnM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730251902; c=relaxed/simple;
-	bh=R3q0dPELC599uJtphGcY6pZKLHS42kH0SLJYtP6cdEQ=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=rexiFJ7oVxTXeuSuWbBriJQ2f3hLsHTXfDJGPz1ZQaM9Fo29932748XJhb662WE0gVXFt2R3bOPgz69k1ZVljP4yD3tb8QtybbsXdw23M2yiiqMsinws1qJDQCn7wogD8YCIHiLEQE7ivn1iWEGh0x33/GOTuD6AosWLgwGlYzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=FVSjLAYv; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id 5SdDtBpuCiA195xYbtHxpC; Wed, 30 Oct 2024 01:31:33 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 5xYatNekOWdNZ5xYatx8zD; Wed, 30 Oct 2024 01:31:32 +0000
-X-Authority-Analysis: v=2.4 cv=FtTO/Hrq c=1 sm=1 tr=0 ts=67218c74
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=4Na9fpYnh4hjKbwFJnwA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NFJKSAGjASlvJI0n+bDCAkzsVkHO6HlGZfLxudFBndE=; b=FVSjLAYvauQbPF2bHU6+83CtW+
-	A+tdjMmI5xW2BbkPxogoLTHjQcm8VVcho8wD5gNDVUcbJhKQ8VeMDJqkr+hWYXwiC41gwsOMCFjgE
-	hj/3pM04iLjoLDrtxTmEJ2DPv1cSguYzTPoIYD9FCu2Cv4Wnr3/AOzY9S97u/Zxf9c0BKuI3/WCTp
-	JlwIFxYKBz8yRkUOJ9CKdDl1ayypAAbU32bpZ35ZsjuZl2aNQs1Yt7C/aj4r+HodC/T+bB5w+m5j3
-	mGF8c8byDbd90cbX7cP3C4TK1s4Ng5mwg/Ruj2obEwUFE0BPUiTJJd4LXysVEEwRn60rZ18AgxvGD
-	hsSHO+1g==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:36540 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1t5xYY-001H46-1P;
-	Tue, 29 Oct 2024 19:31:30 -0600
-Subject: Re: [PATCH 6.6 000/208] 6.6.59-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241028062306.649733554@linuxfoundation.org>
-In-Reply-To: <20241028062306.649733554@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <6e9e2d08-338c-ae6b-977a-160c13081a41@w6rz.net>
-Date: Tue, 29 Oct 2024 18:31:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E60BE46;
+	Wed, 30 Oct 2024 01:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730251988; cv=fail; b=Q+MHNVPp6wwhue0autxgWzQGWw3mmpQ7uTs438z+ediXgSuaN2KdrzVYU1HMU1BvWGWbUns/z2xK3WlSXHE2nBpancm63HOajoEei8eP/v2OeYcC8/3ydrI5Qcox0PHSxpdPK/X28WBLTBnXEDXoFYPzndmh8ujw/nEaj9CWxZM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730251988; c=relaxed/simple;
+	bh=NzVwo9ich7e2JfkjwxcY5k3BVihEi8+LZl9jjEMaNUg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tRRKMUkBH3AN8UpV36dbfT6peFP3R1CMtaIfVJR+Vz2yZ9ga6i4DyhphegngRyCFG8WmfHoC3SglyjvPYAgb8AI9vnf5Zv6uXx956D5Q16f+cqXyO9AAyfppT5Tt0kRLGBJNVmWIQAfitO1oR2ryqB4goa8W7kw6ashIWLCLcxw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cDyiTBUr0FQCfBRNQqW8nSVe81lmP1gGXRfdf8GZgX+aQSMngFhqLUktE69dPMbXBU6rTeJKs0f9XuMmkNv5UxgX7EBY2NeRiX5jenoJXMTXxujy2R+D/QB2DGIIj/1T23dWdcWDxQ6Jq616FdW9hqvCQ2LQ0fOHYOY6OqorZpQKeSt95sZ4uT1LKR7euRZa+vHGLnchs8BPuNvKwFVMy+k73D7fvxE2Sy6tl99cPl3RFOSWgqVnLH1nh+z+WGc6ItBL09SO0BOFjN6/lu8rQmERBML9nVls3LTf223THjdG2O4uFJQcUfip2GyfZq8aF47ddS3IPx4YJG2D0OBT8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8FGKjUCS/RSuA2vw1ZxKnx/bw5X5XYua+H3ZuKWeieE=;
+ b=JVYopqRzqZ++U1yBNva+BIhFnyIqAFLQvwlt6lVc/yKENGNT0q9cqRAhav7J0uxISCFi6hw2apojLDMwsdQYQfXAOFVB7KRvAQ+xr6sPUq/qOEfdYIv4a8XE+dGh+AESm3yx9ZBQSza+dzC6VVo1B4rfwilC8rIQ96izQzCtLX8fcAXMJKPTFdLQ5gb8sDsRczEfhcvTmM6cy7k/R1fVdSIUR5WOomO36v+duziw7zMUq66AWj+5HQjHy2ynSNF9EzcnB09BPMXtJhfTT16DKIDrAeBUIYAjN7bHBLNxj6ndur5URXSt2wquBJqyEOLlho2oNZ16nfayQycyAsrt9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1052.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:9::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Wed, 30 Oct
+ 2024 01:33:03 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::40dc:d70a:7a0b:3f92]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::40dc:d70a:7a0b:3f92%4])
+ with mapi id 15.20.8069.024; Wed, 30 Oct 2024 01:33:03 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>, Emil Renner Berthing
+	<kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] clk: starfive: jh7110-pll: Mark the probe function as
+ __init
+Thread-Index: AQHbKbKrTkkKQNBM8Ea0IUaIPXt50LKegdSw
+Date: Wed, 30 Oct 2024 01:33:02 +0000
+Message-ID:
+ <NTZPR01MB095605A72E938ECBE381F4E69F542@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1052:EE_
+x-ms-office365-filtering-correlation-id: a2d9e37d-4c49-4c0c-4e43-08dcf882cbe2
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ OPowV4+ep4ikb3+rzAKv46O+JnSDeWGuGTcx6pcAnkgAQjEe+u+p1hp4+o2b9F2luOg36jec3y4NKLd9yT9qUkC4nwXTRDG+Rpu5jwM0DKApDVMROTaULF2THeqUxW31FcMnB1XwnpHpEsaXmxOAzRf62wYveFKz1LV4bLjXRUhYdGKjttm7sNN9GPdhwAKiIjjCTqZ02Kk2RounQdPsKkvNknryCQyyQa4Pb+bOuBLBeb5ffxzsF3AR1U01zP4u+WI/d+cX+Nw1A2AEn66Wvsclia4Q0sXabrA8OeWC1g/r1QgoCn1461gcdCu2pQA7h1ek0xwewozttapuITe8PJrz21kWyscscyqQ0VqpxKcp673+ll4WzDYjfUcnSAsthItg8wAB1Yz3MWYvp8PJ21BBi95AvSuTEQK9DariKbJ6ar5zThXqFfP5Q1cVQSfG2/AJgalWBCsSlZDlXhFCK46xjuUupx7dzcCjSeCl68+mHPqgrGmfBsk9a8jc/rmI4nibhU9ZT6/m5xVVvSjFjND9pvCaSHH4bn57/7G6+52/bZcMWU3YQBlyv3BcWdl5D+UmlWBfcKJzpL+3IYk9swQ/kgoQSvX300XYdnp+5nYKrG8OQlqUQvaPyR1d/fdt
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?CLjPoldroc+XyqN7dNnceHRjtepcfhx16auAKnA9MM77uWXtw0JtHK4Xu7rM?=
+ =?us-ascii?Q?JixgHoIEzqE8dTIhLnfHrnmWOtVb5fS2UwyJCbT3vvfqNtc295zxnMARj50c?=
+ =?us-ascii?Q?fobmEuhKp/rUAsUeU47ufOAh6QHys9xenrhkub/93mA30pr823ol8W1gv4At?=
+ =?us-ascii?Q?AnyAubPKLW/1ZGnoxVsFu9bjhu7eXUFj2tsu475d6oVhRfGi9eSekyePk0KZ?=
+ =?us-ascii?Q?4sNm452RC6ZZ4+7U3m9sJXXYc5BTjIXvYNbG820sYMpLdpHKIiOMhgyrVc34?=
+ =?us-ascii?Q?K0A/F3TMTn9VZkb2jV14iUYn8eci/415i+WD5FVacyRSt8czgu9slLHwmSIR?=
+ =?us-ascii?Q?90674ih3XgNxGU/MZQQkKtDFgkv2zb5bY8bmVNyxcCzr6jJvaitLZ4dyTKsP?=
+ =?us-ascii?Q?hCAVnDq2t3cpm6S6ZeoSly1DS9y20bEfta5O7fd04eFHlo6PPEgTMc/gb8zl?=
+ =?us-ascii?Q?mRKBDJ25lOJz9vSxQ6KmFhsLHomwj3G+V2B2y5Whf0A196brSgWviCWeZrrK?=
+ =?us-ascii?Q?6RlhLe2DJTw2w0HHn9GGhbUVFqeAup+thpj8rcFqld7EzTRLJ6bZRfNJawb2?=
+ =?us-ascii?Q?2Iier4L0V3t6UP5usc3a2OnOy0m1e7Ofz/yXhq31yT11IrG1tYr2Jf7A5BJs?=
+ =?us-ascii?Q?q05A4FH1+fNGTRrBudWHtObstqUQenMr/fVJj7uwvzCmTaN6lzPcwBpsk4AG?=
+ =?us-ascii?Q?MNHcwudT8lSCMOAz05xkDTEqU8PF2rDfzLa1L+Jy/Ogh4HbZ7OHlhyAqeLRI?=
+ =?us-ascii?Q?b95C73/D5V9sbhtJmxgsEsGZ7EgMqMEuKgDIQmRlow85ApPYLJHhRVA+QXQJ?=
+ =?us-ascii?Q?kVKoquEj2Qq1Rkv6Y61zXrKTA2sYQ00K63wBUV6jsSurvr5fO4gDw8M66V02?=
+ =?us-ascii?Q?JN8r54wladaKMBLw14MNeJm50Ggj4ySOGY7bWfCeeCP30VIsnT5Naiune1Xn?=
+ =?us-ascii?Q?DXKtoa4HxltbYvHAt2OAITFeutQO7pRlHCIftVQUyYv4N52VLrukvZ4EoUKF?=
+ =?us-ascii?Q?/yRyrMJHEj1OW15ixgGAPed26NpHrqMKVLjeLg7Aq4cfPk2+9cmoF385xylR?=
+ =?us-ascii?Q?+QjDwXfHV6tdAiTxKjp+gK89++3aUFh026avPeiyxdG4KW5Br8bgc0/yDotc?=
+ =?us-ascii?Q?iT8kEEVXFWtcou5C9YamTHQnm/7gUvmG9Q6zLte6s1D38gtuPbd8p38Vh6tj?=
+ =?us-ascii?Q?9vE1Oz/toG8yUyXavXhfFlLvCqxANv8cS7xlD3NVjtmVLOJCmdYSP8qYZH4b?=
+ =?us-ascii?Q?fzNPuInO53NXNo2FRSdWAmdP0YIoD1+x6qe69PQ2uXaT34xYNh2AYRQP+eGM?=
+ =?us-ascii?Q?DzH9NqrFsaMaG8o75WygQ8NaMAmDISqQfAIp6/Pt8dl2J93PLHZTG3Tu0DRo?=
+ =?us-ascii?Q?5tXgWfuwLclOqaPN5AL/d2/dhmUIM3DTLnamK+4T+N/0D3835sQbC6pmwxUJ?=
+ =?us-ascii?Q?g1VZBNMz/bqqhTIqFvLMnBPQ2G5n6LHkYmyKsELN/Mfl+R+MWSE6NBweOzza?=
+ =?us-ascii?Q?Gv0cp2GwQbZlw0ngJnPx20A6M+S+mnu1run8FZOazi/POIi4d4lL+BUMxwP+?=
+ =?us-ascii?Q?THCnivErca4XCvxbOdMcetTY0Lxlli60Hmoxypyx?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1t5xYY-001H46-1P
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:36540
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfKIprNDN2/fx0Ph/8BtcXmRYK8mnObNfGD/u+QzoNX+JWrBdl+uB20j3Qz12q/OdFCAj7jcjHrqb2c5iNMG/yldIERX4VgjzRsrzWMOwOhHmemllPQn0
- 6v6oHLaIy6nCHMNaT1aQ9z26VALpdT3HE7tgH2Tp8oHaAHH9t0X4gMr4ptsjjXD0GXqwjqNGTyka031jnMdp0OtcUR/ES7tpoI4=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2d9e37d-4c49-4c0c-4e43-08dcf882cbe2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 01:33:02.9404
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wapdls8ah+RvpNMgSqpTzgLYg+JXP/RVNecOyBkYXoIB3SpAZBN5YIHUENNSZLkJ98w5sBmXUkBnoEURFVSj2W4CoFeJcVFilSI3YM9PIDM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1052
 
-On 10/27/24 11:23 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.59 release.
-> There are 208 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.59-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 29/10/2024 11:28, Changhuang Liang wrote:
+> Subject: [PATCH] clk: starfive: jh7110-pll: Mark the probe function as __=
+init
+>=20
+> Mark the jh7110_pll_probe function as __init.
+>=20
+> There's no need to support hotplugging in the jh7110-pll driver. We use
+> builtin_platform_driver_probe, the probe function will only be called at =
+startup.
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  drivers/clk/starfive/clk-starfive-jh7110-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-pll.c b/drivers/clk=
+/starfive/clk-
+> starfive-jh7110-pll.c
+> index 3598390e8fd0..56dc58a04f8a 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> @@ -453,7 +453,7 @@ static struct clk_hw *jh7110_pll_get(struct
+> of_phandle_args *clkspec, void *data
+>  	return ERR_PTR(-EINVAL);
+>  }
+>=20
+> -static int jh7110_pll_probe(struct platform_device *pdev)
+> +static int __init jh7110_pll_probe(struct platform_device *pdev)
+>  {
+>  	struct jh7110_pll_priv *priv;
+>  	unsigned int idx;
+> --
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
-
-Tested-by: Ron Economos <re@w6rz.net>
-
+Reviewed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 
