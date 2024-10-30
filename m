@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-389693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC1C9B7004
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:51:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EFA9B7008
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709101C2137F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF922830D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165DE1E2832;
-	Wed, 30 Oct 2024 22:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D883D1E2832;
+	Wed, 30 Oct 2024 22:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwXp4agm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUvC7UIQ"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626401F4288;
-	Wed, 30 Oct 2024 22:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954441E377F;
+	Wed, 30 Oct 2024 22:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730328678; cv=none; b=SVKOQW/DH2RNiVSP64rrHslUJuaPesL3+s1wEjbj8kqev+7WZLg9JsRyBCZ3ye57v8dPiwW4ikxB5c8dGuBNyN7Ge8bHBqp9+K7FJm6lVrQyplpuoCw2La4IX3sn0LQXrdrq5sOr5yh964cEqR1vCMe62cHDManKJ3s06auXKTA=
+	t=1730328707; cv=none; b=rSWTpglHdyqdpsM7QkrQR1IUik6LLQuYBuizR2J7m1htERQ+D3l8WLid3HPFphSVLb9lUdnV4QI04T7ABOFyX3vtNN4i2lxrdmWdqx9pQUGjbj+4HpHpfrJuklytIrzTEPr54TKctzi65C68yEIHzf+FFL7iupNwyAPYkYTdHrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730328678; c=relaxed/simple;
-	bh=6984DWiiZS6tpY28qzM6kzD89hg0yELFs+RNJQ8Wu9Q=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=I/B2bi8G4Y2R8vkji4n6wCIPoR0DmPTScMJkDQ99g5KvDMNkSvVLqcbZWM+g93zq6Xui+zPiwKBIDrYfH5bHx1mbXEgc0Bvv3VAzBHH8JN9Q1sEcJ3Egz5uRTxUwsQK9NooxqSultVltdNYu/Kv8NQyizjs6jPL+4hOjEBy2Q/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwXp4agm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD72C4CECE;
-	Wed, 30 Oct 2024 22:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730328676;
-	bh=6984DWiiZS6tpY28qzM6kzD89hg0yELFs+RNJQ8Wu9Q=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=BwXp4agmfVWQmJf6zrYQmWhunGpiG4KNBmdIhywjHM7ULS6RWwE+jKOYGJyR/uoHi
-	 WtWPh1dSm1BJYOxpJ4eRN/rgGQU9BQjTYx7nLCO2lZvvOcrjT+2IOl1Ag0muixkKLK
-	 aH6CT1e90ckLNGB9fhofWECC7jbB5s6Xae65l4fo5cuH5GgzqtnVvLAWiZStwfIp54
-	 YHNG2wVPQY6So6ShwY5IkgYdysN3T3uMpAppb1CTkBgK3yy102SPar02WnqAv0FEVz
-	 9Hn3S+sAc+PpGCkrPhJN+OTMATpXL6ao3YEcPEtNy4neNQg4LlXoiNpryhcbKT4H5d
-	 qSe5oJ1BE2xGQ==
-Date: Wed, 30 Oct 2024 17:51:14 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1730328707; c=relaxed/simple;
+	bh=nNa3dandOYrQncECAtYJrrGr/qHVyc7Xx9V/xoWKAlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8xR56qxLZLxZjthFduhApesGce5eggP7LaisW3GhBoVIBQJ8CcYGHxXvQ/91GaV57jj0kTZABsuQ6YdwT1CNhCMk0R8Tj+I3xRiOv0uJ5Vemmzp8FcyTADTef9fDyA7oyXOwnnByuGuyXmuFLC89jIuPznKFw3TeLqwmjvUOJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUvC7UIQ; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso307854a12.1;
+        Wed, 30 Oct 2024 15:51:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730328704; x=1730933504; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZRCk2bBPg/lDFOZ6OFaWGIga5V+/XV5F5FjTujAlwk=;
+        b=CUvC7UIQdoOJMG/7ta/mtN6tB3e2Ft2sjpTCkkVwqL4WrmLSHg7YWNgcw4OTwiTF+V
+         p9UTfxjWGduhZGU/qZUwaPAq5ZOl+ve30Iu1drlUOLgXItzGzaFQVxjS+Rhr+uv0APGo
+         t7k1PD48NszFcqHPUA9X6a3SMmftiRl53LP0qBdhQNNqPp8N+iyu9Vi2XxStg1g4BpWk
+         2nMT945Mb1Sx34Jy/ob3Xhex2ev5jhFLJgU+svgVK/at9T/C19umeEzsKsCwbBm9APzv
+         DVsc1DvAHQ77we/WzeJ5mUveH/wvUd2sqew+jSk/wpRRYLUXcKKItYd1SOEVu8Gv1p3b
+         4NNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730328704; x=1730933504;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tZRCk2bBPg/lDFOZ6OFaWGIga5V+/XV5F5FjTujAlwk=;
+        b=cY/2iJUpRJO2JeW6+NZkS22eIVCPd1dIPQzGl5FHqu4d1Izr0OuEJrHxumCCPNlzaT
+         2kQSCTmp1xHnDc4lnuVepVn1Y0MkLmrMPA+hK7ML4fEAMTm8fZ33AVJEhbt30LH6dTmK
+         6r7XJx1KSU7GAWC5NgYiwi0ULnDDPRDFiE34QHmo+t0bzG5ncSHPXxmWAvK+U4XcklUK
+         P9zvBM89m+dkJ9nO1QIh39aJ7bVvCL0zA/IqUKfu+d0QAinOd3L/VVDqAFgShDYEou9h
+         AYb1yOpnS/Y1lVJXqKb4qx8mb4uEGYimKG5OqaInU1kKm1MRiQAvJXF+4Cm7zvA8MMJw
+         q1kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVd72O8/fcjWgRoeLyY179Uk23rFWZjfpyrxTO2RAtt0B/0S58/Ua2PSeV3o+ZDwryGOSPY88vNYgNgBw==@vger.kernel.org, AJvYcCWKn6HwJaQMKvyiijvs7lRz9U2n3b8Z8b8jK70kZ8StDmqWfjiXaIzWuATZo/xkKc0QBA+ZHX2hYIKbB9Jn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVIo2+bcgOOg1qgHP8ckaSMuYCiJbG2oJalxPGnYExxSOFVwti
+	mHR92CqYT9c5M/c5+Ppt1v3LMpoeE22r1MHtXn0EhyVXz3xlDkT+
+X-Google-Smtp-Source: AGHT+IH0Epi711Hk2bnt5aad2kBfc6Knhio0ilVwA0BRPkzEM2oMdLy76CjdAKXMBZAJfQd50p5BaQ==
+X-Received: by 2002:a05:6a20:b68a:b0:1d9:1784:49f with SMTP id adf61e73a8af0-1d9a8516a38mr20283448637.46.1730328703192;
+        Wed, 30 Oct 2024 15:51:43 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:9bd7:a771:2e97:d35c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee455b4cd4sm102265a12.50.2024.10.30.15.51.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 15:51:42 -0700 (PDT)
+Date: Wed, 30 Oct 2024 15:51:40 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Shivam Chaudhary <cvam0000@gmail.com>
+Cc: u.kleine-koenig@pengutronix.de, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Driver:input:misc:drv2667: Fix typo 'contol'
+Message-ID: <ZyK4fI4wqZEkbESu@google.com>
+References: <20241028204048.128542-1-cvam0000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Vinod Koul <vkoul@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
- devicetree@vger.kernel.org, dmaengine@vger.kernel.org
-In-Reply-To: <20241030-axi-dma-dt-yaml-v3-1-d3a9b506f96c@baylibre.com>
-References: <20241030-axi-dma-dt-yaml-v3-0-d3a9b506f96c@baylibre.com>
- <20241030-axi-dma-dt-yaml-v3-1-d3a9b506f96c@baylibre.com>
-Message-Id: <173032867487.2384864.2184195071332557080.robh@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: dma: adi,axi-dmac: convert to yaml
- schema
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028204048.128542-1-cvam0000@gmail.com>
 
+Hi Shivam,
 
-On Wed, 30 Oct 2024 16:33:56 -0500, David Lechner wrote:
-> Convert the AXI DMAC bindings from .txt to .yaml.
-> 
-> Acked-by: Nuno Sa <nuno.sa@analog.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> 
-> For the maintainer, Lars is the original author, but isn't really
-> active with ADI anymore, so I have added Nuno instead since he is the
-> most active ADI representative currently and is knowledgeable about this
-> hardware.
-> 
-> As in v1, the rob-bot is likely to complain with the following:
-> 
-> 	Documentation/devicetree/bindings/dma/adi,axi-dmac.yaml: properties:adi,channels:type: 'boolean' was expected
-> 		hint: A vendor boolean property can use "type: boolean"
-> 		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-> 	DTC [C] Documentation/devicetree/bindings/dma/adi,axi-dmac.example.dtb
-> 
-> This is due to the fact that we have a vendor prefix on an object node.
-> We can't change that since it is an existing binding. Rob said he will
-> fix this in dtschema.
-> ---
->  .../devicetree/bindings/dma/adi,axi-dmac.txt       |  61 ---------
->  .../devicetree/bindings/dma/adi,axi-dmac.yaml      | 139 +++++++++++++++++++++
->  2 files changed, 139 insertions(+), 61 deletions(-)
-> 
+On Tue, Oct 29, 2024 at 02:10:48AM +0530, Shivam Chaudhary wrote:
+> This patch will fix typo 'contol' to 'control'.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+This typo has already been fixed.
 
-yamllint warnings/errors:
+Thanks.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/adi,axi-dmac.yaml: properties:adi,channels:type: 'boolean' was expected
-	hint: A vendor boolean property can use "type: boolean"
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241030-axi-dma-dt-yaml-v3-1-d3a9b506f96c@baylibre.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Dmitry
 
