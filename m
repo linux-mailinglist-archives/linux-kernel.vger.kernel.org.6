@@ -1,230 +1,193 @@
-Return-Path: <linux-kernel+bounces-388409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B229B5F42
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:52:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8237F9B5F2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA8C1F21E8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9181F2258B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6AE1E2834;
-	Wed, 30 Oct 2024 09:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B31A1E230F;
+	Wed, 30 Oct 2024 09:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Dt0TrS6d";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MQYEioy1"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0DJmS1z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1679199E89;
-	Wed, 30 Oct 2024 09:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730281937; cv=fail; b=lgF7I2uJWPF7G7uJgXHvEALVTKiYndg+GpOnW8x67UmwGtLno+9+SExhYNYdhrHYkBZhUf8JLcoyBIjqVATweRVE9lSKu8oGeb334SN9gy7eGqyT/ww9bNRp4WFc5GaAkejOC4d9bclWLD9m/Ewz2aig+Koef/N8sL1vSPOokps=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730281937; c=relaxed/simple;
-	bh=VLa7wmMYxxFsc0wA/xGtjcLrr3VlrLn8ip4S++ojMVE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h/bwcz5GaPgM4vUN6s9gLf+jR7jRLerP4bZBsUkWK8Vz+9azDVOgxseV0qOk8RJ2I1Advvm81f6j5HtkI8YNaM3NpAijJP8kCNfheCi0fxBmzVqLzejX/ftPbvp4/DHq9sMYasw9ak+ZezKvVe42nMazEzG1flMGaqEpvhcFvw4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Dt0TrS6d; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MQYEioy1; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U1fcrT021240;
-	Wed, 30 Oct 2024 09:50:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=V6stwJwvLNvHT3vVDGp/GSQm/fuuX97C9la5hgyVBZs=; b=
-	Dt0TrS6dMRPYlW0is+SAQfJUb2w8lJPwy2ZMv1UpjzmZZtaFpAfOHeqyylZMj9rD
-	U3Gnqmle4h2hBxpPOKHlf/zVw08Qum3lzDzhJAIWWNRUqy0HwfGekX9aIIi2+t/H
-	4CR9+WBAprxX/gMcj7m7o0j7J1WKxZmb3iMBOoRjPmNU0osZkYFXrduhx7/+cAFX
-	gOObut2SqFch1geLmv1yDxfn5OwrkCwj6mr1B0WYxrRwdxcmowT9WnU6TX/S4uo6
-	zOntCC+mhgPHbuKz6Jfku3Q9UEvlWqHXXNoZw2ZvEbleLZQM55XuxbXWsa5KlNO0
-	JHlCGEOy/5XeJMsmB8s34g==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grc8ykb4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 09:50:05 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49U8dhBW010151;
-	Wed, 30 Oct 2024 09:50:04 GMT
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2172.outbound.protection.outlook.com [104.47.73.172])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42hn8y2xu5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 09:50:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZSSgcY0cLRek6WV3XDExHvVmAfRWZ7/scQqh+Pg91EbmrTjzLCX+14zUG1zC8Ee5Cgc5xLFLeaD4QIVaeXHe8W18EScdl63DFurqcG/ixkDn55eAfZzwjVvJEjHSJyMDS61MIYKkXoNvO7KtRz0xwLSlvrkEiGDPfm6O85fhFqgLaZgNjt06ZTWSO8vmOJEERqgVMBwHTSMR1MwzBH62z3xTz9RsuOohP6FYZas+ALUzydMKLIIkqnjjhau6fLNUheneHsiWnG8msdPVSZfXMNtZEJJzpYSB2S9zoJn0y4lEfEZLw003RxfzI2+PrsvLu4HGUmVXj/NuDQAuy7q9yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V6stwJwvLNvHT3vVDGp/GSQm/fuuX97C9la5hgyVBZs=;
- b=JNmukrcTSx8FIWdSOxQtmQezhx9ROp7YmUzMFxHqufd9QWvMSddx3m8YwPQmgNEPnXB+d3xubuIMsZq/Snmi2y7e5Zo9jRLC/R7i2H5mmBmTGW4TtukM2Oy5bvmIyVKNw9YQx4TGbhU7h7ghRGuS/BUteW5cdxdkrrwjwFL0ejaMGYeCvrX7G0EdYeXrM0HeSFgjxpTq+X8B8p4IywHHoucHA6KX9Xsh/iMwhK046V3+y4i8E3dkQZXlP9hVpb7Mxk7oeO2BLMK45VKgQe7D9NtwjBn3WHlHBmc1V99LWz3iTrAJKINlYtEBiP3dNFR+At0Q07xLS2fxW7ZqX7GhUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V6stwJwvLNvHT3vVDGp/GSQm/fuuX97C9la5hgyVBZs=;
- b=MQYEioy15Qf8TM8lToPoogBfIsax4pZ25eyXGTFNz2E1qScpXXAmwJtw/dcs37a/gg7g65NQUHxgA1ByWcfMyIRqIaU4XTIF+vz3L33A7abAiX5M5u5qkab1ZaW4y84JfodeRx3Gnos+/kaqAMcOltYKzF5rO+FQ0hldtJ5ktpE=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SJ2PR10MB7826.namprd10.prod.outlook.com (2603:10b6:a03:56b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
- 2024 09:50:00 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.027; Wed, 30 Oct 2024
- 09:50:00 +0000
-From: John Garry <john.g.garry@oracle.com>
-To: axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, hch@lst.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, martin.petersen@oracle.com,
-        John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v2 5/5] md/raid10: Atomic write support
-Date: Wed, 30 Oct 2024 09:49:12 +0000
-Message-Id: <20241030094912.3960234-6-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20241030094912.3960234-1-john.g.garry@oracle.com>
-References: <20241030094912.3960234-1-john.g.garry@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0263.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37c::12) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462E6199E89;
+	Wed, 30 Oct 2024 09:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730281760; cv=none; b=tASgdgDs4GMIukFwIaw2YoVCNJYkIkCqFcnfR1+TI8vjBGek4dnTPQyt3vt7M+mQ85xGRXaCIWQTvFqku+FqnUDE2VPfl/cYiG0wmZ85yGLvQJkai+Zus4tvltb3pGMfPEJXvQwHFaDmPVgn9bNOV3X/qo9iifhaMCjYm38VkXo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730281760; c=relaxed/simple;
+	bh=NDw0InURcJy7Z0GoHumZQCjg5VAENS9N1S5pr0z2yb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHyXhx8EdmWCxVoMai/5Gzx2so3ScwRbFv2GRmiaeLnpG6HVE7+tzb/Tv1xxNTklaYnoBAKY6F4QhQXx2BfZl2JyLv9ZWsNDb7qZGhI5xdxMme3sv1LYQuSVWVV6UywiZYSTzapc0bI2GUZG+vKBgSl3Sjt07V/ffFLFm9Xc0kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0DJmS1z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C323FC4CEE5;
+	Wed, 30 Oct 2024 09:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730281758;
+	bh=NDw0InURcJy7Z0GoHumZQCjg5VAENS9N1S5pr0z2yb8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j0DJmS1zCBPUEjiPHvT4etc+FpuqaQI/KH7l25dsJAYubGrzFCR0ZoQlAvYpYgKOn
+	 cOVUEMwVPVsgYdwl46rgLrJi4L0wXh4qorl48s4x2C/7i2rjtnNrgxlRteFOPPnHNw
+	 UqCDsVbUlr3jNbnmcba08gJ37c51+ZdkNU/qp4Ajfx0oSmp2ak3jzb6gyOml17iNXs
+	 FQBFj/i6whwIfTCKB3N/6Kqa8rpeD47HaH0rhzjwA1pCQoAmOG9afgtj/FE9C+C5cX
+	 v72xlIfJDYcNroim9cDUyQb3k4HQ0hL19/9Z6FBE2wF81fDBmwao/3Nm7msjEKPWDh
+	 43x9XTHhi+p+g==
+Date: Wed, 30 Oct 2024 10:49:13 +0100
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>, will@kernel.org,
+	catalin.marinas@arm.com
+Cc: guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
+	maz@kernel.org, rafael@kernel.org, lenb@kernel.org,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+Message-ID: <ZyIBGRv/10kpOcOl@lpieralisi>
+References: <20241016095458.34126-1-zhengzengkai@huawei.com>
+ <Zw+O4nZisbkdvNtz@lpieralisi>
+ <3bf1fe29-e135-c1ba-2774-d1e98c8b92b3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ2PR10MB7826:EE_
-X-MS-Office365-Filtering-Correlation-Id: baebffe1-f166-43ef-f321-08dcf8c83883
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tTYQfpKPmd30DRGTRogtVGg/TASd7q2oaUXcqNhszcA5qumh1sU/SRDtT5dj?=
- =?us-ascii?Q?woJ6wHzsg8uNkuKaRd4toSFCNfwvCaHrcnwCZVjqjSksX4lzi4gaG7BLVvhG?=
- =?us-ascii?Q?Yq802Ed2mGjAldPxUrLFeh+6dMjNRLM/cbHjvEqlR3EDi8Hgj8UI/4TxGBx0?=
- =?us-ascii?Q?tj64mW2uPWNG3UJn02je33ShLdWF59BCLPK0UqZIzv6YcIDgwERhcTZA1mD/?=
- =?us-ascii?Q?/MbsTDnZAVcdLlvnftxxII0e5HBpke5mKa7lpSFIwP/NiucUofWtr4sO4TIF?=
- =?us-ascii?Q?D4oXwnqYepdgsn2+m3VMKC1HP+fIWjWXV6SMIjo5DuI1lUMO5j19JsqikGnd?=
- =?us-ascii?Q?SxLoksoMM/ifdUdbI7+DUky+1OP8rxKssLCxeQHwxw5NTtVKEOVzm+OCeA5D?=
- =?us-ascii?Q?AooM6uw2BKnlO2JoanDrIG46b52mmcFB1D6diaooGEXKdN0U9S43K2ob+UVg?=
- =?us-ascii?Q?EzBLH997Huep/uEQc2js8YZ8nPEvCSQUJZkmdoTNGxUNS1KZ4NW/p9HRVmXU?=
- =?us-ascii?Q?iCAPBfGIqqy3ygZjsWktZkzowzWxAuG1oAy9/TJrv7c2r72F2pIbTLHhkHYq?=
- =?us-ascii?Q?WytHDLIxUhosyc6NRkO2PROUZXs8PSMDa7g8Shl+1RUqad0bDL/CbZyHh+HV?=
- =?us-ascii?Q?UfIb6OMKUAEb+R3NYF66WAaX2tLP2YVWIz7OsWzjuFuOzg6dBrgznwasTkWq?=
- =?us-ascii?Q?5FJ0EkFtB8sJBJMq/nRf0XoFuePgq2B4HGnO/HsNE6uKvokmZI7faX7/C0MN?=
- =?us-ascii?Q?JKtMLyReXcrT6mEqEmOxuMy+ruAWI4ZtLViYKTHj7rTyxdyjcdZ9Sh7saiQj?=
- =?us-ascii?Q?9tP1NUNc1fqduRh0MApkO7+qOl9D6XaGAvPg0fkG03R9q2w37cs1MNPm+eV3?=
- =?us-ascii?Q?fomtqoQCzmgeHgcEb3LvuKkp7JSdQRv2UCqfF0MtRDWlcrSABGyufuA0B/34?=
- =?us-ascii?Q?qK4edCHZ8lfajegfoqleJHXHOs4UiQL56OYCswCzrusJw2EPFhy+FIkXHmSP?=
- =?us-ascii?Q?cA+BJii72MUyh/SIq1LLqjo8PThWr8dBSVVwOWEB9BRWZ9BpGaccmC+0pplM?=
- =?us-ascii?Q?j4a4fER8AqfM3HVKJHokKLtke8rGQx/npAR45VbnQslCZr1hn0OxdQm+VQ9s?=
- =?us-ascii?Q?qgkpeSjSUdFtpEoIAlH7atvfQ2h25+/CCuuuiF3qe5J0Mhsb/ouPSIExX/H4?=
- =?us-ascii?Q?WoRJMLmAdpp8/7gAgy4E7HNQGnxJ49BfnZBZzMjDslF+64Q2NjjALnptWEcC?=
- =?us-ascii?Q?qixQCcYi04NbDI3Z5e/eVhD53u8+EYJJN8fXAbKnLCsBIk5cNx1fz3WYITEi?=
- =?us-ascii?Q?Z2E6BixSOFdWZ6Bq/2Cl7hR9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?S5RtWjb2bNvEA47jrFwSyBhmmnagEHnCGiRimOcgjiVCL1ODH4XWbHHw1S0y?=
- =?us-ascii?Q?KZ97yIQ9Lr8JYCipnPSyyeGobUGvzcRtsV6o34/iIUhQupjY8Ha5VFw0LP9f?=
- =?us-ascii?Q?mSU+We2D1zsLd4jc2SGVGK8RSljErfiAfO8ORgpY6Afx67wUvnD0hOLvKfkx?=
- =?us-ascii?Q?LO8bUf07gOxHPaVMRDup4a7fcXBFFusQGN0XZ61nimjppoal1KYktFg2kp5V?=
- =?us-ascii?Q?VOrvDPRnxWveryzEDodS+N5D3hGPtlUDyBNVU5cJCV+hfCDQRh/17RXksYvx?=
- =?us-ascii?Q?mn+9Ygh1ac50bjNrq5ROr5BorS+ADnNNu8159nADy3yrhOzmMgFRpyNAQ3cP?=
- =?us-ascii?Q?PAvryHlGfItgSaRD5sArpj/++J99KaOYystXMeZr59FekNi2xbSv86DAo57V?=
- =?us-ascii?Q?aSOmdYHlNPxxlvP9TrIqHEsybciUwnyM01CzfWvAQFOTL7ycoj25IKzIJuiy?=
- =?us-ascii?Q?Is2H2wCWKEwbchPmKwsiI+ukiomgUldtCBOjM2LHc3U3kRhSXXA1WHcB08AN?=
- =?us-ascii?Q?DtQlS6qQzeiEHvf7lUFxvI2cvN3DTZDZ2a2kRtPkQx7YB6R+0aCXenK5gUfT?=
- =?us-ascii?Q?DEoWYCQZ9y+EFjB2aV5Jur7nZF/dtV3okldtRWHT6poz4EUD/mz9SCKIsoww?=
- =?us-ascii?Q?DS+rfsBXkqesqGwK2IWIQT1cQrzM3+cn4szy+PZ7y7QvHq55x2/pyCHnRmkX?=
- =?us-ascii?Q?V4MRIfme45RGm+MlPDSUa+E1lAukfOqG548a6tAMNIebjyOwza+NwIpYqPre?=
- =?us-ascii?Q?PH++qASKpQzJRFZBiORp6xoo+uMxOtEQPCEBg/XlrC8CCc1KCKaYGPJsFXor?=
- =?us-ascii?Q?broPCvP6yUbYthRF0roVwjmMOTaoMhVb964NErLDm6B1PsgH7Reez4XNowup?=
- =?us-ascii?Q?hBiIy5TDMvlWvLoU6vqcJsaSKDVewJ26zytroox2eWAMSOKY5JbXOKas6xHZ?=
- =?us-ascii?Q?2FwHP0E0Y8vHVUDoYvlIKY6Sw7D2UbXSi5+4RmNWFnwvdqEfHcXSJCbZQFxE?=
- =?us-ascii?Q?Pdge0XC5WCWRVvWDuWOy1x8CTdWMWfA7NBKJQbyy2kdU8Ro7Ys6Co+b+2Ie9?=
- =?us-ascii?Q?d/psuxDE77tz/3tWm+z63fOZhaBV8FNfvoGwOlxWq3yWY1MyebZAihD8+yIr?=
- =?us-ascii?Q?n7Wpv81tEtknzLBS3L5H62s1A/u45bPDGdBGVTJf4eZ+oH9Ehcvc+Rh19NKP?=
- =?us-ascii?Q?YLzXT+GL99hIl8B/XFd2pOqr5AQm2JNXiQj44rcglg/QjQ93zlTfGJ8DChRC?=
- =?us-ascii?Q?7pKR9f8ukF+DZ+ubuDbZAlz3AB/gTMDEVL34zUyjIIMDg/JCyPEaGKyNpROn?=
- =?us-ascii?Q?E7nVU39hTz9akoLy+Myh1TVR0sc/8Chq+LWuFfEq+Zg2bNySS6uHDj0ZdO1t?=
- =?us-ascii?Q?v7C1qb+FAEIJBap3j6f9LpYUNQLmu9AtUye2F5Moj90Mzt1wbuXspdu5zoAq?=
- =?us-ascii?Q?7EiepedasLYIw+JlHWzZ3BqxTGPfRU7kBcjK9UbuBzEWCXBuMrJ7zOrYxn7H?=
- =?us-ascii?Q?gzFeXfHp/rIOtOfs56ey+AeYoLObzOf/KHFOS9TT3WDBFVTtsCjlvRFaHDVX?=
- =?us-ascii?Q?ldBWOUm8rQ/pfYKXP3QqUj3658QhqqKxEmslPJsdye8k1F/jw5AEnfUGHUkV?=
- =?us-ascii?Q?pQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	gWN88D8j1xRJbo1cI9O0m9OzDanwm4fWRpQoTFNlwjaBp63cSk3Fkda00OufFjNuk2bHDL9Iy3osTqkih59WAncGaLFN8lcvUkv+No2jugLA6sv7iyZ3GhrjGFSPZuGiuvAT1IPYlGMtowGCdMMI6e6IDhDiq9eHRnc4vahpZ/lt/nDLzPRhTZcmv3Lt/rssyRlvs+AzAstOfxJWpk2i5MkslkiUP81jkdirEtdjD/+WEZi+/aqr3zWbvgnEAJ0EMzVGS+yvQGCSkIiS4zr98YLd2Trt9Sy6KG5jlaORlz5av5n/NbyIfLuQQnOL7uZ6FPz4oRnqBNSFpSvLMIX9OSRpsJF2FLLvsaVrMTp78t6G26xGBplXtNnsVKdGgWmupyc4XJFcLgJLklDaEc8siOuWbKaVQbScz+qf4RRyoIoJVm+2fZMG2lUnjQ35CD0YmbcnSF7FbTHz2XVnk4GSqM9EmQarIT92xN9KzE689ncHlO8fsrMaiU+blZrOgS/Z2fVnrOXIcTYm09Kp0OBaEHJtN1UGaIwhaXdaPUvnyNCVMMVxGcp0snGV3jT4ZvHPjUqAueYY/198fLCnmY6oVTnY8tO/KWPUOGFyn2gJMWM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: baebffe1-f166-43ef-f321-08dcf8c83883
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 09:50:00.7257
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HHtdtFSNrszvPBz9XL00T42SeT2uPH7wz4vsJ5d0CM3h5aG0NZiocX7ZInjEBWkTHuxiZXTfXqtgOP1QSiGZZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7826
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-30_08,2024-10-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 spamscore=0
- phishscore=0 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410300076
-X-Proofpoint-GUID: LFCBdzeNCmxy-AT3XoeTaCdmmbvJNQ_r
-X-Proofpoint-ORIG-GUID: LFCBdzeNCmxy-AT3XoeTaCdmmbvJNQ_r
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3bf1fe29-e135-c1ba-2774-d1e98c8b92b3@huawei.com>
 
-Set BLK_FEAT_ATOMIC_WRITES_STACKED to enable atomic writes.
+[+Catalin/Will]
 
-For an attempt to atomic write to a region which has bad blocks, error
-the write as we just cannot do this. It is unlikely to find devices which
-support atomic writes and bad blocks.
+On Tue, Oct 29, 2024 at 10:16:41PM +0800, Zheng Zengkai wrote:
+> 
+> Gentle ping.
+> 
+> This patch still can be applied to upstream now.
 
-Signed-off-by: John Garry <john.g.garry@oracle.com>
----
- drivers/md/raid10.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi Catalin, Will,
 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 9c56b27b754a..aacd8c3381f5 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1454,6 +1454,13 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
- 
- 			is_bad = is_badblock(rdev, dev_sector, max_sectors,
- 					     &first_bad, &bad_sectors);
-+
-+			if (is_bad && bio->bi_opf & REQ_ATOMIC) {
-+				/* We just cannot atomically write this ... */
-+				error = -EFAULT;
-+				goto err_handle;
-+			}
-+
- 			if (is_bad && first_bad <= dev_sector) {
- 				/* Cannot write here at all */
- 				bad_sectors -= (dev_sector - first_bad);
-@@ -4029,6 +4036,7 @@ static int raid10_set_queue_limits(struct mddev *mddev)
- 	lim.max_write_zeroes_sectors = 0;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
-+	lim.features |= BLK_FEAT_ATOMIC_WRITES_STACKED;
- 	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
- 	if (err) {
- 		queue_limits_cancel_update(mddev->gendisk->queue);
--- 
-2.31.1
+this patch is a clean-up - not a fix, it could be merged
+for v6.13, please consider it if there is still time.
 
+Thanks,
+Lorenzo
+
+> 
+> Thanks!
+> 
+> 
+> 在 2024/10/16 18:01, Lorenzo Pieralisi 写道:
+> > On Wed, Oct 16, 2024 at 05:54:58PM +0800, Zheng Zengkai wrote:
+> > > As suggested by Marc and Lorenzo, first we need to check whether the
+> > > platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+> > > de-referencing what it points at to detect the length of the platform
+> > > timer struct and then check that the length of current platform_timer
+> > > struct is also valid, i.e. the length is not zero and within gtdt_end.
+> > > Now next_platform_timer() only checks against gtdt_end for the entry of
+> > > subsequent platform timer without checking the length of it and will
+> > > not report error if the check failed and the existing check in function
+> > > acpi_gtdt_init() is also not enough.
+> > > 
+> > > Modify the for_each_platform_timer() iterator and use it combined with
+> > > a dedicated check function platform_timer_valid() to do the check
+> > > against table length (gtdt_end) for each element of platform timer
+> > > array in function acpi_gtdt_init(), making sure that both their entry
+> > > and length actually fit in the table.
+> > > 
+> > > Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > > Co-developed-by: Marc Zyngier <maz@kernel.org>
+> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > > Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> > > ---
+> > > Changes in v4:
+> > > - remove the tmp pointer to make the code more concise.
+> > > 
+> > > Changes in v3:
+> > > - based on Marc's patch and reuse the for_each_platform_timer() loop
+> > > Link to v3: https://lore.kernel.org/linux-arm-kernel/20241015152602.184108-1-zhengzengkai@huawei.com/
+> > > 
+> > > Changes in v2:
+> > > - Check against gtdt_end for both entry and len of each array element
+> > > Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
+> > > 
+> > > Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
+> > > 
+> > > Link to previous related patches:
+> > > https://lore.kernel.org/all/20241008082429.33646-1-zhengzengkai@huawei.com/
+> > > https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
+> > > ---
+> > >   drivers/acpi/arm64/gtdt.c | 29 ++++++++++++++++++++---------
+> > >   1 file changed, 20 insertions(+), 9 deletions(-)
+> > Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > 
+> > > diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> > > index c0e77c1c8e09..d7c4e1b9915b 100644
+> > > --- a/drivers/acpi/arm64/gtdt.c
+> > > +++ b/drivers/acpi/arm64/gtdt.c
+> > > @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
+> > >   static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
+> > > -static inline __init void *next_platform_timer(void *platform_timer)
+> > > +static __init bool platform_timer_valid(void *platform_timer)
+> > >   {
+> > >   	struct acpi_gtdt_header *gh = platform_timer;
+> > > -	platform_timer += gh->length;
+> > > -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
+> > > -		return platform_timer;
+> > > +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
+> > > +		platform_timer < acpi_gtdt_desc.gtdt_end &&
+> > > +		gh->length != 0 &&
+> > > +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
+> > > +}
+> > > +
+> > > +static __init void *next_platform_timer(void *platform_timer)
+> > > +{
+> > > +	struct acpi_gtdt_header *gh = platform_timer;
+> > > -	return NULL;
+> > > +	return platform_timer + gh->length;
+> > >   }
+> > >   #define for_each_platform_timer(_g)				\
+> > > -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
+> > > +	for (_g = acpi_gtdt_desc.platform_timer; platform_timer_valid(_g);\
+> > >   	     _g = next_platform_timer(_g))
+> > >   static inline bool is_timer_block(void *platform_timer)
+> > > @@ -157,6 +163,7 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+> > >   {
+> > >   	void *platform_timer;
+> > >   	struct acpi_table_gtdt *gtdt;
+> > > +	int cnt = 0;
+> > >   	gtdt = container_of(table, struct acpi_table_gtdt, header);
+> > >   	acpi_gtdt_desc.gtdt = gtdt;
+> > > @@ -176,12 +183,16 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+> > >   		return 0;
+> > >   	}
+> > > -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> > > -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+> > > +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> > > +	for_each_platform_timer(platform_timer)
+> > > +		cnt++;
+> > > +
+> > > +	if (cnt != gtdt->platform_timer_count) {
+> > > +		acpi_gtdt_desc.platform_timer = NULL;
+> > >   		pr_err(FW_BUG "invalid timer data.\n");
+> > >   		return -EINVAL;
+> > >   	}
+> > > -	acpi_gtdt_desc.platform_timer = platform_timer;
+> > > +
+> > >   	if (platform_timer_count)
+> > >   		*platform_timer_count = gtdt->platform_timer_count;
+> > > -- 
+> > > 2.20.1
+> > > 
+> > .
+> > 
 
