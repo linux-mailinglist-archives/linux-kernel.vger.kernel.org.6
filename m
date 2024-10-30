@@ -1,187 +1,265 @@
-Return-Path: <linux-kernel+bounces-388188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51D49B5BBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:33:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67C59B5BC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:33:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36281B2268B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E73283A2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B35E1D1F6F;
-	Wed, 30 Oct 2024 06:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E781D433B;
+	Wed, 30 Oct 2024 06:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aibMDmx8"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kf3J6PxE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF6D63CB;
-	Wed, 30 Oct 2024 06:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5C563CB;
+	Wed, 30 Oct 2024 06:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730270003; cv=none; b=sqoHm4p84qJbhPfRRpqYtuYvN7zqBhQ2/LBaXtCkdMeiSpnuw4Q2BVzfAUELHD3nqd0xH9YY+qkGU+yRGl9GsYM6ULSp6t9c1IKrW5m3pfhqxVbLw+8/d55wAycTkRru73L0QnRRzA5zLXhiBTO5dLFRhxScAY/DqoHj+g4Feso=
+	t=1730270010; cv=none; b=Dg0SzucxGmEID8cP3Ddwk2Jpudn4xix8Ot6f8/0h2lNMDlp+IoEWjHJlsxojPsRF2s5tCAsOCPaXA9UIrscNGSXfHUm0z/KlPGyRVF9yFd8P2TE368Ah+bxhLmyvIGK2h0QRNLfkcTzosCAxVzKUVFgJwl3x1KggP8+SnoQ4U1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730270003; c=relaxed/simple;
-	bh=JkKmcioEchHN6SSzjPu+rsMYp/BSELwDzX0MuJ3+zZo=;
-	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BOeyrSa6wafiof1m8QHCnM02YCrinWAaEZ4elZQQz2NmkRX2TEOxDevnC/L22Q8Ct+bFJhsx5X9ICJ5E1HBhLnk8Xble0eVCqR8qdTgS7YHmS9b8WUB1lDcpTTVfBb9smroh7gVkTbL87PV0GRXizHl1M/2KUjc7NPWos0324sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aibMDmx8; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a0c40849cso1025553666b.3;
-        Tue, 29 Oct 2024 23:33:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730270000; x=1730874800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:cc:to:subject:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tQB2skrqNyBBtXr9NvGq3k5U2F5Farr1AhF3+r/DnZY=;
-        b=aibMDmx8YdW19MXdaR+LgkV+trkjCxP4Nno88xv1Jfbo5t6INgQXkK3kwux7z6waCX
-         ioVi8YbuaZET0u37uIIG0FooGqu71SyBmKIqW9FN9uPWV/eADFu6sboLx56OPFj45Cxb
-         tD6Bt0HF+4o4GjljgSDoig6RDU7f1CvW/gasR4INrp2g0oFRMVLNMQPuW1oZY5VFiVlx
-         dnpTq+ScGDncDvd4zQGeB72kubddxgtnjuC1n7v3KSNqB3aJHEF1D+l1pmfvTZEZBig1
-         IwKTbmuUaFvzw/0OwxZt4YprgHTq6puYxNgHZcb7OgUmO7uB4lrsxpWMfEfkuZzpDo3w
-         EpQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730270000; x=1730874800;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:cc:to:subject:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tQB2skrqNyBBtXr9NvGq3k5U2F5Farr1AhF3+r/DnZY=;
-        b=ws/y2dZJHjYXXcByaEdS93P/lTtXWbZAH5rJ+gO7V3Feq2H4iHXVe/tD5eDL7ACx1K
-         tGceIr0lJq5OhhcRJ1VM9vhhr9Os6+JB2DrlLKsde0Ol7HgylDd9qOMP6K07lL2FA5zC
-         +0H6I5SvGYMZqZ086dlam1ucDK1REvZ761zaesVImw8KrUmI7Bg21kKTY0EiTWdUn681
-         PQkxOGsDe6N75VgrSk3n1N/2h6hRE36Odu8AhQp7uE5Qs4qeReRCygotSEzhfqQ0iucp
-         1iXzeilLVSDe+9pn6SkDHMgfpTTqrIGsQ5xzxnOz3FcEEkYo05TAnEc/ASWo95G638Sx
-         1KFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqezj/AoPg21rnYyGAR/M3VDsu5zMdI/w3dpPLvSPsyKrw7Ln5HDT+VrXbImulJOd9Hto6uN16teSrc6r2@vger.kernel.org, AJvYcCXBlA9CBUlKA4QcrFD1s9+UKzz0sq2geQI6Gmn/9q5aunpOiDox4enMHZ5Xo6uWM5Ppb17zK1cchn3bUA==@vger.kernel.org, AJvYcCXpKxaJz/Ra4XUZAVuIxqccjZ77Ay7IZp5VIaW3dfnmXgKtFJ2/ILMiKgef7S1rrKvAyGHTQgE6HEap@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO1ao4RfUC8z6AzAVjwGoC0aKEB8auwfQqxkSh4M2tCWsPkziQ
-	8yDVifxg0rQEXki3/Jk0BWjcW2IelcegpaTQGej/eHsvgW3H0Tqo
-X-Google-Smtp-Source: AGHT+IGoO/JgCl6tIFd8tMOpxidHIIxUPkp1DnQ/++FPlMXZXQ2ix6vSKLM04UkK2EC6h5bxjO2Xow==
-X-Received: by 2002:a17:906:6a0e:b0:a9a:2afc:e4da with SMTP id a640c23a62f3a-a9e3a7f433bmr177110766b.63.1730269999630;
-        Tue, 29 Oct 2024 23:33:19 -0700 (PDT)
-Received: from [10.34.27.4] ([95.183.227.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b30c7adadsm544485066b.175.2024.10.29.23.33.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 23:33:17 -0700 (PDT)
-Date: Wed, 30 Oct 2024 09:33:07 +0300
-From: Yassine Oudjana <yassine.oudjana@gmail.com>
-Subject: Re: [PATCH v6 1/8] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
- Pull pinctrl node changes from MT6795 document
-To: Rob Herring <robh@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Yassine Oudjana
-	<y.oudjana@protonmail.com>, Andy Teng <andy.teng@mediatek.com>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Message-Id: <7VO5MS.DLTH7ISEUBUE1@gmail.com>
-In-Reply-To: <CAL_JsqJ864ZM8qgqfuyKsS5H=gsVm=nOrikQ4cuObEVBJX75JQ@mail.gmail.com>
-References: <20241011120520.140318-1-y.oudjana@protonmail.com>
-	<20241011120520.140318-2-y.oudjana@protonmail.com>
-	<20241011165640.GA2475122-robh@kernel.org>
-	<2608306c-da19-4160-b0c7-dbb8935abc42@collabora.com>
-	<CAL_JsqJ864ZM8qgqfuyKsS5H=gsVm=nOrikQ4cuObEVBJX75JQ@mail.gmail.com>
-X-Mailer: geary/46.0
+	s=arc-20240116; t=1730270010; c=relaxed/simple;
+	bh=SC0Xu24Wqh43ElDcUACTlpmVLeS1VgEZ9q2pTiK0tTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lmwy4N3F1RGJc6upUleMq2q93ykz/zDukHrYtDsH+OHnSbTxq8kfsrVvO+MCVZySpIB44fiGHY58owUb3/q9tsrcDkbrTPd/KhOkH4DB7qz80g+QPECbnIxF3sMf60n3N4f6QuSdtveJCpET8r8FyUrdikTqoB42UbL6Wdp9HCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kf3J6PxE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13655C4CEE6;
+	Wed, 30 Oct 2024 06:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730270009;
+	bh=SC0Xu24Wqh43ElDcUACTlpmVLeS1VgEZ9q2pTiK0tTQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kf3J6PxEKPDD4Fz76JOnhxqOI1OG68PL1+OtmdWR48jgGSd4xHgBHoljIc2JAsvir
+	 8ALulSMNeCtgUxLpj3RFMuxF5YjUa4CsJdCCmVsFZt9fgZcbRhs8Ds9j54DvyeP+Jp
+	 FtIowtsja5piCmhoXVWCOvFYvTRrksj6Wu9FkdpoXR81Uys+1rrtQYTFhb7VEcZdHL
+	 5/8mFOvhAg94PcAOZ3mRzc2CGBm6mrUnhowYJiYSmmMEBDCoIqGA190Ur7tlze0iLA
+	 M+PDLRoO/3AumSvVPIr3eypPvsG3ggcpyPHnZINVicOJkee4aV3voJtSPYzhZqnKHD
+	 uFO6sA8QE4ycA==
+Message-ID: <419edf13-3f5e-4d30-90d8-88118f77f704@kernel.org>
+Date: Wed, 30 Oct 2024 07:33:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH tty-next v3 5/6] serial: 8250: Switch to nbcon console
+To: John Ogness <john.ogness@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Petr Mladek <pmladek@suse.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Tony Lindgren <tony@atomide.com>, Rengarajan S <rengarajan.s@microchip.com>,
+ Peter Collingbourne <pcc@google.com>, Serge Semin <fancer.lancer@gmail.com>,
+ Lino Sanfilippo <l.sanfilippo@kunbus.com>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-6-john.ogness@linutronix.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241025105728.602310-6-john.ogness@linutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
+On 25. 10. 24, 12:57, John Ogness wrote:
+> Implement the necessary callbacks to switch the 8250 console driver
+> to perform as an nbcon console.
+> 
+> Add implementations for the nbcon console callbacks (write_atomic,
+> write_thread, device_lock, device_unlock) and add CON_NBCON to the
+> initial flags.
+> 
+> All register access in the callbacks are within unsafe sections.
+> The write callbacks allow safe handover/takeover per byte and add
+> a preceding newline if they take over mid-line.
+> 
+> For the write_atomic() case, a new irq_work is used to defer modem
+> control since it may be a context that does not allow waking up
+> tasks.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> ---
+>   drivers/tty/serial/8250/8250_core.c |  35 +++++-
+>   drivers/tty/serial/8250/8250_port.c | 159 ++++++++++++++++++++++------
+>   include/linux/serial_8250.h         |   7 +-
+>   3 files changed, 164 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+> index 5f9f06911795..7184100129bd 100644
+> --- a/drivers/tty/serial/8250/8250_core.c
+> +++ b/drivers/tty/serial/8250/8250_core.c
+> @@ -388,12 +388,34 @@ void __init serial8250_register_ports(struct uart_driver *drv, struct device *de
+>   
+>   #ifdef CONFIG_SERIAL_8250_CONSOLE
+>   
+> -static void univ8250_console_write(struct console *co, const char *s,
+> -				   unsigned int count)
+> +static void univ8250_console_write_atomic(struct console *co,
 
-On Mon, Oct 14 2024 at 14:02:37 -05:00:00, Rob Herring=20
-<robh@kernel.org> wrote:
-> On Mon, Oct 14, 2024 at 3:27=E2=80=AFAM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>=20
->>  Il 11/10/24 18:56, Rob Herring ha scritto:
->>  > On Fri, Oct 11, 2024 at 03:03:46PM +0300, Yassine Oudjana wrote:
->>  >> From: Yassine Oudjana <y.oudjana@protonmail.com>
->>  >>
->>  >> mediatek,pinctrl-mt6795.yaml has different node name patterns=20
->> which match
->>  >> bindings of other MediaTek pin controllers, ref for=20
->> pinmux-node.yaml which
->>  >> has a description of the pinmux property, as well as some=20
->> additional
->>  >> descriptions for some pin configuration properties. Pull those=20
->> changes
->>  >> into mediatek,mt6779-pinctrl.yaml and adjust the example DTS to=20
->> match in
->>  >> preparation to combine the MT6795 document into it.
->>  >>
->>  >> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
->>  >> ---
->>  >>   .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 38=20
->> ++++++++++++++-----
->>  >>   1 file changed, 28 insertions(+), 10 deletions(-)
->>  >>
->>  >> diff --git=20
->> a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml=
-=20
->> b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
->>  >> index 3bbc00df5548d..352a88d7b135e 100644
->>  >> ---=20
->> a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
->>  >> +++=20
->> b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
->>  >> @@ -111,12 +111,12 @@ allOf:
->>  >>           - "#interrupt-cells"
->>  >>
->>  >>   patternProperties:
->>  >> -  '-[0-9]*$':
->>  >> +  '-pins$':
->>  >
->>  > Worst case, this could be an ABI break. Best case, it's churn for
->>  > mt6779. Is it worth unifying?
->>  >
->>  All those MediaTek pinctrl bindings are mostly the same, where only=20
->> the pin
->>  definitions in the binding header does actually change.
->>=20
->>  I think that it's worth unifying them, not only to get rid of the=20
->> duplication
->>  but mostly for consistency between all of those subnode names which=20
->> are wildly
->>  differing for no real reason... and consistency is a long time=20
->> issue with
->>  MediaTek bindings/dts in general (which is way way way better now,=20
->> but still)...
->>=20
->>  Besides - just for context and nothing else: the driver doesn't=20
->> care about
->>  the names of the subnodes, anyway... so while this is technically=20
->> an ABI break
->>  it's not really creating any functionality issue, and then,=20
->> actually, Yassine
->>  is also modifying the devicetrees to comply with his consistency=20
->> changes, so,
->>  in my own perspective, it's still acceptable.
->=20
-> Wait, I thought there were no users?
+Once 'co'.
 
-Right, When I said there were no users I was thinking of MT6779=20
-strictly, but MT6797 is included in the bindings so it counts too.=20
-mt6797.dtsi is currently the only place where these bindings are used.
+> +					  struct nbcon_write_context *wctxt)
+>   {
+>   	struct uart_8250_port *up = &serial8250_ports[co->index];
+>   
+> -	serial8250_console_write(up, s, count);
+> +	serial8250_console_write(up, wctxt, true);
+> +}
+> +
+> +static void univ8250_console_write_thread(struct console *co,
 
->=20
-> We generally only consider node names ABI when/if something or someone
-> cares. Most of the time it doesn't matter. For the pinctrl nodes, it's
-> really just a question of churn renaming a lot of nodes.
->=20
-> Ultimately, it's up to you. I only care that the implications of the
-> changes are clear in the commit msg.
+Second time co.
 
-I'll mention MT6797 in the commit message.
+> +					  struct nbcon_write_context *wctxt)
+> +{
+> +	struct uart_8250_port *up = &serial8250_ports[co->index];
+> +
+> +	serial8250_console_write(up, wctxt, false);
+> +}
+> +
+> +static void univ8250_console_device_lock(struct console *con, unsigned long *flags)
 
+And suddenly, it is 'con'.
 
+> +{
+> +	struct uart_port *up = &serial8250_ports[con->index].port;
+> +
+> +	__uart_port_lock_irqsave(up, flags);
+> +}
+> +
+> +static void univ8250_console_device_unlock(struct console *con, unsigned long flags)
+> +{
+> +	struct uart_port *up = &serial8250_ports[con->index].port;
+> +
+> +	__uart_port_unlock_irqrestore(up, flags);
+>   }
+>   
 
+...
+>   static void serial8250_console_putchar(struct uart_port *port, unsigned char ch)
+>   {
+> +	struct uart_8250_port *up = up_to_u8250p(port);
+> +
+>   	serial_port_out(port, UART_TX, ch);
+> +
+> +	if (ch == '\n')
+> +		up->console_line_ended = true;
+> +	else
+> +		up->console_line_ended = false;
+
+So simply:
+    up->console_line_ended = ch == '\n';
+?
+
+...
+> -void serial8250_console_write(struct uart_8250_port *up, const char *s,
+> -			      unsigned int count)
+> +void serial8250_console_write(struct uart_8250_port *up,
+> +			      struct nbcon_write_context *wctxt,
+> +			      bool is_atomic)
+>   {
+>   	struct uart_8250_em485 *em485 = up->em485;
+>   	struct uart_port *port = &up->port;
+> -	unsigned long flags;
+> -	unsigned int ier, use_fifo;
+> -	int locked = 1;
+> -
+> -	touch_nmi_watchdog();
+> +	unsigned int ier;
+> +	bool use_fifo;
+>   
+> -	if (oops_in_progress)
+> -		locked = uart_port_trylock_irqsave(port, &flags);
+> -	else
+> -		uart_port_lock_irqsave(port, &flags);
+> +	if (!nbcon_enter_unsafe(wctxt))
+> +		return;
+>   
+>   	/*
+> -	 *	First save the IER then disable the interrupts
+> +	 * First save IER then disable the interrupts. The special variant
+
+When you are at it:
+"First, save the IER, then"
+
+(BTW why did you remove the "the"?)
+
+> +	 * to clear IER is used because console printing may occur without
+> +	 * holding the port lock.
+>   	 */
+>   	ier = serial_port_in(port, UART_IER);
+> -	serial8250_clear_IER(up);
+> +	__serial8250_clear_IER(up);
+>   
+>   	/* check scratch reg to see if port powered off during system sleep */
+>   	if (up->canary && (up->canary != serial_port_in(port, UART_SCR))) {
+
+> @@ -3497,6 +3593,9 @@ int serial8250_console_setup(struct uart_port *port, char *options, bool probe)
+>   	if (!port->iobase && !port->membase)
+>   		return -ENODEV;
+>   
+> +	up->console_line_ended = true;
+> +	up->modem_status_work = IRQ_WORK_INIT(modem_status_handler);
+
+Looks weird ^^^.
+
+Do:
+   init_irq_work(&up->modem_status_work, modem_status_handler)
+
+thanks,
+-- 
+js
+suse labs
 
