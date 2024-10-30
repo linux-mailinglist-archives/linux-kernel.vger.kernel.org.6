@@ -1,440 +1,144 @@
-Return-Path: <linux-kernel+bounces-388603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458B39B61F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:36:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3049B61FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4321F21194
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04031C213B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553B21E5703;
-	Wed, 30 Oct 2024 11:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D62B1E570D;
+	Wed, 30 Oct 2024 11:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efIpLUtW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oc2Sa1xI"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501E41E00B6;
-	Wed, 30 Oct 2024 11:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77151D0E30
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288192; cv=none; b=e639xWooZg4uRXSolzxKvW18ESHzYHhdvZ8PA2Pe8wzS1tzdMC6M/Jc8hrah04pLD/2KqnQy/GsOF+Rh0I80nKXVJ7Cilli8fb78tztMhwchJjepMBCpCTp5FOMvyLeqnA82rfEYj1gr7sH0sgZlCsyI8qRspcbqgsOCCuuGYac=
+	t=1730288266; cv=none; b=HR/isapQ82e1jUOI3bxThEI9QjK1p3Gxx44BmVdN/7+i6ewOY8Qm2Ojjcaxbzy1zVFoDVdW7MIel/kH1c8kk1gmOBDI9GHtVFRqfqQldgv+l5GbfpBAvUO462VpcvmG4Tr0+gW58mxLchYah29NB8gJjmR9dhx681AMBxFQtEwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288192; c=relaxed/simple;
-	bh=EiYLID+rEnnp/6r5IBCq2DGwVezS7+Z7vQIbpQIMvVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T7EEhpjNXLc585gN4IJDGlVo0rQOS9KsNjwdjeOViikaAxLdDF1BfoB4Gwbcd7BqhToCCHRGpwvH6XICglgbhFIhSiI3vwb5JZvrQekuuChUyTkVNw7qs9V4A2T9rzdjSWZZK/lmAzXvkVBOalN1Fw0UF7GtD6+uSTLo0Wfazb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efIpLUtW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4383C4CEE8;
-	Wed, 30 Oct 2024 11:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730288191;
-	bh=EiYLID+rEnnp/6r5IBCq2DGwVezS7+Z7vQIbpQIMvVc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=efIpLUtWWsYY19Ie8ihxuUy70vSKSSjt7dxGOW92VaYOQhWsyaw8ySQa//wVkhM4A
-	 qnVcrezFVRC6Tg6PVYohUiR2IWgq4F/Er2HqkeCmopGM5KNoPKT8cbBGqsC4HiHPBn
-	 KGvp1qH7UBVuIPF1m5lyHluuwKXdcX6sbs5b83Z3oD/HVC7tdsmUW+HTuGKRfu1r4C
-	 1o9s3fFyJPmKZVy/pk+yP28gW2VNgxyqcAG+b1FCnD6D18qRIhrqxglwYFbCEPBJs9
-	 E30j8ECOgX+c/RuU4lQbZpqJAaIjZcBJv2aBc+fEBVZ2ibn8R0w7w3KYwp2s2X/m+4
-	 azCehS1N326gQ==
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4a47f8a9168so2164824137.0;
-        Wed, 30 Oct 2024 04:36:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBpGGQRAhuBZAnlvYGITb/gR3Xps3FSsYELfPBKKYO/J4bR5ei/vWkW4+GWQ1qDBEzVSH6QkyJh+sNFx0=@vger.kernel.org, AJvYcCUT6fm3bafuY+dyIvtQauPzEfxZiLE6hc8j8wepdy5gyzjJwFYLvQYkoL2nMX98JS4S/GPEYG++kfNT04Q=@vger.kernel.org, AJvYcCWUem70JF0m7kwcV5bSAx/mAY34YpCQyfcQHZwJxvysAovrzolzs7/phBch9v51Fsy4e9SHPxDoUEu+e3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOTL9frgzL8dWSmgUPNrnxQu+RaW4KU1GcSSLGfbVex8lDtuyl
-	mqIqIX7QW/yiMZseUodQL8cZfRoPT9s4b/hEn0yGFVbap0ZWWiY6QpdbKwSsvWViqqmoqFRkVWk
-	ZTRttC2NTG91SV2VCeRO8xf/qixE=
-X-Google-Smtp-Source: AGHT+IE/bopOPlbzo3kOBz/rvslHjk/wORt+a1z55e2PGl4vpTj7SqPpWOmXx+xmV9aA3aGKkM6gFW2L0+J3+716734=
-X-Received: by 2002:a05:6102:2aca:b0:4a7:502c:5fcc with SMTP id
- ada2fe7eead31-4a8cfb44d47mr13612992137.5.1730288190776; Wed, 30 Oct 2024
- 04:36:30 -0700 (PDT)
+	s=arc-20240116; t=1730288266; c=relaxed/simple;
+	bh=FpqEcqz5ysQty4cAtR4jPHdLSbIpX1aKXXfjG/Vd8MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUTbRtRYAWMPiCrt5vcL6j5d9OL8r2HWRbxPuu13TM5VI1Mg0iH8vpJLXmfpUdJ18EX6rgaRoJbPQ9/ucZaxyhpBV4IeAg3weNunApDweF4sct4xnpPpVxTcTYOsl0AQ3LVKM1loFWswStwKRwi7W0POVjiXwT1ZCLJILxx1JZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oc2Sa1xI; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53c779ef19cso238092e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:37:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730288261; x=1730893061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k6P6CHR2G+Z74CeVbWC/M2HCFnqe+PKSGrzretJt9j4=;
+        b=oc2Sa1xI1y5+9zYywu0qF5PQZFT60fAT1lUYQOd9GBzjhxC2rB5AQ7BYh67EZKRPO/
+         eGlIZBmgcYkMOipk4GHYyxagUX5S5rbRBz+atnUaWXljFM7yLi0Iou42p9cSjrEwTgBH
+         F/cWvK4+zOYShK0UxgPoRg2X+gnvKVdl2cnL7nbhkzhWSX4Fj2uIonER8kr4sezIotVK
+         XgkHNerptC53bwVR44wuQ+urD11UjZ3kRuo1GaZi3toKUnyylksxAIKMXabv8CDL5YHR
+         5aufBFqnZklSrotM1SIhmp+s09IWXvLkXCQh9+tcBhCfePEokiTh0pUrXHgYgcGPhO73
+         sq4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730288261; x=1730893061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k6P6CHR2G+Z74CeVbWC/M2HCFnqe+PKSGrzretJt9j4=;
+        b=or/SWbK9RZicnkhalsU1hgy7DG2qTsWSRFyHUqIa03ksF0cfljzIYqiqhhsrrPLmI3
+         gNtTNSyIfeWV5bf+JE2/Le8bO0YnnblPIEaeo1XfFNJAzaSt50iVBfUIRCZmjdPslvrf
+         jVPGXl/O7Qq0dduXFyfitb3pDU2wQTGvYYPnH5TfhqdLVNIOvWFNcGxFEtCKlks4cC7J
+         GSMxSefOJ3MRMWaNVHXoKcFf/naaAWxOK6Xwo4jkjDEhXyZScWxjuRdHZkzfOxS56lrx
+         AzAm2xYRQVlIKvhpZ0SOzzUtq9/ba5ecy1GkEMBUsqfEpqceLBuZdAX2LaVbuRpbMx6b
+         Y4+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWslxJC6nZfLwAQJ5MNWGvyX3jmeh0RgfYSJQQaqAPBcE28z7/ISda2kWG72MsvY10HK3Xf4Hqeezz+nI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzLvEQHxEJYu7j2uyjX4/de6txkXTSlHWjwjpjWofQnIWygxJG
+	klyw28xNRWiOty5Mi2K7lf2TqQcfNQsFg+4oB4Nk4PklSHPP38WB0Vqkk2DxhVU=
+X-Google-Smtp-Source: AGHT+IHyikXAyWWvRz+LDig1htJzJ4Wi027eELtxUwK8sBFMRombUryR+qpp/TW7fESgN0nBLz3WyA==
+X-Received: by 2002:a05:6512:3d14:b0:539:fc86:ce0e with SMTP id 2adb3069b0e04-53b348e58c7mr7586492e87.35.1730288260923;
+        Wed, 30 Oct 2024 04:37:40 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c763d8775sm85995e87.129.2024.10.30.04.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 04:37:40 -0700 (PDT)
+Date: Wed, 30 Oct 2024 13:37:39 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, Stephan Gerhold <stephan@gerhold.net>, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] cpuidle: qcom-spm: fix platform device release in
+ spm_cpuidle_register
+Message-ID: <ltsbd7dyvfpk6dhcl5cpwcy3gctzdt3rmiivue4uluujgxcfxb@duuo5ygohqwr>
+References: <20241030-cpuidle-qcom-spm-cleanup-v1-0-04416fcca7de@gmail.com>
+ <20241030-cpuidle-qcom-spm-cleanup-v1-2-04416fcca7de@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu> <20241021-imx214-v2-2-fbd23e99541e@apitzsch.eu>
-In-Reply-To: <20241021-imx214-v2-2-fbd23e99541e@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Wed, 30 Oct 2024 12:36:13 +0100
-X-Gmail-Original-Message-ID: <CAPybu_2eeUCPgeg9-D9DRTFgZXDRMwwrwfeW29_yr8Se50+gGA@mail.gmail.com>
-Message-ID: <CAPybu_2eeUCPgeg9-D9DRTFgZXDRMwwrwfeW29_yr8Se50+gGA@mail.gmail.com>
-Subject: Re: [PATCH v2 02/13] media: i2c: imx214: Use subdev active state
-To: git@apitzsch.eu
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030-cpuidle-qcom-spm-cleanup-v1-2-04416fcca7de@gmail.com>
 
-Hi
+On Wed, Oct 30, 2024 at 07:38:33AM +0100, Javier Carrasco wrote:
+> A reference to a device obtained via of_find_device_by_node() requires
+> explicit calls to put_device() when it is no longer required to avoid
+> leaking the resource.
+> 
+> Add the missing calls to put_device(&pdev->dev) in the success path as
+> well as in the only error path before the device is no longer required.
+> 
+> Note that the acquired device is neither assigned nor used to manage
+> additional resources, and it can be released right after using it.
 
-It looks good to me, but I would like Sakari to review it. I am not
-sure if it is ok to keep the cur_mode variable.
+Well... This raises one question: if the device is put, then its drvdata
+can go away. But at the same time the drvdata can also go away if the
+SPM device is just unbound from the driver. Granted the age of those
+platforms it's probably not worth refactoring the drivers too much.
 
-On Mon, Oct 21, 2024 at 12:14=E2=80=AFAM Andr=C3=A9 Apitzsch via B4 Relay
-<devnull+git.apitzsch.eu@kernel.org> wrote:
->
-> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
->
-> Port the imx214 sensor driver to use the subdev active state.
->
-> Move all the format configuration to the subdevice state and simplify
-> the format handling, locking and initialization.
->
-> While at it, simplify imx214_start_streaming() by removing unneeded goto
-> statements and the corresponding error label.
->
-> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 60f3692b5f0b ("cpuidle: qcom_spm: Detach state machine from main SPM handling")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
->  drivers/media/i2c/imx214.c | 159 +++++++++++++++------------------------=
-------
->  1 file changed, 53 insertions(+), 106 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 5d411452d342fdb177619cd1c9fd9650d31089bb..990fd0811904fc478c05d6405=
-4089fc2879cae94 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -59,8 +59,6 @@ struct imx214 {
->
->         struct v4l2_subdev sd;
->         struct media_pad pad;
-> -       struct v4l2_mbus_framefmt fmt;
-> -       struct v4l2_rect crop;
->
->         struct v4l2_ctrl_handler ctrls;
->         struct v4l2_ctrl *pixel_rate;
-> @@ -68,15 +66,11 @@ struct imx214 {
->         struct v4l2_ctrl *exposure;
->         struct v4l2_ctrl *unit_size;
->
-> +       const struct imx214_mode *cur_mode;
-> +
->         struct regulator_bulk_data      supplies[IMX214_NUM_SUPPLIES];
->
->         struct gpio_desc *enable_gpio;
-> -
-> -       /*
-> -        * Serialize control access, get/set format, get selection
-> -        * and start streaming.
-> -        */
-> -       struct mutex mutex;
->  };
->
->  struct reg_8 {
-> @@ -490,6 +484,22 @@ static int __maybe_unused imx214_power_off(struct de=
-vice *dev)
->         return 0;
->  }
->
-> +static void imx214_update_pad_format(struct imx214 *imx214,
-> +                                    const struct imx214_mode *mode,
-> +                                    struct v4l2_mbus_framefmt *fmt, u32 =
-code)
-> +{
-> +       fmt->code =3D IMX214_MBUS_CODE;
-> +       fmt->width =3D mode->width;
-> +       fmt->height =3D mode->height;
-> +       fmt->field =3D V4L2_FIELD_NONE;
-> +       fmt->colorspace =3D V4L2_COLORSPACE_SRGB;
-> +       fmt->ycbcr_enc =3D V4L2_MAP_YCBCR_ENC_DEFAULT(fmt->colorspace);
-> +       fmt->quantization =3D V4L2_MAP_QUANTIZATION_DEFAULT(true,
-> +                                                         fmt->colorspace=
-,
-> +                                                         fmt->ycbcr_enc)=
-;
-> +       fmt->xfer_func =3D V4L2_MAP_XFER_FUNC_DEFAULT(fmt->colorspace);
-> +}
-> +
->  static int imx214_enum_mbus_code(struct v4l2_subdev *sd,
->                                  struct v4l2_subdev_state *sd_state,
->                                  struct v4l2_subdev_mbus_code_enum *code)
-> @@ -549,52 +559,6 @@ static const struct v4l2_subdev_core_ops imx214_core=
-_ops =3D {
->  #endif
->  };
->
-> -static struct v4l2_mbus_framefmt *
-> -__imx214_get_pad_format(struct imx214 *imx214,
-> -                       struct v4l2_subdev_state *sd_state,
-> -                       unsigned int pad,
-> -                       enum v4l2_subdev_format_whence which)
-> -{
-> -       switch (which) {
-> -       case V4L2_SUBDEV_FORMAT_TRY:
-> -               return v4l2_subdev_state_get_format(sd_state, pad);
-> -       case V4L2_SUBDEV_FORMAT_ACTIVE:
-> -               return &imx214->fmt;
-> -       default:
-> -               return NULL;
-> -       }
-> -}
-> -
-> -static int imx214_get_format(struct v4l2_subdev *sd,
-> -                            struct v4l2_subdev_state *sd_state,
-> -                            struct v4l2_subdev_format *format)
-> -{
-> -       struct imx214 *imx214 =3D to_imx214(sd);
-> -
-> -       mutex_lock(&imx214->mutex);
-> -       format->format =3D *__imx214_get_pad_format(imx214, sd_state,
-> -                                                 format->pad,
-> -                                                 format->which);
-> -       mutex_unlock(&imx214->mutex);
-> -
-> -       return 0;
-> -}
-> -
-> -static struct v4l2_rect *
-> -__imx214_get_pad_crop(struct imx214 *imx214,
-> -                     struct v4l2_subdev_state *sd_state,
-> -                     unsigned int pad, enum v4l2_subdev_format_whence wh=
-ich)
-> -{
-> -       switch (which) {
-> -       case V4L2_SUBDEV_FORMAT_TRY:
-> -               return v4l2_subdev_state_get_crop(sd_state, pad);
-> -       case V4L2_SUBDEV_FORMAT_ACTIVE:
-> -               return &imx214->crop;
-> -       default:
-> -               return NULL;
-> -       }
-> -}
-> -
->  static int imx214_set_format(struct v4l2_subdev *sd,
->                              struct v4l2_subdev_state *sd_state,
->                              struct v4l2_subdev_format *format)
-> @@ -604,34 +568,25 @@ static int imx214_set_format(struct v4l2_subdev *sd=
-,
->         struct v4l2_rect *__crop;
->         const struct imx214_mode *mode;
->
-> -       mutex_lock(&imx214->mutex);
-> -
-> -       __crop =3D __imx214_get_pad_crop(imx214, sd_state, format->pad,
-> -                                      format->which);
-> -
->         mode =3D v4l2_find_nearest_size(imx214_modes,
->                                       ARRAY_SIZE(imx214_modes), width, he=
-ight,
->                                       format->format.width,
->                                       format->format.height);
->
-> -       __crop->width =3D mode->width;
-> -       __crop->height =3D mode->height;
-> +       imx214_update_pad_format(imx214, mode, &format->format, format->f=
-ormat.code);
-> +       __format =3D v4l2_subdev_state_get_format(sd_state, 0);
->
-> -       __format =3D __imx214_get_pad_format(imx214, sd_state, format->pa=
-d,
-> -                                          format->which);
-> -       __format->width =3D __crop->width;
-> -       __format->height =3D __crop->height;
-> -       __format->code =3D IMX214_MBUS_CODE;
-> -       __format->field =3D V4L2_FIELD_NONE;
-> -       __format->colorspace =3D V4L2_COLORSPACE_SRGB;
-> -       __format->ycbcr_enc =3D V4L2_MAP_YCBCR_ENC_DEFAULT(__format->colo=
-rspace);
-> -       __format->quantization =3D V4L2_MAP_QUANTIZATION_DEFAULT(true,
-> -                               __format->colorspace, __format->ycbcr_enc=
-);
-> -       __format->xfer_func =3D V4L2_MAP_XFER_FUNC_DEFAULT(__format->colo=
-rspace);
-> +       if (imx214->cur_mode =3D=3D mode && __format->code =3D=3D format-=
->format.code)
-> +               return 0;
->
+>  drivers/cpuidle/cpuidle-qcom-spm.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-qcom-spm.c b/drivers/cpuidle/cpuidle-qcom-spm.c
+> index c9ab49b310fd..601aa81ffff3 100644
+> --- a/drivers/cpuidle/cpuidle-qcom-spm.c
+> +++ b/drivers/cpuidle/cpuidle-qcom-spm.c
+> @@ -106,10 +106,13 @@ static int spm_cpuidle_register(struct device *cpuidle_dev, int cpu)
+>  		return -ENODEV;
+>  
+>  	data = devm_kzalloc(cpuidle_dev, sizeof(*data), GFP_KERNEL);
+> -	if (!data)
+> +	if (!data) {
+> +		put_device(&pdev->dev);
+>  		return -ENOMEM;
+> +	}
+>  
+>  	data->spm = dev_get_drvdata(&pdev->dev);
+> +	put_device(&pdev->dev);
+>  	if (!data->spm)
+>  		return -EINVAL;
+>  
+> 
+> -- 
+> 2.43.0
+> 
 
-Isnt'   if (imx214->cur_mode =3D=3D mode) enough?
-
-
-> -       format->format =3D *__format;
-> +       *__format =3D format->format;
->
-> -       mutex_unlock(&imx214->mutex);
-> +       __crop =3D v4l2_subdev_state_get_crop(sd_state, 0);
-> +       __crop->width =3D mode->width;
-> +       __crop->height =3D mode->height;
-> +
-> +       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE)
-> +               imx214->cur_mode =3D mode;
->
->         return 0;
->  }
-> @@ -640,14 +595,9 @@ static int imx214_get_selection(struct v4l2_subdev *=
-sd,
->                                 struct v4l2_subdev_state *sd_state,
->                                 struct v4l2_subdev_selection *sel)
->  {
-> -       struct imx214 *imx214 =3D to_imx214(sd);
-> -
->         switch (sel->target) {
->         case V4L2_SEL_TGT_CROP:
-> -               mutex_lock(&imx214->mutex);
-> -               sel->r =3D *__imx214_get_pad_crop(imx214, sd_state, sel->=
-pad,
-> -                                               sel->which);
-> -               mutex_unlock(&imx214->mutex);
-> +               sel->r =3D *v4l2_subdev_state_get_crop(sd_state, 0);
->                 return 0;
->
->         case V4L2_SEL_TGT_NATIVE_SIZE:
-> @@ -826,40 +776,28 @@ static int imx214_write_table(struct imx214 *imx214=
-,
->
->  static int imx214_start_streaming(struct imx214 *imx214)
->  {
-> -       const struct imx214_mode *mode;
->         int ret;
->
-> -       mutex_lock(&imx214->mutex);
->         ret =3D imx214_write_table(imx214, mode_table_common);
->         if (ret < 0) {
->                 dev_err(imx214->dev, "could not sent common table %d\n", =
-ret);
-> -               goto error;
-> +               return ret;
->         }
->
-> -       mode =3D v4l2_find_nearest_size(imx214_modes,
-> -                               ARRAY_SIZE(imx214_modes), width, height,
-> -                               imx214->fmt.width, imx214->fmt.height);
-> -       ret =3D imx214_write_table(imx214, mode->reg_table);
-> +       ret =3D imx214_write_table(imx214, imx214->cur_mode->reg_table);
->         if (ret < 0) {
->                 dev_err(imx214->dev, "could not sent mode table %d\n", re=
-t);
-> -               goto error;
-> +               return ret;
->         }
->         ret =3D __v4l2_ctrl_handler_setup(&imx214->ctrls);
->         if (ret < 0) {
->                 dev_err(imx214->dev, "could not sync v4l2 controls\n");
-> -               goto error;
-> +               return ret;
->         }
->         ret =3D regmap_write(imx214->regmap, IMX214_REG_MODE_SELECT, IMX2=
-14_MODE_STREAMING);
-> -       if (ret < 0) {
-> +       if (ret < 0)
->                 dev_err(imx214->dev, "could not sent start table %d\n", r=
-et);
-> -               goto error;
-> -       }
->
-> -       mutex_unlock(&imx214->mutex);
-> -       return 0;
-> -
-> -error:
-> -       mutex_unlock(&imx214->mutex);
->         return ret;
->  }
->
-> @@ -877,6 +815,7 @@ static int imx214_stop_streaming(struct imx214 *imx21=
-4)
->  static int imx214_s_stream(struct v4l2_subdev *subdev, int enable)
->  {
->         struct imx214 *imx214 =3D to_imx214(subdev);
-> +       struct v4l2_subdev_state *state;
->         int ret;
->
->         if (enable) {
-> @@ -884,7 +823,9 @@ static int imx214_s_stream(struct v4l2_subdev *subdev=
-, int enable)
->                 if (ret < 0)
->                         return ret;
->
-> +               state =3D v4l2_subdev_lock_and_get_active_state(subdev);
->                 ret =3D imx214_start_streaming(imx214);
-> +               v4l2_subdev_unlock_state(state);
->                 if (ret < 0)
->                         goto err_rpm_put;
->         } else {
-> @@ -948,7 +889,7 @@ static const struct v4l2_subdev_pad_ops imx214_subdev=
-_pad_ops =3D {
->         .enum_mbus_code =3D imx214_enum_mbus_code,
->         .enum_frame_size =3D imx214_enum_frame_size,
->         .enum_frame_interval =3D imx214_enum_frame_interval,
-> -       .get_fmt =3D imx214_get_format,
-> +       .get_fmt =3D v4l2_subdev_get_fmt,
->         .set_fmt =3D imx214_set_format,
->         .get_selection =3D imx214_get_selection,
->         .get_frame_interval =3D imx214_get_frame_interval,
-> @@ -1079,13 +1020,13 @@ static int imx214_probe(struct i2c_client *client=
-)
->         pm_runtime_enable(imx214->dev);
->         pm_runtime_idle(imx214->dev);
->
-> +       /* Set default mode to max resolution */
-> +       imx214->cur_mode =3D &imx214_modes[0];
-> +
->         ret =3D imx214_ctrls_init(imx214);
->         if (ret < 0)
->                 goto error_power_off;
->
-> -       mutex_init(&imx214->mutex);
-> -       imx214->ctrls.lock =3D &imx214->mutex;
-> -
->         imx214->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
->         imx214->pad.flags =3D MEDIA_PAD_FL_SOURCE;
->         imx214->sd.dev =3D &client->dev;
-> @@ -1097,20 +1038,27 @@ static int imx214_probe(struct i2c_client *client=
-)
->                 goto free_ctrl;
->         }
->
-> -       imx214_entity_init_state(&imx214->sd, NULL);
-> +       imx214->sd.state_lock =3D imx214->ctrls.lock;
-> +       ret =3D v4l2_subdev_init_finalize(&imx214->sd);
-> +       if (ret < 0) {
-> +               dev_err(dev, "subdev init error: %d\n", ret);
-> +               goto free_entity;
-> +       }
->
->         ret =3D v4l2_async_register_subdev_sensor(&imx214->sd);
->         if (ret < 0) {
->                 dev_err(dev, "could not register v4l2 device\n");
-> -               goto free_entity;
-> +               goto error_subdev_cleanup;
->         }
->
->         return 0;
->
-> +error_subdev_cleanup:
-> +       v4l2_subdev_cleanup(&imx214->sd);
-> +
->  free_entity:
->         media_entity_cleanup(&imx214->sd.entity);
->  free_ctrl:
-> -       mutex_destroy(&imx214->mutex);
->         v4l2_ctrl_handler_free(&imx214->ctrls);
->  error_power_off:
->         pm_runtime_disable(imx214->dev);
-> @@ -1125,13 +1073,12 @@ static void imx214_remove(struct i2c_client *clie=
-nt)
->         struct imx214 *imx214 =3D to_imx214(sd);
->
->         v4l2_async_unregister_subdev(&imx214->sd);
-> +       v4l2_subdev_cleanup(sd);
->         media_entity_cleanup(&imx214->sd.entity);
->         v4l2_ctrl_handler_free(&imx214->ctrls);
->
->         pm_runtime_disable(&client->dev);
->         pm_runtime_set_suspended(&client->dev);
-> -
-> -       mutex_destroy(&imx214->mutex);
->  }
->
->  static const struct of_device_id imx214_of_match[] =3D {
->
-> --
-> 2.47.0
->
->
+-- 
+With best wishes
+Dmitry
 
