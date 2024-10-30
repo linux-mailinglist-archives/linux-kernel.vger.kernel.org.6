@@ -1,192 +1,90 @@
-Return-Path: <linux-kernel+bounces-388524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82CC9B60BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:00:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C467E9B60BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680511F22DD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BE128207A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B0C1E47BD;
-	Wed, 30 Oct 2024 11:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1379A1E285C;
+	Wed, 30 Oct 2024 11:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ym7TTSkM"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Dgi1j5mU"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA26E1E3DFD;
-	Wed, 30 Oct 2024 11:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1A374F1
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286007; cv=none; b=Amf+tgOG3NNhiDVY4OOrpZUxWfIE1tg/elZbNqHRZrEs00F5AZx/+mdnzNHDK1AC8053mHLDYsMVIAZ5iR4QPcZr1uGQyqzInn5HZfur1Rgmc+6oYpXUcIAXkrlnpi3sVaz9cjf4p1B+Ho5YSbYJLeIOO9gnqiRzV5JHQofkVMQ=
+	t=1730286067; cv=none; b=cXm/UwSehTgnjYf6tg3zNUMlJRqR/LlCGBy0nKQ6xnVdqCa1LWLYnLCSigxqARjmkEe3U9fU9p9HY9dsRuBGRtrkQZTyhWrpMerxGXJ675Ugj8QmmZ8LKcdKF0LoX8Fim6HIA+EBIufNWHDdsvOqWZweV9tpl2kYuI1uVkM2gSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286007; c=relaxed/simple;
-	bh=OakBX+RLezysbRjHVFoqGAN0kilo4WleR6cnN3iJ4ds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OzE87LgGkWFDiK6uIx/IX74HINAps8uvXmvCQlfdqyyYKkS24GKeRHQyN3O26PzOukRMN+8PoyDmJg7L48piGFwrv7SvpmRw/mDyr7n2YcG/W651VdgCWiDFmB70SMog1F6ggXR6GkLXUErcrOlsDNyiDtByrjnq6Ip4JnTGJ48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ym7TTSkM; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UAxsum113792;
-	Wed, 30 Oct 2024 05:59:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730285995;
-	bh=l63k3Jhw1oNpvbtOumlKeE3VOY2fol/XMJbv2YlVDLs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ym7TTSkMK7JCdrWlrrpPLD0WKp0NFl57xFlQXOUtAkwRcDdZvRr9lN7eW74MMzpQK
-	 p04sGadWJe5qkJs62O7JE3NB7koWoUPWapfP32SYMUVIzjvU6LPf1y8vj13+0xRt1F
-	 8bv9VPBPBvqOi+GD21SC5v0zMQWyFmJMmjUDlBbk=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49UAxs5R012788
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 30 Oct 2024 05:59:54 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
- Oct 2024 05:59:54 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 30 Oct 2024 05:59:54 -0500
-Received: from [10.250.202.81] ([10.250.202.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UAxp7h068380;
-	Wed, 30 Oct 2024 05:59:51 -0500
-Message-ID: <8024aa1c-5bd1-40d8-b0c3-14b5fcd992e2@ti.com>
-Date: Wed, 30 Oct 2024 12:59:50 +0200
+	s=arc-20240116; t=1730286067; c=relaxed/simple;
+	bh=FdqQgkr6nyj5UIrSkVF1FPhTvx2Ly5K1TjMARDT8dtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WayolVvKBr2/eX3prvByOSwxp2Bp4W/+K17r6lw63fk/8jcsPIczPAfageGroca+Qm5gQA6e9St02ewLFPKRE5BUcdU3u9NqBExdRVL3q04lzbwoQsxDdzcDs6zKn0yZz5kFxyRU20T42FGuZbvJmnW/7E0B7DcKeZEcbt0lYyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Dgi1j5mU; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dro8xWc27MCENjI9Eb4iLkZ+EZf2BtDA/T4dTqKV1oQ=; b=Dgi1j5mUIc6SAPmt1FmNEGw0Uj
+	JiNl9PkPCPAmN1G/PB3XO/svCGSUkH2oO4iYCH5eMKg+JQXKEvNB2wsJAts9wDI4L5W+IyQHCr8WS
+	eWT1Yu3vUlxHKZi77uxCwfTJhyft5RpHHZJa1M7rPkHqS7fysC0ghzGRmU573CK1pAQfEELXLb/Al
+	cwAw7YoNrBFkivxvJ/dQYzoOO3tUAdn13uuKAqooWTQoJ0CGOGisSRc2nk/8ky/oc7W2fLQa9tqSj
+	Boo2ZLhrD6BryBWYPnMQLTfX/6kyyMX7aucFCSRp26M3PnyLNYEWBQHDOY5uN6+3CV69cQ58JQwCa
+	Dtrf40tg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t66Rc-0000000AEOV-357N;
+	Wed, 30 Oct 2024 11:00:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 62073300ABE; Wed, 30 Oct 2024 12:00:56 +0100 (CET)
+Date: Wed, 30 Oct 2024 12:00:56 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tianchen Ding <dtcccc@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [RFC PATCH 2/2] sched/eevdf: Introduce a cgroup interface for
+ slice
+Message-ID: <20241030110056.GL14555@noisy.programming.kicks-ass.net>
+References: <20241028063313.8039-1-dtcccc@linux.alibaba.com>
+ <20241028063313.8039-3-dtcccc@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/17] dt-bindings: net: wireless: cc33xx: Add
- ti,cc33xx.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20241029172354.4027886-1-michael.nemanov@ti.com>
- <20241029172354.4027886-2-michael.nemanov@ti.com>
- <936b19eb-cde7-4be8-98cf-e60e32b335cd@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <936b19eb-cde7-4be8-98cf-e60e32b335cd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028063313.8039-3-dtcccc@linux.alibaba.com>
 
-On 10/29/2024 7:28 PM, Krzysztof Kozlowski wrote:
-> On 29/10/2024 18:23, Michael Nemanov wrote:
->> Add device-tree bindings for the CC33xx family.
->>
->> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
->> ---
->>   .../bindings/net/wireless/ti,cc33xx.yaml      | 59 +++++++++++++++++++
->>   1 file changed, 59 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
->> new file mode 100644
->> index 000000000000..12a0a2f52f44
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
->> @@ -0,0 +1,59 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/net/wireless/ti,cc33xx.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Texas Instruments CC33xx Wireless LAN Controller
->> +
->> +maintainers:
->> +  - Michael Nemanov <michael.nemanov@ti.com>
->> +
->> +description:
->> +  The CC33xx is a family of IEEE 802.11ax chips from Texas Instruments.
->> +  These chips must be connected via SDIO and support in-band / out-of-band IRQ.
->> +
->> +properties:
->> +  $nodename:
->> +    pattern: "^wifi@2"
+On Mon, Oct 28, 2024 at 02:33:13PM +0800, Tianchen Ding wrote:
+> Introduce "cpu.fair_slice" for cgroup v2 and "cpu.fair_slice_us" for v1
+> according to their name styles. The unit is always microseconds.
 > 
-> This wasn't here, please drop.
- >
-
-In the previous patch you noted there was a mismatch between the reg 
-address in the schema (const: 2) and the used in the example (wifi@1). 
-The dt_binding_check did not flag this because SDIO is not a simple bus. 
-Using this regex seemed like a good alternative. Still drop it?
-
+> A cgroup with shorter slice can preempt others more easily. This could be
+> useful in container scenarios.
 > 
->> +
->> +  compatible:
->> +    oneOf:
-> 
-> Why oneOf appeared? Do you plan to grow it? >
->> +      - items:
->> +          - enum:
->> +              - ti,cc3300
->> +              - ti,cc3301
->> +              - ti,cc3350
->> +              - ti,cc3351
->> +          - const: ti,cc33xx
-> 
-> And how cc33xx could appear? That's a no. Generic compatibles are not
-> allowed. Please do not introduce some completely different changes than
-> asked for.
-> 
-> Your changelog does not explain these three. "Fixed compatibility" is
-> way too vague, especially that you do not fix anything here.
-> 
+> By default, cpu.fair_slice is 0, which means the slice of se is
+> calculated by min_slice from its cfs_rq. If cpu.fair_slice is set, it
+> will overwrite se->slice with the customized value.
 
-I was trying to address the feedback from previous patch. You said:
+So I'm not sure I like to expose this, like this.
 
->>>> +static const struct of_device_id cc33xx_sdio_of_match_table[] = {
->>>> +	{ .compatible = "ti,cc3300", .data = &cc33xx_data },
->>>> +	{ .compatible = "ti,cc3301", .data = &cc33xx_data },
->>>> +	{ .compatible = "ti,cc3350", .data = &cc33xx_data },
->>>> +	{ .compatible = "ti,cc3351", .data = &cc33xx_data },
->>>> +	{ }
->>>> +};
->>>
->>>
->>> Eh? What happened here? So devices are compatibles thus make them
->>> compatible in the bindings.
->>>
->>
->> I thought this is the right way to do it (originally taken from [1]).
->> How can I solve it via DT bindings?
-> 
-> It's all over the bindings (also example-schema). Use fallback and oneOf.
-> 
-
-Looking at [2] and [3] as an example I tried to do the same (make cc33xx 
-driver compatible with all chip variants).
-How should have I done it?
-
-Regards,
-Michael.
-
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/wireless/ti/wlcore/sdio.c#n204
-
-[2] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-
-[3] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/watchdog/qcom-wdt.c
+The thing is, this is really specific to the way we schedule the cgroup
+mess, fully hierarchical. If you want to collapse all this, like one of
+those bpf schedulers does, then you cannot do this.
 
