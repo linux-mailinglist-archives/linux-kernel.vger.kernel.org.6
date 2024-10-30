@@ -1,208 +1,96 @@
-Return-Path: <linux-kernel+bounces-388442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790D19B5FBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:10:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B809B5FBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86E0B2189E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A042A1F21FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD341E260E;
-	Wed, 30 Oct 2024 10:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PFUL8SIi"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444E31E260C;
+	Wed, 30 Oct 2024 10:10:43 +0000 (UTC)
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C92194151;
-	Wed, 30 Oct 2024 10:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0300194151
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730283033; cv=none; b=ipqDLLq7M0VH4UVmHJf6+5CGJ24gom2I3YCGDWy35ivugt2GLaXS90K1ie1+Cv1IkiQXAJZ42JoHr9EAS/1AJUiWSMQ0acUJupu8kgg148+pvRIS9++nKqCKLCT+7tEonkE+nfH34C3RVb+h3/Bd3WB5OIegWv49dIqVanlYiY8=
+	t=1730283042; cv=none; b=frrvVlhdiFI2hly3rDAy3Zzd7DYzBcp7t3mKAujPWNC+xlWMOvcNitKNArGzAXSkMwrNscrtpsvSV/oRmYK3G4OwR2GKig6SKOEwUizyD7vM9kDCyVcdVRQDu+vguUJaczxHszpf8rUneWOmgsimsofmI/jEJub47zyaImaMleg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730283033; c=relaxed/simple;
-	bh=i4GE77iCf1S6gY67Vn5TV97o355YitLy44ad9O0SH2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTcCbqCL6UWVefUOM/ylye21GgWrb5wWWQz0iiqeAT38XBtBMhB506QylXJTz5U+dz/OWt/HYPwhrh+M+jJzvXTEn82fogXtNrAygCxdVbpiAnPpqdPyBlH+T7PjF71Dniw/UWxfHFG7d7dNjl/iq4ACGhBf4FFajtc985rRAgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PFUL8SIi; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C492D40E019C;
-	Wed, 30 Oct 2024 10:10:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id jfjINq8O0L2C; Wed, 30 Oct 2024 10:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730283022; bh=8Aon9BgNC50dX50N7nMgOjmUoYAVReOI8W6mo7U0dCY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PFUL8SIic5GaUicFyA5suH7Yn3zXh5JAfuLtkquvjXXD0iYbdRcEp1mgOXmq40+KF
-	 TGfSgzEg2MscpcygdivT1p802Ep8RUFG65sASdcM6v5Bq/KJhhSfjlFsYF4hC0HTMM
-	 peopAU27ffbUIVG8t154Dx73EIbV7zy70B/4yhYCtI/9wW+J3l87lkqxrRCjHd2yWs
-	 xAH4HFEHgMngqcwEqVLwagHmgNCyIGOhbvHnB/tH2PWqgvYx186ff9tuFyZbNL2GR5
-	 kd5EIq16gLZkyfHdF+j10nJzzNHnmZFWzAE+4iGAaAFdhRNIT/mHhU76i/nvL7U7Bk
-	 +2zyF2syCbcsMOxfHtP32oGsgjnNvRFJpAY3f+rXjMWWpzg2nYdf6t3oL/545/VoUd
-	 JDkHiCq+vetsVJewDqdJxx+JWmgafumcVAQREBGDEQPkIp8sopq4ICWRqIlgvJMvGo
-	 NpaUnV5G0oBS1/2CHlHI3lMKSlK/as0bMXeOiK0XjpC3X0+tDBaMFqSzm++JTyfhD7
-	 nINH8PPPDVEryytrw5Xr9ETCj61KpPot+Afosh63QsAPsajtAfbikht39yM+5FZt0M
-	 /Ry1HZalAM69I1U8Rq6CnLVm2kU92XeWh0oXC9vV+pxU7ZG+tjZTJ+blDSFCgUaGy/
-	 4sUCaSs5AinjPj4UJtJicQeg=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E9E9740E0191;
-	Wed, 30 Oct 2024 10:10:10 +0000 (UTC)
-Date: Wed, 30 Oct 2024 11:10:05 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v14 01/13] x86/sev: Carve out and export SNP guest
- messaging init routines
-Message-ID: <20241030101005.GAZyIF_bKVpe9gpHrn@fat_crate.local>
-References: <20241028053431.3439593-1-nikunj@amd.com>
- <20241028053431.3439593-2-nikunj@amd.com>
- <20241029174357.GWZyEe3VwJr3xYHXoT@fat_crate.local>
- <733831ed-8622-de7d-a2e6-8f6c9ad4bc96@amd.com>
+	s=arc-20240116; t=1730283042; c=relaxed/simple;
+	bh=0fmuAQK2yswMKUsQDSChND7wQl3uHaskzph+iucktoM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u+G/E5L4Vhka23Np5aBrhJcCinX4rhYQKFUJEHYACd2mfhQq0uFf+kWD5/5DBcw6lBlmVTtJVrkptk3q8lFW83kx7TO95cGaCKSp1NFjl6EHUlmJ6CtAL6QetNtSPKf9GiWV1r/mVp6Q1E5zq/Qs2IEpt5wyC5Q8P6M9enYmwQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4XdjYh2L04z4x4pt
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:10:32 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ceb8:3fda:3601:820f])
+	by laurent.telenet-ops.be with cmsmtp
+	id WaAP2D00D4BbGPD01aAPUS; Wed, 30 Oct 2024 11:10:25 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t65eP-005zQD-1o;
+	Wed, 30 Oct 2024 11:10:23 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t65eh-006Qar-Di;
+	Wed, 30 Oct 2024 11:10:23 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Kiran Patil <kiran.patil@intel.com>,
+	Martin Habets <mhabets@solarflare.com>
+Cc: linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] driver core: auxiliary bus: Spelling s/pecific/specific/
+Date: Wed, 30 Oct 2024 11:10:22 +0100
+Message-Id: <f232a09c377cbe11c81b4ab69d4e7bf016e746c8.1730282860.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <733831ed-8622-de7d-a2e6-8f6c9ad4bc96@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 10:14:45AM +0530, Nikunj A. Dadhania wrote:
-> >> Carve out common SNP guest messaging buffer allocations and message
-> >> initialization routines to core/sev.c and export them. These newly added
-> >> APIs set up the SNP message context (snp_msg_desc), which contains all the
-> >> necessary details for sending SNP guest messages.
-> 
-> This explains how it is being done, which I think is useful. However, if you
-> think otherwise, I can remove.
+Fix a misspelling of the word "specific".
 
-Useful why? It should be visible from the diff itself. Why do you have to
-explain your diff?
+Fixes: 7de3697e9cbd4bd3 ("Add auxiliary bus support")
+Fixes: e1b5186810cc7d4e ("Documentation/auxiliary_bus: Move the text into the code")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+The documentation was moved and reformatted, so I used two Fixes tags.
+---
+ drivers/base/auxiliary.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you feel the need to have to explain it, then *maybe* it needs splitting or
-simplifying or whatnot.
-
-> >> At present, the SEV guest platform data structure is used to pass the
-> >> secrets page physical address to SEV guest driver. Since the secrets page
-> >> address is locally available to the initialization routine, use the cached
-> >> address. Remove the unused SEV guest platform data structure.
-> 
-> In the above paragraph I tried to explains why I have removed
-> sev_guest_platform_data.
-
-Probably ok.
-
-> People have different styles of writing, as long as we are capturing the
-> required information, IMHO, it should be fine.
-
-"... as long we are not writing what the patch does - which is visible from
-the diff itself, it should be fine." is what I would say.
-
-> Let me try to repharse the commit message again:
-> 
-> x86/sev: Carve out and export SNP guest messaging init routines
-> 
-> Currently, the sev-guest driver is the only user of SNP guest messaging.
-> All routines for initializing SNP guest messaging are implemented within
-> the sev-guest driver and are not available during early boot. In
-> prepratation for adding Secure TSC guest support, carve out APIs to
-> allocate and initialize guest messaging descriptor context and make it part
-> of coco/sev/core.c. As there is no user of sev_guest_platform_data anymore,
-> remove the structure.
-
-Yap, better.
-
-Btw, you can even use AI for help rephrasing it:
-
--> Please simpliify this code change description by concentrating only on why
-the change is being done:
-
-<insert commit message here>
-
-ChatGPT: "This change is being made to allow the Secure TSC guest feature to
-access SNP guest messaging routines earlier in the boot process. By moving
-common SNP message initialization routines to a central location (core/sev.c)
-and exporting them, these routines become accessible for early boot needs.
-Additionally, since the secrets page address is now accessible within the
-initialization, the redundant SEV guest platform data structure has been
-removed."
-
--> Do the same as the above but write it in imperative tone
-
-ChatGPT: "Enable Secure TSC guest support by moving the SNP guest messaging
-routines to core/sev.c, making them available during early boot. Export these
-routines to set up the SNP message context (snp_msg_desc) needed for guest
-messaging. Use the cached secrets page address in the initialization routine,
-and remove the unused SEV guest platform data structure."
-
-I think that's a good help to use at least as a starter for the final commit
-message.
-
-To sum up: I'd like the commit message to contain enough information to know
-*why* a change has been done. No rambling about what the patch does.
-
-> > ld: vmlinux.o: in function `snp_init_crypto':
-> > /home/boris/kernel/2nd/linux/arch/x86/coco/sev/core.c:2700:(.text+0x1fa3): undefined reference to `aesgcm_expandkey'
-> > make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
-> > make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1166: vmlinux] Error 2
-> > make[1]: *** Waiting for unfinished jobs....
-> > make: *** [Makefile:224: __sub-make] Error 2
-> > 
-> > I'll stop here until you fix those.
-> 
-> Sorry for this, I had sev-guest driver as in-built module in my config, so wasn't
-> able to catch this in my per patch build script. The corresponding fix is in the 
-> following patch[1], during patch juggling it had landed there:
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 2852fcd82cbd..6426b6d469a4 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1556,6 +1556,7 @@ config AMD_MEM_ENCRYPT
->  	select ARCH_HAS_CC_PLATFORM
->  	select X86_MEM_ENCRYPT
->  	select UNACCEPTED_MEMORY
-> +	select CRYPTO_LIB_AESGCM
-
-Right, that is debatable. AMD memory encryption support cannot really depend
-on a crypto library - you can get it without it too - just won't get secure
-TSC but for simplicity's sake let's leave it that way for now.
-
-Because looking at this:
-
-config AMD_MEM_ENCRYPT          
-        bool "AMD Secure Memory Encryption (SME) support"
-        depends on X86_64 && CPU_SUP_AMD
-        depends on EFI_STUB 
-        select DMA_COHERENT_POOL
-        select ARCH_USE_MEMREMAP_PROT
-        select INSTRUCTION_DECODER
-        select ARCH_HAS_CC_PLATFORM
-        select X86_MEM_ENCRYPT
-        select UNACCEPTED_MEMORY
-        select CRYPTO_LIB_AESGCM
-
-that symbol is pulling in a lot of other stuff. I guess it is ok for now...
-
+diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+index 69b7c93613d6dc00..afa4df4c5a3f371b 100644
+--- a/drivers/base/auxiliary.c
++++ b/drivers/base/auxiliary.c
+@@ -92,7 +92,7 @@
+  * Auxiliary devices are created and registered by a subsystem-level core
+  * device that needs to break up its functionality into smaller fragments. One
+  * way to extend the scope of an auxiliary_device is to encapsulate it within a
+- * domain- pecific structure defined by the parent device. This structure
++ * domain-specific structure defined by the parent device. This structure
+  * contains the auxiliary_device and any associated shared data/callbacks
+  * needed to establish the connection with the parent.
+  *
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
