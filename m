@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-388838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797D09B651C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:02:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B23A9B651D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5E728197B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 905171F214FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6945C1EE022;
-	Wed, 30 Oct 2024 14:02:45 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071381EBFFD;
+	Wed, 30 Oct 2024 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FAkTq0oa"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062AC1E47BC;
-	Wed, 30 Oct 2024 14:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493B23D551
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730296965; cv=none; b=nfPNEljOapPHhLVZWQenusBf0+Ik9K07WpTuxILtMjQcTZtV+Cnw7V0rpbvO1bwasaJ0Q9PfuMP6vyJKbijHs9SYhzfqzSPICFNBhJiwOwNbYAN9hkAEX2XIyNJMc7nhHy3DOC5OE855hPN31KpmRpiOYXoyRodCEx0LxGpLALQ=
+	t=1730296988; cv=none; b=tWiw8sgaRkXVT6+4eottEiXb9AmYNYHHeKCOVDNzCrPmeTGcs5GnWONTXup8S5MuMTk6/ySoVDmOW5bmLf+Q65aTAEFd/COl3Y/lNQS138kVH9VbJYvO85hu9FlhKA6Uod5k+sDdpymN74cUGoX0VZxlH/oKhxltlqcCH2GXXEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730296965; c=relaxed/simple;
-	bh=IRPUtmjRRRWTQls7HsvP5G4WzpSHfHn5+ycAibYhoto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B9Y0FcP6fUGU9xJnjsfVJvV/YPmmbnzA8vegKSPFu+UF4T9rZagf9hE72jEal0NHTdBqSFF1UTpQhQVKOR3LfaxCxRnes4hD9stoicxokKbcQHule9vZMlwGc3b+uJ+DlUkzZC4IOEEj9jtq0l793RuSDlS8BDVVX5nIebmnjF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86e9db75b9so991194366b.1;
-        Wed, 30 Oct 2024 07:02:42 -0700 (PDT)
+	s=arc-20240116; t=1730296988; c=relaxed/simple;
+	bh=CikZL7+VJHJ2NMJ0lkb2V1oVcQwFRqrWFUDrGEUN8Z0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZcnO1UVn8O7WZLwPyT0BSNYHO7IlanzjIzC8II/eLIDfWWfpH4Jn3vyBg3ofwgIIBu61YqVpA9mzOaL3pE6Unbw9lNiuAh9X14qmT3aAmxSSBQ5W5CBEO4IzFBAvsZEEv1EsnK7yqSX1WFL4ABBH+vJgxPHcKK6sE/Kdmswlca4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FAkTq0oa; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-431695fa98bso62135875e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:03:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730296984; x=1730901784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CPMzcHtmzvW9kfj5S4miVCTesK0tTrVqiF4YdM0sb3A=;
+        b=FAkTq0oasPCMuaIuJotPtQ0toLMYs4SvXU5sdlY6LLwBsxW872kKXXQ4q0qeQgIcXY
+         FzOxySPKDh9UVwQ07orjcOhqPQzkLlRcGvkNaUskcRhUxXw3YwNk3rLfEOba3IQqCacy
+         BBq2amefoOJET8LjisUTrfzFlHtCGnkwzcHeVTCYZdp9gyyLosTGqArzD547EBT9XZDm
+         yBbRKmFeVU87muJln/xp7Mqct4fYQezDg6swFruW0kJGAe0vfawTJ3m5icxOMkl5OdWD
+         9Qi5DSKzjcGHFUf8LJnu6UI0gUdY07i7gb6vaMtATYGcF2Fm5q4PjtGl6DKnSH2Kql9B
+         +Wtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730296961; x=1730901761;
+        d=1e100.net; s=20230601; t=1730296984; x=1730901784;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YGmFgroH7JaHubQUsglUYJKecaiUoqcN47UqSxEZ5cA=;
-        b=Ii/Lb9f8sxMj5IvgXgoFG4asxZUEZDwUP8OQWuL7CMpUdS9ujQPA5B2HJetxBqO/Zv
-         DBhwWmJo5Whqjp5wgCvn2Q69Qtume1i/RUuLd7dRpa1XZGYqlhWlZJ0CORTr74PYRKL9
-         52z9s9ifRj4ZJOUuys9DQ6UbzuT549rmZcUsc3QFSf3e8BIm9BHpn+lAGJ04p3O6LO1A
-         3C+MjRw5ytNDMgTzWLLW1tyO4bHIok0ax/b2OQJarBImGFxcDyZmqib+aLYFXUEpCV93
-         3LJsoKq5sG2k2owixHnnBSKrKsN3cPg7DMKCJY0NIUhZhXwU7ijCRF0kVaEdK0gij0a0
-         H0bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXP/XDRqWv60bxRfu3fb8jLUsmvNgwkBVWLamShhm4OYWFPnhFaiR1iKiwUDMJi0PIOCE/jmf6/8UvFTqo=@vger.kernel.org, AJvYcCXmmvPqSTedMCqdBHReigCmc3zqugw5mpRVGBfnqt5Oy9uqQm945FfgkjFzxyzZrCW3HiPJQTCz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwymHST+tdoBGrKdyiXmU2OxYo5WS+yp8h1HzTzMlteUhg+eQPB
-	TVVHPJnNDvUp/LCbTBk9o6pQp1GAQj/9k+OGyi5czKi+EjTr7vxa
-X-Google-Smtp-Source: AGHT+IFLheYALN0Q+h1qZVZyYyfGjs+k4p0+ar7AYK/KpTy5X6XvSJSR4jgGNXMTmFntMr8STHZ0mQ==
-X-Received: by 2002:a17:907:7f8b:b0:a99:499f:4cb7 with SMTP id a640c23a62f3a-a9de5ce4e4amr1512071666b.23.1730296960746;
-        Wed, 30 Oct 2024 07:02:40 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec7aa9sm576513066b.35.2024.10.30.07.02.39
+        bh=CPMzcHtmzvW9kfj5S4miVCTesK0tTrVqiF4YdM0sb3A=;
+        b=NJGu8HAmFyR/TICKxP/+I8rfkHT6WLhP8pTLrHpZXji7SXK3+GYEDXtcPM+e2RWnwE
+         LtU2uqiyZnQPCsLdE9nOjRnPbrUWYrXEwhW8xVeZ7AIT5aexlk9WNJ+6PD5X/v8ebqFr
+         zZThqCWnozOwMaBwVzWOcOOtzY10Bs2AVeBiEUZn5HErZT5DGH+q+rDHMOYEdU5mrddj
+         VIggE3Vfwt5opDjWwh7slpga+ec7hPQ/oE5tR0OXGEcSR7vsOfDc5Ju2xGWn71EkqIDt
+         1rZDbH0DKpc7oESVLCpoN3IKO5B/bJ37eQWSHwa9pcV/I8D5JUxrmEMmdrQ+vWjjMXuq
+         uRaQ==
+X-Gm-Message-State: AOJu0YyDVey7zWCM/OvrrOJrYkbHQKVafIAye1RvYYozRWpt/oSsHYL6
+	VKiELh1uxoE9RmZMFe3wt8fd0NPFSdBAZ9RWJjuUA1Q6Ss7/ZbwHcGhdggm6tTV2yDtxv0mz47C
+	KV44=
+X-Google-Smtp-Source: AGHT+IELy7AYZDfZbLyK0uWzYRFQxXzcKdOFnptyThtHAvzukvGaFkUy/b1uc/w+tSHXSGcKKdhrPw==
+X-Received: by 2002:a05:600c:3b14:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-4319ac6fb0amr127917715e9.4.1730296984470;
+        Wed, 30 Oct 2024 07:03:04 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd918220sm22707505e9.2.2024.10.30.07.03.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 07:02:40 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	horms@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vlad.wing@gmail.com,
-	max@kutsevol.com,
-	kernel-team@meta.com,
-	aehkn@xenhub.one,
-	stable@vger.kernel.org,
-	mptcp@lists.linux.dev (open list:NETWORKING [MPTCP])
-Subject: [PATCH net] mptcp: Ensure RCU read lock is held when calling mptcp_sched_find()
-Date: Wed, 30 Oct 2024 07:02:23 -0700
-Message-ID: <20241030140224.972565-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+        Wed, 30 Oct 2024 07:03:04 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/1] nvmem: fixes for 6.12
+Date: Wed, 30 Oct 2024 14:02:52 +0000
+Message-Id: <20241030140253.40445-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=377; i=srinivas.kandagatla@linaro.org; h=from:subject; bh=nauREPHcEuYE0QkpT3411OWUFGxZugFpPYIJ52isw5w=; b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBnIjyHSROFMVWOyEGH0s1juS+wJhjClzOtMuXVd 7gxDNNJIW2JATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZyI8hwAKCRB6of1ZxzRV N+NAB/9VvdoM6H/WuxuXNlLHdl4+S+t13VYIiHkUCo0cXEONrZBv8hE0r2FAXjF6oEGYYqjJ8e6 WiVvrIGgFx7h1sC4uxf0pBuZOH49Ktgd4TIrBuAlZZT9G4WMDjxtCUj6DI7WRpNFCwb6Yo3A6FF fSESRWU6QqoJtln5HxA8myin/ey+nyhkEc08AH8z2u/qi2LupuOS7juYrK7SIKSmIpKAB1KmcQL rx5HEqeexR+/qi+tuimDcb2ImsRkOTHnSFU5mHSJR0Jm7JyClr7DC7lRtarhGSP9X5i+oUC4bmv 6M5/mehvQSGxW1eXYHHfABwQLcNCN0ecq+OU1hWUxCNwF2b5
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp; fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 Content-Transfer-Encoding: 8bit
 
-The mptcp_sched_find() function must be called with the RCU read lock
-held, as it accesses RCU-protected data structures. This requirement was
-not properly enforced in the mptcp_init_sock() function, leading to a
-RCU list traversal in a non-reader section error when
-CONFIG_PROVE_RCU_LIST is enabled.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-	net/mptcp/sched.c:44 RCU-list traversed in non-reader section!!
+Hi Greg,
 
-Fix it by acquiring the RCU read lock before calling the
-mptcp_sched_find() function. This ensures that the function is invoked
-with the necessary RCU protection in place, as it accesses RCU-protected
-data structures.
+Here is one fix in nvmem for 6.12, Could you queue
+these for next possible rc.
 
-Additionally, the patch breaks down the mptcp_init_sched() call into
-smaller parts, with the RCU read lock only covering the specific call to
-mptcp_sched_find(). This helps minimize the critical section, reducing
-the time during which RCU grace periods are blocked.
+fixes include
+	- add missing readonly check in bin_attr_nvmem_write
+Thanks,
+Srini
 
-The mptcp_sched_list_lock is not held in this case, and it is not clear
-if it is necessary.
+Marek Vasut (1):
+  nvmem: core: Check read_only flag for force_ro in
+    bin_attr_nvmem_write()
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 1730b2b2c5a5 ("mptcp: add sched in mptcp_sock")
-Cc: stable@vger.kernel.org
----
- net/mptcp/protocol.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/nvmem/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-index 6d0e201c3eb2..8ece630f80d4 100644
---- a/net/mptcp/protocol.c
-+++ b/net/mptcp/protocol.c
-@@ -2854,6 +2854,7 @@ static void mptcp_ca_reset(struct sock *sk)
- static int mptcp_init_sock(struct sock *sk)
- {
- 	struct net *net = sock_net(sk);
-+	struct mptcp_sched_ops *sched;
- 	int ret;
- 
- 	__mptcp_init_sock(sk);
-@@ -2864,8 +2865,10 @@ static int mptcp_init_sock(struct sock *sk)
- 	if (unlikely(!net->mib.mptcp_statistics) && !mptcp_mib_alloc(net))
- 		return -ENOMEM;
- 
--	ret = mptcp_init_sched(mptcp_sk(sk),
--			       mptcp_sched_find(mptcp_get_scheduler(net)));
-+	rcu_read_lock();
-+	sched = mptcp_sched_find(mptcp_get_scheduler(net));
-+	rcu_read_unlock();
-+	ret = mptcp_init_sched(mptcp_sk(sk), sched);
- 	if (ret)
- 		return ret;
- 
 -- 
-2.43.5
+2.25.1
 
 
