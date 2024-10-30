@@ -1,143 +1,156 @@
-Return-Path: <linux-kernel+bounces-389299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6321C9B6B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:35:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199B89B6B1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2905E281F33
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA181F21A7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40FF215C59;
-	Wed, 30 Oct 2024 17:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8432D213136;
+	Wed, 30 Oct 2024 17:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BaikVopJ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZlFrTJ4"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E071F1300;
-	Wed, 30 Oct 2024 17:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC96C1EF95A;
+	Wed, 30 Oct 2024 17:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730309695; cv=none; b=B2RhEMg7R++zhw+NAkaTJubc/ko5BI+JW38/m9klhK9UPNX0PXtzS2crEbjeWCyJm0fa4xIvHS7WJdcZqmXpOU6QlLUWNbqqV1iZayicYYKhe8NaCIoGlYWA/6o9AmX9CIMXECAqWSH7zXuYE+beorOt7VkLELWKDujiSYKkyK8=
+	t=1730309731; cv=none; b=MgnJZ+M6/sI6xti9XuKOlMut4tYd4uN5eUcmRK0czb2X/tswKJHbd0LHjwaVoi6zBhJwqSmYozES9kDGzxspD5v6R2CkepG47d91MR9mCOwhbEmg3u4BAUtXvD+4BuygJoQF9QhMN9QJRrZUzLVOm6oyfcdFs+obnIEVKSuDBTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730309695; c=relaxed/simple;
-	bh=U+3Wgt1if/u0aXBUytY2a+1FtlEk1JoYz05UyPfz/Y4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PlcBGlzrWqBwhTdooMg9i1XxveOlkWKL90JZNhD1EHDKSQ9YYKpQKj3QF6tdXjdJHyScRz+2tCvPFL+U73pgTyMZ3K7kKfa05voowJDDOy8EQR6kDPkbtUrs+CT+lq723y/ETbqJ6/ZJVVTJGI2wv7EA5tfL+gWrvP5PHEIjMiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BaikVopJ; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1730309731; c=relaxed/simple;
+	bh=hN96yDzjFZnW0iLyGa0XM7KqV9VA85GMqGjCMXwqqhc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mqMQ9ETDH0JwN/4aOBS+kULL8gThiv3+vehnhOjdWFsD4mu3BI32lgk+puxzMmg6UkdE3yj7+qeVVml8+Op9S2HrxTpZ9vHnvCGvIGBDMnX2lmcx50AH085ExxhhgEN0rxcORm5mrunmZA6Z14u/nVaUfhFxPlOwuyQ3dqlNT7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZlFrTJ4; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso86334e87.2;
-        Wed, 30 Oct 2024 10:34:52 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e5a0177531so34146a91.2;
+        Wed, 30 Oct 2024 10:35:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730309691; x=1730914491; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Juisjn4hdg5t7CbimbozNWZ7Zs4lqTjFGMYg1J1CssY=;
-        b=BaikVopJtkJOVl0d3aBsXHNGSprqfJ+wva8BwBmglyV4P39kcuTqjxoM74g9iQv8vZ
-         pPeXX6P8t+1UYenGDKK0WL2TKKU9O8YhSRDi5y6Xw3mfi6SjLujBrovmQAJT/5PtFijA
-         I1bVeYMCgF/v+y8Nz7QRx1csOzit0kB0fSxwm8nTpAYZQmQvQWk5NuUV1xKy7cdzwTS8
-         yS8WvDoBxxKXWA0gLVlaGuN+nJKMQVBfpBp+Pue5Lgh390Zvdlwgnw0IDW5WRLaXL/jZ
-         YU5k37XpeHESy9jAHYf9z0Bs8/fPPKc9M+Xc76PD8gaZH57/7Jz11ouavolYkQB6qx5V
-         gNog==
+        d=gmail.com; s=20230601; t=1730309729; x=1730914529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BiP+OVHkwJ2WwEc50c1zL6X+ty2T+Id/9XryhgE+LVs=;
+        b=QZlFrTJ4/x1XoNI2NR7+s7HYkA5wjEMaRyYGzb7hz7kET0F5VeO+OUZB6lnMw1e4tp
+         VrtesHdWjnCVzXCM4YK7OIAnuXdhnjQ4uUiFPevSmDslLeKDK8O3Qtq1UXHKAn6rhZ7L
+         vgbeYHpeAQDHGDo9UYUBuvSY82WC4BP+C8O3dkovdxYpKp7EJEW3dU9WjMmjxIk8zFio
+         j9nc5sS7McavPRawn09qkkdU7HvFjgXcH+qupc896ER0JQ4FyjgiSDr+dN2CVuHR+8YJ
+         +o57FINxJb8nNAfzg9TIiGGgegp4orAJCFhm8DnQjB2+EjxxfsHHOSaQ79ooiL4QFEo/
+         XKjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730309691; x=1730914491;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Juisjn4hdg5t7CbimbozNWZ7Zs4lqTjFGMYg1J1CssY=;
-        b=cLvHHdQVWJAw2sHz4T/YM+P94XFKCBYUJxlCuUzubXNuG7CwNK+Dl8Ey7hVmCJL/fP
-         9HPB7ZCmpZQ0d971XHR2FgSQyHxZsL2dUPZDwDxJ981mMVTe3LJEUI3XtUz8HFwmM55h
-         OaNg8llBR19rAGtZRMJzbM/T8QmkbL4QHRWzPsN+B027V3CQqZNFw2thTg+3Sd1+Bxlt
-         7nL9//BYJGzz041AHdJ+rglsvVDJR6KgN1zQjwiv9J0G5R97WcL4+u761yjUJevM3d1k
-         wRZ8q7sg8ROB7nCugdPDPxUDpqzhnIL4tZKxoIOfWWD7wPggPH1YFJoT8D3tUtqxNYcA
-         NXQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsYMx1sUmVXJ7XcATZcAt1O20g93BTDQIzX9KU28Q7th81oj/EqAQYd2DFzchvzCWzxxYtn6gn@vger.kernel.org, AJvYcCWkZFcoGW15T2o21dW+5qTrL7A6mPGQ67G8pUYVDmQfV7T1NMgEKfKQm0l6DSWop3TMm9RauLmi6ygDDLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1b9x5cz9UWnX+80S6c/rdmZnI7is96BSWSNsuK8fQhCRvn8OL
-	bgiV1OWL4Twd+nlmgsYVi5s3aDTQ1evEzNOwB/s7cOtvornYLUPS
-X-Google-Smtp-Source: AGHT+IGZkiA4a/Ypkf0OY1ZbPq+XcHKy5We3bZ+vHCVaMRhq7cotMHd1H8WYoRYbeNygdCs1IVPxSA==
-X-Received: by 2002:a05:6512:68f:b0:539:dca9:19cc with SMTP id 2adb3069b0e04-53b348c1719mr8674104e87.4.1730309691216;
-        Wed, 30 Oct 2024 10:34:51 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-fbf3-0656-23c1-5ba1.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:fbf3:656:23c1:5ba1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9cab13sm27566765e9.48.2024.10.30.10.34.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 10:34:50 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 30 Oct 2024 18:34:45 +0100
-Subject: [PATCH net] wifi: brcmfmac: release 'root' node in all execution
- paths
+        d=1e100.net; s=20230601; t=1730309729; x=1730914529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BiP+OVHkwJ2WwEc50c1zL6X+ty2T+Id/9XryhgE+LVs=;
+        b=YyDSWd51mMp5/arTJWtVzNB9q7lctBpjoqKsioD5FDstJg7jergk2pJuXqU+fo20N8
+         aes5eXl0G2qhYSbrCMrb6Eekg2ch8xbSN+uWb/AcsClDn6TokA1TCwoo9yjeQI82jSeV
+         8zkf8oewHV+xAkfQfPr8JOfEkl3vp8DO3F0//T+2O5ezGl4dmbbDKLnoCn3EqaWU/L46
+         toQUWhMan6IDLoqK9Pxq8mTKe4RXnbupFxUwqk7lRi9mVxKzNHhBVJIV0ailq0ADGZNk
+         srb+Oy0wrA0US7kb4U7oRQKJ09nkDKwckBydk70vuiA0jwF2hqDBN2cmNcWcaIkVR0Th
+         UXXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbL1xgIg/MtCl70MRVd6wl4px1Ume5ZwCSxIzOf8FvATjX03NKXd/2hV/pE60fwkeiL9HJiZfDiE/prNxlMAoB@vger.kernel.org, AJvYcCWRXJku8WWp/jY3oVMiSeGJqJVxtHfZ9bfEJG2IKuxzhvHN0sPCbtEteJpszuEzWuvHE9ItTSuAaDRLmIw1@vger.kernel.org, AJvYcCWhYrW54rx6Bxdpi6h1ZS1xti7x8x+S3HWmpCkBgaB9VjlfxBftUTo3WqyGCxfP0WchOMoMfyVNqRTjJKttZUl2/Ps8@vger.kernel.org, AJvYcCXRVD8Jg12diRlMGd6MgMwEVmIFplOczG1WHIfZpgfmVK8AvsKCxPK0uVMbfJVLNJY8hSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyXeueLd/8tvXc16vmjJbDy5WULzlGhz9DtV0FrUlWveLPXNUU
+	nWGUSbhPz4uEdP/J1P3WuDHxC/QGXcp+LSCf5u33s5FRhrWSxnH4M2kspp5Dxrb5mt4Hbdnsl0B
+	rGYZZmBEwNCwv7wKyIOhGe8DDk2ZHwA==
+X-Google-Smtp-Source: AGHT+IH95yXMclFnAHy8QB+eHNc4rmInj2I+LJ/8aDsx3EJqpaOzdT6/yEgEZy6tveL6Lgr1C9KElhWkO7Mhr4OuAnE=
+X-Received: by 2002:a17:90b:1d0c:b0:2e2:d7db:41fc with SMTP id
+ 98e67ed59e1d1-2e8f10683a4mr18135770a91.10.1730309729183; Wed, 30 Oct 2024
+ 10:35:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-brcmfmac-of-cleanup-v1-1-0b90eefb4279@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADRuImcC/x3MQQqDMBBA0avIrB2YpF3YXkVcxDjTDjSJJCqF4
- N0NLt/i/wqFs3KBd1ch86FFU2wwfQf+6+KHUZdmsGSfhh6Ec/ZBgvOYBP2PXdxXJCLh1zBYswi
- 0cs0s+r+vI0TeYDrPC/mzUEJqAAAA
-To: Arend van Spriel <arend.vanspriel@broadcom.com>, 
- Kalle Valo <kvalo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
- Hector Martin <marcan@marcan.st>, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Cc: linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev, 
- brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730309689; l=1632;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=U+3Wgt1if/u0aXBUytY2a+1FtlEk1JoYz05UyPfz/Y4=;
- b=K24pC7iwnYW7V7S9srCCEP2xQc23aicQ1kjH6fe/uHGFY3ar++CWb5cVFD6U2FL03WZxNUdIv
- 8hVzg37hf2iAMROCaETj6izTXZqXmrBSoQZVto/T+sWumcuFgCIQpnS
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+References: <20241029002208.1947947-1-dolinux.peng@gmail.com>
+ <20241029002208.1947947-2-dolinux.peng@gmail.com> <CAEf4BzbVjkhtQPcsDOLX_aR_vvB1nCQj357EQ5xwey8486=Niw@mail.gmail.com>
+ <CAErzpmuHJ-qZqzS11GPK5_=UsuxtPk1gbexbhJ7nj59M-NzSHA@mail.gmail.com>
+In-Reply-To: <CAErzpmuHJ-qZqzS11GPK5_=UsuxtPk1gbexbhJ7nj59M-NzSHA@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 30 Oct 2024 10:35:17 -0700
+Message-ID: <CAEf4BzaXHrjoEWmEcvK62bqKuT3de__+juvGctR3=e8avRWpMQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] libbpf: Sort btf_types in ascending order by name
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The fixed patch introduced an additional condition to enter the scope
-where the 'root' device_node is released (!settings->board_type,
-currently 'err'), which avoid decrementing the refcount with a call to
-of_node_put() if that second condition is not satisfied.
+On Wed, Oct 30, 2024 at 8:13=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.co=
+m> wrote:
+>
+> On Wed, Oct 30, 2024 at 5:58=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Mon, Oct 28, 2024 at 5:22=E2=80=AFPM Donglin Peng <dolinux.peng@gmai=
+l.com> wrote:
+> > >
+> > > To enhance the searching performance of btf_find_by_name_kind, we
+> > > can sort the btf_types in ascending order based on their names.
+> > > This allows us to implement a binary search method.
+> > >
+> > > Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
+> > > Signed-off-by: Eduard Zingerman <eddyz87@gmail.com>
+> > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> > > ---
+> > > v4:
+> > >  - Divide the patch into two parts: kernel and libbpf
+> > >  - Use Eduard's code to sort btf_types in the btf__dedup function
+> > >  - Correct some btf testcases due to modifications of the order of bt=
+f_types.
+> > > ---
+> > >  tools/lib/bpf/btf.c                           | 115 +++++--
+> > >  tools/testing/selftests/bpf/prog_tests/btf.c  | 296 +++++++++-------=
+--
+> > >  .../bpf/prog_tests/btf_dedup_split.c          |  64 ++--
+> > >  3 files changed, 268 insertions(+), 207 deletions(-)
+> > >
+> >
+> > I don't think we should do any extra sorting by default. Maybe we need
+> > some extra API to explicitly re-sort underlying types. But then again,
+>
+> How do you feel about adding a new feature to the '--btf_features' option=
+,
+> which could be used to control sorting?
 
-Move the call to of_node_put() to the point where 'root' is no longer
-required to avoid leaking the resource if err is not zero.
+This is pahole question, and yes, having a --btf_features makes sense to me=
+.
 
-Cc: stable@vger.kernel.org
-Fixes: 7682de8b3351 ("wifi: brcmfmac: of: Fetch Apple properties")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Note that a call to of_node_put() on a NULL device_node has no effect,
-which simplifies this patch as there is no need to refactor the or
-add more conditions.
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> > why just by type name? What if type names are equal, what do we use to
+> > disambiguate. None of this is considered in this patch.
+>
+> If there are multiple btf_types with identical names in a btf file,
+> they will have different kinds. These btf_types will be grouped
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-index fe4f65756105..af930e34c21f 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-@@ -110,9 +110,8 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
- 		}
- 		strreplace(board_type, '/', '-');
- 		settings->board_type = board_type;
--
--		of_node_put(root);
- 	}
-+	of_node_put(root);
- 
- 	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
- 		return;
+Not necessarily, you can easily have types of the same kind with the
+same name. But this changes nothing, I'd still define fuller search
+criteria.
 
----
-base-commit: c05c62850a8f035a267151dd86ea3daf887e28b8
-change-id: 20241030-brcmfmac-of-cleanup-000fe98821df
+> together after being sorted according to their names. We can
+> determine the range of the group and verify the btf_types within
+> that range by their kind to obtain the appropriate btf_type.
+>
+> >
+> > pw-bot: cr
+> >
+> > > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> > > index 3c131039c523..5290e9d59997 100644
+> > > --- a/tools/lib/bpf/btf.c
+> > > +++ b/tools/lib/bpf/btf.c
+> > > @@ -1,6 +1,9 @@
+> > >  // SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> > >  /* Copyright (c) 2018 Facebook */
+> > >
 
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+[...]
 
