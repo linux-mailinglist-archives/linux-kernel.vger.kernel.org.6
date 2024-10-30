@@ -1,67 +1,63 @@
-Return-Path: <linux-kernel+bounces-388337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631DD9B5E17
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:44:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF509B5E1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A70284A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:44:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16B11B21507
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04611E1A12;
-	Wed, 30 Oct 2024 08:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B89B1E0E15;
+	Wed, 30 Oct 2024 08:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="XA00ENYD"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hKbnog0k"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE6B1990C5;
-	Wed, 30 Oct 2024 08:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BBE149C64;
+	Wed, 30 Oct 2024 08:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730277838; cv=none; b=e23c1uz7m6gpc0oNWygswTYWXy+VHspZqbn1kAjiVeZbNJHFOd7/evz8t2nTHPBpLl9FOqTHXGmVdhwQJNgC8oiGXB0k9kc8mQfIpGEGCG7/BBix7aFLvd5cAVugBOS3UovyOnjIw2rJlr1MG3BXRzremOk20xj3/O+2UB2yGLA=
+	t=1730277926; cv=none; b=br+0jSo7NVkiuAtt5pkxP5FtbBKqmNkTCXhHdoKGJzjROTn/DwJBZs/ODlN4UR2+rDUCZM0At3ajBqTX4mSoUEQH6iqTq05R1/8sOgd0I5DTcpxwOmVgSF0oO1XTP4w8omtMjY3OMhzvJ3zdbGpdqOFRfcPo1JSl7SpfE2QGy9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730277838; c=relaxed/simple;
-	bh=nON4sMqSAvd9n8ClRLG37QnCL3NBJJRIXO1tYAucTZc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TyD94GBJrfta+fjBR5e7VZyfhnPIoBKJsKvNZdXi5+vcvp29YdAVJo/S1g5takqsq49ufwapAs6VY6KZvOD0wOV1vE8yEQVj3euL5j+emsSjqCjx2FyX9ESUbhbT7z8/sdg28VHK4v/uKhAeDAdywFlYLzYHVXDl0aFQiGJpQUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=XA00ENYD; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49U8hgeX73761067, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1730277822; bh=nON4sMqSAvd9n8ClRLG37QnCL3NBJJRIXO1tYAucTZc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=XA00ENYDcchY15J824PGOCtZ5gcb24VLSi2zGEGNbFLjLml7bwaa0996b1lPOxr4p
-	 QC4Oxw3sVx/SfqvhZ/DNKMbgRsUPinO6TdzC9U10PcoZ2uA87r/gddWWEINmRNF3lj
-	 KKsRWOJFeco5LJOfcVn3gKEPsgN3sH2EjhwpvGlj5ZZe8upjNfEZC8cdl1VeIQV7mo
-	 igcO0TG2qM8ZLPyhNhs69BjXsYdbT1EdxpnhYu7y0qpe6BRfudW8eB9rVrjAeT2xGN
-	 Ujbg7XICRjHNWBQkU5G+U2zy6NYIOszONxBOb/GJ1aTZMm3kjTR5SE1ujg02nhuUl+
-	 vx0e7FDx/IY0g==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49U8hgeX73761067
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 16:43:42 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 30 Oct 2024 16:43:42 +0800
-Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 30 Oct
- 2024 16:43:41 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: <marcel@holtmann.org>
-CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <max.chou@realtek.com>,
-        <alex_lu@realsil.com.cn>, <kidman@realtek.com>,
-        <howardchung@google.com>, <apusaka@chromium.org>,
-        <yinghsu@chromium.org>, <johnlai@google.com>
-Subject: [PATCH v3] Bluetooth: btrtl: Decrease HCI_OP_RESET timeout from 10 s to 2 s
-Date: Wed, 30 Oct 2024 16:43:34 +0800
-Message-ID: <20241030084334.2740513-1-hildawu@realtek.com>
+	s=arc-20240116; t=1730277926; c=relaxed/simple;
+	bh=DjrKVkjupKb3hhQGkeCeNIG5gSTj6ohY3jj7zadFT4A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RBHBqFOH6+ARRVMaBFiX+CllYpJEjzrywZRiAxkL/uEhlN0D8CIaP8RQKCWceBMG2rOH9lxPFY66ElJR5dpSn5CZnlUnSWgMQS9z6l5himojhk573yMlLlp2fnXpAnD9N66k2q+gmpVtiIIj3g/N6o7a0O5F/RgFBZZ95lkc9mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hKbnog0k; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id BD22FA11B6;
+	Wed, 30 Oct 2024 09:45:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=pCTs7xE1RNDjOAhXIwJf35Ye4AhjEVbQRROagoMzs9M=; b=
+	hKbnog0k6h+HIXxGMurg+nml0X6WXIn5lG2XxzpBOxmO9phmczQsE0Ls7CoIkhCF
+	h4tf10MLv1VQSp/STabqL6oOywt/sdbVRp3nu2cU6drXIq8rHBUlFz+QAUokHp9j
+	vWLzsLP00CqjMFhCIv9DqQU6xapuFhYyfXCXOFbcTU5gFNAt5JpnPzkNsgpU9y3E
+	yzzBR8TP2O2VjmErg4EMsx3n6AuLfIZfYbsNEVItEqXUdF5+yiHL1k3fhS8+n7Oq
+	TQLZBb/xNULYZK8g3ohtmsv8aBjFZrPbrMfssnKUCk1733DDURhQzYlj284ulbbo
+	RfVB5kxbkpQykVu5jsLPsW0k3iE0xWZ3EeSHjqaJkoALEugCRbszR+MANLCn8ejk
+	ToFwZ5v03vbNPc8lOdxcGYjvIqUDUfjG/xDbAgH1HKpnEiwiO8amJBthOR9UuArg
+	uC+4R2Ym9Y+anBkywKz1Jd/Y/pJJicL11y6i7c6Nsxt8DkV0MuE+9X4Ps0D4uSyu
+	eE1CL3lH3DHcBetJO1c/IxFz0DcXaV7ApzvxjDpFW8J49uxQ0XF4hfggGGawtMgk
+	OTYm51/Bqmo59x2NXBhoMyiuBkT5mB0xNftFUghNNHQaSxfwqm+6nUIpNRFFxMMv
+	/JNmrSHtg5shKP7Kwp80DeD1F+BguUJGBV3sDksZLjo=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Tudor
+ Ambarus" <tudor.ambarus@linaro.org>, Varshini Rajendran
+	<varshini.rajendran@microchip.com>, Mark Brown <broonie@kernel.org>, "Nicolas
+ Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: [PATCH v2] spi: atmel-quadspi: Create `atmel_qspi_ops` to support newer SoC families
+Date: Wed, 30 Oct 2024 09:44:46 +0100
+Message-ID: <20241030084445.2438750-1-csokas.bence@prolan.hu>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,38 +65,217 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730277917;VERSION=7979;MC=2867805427;ID=197345;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855667763
 
-The original timeout setting for HCI Reset on shutdown is 10 seconds.
-HCI Reset shouldn't take 10 seconds to complete so instead use the
-default timeout for commands.
+Refactor the code to introduce an ops struct, to prepare for merging
+support for later SoCs, such as SAMA7G5. This code was based on the
+vendor's kernel (linux4microchip). Cc'ing original contributors.
 
-Signed-off-by: Hilda Wu <hildawu@realtek.com>
----
-V2 -> V3: Update commit message
-V1 -> V2: Modify commit message and summary
----
----
- drivers/bluetooth/btrtl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Varshini Rajendran <varshini.rajendran@microchip.com>
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 2d95b3ea046d..7128a8a0ba25 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -1371,7 +1371,7 @@ int btrtl_shutdown_realtek(struct hci_dev *hdev)
- 	/* According to the vendor driver, BT must be reset on close to avoid
- 	 * firmware crash.
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+---
+
+Notes:
+    Changes in v2:
+    * Remove obsolete SPI naming
+
+ drivers/spi/atmel-quadspi.c | 111 +++++++++++++++++++++++++-----------
+ 1 file changed, 77 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
+index 95cdfc28361e..1d256ab3f7f2 100644
+--- a/drivers/spi/atmel-quadspi.c
++++ b/drivers/spi/atmel-quadspi.c
+@@ -138,11 +138,15 @@
+ #define QSPI_WPSR_WPVSRC_MASK           GENMASK(15, 8)
+ #define QSPI_WPSR_WPVSRC(src)           (((src) << 8) & QSPI_WPSR_WPVSRC)
+ 
++#define ATMEL_QSPI_TIMEOUT		1000	/* ms */
++
+ struct atmel_qspi_caps {
+ 	bool has_qspick;
+ 	bool has_ricr;
+ };
+ 
++struct atmel_qspi_ops;
++
+ struct atmel_qspi {
+ 	void __iomem		*regs;
+ 	void __iomem		*mem;
+@@ -150,13 +154,22 @@ struct atmel_qspi {
+ 	struct clk		*qspick;
+ 	struct platform_device	*pdev;
+ 	const struct atmel_qspi_caps *caps;
++	const struct atmel_qspi_ops *ops;
+ 	resource_size_t		mmap_size;
+ 	u32			pending;
++	u32			irq_mask;
+ 	u32			mr;
+ 	u32			scr;
+ 	struct completion	cmd_completion;
+ };
+ 
++struct atmel_qspi_ops {
++	int (*set_cfg)(struct atmel_qspi *aq, const struct spi_mem_op *op,
++		       u32 *offset);
++	int (*transfer)(struct spi_mem *mem, const struct spi_mem_op *op,
++			u32 offset);
++};
++
+ struct atmel_qspi_mode {
+ 	u8 cmd_buswidth;
+ 	u8 addr_buswidth;
+@@ -404,10 +417,60 @@ static int atmel_qspi_set_cfg(struct atmel_qspi *aq,
+ 	return 0;
+ }
+ 
++static int atmel_qspi_wait_for_completion(struct atmel_qspi *aq, u32 irq_mask)
++{
++	int err = 0;
++	u32 sr;
++
++	/* Poll INSTRuction End status */
++	sr = atmel_qspi_read(aq, QSPI_SR);
++	if ((sr & irq_mask) == irq_mask)
++		return 0;
++
++	/* Wait for INSTRuction End interrupt */
++	reinit_completion(&aq->cmd_completion);
++	aq->pending = sr & irq_mask;
++	aq->irq_mask = irq_mask;
++	atmel_qspi_write(irq_mask, aq, QSPI_IER);
++	if (!wait_for_completion_timeout(&aq->cmd_completion,
++					 msecs_to_jiffies(ATMEL_QSPI_TIMEOUT)))
++		err = -ETIMEDOUT;
++	atmel_qspi_write(irq_mask, aq, QSPI_IDR);
++
++	return err;
++}
++
++static int atmel_qspi_transfer(struct spi_mem *mem,
++			       const struct spi_mem_op *op, u32 offset)
++{
++	struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->controller);
++
++	/* Skip to the final steps if there is no data */
++	if (!op->data.nbytes)
++		return atmel_qspi_wait_for_completion(aq,
++						      QSPI_SR_CMD_COMPLETED);
++
++	/* Dummy read of QSPI_IFR to synchronize APB and AHB accesses */
++	(void)atmel_qspi_read(aq, QSPI_IFR);
++
++	/* Send/Receive data */
++	if (op->data.dir == SPI_MEM_DATA_IN)
++		memcpy_fromio(op->data.buf.in, aq->mem + offset,
++			      op->data.nbytes);
++	else
++		memcpy_toio(aq->mem + offset, op->data.buf.out,
++			    op->data.nbytes);
++
++	/* Release the chip-select */
++	atmel_qspi_write(QSPI_CR_LASTXFER, aq, QSPI_CR);
++
++	return atmel_qspi_wait_for_completion(aq, QSPI_SR_CMD_COMPLETED);
++}
++
+ static int atmel_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ {
+ 	struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->controller);
+-	u32 sr, offset;
++	u32 offset;
+ 	int err;
+ 
+ 	/*
+@@ -416,46 +479,20 @@ static int atmel_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 	 * when the flash memories overrun the controller's memory space.
  	 */
--	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_INIT_TIMEOUT);
-+	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_CMD_TIMEOUT);
- 	if (IS_ERR(skb)) {
- 		ret = PTR_ERR(skb);
- 		bt_dev_err(hdev, "HCI reset during shutdown failed");
+ 	if (op->addr.val + op->data.nbytes > aq->mmap_size)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
++
++	if (op->addr.nbytes > 4)
++		return -EOPNOTSUPP;
+ 
+ 	err = pm_runtime_resume_and_get(&aq->pdev->dev);
+ 	if (err < 0)
+ 		return err;
+ 
+-	err = atmel_qspi_set_cfg(aq, op, &offset);
++	err = aq->ops->set_cfg(aq, op, &offset);
+ 	if (err)
+ 		goto pm_runtime_put;
+ 
+-	/* Skip to the final steps if there is no data */
+-	if (op->data.nbytes) {
+-		/* Dummy read of QSPI_IFR to synchronize APB and AHB accesses */
+-		(void)atmel_qspi_read(aq, QSPI_IFR);
+-
+-		/* Send/Receive data */
+-		if (op->data.dir == SPI_MEM_DATA_IN)
+-			memcpy_fromio(op->data.buf.in, aq->mem + offset,
+-				      op->data.nbytes);
+-		else
+-			memcpy_toio(aq->mem + offset, op->data.buf.out,
+-				    op->data.nbytes);
+-
+-		/* Release the chip-select */
+-		atmel_qspi_write(QSPI_CR_LASTXFER, aq, QSPI_CR);
+-	}
+-
+-	/* Poll INSTRuction End status */
+-	sr = atmel_qspi_read(aq, QSPI_SR);
+-	if ((sr & QSPI_SR_CMD_COMPLETED) == QSPI_SR_CMD_COMPLETED)
+-		goto pm_runtime_put;
+-
+-	/* Wait for INSTRuction End interrupt */
+-	reinit_completion(&aq->cmd_completion);
+-	aq->pending = sr & QSPI_SR_CMD_COMPLETED;
+-	atmel_qspi_write(QSPI_SR_CMD_COMPLETED, aq, QSPI_IER);
+-	if (!wait_for_completion_timeout(&aq->cmd_completion,
+-					 msecs_to_jiffies(1000)))
+-		err = -ETIMEDOUT;
+-	atmel_qspi_write(QSPI_SR_CMD_COMPLETED, aq, QSPI_IDR);
++	err = aq->ops->transfer(mem, op, offset);
+ 
+ pm_runtime_put:
+ 	pm_runtime_mark_last_busy(&aq->pdev->dev);
+@@ -571,12 +608,17 @@ static irqreturn_t atmel_qspi_interrupt(int irq, void *dev_id)
+ 		return IRQ_NONE;
+ 
+ 	aq->pending |= pending;
+-	if ((aq->pending & QSPI_SR_CMD_COMPLETED) == QSPI_SR_CMD_COMPLETED)
++	if ((aq->pending & aq->irq_mask) == aq->irq_mask)
+ 		complete(&aq->cmd_completion);
+ 
+ 	return IRQ_HANDLED;
+ }
+ 
++static const struct atmel_qspi_ops atmel_qspi_ops = {
++	.set_cfg = atmel_qspi_set_cfg,
++	.transfer = atmel_qspi_transfer,
++};
++
+ static int atmel_qspi_probe(struct platform_device *pdev)
+ {
+ 	struct spi_controller *ctrl;
+@@ -601,6 +643,7 @@ static int atmel_qspi_probe(struct platform_device *pdev)
+ 
+ 	init_completion(&aq->cmd_completion);
+ 	aq->pdev = pdev;
++	aq->ops = &atmel_qspi_ops;
+ 
+ 	/* Map the registers */
+ 	aq->regs = devm_platform_ioremap_resource_byname(pdev, "qspi_base");
 -- 
 2.34.1
+
 
 
