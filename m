@@ -1,144 +1,184 @@
-Return-Path: <linux-kernel+bounces-389475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36F39B6D85
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:21:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207B09B6D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69275282AEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4415E1C23BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5BF213EF6;
-	Wed, 30 Oct 2024 20:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6517C1D1721;
+	Wed, 30 Oct 2024 20:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTaUTCqq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f8Tcu1AX"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71AF1D12ED;
-	Wed, 30 Oct 2024 20:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3261E9064
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 20:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730319638; cv=none; b=BSLvnHgTycaGbiDIb4rYnuEflgHrnNmEtGDckgYrE45MUpOmalYCECEpTsdSJw6WWVR4unRcd29t3VeLxUw36AiQguBDsWLPVnD6Uc5NlWGBTf05t5ysVvTIMMovK/QG8r9qyWaLSDFsFUtSiGeMEdw3sIws6KnQGoN36SlQBOY=
+	t=1730319674; cv=none; b=uqcHrG+gveEsIzG9gctERSJSYQ8b7Ndm/gltatLEUk/h8b3UF9MtY/+zKsJ/5/U9BcwlknrAOcgs8J5Ma3bNnJEPuBHCjunqK2/5y0lnnp2jMz/zFtmIZ4RurMLnGj28rkhVTXRxiu8QfSZ2IU8BzwZ81rAjKgILHhfei1xZXt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730319638; c=relaxed/simple;
-	bh=CuBZ7a5jZNesEjvm4P0cJ7WsRpENx9Ukmf3FByacUNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c79f6HkIVLFG8tMECfC7JYqAIzThBviixxXlmaPjCgMkvRAyMkZVwOxpc3iW01oNpul0COcICYESdUrY7yo2QHMhoMQ8YEIaNw8GS68pwzXI8aAUMiBUTaa5EIhrEwDjwtAL5400nVTJk6/YMFRjSLEMuFPW884knLUoWXjwduY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTaUTCqq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36248C4CECE;
-	Wed, 30 Oct 2024 20:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730319637;
-	bh=CuBZ7a5jZNesEjvm4P0cJ7WsRpENx9Ukmf3FByacUNo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oTaUTCqq5kay8J3AvHvGGwA0iYKKKXWuV/NPR5DZmv+HzTwjY+75jJ1cc9eqYtaZH
-	 SeLlz7UhdNipKLn1yX0FLRRBDsOK27e5N4r59q0o8YyrN5R6/G81UamYilbLdCBgmq
-	 2KGIsw8fzc3YgiHejETp8lZO2/KNd2zm+9YBUvUNhy2frcwb/jdCWPaYEeVbiRkxvr
-	 r3FdT/Oi4RtagtYJWYsxtR9Ebnl0s1OqnYWck8faS5fs4xzJs/kkC0IK7i7uYDMF/I
-	 HtuwfCeg8tV+EAi+qq8Rb8tYfSJr/iEEAs2ONuPOnQUiPjTx1/hIaBSKW0SaX9DZ51
-	 jx6x3hI9h6bKA==
-Received: by pali.im (Postfix)
-	id 151DD9D2; Wed, 30 Oct 2024 21:20:30 +0100 (CET)
-Date: Wed, 30 Oct 2024 21:20:29 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: Dell.Client.Kernel@dell.com, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, w_armin@gmx.de
-Subject: Re: [PATCH 2/2] dell-wmi-base: Handle Win-key Lock/Unlock events
-Message-ID: <20241030202029.3ugz75wiautw6ewt@pali>
-References: <20241030181244.3272-2-kuurtb@gmail.com>
- <20241030181532.3594-2-kuurtb@gmail.com>
- <20241030183436.3w5po6kcg6jmqigb@pali>
- <hj6jurton7ll4i475cwcqvk6dzjjire2briawxmuemnliofpyo@kpjdxpwflekm>
+	s=arc-20240116; t=1730319674; c=relaxed/simple;
+	bh=dMSieHhlLhjVhgnJbukKlpTIcZHhL33WPNnPyYGF7H0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dUkcDBSC1NUzgKAdx3UAaZJIJM0DbtuLva9M2shTVbMLw+nhLP9WyEVJmJLTX2Fnbsb4IFN8mdtCIKZeurEcMDBi/KqL5RLagA4Fa6cj/d+JuSe5h7sz+hUoy+9MzW+B7VEQ3kjHVIc22qLwyekZ0mnVCetXwuwSv9Dk0hBInAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f8Tcu1AX; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e56df894d4so163336a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:21:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730319672; x=1730924472; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxptXU8oKSlVF2fvRzkZip9fG/KS/MTrvVI6j9ReCRo=;
+        b=f8Tcu1AXhQqYPUGm43zkUTFCzO0HPNKSXDyWk0BHHXSkvXLhUez7jR+xvncLyLMCq/
+         Wv7r6KArzkp8+IYWFh7TNi/G17lL5PA2TnyXwQ8Vxz/qm2YD1ihBrPIumIowG4ZJCq8x
+         qEts+saBYMSfha/HW059ZK1G033pBtIvnA3HbJJlMimgYgm4CKQFY6jTNq3JMlRYl56y
+         CBC/qFMb19Lw5kvPE2lJ6WhyUPKNpBiNZkpD80GGMmgo518ES25sgndUMw50/xq3pvsj
+         27bX/ls9F6ItDZBjnDcUeiJ2lLNgx7ZGqpCqN57ZPfFHpjckkRyjBMrM938SuxULirmf
+         HagQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730319672; x=1730924472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VxptXU8oKSlVF2fvRzkZip9fG/KS/MTrvVI6j9ReCRo=;
+        b=XHbjzo3+4BtQac32xLZfa2BGqLn6F2THZMtkrOjctxAczzWIkjIY61FzBAXt2GL6Ik
+         6PSRDzOxmDmJ9IciJmh9sXlKsAsMsGSJuM4kaMEOqwkzBnZI/6hd/yizoUui06qg68cl
+         a7Us2/bclYPoVQGakwu9PUSvD6Opg43D/dX4Rfzgihp3ccsLVzJrbyW5X/eOx4ovKmLX
+         wAQYuVjBIF/3t+ZMkvF1hct5RmkBYLYuybAkSpeNj8L2RwW1+qZ0aCYE1YTJIC1kb3eB
+         j3UtP9jQ6oMFePorL76g6Fxp7Hs3Gze+6oHF/GqzDG0aOUihIY9xWaxYiBBXZLg2uGDK
+         3/zw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnPfj/yHt3tEGsMFXgbh/drO5FFWRC+cVyTUFMcDT0oa/oPLZ1jU0B7M0w4jwjH1rsE84tF0Iiuc9Gq2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5/Qk0vS4P8yp7Gee/XjDo+lqUJOxvIuBlpWV8y5fe1D6sKo5B
+	0UCixE91txbCoNJ1+kFib9vWKWss72Kd9/O1P9eSilN5Adn6mej2wX4g8zttZdWRw0ZiOvIty62
+	Hr1DcAKnJh2+X9iPtOHSjWE2RKfieEEewVAQq
+X-Google-Smtp-Source: AGHT+IEP9wXNWXu2pk9j6AVVN/5LTlwN5rgVci/DlwsY/hQHHrt79TYJSPQXM7eBts4e9mwGpTVwOvfM4MoIEhR+9sI=
+X-Received: by 2002:a17:90b:1c84:b0:2e2:b6ef:1611 with SMTP id
+ 98e67ed59e1d1-2e93c1710afmr870053a91.18.1730319671512; Wed, 30 Oct 2024
+ 13:21:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <hj6jurton7ll4i475cwcqvk6dzjjire2briawxmuemnliofpyo@kpjdxpwflekm>
-User-Agent: NeoMutt/20180716
+References: <20240203165307.7806-1-aford173@gmail.com> <20241025080544.136280-1-mailinglist1@johanneskirchmair.de>
+ <6d039ecf-0e48-415a-afd8-6bfce60081ae@kontron.de> <CAHCN7xKevGWipBSch6gKVeJRT9Zb8QTchhxg3c=96XhnAvnjZw@mail.gmail.com>
+In-Reply-To: <CAHCN7xKevGWipBSch6gKVeJRT9Zb8QTchhxg3c=96XhnAvnjZw@mail.gmail.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Wed, 30 Oct 2024 13:20:32 -0700
+Message-ID: <CAGETcx-LGZ1k-seh4LkvCobsxUk67QK40swiQvH6Wrzs0Log0A@mail.gmail.com>
+Subject: Re: imx8mp: HDMI display blank/black problems
+To: Adam Ford <aford173@gmail.com>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, mailinglist1@johanneskirchmair.de, 
+	johannes.kirchmair@skidata.com, Laurent.pinchart@ideasonboard.com, 
+	airlied@gmail.com, alexander.stein@ew.tq-group.com, andrzej.hajda@intel.com, 
+	catalin.marinas@arm.com, conor+dt@kernel.org, daniel@ffwll.ch, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	festevam@gmail.com, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
+	kernel@pengutronix.de, kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	l.stach@pengutronix.de, linux-arm-kernel@lists.infradead.org, 
+	linux-imx@nxp.com, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+	maarten.lankhorst@linux.intel.com, marex@denx.de, mripard@kernel.org, 
+	neil.armstrong@linaro.org, p.zabel@pengutronix.de, rfoss@kernel.org, 
+	robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org, 
+	tzimmermann@suse.de, ulf.hansson@linaro.org, victor.liu@nxp.com, 
+	vkoul@kernel.org, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday 30 October 2024 17:11:40 Kurt Borja wrote:
-> On Wed, Oct 30, 2024 at 07:34:36PM +0100, Pali Rohár wrote:
-> > On Wednesday 30 October 2024 15:15:33 Kurt Borja wrote:
-> > > Some Alienware devices have a key that locks/unlocks the Win-key. This
-> > 
-> > Please specify (in comment / commit message) which devices. It would
-> > help other developers in future to track for which device is this event
-> > needed.
-> 
-> I will!
-> 
-> > 
-> > > key triggers a WMI event that should be ignored, as it's handled
-> > > internally by the firmware.
-> > 
-> > Can be this handling in FW ignored? So OS can use this key for any other
-> > functionality?
-> 
-> Probably not. FW locks the Win-key regardless of how the event is
-> handled.
-> 
-> > 
-> > Anyway, what is that Win-key and its lock?
-> 
-> Win-key is the LEFTMETA key and the lock key is the RIGHTMETA key.
+On Wed, Oct 30, 2024 at 10:28=E2=80=AFAM Adam Ford <aford173@gmail.com> wro=
+te:
+>
+> On Wed, Oct 30, 2024 at 4:01=E2=80=AFAM Frieder Schrempf
+> <frieder.schrempf@kontron.de> wrote:
+> >
+> > Hi Johannes,
+> >
+> > On 25.10.24 10:05 AM, mailinglist1@johanneskirchmair.de wrote:
+> > > [Sie erhalten nicht h=C3=A4ufig E-Mails von mailinglist1@johanneskirc=
+hmair.de. Weitere Informationen, warum dies wichtig ist, finden Sie unter h=
+ttps://aka.ms/LearnAboutSenderIdentification ]
+> > >
+> > > Hey,
+> > > We had some problems with the hdmi on the imx8mp and wanted to leave,=
+ what we found out about it, somewhere for others to find it.
+> > >
+> > > The problem was that our hdmi display sometimes stayed blank after ho=
+t plugging and sometimes at startup. On older kernel versions 6.6 we did no=
+t have the problem with the not mainlined hdmi patches.
+> > > We tracked the commit down that introduced the problem for us. It was=
+ the following =E2=80=9Cdriver core: Enable fw_devlink=3Drpm by default=E2=
+=80=9D  https://lore.kernel.org/lkml/20231113220948.80089-1-saravanak@googl=
+e.com/
+> > > So we switched back to FW_DEVLINK_FLAGS_ON via kernel parameter. Don=
+=E2=80=99t really understand what the problem with RPM is.
+> > >
+> > > So, this information is just for reference. Maybe someone has an idea=
+ what is going on here. And how to fix the problem in a more proper way.
+> >
+> > Thanks for investigating and sharing your results!
+> >
+> > I'm seeing the same symptoms and previously found out that this is
+> > related to LCDIF underrun errors. See [1] for more information.
+> >
+> > Adam has also started this thread: [2].
+> >
+> > Anyway, knowing that this is related to fw_devlink=3Drpm is really
+> > helpful. I just tried with fw_devlink=3Don and wasn't able to see any
+> > issues anymore. So this confirms your findings.
+>
+> I was off in the weeds thinking there was something wrong in timing
+> and/or a race condition around the PLL or something.  This is good
+> news.
+> Please forgive my ignorance, what does fw_devlink do?  Is there
+> something we can do in the driver itself to force its behavior?
 
-Ok, thanks for info.
+fw_devlink figures out supplier/consumer dependencies between devices
+and creates device links between them. This ensures proper
+probe/suspend/resume/shutdown/runtime PM ordering.
 
-So if the firmware handles and process RIGHTMETA key, it means that the
-RIGHTMETA key is not usable for generic purposes on this machine?
+fw_devlink=3Drpm vs on means "enforce all of these" vs "enforce all of
+these except runtime PM".
 
-> > 
-> > > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> > > ---
-> > >  drivers/platform/x86/dell/dell-wmi-base.c | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > > 
-> > > diff --git a/drivers/platform/x86/dell/dell-wmi-base.c b/drivers/platform/x86/dell/dell-wmi-base.c
-> > > index 502783a7a..37fc0371a 100644
-> > > --- a/drivers/platform/x86/dell/dell-wmi-base.c
-> > > +++ b/drivers/platform/x86/dell/dell-wmi-base.c
-> > > @@ -80,6 +80,12 @@ static const struct dmi_system_id dell_wmi_smbios_list[] __initconst = {
-> > >  static const struct key_entry dell_wmi_keymap_type_0000[] = {
-> > >  	{ KE_IGNORE, 0x003a, { KEY_CAPSLOCK } },
-> > >  
-> > > +	/* Win-key Lock */
-> > > +	{ KE_IGNORE, 0xe000, {KEY_RESERVED} },
-> > 
-> > nit: code style: spaces around KEY_RESERVED.
-> 
-> I will fix it.
-> 
-> > 
-> > Is not there some better constant for this KEY_*?
-> 
-> We could assign it KEY_RIGHTMETA.
+> adam
+> >
+> > I hope that some of the driver framework and runtime PM experts can hel=
+p
+> > to find out what is actually wrong and how the correct fix might look l=
+ike.
+> >
+> > I'm also CC-ing Saravana who authored the change from fw_devlink=3Don t=
+o
+> > fw_devlink=3Drpm to see if they have anything to add.
 
-Just to note that if the key is marked with KE_IGNORE, its value is not
-used. But for documentation purposes it is a good idea to have written
-there something other than KEY_RESERVED -- if it is possible.
+When fw_devlink=3Drpm, you'll have device links created between
+consumers and suppliers with the DL_FLAG_PM_RUNTIME flag set. So
+before your device is runtime resumed, it'll make sure all your
+suppliers are resumed first.
 
-For example it can be useful if somebody in future figure out how to
-turn off processing of this key in firmware...
+My guess is that there is some issue in the runtime PM handling in
+these drivers. I don't have enough context to provide further insight.
 
-> > 
-> > > +
-> > > +	/* Win-key Unlock */
-> > > +	{ KE_IGNORE, 0xe001, {KEY_RESERVED} },
-> > > +
-> > >  	/* Key code is followed by brightness level */
-> > >  	{ KE_KEY,    0xe005, { KEY_BRIGHTNESSDOWN } },
-> > >  	{ KE_KEY,    0xe006, { KEY_BRIGHTNESSUP } },
-> > > -- 
-> > > 2.47.0
-> > > 
+-Saravana
+
+> >
+> > Thanks
+> > Frieder
+> >
+> > [1]
+> > https://patchwork.kernel.org/project/linux-phy/cover/20240904233100.114=
+611-1-aford173@gmail.com/#26014057
+> > [2]
+> > https://lore.kernel.org/imx/8cfd3052-c85a-4235-b9b8-6d2929e9e455@kontro=
+n.de/T/
 
