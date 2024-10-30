@@ -1,169 +1,251 @@
-Return-Path: <linux-kernel+bounces-388917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9C89B661D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:37:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2489B6621
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981821F21A78
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:37:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F91B28179D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EDE1F7091;
-	Wed, 30 Oct 2024 14:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BAD1F81B5;
+	Wed, 30 Oct 2024 14:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILNkEIk3"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r41tJhqU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639211EF0AA
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0491F80AC;
+	Wed, 30 Oct 2024 14:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298891; cv=none; b=edpSFN+BglcdOHHjNtucxyVeN1TXoXlMtxfRv90yY7yhoYHniCiCKeeGJpwXO+1vwrSN/P7zMYVnprbLiZILQj4aBDRFkbSO7DJTn7+h6cJ8AO5FeaHkEh6bFrxq4Fdo5EjXygHTUQEyuZ27yVcrIFycJKD2WpPPTrQvTsbqfy0=
+	t=1730298896; cv=none; b=Xvay2cqnInV0bRAMaiNnFMlKmklLFj/MmSZ7YJrBTKGhfn6P+ANC08hhmqq6JYCxSsFOrtXEC6G+ogLroSeKJVOufxrJ9zndCvKxjvgCrRxZ60QxyKofKzlVrdOoFTa+5+uKFCZDyMNGHW+F+4mJFGT8UXsfBCCILaYeA5Q0+aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298891; c=relaxed/simple;
-	bh=Eki/8PUymi3DlYn8iy09FHeO7F5hi7LYw3hNSmdcLP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=utkmuUakGWcTU6hrh7TkH3bqQiOFdIHbtyI9b9GQ2EqREWQ4NgChwK0rpQZ6d75eqJrHlFlloV75qr+acyRnI4cRGtFT9hEX53VtyJrVIV88ZDrRnZ8w14q/q4EPfwqaBlm51WS7j225SWVUVVXNgVEp8vLY9/SK55jUk9Ii3hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILNkEIk3; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b1488fde46so511815985a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730298888; x=1730903688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3tFvvK4S+XscR7M4udOgSSj/lik4hiG6acvCg0+VWJI=;
-        b=ILNkEIk3jmoCYRlpn057kQX+J09Rwm3EKG8j1gTz6ucczpgRTE4m4uw01xm1ww490m
-         d36c82DOXMSQ7iwgkjCOdIQNRDVx8auc6SSkA3KEyhwMeVJ3eNEnokpbHdKabUroIqGt
-         5Axw4K5A6ePEPnkJe8vDq84G3slYpVXu/AQeg/AfRnJlqtzlVrBW2uhVnlHy7HFnfaub
-         dNcsEnjrgn7tvBTCgi6Hw7LIv9CCGAml/L/Ry7bhsMBBabHoeC64NCU0sanDM+WAYkHD
-         CK01cbNmqHdKCOUUxBha1TiO3uoaN2rq5wULB9YsG/jTFAyJ4kChPVd6vo3cjE35FZYL
-         Gneg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730298888; x=1730903688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3tFvvK4S+XscR7M4udOgSSj/lik4hiG6acvCg0+VWJI=;
-        b=Ht7GsGAjj8qaHUsBbNzmZU9TdLOK3656hZ0x/dBf7jWvgTH7KwyZg4oe/kbkkLDzbj
-         V1mQhSM2nEs4pt/7OJn8T6OUm1g4bZwFJctN/5+ntbY95nhK9Mnlz5WENyGU9+vxhy+W
-         SEO0gbUSTJ1PrkCzgcD7gh4YIXmeJpm0dLjZUyBhiiZ+Q2Bzm2/oRxbIrbsMaJT6meZm
-         0W8rzQkea+MYbNy9RebgmIiVSufgOF1N1BzQxrfKeJvLJWBlcsg39XKVTpxMMbFjSi3X
-         bXLISaLITj5Mv/lQSg31A8R0RpFuxTtScM5gqiUgHuj36XUIRQI8M708qzwUE1zc/R/f
-         2iHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIvCogDSbPtiL4J5qYuoUuICLVHi5lj79I2gA5+sZXzkwsWNWgLA4iKhkBhOdSUEbPAT1xVYwThKm1CFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypM+iOI/7nawFW3ykxQgbcJLPFR7aj2hcaOvsZuvQ1QwUkA/Ws
-	EuLLa0rDeM3m8Leylp1ifnEDKKidLoiEsDxebxN1s2syKh2ciTqF
-X-Google-Smtp-Source: AGHT+IG0Ti+K1kKXrP3qgmIck8+gSErpC9BXLgDSa6X9NIGc6jzs3PudVoJcoOs7EWCFRYro1j5onQ==
-X-Received: by 2002:a05:620a:2482:b0:7b1:64fa:3696 with SMTP id af79cd13be357-7b193f4da53mr2158067585a.51.1730298888056;
-        Wed, 30 Oct 2024 07:34:48 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d345a9fsm512998285a.103.2024.10.30.07.34.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 07:34:47 -0700 (PDT)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 10F441200068;
-	Wed, 30 Oct 2024 10:34:47 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Wed, 30 Oct 2024 10:34:47 -0400
-X-ME-Sender: <xms:BkQiZ53SLYzteVh5JLuUEcFgxNqaUr5ucU-XxkiQLB8Wx7NmdyTY_A>
-    <xme:BkQiZwHXbXHwNFEYFrbwPxgPFpBFl_oFruEnILwZLo4QEsXBxWJBtqgQ37EZurnMJ
-    0qTKKH1KVAnUozQZg>
-X-ME-Received: <xmr:BkQiZ57JOwWUdxZpBbmBTvOgn7wm0Cs2-cvO7-2C2zm3vcXTa3JT9tD6nlk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgieehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddtpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehjohhnrghsrdhosggvrhhhrghushgvrheshh
-    hurgifvghitghlohhuugdrtghomhdprhgtphhtthhopehprghulhhmtghksehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurd
-    gvughupdhrtghpthhtohepphgrrhhrihdrrghnughrvggrsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghrii
-    esihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehnphhighhgihhnsehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgtph
-    htthhopehjrdgrlhhglhgrvhgvsehutghlrdgrtgdruhhk
-X-ME-Proxy: <xmx:BkQiZ204JBjXgjffr6FvULrOwE84rA9bptikS63c5W1bYoKH2V-S8A>
-    <xmx:BkQiZ8G43Zi4wdhl6G1mB9XKzvaJmk8tAeitF3M2ukUcyndIJ8_5iA>
-    <xmx:BkQiZ3-sN3tuQLBhUgtaPyPkWGIH_mNqFx_QtZBSGZSR4YkbgbuS0g>
-    <xmx:BkQiZ5kdYBVr1D6kfkyRMNzOsq_uKzZhjbNVvpt05RSRf77Zi_spfw>
-    <xmx:B0QiZwHdQHRH6NbsqxCDRtYQ8Eri98fYpoGe5cFw9kGA_gl8L52nCWXz>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 10:34:46 -0400 (EDT)
-Date: Wed, 30 Oct 2024 07:34:45 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: paulmck@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-	will@kernel.org, peterz@infradead.org, npiggin@gmail.com,
-	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-	urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
-	hernan.poncedeleon@huaweicloud.com
-Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
- and semantic tags
-Message-ID: <ZyJEBc1qwFHwQQT2@Boquns-Mac-mini.local>
-References: <20240930105710.383284-1-jonas.oberhauser@huaweicloud.com>
- <20240930105710.383284-6-jonas.oberhauser@huaweicloud.com>
- <ZyApMteRMxZbpBta@Boquns-Mac-mini.local>
- <cd97e045-dfa4-4ffe-9df0-f7abeec848e7@paulmck-laptop>
- <3b796ef4-735a-44df-a9b1-671df49fd44e@huaweicloud.com>
+	s=arc-20240116; t=1730298896; c=relaxed/simple;
+	bh=0voffoZR/9yLaMs/QSdN1vbgkVtNAlW/4s6JXHFS/kY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fQ5k8HCrdMd1YklSl7F53x3F1mY3bEXnUzIMMIy8bZ5hk7dJACmFQDrZRj74E/T0yYp/MEX+q8x+MnqjINaMaqz7RwnM5aUPxO5VRdUZx2Ja/WpLeUcna92VTr6XWbDlDxRZQqDR+Zrwr06Ga5dnhhMwqpwuGHMfX60M6RqSlPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r41tJhqU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1590C4CED4;
+	Wed, 30 Oct 2024 14:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730298896;
+	bh=0voffoZR/9yLaMs/QSdN1vbgkVtNAlW/4s6JXHFS/kY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r41tJhqUW6DD96Wl0aBg/zf4q11RRPUGIFS4KCQuZ5GvgcbkB1legnQCZR7CmQivt
+	 kpdeAgWL1AwhZHnt81AQSlkQKIVw9fudU8NwiAgyxU64TP+bkuuJg9hO2WafrP0FqE
+	 by+WYOn+TpXNBQfEiJImlxVJIIHUJxasGett6MUf+3WaI/Wo+dh+kfxgY1nA2SlbmK
+	 OrT0/Jl4+thA5gLxH8lakeWYmWrLKyY0tHRzp3RRifeB4qSuqwIDg3az/kI5VNTz1f
+	 TZkeRhUrzP5GouNG17FBLwpE6hgK9dVrE/MXZwKB+rVgwHu87wsXsDw3lnoyZ2aCY5
+	 CAO/F2pwm5/xg==
+Message-ID: <299bd27b-b5bd-492a-9873-447329e60b67@kernel.org>
+Date: Wed, 30 Oct 2024 15:34:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b796ef4-735a-44df-a9b1-671df49fd44e@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: clk: agilex5: Add Agilex5 clock bindings
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, netdev@vger.kernel.org,
+ Teh Wen Ping <wen.ping.teh@intel.com>
+References: <20241030-v6-12-topic-socfpga-agilex5-clk-v1-0-e29e57980398@pengutronix.de>
+ <20241030-v6-12-topic-socfpga-agilex5-clk-v1-1-e29e57980398@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241030-v6-12-topic-socfpga-agilex5-clk-v1-1-e29e57980398@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 12:38:26PM +0100, Jonas Oberhauser wrote:
+On 30/10/2024 13:02, Steffen Trumtrar wrote:
+> From: Teh Wen Ping <wen.ping.teh@intel.com>
 > 
-> 
-> Am 10/30/2024 um 12:41 AM schrieb Paul E. McKenney:
-> > On Mon, Oct 28, 2024 at 05:15:46PM -0700, Boqun Feng wrote:
-> > > On Mon, Sep 30, 2024 at 12:57:10PM +0200, Jonas Oberhauser wrote:
-> > > > Not all tags that are always there syntactically also provide semantic
-> > > > membership in the corresponding set. For example, an 'acquire tag on a
-> > > 
-> > > Maybe:
-> > > 
-> > > Not all annotated accesses provide the same semantic as their syntactic
-> > > tags...
-> > > 
-> > > ?
-> > 
-> > Jonas, are you OK with this change?  If so, I can apply it on my next
-> > rebase.
-> > 
-> 
-> I'm ok with an extra s after semantics and a minor rephrase:
-> 
-> Not all annotated accesses provide the semantics their syntactic
-> tags would imply
-> 
-> 
-> What do you think @Boqun ?
-> 
+> Add Intel SoCFPGA Agilex5 clock definition.
 
-Yes, of course! This looks good to me.
-
-Regards,
-Boqun
+Where is the binding? I see only clock IDs. Your commit msg should
+explain such unusual cases.
 
 > 
->   jonas
+> Signed-off-by: Teh Wen Ping <wen.ping.teh@intel.com>
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+>  include/dt-bindings/clock/agilex5-clock.h | 100 ++++++++++++++++++++++++++++++
+>  1 file changed, 100 insertions(+)
 > 
+> diff --git a/include/dt-bindings/clock/agilex5-clock.h b/include/dt-bindings/clock/agilex5-clock.h
+
+Filename must match compatible.
+
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..661bc8b649adfd6c3ae75dcbaff5dea331f0be52
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/agilex5-clock.h
+> @@ -0,0 +1,100 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+
+Dual license.
+
+> +/*
+> + * Copyright (C) 2022, Intel Corporation
+
+Or if you cannot relicense just create your own binding header.
+
+> + */
+> +
+> +#ifndef __AGILEX5_CLOCK_H
+> +#define __AGILEX5_CLOCK_H
+> +
+> +/* fixed rate clocks */
+> +#define AGILEX5_OSC1			0
+> +#define AGILEX5_CB_INTOSC_HS_DIV2_CLK	1
+> +#define AGILEX5_CB_INTOSC_LS_CLK	2
+> +#define AGILEX5_F2S_FREE_CLK		3
+> +
+> +/* PLL clocks */
+> +#define AGILEX5_MAIN_PLL_CLK		4
+> +#define AGILEX5_MAIN_PLL_C0_CLK		5
+> +#define AGILEX5_MAIN_PLL_C1_CLK		6
+> +#define AGILEX5_MAIN_PLL_C2_CLK		7
+> +#define AGILEX5_MAIN_PLL_C3_CLK		8
+> +#define AGILEX5_PERIPH_PLL_CLK		9
+> +#define AGILEX5_PERIPH_PLL_C0_CLK	10
+> +#define AGILEX5_PERIPH_PLL_C1_CLK	11
+> +#define AGILEX5_PERIPH_PLL_C2_CLK	12
+> +#define AGILEX5_PERIPH_PLL_C3_CLK	13
+> +#define AGILEX5_CORE0_FREE_CLK		14
+> +#define AGILEX5_CORE1_FREE_CLK		15
+> +#define AGILEX5_CORE2_FREE_CLK		16
+> +#define AGILEX5_CORE3_FREE_CLK		17
+> +#define AGILEX5_DSU_FREE_CLK		18
+> +#define AGILEX5_BOOT_CLK		19
+> +
+> +/* fixed factor clocks */
+> +#define AGILEX5_L3_MAIN_FREE_CLK	20
+> +#define AGILEX5_NOC_FREE_CLK		21
+> +#define AGILEX5_S2F_USR0_CLK		22
+> +#define AGILEX5_NOC_CLK			23
+> +#define AGILEX5_EMAC_A_FREE_CLK		24
+> +#define AGILEX5_EMAC_B_FREE_CLK		25
+> +#define AGILEX5_EMAC_PTP_FREE_CLK	26
+> +#define AGILEX5_GPIO_DB_FREE_CLK	27
+> +#define AGILEX5_S2F_USER0_FREE_CLK	28
+> +#define AGILEX5_S2F_USER1_FREE_CLK	29
+> +#define AGILEX5_PSI_REF_FREE_CLK	30
+> +#define AGILEX5_USB31_FREE_CLK		31
+> +
+> +/* Gate clocks */
+> +#define AGILEX5_CORE0_CLK		32
+> +#define AGILEX5_CORE1_CLK		33
+> +#define AGILEX5_CORE2_CLK		34
+> +#define AGILEX5_CORE3_CLK		35
+> +#define AGILEX5_MPU_CLK			36
+> +#define AGILEX5_MPU_PERIPH_CLK		37
+> +#define AGILEX5_MPU_CCU_CLK		38
+> +#define AGILEX5_L4_MAIN_CLK		39
+> +#define AGILEX5_L4_MP_CLK		40
+> +#define AGILEX5_L4_SYS_FREE_CLK		41
+> +#define AGILEX5_L4_SP_CLK		42
+> +#define AGILEX5_CS_AT_CLK		43
+> +#define AGILEX5_CS_TRACE_CLK		44
+> +#define AGILEX5_CS_PDBG_CLK		45
+> +#define AGILEX5_EMAC1_CLK		47
+> +#define AGILEX5_EMAC2_CLK		48
+> +#define AGILEX5_EMAC_PTP_CLK		49
+> +#define AGILEX5_GPIO_DB_CLK		50
+> +#define AGILEX5_S2F_USER0_CLK		51
+> +#define AGILEX5_S2F_USER1_CLK		52
+> +#define AGILEX5_PSI_REF_CLK		53
+> +#define AGILEX5_USB31_SUSPEND_CLK	54
+> +#define AGILEX5_EMAC0_CLK		46
+> +#define AGILEX5_USB31_BUS_CLK_EARLY	55
+> +#define AGILEX5_USB2OTG_HCLK		56
+> +#define AGILEX5_SPIM_0_CLK		57
+> +#define AGILEX5_SPIM_1_CLK		58
+> +#define AGILEX5_SPIS_0_CLK		59
+> +#define AGILEX5_SPIS_1_CLK		60
+> +#define AGILEX5_DMA_CORE_CLK		61
+> +#define AGILEX5_DMA_HS_CLK		62
+> +#define AGILEX5_I3C_0_CORE_CLK		63
+> +#define AGILEX5_I3C_1_CORE_CLK		64
+> +#define AGILEX5_I2C_0_PCLK		65
+> +#define AGILEX5_I2C_1_PCLK		66
+> +#define AGILEX5_I2C_EMAC0_PCLK		67
+> +#define AGILEX5_I2C_EMAC1_PCLK		68
+> +#define AGILEX5_I2C_EMAC2_PCLK		69
+> +#define AGILEX5_UART_0_PCLK		70
+> +#define AGILEX5_UART_1_PCLK		71
+> +#define AGILEX5_SPTIMER_0_PCLK		72
+> +#define AGILEX5_SPTIMER_1_PCLK		73
+> +#define AGILEX5_DFI_CLK			74
+> +#define AGILEX5_NAND_NF_CLK		75
+> +#define AGILEX5_NAND_BCH_CLK		76
+> +#define AGILEX5_SDMMC_SDPHY_REG_CLK	77
+> +#define AGILEX5_SDMCLK			78
+> +#define AGILEX5_SOFTPHY_REG_PCLK	79
+> +#define AGILEX5_SOFTPHY_PHY_CLK		80
+> +#define AGILEX5_SOFTPHY_CTRL_CLK	81
+> +#define AGILEX5_NUM_CLKS		82
+
+Drop, not a binding.
+
+> +
+> +#endif	/* __AGILEX5_CLOCK_H */
+> 
+
+Best regards,
+Krzysztof
+
 
