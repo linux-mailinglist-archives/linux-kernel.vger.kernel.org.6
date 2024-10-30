@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-387973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2159B58A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:30:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5B79B58A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B534DB224DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77FC11F22D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0523417BB6;
-	Wed, 30 Oct 2024 00:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1057D17BBF;
+	Wed, 30 Oct 2024 00:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilJfADuP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gzw2760t"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C5C23D7;
-	Wed, 30 Oct 2024 00:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF7CD528;
+	Wed, 30 Oct 2024 00:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730248228; cv=none; b=FAda2zJr7zMwcXUPuYTFl4NrIUxJc+2ifVkjJxyvbVAwd5sHO9oFI6CEipHXbDzJ5L95JGQziyGwh34FYFrNaZ6YO2SbLWfntTy3spJdLTfnB7CiRe3V8jrpfgIW2h1Mtcj41MpJRgf3iYddVcUmS25Eb5yPO7rKZONzs5Q6bR0=
+	t=1730248349; cv=none; b=F8gmIdg6Jy2/YaYi3EjJC3hmCpv8vrGcFnZW2l1s3B8oX5fS8yzcHhjBrkePK4zCHclBKqrbs534KowupV2eIZ0jmwsJ+nKeRaSf2FvRU4sRrW2ljPnQhTvJQTN42mOuPQoHod8+H1bAFDAHeQrc4qoKcvjoa/haaAZ+2fq1FHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730248228; c=relaxed/simple;
-	bh=oVlw9SNzmrWdMDpxLIFpo1SZYL350HBgiiN3l+EP2Z0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dur/HptRfHfL1ngHKiQ2WCABEKTBcAWNLjGk1E3UH4bvXlzLgDUux61jRxm9lVcEYspFvVunFtrPlPoPm8B/L0e4zp2djub4sosDYTtheRNgShfmpE3bxCA8DldOaEcXWT2ERc0Iuqploxm5qAYupLHD+mMGX1ObS6CnNP3gTnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ilJfADuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3987C4CECD;
-	Wed, 30 Oct 2024 00:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730248227;
-	bh=oVlw9SNzmrWdMDpxLIFpo1SZYL350HBgiiN3l+EP2Z0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ilJfADuPycc2zSWqFUXrm2MFV7PLskhO//pz1N6tNalUHjvhlDk9QC6r17mCCNOeS
-	 L/etVO7z35MKEbTo5vat+ajZXXs1j0e40dFrs9cHNWMHiBSw9ZjAqae3T035ojIBpO
-	 B9qBtRUQX87xk2tbuiL8QcONkxJbvjpBJVK+k1GhJaV2YitE/xn+ksXus2ekccHyMF
-	 2wmDaZjtDvfOIWd3Hub98vVDJVYtRf0lbPdEsxQJ8UoHMjVZfOVYp8N2YdnpJXz9u4
-	 CccMKsJuM7ZkRpFqM000nZaF76anCLGE+uTL7T5vDbpkeaR0orYvEM++p6439NxA1t
-	 Up5g0xgBhwJwQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0F0380AC00;
-	Wed, 30 Oct 2024 00:30:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730248349; c=relaxed/simple;
+	bh=YpZ2l55qpDmvuz/gK4i9l+zbziSVwmk9ZMzxywuxs/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ohcvygaTK770xU28Ys1jbVVgcIAkH2buVqZhP615lfke93h7VNvTaUEd3IV0btmidWWVlf+6fJlNH93RuFfTv3XCWk+sNVWjIys+Z/Zp/IG0PmItiGa8Czg4HXxTJpP+sLBz7tpU7wye4q6A2xtzSoMzy2rCVJ/PtrjI1t53yIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gzw2760t; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TAaNKx013129;
+	Wed, 30 Oct 2024 00:32:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZZ7pdiwsLIsYp6Y59boCI4YznljjqwjdKMC/IJub73o=; b=Gzw2760tYgrbOzXk
+	k4jPXWR+9Yn0rjBHH3B6ip74yAVozAcOIiAWWjn3qgjBjUVJF5eCaVkQfxkLTd90
+	KZOiaOkxJZWeUWlSoYLfSTs2ErWZQgX9bDSn1fe3gNRPRaIkizh+51cegK4ahThq
+	jwVRNyD82GWLZNr6pDtcaIICTMLp+sc87QgGyv8R39ZwneGee7DFD38P29INF6ki
+	/k8Rq8/E/2zWENYYwIZa8zz/RzdO0UKXL9nOTOiPUH7yonLKftRf90yL1bhN2DTq
+	s6cG5NKkMHOi/ct2K6Xws9aWkPOxdhNPGuwElUOpULGFI5E0QLnzn48GryCHxj5q
+	L0mcKg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqe621pt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 00:32:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U0WKw0001427
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 00:32:20 GMT
+Received: from [10.71.115.177] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 17:32:20 -0700
+Message-ID: <934ee86c-2d95-47c6-b507-f9aa277ad0ad@quicinc.com>
+Date: Tue, 29 Oct 2024 17:32:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/7] devlink: minor cleanup
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173024823550.867081.16818826331864738249.git-patchwork-notify@kernel.org>
-Date: Wed, 30 Oct 2024 00:30:35 +0000
-References: <20241023131248.27192-1-przemyslaw.kitszel@intel.com>
-In-Reply-To: <20241023131248.27192-1-przemyslaw.kitszel@intel.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: netdev@vger.kernel.org, anthony.l.nguyen@intel.com,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, marcin.szycik@linux.intel.com,
- jiri@resnulli.us, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
- linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: qcom: pas: Make remoteproc name human
+ friendly
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241022-rproc-friendly-name-v1-1-350c82b075cb@oss.qualcomm.com>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20241022-rproc-friendly-name-v1-1-350c82b075cb@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8bycLzQhYgCBS6BL9Pr2si09lF3v6zTB
+X-Proofpoint-ORIG-GUID: 8bycLzQhYgCBS6BL9Pr2si09lF3v6zTB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=586 malwarescore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300002
 
-Hello:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 23 Oct 2024 15:09:00 +0200 you wrote:
-> (Patch 1, 2) Add one helper shortcut to put u64 values into skb.
-> (Patch 3, 4) Minor cleanup for error codes.
-> (Patch 5, 6, 7) Remove some devlink_resource_*() usage and functions
-> 		itself via replacing devlink_* variants by devl_* ones.
+On 10/21/2024 9:21 PM, Bjorn Andersson wrote:
+> The remoteproc "name" property is supposed to present the "human
+> readable" name of the remoteproc, while using the device name is
+> readable, it's not "friendly".
 > 
-> v2: fix metadata (cc list, target tree) - Jiri; rebase; tags collected
+> Instead, use the "sysmon_name" as the identifier for the remoteproc
+> instance. It matches the typical names used when we speak about each
+> instance, while still being unique.
 > 
-> [...]
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> ---
+>   drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Here is the summary with links:
-  - [net-next,v2,1/7] devlink: introduce devlink_nl_put_u64()
-    https://git.kernel.org/netdev/net-next/c/da3ee3cd79ca
-  - [net-next,v2,2/7] devlink: use devlink_nl_put_u64() helper
-    https://git.kernel.org/netdev/net-next/c/a788acf154eb
-  - [net-next,v2,3/7] devlink: devl_resource_register(): differentiate error codes
-    https://git.kernel.org/netdev/net-next/c/e0b140c44f32
-  - [net-next,v2,4/7] devlink: region: snapshot IDs: consolidate error values
-    https://git.kernel.org/netdev/net-next/c/72429e9e0cfb
-  - [net-next,v2,5/7] net: dsa: replace devlink resource registration calls by devl_ variants
-    https://git.kernel.org/netdev/net-next/c/d5020cb41e3c
-  - [net-next,v2,6/7] devlink: remove unused devlink_resource_occ_get_register() and _unregister()
-    https://git.kernel.org/netdev/net-next/c/2a0df10434dd
-  - [net-next,v2,7/7] devlink: remove unused devlink_resource_register()
-    https://git.kernel.org/netdev/net-next/c/e3302f9a503a
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
 
