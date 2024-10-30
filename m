@@ -1,143 +1,83 @@
-Return-Path: <linux-kernel+bounces-387952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9E39B585F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AEB9B585C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D6C28587B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:12:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9652855EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBAD63CB;
-	Wed, 30 Oct 2024 00:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0D78C07;
+	Wed, 30 Oct 2024 00:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JS/rZlWL"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aMBFD8n0"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418EF440C;
-	Wed, 30 Oct 2024 00:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4AEBA49;
+	Wed, 30 Oct 2024 00:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730247138; cv=none; b=FIuNW64rSA0C36rYFKAv7GaLdGhXntgFa++Y1UIP2QVru5upPrqUlFWv8i+NwrEfef+BwYnWmmKeu/FJmTwvxg+MZZImkbnrwyblaknvw2Gxy4Vtc44GkluO7Jdn+a+Znex1gV0uB1dPbAvX8ZbtTDJUcOHhWd61C4x2ZLxR57I=
+	t=1730247121; cv=none; b=TVcaG2Tx70LNWBtdI1zZrYGU3rciGN1UsrSeoVxOFUzslB+hkiK2WP7wUkvTdUl9DklfRMABcSg9CYl0FfL8MKqHagGZd9v3gJjt5zMAI6t4iAOrSBV/Ub3QLLo7cdVx6OGQwmGgEIgjDYtTe0beqiVUrNF/NMlBKEzf5mtAVTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730247138; c=relaxed/simple;
-	bh=KIpxIg/fnyHZfZG3oyQ2rRPQXhqDdJpGUafpYV4GJDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L0OzeV7kVeWt+uvXplbS027o7CS5qupcEoGrJhx8VQ88N4EhyUxndQurz36Fr0miD8f17j/oGppuDOgd/iw4JKptbUZy1C9Ft3Jp8T9Bq2UlxQHt5zL8KLz+vwlGrBcIebxO7UCtLYwlxosQjLoQIU5dt22oOWdsXgaPlYuarMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JS/rZlWL; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20ce5e3b116so43416805ad.1;
-        Tue, 29 Oct 2024 17:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730247135; x=1730851935; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q4FHs2xo7SoGaE1iiSF7N0/21QZQb33Tz/rJ8tzfDxE=;
-        b=JS/rZlWLPSxY3oIHWZIWnA0I76FQyLQ5UOvwdCmvjtmhv3pcBhLF4qvYJCJL4fXU7y
-         NhbifZ/mAK0FT/+adOgBMH8VxjYWLqhWuVZjEWRe3e1gzzhikL0UojyTNiqxcSYHoNiq
-         FTmj8noF60CrH9MdCh2PzLQBQIiQsYKn50wTvYYLhuTEydNG2HYqjK6pUYZ2aDUg96x/
-         dayHsVfGQxd4qsn2Zhs2QLl0qnBgj/HiTsOrcVD7PRy9Bk0Om0c6trrfd/LHU2HDunpC
-         Y56eFcNMMJtRKmI+0NhIZ5Ih6DydR0r4ezRtB7jmG1Lvfw3CvOevegq6mU0wS0CTfcYe
-         BCzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730247135; x=1730851935;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q4FHs2xo7SoGaE1iiSF7N0/21QZQb33Tz/rJ8tzfDxE=;
-        b=mmfHtlZ3KvY17MM/ZOj4vRLmwUF5+vgDjMBpFtPTc+mRnqJcA84GepJRpn6Xbp4qoP
-         deMXTYFw2GATD0G19+EJRlwQctEanyruHwK4p8cdQWtX4cR4+19TST4hlnf4J9WdFcNQ
-         2E7bN4Il8QpnfW1rNrKsREF5oW5GFMPDz1czzm/WcEAtmUH7PGZHOVyjHYhwtAA604ko
-         yPvn1nJuFvHSRiNwJbOfKjk6dIuO2t/vdduYy9CzLux0ms1JqMttszfhVCZtRByQeqSI
-         ylgYxGGZUmvsjkhw8i1EZKWchCpfqbbuKyw9Lv7TgcWleNdJrTz5bdVG2rKqL4WxptAc
-         y1kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXCKA011plF5XPasucsCL6Ls8X75WbUn44tCsIpNMIvsAod4ntz8eLnkIMrApQaeYPigXNHCaEAtGlwxA=@vger.kernel.org, AJvYcCWAQXLBLynao2PTDxEL6mUDTQTvLxsWAvLxzqDlxWsKehWBPeS0Std+KSfaCJzZvXUlAtnNEIMD/P1jUTHG3oTnCIds6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd3PbOybT07ikDX3i8j5UYQ6fW9XgIpzKaTGe1TMxhaUFlbFYP
-	pPOLvovHsPanLaiaj0rBZ5edoCQ96qzVTLXUf9MFt/78oSRHxkSX
-X-Google-Smtp-Source: AGHT+IHNoCah/wFxLMx1qtL536pU9PZINhr9LJEWr6qIyog9JRNVDaSLVg3c5Fgz4YI2kdxNbzBY/g==
-X-Received: by 2002:a17:903:32c4:b0:20c:a1a3:5373 with SMTP id d9443c01a7336-210c6c90e6cmr168617105ad.55.1730247135440;
-        Tue, 29 Oct 2024 17:12:15 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc013462sm72165255ad.178.2024.10.29.17.12.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 17:12:15 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: W_Armin@gmx.de,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH v11 4/5] alienware-wmi: added force module parameters
-Date: Tue, 29 Oct 2024 21:11:49 -0300
-Message-ID: <20241030001148.7623-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241030000904.7205-2-kuurtb@gmail.com>
-References: <20241030000904.7205-2-kuurtb@gmail.com>
+	s=arc-20240116; t=1730247121; c=relaxed/simple;
+	bh=6fqx+fBwCUhdf5wBO/O6QYAWI8L0keIgHo89A0XY100=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CqRWd2cF0EmxhvA5Nsd6RrfuSZWNnfPxK/lpIztJiYfWKe9g3UfRevlLMfraDh/OGI4i881JIFSEhW5VrkKSDy9F5SNKiqwvMGE8p75nLyb8JNK5Nb30kDfIeEcdD8qGbj9j++5fgIbNSRj95lhgj9QX4o1E71wZXp7YgBZAxdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aMBFD8n0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=50kDheFJoL1v0G60YGTJ0lxn66NL5Mr1869/rHwfCVk=; b=aMBFD8n01kNyPz7DZ9s012H2PD
+	oaFEomS/LxechLafW7XfCF47zICZa030u/I9AeFZSFbxRG+n+n1ZZeHK0LysiS0rKyyLLRhx5wqTa
+	z5ATZxLrtRB8RgFzhTbRrMc6Kow/5J5yAh/d+O4vDnpxTLROsh5RsJmnF1wW8vPggkCohdl/6kBsp
+	KbYU44UZ7NcPk1h13vN1G6X2TFlatEC4mncjy+U8JVVEkmdpiUvOeEI8j2MWV1b7U1zJbkgEZO2+e
+	3WEsiZfeALvZtCbITCE7zuPnFu6n0UnKhME2qtFb2NQqYSuqiQFHfsc6WYv8e+e1LKVU/c303OrP9
+	5NM9WbyQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5wJX-00000009HKD-2eAI;
+	Wed, 30 Oct 2024 00:11:55 +0000
+Date: Wed, 30 Oct 2024 00:11:55 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
+	josef@toxicpanda.com
+Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
+ fanotify fastpath handler
+Message-ID: <20241030001155.GF1350452@ZenIV>
+References: <20241029231244.2834368-1-song@kernel.org>
+ <20241029231244.2834368-3-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029231244.2834368-3-song@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Added force_platform_profile and force_gmode unsafe module parameters,
-allowing users to force `thermal` and `gmode` quirks respectively.
+On Tue, Oct 29, 2024 at 04:12:41PM -0700, Song Liu wrote:
+> +		if (strstr(file_name->name, item->prefix) == (char *)file_name->name)
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
----
-v11:
- - Removed unnecessary 'alienware-wmi' in pr_warn
-v10:
- - Introduced
----
- drivers/platform/x86/dell/alienware-wmi.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+	Huh?  "Find the first substring (if any) equal to item->prefix and
+then check if that happens to be in the very beginning"???
 
-diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index 1d62c2ce7..d74c6edef 100644
---- a/drivers/platform/x86/dell/alienware-wmi.c
-+++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -42,6 +42,14 @@ MODULE_LICENSE("GPL");
- MODULE_ALIAS("wmi:" LEGACY_CONTROL_GUID);
- MODULE_ALIAS("wmi:" WMAX_CONTROL_GUID);
- 
-+static bool force_platform_profile;
-+module_param_unsafe(force_platform_profile, bool, 0);
-+MODULE_PARM_DESC(force_platform_profile, "Forces auto-detecting thermal profiles without checking if WMI thermal backend is available");
-+
-+static bool force_gmode;
-+module_param_unsafe(force_gmode, bool, 0);
-+MODULE_PARM_DESC(force_gmode, "Forces G-Mode when performance profile is selected");
-+
- enum INTERFACE_FLAGS {
- 	LEGACY,
- 	WMAX,
-@@ -1075,6 +1083,16 @@ static int __init alienware_wmi_init(void)
- 	if (quirks == NULL)
- 		quirks = &quirk_unknown;
- 
-+	if (force_platform_profile)
-+		quirks->thermal = true;
-+
-+	if (force_gmode) {
-+		if (quirks->thermal)
-+			quirks->gmode = true;
-+		else
-+			pr_warn("force_gmode requieres platform profile support");
-+	}
-+
- 	ret = platform_driver_register(&platform_driver);
- 	if (ret)
- 		goto fail_platform_driver;
--- 
-2.47.0
+	And you are placing that into the place where it's most likely to cause
+the maximal braindamage and spread all over the tree.  Wonderful ;-/
 
+	Where does that "idiom" come from, anyway?  Java?  Not the first time
+I see that kind of garbage; typecast is an unusual twist, though...
 
