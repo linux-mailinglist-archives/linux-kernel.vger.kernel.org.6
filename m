@@ -1,300 +1,180 @@
-Return-Path: <linux-kernel+bounces-387959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E509B586F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:15:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FB39B5874
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:17:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B127C28659A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53BD1C2298C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A7A17591;
-	Wed, 30 Oct 2024 00:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008FD10A1E;
+	Wed, 30 Oct 2024 00:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qr0tu9WW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="et+lIRlK"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BB6CA64;
-	Wed, 30 Oct 2024 00:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BBB12E5D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730247327; cv=none; b=kXpZnFyuN9lbwJgd85Xqi+urpGCyAUnkMjOQYLFosOzqPL0uIoTTQx+y4jxipCRVmKJWADuDQjQQJRFo5n/824gKpWMDV6R3JE0hQmkwbfIkWwBTt6IqEsUznoJmPIA+9A4kABtD16GD7coS6qPH5QLrKknwcSBz+4bBUtnTEhI=
+	t=1730247425; cv=none; b=blUFDuDpzkgJtVx7CgmbkbvWxFtdEh+DcS4il3dUA+AIOYhxc90wflGLeODvS6GsPN8WmaI70hnB08VotlXjj4umaE/+yJD8CNi/mn3dsJ3z2WIrjkwgGsX2uyTu3Aa6D08uVudeRCP/gRpepAVQSPG80zQWruwkFEwcvv0owU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730247327; c=relaxed/simple;
-	bh=Yy0P1IZcy1h8RABTeivAl3JLt4m0j1R0j+/CQtYFOtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Tg6Yq83H5RLqrM6Td3KPFvSPZHtdFnV/LlJ8hMrkGeHqVXdTLj5XusTPm+/UpzRA88CcWYoFFE1+lZpoxmGNyWvwTVTwEh/TbXTatT5luwQu/iXvsNEfvXLybDdFV1SChd4FqejqddpUaAMYYiHGxwo2mOCc0w995k6OhiJM/Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qr0tu9WW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD844C4CECD;
-	Wed, 30 Oct 2024 00:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730247326;
-	bh=Yy0P1IZcy1h8RABTeivAl3JLt4m0j1R0j+/CQtYFOtI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Qr0tu9WW263FT7aKu8DDn7gNNkLN9QYTa5IJ17LGFxWySaiag+FvWBJ48f/Tx5PGj
-	 Zr0i/b8b7NOoSbM9Kj50HddFjSPQ6EsJ+wVcxbuw0mfhXFdo9UFlFn8QC87f3UJCAv
-	 Klk6SfPXguJbA2eaZHd2R9MxtoN3xRCZQkt7uvYXLij9+BdlOGidO6Lj64JwZ1nza8
-	 jwEDkrXdm9t/dBNNExTPrTMkw4v0KWKhTMe9xePxLIJG1jQ6hBalrwFJm17rFU42MW
-	 K7Hgbg1G+xU36nHoq14NN4+IOsS9QilBniVty6UjgBCqj9IYXMfFm/uMoIVaXZ1JHo
-	 lV32HqYdhgpRQ==
-Date: Tue, 29 Oct 2024 19:15:24 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Esther Shimanovich <eshimanovich@chromium.org>,
-	Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	iommu@lists.linux.dev,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] PCI: Detect and trust built-in Thunderbolt chips
-Message-ID: <20241030001524.GA1180712@bhelgaas>
+	s=arc-20240116; t=1730247425; c=relaxed/simple;
+	bh=kL+nSJs/k5eiTKkckVjqUhseoyaNVTxIYCNgVKz9HcE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OHezEeN7mvlyjbT+ldeOtJBX1GWo336SSX/4fF4DdePC4nTWldnw7ryMViI8GCEaHa6N+HdRKYBjlWu8r8ga84urfjwfWwXP6fL9F7wGq7MKCXvQh7xgjuascLaYgpbfz7wr3clvCsmfJmwQTOV/jlJ8IRXzgpbQ+WDOZhQ0Mko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=et+lIRlK; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4608dddaa35so81261cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:17:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730247422; x=1730852222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RCmWu47sjTGX3jar/Dwdhp+9K5zVvqpEnsEiRnQbuZ4=;
+        b=et+lIRlKegBfC2h9/n31J6d8TJkbDu440N5TWTD2sNhhoMXP6vXEOMh/inA93j6+F4
+         3DKkwv73/9t3NJyDIhv7jzemF2eXJg52P1ihLT74+/JXi0mWUeMhWG6qc3u+23ST3ebS
+         U3OHCEnqPzwjWtDThAAH611SkFBuqkumpinc/ISUBCuOZu5yUTrNox1dpJ+4h0SbzhOS
+         +SX/RqoypTPdwbV49RETbQL/htObPWplcinnvwcrw8vwp4JP0FFTsS4veGJK59w8BCYr
+         wT0rwWxwDaw0dQ/Udb1H+q/AGncW8O2b+boe9voF0/54KyXRoNJ5CEOQw/sDUCzwhMe3
+         beGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730247422; x=1730852222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RCmWu47sjTGX3jar/Dwdhp+9K5zVvqpEnsEiRnQbuZ4=;
+        b=BgcCpytlIuAZXugxt18M3tVdYuMXwJZnz69BOgNdW/JXSgyblzqgp7v2Ru5ZhK5zqr
+         iCxU3qx66157UfEjZ4LQNhnrDZVvr7aO7nJcffmfpOcOjBv7Xtul4kj1gSqnuReSL3uv
+         JbLtlrICls8G430ypZJ4q+sM2FIL72JIYVFEa4f1MGKlq6LZCR+182nW43kzuB15Txdj
+         QH8pbQhuONRQ/SGXOVyhPU+gy9oqpOb9q3xHsWY+UEMkwwRiAH80HZDsKGz/B1yq+76O
+         XMdybzkN0my+Kuv0uYgZ8nI0eYWvraY6M2WDGt5zKfwplQIfwowUlVPdWN/EcV+dqHMs
+         Z/kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQaTdHlRU3jotPGvUIKQri+01+AB6uERS3um3vMAPsTmfCbOxk3BwlBaD5yIT7W+DwPcOXaDPCmA+fwyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQFtywjGi30X5A56LAKnFO701vOYGDtQIkjSs3BsvCmLgEfE3w
+	9R3UXmdABW7/XZ7qFteRctTbNtSU/7SkgzHaZK0P4dSMR1qtRtYxQ2Xx8Devu2IRst4m8WdENp4
+	zvVyxuXaGjZgYp7o9NZkd62qfcap/++Up/jxs
+X-Gm-Gg: ASbGnctXM5Rdtpv5A8DfiH7FHv+FW/2Y4IZYik6bGqtNw/ssAQo1+maNXNUKxTXpony
+	0v0HuALZ4n3/SMMK76TP9XBfs4z8e+55iquETt04kMzoFoDeNBMCZJmoAqLCdMqPT
+X-Google-Smtp-Source: AGHT+IEaPibastFimQxIGHeancJlv6kb2dWI4ioRIOkCpZsX0edKkHwzu5czUo3lz8BTR5AsStAJ1WI8kMngUNb28NI=
+X-Received: by 2002:ac8:5d91:0:b0:460:48f1:5a49 with SMTP id
+ d75a77b69052e-46164f057c4mr6157321cf.14.1730247422165; Tue, 29 Oct 2024
+ 17:17:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240910-trust-tbt-fix-v5-1-7a7a42a5f496@chromium.org>
+References: <20241028234533.942542-1-rananta@google.com> <868qu63mdo.wl-maz@kernel.org>
+ <CAJHc60x3sGdi2_mg_9uxecPYwZMBR11m1oEKPEH4RTYaF8eHdQ@mail.gmail.com> <865xpa3fwe.wl-maz@kernel.org>
+In-Reply-To: <865xpa3fwe.wl-maz@kernel.org>
+From: Raghavendra Rao Ananta <rananta@google.com>
+Date: Tue, 29 Oct 2024 17:16:48 -0700
+Message-ID: <CAJHc60xQNeTwSBuPhrKO_JBuikqZ7R=BM5rkWht3YwieVXwkHg@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: arm64: Get rid of userspace_irqchip_in_use
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 05:57:45PM +0000, Esther Shimanovich wrote:
-> Some computers with CPUs that lack Thunderbolt features use discrete
-> Thunderbolt chips to add Thunderbolt functionality. These Thunderbolt
-> chips are located within the chassis; between the root port labeled
-> ExternalFacingPort and the USB-C port.
-> 
-> These Thunderbolt PCIe devices should be labeled as fixed and trusted,
-> as they are built into the computer. Otherwise, security policies that
-> rely on those flags may have unintended results, such as preventing
-> USB-C ports from enumerating.
-> 
-> Detect the above scenario through the process of elimination.
-> 
-> 1) Integrated Thunderbolt host controllers already have Thunderbolt
->    implemented, so anything outside their external facing root port is
->    removable and untrusted.
-> 
->    Detect them using the following properties:
-> 
->      - Most integrated host controllers have the usb4-host-interface
->        ACPI property, as described here:
-> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
-> 
->      - Integrated Thunderbolt PCIe root ports before Alder Lake do not
->        have the usb4-host-interface ACPI property. Identify those with
->        their PCI IDs instead.
-> 
-> 2) If a root port does not have integrated Thunderbolt capabilities, but
->    has the ExternalFacingPort ACPI property, that means the manufacturer
->    has opted to use a discrete Thunderbolt host controller that is
->    built into the computer.
-> 
->    This host controller can be identified by virtue of being located
->    directly below an external-facing root port that lacks integrated
->    Thunderbolt. Label it as trusted and fixed.
-> 
->    Everything downstream from it is untrusted and removable.
-> 
-> The ExternalFacingPort ACPI property is described here:
-> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
-> 
-> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Esther Shimanovich <eshimanovich@chromium.org>
-> Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Tested-by: Mario Limonciello <mario.limonciello@amd.com>
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> While working with devices that have discrete Thunderbolt chips, I
-> noticed that their internal TBT chips are inaccurately labeled as
-> untrusted and removable.
-> 
-> I've observed that this issue impacts all computers with internal,
-> discrete Intel JHL Thunderbolt chips, such as JHL6240, JHL6340, JHL6540,
-> and JHL7540, across multiple device manufacturers such as Lenovo, Dell,
-> and HP.
-> 
-> This affects the execution of any downstream security policy that
-> relies on the "untrusted" or "removable" flags.
-> 
-> I initially submitted a quirk to resolve this, which was too small in
-> scope, and after some discussion, Mika proposed a more thorough fix:
-> https://lore.kernel.org/lkml/20240510052616.GC4162345@black.fi.intel.com
-> I refactored it and am submitting as a new patch.
-> ---
-> Changes in v5:
-> - Applied the following edits suggested by Lukas Wunner:
->   - Applied ifdefs edits to ensure code is only compiled on x86 systems
->   with ACPI
->   - Added returns to avoid unecessary checks
->   - Renamed pcie_is_tunneled to arch_pci_dev_is_removable
-> - Link to v4: https://lore.kernel.org/r/20240823-trust-tbt-fix-v4-1-c6f1e3bdd9be@chromium.org
-> 
-> Changes in v4:
-> - Applied edits on logic-flow clarity and formatting suggested by Ilpo
->   Järvinen
-> - Mario Limonciello tested patch and confirmed works as intended.
-> - Link to v3: https://lore.kernel.org/r/20240815-trust-tbt-fix-v3-1-6ba01865d54c@chromium.org
-> 
-> Changes in v3:
-> - Incorporated minor edits suggested by Mika Westerberg.
-> - Mika Westerberg tested patch (more details in v2 link)
-> - Added "reviewed-by" and "tested-by" lines
-> - Link to v2: https://lore.kernel.org/r/20240808-trust-tbt-fix-v2-1-2e34a05a9186@chromium.org
-> 
-> Changes in v2:
-> - I clarified some comments, and made minor fixins
-> - I also added a more detailed description of implementation into the
->   commit message
-> - Added Cc recipients Mike recommended
-> - Link to v1: https://lore.kernel.org/r/20240806-trust-tbt-fix-v1-1-73ae5f446d5a@chromium.org
-> ---
->  arch/x86/pci/acpi.c | 119 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/pci/probe.c |  30 +++++++++----
->  include/linux/pci.h |   6 +++
->  3 files changed, 148 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
-> index 55c4b07ec1f6..62271668c3b1 100644
-> --- a/arch/x86/pci/acpi.c
-> +++ b/arch/x86/pci/acpi.c
-> @@ -250,6 +250,125 @@ void __init pci_acpi_crs_quirks(void)
->  		pr_info("Please notify linux-pci@vger.kernel.org so future kernels can do this automatically\n");
->  }
->  
-> +/*
-> + * Checks if pdev is part of a PCIe switch that is directly below the
-> + * specified bridge.
-> + */
-> +static bool pcie_switch_directly_under(struct pci_dev *bridge,
-> +				       struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *parent = pci_upstream_bridge(pdev);
-> +
-> +	/* If the device doesn't have a parent, it's not under anything. */
-> +	if (!parent)
-> +		return false;
-> +
-> +	/*
-> +	 * If the device has a PCIe type, check if it is below the
-> +	 * corresponding PCIe switch components (if applicable). Then check
-> +	 * if its upstream port is directly beneath the specified bridge.
-> +	 */
-> +	switch (pci_pcie_type(pdev)) {
-> +	case PCI_EXP_TYPE_UPSTREAM:
-> +		return parent == bridge;
-> +
-> +	case PCI_EXP_TYPE_DOWNSTREAM:
-> +		if (pci_pcie_type(parent) != PCI_EXP_TYPE_UPSTREAM)
-> +			return false;
-> +		parent = pci_upstream_bridge(parent);
-> +		return parent == bridge;
-> +
-> +	case PCI_EXP_TYPE_ENDPOINT:
-> +		if (pci_pcie_type(parent) != PCI_EXP_TYPE_DOWNSTREAM)
-> +			return false;
-> +		parent = pci_upstream_bridge(parent);
-> +		if (!parent || pci_pcie_type(parent) != PCI_EXP_TYPE_UPSTREAM)
-> +			return false;
-> +		parent = pci_upstream_bridge(parent);
-> +		return parent == bridge;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
-> +{
-> +	struct fwnode_handle *fwnode;
-> +
-> +	/*
-> +	 * For USB4, the tunneled PCIe root or downstream ports are marked
-> +	 * with the "usb4-host-interface" ACPI property, so we look for
-> +	 * that first. This should cover most cases.
-> +	 */
-> +	fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
-> +				       "usb4-host-interface", 0);
-> +	if (!IS_ERR(fwnode)) {
-> +		fwnode_handle_put(fwnode);
-> +		return true;
-> +	}
+On Tue, Oct 29, 2024 at 11:47=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrot=
+e:
+>
+> On Tue, 29 Oct 2024 17:06:09 +0000,
+> Raghavendra Rao Ananta <rananta@google.com> wrote:
+> >
+> > On Tue, Oct 29, 2024 at 9:27=E2=80=AFAM Marc Zyngier <maz@kernel.org> w=
+rote:
+> > >
+> > > On Mon, 28 Oct 2024 23:45:33 +0000,
+> > > Raghavendra Rao Ananta <rananta@google.com> wrote:
+> > > >
+> > > Did you have a chance to check whether this had any negative impact o=
+n
+> > > actual workloads? Since the entry/exit code is a bit of a hot spot,
+> > > I'd like to make sure we're not penalising the common case (I only
+> > > wrote this patch while waiting in an airport, and didn't test it at
+> > > all).
+> > >
+> > I ran the kvm selftests, kvm-unit-tests and booted a linux guest to
+> > test the change and noticed no failures.
+> > Any specific test you want to try out?
+>
+> My question is not about failures (I didn't expect any), but
+> specifically about *performance*, and whether checking the flag
+> without a static key can lead to any performance drop on the hot path.
+>
+> Can you please run an exit-heavy workload (such as hackbench, for
+> example), and report any significant delta you could measure?
 
-The Intel devices below look like they're obviously x86-specific, but
-what about the "usb4-host-interface" above?  Is there any reason that
-should be x86-specific?
+Oh, I see. I ran hackbench and micro-bench from kvm-unit-tests (which
+also causes a lot of entry/exits), on Ampere Altra with kernel at
+v6.12-rc1, and see no significant difference in perf.
 
-> +	/*
-> +	 * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
-> +	 * before Alder Lake do not have the "usb4-host-interface"
-> +	 * property so we use their PCI IDs instead. All these are
-> +	 * tunneled. This list is not expected to grow.
-> +	 */
-> +	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
-> +		switch (pdev->device) {
-> +		/* Ice Lake Thunderbolt 3 PCIe Root Ports */
-> +		case 0x8a1d:
-> +		case 0x8a1f:
-> +		case 0x8a21:
-> +		case 0x8a23:
-> +		/* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
-> +		case 0x9a23:
-> +		case 0x9a25:
-> +		case 0x9a27:
-> +		case 0x9a29:
-> +		/* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
-> +		case 0x9a2b:
-> +		case 0x9a2d:
-> +		case 0x9a2f:
-> +		case 0x9a31:
-> +			return true;
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +bool arch_pci_dev_is_removable(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *parent, *root;
-> +
-> +	/* pdev without a parent or Root Port is never tunneled. */
-> +	parent = pci_upstream_bridge(pdev);
-> +	if (!parent)
-> +		return false;
-> +	root = pcie_find_root_port(pdev);
-> +	if (!root)
-> +		return false;
-> +
-> +	/* Internal PCIe devices are not tunneled. */
-> +	if (!root->external_facing)
-> +		return false;
-> +
-> +	/* Anything directly behind a "usb4-host-interface" is tunneled. */
-> +	if (pcie_has_usb4_host_interface(parent))
-> +		return true;
-> +
-> +	/*
-> +	 * Check if this is a discrete Thunderbolt/USB4 controller that is
-> +	 * directly behind the non-USB4 PCIe Root Port marked as
-> +	 * "ExternalFacingPort". Those are not behind a PCIe tunnel.
-> +	 */
-> +	if (pcie_switch_directly_under(root, pdev))
-> +		return false;
-> +
-> +	/* PCIe devices after the discrete chip are tunneled. */
-> +	return true;
-> +}
+hackbench:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Ran on a guest with 64 vCPUs and backed by 8G of memory. The results
+are an average of 3 runs:
 
-I asked on the v4 patch whether we really need to make all this
-ACPI specific, and I'm still curious about that, since we don't
-actually use any ACPI interfaces directly.
+Task groups | Baseline | Patch | Approx. entry/exits
+----------------|------------|--------- |------------------------
+100              | 0.154     | 0.164  | 150k
+250              | 0.456     | 0.458  | 500k
+500              | 0.851     | 0.826  | 920k
+(Total tasks for each row =3D=3D task groups * 40)
 
-Bjorn
+kvm-unit-tests micro-bench
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+The test causes ~530k entry/exits.
+
+Baseline:
+
+name                                    total ns                         av=
+g ns
+---------------------------------------------------------------------------=
+-----------------
+hvc                                  20095360.0                          30=
+6.0
+mmio_read_user           110350040.0                         1683.0
+mmio_read_vgic              29572840.0                          451.0
+eoi                                        964080.0
+        14.0
+ipi                                   126236640.0                         1=
+926.0
+lpi                                   142848920.0                         2=
+179.0
+timer_10ms                          231040.0                          902.0
+
+
+Patch:
+
+name                                    total ns                         av=
+g ns
+---------------------------------------------------------------------------=
+-----------------
+hvc                                  20067680.0                            =
+306.0
+mmio_read_user           109513800.0                         1671.0
+mmio_read_vgic              29190080.0                           445.0
+eoi                                       963400.0
+        14.0
+ipi                                  116481640.0                          1=
+777.0
+lpi                                  136556000.0                          2=
+083.0
+timer_10ms                         234120.0                            914.=
+0
+
+Thank you.
+Raghavendra
 
