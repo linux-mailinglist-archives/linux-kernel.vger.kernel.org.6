@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-389347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF149B6BA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:07:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FF99B6BAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C48280EBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:07:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C172B21183
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C621C3F3B;
-	Wed, 30 Oct 2024 18:07:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49FC1C462D;
+	Wed, 30 Oct 2024 18:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Th2/OQfg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378E419E99F;
-	Wed, 30 Oct 2024 18:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E1A19E99F;
+	Wed, 30 Oct 2024 18:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730311625; cv=none; b=nQD4BFzfIxeXhlbgudBYxgIm3g3NUpsAfAQxxmdhrRkpQh0cgm8SFUM95Zgc7ic8H1dWnga8u9PNzKw0uPkbW0JvQ9EN1v6/kVm1dn0N1MHb1To/I4gAGTZCzz1xsn7uQAB/9xCvlAVU6rpoL5Z9ocxK/j3rzlt5H1qYTWhZKNU=
+	t=1730311677; cv=none; b=nOFfkk11NC6dFhyFK8RVrPs2VkhlIoIZ3ndpQxkBjzgrXH4UDoAFrv4LTfsB9ATLcaRaarLMdPK3VialW61UvcHFniuZYCWC51wAzaoaPVI/FX4R6vBFhYKpuNkbUBe/ae6TTQIlU+Fjic6nta2ZOBirdvQ71k0OhRXtE2axhpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730311625; c=relaxed/simple;
-	bh=Ob3QZ/kFjZWCEJv+qE06Gp1MrNr26sKK36Jmxpv0iRM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H5C+bveRu6/Cdw1lu+Svhg3JduCAGNQMuvXRTgTAOh78VDt2GyD4oS34MiN/qjoZyaO5GKyHz3VchtJ4R+fSdLeUaPhlM/TfQTtls+uxGFZxfWzxUlfYq/ZpxnDzuSA75yPlJE0rrk/V2xfTR01XPfnxtj6+NyMCnQnb+y+9ozY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdw4f3kppz6K5vS;
-	Thu, 31 Oct 2024 02:04:34 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 44024140B39;
-	Thu, 31 Oct 2024 02:07:00 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 19:06:59 +0100
-Date: Wed, 30 Oct 2024 18:06:58 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-CC: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Kalle Niemi
-	<kaleposti@gmail.com>, Jonathan Cameron <jic23@kernel.org>, "Lars-Peter
- Clausen" <lars@metafoo.de>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: kx022a: Fix raw read format
-Message-ID: <20241030180658.00000ac2@Huawei.com>
-In-Reply-To: <ZyIxm_zamZfIGrnB@mva-rohm>
-References: <ZyIxm_zamZfIGrnB@mva-rohm>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730311677; c=relaxed/simple;
+	bh=DacE1b7YBHxbFapNdObTjtI7fWH1r3sD6tkMcvfimYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQANE8NsXrLZFgYPTkYaA5tW4nz0fMBl0IM+mEiURSwKBhE+2lQT/OrEzMM4CiOeRor72pQHadsbYLFL3sAaTub0FPDgtGZIZP0T6ptybIpyVL7hb38Dy42eN9mZ9TnWtiM++Tb4Nl5XrKVpScQ+PGPIgXDj9ChgI3VOAN889Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Th2/OQfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F5EC4CED2;
+	Wed, 30 Oct 2024 18:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730311676;
+	bh=DacE1b7YBHxbFapNdObTjtI7fWH1r3sD6tkMcvfimYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Th2/OQfge7Cqb5FSvk4tgbZgUOx/XFaqwtFDnx7Na4WLRcSFpDC5YfkBqoNsXIkdE
+	 FeZAA2bNDZnLgebiYO1Z8Rw6relTq2lWLOpQtFH8HUNIWDVKgZjsNHFvmOXTPYO3yH
+	 Nh9cuArCAA8zc4efk+R/0kdcFR1AQPG42SHqggBqPyIUxp21fOLjdmB9Pb7Zw048Ff
+	 sXpF51GnDccvIrxGQHVw3njuZvS7nUUGMTge4EWjwBjDIHy0FjyeM13chZ1dX2NRiH
+	 6ROUWEWDciA/OI3Bc0CFLJHLEH3W6kx9URVlNLZZMo12G+Yn0JLksUocfe0Hwo3mzt
+	 Kdkw+BoC157Wg==
+Date: Wed, 30 Oct 2024 19:07:48 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+Message-ID: <ZyJ19GDyVrGPbSEM@pollux>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-16-dakr@kernel.org>
+ <CAH5fLghVDqWiWfi2WKsNi3n=2pR_Hy3ZLwY8q2xfjAvpHuDx=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghVDqWiWfi2WKsNi3n=2pR_Hy3ZLwY8q2xfjAvpHuDx=w@mail.gmail.com>
 
-On Wed, 30 Oct 2024 15:16:11 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Wed, Oct 30, 2024 at 04:50:43PM +0100, Alice Ryhl wrote:
+> On Tue, Oct 22, 2024 at 11:33 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> > +/// Drivers must implement this trait in order to get a platform driver registered. Please refer to
+> > +/// the `Adapter` documentation for an example.
+> > +pub trait Driver {
+> > +    /// The type holding information about each device id supported by the driver.
+> > +    ///
+> > +    /// TODO: Use associated_type_defaults once stabilized:
+> > +    ///
+> > +    /// type IdInfo: 'static = ();
+> > +    type IdInfo: 'static;
+> > +
+> > +    /// The table of device ids supported by the driver.
+> > +    const ID_TABLE: IdTable<Self::IdInfo>;
+> > +
+> > +    /// Platform driver probe.
+> > +    ///
+> > +    /// Called when a new platform device is added or discovered.
+> > +    /// Implementers should attempt to initialize the device here.
+> > +    fn probe(dev: &mut Device, id_info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>>;
+> 
+> This forces the user to put their driver data in a KBox, but they
+> might want to use an Arc instead. You don't actually *need* a KBox -
+> any ForeignOwnable seems to fit your purposes.
 
-> The KX022A provides the accelerometer data in two subsequent registers.
-> The registers are laid out so that the value obtained via bulk-read of
-> these registers can be interpreted as signed 16-bit little endian value.
-> The read value is converted to cpu_endianes and stored into 32bit integer.
-> The le16_to_cpu() casts value to unsigned 16-bit value, and when this is
-> assigned to 32-bit integer the resulting value will always be positive.
-> 
-> This has not been a problem to users (at least not all users) of the sysfs
-> interface, who know the data format based on the scan info and who have
-> converted the read value back to 16-bit signed value.
-They shouldn't be doing that. Scaninfo is for buffered values only
-This should indeed be signed.
+This is intentional, I do need a `KBox` here.
+
+The reason is that I want to enforce that the returned `Pin<KBox<Self>>` has
+exactly the lifetime of the binding of the device and driver, i.e. from probe()
+until remove(). This is the lifetime the structure should actually represent.
+
+This way we can attach things like `Registration` objects to this structure, or
+anything else that should only exist from probe() until remove().
+
+If a driver needs some private driver data that needs to be reference counted,
+it is usually attached to the class representation of the driver.
+
+For instance, in Nova the reference counted stuff is attached to the DRM device
+and then I just have the DRM device (which itself is reference counted) embedded
+in the `Driver` structure.
+
+In any case, drivers can always embed a separate `Arc` in their `Driver`
+structure if they really have a need for that.
+
+- Danilo
 
 > 
-> This, however, will be a problem for those who use the in-kernel
-> interfaces, especially the iio_read_channel_processed_scale().
+> Please see my miscdevice and shrinker patchsets for examples of how
+> you can extend this to allow any ForeignOwnable.
 > 
-> The iio_read_channel_processed_scale() performs multiplications to the
-> returned (always positive) raw value, which will cause strange results
-> when the data from the sensor has been negative.
+> Alice
 > 
-> Fix the read_raw format by casting the result of the le_to_cpu() to
-> signed 16-bit value before assigning it to the integer. This will make
-> the negative readings to be correctly reported as negative.
-> 
-> This fix will be visible to users by changing values returned via sysfs
-> to appear in correct (negative) format.
-> 
-> Reported-by: Kalle Niemi <kaleposti@gmail.com>
-> Fixes: 7c1d1677b322 ("iio: accel: Support Kionix/ROHM KX022A accelerometer")
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Tested-by: Kalle Niemi <kaleposti@gmail.com>
-> ---
->  drivers/iio/accel/kionix-kx022a.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix-kx022a.c
-> index 53d59a04ae15..b6a828a6df93 100644
-> --- a/drivers/iio/accel/kionix-kx022a.c
-> +++ b/drivers/iio/accel/kionix-kx022a.c
-> @@ -594,7 +594,7 @@ static int kx022a_get_axis(struct kx022a_data *data,
->  	if (ret)
->  		return ret;
->  
-> -	*val = le16_to_cpu(data->buffer[0]);
-> +	*val = (s16)le16_to_cpu(data->buffer[0]);
-LGTM.
->  
->  	return IIO_VAL_INT;
->  }
-> 
-> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-
 
