@@ -1,336 +1,332 @@
-Return-Path: <linux-kernel+bounces-389226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7499B6A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:08:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B8B9B6A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18911C21BD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA3E1F2136B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90142215023;
-	Wed, 30 Oct 2024 17:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A2E21C16D;
+	Wed, 30 Oct 2024 17:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jh9S7BiA"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4V5sPlKo"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BAC1E7C3A
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2883F21B43F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307623; cv=none; b=Ty1WWZhZj/6hBFojP3MkA8gLhbV7abcyghbHSl4P+rg3PJHDCwa3NAsANl+84ctvRsvM1HSmppY+XtIexA/gqnaPGkzE4N9kTyDwHSET1sLFMRc/s4iU/ZGVam2ABk6vogtSAdgTjExl7XdEJUSbV0TUH9Mlp6jT73KBZ4KqWSM=
+	t=1730307685; cv=none; b=Jy7VS/Codm+WWrKyfxG3NTpnOlwKJ7LK1cW3mnr56jhlrl4DdIiqeNHp3fjAqjk2e5/8UCkdbF30sDIh6/4ODo5ztCfw3hi8Kcr1Eork011gXUKKmC7cs/MaPTpOw4z/NkmiLwRPddYBwyIxFlsKYXRK+SZmFK6omCaBuNUtPYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307623; c=relaxed/simple;
-	bh=xEKWkEQ0dsTDVGsrZdU0x7/Ytc30fsIoqz1nb6OTFK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oeo4EiUbyL3NLvvH/4Jri+O4fTA9gMtetENRqp+9eFaybaWyTToal32QH/dDjnb76uCYI+XqDHu5PQHEvhP8iGasdAX/uq9t2ofaGgL8LV3GqiGSaKF0D4jm5pTKMkQ5d0lTOVGCbhv6TBkyElPi0nZQAG/ix8I0KgyL33B1eNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jh9S7BiA; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5101bd018ceso30968e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:00:20 -0700 (PDT)
+	s=arc-20240116; t=1730307685; c=relaxed/simple;
+	bh=fQR1ipAg12rN5GQOwppGuY5jZB1MJHykOwFYTdB2cBU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Hzby+kmJplfcSnGF4PqjkJRmiB+AFTcn9I6u3UXpRm5KuZWmCNr6pXFNGSgkDkq8cp6/93ABM5rQrMg1uNupAZ0bjOhDFBb4i0QQVdwuV4765bZiqlVnVIAS3wVmSxIrIpvtdq0aTPBtjFRrkBryrjkur8Orc1fPqEBmNEE3JDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4V5sPlKo; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e5efb04da7so16685a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:01:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730307620; x=1730912420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wWrbK7fnh9whln3CNHKOj//EVVMSdORA+MSC2o/MTY0=;
-        b=jh9S7BiAZlYQAiLnUTJkPDY3Jrd1ys7bMTbyU/WBEEveqOJ7y6GkdhDW+JuMbGB2YG
-         oi8uMlDE36T8s0TcR+sPpFSWTzMoqd4Fbt3TuyZf4+BoaceIm9o/TRiuASwt+jbo6O3A
-         8dPO1VQ6qlCxlXZQQicwhE4JU25ddC9r9fr0SenqpOsqmnu8WIDr1sX86o9zB1M3Tkb6
-         KCyORARKPa8WVsBx5Zraatftq75z08bmSeaLhpATLwbabqOH+TV61wXKgJuHQI9e+LiV
-         /Lob0MWBFdqg6/QgWdSx717cHnhYTlU62NfSdNhymWytczBP5+r6GjO41LNbb/Fzt2o4
-         Nkkg==
+        d=google.com; s=20230601; t=1730307682; x=1730912482; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=om9+T+BzGiFlRsW2pBH91Ute5YSKt+l3yNwMimZjYxE=;
+        b=4V5sPlKoCm9L+vVhHvsMTGG4mwPGkuWZ8QGxY81cAa5f3Ma5t8Tb8zHpov/iIQCnmH
+         Zjm937Wfs3NRZGaBhCn4Pt4h78foTjIzEaOZ6IDo9ZAtC0uoEU0EhxvAaMjpHpB+ellk
+         5w7KlDXhY1uZCew/nSFiPkZLY0/FABJjK1ad00ZsOiNBvYp0EkWi56w54wnV9uoe5kwq
+         P4ZLZFMf8ms3avLk1SNX+EkS1nOsUGZmoCTdxfsrPQFZu5zjyum0D+fvlMFA3RLvF1uw
+         U+3KxXEt30yOpqX6FbRY25g6seLdQ6dodRThAYLHjntyJ2tcoG4Ztu9fp7z+YMt66RHZ
+         9dWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730307620; x=1730912420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wWrbK7fnh9whln3CNHKOj//EVVMSdORA+MSC2o/MTY0=;
-        b=xDzvlDMp6P9uP+J0TtU4LQMmAepdhQbbSHDV+KSLiWuVF1QsM4WTf5SQhB4qFkmP6z
-         sFtETlZ6qj7eBsbHFYeTLkJ1u/xa1VWkXi3czlWQL9QZJOxzkwuYihFOwtF0qyoKsJDz
-         L40lia6w5rDai8Mc7PAsLvsxl9tzdAZvD5UZvMx43LS4vM6hKzADWzpbFLLddbI1t/6L
-         hXROWjTmHsrZ32bh2nQ16jiYbq0Ln0zn8VjpGmzS0MCyQ2I5++4Fc32lBvHVgTqcD0mo
-         LIK1XGrtZFnfDX7dKLn+HY+XleHN40K79YjEe8lc/0vKPGcsaMHgNmBMyz/RDBtCoTUl
-         fJyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXZrGxPMTEuMRyj0rgMHuB5TRrAAmf6UuS3lnF9PWj/LNLcqf+1Ix2LtCxPeLXhZT4hClf7E/7upV2IyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMV47uof06ncxjqVNBWN/X9qyd/zFKn7E01ciyFfa93lMlYP9Y
-	Vp1kYjxpufdtvQAD6E+eKfeGc/tyyKhCKUPBeSyTBsyZiyoio/9xaK+ZyZTLMgGPK9YoDmwiyUm
-	Qzk9wgWpqmmLCM4asB6X4XgtbXoAQ/2Xu
-X-Google-Smtp-Source: AGHT+IE+a/Gf/q8ZCJNrbPIEjOQEQW/h0iSkBlQV8DZREUM2G66zLJ+sF8UsnR1zsQnuSlZqupomzOXFiVHLrgYaFWM=
-X-Received: by 2002:a05:6122:d90:b0:50d:35d9:ad5a with SMTP id
- 71dfb90a1353d-51015045ccemr13184984e0c.5.1730307618102; Wed, 30 Oct 2024
- 10:00:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730307682; x=1730912482;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=om9+T+BzGiFlRsW2pBH91Ute5YSKt+l3yNwMimZjYxE=;
+        b=azGkU8veNdRF+Rzn7rhwEcbkxXRtO0zH7+W1RnjBzQSN2DkOpQvHhJMqdoLLNJGmyp
+         SnfyqcV6WmJDNIqiUu8Kuvxaavz2Vz/3O8qG/2jRdz7zqOvMov8kLWUEAc3gAJMR3Q/d
+         sTdI7ht+iY2u6GDG37hNl/CPSSM3istmOyhlyXX6SUFbJht7WHM6rJDyzuoLl+BE7SPW
+         jf5MKQh3LqhJEo7UXMdmL4X7j50dtqoC1vLAwJdifXajznvHRQlBc1gOeHf2h6vCCru1
+         XAvzgyPI6zQ2Raoez51KL4SxrldjcW48Qc11n2Ie8rQU5zd2gvY4NQb2dlYHfw8lo5qP
+         X6Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVl3BGwYHCl/Wtm/e5C+Gkro1zrYrVq5uZbr3Eh4sCFdJtpno5z7aQRyU2Xh5ImuXRXsqFPxE6iJPJOYC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygHRwxSInuqU1YaLNKZQetRaxPhP6+6rRs259WTZiBNa8VN7OT
+	DCH/4rKcaMeYmlgDW9kEdBEuA3Lycc2iwoBZyUwOXMrRR2EMS+J6gbmxuATJlxeQUfsXWdnVHbE
+	0C0Bdu6k3UwyskAi6kNZ9BvoX8w==
+X-Google-Smtp-Source: AGHT+IE7JUiy1OA0lARRilo5KjNtcOiy48QgqtB55vOxlLLSgVgbh4T6s2qrhweBdzwLjj5G6iB7dCy5/BdtSL8N0ns=
+X-Received: from samitolvanen.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:4f92])
+ (user=samitolvanen job=sendgmr) by 2002:a17:90b:23d1:b0:2e2:af0f:9875 with
+ SMTP id 98e67ed59e1d1-2e8f11ccdfdmr29458a91.7.1730307682329; Wed, 30 Oct 2024
+ 10:01:22 -0700 (PDT)
+Date: Wed, 30 Oct 2024 17:01:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241030103136.2874140-1-yi.sun@unisoc.com> <20241030103136.2874140-5-yi.sun@unisoc.com>
-In-Reply-To: <20241030103136.2874140-5-yi.sun@unisoc.com>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Wed, 30 Oct 2024 10:00:06 -0700
-Message-ID: <CACOAw_zn0ov0b2h9+zHn2gYVCDVGYPkXFNcx-j7OkhU0Y=i94g@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2 4/5] f2fs: add parameter @len to f2fs_invalidate_blocks()
-To: Yi Sun <yi.sun@unisoc.com>
-Cc: chao@kernel.org, jaegeuk@kernel.org, ke.wang@unisoc.com, 
-	linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	sunyibuaa@gmail.com, hao_hao.wang@unisoc.com
+Mime-Version: 1.0
+X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10158; i=samitolvanen@google.com;
+ h=from:subject; bh=fQR1ipAg12rN5GQOwppGuY5jZB1MJHykOwFYTdB2cBU=;
+ b=owGbwMvMwCEWxa662nLh8irG02pJDOlKaUHNn8KrtUQ5P6ZrZpz9n/RgkfQn7T3fZ0rkzFPmV
+ uyc9/VwRykLgxgHg6yYIkvL19Vbd393Sn31uUgCZg4rE8gQBi5OAZiI7C+G/4EXeuoNcm7MXc8Y
+ dj9359GWpPlbZyivk7uu475Ac9m9UDVGhoneiktuc8aJsG5Scbqjqli+7NnpvefLC3eoqTV9CD6 byQgA
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241030170106.1501763-21-samitolvanen@google.com>
+Subject: [PATCH v5 00/19] Implement DWARF modversions
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, 
+	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 3:35=E2=80=AFAM Yi Sun <yi.sun@unisoc.com> wrote:
->
-> New function can process some consecutive blocks at a time.
->
-> Function f2fs_invalidate_blocks()->down_write() and up_write()
-> are very time-consuming, so if f2fs_invalidate_blocks() can
-> process consecutive blocks at one time, it will save a lot of time.
->
-> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
-> ---
->  fs/f2fs/compress.c |  4 +--
->  fs/f2fs/f2fs.h     |  3 +-
->  fs/f2fs/file.c     |  8 +++---
->  fs/f2fs/node.c     |  4 +--
->  fs/f2fs/segment.c  | 69 ++++++++++++++++++++++++++++++++++++++--------
->  5 files changed, 68 insertions(+), 20 deletions(-)
->
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index e607a7885b57..02ad0ff29cf2 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1374,7 +1374,7 @@ static int f2fs_write_compressed_pages(struct compr=
-ess_ctx *cc,
->                         if (blkaddr =3D=3D COMPRESS_ADDR)
->                                 fio.compr_blocks++;
->                         if (__is_valid_data_blkaddr(blkaddr))
-> -                               f2fs_invalidate_blocks(sbi, blkaddr);
-> +                               f2fs_invalidate_blocks(sbi, blkaddr, 1);
->                         f2fs_update_data_blkaddr(&dn, COMPRESS_ADDR);
->                         goto unlock_continue;
->                 }
-> @@ -1384,7 +1384,7 @@ static int f2fs_write_compressed_pages(struct compr=
-ess_ctx *cc,
->
->                 if (i > cc->valid_nr_cpages) {
->                         if (__is_valid_data_blkaddr(blkaddr)) {
-> -                               f2fs_invalidate_blocks(sbi, blkaddr);
-> +                               f2fs_invalidate_blocks(sbi, blkaddr, 1);
->                                 f2fs_update_data_blkaddr(&dn, NEW_ADDR);
->                         }
->                         goto unlock_continue;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index addd49af57ec..4bb459157adf 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3716,7 +3716,8 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, nid_=
-t ino);
->  int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
->  int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
->  void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free)=
-;
-> -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
-> +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr,
-> +                                               unsigned int len);
->  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr=
-);
->  int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
->  void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 75a8b22da664..13594bb502d1 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -652,7 +652,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_=
-data *dn, int count)
->                                 valid_blocks++;
->                 }
->
-> -               f2fs_invalidate_blocks(sbi, blkaddr);
-> +               f2fs_invalidate_blocks(sbi, blkaddr, 1);
->
->                 if (!released || blkaddr !=3D COMPRESS_ADDR)
->                         nr_free++;
-> @@ -750,7 +750,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 =
-from, bool lock)
->                 unsigned int i;
->
->                 for (i =3D 0; i < ei.len; i++)
-> -                       f2fs_invalidate_blocks(sbi, ei.blk + i);
-> +                       f2fs_invalidate_blocks(sbi, ei.blk + i, 1);
->
->                 dec_valid_block_count(sbi, inode, ei.len);
->                 f2fs_update_time(sbi, REQ_TIME);
-> @@ -1319,7 +1319,7 @@ static int __roll_back_blkaddrs(struct inode *inode=
-, block_t *blkaddr,
->                 ret =3D f2fs_get_dnode_of_data(&dn, off + i, LOOKUP_NODE_=
-RA);
->                 if (ret) {
->                         dec_valid_block_count(sbi, inode, 1);
-> -                       f2fs_invalidate_blocks(sbi, *blkaddr);
-> +                       f2fs_invalidate_blocks(sbi, *blkaddr, 1);
->                 } else {
->                         f2fs_update_data_blkaddr(&dn, *blkaddr);
->                 }
-> @@ -1571,7 +1571,7 @@ static int f2fs_do_zero_range(struct dnode_of_data =
-*dn, pgoff_t start,
->                         break;
->                 }
->
-> -               f2fs_invalidate_blocks(sbi, dn->data_blkaddr);
-> +               f2fs_invalidate_blocks(sbi, dn->data_blkaddr, 1);
->                 f2fs_set_data_blkaddr(dn, NEW_ADDR);
->         }
->
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index af36c6d6542b..db15d6a90f67 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -916,7 +916,7 @@ static int truncate_node(struct dnode_of_data *dn)
->         }
->
->         /* Deallocate node address */
-> -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
-> +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
->         dec_valid_node_count(sbi, dn->inode, dn->nid =3D=3D dn->inode->i_=
-ino);
->         set_node_addr(sbi, &ni, NULL_ADDR, false);
->
-> @@ -2761,7 +2761,7 @@ int f2fs_recover_xattr_data(struct inode *inode, st=
-ruct page *page)
->         if (err)
->                 return err;
->
-> -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
-> +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
->         dec_valid_node_count(sbi, inode, false);
->         set_node_addr(sbi, &ni, NULL_ADDR, false);
->
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 92ddff285a65..67f2bfdeb6ec 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -245,7 +245,7 @@ static int __replace_atomic_write_block(struct inode =
-*inode, pgoff_t index,
->                 if (!__is_valid_data_blkaddr(new_addr)) {
->                         if (new_addr =3D=3D NULL_ADDR)
->                                 dec_valid_block_count(sbi, inode, 1);
-> -                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr);
-> +                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr, 1);
->                         f2fs_update_data_blkaddr(&dn, new_addr);
->                 } else {
->                         f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
-> @@ -2558,29 +2558,76 @@ static void update_sit_entry(struct f2fs_sb_info =
-*sbi, block_t blkaddr, int del)
->                 get_sec_entry(sbi, segno)->valid_blocks +=3D del;
->  }
->
-> -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
-> +static void __f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
-> +                                       block_t addr, block_t end)
->  {
->         unsigned int segno =3D GET_SEGNO(sbi, addr);
->         struct sit_info *sit_i =3D SIT_I(sbi);
-> +       unsigned int seg_num =3D GET_SEGNO(sbi, end) - segno + 1;
-> +       unsigned int i =3D 1, max_blocks =3D sbi->blocks_per_seg, len;
-> +       block_t addr_start =3D addr;
->
-> -       f2fs_bug_on(sbi, addr =3D=3D NULL_ADDR);
-> -       if (addr =3D=3D NEW_ADDR || addr =3D=3D COMPRESS_ADDR)
-> -               return;
-> -
-> -       f2fs_invalidate_internal_cache(sbi, addr, 1);
-> +       f2fs_invalidate_internal_cache(sbi, addr, end - addr + 1);
->
->         /* add it into sit main buffer */
->         down_write(&sit_i->sentry_lock);
->
-> -       update_segment_mtime(sbi, addr, 0);
-> -       update_sit_entry(sbi, addr, -1);
-> +       if (seg_num =3D=3D 1)
-> +               len =3D end - addr + 1;
-> +       else
-> +               len =3D max_blocks - GET_BLKOFF_FROM_SEG0(sbi, addr);
->
-> -       /* add it into dirty seglist */
-> -       locate_dirty_segment(sbi, segno);
-> +       do {
-> +               update_segment_mtime(sbi, addr_start, 0);
-> +               update_sit_entry(sbi, addr_start, -len);
-> +
-> +               /* add it into dirty seglist */
-> +               locate_dirty_segment(sbi, segno);
-> +
-> +               /* update @addr_start and @len and @segno */
-> +               addr_start =3D START_BLOCK(sbi, ++segno);
-> +               if (++i =3D=3D seg_num)
-> +                       len =3D GET_BLKOFF_FROM_SEG0(sbi, end) + 1;
-> +               else
-> +                       len =3D max_blocks;
-> +       } while (i <=3D seg_num);
->
->         up_write(&sit_i->sentry_lock);
->  }
->
-> +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
-> +                               block_t addr, unsigned int len)
-> +{
-> +       unsigned int i;
-> +       /* Temporary record location */
-> +       block_t addr_start =3D addr, addr_end;
-> +
-> +       if (len =3D=3D 0)
-> +               return;
-> +
-> +       for (i =3D 0; i < len; i++) {
-> +               addr_end =3D addr + i;
-> +
-> +               f2fs_bug_on(sbi, addr_end =3D=3D NULL_ADDR);
+Hi,
 
-Looks like this line should be out of this loop, right?
+Here's v5 of the DWARF modversions series. The main motivation is
+modversions support for Rust, which is important for distributions
+like Android that are about to ship Rust kernel modules. Per Luis'
+request [1], v2 dropped the Rust specific bits from the series and
+instead added the feature as an option for the entire kernel to
+make it easier to evaluate the benefits of this approach, and to
+get better test coverage. Matt is addressing Rust modversion_info
+compatibility issues in a separate patch set [2] that depends on this
+series, and actually allows modversions to be enabled with Rust.
 
-> +
-> +               if (addr_end =3D=3D NEW_ADDR || addr_end =3D=3D COMPRESS_=
-ADDR) {
+Short background: Unlike C, Rust source code doesn't have sufficient
+information about the final ABI, as the compiler has considerable
+freedom in adjusting structure layout, for example, which makes
+using a source code parser like genksyms a non-starter. Based on
+earlier feedback, this series uses DWARF debugging information for
+computing versions. DWARF is an established and a relatively stable
+format, which includes all the necessary ABI details, and adding a
+CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
+reasonable trade-off as most distributions already enable it.
 
-ditto?
-Could you help with enhancing the readability here? a little bit
-confused with using addr_start, addr_end and NEW_ADDR, COMPRESS_ADDR,
-here.
+The first patch moves the genksyms CRC32 implementation to a shared
+header file to avoid code duplication and the next 15 patches add
+gendwarfksyms, a tool for computing symbol versions from DWARF. When
+passed a list of exported symbols and object files, the tool
+generates an expanded type string for each symbol and computes symbol
+CRCs similarly to genksyms. gendwarfksyms is written in C and uses
+libdw to process DWARF. Patch 17 ensures that debugging information
+is present where we need it, patch 18 adds gendwarfksyms as an
+alternative to genksyms, and the last patch adds documentation.
 
-> +                       if (addr_start =3D=3D addr_end) {
-> +                               addr_end =3D addr_start =3D addr_end + 1;
-> +                               continue;
-> +                       }
-> +
-> +                       __f2fs_invalidate_blocks(sbi, addr_start, addr_en=
-d - 1);
-> +                       addr_end =3D addr_start =3D addr_end + 1;
-> +               }
-> +       }
-> +
-> +       if (addr_end >=3D (addr + len))
-> +               return;
-> +
-> +       __f2fs_invalidate_blocks(sbi, addr_start, addr_end);
-> +
-> +}
-> +
->  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr=
-)
->  {
->         struct sit_info *sit_i =3D SIT_I(sbi);
-> --
-> 2.25.1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+v5 is based on v6.12-rc5 and for your convenience the series is also
+available here:
+
+https://github.com/samitolvanen/linux/commits/gendwarfksyms-v5
+
+If you also want to test the series with Rust modules, this branch
+adds Matt's latest modversion_info series:
+
+https://github.com/samitolvanen/linux/commits/rustmodversions-v5
+
+Sami
+
+
+[1] https://lore.kernel.org/lkml/ZnIZEtkkQWEIGf9n@bombadil.infradead.org/
+[2] https://lore.kernel.org/lkml/20240925233854.90072-1-mmaurer@google.com/
+
+---
+
+v5:
+- Rebased on v6.12-rc5.
+
+- Fixed an issue with limiting structure expansion, and applied
+  Petr's clean-up. (Patch 10)
+
+- Dropped an unnecessary return statement in error path. (Patch
+  12)
+
+- Addressed several other smaller issues Petr brought up. (Patches
+  13, 14, and 15)
+
+- Added a KBUILD_GENDWARFKSYMS_STABLE flag to enable --stable for
+  the entire kernel build. (Patch 18)
+
+- Updated documentation to include KBUILD flags. (Patch 19)
+
+- Picked up Reviewed-by tags from v4.
+
+v4: https://lore.kernel.org/lkml/20241008183823.36676-21-samitolvanen@google.com/
+- Rebased on v6.12-rc2, which now includes all the prerequisites.
+
+- Dropped unnecessary name_only parameter for symbols.c::for_each
+  and cleaned up error handling. (Patch 3)
+
+- Fixed anonymous scope handling to ensure unnamed DIEs don't get
+  names. (Patch 4)
+
+- Added non-variant children to variant_type output, and included
+  DW_AT_discr_value attributes for variants. (Patch 9)
+
+- Added another symbol pointer test case. (Patch 16)
+
+- Picked up (Acked|Reviewed)-by tags from v3.
+
+
+v3: https://lore.kernel.org/lkml/20240923181846.549877-22-samitolvanen@google.com/
+- Updated SPX license headers.
+
+- Squashed the first two patches in v2 and tried to reduce churn as
+  much as reasonable.
+
+- Dropped patch 18 from v2 ("x86/asm-prototypes: Include
+  <asm/ptrace.h>") as it's addressed by a separate patch.
+
+- Changed the error handling code to immediately terminate instead
+  of propagating the errors back to main, which cleaned up the code
+  quite a bit.
+
+- Switched to the list and hashtable implementations in scripts and
+  dropped the remaining tools/include dependencies. Added a couple
+  missing list macros. (patch 1)
+
+- Moved the genksyms CRC32 implementation to scripts/include and
+  dropped the duplicate code. (patches 2 and 14)
+
+- Switched from ad-hoc command line parsing to getopt_long (patch 3).
+
+- Added structure member and function parameter names to the DIE
+  output to match genksyms behavior, and tweaked the symtypes format
+  to be more parser-friendly in general based on Petr's suggestions.
+
+- Replaced the declaration-only struct annotations with more generic
+  kABI stability rules that allow source code annotations to be used
+  where #ifndef __GENKSYMS__ was previously used.  Added support for
+  rules that can be used to exclude enumerators from versioning.
+  (patch 16)
+
+- Per Miroslav's suggestion, added an option to hide structure
+  members from versioning when they're added to existing alignment
+  holes, for example. (patch 16)
+
+- Per Greg's request, added documentation and example macros for the
+  --stable features, and a couple of test cases. (patches 15, 16, and
+  20)
+
+- Fixed making symtypes files, which need to depend on .o files with
+  gendwarfksyms. (patch 19)
+
+- Addressed several other smaller issues that Petr and Masahiro
+  kindly pointed out during the v2 review.
+
+
+v2: https://lore.kernel.org/lkml/20240815173903.4172139-21-samitolvanen@google.com/
+- Per Luis' request, dropped Rust-specific patches and added
+  gendwarfksyms as an alternative to genksyms for the entire
+  kernel.
+
+- Added support for missing DWARF features needed to handle
+  also non-Rust code.
+
+- Changed symbol address matching to use the symbol table
+  information instead of relying on addresses in DWARF.
+
+- Added __gendwarfksyms_ptr patches to ensure the compiler emits
+  the necessary type information in DWARF even for symbols that
+  are defined in other TUs.
+
+- Refactored debugging output and moved the more verbose output
+  behind --dump* flags.
+
+- Added a --symtypes flag for generating a genksyms-style
+  symtypes output based on Petr's feedback, and refactored
+  symbol version calculations to be based on symtypes instead
+  of raw --dump-dies output.
+
+- Based on feedback from Greg and Petr, added --stable flag and
+  support for reserved data structure fields and declaration-onl
+  structures. Also added examples for using these features.
+
+- Added a GENDWARFKSYMS option and hooked up kbuild support
+  for both C and assembly code. Note that with gendwarfksyms,
+  we have to actually build a temporary .o file for calculating
+  assembly modversions.
+
+v1: https://lore.kernel.org/lkml/20240617175818.58219-17-samitolvanen@google.com/
+
+---
+
+Sami Tolvanen (19):
+  scripts: move genksyms crc32 implementation to a common include
+  tools: Add gendwarfksyms
+  gendwarfksyms: Add address matching
+  gendwarfksyms: Expand base_type
+  gendwarfksyms: Add a cache for processed DIEs
+  gendwarfksyms: Expand type modifiers and typedefs
+  gendwarfksyms: Expand subroutine_type
+  gendwarfksyms: Expand array_type
+  gendwarfksyms: Expand structure types
+  gendwarfksyms: Limit structure expansion
+  gendwarfksyms: Add die_map debugging
+  gendwarfksyms: Add symtypes output
+  gendwarfksyms: Add symbol versioning
+  gendwarfksyms: Add support for kABI rules
+  gendwarfksyms: Add support for reserved and ignored fields
+  gendwarfksyms: Add support for symbol type pointers
+  export: Add __gendwarfksyms_ptr_ references to exported symbols
+  kbuild: Add gendwarfksyms as an alternative to genksyms
+  Documentation/kbuild: Add DWARF module versioning
+
+ Documentation/kbuild/gendwarfksyms.rst      |  276 +++++
+ Documentation/kbuild/index.rst              |    1 +
+ include/linux/export.h                      |   15 +
+ kernel/module/Kconfig                       |   31 +
+ scripts/Makefile                            |    3 +-
+ scripts/Makefile.build                      |   41 +-
+ scripts/gendwarfksyms/.gitignore            |    2 +
+ scripts/gendwarfksyms/Makefile              |   12 +
+ scripts/gendwarfksyms/cache.c               |   44 +
+ scripts/gendwarfksyms/die.c                 |  166 +++
+ scripts/gendwarfksyms/dwarf.c               | 1109 +++++++++++++++++++
+ scripts/gendwarfksyms/examples/kabi.h       |  141 +++
+ scripts/gendwarfksyms/examples/kabi_ex0.c   |   86 ++
+ scripts/gendwarfksyms/examples/kabi_ex1.c   |   89 ++
+ scripts/gendwarfksyms/examples/kabi_ex2.c   |   98 ++
+ scripts/gendwarfksyms/examples/kabi_rules.c |   56 +
+ scripts/gendwarfksyms/examples/symbolptr.c  |   33 +
+ scripts/gendwarfksyms/gendwarfksyms.c       |  185 ++++
+ scripts/gendwarfksyms/gendwarfksyms.h       |  288 +++++
+ scripts/gendwarfksyms/kabi.c                |  263 +++++
+ scripts/gendwarfksyms/symbols.c             |  339 ++++++
+ scripts/gendwarfksyms/types.c               |  477 ++++++++
+ scripts/genksyms/genksyms.c                 |   77 +-
+ scripts/include/crc32.h                     |   93 ++
+ 24 files changed, 3840 insertions(+), 85 deletions(-)
+ create mode 100644 Documentation/kbuild/gendwarfksyms.rst
+ create mode 100644 scripts/gendwarfksyms/.gitignore
+ create mode 100644 scripts/gendwarfksyms/Makefile
+ create mode 100644 scripts/gendwarfksyms/cache.c
+ create mode 100644 scripts/gendwarfksyms/die.c
+ create mode 100644 scripts/gendwarfksyms/dwarf.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi.h
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex0.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex1.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex2.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_rules.c
+ create mode 100644 scripts/gendwarfksyms/examples/symbolptr.c
+ create mode 100644 scripts/gendwarfksyms/gendwarfksyms.c
+ create mode 100644 scripts/gendwarfksyms/gendwarfksyms.h
+ create mode 100644 scripts/gendwarfksyms/kabi.c
+ create mode 100644 scripts/gendwarfksyms/symbols.c
+ create mode 100644 scripts/gendwarfksyms/types.c
+ create mode 100644 scripts/include/crc32.h
+
+
+base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+-- 
+2.47.0.163.g1226f6d8fa-goog
+
 
