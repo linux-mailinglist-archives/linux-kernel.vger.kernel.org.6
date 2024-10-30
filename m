@@ -1,125 +1,185 @@
-Return-Path: <linux-kernel+bounces-388623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC2A9B6233
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:47:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77C49B6231
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 822462835B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275231F21EDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6002B1E47CE;
-	Wed, 30 Oct 2024 11:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441231E5719;
+	Wed, 30 Oct 2024 11:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ULjmv6uR"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0xhIJoO"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD7F1DC759;
-	Wed, 30 Oct 2024 11:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1861E571F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288868; cv=none; b=uqiAE8HYLAnyEWyt6VzLsHVl2Bic2vIXKy97OSFgIGZ64+FHYUKEXN5koAZsI4e4AXv5L7oKQdTg7BvEGcVHNmcIte9Y/1yz6VKsrbkmNCcTKJd07Ik4Geie7i3Ae2BGs6o+UFVLPzybnQEe4VOaBE09/UmumzYAWvNjEom5c6A=
+	t=1730288855; cv=none; b=UGm6fOi/zNqcnDjGWSnHAoMEC6HC33JjwAyc6K0TnO5cDbeYCfHPRa3hSjIcYSIDosLvyP3c+0BeDIT61o41OmxcLaH4IeOGHAIHpy2adEl5JRbdV6R95YG5DCQL8QzKKfSPlz8Aw3zvVgGlokKEoKBzk5a1RHSJaUzsn7A7EqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288868; c=relaxed/simple;
-	bh=m566/Aw7BokwNE95AHhDC+A322x2cffvVlTff/86lYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MOLUDEokSdjU3JBgL3l5HPbN9r0DaM6o1dgXjDphlgbDqhOvaWUelVVd2cPfuz3K7JZNS0vwWV1zTvkcQr1YRKcAGRJ0TTyn7sghOovGg5nauj0AHeynudDLHUIi1ExyoaG/4nvMRuTMnOrsEdn6rWLQt+iidaNmvZNwgYQXaPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ULjmv6uR; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3561040E0219;
-	Wed, 30 Oct 2024 11:47:44 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id S9VEuAuA33Y3; Wed, 30 Oct 2024 11:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730288860; bh=600G8edgGU8M7BuLs4swFcgrBvQ+28NzvVnBeZLi5DE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ULjmv6uRCnWbaMzdOD0q270221nwyjYiK+v3hPxMLHNF7J9ulZnnnWQJ8I0/2SydL
-	 K7obiq5YWgKYTrg89dbJJxJjDKBnPHyXncCqi3zGyZaCzbSaevTqsCS3squcY/fVVd
-	 RN69gP4fXiLYIFm0B2l2Lv08lYNHWw8fDNca9pRHF9hHDGpHFe6gmul8tJg8UFiKPl
-	 dc8Hjs8VxUmiE+TrUgX/QFE+wwj6uSG4/CSZLbEV2QbvmR5yaNuKfK5A4j6n3DsgBp
-	 Hwbw/8R9t6UakaAxcUYCIEe7Zf0eREaEpEstObDxPkFcnmWQuIWB3av+s6orMLzy8C
-	 /WKHE0xubYBkoBTkgq9mlJsXkFfl13XjaQ3oO9DtnFK2JbOk21sZ1/m2VnlshnrLly
-	 tg0Z+JubTgdvzFfUGA1znzk1PQGtFOS++spRIXRdMUdeZj4ka2XuGM+mBehzbGI5JY
-	 VlmuvbUxtLAoVSStgB3W32O2gOxXbaxCcAjILALFD45R/E27Xdg382mSnyydww0t1f
-	 sV3w2c8FMam4RT/VeasYrTrjNIYEfkef3XJLt5It1d2EpoTlw39ZKsu/23dt5Vqofo
-	 LGBSBgQ9XhhDSbSrU1yH6XQXRG0xGH+X1fzDrPELjIneSfcDorJZDBFoC4t3aLW80p
-	 7nDhrD8zflS3Dghyn9r4/zw8=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AD75940E0191;
-	Wed, 30 Oct 2024 11:47:21 +0000 (UTC)
-Date: Wed, 30 Oct 2024 12:47:12 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sean Christopherson <seanjc@google.com>,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCHv4, REBASED 1/4] x86/mm/ident_map: Fix virtual address
- wrap to zero
-Message-ID: <20241030114712.GCZyIcwF9MyQacmRf1@fat_crate.local>
-References: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
- <20241016111458.846228-2-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1730288855; c=relaxed/simple;
+	bh=jjowhWeb58M8dkbWfz1/39wWSagqvOzeCM5x/j9GsWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MOUz1JPIr4dOfNiXeLPcQa08GzfTujwGYoWX+i6iB0Ss7UiWhWiKTQKkrCZ23izqFeA2L/RggjAw5A/8llkY8hAkzCyMV4LxMr7hr/gJEtfDfNHf2kS5BAhPhzDkUNigJksVfAPPQQ4gI3oTZyWNftfdCNeabuz7taJwjWVxouI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0xhIJoO; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9abe139088so965137166b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730288852; x=1730893652; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+iPeoiKgqWsihw7QOhYcfHs+xFsoMwxQZ4v+dLUj0kU=;
+        b=j0xhIJoOq7emEDmE0KxWkA9dSKnxgDq8Rnuy1xlhmIdVK7mZTNWF0nt7RcKYv2DcRa
+         ORGydZQZpmVuFScQMcCFh+m3BoMXN7dAsTVvB2glMRlDK2cXMa9e122vARCbF+4VSWV0
+         Vb3ddocPFRIAfzzZ+VSGbOPKkK0W0BidtALmpHe6EMhcDfW7LjBb/byqqpDu7ysrQXD+
+         PdOEtSEa2Lprx+CQiCR6Jl6CgvT4GIGXaSrVo9Jvu8/7ZFUTZ82J89GCwsEnnwmfN1/y
+         o19YXkQ+49ZFArW9OuH4/uHVUQ5Bstw7xuc+jauWDRMgtYRit+O78tyIpLzdDuM99yAs
+         pzYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730288852; x=1730893652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+iPeoiKgqWsihw7QOhYcfHs+xFsoMwxQZ4v+dLUj0kU=;
+        b=brwqgdXJR9wOsMdQL3nJdmhIo361bHjPoBGBS3O8OB/LXWTUM4kxSdYtxWnD2M6Vsk
+         LdDxP4R4KUDQDNel/zuZZyYkspkBbkCM/Kt6ZQLye/3rhNB8G2edZ48DfE6V6b/UKm9Y
+         rW6zXruPR11K/IHW63AZf6lq48WeAHSrBAkj6GAhyvzmgTjXmU1EnUNRbQh44lQSbH+f
+         Rj8MYol56aKgz7AEsufctOCd6SaJHdL3aHsVMQvOlF/ooD6lSL4LVh1/wmw1hF030KpN
+         /3IvWScRXkTcTYe91GwqBS3To84c7Rh1hc+bfwMEvKxMsJcxnB7zs6O6Xlke6tfKb4lu
+         i3Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxg/i2pLb1uMMSON4zUmDmuBZIkAH4fJrty8gC3zQPRlgXMv6uyM1Au5h93Q5kGOhAZFuEC1neshcCcjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcydsGP4Tq1fhQIzs+k8Md7nzy8qy+RZ/LR2ausCsccwjO87oq
+	bVVQLEDVq8zh2O6tk1LBxFV/4yIo20m3ZjNQaQIV6SA0L7/fbgoETL7aK8YThACICQ4L3E5Rbxi
+	vFJPlSbn9cMoWU+idnFwdDRJIAtY=
+X-Google-Smtp-Source: AGHT+IHOhf0jCKXNjWWUFbLvQ8OX9sG6XrtUY0Z+2vfScEF3jOf24p7/NPgnSEG0lkw4bOS9pecA20ZITnp24rCfHHw=
+X-Received: by 2002:a17:907:7d8b:b0:a9a:5b4:b19e with SMTP id
+ a640c23a62f3a-a9de5ee15damr1543532666b.32.1730288851169; Wed, 30 Oct 2024
+ 04:47:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016111458.846228-2-kirill.shutemov@linux.intel.com>
+References: <20241029161341.14063-1-marc.c.dionne@gmail.com> <20241029174518.60fa703fc9cb304d6e69e9a0@linux-foundation.org>
+In-Reply-To: <20241029174518.60fa703fc9cb304d6e69e9a0@linux-foundation.org>
+From: Marc Dionne <marc.c.dionne@gmail.com>
+Date: Wed, 30 Oct 2024 08:47:19 -0300
+Message-ID: <CAB9dFdtd3paOGdYU8qJM5grD3pEFMiiCXk=fmPFW7k6s6yOBpQ@mail.gmail.com>
+Subject: Re: [PATCH v2] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 02:14:55PM +0300, Kirill A. Shutemov wrote:
-> Calculation of 'next' virtual address doesn't protect against wrapping
-> to zero. It can result in page table corruption and hang. The
-> problematic case is possible if user sets high x86_mapping_info::offset.
-> 
-> The wrapping to zero only occurs if the top PGD entry is accessed.
-> There are no such users in the upstream. Only hibernate_64.c uses
-> x86_mapping_info::offset, and it operates on the direct mapping range,
-> which is not the top PGD entry.
-> 
-> Replace manual 'next' calculation with p?d_addr_end() which handles
-> wrapping correctly.
+On Tue, Oct 29, 2024 at 9:45=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Tue, 29 Oct 2024 13:13:41 -0300 Marc Dionne <marc.c.dionne@gmail.com> =
+wrote:
+>
+> > From: Marc Dionne <marc.dionne@auristor.com>
+> >
+> > The number of slabs can easily exceed the hard coded MAX_SLABS in the
+> > slabinfo tool, causing it to overwrite memory and crash.
+> >
+> > Increase the value of MAX_SLABS, and check if that has been exceeded fo=
+r
+> > each new slab, instead of at the end when it's already too late.  Also
+> > move the check for MAX_ALIASES into the loop body.
+>
+> Thanks.
+>
+> > --- a/tools/mm/slabinfo.c
+> > +++ b/tools/mm/slabinfo.c
+> > @@ -21,7 +21,7 @@
+> >  #include <regex.h>
+> >  #include <errno.h>
+> >
+> > -#define MAX_SLABS 500
+> > +#define MAX_SLABS 1000
+>
+> That isn't a very large increase.
 
-So this is a fix for a theoretical issue as it cannot happen currently?
+Fair point, given how quickly it has grown, maybe something like 4k
+would give more headroom.
 
-Can we call that out in the commit message so that the stable AI doesn't pick
-it up?
+>
+> >  #define MAX_ALIASES 500
+> >  #define MAX_NODES 1024
+> >
+> > @@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
+> >                               p--;
+> >                       alias->ref =3D strdup(p);
+> >                       alias++;
+> > +                     if (alias - aliasinfo > MAX_ALIASES)
+> > +                             fatal("Too many aliases\n");
+> >                       break;
+> >                  case DT_DIR:
+> >                       if (chdir(de->d_name))
+> > @@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
+> >                       if (slab->name[0] =3D=3D ':')
+> >                               alias_targets++;
+> >                       slab++;
+> > +                     if (slab - slabinfo > MAX_SLABS)
+> > +                             fatal("Too many slabs\n");
+> >                       break;
+>
+> This could be improved - if the number of slabs is exactly equal to
+> MAX_SLABS we'll unnecessarily report an error.  Wouldn't this
+> alteration be better?
 
-And which commit is it fixing?
+Actually the issue is rather that we'll accept MAX_SLABS + 1 when we
+shouldn't, so yes the checks should be >=3D, or could also be just =3D=3D,
+sorry.
 
-aece27851d44 ("x86, 64bit, mm: Add generic kernel/ident mapping helper")
-perhaps?
-
-Always add Fixes: tags when a patch is fixing something - you know that.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+> --- a/tools/mm/slabinfo.c~tools-mm-fix-slabinfo-crash-when-max_slabs-is-e=
+xceeded-fix
+> +++ a/tools/mm/slabinfo.c
+> @@ -1228,6 +1228,8 @@ static void read_slab_dir(void)
+>                                 continue;
+>                 switch (de->d_type) {
+>                    case DT_LNK:
+> +                       if (alias - aliasinfo >=3D MAX_ALIASES)
+> +                               fatal("Too many aliases\n");
+>                         alias->name =3D strdup(de->d_name);
+>                         count =3D readlink(de->d_name, buffer, sizeof(buf=
+fer)-1);
+>
+> @@ -1240,10 +1242,10 @@ static void read_slab_dir(void)
+>                                 p--;
+>                         alias->ref =3D strdup(p);
+>                         alias++;
+> -                       if (alias - aliasinfo > MAX_ALIASES)
+> -                               fatal("Too many aliases\n");
+>                         break;
+>                    case DT_DIR:
+> +                       if (slab - slabinfo >=3D MAX_SLABS)
+> +                               fatal("Too many slabs\n");
+>                         if (chdir(de->d_name))
+>                                 fatal("Unable to access slab %s\n", slab-=
+>name);
+>                         slab->name =3D strdup(de->d_name);
+> @@ -1305,8 +1307,6 @@ static void read_slab_dir(void)
+>                         if (slab->name[0] =3D=3D ':')
+>                                 alias_targets++;
+>                         slab++;
+> -                       if (slab - slabinfo > MAX_SLABS)
+> -                               fatal("Too many slabs\n");
+>                         break;
+>                    default :
+>                         fatal("Unknown file type %lx\n", de->d_type);
+> _
+>
 
