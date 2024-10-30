@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-388732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3FA9B63AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FC79B639B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:01:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E9C41C20F02
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185BD1F21D91
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692421EF09F;
-	Wed, 30 Oct 2024 13:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B73A1E8856;
+	Wed, 30 Oct 2024 13:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AjeU/KsG"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yO8XwNtw"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E245B1EBA16;
-	Wed, 30 Oct 2024 13:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE3F79D2;
+	Wed, 30 Oct 2024 13:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730293444; cv=none; b=M5p3lTuqkRA8U0v9BKTUgmB/mhqJrkyvJtkQc1uXEFWGHa3Zq8eb6xM2CAkUfuEhWe3lv7gbGEyPkKKO1sC/RZ7tzz96sLGWhfrNc46faJ2Kzv9iOfjBVZp86mRq1iZZsIiT1AtCCM3A7ynghmTnNFWU35SaC/++GirdvUmPR+8=
+	t=1730293306; cv=none; b=MNFsGEAJVpiaIMHDovNnNXxuKoxyjGO1OQcAYyTcH14iuTXP1xYXTxMBAuA3pG7sDCqg7aTPPwckOVr08dNSd1YYfdvS+ZE+9ZIr9MmKLVTXPb6Z6sMAU+ujHoZEm9wbO0vnrUk0igojfPJxbW2Q/ycN4MyeOkzRpWqzsRmL0Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730293444; c=relaxed/simple;
-	bh=jtzBEiiVYmdNANE1VaGgB4AR5jbo2kyA1L+ao7NBWbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GHqQRV65IiRoQniBm0o95klP/IYXHLFIsYuk/Va+TDwsxTDvEFprme22cGTICqn4f2bR3rwRtdj9l+Hra91dWubYr4EaOhBMsGTQrzJg3vC0ULySz+RTIDmPCdMSRKEVLL0y/fcC94gP+Q0VBoPubfdcZiZwjnADGtQPgMIPd74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AjeU/KsG; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=/lH6a4L8gtRKOjPZ3v2254wh73VRSysBe4phJD9CDEs=; b=AjeU/KsGJLU50JSiT7VnonXpVh
-	xz162mpXuW5PYT8HVrkynl+V4L5bYQ6ExijZcA+EMXvKfT6YIV+MAjIQJ4gsHzbRp79rnDgZdjgsb
-	upmm9Teb+VtHj3VcJHi4NtlEBRE+XnecY0G26vW2jhQrT4TW46nw65Ed5GVT1hZ9HKRRLCCsDEQ+r
-	sG1XmQcd6BDGZj/lJXYm8hAt9NXjZDSs0ej2GO41/QQC6TAR+iUcAVhs1Tvrrpqfn0X1iC/EtyHWU
-	/RRQGdXOMT6j6rTERDtWG7RAq5YMYsinIfXvvLRGEiuqPZf8FybhAvLw+F78ANejVw4Pj1uJ4n0LO
-	l2zQmP5A==;
-Received: from [187.36.213.55] (helo=morissey..)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t68MY-00H5h8-CM; Wed, 30 Oct 2024 14:03:50 +0100
-From: =?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Barry Song <baohua@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lance Yang <ioworker0@gmail.com>
-Cc: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
-Subject: [PATCH v3 4/4] mm: huge_memory: Use strscpy() instead of strcpy()
-Date: Wed, 30 Oct 2024 09:58:58 -0300
-Message-ID: <20241030130308.1066299-5-mcanal@igalia.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241030130308.1066299-1-mcanal@igalia.com>
-References: <20241030130308.1066299-1-mcanal@igalia.com>
+	s=arc-20240116; t=1730293306; c=relaxed/simple;
+	bh=81OLaueuzInLGNjccaZly8pUzu9tuU0htBXOEtYdJTA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KtC9QHYPOxc30xoHKo01N6muwqLXkulUkd/TITwGpPrLB+uYHm8KDG+tR6MSgM35JnvjrBE+Ic6J+L+gvjQFsH81/mO3Ba1b7jGIcamSaF8Glnd1cSgaQxT734v8fJ9vuPMMJ4kqI9Ckg6ZJbXEoiH30u0fHY4xRQl+fbsMj4BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yO8XwNtw; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UD1Uvi086261;
+	Wed, 30 Oct 2024 08:01:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730293290;
+	bh=6O7DRUlTOQ1uVBZyn2qb6McuWmIQQJwh05TiRUoOhj0=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=yO8XwNtwScSRXieQQ2kgpH00CwE3gHz7yY0MVpb7WBsoZaF10+m8u9ciqQ061Jyl+
+	 UjNAZsgPBK4a6165zvxcAPJ18T1ruSTyLCauMcI6OA0dVkvvD1/4heFq0zLeghHmgI
+	 v+LPTD6ipkiMNwmnBoemRsQciy7MoB8AZgLCAR7s=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49UD1UMe023548
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 30 Oct 2024 08:01:30 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
+ Oct 2024 08:01:29 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 30 Oct 2024 08:01:29 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UD1T4a079000;
+	Wed, 30 Oct 2024 08:01:29 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
+        Kevin
+ Hilman <khilman@baylibre.com>
+CC: Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>,
+        Dhruva Gole
+	<d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
+        Sebin Francis
+	<sebin.francis@ti.com>,
+        Markus Schneider-Pargmann <msp@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode constraints
+Date: Wed, 30 Oct 2024 08:01:27 -0500
+Message-ID: <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
+References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Replace strcpy() with strscpy() in mm/huge_memory.c
+Hi Kevin Hilman,
 
-strcpy() has been deprecated because it is generally unsafe, so help to
-eliminate it from the kernel source.
+On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
+> The latest (10.x) version of the firmware for the PM co-processor (aka
+> device manager, or DM) adds support for a "managed" mode, where the DM
+> firmware will select the specific low power state which is entered
+> when Linux requests a system-wide suspend.
+> 
+> In this mode, the DM will always attempt the deepest low-power state
+> available for the SoC.
+> 
+> [...]
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Maíra Canal <mcanal@igalia.com>
----
- mm/huge_memory.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I have applied the following to branch ti-drivers-soc-next on [1].
+Thank you!
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index f92068864469..8f41a694433c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -989,7 +989,7 @@ static int __init setup_thp_anon(char *str)
- 
- 	if (!str || strlen(str) + 1 > PAGE_SIZE)
- 		goto err;
--	strcpy(str_dup, str);
-+	strscpy(str_dup, str);
- 
- 	always = huge_anon_orders_always;
- 	madvise = huge_anon_orders_madvise;
-@@ -4175,7 +4175,7 @@ static ssize_t split_huge_pages_write(struct file *file, const char __user *buf,
- 
- 		tok = strsep(&buf, ",");
- 		if (tok) {
--			strcpy(file_path, tok);
-+			strscpy(file_path, tok);
- 		} else {
- 			ret = -EINVAL;
- 			goto out;
+Ulf, based on your ack[2], I have assumed that you want me to pick
+this series up. Let me know if that is not the case and I can drop the
+series.
+
+[1/3] pmdomain: ti_sci: add per-device latency constraint management
+      commit: 7c2c8d2651b5ffaffb2d5f723bd5b0493bd66f36
+[2/3] pmdomain: ti_sci: add wakeup constraint management
+      commit: 5a2d997b1bf8b05379309270063d7b9bd3767dd2
+[3/3] pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
+      commit: e8f35dc8de8c3216d28dab51b962bb31f20934c8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+[2] https://lore.kernel.org/all/CAPDyKFr9isnz66B+n5y3=QO-ndB05JKZN3kgXO+kXBn7ofcwMw@mail.gmail.com/
 -- 
-2.46.2
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
 
