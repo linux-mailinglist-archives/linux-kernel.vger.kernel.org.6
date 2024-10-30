@@ -1,252 +1,210 @@
-Return-Path: <linux-kernel+bounces-388968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CF49B66BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:00:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931499B66B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FBE1B235BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:00:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 061AEB228C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9F41F4FCC;
-	Wed, 30 Oct 2024 15:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687781F4295;
+	Wed, 30 Oct 2024 14:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2FwYuAiT"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Rj8xdqco"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8361F4295
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F111E8850
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300403; cv=none; b=IuJpfwJmT8V2s7q0NkeSxsbmmVkzbIxUfJ0rqkb32XRyvFn0kC0eQjxiXPCQlOCs0x70g7A463AN3R6F8++F6d3PLlQagMDt8s01dDi4Sn9yMqDrqSmHJKuj9XVO59mIWWBUcHhtuevC3czXXk/uSR9mbzjJLyQlr+El4rUKcFU=
+	t=1730300386; cv=none; b=Mt7YSF28v1RUQvAdL6iRfk1Y/hlnUs8eIgWLNnif0eXd2RqfucEsoJ1FjzbhhhYn4ngB5J2o3g645qJrSca3GPwz324FjsJfgeIw+wKM+9gGQS3Q0mP0E8QirLZD0Ck7RcZzzNj7HKOA+cTpH+9oTa0zudwAbVPAXiLYtAM0ErI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300403; c=relaxed/simple;
-	bh=uoWze0AFqGEBBuJL+IHIOIyHzv7bxNM24tB4dFyRAlU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NXjYsodjJ+OTXvrj8DCKTWRZW5Rz/14T67sdYNX/9wJ/PEgA/sMW3Eil+K6JHPmEoMHbLo83jfivszBZ8ncDVpIw1oXSjyA3pniumz1jm6Er3ddrFn2x0Aud5z3HYeN2Zc02W5sYfRcZvk8bw7UI6bDc0CaqsU0WTw0DvMh1W8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2FwYuAiT; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-460969c49f2so311271cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:00:01 -0700 (PDT)
+	s=arc-20240116; t=1730300386; c=relaxed/simple;
+	bh=xgTGTLCEi3J05i1dd/M/kJiy/4dDsFFhU1eqm56yAXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0lVRsXpQXpgBoMXiwPR5lJBWPAbezUmeeT0K86pRTCsi7OBkgeEm0GaFsmsattcS8zdspbmVyEjHJ4zlp8NkON6Y14tjWOx3kKWM5RrvcppJ2tU/MR2mbpkXwf76W1pdfH9FQZmJ1KS0fSZZZ7eyrFt79zPFcp0DQ4lru3WNzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Rj8xdqco; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cbceb48613so43199746d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730300400; x=1730905200; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JW8S8WBlORDTYGL1pb5mR6Fb+1WUMKbWZMEBW0G2lRs=;
-        b=2FwYuAiTPw15hfw1ZxlQqdEXJDNuxI6K/8wgqjY7aNKve07s9scPeGHuwVhZo20SkS
-         +ELZqdD/nUyott9tkJTDx6ZTAO96DwxvSwi+UkPpG4GQYOHg+k4trxYYHxc0OtVSi7ot
-         g4lQcsY91jF1BnzDd/auiHX5CdDCd+MGTEA7UK9NXl2EEK3VatHzOqxMLB51TTMKxLWT
-         cof1Jdf6YPoNXDVLQb7f6/h/wTxhMZwDxNUetdO2StMzvpwGMGfrmoLkIeskJMmo/i8C
-         fjtXhNbLNZGzWN1Kf9OzFG0kTtVchMx36dx5rfHEreAE2j2ouB2XGgfO0Fl5oFLLYcWX
-         gRLw==
+        d=gourry.net; s=google; t=1730300383; x=1730905183; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1CRNigufEv4srYMK7CzZ+n/1hKhvYmg+07IbXIIY6zQ=;
+        b=Rj8xdqco40tFZFQkwoYWFKbwTgPH0fCkaO14XwFGGdKrE5plUpPvNoLvLdStl4uXF9
+         y80ki0jpSy2lCUcOxa5ukN1UZpEeN/QcFciRONgNWvGTwtB4zGrGAkax0vZn2kMM/N8u
+         DAKT1Sl2pmAeGvVHRZQjHnyh7oXWpUwzNGqSYQG2GwFrsvjkyduMWQH0+kZ88hI0aBEz
+         PdLze5bsbq1zr59huFTucQqiJihQjMT5mxbk4RK/lt+f25ljcs9PGmWAcZuZHZgCGBr6
+         5qESX5OhRKRVCJgHh0lQcwxL0Dh3Q2ZVX+PtljxFrbW9DXdshYAk5UpaPjMrH3j1gxTV
+         z0kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730300400; x=1730905200;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JW8S8WBlORDTYGL1pb5mR6Fb+1WUMKbWZMEBW0G2lRs=;
-        b=DwDpFOvSwSZpOHqdSimdkelT7ROfMpHRQG2OWIrwfO3GqlNGbw4aruqLDUU+FzaSaU
-         Kwsl9l8EsjcmwCTZGaxIsR0holdKBwaYdRTFXktvB1oWDQcqX5fq4EzHwhl2a3Hmn04g
-         egbTwpywQgc7eiqpd18b9MjR0GcCbYrjjB5DTBA038FfeFOX8A9Pg49ffyb3xUS+7C93
-         baV8OZ8OkBZQRJIBmlnTcL9me4eICfoW6bEoEJ5YSRvMDquGeiEGoKo0grsqpDNK748C
-         5Q3dKZA9YNzG8uaIoihOWI0HZK3ZxcVE7DfOYG6QnJSJDtfRf6uT63lPKcuJQ78/0fVH
-         9jQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmqPYpd/fvcvb6Wcaqn91kMDxwijYtFRtbj0YJCnVpCoCpLTJXTTcMDJkZDHn+Pz6Y23ZjWkC9rCQRvEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPD9aWs546tkMOYqDulH9VuHnzHqg2IScX9vY2uYJRihfUQ2ZT
-	BQjQiW1Y70ju/2G9lOgIS67OVQ/g6M41EC5IUyce8f+mQrlnrQYKM7EKxQaIVFULbCs3qWA3dM0
-	Le0u7EjZfmK+uWgC0FRNeGk9k2SAsN6JWUlt1
-X-Gm-Gg: ASbGncsE1mQk+2RGZRPD+NPlkp4IGQ/x7QIRCEdzkkTpYWSI2C0PVSWMH2lBx0pHhel
-	LZiYiIpMyngxYwASPVxGSYthHYP/tKWI=
-X-Google-Smtp-Source: AGHT+IFwQRC1OM1gOyKoR/O/t02TCtvuvF1tbAha8ccPoXgqMdwrxYU0mf40JkfMIXKC4/9HFpcyjbWJ5vMjBZtQKT0=
-X-Received: by 2002:ac8:5d91:0:b0:460:b4e3:49e with SMTP id
- d75a77b69052e-46166dadbe0mr7711771cf.9.1730300400312; Wed, 30 Oct 2024
- 08:00:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730300383; x=1730905183;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1CRNigufEv4srYMK7CzZ+n/1hKhvYmg+07IbXIIY6zQ=;
+        b=L2r+Ht45OSepJB9LoU4iT15Lh35uJDBXX3vN4gJqVXWAEoS8DW/aqtOm/me66DGjSq
+         MSwtezLpSHL8dMRebjck1CoBDpVJBrHoJIdKgllytD9yKJOFqEMQHYzobTBY1yDSYsz8
+         RZ872tSC1Qe5UB3tnEUUkC7ye2umBN7lYA+MNShb/sXpn7CLHG0VqQa7/pahgmrAolqR
+         kfJj0/7vXBe2JQupPcEU73cQAlcSKt68Cup8p63KPzzhI5tqfeBR2kyl/RKR+h6W2SuX
+         Ms4im74IC2cywaHz9Vu0hwJ9qNRDttQXNxDuyIWVI4Bm9TIox/AcMLDfY5Lwg1XYFhJX
+         62Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMhKOUdAxKEEI6f1dfeh4X3e/1Dvf11G3WToxeorDpn6f9LMllvocd5cnPjJRUfKfoAVXQX00k3uAIhgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfzRvS0JNZDlEb6SvSNdE/hzo2wSzKFX5Jbicokxf/rapCoJ6B
+	zT/lztulHN1HZOVwWybyk58g0spZiMn6f5coKv5mNQLVG2ocqQerfORMgK+s+qs=
+X-Google-Smtp-Source: AGHT+IEV7l+Y+OcHF3D5iHR7Q3RlAhw7sBOVYB5E6ILrTizIrARGpPbdx8snNJXXQLRSYzX4Yuru7A==
+X-Received: by 2002:a0c:f409:0:b0:6cb:c6d2:3567 with SMTP id 6a1803df08f44-6d345fae094mr34561776d6.3.1730300383356;
+        Wed, 30 Oct 2024 07:59:43 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d179a09498sm52532166d6.93.2024.10.30.07.59.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 07:59:43 -0700 (PDT)
+Date: Wed, 30 Oct 2024 10:59:48 -0400
+From: Gregory Price <gourry@gourry.net>
+To: David Hildenbrand <david@redhat.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
+	dave.jiang@intel.com, ira.weiny@intel.com,
+	alison.schofield@intel.com, dave.hansen@linux.intel.com,
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
+	lenb@kernel.org, osalvador@suse.de, gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org, rppt@kernel.org
+Subject: Re: [PATCH v4 1/3] memory: implement
+ memory_block_advise/probe_max_size
+Message-ID: <ZyJJ5Pvfj4Spcyo7@PC2K9PVX.TheFacebook.com>
+References: <20241029202041.25334-1-gourry@gourry.net>
+ <20241029202041.25334-2-gourry@gourry.net>
+ <55df76a9-afa3-4dc0-a7f9-ff9b6f139448@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030142722.2901744-1-sdf@fomichev.me>
-In-Reply-To: <20241030142722.2901744-1-sdf@fomichev.me>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 30 Oct 2024 07:59:48 -0700
-Message-ID: <CAHS8izOBp4yXBg-nOSouD+A7gOGs9MPmdFc9_hB8=Ni0QdeZHg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 00/12] selftests: ncdevmem: Add ncdevmem to ksft
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch, shuah@kernel.org, 
-	horms@kernel.org, willemb@google.com, petrm@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55df76a9-afa3-4dc0-a7f9-ff9b6f139448@redhat.com>
 
-On Wed, Oct 30, 2024 at 7:27=E2=80=AFAM Stanislav Fomichev <sdf@fomichev.me=
-> wrote:
->
-> The goal of the series is to simplify and make it possible to use
-> ncdevmem in an automated way from the ksft python wrapper.
->
-> ncdevmem is slowly mutated into a state where it uses stdout
-> to print the payload and the python wrapper is added to
-> make sure the arrived payload matches the expected one.
->
-> v6:
-> - fix compilation issue in 'Unify error handling' patch (Jakub)
->
+On Wed, Oct 30, 2024 at 11:25:33AM +0100, David Hildenbrand wrote:
+> On 29.10.24 21:20, Gregory Price wrote:
+> > Hotplug memory sources may have opinions on what the memblock size
+> > should be - usually for alignment purposes.  For example, CXL memory
+> > extents can be 256MB with a matching alignment. If this size/alignment
+> > is smaller than the block size, it can result in stranded capacity.
+> > 
+> > Implement memory_block_advise_max_size for use prior to allocator init,
+> > for software to advise the system on the max block size.
+> > 
+> > Implement memory_block_probe_max_size for use by arch init code to
+> > calculate the best block size. Use of advice is architecture defined.
+> > 
+> > The probe value can never change after first probe. Calls to advise
+> > after probe will return -EBUSY to aid debugging.
+> > 
+> > On systems without hotplug, always return -ENODEV and 0 respectively.
+> > 
+> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Gregory Price <gourry@gourry.net>
+> > ---
+> >   drivers/base/memory.c  | 48 ++++++++++++++++++++++++++++++++++++++++++
+> >   include/linux/memory.h | 10 +++++++++
+> >   2 files changed, 58 insertions(+)
+> > 
+> > diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> > index 67858eeb92ed..099a972c52dc 100644
+> > --- a/drivers/base/memory.c
+> > +++ b/drivers/base/memory.c
+> > @@ -110,6 +110,54 @@ static void memory_block_release(struct device *dev)
+> >   	kfree(mem);
+> >   }
+> > +/**
+> > + * memory_block_advise_max_size() - advise memory hotplug on the max suggested
+> > + *				    block size, usually for alignment.
+> > + * @size: suggestion for maximum block size. must be aligned on power of 2.
+> > + *
+> > + * Early boot software (pre-allocator init) may advise archs on the max block
+> > + * size. This value can only decrease after initialization, as the intent is
+> > + * to identify the largest supported alignment for all sources.
+> > + *
+> > + * Use of this value is arch-defined, as is min/max block size.
+> > + *
+> > + * Return: 0 on success
+> > + *	   -EINVAL if size is 0 or not pow2 aligned
+> > + *	   -EBUSY if value has already been probed
+> > + */
+> > +static size_t memory_block_advised_sz;
+> 
+> Nit: if everything is called "size", call this "size" as well.
+> 
 
-Since I saw a compilation failures on a couple of iterations I
-cherry-picked this locally and tested compilation. I'm seeing this:
+Mostly shortened here because
 
-sudo CFLAGS=3D"-static" make -C ./tools/testing/selftests/drivers/net/hw
-TARGETS=3Dncdevmem 2>&1
-make: Entering directory
-'/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/driv=
-ers/net/hw'
-  CC       ncdevmem
-In file included from ncdevmem.c:63:
-/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/../..=
-/../tools/net/ynl/generated/ethtool-user.h:23:43:
-warning: =E2=80=98enum ethtool_header_flags=E2=80=99 declared inside parame=
-ter list
-will not be visible outside of this definition or declaration
-   23 | const char *ethtool_header_flags_str(enum ethtool_header_flags valu=
-e);
-      |                                           ^~~~~~~~~~~~~~~~~~~~
-/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/../..=
-/../tools/net/ynl/generated/ethtool-user.h:25:41:
-warning: =E2=80=98enum ethtool_module_fw_flash_status=E2=80=99 declared ins=
-ide
-parameter list will not be visible outside of this definition or
-declaration
-   25 | ethtool_module_fw_flash_status_str(enum
-ethtool_module_fw_flash_status value);
-      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~
-/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/../..=
-/../tools/net/ynl/generated/ethtool-user.h:6766:45:
-error: field =E2=80=98status=E2=80=99 has incomplete type
- 6766 |         enum ethtool_module_fw_flash_status status;
-      |                                             ^~~~~~
-ncdevmem.c: In function =E2=80=98do_server=E2=80=99:
-ncdevmem.c:517:37: error: storage size of =E2=80=98token=E2=80=99 isn=E2=80=
-=99t known
-  517 |                 struct dmabuf_token token;
-      |                                     ^~~~~
-ncdevmem.c:542:47: error: =E2=80=98SCM_DEVMEM_DMABUF=E2=80=99 undeclared (f=
-irst use in
-this function)
-  542 |                             (cm->cmsg_type !=3D SCM_DEVMEM_DMABUF &=
-&
-      |                                               ^~~~~~~~~~~~~~~~~
-ncdevmem.c:542:47: note: each undeclared identifier is reported only
-once for each function it appears in
-ncdevmem.c:543:47: error: =E2=80=98SCM_DEVMEM_LINEAR=E2=80=99 undeclared (f=
-irst use in
-this function)
-  543 |                              cm->cmsg_type !=3D SCM_DEVMEM_LINEAR))=
- {
-      |                                               ^~~~~~~~~~~~~~~~~
-ncdevmem.c:557:52: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  557 |                                         dmabuf_cmsg->frag_size);
-      |                                                    ^~
-ncdevmem.c:562:56: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  562 |                         token.token_start =3D dmabuf_cmsg->frag_tok=
-en;
-      |                                                        ^~
-ncdevmem.c:566:42: error: =E2=80=98SO_DEVMEM_DONTNEED=E2=80=99 undeclared (=
-first use
-in this function)
-  566 |                                          SO_DEVMEM_DONTNEED, &token=
-,
-      |                                          ^~~~~~~~~~~~~~~~~~
-ncdevmem.c:573:56: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  573 |                         token.token_start =3D dmabuf_cmsg->frag_tok=
-en;
-      |                                                        ^~
-ncdevmem.c:576:54: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  576 |                         total_received +=3D dmabuf_cmsg->frag_size;
-      |                                                      ^~
-ncdevmem.c:579:44: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  579 |                                 dmabuf_cmsg->frag_offset >> PAGE_SH=
-IFT,
-      |                                            ^~
-ncdevmem.c:580:44: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  580 |                                 dmabuf_cmsg->frag_offset %
-getpagesize(),
-      |                                            ^~
-ncdevmem.c:581:44: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  581 |                                 dmabuf_cmsg->frag_offset,
-      |                                            ^~
-ncdevmem.c:582:44: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  582 |                                 dmabuf_cmsg->frag_size,
-dmabuf_cmsg->frag_token,
-      |                                            ^~
-ncdevmem.c:582:68: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  582 |                                 dmabuf_cmsg->frag_size,
-dmabuf_cmsg->frag_token,
-      |                                                                    =
-^~
-ncdevmem.c:583:60: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  583 |                                 total_received, dmabuf_cmsg->dmabuf=
-_id);
-      |                                                            ^~
-ncdevmem.c:585:40: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  585 |                         if (dmabuf_cmsg->dmabuf_id !=3D dmabuf_id)
-      |                                        ^~
-ncdevmem.c:589:40: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  589 |                         if (dmabuf_cmsg->frag_size % getpagesize())
-      |                                        ^~
-ncdevmem.c:595:65: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  595 |
-dmabuf_cmsg->frag_offset,
-      |                                                                 ^~
-ncdevmem.c:596:65: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  596 |
-dmabuf_cmsg->frag_size);
-      |                                                                 ^~
-ncdevmem.c:601:60: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  601 |
-dmabuf_cmsg->frag_offset,
-      |                                                            ^~
-ncdevmem.c:602:52: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  602 |                                         dmabuf_cmsg->frag_size);
-      |                                                    ^~
-ncdevmem.c:604:73: error: invalid use of undefined type =E2=80=98struct dma=
-buf_cmsg=E2=80=99
-  604 |                                 print_nonzero_bytes(tmp_mem,
-dmabuf_cmsg->frag_size);
-      |
-         ^~
-make: *** [../../../lib.mk:222:
-/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/drive=
-rs/net/hw/ncdevmem]
-Error 1
-make: Leaving directory
-'/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/driv=
-ers/net/hw'
+	if (memory_block_advised_sz)
+		memory_block_advised_size = min(size, memory_block_advised_size);
 
-The errors are still there even without the CFLAGS=3D"-static". Can you
-take a look before merge?
+is over 80 characters lol.  Happy to change if you have strong feelings.
+
+
+> > +static bool memory_block_advised_size_queried;
+> > +int memory_block_advise_max_size(size_t size)
+> 
+> Not that memory_block_size_bytes() uses "unsigned long". I don't think it
+> matters here. Or could it on 32bit? (I assume that code will not really
+> matter on 32bit)
+> 
+
+ack
+
+> > +{
+> > +	if (!size || !is_power_of_2(size))
+> > +		return -EINVAL;
+> > +
+> > +	if (memory_block_advised_size_queried)
+> > +		return -EBUSY;
+> > +
+> > +	if (memory_block_advised_sz)
+> > +		memory_block_advised_sz = min(size, memory_block_advised_sz);
+> > +	else
+> > +		memory_block_advised_sz = size;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * memory_block_advised_max_size() - query advised max hotplug block size.
+> > + *
+> > + * After the first call, the value can never change. Callers looking for the
+> > + * actual block size should use memory_block_size_bytes. This interface is
+> > + * intended for use by arch-init when initializing the hotplug block size.
+> > + *
+> > + * Return: advised size in bytes, or 0 if never set.
+> > + */
+> > +size_t memory_block_advised_max_size(void)
+> > +{
+> > +	memory_block_advised_size_queried = true;
+> > +	return memory_block_advised_sz;> +}
+> > +
+> 
+> I wonder if both should.could be "__init" ? So they could only be called
+> from __init ... which sounds like the tight thing to do?
+> 
+
+Was thinking the same thing in another thread, will go ahead and change it.
+
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
