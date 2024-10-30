@@ -1,103 +1,133 @@
-Return-Path: <linux-kernel+bounces-389330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F129B6B71
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:56:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA24C9B6B79
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D012B28115B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:56:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB0D1C227C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB221C9B77;
-	Wed, 30 Oct 2024 17:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0811CDA24;
+	Wed, 30 Oct 2024 17:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ozs9COpH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N0zhlC3h"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE411BD9DD;
-	Wed, 30 Oct 2024 17:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E17A1C7B86;
+	Wed, 30 Oct 2024 17:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730310955; cv=none; b=knvihRi+OdDliXu7c/z3U5Yg1VHTQeXHrsyc3qJRamvoUf7+RBbb4wS/D20CHYEqNPwLfQfgjsJ4u8dhZY9t1uMDIWsC8kU5DMOVTgykuGLayRnsSgGM4Orcnw4D32TKj1dU8DBOP5bq3fdmM9mmafqTwafU9XHqfZ7sOsdno3w=
+	t=1730311025; cv=none; b=tQSNRk2GXNePrYkVqDaD51DBqmasB+D7OLQeNKDvN9T2YJ5RwBl+wBLOKmz82mjhHPdUt2jScIlMV7tLJR7qtpfPhTRc10CMcfeIUmHH4YjLw0tgP2rUC3KPxQRkuFehDgWDUpUgYOqFmJ2rWSOTnR6UE1BXNtIf2q2b+3NssKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730310955; c=relaxed/simple;
-	bh=b/XZhS5qvIF8GRTaPPLH4l/WRsHDNNMXvE3cGm+jC+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9U6kVJe0b5LqLTy4GxDLnOK635cE11Q44itCXdRutxpUGZcnSpLdevqLq1mYBpe/Odb79jhCveN0A2ZMWqCAfnqzzQiFQ3Ax62K5yL6OPKQpCV1oJE8ufc+CSfQr/D1xzC0tU3y6IMIjIOqZH+VE+5aUTfxKTdxgc/dGBj+MXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ozs9COpH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60380C4CECE;
-	Wed, 30 Oct 2024 17:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730310955;
-	bh=b/XZhS5qvIF8GRTaPPLH4l/WRsHDNNMXvE3cGm+jC+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ozs9COpHkUTgo+pspB79K0MA2RfmpSIvmi43C5dKpUXQwMRT15P1cxY2uvONUv/pC
-	 MD1gpprssuL04GzFOuk1fmVCCh/azeAwvjGKbFRL8JTze43dZqi0pdAaPblR/UcaMf
-	 O/dQjCETTvMinCoyzxixu/6d0nLhGKFg1Yt1A1Yosu/HptFWTcTXEhQmtmrrgfRLBD
-	 ohpa2yK9w6uuzaKvvVR2uQFgmTSn/I8BOE5Rgsh5zvw+Cy0FYer4khLsEk4AAWe2D1
-	 hikNIbtBL6ajOBXaYCiF0wZOJVOf+SjzLo2Rp1vK8+F5SVpd05h8x4xeZHn194xBZr
-	 ONTJORhKs8bkA==
-Date: Wed, 30 Oct 2024 10:55:52 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-Message-ID: <20241030175552.22cza6t7dfe3xy3p@treble.attlocal.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <20241029135617.GB14555@noisy.programming.kicks-ass.net>
- <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
- <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
- <20241029183440.fbwoistveyxneezt@treble.attlocal.net>
- <74afc8d4-621a-4876-a8cf-6165a913e4b3@efficios.com>
- <20241030174752.gwzk6q6n2f3sg52a@treble.attlocal.net>
+	s=arc-20240116; t=1730311025; c=relaxed/simple;
+	bh=QFHNWyeOT84lDnUeAxBf7OiGBDDKYrKbBImX4Bblk2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YoQeQfJOATZ9zIYqNRD1OvNejd+0G+l40U6ECz1ZJuVtcgjuSCnxAMNEQmd+7tTDhO1Q9mNItmtqP4hI6HeWBac4OznsYNEtYElv1cUD3gtd2qTl22d9M3SF3Bfb/caExpaVLOKD/mqFaEPRzTohxT94cBDGDHxFEWrvexv2FBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N0zhlC3h; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDqNS3000334;
+	Wed, 30 Oct 2024 17:56:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7DGMEMnPe14tMN1h50lsqpL8wS50+hsWQ2+3K1ttIWQ=; b=N0zhlC3h3yf77wB8
+	ujtPmVzcLEBuuLFMbUR3kCJTDytzBCMdH5WIMd94MgoQwSXj4x5VyOtus6+4W1+W
+	qIEc/4iRolMMspMZ+Z1y9THjLZpiXo/OGNhXKRFVBFmZICks1LUVjsO51W1TLj3U
+	6WiH0XQGSk+4YKrPErMfqz0X8BrvNbTvMj3dpN5E2xNxXwmCt7Cw3/cbWjxn6N9u
+	CPVGQahy2sDfQmmzo5SbSy1Yi+XdRK5eSKQculKxnoqluMeXp8HI6V6MJrnIhIZz
+	caBaK0yrOGSeSepDvgctkrCGlO9aAT5JGK7uwL3dozZss1iIQYlZGnsbJJvjOVyL
+	awhYzQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kp2g8pem-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 17:56:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UHuHUn005844
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 17:56:17 GMT
+Received: from [10.216.35.255] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 10:56:12 -0700
+Message-ID: <4c4d7b11-36b1-4d86-91bc-8bcb8bca0a00@quicinc.com>
+Date: Wed, 30 Oct 2024 23:26:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241030174752.gwzk6q6n2f3sg52a@treble.attlocal.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] clk: qcom: camcc-qcs615: Add QCS615 camera clock
+ controller driver
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Abhishek Sahu
+	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-4-4cfb96d779ae@quicinc.com>
+ <f5exjvacw4gz7s7byxz6aux7jt3kczn5waio3f3dukpdvzmkvi@c65xjssv4aqy>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <f5exjvacw4gz7s7byxz6aux7jt3kczn5waio3f3dukpdvzmkvi@c65xjssv4aqy>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Ql71PkICb3kDMqTD6nefwc_Tbirt6U7t
+X-Proofpoint-GUID: Ql71PkICb3kDMqTD6nefwc_Tbirt6U7t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxscore=0 priorityscore=1501 clxscore=1015 suspectscore=0 impostorscore=0
+ mlxlogscore=724 adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410300141
 
-On Wed, Oct 30, 2024 at 10:47:55AM -0700, Josh Poimboeuf wrote:
-> > Moving from per-cpu to per-task makes this cookie task-specific and not
-> > global anymore, I don't think we want this for a stack walking
-> > infrastructure meant to be used by various tracers. Also a global cookie
-> > is more robust and does not depend on guaranteeing that all the
-> > trace data is present to guarantee current thread ID accuracy and
-> > thus that cookies match between deferred unwind request and their
-> > fulfillment.
-> 
-> I don't disagree.  What I meant was, on entry (or exit), increment the
-> task cookie *with* the CPU bits included.
-> 
-> Or as you suggested previously, the "cookie" just be a struct with two
-> fields: CPU # and per-task entry counter.
 
-Never mind, that wouldn't work...  Two tasks could have identical
-per-task counters while being scheduled on the same CPU.
+
+On 10/19/2024 1:52 AM, Dmitry Baryshkov wrote:
+>> +static struct gdsc ife_1_gdsc = {
+>> +	.gdscr = 0xa004,
+>> +	.en_rest_wait_val = 0x2,
+>> +	.en_few_wait_val = 0x2,
+>> +	.clk_dis_wait_val = 0xf,
+>> +	.pd = {
+>> +		.name = "ife_1_gdsc",
+>> +	},
+>> +	.pwrsts = PWRSTS_OFF_ON,
+>> +	.flags = POLL_CFG_GDSCR,
+>> +};
+> Shouldn't IFE GDSCs have titan_top as a parent?
+
+Yes, I will fix in the next patch.
 
 -- 
-Josh
+Thanks & Regards,
+Taniya Das.
 
