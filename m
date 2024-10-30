@@ -1,296 +1,126 @@
-Return-Path: <linux-kernel+bounces-388141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E213D9B5B39
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:34:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27E09B5B3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0EC1F23044
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49F71C210AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85F21CF5E0;
-	Wed, 30 Oct 2024 05:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6701CF5EC;
+	Wed, 30 Oct 2024 05:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="RN78hWWq"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="iBvnjoKY"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759D61CF289;
-	Wed, 30 Oct 2024 05:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB4E1CF289;
+	Wed, 30 Oct 2024 05:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730266485; cv=none; b=tNeQmfHWbaxskDMlNX9CAzTa/O7Y24vgF+Fecc9LAnGVpttB9WZgp5FfDBlAg7uGkuJJwYSFUWWdTkAqe/QdU8Z5iNf4qq4S4+E0pC8zmYegm4IgWHuQ+VWKiZt4zi3sgwe41utwXVvhflXzXQqTZYPkTV8lvZxVGnVcnZOk/RY=
+	t=1730266531; cv=none; b=Jrncrvt+8TZkbplwjFLjO/0w6eSdKWd9thdz+23t8ut/olbSiwVQ0rfT+IRA5TbkJJ1tM5dmT2pGfDCFnf0AlkzgkK/FFSuNG+73lBJEC4QFK6mFZqOTFeSAfBXqIk7eHbUkXZqdpfcWzEKxnlZ9EdZZUrDx9Z05WxLWvucNm2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730266485; c=relaxed/simple;
-	bh=dHhuB2IE27lAAeAOVaI08udg5UR0ckWSZPoSDjGgyDY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnwkIu5Rf3Vhn4JombY+Vf7GXzvWSLw6Tg8UCZTA2fxKWFUCtXKw9mFLVDmQDFNwsQAS7L3ZDITWkHVO50/RGqhwPzygmxsqJNj31jVKZBwXJlU+xI7DWyPwQqyj5BEsG3ZvLEAjYSm2/jIjWBe9VnRxStDcL/6+4nNadTDpIbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=RN78hWWq; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U43fa1003644;
-	Tue, 29 Oct 2024 22:34:26 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=EuPLCTaaZkOVLsRjkJ81O2nbg
-	SZwu3PbWuJ71l62EK0=; b=RN78hWWq+zYo5mGjfLoaNkr6xEe2eiLnX8DmPZtgw
-	4wnwZDfm69EN/UEG5XVuKU6IBl+VESC4vEEqVbMpaczPF0gJEv3njwLKIJ4/DWc7
-	7Zdvbunh4h3Vjylt/XdqD9bG/KuFyK+Nm8mutYB9ZS6FWlPK6MzoYh+AL5s0TRio
-	pxVvrKyJOsxdJG76VvveDup//zBsbuwVixh4R7CYPmLisWHTtwEifrjtA2WPkrFy
-	L8rxIMRETEzNwV8o/Oyx8ePSTGRLNK3qLlIwf/ZrLxUZeFLmLbJTXf3Wuv2DTM6Y
-	W1h9h/Un/pkkK3wFcRsW8PUgY1ilFsUTjgtQWXv6Bpk+Q==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42kdenr538-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 22:34:25 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 29 Oct 2024 22:34:25 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 29 Oct 2024 22:34:24 -0700
-Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
-	by maili.marvell.com (Postfix) with SMTP id 2CBB65E6870;
-	Tue, 29 Oct 2024 22:34:19 -0700 (PDT)
-Date: Wed, 30 Oct 2024 11:04:19 +0530
-From: Linu Cherian <lcherian@marvell.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-CC: <mike.leach@linaro.org>, <james.clark@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gcherian@marvell.com>, Anil Kumar Reddy <areddy3@marvell.com>,
-        "Tanmay
- Jagdale" <tanmay@marvell.com>
-Subject: Re: [PATCH v10 5/8] coresight: tmc: Add support for reading crash
- data
-Message-ID: <20241030053419.GA984012@hyd1403.caveonetworks.com>
-References: <20240916103437.226816-1-lcherian@marvell.com>
- <20240916103437.226816-6-lcherian@marvell.com>
- <f1acfd07-7317-4b7e-bb81-ea9a894f25ac@arm.com>
- <20241017114054.GC896339@hyd1403.caveonetworks.com>
- <05ed4a6f-cb41-4953-a654-9988f0fcd373@arm.com>
- <20241021124040.GA929726@hyd1403.caveonetworks.com>
- <20241029062112.GA978396@hyd1403.caveonetworks.com>
+	s=arc-20240116; t=1730266531; c=relaxed/simple;
+	bh=iNv76ZzAMBPTV4l1YgFD0Bej4qjTGYw2zGCKkGf5dtk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HxsusLOWFjyLqJSbft2BCLnSQSdxO0Ovj3v/fk5wUzyM5rZiaX3qW16+7yzOOV7c7Pbns1ge3xsK4i8yO+EE8TGOYaIYxIVgO8Li7a1COu6v2hhm4kMe8cIF2lsC+bRZFyr5dpHsTRAjLkyYDm93l/iPZFI1dl7yoyHCZiL2m5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=iBvnjoKY; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1730266522;
+	bh=fTiOGMiECd5augAVpcP0FAu96xmTgJEVxQ1j0YsCjtE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=iBvnjoKYWd263kXfDZH/Sh3Gw+wTz+mRV6lTEiTnUbqNaziGATw0mFF/3EToCY/PD
+	 udF0Al/to8Vm7A/g41rEuux1jQmB83t1Kr6C9ZcQq4Xq/UaQGqAjDuqJV9oYMQ82jV
+	 DVKSCXTurLYVR3+ooGcH3Sq/8S1VGrbDhpePRLxQaDxfhTLlnj2C0cZONLKusDrrK8
+	 Up/XjvkE6J4cyUVYfviZrBdnHI4CfI/7Nodpb4xfjVNDjDyDZi2/hCfSA9SdvnllD2
+	 wZb6ggjadgnszxDjHOe9PnHOTusOlD1OemAGIwvANBqjeV8PiDciNgQEVMkU1dnQnL
+	 n0M/8hQTWodXw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XdbS75X7wz4x8f;
+	Wed, 30 Oct 2024 16:35:19 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada
+ <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
+ Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno
+ Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] modules: Support extended MODVERSIONS info
+In-Reply-To: <CAGSQo03L--HDUBeo3xEUANbBcSf4GK5GUNGmHSBzL+ixpRGuqA@mail.gmail.com>
+References: <20241023-extended-modversions-v7-0-339787b43373@google.com>
+ <20241023-extended-modversions-v7-1-339787b43373@google.com>
+ <874j50juyp.fsf@mail.lhotse>
+ <CAGSQo03L--HDUBeo3xEUANbBcSf4GK5GUNGmHSBzL+ixpRGuqA@mail.gmail.com>
+Date: Wed, 30 Oct 2024 16:35:10 +1100
+Message-ID: <878qu6dugh.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241029062112.GA978396@hyd1403.caveonetworks.com>
-X-Proofpoint-GUID: lFDf-iV9kTHpZR2ZAKiqkqcGhfZO1D4G
-X-Proofpoint-ORIG-GUID: lFDf-iV9kTHpZR2ZAKiqkqcGhfZO1D4G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
- definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+Content-Type: text/plain
 
-Hi Suzuki,
+Matthew Maurer <mmaurer@google.com> writes:
+>> Sorry I realise it's version 7, but although the above looks correct it's
+>> kind of dense.
+>>
+>> I think the below would also work and is (I think) easier to follow, and
+>> is more obviously similar to the existing code. I'm sure your version is
+>> faster, but I don't think it's that performance critical.
+>>
+>> static void dedotify_ext_version_names(char *str_seq, unsigned long size)
+>> {
+>>         char *end = str_seq + size;
+>>         char *p = str_seq;
+>>
+>>         while (p < end) {
+>>                 if (*p == '.')
+>>                         memmove(p, p + 1, end - p - 1);
+>>
+>>                 p += strlen(p) + 1;
+>>         }
+>> }
+>>
+>> The tail of str_seq will be filled with nulls as long as the last string
+>> was null terminated.
+>
+> As you alluded to, what you're providing is potentially O(n^2) in the
+> number of symbols a module depends on - the existing code is O(n).
+> If leading dots on names are rare, this is probably fine. If they're
+> common, this will potentially make loading modules with a large number
+> of imported symbols actually take a measurable amount of additional
+> time.
 
-On 2024-10-29 at 11:51:12, Linu Cherian (lcherian@marvell.com) wrote:
-> Hi Suzuki,
-> 
-> On 2024-10-21 at 18:10:40, Linu Cherian (lcherian@marvell.com) wrote:
-> > Hi Suzuki,
-> > 
-> > On 2024-10-18 at 15:16:17, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
-> > > On 17/10/2024 12:40, Linu Cherian wrote:
-> > > > On 2024-10-03 at 18:55:54, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
-> > > > > Hi Linu
-> > > > > 
-> > > > > On 16/09/2024 11:34, Linu Cherian wrote:
-> > > > > > * Add support for reading crashdata using special device files.
-> > > > > >     The special device files /dev/crash_tmc_xxx would be available
-> > > > > >     for read file operation only when the crash data is valid.
-> > > > > > 
-> > > > > > * User can read the crash data as below
-> > > > > > 
-> > > > > >     For example, for reading crash data from tmc_etf sink
-> > > > > > 
-> > > > > >     #dd if=/dev/crash_tmc_etfXX of=~/cstrace.bin
-> > > > > 
-> > > > > There are some comments below, please take a look.
-> > > > > 
-> > > > > > 
-> > > > > > Signed-off-by: Anil Kumar Reddy <areddy3@marvell.com>
-> > > > > > Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
-> > > > > > Signed-off-by: Linu Cherian <lcherian@marvell.com>
-> > > > > > ---
-> > > > > > Changelog from v9:
-> > > > > > - Removed READ_CRASHDATA mode meant for special casing crashdata read
-> > > > > > - Added new fields full, len, offset to struct tmc_resrv_buf
-> > > > > 
-> > > > > Why do we need "full" ? See more on that below.
-> > > > > 
-> > > > > >     so as to have a common read function for ETR and ETF
-> > > > > > - Introduced read file operation, tmc_crashdata_read
-> > > > > >     specific to crashdata reads common for both ETR and ETF
-> > > > > > - Introduced is_tmc_crashdata_valid function
-> > > > > >     Special device file /dev/crash_tmc_xxx will be available only when
-> > > > > >     crashdata is valid.
-> > > > > > - Version checks added to crashdata validity checks
-> > > > > > - Mark crashdata as invalid when user starts tracing with ETR sink in
-> > > > > >     "resrv" buffer mode
-> > > > > > 
-> > > > > >    .../hwtracing/coresight/coresight-tmc-core.c  | 206 +++++++++++++++++-
-> > > > > >    .../hwtracing/coresight/coresight-tmc-etf.c   |  36 +++
-> > > > > >    .../hwtracing/coresight/coresight-tmc-etr.c   |  63 ++++++
-> > > > > >    drivers/hwtracing/coresight/coresight-tmc.h   |  18 +-
-> > > > > >    include/linux/coresight.h                     |  12 +
-> > > > > >    5 files changed, 333 insertions(+), 2 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > > > > > index 54bf8ae2bff8..47b6b3f88750 100644
-> > > > > > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > > > > > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > > > > > @@ -105,6 +105,125 @@ u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata)
-> > > > > >    	return mask;
-> > > > > >    }
-> > > > > > +bool is_tmc_crashdata_valid(struct tmc_drvdata *drvdata)
-> > > > > > +{
-> > > > > > +	struct tmc_crash_metadata *mdata;
-> > > > > > +
-> > > > > > +	if (!tmc_has_reserved_buffer(drvdata) ||
-> > > > > > +	    !tmc_has_crash_mdata_buffer(drvdata))
-> > > > > > +		return false;
-> > > > > > +
-> > > > > > +	mdata = drvdata->crash_mdata.vaddr;
-> > > > > > +
-> > > > > > +	/* Check version match */
-> > > > > > +	if (mdata->version != CS_CRASHDATA_VERSION)
-> > > > > > +		return false;
-> > > > > > +
-> > > > > > +	/* Check data integrity of metadata */
-> > > > > > +	if (mdata->crc32_mdata != find_crash_metadata_crc(mdata)) {
-> > > > > > +		dev_dbg(&drvdata->csdev->dev,
-> > > > > > +			"CRC mismatch in tmc crash metadata\n");
-> > > > > > +		return false;
-> > > > > > +	}
-> > > > > > +	/* Check data integrity of tracedata */
-> > > > > > +	if (mdata->crc32_tdata != find_crash_tracedata_crc(drvdata, mdata)) {
-> > > > > > +		dev_dbg(&drvdata->csdev->dev,
-> > > > > > +			"CRC mismatch in tmc crash tracedata\n");
-> > > > > > +		return false;
-> > > > > > +	}
-> > > > > > +	/* Check for valid metadata */
-> > > > > > +	if (!mdata->valid) {
-> > > > > 
-> > > > > minor nit: This could be checked right after the VERSION and we verify
-> > > > > the CRC anyway later and thus could skip all the CRC calculations if
-> > > > > !valid.
-> > > > 
-> > > > 
-> > > > Ack.
-> > > > 
-> > > > > 
-> > > > > > +		dev_dbg(&drvdata->csdev->dev,
-> > > > > > +			"Data invalid in tmc crash metadata\n");
-> > > > > > +		return false;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	return true;
-> > > > > > +}
-> > > > > > +
-> > > > > > +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata)
-> > > > > > +{
-> > > > > > +	int ret = 0;
-> > > > > > +	unsigned long flags;
-> > > > > > +	struct tmc_crash_metadata *mdata;
-> > > > > > +	struct coresight_device *csdev = drvdata->csdev;
-> > > > > > +
-> > > > > > +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> > > > > > +
-> > > > > > +	if (!is_tmc_crashdata_valid(drvdata)) {
-> > > > > > +		ret = -ENXIO;
-> > > > > > +		goto out;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	mdata = drvdata->crash_mdata.vaddr;
-> > > > > > +	/*
-> > > > > > +	 * Buffer address given by metadata for retrieval of trace data
-> > > > > > +	 * from previous boot is expected to be same as the reserved
-> > > > > > +	 * trace buffer memory region provided through DTS
-> > > > > > +	 */
-> > > > > > +	if (drvdata->resrv_buf.paddr != mdata->trace_paddr) {
-> > > > > > +		dev_dbg(&csdev->dev, "Trace buffer address of previous boot invalid\n");
-> > > > > 
-> > > > > Couldn't this be made part of the "is_tmc_crashdata_valid()" and not
-> > > > > repeated everytime we do the read ? Surely, this can't change after
-> > > > > boot.
-> > > > 
-> > > > Ack. Will move.
-> > > > 
-> > > > > 
-> > > > > > +		ret = -EINVAL;
-> > > > > > +		goto out;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	/* Sink specific crashdata mode preparation */
-> > > > > > +	ret = crashdata_ops(csdev)->prepare(csdev);
-> > > > > > +	if (ret)
-> > > > > > +		goto out;
-> > > > > > +
-> > > > > > +	if (mdata->sts & 0x1)
-> > > > > > +		coresight_insert_barrier_packet(drvdata->buf);
-> > > > > > +
-> > > > > > +	drvdata->reading = true;
-> > > > > 
-> > > > > Why are we dealing with drvdata->reading ? That is supposed to be only
-> > > > > for the normal trace reading ?
-> > > > 
-> > > > Ack. Will remove, we dont need this.
-> > > > 
+It should only be a single symbol these days, .TOC., for both big and
+little endian builds.
 
-Looked into this further and it seems like, retaining the
-drvdata->reading flags would be useful to avoid simultaneous crashdata reads
-and regular trace capture sessions using reserve buffers.
+But maybe someone out there is still building their kernel ELFv1, in
+which case every function will begin with '.'.
 
-Something like this,
+I still don't think it will be measurable, but n^2 is asking for
+trouble.
 
-+static int buf_mode_set_resrv(struct tmc_drvdata *drvdata)
-+{
-+	unsigned long flags;
-+	int err = 0;
-+
-+	/* Ensure there are no active crashdata read sessions */
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (!drvdata->reading) {
-+		tmc_crashdata_set_invalid(drvdata);
-+		drvdata->etr_mode = ETR_MODE_RESRV;
-+
-+	} else
-+		err = -EINVAL;
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+	return err;
-+}
-+
- static ssize_t buf_mode_preferred_store(struct device *dev,
- 					  struct device_attribute *attr,
- 					  const char *buf, size_t size)
- {
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(dev->parent);
- 	struct etr_buf_hw buf_hw;
- 
- 	get_etr_buf_hw(dev, &buf_hw);
-@@ -2039,7 +2050,7 @@ static ssize_t buf_mode_preferred_store(struct device *dev,
- 	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_CATU]) && buf_hw.has_catu)
- 		drvdata->etr_mode = ETR_MODE_CATU;
- 	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_RESRV]) && buf_hw.has_resrv)
--		drvdata->etr_mode = ETR_MODE_RESRV;
-+		return buf_mode_set_resrv(drvdata);
- 	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_AUTO]))
- 		drvdata->etr_mode = ETR_MODE_AUTO;
- 	else
+So forget it, just use your version, you've already written it anyway.
+Sorry for the noise.
 
-
-Was acutally calling the tmc_crashdata_set_invalid in the wrong place in v10 patch.
-
-
+cheers
 
