@@ -1,175 +1,173 @@
-Return-Path: <linux-kernel+bounces-388271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4A79B5CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:31:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD539B5CF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEC54B22037
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17E31C20F50
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F9E1DF27D;
-	Wed, 30 Oct 2024 07:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A412B1DFDBF;
+	Wed, 30 Oct 2024 07:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="crtbyHfN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVxGxuho"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB42521348;
-	Wed, 30 Oct 2024 07:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0321DE4FF;
+	Wed, 30 Oct 2024 07:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730273452; cv=none; b=HS5pnPGC4TciaItqgIFAaXUe2pxyDk4WrpUA1CZpam9m6CYRtba03ne6boLJdzxDIwUZwBTNGDfkK+hwcY4oz9hNXNLaXZS+SKCgjs5gQnGeOMaJwognZPGMC8AnAL6cxY0RJE95a7g3LalsSe9KOdhOZhvgRfTHnxvKEO93ZH8=
+	t=1730273469; cv=none; b=MNAR8tokf2cFxKUZIRV+3XRj83+DAfuVrw0oeKna7u6KhAB43xfdRel91uHGV+7dg134vN+u33Wrk5Uj6UrfJtE7WuANKdWf/y/3PMb22/2xQa1/L4tg+glb2DNYW1q3TUxs/6cZYlCskWTeZOaoTgTIfVIgxUJ7BWoSx5aat8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730273452; c=relaxed/simple;
-	bh=YtZl0beGIglzcPZW3trzc2HK/CfGnezp/1ror33Ds2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KeCJBEJFhzNcvHZ00pt5sdI3cHyoqSOUAAbAEA0okbE+MReLKORZP1r29oWuq7HSSRsuWVXrYKmqEOOFPzZi1fb6LJp9+ztMQrJR0AW0Ce764v08WK5AlgnDDY7Q+kg1mS8XUx6sffUgx/vCAiRNDCIoSjjcD2hap5vStn6L7KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=crtbyHfN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730273443;
-	bh=cOueB5rR6fgZJh/e1wlGkXJkIR2AUPUME4RMGqGPBnE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=crtbyHfNPO+Cpv7T+Io9QFTka8lR2n+GyZLVOjrQNNv7Wn3ahEUO280EMpi4MJpIW
-	 /x8XgV3EkRtIAYk6gZUL07VoosJvn9PpkhNKu+xvyleEqrgiBsG/jkNcKAOxoEIiGP
-	 hh3izu3SNgFGUedQCRwC3MpNLhCuw54OcWjNU9mI7gjxIfdWzZK+N/DUGCjOd1LSSh
-	 J5YbUb00qe3vcw5FyjndPrpCvL2hXTLCfbuLbFxHIz/kXKhXgxl54Q9cM4dp9bgu2K
-	 c2+FU82cpiWsPNOCQ89EFtO/dwZs5cBeZNL2wu+PGkTbeJXk9GcpR5g/q8I4+UV08h
-	 jMGo+j7uKGJgQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xdf1H5c5Hz4x33;
-	Wed, 30 Oct 2024 18:30:43 +1100 (AEDT)
-Date: Wed, 30 Oct 2024 18:30:44 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: boot failure after merge of the vfs-brauner tree
-Message-ID: <20241030183044.673e14b4@canb.auug.org.au>
+	s=arc-20240116; t=1730273469; c=relaxed/simple;
+	bh=fAjMDAmGdqV3C4LaqmDkeJghPf7va/LgPEvMON1fpg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TU0OUQ32IE46ESID3dwFGM5zgGyBfH4+4LCjKu6x0NSfMo0b3DXT89OWnKHwjIO7dEGIGqEo829EbWbhKMo1YA+vDA0wdS3ekx4HgqMZrclOWQGv5Hc2HE0DGjxQZ0NvI9nItIxvmKDlf77VDw1U4HfBdZi3E7+4ARZx44wwGNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KVxGxuho; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E31C4CEE4;
+	Wed, 30 Oct 2024 07:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730273468;
+	bh=fAjMDAmGdqV3C4LaqmDkeJghPf7va/LgPEvMON1fpg0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KVxGxuhowT20UZ5a9jxWzgU48leNiWqNjMYCUuJ1mUsIgCYbybvPzAEw+dde74270
+	 yBu7MzSfSQqLskiQgrL6v0K+N+jOZTqwjURcThKhIO2CzSdI33P/Go+/vLx4XXHkXQ
+	 dregMU2VXg/bneQWpFh+/4PN0EFaobDNTzp/Eun5R4ntfR0KtvE1uLU59vad0kCx4y
+	 JBmNmxlHCEOU84GIkj4bvhAQDjSw2wAJ1/M0qew3QTRQHRusYxYX70Squ2UNQiP01j
+	 ye6AfqWmZlxkE0Hi/i3F7Js2hWUI3tR3bkZ6rwRpUsA9rBbnHu/THAD/gPxQ1GstlZ
+	 S4dKti0740SVw==
+Message-ID: <46c19729-b31e-42e3-a6dd-6b43b27348d8@kernel.org>
+Date: Wed, 30 Oct 2024 08:30:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/c+VjkI1f/HBkG6X5vuFJ3LZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
+ QCS8300
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
+ <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
+ <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
+ <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
+ <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
+ <fff416f9-4ea7-4117-87b0-986087f8e142@quicinc.com>
+ <9bd4c63b-7c68-4e40-9995-9d569eed15b5@kernel.org>
+ <f7551a7a-885c-4f74-8f74-10f1c0ebe6ad@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f7551a7a-885c-4f74-8f74-10f1c0ebe6ad@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/c+VjkI1f/HBkG6X5vuFJ3LZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 30/10/2024 07:59, Imran Shaik wrote:
+> 
+> 
+> On 10/29/2024 3:06 PM, Krzysztof Kozlowski wrote:
+>> On 29/10/2024 10:23, Imran Shaik wrote:
+>>>
+>>>
+>>> On 10/28/2024 12:35 PM, Krzysztof Kozlowski wrote:
+>>>> On 28/10/2024 06:15, Imran Shaik wrote:
+>>>>>
+>>>>>
+>>>>> On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
+>>>>>> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
+>>>>>>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
+>>>>>>> QCS8300 has few additional clocks and minor differences. Hence, reuse
+>>>>>>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
+>>>>>>
+>>>>>> IIUC, these clocks are not valid for SA8775p. How do we deal with such
+>>>>>> cases for other Qualcomm SoCs?
+>>>>>>
+>>>>>
+>>>>> These newly added clocks are not applicable to SA8755P. In the
+>>>>> gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P,
+>>>>> ensuring they are not registered to the CCF.
+>>>>
+>>>> I meant bindings. And existing practice.
+>>>>
+>>>
+>>> In the bindings, the same approach is followed in other Qualcomm SoCs as
+>>> well, where additional clocks are added to the existing identical SoC’s
+>>> bindings.
+>>>
+>>> https://lore.kernel.org/r/20240818204348.197788-2-danila@jiaxyga.com
+>>
+>> Exactly, defines are very different, so no, it is not the same approach.
+>>
+> 
+> I believe the QCS8300 approach is same as that of SM8475. In the SM8475 
+> SoC, GPLL2 and GPLL3 are the additional clock bindings compared to the 
+> SM8450. Similarly, in the QCS8300, the GPU_CC_*_ACCU_SHIFT_CLK clock 
+> bindings are additional to the SA8775P.
+> 
+> We are also following this approach across all SoCs in the downstream 
+> msm-kernel as well.
+> 
+> Please let me know if I am missing anything here.
 
-Hi all,
+Not sure, please take the same approach as SM8475, not a different one.
 
-After merging the vfs-brauner tree, today's linux-next build (powerpc
-pseries_le_defconfig) qemu boot test failed like this:
+Best regards,
+Krzysztof
 
- Initialise system trusted keyrings
- Key type blacklist registered
- BUG: Kernel NULL pointer dereference on write at 0x00000018
- Faulting instruction address: 0xc0000000009867d0
- Oops: Kernel access of bad area, sig: 7 [#1]
- LE PAGE_SIZE=3D4K MMU=3DRadix SMP NR_CPUS=3D2048 NUMA pSeries
- Modules linked in:
- CPU: 0 UID: 0 PID: 27 Comm: kworker/u4:1 Not tainted 6.12.0-rc5-08184-gd1b=
-0879097de #1
- Hardware name: IBM pSeries (emulated by qemu) POWER10 (architected) 0x8012=
-00 0xf000006 of:SLOF,HEAD pSeries
- Workqueue: async async_run_entry_fn
- NIP:  c0000000009867d0 LR: c0000000009867cc CTR: c000000000986780
- REGS: c000000004a17510 TRAP: 0300   Not tainted  (6.12.0-rc5-08184-gd1b087=
-9097de)
- MSR:  8000000002009033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 84088884  XER: 0000=
-0000
- CFAR: c000000000985c94 DAR: 0000000000000018 DSISR: 02080000 IRQMASK: 0=20
- GPR00: c0000000009867cc c000000004a177b0 c0000000016ae600 c000000004353748=
-=20
- GPR04: 0000000000000000 0000000000000000 0000000000000000 0000000000000000=
-=20
- GPR08: 000000007d629000 0000000000000003 0000000000000000 0000000000004000=
-=20
- GPR12: c000000000986780 c000000002a7b000 c00000000018d168 c0000000041f3d80=
-=20
- GPR16: 0000000000000000 0000000000000000 c000000003855800 c00000000427b300=
-=20
- GPR20: fffffffffffffef7 c000000004ba2c20 0000000000000001 0000000000000000=
-=20
- GPR24: 0000000000000041 0001024100010041 c000000002779f18 c00000000435ef40=
-=20
- GPR28: 0000000000000000 c000000004ba6650 0000000000000010 c00000000435ef00=
-=20
- NIP [c0000000009867d0] selinux_file_open+0x50/0x140
- LR [c0000000009867cc] selinux_file_open+0x4c/0x140
- Call Trace:
- [c000000004a177b0] [c0000000009867cc] selinux_file_open+0x4c/0x140 (unreli=
-able)
- [c000000004a17810] [c00000000096ab04] security_file_open+0xa4/0x1b0
- [c000000004a17840] [c00000000059ff94] do_dentry_open+0x174/0x5d0
- [c000000004a17890] [c0000000005a28c4] vfs_open+0x44/0x140
- [c000000004a178c0] [c0000000005c5af8] path_openat+0xb08/0x1490
- [c000000004a179a0] [c0000000005c6548] do_filp_open+0xc8/0x1a0
- [c000000004a17ad0] [c0000000005a0880] filp_open+0x130/0x1f0
- [c000000004a17b30] [c000000002007c2c] do_name+0x110/0x360
- [c000000004a17bc0] [c000000002006d1c] write_buffer+0x60/0x8c
- [c000000004a17bf0] [c000000002006db0] flush_buffer+0x68/0xf4
- [c000000004a17c40] [c00000000207f860] gunzip+0x344/0x454
- [c000000004a17cc0] [c000000002007924] unpack_to_rootfs+0x204/0x380
- [c000000004a17d60] [c000000002008124] do_populate_rootfs+0xbc/0x2b8
- [c000000004a17df0] [c0000000001973e8] async_run_entry_fn+0x58/0x170
- [c000000004a17e40] [c0000000001806f4] process_one_work+0x1d4/0x4d0
- [c000000004a17ef0] [c00000000018199c] worker_thread+0x3ec/0x5b0
- [c000000004a17f90] [c00000000018d298] kthread+0x138/0x140
- [c000000004a17fe0] [c00000000000ded8] start_kernel_thread+0x14/0x18
- Code: 7c7f1b78 f8010010 f821ffa1 e929b53e ebc30080 e8630028 e94d0478 f9410=
-048 39400000 7fde4a14 4bfff431 8123001c <913e0008> 4bff3245 60000000 907e00=
-0c=20
- ---[ end trace 0000000000000000 ]---
- pstore: backend (nvram) writing error (-1)
-
-Caused by commit
-
-  0eccf222d798 ("fs: port files to file_ref")
-
-I bisected it to this commit, the commit before boots OK.
-
-I have reverted that commit for today.
-
-The qemu command line is:
-
-qemu-system-ppc64 -M pseries,cap-hpt-max-page-size=3D4k,accel=3Dkvm  -m 2G =
--vga none -nographic -enable-kvm -kernel $vmlinux -initrd $initrd
-
-but=20
-
-qemu-system-ppc64 -M pseries -m 2G -vga none -nographic -kernel $vmlinux -i=
-nitrd $initrd
-
-fails as well.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/c+VjkI1f/HBkG6X5vuFJ3LZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmch4KQACgkQAVBC80lX
-0GxSBQf/b7j8Q5EaGEM4KdVFkjAL4kV82VwfPaPzb7MpOmvZJwSOdWz+2RgaJrax
-vC+QNc7bm2Je6W7qM6kmaeqMOjqGz8HxP5jpR4fvah7UPmmWAEGInPhD6sO67byR
-owcNcUqNbYDWrdeqN/8eC30ovDxpuj3A83fsuh7PyHz8Mzqak6ZcjUizE9lc92WY
-8Ctt8XJc1J24Rvlf8HLVe5RQR4+6uMyrvwcPcncTwIm+aXkTgx3tftm7OdmvvQZ8
-WXkYnXBtPBJCzgHjxWmJEp6dqvLcvkMpAPzNRG6/Z5XuRUnD61ug9SFXm1Xc8Wox
-3mXI7nGH7zRKogtt2Lg2C+kAF9iVqQ==
-=2z5S
------END PGP SIGNATURE-----
-
---Sig_/c+VjkI1f/HBkG6X5vuFJ3LZ--
 
