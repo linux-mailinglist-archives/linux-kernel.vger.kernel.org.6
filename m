@@ -1,169 +1,917 @@
-Return-Path: <linux-kernel+bounces-389673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0F49B6FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:02:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F109B6FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4850D1F22256
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B74284EAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1725B1E2007;
-	Wed, 30 Oct 2024 22:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45996217453;
+	Wed, 30 Oct 2024 22:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="jfiewKPu"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3FtJzsq"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C61F1991DF;
-	Wed, 30 Oct 2024 22:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60E41BD9E2;
+	Wed, 30 Oct 2024 22:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730325718; cv=none; b=qIr9T6W9i00xqZFB1o9YlnrpZguF1BRU0P/dZBQkTo5thBr97FhmOnatu49Bg45T5tam8KMHdNduI/gb/HItPbExjQYqa57uM5Il2tQBKbsDI7wiRmqOLuexCTPSxUHCBrjS6/+TI8FRyxzRNC8ZXX2KCRcdgmVXsUyxupNdLRA=
+	t=1730326079; cv=none; b=Jq1XUnzeGWUU4B6982kqNkansDrQBXgaefgW0bKrmQeTQwtpXa96qUbwi/cUT6C/+F4EIfAD3qz3qHh6UZS6VVOImoeQX8bkeh5ZUYxpiOr8b8SVwgAXq/ffHtwZb/l7xVY8x+aApN8vkVpb2b1t7PdnYBEuTgQ1b6fEWjS5Zhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730325718; c=relaxed/simple;
-	bh=rJV2D6Plr4LfbnmTXbxs2ZMIPn0FTjvTS2EdkNm+PaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c2sL2pjkovRXzL+vRrM9E4FEUqlEuw1bOtHhnSc6O9yXCNhs5khBVKR31L3Rc5g5dRb07gxeUFBP6gmNy0pWcnpi9EgVszVWxOALRMUcZp1Se8yMkEmjE6MrSAS6Uh6IT0P0Wno85zLi4CmDSCg6W+em/JfNxTFO9kTpzX834iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=jfiewKPu; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1730325701; x=1730930501; i=quwenruo.btrfs@gmx.com;
-	bh=rJV2D6Plr4LfbnmTXbxs2ZMIPn0FTjvTS2EdkNm+PaU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jfiewKPu0kc+D8vZfch32OjP0dQrOe1UUQyxwL9K/JZ+5lQXX20DJmVOQ5/pQHtU
-	 i7JI8eE3svi7dNLvrz/+be/yzTrZAh6BtEGpNARSpr/sBKeF6b8+8Iq6H0e5BdW/k
-	 zwEF3lYT3Ry+XEm24UyLfnxvqRcrc6TqPnnc8rh+bQYEc8/a2+lS6lYioY5UfE+Y/
-	 WUGyjOFcsZoWQpURoPGFTUKluCRuWhVS6kUYLQ5V40RA6Y/EWq8Ho97vGth4kneZR
-	 iD+0nkgCD6/EzbriIen9YJTJJjQCTdyHzRz9CsYmeLPxYp/lzEiiHlZQU2QsvpuVL
-	 v8geFChxVgDPsnXvfQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MyKHm-1u4hTc2Hm8-00qr5P; Wed, 30
- Oct 2024 23:01:41 +0100
-Message-ID: <19596057-5403-4ecd-a817-efdc5d69adc6@gmx.com>
-Date: Thu, 31 Oct 2024 08:31:32 +1030
+	s=arc-20240116; t=1730326079; c=relaxed/simple;
+	bh=axVjjRPy0WfFhLnxV5BnFjw5AXWTMWzF5YzVcauai6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=puUuUMrhBZYntNTYrfTT2kPDqZ1rzw9C6agnWiPHWmWm4kJKygUQ5f+2ziwHSqFyx24PQkjRVO/LE5H6WPYECLHm5g0wHKH8kSaFKDJUFJvURgjMaa/zCB6ysf6TQgfAUTkPT0HxtxCILPyIfu1HpekW4SWbvIkjq6YQT/7JC/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3FtJzsq; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20e6981ca77so3626575ad.2;
+        Wed, 30 Oct 2024 15:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730326070; x=1730930870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FakfmVmmn66WHw9K9uiNMPfhjtkFKPJU3sd8XCgu1DY=;
+        b=G3FtJzsqa5A/jeTrGCYjI9Nnu1gS7IHOEyt/lDJdUu0rKezSqgVhG1/8aa6dRK4Myo
+         xrBSC3PpyICqbb7W56VzJQvUT63O//F4hH646AXaE8uD5NpZXxjcRyXikMsyqPHy4Vh8
+         1DLjxO13/rsUWDTg/yYVKiHJu5eV3fEmtsiNRswVLhbjVfL+9ekGVMvcQK7CyklZ3s9u
+         2FHDhYfqQjJ2IKKpudoePOwdsEu8aYz29NsUMhhLGoKUSfcDbDNh+8GFr0Hr36Tm8gGe
+         U8tne3tHG3KadGrfnlkucZuuI0E+jNNCrEcHOlRZmP5R31oSVykiyjbkEPTMd+IbrFQa
+         PI6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730326070; x=1730930870;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FakfmVmmn66WHw9K9uiNMPfhjtkFKPJU3sd8XCgu1DY=;
+        b=i6QfCVHI3v59yNGiUbP4sRbZ8zS7IrGdAtl8+ORxf/Cs+pbz8s9+fXPgWcHyBgiK63
+         8Ydg9Gc5/GiVx0oo3wG5PMol1g2l26mDRsQjCLac2IavZVF0q7rii3mRn3cjQauXZigV
+         lvDtR9C5+orEn9DZpQiir+ymgO1nCQip5CJ5KdTlVxs1QYKQKju8uDTvwmEesD1GbU8n
+         gWqQdL+MXhmLm4FW/9JMy4mLXpx+rlG7FWJjSadfmhgzKWA88dSxjGxcFIE+Vtxd6gDq
+         RY5D19YZI7XSX94FQz+LXN3OUtSJ3teCAeE9uxHUgEIp/nUzALXWSmgO4T4pHY42J1QU
+         8Mfw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3NfJuAk3D3UlXMQwim80toRjta/ID60TIjirA72hplZiOFPIPTjWobkE1HaNL314OEWnKtSPXs5Uy3yo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ83EeEx3LnMX2EUetUChhvS+SZ9Y4yvgEvUIdlKYkm8mOHCcP
+	xkGdq1oQuNdzNgH7nztrSRxXITVDsXKtnsxyhHvJk4Nw5BHAo6T3t3OAhLBB
+X-Google-Smtp-Source: AGHT+IESbNdXGEdLKrxiy+n2N3/i+rpcsZ2GgtLzFLOZpQfizkmaVxdeyhwccIjCDO+eee8oLceFXA==
+X-Received: by 2002:a17:903:41c7:b0:20c:98f8:e0f5 with SMTP id d9443c01a7336-21103c59dd3mr14599975ad.43.1730326069577;
+        Wed, 30 Oct 2024 15:07:49 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c6511sm611615ad.195.2024.10.30.15.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 15:07:49 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Jian Shen <shenjian15@huawei.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jijie Shao <shaojijie@huawei.com>,
+	Rosen Penev <rosenp@gmail.com>,
+	Wei Fang <wei.fang@nxp.com>,
+	Louis Peens <louis.peens@corigine.com>,
+	"justinstitt@google.com" <justinstitt@google.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Yonglong Liu <liuyonglong@huawei.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+	Simon Horman <horms@kernel.org>,
+	Jie Wang <wangjie125@huawei.com>,
+	Peiyang Wang <wangpeiyang1@huawei.com>,
+	Hao Lan <lanhao@huawei.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: hisilicon: use ethtool string helpers
+Date: Wed, 30 Oct 2024 15:07:46 -0700
+Message-ID: <20241030220746.305924-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] btrfs: simplify regions mark and keep start unchanged
- in err handling
-To: dsterba@suse.cz
-Cc: iamhswang@gmail.com, linux-btrfs@vger.kernel.org, clm@fb.com,
- josef@toxicpanda.com, dsterba@suse.com, wqu@suse.com, boris@bur.io,
- linux-kernel@vger.kernel.org, Haisu Wang <haisuwang@tencent.com>
-References: <20241025065448.3231672-1-haisuwang@tencent.com>
- <20241025065448.3231672-3-haisuwang@tencent.com>
- <4d0603d4-1503-4e8f-bfe2-ed205b598072@gmx.com>
- <20241030152836.GA31418@twin.jikos.cz>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20241030152836.GA31418@twin.jikos.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YQl52prO9scIDpgld1zYeo/yD238m14tPdwLTacSkOfpIfpK5U1
- HwJGFgsnQ3TyP5Kq6reG7nP6x65JsNF2qyOZ1JL2/46xiDJQcoDiSPvZ+lve3bPq/wObKxG
- etbWYTkBk/cfmrxvmjT/CigMBye8tMQoSv/B1N7gm2g+3DvqSZiTIylRxnKqAns+SZ7oulV
- /llMHVrtjvDaWkLzCvo/g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XacmrmYyPko=;h5NZ5d0hO2VLLvewvuNljg6jQ2/
- NEyZ9Z5LaWnTcvpnh4GA5WkSnG0NT5mN5/FzGH3QDJSwTgISTVZjRTgm8/124a+guqkU1uoqA
- gRClmVeHKgaP75GNG7lxo7Q1E83//MjtffrxunP6SlEndtBLmX3wFg0EOOmDYsg6IrS3NZlAe
- X3ZfLc0RXBzcxG7LTFCDra+lvk905LesIcdbYWkxYCHRN9iosUdwIU1fPRkyGCW6xcOm2OZE/
- iqE10DF/iO0h9rVMaHDzksCo+WAoQrdLpMrr0zpDoBS+JBuQcVshhOGor4DoBPY+NqRVlGOXN
- GFCxgqt0nygzEbMLzRyjM57YFnFnyDih1LLQHJ9+c/41uLmDWDwGlsayJNg54MVp0e8717FgV
- h/D7BZY2a6z4K7QbmPiAXV4jw2R5Slshk29ZsTo2zz38/oM0ifhj5oQRK7RKnQnottQlvdbbO
- XjZfmF0iTd4apcm3D4cES2gikAdh7mLFkfNIrCBSYGv9WDF3nkfzJ70GScbFAGhWI6HUyrhSU
- V5GAs75HlPv84hIxmqLlMgOZSpzniCGexalF9J/9haWtk3jZiAEnm6JZuj+Mh9UfYWgxoRN4h
- 2zkF6+yMtO5d/sdyixvx1Ex2lz3/VIXC9Mug7jWY15fZ2VY592d6kOWjx19AWg3hvPj7sXY1P
- IPv74INqWmuV5ZQylos6qLutrLPfN6wTcbjcrQLWQ/oqcK+g2TE5yLS3dJKp4qwFAE9Jz02dF
- /bAvBb94WrxzQybfJzsQwVcaXyx784TkyIxbqy94//eG0WK3uEQUT8o5w5mUSYWyFscNig6zZ
- O6H+KaiCZ+s/qaG2YMBNzy6w==
+Content-Transfer-Encoding: 8bit
 
+The latter is the preferred way to copy ethtool strings.
 
+Avoids manually incrementing the pointer. Cleans up the code quite well.
 
-=E5=9C=A8 2024/10/31 01:58, David Sterba =E5=86=99=E9=81=93:
-> On Wed, Oct 30, 2024 at 01:31:15PM +1030, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2024/10/25 17:24, iamhswang@gmail.com =E5=86=99=E9=81=93:
->>> From: Haisu Wang <haisuwang@tencent.com>
->>>
->>> Simplify the regions mark by using cur_alloc_size only to present
->>> the reserved but may failed to alloced extent. Remove the ram_size
->>> as well since it is always consistent to the cur_alloc_size in the
->>> context. Advanced the start mark in normal path until extent succeed
->>> alloced and keep the start unchanged in error handling path.
->>>
->>> PASSed the fstest generic/475 test for a hundred times with quota
->>> enabled. And a modified generic/475 test by removing the sleep time
->>> for a hundred times. About one tenth of the tests do enter the error
->>> handling path due to fail to reserve extent.
->>>
->>
->> Although this patch is already merged into for-next, it looks like the
->> next patch will again change the error handling, mostly render the this
->> one useless:
->>
->> https://lore.kernel.org/linux-btrfs/2a0925f0264daf90741ed0a7ba7ed4b4888=
-cf778.1728725060.git.wqu@suse.com/
->>
->> The newer patch will change the error handling to a simpler one, so
->> instead of 3 regions, there will be only 2.
->>
->> There will be no change needed from your side, I will update my patches
->> to solve the conflicts, just in case if you find the error handling is
->> different in the future.
->
-> Please take care of that, the only request I have is that it's done by
-> the end of this week so we have the code in linux-next and that a fix
-> should come before a refactoring (due to backports). Update for-next as
-> you need.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hnae.h     |  2 +-
+ .../net/ethernet/hisilicon/hns/hns_ae_adapt.c | 20 ++----
+ .../ethernet/hisilicon/hns/hns_dsaf_gmac.c    |  5 +-
+ .../net/ethernet/hisilicon/hns/hns_dsaf_mac.c |  3 +-
+ .../net/ethernet/hisilicon/hns/hns_dsaf_mac.h |  4 +-
+ .../ethernet/hisilicon/hns/hns_dsaf_main.c    | 70 +++++++------------
+ .../ethernet/hisilicon/hns/hns_dsaf_main.h    |  2 +-
+ .../net/ethernet/hisilicon/hns/hns_dsaf_ppe.c | 31 ++++----
+ .../net/ethernet/hisilicon/hns/hns_dsaf_ppe.h |  2 +-
+ .../net/ethernet/hisilicon/hns/hns_dsaf_rcb.c | 66 +++++++++--------
+ .../net/ethernet/hisilicon/hns/hns_dsaf_rcb.h |  2 +-
+ .../ethernet/hisilicon/hns/hns_dsaf_xgmac.c   |  5 +-
+ .../net/ethernet/hisilicon/hns/hns_ethtool.c  | 67 +++++++++---------
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h   |  2 +-
+ .../hns3/hns3_common/hclge_comm_tqp_stats.c   | 11 +--
+ .../hns3/hns3_common/hclge_comm_tqp_stats.h   |  2 +-
+ .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 53 +++++---------
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 50 ++++++-------
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      |  6 +-
+ 19 files changed, 166 insertions(+), 237 deletions(-)
 
-Then everything is done.
+diff --git a/drivers/net/ethernet/hisilicon/hns/hnae.h b/drivers/net/ethernet/hisilicon/hns/hnae.h
+index d72657444ef3..2ae34d01fd36 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hnae.h
++++ b/drivers/net/ethernet/hisilicon/hns/hnae.h
+@@ -512,7 +512,7 @@ struct hnae_ae_ops {
+ 			     struct net_device_stats *net_stats);
+ 	void (*get_stats)(struct hnae_handle *handle, u64 *data);
+ 	void (*get_strings)(struct hnae_handle *handle,
+-			    u32 stringset, u8 *data);
++			    u32 stringset, u8 **data);
+ 	int (*get_sset_count)(struct hnae_handle *handle, int stringset);
+ 	void (*update_led_status)(struct hnae_handle *handle);
+ 	int (*set_led_id)(struct hnae_handle *handle,
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+index bc3e406f0139..8ce910f8d0cc 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+@@ -730,15 +730,14 @@ static void hns_ae_get_stats(struct hnae_handle *handle, u64 *data)
+ 		hns_dsaf_get_stats(vf_cb->dsaf_dev, p, vf_cb->port_index);
+ }
+ 
+-static void hns_ae_get_strings(struct hnae_handle *handle,
+-			       u32 stringset, u8 *data)
++static void hns_ae_get_strings(struct hnae_handle *handle, u32 stringset,
++			       u8 **data)
+ {
+ 	int port;
+ 	int idx;
+ 	struct hns_mac_cb *mac_cb;
+ 	struct hns_ppe_cb *ppe_cb;
+ 	struct dsaf_device *dsaf_dev = hns_ae_get_dsaf_dev(handle->dev);
+-	u8 *p = data;
+ 	struct	hnae_vf_cb *vf_cb;
+ 
+ 	assert(handle);
+@@ -748,19 +747,14 @@ static void hns_ae_get_strings(struct hnae_handle *handle,
+ 	mac_cb = hns_get_mac_cb(handle);
+ 	ppe_cb = hns_get_ppe_cb(handle);
+ 
+-	for (idx = 0; idx < handle->q_num; idx++) {
+-		hns_rcb_get_strings(stringset, p, idx);
+-		p += ETH_GSTRING_LEN * hns_rcb_get_ring_sset_count(stringset);
+-	}
+-
+-	hns_ppe_get_strings(ppe_cb, stringset, p);
+-	p += ETH_GSTRING_LEN * hns_ppe_get_sset_count(stringset);
++	for (idx = 0; idx < handle->q_num; idx++)
++		hns_rcb_get_strings(stringset, data, idx);
+ 
+-	hns_mac_get_strings(mac_cb, stringset, p);
+-	p += ETH_GSTRING_LEN * hns_mac_get_sset_count(mac_cb, stringset);
++	hns_ppe_get_strings(ppe_cb, stringset, data);
++	hns_mac_get_strings(mac_cb, stringset, data);
+ 
+ 	if (mac_cb->mac_type == HNAE_PORT_SERVICE)
+-		hns_dsaf_get_strings(stringset, p, port, dsaf_dev);
++		hns_dsaf_get_strings(stringset, data, port, dsaf_dev);
+ }
+ 
+ static int hns_ae_get_sset_count(struct hnae_handle *handle, int stringset)
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+index bdb7afaabdd0..400933ca1a29 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -669,16 +669,15 @@ static void hns_gmac_get_stats(void *mac_drv, u64 *data)
+ 	}
+ }
+ 
+-static void hns_gmac_get_strings(u32 stringset, u8 *data)
++static void hns_gmac_get_strings(u32 stringset, u8 **data)
+ {
+-	u8 *buff = data;
+ 	u32 i;
+ 
+ 	if (stringset != ETH_SS_STATS)
+ 		return;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(g_gmac_stats_string); i++)
+-		ethtool_puts(&buff, g_gmac_stats_string[i].desc);
++		ethtool_puts(data, g_gmac_stats_string[i].desc);
+ }
+ 
+ static int hns_gmac_get_sset_count(int stringset)
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
+index 5fa9b2eeb929..bc6b269be299 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
+@@ -1190,8 +1190,7 @@ void hns_mac_get_stats(struct hns_mac_cb *mac_cb, u64 *data)
+ 	mac_ctrl_drv->get_ethtool_stats(mac_ctrl_drv, data);
+ }
+ 
+-void hns_mac_get_strings(struct hns_mac_cb *mac_cb,
+-			 int stringset, u8 *data)
++void hns_mac_get_strings(struct hns_mac_cb *mac_cb, int stringset, u8 **data)
+ {
+ 	struct mac_driver *mac_ctrl_drv = hns_mac_get_drv(mac_cb);
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.h
+index edf0bcf76ac9..630f01cf7a71 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.h
+@@ -378,7 +378,7 @@ struct mac_driver {
+ 	void (*get_regs)(void *mac_drv, void *data);
+ 	int (*get_regs_count)(void);
+ 	/* get strings name for ethtool statistic */
+-	void (*get_strings)(u32 stringset, u8 *data);
++	void (*get_strings)(u32 stringset, u8 **data);
+ 	/* get the number of strings*/
+ 	int (*get_sset_count)(int stringset);
+ 
+@@ -445,7 +445,7 @@ int hns_mac_config_mac_loopback(struct hns_mac_cb *mac_cb,
+ 				enum hnae_loop loop, int en);
+ void hns_mac_update_stats(struct hns_mac_cb *mac_cb);
+ void hns_mac_get_stats(struct hns_mac_cb *mac_cb, u64 *data);
+-void hns_mac_get_strings(struct hns_mac_cb *mac_cb, int stringset, u8 *data);
++void hns_mac_get_strings(struct hns_mac_cb *mac_cb, int stringset, u8 **data);
+ int hns_mac_get_sset_count(struct hns_mac_cb *mac_cb, int stringset);
+ void hns_mac_get_regs(struct hns_mac_cb *mac_cb, void *data);
+ int hns_mac_get_regs_count(struct hns_mac_cb *mac_cb);
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+index eb60f45a3460..851490346261 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+@@ -2590,55 +2590,34 @@ void hns_dsaf_get_regs(struct dsaf_device *ddev, u32 port, void *data)
+ 		p[i] = 0xdddddddd;
+ }
+ 
+-static char *hns_dsaf_get_node_stats_strings(char *data, int node,
+-					     struct dsaf_device *dsaf_dev)
++static void hns_dsaf_get_node_stats_strings(u8 **data, int node,
++					    struct dsaf_device *dsaf_dev)
+ {
+-	char *buff = data;
+-	int i;
+ 	bool is_ver1 = AE_IS_VER1(dsaf_dev->dsaf_ver);
++	int i;
+ 
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_pad_drop_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_manage_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_rx_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_rx_pkt_id", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_rx_pause_frame", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_release_buf_num", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_sbm_drop_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_crc_false_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_bp_drop_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_lookup_rslt_drop_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_local_rslt_fail_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_vlan_drop_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-	snprintf(buff, ETH_GSTRING_LEN, "innod%d_stp_drop_pkts", node);
+-	buff += ETH_GSTRING_LEN;
++	ethtool_sprintf(data, "innod%d_pad_drop_pkts", node);
++	ethtool_sprintf(data, "innod%d_manage_pkts", node);
++	ethtool_sprintf(data, "innod%d_rx_pkts", node);
++	ethtool_sprintf(data, "innod%d_rx_pkt_id", node);
++	ethtool_sprintf(data, "innod%d_rx_pause_frame", node);
++	ethtool_sprintf(data, "innod%d_release_buf_num", node);
++	ethtool_sprintf(data, "innod%d_sbm_drop_pkts", node);
++	ethtool_sprintf(data, "innod%d_crc_false_pkts", node);
++	ethtool_sprintf(data, "innod%d_bp_drop_pkts", node);
++	ethtool_sprintf(data, "innod%d_lookup_rslt_drop_pkts", node);
++	ethtool_sprintf(data, "innod%d_local_rslt_fail_pkts", node);
++	ethtool_sprintf(data, "innod%d_vlan_drop_pkts", node);
++	ethtool_sprintf(data, "innod%d_stp_drop_pkts", node);
+ 	if (node < DSAF_SERVICE_NW_NUM && !is_ver1) {
+ 		for (i = 0; i < DSAF_PRIO_NR; i++) {
+-			snprintf(buff + 0 * ETH_GSTRING_LEN * DSAF_PRIO_NR,
+-				 ETH_GSTRING_LEN, "inod%d_pfc_prio%d_pkts",
+-				 node, i);
+-			snprintf(buff + 1 * ETH_GSTRING_LEN * DSAF_PRIO_NR,
+-				 ETH_GSTRING_LEN, "onod%d_pfc_prio%d_pkts",
+-				 node, i);
+-			buff += ETH_GSTRING_LEN;
++			ethtool_sprintf(data, "inod%d_pfc_prio%d_pkts", node,
++					i);
++			ethtool_sprintf(data, "onod%d_pfc_prio%d_pkts", node,
++					i);
+ 		}
+-		buff += 1 * DSAF_PRIO_NR * ETH_GSTRING_LEN;
+ 	}
+-	snprintf(buff, ETH_GSTRING_LEN, "onnod%d_tx_pkts", node);
+-	buff += ETH_GSTRING_LEN;
+-
+-	return buff;
++	ethtool_sprintf(data, "onnod%d_tx_pkts", node);
+ }
+ 
+ static u64 *hns_dsaf_get_node_stats(struct dsaf_device *ddev, u64 *data,
+@@ -2720,21 +2699,20 @@ int hns_dsaf_get_sset_count(struct dsaf_device *dsaf_dev, int stringset)
+  *@port:port index
+  *@dsaf_dev: dsaf device
+  */
+-void hns_dsaf_get_strings(int stringset, u8 *data, int port,
++void hns_dsaf_get_strings(int stringset, u8 **data, int port,
+ 			  struct dsaf_device *dsaf_dev)
+ {
+-	char *buff = (char *)data;
+ 	int node = port;
+ 
+ 	if (stringset != ETH_SS_STATS)
+ 		return;
+ 
+ 	/* for ge/xge node info */
+-	buff = hns_dsaf_get_node_stats_strings(buff, node, dsaf_dev);
++	hns_dsaf_get_node_stats_strings(data, node, dsaf_dev);
+ 
+ 	/* for ppe node info */
+ 	node = port + DSAF_PPE_INODE_BASE;
+-	(void)hns_dsaf_get_node_stats_strings(buff, node, dsaf_dev);
++	hns_dsaf_get_node_stats_strings(data, node, dsaf_dev);
+ }
+ 
+ /**
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.h
+index 5526a10caac5..0eb03dff1a8b 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.h
+@@ -442,7 +442,7 @@ void hns_dsaf_update_stats(struct dsaf_device *dsaf_dev, u32 inode_num);
+ 
+ int hns_dsaf_get_sset_count(struct dsaf_device *dsaf_dev, int stringset);
+ void hns_dsaf_get_stats(struct dsaf_device *ddev, u64 *data, int port);
+-void hns_dsaf_get_strings(int stringset, u8 *data, int port,
++void hns_dsaf_get_strings(int stringset, u8 **data, int port,
+ 			  struct dsaf_device *dsaf_dev);
+ 
+ void hns_dsaf_get_regs(struct dsaf_device *ddev, u32 port, void *data);
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
+index a08d1f0a5a16..5013beb4d282 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
+@@ -457,24 +457,23 @@ int hns_ppe_get_regs_count(void)
+  * @stringset: string set type
+  * @data: output string
+  */
+-void hns_ppe_get_strings(struct hns_ppe_cb *ppe_cb, int stringset, u8 *data)
++void hns_ppe_get_strings(struct hns_ppe_cb *ppe_cb, int stringset, u8 **data)
+ {
+ 	int index = ppe_cb->index;
+-	u8 *buff = data;
+-
+-	ethtool_sprintf(&buff, "ppe%d_rx_sw_pkt", index);
+-	ethtool_sprintf(&buff, "ppe%d_rx_pkt_ok", index);
+-	ethtool_sprintf(&buff, "ppe%d_rx_drop_pkt_no_bd", index);
+-	ethtool_sprintf(&buff, "ppe%d_rx_alloc_buf_fail", index);
+-	ethtool_sprintf(&buff, "ppe%d_rx_alloc_buf_wait", index);
+-	ethtool_sprintf(&buff, "ppe%d_rx_pkt_drop_no_buf", index);
+-	ethtool_sprintf(&buff, "ppe%d_rx_pkt_err_fifo_full", index);
+-
+-	ethtool_sprintf(&buff, "ppe%d_tx_bd", index);
+-	ethtool_sprintf(&buff, "ppe%d_tx_pkt", index);
+-	ethtool_sprintf(&buff, "ppe%d_tx_pkt_ok", index);
+-	ethtool_sprintf(&buff, "ppe%d_tx_pkt_err_fifo_empty", index);
+-	ethtool_sprintf(&buff, "ppe%d_tx_pkt_err_csum_fail", index);
++
++	ethtool_sprintf(data, "ppe%d_rx_sw_pkt", index);
++	ethtool_sprintf(data, "ppe%d_rx_pkt_ok", index);
++	ethtool_sprintf(data, "ppe%d_rx_drop_pkt_no_bd", index);
++	ethtool_sprintf(data, "ppe%d_rx_alloc_buf_fail", index);
++	ethtool_sprintf(data, "ppe%d_rx_alloc_buf_wait", index);
++	ethtool_sprintf(data, "ppe%d_rx_pkt_drop_no_buf", index);
++	ethtool_sprintf(data, "ppe%d_rx_pkt_err_fifo_full", index);
++
++	ethtool_sprintf(data, "ppe%d_tx_bd", index);
++	ethtool_sprintf(data, "ppe%d_tx_pkt", index);
++	ethtool_sprintf(data, "ppe%d_tx_pkt_ok", index);
++	ethtool_sprintf(data, "ppe%d_tx_pkt_err_fifo_empty", index);
++	ethtool_sprintf(data, "ppe%d_tx_pkt_err_csum_fail", index);
+ }
+ 
+ void hns_ppe_get_stats(struct hns_ppe_cb *ppe_cb, u64 *data)
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
+index 7e00231c1acf..602c8e971fe4 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
+@@ -109,7 +109,7 @@ int hns_ppe_get_sset_count(int stringset);
+ int hns_ppe_get_regs_count(void);
+ void hns_ppe_get_regs(struct hns_ppe_cb *ppe_cb, void *data);
+ 
+-void hns_ppe_get_strings(struct hns_ppe_cb *ppe_cb, int stringset, u8 *data);
++void hns_ppe_get_strings(struct hns_ppe_cb *ppe_cb, int stringset, u8 **data);
+ void hns_ppe_get_stats(struct hns_ppe_cb *ppe_cb, u64 *data);
+ void hns_ppe_set_tso_enable(struct hns_ppe_cb *ppe_cb, u32 value);
+ void hns_ppe_set_rss_key(struct hns_ppe_cb *ppe_cb,
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+index 93344563a259..46af467aa596 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+@@ -923,44 +923,42 @@ int hns_rcb_get_ring_regs_count(void)
+  *@data:strings name value
+  *@index:queue index
+  */
+-void hns_rcb_get_strings(int stringset, u8 *data, int index)
++void hns_rcb_get_strings(int stringset, u8 **data, int index)
+ {
+-	u8 *buff = data;
+-
+ 	if (stringset != ETH_SS_STATS)
+ 		return;
+ 
+-	ethtool_sprintf(&buff, "tx_ring%d_rcb_pkt_num", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_ppe_tx_pkt_num", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_ppe_drop_pkt_num", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_fbd_num", index);
+-
+-	ethtool_sprintf(&buff, "tx_ring%d_pkt_num", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_bytes", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_err_cnt", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_io_err", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_sw_err", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_seg_pkt", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_restart_queue", index);
+-	ethtool_sprintf(&buff, "tx_ring%d_tx_busy", index);
+-
+-	ethtool_sprintf(&buff, "rx_ring%d_rcb_pkt_num", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_ppe_pkt_num", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_ppe_drop_pkt_num", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_fbd_num", index);
+-
+-	ethtool_sprintf(&buff, "rx_ring%d_pkt_num", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_bytes", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_err_cnt", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_io_err", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_sw_err", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_seg_pkt", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_reuse_pg", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_len_err", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_non_vld_desc_err", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_bd_num_err", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_l2_err", index);
+-	ethtool_sprintf(&buff, "rx_ring%d_l3l4csum_err", index);
++	ethtool_sprintf(data, "tx_ring%d_rcb_pkt_num", index);
++	ethtool_sprintf(data, "tx_ring%d_ppe_tx_pkt_num", index);
++	ethtool_sprintf(data, "tx_ring%d_ppe_drop_pkt_num", index);
++	ethtool_sprintf(data, "tx_ring%d_fbd_num", index);
++
++	ethtool_sprintf(data, "tx_ring%d_pkt_num", index);
++	ethtool_sprintf(data, "tx_ring%d_bytes", index);
++	ethtool_sprintf(data, "tx_ring%d_err_cnt", index);
++	ethtool_sprintf(data, "tx_ring%d_io_err", index);
++	ethtool_sprintf(data, "tx_ring%d_sw_err", index);
++	ethtool_sprintf(data, "tx_ring%d_seg_pkt", index);
++	ethtool_sprintf(data, "tx_ring%d_restart_queue", index);
++	ethtool_sprintf(data, "tx_ring%d_tx_busy", index);
++
++	ethtool_sprintf(data, "rx_ring%d_rcb_pkt_num", index);
++	ethtool_sprintf(data, "rx_ring%d_ppe_pkt_num", index);
++	ethtool_sprintf(data, "rx_ring%d_ppe_drop_pkt_num", index);
++	ethtool_sprintf(data, "rx_ring%d_fbd_num", index);
++
++	ethtool_sprintf(data, "rx_ring%d_pkt_num", index);
++	ethtool_sprintf(data, "rx_ring%d_bytes", index);
++	ethtool_sprintf(data, "rx_ring%d_err_cnt", index);
++	ethtool_sprintf(data, "rx_ring%d_io_err", index);
++	ethtool_sprintf(data, "rx_ring%d_sw_err", index);
++	ethtool_sprintf(data, "rx_ring%d_seg_pkt", index);
++	ethtool_sprintf(data, "rx_ring%d_reuse_pg", index);
++	ethtool_sprintf(data, "rx_ring%d_len_err", index);
++	ethtool_sprintf(data, "rx_ring%d_non_vld_desc_err", index);
++	ethtool_sprintf(data, "rx_ring%d_bd_num_err", index);
++	ethtool_sprintf(data, "rx_ring%d_l2_err", index);
++	ethtool_sprintf(data, "rx_ring%d_l3l4csum_err", index);
+ }
+ 
+ void hns_rcb_get_common_regs(struct rcb_common_cb *rcb_com, void *data)
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
+index c1e9b6997853..0f4cc184ef39 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
+@@ -157,7 +157,7 @@ int hns_rcb_get_ring_regs_count(void);
+ 
+ void hns_rcb_get_ring_regs(struct hnae_queue *queue, void *data);
+ 
+-void hns_rcb_get_strings(int stringset, u8 *data, int index);
++void hns_rcb_get_strings(int stringset, u8 **data, int index);
+ void hns_rcb_set_rx_ring_bs(struct hnae_queue *q, u32 buf_size);
+ void hns_rcb_set_tx_ring_bs(struct hnae_queue *q, u32 buf_size);
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c
+index c58833eb4830..dbc44c2c26c2 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c
+@@ -743,16 +743,15 @@ static void hns_xgmac_get_stats(void *mac_drv, u64 *data)
+  *@stringset: type of values in data
+  *@data:data for value of string name
+  */
+-static void hns_xgmac_get_strings(u32 stringset, u8 *data)
++static void hns_xgmac_get_strings(u32 stringset, u8 **data)
+ {
+-	u8 *buff = data;
+ 	u32 i;
+ 
+ 	if (stringset != ETH_SS_STATS)
+ 		return;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(g_xgmac_stats_string); i++)
+-		ethtool_puts(&buff, g_xgmac_stats_string[i].desc);
++		ethtool_puts(data, g_xgmac_stats_string[i].desc);
+ }
+ 
+ /**
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index a5bb306b2cf1..6c458f037262 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -903,7 +903,6 @@ static void hns_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
+ {
+ 	struct hns_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae_handle *h = priv->ae_handle;
+-	u8 *buff = data;
+ 
+ 	if (!h->dev->ops->get_strings) {
+ 		netdev_err(netdev, "h->dev->ops->get_strings is null!\n");
+@@ -912,43 +911,43 @@ static void hns_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
+ 
+ 	if (stringset == ETH_SS_TEST) {
+ 		if (priv->ae_handle->phy_if != PHY_INTERFACE_MODE_XGMII)
+-			ethtool_puts(&buff,
++			ethtool_puts(&data,
+ 				     hns_nic_test_strs[MAC_INTERNALLOOP_MAC]);
+-		ethtool_puts(&buff, hns_nic_test_strs[MAC_INTERNALLOOP_SERDES]);
++		ethtool_puts(&data, hns_nic_test_strs[MAC_INTERNALLOOP_SERDES]);
+ 		if ((netdev->phydev) && (!netdev->phydev->is_c45))
+-			ethtool_puts(&buff,
++			ethtool_puts(&data,
+ 				     hns_nic_test_strs[MAC_INTERNALLOOP_PHY]);
+ 
+ 	} else {
+-		ethtool_puts(&buff, "rx_packets");
+-		ethtool_puts(&buff, "tx_packets");
+-		ethtool_puts(&buff, "rx_bytes");
+-		ethtool_puts(&buff, "tx_bytes");
+-		ethtool_puts(&buff, "rx_errors");
+-		ethtool_puts(&buff, "tx_errors");
+-		ethtool_puts(&buff, "rx_dropped");
+-		ethtool_puts(&buff, "tx_dropped");
+-		ethtool_puts(&buff, "multicast");
+-		ethtool_puts(&buff, "collisions");
+-		ethtool_puts(&buff, "rx_over_errors");
+-		ethtool_puts(&buff, "rx_crc_errors");
+-		ethtool_puts(&buff, "rx_frame_errors");
+-		ethtool_puts(&buff, "rx_fifo_errors");
+-		ethtool_puts(&buff, "rx_missed_errors");
+-		ethtool_puts(&buff, "tx_aborted_errors");
+-		ethtool_puts(&buff, "tx_carrier_errors");
+-		ethtool_puts(&buff, "tx_fifo_errors");
+-		ethtool_puts(&buff, "tx_heartbeat_errors");
+-		ethtool_puts(&buff, "rx_length_errors");
+-		ethtool_puts(&buff, "tx_window_errors");
+-		ethtool_puts(&buff, "rx_compressed");
+-		ethtool_puts(&buff, "tx_compressed");
+-		ethtool_puts(&buff, "netdev_rx_dropped");
+-		ethtool_puts(&buff, "netdev_tx_dropped");
+-
+-		ethtool_puts(&buff, "netdev_tx_timeout");
+-
+-		h->dev->ops->get_strings(h, stringset, buff);
++		ethtool_puts(&data, "rx_packets");
++		ethtool_puts(&data, "tx_packets");
++		ethtool_puts(&data, "rx_bytes");
++		ethtool_puts(&data, "tx_bytes");
++		ethtool_puts(&data, "rx_errors");
++		ethtool_puts(&data, "tx_errors");
++		ethtool_puts(&data, "rx_dropped");
++		ethtool_puts(&data, "tx_dropped");
++		ethtool_puts(&data, "multicast");
++		ethtool_puts(&data, "collisions");
++		ethtool_puts(&data, "rx_over_errors");
++		ethtool_puts(&data, "rx_crc_errors");
++		ethtool_puts(&data, "rx_frame_errors");
++		ethtool_puts(&data, "rx_fifo_errors");
++		ethtool_puts(&data, "rx_missed_errors");
++		ethtool_puts(&data, "tx_aborted_errors");
++		ethtool_puts(&data, "tx_carrier_errors");
++		ethtool_puts(&data, "tx_fifo_errors");
++		ethtool_puts(&data, "tx_heartbeat_errors");
++		ethtool_puts(&data, "rx_length_errors");
++		ethtool_puts(&data, "tx_window_errors");
++		ethtool_puts(&data, "rx_compressed");
++		ethtool_puts(&data, "tx_compressed");
++		ethtool_puts(&data, "netdev_rx_dropped");
++		ethtool_puts(&data, "netdev_tx_dropped");
++
++		ethtool_puts(&data, "netdev_tx_timeout");
++
++		h->dev->ops->get_strings(h, stringset, &data);
+ 	}
+ }
+ 
+@@ -970,7 +969,7 @@ static int hns_get_sset_count(struct net_device *netdev, int stringset)
+ 		return -EOPNOTSUPP;
+ 	}
+ 	if (stringset == ETH_SS_TEST) {
+-		u32 cnt = (sizeof(hns_nic_test_strs) / ETH_GSTRING_LEN);
++		u32 cnt = ARRAY_SIZE(hns_nic_test_strs);
+ 
+ 		if (priv->ae_handle->phy_if == PHY_INTERFACE_MODE_XGMII)
+ 			cnt--;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 27dbe367f3d3..710a8f9f2248 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -677,7 +677,7 @@ struct hnae3_ae_ops {
+ 	void (*get_mac_stats)(struct hnae3_handle *handle,
+ 			      struct hns3_mac_stats *mac_stats);
+ 	void (*get_strings)(struct hnae3_handle *handle,
+-			    u32 stringset, u8 *data);
++			    u32 stringset, u8 **data);
+ 	int (*get_sset_count)(struct hnae3_handle *handle, int stringset);
+ 
+ 	void (*get_regs)(struct hnae3_handle *handle, u32 *version,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
+index 2b31188ff555..f9a3d6fc4416 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
+@@ -36,27 +36,22 @@ int hclge_comm_tqps_get_sset_count(struct hnae3_handle *handle)
+ }
+ EXPORT_SYMBOL_GPL(hclge_comm_tqps_get_sset_count);
+ 
+-u8 *hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 *data)
++void hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 **data)
+ {
+ 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+-	u8 *buff = data;
+ 	u16 i;
+ 
+ 	for (i = 0; i < kinfo->num_tqps; i++) {
+ 		struct hclge_comm_tqp *tqp =
+ 			container_of(kinfo->tqp[i], struct hclge_comm_tqp, q);
+-		snprintf(buff, ETH_GSTRING_LEN, "txq%u_pktnum_rcd", tqp->index);
+-		buff += ETH_GSTRING_LEN;
++		ethtool_sprintf(data, "txq%u_pktnum_rcd", tqp->index);
+ 	}
+ 
+ 	for (i = 0; i < kinfo->num_tqps; i++) {
+ 		struct hclge_comm_tqp *tqp =
+ 			container_of(kinfo->tqp[i], struct hclge_comm_tqp, q);
+-		snprintf(buff, ETH_GSTRING_LEN, "rxq%u_pktnum_rcd", tqp->index);
+-		buff += ETH_GSTRING_LEN;
++		ethtool_sprintf(data, "rxq%u_pktnum_rcd", tqp->index);
+ 	}
+-
+-	return buff;
+ }
+ EXPORT_SYMBOL_GPL(hclge_comm_tqps_get_strings);
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h
+index a46350162ee8..b9ff424c0bc2 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h
+@@ -32,7 +32,7 @@ struct hclge_comm_tqp {
+ 
+ u64 *hclge_comm_tqps_get_stats(struct hnae3_handle *handle, u64 *data);
+ int hclge_comm_tqps_get_sset_count(struct hnae3_handle *handle);
+-u8 *hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 *data);
++void hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 **data);
+ void hclge_comm_reset_tqp_stats(struct hnae3_handle *handle);
+ int hclge_comm_tqps_update_stats(struct hnae3_handle *handle,
+ 				 struct hclge_comm_hw *hw);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index b1e988347347..a6b1ab7d6ee2 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -509,54 +509,38 @@ static int hns3_get_sset_count(struct net_device *netdev, int stringset)
+ 	}
+ }
+ 
+-static void *hns3_update_strings(u8 *data, const struct hns3_stats *stats,
+-		u32 stat_count, u32 num_tqps, const char *prefix)
++static void hns3_update_strings(u8 **data, const struct hns3_stats *stats,
++				u32 stat_count, u32 num_tqps,
++				const char *prefix)
+ {
+ #define MAX_PREFIX_SIZE (6 + 4)
+-	u32 size_left;
+ 	u32 i, j;
+-	u32 n1;
+ 
+-	for (i = 0; i < num_tqps; i++) {
+-		for (j = 0; j < stat_count; j++) {
+-			data[ETH_GSTRING_LEN - 1] = '\0';
+-
+-			/* first, prepend the prefix string */
+-			n1 = scnprintf(data, MAX_PREFIX_SIZE, "%s%u_",
+-				       prefix, i);
+-			size_left = (ETH_GSTRING_LEN - 1) - n1;
+-
+-			/* now, concatenate the stats string to it */
+-			strncat(data, stats[j].stats_string, size_left);
+-			data += ETH_GSTRING_LEN;
+-		}
+-	}
+-
+-	return data;
++	for (i = 0; i < num_tqps; i++)
++		for (j = 0; j < stat_count; j++)
++			ethtool_sprintf(data, "%s%u_%s", prefix, i,
++					stats[j].stats_string);
+ }
+ 
+-static u8 *hns3_get_strings_tqps(struct hnae3_handle *handle, u8 *data)
++static void hns3_get_strings_tqps(struct hnae3_handle *handle, u8 **data)
+ {
+ 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+ 	const char tx_prefix[] = "txq";
+ 	const char rx_prefix[] = "rxq";
+ 
+ 	/* get strings for Tx */
+-	data = hns3_update_strings(data, hns3_txq_stats, HNS3_TXQ_STATS_COUNT,
+-				   kinfo->num_tqps, tx_prefix);
++	hns3_update_strings(data, hns3_txq_stats, HNS3_TXQ_STATS_COUNT,
++			    kinfo->num_tqps, tx_prefix);
+ 
+ 	/* get strings for Rx */
+-	data = hns3_update_strings(data, hns3_rxq_stats, HNS3_RXQ_STATS_COUNT,
+-				   kinfo->num_tqps, rx_prefix);
+-
+-	return data;
++	hns3_update_strings(data, hns3_rxq_stats, HNS3_RXQ_STATS_COUNT,
++			    kinfo->num_tqps, rx_prefix);
+ }
+ 
+ static void hns3_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
+ {
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+ 	const struct hnae3_ae_ops *ops = h->ae_algo->ops;
+-	char *buff = (char *)data;
+ 	int i;
+ 
+ 	if (!ops->get_strings)
+@@ -564,18 +548,15 @@ static void hns3_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
+ 
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+-		buff = hns3_get_strings_tqps(h, buff);
+-		ops->get_strings(h, stringset, (u8 *)buff);
++		hns3_get_strings_tqps(h, &data);
++		ops->get_strings(h, stringset, &data);
+ 		break;
+ 	case ETH_SS_TEST:
+-		ops->get_strings(h, stringset, data);
++		ops->get_strings(h, stringset, &data);
+ 		break;
+ 	case ETH_SS_PRIV_FLAGS:
+-		for (i = 0; i < HNS3_PRIV_FLAGS_LEN; i++) {
+-			snprintf(buff, ETH_GSTRING_LEN, "%s",
+-				 hns3_priv_flags[i].name);
+-			buff += ETH_GSTRING_LEN;
+-		}
++		for (i = 0; i < HNS3_PRIV_FLAGS_LEN; i++)
++			ethtool_puts(&data, hns3_priv_flags[i].name);
+ 		break;
+ 	default:
+ 		break;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index bd86efd92a5a..05942fa78b11 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -594,25 +594,21 @@ static u64 *hclge_comm_get_stats(struct hclge_dev *hdev,
+ 	return buf;
+ }
+ 
+-static u8 *hclge_comm_get_strings(struct hclge_dev *hdev, u32 stringset,
+-				  const struct hclge_comm_stats_str strs[],
+-				  int size, u8 *data)
++static void hclge_comm_get_strings(struct hclge_dev *hdev, u32 stringset,
++				   const struct hclge_comm_stats_str strs[],
++				   int size, u8 **data)
+ {
+-	char *buff = (char *)data;
+ 	u32 i;
+ 
+ 	if (stringset != ETH_SS_STATS)
+-		return buff;
++		return;
+ 
+ 	for (i = 0; i < size; i++) {
+ 		if (strs[i].stats_num > hdev->ae_dev->dev_specs.mac_stats_num)
+ 			continue;
+ 
+-		snprintf(buff, ETH_GSTRING_LEN, "%s", strs[i].desc);
+-		buff = buff + ETH_GSTRING_LEN;
++		ethtool_puts(data, strs[i].desc);
+ 	}
+-
+-	return (u8 *)buff;
+ }
+ 
+ static void hclge_update_stats_for_all(struct hclge_dev *hdev)
+@@ -717,44 +713,38 @@ static int hclge_get_sset_count(struct hnae3_handle *handle, int stringset)
+ }
+ 
+ static void hclge_get_strings(struct hnae3_handle *handle, u32 stringset,
+-			      u8 *data)
++			      u8 **data)
+ {
+ 	struct hclge_vport *vport = hclge_get_vport(handle);
+ 	struct hclge_dev *hdev = vport->back;
+-	u8 *p = (char *)data;
++	const char *str;
+ 	int size;
+ 
+ 	if (stringset == ETH_SS_STATS) {
+ 		size = ARRAY_SIZE(g_mac_stats_string);
+-		p = hclge_comm_get_strings(hdev, stringset, g_mac_stats_string,
+-					   size, p);
+-		p = hclge_comm_tqps_get_strings(handle, p);
++		hclge_comm_get_strings(hdev, stringset, g_mac_stats_string,
++				       size, data);
++		hclge_comm_tqps_get_strings(handle, data);
+ 	} else if (stringset == ETH_SS_TEST) {
+ 		if (handle->flags & HNAE3_SUPPORT_EXTERNAL_LOOPBACK) {
+-			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_EXTERNAL],
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
++			str = hns3_nic_test_strs[HNAE3_LOOP_EXTERNAL];
++			ethtool_puts(data, str);
+ 		}
+ 		if (handle->flags & HNAE3_SUPPORT_APP_LOOPBACK) {
+-			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_APP],
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
++			str = hns3_nic_test_strs[HNAE3_LOOP_APP];
++			ethtool_puts(data, str);
+ 		}
+ 		if (handle->flags & HNAE3_SUPPORT_SERDES_SERIAL_LOOPBACK) {
+-			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_SERIAL_SERDES],
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
++			str = hns3_nic_test_strs[HNAE3_LOOP_SERIAL_SERDES];
++			ethtool_puts(data, str);
+ 		}
+ 		if (handle->flags & HNAE3_SUPPORT_SERDES_PARALLEL_LOOPBACK) {
+-			memcpy(p,
+-			       hns3_nic_test_strs[HNAE3_LOOP_PARALLEL_SERDES],
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
++			str = hns3_nic_test_strs[HNAE3_LOOP_PARALLEL_SERDES];
++			ethtool_puts(data, str);
+ 		}
+ 		if (handle->flags & HNAE3_SUPPORT_PHY_LOOPBACK) {
+-			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_PHY],
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
++			str = hns3_nic_test_strs[HNAE3_LOOP_PHY];
++			ethtool_puts(data, str);
+ 		}
+ 	}
+ }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 094a7c7b5592..2f6ffb88e700 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -130,12 +130,10 @@ static int hclgevf_get_sset_count(struct hnae3_handle *handle, int strset)
+ }
+ 
+ static void hclgevf_get_strings(struct hnae3_handle *handle, u32 strset,
+-				u8 *data)
++				u8 **data)
+ {
+-	u8 *p = (char *)data;
+-
+ 	if (strset == ETH_SS_STATS)
+-		p = hclge_comm_tqps_get_strings(handle, p);
++		hclge_comm_tqps_get_strings(handle, data);
+ }
+ 
+ static void hclgevf_get_stats(struct hnae3_handle *handle, u64 *data)
+-- 
+2.47.0
 
-The patch itself is not touched and already in for-next branch.
-
-The new one is part of the subpage enhancement series now, which is not
-that urgent.
-The subpage compression write support is already large enough for the
-next release cycle.
-
-Thanks,
-Qu
 
