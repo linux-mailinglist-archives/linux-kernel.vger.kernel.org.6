@@ -1,153 +1,253 @@
-Return-Path: <linux-kernel+bounces-388320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439059B5DEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:31:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC95B9B5DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:33:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0357528436B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D0628436B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD951E1A12;
-	Wed, 30 Oct 2024 08:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EB51E0E10;
+	Wed, 30 Oct 2024 08:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHjwf91M"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bQO58ozg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA65114F90;
-	Wed, 30 Oct 2024 08:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C121D3578
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730277051; cv=none; b=YINPAZRjdZgjj3IRQMZ53I7xi6iXJAzBsdy6Pbrlm6T4K54n7tKQz3ReTcBLOShXH+X8MkLgSqs+/kQAddSbfrRzE30frJ7bdZYqFMWSkQbnaDJHz3hzSA+bPAWXTYbOF88Fmt20DdkCplSi+GbiWdiD9qiaRw4aE/6SjQHjrl4=
+	t=1730277179; cv=none; b=mvUpKYpwP6SPybOSloGdLlTRUE2c/QXIInoIyTtG0taAv1c4rlNkowFGuQ6azKbouP6nsrTURLY6vlrSr3LGjkiseGNAKshIZNWxmnufkA+Gy3lnnBGBfC4e13loswwEqmo64DwVINjAAoeI5+Gdyd3hOpOieVCgLvLbdy2J+6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730277051; c=relaxed/simple;
-	bh=kaltN+RuaBtKA+njTIOTqNhKc1ILmMjKsnquuYPjYb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iiaQn1oBnWypIBAYv7bwtGgGZRYK++KWXbxS/H80wgn3ksfYaliJMw/2/hIaAxrZ6g6fhBUbJkg3x3NGFKBlthedW+bfgI5EWAzIZglfnJB3mbOMQCn5vDJG9tSjORQwX1QbK1H3PJMxJT43VYbv5zt7lX6F+Bq9b332c4EpXT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHjwf91M; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2972abc807so6172157276.3;
-        Wed, 30 Oct 2024 01:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730277049; x=1730881849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=83QsD+0SmOIU2ZSbEm0g75qhVVIQnebcpG7P/LY0U3o=;
-        b=EHjwf91MtE6JMHX9Ebi1m61WjVZvdJmB+3zHLskYVQNrOGDil7hZiAcc4GVHAd6Pas
-         5eaO0lQQfdtj859uCfrCCDDmSUGOtAkOAWgxeTQ1SdE/V6nQ2ZzGGNiGrNNYoKpXGHfQ
-         j1BEoVLl5NPI/D1dHI5jqvUClIJ3GQeL5y/ZLD+p7tCxMvySDcxhSCkk8rO7FPjdbRTJ
-         BGAQAvwjWrkefaxJOmse/N2R0OIJys79ttCbgFBZ7qB+SlLOkoXPUQoK3VVnKAxs2peu
-         /K13ysnTZIV0m1BpipkM02pLVHBFA0w8iWjHwlpeNll3kSdAAWUJg66O/wkUGV4omBVh
-         Rqzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730277049; x=1730881849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=83QsD+0SmOIU2ZSbEm0g75qhVVIQnebcpG7P/LY0U3o=;
-        b=jhtqIFe3mbzqvtbJKl2ld8fna/N2XxDbd9VnWsry+6TrHVaRunbg3mb1/c6cTx6EJv
-         szk6j8Hk6nqR3NnoyuqsBEulggWL8W70MFlOh1UYLWsU4EDZeamCxu1JexPMWnxpgz8E
-         gB+CzoSzlT5iGS8fmyyt5CtcuSBUz0nF9wcNPLk/nDIk8xpxOCOomQLTw+cyrIIpmNur
-         c+xf9+OAVjoAMH0Cmg/DbUzbc+S8PK1vLFhJlany1Z+q9UxQAFo8nbuFaoDtavXucnrX
-         cTI74MpSSy6SVpoul9nCbMyo4FX26d7ENxYBtQKFHDHM/ooa/pdPzE7ngDTvPtqAKqY5
-         PZrg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7xnoX3QHKM8BfrdZQ6kCyMmpV9XORVR5Z5nw8lMaUjUcTyP0ksCUTVVNGWGsrvqpmlbHadnpqE8pL@vger.kernel.org, AJvYcCUKOQRmyBco+TUNRLB9/5HncvM9JrzY9GpfLf6Cz/tUFVcwsZjGM2A0hmq7+FBZICPtOwR1pdmuuF8jF6hY1qY=@vger.kernel.org, AJvYcCUiH6SOhc9QxVCoQfcSqfZXcTtBqGblOoZT/hRAhrBaF0Mi4+KbxndZF4R+WLSuecxx/KNvdKC63T+v@vger.kernel.org, AJvYcCVRndUBZx4ULbzi5/XKSIfXl4+GX6PiY496AWkySkIUNFTmByL5UWo8LlKfXY9Yti0qJbYS2JC2ziVJ@vger.kernel.org, AJvYcCVYo5kZOQ6kHg6XYmYEcLz+7sSixrg49qf3vcFfNMTaJ2/aNtRd6PQXP9NpkF69pTG1+3dbBp0v1qw=@vger.kernel.org, AJvYcCVfdg/TcpLk+2+Y4VJbciae/J88tpWANkysluUaOFdL1K27ddq+pux7dGldq5pZwn+xsAZVILN2N6+zXw==@vger.kernel.org, AJvYcCW1eJc578bgGWqhk9N987kqvapowvrwrYAZXjqPRo1PjxqfecQ7sYrs6pCByS7D+mLhQdxM0QOyewxVWp8=@vger.kernel.org, AJvYcCWhMVHWaA3z8CAB2jKAUiBC/I9BqnVzCzmjGb0gvi8wD/PQMqRddAeFpPVtVMFFn39o6gnPdJv0@vger.kernel.org, AJvYcCWqEbZxVo+obMyLaNjQFvKfxb+g+ZKNaAGTDXk+HhrLu75NizClGuKuHaqXcEYnvvHFNrlDcyJ67i9P@vger.kernel.org, AJvYcCXRBQ1u0uqMoro+5Q9nmYeRPumVVfUJp7KM
- w5A6EHLfWbylMuWkmx3PS8z+Bakm0H9Ea/ZSJiTrqjbyXT5W@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK2JYi9nzaEbVbDnfg7hcEIE+NclBxRic87I2vcJ5u0YRYe+k/
-	MhtxdOBC8Pffqqyq2weB2MyuE4aR5VWir9japz4jThdLfycmFhByb42PoVt+q9SDM4igTvX1OFo
-	Gbb7NVpxfObYXN/1+2j8sMApt/mk=
-X-Google-Smtp-Source: AGHT+IGXNYy381QkNndFOp7Kep7v+AsfnJYrtU85o86EwyuP7sESCo7RFZ/IU1mfbniSwKfrtjlalqvrFol9fGaaTOU=
-X-Received: by 2002:a05:6902:1144:b0:e30:da6f:ccb4 with SMTP id
- 3f1490d57ef6-e30da6fce98mr354099276.43.1730277048550; Wed, 30 Oct 2024
- 01:30:48 -0700 (PDT)
+	s=arc-20240116; t=1730277179; c=relaxed/simple;
+	bh=QQ+pxASCsT2NB2DayXgXGRpcgDcPcXAGaZi+vCJo4CI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TTb7rbT3Ownc7QeXnKAmtOXPsuWRgQypxdvbeiRePdj492owuvSVvIMKTGJNLEltmf+3zTMNr1jPgFbFTTgs7W7tGjXaLq9UvEhlT4WKoLz14lDhya2q7YEfxsLgoAGdd70Go6bRW+bM0O/xFyHMIyXHzcZVneq75jpcHNu5SsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bQO58ozg; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730277177; x=1761813177;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QQ+pxASCsT2NB2DayXgXGRpcgDcPcXAGaZi+vCJo4CI=;
+  b=bQO58ozggA+r+9rgf/Bfu9udXxlBiwUuebIJBXcyICVPPmk3sPn3jq4I
+   DdJevs6LXaDxak9OFzX/JWIJVfOQGRCnwuUHpjnazMM41HP10Wb2m8yB3
+   2Dh4yS746noYY0B7LY9eX9TOQJJtDmqLx6Hk7ucTYpVQ1Q3UW9PR6JKs2
+   AmQQ/PXw1nKQI4inMyuGuVYyLvSgPsQSP+CGzcGzfxRYCnU6LVqtb63T8
+   jLFUwUrjlJkcuIR9bMiZ4RCYQZAb5MYoiXSNZPbSxOkblA1XF3+xbk7mn
+   DYQTRijZG74CNqRGgO6uDZfSIGiBr7r4BF6RRHQWxjcFunyMeYrNE1Nyn
+   Q==;
+X-CSE-ConnectionGUID: dDlvewTpQ/S7UTbJUyNZ2w==
+X-CSE-MsgGUID: /JOkF2tGQGicGJoDRPIHHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30112034"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30112034"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 01:32:56 -0700
+X-CSE-ConnectionGUID: nlRvCMxRRa+F69QRCkTKfw==
+X-CSE-MsgGUID: 6GXUWZ5XQbedtVmBquCWYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="82406864"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 01:32:49 -0700
+Message-ID: <36ce098c-4862-4490-a3ed-3226c08aa6d1@linux.intel.com>
+Date: Wed, 30 Oct 2024 16:32:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024-eminent-dancing-narwhal-8f25dd-mkl@pengutronix.de>
- <CAOoeyxV4K=jR+tofeQtsMB7+smuu+Ghas5Tqfx4JvhuVK8dXrA@mail.gmail.com> <20241025-modest-hasty-angelfish-1e9193-mkl@pengutronix.de>
-In-Reply-To: <20241025-modest-hasty-angelfish-1e9193-mkl@pengutronix.de>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Wed, 30 Oct 2024 16:30:37 +0800
-Message-ID: <CAOoeyxU9VwsM=mRZy5AtjH=V3iSGQxkKw18qL+yeUxkh1OVHgQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/9] Add Nuvoton NCT6694 MFD devices
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
+ prq_event_thread
+To: Yi Liu <yi.l.liu@intel.com>, Joel Granados <joel.granados@kernel.org>
+References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
+ <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
+ <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
+ <ujexsgcpvcjux2ugfes6mzjxl53j3icarfbu25imhzliqskyv6@l7f42nv4fhmy>
+ <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
+ <91d59b7d-58b0-4da2-af59-18a980273bb4@intel.com>
+ <acd5c4a6-040c-48ff-9e6b-1a33e5ff118d@linux.intel.com>
+ <ccd8352c-16e7-4845-a94e-b22bdb3ec5c7@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ccd8352c-16e7-4845-a94e-b22bdb3ec5c7@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Dear Marc,
+On 2024/10/30 13:51, Yi Liu wrote:
+> On 2024/10/29 13:39, Baolu Lu wrote:
+>> On 2024/10/29 13:13, Yi Liu wrote:
+>>> On 2024/10/29 11:12, Baolu Lu wrote:
+>>>> On 2024/10/28 18:24, Joel Granados wrote:
+>>>>> On Mon, Oct 28, 2024 at 03:50:46PM +0800, Yi Liu wrote:
+>>>>>> On 2024/10/16 05:08, Joel Granados wrote:
+>>>>>>> From: Klaus Jensen<k.jensen@samsung.com>
+>>>>>>>
+>>>>>>> PASID is not strictly needed when handling a PRQ event; remove 
+>>>>>>> the check
+>>>>>>> for the pasid present bit in the request. This change was not 
+>>>>>>> included
+>>>>>>> in the creation of prq.c to emphasize the change in capability 
+>>>>>>> checks
+>>>>>>> when handing PRQ events.
+>>>>>>>
+>>>>>>> Signed-off-by: Klaus Jensen<k.jensen@samsung.com>
+>>>>>>> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
+>>>>>>> Signed-off-by: Joel Granados<joel.granados@kernel.org>
+>>>>>> looks like the PRQ draining is missed for the PRI usage. When a pasid
+>>>>>> entry is destroyed, it might need to add helper similar to the
+>>>>>> intel_drain_pasid_prq() to drain PRQ for the non-pasid usage.
+>>>>> These types of user space PRIs (non-pasid, non-svm) are created by
+>>>>> making use of iommufd_hwpt_replace_device. Which adds an entry to the
+>>>>> pasid_array indexed on IOMMU_NO_PASID (0U) via the following path:
+>>>>>
+>>>>> iommufd_hwpt_replace_device
+>>>>>    -> iommufd_fault_domain_repalce_dev
+>>>>>      -> __fault_domain_replace_dev
+>>>>>        -> iommu_replace_group_handle
+>>>>             -> __iommu_group_set_domain
+>>>>               -> intel_iommu_attach_device
+>>>>                  -> device_block_translation
+>>>>                    -> intel_pasid_tear_down_entry(IOMMU_NO_PASID)
+>>>>
+>>>> Here a domain is removed from the pasid entry, hence we need to flush
+>>>> all page requests that are pending in the IOMMU page request queue or
+>>>> the PCI fabric.
+>>>>
+>>>>>          -> xa_reserve(&group->pasid_array, IOMMU_NO_PASID, 
+>>>>> GFP_KERNEL);
+>>>>>
+>>>>> It is my understanding that this will provide the needed relation
+>>>>> between the device and the prq in such a way that when  
+>>>>> remove_dev_pasid
+>>>>> is called, intel_iommu_drain_pasid_prq will be called with the
+>>>>> appropriate pasid value set to IOMMU_NO_PASID. Please correct me if 
+>>>>> I'm
+>>>>> mistaken.
+>>>>
+>>>> Removing a domain from a RID and a PASID are different paths.
+>>>> Previously, this IOMMU driver only supported page requests on PASID
+>>>> (non-IOMMU_NO_PASID). It is acceptable that it does not flush the 
+>>>> PRQ in
+>>>> the domain-removing RID path.
+>>>>
+>>>> With the changes made in this series, the driver now supports page
+>>>> requests for RID. It should also flush the PRQ when removing a domain
+>>>> from a PASID entry for IOMMU_NO_PASID.
+>>>>
+>>>>>
+>>>>> Does this answer your question? Do you have a specific path that 
+>>>>> you are
+>>>>> looking at where a specific non-pasid drain is needed?
+>>>>
+>>>> Perhaps we can simply add below change.
+>>>>
+>>>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>>>> index e860bc9439a2..a24a42649621 100644
+>>>> --- a/drivers/iommu/intel/iommu.c
+>>>> +++ b/drivers/iommu/intel/iommu.c
+>>>> @@ -4283,7 +4283,6 @@ static void 
+>>>> intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid,
+>>>>          intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+>>>>          kfree(dev_pasid);
+>>>>          intel_pasid_tear_down_entry(iommu, dev, pasid, false);
+>>>> -       intel_drain_pasid_prq(dev, pasid);
+>>>>   }
+>>>>
+>>>>   static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
+>>>> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+>>>> index 2e5fa0a23299..8639f3eb4264 100644
+>>>> --- a/drivers/iommu/intel/pasid.c
+>>>> +++ b/drivers/iommu/intel/pasid.c
+>>>> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct 
+>>>> intel_iommu *iommu, struct device *dev,
+>>>>                  iommu->flush.flush_iotlb(iommu, did, 0, 0, 
+>>>> DMA_TLB_DSI_FLUSH);
+>>>>
+>>>>          devtlb_invalidation_with_pasid(iommu, dev, pasid);
+>>>> +       intel_drain_pasid_prq(dev, pasid);
+>>>>   }
+>>>>
+>>>>   /*
+>>>> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
+>>>> index 078d1e32a24e..ff88f31053d1 100644
+>>>> --- a/drivers/iommu/intel/svm.c
+>>>> +++ b/drivers/iommu/intel/svm.c
+>>>> @@ -304,9 +304,6 @@ void intel_drain_pasid_prq(struct device *dev, 
+>>>> u32 pasid)
+>>>>          int qdep;
+>>>>
+>>>>          info = dev_iommu_priv_get(dev);
+>>>> -       if (WARN_ON(!info || !dev_is_pci(dev)))
+>>>> -               return;
+>>>> -
+>>>>          if (!info->pri_enabled)
+>>>>                  return;
+>>>>
+>>>> Generally, intel_drain_pasid_prq() should be called if
+>>>>
+>>>> - a translation is removed from a pasid entry; and
+>>>> - PRI on this device is enabled.
+>>>
+>>> If the @pasid==IOMMU_NO_PASID, PRQ drain should use the iotlb 
+>>> invalidation
+>>> and dev-tlb invalidation descriptors. So extra code change is needed in
+>>> intel_drain_pasid_prq(). Or perhaps it's better to have a separate 
+>>> helper
+>>> for draining prq for non-pasid case.
+>>
+>> According to VT-d spec, section 7.10, "Software Steps to Drain Page
+>> Requests & Responses", we can simply replace p_iotlb_inv_dsc and
+>> p_dev_tlb_inv_dsc with iotlb_inv_dsc and dev_tlb_inv_dsc. Any
+>> significant negative performance impact?
+> 
+> It's not about performance impact. My point is to use iotlb_inv_dsc and
+> dev_tlb_inv_dsc for the @pasid==IOMMU_NO_PASID case. The existing
+> intel_drain_pasid_prq() only uses p_iotlb_inv_dsc and p_dev_tlb_inv_dsc.
+> The way you described in above reply works. But it needs to add if/else
+> to use the correct invalidation descriptor. Since the descriptor
+> composition has several lines, so just an ask if it's better to have a
+> separate helper. :)
 
-I am trying to register interrupt controller for the MFD deivce.
-I need to queue work to call handle_nested_irq() in the callback
-of the interrupt pipe, right?
+The spec says (7.10 Software Steps to Drain Page Requests & Responses):
 
-Best regards,
-Ming
+"
+Submit an IOTLB invalidate descriptor (iotlb_inv_dsc or p_iotlb_inv_dsc)
+followed by DeviceTLB invalidation descriptor (dev_tlb_inv_dsc or
+p_dev_tlb_inv_dsc) targeting the endpoint device. These invalidation
+requests can be of any granularity. Per the ordering requirements
+described in Section 7.8, older page group responses issued by software
+to the endpoint device before step (a) are guaranteed to be received by
+the endpoint before the endpoint receives this Device-TLB invalidation
+request.
+"
 
-Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=8825=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:33=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> On 25.10.2024 16:22:01, Ming Yu wrote:
-> > Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=
-=8824=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=887:57=E5=AF=AB=E9=81=93=
-=EF=BC=9A
-> > > On 24.10.2024 16:59:13, Ming Yu wrote:
-> > > > This patch series introduces support for Nuvoton NCT6694, a periphe=
-ral
-> > > > expander based on USB interface. It models the chip as an MFD drive=
-r
-> > > > (1/9), GPIO driver(2/9), I2C Adapter driver(3/9), CANfd driver(4/9)=
-,
-> > > > WDT driver(5/9), HWMON driver(6/9), IIO driver(7/9), PWM driver(8/9=
-),
-> > > > and RTC driver(9/9).
-> > > >
-> > > > The MFD driver implements USB device functionality to issue
-> > > > custom-define USB bulk pipe packets for NCT6694. Each child device =
-can
-> > > > use the USB functions nct6694_read_msg() and nct6694_write_msg() to=
- issue
-> > > > a command. They can also register a handler function that will be c=
-alled
-> > > > when the USB device receives its interrupt pipe.
-> > >
-> > > What about implementing a proper IRQ demux handler instead?
->
-> > I think the currently planned IRQ process meets expectations.
-> > Is there anything that needs improvement?
->
-> You can register the IRQs of the MFD device with the Linux kernel. This
-> way the devices can request a threaded IRQ handler directly via the
-> kernel function, instead of registering the callback.
->
-> With a threaded IRQ handler you can directly call the
-> nct6694_read_msg(), nct6694_write_msg() without the need to start a
-> workqueue from the callback.
->
-> Marc
->
-> --
-> Pengutronix e.K.                 | Marc Kleine-Budde          |
-> Embedded Linux                   | https://www.pengutronix.de |
-> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+The purpose of the cache invalidation requests sent to the device is to
+leverage PCI ordering requirements to ensure that all page group
+responses are received by the device before it processes the TLB
+invalidation request. Therefore, the specification doesn't mandate the
+type and granularity of invalidation requests, as long as they are
+valid.
+
+Given that the Page Request Interface (PRI) is only supported when the
+IOMMU operates in scalable mode, I don't believe we need to make any
+changes to the invalidation types at this time.
+
+--
+baolu
 
