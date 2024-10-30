@@ -1,148 +1,153 @@
-Return-Path: <linux-kernel+bounces-388472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD1A9B6022
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:31:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910789B602F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA0B1C21167
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 279A9283B35
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2461E32C5;
-	Wed, 30 Oct 2024 10:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C5FZRHHx"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE3F1E284E;
+	Wed, 30 Oct 2024 10:32:25 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4192429CE7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E7D1D278D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284304; cv=none; b=Ga4e+e9ypgCgRp8E1LaMiBvUNalPeUYXgbMYv7uTVwFQisd/UZTjg18nLVlUgIX2kB9VRvSNN/5CVyeo92Y0yzaEMcMgUpMm3xbcWfe1QYKGyo0NSPQPym0WzULPJZ5WohgEvVnuwdXO4CxwQMfp98lCK+BGH1v/RBuc4E39W7A=
+	t=1730284345; cv=none; b=lviKuCiGto5J0t/B+0XvTP1PIkjEliT19O2lq2Nhl4DyLlKxFHNT39ctH1eex4SlWuWn0WlsX2w1Hj6jeSov38bKT9rB022xqe+W37rWla2tHarHeH25AEgHKFKEEmKNj+DpVhgvLs+jOwJ068FOMaDokKDppBlkTNIVa4bPje0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284304; c=relaxed/simple;
-	bh=HJK67huFrgBbh0oq3D9/SSpm2m6CsdbT12PbWndMQ+Y=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mPzVA5eWslVuz/a7lwYc1MG8bYyszsMKh0hjWq3XGsI7CmllgFfqCGOQ6siH/BlySfPgEhP9SB+iXRSk3JKRS+LYLldIWnKVfErkKYB1N6y3xxRJb84zGjyS8uL4kWJZtGyzZti/b5ieYAQrMqx7lneTf92zgBNc93cDyz9w5sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C5FZRHHx; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-37d533a484aso399826f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:31:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730284300; x=1730889100; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=k6MdjXaWjXuXFvZiq7sXgM/XS2xMntv/yleDKxQ87K8=;
-        b=C5FZRHHxz8Rbz0bgu5Nx8pNogVLAdrarxhBwmhIFwta7ovbYmK1Nc+8wr6GXxH+9C6
-         mpXK3ZfmnOQerpI8n/iROXbfmaL1iYAPdbZdMhMfsKjdhskqGmILvmANOEYGybxZodYm
-         67FER3Cbt6MBEITvUweLQFK4IhLtq5+bu6DUNBcThZ1UY7hJlP9zTx72P4PrluGm+IMU
-         AKimNlmXnV7lAIX3BpHuloc30JYVZjO8J8q9nV9NWUa7iFflmdfTl4pZKGWhnpBejLAj
-         ZDwr3V8urj05wK4tiktBi1oHdlfCs+RbS0L6aQso97rRQBhxoUJ0yzAPmDrU8OoQnj8P
-         hpsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730284300; x=1730889100;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k6MdjXaWjXuXFvZiq7sXgM/XS2xMntv/yleDKxQ87K8=;
-        b=HtHRxxcqEaqbSDJow+l4U4HSXTmB392sOXRBz1rOoMDsBwbsC5+Er5S1r9g8coyofG
-         My8hZaIHCtlMn9bMDuTOEHJHvMwKWW4ygCGOxPwFR0Oy+p5mbjaOzgNld+HBitGp24PQ
-         3/y1CJInJZyKpAHW3G7kEQ9cLY2raRJkslqOEed60wBpwcFLGGtfNpnwUA7BOMR89GAQ
-         UCJO0vPhX9JZKAILiCP14NoaC75gpTkYqCQdnzcKxleOul9K/xbX1g6fd2UbtIBTTeao
-         3RB+u7nrFxMB9PvEuYyT/nqFuhXTMD5HnVYqv4cfeKM9qESou0PeWf5TK56J6vzcaGHW
-         wEwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXT92luesBh60GCnEjRRkx3xC5X8IkKOq6v/vAZikd+Q/44tbHXHa1iyxu4e0KEo5PfwhqVjzNXTkgBfBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB3ki5OYxWOeF5KRYYWTVu4We3y1SBLJHqJtrxVHPRDt67YzSh
-	LBuR1tpR2pa2ZZsD/FYxV3a5TqTgQSg3o+waS1WFyjthb8cDG0xWtsB6kPRQuFmSaLcZ2Ek4zIb
-	kML23G2wwsaGRPg==
-X-Google-Smtp-Source: AGHT+IFnZQr30Y+M2jhTAmoir5ZrxKPXp/akJvD704Eg2oZKQaaz30lDM/zqxKc6KNIUk1EYIT5KPVY3MJkj4sQ=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:adf:ee0e:0:b0:37d:3878:ff42 with SMTP id
- ffacd0b85a97d-381b97ee8ffmr2906f8f.5.1730284299740; Wed, 30 Oct 2024 03:31:39
- -0700 (PDT)
-Date: Wed, 30 Oct 2024 10:31:34 +0000
+	s=arc-20240116; t=1730284345; c=relaxed/simple;
+	bh=3GVtOXyyD93rLRf/4WDDUmXb6p+JsYf2GMu2Iy6RY3o=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JFAxLRNNUszKyjrQk+5aTbiJwlTZrtM9cBz4vR/DGxZpiVs1kdw4GgTeTBTnypwoza0iCcoEimavG4aXA95OYbJuvAQugAXabho5v3RWpSJ0GDNfBeNzCfwuzGPETQtCZIFe4S8YcfT+Jint0hpjyva9QxC00bW4EIlSrx0lqz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 49UAVhEW026848;
+	Wed, 30 Oct 2024 18:31:43 +0800 (+08)
+	(envelope-from Yi.Sun@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1P5JHRz2KSK4X;
+	Wed, 30 Oct 2024 18:31:05 +0800 (CST)
+Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 30 Oct 2024 18:31:41 +0800
+From: Yi Sun <yi.sun@unisoc.com>
+To: <chao@kernel.org>, <jaegeuk@kernel.org>
+CC: <yi.sun@unisoc.com>, <sunyibuaa@gmail.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <niuzhiguo84@gmail.com>,
+        <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>
+Subject: [PATCH v2 3/5] f2fs: add parameter @len to f2fs_invalidate_internal_cache()
+Date: Wed, 30 Oct 2024 18:31:34 +0800
+Message-ID: <20241030103136.2874140-4-yi.sun@unisoc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241030103136.2874140-1-yi.sun@unisoc.com>
+References: <20241030103136.2874140-1-yi.sun@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAAULImcC/x3MQQqAIBBA0avErBvQsSi7SrQwnWogLBQiiO6et
- HyL/x/InIQzDNUDiS/JcsQCXVfgNxdXRgnFQIoarYxCvwiKd/uO2mqDwba9CYEcdTOU6Ey8yP0 Px+l9PzrYWaVgAAAA
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1882; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=HJK67huFrgBbh0oq3D9/SSpm2m6CsdbT12PbWndMQ+Y=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnIgsIDkprsQHnquBzdddO8VG6yBx2gIzt/R/V5
- lOhbSIB5+qJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZyILCAAKCRAEWL7uWMY5
- Rg26EACVKjteAW4c2ejRnwDxOvD+WRYhuqP2MXBTJDi14yPKpgXf5UV7MXboKuBCpFJJuOXVePc
- WBanDEMSZZFSxR7lvkXUZLLwJd/sdKiZ13Zkoa2Q9KletFcqEGPFU7TMU0+pa6GccYWOYSBkNjv
- pndYPVexIcfWKGapv5dJvqJl6J/l9qeMkGfVSUOnEJdVlk3U/5x3238QmhaWFrOwruu6FkVx/Ns
- u1XpYfQY6MxpgUJNVejZ3iY5gOdnwiB1/7lzkHPDiQUm1ceipEz2mXamJ9Hsn5ORv3s3En5YJNo
- 8DOwVj9owfmZMLU8BKJ+zQ9XBN+6JLQmOJ3/u6BzzPYryBhL9Gn/Qs+b5h/KYFd6Se4xGX0GyiR
- 1uuLVlSiE/TrT00Uf4UWqKgMw/UGAhBtybtQqO/cuWuvlgVysD3NIuA0Bd11hcOZUhtbP40ybBf
- Awn6DMPJjSm9Hzm43vsBAryKKeCEOjM34MubEip40az9Ts5LAjIC/NZBcpVSl0JYlLMUhDvR3He
- s79reSUwhw4CkZEWcrqw6plhWTaYwMwzaTGnVQujYbHobrvADtywiDPs5rDroCkdulGQ3sxAjRT
- 7cJSvjVU5GReIi4IlrQZoHJDgrP72U5PZi0NXkvURae6I/UWJD0gIHNURf0wJi+uolSh+iHeOsy s/2OSs2/mRYqwiA==
-X-Mailer: b4 0.13.0
-Message-ID: <20241030-cfi-icall-1913-v1-1-ab8a26e13733@google.com>
-Subject: [PATCH] cfi: tweak llvm version for HAVE_CFI_ICALL_NORMALIZE_INTEGERS
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Sami Tolvanen <samitolvanen@google.com>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev, kernel test robot <oliver.sang@intel.com>, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 49UAVhEW026848
 
-The llvm fix [1] did not make it for 19.0.0, but ended up getting
-backported to llvm 19.1.3 [2]. Thus, fix the version requirement to
-correctly specify which versions have the bug.
+New function can process some consecutive blocks at a time.
 
-Link: https://github.com/llvm/llvm-project/pull/104826 [1]
-Link: https://github.com/llvm/llvm-project/pull/113938 [2]
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202410281414.c351044e-oliver.sang@intel.com
-Fixes: 8b8ca9c25fe6 ("cfi: fix conditions for HAVE_CFI_ICALL_NORMALIZE_INTEGERS")
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Yi Sun <yi.sun@unisoc.com>
 ---
- arch/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/data.c    | 2 +-
+ fs/f2fs/f2fs.h    | 6 +++---
+ fs/f2fs/gc.c      | 2 +-
+ fs/f2fs/segment.c | 6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 00163e4a237c..bd9f095d69fa 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -855,14 +855,14 @@ config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
- 	def_bool y
- 	depends on $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
- 	# With GCOV/KASAN we need this fix: https://github.com/llvm/llvm-project/pull/104826
--	depends on CLANG_VERSION >= 190000 || (!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
-+	depends on CLANG_VERSION >= 190103 || (!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 90fa8ab85194..37bc747aac89 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1420,7 +1420,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 		return err;
  
- config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
- 	def_bool y
- 	depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
- 	depends on RUSTC_VERSION >= 107900
- 	# With GCOV/KASAN we need this fix: https://github.com/rust-lang/rust/pull/129373
--	depends on (RUSTC_LLVM_VERSION >= 190000 && RUSTC_VERSION >= 108200) || \
-+	depends on (RUSTC_LLVM_VERSION >= 190103 && RUSTC_VERSION >= 108200) || \
- 		(!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
+ 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
+-		f2fs_invalidate_internal_cache(sbi, old_blkaddr);
++		f2fs_invalidate_internal_cache(sbi, old_blkaddr, 1);
  
- config CFI_PERMISSIVE
-
----
-base-commit: 8b8ca9c25fe69c2162e3235c7d6c341127abeed6
-change-id: 20241030-cfi-icall-1913-d9583dd2a27b
-
-Best regards,
+ 	f2fs_update_data_blkaddr(dn, dn->data_blkaddr);
+ 	return 0;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d3fe66a93a56..addd49af57ec 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4757,10 +4757,10 @@ static inline void f2fs_truncate_meta_inode_pages(struct f2fs_sb_info *sbi,
+ }
+ 
+ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
+-								block_t blkaddr)
++						block_t blkaddr, unsigned int len)
+ {
+-	f2fs_truncate_meta_inode_pages(sbi, blkaddr, 1);
+-	f2fs_invalidate_compress_pages_range(sbi, blkaddr, 1);
++	f2fs_truncate_meta_inode_pages(sbi, blkaddr, len);
++	f2fs_invalidate_compress_pages_range(sbi, blkaddr, len);
+ }
+ 
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index e40bdd12e36d..155c1a4a0d74 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1410,7 +1410,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 				page_address(mpage), PAGE_SIZE);
+ 	f2fs_put_page(mpage, 1);
+ 
+-	f2fs_invalidate_internal_cache(fio.sbi, fio.old_blkaddr);
++	f2fs_invalidate_internal_cache(fio.sbi, fio.old_blkaddr, 1);
+ 
+ 	set_page_dirty(fio.encrypted_page);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a5bd101c63a1..92ddff285a65 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2567,7 +2567,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+ 	if (addr == NEW_ADDR || addr == COMPRESS_ADDR)
+ 		return;
+ 
+-	f2fs_invalidate_internal_cache(sbi, addr);
++	f2fs_invalidate_internal_cache(sbi, addr, 1);
+ 
+ 	/* add it into sit main buffer */
+ 	down_write(&sit_i->sentry_lock);
+@@ -3845,7 +3845,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 		goto out;
+ 	}
+ 	if (GET_SEGNO(fio->sbi, fio->old_blkaddr) != NULL_SEGNO)
+-		f2fs_invalidate_internal_cache(fio->sbi, fio->old_blkaddr);
++		f2fs_invalidate_internal_cache(fio->sbi, fio->old_blkaddr, 1);
+ 
+ 	/* writeout dirty page into bdev */
+ 	f2fs_submit_page_write(fio);
+@@ -4037,7 +4037,7 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		update_sit_entry(sbi, new_blkaddr, 1);
+ 	}
+ 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO) {
+-		f2fs_invalidate_internal_cache(sbi, old_blkaddr);
++		f2fs_invalidate_internal_cache(sbi, old_blkaddr, 1);
+ 		if (!from_gc)
+ 			update_segment_mtime(sbi, old_blkaddr, 0);
+ 		update_sit_entry(sbi, old_blkaddr, -1);
 -- 
-Alice Ryhl <aliceryhl@google.com>
+2.25.1
 
 
