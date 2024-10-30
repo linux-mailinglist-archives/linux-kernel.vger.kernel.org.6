@@ -1,142 +1,115 @@
-Return-Path: <linux-kernel+bounces-389736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9F59B7097
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:39:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112099B7098
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7329B1C208CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD00282842
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4E61EF94E;
-	Wed, 30 Oct 2024 23:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HgkTzLIC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48A7217446;
+	Wed, 30 Oct 2024 23:40:10 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0CB1C4612
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 23:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429941E8856;
+	Wed, 30 Oct 2024 23:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730331583; cv=none; b=XLg5AYGGAvj4zdAOA5jpQWbgcKnXhVj46JKOCb37sFmOW3baahaES1ORo50hN8tFpnMMYEOfxp9XTjqED2Xm6NpYkQTFLl8140aAyzA0M8rf4mOMMPIQQ00T1nV0Jfs3DXRSgP6aumlSNxxG5Xk7nZ2gsY8vvjju755HoMBZCIM=
+	t=1730331610; cv=none; b=OaLfdLb5HmSqGZVf9zey/EyIR8zv4X1M/iuW3DeOFHwMFxdUcdoR7Xz8fazaorcwcmJq4WWpRzxwsoYCaGye3KjksKSzsUdrQC0NZWvo+5MjRB+B0RW/DZUobwORNBh3G+6IoSf3/WSIEIdWRZc+R8utALwyk/KPEDqOjgbaWkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730331583; c=relaxed/simple;
-	bh=9RoctVLz7vPRQQux3xk7hRjAce6Fv+nbYXFla/dRFZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ocB+voLLht483u2hlcStHbZ2Og/EpANUZIopAS00+wVZ542R4kbxEFHLv6nUaEizXC0eiZZp7U3Eo6SvcMSI1lMqOLqAjVwILTJ4b7TdlqCFKstan3iXnhBR4C18g0lmmO62tCkOD/5EA5vR5rw4aahGmQapa3pzDaWeALYlv2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HgkTzLIC; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730331582; x=1761867582;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9RoctVLz7vPRQQux3xk7hRjAce6Fv+nbYXFla/dRFZo=;
-  b=HgkTzLICgpAg2iR+DV+tETaV+xyMeqOgnIp3dlUMdRTA5OGb4n65cXZZ
-   XoX0yNmx6A5DqDHMUJMh/L7GL40WrHhcY9k9hSwd8EFeJ/nwvlddR32Fu
-   vaR5cX37dBTz4K2waSbTCvNfWycTbD9Trj12Ili0VXN+XjBXNzKzzfw3s
-   oNyieBR4kjyo+XisfT43ADdYdYKAYJJJeHcP6RfYM9VFwBmRmle/XFORA
-   iXzrfd2tkE3OXwBjyb0tW1PQmZ2K61MVM/imHrQQNuCIypAcwekgygkZ6
-   t5lT0VOB/PwKlY1MkxoiMtgZKDhB9SrfbKExoL0l/e558uYlqbHMMJUTz
-   w==;
-X-CSE-ConnectionGUID: joTOFzDuSx6+etqJjCu3nQ==
-X-CSE-MsgGUID: odbnl7paQmi9+DNIn76V0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="41454391"
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="41454391"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 16:39:42 -0700
-X-CSE-ConnectionGUID: gp8SokX3R424+Ob5wS9QnQ==
-X-CSE-MsgGUID: RejddLsOS9OmV97P5cf62g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="82556564"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.223.155]) ([10.124.223.155])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 16:39:40 -0700
-Message-ID: <1c1c25f4-2aa3-42cb-87e2-0bc54b2d0e07@intel.com>
-Date: Wed, 30 Oct 2024 16:39:39 -0700
+	s=arc-20240116; t=1730331610; c=relaxed/simple;
+	bh=P54VmbAjUDEuc9ALM89/kQ517bvFtFpeh51kBjdxCT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b+VO3xp/1Toyl7qCLLVJjTCAV/wJAn9ShzxRU6RsUFUUBWfq9AmDO3mh9FekoVu7phuNjqQEjuJlnHHzEZCrOxzKPaxN4YS/li9+RzZbPFO2EBHUxdicz3M1LURB3+LC6++lyLz0S9nUFWEArJRSSKw9AlBpo7lXzbGaYgMVBVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53114C4E692;
+	Wed, 30 Oct 2024 23:40:09 +0000 (UTC)
+Date: Wed, 30 Oct 2024 19:40:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+ <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tracing: Replace strncpy() with strscpy() when copying
+ comm
+Message-ID: <20241030194006.4d29417c@rorschach.local.home>
+In-Reply-To: <20240731075058.617588-1-ruanjinjie@huawei.com>
+References: <20240731075058.617588-1-ruanjinjie@huawei.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/cpufeature: Add feature dependency checks
-To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Uros Bizjak <ubizjak@gmail.com>,
- Sandipan Das <sandipan.das@amd.com>, Sean Christopherson
- <seanjc@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Vegard Nossum <vegard.nossum@oracle.com>, Tony Luck <tony.luck@intel.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>, Eric Biggers <ebiggers@google.com>,
- Xin Li <xin3.li@intel.com>, Alexander Shishkin
- <alexander.shishkin@intel.com>,
- Kirill Shutemov <kirill.shutemov@linux.intel.com>,
- linux-kernel@vger.kernel.org
-References: <20241030233118.615493-1-sohil.mehta@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241030233118.615493-1-sohil.mehta@intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 10/30/24 16:31, Sohil Mehta wrote:
-> Unexpected failures can occur when the kernel tries to use such a
-> feature. Rather than debug such scenarios, it would be better to
-> disable the feature upfront.
+On Wed, 31 Jul 2024 15:50:58 +0800
+Jinjie Ruan <ruanjinjie@huawei.com> wrote:
 
-It Looks OK and sane to me.  It's nice that it inherits the "Loop until
-we get a stable state" from do_clear_cpu_cap().
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events=
+_hist.c
+> index 6ece1308d36a..4ee0e64719fa 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -1599,7 +1599,7 @@ static inline void save_comm(char *comm, struct tas=
+k_struct *task)
+>  		return;
+>  	}
+> =20
+> -	strncpy(comm, task->comm, TASK_COMM_LEN);
+> +	strscpy(comm, task->comm);
+>  }
+> =20
 
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Was this even compiled?
+
+In file included from /work/git/test-linux.git/include/linux/container_of.h=
+:5,
+                 from /work/git/test-linux.git/include/linux/list.h:5,
+                 from /work/git/test-linux.git/include/linux/module.h:12,
+                 from /work/git/test-linux.git/kernel/trace/trace_events_hi=
+st.c:8:
+/work/git/test-linux.git/kernel/trace/trace_events_hist.c: In function =E2=
+=80=98save_comm=E2=80=99:
+/work/git/test-linux.git/include/linux/build_bug.h:16:51: error: negative w=
+idth in bit-field =E2=80=98<anonymous>=E2=80=99
+   16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); }=
+)))
+      |                                                   ^
+/work/git/test-linux.git/include/linux/compiler.h:243:33: note: in expansio=
+n of macro =E2=80=98BUILD_BUG_ON_ZERO=E2=80=99
+  243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), =
+&(a)[0]))
+      |                                 ^~~~~~~~~~~~~~~~~
+/work/git/test-linux.git/include/linux/string.h:79:47: note: in expansion o=
+f macro =E2=80=98__must_be_array=E2=80=99
+   79 |         sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) =
++    \
+      |                                               ^~~~~~~~~~~~~~~
+/work/git/test-linux.git/include/linux/args.h:25:24: note: in expansion of =
+macro =E2=80=98__strscpy0=E2=80=99
+   25 | #define __CONCAT(a, b) a ## b
+      |                        ^
+/work/git/test-linux.git/include/linux/args.h:26:27: note: in expansion of =
+macro =E2=80=98__CONCAT=E2=80=99
+   26 | #define CONCATENATE(a, b) __CONCAT(a, b)
+      |                           ^~~~~~~~
+/work/git/test-linux.git/include/linux/string.h:113:9: note: in expansion o=
+f macro =E2=80=98CONCATENATE=E2=80=99
+  113 |         CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, _=
+_VA_ARGS__)
+      |         ^~~~~~~~~~~
+/work/git/test-linux.git/kernel/trace/trace_events_hist.c:1602:9: note: in =
+expansion of macro =E2=80=98strscpy=E2=80=99
+ 1602 |         strscpy(comm, task->comm);
+      |         ^~~~~~~
+
+Bah!
+
+-- Steve
 
