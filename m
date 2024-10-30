@@ -1,94 +1,146 @@
-Return-Path: <linux-kernel+bounces-388926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719549B6646
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:44:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22C99B6644
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E3A1C20AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:44:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59CF1C20AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A9B1F4714;
-	Wed, 30 Oct 2024 14:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="wbith0Z4"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5DA1F131B;
+	Wed, 30 Oct 2024 14:44:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F56B1EF92C;
-	Wed, 30 Oct 2024 14:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ACDB672;
+	Wed, 30 Oct 2024 14:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299465; cv=none; b=HWmmM05+9vDhN9tZfk9T/CXNCz3ZkRymCGmUsnTlnuBBiywifbCuPbSo2DtmJQzK1pkFGXzJpWhZpzqfBU+NrmhxaD6YndRGoiB2vJ+cmD3RxW6cDMMnd5Zz8n/g1am/311dYgED+stgjyFu/uZGnHGQZyOKOMLIQ9rqWk6ef3E=
+	t=1730299464; cv=none; b=TmSM71kky24xujHSgbpxtal/gQp14g8PwqqMcrbCSdQHFzx6Atg6YHEPWwmqSh/PnGpaFqPf/Nwblwfn7bUWfmzSNpu24k1cxMo97cBOnf6CcoC/W56l5uI7MTTdCdHPIimKj9W4YBqr4YE+qVQX1f/DC8Kb4xwoYdJHdLifvf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299465; c=relaxed/simple;
-	bh=z5b+ZJLDzyjbUCMVAcP4EsLW34usezSkpLXV0vWtgss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eGtEEWBz4noW2rpPQBQvZKU5X6XipMtlw1BkFV4oFKd8krnFN57wUXbkv29mpjHbNhn/rMqqK5KH/MkGedQKFFnmVmo5HV57i93HQji7/sB680LP5/YGLubcKJAmjzZ1yw/HepJFupu0e/Aayl6H0j9HI18jg/71S4/uR7obQVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=wbith0Z4; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730299461;
-	bh=z5b+ZJLDzyjbUCMVAcP4EsLW34usezSkpLXV0vWtgss=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wbith0Z4ftepVN0kCdg9O/W0pDd3JcQdljZaB6qkH6obhaFEKfuhp125U2avoTKSG
-	 OB8Pn/GZm2UuGB5jFCEPCG57ilPqnzZaF6MD71nxfPriebNOIEHcgwArJLxosQd8AQ
-	 bppx4fNLPvzefwxyOdJBrpxOuuRNZw7LYVlDvRykUW5CD6HW+VaJExdiGnx5n6ZX5W
-	 VLq7ZbnntsYU8JzGXcyMSUiuAqGoW8aBEF5PRsRFnbFiaJZZMHT8YSa8+qK+NZ3kb5
-	 KqktJYsssOopVwBfdNmqOZzqLR/+hsE4r7XhWNeQaFDKYTMwYEo3QvbJouMhXF9iA9
-	 RaxMRQcfpkF1A==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Xdqdc68yXzL14;
-	Wed, 30 Oct 2024 10:44:20 -0400 (EDT)
-Message-ID: <91b9202c-6124-44ec-9d44-4556fa21dd41@efficios.com>
-Date: Wed, 30 Oct 2024 10:42:43 -0400
+	s=arc-20240116; t=1730299464; c=relaxed/simple;
+	bh=F2p1CIBhsgGPCFP7JP4hFpvJnWXOIzEKAIw73T3SjtE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rV/ulRk25gKfzyKBAnEcgvwp9k7hDGA01NCZNnTkhGHkn7Uy3anUy7/uxzd9qw0yM/GNlTqRwOv9CoAFk1LdwkiZybdpg5B2v8RAVhIrbZaqFxYxXeLdZs+yxq3usxaerLsUDrOdVqo9qy22z6crn1to1rQM6KUg9BtxBwklbDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdqWs0Gy4z6GDsD;
+	Wed, 30 Oct 2024 22:39:21 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 44F3C140498;
+	Wed, 30 Oct 2024 22:44:12 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 15:44:11 +0100
+Date: Wed, 30 Oct 2024 14:44:10 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 23/27] dax/region: Create resources on sparse DAX
+ regions
+Message-ID: <20241030144410.00001be7@Huawei.com>
+In-Reply-To: <20241029-dcd-type2-upstream-v5-23-8739cb67c374@intel.com>
+References: <20241029-dcd-type2-upstream-v5-0-8739cb67c374@intel.com>
+	<20241029-dcd-type2-upstream-v5-23-8739cb67c374@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/4] tracing: Add might_fault() check in
- __DO_TRACE() for syscall
-To: Jordan Rife <jrife@google.com>
-Cc: acme@kernel.org, alexander.shishkin@linux.intel.com,
- andrii.nakryiko@gmail.com, ast@kernel.org, bpf@vger.kernel.org,
- joel@joelfernandes.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com,
- mhiramat@kernel.org, mingo@redhat.com, mjeanson@efficios.com,
- namhyung@kernel.org, paulmck@kernel.org, peterz@infradead.org,
- rostedt@goodmis.org, tglx@linutronix.de, yhs@fb.com
-References: <CADKFtnT59wzKxob03OOOfvVh67MQkpWvzvfmzv3D-_bGeM=rJA@mail.gmail.com>
- <20241029002814.505389-1-jrife@google.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241029002814.505389-1-jrife@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 2024-10-28 20:28, Jordan Rife wrote:
->> I can test this later today. Considering there needs to be a fix on
->> the BPF side to fully resolve the use-after-free issue reported by
->> syzbot, I may combine your v4 patch with the bandaid fix which chains
->> call_rcu->call_rcu_tasks_trace I made earlier while running the
->> reproducer locally.
+On Tue, 29 Oct 2024 15:34:58 -0500
+ira.weiny@intel.com wrote:
+
+> From: Navneet Singh <navneet.singh@intel.com>
 > 
-> Testing this way, the series LGTM. Here's what I did starting from
-> linux-next tag next-20241028.
-[...]
-> Tested-by: Jordan Rife <jrife@google.com>
+> DAX regions which map dynamic capacity partitions require that memory be
+> allowed to come and go.  Recall sparse regions were created for this
+> purpose.  Now that extents can be realized within DAX regions the DAX
+> region driver can start tracking sub-resource information.
 > 
+> The tight relationship between DAX region operations and extent
+> operations require memory changes to be controlled synchronously with
+> the user of the region.  Synchronize through the dax_region_rwsem and by
+> having the region driver drive both the region device as well as the
+> extent sub-devices.
+> 
+> Recall requests to remove extents can happen at any time and that a host
+> is not obligated to release the memory until it is not being used.  If
+> an extent is not used allow a release response.
+> 
+> When extents are eligible for release.  No mappings exist but data may
+> reside in caches not yet written to the device.  Call
+> cxl_region_invalidate_memregion() to write back data to the device prior
+> to signaling the release complete.  This is inefficient but is the best
+> we can do at the moment and should occur infrequently with sufficiently
+> large extents and work loads.
+> 
+> The DAX layer has no need for the details of the CXL memory extent
+> devices.  Expose extents to the DAX layer as device children of the DAX
+> region device.  A single callback from the driver aids the DAX layer to
+> determine if the child device is an extent.  The DAX layer also
+> registers a devres function to automatically clean up when the device is
+> removed from the region.
+> 
+> There is a race between extents being surfaced and the dax_cxl driver
+> being loaded.  The driver must therefore scan for any existing extents
+> while still under the device lock.
+> 
+> Respond to extent notifications.  Manage the DAX region resource tree
+> based on the extents lifetime.  Return the status of remove
+> notifications to lower layers such that it can manage the hardware
+> appropriately.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+One typo spotted.
 
-Thanks! I'll add your tested-by tags and send a v5 non-RFC.
+Otherwise seems fine to me but not an area I know well yet!
 
-Mathieu
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+> index 0867115aeef2e1b2d4c88b5c38b6648a404b1060..8ebbc4808c3509ff17ac3af045505dc42c003fb0 100644
+> --- a/drivers/dax/dax-private.h
+> +++ b/drivers/dax/dax-private.h
+
+> +/**
+> + * struct dax_resource - For sparse regions; an active resource
+> + * @region: dax_region this resources is in
+> + * @res: resource
+> + * @use_cnt: count the number of uses of this resource
+> + *
+> + * Changes to the dax_reigon and the dax_resources within it are protected by
+dax_region
+
+> + * dax_region_rwsem
+> + *
+> + * dax_resource's are not intended to be used outside the dax layer.
+> + */
+> +struct dax_resource {
+> +	struct dax_region *region;
+> +	struct resource *res;
+> +	unsigned int use_cnt;
+> +};
 
 
