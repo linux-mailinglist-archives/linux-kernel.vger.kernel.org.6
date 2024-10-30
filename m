@@ -1,112 +1,169 @@
-Return-Path: <linux-kernel+bounces-389056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586F69B67FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 027FD9B67FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044EB1F22A08
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81D0B1F22AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776842141A4;
-	Wed, 30 Oct 2024 15:37:17 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B022139A8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DFD2139A2;
 	Wed, 30 Oct 2024 15:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qb/12Uin"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFEC2C6A3;
+	Wed, 30 Oct 2024 15:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730302637; cv=none; b=kXYE3L+J5YU+D/4E/Bba/OtBsUAXEBXudt3QpKnK7IT0m5zpyuf60I3R8iHpeB35fapQnCJ9l2HV4k+uCoOVAyCVl+ddwT/M70fmZFy/gIoEereKcxhAQxw+fPsv38jrrz13iTMcU5HlyU6VMRakA/296LrULtZEdSOEPwVkV/0=
+	t=1730302632; cv=none; b=UizKU9i6a8pJBh2qpk5esHy40es+vqWAZvESeM4WGKiC9CG/c3zXWL8WKGN9DLI220VW1KhkCuwbUwvn7LgNkls+cdKG6AsojMAP7cX0rp0fmyDZlyD5VcKlCS7xCNT9VtxjPcyQpIpCo4GSisBRzFmrJHxZSgkwKPB6+n/yKIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730302637; c=relaxed/simple;
-	bh=PIpJkJ1iSVh/VJTjPjEj26Ptv2Y+3Be1BtZThLonA2A=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eYOHOWvspQqAFbmiPhn+ljlGkb9Bj+PWmagQfdohnjPhUShwyocMV3vciL3p/3FHhAhBj50C/o3eCPRGlRRpl4dLqaNgpaXjb00fE17UlvDvr9KGb0MaeusWLkMxlmyU3jKeyaKcV8f9CUukxo2jS9Wx+2IuLF7miBcfk0QKSF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdrn35vkpz6HJgF;
-	Wed, 30 Oct 2024 23:35:51 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4841C140A35;
-	Wed, 30 Oct 2024 23:37:10 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 16:37:09 +0100
-Date: Wed, 30 Oct 2024 15:37:08 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 06/14] PCI/AER: Change AER driver to read UCE fatal
- status for all CXL PCIe port devices
-Message-ID: <20241030153708.000001a0@Huawei.com>
-In-Reply-To: <20241025210305.27499-7-terry.bowman@amd.com>
-References: <20241025210305.27499-1-terry.bowman@amd.com>
-	<20241025210305.27499-7-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730302632; c=relaxed/simple;
+	bh=jsll4iE1W2vc5wqDh6vKsydyOvjcSPJ7tW7yaYX8bCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUMK78Mm0/fXDdou+LwtkerpKDLIxSzkGRIWF0oX/08cfsswjtO48EeS8LC2kIRZOXZJFNfyBIvZwnFUwnZJdRJHXJfYVs+9fwe6d6oSSFbzI6MqzXsxnpQrrk/FIzKlRSIPgsOW9VD8CkYiSeRXgSHVjxs7XbOYem8BEajSsMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qb/12Uin; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7edb3f93369so21428a12.1;
+        Wed, 30 Oct 2024 08:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730302629; x=1730907429; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qRgFGBcG9N2scOzZ+x26NTz7+MUkQBjpLYs7QSpsjkc=;
+        b=Qb/12Uin85auYVP7smHFW8Dodn2q7hsHan8IWTHDDJ9IpDYRfk0OwMMRVpxqZWyumw
+         v33YLsZqVGepPrU4s1LZ5F1I+cmgVUXlQjQGEY6WpRfhoWtR6mgEfpKcV8eKlSDQd6V1
+         eMDYipzB6BUUzhFe3xYVgzUn0nwMfuCA+KpClm9O4FKD2aawkxFXhU+0UFuGUKLpDzE9
+         1plX6SMNZclvuJCfetKW79KBJzo2HPOZk4IwPdWI7F6gIbfUni/q+MAHo6yT3WXbhN81
+         KGWGELlQSIqpMS9sFEkiBX1SlBxE1ej27TUUGS7g9mqiRSoRReSgmf16oCBZ7q0b/R5J
+         ue+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730302629; x=1730907429;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qRgFGBcG9N2scOzZ+x26NTz7+MUkQBjpLYs7QSpsjkc=;
+        b=KKUiZrxp2cyLEbnPb2u25pUag+ap+UFYXlw/GT7XPlkj+BOKJtu1+Haq7WQ3Enh+2Y
+         OQ9Wq49XhW7NYNAgmymsxw5PpKH8VjeUfIdvdpaHp5H9KcMq3y+etxVDfb4HFE/t0yE9
+         W4Q4+abck1GtEMltJ/Drsm25tAKeSSiNGdRLT/+LdcnJvslHm0zSfmsOJG8qk/Q0uzIU
+         Vxbp+vMng09U/LEmR8xm7TXZmR0RI8gZtxFoeCk3PFJFTc3od8hg/4+dpqDOEGnwmyG3
+         X5NJSg+p63Pz6XkmHHnavIJ/PQuB8k0l8l8EcIsrA0BbEUPrp0WgeZAbHr4+YbGCQAor
+         LdTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMp08Jyc9ydDLm31q3WZ0lNzk01TdW/sAvhzqytx6QpeIzGrwZ7slUL/AokwMB9CnM9lnn8CdVy2/QxtxrIxVu@vger.kernel.org, AJvYcCVBT4EM1SNczIPnmBZ0S10Nt2UN29bDefhLODnOTSa4trC95ysgt5GVMCYD3qZDExtmGv7wRlIF@vger.kernel.org, AJvYcCW/RKkWnzkjpu6Nfn7F4nEP/beRUv4U7tOvhVdFtnume0zHDDUhCKWAAkYiK6FbFOPVmXuXTkG/EAbKacU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmGc2J5sBe4z09FE6rY8hjFbHI/v2IfyWxxwmiTDawhDuoH+9A
+	nYVHN945jglT9r/jdAA9jWBYaWSq34BmfUz53pVXIf8kZdkwP6A=
+X-Google-Smtp-Source: AGHT+IHMgfYhqtG/HeD4IkXQKmRqZBm1ETzBUyPWZsG0ycjcyLfBwQroJVrhMWh2VNGZ4DMQG6jyjQ==
+X-Received: by 2002:a05:6300:4041:b0:1d9:2bed:c7e5 with SMTP id adf61e73a8af0-1d9a84b89bfmr21656776637.40.1730302629584;
+        Wed, 30 Oct 2024 08:37:09 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0df99sm9405125b3a.118.2024.10.30.08.37.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 08:37:09 -0700 (PDT)
+Date: Wed, 30 Oct 2024 08:37:08 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
+	shuah@kernel.org, horms@kernel.org, willemb@google.com,
+	petrm@nvidia.com
+Subject: Re: [PATCH net-next v6 00/12] selftests: ncdevmem: Add ncdevmem to
+ ksft
+Message-ID: <ZyJSpBrhz7UJ0r7c@mini-arch>
+References: <20241030142722.2901744-1-sdf@fomichev.me>
+ <CAHS8izOBp4yXBg-nOSouD+A7gOGs9MPmdFc9_hB8=Ni0QdeZHg@mail.gmail.com>
+ <ZyJM_dVs1_ys3bFX@mini-arch>
+ <CAHS8izN6-5RJgKX08sgntYDVgETkBGpgoYToq8ezcy+tYHdaSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izN6-5RJgKX08sgntYDVgETkBGpgoYToq8ezcy+tYHdaSA@mail.gmail.com>
 
-On Fri, 25 Oct 2024 16:02:57 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
-
-> The AER service driver's aer_get_device_error_info() function doesn't read
-> uncorrectable (UCE) fatal error status from PCIe upstream port devices,
-> including CXL upstream switch ports. As a result, fatal errors are not
-> logged or handled as needed for CXL PCIe upstream switch port devices.
+On 10/30, Mina Almasry wrote:
+> On Wed, Oct 30, 2024 at 8:13 AM Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> >
+> > On 10/30, Mina Almasry wrote:
+> > > On Wed, Oct 30, 2024 at 7:27 AM Stanislav Fomichev <sdf@fomichev.me> wrote:
+> > > >
+> > > > The goal of the series is to simplify and make it possible to use
+> > > > ncdevmem in an automated way from the ksft python wrapper.
+> > > >
+> > > > ncdevmem is slowly mutated into a state where it uses stdout
+> > > > to print the payload and the python wrapper is added to
+> > > > make sure the arrived payload matches the expected one.
+> > > >
+> > > > v6:
+> > > > - fix compilation issue in 'Unify error handling' patch (Jakub)
+> > > >
+> > >
+> > > Since I saw a compilation failures on a couple of iterations I
+> > > cherry-picked this locally and tested compilation. I'm seeing this:
+> >
+> > Are you cherry picking the whole series or just this patch? It looks
+> > too broken.
+> >
+> > > sudo CFLAGS="-static" make -C ./tools/testing/selftests/drivers/net/hw
+> > > TARGETS=ncdevmem 2>&1
+> > > make: Entering directory
+> > > '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/drivers/net/hw'
+> > >   CC       ncdevmem
+> > > In file included from ncdevmem.c:63:
+> > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/../../../tools/net/ynl/generated/ethtool-user.h:23:43:
+> > > warning: ‘enum ethtool_header_flags’ declared inside parameter list
+> > > will not be visible outside of this definition or declaration
+> > >    23 | const char *ethtool_header_flags_str(enum ethtool_header_flags value);
+> > >       |                                           ^~~~~~~~~~~~~~~~~~~~
+> > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/../../../tools/net/ynl/generated/ethtool-user.h:25:41:
+> > > warning: ‘enum ethtool_module_fw_flash_status’ declared inside
+> > > parameter list will not be visible outside of this definition or
+> > > declaration
+> > >    25 | ethtool_module_fw_flash_status_str(enum
+> > > ethtool_module_fw_flash_status value);
+> > >       |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/../../../tools/net/ynl/generated/ethtool-user.h:6766:45:
+> > > error: field ‘status’ has incomplete type
+> > >  6766 |         enum ethtool_module_fw_flash_status status;
+> > >       |                                             ^~~~~~
+> >
+> > This has been fixed via '#include <linux/ethtool_netlink.h>'
+> >
+> > > ncdevmem.c: In function ‘do_server’:
+> > > ncdevmem.c:517:37: error: storage size of ‘token’ isn’t known
+> > >   517 |                 struct dmabuf_token token;
+> >
+> > And this, and the rest, don't make sense at all?
+> >
+> > I'll double check on my side.
 > 
-> Update the aer_get_device_error_info() function to read the UCE fatal
-> status for all CXL PCIe port devices.
+> Oh, whoops, I forgot to headers_install first. This works for me:
 > 
-> The fatal error status will be used in future patches implementing
-> CXL PCIe port uncorrectable error handling and logging.
+> ➜  cos-kernel git:(tcpdevmem-fixes-1) ✗ sudo make headers_install &&
+> sudo CFLAGS="-static" make -C ./tools/testing/selftests/drivers/net/hw
+> TARGETS=ncdevmem 2>&1
+>   INSTALL ./usr/include
+> make: Entering directory
+> '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/drivers/net/hw'
+> make: Nothing to be done for 'all'.
+> make: Leaving directory
+> '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/drivers/net/hw'
+> ➜  cos-kernel git:(tcpdevmem-fixes-1) ✗ find . -iname ncdevmem
+> ./tools/testing/selftests/drivers/net/hw/ncdevmem
 > 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Sorry for the noise :D
 
-I assume this was previously not done because the upstream port
-requires a healthy link and maybe the error indicates we don't have one.
-
-So I'd imagine this change may have a bad effect on PCIe devices
-even if we know it's fine CXL ones in the case of certain protocol errors.
-
-Also, does the error log stuff that follows make much sense for
-an upstream port?
-
-> ---
->  drivers/pci/pcie/aer.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 1d3e5b929661..d772f123c6a2 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1250,6 +1250,7 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->  		   type == PCI_EXP_TYPE_RC_EC ||
->  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
-> +		   type == PCI_EXP_TYPE_UPSTREAM ||
->  		   info->severity == AER_NONFATAL) {
->  
->  		/* Link is still healthy for IO reads */
-
+Whew, thanks and no worries!
 
