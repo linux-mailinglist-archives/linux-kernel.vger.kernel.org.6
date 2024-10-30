@@ -1,254 +1,271 @@
-Return-Path: <linux-kernel+bounces-388440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6229B5FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:08:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62829B5FBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AE501C2138C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:08:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059321C214D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0C91E25E8;
-	Wed, 30 Oct 2024 10:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107B11E260B;
+	Wed, 30 Oct 2024 10:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="TSC31qEP"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="hfL46OIM"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA45194151;
-	Wed, 30 Oct 2024 10:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB43194151;
+	Wed, 30 Oct 2024 10:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730282905; cv=none; b=aAz8ZyHiIs7rMMN35ghSbSmyLQzyB4hRUX5vC10GTAM0UhHOpb9QImawTKdpj/yLhk/yxPoO7yqX3uvEEFnSeLyFQskFqmUUFUS1A3WLteR97GH25J5a1fYB7U7a6Rh6KcL4sOn/O32rxrx/XmjodkXnVal/bldDzSwemJ6WXFk=
+	t=1730282931; cv=none; b=HmOJq1NJW3IPmm+UEiCB5/VM0MnV0ffV7EQk6933aiGCyaFcdbWTJpo0bz0XIeynggn8VOXj0vP+syYpNgaBcCfvjVJIJzNufkfPr1N/mkgsrXsfPpJ+nSjNVWy2QguIU+NFawZN2Xpue43+DQWqjp3gS6THqi+uwTrZKP25mz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730282905; c=relaxed/simple;
-	bh=7Q+MTQAKucz7iLxuJeNISzJ9qykwouLo3OSjZDpUyFs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F7Ufz7Qrvx6jeGsK29M6NMBonhVPhGvIl1xyWJL+TGkSHAWbtgMeHEL4BKKO3lFwK3o17mg0JJExL47nnle1mKj8hAgN/p3TKS18feMbeMr1k7HUIEWK58PMLzRiUjosKUcf4cCf11LmBXo6f4bnE2pdGduZ/xXcMZ9vB51w4IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=TSC31qEP; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49UA89irC3852080, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1730282889; bh=7Q+MTQAKucz7iLxuJeNISzJ9qykwouLo3OSjZDpUyFs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=TSC31qEPq6jIlmKGj1cXD/lxxj/Ke76wzyZjg1D1wt68W2Y9wguNt4kPeLZcrYDQD
-	 Ci71n+V5nv6yBLWL5PM/rtwcEFLfW9l0UHAY+JHAQIJcOi/WNCgd5eDrnSepWJVPMn
-	 54dxakyN2/M/agQCgWnebDBRJ/dKpbRjJTUuVQhhcCQBqyXkFTn7OYVQv+btMN4Ywc
-	 njAE4trr9cw4KwGi/S4E84gy430BczMIOb10mNheoTrsV2yuaRkEyWTvddnWcsFSM1
-	 E0GJYbYj7uhHp4az+IA495Ma7q0LQjtt9M+8TdrsiUwp2QShRZbjAKubDMpY7CHA1f
-	 TbCjrXO1+qZMQ==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49UA89irC3852080
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 18:08:09 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 30 Oct 2024 18:08:09 +0800
-Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 30 Oct
- 2024 18:08:08 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: <marcel@holtmann.org>
-CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <max.chou@realtek.com>,
-        <alex_lu@realsil.com.cn>, <kidman@realtek.com>
-Subject: [PATCH] bluetooth: add quirk using packet size 60
-Date: Wed, 30 Oct 2024 18:08:04 +0800
-Message-ID: <20241030100804.2743115-1-hildawu@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730282931; c=relaxed/simple;
+	bh=GJjkKtJLGg2c+fpkv6w0zC/tfBrQdQJ3rxaYasuqh38=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=FhEI6MdN1PkS1QWuP62/gwpH8D431buAGZVUjnP4mGrN0zWLS8DrI/76Pwvy1z6FHjSVHFUXE/IbmP0yKRNdNdXwocbQry2piMIuJOO6tjAYnsS2QvOeofTcbIwIHEctUVxsSg/5PsizxTWWXybVwG3/e7j7V4EPnn6gbwAWKd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=hfL46OIM; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=aoyqYRRkHEEL8sSP+v1UFQCenPsx/7LS5sbiYM0jCV0=;
+  b=hfL46OIM18PcKRsLAxYyS/WxSYD8Ro3TW3AC0/4WXC5MaBxvvy+xN3hB
+   XXKqxYjLwiNlpZgkf+JWhmsYWK7BgcT/4K8e7Q9O+WPv8+wVPmJnMqayd
+   2CiTPAnV5k+TOXBKKvU4T9jqFrdIeEZWEX8LNSQ8d/SXcNL9gx/rvEpSo
+   8=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,244,1725314400"; 
+   d="scan'208";a="191419412"
+Received: from 089-101-193071.ntlworld.ie (HELO hadrien) ([89.101.193.71])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 11:08:44 +0100
+Date: Wed, 30 Oct 2024 10:08:43 +0000 (GMT)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+cc: R Sundar <prosunofficial@gmail.com>, 
+    Tony Nguyen <anthony.l.nguyen@intel.com>, intel-wired-lan@lists.osuosl.org, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    karol.kolacinski@intel.com, arkadiusz.kubalewski@intel.com, 
+    jacob.e.keller@intel.com, kernel test robot <lkp@intel.com>, 
+    Julia Lawall <julia.lawall@inria.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+    davem@davemloft.net, Eric Dumazet <edumazet@google.com>, 
+    Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+    Richard Cochran <richardcochran@gmail.com>
+Subject: Re: [PATCH linux-next] ice: use string choice helpers
+In-Reply-To: <ca4f7990-16c4-42ef-b0ae-12e64a100f5e@intel.com>
+Message-ID: <498a3d58-55e0-4349-bd92-8ce16c6016@inria.fr>
+References: <20241027141907.503946-1-prosunofficial@gmail.com> <ca4f7990-16c4-42ef-b0ae-12e64a100f5e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=US-ASCII
 
-The RTL8852BE-VT supports USB alternate setting 6.
-However, its descriptor does not report this capability to the host.
-Therefore, a quirk is needed to bypass the RTL8852BE-VT's descriptor
-and allow it to use USB ALT 6 directly.
 
-Signed-off-by: Hilda Wu <hildawu@realtek.com>
----
- drivers/bluetooth/btrtl.c |  3 ++
- drivers/bluetooth/btrtl.h |  1 +
- drivers/bluetooth/btusb.c | 89 ++++++++++++++++++++++++++++++---------
- 3 files changed, 73 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 0bcb44cf7b31..b75f0b36a09b 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -1312,6 +1312,9 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
- 		    btrtl_dev->project_id == CHIP_ID_8852C)
- 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
- 
-+		if (btrtl_dev->project_id == CHIP_ID_8852BT)
-+			btrealtek_set_flag(hdev, REALTEK_ALT6_FORCE);
-+
- 		hci_set_aosp_capable(hdev);
- 		break;
- 	default:
-diff --git a/drivers/bluetooth/btrtl.h b/drivers/bluetooth/btrtl.h
-index a2d9d34f9fb0..ffec2fca88ec 100644
---- a/drivers/bluetooth/btrtl.h
-+++ b/drivers/bluetooth/btrtl.h
-@@ -105,6 +105,7 @@ struct rtl_vendor_cmd {
- 
- enum {
- 	REALTEK_ALT6_CONTINUOUS_TX_CHIP,
-+	REALTEK_ALT6_FORCE,
- 
- 	__REALTEK_NUM_FLAGS,
- };
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 514d593923ad..eca0b173232e 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -804,6 +804,7 @@ struct qca_dump_info {
- #define BTUSB_USE_ALT3_FOR_WBS	15
- #define BTUSB_ALT6_CONTINUOUS_TX	16
- #define BTUSB_HW_SSR_ACTIVE	17
-+#define BTUSB_ALT_CHANGED	18
- 
- struct btusb_data {
- 	struct hci_dev       *hdev;
-@@ -2130,16 +2131,61 @@ static void btusb_notify(struct hci_dev *hdev, unsigned int evt)
- 	}
- }
- 
-+static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
-+							int alt)
-+{
-+	struct usb_interface *intf = data->isoc;
-+	int i;
-+
-+	BT_DBG("Looking for Alt no :%d", alt);
-+
-+	if (!intf)
-+		return NULL;
-+
-+	for (i = 0; i < intf->num_altsetting; i++) {
-+		if (intf->altsetting[i].desc.bAlternateSetting == alt)
-+			return &intf->altsetting[i];
-+	}
-+
-+	return NULL;
-+}
-+
- static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
- {
- 	struct btusb_data *data = hci_get_drvdata(hdev);
- 	struct usb_interface *intf = data->isoc;
- 	struct usb_endpoint_descriptor *ep_desc;
-+	struct usb_host_interface *alt;
- 	int i, err;
- 
- 	if (!data->isoc)
- 		return -ENODEV;
- 
-+	/* For some Realtek chips, they actually have the altsetting 6, but its
-+	 * altsetting descriptor is not exposed. We can activate altsetting 6 by
-+	 * replacing the altsetting 5.
-+	 */
-+	if (altsetting == 6 && !btusb_find_altsetting(data, 6) &&
-+	    btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE)) {
-+		alt = NULL;
-+		for (i = 0; i < intf->num_altsetting; i++) {
-+			if (intf->altsetting[i].desc.bAlternateSetting == 5) {
-+				alt = &intf->altsetting[i];
-+				break;
-+			}
-+		}
-+		if (alt) {
-+			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
-+				ep_desc = &alt->endpoint[i].desc;
-+				if (usb_endpoint_is_isoc_out(ep_desc) ||
-+				    usb_endpoint_is_isoc_in(ep_desc))
-+					ep_desc->wMaxPacketSize = 63;
-+			}
-+			alt->desc.bAlternateSetting = 6;
-+			set_bit(BTUSB_ALT_CHANGED, &data->flags);
-+		}
-+	}
-+
- 	err = usb_set_interface(data->udev, data->isoc_ifnum, altsetting);
- 	if (err < 0) {
- 		bt_dev_err(hdev, "setting interface failed (%d)", -err);
-@@ -2151,6 +2197,27 @@ static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
- 	data->isoc_tx_ep = NULL;
- 	data->isoc_rx_ep = NULL;
- 
-+	/* Recover alt 5 desc if alt 0 is set. */
-+	if (!altsetting && test_bit(BTUSB_ALT_CHANGED, &data->flags)) {
-+		alt = NULL;
-+		for (i = 0; i < intf->num_altsetting; i++) {
-+			if (intf->altsetting[i].desc.bAlternateSetting == 6) {
-+				alt = &intf->altsetting[i];
-+				break;
-+			}
-+		}
-+		if (alt) {
-+			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
-+				ep_desc = &alt->endpoint[i].desc;
-+				if (usb_endpoint_is_isoc_out(ep_desc) ||
-+				    usb_endpoint_is_isoc_in(ep_desc))
-+					ep_desc->wMaxPacketSize = 49;
-+			}
-+			alt->desc.bAlternateSetting = 5;
-+			clear_bit(BTUSB_ALT_CHANGED, &data->flags);
-+		}
-+	}
-+
- 	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
- 		ep_desc = &intf->cur_altsetting->endpoint[i].desc;
- 
-@@ -2213,25 +2280,6 @@ static int btusb_switch_alt_setting(struct hci_dev *hdev, int new_alts)
- 	return 0;
- }
- 
--static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
--							int alt)
--{
--	struct usb_interface *intf = data->isoc;
--	int i;
--
--	BT_DBG("Looking for Alt no :%d", alt);
--
--	if (!intf)
--		return NULL;
--
--	for (i = 0; i < intf->num_altsetting; i++) {
--		if (intf->altsetting[i].desc.bAlternateSetting == alt)
--			return &intf->altsetting[i];
--	}
--
--	return NULL;
--}
--
- static void btusb_work(struct work_struct *work)
- {
- 	struct btusb_data *data = container_of(work, struct btusb_data, work);
-@@ -2269,7 +2317,8 @@ static void btusb_work(struct work_struct *work)
- 			 * MTU >= 3 (packets) * 25 (size) - 3 (headers) = 72
- 			 * see also Core spec 5, vol 4, B 2.1.1 & Table 2.1.
- 			 */
--			if (btusb_find_altsetting(data, 6))
-+			if (btusb_find_altsetting(data, 6) ||
-+			    btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE))
- 				new_alts = 6;
- 			else if (btusb_find_altsetting(data, 3) &&
- 				 hdev->sco_mtu >= 72 &&
--- 
-2.34.1
+On Mon, 28 Oct 2024, Przemek Kitszel wrote:
 
+> On 10/27/24 15:19, R Sundar wrote:
+> > Use string choice helpers for better readability.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Reported-by: Julia Lawall <julia.lawall@inria.fr>
+> > Closes: https://lore.kernel.org/r/202410121553.SRNFzc2M-lkp@intel.com/
+> > Signed-off-by: R Sundar <prosunofficial@gmail.com>
+> > ---
+>
+> thanks, this indeed covers all "enabled/disabled" cases, so:
+> Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+>
+> for future submissions for Intel Ethernet drivers please use the
+> iwl-next (or iwl-net) target trees.
+>
+> There are also other cases that we could cover ON/OFF etc
+
+I counted the number of occurrences of various cases.  Here are the
+results for at least 5 occurrences.  I converted everything to lowercase
+and put the two strings in alphabetical order.
+
+julia
+
+" " "\n   ": 5
+" (full)" "": 5
+" (last)" "": 5
+" csc" "": 5
+" recoverable" "": 5
+"" ".5": 5
+"" "1": 5
+"" ":" systemlow: 5
+"" "\"": 5
+"" "_backup": 5
+"" "auto-": 5
+"" "non": 5
+"" "t": 5
+"" # x " ": 5
+"->" "<-": 5
+"070701" "070702": 5
+"2.4g" "5g": 5
+"2g" dpk->bp[path][kidx].band == 1 ? "5g" : "6g": 5
+"80m" dpk->bp[path][kidx].bw == rtw89_channel_width_40 ? "40m" : "20m": 5
+"aborted" "completed": 5
+"active" "disabled": 5
+"anode" "sectors": 5
+"assert" "deassert": 5
+"attach" "detach": 5
+"basic rate" "edr rate": 5
+"bulk" "isoc": 5
+"client" "server": 5
+"closed" "open": 5
+"correctable" "uncorrectable": 5
+"dedicated" "shared": 5
+"fcp" "nvme": 5
+"fixed" "roll": 5
+"full duplex" "half duplex": 5
+"full" "high": 5
+"gsi" "smi": 5
+"hit" "not hit": 5
+"ht20" "ht40": 5
+"init" "rt": 5
+"ips off" "ips on": 5
+"lps off" "lps on": 5
+"mc" "uc": 5
+"migration" "recovery": 5
+"none" "tx": 5
+"off!!" "on!!": 5
+"pause" "resume": 5
+"rf_1t1r" "rf_2t2r": 5
+"running" "stopped": 5
+"set" "unset": 5
+"veb" "vepa": 5
+kern_emerg kern_info: 5
+" " "\n": 6
+" -- kernel too old?" "": 6
+" and " "": 6
+" flr" "": 6
+" iaa" "": 6
+" int" "": 6
+" pcd" "": 6
+" periodic" "": 6
+" x4" "": 6
+"" ")": 6
+"" "*not* ": 6
+"" ", ibss": 6
+"" ".": 6
+"" ":": 6
+"" "_flip": 6
+"" "amps, ": 6
+"" "i": 6
+"" "no": 6
+"" "pkgpwrl1, ": 6
+"" "pkgpwrl2, ": 6
+"" "prochot, ": 6
+"" "thermstatus, ": 6
+"" "vr-therm, ": 6
+"(not available)" "(success)": 6
+"1" "2": 6
+"20m" "40m": 6
+"32" "64": 6
+"???" "dma write": 6
+"active/passive" "passive only": 6
+"analog" "digital": 6
+"aura" "pool": 6
+"beacon" "probe response": 6
+"c-vlan" "vlan": 6
+"cancelled" "initiated": 6
+"capture" "playback": 6
+"cc1" "cc2": 6
+"decoder" "encoder": 6
+"downlink" "uplink": 6
+"exmode" "prmode": 6
+"found" "lost": 6
+"gdt" "ldt": 6
+"get" "set": 6
+"group" "user": 6
+"host" "peripheral": 6
+"ipv4" "ipv6": 6
+"is" "not": 6
+"kill" "on": 6
+"ns" "us": 6
+"reading" "writing": 6
+"recv" "send": 6
+" ..." "": 7
+" overflow" "": 7
+" suspend" "": 7
+"" ", nowayout": 7
+"" "...": 7
+"" "c": 7
+"" (#x " "): 7
+"" column_sep: 7
+"active" "idle": 7
+"add" "del": 7
+"add" "remove": 7
+"autodetected" "insmod option": 7
+"capture" "output": 7
+"ce" "ue": 7
+"dual" "single": 7
+"enter" "exit": 7
+"fail:" "pass:": 7
+"gate" "ungate": 7
+"intx" "msi": 7
+"private" "shared": 7
+"read error" "write error": 7
+"read from" "write to": 7
+"ro" "rw": 7
+kern_debug kern_err: 7
+" async" "": 8
+" fatal" "": 8
+" sof" "": 8
+" x16" "": 8
+"" "a": 8
+"" "b": 8
+"10" "100": 8
+"40m" "80m": 8
+"active" "passive": 8
+"bypass" "ram b": 8
+"connected" "disconnected": 8
+"dcs" "generic": 8
+"done" "failed": 8
+"dst" "src": 8
+"entering" "leaving": 8
+"failed" "ok": 8
+"failed" "pass": 8
+"fast" "slow": 8
+"hard" "soft": 8
+"invalid" "valid": 8
+"kernel" "user": 8
+"local" "remote": 8
+"primary" "secondary": 8
+"ram" "unknown": 8
+"restart" "start": 8
+"runtime" "system": 8
+" err" "": 9
+"" "-": 9
+"" "/s": 9
+"" ": ": 9
+"" "[": 9
+"" "]": 9
+"" "d": 9
+"2.4" "5.2": 9
+"absent" "present": 9
+"fail" "pass": 9
+"locked" "unlocked": 9
+"offline" "online": 9
+"r" "w": 9
+"struct" "union": 9
+"failed" "success": 53
+"" "un": 55
+"down" "up": 56
+"high" "low": 57
+"" "s": 65
+"full" "half": 84
+"" ",": 86
+"not supported" "supported": 91
+"" "not ": 96
 
