@@ -1,250 +1,152 @@
-Return-Path: <linux-kernel+bounces-388895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654DD9B65D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:29:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CE59B65BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D30CCB22902
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2901F2111C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DF51F8935;
-	Wed, 30 Oct 2024 14:27:35 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BAB1F1300;
+	Wed, 30 Oct 2024 14:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LMxxUptL"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3951F7082;
-	Wed, 30 Oct 2024 14:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BCC1EF953
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298454; cv=none; b=Rk39XR/hKYwWRBeo6ys4yd+hqDQB5OoG/2XmNcfn4yKRZac4mtWOYAUOIJBtKvx8J9T5rl6o4XPPBfT6gOVU5mbNn48ZNdhnBJWyNTLK7UIjd9oQj7WmyPt9PxXtskOlg5af6SS5kUKmHX59KTtTFTmWmFBTVIBwCV1PnJbk0f0=
+	t=1730298444; cv=none; b=ADV5qQUvp+CKS7EV5HQdHu8GBdovVeVkJRalnDvL9dEB0D1X/lHMJDotZCG6B9rR7nGZEvOT0wGFUuxHTUyw0xQv8QDaE779EPwp5UZnsA4/jAfz/fqZ9lsDjpwZ1lciJ8n0ywChmwDtWlpsnok+8Xw7E3F+e8/NpFRZWI+ZGR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298454; c=relaxed/simple;
-	bh=/9Aeg71P+WeuP/lJ/VnhMNWlAqelLsVbXCewlIWWuVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AVL+qGPKOos23L4N71QW2IrMSewcQjpxLFzNlTAta3L9BMOWBfNkxMAytpM8SB3ep7IerFvULf7yky96nsI527RLi4b/KgEaSmio/F8s5Woz9qyx4pxHxpu0JtTqCdteyD/D27Qzjx8khUnW+oqn8opFcy78+35ICnqaBzJMZtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cb7139d9dso65164865ad.1;
-        Wed, 30 Oct 2024 07:27:32 -0700 (PDT)
+	s=arc-20240116; t=1730298444; c=relaxed/simple;
+	bh=TKUoAPUA6DySqr60oJ3GcgzsVj/+dwLSsZp71Yup4YI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H1z40yrWCflMmHp7HBgW8a3bQ0uL7WQjrBY5sbGmZ6ha5nbbfp31IB/QwGC8/oweE4qHq82G8yiho70jKRRvGwXco6Bq0kTHMe98xJ7N36ppI/PHmT6xLu/4pDEb/bunodNi3W1Sw6dZuVCj2f1M6uzUP/4HmYd/fumSLGDlu+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LMxxUptL; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-288d4da7221so3599963fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:27:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730298440; x=1730903240; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OJr8SKaI8AcnRFsMtOpCdNtJ/tI/x3PUXE9ZFvbALXk=;
+        b=LMxxUptL3PNCmEiCfCJOGsZr8i8vQ3+CEAmslNlLWag5WEQseAWVP6WRU443v/q/UX
+         kiM3Tfq6FJYfqHPRkVQw0b/amCMwz7BFp9TE2xffkp9f6ZWTN6ib77wcJ8S7FhzCYRCc
+         VjHb+3FY3k6cV/IeZsy88p5EJln69D0q8uUZJokzGt3W7vNtoQIexU2vvhTGss2xGcQ7
+         UJ2tQhhcwnMnxUq5vkWyAYvGWW5L9LBY53+09Rd1MIE/33zhzNLIELRTmb5RNtEfiTHb
+         XT45e4aQm9mWAU2eDN3FmcT//d2Js6PVu/VO8A891aQcSuzbMaOmS+TAE/4WZzH53fIi
+         oItA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730298451; x=1730903251;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SGFZk/edoAU0ji551OMPbJzhccOrkILDSWMyBZaA81E=;
-        b=J/hXwXb7zzIpBAhdB4OrbOdEK6sNOn+faLplawf0DGvRuztjeiz0wwMD6ItKL5sYv+
-         eciARKL/jqANjuIQf1etGkRQ4602VwdCtj0fUI4NI5BZr71IDTls0J4TF908kzFB0BZh
-         /7JPFvzHfW/WhN6qKpTXHBuXtBWVhxhDJ8qxo2unlV1ZyIX5E5IbznJp3kaoNghF2IXW
-         ZRWX8bXvGUtyot0r5H1/f6s0IxFU1VLUzz73zzSonvhVbFCYIwQyqfNfAroweYaR/pSb
-         3E7WXUdlTW3fJk1BZ+K8InpLPTgh8mQ0weRzm1W97qILeQRcY8pGwy3flrvgovzzDhfp
-         wLPg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6EN9dqPQEM/PigaI/fSrdUNLTOTpar0ktuQijebOrfAkCfQmyDBLXcAOjopo+3PUwS27FroDedqOehQ2zPsDu@vger.kernel.org, AJvYcCX7/OtZ/EBmlUzqYFyN6s1/1MEVCOZF9ST6pbfuCUS12SQgGMD7zM4TW32GeZ/hhFUNcRDf4+9kHxXb77s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1ZjkRPEGX7CXkwwlH+F7pTI3Yr+VE6qn3q1G9HVW6RAlkKbV
-	imBIa78JREJ2SbO3ILHaEmOVvT9x5Q6BzpTu/n7txHehShIXaw/Xxtz6UsE=
-X-Google-Smtp-Source: AGHT+IFTtAIbKvQ4WSBihFqCuysx6SerVOR0yHxJZyGQPpm1cBM+uEjEKheafjWJB3/8SGTrhMFuXg==
-X-Received: by 2002:a17:902:e548:b0:20b:951f:6dff with SMTP id d9443c01a7336-210c673ae39mr188774055ad.0.1730298451479;
-        Wed, 30 Oct 2024 07:27:31 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc03d50esm81347085ad.231.2024.10.30.07.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 07:27:31 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	shuah@kernel.org,
-	horms@kernel.org,
-	sdf@fomichev.me,
-	almasrymina@google.com,
-	willemb@google.com,
-	petrm@nvidia.com
-Subject: [PATCH net-next v6 06/12] selftests: ncdevmem: Switch to AF_INET6
-Date: Wed, 30 Oct 2024 07:27:16 -0700
-Message-ID: <20241030142722.2901744-7-sdf@fomichev.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241030142722.2901744-1-sdf@fomichev.me>
-References: <20241030142722.2901744-1-sdf@fomichev.me>
+        d=1e100.net; s=20230601; t=1730298440; x=1730903240;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OJr8SKaI8AcnRFsMtOpCdNtJ/tI/x3PUXE9ZFvbALXk=;
+        b=Ai4vW4oRBeMeEVOAJgIcqMmtZv2ttB/BxBPOQYamMaWVIZpL+7dgy0o9XuzmhjOMus
+         9f1TItyBPtvmFGZXAWDwzKjmJtFQmhCvNsQOjZoykHRE+lxX27vv+fS9y1M4eeBtMG2M
+         8asIv+COUkTqODzEr4ZFoUU2XhEHFrdCH3nY3z3LJqoQm8d4J93PTatMTW+JYxJmxDVA
+         RkC2xlSyvQAH+Bn1ZfzEuMDYDsfTvupMOnuoRyRzVtnJS/cJ4AeAwP74WKxrjTqrgFBl
+         804QsohZyJ8dT7EheWlLbnmjDbDJovrSPXUSnSNA47bE0dtvhu/Co0rLDCo+iDAR9PdF
+         L/Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUB/wWQ9V8LXpAAReZrserPn9Y9cJQCksXJmb20rD7n3sfrwtglYXVsg4LOmD7QeoGIRtMX4gle9qzAric=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGcHHZPQIKCK2c6oZ3+hVdFWcM2FQwDP6mIoMvI+fz6OPklWiK
+	QifyzPpI3CvOGGgKTUncM/GJ6aEMuD/WZqPtC62joV8Lg6uQKpW4TtM8CnIZ64A=
+X-Google-Smtp-Source: AGHT+IFjLF23bXQI112RrKS7DtmQwnJ60Ef1gSmQvtciDIl80QcFcve5plrDwJb0QoEP9FPGBx1k3g==
+X-Received: by 2002:a05:6870:a917:b0:288:2906:6882 with SMTP id 586e51a60fabf-29051db9ca3mr13044852fac.29.1730298440581;
+        Wed, 30 Oct 2024 07:27:20 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29035d20d3fsm3425347fac.5.2024.10.30.07.27.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 07:27:19 -0700 (PDT)
+Message-ID: <4c457ac4-139c-4df0-958a-fcda94705d02@baylibre.com>
+Date: Wed, 30 Oct 2024 09:27:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] docs: iio: ad7380: add adaq4370-4 and adaq4380-4
+To: Julien Stephan <jstephan@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20241030-ad7380-add-adaq4380-4-support-v4-0-864ff02babae@baylibre.com>
+ <20241030-ad7380-add-adaq4380-4-support-v4-5-864ff02babae@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241030-ad7380-add-adaq4380-4-support-v4-5-864ff02babae@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Use dualstack socket to support both v4 and v6. v4-mapped-v6 address
-can be used to do v4.
+On 10/30/24 8:44 AM, Julien Stephan wrote:
+> Adding documentation for adaq4370-4 and adaq4380-4 supported devices. In
+> particular, document the reference voltage mechanism and the gain
+> parameter that are specific to adaq devices.
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+>  Documentation/iio/ad7380.rst | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/iio/ad7380.rst b/Documentation/iio/ad7380.rst
+> index 6f70b49b9ef27c1ac32acaefecd1146e5c8bd6cc..1b9777c33e0c3e9e06f72d7c957a012346d4a26a 100644
+> --- a/Documentation/iio/ad7380.rst
+> +++ b/Documentation/iio/ad7380.rst
+> @@ -27,6 +27,8 @@ The following chips are supported by this driver:
+>  * `AD7386-4 <https://www.analog.com/en/products/ad7386-4.html>`_
+>  * `AD7387-4 <https://www.analog.com/en/products/ad7387-4.html>`_
+>  * `AD7388-4 <https://www.analog.com/en/products/ad7388-4.html>`_
+> +* `ADAQ4370-4 <https://www.analog.com/en/products/adaq4370-4.html>`_
+> +* `ADAQ4380-4 <https://www.analog.com/en/products/adaq4380-4.html>`_
+>  
+>  
+>  Supported features
+> @@ -47,6 +49,12 @@ ad7380-4
+>  ad7380-4 supports only an external reference voltage (2.5V to 3.3V). It must be
+>  declared in the device tree as ``refin-supply``.
+>  
+> +ADAQ devices
+> +~~~~~~~~~~~~
+> +
+> +adaq4370-4 and adaq4380-4 don't have an external reference, but use a 3V
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- tools/testing/selftests/net/ncdevmem.c | 85 +++++++++++++++++---------
- 1 file changed, 57 insertions(+), 28 deletions(-)
+It's 3.3V, not 3V
 
-diff --git a/tools/testing/selftests/net/ncdevmem.c b/tools/testing/selftests/net/ncdevmem.c
-index 037fb6e97d29..8e4a0fe74bb1 100644
---- a/tools/testing/selftests/net/ncdevmem.c
-+++ b/tools/testing/selftests/net/ncdevmem.c
-@@ -242,13 +242,22 @@ static int configure_channels(unsigned int rx, unsigned int tx)
- 	return run_command("sudo ethtool -L %s rx %u tx %u", ifname, rx, tx);
- }
- 
--static int configure_flow_steering(void)
-+static int configure_flow_steering(struct sockaddr_in6 *server_sin)
- {
--	return run_command("sudo ethtool -N %s flow-type tcp4 %s %s dst-ip %s %s %s dst-port %s queue %d >&2",
-+	const char *server_addr = server_ip;
-+	const char *type = "tcp6";
-+
-+	if (IN6_IS_ADDR_V4MAPPED(&server_sin->sin6_addr)) {
-+		type = "tcp4";
-+		server_addr = strrchr(server_ip, ':') + 1;
-+	}
-+
-+	return run_command("sudo ethtool -N %s flow-type %s %s %s dst-ip %s %s %s dst-port %s queue %d >&2",
- 			   ifname,
-+			   type,
- 			   client_ip ? "src-ip" : "",
- 			   client_ip ?: "",
--			   server_ip,
-+			   server_addr,
- 			   client_ip ? "src-port" : "",
- 			   client_ip ? port : "",
- 			   port, start_queue);
-@@ -299,13 +308,43 @@ static int bind_rx_queue(unsigned int ifindex, unsigned int dmabuf_fd,
- 	return -1;
- }
- 
-+static int enable_reuseaddr(int fd)
-+{
-+	int opt = 1;
-+	int ret;
-+
-+	ret = setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-+	if (ret)
-+		return -errno;
-+
-+	ret = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-+	if (ret)
-+		return -errno;
-+
-+	return 0;
-+}
-+
-+static int parse_address(const char *str, int port, struct sockaddr_in6 *sin6)
-+{
-+	int ret;
-+
-+	sin6->sin6_family = AF_INET6;
-+	sin6->sin6_port = htons(port);
-+
-+	ret = inet_pton(sin6->sin6_family, str, &sin6->sin6_addr);
-+	if (ret < 0)
-+		return -1;
-+
-+	return 0;
-+}
-+
- int do_server(struct memory_buffer *mem)
- {
- 	char ctrl_data[sizeof(int) * 20000];
- 	struct netdev_queue_id *queues;
- 	size_t non_page_aligned_frags = 0;
--	struct sockaddr_in client_addr;
--	struct sockaddr_in server_sin;
-+	struct sockaddr_in6 client_addr;
-+	struct sockaddr_in6 server_sin;
- 	size_t page_aligned_frags = 0;
- 	size_t total_received = 0;
- 	socklen_t client_addr_len;
-@@ -317,9 +356,12 @@ int do_server(struct memory_buffer *mem)
- 	int socket_fd;
- 	int client_fd;
- 	size_t i = 0;
--	int opt = 1;
- 	int ret;
- 
-+	ret = parse_address(server_ip, atoi(port), &server_sin);
-+	if (ret < 0)
-+		error(1, 0, "parse server address");
-+
- 	if (reset_flow_steering())
- 		error(1, 0, "Failed to reset flow steering\n");
- 
-@@ -328,7 +370,7 @@ int do_server(struct memory_buffer *mem)
- 		error(1, 0, "Failed to configure rss\n");
- 
- 	/* Flow steer our devmem flows to start_queue */
--	if (configure_flow_steering())
-+	if (configure_flow_steering(&server_sin))
- 		error(1, 0, "Failed to configure flow steering\n");
- 
- 	sleep(1);
-@@ -349,29 +391,16 @@ int do_server(struct memory_buffer *mem)
- 	if (!tmp_mem)
- 		error(1, ENOMEM, "malloc failed");
- 
--	server_sin.sin_family = AF_INET;
--	server_sin.sin_port = htons(atoi(port));
--
--	ret = inet_pton(server_sin.sin_family, server_ip, &server_sin.sin_addr);
--	if (ret < 0)
--		error(1, errno, "%s: [FAIL, create socket]\n", TEST_PREFIX);
--
--	socket_fd = socket(server_sin.sin_family, SOCK_STREAM, 0);
-+	socket_fd = socket(AF_INET6, SOCK_STREAM, 0);
- 	if (socket_fd < 0)
- 		error(1, errno, "%s: [FAIL, create socket]\n", TEST_PREFIX);
- 
--	ret = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEPORT, &opt,
--			 sizeof(opt));
--	if (ret)
--		error(1, errno, "%s: [FAIL, set sock opt]\n", TEST_PREFIX);
--
--	ret = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt,
--			 sizeof(opt));
-+	ret = enable_reuseaddr(socket_fd);
- 	if (ret)
--		error(1, errno, "%s: [FAIL, set sock opt]\n", TEST_PREFIX);
-+		error(1, errno, "%s: [FAIL, reuseaddr]\n", TEST_PREFIX);
- 
- 	fprintf(stderr, "binding to address %s:%d\n", server_ip,
--		ntohs(server_sin.sin_port));
-+		ntohs(server_sin.sin6_port));
- 
- 	ret = bind(socket_fd, &server_sin, sizeof(server_sin));
- 	if (ret)
-@@ -383,16 +412,16 @@ int do_server(struct memory_buffer *mem)
- 
- 	client_addr_len = sizeof(client_addr);
- 
--	inet_ntop(server_sin.sin_family, &server_sin.sin_addr, buffer,
-+	inet_ntop(AF_INET6, &server_sin.sin6_addr, buffer,
- 		  sizeof(buffer));
- 	fprintf(stderr, "Waiting or connection on %s:%d\n", buffer,
--		ntohs(server_sin.sin_port));
-+		ntohs(server_sin.sin6_port));
- 	client_fd = accept(socket_fd, &client_addr, &client_addr_len);
- 
--	inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buffer,
-+	inet_ntop(AF_INET6, &client_addr.sin6_addr, buffer,
- 		  sizeof(buffer));
- 	fprintf(stderr, "Got connection from %s:%d\n", buffer,
--		ntohs(client_addr.sin_port));
-+		ntohs(client_addr.sin6_port));
- 
- 	while (1) {
- 		struct iovec iov = { .iov_base = iobuf,
--- 
-2.47.0
+> +internal reference derived from one of its supplies (``refin-supply``)
+> +
+>  All other devices from ad738x family
+>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  
+> @@ -121,6 +129,14 @@ Example for AD7386/7/8 (2 channels parts):
+>  
+>  When enabling sequencer mode, the effective sampling rate is divided by two.
+>  
+> +Gain (ADAQ devices only)
+> +~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +ADAQ devices have a pin selectable gain in front of each ADC. The appropriate
+> +gain is selectable from device tree using the ``adi,gain-milli`` property.
+> +Refer to the typical connection diagrams section of the datasheet for pin
+> +wiring.
+> +
+>  Unimplemented features
+>  ----------------------
+>  
+> 
 
 
