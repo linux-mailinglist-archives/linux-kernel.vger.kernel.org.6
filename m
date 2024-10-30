@@ -1,229 +1,167 @@
-Return-Path: <linux-kernel+bounces-388801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A24D9B648A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:46:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344449B6471
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CE351C217CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F01C1C2166D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EB91EB9F5;
-	Wed, 30 Oct 2024 13:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B851EC018;
+	Wed, 30 Oct 2024 13:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FseGwaDA"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="t3+Hv9JA"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23A31EB9E3;
-	Wed, 30 Oct 2024 13:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FD71EB9F5
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295956; cv=none; b=sJMf7sghwsSLQ4uNpmMqKxQWqiEiQEEAX6sfrLR+7/sHOhl38nlShzNE9JHSm3TGwF2tCOS5y7xjI3/krxDrXPwe3E63sLl0B93wR2wRa9S2Y7s5PoCEy/jXbkWI378ti00zI1cFQeTRDdGpgl1bEbNK9WnanE+V/gJSZeE3d9Q=
+	t=1730295883; cv=none; b=Jy5PWmNY7lKFBuH2ejuSGLqLUIQ+DLGEebQxrdaHCPgGA4oiwPlC30jwis4Idqbb4ap5sxJ+xjrfZpM8s+u2BCvwWi1nG16Wvwh7Y+N4/N3hlCpGmMcNF5yP8EFvNoC/I1EGgzP++4RpyaIDqgkgmMoE/Sf7jRValvJY2NsdhtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295956; c=relaxed/simple;
-	bh=inaXq35j3illj9PkvgGc1dWz3CoE0YPpBiSWZgXyH14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a0kZEFJPCNuXDJeyJo5j+g5Tj0DbV/IoEQH3lhXpHWhiYsHuKnk0LNPCkgZgtiXizU/vK+c1BdRezLsardZCyNSrZnl9LZGhZVoWRlG0DsYjntN7oryBY8trkvbqOFQ4sjfUFLSOcBI92V5MOixnU6cEd315FtSFVyU62Fh6zdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=FseGwaDA; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730295951;
-	bh=inaXq35j3illj9PkvgGc1dWz3CoE0YPpBiSWZgXyH14=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FseGwaDAyWUlQyT9V6NJwpyrEul/8LotpIe2AfAY4FEM5/enn2rPCEcSnbvruRitM
-	 6UflBBgdmTrtg9qFuaeR/A/jxMSGz9whx1TJSbcMXlh7nZm7UTZi/UJftEANS0iTDv
-	 SFfrMInsHYtBndoIWnLHjpYU1bHvWuBVC+NYu6CNGQV0CdzT9Vb3ma33bEp+gfKlVG
-	 oleW+gEoMxXKc7OuuWDrJx/5l39McaOxxuGb2SlE/4ca8/isOLvpi6gy+54556TP0c
-	 4r04mdX1wUljdr6fKvZ0cHpmeJ6TsuSeNElkhTpfMEOoQz7zjLm5G9MXVcNJXEhGRq
-	 zPXyjTtxNPz4Q==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XdpL71YMCzKGr;
-	Wed, 30 Oct 2024 09:45:51 -0400 (EDT)
-Message-ID: <74afc8d4-621a-4876-a8cf-6165a913e4b3@efficios.com>
-Date: Wed, 30 Oct 2024 09:44:14 -0400
+	s=arc-20240116; t=1730295883; c=relaxed/simple;
+	bh=GWJqVI/iDilEQvlonvyO4sifazW5TTd5oM98ekzbBAY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lBCrMsHYEeMIZbY2NggH35PE1oSSvxQk7eCyNijJUSZSdsJ4Hqjoslu9F3zBeVhZOhhwST+hlWXhEggy/l7dEU8avZ1v+NTy7brF91mnP+NKOKs9G9Ox+roXdHkQD/olp0QdqrUAfrCuiD6+Z4T2nSxthYbaTBfn6sVyngAPokg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=t3+Hv9JA; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315baec69eso64323065e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730295878; x=1730900678; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BLjctguBHNZi72pE4FjnNOCTerHeFfzbTHz+mVkOm/k=;
+        b=t3+Hv9JAwpxcq7b/FOgVK3IZMIeoLDUu8xFjf/wqp6smXlX8U6po+2P8uFcgPAg84R
+         pNQGVQAO6H8moqfw3fmuTULJUgNJXdJRX/jDfJff6XJI8d+mxS+3rCjNd5eF5WhbLJru
+         xSbgD2xzPB+YQkFDGnDNCOTIjEWknqG8BrL5hU++EHQC5cEiNT7/hOXK9azuPRxLpCv6
+         nKTTdq5ZOw7yR417XEXCHuxjVxrhGn9jxgd2BHm3+Fea9M1dEW0DN3cwtDIGphcpB/RS
+         IfJKrZlCZULahnOMtf/fdg4GCFswnR4tJLdcBy1QpJ5+wZGTSUeDjsN94YbWEL61ijqb
+         S4Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730295878; x=1730900678;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BLjctguBHNZi72pE4FjnNOCTerHeFfzbTHz+mVkOm/k=;
+        b=Yc2+6W9VnxgJENiZBf3fE2avWkl05Dciww8AU+KOZdPrrVCZ+v1mFqUEzxRumIg7Mj
+         /yWtaB2Yb7QnlGddrMYADYdgZknuRBk8qS1PYWDMoXBEudCqD8W8n9S7aQQgP+Pn2i+j
+         WWC7f1+ONVqvp9FmTnVkk0egzK3f/FagBfQdwUhQPCMXnWwasTR9Ro8yhP54rJubJjwG
+         cuXAVOM1RPdz8laBNVOsURY1eV3fHZULkds0o9bAF2ZwwZzUU0D3CR4fXMLv/rxilvMe
+         QcEIIZB1V/rnmXQ01rSneAbXMhuq8FrONLjCnlhFd4mIyQlZkvZuEb7z2Xhub7Yp6nMf
+         lTNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwzbG+8eh12W16AVnijahGSQ/GySGvBZQTovg1pMePqYYogrLVIQ5E1XQgGHRt3p7MtDN9JOaMR/TSTyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpxnLA5lvvxNGQbAuKnRJIbTQbJ2gJB4PRf588pax8HzQ4IPn6
+	ZRJEK5X0yaWN2NyAx5xnsu8jKaXu5D3CQI7eU4RFP//xYZ71ANLA2az33lAHcko=
+X-Google-Smtp-Source: AGHT+IFXxritnGOAkQy9nNZHfdEtaUI6ECg0r1jyvwI+ZBJUClRm1YR6NclS2yRbCJXEAwaU8aoddw==
+X-Received: by 2002:a05:600c:4ecb:b0:42d:a024:d6bb with SMTP id 5b1f17b1804b1-4319acb8145mr113091665e9.20.1730295877841;
+        Wed, 30 Oct 2024 06:44:37 -0700 (PDT)
+Received: from [192.168.1.62] (2a02-842a-d52e-6101-6f8f-5617-c4b6-8627.rev.sfr.net. [2a02:842a:d52e:6101:6f8f:5617:c4b6:8627])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d693sm22135175e9.24.2024.10.30.06.44.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 06:44:37 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH v4 0/5] ad7380: add adaq4370-4 and adaq4380-4 support
+Date: Wed, 30 Oct 2024 14:44:24 +0100
+Message-Id: <20241030-ad7380-add-adaq4380-4-support-v4-0-864ff02babae@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org,
- Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kernel.org,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Jens Remus <jremus@linux.ibm.com>, Florian Weimer <fweimer@redhat.com>,
- Andy Lutomirski <luto@kernel.org>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <20241029135617.GB14555@noisy.programming.kicks-ass.net>
- <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
- <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
- <20241029183440.fbwoistveyxneezt@treble.attlocal.net>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241029183440.fbwoistveyxneezt@treble.attlocal.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADg4ImcC/42Py2rDMBBFf8VoXRU9I9mr/kfpYiSNGkESO5JjG
+ oL/vbJNwZRCuhiGO4sz5z5IwZywkK55kIxTKqm/1KBeGuKPcPlEmkLNRDChOOOaQjDSsrpCHbi
+ qJShabsPQ55FyFTw36BkTLamMIWNMXyv//WPLGa+3+mbcjsRBQer78zmNXWMdgrTGAtecO48Qv
+ IguCqscY857DQJrCmSv1zWbHFM/cvXlanSqzag8GCMP2kcL0E2SLBrHVMY+39fWE189/llw4pT
+ RIJBDq6MTyr45uJ+Sy/haS6zwSeyAQj4DigWodYRa3WGIfwDlHqieAWUFHkC0LrBo2gC/gPM8f
+ wMLrwKp9gEAAA==
+X-Change-ID: 20241015-ad7380-add-adaq4380-4-support-14dc17ec0029
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
 
-On 2024-10-29 14:34, Josh Poimboeuf wrote:
-> On Tue, Oct 29, 2024 at 01:47:59PM -0400, Mathieu Desnoyers wrote:
->>>> If ftrace needs brain damage like this, can't we push this to the user?
->>>>
->>>> That is, do away with the per-cpu sequence crap, and add a per-task
->>>> counter that is incremented for every return-to-userspace.
->>>
->>> That would definitely make things easier for me, though IIRC Steven and
->>> Mathieu had some concerns about TID wrapping over days/months/years.
->>>
->>> With that mindset I suppose the per-CPU counter could also wrap, though
->>> that could be mitigated by making the cookie a struct with more bits.
->>>
->>
->> AFAIR, the scheme we discussed in Prague was different than the
->> implementation here.
-> 
-> It does differ a bit.  I'll explain why below.
-> 
->> We discussed having a free-running counter per-cpu, and combining it
->> with the cpu number as top (or low) bits, to effectively make a 64-bit
->> value that is unique across the entire system, but without requiring a
->> global counter with its associated cache line bouncing.
->>
->> Here is part where the implementation here differs from our discussion:
->> I recall we discussed keeping a snapshot of the counter value within
->> the task struct of the thread. So we only snapshot the per-cpu value
->> on first use after entering the kernel, and after that we use the same
->> per-cpu value snapshot (from task struct) up until return to userspace.
->> We clear the task struct cookie snapshot on return to userspace.
-> 
-> Right, so adding some details to this, what I remember specifically
-> deciding on:
-> 
->   - In unwind_user_deferred(), if task cookie is 0, it snapshots the
->     per-cpu counter, stores the old value in the task cookie, and
->     increments the new value (with CPU # in top 48 bits).
-> 
->   - Future calls to unwind_user_deferred() see the task cookie is set and
->     reuse the same cookie.
-> 
->   - Then the task work (which runs right before exiting the kernel)
->     clears the task cookie (with interrupts disabled), does the unwind,
->     and calls the callbacks.  It clears the task cookie so that any
->     future calls to unwind_user_deferred() (either before exiting the
->     kernel or after next entry) are guaranteed to get an unwind.
+Hello,
 
-This is where I think we should improve the logic.
+This series add support for adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS)
+which are quad-channel precision data acquisition signal chain μModule
+solutions compatible with the ad738x family, with the following differences:
 
-If an unwind_user_deferred() is called right over/after the unwind,
-I don't think we want to issue another stack walk: it would be redundant
-with the one already in progress or completed.
+- pin selectable gain in front of each 4 adc
+- internal reference is 3V derived from refin-supply (5V)
+- additional supplies
 
-What we'd want is to make sure that the cookie returned to that
-unwind_user_deferred() is the same as the cookie associated with the
-in-progress or completed stack unwind. This way, trace analysis can
-look at the surrounding events (before and after) the unwind request
-and find the associated call stack.
+This series depends on [1] which fix several supplies issues
 
-> 
-> That's what I had implemented originally.  It had a major performance
-> issue, particularly for long stacks (bash sometimes had 300+ stack
-> frames in my testing).
+[1]: https://lore.kernel.org/all/20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com/
 
-That's probably because long stacks require a lot of work (user pages
-accesses) to be done when stack walking, which increases the likeliness
-of re-issuing unwind_user_deferred() while the stack walk is being done.
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Changes in v4:
+- Adding a new patch to pull out a local "dev" variable to shorten some
+  long lines
+- Fix few minor comment from Jonathan Cameron and David Lechner
+- Link to v3: https://lore.kernel.org/r/20241024-ad7380-add-adaq4380-4-support-v3-0-6a29bd0f79da@baylibre.com
 
-That's basically a lack-of-progress issue: a sufficiently long stack
-walk with a sufficiently frequent unwind_user_deferred() trigger could
-make the system stall forever trying to service stalk walks again
-and again. That's bad.
+Changes in v3:
+bindings:
+  - remove item from channel reg property (should be part of V2, but get
+    lost during rebase)
+  - remove unnecessary () for channel property
+  - keep consistent quotes
 
-> 
-> The task work runs with interrupts enabled.  So if another PMU interrupt
-> and call to unwind_user_deferred() happens after the task work clears
-> the task cookie but before kernel exit, a new cookie is generated and an
-> additional task work is scheduled.  For long stacks, performance gets
-> really bad, dominated by all the extra unnecessary unwinding.
+- Link to v2: https://lore.kernel.org/r/20241023-ad7380-add-adaq4380-4-support-v2-0-d55faea3bedf@baylibre.com
 
-What you want here is to move the point where you clear the task
-cookie to _after_ completion of stack unwind. There are a few ways
-this can be done:
+Changes in v2:
+- fix commit messages and documentation about the gain: pin selectable
+  gain instead of configurable gain
+- add the enum of available gains inthe binding and array of available
+  gains in the driver as ad4000 series
+- in the bindings, remove item from channel reg property
+- in the bindings, merge additional supplies and channel properties inside
+  the same if branch for adaq devices
+- fix comment as suggested by Jonathan in the driver
 
-A) Clear the task cookie in the task_work() right after the
-    unwind_user_deferred() is completed. Downside: if some long task work
-    happen to be done after the stack walk, a new unwind_user_deferred()
-    could be issued again and we may end up looping forever taking stack
-    unwind and never actually making forward progress.
+- Link to v1: https://lore.kernel.org/r/20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com
 
-B) Clear the task cookie after the exit_to_user_mode_loop is done,
-    before returning to user-space, while interrupts are disabled.
+---
+Julien Stephan (5):
+      dt-bindings: iio: adc: ad7380: add adaq4370-4 and adaq4380-4 compatible parts
+      iio: adc: ad7380: fix oversampling formula
+      iio: adc: ad7380: use local dev variable to shorten long lines
+      iio: adc: ad7380: add support for adaq4370-4 and adaq4380-4
+      docs: iio: ad7380: add adaq4370-4 and adaq4380-4
 
-C) Clear the task cookie when entering kernel space again.
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    | 120 ++++++++++++++
+ Documentation/iio/ad7380.rst                       |  16 ++
+ drivers/iio/adc/ad7380.c                           | 178 ++++++++++++++++++---
+ 3 files changed, 290 insertions(+), 24 deletions(-)
+---
+base-commit: 8bea3878a1511bceadc2fbf284b00bcc5a2ef28d
+change-id: 20241015-ad7380-add-adaq4380-4-support-14dc17ec0029
+prerequisite-change-id: 20241004-ad7380-fix-supplies-3677365cf8aa:v3
+prerequisite-patch-id: 6127a52d3b14e82d1a6081c7e504d0e4eb323089
+prerequisite-patch-id: 7dee57142d0d12682b0be3b62f1c16851aeac069
+prerequisite-patch-id: f737e56a372cd91e5fac651a2063b06827f9aa21
+prerequisite-patch-id: 7c8d5fbde82810057630b95e12bb2f6576da6980
+prerequisite-patch-id: 972bdbf06bafa7c56f604dbe8eb7d236aadaad99
 
-I think (B) and (C) could be interesting approaches, perhaps with
-(B) slightly more interesting because it cleans up after itself
-before returning to userspace. Also (B) allows us to return to a
-purely lazy scheme where there is nothing to do when entering the
-kernel. This is therefore more efficient in terms of cache locality,
-because we can expect our per-task state to be cache hot when
-returning to userspace, but not necessarily when entering into
-the kernel.
-
-> 
-> So I changed the design a bit:
-> 
->    - Increment a per-cpu counter at kernel entry before interrupts are
->      enabled.
-> 
->    - In unwind_user_deferred(), if task cookie is 0, it sets the task
->      cookie based on the per-cpu counter, like before.  However if this
->      cookie was the last one used by this callback+task, it skips the
->      callback altogether.
-> 
-> So it eliminates duplicate unwinds except for the CPU migration case.
-
-This sounds complicated and fragile. And why would we care about
-duplicated unwinds on cpu migration ?
-
-What prevents us from moving the per-task cookie clearing to after
-exit_to_user_mode_loop instead ? Then there is no need to do per-cpu
-counter increment on every kernel entry and we can go back to a lazy
-scheme.
-
-> 
-> If I change the entry code to increment a per-task counter instead of a
-> per-cpu counter then this problem goes away.  I was just concerned about
-> the performance impacts of doing that on every entry.
-
-Moving from per-cpu to per-task makes this cookie task-specific and not
-global anymore, I don't think we want this for a stack walking
-infrastructure meant to be used by various tracers. Also a global cookie
-is more robust and does not depend on guaranteeing that all the
-trace data is present to guarantee current thread ID accuracy and
-thus that cookies match between deferred unwind request and their
-fulfillment.
-
-Thanks,
-
-Mathieu
-
+Best regards,
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Julien Stephan <jstephan@baylibre.com>
 
 
