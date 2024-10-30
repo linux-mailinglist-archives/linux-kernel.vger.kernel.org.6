@@ -1,390 +1,281 @@
-Return-Path: <linux-kernel+bounces-388817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9879B64D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:54:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757A99B64D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF1D1F231C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02CBD1F21F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6BB1EBFFB;
-	Wed, 30 Oct 2024 13:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBDF1E8844;
+	Wed, 30 Oct 2024 13:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqWRpzQw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRrWfpHI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C54B13FEE;
-	Wed, 30 Oct 2024 13:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2566013FEE;
+	Wed, 30 Oct 2024 13:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730296445; cv=none; b=c0IIl1Z0MhmFDjNpDDPb5DrRnmahDHAszpJzyKW4fY+kMf/1UUjh8jkuugYfDX4rOi7+CVu93gnuenhqDHG6Ur0qePgKUFpZo1AUHmXpwYUpv7OmXNUuurJJtB6CkRw0VvDWpc1/3t+5LRgMAomMhBLWIhw2wQdj2ljdTC0M4WQ=
+	t=1730296453; cv=none; b=sWigQGd3YqD3Fz1EjxriB7Kbr0YwKsdOzDiXm7c33sXaOOUudi9eAJdXR+49b8xtmBijg5s/zJ6kVDabeAldjrER+ydxN8psfqW4os714DJb4GD2db5L+GcB6YY6sUR1deSfcNc5b+aI6cTqH3BmxYhqrh+PudBcLl7c3uXaP0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730296445; c=relaxed/simple;
-	bh=4Mwwh4tsM3ztywr+zawTMklRK72LDgitnERM1pqIlwc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ri2zBQ5gg+LUiNtYwV8Y5NsFNp5OUa3uiv7+o1VprxZUXZnmctHnLyrOx6KEOANfaK3R37Ei3/iTAHVOgwRrJy+VklvCE1gP/PnB5XNFI+HkqIRpmI/4MsYd7ewSF25Bc2vK2pSSbS7wHAQs1E47Ug7HHKHf1/bj84GWRTYTTM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqWRpzQw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B04C4CECF;
-	Wed, 30 Oct 2024 13:54:01 +0000 (UTC)
+	s=arc-20240116; t=1730296453; c=relaxed/simple;
+	bh=PhXYYAn+2LT8w0L4LGY0S9YENmYHSpGxQ6PQjfy3S0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMX0ANgG2FOSzDJKIPR/423wNRdOUMgCZgmyzfSju9AC/kBnZ4UuF1PN4m1XhP0CB7D3gzC99MMe5/46z5Wj6PjDFfI9oiHNa9lSbYtbpYP6OtOPajyezJ55UGsbtNPMRfZBdv6Gjt4+aFZpnO5vSlek77aFA+vr26gX57mC4HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRrWfpHI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF98C4CECE;
+	Wed, 30 Oct 2024 13:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730296445;
-	bh=4Mwwh4tsM3ztywr+zawTMklRK72LDgitnERM1pqIlwc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=CqWRpzQwYE0079V97Xhbm7zKQCqGQyZXBfJ028l050yB5aHNYpQ9ZWSrLvoGL9kry
-	 6UUd0cTAye6d8Sc7kFpU9lf0VfJSSx7fmJh/CpMfklvpV06KEDcp05swanwRq7OyMW
-	 DG4L4qr3GL2UUCmMsuXL601XuMsO7vO8mI74S1N3FlDc9kh+Jwrnm+iSSR6ZecxBxJ
-	 Fx3PcuU6G3cGmgDlynD9cHGCxO/dAmSXAy3dbXHHnXhB+1x0rb94KUCeA7B1NV5cYn
-	 Yd4LftRBKqOcRz/WkoDEETvxPI2fplpvvap3uitw9js6CVKJo9a9OCLZX/810j8+Vr
-	 FjdR/9m9mcw/w==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Wed, 30 Oct 2024 15:53:58 +0200
-Subject: [PATCH net v2] net: ethernet: ti: am65-cpsw: Fix multi queue Rx on
- J7
+	s=k20201202; t=1730296452;
+	bh=PhXYYAn+2LT8w0L4LGY0S9YENmYHSpGxQ6PQjfy3S0w=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=iRrWfpHI1cpj16s7bdO00D1EDQY9ZR0HXUyhoQ9o5LF1XXlAOWFX/qhNzU+gKAChw
+	 2lKx9I4zTpddP/WC9aDfRv+aXDpvKTS6RYkuvjyHLl7Qcc5reyA6xs4nSRZfppxtQv
+	 nd3uqfHm1oieKfFR9bwbAnrK00QHO40TN7SMrBJn+zzUPDl3RsNXYx2RGoqIhu9WIj
+	 I1NR+K8o4q4L9+ez4RrH+QRibW8I/xZXH1f712hUYoJO2eZ9zOcPMShMFpctb0/irP
+	 niejR/jT/el1EBfyNKm+09NrBkkWR6L1B6CMVq2i4xns+1FY19dJmRNB0ejxX5dkh9
+	 ePR6+Dwxunu5A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2D4FDCE09DB; Wed, 30 Oct 2024 06:54:12 -0700 (PDT)
+Date: Wed, 30 Oct 2024 06:54:12 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Cheng-Jui Wang =?utf-8?B?KOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>
+Cc: "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"dianders@chromium.org" <dianders@chromium.org>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"frederic@kernel.org" <frederic@kernel.org>,
+	wsd_upstream <wsd_upstream@mediatek.com>,
+	Bobule Chang =?utf-8?B?KOW8teW8mOe+qSk=?= <bobule.chang@mediatek.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"kernel-team@meta.com" <kernel-team@meta.com>,
+	"joel@joelfernandes.org" <joel@joelfernandes.org>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Subject: Re: [PATCH v3 rcu 3/3] rcu: Finer-grained grace-period-end checks in
+ rcu_dump_cpu_stacks()
+Message-ID: <9e90d04e-081b-4730-890b-295ed52747de@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <92193018-8624-495e-a685-320119f78db1@paulmck-laptop>
+ <20241016161931.478592-3-paulmck@kernel.org>
+ <c3218fbe-7bb1-4fd6-8b00-beee244ffeae@paulmck-laptop>
+ <b2b0bceacbd080e13b3aa7ad05569a787df4646d.camel@mediatek.com>
+ <adb044e2-8f62-4367-9a22-30515f5647b1@paulmck-laptop>
+ <d0adc7d14da0f21909eef68acf19fc5706a4b1af.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-am65-cpsw-multi-rx-j7-fix-v2-1-bc54087b0856@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAHY6ImcC/32NwQ6CMBBEf4Xs2TW0AlJP/ofhUMsCVWjJFhFD+
- Hcb4tnjvMm8WSEQWwpwSVZgmm2w3sUgDwmYTruW0NYxg0xlJlJ5Qj0UOZoxvHF49ZNFXvBxxsY
- u2CgtRabuVNQ1xP3IFPHuvoGjCaoIOxsmz5/9bxZ79VOrP+pZoMBMFkaXaa5Eaa5PYkf90XML1
- bZtX//xAXrIAAAA
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Jesper Dangaard Brouer <hawk@kernel.org>, 
- John Fastabend <john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>, 
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Md Danish Anwar <danishanwar@ti.com>, 
- Govindarajan Sriramakrishnan <srk@ti.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10982; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=4Mwwh4tsM3ztywr+zawTMklRK72LDgitnERM1pqIlwc=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnIjp4s2M8g0hNpaKn1oSOd5mimGa+pX65kPnXf
- BWSdbLYrx2JAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZyI6eAAKCRDSWmvTvnYw
- k0qnEADQE3d+X0rUH9vESob2AlaGe3U0VkY3P6ogsjmPgNrQxl95EoWAN400zyG1IzKYu7DJdpF
- qVR45gtxK6iyFk5f2Gut5GZW8rxRdluNXqhwz/WbM6WP3AgCHQzHjw+3cxBdHFqSA6jQtS5mzhj
- eIKRhElLuNJpq5y5YL4PUeQLBpCcFY1wn2ic+qH8Ea45KaTVmzioY63XRjcekJOc8siYOqvE1gw
- jhbbOdqxQbnyH0dUWrpO7sW+O+INTm4RM6QYPEjXUoohiOyWmv1WpudLhNn0ybzd6ox4PX8+CzT
- LWj/WFS2GRNKLUi65ePM6YpM46xwKlhSQKu7nac4oOwoap73H75bD2vRPrQdBbIFSt1EUQTuWBg
- zrbsIrNHhd0zBSkRXqm3pEr1uRaf+FWAnt5e6PGTm6Lu/pnwROgWRVuAaSy5Exo1OFiI+2manQX
- jlez/N7Iv+jW6waD4MgPnHCv55arFJ+O91koUJiSkRECs/Vxps7x7AV6aXmqsDXDaKRGN/j76hV
- h1Usib+SS15GsFvz+l0s54vmzwoWlC0zKu+H6s4WAkMmDll0TTeE5zweV5xnN5sY/SyYUKp/xvd
- HeHCeiBWtrT2bsP+kN8KoP9IM1VzaqecqQzamVwW6lv7/TyGyf5q8xQDA59Q/8oe8YEbimnKH80
- 7JS3Lup07UIGJtQ==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d0adc7d14da0f21909eef68acf19fc5706a4b1af.camel@mediatek.com>
 
-On J7 platforms, setting up multiple RX flows was failing
-as the RX free descriptor ring 0 is shared among all flows
-and we did not allocate enough elements in the RX free descriptor
-ring 0 to accommodate for all RX flows.
+On Wed, Oct 30, 2024 at 03:55:56AM +0000, Cheng-Jui Wang (王正睿) wrote:
+> On Tue, 2024-10-29 at 09:29 -0700, Paul E. McKenney wrote:
+> > External email : Please do not click links or open attachments until you have verified the sender or the content.
+> > 
+> > 
+> > On Tue, Oct 29, 2024 at 02:20:51AM +0000, Cheng-Jui Wang (王正睿) wrote:
+> > > On Mon, 2024-10-28 at 17:22 -0700, Paul E. McKenney wrote:
+> > > > The result is that the current leaf rcu_node structure's ->lock is
+> > > > acquired only if a stack backtrace might be needed from the current CPU,
+> > > > and is held across only that CPU's backtrace. As a result, if there are
+> > > 
+> > > After upgrading our device to kernel-6.11, we encountered a lockup
+> > > scenario under stall warning.
+> > > I had prepared a patch to submit, but I noticed that this series has
+> > > already addressed some issues, though it hasn't been merged into the
+> > > mainline yet. So, I decided to reply to this series for discussion on
+> > > how to fix it before pushing. Here is the lockup scenario We
+> > > encountered:
+> > > 
+> > > Devices: arm64 with only 8 cores
+> > > One CPU holds rnp->lock in rcu_dump_cpu_stack() while trying to dump
+> > > other CPUs, but it waits for the corresponding CPU to dump backtrace,
+> > > with a 10-second timeout.
+> > > 
+> > >    __delay()
+> > >    __const_udelay()
+> > >    nmi_trigger_cpumask_backtrace()
+> > >    arch_trigger_cpumask_backtrace()
+> > >    trigger_single_cpu_backtrace()
+> > >    dump_cpu_task()
+> > >    rcu_dump_cpu_stacks()  <- holding rnp->lock
+> > >    print_other_cpu_stall()
+> > >    check_cpu_stall()
+> > >    rcu_pending()
+> > >    rcu_sched_clock_irq()
+> > >    update_process_times()
+> > > 
+> > > However, the other 7 CPUs are waiting for rnp->lock on the path to
+> > > report qs.
+> > > 
+> > >    queued_spin_lock_slowpath()
+> > >    queued_spin_lock()
+> > >    do_raw_spin_lock()
+> > >    __raw_spin_lock_irqsave()
+> > >    _raw_spin_lock_irqsave()
+> > >    rcu_report_qs_rdp()
+> > >    rcu_check_quiescent_state()
+> > >    rcu_core()
+> > >    rcu_core_si()
+> > >    handle_softirqs()
+> > >    __do_softirq()
+> > >    ____do_softirq()
+> > >    call_on_irq_stack()
+> > > 
+> > > Since the arm64 architecture uses IPI instead of true NMI to implement
+> > > arch_trigger_cpumask_backtrace(), spin_lock_irqsave disables
+> > > interrupts, which is enough to block this IPI request.
+> > > Therefore, if other CPUs start waiting for the lock before receiving
+> > > the IPI, a semi-deadlock scenario like the following occurs:
+> > > 
+> > > CPU0                    CPU1                    CPU2
+> > > -----                   -----                   -----
+> > > lock_irqsave(rnp->lock)
+> > >                         lock_irqsave(rnp->lock)
+> > >                         <can't receive IPI>
+> > > <send ipi to CPU 1>
+> > > <wait CPU 1 for 10s>
+> > >                                                 lock_irqsave(rnp->lock)
+> > >                                                 <can't receive IPI>
+> > > <send ipi to CPU 2>
+> > > <wait CPU 2 for 10s>
+> > > ...
+> > > 
+> > > 
+> > > In our scenario, with 7 CPUs to dump, the lockup takes nearly 70
+> > > seconds, causing subsequent useful logs to be unable to print, leading
+> > > to a watchdog timeout and system reboot.
+> > > 
+> > > This series of changes re-acquires the lock after each dump,
+> > > significantly reducing lock-holding time. However, since it still holds
+> > > the lock while dumping CPU backtrace, there's still a chance for two
+> > > CPUs to wait for each other for 10 seconds, which is still too long.
+> > > So, I would like to ask if it's necessary to dump backtrace within the
+> > > spinlock section?
+> > > If not, especially now that lockless checks are possible, maybe it can
+> > > be changed as follows?
+> > > 
+> > > -                     if (!(data_race(rnp->qsmask) & leaf_node_cpu_bit(rnp, cpu)))
+> > > -                             continue;
+> > > -                     raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> > > -                     if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu)) {
+> > > +                     if (data_race(rnp->qsmask) & leaf_node_cpu_bit(rnp, cpu)) {
+> > >                               if (cpu_is_offline(cpu))
+> > >                                       pr_err("Offline CPU %d blocking current GP.\n", cpu);
+> > >                               else
+> > >                                       dump_cpu_task(cpu);
+> > >                               }
+> > >                       }
+> > > -                     raw_spin_unlock_irqrestore_rcu_node(rnp,
+> > > flags);
+> > > 
+> > > Or should this be considered an arm64 issue, and they should switch to
+> > > true NMI, otherwise, they shouldn't use
+> > > nmi_trigger_cpumask_backtrace()?
+> > 
+> > Thank you for looking into this!
+> > 
+> > We do assume that nmi_trigger_cpumask_backtrace() uses true NMIs, so,
+> > yes, nmi_trigger_cpumask_backtrace() should use true NMIs, just like
+> > the name says.  ;-)
+> 
+> In the comments of following patch, the arm64 maintainers have
+> differing views on the use of nmi_trigger_cpumask_backtrace(). I'm a
+> bit confused and unsure which perspective is more reasonable.
+> 
+> https://lore.kernel.org/all/20230906090246.v13.4.Ie6c132b96ebbbcddbf6954b9469ed40a6960343c@changeid/
 
-This issue is not present on AM62 as separate pair of
-rings are used for free and completion rings for each flow.
+I clearly need to have a chat with the arm64 maintainers, and thank
+you for checking.
 
-Fix this by allocating enough elements for RX free descriptor
-ring 0.
+> > /*
+> >  * NOTE: though nmi_trigger_cpumask_backtrace() has "nmi_" in the
+> name,
+> >  * nothing about it truly needs to be implemented using an NMI, it's
+> >  * just that it's _allowed_ to work with NMIs. If ipi_should_be_nmi()
+> >  * returned false our backtrace attempt will just use a regular IPI.
+> >  */
+> 
+> > Alternatively, arm64 could continue using nmi_trigger_cpumask_backtrace()
+> > with normal interrupts (for example, on SoCs not implementing true NMIs),
+> > but have a short timeout (maybe a few jiffies?) after which its returns
+> > false (and presumably also cancels the backtrace request so that when
+> > the non-NMI interrupt eventually does happen, its handler simply returns
+> > without backtracing).  This should be implemented using atomics to avoid
+> > deadlock issues.  This alternative approach would provide accurate arm64
+> > backtraces in the common case where interrupts are enabled, but allow
+> > a graceful fallback to remote tracing otherwise.
+> > 
+> > Would you be interested in working this issue, whatever solution the
+> > arm64 maintainers end up preferring?
+> 
+> The 10-second timeout is hard-coded in nmi_trigger_cpumask_backtrace().
+> It is shared code and not architecture-specific. Currently, I haven't
+> thought of a feasible solution. I have also CC'd the authors of the
+> aforementioned patch to see if they have any other ideas.
 
-However, we can no longer rely on desc_idx (descriptor based
-offsets) to identify the pages in the respective flows as
-free descriptor ring includes elements for all flows.
-To solve this, introduce a new swdata data structure to store
-flow_id and page. This can be used to identify which flow (page_pool)
-and page the descriptor belonged to when popped out of the
-RX rings.
+It should be possible for arm64 to have an architecture-specific hook
+that enables them to use a much shorter timeout.  Or, to eventually
+switch to real NMIs.
 
-Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
-Changes in v2:
-- Dropped unused variables desc-idx and flow
-- Link to v1: https://lore.kernel.org/r/20241029-am65-cpsw-multi-rx-j7-fix-v1-1-426ca805918c@kernel.org
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 75 ++++++++++++++------------------
- drivers/net/ethernet/ti/am65-cpsw-nuss.h |  6 ++-
- 2 files changed, 37 insertions(+), 44 deletions(-)
+> Regarding the rcu stall warning, I think the purpose of acquiring `rnp-
+> >lock` is to protect the rnp->qsmask variable rather than to protect
+> the `dump_cpu_task()` operation, right?
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 0520e9f4bea7..ca1b75511596 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -339,7 +339,7 @@ static int am65_cpsw_nuss_rx_push(struct am65_cpsw_common *common,
- 	struct device *dev = common->dev;
- 	dma_addr_t desc_dma;
- 	dma_addr_t buf_dma;
--	void *swdata;
-+	struct am65_cpsw_swdata *swdata;
- 
- 	desc_rx = k3_cppi_desc_pool_alloc(rx_chn->desc_pool);
- 	if (!desc_rx) {
-@@ -363,7 +363,8 @@ static int am65_cpsw_nuss_rx_push(struct am65_cpsw_common *common,
- 	cppi5_hdesc_attach_buf(desc_rx, buf_dma, AM65_CPSW_MAX_PACKET_SIZE,
- 			       buf_dma, AM65_CPSW_MAX_PACKET_SIZE);
- 	swdata = cppi5_hdesc_get_swdata(desc_rx);
--	*((void **)swdata) = page_address(page);
-+	swdata->page = page;
-+	swdata->flow_id = flow_idx;
- 
- 	return k3_udma_glue_push_rx_chn(rx_chn->rx_chn, flow_idx,
- 					desc_rx, desc_dma);
-@@ -519,36 +520,31 @@ static enum am65_cpsw_tx_buf_type am65_cpsw_nuss_buf_type(struct am65_cpsw_tx_ch
- 
- static inline void am65_cpsw_put_page(struct am65_cpsw_rx_flow *flow,
- 				      struct page *page,
--				      bool allow_direct,
--				      int desc_idx)
-+				      bool allow_direct)
- {
- 	page_pool_put_full_page(flow->page_pool, page, allow_direct);
--	flow->pages[desc_idx] = NULL;
- }
- 
- static void am65_cpsw_nuss_rx_cleanup(void *data, dma_addr_t desc_dma)
- {
--	struct am65_cpsw_rx_flow *flow = data;
-+	struct am65_cpsw_rx_chn *rx_chn = data;
- 	struct cppi5_host_desc_t *desc_rx;
--	struct am65_cpsw_rx_chn *rx_chn;
-+	struct am65_cpsw_swdata *swdata;
- 	dma_addr_t buf_dma;
- 	u32 buf_dma_len;
--	void *page_addr;
--	void **swdata;
--	int desc_idx;
-+	struct page *page;
-+	u32 flow_id;
- 
--	rx_chn = &flow->common->rx_chns;
- 	desc_rx = k3_cppi_desc_pool_dma2virt(rx_chn->desc_pool, desc_dma);
- 	swdata = cppi5_hdesc_get_swdata(desc_rx);
--	page_addr = *swdata;
-+	page = swdata->page;
-+	flow_id = swdata->flow_id;
- 	cppi5_hdesc_get_obuf(desc_rx, &buf_dma, &buf_dma_len);
- 	k3_udma_glue_rx_cppi5_to_dma_addr(rx_chn->rx_chn, &buf_dma);
- 	dma_unmap_single(rx_chn->dma_dev, buf_dma, buf_dma_len, DMA_FROM_DEVICE);
- 	k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
- 
--	desc_idx = am65_cpsw_nuss_desc_idx(rx_chn->desc_pool, desc_rx,
--					   rx_chn->dsize_log2);
--	am65_cpsw_put_page(flow, virt_to_page(page_addr), false, desc_idx);
-+	am65_cpsw_put_page(&rx_chn->flows[flow_id], page, false);
- }
- 
- static void am65_cpsw_nuss_xmit_free(struct am65_cpsw_tx_chn *tx_chn,
-@@ -703,14 +699,13 @@ static int am65_cpsw_nuss_common_open(struct am65_cpsw_common *common)
- 				ret = -ENOMEM;
- 				goto fail_rx;
- 			}
--			flow->pages[i] = page;
- 
- 			ret = am65_cpsw_nuss_rx_push(common, page, flow_idx);
- 			if (ret < 0) {
- 				dev_err(common->dev,
- 					"cannot submit page to rx channel flow %d, error %d\n",
- 					flow_idx, ret);
--				am65_cpsw_put_page(flow, page, false, i);
-+				am65_cpsw_put_page(flow, page, false);
- 				goto fail_rx;
- 			}
- 		}
-@@ -764,8 +759,8 @@ static int am65_cpsw_nuss_common_open(struct am65_cpsw_common *common)
- 
- fail_rx:
- 	for (i = 0; i < common->rx_ch_num_flows; i++)
--		k3_udma_glue_reset_rx_chn(rx_chn->rx_chn, i, &rx_chn->flows[i],
--					  am65_cpsw_nuss_rx_cleanup, 0);
-+		k3_udma_glue_reset_rx_chn(rx_chn->rx_chn, i, rx_chn,
-+					  am65_cpsw_nuss_rx_cleanup, !!i);
- 
- 	am65_cpsw_destroy_xdp_rxqs(common);
- 
-@@ -817,11 +812,11 @@ static int am65_cpsw_nuss_common_stop(struct am65_cpsw_common *common)
- 			dev_err(common->dev, "rx teardown timeout\n");
- 	}
- 
--	for (i = 0; i < common->rx_ch_num_flows; i++) {
-+	for (i = common->rx_ch_num_flows - 1; i >= 0; i--) {
- 		napi_disable(&rx_chn->flows[i].napi_rx);
- 		hrtimer_cancel(&rx_chn->flows[i].rx_hrtimer);
--		k3_udma_glue_reset_rx_chn(rx_chn->rx_chn, i, &rx_chn->flows[i],
--					  am65_cpsw_nuss_rx_cleanup, 0);
-+		k3_udma_glue_reset_rx_chn(rx_chn->rx_chn, i, rx_chn,
-+					  am65_cpsw_nuss_rx_cleanup, !!i);
- 	}
- 
- 	k3_udma_glue_disable_rx_chn(rx_chn->rx_chn);
-@@ -1028,7 +1023,7 @@ static int am65_cpsw_xdp_tx_frame(struct net_device *ndev,
- static int am65_cpsw_run_xdp(struct am65_cpsw_rx_flow *flow,
- 			     struct am65_cpsw_port *port,
- 			     struct xdp_buff *xdp,
--			     int desc_idx, int cpu, int *len)
-+			     int cpu, int *len)
- {
- 	struct am65_cpsw_common *common = flow->common;
- 	struct am65_cpsw_ndev_priv *ndev_priv;
-@@ -1101,7 +1096,7 @@ static int am65_cpsw_run_xdp(struct am65_cpsw_rx_flow *flow,
- 	}
- 
- 	page = virt_to_head_page(xdp->data);
--	am65_cpsw_put_page(flow, page, true, desc_idx);
-+	am65_cpsw_put_page(flow, page, true);
- 
- out:
- 	return ret;
-@@ -1150,16 +1145,16 @@ static int am65_cpsw_nuss_rx_packets(struct am65_cpsw_rx_flow *flow,
- 	struct am65_cpsw_ndev_stats *stats;
- 	struct cppi5_host_desc_t *desc_rx;
- 	struct device *dev = common->dev;
-+	struct am65_cpsw_swdata *swdata;
- 	struct page *page, *new_page;
- 	dma_addr_t desc_dma, buf_dma;
- 	struct am65_cpsw_port *port;
--	int headroom, desc_idx, ret;
- 	struct net_device *ndev;
- 	u32 flow_idx = flow->id;
- 	struct sk_buff *skb;
- 	struct xdp_buff	xdp;
-+	int headroom, ret;
- 	void *page_addr;
--	void **swdata;
- 	u32 *psdata;
- 
- 	*xdp_state = AM65_CPSW_XDP_PASS;
-@@ -1182,8 +1177,8 @@ static int am65_cpsw_nuss_rx_packets(struct am65_cpsw_rx_flow *flow,
- 		__func__, flow_idx, &desc_dma);
- 
- 	swdata = cppi5_hdesc_get_swdata(desc_rx);
--	page_addr = *swdata;
--	page = virt_to_page(page_addr);
-+	page = swdata->page;
-+	page_addr = page_address(page);
- 	cppi5_hdesc_get_obuf(desc_rx, &buf_dma, &buf_dma_len);
- 	k3_udma_glue_rx_cppi5_to_dma_addr(rx_chn->rx_chn, &buf_dma);
- 	pkt_len = cppi5_hdesc_get_pktlen(desc_rx);
-@@ -1199,9 +1194,6 @@ static int am65_cpsw_nuss_rx_packets(struct am65_cpsw_rx_flow *flow,
- 
- 	k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
- 
--	desc_idx = am65_cpsw_nuss_desc_idx(rx_chn->desc_pool, desc_rx,
--					   rx_chn->dsize_log2);
--
- 	skb = am65_cpsw_build_skb(page_addr, ndev,
- 				  AM65_CPSW_MAX_PACKET_SIZE);
- 	if (unlikely(!skb)) {
-@@ -1213,7 +1205,7 @@ static int am65_cpsw_nuss_rx_packets(struct am65_cpsw_rx_flow *flow,
- 		xdp_init_buff(&xdp, PAGE_SIZE, &port->xdp_rxq[flow->id]);
- 		xdp_prepare_buff(&xdp, page_addr, AM65_CPSW_HEADROOM,
- 				 pkt_len, false);
--		*xdp_state = am65_cpsw_run_xdp(flow, port, &xdp, desc_idx,
-+		*xdp_state = am65_cpsw_run_xdp(flow, port, &xdp,
- 					       cpu, &pkt_len);
- 		if (*xdp_state != AM65_CPSW_XDP_PASS)
- 			goto allocate;
-@@ -1247,10 +1239,8 @@ static int am65_cpsw_nuss_rx_packets(struct am65_cpsw_rx_flow *flow,
- 		return -ENOMEM;
- 	}
- 
--	flow->pages[desc_idx] = new_page;
--
- 	if (netif_dormant(ndev)) {
--		am65_cpsw_put_page(flow, new_page, true, desc_idx);
-+		am65_cpsw_put_page(flow, new_page, true);
- 		ndev->stats.rx_dropped++;
- 		return 0;
- 	}
-@@ -1258,7 +1248,7 @@ static int am65_cpsw_nuss_rx_packets(struct am65_cpsw_rx_flow *flow,
- requeue:
- 	ret = am65_cpsw_nuss_rx_push(common, new_page, flow_idx);
- 	if (WARN_ON(ret < 0)) {
--		am65_cpsw_put_page(flow, new_page, true, desc_idx);
-+		am65_cpsw_put_page(flow, new_page, true);
- 		ndev->stats.rx_errors++;
- 		ndev->stats.rx_dropped++;
- 	}
-@@ -2402,10 +2392,6 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 	for (i = 0; i < common->rx_ch_num_flows; i++) {
- 		flow = &rx_chn->flows[i];
- 		flow->page_pool = NULL;
--		flow->pages = devm_kcalloc(dev, AM65_CPSW_MAX_RX_DESC,
--					   sizeof(*flow->pages), GFP_KERNEL);
--		if (!flow->pages)
--			return -ENOMEM;
- 	}
- 
- 	rx_chn->rx_chn = k3_udma_glue_request_rx_chn(dev, "rx", &rx_cfg);
-@@ -2455,10 +2441,12 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 		flow = &rx_chn->flows[i];
- 		flow->id = i;
- 		flow->common = common;
-+		flow->irq = -EINVAL;
- 
- 		rx_flow_cfg.ring_rxfdq0_id = fdqring_id;
- 		rx_flow_cfg.rx_cfg.size = max_desc_num;
--		rx_flow_cfg.rxfdq_cfg.size = max_desc_num;
-+		/* share same FDQ for all flows */
-+		rx_flow_cfg.rxfdq_cfg.size = max_desc_num * rx_cfg.flow_id_num;
- 		rx_flow_cfg.rxfdq_cfg.mode = common->pdata.fdqring_mode;
- 
- 		ret = k3_udma_glue_rx_flow_init(rx_chn->rx_chn,
-@@ -2496,6 +2484,7 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 		if (ret) {
- 			dev_err(dev, "failure requesting rx %d irq %u, %d\n",
- 				i, flow->irq, ret);
-+			flow->irq = -EINVAL;
- 			goto err;
- 		}
- 	}
-@@ -3349,8 +3338,8 @@ static int am65_cpsw_nuss_register_ndevs(struct am65_cpsw_common *common)
- 
- 	for (i = 0; i < common->rx_ch_num_flows; i++)
- 		k3_udma_glue_reset_rx_chn(rx_chan->rx_chn, i,
--					  &rx_chan->flows[i],
--					  am65_cpsw_nuss_rx_cleanup, 0);
-+					  rx_chan,
-+					  am65_cpsw_nuss_rx_cleanup, !!i);
- 
- 	k3_udma_glue_disable_rx_chn(rx_chan->rx_chn);
- 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.h b/drivers/net/ethernet/ti/am65-cpsw-nuss.h
-index dc8d544230dc..92a27ba4c601 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.h
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.h
-@@ -101,10 +101,14 @@ struct am65_cpsw_rx_flow {
- 	struct hrtimer rx_hrtimer;
- 	unsigned long rx_pace_timeout;
- 	struct page_pool *page_pool;
--	struct page **pages;
- 	char name[32];
- };
- 
-+struct am65_cpsw_swdata {
-+	u32 flow_id;
-+	struct page *page;
-+};
-+
- struct am65_cpsw_rx_chn {
- 	struct device *dev;
- 	struct device *dma_dev;
+As noted below, it is also to prevent false-positive stack dumps.
 
----
-base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
-change-id: 20241023-am65-cpsw-multi-rx-j7-fix-f9a2149be6dd
+> Therefore, there is no need to call dump_cpu_task() while holding the
+> lock.
+> When holding the spinlock, we can store the CPUs that need to be dumped
+> into a cpumask, and then dump them all at once after releasing the
+> lock.
+> Here is my temporary solution used locally based on kernel-6.11.
+> 
+> +	cpumask_var_t mask;
+> +	bool mask_ok;
+> 
+> +	mask_ok = zalloc_cpumask_var(&mask, GFP_ATOMIC);
+> 	rcu_for_each_leaf_node(rnp) {
+> 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> 		for_each_leaf_node_possible_cpu(rnp, cpu)
+> 			if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu))
+> {
+> 				if (cpu_is_offline(cpu))
+> 					pr_err("Offline CPU %d blocking
+> current GP.\n", cpu);
+> +				else if (mask_ok)
+> +					cpumask_set_cpu(cpu, mask);
+> 				else
+> 					dump_cpu_task(cpu);
+> 			}
+> 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> 	}
+> +	if (mask_ok) {
+> +		if (!trigger_cpumask_backtrace(mask)) {
+> +			for_each_cpu(cpu, mask)
+> +				dump_cpu_task(cpu);
+> +		}
+> +		free_cpumask_var(mask);
+> +	}
+> 
+> After applying this, I haven't encountered the lockup issue for five
+> days, whereas it used to occur about once a day.
 
-Best regards,
--- 
-Roger Quadros <rogerq@kernel.org>
+We used to do it this way, and the reason that we changed was to avoid
+false-positive (and very confusing) stack dumps in the surprisingly
+common case where the act of dumping the first stack caused the stalled
+grace period to end.
 
+So sorry, but we really cannot go back to doing it that way.
+
+							Thanx, Paul
 
