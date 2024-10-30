@@ -1,219 +1,202 @@
-Return-Path: <linux-kernel+bounces-389436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324E79B6D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:50:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB3F9B6D1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E08282C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC47282D90
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB251D1741;
-	Wed, 30 Oct 2024 19:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50E11D0400;
+	Wed, 30 Oct 2024 19:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="keJGYyUx"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="uPt6kKOo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i0Uk18Jr"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E21C1D0F66
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 19:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B30E1D0DE6
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 19:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730317822; cv=none; b=X++qI74ptr2suu1umEHFMVKkQGW8hNXiAapPtHLvtamYdrwiPrXMxHg2yh555EtxmWgqkW6UqiTDdt8VuxahT7bRn4oKK5m69o1CnZ8eE6wqwxX94JoMcTBHMx2DIN65qqc4wQfKuxMUoh97BjuBpFc/DhwIBPHW0hHwgv8/qCA=
+	t=1730317860; cv=none; b=T9D8fOcr8H0cOan9QsT91QtzqDIkVYSrmJriKcKCi0W/Clctp/dggkrk5tIuMoUkQMNzWXDhkMVDI8GJnf+mOdUpx1srwDfNLGzMLf17wi9AFK9JAvNz84WGzvQLS+rzae3tieWN76cg4fBnqNvGW8gGg/PvLREdsAVdQHrDr6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730317822; c=relaxed/simple;
-	bh=ySnpbX4VP29q4J6OxGAwZZWV0JQNNJpiT2GpfS/xK+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXZwwccuA0HtmbVYtvsyvOUKkHoAv+yHbRCH7u1b3bcQDC4mM4ACrF+vMwvGJGr5ETooaQUZlRQDYWvSqsbcVIxQMBzs1+vH/qhJls2886tPNuvxRtjY1ZV/8nhvBlEjEakBI0elFw1FhM+8jMNodwcxXxJ18LNBbHeHVYExTxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=keJGYyUx; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a4e5e57678so4414815ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:50:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1730317819; x=1730922619; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ggsqcu8z7xAQnpCnTimF3os+TBYkuBRWj+Dwvf/jCsg=;
-        b=keJGYyUxl/eHpbMY19OIuK0p2Gc0iUsjP3HLMu63v5Y3RbcrwBGFOlGYCTUyMi6G4p
-         miT4RdiQDK0mk4TR2+lWoIUxjujmPgjRMjaKK5+Ose9supRDdMjeGKBQ6rA85krTwUjq
-         b7LBbp6L2bowmomWk/W+yJwaBxxIPUN6naT8Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730317819; x=1730922619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ggsqcu8z7xAQnpCnTimF3os+TBYkuBRWj+Dwvf/jCsg=;
-        b=eNUBnOS6bzk1Wct+3hkFSB4a/8zM6TG6nyC/SraJU4QjTT1m8iwBxjZzlYW8VHkV4x
-         6fRGUQCOasodl5F8j7Yrmw6QYZLN39FvE696E7SHDQNYa9SClPnCehV9ZjEAQqwiqaej
-         F/ZGvpDx+GxuMqy/rvyfP7KemquihpPDtvXXvag1hP/Bt24AseYwHDVlHvlQ2mBU8bOe
-         /HmoW3GN3a02q2GD546rYJ7gsoW9XYs+4RFCPSBFnDJp6Ev7Eq3vE4FDiOrq4mVB9gm7
-         alux4BFH3Olk14JBvXZGx4Ww6tQjKNN/cDmYML3MZ2yHNzIu70eyB99d1Bu232MPo6RD
-         KKOQ==
-X-Gm-Message-State: AOJu0YylPYpUHdzttf83rJ8i4nUEYpM/vTs7x9GFv3w761rtDl8TGTD5
-	gNr9VE2HKFT2QvYOUzgJ5hEtoOnvTyGHfZWz+nUArOAnWMBQXtQEjqOcqOZ5l58=
-X-Google-Smtp-Source: AGHT+IHYt0ZOSpiI7jrVNYso6Mo3G2wuCM5em87FTJDa+Bpc0QVRk9VV2WFNEahmGB/VwZ2NzyWUJQ==
-X-Received: by 2002:a05:6e02:12ef:b0:3a2:6d54:33df with SMTP id e9e14a558f8ab-3a5e3b5916bmr27226945ab.4.1730317818992;
-        Wed, 30 Oct 2024 12:50:18 -0700 (PDT)
-Received: from localhost (68.192.68.34.bc.googleusercontent.com. [34.68.192.68])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc72781359sm3001146173.138.2024.10.30.12.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 12:50:18 -0700 (PDT)
-Date: Wed, 30 Oct 2024 19:50:17 +0000
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
-Message-ID: <20241030195017.GA4171541@google.com>
-References: <20241029225116.3998487-1-joel@joelfernandes.org>
- <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
+	s=arc-20240116; t=1730317860; c=relaxed/simple;
+	bh=+nzOCBc/wjXtHobKLUDFTq6IHeq4topcyWsXuWINEdM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sa5X5w9dHtAaBba95/RkPO/v1pHtCmvR8M8WK2IMoPfWberBTlP2ms2A3+wsQyZz7eOv6Qc7bBsgAA/6kLB0efyNr3FhoW1B7fPVi5XNoi+X9CGDj6E8KUE1U4LUFA+Mu8qNc7so1/CqrgOGVjPe4+TL10TlbAD3yq40dwbWzL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=uPt6kKOo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i0Uk18Jr; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 1B18C25400F9;
+	Wed, 30 Oct 2024 15:50:55 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 30 Oct 2024 15:50:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730317854;
+	 x=1730404254; bh=Weyhm/0lKDkxwZ9NlzdP58yGW7aBHjGRbeLW9BvpyXQ=; b=
+	uPt6kKOo9PDGuuhJHkisxP5GrxUlevekmm8trTkWTrOzTKq2EoulPqJ6Baajko65
+	lHoLYYy/Ctbhw1luJchuuy7xETES54PuWS7ZWQjUtzUnAOQUbysMq/hGgISFnxma
+	aDgCMqTrS4cOoxkbj66cI3hQ01SJzZ1l0DM/cwjwvkepVXDka+VB3Zur1SM9f3wz
+	xrcaCJtlD7gGkpUDOc6D4pZYzms0Z0gUMEddPYVG1z9muCcswT4X8zolZn8NiNre
+	00A8efQ7Q8xdLFBbtJCnCNZm9iKHLILeQOcVcRuErEUzf2EZKbXZS/+6dClaPE1I
+	KMJDqbUgF01zNoOyuucEtw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730317854; x=
+	1730404254; bh=Weyhm/0lKDkxwZ9NlzdP58yGW7aBHjGRbeLW9BvpyXQ=; b=i
+	0Uk18Jr76emzGxvwwqCVd33VPjL+y5Ekv+UIU/izPELwtURULc99+vadOoeU9zQB
+	zJ7wKa/fc2pKKtzNf8lYDyx6a8ZRCb/g5POf4wD7tE5YbMAa2235ZH71yLy4q9n7
+	NSr4zIJLKKY6jZDmvEPrpL2veLDazKmtuBpNn2Z3ohUkEhBlDJsoy81FWrMhWlWy
+	Cqk6Fh6UUWYtJYBSoLRfksEZNQoEdBF1xF63e9axulsymmSiliDX4GmfGFfgmUEP
+	Qb89cLmcLXhCNtdI9XcpiJ4meyTRGPyW20yOezl3u6+W0eXR2TdEeMnHh79i3Xbp
+	NZeZdVPG6wUgrx50lMBMw==
+X-ME-Sender: <xms:Ho4iZ22p3jWCyF-xwhFYVIeQImwLDXgYdR8rTZ17liLzCT5NV8XJ7g>
+    <xme:Ho4iZ5EtePrP_YMaE9Isk2ROL2RdqXIusju4PVecdYSBq2rY9hlod3lRkygKiAgge
+    z3qA34E0wp782Ad4gI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedguddvkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddv
+    geejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeei
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpd
+    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgvggvrhht
+    sehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehgvghrgheslhhinhhugidqmh
+    eikehkrdhorhhgpdhrtghpthhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhn
+    uhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Ho4iZ-4EKFVdfJBxBgo2OLkOe3eyoGpEN5Zp7dznwXUf70M1hVubYw>
+    <xmx:Ho4iZ31Zw2ro_P6qXMconOvqtY5_UR-Yrz-59fMTG3rTcM3mKGWJKg>
+    <xmx:Ho4iZ5EsExmrHmR8G5qRxAAhE4XF5Mhbs5qlctcPmKAUx7VfFRNEAQ>
+    <xmx:Ho4iZw_cxjsMgSCX8OQG30DNqfjhrNEyCOSxiTR6aGzlQSu69JpXOQ>
+    <xmx:Ho4iZyMiCQ1BeGnh6FsfJ_pdn9DgueVKay4-bbHqmf3TnFU4ZGdmtmV3>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 05DDE2220071; Wed, 30 Oct 2024 15:50:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
+Date: Wed, 30 Oct 2024 20:50:33 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "kernel test robot" <lkp@intel.com>, "Greg Ungerer" <gerg@linux-m68k.org>,
+ linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Message-Id: <23106647-abcd-42ee-8e09-cca4cb9cc0ee@app.fastmail.com>
+In-Reply-To: 
+ <CAMuHMdVC-FUSA5C9aNrvP3=RaRWrchhUEC5UYcSGMz_ep1PEhg@mail.gmail.com>
+References: <20240803140115.3305547-1-arnd@kernel.org>
+ <CAMuHMdVC-FUSA5C9aNrvP3=RaRWrchhUEC5UYcSGMz_ep1PEhg@mail.gmail.com>
+Subject: Re: [PATCH] m68k: move sun3 into a top-level platform option
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 03:30:12PM +0100, Juri Lelli wrote:
-> Hi Joel,
+On Sun, Aug 18, 2024, at 13:08, Geert Uytterhoeven wrote:
+> On Sat, Aug 3, 2024 at 4:01=E2=80=AFPM Arnd Bergmann <arnd@kernel.org>=
+ wrote:
 
-Hi Juri!
+>> +       help
+>> +         This option enables support for the Sun 3 series of worksta=
+tions
+>> +         (3/50, 3/60, 3/1xx, 3/2xx systems). These use a classic 680=
+20 CPU
+>> +         but the custom memory management unit makes them incompatib=
+le with
+>> +         all other classic m68k machines, including Sun 3x.
+>
+> Yes, it's a good idea to factor out at the top level machines that
+> need special handling.
+>
+> However, the name of the choice now sounds a bit odd. Perhaps it should
+> be changed to "CPU/machine family support"?
+> Likewise for M68KCLASSIC.
 
-> On 29/10/24 22:51, Joel Fernandes (Google) wrote:
-> > During boot initialization, DL server parameters are initialized using the
-> > default root domain before the proper scheduler domains and root domains
-> > are built. This results in DL server parameters being tied to the default
-> > root domain's bandwidth accounting instead of the actual root domain
-> > assigned to the CPU after scheduler topology initialization.
-> > 
-> > When secondary CPUs are brought up, the dl_bw_cpus() accounting doesn't
-> > properly track CPUs being added since the DL server was started too early
-> > with the default root domain. Specifically, dl_bw_cpus() is called before
-> > set_cpu_active() during secondary CPU bringup, causing it to not account
-> > for the CPU being brought up in its capacity calculations. This causes
-> > subsequent sysfs parameter updates to fail with -EBUSY due to bandwidth
-> > accounting using the wrong root domain with zeroed total_bw.
-> > 
-> > This issue also causes under-utilization of system capacity. With the fix,
-> > we see proper capacity initialization and scaling as CPUs come online - the
-> > total system capacity increases from CPU 0 to CPU 1 and continues scaling
-> > up as more CPUs are added (from cap=1024 initially to cap=8192 with 8
-> > CPUs). Without the fix, the capacity initialization was incomplete since
-> > dl_bw_cpus() runs before the CPU is marked active in set_cpu_active(),
-> > leading to CPUs not being properly accounted for in the capacity
-> > calculations.
-> > 
-> > Fix this by tracking the last root domain used for the DL server and
-> > resetting the server parameters when the root domain changes. This ensures
-> > bandwidth accounting uses the correct, fully initialized root domain after
-> > the scheduler topology is built.
-> 
-> So, I'm trying to reproduce this issue, but currenlty not really seeing
-> it, sorry.
-> 
-> I'm on a 40 CPUs box and, even if I fiddle with hotplug, the numbers I
-> see from debug (bw, total_bw) seem sane and consistent with the fair
-> server settings.
-> 
-> Could you please provide additional info about how you reproduce the
-> issue? Maybe you have a test script around you could share?
+Changed for v3 now.
 
-With some prints [1] in the kernel, we can see on boot:
+>> -if M68KCLASSIC
+>> +endchoice
+>>
+>>  config M68000
+>> -       def_bool y
+>> -       depends on !MMU
+>> +       def_bool M68KCLASSIC && !MMU
+>
+> I think this is unrelated, and should be spun-off into a separate patch
+> to fix the "no CPU type selected" issue?
 
-$ dmesg|grep appl
-[    0.930337] dl_server_apply_params: cpu=0, runtime=50000000, period=1000000000, cpus=1, cap=1024, init=1
-[    0.949025] dl_server_apply_params: cpu=1, runtime=50000000, period=1000000000, cpus=1, cap=1024, init=1
-[    0.953026] dl_server_apply_params: cpu=2, runtime=50000000, period=1000000000, cpus=2, cap=2048, init=1
-[    0.957024] dl_server_apply_params: cpu=3, runtime=50000000, period=1000000000, cpus=3, cap=3072, init=1
-[    0.961023] dl_server_apply_params: cpu=4, runtime=50000000, period=1000000000, cpus=4, cap=4096, init=1
-[    0.965030] dl_server_apply_params: cpu=5, runtime=50000000, period=1000000000, cpus=5, cap=5120, init=1
-[    0.969024] dl_server_apply_params: cpu=6, runtime=50000000, period=1000000000, cpus=6, cap=6144, init=1
-[    0.973024] dl_server_apply_params: cpu=7, runtime=50000000, period=1000000000, cpus=7, cap=7168, init=1
+This change is actually needed here since I'm moving
+it out of the 'if M68KCLASSIC' block. There is no change
+in behavior here, only adapting to the other changes.
 
-For the 8th apply_params, the 8th CPU is not considered. This is because
-set_cpu_active() for the 8th CPU has not yet happened as mentioned in commit
-message.
+>>         select CPU_HAS_NO_BITFIELDS
+>>         select CPU_HAS_NO_CAS
+>>         select CPU_HAS_NO_MULDIV64
+>> @@ -56,7 +66,8 @@ config M68000
+>>           a paging MMU.
+>>
+>>  config M68020
+>> -       bool "68020 support"
+>> +       bool "68020 support" if M68KCLASSIC
+>> +       default !(M68030 || M68040 || M68060)
+>
+> Part of the "no CPU type selected" fix?
 
-With the patch:
+It turns out this was just wrong an broke COLDFIRE builds.
+I've replaced it with a separate patch that works.
 
-$ dmesg|grep appl
-[    0.961169] dl_server_apply_params: cpu=0, runtime=50000000, period=1000000000, cpus=1, cap=1024, init=1
-[    0.981936] dl_server_apply_params: cpu=1, runtime=50000000, period=1000000000, cpus=1, cap=1024, init=1
-[    0.985836] dl_server_apply_params: cpu=2, runtime=50000000, period=1000000000, cpus=2, cap=2048, init=1
-[    0.989835] dl_server_apply_params: cpu=3, runtime=50000000, period=1000000000, cpus=3, cap=3072, init=1
-[    0.993840] dl_server_apply_params: cpu=4, runtime=50000000, period=1000000000, cpus=4, cap=4096, init=1
-[    0.997835] dl_server_apply_params: cpu=5, runtime=50000000, period=1000000000, cpus=5, cap=5120, init=1
-[    1.001838] dl_server_apply_params: cpu=6, runtime=50000000, period=1000000000, cpus=6, cap=6144, init=1
-[    1.005834] dl_server_apply_params: cpu=7, runtime=50000000, period=1000000000, cpus=7, cap=7168, init=1
+>>         depends on MMU
+>>         select FPU
+>>         select CPU_HAS_ADDRESS_SPACES
+>
+> You also need:
+>
+>     config M68KFPU_EMU
+>             bool "Math emulation support"
+>    -        depends on M68KCLASSIC && FPU
+>    +        depends on (M68KCLASSIC || SUN3) && FPU
 
-   [ ... here somewhere rd changes as topology init finishes, then all the
-   params are replied, this time with the correct rd. ]
+Added.
 
-[    1.009903] dl_server_apply_params: cpu=0, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
-[    1.012409] dl_server_apply_params: cpu=1, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
-[    1.014269] dl_server_apply_params: cpu=2, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
-[    1.019865] dl_server_apply_params: cpu=3, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
-[    1.054908] dl_server_apply_params: cpu=4, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
-[    1.081865] dl_server_apply_params: cpu=5, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
-[    1.108861] dl_server_apply_params: cpu=6, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
-[    1.136944] dl_server_apply_params: cpu=7, runtime=50000000, period=1000000000, cpus=8, cap=8192, init=1
+>> --- a/arch/m68k/kernel/Makefile
+>> +++ b/arch/m68k/kernel/Makefile
+>> @@ -5,16 +5,8 @@
+>>
+>>  extra-y                        +=3D vmlinux.lds
+>>
+>> -obj-$(CONFIG_AMIGA)    :=3D head.o
+>> -obj-$(CONFIG_ATARI)    :=3D head.o
+>> -obj-$(CONFIG_MAC)      :=3D head.o
+>> -obj-$(CONFIG_APOLLO)   :=3D head.o
+>> -obj-$(CONFIG_VME)      :=3D head.o
+>> -obj-$(CONFIG_HP300)    :=3D head.o
+>> -obj-$(CONFIG_Q40)      :=3D head.o
+>> -obj-$(CONFIG_SUN3X)    :=3D head.o
+>> -obj-$(CONFIG_VIRT)     :=3D head.o
+>> -obj-$(CONFIG_SUN3)     :=3D sun3-head.o
+>> +obj-$(CONFIG_M68KCLASSIC)      :=3D head.o
+>> +obj-$(CONFIG_SUN3)             :=3D sun3-head.o
+>
+> Nice cleanup ;-)
+>
 
-The -EBUSY happens for our 5.15 backport. I see dl_b->total_bw to be 0
-without my patch. Even if the -EBUSY doesn't happen for you (perhaps due to
-compiler or other differences), shouldn't we use the correct rd for
-apply_params? The dl_bw is tied to the rd via  cpu_rq(cpu)->rd->dl_bw;
+This also needed a small fixuup to not break dragonball,
+using CONFIG_MMU_MOTOROLA instead of CONFIG_M68KCLASSIC.
 
-So if rd changes during boot initialization, the correct dl_bw has to be
-updated AFAICS. Also if cpusets are used, the rd for a CPU may change.
-
-Let me know if I missed something?
-
-[1]
-----------8<-----------
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index d9d5a702f1a6..249f99e88b98 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -238,6 +238,12 @@ void __dl_add(struct dl_bw *dl_b, u64 tsk_bw, int cpus)
- static inline bool
- __dl_overflow(struct dl_bw *dl_b, unsigned long cap, u64 old_bw, u64 new_bw)
- {
-+	printk("dl_b->bw: %llu\n", dl_b->bw);
-+	printk("cap: %lu, cap_scale(dl_b->bw, cap): %llu\n", cap, cap_scale(dl_b->bw, cap));
-+	printk("dl_b->total_bw: %llu\n", dl_b->total_bw);
-+	printk("old_bw: %llu\n", old_bw);
-+	printk("new_bw: %llu\n", new_bw);
-+
- 	return dl_b->bw != -1 &&
- 	       cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw;
- }
-@@ -1704,6 +1710,10 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
- 	cpus = dl_bw_cpus(cpu);
- 	cap = dl_bw_capacity(cpu);
- 
-+	printk("dl_server_apply_params: cpu=%d, runtime=%llu, period=%llu, cpus=%d, cap=%lu, init=%d\n",
-+		cpu, runtime, period, cpus, cap, init);
-+	printk("initial dl_b->total_bw=%llu, dl_b->bw=%llu\n", dl_b->total_bw, dl_b->bw);
-+
- 	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
- 		return -EBUSY;
- 
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+      Arnd
 
