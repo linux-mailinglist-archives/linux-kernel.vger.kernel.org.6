@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-389735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF319B7094
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:37:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9F59B7097
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302502827EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7329B1C208CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F27215029;
-	Wed, 30 Oct 2024 23:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4E61EF94E;
+	Wed, 30 Oct 2024 23:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYMblBXG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HgkTzLIC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22551CCB53;
-	Wed, 30 Oct 2024 23:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0CB1C4612
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 23:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730331411; cv=none; b=izWW03q8IeSfQgkKAHk+K1TVZZY3YTIFNDZiKzEjU7PDifUq6JFYcWXZlKJEyXNXh+1mNaWjBfAiYAg+VEyIMgDaniAn3OfXMxvU4BFRFGxJpoo/Q6EYgD+G//dSj7tjKPt+hBLC7rYLEJAQzigfnysUKn+dKocCclxXbZuSKFg=
+	t=1730331583; cv=none; b=XLg5AYGGAvj4zdAOA5jpQWbgcKnXhVj46JKOCb37sFmOW3baahaES1ORo50hN8tFpnMMYEOfxp9XTjqED2Xm6NpYkQTFLl8140aAyzA0M8rf4mOMMPIQQ00T1nV0Jfs3DXRSgP6aumlSNxxG5Xk7nZ2gsY8vvjju755HoMBZCIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730331411; c=relaxed/simple;
-	bh=unxNl6vAvsReQL1kX4mCDIAfvq/vFGNPbPnhztQp0U8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=DypWMfkko5O4kwS0ilWsw6aw7TYlquMqp7a1+4TZ2opdGewDH7D53NUjBtokUlfdqvPSFxDT9i0wPSeiI4qjbXpeE4oIgdIw1HzjE7XL8wD94V3s698nTsy5cbfdBgggD76p+uPgmI9i8lW4AaAo7WvZ/9497Qu1dSUlRJ7GB20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYMblBXG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC9B3C4DE02;
-	Wed, 30 Oct 2024 23:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730331411;
-	bh=unxNl6vAvsReQL1kX4mCDIAfvq/vFGNPbPnhztQp0U8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=SYMblBXG3Fg0iTjimrACSgPftvaPXObEcSk982F3K6yMiU9g51FLgnHtrZAixyZjA
-	 ogvA5lWklolwwztI+axBO58hu9B1xL3jKAsY6chDYSgR8Lc35iAc0UTggvO+Q6qLdj
-	 USdhls2K8RO4pt9rMfc3mgIkR3aClxJNlBCRG06cvXU2bAT+0ybIxdGqQaytw0drqY
-	 4hcTQZR6Du9ncg1OoPijSrqfOBNiC5Rv0HjEdezIR61K6ZQXi5W2E4/GQOOkFIoXuY
-	 uHdN42LPtJ/cRr9jVh3pi/EiPCmD+X6kxyJpgR/9mAL0KHGo4ONGuH96unrzew1lth
-	 ks0z+IxI+0wUA==
+	s=arc-20240116; t=1730331583; c=relaxed/simple;
+	bh=9RoctVLz7vPRQQux3xk7hRjAce6Fv+nbYXFla/dRFZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ocB+voLLht483u2hlcStHbZ2Og/EpANUZIopAS00+wVZ542R4kbxEFHLv6nUaEizXC0eiZZp7U3Eo6SvcMSI1lMqOLqAjVwILTJ4b7TdlqCFKstan3iXnhBR4C18g0lmmO62tCkOD/5EA5vR5rw4aahGmQapa3pzDaWeALYlv2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HgkTzLIC; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730331582; x=1761867582;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9RoctVLz7vPRQQux3xk7hRjAce6Fv+nbYXFla/dRFZo=;
+  b=HgkTzLICgpAg2iR+DV+tETaV+xyMeqOgnIp3dlUMdRTA5OGb4n65cXZZ
+   XoX0yNmx6A5DqDHMUJMh/L7GL40WrHhcY9k9hSwd8EFeJ/nwvlddR32Fu
+   vaR5cX37dBTz4K2waSbTCvNfWycTbD9Trj12Ili0VXN+XjBXNzKzzfw3s
+   oNyieBR4kjyo+XisfT43ADdYdYKAYJJJeHcP6RfYM9VFwBmRmle/XFORA
+   iXzrfd2tkE3OXwBjyb0tW1PQmZ2K61MVM/imHrQQNuCIypAcwekgygkZ6
+   t5lT0VOB/PwKlY1MkxoiMtgZKDhB9SrfbKExoL0l/e558uYlqbHMMJUTz
+   w==;
+X-CSE-ConnectionGUID: joTOFzDuSx6+etqJjCu3nQ==
+X-CSE-MsgGUID: odbnl7paQmi9+DNIn76V0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="41454391"
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="41454391"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 16:39:42 -0700
+X-CSE-ConnectionGUID: gp8SokX3R424+Ob5wS9QnQ==
+X-CSE-MsgGUID: RejddLsOS9OmV97P5cf62g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="82556564"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.223.155]) ([10.124.223.155])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 16:39:40 -0700
+Message-ID: <1c1c25f4-2aa3-42cb-87e2-0bc54b2d0e07@intel.com>
+Date: Wed, 30 Oct 2024 16:39:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] x86/cpufeature: Add feature dependency checks
+To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Uros Bizjak <ubizjak@gmail.com>,
+ Sandipan Das <sandipan.das@amd.com>, Sean Christopherson
+ <seanjc@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vegard Nossum <vegard.nossum@oracle.com>, Tony Luck <tony.luck@intel.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Nikolay Borisov <nik.borisov@suse.com>, Eric Biggers <ebiggers@google.com>,
+ Xin Li <xin3.li@intel.com>, Alexander Shishkin
+ <alexander.shishkin@intel.com>,
+ Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+ linux-kernel@vger.kernel.org
+References: <20241030233118.615493-1-sohil.mehta@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241030233118.615493-1-sohil.mehta@intel.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 01:36:46 +0200
-Message-Id: <D59JAI6RR2CD.G5E5T4ZCZ49W@kernel.org>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- <stable@vger.kernel.org>, "Mike Seo" <mikeseohyungjin@gmail.com>, "open
- list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, "open list"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: set TPM_CHIP_FLAG_SUSPENDED early
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jerry Snitselaar" <jsnitsel@redhat.com>
-X-Mailer: aerc 0.18.2
-References: <20241029223647.35209-1-jarkko@kernel.org>
- <z4ggs22bzp76ire4yecy5cehlurlcll7hrf2bx4mksebtdmcmr@hpjardr6gwib>
-In-Reply-To: <z4ggs22bzp76ire4yecy5cehlurlcll7hrf2bx4mksebtdmcmr@hpjardr6gwib>
+Content-Transfer-Encoding: 7bit
 
-On Wed Oct 30, 2024 at 10:09 PM EET, Jerry Snitselaar wrote:
-> On Wed, Oct 30, 2024 at 12:36:47AM +0200, Jarkko Sakkinen wrote:
-> > Setting TPM_CHIP_FLAG_SUSPENDED in the end of tpm_pm_suspend() can be r=
-acy
-> > according to the bug report, as this leaves window for tpm_hwrng_read()=
- to
-> > be called while the operation is in progress. Move setting of the flag
-> > into the beginning.
-> >=20
-> > Cc: stable@vger.kernel.org # v6.4+
-> > Fixes: 99d464506255 ("tpm: Prevent hwrng from activating during resume"=
-)
-> > Reported-by: Mike Seo <mikeseohyungjin@gmail.com>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219383
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> >  drivers/char/tpm/tpm-interface.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-in=
-terface.c
-> > index 8134f002b121..3f96bc8b95df 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -370,6 +370,8 @@ int tpm_pm_suspend(struct device *dev)
-> >  	if (!chip)
-> >  		return -ENODEV;
-> > =20
-> > +	chip->flags |=3D TPM_CHIP_FLAG_SUSPENDED;
-> > +
-> >  	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
-> >  		goto suspended;
-> > =20
-> > @@ -390,8 +392,6 @@ int tpm_pm_suspend(struct device *dev)
-> >  	}
-> > =20
-> >  suspended:
-> > -	chip->flags |=3D TPM_CHIP_FLAG_SUSPENDED;
-> > -
-> >  	if (rc)
-> >  		dev_err(dev, "Ignoring error %d while suspending\n", rc);
-> >  	return 0;
-> > --=20
-> > 2.47.0
-> >=20
->
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+On 10/30/24 16:31, Sohil Mehta wrote:
+> Unexpected failures can occur when the kernel tries to use such a
+> feature. Rather than debug such scenarios, it would be better to
+> disable the feature upfront.
 
-Thanks but I actually started to look at the function:
+It Looks OK and sane to me.  It's nice that it inherits the "Loop until
+we get a stable state" from do_clear_cpu_cap().
 
-https://elixir.bootlin.com/linux/v6.11.5/source/drivers/char/tpm/tpm-interf=
-ace.c#L365
-
-The absolutely safe-play way considering concurrency would be
-to do tpm_try_get_ops() before checking any flags. That way
-tpm_hwrng_read() is guaranteed not conflict.
-
-So the way I would fix this instead would be to (untested
-wrote inline here):
-
-int tpm_pm_suspend(struct device *dev)
-{
-	struct tpm_chip *chip =3D dev_get_drvdata(dev);
-	int rc =3D 0;
-
-	if (!chip)
-		return -ENODEV;
-
-	rc =3D tpm_try_get_ops(chip);
-	if (rc) {
-		chip->flags =3D |=3D TPM_CHIP_FLAG_SUSPENDED;
-		return rc;
-	}
-
-	/* ... */
-
-suspended:
-	chip->flags |=3D TPM_CHIP_FLAG_SUSPENDED;
-	tpm_put_ops(chip);
-
-It does not really affect performance but guarantees that
-tpm_hwrng_read() is guaranteed either fully finish or
-never happens given that both sides take chip->lock.
-
-So I'll put one more round of this and then this should be
-stable and fully fixed.
-
-BR, Jarkko
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
 
