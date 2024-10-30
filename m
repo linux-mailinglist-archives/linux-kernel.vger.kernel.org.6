@@ -1,264 +1,125 @@
-Return-Path: <linux-kernel+bounces-388621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD979B622F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:47:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC2A9B6233
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:47:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB2B28361E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 822462835B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8721E572F;
-	Wed, 30 Oct 2024 11:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6002B1E47CE;
+	Wed, 30 Oct 2024 11:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yf+8nCu/"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ULjmv6uR"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A131E47CE;
-	Wed, 30 Oct 2024 11:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD7F1DC759;
+	Wed, 30 Oct 2024 11:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288834; cv=none; b=bHa+IAu2AAwKowycsF1FskigbMAaNA2Pas+PQY1QuY0ot0MLhOuhz2UdHxCoJVI5CFiUaWdFomekthjWxiYfg5DE20JFjofkwVAQwa2IS8fZQ9+W5/qFTCEsVPp3TiMilqqOq/YYb7DyFskAdpatgxoxHEb1Df83Wqou5j4eCi4=
+	t=1730288868; cv=none; b=uqiAE8HYLAnyEWyt6VzLsHVl2Bic2vIXKy97OSFgIGZ64+FHYUKEXN5koAZsI4e4AXv5L7oKQdTg7BvEGcVHNmcIte9Y/1yz6VKsrbkmNCcTKJd07Ik4Geie7i3Ae2BGs6o+UFVLPzybnQEe4VOaBE09/UmumzYAWvNjEom5c6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288834; c=relaxed/simple;
-	bh=a10ZdxMtL4d0AOZv+brjgYZyiOYcVyQqAW0BY+GhlQ0=;
+	s=arc-20240116; t=1730288868; c=relaxed/simple;
+	bh=m566/Aw7BokwNE95AHhDC+A322x2cffvVlTff/86lYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnA7coCH6wn4lrsFQfpufOhyXW8sLGFOJwJFlGjlxqvNHhBv0JBi+BBepg63pqfwGiNkRANF9AGo3XEpKHwoL9p7pDYaFiIW3YjJqxu6Q7URX0udotP4c7kt75ukA64DRHFb+cM110253rA/JIvZBvQi6ALeIsmPdyFgzhkd9x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yf+8nCu/; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ece998fe6so886228f8f.1;
-        Wed, 30 Oct 2024 04:47:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730288830; x=1730893630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=71Z6N0f0s9Q9l3FMkhrwHC4fWFLGTTR2mo+j6DbIOd4=;
-        b=Yf+8nCu/BirKOEVQ7a0HqNm05ZMsF8QKL2PEcKlTP1ud3iGNDYUtb1Ig2PRwU8mt5Q
-         snzsK9PL+oJXk48wPnDNBDKlOWmPhZKuEa+0zNMS57FnxwBGoEa4xDTLr+pBW9pxg0j7
-         mZ95qAIIpKwaCnR24ZvZG7uqzEk/TPUvc5dgp1RAFC7KIZ9lvU/K4DPNonxx1pCgaMH0
-         KfxIX4UcD3uncKc01/aGRna2w3pU32jod0DoWMGvGndD/97yxDzGGLHgJ3VouQha0o9X
-         hpzyGbFrlmSd2Iu7HyyAMejTBxG/bSHu8/g5SkpcxKgle81EVzfZJtRZmIpg4jUkkSVM
-         cIeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730288830; x=1730893630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=71Z6N0f0s9Q9l3FMkhrwHC4fWFLGTTR2mo+j6DbIOd4=;
-        b=g4kdiQOs2rbDcmsM7D7yX1J32xEGbjeNTyq+4YcHNIkcwlS4GHxmCEiTrM5+V6Tyeh
-         H1BXm4APdVdcGP1/tRyZtVEldVZky8VHKQY3FUcU9lX7VULLW3POstPPimoxnB11rKEr
-         xGue5hsNOvQhEAoEWtFTQI9rjVCM9bsp8O6ungssMSWu/3T6XUbyBnl6aZ4eR4+XYumY
-         DvlQh8QlkAb0g9S0C/mc/URTWLlgLoVUijHw/2XpDCUpGRc2AArfOWT4fdxpWUrU7l+C
-         JtkDdSRAXzgyMXlCOrqWwK5QZws8KgnqM1Mx6M64WFLPaqvRftTT6mHJF/9fqxlBSbZ4
-         xlzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTccIS4uNT9oPGFb2a9zfTYbWsOWRCzoYIvCExG5V4b58nVzvE29IOY/L7jn1KoOYLe2qpTq0MmeO+KpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4JU0lNHrEldyLSWgLvW1XnpyRsfONXvedWaYiuPU5IwlodsOQ
-	SAyQO1n2clMdpMFjYghqep2+QHZpm8aGZg6ajsv3d652ArqJqtdD
-X-Google-Smtp-Source: AGHT+IH9XhTipE8INCmJM9rDpTSk6gZJf8Rw2L5Pqs2PM2odooDFAsmqFnRjL6M7rtEJXarPjCXh7g==
-X-Received: by 2002:a05:6000:18a3:b0:378:c6f5:9e54 with SMTP id ffacd0b85a97d-3806112785amr5406861f8f.5.1730288829817;
-        Wed, 30 Oct 2024 04:47:09 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd917f0bsm18906905e9.17.2024.10.30.04.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 04:47:08 -0700 (PDT)
-Date: Wed, 30 Oct 2024 13:47:06 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Simon Horman <horms@kernel.org>,
-	andrew+netdev@lunn.ch,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com
-Subject: Re: [PATCH net-next v6 3/6] net: stmmac: Refactor FPE functions to
- generic version
-Message-ID: <20241030114706.yaevtgpefwfxva5v@skbuf>
-References: <cover.1730263957.git.0x1207@gmail.com>
- <cover.1730263957.git.0x1207@gmail.com>
- <cc87e0e02610a5ebfb0079716061f57fb9678dfc.1730263957.git.0x1207@gmail.com>
- <cc87e0e02610a5ebfb0079716061f57fb9678dfc.1730263957.git.0x1207@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOLUDEokSdjU3JBgL3l5HPbN9r0DaM6o1dgXjDphlgbDqhOvaWUelVVd2cPfuz3K7JZNS0vwWV1zTvkcQr1YRKcAGRJ0TTyn7sghOovGg5nauj0AHeynudDLHUIi1ExyoaG/4nvMRuTMnOrsEdn6rWLQt+iidaNmvZNwgYQXaPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ULjmv6uR; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3561040E0219;
+	Wed, 30 Oct 2024 11:47:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id S9VEuAuA33Y3; Wed, 30 Oct 2024 11:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730288860; bh=600G8edgGU8M7BuLs4swFcgrBvQ+28NzvVnBeZLi5DE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ULjmv6uRCnWbaMzdOD0q270221nwyjYiK+v3hPxMLHNF7J9ulZnnnWQJ8I0/2SydL
+	 K7obiq5YWgKYTrg89dbJJxJjDKBnPHyXncCqi3zGyZaCzbSaevTqsCS3squcY/fVVd
+	 RN69gP4fXiLYIFm0B2l2Lv08lYNHWw8fDNca9pRHF9hHDGpHFe6gmul8tJg8UFiKPl
+	 dc8Hjs8VxUmiE+TrUgX/QFE+wwj6uSG4/CSZLbEV2QbvmR5yaNuKfK5A4j6n3DsgBp
+	 Hwbw/8R9t6UakaAxcUYCIEe7Zf0eREaEpEstObDxPkFcnmWQuIWB3av+s6orMLzy8C
+	 /WKHE0xubYBkoBTkgq9mlJsXkFfl13XjaQ3oO9DtnFK2JbOk21sZ1/m2VnlshnrLly
+	 tg0Z+JubTgdvzFfUGA1znzk1PQGtFOS++spRIXRdMUdeZj4ka2XuGM+mBehzbGI5JY
+	 VlmuvbUxtLAoVSStgB3W32O2gOxXbaxCcAjILALFD45R/E27Xdg382mSnyydww0t1f
+	 sV3w2c8FMam4RT/VeasYrTrjNIYEfkef3XJLt5It1d2EpoTlw39ZKsu/23dt5Vqofo
+	 LGBSBgQ9XhhDSbSrU1yH6XQXRG0xGH+X1fzDrPELjIneSfcDorJZDBFoC4t3aLW80p
+	 7nDhrD8zflS3Dghyn9r4/zw8=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AD75940E0191;
+	Wed, 30 Oct 2024 11:47:21 +0000 (UTC)
+Date: Wed, 30 Oct 2024 12:47:12 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Kai Huang <kai.huang@intel.com>
+Subject: Re: [PATCHv4, REBASED 1/4] x86/mm/ident_map: Fix virtual address
+ wrap to zero
+Message-ID: <20241030114712.GCZyIcwF9MyQacmRf1@fat_crate.local>
+References: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
+ <20241016111458.846228-2-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cc87e0e02610a5ebfb0079716061f57fb9678dfc.1730263957.git.0x1207@gmail.com>
- <cc87e0e02610a5ebfb0079716061f57fb9678dfc.1730263957.git.0x1207@gmail.com>
+In-Reply-To: <20241016111458.846228-2-kirill.shutemov@linux.intel.com>
 
-On Wed, Oct 30, 2024 at 01:36:12PM +0800, Furong Xu wrote:
-> FPE implementation for DWMAC4 and DWXGMAC differs only for:
-> 1) Offset address of MAC_FPE_CTRL_STS and MTL_FPE_CTRL_STS
-> 2) FPRQ(Frame Preemption Residue Queue) field in MAC_RxQ_Ctrl1
-> 3) Bit offset of Frame Preemption Interrupt Enable
+On Wed, Oct 16, 2024 at 02:14:55PM +0300, Kirill A. Shutemov wrote:
+> Calculation of 'next' virtual address doesn't protect against wrapping
+> to zero. It can result in page table corruption and hang. The
+> problematic case is possible if user sets high x86_mapping_info::offset.
 > 
-> Refactor FPE functions to avoid code duplication.
-
-I would add "and to simplify the code flow by avoiding the use of
-function pointers".
-
+> The wrapping to zero only occurs if the top PGD entry is accessed.
+> There are no such users in the upstream. Only hibernate_64.c uses
+> x86_mapping_info::offset, and it operates on the direct mapping range,
+> which is not the top PGD entry.
 > 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-> index 70ea475046f0..ee86658f77b4 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-> @@ -27,6 +27,20 @@
->  #define STMMAC_MAC_FPE_CTRL_STS_SVER	BIT(1)
->  #define STMMAC_MAC_FPE_CTRL_STS_EFPE	BIT(0)
->  
-> +struct stmmac_fpe_reg {
-> +	const u32 mac_fpe_reg;		/* offset of MAC_FPE_CTRL_STS */
-> +	const u32 mtl_fpe_reg;		/* offset of MTL_FPE_CTRL_STS */
-> +	const u32 rxq_ctrl1_reg;	/* offset of MAC_RxQ_Ctrl1 */
-> +	const u32 fprq_mask;		/* Frame Preemption Residue Queue */
-> +	const u32 int_en_reg;		/* offset of MAC_Interrupt_Enable */
-> +	const u32 int_en_bit;		/* Frame Preemption Interrupt Enable */
-> +};
-> +
-> +bool stmmac_fpe_supported(struct stmmac_priv *priv)
-> +{
-> +	return (priv->dma_cap.fpesel && priv->fpe_cfg.reg);
-> +}
+> Replace manual 'next' calculation with p?d_addr_end() which handles
+> wrapping correctly.
 
-This is a separate logical change from just refactoring. Refactoring
-changes (which are noisy) should not have functional changes. Could
-the introduction and use of stmmac_fpe_supported() please be a separate
-patch?
+So this is a fix for a theoretical issue as it cannot happen currently?
 
-Also, parentheses are not necessary.
+Can we call that out in the commit message so that the stable AI doesn't pick
+it up?
 
-> +
->  void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
->  {
->  	struct stmmac_fpe_cfg *fpe_cfg = &priv->fpe_cfg;
-> @@ -38,25 +52,19 @@ void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
->  
->  	if (is_up && fpe_cfg->pmac_enabled) {
->  		/* VERIFY process requires pmac enabled when NIC comes up */
-> -		stmmac_fpe_configure(priv, priv->ioaddr, fpe_cfg,
-> -				     priv->plat->tx_queues_to_use,
-> -				     priv->plat->rx_queues_to_use,
-> -				     false, true);
-> +		stmmac_fpe_configure(priv, false, true);
->  
->  		/* New link => maybe new partner => new verification process */
->  		stmmac_fpe_apply(priv);
->  	} else {
->  		/* No link => turn off EFPE */
-> -		stmmac_fpe_configure(priv, priv->ioaddr, fpe_cfg,
-> -				     priv->plat->tx_queues_to_use,
-> -				     priv->plat->rx_queues_to_use,
-> -				     false, false);
-> +		stmmac_fpe_configure(priv, false, false);
->  	}
->  
->  	spin_unlock_irqrestore(&fpe_cfg->lock, flags);
->  }
->  
-> -void stmmac_fpe_event_status(struct stmmac_priv *priv, int status)
-> +static void stmmac_fpe_event_status(struct stmmac_priv *priv, int status)
->  {
->  	struct stmmac_fpe_cfg *fpe_cfg = &priv->fpe_cfg;
->  
-> @@ -68,8 +76,7 @@ void stmmac_fpe_event_status(struct stmmac_priv *priv, int status)
->  
->  	/* LP has sent verify mPacket */
->  	if ((status & FPE_EVENT_RVER) == FPE_EVENT_RVER)
-> -		stmmac_fpe_send_mpacket(priv, priv->ioaddr, fpe_cfg,
-> -					MPACKET_RESPONSE);
-> +		stmmac_fpe_send_mpacket(priv, MPACKET_RESPONSE);
->  
->  	/* Local has sent verify mPacket */
->  	if ((status & FPE_EVENT_TVER) == FPE_EVENT_TVER &&
-> @@ -107,8 +114,7 @@ static void stmmac_fpe_verify_timer(struct timer_list *t)
->  	case ETHTOOL_MM_VERIFY_STATUS_INITIAL:
->  	case ETHTOOL_MM_VERIFY_STATUS_VERIFYING:
->  		if (fpe_cfg->verify_retries != 0) {
-> -			stmmac_fpe_send_mpacket(priv, priv->ioaddr,
-> -						fpe_cfg, MPACKET_VERIFY);
-> +			stmmac_fpe_send_mpacket(priv, MPACKET_VERIFY);
->  			rearm = true;
->  		} else {
->  			fpe_cfg->status = ETHTOOL_MM_VERIFY_STATUS_FAILED;
-> @@ -118,10 +124,7 @@ static void stmmac_fpe_verify_timer(struct timer_list *t)
->  		break;
->  
->  	case ETHTOOL_MM_VERIFY_STATUS_SUCCEEDED:
-> -		stmmac_fpe_configure(priv, priv->ioaddr, fpe_cfg,
-> -				     priv->plat->tx_queues_to_use,
-> -				     priv->plat->rx_queues_to_use,
-> -				     true, true);
-> +		stmmac_fpe_configure(priv, true, true);
->  		break;
->  
->  	default:
-> @@ -154,6 +157,9 @@ void stmmac_fpe_init(struct stmmac_priv *priv)
->  	priv->fpe_cfg.status = ETHTOOL_MM_VERIFY_STATUS_DISABLED;
->  	timer_setup(&priv->fpe_cfg.verify_timer, stmmac_fpe_verify_timer, 0);
->  	spin_lock_init(&priv->fpe_cfg.lock);
-> +
-> +	if (priv->dma_cap.fpesel && !priv->fpe_cfg.reg)
-> +		dev_info(priv->device, "FPE on this MAC is not supported by driver.\n");
+And which commit is it fixing?
 
-This as well.
+aece27851d44 ("x86, 64bit, mm: Add generic kernel/ident mapping helper")
+perhaps?
 
->  }
->  
->  void stmmac_fpe_apply(struct stmmac_priv *priv)
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
-> index 25725fd5182f..00e616d7cbf1 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
-> @@ -22,24 +22,21 @@ struct stmmac_priv;
->  struct stmmac_fpe_cfg;
->  
->  void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up);
-> -void stmmac_fpe_event_status(struct stmmac_priv *priv, int status);
-> +bool stmmac_fpe_supported(struct stmmac_priv *priv);
->  void stmmac_fpe_init(struct stmmac_priv *priv);
->  void stmmac_fpe_apply(struct stmmac_priv *priv);
-> -
-> -void dwmac5_fpe_configure(void __iomem *ioaddr, struct stmmac_fpe_cfg *cfg,
-> -			  u32 num_txq, u32 num_rxq,
-> -			  bool tx_enable, bool pmac_enable);
-> -void dwmac5_fpe_send_mpacket(void __iomem *ioaddr,
-> -			     struct stmmac_fpe_cfg *cfg,
-> +void stmmac_fpe_configure(struct stmmac_priv *priv, bool tx_enable,
-> +			  bool pmac_enable);
-> +void stmmac_fpe_send_mpacket(struct stmmac_priv *priv,
->  			     enum stmmac_mpacket_type type);
+Always add Fixes: tags when a patch is fixing something - you know that.
 
-Sorry I noticed this just now. After the refactoring, stmmac_fpe_send_mpacket()
-is only used from stmmac_fpe.c, and thus can be unexported and made static.
-Same goes for enum stmmac_mpacket_type.
+Thx.
 
-> -int dwmac5_fpe_irq_status(void __iomem *ioaddr, struct net_device *dev);
-> -int dwmac5_fpe_get_add_frag_size(const void __iomem *ioaddr);
-> -void dwmac5_fpe_set_add_frag_size(void __iomem *ioaddr, u32 add_frag_size);
-> +void stmmac_fpe_irq_status(struct stmmac_priv *priv);
-> +int stmmac_fpe_get_add_frag_size(struct stmmac_priv *priv);
-> +void stmmac_fpe_set_add_frag_size(struct stmmac_priv *priv, u32 add_frag_size);
-> +
->  int dwmac5_fpe_map_preemption_class(struct net_device *ndev,
->  				    struct netlink_ext_ack *extack, u32 pclass);
->  
-> -void dwxgmac3_fpe_configure(void __iomem *ioaddr, struct stmmac_fpe_cfg *cfg,
-> -			    u32 num_txq, u32 num_rxq,
-> -			    bool tx_enable, bool pmac_enable);
-> +extern const struct stmmac_fpe_reg dwmac5_fpe_reg;
-> +extern const struct stmmac_fpe_reg dwxgmac3_fpe_reg;
->  
->  #endif
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
