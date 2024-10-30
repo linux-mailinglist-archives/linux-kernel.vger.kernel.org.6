@@ -1,338 +1,539 @@
-Return-Path: <linux-kernel+bounces-388829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF35D9B64FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:58:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3407E9B64F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:58:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533071F22388
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6F71F23664
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFA91F8EF1;
-	Wed, 30 Oct 2024 13:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BC11F8938;
+	Wed, 30 Oct 2024 13:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J8817F02"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="MtJRZEKx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LBmdRAnv"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9688A1F8900;
-	Wed, 30 Oct 2024 13:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2571F5834;
+	Wed, 30 Oct 2024 13:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730296524; cv=none; b=pHcVlCRi4A8d5BoaZUZ/nLlbQp6uRxWAnec4/nmJ4mnOTbdnyM7MQn4p7jrYxr0rh2t+KPXYWQTraC9fIJbopz3oZ9G1Om5sXIQomycbkpUTh2AV8UZRvhgTCEJl4L/aU6xtYrMihdKHHcP2kESTNgat+Oht7MHL69A5BoRrlfo=
+	t=1730296522; cv=none; b=mjFDdlzwily8ZHrNZ+XLEhkQKxGoetl23LqAHtn8haDC7As9Jv1Cee7dqf8LKBdlcntokDbFF2w7pu6S/jm2fjEpUI6Mg5lOVFluteplyTg4DV4UkfhSJHKxDTyvug6xDFvM2MVokV6KCOD4FAXF1rfBF1njp5spHVaIn7NMLqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730296524; c=relaxed/simple;
-	bh=LrsGh3qmzchnmqG2MM3YOk05oabiM6pDWIcBkA50Nxc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AjEg/UDtRf7wkpOFtrlWCUhkv9603ZP95nNTKr5s0qNL+b5nxIF9yeZ1LTxUeuiOWXSjQNQD7iLH16bFA1ggKWD9rL3khmehqoU36qYMNW24HkTVEJouCx8IEPKc3UR70Qjpoo+qlCDuR74qlbdVXaI0ZWO9w/FzbBDzOUKBg6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J8817F02; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7A8B31C0004;
-	Wed, 30 Oct 2024 13:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730296520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U981dne136mJZRxylVkDHEeRlMRiiF/+nXZbj0TIeeA=;
-	b=J8817F02quQ1eKrhKd+uXon5xmSaNc4dPvFZXxRhjJ3sR2HZdKfY08zctkIu/4Qae8vCCW
-	d778sibi0rfRO/TUjIFjflc4f2oRFR93Ws+8oU4C0L1gQsTFyQe3PBW1NbgSdtVURRfl8S
-	y7IqvX3whEAHjTLo28XARUENQNcBXKO/OHyNU7Am9fY4kpADr8IHjs7qrkiXo1QTgE+EFt
-	i8gCFT/LQK3prG3eCRs4a4/V8MUZi9fPHCTcGRnoqDrBltafCRvpnZ+3F4BvH3iaLV+JSD
-	+uYod3GAvPBib0FRSuvPYDBn/jR0Xt7XRjuA2bIl1e8oCkpUDj7W7S1GHPw5+Q==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 30 Oct 2024 14:54:52 +0100
-Subject: [PATCH net-next v19 10/10] netlink: specs: Enhance tsinfo netlink
- attributes and add a tsconfig set command
+	s=arc-20240116; t=1730296522; c=relaxed/simple;
+	bh=iM0/1TsjySmpzoK29E7ZhX5iSPVldsSzoIsHTov5EaA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=VLepDC4BI50sEwrSBhobcaqILYpau0MXdcOlMZUHTs40BuX2zuV6pvVD5Z1gOzKcWaaNC6g9z2gT36OxZ3muvf+LXm8/utjj5KAhHqZnyCvqRT88tBb45Im656YlI53UL3k3H1115U4TAULbKHs8P0+yBxflOgG77XtUkUnGtPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=MtJRZEKx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LBmdRAnv; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 9FAB92540119;
+	Wed, 30 Oct 2024 09:55:16 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-08.internal (MEProxy); Wed, 30 Oct 2024 09:55:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1730296516;
+	 x=1730382916; bh=w5foPMucCDoCKxtR0O1ytzXoIj/AgQRy+uRoTORaXTo=; b=
+	MtJRZEKxySlT3PDTFKjlkB6r+FAp7UmttBejzrwbUtH2rRlopsFyLLc7A+Zj8e8A
+	wrU65L5XmpR2qU6FBPoX+NbzRn9RTGwvRGx+9uNJjOXGfjDzR822ZFwpDo4m96Ye
+	0jNxJAoybofkZddKLCxhG0BeZqAdxzfesUQV8B1vCIoTS5zXyTY+kfLf+YnMiU3A
+	B6/A/fYYHHBRGTWk+PwSregC0j31xAYnP7tQih+ZoMtxksI8W+73UVd0hLjKtM6L
+	74GlXc6rSfWCKYdD32hs8E+RP4e0NeuIFtdQ9dITMsFVMAayLezwaUdOT5OTLYnN
+	DQ9AZHM6I6MU/pHbmlHW+Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730296516; x=
+	1730382916; bh=w5foPMucCDoCKxtR0O1ytzXoIj/AgQRy+uRoTORaXTo=; b=L
+	BmdRAnvLAvSHi4B3KTmgeyiQUlR7bNv/vOIEWTlQQZtKGteHlk/GsifzqTu+Zg/Y
+	05Jsr/ZCJ3dBiW4kA7rwfXS/jNJ6JZcTJRH81RTXNzSctL1H0gkIv+gwituydoHE
+	afeKg1cEp+phBnfsiU+wxvH5RV2NNgrVxOEHniZ62qutIdRFhzLLu43dWx49ocH3
+	CJQIPcC4FsoPpMhF/oZzO7ytwwbKfmmjwtA7sNaf5ty9Nn0z7278iAuftTFd7ELd
+	fkJvKnapxaD4kGzyowbsaJ9Rl7rBBccTxLfT8MRFQAD7Lab1fedQPHIQ9oNnfWdY
+	rB5vVmu4greB3t0VYYvxA==
+X-ME-Sender: <xms:xDoiZwib2eyCqyNHKbf9zlnaCi16PyTlp1Oob1pfAuBYV6Qxgu4fUA>
+    <xme:xDoiZ5BORn2gWRq7Ihs4VXsXV0-uAwOh7dkAI0d0Z2zfjbhZkOm44em8pvWkX5Ayr
+    c6djT7GjmUomiIbj40>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
+    hvqeenucggtffrrghtthgvrhhnpeehtedugfelgeeltdevvedtleffhfetgfdtjefhkefg
+    udejfeeuueefvdejuddutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrihhordhlihhmohhntghivg
+    hllhhosegrmhgurdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrdgthhgrrhihsehg
+    mhgrihhlrdgtohhmpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhlphho
+    rdhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhug
+    gvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhu
+    thesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnh
+    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehplhgrthhfohhrmhdq
+    ughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:xDoiZ4ErpcWqPDKp59c8kBuHc67sHADcy9-5OzGjgGa1box-nDwWyQ>
+    <xmx:xDoiZxTYOMpojBoUA1lkgOy6r_pF3r_5d0_P83GoKO6OmDzBgMGxJA>
+    <xmx:xDoiZ9y8CfOO_x98k5DxgeiqdsM49uOIOdVoKbiXdTTMUGzZwHw-oQ>
+    <xmx:xDoiZ_6tiZ7kgs9LDUNCuz8Gw00aN7mBsXZi5ULM1ORCC3AYvYuDEQ>
+    <xmx:xDoiZ8ycIOelkxeuTGylLO9BV_qF7m4KQSMhE5N5h7_Fa8QibP6r4VV5>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 13E933360079; Wed, 30 Oct 2024 09:55:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-feature_ptp_netnext-v19-10-94f8aadc9d5c@bootlin.com>
-References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
-In-Reply-To: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
- Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
- Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
- donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
- Willem de Bruijn <willemb@google.com>, 
- Shannon Nelson <shannon.nelson@amd.com>, 
- Alexandra Winter <wintera@linux.ibm.com>, 
- Kory Maincent <kory.maincent@bootlin.com>, 
- Jacob Keller <jacob.e.keller@intel.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: kory.maincent@bootlin.com
+Date: Wed, 30 Oct 2024 14:54:55 +0100
+From: "Luke Jones" <luke@ljones.dev>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org,
+ "Jiri Kosina" <jikos@kernel.org>, platform-driver-x86@vger.kernel.org,
+ "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com,
+ "Mario Limonciello" <superm1@kernel.org>,
+ "Mario Limonciello" <mario.limonciello@amd.com>
+Message-Id: <46cd22c7-e63a-4dde-aa97-f76ac9bb6b8e@app.fastmail.com>
+In-Reply-To: <33f4f13f-c5ed-ac89-9243-4356976cc042@linux.intel.com>
+References: <20240930000046.51388-1-luke@ljones.dev>
+ <20240930000046.51388-9-luke@ljones.dev>
+ <33f4f13f-c5ed-ac89-9243-4356976cc042@linux.intel.com>
+Subject: Re: [PATCH v6 8/9] platform/x86: asus-armoury: add core count control
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add new attributed to tsinfo allowing to get the tsinfo from a phc provider
-(composed by a phc index and a phc qualifier) on a netdevice's link.
-Add simultaneously a tsconfig command to be able to get and set hwtstamp
-configuration for a specified phc provider.
+Hello,
 
-Here is few examples:
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema
-             --dump tsinfo-get
-             --json '{"header":{"dev-name":"eth0"}}'
-[{'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 0, 'qualifier': 0},
-  'phc-index': 0,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 2, 'name': 'some'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'}]},
-               'nomask': True,
-               'size': 4}},
- {'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 2, 'qualifier': 0},
-  'phc-index': 2,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 1, 'name': 'all'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 1, 'name': 'software-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 3, 'name': 'software-receive'},
-                                    {'index': 4,
-                                     'name': 'software-system-clock'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'},
-                                {'index': 2, 'name': 'onestep-sync'}]},
-               'nomask': True,
-               'size': 4}}]
+On Thu, 17 Oct 2024, at 4:41 PM, Ilpo J=C3=A4rvinen wrote:
+> On Mon, 30 Sep 2024, Luke D. Jones wrote:
+>
+>> Implement Intel core enablement under the asus-armoury module using t=
+he
+>> fw_attributes class.
+>>=20
+>> This allows users to enable or disable preformance or efficiency cores
+>> depending on their requirements. After change a reboot is required.
+>>=20
+>> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+>> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>>  drivers/platform/x86/asus-armoury.c        | 227 +++++++++++++++++++=
+++
+>>  drivers/platform/x86/asus-armoury.h        |  28 +++
+>>  include/linux/platform_data/x86/asus-wmi.h |   4 +
+>>  3 files changed, 259 insertions(+)
+>>=20
+>> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x=
+86/asus-armoury.c
+>> index 09e0cbf24f25..caaa55219946 100644
+>> --- a/drivers/platform/x86/asus-armoury.c
+>> +++ b/drivers/platform/x86/asus-armoury.c
+>> @@ -40,6 +40,24 @@
+>>  #define ASUS_MINI_LED_2024_STRONG 0x01
+>>  #define ASUS_MINI_LED_2024_OFF 0x02
+>> =20
+>> +#define ASUS_POWER_CORE_MASK GENMASK(15, 8)
+>> +#define ASUS_PERF_CORE_MASK GENMASK(7, 0)
+>
+> Align GENMASK()s.
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-get
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":0, "qualifier":0 }
-}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtst-provider': {'index': 0, 'qualifier': 0},
- 'phc-index': 0,
- 'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                 {'index': 2, 'name': 'some'}]},
-                'nomask': True,
-                'size': 16},
- 'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                   {'index': 2, 'name': 'hardware-receive'},
-                                   {'index': 6, 'name': 'hardware-raw-clock'}]},
-                  'nomask': True,
-                  'size': 17},
- 'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                               {'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+That is how clang-format put them using the .clang-format in the repo. I=
+'m not keen on maintaining style manually as it inevitably develops inco=
+nsistency.
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-set
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":2, "qualifier":0}}'
-None
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-get
-	     --json '{"header":{"dev-name":"eth0"}}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtstamp-flags': 1,
- 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
- 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
-                'nomask': True,
-                'size': 16},
- 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+>> +
+>> +enum cpu_core_type {
+>> +	CPU_CORE_PERF =3D 0,
+>> +	CPU_CORE_POWER,
+>> +};
+>> +
+>> +enum cpu_core_value {
+>> +	CPU_CORE_DEFAULT =3D 0,
+>> +	CPU_CORE_MIN,
+>> +	CPU_CORE_MAX,
+>> +	CPU_CORE_CURRENT,
+>> +};
+>> +
+>> +#define CPU_PERF_CORE_COUNT_MIN 4
+>> +#define CPU_POWR_CORE_COUNT_MIN 0
+>> +
+>>  /* Default limits for tunables available on ASUS ROG laptops */
+>>  #define NVIDIA_BOOST_MIN 5
+>>  #define NVIDIA_BOOST_MAX 25
+>> @@ -85,6 +103,13 @@ struct rog_tunables {
+>>  	u32 dgpu_tgp_min;
+>>  	u32 dgpu_tgp_max;
+>>  	u32 dgpu_tgp;
+>> +
+>> +	u32 cur_perf_cores;
+>> +	u32 min_perf_cores;
+>> +	u32 max_perf_cores;
+>> +	u32 cur_power_cores;
+>> +	u32 min_power_cores;
+>> +	u32 max_power_cores;
+>>  };
+>> =20
+>>  static const struct class *fw_attr_class;
+>> @@ -143,6 +168,8 @@ static struct kobj_attribute pending_reboot =3D _=
+_ATTR_RO(pending_reboot);
+>>  static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+>>  {
+>>  	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+>> +	       !strcmp(attr->attr.name, "cores_performance") ||
+>> +	       !strcmp(attr->attr.name, "cores_efficiency") ||
+>>  	       !strcmp(attr->attr.name, "panel_hd_mode");
+>>  }
+>> =20
+>> @@ -579,6 +606,200 @@ static ssize_t apu_mem_possible_values_show(str=
+uct kobject *kobj, struct kobj_at
+>>  }
+>>  ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM=
+ (in GB) for the APU to use");
+>> =20
+>> +static int init_max_cpu_cores(void)
+>> +{
+>> +	u32 cores;
+>> +	int err;
+>> +
+>> +	if (!asus_wmi_is_present(ASUS_WMI_DEVID_CORES_MAX))
+>> +		return 0;
+>> +
+>> +
+>> +	err =3D asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores=
+);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	cores &=3D ~ASUS_WMI_DSTS_PRESENCE_BIT;
+>
+> This looks deadcode.
 
- ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-set
-	      --json '{"header":{"dev-name":"eth0"},
-		       "hwtstamp-provider":{"index":1, "qualifier":0 },
-		       "rx-filters":{"bits": {"bit": {"name":"ptpv2-l4-event"}},
-				     "nomask": 1},
-		       "tx-types":{"bits": {"bit": {"name":"on"}},
-				   "nomask": 1}}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtstamp-flags': 1,
- 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
- 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
-                'nomask': True,
-                'size': 16},
- 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+The asus_wmi_is_present can be removed and is now.
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
-Changes in v8:
-- New patch
+>
+>> +	asus_armoury.rog_tunables->max_power_cores =3D FIELD_GET(ASUS_POWER=
+_CORE_MASK, cores);
+>> +	asus_armoury.rog_tunables->max_perf_cores =3D FIELD_GET(ASUS_PERF_C=
+ORE_MASK, cores);
+>> +
+>> +	cores =3D 0;
+>
+> Is this needed, you're doing get after all?
 
-Changes in v10:
-- Add ghwtstamp attributes
-- Add tsinfo ntf command
+I guess not since it is overwritten by call below.
 
-Changes in v11:
-- Add examples in the commit message.
+>
+>> +	err =3D asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
+>> +	if (err) {
+>> +		pr_err("Could not get CPU core count: error %d", err);
+>> +		return err;
+>> +	}
+>> +
+>> +	asus_armoury.rog_tunables->cur_perf_cores =3D FIELD_GET(ASUS_PERF_C=
+ORE_MASK, cores);
+>> +	asus_armoury.rog_tunables->cur_power_cores =3D FIELD_GET(ASUS_POWER=
+_CORE_MASK, cores);
+>> +
+>> +	asus_armoury.rog_tunables->min_perf_cores =3D CPU_PERF_CORE_COUNT_M=
+IN;
+>> +	asus_armoury.rog_tunables->min_power_cores =3D CPU_POWR_CORE_COUNT_=
+MIN;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static ssize_t cores_value_show(struct kobject *kobj, struct kobj_at=
+tribute *attr, char *buf,
+>> +				enum cpu_core_type core_type, enum cpu_core_value core_value)
+>> +{
+>> +	u32 cores;
+>> +
+>> +	switch (core_value) {
+>> +	case CPU_CORE_DEFAULT:
+>> +	case CPU_CORE_MAX:
+>> +		if (core_type =3D=3D CPU_CORE_PERF)
+>> +			return sysfs_emit(buf, "%d\n",
+>> +					  asus_armoury.rog_tunables->max_perf_cores);
+>> +		else
+>> +			return sysfs_emit(buf, "%d\n",
+>> +					  asus_armoury.rog_tunables->max_power_cores);
+>> +	case CPU_CORE_MIN:
+>> +		if (core_type =3D=3D CPU_CORE_PERF)
+>> +			return sysfs_emit(buf, "%d\n",
+>> +					  asus_armoury.rog_tunables->min_perf_cores);
+>> +		else
+>> +			return sysfs_emit(buf, "%d\n",
+>> +					  asus_armoury.rog_tunables->min_power_cores);
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	if (core_type =3D=3D CPU_CORE_PERF)
+>> +		cores =3D asus_armoury.rog_tunables->cur_perf_cores;
+>> +	else
+>> +		cores =3D asus_armoury.rog_tunables->cur_power_cores;
+>> +
+>> +	return sysfs_emit(buf, "%d\n", cores);
+>> +}
+>> +
+>> +static ssize_t cores_current_value_store(struct kobject *kobj, struc=
+t kobj_attribute *attr,
+>> +					 const char *buf, enum cpu_core_type core_type)
+>> +{
+>> +	int result, err;
+>> +	u32 new_cores, perf_cores, powr_cores, out_val, min, max;
+>
+> Please be consistent with the struct field naming and use "power_cores=
+".
 
-Changes in v13:
-- Replace shorter name by real name.
-- Fix an issue reported by "make -C tools/net/ynl" on the namings.
+Ack.
 
-Changes in v16:
-- Move to tsconfig command to get and set hwtstamp configuration.
-
-Changes in v18:
-- Add a tsconfig-set reply command description
----
- Documentation/netlink/specs/ethtool.yaml | 70 ++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
-
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index 93369f0eb816..8bd04ff89122 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -637,6 +637,15 @@ attribute-sets:
-       -
-         name: tx-err
-         type: uint
-+  -
-+    name: ts-hwtstamp-provider
-+    attributes:
-+      -
-+        name: index
-+        type: u32
-+      -
-+        name: qualifier
-+        type: u32
-   -
-     name: tsinfo
-     attributes:
-@@ -663,6 +672,10 @@ attribute-sets:
-         name: stats
-         type: nest
-         nested-attributes: ts-stat
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: ts-hwtstamp-provider
-   -
-     name: cable-result
-     attributes:
-@@ -1137,6 +1150,28 @@ attribute-sets:
-       -
-         name: downstream-sfp-name
-         type: string
-+  -
-+    name: tsconfig
-+    attributes:
-+      -
-+        name: header
-+        type: nest
-+        nested-attributes: header
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: ts-hwtstamp-provider
-+      -
-+        name: tx-types
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: rx-filters
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: hwtstamp-flags
-+        type: u32
- 
- operations:
-   enum-model: directional
-@@ -1578,6 +1613,7 @@ operations:
-         request:
-           attributes:
-             - header
-+            - hwtstamp-provider
-         reply:
-           attributes:
-             - header
-@@ -1586,6 +1622,7 @@ operations:
-             - rx-filters
-             - phc-index
-             - stats
-+            - hwtstamp-provider
-       dump: *tsinfo-get-op
-     -
-       name: cable-test-act
-@@ -1960,3 +1997,36 @@ operations:
-       name: phy-ntf
-       doc: Notification for change in PHY devices.
-       notify: phy-get
-+    -
-+      name: tsconfig-get
-+      doc: Get hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do: &tsconfig-get-op
-+        request:
-+          attributes:
-+            - header
-+        reply:
-+          attributes: &tsconfig
-+            - header
-+            - hwtstamp-provider
-+            - tx-types
-+            - rx-filters
-+            - hwtstamp-flags
-+      dump: *tsconfig-get-op
-+    -
-+      name: tsconfig-set
-+      doc: Set hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do:
-+        request:
-+          attributes: *tsconfig
-+        reply:
-+          attributes: *tsconfig
-+    -
-+      name: tsconfig-ntf
-+      doc: Notification for change in tsconfig configuration.
-+      notify: tsconfig-get
-
--- 
-2.34.1
-
+Luke.
+>
+> --=20
+>  i.
+>
+>> +
+>> +	result =3D kstrtou32(buf, 10, &new_cores);
+>> +	if (result)
+>> +		return result;
+>> +
+>> +	if (core_type =3D=3D CPU_CORE_PERF) {
+>> +		perf_cores =3D new_cores;
+>> +		powr_cores =3D out_val =3D asus_armoury.rog_tunables->cur_power_co=
+res;
+>> +		min =3D asus_armoury.rog_tunables->min_perf_cores;
+>> +		max =3D asus_armoury.rog_tunables->max_perf_cores;
+>> +	} else {
+>> +		perf_cores =3D asus_armoury.rog_tunables->cur_perf_cores;
+>> +		powr_cores =3D out_val =3D new_cores;
+>> +		min =3D asus_armoury.rog_tunables->min_power_cores;
+>> +		max =3D asus_armoury.rog_tunables->max_power_cores;
+>> +	}
+>> +
+>> +	if (new_cores < min || new_cores > max)
+>> +		return -EINVAL;
+>> +
+>> +	out_val =3D 0;
+>> +	out_val |=3D FIELD_PREP(ASUS_PERF_CORE_MASK, perf_cores);
+>> +	out_val |=3D FIELD_PREP(ASUS_POWER_CORE_MASK, powr_cores);
+>> +
+>> +	mutex_lock(&asus_armoury.mutex);
+>> +	err =3D asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, out_val, &resul=
+t);
+>> +	mutex_unlock(&asus_armoury.mutex);
+>> +
+>> +	if (err) {
+>> +		pr_warn("Failed to set CPU core count: %d\n", err);
+>> +		return err;
+>> +	}
+>> +
+>> +	if (result > 1) {
+>> +		pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	pr_info("CPU core count changed, reboot required\n");
+>> +	sysfs_notify(kobj, NULL, attr->attr.name);
+>> +	asus_set_reboot_and_signal_event();
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static ssize_t cores_performance_min_value_show(struct kobject *kobj,
+>> +						struct kobj_attribute *attr, char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MI=
+N);
+>> +}
+>> +
+>> +static ssize_t cores_performance_max_value_show(struct kobject *kobj,
+>> +						struct kobj_attribute *attr, char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MA=
+X);
+>> +}
+>> +
+>> +static ssize_t cores_performance_default_value_show(struct kobject *=
+kobj,
+>> +						    struct kobj_attribute *attr, char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_DE=
+FAULT);
+>> +}
+>> +
+>> +static ssize_t cores_performance_current_value_show(struct kobject *=
+kobj,
+>> +						    struct kobj_attribute *attr, char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_CU=
+RRENT);
+>> +}
+>> +
+>> +static ssize_t cores_performance_current_value_store(struct kobject =
+*kobj,
+>> +						     struct kobj_attribute *attr,
+>> +						     const char *buf, size_t count)
+>> +{
+>> +	int err;
+>> +
+>> +	err =3D cores_current_value_store(kobj, attr, buf, CPU_CORE_PERF);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return count;
+>> +}
+>> +ATTR_GROUP_CORES_RW(cores_performance, "cores_performance",
+>> +		    "Set the max available performance cores");
+>> +
+>> +static ssize_t cores_efficiency_min_value_show(struct kobject *kobj,=
+ struct kobj_attribute *attr,
+>> +					       char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_M=
+IN);
+>> +}
+>> +
+>> +static ssize_t cores_efficiency_max_value_show(struct kobject *kobj,=
+ struct kobj_attribute *attr,
+>> +					       char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_M=
+AX);
+>> +}
+>> +
+>> +static ssize_t cores_efficiency_default_value_show(struct kobject *k=
+obj,
+>> +						   struct kobj_attribute *attr, char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_D=
+EFAULT);
+>> +}
+>> +
+>> +static ssize_t cores_efficiency_current_value_show(struct kobject *k=
+obj,
+>> +						   struct kobj_attribute *attr, char *buf)
+>> +{
+>> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_C=
+URRENT);
+>> +}
+>> +
+>> +static ssize_t cores_efficiency_current_value_store(struct kobject *=
+kobj,
+>> +						    struct kobj_attribute *attr, const char *buf,
+>> +						    size_t count)
+>> +{
+>> +	int err;
+>> +
+>> +	err =3D cores_current_value_store(kobj, attr, buf, CPU_CORE_POWER);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return count;
+>> +}
+>> +ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
+>> +		    "Set the max available efficiency cores");
+>> +
+>>  /* Simple attribute creation */
+>>  ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PP=
+T_PL1_SPL, cpu_default,
+>>  		       cpu_min, cpu_max, 1, "Set the CPU slow package limit");
+>> @@ -635,6 +856,8 @@ static const struct asus_attr_group armoury_attr_=
+groups[] =3D {
+>>  	{ &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
+>>  	{ &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
+>>  	{ &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
+>> +	{ &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>> +	{ &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>> =20
+>>  	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
+>>  	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+>> @@ -752,6 +975,7 @@ static void init_rog_tunables(struct rog_tunables=
+ *rog)
+>>  	 * "ROG Flow X16 GV601VV_GV601VV_00185149B".
+>>  	 * The bulk of these defaults are gained from users reporting what
+>>  	 * ASUS Armoury Crate in Windows provides them.
+>> +	 * This should be turned in to a tabe eventually.
+>>  	 */
+>>  	product =3D dmi_get_system_info(DMI_PRODUCT_NAME);
+>> =20
+>> @@ -836,6 +1060,9 @@ static int __init asus_fw_init(void)
+>>  		return -ENOMEM;
+>> =20
+>>  	init_rog_tunables(asus_armoury.rog_tunables);
+>> +	err =3D init_max_cpu_cores();
+>> +	if (err)
+>> +		return err;
+>> =20
+>>  	err =3D asus_fw_attr_add();
+>>  	if (err)
+>> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x=
+86/asus-armoury.h
+>> index e08459cad942..04b88f7d2421 100644
+>> --- a/drivers/platform/x86/asus-armoury.h
+>> +++ b/drivers/platform/x86/asus-armoury.h
+>> @@ -167,6 +167,34 @@ static ssize_t enum_type_show(struct kobject *ko=
+bj, struct kobj_attribute *attr,
+>>  		.name =3D _fsname, .attrs =3D _attrname##_attrs               \
+>>  	}
+>> =20
+>> +/* CPU core attributes need a little different in setup */
+>> +#define ATTR_GROUP_CORES_RW(_attrname, _fsname, _dispname)          =
+    \
+>> +	__ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", 1);        \
+>> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);    \
+>> +	static struct kobj_attribute attr_##_attrname##_current_value =3D \
+>> +		__ASUS_ATTR_RW(_attrname, current_value);               \
+>> +	static struct kobj_attribute attr_##_attrname##_default_value =3D \
+>> +		__ASUS_ATTR_RO(_attrname, default_value);               \
+>> +	static struct kobj_attribute attr_##_attrname##_min_value =3D     \
+>> +		__ASUS_ATTR_RO(_attrname, min_value);                   \
+>> +	static struct kobj_attribute attr_##_attrname##_max_value =3D     \
+>> +		__ASUS_ATTR_RO(_attrname, max_value);                   \
+>> +	static struct kobj_attribute attr_##_attrname##_type =3D          \
+>> +		__ASUS_ATTR_RO_AS(type, int_type_show);                 \
+>> +	static struct attribute *_attrname##_attrs[] =3D {                \
+>> +		&attr_##_attrname##_current_value.attr,                 \
+>> +		&attr_##_attrname##_default_value.attr,                 \
+>> +		&attr_##_attrname##_min_value.attr,                     \
+>> +		&attr_##_attrname##_max_value.attr,                     \
+>> +		&attr_##_attrname##_scalar_increment.attr,              \
+>> +		&attr_##_attrname##_display_name.attr,                  \
+>> +		&attr_##_attrname##_type.attr,                          \
+>> +		NULL                                                    \
+>> +	};                                                              \
+>> +	static const struct attribute_group _attrname##_attr_group =3D {  \
+>> +		.name =3D _fsname, .attrs =3D _attrname##_attrs             \
+>> +	}
+>> +
+>>  /*
+>>   * ROG PPT attributes need a little different in setup as they
+>>   * require rog_tunables members.
+>> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/lin=
+ux/platform_data/x86/asus-wmi.h
+>> index 88bf250dc8ca..cc21e4272460 100644
+>> --- a/include/linux/platform_data/x86/asus-wmi.h
+>> +++ b/include/linux/platform_data/x86/asus-wmi.h
+>> @@ -137,6 +137,10 @@
+>>  /* dgpu on/off */
+>>  #define ASUS_WMI_DEVID_DGPU		0x00090020
+>> =20
+>> +/* Intel E-core and P-core configuration in a format 0x0[E]0[P] */
+>> +#define ASUS_WMI_DEVID_CORES		0x001200D2
+>> + /* Maximum Intel E-core and P-core availability */
+>> +#define ASUS_WMI_DEVID_CORES_MAX	0x001200D3
+>>  #define ASUS_WMI_DEVID_DGPU_BASE_TGP	0x00120099
+>>  #define ASUS_WMI_DEVID_DGPU_SET_TGP	0x00120098
+>>  #define ASUS_WMI_DEVID_APU_MEM		0x000600C1
+>>
 
