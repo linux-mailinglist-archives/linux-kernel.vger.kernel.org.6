@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-389097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A869B687D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:54:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBE89B687E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:54:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9D1284653
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6041F23A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2103B21765D;
-	Wed, 30 Oct 2024 15:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361AA2141A5;
+	Wed, 30 Oct 2024 15:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2+snP6u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LomRR9HR"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639CB217649;
-	Wed, 30 Oct 2024 15:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B021B213EF9
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303559; cv=none; b=Bp4yz08ejMH1f/XD0ZwYGeTk7c3XTW8G/4zJhJbMtfP7o2ijZWtE1U/k5W9kVeEXZ04Arw2f+/R/LLTufkWam00owjoGs1WqYPYZijFFwUzyBiQsTVRpSPSVPdbBn0noiZEJQB12+zX7waH+OaE8j7BLo3ivBNaJmfrT56+nY+M=
+	t=1730303652; cv=none; b=V8yDdtQCfc0WIbps+FojPBTdh6xfvtxAtP0aC+/4NILl0xgryLTAXEqLE1DnRjBRJk3UOhntNl9fSkVK/VCFJQNEBTLzEP/KY/lIkxxbSqmo+4RjQXJOnclzc0Lie0gn7tnKWuFjVFTKGZdLSdVxLnKOfLyD61oH4huycUfO2Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303559; c=relaxed/simple;
-	bh=bBAnLBh3UuZFA7fRyGRPAdxcc+khwrsua63VHHiyl/c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QFsgy5Y/4ZUs/asXg7xmR48mqma2MdyoQSgYlS4sZnv+1knUV+CeO/Ct21eMLRYvO/EJNrviRs6bMFYyhzqsLs6zQVzBd3ZlZYgCzMXa2yIjwolE+wd5Fw+wWwhIQF+WSu0h5yXu1Lphfy2q3R31617vHtnTR87savgF28w895I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2+snP6u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42FEC4CECE;
-	Wed, 30 Oct 2024 15:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730303559;
-	bh=bBAnLBh3UuZFA7fRyGRPAdxcc+khwrsua63VHHiyl/c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=d2+snP6usiu6L/44YutUXLj+oEPXKyjFSLw70w9Q9snTdT6smYkhwQrXW+EvwIPiq
-	 ZKmpeTwhep/k7f5iM4Bwnr4X2ZK7LoQFtcsNETVQc7Z8SrB3sw+eyE/XuE0Rzm/h6E
-	 sunI1GCARTq7tAD0mwySsmGbRlrAFXGcGHBB5O0FNB07yUl/RT05hN7ulQRvlNESIm
-	 PNzTO0nYkDmaQDEdAlWkgRL2L9mCpJLDK0y2o6/gxbo+2YR6J7+4N2PxsinO1xaP1w
-	 A1tuCAXP8Rv6DSUYRFM8DPJiTF99fq1PhN+mDDNfLfGy4Fd6VVQbQWdbN4TzmNr+yT
-	 /cHKihHNf6YyQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t6Azs-008JLH-S2;
-	Wed, 30 Oct 2024 15:52:36 +0000
-Date: Wed, 30 Oct 2024 15:52:36 +0000
-Message-ID: <86zfml1tbv.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: <andersson@kernel.org>,
-	<konradybcio@kernel.org>,
-	<krzk+dt@kernel.org>,
-	<robh+dt@kernel.org>,
-	<dmitry.baryshkov@linaro.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<conor+dt@kernel.org>,
-	<abel.vesa@linaro.org>,
-	<srinivas.kandagatla@linaro.org>,
-	<quic_jjohnson@quicinc.com>,
-	<jens.glathe@oldschoolsolutions.biz>
-Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: x1e001de-devkit: Enable SD card support
-In-Reply-To: <20241025123551.3528206-3-quic_sibis@quicinc.com>
-References: <20241025123551.3528206-1-quic_sibis@quicinc.com>
-	<20241025123551.3528206-3-quic_sibis@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1730303652; c=relaxed/simple;
+	bh=arSOT0r89f3l1GYllHvyc9zPs51VqGrI+YBzZ7Rv+Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkE5umPkYClz56U/22snnJonz9w46X7AidzDc/IEiuPtytXwk2WP/yGLxflG+tzsFZ/lhgLSWyW3MGpGE6PIa7bKg7YvEr1UO78CC+JK37weEuOhuy4t8JLEPAFqsvS//2GW28Hrdmz4NpBOEoznwpqwsA07qU/Z8zgzPDYRS3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LomRR9HR; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ind1uMP0jsdAMwnAlkouV2En44aSbAAxl0FaedMhEmc=; b=LomRR9HRJLfQ1LaKWVoh5gPZaO
+	eB2GBHB9H2+RHabJiSA71SsOjB40Tnq7iLy49d1XyKT4/bV3gY4eLE64+gSQR0J8EFuwAXCrCg1Dx
+	qbULF2bCOcBKAZE+DMQfjTfCAgs1ud5NF8Y056HBRr2AYreO+W6YFHI3dJdQno7QfPu4V3Iho4iVu
+	z4YdjnMZfVMVlsKHZd7/pF11ur2ouwCc4nvTsvMN1+G+SO6HFfMrs+VSaI7u6XNyijDtKy01/Nrju
+	T82Pqk/0nvmO0OCjzPkDB5aSELH2eXDAZt8aEAXweB4RTxKQqaldki/zfO6qobyHEenQIZMKkHGoi
+	5HlGTRYA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6B1H-0000000DdkB-1S23;
+	Wed, 30 Oct 2024 15:54:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 90CF6300ABE; Wed, 30 Oct 2024 16:54:03 +0100 (CET)
+Date: Wed, 30 Oct 2024 16:54:03 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: mingo@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, tj@kernel.org,
+	void@manifault.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] sched/ext: Fix scx vs sched_delayed
+Message-ID: <20241030155403.GO14555@noisy.programming.kicks-ass.net>
+References: <20241030151255.300069509@infradead.org>
+ <20241030152142.372771313@infradead.org>
+ <a20ccb66-0233-4e09-94cd-586133072c3c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: quic_sibis@quicinc.com, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org, quic_jjohnson@quicinc.com, jens.glathe@oldschoolsolutions.biz
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a20ccb66-0233-4e09-94cd-586133072c3c@arm.com>
 
-On Fri, 25 Oct 2024 13:35:50 +0100,
-Sibi Sankar <quic_sibis@quicinc.com> wrote:
+On Wed, Oct 30, 2024 at 03:50:05PM +0000, Christian Loehle wrote:
+> On 10/30/24 15:12, Peter Zijlstra wrote:
+> > Commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs
+> > switched_from_fair()") forgot about scx :/
+> > 
+> > Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
+> > Reported-by: Tejun Heo <tj@kernel.org>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Link: https://lkml.kernel.org/r/20241030104934.GK14555@noisy.programming.kicks-ass.net
+> > ---
+> >  kernel/sched/ext.c |   14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > --- a/kernel/sched/ext.c
+> > +++ b/kernel/sched/ext.c
+> > @@ -4489,11 +4489,16 @@ static void scx_ops_disable_workfn(struc
+> >  	scx_task_iter_start(&sti);
+> >  	while ((p = scx_task_iter_next_locked(&sti))) {
+> >  		const struct sched_class *old_class = p->sched_class;
+> > +		const struct sched_class *new_class =
+> > +			__setscheduler_class(p->policy, p->prio);
+> >  		struct sched_enq_and_set_ctx ctx;
+> >  
+> > +		if (old_class != new_class && p->se.sched_delayed)
+> > +			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+> > +
+> >  		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
+> >  
+> > -		p->sched_class = __setscheduler_class(p->policy, p->prio);
+> > +		p->sched_class = new_class;
+> >  		check_class_changing(task_rq(p), p, old_class);
+> >  
+> >  		sched_enq_and_set_task(&ctx);
+> > @@ -5199,12 +5204,17 @@ static int scx_ops_enable(struct sched_e
+> >  	scx_task_iter_start(&sti);
+> >  	while ((p = scx_task_iter_next_locked(&sti))) {
+> >  		const struct sched_class *old_class = p->sched_class;
+> > +		const struct sched_class *new_class =
+> > +			__setscheduler_class(p->policy, p->prio);
+> >  		struct sched_enq_and_set_ctx ctx;
+> >  
+> > +		if (old_class != new_class && p->se.sched_delayed)
+> > +			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEE_DELAYED);
+> > +
 > 
-> The SD card slot found on the X1E001DE Snapdragon Devkit for windows
-> board is controlled by SDC2 instance, so enable it.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> index 432ffefc525a..f169714abcd3 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> @@ -672,6 +672,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&sdhc_2 {
+> s/DEQUEE_DELAYED/DEQUEUE_DELAYED
 
-It doesn't look like this path exists in the upstream dtsi. I guess
-this applies on top of another series that isn't exclusively
-targeting the devkit?
+Bah, typing so hard..
 
-Thanks,
+> Anyway, no luck for me applying the series onto sched/core scx's for-next or rc5.
+> Any hint or do you mind supplying a branch?
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+I think I did it on top of tip/master..
 
