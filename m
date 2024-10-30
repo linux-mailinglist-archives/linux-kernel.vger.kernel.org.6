@@ -1,185 +1,122 @@
-Return-Path: <linux-kernel+bounces-389070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42289B682B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:43:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5467E9B6830
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7246B28470A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0033C1F22965
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCEA213143;
-	Wed, 30 Oct 2024 15:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vZLoO8ZV"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C1D2141A8;
+	Wed, 30 Oct 2024 15:43:31 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32273213141
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCF61F4737;
+	Wed, 30 Oct 2024 15:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303002; cv=none; b=kW7zcMWGF2GkbNr/6PsSAMwvG6qOlJZPDYqI9TkO0pjzp8GiGmeuXbARsgDDiOGSTjXRajeAEsGkt8TS84MuXJMWyNB4e8+mfRtBotqIwx/2XJ6e82OH8CdYoRtGLMmz4H958ZFppFsPguV61r4q/zHPaicamL7/i3bgghvzTfA=
+	t=1730303011; cv=none; b=oNIDbD/oqNatqMxYd+Ey32bHaoJdl4uBO10Zf8mDgoUeqhxWWpP7W/cpu/67IL6z0syVzwX25LyDd8+Rxmrv2wO4BHtVL8S4ErST4VIgip54dOGaf5DsNM/I6LMyOQMfwd5+kW4AkisFxdy7B1i5UE+zrBgMj4Z4+BLiCErKO0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303002; c=relaxed/simple;
-	bh=oql6ZPLoUgn02Fh55NUNwwb0KwLe/Of7ONbvojTqFQo=;
+	s=arc-20240116; t=1730303011; c=relaxed/simple;
+	bh=HVlUAT9rnpvVzaRzwivwZt/uHtsRrjjj6w5u177GnHM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sFNPdrObFT4P//Ewbn97Wzd6oycHAz80ldsMree5gdTs1/HYGTppXYgrxRccX8H3vFbaRZyLwCLMy1cqMRUXC4XIo0hv9ZcL/E+stXGs7J9AmhO6Jp28qFyRsQpe6y7zaT5IXkEGhV3fwouVsZ960sfiXb7N86MkeRDTzcpgaHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vZLoO8ZV; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d447de11dso21163f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730302997; x=1730907797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PRNVR9q+A72wfr6nUUTOiTdZMqTfsk4EV6uOVMZIZcM=;
-        b=vZLoO8ZVGwOWQpKgUfuVCo4iHB8mcEV9k9Q6KBKvvGVTngv9c5sxX2ojTWVH3pdQrF
-         YeR/UBl0Ve3u7oBnLzvE6IlZ5tl2ENsYjq7NqFWehO83J6POpkNSkBJkdU4UZGQwWQIJ
-         DIohbgN0Vf9sjRubqj7p1aIeGfQyj5QdUPQsR5WiV6N00LU6oHgDbUuL2vQ6qC1cQTeE
-         mXqN4j4AB0raTZ9iifCO0CwXUFyDWHE1thojxZy33FBcr0xFFI4jkSg/ULPoXqQ9tz1W
-         ZGaiDR3/4zK8TFm2FuiBOS84/rJ3t9Qpz4FoXnGiK4ewDtAyuHYh9DeLZm18WOpgKJ3y
-         +8Xg==
+	 To:Cc:Content-Type; b=A42YS26hPxRUByBLos7MGi0xHCUvH/bgygOnAGBNFErk7rgvpZUnkqteoHqymj+3rQdfhFPhzzsPLRe+kG4CufI1kXYBkWz8Np9HfpE3F1LXkauiVMLoeuNlCE6qlEwrJ/Wu1bFeOoVkf5rPge8oF2phQabhIWHwDEvIr9vaIQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e3b7b3e9acso64481147b3.1;
+        Wed, 30 Oct 2024 08:43:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730302997; x=1730907797;
+        d=1e100.net; s=20230601; t=1730303007; x=1730907807;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PRNVR9q+A72wfr6nUUTOiTdZMqTfsk4EV6uOVMZIZcM=;
-        b=bmwgSuSO3FlsBIidB7GX09qdInywUFoCWiuFM9/i6S5mBkB61fU9utZvYNAyspnPYk
-         ioCOGFbrFaV3s0uKMdo2BxxfH87/ftEyyVsVkOuSB/9UMaz2v87Gtx8v6qNBNFuWiyd7
-         IUf6r45rtBb0Q4T22ECvAEHBIIM5oxAVlxMltS+855ksMI6gE4gthXAdnQwxzfPTL6uL
-         3IuYcMcLmolwIni3qyVT9GmDqbc4l1bq50UoqmF/KIj2PE5rTkBMv6wfrZiSGjXXi6/M
-         +iUxU6QDKXKTcHCXCcvxomRVZ6bMoHTOJ+Xp7jW1e/fNcCv6b40ryhzgd0JxvHMFPK5s
-         ZJpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQgwgE32Oj5e+kwUnH+yK1Ta6+LxMb2PtiKw+HWUFY9afqBfpIVKloYJ7uNgsat0fcb9hcb+2OUdg2hMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykO4O9VyS/RINJUXIbUmpOHl1lT34CsFHRmR895fVB2gNJpWc4
-	oyBV15nmjXGOc7y1OvnScWRyL9+DWYC/68MCa4OuS8blscjQfF3giq/cDJCWmnBnhVtABw/LCnK
-	L77AJx9kpihXe4VpPGnj/fIP5bYfp1UWa9ebM
-X-Google-Smtp-Source: AGHT+IFypoS/zDMgNd2EUPFH4Fr9MZcxVZlJ6D1ac+TCSJlZLudocklOggyVil05FxmbzoYUJbESQQ+jCK/CFFNM/L0=
-X-Received: by 2002:a05:6000:1867:b0:37d:4d80:34ae with SMTP id
- ffacd0b85a97d-381be7adff4mr31281f8f.4.1730302997417; Wed, 30 Oct 2024
- 08:43:17 -0700 (PDT)
+        bh=bgfoTzR+2hIhhje2BGTwOg4t17NZbptniFGPOQ3kcZU=;
+        b=EYBOWVGflkvdJf0FZFfAOYO888bAgDvLQQyvH5+trojbB3sHJN7OnRXY4kGuPvfUcl
+         pYtuF62jo2g7ygzTXw0LoEYJXCLJrqTuPzDjM1Hbiv+d+6uTY3/7j5K5W8f15PESMwi3
+         vfaeAORBtJ3QFiDs/HonvYQT9p1u2jCpPhAZ3DWOjO8L0c+S1ujK8XSA86iITf/HcrOU
+         9rMnD8EiaX7xg8Ur9w7IBfC7kcslhPSEDu/fkcdN//DSrVXvIkjKMHE1MVVedCcyjMOq
+         UzsauTFxh8JbDFWtn+eMruTZqY+230jtPwXTUA4oPbfLeEkn0WmcCktDQVdaOjdsT7Lq
+         eTHw==
+X-Forwarded-Encrypted: i=1; AJvYcCULBK+HiO4KVIAAFEG50woYQW/nvmRimiwDPIUDTnDDm4N/rS5YHp+yL9ukbrJZCT82w7DkiLL8Ze3J@vger.kernel.org, AJvYcCUW8eV5gk4ezwDAXBVeEi8nGpAHNRGeDx0ssgFQwIMjm5LnQghBa2s/GTUYJ2HM9VJjV5gVxCko4hDYYldM@vger.kernel.org, AJvYcCXQBxuYhTn5Mwxis7NneJyCoEvCSdmpZX2xK1dPKtgHNsUgOgYyj42TBq7CkjJWIQ7clUsIuCMMF3g9@vger.kernel.org, AJvYcCXedsQ5DOt1twgc5YZ8Oix4DJEdlZb5KQHOtncAB5M/FaxuQK6XH1dr66IHTKRtuOTEYqV2hWCTHz35NPHdJvSjhXk=@vger.kernel.org, AJvYcCXvCAAcyj+WBMUFvA8S/p5IcAJ1lTSmmohlTJZ46odlckWJBB2TpUSaW6GAHXvHXs/YeOIqw14DTWqU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkHnGG1YhbfaEN78n1HEEpoL17K2SDvHb/kGNaDPkd3QnIz2JL
+	12zor0TXjBp82TO9WfQ8zHEFGf5Ahm/8Q3g5Zdcv4PLYRLVcuUJgn4IPRMft
+X-Google-Smtp-Source: AGHT+IHJgmEYSDMJ3lwBDd1ue/JFOnErvkkGSpobqvdiidrfWsthIU294Sut93CQgks/OwCnBuXpcw==
+X-Received: by 2002:a05:690c:f06:b0:6e2:ac0a:8926 with SMTP id 00721157ae682-6e9d88b8a54mr167774417b3.9.1730303007025;
+        Wed, 30 Oct 2024 08:43:27 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c193b6sm24525737b3.66.2024.10.30.08.43.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 08:43:26 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e3cdbc25a0so75702767b3.2;
+        Wed, 30 Oct 2024 08:43:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVFoGcZifm+CcBCXtXJ3+TXIRONzDdlVul+0BvjnBL4F5zGmfMLQX3zM5+LRuLn9vYOekSQMb+oT+Q@vger.kernel.org, AJvYcCVaZFIsWkENtp3ESxKUpO7PDMe5dn6m3+z/6FwVxPOjTFSEldcoJ5zmw9r+7l2N117EuWD/7XsePuUSsMH9tcTUhSg=@vger.kernel.org, AJvYcCWVMGW9w326ShnuFg+c7ou1e2Lu0npwTcsTsJN1/tBegm/296ggyifTBBP5fRQILYy4b64CchEPfv4r@vger.kernel.org, AJvYcCX0thFWnHqftT24X5qx2jbA9KCDDxYOYVchj2rKknU9pqq4rqvEhpjsF5URX9hPtabfciYW6kfexx6r361G@vger.kernel.org, AJvYcCXbimQzBr/BapkEtkwCGcFzeM1jM1VDRodu/xPEtLH6nwFzTtazX4poKOA5YzGb8A9odW4bPDndHe57@vger.kernel.org
+X-Received: by 2002:a05:690c:3388:b0:683:37a8:cd77 with SMTP id
+ 00721157ae682-6e9d8ab98c6mr169194477b3.29.1730303005903; Wed, 30 Oct 2024
+ 08:43:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
- <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
- <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
- <CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com>
- <CANiq72kaidDJ=81+kibMNr9jNxg467HjOm9C_4G7WRvaiddGvg@mail.gmail.com>
- <CAL_Jsq+T6T_3p2C62U3v4aSjm_oc-Ycjxi_ckF0ufh=JJDz=rg@mail.gmail.com>
- <CAH5fLggCDiKUu_dvJZeJr8UD5RvUpqRJbdYKf1F3_MvCdOVK6g@mail.gmail.com> <CAL_JsqL+b-f5K24qTxyA09c_QPeb07s4Hb=s1VqrdksBB4BQ=Q@mail.gmail.com>
-In-Reply-To: <CAL_JsqL+b-f5K24qTxyA09c_QPeb07s4Hb=s1VqrdksBB4BQ=Q@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 30 Oct 2024 16:43:04 +0100
-Message-ID: <CAH5fLgieTHPPT7LwdbHnZjcLC1NLPKNRJhdrLtPXYJCZpsx9Gg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
-To: Rob Herring <robh@kernel.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Saravana Kannan <saravanak@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, 
+References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com> <20241030110120.332802-5-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241030110120.332802-5-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 Oct 2024 16:43:13 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUTtCX5CO4y_Z2vcxY39oaHFuzH15md4xsjkz9RR+bByA@mail.gmail.com>
+Message-ID: <CAMuHMdUTtCX5CO4y_Z2vcxY39oaHFuzH15md4xsjkz9RR+bByA@mail.gmail.com>
+Subject: Re: [PATCH v5 04/10] dt-bindings: rtc: renesas,rzg3s-rtc: Document
+ the Renesas RTCA-3 IP
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 3:06=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Wed, Oct 30, 2024 at 3:15=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+On Wed, Oct 30, 2024 at 12:01=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev>=
  wrote:
-> >
-> > On Tue, Oct 29, 2024 at 8:35=E2=80=AFPM Rob Herring <robh@kernel.org> w=
-rote:
-> > >
-> > > On Tue, Oct 29, 2024 at 1:57=E2=80=AFPM Miguel Ojeda
-> > > <miguel.ojeda.sandonis@gmail.com> wrote:
-> > > >
-> > > > On Tue, Oct 29, 2024 at 7:48=E2=80=AFPM Alice Ryhl <aliceryhl@googl=
-e.com> wrote:
-> > > > >
-> > > > > One option is to define a trait for integers:
-> > >
-> > > Yeah, but that doesn't feel like something I should do here. I imagin=
-e
-> > > other things might need the same thing. Perhaps the bindings for
-> > > readb/readw/readl for example. And essentially the crate:num already
-> > > has the trait I need. Shouldn't the kernel mirror that? I recall
-> > > seeing some topic of including crates in the kernel?
-> >
-> > You can design the trait to look similar to traits in external crates.
-> > We did that for FromBytes/AsBytes.
-> >
-> > I assume you're referring to the PrimInt trait [1]? That trait doesn't
-> > really let you get rid of the catch-all case, and it's not even
-> > unreachable due to the u128 type.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> It was num::Integer which seems to be similar.
+> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> The RTC IP available on Renesas RZ/V2H is almost identical with the
+> one found on Renesas RZ/G3S (it misses the time capture functionality
+> which is not yet implemented on proposed driver). For this, added also a
+> generic compatible that will be used at the moment as fallback for both
+> RZ/G3S and RZ/V2H.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v5:
+> - added back the #include <dt-bindings/clock/renesas,r9a08g045-vbattb.h>
+>   in example section to fix the build error
+> - kept the Rb tag from Rob; Rob, please let me know if you consider it
+>   otherwise
 
-Abstracting over a set of C functions that matches on the different
-integer types seems like it'll be pretty common in the kernel. I think
-it's perfectly fine for you to add a trait for that purpose.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> > [1]: https://docs.rs/num-traits/0.2.19/num_traits/int/trait.PrimInt.htm=
-l
-> >
-> > > > +1, one more thing to consider is whether it makes sense to define =
-a
-> > > > DT-only trait that holds all the types that can be a device propert=
-y
-> > > > (like `bool` too, not just the `Integer`s).
-> > > >
-> > > > Then we can avoid e.g. `property_read_bool` and simply do it in `pr=
-operty_read`.
-> > >
-> > > Is there no way to say must have traitA or traitB?
-> >
-> > No. What should it do if you pass it something that implements both tra=
-its?
-> >
-> > If you want a single function name, you'll need one trait.
->
-> I'm not sure I want that actually.
->
-> DT boolean is a bit special. A property not present is false.
-> Everything else is true. For example, 'prop =3D <0>' or 'prop =3D
-> "string"' are both true. I'm moving things in the kernel to be
-> stricter so that those cases are errors. I recently introduced
-> (of|device)_property_present() for that reason. There's no type
-> information stored in DT.  At the DT level, it's all just byte arrays.
-> However, we now have all the type information for properties within
-> the schema. So eventually, I want to use that to warn on accessing
-> properties with the wrong type.
->
-> For example, I think I don't want this to work:
->
-> if dev.property_read(c_str!("test,i16-array"))? {
->     // do something
-> }
->
-> But instead have:
->
-> if dev.property_present(c_str!("test,i16-array")) {
->     // do something
-> }
->
-> To actually warn on property_read_bool, I'm going to have to rework
-> the underlying C implementation to separate device_property_present
-> and device_property_read_bool implementations.
+Gr{oetje,eeting}s,
 
-Having bool separate seems fine to me.
+                        Geert
 
-Alice
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
