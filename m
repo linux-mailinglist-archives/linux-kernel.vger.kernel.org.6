@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-388689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DBC9B631E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:32:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D0B9B631F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:32:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FEA6B214B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E92820AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E831EABAD;
-	Wed, 30 Oct 2024 12:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20FB1E571F;
+	Wed, 30 Oct 2024 12:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FYIqQah5"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KnfyCQGk"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9175F1E570B;
-	Wed, 30 Oct 2024 12:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC871E5734
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730291503; cv=none; b=ImCNkfxmR0WjxsOjrx9xc+FAM0JWEkmL9NQRyaWnVXmYTL571FmhBK1Ludz+Px8EEr2xKf5wRdr04yLil0c+uMC1WrNLXo8k4n+2XXIb5AGGS5xYYQ9PpDUgxsSyvNIPGOOIdejvMb+Ty8L2NN61TEvKnp1cWw5AR658z35TagU=
+	t=1730291520; cv=none; b=psWzL1JCeMPVgoZbQ1j8a3qT8SQwv5UaNHb98OaPo/KI6IlIUOFFpKLLYju0Ocz4RcIqe13DGJMQwP4hZOsNh8gVyPf7bFXg9VYV0T9gw/+k1JfPnBMxrrvuMrzuljCWm7RHru/ZBv2rRFafgsm46ysMcOXPY0NN+4E+zyw2M7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730291503; c=relaxed/simple;
-	bh=5WjxaCpOtmNmXe4YJQkUqUuW+bFgPW+KHY3iNDjzG4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g++EoNbRtbes1LhZybboHSxymILWiq/vIeb/dxaPx6u0Hta0Qdr1/K3cC7tM6l8/SPvJHTrlCx9Xsmn0VGMXGFq8ns7odnDejiQOiqbeqFtLL5x7TzCYGIDqx4MCX1N3SIxiBQrpxX8tMTdHxrWeGAg0yb4Leb+Zv7lwjzsQp/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FYIqQah5; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=A1gdFxL9zVx4lkEXli7DnX5FSvvlBekb4hoQcoFayx4=; b=FYIqQah5jFjkkhCL49WEyg4yz6
-	I+kPSfgfV0jbmFYzzdfPSDNPWoLsi9hkwYIfzhQaOPEGp6ZNjHVFc78r/2dBD5mrO2dYkTC9DJrlI
-	N+21apyXdybsTZF8hkXp4ys8wGy9Ye8a0chut7yE3NDjCTmCQPtQPNkGOaxrxFhGh8nY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t67r2-00Bgcd-B3; Wed, 30 Oct 2024 13:31:16 +0100
-Date: Wed, 30 Oct 2024 13:31:16 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH net-next v2 2/5] dt-bindings: net: dsa: ksz: add
- mdio-parent-bus property for internal MDIO
-Message-ID: <4754b485-05e9-47e5-872e-da5ee31bf9eb@lunn.ch>
-References: <20241029110732.1977064-1-o.rempel@pengutronix.de>
- <20241029110732.1977064-3-o.rempel@pengutronix.de>
- <20241029123107.ssvggsn2b5w3ehoy@skbuf>
- <ZyDe_ObZ-laVk8c2@pengutronix.de>
- <2b03f429-9ae2-4c7a-9cec-0bc2f3c6e816@lunn.ch>
- <ZyHGEDfhcRGX_Fzg@pengutronix.de>
+	s=arc-20240116; t=1730291520; c=relaxed/simple;
+	bh=Giz/mURqvqVaoic/VisR6dZMT3/sZ4x7w01A9rETjJo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q/K7v41lVhSC7xqtVDDiRQTNDp3hlB6DS0Gh07qkVCIEGkWB6BkuVXTqdrdCuqhq3BJ25JwmGfa0KDCv+8YDR7Aur5Kr18rzd+lrE9dRzZlqf2dYlMEF7F34KVFvpquQ40HXEJfiY3TsflGi1Vf206rIPIpiqsTCmfME9tc5x5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KnfyCQGk; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2e050b1c3so656741a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:31:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730291518; x=1730896318; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpVbNemuqem1Mv7Ge0jObf+sLKmtqb08uNrfDrodtWM=;
+        b=KnfyCQGkdLBAmpxLpuVPXxCRaN+07AbXFTiOBZ9nnkM57w59jMWhfzyuBaKKehlj1p
+         rEXnHk1PPpRDuHTqI8Zsu7pUXxbgpCrehLJbutsYmuwNwktR44ko6uxc09MCCH3o+Phh
+         oxzSGFEu/6wUUBwnYUNuIn548GSobbTIOP3iTfI+0whG05TtPivSHsPc8nB1YtW40y39
+         mgvlWnyGDosyFnxig0HxgKNJRfVGXyXzsMUT+vA5VbnuhTOwyPM+HzcKfTRJxpD1x/O2
+         g//1KJb02VHzklc+N8LkOelhyyMh2hwTKwfmPBZIj+J6jLsghEAjN8yQxWJHsJCRlU0i
+         GuiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730291518; x=1730896318;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZpVbNemuqem1Mv7Ge0jObf+sLKmtqb08uNrfDrodtWM=;
+        b=PS9+AOjHcMfzf9a8GtTTBipz3H0pACgmnBt1tvfF4DIHw0SN0nHTcqhgC+FerJfM1a
+         FDst0HAJFAzJRYZnM7F8sMVyLRgJIrhxciC6jN3WM364rKIqFrXMSCRwBL7O69JrMoVc
+         xWVKuiVlUHPqSU6GkSasKub4+xWDY0XLkXzzsIcTA0aWI0v9qwqfdCXeZq2BJhBMA6l8
+         fH8xlDfNPnZAnDQgWx9iLLuQNLkR2L6jTkTu7pzFe832oAGvjcZJ6A7T0YbxDotggjjR
+         YRe3IyYoLrc0pACne8HUa0TTBR1sb8Mapa/PPYlzDxJiUoP2APCKkVXQubq22LEwtHvG
+         1KQg==
+X-Gm-Message-State: AOJu0YwsN1FBltBkJBORdyn8im4meHyArttEmA8sghzPUA9hes/9t77p
+	qv88qVxDy+RqWfJCsfT5WmajugrqHKbE+6kY/QpyJqRy03uFpJK2
+X-Google-Smtp-Source: AGHT+IHvIp0tkAiO4P8ZZ4P2Sd3zFcmtjgSOyulVA0w/tTALOxiHTmKhrKpr7QsN/B/RQ+uA+hWGUw==
+X-Received: by 2002:a17:90a:7849:b0:2e2:bb32:73e7 with SMTP id 98e67ed59e1d1-2e9224b5ce0mr9181052a91.15.1730291517587;
+        Wed, 30 Oct 2024 05:31:57 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:40f2:e:4b75:4a8b:dc8e:3a8c:27fe])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa634b3sm1561615a91.27.2024.10.30.05.31.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 05:31:56 -0700 (PDT)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: mikulas@artax.karlin.mff.cuni.cz
+Cc: linux-kernel@vger.kernel.org,
+	Suraj Sonawane <surajsonawane0215@gmail.com>
+Subject: [PATCH] fs: hpfs: fix inconsistent indentation in hpfs_write_inode_ea
+Date: Wed, 30 Oct 2024 18:01:26 +0530
+Message-Id: <20241030123126.16531-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyHGEDfhcRGX_Fzg@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-> Yes, this is correct. This can be implemented purely by parsing the
-> devicetree. Based on previous experience, I expected you to suggest me
-> to implement the validation so i jumped directly to a part of this step.
-> 
-> Should I implement it based on the devicetree information and validate
-> based on HW strapping?
+Fix the indentation to ensure consistent code style and improve
+readability, and to fix this warning:
 
-I assume you need to list the PHYs in DT because there is not a 1:1
-mapping of port number to MDIO address? If there is a 1:1 mapping,
-port 1 has a PHY at MDIO address 1, the DSA core will connect the PHYs
-for you, there is no need to list them in DT.
+fs/hpfs/inode.c:153 hpfs_write_inode_ea() warn: inconsistent indenting
 
-But if strapping can put them anywhere on the bus, this is not true,
-and then you need the phy-handle.
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+ fs/hpfs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I would then suggest DT described the hardware, the PHYs are listed on
-the correct MDIO address, and you validate the hardware matches DT
-just as a sanity check.
+diff --git a/fs/hpfs/inode.c b/fs/hpfs/inode.c
+index a59e8fa63..0aacad6b4 100644
+--- a/fs/hpfs/inode.c
++++ b/fs/hpfs/inode.c
+@@ -150,7 +150,8 @@ static void hpfs_write_inode_ea(struct inode *i, struct fnode *fnode)
+ 		   Some unknown structures like ACL may be in fnode,
+ 		   we'd better not overwrite them
+ 		hpfs_error(i->i_sb, "fnode %08x has some unknown HPFS386 structures", i->i_ino);
+-	} else*/ if (hpfs_sb(i->i_sb)->sb_eas >= 2) {
++	} else*/
++	if (hpfs_sb(i->i_sb)->sb_eas >= 2) {
+ 		__le32 ea;
+ 		if (!uid_eq(i->i_uid, hpfs_sb(i->i_sb)->sb_uid) || hpfs_inode->i_ea_uid) {
+ 			ea = cpu_to_le32(i_uid_read(i));
+-- 
+2.34.1
 
-	Andrew
 
