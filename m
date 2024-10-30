@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-388014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33529B5935
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:37:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460709B5936
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7970A1F23EDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:37:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC701F24060
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4CD15575C;
-	Wed, 30 Oct 2024 01:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8B222334;
+	Wed, 30 Oct 2024 01:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="POQ4R38J"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="4oKk2alN"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EDE4437
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5294437
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252259; cv=none; b=R9YLOYYSjemTDQFXY3D5onu1By8TMYmiN4uDk69Xs37FDepWNmm7forx2Bgh0uMDO96Zt4U4YmMgEygAguANGLSm6y4FNBcHWw8b7WkuIKl/YbhUZMMvlXbHCoYL/BYBrW1jvjAYUNBsOT/g5T+H14eOLI1zqqg5dGuqPzKqlQA=
+	t=1730252363; cv=none; b=g8Pg0PAjkU+3K5TGMJyjL92nTxlxyjDcX3HM4TjP9i6jaqqryWf1EdIpS+tOJ6FbTHVYPk7EgY0UnETE1jVvBdYgTrnaC+vAIBJA2ZUVYmzAw8GYry13i/dIgZbegn2V3KQAT7oEIoigCWexBvUzMy323XN9YEPKuFS+56iV0C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252259; c=relaxed/simple;
-	bh=RLfpmUMahhgj2VtJJiFYWdZQx1rwpAQsriFNnBWzWxg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MUYYtwgzr0eBWrf7ryV7//0SghvE9ozSQfJskK2guJF1RyEeVtx0GtACzX+4+p3C1qLaG9LKL26qgGtn7ZVAd4lUfM7AozaXgvjf5KjyvFjPn6bytzhloEisVrZiqdFmDmZRLqAw9QLMH63HqZbs0nh/g4lEtevdgjJpW5QimeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=POQ4R38J; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 86d5619c965f11efb88477ffae1fc7a5-20241030
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=P7nbJqT7Rm1H4AHPjbsBGMrWkOmgdm228ehu4L7mLa0=;
-	b=POQ4R38JY06+Gh2Hod44HBPTuSpkE7pQ88f1p/NHG3Uxt1iEQJfQ1IfqoPZIaRSsGtFThC3m8sHRQye+ulmPARkYDaJ8ew2FlI6wjsP0GBcVIOzlsaxr3q6rQa0Wk1c/dltc09UehxY94Quj9nG2p7/xMO9eJMxCkMn2NYx+YCQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:4fdfe099-8649-4e66-b521-d16144ee9151,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:d5a23f07-7990-429c-b1a0-768435f03014,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 86d5619c965f11efb88477ffae1fc7a5-20241030
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-	(envelope-from <karl.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 97522183; Wed, 30 Oct 2024 09:37:29 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 30 Oct 2024 09:37:28 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 30 Oct 2024 09:37:28 +0800
-From: Karl.Li <karl.li@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Karl Li <Karl.Li@mediatek.com>,
-	Chungying Lu <chungying.lu@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<chien-chih.tseng@mediatek.com>, <andy.teng@mediatek.com>, Karl Li
-	<karl.li@mediatek.com>
-Subject: [PATCH v2 1/1] soc: mediatek: Add command for APU SMC call
-Date: Wed, 30 Oct 2024 09:35:28 +0800
-Message-ID: <20241030013533.855696-2-karl.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241030013533.855696-1-karl.li@mediatek.com>
-References: <20241030013533.855696-1-karl.li@mediatek.com>
+	s=arc-20240116; t=1730252363; c=relaxed/simple;
+	bh=4TEjeKATJgx/DsL1fZt+CskwoERCXkvbkcO7a6U9qb8=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=OhOOwv00/PaHsjFZoLX1RnQ1obqDQSXUVMf3yfRbild8+ESrYE/IBNbIv45L6N1TkP40XrDR1Nl/vBKJ9zc3umNHXqj8PmLfmnQdncYZnfBEXeoNXarAlwCFcHQiU/JQzwODSgJeo2oe2hhBc7jH+XBFapFTkuSz3uGZ23vSgnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=4oKk2alN; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
+	by cmsmtp with ESMTPS
+	id 5eDFtFiSdiA195xg8tHzkO; Wed, 30 Oct 2024 01:39:20 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 5xg7tBpVLCgT65xg7t0PMN; Wed, 30 Oct 2024 01:39:19 +0000
+X-Authority-Analysis: v=2.4 cv=XvwxOkF9 c=1 sm=1 tr=0 ts=67218e47
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=4Na9fpYnh4hjKbwFJnwA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RO0CwdqMBMddgOUS/JMZTYpGLtRnrUN9C4iHgeaf0gU=; b=4oKk2alNMXmT55eA48NseU5gQr
+	63UePdPPzgGV5AfkRwmRhEBzNezhlEiOC7cHJy+jyqXyyBn9+whtE/WKOaFkqwbOqF07eRtM43mSu
+	Ij9xdY+QHZA5d/ZKxQoKamvhWBHq0nMwjc3DJ6w5vuMffvl5ZXp30XgmM3PSy3U9YuPQ4GqXNXwqU
+	X3s74ZfwusVcoj2g+41GdTrfsjJTEwzFIUHb9ab9MR0Pev29KgIYpCyL2krxaxwqUUZdFpZif5tOV
+	4GtbPgQb1zEA0zqWZdCaZZsvvLnw6z5xA4uC0101PrdhlspMOXRK6DcfMbgIHeyOGi8VzUwd957sx
+	xOuTwnPw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:36544 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1t5xg5-001Itz-0O;
+	Tue, 29 Oct 2024 19:39:17 -0600
+Subject: Re: [PATCH 6.1 000/137] 6.1.115-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241028062258.708872330@linuxfoundation.org>
+In-Reply-To: <20241028062258.708872330@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <023c325b-f0de-f929-dba3-784f81b58b50@w6rz.net>
+Date: Tue, 29 Oct 2024 18:39:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1t5xg5-001Itz-0O
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:36544
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 42
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPjqlXJfH7VZSnR7ScbCE9QdEvvjWB5LG5XA1NFHHnjJKyHzRU+/sj5HgvsgP7eIdSm5Y2VClK9TYguyf/r/AEuqBxCDm9ilxex93QAIviOX+Lj4MNF3
+ 7TG1YAQAKrfMhCGJF6xHILd/OqvmEdfEZ6AO8joW/Is5k+3bzrruZBdyQ74T2fuJsg+othSn+NdhMcNOFZpP9usNobIYAsJY/S4=
 
-From: Karl Li <karl.li@mediatek.com>
+On 10/27/24 11:23 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.115 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.115-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Add command for APU SMC call.
-The APU microprocess's start and stop sequence will process in ATF.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Signed-off-by: Karl Li <karl.li@mediatek.com>
----
- include/linux/firmware/mediatek/mtk-apu.h | 32 +++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 include/linux/firmware/mediatek/mtk-apu.h
-
-diff --git a/include/linux/firmware/mediatek/mtk-apu.h b/include/linux/firmware/mediatek/mtk-apu.h
-new file mode 100644
-index 000000000000..a327e31d40fa
---- /dev/null
-+++ b/include/linux/firmware/mediatek/mtk-apu.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2024 MediaTek Inc.
-+ */
-+
-+#ifndef __MEDIATEK_APU_H__
-+#define __MEDIATEK_APU_H__
-+
-+enum mtk_apusys_kernel_op {
-+	MTK_APUSYS_KERNEL_OP_APUSYS_PWR_TOP_ON,			/*  0 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_PWR_TOP_OFF,		/*  1 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_SETUP_REVISER,		/*  2 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_RESET_MP,		/*  3 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_SETUP_BOOT,		/*  4 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_START_MP,		/*  5 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_STOP_MP,			/*  6 */
-+	MTK_APUSYS_KERNEL_OP_DEVAPC_INIT_RCX,			/*  7 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_SETUP_SEC_MEM,		/*  8 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_DISABLE_WDT_ISR,		/*  9 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_CLEAR_WDT_ISR,		/* 10 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_CG_GATING,		/* 11 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_CG_UNGATING,		/* 12 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_RV_SETUP_APUMMU,		/* 13 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_LOGTOP_REG_DUMP,		/* 14 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_LOGTOP_REG_WRITE,		/* 15 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_LOGTOP_REG_W1C,		/* 16 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_COLD_BOOT_CLR_MBOX_DUMMY,	/* 17 */
-+	MTK_APUSYS_KERNEL_OP_APUSYS_SETUP_CE_BIN,		/* 18 */
-+	MTK_APUSYS_KERNEL_OP_NUM,
-+};
-+
-+#endif
--- 
-2.18.0
+Tested-by: Ron Economos <re@w6rz.net>
 
 
