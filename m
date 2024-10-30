@@ -1,123 +1,102 @@
-Return-Path: <linux-kernel+bounces-388471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4429F9B6020
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:30:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA5D9B6033
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE8C7B21ADC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A3251C217A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B077F1E32D4;
-	Wed, 30 Oct 2024 10:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPBom++I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0B11E2848;
+	Wed, 30 Oct 2024 10:32:27 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0784C4DA03;
-	Wed, 30 Oct 2024 10:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCA71E3784
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284212; cv=none; b=LUnjbOlc4ruK4pV06tL1FbUI70LJMuEC/wEt1Nr6NWqkdWYo4wYHqeXke+uPOupKOOvDb2lISay2IrOAYCR2LlQbSSd5QkAc/aZGqqj9JeqRMPiGDvYZSbfUnQvW3x80K/EWnDYp2uwsntfoO1fXWFcr510gDEge2+cXEupcN3E=
+	t=1730284347; cv=none; b=h5AlDQk7dJ54aXOYOtny2g48rlzyUoEPFWJBeKklhdeMZOFAr0lTWQYr44lViNL2RJh+NKdLCQ/w7ZkKZUaHna+vGQvQGBhpdoJnZOGfwacw7RM+7U41Cnn/xanWgaVQ358UxnKzrJzPASW1kurVL1v4K5hvOhTR4zJlyFX++ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284212; c=relaxed/simple;
-	bh=fEyGQG5p+/Axzk94LPtg9MyYLs8WiA+7sDPOBdC8nuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mP1wFkJoo8C+Ogn3rNbzuzLxQIH8CWPYRnP2Zs7GBqChLpWMXC8Z31Kl1HbFrNXwIt3t6aITP3RjaskMYyzQVSIsjH00DmC/HryirGqlEhgzpEAuWXyJVMW+R7RpXdE5SguUQrgvI/0eTUgP7dMgloKlfVHg6JEiClW+lRXc0gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPBom++I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E7CC4CEE3;
-	Wed, 30 Oct 2024 10:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730284211;
-	bh=fEyGQG5p+/Axzk94LPtg9MyYLs8WiA+7sDPOBdC8nuY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iPBom++Ip3zXbNr4S9qX5JpImsDxqHoTocohiCaoOx5wNTJbiARb4bC/qMG+xkcKl
-	 4bo9Z5yrvUKpiXeTjblCmlZFumY+okw/Vt7mCFA55EdghPH5Za2gM3Pd4VOqUoihoM
-	 RC1xYCQrttOvZlsb/YnO8yx8rwmJMkz4dkArPco2y1Naytv1uKPyxf+rLmFiNnWqL4
-	 hLvcUJg2ZZj271QMiXn3eMmS3Gk3eUI74tYuVqsgFHmT1D26eR4bwwRZoXeSi29m2C
-	 o24VUlOK0cedEcwP3X/B28lsMehPiZZsJvfrGYvPA5SwkdJ/67vIoYA0QMo/YjPKne
-	 u3uClG+jbjG3A==
-Date: Wed, 30 Oct 2024 11:30:09 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, quic_jesszhan@quicinc.com, mchehab@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
-	arnd@arndb.de, nfraprado@collabora.com, thierry.reding@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v4 03/13] drm/bridge: fsl-ldb: Use clk_round_rate() to
- validate "ldb" clock rate
-Message-ID: <20241030-hypersonic-tremendous-tuatara-2bbeb0@houat>
-References: <20241028023740.19732-1-victor.liu@nxp.com>
- <20241028023740.19732-4-victor.liu@nxp.com>
+	s=arc-20240116; t=1730284347; c=relaxed/simple;
+	bh=ONljCAaXxr7CvIpXfPSLakG9YzdXAgNj39DDo3OpjOQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tpr29FG4kWzZ3Ndsho2xwmtt7ZB3LoEW0bNgbdywIf1M35LrbvXfjNTJC7cmcqGZzoHDeJvVecV/uIuUiqGs1a2aDG2Muq7henDf71L6DG/M8QXUn/tgVHVE2pCGeVd6kqEvdR03gtXGKkyn0AQXiUfr/Q5d3F1Um4nahSuzuQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 49UAVevu026664;
+	Wed, 30 Oct 2024 18:31:40 +0800 (+08)
+	(envelope-from Yi.Sun@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1L6f7gz2K4lHM;
+	Wed, 30 Oct 2024 18:31:02 +0800 (CST)
+Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 30 Oct 2024 18:31:38 +0800
+From: Yi Sun <yi.sun@unisoc.com>
+To: <chao@kernel.org>, <jaegeuk@kernel.org>
+CC: <yi.sun@unisoc.com>, <sunyibuaa@gmail.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <niuzhiguo84@gmail.com>,
+        <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>
+Subject: [PATCH v2 0/5] Speed up f2fs truncate
+Date: Wed, 30 Oct 2024 18:31:31 +0800
+Message-ID: <20241030103136.2874140-1-yi.sun@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="jdfa4z4pqzuvoooj"
-Content-Disposition: inline
-In-Reply-To: <20241028023740.19732-4-victor.liu@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 49UAVevu026664
 
+Deleting large files is time-consuming, and a large part
+of the time is spent in f2fs_invalidate_blocks()
+->down_write(sit_info->sentry_lock) and up_write().
 
---jdfa4z4pqzuvoooj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 03/13] drm/bridge: fsl-ldb: Use clk_round_rate() to
- validate "ldb" clock rate
-MIME-Version: 1.0
+If some blocks are continuous, we can process these blocks
+at the same time. This can reduce the number of calls to
+the down_write() and the up_write(), thereby improving the
+overall speed of doing truncate.
 
-On Mon, Oct 28, 2024 at 10:37:30AM +0800, Liu Ying wrote:
-> Multiple display modes could be read from a display device's EDID.
-> Use clk_round_rate() to validate the "ldb" clock rate for each mode
-> in drm_bridge_funcs::mode_valid() to filter unsupported modes out.
->=20
-> Also, since this driver doesn't directly reference pixel clock, use
-> clk_round_rate() to validate the pixel clock rate against the "ldb"
-> clock if the "ldb" clock and the pixel clock are sibling in clock
-> tree.  This is not done in display controller driver because
-> drm_crtc_helper_funcs::mode_valid() may not decide to do the
-> validation or not if multiple encoders are connected to the CRTC,
-> e.g., i.MX93 LCDIF may connect with MIPI DSI controller, LDB and
-> parallel display output simultaneously.
->=20
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
-> Note that this patch depends on a patch in shawnguo/imx/fixes:
-> https://patchwork.kernel.org/project/linux-arm-kernel/patch/2024101703114=
-6.157996-1-marex@denx.de/
+Test steps:
+Set the CPU and DDR frequencies to the maximum.
+dd if=/dev/random of=./test.txt bs=1M count=100000
+sync
+rm test.txt
 
-I still believe that the root cause of this issue is your clock tree and
-driver setup, and since I've asked for explanations and didn't get any,
-I don't really see how we can move forward here.
+Time Comparison of rm:
+original        optimization            ratio
+7.17s           3.27s                   54.39%
 
-Maxime
+Yi Sun (5):
+  f2fs: blocks need to belong to the same segment when using
+    update_sit_entry()
+  f2fs: expand f2fs_invalidate_compress_page() to
+    f2fs_invalidate_compress_pages_range()
+  f2fs: add parameter @len to f2fs_invalidate_internal_cache()
+  f2fs: add parameter @len to f2fs_invalidate_blocks()
+  f2fs: Optimize f2fs_truncate_data_blocks_range()
 
---jdfa4z4pqzuvoooj
-Content-Type: application/pgp-signature; name="signature.asc"
+ fs/f2fs/compress.c | 11 +++---
+ fs/f2fs/data.c     |  2 +-
+ fs/f2fs/f2fs.h     | 16 +++++----
+ fs/f2fs/file.c     | 78 ++++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/gc.c       |  2 +-
+ fs/f2fs/node.c     |  4 +--
+ fs/f2fs/segment.c  | 84 +++++++++++++++++++++++++++++++++++++++-------
+ 7 files changed, 161 insertions(+), 36 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.25.1
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZyIKrAAKCRAnX84Zoj2+
-dk5eAYDDyKjKmenLlLXrE7PF5+02MCRjxjyPZUPeFcxn9WqZwrqLx6hAeRNfTD1I
-fBz39NEBgPedANzTVocrGaKTqjaLuKN1UWpfFGVqf9OjORjTtsRTq+Rg7VBMH8ER
-7Vm4WtqjxQ==
-=QcTM
------END PGP SIGNATURE-----
-
---jdfa4z4pqzuvoooj--
 
