@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-387993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68AA9B58E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:01:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C239B58F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33421B228DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FEA01F24180
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790ED12C499;
-	Wed, 30 Oct 2024 01:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9715112C544;
+	Wed, 30 Oct 2024 01:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="GKfHp9Aj"
-Received: from esa9.hc1455-7.c3s2.iphmx.com (esa9.hc1455-7.c3s2.iphmx.com [139.138.36.223])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g9yqBDQP"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3852E3C14;
-	Wed, 30 Oct 2024 01:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.36.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78EB3C14;
+	Wed, 30 Oct 2024 01:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730250046; cv=none; b=RbNOWNfqcjiKVx8615XrDjUszIxYdO+lrzXoGWu3I8II5gXxxfLml2c04jLzyEhtTpyS4XMPOL1hiIHVfWrs9jtNEL0qsH0pkdgU500/OKliW9WgZv1vhJYEiNzKKU4uan+IvOkTadRORDetVWBNJivC6fn6oaaL9IFUwrfrm5Q=
+	t=1730250336; cv=none; b=TugpjQhKXTL3dd9qXQFWFquuyitQjhyYjKyojVzrfzmfGS0oeOQ1pSi+ZxJv9/IoF9WcKFEQOXt/NuSe0VVbyZS9+A8/stPtfcg4btkLRij8e1s+TKNFH/EaqTuGN9eJjD0ebIyid2FnIRVIrXnbds7oGhltEY2AJGqanGyX8E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730250046; c=relaxed/simple;
-	bh=od59CaTPcXAt5fo3ZaO6rvMZ1g5AHGLeUgTuhqAeGVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gVSaGCoNCT4dUU7hI0FkOD27Z86aQMVxOt0BZGc+2Dj78TTRWuSM6BqyF/wiI9oGiIEzv8ZqNvdDI3+ssNxxsSSWG5ZViv/uXi4ZPblcrsT9QJAn74RZMyvTluY0YhGhTeAijmi5g1ZPBxBXrydbu1ql6YUPeC24Q4Lh9WEcAlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=GKfHp9Aj; arc=none smtp.client-ip=139.138.36.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1730250045; x=1761786045;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=od59CaTPcXAt5fo3ZaO6rvMZ1g5AHGLeUgTuhqAeGVU=;
-  b=GKfHp9AjIz8PZIQt0PT9cdM9dXN1Wqi28z9Qm6n2ilyaBaItpNZiMzK2
-   llKMBWWyf03YtaQLnQvuUiqhw7YyS31dn7/CDFXo6HSiijEHSTuPE0OGt
-   OpvY9ZeJjrMXhpOofdTbuSaQzZw4iRePqui6rnxQfLEwwe7HS1G4tiksE
-   zSvMxK2iDrSkhqUQqqv7VNDQ33HxbVNkel/PW5XyJWsVHTsHhAAImvsc8
-   /Ng8DGh9NFFYkbZhFbOsF5qYTB3afABOjRck2+adLiriHp5BKCzLpZHh2
-   J+nfJ449O8qhPpx5VXLS3EydjK6siW8RlnfnUmygLL4JS3zWOzhCa/+9x
-   A==;
-X-CSE-ConnectionGUID: Il4evkucS4KFMvK1w5c3WA==
-X-CSE-MsgGUID: Q2HKdES+RmWdjNZp+7dWRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="166793493"
-X-IronPort-AV: E=Sophos;i="6.11,243,1725289200"; 
-   d="scan'208";a="166793493"
-Received: from unknown (HELO yto-r2.gw.nic.fujitsu.com) ([218.44.52.218])
-  by esa9.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:59:32 +0900
-Received: from yto-m4.gw.nic.fujitsu.com (yto-nat-yto-m4.gw.nic.fujitsu.com [192.168.83.67])
-	by yto-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id E8E89C68E8;
-	Wed, 30 Oct 2024 09:59:29 +0900 (JST)
-Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
-	by yto-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id 36B5DD5047;
-	Wed, 30 Oct 2024 09:59:29 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id CF0D220079562;
-	Wed, 30 Oct 2024 09:59:28 +0900 (JST)
-Received: from iaas-rdma.. (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 9D78F1A000A;
-	Wed, 30 Oct 2024 08:59:27 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: shuah@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org
-Subject: [PATCH v3] selftests/net: Add missing gitignore file
-Date: Wed, 30 Oct 2024 09:00:02 +0800
-Message-ID: <20241030010002.400238-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1730250336; c=relaxed/simple;
+	bh=O3eyHCxMcdQ467ALRIumPj1rNupJxrZMOTcaSjzwyvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XLPo5YOg6rIxR+1X85aOioCtNybE+w66jCT03mfOlBNRCxTbIFl/FuJCWpzkK1wx3xZ4T7nU+kfx/k6e3ZgVV7EV8+oAEZd3Jp2hSDEdH3iiiDd9+Y+iIBMUi/jDEJuH3QrYKqnj35O66JBxUlcYOuG3gupgV+sLeJ9FhP0gRJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=g9yqBDQP; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730250326;
+	bh=rJ+zeOXAOkv0gwsLv1luKB4UBmUC3jKRnaMznn+sZ54=;
+	h=Date:From:To:Cc:Subject:From;
+	b=g9yqBDQPWwHheAUZ1cogWboY7xJXsw0x2PmCquxMdLczVOBfdPD73Ost6vd7EQpcF
+	 2fmWJ1esTB317UqFZQ6c6MbFa72Z/uAir43LY2oMfy43sw5H/+vSQd8WtgCpQOosoU
+	 gQUj40PmZ+2q8kIL/Xxd0kMUCyvu+sZsE7rN56uWWy3u7U4HCyQ6MgpCMF+S+8ktHs
+	 WBYeIZnYLKLZi7K61dsJ92CnsXNYrR4uj96oqZ5WzF5OS90hjNmaJHTbWeoibGJXPy
+	 XWliswlp3jibsoaqpSF58fn3p2puWWx6SkwKiWCx12UMzu8/H2z3ZMaSOENShyNBO8
+	 XXQ1mGBuV/dpg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XdTSj0Xl7z4xFt;
+	Wed, 30 Oct 2024 12:05:23 +1100 (AEDT)
+Date: Wed, 30 Oct 2024 12:05:24 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Arkadiusz Kubalewski
+ <arkadiusz.kubalewski@intel.com>, Jacob Keller <jacob.e.keller@intel.com>,
+ Karol Kolacinski <karol.kolacinski@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Yochai Hagvi <yochai.hagvi@intel.com>, Yue Haibing <yuehaibing@huawei.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20241030120524.1ee1af18@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28762.003
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28762.003
-X-TMASE-Result: 10--10.200800-10.000000
-X-TMASE-MatchedRID: a3KJLn6RIiIhiKpapiFQUqoXHZz/dXlxTJDl9FKHbrmwcSh5kytY+Wlr
-	rhfytIG3ue7scXXMXXbOw1q4IOi+g+VaI0j/eUAP9Ib/6w+1lWTVBDonH99+VkYUijfAB7a8Sdp
-	3nQlC6CvONlqzU5N8TV5k1j3tRqCQZB7FaQ6KQ99O5y1KmK5bJTZlY6a4lRLZSGcP+0SEjFBAPN
-	HJ6d1lGx63ztJ0rJm/nagtny7ZPcQfE8yM4pjsD67rlQMPRoOCxEHRux+uk8h+ICquNi0WJKxPa
-	V9/KHBB+Z6nLjaSWHAwVhpxqsrjNJRD0+ifpY+DftwZ3X11IV0=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+Content-Type: multipart/signed; boundary="Sig_/qQcC7M9W10_+AKldn1crROG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Compiled binary files should be added to .gitignore
-'git status' complains:
-   Untracked files:
-   (use "git add <file>..." to include in what will be committed)
-         net/netfilter/conntrack_reverse_clash
+--Sig_/qQcC7M9W10_+AKldn1crROG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
-Cc: netfilter-devel@vger.kernel.org
-Cc: coreteam@netfilter.org
-Cc: netdev@vger.kernel.org
----
-Hello,
-Cover letter is here.
+Hi all,
 
-This patch set aims to make 'git status' clear after 'make' and 'make
-run_tests' for kselftests.
----
-V3:
-  sort the files
+Today's linux-next merge of the net-next tree got a conflict in:
 
-V2:
-  split as a separate patch from a small one [0]
-  [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
+  drivers/net/ethernet/intel/ice/ice_ptp_hw.h
 
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
- tools/testing/selftests/net/netfilter/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+between commit:
 
-diff --git a/tools/testing/selftests/net/netfilter/.gitignore b/tools/testing/selftests/net/netfilter/.gitignore
-index 0a64d6d0e29a..64c4f8d9aa6c 100644
---- a/tools/testing/selftests/net/netfilter/.gitignore
-+++ b/tools/testing/selftests/net/netfilter/.gitignore
-@@ -2,5 +2,6 @@
- audit_logread
- connect_close
- conntrack_dump_flush
-+conntrack_reverse_clash
- sctp_collision
- nf_queue
--- 
-2.44.0
+  6e58c3310622 ("ice: fix crash on probe for DPLL enabled E810 LOM")
 
+from the net tree and commits:
+
+  e4291b64e118 ("ice: Align E810T GPIO to other products")
+  ebb2693f8fbd ("ice: Read SDP section from NVM for pin definitions")
+  ac532f4f4251 ("ice: Cleanup unused declarations")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/intel/ice/ice_ptp_hw.h
+index 6cedc1a906af,656daff3447e..000000000000
+--- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
++++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
+@@@ -400,11 -402,10 +402,11 @@@ int ice_phy_cfg_rx_offset_e82x(struct i
+  int ice_phy_cfg_intr_e82x(struct ice_hw *hw, u8 quad, bool ena, u8 thresh=
+old);
+ =20
+  /* E810 family functions */
+- int ice_read_sma_ctrl_e810t(struct ice_hw *hw, u8 *data);
+- int ice_write_sma_ctrl_e810t(struct ice_hw *hw, u8 data);
+- int ice_read_pca9575_reg_e810t(struct ice_hw *hw, u8 offset, u8 *data);
+- bool ice_is_pca9575_present(struct ice_hw *hw);
++ int ice_read_sma_ctrl(struct ice_hw *hw, u8 *data);
++ int ice_write_sma_ctrl(struct ice_hw *hw, u8 data);
++ int ice_read_pca9575_reg(struct ice_hw *hw, u8 offset, u8 *data);
++ int ice_ptp_read_sdp_ac(struct ice_hw *hw, __le16 *entries, uint *num_ent=
+ries);
+ +int ice_cgu_get_num_pins(struct ice_hw *hw, bool input);
+  enum dpll_pin_type ice_cgu_get_pin_type(struct ice_hw *hw, u8 pin, bool i=
+nput);
+  struct dpll_pin_frequency *
+  ice_cgu_get_pin_freq_supp(struct ice_hw *hw, u8 pin, bool input, u8 *num);
+
+--Sig_/qQcC7M9W10_+AKldn1crROG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmchhlQACgkQAVBC80lX
+0GzxWQf/Z3ukUS5tXbrpV+AFp0cF9uL7oxqvq3A/tmSCOBBFnBT8GrbSPyn9Iggq
+RBgNBOnMX3dc3gCxF62IQphDRwMm/OXHtW568uRhJPdMKC/BVtXXD9/GbUo907il
+IwqOBo9Bhk9iZrFnr00kYTwMfj4f5lyLcfxW9lInXioyGttMhDnotthzwrTxNHsZ
+HPB7vHmK0nVLxdEXHM52jdnzQdDpfYYnkRsThm8lSujvvJaulgeew0teZkc7Yr7e
+986Wa5x1kNd24bbX1Ma3RxkAUsLB2WIqBit36maNIHgyCk+Hi8NWvVrwfpFI10do
+vmFQ+s2oOKvDF4n4/NBMaCb08l8QMQ==
+=n2/n
+-----END PGP SIGNATURE-----
+
+--Sig_/qQcC7M9W10_+AKldn1crROG--
 
