@@ -1,313 +1,116 @@
-Return-Path: <linux-kernel+bounces-388553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8FCD9B6126
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:11:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC169B613E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18CE31C218F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B571C21BD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB93D1E47BB;
-	Wed, 30 Oct 2024 11:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lyFjLMwP"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC5D1E47D9;
+	Wed, 30 Oct 2024 11:17:40 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCB81E32C6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A231E47BB;
+	Wed, 30 Oct 2024 11:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286658; cv=none; b=t3mxnXIeWkGZO8XOsuCpZ2/ruk9tTzBCCjlQT7DgQW5U5Y/Z1onzK/ePT2WbAviY3rYieQn3XStAady+DsJUimEnUPvgz1/X8MHIUwQEGsvqI8fSOI11UpYeQi815G/o86hlVTJmMFZ9eMvz0rXUtyQMHkNLNYsXdQdM0fZg+gc=
+	t=1730287060; cv=none; b=G/5Uv+1FNdmVwE+NCo4EcsfnlLm65gz9kH8HD/qDPVVeJFtEJ6aSV4cD4CXwbr3rG5Lw06xFfLteMK6e9ddctfRTU7zekJ6Kv/Aa684VF7yJ+g14bHgL7bQCeJhkkIQ+ag/Utfac5zq/oKSq/uYJ2EY5ODW90zG7N0oP16SRi40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286658; c=relaxed/simple;
-	bh=mXkD6+ddr41U5PViIBTU9BU6uT/vbTsDOmmsfhhEJwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nisnlyIBDdyOFC76548aojq5IBNLbsdOuKFSriLyT4qEDbwOm2VQyrUNzrThUm26HgEJwmYIYlbkmDWp0mlVsF4A5yqkD+dWFm5xuPMkacylKBGsG9FgI27WtYUz/rM41AFaK3o8iI1yEsmqbdijHTcUFItEB8+3QDz4f7Ut+l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lyFjLMwP; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e4824917so638534e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730286654; x=1730891454; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NOnTk9a6lwE+fikfwNbQZenhWDbjRYFsjjyWWoDZ0tI=;
-        b=lyFjLMwPgeu5xYtRzN/tuNtYrAWSZw0VsA+RdTgOJ775wXREvHZxYtKhKrOAgpLqjX
-         Ba4sbrUWQ+uwcoIImDIRFSmCYe3CEQs46gNqaBVuvfZbHNBwR8/0HMXeR+Czn7YCYyyJ
-         SdIa+GXzeAHBtcjj64c3CqQrizPkf22rgD9QwYwBkTahTbYFZNQtApQgljhlXKkEWdHc
-         uEdMmPE1z/7aGUmiljulz/htzXzo8KvHjl7tTgoj24jgx7xpEMB3fvD4GddkNPVPyuc3
-         nuVGHuaD80WQM5tNIC387bHOO3yP5h7hGqL6YSYp/s3KULi5ihbaXR1udj2cMaUHxIXe
-         F8Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730286654; x=1730891454;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOnTk9a6lwE+fikfwNbQZenhWDbjRYFsjjyWWoDZ0tI=;
-        b=NbC4ilZYBYeibSRXk+3EeOK5vX+vddqo4VklJEX9sr8MJfcuub7XkcN4zXKAT0zklI
-         O1O8r5b46/OiMFC3xSncauh95FbSHEqPcXYba2aHHRZcyh+ZxUwPGmqhEgjYA0//H/tt
-         VDhuW+KMu3SxyztFZyFh2Zibm82F4wGCiTE+WZAc9OVoSk5RHNnChtFGqgcEK+G3WrtB
-         ElSO8ZiKrvKHMn3P6HGOkXU2etbu4lXB+1fDEc3ElbQ6QrqxXvB9cAdnFLftHu5YgbMr
-         xPH3Sw0aCeujQ+cU3pITMjwhNGjHh6FGoE7TRDMj/VvzDxyadxK/kYTjdo7EdZXdxydV
-         UMPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjGgf4kpq+bW2T/nSXx527cxlzUJB6K2NkdjffdKGWVw16/gPCjR99KgGtYOZmsbcYEK8jqsTZ3FUOU8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuzGTZnsDuKjxJsr6f+8EK9D712/yB2xcskbsZriYv8idTJ/Ve
-	dpvj3VDqPnzMYAOhJiHgXTvbrP5Eqg4WuzHyPWiySX8LW101FWtR7ivtKgptn7c=
-X-Google-Smtp-Source: AGHT+IEzJbN78pas3iBKE3f0DF1PHH7hK5iUIwcfZk1R7VOhJ+ChO8DW/VFwGmpEUrcrPWlQ5+q1rA==
-X-Received: by 2002:a2e:a983:0:b0:2fa:d1f9:9fb9 with SMTP id 38308e7fff4ca-2fcbdf5bf6bmr22883061fa.2.1730286654441;
-        Wed, 30 Oct 2024 04:10:54 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bb818ff46sm227061e87.45.2024.10.30.04.10.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 04:10:53 -0700 (PDT)
-Message-ID: <812499a0-b87e-45e3-b491-5f369b6de5ca@linaro.org>
-Date: Wed, 30 Oct 2024 13:10:50 +0200
+	s=arc-20240116; t=1730287060; c=relaxed/simple;
+	bh=przTDjQYYTgJs6OmbMeksLnt9utBBFTAptOHzRDnJrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJWuPfufRtA/23U9+skmQLoU335T8wDsPs18L0Xay5PLmeHsYHwZwrL6R0nznAW2XMqPSWD60Rwp52fl3qiruSbZqgN/Q5MKBqF+LK76n8QNRITusXEQTuJleZvJilasWe8XxyJvrvKldyULtxz0yu3wV3UIUStfpBIqwXHw6CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 4F0E130008206;
+	Wed, 30 Oct 2024 12:11:33 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 36BFF22CE34; Wed, 30 Oct 2024 12:11:33 +0100 (CET)
+Date: Wed, 30 Oct 2024 12:11:33 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Esther Shimanovich <eshimanovich@chromium.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rajat Jain <rajatja@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	iommu@lists.linux.dev,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] PCI: Detect and trust built-in Thunderbolt chips
+Message-ID: <ZyIUZfFuUdAbVf25@wunner.de>
+References: <20240910-trust-tbt-fix-v5-1-7a7a42a5f496@chromium.org>
+ <20241030001524.GA1180712@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] media: dt-bindings: media: camss: Add
- qcom,sc7280-camss binding
-Content-Language: en-US
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
- <20241030105347.2117034-2-quic_vikramsa@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241030105347.2117034-2-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030001524.GA1180712@bhelgaas>
 
-Hi Vikram,
+On Tue, Oct 29, 2024 at 07:15:24PM -0500, Bjorn Helgaas wrote:
+> I asked on the v4 patch whether we really need to make all this
+> ACPI specific, and I'm still curious about that, since we don't
+> actually use any ACPI interfaces directly.
 
-On 10/30/24 12:53, Vikram Sharma wrote:
-> Add bindings for qcom,sc7280-camss to support the camera subsystem
-> on the SC7280 platform.
-> 
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
+The patch works around a deficiency in a Microsoft spec which is
+specifically for ACPI-based systems, not devicetree-based systems:
 
-<snip>
+   "ACPI Interface: Device Specific Data (_DSD) for PCIe Root Ports
+    In Windows 10 (Version 1803), new ACPI _DSD methods have been added
+    to support Modern Standby and PCI hot plug scenarios."
 
-> +required:
-> +  - clock-names
-> +  - clocks
-> +  - compatible
-> +  - interconnects
-> +  - interconnect-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - iommus
-> +  - power-domains
-> +  - power-domains-names
-> +  - reg
-> +  - reg-names
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
+    https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports
 
-These supplies shall be split into pad specific ones.
+The deficiency is that Microsoft says the ExternalFacingPort property
+must be below the Root Port...
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,camcc-sc7280.h>
-> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> +    #include <dt-bindings/interconnect/qcom,sc7280.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        camss: camss@acaf000 {
+   "This ACPI object enables the operating system to identify externally
+    exposed PCIe hierarchies, such as Thunderbolt. This object must be
+    implemented in the Root Port ACPI device scope."
 
-Unit address is not the first one from the list of addresses from,
-reg values nor it even in the list.
+...but on the systems in question, external-facing ports do not
+originate from the Root Port, but from Downstream Ports.
+So there's the Root Port (with the external facing property),
+below that an Upstream Port and below that a Downstream Port
+(which is the actual external facing port).
 
-I kindly suggest to sort the list of reg values in address increase
-order, this will immediately make visible problems of this type.
+I'm not sure if Windows on ARM systems use ACPI or devicetree.
+I'm also not sure whether the Qualcomm SnapDragon SoCs they use
+have Thunderbolt built-in, in which case they won't need a
+discrete Thunderbolt controller.  If they don't use discrete
+Thunderbolt controllers or if they don't use ACPI, they can't
+exhibit the problem.
 
-> +            compatible = "qcom,sc7280-camss";
-> +
-> +            clocks = <&clock_camcc CAM_CC_CAMNOC_AXI_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_0_CSID_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_1_CSID_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_2_CSID_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_LITE_0_CSID_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_LITE_1_CSID_CLK>,
-> +                     <&clock_camcc CAM_CC_CSIPHY0_CLK>,
-> +                     <&clock_camcc CAM_CC_CSI0PHYTIMER_CLK>,
-> +                     <&clock_camcc CAM_CC_CSIPHY1_CLK>,
-> +                     <&clock_camcc CAM_CC_CSI1PHYTIMER_CLK>,
-> +                     <&clock_camcc CAM_CC_CSIPHY2_CLK>,
-> +                     <&clock_camcc CAM_CC_CSI2PHYTIMER_CLK>,
-> +                     <&clock_camcc CAM_CC_CSIPHY3_CLK>,
-> +                     <&clock_camcc CAM_CC_CSI3PHYTIMER_CLK>,
-> +                     <&clock_camcc CAM_CC_CSIPHY4_CLK>,
-> +                     <&clock_camcc CAM_CC_CSI4PHYTIMER_CLK>,
-> +                     <&gcc GCC_CAMERA_AHB_CLK>,
-> +                     <&gcc GCC_CAMERA_HF_AXI_CLK>,
-> +                     <&clock_camcc CAM_CC_CPAS_AHB_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_0_AXI_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_0_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_1_AXI_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_1_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_2_AXI_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_2_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_2_CPHY_RX_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_LITE_0_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_LITE_0_CPHY_RX_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_LITE_1_CLK>,
-> +                     <&clock_camcc CAM_CC_IFE_LITE_1_CPHY_RX_CLK>;
-> +
-> +            clock-names = "camnoc_axi",
-> +                          "csi0",
-> +                          "csi1",
-> +                          "csi2",
-> +                          "csi3",
-> +                          "csi4",
-> +                          "csiphy0",
-> +                          "csiphy0_timer",
-> +                          "csiphy1",
-> +                          "csiphy1_timer",
-> +                          "csiphy2",
-> +                          "csiphy2_timer",
-> +                          "csiphy3",
-> +                          "csiphy3_timer",
-> +                          "csiphy4",
-> +                          "csiphy4_timer",
-> +                          "gcc_camera_ahb",
-> +                          "gcc_camera_axi",
-> +                          "soc_ahb",
-> +                          "vfe0_axi",
-> +                          "vfe0",
-> +                          "vfe0_cphy_rx",
-> +                          "vfe1_axi",
-> +                          "vfe1",
-> +                          "vfe1_cphy_rx",
-> +                          "vfe2_axi",
-> +                          "vfe2",
-> +                          "vfe2_cphy_rx",
-> +                          "vfe0_lite",
-> +                          "vfe0_lite_cphy_rx",
-> +                          "vfe1_lite",
-> +                          "vfe1_lite_cphy_rx";
-> +
-> +            interconnects = <&gem_noc MASTER_APPSS_PROC 0 &cnoc2 SLAVE_CAMERA_CFG 0>,
-> +                            <&mmss_noc MASTER_CAMNOC_HF 0 &mc_virt SLAVE_EBI1 0>;
-> +
-> +            interconnect-names = "ahb", "hf_0";
-> +
-> +            interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 641 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>;
-> +
-> +            interrupt-names = "csid0",
-> +                              "csid1",
-> +                              "csid2",
-> +                              "csid_lite0",
-> +                              "csid_lite1",
-> +                              "csiphy0",
-> +                              "csiphy1",
-> +                              "csiphy2",
-> +                              "csiphy3",
-> +                              "csiphy4",
-> +                              "vfe0",
-> +                              "vfe1",
-> +                              "vfe2",
-> +                              "vfe_lite0",
-> +                              "vfe_lite1";
-> +
-> +            iommus = <&apps_smmu 0x800 0x4e0>;
-> +
-> +            power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
-> +                            <&camcc CAM_CC_IFE_1_GDSC>,
-> +                            <&camcc CAM_CC_IFE_2_GDSC>,
-> +                            <&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +
-> +            power-domains-names = "ife0", "ife1", "ife2", "top";
-> +
-> +            reg = <0x0 0x0acb3000 0x0 0x1000>,
-> +                  <0x0 0x0acba000 0x0 0x1000>,
-> +                  <0x0 0x0acc1000 0x0 0x1000>,
-> +                  <0x0 0x0acc8000 0x0 0x1000>,
-> +                  <0x0 0x0accf000 0x0 0x1000>,
-> +                  <0x0 0x0ace0000 0x0 0x2000>,
-> +                  <0x0 0x0ace2000 0x0 0x2000>,
-> +                  <0x0 0x0ace4000 0x0 0x2000>,
-> +                  <0x0 0x0ace6000 0x0 0x2000>,
-> +                  <0x0 0x0ace8000 0x0 0x2000>,
-> +                  <0x0 0x0acaf000 0x0 0x4000>,
-> +                  <0x0 0x0acb6000 0x0 0x4000>,
-> +                  <0x0 0x0acbd000 0x0 0x4000>,
-> +                  <0x0 0x0acc4000 0x0 0x4000>,
-> +                  <0x0 0x0accb000 0x0 0x4000>;
-> +
-> +            reg-names = "csid0",
-> +                        "csid1",
-> +                        "csid2",
-> +                        "csid_lite0",
-> +                        "csid_lite1",
-> +                        "csiphy0",
-> +                        "csiphy1",
-> +                        "csiphy2",
-> +                        "csiphy3",
-> +                        "csiphy4",
-> +                        "vfe0",
-> +                        "vfe1",
-> +                        "vfe2",
-> +                        "vfe_lite0",
-> +                        "vfe_lite1";
+In any case I haven't heard of any Windows on ARM systems being
+affected by the issue.
 
-reg and reg-names properties come right after the compatible property.
+So it boils down to:  Should we compile the quirk in just in case
+ARM-based ACPI systems with discrete Thunderbolt controllers and
+problematic ACPI tables show up, or should we constrain it to x86,
+which is the only known architecture that actually needs it right now.
 
-> +
-> +            vdda-phy-supply = <&vreg_l10c_0p88>;
-> +            vdda-pll-supply = <&vreg_l6b_1p2>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +            };
-> +        };
-> +    };
+My recommendation would be the latter because it's easy to move
+code around in the tree, should other arches become affected,
+but in the meantime we save memory and compile time on anything
+not x86.
 
---
-Best wishes,
-Vladimir
+Thanks,
+
+Lukas
 
