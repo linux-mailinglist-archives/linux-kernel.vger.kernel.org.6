@@ -1,221 +1,187 @@
-Return-Path: <linux-kernel+bounces-388502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420769B6072
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:48:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71F89B6078
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95229B22587
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 097331C21541
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A725D1E573E;
-	Wed, 30 Oct 2024 10:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UEwPKUWv"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92AB1E7C2D;
+	Wed, 30 Oct 2024 10:47:36 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735481E47AC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E84A1E765C;
+	Wed, 30 Oct 2024 10:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730285252; cv=none; b=O0iEL0nKBEbdCp1jugYUpqVaPgEpi1+ftri+cbERTKcePz1vmDf5nWGS0KAAX/bwoFZML79ukYtRB5PmAVhJXtftOLljE5q8zarWCE6SRDhn2mC10UwdDi2NRhCPfsF/Sx1W61rb5sBvroBuK900RJDGtIFlYhpAVBeAiUf8bFM=
+	t=1730285256; cv=none; b=f6x2WAb2ugEbKCaFOfqmMjh81YtQvWo/KVfv1YyS7Rp4kp1HcSjkUfDvNmkmI8EcEeAK5Y2HOWPDCdLm9uyAR9d2DNz5M0sVqjcLJaO06dluGDEFuN2mJgiwZEfz5HpFV9iSALAVXBJ9c60GDnD2vlNYlloGkqRjiqiXkq+59Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730285252; c=relaxed/simple;
-	bh=TN1cHZIOpy6i3DhRcNJ2ESG8eeF0p3jBWFhx4Uh7WYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O6b3IGzQT3cqI4Ja5gyBrqozRK69AZloWpa+JFTnt/bMnuuDYze03u1f3WJSxHhmoOgMyExAFSk5FQdYsFONMdMwyzUDhqYS5WrmHMsh0VTvvvYIPKCvGKldeqHqjB6wAEsrFrnFq+H/kQf76aqwYUxvI8lbTxUti887rVttJIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UEwPKUWv; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 821A2C0003;
-	Wed, 30 Oct 2024 10:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730285248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v9j3vuJY/COyFVkvUtwz2LlT17k8T67pfaVSrv49d48=;
-	b=UEwPKUWvjJ2u8dfZ4L4Viya3Wuxn5XcrOj6sZz0EJlBOQHmSvxhy93WFxYHR2DuXJJv4xw
-	cw8xss9CIwvV0vrqWJf8D2r1b5Wh9Y6IZZeD508WBPqi1pwjco3Um5yW/xPvA9phSXUD6I
-	OKzdWKv2YBoZyoYtQ9KQJyDZk6lY/0KtMoYJFmzGTa44JT4PlYmle5dtT76AZxfZVPH5e1
-	loMfH3iVTEfd0zGrc2wkW1gllJftbB7AbPQj5/TOjBtpcCyOSFSmZGYIcQyZ5Uqpvirx7j
-	Z5xdCgw5ymkOezsYJPig6mw4L9S5GslNJofEC0iCxVTnWmJjlZblbDt3YsxbRQ==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH 5/5] mtd: rawnand: davinci: Implement setup_interface() operation
-Date: Wed, 30 Oct 2024 11:47:17 +0100
-Message-ID: <20241030104717.88688-6-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241030104717.88688-1-bastien.curutchet@bootlin.com>
-References: <20241030104717.88688-1-bastien.curutchet@bootlin.com>
+	s=arc-20240116; t=1730285256; c=relaxed/simple;
+	bh=NfdECQjhLdCrDtfug5grGVQRxCB3pq6AgqaEH3NDC6g=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gh0GXwHeXX0E9t48Qq+FT0F+QJlYkLj6Z+4zIVoC98Al+fm1YtlF+mTlchKmOHjfirdNi2pw4JWrFP9wtHiRcAIcHOPthyAtm4X2IOagz4+APTgR/FnPi7N8p0ieF4KDyfkh1N1uaF6PmEQ2OZRVcG4PAOaKb1j2R6MT7wMIMNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 30 Oct
+ 2024 18:47:18 +0800
+Received: from aspeedtech.com (192.168.10.152) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Wed, 30 Oct 2024 18:47:18 +0800
+From: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+To: <patrick@stwcx.xyz>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-watchdog@vger.kernel.org>
+CC: <Peter.Yin@quantatw.com>, <Patrick_NC_Lin@wiwynn.com>,
+	<Bonnie_Lo@wiwynn.com>, <DELPHINE_CHIU@wiwynn.com>, <bmc-sw@aspeedtech.com>,
+	<chnguyen@amperecomputing.com>
+Subject: [PATCH v3 2/2] watchdog: aspeed: Add support for SW restart
+Date: Wed, 30 Oct 2024 18:47:17 +0800
+Message-ID: <20241030104717.168324-3-chin-ting_kuo@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241030104717.168324-1-chin-ting_kuo@aspeedtech.com>
+References: <20241030104717.168324-1-chin-ting_kuo@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Type: text/plain
 
-The setup_interface() operation isn't implemented. It forces the driver
-to use the ONFI mode 0, though it could use more optimal modes.
+Since AST2600, except for HW WDT counter timeout, HW WDT
+reset can also be triggered by just cinfiguring some
+HW registers by SW directly. We named it "SW restart".
+Although it is "SW" restart, its mechanism is implemented
+by HW.
 
-Implement the setup_interface() operation. It uses the
-aemif_set_cs_timings() function from the AEMIF driver to update the
-chip select timings. The calculation of the register's contents is
-directly extracted from §20.3.2.3 of the DaVinci TRM [1]
+Originally, system can only know it is reset by WDT
+through a reset flag. However, since AST2600, SW can
+trigger the reset event consciously and directly without
+wait for WDT timeout. WDT counter is not enabled when
+SW restart is adopted. After that, an independent reset
+event flag will be set after systemis reset by SW.
 
-These timings are previously set by the AEMIF driver itself from
-device-tree properties. Therefore, IMHO, failing to update them in the
-setup_interface() isn't critical, which is why 0 is returned even when
-timings aren't updated.
-
-MAX_TH_PS and MAX_TSU_PS are the worst case timings based on the
-Keystone2 and DaVinci datasheets.
-
-[1] : https://www.ti.com/lit/ug/spruh77c/spruh77c.pdf
-
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
 ---
- drivers/mtd/nand/raw/davinci_nand.c | 78 +++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+ drivers/watchdog/aspeed_wdt.c | 40 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 11dc30c29957..76f0306dfe77 100644
---- a/drivers/mtd/nand/raw/davinci_nand.c
-+++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -20,6 +20,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <memory/ti-aemif.h>
+diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+index add76be3ee42..1e9808d42023 100644
+--- a/drivers/watchdog/aspeed_wdt.c
++++ b/drivers/watchdog/aspeed_wdt.c
+@@ -42,6 +42,9 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
  
- #define NRCSR_OFFSET		0x00
- #define NANDFCR_OFFSET		0x60
-@@ -44,6 +45,9 @@
- #define	MASK_ALE		0x08
- #define	MASK_CLE		0x10
+ #define WDT_REG_OFFSET_MASK		0x00000fff
  
-+#define MAX_TSU_PS		3000	/* Input setup time in ps */
-+#define MAX_TH_PS		1600	/* Input hold time in ps */
++/* WDT behavior control flag */
++#define WDT_RESTART_SYSTEM_SW_SUPPORT	0x00000001
 +
- struct davinci_nand_pdata {
- 	uint32_t		mask_ale;
- 	uint32_t		mask_cle;
-@@ -120,6 +124,7 @@ struct davinci_nand_info {
- 	uint32_t		core_chipsel;
- 
- 	struct clk		*clk;
-+	struct aemif_device	*aemif;
+ struct aspeed_wdt_scu {
+ 	const char *compatible;
+ 	u32 reset_status_reg;
+@@ -55,6 +58,7 @@ struct aspeed_wdt_config {
+ 	u32 irq_shift;
+ 	u32 irq_mask;
+ 	u32 reg_size;
++	u32 flags;
+ 	struct aspeed_wdt_scu scu;
  };
  
- static DEFINE_SPINLOCK(davinci_nand_lock);
-@@ -767,9 +772,81 @@ static int davinci_nand_exec_op(struct nand_chip *chip,
+@@ -71,6 +75,7 @@ static const struct aspeed_wdt_config ast2400_config = {
+ 	.irq_shift = 0,
+ 	.irq_mask = 0,
+ 	.reg_size = 0x20,
++	.flags = 0,
+ 	.scu = {
+ 		.compatible = "aspeed,ast2400-scu",
+ 		.reset_status_reg = AST2400_SCU_SYS_RESET_STATUS,
+@@ -85,6 +90,7 @@ static const struct aspeed_wdt_config ast2500_config = {
+ 	.irq_shift = 12,
+ 	.irq_mask = GENMASK(31, 12),
+ 	.reg_size = 0x20,
++	.flags = 0,
+ 	.scu = {
+ 		.compatible = "aspeed,ast2500-scu",
+ 		.reset_status_reg = AST2400_SCU_SYS_RESET_STATUS,
+@@ -99,6 +105,7 @@ static const struct aspeed_wdt_config ast2600_config = {
+ 	.irq_shift = 0,
+ 	.irq_mask = GENMASK(31, 10),
+ 	.reg_size = 0x40,
++	.flags = WDT_RESTART_SYSTEM_SW_SUPPORT,
+ 	.scu = {
+ 		.compatible = "aspeed,ast2600-scu",
+ 		.reset_status_reg = AST2600_SCU_SYS_RESET_STATUS,
+@@ -136,6 +143,11 @@ MODULE_DEVICE_TABLE(of, aspeed_wdt_of_table);
+ #define   WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION	BIT(0)
+ #define WDT_RESET_MASK1		0x1c
+ #define WDT_RESET_MASK2		0x20
++#define WDT_SW_RESET_CTRL	0x24
++#define   WDT_SW_RESET_COUNT_CLEAR	0xDEADDEAD
++#define   WDT_SW_RESET_ENABLE	0xAEEDF123
++#define WDT_SW_RESET_MASK1	0x28
++#define WDT_SW_RESET_MASK2	0x2c
+ 
+ /*
+  * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
+@@ -255,10 +267,31 @@ static int aspeed_wdt_set_pretimeout(struct watchdog_device *wdd,
  	return 0;
  }
  
-+#define TO_CYCLES(ps, period_ns) (DIV_ROUND_UP((ps) / 1000, (period_ns)))
-+
-+static int davinci_nand_setup_interface(struct nand_chip *chip, int chipnr,
-+					const struct nand_interface_config *conf)
++static void aspeed_wdt_sw_reset(struct watchdog_device *wdd)
 +{
-+	struct davinci_nand_info *info = to_davinci_nand(nand_to_mtd(chip));
-+	const struct nand_sdr_timings *sdr;
-+	struct aemif_cs_timings timings;
-+	s32 cfg, min, cyc_ns;
++	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
++	u32 ctrl = WDT_CTRL_RESET_MODE_SOC |
++		   WDT_CTRL_RESET_SYSTEM;
 +
-+	cyc_ns = 1000000000 / clk_get_rate(info->clk);
++	writel(ctrl, wdt->base + WDT_CTRL);
++	writel(WDT_SW_RESET_COUNT_CLEAR,
++	       wdt->base + WDT_SW_RESET_CTRL);
++	writel(WDT_SW_RESET_ENABLE, wdt->base + WDT_SW_RESET_CTRL);
 +
-+	sdr = nand_get_sdr_timings(conf);
-+	if (IS_ERR(sdr))
-+		return PTR_ERR(sdr);
-+
-+	cfg = TO_CYCLES(sdr->tCLR_min, cyc_ns) - 1;
-+	timings.rsetup = cfg > 0 ? cfg : 0;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tREA_max + MAX_TSU_PS, cyc_ns),
-+		    TO_CYCLES(sdr->tRP_min, cyc_ns)) - 1;
-+	timings.rstrobe = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tCEA_max + MAX_TSU_PS, cyc_ns) - 2;
-+	while ((s32)(timings.rsetup + timings.rstrobe) < min)
-+		timings.rstrobe++;
-+
-+	cfg = TO_CYCLES((s32)(MAX_TH_PS - sdr->tCHZ_max), cyc_ns) - 1;
-+	timings.rhold = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tRC_min, cyc_ns) - 3;
-+	while ((s32)(timings.rsetup + timings.rstrobe + timings.rhold) < min)
-+		timings.rhold++;
-+
-+	cfg = TO_CYCLES((s32)(sdr->tRHZ_max - (timings.rhold + 1) * cyc_ns * 1000), cyc_ns);
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCHZ_max, cyc_ns)) - 1;
-+	timings.ta = cfg > 0 ? cfg : 0;
-+
-+	cfg = TO_CYCLES(sdr->tWP_min, cyc_ns) - 1;
-+	timings.wstrobe = cfg > 0 ? cfg : 0;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tCLS_min, cyc_ns), TO_CYCLES(sdr->tALS_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCS_min, cyc_ns)) - 1;
-+	timings.wsetup = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tDS_min, cyc_ns) - 2;
-+	while ((s32)(timings.wsetup + timings.wstrobe) < min)
-+		timings.wstrobe++;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tCLH_min, cyc_ns), TO_CYCLES(sdr->tALH_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCH_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tDH_min, cyc_ns)) - 1;
-+	timings.whold = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tWC_min, cyc_ns) - 2;
-+	while ((s32)(timings.wsetup + timings.wstrobe + timings.whold) < min)
-+		timings.whold++;
-+
-+	dev_dbg(&info->pdev->dev, "RSETUP %x RSTROBE %x RHOLD %x\n",
-+		timings.rsetup, timings.rstrobe, timings.rhold);
-+	dev_dbg(&info->pdev->dev, "TA %x\n", timings.ta);
-+	dev_dbg(&info->pdev->dev, "WSETUP %x WSTROBE %x WHOLD %x\n",
-+		timings.wsetup, timings.wstrobe, timings.whold);
-+
-+	if (aemif_set_cs_timings(info->aemif, info->core_chipsel, &timings) < 0)
-+		dev_info(&info->pdev->dev,
-+			 "Failed to dynamically update the CS timings, keep them unchanged");
-+
-+	return 0;
++	/* system must be reset immediately */
++	mdelay(1000);
 +}
 +
- static const struct nand_controller_ops davinci_nand_controller_ops = {
- 	.attach_chip = davinci_nand_attach_chip,
- 	.exec_op = davinci_nand_exec_op,
-+	.setup_interface = davinci_nand_setup_interface,
- };
+ static int aspeed_wdt_restart(struct watchdog_device *wdd,
+ 			      unsigned long action, void *data)
+ {
+ 	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
++	const struct aspeed_wdt_config *cfg = wdt->cfg;
++
++	if (cfg->flags & WDT_RESTART_SYSTEM_SW_SUPPORT) {
++		aspeed_wdt_sw_reset(wdd);
++		return 0;
++	}
  
- static int nand_davinci_probe(struct platform_device *pdev)
-@@ -834,6 +911,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 	info->pdev		= pdev;
- 	info->base		= base;
- 	info->vaddr		= vaddr;
-+	info->aemif		= dev_get_drvdata(pdev->dev.parent);
+ 	wdt->ctrl &= ~WDT_CTRL_BOOT_SECONDARY;
+ 	aspeed_wdt_enable(wdt, 128 * WDT_RATE_1MHZ / 1000);
+@@ -529,6 +562,13 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+ 			if (nrstmask > 1)
+ 				writel(reset_mask[1], wdt->base + WDT_RESET_MASK2);
+ 		}
++
++		if (wdt->cfg->flags & WDT_RESTART_SYSTEM_SW_SUPPORT) {
++			reg = readl(wdt->base + WDT_RESET_MASK1);
++			writel(reg, wdt->base + WDT_SW_RESET_MASK1);
++			reg = readl(wdt->base + WDT_RESET_MASK2);
++			writel(reg, wdt->base + WDT_SW_RESET_MASK2);
++		}
+ 	}
  
- 	mtd			= nand_to_mtd(&info->chip);
- 	mtd->dev.parent		= &pdev->dev;
+ 	if (!of_property_read_u32(np, "aspeed,ext-pulse-duration", &duration)) {
 -- 
-2.47.0
+2.34.1
 
 
