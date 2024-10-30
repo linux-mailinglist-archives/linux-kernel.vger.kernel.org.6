@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-388204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0644F9B5BFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:48:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E202B9B5BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:46:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AABA51F24292
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC6C1F22341
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71D61D2F54;
-	Wed, 30 Oct 2024 06:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC901D2781;
+	Wed, 30 Oct 2024 06:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1PybXgQ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="dz8GQSXP"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C57013CF82;
-	Wed, 30 Oct 2024 06:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56DC18FC8F;
+	Wed, 30 Oct 2024 06:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730270878; cv=none; b=ocEoq0CclReaAxBCV/dyuvtGQZIy7O+lVxcjMYFCcZcyrDzfYvfonhcF0gqSUfJvuK9wrzySi4C3l+U3xlaZUXbctkDg6NIxpzxnTv7MR2V1J/MxFTO+2UQw0ccAtgbxssy9I7awejFmM2nEQbrEFuDniibAMpy0IlY6c1IQAnE=
+	t=1730270810; cv=none; b=Yg20dr7lKv2NfrDl17Gz1ET3+ssZ1dizsL4+/8KtfO1TF74sNRZHCDQyxWPZUcdYv9Ku90hkrxO/2+0UTHl5LKxdYrnZs9V7M7HmAiIuNwy56KbA8UWY7lVhzhh2/vSYTitKK3YLY7yXNNTeCJ6QG/iuKAb2RzUk7XmOHRFr34s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730270878; c=relaxed/simple;
-	bh=sBuryP79hCPagQG+G9zXZR8cppcDQQ2uy+1JYtvGHQc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Lh4fzyYN5na7+rY/+QuBL+YfU9dUj0m1tyOBvRkUgTV2tDzu6rMI1MVfxkm/ZwNyDAqGpb1U3xNiZeXformIzedkwJhSmg1diRaYngkspRITEQe7hzwli6zpxCKHf0BzmIVRBM13rksPOO1jr7pT5HmESFOOikry6744gc74Kvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1PybXgQ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9e44654ae3so30404966b.1;
-        Tue, 29 Oct 2024 23:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730270874; x=1730875674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hMXpNxhBWpXkuiYmAOYmqAd0VDs3nYutt8Ocou5MWO8=;
-        b=J1PybXgQzpIf7UMcERklxOgz0gNpr8VOIcpuJXX+8rBhc5zzEXlFnECrGT7D/AlGwN
-         sKreQCvwsSF8rtyNxjuRkXXAWBHV19+LXlfAjN63TYWvSOZRwBF5IY4W7mr15cvw8XNy
-         gpOzJIJk9JnJc9zyy6SEzSPhs1aaKiDvmVWwkPTUPNjfNiT4EBsB764rTGJi7N3pdXc0
-         VSLF7tuG1KWfXuG4McgmTkHnc9qsbZ9iI5kosGe85fEID7vo2lrxy9Awo9YaYwzGRi6C
-         nYIrqilx9f1nQY5UpIApu0bt9CgpZtVB1D4iBnTP6gbopPtuJVSFGjxfGstqNG2nDF08
-         lEkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730270874; x=1730875674;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hMXpNxhBWpXkuiYmAOYmqAd0VDs3nYutt8Ocou5MWO8=;
-        b=Zvjk0HNx7Bkpig0dynMBS3SJaaw/9WTn3qZcmsNHkSX5iuacBapJVXOSmc+1M0EOHn
-         uH/rpruqtVUWBF9RCHT/mV2KCHemEp6P8V3ZDi1Xoh7FazrIfAJjatfl9MmchLcQLg+Y
-         a37ybBpdwqHHuH75E/xpAQJXWJIPvGURov7puCJ8vaXc2CCXjPf3jk5FZE4Jt5Bk8iES
-         vb3joEERfnOISoOt7avfaDygO9RvGFusT9mhfujBr9YcZqeOa3JIl1f8kMxHJ4oRSOTP
-         MKWuX2rEnhAct8a6xhAHnW5wko/D3Oa3c9Ck8w08O3h4yObcKBUT5UjrlqTCRsGEDrhx
-         Il4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUyNVVIEH+6AXJ4g8rjRYBDVYuh2uZVVgEXQNpepQuPfMwU3jNY3/Fe4ZDG+Y1nX9qa1/cINEnoAQnqa/A=@vger.kernel.org, AJvYcCXSysHoNR7jJz5UKqQ440vYZNkP9qtbOb/NvO9d4eT0GTzQdKIJB+RHI4ZhdqbS12q09KybiEc4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbN82ZM8oXQHFIwLr1LaeM69antMpMcJ6ptvsQq8/U3fPG0/3J
-	XiQoS96p9aOi4KLSQloZwHh4cwhVvkoluQijIwmvKepmpAMNrlmu
-X-Google-Smtp-Source: AGHT+IHx0pqrSrMV1MRAV3jbq6+foJpa2k5N4VD2r4i5BCuz3to+OqRh1UbcMSGMr3Z0vtMx/NJCuA==
-X-Received: by 2002:a17:907:980e:b0:a9a:7f34:351b with SMTP id a640c23a62f3a-a9de5cfd5d1mr1301008966b.3.1730270874107;
-        Tue, 29 Oct 2024 23:47:54 -0700 (PDT)
-Received: from [127.0.0.1] ([82.102.65.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f030193sm539645666b.85.2024.10.29.23.47.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 23:47:53 -0700 (PDT)
-Date: Wed, 30 Oct 2024 08:45:48 +0200
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-To: =?ISO-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: Jinjie Ruan <ruanjinjie@huawei.com>, chandrashekar.devegowda@intel.com,
- chiranjeevi.rapolu@linux.intel.com, haijun.liu@mediatek.com,
- m.chetan.kumar@linux.intel.com, ricardo.martinez@linux.intel.com,
- loic.poulain@linaro.org, johannes@sipsolutions.net, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_net=5D_net=3A_wwan=3A_t7xx=3A_off-by?=
- =?US-ASCII?Q?-one_error_in_t7xx=5Fdpmaif=5Frx=5Fbuf=5Falloc=28=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <a628c035-641a-1c40-e4c8-c266e867718c@linux.intel.com>
-References: <20241028080618.3540907-1-ruanjinjie@huawei.com> <34589bdb-8cbd-455d-9e5b-a237d5c2cd0c@gmail.com> <a628c035-641a-1c40-e4c8-c266e867718c@linux.intel.com>
-Message-ID: <6F7BB669-7971-4444-B693-0533E56D623A@gmail.com>
+	s=arc-20240116; t=1730270810; c=relaxed/simple;
+	bh=U8FWZ6SDqLWyS4j+r11B50+GOeGBfrXGbo421lmH874=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I35hI9GptB36CBqDHdXLmaaJUXwadgrhhYGT5d1vxwUX76FARr+A0xLhuL7GNRMjzCJs5dwxA+CiomFsmUKL9XUWWB+MRzru/bDfLR6FaNMZ/GqTqRVdWT5iFUj2m9UtxtPp37ZVVAkvMYrscTHfUTEaz9AbxVkmrHdDSodThSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=dz8GQSXP; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=U8FWZ6SDqLWyS4j+r11B50+GOeGBfrXGbo421lmH874=; t=1730270808;
+	x=1730702808; b=dz8GQSXPOlAzMcPy1jac4g3/wbObnaXJuu0+umknJ+l/wjlTDXYBVBqEpWMIn
+	aqg5TLzB9LIuMy1DDr6Wf9QUMBgw9+Owtje5/WnvzZtl9GBHddPnZpZuday8q5CJatWFattpayJLh
+	NlF0zsgZ0372aplTkovYE4K+0AyF7PRCYe51yzGqGdSKqijk3auRSyu52oPGOdZzqCrn291cnVjOm
+	smu/cdJYUNENA3x/GDKzVaZagZlIdX8G1oS/Ep8hl9fOJDhqZ+MfHBs9rBE1CBmJyGLuNwBhDCXd4
+	X7ukaIFgTSPl1ALFyf7qDA6jqX/c4IvwP1+/yoaicgT4ogYPPw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t62TY-0008D9-On; Wed, 30 Oct 2024 07:46:40 +0100
+Message-ID: <58c58550-532a-4cfa-947d-ed56c6c5ba4e@leemhuis.info>
+Date: Wed, 30 Oct 2024 07:46:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+To: Sasha Levin <sashal@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
+ torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org> <ZyAUO0b3z_f_kVnj@sashalap>
+ <d75c9c2f-353f-464c-89d3-8c18dbfb4770@leemhuis.info>
+ <ZyDHZHjxwmK1Ow9e@sashalap>
+ <292de8f0-49e7-49c8-a327-b279924a5794@leemhuis.info>
+ <ZyD6QioGPyJUXI5r@sashalap>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <ZyD6QioGPyJUXI5r@sashalap>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730270808;c96c0a51;
+X-HE-SMSGID: 1t62TY-0008D9-On
 
-On October 29, 2024 12:52:39 PM, "Ilpo J=C3=A4rvinen" <ilpo=2Ejarvinen@linu=
-x=2Eintel=2Ecom> wrote:
->On Tue, 29 Oct 2024, Sergey Ryazanov wrote:
->
->> Hello Jinjie,
->>=20
->> On 28=2E10=2E2024 10:06, Jinjie Ruan wrote:
->>> The error path in t7xx_dpmaif_rx_buf_alloc(), free and unmap the alrea=
-dy
->>> allocated and mapped skb in a loop, but the loop condition terminates =
-when
->>> the index reaches zero, which fails to free the first allocated skb at
->>> index zero=2E
->>>=20
->>> Check for >=3D 0 so that skb at index 0 is freed as well=2E
->>=20
->> Nice catch! Still implementation needs some improvements, see below=2E
->>=20
->>>=20
->>> Fixes: d642b012df70 ("net: wwan: t7xx: Add data path interface")
->>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei=2Ecom>
->>> ---
->>>   drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>=20
->>> diff --git a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
->>> b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
->>> index 210d84c67ef9=2E=2Ef2298330e05b 100644
->>> --- a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
->>> +++ b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
->>> @@ -226,7 +226,7 @@ int t7xx_dpmaif_rx_buf_alloc(struct dpmaif_ctrl
->>> *dpmaif_ctrl,
->>>   	return 0;
->>>     err_unmap_skbs:
->>> -	while (--i > 0)
->>> +	while (--i >=3D 0)
->>>   		t7xx_unmap_bat_skb(dpmaif_ctrl->dev, bat_req->bat_skb, i);
->>=20
->> The index variable declared as unsigned so changing the condition alone=
- will
->> cause the endless loop=2E Can you change the variable type to signed as=
- well?
->
->Isn't the usual pattern:
->
->	while (i--)
->		t7xx_unmap_bat_skb(dpmaif_ctrl->dev, bat_req->bat_skb, i);
->
->?
+On 29.10.24 16:07, Sasha Levin wrote:
+> On Tue, Oct 29, 2024 at 01:46:23PM +0100, Thorsten Leemhuis wrote:
+>> Hmmm. After all those mails in this thread improving (and maybe even
+>> separating & somewhat automating[1]) pending-fixes to me still sounds
+>> like time better spend, as then more things could tested before they
+>> even read a PR; but yes, I understand, the timing/order of merges can
+>> mess things up, so testing on PR time has benefits, too.
+> Automating how? Having it be generated more often?
 
-I can't say it's a usual pattern, but yes, you are right and your solution=
- will work even without signedness change=2E
+Have the list of -fixes trees which a "no rebases" policy somewhere and
+a script that regularly merges them into a tree. But as indicated, it's
+not that easy in practice and can't be fully automated, as there will be
+merge conflicts occasionally. But Linus wants to see them, so they will
+happen at pull requests time, too -- doing it constantly has the benefit
+that you can notice and resolve them ahead of time.
 
-Jinjie have sent a V2 with int I=2E And since I assume that loop format a =
-matter of taste, I am going to Ack it=2E If you think that it is not only m=
-atter of taste or Jinjie wants to follow the suggested approach then I will=
- be happy to Ack a new patch with the different loop implementation=2E
+How much work this is: no idea, maybe Stephen could help answering that
+from experiences for pending-fixes. But I expect conflicts should not
+happen as often as they do when it comes to merging -for-next branches.
 
---
-Sergey
+But that obviously only helps outside of merge windows.
 
-Hello Ilpo,
+Ciao, Thorsten
 
