@@ -1,152 +1,99 @@
-Return-Path: <linux-kernel+bounces-389126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679409B68E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0693E9B68C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01178B21FC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:08:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3912B21F9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A22214411;
-	Wed, 30 Oct 2024 16:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B82213ED7;
+	Wed, 30 Oct 2024 16:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JFBaNX3w"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INk/yM5l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AE61E2838;
-	Wed, 30 Oct 2024 16:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2F436126;
+	Wed, 30 Oct 2024 16:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304483; cv=none; b=L/vXbKsxtMxIkaMAMOTeabtm+6FOwpVjdMWg5pW8lhXuyifHFW9tuNyox9i5QVvr2zy/XJUe/gomAwupPni0uHAIFqutNVI64L1/QnlMZiTmqEo56dXZAMwLw/+9Im40nReLuVOEs3m36PPgyK3pLM/Dh2ghs0tZ8iawWhFcxrA=
+	t=1730304143; cv=none; b=t0lddDHTOfDIspE5VNB3M4vNeq3VVPXzC+LuQeUu/cwRiW8gjHfYYCvnmvvvIHg3P05HBq4fV0XuBwICc71ICgsCD+E214BKrMMhBGfgQqhX2OgKJlr5hKtNa5+WrvuzGk9EzR87I94ppMdqcaP4bPq0vOPRr2lBgdlduEzY8rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304483; c=relaxed/simple;
-	bh=sG3ot16sMv9t5rM8f8rGAEaq9yO+g6GPx5PBiVGBZvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=um+OfWfBWv7YxSBGP5pED6Z5e4r9LNqZkSspFleJf9bUZuGaAB+JxyaYm5Dqox2C4nD+V4qp35gezZ4CcNaMN16eWMbnFbNo5vOO/E1KhrqkfpKjgTNlDVL1dIGzptms1hbL26NyeOKB62oPGKLYQts/H4u9nUk4dN8negWLjJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JFBaNX3w; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730304483; x=1761840483;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sG3ot16sMv9t5rM8f8rGAEaq9yO+g6GPx5PBiVGBZvQ=;
-  b=JFBaNX3wSA9Z9dDdybmB5LCjU5QqNa+Wj5bro5LVycYdsZ6dwUlsIvgc
-   rsMaE+eUSjOrCxZ00inLJHz9ORrz/qPo/dCIYfFotFjtJxAu6054ikFog
-   /w/PaRXmXZpH93MeUeHCxNJQEBR2g19LPXjDYxQM0d5LfSFQygNgZNLI5
-   Vk38GvyLBT1VHuaBMOpY6/PkjKtad54zAzcIdVcjNv84bikuYUB/ZDdTi
-   AmcyBq4JLpIzlQMlKn0Dwqhgl0xSeRjhwmq682tqvEE6Q45uoKfAUxewr
-   i6vYfaEVGianhusCjYhnWvZLtrbKElVobOVedip1zdyWDk2AYUZODhQP/
-   A==;
-X-CSE-ConnectionGUID: htsrnKQpSHODfbuVvj3Fkg==
-X-CSE-MsgGUID: j9T3qg5HRzulIkZISrVCTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30165101"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30165101"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:08:02 -0700
-X-CSE-ConnectionGUID: s8IUe0R6THCIt2UwyPMhxA==
-X-CSE-MsgGUID: 3Ziq6GkVSeO1mMUzfIma2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="113212711"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 30 Oct 2024 09:07:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 6BF8131D; Wed, 30 Oct 2024 18:07:58 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH v1 3/4] iio: accel: kxcjk-1013: Deduplicate ODR startup time array
-Date: Wed, 30 Oct 2024 18:02:19 +0200
-Message-ID: <20241030160756.2099326-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
-References: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1730304143; c=relaxed/simple;
+	bh=YIULgKbhVLl2KEUkjm5ebB+z6v8KNB9tZvb34/55RMc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NokSxImVb+sV54q97H8FlQyXitksucIefQLcBu9Lz0XBGj5Wnu9ZAdcL9kUkP2skWkkBTeMW5FWX5HHk6RoUVogdqF/Z1p0S/kMBihJi7ompRavi+NuifxL3OC8ZdoS68yq+KK5JWPS2d6U+bBf1MMo+LbVDyhKLqRvRF7x2RzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INk/yM5l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1982FC4CED0;
+	Wed, 30 Oct 2024 16:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730304143;
+	bh=YIULgKbhVLl2KEUkjm5ebB+z6v8KNB9tZvb34/55RMc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=INk/yM5lxlbPlzB5uUxspssKfu+Dzl+tM/QbkEjKZ6GWe7NxgZrhK7cg61luWkP+t
+	 LVmOW0Me6esngVwbOHmGIgsxMj/4kD7ALzCHB+Puew05h1mlT/9F8mKaeKyResrSJH
+	 HzBDtu8YDBKiY23rHCU5ZY1fDplTfJ2ME1ZWjZST18nU9buM59n9d8vKICVu0vwIPu
+	 iMMqhdecBbhAU5rZndJFnhEscuy0kHFI/JTs6wkBc7lCXaf7d+zfryhnu3OFRJOEBB
+	 +FeX5kSqEvJjZynt/MVdz7/mwAx6l4LgXguRuHrd5nwvCYmoY6tchvm+9eVjSPftML
+	 +O61Y7Uanib1g==
+From: Mark Brown <broonie@kernel.org>
+To: david.rhodes@cirrus.com, 
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: rf@opensource.cirrus.com, povik+lin@cutebit.org, lgirdwood@gmail.com, 
+ perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org, 
+ patches@opensource.cirrus.com, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+In-Reply-To: <20241030021047.70543-1-jiapeng.chong@linux.alibaba.com>
+References: <20241030021047.70543-1-jiapeng.chong@linux.alibaba.com>
+Subject: Re: [PATCH -next] ASoC: cs42l84: Remove unused including
+ <linux/version.h>
+Message-Id: <173030414082.39784.12603422768068027639.b4-ty@kernel.org>
+Date: Wed, 30 Oct 2024 16:02:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-The content of kxcj91008_odr_start_up_times and kxcjk1013_odr_start_up_times
-is identical, deduplicate it.
+On Wed, 30 Oct 2024 10:10:47 +0800, Jiapeng Chong wrote:
+> ./sound/soc/codecs/cs42l84.c: 15 linux/version.h not needed.
+> 
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/accel/kxcjk-1013.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+Applied to
 
-diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-index 3d24d4fb6621..27c83c17931a 100644
---- a/drivers/iio/accel/kxcjk-1013.c
-+++ b/drivers/iio/accel/kxcjk-1013.c
-@@ -193,23 +193,6 @@ static const struct kx_odr_start_up_time kxcjk1013_odr_start_up_times[] = {
- 	{ }
- };
- 
--/* KXCJ9-1008 */
--static const struct kx_odr_start_up_time kxcj91008_odr_start_up_times[] = {
--	{ 0x08, 100000 },
--	{ 0x09, 100000 },
--	{ 0x0A, 100000 },
--	{ 0x0B, 100000 },
--	{ 0x00, 80000 },
--	{ 0x01, 41000 },
--	{ 0x02, 21000 },
--	{ 0x03, 11000 },
--	{ 0x04, 6400 },
--	{ 0x05, 3900 },
--	{ 0x06, 2700 },
--	{ 0x07, 2100 },
--	{ }
--};
--
- /* KXCTJ2-1009 */
- static const struct kx_odr_start_up_time kxtj21009_odr_start_up_times[] = {
- 	{ 0x08, 1240000 },
-@@ -325,24 +308,24 @@ static const struct kx_chipset_info kxcjk1013_info = {
- 
- static const struct kx_chipset_info kxcj91008_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- };
- 
- static const struct kx_chipset_info kxcj91008_kiox010a_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- 	.acpi_type = ACPI_KIOX010A,
- };
- 
- static const struct kx_chipset_info kxcj91008_kiox020a_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- 	.acpi_type = ACPI_GENERIC,
- };
- 
- static const struct kx_chipset_info kxcj91008_smo8500_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- 	.acpi_type = ACPI_SMO8500,
- };
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: cs42l84: Remove unused including <linux/version.h>
+      commit: 334d538e176ce0c70bea5321d067432df2299bca
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
