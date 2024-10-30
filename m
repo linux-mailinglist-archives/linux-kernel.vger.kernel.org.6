@@ -1,268 +1,106 @@
-Return-Path: <linux-kernel+bounces-388544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52969B610F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:06:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1319B6110
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9EB1C203AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:06:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFE772817DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51B21E4123;
-	Wed, 30 Oct 2024 11:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FC41E3DF3;
+	Wed, 30 Oct 2024 11:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="cx6upxl2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="pZF8oJmY"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2kRHwRd"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A831E411D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A0A374F1
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286319; cv=none; b=d3IXaue8ihJU0UigxdhRCBPQCIQn5QkZtwQWDq6FniC6DoPTDoYbIytDci3AAT+1d5pnTC+7DWKBLQxc0HY+KzRTHwiVzTK6AoihdK2Sy1QJZRPDoRaK2hGURJ6n8zETzN49jn6YXMXrIXo9f1XiC3B7Z/2noaXUPqnvakH86Mk=
+	t=1730286488; cv=none; b=IRnmv07FCaBEmRP2VkRcUH5d+YGLroaKJ3b0C+wrsxEB4cy81unGFkr9nLWF5qPIF4nyHK7fD0uLTZCaGzfGI8CW5uFe9CvAL52bQBkqNFV3eImc2EGssK22XTzuu1HJARcINQ15rQALhWBmUKK4U8g5nwfhTC3OeR5ZrUB5fs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286319; c=relaxed/simple;
-	bh=HmwbZv87fwP6B/AtqGYTaZXvxMZBtQZ2EyfJ/RUu7uo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y4bmLPyA1fKRcMjpyxhaqSl3ZAOnmAL1bp8GDjm2QrNje+4I0EbXq+jjSXjBx9JtrWRDKOPlcbF2KhnxURNhBIc3HO9aKIRVuWuJY3QwOYiSP3t3GH1MsZmkkI33PninBdnSwpyQnFHU0PYoZyoIPJhrMB0HuL8/u3F0icPI7rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=cx6upxl2; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=pZF8oJmY reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1730286488; c=relaxed/simple;
+	bh=zzrha7jGy6bX4A4KIQJr6OduF2QVMnAKjm8yxplyNYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mT50agLD4xbcAaSw8DHSnVNBl7AJuCFNjPa4W1xNKP3fW1cqz85OAM8ywWzRaqTBfO5ntdO7a58DrlM1xVA+5W/yBP9DtmU0tdcCblqDugnlyf26eXNuJPvFj0uTZYq18LYrdEH/iycZdY29QdwLHtLi0ISI3nDypPp1qztn2bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D2kRHwRd; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so9143594a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1730286314; x=1761822314;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=W0Q0NHRej2coWnmexPznhuNwYovVzP2Rt/Szk2eDAPg=;
-  b=cx6upxl2sM56FW65tLbhvDyh1zX0Yxh2tNNUEhLzm3XISAQcCOZ5ukzj
-   w+YBSawDu/alNDdcWBgd6XsmzO2ZN33Y91hHfkY9rspFlLEoxd+tKmOVC
-   lkpiaH3QcI6tBSGNBMRRdjeaGrL2kvfGxJ6aFLiiX9lmHAB5ttPPZ8XbO
-   Rhnj/AK7Qh7SJnM4dqZVuKa/OhqlWqmOF1b/7Z+QXYfq3z7MwR46ap067
-   4euQ42xGZnjBew1/6rQWcICIqNwJ5FdYAV4qV53daaCxRJR4eAch79JNt
-   YKpPxL/ilqcMpQKiIjB5cc+cXkmrbXzO9vb4y1/Ln4f8cTY7dTM7TugGn
-   Q==;
-X-CSE-ConnectionGUID: LpTo4fn5RuqVpbEi9f2Gfg==
-X-CSE-MsgGUID: WcNd3tbQQCGYpjlYkklPDw==
-X-IronPort-AV: E=Sophos;i="6.11,245,1725314400"; 
-   d="scan'208";a="39761269"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 30 Oct 2024 12:05:12 +0100
-X-CheckPoint: {672212E8-E-86C05612-CA75E1CA}
-X-MAIL-CPID: 7D52A97F582B8EE47DF0C31390848B71_1
-X-Control-Analysis: str=0001.0A682F1E.672212E8.007C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D24E8169682;
-	Wed, 30 Oct 2024 12:05:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1730286307;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=W0Q0NHRej2coWnmexPznhuNwYovVzP2Rt/Szk2eDAPg=;
-	b=pZF8oJmYsgoYihk9OobiizHKp5cvTF5FYVU9STIJjs14/bk/4KRTuXYWQSwZ0kHzNGSlZP
-	7GZSX0ZPvYFsv7TkrF2IH58VOkvEfwZWfvpG9ACqdY2jH7PYhN6ZY62X70NaN9GAGQwZ6J
-	lm2Oke6KjYJz6wBomtbo/sXAH9DecuVvaF2SXk3wYhbemwDxdG/XqT2g9EMfxTRNq39wHE
-	tHtdK04zEUx5U/R2xZJcS070U9AWHY4zHH0r6y/f1IAB0m27luiDaX+QianowEiybXxk6e
-	8pwNVfgdxu8aso8Y+jSLGGy1WhKXz3FaQgDO1PaLKIWgSrOUuF54OhA6f0OhMw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: wahrenst@gmx.net, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, alice.guo@oss.nxp.com
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "alice.guo" <alice.guo@nxp.com>
-Subject: Re: [PATCH v3] soc: imx: Add SoC device register for i.MX9
-Date: Wed, 30 Oct 2024 12:05:04 +0100
-Message-ID: <2964906.e9J7NaK4W3@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
-References: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+        d=linaro.org; s=google; t=1730286484; x=1730891284; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HtW7qNw/Gr/IvmBwOpblzp4beHIWRAaSzNdUMpl4z7U=;
+        b=D2kRHwRdHDN2BcGJd6LGb2IteosWeHU0j1NddhY2tB5w0dwGcz7w8XOmJmyHw/oMPn
+         yC37AJO4h+4P4TJpPEGL8mTTeagxBub0zJR9wqZ9c9wQMJ9vGa7F4V6Sf/88Fem9t5i4
+         L/c5rLVRphizxe5CwGTW8i+Pj48fX209GAHT6ltH4mtvFL1g+SmzNMsaOpqXbmXhXKhM
+         d/r3xDkMRHjUeNW/eOJW3bIOirnF4ywGS9UTAflzORghj6NZStauXTYrx9NMmNFsX8/z
+         9xhjyrqr9LsqX/RU2OZ7ZDizmlFUEtY4VjVDEKJ8IrIQfLGtlYEn5Gwd4brRVYDfbDv1
+         jVsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730286484; x=1730891284;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HtW7qNw/Gr/IvmBwOpblzp4beHIWRAaSzNdUMpl4z7U=;
+        b=ht5FozwHfPhH+t5gWrQoRBZlTPU2s7Djm3lpjHdZy+c81ILzakhy12BR/WbfRDJML8
+         j9zDIOWwc7NUS98CiX3FmOWO/Ou7OAvBQ2JmRKnwP1J6kq8ObS81HOVTGgAWcs69r3Lo
+         jrx09UnG5D8kP1drkXEh5j0x1PGrtrLVe5ZTRlBCQ0vVQ9J4XiFFYhCpV7U8nBIMEINl
+         hKwWfRL7gEmHPw+9pic7XU0ksfkiu5phZR7kTvouj9xz8jNFdLRJm+1OSBgtJnJsc2Q3
+         BIfgT2BzQJ5SY3zmmSpVelPi/1Asadv0gG5Z5E7UVsg9x3MQXFYwEeAW2uutuE7m8HOn
+         pqAA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4otF5odL4bxX4YYFX31kLn9i1gdoqehbYoEqAdoFsD4YU6R+lYdNfehDkIRIcOMfJ+Wk1OYVilgSZ4JA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzGJpzl/rpa+rVZ4+0arEoxVfxmSWy9MFe8PXLqlDu/NxgkoX6
+	EuT0PWaOC9uHc482J49rUkQqUSZCI5zuJcKY79gzOnooElj5KTTD4/Up6uaImjO4GGXsBYfk1dc
+	Z6xfsiVzX/ZcsP6WjsY/RjNJ9o6MOnVtHQJG+Kw==
+X-Google-Smtp-Source: AGHT+IFXN3h9v/G1nyYZauhpuoFivbA/dTsCzahlR97/GO2a33q0fDcSFnxWfjsGDzeOG9bypL8ba+QnHBYYVFERS80=
+X-Received: by 2002:a05:6402:440a:b0:5c9:87a0:4fcc with SMTP id
+ 4fb4d7f45d1cf-5cbbf8c30a9mr12008965a12.16.1730286484442; Wed, 30 Oct 2024
+ 04:08:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20241029131752.226764-1-ulf.hansson@linaro.org> <b46e153f-f329-44b9-a72e-bcc65763f789@intel.com>
+In-Reply-To: <b46e153f-f329-44b9-a72e-bcc65763f789@intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 30 Oct 2024 12:07:25 +0100
+Message-ID: <CAPDyKFoL7gHY7h924HXc6_TTyGsRR=oTs1p5BitJP8OpBPcTfw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] mmc: core: A couple of fixes for UHS-II card
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, Victor Shih <victor.shih@genesyslogic.com.tw>, 
+	Victor Shih <victorshihgli@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Am Mittwoch, 30. Oktober 2024, 10:13:36 CET schrieb alice.guo@oss.nxp.com:
-> From: "alice.guo" <alice.guo@nxp.com>
->=20
-> i.MX9 SoCs have SoC ID, SoC revision number and chip unique identifier
-> which are provided by the corresponding ARM trusted firmware API. This
-> patch intends to use SMC call to obtain these information and then
-> register i.MX9 SoC as a device.
->=20
-> Signed-off-by: alice.guo <alice.guo@nxp.com>
+On Tue, 29 Oct 2024 at 16:00, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 29/10/24 15:17, Ulf Hansson wrote:
+> > The recently introduced UHS-II support to the mmc core has a few problems,
+> > during the card initialization and re-initialization. This series intends to
+> > addresses some these problems.
+> >
+> > Ulf Hansson (3):
+> >   mmc: core: Simplify sd_uhs2_power_up()
+> >   mmc: core: Add error handling of sd_uhs2_power_up()
+> >   mmc: core: Fix error paths for UHS-II card init and re-init
+> >
+> >  drivers/mmc/core/sd_uhs2.c | 65 +++++++++++++++++---------------------
+> >  1 file changed, 29 insertions(+), 36 deletions(-)
+>
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-I was able to successfully this on two boards:
+Thanks for reviewing!
 
-$ grep . /sys/bus/soc/devices/soc0/* 2> /dev/null=20
-/sys/bus/soc/devices/soc0/family:Freescale i.MX
-/sys/bus/soc/devices/soc0/machine:TQ-Systems i.MX93 TQMa93xxLA/TQMa93xxCA o=
-n MBa93xxCA starter kit
-/sys/bus/soc/devices/soc0/revision:1.1
-/sys/bus/soc/devices/soc0/serial_number:3d0f41f05242fc17baca88b84febf6de
-/sys/bus/soc/devices/soc0/soc_id:i.MX93
+I have queued up the series for next.
 
-$ grep . /sys/bus/soc/devices/soc0/* 2> /dev/null=20
-/sys/bus/soc/devices/soc0/family:Freescale i.MX
-/sys/bus/soc/devices/soc0/machine:TQ-Systems i.MX95 TQMa95xxSA on MB-SMARC-2
-/sys/bus/soc/devices/soc0/revision:1.1
-/sys/bus/soc/devices/soc0/serial_number:64955bc2d946b9c3f11984a9522b2822
-/sys/bus/soc/devices/soc0/soc_id:i.MX95
-
-Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-Thanks
-Alexander
-> ---
->=20
-> Changes for v2:
->  - refine error log print
-> Changes for v3:
->  - return -EINVAL when arm_smccc_smc failed
->  - fix the build warning caused by pr_err("%s: SMC failed: %d\n", __func_=
-_, res.a0);
->  - drop the pr_err in imx9_soc_init
->  - free the memory in the reverse order of allocation
->  - use of_match_node instead of of_machine_is_compatible
->=20
->  drivers/soc/imx/Makefile   |   2 +-
->  drivers/soc/imx/soc-imx9.c | 106 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 107 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/soc/imx/soc-imx9.c
->=20
-> diff --git a/drivers/soc/imx/Makefile b/drivers/soc/imx/Makefile
-> index 3ad321ca608a..ca6a5fa1618f 100644
-> --- a/drivers/soc/imx/Makefile
-> +++ b/drivers/soc/imx/Makefile
-> @@ -3,4 +3,4 @@ ifeq ($(CONFIG_ARM),y)
->  obj-$(CONFIG_ARCH_MXC) +=3D soc-imx.o
->  endif
->  obj-$(CONFIG_SOC_IMX8M) +=3D soc-imx8m.o
-> -obj-$(CONFIG_SOC_IMX9) +=3D imx93-src.o
-> +obj-$(CONFIG_SOC_IMX9) +=3D imx93-src.o soc-imx9.o
-> diff --git a/drivers/soc/imx/soc-imx9.c b/drivers/soc/imx/soc-imx9.c
-> new file mode 100644
-> index 000000000000..823395584533
-> --- /dev/null
-> +++ b/drivers/soc/imx/soc-imx9.c
-> @@ -0,0 +1,106 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#include <linux/arm-smccc.h>
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/slab.h>
-> +#include <linux/sys_soc.h>
-> +
-> +#define IMX_SIP_GET_SOC_INFO	0xc2000006
-> +#define SOC_ID(x)		(((x) & 0xFFFF) >> 8)
-> +#define SOC_REV_MAJOR(x)	((((x) >> 28) & 0xF) - 0x9)
-> +#define SOC_REV_MINOR(x)	(((x) >> 24) & 0xF)
-> +
-> +static int imx9_soc_device_register(void)
-> +{
-> +	struct soc_device_attribute *attr;
-> +	struct arm_smccc_res res;
-> +	struct soc_device *sdev;
-> +	u32 soc_id, rev_major, rev_minor;
-> +	u64 uid127_64, uid63_0;
-> +	int err;
-> +
-> +	attr =3D kzalloc(sizeof(*attr), GFP_KERNEL);
-> +	if (!attr)
-> +		return -ENOMEM;
-> +
-> +	err =3D of_property_read_string(of_root, "model", &attr->machine);
-> +	if (err) {
-> +		pr_err("%s: missing model property: %d\n", __func__, err);
-> +		goto attr;
-> +	}
-> +
-> +	attr->family =3D kasprintf(GFP_KERNEL, "Freescale i.MX");
-> +
-> +	/*
-> +	 * Retrieve the soc id, rev & uid info:
-> +	 * res.a1[31:16]: soc revision;
-> +	 * res.a1[15:0]: soc id;
-> +	 * res.a2: uid[127:64];
-> +	 * res.a3: uid[63:0];
-> +	 */
-> +	arm_smccc_smc(IMX_SIP_GET_SOC_INFO, 0, 0, 0, 0, 0, 0, 0, &res);
-> +	if (res.a0 !=3D SMCCC_RET_SUCCESS) {
-> +		pr_err("%s: SMC failed: 0x%lx\n", __func__, res.a0);
-> +		err =3D -EINVAL;
-> +		goto family;
-> +	}
-> +
-> +	soc_id =3D SOC_ID(res.a1);
-> +	rev_major =3D SOC_REV_MAJOR(res.a1);
-> +	rev_minor =3D SOC_REV_MINOR(res.a1);
-> +
-> +	attr->soc_id =3D kasprintf(GFP_KERNEL, "i.MX%2x", soc_id);
-> +	attr->revision =3D kasprintf(GFP_KERNEL, "%d.%d", rev_major, rev_minor);
-> +
-> +	uid127_64 =3D res.a2;
-> +	uid63_0 =3D res.a3;
-> +	attr->serial_number =3D kasprintf(GFP_KERNEL, "%016llx%016llx", uid127_=
-64, uid63_0);
-> +
-> +	sdev =3D soc_device_register(attr);
-> +	if (IS_ERR(sdev)) {
-> +		err =3D PTR_ERR(sdev);
-> +		pr_err("%s failed to register SoC as a device: %d\n", __func__, err);
-> +		goto serial_number;
-> +	}
-> +
-> +	return 0;
-> +
-> +serial_number:
-> +	kfree(attr->serial_number);
-> +	kfree(attr->revision);
-> +	kfree(attr->soc_id);
-> +family:
-> +	kfree(attr->family);
-> +attr:
-> +	kfree(attr);
-> +	return err;
-> +}
-> +
-> +static const struct of_device_id imx9_soc_match[] =3D {
-> +	{ .compatible =3D "fsl,imx93", },
-> +	{ .compatible =3D "fsl,imx95", },
-> +	{ }
-> +};
-> +
-> +static int __init imx9_soc_init(void)
-> +{
-> +	int ret;
-> +
-> +	/* No match means it is not an i.MX 9 series SoC, do nothing. */
-> +	if (!of_match_node(imx9_soc_match, of_root))
-> +		return 0;
-> +
-> +	ret =3D imx9_soc_device_register();
-> +
-> +	return ret;
-> +}
-> +device_initcall(imx9_soc_init);
-> +
-> +MODULE_AUTHOR("NXP");
-> +MODULE_DESCRIPTION("NXP i.MX9 SoC");
-> +MODULE_LICENSE("GPL");
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Kind regards
+Uffe
 
