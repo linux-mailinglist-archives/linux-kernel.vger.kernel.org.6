@@ -1,222 +1,216 @@
-Return-Path: <linux-kernel+bounces-389058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B07F9B6802
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:39:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C619B6829
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2A92811EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675DA28455F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DCE2139A1;
-	Wed, 30 Oct 2024 15:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ouD0ZFgW"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EDF213ED9;
+	Wed, 30 Oct 2024 15:42:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D1F1F4737
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DAA213143;
+	Wed, 30 Oct 2024 15:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730302750; cv=none; b=poADhqmzfWrAkLJZz+IWzxIfVKXLsXgYPoYscllCHLTEIMBjDOrBYqh5I/VqZ0XgHe3d2O3CVBkloes7mgp1Th7sbV2SzOrRoTWlXGTphfzxcLmYf6cc1Y0HuIM4QSx9PIdLDlhckJ23aa6F62cSsJn+NfsOXioGwh0u/INmXWc=
+	t=1730302976; cv=none; b=r53gU7WB8Aozuf1CC8igq0HPSPKQsCAv7WZwqBKQv4aCNQe7gISWmSF7jK4ik/Rjnkc6J5OaHrNjLEYG/4HJziH3woUPul0lUcGId1h+S3jCBQQEJC+/ZI+ae58yH9C+SCCXmURtJugh75Wdlc8QOTBK+Nb3Enx1r/B31f/Zm8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730302750; c=relaxed/simple;
-	bh=G2jmoUbZWmeucgcA5V400Itpx6H5+Q9/pVo3PqRvsIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MqBN5RQzmNt9ZuzqswqJpmd1iZc2/kUuRTh4k4AHEgW8KLkL3aW3D+I3ak22I9RQKuBJTO815dUH8DDtTSHZdg1gEG2g9Uzv1Jlvl3D/9mh4gmSJVMTjfuUkOCmI0grVhjuc1pZenY+uiGWP/oWdhqrlywWWAtU6jed/XBAlKr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ouD0ZFgW; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso283225ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730302747; x=1730907547; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=66zbflDx6zqJBO5nUu4XlW0w7XH1NmLpzk/AkOmTTzg=;
-        b=ouD0ZFgWJrrArKDJ+ENf6DfKJgnGCvA1tdU5cfxin1Z7Cr10BhOomqwJAYIXLznRbF
-         lOEy/p9rTCwQF8e1POY9KuL86yKoROy8f6HYYjpQcDPEDDOU1s56b5rxvOUqazd48/VQ
-         wKbUMwiD2uX52EmFjz//j1UNSGpBLkOmjD3nf8GwgGxvkGtWwffEdl50+LiZGCZLtGT1
-         gsVMa8yCaBSgrZORNE/IvN6TAImx3qTJLSkYiEjyMrh3cChVyhfqTfb+XZSg+MEw4TDv
-         NbfNx3aQQNE8UZOvPrPj/xkPeWyxuc+QrkSfnXVA09TyhqC3lWDVS/xzvSZhxpvo498H
-         JCSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730302747; x=1730907547;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=66zbflDx6zqJBO5nUu4XlW0w7XH1NmLpzk/AkOmTTzg=;
-        b=rayfL8U6lwmrHzG1FGL5424SDrjcnKeYp+o58ph44KiOZNBKU94+/recyzpXH0joS5
-         YoXGn4rWQEeEpQD0muQXbURYtB+wy0nftgynPuJ3GQ1VwSKuLZ1Fr4KoWmtjEp48JyBZ
-         hI8eLS3yrpBpuPoX0SMTXwAvO8i7ulT2FuVC0+kFL1sCNG468a3OJc557xeP4UTO7akv
-         EW51NQ4uyu3JuB2QpAG3ragj/0OKziuVekj+bVHGOalNUjowTKKzsuIGCR8OwD8WFvTD
-         tiy/UUBWFNvCfh/q62OK/gUtcdfTtw0U0PxxlbyzSPwDPi3HUhX2/ePTlXSLvqhddjAC
-         64tw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6uzOhW//MNeGvkAFVWvePlLUhqiGMl+UrqeviFiU4ImaYX9nKTHkT5ZDEEvou43dfj9vD79qVRlkWx9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb9vrxdAfa4VaKxi2epzcNeusSsUVXPjV+vWy93//ZDQYWTYKU
-	Jda1KwU58eSVkB/fmGBl3ZP77LLJ/73JKzbxq9kgtifsao7g0fEBeX4OHHxzGXSpv7KcTHCUxNV
-	5B2GxjDOmYy0NXq0KpHmaK1OFt0/V4zCPlYDX
-X-Gm-Gg: ASbGncve7uqNNdSDZCy61WIVVCtXsBping0lMsX5gxu3qwOanTxxcLi6BkU1Q7mwX4N
-	xpFV/0dbNq3nwsRTPMk2kqLc4MRiuJMNjbPOmRCj8TvITUTRFhU/g8yFK6797YwSr
-X-Google-Smtp-Source: AGHT+IERGcd665gPU5pcuGcGkzWNZoCAuE/ytmNq8trw7X7OcueUsdQLotRDk3jolftkSsp1HOEHIrleWV51tJpgKy4=
-X-Received: by 2002:a92:ca45:0:b0:3a3:a639:a591 with SMTP id
- e9e14a558f8ab-3a509bf11dbmr9250295ab.8.1730302746965; Wed, 30 Oct 2024
- 08:39:06 -0700 (PDT)
+	s=arc-20240116; t=1730302976; c=relaxed/simple;
+	bh=7kcnWVYIKaF+38h6wpgdybIdYb0dLLBerv1NN1T1BA0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b3YCh5BomvdHhqFIe4/mdjvMqtjfLzYp03gOhzui+sQfvv05pgkEW69APWyRm325tSjOHXdza6mUSuhRFlRnik+Js86WZlqZx4LNCGPpTpXtnDQ4o4aW210c5SJUB0nmWWwbHHRUU3Yk3sDGB++OluERngTdFZU5aWQAqzl1gKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdrtG5GvKz6K6X2;
+	Wed, 30 Oct 2024 23:40:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29E8C140B3C;
+	Wed, 30 Oct 2024 23:42:48 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 16:42:47 +0100
+Date: Wed, 30 Oct 2024 15:42:46 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v2 07/14] PCI/AER: Add CXL PCIe port uncorrectable error
+ recovery in AER service driver
+Message-ID: <20241030154246.000059d2@Huawei.com>
+In-Reply-To: <20241025210305.27499-8-terry.bowman@amd.com>
+References: <20241025210305.27499-1-terry.bowman@amd.com>
+	<20241025210305.27499-8-terry.bowman@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025090307.59127-1-james.clark@linaro.org>
- <20241025090307.59127-3-james.clark@linaro.org> <ZyGA9cjrtbE_eWik@google.com>
- <CAP-5=fW=DfWK9qvrtxp7z+N7aELar2xMts_=twUjWbfEQ_9vHg@mail.gmail.com> <1ab9d5be-b31b-4f76-9ccd-001603a55e53@linaro.org>
-In-Reply-To: <1ab9d5be-b31b-4f76-9ccd-001603a55e53@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 30 Oct 2024 08:38:53 -0700
-Message-ID: <CAP-5=fW9fy3PEicYgmhqQFUJmJaFs_LiponqYwEJGc7u7KQcxA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] perf stat: Also hide metric from JSON if units are an
- empty string
-To: James Clark <james.clark@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org, acme@kernel.org, 
-	tim.c.chen@linux.intel.com, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Oct 30, 2024 at 2:36=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
->
->
->
-> On 30/10/2024 2:45 am, Ian Rogers wrote:
-> > On Tue, Oct 29, 2024 at 5:42=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
-rg> wrote:
-> >>
-> >> Hello,
-> >>
-> >> On Fri, Oct 25, 2024 at 10:03:05AM +0100, James Clark wrote:
-> >>> We decided to hide NULL metric units rather than showing it as "(null=
-)",
-> >>> but on hybrid systems if the process doesn't hit a PMU you get an emp=
-ty
-> >>> string metric unit instead. To make it consistent also remove empty
-> >>> strings.
-> >>>
-> >>> Note that metric-threshold is already hidden in this case without thi=
-s
-> >>> change.
-> >>>
-> >>> Where a process only runs on cpu_core and never hits cpu_atom:
-> >>> Before:
-> >>>   $ perf stat -j -- true
-> >>>   ...
-> >>>   {"counter-value" : "<not counted>", "unit" : "", "event" : "cpu_ato=
-m/branch-misses/", "event-runtime" : 0, "pcnt-running" : 0.00, "metric-valu=
-e" : "0.000000", "metric-unit" : ""}
-> >>>   {"counter-value" : "6326.000000", "unit" : "", "event" : "cpu_core/=
-branch-misses/", "event-runtime" : 293786, "pcnt-running" : 100.00, "metric=
--value" : "3.553394", "metric-unit" : "of all branches", "metric-threshold"=
- : "good"}
-> >>>   ...
-> >>
-> >> I guess you're talking about "metric-unit", not plain "unit", right?
-> >> Then please update the subject line to reduce the config.
-> >>
->
-> Yep I'll update it.
->
-> >> Ian, can you please review?
-> >
-> > It'd be nice to see the stack trace for when metric-unit is "" as I'm
-> > not seeing the logic in stat-shadow.c. If we know the caller than it
-> > seems logical the unit can be passed as NULL rather than "".
-> >
-> > Thanks,
-> > Ian
-> >
->
->
-> Here's the stack:
->
-> print_metric_json() (stat-display.c:516)
-> printout() (stat-display.c:912)
-> print_counter_aggrdata() (stat-display.c:1110)
-> print_counter() (stat-display.c:1224)
-> evlist__print_counters() (stat-display.c:1734)
-> print_counters() (builtin-stat.c:1016)
-> cmd_stat() (builtin-stat.c:2872)
-> run_builtin() (perf/perf.c:351)
-> handle_internal_command() (perf.c:404)
-> run_argv() (perf.c:448)
-> main() (perf.c:560)
->
-> The empty string is from printout():
->
->    pm(config, os, METRIC_THRESHOLD_UNKNOWN, /*format=3D*/NULL, /*unit=3D*=
-/"",
->       /*val=3D*/0);
->
-> Changing it to NULL seems to work, so is probably a bit neater. I can do
-> that if you think that makes sense?
->
-> There's another one for --metric-only that I didn't run into, but it
-> could also make sense to change:
->
->    if (config->metric_only) {
->      pm(config, os, METRIC_THRESHOLD_UNKNOWN, "", "", 0);
+On Fri, 25 Oct 2024 16:02:58 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Yeah, it looks like all the callers should be passing NULL. I feel
-more comfortable doing this than ignoring the empty string which is
-something a json metric may accidentally do. Could you send a patch?
+> Existing recovery procedure for PCIe uncorrectable errors (UCE) does not
+> apply to CXL devices. Recovery can not be used for CXL devices because of
+> the potential for corruption on what can be system memory. Also, current
+> PCIe UCE recovery does not begin at the bridge but begins at the bridge's
+> first downstream device. 
 
-Thanks,
-Ian
+I'm still stuck on why it is fine for PCIe to skip handling errors in the
+root port.  Can't see why it should be different.
 
-> >> Thanks,
-> >> Namhyung
-> >>
-> >>>
-> >>> After:
-> >>>   ...
-> >>>   {"counter-value" : "<not counted>", "unit" : "", "event" : "cpu_ato=
-m/branch-misses/", "event-runtime" : 0, "pcnt-running" : 0.00}
-> >>>   {"counter-value" : "5778.000000", "unit" : "", "event" : "cpu_core/=
-branch-misses/", "event-runtime" : 282240, "pcnt-running" : 100.00, "metric=
--value" : "3.226797", "metric-unit" : "of all branches", "metric-threshold"=
- : "good"}
-> >>>   ...
-> >>>
-> >>> Signed-off-by: James Clark <james.clark@linaro.org>
-> >>> ---
-> >>>   tools/perf/util/stat-display.c | 2 +-
-> >>>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-di=
-splay.c
-> >>> index a5d72f4a515c..9b7fd985a42a 100644
-> >>> --- a/tools/perf/util/stat-display.c
-> >>> +++ b/tools/perf/util/stat-display.c
-> >>> @@ -506,7 +506,7 @@ static void print_metric_json(struct perf_stat_co=
-nfig *config __maybe_unused,
-> >>>        struct outstate *os =3D ctx;
-> >>>        FILE *out =3D os->fh;
-> >>>
-> >>> -     if (unit) {
-> >>> +     if (unit && strlen(unit)) {
-> >>>                json_out(os, "\"metric-value\" : \"%f\", \"metric-unit=
-\" : \"%s\"", val, unit);
-> >>>                if (thresh !=3D METRIC_THRESHOLD_UNKNOWN) {
-> >>>                        json_out(os, "\"metric-threshold\" : \"%s\"",
-> >>> --
-> >>> 2.34.1
-> >>>
->
+I might take a poke at what happens on an emulated PCIe system to try and
+understand this better but probably not that quickly.
+
+Without understanding the reasoning behind that I'm reluctant to make
+an assessment of whether this code is right.
+
+One trivial comment inline.
+
+Jonathan
+
+
+> This will miss handling CXL protocol errors in a
+> CXL root port. A separate CXL recovery is needed because of the different
+> handling requirements
+> 
+> Add a new function, cxl_do_recovery() using the following.
+> 
+> Add cxl_walk_bridge() to iterate the detected error's sub-topology.
+> cxl_walk_bridge() is similar to pci_walk_bridge() but the CXL flavor
+> will begin iteration at the bridge rather than beginning at the
+> bridge's first downstream child.
+> 
+> Add cxl_report_error_detected() as an analog to report_error_detected().
+> It will call pci_driver::cxl_err_handlers for each iterated downstream
+> child. The pci_driver::cxl_err_handlers UCE handler returns a boolean
+> indicating if there was a UCE error detected during handling.
+> 
+> cxl_do_recovery() uses the status from cxl_report_error_detected() to
+> determine how to proceed. Non-fatal CXL UCE errors will be treated as
+> fatal. If a UCE was present during handling then cxl_do_recovery()
+> will kernel panic.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+>  drivers/pci/pci.h      |  3 +++
+>  drivers/pci/pcie/aer.c |  5 +++-
+>  drivers/pci/pcie/err.c | 54 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 61 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 14d00ce45bfa..5a67e41919d8 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -658,6 +658,9 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>  		pci_channel_state_t state,
+>  		pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev));
+>  
+> +/* CXL error reporting and handling */
+> +void cxl_do_recovery(struct pci_dev *dev);
+> +
+>  bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
+>  int pcie_retrain_link(struct pci_dev *pdev, bool use_lt);
+>  
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index d772f123c6a2..19432ab2cfb6 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1048,7 +1048,10 @@ static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>  			pdrv->cxl_err_handler->cor_error_detected(dev);
+>  
+>  		pcie_clear_device_status(dev);
+> -	}
+> +	} else if (info->severity == AER_NONFATAL)
+> +		cxl_do_recovery(dev);
+> +	else if (info->severity == AER_FATAL)
+Needs {}
+
+> +		cxl_do_recovery(dev);
+>  }
+>  
+>  static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
+> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> index 31090770fffc..3785f4ca5103 100644
+> --- a/drivers/pci/pcie/err.c
+> +++ b/drivers/pci/pcie/err.c
+> @@ -276,3 +276,57 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>  
+>  	return status;
+>  }
+> +
+> +static void cxl_walk_bridge(struct pci_dev *bridge,
+> +			    int (*cb)(struct pci_dev *, void *),
+> +			    void *userdata)
+> +{
+> +	bool *status = userdata;
+> +
+> +	cb(bridge, status);
+> +	if (bridge->subordinate && !*status)
+> +		pci_walk_bus(bridge->subordinate, cb, status);
+> +}
+> +
+> +static int cxl_report_error_detected(struct pci_dev *dev, void *data)
+> +{
+> +	struct pci_driver *pdrv = dev->driver;
+> +	bool *status = data;
+> +
+> +	device_lock(&dev->dev);
+> +	if (pdrv && pdrv->cxl_err_handler &&
+> +	    pdrv->cxl_err_handler->error_detected) {
+> +		const struct cxl_error_handlers *cxl_err_handler =
+> +			pdrv->cxl_err_handler;
+> +		*status |= cxl_err_handler->error_detected(dev);
+> +	}
+> +	device_unlock(&dev->dev);
+> +	return *status;
+> +}
+> +
+> +void cxl_do_recovery(struct pci_dev *dev)
+> +{
+> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+> +	int type = pci_pcie_type(dev);
+> +	struct pci_dev *bridge;
+> +	int status;
+> +
+> +	if (type == PCI_EXP_TYPE_ROOT_PORT ||
+> +	    type == PCI_EXP_TYPE_DOWNSTREAM ||
+> +	    type == PCI_EXP_TYPE_UPSTREAM ||
+> +	    type == PCI_EXP_TYPE_ENDPOINT)
+> +		bridge = dev;
+> +	else
+> +		bridge = pci_upstream_bridge(dev);
+> +
+> +	cxl_walk_bridge(bridge, cxl_report_error_detected, &status);
+> +	if (status)
+> +		panic("CXL cachemem error. Invoking panic");
+> +
+> +	if (host->native_aer || pcie_ports_native) {
+> +		pcie_clear_device_status(dev);
+> +		pci_aer_clear_nonfatal_status(dev);
+> +	}
+> +
+> +	pci_info(bridge, "No uncorrectable error found. Continuing.\n");
+> +}
+
 
