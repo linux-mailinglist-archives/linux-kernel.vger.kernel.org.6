@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-388785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D829B6459
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:40:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E869B646B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267A01C20E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC071F2312C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4B61EABC9;
-	Wed, 30 Oct 2024 13:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589421EB9EE;
+	Wed, 30 Oct 2024 13:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vG3zkCCM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BsxwbcBB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vG3zkCCM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BsxwbcBB"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="MGknvzpY"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004581E411D;
-	Wed, 30 Oct 2024 13:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A411EABA5;
+	Wed, 30 Oct 2024 13:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295649; cv=none; b=kZtsDOJ1btYGG2JGONtcxh5sWVf83vrYNO4fGTVxpaTDnHAMHbrmn/UAjR51GvZUUDcQ2GorTm8PKvgj258wxWPY/Ve/Js4K0KynBUaMAoRdsGiLJsl5Sc5/F3fcL894Dv6LN5MtL8YoojJXwsCroJ4PAB9t1vze41t8dcnhY9I=
+	t=1730295767; cv=none; b=QRoPjbR11GWFfPs9iCp+3AYJVU/fa1OUyHQoakuVCfbk+dIK87C3JCnhuG0sisTo3AXuss/FobBXTI39sqj4uewz+58sluBkYSfHWB+wRIF+STOKVK6ehc0t6yCFYgw41Zhmdtp1vVa20xNmzLqiMp4fNMDXJCV7qwdg7YzI1rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295649; c=relaxed/simple;
-	bh=OXuyPS2ux3aICdvcFgZSw99lMxgdGxpOT6EJ4MwHCQE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cAR9CTCEV29woGxd5bszLhhBQ0RKwDyzqFbuQrwUrg2oo/qYojQnceHGnPDsi6j6cvJoNPgu+WlDCyffTqJu5dRYAHHXUyniX3TxlKzukUvJ1mMR8B1hazlpEY/DvIV4sixBdlWje4Au0eaOm/QXix/8Fer9HrhG3S6uFL35AOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vG3zkCCM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BsxwbcBB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vG3zkCCM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BsxwbcBB; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0747C21D4E;
-	Wed, 30 Oct 2024 13:40:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730295645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYg+D4uOU1PUiPo6jLbMQ4uKMdoi00EvLXys6ceFE4Q=;
-	b=vG3zkCCMFh2XzeBCP8UwokY3FSvdo6MlSBLfcxE9E+v8AjI3JK+kZBjyCjjpStG7JnbpTj
-	qwqYxreppmpC078O37yjcVyvYwx5V1llATroMJBiUpLVTZr4XL4E9su8zrhwrH8ss0wu40
-	DA1XY1DvIch33qnO0bWk9hU2FGbcTZA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730295645;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYg+D4uOU1PUiPo6jLbMQ4uKMdoi00EvLXys6ceFE4Q=;
-	b=BsxwbcBBfwluDK6KQMJfewHtkm7fCXxJM93bi4v/YIE+H7WcpHDt4CyVGaTlnGcNbyyj1x
-	bd8tUisKqFgTSNAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vG3zkCCM;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=BsxwbcBB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730295645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYg+D4uOU1PUiPo6jLbMQ4uKMdoi00EvLXys6ceFE4Q=;
-	b=vG3zkCCMFh2XzeBCP8UwokY3FSvdo6MlSBLfcxE9E+v8AjI3JK+kZBjyCjjpStG7JnbpTj
-	qwqYxreppmpC078O37yjcVyvYwx5V1llATroMJBiUpLVTZr4XL4E9su8zrhwrH8ss0wu40
-	DA1XY1DvIch33qnO0bWk9hU2FGbcTZA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730295645;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYg+D4uOU1PUiPo6jLbMQ4uKMdoi00EvLXys6ceFE4Q=;
-	b=BsxwbcBBfwluDK6KQMJfewHtkm7fCXxJM93bi4v/YIE+H7WcpHDt4CyVGaTlnGcNbyyj1x
-	bd8tUisKqFgTSNAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD69A13AD9;
-	Wed, 30 Oct 2024 13:40:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aeOfMFw3Imc1dQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 30 Oct 2024 13:40:44 +0000
-Date: Wed, 30 Oct 2024 14:41:47 +0100
-Message-ID: <87y125yag4.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jan =?ISO-8859-1?Q?Sch=E4r?= <jan@jschaer.ch>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: Add quirks for Dell WD19 dock
-In-Reply-To: <20241029221249.15661-1-jan@jschaer.ch>
-References: <20241029221249.15661-1-jan@jschaer.ch>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1730295767; c=relaxed/simple;
+	bh=vDMFHs/mq1eFUuFa57P2oCYWH013u3ueyncoKLl72bo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sn5QTwkOhpjJR0DpbFKxCqCotyJiseaj25YlQ61sOzDKYkYNfvwLiWkp12ooK/kwGQe/zr2UZGdbX4PIRUuoCMMBNP9rQf+VA9Hgb5aVIxP6w8KssLMYyvHmvefkw+QTan7MVY0tIedmqHqOnwl0+LoIqq7HH6KDgF6l33RjY5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=MGknvzpY; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730295748; x=1730900548; i=metux@gmx.de;
+	bh=vDMFHs/mq1eFUuFa57P2oCYWH013u3ueyncoKLl72bo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=MGknvzpYbDvmVG6Nx/4n6qnFUL1gMVwv2hhj7YQd4rO7QTQYcNp1SoyWtmDi25oa
+	 uVe6CFhyCJV96wYaqXSpXPgMyIf/6BSMaHIxE2QjgEoEbSLZoufZCjWCklPXWtl8R
+	 PxGsFFZbTLz5Chy5lJxEOWjGjbW8EEiGMVU9+rsGh3D+HiE3QKLDIo+LzruXVDyDN
+	 rNGZwTWawRfZBxI7XTEO8v639N8Sl3SaPf5G0I0iswyHNoLRgTpkR8H4e0NUjCZcz
+	 fIIsPjUm17ktP68WXmT3D1rg4m+tIrcqQ+a9Ej7Wl6GxvuexsMcW97XZWp+kxCxXR
+	 vopTVrAWLoQ56BxO2w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.178] ([95.114.207.188]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MzQkE-1u1WoV39iS-00uA9h; Wed, 30
+ Oct 2024 14:42:28 +0100
+Message-ID: <c06896d0-bf31-4dd9-a552-341b48d75521@gmx.de>
+Date: Wed, 30 Oct 2024 14:43:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 0747C21D4E
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: remove me from nzxt-smart2 maintainers
+To: Aleksandr Mezin <mezin.alexander@gmail.com>, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+ Jonas Malaco <jonas@protocubo.io>, Aleksa Savic <savicaleksa83@gmail.com>
+References: <20241023201334.250764-1-mezin.alexander@gmail.com>
+Content-Language: tl
+From: metux <metux@gmx.de>
+In-Reply-To: <20241023201334.250764-1-mezin.alexander@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:yzvYk/DLlYgkMquhPs3TR7SXSHYQ29yYvpuzHC3dqCunfsYU/9I
+ Iqm8QtD3CDENR6MA2twWyXLuMTJllBj1Dkt2j+OcdPpEFJt3qF/xMfWotTAOloVHCzP8fc7
+ LP9gzdG0B21vLdjSzwFmNnsXdU5PXRdHg51gW45N/Lzh6pN7KoEqggxygCKCE8+ElvalIdV
+ FOgskX1OAhyPdjKW/klAA==
 X-Spam-Flag: NO
-X-Spam-Level: 
+UI-OutboundReport: notjunk:1;M01:P0:WLwoR3BM0cg=;cBDISIv995U0Sug/RagVRtAEOLr
+ 3bVb+vuIRrM9wATBg8wkPKRJmQ9i2y3gU5EZVAoAE9EvQH5wtkjVyXtMGzZ2ChrJhTmkaGEoe
+ uWQEAl+fibZu9syi9bpl/7X6UbpqfUTp5AQx9aZs7L9azg7+T+RA6yEphCrRtFc6xmjUgOaRj
+ m+OQHmUjWYZkJrwlcPAm0WraB/MRzmjxOhNHdhCNGUV6Vkj5lMrbpC2lBdewMDmwTfPNBl/+h
+ lb9j3d52xLXnp4tAQytK8LHZh5Ju+3Qyf6Tn13KYwslnQ2BTwArohL4VsuAPamv39a0g8MheX
+ Xm2wD7Y5hqDk3YMVeTscJgVAxbyu7Bp9W/IwWsUfwqpkEjIh4ByNaEhacFd5C3bDNi9Rx7aqi
+ hHGIrJ4Jg8NmypqXRTzFfouyFu9PCAlF7OYTt2HG3o4RSJgC0fkUKGEiGFwQalBCjumlcK+Fw
+ gihWpfJLcY09IyVkvzGZQe8UNyTFc5jcTlPdjKvrC8kNNsx+VClOC7g1PKb+PC5t0ZC+zxDo9
+ 9bxGrtSkCnKctl7W4ZxJAi/+usY2+e8NCzkvhnMIYE/1C5YmWW+3OkZofSRvw3VuxicCIum/G
+ w5kUmA/h5AmC5GOHIjUJCLSWOXTVs+DkYQF5lPMXoiPAm85Bq3TDpWZUoy4yRSV/PBIT9YTgW
+ sYNciZFTACppKv5OvUKo8gL6Uhbhio4cAmDOTBFhPMp/332k2wzb6JwOI3HIfL13ezxwI5nFB
+ guhji5vHYwIzEFYOh4tZEymMUAv9sllc4ZDoIrPKuzf4bcmrFaQGBMQi9BCzJcU2OMIffHwhm
+ DTrSmhdLEjhbwjRnv3lPWG68FqFEY42rDNNTq9zDfe46I=
 
-On Tue, 29 Oct 2024 23:12:49 +0100,
-Jan Schär wrote:
-> 
-> The WD19 family of docks has the same audio chipset as the WD15. This
-> change enables jack detection on the WD19.
-> 
-> We don't need the dell_dock_mixer_init quirk for the WD19. It is only
-> needed because of the dell_alc4020_map quirk for the WD15 in
-> mixer_maps.c, which disables the volume controls. Even for the WD15,
-> this quirk was apparently only needed when the dock firmware was not
-> updated.
-> 
-> Signed-off-by: Jan Schär <jan@jschaer.ch>
-
-Thanks, applied now.
+On 23.10.24 22:12, Aleksandr Mezin wrote:
+> I'm a Russian troll. So remove myself from the maintainers list.
+Good take. But I guess you should also remove the *whole* block, as this
+seems to be how things are handled now :p
 
 
-Takashi
+By the way, interesting to see my whole business domain is hard-blocked
+on kernel.org mail system (I'm a maintainer, too, btw).
+
+I'm not even Russian (I've got family relations to Ukraine instead),
+just somebody speaking out against this cancel culture.
+
+Meanwhile, Linux turned from the most famous FOSS project into the most
+famous POSS. (politware). And speaking out against censorship gets you
+censored.
+
+
+--mtx
 
