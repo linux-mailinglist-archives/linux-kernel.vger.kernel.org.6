@@ -1,144 +1,195 @@
-Return-Path: <linux-kernel+bounces-389017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BAE9B679B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:23:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB749B679D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A21EFB23C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8301F22651
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91B221502C;
-	Wed, 30 Oct 2024 15:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ERJhU7iR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA8D2144D1
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5754121C160;
+	Wed, 30 Oct 2024 15:16:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B1921BAEC
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301368; cv=none; b=gUHQpTMDRRl1DTFo2/l2NTFWFmIQWvT18pWNdf8kNhc7pk2UuNzcf7UIBOsdjahYwUPZQXgbekx1keqlclVfw5JEy137UaVW+LH8Zzvjpd0/JlixuOe/FmDGMFZJlxH+jGR7Mpl7++T8t6/rYKXWpsB9iDDIHNoID5tqXdI3lJs=
+	t=1730301410; cv=none; b=nB0Vo6etoyMGcf0u3oxocPcTpu0tfROdqDybZhaP6FAGuXv4aOy//iwqxsMu7z2jszgDrVKS3Y1rDvYEIVonWqiLVdmGDoTI0grU3dQOjeTQwHOXwTBPp9+kZS9X2DM7o+0l8T6K0308oSq9Z1ApFQtfZrTaoDiTIVdCIg10Y0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301368; c=relaxed/simple;
-	bh=7XcxJbm5D06UQvHD13AF8g7v8ihVLD5KCzQURgAp7kU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AkoIAVGY4Mqnw8/OUdLkIiooB30w94Fz6Yq+TAb/Qus3g0Kt0KPwfW2iuow7wu61cUm8+e4ozgXOi2EpcYiB/9udlIWKNNDFZy7Hkfi18t2pqSM/Hc3JY2xoeOZjov32FiYLCR/9iOQnHrstsdw9rzwothOLWQxgeqRV2BBNtxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ERJhU7iR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730301363;
-	bh=7XcxJbm5D06UQvHD13AF8g7v8ihVLD5KCzQURgAp7kU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ERJhU7iRdQt3Ta6xEIfOl56LPJ98BnvTE/P4yiw/i53Fgv+Jk1aqeMImi99ynfxlS
-	 rMzXMzZrA7rnNxdphfDyXmFJyPwonUPC4E0FehRzhpwKefqpq7TEt29BcnU0RiR2NI
-	 liqImFb3bGtyCAv2G3YRb5z5CegdyrBAhZCjbqp4m3DSc7mOCNr7fcu09JdI6JVrZe
-	 HFMWw3HoNo9/gsEXNhqPTeFtFLoQnci9sT1JtAb+BnDTJFND3KLvjeq4TXZ9a90s+W
-	 gLyeyT4SGSbg+yRxUoYqRJS8Q7rl7ewIO5SzjM2kKRHP/+9XYyZDEU3j1FsL4j9vay
-	 xFCCmNHpQnYlQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0BCE517E3636;
-	Wed, 30 Oct 2024 16:16:03 +0100 (CET)
-Date: Wed, 30 Oct 2024 16:15:59 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, AngeloGioacchino Del
- Regno <angelogioacchino.delregno@collabora.com>, Liviu Dudau
- <liviu.dudau@arm.com>, =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?=
- <peron.clem@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Grant Likely
- <grant.likely@linaro.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] drm/panthor: Fix OPP refcnt leaks in devfreq
- initialisation
-Message-ID: <20241030161559.7edff79d@collabora.com>
-In-Reply-To: <20241030161358.3b78b423@collabora.com>
-References: <20241003133037.3398144-1-adrian.larumbe@collabora.com>
-	<20241003133037.3398144-2-adrian.larumbe@collabora.com>
-	<20241030161358.3b78b423@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730301410; c=relaxed/simple;
+	bh=CQTlpv6yhjHEbV/CJ9VbmZBbzh8yiW0nnuG8pOBOO9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZRWJZf2HcMKOoRFYpBn7UyBPPTO9lorxD2GEWzhbrwQYW6+uVUxe/4dceFTZvxRsUO/zUt2WPRnsKDET7jAzvcB5DyGkXCdZNWA0gNXKRH2G3V0FpQpPCYKhu5wuzf633UxAwcAAZLlMHJNjOSbw5WwyPoD4gSnCk/EemSPB0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5462113E;
+	Wed, 30 Oct 2024 08:17:16 -0700 (PDT)
+Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 247943F66E;
+	Wed, 30 Oct 2024 08:16:44 -0700 (PDT)
+Message-ID: <b62b9ba4-eaf9-4533-9a97-7d5e2929b1e8@arm.com>
+Date: Wed, 30 Oct 2024 10:16:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: rsi: Add automatic arm-cca-guest module loading
+To: Gavin Shan <gshan@redhat.com>, linux-arm-kernel@lists.infradead.org
+Cc: steven.price@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com,
+ will@kernel.org, sami.mujawar@arm.com, linux-kernel@vger.kernel.org
+References: <20241029141114.7207-1-jeremy.linton@arm.com>
+ <32211eb5-eed5-4c71-b62a-362d32e1af47@redhat.com>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <32211eb5-eed5-4c71-b62a-362d32e1af47@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Oct 2024 16:13:58 +0100
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
+Hi Gavin,
 
-> On Thu,  3 Oct 2024 14:30:29 +0100
-> Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
->=20
-> > Make sure in case of errors between the first fetch of an OPP in
-> > panthor_devfreq_init and its successive put, the error path decrements =
-its
-> > reference count to avoid OPP object leaks when removing the device.
-> >=20
-> > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> > Fixes: fac9b22df4b1 ("drm/panthor: Add the devfreq logical block") =20
->=20
-> It doesn't apply on top of drm-misc-fixes. Could you send a v3 based
-> on drm-misc-fixes please?
+Thanks for looking at this!
 
-Sorry, I meant v4. v3 exists, but doesn't apply correctly on
-drm-misc-fixes.
+On 10/29/24 7:23 PM, Gavin Shan wrote:
+> Hi Jeremy,
+> 
+> On 10/30/24 12:11 AM, Jeremy Linton wrote:
+>> The TSM module provides both guest identification as well as
+>> attestation when a guest is run in CCA mode. Lets assure by creating a
+>> dummy platform device that the module is automatically loaded during
+>> boot. Once it is in place it can be used earlier in the boot process
+>> to say decrypt a LUKS rootfs.
+>>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> ---
+>>   arch/arm64/include/asm/rsi.h                    |  2 ++
+>>   arch/arm64/kernel/rsi.c                         | 15 +++++++++++++++
+>>   drivers/virt/coco/arm-cca-guest/arm-cca-guest.c |  7 +++++++
+>>   3 files changed, 24 insertions(+)
+>>
+> 
+> I don't understand how the TSM module is automatically loaded and 
+> arm_cca_guest_init()
+> is triggered because of the newly introduced platform device. Could you 
+> please provide
+> more details? Apart from it, some nick-picks as below.
 
->=20
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_devfreq.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/dr=
-m/panthor/panthor_devfreq.c
-> > index 9d0f891b9b53..ce0ac4563f65 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> > @@ -197,7 +197,7 @@ int panthor_devfreq_init(struct panthor_device *ptd=
-ev)
-> >  	if (ret && ret !=3D -ENODEV) {
-> >  		if (ret !=3D -EPROBE_DEFER)
-> >  			DRM_DEV_ERROR(dev, "Couldn't retrieve/enable sram supply\n");
-> > -		return ret;
-> > +		goto opp_err;
-> >  	}
-> > =20
-> >  	/*
-> > @@ -207,7 +207,7 @@ int panthor_devfreq_init(struct panthor_device *ptd=
-ev)
-> >  	ret =3D dev_pm_opp_set_opp(dev, opp);
-> >  	if (ret) {
-> >  		DRM_DEV_ERROR(dev, "Couldn't set recommended OPP\n");
-> > -		return ret;
-> > +		goto opp_err;
-> >  	}
-> > =20
-> >  	dev_pm_opp_put(opp);
-> > @@ -242,6 +242,10 @@ int panthor_devfreq_init(struct panthor_device *pt=
-dev)
-> >  		DRM_DEV_INFO(dev, "Failed to register cooling device\n");
-> > =20
-> >  	return 0;
-> > +
-> > +opp_err:
-> > +	dev_pm_opp_put(opp);
-> > +	return ret;
-> >  }
-> > =20
-> >  int panthor_devfreq_resume(struct panthor_device *ptdev) =20
->=20
+I think your asking how the module boilerplate here works, AKA how the 
+standard uevent/udev/modalias/kmod stuff works? The short version is 
+that the platform bus uevents an add device with a modalias and 
+userspace udev + kmod finds matching modules, and their dependencies, 
+and loads them which triggers the module_init() calls.
+
+The suse folks have a detailed description of how this works:
+https://doc.opensuse.org/documentation/leap/reference/html/book-reference/cha-udev.html#sec-udev-kernel
+
+So, this is a fairly common misuse of the platform bus, in this case to 
+avoid needing a HWCAP. Assuring the module exists in the initrd will 
+then result in it being loaded along any other modules required for the 
+rootfs pivot.
+
+
+> 
+>> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
+>> index 188cbb9b23f5..1b14a4c4257a 100644
+>> --- a/arch/arm64/include/asm/rsi.h
+>> +++ b/arch/arm64/include/asm/rsi.h
+>> @@ -10,6 +10,8 @@
+>>   #include <linux/jump_label.h>
+>>   #include <asm/rsi_cmds.h>
+>> +#define ARMV9_RSI_PDEV_NAME "arm-cca-dev"
+>> +
+> 
+> Maybe 'ARMV9' can be avoided since RSI is the specific feature to ARMv9.
+> Besides, we already had @rsi_present there. So I would suggest to rename
+> it to RSI_PDEV_NAME
+
+This and the remainder of the comments below look reasonable to me, thanks!
+> 
+>>   DECLARE_STATIC_KEY_FALSE(rsi_present);
+>>   void __init arm64_rsi_init(void);
+>> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+>> index 3031f25c32ef..ad963eb12921 100644
+>> --- a/arch/arm64/kernel/rsi.c
+>> +++ b/arch/arm64/kernel/rsi.c
+>> @@ -8,6 +8,7 @@
+>>   #include <linux/psci.h>
+>>   #include <linux/swiotlb.h>
+>>   #include <linux/cc_platform.h>
+>> +#include <linux/platform_device.h>
+>>   #include <asm/io.h>
+>>   #include <asm/mem_encrypt.h>
+>> @@ -140,3 +141,17 @@ void __init arm64_rsi_init(void)
+>>       static_branch_enable(&rsi_present);
+>>   }
+>> +static struct platform_device rsi_dev = {
+>> +    .name = ARMV9_RSI_PDEV_NAME,
+>> +    .id = -1
+>> +};
+>> +
+> 
+>          .id = PLATFORM_DEVID_NONE,
+> 
+>> +static int __init rsi_init(void)
+>> +{
+>> +    if (is_realm_world())
+>> +        if (platform_device_register(&rsi_dev))
+>> +            pr_err("failed to register rsi platform device");
+>> +    return 0;
+>> +}
+>> +
+> 
+> Those two checks can be connected with '&&' and '\n' seems missed in the
+> error message.
+> 
+>          if (is_realm_world() && platform_device_register(&rsi_dev))
+>              pr_err("Failed to register RSI platform device\n");
+> 
+>> +arch_initcall(rsi_init)
+>> diff --git a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c b/ 
+>> drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+>> index 488153879ec9..e7ef3b83d5d9 100644
+>> --- a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+>> +++ b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+>> @@ -6,6 +6,7 @@
+>>   #include <linux/arm-smccc.h>
+>>   #include <linux/cc_platform.h>
+>>   #include <linux/kernel.h>
+>> +#include <linux/mod_devicetable.h>
+>>   #include <linux/module.h>
+>>   #include <linux/smp.h>
+>>   #include <linux/tsm.h>
+>> @@ -219,6 +220,12 @@ static void __exit arm_cca_guest_exit(void)
+>>   }
+>>   module_exit(arm_cca_guest_exit);
+>> +static const struct platform_device_id arm_cca_match[] = {
+>> +    { ARMV9_RSI_PDEV_NAME, 0},
+>> +    { }
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(platform, arm_cca_match);
+> 
+> 
+> /* Comments here to explain why @arm_cca_dev_ids[] is needed */
+> static const struct platform_device_id arm_cca_dev_ids[] = {
+>         ...
+> };
+> 
+> MODULE_DEVICE_TABLE(platform, arm_cca_dev_ids);
+> 
+>>   MODULE_AUTHOR("Sami Mujawar <sami.mujawar@arm.com>");
+>>   MODULE_DESCRIPTION("Arm CCA Guest TSM Driver");
+>>   MODULE_LICENSE("GPL");
+> 
+> Thanks,
+> Gavin
+> 
 
 
