@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-389571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80AF9B6E8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:13:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6209B6E8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7AB1C21773
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F202B282D83
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F95F217447;
-	Wed, 30 Oct 2024 21:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5650B2170B3;
+	Wed, 30 Oct 2024 21:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TgX4jy4s"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WX0NOvRK"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDBF1F4700
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821422144D2
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730322809; cv=none; b=emlwngcMRsvZKwBwU+cGlG2N/pqsg48X7Fu9+4igZIuDtUqpWgFtsYgDBjxFs2CZ+RZUOiAAqCt673RF8RztAn3xpYYzGu4HWPLfNu4Ab/qQflDhoxWiUguPW3XwuMo9j+2hc8GmY/agsamnuoxIqPAqtX0wjqMceqioc6wCec8=
+	t=1730322827; cv=none; b=aRxm9KZlrhCHfp80D24KOUPrdX3BFrrxGdFuE6+5VSxAdY6GQhn6RFa5lNrI15pG8AlV7aYN3ExXg3VFbgeQv/PiTl5B+Omre1OxmZMkN004wCI+5eiJA9iq0FGBp2xxlZlpQYEux2qwjZXE48mNrM8yY1/WN0KQdUpO3cPUFnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730322809; c=relaxed/simple;
-	bh=/FTy96P2ETm6sf+VPH671cWZq6UL39N1Z55TKD2tsKY=;
+	s=arc-20240116; t=1730322827; c=relaxed/simple;
+	bh=BWPAV0AmvW2ZBcdVAybIi1cao96HLaitAZnCfdTAFYs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B5FZ6gw3jhvjjmehGnGSZKx5xR7mRK7+YvKdoHmXCLHqnzZb6EqMPj0SFjhB5bBkmKUM6NwuMkg6BplfpbIP9QVhwbTu85L9C0sfuZo73MrIKpuSnXvs/osa0ual/zXpeKNSrHUzZ+qrHGv3xT0VSIgIFEodJFlu/YoY4LGc6fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TgX4jy4s; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:MIME-Version; b=M0bAmS/LRQqbVygzpFGAkJbZFDtNwPTQiRixU8AzkppD2XQTuNn1Xlqi9cOsehBa6qhv0A8j+IeD7x722wUQXlg3QaeT3Ue/haoi/J4ciJW8Oh8kSTtzZLxLaEURet007/hkuapgU360nFnRds504Px0QPkX/R0AqE8fmQgIyK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WX0NOvRK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730322806;
+	s=mimecast20190719; t=1730322820;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mDpS5x8dmu9kuzt32B98o/PyB3+3iZe2sQYd6fMoEgU=;
-	b=TgX4jy4sx6w2PmJ6w78y3R9sj5VgLAvMnaNjHPEH+Fc8bPUWnILcxmCN5WklsJerS3NyVO
-	+fjIkEXAcbUMywSq8m0j+3YzaC4mmpteyAMiV+NtHy3zd2opLmysWBohYXV8nIZQwqnBQ0
-	Ao0BonA8Y2ZL2BUWWaylrMeqGqvD78c=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=DhtWFShgVxLqWJ12SCRLNP9JkXqu4UbH38bSGoLla+g=;
+	b=WX0NOvRKbEF7iS2H+ys7rnmEM05x/xc/+CkS1jPqO9jdqLFP+i8xQ5od4B965jqqXCPTZY
+	X6sQzJF+mlbONh26AJL+xWozIboc/7B4zdtUIdbViPLbsrhrgF2yiJRG16KBZDAuBFIlgo
+	UCGxOic0oTnJZiaOkkIeFG9q9iuXe7Y=
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
+ [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-192-pUJH_bk7Oa6R4LqCgbTs-Q-1; Wed, 30 Oct 2024 17:13:24 -0400
-X-MC-Unique: pUJH_bk7Oa6R4LqCgbTs-Q-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-460bfa9ff3dso7180891cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:13:24 -0700 (PDT)
+ us-mta-490-qA-A9DhoNV-GohlflJwx-g-1; Wed, 30 Oct 2024 17:13:39 -0400
+X-MC-Unique: qA-A9DhoNV-GohlflJwx-g-1
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-84937f5859bso46114241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:13:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730322804; x=1730927604;
+        d=1e100.net; s=20230601; t=1730322818; x=1730927618;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mDpS5x8dmu9kuzt32B98o/PyB3+3iZe2sQYd6fMoEgU=;
-        b=D6P6cxsrvXugHlsLhw3HHBYfsuRNkTCezQVRQag0TAlNyUkBjkfYTZ+KVnwgZICFvZ
-         bHio35ZcEsioTD20MeAlA3PqrJf8byE6YwqaqXBv4Pc3GmCAc6OtkXXFIWFF4VWL5A05
-         DP+p+gy+DlEe5prbasssOYz6wWwU6ovJ1QwdoZjR2g4ul0rc+R5Q5f8+Qst8H9WpbPU0
-         ia9E0eHXmLSFgSj/tTPHm5as4pWRVzNiQsL0jgavg+dyH0WxpiqS0DiMrthJ0JzxSk/e
-         Uge8kpsJh6Qc1uOFJyyhZTxNMw9EcML7tl3r5zhQ3lXPnXl+Ue2Pp72ekciwz1ecclPK
-         J7gA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYA7VjafT5q4PFtR5UfwxGbLuUqbqiAMq5Lhr7YBfltqoxrerfd89AXgylkin4mHcM/opl4sJsdnp8Hwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEKx6a5VxLqpW7S0907QwshAFumvsALg40DiDBn3VLgR+l2atd
-	5SH/10sgaKGjR0qpjJWXY+QIWI94HBTs/xaqyQgIic7x+5Y37et2fORDBgm+7veWr5jjn6KgBu2
-	rcHS/K9eqO/KctfWnMS7H42S2sqq3cc4AsZCUiRE5nnB8dOY+yvalCAmZ5Yc/jg==
-X-Received: by 2002:a05:6214:418e:b0:6c3:5833:260f with SMTP id 6a1803df08f44-6d34609a8b8mr47908336d6.39.1730322804333;
-        Wed, 30 Oct 2024 14:13:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvupjoGiDQSbH4vksBPp9cno7jEbTpR6vbKzhEznV2sKwBx0R6PUBrDNOHRwN1Mnr/QvUn9A==
-X-Received: by 2002:a05:6214:418e:b0:6c3:5833:260f with SMTP id 6a1803df08f44-6d34609a8b8mr47908106d6.39.1730322804000;
-        Wed, 30 Oct 2024 14:13:24 -0700 (PDT)
+        bh=DhtWFShgVxLqWJ12SCRLNP9JkXqu4UbH38bSGoLla+g=;
+        b=YQs9pP5+J49UUwr9LNH6afCXoaK7BJvVyJNksC/9NbtuXpcr2WwRnJiYnhxjnnuLcf
+         r1YF7GY+yjIxY7jIx+WubH/fx5fHB8vFr5pv460zxvHrJr2q8pmVsBXXiC1oQyCXbATo
+         bunJqGbWfrRyhnBCpjDzYPtgR/xZPQ2rce8o8nCwEp+Vl1mmfqnfOY5FPOmaEshDrxfK
+         7wrW6++6/jg1YJNracVzgHv5g/VvF1FhOk7UlGES+K1bdz2TMahDXPL098vJZW3RML04
+         WzrvFN1+eULf5V2sGIWjnS7FQxctsMkFhh2+VPr/jpMrMT+0hY4cBrnbNfh9c99/iV9K
+         /VFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJfNi7wTMX4KqhTVv86d65ghpqYLX71wSLFB/zOGJB0wSaZboHgGyglYcNMAGblEU6Rdva5O9vW4ISLrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1bbxvlVHS1vdptCCIpxzhTiqm0TaHZb/b4KEyQTclokRvvniO
+	MTz+wl6KMo/Z3UGsErj/hE/LY3vyiq1AUs2XNOkrQjTlPG49+TPlj6Ss/rFyLVvc8qCYLi+ishN
+	F+BdphfKUAWlQWmZ3J1Sln5n/MsqgZAIyYkiO/f9xaRKWDmK4W4OunAEEunsA1w==
+X-Received: by 2002:a05:6102:5488:b0:4a5:6f41:2143 with SMTP id ada2fe7eead31-4a8cfb42ee1mr16266000137.4.1730322818486;
+        Wed, 30 Oct 2024 14:13:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVMwzTfHk1fhhCuy6E0m1w3eznD1Yt7W0LGKpIBTmxz1cA9r+3mMGyzl7M9m8UEjlP6p4BpA==
+X-Received: by 2002:a05:6102:5488:b0:4a5:6f41:2143 with SMTP id ada2fe7eead31-4a8cfb42ee1mr16265990137.4.1730322818212;
+        Wed, 30 Oct 2024 14:13:38 -0700 (PDT)
 Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3541614e1sm455566d6.86.2024.10.30.14.13.23
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad0a10a0sm471701cf.22.2024.10.30.14.13.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 14:13:23 -0700 (PDT)
-Message-ID: <0b9cabc04b9ef9e9b24fe439cafc232afc035972.camel@redhat.com>
-Subject: Re: [PATCH v4 3/4] KVM: x86: Add lockdep-guarded asserts on
- register cache usage
+        Wed, 30 Oct 2024 14:13:37 -0700 (PDT)
+Message-ID: <ab6183a931e7edb30e169bcd944981a7cf484ac7.camel@redhat.com>
+Subject: Re: [PATCH v4 4/4] KVM: x86: Use '0' for guest RIP if PMI
+ encounters protected guest state
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
  <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 30 Oct 2024 17:13:23 -0400
-In-Reply-To: <20241009175002.1118178-4-seanjc@google.com>
+Date: Wed, 30 Oct 2024 17:13:37 -0400
+In-Reply-To: <20241009175002.1118178-5-seanjc@google.com>
 References: <20241009175002.1118178-1-seanjc@google.com>
-	 <20241009175002.1118178-4-seanjc@google.com>
+	 <20241009175002.1118178-5-seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
@@ -94,88 +94,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
 On Wed, 2024-10-09 at 10:50 -0700, Sean Christopherson wrote:
-> When lockdep is enabled, assert that KVM accesses the register caches if
-> and only if cache fills are guaranteed to consume fresh data, i.e. when
-> KVM when KVM is in control of the code sequence.  Concretely, the caches
-> can only be used from task context (synchronous) or when handling a PMI
-> VM-Exit (asynchronous, but only in specific windows where the caches are
-> in a known, stable state).
+> Explicitly return '0' for guest RIP when handling a PMI VM-Exit for a vCPU
+> with protected guest state, i.e. when KVM can't read the real RIP.  While
+> there is no "right" value, and profiling a protect guest is rather futile,
+> returning the last known RIP is worse than returning obviously "bad" data.
+> E.g. for SEV-ES+, the last known RIP will often point somewhere in the
+> guest's boot flow.
 > 
-> Generally speaking, there are very few flows where reading register state
-> from an asynchronous context is correct or even necessary.  So, rather
-> than trying to figure out a generic solution, simply disallow using the
-> caches outside of task context by default, and deal with any future
-> exceptions on a case-by-case basis _if_ they arise.
+> Opportunistically add WARNs to effectively assert that the in_kernel() and
+> get_ip() callbacks are restricted to the common PMI handler, as the return
+> values for the protected guest state case are largely arbitrary, i.e. only
+> make any sense whatsoever for PMIs, where the returned values have no
+> functional impact and thus don't truly matter.
 > 
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  arch/x86/kvm/kvm_cache_regs.h | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+>  arch/x86/kvm/x86.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
-> index b1eb46e26b2e..36a8786db291 100644
-> --- a/arch/x86/kvm/kvm_cache_regs.h
-> +++ b/arch/x86/kvm/kvm_cache_regs.h
-> @@ -43,6 +43,18 @@ BUILD_KVM_GPR_ACCESSORS(r14, R14)
->  BUILD_KVM_GPR_ACCESSORS(r15, R15)
->  #endif
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 830073294640..516cf6c71567 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -13213,6 +13213,8 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
 >  
-> +/*
-> + * Using the register cache from interrupt context is generally not allowed, as
-> + * caching a register and marking it available/dirty can't be done atomically,
-> + * i.e. accesses from interrupt context may clobber state or read stale data if
-> + * the vCPU task is in the process of updating the cache.  The exception is if
-> + * KVM is handling a PMI IRQ/NMI VM-Exit, as that bound code sequence doesn't
-> + * touch the cache, it runs after the cache is reset (post VM-Exit), and PMIs
-> + * need to access several registers that are cacheable.
-> + */
-> +#define kvm_assert_register_caching_allowed(vcpu)		\
-> +	lockdep_assert_once(in_task() || kvm_arch_pmi_in_guest(vcpu))
+>  bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+>  {
+> +	WARN_ON_ONCE(!kvm_arch_pmi_in_guest(vcpu));
 > +
->  /*
->   * avail  dirty
->   * 0	  0	  register in VMCS/VMCB
-> @@ -53,24 +65,28 @@ BUILD_KVM_GPR_ACCESSORS(r15, R15)
->  static inline bool kvm_register_is_available(struct kvm_vcpu *vcpu,
->  					     enum kvm_reg reg)
+>  	if (vcpu->arch.guest_state_protected)
+>  		return true;
+>  
+> @@ -13221,6 +13223,11 @@ bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+>  
+>  unsigned long kvm_arch_vcpu_get_ip(struct kvm_vcpu *vcpu)
 >  {
-> +	kvm_assert_register_caching_allowed(vcpu);
->  	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+> +	WARN_ON_ONCE(!kvm_arch_pmi_in_guest(vcpu));
+> +
+> +	if (vcpu->arch.guest_state_protected)
+> +		return 0;
+> +
+>  	return kvm_rip_read(vcpu);
 >  }
 >  
->  static inline bool kvm_register_is_dirty(struct kvm_vcpu *vcpu,
->  					 enum kvm_reg reg)
->  {
-> +	kvm_assert_register_caching_allowed(vcpu);
->  	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
->  }
->  
->  static inline void kvm_register_mark_available(struct kvm_vcpu *vcpu,
->  					       enum kvm_reg reg)
->  {
-> +	kvm_assert_register_caching_allowed(vcpu);
->  	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
->  }
->  
->  static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
->  					   enum kvm_reg reg)
->  {
-> +	kvm_assert_register_caching_allowed(vcpu);
->  	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
->  	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
->  }
-> @@ -84,6 +100,7 @@ static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
->  static __always_inline bool kvm_register_test_and_mark_available(struct kvm_vcpu *vcpu,
->  								 enum kvm_reg reg)
->  {
-> +	kvm_assert_register_caching_allowed(vcpu);
->  	return arch___test_and_set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
->  }
->  
-
-Using lockdep for non 100% lockdep purposes is odd, but then these asserts do
-guard against races, so I guess this is a fair use of this assert.
-
 
 Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 
