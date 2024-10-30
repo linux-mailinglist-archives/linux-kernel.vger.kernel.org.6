@@ -1,92 +1,101 @@
-Return-Path: <linux-kernel+bounces-388906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1C69B65F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:33:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2099B65F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:34:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F09B23FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:33:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C9AB2435C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC0E1F1301;
-	Wed, 30 Oct 2024 14:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4D81F81A6;
+	Wed, 30 Oct 2024 14:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vx3ilog5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HbWDG2Ic"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA79B672
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD951F81A2;
+	Wed, 30 Oct 2024 14:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298623; cv=none; b=J4/HnE2pZpJ79SqigXpm3Olatc9sAfj6Lbo/1GnIWYp8+BdMi6VWZOaEpjpuehR1bxSTWV/KWF5AoVBugmPpPRLvscWM1ViiLqS0i3Us7M3uPOvc1Q8XBUYP+QeVAssYumHc2+MsKp0mx5RKd7d9pW2qVE3rW8VNHZpPyVfNLjk=
+	t=1730298639; cv=none; b=HhR+KoOtD4SYevsXHtLL6wiOyjMR48UXooQvYjaLtP9AdNKS8broEyAEbVTIkldrKD6ECLxZvNtgKFKzlAh6tiPpwROMNwgzONy+8gb2Fz8kzPORwWlvJ4zgyw86OCQqoHI/BKn2YLJkFSM7cZbBjWtEeQWByMn3kS2TtODflrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298623; c=relaxed/simple;
-	bh=tCxOVAtri6SI3GLq7IRBGJhxlLkGVKJd2rKYm8ogUfg=;
+	s=arc-20240116; t=1730298639; c=relaxed/simple;
+	bh=gzjIFKrEXj7Aftc4CfgtSmWNjrDVzXiGbesbIvaaSxs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMrK/kFQmAy18EBqpLj3flMIDQwR2GwXcbkH1ed9Rtpi3kCD/VAV2S3IXQm0PLMv/b7E6glyG76GVk4tr15Y++9cfWE2nSx2Yu4y6XcQtyRaezWtqtG0XKWRGPHEqvd3FFS+MOCVGOVqJ2M3kdTNc9MeUQ++EjQOdG8da9GJ1YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vx3ilog5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730298620;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VoMsgj5+7GMmTtrQl6iW6QZGad7SV15Glaq2I5HTvfw=;
-	b=Vx3ilog5urIfItE+k5CBkob3UCm6ojilI2cft2nSoPL0mjsZKBsmPH4I8d1BDrw70jsLTG
-	aKFfchuwF9KtOuGJBqcXIFr2hQxa53jpk/buUcli/SwkTVleTuqqyO6RLWUQzYYLTvKtrg
-	smNlXhDVcuMfmvAKcudArdaQBTRYfEU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-528-fwAEvx8QMMmHvkeEBHQ8WQ-1; Wed, 30 Oct 2024 10:30:17 -0400
-X-MC-Unique: fwAEvx8QMMmHvkeEBHQ8WQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d603515cfso3027712f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:30:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730298616; x=1730903416;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VoMsgj5+7GMmTtrQl6iW6QZGad7SV15Glaq2I5HTvfw=;
-        b=SCa7/DSzuNIkbUT2IsM4DhEsafDQVVHbxnvsjz0hzkR2NvZ0BpxzSxo1ZElrynaoeB
-         c62fcXfdrftsiXziHxKJn6CnYGcIBChgkvI099sKlWXvgfUGntt7iVO0itaUdpQl9MKw
-         GiQKsmZ/W/xjjnCLXid41RsbBByTAToWicj/SxnVi15ai5k80dmLTgdR4c0u5ZyM0fbW
-         pzEkEaIk5+Nupo4unIuH4TCfEATnYKIesoLHExaM+kFXurmv/turSSZy0GWh1d/+ivW0
-         b7VH6o5+/wRkrqpzwL0VFpZeMm0lVtd1E5f6xEbwaarMDT/x8k7ccDkdTOFLVYHlP04o
-         zvCg==
-X-Gm-Message-State: AOJu0Yyl7tpEBaGSqyQswgiUVPIYJ6wPObbGwW6wTD72OGD9eylkzwCI
-	aLKZbWvfn3SA/LSWlsXmOTBK4IGY28TbqxCvgG8yO5WPM7DISRnqDAdeFh+leEG4dIeD98AgZ/+
-	1ibdgdoMsCg6oUOrCAUPKYKTOyNIqwgyngBzLw03FzVAyO/DSb8E91Y8QovDrog==
-X-Received: by 2002:adf:fd0a:0:b0:37d:2ceb:ef92 with SMTP id ffacd0b85a97d-38061162d5amr11170159f8f.27.1730298615997;
-        Wed, 30 Oct 2024 07:30:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdo16YN0xMZ116nFeuY1zrzzJPjDJX5d3Xcla2/WNHCCi4GXGUA9WScud3qFUn3CYqq56xjQ==
-X-Received: by 2002:adf:fd0a:0:b0:37d:2ceb:ef92 with SMTP id ffacd0b85a97d-38061162d5amr11170134f8f.27.1730298615588;
-        Wed, 30 Oct 2024 07:30:15 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.142.6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1c4a1sm15396531f8f.16.2024.10.30.07.30.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 07:30:14 -0700 (PDT)
-Date: Wed, 30 Oct 2024 15:30:12 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
-Message-ID: <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241029225116.3998487-1-joel@joelfernandes.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NWIcWqkgLS7ZxJc+1HEL1W8wHXvi9n6WtXXr1HxP6ecBawZX27vRRlQLWy4uIPWN9nMy+W3WrvmgegO0d8VEs50Ah+y3mOfF5wJPxZEfC+c2a9KcBSxiNWMOnV5O6ohT0+urNXNGxABVbAdVYmSpKpM+UEJ5+9IvORomgIDDNwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HbWDG2Ic; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDw4Tk027057;
+	Wed, 30 Oct 2024 14:30:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=QoT7eE2k9HBigUNotJEuDjW8wq/kBu
+	Ua4MTBBYTqlWI=; b=HbWDG2Ic65XlMqb/D3TwV1oPEqcF5RCxQ9TgUawZNO/cqm
+	Tnp24tsoW/Yjbi3C0skNfiIGSg7D4RgRHMhB+sOoG0jH42U8eQUbakTlQf4MHUIv
+	jMTUrhx27tuhiPfBQEo8zVpryMy1EAo1IhxMSRKLuREM+rMVaXBliBAST9uH7Z/N
+	XClRoh83sBAvy0M/9lN+Bt+DcSLaKJMAlGS1HcT+eH5fEdx3Tzz9CIG/4lKSr8rJ
+	01dGny0S6N+sfaQQELe+lTMxfp53r/jeou/ANEqINjs+orALVgrTgUkjVdG5lmFy
+	laKJ0gzsMXThqGRL7OwEA0v028PFmwFRosHB+b/g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j43g7pmv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 14:30:26 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49UEUQVq009391;
+	Wed, 30 Oct 2024 14:30:26 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j43g7pmn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 14:30:26 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49UBsO9F018383;
+	Wed, 30 Oct 2024 14:30:24 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hc8k8aw1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 14:30:24 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49UEUKMk55116176
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 14:30:20 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 752C120043;
+	Wed, 30 Oct 2024 14:30:20 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C2E02004B;
+	Wed, 30 Oct 2024 14:30:20 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 30 Oct 2024 14:30:20 +0000 (GMT)
+Date: Wed, 30 Oct 2024 15:30:18 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT)
+ to support QEMU/KVM memory devices
+Message-ID: <ZyJC+s5L6JI3xO44@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-5-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,50 +104,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241029225116.3998487-1-joel@joelfernandes.org>
+In-Reply-To: <20241014144622.876731-5-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jcbMrInueqgSbuMhblYjsLoimVoh1fDK
+X-Proofpoint-ORIG-GUID: zWiWWhTbdgzaKB2WcP0riaikdeezGz5v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=742 clxscore=1011
+ adultscore=0 mlxscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410300111
 
-Hi Joel,
+On Mon, Oct 14, 2024 at 04:46:16PM +0200, David Hildenbrand wrote:
 
-On 29/10/24 22:51, Joel Fernandes (Google) wrote:
-> During boot initialization, DL server parameters are initialized using the
-> default root domain before the proper scheduler domains and root domains
-> are built. This results in DL server parameters being tied to the default
-> root domain's bandwidth accounting instead of the actual root domain
-> assigned to the CPU after scheduler topology initialization.
+Hi David,
+
+> To support memory devices under QEMU/KVM, such as virtio-mem,
+> we have to prepare our kernel virtual address space accordingly and
+> have to know the highest possible physical memory address we might see
+> later: the storage limit. The good old SCLP interface is not suitable for
+> this use case.
 > 
-> When secondary CPUs are brought up, the dl_bw_cpus() accounting doesn't
-> properly track CPUs being added since the DL server was started too early
-> with the default root domain. Specifically, dl_bw_cpus() is called before
-> set_cpu_active() during secondary CPU bringup, causing it to not account
-> for the CPU being brought up in its capacity calculations. This causes
-> subsequent sysfs parameter updates to fail with -EBUSY due to bandwidth
-> accounting using the wrong root domain with zeroed total_bw.
+> In particular, memory owned by memory devices has no relationship to
+> storage increments, it is always detected using the device driver, and
+> unaware OSes (no driver) must never try making use of that memory.
+> Consequently this memory is located outside of the "maximum storage
+> increment"-indicated memory range.
 > 
-> This issue also causes under-utilization of system capacity. With the fix,
-> we see proper capacity initialization and scaling as CPUs come online - the
-> total system capacity increases from CPU 0 to CPU 1 and continues scaling
-> up as more CPUs are added (from cap=1024 initially to cap=8192 with 8
-> CPUs). Without the fix, the capacity initialization was incomplete since
-> dl_bw_cpus() runs before the CPU is marked active in set_cpu_active(),
-> leading to CPUs not being properly accounted for in the capacity
-> calculations.
+> Let's use our new diag500 STORAGE_LIMIT subcode to query this storage
+> limit that can exceed the "maximum storage increment", and use the
+> existing interfaces (i.e., SCLP) to obtain information about the initial
+> memory that is not owned+managed by memory devices.
 > 
-> Fix this by tracking the last root domain used for the DL server and
-> resetting the server parameters when the root domain changes. This ensures
-> bandwidth accounting uses the correct, fully initialized root domain after
-> the scheduler topology is built.
+> If a hypervisor does not support such memory devices, the address exposed
+> through diag500 STORAGE_LIMIT will correspond to the maximum storage
+> increment exposed through SCLP.
+> 
+> To teach kdump on s390 to include memory owned by memory devices, there
+> will be ways to query the relevant memory ranges from the device via a
+> driver running in special kdump mode (like virtio-mem already implements
+> to filter /proc/vmcore access so we don't end up reading from unplugged
+> device blocks).
+> 
+> Tested-by: Mario Casquero <mcasquer@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/s390/boot/physmem_info.c        | 46 ++++++++++++++++++++++++++--
+>  arch/s390/include/asm/physmem_info.h |  3 ++
+>  2 files changed, 46 insertions(+), 3 deletions(-)
 
-So, I'm trying to reproduce this issue, but currenlty not really seeing
-it, sorry.
-
-I'm on a 40 CPUs box and, even if I fiddle with hotplug, the numbers I
-see from debug (bw, total_bw) seem sane and consistent with the fair
-server settings.
-
-Could you please provide additional info about how you reproduce the
-issue? Maybe you have a test script around you could share?
+Reviewed-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
 Thanks!
-Juri
-
 
