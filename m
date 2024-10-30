@@ -1,116 +1,153 @@
-Return-Path: <linux-kernel+bounces-388561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC169B613E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:18:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 697549B6128
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B571C21BD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBBFB2841B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC5D1E47D9;
-	Wed, 30 Oct 2024 11:17:40 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8C61E47B6;
+	Wed, 30 Oct 2024 11:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6oCTjVU"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A231E47BB;
-	Wed, 30 Oct 2024 11:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346531DDA31;
+	Wed, 30 Oct 2024 11:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287060; cv=none; b=G/5Uv+1FNdmVwE+NCo4EcsfnlLm65gz9kH8HD/qDPVVeJFtEJ6aSV4cD4CXwbr3rG5Lw06xFfLteMK6e9ddctfRTU7zekJ6Kv/Aa684VF7yJ+g14bHgL7bQCeJhkkIQ+ag/Utfac5zq/oKSq/uYJ2EY5ODW90zG7N0oP16SRi40=
+	t=1730286786; cv=none; b=igidvpAjyqRsP7g8vjJ2PAq9eKBsDfjgjuNxu+7HQaeaqmjxM64ZNhObAEFvT08/LivPtKbN5YdNnWOzPc3tKHCy+dZkMyy0DwqDtGSNg2A3+5HkU11Is0w581f9ztHvms7AJrlIXN8SUZ4bShUdMOkf8TnqvCdz/8bieBOkmqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287060; c=relaxed/simple;
-	bh=przTDjQYYTgJs6OmbMeksLnt9utBBFTAptOHzRDnJrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJWuPfufRtA/23U9+skmQLoU335T8wDsPs18L0Xay5PLmeHsYHwZwrL6R0nznAW2XMqPSWD60Rwp52fl3qiruSbZqgN/Q5MKBqF+LK76n8QNRITusXEQTuJleZvJilasWe8XxyJvrvKldyULtxz0yu3wV3UIUStfpBIqwXHw6CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 4F0E130008206;
-	Wed, 30 Oct 2024 12:11:33 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 36BFF22CE34; Wed, 30 Oct 2024 12:11:33 +0100 (CET)
-Date: Wed, 30 Oct 2024 12:11:33 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Esther Shimanovich <eshimanovich@chromium.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Rajat Jain <rajatja@google.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	iommu@lists.linux.dev,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] PCI: Detect and trust built-in Thunderbolt chips
-Message-ID: <ZyIUZfFuUdAbVf25@wunner.de>
-References: <20240910-trust-tbt-fix-v5-1-7a7a42a5f496@chromium.org>
- <20241030001524.GA1180712@bhelgaas>
+	s=arc-20240116; t=1730286786; c=relaxed/simple;
+	bh=fCeONLvHegGSfcw9Ky8jaNUZK0p1bHTKuZ3C1akz+tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I/arPV6H/cI7X/iZ4MKW42WP3onFgDT9HDunhtwvIRYf7RQmBsvT5rddm3Ouv+eXTCLSbxIJcyRQvlyR6NH8g37NZcnUZdU+jPudMjZswf4v5S3us5elppLMMevxT649Dj84ZRNDO8+ia0aZs9cHbQzRrrV34O0hRT+vSTv5OKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6oCTjVU; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e70c32cd7so5124662b3a.1;
+        Wed, 30 Oct 2024 04:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730286783; x=1730891583; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ymRlvy1aQPoMurranzuEhc83ceu3SVzS1IDAUzBuNJY=;
+        b=j6oCTjVUib255WSr5Ls3OoFvsvVkWIAPPb1ZKLNaKsUVtbNtBRTEtl6NBRBT1ILsVr
+         n5GM9Ecgb/SyEoL3gmVtK9UNP1gWgIuYBp0iPYAot860+ydWk+B1JrEP3yzgGMkHDZzX
+         cQRf/HSAYn8s6lQ7+mAYl9ape0ho4snCscIsbVU3SUSUsqyQBANx/yyBxga5T/sz/0Bf
+         wRtPEasa5ZBYWzgwRBUc1YEkJ8/HkHjrea1c9C2vKRdCjfeELcGwgYAUscYEFqAn+i9K
+         NeGCG8Qefizsun7RVycWX8lTrYQibuK2F3pysw5AYq7x4LCLV4Sxsjvi6Nz/WCt+Cte+
+         C9dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730286783; x=1730891583;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ymRlvy1aQPoMurranzuEhc83ceu3SVzS1IDAUzBuNJY=;
+        b=jdLbYuaTdp6dnDQ+TawwGELfq6FrnW5EJAIYU65DFjZoSMF4pxM4fY7vtb8hVwjaJB
+         AhLlbo4VslKNFbk9TyC+FwvdQ7ldPza5gR4RAFL/cFlIDFKXKjQhXA69GsCo1CiYkrnn
+         qMsv8qyK2GFQQv02M42rx6NWfPxt4hCwfGntIHnqMvJPudns46PUc9ll7kIIY1v9tkMN
+         d4+AMJ1DXIIN/kh2tq7cCN808Fi0n+gYbB3KEGsG3icRzjwbPXqow/sWri9wlYwOmNbg
+         JWP63A789l3f3vgumi35zG/t7c3SVgaz0sG/ostVEjyd+9KkB8aI/08j3Xo1qchnDES4
+         gcqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJqZ/MPHXPR9ijJuVa7F8/p3xXCsByIvjAmCvtz3YLDBX/cNdDfw76mlIsKiOuj0nRI9hR0MI/ifgi5LI=@vger.kernel.org, AJvYcCX7o6PjFplFJV6pGZfgWrQ1NN0I5LEL72rdX8QSTQhF+haa83K2ggGYo4eBCIKnqchBv0vqDRiwIQKpYyVWahA/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5zC1YwUSIzd7BsjQRYfdE6JYJHHkSI8zsrR+I7mcjqPmSO7Gf
+	S1eRRL7RK0/Ny+/B/JDKOK/g3IP/UFI1Zqn37/OLzkuxBZAdzRAWvUDfXw==
+X-Google-Smtp-Source: AGHT+IFu590Lq0TECetYlxh+A+zx5xw+jixfRaS4gaHnOxwLCVbOJeI7mB2J/qtdx99nB4yMsMjyYA==
+X-Received: by 2002:a05:6a00:992:b0:717:8ee0:4ea1 with SMTP id d2e1a72fcca58-72062ae79f3mr23973439b3a.0.1730286783297;
+        Wed, 30 Oct 2024 04:13:03 -0700 (PDT)
+Received: from [172.23.160.204] ([183.134.211.52])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0b961sm8987011b3a.121.2024.10.30.04.12.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 04:13:02 -0700 (PDT)
+Message-ID: <3bc02b33-421e-4c95-8f69-33ec89782621@gmail.com>
+Date: Wed, 30 Oct 2024 19:12:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030001524.GA1180712@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] selftests/bpf: Fix compile error when MPTCP not
+ support
+To: Matthieu Baerts <matttbe@kernel.org>, Mat Martineau
+ <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev
+References: <20241030100108.2443371-1-chen.dylane@gmail.com>
+ <abb72d1b-3347-4493-9a18-43c1655b7449@kernel.org>
+From: Tao Chen <chen.dylane@gmail.com>
+In-Reply-To: <abb72d1b-3347-4493-9a18-43c1655b7449@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 29, 2024 at 07:15:24PM -0500, Bjorn Helgaas wrote:
-> I asked on the v4 patch whether we really need to make all this
-> ACPI specific, and I'm still curious about that, since we don't
-> actually use any ACPI interfaces directly.
+在 2024/10/30 18:49, Matthieu Baerts 写道:
+> Hi Tao Chen,
+> 
+> Thank you for having shared this patch.
+> 
+> On 30/10/2024 11:01, Tao Chen wrote:
+>> Fix compile error when MPTCP feature not support, though eBPF core check
+>> already done which seems invalid in this situation, the error info like:
+>> progs/mptcp_sock.c:49:40: error: no member named 'is_mptcp' in 'struct
+>> tcp_sock'
+>>     49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ?
+>>
+>> The filed created in new definitions with eBPF core feature to solve
+>> this build problem, and test case result still ok in MPTCP kernel.
+>>
+>> 176/1   mptcp/base:OK
+>> 176/2   mptcp/mptcpify:OK
+>> 176     mptcp:OK
+>> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+>>
+>> Fixes: 8039d353217c ("selftests/bpf: Add MPTCP test base")
+> 
+> The commit you mentioned here is more than 2 years old, and as far as I
+> can see, nobody else reported this compilation issue. I guess that's
+> because people used tools/testing/selftests/bpf/config file as expected
+> to populate the kernel config, and I suppose you didn't, right?
+>
 
-The patch works around a deficiency in a Microsoft spec which is
-specifically for ACPI-based systems, not devicetree-based systems:
+Hi Matt, thank you for your reply, as you said, i did not use 
+tools/testing/selftests/bpf/config to compile kernel, i will use this 
+helpful
+feature.
 
-   "ACPI Interface: Device Specific Data (_DSD) for PCIe Root Ports
-    In Windows 10 (Version 1803), new ACPI _DSD methods have been added
-    to support Modern Standby and PCI hot plug scenarios."
+> I don't think other BPF selftests check for missing kernel config if
+> they are specified in the 'config' file, but even if it is the case, I
+> think it would be better to skip all the MPTCP tests, and not try to
+> have them checking something that doesn't exist: no need to validate
+> these tests if the expected kernel config has not been enabled.
+> 
 
-    https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports
+If i use the kernel not support MPTCP, the compile error still exists, 
+and i can not build the bpf test successfully. Maybe skill the test case 
+seems better when kernel not support. Now that bpf_core_field_exists 
+check already used in the code, i think it is better to use new 
+definition mode.
 
-The deficiency is that Microsoft says the ExternalFacingPort property
-must be below the Root Port...
+> But again, please correct me if I'm wrong, but I don't think there is
+> anything to change here to fix your compilation issue: simply make sure
+> to use this tools/testing/selftests/bpf/config file to generate your
+> kernel config, no?
+> 
+> Cheers,
+> Matt
 
-   "This ACPI object enables the operating system to identify externally
-    exposed PCIe hierarchies, such as Thunderbolt. This object must be
-    implemented in the Root Port ACPI device scope."
 
-...but on the systems in question, external-facing ports do not
-originate from the Root Port, but from Downstream Ports.
-So there's the Root Port (with the external facing property),
-below that an Upstream Port and below that a Downstream Port
-(which is the actual external facing port).
-
-I'm not sure if Windows on ARM systems use ACPI or devicetree.
-I'm also not sure whether the Qualcomm SnapDragon SoCs they use
-have Thunderbolt built-in, in which case they won't need a
-discrete Thunderbolt controller.  If they don't use discrete
-Thunderbolt controllers or if they don't use ACPI, they can't
-exhibit the problem.
-
-In any case I haven't heard of any Windows on ARM systems being
-affected by the issue.
-
-So it boils down to:  Should we compile the quirk in just in case
-ARM-based ACPI systems with discrete Thunderbolt controllers and
-problematic ACPI tables show up, or should we constrain it to x86,
-which is the only known architecture that actually needs it right now.
-
-My recommendation would be the latter because it's easy to move
-code around in the tree, should other arches become affected,
-but in the meantime we save memory and compile time on anything
-not x86.
-
-Thanks,
-
-Lukas
+-- 
+Best Regards
+Dylane Chen
 
