@@ -1,98 +1,144 @@
-Return-Path: <linux-kernel+bounces-389350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58B89B6BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:09:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE0A9B6BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:12:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71B66B21327
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:09:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63ADEB2273E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEEB1C4616;
-	Wed, 30 Oct 2024 18:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAD01CCB45;
+	Wed, 30 Oct 2024 18:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCQfUQc5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZFKIJMn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE681C3F00;
-	Wed, 30 Oct 2024 18:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6121213137;
+	Wed, 30 Oct 2024 18:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730311765; cv=none; b=K96wc6qZWUeirq0R9VYtHDPuO3KMMWXW3vhxopFpw1DSpksFYqDXirLAQqWAxbtCdLCDw1AeB5WVl8Fp7uEczShRErCnZql2c5QQadG1DZJ3C87IQPGBUQp5JG9q6uPdfQ95qUEv85EENKvWKOPpF/bNzEp1bHIWa8YJkqAqkkA=
+	t=1730311833; cv=none; b=TRb9sA3SRdE7d8N9V1piyUgjPKssYtv5N8M83n8f/88SLBGNbqfYKg85eujDuFEJYoT23akxFYNJGeE3rne0cefTtKUrqIp4GFNG1lGIjmqARUozKmvS9RL8fFvLEmjRspH+VfzafgwI+mLiCwfPn6+txjXBpLplOyWtx7sbSs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730311765; c=relaxed/simple;
-	bh=J+D38Y++wLZFZ7gBnMBrr82e/+4yn1ZFl58LuVnWe8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=p4d96TlkI9hFmBuyi7Uqs7QNRborqTe6as/l/0NsQC/3uW4+AkDUskaUnXyYbd/N3xcKQN5aEc9yXyzVA/w8aHzzUYR4GlgvTuaZ2BP1erToqDxuRTCGRQ8AOwRkjXLRzhUqKRLk20sLteqae0mUUBQxhLWmKb1j67O9sr4SY/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCQfUQc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F825C4CECE;
-	Wed, 30 Oct 2024 18:09:24 +0000 (UTC)
+	s=arc-20240116; t=1730311833; c=relaxed/simple;
+	bh=PUSWypS9RPlliztjPuKrypjSxl4XFZNOoSoJofJ+sX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUnHIOhJdudfOFo+4lF8K0Kt7XiBt/ILHZ/n9Hxzm9+9JU5ZHgRsPm/SqAT5x+87JQZ1kG9FtFoqAKuzN4xQXQ+I2a7QurAs6mDWgU9hSLMw/4BOA+wszcuATUn41TjXmWoN/5wnpvUHY+kI3Ql0Hdx296iZ7BQ2VEg5hP2DVsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZFKIJMn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10ABC4CED1;
+	Wed, 30 Oct 2024 18:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730311764;
-	bh=J+D38Y++wLZFZ7gBnMBrr82e/+4yn1ZFl58LuVnWe8U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=uCQfUQc596x9T88iYcBrR/Nx9qqnXcoJ7ex0HlrxaxOZ1FMvHc998Kni/w376UxwY
-	 YdCePETd5+O1O0rF5O5acvvq6Q8FTjmfXamFoNrzee9VqJZZLVpXm2dNy8Jdqo7ncq
-	 yyjPJXSd5WDfgLghTq2yXSWTr03Jc/v3XsfHQDY7tmV3yC7IJuu1Uo0cCP08D8GL48
-	 QUzJRurD+39/cJM47lpwJa4xX76Vde/bYliu4/PkVrSAcv38PuRQc75RS3S/mW+Bqy
-	 /NVCVxZS3tvKOnJhwPWD4saXLGiDuL68C/hCOzbBlRy+X8NlOKy0uPTCxja2oPkvm5
-	 RZfq4Ckf/PbNw==
-Date: Wed, 30 Oct 2024 13:09:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] PCI/bwctrl: Check for error code from
- devm_mutex_init() call
-Message-ID: <20241030180921.GA1210204@bhelgaas>
+	s=k20201202; t=1730311833;
+	bh=PUSWypS9RPlliztjPuKrypjSxl4XFZNOoSoJofJ+sX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gZFKIJMnYVyNIvUEnvLYifNu+y+jzl1Wz0YI1ofnDId92z1griWtJC43eteIaDLVd
+	 maGJzQud9s7pIMOyLHkWMJWebPOlHO8TVSbKBIv9Wm4LUHy+JHMeBcDwruRzJzPZor
+	 OrEJ2wIdc7W2NJ1zxf6TQycLUvScYtXwMrUzxK3SBi+GZV//1iWVjzECrK9C46xoDK
+	 /yaamwjW+q0JnuCZU9YbYLoJzZdBueCTrN3FGhPVHDSDNMfZ9zB3yPSA8xnw1xw5yr
+	 iYvtoh0fpbEKrCqLF1SRBRD5FcrUl5eYP0VHLmw4935aPBOE3RH+juVn4iDuQt1FTp
+	 7hu8QbRH1Lhxg==
+Date: Wed, 30 Oct 2024 18:10:28 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Andre.Przywara@arm.com
+Subject: Re: [PATCH] arm64/signal: Avoid corruption of SME state when
+ entering signal handler
+Message-ID: <618074b8-c685-40bb-b7d3-f309b30cd25a@sirena.org.uk>
+References: <20241023-arm64-fp-sme-sigentry-v1-1-249ff7ec3ad0@kernel.org>
+ <ZyJuEBC1wFPrTLAS@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tzY2Rc5DUyHGb0DA"
+Content-Disposition: inline
+In-Reply-To: <ZyJuEBC1wFPrTLAS@J2N7QTR9R3>
+X-Cookie: I feel partially hydrogenated!
+
+
+--tzY2Rc5DUyHGb0DA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030163139.2111689-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 06:31:39PM +0200, Andy Shevchenko wrote:
-> Even if it's not critical, the avoidance of checking the error code
-> from devm_mutex_init() call today diminishes the point of using devm
-> variant of it. Tomorrow it may even leak something. Add the missed
-> check.
-> 
-> Fixes: 9b3da6e19e4d ("PCI/bwctrl: Add pcie_set_target_speed() to set PCIe Link Speed")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Wed, Oct 30, 2024 at 05:34:16PM +0000, Mark Rutland wrote:
 
-Squashed into 399ba413fa23 ("PCI/bwctrl: Add pcie_set_target_speed()
-to set PCIe Link Speed"), thanks, Andy.
+> I originally just had a few comments on the commit message, but I
+> believe I've found a logic issue in this patch, and more general issue
+> throughout our FPSIMD/SVE/SME manipulation -- more details below.
 
-> ---
->  drivers/pci/pcie/bwctrl.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
-> index 3a93ed0550c7..2a19e441a901 100644
-> --- a/drivers/pci/pcie/bwctrl.c
-> +++ b/drivers/pci/pcie/bwctrl.c
-> @@ -299,7 +299,10 @@ static int pcie_bwnotif_probe(struct pcie_device *srv)
->  	if (!data)
->  		return -ENOMEM;
->  
-> -	devm_mutex_init(&srv->device, &data->set_speed_mutex);
-> +	ret = devm_mutex_init(&srv->device, &data->set_speed_mutex);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = devm_request_threaded_irq(&srv->device, srv->irq, NULL,
->  					pcie_bwnotif_irq_thread,
->  					IRQF_SHARED | IRQF_ONESHOT,
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
-> 
+I'm fairly sure there's at least one other issue lurking somewhere with
+TIF_SVE tearing, yes.  I've not been able to get that to reproduce, and
+I've probably stared at this code too much to see it by pure inspection
+however it looks like you might've spotted the issue here.
+
+> On Wed, Oct 23, 2024 at 10:31:24PM +0100, Mark Brown wrote:
+
+> It would be nice to have the signature of the failure as well, e.g.
+
+> | This is intermittently detected by the fp-stress test, which
+> | intermittently reports "ZA-VL-*-*: Bad SVCR: 0".
+
+That's a common one for timing reasons, but it does also manifest with
+other outputs (eg, if we turn off ZA while trying to execute
+instructions that access ZA).
+
+> I don't think this is correct in the TIF_FOREIGN_FPSTATE case. We don't
+> unbind the saved state from another CPU it might still be resident on,
+> and so IIUC there's a race whereby the updates to the saved state can
+> end up discarded:
+
+=2E..
+
+> ... and either:
+
+> * A subsequent return to userspace will see TIF_FOREIGN_FPSTATE is
+>   clear and not restore the in-memory state.
+
+> * A subsequent context-switch will see TIF_FOREIGN_FPSTATE is clear an=20
+>   save the (stale) HW state again.
+
+> It looks like we have a similar pattern all over the place, e.g.  in
+> do_sve_acc():
+
+Yes, indeed - I think that's a separate bug caused by the recalcuation
+of TIF_FOREIGN_FPSTATE.
+
+> This is going to need a careful audit and a proper series of
+> fixes that can be backported to stable.
+
+It feels like a separate thing at any rate.  We can do a simple and
+robust but performance impacting fix by having fpsimd_thread_switch()
+only ever set TIF_FOREIGN_FPSTATE, never clear it.  That'd cause extra
+reloads in the case where we switch to a thread but stay in kernel mode
+which probably happens often enough to be palatable.
+
+Otherwise I'm not sure it's *too* hard, TIF_FOREIGN_FPSTATE is a bit of
+a giveaway for places that could have issues.
+
+--tzY2Rc5DUyHGb0DA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcidpQACgkQJNaLcl1U
+h9DgCQf/aKq9znkcNdaaX99tyQKmAGH0Ab+cyf8R0/hXJzUa13y5F+gTf+/NDjYO
+Z94a5ttBE5fllSBD/GpqF3OOGXqKlfW4BBVLEU1LCgpprvXfb9TtUna6gIxIQKwE
+78yNEk7yd08AKgvUbAoUsUsG/L+0tSB4PMcAE9KisCueQAsikV/zMenetiwOQ4MS
+XdsJ0VYLpFarFB2wie+UTaMeuwtNCWlWzrkO9oL0YTbiUB8OWXgSuzhsRXNY+aKq
+b1hHEifXqMThHgXH8napkaDP95yRHV+97X+pgZjPyOnZnvBXs9cxepoKbFo+ZLJ0
+JMf0C4jXPRlsMcyLz238xdpuE1XJow==
+=mZzF
+-----END PGP SIGNATURE-----
+
+--tzY2Rc5DUyHGb0DA--
 
