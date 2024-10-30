@@ -1,110 +1,107 @@
-Return-Path: <linux-kernel+bounces-389269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048029B6AC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:20:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9B99B6ACB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA831F23458
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D549A2813B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F406212F1D;
-	Wed, 30 Oct 2024 17:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613FE217468;
+	Wed, 30 Oct 2024 17:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1lhCbCt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nl+hqb0w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853921BD9F7;
-	Wed, 30 Oct 2024 17:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82EA1E9064;
+	Wed, 30 Oct 2024 17:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730308493; cv=none; b=Mn7J/iLM0fTw2DfGoa16b/RwBT2PiBtuiPgVjZFO8VhsQVSNds2zSksyrCdGEcsZWS7O6xSVI6rjgP7hOzpzucFbeFMzzDJRE9In/YaxLWcGrBDPlbjeHav/vAPRPAaifh6vi7HgcbT1wB835qlWvqE7fOwKmrAoL6LhRSoqlm4=
+	t=1730308541; cv=none; b=G7xo9G58L3ar/D6rELnkjwCphxVj75a5W3sG/4CillgoCt69IgGZLK+IyVTz595vG+umktbh140uB592agFrv4DtGgNr+VWYkSYfyg5CHN4TlS7IU6xgcSH0DbQ4TSPf0/wqAj9/L+3dCblycrhy6Wsoq1R5dSOLGM8xo5DNlm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730308493; c=relaxed/simple;
-	bh=u+UIzsE2LAWlfcNx/d9eBpjzeP5vEFMjHlcbR8gn1LQ=;
+	s=arc-20240116; t=1730308541; c=relaxed/simple;
+	bh=EUedKMVFw2ww45cgy4fnjJQneRbzjMldoBuRMuIfEdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BH3EdS7rbKuLFpQFNZ+iWEUKj8xCeT+l1anvpA3GImG0LqCiI00aQEKFtZPSalAMHWlaZSyM57eHiuC6vSzTv6AqMFIsnljm5Yuh6xPvpka4HrZGRzSImaIMblHAjU8D1zkV/8xZ9RYpixEa6kPh+wNvOdADnmxP1eKi2Bxl1I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1lhCbCt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA3CFC4CECE;
-	Wed, 30 Oct 2024 17:14:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lD/j88PBx5/tAosZp5Cy/6MONz/ddIfccOD0sGPkmI9uA+IXGEpGYuylQihOF14Fyto40DFDKHoXVoRyg7tl+43GVBUZZrOhvUc9NJDcs6aDk6YM6TA9NlT19pbt/3UANbsJsi4d+klm3dhCYMXU3zO/rO/JcvR5hNZMTFe9wxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nl+hqb0w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D1DC4CECE;
+	Wed, 30 Oct 2024 17:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730308493;
-	bh=u+UIzsE2LAWlfcNx/d9eBpjzeP5vEFMjHlcbR8gn1LQ=;
+	s=k20201202; t=1730308541;
+	bh=EUedKMVFw2ww45cgy4fnjJQneRbzjMldoBuRMuIfEdg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s1lhCbCtrulrKBX3bgLiC9qOLS9kzPc4e1HFBFJpRXJCOdHswYlDpbZFWn21SnXif
-	 ahzA/MLaKt/wjWXPO6leBwahWvelCqhCccCpkMmyZtI+wwOZsfkKbCL7s79w3reBLb
-	 E1G/4rLMpVGVojOUscwUvTvoqq5UlW1lIgcS6EujkXeHZms7kuOBQ6LdjMwBAlfWNx
-	 l4XpGJPrzTqcwjb6A16j53uIJX8PGobSDQGz29+7Ktzu1gWQ8mOiCj0BcqIITapoWb
-	 YI2FA6C9vg6ozegrWqXHGo1PgVT1u4+NxfshFr017AyP4eAht1EzSSE8EvGRqypmiP
-	 OJjsHiDKm0zow==
-Date: Wed, 30 Oct 2024 17:14:48 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Suraj Sonawane <surajsonawane0215@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+	b=Nl+hqb0wDSMyfdOIdjYWPoAsMARzUO26xp4ze/w11RmVTN0RYBnYvntXj9Tbk34Vu
+	 uuiChFcnM+KjEbq2JeprUZfMQZzNBx4DBIKRWWSDeX17hx71a1LavBpPgycQYrrxga
+	 1dGPD60vSoAAP5GSH8gq6c0rGzd6cVQBEBHNMkZyL5JJbJ5PyGps7qQz9cKnCjQLBL
+	 XTBvLPhb4A/yX2B0zjgRXTFGhaSwz0Fp4twS+JgSaokisCHnkxMpyGKyLxPn6ZpTJ7
+	 utLzAFimyiNRFfPuGc+xvB3KSTTR2eThWSFRfDh1Bat4DtfNfh+om255TxoJuuvl8P
+	 o+P5d2+r2nsFw==
+Date: Wed, 30 Oct 2024 13:15:39 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sound: fix uninit-value in i2s_dma_isr
-Message-ID: <635f1691-74e9-4e48-8ebf-8e7ce0c6d1e3@sirena.org.uk>
-References: <20241030170829.36161-1-surajsonawane0215@gmail.com>
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <ZyJpu5QdGho6cOUs@sashalap>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <ZyAUO0b3z_f_kVnj@sashalap>
+ <c936a7f6-e532-4f6a-b55a-bbf0fe6c6f32@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MQdPN2PYzhrYRi+s"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20241030170829.36161-1-surajsonawane0215@gmail.com>
-X-Cookie: I feel partially hydrogenated!
+In-Reply-To: <c936a7f6-e532-4f6a-b55a-bbf0fe6c6f32@paulmck-laptop>
 
+On Wed, Oct 30, 2024 at 10:08:57AM -0700, Paul E. McKenney wrote:
+>On Mon, Oct 28, 2024 at 06:46:19PM -0400, Sasha Levin wrote:
+>> On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
+>> > On Mon, Oct 21, 2024 at 09:54:53PM -0700, Kees Cook wrote:
+>> > > For example, for a given PR, the bot can report:
+>> > >
+>> > > - Were the patches CCed to a mailing list?
+>> > > - A histogram of how long the patches were in next (to show bake times)
+>> > > - Are any patches associated with test failures? (0day and many other
+>> > > CIs are already running tests against -next; parse those reports)
+>> > >
+>> > > We could have a real pre-submit checker! :)
+>> >
+>> > That would be very useful.  Items 1 and 2 should be trivial, 3 would
+>> > require a bit of work but would still be very useful.
+>>
+>> If you've been following so far, there is a bot that is capable of doing
+>> most of the above
+>> (https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/).
+>
+>Nice!!!
+>
+>What does this make of these commits of mine?
+>
+>744e87210b1ae rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()
+>cbe644aa6fe17 rcu: Stop stall warning from dumping stacks if grace period ends
+>26ff1fb02991e rcu: Delete unused rcu_gp_might_be_stalled() function
 
---MQdPN2PYzhrYRi+s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Days in linux-next:
+----------------------------------------
+  1 |
+  2 |
+  3 |
+  4 |
+  5 |
+  6 | +++ (3)
 
-On Wed, Oct 30, 2024 at 10:38:29PM +0530, Suraj Sonawane wrote:
-> Fix an issue detected by the Smatch tool:
->=20
-> sound/soc/bcm/bcm63xx-pcm-whistler.c:264 i2s_dma_isr()
-> error: uninitialized symbol 'val_1'.
-> sound/soc/bcm/bcm63xx-pcm-whistler.c:264 i2s_dma_isr()
-> error: uninitialized symbol 'val_2'.
->=20
-> These errors occurred because the variables 'val_1' and 'val_2' are
-> declared but may not be assigned a value before they are used.
-> Specifically, if the loop that assigns values to 'val_1' and 'val_2'
-> does not execute (for example, when 'offlevel' is zero), these
-> variables remain uninitialized, leading to potential undefined
-> behavior.
->=20
-> To resolve this issue, initialize 'val_1' and 'val_2' to 0 at the
-> point of declaration. This ensures that 'val_1' and 'val_2' have
-> defined values before they are used in subsequent calculations,
-> preventing any warnings or undefined behavior in cases where the
-> loop does not run.
-
-This will shut the warning up, but why are these values valid?  Are we
-handling the cases where the loops do not execute properly?
-
---MQdPN2PYzhrYRi+s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmciaYgACgkQJNaLcl1U
-h9C3dwf+JZ315ez2ikVHreXBKQBRZVx0IZE8f7hZigdeRuM0J0jpU8645q/YSReP
-T2hZeIFihq0odYaL+d4wzO/7MFLuUD49dsRDmvFAMP3Bc+MMHo98GAcXqRT+5yhT
-xMhdu0+DAuFLeYP+IUpfXuv9p2FLIt/f/7maH9Rbtz5vmZ4y21VwNlWgafMMen/w
-RP9FDB/Va+YuVMGIqYYXWSWjSVKPvFkj5vGWoiwKPF8OEFrurUJUwDqqkrsNTGg1
-Rhp15h2F4MdU+FAaB+pocSsJkFYS9rH7FYarBDMkv259YHVtvLon/6SErT3tzxXx
-v1q3nuMqKYU/kcUD+KFg1PSstpxpJg==
-=FU6s
------END PGP SIGNATURE-----
-
---MQdPN2PYzhrYRi+s--
+-- 
+Thanks,
+Sasha
 
