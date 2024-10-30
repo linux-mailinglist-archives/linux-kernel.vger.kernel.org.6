@@ -1,524 +1,124 @@
-Return-Path: <linux-kernel+bounces-388121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5801D9B5AE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:52:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6E29B5AE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58DE1B236EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938F11F24DB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87586194C75;
-	Wed, 30 Oct 2024 04:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61ED41993AE;
+	Wed, 30 Oct 2024 04:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c5f9imJT"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TvgSqcCo"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C93A17BB21
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973D1193063;
+	Wed, 30 Oct 2024 04:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730263922; cv=none; b=bqTe/RFHfAYnWaNrGN73qRZahjM69xU5EBzE/xc1jwzpSXxnTX5V2q4nKSF54qmauEVSJASBzdk1c9RYleng65fL7mWoBWJ40Bbsk4sx0hlyk0URJkKUgm+X6kvFN/sDPKufonlf3wR3nR8DwqTt7If25g/6mjiwKhAS7QRRBwQ=
+	t=1730263930; cv=none; b=Vd0w0lmE/E1LHCB6BcS1SAnuuOvzFw7MDOrte1+UZWrc4NgSiC8y1Q8tRIVegeOLdtH3J+9jJHNtvNQtCP0HwUU37Wii/UssSExLKke/GI5WUGMPgXjqtkf8WvMFLoEYovTzJrpcgBmILIErs208tInrMDeK9iyZHZ1ktq96Va8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730263922; c=relaxed/simple;
-	bh=G+bMr6YdZChhTerfvg6e4IsquIUFG2lzxpHjI5uEdN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o2j8DrcLDV8QRaYt79FOli8+nAy+ezY6j0wITZqv65wlevHtDtmsuKa6+kfB/UO5LxUE0l0zkplCjrq0UefA678gQDLIHDa4cTWNO0/r1pFhG9gst3Ubz52AHgZlXBq6/ajDHYpMttr8vu/lgIKoQZ5Yu7+gyvgnCCzQC4UcpyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c5f9imJT; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2eb9dde40so4984921a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730263919; x=1730868719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ebK5FEqo1uQJrGG2XPzgss6DJVNI4exo5BqUHuwCN0U=;
-        b=c5f9imJTJXjSaUAhZFHw9V32B19UjY0nOFP1WW8gOLA0JMmOD9Al73p1RGzEHN6bhU
-         KWYqv3G0G5JTqZGXw9TIC+nKvnJxGXhbIrwvkDSDkK53kwTODY0InLenSBlgKdVBxQT/
-         MJnCqs6dyr7EgZtlgHgIhouY5X/smZEkMsNKebmXFHrcQSbUSW66osq4UgimE8WhNbKg
-         v35nRxN39lsx5ylon9QW+b5PHlxvOLrhsJlSPyYqSWjYWsdVdnR55vsFviGH9JFmoO7q
-         Jjy6W44w/XcPr+pcfi9p/6vs4NDyDQs3nL5wsQl3A9l+WmBgsBZK7znhc98jaQHZ93V4
-         p9Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730263919; x=1730868719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ebK5FEqo1uQJrGG2XPzgss6DJVNI4exo5BqUHuwCN0U=;
-        b=HSVKFbV3kpLcx5JaYELLhrHLlaG5d+dKWqxeIuMPXQa3J7aCqxLWaU6FeokjWqk4rf
-         iX+8Ap8wbmxPti1eNHEFyUBdj24CpOZkgv8ncb9SkbjxVkr8+776HDiRyUDevL6McMVU
-         +2mL3qIcUlvmGzgrORS56giczQikI9dVAoRi/rRd9Vpr6OjWUwy6SPsfBTsRo0SE0PB9
-         jfsnH5JBlxA8wzDaWP32IU7vkLvCy5gZJJ4nyCGzI/RdihL4rW+M1VP3lTEKXYtOqjYT
-         4Tevip+Gll4OmCScE7vPcYo5fmtvLjzDC4KVLvpTWvukPh5KfsJTkJvg+yP+YZZF8+lZ
-         zlug==
-X-Forwarded-Encrypted: i=1; AJvYcCUBIoiW+ulTrjAeA2QRKSUhoP7xreLhgqIB+45DQ6C0sfPiZ6rzs+qlfE7AljNnFEn/4ujLucq862O4wA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6h6FF9Bf0Oe8qCTMWCArlhnafxWg7EO877QF5mjxuK4AqKj5u
-	n6NFj18WrIMJFOrI5H+hbV5JHgnCrBGKGz8jW38YYhiiJpEUEuOCt+IZJLYQ3Si4pJUfooqKDaH
-	e94cOw4AJbQetB0enxTks9UMkE+jkOHFXOmRd
-X-Google-Smtp-Source: AGHT+IEQFx5Vol9XZhdV8siS1D10S0uW4JnzXjjG2nxUm0689UTM6b9J3FgMu5InPp+KGAT5fvuNb3m3n0qAQjll56w=
-X-Received: by 2002:a17:90a:4b08:b0:2e2:bad3:e393 with SMTP id
- 98e67ed59e1d1-2e8f104f1d4mr16084160a91.3.1730263918341; Tue, 29 Oct 2024
- 21:51:58 -0700 (PDT)
+	s=arc-20240116; t=1730263930; c=relaxed/simple;
+	bh=KyE8Y0094IzvX+QztK/Hl+miMVHP0Icf7MRK1ez9ffk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q7YjAWZw5i5zqJE/kOnB78t4STyJ+GO+6WklsYeVXuYaoEKE+FF0I4OHDFZiW7nZnh2tg0Qs8lrBMxhJIkr0eVmd+4pS7vcyfxlbYk9TaV57xHMYfj2Hg1vk5gqLtGvYaWDWVcQTKZtvyFX4wPD5Pp1pxN5wfGkM/bkTfgURQDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TvgSqcCo; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49U4ptv3046150;
+	Tue, 29 Oct 2024 23:51:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730263915;
+	bh=jENql/JSGijaO51AIfErQCfqmfrbjatMPfN+Lc1t6vM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=TvgSqcCoshNhLT2WsRBHnmLIrWxj0EABkJKiP6S29tdE08vt+ebDFWfCEffVf+ivK
+	 rHf8MoB+mkAGQsl+7CopGi2h8yFmWzQn6g4gGoLMR82G5IDrpLtvfklnjscCwoPOJW
+	 ZOJd6C60oWuecT7MJ8DE+5xsslaPcQhxafiOYdcg=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4ptxp085245;
+	Tue, 29 Oct 2024 23:51:55 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
+ Oct 2024 23:51:55 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 29 Oct 2024 23:51:55 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4pp9e062140;
+	Tue, 29 Oct 2024 23:51:52 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?=
+	<jpaulo.silvagoncalves@gmail.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-am62-verdin: Fix SoM ADC compatible
+Date: Wed, 30 Oct 2024 10:21:47 +0530
+Message-ID: <173021674664.3859929.252749757982306283.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241015113334.246110-1-jpaulo.silvagoncalves@gmail.com>
+References: <20241015113334.246110-1-jpaulo.silvagoncalves@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026045243.452957-1-saravanak@google.com> <76eb4a60-e192-4018-9770-4b973075a3cb@ideasonboard.com>
- <CAGETcx99+EA=t6KaWCWbHk=Xjj32UAKepktZkmLuap=K5G9h3w@mail.gmail.com> <10e892a8-2b07-480e-93c1-3083ce31e7e2@ideasonboard.com>
-In-Reply-To: <10e892a8-2b07-480e-93c1-3083ce31e7e2@ideasonboard.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 29 Oct 2024 21:51:18 -0700
-Message-ID: <CAGETcx8KUrZbf-FnQM3cD1n9gFDkSt0UEY_KeLtT+6fYENB40g@mail.gmail.com>
-Subject: Re: [PATCH v2] driver core: fw_devlink: Stop trying to optimize cycle
- detection logic
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Aradhya Bhatia <aradhya.bhatia@linux.dev>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Devarsh Thakkar <devarsht@ti.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Oct 29, 2024 at 4:21=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
->
-> Hi,
->
-> On 28/10/2024 22:39, Saravana Kannan wrote:
-> > On Mon, Oct 28, 2024 at 1:06=E2=80=AFAM Tomi Valkeinen
-> > <tomi.valkeinen@ideasonboard.com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On 26/10/2024 07:52, Saravana Kannan wrote:
-> >>> In attempting to optimize fw_devlink runtime, I introduced numerous c=
-ycle
-> >>> detection bugs by foregoing cycle detection logic under specific
-> >>> conditions. Each fix has further narrowed the conditions for optimiza=
-tion.
-> >>>
-> >>> It's time to give up on these optimization attempts and just run the =
-cycle
-> >>> detection logic every time fw_devlink tries to create a device link.
-> >>>
-> >>> The specific bug report that triggered this fix involved a supplier f=
-wnode
-> >>> that never gets a device created for it. Instead, the supplier fwnode=
- is
-> >>> represented by the device that corresponds to an ancestor fwnode.
-> >>>
-> >>> In this case, fw_devlink didn't do any cycle detection because the cy=
-cle
-> >>> detection logic is only run when a device link is created between the
-> >>> devices that correspond to the actual consumer and supplier fwnodes.
-> >>>
-> >>> With this change, fw_devlink will run cycle detection logic even when
-> >>> creating SYNC_STATE_ONLY proxy device links from a device that is an
-> >>> ancestor of a consumer fwnode.
-> >>>
-> >>> Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> >>> Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d=
-276@ideasonboard.com/
-> >>> Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of o=
-verlapping cycles")
-> >>> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> >>> ---
-> >>> Greg,
-> >>>
-> >>> I've tested this on my end and it looks ok and nothing fishy is going
-> >>> on. You can pick this up once Tomi gives a Tested-by.
-> >>
-> >> I tested this on TI AM62 SK board. It has an LVDS (OLDI) display and a
-> >> HDMI output, and both displays are connected to the same display
-> >> subsystem. I tested with OLDI single and dual link cases, with and
-> >> without HDMI, and in all cases probing works fine.
-> >>
-> >> Looks good on that front, so:
-> >>
-> >> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> >
-> > Great! Thanks!
-> >
-> >> You also asked for a diff of the devlinks. That part doesn't look so
-> >> good to me, but probably you can tell if it's normal or not.
-> >
-> > TL;DR: All device links in a cycle get marked as
-> > DL_FLAG_SYNC_STATE_ONLY and DL_FLAG_CYCLE (in addition to other
-> > flags). All DL_FLAG_SYNC_STATE_ONLY (not all of them are cycles) will
-> > get deleted after the consumer probes (since they are no longer needed
-> > after that). My guess on what's going on is that with the patch,
-> > fw_devlink found and marked more device links as cycles. Ones that in
-> > the past weren't detected as being part of a cycle but coincidentally
-> > the "post-init" dependency was the one that was getting ignored/not
-> > enforced. So the actual links in a cycle getting deleted after all the
-> > devices have probed is not a problem.
->
-> Ok. Yep, it might all be fine. I still don't understand all that's going
-> on here, so maybe look at one more case below.
->
-> > You can enable the "cycle" logs in drivers/base/core.c so it's easier
-> > to follow the cycles fw_devlink detected. But the logs are a bit
-> > cryptic because it tries to print all the multiple cycles that were
-> > detected using a recursive search.
-> >
-> > The non-cycle use for DL_FLAG_SYNC_STATE_ONLY is for parent devices to
-> > put a "proxy-vote" (Hey supplier, you still have a consumer that
-> > hasn't bound to a driver yet) for descendant (children, grand
-> > children) devices that haven't been created yet. So, without the fix
-> > it's possible some descendant child never got to probe and the
-> > DL_FLAG_SYNC_STATE_ONLY device link stuck around.
-> >
-> > If you can confirm all the deleted device links fall into one of these
-> > two categories, then there's no issue here. If you find cases that
-> > aren't clear, then let me know which one and point to specific nodes
-> > in an upstream DTS file and I can take a look.
-> >
-> > Every device link folder has a "sync_state_only" file that says if it
-> > has the DL_FLAG_SYNC_STATE_ONLY set. But to check for the cycle flag,
-> > you'll have to extend the debug log in device_link_add() that goes:
-> > "Linked as a sync state only consumer to......" and print the "flags" p=
-aram.
->
-> I added this print.
->
-> I thought I'll test without any non-upstream patches, so this is booting
-> with the upstream k3-am625-sk.dtb, no overlays. I've attached boot log
-> (with this patch applied), and devlink lists, without and with this patch=
-.
->
-> As the OLDI stuff is not upstream, I did expect to see less diff, and
-> that is the case. It's still somewhat interesting diff:
->
-> $ diff devlink-broken.txt devlink-fixed.txt
-> 1d0
-> < i2c:1-0022--i2c:1-003b
->
-> So that's the gpio expander (exp1: gpio@22 in k3-am625-sk.dts) and the
-> hdmi bridge (sii9022: bridge-hdmi@3b in k3-am62x-sk-common.dtsi). And,
-> indeed, in the log I can see:
->
-> i2c 1-003b: Linked as a sync state only consumer to 1-0022 (flags 0x3c0)
-> /bus@f0000/i2c@20010000/bridge-hdmi@3b Dropping the fwnode link to
-> /bus@f0000/i2c@20010000/gpio@22
->
-> If I'm not mistaken, the above means that the framework has decided
-> there's a (possible) probe time cyclic dependency between the gpio
-> expander and the hdmi bridge, right?
->
-> I don't think that makes sense, and I was trying to understand why the
-> framework has arrived to such a conclusion, but it's not clear to me.
->
-> Also, I can see, e.g.:
->
-> /bus@f0000/i2c@20010000: cycle: depends on /bus@f0000/dss@30200000
->
-> So somehow the i2c bus has a dependency on the DSS? The DSS does not
-> depend on the i2c, but the HDMI does, so I can understand that the DSS
-> would have a dependency to i2c. But the other way around?
+Hi João Paulo Gonçalves,
 
-Thanks for being persistent! :) I think you found a real issue in this patc=
-h.
-I'm squeezing these fixes late at night and between my regular work.
-So, apologies in advance for untested patches and me going with
-hunches.
+On Tue, 15 Oct 2024 08:33:34 -0300, João Paulo Gonçalves wrote:
+> Fix Verdin AM62 on-SOM ADC compatible. Currently the hardware is not
+> correctly described in the DT, use the correct TI TLA2024 compatible that
+> matches what is assembled on the board.
+> 
+> The "ti,tla2024" compatible was introduced in Linux v5.19 and Verdin AM62
+> support was introduced in Linux v6.5.
+> 
+> [...]
 
-This part probably won't make sense, but I'm "explaining" it here just
-to record it somewhere if I or someone else comes back and looks at
-this after a few months.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-What's happening is that when 30200000.dss was added, 20010000.i2c was
-creating a sync state only proxy link for bridge-hdmi@3b (child of
-i2c). But when creating the proxy link, fw_devlink detected the cycle
-between bridge-hdmi@3b and 30200000.dss. That cycle is valid, but this
-patch also results in marking the "proxy" link as part of a cycle
-(when it wasn't). So it incorrectly marked i2c as being in a consumer
-of with dss and part of a cycle.
+[1/1] arm64: dts: ti: k3-am62-verdin: Fix SoM ADC compatible
+      commit: ab53b8c0ac975d8c4d61927d2be14afce14f6902
 
-Later on when running cycle detection logic between bridge-hdmi@3b and
-gpio@22, the cycle detection logic follows the i2c to dss link because
-it thinks the i2c really depends on dss but is part of a cycle.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Try this fix on top of this patch and it should allow probing for all
-the previous broken scenarios AND should avoid dropping some links
-incorrectly.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2115,11 +2115,6 @@ static int fw_devlink_create_devlink(struct device *=
-con,
-        if (link->flags & FWLINK_FLAG_IGNORE)
-                return 0;
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
--       if (con->fwnode =3D=3D link->consumer)
--               flags =3D fw_devlink_get_flags(link->flags);
--       else
--               flags =3D FW_DEVLINK_FLAGS_PERMISSIVE;
--
-        /*
-         * In some cases, a device P might also be a supplier to its child =
-node
-         * C. However, this would defer the probe of C until the probe of P
-@@ -2147,13 +2142,17 @@ static int fw_devlink_create_devlink(struct device =
-*con,
-        device_links_write_lock();
-        if (__fw_devlink_relax_cycles(link->consumer, sup_handle)) {
-                __fwnode_link_cycle(link);
--               flags =3D fw_devlink_get_flags(link->flags);
-                pr_debug("----- cycle: end -----\n");
-                pr_info("%pfwf: Fixed dependency cycle(s) with %pfwf\n",
-                        link->consumer, sup_handle);
-        }
-        device_links_write_unlock();
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-+       if (con->fwnode =3D=3D link->consumer)
-+               flags =3D fw_devlink_get_flags(link->flags);
-+       else
-+               flags =3D FW_DEVLINK_FLAGS_PERMISSIVE;
-+
-        if (sup_handle->flags & FWNODE_FLAG_NOT_DEVICE)
-                sup_dev =3D fwnode_get_next_parent_dev(sup_handle);
-        else
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
-Thanks,
-Saravana
-
->
->   Tomi
->
-> >>
-> >> $ diff devlink-single-broken.txt devlink-single-fixed.txt
-> >
-> > I was hoping you'd give me some line count diff too to get a sense of
-> > if it's wreaking havoc or not. But based on my local testing on
-> > different hardware, I'm expecting a very small number of device links
-> > are getting affected.
-> >
-> >> 2d1
-> >> < i2c:1-0022--i2c:1-003b
-> >> 11d9
-> >> <
-> >> platform:44043000.system-controller:clock-controller--platform:2001000=
-0.i2c
-> >> 27d24
-> >> < platform:44043000.system-controller:clock-controller--platform:60100=
-0.gpio
-> >> 42d38
-> >> <
-> >> platform:44043000.system-controller:power-controller--platform:2001000=
-0.i2c
-> >> 58d53
-> >> < platform:44043000.system-controller:power-controller--platform:60100=
-0.gpio
-> >> 74d68
-> >> < platform:4d000000.mailbox--platform:44043000.system-controller
-> >
-> > I took a quick look at this one in
-> > arch/arm64/boot/dts/ti/k3-am62-main.dtsi which I assume is part of the
-> > device you are testing on and I couldn't find a cycle. But with dtsi
-> > and dts files, it's hard to find these manually. Let me know if
-> > fw_devlink is thinking there's a cycle where there is none.
-> >
-> >> 76d69
-> >> < platform:601000.gpio--i2c:1-0022
-> >> 80d72
-> >> < platform:bus@f0000:interrupt-controller@a00000--platform:601000.gpio
-> >> 82d73
-> >> < platform:f4000.pinctrl--i2c:1-0022
-> >> 84d74
-> >> < platform:f4000.pinctrl--platform:20010000.i2c
-> >>
-> >> "i2c:1-003b" is the hdmi bridge, "i2c:1-0022" is a gpio expander. So,
-> >> for example, we lose the devlink between the gpio expander and the hdm=
-i
-> >> bridge. The expander is used for interrupts. There's an interrupt line
-> >> from the HDMI bridge to the expander, and from there there's an
-> >> interrupt line going to the SoC.
-> >>
-> >> Also, I noticed the devlinks change if I load the display drivers. The
-> >> above is before loading. Comparing the loaded/not-loaded:
-> >
-> > Yeah, DL_FLAG_SYNC_STATE_ONLY device links vanishing as more devices
-> > probe is not a problem. That's working as intended.
-> >
-> > Thanks,
-> > Saravana
-> >
-> >>
-> >> $ diff devlink-dual-fixed.txt devlink-dual-fixed-loaded.txt
-> >> 3d2
-> >> < i2c:1-003b--platform:30200000.dss
-> >> 23d21
-> >> <
-> >> platform:44043000.system-controller:clock-controller--platform:3020000=
-0.dss
-> >> 52d49
-> >> <
-> >> platform:44043000.system-controller:power-controller--platform:3020000=
-0.dss
-> >> 73d69
-> >> < platform:display--platform:30200000.dss
-> >> 78d73
-> >> < platform:f4000.pinctrl--platform:30200000.dss
-> >> 97a93
-> >>   > regulator:regulator.0--platform:display
-> >>
-> >>    Tomi
-> >>
-> >>
-> >>> Thanks,
-> >>> Saravana
-> >>>
-> >>> v1 -> v2:
-> >>> - Removed the RFC tag
-> >>> - Remaned the subject. v1 is https://lore.kernel.org/all/202410252237=
-21.184998-1-saravanak@google.com/T/#u
-> >>> - Added a NULL check to avoid NULL pointer deref
-> >>>
-> >>>    drivers/base/core.c | 46 ++++++++++++++++++++---------------------=
-----
-> >>>    1 file changed, 20 insertions(+), 26 deletions(-)
-> >>>
-> >>> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> >>> index 3b13fed1c3e3..f96f2e4c76b4 100644
-> >>> --- a/drivers/base/core.c
-> >>> +++ b/drivers/base/core.c
-> >>> @@ -1990,10 +1990,10 @@ static struct device *fwnode_get_next_parent_=
-dev(const struct fwnode_handle *fwn
-> >>>     *
-> >>>     * Return true if one or more cycles were found. Otherwise, return=
- false.
-> >>>     */
-> >>> -static bool __fw_devlink_relax_cycles(struct device *con,
-> >>> +static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_hand=
-le,
-> >>>                                 struct fwnode_handle *sup_handle)
-> >>>    {
-> >>> -     struct device *sup_dev =3D NULL, *par_dev =3D NULL;
-> >>> +     struct device *sup_dev =3D NULL, *par_dev =3D NULL, *con_dev =
-=3D NULL;
-> >>>        struct fwnode_link *link;
-> >>>        struct device_link *dev_link;
-> >>>        bool ret =3D false;
-> >>> @@ -2010,22 +2010,22 @@ static bool __fw_devlink_relax_cycles(struct =
-device *con,
-> >>>
-> >>>        sup_handle->flags |=3D FWNODE_FLAG_VISITED;
-> >>>
-> >>> -     sup_dev =3D get_dev_from_fwnode(sup_handle);
-> >>> -
-> >>>        /* Termination condition. */
-> >>> -     if (sup_dev =3D=3D con) {
-> >>> +     if (sup_handle =3D=3D con_handle) {
-> >>>                pr_debug("----- cycle: start -----\n");
-> >>>                ret =3D true;
-> >>>                goto out;
-> >>>        }
-> >>>
-> >>> +     sup_dev =3D get_dev_from_fwnode(sup_handle);
-> >>> +     con_dev =3D get_dev_from_fwnode(con_handle);
-> >>>        /*
-> >>>         * If sup_dev is bound to a driver and @con hasn't started bin=
-ding to a
-> >>>         * driver, sup_dev can't be a consumer of @con. So, no need to=
- check
-> >>>         * further.
-> >>>         */
-> >>>        if (sup_dev && sup_dev->links.status =3D=3D  DL_DEV_DRIVER_BOU=
-ND &&
-> >>> -         con->links.status =3D=3D DL_DEV_NO_DRIVER) {
-> >>> +         con_dev && con_dev->links.status =3D=3D DL_DEV_NO_DRIVER) {
-> >>>                ret =3D false;
-> >>>                goto out;
-> >>>        }
-> >>> @@ -2034,7 +2034,7 @@ static bool __fw_devlink_relax_cycles(struct de=
-vice *con,
-> >>>                if (link->flags & FWLINK_FLAG_IGNORE)
-> >>>                        continue;
-> >>>
-> >>> -             if (__fw_devlink_relax_cycles(con, link->supplier)) {
-> >>> +             if (__fw_devlink_relax_cycles(con_handle, link->supplie=
-r)) {
-> >>>                        __fwnode_link_cycle(link);
-> >>>                        ret =3D true;
-> >>>                }
-> >>> @@ -2049,7 +2049,7 @@ static bool __fw_devlink_relax_cycles(struct de=
-vice *con,
-> >>>        else
-> >>>                par_dev =3D fwnode_get_next_parent_dev(sup_handle);
-> >>>
-> >>> -     if (par_dev && __fw_devlink_relax_cycles(con, par_dev->fwnode))=
- {
-> >>> +     if (par_dev && __fw_devlink_relax_cycles(con_handle, par_dev->f=
-wnode)) {
-> >>>                pr_debug("%pfwf: cycle: child of %pfwf\n", sup_handle,
-> >>>                         par_dev->fwnode);
-> >>>                ret =3D true;
-> >>> @@ -2067,7 +2067,7 @@ static bool __fw_devlink_relax_cycles(struct de=
-vice *con,
-> >>>                    !(dev_link->flags & DL_FLAG_CYCLE))
-> >>>                        continue;
-> >>>
-> >>> -             if (__fw_devlink_relax_cycles(con,
-> >>> +             if (__fw_devlink_relax_cycles(con_handle,
-> >>>                                              dev_link->supplier->fwno=
-de)) {
-> >>>                        pr_debug("%pfwf: cycle: depends on %pfwf\n", s=
-up_handle,
-> >>>                                 dev_link->supplier->fwnode);
-> >>> @@ -2140,25 +2140,19 @@ static int fw_devlink_create_devlink(struct d=
-evice *con,
-> >>>                return -EINVAL;
-> >>>
-> >>>        /*
-> >>> -      * SYNC_STATE_ONLY device links don't block probing and support=
-s cycles.
-> >>> -      * So, one might expect that cycle detection isn't necessary fo=
-r them.
-> >>> -      * However, if the device link was marked as SYNC_STATE_ONLY be=
-cause
-> >>> -      * it's part of a cycle, then we still need to do cycle detecti=
-on. This
-> >>> -      * is because the consumer and supplier might be part of multip=
-le cycles
-> >>> -      * and we need to detect all those cycles.
-> >>> +      * Don't try to optimize by not calling the cycle detection log=
-ic under
-> >>> +      * certain conditions. There's always some corner case that won=
-'t get
-> >>> +      * detected.
-> >>>         */
-> >>> -     if (!device_link_flag_is_sync_state_only(flags) ||
-> >>> -         flags & DL_FLAG_CYCLE) {
-> >>> -             device_links_write_lock();
-> >>> -             if (__fw_devlink_relax_cycles(con, sup_handle)) {
-> >>> -                     __fwnode_link_cycle(link);
-> >>> -                     flags =3D fw_devlink_get_flags(link->flags);
-> >>> -                     pr_debug("----- cycle: end -----\n");
-> >>> -                     dev_info(con, "Fixed dependency cycle(s) with %=
-pfwf\n",
-> >>> -                              sup_handle);
-> >>> -             }
-> >>> -             device_links_write_unlock();
-> >>> +     device_links_write_lock();
-> >>> +     if (__fw_devlink_relax_cycles(link->consumer, sup_handle)) {
-> >>> +             __fwnode_link_cycle(link);
-> >>> +             flags =3D fw_devlink_get_flags(link->flags);
-> >>> +             pr_debug("----- cycle: end -----\n");
-> >>> +             pr_info("%pfwf: Fixed dependency cycle(s) with %pfwf\n"=
-,
-> >>> +                     link->consumer, sup_handle);
-> >>>        }
-> >>> +     device_links_write_unlock();
-> >>>
-> >>>        if (sup_handle->flags & FWNODE_FLAG_NOT_DEVICE)
-> >>>                sup_dev =3D fwnode_get_next_parent_dev(sup_handle);
-> >>
 
