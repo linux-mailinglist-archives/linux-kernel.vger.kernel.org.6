@@ -1,153 +1,105 @@
-Return-Path: <linux-kernel+bounces-389113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF7B9B68C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:01:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8837D9B68C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F941F25BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98EF1C20B3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C1213EF7;
-	Wed, 30 Oct 2024 16:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3B52141AD;
+	Wed, 30 Oct 2024 16:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2g94pwP"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grT93DND"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8055D36126;
-	Wed, 30 Oct 2024 16:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E84A36126;
+	Wed, 30 Oct 2024 16:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304076; cv=none; b=NOQB9/lYhlUYnfiZ1oV0m+KMXIVhp2kpNgaRxVEYvPtRCa6Fqy9JEVrX7CkfFwzC/L0hculcljY3smKKlRaU4ZCJyC9SKxlF9JJuyPYjw7mcWk9IyMXHHmKJZ2vhRLrTuLokyk+SGeIE2PaTCO6Ap82oT3ZrgqQdjA1NS/hRl4c=
+	t=1730304138; cv=none; b=X2RNuPFeojheiJ/gvFOlcmrA/BYBWLV3Jm0b396YY1t6vKaS6uNm6rHFfkAK4SqG+eK6vXK7pGel+bfRFpUUaeoDZmpbPNDUL+p4hq8S7Jy+CE7ZjWUJLBo6jhdBj1PyJ50AybNcQdRSQXZvcj3VhsR4bHZgz2UaTtoJ4VnqWZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304076; c=relaxed/simple;
-	bh=zxSt/cKFcoAWpo+73TfuR/yadVCk9iMi3er6GwJJT5A=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=qJ2heE5KM1uU1YHfj6lVR+AAyOCmgT4W4XcH+QUl4XN7CZB7v4i/1mIyvgsrcdo3aCWU6af0hQMKbMYIuyj6YE8IFKZDb3NfcjLO9iZ95LHtyVSA78Klg9bcrVQmYyhdnhRshTOs+nOuyx5q8OU5ek9GCFhJ6NSc8EL4bl6MrbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2g94pwP; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43159c9f617so63321805e9.2;
-        Wed, 30 Oct 2024 09:01:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730304073; x=1730908873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8OJQ24DPV4G1yn5B7zxNeki92edP5+Wx7P/c1L2gO6M=;
-        b=P2g94pwPFsQF9XW1Xn549XXEZ8f1H4Kv/ZqI2zZngv7WjU+2AJQYaHHxsUqwLUJVFK
-         82rowLiCZWNQO69HLfo3689obCY57aeZ/Oxaa+35dUoTOQJSQ6FtOaH/2+4a/A0uhlf3
-         OcZbBnh9ttTDDwQlqQqm1JdPkNcUbZGH/WKwT8QQ6y7JjQu7Tl+q31SrmeZwye6k2tu/
-         uUIYx36W3bkswohjU/P2e2ogO7MeSj32bed920MG5jdrM2CSdxh6MEygptGbKCvpkiaL
-         DZ02VOLX22h3ZN4iMVJIuQIh2D09nqJ+WdA5yWDQV5d3c8FmHBhXVKcAxPIcp5rvLWRW
-         hrwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730304073; x=1730908873;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8OJQ24DPV4G1yn5B7zxNeki92edP5+Wx7P/c1L2gO6M=;
-        b=l8tG0QZpLcrYbHS+AdlSs1vGV6D82uU+wJbjgi8aNmUC1dRtQh/Y2hvNHhB8dH5rsZ
-         ecNGQpM4yJq5GnuLKbdwXjhio+ys7i4xG7OspegsoWTNKlhOJ/kLrjHoZKL1vpsaoXpa
-         X1WoDypk/vEEQ3QKD211qk26tx7IdL/BgJSaObVah0F8LpPZOL0qnZOyEjwNVgR8f+aD
-         JNhM1DdBVhyFylNJqFJCkNpkkX4uQYepoMEEvUFkAPRoIl5dWIYg9Bv62UkQUrWcN0Fv
-         gXepXGlnX8om7RcIQH9klAk+v+Q83VgTbWjMCdnIB6f8QFzLZ6EC9E7UKnX3BEaWKU+f
-         ychg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDohRVJnCIH1MRzr/vMmKfgO4UZzAxe36IZgDzOSUXLNBm6AEymyaKRy8ejXY9uVdhhhQL5/3owA/QyKs=@vger.kernel.org, AJvYcCW5+646OKePAtHTMHIxE9ebZb6RQKTQci2ZrBnbh1qY7K4SqFd4/v/8bAl+cPV8d2WFQpzcbmjz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU5rCqW0ojRsKxPpWRcWbtRcNVkW7/Z23XCZJUycPkWuYs6M+J
-	XoHh1tK+ZlenVBtLLKXtXHefDaKDr6plPOOpCYz9B/VdRhgxfT6x
-X-Google-Smtp-Source: AGHT+IHxh2nE6c3Hr7lmx5tE2SKF5626IT4Q+yXSUh0H84G7Mh5lChvyrTVjCjQ+//VF7d9p7QA2/Q==
-X-Received: by 2002:a05:600c:511c:b0:42c:a580:71cf with SMTP id 5b1f17b1804b1-4319ad24423mr137434895e9.30.1730304072471;
-        Wed, 30 Oct 2024 09:01:12 -0700 (PDT)
-Received: from [127.0.0.1] (217-175-223-26.dyn-pool.spidernet.net. [217.175.223.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd74f132sm26045035e9.0.2024.10.30.09.01.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 09:01:11 -0700 (PDT)
-Date: Wed, 30 Oct 2024 18:01:07 +0200
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, chandrashekar.devegowda@intel.com,
- chiranjeevi.rapolu@linux.intel.com, haijun.liu@mediatek.com,
- m.chetan.kumar@linux.intel.com, ricardo.martinez@linux.intel.com,
- loic.poulain@linaro.org, johannes@sipsolutions.net, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-CC: ruanjinjie@huawei.com
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_net_v2=5D_net=3A_wwan=3A_t7xx=3A_Fix_off?=
- =?US-ASCII?Q?-by-one_error_in_t7xx=5Fdpmaif=5Frx=5Fbuf=5Falloc=28=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241029125600.3036659-1-ruanjinjie@huawei.com>
-References: <20241029125600.3036659-1-ruanjinjie@huawei.com>
-Message-ID: <F9E73DD2-B898-440D-B35D-B6B10B8BC0E9@gmail.com>
+	s=arc-20240116; t=1730304138; c=relaxed/simple;
+	bh=ObLb9xVnLmTxDk4I8X448bZDNJQZC+3IyOwYYRurdMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mjOORt8i+AemyY9gq88IeL3TCuR50PDjEqbxNKrQ8lTAkI75+oTL1Xrk9FrTPOxwEB3im9ZzVXrYkBZn5FfaHTmneMWRdPDmAuW4VG5qEgidpz8gENORcGDNz10PGPSQuhO9qHvKO5eLziMPATOwDA9n4faVnQfJS1CkffBDw+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grT93DND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97A9C4CECE;
+	Wed, 30 Oct 2024 16:02:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730304137;
+	bh=ObLb9xVnLmTxDk4I8X448bZDNJQZC+3IyOwYYRurdMU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=grT93DNDl8Vs7yKEC9ZqUrx2yZJcqpQBBwBSb7heHfpPYw7bgkatgF+Bdrd9d/hlY
+	 jM7KePkP6IQsEaoduUgU5HfNDEgh5/OQu+axL9ettEb0HP34p84vHrhXuokKi8le03
+	 WrNAVZ7SqOE9+6Q/Ywxky9l5Z1pvfloEtSQBGHRSR5wIrtLw3bb3zRZvhTceqfvcMM
+	 TgAsjLosVcVHqnjoLG4pl3t+cuqlSP4rT3FRVuMjeH/YPbC2HRKfoof1ER5f7rmOCK
+	 ArCDLJbSlVs8Uc0Va+VmrPAfSg+Y0FI4p/PFsBVZJD3HMX/c+9WHpA3qV/0FLYhySN
+	 5lSTFemMJHicA==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	oleg@redhat.com
+Cc: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mingo@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	paulmck@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH perf/core] uprobes: fix WARN() inside hprobe_consume()
+Date: Wed, 30 Oct 2024 09:02:08 -0700
+Message-ID: <20241030160208.2115179-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On October 29, 2024 2:56:00 PM, Jinjie Ruan <ruanjinjie@huawei=2Ecom> wrote=
-:
->The error path in t7xx_dpmaif_rx_buf_alloc(), free and unmap the already
->allocated and mapped skb in a loop, but the loop condition terminates whe=
-n
->the index reaches zero, which fails to free the first allocated skb at
->index zero=2E
->
->Check for >=3D 0 so that skb at index 0 is freed as well=2E
->
->Fixes: d642b012df70 ("net: wwan: t7xx: Add data path interface")
->Suggested-by: Sergey Ryazanov <ryazanov=2Es=2Ea@gmail=2Ecom>
->Signed-off-by: Jinjie Ruan <ruanjinjie@huawei=2Ecom>
+Use proper `*hstate` to print unexpected hprobe state. And drop unused
+local `state` variable.
 
-Jakub, when applying, could you drop that suggested-by tag, please=2E My c=
-ontribution was only a small suggestion to avoid an endless loop=2E In all =
-other meanings this patch is original work made by Jinjie, and all creds sh=
-ould go to him=2E
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202410302020.1jHBLfss-lkp@intel.com/
+Fixes: 72a27524a493 ("uprobes: SRCU-protect uretprobe lifetime (with timeout)")
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ kernel/events/uprobes.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Besides that tag:
-
-Acked-by: Sergey Ryazanov <ryazanov=2Es=2Ea@gmail=2Ecom>
-
->---
->v2:
->- Update the commit title=2E
->- Declare i as signed to avoid the endless loop=2E
->---
-> drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
->
->diff --git a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec b/drivers/net/w=
-wan/t7xx/t7xx_hif_dpmaif_rx=2Ec
->index 210d84c67ef9=2E=2E45e7833965b1 100644
->--- a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
->+++ b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
->@@ -166,8 +166,8 @@ int t7xx_dpmaif_rx_buf_alloc(struct dpmaif_ctrl *dpma=
-if_ctrl,
-> 			     const unsigned int q_num, const unsigned int buf_cnt,
-> 			     const bool initial)
-> {
->-	unsigned int i, bat_cnt, bat_max_cnt, bat_start_idx;
->-	int ret;
->+	unsigned int bat_cnt, bat_max_cnt, bat_start_idx;
->+	int ret, i;
->=20
-> 	if (!buf_cnt || buf_cnt > bat_req->bat_size_cnt)
-> 		return -EINVAL;
->@@ -226,7 +226,7 @@ int t7xx_dpmaif_rx_buf_alloc(struct dpmaif_ctrl *dpma=
-if_ctrl,
-> 	return 0;
->=20
-> err_unmap_skbs:
->-	while (--i > 0)
->+	while (--i >=3D 0)
-> 		t7xx_unmap_bat_skb(dpmaif_ctrl->dev, bat_req->bat_skb, i);
->=20
-> 	return ret;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 998a9726b80f..f2beb4b3f5c5 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -704,8 +704,6 @@ static void hprobe_init_stable(struct hprobe *hprobe, struct uprobe *uprobe)
+  */
+ static inline struct uprobe *hprobe_consume(struct hprobe *hprobe, enum hprobe_state *hstate)
+ {
+-	enum hprobe_state state;
+-
+ 	*hstate = xchg(&hprobe->state, HPROBE_CONSUMED);
+ 	switch (*hstate) {
+ 	case HPROBE_LEASED:
+@@ -715,7 +713,7 @@ static inline struct uprobe *hprobe_consume(struct hprobe *hprobe, enum hprobe_s
+ 	case HPROBE_CONSUMED:	/* uprobe was finalized already, do nothing */
+ 		return NULL;
+ 	default:
+-		WARN(1, "hprobe invalid state %d", state);
++		WARN(1, "hprobe invalid state %d", *hstate);
+ 		return NULL;
+ 	}
+ }
+-- 
+2.43.5
 
 
