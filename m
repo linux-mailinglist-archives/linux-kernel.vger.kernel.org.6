@@ -1,156 +1,178 @@
-Return-Path: <linux-kernel+bounces-388069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A249B5A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:46:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276DF9B5A1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412C3B22BBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:46:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D341F2333E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFE1196C67;
-	Wed, 30 Oct 2024 02:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6701946A8;
+	Wed, 30 Oct 2024 02:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VvjPLA2c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B46194AF4
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JfbT+1xi"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4D64437;
+	Wed, 30 Oct 2024 02:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730256347; cv=none; b=MgBMKqfASJDxb7bLVkXD9oNw3na58blobEjHElFpfs5Kqsq/bgvrig5hECQoCEgk8CYXCUukYsrVdUz9Njgm4UQpglbZifbMVwYP1tBMCXIQ7q12o17Sic7K2AK2TV+ESZ/o3T97cgtYUJIEmB06LXzCKeG4+V4XM7H+H7yMf6U=
+	t=1730256667; cv=none; b=UDnk2oeCu8igh7lkxy5GWHMDmAf+bficDMOifZW3ZGyis4tTdBobJfXrpweOKZ2yjdlmDru0WcmEopsdgDzSE6bqMBJ5QM1z3aAvVkxnHOGtW0mFpZwQn/+6zejwnItgolOLexo06M9VwGC0PJR7mn4jMggddICcRUIn+sMnxxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730256347; c=relaxed/simple;
-	bh=lC0BEgzdIKoa4TPyy81izcJDiI7PR2f8LE6mnKnb3jI=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=tajpgDtXDATRhrqCQtfiBJkLVpbtRtias6X78V2hwCGLg1RuEuof/6FNuWaTQc44zfMrMtJ75lQrD086iWW0uf+hGoZUzgpy63nuQFlMTkdlQofCVgSInqjpmCLxxOcS3rz1czhj2YfbuNmKrUuJdSfzEmcpBfdzu01m6FDzrgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VvjPLA2c; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730256345; x=1761792345;
-  h=date:from:to:cc:subject:message-id;
-  bh=lC0BEgzdIKoa4TPyy81izcJDiI7PR2f8LE6mnKnb3jI=;
-  b=VvjPLA2c+jG37iZq2N/ITdAh8O7qg9HI3ulVwpN54DLzTcponXzLI8rk
-   iC9gJWSMLbJGpWWi+VeiB2PzTHOKCcyz5BsXRKqTFGoPYv/tLpE307zm6
-   x8MmcQEieKM2JMI3lEtqrsSPW0BULRR+eVirGTu/KS9nDgiOUCwk0i2sI
-   P9SBUta/s4RVjqKg9GvMa1RTnIXONNYeaT1jfSGgF37TOf3m5dSrzn5XB
-   WJkr7m4RbQsTEa/U7oNkyi+lk4iHsngLxvMoQr32iSXAy61YBnKsicv8u
-   i4PqPllEEF9ZL3YUIi5YUU0pSdZrYbB9xvfBBABlx9/4oMLvK0PeGYuiJ
-   Q==;
-X-CSE-ConnectionGUID: UnyfUEILSeGxaQ5wWxEZPg==
-X-CSE-MsgGUID: PxLxY95sTB2T/JYrHqGhKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29703192"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29703192"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 19:45:45 -0700
-X-CSE-ConnectionGUID: +ZG65z1NTRinoVuNQNekPw==
-X-CSE-MsgGUID: fcEKB0mNS1O6N95jMZjsjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="82102372"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 29 Oct 2024 19:45:44 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5yiL-000eQs-30;
-	Wed, 30 Oct 2024 02:45:41 +0000
-Date: Wed, 30 Oct 2024 10:45:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 8b766b117ad0ef7311f0dec6f9b8c39e86393196
-Message-ID: <202410301019.e0xCUoe0-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1730256667; c=relaxed/simple;
+	bh=9hPKqNQjyusRoKaJAkDgVlScXaFG/rUGQKYmVM9MmLM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aED5bSRYEHMAJeGmL2CjtTZNwKKnPDmijHlCLxePFXguh/QsSCQujm+MW4GvvISdkK1+vAn1EC8lEBJenioD7iamswKw3adHFhxFg+MPEG3YHAxIpooYe/VU8bo3tAVAcB9HlqxaJNPoCTKblMYg3LCkuvRH9Vg4MMeDU2t3Uxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JfbT+1xi; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=0CaPG
+	GT5Nb49Lgi2Fhlg+7izeIcy26jCF0+UBWrjnmk=; b=JfbT+1xijGs6miiyCn0nz
+	6pXVX+GiU72HFboIOkjktudVBO1jrqWGf+3vJ7kP4eP91xszXGpbQXEMr8JCFq4V
+	9Htq+/+7foc1iiyK63tN09Xp8oSgatRjKy7onYWXGlLiEZKhqV7ESiVCqG/g3LAk
+	ZLf8lM9ns9zFFqyh/FA3L8=
+Received: from localhost.localdomain (unknown [111.48.69.246])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3_wIMnyFnWR+xEA--.876S2;
+	Wed, 30 Oct 2024 10:50:53 +0800 (CST)
+From: zhouyuhang <zhouyuhang1010@163.com>
+To: brauner@kernel.org,
+	shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	zhouyuhang <zhouyuhang@kylinos.cn>
+Subject: [PATCH v3] selftests: clone3: Use the capget and capset syscall directly
+Date: Wed, 30 Oct 2024 10:50:45 +0800
+Message-Id: <20241030025045.1156941-1-zhouyuhang1010@163.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_wIMnyFnWR+xEA--.876S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4kWr4kJrWkJryxuF48JFb_yoW5KF18pa
+	ykJrsxKrs5Wr1xGFWFywsruFnYkF95Xw47Jr1UAw1jkr1akr4xtF4FkFyqq3Wj9ayDu3yY
+	qa18KayxZFyDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07juFALUUUUU=
+X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiYAKIJmchlfLjjgAAsA
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 8b766b117ad0ef7311f0dec6f9b8c39e86393196  Merge branch into tip/master: 'x86/sev'
+From: zhouyuhang <zhouyuhang@kylinos.cn>
 
-elapsed time: 911m
+The libcap commit aca076443591 ("Make cap_t operations thread safe.")
+added a __u8 mutex at the beginning of the struct _cap_struct, it changes
+the offset of the members in the structure that breaks the assumption
+made in the "struct libcap" definition in clone3_cap_checkpoint_restore.c.
+This will cause the test case to fail with the following output:
 
-configs tested: 64
-configs skipped: 1
+ #  RUN           global.clone3_cap_checkpoint_restore ...
+ # clone3() syscall supported
+ # clone3_cap_checkpoint_restore.c:151:clone3_cap_checkpoint_restore:Child has PID 130508
+ cap_set_proc: Operation not permitted
+ # clone3_cap_checkpoint_restore.c:160:clone3_cap_checkpoint_restore:Expected set_capability() (-1) == 0 (0)
+ # clone3_cap_checkpoint_restore.c:161:clone3_cap_checkpoint_restore:Could not set CAP_CHECKPOINT_RESTORE
+ # clone3_cap_checkpoint_restore: Test terminated by assertion
+ #          FAIL  global.clone3_cap_checkpoint_restore
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Changing to using capget and capset syscall directly here can fix this error,
+just like what the commit 663af70aabb7 ("bpf: selftests: Add helpers to directly
+use the capget and capset syscall") does.
 
-tested configs:
-alpha        allnoconfig    gcc-14.1.0
-alpha       allyesconfig    gcc-13.3.0
-arc         allmodconfig    clang-20
-arc         allmodconfig    gcc-13.2.0
-arc          allnoconfig    gcc-14.1.0
-arc         allyesconfig    clang-20
-arc         allyesconfig    gcc-13.2.0
-arm         allmodconfig    clang-20
-arm         allmodconfig    gcc-14.1.0
-arm          allnoconfig    gcc-14.1.0
-arm         allyesconfig    clang-20
-arm         allyesconfig    gcc-14.1.0
-arm64       allmodconfig    clang-20
-arm64        allnoconfig    gcc-14.1.0
-csky         allnoconfig    gcc-14.1.0
-hexagon     allmodconfig    clang-20
-hexagon      allnoconfig    gcc-14.1.0
-hexagon     allyesconfig    clang-20
-i386        allmodconfig    clang-19
-i386        allmodconfig    gcc-12
-i386         allnoconfig    clang-19
-i386         allnoconfig    gcc-12
-i386        allyesconfig    clang-19
-i386        allyesconfig    gcc-12
-i386           defconfig    clang-19
-loongarch   allmodconfig    gcc-14.1.0
-loongarch    allnoconfig    gcc-14.1.0
-m68k        allmodconfig    gcc-14.1.0
-m68k         allnoconfig    gcc-14.1.0
-m68k        allyesconfig    gcc-14.1.0
-microblaze  allmodconfig    gcc-14.1.0
-microblaze   allnoconfig    gcc-14.1.0
-microblaze  allyesconfig    gcc-14.1.0
-mips         allnoconfig    gcc-14.1.0
-nios2        allnoconfig    gcc-14.1.0
-openrisc     allnoconfig    clang-20
-openrisc    allyesconfig    gcc-14.1.0
-parisc      allmodconfig    gcc-14.1.0
-parisc       allnoconfig    clang-20
-parisc      allyesconfig    gcc-14.1.0
-powerpc     allmodconfig    gcc-14.1.0
-powerpc      allnoconfig    clang-20
-powerpc     allyesconfig    clang-20
-riscv       allmodconfig    clang-20
-riscv        allnoconfig    clang-20
-riscv       allyesconfig    clang-20
-s390        allmodconfig    clang-20
-s390        allmodconfig    gcc-14.1.0
-s390         allnoconfig    clang-20
-s390        allyesconfig    gcc-14.1.0
-sh          allmodconfig    gcc-14.1.0
-sh           allnoconfig    gcc-14.1.0
-sh          allyesconfig    gcc-14.1.0
-sparc       allmodconfig    gcc-14.1.0
-um          allmodconfig    clang-20
-um           allnoconfig    clang-20
-um          allyesconfig    gcc-12
-x86_64       allnoconfig    clang-19
-x86_64      allyesconfig    clang-19
-x86_64         defconfig    clang-19
-x86_64         defconfig    gcc-11
-x86_64             kexec    clang-19
-x86_64          rhel-8.3    gcc-12
-xtensa       allnoconfig    gcc-14.1.0
+Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+---
+ .../clone3/clone3_cap_checkpoint_restore.c    | 58 +++++++++----------
+ 1 file changed, 27 insertions(+), 31 deletions(-)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+index 3c196fa86c99..8b61702bf721 100644
+--- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
++++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+@@ -27,6 +27,13 @@
+ #include "../kselftest_harness.h"
+ #include "clone3_selftests.h"
+ 
++/*
++ * Prevent not being defined in the header file
++ */
++#ifndef CAP_CHECKPOINT_RESTORE
++#define CAP_CHECKPOINT_RESTORE 40
++#endif
++
+ static void child_exit(int ret)
+ {
+ 	fflush(stdout);
+@@ -87,47 +94,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
+ 	return ret;
+ }
+ 
+-struct libcap {
+-	struct __user_cap_header_struct hdr;
+-	struct __user_cap_data_struct data[2];
+-};
+-
+ static int set_capability(void)
+ {
+-	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+-	struct libcap *cap;
+-	int ret = -1;
+-	cap_t caps;
+-
+-	caps = cap_get_proc();
+-	if (!caps) {
+-		perror("cap_get_proc");
++	struct __user_cap_data_struct data[2];
++	struct __user_cap_header_struct hdr = {
++		.version = _LINUX_CAPABILITY_VERSION_3,
++	};
++	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
++	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
++	int ret;
++
++	ret = capget(&hdr, data);
++	if (ret) {
++		perror("capget");
+ 		return -1;
+ 	}
+ 
+ 	/* Drop all capabilities */
+-	if (cap_clear(caps)) {
+-		perror("cap_clear");
+-		goto out;
+-	}
+-
+-	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+-	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
++	memset(&data, 0, sizeof(data));
+ 
+-	cap = (struct libcap *) caps;
++	data[0].effective |= cap0;
++	data[0].permitted |= cap0;
+ 
+-	/* 40 -> CAP_CHECKPOINT_RESTORE */
+-	cap->data[1].effective |= 1 << (40 - 32);
+-	cap->data[1].permitted |= 1 << (40 - 32);
++	data[1].effective |= cap1;
++	data[1].permitted |= cap1;
+ 
+-	if (cap_set_proc(caps)) {
+-		perror("cap_set_proc");
+-		goto out;
++	ret = capset(&hdr, data);
++	if (ret) {
++		perror("capset");
++		return -1;
+ 	}
+-	ret = 0;
+-out:
+-	if (cap_free(caps))
+-		perror("cap_free");
+ 	return ret;
+ }
+ 
+-- 
+2.27.0
+
 
