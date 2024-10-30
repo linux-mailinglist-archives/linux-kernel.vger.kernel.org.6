@@ -1,103 +1,94 @@
-Return-Path: <linux-kernel+bounces-388772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E2F9B642F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:34:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C780C9B643B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:35:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872A7280F13
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D0D628160E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021CB1EB9F0;
-	Wed, 30 Oct 2024 13:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C911EABCB;
+	Wed, 30 Oct 2024 13:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="BF4AVrex"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ooR9oXz4"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76D53D0A4;
-	Wed, 30 Oct 2024 13:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0A3185B62;
+	Wed, 30 Oct 2024 13:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295229; cv=none; b=eAoibBvZv8RRgGV865kiHBx2qn9qUmltTXHGZ1t2g7M0iV0kA96d814WL851C2Epjj7b2TdHKRCAuJQv/sEohicA9lZ88ax7kSM0GqxOz6cCLz+1hMTxFRlF3vAoT7/CwlEIpiBiLoGoGTrcNabraZ3pTFir0+4Dd+zPZRkHPU0=
+	t=1730295337; cv=none; b=ZdGC9hVIS80E0vNiKstt9yBKihxq14mJM61VtKPlj9+FQxxUniAiTqfsPskZAvVDt+Sc8gJjlwZuQXcR9kVvwjiOmuKPaWF9qXgmkXp/uCdfGWcPvCJfe9Nu1s3T6AOL4L7zz1BFLCueD1cJGzJexiT1moVgIwSzkF+F6ueSHak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295229; c=relaxed/simple;
-	bh=0hzVmSoIPIfT1E3L18ipoalsx/laSXZLH2Jym00CjNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dTx5A0/S88qXYo58jlrVVSXYMI7yWsG9xPHMjn46FAyLaGP7tzqqbluenLviu5yKKyW/k/Djfhswug3PvZBRVmoxtHyh1yoTD18gSmLXvisDhjfRehs+OXxp0mdlY+mM0tAd6CjKBz7YOeycB/58r30tgWyXcmLAFVj4bzvm0kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=BF4AVrex; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730295220; x=1730900020; i=metux@gmx.de;
-	bh=0hzVmSoIPIfT1E3L18ipoalsx/laSXZLH2Jym00CjNM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=BF4AVrexW929lMpaB6D/0mvscPLRsE6MkcoyQKK0k52bJZ6g/N/4a/ynMrwrTpqG
-	 mIYQyfFSkXZ2P9YhmTQDbExRoyP290LiQqZ4nd1SjVK1Ko9kIzJYoptbUtAh9ylCD
-	 aqQSCdEn83/xdDJdc+BFrinVnoTFmUbcdtRb66eWKjIl0t/J+okXhIT3+8uPnLTDq
-	 DsMs9vba3iA0nQfbSd9y7yytsUE26yVNkTrrn/gSBII5GORpvO0RlzLmF6voxfd6X
-	 xS74JfxWaWLjjrSXTt3s0cBbsg7UC7fr0hvlFqs59lxOpuLHDWT45WonTBL6ngVuD
-	 RG+8GVdBhfjrLQvf1g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.178] ([95.114.207.188]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mlw3N-1tWMtT1gOp-00qbUt; Wed, 30
- Oct 2024 14:33:40 +0100
-Message-ID: <380d9a2d-957e-43fa-a59a-fe2a0e716ec5@gmx.de>
-Date: Wed, 30 Oct 2024 14:34:22 +0100
+	s=arc-20240116; t=1730295337; c=relaxed/simple;
+	bh=q0+2bsG1gRSPhvpYprB+IAG8xeuM/DVRZ6H3+S4xmGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXxdp05g+xhPRyvYfESpFvf0Xo0hOK34e+3Alt+IbGMxnoz+8OddeHFKj/oYZ1xziJJ8j8pM3s9V7BcLFX8LX8P/OTWMaubAwW63slWbD5syySpYhhJ7otio9nlukiWFKM9A/ZeyJ6EL8Tznd3K0Q7+eSpp4exKqETektIgNel0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ooR9oXz4; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Q/3yOnbAAYgurf+C+eCBdRRuc1aeP4zqVtwXMl6zbys=; b=ooR9oXz4Ia58Wc5ZleJG1mkXW8
+	hSOeOcdYurwLwLvenD/zFFbS3NugdL74o7f1gWJL73KUdkbvj3/otUa4u+onWqOlaIXM3u6EzhGQ2
+	LcMJWbdzUetNevvOLuRujQKCRwmCPDOR9xhU5wcYXWBg4/4QftMbpuelJsa1Pfmww7es=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t68r7-00BgzV-E7; Wed, 30 Oct 2024 14:35:25 +0100
+Date: Wed, 30 Oct 2024 14:35:25 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+Cc: "Gupta, Suraj" <Suraj.Gupta2@amd.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH net] dt-bindings: net: xlnx,axi-ethernet: Correct
+ phy-mode property value
+Message-ID: <b078780a-4afd-43af-afcf-309707614b0a@lunn.ch>
+References: <20241028091214.2078726-1-suraj.gupta2@amd.com>
+ <MN0PR12MB59539234124DEF1B37FAB220B7542@MN0PR12MB5953.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Remove some entries due to various
- compliance requirements.
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- geert@linux-m68k.org
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-References: <7ee74c1b5b589619a13c6318c9fbd0d6ac7c334a.camel@HansenPartnership.com>
-Content-Language: tl
-From: metux <metux@gmx.de>
-In-Reply-To: <7ee74c1b5b589619a13c6318c9fbd0d6ac7c334a.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9p0u9Hqk4fTogFMrQLZCmUdTnLNdIf/I0gHAIaimBe+wNqWZ7iZ
- ZDSuG9ICFR33/+UKoXNjVt8P9QIyDgah+wNBbOwffmUQ892anKkjs1IqOVUp2Wnp2ouB8bq
- 40eMz0uM0mhrJcIh1K+md2NcwpD8gGYw3ls6j7q40XJtNSyxVvNWG+DBeWT1Us8IGnKv+5/
- TWUT7RX5LsoT/2e+0RjcQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:l8hZDc0jzcE=;99jN54kvdg6DHSR4y/gDYJyDD8S
- F/tvHSNW7q+qgFkZfPXbrGyRUEmubX9y9pIgO6QnMyHiKjCIBOxdTniz4bqQx6nDihuw+73E5
- Tvllv4J6JqFqO6eLuyaHJ7vuYOGopsutphQdZstS+aXgkpz01r1jm0uUB2NOuNUm9IzGnINlI
- d3QOptFChmTNydFXWTEtVPU5tZ6v2Zc4ix+xcx1RzyAOuNsajkhy0Bd7PROv3lW12Js3D9WTg
- 0+6HX4V7wVXVeFYfBKAc5k7gapVG/ldYCXm5jnB6jJYePunmKkFssMhFZ6uIEs5VxFCBQB8fV
- lPoAaR7vjhd+WcKW2o1pp10gDhrZkKaqRlIjcRxD9DE3qz/3N6BepIeJACQAAMKV+gO/WygkO
- m0gXevynpTJi8JY/KD0UZRALutdFC/qId/lxw3ODQ5Gpx9D8vkWmpGz0K/6xqzqQi/ImFcqWE
- ev7DX+xtGtjAbMwtXz0aVRGiqCMLg7HFR+TYFF8dWGWffChki2llBHJ+QxxzCGuG3WaoM0mcG
- RNHIf1TYWPz0yZI1ZXjtvCfFjS2IKcXUsGJCUMhj3z2BttDtSAZ9271lvfC+oLA3EcH4YAlLy
- /QWQv55bB/NpPsq/9SbAi7OzOpZNuvRV8pMJ3ICJY8LgZ/Sf/TE4I9gk/j/0S3VIx7loa+5D2
- Sy8ssWzOu78N3dhEYat6xDZhRMom73l7liSNmFtR/3jUe1m5ckPtBEv/NWTIwFk0KYIgcaIf+
- csYoGFNTLLTd/sT779Ic7jiIC0JcoF7nTHJi/kubumdptAPyecDo30n4JDXkU3Pjy+l0RpbHe
- C6A9xzNuI4UpDrdh3IgRBtGQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MN0PR12MB59539234124DEF1B37FAB220B7542@MN0PR12MB5953.namprd12.prod.outlook.com>
 
-On 24.10.24 17:39, James Bottomley wrote:
+On Wed, Oct 30, 2024 at 06:12:37AM +0000, Pandey, Radhey Shyam wrote:
+> > -----Original Message-----
+> > From: Suraj Gupta <suraj.gupta2@amd.com>
+> > Sent: Monday, October 28, 2024 2:42 PM
+> > To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>;
+> > andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
+> > kuba@kernel.org; pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Cc: git (AMD-Xilinx) <git@amd.com>; Katakam, Harini <harini.katakam@amd.com>
+> > Subject: [PATCH net] dt-bindings: net: xlnx,axi-ethernet: Correct phy-mode property
+> > value
+> > 
+> > Correct phy-mode property value to 1000base-x.
 
-> The documentation Greg is looking for (which a group of Lawyers at the
-> LF will verify) is that someone in the removed list doesn't actually
-> work for an OFAC SDN sanctioned entity.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Aha, guilty until proven otherwise ?
-
-Is that how things are handled in the "land of the free" ?
-
-
---mtx
+    Andrew
 
