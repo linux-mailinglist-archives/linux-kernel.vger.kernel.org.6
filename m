@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-388460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB249B5FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:21:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A929B5FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:22:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08471F2250E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:21:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 118C8B21B7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2E91E3DF3;
-	Wed, 30 Oct 2024 10:21:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E731E32BB;
-	Wed, 30 Oct 2024 10:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27861E32BF;
+	Wed, 30 Oct 2024 10:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbRIkqMH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECA11990CD;
+	Wed, 30 Oct 2024 10:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730283674; cv=none; b=dOy3Zv9AgIIdlVhRl4cfL505WUTTJBMoI6tYRPSogr6/fxo8hYOhIbIkwknImzpgUSw7L8Vw1Au5ct+lI4QQpTmIq3WnF7iajAs8x4ELRpLLxVLD2onWkpahbKfYPLI7GXP7kJ5jpIZa1WrbTFGjP4kwy+QPqBbz2mj6Dez3MXQ=
+	t=1730283754; cv=none; b=I6oRRFDCStR4zGbgFIK2vhDmROwUJX/6v3xbFmmEFaVPW+MGjFD/5jj++3LmJ+N2pUsKWVpl7dlsRYYFBy5ubqnjiVtwEhqOvz6icz/w3kfFBHKNgbopvay+sAw6UOpgQq3OAYpQFYwup8boY6W1KKDejRFZLLfvcOd33eE0GMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730283674; c=relaxed/simple;
-	bh=bFyfyPa5ynN5tSJoXKygJHVf9Y0VY47AI3w7qL6i3qI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BsYRcn8O3crcX1qQE8V3GRUSqgMfELvPHJtMt1Q8cAOOZsBriwZvbOtN71neac/byRa8yOGJI57gwDrTvbHQl+ncuR5gYBkkmHhe5xWsvXsr8/gLeS+UsvsUDMp60FTdFMpcMwUG8KJnQISpWjsX7YE83v6Thu91ocuEMOhVqAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DD0A113E;
-	Wed, 30 Oct 2024 03:21:40 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF2DA3F73B;
-	Wed, 30 Oct 2024 03:21:07 -0700 (PDT)
-Message-ID: <570e25e1-03c2-4ae1-8e4c-447a453a9d34@arm.com>
-Date: Wed, 30 Oct 2024 11:21:06 +0100
+	s=arc-20240116; t=1730283754; c=relaxed/simple;
+	bh=4fT801tnpCU5ccrvSwjjjBp81I2/ME0Fo9DErJwwTfg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KuHtjuhtM9cwvwO+VdLDSn7T+axBWy3kVI3j2zD6NNjN+3k6iSFa/d9rr1+B734Xv4g7PIMKGPPOG8OPfZeIMvnUzfVuTUXuZkxgGou03fm6juo2tvgimi7NyUEWu4p3ai25qnWwWXRU6tdSBjjv7hYGkJ28bCmgmuS7RjO2G8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbRIkqMH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so57969275e9.0;
+        Wed, 30 Oct 2024 03:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730283751; x=1730888551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l/cqopELy2+eorysxMacWsOMH8qMdYy0akIQnwzx3HY=;
+        b=VbRIkqMHQuV9FJOkojzs726bcNPqdfIj1JM2197SLEFP1OCyVQ2sl+p/dsd/3/Prdy
+         KZxXN0s4rmwxuytjZDnRN6WeoNmx8H+vGEN9BSpwxUoSkahKzzpsIs4sASNWGa8eR0QY
+         tEpk83HA7MuUb9fiHxbogdfg/sqsTleb6pyxkeOxOnYQKzoAoTN1tzghc3tEiP9Txn5V
+         WZdQ4eBmPoEy1N9T2BHmiO5evS+MLbGghZGqxQkMnxDdIFoPdIPh01yoGQaaw0OQpIhd
+         GeEW8luZsociph/8JjcF6VyKAYncmps0CknwvGIm7d0cdmqJjMrjKzsfjWRes61DuT3j
+         khUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730283751; x=1730888551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l/cqopELy2+eorysxMacWsOMH8qMdYy0akIQnwzx3HY=;
+        b=AFueLEJgk0GzP6lMNjXGBN4taiEZyvk+fmYXf8ncBb78GaiCTTPrfjSeEHJOumB7yk
+         pNos6xGg8oKn+J+/E6Z1KD6IlBcmclvzKHwvms0EH/Wbx3+tkuuCcEih9DPli9dE1uOV
+         dIazjClZjmGOUzpvNgsPFxWubPg/1tHQZQ5CoGx87NMwqRq4ZD6MuLPyCoW7MQiIHGiK
+         LCP4glqlm3UJFDEnPkRvuX8szUu2XDUAJ4nKHcLA0pmRtnvNVOrR+YSxsYSn42TR6bPB
+         CVdwO86J+R0+sQP2Cy80wv8Pjc3PwYEmRJKEvDYr4xBokIjG6poDGB2TkdrwXxcF3n6r
+         J1Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEBufrHREfgjoCXYvHueWkl/jak3d/Vshuoaw1GbXnKZAVIwqE1VCjv3tH5gabjgp5n15tKybFxZkXf6md@vger.kernel.org, AJvYcCUOdZgJRtV6FCef69Jn0HGXY2yIUiwhvs7ZahLxSLYHCTNG5tS8Jm5lhXmTyKvWxin7r61jm4yUPnpjcer44GBB@vger.kernel.org, AJvYcCUTHcxoCAQ0IMBzRnnQ092MxPB9zWYN3JMjZ/bdxs7RPVNiY6HKQUmFsWcp6K3thbtWtrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUK3bibvvxgYIjSCGDn3Ui0qiBI2NvFh/yGWQvyURoRqFVUVCi
+	sBZFdTzvYt9EplrqMxrHzHntEK+kruZABrCkps9NDO/vumvq5xBH
+X-Google-Smtp-Source: AGHT+IGfo43UJNvQPjITUSCIJAK9Ze0chz0K2mNutQBnGmnznl2CM1ZwI7KvASW32glKedi/p8XYJw==
+X-Received: by 2002:a05:600c:1992:b0:431:1d0a:38e2 with SMTP id 5b1f17b1804b1-4319acb1d82mr133855645e9.21.1730283750464;
+        Wed, 30 Oct 2024 03:22:30 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca818sm16810685e9.40.2024.10.30.03.22.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 03:22:30 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] KVM: s390: selftests: Fix spelling mistake "avaialable" -> "available"
+Date: Wed, 30 Oct 2024 10:22:29 +0000
+Message-Id: <20241030102229.3085137-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-To: Cristian Prundeanu <cpru@amazon.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: linux-tip-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- Bjoern Doebel <doebel@amazon.com>,
- Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
- Geoff Blake <blakgeof@amazon.com>, Ali Saidi <alisaidi@amazon.com>,
- Csaba Csoma <csabac@amazon.com>,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- K Prateek Nayak <kprateek.nayak@amd.com>
-References: <ZxuujhhrJcoYOdMJ@BLRRASHENOY1.amd.com>
- <20241029045749.37257-1-cpru@amazon.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20241029045749.37257-1-cpru@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Christian,
+There is a spelling mistake in a ksft_test_result_skip message. Fix it.
 
-On 29/10/2024 05:57, Cristian Prundeanu wrote:
-> Hi Gautham,
-> 
-> On 2024-10-25, 09:44, "Gautham R. Shenoy" <gautham.shenoy@amd.com <mailto:gautham.shenoy@amd.com>> wrote:
-> 
->> On Thu, Oct 24, 2024 at 07:12:49PM +1100, Benjamin Herrenschmidt wrote:
->>> On Sat, 2024-10-19 at 02:30 +0000, Prundeanu, Cristian wrote:
->>>>
->>>> The hammerdb test is a bit more complex than sysbench. It uses two
->>>> independent physical machines to perform a TPC-C derived test [1], aiming
->>>> to simulate a real-world database workload. The machines are allocated as
->>>> an AWS EC2 instance pair on the same cluster placement group [2], to avoid
->>>> measuring network bottlenecks instead of server performance. The SUT
->>>> instance runs mysql configured to use 2 worker threads per vCPU (32
->>>> total); the load generator instance runs hammerdb configured with 64
->>>> virtual users and 24 warehouses [3]. Each test consists of multiple
->>>> 20-minute rounds, run consecutively on multiple independent instance
->>>> pairs.
->>>
->>> Would it be possible to produce something that Prateek and Gautham
->>> (Hi Gautham btw !) can easily consume to reproduce ?
->>>
->>> Maybe a container image or a pair of container images hammering each
->>> other ? (the simpler the better).
->>
->> Yes, that would be useful. Please share your recipe. We will try and
->> reproduce it at our end. In our testing from a few months ago (some of
->> which was presented at OSPM 2024), most of the database related
->> regressions that we observed with EEVDF went away after running these
->> the server threads under SCHED_BATCH.
-> 
-> I am working on a repro package that is self contained and as simple to 
-> share as possible.
-> 
-> My testing with SCHED_BATCH is meanwhile concluded. It did reduce the 
-> regression to less than half - but only with WAKEUP_PREEMPTION enabled. 
-> When using NO_WAKEUP_PREEMPTION, there was no performance change compared 
-> to SCHED_OTHER.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Which tasks did you set SCHED_BATCH here? I'm assuming the mysql
-'connection' tasks on the SUT (1 task for each virtual user I guess).
-
-I did this and see that the regression goes away. I'm using a similar
-test setup (hammerdb - mysql on AWS EC2 instances).
-
-I'm not sure yet how reliable my results are. The big unknown is the
-host system when I use AWS EC2 instances for hammerdb (Load Gen) and
-mysql (server). In case I gather test results over multiple days, the
-host system might have changed?
-
-I also tried the (not-mainlined) RESPECT_SLICE (NO_RUN_TO_PARITY)
-features which shows similar results compared to SCHED_BATCH for those
-threads.
-
-IIRC, RESPECT_SLICE was also helping Gautham to get the performance back
-for his 'sysbench + mysql' workload:
-
-OSPM 24 link to his presentation:
-
-https://youtu.be/jrEN4pJiRWU?t=1115
-
-> (At the risk of stating the obvious, using SCHED_BATCH only to get back to 
-> the default CFS performance is still only a workaround, just as disabling 
-> PLACE_LAG+RUN_TO_PARITY is; these give us more room to investigate the 
-> root cause in EEVDF, but shouldn't be seen as viable alternate solutions.)
-> 
-> Do you have more detail on the database regressions you saw a few months 
-> ago? What was the magnitude, and which workloads did it manifest on?
-> 
-> -Cristian
-> 
+diff --git a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+index 222ba1cc3cac..34e0ceceaa74 100644
+--- a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
++++ b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
+ 			ksft_test_result_pass("%s\n", testlist[idx].subfunc_name);
+ 			free(array);
+ 		} else {
+-			ksft_test_result_skip("%s feature is not avaialable\n",
++			ksft_test_result_skip("%s feature is not available\n",
+ 					      testlist[idx].subfunc_name);
+ 		}
+ 	}
+-- 
+2.39.5
 
 
