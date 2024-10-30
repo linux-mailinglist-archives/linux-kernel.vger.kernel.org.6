@@ -1,148 +1,82 @@
-Return-Path: <linux-kernel+bounces-388799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101B09B6486
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:45:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52799B6489
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D241C21386
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:45:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F4A1F21964
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4975F1F4710;
-	Wed, 30 Oct 2024 13:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5771E1E8852;
+	Wed, 30 Oct 2024 13:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TBgdcrxG"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgW8R+hX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFA51EF09B
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22812EB02
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295887; cv=none; b=dopu7ubF4QsIMa/40qN/+JLBv/WyBv7+GJs69QQfenElIp4R7+WkDcfCYC9+Eqk2itbN4cNRmn3XZLLDF2AOiv9cHiSAhFe/tz7+tEJwijnUCBCp0bB/0YwL6/vrB4eWKm2vFxVtdhRSJ3/CSGIaXrUtJVqvsbaNNA9vAvtiQ7Y=
+	t=1730295932; cv=none; b=PUiQYpyek3QzNhmWl4a3JgxnPQ/oXH9sQe7L53F/sL/Rd711uzK4BN/aGHBBQcAP1nGFAYpAP3sEZVYHu8TZZxWdZonm1N5Zq3bqgtgvRVxz2zXF+6LqHcyym5xNnkN616K13qm2n4KfOeyLu/g5ZPPEo+3SmHtCJ30aBPh2Nvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295887; c=relaxed/simple;
-	bh=lyFd5Qy9b/diKvMLRhapoJ8Lj/FcZgWn8uTxreNufZw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MD10mD2OtWsQ0azCvt/Suc6eQgj/h5mjvs7LBrM2H9Ip5IHIKoOe6lXWLWg/N8slSS0qGN9ucmZn20TFWKNwgnyokBOL+x95D/pZumOmSMvK8KdHhDcnXYOC1d0NAbXq2pX1nAyJ4+pjp1e2GCj0xN87C7SA7tuOep6ka0TxQRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TBgdcrxG; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4314f38d274so84629045e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730295882; x=1730900682; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dSM1H9kQmZbNYjD2c9OgvWRYm0lRsPAWlbXFXQCdhuI=;
-        b=TBgdcrxGvba4ZuXK1SG4WM1YUxazRDtpDYxoXKL7TRfX6ZAiU4r7bMf8v8bqSEx0oT
-         VmyW9rXK6aNs/UgHRK8+V/FQapyXY1yuAF/Bqqznx9muE+DCuTkU3mu/fg46W7Dk1zT/
-         C0WF2WjKE+6zO9W5JRvpzZo+bYhwkIi47w1G9gIILHNnhQFwS9Ych5dDtd7v0REdTV8f
-         6jj57+WYIC3Mt3FLU5Mcwq76dy2ClU/6DBIRbLnV6lyRx9uc6C7OibbaT3eukzI29iEw
-         IEC+mMtjB+v5RqZ4tZWJZHEeGWLEUCGQ09GUxYq9+WaiFA3DbS4kdUJOuPWG/ZKywZJ/
-         2T9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730295882; x=1730900682;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dSM1H9kQmZbNYjD2c9OgvWRYm0lRsPAWlbXFXQCdhuI=;
-        b=SUg41lIG8LhCiIigoGIgSLaaHfGcWU9sozaM0L49Y2fiQ80P/l+jdQweb9Dn8MEMf0
-         NGiTkadHUxN01/ULkHDVMqTMBoAIneSgrfVR1mjLLrxDIqPBDF0TwAtAOK9MluZSr3S6
-         squXd59AIBzw5aEjEr3cELMxL44TIVBYSrsbMFXSLygmeD8VA0jKYrXyvjZU6caYSs5S
-         TVDgHIbNZj8x9kKImMFptGFMSWUIu9BdS7uBMuGNE6BfO+8ORTN/omlphKGtjJkb1g9Q
-         uq4Ayud8OOTCb1C1OQzjUR+sobosfzQ7GGQPScwTV8pzDrG/e+Z4qMDTwaqyAKN6lnGY
-         vy1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWcTwr0AO6Ixtg1C+AxNDZ8X1XLvUy9xjtnM5oD6O7w8PSu21Df0H6nkaEwPa/7UWjzO74quKgv1wbQLG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW0clU82csK4uaK3HEGPWyCOIVYcJc7FPt9EADUH+1RXxo6/xO
-	8c23K83B78FSTPAW3AdEiQgJyHPRI22e3CvPuVqchRWsCKllOBxocdZc4lK+5Os=
-X-Google-Smtp-Source: AGHT+IE2n8u+e+ZREW1BpdcgVl/9aw+yhcg+q8JpfH04yUN5XBE8lhFyGFOGAUTC9j2X67KQA3sBlg==
-X-Received: by 2002:a05:600c:4f4a:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-4319ac6f874mr169681245e9.5.1730295882572;
-        Wed, 30 Oct 2024 06:44:42 -0700 (PDT)
-Received: from [192.168.1.62] (2a02-842a-d52e-6101-6f8f-5617-c4b6-8627.rev.sfr.net. [2a02:842a:d52e:6101:6f8f:5617:c4b6:8627])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d693sm22135175e9.24.2024.10.30.06.44.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 06:44:42 -0700 (PDT)
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Wed, 30 Oct 2024 14:44:29 +0100
-Subject: [PATCH v4 5/5] docs: iio: ad7380: add adaq4370-4 and adaq4380-4
+	s=arc-20240116; t=1730295932; c=relaxed/simple;
+	bh=7Bxt9L9WVuyMEm/Nk2GL/sQJDsMYOACIhygsoXfiub8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRNDe34rO9tUhkniCJl+x1j2E2RRTB/d8EEOWt43oYRRuIO7Z/UnzXvHbKKC9veTMkzokFSsDGA3Kw3A9dhBAh9eZXNkIM3uJoiIbTRJt2k1Oe0MSUceaY4TQNMshMDMbzn3SZhAO0Fr2AYl09S3P6geWLQ+YYRbNIRWBL+mxYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgW8R+hX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B29EBC4CEE3;
+	Wed, 30 Oct 2024 13:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730295932;
+	bh=7Bxt9L9WVuyMEm/Nk2GL/sQJDsMYOACIhygsoXfiub8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MgW8R+hXPKWGYEAF/i6jaW4933OCOxb6QwrO1fy3KmNfPSIaMhAxLDNnLzARWjlg7
+	 RdbcQRrfY0S4DAOpbI0nLX/B5QQdH1nGrC9IOvlXioRR52gAIs7N1bQ6wq9tbCRLf+
+	 3tjQQth1HOSM93PRVpvdwEsKH2gX9COOd2QhgJ+uSLQIreMWn6acUAIHDpYAGuyBJH
+	 WYWMvd3Vb3I+1pM+zmXBDJuUCefOIwR+5oR4rZ9t1v2nXVo9M93koIMTj5z1pl4QTr
+	 TfUN/1PrGjax96VnaV6n3ffX+dZ8B4QxZPbbZsoTpgePArIQtKyPphcSRYcsc6XYFh
+	 5ZKKm9GahfYCA==
+Date: Wed, 30 Oct 2024 14:45:29 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 19/26] posix-timers: Move sequence logic into struct
+ k_itimer
+Message-ID: <ZyI4eYlhYXXIJff6@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083836.396279339@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-ad7380-add-adaq4380-4-support-v4-5-864ff02babae@baylibre.com>
-References: <20241030-ad7380-add-adaq4380-4-support-v4-0-864ff02babae@baylibre.com>
-In-Reply-To: <20241030-ad7380-add-adaq4380-4-support-v4-0-864ff02babae@baylibre.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Julien Stephan <jstephan@baylibre.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241001083836.396279339@linutronix.de>
 
-Adding documentation for adaq4370-4 and adaq4380-4 supported devices. In
-particular, document the reference voltage mechanism and the gain
-parameter that are specific to adaq devices.
+Le Tue, Oct 01, 2024 at 10:42:26AM +0200, Thomas Gleixner a écrit :
+> The posix timer signal handling uses siginfo::si_sys_private for handling
+> the sequence counter check. That indirection is not longer required and the
+> sequence count value at signal queueing time can be stored in struct
+> k_itimer itself.
+> 
+> This removes the requirement of treating siginfo::si_sys_private special as
+> it's now always zero as the kernel does not touch it anymore.
+> 
+> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
----
- Documentation/iio/ad7380.rst | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/Documentation/iio/ad7380.rst b/Documentation/iio/ad7380.rst
-index 6f70b49b9ef27c1ac32acaefecd1146e5c8bd6cc..1b9777c33e0c3e9e06f72d7c957a012346d4a26a 100644
---- a/Documentation/iio/ad7380.rst
-+++ b/Documentation/iio/ad7380.rst
-@@ -27,6 +27,8 @@ The following chips are supported by this driver:
- * `AD7386-4 <https://www.analog.com/en/products/ad7386-4.html>`_
- * `AD7387-4 <https://www.analog.com/en/products/ad7387-4.html>`_
- * `AD7388-4 <https://www.analog.com/en/products/ad7388-4.html>`_
-+* `ADAQ4370-4 <https://www.analog.com/en/products/adaq4370-4.html>`_
-+* `ADAQ4380-4 <https://www.analog.com/en/products/adaq4380-4.html>`_
- 
- 
- Supported features
-@@ -47,6 +49,12 @@ ad7380-4
- ad7380-4 supports only an external reference voltage (2.5V to 3.3V). It must be
- declared in the device tree as ``refin-supply``.
- 
-+ADAQ devices
-+~~~~~~~~~~~~
-+
-+adaq4370-4 and adaq4380-4 don't have an external reference, but use a 3V
-+internal reference derived from one of its supplies (``refin-supply``)
-+
- All other devices from ad738x family
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-@@ -121,6 +129,14 @@ Example for AD7386/7/8 (2 channels parts):
- 
- When enabling sequencer mode, the effective sampling rate is divided by two.
- 
-+Gain (ADAQ devices only)
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+ADAQ devices have a pin selectable gain in front of each ADC. The appropriate
-+gain is selectable from device tree using the ``adi,gain-milli`` property.
-+Refer to the typical connection diagrams section of the datasheet for pin
-+wiring.
-+
- Unimplemented features
- ----------------------
- 
-
--- 
-2.47.0
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
