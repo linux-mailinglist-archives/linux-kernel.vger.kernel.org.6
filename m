@@ -1,156 +1,89 @@
-Return-Path: <linux-kernel+bounces-388814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170979B64CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:52:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3269B649C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AB691C21639
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0BD28325F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396AD1F4FCC;
-	Wed, 30 Oct 2024 13:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A6013FEE;
+	Wed, 30 Oct 2024 13:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="Yh3moyUG"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECSgIwLR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CA11F4FB5;
-	Wed, 30 Oct 2024 13:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB563D551
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730296246; cv=none; b=qghXuSt6HuEzojwTRh973jzdqy7nNtCYkUqx0GaKHENUeFa6JUwW5ALoCOCzd6idfJhKUnEMAipFjos6EuF467fTb3LIIwVmUBNk01AreMlQgEXW+Vy25l9rr/+MJjIrZBQT9o+E+OlYIOZyKKG6zVBcmn+Xi51rcrcU11vL3HI=
+	t=1730296134; cv=none; b=u/MG2XoMKqENmbiQyxSS6NG6KlR/+aj+hfvAe43Rt7Ns4uz9jcJWHVrKjA0U3/QxX9O0rTHcLbC9KIetWix3HcxtKfomnoanZJJLuV04h6iOJE+jdo7o738z2oy4VgjueVFtKVvH6TidSqrJXcHRy2Y9wHVf0QhwIZztG3yrWMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730296246; c=relaxed/simple;
-	bh=D7AqZoX4gYwteb6RFEF1+ZVpyBKM5MFuI9FZMJjT8pA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NzjIvZVrBwHJ8xA9b1jflLGbBGbyDeCdBsXczkVTfq6DGWyFDEQUxXMWrLpPYKX8nsF0K4h7egmwlLJOThCGYnehapTRYAOumIsplEJtzqK1R0st3fJI8ksRxhoB7iucIgYOcPoazSrt24PPRFIxx5UqI1jBla8YD0GGDLrrqZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=Yh3moyUG; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730296100; x=1730900900; i=metux@gmx.de;
-	bh=D7AqZoX4gYwteb6RFEF1+ZVpyBKM5MFuI9FZMJjT8pA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Yh3moyUGQiWIS5M+hsYMxsskv2Uv6AVjW1tdiExk6hc2qFHctV/5S+d5s0VDetbM
-	 ddXzSOgh4H9xiXZWdQQ9p/bxvJbpfC0cdzm2GjGMdqdGKR57jEv3O/HGnXyhdweD7
-	 ccaRv5YiORcBs53mTe9MAMZYMlaZpugACFe7+1ZbAb3e16vRosw+4uqYuCKyFoPSh
-	 ebsVFbcCQx46mA6re4AGlNQES/piXbnlltBhxqaooB41ez9ls791F95cmnbKf5nr/
-	 8wGbqi5BkhpQ516UfzX6Hh0kPqS8AZWmCVzVbglOwE3a8FbBCeynePOSL575ZcOid
-	 Dd1YAX2gyFNCokhe8Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.178] ([95.114.207.188]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3DO3-1t9iMT01nh-006fzu; Wed, 30
- Oct 2024 14:48:20 +0100
-Message-ID: <b410a7fb-58c0-4d17-b818-54ec3476833a@gmx.de>
-Date: Wed, 30 Oct 2024 14:48:37 +0100
+	s=arc-20240116; t=1730296134; c=relaxed/simple;
+	bh=l29xjMvWd5IzFEym1SdeJT/5uE5SzAyDVBZM5T+wfow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cjsflnQv6pom/lvjyjWTrsUvJZqIZCffnE3en2T5zv7tW3T1FRvTrvSuy8BBGZliFb54fu29vAfJyaW9xpeVUXGS4ICDtaMetX+9RisfX/I5l+M0L7JB3MmoG8H+H4zxp0wMlHOZ50s4wuBxgd5/Qzc/NW14vpsd07I0Q7lEPmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECSgIwLR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8CCBC4CED1
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730296133;
+	bh=l29xjMvWd5IzFEym1SdeJT/5uE5SzAyDVBZM5T+wfow=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ECSgIwLR13qCsQcxcgWKx7mLKaXwrrDJdUvpmzsgGQ4t9HeIcU5CDu02sQfbIMAmx
+	 YVW2lrpSs8NnRQrjA0dscfJgAK3ZozIP40i3SGrpMiJoAnoACZbltghK8IlGpMEhPK
+	 I9RUmm5zX6UqFjN6G8wtNAWtIS2XIGF+2sJDY739CoZegLmk9T0ZwYOe9DdQxqxg1+
+	 0WChpy3Zm9s5Z4jik6W2sK8R4y5T136x/A4bUz3c3pXFYrb312+OBNxUcWzDD/pcgK
+	 OFHU3R9pcJJMLguit0l6o/4GqvYxvd3r6mcScMZMr45abDPCpFTBQh44Iyqp3JDAZb
+	 LmH4a62aIcPWg==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso59672321fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:48:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtgxv06ZhlpfEQCEW/aX0twS/y1HGq3J2gdfKiBBnZ0tDGByW5FefJT5uizP6SiQLOEeGyMGbv1CY0X9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywut0sKCjXYSBC5eok7qG0yASFDFsBOJ4Z7tjYkww+483EtTLL
+	c2Cy+2RntCMBKdf9OD9SavGCF+vibbFttJSNev+uTQ8d7CPVpZTxk8LsrozedCUMg6gLAuRMOWS
+	yH5yAGHaKeMAvHxj82ZUZdf2N9H4=
+X-Google-Smtp-Source: AGHT+IFtq4EtnqrroYItyFo72u+yn8LxIyPbI0vN4T1+ioELAZ476zVUyFG3o8hJBQBfVrJOI3bVhga2K4K/hCe5Hag=
+X-Received: by 2002:a05:6512:1047:b0:53a:40e:d547 with SMTP id
+ 2adb3069b0e04-53b7ecd58damr2272034e87.5.1730296132256; Wed, 30 Oct 2024
+ 06:48:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel maintainer *CENSORED* on LKML [WAS: linux: Goodbye from a
- Linux community volunteer]
-To: =?UTF-8?Q?Dragan_Milivojevi=C4=87?= <d.milivojevic@gmail.com>,
- "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: Peter Cai <peter@typeblog.net>, phoronix@phoronix.com,
- Goran <g@odyss3us.net>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>,
- Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
- ntb@lists.linux.dev, Andy Shevchenko <andy@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Kory Maincent <kory.maincent@bootlin.com>,
- Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
- Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
- Paul Burton <paulburton@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Arnd Bergmann <arnd@arndb.de>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- linux-mips@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- linux-pci@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
- Vladimir Oltean <olteanv@gmail.com>, Keguang Zhang
- <keguang.zhang@gmail.com>, Yanteng Si <siyanteng@loongson.cn>,
- netdev@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
- linux-hwmon@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andrew Halaney <ajhalaney@gmail.com>, Nikita Travkin <nikita@trvn.ru>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
- Alexander Shiyan <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>,
- Sergey Shtylyov <s.shtylyov@omp.ru>, Evgeniy Dushistov <dushistov@mail.ru>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Sergio Paracuellos <sergio.paracuellos@gmail.com>,
- Nikita Shubin <nikita.shubin@maquefel.me>,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kexy Biscuit <kexybiscuit@aosc.io>, jeffbai@aosc.io,
- Linus Torvalds <torvalds@linux-foundation.org>, "[DNG]"
- <dng@lists.dyne.org>, redaktion@golem.de, dev mail list <dev@suckless.org>
-References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
- <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
- <6beb4070-1946-4387-bd0e-34608a76b19e@typeblog.net>
- <CALtW_agj1rurb3DRrPd9o2mkfku5fq_M3CEKY5sW+Zz7shKYHA@mail.gmail.com>
- <6d37175d-1b0b-4b82-80f0-c5b4e61badbf@metux.net>
- <2f12ee89-af9f-4af1-8ec8-ede1d5256592@metux.net>
- <CALtW_agiJyX3sTaBKgwPF7X920=+fFrRgXMPt4x_GCDOMfZy_w@mail.gmail.com>
- <CALtW_aimN531aZKSSG4hVLeQDk6bUoujopkhCh57xsaxfJrYgA@mail.gmail.com>
-Content-Language: tl
-From: metux <metux@gmx.de>
-In-Reply-To: <CALtW_aimN531aZKSSG4hVLeQDk6bUoujopkhCh57xsaxfJrYgA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241009160438.3884381-7-ardb+git@google.com> <CAMj1kXHzahaLRH_0nSQaS7L+so0WRwh4R6SLdb1R+Hm3s-o1dA@mail.gmail.com>
+ <1dea1f19-c247-435b-9c73-a0181914024d@suse.com>
+In-Reply-To: <1dea1f19-c247-435b-9c73-a0181914024d@suse.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 30 Oct 2024 14:48:40 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFgoEk65bJBU=eZccYUdZCqF3Bk2pMAZCA4TviC3U9ExQ@mail.gmail.com>
+Message-ID: <CAMj1kXFgoEk65bJBU=eZccYUdZCqF3Bk2pMAZCA4TviC3U9ExQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] x86/xen: Drop absolute references from startup code
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	Jason Andryuk <jason.andryuk@amd.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, x86@kernel.org, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:02/JYljBFpt12zmY0Go6Xkn401QYmKavoXnaT8EeSlrAHbRsx8n
- Zdvv/lLJxVdM8nFQizZfTKEW37UKSRmLg/f7sd3o97CFe9/qm8RP0UtwctZ+qxVObR/jFNw
- m13fSOqomvd7q+gMqAZ942T8v05wPOrYZpb9mIQDrg5MXcznAOy7aytPmL3VlgdapjHCO2n
- gp70ijx1LoNifjgVmNeng==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XMcg9mQEW00=;8p/Sr9f43i/VMDKIw0uuN4zeFJj
- 4TzNACOpE4r2YbLQxZ5xl1PnYM+gpaKmM07XslwcqNngCXLB/XttSLHNSdEvR8s3B47NjhE4Z
- gzCXT1FKQIMCgB4RbRzC6MGKa+z4KYaV7xlHwMBOtWQFO7JG1x6IekOpKNRsdDBnGGQUPlX5Q
- NpiKIH7f7dZZbkUks6KHEL7Cw1yhhM+DDxR9v+J8Y3EbhOl+pqDAa5zkW031TMU6RP1NAEh8L
- w5W3BMaUImgWK3HjJCuWDQJW/uapa9utlZeZFhk75sKmzP+v1VvDNGawPrYnM7ZqwfhA2BDLH
- xCLmFjHW61xtNh01x6lEDKLLctnwXP5AGjDyUp+umcxFONS2fffaPA+V8uvn5YPPgJmqGElw7
- ALecE9QNd4O+9zMnfh5BS1I72wVO3CM0k8ewBwd2TTSh2X2ZZKSjE9eFtU23D8SV6SNHGq3VL
- hAB1H7fXdigm8b9aLmTxZjJ/1RMDu8ef4YggBoz1+WVG2VnrSKtNta/WWzAI3QtcBoZnsWcrO
- It2zyC6kJ8mGD8XBqofmwTlL3LP2+cvIE18rL7d36PTROQgvVSW7DFkJU1AspI6covtd35jCZ
- FXHGPfFDc+r41fAp7tjNc4DHJlUFZ3ga4LaJitNOM1JvBfmrazXfH21sxmaO6nAmN2F7MmKun
- 5BG2jzR0E2loJkz+FDYujXL4ittyLdbZ0KAQFKHl+5A+k48zyYBpc/peSRZITevB55Kav7VlS
- TchpkcgA4n3JLFkMgA95jPXj+i2mXrTz9GOVbUHx3l0Nfa7L3hALf6Ni2Zqc97rk3b9xf1z4d
- 4miKQK+swI7CsaCsEeJgfj+GwJ6elj8XkjCLKiEWjNXvk=
 
-On 29.10.24 20:33, Dragan Milivojevi=C4=87 wrote:
-
-Hi,
-
->>> First I've thought it's just when replying specific mails, but now
->>> turned out *all* my mails are blocked, even totally unrelated things.
->>> I can confirm it's not by the message content, but my mail address or
->>> domain. I'm blocked from whole kernel.org
->>
->> Same thing on my end, partial sample: https://imgur.com/a/l4Jcfhk
+On Tue, 29 Oct 2024 at 13:54, J=C3=BCrgen Gro=C3=9F <jgross@suse.com> wrote=
+:
 >
-> And it is spreading, previous message to dng@lists.dyne.org was rejected=
- with:
+> On 29.10.24 13:50, Ard Biesheuvel wrote:
+> > On Wed, 9 Oct 2024 at 18:09, Ard Biesheuvel <ardb+git@google.com> wrote=
+:
+> >>
+..
+> >
+> > Ping?
 >
-> "Message rejected by filter rule match"
+> I have queued this series for 6.13.
+>
 
-Do you have some evidence that Devuan's mail server is really blocking
-us ?
-
-If so, I'd be exceptionally surprised.
-
-
-=2D-mtx
+Thanks!
 
