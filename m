@@ -1,70 +1,85 @@
-Return-Path: <linux-kernel+bounces-388572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E123B9B615E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:23:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EA89B615A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A333A2840EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:23:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCAD21C215ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED421E47B4;
-	Wed, 30 Oct 2024 11:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1530D1E47C2;
+	Wed, 30 Oct 2024 11:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="I316a+Xh"
-Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2UPjlrD"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFC21E285C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50574D8A7;
+	Wed, 30 Oct 2024 11:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287387; cv=none; b=swSPcB3sQbvV568j6hewGvfwLvE1XadsD3xnRJVKrX3w5P/zCbLQWV537z02xkzmlgNTUfTHSyIWDuieUxelnKLzfMpOVfhUaThIo7N786WIyzyvO4uU4o6uS/cXG17A5/9bTTmMqzwDZPrK9Go2j0gjw4bx1pm8pofsmJ0Y674=
+	t=1730287346; cv=none; b=Npn7Cl3J/LW4B8MkVxjswgIQRIGoKuNt6J2XbD4lmh8/2WzMqSt+MHrxxkQ5TN9+64XIYCsg7x9Rfg+E4P2GNafDLYyNvq/mo/iX21sMzEV7fIe6goxDHN3GwbiG0UV+8bq9CUGkEzHyfuCAvEzsZuVX7DLivA8bH2kic6la2es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287387; c=relaxed/simple;
-	bh=vAClixil9ctOwyUjrpNeEnIAT9+x6cz+JtC+S4IQU+Y=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pV8s77WMyDuyb1BeT9W2AKnlIf6vF0NSDEw5tCt1WI8lu2H1upp+v1fWF2RrQ7ZQCfeTKkTALhmIDq1/RTfg2yF4zkN9nxvbqref67VXXWPU9sqy3CCwkyXFw04nTyQ9UddGh8paPdZZ+4TF1FGXD3KjalVNQdMTLDoQXXUCruY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=I316a+Xh; arc=none smtp.client-ip=203.205.221.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730287376; bh=vqM/J8b47sq+qs2sxKbDTYiKVZ0AGjfRosIfsrAwCIQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=I316a+XhVi4mP5ATlseICQZcO6CbgUwDOvnf06MaxIBtjopLIc1KODMgWFDUwR+nW
-	 5EQNL5YPNwGaxU5P+WmaAT7FrtuLUoBxkyDFiGo/5O6XnVPixLLi8Rdd9rTOMIOiad
-	 0jCF4mu+vgAnuSlRQgGZtTBvKqCNdqRHQ/F4H+f0=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 566A38DF; Wed, 30 Oct 2024 19:21:38 +0800
-X-QQ-mid: xmsmtpt1730287298tejdjgkvx
-Message-ID: <tencent_889A2EFAAEE6CC9827D206E6D2F286794906@qq.com>
-X-QQ-XMAILINFO: NSahpW5IwUZOzKN800ZyPXNXZux2Hl4UHHmBrJKNrYvpmim2NgA80EV2jLAXEm
-	 +ahoCMmNQeX3/yoaoauXjnA1VkGRnv4wvKiy/1Cxlirt5IjTF1p8bfrpk1NHY5qUYcdur2yaj6mo
-	 8G1Ziv+D7qkfGT+KuxeRg2YMdz+RosskOzpV6LxQMekJd/hYBUrbmhIEDm07SRvqYyxObtN2gcTw
-	 v7w1Lv8a58GJp150NxLOGOrzxU7ic0U55atUXPVPvn9X9ZTUd3EWXzEDXxCl7jnPuwzOsobfkNsL
-	 JTeLWECdDM9VrjRsFNp4gaaZu8TM7w9zq07yjjNeLBA0cMrh4sjrbUpMPNDGHkihMwnR/TQUC21M
-	 AQIFw7/3eO7gIP1M7lx0l4rQ4Jc9YBSdtyVumA7EAUjbGVz8MVqS6Kc9KRn5BRulPBTwHzQkOtCY
-	 IyMqzzGYr8iULM7clbn0bgN8Mk+5g1dwARjN99aMrDWkMPuV5MJBeHB84fnX+hWh0BNnqRd9yGgm
-	 0MUth8pW6GpACL1iszPFbZW0+xEEAoJy8RmjVN+p1DWHPF8nET7iua9PvJdE8XYYhsejeT12cUXo
-	 96+9thbiAR244yF9KgzOF0U92zoCmRSNatSVbVA962q7bNzSQ6182APLH0OLF6Xah/3ufLPV8z/y
-	 3ECl12ydG7IIsgkskoF3+Rr4uhJlVjeafVf4FyGZwQ9YE17lFv9aDaZGyOn7tmNpumDNE0dDBw5Z
-	 hklSzGxv6c+iotJPbu2khl8L9Fz6K4iiqASaztlHnguu94HMQUWoC1Oyrt5ft7ZHdMD09bVe4u5P
-	 PyAZcncUrFI+A2CVj3hrpIAc3p9mFWyjOT+iFIjwXW/gJAVoQjKoHOnHIRPIwGyQQ2pIPvhSNHSa
-	 gP+qieNMg4IaiV+IEMRVvDaA3AdQe3FnwzpMlgTfjCa4W/8ngBeuaEezwkOeliK8bEBiCPhjeh
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Write in ext4_insert_dentry
-Date: Wed, 30 Oct 2024 19:21:39 +0800
-X-OQ-MSGID: <20241030112138.3629327-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
-References: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
+	s=arc-20240116; t=1730287346; c=relaxed/simple;
+	bh=HoPTHRsvBBB1nq5o9cSeg9KcXnBlUyJAWr01EkE8o9s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m34si2kOwCm5bXn4LvxxL/BewSUUn/yceg5+eSYCpUJBPnb39zLwx+BDT8ryIcNRH35PIoPn4fksrDgoAR9Crr3gFhDF8lBHgkdbntCwOAe4rPBX1dkqUHafZhO1iw9iKO0iK5D/h3NPrLwAr43e0jtcKS79XpvAUoJYSZtL04c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2UPjlrD; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c714cd9c8so68468345ad.0;
+        Wed, 30 Oct 2024 04:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730287344; x=1730892144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yynQzzzxVGBp2IeLk/YFaZitZpg8+Akn63eN9G7YdBY=;
+        b=H2UPjlrDnSl80tFp7l7JohD7rghUCbNWoN97tTLLqxOdur+xfHt9V08gVOfx/5neeP
+         ROOpapziVRy8dw7c+Aj1eElxykvSjC7SvqPDA3Qznp+UatAv5Agy5SH6iTu+eCfZcAmT
+         4G4xa2Ojs9ku5rDUQ4e9cHRJgIcsdvI39IYW8MBjn5cMWQ6a3bs+5yLFqbRvFVtsbJjb
+         P8BwA9fC5RZ5Ou8urSISv8En0n9hH2bqcNVAZ1Qi+HZhsVPC2NuSnlR7ElmHP1WxqVu9
+         S+LZFLnRofnkDqGPv3hQWxS7IGlRRK7EnDJzrHhqoFbySLjGDtRB5ZdRYimC/g5v7rwN
+         2llA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730287344; x=1730892144;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yynQzzzxVGBp2IeLk/YFaZitZpg8+Akn63eN9G7YdBY=;
+        b=N3L8vI1iKH5PO8MnyZm2lKsSZ3r42ACzmvyZiWZjStGNP38wOoSN2cZUSC4qbhk4/f
+         UErBi7nlBXb1oE1EtlouX1w0iuHQsFNMRV7YGpugqOAn1kXNXHzzH8/au/w8wCo5WmRo
+         PLVfOQTXgMopOijJBWAM+7j6tdmDMBzJwHA9+txEt2xCTElVIbOoqyP4hjXvBmDJtxx3
+         F1D7T0cqxIa/U4iZP2uitgHnXXxl6siLFhzj+0MVqIuJK+y2YZ7Q9rECR2V4eWfwFHzg
+         agikzz6H4KkAB/hzNHFrRujForY3ZMYoC0B8v435w+RyBKVg62XUgiX1r1PaZlnsF32a
+         MU9A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1E3LuAXpjxigNVBPNRT5y6d8refjwAUvanDGtdzokW+W+IHy0mSwb/mG7ve/ubKPYscXkPYSl2MsyiLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNv+KWV09rMUf0RJZKqGdqDmB9pedMunvjjMGq2RpCxCmahrbs
+	ykgrdDgpWHEZlSUz2YHo7IAz4FAvyjXjG8/dsjhs1sV0b5iBrFPj
+X-Google-Smtp-Source: AGHT+IF9HDpYcagHO0Qc0OTCwTWawP7GLOQI2jjr2BWAzZ68sJqZghM16DpU8UB4swTH8MNDE+zmeg==
+X-Received: by 2002:a17:903:230e:b0:202:13ca:d73e with SMTP id d9443c01a7336-210c69edb0fmr226669965ad.28.1730287343809;
+        Wed, 30 Oct 2024 04:22:23 -0700 (PDT)
+Received: from localhost.localdomain ([2402:7500:469:ce01:7b68:43c3:e54e:a61f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fabf82asm1402645a91.51.2024.10.30.04.22.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 04:22:23 -0700 (PDT)
+From: Victor Shih <victorshihgli@gmail.com>
+To: ulf.hansson@linaro.org,
+	adrian.hunter@intel.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	benchuanggli@gmail.com,
+	HL.Liu@genesyslogic.com.tw,
+	Greg.tu@genesyslogic.com.tw,
+	Victor Shih <victorshihgli@gmail.com>,
+	kernel test robot <lkp@intel.com>,
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Subject: [PATCH V1] mmc: sdhci-uhs2: correction of incorrect type in argument
+Date: Wed, 30 Oct 2024 19:22:15 +0800
+Message-Id: <20241030112216.4057-1-victorshihgli@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,109 +88,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-check next directory entry space if it is too smaller than file name exit dentry insert and return -EINVAL 
+From: Victor Shih <victor.shih@genesyslogic.com.tw>
 
-#syz test: upstream master
+There is a type issue in the argument in the __sdhci_uhs2_send_command()
+that will generate a warning when building the kernel.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 44b0d418143c..e07ac540ed00 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2834,7 +2834,7 @@ extern int ext4_find_dest_de(struct inode *dir, struct inode *inode,
- 			     void *buf, int buf_size,
- 			     struct ext4_filename *fname,
- 			     struct ext4_dir_entry_2 **dest_de);
--void ext4_insert_dentry(struct inode *dir, struct inode *inode,
-+int ext4_insert_dentry(struct inode *dir, struct inode *inode,
- 			struct ext4_dir_entry_2 *de,
- 			int buf_size,
- 			struct ext4_filename *fname);
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 3536ca7e4fcc..e318b13459d1 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1022,7 +1022,9 @@ static int ext4_add_dirent_to_inline(handle_t *handle,
- 					    EXT4_JTR_NONE);
- 	if (err)
- 		return err;
--	ext4_insert_dentry(dir, inode, de, inline_size, fname);
-+	err = ext4_insert_dentry(dir, inode, de, inline_size, fname);
-+	if (err)
-+		return err;
- 
- 	ext4_show_inline_dir(dir, iloc->bh, inline_start, inline_size);
- 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 790db7eac6c2..1c9fedf36fb0 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2084,24 +2084,38 @@ int ext4_find_dest_de(struct inode *dir, struct inode *inode,
- 	return 0;
- }
- 
--void ext4_insert_dentry(struct inode *dir,
-+static int check_next_dentry(struct inode *dir,
- 			struct inode *inode,
- 			struct ext4_dir_entry_2 *de,
- 			int buf_size,
- 			struct ext4_filename *fname)
- {
--
- 	int nlen, rlen;
- 
- 	nlen = ext4_dir_rec_len(de->name_len, dir);
- 	rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
- 	if (de->inode) {
--		struct ext4_dir_entry_2 *de1 =
-+		struct ext4_dir_entry_2 *nde =
- 			(struct ext4_dir_entry_2 *)((char *)de + nlen);
--		de1->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
-+		nde->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
- 		de->rec_len = ext4_rec_len_to_disk(nlen, buf_size);
--		de = de1;
-+		de = nde;
-+		rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
-+		return fname_len(fname) > rlen - EXT4_BASE_DIR_LEN;
- 	}
-+
-+	return 0;
-+}
-+
-+int ext4_insert_dentry(struct inode *dir,
-+			struct inode *inode,
-+			struct ext4_dir_entry_2 *de,
-+			int buf_size,
-+			struct ext4_filename *fname)
-+{
-+	if (check_next_dentry(dir, inode, de, buf_size, fname))
-+		return -EINVAL;
-+
- 	de->file_type = EXT4_FT_UNKNOWN;
- 	de->inode = cpu_to_le32(inode->i_ino);
- 	ext4_set_de_type(inode->i_sb, de, inode->i_mode);
-@@ -2114,6 +2128,8 @@ void ext4_insert_dentry(struct inode *dir,
- 		EXT4_DIRENT_HASHES(de)->minor_hash =
- 						cpu_to_le32(hinfo->minor_hash);
- 	}
-+
-+	return 0;
- }
- 
- /*
-@@ -2151,7 +2167,11 @@ static int add_dirent_to_buf(handle_t *handle, struct ext4_filename *fname,
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410260525.ZUuPhMJz-lkp@intel.com/
+Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+---
+ drivers/mmc/host/sdhci-uhs2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
+index 43820eb5a7ea..7f41ca67b069 100644
+--- a/drivers/mmc/host/sdhci-uhs2.c
++++ b/drivers/mmc/host/sdhci-uhs2.c
+@@ -649,7 +649,8 @@ static void __sdhci_uhs2_send_command(struct sdhci_host *host, struct mmc_comman
+ 	 * MSB when preparing config read/write commands.
+ 	 */
+ 	for (j = 0; j < cmd->uhs2_cmd->payload_len / sizeof(u32); j++) {
+-		sdhci_writel(host, *(cmd->uhs2_cmd->payload + j), SDHCI_UHS2_CMD_PACKET + i);
++		sdhci_writel(host, *(__force u32 *)(cmd->uhs2_cmd->payload + j),
++			     SDHCI_UHS2_CMD_PACKET + i);
+ 		i += 4;
  	}
  
- 	/* By now the buffer is marked for journaling */
--	ext4_insert_dentry(dir, inode, de, blocksize, fname);
-+	err = ext4_insert_dentry(dir, inode, de, blocksize, fname);
-+	if (err) {
-+		ext4_std_error(dir->i_sb, err);
-+		return err;
-+	}
- 
- 	/*
- 	 * XXX shouldn't update any times until successful
 -- 
-2.43.0
+2.25.1
 
 
