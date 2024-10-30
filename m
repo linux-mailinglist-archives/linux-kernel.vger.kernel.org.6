@@ -1,191 +1,112 @@
-Return-Path: <linux-kernel+bounces-388691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AAC9B6320
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:32:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D149B6326
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:36:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1DD31C20951
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7BDD282AF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C831E9094;
-	Wed, 30 Oct 2024 12:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D2D1E884A;
+	Wed, 30 Oct 2024 12:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="mU6Nd/Ev";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JXh2JPRR"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GFRe41tY"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F271E885F;
-	Wed, 30 Oct 2024 12:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6811E4AE
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730291524; cv=none; b=k06suX8hGktNRNErIBq+ZUR9YpMo4BdNee9SelZGF5NeHIS3jbDCyTlc1DHW5Iw8uGPEg6hQSwkI7TlNRsBQAy4R5b3soC5daLZqVPAJ/h20sEPTdr3QzTgrYoXsWPmcdlqfbdyTa86llf8tfS7wXYw540KRziAfiIvqvqjEcuo=
+	t=1730291789; cv=none; b=cOFdlGbihk0tWi8zPPe1wjMVk6dGAjtXqmgSHO1SDzsJ7YnEvrX4Fb2aGX/kX5/NBmVbtIUbb9YD56QicQyPlA01djzDARVZqh41L5GY/GdWxHGziFTfwYttgbNlNAUiwix7HJMUduSf0YAIGVua4SFQHo0p1dcmdxHA8Qn1UUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730291524; c=relaxed/simple;
-	bh=Kq5fW09On13fUS0JYLUzYNQGtfOTZ3cdNf1UTRdhyaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A80Tu2nr+wemu3RTaROvmzpDftA/eyoBnNw4Z/fyFENWsvNWJwAozbp3BCjZ7v7mx9/izG+nBM853Ppy7J2oVsEbO9h9Ce7AAgFygGrEbci/kqpffu64wYzuEQxixKSvG+OfShZ+bR1Ks1VQc4gE4m5YCum800/C2atpacrZlzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=mU6Nd/Ev; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JXh2JPRR; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DF2001140098;
-	Wed, 30 Oct 2024 08:32:00 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Wed, 30 Oct 2024 08:32:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730291520; x=
-	1730377920; bh=A/ppIlWNYztYatUHxV9Q+2wBv4V7E9P9uRfoUG/IVb4=; b=m
-	U6Nd/Ev649pldcj7ZJvmxFbXzwZGJAQ+yyBhF7bjaxYIpgA+TeqPCGS5FbICNDSJ
-	Xw2FoTI76wEJ782XlEYM+/+rrmH6TjVII/am9fspRAk06WUTTQ/9+GiBsJk6GZVQ
-	fl3jmbwuqQABFTNonmvz5eF4HShd6Bvbdjk/lYUAqGNxWsW5IqIQTK423EoJIYHK
-	Hu0tml9sZdSMWW9i7po5YLrU2No5qNekCeL8MnM6tyjevzieF+4sZ3tgPqP4rsLa
-	6tRtH/b/Gs6uwUobPgzhF5L4m/R9JVWDAFj+a0oJdjQAcg+oNvBiEXLWzsxmpV3n
-	+24cgQmscKAg2AQHzaa5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730291520; x=1730377920; bh=A/ppIlWNYztYatUHxV9Q+2wBv4V7E9P9uRf
-	oUG/IVb4=; b=JXh2JPRRiu+bDq4Lnjaa15TZ9AOX/H42pN5AZTUVOpCO2sgRi+B
-	a2QURJuqpQMPfy/lZdTUYYmtgtycFtT+AqC9YFyw+Cs/OUBVWsIVt9SN4NQ1WilX
-	jNEGzNw9a1ZcQ3JmtyFZ8rZRyIgwV8Ln6wGIfk0BxGF4nImkMYtW6Tlz5IAo8FOq
-	HajXVKtRh/dgg5vOcRC+MELJQD9k/bDJcxRDkGcra+yd3fsD4MubOaIATLcWvhGH
-	P+i0lkyvR4zc5E2wKsqnmR+OqmFIsjRV5thLRJI3r+ceLS3Pw4gqFu1LuUPUpVMD
-	kdut11be3d1VJ0X7lvcwlnR32tk82+jOqJg==
-X-ME-Sender: <xms:PyciZ2cgkTijlz0fOdzVR2gj5dET5K3oUyitHPZPCXU_BUOh-LAlJA>
-    <xme:PyciZwNy0fGTw_jvlodXhmye4eQ0cvLBviRC8iWFFB1qAT04R_0Fz74lWAW6mLtCN
-    _oC-_HLGKubHT5uvT4>
-X-ME-Received: <xmr:PyciZ3iVwM6qvQS4vI8rb2guUoB9IJvah_HA1OXKbSPGzlpi0hmXiSdhm6rZIZAv1-PzPg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedggeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeeltedugedtgfehuddu
-    hfetleeiuedvtdehieejjedufeejfeegteetuddtgefgudenucffohhmrghinhepkhgvrh
-    hnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhope
-    dutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrtghivghjrdifihgvtgii
-    ohhrqdhrvghtmhgrnhesihhnthgvlhdrtghomhdprhgtphhtthhopehtghhlgieslhhinh
-    huthhrohhnihigrdguvgdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdp
-    rhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnh
-    hsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphhtthhope
-    hshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:QCciZz_gzC2uxHBSkFeUPEqaX-bMvoeM9hMlw6CmqpH9ROdywucoCQ>
-    <xmx:QCciZyvZCyoNN8bnzV31eXoJLb9DR8yk7nouElTGJZ6n5Yj6hd_PSA>
-    <xmx:QCciZ6G1soq_ts3LhLAdMfQ3bgkO6sO00LWTdGYJC_4SHMJ27xdZ8g>
-    <xmx:QCciZxONTx7ujt1qOyd7qCheiEEdj72iXxXbjQzCvmbhyA-cDhyRZA>
-    <xmx:QCciZzkMl9w0vKLQuKRYQuNP3OaP5CCJMrOEadhCfeIe-ubh5YpjeNum>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 08:31:56 -0400 (EDT)
-Date: Wed, 30 Oct 2024 14:31:51 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests/lam: Test get_user() LAM pointer handling
-Message-ID: <6va3r22jkgpk2kah7d3au7euiqrdeuooegezaguk4j4djfydop@3dpbdrl7akrp>
-References: <20241029141421.715686-1-maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1730291789; c=relaxed/simple;
+	bh=1KULsa+6j+6JCRwXetM56Lo0Zn1gw65F9feRGJpZAlI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vAQeIDMdawseQMq8+/qL9+/5NR33mgS/gtkm5lhpUpQue9VWpAVBFTGShxTJ/5l+FZnI6iSrzXq+uWJVxjsMD9uHoNjJh+uB/vCxduN1jgNHnxeQ/3/3evHGBcDxxBmtBzKm8N5CEgcdgOnINRdXEF6PgPv2mNDrMTTU43vVa0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GFRe41tY; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d3ecad390so528737f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730291784; x=1730896584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Dz8ORMovlm8PCaRFyxkHztKoIVxbuXiuAHwjiXhbYNM=;
+        b=GFRe41tYh0/0RJ4DTtspjGPX7JYeR2XtAqYQQURty/da+ccLsHqsTsEkFG4M6C8e06
+         HBsoK0KL2Fl6s42bnC9iXFlUgezE2/S65fXHTmdJmaWzfFHNeqXZCnqYBX6nwmF8en0z
+         9UkFYKz+rndqyUQEfhKpqVDo8PnWTUKmKxwwtjlOqtaO9TGIRd/xWpw90KXgfpnxceuZ
+         rt1KuDE3nZB6Q4Ua7C94dJaNNHOuiB5oaO32roeUuwGrw+u5kQy0zVaBeZbUe6VP/MNs
+         dAyzrkrQpPO5VBnKULe8r9qnab267CzmtIKXht0joYDIUNdXK0/+DKAK0aEHLmV1Vgb0
+         32Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730291784; x=1730896584;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dz8ORMovlm8PCaRFyxkHztKoIVxbuXiuAHwjiXhbYNM=;
+        b=TFsvPyVcPcV28tqi4gBXzsKG3jIAFM+3RgV/AJoPnAa07DtsJ0+i7qeJkpPZ3iJmIG
+         HeLpAgQ8LTwpWozmbNZas3qH2dUApypMJHb8mn57dUmgUC6apgZwRdZiQXsGw63aiHvq
+         R+mtyqnYFnBHDgVrtjZkFW4T7lDAUfXicXKGXIR/8EsIqt8bT2P2AXzIIRoDJAhu22qo
+         F17ChNyNCJ+Lf50xIx/sJ5SSh/kF8n5Zmez3DBjTxXO3qgr/u96lMB9xFLDANw/ZCO2D
+         SaR+nDRzv6KkcCRcCLHCMrO1CKIa8rurgMtU4zRwRf2SL0swsqOMJMjyROSQJzH2uL9E
+         yH6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV0csG7f0o0HR1/rHnfBImJ1eqBrSA04IDTJ5gucN5/sdHyDVAGXXR+EXA7qSgfxKLGz5WyT6I1R9askug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3jlbje9D2e5DLWhL82FrXW+NN7CWzaOgA0sSlBRz3jr6JvJ42
+	AE4Ql6YgbnmNK2nrMlU8LXjmo/rVFyjiKvNTqlL7n9YTjosomxJryfcKe8bgjbI=
+X-Google-Smtp-Source: AGHT+IH4FRnmdK9aLuDppBh7wG3Y7nEnBh681TyLIF03sNmMciY0XgRonlSoema7XbLW/dKKGVBRtA==
+X-Received: by 2002:a05:6000:504:b0:37c:fbb7:5082 with SMTP id ffacd0b85a97d-3817d649f89mr4690368f8f.25.1730291784286;
+        Wed, 30 Oct 2024 05:36:24 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47952sm15159285f8f.48.2024.10.30.05.36.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 05:36:23 -0700 (PDT)
+Message-ID: <8dfeb9bf-3326-4d04-8dfb-fea9dad85864@linaro.org>
+Date: Wed, 30 Oct 2024 12:36:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029141421.715686-1-maciej.wieczor-retman@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/11] scsi: ufs: exynos: enable write line unique
+ transactions on gs101
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com,
+ martin.petersen@oracle.com, avri.altman@wdc.com, bvanassche@acm.org,
+ krzk@kernel.org, andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
+References: <20241025131442.112862-1-peter.griffin@linaro.org>
+ <20241025131442.112862-9-peter.griffin@linaro.org>
+ <436b02c6-a262-4015-92e3-454d444e877f@linaro.org>
+ <CADrjBPoq2jbrMC7wBrjGxMwQ1ebTtBNRQzQ7NfE9=Gw9_4LQ6A@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CADrjBPoq2jbrMC7wBrjGxMwQ1ebTtBNRQzQ7NfE9=Gw9_4LQ6A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 03:14:20PM +0100, Maciej Wieczor-Retman wrote:
-> Recent change in how get_user() handles pointers [1] has a specific case
-> for LAM. It assigns a different bitmask that's later used to check
-> whether a pointer comes from userland in get_user().
-> 
-> While currently commented out (until LASS [2] is merged into the kernel)
-> it's worth making changes to the LAM selftest ahead of time.
-> 
-> Add test case to LAM that utilizes a ioctl (FIOASYNC) syscall which uses
-> get_user() in its implementation. Execute the syscall with differently
-> tagged pointers to verify that valid user pointers are passing through
-> and invalid kernel/non-canonical pointers are not.
-> 
-> Code was tested on a Sierra Forest Xeon machine that's LAM capable. The
-> test was ran without issues with both the LAM lines from [1] untouched
-> and commented out. The test was also ran without issues with LAM_SUP
-> both enabled and disabled.
-> 
-> [1] https://lore.kernel.org/all/20241024013214.129639-1-torvalds@linux-foundation.org/
-> [2] https://lore.kernel.org/all/20240710160655.3402786-1-alexander.shishkin@linux.intel.com/
-> 
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> ---
->  tools/testing/selftests/x86/lam.c | 85 +++++++++++++++++++++++++++++++
->  1 file changed, 85 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
-> index 0ea4f6813930..3c53d4b7aa61 100644
-> --- a/tools/testing/selftests/x86/lam.c
-> +++ b/tools/testing/selftests/x86/lam.c
-> @@ -4,6 +4,7 @@
->  #include <stdlib.h>
->  #include <string.h>
->  #include <sys/syscall.h>
-> +#include <sys/ioctl.h>
->  #include <time.h>
->  #include <signal.h>
->  #include <setjmp.h>
-> @@ -43,10 +44,19 @@
->  #define FUNC_INHERITE           0x20
->  #define FUNC_PASID              0x40
->  
-> +/* get_user() pointer test cases */
-> +#define GET_USER_USER           0
-> +#define GET_USER_KERNEL_TOP     1
-> +#define GET_USER_KERNEL_BOT     2
-> +#define GET_USER_KERNEL         3
-> +
->  #define TEST_MASK               0x7f
-> +#define L5_SIGN_EXT_MASK        (0xFFUL << 56)
-> +#define L4_SIGN_EXT_MASK        (0x1FFFFUL << 47)
->  
->  #define LOW_ADDR                (0x1UL << 30)
->  #define HIGH_ADDR               (0x3UL << 48)
-> +#define L5_ADDR                 (0x1UL << 48)
->  
->  #define MALLOC_LEN              32
->  
-> @@ -370,6 +380,54 @@ static int handle_syscall(struct testcases *test)
->  	return ret;
->  }
->  
-> +static int get_user_syscall(struct testcases *test)
-> +{
-> +	int ret = 0;
-> +	int ptr_value = 0;
-> +	void *ptr = &ptr_value;
-> +	int fd;
-> +
-> +	uint64_t bitmask = ((uint64_t)ptr & L5_ADDR) ? L5_SIGN_EXT_MASK :
-> +						       L4_SIGN_EXT_MASK;
 
-Emm. Do you expect stack to be above at the very top of address space on
-5-level paging machines? It is not true. We don't allocate any memory
-above 46-bit unless asked explicitly.
 
-See tools/testing/selftests/mm/va_high_addr_switch.c
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+On 10/30/24 11:32 AM, Peter Griffin wrote:
+>>> Previously just AXIDMA_RWDATA_BURST_LEN[3:0] field was set to 8.
+>> where was this set?
+> It is set to 0xf in exynos_ufs_post_link() function, see the following line
+> hci_writel(ufs, 0xf, HCI_AXIDMA_RWDATA_BURST_LEN);
+> 
+> As all other SoCs expect the current value, I've left that assignment
+> in the common function, and we update it in the  gs101_ufs_post_link()
+> specific hook.
+> 
+oh yes, as a driver quirk.
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
