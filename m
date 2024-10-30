@@ -1,130 +1,193 @@
-Return-Path: <linux-kernel+bounces-388916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C989B661A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:37:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F909B6617
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E691B227DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 324081F21A78
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076821F5822;
-	Wed, 30 Oct 2024 14:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C69D1F4700;
+	Wed, 30 Oct 2024 14:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WyIejBet"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ew12GuLe"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E0B1EABA5;
-	Wed, 30 Oct 2024 14:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EB61E7C12;
+	Wed, 30 Oct 2024 14:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298825; cv=none; b=kYwLIJR5vrJPgNTvmcioif1DD6MC7fbmcDtKHDJqj6Njxzb32tgKzF3hVPmGiqipGDk/obIikegaDvmp7mmhRg6pWHQPoi2JC46rt0ej3N1J28BoLsl/WSSn2zrEPJrcpXCf0rOQDStOsOXeFHZDpuAE1jBm7a1YlbwqnJs5APo=
+	t=1730298823; cv=none; b=TaT511c9SdOYBc3GfHwn9u5y2rFV6nTqf8v7lbu6cyq1LYX12mzALnVAA3zpd2tn2WGveXeJ+SHV7xPAhOxPIFtFK1EnNjlpli3xz/3JhtxFlbI576uJE3C6T2aFvpcc5ZLUsUCtGV3vTbCx/3QMK/5Llv7mLWrrbQNytohF8Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298825; c=relaxed/simple;
-	bh=nAXA1e6ereqmb3MHInQbwUXw9moQjsLdg9jJAZQQfmw=;
+	s=arc-20240116; t=1730298823; c=relaxed/simple;
+	bh=GdrLnAcoyLbuyIkP4M7EWVlAvKcTHkaUfN511LRxwPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2C6ZTFYoLtRCoCjBGiz+KY5k9rTHxAEqfkcIqVPBdp7mxyavK5VREY4Ntf3Ou2F848CNYVPVAhnCHuiVh9I2yvX15cS655zr149oOCrOqTPIkIf2BKufbw3wiTujQrsiJc7hgA6WnIJCd/4aRQgpLKVwD6njEu6+y9H55Wc5Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WyIejBet; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDw8v0012224;
-	Wed, 30 Oct 2024 14:33:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=YkQE0QbnYso+0/vqDX8+nkLt1O3VUV
-	PdnTC+wEH8KGE=; b=WyIejBetHbX0WyYb0GKLUyHBI8ejg4faUfq03iPDKQCjyC
-	i3eQ6LR/lXfw55UdBInl/1YGQxhPOjZrLTuu5WK3zQ6D+mLH6yFPsgv1UkRLhYww
-	ALuAuwUR3t/FUstC6wrPpSQRLXwPOrpdIKUQijW0H4bk6hZDZWSueEj1Rv7yh4wh
-	ZaWTgnrOwQSWDjhsVU4mbfzK/q1EXQoHseOFl4LzLYKMt7vefzsXgG5hGaekQ2lt
-	7bul14+5kPhuYmh6La4Y5kDWu4exphv0jy8OJF7lcC2YpF4qy9WVS4tQuPpT+3KK
-	1tjM8eVvRjfVGRiJ1hEK0gKbhXHg7/olgUTQ5bIw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jyhbpbju-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 14:33:34 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49UEXX6l003381;
-	Wed, 30 Oct 2024 14:33:33 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jyhbpbjq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 14:33:33 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49UBsOA9018383;
-	Wed, 30 Oct 2024 14:33:32 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hc8k8ba4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 14:33:32 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49UEXSsL57475502
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 14:33:28 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C983E20043;
-	Wed, 30 Oct 2024 14:33:28 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AA4C62004B;
-	Wed, 30 Oct 2024 14:33:27 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 30 Oct 2024 14:33:27 +0000 (GMT)
-Date: Wed, 30 Oct 2024 15:33:25 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT)
- to support QEMU/KVM memory devices
-Message-ID: <ZyJDtdElqCCwjcW+@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-5-david@redhat.com>
- <ZyJC+s5L6JI3xO44@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xty+wTzYGywlm2PSuIMg6C00qh8V5XVNAiSWGHuBXz8gC1mhWjY91yKa8tVbQtdlVrn7w++oKg9u2YjYTotvNhNXrqu5YVG5pT6XZ+1BVKJf8uA/7bnwZYMb4t+wf2I4pWaD68MdK2/A0yYgY1w2KNWiLKnTyJhNuSTTKMLJpD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ew12GuLe; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso2486901a12.3;
+        Wed, 30 Oct 2024 07:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730298821; x=1730903621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kdt8y8wCusL4+S51EkCSh7l/zTm5/WwfbbuBF+5V9wY=;
+        b=Ew12GuLe1KJgiX5Fh3SwLWcgqGnMDPDHEjYkjYWP2JThQODnTU8tVMDlT0yhJ3Sidb
+         nTXc/mvTNYHGCLySHazgGrCE7KbZHYs9QJbRkUYtmJwSf8PR0VcEMuS29zYqKfAXgMzW
+         THLlzrzq47EpnO1eWMLQ+ifJ9HouiTyyPI9LHA76H5lDGHYt8A8J3u3c+lkGG3CaoaiA
+         3QAP0Sm9l/RMAX8VaEMRzSL0veydKGLLtIwDAbI2VDzaZ8wxIFaL8WatoHmmlhyz0HIA
+         CmqyU0D0szzJQk8k68tRwQz6j4BcVXDGM5j3LTnDBRsbun+Wu6/ghn2SttOUPlqSuQpK
+         qZKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730298821; x=1730903621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kdt8y8wCusL4+S51EkCSh7l/zTm5/WwfbbuBF+5V9wY=;
+        b=AxcOPgH7HMkb9lBVNwdf0r04lOMLrd4LkvoCftKcCm50Z1oY0qRYCdlPPJsyrXoebS
+         l/LIcGxQD08KuG58b/mz1llNrkEOai4fEyYvhNSx8SQNPNlI9RqdgcumZefqFErWhXI3
+         Q5Wv1pvrZ9BPgscvAZ8E9MfWMx0npwQp/FxQjyoMQsGvZkZPtKzLUKMvGlkj3mbBUwSM
+         /Ij1oUXudSeNA75AqpESgkKatCC3l12Y3m5+wimWgEQT+xXfcMdQ2hlOlz3ukN3oad9V
+         zkk5oz76MnHestzpPx+iJmXyI0pRe8l156fQtprQN+eGmgv9ajWuq4ZZgZiVewSN/tgw
+         4y1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUTrPX5Olgw0GYccVRGkrk8IJEjUe0Q6csR+ZQwKk58SmEPO+x7EGQSTHRpOEkULrXrIpCZ6+FEOgPfX0g=@vger.kernel.org, AJvYcCXC8xOotc+U1cPbfpjY0TRIbaEbD7QoPBHBIA44uSQdjm9sS1qMfRdbF/0suXmPDjZvSN1EgF7ebczVd7DrpRqq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsUVF412BlAE388VdpeEVESi8SJVmPemNDlqUa77HEnp9gJgWd
+	jhzNWTP2g7q6JVK8n7rBAT/KhYvQOhvLt+VVOgDPEnOKyEUlKMc=
+X-Google-Smtp-Source: AGHT+IEve8HxoMBLYPBXREW/IQ8rQr+VlBoXiX0uAQiQOUjrlCCv7vNIOQoUXXJ5gLY/N23zW/Vv6g==
+X-Received: by 2002:a05:6a20:c793:b0:1d8:d613:7d6f with SMTP id adf61e73a8af0-1d9a83a9a56mr20896378637.4.1730298821018;
+        Wed, 30 Oct 2024 07:33:41 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a20f9asm9627350b3a.170.2024.10.30.07.33.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 07:33:40 -0700 (PDT)
+Date: Wed, 30 Oct 2024 07:33:40 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Shuah Khan <shuah@kernel.org>, Yi Lai <yi1.lai@linux.intel.com>
+Subject: Re: [PATCH net-next v1 6/7] net: fix SO_DEVMEM_DONTNEED looping too
+ long
+Message-ID: <ZyJDxK5stZ_RF71O@mini-arch>
+References: <20241029205524.1306364-1-almasrymina@google.com>
+ <20241029205524.1306364-2-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZyJC+s5L6JI3xO44@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pyTitmUaMPipLM8LFiCgngkB-xj0DyYQ
-X-Proofpoint-ORIG-GUID: LU3TDk4DyvFKwduroN5_L-gXPQpICUT5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 phishscore=0 impostorscore=0 mlxlogscore=623 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300111
+In-Reply-To: <20241029205524.1306364-2-almasrymina@google.com>
 
-> >  arch/s390/boot/physmem_info.c        | 46 ++++++++++++++++++++++++++--
-> >  arch/s390/include/asm/physmem_info.h |  3 ++
-> >  2 files changed, 46 insertions(+), 3 deletions(-)
+On 10/29, Mina Almasry wrote:
+> Check we're going to free a reasonable number of frags in token_count
+> before starting the loop, to prevent looping too long.
 > 
-> Reviewed-by: Alexander Gordeev <agordeev@linux.ibm.com>
+> Also minor code cleanups:
+> - Flip checks to reduce indentation.
+> - Use sizeof(*tokens) everywhere for consistentcy.
+> 
+> Cc: Yi Lai <yi1.lai@linux.intel.com>
+> 
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
+> ---
+>  net/core/sock.c | 46 ++++++++++++++++++++++++++++------------------
+>  1 file changed, 28 insertions(+), 18 deletions(-)
+> 
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index 7f398bd07fb7..8603b8d87f2e 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -1047,11 +1047,12 @@ static int sock_reserve_memory(struct sock *sk, int bytes)
+> 
+>  #ifdef CONFIG_PAGE_POOL
+> 
+> -/* This is the number of tokens that the user can SO_DEVMEM_DONTNEED in
+> +/* This is the number of frags that the user can SO_DEVMEM_DONTNEED in
+>   * 1 syscall. The limit exists to limit the amount of memory the kernel
+> - * allocates to copy these tokens.
+> + * allocates to copy these tokens, and to prevent looping over the frags for
+> + * too long.
+>   */
+> -#define MAX_DONTNEED_TOKENS 128
+> +#define MAX_DONTNEED_FRAGS 1024
+> 
+>  static noinline_for_stack int
+>  sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
+> @@ -1059,43 +1060,52 @@ sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
+>  	unsigned int num_tokens, i, j, k, netmem_num = 0;
+>  	struct dmabuf_token *tokens;
+>  	netmem_ref netmems[16];
+> +	u64 num_frags = 0;
+>  	int ret = 0;
+> 
+>  	if (!sk_is_tcp(sk))
+>  		return -EBADF;
+> 
+> -	if (optlen % sizeof(struct dmabuf_token) ||
+> -	    optlen > sizeof(*tokens) * MAX_DONTNEED_TOKENS)
+> +	if (optlen % sizeof(*tokens) ||
+> +	    optlen > sizeof(*tokens) * MAX_DONTNEED_FRAGS)
+>  		return -EINVAL;
+> 
+> -	tokens = kvmalloc_array(optlen, sizeof(*tokens), GFP_KERNEL);
+> +	num_tokens = optlen / sizeof(*tokens);
+> +	tokens = kvmalloc_array(num_tokens, sizeof(*tokens), GFP_KERNEL);
+>  	if (!tokens)
+>  		return -ENOMEM;
+> 
+> -	num_tokens = optlen / sizeof(struct dmabuf_token);
+>  	if (copy_from_sockptr(tokens, optval, optlen)) {
+>  		kvfree(tokens);
+>  		return -EFAULT;
+>  	}
+> 
+> +	for (i = 0; i < num_tokens; i++) {
+> +		num_frags += tokens[i].token_count;
+> +		if (num_frags > MAX_DONTNEED_FRAGS) {
+> +			kvfree(tokens);
+> +			return -E2BIG;
+> +		}
+> +	}
+> +
+>  	xa_lock_bh(&sk->sk_user_frags);
+>  	for (i = 0; i < num_tokens; i++) {
+>  		for (j = 0; j < tokens[i].token_count; j++) {
+>  			netmem_ref netmem = (__force netmem_ref)__xa_erase(
+>  				&sk->sk_user_frags, tokens[i].token_start + j);
+> 
+> -			if (netmem &&
+> -			    !WARN_ON_ONCE(!netmem_is_net_iov(netmem))) {
+> -				netmems[netmem_num++] = netmem;
+> -				if (netmem_num == ARRAY_SIZE(netmems)) {
+> -					xa_unlock_bh(&sk->sk_user_frags);
+> -					for (k = 0; k < netmem_num; k++)
+> -						WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
+> -					netmem_num = 0;
+> -					xa_lock_bh(&sk->sk_user_frags);
+> -				}
+> -				ret++;
 
-Sorry, it supposed to be for v3, so please dismiss this one.
+[..]
 
-> Thanks!
+> +			if (!netmem || WARN_ON_ONCE(!netmem_is_net_iov(netmem)))
+> +				continue;
+
+Any reason we are not returning explicit error to the callers here?
+That probably needs some mechanism to signal which particular one failed
+so the users can restart?
 
