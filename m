@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-388592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368299B61D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:33:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A459B61DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:33:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3B98B21008
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCEA1F26031
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782AD1E9088;
-	Wed, 30 Oct 2024 11:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085C21EABC0;
+	Wed, 30 Oct 2024 11:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr2/OAeO"
-Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4MpXqDw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DAB1E907D;
-	Wed, 30 Oct 2024 11:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2491E5726;
+	Wed, 30 Oct 2024 11:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287872; cv=none; b=CRVNe7dqoEmMM1sIM4B3Ea0VkYbleL1qW925gf8N4T1wcA34ugc+ajg00vTPyl5MtFFtbE8vKIRFXl/G7L3BhzqjjEzYCeyeJKMqTVcTw/uIODrLmdatf7fFpXAECAXNX7gaF0NGIT0b8LItxbFoUxhzdShcY2swDs9C2o7wPrk=
+	t=1730287886; cv=none; b=gZoSs2sQY8OIg1+8LWz/iXBfqrYiUhUtYlqjRDOkUlmY+7iYLjiFnDED3NCkhYlHd3ecm8ETnMzyMpP+aSqtuPvPhZd7t65i8JPGwO0TQbnElV46R+X6PGoC8ePAbuH9UxrjuRbN4JMKUbiPENTgd6kqZ/9uOA7M70l6ZffpDqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287872; c=relaxed/simple;
-	bh=TuQA7dPpS8bAGcKBW+pbPNP714DcJshUvyM1zp01fAk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ik9i1uKjtEjvWwrVEh/z5Zb5rxCYXue9jp01n1xiNERq5tEsXM26siSAPGv4icQjZvU40+FfTd5tzb4YA4IQQbpa5GmQpUpA9VJ/y2vJSjaR1OxZuCwi+yAPekPU1bAt7esE5WsDODSxm38Y6QWm87QhksGXieaYQ7X7wC7Ly4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr2/OAeO; arc=none smtp.client-ip=209.85.216.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso5253099a91.3;
-        Wed, 30 Oct 2024 04:31:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730287870; x=1730892670; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2pAE1nQgw4jbrmDxYeWEQDTLjgIt/Rez86CyuKC0C0=;
-        b=Dr2/OAeOhyr1OXsxeeFVzxRn2D7FWUJK3wUF8cquJLg0ajlT70er+oL2bIg17XhxGy
-         syZgJfyTrcd826WZau8/9Dfypuj9ipi2JGjBAJ9W0gTGg+1rNAFGHN9mCUdNtS3Z4qPY
-         Hbpz1cHsL/hGoOprpsWlzFm8KNcu+C5zu4C+49L3QGPTSVm5qMsbQ3A64o3UAvs5hJsz
-         F1HvEnuQWCIqcqF9orNo0igITtzBrchykTmEf39VxiR4JfWHXh5ds8zbkjVU7ichtf5U
-         e26U92OfjUlytgdcwhfKQt2MzWGsRKdjqe12l2Sn7y5UkhgurHY+3XvTuhm5ootZw3zB
-         oyyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730287870; x=1730892670;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I2pAE1nQgw4jbrmDxYeWEQDTLjgIt/Rez86CyuKC0C0=;
-        b=RA9jCwumfhzTdsCDYTZq/m0izJG2MynA7QEDTsQv+r1Byf593TYk7VTCjxVGt05tdR
-         P8KnnRhU6X1GxuOW+A6dhnh0CnF6AFVHcPu+5VsYISn8vCOWqKFHB+whB1v16lwV/oAA
-         FMbI6IBJFfkFYKwkwxi42eC2w4Vth39KR1WwhxNL9EN7Viw6Nerqo8+oOOaV5D8FvNs2
-         jHNemUWLloaVJ4qxThaGEmlNOaEgmn4XhxokBn21rnR3GqxTOacJaKdOV7GB0QdwSb0B
-         XPzLr84U8bRvJHmta2dwOW3tkkYe2Q4nhOhecA0Ona+AeKRlQpqndyda+mn/kg80Tew7
-         dcVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsVznEEq8zgWLuCfzDo6lkSI5jh1IadvIlBX1Xgpo0CUy7Ad1f4hJjYRxJku/L/1oIqrrAwCM71qbeC4Y=@vger.kernel.org, AJvYcCWvtdXBDM6ZADaTUAqbddOFQdxFACsDYJEUdGITj3l57UWy5G0pOmIgY7cCFJoRZ1+TEZnDiDrC@vger.kernel.org
-X-Gm-Message-State: AOJu0YydBieOdBFV71Pd7DhTx1oCMkrC0glov3JodihrT/2efdY59HEh
-	SW65hGGneqN3iLEZs/3GVKFC1RRTB6W++WXZcmE8bWYr+6hy32zu
-X-Google-Smtp-Source: AGHT+IGpGVKCN90xhTpFCl08VSNFLJNn75cfSQEFN34QoTDwpHEjyS9RmsB2fFr3lggR73yEGDVL0Q==
-X-Received: by 2002:a17:90a:ba8f:b0:2d8:a744:a820 with SMTP id 98e67ed59e1d1-2e8f11b96a2mr17442528a91.36.1730287870112;
-        Wed, 30 Oct 2024 04:31:10 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa63967sm1435129a91.32.2024.10.30.04.31.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 04:31:09 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: edumazet@google.com,
-	lixiaoyan@google.com
-Cc: dsahern@kernel.org,
-	kuba@kernel.org,
-	weiwan@google.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>
-Subject: [PATCH RESEND net-next] net: tcp: replace the document for "lsndtime" in tcp_sock
-Date: Wed, 30 Oct 2024 19:31:08 +0800
-Message-Id: <20241030113108.2277758-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730287886; c=relaxed/simple;
+	bh=jGdZDsx0s9g6rg3dnMU2BE+xkNj1ngNNFczgoy6gzvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeAkU4CJ/sTVpUvs0pydgzKiqiIVn6NtuAe81lE9AqUweSL6Y2clEhw4oy6IlDOBXFESK4hWLkiIg2rs2VOkio/zI3+k5AkHBWFIl65/qteiutPFf9iwXUEMu/fzTknJR+1mTxrKNwjCYZsfNXKF5pDX2L5Q7V9iCl7YNPtd82s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4MpXqDw; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730287884; x=1761823884;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jGdZDsx0s9g6rg3dnMU2BE+xkNj1ngNNFczgoy6gzvM=;
+  b=n4MpXqDw6a/FVdRhc+7iJeNCH6fs+STQ0NgHU+8X13WkyocOWiV3Pmap
+   9MHCYnEeyUAlA+Bdq2KRCxJYUrQrGjcDwL2QH4KiS8w4s1FM1rl5AyJrD
+   jE/+6VoIEg/cGiW6yyKLVpMqhsGidnqoEJzxmRRHLp/6k6tR3TZ3cnb0m
+   i4H049Jr7gkUP6CjsxcLSIuW5eeL3oU+74pfSMhlPPli1xRmnRKAdQCQ6
+   gpevNJdMZzbGvMKQJGcRUuhPwdsR4RvjVvj51eFD+NO1a41BwgxFHFfiB
+   t9OlxOgzFH0feMYAx7mm4N8DvlccIJcqHp2umTg69yjPhbqwg/1pBnGlD
+   A==;
+X-CSE-ConnectionGUID: yNyayGJQTTCHRYy5q9l/9A==
+X-CSE-MsgGUID: OZmA69O8TTOZ2zqdwt/wug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="40589394"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="40589394"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 04:31:24 -0700
+X-CSE-ConnectionGUID: NTZUZfUTSQSodWopAYiw2g==
+X-CSE-MsgGUID: TuXwUavjSwue7XGiLvWGCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="81936772"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 30 Oct 2024 04:31:19 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 64AAF275; Wed, 30 Oct 2024 13:31:08 +0200 (EET)
+Date: Wed, 30 Oct 2024 13:31:08 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	Esther Shimanovich <eshimanovich@chromium.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rajat Jain <rajatja@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	iommu@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] PCI: Detect and trust built-in Thunderbolt chips
+Message-ID: <20241030113108.GT275077@black.fi.intel.com>
+References: <20240910-trust-tbt-fix-v5-1-7a7a42a5f496@chromium.org>
+ <20241030001524.GA1180712@bhelgaas>
+ <ZyIUZfFuUdAbVf25@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZyIUZfFuUdAbVf25@wunner.de>
 
-The document for "lsndtime" in struct tcp_sock is placed in the wrong
-place, so let's replace it in the proper place.
+On Wed, Oct 30, 2024 at 12:11:33PM +0100, Lukas Wunner wrote:
+> On Tue, Oct 29, 2024 at 07:15:24PM -0500, Bjorn Helgaas wrote:
+> > I asked on the v4 patch whether we really need to make all this
+> > ACPI specific, and I'm still curious about that, since we don't
+> > actually use any ACPI interfaces directly.
+> 
+> The patch works around a deficiency in a Microsoft spec which is
+> specifically for ACPI-based systems, not devicetree-based systems:
+> 
+>    "ACPI Interface: Device Specific Data (_DSD) for PCIe Root Ports
+>     In Windows 10 (Version 1803), new ACPI _DSD methods have been added
+>     to support Modern Standby and PCI hot plug scenarios."
+> 
+>     https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports
+> 
+> The deficiency is that Microsoft says the ExternalFacingPort property
+> must be below the Root Port...
+> 
+>    "This ACPI object enables the operating system to identify externally
+>     exposed PCIe hierarchies, such as Thunderbolt. This object must be
+>     implemented in the Root Port ACPI device scope."
+> 
+> ...but on the systems in question, external-facing ports do not
+> originate from the Root Port, but from Downstream Ports.
+> So there's the Root Port (with the external facing property),
+> below that an Upstream Port and below that a Downstream Port
+> (which is the actual external facing port).
+> 
+> I'm not sure if Windows on ARM systems use ACPI or devicetree.
+> I'm also not sure whether the Qualcomm SnapDragon SoCs they use
+> have Thunderbolt built-in, in which case they won't need a
+> discrete Thunderbolt controller.  If they don't use discrete
+> Thunderbolt controllers or if they don't use ACPI, they can't
+> exhibit the problem.
+> 
+> In any case I haven't heard of any Windows on ARM systems being
+> affected by the issue.
 
-Fixes: d5fed5addb2b ("tcp: reorganize tcp_sock fast path variables")
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- include/linux/tcp.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Well they can do whatever they want without us knowing ;-) This problem
+does not happen even in x86 Windows probably because they do something
+similar than this patch.
 
-diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-index 6a5e08b937b3..f88daaa76d83 100644
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -200,7 +200,6 @@ struct tcp_sock {
- 
- 	/* TX read-mostly hotpath cache lines */
- 	__cacheline_group_begin(tcp_sock_read_tx);
--	/* timestamp of last sent data packet (for restart window) */
- 	u32	max_window;	/* Maximal window ever seen from peer	*/
- 	u32	rcv_ssthresh;	/* Current window clamp			*/
- 	u32	reordering;	/* Packet reordering metric.		*/
-@@ -263,7 +262,7 @@ struct tcp_sock {
- 	u32	chrono_stat[3];	/* Time in jiffies for chrono_stat stats */
- 	u32	write_seq;	/* Tail(+1) of data held in tcp send buffer */
- 	u32	pushed_seq;	/* Last pushed seq, required to talk to windows */
--	u32	lsndtime;
-+	u32	lsndtime;	/* timestamp of last sent data packet (for restart window) */
- 	u32	mdev_us;	/* medium deviation			*/
- 	u32	rtt_seq;	/* sequence number to update rttvar	*/
- 	u64	tcp_wstamp_ns;	/* departure time for next sent data packet */
--- 
-2.39.5
+> So it boils down to:  Should we compile the quirk in just in case
+> ARM-based ACPI systems with discrete Thunderbolt controllers and
+> problematic ACPI tables show up, or should we constrain it to x86,
+> which is the only known architecture that actually needs it right now.
+> 
+> My recommendation would be the latter because it's easy to move
+> code around in the tree, should other arches become affected,
+> but in the meantime we save memory and compile time on anything
+> not x86.
 
+IMHO this should be made generic enough that allows device tree based
+systems to take advantage of this right from the get-go. Note also there
+is already "external-facing" device tree property that matches the ACPI
+one defined in Documentation/devicetree/bindings/pci/pci.txt.
 
