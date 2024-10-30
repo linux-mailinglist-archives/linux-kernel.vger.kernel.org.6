@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-388951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E50F9B6688
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:53:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1EB9B668C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71BF281CB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:53:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 898ADB21223
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E625A1F4FC6;
-	Wed, 30 Oct 2024 14:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E1A1F4726;
+	Wed, 30 Oct 2024 14:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="Kh72ghVR"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nn1XKgFN"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0DF1F12FA
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A511E9071;
+	Wed, 30 Oct 2024 14:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299941; cv=none; b=d3LwXFlJU7/mSDEYDgAOh6RYrWTZ7pD5kENzvoe7/TdXqo0AREjQRjLlRL4RFW2bg+G8MdahDltBHHfGsNc6S+++GqDEOTFHvgzko5EljfShe1388FjrLvdYpXSlHXq2Q3vRLUpqz6zldNuZwxtKWkuRBfG+YYoqsCJXNr3VWpM=
+	t=1730300005; cv=none; b=Dv9424s148gQQP9NCtgXpLIyEqioguMtJwZgKvFclRS5rAtNAr/1aNyz57Pl8fNqO5OUWlGnC2w6GRyfe/sa/LA+79ioPughrv5FlWwDnEL5frfhRbxDYEO4M6rGcQcgMPBPwDKh8M+BJaVZvSHpxZtLTwuRtrZu10E3/5Ya7XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299941; c=relaxed/simple;
-	bh=/nTu4yiVBod9F3pqX7RljXeoBuJmAXaC0LVBlRDlCkM=;
+	s=arc-20240116; t=1730300005; c=relaxed/simple;
+	bh=0KmdwmGaHffLEA6SPWvkmiakFdh9J6nLYLces2WeUnA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSUJWvoiyCn4lh07ftBVXE2jlWq/wQHRLSSl4N4f0CF2mIg5T2geLIzB2NzExX1TN0JDYfE/eD3nimo7IuRbfvnUB515CmQH38C3jGQF+jgNe9wseVzY3aWUkama8qFh8xPYFpMtLb+6wfxustkSsIMyOphHtnnA9IMa1WuJOcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name; spf=pass smtp.mailfrom=chrisdown.name; dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b=Kh72ghVR; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431616c23b5so6897145e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:52:19 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mH1XST4xYnsDa6BB+JdD+XFS7v1rRc/mi2zri5ovvIwn8XTtBchj0Nx+BVY0pwc0+LF4UDvNxb/jqri5JMwBs5KO7C1dbVqtmGvBtkqM79vyCVSzXLjNN7oGtb9iIyLaTf1TJLrDr9APaj0dTqkbcbxj95y7RE2mJZPrcDa6mwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nn1XKgFN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315855ec58so8215785e9.2;
+        Wed, 30 Oct 2024 07:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google; t=1730299938; x=1730904738; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/SSvlJM/OhJQtJUJbC46VqSozyrQEBY8ZBkPG7MvxSU=;
-        b=Kh72ghVRwv6AbQYUpvgeinsM/cRUr/Y05PmhrB7H/zoT6ux+f/CROtLZ+LQizV7w/H
-         6GDrULyqtR2l02zkpOxgayksZCTTgro7YWsy0RndvIP20l7PfRbEqLO9Ivg0byXsETDZ
-         /LYhy97lDTL0FSAg4Ay+UA77NgVGQbguh2SNA=
+        d=gmail.com; s=20230601; t=1730300002; x=1730904802; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JlskkeRUwtNLu3nkD9yQJXhTHloOmWBDLcwuQvdxQuI=;
+        b=nn1XKgFNGkPuYE7PALv0SBEFU/8wZpr2m/Mzu9c83uolimxqRaBLUvZcqgIElWJv7i
+         smuV4X5BEppGS4SMlBaiFXL3Df4GMi8auQ+BOwNAjR+L3aderpXh4zjJI++sHyu1HP6E
+         mdNk/ae5JoGBN64380qrXhc1ubS5z7OtHiw+O5WmEnZ5uZyVZm1unPXFRUAv8qc14FlQ
+         KF0jL2tw/7m69iX2H+KRzfCepbbGZZa/ip4hee5SlQXa4OW/mNIZkSxw+P4Vpx5P744F
+         yQWf/n9DQxUD16Dy2vPBfXk8Hr+K4D/cetsbJkT4te6wwFjS4g+4jHaybNF4NmXiKpLx
+         QKuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730299938; x=1730904738;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/SSvlJM/OhJQtJUJbC46VqSozyrQEBY8ZBkPG7MvxSU=;
-        b=rqCINMKR6ngGotDXpVKGww0rWxXRrZYRQIaUlOjf9nnh8XYHL2dnn7m7xhI7kCpmlM
-         MbJW4l12H8bqyBcVDbMHHQyaoN2pGnDfQCwrI3l3fopBeZCbmDHt/7RSi7ZeVxKlf6nR
-         xxDBs8A29BTILOhrUVKbKzQud23YYUCnW+69RaOIIFGId8Ktqmf44Lqr//xQawhfg+FK
-         9Q+UkzbvyN2T1mAGijSR6PJ2u2R5O0tlJp4P2LfBKsCFZdqfkf3/7nkEiGQ06C7P6Lnz
-         qILga2mhML24xOZAKxi0dUclZxLyz5hzh8LIOknDP0/CIMOcl5zw0mLbGpK5XwyWVstJ
-         HfTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIn0H1VaYwjE3fLGLU8EKUPI/mVAeb4nXQtUXunXdAqZRcSfq88KmJMEbV1MjkENTjaR6EHybKxT0OL6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3sqMGzq/BL/AaoBZniR2sSqwI0vqZXDJGUZk/gLtbZchnSqU0
-	kA5FjZI2lbqbrcSOHKGqLchmgxjtvbMP3jQN4KZSSLJrH0QjxlhFSym62uDqeOw=
-X-Google-Smtp-Source: AGHT+IEAajtEtz+5vxf3sLgzdnDhCBIDBSA638FA1MLL1J8zLQtfa0+HFp2WolOX0nhmzzXHkrJHBA==
-X-Received: by 2002:a05:600c:512a:b0:42c:b98d:b993 with SMTP id 5b1f17b1804b1-431b5704cbemr49907195e9.2.1730299937500;
-        Wed, 30 Oct 2024 07:52:17 -0700 (PDT)
-Received: from localhost ([93.115.193.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1c3absm15638414f8f.21.2024.10.30.07.52.16
+        d=1e100.net; s=20230601; t=1730300002; x=1730904802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JlskkeRUwtNLu3nkD9yQJXhTHloOmWBDLcwuQvdxQuI=;
+        b=ZWSBt6rpqVI/NcLAOqH+StgzyUNv3jiDTaGDlFZ1rS7jGPrNaT44cPwJy+JZiaSRbD
+         ZpY5+Sxv/Q3gmwJU6tvWdpk2h8IxfRUk3ANY4vYz9gB8Slzv4+wEsdWB1gjuChWTzhUU
+         /8iCn/1CqUpRUS/93o1gmHWSyCk2p+5T+iN10bHLWAVskDgyVJ6yKG2yvRLzLvy/nrBN
+         syu7+dRMzneK77E3kO9sSxsSYPD46gkVo7nMbE4uGHBx4ZlbapNEBl+ES8DXgyLwxwYz
+         VEaQAdu11w2ekvNVQXlcUnfdJQ/hxSV8oWNbLyage7v88nSqRqShXBW6xdciRta3vjvb
+         GdUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFk+oz6CbkqdfYBv6NoeJHdUerm1n9kt8Mof+L2wMLer1ROuG0OyCLGDZOVkMS5m4MnXFBst1RKFrrpT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWql2h+DU7pS9COlFIoukFHfGWC39qzTdyjbGO2to1QetDgdNn
+	xL4YgC7uFCbfVVPZriv5h+kwQc+aO5S00HJjk/5r8fYNBqEFpq/awbS+0JTuaI8=
+X-Google-Smtp-Source: AGHT+IGg3ns6Q36hude1m8Kr+AgT0zYbZ+xfg23M/+7x2R/Akg1gbAmCiIcDBlWMFI0hRGHfSXfWgw==
+X-Received: by 2002:a05:600c:5121:b0:42c:b63d:df3 with SMTP id 5b1f17b1804b1-4319ab9776dmr58381655e9.0.1730300001577;
+        Wed, 30 Oct 2024 07:53:21 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9181e7sm23692315e9.1.2024.10.30.07.53.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 07:52:17 -0700 (PDT)
-Date: Wed, 30 Oct 2024 14:52:16 +0000
-From: Chris Down <chris@chrisdown.name>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: hannes@cmpxchg.org, nphamcs@gmail.com, shakeel.butt@linux.dev,
-	mhocko@kernel.org, roman.gushchin@linux.dev, muchun.song@linux.dev,
-	tj@kernel.org, lizefan.x@bytedance.com, mkoutny@suse.com,
-	corbet@lwn.net, lnyng@meta.com, akpm@linux-foundation.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
-Message-ID: <ZyJIIEEWTXKysQLi@chrisdown.name>
-References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+        Wed, 30 Oct 2024 07:53:21 -0700 (PDT)
+Date: Wed, 30 Oct 2024 16:53:18 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] MAINTAINERS: Remove self from DSA entry
+Message-ID: <20241030145318.uoixalp5ty7jv45z@skbuf>
+References: <20241029003659.3853796-1-f.fainelli@gmail.com>
+ <20241029104946.epsq2sw54ahkvv26@skbuf>
+ <20241029003659.3853796-1-f.fainelli@gmail.com>
+ <20241029104946.epsq2sw54ahkvv26@skbuf>
+ <d7bc3c5f-2788-4878-b6cc-69657607a34c@gmail.com>
+ <d7bc3c5f-2788-4878-b6cc-69657607a34c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+In-Reply-To: <d7bc3c5f-2788-4878-b6cc-69657607a34c@gmail.com>
+ <d7bc3c5f-2788-4878-b6cc-69657607a34c@gmail.com>
 
-Thanks for the detailed changelog, it answered a bunch of questions about the 
-general semantics I had.
+On Tue, Oct 29, 2024 at 09:05:51AM -0700, Florian Fainelli wrote:
+> On 10/29/24 03:49, Vladimir Oltean wrote:
+> > This is unexpected. What has happened?
+> 
+> Nothing, and that's the main motivation, most, if not all of my reviews of
+> DSA patches have been extremely superficial and mostly an additional stamp
+> on top of someone's else review. At this point I don't feel like I am
+> contributing anything to the subsystem that warrants me being listed as a
+> maintainer of that subsystem. There are other factors like having a somewhat
+> different role from when I was working on DSA at the time.
+> -- 
+> Florian
 
-Joshua Hahn writes:
->Suggested-by: Nhat Pham <nphamcs@gmail.com>
->Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
->Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+I see. There's nothing wrong that priorities change. Thank you for the
+benefit you've brought to the DSA subsystem with your journey, starting with
+transitioning non-Marvell switches to it from swconfig, to papers, presentations,
+being nice and patient to newcomers (me at least).
 
-Acked-by: Chris Down <chris@chrisdown.name>
+I kinda wish there was a way for people to get recognition for their work
+in CREDITS even if they don't disappear completely from the picture.
+Hmm, looking at that file, I do recognize some familiar names who are still
+active in other areas: Geert Uytterhoeven, Arnd Bergmann, Marc Zyngier...
+Would you be interested in getting moved there? At least I believe that
+your contribution is significant enough to deserve that.
 
