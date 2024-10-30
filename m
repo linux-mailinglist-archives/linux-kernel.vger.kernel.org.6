@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-388095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CA69B5A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:45:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9D59B5A7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DEE3B232A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590A01C22D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C675D196C67;
-	Wed, 30 Oct 2024 03:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S6pJcoMf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F92C197A8E;
+	Wed, 30 Oct 2024 03:49:11 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E8428F7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD7B193432;
+	Wed, 30 Oct 2024 03:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730259916; cv=none; b=hOyAPZxjjdHYYPHPxKrL9CwhQUmQz3+XDqGHQLYOmHQwRlh+CsY3vYlHnA02//fttLhX30cMH4oKGzUAyNIhrbPl8a4QjpniwXZsBocihYVqsUNEjmVrtc8yo2/Heqc+/pCmQTd4aM4DfbadcaPJ5uD+oPstwswQS6JHLL2Gufc=
+	t=1730260151; cv=none; b=N6ha/ep3g/35wca6rDFWV8/SfSwRkp1XzbrpSNZkP7fyw++hTBgOSZuRa0bqtzpnUNJoXFYZBMdicTL5AlcM0+lU7UzsMGuY+Gk7rnHWEEQZ/ZyeZeR8WiwapW3gqaEZSNkLMlDswfdO/G50v/WnQiaGnurBL5Ivi2/vIk1eoPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730259916; c=relaxed/simple;
-	bh=pvqROz9YZfbJDgEflMBYVsJrtToifyimXzdNQpjU7O4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kCRY2MpfybClV+UVXRwdErhHRWrGmAbMytLyuXXt+i1RVQcA9u7bCTPbT/wf2a0HoZ6GNkoSe/PhXHl6OH8y+7hiRl+L7iJI982Yf6beLN7zVhPhrakbq4ZlEqdqdmaAOZOklTuuJa7fPVQmPHebwOv5poP1x46aQsk6mFlMjz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S6pJcoMf; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730259914; x=1761795914;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=pvqROz9YZfbJDgEflMBYVsJrtToifyimXzdNQpjU7O4=;
-  b=S6pJcoMfrz9Rz+qqjUG05ck2aNu60ZwJNFNUwUkffwsK5ngwEubDZCGJ
-   aNz4vz19PyAF0PPFDJ5hRpYn+WtzzKTb4OJ6GGs6k8S7duJVkyByJwv00
-   /p6Y2MH2+xKBn488HlHDxTewnD5/X3JiuXlIWxA9R2E7TEMnDr5vfN1B3
-   OSgccfNfwsNfYFBOSCZYz0sI59WEbycrufIf5GdhkZcV/+IWmfxPIcmTP
-   6zNGmxk8n3bbh91bNReS/2rnO+boYPqEU2DeqquU/D60PShTMJVl877dn
-   efTATlls/w7+5lklH6nNbCadzk3QjrQXzDF37oTapQXcli77utk+6O+Gf
-   g==;
-X-CSE-ConnectionGUID: 6FUt57YHR0ycqpDFf3uG3A==
-X-CSE-MsgGUID: apJYzfJeTPaWgIxNb7HTng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="29387079"
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="29387079"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 20:45:13 -0700
-X-CSE-ConnectionGUID: t/3/jWFKQJS5zkBnZq0PSg==
-X-CSE-MsgGUID: 2inaq6ZqSeasK3/rdRnLIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="81812491"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 20:45:10 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,  David
- Hildenbrand <david@redhat.com>,  Baolin Wang
- <baolin.wang@linux.alibaba.com>,  Chris Li <chrisl@kernel.org>,  Yosry
- Ahmed <yosryahmed@google.com>,  Kairui Song <kasong@tencent.com>,  Ryan
- Roberts <ryan.roberts@arm.com>,  Kanchana P Sridhar
- <kanchana.p.sridhar@intel.com>,  Usama Arif <usamaarif642@gmail.com>
-Subject: Re: [PATCH] mm: add per-order mTHP swpin counters
-In-Reply-To: <20241026082423.26298-1-21cnbao@gmail.com> (Barry Song's message
-	of "Sat, 26 Oct 2024 21:24:23 +1300")
-References: <20241026082423.26298-1-21cnbao@gmail.com>
-Date: Wed, 30 Oct 2024 11:41:37 +0800
-Message-ID: <87o7329s0e.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730260151; c=relaxed/simple;
+	bh=daNOsmMnPEMLDlV+9yo8DUW06AdiYF2RaW/UiAbgUP4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ryk3LatOrEW6d+YEKFrnvqRJqTtAIekBEBJPak6kOYJIwnc1Fp0NoqX2osRa3uHK1cm+r+Ggu58iU/GkfFehjsRi38ROv4TAsrk+QXfj0MLP+V7wvwlA3s/7FTbWJ64B3ZaxAP1RPULPawPAltCTQvsV06dxiFbf462a2KfuJPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: e5d44ad4967111efa216b1d71e6e1362-20241030
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
+	AMN_C_TI, AMN_C_BU
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:e20aaaf7-ab13-4583-9308-317b1215a0c6,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:15
+X-CID-INFO: VERSION:1.1.38,REQID:e20aaaf7-ab13-4583-9308-317b1215a0c6,IP:0,URL
+	:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:15
+X-CID-META: VersionHash:82c5f88,CLOUDID:8ec5002eb373147914e24c8edb80b435,BulkI
+	D:241030114902BYADF0TW,BulkQuantity:0,Recheck:0,SF:66|841|17|19|102,TC:nil
+	,Content:0,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
+	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: e5d44ad4967111efa216b1d71e6e1362-20241030
+X-User: xiaopei01@kylinos.cn
+Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 848244465; Wed, 30 Oct 2024 11:49:00 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: liambeguin@gmail.com
+Cc: xiaopei01@kylinos.cn,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiaopeitux@foxmail.com
+Subject: [PATCH] iio: test : check null return of kunit_kmalloc in iio_rescale_test_scale
+Date: Wed, 30 Oct 2024 11:48:54 +0800
+Message-Id: <ecd56a85e54a96c2f0313c114075a21a76071ea2.1730259869.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Barry Song <21cnbao@gmail.com> writes:
+kunit_kmalloc may fail, return value might be NULL and will cause
+NULL pointer dereference.Add KUNIT_ASSERT_NOT_ERR_OR_NULL fix it.
 
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> This helps profile the sizes of folios being swapped in. Currently,
-> only mTHP swap-out is being counted.
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+Fixes: 8e74a48d17d5 ("iio: test: add basic tests for the iio-rescale driver")
+---
+ drivers/iio/test/iio-test-rescale.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Better to describe the user space interface in patch description?
+diff --git a/drivers/iio/test/iio-test-rescale.c b/drivers/iio/test/iio-test-rescale.c
+index 31ee55a6faed..11bfff6636a3 100644
+--- a/drivers/iio/test/iio-test-rescale.c
++++ b/drivers/iio/test/iio-test-rescale.c
+@@ -652,6 +652,8 @@ static void iio_rescale_test_scale(struct kunit *test)
+ 	int rel_ppm;
+ 	int ret;
+ 
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buff);
++
+ 	rescale.numerator = t->numerator;
+ 	rescale.denominator = t->denominator;
+ 	rescale.offset = t->offset;
+@@ -681,6 +683,8 @@ static void iio_rescale_test_offset(struct kunit *test)
+ 	int values[2];
+ 	int ret;
+ 
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buff_off);
++
+ 	rescale.numerator = t->numerator;
+ 	rescale.denominator = t->denominator;
+ 	rescale.offset = t->offset;
+-- 
+2.34.1
 
-[snip]
-
---
-Best Regards,
-Huang, Ying
 
