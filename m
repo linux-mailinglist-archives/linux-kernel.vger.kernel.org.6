@@ -1,335 +1,194 @@
-Return-Path: <linux-kernel+bounces-389711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF6059B7056
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:10:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97C19B7059
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33271C21671
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:10:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9A1B210FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72011E32A4;
-	Wed, 30 Oct 2024 23:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF722144A7;
+	Wed, 30 Oct 2024 23:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ro9FvwkM"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VopkGahq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D099217657;
-	Wed, 30 Oct 2024 23:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603281BD9EA;
+	Wed, 30 Oct 2024 23:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730329812; cv=none; b=p4HdJPCIQ5/0D1TbXvYrSr7kk5T6u4IPGthcC5VhrDjXC3/5nQF5H353AOPchto9kY/PNF9tTnvBzMqKuD3VyWpEAOb88/9zw2Bjcq48C0/SaSkJKqc4F2pEUnNetd5WfBYxkTtq+Lul+fPF5fP9xc8+ioTqu7cPkMqW2JuuKMc=
+	t=1730329860; cv=none; b=AYvxQgJf2xkOb5Ao7KlW44Qm7F0vsaF415o78tdWnk1bvOmVHuY349Ooyy6D1TUJtolZWi8f+r51AIVJ+XIO/L+u7OJ9X3Rrqp1AmtaBycT+1OAdcFXgRvZe+RxiuDbOb5Gxnn6UlW2OBZmwGXr4X8gKgJpuPIv6X6rm4eknA5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730329812; c=relaxed/simple;
-	bh=PvMSlb4ER20zgSWWNwE2ypfP9G5WUX3heFVVSw6vmnE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c8VPMxsKracknj156i1PXTpC9xG3eWFCsGOIIdHdPZhjwARBIG2K6ex9dHqT4x+lJsl93XeGMNJU2WyRWQqmLI/ek1DSOSzKHz2xrckIEs1XreSVVo9W6kMR9bOWuh1AnRgj9DkjVa4edgF2mexJkvt0L6gYDw2KZwfRjTTnxNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ro9FvwkM; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso2899255e9.0;
-        Wed, 30 Oct 2024 16:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730329808; x=1730934608; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JEpzUzJ1c5lFszF2kPARxtWbM5pCJuooPUNo/pm7Vmg=;
-        b=Ro9FvwkMvzYIUdb743XXSB3BzBEXdLBW7fOS72iflxQ82z54PNJJm0/sTju8jjhke0
-         gS9ppU9IdjfqXAEf2xxMpJVKLtW47iVsiUvBE0uzD72L0A37RmET4a3gAwF6j2CgBGAK
-         9aAL9FnEM0hL7ZC16xoPxxqC7kR6na8JnSRPR4tNFS5Smr2wNzN6q2e6VBL+ECSttqVA
-         wUUp+cSHB17r0TS51FbXwXm4dt/1mbOHEq8pQgBlmZXC9wm/ljLdOaxMuNpVBo8ywAzR
-         ObivbFl1TRkXvdD4JHrMwCxVtNh9CM3hc3FEUuRoYQjbss+pO6wcKOatwOmaqU6132N8
-         ZdwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730329808; x=1730934608;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JEpzUzJ1c5lFszF2kPARxtWbM5pCJuooPUNo/pm7Vmg=;
-        b=aSnu0MuxNKdbs+oFlxH5I2TCDH95bGwFVSZvHzJENXGE0M0GXYHysKcUCjVhqFUre7
-         YL6nqzhAro/EMFbC+x1hsbXQomoonfGsLf1j/eSW5JL7iw+nfrKaml/tYpfZJy5X4WHR
-         H1ipwPqPsemHYJkQyKP76tIZMOQqihfFAcXLM6hSgIEm4IV1JONJQYEmYUv9i/OjLBMw
-         ZwKVzgyvss0KCYBYEwueZEbAzt9n9ioqKTYVfjltfHNRUn8evf63LK1dDxjmdxu/SOnY
-         79jLSH5IkzXLaOVjhDxL+w9bUpoP/Pxa753+jkDyoyZJy1sd0nKsginHrKtF/3t8B7Nt
-         EyWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp865PUvRNNAI4Zi+wzkKwgNPrjU/fMausQ+ZWT/dix3Q7ZTmYmapOwOtRfe8Ht4WpvMGeqdYOkfZxHoLY@vger.kernel.org, AJvYcCWuWcajWKEQHURlgCSGP0Ayu16lkq0LsfWLLrJPdtpbc3dPBVAZNErpUpxkBP50AJRiH+EUf9UZWi9z@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPMvK1TYCIqyh3e7FTrU3P08TQ+oS42iHDjsvxCLlUM55bjmax
-	qwT6PUDHwP0M7TxyrIlKia09dVaXsn4Ly6FgusgLsGik0ZpjNsD6
-X-Google-Smtp-Source: AGHT+IEPkiJRff+4vPxkrnkgfrNHalMGa4SX2xBvp2YkmFGoSP8+wKhVuaJOhLWXT9KSEb6MoOwpPA==
-X-Received: by 2002:a05:600c:1d16:b0:42e:d4a2:ce67 with SMTP id 5b1f17b1804b1-431ae9c440cmr107681595e9.17.1730329807502;
-        Wed, 30 Oct 2024 16:10:07 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-fbf3-0656-23c1-5ba1.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:fbf3:656:23c1:5ba1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e848csm34819375e9.3.2024.10.30.16.10.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 16:10:07 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 31 Oct 2024 00:09:58 +0100
-Subject: [PATCH v4 2/2] iio: light: veml6070: add support for integration
- time
+	s=arc-20240116; t=1730329860; c=relaxed/simple;
+	bh=NobT7qYPgQUDHyh4P5cTe3irZqg7DEUQJbR+GUeX5ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Icr2CowZgCn6Ho9gK/hkXyNfw2Z3kApIAeYd+ia3iygb7Y951T3Wshlstanni7nK6Zqv3d4KwUsUyobQkMv1/5oP98QxJiymTzLgn1jAFtmvwRnf+lQux2vUOhGzGg5ILk6cXMW4rPo2aZP40RVAh+Ld6y+JLT5SwOWGCycEN7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VopkGahq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBEFCC4CECE;
+	Wed, 30 Oct 2024 23:10:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730329860;
+	bh=NobT7qYPgQUDHyh4P5cTe3irZqg7DEUQJbR+GUeX5ac=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=VopkGahqXCNlTpf7AI+7gIpoBrYuq5ssZSU6uX7UiPnzc+PKC3X1lD6A0oOUF1hTG
+	 atTVsEIE4NoncDheeKu3q6HeLfIqW42kgs2C6u6hsNiKRcfBN9BLc1N7YNSIIZrx/b
+	 lIA25iKdM8Lx9H6QByYehMSl4DlZReZ1aHCd5u6pjCju1Jq80p4ic5TDonx53vZQ4A
+	 4TXtwICbCJn2D0sjy2ALwSr61qLqhpP1D4ZCXseKUEBRwyhmUHGdV4TFQuKMQ0OAfI
+	 QG2Bj/OP+4xoLAapTH//iQaowQ+XgHS1tODxxNrnV1ecO1j/92QCCYMBrWczW+SnAN
+	 k7JPIztZkQOnw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 82F26CE0864; Wed, 30 Oct 2024 16:10:58 -0700 (PDT)
+Date: Wed, 30 Oct 2024 16:10:58 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-mm@kvack.org, sfr@canb.auug.org.au, bigeasy@linutronix.de,
+	longman@redhat.com, boqun.feng@gmail.com, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+	akpm@linux-foundation.org
+Subject: Re: [BUG] -next lockdep invalid wait context
+Message-ID: <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
+ <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
+ <ZyK0YPgtWExT4deh@elver.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-veml6070-integration-time-v4-2-c66da6788256@gmail.com>
-References: <20241031-veml6070-integration-time-v4-0-c66da6788256@gmail.com>
-In-Reply-To: <20241031-veml6070-integration-time-v4-0-c66da6788256@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730329801; l=6758;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=PvMSlb4ER20zgSWWNwE2ypfP9G5WUX3heFVVSw6vmnE=;
- b=+EdcuvwG1WczhePTCYyzglYFdPFVj9AAVTEJ2sDx/eebrBnlXW5E7l2CVy0ozcUxnP5IPrmsq
- QjMqAzrLibqAfylLCZFroYqXVhQ8XuKDSCbrbWMoCysGCLt6VfMyMOV
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyK0YPgtWExT4deh@elver.google.com>
 
-The integration time of the veml6070 depends on an external resistor
-(called Rset in the datasheet) and the value configured in the IT
-field of the command register, whose supported values are 1/2x, 1x,
-2x and 4x.
+On Wed, Oct 30, 2024 at 11:34:08PM +0100, Marco Elver wrote:
+> On Wed, Oct 30, 2024 at 10:48PM +0100, Vlastimil Babka wrote:
+> > On 10/30/24 22:05, Paul E. McKenney wrote:
+> > > Hello!
+> > 
+> > Hi!
+> > 
+> > > The next-20241030 release gets the splat shown below when running
+> > > scftorture in a preemptible kernel.  This bisects to this commit:
+> > > 
+> > > 560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING")
+> > > 
+> > > Except that all this is doing is enabling lockdep to find the problem.
+> > > 
+> > > The obvious way to fix this is to make the kmem_cache structure's
+> > > cpu_slab field's ->lock be a raw spinlock, but this might not be what
+> > > we want for real-time response.
+> > 
+> > But it's a local_lock, not spinlock and it's doing local_lock_irqsave(). I'm
+> > confused what's happening here, the code has been like this for years now.
+> > 
+> > > This can be reproduced deterministically as follows:
+> > > 
+> > > tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration 2 --configs PREEMPT --kconfig CONFIG_NR_CPUS=64 --memory 7G --trust-make --kasan --bootargs "scftorture.nthreads=64 torture.disable_onoff_at_boot csdlock_debug=1"
+> > > 
+> > > I doubt that the number of CPUs or amount of memory makes any difference,
+> > > but that is what I used.
+> > > 
+> > > Thoughts?
+> > > 
+> > > 							Thanx, Paul
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > [   35.659746] =============================
+> > > [   35.659746] [ BUG: Invalid wait context ]
+> > > [   35.659746] 6.12.0-rc5-next-20241029 #57233 Not tainted
+> > > [   35.659746] -----------------------------
+> > > [   35.659746] swapper/37/0 is trying to lock:
+> > > [   35.659746] ffff8881ff4bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x49/0x1b0
+> > > [   35.659746] other info that might help us debug this:
+> > > [   35.659746] context-{2:2}
+> > > [   35.659746] no locks held by swapper/37/0.
+> > > [   35.659746] stack backtrace:
+> > > [   35.659746] CPU: 37 UID: 0 PID: 0 Comm: swapper/37 Not tainted 6.12.0-rc5-next-20241029 #57233
+> > > [   35.659746] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+> > > [   35.659746] Call Trace:
+> > > [   35.659746]  <IRQ>
+> > > [   35.659746]  dump_stack_lvl+0x68/0xa0
+> > > [   35.659746]  __lock_acquire+0x8fd/0x3b90
+> > > [   35.659746]  ? start_secondary+0x113/0x210
+> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > > [   35.659746]  lock_acquire+0x19b/0x520
+> > > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
+> > > [   35.659746]  ? __pfx_lock_acquire+0x10/0x10
+> > > [   35.659746]  ? __pfx_lock_release+0x10/0x10
+> > > [   35.659746]  ? lock_release+0x20f/0x6f0
+> > > [   35.659746]  ? __pfx_lock_release+0x10/0x10
+> > > [   35.659746]  ? lock_release+0x20f/0x6f0
+> > > [   35.659746]  ? kasan_save_track+0x14/0x30
+> > > [   35.659746]  put_cpu_partial+0x52/0x1b0
+> > > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
+> > > [   35.659746]  ? __pfx_scf_handler_1+0x10/0x10
+> > > [   35.659746]  __flush_smp_call_function_queue+0x2d2/0x600
+> > 
+> > How did we even get to put_cpu_partial directly from flushing smp calls?
+> > SLUB doesn't use them, it uses queue_work_on)_ for flushing and that
+> > flushing doesn't involve put_cpu_partial() AFAIK.
+> > 
+> > I think only slab allocation or free can lead to put_cpu_partial() that
+> > would mean the backtrace is missing something. And that somebody does a slab
+> > alloc/free from a smp callback, which I'd then assume isn't allowed?
+> 
+> Tail-call optimization is hiding the caller. Compiling with
+> -fno-optimize-sibling-calls exposes the caller. This gives the full
+> picture:
+> 
+> [   40.321505] =============================
+> [   40.322711] [ BUG: Invalid wait context ]
+> [   40.323927] 6.12.0-rc5-next-20241030-dirty #4 Not tainted
+> [   40.325502] -----------------------------
+> [   40.326653] cpuhp/47/253 is trying to lock:
+> [   40.327869] ffff8881ff9bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x48/0x1a0
+> [   40.330081] other info that might help us debug this:
+> [   40.331540] context-{2:2}
+> [   40.332305] 3 locks held by cpuhp/47/253:
+> [   40.333468]  #0: ffffffffae6e6910 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
+> [   40.336048]  #1: ffffffffae6e9060 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
+> [   40.338607]  #2: ffff8881002a6948 (&root->kernfs_rwsem){++++}-{4:4}, at: kernfs_remove_by_name_ns+0x78/0x100
+> [   40.341454] stack backtrace:
+> [   40.342291] CPU: 47 UID: 0 PID: 253 Comm: cpuhp/47 Not tainted 6.12.0-rc5-next-20241030-dirty #4
+> [   40.344807] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [   40.347482] Call Trace:
+> [   40.348199]  <IRQ>
+> [   40.348827]  dump_stack_lvl+0x6b/0xa0
+> [   40.349899]  dump_stack+0x10/0x20
+> [   40.350850]  __lock_acquire+0x900/0x4010
+> [   40.360290]  lock_acquire+0x191/0x4f0
+> [   40.364850]  put_cpu_partial+0x51/0x1a0
+> [   40.368341]  scf_handler+0x1bd/0x290
+> [   40.370590]  scf_handler_1+0x4e/0xb0
+> [   40.371630]  __flush_smp_call_function_queue+0x2dd/0x600
+> [   40.373142]  generic_smp_call_function_single_interrupt+0xe/0x20
+> [   40.374801]  __sysvec_call_function_single+0x50/0x280
+> [   40.376214]  sysvec_call_function_single+0x6c/0x80
+> [   40.377543]  </IRQ>
+> [   40.378142]  <TASK>
+> 
+> And scf_handler does indeed tail-call kfree:
+> 
+> 	static void scf_handler(void *scfc_in)
+> 	{
+> 	[...]
+> 		} else {
+> 			kfree(scfcp);
+> 		}
+> 	}
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/iio/light/veml6070.c | 131 ++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 123 insertions(+), 8 deletions(-)
+So I need to avoid calling kfree() within an smp_call_function() handler?
 
-diff --git a/drivers/iio/light/veml6070.c b/drivers/iio/light/veml6070.c
-index d11ae00f61f8..6d4483c85f30 100644
---- a/drivers/iio/light/veml6070.c
-+++ b/drivers/iio/light/veml6070.c
-@@ -6,7 +6,7 @@
-  *
-  * IIO driver for VEML6070 (7-bit I2C slave addresses 0x38 and 0x39)
-  *
-- * TODO: integration time, ACK signal
-+ * TODO: ACK signal
-  */
- 
- #include <linux/bitfield.h>
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/err.h>
- #include <linux/delay.h>
-+#include <linux/units.h>
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-@@ -29,18 +30,79 @@
- #define VEML6070_COMMAND_RSRVD	BIT(1) /* reserved, set to 1 */
- #define VEML6070_COMMAND_SD	BIT(0) /* shutdown mode when set */
- 
--#define VEML6070_IT_10	0x01 /* integration time 1x */
-+#define VEML6070_IT_05		0x00
-+#define VEML6070_IT_10		0x01
-+#define VEML6070_IT_20		0x02
-+#define VEML6070_IT_40		0x03
-+
-+#define VEML6070_MIN_RSET_KOHM	75
-+#define VEML6070_MIN_IT_US	15625 /* Rset = 75 kohm, IT = 1/2 */
- 
- struct veml6070_data {
- 	struct i2c_client *client1;
- 	struct i2c_client *client2;
- 	u8 config;
- 	struct mutex lock;
-+	u32 rset;
-+	int it[4][2];
- };
- 
-+static int veml6070_calc_it(struct device *dev, struct veml6070_data *data)
-+{
-+	int i, tmp_it;
-+
-+	data->rset = 270000;
-+	device_property_read_u32(dev, "vishay,rset-ohms", &data->rset);
-+
-+	if (data->rset < 75000 || data->rset > 1200000)
-+		return dev_err_probe(dev, -EINVAL, "Rset out of range\n");
-+
-+	/*
-+	 * convert to kohm to avoid overflows and work with the same units as
-+	 * in the datasheet and simplify UVI operations.
-+	 */
-+	data->rset /= KILO;
-+
-+	tmp_it = VEML6070_MIN_IT_US * data->rset / VEML6070_MIN_RSET_KOHM;
-+	for (i = 0; i < ARRAY_SIZE(data->it); i++) {
-+		data->it[i][0] = (tmp_it << i) / MICRO;
-+		data->it[i][1] = (tmp_it << i) % MICRO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int veml6070_get_it(struct veml6070_data *data, int *val, int *val2)
-+{
-+	int it_idx = FIELD_GET(VEML6070_COMMAND_IT, data->config);
-+
-+	*val = data->it[it_idx][0];
-+	*val2 = data->it[it_idx][1];
-+
-+	return IIO_VAL_INT_PLUS_MICRO;
-+}
-+
-+static int veml6070_set_it(struct veml6070_data *data, int val, int val2)
-+{
-+	int it_idx;
-+
-+	for (it_idx = 0; it_idx < ARRAY_SIZE(data->it); it_idx++) {
-+		if (data->it[it_idx][0] == val && data->it[it_idx][1] == val2)
-+			break;
-+	}
-+
-+	if (it_idx >= ARRAY_SIZE(data->it))
-+		return -EINVAL;
-+
-+	data->config = (data->config & ~VEML6070_COMMAND_IT) |
-+		FIELD_PREP(VEML6070_COMMAND_IT, it_idx);
-+
-+	return i2c_smbus_write_byte(data->client1, data->config);
-+}
-+
- static int veml6070_read(struct veml6070_data *data)
- {
--	int ret;
-+	int ret, it_ms, val, val2;
- 	u8 msb, lsb;
- 
- 	guard(mutex)(&data->lock);
-@@ -51,7 +113,9 @@ static int veml6070_read(struct veml6070_data *data)
- 	if (ret < 0)
- 		return ret;
- 
--	msleep(125 + 10); /* measurement takes up to 125 ms for IT 1x */
-+	veml6070_get_it(data, &val, &val2);
-+	it_ms = val * MILLI + val2 / (MICRO / MILLI);
-+	msleep(it_ms + 10);
- 
- 	ret = i2c_smbus_read_byte(data->client2); /* read MSB, address 0x39 */
- 	if (ret < 0)
-@@ -81,26 +145,37 @@ static const struct iio_chan_spec veml6070_channels[] = {
- 		.modified = 1,
- 		.channel2 = IIO_MOD_LIGHT_UV,
- 		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
-+		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME),
- 	},
- 	{
- 		.type = IIO_UVINDEX,
- 		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-+		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
-+		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME),
- 	}
- };
- 
--static int veml6070_to_uv_index(unsigned int val)
-+static int veml6070_to_uv_index(struct veml6070_data *data, unsigned int val)
- {
- 	/*
- 	 * conversion of raw UV intensity values to UV index depends on
- 	 * integration time (IT) and value of the resistor connected to
--	 * the RSET pin (default: 270 KOhm)
-+	 * the RSET pin.
- 	 */
- 	unsigned int uvi[11] = {
- 		187, 373, 560, /* low */
- 		746, 933, 1120, /* moderate */
- 		1308, 1494, /* high */
- 		1681, 1868, 2054}; /* very high */
--	int i;
-+	int i, it_idx;
-+
-+	it_idx = FIELD_GET(VEML6070_COMMAND_IT, data->config);
-+
-+	if (!it_idx)
-+		val = (val * 270  / data->rset) << 1;
-+	else
-+		val = (val * 270 / data->rset) >> (it_idx - 1);
- 
- 	for (i = 0; i < ARRAY_SIZE(uvi); i++)
- 		if (val <= uvi[i])
-@@ -123,10 +198,44 @@ static int veml6070_read_raw(struct iio_dev *indio_dev,
- 		if (ret < 0)
- 			return ret;
- 		if (mask == IIO_CHAN_INFO_PROCESSED)
--			*val = veml6070_to_uv_index(ret);
-+			*val = veml6070_to_uv_index(data, ret);
- 		else
- 			*val = ret;
- 		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_INT_TIME:
-+		return veml6070_get_it(data, val, val2);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int veml6070_read_avail(struct iio_dev *indio_dev,
-+			       struct iio_chan_spec const *chan,
-+			       const int **vals, int *type, int *length,
-+			       long mask)
-+{
-+	struct veml6070_data *data = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_INT_TIME:
-+		*vals = (int *)data->it;
-+		*length = 2 * ARRAY_SIZE(data->it);
-+		*type = IIO_VAL_INT_PLUS_MICRO;
-+		return IIO_AVAIL_LIST;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int veml6070_write_raw(struct iio_dev *indio_dev,
-+			      struct iio_chan_spec const *chan,
-+			      int val, int val2, long mask)
-+{
-+	struct veml6070_data *data = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_INT_TIME:
-+		return veml6070_set_it(data, val, val2);
- 	default:
- 		return -EINVAL;
- 	}
-@@ -134,6 +243,8 @@ static int veml6070_read_raw(struct iio_dev *indio_dev,
- 
- static const struct iio_info veml6070_info = {
- 	.read_raw = veml6070_read_raw,
-+	.read_avail  = veml6070_read_avail,
-+	.write_raw = veml6070_write_raw,
- };
- 
- static void veml6070_i2c_unreg(void *p)
-@@ -164,6 +275,10 @@ static int veml6070_probe(struct i2c_client *client)
- 	indio_dev->name = VEML6070_DRV_NAME;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 
-+	ret = veml6070_calc_it(&client->dev, data);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = devm_regulator_get_enable(&client->dev, "vdd");
- 	if (ret < 0)
- 		return ret;
-
--- 
-2.43.0
-
+							Thanx, Paul
 
