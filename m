@@ -1,104 +1,84 @@
-Return-Path: <linux-kernel+bounces-389747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711739B70B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:48:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB70F9B70B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 357452829E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7142D282A9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E65821765A;
-	Wed, 30 Oct 2024 23:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EA8217453;
+	Wed, 30 Oct 2024 23:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ju76Edax"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBEIm0oh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DA319CC24;
-	Wed, 30 Oct 2024 23:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76C71E3DFE;
+	Wed, 30 Oct 2024 23:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730332089; cv=none; b=WC9ADJCEzGypMags45DqcnwFsZFByX0OmOGH5TmnQOp7WqRFIxZwC0ssXSYLDEoK9Q/DHe8YpWVztI1szE6jD/Z/YENGeqpom27WKa/Mv4vtXj/hs49w4H3fLWcHrZa6K2DeLh54iPTHquqVexI+75jdHomkl69UtHRUuSTyE98=
+	t=1730332109; cv=none; b=Oc/NO2Tz2bxiWo1FBe5714C5w7ArESl/3p9FfQRBXNJo7gKu2G5/vY9+bJNz5lA8ZOgxRhfb/rKVwNYjIo3Io9MhgJY1jRUtvOGQqOB1Gb+Pnj6WIdT82TMh8QOGxzJzMZW5RezWKuvbaTLIv4xkFZEoohPUYEPZ7DecR6fzbZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730332089; c=relaxed/simple;
-	bh=Q0wXyQGBlYip/F0j6/woGSioAXOUzqyfPJJC3tkOLK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=elIlq3jrMuXnU4PN1FknX7VQtbi4ib0J8euyl4s+xf+N/WvCIL9jT3NYKDzX22OpLMfWjzPmR2k5T7xL1YZ0G0LH9Zo2hs3GLQ+50l46HmZ2eaXiszdPOAHZ6eVvKrRyG+3ldibAO0Jn5i/SNVok6fzUlsc36M34ysaKtdq8mi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ju76Edax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA34C4CEF0;
-	Wed, 30 Oct 2024 23:48:06 +0000 (UTC)
+	s=arc-20240116; t=1730332109; c=relaxed/simple;
+	bh=sdP3cmceKoTBTmv68ump4mtr8l8T89PTZNm/eFbYY/k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=FK/qT40GdXKP8a7PM5YGyTsHIzuQhX2cA36YqMazvLz1Hmb8b5fr/XgenMfCNPPZg3H7PIUg9dwUO7i9lRJw+zyBLuTupaXyMIdiI12K4hpdYHTp+Mu21I8U9u7GNQ0AHancxtE6r/FUuptXB8nXP35GZAdgH2iutPB2xITWE10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBEIm0oh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD5CBC4AF11;
+	Wed, 30 Oct 2024 23:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730332089;
-	bh=Q0wXyQGBlYip/F0j6/woGSioAXOUzqyfPJJC3tkOLK8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ju76EdaxYrc2VgAjivV0KVt2GMgCCgQhkFEfaJJ6/pgDxTefM1lg4Tf1OWyD6kJF1
-	 KPs45HSaTf/dlBDXadIlmKLrd/PTXlvHaEPFN+6htEnDe9la3DhVDjvzJ08pFbHCu1
-	 Mi9Dcrl+rhMsrI94lHkbmm+ltjVTd56lvqQYX2iMsa9T1VhTsDaczRIlDIIrjNFfwV
-	 BJFkhdoI7ChFFbj0fL95fN0enUv6F2jgu70AtVwj6XP/DlYWjcgdm+p8m6To/KCBGH
-	 7u3hKM5vMU2n1gcpbXdQJ1gi5+guUy9KsxG9mMUy4fX4yx/ByjRBAgjJViZhPyf2di
-	 YfF8DVjTLFaVg==
-Date: Wed, 30 Oct 2024 16:48:05 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Tal Gilboa <talgi@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shay Agroskin
- <shayagr@amazon.com>, Arthur Kiyanovski <akiyano@amazon.com>, David Arinzon
- <darinzon@amazon.com>, Noam Dagan <ndagan@amazon.com>, Saeed Bishara
- <saeedb@amazon.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Michael Chan
- <michael.chan@broadcom.com>, Doug Berger <opendmb@gmail.com>, Claudiu
- Manoil <claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
- Jijie Shao <shaojijie@huawei.com>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>,
- Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
- <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>, Felix Fietkau
- <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, Mark Lee
- <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Saeed Mahameed
- <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, Louis Peens <louis.peens@corigine.com>, Shannon Nelson
- <shannon.nelson@amd.com>, Brett Creeley <brett.creeley@amd.com>, "Michael
- S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Eugenio =?UTF-8?B?UMOpcmV6?=
- <eperezma@redhat.com>, Roy Pledge <Roy.Pledge@nxp.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-rdma@vger.kernel.org,
- oss-drivers@corigine.com, virtualization@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/2] dim: pass dim_sample to net_dim() by reference
-Message-ID: <20241030164805.40408945@kernel.org>
-In-Reply-To: <20241030194914.3268865-2-csander@purestorage.com>
-References: <20241030194914.3268865-1-csander@purestorage.com>
-	<20241030194914.3268865-2-csander@purestorage.com>
+	s=k20201202; t=1730332109;
+	bh=sdP3cmceKoTBTmv68ump4mtr8l8T89PTZNm/eFbYY/k=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=MBEIm0ohPfj6/5VXvwaEAMJyS/6D+v6qQPwEixuIRWOXGo7NYb/2dsrezD3EZrjE+
+	 TiYbZQ35lQlxvaEJUU8Glv3i1hLBORwBfSioCKfH6LkIFPOjwfJ02f/EzZJCeI5sHf
+	 XAsFmWEnGitMjXuVQRI1Tvfc0P4nHTeSgV1Na3RQ4XknL3sJ+a6pS8K5OixDDmzh8I
+	 9xb08Zqfpmtdd1dI9DrKlrNmSjPpXv2prFVtLpWhJzT6V5fQjnB2jOVvR6Ku/S4cov
+	 EF6m+9IvYkaQPF4P0o0MQb0WPpuI/bXXbU5Sc3CObjT+aAv3sx3Mj77RfHkaXdF40D
+	 bfQ7B0n9If0/A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 31 Oct 2024 01:48:25 +0200
+Message-Id: <D59JJFBKKJ14.2KQSUSXP649DE@kernel.org>
+Cc: "Jett Rink" <jettrink@chromium.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "Peter Huewe" <peterhuewe@gmx.de>,
+ <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH v6] tpm: Add new device/vendor ID 0x50666666
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Tzung-Bi Shih" <tzungbi@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240910191117.1001581-1-jettrink@chromium.org>
+ <D43HINLZGMXS.FYJOK0SVQFQW@kernel.org> <ZxckGbxzpWDuXG_q@google.com>
+In-Reply-To: <ZxckGbxzpWDuXG_q@google.com>
 
-On Wed, 30 Oct 2024 13:49:08 -0600 Caleb Sander Mateos wrote:
-> net_dim() is currently passed a struct dim_sample argument by value.
-> struct dim_sample is 24 bytes. Since this is greater 16 bytes, x86-64
-> passes it on the stack. All callers have already initialized dim_sample
-> on the stack, so passing it by value requires pushing a duplicated copy
-> to the stack. Either witing to the stack and immediately reading it, or
-> perhaps dereferencing addresses relative to the stack pointer in a chain
-> of push instructions, seems to perform quite poorly.
+On Tue Oct 22, 2024 at 7:03 AM EEST, Tzung-Bi Shih wrote:
+> Hi Jarkko,
+>
+> On Wed, Sep 11, 2024 at 04:21:24PM +0300, Jarkko Sakkinen wrote:
+> > I applied this (will push later to my remote tree).
+>
+> I failed to find the patch in [1].  Is it somehow overlooked?
+>
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.g=
+it/log/?h=3Dnext
 
-Looks like patch 1 didn't get CCed to netdev. Please repost?
--- 
-pw-bot: cr
+It is applied to my master branch now:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/
+
+Can you sanity check that it looks good? Thanks and sorry for the
+delay!
+
+BR, Jarkko
 
