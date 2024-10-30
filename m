@@ -1,198 +1,243 @@
-Return-Path: <linux-kernel+bounces-388716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D1D9B6376
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:56:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99ADD9B637E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B4B282A23
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595CD282C45
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D490A1EABAC;
-	Wed, 30 Oct 2024 12:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D3E1E9066;
+	Wed, 30 Oct 2024 12:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4y2kprfe"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bg20VppE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE381E9065
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7A81EBA19;
+	Wed, 30 Oct 2024 12:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730292926; cv=none; b=FdS1hH3tbVUyWGmicwwVQT6H/Vuynv3tGxhX1F6ouJmuT/xPck+2OD2Zr7OY5iMKja64z/AWCFygsyPZAjp4af4cyUfpm5saEd21tVGgFcmc3hNHCzPru4nIXNs2ymtUq13h5qxZfUZI400Q7/FA7kLWG6Ml5oEpmJBfF1iZT/c=
+	t=1730292951; cv=none; b=RLlREs6wTdo0wUIaIaU49SvhZ2Nf91nCa3yJgS7XIvj6g6gsFLFJ+eGqUbn3O8v26VYYiXBgwGZ+WXDN7TqAQ4BpSd1oz9h0jLroZjRorotiTAW119qY18IaiBFzk2VHnYO/wNOkZZ0ZJv/X17LuTj0QkZzSrRl4SN5s/s7eWhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730292926; c=relaxed/simple;
-	bh=9HeikSnNtESYGfEHkL/7qmokgovZf7aQSZWo+XWMD84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MUzM7UXa2sC+y4uVwftIkKlK14oqI8nKc0EHYGo9kZDFQdiiuM6yVoRaMi1LdknUo9us5LOo8WD/c32a58LLYM8BwOCkJbEI0WGFpCCBGnGgcjrLKaSXCsgsmgsGDQep6FZRXyvlh861Vep4c0gDl5PXgCP7TCpLu8I/AK83o/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4y2kprfe; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso12985257a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730292922; x=1730897722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fd0+WXgf+BWTWhA8jygsIOHrOH6t8SMTi55qCk7gJSk=;
-        b=4y2kprfer19VK2xarO0dQHD72YsJUmoTupuYNeTg0Vf8Qv8MdEI7c0MokAkPJBy9xF
-         xdT6XVQv/0Px8Jgmq3oYVaKRsj32YJyKl93+mji5fDLe26hpl7uBgEE44DNW3UrFrLND
-         KmwkCQ90XpaNVor7Uy6bFdR2peMcscVSeT8neBxh9qiJE01cUjVZvYJtp58hgvg2XAEu
-         YCA5B9u5xJsfqU3AT1a92E9YgD9TnKH+vSIbQKGdw+t5Acih9j1JR+iHcdQgGy4kYV7X
-         Xo4A/Izq3FsOrHm/JHpoM5xgKLwufVKcywFfmB1Azxb9bQdRqC21BodeojUZZSP8CY0G
-         CYPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730292922; x=1730897722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fd0+WXgf+BWTWhA8jygsIOHrOH6t8SMTi55qCk7gJSk=;
-        b=nRxuCTmqbPHQXkKWsuOVnu1D+2j/mBuLgDmQ8BzjnnieYw0bTUOsNj1UUmSCeE8rJ3
-         ndYxOnfNnRTuN/pbJ0wISt+LBI/i4LI6kEyT/m5M7fReIeNfA995ncNK+BVyvSrzuMaT
-         ozBcNpwPmRPm964HRq9nY9/EIeoUEw5bFF5+XaxAZE6B3DCbERmlOrUdN6uF2aJIoio8
-         3p0w+885V6kREIfPsip0lFxQE5MyPqXK9kV+Og/t9h+aHpn9yDVa+Dmq2X+zY5/NEuQU
-         IfRU7SAFuFWaK0MxuBLMzE6ZNZk/S4jEvvccEo34KtqjDZ4lXdTtadnomBJ4yA2dOsBB
-         R3Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUh3hddIdMrNEgV1tXbuo/DZXY9Faqb6UAotzzbkfeQ5K2rmUcVyht+H5hQ3GRhEmAfq1Le9/Gy5u97Gcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsBudvAppgUEZN0I52NDu9FA80qZZvpaOLG6RJsaoBk3DASMmR
-	wXiJ6TQFn71bjR6TvuF+f2VZCa5XpI0Uc1nQ12Sqlkopo872s8hpaFuijexghcOQB+wI6XR8HBC
-	dtJc9nLZqe9+X3VLRgvnLPBcBbZmVemCOv3OZ
-X-Google-Smtp-Source: AGHT+IFAptJsX2O9Az/I1ss64NYWqCPlrPAi6PzQMHPjp6B2tnwmHzxquTjrBDurcpyu96ID/8shmMEe4GTEqlZb9L4=
-X-Received: by 2002:a05:6402:2114:b0:5c8:9f3c:ea01 with SMTP id
- 4fb4d7f45d1cf-5cbbf8923a3mr12315247a12.2.1730292921659; Wed, 30 Oct 2024
- 05:55:21 -0700 (PDT)
+	s=arc-20240116; t=1730292951; c=relaxed/simple;
+	bh=Q/IauaK/WG//j5kMAuS6rPBwXVVNP4nOebEiBM53LEA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tUNMob6Hee5YRDsUQ97YJGiCgay6zHOhQ2/Ij0vrVDQdQ6OckF1bClLNkLJDKac5uhgQt7JwgPBfAHe2cL9M2fb0Dp8Fr3+rlqJcpTs0zrp27YM0e2EFezANEKqKaya2Q7zFZGQjnzA64WUEBxgOynLqSFQG6dmf1MYQmWIJXYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bg20VppE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U9RSic025437;
+	Wed, 30 Oct 2024 12:55:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AmMdiBqGxXHJ2RtZV+VXQAhbRxOF+HcER2r7krMw7hE=; b=Bg20VppER9MpLKPy
+	sNqI2u/68saKtjAAFu5ewmNqGPmmQxOMjOeeEeK5+iVzc9Uw2uL4/ZIhOcdeYqP4
+	eMUerclZMX9I1xKqahqckYGf0RE2C68vgDiDddyb/z/CKpVUoZ89rrfzBWD5V8fN
+	BpaEie+NQ+JULMZSi/bbSxrlsyrIehVQLlBIlPluNaX3B+0NmF7Zpb5vwh6Ixeg8
+	YWaWZjxtfZDYc7fu8bx+ws7RWkAvzQEK+cGiJ+J43oybtt1QUrse1s4QQVFcTkQV
+	8rHhe+fOofHmKS6a6hfee24qumLepjf/vXw5o1IfuXBC6JL65SJ/VLiiUYF0+EGu
+	J3hxCQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8m0ky-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 12:55:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UCtbOG026971
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 12:55:37 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 30 Oct 2024 05:55:31 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <johan@kernel.org>,
+        <ulf.hansson@linaro.org>, <jassisinghbrar@gmail.com>,
+        <dmitry.baryshkov@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_sibis@quicinc.com>,
+        <konradybcio@kernel.org>, <linux-pm@vger.kernel.org>,
+        <tstrudel@google.com>, <rafael@kernel.org>, <stable@vger.kernel.org>,
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH V5 1/6] firmware: arm_scmi: Ensure that the message-id supports fastchannel
+Date: Wed, 30 Oct 2024 18:25:07 +0530
+Message-ID: <20241030125512.2884761-2-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241030125512.2884761-1-quic_sibis@quicinc.com>
+References: <20241030125512.2884761-1-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029182703.2698171-1-csander@purestorage.com>
- <CANn89iLx-4dTB9fFgfrsXQ8oA0Z+TpBWNk4b91PPS1o=oypuBQ@mail.gmail.com> <CADUfDZrSUNu7nym9dC1_yFUqhC8tUPYjv-ZKHofU9Q8Uv4Jvhw@mail.gmail.com>
-In-Reply-To: <CADUfDZrSUNu7nym9dC1_yFUqhC8tUPYjv-ZKHofU9Q8Uv4Jvhw@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 30 Oct 2024 13:55:07 +0100
-Message-ID: <CANn89iKQ3g2+nSWaV3BWarpbneRCSoGSXdGP90PF7ScDu4ULEQ@mail.gmail.com>
-Subject: Re: [PATCH] net: skip RPS if packet is already on target CPU
-To: Caleb Sander <csander@purestorage.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 46bhYeiN227ZEQEpeNnU8Ayc2iXoGhzA
+X-Proofpoint-ORIG-GUID: 46bhYeiN227ZEQEpeNnU8Ayc2iXoGhzA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1011 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410300101
 
-On Tue, Oct 29, 2024 at 9:38=E2=80=AFPM Caleb Sander <csander@purestorage.c=
-om> wrote:
->
-> On Tue, Oct 29, 2024 at 12:02=E2=80=AFPM Eric Dumazet <edumazet@google.co=
-m> wrote:
-> >
-> > On Tue, Oct 29, 2024 at 7:27=E2=80=AFPM Caleb Sander Mateos
-> > <csander@purestorage.com> wrote:
-> > >
-> > > If RPS is enabled, all packets with a CPU flow hint are enqueued to t=
-he
-> > > target CPU's input_pkt_queue and process_backlog() is scheduled on th=
-at
-> > > CPU to dequeue and process the packets. If ARFS has already steered t=
-he
-> > > packets to the correct CPU, this additional queuing is unnecessary an=
-d
-> > > the spinlocks involved incur significant CPU overhead.
-> > >
-> > > In netif_receive_skb_internal() and netif_receive_skb_list_internal()=
-,
-> > > check if the CPU flow hint get_rps_cpu() returns is the current CPU. =
-If
-> > > so, bypass input_pkt_queue and immediately process the packet(s) on t=
-he
-> > > current CPU.
-> > >
-> > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> >
-> > Current implementation was a conscious choice. This has been discussed
-> > several times.
-> >
-> > By processing packets inline, you are actually increasing latencies of
-> > packets queued to other cpus.
->
-> Sorry, I wasn't aware of these prior discussions. I take it you are
-> referring to threads like
-> https://lore.kernel.org/netdev/20230322072142.32751-1-xu.xin16@zte.com.cn=
-/T/
-> ? I see what you mean about the latency penalty for packets that do
-> require cross-CPU steering.
->
-> Do you have an alternate suggestion for how to avoid the overhead of
-> acquiring a spinlock for every packet? The atomic instruction in
-> rps_lock_irq_disable() called from process_backlog() is consuming 5%
-> of our CPU time. For our use case, we don't really want software RPS;
-> we are expecting ARFS to steer all high-bandwidth traffic to the
-> desired CPUs. We would happily turn off software RPS entirely if we
-> could, which seems like it would avoid the concerns about higher
-> latency for packets that need to be steering to a different CPU. But
-> my understanding is that using ARFS requires RPS to be enabled
-> (rps_sock_flow_entries set globally and rps_flow_cnt set on each
-> queue), which enables these rps_needed static branches. Is that
-> correct? If so, would you be open to adding a sysctl that disables
-> software RPS and relies upon ARFS to do the packet steering?
+Currently the perf and powercap protocol relies on the protocol domain
+attributes, which just ensures that one fastchannel per domain, before
+instantiating fastchannels for all possible message-ids. Fix this by
+ensuring that each message-id supports fastchannel before initialization.
 
-A sysctl will not avoid the fundamental issue.
-Why not instead address the past feedback ?
-Can you test the following ?
+Logs:
+scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
+scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
+scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index c682173a76424d7dadcc8374aa5b11dff44a4b46..7a5a7f1a4b7c3cbd105ecfc0763=
-77f25929729eb
-100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -5842,6 +5842,21 @@ static int generic_xdp_install(struct
-net_device *dev, struct netdev_bpf *xdp)
-        return ret;
+CC: stable@vger.kernel.org
+Reported-by: Johan Hovold <johan+linaro@kernel.org>
+Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
+Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+---
+
+v4:
+* Add cc stable and err logs to patch 1 commit message [Johan]
+
+ drivers/firmware/arm_scmi/driver.c    | 72 +++++++++++++++------------
+ drivers/firmware/arm_scmi/protocols.h |  2 +
+ 2 files changed, 41 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index 1f53ca1f87e3..55e496e78403 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -1698,6 +1698,39 @@ static int scmi_common_get_max_msg_size(const struct scmi_protocol_handle *ph)
+ 	return info->desc->max_msg_size;
  }
-
-+#ifdef CONFIG_RPS
-+static bool net_must_use_backlog(int tcpu)
+ 
++/**
++ * scmi_protocol_msg_check  - Check protocol message attributes
++ *
++ * @ph: A reference to the protocol handle.
++ * @message_id: The ID of the message to check.
++ * @attributes: A parameter to optionally return the retrieved message
++ *		attributes, in case of Success.
++ *
++ * An helper to check protocol message attributes for a specific protocol
++ * and message pair.
++ *
++ * Return: 0 on SUCCESS
++ */
++static int scmi_protocol_msg_check(const struct scmi_protocol_handle *ph,
++				   u32 message_id, u32 *attributes)
 +{
-+       if (tcpu < 0)
-+               return false;
-+       if (tcpu !=3D smp_processor_id())
-+               return true;
-+       /* target cpu is ourself. We must use our backlog
-+        * if we have deferred IPI or packets.
-+        */
-+       return this_cpu_read(softnet_data.rps_ipi_list) !=3D NULL ||
-+              this_cpu_read(softnet_data.input_pkt_queue.qlen) !=3D 0;
-+}
-+#endif
++	int ret;
++	struct scmi_xfer *t;
 +
- static int netif_receive_skb_internal(struct sk_buff *skb)
- {
-        int ret;
-@@ -5857,7 +5872,7 @@ static int netif_receive_skb_internal(struct sk_buff =
-*skb)
-                struct rps_dev_flow voidflow, *rflow =3D &voidflow;
-                int cpu =3D get_rps_cpu(skb->dev, skb, &rflow);
++	ret = xfer_get_init(ph, PROTOCOL_MESSAGE_ATTRIBUTES,
++			    sizeof(__le32), 0, &t);
++	if (ret)
++		return ret;
++
++	put_unaligned_le32(message_id, t->tx.buf);
++	ret = do_xfer(ph, t);
++	if (!ret && attributes)
++		*attributes = get_unaligned_le32(t->rx.buf);
++	xfer_put(ph, t);
++
++	return ret;
++}
++
+ /**
+  * struct scmi_iterator  - Iterator descriptor
+  * @msg: A reference to the message TX buffer; filled by @prepare_message with
+@@ -1839,6 +1872,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+ 	int ret;
+ 	u32 flags;
+ 	u64 phys_addr;
++	u32 attributes;
+ 	u8 size;
+ 	void __iomem *addr;
+ 	struct scmi_xfer *t;
+@@ -1847,6 +1881,11 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+ 	struct scmi_msg_resp_desc_fc *resp;
+ 	const struct scmi_protocol_instance *pi = ph_to_pi(ph);
+ 
++	/* Check if the MSG_ID supports fastchannel */
++	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
++	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes))
++		return;
++
+ 	if (!p_addr) {
+ 		ret = -EINVAL;
+ 		goto err_out;
+@@ -1974,39 +2013,6 @@ static void scmi_common_fastchannel_db_ring(struct scmi_fc_db_info *db)
+ #endif
+ }
+ 
+-/**
+- * scmi_protocol_msg_check  - Check protocol message attributes
+- *
+- * @ph: A reference to the protocol handle.
+- * @message_id: The ID of the message to check.
+- * @attributes: A parameter to optionally return the retrieved message
+- *		attributes, in case of Success.
+- *
+- * An helper to check protocol message attributes for a specific protocol
+- * and message pair.
+- *
+- * Return: 0 on SUCCESS
+- */
+-static int scmi_protocol_msg_check(const struct scmi_protocol_handle *ph,
+-				   u32 message_id, u32 *attributes)
+-{
+-	int ret;
+-	struct scmi_xfer *t;
+-
+-	ret = xfer_get_init(ph, PROTOCOL_MESSAGE_ATTRIBUTES,
+-			    sizeof(__le32), 0, &t);
+-	if (ret)
+-		return ret;
+-
+-	put_unaligned_le32(message_id, t->tx.buf);
+-	ret = do_xfer(ph, t);
+-	if (!ret && attributes)
+-		*attributes = get_unaligned_le32(t->rx.buf);
+-	xfer_put(ph, t);
+-
+-	return ret;
+-}
+-
+ static const struct scmi_proto_helpers_ops helpers_ops = {
+ 	.extended_name_get = scmi_common_extended_name_get,
+ 	.get_max_msg_size = scmi_common_get_max_msg_size,
+diff --git a/drivers/firmware/arm_scmi/protocols.h b/drivers/firmware/arm_scmi/protocols.h
+index aaee57cdcd55..d62c4469d1fd 100644
+--- a/drivers/firmware/arm_scmi/protocols.h
++++ b/drivers/firmware/arm_scmi/protocols.h
+@@ -31,6 +31,8 @@
+ 
+ #define SCMI_PROTOCOL_VENDOR_BASE	0x80
+ 
++#define MSG_SUPPORTS_FASTCHANNEL(x)	((x) & BIT(0))
++
+ enum scmi_common_cmd {
+ 	PROTOCOL_VERSION = 0x0,
+ 	PROTOCOL_ATTRIBUTES = 0x1,
+-- 
+2.34.1
 
--               if (cpu >=3D 0) {
-+               if (net_must_use_backlog(cpu)) {
-                        ret =3D enqueue_to_backlog(skb, cpu, &rflow->last_q=
-tail);
-                        rcu_read_unlock();
-                        return ret;
-@@ -5890,7 +5905,7 @@ void netif_receive_skb_list_internal(struct
-list_head *head)
-                        struct rps_dev_flow voidflow, *rflow =3D &voidflow;
-                        int cpu =3D get_rps_cpu(skb->dev, skb, &rflow);
-
--                       if (cpu >=3D 0) {
-+                       if (net_must_use_backlog(cpu)) {
-                                /* Will be handled, remove from list */
-                                skb_list_del_init(skb);
-                                enqueue_to_backlog(skb, cpu,
-&rflow->last_qtail);
 
