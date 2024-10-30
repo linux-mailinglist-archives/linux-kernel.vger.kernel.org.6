@@ -1,127 +1,224 @@
-Return-Path: <linux-kernel+bounces-388936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6747C9B6665
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:48:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18219B6652
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2949F282095
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C499E1C20BF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F501F4FDE;
-	Wed, 30 Oct 2024 14:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98D81F4713;
+	Wed, 30 Oct 2024 14:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="X1xVI4KX"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HadkQECS"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FE61F427F;
-	Wed, 30 Oct 2024 14:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF9043173
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299700; cv=none; b=mmtDhJbvSAydyOwA0ZffmaL7DNGisj23qIeiSuuPgKHGWneUd/VVdMtCBQTY0jwC+1CXGeGBS2BDhbSOx4RXOGeKxAt5hwQHU/+fuSYWlO2quSyNIKnvp5mc8WQzi8wv1GWW6bStdqMClsWkiUUp0/d6V+Ex5FYAYwmmAl0FKzo=
+	t=1730299618; cv=none; b=spfZgoint/BMKnej0wvCDcXcqn/tooANa+LIgCKMhcLZk2hL4lxzek8heD0mymP2yfSLqZJ2HIw+SxuPawLlbiwYyG33+aoG3ArYUy1Up72D6LvrWojI+xpXCoqACcc+zCwKx47YUd6K6cetO4FphVg1orTBlH7GSBYtHOOXLWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299700; c=relaxed/simple;
-	bh=fZ4aXsvx9pf6rtAgOnrIQ2yOSxwJ5B0XGke7hbnZHrA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F4sa2RB/LK2RIACZQzhgwiHU71PW43L2qfS8mPpCUZ6q0/ghn0Q5rD+FWN5ZBFIUMN7RbfVDVznavFOWmKjUsF+8edBOZdBrU7XVOLMVVzT9EcbFZtv7QB4otGh/asB9F2YTVK9KYD9CMzuqwmbLHvbbQJDe1YaEdc+14sWKv3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=X1xVI4KX; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730299697;
-	bh=fZ4aXsvx9pf6rtAgOnrIQ2yOSxwJ5B0XGke7hbnZHrA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X1xVI4KXD5WGCrUqrtHtzsSmRw7bZlyK/DVPDejOoaFqVc6mjCyIHq2l2rhQ9JMx2
-	 ikYEPrdOpApryDWpVMrlFApAbudYJWmgvY8CIWF905Hl63o+m7guPatxoPDzT1DXLp
-	 nikxWQkGqfRx4zIOuSV2anayN3TjnePiTAZPOYo/9W5R5tgnJHvrcPEpfl3uJ1O2yv
-	 2Z9WWSD38e1VWpUvkn5TJJmZ9IO0Q2upOtnF2/PnuO7LIsmMtndehfYOHa/y0n1MSV
-	 ZOKtM6IFBMOclefZXb7kMooK7n5AJG+CZlpPj5mdLM9Qhj463zr6KaOgVSTWdLDfs9
-	 VuYnP28by7IiA==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Xdqk86zmpzL6D;
-	Wed, 30 Oct 2024 10:48:16 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jordan Rife <jrife@google.com>
-Subject: [PATCH v5 4/4] tracing: Add might_fault() check in __DECLARE_TRACE_SYSCALL
-Date: Wed, 30 Oct 2024 10:46:34 -0400
-Message-Id: <20241030144634.721630-5-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241030144634.721630-1-mathieu.desnoyers@efficios.com>
-References: <20241030144634.721630-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1730299618; c=relaxed/simple;
+	bh=NhwqWyY/+B3HNQ4Zf0F1u8UUhwHCc0U85k9UaImZi+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sLcJyonh3a6/A/8u+8kK5UJVWXz+srXWEvpxYTDrDruN8KJThOjEY5GYxvSzEJC85wDtgKfGRGXxh7cyCw1n3+yKao7CvwbQiAKN+g7xCxP2c9LYMiJhlSyqlgRq4GWnOpoqSr8Qxy0O7Z/+4jA3Y1N2TSj7vWvsizyjjfwfh1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HadkQECS; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460b295b9eeso282761cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730299613; x=1730904413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XuDgcDjnMSaWBwmR/hE5gS6R3pwsgWNYwLcvCI/5raw=;
+        b=HadkQECSYCRg/8LnumacTNk/raXMe1BUBkRjAqiIFZ3LhYHdla5lW61+hqMppRlVtu
+         1zMqviiRosPfa83lGeiIQjtpmRcVDpmn1GcHoxIHJ6JuRhw5SaZB+TP93BW7sPSHgjWL
+         zFEaLbQHGz2shOu+6R8HLkoYV4EYkDc5knGeAs4bKIPPyygsbG5/93BYDvsHlvz/RUyw
+         bkwMSAW71rxHxX8/UKDtgq/QjcZicrXdFc6H9TKfEblOWUqLfB6cQ+YbG1OUJ36yuikZ
+         aQc/Ns/dhOBPx7gwuhlwSfPKx4fJRYNESaq6ECRiKNbdf1ZECi+axbipF3mXQPkxKF2H
+         Reig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730299613; x=1730904413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XuDgcDjnMSaWBwmR/hE5gS6R3pwsgWNYwLcvCI/5raw=;
+        b=edAHs9NXT6MvJqHMveHM4zEjSEvGj2f2i/Ab599BLxo68PZRlBd1uIrMQvCnj3LLED
+         Xpf79Gt41ZF5MifE3D0dKk5QEBJ6xtUcljw4u6fWJN1WmT+dNq70+YtiU3sSCyXC58NA
+         t76KF/RzGLlxs6veQJEF+V2IF5aoK0xQSHqpEgLI6NYRL6aL0R1So7Gz2C+bPm4UiAR0
+         hcYe30YFF6ge988wuBm07WKPC0KaJjGZdiULq29CAKj2rWpW4A9n3vNzo6BRkQSVH6HB
+         dUA/XwStQN6BzaRQ/VEHa+oAiC4Rp5oA1MKLte9mX9M5FjpEJnXckyX/QabXvppVzl8T
+         VeyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAj+ky+ZlC1pmNTKNzO2Kq6DFRCxh0PIWtfPVzCrOLJ2GXIb82uIHxbPA5zATvUEqG0o+86z7TlnZ327k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp0Jkj9P/aTj2Y8xslXOCJ+x0d22u2ThpZzh2cMa7aqZo4kJP6
+	d+oQwkdcyoCxg+DKUb9WmdzneN5sql1cSkJh93fJzziQ/OgkAXO4QKs6AN0X3hBmjbUBjITqYFA
+	SztcwviTACNv6lBEbDflafFn8EXoYXrP//gwM
+X-Gm-Gg: ASbGncvfKxv+f8t3/ANvz8+vibymEjg9weStVpgAJWo8A8Yim+HENIDUlUkXCdOdzCQ
+	TkhT3vVqNQyDrTVXhiqV6GIEo1lPdsfw=
+X-Google-Smtp-Source: AGHT+IHO71Bgm3DP3V5XUI+nKDL6o15iOeRQ0hNxysL/MW5H5VlmppL+MsAbA04+c6Sv5xzLC92i8Rvoo7uv21QiiBM=
+X-Received: by 2002:ac8:7d55:0:b0:460:3f4a:40a1 with SMTP id
+ d75a77b69052e-46166dc4566mr8035791cf.13.1730299613385; Wed, 30 Oct 2024
+ 07:46:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241029205524.1306364-1-almasrymina@google.com>
+ <20241029205524.1306364-2-almasrymina@google.com> <ZyJDxK5stZ_RF71O@mini-arch>
+In-Reply-To: <ZyJDxK5stZ_RF71O@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 30 Oct 2024 07:46:41 -0700
+Message-ID: <CAHS8izNKbQHFAHm2Sz=bwwO_A0S_dOLNDff7GTSM=tJiJD2m0A@mail.gmail.com>
+Subject: Re: [PATCH net-next v1 6/7] net: fix SO_DEVMEM_DONTNEED looping too long
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>, 
+	Yi Lai <yi1.lai@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Catch incorrect use of syscall tracepoints even if no probes are
-registered by adding a might_fault() check in trace_##name()
-emitted by __DECLARE_TRACE_SYSCALL.
+On Wed, Oct 30, 2024 at 7:33=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
+l.com> wrote:
+>
+> On 10/29, Mina Almasry wrote:
+> > Check we're going to free a reasonable number of frags in token_count
+> > before starting the loop, to prevent looping too long.
+> >
+> > Also minor code cleanups:
+> > - Flip checks to reduce indentation.
+> > - Use sizeof(*tokens) everywhere for consistentcy.
+> >
+> > Cc: Yi Lai <yi1.lai@linux.intel.com>
+> >
+> > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> >
+> > ---
+> >  net/core/sock.c | 46 ++++++++++++++++++++++++++++------------------
+> >  1 file changed, 28 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/net/core/sock.c b/net/core/sock.c
+> > index 7f398bd07fb7..8603b8d87f2e 100644
+> > --- a/net/core/sock.c
+> > +++ b/net/core/sock.c
+> > @@ -1047,11 +1047,12 @@ static int sock_reserve_memory(struct sock *sk,=
+ int bytes)
+> >
+> >  #ifdef CONFIG_PAGE_POOL
+> >
+> > -/* This is the number of tokens that the user can SO_DEVMEM_DONTNEED i=
+n
+> > +/* This is the number of frags that the user can SO_DEVMEM_DONTNEED in
+> >   * 1 syscall. The limit exists to limit the amount of memory the kerne=
+l
+> > - * allocates to copy these tokens.
+> > + * allocates to copy these tokens, and to prevent looping over the fra=
+gs for
+> > + * too long.
+> >   */
+> > -#define MAX_DONTNEED_TOKENS 128
+> > +#define MAX_DONTNEED_FRAGS 1024
+> >
+> >  static noinline_for_stack int
+> >  sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int o=
+ptlen)
+> > @@ -1059,43 +1060,52 @@ sock_devmem_dontneed(struct sock *sk, sockptr_t=
+ optval, unsigned int optlen)
+> >       unsigned int num_tokens, i, j, k, netmem_num =3D 0;
+> >       struct dmabuf_token *tokens;
+> >       netmem_ref netmems[16];
+> > +     u64 num_frags =3D 0;
+> >       int ret =3D 0;
+> >
+> >       if (!sk_is_tcp(sk))
+> >               return -EBADF;
+> >
+> > -     if (optlen % sizeof(struct dmabuf_token) ||
+> > -         optlen > sizeof(*tokens) * MAX_DONTNEED_TOKENS)
+> > +     if (optlen % sizeof(*tokens) ||
+> > +         optlen > sizeof(*tokens) * MAX_DONTNEED_FRAGS)
+> >               return -EINVAL;
+> >
+> > -     tokens =3D kvmalloc_array(optlen, sizeof(*tokens), GFP_KERNEL);
+> > +     num_tokens =3D optlen / sizeof(*tokens);
+> > +     tokens =3D kvmalloc_array(num_tokens, sizeof(*tokens), GFP_KERNEL=
+);
+> >       if (!tokens)
+> >               return -ENOMEM;
+> >
+> > -     num_tokens =3D optlen / sizeof(struct dmabuf_token);
+> >       if (copy_from_sockptr(tokens, optval, optlen)) {
+> >               kvfree(tokens);
+> >               return -EFAULT;
+> >       }
+> >
+> > +     for (i =3D 0; i < num_tokens; i++) {
+> > +             num_frags +=3D tokens[i].token_count;
+> > +             if (num_frags > MAX_DONTNEED_FRAGS) {
+> > +                     kvfree(tokens);
+> > +                     return -E2BIG;
+> > +             }
+> > +     }
+> > +
+> >       xa_lock_bh(&sk->sk_user_frags);
+> >       for (i =3D 0; i < num_tokens; i++) {
+> >               for (j =3D 0; j < tokens[i].token_count; j++) {
+> >                       netmem_ref netmem =3D (__force netmem_ref)__xa_er=
+ase(
+> >                               &sk->sk_user_frags, tokens[i].token_start=
+ + j);
+> >
+> > -                     if (netmem &&
+> > -                         !WARN_ON_ONCE(!netmem_is_net_iov(netmem))) {
+> > -                             netmems[netmem_num++] =3D netmem;
+> > -                             if (netmem_num =3D=3D ARRAY_SIZE(netmems)=
+) {
+> > -                                     xa_unlock_bh(&sk->sk_user_frags);
+> > -                                     for (k =3D 0; k < netmem_num; k++=
+)
+> > -                                             WARN_ON_ONCE(!napi_pp_put=
+_page(netmems[k]));
+> > -                                     netmem_num =3D 0;
+> > -                                     xa_lock_bh(&sk->sk_user_frags);
+> > -                             }
+> > -                             ret++;
+>
+> [..]
+>
+> > +                     if (!netmem || WARN_ON_ONCE(!netmem_is_net_iov(ne=
+tmem)))
+> > +                             continue;
+>
+> Any reason we are not returning explicit error to the callers here?
+> That probably needs some mechanism to signal which particular one failed
+> so the users can restart?
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jordan Rife <jrife@google.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Jeanson <mjeanson@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Jordan Rife <jrife@google.com>
----
-Changes since v4:
-- Move might_fault() to trace_##name() emitted by __DECLARE_TRACE_SYSCALL
-  so it is validated even when the tracepoint is disabled.
----
- include/linux/tracepoint.h | 1 +
- 1 file changed, 1 insertion(+)
+Only because I can't think of a simple way to return an array of frags
+failed to DONTNEED to the user.
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 906f3091d23d..425123e921ac 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -301,6 +301,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), cond, PARAMS(data_proto)) \
- 	static inline void trace_##name(proto)				\
- 	{								\
-+		might_fault();						\
- 		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
--- 
-2.39.5
+Also, this error should be extremely rare or never hit really. I don't
+know how we end up not finding a netmem here or the netmem is page.
+The only way is if the user is malicious (messing with the token ids
+passed to the kernel) or if a kernel bug is happening.
 
+Also, the information is useless to the user. If the user sees 'frag
+128 failed to free'. There is nothing really the user can do to
+recover at runtime. Only usefulness that could come is for the user to
+log the error. We already WARN_ON_ONCE on the error the user would not
+be able to trigger.
+
+--=20
+Thanks,
+Mina
 
