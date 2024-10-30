@@ -1,211 +1,258 @@
-Return-Path: <linux-kernel+bounces-388903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855B09B65E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:32:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 746AA9B65E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44919284515
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34739284952
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D960F1F4726;
-	Wed, 30 Oct 2024 14:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5854F1F4FB0;
+	Wed, 30 Oct 2024 14:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmxueWrz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTbMZxDk"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE671EABA5;
-	Wed, 30 Oct 2024 14:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793251F4FA5
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298505; cv=none; b=ieeYTd/7EHvXGhPiEY5kmaEHq4Oc6Rq8pQOewcq1y6insy93w4qa80WOnMUrerFKs7mB6ZII9pMx5bDUjiOhcdOnDvwveazlC/mVKvRGr8ZzhgtFdy2Kc4GH9qgpNabGpBm/oc4v7otgg0ILwyyMHpYTvosHGX7YvsGuFED5KUo=
+	t=1730298513; cv=none; b=NH8BhxG0dfZz6sfTHmEQVDct6yZdetdzd/bkqawgmm6LvyGRmfd201McqfzDMGB2fUusGCyXEg2yOUYLaRbzWCjqhVAjAj0BNBDu2V+wyIKjQW/5ZVC4dNcETiG/zYuQmRKBGvBqWTIHrFLn0noGibNKPUVotFbgGFusHGWemXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298505; c=relaxed/simple;
-	bh=cik8CPZIYPW9LoZhpfSKFRXBikFEngZ05BGqUP+wAlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYMwPVT1kOeFVn5rxJH4rl8r+TvUcUeJ7iCTMK0ZG8y+nthJhV/r39HyHgtqeIeN2grPEci901FIEU41lgG2hYBzdWRRx81XxXxE9HBhudQaqodjVPoPNggSpbjFKZZPYcCYZyicGiNQJU397UjOk3VJ9nLAhSPu8yIJge4JA0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmxueWrz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD2AC4CECE;
-	Wed, 30 Oct 2024 14:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730298504;
-	bh=cik8CPZIYPW9LoZhpfSKFRXBikFEngZ05BGqUP+wAlM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WmxueWrzfCVuFMHErUMRXyrCD1zxmw7JfJnuWjNIvSSVOh+yUpiaA92k8jjvTTxAW
-	 ivxwn/8dJA9rPojJhVr2MffiPVolJN1Qd/mbJHDlJyeOnbJo13snzVhd8gAjrD3pOI
-	 OYcKP8ecZfWnPHQ1bT5hS2vrAtfRARpHxF2z0a2AakOCOGzQ/fs+X1b3x4zbE7f6UD
-	 TVglVBXWecL0nqQvioxg1wfAmq04rw37CJy+uxNucyDd1Bu3X10/HLCrHL2mulqSfE
-	 1XhFuJ0K5OGP4170Am2DNoWtRI3K5tXLs3wu4E2Ih7Q1F/YvjgVcRo+Lx/bsdGb7/Y
-	 wOCe/k2h0S0DA==
-Date: Wed, 30 Oct 2024 15:28:19 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Yi Liu <yi.l.liu@intel.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, Klaus Jensen <k.jensen@samsung.com>
-Subject: Re: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
- prq_event_thread
-Message-ID: <pdslu36mhfxbzs254tlte2wavfkmecm53xhdtdelm4nfnemt3f@m5ed4hn6zmbl>
-References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
- <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
- <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
- <ujexsgcpvcjux2ugfes6mzjxl53j3icarfbu25imhzliqskyv6@l7f42nv4fhmy>
- <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
+	s=arc-20240116; t=1730298513; c=relaxed/simple;
+	bh=2yRQmuJJ6sT+0V/3Iulpf4QlwwsywcGSPSgOUVmFmsc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tSo+cumWIgVjnTeSqtGlT/cICgB3CEbD3jEEJSV7b0sWZSruDlvIpFdxbyV5CIK7ey+PKzRILl2OgDsczDxK7a+8Ds99m/qXyb6iWiRQxYPksXNThwnBFIOplTrLRxgONFOeAWvlbMiVnURMyG+uWU6wkC1duEB8y5Q+u6nLG1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oTbMZxDk; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e2fc2b1ce1so6899434a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730298511; x=1730903311; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GTp2ewWGPW0TW7CBlZiJJqpjbZEo8dYN/EbPFSkUuR4=;
+        b=oTbMZxDkr8KrpZ/9h3tTl/b1ZTiDXaKpQ6/61zh3/0yB0Ug1kCgd/rdE5c0vt9Uq7M
+         VUeu/cvpnortYIczqJv8qfWs2CjaVqcgb2uqBDSb7QIJZUMmI69vfVbdjqzoVKwaPAy5
+         HL2MG1dcvh9Q4Z5u+QLNUjbREW9A/0APUPsGxZdxDtbB+nwn0YFsgR7gKg61w72bnnN7
+         mkqub4c+WR8fEDvlEmFz9ReWgT+AoCTHQTdvEQNM112D+40vlbpcs/SFDq0tjMgfKnPI
+         0a+GHuEnUYX5a/kfCownGJnfbfYb1DY4tmBxQsWs0Txd3yXVdIDPtbW4TRz6QBhtK97N
+         NFhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730298511; x=1730903311;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GTp2ewWGPW0TW7CBlZiJJqpjbZEo8dYN/EbPFSkUuR4=;
+        b=lWNmrcfH7SkGI4XzRcuxvo9nLLqhimRb7unHIgSjRC7eaPEu5NTaIbiVaTXxFiRFej
+         lvw5+96qvOUZvGVd3jNpRccjzeCk9SkWGrnmU/eWyaOjrCPmRlmwr3qhoV/wlQ/hL4Rx
+         WPXSKenQNy/I19M3Zd4XKv2vHS1f0DAZDzLnHGzHgIOVucGkgMTB/02eVPujElaltI+O
+         dcKjS6bliEUpIYjdb02E1j1bNn5zbvUP+nBlsFc1LoSSJRtoZpEHGVe3xKRYaUEquKmd
+         a9BjLa2YCRnKs/XHG2JzyOkKj2Z+EnS/XoX6r8KnL9RfhbhAKq7Kt/7mXiF803WqR0q5
+         gA+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOeyWHezE8TwO7N9528oj4mxWWkzKVrealnFZfgw7bhslv5zFB82aAYSWzP1GAk9tfxqjRuYtFxey6Jrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq6Dy+ZFJQwe8EsYLangaqvt5D8G7u7Z49C9j2WfJin0MB9ba7
+	UWPyi/VMKK5TBQ/7Hhi83zdu0XDygQ/O62xNqD94vezlTyXk/JyY2ukxXDEtT/4oJtUIGGK0NPY
+	/fA==
+X-Google-Smtp-Source: AGHT+IGvyvv+UuU+n7Fy8JhvcxqI0V5keILsIwkImrcxT1GQxNZQqyGj169BaloYUwrP5Q5CbjjHGz0+tLw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e88f:b0:20c:5da9:ede0 with SMTP id
+ d9443c01a7336-210f76d896emr318815ad.10.1730298510582; Wed, 30 Oct 2024
+ 07:28:30 -0700 (PDT)
+Date: Wed, 30 Oct 2024 07:28:28 -0700
+In-Reply-To: <20240906204515.3276696-3-vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
+Mime-Version: 1.0
+References: <20240906204515.3276696-1-vipinsh@google.com> <20240906204515.3276696-3-vipinsh@google.com>
+Message-ID: <ZyJCjJx2lxnEnDwa@google.com>
+Subject: Re: [PATCH v3 2/2] KVM: x86/mmu: Recover TDP MMU NX huge pages using
+ MMU read lock
+From: Sean Christopherson <seanjc@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Oct 29, 2024 at 11:12:49AM +0800, Baolu Lu wrote:
-> On 2024/10/28 18:24, Joel Granados wrote:
-> > On Mon, Oct 28, 2024 at 03:50:46PM +0800, Yi Liu wrote:
-> >> On 2024/10/16 05:08, Joel Granados wrote:
-> >>> From: Klaus Jensen<k.jensen@samsung.com>
-> >>>
-> >>> PASID is not strictly needed when handling a PRQ event; remove the check
-> >>> for the pasid present bit in the request. This change was not included
-> >>> in the creation of prq.c to emphasize the change in capability checks
-> >>> when handing PRQ events.
-> >>>
-> >>> Signed-off-by: Klaus Jensen<k.jensen@samsung.com>
-> >>> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
-> >>> Signed-off-by: Joel Granados<joel.granados@kernel.org>
-> >> looks like the PRQ draining is missed for the PRI usage. When a pasid
-> >> entry is destroyed, it might need to add helper similar to the
-> >> intel_drain_pasid_prq() to drain PRQ for the non-pasid usage.
-> > These types of user space PRIs (non-pasid, non-svm) are created by
-> > making use of iommufd_hwpt_replace_device. Which adds an entry to the
-> > pasid_array indexed on IOMMU_NO_PASID (0U) via the following path:
-> > 
-> > iommufd_hwpt_replace_device
-> >    -> iommufd_fault_domain_repalce_dev
-> >      -> __fault_domain_replace_dev
-> >        -> iommu_replace_group_handle
->             -> __iommu_group_set_domain
->               -> intel_iommu_attach_device
->                  -> device_block_translation
->                    -> intel_pasid_tear_down_entry(IOMMU_NO_PASID)
-> 
-> Here a domain is removed from the pasid entry, hence we need to flush
-> all page requests that are pending in the IOMMU page request queue or
-> the PCI fabric.
-This make a lot of sense: To use iommufd_hwpt_replace_device to replace
-the existing hwpt with a iopf enabled one, the soon to be irrelevant
-page requests from the existing hwpt need to be flushed. And we were not
-doing that here.
+On Fri, Sep 06, 2024, Vipin Sharma wrote:
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 455caaaa04f5..fc597f66aa11 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -7317,8 +7317,8 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
+>  	return err;
+>  }
+>  
+> -void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
+> -			       unsigned long nr_pages)
+> +void kvm_recover_nx_huge_pages(struct kvm *kvm, bool shared,
+> +			       struct list_head *pages, unsigned long nr_pages)
+>  {
+>  	struct kvm_memory_slot *slot;
+>  	int rcu_idx;
+> @@ -7329,7 +7329,10 @@ void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
+>  	ulong to_zap;
+>  
+>  	rcu_idx = srcu_read_lock(&kvm->srcu);
+> -	write_lock(&kvm->mmu_lock);
+> +	if (shared)
 
-> 
-> >          -> xa_reserve(&group->pasid_array, IOMMU_NO_PASID, GFP_KERNEL);
-> > 
-> > It is my understanding that this will provide the needed relation
-> > between the device and the prq in such a way that when  remove_dev_pasid
-> > is called, intel_iommu_drain_pasid_prq will be called with the
-> > appropriate pasid value set to IOMMU_NO_PASID. Please correct me if I'm
-> > mistaken.
-> 
-> Removing a domain from a RID and a PASID are different paths.
-> Previously, this IOMMU driver only supported page requests on PASID
-> (non-IOMMU_NO_PASID). It is acceptable that it does not flush the PRQ in
-> the domain-removing RID path.
-> 
-> With the changes made in this series, the driver now supports page
-> requests for RID. It should also flush the PRQ when removing a domain
-> from a PASID entry for IOMMU_NO_PASID.
 
-Thank you for your explanation. Clarifies where I lacked understanding.
+Hmm, what if we do this?
 
-> 
-> > 
-> > Does this answer your question? Do you have a specific path that you are
-> > looking at where a specific non-pasid drain is needed?
-> 
-> Perhaps we can simply add below change.
-> 
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index e860bc9439a2..a24a42649621 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -4283,7 +4283,6 @@ static void intel_iommu_remove_dev_pasid(struct 
-> device *dev, ioasid_t pasid,
->          intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
->          kfree(dev_pasid);
->          intel_pasid_tear_down_entry(iommu, dev, pasid, false);
-> -       intel_drain_pasid_prq(dev, pasid);
->   }
-> 
->   static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
-> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-> index 2e5fa0a23299..8639f3eb4264 100644
-> --- a/drivers/iommu/intel/pasid.c
-> +++ b/drivers/iommu/intel/pasid.c
-> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu 
-> *iommu, struct device *dev,
->                  iommu->flush.flush_iotlb(iommu, did, 0, 0, 
-> DMA_TLB_DSI_FLUSH);
-> 
->          devtlb_invalidation_with_pasid(iommu, dev, pasid);
-> +       intel_drain_pasid_prq(dev, pasid);
->   }
-This make sense logically as the intel_drain_pasid_prq keeps being
-called at the end of intel_iommu_remove_dev_pasid, but it is now also
-included in the intel_pasid_tear_down_entry call which adds it to the
-case discussed.
+enum kvm_mmu_types {
+	KVM_SHADOW_MMU,
+#ifdef CONFIG_X86_64
+	KVM_TDP_MMU,
+#endif
+	KVM_NR_MMU_TYPES,
+};
 
-> 
->   /*
-> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
-> index 078d1e32a24e..ff88f31053d1 100644
-> --- a/drivers/iommu/intel/svm.c
-> +++ b/drivers/iommu/intel/svm.c
-> @@ -304,9 +304,6 @@ void intel_drain_pasid_prq(struct device *dev, u32 
-> pasid)
->          int qdep;
-> 
->          info = dev_iommu_priv_get(dev);
-> -       if (WARN_ON(!info || !dev_is_pci(dev)))
-> -               return;
-Did you mean to take out both checks?:
-  1. The info pointer check
-  2. the dev_is_pci check
+#ifndef CONFIG_X86_64
+#define KVM_TDP_MMU -1
+#endif
 
-I can understand the dev_is_pci check, but we should definitely take
-action if info is NULL. Right?
+And then this becomes:
 
-> -
->          if (!info->pri_enabled)
->                  return;
-> 
-> Generally, intel_drain_pasid_prq() should be called if
-> 
-> - a translation is removed from a pasid entry; and
-This is the path that is already mentiond
+	if (mmu_type == KVM_TDP_MMU)
+		
+> +		read_lock(&kvm->mmu_lock);
+> +	else
+> +		write_lock(&kvm->mmu_lock);
+>  
+>  	/*
+>  	 * Zapping TDP MMU shadow pages, including the remote TLB flush, must
+> @@ -7341,8 +7344,13 @@ void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
+>  	ratio = READ_ONCE(nx_huge_pages_recovery_ratio);
+>  	to_zap = ratio ? DIV_ROUND_UP(nr_pages, ratio) : 0;
+>  	for ( ; to_zap; --to_zap) {
+> -		if (list_empty(pages))
+> +		if (tdp_mmu_enabled)
 
-> - PRI on this device is enabled.
-And this path is:
-  -> intel_iommu_enable_iopf
-    -> context_flip_pri
-      -> intel_context_flush_present
-        -> qi_flush_pasid_cache
+Shouldn't this be?
 
-Right?
+		if (shared)
 
-I'll put this in my next version if I see that there is a consensus in
-the current discussion.
+Or if we do the above
 
-thx again for the feedback.
+		if (mmu_type == KVM_TDP_MMU)
+			 
+Actually, better idea (sans comments)
 
-Best
--- 
+	if (mmu_type == KVM_TDP_MMU) {
+		read_lock(&kvm->mmu_lock);
+		kvm_tdp_mmu_pages_lock(kvm);
+	} else {
+		write_lock(&kvm->mmu_lock);
+	}
 
-Joel Granados
+	rcu_read_lock();
+
+	ratio = READ_ONCE(nx_huge_pages_recovery_ratio);
+	to_zap = ratio ? DIV_ROUND_UP(possible_nx->nr_pages, ratio) : 0;
+	for ( ; to_zap; --to_zap) {
+		if (list_empty(possible_nx->pages))
+			break;
+
+                ...
+
+		/* Blah blah blah. */
+		if (mmu_type == KVM_TDP_MMU)
+			kvm_tdp_mmu_pages_unlock(kvm);
+
+                ...
+
+		/* Blah blah blah. */
+		if (mmu_type == KVM_TDP_MMU)
+			kvm_tdp_mmu_pages_lock(kvm);
+	}
+	kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
+
+	rcu_read_unlock();
+
+	if (mmu_type == KVM_TDP_MMU) {
+		kvm_tdp_mmu_pages_unlock(kvm);
+		read_unlock(&kvm->mmu_lock);
+	} else {
+		write_unlock(&kvm->mmu_lock);
+	}
+	srcu_read_unlock(&kvm->srcu, rcu_idx);
+
+> @@ -825,23 +835,51 @@ static void tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root,
+>  	rcu_read_unlock();
+>  }
+>  
+> -bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
+> +bool kvm_tdp_mmu_zap_possible_nx_huge_page(struct kvm *kvm,
+
+This rename, and any refactoring that is associated with said rename, e.g. comments,
+belongs in a separate patch.
+
+> +					   struct kvm_mmu_page *sp)
+>  {
+> -	u64 old_spte;
+> +	struct tdp_iter iter = {
+> +		.old_spte = sp->ptep ? kvm_tdp_mmu_read_spte(sp->ptep) : 0,
+> +		.sptep = sp->ptep,
+> +		.level = sp->role.level + 1,
+> +		.gfn = sp->gfn,
+> +		.as_id = kvm_mmu_page_as_id(sp),
+> +	};
+> +
+> +	lockdep_assert_held_read(&kvm->mmu_lock);
+
+Newline here, to isolate the lockdep assertion from the functional code.
+
+> +	if (WARN_ON_ONCE(!is_tdp_mmu_page(sp)))
+> +		return false;
+>  
+>  	/*
+> -	 * This helper intentionally doesn't allow zapping a root shadow page,
+> -	 * which doesn't have a parent page table and thus no associated entry.
+> +	 * Root shadow pages don't a parent page table and thus no associated
+
+Missed a word or three.
+
+> +	 * entry, but they can never be possible NX huge pages.
+>  	 */
+>  	if (WARN_ON_ONCE(!sp->ptep))
+>  		return false;
+>  
+> -	old_spte = kvm_tdp_mmu_read_spte(sp->ptep);
+> -	if (WARN_ON_ONCE(!is_shadow_present_pte(old_spte)))
+> +	/*
+> +	 * Since mmu_lock is held in read mode, it's possible another task has
+> +	 * already modified the SPTE. Zap the SPTE if and only if the SPTE
+> +	 * points at the SP's page table, as checking  shadow-present isn't
+> +	 * sufficient, e.g. the SPTE could be replaced by a leaf SPTE, or even
+> +	 * another SP. Note, spte_to_child_pt() also checks that the SPTE is
+> +	 * shadow-present, i.e. guards against zapping a frozen SPTE.
+> +	 */
+> +	if ((tdp_ptep_t)sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
+>  		return false;
+>  
+> -	tdp_mmu_set_spte(kvm, kvm_mmu_page_as_id(sp), sp->ptep, old_spte,
+> -			 SHADOW_NONPRESENT_VALUE, sp->gfn, sp->role.level + 1);
+> +	/*
+> +	 * If a different task modified the SPTE, then it should be impossible
+> +	 * for the SPTE to still be used for the to-be-zapped SP. Non-leaf
+> +	 * SPTEs don't have Dirty bits, KVM always sets the Accessed bit when
+> +	 * creating non-leaf SPTEs, and all other bits are immutable for non-
+> +	 * leaf SPTEs, i.e. the only legal operations for non-leaf SPTEs are
+> +	 * zapping and replacement.
+> +	 */
+> +	if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE)) {
+> +		WARN_ON_ONCE((tdp_ptep_t)sp->spt == spte_to_child_pt(iter.old_spte, iter.level));
+> +		return false;
+> +	}
+>  
+>  	return true;
+>  }
 
