@@ -1,237 +1,274 @@
-Return-Path: <linux-kernel+bounces-388345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161D49B5E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:48:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FC49B5E30
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32302840AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1657E1C21019
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCE01E1C19;
-	Wed, 30 Oct 2024 08:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="C2bCg4Od";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="lsAHrvnz"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEA915B0F7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730278116; cv=fail; b=Cyxtj7CYyOLzG3+8nCSPJl7gxPlFeB/NuquJBQfXcnpYpetVTLvU28sWODwh0lAjUcKl4qm8mV1Eg1FYsb69s3Ge/aB4UGcxuGrL5ktCa/DrTQFywiRp33Rt1f3dhXpD9GLFMOjUhbnTUsJx3a47HicTUGhjbU6kizlbO5BTNWU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730278116; c=relaxed/simple;
-	bh=H31kIyZyjaUgwaS3yuknDQjBoxN/3V01N4GXlnp61CE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fqLIzBKbk6V0EyAle8WzuBUAJ7Z4fz2TAXKTG/vWKgD0Z0WiSrgDrgutJPwwnAj6ZKpUlTxGVV3z9ZZYTAWmhGbWTBomjYwzURhwRlpEXH/Z2O1P4xcD9SpHJYC5tonLQaL5XZ7Zy31381ytKroeH7Y9K+iVsgTL+FRngX3QRJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=C2bCg4Od; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=lsAHrvnz; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: bc3afcde969b11efb88477ffae1fc7a5-20241030
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=H31kIyZyjaUgwaS3yuknDQjBoxN/3V01N4GXlnp61CE=;
-	b=C2bCg4OdWKJ3Br7fCC42Ld2ViYpElZxn0jQKRThY8SdMCKMWLhEJKpvFRMFWggCR41zEqtHSzYehRV9itmPGT7pu/J1PVtA7WKSzLY4C5i5DJTIiSnhUaPNvsxjHwcDpHnTS/MXu8LEC7/hdqn10PxIEYTfyN/SZSlPC6EluERs=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:ad3e05b2-fae0-4b8b-b1b1-ab6f0447f3f1,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:e54949e7-cb6b-4a59-bfa3-98f245b4912e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: bc3afcde969b11efb88477ffae1fc7a5-20241030
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 661514516; Wed, 30 Oct 2024 16:48:29 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 30 Oct 2024 16:48:27 +0800
-Received: from SEYPR02CU001.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 30 Oct 2024 16:48:27 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RqDnhY//EIdaP9POod8z1VQbemnpoPsm08ghApzmwqndMVfFea+BlUpBP07lxiGR1hadw8Ld/zbh4IVbuwa3QQfS6eGdsgCT2mtQu6Ole2mkMuJZ1a13YEV74uk5+JdaezPVQxz2ICcqcE5XGSujPFPfJx4Zu/W8E1O9+XNt0di6uwn1mdV8l0N/P0783r1wDg12Nt0D+lzXigNY8QyYuhxZToX+/jbl8mk+6vATmgYHIhYHZ/Nd40xhRJIiKAfLAqYl9ZstUqkIS09S2ehNSU7arfi57snQFO4m1Yem+nB/Vk4GXI3FeLelYy1MfM+gHS/GGypPApRCP+JFhE4nYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H31kIyZyjaUgwaS3yuknDQjBoxN/3V01N4GXlnp61CE=;
- b=qFLLlKN4VIRCHH2la99kKXlWWZG42HSOmZcrZfUIT4/7iPLR2Ez/6ubZmh1Zvm5CUmrI5pVkhAX/gxPsv2OWq9Vd3IRzRWNgLrjUvD2i0h8L9YX1iR2eDpfz29K+wOzbllysb+YCNcL4SKKrAuTUSP8WPEeo8Cf6sWdsiA58WSUFaD0rDb9YYbFS+sR9It+uB5Rm23QXq5WrVRtY9qb3XbDAIgQYVOFgFeOeQNkDDhZCQcZxmvQTse57I/oIy2BObnDf8ey+4+/dzPGWdtFTUPJIxJIPyOssayiR8zefG6Un0HRSMIzO7URrVDLOEc0hNnp/nSUIQZi+3RmMC9CMtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H31kIyZyjaUgwaS3yuknDQjBoxN/3V01N4GXlnp61CE=;
- b=lsAHrvnzqSc2nu+qbaYnBnpdWq8Ntykg1bVOs+1ElQFrsnS4zL8ao897BW4Qrq/7+g4sX3oumPdETAtQJT9MwrgeTfa0d0W5M+A1QK4Lpbl+eaBgE+ouXky1ORoob0s4YqITPCQdUutIRoF9IqOg7rNfh1xjth05/VHP4/oMDGU=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by SI2PR03MB6567.apcprd03.prod.outlook.com (2603:1096:4:1e2::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Wed, 30 Oct
- 2024 08:48:24 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%7]) with mapi id 15.20.8093.021; Wed, 30 Oct 2024
- 08:48:23 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: "mripard@kernel.org" <mripard@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"wenst@chromium.org" <wenst@chromium.org>, "chunkuang.hu@kernel.org"
-	<chunkuang.hu@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "ville.syrjala@linux.intel.com"
-	<ville.syrjala@linux.intel.com>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "airlied@gmail.com" <airlied@gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Drop dependency on ARM
-Thread-Topic: [PATCH] drm/mediatek: Drop dependency on ARM
-Thread-Index: AQHbKfOlKgrWu8XeBkaWOJ8UqtA9E7KepD+AgABSgoCAAAZKAA==
-Date: Wed, 30 Oct 2024 08:48:23 +0000
-Message-ID: <0cfba5bdc9443fb4b9719c47ee93c2a467cc66bd.camel@mediatek.com>
-References: <20241029111309.737263-1-wenst@chromium.org>
-	 <d9177ba80fc78b1f74dc54260c0c43440ec5a804.camel@mediatek.com>
-	 <20241030-hot-peridot-falcon-57bdbb@houat>
-In-Reply-To: <20241030-hot-peridot-falcon-57bdbb@houat>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|SI2PR03MB6567:EE_
-x-ms-office365-filtering-correlation-id: 6e916400-3a42-4fd6-5f44-08dcf8bf9ce8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?VnE0WUtuZTZJLzg3ci9YTVRNUmp5ZE5UT1NjTG9WaXJ4d0VmcThUNHo0Smgv?=
- =?utf-8?B?bzhEUVhpMWg3ckMxWU85R0N3L2pjZFdHNUtpKzNualV1NzN3RHFKVVpJZFNq?=
- =?utf-8?B?bEowWlUzaE83ZXlaZDAyQkNyb20rbzRlWkxRL2NHb0krdFBoVFJQUDBnTTQv?=
- =?utf-8?B?Ui9PcjhzNDMxdk9hcFRCbkw3b1JvaldyMXZub2swQ1R1VUtrRHNjd0d4L1Jl?=
- =?utf-8?B?OFVZdnFkRnh2d044TDJ0dnZ0ZHluK2JPQjJ0eU1NTjVmV1l2aU84OVB3L0tJ?=
- =?utf-8?B?cVhONUpqazczeFFKM3ZHc0hld0RPMGx6eFoyYXdmODJXb0lRS1JnL283WVY5?=
- =?utf-8?B?STJneHppeTJieVRzUkdCbHFhU25MRWQ2M0swd0NJZ09HR3VzY3lCOVlKcGhz?=
- =?utf-8?B?dTdPMGRweWQvb1FYS1U3Sk5INm5rVlNkRTNaN2FDVlhYVE1aWVZSSmZMZ0dx?=
- =?utf-8?B?dnhWSFdIMjRlcXAwclFlSXpkTlpEQVdzcFdOSFdnRW1jekpJcjdEcmJQSDFz?=
- =?utf-8?B?T3JhODF0UHhoT2ZUZjJzeDMvZ3F6QkhOMFI2OXZzbDV3VjJXUHdaenRNSXcr?=
- =?utf-8?B?R29VU0lPcXM4cThuVjhWY3h0RDMrMTJ3UVlocDdxbTNSNWd2cUVuSzFLSEFh?=
- =?utf-8?B?SkxhclBVVkQ3a25DTnpZc1VhM2ZPa0JzaEtYcDJabmF1ZlJKYzdFM0s1amNH?=
- =?utf-8?B?V1V4ejZqRTdXdXpKcEdpbDI5aG9Dc09PSGkwVVp0MzZBZGhtRmIwdGprTUdn?=
- =?utf-8?B?NWFxUEplQlZPOEdXSzhJbEFHUHorTEVMUkFTWlorRG4vRDM1OFMxK29KdnFk?=
- =?utf-8?B?dk0rOC9kWE9NaEozWng3NTJWbmVydm5ic0FHb05nY0hqM3d5M0p4ZHhkL0NL?=
- =?utf-8?B?SUlFeXN5Q0hadFR5b0hUUW9mT2JQeVdRU2hlQjdtUnZVTHUzVVJBcjBMNnZN?=
- =?utf-8?B?b2lZbmh4dFMydTJEd3ByelY3SURIRkVNRUdOeVYvOHprZGIrYlYwUE50VXdE?=
- =?utf-8?B?b0NKWTZnQXc3amtOSXZMSHllTG9WV0JYaTA4NFBiQmpJVE8zU2E3V0lHMUU2?=
- =?utf-8?B?bU1NSUVSNjNyOHQxdXNUaTZmeDgzRHNPS3hyMzFqa0hvZFJ1SUtscHR5QWE5?=
- =?utf-8?B?M0FiTVlIKzBVdmo2SHdGTGZXd1A1am5XckhPS0c2b3F5YzN5U1o3N1Z4V3VS?=
- =?utf-8?B?RG1GWmRxdFZONWtuNmI4TDBXeHFyQ3lRb21ZVStocVUyeE43QWVhZVBXTTBQ?=
- =?utf-8?B?WjZTSEI3d3l1V2RNMFdoNVFsTG13T0wyVDMyYk9NVDVTZ2hOM2JBTVRzaEs2?=
- =?utf-8?B?eEU2bGRSZ3VmNmVNaUN6cW5YVVZpa2UwSWp5WUc4ME1lZFpUWW11ZUE4NDJQ?=
- =?utf-8?B?bkdZb0NiMWVIbzBDSDFmd1g4VzZCbkFtR3lUdEM2a0pwOEtHTE1YVy91bzlH?=
- =?utf-8?B?blkrN2lkQVZGUko2VzFMRHRybS9GbnhBMU94bFdsWDJ6VFQ3SnFGbEJ5RzVT?=
- =?utf-8?B?OTFZUmwyQ1N0MjdxMFVFY2daZjQ1cGRzYWRwR2EvaFBvbW9LRm9COERORXZp?=
- =?utf-8?B?bzBlaHo0KzdhN2lhaHlRdUY3SkVseWp6SFZwZnFadG5pN3hoa3llT3lRRDRo?=
- =?utf-8?B?K2ZBZ1QyNFl4a0dPNkxWZzFCLzlpK1RJN1V4L0pEWVR1MFdyYVFHM3U5OTJn?=
- =?utf-8?B?RUhxd2JRblE1M3F0dVI2elVaUzVEcmFXWkpkRnQ3Y3ZuZU5tZlF6RjI3dWJS?=
- =?utf-8?B?UEcxRHBxbi9mM1R0RzVVNDVqTUJrMVdpR2ZKcitMa0Rwd09DbTBKUTFiUTRO?=
- =?utf-8?Q?MTu9wA9stmB3Y6jSjGhXi+6bmbVdTuZnPW5dY=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MFdyRm5CZzFvWWpzTi9USzhQRW1Kb0dpanRrVE8zZVdnbWdVMHpndHRQbVV6?=
- =?utf-8?B?d2g5MndGTkVFYk5UUVB3MWRZK01jK2NkS09nTzAwVFAvMjJvNDhQQnI0Tlkw?=
- =?utf-8?B?WmxBNUt0V1g2OS9NOXFYNU8xNlROcWs2L2xxS0tXNGFkMGt6WnoxdVNIMGd6?=
- =?utf-8?B?TkJmbFBML1ZRNytJTXRISU81WGc4YmpTdzVjNzFFSHd6MDlzMmM4dG1YQXhZ?=
- =?utf-8?B?aGFnRzJyRnVteHdtbGxVYjBKQWdLVXVqSTBxcTVVYUVzWlhaak0wYzNyeWE3?=
- =?utf-8?B?aDhFM1hDbDNlU3hOOFU4UWxiKytLYU5zdU1NZXF6M3JMbzZoTFAzNGYzcGl3?=
- =?utf-8?B?UVZGQU8zNVQ0T3g5VHorc3ZSMVgyaFFQSmp3OUhZVFdnSjBhbTR3VFQxSGlY?=
- =?utf-8?B?MXdHTHpsbjRzb1ZscER0VVpBK2JNNHpzdjJaci9SM0E0SHB6VE04V2Z1akQ3?=
- =?utf-8?B?cmZqUndlOUdOeThCVGpiRWlQZnVteTFKOGdEUlYxajFndHpWMDlIcXhnWDd5?=
- =?utf-8?B?V0pCUDdkQ0JZcUtUQ3Y4VEptOFp6TUJuNTRkYk0yMXFleDVtMVVMWDRHSDEv?=
- =?utf-8?B?WHdUQW9WTE12M2NRbGhXU3VxcFlLSnl2ZGxQdHByMXJtYzRYL0hWQWhhVHlo?=
- =?utf-8?B?K0lZbDREVWUzc0t6OXZzc2xNRjVWV2wyRERXZXF0UTZFOWRLVnRxa3d5dmJ2?=
- =?utf-8?B?b21ESU5nNEt3WkR6a0dzQkRlQVZZQ2YyY0xralBhTVI4a2YrZGRWU1F5MkxJ?=
- =?utf-8?B?aXNUSmY0VnhuWm5qNDNhbmFKbjBDemxKeUY5eHJCRWV2YVUzWUsvVXBLOTFq?=
- =?utf-8?B?d2szNElUMVJRNUlFS0xUdUxJU3VLMUllT2JlM1BFdkN6TWpUWEdvQnJPKzZq?=
- =?utf-8?B?TmZmVTNzSmZUNkZXUkNweW8rWUs4Qk1UVWlOcHAzSmNUWDV3aHB1emwrUkpj?=
- =?utf-8?B?Q1lGQk9nRW02MHhMdGNra0VhTUw5OEc0VVdLelIvY1gwRlB5SXd1QUo5cm1S?=
- =?utf-8?B?c1RId0hnbjJKL1VIZTR1eFVzbW14Y1RmU21oWHdNMit4THZKdFdyT3VEOFBv?=
- =?utf-8?B?c21rU1o5OG9nRzVYSU1YTzl5UE1WNDRNbHpSRnhWMVI2S3ZEcTFIcVdnK2Ny?=
- =?utf-8?B?YndQNWIwREszeitHb1UvVHdSL0lFUWJCWnJMdHZoQ09wZGRGWTBDelA1d3hi?=
- =?utf-8?B?aFhlc0VZdWs5KzZPWVhjMlNpajV3SVhvUkFjRmlTWWFnYTdDSVhQVlFwb1JX?=
- =?utf-8?B?M0tEb1V4UVliK25FeE02Z2VmWVRXWDJFZDcvRnpaV01waWFKaE03ZCt6WCta?=
- =?utf-8?B?N2pQWXFHTDhGQnpIeW52Q1F6TnhUMG9oZW82aDFkNmdYNlpoWXR1SzJjZ01G?=
- =?utf-8?B?ckVvMHU4L3puTDBUNG13TktSNWV1N0w0c2hka3hMUG1TU3JCSlpCdmQ3TVli?=
- =?utf-8?B?RFpQeUoyRkJGV3dTY2ZMZ0JGZmxidHVIblJkMHdlVHhKN2dTUlI2eWVMcWp2?=
- =?utf-8?B?K2Y4M2ZvaHZqenZRbUZCL3hTcy94TllDMlhCNU9YOE1vN2lmb0pGS0YvTWU2?=
- =?utf-8?B?bTVQSkpLV29lUFplQ1VGSlY2WkJDNDF4R2RBZ1hxbFZvN291b1VNMXk2bkNn?=
- =?utf-8?B?ODB4YTh2dXZSL2d6OWtPUVk5eXdKdTA5ZWduYkhBVTdJbS9oUUI4MUVQZlNK?=
- =?utf-8?B?elNxUC9mSDY1b21LcDRhRGZzNkNNeloxeWVjK3BVMkhTTkpXSkdlbHlLdGs5?=
- =?utf-8?B?RlpVOEtWV3VYdGk2Y0tvNUVyZjkrYm5oTG95Y2hoSElYZ2l4T2I3TVpscWh1?=
- =?utf-8?B?OTJ4bkVaS3NSaDlxY1JTWmUrS1hlUkZFSTU5cWQxckFtbWRHYVZLSEE3S3p1?=
- =?utf-8?B?cU5xUGM0c2hQOXU4b2VwaDVURDI3MktKd2VZaEhOcmdxYUhIcm4xOUZXcDAx?=
- =?utf-8?B?T1F2akRNRVpGcE9rUHNUcVVzU21OU0FoUURTMGprY2NIdFhJVGsybnNHamtI?=
- =?utf-8?B?bzNZTFJ3WTVnVngwRTFFSmlEOStzbGpBYXFCVkI4elViR1FWeHZFNlFVL3ND?=
- =?utf-8?B?NXhkNGY1T3ZvMzRhc1pxMEc2L1haR0lqTUoyTnNIajZPUmpUTk1mWUNQbFA0?=
- =?utf-8?Q?hHdJjsFi7OvLxAujLDTTHXPCh?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1EB541894DB1A0469124CB0E1438AC9D@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68601E104F;
+	Wed, 30 Oct 2024 08:47:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D021E1C2F;
+	Wed, 30 Oct 2024 08:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730278036; cv=none; b=qrrITHrNvWV1pPLrFZ7iXLFQNuahhuzhZbuI6clcujhsMlTDVxfhNDfHh/0Jf/VosyWk8pMhgjGkhrLhwd5zdymK7fjplfk0bMo0cdEwm4TFQcvk6dEG35TRDA474sSdrIidanwP+BUge5tlC75FX72o1ib38q7TdvYMRFWDafM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730278036; c=relaxed/simple;
+	bh=gVwbPlbjyyBA2CmeQ+z1taKLf91Lfta1ZkwNhDZ47jw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=riMkzHn33OFdfCt/NYKrdG9BI5YN4wOq7YmVvpCpjR+HGOEHAc7zmQ62wlHB0WfnIhzmSnOEg/FdBjBcaFMDo72tMxSjhiWzvWtI4k90X74ELKur/oS04YlON0aD3z5oJUnz3e3dZcUU6Rvv14oRDpXWcOOJar4wOF/mjgNG0VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACDAB169E;
+	Wed, 30 Oct 2024 01:47:42 -0700 (PDT)
+Received: from [10.57.58.72] (unknown [10.57.58.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 184483F73B;
+	Wed, 30 Oct 2024 01:47:11 -0700 (PDT)
+Message-ID: <6cdb2f8b-62e0-455c-a3a5-ed5359a2e941@arm.com>
+Date: Wed, 30 Oct 2024 08:48:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e916400-3a42-4fd6-5f44-08dcf8bf9ce8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 08:48:23.4354
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: X5Y8dLz4F1+sSYm1SNH0Jk80qjnuVR7xMZ73+ZMYTbUbPKCAR66pZl0WarKK3GuikSTk9wtaYLHHU8/0E09NWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB6567
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--17.271100-8.000000
-X-TMASE-MatchedRID: 9zTThWtzImvKRSR886eK0ia1MaKuob8PC/ExpXrHizwJ3JxKjb/Mqtpu
-	f2sIyxhOshXHqIHwr0zD0KDb21Sxj3jxgHkp9duCQty8giCJW42r3d1rmRdCgKXJ9vMysD/CGU3
-	GI9BKWefx4l/1nQjDTKvscqiup2xXc4SuAICAZm5IRA38P/dwbiDQvhfLY4eVemIOfEwRhx1X2a
-	lgP5+nkuLzNWBegCW2PZex/kxUIHWNo+PRbWqfRJBlLa6MK1y4
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--17.271100-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	EE52A2A6916F482A3D2443F5B5625A1A1597D101805ACF2F1B795C634855E1972000:8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] PM: EM: Add min/max available performance state
+ limits
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ dietmar.eggemann@arm.com
+References: <20241029094452.495439-1-lukasz.luba@arm.com>
+ <20241029094452.495439-2-lukasz.luba@arm.com>
+ <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI0LTEwLTMwIGF0IDA5OjI1ICswMTAwLCBtcmlwYXJkQGtlcm5lbC5vcmcgd3Jv
-dGU6DQo+IE9uIFdlZCwgT2N0IDMwLCAyMDI0IGF0IDAzOjMwOjM0QU0gKzAwMDAsIENLIEh1ICjo
-g6Hkv4rlhYkpIHdyb3RlOg0KPiA+IEhpLCBDaGVuLXl1Og0KPiA+IA0KPiA+IE9uIFR1ZSwgMjAy
-NC0xMC0yOSBhdCAxOToxMyArMDgwMCwgQ2hlbi1ZdSBUc2FpIHdyb3RlOg0KPiA+ID4gRXh0ZXJu
-YWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMg
-dW50aWwgeW91IGhhdmUgdmVyaWZpZWQgdGhlIHNlbmRlciBvciB0aGUgY29udGVudC4NCj4gPiA+
-IA0KPiA+ID4gDQo+ID4gPiBUaGUgcmVjZW50IGF0dGVtcHQgdG8gbWFrZSB0aGUgTWVkaWFUZWsg
-RFJNIGRyaXZlciBidWlsZCBmb3Igbm9uLUFSTQ0KPiA+ID4gY29tcGlsZSB0ZXN0cyBtYWRlIHRo
-ZSBkcml2ZXIgdW5idWlsZGFibGUgZm9yIGFybTY0IHBsYXRmb3Jtcy4gU2luY2UNCj4gPiA+IHRo
-aXMgaXMgdXNlZCBvbiBib3RoIEFSTSBhbmQgYXJtNjQgcGxhdGZvcm1zLCBqdXN0IGRyb3AgdGhl
-IGRlcGVuZGVuY3kNCj4gPiA+IG9uIEFSTS4NCj4gPiANCj4gPiBSZXZpZXdlZC1ieTogQ0sgSHUg
-PGNrLmh1QG1lZGlhdGVrLmNvbT4NCj4gPiANCj4gPiBJIGZpbmQgdGhpcyBkYXlzIGFnbywgYnV0
-IEkgZG9uJ3Qga25vdyB0aGVyZSBpcyBzb21lb25lIHdobyBhcHBseSBpdC4NCj4gPiBMZXQgdGhp
-cyBwYXRjaCBnbyB0aHJvdWdoIGRybS1taXNjIHRyZWUgd2hpY2ggYWxyZWFkeSBoYXMgdGhlIGJ1
-ZyBwYXRjaC4NCj4gDQo+IElmIHlvdSBhcmUgb2sgd2l0aCB0aGlzIHBhdGNoLCB3aHkgZGlkbid0
-IHlvdSBhcHBseSBpdCB5b3Vyc2VsZj8NCj4gDQo+IEkgdGhpbmsgdGhhdCdzIHZlcnkgbXVjaCB0
-aGUgZXhwZWN0YXRpb24sIHNvIGl0J3MgcHJvYmFibHkgdG9vayBhIHdoaWxlIHRvIG1lcmdlLg0K
-DQpUaGF0J3Mgb2sgZm9yIG1lIHRvIGFwcGx5IGl0IGlmIGRybS1taXNjIGhhcyBubyBwbGFuIHRv
-IGFwcGx5IGl0Lg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiANCj4gTWF4aW1lDQo=
+Hi Rafael,
+
+On 10/29/24 18:29, Rafael J. Wysocki wrote:
+> On Tue, Oct 29, 2024 at 10:43 AM Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>
+>> On some devices there are HW dependencies for shared frequency and voltage
+>> between devices. It will impact Energy Aware Scheduler (EAS) decision,
+>> where CPUs share the voltage & frequency domain with other CPUs or devices
+>> e.g.
+>> - Mid CPUs + Big CPU
+>> - Little CPU + L3 cache in DSU
+>> - some other device + Little CPUs
+>>
+>> Detailed explanation of one example:
+>> When the L3 cache frequency is increased, the affected Little CPUs might
+>> run at higher voltage and frequency. That higher voltage causes higher CPU
+>> power and thus more energy is used for running the tasks. This is
+>> important for background running tasks, which try to run on energy
+>> efficient CPUs.
+>>
+>> Therefore, add performance state limits which are applied for the device
+>> (in this case CPU). This is important on SoCs with HW dependencies
+>> mentioned above so that the Energy Aware Scheduler (EAS) does not use
+>> performance states outside the valid min-max range for energy calculation.
+>>
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>>   include/linux/energy_model.h | 24 ++++++++++++++---
+>>   kernel/power/energy_model.c  | 52 ++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 72 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+>> index 1ff52020cf757..e83bf230e18d1 100644
+>> --- a/include/linux/energy_model.h
+>> +++ b/include/linux/energy_model.h
+>> @@ -55,6 +55,8 @@ struct em_perf_table {
+>>    * struct em_perf_domain - Performance domain
+>>    * @em_table:          Pointer to the runtime modifiable em_perf_table
+>>    * @nr_perf_states:    Number of performance states
+>> + * @min_ps:            Minimum allowed Performance State index
+>> + * @max_ps:            Maximum allowed Performance State index
+>>    * @flags:             See "em_perf_domain flags"
+>>    * @cpus:              Cpumask covering the CPUs of the domain. It's here
+>>    *                     for performance reasons to avoid potential cache
+>> @@ -70,6 +72,8 @@ struct em_perf_table {
+>>   struct em_perf_domain {
+>>          struct em_perf_table __rcu *em_table;
+>>          int nr_perf_states;
+>> +       int min_ps;
+>> +       int max_ps;
+>>          unsigned long flags;
+>>          unsigned long cpus[];
+>>   };
+>> @@ -173,6 +177,8 @@ void em_table_free(struct em_perf_table __rcu *table);
+>>   int em_dev_compute_costs(struct device *dev, struct em_perf_state *table,
+>>                           int nr_states);
+>>   int em_dev_update_chip_binning(struct device *dev);
+>> +int em_update_performance_limits(struct em_perf_domain *pd,
+>> +               unsigned long freq_min_khz, unsigned long freq_max_khz);
+>>
+>>   /**
+>>    * em_pd_get_efficient_state() - Get an efficient performance state from the EM
+>> @@ -180,6 +186,8 @@ int em_dev_update_chip_binning(struct device *dev);
+>>    * @nr_perf_states:    Number of performance states
+>>    * @max_util:          Max utilization to map with the EM
+>>    * @pd_flags:          Performance Domain flags
+>> + * @min_ps:            Minimum allowed Performance State index
+>> + * @max_ps:            Maximum allowed Performance State index
+>>    *
+>>    * It is called from the scheduler code quite frequently and as a consequence
+>>    * doesn't implement any check.
+>> @@ -189,12 +197,13 @@ int em_dev_update_chip_binning(struct device *dev);
+>>    */
+>>   static inline int
+>>   em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_states,
+>> -                         unsigned long max_util, unsigned long pd_flags)
+>> +                         unsigned long max_util, unsigned long pd_flags,
+>> +                         int min_ps, int max_ps)
+>>   {
+>>          struct em_perf_state *ps;
+>>          int i;
+>>
+>> -       for (i = 0; i < nr_perf_states; i++) {
+>> +       for (i = min_ps; i <= max_ps; i++) {
+>>                  ps = &table[i];
+>>                  if (ps->performance >= max_util) {
+>>                          if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES &&
+>> @@ -204,7 +213,7 @@ em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_states,
+>>                  }
+>>          }
+>>
+>> -       return nr_perf_states - 1;
+>> +       return max_ps;
+>>   }
+>>
+>>   /**
+>> @@ -254,7 +263,8 @@ static inline unsigned long em_cpu_energy(struct em_perf_domain *pd,
+>>           */
+>>          em_table = rcu_dereference(pd->em_table);
+>>          i = em_pd_get_efficient_state(em_table->state, pd->nr_perf_states,
+>> -                                     max_util, pd->flags);
+>> +                                     max_util, pd->flags, pd->min_ps,
+>> +                                     pd->max_ps);
+>>          ps = &em_table->state[i];
+>>
+>>          /*
+>> @@ -391,6 +401,12 @@ static inline int em_dev_update_chip_binning(struct device *dev)
+>>   {
+>>          return -EINVAL;
+>>   }
+>> +static inline
+>> +int em_update_performance_limits(struct em_perf_domain *pd,
+>> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
+>> +{
+>> +       return -EINVAL;
+>> +}
+>>   #endif
+>>
+>>   #endif
+>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+>> index 927cc55ba0b3d..436c2b8fdf9eb 100644
+>> --- a/kernel/power/energy_model.c
+>> +++ b/kernel/power/energy_model.c
+>> @@ -628,6 +628,8 @@ int em_dev_register_perf_domain(struct device *dev, unsigned int nr_states,
+>>                  goto unlock;
+>>
+>>          dev->em_pd->flags |= flags;
+>> +       dev->em_pd->min_ps = 0;
+>> +       dev->em_pd->max_ps = nr_states - 1;
+>>
+>>          em_cpufreq_update_efficiencies(dev, dev->em_pd->em_table->state);
+>>
+>> @@ -856,3 +858,53 @@ int em_dev_update_chip_binning(struct device *dev)
+>>          return em_recalc_and_update(dev, pd, em_table);
+>>   }
+>>   EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
+>> +
+>> +
+>> +/**
+>> + * em_update_performance_limits() - Update Energy Model with performance
+>> + *                             limits information.
+>> + * @pd                 : Performance Domain with EM that has to be updated.
+>> + * @freq_min_khz       : New minimum allowed frequency for this device.
+>> + * @freq_max_khz       : New maximum allowed frequency for this device.
+>> + *
+>> + * This function allows to update the EM with information about available
+>> + * performance levels. It takes the minimum and maximum frequency in kHz
+>> + * and does internal translation to performance levels.
+>> + * Returns 0 on success or -EINVAL when failed.
+>> + */
+>> +int em_update_performance_limits(struct em_perf_domain *pd,
+>> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
+>> +{
+>> +       struct em_perf_state *table;
+>> +       int min_ps = -1;
+>> +       int max_ps = -1;
+>> +       int i;
+>> +
+>> +       if (!pd)
+>> +               return -EINVAL;
+>> +
+>> +       rcu_read_lock();
+>> +       table = em_perf_state_from_pd(pd);
+>> +
+>> +       for (i = 0; i < pd->nr_perf_states; i++) {
+>> +               if (freq_min_khz == table[i].frequency)
+>> +                       min_ps = i;
+>> +               if (freq_max_khz == table[i].frequency)
+>> +                       max_ps = i;
+>> +       }
+>> +       rcu_read_unlock();
+>> +
+>> +       /* Only update when both are found and sane */
+>> +       if (min_ps < 0 || max_ps < 0 || max_ps < min_ps)
+>> +               return -EINVAL;
+>> +
+>> +
+>> +       /* Guard simultaneous updates and make them atomic */
+>> +       mutex_lock(&em_pd_mutex);
+>> +       pd->min_ps = min_ps;
+>> +       pd->max_ps = max_ps;
+>> +       mutex_unlock(&em_pd_mutex);
+>> +
+>> +       return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(em_update_performance_limits);
+> 
+> It would be good to have at least one caller of this function in the tree.
+
+Yes, I know, but we had delays with the SCMI cpufreq to get the
+notifications support, which are sent from FW...
+
+The patch using this API was part of v1 but with assumption that
+those SCMI notifications are merged.
+
+The patch v1 for the SCMI cpufreq driver [1].
+
+In that v1 cover letter I mentioned that the 2nd patch depends
+on notifications [2].
+
+I will have to work with Cristian on that notification in SCMI
+then this API will be used. I can see that it stuck for a while
+in v5. Let me sort that out (probably not in this merge window
+though).
+
+Can we do it this way?
+
+Regards,
+Lukasz
+
+[1] 
+https://lore.kernel.org/lkml/20240403162315.1458337-3-lukasz.luba@arm.com/
+[2] 
+https://lore.kernel.org/lkml/20240403162315.1458337-1-lukasz.luba@arm.com/
+[3] 
+https://lore.kernel.org/lkml/20240603192654.2167620-1-quic_sibis@quicinc.com/
 
