@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-387969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AB19B5893
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:25:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D369B5899
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34C41C22691
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:25:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 958DE1F2150D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AAD15E96;
-	Wed, 30 Oct 2024 00:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14E61802B;
+	Wed, 30 Oct 2024 00:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfb0zGBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zA7zIitO"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932C0BA4A;
-	Wed, 30 Oct 2024 00:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4111912E5D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730247913; cv=none; b=aUszdmrMX1R9/vnlcnD9sbmrimNC6PnKCgtokxAYraQgvr05YD4lgB6N0eNj65HXHyP69PWrg41ehWXy28VRGPm2r1YFz++ZARAf0hfjqr+wpe6ushRZcRLsNtqKl3Yn3xRyMuXPtezU5yT1A64nhANrUmHaDTflnw/1VOCky60=
+	t=1730248152; cv=none; b=ULltcyMthZ8jLn2sgwqa0b/NQL1Ez4YHUYYD3a8A5LhNzop+6WTooxcSQ1e2WMi9Co8F9FAC1NUiXNCo2wdcmr9QSm18qY+/16sOZ6dx1R3yVu9YHqOZgpTrOCNiU/QVYHabGza49m8UcaP74E03/+72Vaq5h0yObVPnRRfAT1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730247913; c=relaxed/simple;
-	bh=BL5aCCiMZkStQF1EjG4B5SZBurDZGFe+Lr5aoIHpMtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKLx+XA7Rqe8qGa0fO5tl/VusoU/gfmQ8V8LJIQOrfQKnm2vWPn65lNIGvhnIOykhI2MyzRfL3kba/hEN03UROwZIpr6mSfqb+WXwCs9GywPIhK1osyc0QLdhfUS8lpdZaCZv7WWRMhq9V1kacicaAP0tLLNvzC2UI8I0AF6nC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfb0zGBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB69C4CECD;
-	Wed, 30 Oct 2024 00:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730247913;
-	bh=BL5aCCiMZkStQF1EjG4B5SZBurDZGFe+Lr5aoIHpMtY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qfb0zGBM67fO1txbsHlw983IPG6An+plrWb3yFCRhOG5gDWuoJCshyrvddiQxbAsr
-	 JH7oWY/KAGQnul7987ngBeZAWVKH0MgP+2icl6P3DIVgyPzz5JTW28JFtr7XOxeY3J
-	 3zFdoA7m/k27m6XtaGBrU9dnm88lHNd4/3DxWuYhImZ9V12NxKXfxnlN2uwCpernp+
-	 1L3YfkFOw2RVgrx8xOhSjMwPH6E+tWzUJimYwkGQJmlfujYAbptCb/g3d0HuAfk+bU
-	 H45DgiPZOUrcyF0LP+gPaK7+LmCNwd9IFt+TLIWQWEZoHxJAmc8RI9KhUKrNaEdMkX
-	 r9aikwrP6G2Vg==
-Date: Tue, 29 Oct 2024 14:25:11 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Luca Boccassi <bluca@debian.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
-Message-ID: <ZyF858Ruj-jgdLLw@slm.duckdns.org>
-References: <ZyAnSAw34jwWicJl@slm.duckdns.org>
- <1998a069-50a0-46a2-8420-ebdce7725720@redhat.com>
+	s=arc-20240116; t=1730248152; c=relaxed/simple;
+	bh=V1iNnvuBm2oNPGSNfSGCVmkg1t1E6dTFsv0w9mlYepo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TnvpKdiuY/TPE/sqpaVdcR+47Zoh6ZqRppPWU/o4khAM4icHR4GROjuyaw3MvhkC6xhqi/HR/0haqzFtrWTmKNzoNQocNQeIqz5M5iUqQ+C3wKgCFL1CqEXpK0E+PYDZMuSH+s+J5s30sTbIJ5BF356n99GLjgZZOD7h+RDNbzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ovt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zA7zIitO; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ovt.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e5a1eefeeso6561573b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730248149; x=1730852949; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/Ye+vbAHY2hoAlG8bCiiPKeIhcJVGNMWcPfmJps0LRM=;
+        b=zA7zIitO1JDLLMVh2tDpB/Ydm3JznmxluumgnAAQ6WMBUCseUBjDcmx2aSepa5iFMB
+         HSjvnGMHXxhkte8W0S3t+8vKStng2pG471DZjrS96ZBqOheyTx3r1Rmlzy9ULwDLiLcP
+         rQvGSbSa0ducNsfRQKEmE2TUXcWn2qhJz7Ijr2C7b+d83a8G8RMpNg3ah9kWp+Pcz5qW
+         cdo8gELtUl4Wk3KtB+s4mN8epfcU9wH1nPTQAiNSEEIrd8Wuj/mqguz1iTb45CPQLW+P
+         C7lfbQplOCBz2b19DtKVbwP4Av747A7OhYbFmQ3/RSxmDiI4l60Nw1afKIOU39hv1QIg
+         evBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730248149; x=1730852949;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/Ye+vbAHY2hoAlG8bCiiPKeIhcJVGNMWcPfmJps0LRM=;
+        b=jlb/H4ok5wRhE7MRMf9dLK5k/5i5GF/FU5FRtGMM8QXvBUUmo6xZYzqYEsjlrtHymi
+         bW7uSL4XCU8xcmKdtEudnQOXYJWtLm2lg9OgK6zkaTVuFU1kWRywN4eV8CZDxbzOS84M
+         otMIfiXKAxmXmCb4C6Qk56ZrzLECsh8jUKlbjVYIuMFHSufWxEFeW8/yM6I0qQSWRM/6
+         gvJgmrArhN9QJuMnpSprT9B0ZhPqE+X/LUApRA2N9NuJ+gdjKyCCXEy7a3VbyzhdDTyM
+         /OFdAhSQdT4L9REGgzO7Wmv2u9RX09gXbpTW+bygMfZQ92v7nS8um2Pl+y23r3fCPHIV
+         G/ew==
+X-Forwarded-Encrypted: i=1; AJvYcCX2JtAnoGTFMH3EBmhBRuS4VktTBkO0fvQVc2ziEE5Aw29cs2oyj0dya63CR6RQQ8cE6YudUUwzXEh8pHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEipTOyecUVFiBZiP3leIzlrpVmFC5M6d3weR5DhigKJqunm5V
+	d5a+GGudWs5WS1Jxj11RTiFJRyNGcEgOL8RDafI2sWX6XAatvNBV/BR2twQpnYS/Wg==
+X-Google-Smtp-Source: AGHT+IFmIqfjPUXzygglv0CS5v98bbZvDbHPlRnqqpROK5kUQdzIOV0DEK16WsMTN1yt3vYZ1XyvGZ0=
+X-Received: from hmarynka.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1148])
+ (user=ovt job=sendgmr) by 2002:a05:6a00:3c50:b0:71e:5d1d:350a with SMTP id
+ d2e1a72fcca58-72063089caamr24309b3a.3.1730248149442; Tue, 29 Oct 2024
+ 17:29:09 -0700 (PDT)
+Date: Wed, 30 Oct 2024 00:28:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1998a069-50a0-46a2-8420-ebdce7725720@redhat.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241030002856.2103752-1-ovt@google.com>
+Subject: [PATCH] ovl: properly handle large files in ovl_security_fileattr
+From: Oleksandr Tymoshenko <ovt@google.com>
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: ovt@google.com, stable@vger.kernel.org, 
+	Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello, Paolo.
+dentry_open in ovl_security_fileattr fails for any file
+larger than 2GB if open method of the underlying filesystem
+calls generic_file_open (e.g. fusefs).
 
-On Tue, Oct 29, 2024 at 11:59:43PM +0100, Paolo Bonzini wrote:
-...
-> For the freezing part, would this be anything more than
-> 
-> fdiff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index d16ce8174ed6..b7b6a1c1b6a4 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -47,6 +47,7 @@
->  #include <linux/kern_levels.h>
->  #include <linux/kstrtox.h>
->  #include <linux/kthread.h>
-> +#include <linux/freezer.h>
->  #include <linux/wordpart.h>
->  #include <asm/page.h>
-> @@ -7429,22 +7430,27 @@ static long get_nx_huge_page_recovery_timeout(u64 start_time)
->  static int kvm_nx_huge_page_recovery_worker(struct kvm *kvm, uintptr_t data)
->  {
->  	u64 start_time;
-> +	u64 end_time;
-> +
-> +	set_freezable();
->  	while (true) {
->  		start_time = get_jiffies_64();
-> +		end_time = start_time + get_nx_huge_page_recovery_timeout(start_time);
-> +		for (;;) {
->  			set_current_state(TASK_INTERRUPTIBLE);
-> +			if (kthread_freezable_should_stop(NULL))
-> +				break;
-> +			start_time = get_jiffies_64();
-> +			if ((s64)(end_time - start_time) <= 0)
-> +				break;
-> +			schedule_timeout(end_time - start_time);
->  		}
->  		set_current_state(TASK_RUNNING);
-> +		if (kthread_freezable_should_stop(NULL))
+The issue can be reproduce using the following script:
+(passthrough_ll is an example app from libfuse).
 
-So, this is the PM and cgroup1 freezer which traps tasks in a pretty opaque
-state which is problematic when only a part of the system is frozen, so the
-cgroup2 freezer is implemented in the signal delivery / trap path so that
-they behave similar to e.g. SIGSTOP stops.
+  $ D=/opt/test/mnt
+  $ mkdir -p ${D}/{source,base,top/uppr,top/work,ovlfs}
+  $ dd if=/dev/zero of=${D}/source/zero.bin bs=1G count=2
+  $ passthrough_ll -o source=${D}/source ${D}/base
+  $ mount -t overlay overlay \
+      -olowerdir=${D}/base,upperdir=${D}/top/uppr,workdir=${D}/top/work \
+      ${D}/ovlfs
+  $ chmod 0777 ${D}/mnt/ovlfs/zero.bin
 
->  			return 0;
->  		kvm_recover_nx_huge_pages(kvm);
-> 
-> (untested beyond compilation).
-> 
-> I'm not sure if the KVM worker thread should process signals.  We want it
-> to take the CPU time it uses from the guest, but otherwise it's not running
-> on behalf of userspace in the way that io_wq_worker() is.
+Running this script results in "Value too large for defined data type"
+error message from chmod.
 
-I see, so io_wq_worker()'s handle signals only partially. It sets
-PF_USER_WORKER which ignores fatal signals, so the only signals which take
-effect are STOP/CONT (and friends) which is handled in do_signal_stop()
-which is also where the cgroup2 freezer is implemented.
+Signed-off-by: Oleksandr Tymoshenko <ovt@google.com>
+Fixes: 72db82115d2b ("ovl: copy up sync/noatime fileattr flags")
+Cc: stable@vger.kernel.org # v5.15+
+---
+ fs/overlayfs/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Given that the kthreads are tied to user processes, I think it'd be better
-to behave similarly to user tasks as possible in this regard if userspace
-being able to stop/cont these kthreads are okay.
-
-If that can't be done, we can add a mechanism to ignore these tasks when
-determining when a cgroup is frozen provided that this doesn't affect the
-snapshotting (ie. when taking a snapshot of frozen cgroup, activities from
-the kthreads won't corrupt the snapshot).
-
-Thanks.
-
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 35fd3e3e1778..baa54c718bd7 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -616,8 +616,13 @@ static int ovl_security_fileattr(const struct path *realpath, struct fileattr *f
+ 	struct file *file;
+ 	unsigned int cmd;
+ 	int err;
++	unsigned int flags;
++
++	flags = O_RDONLY;
++	if (force_o_largefile())
++		flags |= O_LARGEFILE;
+ 
+-	file = dentry_open(realpath, O_RDONLY, current_cred());
++	file = dentry_open(realpath, flags, current_cred());
+ 	if (IS_ERR(file))
+ 		return PTR_ERR(file);
+ 
 -- 
-tejun
+2.47.0.163.g1226f6d8fa-goog
+
 
