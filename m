@@ -1,156 +1,118 @@
-Return-Path: <linux-kernel+bounces-388036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB389B5993
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:48:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4379B5995
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:49:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5121F24593
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78281283F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D06842AA2;
-	Wed, 30 Oct 2024 01:48:45 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6F513212B;
+	Wed, 30 Oct 2024 01:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mEFizGtK"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7171C3398E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83C3398E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252924; cv=none; b=R6gQcDeiRD8iwtnOL0OixsH3PEfrH9kUmW+Q3HlgJQdldaeIr9Fu6mwBchT7o6UrW9etxRRz24F80Vetw27mXdF+kj9RnM1eVR1j5Irr6cJRCP/GmFIuRU5P9cmxjBz4EKaeN1IXqknJsC52jOnhSFeXXcY0wYMxGW0tsmuQNkI=
+	t=1730252963; cv=none; b=lclUVuC1ZnCbKE/GlMTs+rYaw18oID5HoaNEEV6yuCzd5B0+23dV0ajBVlNkFLtxEUpWYauXS/KFq2ZlBSmJOmqNTMciuJaVRo+GeoKr2YoTiEMNIh6ajk2MTvfQkTbRpQN9T7vSSQ8WTG849o47Ki2ulB2CNdh9454DrEaXOA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252924; c=relaxed/simple;
-	bh=rhoaOuqDJNil2klkhAws95rS0vuhTdTcJ9PE/AzBKWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sH5KiPBwczM4QNVMhK5Qaad/18maHRZXUVj/hwaedCgdc90NTpvMdK0AGW9y1Et+Qs2eIc2h1wXDg5YVzRFrx9Fk70v6jWM+wy2JG5PJpHVgbyiAyK/fBotbh/HqQp2gcnJnT2WXAP3x2DNrxtT7lxEuuEmHBO8L1By3F+1t3Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XdVMX1QH6zDqV3;
-	Wed, 30 Oct 2024 09:46:00 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 920A91400DC;
-	Wed, 30 Oct 2024 09:48:33 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Oct 2024 09:48:32 +0800
-Message-ID: <81fb3a17-4e2d-d21e-71a1-222b85b0ff9b@huawei.com>
-Date: Wed, 30 Oct 2024 09:48:31 +0800
+	s=arc-20240116; t=1730252963; c=relaxed/simple;
+	bh=x0ed5fyvDn11llPZvaG/AmyPvXdzuyLMLtZ8rEnJtaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fynEGDTorRX5OFOEc3o9g0s05RONhnMyBUKkxJ/vrVsikPQXk2SqH/O6wrA58BIp2/e2Wp2WqPv4X2JGKR1gctOJoppbbO7TRxWMFWmqo7Osjc60xVQUjsUKVyKorrRp2078w9lRe6KVcHiE94I15aaZQZUPifg+LqbUnhkFygQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mEFizGtK; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e5cec98cceso51064067b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:49:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730252960; x=1730857760; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vQfV3QO9KjfChtLzJsZNfhkclfq5Ha2/eewFg3kibJg=;
+        b=mEFizGtKQkP70OwPzuBUgc70dKzbhxn+D262/glgrkBrBA2l5n7pXPlSyQA0HZXdLk
+         8BCrjed9cC8Rr5t5X3ihWmhp1EUyRAqS7ShSF959BTMxujis3gphIPc4tLeLPVJevOa8
+         AX51BTANIMHtrKUcch9CFH1KY2Emj2ljn0LSZzB4YLb8Pwza7fEXopmc2+RGjrueU+BS
+         YECBvhO040wBgpapHlbhSTL5ZYnSREOVhdAz8LYlGihTNFBjLhD2ay4wOPPPvu4wuqsv
+         cKJSf01vIJjHHwAuLwgWtVo5QjJmScU926hQQ8JWJ5q+RhdK3zfDUygj9ZDLNCa9knr7
+         1X/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730252960; x=1730857760;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vQfV3QO9KjfChtLzJsZNfhkclfq5Ha2/eewFg3kibJg=;
+        b=UbBOqHOCPg7ffqDIhl8JCsL9DJitJQriDahJTOOEK4wPLY1IHAwZv4BL3ITT7qFxBr
+         UhAWwGFitFoVEPJyFDO5cyTUIYWS9tYJHciYjky4liztg5t0j8+/xDxHuXc2RzQWyNDp
+         c4pCfCs22vw9tjXZeg0cB0xDRuK3OMISyg+sA07BXVSCSUPyrmpkOu8YFdW2ZaQCTfdD
+         VIFS/GAqGN34gWNG8UiSTD1846iFamNVb2tsVVNBM9+1OU7xuAgvf6cDwS6+IHq+AiM1
+         kI61Re5bi3TGrRvpertDmq0MAPKtggG5aPKiYk6CO3gA4B/a3t5DMWIH4dMPrKyLw+ZG
+         vkDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtK3UksArhJGekxh8olgINqkT4qJsrMuTGRBfEyOOfJr8/hnyswJ0mEWTc5x13s1BjE0/aYqV7B/up+mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNqFrLcLAVZW137Jwi9waDy5EDSKjy5b58Wmjjz9kwAkwB1jSq
+	mw8C3veb6ZFJcoJCOC3ySB+Br99m9E7nyHYdKxnROfqsISiZbFMSUeSQ+9zXtuqY3JLKlZXNYgF
+	5Ob198JHhW7RZebaJYAmd6/FVXrmksBXLKGXKCQ==
+X-Google-Smtp-Source: AGHT+IFAd9OlkY1/IfgnYCIVx3fRmdHwRO/F3PUZW4uFE6vgj8FUomr2ncttaV4zBKegVHV0ggfRqOb9u7zb2JD2Bls=
+X-Received: by 2002:a05:690c:87:b0:6db:b5b2:53c with SMTP id
+ 00721157ae682-6e9d8ab3cbcmr150957977b3.32.1730252960419; Tue, 29 Oct 2024
+ 18:49:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 1/4] drm/tests: helpers: Add helper for
- drm_display_mode_from_cea_vic()
-Content-Language: en-US
-To: Maxime Ripard <mripard@kernel.org>
-CC: <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-	<airlied@gmail.com>, <simona@ffwll.ch>, <christian.koenig@amd.com>,
-	<ray.huang@amd.com>, <dmitry.baryshkov@linaro.org>,
-	<dave.stevenson@raspberrypi.com>, <quic_jjohnson@quicinc.com>,
-	<mcanal@igalia.com>, <davidgow@google.com>, <skhan@linuxfoundation.org>,
-	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
-	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241017063125.3080347-1-ruanjinjie@huawei.com>
- <20241017063125.3080347-2-ruanjinjie@huawei.com>
- <20241029-dancing-hissing-bullfrog-b6d0ed@houat>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20241029-dancing-hissing-bullfrog-b6d0ed@houat>
+References: <20241022124148.1952761-1-shiyongbang@huawei.com>
+ <20241022124148.1952761-2-shiyongbang@huawei.com> <wu2kwdqce7jovidzxhublmpgdhzq4uby65quo7ks44tfjhtgd2@qtfogva3exyg>
+ <c418e93a-7305-4ca6-85c1-42bd458f4e7b@huawei.com>
+In-Reply-To: <c418e93a-7305-4ca6-85c1-42bd458f4e7b@huawei.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 30 Oct 2024 03:49:11 +0200
+Message-ID: <CAA8EJppvnAcj5ESHe3t2QBvTGZTpiUUS3K+tJ+4_3Pkuijga0g@mail.gmail.com>
+Subject: Re: [PATCH V2 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, 
+	liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com, 
+	libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+
+On Tue, 29 Oct 2024 at 16:15, Yongbang Shi <shiyongbang@huawei.com> wrote:
+>
+> > On Tue, Oct 22, 2024 at 08:41:45PM +0800, Yongbang Shi wrote:
+> >> From: baihan li <libaihan@huawei.com>
+
+> >> +}
+> >> +
+> >> +enum dpcd_revision {
+> >> +    DPCD_REVISION_10 = 0x10,
+> >> +    DPCD_REVISION_11,
+> >> +    DPCD_REVISION_12,
+> >> +    DPCD_REVISION_13,
+> >> +    DPCD_REVISION_14,
+> > Any reason for ignoring defines in drm_dp.h?
+>
+> Hi Dmitry,
+> I tried it but still can't find it, if you know, can you tell me which macro I can use?
+
+# define DP_DPCD_REV_10                     0x10
+# define DP_DPCD_REV_11                     0x11
+etc
+
+> Thanks,
+> Baihan
 
 
-
-On 2024/10/29 16:16, Maxime Ripard wrote:
-> On Thu, Oct 17, 2024 at 02:31:22PM +0800, Jinjie Ruan wrote:
->> As Maxime suggested, add a new helper
->> drm_kunit_display_mode_from_cea_vic(), it can replace the direct call
->> of drm_display_mode_from_cea_vic(), and it will help solving
->> the `mode` memory leaks.
->>
->> Acked-by: Maxime Ripard <mripard@kernel.org>
->> Suggested-by: Maxime Ripard <mripard@kernel.org>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->> v3:
->> - Adjust drm/drm_edid.h header to drm_kunit_helpers.c.
->> - Drop the "helper" in the helper name.
->> - Add Acked-by.
->> ---
->>  drivers/gpu/drm/tests/drm_kunit_helpers.c | 40 +++++++++++++++++++++++
->>  include/drm/drm_kunit_helpers.h           |  4 +++
->>  2 files changed, 44 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/tests/drm_kunit_helpers.c b/drivers/gpu/drm/tests/drm_kunit_helpers.c
->> index aa62719dab0e..565172990044 100644
->> --- a/drivers/gpu/drm/tests/drm_kunit_helpers.c
->> +++ b/drivers/gpu/drm/tests/drm_kunit_helpers.c
->> @@ -3,6 +3,7 @@
->>  #include <drm/drm_atomic.h>
->>  #include <drm/drm_atomic_helper.h>
->>  #include <drm/drm_drv.h>
->> +#include <drm/drm_edid.h>
->>  #include <drm/drm_fourcc.h>
->>  #include <drm/drm_kunit_helpers.h>
->>  #include <drm/drm_managed.h>
->> @@ -311,6 +312,45 @@ drm_kunit_helper_create_crtc(struct kunit *test,
->>  }
->>  EXPORT_SYMBOL_GPL(drm_kunit_helper_create_crtc);
->>  
->> +static void kunit_action_drm_mode_destroy(void *ptr)
->> +{
->> +	struct drm_display_mode *mode = ptr;
->> +
->> +	drm_mode_destroy(NULL, mode);
->> +}
->> +
->> +/**
->> + * drm_kunit_display_mode_from_cea_vic() - return a mode for CEA VIC
->> +					   for a KUnit test
->> + * @test: The test context object
->> + * @dev: DRM device
->> + * @video_code: CEA VIC of the mode
->> + *
->> + * Creates a new mode matching the specified CEA VIC for a KUnit test.
->> + *
->> + * Resources will be cleaned up automatically.
->> + *
->> + * Returns: A new drm_display_mode on success or NULL on failure
->> + */
->> +struct drm_display_mode *
->> +drm_kunit_display_mode_from_cea_vic(struct kunit *test, struct drm_device *dev,
->> +				    u8 video_code)
->> +{
->> +	struct drm_display_mode *mode;
->> +	int ret;
->> +
->> +	mode = drm_display_mode_from_cea_vic(dev, video_code);
-> 
-> I'd rather return directly if mode is NULL here...
-> 
->> +	ret = kunit_add_action_or_reset(test,
->> +					kunit_action_drm_mode_destroy,
->> +					mode);
->> +	if (ret)
->> +		return NULL;
-> 
-> Because it doesn't really make much sense to register a cleanup action
-> if we know that it's going to be useless, and possibly be executed right
-> away.
-
-Sure, will udpate it.
-
-> 
-> Maxime
+-- 
+With best wishes
+Dmitry
 
