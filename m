@@ -1,128 +1,161 @@
-Return-Path: <linux-kernel+bounces-389287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E22C9B6AFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:27:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 361B69B6B01
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC1472811B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:27:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53841F2153D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A4D1BD9E1;
-	Wed, 30 Oct 2024 17:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1DE1BD9E8;
+	Wed, 30 Oct 2024 17:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BqaG4V9P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIzn2okU"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E021BD9CB
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE201BD9CB;
+	Wed, 30 Oct 2024 17:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730309253; cv=none; b=Lj90j+2ZUcK6IDhYS2U36OnccRQ3BX/XaTRGdli0R3IoyH4uRBUBIVf/F6R+qA+hgn0vahSSLWRU8l9ys9S3b+v0wYmpbgbCPr186w+riSctPPodzJLkt3C8WBccvivFxciiBz5Q5km/B+Bi85J0I6Z0/iNORX2OUNUgyyvV58o=
+	t=1730309306; cv=none; b=ZkVqbjY+g9lwzoPSpD5zX9I+TzvuW8L+t0aTjTcxJid2VwQIqbMVUJDxAr8Ktg7QyMM2A19R5P84hJQcjNpOGPYk/ZrZaXRW+CLW9Xmm3ihgu5xHZNYENkfgXzFypRI3ngc4zNr/KmjiArO+gBVr95nLM+hxIIsuHeQ+G6vHt/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730309253; c=relaxed/simple;
-	bh=cNl2/fGvTSjZNQLFBkNM+rzYZRnqnD+u3xoD1T4iY6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmtbdegP6rmtGwAVSesrNPuGqoZbY9I/Dhv7Ca3GynciC+8d7bpwhSGOwQu5x3zbGaEwj+RLSAHfqDhuDvm6udenjPvr+aPVmmIZjTa7lBNBVB64l3318ac0A6ZaCdOUz7jNkW0o4hv6TWdb4VD2Lv1YsCo4/VjVvJkn53tVPoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BqaG4V9P; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730309249; x=1761845249;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cNl2/fGvTSjZNQLFBkNM+rzYZRnqnD+u3xoD1T4iY6s=;
-  b=BqaG4V9PIgfJlyir7u/5ea9LTsd5nGrtcHBBKi4jRjRpcbnB54AjPRkK
-   /Gjs0/94+GHvbcunnB2LkF09TuI/VgJI2jIaOndlXwcGEDuYeP8NF2bvK
-   Kfr5WO4HNWQoSQqZhA/boXLZQjYsjKFDoiJyBsCWPHJJuKParvYR4HgwS
-   2OCZuQcv8piuVYUp92Ket3EckSMoQBnfHyv3mwkPYxpxsda+SaKrEL9S7
-   d48yMHhxADbXeeCmzG3ueG82FtvqfWwuBiPaUhwDjgVY0qhhBA/yqvaEs
-   HpCzs5yT7ZGD5MwrwYrrZfbX+6P7h66hn7mY6oavJFd3NlQ/xyqJFHqC7
-   g==;
-X-CSE-ConnectionGUID: VVbHVTSYRLK5DhVT5MwXGA==
-X-CSE-MsgGUID: F9RXgz25RIOU1A803F7gqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29921832"
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="29921832"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 10:27:29 -0700
-X-CSE-ConnectionGUID: 6PCfgC5OTUS4DQd1LF/Lxg==
-X-CSE-MsgGUID: qrB5aKwZRLOcSUPXwHEs7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="87169933"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 30 Oct 2024 10:27:26 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6CTb-000f8v-2x;
-	Wed, 30 Oct 2024 17:27:23 +0000
-Date: Thu, 31 Oct 2024 01:26:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: alice.guo@oss.nxp.com, alexander.stein@ew.tq-group.com,
-	wahrenst@gmx.net, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	"alice.guo" <alice.guo@nxp.com>
-Subject: Re: [PATCH v3] soc: imx: Add SoC device register for i.MX9
-Message-ID: <202410310126.WFKQ7LtM-lkp@intel.com>
-References: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+	s=arc-20240116; t=1730309306; c=relaxed/simple;
+	bh=I+pOOGHMZI2SP6OFUnOB4ImhG03P+O3foWEohCD03YA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y0Ob+bj4r66vxUFgsszBy7xtopFjq22ZXSVqBBjK09VYQBLlsMF0bR5Zc3HwFQob4tMhdANKN1Kd0InTYalvWLZ+/JnUCsuJXdQUSLCadR9geSkYtNgQQ3Cf4scKJIaVz+AShmS4O4vFqSnVBDbnQ9oefZaAwDyxUuWJNJvNJNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIzn2okU; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720b173a9ebso54451b3a.0;
+        Wed, 30 Oct 2024 10:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730309304; x=1730914104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MnkN8ptr3KGmpx2Uv+pp+uUkuHBCH11BckHc8GqWeDg=;
+        b=HIzn2okUNsJGA1yDQ62T5nhFz8JXJli5zSBbK/vxVBdYceEHL0ZPEVYhuVu29XSpi8
+         4pr4XBLwTdD72d4oYy1rXrRJkfjeHZl5p0IQjXVTOdvP95Yl9XD5Wz82FLUEjVMpGqwD
+         vl7IavGpluS/8tAu7s028/NKeLJRiJniS8VRYDQPMCKYUQadhl6/Lr+bsbg+Ywfkq0R/
+         MYExAnJv4ytgAK7gVKAZq/aNP5rArJEK0AR2ff04yWhuysCGLqiaal14jDcaekrAktNb
+         UgQfjUiKcEW0AfgrANK5ZRSSsQtKWF5NqSzlu35yozYtRAeETfcUHa8HG0d8DK3ZTC7o
+         2iTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730309304; x=1730914104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MnkN8ptr3KGmpx2Uv+pp+uUkuHBCH11BckHc8GqWeDg=;
+        b=ERz/FPS/zkKswIz7WzXMP9Whfc4c68PBlhQ9FgjdjPWPID9IycRCLt3OdCzUg3sCML
+         1RfceAMw6eZeaESDYtiL0GDvRVx7uATUlrZ9lgpeKz8eOoYUls+wQWS4DxaEDhuOzq3g
+         AmGq0rS8N7+6RqGWIOt8xyHtMvwNyIyuzFWjGZXb70nM1k/icDClHlgJyWbfjKp9/Jc9
+         n3MaG6q5af9XCsbrhDiOTjidYio27yCQTYIDVKORbdpcT+SL9z5MvmIIO8I5zNHAXNkZ
+         1CoHNYDiaPiWAMkq7g/eZItIHN/2Dx5ALByeLzFEbtSHOGByOCcFfXisuC2zYVeV4vIs
+         lLQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUt+WbiBbEJSzutStsa7f5kUYbvyPd+5h4aMJT6gxu4YF5SkhL4VGlgOBnAjtavC2Qzryz6Aj0iJWHD@vger.kernel.org, AJvYcCW37a84R/O+kc7JORiR92oG+B2Oo3qu48yRbN5t4knCbuOzzqIiAfVzKNBOdcZdlmzX0HlCuvOjPN+a0S/1@vger.kernel.org, AJvYcCXNZS0Pntqsqw/1Z0JiLH8nDErRXkleKyZj6MvC4KXAzV9ks5AWq/C8m94gYYlIbqiLBsaoMLy99Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBM/PKxtxjHDWGfE8wltK6QaWMibQWXGzIVDQcItpAykeDSRzE
+	FKQ0SYK32D47zMPg4AVioqSbrWuJKrbOsIw61jJSwjiKfEKsZOixzucvr8+C7Utmj60CqcDN7Li
+	df6gCBhuVOo62QugBgd25ZUZ9LlbtjQ==
+X-Google-Smtp-Source: AGHT+IHW4Ei/MHebO474qYJ4FnNy3KOOcESKnX+HK1imXciZaQOAIYn479DmypH3MHAeRnnMNdgGnRLoV9bhVu1WXCI=
+X-Received: by 2002:a05:6a00:3c96:b0:71d:f4ef:6b3a with SMTP id
+ d2e1a72fcca58-720b9db22bfmr624360b3a.21.1730309303938; Wed, 30 Oct 2024
+ 10:28:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+References: <20240203165307.7806-1-aford173@gmail.com> <20241025080544.136280-1-mailinglist1@johanneskirchmair.de>
+ <6d039ecf-0e48-415a-afd8-6bfce60081ae@kontron.de>
+In-Reply-To: <6d039ecf-0e48-415a-afd8-6bfce60081ae@kontron.de>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 30 Oct 2024 12:28:12 -0500
+Message-ID: <CAHCN7xKevGWipBSch6gKVeJRT9Zb8QTchhxg3c=96XhnAvnjZw@mail.gmail.com>
+Subject: Re: imx8mp: HDMI display blank/black problems
+To: Frieder Schrempf <frieder.schrempf@kontron.de>
+Cc: mailinglist1@johanneskirchmair.de, johannes.kirchmair@skidata.com, 
+	Laurent.pinchart@ideasonboard.com, airlied@gmail.com, 
+	alexander.stein@ew.tq-group.com, andrzej.hajda@intel.com, 
+	catalin.marinas@arm.com, conor+dt@kernel.org, daniel@ffwll.ch, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	festevam@gmail.com, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
+	kernel@pengutronix.de, kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	l.stach@pengutronix.de, linux-arm-kernel@lists.infradead.org, 
+	linux-imx@nxp.com, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+	maarten.lankhorst@linux.intel.com, marex@denx.de, mripard@kernel.org, 
+	neil.armstrong@linaro.org, p.zabel@pengutronix.de, rfoss@kernel.org, 
+	robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org, 
+	tzimmermann@suse.de, ulf.hansson@linaro.org, victor.liu@nxp.com, 
+	vkoul@kernel.org, will@kernel.org, Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 30, 2024 at 4:01=E2=80=AFAM Frieder Schrempf
+<frieder.schrempf@kontron.de> wrote:
+>
+> Hi Johannes,
+>
+> On 25.10.24 10:05 AM, mailinglist1@johanneskirchmair.de wrote:
+> > [Sie erhalten nicht h=C3=A4ufig E-Mails von mailinglist1@johanneskirchm=
+air.de. Weitere Informationen, warum dies wichtig ist, finden Sie unter htt=
+ps://aka.ms/LearnAboutSenderIdentification ]
+> >
+> > Hey,
+> > We had some problems with the hdmi on the imx8mp and wanted to leave, w=
+hat we found out about it, somewhere for others to find it.
+> >
+> > The problem was that our hdmi display sometimes stayed blank after hot =
+plugging and sometimes at startup. On older kernel versions 6.6 we did not =
+have the problem with the not mainlined hdmi patches.
+> > We tracked the commit down that introduced the problem for us. It was t=
+he following =E2=80=9Cdriver core: Enable fw_devlink=3Drpm by default=E2=80=
+=9D  https://lore.kernel.org/lkml/20231113220948.80089-1-saravanak@google.c=
+om/
+> > So we switched back to FW_DEVLINK_FLAGS_ON via kernel parameter. Don=E2=
+=80=99t really understand what the problem with RPM is.
+> >
+> > So, this information is just for reference. Maybe someone has an idea w=
+hat is going on here. And how to fix the problem in a more proper way.
+>
+> Thanks for investigating and sharing your results!
+>
+> I'm seeing the same symptoms and previously found out that this is
+> related to LCDIF underrun errors. See [1] for more information.
+>
+> Adam has also started this thread: [2].
+>
+> Anyway, knowing that this is related to fw_devlink=3Drpm is really
+> helpful. I just tried with fw_devlink=3Don and wasn't able to see any
+> issues anymore. So this confirms your findings.
 
-kernel test robot noticed the following build warnings:
+I was off in the weeds thinking there was something wrong in timing
+and/or a race condition around the PLL or something.  This is good
+news.
+Please forgive my ignorance, what does fw_devlink do?  Is there
+something we can do in the driver itself to force its behavior?
 
-[auto build test WARNING on shawnguo/for-next]
-[also build test WARNING on linus/master v6.12-rc5 next-20241030]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/alice-guo-oss-nxp-com/soc-imx-Add-SoC-device-register-for-i-MX9/20241030-171525
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241030091336.3901440-1-alice.guo%40oss.nxp.com
-patch subject: [PATCH v3] soc: imx: Add SoC device register for i.MX9
-config: x86_64-buildonly-randconfig-002-20241030 (https://download.01.org/0day-ci/archive/20241031/202410310126.WFKQ7LtM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410310126.WFKQ7LtM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410310126.WFKQ7LtM-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/soc/imx/soc-imx9.c:84:34: warning: 'imx9_soc_match' defined but not used [-Wunused-const-variable=]
-      84 | static const struct of_device_id imx9_soc_match[] = {
-         |                                  ^~~~~~~~~~~~~~
-
-
-vim +/imx9_soc_match +84 drivers/soc/imx/soc-imx9.c
-
-    83	
-  > 84	static const struct of_device_id imx9_soc_match[] = {
-    85		{ .compatible = "fsl,imx93", },
-    86		{ .compatible = "fsl,imx95", },
-    87		{ }
-    88	};
-    89	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+adam
+>
+> I hope that some of the driver framework and runtime PM experts can help
+> to find out what is actually wrong and how the correct fix might look lik=
+e.
+>
+> I'm also CC-ing Saravana who authored the change from fw_devlink=3Don to
+> fw_devlink=3Drpm to see if they have anything to add.
+>
+> Thanks
+> Frieder
+>
+> [1]
+> https://patchwork.kernel.org/project/linux-phy/cover/20240904233100.11461=
+1-1-aford173@gmail.com/#26014057
+> [2]
+> https://lore.kernel.org/imx/8cfd3052-c85a-4235-b9b8-6d2929e9e455@kontron.=
+de/T/
 
