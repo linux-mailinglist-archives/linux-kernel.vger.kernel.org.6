@@ -1,128 +1,160 @@
-Return-Path: <linux-kernel+bounces-388573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F3D9B6161
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:23:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB639B6164
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087612840EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:23:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421D71F21C81
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19088156F54;
-	Wed, 30 Oct 2024 11:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9F91E47BF;
+	Wed, 30 Oct 2024 11:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGbeZX9E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CeBC6LFB"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E824D8A7;
-	Wed, 30 Oct 2024 11:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623EE1E47A4
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287399; cv=none; b=p3XUGrMcbgfbEsP3a5gOUoKBVd3JWIWvjGUflPyJ8paKkr18GpO7y7btLHCiHP+2jYSzTDwROc+HIhmAG4bQrErP93Cm2pc5MrZh5KTc8nNUJUJrZCeucEYr4pu9jNIDhrKv6gENp2kfsxHdtCqNeU9EQAdCgm9ZdmtfvvNpS1o=
+	t=1730287416; cv=none; b=qTkFg/+ZwmFkmWZlc6s9RNSHoB08dRyFHWu8vAgMbVAFdoV9dqjlxNVt50NHsQJzF4YNuxwWzw1E0IFB0293QIziGIw1NvVZ/4TrO5eH1wTN2L1pwJGLFF56htTgt54lkJ0g/17j2YjWYspJPLfm7GWpc4kkrUfGZeR+hNjCsdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287399; c=relaxed/simple;
-	bh=ZELZTzUNqo0r6dZrQS3xkAeDQuEaYVCCa8D/LddOGWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SEgcNZoPVF6DDfhlJ+UzHA+4tTpadt+vFJu/MDlGRXYjYkMkKIdNTp3qfEyyFNdYxC3ih7k0Lp0Te/VM3v9YH6xhzw0k1wRRKWQo2d9auyFf+E82uwNiPeKbxWtnQJCHfDBY2V8FPuwpps5cMFdgO2jYEmSZ3ERmDxMIt/ecvzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGbeZX9E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBCBC4CEE7;
-	Wed, 30 Oct 2024 11:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730287399;
-	bh=ZELZTzUNqo0r6dZrQS3xkAeDQuEaYVCCa8D/LddOGWg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cGbeZX9EN1J3qsM4AAtPIN9HLwtII22J+bicmUkKdNoCqTC7kBczPwtQS23D5Tklx
-	 +JBxetXSg9mTVcrMkfwcAwEXgG8jhASBcSpyHSYUq3J+4IZX0RRN7kBjB03n7Y4doq
-	 bpZYBt9+B5pb2RgJMJ9qIGU0GKmCGD3jlB16qUdEyV3PsXMR4ZZXqZ97X9iMykDcAj
-	 Z0CIGRoKULl4b+m6qkWm0cWNnXv9zXcsmTBPkYK4ekDuLoyX5XRJpiebDaji3QVc0n
-	 BjphU5nRf5D3rrP0Gjz+gCeEdxCvhLcg1w6aAV6IHif1r3CVo5HGetry6kYGjIoJV6
-	 EEGFyn0JgnOLg==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-27beb2496f4so2306462fac.1;
-        Wed, 30 Oct 2024 04:23:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW3pInNz7AR+lTRKJPXzKCQTjk01IPuiQzs3Hbyv12YsuHgKW2k5k5TW2kmhs9asVbOZVSGM0NSPt0TPg0=@vger.kernel.org, AJvYcCWgDsA5RO4lLVz3We/ne/ij1CITLm6bBikz51K/T2L13pSZnpIYTzJQdZj8NS9o0ZYTReoRSeJcmA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmyNzMmDJpVnKYo4iG4gewoQLBHyIaOQVTZrwGGf4WAau6muny
-	M+KYxxCNwdQVkID35BzNHFCTPoCfHTZnlFb56C5pzXC4NvgLiN6qeTc9i8rzjHRELBjW28fBajF
-	5ZOiO2CMr6/NZqymxueWNBUiM4UA=
-X-Google-Smtp-Source: AGHT+IHCcWzbBvzQZ78Xsrj4J41Cv8KkkFQU9rrK6ytLjSa1GuXNRtwhVDyN2RGzYyIdPv0n4BIGocz5VnkSr6tUzvI=
-X-Received: by 2002:a05:6870:469e:b0:277:ca2f:905 with SMTP id
- 586e51a60fabf-29051d432c4mr12996048fac.29.1730287398214; Wed, 30 Oct 2024
- 04:23:18 -0700 (PDT)
+	s=arc-20240116; t=1730287416; c=relaxed/simple;
+	bh=zHgIwEWfPk4yyvPCEPt5Azic6gPbJHaNqF2Poifr9rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kr26c8Q7NMZNudWT4cs18zi6tp20qzZ2JA/DDg5w3pvZ26NOxLE+oJgDhzLGS9f/RwI1iFodWMQWliOwb/KRZ0QXWRjiByT+AtqVS9BagKZ1WpXv9dAwy15OHazjCsGUcfQVbU5hyFsTbgktfj1FggW5rXiw2l/Byl72HQlOs64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CeBC6LFB; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f8490856so6077301e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:23:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730287412; x=1730892212; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wfR1CwiWgHND2Gsj8zReFr51weqymmRbQbInKm0uI9k=;
+        b=CeBC6LFBKaJ16PRXHNyrCq1BiV7k2jdIqjNpUvt0+xk2lXbhNBbQeicoQR2sbSdtwo
+         MHip/VwLfxhU4kdlDjjZA1LWw0BQGbaIGVy/OC2/o9sjIca/wXj4eb2v+Gc+tujc4nN6
+         YoV7csrSVTaVGMp6hfmMm3LluRqMlXQ7eW3KU0eHI69Voha8dTB8tpFhrV1QukUeMsvi
+         25dB32IgY4t162i9kKVXzB3qbUKkADQiP9Y9NTssfrr51ApcbCE8m3EecNFtjrHUDH9m
+         OCp4+x/KVaqArdraXk+yJDmA9imnjU05p3+zQ0szJXh/0WyPVDoV4aiSNUoLhBYFJx/0
+         jCzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730287412; x=1730892212;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfR1CwiWgHND2Gsj8zReFr51weqymmRbQbInKm0uI9k=;
+        b=arOohWcA9Syd0RN6odW8EL9Z2QrIEM968TgQ6i8ltj2KY7hLPzq4TU25ZJA2AU8HQ7
+         3u2LI0ZQX6ED91b+ZMRBUSyV59o4Rpr0vIbzyiU8T39oeYUCzDydJw/MxfjR9XmsCtsz
+         VK6YBU1Av+KBK2FwAMtLiRmCTtqj2GGtssBzwKT2g9gaY5bkgFk4wB6tOKXYsdz+Qfaj
+         VkD6tugc7FXrrWQvHADsnmJaY979Ni9vflfQ502TO2uhet/JhjczrT4u9kmxUJkADmR2
+         VXHfuXUuxlmt12w35eSvHr6EyWCKtIe5uDUznpROniXPkBq4n5x8z/fws7CuAA2dx3od
+         Z6Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTS2Is5lh+h5hXIfxY+b9zh/mtRcLXFHm1iiXfjH5vNGZ3JvqDd0o/z+14Dh3QZjk0FGroU1i5iyTILKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR8JvPn8Kb7WrcxQsW++yAC9zoF31LPQS7Zd96wBZ7ETMe14lz
+	+NXyux6pZ1sd3HGUAaTRLldtrnza37xJFsotKQLIT01ITyYzL5uktCaY51Rjhc4=
+X-Google-Smtp-Source: AGHT+IHFi2VTNyFiaZV+LcQXM7FIAG/G39oW0UZ1SN9GGWF/bKTG4Q4CtRRvHoAZoaRoZWs4e3EpGA==
+X-Received: by 2002:a05:6512:ba1:b0:539:fd33:abd2 with SMTP id 2adb3069b0e04-53b348d6148mr6291979e87.25.1730287412407;
+        Wed, 30 Oct 2024 04:23:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bb838e351sm224601e87.99.2024.10.30.04.23.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 04:23:31 -0700 (PDT)
+Date: Wed, 30 Oct 2024 13:23:30 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Imran Shaik <quic_imrashai@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
+ QCS8300
+Message-ID: <ixnqjfb6l7cz4qp23zevtbwws72rjo25cfgvntyiauzdg2yisw@vr2t4qy4k6iq>
+References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
+ <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
+ <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
+ <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
+ <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
+ <fff416f9-4ea7-4117-87b0-986087f8e142@quicinc.com>
+ <9bd4c63b-7c68-4e40-9995-9d569eed15b5@kernel.org>
+ <f7551a7a-885c-4f74-8f74-10f1c0ebe6ad@quicinc.com>
+ <46c19729-b31e-42e3-a6dd-6b43b27348d8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029094452.495439-1-lukasz.luba@arm.com> <20241029094452.495439-2-lukasz.luba@arm.com>
- <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
- <6cdb2f8b-62e0-455c-a3a5-ed5359a2e941@arm.com> <61afac10-b434-4e39-8c49-c220add4bd8e@arm.com>
-In-Reply-To: <61afac10-b434-4e39-8c49-c220add4bd8e@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 30 Oct 2024 12:23:05 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jk+0vfn88+gaunezgtb6TLVagqav=9sM-D169Q69MF5w@mail.gmail.com>
-Message-ID: <CAJZ5v0jk+0vfn88+gaunezgtb6TLVagqav=9sM-D169Q69MF5w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] PM: EM: Add min/max available performance state limits
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, dietmar.eggemann@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <46c19729-b31e-42e3-a6dd-6b43b27348d8@kernel.org>
 
-On Wed, Oct 30, 2024 at 11:00=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> =
-wrote:
->
-> On 10/30/24 08:48, Lukasz Luba wrote:
-> > Hi Rafael,
-> >
-> > On 10/29/24 18:29, Rafael J. Wysocki wrote:
-> >> On Tue, Oct 29, 2024 at 10:43=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.=
-com> wrote:
+On Wed, Oct 30, 2024 at 08:30:59AM +0100, Krzysztof Kozlowski wrote:
+> On 30/10/2024 07:59, Imran Shaik wrote:
+> > 
+> > 
+> > On 10/29/2024 3:06 PM, Krzysztof Kozlowski wrote:
+> >> On 29/10/2024 10:23, Imran Shaik wrote:
 > >>>
->
-> [snip]
->
-> >>> +EXPORT_SYMBOL_GPL(em_update_performance_limits);
+> >>>
+> >>> On 10/28/2024 12:35 PM, Krzysztof Kozlowski wrote:
+> >>>> On 28/10/2024 06:15, Imran Shaik wrote:
+> >>>>>
+> >>>>>
+> >>>>> On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
+> >>>>>> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
+> >>>>>>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
+> >>>>>>> QCS8300 has few additional clocks and minor differences. Hence, reuse
+> >>>>>>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
+> >>>>>>
+> >>>>>> IIUC, these clocks are not valid for SA8775p. How do we deal with such
+> >>>>>> cases for other Qualcomm SoCs?
+> >>>>>>
+> >>>>>
+> >>>>> These newly added clocks are not applicable to SA8755P. In the
+> >>>>> gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P,
+> >>>>> ensuring they are not registered to the CCF.
+> >>>>
+> >>>> I meant bindings. And existing practice.
+> >>>>
+> >>>
+> >>> In the bindings, the same approach is followed in other Qualcomm SoCs as
+> >>> well, where additional clocks are added to the existing identical SoC’s
+> >>> bindings.
+> >>>
+> >>> https://lore.kernel.org/r/20240818204348.197788-2-danila@jiaxyga.com
 > >>
-> >> It would be good to have at least one caller of this function in the
-> >> tree.
-> >
-> > Yes, I know, but we had delays with the SCMI cpufreq to get the
-> > notifications support, which are sent from FW...
-> >
-> > The patch using this API was part of v1 but with assumption that
-> > those SCMI notifications are merged.
-> >
-> > The patch v1 for the SCMI cpufreq driver [1].
-> >
-> > In that v1 cover letter I mentioned that the 2nd patch depends
-> > on notifications [2].
-> >
-> > I will have to work with Cristian on that notification in SCMI
-> > then this API will be used. I can see that it stuck for a while
-> > in v5. Let me sort that out (probably not in this merge window
-> > though).
->
-> Just to link the effort which has been started into that direction:
->
-> https://lore.kernel.org/lkml/ab36709d-a181-4621-a8e5-0ef38b80186b@arm.com=
-/
+> >> Exactly, defines are very different, so no, it is not the same approach.
+> >>
+> > 
+> > I believe the QCS8300 approach is same as that of SM8475. In the SM8475 
+> > SoC, GPLL2 and GPLL3 are the additional clock bindings compared to the 
+> > SM8450. Similarly, in the QCS8300, the GPU_CC_*_ACCU_SHIFT_CLK clock 
+> > bindings are additional to the SA8775P.
+> > 
+> > We are also following this approach across all SoCs in the downstream 
+> > msm-kernel as well.
+> > 
+> > Please let me know if I am missing anything here.
+> 
+> Not sure, please take the same approach as SM8475, not a different one.
 
-OK, then this can be queued up as a prerequisite for the upcoming changes.
+Just for my understanding, are you proposing to prefix the
+platform-specific defines with platform name (like it was done for
+SM8475)?
 
-I would, however, mention that in the patch changelog and add a Link:
-tag pointing to the above.
-
-> > [1]
-> > https://lore.kernel.org/lkml/20240403162315.1458337-3-lukasz.luba@arm.c=
-om/
-> > [2]
-> > https://lore.kernel.org/lkml/20240403162315.1458337-1-lukasz.luba@arm.c=
-om/
-> > [3]
-> > https://lore.kernel.org/lkml/20240603192654.2167620-1-quic_sibis@quicin=
-c.com/
-> >
+-- 
+With best wishes
+Dmitry
 
