@@ -1,327 +1,294 @@
-Return-Path: <linux-kernel+bounces-388160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605579B5B63
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8492B9B5B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2035B282503
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:40:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4334C2842E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7E51D318A;
-	Wed, 30 Oct 2024 05:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8571D0B95;
+	Wed, 30 Oct 2024 05:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X5Zsyulc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LXBEvRJ2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870191D1E85;
-	Wed, 30 Oct 2024 05:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730266677; cv=none; b=c727bFb0OP5GWitwaQfrh9V8dJ/CxO6u4+vAhREOIiPu/Xje1JUgQ8Tnorp9vonyrK44FSyHWJtZ0on4tB1Hb+X3nbdGdZ0/P5fbfkC8zMYP2r8shna2QAGkuggMRE4+7QvpB8+n6uelJQLuSFitBKW0GorPJFgmyIjA9EuhWTE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730266677; c=relaxed/simple;
-	bh=1/DGcU7Zlltk1x7fuVYT81Nir1EKwHzZ5qc1TwzwZyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSyOyGlerg44rfR6StGnL1WxhwTUht1yB+L0oKCHqzewIHza58LbxKr4EnWp6Vun03B8XasgoVwa7q6QmIlj2VJlP6U0rf3MgfGEBXVaA6FDYurQr3Jy9tNf0tj0a8P+pOoD9tvxOKwIo2TnuM5DqnDeQOddqUs0RoMrfmYzsvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X5Zsyulc; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B411CF5FA
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730266749; cv=fail; b=aRwmjKLLnxhLN+bOQURIKrkK+pbiza4Gck8+MuJ8wUXgyUGn6yo4xfHrAFfqgrdNmRkx5qJnjbwfSuDOoNmx5nXOkZOWGAH6yFwosbcVm7BbWNVtAyxhknkUy342SDKcCLwC87k5M05xoxSt3Kqbwjw9iRU8O08IZ+u7LK89NNk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730266749; c=relaxed/simple;
+	bh=kU+PEuFrebbVBCFEARwHms0zKZyZlE9e3pbpYugLc0A=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=t6uOTS80nxUTbBdkjHt6kfDHzlubo5HPxtJo1Kimo3dX6s7TumlfSoVBLWLYpqOZheYDWP/w52N1rC0Hy7qmzvH7/EFDn3u/rozlZX/1ss2zpizLJkWcB1CTA+5Gl5Pq8vvuC3rus4bVixFgHHZiFvzhiZ3O+ZLLs1LPWkmeM9U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LXBEvRJ2; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730266674; x=1761802674;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=1/DGcU7Zlltk1x7fuVYT81Nir1EKwHzZ5qc1TwzwZyY=;
-  b=X5ZsyulcegDm14EXqQD800R9bmzewtqRR5Jv6SsM+DnTup4FThPxCpaa
-   ub5KPoHy61W6rar38KB19+cg2ILeJKCckZHGXPS708qrUMU0lk7sSK03+
-   A0RpTPxgUWHNmIcuJCfMKuI+5Hf07g1YcPrglMXmE5JwyHNVcvlFt4aVm
-   cZx4yCkby6Hz4Ki1UYo2t1sgd11VvC2n/lpR46/NunECm6jNBTEgfSUrg
-   9fSJoxjlWzUkbWVJjfkHK+OiLaYdU0WXzwSNC/Pn6U/eEbBF06gLleCgy
-   l59YHQk8ZTSMPJjW1cR3nWFhh3qFQ9E9F/o4EVyP+Hxcp8Ly3453sXPw/
-   A==;
-X-CSE-ConnectionGUID: 8ZX4cfTFSH2SlvEs70Xr1A==
-X-CSE-MsgGUID: 53akORIqTJiLQuq2sLx72w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41046313"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41046313"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 22:37:53 -0700
-X-CSE-ConnectionGUID: g18aei1wQqCGHuxv8Bd44Q==
-X-CSE-MsgGUID: Sm7rTaCeQuaHrdIemhehog==
+  t=1730266747; x=1761802747;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=kU+PEuFrebbVBCFEARwHms0zKZyZlE9e3pbpYugLc0A=;
+  b=LXBEvRJ2+qs+FuUeOH6l4smnUD1PMOxXCxmVSx6UlhrylAlysGshJBD7
+   XOThlbWI+d5aeWtgvNU4reQLoAkKUImSDK5kmuZhWca0FppLUj/xWSx2f
+   w7ilUxD7WR7Gkq6eaf25TlpBfybqmRb5oZolY4LbQQUPD7tYaEYwl+E7H
+   ZFQ999HZli2xRcLUMvy9IRV5BO351ejAtfAaX7llFur3ENNr/1uWiFkdC
+   KXIzoFyV0Te6l5YI43ZH/VAFuLNHkwfAg7mIXwk3fPHfUxPSYUFQIE2Tt
+   eHnNUA3xQ4/DuyYbYoJiNo7iCJYQzClhZEex0k8bYMk6UTpvaXUNL81hs
+   g==;
+X-CSE-ConnectionGUID: S4fRp/oITYK7kP+FfebkRA==
+X-CSE-MsgGUID: WLWDF98OSvm7irPkev0EnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="33748707"
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="33748707"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 22:38:53 -0700
+X-CSE-ConnectionGUID: b6pZ9ACISLa2BYxOewgyYg==
+X-CSE-MsgGUID: /MmoP2o8TeitTxUsvmXR3w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="82521628"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Oct 2024 22:37:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 4F4BD275; Wed, 30 Oct 2024 07:37:49 +0200 (EET)
-Date: Wed, 30 Oct 2024 07:37:49 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Esther Shimanovich <eshimanovich@chromium.org>,
-	Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
-	Rajat Jain <rajatja@google.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	iommu@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] PCI: Detect and trust built-in Thunderbolt chips
-Message-ID: <20241030053749.GR275077@black.fi.intel.com>
-References: <20240910-trust-tbt-fix-v5-1-7a7a42a5f496@chromium.org>
- <20241030001524.GA1180712@bhelgaas>
+   d="scan'208";a="86807698"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 22:38:49 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 29 Oct 2024 22:38:49 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 22:38:49 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.173)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 29 Oct 2024 22:38:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AiF/eXR37gFdJpVtCnEHmDQlUkDfiOkVDTEEfTwARSlHdzYwc2f6H3oKwqI3bljBV0J1Z0Z37YWUqut+1oGyrqDsWg7T0RbqhXyaUiHzLELR0S9Og0OzJBskAPJ1rb4opk2qbRljNlAte3YUAhsZAUX+k2uqIz8IHSpNlf9UdQz2XV8cB+BlpEvcTQORcfpbeUk8BBRrdeKPzBu2tqd5PhilWWcmm+ctrsqYdnn5gZNqyJ8T7p4gAA/amXU8IfVQ5OGnd0osHjSD5g9Wc6uDV8myGcBdlNkNWXcGdroOzeh6eRKxA+OZbCJl6++WozbUHEHyjyoImlA6u6f2jEhUrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rnRIQVbME081KFF6T/yL8YOHXPE4OGU1pVm08Ob3UKo=;
+ b=sJQu3a65Smz6Qm3DNrnRrKyoVgpDpq+7GeRVovD3RaSmgmC9KblzbdZlenUULW2v3ccCDJpbSJw+5JYUVo6bcf3xYECvtr9zdM0k+T56ymSkQEI7d7WqJs8FV+U8GhdF3giGnNPqeKFVOkTssc4nrlLw2m1aM1J6x3sGyWtMn0iabBHkZQ4u2UHdH582o8mylc+qMLEi7PqGLUIKq/wRVIfB2E6VUSd0izpe1L+/3tnhuzCjIfLQc7fCtRy0IQUTnW60iFxyrZ9gdv8oqeGMrjNVR1lpX21GCTvIfV8qJKpydZsOr7L7o3KbXhguFf74/tBIo+vb3z2YyMGQ4chF2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SJ0PR11MB4957.namprd11.prod.outlook.com (2603:10b6:a03:2df::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Wed, 30 Oct
+ 2024 05:38:42 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.8093.025; Wed, 30 Oct 2024
+ 05:38:42 +0000
+Date: Wed, 30 Oct 2024 13:38:34 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker
+	<frederic@kernel.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [timers]  fe90c5ba88:
+ BUG:KCSAN:data-race_in_timer_expire_remote/timer_recalc_next_expiry
+Message-ID: <202410301205.ef8e9743-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SI2P153CA0010.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::13) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030001524.GA1180712@bhelgaas>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SJ0PR11MB4957:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5aabf092-de67-4377-4091-08dcf8a51d47
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?CzfbL+1I3Kcz1r7pC3XuZpundT2WbpDOrSmbY900GUuCoR+N3T5GzpGlQjGq?=
+ =?us-ascii?Q?w6ORf5kuEHUajffcJ2LBGQKVR2CbWpo7nlHIazf+rBaYQr+ZwKYi9Y8Do72n?=
+ =?us-ascii?Q?VLq1VR9fk3B9fuiQueU7+WVOpO8206DLIUU59r5eUAqF7BwXfA6iji6V5OPU?=
+ =?us-ascii?Q?1gTeVTs5Fq10NGMQAxgwC78k/FK3zmggHDhwJXy1xuCCK99f18TwhkOfno4t?=
+ =?us-ascii?Q?j9AzZfl7/CBNHEpz+imLthClGYoxyjnh53oI8RZawkzNAJFhW7xNep6KEKAh?=
+ =?us-ascii?Q?tzNhY+1x7kYDBHpezLaQ882I66xLLiqK0umI36sT9JOc1Dc+oMIy2ZYrWFnU?=
+ =?us-ascii?Q?LYru2+Jy8S6mQ/J6Sv3yy5RTtTg+VKx1c9YgIa5Tqs8qWx0wbLZdlY1iXLfc?=
+ =?us-ascii?Q?o+Yvql7O5tGejmvuTC7GAlf3wv2ivowCoV3oIH2g8ugCcUrGMtkcYSu8qDel?=
+ =?us-ascii?Q?/5S3JIhCmSeTZkXz1ORxDOfMwj7dpGZJyetfif7n+jC0IjuR+7bmYW+1N0YQ?=
+ =?us-ascii?Q?4Li8Vg+JClKD+gbwIriGFzT7HLQdIqkMLc+hl3eg262R2yox6qWhz4M1pklS?=
+ =?us-ascii?Q?1vwpW3+WQBXCf50jLXca9xIVN+Pd5s3rq7IhLsNCk6/LAhR7hwAC7i6Mbmbd?=
+ =?us-ascii?Q?WFfxSMeiCbjM75Oq/2jhsQSfn68Sa5igFTOFps6TJYugH/ZWx5ecLaa2qh91?=
+ =?us-ascii?Q?vJ7tCNJJ3NMC03YYPnjEuvQmQvqA5wsX+A0+v7DfRT04zKCqcXDYQJwZHsiZ?=
+ =?us-ascii?Q?jHSXmNUMyYWueJWxbMTzkePWKVZNMAfoCTPBlNo4vcwfriY6xCDCgUewC7Wc?=
+ =?us-ascii?Q?v5S9pK9gtrl4TT8AFpDkIa5Ga9DzkEnQKeMcir8kD9tk1rpy/V+DJk9yQzvp?=
+ =?us-ascii?Q?XDVmDvZNlyL8bGI+gmQsO6uMvKVGVLqZkkhP3BtHx7SovVEE0LkAVuVvpjuv?=
+ =?us-ascii?Q?Nu9oAvv75a28+k4By2XEFPh1jWMCt9MbLT3NDVAGBMh59J7oR9bO5fR/e+gJ?=
+ =?us-ascii?Q?KbAuWYbvjAbZl7FrFWa3nUUp2h3mRW2b2BImzO2bUe7tRpaqU11hCvme+eJG?=
+ =?us-ascii?Q?vKH4yMGhjF/bP+DlXifQa+eQiWTFQDW6uOJ7FQGe0VotQJwnCO0x0rw+av9A?=
+ =?us-ascii?Q?wzyidXvb98g0OGdieiRDp+6RFnBxhtAUJgWNc9acQ7A7VCUzu9tIC+zm50sC?=
+ =?us-ascii?Q?IyOGG+4e2JOWuVFetYYIZPx5wMXqXe9F5mOEpr+6N+b+r/07DtTqE5VNnBA8?=
+ =?us-ascii?Q?LhKVmlmzqKMITi9l1E+qqbqcWJ0c10L9T20VSkNKng=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hEmXQ4mWqykNAydzODmQEYIE7xm1vHVmrPJvp2iuZnzfKcFoikSjZY+MB8Bz?=
+ =?us-ascii?Q?mtJcQQDczmHgunYPILFN958q3JvE1Zo5ZdsqKa5yJTWC2wG+TjGq0/XKH7ab?=
+ =?us-ascii?Q?qUWZnKGZbku7DXrs3W+pw6QntvYMee9cN5CuJmgfn1vthHvrX0gKzMDkGNOo?=
+ =?us-ascii?Q?w5p2QkPe6izYLo+ExsYEXuDSYWO64xPl9eDmWvGjUaN95tl5e+JkJWWQEDao?=
+ =?us-ascii?Q?4ElgwBufV7uR4V222/XH0d83PvLRci5ln5QDtEmuzmtFhQcAw+/P0Y5FnnYP?=
+ =?us-ascii?Q?Ze+9JErvQ/MFVm7BPzUyf9TczdEJK3JGWyH5r+6d/JxluBDmMMCQ2Al0Jswe?=
+ =?us-ascii?Q?9UMjCU2ResFL06BU6DJNWEguTl4uXplO7r3DxUVP1ITYqybnb9EW8hLpdbnz?=
+ =?us-ascii?Q?QS1HA6PV6NP2YvSzoOSAVDwSgy4pgSVrWQwg0HF51BgHsVjxBETNUK6+WpwT?=
+ =?us-ascii?Q?84yibLTZtwroghdrQBIR53kN6xMLZs+/9Mg5JTWgrjh9ehajRBi6FLfyDOQq?=
+ =?us-ascii?Q?qDko8U/JmQ37kYxXlhi0YjcVBiOmDCsWQQOkoNd5vVgmZTYx4PAxdYR4VvqW?=
+ =?us-ascii?Q?ogooFbiX+J0psK65AFC1vqF/am25jCiRZSa85PS6X2GpDZJHhWNIX+3FBUSX?=
+ =?us-ascii?Q?wbgPmSnLf51d7Jkg3r22AzH2pRTirKSu7Xcl/T3dt4WG3/SBzG1HHCK1lR3L?=
+ =?us-ascii?Q?ee0fVs06gGcE4PJjLgal76R7YojrE3JLqUg9D7PANVBnPILWKbg7542VhUTo?=
+ =?us-ascii?Q?Tin0od7MUXHMnsLzKm6GYZ0SUjLrkitBFIoxKkYgHxiXsKtraQNuQDP/5sbX?=
+ =?us-ascii?Q?INMmljXX2yXUTHL5hqwvR0xW+DacFWFWJeUScgWQpTqkPlaRH89GSEkd4muD?=
+ =?us-ascii?Q?TDs02Ku6QNwNrGURM9KYhbA9OL2/NTUP6p1FUiCvD4fU1NmpDcVJfIMtCj0F?=
+ =?us-ascii?Q?2ijQkA6AtLbWPmlllceQeTLBmiThsf8gVoOzc5hYqhK1qVckWIC1w+cy1cEd?=
+ =?us-ascii?Q?YNhfcKtAo0AzQ59ujDBlDmxOKxI7EkCOhULEXwWMFU5EA9UIczC/2eCmIKpM?=
+ =?us-ascii?Q?Br7uq+j4uYtt7K43g0XKdQWyVTQzuUyOV9JQjSncLViu4mQ3jDm8Bb8XImEN?=
+ =?us-ascii?Q?sI2dVAF7xuUQgEFIIfGjrMLCnUJiHzj7DnCdw9HcMooEMo7rz5ChbJ6euU6D?=
+ =?us-ascii?Q?jNcchiwT0FEMDky9d3hM5rizSTmRSSOLcf5YVsomuVXRFxTxIQJOf7VFsGKc?=
+ =?us-ascii?Q?EeMDHq0frJQooTRqZqwmE2qbgLqHWSumL80JMIT7tjVybWbhPLy+PrqrIVmJ?=
+ =?us-ascii?Q?t2oZZueQ+xn6eE27etaHblMm65zcKvPAH0ALHL0Z6PdnkOiN7AYOFMLq4oJm?=
+ =?us-ascii?Q?Tr/v37VqU61mcUWxQAehQMSKkx9tZSeyVinkLwh7dfWKFxFJTBWMtpUIG2/g?=
+ =?us-ascii?Q?n88PjHYy6rLuj6lrdukZ2kUnLMehEKjfC2xUquAoAHRe+7HK3/mKBtVzd/WJ?=
+ =?us-ascii?Q?tUMn6BtZmHZWkdgrXKXoHpUbd6Ljhk34dKsC3KCxNC4QT4AAtPWfubHpxUuv?=
+ =?us-ascii?Q?8y/GYRdlVFdPEqmlJsfjlCVQhDD5zq6OkE3sCZiMEl6F/PA5XTCr0dFYMJVq?=
+ =?us-ascii?Q?Dw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5aabf092-de67-4377-4091-08dcf8a51d47
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 05:38:42.5171
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Aynv5nDcig5jq9b9nY/x93QuQpqWPDmAF2wToArkSKFvlzLJUnCNVI56CEavnlc00YTIr/z3RUySRtUPWnKUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4957
+X-OriginatorOrg: intel.com
 
-On Tue, Oct 29, 2024 at 07:15:24PM -0500, Bjorn Helgaas wrote:
-> On Tue, Sep 10, 2024 at 05:57:45PM +0000, Esther Shimanovich wrote:
-> > Some computers with CPUs that lack Thunderbolt features use discrete
-> > Thunderbolt chips to add Thunderbolt functionality. These Thunderbolt
-> > chips are located within the chassis; between the root port labeled
-> > ExternalFacingPort and the USB-C port.
-> > 
-> > These Thunderbolt PCIe devices should be labeled as fixed and trusted,
-> > as they are built into the computer. Otherwise, security policies that
-> > rely on those flags may have unintended results, such as preventing
-> > USB-C ports from enumerating.
-> > 
-> > Detect the above scenario through the process of elimination.
-> > 
-> > 1) Integrated Thunderbolt host controllers already have Thunderbolt
-> >    implemented, so anything outside their external facing root port is
-> >    removable and untrusted.
-> > 
-> >    Detect them using the following properties:
-> > 
-> >      - Most integrated host controllers have the usb4-host-interface
-> >        ACPI property, as described here:
-> > Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
-> > 
-> >      - Integrated Thunderbolt PCIe root ports before Alder Lake do not
-> >        have the usb4-host-interface ACPI property. Identify those with
-> >        their PCI IDs instead.
-> > 
-> > 2) If a root port does not have integrated Thunderbolt capabilities, but
-> >    has the ExternalFacingPort ACPI property, that means the manufacturer
-> >    has opted to use a discrete Thunderbolt host controller that is
-> >    built into the computer.
-> > 
-> >    This host controller can be identified by virtue of being located
-> >    directly below an external-facing root port that lacks integrated
-> >    Thunderbolt. Label it as trusted and fixed.
-> > 
-> >    Everything downstream from it is untrusted and removable.
-> > 
-> > The ExternalFacingPort ACPI property is described here:
-> > Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
-> > 
-> > Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Signed-off-by: Esther Shimanovich <eshimanovich@chromium.org>
-> > Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Tested-by: Mario Limonciello <mario.limonciello@amd.com>
-> > Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> > ---
-> > While working with devices that have discrete Thunderbolt chips, I
-> > noticed that their internal TBT chips are inaccurately labeled as
-> > untrusted and removable.
-> > 
-> > I've observed that this issue impacts all computers with internal,
-> > discrete Intel JHL Thunderbolt chips, such as JHL6240, JHL6340, JHL6540,
-> > and JHL7540, across multiple device manufacturers such as Lenovo, Dell,
-> > and HP.
-> > 
-> > This affects the execution of any downstream security policy that
-> > relies on the "untrusted" or "removable" flags.
-> > 
-> > I initially submitted a quirk to resolve this, which was too small in
-> > scope, and after some discussion, Mika proposed a more thorough fix:
-> > https://lore.kernel.org/lkml/20240510052616.GC4162345@black.fi.intel.com
-> > I refactored it and am submitting as a new patch.
-> > ---
-> > Changes in v5:
-> > - Applied the following edits suggested by Lukas Wunner:
-> >   - Applied ifdefs edits to ensure code is only compiled on x86 systems
-> >   with ACPI
-> >   - Added returns to avoid unecessary checks
-> >   - Renamed pcie_is_tunneled to arch_pci_dev_is_removable
-> > - Link to v4: https://lore.kernel.org/r/20240823-trust-tbt-fix-v4-1-c6f1e3bdd9be@chromium.org
-> > 
-> > Changes in v4:
-> > - Applied edits on logic-flow clarity and formatting suggested by Ilpo
-> >   Järvinen
-> > - Mario Limonciello tested patch and confirmed works as intended.
-> > - Link to v3: https://lore.kernel.org/r/20240815-trust-tbt-fix-v3-1-6ba01865d54c@chromium.org
-> > 
-> > Changes in v3:
-> > - Incorporated minor edits suggested by Mika Westerberg.
-> > - Mika Westerberg tested patch (more details in v2 link)
-> > - Added "reviewed-by" and "tested-by" lines
-> > - Link to v2: https://lore.kernel.org/r/20240808-trust-tbt-fix-v2-1-2e34a05a9186@chromium.org
-> > 
-> > Changes in v2:
-> > - I clarified some comments, and made minor fixins
-> > - I also added a more detailed description of implementation into the
-> >   commit message
-> > - Added Cc recipients Mike recommended
-> > - Link to v1: https://lore.kernel.org/r/20240806-trust-tbt-fix-v1-1-73ae5f446d5a@chromium.org
-> > ---
-> >  arch/x86/pci/acpi.c | 119 ++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/pci/probe.c |  30 +++++++++----
-> >  include/linux/pci.h |   6 +++
-> >  3 files changed, 148 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
-> > index 55c4b07ec1f6..62271668c3b1 100644
-> > --- a/arch/x86/pci/acpi.c
-> > +++ b/arch/x86/pci/acpi.c
-> > @@ -250,6 +250,125 @@ void __init pci_acpi_crs_quirks(void)
-> >  		pr_info("Please notify linux-pci@vger.kernel.org so future kernels can do this automatically\n");
-> >  }
-> >  
-> > +/*
-> > + * Checks if pdev is part of a PCIe switch that is directly below the
-> > + * specified bridge.
-> > + */
-> > +static bool pcie_switch_directly_under(struct pci_dev *bridge,
-> > +				       struct pci_dev *pdev)
-> > +{
-> > +	struct pci_dev *parent = pci_upstream_bridge(pdev);
-> > +
-> > +	/* If the device doesn't have a parent, it's not under anything. */
-> > +	if (!parent)
-> > +		return false;
-> > +
-> > +	/*
-> > +	 * If the device has a PCIe type, check if it is below the
-> > +	 * corresponding PCIe switch components (if applicable). Then check
-> > +	 * if its upstream port is directly beneath the specified bridge.
-> > +	 */
-> > +	switch (pci_pcie_type(pdev)) {
-> > +	case PCI_EXP_TYPE_UPSTREAM:
-> > +		return parent == bridge;
-> > +
-> > +	case PCI_EXP_TYPE_DOWNSTREAM:
-> > +		if (pci_pcie_type(parent) != PCI_EXP_TYPE_UPSTREAM)
-> > +			return false;
-> > +		parent = pci_upstream_bridge(parent);
-> > +		return parent == bridge;
-> > +
-> > +	case PCI_EXP_TYPE_ENDPOINT:
-> > +		if (pci_pcie_type(parent) != PCI_EXP_TYPE_DOWNSTREAM)
-> > +			return false;
-> > +		parent = pci_upstream_bridge(parent);
-> > +		if (!parent || pci_pcie_type(parent) != PCI_EXP_TYPE_UPSTREAM)
-> > +			return false;
-> > +		parent = pci_upstream_bridge(parent);
-> > +		return parent == bridge;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
-> > +{
-> > +	struct fwnode_handle *fwnode;
-> > +
-> > +	/*
-> > +	 * For USB4, the tunneled PCIe root or downstream ports are marked
-> > +	 * with the "usb4-host-interface" ACPI property, so we look for
-> > +	 * that first. This should cover most cases.
-> > +	 */
-> > +	fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
-> > +				       "usb4-host-interface", 0);
-> > +	if (!IS_ERR(fwnode)) {
-> > +		fwnode_handle_put(fwnode);
-> > +		return true;
-> > +	}
-> 
-> The Intel devices below look like they're obviously x86-specific, but
-> what about the "usb4-host-interface" above?  Is there any reason that
-> should be x86-specific?
 
-It is generic to any USB4 host, not just x86 although currently we know
-of only Intel and AMD using it.
 
-> > +	/*
-> > +	 * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
-> > +	 * before Alder Lake do not have the "usb4-host-interface"
-> > +	 * property so we use their PCI IDs instead. All these are
-> > +	 * tunneled. This list is not expected to grow.
-> > +	 */
-> > +	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
-> > +		switch (pdev->device) {
-> > +		/* Ice Lake Thunderbolt 3 PCIe Root Ports */
-> > +		case 0x8a1d:
-> > +		case 0x8a1f:
-> > +		case 0x8a21:
-> > +		case 0x8a23:
-> > +		/* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
-> > +		case 0x9a23:
-> > +		case 0x9a25:
-> > +		case 0x9a27:
-> > +		case 0x9a29:
-> > +		/* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
-> > +		case 0x9a2b:
-> > +		case 0x9a2d:
-> > +		case 0x9a2f:
-> > +		case 0x9a31:
-> > +			return true;
-> > +		}
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +bool arch_pci_dev_is_removable(struct pci_dev *pdev)
-> > +{
-> > +	struct pci_dev *parent, *root;
-> > +
-> > +	/* pdev without a parent or Root Port is never tunneled. */
-> > +	parent = pci_upstream_bridge(pdev);
-> > +	if (!parent)
-> > +		return false;
-> > +	root = pcie_find_root_port(pdev);
-> > +	if (!root)
-> > +		return false;
-> > +
-> > +	/* Internal PCIe devices are not tunneled. */
-> > +	if (!root->external_facing)
-> > +		return false;
-> > +
-> > +	/* Anything directly behind a "usb4-host-interface" is tunneled. */
-> > +	if (pcie_has_usb4_host_interface(parent))
-> > +		return true;
-> > +
-> > +	/*
-> > +	 * Check if this is a discrete Thunderbolt/USB4 controller that is
-> > +	 * directly behind the non-USB4 PCIe Root Port marked as
-> > +	 * "ExternalFacingPort". Those are not behind a PCIe tunnel.
-> > +	 */
-> > +	if (pcie_switch_directly_under(root, pdev))
-> > +		return false;
-> > +
-> > +	/* PCIe devices after the discrete chip are tunneled. */
-> > +	return true;
-> > +}
-> 
-> I asked on the v4 patch whether we really need to make all this
-> ACPI specific, and I'm still curious about that, since we don't
-> actually use any ACPI interfaces directly.
+Hello,
 
-We definitely don't want this to be ACPI specific, there can be ARM
-based systems with USB4 host controller too and those can also use
-DeviceTree instead of ACPI.
+
+we understand this is a renaming commit, which causes below KCSAN report
+difference.
+
+d7b01b81bd2dad57 fe90c5ba88ad43d42acefb21b57
+---------------- ---------------------------
+       fail:runs  %reproduction    fail:runs
+           |             |             |
+         20:300         -7%            :300   dmesg.BUG:KCSAN:data-race_in_next_expiry_recalc/run_timer_softirq
+         11:300         -4%            :300   dmesg.BUG:KCSAN:data-race_in_next_expiry_recalc/timer_expire_remote
+           :300          6%          18:300   dmesg.BUG:KCSAN:data-race_in_run_timer_softirq/timer_recalc_next_expiry
+           :300          5%          14:300   dmesg.BUG:KCSAN:data-race_in_timer_expire_remote/timer_recalc_next_expiry
+
+we made out this report to let you be aware that the possible issues in
+related code. then it's up to you to see if these issues need to care.
+
+if you need us do more tests or test some patch, please let us know. thanks!
+
+below is full report FYI.
+
+
+kernel test robot noticed "BUG:KCSAN:data-race_in_timer_expire_remote/timer_recalc_next_expiry" on:
+
+commit: fe90c5ba88ad43d42acefb21b57df837be86a61a ("timers: Rename next_expiry_recalc() to be unique")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+[test failed on linus/master      81983758430957d9a5cb3333fe324fd70cf63e7e]
+[test failed on linux-next/master dec9255a128e19c5fcc3bdb18175d78094cc624d]
+
+in testcase: trinity
+version: 
+with following parameters:
+
+	runtime: 300s
+	group: group-03
+	nr_groups: 5
+
+
+
+config: x86_64-randconfig-073-20241025
+compiler: gcc-12
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202410301205.ef8e9743-lkp@intel.com
+
+
+[  131.612941][    C0] ==================================================================
+[  131.614221][    C0] BUG: KCSAN: data-race in timer_expire_remote / timer_recalc_next_expiry
+[  131.615526][    C0]
+[  131.615932][    C0] write (marked) to 0xffff88842fd1d4d0 of 8 bytes by interrupt on cpu 1:
+[ 131.617229][ C0] timer_recalc_next_expiry (kernel/time/timer.c:1969 (discriminator 2)) 
+[ 131.618104][ C0] __run_timers (kernel/time/timer.c:2399) 
+[ 131.618818][ C0] run_timer_softirq (kernel/time/timer.c:2431 kernel/time/timer.c:2423 kernel/time/timer.c:2439 kernel/time/timer.c:2449) 
+[ 131.619581][ C0] handle_softirqs (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 include/trace/events/irq.h:142 kernel/softirq.c:555) 
+[ 131.620321][ C0] __irq_exit_rcu (kernel/softirq.c:589 kernel/softirq.c:428 kernel/softirq.c:637) 
+[ 131.621036][ C0] irq_exit_rcu (kernel/softirq.c:651) 
+[ 131.621719][ C0] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 arch/x86/kernel/apic/apic.c:1043) 
+[ 131.622596][ C0] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
+[ 131.623523][ C0] default_idle (arch/x86/include/asm/irqflags.h:37 arch/x86/include/asm/irqflags.h:92 arch/x86/kernel/process.c:743) 
+[ 131.628342][ C0] default_idle_call (include/linux/cpuidle.h:143 kernel/sched/idle.c:118) 
+[ 131.629091][ C0] cpuidle_idle_call (kernel/sched/idle.c:186) 
+[ 131.629892][ C0] do_idle (kernel/sched/idle.c:328) 
+[ 131.630536][ C0] cpu_startup_entry (kernel/sched/idle.c:423 (discriminator 1)) 
+[ 131.631318][ C0] start_secondary (arch/x86/kernel/smpboot.c:224 arch/x86/kernel/smpboot.c:291) 
+[ 131.632082][ C0] common_startup_64 (arch/x86/kernel/head_64.S:421) 
+[  131.632864][    C0]
+[  131.633255][    C0] read to 0xffff88842fd1d4d0 of 8 bytes by interrupt on cpu 0:
+[ 131.634436][ C0] timer_expire_remote (kernel/time/timer.c:2425 kernel/time/timer.c:2182) 
+[ 131.635247][ C0] tmigr_handle_remote_up (arch/x86/include/asm/irqflags.h:26 arch/x86/include/asm/irqflags.h:87 arch/x86/include/asm/irqflags.h:147 kernel/time/timer_migration.c:947 kernel/time/timer_migration.c:1021) 
+[ 131.636092][ C0] tmigr_handle_remote (kernel/time/timer_migration.c:533 kernel/time/timer_migration.c:1080) 
+[ 131.636875][ C0] run_timer_softirq (kernel/time/timer.c:2455) 
+[ 131.637671][ C0] handle_softirqs (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 include/trace/events/irq.h:142 kernel/softirq.c:555) 
+[ 131.638358][ C0] __irq_exit_rcu (kernel/softirq.c:589 kernel/softirq.c:428 kernel/softirq.c:637) 
+[ 131.639083][ C0] irq_exit_rcu (kernel/softirq.c:651) 
+[ 131.639737][ C0] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 arch/x86/kernel/apic/apic.c:1043) 
+[ 131.640600][ C0] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
+[ 131.641494][ C0] mtree_range_walk (lib/maple_tree.c:788 lib/maple_tree.c:2792) 
+[ 131.642226][ C0] mas_walk (lib/maple_tree.c:265 lib/maple_tree.c:4907) 
+[ 131.642874][ C0] lock_vma_under_rcu (mm/memory.c:5996) 
+[ 131.643627][ C0] do_user_addr_fault (arch/x86/mm/fault.c:1330) 
+[ 131.644422][ C0] exc_page_fault (arch/x86/include/asm/irqflags.h:26 arch/x86/include/asm/irqflags.h:87 arch/x86/include/asm/irqflags.h:147 arch/x86/mm/fault.c:1489 arch/x86/mm/fault.c:1539) 
+[ 131.645154][ C0] asm_exc_page_fault (arch/x86/include/asm/idtentry.h:623) 
+[  131.645911][    C0]
+[  131.646292][    C0] value changed: 0x00000000ffff5991 -> 0x00000000ffff5bc0
+[  131.647367][    C0]
+[  131.647755][    C0] Reported by Kernel Concurrency Sanitizer on:
+[  131.648646][    C0] CPU: 0 UID: 0 PID: 518 Comm: run Not tainted 6.11.0-rc1-00042-gfe90c5ba88ad #1 cf6842c5d2875ed08b01af3196bb8a34c3713203
+[  131.650536][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[  131.652009][    C0] ==================================================================
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20241030/202410301205.ef8e9743-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
