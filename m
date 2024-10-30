@@ -1,77 +1,104 @@
-Return-Path: <linux-kernel+bounces-388558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B0C9B6134
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:16:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E469B614A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4BA81F22BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:16:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E8C1C21C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AA81E47B2;
-	Wed, 30 Oct 2024 11:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9OrkQxR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3CA1CF7DE
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59101E5733;
+	Wed, 30 Oct 2024 11:19:55 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722C71E1C1C;
+	Wed, 30 Oct 2024 11:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287009; cv=none; b=KoMN3n7gbXqPVf6ixsSFZkkIc99TvXbpbZvqXyEtOJ2dpfC9VCbI/szQ7/I01f/MLTEzRzDrNjxjPzN71B/D1VDymvctX4VNfpJup95NSYAJ56NPfPStaM6JN2/ANaL/FJDO+bLzE1li8beduUNMDf7wtIxYmV5bdBXTLIjSD9c=
+	t=1730287195; cv=none; b=cfe7L1E2vuxE/0cBgFuh/o6Ehyde5ltdx48KVwe9bJTgy8KUFiMg0EpRKO/j/mAEoO7g1iUEZ6YK8xfkPZRkwoTYgPCbpoRUS5379SMeJyx10MxAMC0a24i++16BWKVH7EgX1ftjvDaFinVlZr35aKP9xcx6JxbW7v9YAYwo0bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287009; c=relaxed/simple;
-	bh=CrTKs/PgnusP+ItjAesPGATDP1uOydqzrTWerpGCjhg=;
+	s=arc-20240116; t=1730287195; c=relaxed/simple;
+	bh=2LeRGLpOM4mO/tTEoXGWL1stdFet/fgOwC3vANeEbi4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjhaTDUPp6S00X94dG3itopjp9jYl+eZJucS79l+G8nyDpegXQzn9UwzCYURYcHf0KeCJmcNFiRqNNjMZeSiNMogJn3kMwFrCvfk2+W4zKOtFmAG4OUmGpxM1c6kGo1pLUQH+4JuzauvB9D54S4gEIs2FYYklPQq8BIrHZIPemo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9OrkQxR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00C9C4CEE3;
-	Wed, 30 Oct 2024 11:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730287009;
-	bh=CrTKs/PgnusP+ItjAesPGATDP1uOydqzrTWerpGCjhg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n9OrkQxR8VYw++8Ifwb1fkehxaV4DDZRJCCm8wj4If6vVSFQFhIYo9hGtBMSUsU2A
-	 LbzZszcDCSslQhDp5jStwJCd3N0tEkQiUkh5UhGjQRj++A/Qh9C8q6626QzLUOdhpT
-	 o1l6xTIP7G+lS1o4Ew1Ak0HR1FhwVqITVtJvjGnGHXBkWI63WeQAAXE0Kn7eVySeie
-	 R/L85twmjsvtVVB6edZfdJ4ndAVxahALjXf7TczDqIqLdBS2zA8I9A3M36zSWsILL0
-	 zqGrBn/0ae3H5vPl/ksBLfiQKFOBlAPHPLJYJvrKRju45NokhbnsUR7FLol1b+gJqg
-	 Cg2V0NKgJmjAQ==
-Date: Wed, 30 Oct 2024 12:16:46 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 18/26] signal: Cleanup unused posix-timer leftovers
-Message-ID: <ZyIVnpqpNiLths5_@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.337735372@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q/o2de+wrP1usm+J2rYM1gA648wWgcmctMLrew2KiOjzrO+JUEB9/MS1Yy+It7AuhvFOlqQF1VNHeE+0KYN/8URUhpWuf2P+p7CBW3iSsmTdWDUD2fi8SGsuEStPsAvhRAcS9e96KAp3Zrnit52ZxeceNVSpNAFPfgNlRidf/6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1t66jk-00061Z-00; Wed, 30 Oct 2024 12:19:40 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 26234C0660; Wed, 30 Oct 2024 12:16:50 +0100 (CET)
+Date: Wed, 30 Oct 2024 12:16:50 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2] MIPS: Allow using more than 32-bit addresses for
+ reset vectors when possible
+Message-ID: <ZyIVom8HlxdKwDQx@alpha.franken.de>
+References: <20241011-eyeq6h-smp-v2-1-8381edf8a5c6@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083836.337735372@linutronix.de>
+In-Reply-To: <20241011-eyeq6h-smp-v2-1-8381edf8a5c6@bootlin.com>
 
-Le Tue, Oct 01, 2024 at 10:42:24AM +0200, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
+On Fri, Oct 11, 2024 at 03:34:08PM +0200, Gregory CLEMENT wrote:
+> While most MIPS64 CPUs use 32-bit values for their VP Local Reset
+> Exception Base registers, some I6500 CPUs can utilize a 64-bit value,
+> allowing addressing up to 47 bits of physical memory.
 > 
-> Remove the leftovers of sigqueue preallocation as it's not longer used.
+> For the EyeQ6H CPU, where physical memory addresses exceed the 4GB
+> limit, utilizing this feature is mandatory to enable SMP support.
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Unfortunately, there is no way to detect this capability based solely
+> on the ID of the CPU. According to Imagination, which designed the
+> CPU, the only reliable method is to fill the reset base field with
+> 0xFF and then read back its value. If the upper part of the read-back
+> value is zero, it indicates that the address space is limited to 32
+> bits.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+> Hello,
+> 
+> The following patch enables SMP on EyeQ6H SoCs.
+> 
+> It was successfully tested on EyeQ5 and EyeQ6H, as well as on MIPS32
+> CPUs such as ocelot on board PCB123 and JZ4780 on CI20. However, I
+> must admit that none of these platforms ran SMP. The ocelot has only
+> one core, and while the JZ4780 does have SMP capabilities, its support
+> is not yet available in the mainline kernel.
+> 
+> In the first version, I forgot to remove a line from
+> check_64bit_reset() that was originally used to print debug
+> information, but is no longer required. Sorry for the inconvenience.
+> 
+> Gregory
+> ---
+> Changes in v2:
+> - Removed a leftover line of code that was used during development
+> - Link to v1: https://lore.kernel.org/r/20241011-eyeq6h-smp-v1-1-866417772cd7@bootlin.com
+> ---
+>  arch/mips/include/asm/mips-cm.h |  2 ++
+>  arch/mips/kernel/smp-cps.c      | 46 ++++++++++++++++++++++++++++++++++-------
+>  2 files changed, 41 insertions(+), 7 deletions(-)
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+applied to mips-next.
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
