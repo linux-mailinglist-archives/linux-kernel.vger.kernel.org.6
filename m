@@ -1,206 +1,141 @@
-Return-Path: <linux-kernel+bounces-389075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877B99B683D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:46:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574019B6844
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFB82B24602
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5C1D1F2398E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14C32141A1;
-	Wed, 30 Oct 2024 15:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6832144A6;
+	Wed, 30 Oct 2024 15:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQ2Pm/69"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRsVs12x"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACA71F4711;
-	Wed, 30 Oct 2024 15:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC2E2141AF;
+	Wed, 30 Oct 2024 15:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303185; cv=none; b=eaVy3C1Jz42C3MCYzZ2mtfmFqTcT2yrFRUZZNb08EMl3RGqxofxAbFzVYV3r1YFvwt/Zwjq1xeON9QuqfaSWJl/bj59AN2NCFq6xmbPzJNErd91N23t8bEAlX2qHZxYRwMsra/vbQhTR4F/CU5IoIpVMTAUwaI7jk2BtJNLZ60s=
+	t=1730303202; cv=none; b=HvxoALjWEPosKuJH5XhGe79HL2Ur2Fr/EX3u0c3ajUT3iKd3EJa97q/iYFdnXFJTrQYA9bu02yYDk3dU6prYo14nYRVw1ZqHfzA0UNIsZd1CAKVS2LaVhL1jszLWpTi2cXkS05V4jr1/LzlkPM9X3SO0B4kresvNGBHCLiC8/7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303185; c=relaxed/simple;
-	bh=02fzOt3hjs0XplZPBlHeTB8KJ/xnkeRcpDH3gjvSSj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSe/Nr4ynGipTHQ8upJ0jegoET7aiX1eIiB5l5LnkMfSl2Xx3Q9gxQSwjRwi6KjyRXNqQQlU/EjR9uxNygX+4w/N374T44YsCuxBKVS165tyvlp6+vsv3z8Q5C+DHGkgURCmZXIvrjtzUtF5fDmdw5zJcdsasCESIF7u/+d5xJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQ2Pm/69; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824FFC4CECE;
-	Wed, 30 Oct 2024 15:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730303184;
-	bh=02fzOt3hjs0XplZPBlHeTB8KJ/xnkeRcpDH3gjvSSj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QQ2Pm/69WVVKq6UK7oiomNKoOLGOo7xZOlbR6GEyRLHlfnf5rELUZmFJVOOxD1P6A
-	 diatsdY2LEwGrnPGnZ1JalY5iSv3WVNfKSCzKX9kD5nA99eOjzSir2kckQQbFMJX4K
-	 WAv2UZ/LWR6Np0Qhc3k1jvYhv79JHDb0omrFX5K6uLUwNjJ6vdnvm5W9e2MGwPAdJw
-	 cZhwFK6NUU5wOjae4Twyj+t777r2ES2yVc79DxAKPWbsCO2kq5iiBhUKsQNHqjHqut
-	 xZ0iGYzIK6nlxDofWi8YvDhP+ejFa+ZJWR9cP0MEgJ32bf1EeeHOCqA1sMspCxvZUI
-	 7ijMZF7SNE9ag==
+	s=arc-20240116; t=1730303202; c=relaxed/simple;
+	bh=X4bS7jZBrQsTQ9pemudF62VcEvDkNDsGs6ennZLexiI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=en2kZYiQrUhRf7NRLCoABasCG/qzTtsjCetQ4SvvMEwwaheGh4dQ2eI2P1eUcRDTEDHO1HHcIflBgkBKUjLiG/W+7hup6ZwC2seN0aQLLH+WEq/YNSIECZ2wHX63icDvYAykhZRSS1mkf621ehVpy6oEuM0WtvAg3SMl2VfcxVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRsVs12x; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99ebb390a5so197107066b.1;
+        Wed, 30 Oct 2024 08:46:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730303198; x=1730907998; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ywf+/b+4z5TUeH000STbqJxWFX2lQppigAFbBYhUVZY=;
+        b=IRsVs12xCYTN9CdsSGfDLCu9lq2+z87NFBDtgrLnP0Xn6/Y7lxw1XmRv8GfeirveI/
+         6Yh7kth+ucvWSQiy1ogq8241SIvWrlRcw9VhKvfhiH5kGUfdCgzJCoHlmb3ODHt0deKz
+         oYLms4rFKNcIdZmXMUdju8QNZJMKYLs6upxuBCI2Cd7hb1NtwIpnPRN/PTOk+vQJusae
+         0jPP14jgohI9x4LV3lKczSBPy+70BnhsjtJG0+u4TM58VUFRtdPbowWSlX6mHb24xNch
+         qDwpHbSpWjmyA9xYZxAc+SSnaiBau8OvJOjOmSh3RuNh5OQzHnbUEZWiowjOAjdzbTTR
+         tDAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730303198; x=1730907998;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ywf+/b+4z5TUeH000STbqJxWFX2lQppigAFbBYhUVZY=;
+        b=nAcQZB99Dow71DyGJfbXNijuEi/SPwmLzLMcKv4MAgL84X1jscOJ7KoIDmN0Lr/zv9
+         zd1s0IgyPRn+hSl23/4/xDMdrwGtsdJFsY0i6v+vSSjc/3rZ0rRQVEoA/gSbreID+jp+
+         M5OEQmGQKr6r0tkNbnLxBudPKtfUufJeoqxlM7ZMeLDaQ7qPurlIZ2vfiNWuOG0MhDMK
+         DqUT9lZZzHYrLOD+bAAKsI5aXO4EbZOmm9QiiuBCkH4GKrINmnqQUhpu6uHHy7Om3LLm
+         WbKN0FZpWLugAodm2yCWUGs8ruYvT1dsGgXJLHklIiOf+sn88zdtkfJWg5pdyfeghPIK
+         6Nag==
+X-Forwarded-Encrypted: i=1; AJvYcCVYCFJZwMJ8MQF+E6VydMAUoU0bbsfn98P3LZTbtIxf8hQvp/jq0auCuan/mNwrqhVy6T3SGYWtGpPMTnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiLJoqBGBd3C0FacwQETqUcqFUNWnqKZPXVpBrr3m4S4V1jB1C
+	S+yQE1cf8D3oCj+amxl+Tyx6wzV64cM4U51/2mjX/fDMCwPKe+DnDyi6DQ==
+X-Google-Smtp-Source: AGHT+IE4kMH7781VGRzXLHNlecgeJTSwY7og38Lu++uliRPFZriSjrif96AQ2nPEDjMztByH5IXscw==
+X-Received: by 2002:a17:907:3f97:b0:a9a:e0b8:5bac with SMTP id a640c23a62f3a-a9e40fda6d6mr258358366b.23.1730303198168;
+        Wed, 30 Oct 2024 08:46:38 -0700 (PDT)
+Received: from [127.0.1.1] ([213.208.157.67])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a086de0sm580414766b.218.2024.10.30.08.46.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 08:46:37 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 Date: Wed, 30 Oct 2024 16:46:22 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Lai, Yi" <yi1.lai@linux.intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
-Message-ID: <ZyJUzhzHGDu5CLdi@localhost.localdomain>
-References: <20240624152732.1231678-1-bigeasy@linutronix.de>
- <20240624152732.1231678-3-bigeasy@linutronix.de>
- <Zx9Losv4YcJowaP/@ly-workstation>
- <Zx-B0wK3xqRQsCOS@localhost.localdomain>
- <20241029172126.5XY8vLBH@linutronix.de>
- <20241030140721.pZzb9D-u@linutronix.de>
+Subject: [PATCH 2/2] Bluetooth: btbcm: automate node cleanup in
+ btbcm_get_board_name()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030140721.pZzb9D-u@linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
+References: <20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com>
+In-Reply-To: <20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730303189; l=1278;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=X4bS7jZBrQsTQ9pemudF62VcEvDkNDsGs6ennZLexiI=;
+ b=NXX2QxMwsq+yiv1DLUCBmB+gqhH4/ShsIIesjB6CR3K6y+i/WA8HGBl1EmWcGuTG4FUtRl59w
+ /NsEm11rEtxBpb8+HxfpCXctYow2djbBDn2x5tmCUmh9eLzzzCzfyTZ
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Le Wed, Oct 30, 2024 at 03:07:21PM +0100, Sebastian Andrzej Siewior a écrit :
-> On 2024-10-29 18:21:31 [+0100], To Frederic Weisbecker wrote:
-> > On 2024-10-28 13:21:39 [+0100], Frederic Weisbecker wrote:
-> > > Ah the perf_pending_task work is pending but perf_pending_task_sync()
-> > > fails to cancel there:
-> > > 
-> > > 	/*
-> > > 	 * If the task is queued to the current task's queue, we
-> > > 	 * obviously can't wait for it to complete. Simply cancel it.
-> > > 	 */
-> > > 	if (task_work_cancel(current, head)) {
-> > > 		event->pending_work = 0;
-> > > 		local_dec(&event->ctx->nr_no_switch_fast);
-> > > 		return;
-> > > 	}
-> > > 
-> > > And that's because the work is not anymore on the task work
-> > > list in task->task_works. Instead it's in the executing list
-> > > in task_work_run(). It's a blind spot for task_work_cancel()
-> > > if the current task is already running the task works. And it
-> > > does since it's running the fput delayed work.
-> > > 
-> > > Something like this untested?
-> > 
-> > Tested. Not sure if this is a good idea.
-> > Couldn't we take the ->next pointer and add it to current::task_works
-> > instead?
-> > That patch in ZtYyXG4fYbUdoBpk@pavilion.home gets rid of that
-> > rcuwait_wait_event().
-> 
-> Just tested. That patch from ZtYyXG4fYbUdoBpk@pavilion.home also solves
-> that problem. Could we take that one instead?
+Switch to a more robust approach by automating the node release when it
+goes out of scope, removing the need for explicit calls to
+of_node_put().
 
-This needs more thoughts. We must make sure that the parent is put _after_
-the child because it's dereferenced on release, for example:
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+ drivers/bluetooth/btbcm.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-put_event()
-   free_event()
-      irq_work_sync(&event->pending_irq);
-      ====> IRQ or irq_workd
-      perf_event_wakeup()
-         ring_buffer_wakeup()
-	    event = event->parent;
-	    rcu_dereference(event->rb);
-
-And now after this patch it's possible that this happens after
-the parent has been released.
-
-We could put the parent from the child's free_event() but some
-places (inherit_event()) may call free_event() on a child without
-having held a reference to the parent.
-
-Also note that with this patch the task may receive late irrelevant
-signals after the event is removed. It's probably not that bad but
-still... This could be a concern for exec(), is there a missing
-task_work_run() there before flush_signal_handlers()?
-
-Anyway here is an updated version:
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e3589c4287cb..4031d0dbc47b 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5448,10 +5448,17 @@ static void perf_remove_from_owner(struct perf_event *event)
- 
- static void put_event(struct perf_event *event)
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index 400c2663d6b0..a1153ada74d2 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -541,23 +541,19 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
+ static const char *btbcm_get_board_name(struct device *dev)
  {
-+	struct perf_event *parent;
-+
- 	if (!atomic_long_dec_and_test(&event->refcount))
- 		return;
+ #ifdef CONFIG_OF
+-	struct device_node *root;
++	struct device_node *root __free(device_node) = of_find_node_by_path("/");
+ 	char *board_type;
+ 	const char *tmp;
  
-+	parent = event->parent;
- 	_free_event(event);
-+
-+	/* Matches the refcount bump in inherit_event() */
-+	if (parent)
-+		put_event(parent);
- }
+-	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return NULL;
  
- /*
-@@ -5535,11 +5542,6 @@ int perf_event_release_kernel(struct perf_event *event)
- 		if (tmp == child) {
- 			perf_remove_from_context(child, DETACH_GROUP);
- 			list_move(&child->child_list, &free_list);
--			/*
--			 * This matches the refcount bump in inherit_event();
--			 * this can't be the last reference.
--			 */
--			put_event(event);
- 		} else {
- 			var = &ctx->refcount;
- 		}
-@@ -5565,7 +5567,7 @@ int perf_event_release_kernel(struct perf_event *event)
- 		void *var = &child->ctx->refcount;
+-	if (of_property_read_string_index(root, "compatible", 0, &tmp)) {
+-		of_node_put(root);
++	if (of_property_read_string_index(root, "compatible", 0, &tmp))
+ 		return NULL;
+-	}
  
- 		list_del(&child->child_list);
--		free_event(child);
-+		put_event(child);
+ 	/* get rid of any '/' in the compatible string */
+ 	board_type = devm_kstrdup(dev, tmp, GFP_KERNEL);
+ 	strreplace(board_type, '/', '-');
+-	of_node_put(root);
  
- 		/*
- 		 * Wake any perf_event_free_task() waiting for this event to be
-@@ -13325,8 +13327,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
- 		 * Kick perf_poll() for is_event_hup();
- 		 */
- 		perf_event_wakeup(parent_event);
--		free_event(event);
--		put_event(parent_event);
-+		put_event(event);
- 		return;
- 	}
- 
-@@ -13444,13 +13445,11 @@ static void perf_free_event(struct perf_event *event,
- 	list_del_init(&event->child_list);
- 	mutex_unlock(&parent->child_mutex);
- 
--	put_event(parent);
--
- 	raw_spin_lock_irq(&ctx->lock);
- 	perf_group_detach(event);
- 	list_del_event(event, ctx);
- 	raw_spin_unlock_irq(&ctx->lock);
--	free_event(event);
-+	put_event(event);
- }
- 
- /*
+ 	return board_type;
+ #else
+
+-- 
+2.43.0
+
 
