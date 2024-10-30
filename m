@@ -1,97 +1,153 @@
-Return-Path: <linux-kernel+bounces-389111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843F99B68B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:59:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF7B9B68C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304711F258A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F941F25BA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5852141B2;
-	Wed, 30 Oct 2024 15:59:07 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C1213EF7;
+	Wed, 30 Oct 2024 16:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2g94pwP"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA130213EFF;
-	Wed, 30 Oct 2024 15:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8055D36126;
+	Wed, 30 Oct 2024 16:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303946; cv=none; b=Vo8Lh3zXILVN15biyGrz2yy3EHwhgVe3qPuR1s/1soJUtuI83qiUljdi3vCFYYIEwDbWqVBOnmq8zSWW+OkmRsPUbWVrLyU4QdDo1UKh7iu9lQduWoGX3Syllfw/vM8gMy+wfI2WyDeDs6fL7WmsHbwluoBosqn3aO1dMwTpzb4=
+	t=1730304076; cv=none; b=NOQB9/lYhlUYnfiZ1oV0m+KMXIVhp2kpNgaRxVEYvPtRCa6Fqy9JEVrX7CkfFwzC/L0hculcljY3smKKlRaU4ZCJyC9SKxlF9JJuyPYjw7mcWk9IyMXHHmKJZ2vhRLrTuLokyk+SGeIE2PaTCO6Ap82oT3ZrgqQdjA1NS/hRl4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303946; c=relaxed/simple;
-	bh=izOxNBnMwK2x6wyTuLbVwu4dfjX4Be2CqB/qIo5sb04=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=diZbDK2+G/Vt3HMAMyjQBM9QUye4GvLCauMeze5dCs/cy5JCCGzDbqRF7p+USZLy/WThhHY7a8i6elhgU1PQ4F164KyY+otVUyu75eubwXBbW6AIYRld6ZGLgsXmwNhaByEB618csLUAWPZlqhin6GxOHVOclUNBT9RUeu/hJiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdsF13FGyz6K6XB;
-	Wed, 30 Oct 2024 23:56:37 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E06C9140453;
-	Wed, 30 Oct 2024 23:59:02 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 16:59:02 +0100
-Date: Wed, 30 Oct 2024 15:59:00 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 11/14] cxl/pci: Rename RAS handler interfaces to also
- indicate CXL PCIe port support
-Message-ID: <20241030155900.00000867@Huawei.com>
-In-Reply-To: <20241025210305.27499-12-terry.bowman@amd.com>
-References: <20241025210305.27499-1-terry.bowman@amd.com>
-	<20241025210305.27499-12-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730304076; c=relaxed/simple;
+	bh=zxSt/cKFcoAWpo+73TfuR/yadVCk9iMi3er6GwJJT5A=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qJ2heE5KM1uU1YHfj6lVR+AAyOCmgT4W4XcH+QUl4XN7CZB7v4i/1mIyvgsrcdo3aCWU6af0hQMKbMYIuyj6YE8IFKZDb3NfcjLO9iZ95LHtyVSA78Klg9bcrVQmYyhdnhRshTOs+nOuyx5q8OU5ek9GCFhJ6NSc8EL4bl6MrbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2g94pwP; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43159c9f617so63321805e9.2;
+        Wed, 30 Oct 2024 09:01:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730304073; x=1730908873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8OJQ24DPV4G1yn5B7zxNeki92edP5+Wx7P/c1L2gO6M=;
+        b=P2g94pwPFsQF9XW1Xn549XXEZ8f1H4Kv/ZqI2zZngv7WjU+2AJQYaHHxsUqwLUJVFK
+         82rowLiCZWNQO69HLfo3689obCY57aeZ/Oxaa+35dUoTOQJSQ6FtOaH/2+4a/A0uhlf3
+         OcZbBnh9ttTDDwQlqQqm1JdPkNcUbZGH/WKwT8QQ6y7JjQu7Tl+q31SrmeZwye6k2tu/
+         uUIYx36W3bkswohjU/P2e2ogO7MeSj32bed920MG5jdrM2CSdxh6MEygptGbKCvpkiaL
+         DZ02VOLX22h3ZN4iMVJIuQIh2D09nqJ+WdA5yWDQV5d3c8FmHBhXVKcAxPIcp5rvLWRW
+         hrwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730304073; x=1730908873;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8OJQ24DPV4G1yn5B7zxNeki92edP5+Wx7P/c1L2gO6M=;
+        b=l8tG0QZpLcrYbHS+AdlSs1vGV6D82uU+wJbjgi8aNmUC1dRtQh/Y2hvNHhB8dH5rsZ
+         ecNGQpM4yJq5GnuLKbdwXjhio+ys7i4xG7OspegsoWTNKlhOJ/kLrjHoZKL1vpsaoXpa
+         X1WoDypk/vEEQ3QKD211qk26tx7IdL/BgJSaObVah0F8LpPZOL0qnZOyEjwNVgR8f+aD
+         JNhM1DdBVhyFylNJqFJCkNpkkX4uQYepoMEEvUFkAPRoIl5dWIYg9Bv62UkQUrWcN0Fv
+         gXepXGlnX8om7RcIQH9klAk+v+Q83VgTbWjMCdnIB6f8QFzLZ6EC9E7UKnX3BEaWKU+f
+         ychg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDohRVJnCIH1MRzr/vMmKfgO4UZzAxe36IZgDzOSUXLNBm6AEymyaKRy8ejXY9uVdhhhQL5/3owA/QyKs=@vger.kernel.org, AJvYcCW5+646OKePAtHTMHIxE9ebZb6RQKTQci2ZrBnbh1qY7K4SqFd4/v/8bAl+cPV8d2WFQpzcbmjz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU5rCqW0ojRsKxPpWRcWbtRcNVkW7/Z23XCZJUycPkWuYs6M+J
+	XoHh1tK+ZlenVBtLLKXtXHefDaKDr6plPOOpCYz9B/VdRhgxfT6x
+X-Google-Smtp-Source: AGHT+IHxh2nE6c3Hr7lmx5tE2SKF5626IT4Q+yXSUh0H84G7Mh5lChvyrTVjCjQ+//VF7d9p7QA2/Q==
+X-Received: by 2002:a05:600c:511c:b0:42c:a580:71cf with SMTP id 5b1f17b1804b1-4319ad24423mr137434895e9.30.1730304072471;
+        Wed, 30 Oct 2024 09:01:12 -0700 (PDT)
+Received: from [127.0.0.1] (217-175-223-26.dyn-pool.spidernet.net. [217.175.223.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd74f132sm26045035e9.0.2024.10.30.09.01.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 09:01:11 -0700 (PDT)
+Date: Wed, 30 Oct 2024 18:01:07 +0200
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>, chandrashekar.devegowda@intel.com,
+ chiranjeevi.rapolu@linux.intel.com, haijun.liu@mediatek.com,
+ m.chetan.kumar@linux.intel.com, ricardo.martinez@linux.intel.com,
+ loic.poulain@linaro.org, johannes@sipsolutions.net, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+CC: ruanjinjie@huawei.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_net_v2=5D_net=3A_wwan=3A_t7xx=3A_Fix_off?=
+ =?US-ASCII?Q?-by-one_error_in_t7xx=5Fdpmaif=5Frx=5Fbuf=5Falloc=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241029125600.3036659-1-ruanjinjie@huawei.com>
+References: <20241029125600.3036659-1-ruanjinjie@huawei.com>
+Message-ID: <F9E73DD2-B898-440D-B35D-B6B10B8BC0E9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 25 Oct 2024 16:03:02 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
+On October 29, 2024 2:56:00 PM, Jinjie Ruan <ruanjinjie@huawei=2Ecom> wrote=
+:
+>The error path in t7xx_dpmaif_rx_buf_alloc(), free and unmap the already
+>allocated and mapped skb in a loop, but the loop condition terminates whe=
+n
+>the index reaches zero, which fails to free the first allocated skb at
+>index zero=2E
+>
+>Check for >=3D 0 so that skb at index 0 is freed as well=2E
+>
+>Fixes: d642b012df70 ("net: wwan: t7xx: Add data path interface")
+>Suggested-by: Sergey Ryazanov <ryazanov=2Es=2Ea@gmail=2Ecom>
+>Signed-off-by: Jinjie Ruan <ruanjinjie@huawei=2Ecom>
 
-Patch title looks unconnected to the patch. Cut and paste issue?
+Jakub, when applying, could you drop that suggested-by tag, please=2E My c=
+ontribution was only a small suggestion to avoid an endless loop=2E In all =
+other meanings this patch is original work made by Jinjie, and all creds sh=
+ould go to him=2E
 
+Besides that tag:
 
-> CXL PCIe port protocol error handling support will be added to the
-> CXL drivers in the future. In preparation, rename the existing
-> interfaces to support handling all CXL PCIe port protocol errors.
-> 
-> The driver's RAS support functions currently rely on a 'struct
-> cxl_dev_state' type parameter, which is not available for CXL port
-> devices. However, since the same CXL RAS capability structure is
-> needed across most CXL components and devices, a common handling
-> approach should be adopted.
-> 
-> To accommodate this, update the __cxl_handle_cor_ras() and
-> __cxl_handle_ras() functions to use a `struct device` instead of
-> `struct cxl_dev_state`.
-> 
-> No functional changes are introduced.
-> 
-> [1] CXL 3.1 Spec, 8.2.4 CXL.cache and CXL.mem Registers
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Otherwise looks fine
+Acked-by: Sergey Ryazanov <ryazanov=2Es=2Ea@gmail=2Ecom>
+
+>---
+>v2:
+>- Update the commit title=2E
+>- Declare i as signed to avoid the endless loop=2E
+>---
+> drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec | 6 +++---
+> 1 file changed, 3 insertions(+), 3 deletions(-)
+>
+>diff --git a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec b/drivers/net/w=
+wan/t7xx/t7xx_hif_dpmaif_rx=2Ec
+>index 210d84c67ef9=2E=2E45e7833965b1 100644
+>--- a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
+>+++ b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx=2Ec
+>@@ -166,8 +166,8 @@ int t7xx_dpmaif_rx_buf_alloc(struct dpmaif_ctrl *dpma=
+if_ctrl,
+> 			     const unsigned int q_num, const unsigned int buf_cnt,
+> 			     const bool initial)
+> {
+>-	unsigned int i, bat_cnt, bat_max_cnt, bat_start_idx;
+>-	int ret;
+>+	unsigned int bat_cnt, bat_max_cnt, bat_start_idx;
+>+	int ret, i;
+>=20
+> 	if (!buf_cnt || buf_cnt > bat_req->bat_size_cnt)
+> 		return -EINVAL;
+>@@ -226,7 +226,7 @@ int t7xx_dpmaif_rx_buf_alloc(struct dpmaif_ctrl *dpma=
+if_ctrl,
+> 	return 0;
+>=20
+> err_unmap_skbs:
+>-	while (--i > 0)
+>+	while (--i >=3D 0)
+> 		t7xx_unmap_bat_skb(dpmaif_ctrl->dev, bat_req->bat_skb, i);
+>=20
+> 	return ret;
 
 
