@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-388012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351719B5931
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:34:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9C79B5934
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 668AF1C2127F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE3EB1C216AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53D918D623;
-	Wed, 30 Oct 2024 01:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E430915575C;
+	Wed, 30 Oct 2024 01:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lG+7G+C2"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hu+QhaOM"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540FE42A8B;
-	Wed, 30 Oct 2024 01:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40DD22334
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252064; cv=none; b=lnsnTcyzlcXS125vqHSQd5kvWb+NdJsCWbhDS07O3SdM6esZ6IGKIDu2Zqr4D+1ee/UZtW6lWJ4ys++czKa6VWdiKbVJQR8lRs2eIblgbE2bVl9QJCFxFxjMAwo228g6h5jZrfYTu2KEuK1HrGQZnPdBpFOOFYqBjFYkCJEE8zI=
+	t=1730252251; cv=none; b=D/P5rdAQebe9l5ej5nGjRT0IpvMXDTBBRZA3UdP5Kmd7N7KhXY0MwtjJrRMfgJIIlij7IVid6PMfA8y45z0LGV7hoRZBNRMBdmBTy8dA4u3PwSiU53oTRQcr+ZdgoTvrHVzkkwQW1ibHCkPsiiqVJnB7Ul/kuqWdfGcJUv2tHb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252064; c=relaxed/simple;
-	bh=Yp66zOjBTkqdw1eyRFLXESGFpMB8EYkX1+UgnwBfc1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RWjex5CQ4inD5C1APjoXWlZPTTQw2OW1qQQTlehfzP1WhcdW3ayisrQ8P6Bh9wEVKxPg61zjUuL4+O1+myaIzFSRF+WNR+TsfAxIICnS316t90Ar1IbSZ0xs+KUACWwPxQvd/eB5vTDS/axKKx79K6dn5OWd21QkkvwCsV4vKTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lG+7G+C2; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-6ea051d04caso24839427b3.0;
-        Tue, 29 Oct 2024 18:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730252061; x=1730856861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h//5h0dIiAWAEjEnhgHy2Bo5TCA+6MH9QdtoE5g4NIQ=;
-        b=lG+7G+C2yV24Le/crfyiM4sgb0LBOWehHWgCXCKyATzxs1eYgEJy5sQKBb8b/4sj/r
-         s8AfmaufxXzA2f8zOt6kwW0DBISoscL8Z5+Rgpog6z75uczxuQUsmY94qi3CcZ4L+3Aw
-         SnrFqNCNW5ijJ37Jwysj2TGYyDNR9F/apleHygsY1fMwUZAd/kA4+f/0UKcCZjfWEkpD
-         4pNGoOYpn26NY4WCdj1BOwBcnmoztsmB0BgU5wrA3jVSfDFAF+Ia8NvRREXuQhHAkb5u
-         KqOkdTcjOtfD1oHzFwM03KON1U4Z7/6cHMrYLUh5TTjfwHga24VPrFL6KR7/CIGN2RRZ
-         953w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730252061; x=1730856861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h//5h0dIiAWAEjEnhgHy2Bo5TCA+6MH9QdtoE5g4NIQ=;
-        b=corDT3OWX8BPABPGPO6WCEh4xL0vfWpNanjQjXMCbr+eBC/xfYS0wEah8MmGqqKX3X
-         +oSYXYScdqytzL94rzDc7kxqScpCI8/BWGMdtuARMRHD22Yb0ggBL5a6O8XMVrtTqFAC
-         /3Pabg1MZYUMxnAt0c77zFbkvLfCI5TEw+ApcCT8L1EKNRiNm78F3IFAKw5X6z+CZ+tX
-         gkeU0FFMZtFQBnAyCYEQAHH7ilImPw7xK4wQ7ttNr0Idr0wJ4eTgP7vqpmMV4zNkWim+
-         AL8iBs5c7DjrTxQ++KkvRShxgn6pfJf0UNZWgJMCEuvowhpMejjzx0JqwNnvpL3/bq3+
-         vgsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7/Xxra4SRAlYjSPGI6azK68mDd0KuVdQ6wPrQVmpL2qznWRcIjjrueFNkKxN8hnqFtUs=@vger.kernel.org, AJvYcCUVkLvIraTxPWNz2MgnoP0LWEFaA/4JjFheJ46sHEVYqECQneh5NNLVIwekNEy6lQhbk+Md7/dvaOMLx39ucnEf@vger.kernel.org, AJvYcCXZGtWtGe4Btz1NgIVRykP1IxGTUK0pvt/LKUKFpVH8U9EKI1TpcKDwAObN2Uj+z1whq72JGG21@vger.kernel.org, AJvYcCXmEscEkzOTjEUjllDalZefBc20B3t0HzX0qqzby+tm9zpmjwZ3rKLSYVRlMExGAk/9+bifD1Tr8da0gF9/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxivOhuzmp7if9VRq0fDzSQ9ikpl6eX0DsnF6LVkScCrmM7sA69
-	Bj0rdwcUTlaobfC1Y4jXW5eGtU7LRTeIdxC4Nk5LY5FW413hmVG85XjkCad8aAMzQUtSNQELCOv
-	S2XMuhF1sHn4losttLsgTfVVMeYA=
-X-Google-Smtp-Source: AGHT+IGmt0v/jSWrgx/76rpboLxL9IobAr7TI03JuBHGd40YJIScAQ5UnmQr1bHYch2Zxftv5X/RAJg5pl62ieHQRyE=
-X-Received: by 2002:a05:690c:39d:b0:6ea:3313:fa1b with SMTP id
- 00721157ae682-6ea3313fc65mr28460797b3.46.1730252061300; Tue, 29 Oct 2024
- 18:34:21 -0700 (PDT)
+	s=arc-20240116; t=1730252251; c=relaxed/simple;
+	bh=u0wRbUpUbd8eRidaKgPD3AVQ7UgkD56WXefRXLDR0es=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ez9zAx4s3LDF1lZB+dc9U7CidB3Ei2MVtdlk94FvxTWgQI5vCI5vgMRII3VgdGWMKW3HJNi2wzcAU71YxyUl4b+PrQ+cfLsnyI6PticZa6OC+dRUjLvY3PqmmG6wOD01D8WXd9kBRXA+A4qbxvNYaHHYVNdQxGj1NGj8tWwMvuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hu+QhaOM; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 82338ce0965f11efbd192953cf12861f-20241030
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ayZ15KMuy8YT+MalqR6y/T6iKNCjhQrVgR1kRLPQd8c=;
+	b=hu+QhaOMh3IrLFvqwZd/WEKxQXvaXr35Q6m6glSUKLb8MU7+YwppaOrtOtu4bu77qjYEXHKM35HhCjdgDq+mfplwXiJFN7OocYsuGrRT4moiMukxDMVblVD97LLqwYnz2SnfodyqcahZJn7KXaK1FwyHG1LUl8K0kpc5aDBLR28=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:1d44a4da-e243-46bb-832f-30c44d4b998b,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:f6d46448-ca13-40ea-8070-fa012edab362,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 82338ce0965f11efbd192953cf12861f-20241030
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <karl.li@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 554073609; Wed, 30 Oct 2024 09:37:22 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 30 Oct 2024 09:37:20 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 30 Oct 2024 09:37:20 +0800
+From: Karl.Li <karl.li@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Karl Li <Karl.Li@mediatek.com>,
+	Chungying Lu <chungying.lu@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<chien-chih.tseng@mediatek.com>, <andy.teng@mediatek.com>, Karl Li
+	<karl.li@mediatek.com>
+Subject: [PATCH v2 0/1] Add MediaTek APU SMC call Definition
+Date: Wed, 30 Oct 2024 09:35:27 +0800
+Message-ID: <20241030013533.855696-1-karl.li@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024093348.353245-1-dongml2@chinatelecom.cn> <20241029170341.1b351225@kernel.org>
-In-Reply-To: <20241029170341.1b351225@kernel.org>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 30 Oct 2024 09:35:24 +0800
-Message-ID: <CADxym3bUKBuMkaG3NiQHavkgScLxRAgkSSmk-KbuYpMepSYDzw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 0/9] net: ip: add drop reasons to input route
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com, 
-	dsahern@kernel.org, pablo@netfilter.org, kadlec@netfilter.org, 
-	roopa@nvidia.com, razor@blackwall.org, gnault@redhat.com, 
-	bigeasy@linutronix.de, idosch@nvidia.com, ast@kernel.org, 
-	dongml2@chinatelecom.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	bridge@lists.linux.dev, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, Oct 30, 2024 at 8:03=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Thu, 24 Oct 2024 17:33:39 +0800 Menglong Dong wrote:
-> > In this series, we mainly add some skb drop reasons to the input path o=
-f
-> > ip routing, and we make the following functions return drop reasons:
-> >
-> >   fib_validate_source()
-> >   ip_route_input_mc()
-> >   ip_mc_validate_source()
-> >   ip_route_input_slow()
-> >   ip_route_input_rcu()
-> >   ip_route_input_noref()
-> >   ip_route_input()
-> >   ip_mkroute_input()
-> >   __mkroute_input()
-> >   ip_route_use_hint()
-> >
-> > And following new skb drop reasons are added:
-> >
-> >   SKB_DROP_REASON_IP_LOCAL_SOURCE
-> >   SKB_DROP_REASON_IP_INVALID_SOURCE
-> >   SKB_DROP_REASON_IP_LOCALNET
-> >   SKB_DROP_REASON_IP_INVALID_DEST
->
-> We're "a bit" behind on patches after my vacation, so no real review
-> here, but please repost with net-next in the subject. The test
-> automation trusts the tree designation and bpf-next is no longer
-> based on net-next. So this doesn't apply.
+From: Karl Li <karl.li@mediatek.com>
 
-I was wondering how the conflict, which was checked by bpf-ci,
-happened, as there was no conflict between this series and
-net-next. And now I see, I just tagged a wrong branch for this
-series. Sorry about that, and I'll resend it to the right branch.
+Based on tag: next-20241029, linux-next/master
 
-Thanks!
-Menglong Dong
+Hello,
 
+This patch introduces the SMC calls for MediaTek APU.
 
-> --
-> pw-bot: cr
+The start and stop sequences of the APU microprocessor are managed within the ARM Trusted Firmware (ATF), which requires a secure and reliable communication channel to issue commands from the non-secure world. This patch adds the necessary infrastructure to issue these SMC calls, ensuring that the APU can be securely managed by the system's software.
+
+Please review and provide feedback.
+
+Best regards
+
+---
+
+Changes in v2:
+
+- Move header file to include/linux/firmware/mediatek/
+- Rename header file name to mtk-apu.h
+- Update define macro name to __MEDIATEK
+
+Karl Li (1):
+  soc: mediatek: Add command for APU SMC call
+
+ include/linux/firmware/mediatek/mtk-apu.h | 32 +++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 include/linux/firmware/mediatek/mtk-apu.h
+
+-- 
+2.18.0
+
 
