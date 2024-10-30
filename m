@@ -1,258 +1,375 @@
-Return-Path: <linux-kernel+bounces-388132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA919B5B00
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6869B5B14
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5E91C20EE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:00:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29911C20DE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3439519A28D;
-	Wed, 30 Oct 2024 05:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589DC199223;
+	Wed, 30 Oct 2024 05:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bs5e1tCQ"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lMCMlvKW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553CF137750
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD890BA4A;
+	Wed, 30 Oct 2024 05:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730264410; cv=none; b=A9uTbWEYVxWzinRawVAntZ6kB0Z0nmnnbvFCi1Y+6x1StSmngobGA5MzRQTWOQURFS6n4Jwf4oaURO0IlJy7zwajOiARuKVsK7RPmKS+7EAQRjXk6znx1TzpqVHwYVyFjQ3oXUBeOuyg2Gdbq8mM3ZJaskAcfTFV1SdnIlAKyxQ=
+	t=1730264882; cv=none; b=V5hmsaOcDqxNZSIjce3iaMzuO6hp27pZUXB1gybgj2TpJaB0c4NUENtsTtJXNtDBJVs0iQurX+a5h9LSp233Niayjb85Kw/XMvgIz2BDiUEzGBv1DWMEQn5wPyYxs20Of6u8Q5PracSehPIpTiZB7uhIhBqOOIsj3urcHUz27N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730264410; c=relaxed/simple;
-	bh=hYA9uCrwWw+k7KMi2UN8q9dd0gMU4GFLGqCkl+yGd8M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ud9SiR6ev5VqOxbhct5cag077sdXwRirPAuJ5eCWRjkF4H2nvMKmAtP3gThuxUMFL4Osd0knWBNVRoFU4h3aVPRbyQpcEWcXDY0nmD8Ysr9iqTcz80ykiUQd+yEkErUiKlvuraKQ3q9+e45/vzcuRd9vqGdyf5lfbLDlqCyF0TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bs5e1tCQ; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbd1ae26a6so31928296d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 22:00:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730264407; x=1730869207; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7zRG3PQZ2L6kVmiy8DpyC8uCMJyq4TG5HE6ZMF0pZRA=;
-        b=bs5e1tCQiPXKBnd084Nv0stHWWlafAx0NXnTRHpmYY0Dt0OwHGG4VPy980F88kM8xO
-         d/BRaGZeWmditcXTix3BEvRhiudFDRvjOQcY2S+8EPVrGKg0pYV6q3HhExZaonrXmU1a
-         41wLpa/VW9f2xKhQea7aZZSxM8Mh5v2k+yTQBz1hiHVmirIZLit7XToLFuehILF1MQEo
-         B3w1f53czS8HQP+pZvSGiLgyCa9u7S2+f5flTye+jmnZJMjNCt461NklFweXNNUAr2aI
-         If0ZYGHlmjBaR95wUv2o4w23woyXZKutCK/jkGnnLkqtqgiw9p5HOgqP4/Cm80XsCtKl
-         FR4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730264407; x=1730869207;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7zRG3PQZ2L6kVmiy8DpyC8uCMJyq4TG5HE6ZMF0pZRA=;
-        b=uXpM9/MlUJpTXnbzaXciYhbOQ/a94byqMPYL/lTheGQP6Nb6bKfv2kE9gulSTlKaBI
-         1eD2U4E5POUacG8i5FgZQ6k3/gfiUJ7cXSU1M/dlKVXBOWNZMqcZEi8BEu0Qkwyzr9lZ
-         WmwhC2xxW9HlHiCChjklTDvImLcXhpeDWZBnVMNMN950l4wxeBKEYZT8za70G2cymmCH
-         MQlCkhVRPf2DsRiQ7xWGBim6/vTfsVgQtZ1u+52iazhGW6x0SVzdWQ2sniAol7oRz7Rm
-         EVGnma+rycpbiL8XsGYKtOCuYYAjYeZvOmpXEraeFk2UnX+jX/O+c5hVeIjU8QsLnIYp
-         UcNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8nH/O+PZAImXf2ixR1TzTVO5y9sh5a/fJmGW4QlEPb1rWG+1GNah85IwJKJ/o9uiLqvd7jKaEcZPCtfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK03OXVyYqLPMVRkQIdAGA+dHW2iXD8TnoIhxhsgCuoLYydSSR
-	dXveg+jJ+XdUCaJ+BoBR6DdDiYVR18V31TcqGu6WMFcdqy8LyUERDlMET9KXxpM0Re0qQUrM0Rg
-	JiWwgHZpPI6OUuDl1rCgA58veTImDsqT+OoSl
-X-Google-Smtp-Source: AGHT+IHH0QHGaX+GSj34u1/5JgSJF7GwsrOiWP8LwULydSGQYhOVTcYwvsHeAZeMo9Bg3CIRBsKZz3j1MzXVoaT2iPE=
-X-Received: by 2002:a05:6214:320b:b0:6cd:fa19:2b64 with SMTP id
- 6a1803df08f44-6d18583747bmr189033556d6.39.1730264406939; Tue, 29 Oct 2024
- 22:00:06 -0700 (PDT)
+	s=arc-20240116; t=1730264882; c=relaxed/simple;
+	bh=dN6dWGsj0J+OPpngUYV8QXJlh0F89unqq6bsVm2JvYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dlQwFhn614Mf9rrfnDEvoALBXxuNRL8rbMFwF5WaQNf7rYOAD1IJZRpzDblrC5tIDgYSeslLTm3e7iCQLyYkkrwCTJQm/GInAI0S6M4B8JZgUKdwSa0TamRX+veNvZ60qQfvpuV2Ukb4iWCa5+UcO06n0lG9y3D8bclYuRqeuOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lMCMlvKW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TM0eSA012773;
+	Wed, 30 Oct 2024 05:07:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5EaiPV8HgOn+AOMbwRUCE8i+sVD4MK8Fvx+leJhokhw=; b=lMCMlvKW9/Frk9qy
+	+GjnzZGQigvOUDxtQW+qXN6WPoQmBXsdi+/UyC3HnG4kvXaw5TxQdt3IFTipPrdm
+	nwCAyq0wZDFNfW9sdZ2s5L4s8BrFK9d6xFetwGzJEd3pap9KqB4tcDh1I6FuiOei
+	2ol6qEKsG7m2Is4hfm00+W5qTt27ruXbWYkVp5G/ymTk14Vb5QviopCEDCRF3+FB
+	o/+9ESRPb1fFXgjdxAr76FIKGqUje/N7dmwWmbDg5p7JOpqGYfgQ7/pcYt0pikmZ
+	EeufpI7M3RclCcTXO4RirDn4khPhYCHnUf4tUBelzw8BO3DPd265Gt7Zp4VWo8w+
+	6EDPVw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgujrf9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 05:07:30 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U57THl015152
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 05:07:29 GMT
+Received: from [10.216.49.160] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 22:07:20 -0700
+Message-ID: <d98bff34-d7ea-2b05-0c0d-eaf0392aef3f@quicinc.com>
+Date: Wed, 30 Oct 2024 10:37:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029092422.2884505-1-davidgow@google.com> <20241029092422.2884505-3-davidgow@google.com>
- <ZyDUsFaZt2WViQL8@boqun-archlinux>
-In-Reply-To: <ZyDUsFaZt2WViQL8@boqun-archlinux>
-From: David Gow <davidgow@google.com>
-Date: Wed, 30 Oct 2024 12:59:55 +0800
-Message-ID: <CABVgOSnMNAVJaC70yDB6cJa-Mm7c9EoPNtYTQp3aybqd3cobpA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] rust: macros: add macro to easily run KUnit tests
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000061095c0625aa9390"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v2 1/4] ASoC: dt-bindings: wcd937x-sdw: Add static channel
+ mapping support
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>,
+        Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>,
+        Sanyog Kale <sanyog.r.kale@intel.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
+        <kernel@quicinc.com>
+References: <20241023061326.3871877-1-quic_mohs@quicinc.com>
+ <20241023061326.3871877-2-quic_mohs@quicinc.com>
+ <qzjbiby7w6a7m4e324hdatgklmejlcxfwv7tszzfmdqahgrbu2@bcwsdlrpncxq>
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+In-Reply-To: <qzjbiby7w6a7m4e324hdatgklmejlcxfwv7tszzfmdqahgrbu2@bcwsdlrpncxq>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VHEgHkQ44s6yuQoIlMFokJ7O4BZ33SqG
+X-Proofpoint-GUID: VHEgHkQ44s6yuQoIlMFokJ7O4BZ33SqG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410300037
 
---00000000000061095c0625aa9390
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 10/23/2024 1:22 PM, Krzysztof Kozlowski wrote:
+> On Wed, Oct 23, 2024 at 11:43:23AM +0530, Mohammad Rafi Shaik wrote:
+>> Add static channel mapping between master and slave rx/tx ports for
+>> Qualcomm wcd937x soundwire codec.
+>>
+>> Currently, the channel mask for each soundwire port is hardcoded in the
+>> wcd937x-sdw driver, and the same channel mask value is configured in the
+>> soundwire master.
+>>
+>> The Qualcomm boards like the QCM6490-IDP require different channel mask settings
+>> for the soundwire master and slave ports.
+> 
+> Different than what? Other wcd937x? Which are these?
+> 
+For Qualcomm QCM6490-IDP board soundwire master needs a different 
+channel mask setting.
 
-On Tue, 29 Oct 2024 at 20:28, Boqun Feng <boqun.feng@gmail.com> wrote:
+The wcd937x channel mask values are hardcoded in wcd driver.
+https://elixir.bootlin.com/linux/v6.12-rc5/source/sound/soc/codecs/wcd937x-sdw.c#L35
+https://elixir.bootlin.com/linux/v6.12-rc5/source/sound/soc/codecs/wcd938x-sdw.c#L37
+
+In case of QCM6490-IDP the soundwire master and wcd937x require 
+different channel mask settings, not the same.
+For Example, wcd937x ADC2 connection
+
+                           Master                 Slave (wcd937x)
+                      +--------------+           +--------------+
+                      |  +--------+  |           |  +--------+  |
+          ADC1  ----->|  | PORT1  |  |           |  |   TX1  | 
+|<-----------ADC1
+          ADC2  ----->|  |        |  |           |  |        |  |
+                      |  +--------+  |           |  +--------+  |
+                      |              |           |              |
+          ADC3  ----->|  +--------+  |           |  +--------+  |
+                      |  |  PORT2 |  |           |  |   TX2  | 
+|<-----------ADC2
+                      |  |        |  |           |  |        | 
+|<-----------ADC3
+                      |  +--------+  |           |  +--------+  |
+                      |              |           |              |
+                      |  +--------+  |           |  +--------+  |
+  DMIC0...DMIC3------>|  |  PORT3 |  |           |  |   TX3  | 
+|<-----------DMIC0...DMIC3
+                      |  |        |  |           |  |        | 
+|<-----------MBHC
+                      |  +--------+  |           |  +--------+  |
+                      |              |           |              |
+                      |  +--------+  |           |  +--------+  |
+  DMIC4...DMIC3 ----->|  |  PORT4 |  |           |  |   TX4  | 
+|<-----------DMIC4...DMIC7
+                      |  |        |  |           |  |        |  |
+                      |  +--------+  |           |  +--------+  |
+                      |              |           |              |
+                      +------------- +           +--------------+
+
+					
+For ADC2, The Slave needs to configure TX2 Port with channel mask value 
+1 and
+For Master, it required PORT1 with channel mask  value 2.
+
+
+In existing design master and slave configured with same channel mask, 
+it will fail ADC2.
+The new design will help to configure channel mapping between master and 
+slave from DT.
+
+>>
+>> With the introduction of the following channel mapping properties, it is now possible
+>> to configure the master channel mask directly from the device tree.
+>>
+>> The qcom,tx-channel-mapping property specifies the static channel mapping between the slave
+>> and master tx ports in the order of slave port channels which is adc1, adc2, adc3, adc4,
+>> dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
+> 
+> I still don't get what is the channel here.
+> 
+Typo error,
+
+The qcom,tx-channel-mapping property specifies the static channel 
+mapping between the slave
+
+and master tx ports in the order of slave port channel index which are 
+adc1, adc2, adc3, adc4,
+
+dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
+
+
+
+https://elixir.bootlin.com/linux/v6.12-rc5/source/sound/soc/codecs/wcd937x.h#L599
+
+
+
+Will be fixed in the next version
+
+>>
+>> The qcom,rx-channel-mapping property specifies static channel mapping between the slave
+>> and master rx ports in the order of slave port channels which is hph_l, hph_r, clsh,
+>> comp_l, comp_r, lo, dsd_r, dsd_l.
+> 
+> And this description copies binding :/.
+> 
+> Please wrap commit message according to Linux coding style / submission
+> process (neither too early nor over the limit):
+> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 >
-> Hi David,
->
-> On Tue, Oct 29, 2024 at 05:24:18PM +0800, David Gow wrote:
-> > From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> >
-> > Add a new procedural macro (`#[kunit_tests(kunit_test_suit_name)]`) to
-> > run KUnit tests using a user-space like syntax.
-> >
-> > The macro, that should be used on modules, transforms every `#[test]`
-> > in a `kunit_case!` and adds a `kunit_unsafe_test_suite!` registering
-> > all of them.
-> >
-> > The only difference with user-space tests is that instead of using
-> > `#[cfg(test)]`, `#[kunit_tests(kunit_test_suit_name)]` is used.
-> >
-> > Note that `#[cfg(CONFIG_KUNIT)]` is added so the test module is not
-> > compiled when `CONFIG_KUNIT` is set to `n`.
-> >
-> > Reviewed-by: David Gow <davidgow@google.com>
-> > Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> > [Updated to use new const fn.]
-> > Signed-off-by: David Gow <davidgow@google.com>
-> > ---
-> >
-> > Changes since v1:
-> > https://lore.kernel.org/lkml/20230720-rustbind-v1-2-c80db349e3b5@google=
-.com/
-> > - Rebased on top of rust-next
-> > - Make use of the new const functions, rather than the kunit_case!()
-> >   macro.
-> >
-> > ---
-> >  MAINTAINERS          |  1 +
-> >  rust/kernel/kunit.rs | 11 +++++++++++
-> >  rust/macros/lib.rs   | 29 +++++++++++++++++++++++++++++
-> >  3 files changed, 41 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index b77f4495dcf4..b65035ede675 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -12433,6 +12433,7 @@ F:    Documentation/dev-tools/kunit/
-> >  F:   include/kunit/
-> >  F:   lib/kunit/
-> >  F:   rust/kernel/kunit.rs
-> > +F:   rust/macros/kunit.rs
->
-> I cannot find this file in this series, and it's not in the current
-> rust-next either.
->
-> (Did you do the same thing as I sometimes did: forget to `git add` a new
-> file?)
+
+Ack
+
+>>
+>> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>> ---
+>>   .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++++++++
+>>   1 file changed, 36 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+>> index d3cf8f59cb23..a6bc9b391db0 100644
+>> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+>> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+>> @@ -58,6 +58,38 @@ properties:
+>>       items:
+>>         enum: [1, 2, 3, 4, 5]
+>>   
+>> +  qcom,tx-channel-mapping:
+>> +    description: |
+>> +      Specifies static channel mapping between slave and master tx port
+>> +      channels.
+>> +      In the order of slave port channels which is adc1, adc2, adc3, adc4,
+>> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
+>> +      ch_mask1 ==> bit mask value 1
+>> +      ch_mask2 ==> bit mask value 2
+>> +      ch_mask3 ==> bit mask value 4
+>> +      ch_mask4 ==> bit mask value 8
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+>> +    minItems: 8
+>> +    maxItems: 13
+> 
+> Why size is variable? This device has fixed amount of slave ports, I
+> think.
 >
 
-Whoops! Thanks for catching this: I somehow managed to unstage it
-while editing things. Fixed in v3:
-https://lore.kernel.org/linux-kselftest/20241030045719.3085147-6-davidgow@g=
-oogle.com/
+yes will check modify
 
-Cheers,
--- David
+>> +    items:
+>> +      enum: [1, 2, 4, 8]
+> 
+> What is the point of using bits if you cannot actually create a bit mask
+> out of it? Why this cannot be 7?
+> 
+Actually, these values should be fixed: 1 (0001), 2 (0010), 4(0100), 
+8(1000).
 
---00000000000061095c0625aa9390
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
 
-MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
-cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
-nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
-hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
-XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
-h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
-ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
-hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
-BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
-0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
-hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
-AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
-eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgPAyP4AAnd7JAtu8c+z0YthIQ8LZ5
-cKUw+WB7cRJ1BTUwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
-MDMwMDUwMDA3WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBAA7X0oZhc9WuVvjL68/zSllhDrdDMOzOh5J/WdmKeNMEWR9F
-I/GdovrWx+sSR9JvFumhDOwB5a9PPPvBR6Qhl4souYiKbFps3Q0RwhulX/acNlzxgONETWlU0JB1
-nl/pnflUwiTwW8X+jPO+fw3Q64qAk4S2IAiWhEPbYBFcHto1dC9kfNRxOfH9j05ctnSCAhYW8wCm
-UaixS59HphPLFP4PzuF5Mq3qUdeCdfO3kBroHPMzB+ACAuQhVkYTFF2GdFjNA/LKodtaDbHe6JDb
-6tQWSs6qScCwNTC23YKUXqM156Ew0Czz1sXSNJmylw/rk4P6eSYXM5yEGCjm3gAkXvo=
---00000000000061095c0625aa9390--
+If required to set 7, it is handled in wcd driver based on mixer commands.
+https://elixir.bootlin.com/linux/v6.12-rc5/source/sound/soc/codecs/wcd937x.c#L1199
+
+
+Example:
+WCD937X_HPH_L -> channel mask value is 1
+WCD937X_HPH_R -> channel mask value is 2
+
+
+The final channel mask for that specific port is 3
+>> +
+>> +  qcom,rx-channel-mapping:
+>> +    description: |
+>> +      Specifies static channels mapping between slave and master rx port
+>> +      channels.
+>> +      In the order of slave port channels, which is
+>> +      hph_l, hph_r, clsh, comp_l, comp_r, lo, dsd_r, dsd_l.
+>> +      ch_mask1 ==> bit mask value 1
+>> +      ch_mask2 ==> bit mask value 2
+>> +      ch_mask3 ==> bit mask value 4
+>> +      ch_mask4 ==> bit mask value 8
+> 
+> and the value is what exactly? Index is channel, but what does "ch_mask4 ==> bit
+> mask value 8" mean? I don't understand this at all.
+> 
+
+                           Master
+                      +--------------+
+                      |  +--------+  |
+           ADC1 ----->|  | PORT1  |  |
+           ADC2 ----->|  |        |  |
+                      |  +--------+  |
+                      |              |
+           ADC3 ----->|  +--------+  |
+                      |  |  PORT2 |  |
+                      |  |        |  |
+                      |  +--------+  |
+                      |              |
+                      |  +--------+  |
+   DMIC0...DMIC3 ---->|  |  PORT3 |  |
+                      |  |        |  |
+                      |  +--------+  |
+                      |              |
+                      |  +--------+  |
+   DMIC4...DMIC7----->|  |  PORT4 |  |
+                      |  |        |  |
+                      |  +--------+  |
+                      |              |
+                      +------------- +
+
+
+The PORT1 has 2 ADC connections,
+
+ADC1 -> PORT1 ch_mask index 1 -> channel mask value 1 (0001)
+ADC2 -> PORT1 ch_mask index 2 -> channel mask value 2 (0010)
+
+
+DMIC0 -> PORT3 ch_mask index 1 -> channel mask value 1 (0001)
+DMIC1 -> PORT3 ch_mask index 2 -> channel mask value 2 (0010)
+DMIC2 -> PORT3 ch_mask index 3 -> channel mask value 4 (0100)
+DMIC3 -> PORT3 ch_mask index 4 -> channel mask value 8 (1000)
+
+
+Will check and add a proper description.
+
+
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+>> +    minItems: 8
+>> +    maxItems: 8
+>> +    items:
+>> +      enum: [1, 2, 4, 8]
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+>> @@ -74,6 +106,8 @@ examples:
+>>               compatible = "sdw20217010a00";
+>>               reg = <0 4>;
+>>               qcom,rx-port-mapping = <1 2 3 4 5>;
+>> +            qcom,rx-channel-mapping =  /bits/ 8 <0x01 0x02 0x01 0x01 0x02
+>> +                                                 0x01 0x01 0x02>;
+>>           };
+>>       };
+>>   
+>> @@ -85,6 +119,8 @@ examples:
+>>               compatible = "sdw20217010a00";
+>>               reg = <0 3>;
+>>               qcom,tx-port-mapping = <2 2 3 4>;
+>> +            qcom,tx-channel-mapping = /bits/ 8 <0x01 0x02 0x01 0x01 0x02 0x04
+>> +                                                0x04 0x08 0x01 0x02 0x04 0x8>;
+> 
+> Keep it consistent, e.g. everywhere without leading 0... actually not
+> sure why this is hex, either.
+> 
+
+Ack, okay will check and modify.
+
+
+For hex value, Actually took the reference from port mask values in swr 
+DT entry.
+https://elixir.bootlin.com/linux/v6.12-rc5/source/arch/arm64/boot/dts/qcom/sc7280.dtsi#L2528
+>>           };
+>>       };
+>>   
+>> -- 
+>> 2.25.1
+
+Thanks & Regards,
+Rafi.
+>>
+
 
