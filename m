@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-389166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EBF9B6968
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:42:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B0B9B699F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D4551F224E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62A431C20E72
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8C215011;
-	Wed, 30 Oct 2024 16:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9574421502B;
+	Wed, 30 Oct 2024 16:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a59x0CjD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j5ydOn/o"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3413B21443B;
-	Wed, 30 Oct 2024 16:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D902C8EB;
+	Wed, 30 Oct 2024 16:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730306519; cv=none; b=gdYGiQheugtyXGWafDuj1qtK6cnq9QGBfCES2UjhCQzXyCZKw95FpGTw6Ha0UK5XI/GWpv1sOUngL2EBCzbsu3qwtp63HGCH/wFDZoOyU0i8Hsk4AFl3bGjQd9tt06wrRMh17GpbGTE+QKNtzq3u2miVpDdCoYiLY28XG7aZsIA=
+	t=1730307166; cv=none; b=OfmwIbdnz1YCR/BjxGK5AH8LN0FwrgL5nKW2V3oIwwf7sKSrdbGlrGr0DIDkHJy7b8GWfYT/BTexwfqQ/0BAFP+AxwqdNYHP6HiHStIZLfZiIpwTCjnL+g//bwjEkkdhT4LvMhtxf9z6m0WPEnlg4UhqTpeSIngC7qHKjgNPNLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730306519; c=relaxed/simple;
-	bh=B3Cv7vdNPxKLmEpv+ochTFb7si+5bh3/r5+EkHPjJJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUl1r0DIPQ8Gu7SjDttETOoibjCDychyBD/iwWT3sechUIE4bbUOPYY1Ebcz1dEEO+RnCTO906hK9qBtpGeqd3vqyDfU6D1kk63nyf/aFdo1UksKOteoWARawIsXIdVQZMvNpOtcLRzJT1sfINlgXd87WOKF7BaE9TSsNsvMPNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a59x0CjD; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730306517; x=1761842517;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B3Cv7vdNPxKLmEpv+ochTFb7si+5bh3/r5+EkHPjJJA=;
-  b=a59x0CjD0a7I5KH/aNyegLaW6jIbfIYusLlTB6ukdWkTdq/s/cU95OwG
-   bWj4CYLVum43gxQ0EW5kIxGH1gJTIhRuBQX0+X1eTJSgyZuo3oWKJsTm+
-   E4Bu8tQamG3NDD2lfgeO0LoWGlwclbF7u/M3EixYaqtkyQdGQ71VNl0yf
-   RGtu50hB+O8Pqa3GPclJASUN6GEWU22AkK6hmxBRCH1u5uTqcqtUy3eVs
-   aOSwgusw0FERfOpPG1paNqJMoePMmu6BllTZz+M0WFxH/VS9d/VSs5OKC
-   QMK0QC0VDDSfh8SeqrXs9Df7938CxvW4Fxam2sDvU0ov/KAWsPIN1sruK
-   g==;
-X-CSE-ConnectionGUID: y4w+HwI7QNWf5NrdsqTIbw==
-X-CSE-MsgGUID: pdi/FOSMRtig4VqShafUaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="17663752"
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="17663752"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:41:56 -0700
-X-CSE-ConnectionGUID: eV3frLhsSNKUTK4lei1d3w==
-X-CSE-MsgGUID: iA/9olc6TFSG9S0nYKlt2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="119825117"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 30 Oct 2024 09:41:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 54C4D1CF; Wed, 30 Oct 2024 18:41:52 +0200 (EET)
-Date: Wed, 30 Oct 2024 18:41:52 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Esther Shimanovich <eshimanovich@chromium.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Rajat Jain <rajatja@google.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	iommu@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] PCI: Detect and trust built-in Thunderbolt chips
-Message-ID: <20241030164152.GU275077@black.fi.intel.com>
-References: <20240910-trust-tbt-fix-v5-1-7a7a42a5f496@chromium.org>
- <20241030001524.GA1180712@bhelgaas>
- <ZyIUZfFuUdAbVf25@wunner.de>
- <20241030113108.GT275077@black.fi.intel.com>
- <ZyIwg0nNb_eVzRaz@wunner.de>
+	s=arc-20240116; t=1730307166; c=relaxed/simple;
+	bh=FrhdR0H7SLDZA6XsFsIzYM+EhpK7bnJryMCVRT1iNe4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=hfyb6J2FrE0Xmfe/IyOzFSPMBclYl6oWVBSQApSLZpTPdAPoRJ7WPKZwDCBGOKwlQXhk4RUg2MmgLkBIjkpZGiO3aDmoxn11HjIyOBZA5dpWKLoTKKjndSERyxof6BAGU3i4zeVfqHOR0b68stzMRsHI6kf0XzdEySoUc9HlSyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j5ydOn/o; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1730306547;
+	bh=FrhdR0H7SLDZA6XsFsIzYM+EhpK7bnJryMCVRT1iNe4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=j5ydOn/oNSuRmyD+3amgUBEoazFW+10NviKpxEmhPUCLCa4FRQt1rPeX+l16c7p+T
+	 0Je4uokldLGmV3mkgxcBKVk8uzbkhnV/xrcHTAYLUI0K1RIpKFbo3DHcYON0xfMyRZ
+	 QqmY650drxdCGlqbY9ngMtCqiJeyNv+gq5qcygy8=
+Date: Wed, 30 Oct 2024 10:42:18 -0600 (CST)
+From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Message-ID: <63b16433-9f80-492f-9389-633a9852a223@weissschuh.net>
+In-Reply-To: <20241030162754.2110946-1-andriy.shevchenko@linux.intel.com>
+References: <20241030162754.2110946-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] ACPI: battery: Check for error code from
+ devm_mutex_init() call
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZyIwg0nNb_eVzRaz@wunner.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <63b16433-9f80-492f-9389-633a9852a223@weissschuh.net>
 
-On Wed, Oct 30, 2024 at 02:11:31PM +0100, Lukas Wunner wrote:
-> > IMHO this should be made generic enough that allows device tree based
-> > systems to take advantage of this right from the get-go. Note also there
-> > is already "external-facing" device tree property that matches the ACPI
-> > one defined in Documentation/devicetree/bindings/pci/pci.txt.
-> 
-> The workaround implemented by Esther's patch (only) becomes necessary
-> because OEMs followed Microsoft's spec blindly and put the property
-> below the Root Port, instead of the Downstream Port.
+Hi Andy,
 
-Honestly I don't know how else that could be implemented otherwise
-without changing that definition (which BTW came from Intel originally).
-They did the exact correct thing. The only real problem is that Linux
-interprets it in different way.
+Oct 30, 2024 10:28:03 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
+
+> Even if it's not critical, the avoidance of checking the error code
+> from devm_mutex_init() call today diminishes the point of using devm
+> variant of it. Tomorrow it may even leak something. Add the missed
+> check.
+
+Thanks!
+
+Assuming you found this via some sort of tool and you already fixed up all =
+the other places in the tree missing these checks,
+wouldn't it make sense to mark devm_mutex_init() as __must_check?
+
+> Fixes: 0710c1ce5045 ("ACPI: battery: initialize mutexes through devm_ API=
+s")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Reviewed-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+
+> ---
+> drivers/acpi/battery.c | 8 ++++++--
+> 1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> index 66662712e288..70f706d7634f 100644
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -1226,8 +1226,12 @@ static int acpi_battery_add(struct acpi_device *de=
+vice)
+> =C2=A0=C2=A0=C2=A0 strscpy(acpi_device_name(device), ACPI_BATTERY_DEVICE_=
+NAME);
+> =C2=A0=C2=A0=C2=A0 strscpy(acpi_device_class(device), ACPI_BATTERY_CLASS)=
+;
+> =C2=A0=C2=A0=C2=A0 device->driver_data =3D battery;
+> -=C2=A0=C2=A0 devm_mutex_init(&device->dev, &battery->lock);
+> -=C2=A0=C2=A0 devm_mutex_init(&device->dev, &battery->sysfs_lock);
+> +=C2=A0=C2=A0 result =3D devm_mutex_init(&device->dev, &battery->lock);
+> +=C2=A0=C2=A0 if (result)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return result;
+> +=C2=A0=C2=A0 result =3D devm_mutex_init(&device->dev, &battery->sysfs_lo=
+ck);
+> +=C2=A0=C2=A0 if (result)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return result;
+> =C2=A0=C2=A0=C2=A0 if (acpi_has_method(battery->device->handle, "_BIX"))
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(ACPI_BATTERY_XINFO_PRE=
+SENT, &battery->flags);
+>
+> --
+> 2.43.0.rc1.1336.g36b5255a03ac
+
 
