@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-388351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9B09B5E42
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:52:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73CE9B5E43
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1FD1C2100F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A13D1F23F7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3051E1A32;
-	Wed, 30 Oct 2024 08:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gx1MNhvD"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A9C1E1A36;
+	Wed, 30 Oct 2024 08:52:43 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF541D278D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F261D6194
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730278353; cv=none; b=SQW/i3gDw+oth9W7SsnTr283sqx5R/2jqUqxSalY8Qh2adPkpFHEFcYBGb7I/CWNLOP5AwDRnMokkLQh7lHJkCuhbUQ6QkaVy4tF+zNJKhA5nXJR5aOxBYicr7a5olOkjmfo2xvbZ92GOulSKFacSy2abVb+U2Dxhxj1QOjjTU4=
+	t=1730278362; cv=none; b=QazerECpGx1xDZZDvqCfHiWsw4E9PIN/f9Y1rHixcnsS4ukXftzGmBxMVd92Nmq25Bw7LS4rPsb51osS1jRH3okhSfHQi86JZUh4yDaEZvo4g3BCmDgwsgzXEN4L2TJN6dY/uT2Vcw696P7BXjZGVaKpeqVBxozajpt/0Dl6NX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730278353; c=relaxed/simple;
-	bh=OZnoNZrdZV2/crQbUH4IG8um4cL2sl75Grz7lZVdnH8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EKn+6BRmei84+IfPnaRrwrkR0EXwl1UCieCBlJTCjqfZdXBVCXPcs/2Z6GTz8E4ixLNZMJbjCh2ZkeTu4oDkIFIZHBwFu+6T6Sb79yjsVMIk3z+8nmk1f744/JM2re5/DITiCqaheO4ut0icPQEQJNuuu4mRRM6yt57O0iDmKoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gx1MNhvD; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e7e73740so5391760e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730278349; x=1730883149; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZnoNZrdZV2/crQbUH4IG8um4cL2sl75Grz7lZVdnH8=;
-        b=Gx1MNhvDYMRXzGOXv/QeXFSrhVJagkKZgJtdMYNg7w9i9ycJnuHDj0EsyvwkUsTQLB
-         ujyu8L78mBKZ3bedds1bppq3Cwr/GjudIkBD+2pHI85KOSGXR+OOvv95FFT9VMJ3V+qA
-         6XqoDmDlj8y78cQ28ZBKbh5QUbtVenA7+EYD0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730278349; x=1730883149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OZnoNZrdZV2/crQbUH4IG8um4cL2sl75Grz7lZVdnH8=;
-        b=tzRVQnJY6r72Zil5wMVs6o2mVjwo/AirTYEQoIvuRLuS5rA3oQkWxb83OO4sEtkOJp
-         aCLLpVyP1RmSItL9/eCyKIZEm/77y6H18SDj0l29TYoWydrGRLJTtwpGCvXl4n6GSKfl
-         Q1zvohqalEeKd6NpPB5aZe2tfPaHSXvNoVaO9lhTcPfVC75RPeV5Lw5sWdnCbINtSptL
-         238FIp3hcgtiVM9nN7DxB4jrbYUXR1xAlW3n+Mx+ENf9qJ9zaE90qPFtF3uRfEH5NRNT
-         1hjQDj3MhXq0G8EN9fZi2+fTFmgkxfValFsPLyHc1E6kEBqMoCfUooQdjIluUEl3BieC
-         wnmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7s7cD+4da8LAxmqd8tupTJttjod0Akvq+jnX73mtnJwTXN+kM2e3MQeVaEObNC/e2awUKZLyLONn+yEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+qrwiJ2HzM+VideTRf6PqwsbX4P+aEOg0/iOvD0Ha1Y/RLsuT
-	mSmfwbhQddiLN34wjBWxE+D3bBivN+bKKLGMsuNAe695iedGQTVQDoY+i6JRELLrNprUMfzaWF4
-	LLc0nvmAwzbjn/ntRcXeVAvQOXPJS+gv/7UVS
-X-Google-Smtp-Source: AGHT+IFN+5L8Zy7+Hnrc96LK5WeSb49IZ59brkNk4NXUJ6HqftStgtUU7GRQnbHmisIT1dsrtBDF17VQ5Tz/yjajEuE=
-X-Received: by 2002:a05:6512:350e:b0:53c:74dc:2252 with SMTP id
- 2adb3069b0e04-53c74dc2378mr320758e87.49.1730278349113; Wed, 30 Oct 2024
- 01:52:29 -0700 (PDT)
+	s=arc-20240116; t=1730278362; c=relaxed/simple;
+	bh=v7/nbc54GkOXJi2BxdMmj3tHMVBcVs/Y/X/RgkcMj0o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=izSNoaGe+///11A2FvwmqCHC1KPU+ApUeciquDjUPbQJB1B5BdYhJ0fOvuqG2x34E9pTjti4zPI9GybbxeiYt7HmSLDzhvEA7wIqyTgMWbnyomGjrA+htUBWzHalKblo/bc/qlzOSh8wioEexvaIOAyECggp015X96prX8BPT1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t64RH-0001yk-6A; Wed, 30 Oct 2024 09:52:27 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t64RF-001APC-1t;
+	Wed, 30 Oct 2024 09:52:25 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t64RF-00B2p4-1g;
+	Wed, 30 Oct 2024 09:52:25 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	havasi@efr.de
+Subject: [PATCH net-next v1] net: macb: avoid redundant lookup for "mdio" child node in MDIO setup
+Date: Wed, 30 Oct 2024 09:52:24 +0100
+Message-Id: <20241030085224.2632426-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029111309.737263-1-wenst@chromium.org> <d9177ba80fc78b1f74dc54260c0c43440ec5a804.camel@mediatek.com>
- <20241030-hot-peridot-falcon-57bdbb@houat> <0cfba5bdc9443fb4b9719c47ee93c2a467cc66bd.camel@mediatek.com>
-In-Reply-To: <0cfba5bdc9443fb4b9719c47ee93c2a467cc66bd.camel@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 30 Oct 2024 16:52:17 +0800
-Message-ID: <CAGXv+5EWyGGKYo+NNQ3Ykd3QUUO2cOManSnhZQaVhhCnupNx=Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Drop dependency on ARM
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-Cc: "mripard@kernel.org" <mripard@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, 
-	"ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "airlied@gmail.com" <airlied@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2024 at 4:48=E2=80=AFPM CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89)=
- <ck.hu@mediatek.com> wrote:
->
-> On Wed, 2024-10-30 at 09:25 +0100, mripard@kernel.org wrote:
-> > On Wed, Oct 30, 2024 at 03:30:34AM +0000, CK Hu (=E8=83=A1=E4=BF=8A=E5=
-=85=89) wrote:
-> > > Hi, Chen-yu:
-> > >
-> > > On Tue, 2024-10-29 at 19:13 +0800, Chen-Yu Tsai wrote:
-> > > > External email : Please do not click links or open attachments unti=
-l you have verified the sender or the content.
-> > > >
-> > > >
-> > > > The recent attempt to make the MediaTek DRM driver build for non-AR=
-M
-> > > > compile tests made the driver unbuildable for arm64 platforms. Sinc=
-e
-> > > > this is used on both ARM and arm64 platforms, just drop the depende=
-ncy
-> > > > on ARM.
-> > >
-> > > Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> > >
-> > > I find this days ago, but I don't know there is someone who apply it.
-> > > Let this patch go through drm-misc tree which already has the bug pat=
-ch.
-> >
-> > If you are ok with this patch, why didn't you apply it yourself?
-> >
-> > I think that's very much the expectation, so it's probably took a while=
- to merge.
->
-> That's ok for me to apply it if drm-misc has no plan to apply it.
+Pass the "mdio" child node directly to `macb_mdiobus_register` to avoid
+performing the node lookup twice.
 
-I'm confused. The culprit patch is already in drm-misc. So this one has
-to go in drm-misc as well.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/ethernet/cadence/macb_main.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
-I can try to apply it to drm-misc myself, or have a colleague assist with
-that. I'll let it sit for another day in case anyone has something to say
-about it.
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index ebe886b988917..daa416fb1724e 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -915,20 +915,15 @@ static int macb_mii_probe(struct net_device *dev)
+ 	return 0;
+ }
 
+-static int macb_mdiobus_register(struct macb *bp)
++static int macb_mdiobus_register(struct macb *bp, struct device_node *mdio_np)
+ {
+ 	struct device_node *child, *np = bp->pdev->dev.of_node;
 
-ChenYu
+ 	/* If we have a child named mdio, probe it instead of looking for PHYs
+ 	 * directly under the MAC node
+ 	 */
+-	child = of_get_child_by_name(np, "mdio");
+-	if (child) {
+-		int ret = of_mdiobus_register(bp->mii_bus, child);
+-
+-		of_node_put(child);
+-		return ret;
+-	}
++	if (mdio_np)
++		return of_mdiobus_register(bp->mii_bus, mdio_np);
+
+ 	/* Only create the PHY from the device tree if at least one PHY is
+ 	 * described. Otherwise scan the entire MDIO bus. We do this to support
+@@ -950,17 +945,15 @@ static int macb_mdiobus_register(struct macb *bp)
+
+ static int macb_mii_init(struct macb *bp)
+ {
+-	struct device_node *child, *np = bp->pdev->dev.of_node;
++	struct device_node *mdio_np, *np = bp->pdev->dev.of_node;
+ 	int err = -ENXIO;
+
+ 	/* With fixed-link, we don't need to register the MDIO bus,
+ 	 * except if we have a child named "mdio" in the device tree.
+ 	 * In that case, some devices may be attached to the MACB's MDIO bus.
+ 	 */
+-	child = of_get_child_by_name(np, "mdio");
+-	if (child)
+-		of_node_put(child);
+-	else if (of_phy_is_fixed_link(np))
++	mdio_np = of_get_child_by_name(np, "mdio");
++	if (!mdio_np && of_phy_is_fixed_link(np))
+ 		return macb_mii_probe(bp->dev);
+
+ 	/* Enable management port */
+@@ -984,7 +977,7 @@ static int macb_mii_init(struct macb *bp)
+
+ 	dev_set_drvdata(&bp->dev->dev, bp->mii_bus);
+
+-	err = macb_mdiobus_register(bp);
++	err = macb_mdiobus_register(bp, mdio_np);
+ 	if (err)
+ 		goto err_out_free_mdiobus;
+
+@@ -999,6 +992,8 @@ static int macb_mii_init(struct macb *bp)
+ err_out_free_mdiobus:
+ 	mdiobus_free(bp->mii_bus);
+ err_out:
++	of_node_put(mdio_np);
++
+ 	return err;
+ }
+
+--
+2.39.5
+
 
