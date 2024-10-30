@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-388335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B889B5E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:42:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BEC39B5E16
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B539EB2337E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145881F23AFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D11E1E1324;
-	Wed, 30 Oct 2024 08:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AEC1E1A20;
+	Wed, 30 Oct 2024 08:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="PJShXk6Q";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rlKazrdM"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LQqqRtlH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0ED71990C5;
-	Wed, 30 Oct 2024 08:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D4E1990C5;
+	Wed, 30 Oct 2024 08:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730277715; cv=none; b=TOXreLOiFyp0s7IRfTwGUQL5OsXu08RBvpOVlOrgxcdeaze0/mjv/Sk+dBX4flBlACgoj55hrxXUF8T7rKQHpAGy6bcEIRBjyRVORXhABaONgAz64Sn5ZiQY1vZ3/HovEPD9SvVQyt9YBgv+3zSTKTFRes1JoYt5eOYhR8ay3mM=
+	t=1730277758; cv=none; b=fbwgrf2xy4HA3NLY67IacMHTNFfJpFfFXzeXPH3JbLt27JLXxkSneLbFqWD76bOrK51EzQkEN8OVrWzT1zwckTxbI5M8yjJcpsAIhTxjXIN4lE3NO9vvaLiJ6ru9jjYTIxThFGJc0f/IdEhPJzfQvjcQlLqN/BDgCv9HvpzKqMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730277715; c=relaxed/simple;
-	bh=4K/WP62uPq6V560IiCzhbH2c1uA7hP9SMx44NCKtD0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XZ5gdnUoudfum4qTHRBc4QPNn5eTS/HGfHtY6UIFmIQWe3ZqWjneJZVQ7lxqsxWHcIuHXgxsors3QH5Z6GNoC3s2w86ZxKDwsExRSI1qgGmrIHQe/2PQ+yD6eizKIk1IfuYo6PCBUl+8tz1ciUiD4Gb9Rgv7TYIJHSJDsVLqx2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=PJShXk6Q; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rlKazrdM reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1730277711; x=1761813711;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kv28fZyUnvSoy7xLNeLLk5bmzedyTwjko9yL0PpBFlA=;
-  b=PJShXk6QxFc03OoE0v+jR+q97hrplFVQ9KRYGvoXldwYqocId7Lx8PIu
-   vaTarmV9MlJrQB4J2zPh3P7R5dJo4MHq4AB0tRYiWyJoP8WMwKI//WQpN
-   yVeAz8WuhitcsCsK6/fsuaHEQg1VHwpDWzf3rlBXPuhupOVVsZv90nTRu
-   K3Fxt0WUBTd5nNculXvKI3JA8E8S1krE2Pjz/feDT0pibTlkQT36QO7CM
-   kKc5qsJmws5R+P2AxcGeA5wMZxtWtc34aKfzrK+QjMgd4tHzWsGMMgX13
-   SSGGenYmK85AtAp2ySfERwj86QczO1c/ksMF8HmlZysQTwHquXnWyMQqI
-   Q==;
-X-CSE-ConnectionGUID: v0LiVWSLR7yMTkEUEYUWFw==
-X-CSE-MsgGUID: NUhZCbb9SeCskmtMKAn52Q==
-X-IronPort-AV: E=Sophos;i="6.11,244,1725314400"; 
-   d="scan'208";a="39755780"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 30 Oct 2024 09:41:48 +0100
-X-CheckPoint: {6721F14C-4-D31EDE1A-D52D6119}
-X-MAIL-CPID: 61672B9E44BD23F5585782F3A78BAD14_5
-X-Control-Analysis: str=0001.0A682F23.6721F14C.0071,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C7994160F31;
-	Wed, 30 Oct 2024 09:41:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1730277703; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=kv28fZyUnvSoy7xLNeLLk5bmzedyTwjko9yL0PpBFlA=;
-	b=rlKazrdMT7vl6dJMxpzGapJMT+rlSAnKUilGsMOxmFzH0t7ZtG/KUemS2lOgfRmA0MolXM
-	BUF1eGSg+peSa/i0hbN81YtmkBZrYF0GEMBY+hwCZjGUzjrD2n3dRsRC6RQiUoVFu6vxo6
-	Sinp8fEXV4uNSLuphCGplmxHCKuPwwx/9nS2HclaL7SJVj3j2IrzborRoRUhx1fJpK5tNp
-	hfWYB/AyVrQew2D8KsAo9mHU+7ZpvP6xLpvhtGL2UmA24DYWFccpvP9KYdbEJDouPn0NK8
-	5R2Wd0aPSc8QD3Ham80vFRXsDU/m5tjxayN3meO9TwT6V7J6UD1CxPQuztFTwA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: firmware: imx95-scmi: Allow linux,code for protocol@81
-Date: Wed, 30 Oct 2024 09:41:40 +0100
-Message-Id: <20241030084140.9704-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730277758; c=relaxed/simple;
+	bh=rD045AXbDGXk5YlOnxuclO0/yqk4Mc2QaasO79S+fW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qzO42cJ4u9pOpDcNSBlIVaJl6nfyLRhcnQAri5Wi0heBB3uGWNJ6saxXtFvmvWn/2BedpoJtD5CkZMjHDCMzzBJTOec7OdHvNVbpanA4jwn6wXzBKRybeWizodPsRiJiWrpAbwWX3AZ5k8aiml5WJeaEL9/lQXk+qtxJfZ/VkHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LQqqRtlH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TKgrSQ025601;
+	Wed, 30 Oct 2024 08:42:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MSvP7/3RNM+CGuEImEY5eY8ngBdgWS6T4On0LyxkaKI=; b=LQqqRtlHGlHypp5b
+	ybJK5HRvmQWDoLjBnmpPe9Myu8F8Uov9BmpVPBzJoM/ZAvpcWwTSCSZNz7jGa46U
+	ehY08g2OeQkxz7IuC8N3iV90ut5f814W9vjC2MIt3pT2VGvY84imZ0GeyL+0fBBY
+	yaEyVoNR8C3T9cXFliquLH6JpDgT+kOAYpnlnMqdWDK688bg2WDLLjEOWIzaMEXy
+	teyODgZgyQjjZq/Ki1p4IKkxE1gy2pOwmOPLKKXklu5USEFphycJg510hyRkhH6g
+	mHu+e/M80u+6F3Ec2VVN3kqdBsx3PW++SuTr0U5Cdoj4Wkbwm3aYczAud/oLLNou
+	LVaOZQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgukbjy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 08:42:27 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U8gQ9R031549
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 08:42:26 GMT
+Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 01:42:22 -0700
+Message-ID: <645c9887-4df2-4ab2-a048-ba79a97b8d2f@quicinc.com>
+Date: Wed, 30 Oct 2024 16:42:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: qcs615: add the SCM node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <robimarko@gmail.com>,
+        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+References: <20241025030732.29743-1-quic_qqzhou@quicinc.com>
+ <20241025030732.29743-4-quic_qqzhou@quicinc.com>
+ <flk7n534gfqyivlbl72qco4k5d3c6ravevumjfoh6464pe3qg4@r7ns6zr2i3bv>
+From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+In-Reply-To: <flk7n534gfqyivlbl72qco4k5d3c6ravevumjfoh6464pe3qg4@r7ns6zr2i3bv>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rDhdqv0yAmW8i4-a-bXxV1gUrAbklpUy
+X-Proofpoint-GUID: rDhdqv0yAmW8i4-a-bXxV1gUrAbklpUy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410300067
 
-BBM protocol supports a single power button, supported by driver
-imx-sm-bbm-key.c. By default this is KEY_POWER, but can also be overwritten
-using linux,code. Add a reference to this schema and add linux,code as a
-supported property.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Admittedly, I'm not sure if this is the correct way of referencing the
-linux,code from input.yaml.
 
- .../devicetree/bindings/firmware/nxp,imx95-scmi.yaml     | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi.yaml b/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi.yaml
-index 1a95010a546b1..112c3a3eb1980 100644
---- a/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi.yaml
-+++ b/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi.yaml
-@@ -12,13 +12,18 @@ maintainers:
- 
- properties:
-   protocol@81:
--    $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
--    unevaluatedProperties: false
-+    type: object
-+    allOf:
-+      - $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
-+      - $ref: /schemas/input/input.yaml#
-+    additionalProperties: false
- 
-     properties:
-       reg:
-         const: 0x81
- 
-+      linux,code: true
-+
-   protocol@84:
-     $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
-     unevaluatedProperties: false
--- 
-2.34.1
+在 10/25/2024 2:02 PM, Dmitry Baryshkov 写道:
+> On Fri, Oct 25, 2024 at 08:37:31AM +0530, Qingqing Zhou wrote:
+>> Add the SCM node for QCS615 platform. It is an interface to
+>> communicate to the secure firmware.
+>>
+>> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> index ac4c4c751da1..027c5125f36b 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> @@ -278,6 +278,13 @@
+>>  		reg = <0 0x80000000 0 0>;
+>>  	};
+>>  
+>> +	firmware {
+>> +		scm {
+>> +			compatible = "qcom,scm-qcs615", "qcom,scm";
+>> +			qcom,dload-mode = <&tcsr 0x13000>;
+> 
+> No CRYPTO clock?
+NO, response from Qualcomm clock team is "the current QCS615 RPMH code does not have the clock support for CE clock", so we don't configure clocks here.
+> 
+>> +		};
+>> +	};
+>> +
+>>  	camnoc_virt: interconnect-0 {
+>>  		compatible = "qcom,qcs615-camnoc-virt";
+>>  		#interconnect-cells = <2>;
+>> -- 
+>> 2.17.1
+>>
+> 
 
 
