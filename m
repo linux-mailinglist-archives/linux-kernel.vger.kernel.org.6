@@ -1,150 +1,78 @@
-Return-Path: <linux-kernel+bounces-388062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C489B5A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:36:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FA69B5A0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA251F24925
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:36:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D9DBB220D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039F11991DA;
-	Wed, 30 Oct 2024 02:35:50 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D904194151;
+	Wed, 30 Oct 2024 02:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW77qyAZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31215197531
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B03191F8A;
+	Wed, 30 Oct 2024 02:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730255749; cv=none; b=KpL7Jhf13bgzJR7s4LhgNuZr3x7ZP7M1dK3fBd333s472y2OPBjnYNe9tvMtLm8SO1HV55ttIyJuALbBvMEC3pkcywoSx35p4LdhTqbu2CBmsqSMpcfBZytCoB2HXpwYT6zc/e5f6h+f23SNKzAo88zFxNbW5MmZIYtNLNIptuc=
+	t=1730256261; cv=none; b=mSzzz12U/wF1tr1yNJiqnh71KivOoMWQIo85aQMft59mCT/J7iwibHZQKEXWgHrzUaTxFTIbwRjth20mQcGDw/u9RiB4Y1Ky4gyABH7/acOxo7azP4sVYZPp4IjOdtYrtHUbKbv4JUCOH72Nd4GKyKgTZ3+QXDsdmMq74ZzghSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730255749; c=relaxed/simple;
-	bh=azXntv+UyVFnf1m8MaiGbtyNsBRlg6UhTczO4U4Ra4I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SnqCXvRHpzeecBzZZoJUen36/hxnsUTVHf3iIB8jnRTjqFNovoK4Cms+eY38CCAMRVkZYEEt/9YElq95wevfMkA8J8EeSZYIJmwXcts9pJIzG7OxnmAcX/MkRtuJbSlzJcZfCHpLCIeLJZSEmABl21P7ITTlkifMEfybgh/jumg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdWMc71fmz1HLp5;
-	Wed, 30 Oct 2024 10:31:08 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 23EFD180043;
-	Wed, 30 Oct 2024 10:35:37 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 30 Oct
- 2024 10:35:36 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<dmitry.baryshkov@linaro.org>, <dave.stevenson@raspberrypi.com>,
-	<quic_jjohnson@quicinc.com>, <mcanal@igalia.com>,
-	<skhan@linuxfoundation.org>, <davidgow@google.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v4 3/3] drm/tests: hdmi: Fix memory leaks in drm_display_mode_from_cea_vic()
-Date: Wed, 30 Oct 2024 10:35:04 +0800
-Message-ID: <20241030023504.530425-4-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241030023504.530425-1-ruanjinjie@huawei.com>
-References: <20241030023504.530425-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1730256261; c=relaxed/simple;
+	bh=0ghpe4D3b5OMK48zde4csZNO1vsmy0T9ep+8bPI8Xs4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KxHYVf3qJ1R1pjse2KvDCcAg9sXcjYqda3G55DqtM58nOTkQp2e4z5sA4l3AvyBia8IiN7Yz5voj2/GeSyRxKCtgADXUjFWeaDpJJ6Ru417mvfwSe6EbnNolvq9xea1sO0OfscKqzSx9t1LMrrxi/slXpoWH/SBULIdIjqfRYGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW77qyAZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D82C4CECD;
+	Wed, 30 Oct 2024 02:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730256261;
+	bh=0ghpe4D3b5OMK48zde4csZNO1vsmy0T9ep+8bPI8Xs4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=VW77qyAZzE73UvvGzcNZS3fomWVtYlAQmfyyZcPw8MUiP+LEhQ2MSGQkSmA9m3jsL
+	 OCWNqHCeGiiC9jpg4xzoWrrMsZSP+k1boC/e+fXOQ2dvRpkLay88HUOmnzWZk5ImA9
+	 K1VCIHGyM7x4iBS6JTGWqexL11ohA+N/SIiRlatSlLBtrok9F4PC4bg2ohZHWXACyv
+	 ZWjxUR43JjHXNOipqkwf8HZojuEWy1EYmmk/1Q75dyge7JFi0KynA67XG9AA9APouN
+	 MklefliOqPj5nemqUAc0jlqq8qSgbbo66z4hGSe6ycinntVYxI1fQzOupWCUeAK1W2
+	 ZwHtgJsROg96A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71134380AC00;
+	Wed, 30 Oct 2024 02:44:30 +0000 (UTC)
+Subject: Re: [GIT PULL V2] hotfixes for 6.12-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241028223738.bb14a8723e947d40f3711007@linux-foundation.org>
+References: <20241028223738.bb14a8723e947d40f3711007@linux-foundation.org>
+X-PR-Tracked-List-Id: <mm-commits.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241028223738.bb14a8723e947d40f3711007@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-10-28-21-50
+X-PR-Tracked-Commit-Id: 01626a18230246efdcea322aa8f067e60ffe5ccd
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9251e3e93cf2892641539c184294838adedae415
+Message-Id: <173025626914.893735.8352324667615241008.pr-tracker-bot@kernel.org>
+Date: Wed, 30 Oct 2024 02:44:29 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
 
-modprobe drm_hdmi_state_helper_test and then rmmod it, the following
-memory leak occurs.
+The pull request you sent on Mon, 28 Oct 2024 22:37:38 -0700:
 
-The `mode` allocated in drm_mode_duplicate() called by
-drm_display_mode_from_cea_vic() is not freed, which cause the memory leak:
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-10-28-21-50
 
-	unreferenced object 0xffffff80ccd18100 (size 128):
-	  comm "kunit_try_catch", pid 1851, jiffies 4295059695
-	  hex dump (first 32 bytes):
-	    57 62 00 00 80 02 90 02 f0 02 20 03 00 00 e0 01  Wb........ .....
-	    ea 01 ec 01 0d 02 00 00 0a 00 00 00 00 00 00 00  ................
-	  backtrace (crc c2f1aa95):
-	    [<000000000f10b11b>] kmemleak_alloc+0x34/0x40
-	    [<000000001cd4cf73>] __kmalloc_cache_noprof+0x26c/0x2f4
-	    [<00000000f1f3cffa>] drm_mode_duplicate+0x44/0x19c
-	    [<000000008cbeef13>] drm_display_mode_from_cea_vic+0x88/0x98
-	    [<0000000019daaacf>] 0xffffffedc11ae69c
-	    [<000000000aad0f85>] kunit_try_run_case+0x13c/0x3ac
-	    [<00000000a9210bac>] kunit_generic_run_threadfn_adapter+0x80/0xec
-	    [<000000000a0b2e9e>] kthread+0x2e8/0x374
-	    [<00000000bd668858>] ret_from_fork+0x10/0x20
-	......
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9251e3e93cf2892641539c184294838adedae415
 
-Free `mode` by using drm_kunit_display_mode_from_cea_vic()
-to fix it.
+Thank you!
 
-Cc: stable@vger.kernel.org
-Fixes: 4af70f19e559 ("drm/tests: Add RGB Quantization tests")
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v3:
-- Update the commit message.
-- Add Acked-by.
-v2:
-- Fix it with new introduced helper instead of drm_mode_destroy().
-- Update the commit message.
----
- drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-index 34ee95d41f29..294773342e71 100644
---- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-+++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-@@ -441,7 +441,7 @@ static void drm_test_check_broadcast_rgb_auto_cea_mode_vic_1(struct kunit *test)
- 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
- 
--	mode = drm_display_mode_from_cea_vic(drm, 1);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	drm = &priv->drm;
-@@ -555,7 +555,7 @@ static void drm_test_check_broadcast_rgb_full_cea_mode_vic_1(struct kunit *test)
- 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
- 
--	mode = drm_display_mode_from_cea_vic(drm, 1);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	drm = &priv->drm;
-@@ -671,7 +671,7 @@ static void drm_test_check_broadcast_rgb_limited_cea_mode_vic_1(struct kunit *te
- 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
- 
--	mode = drm_display_mode_from_cea_vic(drm, 1);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	drm = &priv->drm;
-@@ -1263,7 +1263,7 @@ static void drm_test_check_output_bpc_format_vic_1(struct kunit *test)
- 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
- 
--	mode = drm_display_mode_from_cea_vic(drm, 1);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	/*
 -- 
-2.34.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
