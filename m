@@ -1,83 +1,140 @@
-Return-Path: <linux-kernel+bounces-388298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73AE9B5D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:07:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2929B5D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913241F23E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3EF1284629
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA531E04BC;
-	Wed, 30 Oct 2024 08:07:28 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6941E0489;
+	Wed, 30 Oct 2024 07:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyf0LMJf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A88333E1;
-	Wed, 30 Oct 2024 08:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFF533E1;
+	Wed, 30 Oct 2024 07:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730275648; cv=none; b=kCZLxOK5/x74btLDeK7BPK0ahBZ+KgfnLBJw/xlOK1QSbpehIBMuyCsBqBysb2viJCA1wfB+xX4BoeYGaQ9shM0tiRAYMH+9Tg5KXsuswg2FgR4HuNNuSdPHnDBozq+79Mlw17Ph3Ox1jTCbF4VVwA0cCQTDvjZPtGGcmhMUhVk=
+	t=1730274729; cv=none; b=U8mb9Azx10J5smgYGoPA6r+rQdg4dowGLKELwIHZq9JJ54dTJHwhthc7xShNxowBV9/uMIyvSPM7eiyaFkzYAYJOdXDC6sEXCXE7WWYxq+6FXEhe9kyQJK1rqiff5LVCqz3i5rhmYYtOH7R8PA+YX4CpVLs1jMhG0EHOkSr45yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730275648; c=relaxed/simple;
-	bh=AY4UigibdlHyc7P72ece5G/HJMeI6L0dArw/r4tMTMU=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bhKJ2L4nEVPEFjqbwLoeHDgopaOxlGCYz1g0diXhKwZHiHOBlTWmcF9vEbiwY3ad+gYbhsJSKzdC2SbQ0hJ4anJYGYZ2bJTyUZtCF7mcBkJnOomcR0GCmnJmzJI2941ZU73TRACDsiSYd4z4DJPqugE7rHqIvnzXmU6yyM46rz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com"
-	<mingo@redhat.com>, "acme@kernel.org" <acme@kernel.org>,
-	"namhyung@kernel.org" <namhyung@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "jolsa@kernel.org" <jolsa@kernel.org>,
-	"irogers@google.com" <irogers@google.com>, "adrian.hunter@intel.com"
-	<adrian.hunter@intel.com>, "kan.liang@linux.intel.com"
-	<kan.liang@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "zhiquan1.li@intel.com"
-	<zhiquan1.li@intel.com>
-Subject: Re: Re: [PATCH] perf/x86/intel/bts: allocate bts_ctx only if
- necessary
-Thread-Topic: Re: [PATCH] perf/x86/intel/bts: allocate bts_ctx only if
- necessary
-Thread-Index: AdsqoCQMn7HthvF5RJCIQTlmmSLYkA==
-Date: Wed, 30 Oct 2024 07:50:20 +0000
-Message-ID: <6d59c9067b7e4711a1ea7236d639a3c2@baidu.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1730274729; c=relaxed/simple;
+	bh=vrq3Hj0eASMy2KLVd52CUc8legLz7mDW/VncF6IQKRk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HPTbywzR5PMqGoblaXgzILbqOOsPGjYeMeSN7/vpw3QIJIwJZ7OJZIphyX+uIFGD0BmFI1eALNoV+hz5uRVuoHHOTpToPRP6fMvc6UaZFouo41DoE2pQUIcU1QYBAAR5/oVO5jKHIoH6u5CzrK0GhiPI2cH0w7HWu/qLrsINbKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyf0LMJf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBD3C4CEE4;
+	Wed, 30 Oct 2024 07:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730274729;
+	bh=vrq3Hj0eASMy2KLVd52CUc8legLz7mDW/VncF6IQKRk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=fyf0LMJf7Dtu1xwovWtcG6BfS649d4d36jLDwt+BeNQyBUsWZQ/X0tcmIebTw/E9U
+	 aVV6KA+GAnRHC10my9qHaHTRstRTBSD8dW6oLM1GoPMFE2BhLQBO5vyPCezZzQ2dnZ
+	 +oDU45jvPEjKOX5qC77au6BuHcBFxOH7cNEDQIboSQbRKzACVfaJKensFd8+PzY6Z3
+	 bD2+bzGtuFPaTXfmMiJXEtpXafSuwz1KoCLyUgJNkPH7DiwWDFJ9uz/IkGg8gpf4ta
+	 g7Q+Mnthdgki4eFXTeWepnFh4HvsyZ/yYE8EG2Uij/iTGTHjMMoL9qSrfwU2vRA1R0
+	 J6Xt04LlfhfPA==
+X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>
+Subject: Re: [PATCH v5 17/43] arm64: RME: Allow VMM to set RIPAS
+In-Reply-To: <4075a8bc-2f1e-441d-815e-aaf83e88d3d0@arm.com>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-18-steven.price@arm.com>
+ <4075a8bc-2f1e-441d-815e-aaf83e88d3d0@arm.com>
+Date: Wed, 30 Oct 2024 13:22:00 +0530
+Message-ID: <yq5afroec9jz.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 10.127.64.36
-X-FE-Last-Public-Client-IP: 100.100.100.38
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain
 
-> > Avoid unnecessary per-CPU memory allocation on unsupported CPUs, this
-> > can save 12K memory for every CPU
->=20
-> Looks reasonable, but have you tested it? This driver is in serious dange=
-r of
-> bitrot ever since KPTI. It might save even more if we simply remove the w=
-hole
-> thing.
->=20
+Suzuki K Poulose <suzuki.poulose@arm.com> writes:
 
-I fine to remove it, Could you send a patch to remove it
+> Hi Steven
+>
+>
+>> +	if (WARN_ON(rmi_granule_undelegate(phys))) {
+>> +		/* Undelegate failed: leak the page */
+>> +		return;
+>> +	}
+>> +
+>> +	free_page((unsigned long)phys_to_virt(phys));
+>
+> The above pattern of undelegate and reclaim a granule or leak appears 
+> elsewhere in the KVM support code. Is it worth having a common helper to
+> do the same ?
+>
+> something like: reclaim_delegated_granule()
+>
 
-Thank
+free_delegated_page() which should really be renamed to
+free_delegated_granule() essentially does that.
 
--Li
+IMHO we should convert all the delgated allocation and free to
+alloc_delegated_granule() and free_delegated_granule(). This will also
+help in switching to a slab for granule allocation. 
+
+>
+>
+>> +}
+>> +
+>> +static int realm_rtt_create(struct realm *realm,
+>> +			    unsigned long addr,
+>> +			    int level,
+>> +			    phys_addr_t phys)
+>> +{
+>> +	addr = ALIGN_DOWN(addr, rme_rtt_level_mapsize(level - 1));
+>> +	return rmi_rtt_create(virt_to_phys(realm->rd), phys, addr, level);
+>> +}
+
+.......
+
+>> +static void realm_unmap_range_private(struct kvm *kvm,
+>> +				      unsigned long start,
+>> +				      unsigned long end)
+>> +{
+>> +	struct realm *realm = &kvm->arch.realm;
+>> +	ssize_t map_size = RME_PAGE_SIZE;
+>> +	unsigned long next_addr, addr;
+>> +
+>> +	for (addr = start; addr < end; addr = next_addr) {
+>> +		int ret;
+>> +
+>> +		next_addr = ALIGN(addr + 1, map_size);
+>> +
+
+Is that next_addr update needed? 
+
+
+>> +		ret = realm_destroy_protected(realm, addr, &next_addr);
+>> +
+>> +		if (WARN_ON(ret))
+>> +			break;
+>
 
