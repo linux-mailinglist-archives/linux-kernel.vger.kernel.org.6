@@ -1,206 +1,296 @@
-Return-Path: <linux-kernel+bounces-389439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC819B6D23
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:53:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F3F9B6D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820601C21903
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:53:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351B61C21826
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84791D0DC8;
-	Wed, 30 Oct 2024 19:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005D01D0DF2;
+	Wed, 30 Oct 2024 19:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SCcvWB4X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gt5ZLZsX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9FB1C3F01;
-	Wed, 30 Oct 2024 19:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BD21D07A2;
+	Wed, 30 Oct 2024 19:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730318017; cv=none; b=Ta5Vu2OG7ABP0cnD0JQc5PKV7FZ0R1r49Pb2DZ5g1X1cuHxg4bOWVOpQDvbCvUreDZeJWBhwojEW+HIo+7dFEsNYZg+Lv9aVkpW1Fxv0f4Pnqb4/G/UvIFscXaLp+ZKiBm0s1lJBrA3ADhKE+NlJuVGCi6ugKXFMWHE4TrxivW8=
+	t=1730318046; cv=none; b=OV6IUTAa1JXkt6OdzS8maNLIRPXBYV5gZZZ4x6jDkalHEEhFboyPnB9BINhJEWO5/2RiVzNihhM+hMGVnffgc1tlp+jtFLnb36pqjeiYkM9JJAdHUbGBAlWY6JYVgWhuhg35d1B1zykSRPdQar1AZ6uLVwZFdh0GPJRwXobPVX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730318017; c=relaxed/simple;
-	bh=wyt0dBMKgnMl5ZM1MfC4za/eAJFFeRWrQfZ8t4y/fYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jfI3apxVcs9/bUo4DlSNtMZRl3szUTzmgu632h2acxlOnYt6c1sOZL+eiei24V/FayxHEWMDpxaRKDbJixT5aCIjGH0H4X8/JB+8eNOj1yjzrUgBWcTMet8Z5Pup5qDLdMnTEZfXEo37iEq5r9PFgmYyrOzz46we1dYvbOS+ZM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SCcvWB4X; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730318014; x=1761854014;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wyt0dBMKgnMl5ZM1MfC4za/eAJFFeRWrQfZ8t4y/fYM=;
-  b=SCcvWB4XUSRxEwUrqgzbQDQ71Rb3PvuRQlNDZWTksqbQnOdJU63CY8o+
-   /KLmYB1ihHi33B6t2C/570auLuEFZVVSLMUXw+NPIHInHMqnCRKlcqLWg
-   gW7bwyMW0dhNrnCvxPwJhDyWYE+brAb40lJeuEQ90Pe/vATxgZx/506xa
-   YrqzblJSq/KfAXpyLuTGNqwKVhu4vO4OEfbvYkfpuYwYHBhr2g7H76wcY
-   gB3pqJ1h+XmSlVFSlmTnDxF7c/RedDaYN3JiH5PijwTN0Wcjl4B3E3qnn
-   gYwzOi4c9XEHG3Omf+teRYuKOuZwBwJ0jSN2wPWzigNn6ZBdyc4RxjurY
-   A==;
-X-CSE-ConnectionGUID: li1hay2fTxakTgoILPl8qg==
-X-CSE-MsgGUID: xA5njYveTjGMOM2MuV9IFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30232632"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30232632"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 12:53:34 -0700
-X-CSE-ConnectionGUID: vSzTMaDxR56N3mVuaCpRoA==
-X-CSE-MsgGUID: I+tDLQUZRwSJNEDQJmbdSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="86358492"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 30 Oct 2024 12:53:31 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6Ekz-000fFo-1b;
-	Wed, 30 Oct 2024 19:53:29 +0000
-Date: Thu, 31 Oct 2024 03:53:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, broonie@kernel.org,
-	miquel.raynal@bootlin.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: Re: [PATCH] spi: spi-mem: rtl-snand: Correctly handle DMA transfers
-Message-ID: <202410310358.GyKQwhxO-lkp@intel.com>
-References: <20241029215159.1975844-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1730318046; c=relaxed/simple;
+	bh=6dgFv0ScZrtTIDtWns7r3IG7FX5zk+FYzLYFQLcuGqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uo5lehf2+lJ30fNpZmUvf1/fajc/l3e4sVRMYCQvlickCTmQUi40p1lJpBC7ccKQKNSzvPToujTqOwVsCaJ7k6ez8MNKgY14UBQjdKAJQUx/hrgNekaNKTRcXpmdpPktlThjjXh9m29cfmHabw9Eza6tVT7bD2Nj+elx0TJXnTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gt5ZLZsX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A881EC4CED3;
+	Wed, 30 Oct 2024 19:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730318045;
+	bh=6dgFv0ScZrtTIDtWns7r3IG7FX5zk+FYzLYFQLcuGqk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gt5ZLZsXcgHmv/c/pccmqH1QKWVp4l3/4yyZEdeO8+BBqBeLkV82X9r9rG0EwU1Z9
+	 snisbAnIJpI1pqqIXTmkZ4c1qdiKYe+ZFa40Fe1gUs//Jx5vJ/Okv+n5uqKbfDsZs+
+	 /4L0XkklQ0nEijn33Zjkrj/gl05xWWzuTEq7JsBKIlf/6QMCXthDRVrv6PWfuw79uF
+	 KPP3hdQN5OdR+uTDROurC7hjHe98/q48UmsWScw/nxHH219qSHQysL5x+9P105cLWR
+	 MtpD2RUm8qGxu1e/SVGDgUg/FSMxHbDPt+JBULWbWfIiBZFYagu8OpSKKRAM0ihpib
+	 5S21u19ta/OqQ==
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7180cc146d8so91941a34.0;
+        Wed, 30 Oct 2024 12:54:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdFZXPMsFvLlGRIQyMChMUAuuiqI0CsKMe7+SB6yH6H4Iwc1Jlt89t1LPixENXkrwWpWX/SdupPwaeSb4=@vger.kernel.org, AJvYcCWasKpnSm8YVSgaFZZaTuDIXPVdfS1LFNpA1GXz/Jg36toQgcU49CsU6QSH1oQRzTsDss00zKeD5Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX+9T8k2razrlUChoD4CNff1Ohnv5XYYz34C/D2gKClMx90bLP
+	IhiomNcZEMNQLSBVIHdZcd6ZIkBntvfRyCPQ59adn/+fKOIjeVJXX1Jezfj36lsvxiExaoSnjzG
+	V0kRaUHH67/bumMVnLalLOn8/idE=
+X-Google-Smtp-Source: AGHT+IHAP0IXH1cTeJej5GFb0EKHw585EkuL1Jg2TTCm09EUI1wB7fOJUMzdgLpH1LTeobOnFSE4Z34nK9iVaqAQ+OI=
+X-Received: by 2002:a05:6871:3a0c:b0:25e:1711:90e3 with SMTP id
+ 586e51a60fabf-2946467a3c8mr4859696fac.2.1730318044935; Wed, 30 Oct 2024
+ 12:54:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029215159.1975844-1-chris.packham@alliedtelesis.co.nz>
+References: <20241029101507.7188-1-patryk.wlazlyn@linux.intel.com>
+ <20241029101507.7188-3-patryk.wlazlyn@linux.intel.com> <e332a243-5a98-49ed-81be-b6db305d5dc5@intel.com>
+ <35946efe3b8b8b686ba4ea0ed5c9f15c50ca6ef8.camel@linux.intel.com> <000fd68e-2b24-4eb3-b2d7-e4856b403212@intel.com>
+In-Reply-To: <000fd68e-2b24-4eb3-b2d7-e4856b403212@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 30 Oct 2024 20:53:53 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0j+Qc+5PtPdsDy5B0iAGWOxYbKdUOkVmL_jPNVO8fNK=g@mail.gmail.com>
+Message-ID: <CAJZ5v0j+Qc+5PtPdsDy5B0iAGWOxYbKdUOkVmL_jPNVO8fNK=g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] x86/smp: Allow forcing the mwait hint for play
+ dead loop
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+On Wed, Oct 30, 2024 at 8:32=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
+>
+> On 10/30/24 02:58, Artem Bityutskiy wrote:
+> > On Tue, 2024-10-29 at 11:30 -0700, Dave Hansen wrote:
+> > 1. Could we at least set up a few rules here?  Like, say what the hints
+> > are, what values can they have?
+> >
+> > The hints are 8-bit values, lower 4 bits define "sub-state", higher 4 b=
+its
+> > define the state.
+> >
+> > The state value (higher 4 bits) correspond to the state enumerated by C=
+PUID leaf
+> > 5 (Value 0 is C0, value 1 is C1, etc). The sub-state value is an opaque=
+ number.
+> >
+> > The hint is provided to the mwait instruction via EAX.
+>
+> OK, so can you distill that down to something succinct and get it in a
+> comment above the new function, please?
+>
+> > 2. Where do they come from?
+> >
+> > Hardware C-states are defined by the specific platform (e.g., C1, C1E, =
+CC6,
+> > PC6). Then they are "mapped" to the SDM C-states (C0, C1, C2, etc). The=
+ specific
+> > platform defines the hint values.
+> >
+> > Intel typically provides the hint values in the EDS (External Design
+> > Specification) document. It is typically non-public.
+> >
+> > Intel also discloses the hint values for open-source projects like Linu=
+x, and
+> > then Intel engineers submit them to the intel_idle driver.
+> >
+> > Some of the hints may also be found via ACPI _CST table.
+>
+> What about the mwait_play_dead() loop that calculates the hint?  Doesn't
+> that derive the hint from CPUID?
+>
+> > 3. Can this get called more than once?
+> >
+> > It is not supposed to. The idea is that if a driver like intel_idle is =
+used, it
+> > can call 'set_mwait_play_dead_hint()' and provide the most optimal hint=
+ number
+> > for the offline code.
+>
+> There are two important nuggets in there:
+>
+> First, an idle driver can but is not required to set the hint.  This
+> would be good comment material.
+>
+> Second, only one thing is supposed to set the hint.  This is a good
+> thing to WARN() about.
+>
+> > 4. Does it _need_ to be set?
+> >
+> > No. It is more of an optimization. But it is an important optimization =
+which may
+> > result in saving a lot of money in a datacenter.
+> >
+> > Typically using a "wrong" hint value is non-fatal, at least I did not s=
+ee it
+> > being fatal so far. The CPU will map it to some hardware C-state reques=
+t, but
+> > which one - depends on the "wrong" value and the CPU. It just may be su=
+b-
+> > optimal.
+>
+> OK, so this tells me we *don't* want some kind of:
+>
+>         WARN_ON(play_dead_mwait_hint =3D=3D PLAY_DEAD_MWAIT_HINT_UNSET);
+>
+> warning.
+>
+> > 5. What's the behavior when it is not set?
+> >
+> > The offline code will fall-back to the generic non-architectural algori=
+thm,
+> > which provides correct results for all server platforms I dealt with si=
+nce 2017.
+> > It should provide the correct hint for most client platforms, as far as=
+ I am
+> > aware.
+> >
+> > Sierra Forest Xeon is the first platform where the generic algorithm pr=
+ovides a
+> > sub-optimal value 0x21. It is not fatal, just sub-optimal.
+>
+> What is the non-architectural algorithm?  Which Linux code are you
+> referring to?
+>
+> > Note: I am working with Intel firmware team on having the FW "re-mappin=
+g" hint
+> > 0x21 to hint 0x23, so that "unaware" Linux kernel also ends up with req=
+uesting
+> > the deepest C-state for an offline CPU.
+>
+> That would be great as well.  Thanks for doing that!
+>
+> > 6. Who is responsible for calling this?
+> >
+> > The idea for now is that the intel_idle driver calls it.
+> >
+> > But in theory, in the future, any driver/platform code may call it if i=
+t "knows"
+> > what's the most optimal hint, I suppose. I do not have a good example t=
+hough.
+>
+> So let's look at how this works:
+>
+> void native_play_dead(void)
+> {
+> ...
+>         mwait_play_dead();
+>         if (cpuidle_play_dead())
+>                 hlt_play_dead();
+> }
+>
+> This _existing_ code has three different ways of playing dead (in this
+> order of preference):
+>
+>  1. mwait
+>  2. cpuidle
+>  3. hlt
+>
+> It has (at least) two different mechanisms for telling which of these to
+> call:
+>
+>   1. mwait has a bunch of built-in logic that will ensure the CPU
+>      should use for playing dead.  If not, it does nothing and returns.
+>   2. cpuidle_play_dead() (only used by acpi_idle_driver as far as I can
+>      tell) will return an error if it does not support playing dead
+>
+> If 1 and 2 fail, then hlt_play_dead() gets called.
+>
+> But the really fun part of this is that idle driver is *called* here.
 
-kernel test robot noticed the following build warnings:
+Currently, cpuidle_play_dead() is for the cases when MWAIT is not supported=
+.
 
-[auto build test WARNING on broonie-spi/for-next]
-[also build test WARNING on next-20241030]
-[cannot apply to linus/master v6.12-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> The driver that is also responsible for overriding the mwait hint.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/spi-spi-mem-rtl-snand-Correctly-handle-DMA-transfers/20241030-055313
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/20241029215159.1975844-1-chris.packham%40alliedtelesis.co.nz
-patch subject: [PATCH] spi: spi-mem: rtl-snand: Correctly handle DMA transfers
-config: nios2-randconfig-r131-20241030 (https://download.01.org/0day-ci/archive/20241031/202410310358.GyKQwhxO-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241031/202410310358.GyKQwhxO-lkp@intel.com/reproduce)
+So no, intel_idle is not called there because it only uses MWAIT.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410310358.GyKQwhxO-lkp@intel.com/
+> So this series opts to have the boot code plumb the hint back into a
+> basically undocumented global variable while also assuming that the
+> system is *going* to use mwait.  It then does *nothing* with the
+> callback just adjacent to the code it wants to modify.
+>
+> Seems rather spaghetti-like to me.
+>
+> To make it worse, go look at da6fa7ef67f0 ("x86/smpboot: Don't use
+> mwait_play_dead() on AMD systems").  It hacks AMD-specific code in
+> mwait_play_dead() just to force the cpuidle code to get called.
+>
+> What if we did this?  First, introduce a helper:
+>
+>         bool mwait_play_dead_with_hint(u32 hint)
+>
+> and then restructure native_play_dead() to look like this:
+>
+> static mwait_play_dead_generic(void)
+> {
+>         u32 hint =3D get_deepest_mwait_hint();
+>
+>         return mwait_play_dead_with_hint(hint);
+> }
+>
+> void native_play_dead(void)
+> {
+>         bool used;
+>
+>         used =3D cpuidle_play_dead();
+>         if (used)
+>                 return;
+>
+>         used =3D mwait_play_dead_generic();
+>         if (used)
+>                 return;
+>
+>         hlt_play_dead();
+> }
+>
+> If the cpuidle drivers want to use mwait with a different hint, they
+> override the *EXISTING* drv->states[].enter_dead() functionality and
+> call mwait_play_dead_with_hint() with their new hint.  Then they don't
+> need to pass anything _over_ to the mwait code.
+>
+> Wouldn't something like that makes this all much more straightforward?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/spi/spi-realtek-rtl-snand.c:252:21: sparse: sparse: incorrect type in assignment (different modifiers) @@     expected void *[assigned] buf @@     got void const *const out @@
-   drivers/spi/spi-realtek-rtl-snand.c:252:21: sparse:     expected void *[assigned] buf
-   drivers/spi/spi-realtek-rtl-snand.c:252:21: sparse:     got void const *const out
+Well, except for one detail which is this beautiful thing in mwait_play_dea=
+d():
 
-vim +252 drivers/spi/spi-realtek-rtl-snand.c
+if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT) {
+    /*
+     * Kexec is about to happen. Don't go back into mwait() as
+     * the kexec kernel might overwrite text and data including
+     * page tables and stack. So mwait() would resume when the
+     * monitor cache line is written to and then the CPU goes
+     * south due to overwritten text, page tables and stack.
+     *
+     * Note: This does _NOT_ protect against a stray MCE, NMI,
+     * SMI. They will resume execution at the instruction
+     * following the HLT instruction and run into the problem
+     * which this is trying to prevent.
+     */
+    WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
+    while(1)
+         native_halt();
 
-   231	
-   232	static int rtl_snand_dma_xfer(struct rtl_snand *snand, int cs, const struct spi_mem_op *op)
-   233	{
-   234		unsigned int pos, nbytes;
-   235		int ret;
-   236		dma_addr_t buf_dma;
-   237		enum dma_data_direction dir;
-   238		u32 trig, len, maxlen;
-   239		void *buf;
-   240	
-   241		ret = rtl_snand_xfer_head(snand, cs, op);
-   242		if (ret)
-   243			goto out_deselect;
-   244	
-   245		if (op->data.dir == SPI_MEM_DATA_IN) {
-   246			maxlen = 2080;
-   247			buf = op->data.buf.in;
-   248			dir = DMA_FROM_DEVICE;
-   249			trig = 0;
-   250		} else if (op->data.dir == SPI_MEM_DATA_OUT) {
-   251			maxlen = 520;
- > 252			buf = op->data.buf.out;
-   253			dir = DMA_TO_DEVICE;
-   254			trig = 1;
-   255		} else {
-   256			ret = -EOPNOTSUPP;
-   257			goto out_deselect;
-   258		}
-   259	
-   260		buf_dma = dma_map_single(snand->dev, buf, op->data.nbytes, dir);
-   261		ret = dma_mapping_error(snand->dev, buf_dma);
-   262		if (ret)
-   263			goto out_deselect;
-   264	
-   265		ret = regmap_write(snand->regmap, SNAFDIR, SNAFDIR_DMA_IP);
-   266		if (ret)
-   267			goto out_unmap;
-   268	
-   269		ret = regmap_update_bits(snand->regmap, SNAFCFR, SNAFCFR_DMA_IE, SNAFCFR_DMA_IE);
-   270		if (ret)
-   271			goto out_unmap;
-   272	
-   273		pos = 0;
-   274		len = op->data.nbytes;
-   275	
-   276		while (pos < len) {
-   277			nbytes = len - pos;
-   278			if (nbytes > maxlen)
-   279				nbytes = maxlen;
-   280	
-   281			reinit_completion(&snand->comp);
-   282	
-   283			ret = regmap_write(snand->regmap, SNAFDRSAR, buf_dma + pos);
-   284			if (ret)
-   285				goto out_disable_int;
-   286	
-   287			pos += nbytes;
-   288	
-   289			ret = regmap_write(snand->regmap, SNAFDLR,
-   290					CMR_WID(op->data.buswidth) | nbytes);
-   291			if (ret)
-   292				goto out_disable_int;
-   293	
-   294			ret = regmap_write(snand->regmap, SNAFDTR, trig);
-   295			if (ret)
-   296				goto out_disable_int;
-   297	
-   298			if (!wait_for_completion_timeout(&snand->comp, usecs_to_jiffies(20000)))
-   299				ret = -ETIMEDOUT;
-   300	
-   301			if (ret)
-   302				goto out_disable_int;
-   303		}
-   304	
-   305	out_disable_int:
-   306		regmap_update_bits(snand->regmap, SNAFCFR, SNAFCFR_DMA_IE, 0);
-   307	out_unmap:
-   308		dma_unmap_single(snand->dev, buf_dma, op->data.nbytes, dir);
-   309	out_deselect:
-   310		rtl_snand_xfer_tail(snand, cs);
-   311	
-   312		if (ret)
-   313			dev_err(snand->dev, "transfer failed %d\n", ret);
-   314	
-   315		return ret;
-   316	}
-   317	
+clearly referred to as a kexec() hack, which cannot be done in
+cpuidle_play_dead() because the cpuidle driver doesn't know how to get
+to md->control.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+And even if it did, it is kind of not its business to deal with this stuff.
 
