@@ -1,107 +1,340 @@
-Return-Path: <linux-kernel+bounces-389270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9B99B6ACB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:20:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905DE9B6AD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D549A2813B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3B71F22CD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613FE217468;
-	Wed, 30 Oct 2024 17:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E30E21766F;
+	Wed, 30 Oct 2024 17:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nl+hqb0w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ggoZYOY+"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82EA1E9064;
-	Wed, 30 Oct 2024 17:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC7E1E32D8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730308541; cv=none; b=G7xo9G58L3ar/D6rELnkjwCphxVj75a5W3sG/4CillgoCt69IgGZLK+IyVTz595vG+umktbh140uB592agFrv4DtGgNr+VWYkSYfyg5CHN4TlS7IU6xgcSH0DbQ4TSPf0/wqAj9/L+3dCblycrhy6Wsoq1R5dSOLGM8xo5DNlm4=
+	t=1730308599; cv=none; b=OqRMSvYwVLIAzUQhbLK4dbpvp9Zr299+gDjWqTuvArJqxYYus9uKh7NWAVVKnhLf6QNPBohN3RT4DWNlEwBNgA1mET0PwoExGkotoHTh4sp9LMpN2w+0RXYzwKFYEpcRfnixCcr7r+uLN/EUJgAx/l17piU9USNxxwT/NqBNMgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730308541; c=relaxed/simple;
-	bh=EUedKMVFw2ww45cgy4fnjJQneRbzjMldoBuRMuIfEdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lD/j88PBx5/tAosZp5Cy/6MONz/ddIfccOD0sGPkmI9uA+IXGEpGYuylQihOF14Fyto40DFDKHoXVoRyg7tl+43GVBUZZrOhvUc9NJDcs6aDk6YM6TA9NlT19pbt/3UANbsJsi4d+klm3dhCYMXU3zO/rO/JcvR5hNZMTFe9wxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nl+hqb0w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D1DC4CECE;
-	Wed, 30 Oct 2024 17:15:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730308541;
-	bh=EUedKMVFw2ww45cgy4fnjJQneRbzjMldoBuRMuIfEdg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nl+hqb0wDSMyfdOIdjYWPoAsMARzUO26xp4ze/w11RmVTN0RYBnYvntXj9Tbk34Vu
-	 uuiChFcnM+KjEbq2JeprUZfMQZzNBx4DBIKRWWSDeX17hx71a1LavBpPgycQYrrxga
-	 1dGPD60vSoAAP5GSH8gq6c0rGzd6cVQBEBHNMkZyL5JJbJ5PyGps7qQz9cKnCjQLBL
-	 XTBvLPhb4A/yX2B0zjgRXTFGhaSwz0Fp4twS+JgSaokisCHnkxMpyGKyLxPn6ZpTJ7
-	 utLzAFimyiNRFfPuGc+xvB3KSTTR2eThWSFRfDh1Bat4DtfNfh+om255TxoJuuvl8P
-	 o+P5d2+r2nsFw==
-Date: Wed, 30 Oct 2024 13:15:39 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
-	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ZyJpu5QdGho6cOUs@sashalap>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
- <ZxdKwtTd7LvpieLK@infradead.org>
- <ZyAUO0b3z_f_kVnj@sashalap>
- <c936a7f6-e532-4f6a-b55a-bbf0fe6c6f32@paulmck-laptop>
+	s=arc-20240116; t=1730308599; c=relaxed/simple;
+	bh=Tm1wNYqvzeAF3HnTDVTnjC8Rcq/6gl29WbAbQZ1MVNg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gdLNpJDo70xXGRTyL6Aq+lS5g62PXmcp3ba8vrFJWqOJnB998Mh90FafnpqjrJXrbznJoDDVwcqaYUN0NFWXUeaS5zkpjt0dXGC1l1UF6y8Xxp7DGoZNSlbTYUy9Yx1D2FLkIZY+tDqm/KTEHsPCkcKLsK13HJZ/Q8NLlkOAyZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ggoZYOY+; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30df8dbfd4so79818276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730308596; x=1730913396; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g6NaQ3IuZZfSraqlt8TSkxzrbSmeVk6CTF7q3lZSxz4=;
+        b=ggoZYOY+OBg8MYH9iZI4VkvQ9iww88haatF39UO3Di1sJp0y9oNHbNspMBdEcVNZ/N
+         9e+KHQjRjP9h4j0sVl6jqBbxk/paVpdkvXFPeIqhOp1vn7GsW23+QqlFZVUPvGE/EOSp
+         nBFq2tKYbni5iyhKjyEmfaU32JqUYjX5ZouSTEWh0nG5QEM5RAcdyY9kncNM+BIjolED
+         VjjB58mBrdVr/mvNDzHNEQKLIICmhVZtRr+NjVmLHof6q0fs3w8hSLVN42jPkdTOLK1b
+         LbBvo4zXemia7U3JfMIgKD81q7WnK6cjHPxsTGI5HndK3luzXxzbtd6F2cZtqBO2EM4K
+         5gRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730308596; x=1730913396;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g6NaQ3IuZZfSraqlt8TSkxzrbSmeVk6CTF7q3lZSxz4=;
+        b=mli1OARQIbCwHP/ihNU/g6tMoxSIO1k2F0jyPjr39X7bKYu5UUHvNmis2tXi+Ekgfa
+         GRpkqlvNoDfD9J93jBfSZyCYlF0Viyl4aH1i5n5BhCJmClLUx6/ibuCQBbVEerBYEB/f
+         wGCoQXEO/rIGdWmEmZi26fLwRP0r9AvmzH9Z0qRUCh8bOR3onny0J9hFxyjHMzxhdNhS
+         YbJ+3HM17n8w7qI1E1MapOzNxC4yKUoHPGk24ji6lD4w8vnu4rEj/3izZeBNr706OnsL
+         lFXAAc9IaSit3sucZRBWC49IGkV5+Pf0wSnqbrgAlH0HtaVHkcoTw8xqugEKFtnP2YUX
+         aGLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuaBfDF/twPOBzD6wcNPH1UPJm+WOJOrPwnpJ5RsIS2lbgyMc7uoNDsyT4/m10I+yZmfdCsUHOG3Q+gCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAnFQlCWeahT6RYRWsLOyOxjT1PYIS3QZXrm9t6Sqh8Lx+yOY7
+	myGMaj0jdfS27y+K77l0PcGMCYGq8AnhYcFiaxIM2IRGcwRBd+MCgLwbicssJVbeIFEpzq/dVef
+	3CP0eUw==
+X-Google-Smtp-Source: AGHT+IG5xPxqqpKxLgZ6zXN6V78UnUjBXaSxpkGut/FS6GJSqSvmQ69f6lOGEvOsEwQHgaeCqjpR5w/uRE0E
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a25:4b85:0:b0:e29:68a9:8612 with SMTP id
+ 3f1490d57ef6-e3087a54ccemr74678276.4.1730308595588; Wed, 30 Oct 2024 10:16:35
+ -0700 (PDT)
+Date: Wed, 30 Oct 2024 17:16:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <c936a7f6-e532-4f6a-b55a-bbf0fe6c6f32@paulmck-laptop>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAPFpImcC/4WNQQqDMBBFryKzbopJrCVd9R7FhR1HDagTEgkWy
+ d2b5gJdfd6H//4JgbylAI/qBE/RBstbBnWpAOd+m0jYITOoWjWyVkZ4WjmSoMOx3zOVcIu46/a
+ GLfb6TQR57TyN9ijmV5d5tmFn/ylHUf7a/84ohRQGhxZxNLox+jkxTwtdkVfoUkpfzMP6kL8AA AA=
+X-Change-Id: 20241029-remove-export-report-pl-7365c6ca3bee
+X-Mailer: b4 0.15-dev
+Message-ID: <20241030-remove-export-report-pl-v2-1-f289ab92bd2e@google.com>
+Subject: [PATCH v2] scripts: Remove export_report.pl
+From: Matthew Maurer <mmaurer@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 30, 2024 at 10:08:57AM -0700, Paul E. McKenney wrote:
->On Mon, Oct 28, 2024 at 06:46:19PM -0400, Sasha Levin wrote:
->> On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
->> > On Mon, Oct 21, 2024 at 09:54:53PM -0700, Kees Cook wrote:
->> > > For example, for a given PR, the bot can report:
->> > >
->> > > - Were the patches CCed to a mailing list?
->> > > - A histogram of how long the patches were in next (to show bake times)
->> > > - Are any patches associated with test failures? (0day and many other
->> > > CIs are already running tests against -next; parse those reports)
->> > >
->> > > We could have a real pre-submit checker! :)
->> >
->> > That would be very useful.  Items 1 and 2 should be trivial, 3 would
->> > require a bit of work but would still be very useful.
->>
->> If you've been following so far, there is a bot that is capable of doing
->> most of the above
->> (https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/).
->
->Nice!!!
->
->What does this make of these commits of mine?
->
->744e87210b1ae rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()
->cbe644aa6fe17 rcu: Stop stall warning from dumping stacks if grace period ends
->26ff1fb02991e rcu: Delete unused rcu_gp_might_be_stalled() function
+This script has been broken for 5 years with no user complaints.
 
-Days in linux-next:
-----------------------------------------
-  1 |
-  2 |
-  3 |
-  4 |
-  5 |
-  6 | +++ (3)
+It first had its .mod.c parser broken in commit a3d0cb04f7df ("modpost:
+use __section in the output to *.mod.c"). Later, it had its object file
+enumeration broken in commit f65a486821cf ("kbuild: change module.order
+to list *.o instead of *.ko"). Both of these changes sat for years with
+no reports.
 
+Rather than reviving this script as we make further changes to `.mod.c`,
+this patch gets rid of it because it is clearly unused.
+
+Signed-off-by: Matthew Maurer <mmaurer@google.com>
+---
+Changes in v2:
+- Remove references to export_report from Makefile
+- Link to v1: https://lore.kernel.org/r/20241029-remove-export-report-pl-v1-1-9cd6ccf93493@google.com
+---
+ Makefile                 |   6 +-
+ scripts/export_report.pl | 186 -----------------------------------------------
+ 2 files changed, 1 insertion(+), 191 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f554430954deebd56ede882f81a541ebc42f1937..5333b3f8a1a916d70614d6d125dc383b2a47bb34 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1620,7 +1620,6 @@ help:
+ 	@echo  '                    with a stack size larger than MINSTACKSIZE (default: 100)'
+ 	@echo  '  versioncheck    - Sanity check on version.h usage'
+ 	@echo  '  includecheck    - Check for duplicate included header files'
+-	@echo  '  export_report   - List the usages of all exported symbols'
+ 	@echo  '  headerdep       - Detect inclusion cycles in headers'
+ 	@echo  '  coccicheck      - Check with Coccinelle'
+ 	@echo  '  clang-analyzer  - Check with clang static analyzer'
+@@ -2033,7 +2032,7 @@ endif
+ # Scripts to check various things for consistency
+ # ---------------------------------------------------------------------------
+ 
+-PHONY += includecheck versioncheck coccicheck export_report
++PHONY += includecheck versioncheck coccicheck
+ 
+ includecheck:
+ 	find $(srctree)/* $(RCS_FIND_IGNORE) \
+@@ -2048,9 +2047,6 @@ versioncheck:
+ coccicheck:
+ 	$(Q)$(BASH) $(srctree)/scripts/$@
+ 
+-export_report:
+-	$(PERL) $(srctree)/scripts/export_report.pl
+-
+ PHONY += checkstack kernelrelease kernelversion image_name
+ 
+ # UML needs a little special treatment here.  It wants to use the host
+diff --git a/scripts/export_report.pl b/scripts/export_report.pl
+deleted file mode 100755
+index feb3d5542a62d90b7af4f041d98a3c4b5ac386c0..0000000000000000000000000000000000000000
+--- a/scripts/export_report.pl
++++ /dev/null
+@@ -1,186 +0,0 @@
+-#!/usr/bin/env perl
+-# SPDX-License-Identifier: GPL-2.0-only
+-#
+-# (C) Copyright IBM Corporation 2006.
+-#	Author : Ram Pai (linuxram@us.ibm.com)
+-#
+-# Usage: export_report.pl -k Module.symvers [-o report_file ] -f *.mod.c
+-#
+-
+-use warnings;
+-use Getopt::Std;
+-use strict;
+-
+-sub numerically {
+-	my $no1 = (split /\s+/, $a)[1];
+-	my $no2 = (split /\s+/, $b)[1];
+-	return $no1 <=> $no2;
+-}
+-
+-sub alphabetically {
+-	my ($module1, $value1) = @{$a};
+-	my ($module2, $value2) = @{$b};
+-	return $value1 <=> $value2 || $module2 cmp $module1;
+-}
+-
+-sub print_depends_on {
+-	my ($href) = @_;
+-	print "\n";
+-	for my $mod (sort keys %$href) {
+-		my $list = $href->{$mod};
+-		print "\t$mod:\n";
+-		foreach my $sym (sort numerically @{$list}) {
+-			my ($symbol, $no) = split /\s+/, $sym;
+-			printf("\t\t%-25s\n", $symbol);
+-		}
+-		print "\n";
+-	}
+-	print "\n";
+-	print "~"x80 , "\n";
+-}
+-
+-sub usage {
+-        print "Usage: @_ -h -k Module.symvers  [ -o outputfile ] \n",
+-	      "\t-f: treat all the non-option argument as .mod.c files. ",
+-	      "Recommend using this as the last option\n",
+-	      "\t-h: print detailed help\n",
+-	      "\t-k: the path to Module.symvers file. By default uses ",
+-	      "the file from the current directory\n",
+-	      "\t-o outputfile: output the report to outputfile\n";
+-	exit 0;
+-}
+-
+-sub collectcfiles {
+-    my @file;
+-    open my $fh, '< modules.order' or die "cannot open modules.order: $!\n";
+-    while (<$fh>) {
+-	s/\.ko$/.mod.c/;
+-	push (@file, $_)
+-    }
+-    close($fh);
+-    chomp @file;
+-    return @file;
+-}
+-
+-my (%SYMBOL, %MODULE, %opt, @allcfiles);
+-
+-if (not getopts('hk:o:f',\%opt) or defined $opt{'h'}) {
+-        usage($0);
+-}
+-
+-if (defined $opt{'f'}) {
+-	@allcfiles = @ARGV;
+-} else {
+-	@allcfiles = collectcfiles();
+-}
+-
+-if (not defined $opt{'k'}) {
+-	$opt{'k'} = "Module.symvers";
+-}
+-
+-open (my $module_symvers, '<', $opt{'k'})
+-    or die "Sorry, cannot open $opt{'k'}: $!\n";
+-
+-if (defined $opt{'o'}) {
+-    open (my $out, '>', $opt{'o'})
+-	or die "Sorry, cannot open $opt{'o'} $!\n";
+-
+-    select $out;
+-}
+-
+-#
+-# collect all the symbols and their attributes from the
+-# Module.symvers file
+-#
+-while ( <$module_symvers> ) {
+-	chomp;
+-	my (undef, $symbol, $module, $gpl, $namespace) = split('\t');
+-	$SYMBOL { $symbol } =  [ $module , "0" , $symbol, $gpl];
+-}
+-close($module_symvers);
+-
+-#
+-# collect the usage count of each symbol.
+-#
+-my $modversion_warnings = 0;
+-
+-foreach my $thismod (@allcfiles) {
+-	my $module;
+-
+-	unless (open ($module, '<', $thismod)) {
+-		warn "Sorry, cannot open $thismod: $!\n";
+-		next;
+-	}
+-
+-	my $state=0;
+-	while ( <$module> ) {
+-		chomp;
+-		if ($state == 0) {
+-			$state = 1 if ($_ =~ /static const struct modversion_info/);
+-			next;
+-		}
+-		if ($state == 1) {
+-			$state = 2 if ($_ =~ /__attribute__\(\(section\("__versions"\)\)\)/);
+-			next;
+-		}
+-		if ($state == 2) {
+-			if ( $_ !~ /0x[0-9a-f]+,/ ) {
+-				next;
+-			}
+-			my $sym = (split /([,"])/,)[4];
+-			my ($module, $value, $symbol, $gpl) = @{$SYMBOL{$sym}};
+-			$SYMBOL{ $sym } =  [ $module, $value+1, $symbol, $gpl];
+-			push(@{$MODULE{$thismod}} , $sym);
+-		}
+-	}
+-	if ($state != 2) {
+-		warn "WARNING:$thismod is not built with CONFIG_MODVERSIONS enabled\n";
+-		$modversion_warnings++;
+-	}
+-	close($module);
+-}
+-
+-print "\tThis file reports the exported symbols usage patterns by in-tree\n",
+-	"\t\t\t\tmodules\n";
+-printf("%s\n\n\n","x"x80);
+-printf("\t\t\t\tINDEX\n\n\n");
+-printf("SECTION 1: Usage counts of all exported symbols\n");
+-printf("SECTION 2: List of modules and the exported symbols they use\n");
+-printf("%s\n\n\n","x"x80);
+-printf("SECTION 1:\tThe exported symbols and their usage count\n\n");
+-printf("%-25s\t%-25s\t%-5s\t%-25s\n", "Symbol", "Module", "Usage count",
+-	"export type");
+-
+-#
+-# print the list of unused exported symbols
+-#
+-foreach my $list (sort alphabetically values(%SYMBOL)) {
+-	my ($module, $value, $symbol, $gpl) = @{$list};
+-	printf("%-25s\t%-25s\t%-10s\t", $symbol, $module, $value);
+-	if (defined $gpl) {
+-		printf("%-25s\n",$gpl);
+-	} else {
+-		printf("\n");
+-	}
+-}
+-printf("%s\n\n\n","x"x80);
+-
+-printf("SECTION 2:\n\tThis section reports export-symbol-usage of in-kernel
+-modules. Each module lists the modules, and the symbols from that module that
+-it uses.  Each listed symbol reports the number of modules using it\n");
+-
+-print "\nNOTE: Got $modversion_warnings CONFIG_MODVERSIONS warnings\n\n"
+-    if $modversion_warnings;
+-
+-print "~"x80 , "\n";
+-for my $thismod (sort keys %MODULE) {
+-	my $list = $MODULE{$thismod};
+-	my %depends;
+-	$thismod =~ s/\.mod\.c/.ko/;
+-	print "\t\t\t$thismod\n";
+-	foreach my $symbol (@{$list}) {
+-		my ($module, $value, undef, $gpl) = @{$SYMBOL{$symbol}};
+-		push (@{$depends{"$module"}}, "$symbol $value");
+-	}
+-	print_depends_on(\%depends);
+-}
+
+---
+base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
+change-id: 20241029-remove-export-report-pl-7365c6ca3bee
+
+Best regards,
 -- 
-Thanks,
-Sasha
+Matthew Maurer <mmaurer@google.com>
+
 
