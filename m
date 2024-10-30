@@ -1,73 +1,110 @@
-Return-Path: <linux-kernel+bounces-388920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D0F9B6628
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:39:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321579B662C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F157BB217D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:39:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F871C20BB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3501F12E5;
-	Wed, 30 Oct 2024 14:39:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6391D156C63;
-	Wed, 30 Oct 2024 14:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54371F12F5;
+	Wed, 30 Oct 2024 14:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+qQ0ibR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A8AB672;
+	Wed, 30 Oct 2024 14:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299171; cv=none; b=bnB3UP2imPlAQLnOlYGIqeqjuzMuTkjsY5wUl5WzbiV97qXRx0DdsoIw00NB6BQeix3LHZA9VDWwEPjCJfx+JEO6xZ5isf90q1yd/NRqOKrVDkX+WTfGX98UcLeU67TZL3vJ9QUeXL73s0QNK9ywolKxshSGGeXIlHEQatkgH/8=
+	t=1730299224; cv=none; b=E/LKhaMyTWWWnNez73/hh34tKAgPuv9IFXzyZ51PDllBieifcrBgSxpm7SCYZArq7cYRCSLJximaRbmxFulrqYOT8xtDV6Ng7OBRvXL8H3MbO7vkbur/bsYBvEOENW1DVlFV6VzHD/z7VJ6V57c/vNNsiFg40QUQIui8JnHF9a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299171; c=relaxed/simple;
-	bh=GWhDLschdc3DuOs87kaMzDvVhpA+L0kr+TALB3AaayE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+Ny+DkSGi/Ug17FduWEnza8t5kflXIazaeXoz3g4yLpej2Y2e9ZcMuky8tg5yvLvB7Ye84Q27iXKJ4vQPeDU3oX6HXumaMsLnNCjppCQ8XhbBRXyZNfhdwtKpayjxcECzzonP+oR4tIgeRC4eENkLmnt1U65S/H7mJVr+spO3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E5FB113E;
-	Wed, 30 Oct 2024 07:39:57 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F65D3F528;
-	Wed, 30 Oct 2024 07:39:25 -0700 (PDT)
-Date: Wed, 30 Oct 2024 14:39:17 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, johan@kernel.org,
-	ulf.hansson@linaro.org, jassisinghbrar@gmail.com,
-	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org,
-	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH V5 3/6] firmware: arm_scmi: Report duplicate opps as
- firmware bugs
-Message-ID: <ZyJFFUx_EUicAfQN@pluto>
-References: <20241030125512.2884761-1-quic_sibis@quicinc.com>
- <20241030125512.2884761-4-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1730299224; c=relaxed/simple;
+	bh=vB3pvWOA7axGK3P12THCJTUlY17q7zuJreBzEmisMrM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=t2nrSZTLKi4PNnMss4I7o9bwitrdkr3VFoxo8X+CMOJKXnyhVwcTnLQNSGl89wwreNdzB6H9RDcL9xQQM2Bcmx6JtLZedX4pbhraoKLp3obN6PuIq94pz6MdRrK++LdwaRGeVWlFXeiIQtYk+LK1IJMcO3N8gESezPhDermsMV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+qQ0ibR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC33C4CECE;
+	Wed, 30 Oct 2024 14:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730299223;
+	bh=vB3pvWOA7axGK3P12THCJTUlY17q7zuJreBzEmisMrM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=C+qQ0ibRuSgpkjSdXWVlurXrPNrevIoPI9+ZnWRSvtKm8Rw++dcE3rn7jrBK46ZvI
+	 wqRY1cg12sMJqfI4CGeRUPQR0CmfZc4pb3ZjYQjkDA44j/WurH9LyJCuvLEaxM8sTu
+	 iyW57V89pBj4cFmIGOW3NGa2rj0v2j9vAnyU4n6P++DckrkzkaRCoMQ9IH7zuF+OP4
+	 hQ5DwFzOa3Ebiy9UPxy8RlftGZ+2cNRt2DKrPmQ/jlCMeAWVBbb0Zri66YX/KwtBkj
+	 INuWWGA2UnAi7RVsS2Dqpnugg87fR6Fr7Bx550vO4OFm8LglVv8jWo8w+Mv7ej03x7
+	 iJteFwZwvRWnA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DAF380AC22;
+	Wed, 30 Oct 2024 14:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030125512.2884761-4-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v3 0/4] Optimize bpf_csum_diff() and homogenize for
+ all archs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173029923127.1361326.16471187092779052308.git-patchwork-notify@kernel.org>
+Date: Wed, 30 Oct 2024 14:40:31 +0000
+References: <20241026125339.26459-1-puranjay@kernel.org>
+In-Reply-To: <20241026125339.26459-1-puranjay@kernel.org>
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: aou@eecs.berkeley.edu, ast@kernel.org, akpm@linux-foundation.org,
+ andrii@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, eddyz87@gmail.com, edumazet@google.com,
+ haoluo@google.com, deller@gmx.de, kuba@kernel.org,
+ James.Bottomley@HansenPartnership.com, jolsa@kernel.org,
+ john.fastabend@gmail.com, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ martin.lau@linux.dev, mykolal@fb.com, netdev@vger.kernel.org,
+ palmer@dabbelt.com, pabeni@redhat.com, paul.walmsley@sifive.com,
+ puranjay12@gmail.com, shuah@kernel.org, song@kernel.org, sdf@fomichev.me,
+ yonghong.song@linux.dev
 
-On Wed, Oct 30, 2024 at 06:25:09PM +0530, Sibi Sankar wrote:
-> Duplicate opps reported by buggy SCP firmware currently show up
-> as warnings even though the only functional impact is that the
-> level/index remain inaccessible. Make it less scary for the end
-> user by using dev_info instead, along with FW_BUG tag.
+Hello:
 
-Thanks for this.
+This series was applied to bpf/bpf-next.git (net)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-LGTM.
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+On Sat, 26 Oct 2024 12:53:35 +0000 you wrote:
+> Changes in v3:
+> v2: https://lore.kernel.org/all/20241023153922.86909-1-puranjay@kernel.org/
+> - Fix sparse warning in patch 2
+> 
+> Changes in v2:
+> v1: https://lore.kernel.org/all/20241021122112.101513-1-puranjay@kernel.org/
+> - Remove the patch that adds the benchmark as it is not useful enough to be
+>   added to the tree.
+> - Fixed a sparse warning in patch 1.
+> - Add reviewed-by and acked-by tags.
+> 
+> [...]
 
-Thanks,
-Cristian
+Here is the summary with links:
+  - [bpf-next,v3,1/4] net: checksum: move from32to16() to generic header
+    https://git.kernel.org/bpf/bpf-next/c/db71aae70e3e
+  - [bpf-next,v3,2/4] bpf: bpf_csum_diff: optimize and homogenize for all archs
+    https://git.kernel.org/bpf/bpf-next/c/6a4794d5a3e2
+  - [bpf-next,v3,3/4] selftests/bpf: don't mask result of bpf_csum_diff() in test_verifier
+    https://git.kernel.org/bpf/bpf-next/c/b87f584024e1
+  - [bpf-next,v3,4/4] selftests/bpf: Add a selftest for bpf_csum_diff()
+    https://git.kernel.org/bpf/bpf-next/c/00c1f3dc66a3
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
