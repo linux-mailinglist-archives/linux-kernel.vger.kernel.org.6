@@ -1,185 +1,229 @@
-Return-Path: <linux-kernel+bounces-388607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40EDA9B6204
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:39:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EF59B6207
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643721C216DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49FF81F2120F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8831E570A;
-	Wed, 30 Oct 2024 11:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054D01E5027;
+	Wed, 30 Oct 2024 11:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HvN641iv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="YYZcYeYV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YlrwvEXJ"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9974F1E00B6;
-	Wed, 30 Oct 2024 11:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4491E49B;
+	Wed, 30 Oct 2024 11:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288357; cv=none; b=V16OPr+idvoiB6ktJFLHO517HtLUPspT/KTGa2+Xtqch6bQ76hjPmoapq2wtW4yHsR9K7LZOFtN5iku3yoLWnMyppJlHJ8VRd4sjkb0VrUSe3VntA938/lNlqewfs0VtF7saWCFz0wu/It/U104G9d5i6+OPA3gDp2H01bTw67g=
+	t=1730288373; cv=none; b=SuYDI8ymXbBRwk3t+PuMgvN8mRQABd5FOq7XJZAb0A7LJDpuVjJ80vschUHIS/ItbQm8SwKCwR0yheD67ueq+k8i/wtIh5YqKjogLMQxk0egaQZW4HbAtz2vFRSEktULHV/3NDH9iSiHNHWhAPYNsmRKdIYeTW1AdicIhp8Ii3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288357; c=relaxed/simple;
-	bh=eiYRD7zCmW6r80UgPSfahuzaI3z9MGeiBsIrWhGnOaE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2JLm5E6pdl7JuTVpw+7/QIrhfb9VpMbe74wL3LyxjRiq6RudVxRrrKx/aOzEUDNij2cV76v1rg9zJLhaaf+5KPoyZKg6nPr+xRgx+Lt8CHZsue1QSYkJyU81yKQCLeM0yWphsrjnSMW09icQIGoEpNz/uQ/d9KKDbAGQByw8s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HvN641iv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F65C4CEE5;
-	Wed, 30 Oct 2024 11:39:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730288357;
-	bh=eiYRD7zCmW6r80UgPSfahuzaI3z9MGeiBsIrWhGnOaE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HvN641ivHdVIOPg38qnp4sr3384KfVUkLI1VlPAuTFWLTThf7DCDESx+Q6ZeUOS1o
-	 Qa1sp73wpH+0ySLKa/nINxGRcCgkfX4Tz7QqOlx4MbubmuPaL5oRg9ZhN6RROrB03B
-	 fMvFA0QBenXPq7+gDY6iwNl7cdnsRAl7V1fUK60Hkfm14ujvD5nYfRyFRHLcFWwctV
-	 LOHpfP7KKj2wdpPTv46iscCt5vK8dI2nX9SyDdGva6TdO8lY+IoL0XAf2bWWwGB8vz
-	 nFgVljRYMveig8GVSPes3BLdb4IxFGza3lJLN6LkHYvj8eza91V0obkDoXnXgnyF3z
-	 1Lg8ct0ju4Clw==
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-84fcd9f4e98so1620993241.0;
-        Wed, 30 Oct 2024 04:39:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4ZQQT2ldZ3RJe3ns0MB2pdjcF7YPPoryCxFcD+8C+OgVvWeuMQPkRx6LQi2N5VmrRqy1lJ48MRNJRfSk=@vger.kernel.org, AJvYcCW3Rt9TdljMFL8b6j2dX62k2SZK8A52CmkdsO1sqf/lU/VaKZkz2F1sj6axa8KiNxFdrFTMnJb7QJ6qWBc=@vger.kernel.org, AJvYcCX62S8CHpfjSjy1T82uzrATleHONrNqkzKgfUOEmMaPqVcM1fWgf/3OwyoszJLbEHuQqyRQNWde8wTlVw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB0BcGcMQ5/X1VztIVK2mP77NUMKzUDVXjsuZqNmufXq/GSYHB
-	QrTkjM8WGGUPVlD/1tfvJ9/7IFkbW4iqSLS/QzCOGupoqIoOahGR4XsgVdA0z5Uoz2zXvHpjZix
-	8tectIuXa9mdiPzpqBttsxol8YyI=
-X-Google-Smtp-Source: AGHT+IHxBG/XYrL65JET4f8lbEvLUBaY0/DYd+k+TAwfIpTBNvaUKGZ2pp+m0JitHrIUvyQXH0yvqPIsVM1T3WZS7qY=
-X-Received: by 2002:a05:6122:a2a:b0:50a:ca69:2b76 with SMTP id
- 71dfb90a1353d-51014e8ca8dmr13583721e0c.0.1730288356293; Wed, 30 Oct 2024
- 04:39:16 -0700 (PDT)
+	s=arc-20240116; t=1730288373; c=relaxed/simple;
+	bh=gmCi/uZwYnkiFUs2WMFdnKPraNTsLgf2OR97nVEfTTI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=b6FoZ46XWD9+QfL2SwYlx5MlT+ufns7aE6mq/VQBcYwb3vf1Qk2CYNvmnxWsdJqxTiW3EBmYKsP90UFdwJ2Dl6//Kq8xpiL8+WiHjJ/DWat9WQr4o2MCbV6upa54tAMfyFWrTk9S0iAufc0H9FTvDOWVvYpxXTSiSU+Smz01AUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=YYZcYeYV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YlrwvEXJ; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id B002C1380180;
+	Wed, 30 Oct 2024 07:39:29 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Wed, 30 Oct 2024 07:39:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1730288369;
+	 x=1730374769; bh=vJ+XVhVHplg9ttgUYa3oL3Gxnr7G8gm3S+I6W1k4b7M=; b=
+	YYZcYeYVOlFiQ+M7zg32jmt9WxD6PJ1Ra3fNAJ3a0rvEO4KaMYthdJqmtqB/bMOe
+	GO+DpVlJZi/TZS0J4o8HvI4OysXUYIGVc2ugfL0mW2A2ZjZlRLh+MdpEVY04eJhf
+	0HOZ5yrU0T2eUODriMwsOc9O47dyQTdzEqdxwJhwdG/XVcCYz0bDAeBqdoabc4CM
+	S9u7BCHbc01/AkMGb57C6ZV1XK9nRT/MyyeIwhA3sl1TjJJuCtoQ9rEp3EJDA2lx
+	3+zVtRsyDg9o52cmwmdKPLvk0/BpoEMnQik3iNGkee2UmzdCtDN55ckTv8GrK+7A
+	G+rMSpcSSi+R2vHsnk8O+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730288369; x=
+	1730374769; bh=vJ+XVhVHplg9ttgUYa3oL3Gxnr7G8gm3S+I6W1k4b7M=; b=Y
+	lrwvEXJlrCTmOZK0/7iWWI5YZhE7K14ErlkHE/gixbXOmcDZ33dNl4hWeMC9jJ4F
+	2MLkEm310aoc4Q7wRdJ9PgdJ+EqLIQ/Bnxz4VzB8TYyBhJeXLkzr8/el7axRRKB/
+	YC8FCtJ0r0RUXEDYT686XSI52Sr/jTef9CneLubSOf7vteLAYJJ8dKibtS0lfRQu
+	oozUZRnXxGvN0Ebd+jyKJgpa7G3yII2upnzQequltDgYjrx7WWjD2R0A962OApQU
+	lJHJ6PJWngROrNZT/Hr3ce+F0Nw3D8aCNjU5LVik1rOULdRaEuIjsqIxxZfRPJN3
+	0jWkqjuKLGgprKDBTYHNg==
+X-ME-Sender: <xms:8BoiZ1kU6xE6iphMe_o85FZqC57SKME9R6LlfdHHinK4LIT2vA3JEg>
+    <xme:8BoiZw28YQ3CA0PWzLl1wGXtck4Rmjvq1qOGtbifAIaybB7yzf7hcZJpQAMn_yWOh
+    YlLfNJrd57t0_f8Kkg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgfedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepvdegpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
+    oheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmh
+    gvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhes
+    sghoohhtlhhinhdrtghomhdprhgtphhtthhopegrrhhikhgrlhhosehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtghomhdprhgt
+    phhtthhopehilhihrgdrlhhiphhnihhtshhkihihsehgmhgrihhlrdgtohhmpdhrtghpth
+    htohephhgruhhkvgeshhgruhhkvgdqmhdruggvpdhrtghpthhtohepughjohhrughjvgdr
+    thhoughorhhovhhitgeshhhtvggtghhrohhuphdrtghomh
+X-ME-Proxy: <xmx:8RoiZ7oX7RopTdG4yxmzrwlUNKsruFgAYit8FwWxfF-cgU-UddnnOg>
+    <xmx:8RoiZ1min-qbMZiuRJ8POMX0DqIfFowADcIpEBK2BPRrO1PDV1tsPg>
+    <xmx:8RoiZz3aI2au3szQk3vxFq6oYnCsb9pY_mua3Z3w7u6-H65Vl3h_6Q>
+    <xmx:8RoiZ0tWeUqdJ-md42IZPUgMjiknD2kBlQCQa09RYpGvDkHMRNeJqQ>
+    <xmx:8RoiZ4W2vr8jfFROwbyYelTjuv9Xfdh1mWzj_kJArnsXq6u7MsE1wY_h>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id E7B771C20067; Wed, 30 Oct 2024 07:39:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu> <20241021-imx214-v2-7-fbd23e99541e@apitzsch.eu>
-In-Reply-To: <20241021-imx214-v2-7-fbd23e99541e@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Wed, 30 Oct 2024 12:38:59 +0100
-X-Gmail-Original-Message-ID: <CAPybu_28VXjfJksVccfvytB9PU2-saNpAos8sBtQnhgt8KKz2w@mail.gmail.com>
-Message-ID: <CAPybu_28VXjfJksVccfvytB9PU2-saNpAos8sBtQnhgt8KKz2w@mail.gmail.com>
-Subject: Re: [PATCH v2 07/13] media: i2c: imx214: Check number of lanes from
- device tree
-To: git@apitzsch.eu
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 30 Oct 2024 11:39:07 +0000
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Aleksandar Rikalo" <arikalo@gmail.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ "Theo Lebrun" <theo.lebrun@bootlin.com>, "Arnd Bergmann" <arnd@arndb.de>,
+ devicetree@vger.kernel.org,
+ "Djordje Todorovic" <djordje.todorovic@htecgroup.com>,
+ "Chao-ying Fu" <cfu@wavecomp.com>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Greg Ungerer" <gerg@kernel.org>, "Hauke Mehrtens" <hauke@hauke-m.de>,
+ "Ilya Lipnitskiy" <ilya.lipnitskiy@gmail.com>, linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "Marc Zyngier" <maz@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "Tiezhu Yang" <yangtiezhu@loongson.cn>
+Message-Id: <c7d5a4e9-f080-46dd-9b96-07eb08d361f4@app.fastmail.com>
+In-Reply-To: <20241028175935.51250-1-arikalo@gmail.com>
+References: <20241028175935.51250-1-arikalo@gmail.com>
+Subject: Re: [PATCH v8 00/13] MIPS: Support I6500 multi-cluster configuration
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 12:14=E2=80=AFAM Andr=C3=A9 Apitzsch via B4 Relay
-<devnull+git.apitzsch.eu@kernel.org> wrote:
->
-> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
->
-> The imx214 camera is capable of either two-lane or four-lane operation.
->
-> Currently only the four-lane mode is supported, as proper pixel rates
-> and link frequences for the two-lane mode are unknown.
->
-> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> ---
->  drivers/media/i2c/imx214.c | 26 +++++++++++++++++++-------
->  1 file changed, 19 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 0c83149bcc3e3b833a087d26104eb7dfaafdf904..497baad616ad7374a92a3da2b=
-7c1096b1d72a0c7 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -199,7 +199,6 @@ struct imx214 {
->
->  /*From imx214_mode_tbls.h*/
->  static const struct cci_reg_sequence mode_4096x2304[] =3D {
-> -       { IMX214_REG_CSI_LANE_MODE, IMX214_CSI_4_LANE_MODE },
->         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
->         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
->         { IMX214_REG_EXPOSURE_RATIO, 1 },
-> @@ -272,7 +271,6 @@ static const struct cci_reg_sequence mode_4096x2304[]=
- =3D {
->  };
->
->  static const struct cci_reg_sequence mode_1920x1080[] =3D {
-> -       { IMX214_REG_CSI_LANE_MODE, IMX214_CSI_4_LANE_MODE },
->         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
->         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
->         { IMX214_REG_EXPOSURE_RATIO, 1 },
-> @@ -791,6 +789,13 @@ static int imx214_start_streaming(struct imx214 *imx=
-214)
->                 return ret;
->         }
->
-> +       ret =3D cci_write(imx214->regmap, IMX214_REG_CSI_LANE_MODE,
-> +                       IMX214_CSI_4_LANE_MODE, NULL);
-> +       if (ret) {
-> +               dev_err(imx214->dev, "%s failed to configure lanes\n", __=
-func__);
-> +               return ret;
-> +       }
-> +
->         ret =3D cci_multi_reg_write(imx214->regmap, imx214->cur_mode->reg=
-_table,
->                                   imx214->cur_mode->num_of_regs, NULL);
->         if (ret < 0) {
-> @@ -932,7 +937,7 @@ static int imx214_get_regulators(struct device *dev, =
-struct imx214 *imx214)
->                                        imx214->supplies);
->  }
->
-> -static int imx214_parse_fwnode(struct device *dev)
-> +static int imx214_parse_fwnode(struct device *dev, struct imx214 *imx214=
-)
-We don't seem to use imx214 in the function. You probably do not want
-to add this change.
->  {
->         struct fwnode_handle *endpoint;
->         struct v4l2_fwnode_endpoint bus_cfg =3D {
-> @@ -951,6 +956,13 @@ static int imx214_parse_fwnode(struct device *dev)
->                 goto done;
->         }
->
-> +       /* Check the number of MIPI CSI2 data lanes */
-> +       if (bus_cfg.bus.mipi_csi2.num_data_lanes !=3D 4) {
-> +               dev_err_probe(dev, -EINVAL,
-> +                             "only 4 data lanes are currently supported\=
-n");
-> +               goto done;
-> +       }
-> +
->         for (i =3D 0; i < bus_cfg.nr_of_link_frequencies; i++)
->                 if (bus_cfg.link_frequencies[i] =3D=3D IMX214_DEFAULT_LIN=
-K_FREQ)
->                         break;
-> @@ -975,14 +987,14 @@ static int imx214_probe(struct i2c_client *client)
->         struct imx214 *imx214;
->         int ret;
->
-> -       ret =3D imx214_parse_fwnode(dev);
-> -       if (ret)
-> -               return ret;
-> -
->         imx214 =3D devm_kzalloc(dev, sizeof(*imx214), GFP_KERNEL);
->         if (!imx214)
->                 return -ENOMEM;
->
-> +       ret =3D imx214_parse_fwnode(dev, imx214);
-> +       if (ret)
-> +               return ret;
-I  am not against changing the order... but the commit message does
-not mention it.
 
-> +
->         imx214->dev =3D dev;
+
+=E5=9C=A82024=E5=B9=B410=E6=9C=8828=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
+=E5=8D=885:59=EF=BC=8CAleksandar Rikalo=E5=86=99=E9=81=93=EF=BC=9A
+> Taken from Paul Burton MIPS repo with minor changes from Chao-ying Fu.
+> Tested with 64r6el_defconfig on Boston board in 2 cluster/2 VPU and
+> 1 cluster/4 VPU configurations.
+
+For the whole series (despite pending dt-binding discussion):
+
+Reviewd-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Tested-by: Jiaxun Yang <jiaxun.yang@flygoat.com> # Single cluster I6500
+
+Thanks.
+- Jiaxun
+
 >
->         imx214->xclk =3D devm_clk_get(dev, NULL);
+> v8:
+>  - irqchip: mips-gic: Handle case with cluster without CPU cores.
+>  - Add Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com> for th=
+e=20
+> entire series.
+>  - Re-base onto the master branch, with no functionality impact.
 >
-> --
-> 2.47.0
+> v7:
+>  - Add fixes for specific CM3.5 which is used in EyeQ6H SoCs, suggeste=
+d=20
+> by Gregory Clement.
+>  - Re-base onto the master branch, with no functionality impact.
 >
+> v6:
+>  - Re-base onto the master branch, with no functionality impact.
+>  - Correct the issue reported by the kernel test robot.
 >
+> v5:
+>  - Drop FDC related changes (patches 12, 13, and 14).
+>  - Apply changes suggested by Thomas Gleixner (patches 3 and 4).
+>  - Add #include <linux/cpumask.h> to patch 1, suggested by Thomas=20
+> Bogendoerfer.
+>  - Add Reviewed-by: Philippe Mathieu-Daud=C3=A9 <philmd@linaro.org> fo=
+r the=20
+> patch 08/11.
+>  - Add Tested-by: Serge Semin <fancer.lancer@gmail.com> for the entire=20
+> series.
+>  - Correct some commit messages.
+>
+> v4:
+>  - Re-base onto the master branch, with no functionality impact.
+>  - Refactor MIPS FDC driver in the context of multicluster support.
+>
+> v3:
+>  - Add Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com> for the patc=
+h 02/12.
+>  - Add the changes requested by Marc Zyngier for the 3/12 patch.
+>  - Remove the patch 11/12 (a consequence of a discussion between Jiaxu=
+n Yang
+>    and Marc Zyngier.
+>  - Re-base onto the master branch, with no functionality impact.
+>
+> v2:
+>  - Apply correct Signed-off-by to avoid confusion.
+>
+> Chao-ying Fu (1):
+>   irqchip/mips-gic: Setup defaults in each cluster
+>
+> Gregory CLEMENT (4):
+>   dt-bindings: mips: cpu: Add property for broken HCI information
+>   MIPS: CPS: Support broken HCI for multicluster
+>   MIPS: mobileye: dts: eyeq6h: Enable cluster support
+>   irqchip: mips-gic: Handle case with cluster without CPU cores
+>
+> Paul Burton (8):
+>   irqchip/mips-gic: Introduce for_each_online_cpu_gic()
+>   irqchip/mips-gic: Support multi-cluster in for_each_online_cpu_gic()
+>   irqchip/mips-gic: Multi-cluster support
+>   clocksource: mips-gic-timer: Always use cluster 0 counter as
+>     clocksource
+>   clocksource: mips-gic-timer: Enable counter when CPUs start
+>   MIPS: pm-cps: Use per-CPU variables as per-CPU, not per-core
+>   MIPS: CPS: Introduce struct cluster_boot_config
+>   MIPS: CPS: Boot CPUs in secondary clusters
+>
+>  .../devicetree/bindings/mips/cpus.yaml        |   6 +
+>  arch/mips/boot/dts/mobileye/eyeq6h.dtsi       |   1 +
+>  arch/mips/include/asm/mips-cm.h               |  18 ++
+>  arch/mips/include/asm/smp-cps.h               |   7 +-
+>  arch/mips/kernel/asm-offsets.c                |   3 +
+>  arch/mips/kernel/cps-vec.S                    |  19 +-
+>  arch/mips/kernel/mips-cm.c                    |   4 +-
+>  arch/mips/kernel/pm-cps.c                     |  35 +-
+>  arch/mips/kernel/smp-cps.c                    | 305 +++++++++++++++---
+>  drivers/clocksource/mips-gic-timer.c          |  45 ++-
+>  drivers/irqchip/Kconfig                       |   1 +
+>  drivers/irqchip/irq-mips-gic.c                | 269 ++++++++++++---
+>  12 files changed, 599 insertions(+), 114 deletions(-)
+>
+> --=20
+> 2.25.1
+
+--=20
+- Jiaxun
 
