@@ -1,264 +1,152 @@
-Return-Path: <linux-kernel+bounces-388516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B879B60A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:56:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E23E9B60AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54C4283073
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C618D2840F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4141E5738;
-	Wed, 30 Oct 2024 10:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EC91E3DEC;
+	Wed, 30 Oct 2024 10:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BOh6tNfh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JoH7eWQm";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="XI0R4ZDp"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6D71E3797;
-	Wed, 30 Oct 2024 10:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDA1E22FF;
+	Wed, 30 Oct 2024 10:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730285711; cv=none; b=rHoY0V1/T+wqUcCufddvDHVlQMdqF+jz8YqE6jkd089z+g56+cMDO3GxYAx9nfwpuz8Ve6eMiPE59kUbeqZxKCpxf1JCuorJsiiVcFktFrNmCVNuOtdQslj/ZXh+iXVLMbFVNfSrYcDA2necVfU2leQcJigjRu/x4bHroOKKBU4=
+	t=1730285886; cv=none; b=EU7i660KB1+U9GcokaCm7EagaAHMD9+cgGOWD9qBWlAw6gHDMLYry2DSLZ/HxPSdVUVQ79603gGiJ7SboGsaXsL6qfAA7LVB93JY2LqW4ivBqs4o/i2FRH/kDGTZ8WhF6YsGvn9+4dPE68kv78JSuG+8XRftjiyAflLItLN/ylQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730285711; c=relaxed/simple;
-	bh=wuZ7LTlT9Z4VG9OzPeHAxrw0rlQtLwqS5Hu2osalNCg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K3AOveNg2JpYgfLpy7H7rjF021nrfLIKAVOpsnXlDmvW0Ihw4cWQ+TOsaAEPq02+PoaZljarCJM451E7GBHcnkAyclRJkGQvrZI0LWmQc3XxuZacx8v2+M/Rle1WIRECBzx8oLXCnYv5WYIFVxRTF/vTTk0EEgMI8+8caIZXSms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BOh6tNfh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U9i7iS006853;
-	Wed, 30 Oct 2024 10:54:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bhaOSwgRgWw/5HeQA5POnyczQGuHVdALfWX/DT2LBos=; b=BOh6tNfhTmkOCgZj
-	HJjlkwUj5SlzncvvW+zdsTuvlyoOk2b4UGXIueTyR4A/ADMbJyOOCKE6vOnAnc8t
-	1YnUYY431CiRiSWjjgbgGs8UiM0gsmRR9TL05FaZJ+cnW0615XauHdROyAF+mFbM
-	ZUNNRNKIaBHLLs3O240XoB1ygo/JwGono8tcQfZrFJCYy0RAOkiTlHgJUw1I+y+S
-	BncW25eoIc2eSCEUEVNPkJFTbcsUmlSW9e1YMmSwSQi5AaMOcGd4nUEkPYX+p5wN
-	g7w+YIa3LU82fkVfWPapuT2SKhCqkQ1gj4DTEOrT8/KGLCZl3fuLfJSbvHlD6YxD
-	J8jGrA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4e3wd1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 10:54:57 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UAsuhW003588
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 10:54:56 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 30 Oct 2024 03:54:47 -0700
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <akapatra@quicinc.com>, <hariramp@quicinc.com>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_vikramsa@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: [PATCH v4 6/6] arm64: dts: qcom: qcs6490-rb3gen2-vision-mezzanine: Add vision mezzanine
-Date: Wed, 30 Oct 2024 16:23:47 +0530
-Message-ID: <20241030105347.2117034-7-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
-References: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1730285886; c=relaxed/simple;
+	bh=LU89oiIC9/VWlU3cPF95wh6+bbcGtwdZ1Mg192tt/7M=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=j+IbwqcsIsMh30yhqtH0fxMoArpOlh+KV1JNjSyMuOBnor/EqLawDL+PFB5thbt5rPU495CbHiV3O3vsAxp0KJuAKFcUxKyItQOkh92sSwHK9B9ees538JQOp7J97Mt3isi+1mScBX1w3xagdY6b0M5Ak6pJupzfE5GQXSqSWI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JoH7eWQm; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=XI0R4ZDp; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730285883;
+	bh=LU89oiIC9/VWlU3cPF95wh6+bbcGtwdZ1Mg192tt/7M=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=JoH7eWQmloNFjJ4oYH3ea8cZl7eautQ6o5ns8wfF8+F3SRgpG7N/Mb2Zi5axrM/Qv
+	 WlrhOi0x0Eq2oI96h/bnoC1J/hGSzd+2RyY5bUEQesu7EhlcUrNAGW2joXnSdOqq0B
+	 L90bC9gaYFSaDE46g42yxyngn7kiGHTK/l107k+0=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0749812819B1;
+	Wed, 30 Oct 2024 06:58:03 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id MHCH1RQ-0XkO; Wed, 30 Oct 2024 06:58:02 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730285882;
+	bh=LU89oiIC9/VWlU3cPF95wh6+bbcGtwdZ1Mg192tt/7M=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=XI0R4ZDpotmSSS3DcuBtn0+8hQBC0qz5aECa0qun3czMKT5nZXH0rA2GblZBE3J9B
+	 PYOOc5pfgOK+SGdsVF+TrF4ztlzARPlrcP1Op6P0ily8JlqtRaaDqIwHbEe0nzzLen
+	 Lt9HNjM84L+w3Ptny25EnCn9twF6h9gsy1PD7Tz8=
+Received: from [10.250.250.46] (122x212x32x58.ap122.ftth.ucom.ne.jp [122.212.32.58])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 17DC812811B1;
+	Wed, 30 Oct 2024 06:58:01 -0400 (EDT)
+Message-ID: <c82f3c57c5febcefdc95cf4a0b8eff0cdf4689a1.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 6.12-rc5
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Wed, 30 Oct 2024 19:57:59 +0900
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jkHdlLkamE_XYFNLy1D-NFBsklaaUkQH
-X-Proofpoint-GUID: jkHdlLkamE_XYFNLy1D-NFBsklaaUkQH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 mlxlogscore=999 clxscore=1015 spamscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300085
+Content-Transfer-Encoding: 7bit
 
-The Vision Mezzanine for the RB3 ships with an imx577 camera sensor.
-Enable the IMX577 on the vision mezzanine.
+Two small fixes, both in drivers (ufs and scsi_debug).
 
-An example media-ctl pipeline for the imx577 is:
+The patch is available here:
 
-media-ctl --reset
-media-ctl -v -V '"imx577 '19-001a'":0[fmt:SRGGB10/4056x3040 field:none]'
-media-ctl -V '"msm_csiphy3":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -l '"msm_csiphy3":1->"msm_csid0":0[1]'
-media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-yavta -B capture-mplane -c -I -n 5 -f SRGGB10P -s 4056x3040 -F /dev/video0
+The short changelog is:
 
-Signed-off-by: Hariram Purushothaman <quic_hariramp@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+John Garry (1):
+      scsi: scsi_debug: Fix do_device_access() handling of unexpected SG copy length
+
+Peter Wang (1):
+      scsi: ufs: core: Fix another deadlock during RTC update
+
+And the diffstat:
+
+ drivers/scsi/scsi_debug.c | 10 ++++------
+ drivers/ufs/core/ufshcd.c |  2 +-
+ 2 files changed, 5 insertions(+), 7 deletions(-)
+
+with full diff below.
+
+James
+
 ---
- arch/arm64/boot/dts/qcom/Makefile             |  4 +
- .../qcs6490-rb3gen2-vision-mezzanine.dtso     | 73 +++++++++++++++++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi          | 33 +++++++++
- 3 files changed, 110 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index ac199f809b0d..186768f7c696 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -111,6 +111,10 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-+
-+qcs6490-rb3gen2-vision-mezzanine-dtbs := qcs6490-rb3gen2.dtb qcs6490-rb3gen2-vision-mezzanine.dtbo
-+
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-vision-mezzanine.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso
-new file mode 100644
-index 000000000000..cd3fe65fa971
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+/*
-+ * Camera Sensor overlay on top of rb3gen2 core kit.
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/qcom,camcc-sc7280.h>
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&camcc {
-+	status = "okay";
-+};
-+
-+&camss {
-+	vdda-phy-supply = <&vreg_l10c_0p88>;
-+	vdda-pll-supply = <&vreg_l6b_1p2>;
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* The port index denotes CSIPHY id i.e. csiphy3 */
-+		port@3 {
-+			reg = <3>;
-+			csiphy3_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&imx577_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci1 {
-+	status = "okay";
-+};
-+
-+&cci1_i2c1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	camera@1a {
-+		compatible = "sony,imx577";
-+		reg = <0x1a>;
-+
-+		reset-gpios = <&tlmm 78 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default", "suspend";
-+		pinctrl-0 = <&cam2_default>;
-+		pinctrl-1 = <&cam2_suspend>;
-+
-+		clocks = <&camcc CAM_CC_MCLK3_CLK>;
-+		assigned-clocks = <&camcc CAM_CC_MCLK3_CLK>;
-+		assigned-clock-rates = <24000000>;
-+
-+		dovdd-supply  = <&vreg_l18b_1p8>;
-+
-+		port {
-+			imx577_ep: endpoint {
-+				clock-lanes = <7>;
-+				link-frequencies = /bits/ 64 <600000000>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&csiphy3_ep>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 690051708dec..8130c1374722 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -5115,6 +5115,39 @@ tlmm: pinctrl@f100000 {
- 			gpio-ranges = <&tlmm 0 0 175>;
- 			wakeup-parent = <&pdc>;
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index d95f417e24c0..9be2a6a00530 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -3651,7 +3651,7 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
+ 	enum dma_data_direction dir;
+ 	struct scsi_data_buffer *sdb = &scp->sdb;
+ 	u8 *fsp;
+-	int i;
++	int i, total = 0;
  
-+			cam2_default: cam2-default-state {
-+				rst-pins {
-+					pins = "gpio78";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+
-+				mclk-pins {
-+					pins = "gpio67";
-+					function = "cam_mclk";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+			};
-+
-+			cam2_suspend: cam2-suspend-state {
-+				rst-pins {
-+					pins = "gpio78";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-pull-down;
-+					output-low;
-+				};
-+
-+				mclk-pins {
-+					pins = "gpio67";
-+					function = "cam_mclk";
-+					drive-strength = <2>;
-+					bias-pull-down;
-+				};
-+			};
-+
- 			cci0_default: cci0-default-state {
- 				pins = "gpio69", "gpio70";
- 				function = "cci_i2c";
--- 
-2.25.1
+ 	/*
+ 	 * Even though reads are inherently atomic (in this driver), we expect
+@@ -3688,18 +3688,16 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
+ 		   fsp + (block * sdebug_sector_size),
+ 		   sdebug_sector_size, sg_skip, do_write);
+ 		sdeb_data_sector_unlock(sip, do_write);
+-		if (ret != sdebug_sector_size) {
+-			ret += (i * sdebug_sector_size);
++		total += ret;
++		if (ret != sdebug_sector_size)
+ 			break;
+-		}
+ 		sg_skip += sdebug_sector_size;
+ 		if (++block >= sdebug_store_sectors)
+ 			block = 0;
+ 	}
+-	ret = num * sdebug_sector_size;
+ 	sdeb_data_unlock(sip, atomic);
+ 
+-	return ret;
++	return total;
+ }
+ 
+ /* Returns number of bytes copied or -1 if error. */
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 706dc81eb924..0e22bbb78239 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -8219,7 +8219,7 @@ static void ufshcd_update_rtc(struct ufs_hba *hba)
+ 
+ 	err = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR, QUERY_ATTR_IDN_SECONDS_PASSED,
+ 				0, 0, &val);
+-	ufshcd_rpm_put_sync(hba);
++	ufshcd_rpm_put(hba);
+ 
+ 	if (err)
+ 		dev_err(hba->dev, "%s: Failed to update rtc %d\n", __func__, err);
 
 
