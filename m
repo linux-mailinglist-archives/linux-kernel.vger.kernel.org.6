@@ -1,125 +1,137 @@
-Return-Path: <linux-kernel+bounces-388707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643269B6360
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:51:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CBF9B6365
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C001F2150E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A271F218EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58111EABBA;
-	Wed, 30 Oct 2024 12:51:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AD51E907F;
+	Wed, 30 Oct 2024 12:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HYbVbyAc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDD31E32D8;
-	Wed, 30 Oct 2024 12:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC5D4D8A7;
+	Wed, 30 Oct 2024 12:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730292672; cv=none; b=a/LRJpVJwnCFAMbvI6bnD8ulB2+Xsa2172/c6CZRZSPMasjKTh2QByzeGXSNcrvf+zia93o4RYOXidSyKC38cv882/13QTFJyYvh4FseH8B/bGphs18fCZ0Ep5rqf3dxaiJNz1DbafnuxRpcnGOCji/ukQCnVSu98yUoJ8+7rsg=
+	t=1730292757; cv=none; b=PSEGXYsBzZuBA0bY1+K5XWF/B9wRZbxvyC4h5/Er4j6w74jmItRIfq/0wtdVY9in3WUIL3VTPXA4/oB/6P2nqeWXwyLX6YXns9EQI73wsour+jfvKJqEjKs/3MJD8AmhTuBxHxWnni/BAOEZgp7uhznQEFjd1VwbmnToourK6CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730292672; c=relaxed/simple;
-	bh=amtuKIZRAbExp3+zXPKGfjQ5RMpg7nZEIXnnYLkh6os=;
+	s=arc-20240116; t=1730292757; c=relaxed/simple;
+	bh=HkTtFEmRjRrNgjKwK8sYfvOwh/wBJWkklEMNCRDk+r4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ApDoL4fjRD3Wv/uyKX4kvD1ooARG4iawAhGff3AB/eXmtpjirQVjriiQA9VFsG+tgvcO10WkofsPxwWM3RchFny/HAW1hliWrDQjwcO+09ff0WOg5im+urtJ5Zu/xNPMeO+pQoV0j7a6DPkLbgpf0NnQOzs9aIx2VAf3jAn3VHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdn1G6lGqz6GDn7;
-	Wed, 30 Oct 2024 20:46:10 +0800 (CST)
-Received: from mscpeml500003.china.huawei.com (unknown [7.188.49.51])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0915F140429;
-	Wed, 30 Oct 2024 20:51:02 +0800 (CST)
-Received: from [10.123.123.154] (10.123.123.154) by
- mscpeml500003.china.huawei.com (7.188.49.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 30 Oct 2024 15:51:01 +0300
-Message-ID: <770bf300-1dbb-42fc-8958-b9307486178e@huawei-partners.com>
-Date: Wed, 30 Oct 2024 15:51:00 +0300
+	 In-Reply-To:Content-Type; b=MqYXEZgtbus3RifJ4XTs+Xo2LJxXHwAk1x7pO9Y+xwipsOM9ion72UUepo+A/NsSBF9dsT1U627MV804z+GsgB+Z7HqA0B//ZplhjAjsFn6G55K4z8tgel5WFahmaFut6BsbSGQ+ye4WI6gdScDaWxJWXhBv2TjREP4jBtAgwG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HYbVbyAc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UAiOVV008871;
+	Wed, 30 Oct 2024 12:52:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gF+3gfp5dbT+G1Ph7dID7VDXTSrRr3ClgxYxPHb04fY=; b=HYbVbyAch/WMPDr2
+	iQGaTkS1tpHhiKQRsP6zgv9yruuy78iK9OODcoUqykcmNnclCmDkBLOfDLciWhsE
+	+pGL7qsX60lR/CW84A6voo3Q6ZVShNFO+aZC25aVNy3eT3h7al5K2/lLLVC1Zg2v
+	lgtylT0dhFq6XshnBKcJLG5o7AkfhCLlT2W2xym5hlr79P51kKtzw7yVbpjKmfCP
+	NFMfOKkRo0uCDA7ByZUboqZ21HJQ+QpLIa3vzVpSi7bma4sVGj0jVY1B0faBMYun
+	JPipyGkLjER+61ZUQF0oJ5hqAt91fV5sm8jNrMHqcwMGeXvBGTsViAnBb3qVr9JR
+	D8xHuQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42jxa8bud0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 12:52:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UCqO1s023019
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 12:52:24 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 05:52:18 -0700
+Message-ID: <a1c14b44-c11a-9855-45a1-9a30fe40c01f@quicinc.com>
+Date: Wed, 30 Oct 2024 18:22:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
-To: Michal Hocko <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<baohua@kernel.org>, <willy@infradead.org>, <peterx@redhat.com>,
-	<hannes@cmpxchg.org>, <hocko@kernel.org>, <roman.gushchin@linux.dev>,
-	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>, <cgroups@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<stepanov.anatoly@huawei.com>, <alexander.kozhevnikov@huawei-partners.com>,
-	<guohanjun@huawei.com>, <weiyongjun1@huawei.com>,
-	<wangkefeng.wang@huawei.com>, <judy.chenhui@huawei.com>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>, <kang.sun@huawei.com>
-References: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
- <ZyHwgjK8t8kWkm9E@tiehlicka>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V4 3/4] pmdomain: core: Fix debugfs node creation failure
 Content-Language: en-US
-From: Gutierrez Asier <gutierrez.asier@huawei-partners.com>
-In-Reply-To: <ZyHwgjK8t8kWkm9E@tiehlicka>
-Content-Type: text/plain; charset="UTF-8"
+To: Johan Hovold <johan@kernel.org>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
+        <ulf.hansson@linaro.org>, <jassisinghbrar@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <konradybcio@kernel.org>,
+        <linux-pm@vger.kernel.org>, <tstrudel@google.com>, <rafael@kernel.org>,
+        Johan
+ Hovold <johan+linaro@kernel.org>
+References: <20241023102148.1698910-1-quic_sibis@quicinc.com>
+ <20241023102148.1698910-4-quic_sibis@quicinc.com>
+ <ZxuixxBzQZUdIW1c@hovoldconsulting.com>
+ <72a0b7b5-4209-f969-0726-e411b5a74e01@quicinc.com>
+ <ZxunIcSZDoO3ph64@hovoldconsulting.com>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <ZxunIcSZDoO3ph64@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: mscpeml500003.china.huawei.com (7.188.49.51) To
- mscpeml500003.china.huawei.com (7.188.49.51)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gmUKxpxBdrgdJWBnvcj7Leuq-A80ZKjX
+X-Proofpoint-ORIG-GUID: gmUKxpxBdrgdJWBnvcj7Leuq-A80ZKjX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ malwarescore=0 impostorscore=0 phishscore=0 mlxlogscore=959 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300101
 
 
 
-On 10/30/2024 11:38 AM, Michal Hocko wrote:
-> On Wed 30-10-24 16:33:08, gutierrez.asier@huawei-partners.com wrote:
->> From: Asier Gutierrez <gutierrez.asier@huawei-partners.com>
->>
->> Currently THP modes are set globally. It can be an overkill if only some
->> specific app/set of apps need to get benefits from THP usage. Moreover, various
->> apps might need different THP settings. Here we propose a cgroup-based THP
->> control mechanism.
->>
->> THP interface is added to memory cgroup subsystem. Existing global THP control
->> semantics is supported for backward compatibility. When THP modes are set
->> globally all the changes are propagated to memory cgroups. However, when a
->> particular cgroup changes its THP policy, the global THP policy in sysfs remains
->> the same.
+On 10/25/24 19:41, Johan Hovold wrote:
+> On Fri, Oct 25, 2024 at 07:36:16PM +0530, Sibi Sankar wrote:
+>> On 10/25/24 19:23, Johan Hovold wrote:
 > 
-> Do you have any specific examples where this would be benefitial?
-
-Now we're mostly focused on database scenarios (MySQL, Redis).  
-
-The main idea is to avoid using a global THP setting that can potentially waste 
-overall resource and have per cgroup granularity.
-
-Besides THP are being beneficial for DB performance, we observe high THP 
-"over-usage" by some unrelated apps/services, when "always" mode is enabled 
-globally.
-
-With cgroup-THP, we're able to specify exact "THP-users", and plan to introduce
-an ability to limit the amount of THPs per-cgroup.
-
-We suppose it should be beneficial for some container-based workloads, when 
-certain containers can have different THP-policies, but haven't looked into 
-this case yet.
-
->> New memcg files are exposed: memory.thp_enabled and memory.thp_defrag, which
->> have completely the same format as global THP enabled/defrag.
+>>> Also seems to do the trick:
+>>>
+>>> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+>>>
+>>> But perhaps you could consider starting enumerating the duplicate
+>>> domains from 2 (or 1) instead of 0?:
+>>>
+>>> NCC_1                           on                              0
+>>> NCC_0                           on                              0
+>>> NCC                             on                              0
 >>
->> Child cgroups inherit THP settings from parent cgroup upon creation. Particular
->> cgroup mode changes aren't propagated to child cgroups.
+>> We are just trying to make sure node names are unique and
+>> can't ensure the pd-name correctness since ida starts its
+>> number generation from 0 and I didn't want to shape the
+>> fix just to cater to our specific case. The firmware fix
+>> will be in charge of ensuring pd-name correctness.
 > 
-> So this breaks hierarchical property, doesn't it? In other words if a
-> parent cgroup would like to enforce a certain policy to all descendants
-> then this is not really possible. 
+> Ah, it's a global number space? I didn't really look at the
+> implementation...
 
-The first idea was to have some flexibility when changing THP policies. 
+Thanks for testing out the patch. Yes it was a global number
+space but we are changing the implementation again in the next
+re-spin. Please try that out instead.
 
-I will submit a new patch set which will enforce the cgroup hierarchy and change all
-the children recursively.
+-Sibi
 
--- 
-Asier Gutierrez
-Huawei
-
+> 
+> Johan
 
