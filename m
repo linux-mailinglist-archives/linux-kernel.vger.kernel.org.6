@@ -1,501 +1,273 @@
-Return-Path: <linux-kernel+bounces-388365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD1C9B5E79
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:10:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CF49B5E7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DD31F225E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD280284074
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B501A1E1C2B;
-	Wed, 30 Oct 2024 09:10:49 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3F1192D79
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBEF1E2007;
+	Wed, 30 Oct 2024 09:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xiKVh8fA"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539B51E1A36
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730279448; cv=none; b=Y94EVfDHVWSs4hD81xju9zjLSntvH+sNJgvCkyQ7z7OseSeMwtVhr68/t6+HsltOprjwyQwD2UyaVoNdc3b4QSsefI37VACoSm3Tt/E3ZWWXOsZctwJUPWDXdgsOdcxrrHSpmMfowwi0Be+P0RjO/nrPbzfHdjN2rKySdPNwHZY=
+	t=1730279507; cv=none; b=bxrRRG0h1Kmvxnav2ZoDP0Cpg3hQwsRh1JTZ3I5Moitd3rlxK0nhpTss+fIAhz7vnREvjzUwLXtRwxhiMItenPQ74J//PmrZN/+h6l80ULUSGM/E+NbAJw1Cql/SaXtBYFVtjm+/tyXOkirN86t2uISVDhBvjb2g66U/HTgxWwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730279448; c=relaxed/simple;
-	bh=Q03Zb8s69ujIzqajvNxeG+INAeVIXQoPtMXR3jp/sPo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CLU6pNHCL3YUz+IUXEiI6ptxQmxHZ2iHltr9Fbx9beypD3WxrrvP8YZwZA9WW7vac3RG+WW39ilcX4eGLedHfbbVkjRUIZCj/486EQi42MKphso29hO2HwUzFPFG09kPv+p+ANIWYFsRRepr8gzdmBy8zxxCvhsMOnSuMgiGzT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8AxquAR+CFnJuodAA--.61922S3;
-	Wed, 30 Oct 2024 17:10:41 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMCxS+AN+CFnOhcpAA--.3166S3;
-	Wed, 30 Oct 2024 17:10:39 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, lixianglai@loongson.cn,
- WANG Xuerui <kernel@xen0n.name>
-References: <20241021080418.644342-1-maobibo@loongson.cn>
- <CAAhV-H4anpgfiAnPgm9h-m9pKCW0KUio+E72r1Q3F_0vm+zMRg@mail.gmail.com>
- <8c55c680-48c8-0ba3-c2a1-56dc72929a8d@loongson.cn>
- <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
- <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn>
- <CAAhV-H6+rE_7P_C0MaWzXToVcPqZQX0YMPnhyZV7Pp6aQ01mCQ@mail.gmail.com>
- <39330bb8-d267-ef02-e082-388c7bfa3b43@loongson.cn>
- <CAAhV-H5jGZz2MeCSuLmJb5b-ugaaj3EECD7Z3mvtHW=OQrhLBw@mail.gmail.com>
- <8d2ab78b-6706-c78d-ffad-835ceef7372c@loongson.cn>
- <CAAhV-H7bwJwGSyBqY3XZynzGaqamKv3BJjxrqPJ-foaP4dFbAw@mail.gmail.com>
- <f2b7283b-9db3-c961-fa11-f1aeff489479@loongson.cn>
- <CAAhV-H4tJJqhJcrERJRVHg_FW4OOEV-OuHkX6PTP9L_ADKgfDg@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <4172a465-a326-e3fa-ddba-5752a38f7237@loongson.cn>
-Date: Wed, 30 Oct 2024 17:10:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1730279507; c=relaxed/simple;
+	bh=2xY069ofHmy4rNARHKYc+PQAGt8OAzWJhiOIbfatK6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6QKmqF1ZBU0R3twJwzV/3ZFhSZnDjk6H2bQ2kzAguyHSPyLzd18YIeXP5RrH8LeJBRD/Dhi7i4f+3CON6n3jd4YhfGgOEkcp7UoOtP1BmN4+nFBhi4wfcgYyQW3AFjmjOknOQMfR7Kr7I29PfstOXZ5Ej3nraZ9auXDr7r0WvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xiKVh8fA; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730279494; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=B1Nj0TklQpMbeBFOiToWO0uWUZIy7wiCw7UL6E3FWT4=;
+	b=xiKVh8fAuLlQoOJUIqs24xkE+EVMnxMsLsU+D1cw4WdnannAs90VsOdWEkoQ5lzPBbDLMmnQJrluEgBbNnM5EIgMevzQEDfquPZQrxLI/o/w9OS+JECuTjx+GhImgm2zNfep5gmYX76kShF+3QoXA20akFXsWfNavBeNEkt9T9A=
+Received: from 30.166.35.5(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0WIDTc5c_1730279491 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 30 Oct 2024 17:11:32 +0800
+Message-ID: <5be3b8a9-dbd9-4640-94ba-78f2c19fa264@linux.alibaba.com>
+Date: Wed, 30 Oct 2024 17:11:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H4tJJqhJcrERJRVHg_FW4OOEV-OuHkX6PTP9L_ADKgfDg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/eevdf: Force propagating min_slice of cfs_rq when a
+ task changing slice
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxS+AN+CFnOhcpAA--.3166S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj9fXoW3ZFy3ArykKFy3AFy5Kw1ktFc_yoW8Ary7Jo
-	W5Jr17Jr18Jr1UJr1DJ34DJr1UJw1UJr1UJryDJr1UXF1Utw1UJr1UJr1UJF4UJr1UGr1U
-	JryUJr1UArW7Jrn8l-sFpf9Il3svdjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
-	UjIYCTnIWjp_UUUYB7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
-	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
-	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280
-	aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
-	xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
-	xVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-	C2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
-	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-	CTnIWIevJa73UjIFyTuYvjxU2DUUUUUUU
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ aubrey.li@linux.intel.com, yu.c.chen@intel.com,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>
+References: <202410301535.14e0855c-lkp@intel.com>
+From: Tianchen Ding <dtcccc@linux.alibaba.com>
+In-Reply-To: <202410301535.14e0855c-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/10/30 下午4:59, Huacai Chen wrote:
-> On Wed, Oct 30, 2024 at 4:48 PM maobibo <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2024/10/30 下午4:34, Huacai Chen wrote:
->>> On Wed, Oct 30, 2024 at 4:25 PM maobibo <maobibo@loongson.cn> wrote:
->>>>
->>>>
->>>>
->>>> On 2024/10/30 下午4:12, Huacai Chen wrote:
->>>>> On Tue, Oct 29, 2024 at 7:49 PM maobibo <maobibo@loongson.cn> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 2024/10/29 下午6:36, Huacai Chen wrote:
->>>>>>> On Mon, Oct 28, 2024 at 8:38 PM maobibo <maobibo@loongson.cn> wrote:
->>>>>>>>
->>>>>>>> Hi Huacai,
->>>>>>>>
->>>>>>>> On 2024/10/22 上午9:31, Huacai Chen wrote:
->>>>>>>>> On Tue, Oct 22, 2024 at 9:17 AM maobibo <maobibo@loongson.cn> wrote:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> On 2024/10/21 下午10:32, Huacai Chen wrote:
->>>>>>>>>>> Hi, Bibo,
->>>>>>>>>>>
->>>>>>>>>>> This version still doesn't touch the round-robin method, but it
->>>>>>>>>>> doesn't matter, I think I misunderstood something since V1...
->>>>>>>>>> I do not understand why round-robin method need be modified, SRAT may be
->>>>>>>>>> disabled with general function disable_srat(). Then round-robin method
->>>>>>>>>> is required.
->>>>>>>>> I don't mean round-robin should be modified, I mean I misunderstand round-robin.
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> Please correct me if I'm wrong: For cpus without ACPI_MADT_ENABLED, in
->>>>>>>>>>> smp_prepare_boot_cpu() the round-robin node ids only apply to
->>>>>>>>>>> cpu_to_node(), but __cpuid_to_node[] still record the right node ids.
->>>>>>>>>>> early_cpu_to_node() returns NUMA_NO_NODE not because
->>>>>>>>>>> __cpuid_to_node[] records NUMA_NO_NODE, but because cpu_logical_map()
->>>>>>>>>>> < 0.
->>>>>>>>>>>
->>>>>>>>>>> If the above is correct, we don't need so complicated, because the
->>>>>>>>>>> correct and simplest way is:
->>>>>>>>>>> https://lore.kernel.org/loongarch/6b2b3e89-5a46-2d20-3dfb-7aae33839f49@loongson.cn/T/#m950eead5250e5992cc703bbe69622348cecfa465
->>>>>>>>>>>
->>>>>>>>>> It works also. Only that LoongArch kernel parsing about SRAT/MADT is
->>>>>>>>>> badly. If you do not mind, I do not mind neither. It is not my duty for
->>>>>>>>>> kernel side.
->>>>>>>>> Yes, I don't mind, please use that simplest way.
->>>>>>>> There is another problem with the simple way. eiointc reports error when
->>>>>>>> cpu is online. The error message is:
->>>>>>>>        Loongson-64bit Processor probed (LA464 Core)
->>>>>>>>        CPU2 revision is: 0014c010 (Loongson-64bit)
->>>>>>>>        FPU2 revision is: 00000001
->>>>>>>>        eiointc: Error: invalid nodemap!
->>>>>>>>        CPU 2 UP state irqchip/loongarch/eiointc:starting (100) failed (-1)
->>>>>>>>
->>>>>>>> The problem is that node_map of eiointc is problematic,
->>>>>>>>
->>>>>>>>
->>>>>>>> static int cpu_to_eio_node(int cpu)
->>>>>>>> {
->>>>>>>>              return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
->>>>>>>> }
->>>>>>>>
->>>>>>>> static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
->>>>>>>>                                     u64 node_map)
->>>>>>>> {
->>>>>>>>              int i;
->>>>>>>>
->>>>>>>>              node_map = node_map ? node_map : -1ULL;
->>>>>>>>              for_each_possible_cpu(i) {
->>>>>>>>                      if (node_map & (1ULL << (cpu_to_eio_node(i)))) {
->>>>>>>>                              node_set(cpu_to_eio_node(i), priv->node_map);
->>>>>>>>               ...
->>>>>>>> The cause is that for possible not present cpu, *cpu_logical_map(cpu)*
->>>>>>>> is -1, cpu_to_eio_node(i) will be equal to -1, so node_map of eiointc is
->>>>>>>> problematic.
->>>>>>> The error message seems from eiointc_router_init(), but it is a little
->>>>>>> strange. Physical hot-add should be before logical hot-add. So
->>>>>>> acpi_map_cpu() is before cpu_up(). acpi_map_cpu() calls
->>>>>>> set_processor_mask() to setup logical-physical mapping, so in
->>>>>>> eiointc_router_init() which is called by cpu_up(), cpu_logical_map()
->>>>>>> should work well.
->>>>>>>
->>>>>>> Maybe in your case a whole node is hot-added? I don't think the
->>>>>>> eiointc design can work with this case...
->>>>>>>
->>>>>>>>
->>>>>>>> So cpu_logical_map(cpu) should be set during MADT parsing even if it is
->>>>>>>> not enabled at beginning, it should not be set at hotplug runtime.
->>>>>>> This will cause the logical cpu number be not continuous after boot.
->>>>>>> Physical numbers have no requirement, but logical numbers should be
->>>>>>> continuous.
->>>>>> I do not understand such requirement about logical cpu should be
->>>>>> continuous. You can check logical cpu allocation method on other
->>>>>> architectures, or what does the requirement about logical cpu continuous
->>>>>> come from.
->>>>> 1, In an internal conference, it is said that non-continuous cpu
->>>>> numbers make users think our processors have bugs.
->>>>> 2, See prefill_possible_map(), it assumes logical numbers continuous
->>>>> cpu_possible_mask and cpu_present_mask, which make it convenient for
->>>>> "nr_cpus=xxx".
->>>>> 3, Can you show me an example in a real machine that "processor" in
->>>>> /proc/cpuinfo non-continues after boot and before soft hotplug?
->>>> It is really wasting my time to discuss with you. You does not
->>>> investigating implementation of other architectures, fully thinking in
->>>> yourself way.
->>> Totally wrong, I have implemented what you need, but you should make
->>> other colleagues (not me) agree with your idea.
->>> https://github.com/chenhuacai/linux/commit/d8dcf2844d5878b3ac5a42d074e781fe2ebfbae7
->> So do you mean we should internal discuss inside and post outside? You
->> can not decide this since you do not know. And actual code writer (lv
->> jianjin) does not reply to you still :(
-> "Non-continuous number is unacceptable" is an internal decision, if
-> you want to break this decision, you should let other colleagues
-> agree, otherwise that is the real thing wastes your time.
-If so I will not touch any kernel code any more, please write the patch 
-to fix it to keep your maintainer position stable. Is that ok for you?
-
-
+On 2024/10/30 16:18, kernel test robot wrote:
 > 
->>
->>>
->>> Imagine that the cpu_possible_mask is 0b11111111, cpu_present_mask is
->>> 0b10101010 (non-continuous), how to make "nr_cpus=3" work in a simple
->>> way?
->> if (bitmap_weight(cpu_present_mask) >=  nr_cpus))
->>      then new cpu fails to add.
-> No,  I means cpu_possible_mask = 0b11111111, cpu_present_mask =
-> 0b10101010 after MADT parsing, if you need to make "nr_cpus=3" work,
-> you should modify them to cpu_possible_mask = 0b10101000,
-> cpu_present_mask = 0b10101000 before smp_init(). But it is difficult
-> to implement the modification.
 > 
->>>
->>>>
->>>> Does the real machines support real cpu hotplug and memory hotplug?
->>> ACPI_MADT_ENABLED is designed for virtual machines only?
->> It is the HW board problem, the HW does not support cpu hotplug, neither
->> memory hotplug and PCIE hotplug. HW board does not support.
-> So we cannot see non-continuous CPU numbers just because all HW boards
-> have problems that don't support CPU hotplug, even on x86?
+> Hello,
 > 
-> Huacai
+> kernel test robot noticed "BUG:KASAN:slab-use-after-free_in_enqueue_task_fair" on:
 > 
->>
->> Regards
->> Bibo Mao
->>
->>>
->>> Huacai
->>>
->>>>
->>>> Regards
->>>> Bibo Mao
->>>>>
->>>>>
->>>>>
->>>>>
->>>>> Huacai
->>>>>>
->>>>>> Regards
->>>>>> Bibo Mao
->>>>>>
->>>>>>>
->>>>>>> Huacai
->>>>>>>
->>>>>>>>
->>>>>>>> Regards
->>>>>>>> Bibo Mao
->>>>>>>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Huacai
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Bibo Mao
->>>>>>>>>>>
->>>>>>>>>>> Huacai
->>>>>>>>>>>
->>>>>>>>>>> On Mon, Oct 21, 2024 at 4:04 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>>>>>>>>>
->>>>>>>>>>>> On LoongArch system, there are two places to set cpu numa node. One
->>>>>>>>>>>> is in arch specified function smp_prepare_boot_cpu(), the other is
->>>>>>>>>>>> in generic function early_numa_node_init(). The latter will overwrite
->>>>>>>>>>>> the numa node information.
->>>>>>>>>>>>
->>>>>>>>>>>> With hot-added cpu without numa information, cpu_logical_map() fails
->>>>>>>>>>>> to its physical cpuid at beginning since it is not enabled in ACPI
->>>>>>>>>>>> MADT table. So function early_cpu_to_node() also fails to get its
->>>>>>>>>>>> numa node for hot-added cpu, and generic function
->>>>>>>>>>>> early_numa_node_init() will overwrite with incorrect numa node.
->>>>>>>>>>>>
->>>>>>>>>>>> APIs topo_get_cpu() and topo_add_cpu() is added here, like other
->>>>>>>>>>>> architectures logic cpu is allocated when parsing MADT table. When
->>>>>>>>>>>> parsing SRAT table or hot-add cpu, logic cpu is acquired by searching
->>>>>>>>>>>> all allocated logical cpu with matched physical id. It solves such
->>>>>>>>>>>> problems such as:
->>>>>>>>>>>>         1. Boot cpu is not the first entry in MADT table, the first entry
->>>>>>>>>>>> will be overwritten with later boot cpu.
->>>>>>>>>>>>         2. Physical cpu id not presented in MADT table is invalid, in later
->>>>>>>>>>>> SRAT/hot-add cpu parsing, invalid physical cpu detected is added
->>>>>>>>>>>>         3. For hot-add cpu, its logic cpu is allocated in MADT table parsing,
->>>>>>>>>>>> so early_cpu_to_node() can be used for hot-add cpu and cpu_to_node()
->>>>>>>>>>>> is correct for hot-add cpu.
->>>>>>>>>>>>
->>>>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>>>>>>>>>>> ---
->>>>>>>>>>>> v1 ... v2:
->>>>>>>>>>>>         1. Like other architectures, allocate logic cpu when parsing MADT table.
->>>>>>>>>>>>         2. Add invalid or duplicated physical cpuid parsing with SRAT table or
->>>>>>>>>>>> hot-add cpu DSDT information.
->>>>>>>>>>>> ---
->>>>>>>>>>>>        arch/loongarch/include/asm/smp.h |  3 ++
->>>>>>>>>>>>        arch/loongarch/kernel/acpi.c     | 24 ++++++++++------
->>>>>>>>>>>>        arch/loongarch/kernel/setup.c    | 47 ++++++++++++++++++++++++++++++++
->>>>>>>>>>>>        arch/loongarch/kernel/smp.c      |  9 +++---
->>>>>>>>>>>>        4 files changed, 70 insertions(+), 13 deletions(-)
->>>>>>>>>>>>
->>>>>>>>>>>> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
->>>>>>>>>>>> index 3383c9d24e94..c61b75937a77 100644
->>>>>>>>>>>> --- a/arch/loongarch/include/asm/smp.h
->>>>>>>>>>>> +++ b/arch/loongarch/include/asm/smp.h
->>>>>>>>>>>> @@ -119,4 +119,7 @@ static inline void __cpu_die(unsigned int cpu)
->>>>>>>>>>>>        #define cpu_logical_map(cpu)   0
->>>>>>>>>>>>        #endif /* CONFIG_SMP */
->>>>>>>>>>>>
->>>>>>>>>>>> +int topo_add_cpu(int physid);
->>>>>>>>>>>> +int topo_get_cpu(int physid);
->>>>>>>>>>>> +
->>>>>>>>>>>>        #endif /* __ASM_SMP_H */
->>>>>>>>>>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
->>>>>>>>>>>> index f1a74b80f22c..84d9812d5f38 100644
->>>>>>>>>>>> --- a/arch/loongarch/kernel/acpi.c
->>>>>>>>>>>> +++ b/arch/loongarch/kernel/acpi.c
->>>>>>>>>>>> @@ -78,10 +78,10 @@ static int set_processor_mask(u32 id, u32 flags)
->>>>>>>>>>>>                       return -ENODEV;
->>>>>>>>>>>>
->>>>>>>>>>>>               }
->>>>>>>>>>>> -       if (cpuid == loongson_sysconf.boot_cpu_id)
->>>>>>>>>>>> -               cpu = 0;
->>>>>>>>>>>> -       else
->>>>>>>>>>>> -               cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
->>>>>>>>>>>> +
->>>>>>>>>>>> +       cpu = topo_add_cpu(cpuid);
->>>>>>>>>>>> +       if (cpu < 0)
->>>>>>>>>>>> +               return -EEXIST;
->>>>>>>>>>>>
->>>>>>>>>>>>               if (!cpu_enumerated)
->>>>>>>>>>>>                       set_cpu_possible(cpu, true);
->>>>>>>>>>>> @@ -203,8 +203,6 @@ void __init acpi_boot_table_init(void)
->>>>>>>>>>>>                       goto fdt_earlycon;
->>>>>>>>>>>>               }
->>>>>>>>>>>>
->>>>>>>>>>>> -       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
->>>>>>>>>>>> -
->>>>>>>>>>>>               /*
->>>>>>>>>>>>                * Process the Multiple APIC Description Table (MADT), if present
->>>>>>>>>>>>                */
->>>>>>>>>>>> @@ -257,7 +255,7 @@ void __init numa_set_distance(int from, int to, int distance)
->>>>>>>>>>>>        void __init
->>>>>>>>>>>>        acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
->>>>>>>>>>>>        {
->>>>>>>>>>>> -       int pxm, node;
->>>>>>>>>>>> +       int pxm, node, cpu;
->>>>>>>>>>>>
->>>>>>>>>>>>               if (srat_disabled())
->>>>>>>>>>>>                       return;
->>>>>>>>>>>> @@ -286,6 +284,11 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
->>>>>>>>>>>>                       return;
->>>>>>>>>>>>               }
->>>>>>>>>>>>
->>>>>>>>>>>> +       cpu = topo_get_cpu(pa->apic_id);
->>>>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
->>>>>>>>>>>> +       if (cpu < 0)
->>>>>>>>>>>> +               return;
->>>>>>>>>>>> +
->>>>>>>>>>>>               early_numa_add_cpu(pa->apic_id, node);
->>>>>>>>>>>>
->>>>>>>>>>>>               set_cpuid_to_node(pa->apic_id, node);
->>>>>>>>>>>> @@ -324,12 +327,17 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id, int *pcpu
->>>>>>>>>>>>        {
->>>>>>>>>>>>               int cpu;
->>>>>>>>>>>>
->>>>>>>>>>>> -       cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
->>>>>>>>>>>> +       cpu = topo_get_cpu(physid);
->>>>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
->>>>>>>>>>>>               if (cpu < 0) {
->>>>>>>>>>>>                       pr_info(PREFIX "Unable to map lapic to logical cpu number\n");
->>>>>>>>>>>>                       return cpu;
->>>>>>>>>>>>               }
->>>>>>>>>>>>
->>>>>>>>>>>> +       num_processors++;
->>>>>>>>>>>> +       set_cpu_present(cpu, true);
->>>>>>>>>>>> +       __cpu_number_map[physid] = cpu;
->>>>>>>>>>>> +       __cpu_logical_map[cpu] = physid;
->>>>>>>>>>>>               acpi_map_cpu2node(handle, cpu, physid);
->>>>>>>>>>>>
->>>>>>>>>>>>               *pcpu = cpu;
->>>>>>>>>>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
->>>>>>>>>>>> index 00e307203ddb..649e98640076 100644
->>>>>>>>>>>> --- a/arch/loongarch/kernel/setup.c
->>>>>>>>>>>> +++ b/arch/loongarch/kernel/setup.c
->>>>>>>>>>>> @@ -65,6 +65,8 @@ EXPORT_SYMBOL(cpu_data);
->>>>>>>>>>>>
->>>>>>>>>>>>        struct loongson_board_info b_info;
->>>>>>>>>>>>        static const char dmi_empty_string[] = "        ";
->>>>>>>>>>>> +static int possible_cpus;
->>>>>>>>>>>> +static bool bsp_added;
->>>>>>>>>>>>
->>>>>>>>>>>>        /*
->>>>>>>>>>>>         * Setup information
->>>>>>>>>>>> @@ -346,10 +348,55 @@ static void __init bootcmdline_init(char **cmdline_p)
->>>>>>>>>>>>               *cmdline_p = boot_command_line;
->>>>>>>>>>>>        }
->>>>>>>>>>>>
->>>>>>>>>>>> +int topo_get_cpu(int physid)
->>>>>>>>>>>> +{
->>>>>>>>>>>> +       int i;
->>>>>>>>>>>> +
->>>>>>>>>>>> +       for (i = 0; i < possible_cpus; i++)
->>>>>>>>>>>> +               if (cpu_logical_map(i) == physid)
->>>>>>>>>>>> +                       break;
->>>>>>>>>>>> +
->>>>>>>>>>>> +       if (i == possible_cpus)
->>>>>>>>>>>> +               return -ENOENT;
->>>>>>>>>>>> +
->>>>>>>>>>>> +       return i;
->>>>>>>>>>>> +}
->>>>>>>>>>>> +
->>>>>>>>>>>> +int topo_add_cpu(int physid)
->>>>>>>>>>>> +{
->>>>>>>>>>>> +       int cpu;
->>>>>>>>>>>> +
->>>>>>>>>>>> +       if (!bsp_added && (physid == loongson_sysconf.boot_cpu_id)) {
->>>>>>>>>>>> +               bsp_added = true;
->>>>>>>>>>>> +               return 0;
->>>>>>>>>>>> +       }
->>>>>>>>>>>> +
->>>>>>>>>>>> +       cpu = topo_get_cpu(physid);
->>>>>>>>>>>> +       if (cpu >= 0) {
->>>>>>>>>>>> +               pr_warn("Adding duplicated physical cpuid 0x%x\n", physid);
->>>>>>>>>>>> +               return -EEXIST;
->>>>>>>>>>>> +       }
->>>>>>>>>>>> +
->>>>>>>>>>>> +       if (possible_cpus >= nr_cpu_ids)
->>>>>>>>>>>> +               return -ERANGE;
->>>>>>>>>>>> +
->>>>>>>>>>>> +       __cpu_logical_map[possible_cpus] = physid;
->>>>>>>>>>>> +       cpu = possible_cpus++;
->>>>>>>>>>>> +       return cpu;
->>>>>>>>>>>> +}
->>>>>>>>>>>> +
->>>>>>>>>>>> +static void __init topo_init(void)
->>>>>>>>>>>> +{
->>>>>>>>>>>> +       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
->>>>>>>>>>>> +       __cpu_logical_map[0] = loongson_sysconf.boot_cpu_id;
->>>>>>>>>>>> +       possible_cpus++;
->>>>>>>>>>>> +}
->>>>>>>>>>>> +
->>>>>>>>>>>>        void __init platform_init(void)
->>>>>>>>>>>>        {
->>>>>>>>>>>>               arch_reserve_vmcore();
->>>>>>>>>>>>               arch_reserve_crashkernel();
->>>>>>>>>>>> +       topo_init();
->>>>>>>>>>>>
->>>>>>>>>>>>        #ifdef CONFIG_ACPI
->>>>>>>>>>>>               acpi_table_upgrade();
->>>>>>>>>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
->>>>>>>>>>>> index 9afc2d8b3414..a3f466b89179 100644
->>>>>>>>>>>> --- a/arch/loongarch/kernel/smp.c
->>>>>>>>>>>> +++ b/arch/loongarch/kernel/smp.c
->>>>>>>>>>>> @@ -291,10 +291,9 @@ static void __init fdt_smp_setup(void)
->>>>>>>>>>>>                       if (cpuid >= nr_cpu_ids)
->>>>>>>>>>>>                               continue;
->>>>>>>>>>>>
->>>>>>>>>>>> -               if (cpuid == loongson_sysconf.boot_cpu_id)
->>>>>>>>>>>> -                       cpu = 0;
->>>>>>>>>>>> -               else
->>>>>>>>>>>> -                       cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
->>>>>>>>>>>> +               cpu = topo_add_cpu(cpuid);
->>>>>>>>>>>> +               if (cpu < 0)
->>>>>>>>>>>> +                       continue;
->>>>>>>>>>>>
->>>>>>>>>>>>                       num_processors++;
->>>>>>>>>>>>                       set_cpu_possible(cpu, true);
->>>>>>>>>>>> @@ -302,7 +301,7 @@ static void __init fdt_smp_setup(void)
->>>>>>>>>>>>                       __cpu_number_map[cpuid] = cpu;
->>>>>>>>>>>>                       __cpu_logical_map[cpu] = cpuid;
->>>>>>>>>>>>
->>>>>>>>>>>> -               early_numa_add_cpu(cpu, 0);
->>>>>>>>>>>> +               early_numa_add_cpu(cpuid, 0);
->>>>>>>>>>>>                       set_cpuid_to_node(cpuid, 0);
->>>>>>>>>>>>               }
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
->>>>>>>>>>>> --
->>>>>>>>>>>> 2.39.3
->>>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>
->>>>>>
->>>>>>
->>>>
->>
+> commit: e9b718a38463470cc388aaa3ff50f12bbe8c4279 ("[PATCH] sched/eevdf: Force propagating min_slice of cfs_rq when a task changing slice")
+> url: https://github.com/intel-lab-lkp/linux/commits/Tianchen-Ding/sched-eevdf-Force-propagating-min_slice-of-cfs_rq-when-a-task-changing-slice/20241028-143410
+> base: https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git d1fb8a78b2ff1fe4e9478c75b4fbec588a73c1b0
+> patch link: https://lore.kernel.org/all/20241028063313.8039-2-dtcccc@linux.alibaba.com/
+> patch subject: [PATCH] sched/eevdf: Force propagating min_slice of cfs_rq when a task changing slice
+> 
+> in testcase: trinity
+> version: trinity-x86_64-ba2360ed-1_20240923
+> with following parameters:
+> 
+> 	runtime: 600s
+> 
+> 
+> 
+> config: x86_64-randconfig-014-20241028
+> compiler: clang-19
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> +------------------------------------------------------------------------------+------------+------------+
+> |                                                                              | d1fb8a78b2 | e9b718a384 |
+> +------------------------------------------------------------------------------+------------+------------+
+> | BUG:KASAN:slab-use-after-free_in_enqueue_task_fair                           | 0          | 4          |
+> | BUG:KASAN:slab-use-after-free_in_dequeue_entities                            | 0          | 1          |
+> +------------------------------------------------------------------------------+------------+------------+
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202410301535.14e0855c-lkp@intel.com
+> 
+> 
+> [ 117.822447][ T468] BUG: KASAN: slab-use-after-free in enqueue_task_fair (kernel/sched/fair.c:831 kernel/sched/fair.c:846 kernel/sched/fair.c:7020)
+> [  117.825270][  T468] Read of size 8 at addr ffff8881678c1c30 by task trinity-main/468
+> [  117.826451][  T468]
+> [  117.826941][  T468] CPU: 0 UID: 65534 PID: 468 Comm: trinity-main Not tainted 6.12.0-rc4-00025-ge9b718a38463 #1
+> [  117.828330][  T468] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [  117.829779][  T468] Call Trace:
+> [  117.830339][  T468]  <TASK>
+> [ 117.830865][ T468] dump_stack_lvl (lib/dump_stack.c:122)
+> [ 117.831554][ T468] ? enqueue_task_fair (kernel/sched/fair.c:831 kernel/sched/fair.c:846 kernel/sched/fair.c:7020)
+> [ 117.832327][ T468] print_report (mm/kasan/report.c:378)
+> [ 117.833021][ T468] ? __virt_addr_valid (include/linux/rcupdate.h:337 include/linux/rcupdate.h:941 include/linux/mmzone.h:2043 arch/x86/mm/physaddr.c:65)
+> [ 117.833768][ T468] ? __virt_addr_valid (arch/x86/include/asm/preempt.h:103 include/linux/rcupdate.h:964 include/linux/mmzone.h:2053 arch/x86/mm/physaddr.c:65)
+> [ 117.834510][ T468] ? enqueue_task_fair (kernel/sched/fair.c:831 kernel/sched/fair.c:846 kernel/sched/fair.c:7020)
+> [ 117.835304][ T468] ? kasan_complete_mode_report_info (mm/kasan/report_generic.c:179)
+> [ 117.836192][ T468] ? enqueue_task_fair (kernel/sched/fair.c:831 kernel/sched/fair.c:846 kernel/sched/fair.c:7020)
+> [ 117.836990][ T468] kasan_report (mm/kasan/report.c:603)
+> [ 117.837670][ T468] ? enqueue_task_fair (kernel/sched/fair.c:831 kernel/sched/fair.c:846 kernel/sched/fair.c:7020)
+> [ 117.838449][ T468] __asan_report_load8_noabort (mm/kasan/report_generic.c:381)
+> [ 117.839276][ T468] enqueue_task_fair (kernel/sched/fair.c:831 kernel/sched/fair.c:846 kernel/sched/fair.c:7020)
+> [ 117.840026][ T468] enqueue_task (kernel/sched/core.c:2027)
+> [ 117.840701][ T468] activate_task (kernel/sched/core.c:2069)
+> [ 117.841383][ T468] wake_up_new_task (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 include/trace/events/sched.h:185 kernel/sched/core.c:4829)
+> [ 117.842104][ T468] kernel_clone (kernel/fork.c:2818)
+> [ 117.842786][ T468] __x64_sys_clone (kernel/fork.c:2927)
+> [ 117.843490][ T468] x64_sys_call (kbuild/obj/consumer/x86_64-randconfig-014-20241028/./arch/x86/include/generated/asm/syscalls_64.h:161)
+> [ 117.844198][ T468] do_syscall_64 (arch/x86/entry/common.c:?)
+> [ 117.844861][ T468] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.c:467)
+> [ 117.845742][ T468] ? syscall_exit_to_user_mode (kernel/entry/common.c:221)
+> [ 117.846571][ T468] ? do_syscall_64 (arch/x86/entry/common.c:102)
+> [ 117.848374][ T468] ? irqentry_exit_to_user_mode (kernel/entry/common.c:234)
+> [ 117.849183][ T468] ? irqentry_exit (kernel/entry/common.c:367)
+> [ 117.849897][ T468] ? exc_page_fault (arch/x86/mm/fault.c:1543)
+> [ 117.850589][ T468] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> [  117.851487][  T468] RIP: 0033:0x7f97dcccc293
+> [ 117.852155][ T468] Code: 00 00 00 00 00 66 90 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
+> All code
+> ========
+>     0:	00 00                	add    %al,(%rax)
+>     2:	00 00                	add    %al,(%rax)
+>     4:	00 66 90             	add    %ah,-0x70(%rsi)
+>     7:	64 48 8b 04 25 10 00 	mov    %fs:0x10,%rax
+>     e:	00 00
+>    10:	45 31 c0             	xor    %r8d,%r8d
+>    13:	31 d2                	xor    %edx,%edx
+>    15:	31 f6                	xor    %esi,%esi
+>    17:	bf 11 00 20 01       	mov    $0x1200011,%edi
+>    1c:	4c 8d 90 d0 02 00 00 	lea    0x2d0(%rax),%r10
+>    23:	b8 38 00 00 00       	mov    $0x38,%eax
+>    28:	0f 05                	syscall
+>    2a:*	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax		<-- trapping instruction
+>    30:	77 35                	ja     0x67
+>    32:	89 c2                	mov    %eax,%edx
+>    34:	85 c0                	test   %eax,%eax
+>    36:	75 2c                	jne    0x64
+>    38:	64                   	fs
+>    39:	48                   	rex.W
+>    3a:	8b                   	.byte 0x8b
+>    3b:	04 25                	add    $0x25,%al
+>    3d:	10 00                	adc    %al,(%rax)
+> 	...
+> 
+> Code starting with the faulting instruction
+> ===========================================
+>     0:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+>     6:	77 35                	ja     0x3d
+>     8:	89 c2                	mov    %eax,%edx
+>     a:	85 c0                	test   %eax,%eax
+>     c:	75 2c                	jne    0x3a
+>     e:	64                   	fs
+>     f:	48                   	rex.W
+>    10:	8b                   	.byte 0x8b
+>    11:	04 25                	add    $0x25,%al
+>    13:	10 00                	adc    %al,(%rax)
+> 	...
+> [  117.854567][  T468] RSP: 002b:00007fff02a6b648 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+> [  117.855822][  T468] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f97dcccc293
+> [  117.856993][  T468] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+> [  117.858049][  T468] RBP: 0000000000000000 R08: 0000000000000000 R09: 7fffffffffffffff
+> [  117.859328][  T468] R10: 00007f97dcbf5a10 R11: 0000000000000246 R12: 0000000000000001
+> [  117.860342][  T468] R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
+> [  117.861176][  T468]  </TASK>
+> [  117.861691][  T468]
+> [  117.862096][  T468] Allocated by task 902:
+> [ 117.862719][ T468] kasan_save_track (mm/kasan/common.c:48 mm/kasan/common.c:68)
+> [ 117.863560][ T468] kasan_save_alloc_info (mm/kasan/generic.c:566)
+> [ 117.864398][ T468] __kasan_kmalloc (mm/kasan/common.c:398)
+> [ 117.865193][ T468] __kmalloc_cache_node_noprof (mm/slub.c:4308)
+> [ 117.866038][ T468] alloc_fair_sched_group (include/linux/slab.h:? kernel/sched/fair.c:13312)
+> [ 117.866871][ T468] sched_create_group (kernel/sched/core.c:8853)
+> [ 117.867588][ T468] sched_autogroup_create_attach (include/linux/err.h:67 kernel/sched/autogroup.c:93 kernel/sched/autogroup.c:194)
+> [ 117.868413][ T468] ksys_setsid (kernel/sys.c:?)
+> [ 117.869079][ T468] __ia32_sys_setsid (kernel/sys.c:1269)
+> [ 117.869767][ T468] x64_sys_call (kbuild/obj/consumer/x86_64-randconfig-014-20241028/./arch/x86/include/generated/asm/syscalls_64.h:161)
+> [ 117.870453][ T468] do_syscall_64 (arch/x86/entry/common.c:?)
+> [ 117.871156][ T468] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> [  117.872032][  T468]
+> [  117.872468][  T468] Freed by task 243:
+> [ 117.873823][ T468] kasan_save_track (mm/kasan/common.c:48 mm/kasan/common.c:68)
+> [ 117.874518][ T468] kasan_save_free_info (mm/kasan/generic.c:582)
+> [ 117.875278][ T468] __kasan_slab_free (mm/kasan/common.c:271)
+> [ 117.875923][ T468] kfree (mm/slub.c:4579)
+> [ 117.876526][ T468] free_fair_sched_group (kernel/sched/fair.c:13278)
+> [ 117.877340][ T468] sched_free_group (kernel/sched/core.c:8823)
+> [ 117.878034][ T468] sched_free_group_rcu (kernel/sched/core.c:8831)
+> [ 117.878758][ T468] rcu_core (kernel/rcu/tree.c:?)
+> [ 117.879467][ T468] rcu_core_si (kernel/rcu/tree.c:2841)
+> [ 117.880104][ T468] handle_softirqs (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 include/trace/events/irq.h:142 kernel/softirq.c:555)
+> [ 117.880824][ T468] __irq_exit_rcu (kernel/softirq.c:617 kernel/softirq.c:639)
+> [ 117.881526][ T468] irq_exit_rcu (kernel/softirq.c:651)
+> [ 117.882185][ T468] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1049)
+> [ 117.883046][ T468] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702)
+> [  117.883877][  T468]
+> [  117.884299][  T468] The buggy address belongs to the object at ffff8881678c1c00
+> [  117.884299][  T468]  which belongs to the cache kmalloc-rnd-07-1k of size 1024
+> [  117.886238][  T468] The buggy address is located 48 bytes inside of
+> [  117.886238][  T468]  freed 1024-byte region [ffff8881678c1c00, ffff8881678c2000)
+> [  117.888235][  T468]
+> [  117.888665][  T468] The buggy address belongs to the physical page:
+> [  117.889558][  T468] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1678c0
+> [  117.890880][  T468] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> [  117.892051][  T468] memcg:ffff88814cf29cc1
+> [  117.892690][  T468] flags: 0x8000000000000040(head|zone=2)
+> [  117.893467][  T468] page_type: f5(slab)
+> [  117.894072][  T468] raw: 8000000000000040 ffff888100059b40 ffffea000479e610 ffff88810005a828
+> [  117.896842][  T468] raw: 0000000000000000 00000000000a000a 00000001f5000000 ffff88814cf29cc1
+> [  117.898038][  T468] head: 8000000000000040 ffff888100059b40 ffffea000479e610 ffff88810005a828
+> [  117.899301][  T468] head: 0000000000000000 00000000000a000a 00000001f5000000 ffff88814cf29cc1
+> [  117.900519][  T468] head: 8000000000000003 ffffea00059e3001 ffffffffffffffff 0000000000000000
+> [  117.901731][  T468] head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+> [  117.903000][  T468] page dumped because: kasan: bad access detected
+> [  117.903859][  T468] page_owner tracks the page as allocated
+> [  117.904643][  T468] page last allocated via order 3, migratetype Unmovable, gfp_mask 0x252800(GFP_NOWAIT|__GFP_NORETRY|__GFP_COMP|__GFP_THISNODE), pid 194, tgid 194 ((sh)), ts 46703728016, free_ts 0
+> [ 117.906952][ T468] post_alloc_hook (include/linux/page_owner.h:?)
+> [ 117.907672][ T468] prep_new_page (mm/page_alloc.c:1547)
+> [ 117.908338][ T468] get_page_from_freelist (mm/page_alloc.c:?)
+> [ 117.909140][ T468] __alloc_pages_noprof (mm/page_alloc.c:4733)
+> [ 117.909885][ T468] new_slab (mm/slub.c:?)
+> [ 117.910539][ T468] ___slab_alloc (mm/slub.c:3819)
+> [ 117.911291][ T468] __slab_alloc (mm/slub.c:3910)
+> [ 117.911959][ T468] __kmalloc_cache_node_noprof (mm/slub.c:3961)
+> [ 117.912775][ T468] alloc_fair_sched_group (include/linux/slab.h:? kernel/sched/fair.c:13312)
+> [ 117.913582][ T468] sched_create_group (kernel/sched/core.c:8853)
+> [ 117.914420][ T468] sched_autogroup_create_attach (include/linux/err.h:67 kernel/sched/autogroup.c:93 kernel/sched/autogroup.c:194)
+> [ 117.915352][ T468] ksys_setsid (kernel/sys.c:?)
+> [ 117.916031][ T468] __ia32_sys_setsid (kernel/sys.c:1269)
+> [ 117.916779][ T468] x64_sys_call (kbuild/obj/consumer/x86_64-randconfig-014-20241028/./arch/x86/include/generated/asm/syscalls_64.h:161)
+> [ 117.917631][ T468] do_syscall_64 (arch/x86/entry/common.c:?)
+> [ 117.918407][ T468] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> [  117.919324][  T468] page_owner free stack trace missing
+> [  117.920090][  T468]
+> [  117.920515][  T468] Memory state around the buggy address:
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20241030/202410301535.14e0855c-lkp@intel.com
+> 
+> 
+
+Hmm... Should add a check about whether se node is on rb tree effectively.
+
+Thanks for the report.
 
 
