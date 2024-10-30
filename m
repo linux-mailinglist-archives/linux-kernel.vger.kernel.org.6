@@ -1,194 +1,145 @@
-Return-Path: <linux-kernel+bounces-389177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E022B9B698F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AA49B6993
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D701C20C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:50:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F941C21106
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEF2215029;
-	Wed, 30 Oct 2024 16:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dyTW5bDn"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2088.outbound.protection.outlook.com [40.107.92.88])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90261215030;
+	Wed, 30 Oct 2024 16:51:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7307B2144A4;
-	Wed, 30 Oct 2024 16:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307035; cv=fail; b=ERGLRGTU3VEgRfpFvLDtUrzBogOYw8i9afNQPJJAH+YH+i8l2mOAEyswoGNSjbELWPinE3+XHr8g6T+JN0MsclJ7JyZtGgMe0Lh0hlSIEjtH3t5B9yI4x81wrVXagY8gjJWJeIugXqwKZKvNchB2pD2Hu1kg4jENWlVUQP1th08=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307035; c=relaxed/simple;
-	bh=du0IhCc/CUdd3lei0G+rFuUCCc7eIdOG9EzpsBLWkYk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rMPunbhzs9KSvMqTdyo93ueAl2zg1S4fLTdww7JC95awvl0agzkOD+9tKd7VNUU9EIbstxCygfQdDx28PyuPmrB9TEznKvBf1x+obXZ0UljK8YbgnIxG32WorPyS7g6H332iQUFp/Aqi/cCBHSY5MPIQsq6DiW5tqNdtS8VbLHE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dyTW5bDn; arc=fail smtp.client-ip=40.107.92.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gxXVBsoaWEcsziUT+WiV+Pav4xV5Ky3KMlcANLp3+h6EF6RvTNPBnCzYhe5VxLENrz4cPhEiriN2n78FrRLnAzF9kF9TrUs61GPOcb4PqVV5lpXtFFrloZOpLNmC5j3N0vNfStlygU0IQzPaiHoM2k2t7gVj/h0P4HDkBD/TVrf5sufNtvvyJnhySxM87CFLQXf+c7AXUPqWPRSzZsmkCNSCixtTNbzNehmsDGqzTkfK5ZtRalS1+woHEzBtsuDr4BZ1C0nuesxR87P9nlKqemP7U0m50hwL/RNWsdOY+dmc1DPLPvzTVzSloS/ud1Im2QsENp6n9OztXTQ5L0n5sQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lu2KGdNmpf+fNcaqmNEt1xQDZ7zf7LNN1ooxCSSzS0U=;
- b=vSYJKYKderygI3VW+POj/TP2HYUM5Wt6QM+MpbsvdW09Uot9VX1qjSYXmg/SdGBamzjJ+0NDm0uc4YpI8II1djmOKpll58czy16dUWIrTF67SnngGoa2QvvW7117haQEHAUSoSHbyd0VfPoydWP++wFCGIStPB45mZIIR7tiowWtQBOm6wik7KEVuqJfYDqL07uyfb28hA24TcpBYzumngJNi/QORsF7vQvymX6SeggOIMVsr2WyJ8cYQIyxjanrFGp8/FlI+Um4ZA87LeV7x47N6RXX1jo56+NYehP8TfVnmY7kMFgUwKRrp/Qmq6+eNKvIeghmhpwggZSm+BfCqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lu2KGdNmpf+fNcaqmNEt1xQDZ7zf7LNN1ooxCSSzS0U=;
- b=dyTW5bDnzmp4s9p7pPln0PUJCyPk98LM8EgRw/qp+npIcrk1OhKjy0nFmATUQ95CcCSWZNVdPIgaOrkYSGKi3SkdwoBx/KBo/9IawdgMyNC6yIyh1PrG264qzOATY7HgumqFslmwKOtZEpfzeN3IL6A1biOdPrF0lQ7GCMQhmkQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com (2603:10b6:610:d7::15)
- by BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Wed, 30 Oct
- 2024 16:50:30 +0000
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607]) by CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607%6]) with mapi id 15.20.8114.015; Wed, 30 Oct 2024
- 16:50:30 +0000
-Message-ID: <962a15c4-d7e8-4d58-bbe4-8045dd341db9@amd.com>
-Date: Wed, 30 Oct 2024 11:50:29 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/5] x86/mce: Add wrapper for struct mce to export
- vendor specific info
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-Cc: Avadhut Naik <avadhut.naik@amd.com>, x86@kernel.org,
- linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tony.luck@intel.com, qiuxu.zhuo@intel.com,
- tglx@linutronix.de, mingo@redhat.com, rostedt@goodmis.org,
- mchehab@kernel.org, yazen.ghannam@amd.com, john.allen@amd.com
-References: <20241022194158.110073-1-avadhut.naik@amd.com>
- <20241022194158.110073-2-avadhut.naik@amd.com>
- <20241030133227.GDZyI1a5rheucn86qc@fat_crate.local>
- <685c039c-06a5-4876-a918-bd1c810397a9@amd.com>
- <20241030164811.GEZyJjS9KJDgMYRdib@fat_crate.local>
-From: "Naik, Avadhut" <avadnaik@amd.com>
-In-Reply-To: <20241030164811.GEZyJjS9KJDgMYRdib@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN4PR0501CA0052.namprd05.prod.outlook.com
- (2603:10b6:803:41::29) To CH0PR12MB5388.namprd12.prod.outlook.com
- (2603:10b6:610:d7::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B9021502A;
+	Wed, 30 Oct 2024 16:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730307061; cv=none; b=M7dCFZEYi8YJbYE8V/CV+giesS8jbT6dFMnA2x5RHy06MbsQ1qzFCa1O30Y/GJMhipvZTw1LEuJLCddrNUFPKntQp7Mp/eve4ne/u1FXLX/FxgtJd5V9R5GS8OGXHmlHTOWILoLwpVZ9Uzklycxn59RqlHToyDPuMmAhA/F07I8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730307061; c=relaxed/simple;
+	bh=bOTH/OjrpnC8FNfhLzXIlR186DhrR59YRd1DzOWN72Q=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GTkWLs64FNzeNUpRIDXUhpLoZmdTGmHsSo6GLUWw2b3pOY5dANxwYrxsw70GiN+gdosoQA1CzzIOgmX/FQElOeKMUnmulL86Cuw8gL2iaHPx/gcWy73RuKjzGS6RxrhdoLh3nehAesQhhcJlc7tFQmwA9IPDuamzBNLsM0Ylamg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdtQ70XY1z6K5VJ;
+	Thu, 31 Oct 2024 00:49:35 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A9119140B39;
+	Thu, 31 Oct 2024 00:50:53 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 17:50:53 +0100
+Date: Wed, 30 Oct 2024 16:50:51 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: David Lechner <dlechner@baylibre.com>
+CC: Ricardo Ribalda <ribalda@chromium.org>, Jonathan Cameron
+	<jic23@kernel.org>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
+	<bentiss@kernel.org>, Srinivas Pandruvada
+	<srinivas.pandruvada@linux.intel.com>, Lars-Peter Clausen <lars@metafoo.de>,
+	Harvey Yang <chenghaoyang@google.com>, <linux-input@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] iio: Add channel type for attention
+Message-ID: <20241030165051.000023a1@Huawei.com>
+In-Reply-To: <b9da1c5e-3177-4bd1-abb2-5e92b0c2fb4c@baylibre.com>
+References: <20241028-hpd-v2-0-18f6e79154d7@chromium.org>
+	<20241028-hpd-v2-3-18f6e79154d7@chromium.org>
+	<20241028203437.3eb5268d@jic23-huawei>
+	<CANiDSCu7G8gDKaY5jJR+JGyqGDobkDPRG+9NOfpXvVviqkQizA@mail.gmail.com>
+	<20241029143847.00004392@Huawei.com>
+	<b9da1c5e-3177-4bd1-abb2-5e92b0c2fb4c@baylibre.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5388:EE_|BL1PR12MB5995:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddaa955d-3fd0-4e2e-20d2-08dcf902f6a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bm5KbFk4RzBra1h1KzVVelJwSEFWMnJsQ2hHUkRXQ25FYlQxUEJneGxKRjhG?=
- =?utf-8?B?eEg0V3NLSTN6ajFZVDJoNnJ1UFM2bnUrUmEyckdSdkpNYXBTUTY2RDJxMCts?=
- =?utf-8?B?Z2xrZDRFSmRLTFkzQnlDNkFFTHgvdXFZMXZzbEpDL0QxQmhFR3o4MFpRRzZU?=
- =?utf-8?B?S1NwTGw1M0pPRTc1Ty9sZkpnUnBOV2cvSjZweXUyK3dYVEp4U2R5QjlCTWFn?=
- =?utf-8?B?TXVRRU1yTnp1a3ZRVVpvTTB6cTYrSDk2K041bWl0R0dqZ1dFSGloeWVQYnBy?=
- =?utf-8?B?cHl0Ry9GRklWNUE1SUZybVQrMlA5Rnh0dktQYzR1S04yOGo3a243M2lkZUI3?=
- =?utf-8?B?dTY1M0JXRlBBazBVY28yaTkrUURhaG5ZeGpWdjB5Ukc2NTVPL3luT2d0YVAw?=
- =?utf-8?B?aWR6Sm1STndIVkh4VFV3Y05xa1V1a3lrN0Z4TWN3UUxaTUcrcmkrZTB5Z1Ar?=
- =?utf-8?B?ODd5a0psUExsRThuaUJZNktlVmVTZjQ5Q2JkVXp3R29MZkhHbm1Td2RyRkh6?=
- =?utf-8?B?NUFHQXd6ZFNRYm1ZRkwwMWxyTEgrNWZlcm4zdllPZmdGN3lGSWhGZzRhY0Rp?=
- =?utf-8?B?b3llYzF0U3Z1Vmxsd1Njc21hdTUwWnA2QmlWMXY1UG5FVnVGc3ZDaXMxWXly?=
- =?utf-8?B?SWJQSkVCYVRlU2tyQVhJcFZ1Y0d5RUp6UXJBR3oxaW5PRll5QVhJZ1RidFJN?=
- =?utf-8?B?NHZEY2JPaExHejR4ZEI4Qk5ZRHgyWnhXelJMTGhibktOMmlQdTJ6WnFSeWhz?=
- =?utf-8?B?NTgweGlmZUNOOUxVSndweVg3eUl2WU1sRTN1SFl3SUg1eWFuVG1RZkNqUGg0?=
- =?utf-8?B?Z3RjUnFrdlJ6Um5QYWVaK1BlZWk5Yld1Njd1U3Q5L3VGTlhjNzNRN1k0NUFV?=
- =?utf-8?B?aUZudXVFLy9KVWY3TW54RzZNMlprUHhaQmxBbkdUa0wzUXVra0tESURmT1JZ?=
- =?utf-8?B?NFprYnlQSlhXbjY4S0JsM1FEQWZHeUY5Si9UNmwyRHI4VzZORjBMNHdaYmJK?=
- =?utf-8?B?amgyc1dCbHJvazkvUkUwZTJuS1A5ZUFsOGI0dnQ3cjBxOVVZNGhFSEUvejFj?=
- =?utf-8?B?emlhRTNPOWpMaUZIQ1JJOFc5aW1vbVlNZ0JMNGljeDhaYkI1bk9SNGNERGVV?=
- =?utf-8?B?UHZVQWdpbDlmOHhQNzloQlhVNWtHWlFCR1pyR2NMUEdXK2c2Qi8wb1hxYkU5?=
- =?utf-8?B?bWJWNVRoU2tWZVRpc2NEMU9tQmc1ZlZOMWt3VFRmLzlwaW1Wd1dkNFNpLzh0?=
- =?utf-8?B?cG0wRHA2MCtQSUpYN3oyNGNNV2xxM0pwd2NSUjlXWTVLVXJxSnRvMzdNUE15?=
- =?utf-8?B?aWVlZ0JmTXdBN0pvM2dJSzgxdGg1WGhwcnRpRFcrWFhXdmx1TGZVejVrbERQ?=
- =?utf-8?B?ZGpmUHlaaGRLa2VxdnAyd3h6TDI5enRVMmFEd3NKaTNRNTFHMk9IU0tnZFVz?=
- =?utf-8?B?aEZacDMzRnlkT01LZnRlQktvTmVCOGhuMGdWWFdGbzIxRDM3NytOYWZDbnVs?=
- =?utf-8?B?cXNyWUdjMU1DdnBsQnhhVUhLY3NENkkyNFlCbFVNQ01la1k0M3RnTENySTE3?=
- =?utf-8?B?OXM0ZDJ1Z1FWQ0tZMzZhbEVJTVVSeXBiWTMybEgyYjVjSjVIYVQxSXdxejNQ?=
- =?utf-8?B?NVdkaWtTZWwzTHlENUluUXdGOXVFWWE1SDE1OGdna05ic2ZQaWgzWkJzOE9i?=
- =?utf-8?B?WWp6UmtGVFJUMTgwdmdMZnpRTUxJVFdkdG5JZVc0Snphc3VWVldXQ2l6OTBm?=
- =?utf-8?Q?cFfsw973BKg+5ojycY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5388.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGlRZWJ2cUdTZjF2TGdsMXBhZTMzNUkxaTRyZDdrLzZVVU9PZ2hEdnpmME43?=
- =?utf-8?B?YjVNSkN1SW5sVzBTTUVtZFl5Yk45Z0kxd3lraFNmRi9PdEZweFVBd1YzbmlU?=
- =?utf-8?B?RUhkMHltb0VsMXliSHUvdklUeit3L1E2SmVJWTBpQ0xiK1dEWC8wS0NOei92?=
- =?utf-8?B?amwwWnFhRGczYTBoR1A1T1FDUUhudlVQRzFLbWhrQmpxV21ySUVIcGpNcUlv?=
- =?utf-8?B?OHJKSlp5VnZFdXgxdy9EVW9rVGdDVVpVSE9jdXNsSUJXL1hqblNyUCtLa2th?=
- =?utf-8?B?ZXpUUDYwdFZPSERVT2I3THlQUktMUTIxMEJHWU5RbGVZamdkWE1sYlVTN1h0?=
- =?utf-8?B?ZG9KaGkvalQyc1M2N04ySENsSmhaSXZaa2ErZWFnR1RqSU9mc3pVcG5KK1R6?=
- =?utf-8?B?bk8vREh6bWtFdzRwSitWNlVINGlBRmkzc2J6YTRlVXVXSWZUaS92RGdMRWJv?=
- =?utf-8?B?UlR6YmUveGQ2emJpT0E1aHI0YWxUZkJNdDhoK0QxNDBoUzdDTG02eDNTTlFG?=
- =?utf-8?B?QUY0YUp5Q290US9HR1FvNkNVQXRtM2s0Tm5QaFpvQ2pnNkJOT0lVc1l1bDdQ?=
- =?utf-8?B?MXMrWkEzWE9nd2hQQjRVc1loU3FlOHJNcWkrWWRkb1hRL1BSOGloUXhCZ1RW?=
- =?utf-8?B?VzVJcER1L1pXc0U5RDV1T2p6UlcvZHNpL0plQ1hVVFVGUUMvbUIzT1ByTkx1?=
- =?utf-8?B?OU8wK2xWSXl0aFh6M2NyMWtKcGJ5YUNtdExmZjFmMVVOclFwM1ZSdGlaR0lm?=
- =?utf-8?B?Z05nWW1sMTVvY0FWK3o4eE5xTUlMSnB1MEpQQ2xvRld1a3k1eGgwYUpLcThq?=
- =?utf-8?B?UzgrTkN2aGNoRHgyVDBSZUg1SDllT1FPL1Iva2ZhdmlNakxCSTloSEVQUnls?=
- =?utf-8?B?ZkpQYTJpd0xVbDhLRHA0SEIyUmdhNmI4RUFNby9pakFSY2VIeVUwVkhmQzU1?=
- =?utf-8?B?QzU4WVNTMTdKSE1nOEN0d0xNZHRGcjYrb3I0T0VCcUROMWthdnN1czVlQkY2?=
- =?utf-8?B?c1djZHlUSE5oTUlOWkpVUHFiM2RhTitKSWY4UXQzMEM4Sk9QVkYyVDF1Y2Nu?=
- =?utf-8?B?ZXBiK081MmFzR1lqMk9MZ2hidGg4cU5sZHlHMmtGMjNVTXozUFF3MS9rdUdJ?=
- =?utf-8?B?c3BmUTBKbEFibmNtc0RGOUY4eXZlOENyNUFVbFYwOVQzcUhNY21aV2w1Tmo0?=
- =?utf-8?B?SDVadVdYdTlHclA4dUtLdnpNRkxyRkVBODlpOHRsTGNTRDB6WXhQM25qT3Y3?=
- =?utf-8?B?SGJrVVVQRVl5a1ZERi80RFM1Nk80RlFZN25WdWxZQmpIQnI5QXpDOUI4elhn?=
- =?utf-8?B?UnZsK3p5YUNMVkhPNFB5Q3lRWGNiZmZEN1ZsTkVHazlZTjIvcjBpTlpwNlM5?=
- =?utf-8?B?S2tKNHVJSStQTFJNS1VDWVN5eEozUTBYZlNQcHAxZ0ZKY0w0UmNMaEtsNTU4?=
- =?utf-8?B?aXVSQ1lSbmpVT0dZUk5MSUYzd3VldlFsclBycFZvdTlHOGdXY013VlNTaGt2?=
- =?utf-8?B?bjllcC82UE1DUld5MEdmNHZJdnNiM3pScmVaZG0xK2Q1bDA5bTlhQlN0RDEz?=
- =?utf-8?B?OHhXelg5WkdLOE10bWl4Zmw5Y25JeFRVaG9DUlppV1J6SFMzcGdSODduNFdj?=
- =?utf-8?B?cVBPaHRIWk9rcGI3YTV2VVUwZHNhV2hKTVg2eFJva081a3h5eHdTVmo2WGhy?=
- =?utf-8?B?RHl5ZGVtZ2tRdERYYVEvd1ZFdGhSOSsyZGJHUE9UTktmaDJKMXMvbGQzV0RG?=
- =?utf-8?B?MWVvRGRXTCtYdU1jVlZkZytPZTlHQmRQOFB0bWpjVlRENHUvNzJZbCt0QmFx?=
- =?utf-8?B?bmlaOFh5a24zek1jUlNKWDdwRlpnQ2doWmNnU1BQOUR2Y25CV1p6T0Q4ZlU4?=
- =?utf-8?B?MEg3SU1NUWxPaTBENjRDaUM2UWNLRmt2UWxoM1JEM2prUjVhMFJRUzgvbWFi?=
- =?utf-8?B?S3lXcUI2VkdNcHNNd1AvU2ZwNGNzRkNjMTFvQmU4Nzk0OEFPRlJlVWRtMjRq?=
- =?utf-8?B?NFR0ZmoxYlJxRndlcmpGZm1kQVQzOVVjakFDbE95Q2J2Y1ptWnprR211OVRa?=
- =?utf-8?B?THlZNE02aG9YWDFxNnJYRW11S0Q4dG9kRWpIU2VJalUvVVUwbm8xdFdta0FS?=
- =?utf-8?Q?zOM2MScIMkt7oodIGtfm0DC38?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddaa955d-3fd0-4e2e-20d2-08dcf902f6a1
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5388.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 16:50:30.5276
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rtq6GnOGmKqpS5nWkEIr8Newehusetl32G00I/EN6EjR9tDIKCQd3iiBk7Fbq3bVAh0qeGSG4Lt1vuVUL0Kgyw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5995
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Tue, 29 Oct 2024 17:26:06 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-
-On 10/30/2024 11:48, Borislav Petkov wrote:
-> On Wed, Oct 30, 2024 at 11:35:17AM -0500, Naik, Avadhut wrote:
->> Will fix this.
-> 
-> You don't have to - I'll fix up while applying.
-> 
-> This was just for your future info.
-> 
-Okay! Thank you!
-> Thx.
+> On 10/29/24 9:38 AM, Jonathan Cameron wrote:
+> > On Tue, 29 Oct 2024 13:20:06 +0100
+> > Ricardo Ribalda <ribalda@chromium.org> wrote:
+> >   
+> >> Hi Jonathan
+> >>
+> >> On Mon, 28 Oct 2024 at 21:34, Jonathan Cameron <jic23@kernel.org> wrote:  
+> >>>
+> >>> On Mon, 28 Oct 2024 10:12:23 +0000
+> >>> Ricardo Ribalda <ribalda@chromium.org> wrote:
+> >>>    
+> >>>> Add a new channel type representing if the user's attention state to the
+> >>>> the system. This usually means if the user is looking at the screen or
+> >>>> not.
+> >>>>
+> >>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> >>>> ---
+> >>>>  Documentation/ABI/testing/sysfs-bus-iio | 7 +++++++
+> >>>>  drivers/iio/industrialio-core.c         | 1 +
+> >>>>  include/uapi/linux/iio/types.h          | 1 +
+> >>>>  tools/iio/iio_event_monitor.c           | 2 ++
+> >>>>  4 files changed, 11 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> >>>> index 89943c2d54e8..d5a2f93bd051 100644
+> >>>> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> >>>> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> >>>> @@ -2339,3 +2339,10 @@ KernelVersion: 6.10
+> >>>>  Contact:     linux-iio@vger.kernel.org
+> >>>>  Description:
+> >>>>               The value of current sense resistor in Ohms.
+> >>>> +
+> >>>> +What:                /sys/.../iio:deviceX/in_attention_raw
+> >>>> +KernelVersion:       6.13
+> >>>> +Contact:     linux-iio@vger.kernel.org
+> >>>> +Description:
+> >>>> +             Boolean value representing the user's attention to the system.
+> >>>> +             This usually means if the user is looking at the screen or not.    
+> >>>
+> >>> Hmm. I should have thought of this when I replied to suggest a new channel type.
+> >>> The question is 'units' for a decision.
+> >>>
+> >>> Last time we hit something like this where processing is used to make a decision
+> >>> we decided to at least allow for the concept of 'certainty'.
+> >>>
+> >>> The idea being that smarter sensors would tell us something about how sure they
+> >>> are that the attention is on the device.
+> >>> The analogy being with activity detection. See in_activity_walking_input
+> >>> in Documentation/ABI/testing/sysfs-bus-iio
+> >>>
+> >>> Do you think that would be appropriate here as well?  For this device
+> >>> it would take the values 0 and 100 rather than 0 and 1.    
+> >>
+> >> For the particular device that I want to support, they are giving me a
+> >> value of 1 and 0, and the example from usb.org seems to work the same
+> >> way (Logical Maximum of 1)
+> >> https://www.usb.org/sites/default/files/hutrr107-humanpresenceattention_1.pdf
+> >>
+> >> I have no problem multiplying my value by 100 if you think there will
+> >> be a use case for that. It will not have a major performance impact on
+> >> the driver.  
+> > Same was true (0 or 1) for the activity classification but I'm not
+> > keen on certainty :)  So lets' copy that precedence and *100
+> > 
+> >   
+> And I assume we would want this to be in_attention_input (processed),
+> not in_attention_raw.
+Good point. Yes.
 > 
 
--- 
-Thanks,
-Avadhut Naik
 
