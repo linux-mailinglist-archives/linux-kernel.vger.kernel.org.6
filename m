@@ -1,285 +1,178 @@
-Return-Path: <linux-kernel+bounces-389511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AAFF9B6DF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:42:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48949B6DDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FF04B222D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:42:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC6E1F22D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81F621730B;
-	Wed, 30 Oct 2024 20:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C41121892D;
+	Wed, 30 Oct 2024 20:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="mPikVvjp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UjSz8CwY"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jndXqIGb"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B62E215005;
-	Wed, 30 Oct 2024 20:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0412178F0;
+	Wed, 30 Oct 2024 20:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730320710; cv=none; b=crRp1Nbnn7tuwJXPIj060N/UB7mGlJkxJ4ahCl761cd1bM0H6SSUtQllSMCO0ZuGuGuhFLXTl28tVJE3mDguUoqIClJbSfh+AJMTzvunFtS8cJ7hk0HhKgtArU5DTe+9xvyRBqFLZRsNhu7U6zq7dU6pPzrGJScX6GulotZgPCs=
+	t=1730320666; cv=none; b=MXf2guXhTs9F1JyLbG56zeTMdv2U8GMQaMqDpQVC9oBEJkZG7Id1N+pXBlTshJbstBwW/XTERr9LsedFk6CiMoMJnZ4p5kYKfSc5Q/qcn+r6q4+u+UTY0j1hWJBAI6LyUw3TD9YziHvpZWPfT8nQWyh39BKBGU1284EfofTl6CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730320710; c=relaxed/simple;
-	bh=qJC5bmo2TZwtOLDTxtUGWYWo3+SWCxPuOFuCU4846j4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=StgySZUaXL4f5hHNku/FQ0jd9jLmVtMFBOM5XZaVk6VjQ0bJ0H5AL8sh4a8msCH3Ufc7PgRyYxsmqkr07EtJT52P0kEx+51chJkuH/0x2QW7rUeDaZb85py1JHXS32Q+Y+UjDT5OMH2yXfzMCWjmUPKEKmJUfj+nwvsoE7gidzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=mPikVvjp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UjSz8CwY; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3C97D25400FD;
-	Wed, 30 Oct 2024 16:38:27 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 30 Oct 2024 16:38:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1730320707; x=
-	1730407107; bh=0r+XHUZuZsMcFUus8OxUh/faPdt2sC3qEYpfg2ntVAY=; b=m
-	PikVvjpOOulDgJtt8fgJTv9y0iR5xoLilAgtN6rIt4VVviX/+ngC9myYslvm/doh
-	BJvXJFkgmvCETTLYEODn7SulKFV7FWMcl8JO1FCtZbP01LrCQ/SDZAwk4g8QW8Bk
-	sQAJBim33GWyg/irw9rXQ0TyWQ1WIJo/JRPUM5BwqR/fbokPszgZ+aUPyuNRuATc
-	fC34fYM5q6EFIttJlGQjWSptyN7mkfS07nxTfpNqAdayUt8UyFMPFlAOZXW+GWG9
-	mHlzbYvCAC+zthlVkg6Oc/b+2mXYeNX+Tzy83saT7TyYnV4KQuT/NrVB/7yjtFDK
-	3FpBnzmiCACXWZnL4g87w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1730320707; x=1730407107; bh=0
-	r+XHUZuZsMcFUus8OxUh/faPdt2sC3qEYpfg2ntVAY=; b=UjSz8CwY2Ltr8JVOc
-	KvByOmqULkJtsP4Om3hiYbwJ0nDqXUcNidrQg0YsM5ueB6BfceukpCsorVRBGao2
-	uLJX0YKuwALEvDBPlISSHXKc5oK8lF1VdU6h1xazpDP5ecLxI2jTf0hQC6XqlN/4
-	QXizqbm4iwoWxYOtl4Hx0H8OfRbL6ot6DkTpxxGcVPJIN3GquoiJZnQVqnvZhSpH
-	4+hi/wqYD0v6422jQ5dgF6AoZVKLLgroXcfeOtUq1YnhMkaZJTt0ww4XVzA9baec
-	oAUmm3fbbc/0J8dXidWmfjmNAf84Zh/E3817Ze4CaRfnvPd3c7RJmOicLI7zyLQ1
-	IUPJw==
-X-ME-Sender: <xms:QpkiZ_ZG2COgeJADxAodu8lWWkkhOmoL_SsAjLn2UL6MmGb4zgI5xw>
-    <xme:QpkiZ-ZWlZnoFBvh1B5NMx6BqVfesPNOyjvkSxuZGtmr_ehR0nyxRKLAUMIJJuOun
-    iM2NOmyzDew2CISLdE>
-X-ME-Received: <xmr:QpkiZx_8EBht8xq_d1tY1NwKkiNk4XkgM8LYnFuxiVTiX4Sej3EQi-fpJC83JLTIu2Qn7g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgudefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
-    necuhfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhord
-    hpihiiiigrqeenucggtffrrghtthgvrhhnpefhvefhvddvffeufffgffejheelffeffeff
-    ueehgeevvdeggfeufeekudeikefgleenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthihtghh
-    ohesthihtghhohdrphhiiiiirgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-    pdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjh
-    grtghksehsuhhsvgdrtgiipdhrtghpthhtohepvggsihgvuggvrhhmseigmhhishhsihho
-    nhdrtghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epshhkhhgrnheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeii
-    sgihshiivghksehinhdrfigrfidrphhlpdhrtghpthhtoheptgihphhhrghrsegthihphh
-    grrhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:QpkiZ1qfNhWdK5gPqH1nFSWr5a-fa6yeEOwdfA9F8yUx_7TmVKjXaQ>
-    <xmx:QpkiZ6p5qEpOo4OHTM9-BZ4qrZ1ZCVoehdlHC7vqf_3O-_S0ERJ0Tw>
-    <xmx:QpkiZ7QlqTwOS2jzHHi0Lk9sqYNcjAQZSfThMu1J7De1_U16dBa2rw>
-    <xmx:QpkiZypXchgZ4zFsXjBSE7xgI-dSnmdLwqQNmFT0Ta0NP6Mto8YpQg>
-    <xmx:Q5kiZ1Cdqrs0yan2ctnJtztcdPLvyrgYBwXGcFyWtxuutNcexreBBCKe>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 16:38:24 -0400 (EDT)
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: =?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Tycho Andersen <tycho@tycho.pizza>,
-	Tycho Andersen <tandersen@netflix.com>
-Subject: [PATCH 2/2] selftests/exec: add a test for execveat()'s comm
-Date: Wed, 30 Oct 2024 14:37:32 -0600
-Message-Id: <20241030203732.248767-2-tycho@tycho.pizza>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241030203732.248767-1-tycho@tycho.pizza>
-References: <20241030203732.248767-1-tycho@tycho.pizza>
+	s=arc-20240116; t=1730320666; c=relaxed/simple;
+	bh=nKpfZxhd5JTHPVwevLVBLkoT7+Jsed3mNhMIIP8pgR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snfYf7s+oF6oFGCx8tNMlN41oJwK9QqElzvyUqXbmxj3mKSMl8VUJdbflyy3CW6GILbs7+sT6j2/N3bzoWzY4EZg6iEidf/9kYvNTB+VfcptPz7qWOuiUXredjom7WEW7NB0FwjLav+8Dj+0tPO+PgSrWEf76RgpCGRsYdAILeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jndXqIGb; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so172982a91.1;
+        Wed, 30 Oct 2024 13:37:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730320663; x=1730925463; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NPktwdcsysf0pPmaCSB+WL73aCzNuMhxTTi/LgU30h0=;
+        b=jndXqIGb8+4EPwLqkENgxJqrUQyJ1fif0QY8JGlqt4MeG7Vbxo7TpnBMHjlKuY3Q3X
+         Vj1VClunsW9N7wsjvvevZMe15SzSWEUntI75e/DcqskjWpInSys77Qj1wuTqkMFXa/AR
+         6Kjq4HLBk9d3FNncAz/6iabWRTLndiN4Cbusgc77bMcEdoghogaVBCldKMzL0HsM4LDe
+         1VrWDIeXORWJODWbYCXqIYWiki0LKhNScGp2R5oartXhnQRngVQStHmLaTGbZJKNFT/Y
+         IsXMh0BkziuDwgwFJ3eXbNNuegTscUF+MRL2mmT3AZMB82qBvsnjJKsyiYVivlQeYV54
+         4mfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730320663; x=1730925463;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPktwdcsysf0pPmaCSB+WL73aCzNuMhxTTi/LgU30h0=;
+        b=CI60lujzHXXF1XRCu6NDs0799Wf9tvdB767AN9bKCNce3diHCeiJSaJnxrGloMmIbD
+         G3HeXI1STHg2l7LgyWCDz5gnKQrRq9D0w9dRYSIxOhorSpm5dp38F9tmRzNvhwjTsyIl
+         PKspNdDU1oSGlgc7AhkUD7Uav8gZK30TMrIypugDdQlqn0ZYi1VUWZ85cWuQsIqh5iyE
+         RqlIOSIIKCoyPENiCdwCvo0mVn3jyROs9UtTUMRxIwIetcIg0PCRmPKMW+OSwd4hVsU8
+         0tgI0jEzNObSvBmERC5Ch9zkHCTM0cJzuJ+K486qR6jhQsAO2HlGXQI0h8Oa2aMtaAcv
+         kjVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2DoTHhfLqxiFkdbtgzcVXfEoDApDYvQ7H57TpJyULmsqwd3ptM+/K6uHU8x43KnOn+dxAUADUdN9Ny+x5iCqLWBNrpg==@vger.kernel.org, AJvYcCWg5kG2k+6XVVzAILX9dEGe5nDkiXkAu5aJegl4qFb3oV8RsglkHurSCM+odFopHH/cVODW+7886wdvPH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw50A2g3pa9aVMhrn3CEV997bmnv83OBgesMSRF0nwFbMKLp9Iv
+	TeKDU7PZku68FD88ZBxqqahCDrq/bNrEqA3YYOE2eyPsOvyWtNk1
+X-Google-Smtp-Source: AGHT+IHWm+74PvGbarLd657fMbJ/otvDcDIVZ4INlbAEkbkWex+5yQTDO+PwPgmi8YRFg4XnAELS0w==
+X-Received: by 2002:a17:90a:4a15:b0:2e2:b41b:854e with SMTP id 98e67ed59e1d1-2e8f10756e1mr17639282a91.20.1730320662671;
+        Wed, 30 Oct 2024 13:37:42 -0700 (PDT)
+Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa5f70fsm2314138a91.33.2024.10.30.13.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 13:37:42 -0700 (PDT)
+Date: Wed, 30 Oct 2024 17:37:38 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+Cc: Dell.Client.Kernel@dell.com, hdegoede@redhat.com, 
+	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, w_armin@gmx.de
+Subject: Re: [PATCH 2/2] dell-wmi-base: Handle Win-key Lock/Unlock events
+Message-ID: <u6iblpzelejo45nshcgkj5ohmmyomas5bze6xsrtgfeoyo5rqd@rfrfcwp5hsaz>
+References: <20241030181244.3272-2-kuurtb@gmail.com>
+ <20241030181532.3594-2-kuurtb@gmail.com>
+ <20241030183436.3w5po6kcg6jmqigb@pali>
+ <hj6jurton7ll4i475cwcqvk6dzjjire2briawxmuemnliofpyo@kpjdxpwflekm>
+ <20241030202029.3ugz75wiautw6ewt@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241030202029.3ugz75wiautw6ewt@pali>
 
-From: Tycho Andersen <tandersen@netflix.com>
+On Wed, Oct 30, 2024 at 09:20:29PM +0100, Pali Rohár wrote:
+> On Wednesday 30 October 2024 17:11:40 Kurt Borja wrote:
+> > On Wed, Oct 30, 2024 at 07:34:36PM +0100, Pali Rohár wrote:
+> > > On Wednesday 30 October 2024 15:15:33 Kurt Borja wrote:
+> > > > Some Alienware devices have a key that locks/unlocks the Win-key. This
+> > > 
+> > > Please specify (in comment / commit message) which devices. It would
+> > > help other developers in future to track for which device is this event
+> > > needed.
+> > 
+> > I will!
+> > 
+> > > 
+> > > > key triggers a WMI event that should be ignored, as it's handled
+> > > > internally by the firmware.
+> > > 
+> > > Can be this handling in FW ignored? So OS can use this key for any other
+> > > functionality?
+> > 
+> > Probably not. FW locks the Win-key regardless of how the event is
+> > handled.
+> > 
+> > > 
+> > > Anyway, what is that Win-key and its lock?
+> > 
+> > Win-key is the LEFTMETA key and the lock key is the RIGHTMETA key.
+> 
+> Ok, thanks for info.
+> 
+> So if the firmware handles and process RIGHTMETA key, it means that the
+> RIGHTMETA key is not usable for generic purposes on this machine?
 
-In the previous patch we've defined a couple behaviors:
+Yes, it is not. Unless, of course we find a way to change FW default
+behavior.
 
-1. execveat(fd, AT_EMPTY_PATH, {"foo"}, ...) should render argv[0] as
-   /proc/pid/comm
-2. execveat(fd, AT_EMPTY_PATH, {NULL}, ...) should keep the old behavior of
-   rendering the fd as /proc/pid/comm
+> 
+> > > 
+> > > > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> > > > ---
+> > > >  drivers/platform/x86/dell/dell-wmi-base.c | 6 ++++++
+> > > >  1 file changed, 6 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/platform/x86/dell/dell-wmi-base.c b/drivers/platform/x86/dell/dell-wmi-base.c
+> > > > index 502783a7a..37fc0371a 100644
+> > > > --- a/drivers/platform/x86/dell/dell-wmi-base.c
+> > > > +++ b/drivers/platform/x86/dell/dell-wmi-base.c
+> > > > @@ -80,6 +80,12 @@ static const struct dmi_system_id dell_wmi_smbios_list[] __initconst = {
+> > > >  static const struct key_entry dell_wmi_keymap_type_0000[] = {
+> > > >  	{ KE_IGNORE, 0x003a, { KEY_CAPSLOCK } },
+> > > >  
+> > > > +	/* Win-key Lock */
+> > > > +	{ KE_IGNORE, 0xe000, {KEY_RESERVED} },
+> > > 
+> > > nit: code style: spaces around KEY_RESERVED.
+> > 
+> > I will fix it.
+> > 
+> > > 
+> > > Is not there some better constant for this KEY_*?
+> > 
+> > We could assign it KEY_RIGHTMETA.
+> 
+> Just to note that if the key is marked with KE_IGNORE, its value is not
+> used. But for documentation purposes it is a good idea to have written
+> there something other than KEY_RESERVED -- if it is possible.
+> 
+> For example it can be useful if somebody in future figure out how to
+> turn off processing of this key in firmware...
 
-and just to be sure keeps working with symlinks, which was a concern in
-[1], I've added a test for that as well.
+Thanks I will replace it with KEY_RIGHTMETA.
 
-The test itself is a bit ugly, because the existing check_execveat_fail()
-helpers use a hardcoded envp and argv, and we want to "pass" things via the
-environment to test various argument values, but it seemed cleaner than
-passing one in everywhere in all the existing tests.
+Kurt
 
-Output looks like:
-
-    ok 51 Check success of execveat(6, 'home/tycho/packages/...yyyyyyyyyyyyyyyyyyyy', 0)...
-    # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
-    ok 52 Check success of execveat(9, '', 4096)...
-    # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
-    ok 53 Check success of execveat(11, '', 4096)...
-    # Check execveat(AT_EMPTY_PATH)'s comm is 9
-    [   25.579272] process 'execveat' launched '/dev/fd/9' with NULL argv: empty string added
-    ok 54 Check success of execveat(9, '', 4096)...
-
-[1]: https://lore.kernel.org/all/20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com/
-Signed-off-by: Tycho Andersen <tandersen@netflix.com>
----
-v4: fix up commit message, use ksft_perror() vs perror(), Shuah
----
- tools/testing/selftests/exec/execveat.c | 77 ++++++++++++++++++++++++-
- 1 file changed, 74 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/exec/execveat.c b/tools/testing/selftests/exec/execveat.c
-index 071e03532cba..3a05f8cbd815 100644
---- a/tools/testing/selftests/exec/execveat.c
-+++ b/tools/testing/selftests/exec/execveat.c
-@@ -23,9 +23,11 @@
- 
- #include "../kselftest.h"
- 
--#define TESTS_EXPECTED 51
-+#define TESTS_EXPECTED 54
- #define TEST_NAME_LEN (PATH_MAX * 4)
- 
-+#define CHECK_COMM "CHECK_COMM"
-+
- static char longpath[2 * PATH_MAX] = "";
- static char *envp[] = { "IN_TEST=yes", NULL, NULL };
- static char *argv[] = { "execveat", "99", NULL };
-@@ -237,12 +239,36 @@ static int check_execveat_pathmax(int root_dfd, const char *src, int is_script)
- 	return fail;
- }
- 
-+static int check_execveat_comm(int fd, char *argv0, char *expected)
-+{
-+	char buf[128], *old_env, *old_argv0;
-+	int ret;
-+
-+	snprintf(buf, sizeof(buf), CHECK_COMM "=%s", expected);
-+
-+	old_env = envp[1];
-+	envp[1] = buf;
-+
-+	old_argv0 = argv[0];
-+	argv[0] = argv0;
-+
-+	ksft_print_msg("Check execveat(AT_EMPTY_PATH)'s comm is %s\n",
-+		       expected);
-+	ret = check_execveat_invoked_rc(fd, "", AT_EMPTY_PATH, 0, 0);
-+
-+	envp[1] = old_env;
-+	argv[0] = old_argv0;
-+
-+	return ret;
-+}
-+
- static int run_tests(void)
- {
- 	int fail = 0;
- 	char *fullname = realpath("execveat", NULL);
- 	char *fullname_script = realpath("script", NULL);
- 	char *fullname_symlink = concat(fullname, ".symlink");
-+	char fd_buf[10];
- 	int subdir_dfd = open_or_die("subdir", O_DIRECTORY|O_RDONLY);
- 	int subdir_dfd_ephemeral = open_or_die("subdir.ephemeral",
- 					       O_DIRECTORY|O_RDONLY);
-@@ -389,6 +415,15 @@ static int run_tests(void)
- 
- 	fail += check_execveat_pathmax(root_dfd, "execveat", 0);
- 	fail += check_execveat_pathmax(root_dfd, "script", 1);
-+
-+	/* /proc/pid/comm gives argv[0] by default */
-+	fail += check_execveat_comm(fd, "sentinel", "sentinel");
-+	/* /proc/pid/comm gives argv[0] when invoked via link */
-+	fail += check_execveat_comm(fd_symlink, "sentinel", "sentinel");
-+	/* /proc/pid/comm gives fdno if NULL is passed */
-+	snprintf(fd_buf, sizeof(fd_buf), "%d", fd);
-+	fail += check_execveat_comm(fd, NULL, fd_buf);
-+
- 	return fail;
- }
- 
-@@ -415,9 +450,13 @@ int main(int argc, char **argv)
- 	int ii;
- 	int rc;
- 	const char *verbose = getenv("VERBOSE");
-+	const char *check_comm = getenv(CHECK_COMM);
- 
--	if (argc >= 2) {
--		/* If we are invoked with an argument, don't run tests. */
-+	if (argc >= 2 || check_comm) {
-+		/*
-+		 * If we are invoked with an argument, or no arguments but a
-+		 * command to check, don't run tests.
-+		 */
- 		const char *in_test = getenv("IN_TEST");
- 
- 		if (verbose) {
-@@ -426,6 +465,38 @@ int main(int argc, char **argv)
- 				ksft_print_msg("\t[%d]='%s\n'", ii, argv[ii]);
- 		}
- 
-+		/* If the tests wanted us to check the command, do so. */
-+		if (check_comm) {
-+			/* TASK_COMM_LEN == 16 */
-+			char buf[32];
-+			int fd, ret;
-+
-+			fd = open("/proc/self/comm", O_RDONLY);
-+			if (fd < 0) {
-+				ksft_perror("open() comm failed");
-+				exit(1);
-+			}
-+
-+			ret = read(fd, buf, sizeof(buf));
-+			if (ret < 0) {
-+				ksft_perror("read() comm failed");
-+				close(fd);
-+				exit(1);
-+			}
-+			close(fd);
-+
-+			// trim off the \n
-+			buf[ret-1] = 0;
-+
-+			if (strcmp(buf, check_comm)) {
-+				ksft_print_msg("bad comm, got: %s expected: %s",
-+					       buf, check_comm);
-+				exit(1);
-+			}
-+
-+			exit(0);
-+		}
-+
- 		/* Check expected environment transferred. */
- 		if (!in_test || strcmp(in_test, "yes") != 0) {
- 			ksft_print_msg("no IN_TEST=yes in env\n");
--- 
-2.34.1
-
+> 
+> > > 
+> > > > +
+> > > > +	/* Win-key Unlock */
+> > > > +	{ KE_IGNORE, 0xe001, {KEY_RESERVED} },
+> > > > +
+> > > >  	/* Key code is followed by brightness level */
+> > > >  	{ KE_KEY,    0xe005, { KEY_BRIGHTNESSDOWN } },
+> > > >  	{ KE_KEY,    0xe006, { KEY_BRIGHTNESSUP } },
+> > > > -- 
+> > > > 2.47.0
+> > > > 
 
