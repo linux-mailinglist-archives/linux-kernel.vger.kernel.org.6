@@ -1,165 +1,104 @@
-Return-Path: <linux-kernel+bounces-389132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D330E9B68ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:11:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECEB9B68EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BE5A1F21D38
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5FA1C21689
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3792141B5;
-	Wed, 30 Oct 2024 16:11:28 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842652141C2;
+	Wed, 30 Oct 2024 16:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgjWmxk+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB9D433D5;
-	Wed, 30 Oct 2024 16:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE30E1E573B;
+	Wed, 30 Oct 2024 16:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304688; cv=none; b=Xh8cR5OPMetA4+omSTvWFAO6PL+lkTGOistomrjSq574OY0ZYh+oZUQ62y88KC1DLZNGdJWDyCJAc0I2ZSxuHIDCviMfG2MFcXfNpNjeZWmqeNtHc63idHeu92xuFZEyC/Ek6NxHjnBZIhZPHfuhoT2DA3wbH+ncvhKeeb8bsDU=
+	t=1730304901; cv=none; b=hf5oAa+AA3DrGFir1+H8jTe2y8JTTUVwQER3ZjvUjrT2k52y53aQfouzyKV7p+zcFfBYmAQQutGKYZxguFERD4ochIG5mfo69FCoDDk0xipBD51rznTmtxOKeYuYxlBPxcsbPc3iGhMbo/7LuLzFKurfsNISrt3oM+s0j4nDeWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304688; c=relaxed/simple;
-	bh=DQ9O8ymxBFCCJfWsoERVpeUQdjxuhmTL/esmCBryiJs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NHE3LVsTO4gmMxd92yTI1c7C8DbXef4XyxDYTiwuFmRWWqoB3iWgj6o8H4vD80M5Ll2pyodqLJ0HdSo1Mx8TIof2hwpvrfBwvnoMlKwGzq9bejJLPHm7mynjuY/tVVCZjIlV8KOt18M2G0EqLP6e1tOzyWbJclE8rqYZwLBIOu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdsXX188Hz6J9sx;
-	Thu, 31 Oct 2024 00:10:04 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id AA97A140B39;
-	Thu, 31 Oct 2024 00:11:22 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 17:11:21 +0100
-Date: Wed, 30 Oct 2024 16:11:20 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 14/14] cxl/pci: Add support to assign and clear
- pci_driver::cxl_err_handlers
-Message-ID: <20241030161120.000078b2@Huawei.com>
-In-Reply-To: <20241025210305.27499-15-terry.bowman@amd.com>
-References: <20241025210305.27499-1-terry.bowman@amd.com>
-	<20241025210305.27499-15-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730304901; c=relaxed/simple;
+	bh=N9werbf4NPq4LiWt3uHpAOCcksOcVaD4UmVzrTm7pkQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=byZBlXfppWDkEHrSSEudO0u6Qjhz3otOU+J/Ch1gELjlzxwkLV8toXcW5cqcyv2MmoBEmQTepRPDfNFPA3bn8S+BDJQDf1TSGH0W+y8YDGcDFAOdR0mdVVLTgH2DhjenmDfy5M4EDRSl6NYs2vawyca24k1QIV9XrK3PCb/+XVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgjWmxk+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB6DCC4CECE;
+	Wed, 30 Oct 2024 16:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730304901;
+	bh=N9werbf4NPq4LiWt3uHpAOCcksOcVaD4UmVzrTm7pkQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=RgjWmxk+Ta/ZUEDhcnH9C0C5ZRjgiyQzdT+5BmFk7ppgAL8Us4vjU9vKAeZ/FeTXQ
+	 yMbrwccUMzIck74xpvaiyL2kauWNWEdOVT2ZOJk89fh3s5eDnNtTP7KPuVB42IRYff
+	 MjzkCg8hqwlhnb1dGmgEjMc4ooUTPS9OeTcz2IQP4ndjgVYPbtHcsoEeRnPoSPAeL8
+	 zErMvqG5Mx55yaHiQXzw281/tDBJ8Ad5NquUG0EG4SMf7QqX1ZC6/4kVHd3hXwCPdM
+	 mdINHTwUqJuKg5JnJKQz7vDUuv6Yr/NAzv/u+dWjeci3GdfqkevEGHsLm7y8rR9tfk
+	 nbo87a8Tzoicg==
+From: Nathan Chancellor <nathan@kernel.org>
+Subject: [PATCH 0/2] kprobes: Adjustments for __counted_by addition
+Date: Wed, 30 Oct 2024 09:14:47 -0700
+Message-Id: <20241030-kprobes-fix-counted-by-annotation-v1-0-8f266001fad0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-B4-Tracking: v=1; b=H4sIAHdbImcC/x2N0QqDMAxFf0XyvIBGhblfGXtobdQwSKXthiL+u
+ 8HHA/fcc0DmJJzhVR2Q+C9Zoho0jwrGxenMKMEYqKauqWnA75qi54yTbDjGnxYO6Hd0qrG4Yja
+ GwH7oiZ6+JbCfNbGN78b7c54XfUuhw3MAAAA=
+X-Change-ID: 20241029-kprobes-fix-counted-by-annotation-ddeb95228b32
+To: Masami Hiramatsu <mhiramat@kernel.org>, 
+ Naveen N Rao <naveen@kernel.org>, 
+ Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, 
+ "David S. Miller" <davem@davemloft.net>
+Cc: Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=950; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=N9werbf4NPq4LiWt3uHpAOCcksOcVaD4UmVzrTm7pkQ=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDOlK0c1zP6c6qvn8SU5i3coa33LcfIrFhcmXy+e/Vb7i9
+ dY0ZDdbRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAZjILndGho9Fpz/e0/l7TZK1
+ efu2K27/aw7M+Hg0m+f70uuNHzfv+MTO8D/6nNjpRy2lnJe+OTyR+CN4aDHn5S18WnMu3F21gFn
+ slTIjAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Fri, 25 Oct 2024 16:03:05 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
+Hi all,
 
-> pci_driver::cxl_err_handlers are not currrently assigned handler callbacks.
-> The handlers can't be set in the pci_driver static definition because the
-> CXL PCIe port devices are bound to the portdrv driver which is not CXL
-> driver aware.
-> 
-> Add cxl_assign_port_error_handlers() in the cxl_core module. This
-> function will assign the default handlers for a CXL PCIe port device.
-> 
-> When the CXL port (cxl_port or cxl_dport) is destroyed the CXL PCIe port
-> device's pci_driver::cxl_err_handlers must be set to NULL to prevent future
-> use. Create cxl_clear_port_error_handlers() and register it to be called
-> when the CXL port device (cxl_port or cxl_dport) is destroyed.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-One trivial comment inline. 
-> ---
->  drivers/cxl/core/pci.c | 35 +++++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index eeb4a64ba5b5..5f7570c6173c 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -839,8 +839,36 @@ static bool cxl_port_error_detected(struct pci_dev *pdev)
->  	return ue;
->  }
->  
-> +static const struct cxl_error_handlers cxl_port_error_handlers = {
-> +	.error_detected	= cxl_port_error_detected,
-> +	.cor_error_detected	= cxl_port_cor_error_detected,
-Odd spacing?  I'd just use a single space as aligning these almost
-always makes for messy future patches.
+This series addresses the issues that I brought up at [1]. The first
+change is the actual functional fix and the second change is something I
+noticed while auditing this code, which is related but tangential to the
+actual fix, since the current code has a correct calculation.
 
-> +};
-> +
-> +static void cxl_assign_port_error_handlers(struct pci_dev *pdev)
-> +{
-> +	struct pci_driver *pdrv = pdev->driver;
-> +
-> +	if (!pdrv)
-> +		return;
-> +
-> +	pdrv->cxl_err_handler = &cxl_port_error_handlers;
-> +}
-> +
-> +static void cxl_clear_port_error_handlers(void *data)
-> +{
-> +	struct pci_dev *pdev = data;
-> +	struct pci_driver *pdrv = pdev->driver;
-> +
-> +	if (!pdrv)
-> +		return;
-> +
-> +	pdrv->cxl_err_handler = NULL;
-> +}
-> +
->  void cxl_uport_init_ras_reporting(struct cxl_port *port)
->  {
-> +	struct pci_dev *pdev = to_pci_dev(port->uport_dev);
-> +
->  	/* uport may have more than 1 downstream EP. Check if already mapped. */
->  	if (port->uport_regs.ras) {
->  		dev_warn(&port->dev, "RAS is already mapped\n");
-> @@ -853,6 +881,9 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
->  		dev_err(&port->dev, "Failed to map RAS capability.\n");
->  		return;
->  	}
-> +
-> +	cxl_assign_port_error_handlers(pdev);
-> +	devm_add_action_or_reset(port->uport_dev, cxl_clear_port_error_handlers, pdev);
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_uport_init_ras_reporting, CXL);
->  
-> @@ -865,6 +896,7 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
->  {
->  	struct device *dport_dev = dport->dport_dev;
->  	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport_dev);
-> +	struct pci_dev *pdev = to_pci_dev(dport_dev);
->  
->  	if (dport->rch && host_bridge->native_aer) {
->  		cxl_dport_map_rch_aer(dport);
-> @@ -883,6 +915,9 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
->  		dev_err(dport_dev, "Failed to map RAS capability.\n");
->  		return;
->  	}
-> +
-> +	cxl_assign_port_error_handlers(pdev);
-> +	devm_add_action_or_reset(dport_dev, cxl_clear_port_error_handlers, pdev);
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, CXL);
->  
+This resolves the issue for me when testing both clang 19 and GCC 15
+(tip of tree, which is the only version that has __counted_by support).
+
+[1]: https://lore.kernel.org/20241022205557.GA3004519@thelio-3990X/
+
+---
+Nathan Chancellor (2):
+      kprobes: Fix __get_insn_slot() after __counted_by annotation
+      kprobes: Use struct_size() in __get_insn_slot()
+
+ kernel/kprobes.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+---
+base-commit: b5f348cbce367d5dcd34bf2b6c02c39a5be3fb97
+change-id: 20241029-kprobes-fix-counted-by-annotation-ddeb95228b32
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
 
