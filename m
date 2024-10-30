@@ -1,253 +1,148 @@
-Return-Path: <linux-kernel+bounces-388763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DE19B6417
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:29:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22B09B6412
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F08282F77
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:29:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5042AB21CA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6B1E909B;
-	Wed, 30 Oct 2024 13:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2A81E907F;
+	Wed, 30 Oct 2024 13:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lMss8O3/"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2078.outbound.protection.outlook.com [40.107.244.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biYP1z73"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EECA1E32B7;
-	Wed, 30 Oct 2024 13:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294936; cv=fail; b=XkGcnILk8I0yDZw/RZ45rSc9SLJenl1pSwRQGTWJuAHzP/TwpN3bSN/zPX4Fuw0aEZa7QiVTAyyeUmrvXlfvekfcsgSj502uIVlCTFus8dTpt6vuRBLX+yLj9yWz0zn6lbRfBZ8wcbBRvY6LZ7PyzqiQrDzXNTqt02dls+qHGpI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294936; c=relaxed/simple;
-	bh=XJwJA0TlmMouCKbqdUPUsUAqw0IADgal7AxSRrlZPLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sI2ejNt1Wb0dIKlSgTCxM6chSoOL+rqFqOKCIvrE14sW8EM9Jo7Sbp3RxyTHiF5kRRYJ20+xx58wVNQyA78YrYRUX5d/lmZXyejssgXutJcT24bMnuSv8ihzdz8MgrsE/Pk7Z3eX8uNle9a5JgDt/52avADvxqucuBoJUGogIJs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lMss8O3/; arc=fail smtp.client-ip=40.107.244.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VZpRBR8qn5wRJl+MePt4HFApbK7yo3he09pyQCg5YjBfZmLx+J9//DPJWLgqg3ZzTbwZrudr6c1mNHYzGXW62ELeFAM7HFrYviP2lnHSfm2DhopxOBUN4MKCFRCjsgFFzuHt+zadjBRwoX15457t1wYyQkhxHpzGGR7eh6rP3Q5GWHFDvnGNix0AniQnvvmJFDvv3xSjxJRVzUTWhIqPcM8Sh1fHrKb4bDW223iVUT29hF4Rz0JqQ2/kn8igWDqevkTBd78nV/0c4lT1FvAn5h/JqvtPtEhmGMY0or7UWd0ggLF3FP9ucoUDvTTlni6cjSa9DMNJHsRIBXAN7uj1YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+Gh74wqIWIW+XJHGSyxq+/VDAiQi7bYIMSmIBb/ChLA=;
- b=IrvGgGp2ZnDtxo5ieyX6RRu9M9CZ7My/JNu/GbDZIVSJDtKXzmjxRZwYgq1d8khUdRpYr0c4gOECYja25ACMxgeHbZbTCf/1M3WsSbLVhs2dJQ11l41HsCy1S2DeFmqItvvWbiBSxvkb30fF/pOtkBBWlzs6GipY2Dl1aotaTh1uhZvDDWMWke4KyG5IefsYODLpQAS+uD+1tJH4kCfezdobwGnqLeAY1zoA0JxnW+2eYqr8GKrIeiYIXEmrjLCYot2Y6VTVT1dfyFNKgi4+Z0DcVmq3ZeITvKPMmzItiktaBTr/gQJM4LeBrpaqYFXdazQH+vgHKcHgGPPFAEjccg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Gh74wqIWIW+XJHGSyxq+/VDAiQi7bYIMSmIBb/ChLA=;
- b=lMss8O3//brNN8DnRRT0fSlBbIShvwMkIAhPpnmGpsvwptZpZi3kAm4sJ7cdGIBi1eI9pn6GtcuqrGZwx4R5Qdfpz2aiqc6wcW+IJWtvinNUaHRN/Dt55mDtvTvUetqIjpVaiRpkvWHCjqRopUfg2ENWLPYoUjq8CE4cNvDsZUBeFit31u1/NgDTGGSkZd7mx3Z4YFpb9+4hEOQaymQEDdovYeoW6I64UVp4vx2CW7Lliul6vcMWjYuHlj1u22Z+NizNKMMifsi23C8JFLc7gb0Jzz0J1KzaDFDP9Siw4TiZVt3CVQngjfYqsMUu2NbF53fS51x61udS9i8jE9XPig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by SA0PR12MB7477.namprd12.prod.outlook.com (2603:10b6:806:24b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
- 2024 13:28:50 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8%3]) with mapi id 15.20.8093.024; Wed, 30 Oct 2024
- 13:28:50 +0000
-Date: Wed, 30 Oct 2024 15:28:38 +0200
-From: Ido Schimmel <idosch@nvidia.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Petr Machata <petrm@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: mellanox: use ethtool string helpers
-Message-ID: <ZyI0htf7Q9ocD6Oc@shredder.mtl.com>
-References: <20241029235422.101202-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029235422.101202-1-rosenp@gmail.com>
-X-ClientProxiedBy: FR4P281CA0192.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ca::10) To SA3PR12MB7901.namprd12.prod.outlook.com
- (2603:10b6:806:306::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B33D1DF754;
+	Wed, 30 Oct 2024 13:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730294927; cv=none; b=J1WZaKgq4sprkRyv0UQulzB4JfKnAaqEnyMBsq+QiUMfqvsPtr6QiOMMlz/FDusQV5drko/BuWmIsTPXb0e87DZyFioJghtTDNpqFe0SQDkNYE2POcF7LcL1A5PujH0MZO5pqEvhKzeKn9rb+XeJffe8KOy0ML/ydrfFAIbQqyg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730294927; c=relaxed/simple;
+	bh=OpH0Ihzw4aLoatOPMl4+LfZ+kC1HwHVeg7SvENl2MHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ec+vqLJ2Z5agKsHdd7k35Zh+cPQOu2RzdKVWSDOVctTtoMbA73YbYvWqWgqLHfhJmZBLzbXu5H97wzqWcn1TTMVyN3Vmbi4laDwg7FSmPB07k9Nz5sD/VdPIO7B2TkXaM1r8CqugeaWj7G+sIMSPqtDeQ4ZIn0LYfIrwa5RILps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biYP1z73; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53a097aa3daso5901929e87.1;
+        Wed, 30 Oct 2024 06:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730294923; x=1730899723; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OGZab1xZG2/vym3zoXCYPi1+0F2M3o2xJQM0/wIDSEk=;
+        b=biYP1z73wN6CXjvF/lx2TajWBX3X9131F3ovKoC5IM0t6ElQSEu4j8DxBh185O6Ofs
+         dnhpWpEsy7g/DGckpzXFbSHWjkYH5HIjnrBEeffWOInHRMdtfwL4eeeYY2Yur7wjS4yg
+         BldIEFULoW4oOghx2eSdRnGGlhVGx1/GYrrfAx0Y1i1mREVKHh8Vy0PLTl07vljxVFzi
+         wpoEGQaApuhVSLaCEVhk4stQ5FGm68FVqOAGfolabGsqpXDv0sjJgRLGlkZDun/Nxs62
+         zqHomnK6FHgJuj2jyTOGI73+dX5jUXlW51cQfe6yrLU3dr4wmitSAzDjHXJ7HjwfeKgY
+         bQfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730294923; x=1730899723;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OGZab1xZG2/vym3zoXCYPi1+0F2M3o2xJQM0/wIDSEk=;
+        b=l8cCmFUXMcsyY6JCKteYMNbrO12Mmha9a0ybPoZSvmedt5Md3yJhzd/zKDrxyiQgAv
+         ryk3bGds/mWH84QmkKSpHPetcdQL/aFhnb76sbCumjkiF7vZfMjzC9XV0Lzyf7QANZJu
+         k0x2JJDEMLUcvASFN4eIU3SA61zq7R4+2FeWOsXA09GWFiU7VyM9eBZjWsrwpVcpzeMN
+         5vrhwM+NKs0a3l/yDCjhKKjmN6z1sKUpV51hzp5mZ8jh56GGg9DVylhYIHGXDWQp5ffX
+         tcCBNxQDb0sQTBWDwS2x09R5jdlpPCf5UoSXONhCNs08NdMzDzOuQX7/4buyjJKGuAaz
+         +ojA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFUnj79z5cjzlXNla4E+ccnCHTawCyMoHvFz5MYvzWDAMBrgqYoVxQC92/UZBLuILqzfMLVZYDj03Ks9Ar@vger.kernel.org, AJvYcCUSugC7ZKonN1usdYJhug9gkE4JfeN+ur1Mggofq/eiBnt9TedlQ01VpXyVpeqAdsQA2BRCKBeDC2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys7+6xzbJt8qHC7Hj1Q1VnZGt8JwiltjqBtX+JR0VXfpmsh6+M
+	hHiRvxMX2iY1XKArC3QB9eqWgCbStR5lSnTj4+HLUR996EwxL2WV
+X-Google-Smtp-Source: AGHT+IHE4gzj70K3Pk1n/7+JRn6DJxVC2dVUX0uQDIzgM9s0SSwXoTwlqo3E2IdUBCPgo8+BgUTuDA==
+X-Received: by 2002:a05:6512:39c7:b0:52e:9e70:d068 with SMTP id 2adb3069b0e04-53b348c0c88mr8721980e87.4.1730294922891;
+        Wed, 30 Oct 2024 06:28:42 -0700 (PDT)
+Received: from [172.16.183.207] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bc0d6de47sm249349e87.261.2024.10.30.06.28.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 06:28:42 -0700 (PDT)
+Message-ID: <216a4ffe-b97a-43e8-b1cc-59baedcb0ca8@gmail.com>
+Date: Wed, 30 Oct 2024 15:28:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|SA0PR12MB7477:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5245b75-ea67-4d38-d2cd-08dcf8e6ca86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oMgwr5r7iT2WMYSsXGviRw5LjIDGCCHkXemZX7s/HdgCvJluhDmfhb2dAQ28?=
- =?us-ascii?Q?MUUck4Hp2iVEnPHoPyyn3n/E3oJP3+eLp2/yu/IK8Qh2F1Yun+IbY9+iEb8G?=
- =?us-ascii?Q?MYBijoaHVWBhfkF3sq+zrx4HM/HphJpAPj0ZOluG8bUJXieEty7ofWBtDjHU?=
- =?us-ascii?Q?6f8r/te6OZdQW430Gbc3c0Uy7nFYeyTvm9hLnUCiummwocecD731eE/FtMqa?=
- =?us-ascii?Q?qyapo/neKH6n3wznY3Rm42OA2LesKsSUS7rCEYAE3cPdfEQJ4x3XWvahESGd?=
- =?us-ascii?Q?J062jsK9Ers1Kb2Gi9c+mhybcY/RMXEaB+AhMnOsxzvCLhqsJveimgLCarM+?=
- =?us-ascii?Q?sShAKrcIPc1blyTL34gEab4afLLXJVA9sksvJM2AvZp8VB/Ythv+Nw2RFxaC?=
- =?us-ascii?Q?v6C3HVg5BK9UaMsT0f/3CeqwRnevqDn6BMvvoJYwwsguaUS6G5bLb5TM1l3T?=
- =?us-ascii?Q?expLwnUIK5ZQB88N+Tt5mv5Sr75FOfPDiwOTuVlaIty2JTS+GAUcuxMwf9Tb?=
- =?us-ascii?Q?RCfZ1swIRuK4aPSBp2TQ+OpR0cDW5cq+8NQA3R+7qwnwlc4rjZV+5QFpWSMw?=
- =?us-ascii?Q?MzTz4282N14Uz/CdmHpMZIMEMD7uYfSR3nKK5O0R/VQ5tDKbERPv4B9SyqBZ?=
- =?us-ascii?Q?e2zSG1jUunxCHrzTRDYXVH+jPgmhgwLWLfpGEhUCPqERUVO1JJXnpfyDW2rV?=
- =?us-ascii?Q?Dt1MqQnMWoQpggRn1ZxsT4AzdaK8mFOJgi0DKIg1tTE/vZuTR2aotem76ZiL?=
- =?us-ascii?Q?TsgI0tWxKu/z+Ly1SUFYdQvoO7U/kNyd+YVRjiXD8XqfXGtMIu2tgELZ3tzE?=
- =?us-ascii?Q?0L8CXui9vvirL+ltqwJcN2p2RLs8Q6y91cyvoJGiTS5WL9Be2qPD84EjUPku?=
- =?us-ascii?Q?oFywujq5lKN1XTPvvpnk3ELZaqoWpm+l6UDiTdNCZGbflsjVd2SppHPEXK5k?=
- =?us-ascii?Q?ImZ/XMAwjedxhbEt5ZjhFDOLqt8JdnqFfEVFdCdWq1vuwL0jBLlhlOCSh9Sy?=
- =?us-ascii?Q?a5/PUNAlR3uO8JVzeiS5be+78/c+ygD5roZPYwJ0WRRA+rO3YE1AH0TdDnTK?=
- =?us-ascii?Q?99BWs5RPfHCJnQA0hSHru6g9eR8/FE3EiSE5ToYsFXBib8HnbnQThRF8N36/?=
- =?us-ascii?Q?5z9ED8fzcvz1MfwNEZiIxNcFUcoENUtO3oIbhGV6eeo54Xz3W3fwjaSVpwEj?=
- =?us-ascii?Q?DbZcJ+wt64M1QKTleBjK+PpPqsYa/w93iaZcghjKVEn/OylX6fCP3jhVXqIA?=
- =?us-ascii?Q?Cd1b1dOuOat+80ohrEXj2fmmpNcHTl8ENPu2JeoSwz+/VMLPOaA9SLtnwI07?=
- =?us-ascii?Q?o4ViIdhbHYa4As/7M4Gkn93B?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?33+8f6viOQ3QJNjxoO7F9TLpaYDBhYhMJbZBPoOzILDiIYYG9RosEuJPZDSY?=
- =?us-ascii?Q?ZDUkKi/Jm8TYFKpa3s9PotJ4lx+Ixncpxvreo+ljJt91pJQK4re/dfUFp9dD?=
- =?us-ascii?Q?7RYQt3AHYcjUbeg0IF0h77w//QV4/szybwjaB8Aqoz6ww0IiU5J06E220TFx?=
- =?us-ascii?Q?ZZ6u/oTqApacenT54+81EFNb4avrCou9fXwYxL/wranM8IG8tuS1UPXACuMy?=
- =?us-ascii?Q?/uSsi/4HPk5IA1w9pe0xE+tijGmPlPPjekHyfhToodWBv6LzyZMMdAiiw1HE?=
- =?us-ascii?Q?PhzswvDnL/9VehleXuWnGW9hmhFnIkewoEG648fxWnlJD89hjY4RDOu9c89y?=
- =?us-ascii?Q?mY5znrmN2q4r2L9vP/YnVvXrv7GQHLeqcU0iFsu/wfdGC+EmGFlmlLm3ALvm?=
- =?us-ascii?Q?jXMKIhF/O43d3ob+htNOqQ3PBfsL1o5AgedKvT3rcRCTxZl5g14mvswSsi/9?=
- =?us-ascii?Q?I3efesmbMdhVVRhMkEfE9axMNKz6b9hd7HIyiAYKcN5Qs5xu2eI4P72z4Oex?=
- =?us-ascii?Q?dapKZxPtgTY5I6h0Zm2K1wgnZhhshr0jjKF3kl7kyxfzr7J+nsXtt5r6lBsv?=
- =?us-ascii?Q?ohWfRc5tr9B2/ZWBqo1j8nwf8zRQ8nBxekg5LDr0oArSQbqwJV8Kn2O5ACA4?=
- =?us-ascii?Q?wO+j/HwZ7TF6I0c6+DyuVJREAG2ixY7bTu+3FC37y8LgyzGzaJX+R6yeZpDR?=
- =?us-ascii?Q?7Mrnbv39o30uSYsoWPK0mytYgXV4/LBIYjPKlVdlQeCeb8DhLkIlU5ZPGsMR?=
- =?us-ascii?Q?O6G6Lplb9g4eZLB/yw1sBVe5PcWGCkMYpJ1UI/2qbW1KwRRYMWN6MP1bSLjk?=
- =?us-ascii?Q?ARPs+SAsZv4aEBHqVmZUYQkRFI/LO8UYTzxUVv8BLGGMw423IIL3zqSd22fe?=
- =?us-ascii?Q?g9vM6/P44HFM3SK4b24XiaiuzDPUAZMuwrmzGb7L6m/erw38r04tN1an/suz?=
- =?us-ascii?Q?PGcuo/9ZsA7GSUmap1ndSC9UhfWNT5o2WOaKhYvtJYT2yi+dosaDh5X0bYJ4?=
- =?us-ascii?Q?7ie0uEJzrYIUNrkjOJG/pilzlSY49oaPinCfMhiRLNTuwNhphGpC/7Ag4lzg?=
- =?us-ascii?Q?kQMElQikfkcIaLdfv2gYG44jPNVEVmmqTPfSrSZFNv6iKEuhrk5zZ2ROhSH2?=
- =?us-ascii?Q?IC1/2bUQTXr8ko5XWsKDY8yD8+lvwtBKLvGYw4tUKCBl3C2eMxbGelIPkKXp?=
- =?us-ascii?Q?WbpQ2xJZN0/5kOe+IRPfgg4elr1c/sRZG4orD+5aKFvcCkhWZbB7O0r3yso5?=
- =?us-ascii?Q?E3NK8SBbLK1WcDEw04BN8+lQpDH7PONWaAu/o4Ba8XvPcPfubKM6v/b5ciln?=
- =?us-ascii?Q?C0Up8zGzSerk/4ad0hQ9bi3rWXYE1i3artznZybPex9xTYDJNKX8SfmdRjxX?=
- =?us-ascii?Q?wARxZHC9RMXF6SxurIh3uBYNqr+1vu8xoeKZmRVw0TZ9k1xjIdAPTK2IhaWG?=
- =?us-ascii?Q?coC5CDyZr88uAp4Hk7xsP4xf0OWUyFaRCehdnyGx/mrQwru/Alxa9nfn1iS3?=
- =?us-ascii?Q?mQ2s/e2NEYMeuLGixotk7s2vD25G7weSNOL7Lj6H37U0zpanx9eejvlBeO7G?=
- =?us-ascii?Q?kZyn3qTRXIo8XaYDOEKRA5oW9Yb+3+7+68F43/kv?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5245b75-ea67-4d38-d2cd-08dcf8e6ca86
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 13:28:50.6870
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kJr7h5TjYNXC8GJ8jj5HlDGj3b8XpUHdTALfXCh/LlhO4S3DO9RvybA/Enu4rAt5a7n+x9xEFPljHwXERPIheQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7477
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: kx022a: Fix raw read format
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Kalle Niemi <kaleposti@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mehdi Djait <mehdi.djait.k@gmail.com>
+References: <ZyIxm_zamZfIGrnB@mva-rohm>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <ZyIxm_zamZfIGrnB@mva-rohm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Wasn't able to apply the patch. Seems to be corrupted. See below.
+On 30/10/2024 15:16, Matti Vaittinen wrote:
+> The KX022A provides the accelerometer data in two subsequent registers.
+> The registers are laid out so that the value obtained via bulk-read of
+> these registers can be interpreted as signed 16-bit little endian value.
+> The read value is converted to cpu_endianes and stored into 32bit integer.
+> The le16_to_cpu() casts value to unsigned 16-bit value, and when this is
+> assigned to 32-bit integer the resulting value will always be positive.
+> 
+> This has not been a problem to users (at least not all users) of the sysfs
+> interface, who know the data format based on the scan info and who have
+> converted the read value back to 16-bit signed value.
+> 
+> This, however, will be a problem for those who use the in-kernel
+> interfaces, especially the iio_read_channel_processed_scale().
+> 
+> The iio_read_channel_processed_scale() performs multiplications to the
+> returned (always positive) raw value, which will cause strange results
+> when the data from the sensor has been negative.
+> 
+> Fix the read_raw format by casting the result of the le_to_cpu() to
+> signed 16-bit value before assigning it to the integer. This will make
+> the negative readings to be correctly reported as negative.
+> 
+> This fix will be visible to users by changing values returned via sysfs
+> to appear in correct (negative) format.
+> 
+> Reported-by: Kalle Niemi <kaleposti@gmail.com>
+> Fixes: 7c1d1677b322 ("iio: accel: Support Kionix/ROHM KX022A accelerometer")
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Tested-by: Kalle Niemi <kaleposti@gmail.com>
+> ---
+>   drivers/iio/accel/kionix-kx022a.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix-kx022a.c
+> index 53d59a04ae15..b6a828a6df93 100644
+> --- a/drivers/iio/accel/kionix-kx022a.c
+> +++ b/drivers/iio/accel/kionix-kx022a.c
+> @@ -594,7 +594,7 @@ static int kx022a_get_axis(struct kx022a_data *data,
+>   	if (ret)
+>   		return ret;
+>   
+> -	*val = le16_to_cpu(data->buffer[0]);
+> +	*val = (s16)le16_to_cpu(data->buffer[0]);
+>   
+>   	return IIO_VAL_INT;
+>   }
+> 
+> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
 
-On Tue, Oct 29, 2024 at 04:54:22PM -0700, Rosen Penev wrote:
-[...]
->  static void mlxsw_sp_port_get_strings(struct net_device *dev,
->  				      u32 stringset, u8 *data)
->  {
->  	struct mlxsw_sp_port *mlxsw_sp_port = netdev_priv(dev);
-> -	u8 *p = data;
->  	int i;
->  
-> -	switch (stringset) {
-> -	case ETH_SS_STATS:
-> -		for (i = 0; i < MLXSW_SP_PORT_HW_STATS_LEN; i++) {
-> -			memcpy(p, mlxsw_sp_port_hw_stats[i].str,
-> -			       ETH_GSTRING_LEN);
-> -			p += ETH_GSTRING_LEN;
-> -		}
-> +	if (stringset != ETH_SS_STATS)
-> +		return;
->  
-> -		for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2863_STATS_LEN; i++) {
-> -			memcpy(p, mlxsw_sp_port_hw_rfc_2863_stats[i].str,
-> -			       ETH_GSTRING_LEN);
-> -			p += ETH_GSTRING_LEN;
-> -		}
-> +	for (i = 0; i < MLXSW_SP_PORT_HW_STATS_LEN; i++)
-> +		ethtool_puts(&data, mlxsw_sp_port_hw_stats[i].str);
->  
-> -		for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2819_STATS_LEN; i++) {
-> -			memcpy(p, mlxsw_sp_port_hw_rfc_2819_stats[i].str,
-> -			       ETH_GSTRING_LEN);
-> -			p += ETH_GSTRING_LEN;
-> -		}
-> +	for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2863_STATS_LEN; i++)
-> +		ethtool_puts(&data, mlxsw_sp_port_hw_rfc_2863_stats[i].str);
->  
-> -		for (i = 0; i < MLXSW_SP_PORT_HW_RFC_3635_STATS_LEN; i++) {
-> -			memcpy(p, mlxsw_sp_port_hw_rfc_3635_stats[i].str,
-> -			       ETH_GSTRING_LEN);
-> -			p += ETH_GSTRING_LEN;
-> -		}
-> +	for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2819_STATS_LEN; i++)
-> +		ethtool_puts(&data, mlxsw_sp_port_hw_rfc_2819_stats[i].str);
->  
-> -		for (i = 0; i < MLXSW_SP_PORT_HW_EXT_STATS_LEN; i++) {
-> -			memcpy(p, mlxsw_sp_port_hw_ext_stats[i].str,
-> -			       ETH_GSTRING_LEN);
-> -			p += ETH_GSTRING_LEN;
-> -		}
-> +	for (i = 0; i < MLXSW_SP_PORT_HW_RFC_3635_STATS_LEN; i++)
-> +		ethtool_puts(&data, mlxsw_sp_port_hw_rfc_3635_stats[i].str);
->  
-> -		for (i = 0; i < MLXSW_SP_PORT_HW_DISCARD_STATS_LEN; i++) {
-> -			memcpy(p, mlxsw_sp_port_hw_discard_stats[i].str,
-> -			       ETH_GSTRING_LEN);
-> -			p += ETH_GSTRING_LEN;
-> -		}
-> +	for (i = 0; i < MLXSW_SP_PORT_HW_EXT_STATS_LEN; i++)
-> +		ethtool_puts(&data, mlxsw_sp_port_hw_ext_stats[i].str);
->  
-> -		for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++)
-> -			mlxsw_sp_port_get_prio_strings(&data, i);
 
-s/data/p/ in current code
+I should have CC's Mehdi who added the kx132-1211 support. Did so now - 
+sorry for the noise.
 
-> +	for (i = 0; i < MLXSW_SP_PORT_HW_DISCARD_STATS_LEN; i++)
-> +		ethtool_puts(&data, mlxsw_sp_port_hw_discard_stats[i].str);
->  
-> -		for (i = 0; i < TC_MAX_QUEUE; i++)
-> -			mlxsw_sp_port_get_tc_strings(&data, i);
-
-Likewise
-
-> +	for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++)
-> +		mlxsw_sp_port_get_prio_strings(&data, i);
->  
-> -		mlxsw_sp_port->mlxsw_sp->ptp_ops->get_stats_strings(&data);
-
-Likewise
-
-> +	for (i = 0; i < TC_MAX_QUEUE; i++)
-> +		mlxsw_sp_port_get_tc_strings(&data, i);
->  
-> -		for (i = 0; i < MLXSW_SP_PORT_HW_TRANSCEIVER_STATS_LEN; i++) {
-> -			memcpy(p, mlxsw_sp_port_transceiver_stats[i].str,
-> -			       ETH_GSTRING_LEN);
-> -			p += ETH_GSTRING_LEN;
-> -		}
-> -		break;
-> -	}
-> +	mlxsw_sp_port->mlxsw_sp->ptp_ops->get_stats_strings(&data);
-> +
-> +	for (i = 0; i < MLXSW_SP_PORT_HW_TRANSCEIVER_STATS_LEN; i++)
-> +		ethtool_puts(&data, mlxsw_sp_port_transceiver_stats[i].str);
->  }
+Yours,
+	-- Matti
 
