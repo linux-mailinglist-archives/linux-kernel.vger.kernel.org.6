@@ -1,204 +1,131 @@
-Return-Path: <linux-kernel+bounces-389168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E669B6972
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:44:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779419B6979
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187991F2275B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:44:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A94791C219F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116CB21500A;
-	Wed, 30 Oct 2024 16:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4349F214422;
+	Wed, 30 Oct 2024 16:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e3SbcddI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nFJ/Pnzu"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2344C28F7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92B2199381
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730306666; cv=none; b=Ogh66SE4hUGpvz1OMs6dlwmNoUvKfO932Yipznec/4VDVgqKIybgycbj2fQEH9w8uhBC4uo5HKYpo+JbEGID6BWA49lt40/bB2M3J9TbvGcthYnF37/MPfoYaY7DW0rpNYrrpjEZJPmb/pAOgMb0WCywXOeyho7xaJsw81fw/IM=
+	t=1730306745; cv=none; b=KSbQr/NTw0oBLrRyaa1NCzdbFAoiuAx9iGq2U5fR/uD1H7+uhE1AsIpUb2UsFlMSx1zI5miSWfRyrlBmSzAwSiLBDYHqtbN/MCKHyIB/rjFE+heCwtFM5B0CriURzoswp40aL5j5dFRxqIEsTAoBdJHWgtkTGLgoFp0ISCscAfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730306666; c=relaxed/simple;
-	bh=m8OthHp3SAjiv0zKnDxglY8U4vs0DCMY/HHcyfT9uTQ=;
+	s=arc-20240116; t=1730306745; c=relaxed/simple;
+	bh=hcFBMSRwI7XyLVXiwju9iNxMgHCXtPSFdswCTiWGT8A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YDvFqrUET6COn+u0GD0H+5peoEuuLCskoigRWt3mdX+jPF+9qhlSGo6bP+JytXeQZ7ua05CZUgxtZh2qPb/Z8trjB0+/T0D3IFEl+ONZJ/NjdQJBXSMg9hRp1ZKy4/wZPrRpaDTa15DTEeKRZ9RleVoYQLUG09tZgv80kPqL7kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e3SbcddI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730306662;
+	 In-Reply-To:Content-Type; b=ECFXEZDO8bkmDTvRQ+0YwB57ZUEduqU0vnz43RPv2eYdm0zWlkQWl7fQasp2SiQfQ1LmxkUskUJcaev6jCGzPQoJ0ThsWQDIzPOpwy3IDEtCBmvZ1FjEI/AtBAfgshjGy21+bRd9zGD0Bd3aBi6e/+v30WFh0kKnmnSQJLnFMX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nFJ/Pnzu; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f2119a4d-7ba3-4f11-91d7-54aac51ef950@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730306737;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2prj1vBARz2TRWE6oRBlqTY8pIpwqPBns44dk5+Rnd4=;
-	b=e3SbcddIiXh8t+Q+kgzxtuwOGwfaB9jCdPdTtiEIJkfjKcFjdu3wCWpzKuSIAhd0z/4zKx
-	gROY2XK2eAR5aE5/e90QAIeWaQl8AcxvFjZtaq3txbzGkwzV0A+Fkuu+62dwG4anZDnp/9
-	iXLxNy14YAVI3PdiYjksKyDDwuwq4U8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-363-gNF4LHhcNGmhB3bWAoX5xg-1; Wed, 30 Oct 2024 12:43:58 -0400
-X-MC-Unique: gNF4LHhcNGmhB3bWAoX5xg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316e350d6aso85605e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:43:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730306637; x=1730911437;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2prj1vBARz2TRWE6oRBlqTY8pIpwqPBns44dk5+Rnd4=;
-        b=e1pX8aXGx4S/vDgyLThhZqMn3u1cqLhEdZRBqbxXLbaVcm5JqSBsFNL8KQiS/08FCB
-         rw+GBqmu1rXEkKWtZhVrx0kJIVsdTNSbfQhcmCjNLlFZd2Sq0en6BF4OFnUoWNYhj6P8
-         l6cNh/CM7/oaKi/06HkKA0MsSwXKlq/G2FG/JbMnUXyEo/U8vBPERrvladPdw54UKMhy
-         V0brFjS0PiNsR6lX5iInZK+23tS1huvQyEtam1xl4EnfvjVDBEUG9tQ6pL63tpAaX8/4
-         MXxiH0TiZcAPxR88H0JmSg4KmcZa+gziNyfJ7x5IvJzaMUTR6zz+FPXFiOTpaTIqO4Qo
-         4Oyg==
-X-Gm-Message-State: AOJu0YxVbOeEwR9ajZM320t03+9ScX6xiS+8RvAi29NasGQqWqUD26Ke
-	qGf9byjtx6ypzpQL5p1BS+NnuzUVgVZ8pYGtE3ExDK9l+owddUwNV373TP2aD8VHFUsgEL7GZxP
-	ROb/oQ5KetvK8Ys9McUGxlnqt+IDsKbsnMIgmc30s2re5G0Yv1vAAQcIndm5M9A==
-X-Received: by 2002:a5d:6082:0:b0:37d:4937:c9eb with SMTP id ffacd0b85a97d-3806113de46mr11924125f8f.21.1730306637505;
-        Wed, 30 Oct 2024 09:43:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvMaXZ4qwwVX8gPGZNbj4VQFicDJ4FE9uDfYitKw51Mvh8VbNoR2SY8GR2Eucf8hZZ4r+X1w==
-X-Received: by 2002:a5d:6082:0:b0:37d:4937:c9eb with SMTP id ffacd0b85a97d-3806113de46mr11924097f8f.21.1730306637117;
-        Wed, 30 Oct 2024 09:43:57 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c733:7c00:d067:e327:4f99:7546? (p200300cbc7337c00d067e3274f997546.dip0.t-ipconnect.de. [2003:cb:c733:7c00:d067:e327:4f99:7546])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b712cbsm15866975f8f.77.2024.10.30.09.43.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 09:43:56 -0700 (PDT)
-Message-ID: <e97e01dc-7db6-4d14-b5e6-40fb306489ce@redhat.com>
-Date: Wed, 30 Oct 2024 17:43:55 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=2IImZ1cZVsIXJIGIFBIuoTjHne0xPtt9XDcxUzdxcbs=;
+	b=nFJ/PnzuiZtjPkvI0PKl64gdNlEDUbL7oSAq78a1QvDclqZGoe1La2Ah6XdSp1vzNooun7
+	bCwWvVAvHmL8gchTeI60zfM3b/WoGPP/2zLD0EmFLUI0Odu5eYChun3lBUKye2a73LAIIs
+	yadQopyWqNnFMUSZFHBPqPAtYd1KtN8=
+Date: Thu, 31 Oct 2024 00:45:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] s390/physmem_info: query diag500(STORAGE LIMIT) to
- support QEMU/KVM memory devices
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
- Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Eric Farman <farman@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Mario Casquero <mcasquer@redhat.com>
-References: <20241025141453.1210600-1-david@redhat.com>
- <20241025141453.1210600-4-david@redhat.com>
- <ZyJDelNH7bvo/TnO@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <ux2lfkaeoyakulhllitxraduqjldtxrcmpgsis3us7msixiguq@ff5gfhtkakh2>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZyJDelNH7bvo/TnO@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <ux2lfkaeoyakulhllitxraduqjldtxrcmpgsis3us7msixiguq@ff5gfhtkakh2>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 30.10.24 15:32, Alexander Gordeev wrote:
-> On Fri, Oct 25, 2024 at 04:14:48PM +0200, David Hildenbrand wrote:
->> To support memory devices under QEMU/KVM, such as virtio-mem,
->> we have to prepare our kernel virtual address space accordingly and
->> have to know the highest possible physical memory address we might see
->> later: the storage limit. The good old SCLP interface is not suitable for
->> this use case.
+Hi,
+
+On 2024/10/18 23:43, Dmitry Baryshkov wrote:
+> On Fri, Oct 18, 2024 at 03:49:34PM +0300, Abel Vesa wrote:
+>> The assignment of the of_node to the aux bridge needs to mark the
+>> of_node as reused as well, otherwise resource providers like pinctrl will
+>> report a gpio as already requested by a different device when both pinconf
+>> and gpios property are present.
+>> Fix that by using the device_set_of_node_from_dev() helper instead.
 >>
->> In particular, memory owned by memory devices has no relationship to
->> storage increments, it is always detected using the device driver, and
->> unaware OSes (no driver) must never try making use of that memory.
->> Consequently this memory is located outside of the "maximum storage
->> increment"-indicated memory range.
->>
->> Let's use our new diag500 STORAGE_LIMIT subcode to query this storage
->> limit that can exceed the "maximum storage increment", and use the
->> existing interfaces (i.e., SCLP) to obtain information about the initial
->> memory that is not owned+managed by memory devices.
->>
->> If a hypervisor does not support such memory devices, the address exposed
->> through diag500 STORAGE_LIMIT will correspond to the maximum storage
->> increment exposed through SCLP.
->>
->> To teach kdump on s390 to include memory owned by memory devices, there
->> will be ways to query the relevant memory ranges from the device via a
->> driver running in special kdump mode (like virtio-mem already implements
->> to filter /proc/vmcore access so we don't end up reading from unplugged
->> device blocks).
->>
->> Update setup_ident_map_size(), to clarify that there can be more than
->> just online and standby memory.
->>
->> Tested-by: Mario Casquero <mcasquer@redhat.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
+>> Cc: stable@vger.kernel.org      # 6.8
+>> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 >> ---
->>   arch/s390/boot/physmem_info.c        | 47 +++++++++++++++++++++++++++-
->>   arch/s390/boot/startup.c             |  7 +++--
->>   arch/s390/include/asm/physmem_info.h |  3 ++
->>   3 files changed, 54 insertions(+), 3 deletions(-)
-> 
-> Reviewed-by: Alexander Gordeev <agordeev@linux.ibm.com>
-> 
+>> Changes in v2:
+>> - Re-worded commit to be more explicit of what it fixes, as Johan suggested
+>> - Used device_set_of_node_from_dev() helper, as per Johan's suggestion
+>> - Added Fixes tag and cc'ed stable
+>> - Link to v1: https://lore.kernel.org/r/20241017-drm-aux-bridge-mark-of-node-reused-v1-1-7cd5702bb4f2@linaro.org
+>> ---
+>>   drivers/gpu/drm/bridge/aux-bridge.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Thanks Alexander!
+
+Technically speaking, your driver just move the burden to its caller.
+Because this driver requires its user call drm_aux_bridge_register()
+to create an AUX child device manually, you need it call ida_alloc()
+to generate a unique id.
+
+Functions symbols still have to leak to other subsystems, which is
+not really preserve coding sharing.
+
+What's worse, the action that allocating unique device id traditionally
+is the duty of driver core. Why breaks (so called) perfect device driver
+model by moving that out of core. Especially in the DT world that the
+core knows very well how to populate device instance and manage the
+reference counter.
+
+HPD handling is traditionally belongs to connector, create standalone
+driver like this one *abuse* to both Maxime's simple bridge driver and
+Laurent's display-connector bridge driver or drm_bridge_connector or
+whatever. Why those work can't satisfy you? At least, their drivers
+are able to passing the mode setting states to the next bridge.
+
+Basically those AUX drivers implementation abusing the definition of
+bridge, abusing the definition of connector and abusing the DT.
+Its just manually populate instances across drivers.
+
+  
 
 -- 
-Cheers,
-
-David / dhildenb
+Best regards,
+Sui
 
 
