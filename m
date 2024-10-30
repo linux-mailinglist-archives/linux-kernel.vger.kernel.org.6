@@ -1,213 +1,375 @@
-Return-Path: <linux-kernel+bounces-388635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A547C9B625C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:55:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741F99B6260
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD401F21B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:55:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2891B212FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E6F1E766D;
-	Wed, 30 Oct 2024 11:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8258879D2;
+	Wed, 30 Oct 2024 11:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IA1X8aUu"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2069.outbound.protection.outlook.com [40.107.93.69])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sz0XMCTK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3DF1E6338;
-	Wed, 30 Oct 2024 11:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730289330; cv=fail; b=K2fUTGDQsKchQJJDOfvSLo0WiKYlCiCjHB5r3MfLnGHzqAxanrVg0UdvaoUZooF/EloIWK6U+fU47uVAIfzm4PLRM6XWZUwi4An2Zh7ESk2HxRb3FJB+/GhyQgN0qST4hqQNm4a5/uvTnWze5iNohkBZbPXVwDOfERw0a/zears=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730289330; c=relaxed/simple;
-	bh=x0FbMS0OmVzEydkLOjbV5rM2/FLq2ZDLZJsQ7zr+LN4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ATVARBL8HGuWvOqa8fbyPQ5/Z+zLI3whKDmISArVR9dexzNwcUNXWQ4yNxVNHClAbAy6zIf1cr1tVyQwBp5n/CTTVCk/Ho1lsRfwjPKrkHrqcGQ1uRwhlhtf0DgBwnoc2bQWsGgoxubZWmVnAnz2mFTe4lXS5nXvYrrDkC95JqE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IA1X8aUu; arc=fail smtp.client-ip=40.107.93.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Txw6EL2ePnf4ZV1tsxwMQHAK3kp+afx3GWqh550sKxSlDgZaJaL04mptPZyoU29KDVvwpTQB6p1IviWZEyQjZ5cj0q+uN7AG1jtIDsrtBlbd0ehrpLqTrSIQdlv0R+P3bhk/dpFbLh4vdmms819hQ3dZxUq3D4OMyQfHtytyQ2tN365SdLIUYsKIa34mDKq0Nqbm54b9zj8/nh3a7QuReX+EObleIpmRJaMCHAVTg2uboVBw2NB6u5DM+oV3tKMAUUyL9gDv9ShH6Vau+Mu5dR7VstZgkKT/L3oaQ5LrCD6ir5V5LsFySXotiC+258m5pCCgUgGsJofxJYu3faJ8ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V0V2OgtNb9Hu0zgfFh/kmaBeuJdAUucxJx0zOq/TJmw=;
- b=sDuhSjfeuZiWLGuHSyPSy+krdVUh9OQsngoAG/eX0/oEj95Yj4M3pWx7m5OGQ9UY2lo+NbcQdjHUzrLYgGwIEoGhmuAasR69UZoRpgo9kDK4l1KoP2dkBPVAV3BSLC7SJPh5dnSIn39V+DmU0g78IOzWfRxN7Vuux5sEPOjSmhzmmLg53yfCWGj1VKU/z/QG0ErG5R2AiCzOPl5XSP1xPdRxTt369FMu2JOvKLeATcc4dp88GVfTu+8SAgw7qGIsEdquboniSpiYxkEvmm6WPOtu+MrCShfLkCZe7eA5NQUdLW5k6j3fDh5KVlyM/NpeDcPa5AapoojzmU0bDEGtkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V0V2OgtNb9Hu0zgfFh/kmaBeuJdAUucxJx0zOq/TJmw=;
- b=IA1X8aUuJUrn/3m1mE/xURfEBC3QgxnZULOzYMT+5yO3u8DNsJIP1KUlfORD5QiS2opNiIfkHl1n0xkm6Yuk5GIY3b4EsMlzaMqcViEAR+2FmAhc3y5JmXjcF+/d5hNRSGiCQK7lp13ysYiqrlg8YuxkV7K8PVLFAAvwM6d+0nw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- MN0PR12MB5786.namprd12.prod.outlook.com (2603:10b6:208:375::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Wed, 30 Oct
- 2024 11:55:22 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%4]) with mapi id 15.20.8093.027; Wed, 30 Oct 2024
- 11:55:22 +0000
-Message-ID: <16a13edd-0061-019e-f8bf-e816022a40c2@amd.com>
-Date: Wed, 30 Oct 2024 17:25:13 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
-To: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
- x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241028053431.3439593-1-nikunj@amd.com>
- <20241028053431.3439593-4-nikunj@amd.com>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <20241028053431.3439593-4-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PNYP287CA0012.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:23d::17) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7CC1E6DE1;
+	Wed, 30 Oct 2024 11:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730289449; cv=none; b=Wsl7kWsMsnardkpdMgiakcGYCz0Nd9jG27ZkIbLBxa6mH2NlSmU1YQRBD2TU0oyVr6b3AUhtY6CYZFpneYGtm48aMZfWmmGp7x7STJXD2flBarQ4OrWBfa5T7FGbmYd20RWSqxJVdTWewRphJw7C5ZQwl8IYLtVn9X1poG++ApY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730289449; c=relaxed/simple;
+	bh=QCMg29osKeFn+fk9AtsIXRUSkPWFNurKMc4JYa7dDRg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gR33WrOK4UbaTwbK2Z3HpjaG9b6oZrT9vwKn58swxrOda8gKrUll1KUL04HJKjhK3Hi0ggDoZRYv2mo1e7l38WV7VlntNLx/JJ9lHvtTod3het3j+XiNhS38wcbjvuiRn+IKzZupF2fzWR8/JqynNKjZ3gf6pA66vkyW/3+YU5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sz0XMCTK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1101C4CEE3;
+	Wed, 30 Oct 2024 11:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730289449;
+	bh=QCMg29osKeFn+fk9AtsIXRUSkPWFNurKMc4JYa7dDRg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Sz0XMCTKYKw/Uywfv5Gwy3+QE328/g79jLrWQ9B7PAo8cwOkVIxgTg9BOq/1O3nJr
+	 w3zbC2OTYvPl+N90ydz1IdZBAwdNT2//YKLKH+YcrZvzCy7Ms5pdoD9fdZRP/P1drv
+	 0Ns52DOee6Ur5ot++Jdh7Ikj6Ob5Bh5SUdyqlrv0TtnC7P/2FmNxN+xQZ8OK7HxP3Z
+	 yjgvV3+t64wVp6/MvoDSQPQu1wyglSfOnCcNpPvQQaQEHYn8PhJxbY+13t1v6WClWw
+	 3+SlgdwgFclTaf/ODtRknX26hjR+WoU+Kv6lNYSjS+QK7aOurYKF7xvY4bLSOkZyAm
+	 y1nbO2fMHQCTg==
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-50d35639d0aso2023787e0c.0;
+        Wed, 30 Oct 2024 04:57:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWEqh2cYT+NbHvt7mVfXUIpNgw0xw/jGEVsoSR3m66aF0vi+XRpQmItrH3xXDCTfE3RihvYUo9tqDnMuI4=@vger.kernel.org, AJvYcCXA/uxg7S6PwbYqegg+cYyv0CkBB9hWysXDEKyyIr6K8w9CDAZ/V8h3fZjueKfaIgXXT8DEOVHS3T3sL4I=@vger.kernel.org, AJvYcCXuXSVOdePZf3iEbOG6D5dYd9bvxz8qX64NQjC6a+unA+moNH9U1QKhViwtCbJeg1idbJoyjY0HFz1vHss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTQKnhhNXeG5twE1Iw1cdLqgPOK6bU06t+0dPG3g1qSoFz4F+v
+	dS85w6mH+SU98JuDlFUj3zQgmM4zEXxHeeccud7tw9fWovADR9Up+bdTqhf+E+kU1ovx9Fhuu00
+	MjEj5B8taAHdUIJFValR0oubYUxk=
+X-Google-Smtp-Source: AGHT+IHWMDJjtkzpiHvyncGcKjvaw3LiNvtppkptwQtVV1tqX7otcXvCH3nRRk5lVeKDmw1Uixdp6QFu/7gUnk4HL3s=
+X-Received: by 2002:a05:6122:200d:b0:4f5:199b:2a61 with SMTP id
+ 71dfb90a1353d-510150e5219mr12531010e0c.9.1730289447920; Wed, 30 Oct 2024
+ 04:57:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|MN0PR12MB5786:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96785cf9-41e7-4e83-e435-08dcf8d9bbb2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VW1qYmtFVlphamNDVUkvd1JZK21TVWhQNUM3cThMWVhDRk9HSkxYZE0rY3pZ?=
- =?utf-8?B?cUF4SmhRMjE5QVdHSWkrTkdZaWR1YjNXU1MvZDlPMC9JKzhhSmJ2SkFxM3M5?=
- =?utf-8?B?ZnVQQXhqdUltUTdObC92VkptdUpESHVreDQ0Q21vTk8rZ3ZBMGk0eWNMQU1S?=
- =?utf-8?B?Nit2ZitRcWlGd01LM0tqREVKMWtZenlaV1hoenQrcDF6Q0JIY0hobVppU2o1?=
- =?utf-8?B?ZTl2YnRNbGRYUEdLWFg4N2szV0dLdUxNOUxXamFjQlNFWi8xVEpNQkdQRWo5?=
- =?utf-8?B?WmlLR01Layt5Yk55SldjQTVHUXVHaXF3UlpBUFd6cHZTSldrcmFQT0VDaURJ?=
- =?utf-8?B?c1JjYWFrY0tpTUFTT0ZFQy9CWWVZbGVGY1A0bkQ2dkt1cGx4WExGazZaQlZq?=
- =?utf-8?B?YkpWMTRSNUhYb1pHelVXR2xNL3c0L1NCQmxGSE51cG03RHg1dkhuQjVIUk5V?=
- =?utf-8?B?UndsU3cweXdQeC9MMFdzSlY1ZFhPZ1JCUXphSzFiL082WTVlZTB5bmZkaEF3?=
- =?utf-8?B?Njd0UGJFMmxkUmFySHZha2xkWHBYclcwT0l3N2dFdTNHcUtqMHJmMytjUEF6?=
- =?utf-8?B?d1VXU0hGRDVQcEo5ZCtDeHlYSHg2K0Y0Qk5UQ1FteUFwcjRIWDYzaWRmMHNP?=
- =?utf-8?B?RFA1STRiM3c3YmwvQjN1TGErTGFRSnJacWVNdzhMUEJiY1J4UzlCa0ZBVEZj?=
- =?utf-8?B?bVM2Ynl1SDMwVXQ3cXU0R3NTTlVnWkZ5T3ZZVEVYczhFNVNuek1DOGhHVmFj?=
- =?utf-8?B?dUhUMGNuTmQwZDBEY2Nyd00xYkNWeVdtK0RJcVRxakxGR3YwWUIxc054bDh5?=
- =?utf-8?B?UVQzWVFGMkhMMDY3enV1YnBsaUhnbndIKys1MkxTY3FhakUwTVFvL3l2RE01?=
- =?utf-8?B?WHZLeEpVR0pONkpVVm9wVjNrbkYvZTF5OEt6QVF4MmRWSHZldDJzbGY4Z3NZ?=
- =?utf-8?B?WjVrTkszK2trVTVTODcrZGxiZEFVSTlVWm55Vk4rV29iYWVLaTdkc2c4TUNP?=
- =?utf-8?B?eU1VRVM5Q3BReWpvcDhxcmU2R29wUzNTS2d3VzBvanM1YXpzclQyUUM2SVdU?=
- =?utf-8?B?akpxdlJJVHNGK3lQYklhYTd3V1ZOOVRucFVOck11R3ZNZzlBUzNoZE1vVG9a?=
- =?utf-8?B?Vm0rRGdPTy8vdUdjdDlTSjVoTVVMS2lod0hqYkZKZk5jVEI5Vk1GNk1qNU9Z?=
- =?utf-8?B?WkxmZmZHcWQzS3IzWXZPMVNIRGhxejEzdG80eGVIVjdBYTNGRGhMS2NTVnFn?=
- =?utf-8?B?TUM2MGttTUJNTkJkUEJ4SWM2djQzQjZtQWNDcitWcGE5UWFzRlZiNnFhQnRW?=
- =?utf-8?B?WXZTMHBObldZazdkd1V2UXl3YXJOMlFyN1ZkYzFWcVVnSnB3b1FNT3J0Nk94?=
- =?utf-8?B?NGMydzhhTHh5L0pZVXlNYlJ4MHU1UysxYytaa05kb3p3MWMwYUtqN01ueHhm?=
- =?utf-8?B?V1I0SEI0Z1pSZWhYemNqVlRXTnF2WmtyZVNRMHFpaFQ3NVhmaFhiVUtuZzF2?=
- =?utf-8?B?L09VOTh2bkkzSS9ERDJNMHBXcTJLWkVlMUx5VmVxM2xmbUtzVTMzaTZWYm16?=
- =?utf-8?B?OFdmTXl1Qm9mWW83OTR4dklkbVBVbXhxZno4M2Jka0dPZiswNGFDT082WTdr?=
- =?utf-8?B?OVBkSGo5WXZaaTRiVTViWEpHMUxkdTc0ZjljK0UzaW50UFA0aC9Td29TUy9S?=
- =?utf-8?B?ZFFYSVVtWHZuV3lQL3FwSzhNVG1vTWZuemxkMUcrZXFPUjB4eGJVRVhyZUFa?=
- =?utf-8?Q?Y4NDmYGH8ZKnSrGIf7DoIMGjH3UnUBWu2rRUKJ6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NkdkYkcxbVFoaVd3dk0rN09JL0hMdldqQnArUnJRbGIzQytwU0p0a3daNlVm?=
- =?utf-8?B?c00yazlvUjBGZzZ5SFBtOS9tc2tRR2NYWWYzczUzS3N6QitnQUlpcnNYOXB3?=
- =?utf-8?B?QjhWTUdUN3pxZm95T0ZHTVhXT1J1eHY0R2draTE2T3Q0by8vbEdFbE51WDBC?=
- =?utf-8?B?UEsxcGxMK1RJMjRUSEpaQlVpRUN2dGhTd3FMbDcraTY1N3dDRTUxWDhKV2ZT?=
- =?utf-8?B?VXJxOHhRSk1uOFhkaUN5dGFsaVNKdGtPcE94OXUwY0hRTEVpMmlMc3JHdGFZ?=
- =?utf-8?B?YWxodW9mV2ZHNlBNVEhZWTRGUjZJRm1sT3hMU1VuNExoOVZwNWhzTXVPT2x1?=
- =?utf-8?B?bjd0c1d2VEVZKzNWNEZEWGV0bHV4L0UrM01DK0YyL1pKWjVBN1pheUVZclhT?=
- =?utf-8?B?STAxMUpvTHQ4WlF3ZTA5RkdDN05lc05pVUFPeDcreDE3azkyYkQ0a1ZUSWtm?=
- =?utf-8?B?M1RTZ1lsRWpUMlRlR1RZUnNsV0Vhd3JwNDg0SG9FdE93dlNnVEV2VS9zYzcw?=
- =?utf-8?B?QXVOS3B5dFVoWVd3R2p6OXppMGlkQVFjdDZEQi82NHcvMnI4WFcwejBIbGhM?=
- =?utf-8?B?YVpxWVAycnIvdStMNWZWd3lxRHFBQjFyWFpWRlVCOVB3Wk5KNGZFazlqOWw4?=
- =?utf-8?B?bFp1NURyblcyV2VkYUY4QlMvWHdkaEU5azgzUVJoTm5Wc3RmTzZJOHZhMHRr?=
- =?utf-8?B?NVA3VTFKS3p5Q2tvckQvQ1RpK1EvcUZ6d0dtMTR5V09jMm9nZUsvdTlWeHlS?=
- =?utf-8?B?N2NycXVxV3hUNWJCZm5KditCSmJUcm9DZHFYdG1DREV6Z2JGL2ZoV0k0blRw?=
- =?utf-8?B?RDVrRTIvYmZUY1NwWUUwNTFYZFZhTlVDMExsWlU2VnNkVjU1WFJLVTlsQ2Nr?=
- =?utf-8?B?MDRXRW5id1I4OGMwWlN4SGNRR2llS1UreG1nSzdUQ2ZFMjV0YUZQemRJeVVi?=
- =?utf-8?B?dXRjNmhCZm10OWxyZEp4REMvYmtZNUQrdGNseGk3a0F4blNhckV6ZlBhMXAz?=
- =?utf-8?B?VVU2SUVCbkpvcitWTTB6Nkw2N2hWQTNNOEQwaEN2dzY5My95UWpFbXFGMUtC?=
- =?utf-8?B?R3JpTVI0dGZIOUYwN1orbktkOHJUNTlwbUFXQ3NnWHZTT3FJVmJla2w4YjJQ?=
- =?utf-8?B?S0JQellzLzZyODRTUzE0MWxPdlZGa1J5KzNjcTkySnRlK21LOEVSMk80S2c4?=
- =?utf-8?B?SDhMQ1JmaUhKT3RTS3I3VHpFK0F6SmM1VXZRK0dtV2ZxQ1kwbTBFVC9lSjk2?=
- =?utf-8?B?YnQyTW1qQnFnWlR0RHBSWVFaVk55a2tobGc4ZmJuZ3hZYUlTZVBiV2MzVnhl?=
- =?utf-8?B?SVdSQ25ibTJjOGR6cUZvZk5pRHFxNHM3UGp0enJScEx2M1hlam5MU05ZSU1o?=
- =?utf-8?B?cE1xN0xGUVJ0WW9PVVpaUDc0b0ZrVWdJVXloMTZmS29hQWtPVzNSbFErVEJK?=
- =?utf-8?B?U0FHUG1IcWYrL2dMSzZ2cjFMNUY2eUZhVk9IVEUxOVNHVE5IVFo5SW1KNmp0?=
- =?utf-8?B?WVNVMjJnMk5EczdyaTRaNFRpTlpsUE1ZaG1pa202NlJuczc5OWU1RGRSTWZp?=
- =?utf-8?B?eXpyTFlQQmxiaVI0azBxTVAxREMyTmpieW1FVFBvUDh1SG9wdWUxZWliUWN6?=
- =?utf-8?B?cjNTUEFhb2lYZFVSdTN2cmlrcG5ZMzN1blRmOW1BSCt1TllYWEJ4b0NoS1Zm?=
- =?utf-8?B?Qi9GYVNXWk1TMmt4Vzh0ZDdxZ0RqWVVNQUY5QVQ3bXRyeE5jeWNEQmdKVXdK?=
- =?utf-8?B?TmVNdGxnV3VUdzFqWFZoZHdvTWc4VzhENVpXcEE2bG85VEVMVEcrWHd4dTgy?=
- =?utf-8?B?LzQ4bkJtOGFGYzNvbHZKaG9ScS90QmNEV2lCdmFhUFZad3lVSW1VVjREdTNI?=
- =?utf-8?B?eVlhMlI5SUVGdE12aWNWZlZLVEZpZjBVcnlkTXplWXBJR1RFaUxleWZEVXU5?=
- =?utf-8?B?SGdjRlNsbkQ2dE52N0hMd2k0NUgvZGdrZStpdkFBVHlXWnNtUk5CYkpySkt3?=
- =?utf-8?B?c0Y5RysrQXRSYm5LSGF5S04zSEZEUHZFaUE5YSsyeXMyYUJvWkFKVlZyNVZM?=
- =?utf-8?B?QUlTYko2MjJpcm9PVm1TQjNDRjJibnVMVmtkcDZjQ2dIOVNKc2hpcFZhWEdo?=
- =?utf-8?Q?VY7MwjNQ+fJO0SarKRKaeByHr?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96785cf9-41e7-4e83-e435-08dcf8d9bbb2
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 11:55:22.4082
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YK2J8wJl3imJUM1YoJ9rsGoyH5wpSUgCaOLkBqGbbOL7ncbVBBI7v4G32klHsL90F8bKhMEwJKWUJ6rRWJkpBQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5786
+References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu> <20241021-imx214-v2-8-fbd23e99541e@apitzsch.eu>
+In-Reply-To: <20241021-imx214-v2-8-fbd23e99541e@apitzsch.eu>
+From: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Date: Wed, 30 Oct 2024 12:57:10 +0100
+X-Gmail-Original-Message-ID: <CAPybu_1qO9ZJSO3EQwb_ggtTysZpqg6gQXABYW8ekH-UwUp8bQ@mail.gmail.com>
+Message-ID: <CAPybu_1qO9ZJSO3EQwb_ggtTysZpqg6gQXABYW8ekH-UwUp8bQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/13] media: i2c: imx214: Add vblank and hblank controls
+To: git@apitzsch.eu
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/28/2024 11:04 AM, Nikunj A Dadhania wrote:
-> @@ -497,6 +516,27 @@ static inline void snp_msg_cleanup(struct snp_msg_desc *mdesc)
->  int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req,
->  			   struct snp_guest_request_ioctl *rio);
->  
-> +static inline int handle_guest_request(struct snp_msg_desc *mdesc, u64 exit_code,
-> +				       struct snp_guest_request_ioctl *rio, u8 type,
-> +				       void *req_buf, size_t req_sz, void *resp_buf,
-> +				       u32 resp_sz)
-> +{
-> +	struct snp_guest_req req = {
-> +		.msg_version	= rio->msg_version,
-> +		.msg_type	= type,
-> +		.vmpck_id	= mdesc->vmpck_id,
-> +		.req_buf	= req_buf,
-> +		.req_sz		= req_sz,
-> +		.resp_buf	= resp_buf,
-> +		.resp_sz	= resp_sz,
-> +		.exit_code	= exit_code,
-> +	};
+On Mon, Oct 21, 2024 at 12:14=E2=80=AFAM Andr=C3=A9 Apitzsch via B4 Relay
+<devnull+git.apitzsch.eu@kernel.org> wrote:
+>
+> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+>
+> Add vblank control to allow changing the framerate /
+> higher exposure values.
+>
+> The vblank and hblank controls are needed for libcamera support.
+>
+> While at it, fix the minimal exposure time according to the datasheet.
+>
+> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> ---
+>  drivers/media/i2c/imx214.c | 119 ++++++++++++++++++++++++++++++++++++---=
+------
+>  1 file changed, 97 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 497baad616ad7374a92a3da2b7c1096b1d72a0c7..cb443d8bee6fe72dc9378b2c2=
+d3caae09f8642c5 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -34,11 +34,18 @@
+>
+>  /* V-TIMING internal */
+>  #define IMX214_REG_FRM_LENGTH_LINES    CCI_REG16(0x0340)
+> +#define IMX214_VTS_MAX                 0xffff
 > +
-> +	return snp_send_guest_request(mdesc, &req, rio);
-> +}
-
-I realized that the above is not required anymore. I will remove in my next version.
-
-> @@ -538,6 +578,12 @@ static inline struct snp_msg_desc *snp_msg_alloc(void) { return NULL; }
->  static inline void snp_msg_cleanup(struct snp_msg_desc *mdesc) { }
->  static inline int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req,
->  					 struct snp_guest_request_ioctl *rio) { return -ENODEV; }
-> +static inline int handle_guest_request(struct snp_msg_desc *mdesc, u64 exit_code,
-> +				       struct snp_guest_request_ioctl *rio, u8 type,
-> +				       void *req_buf, size_t req_sz, void *resp_buf,
-> +				       u32 resp_sz) { return -ENODEV; }
+> +#define IMX214_VBLANK_MIN              890
 > +
+> +/* HBLANK control - read only */
+> +#define IMX214_PPL_DEFAULT             5008
+>
+>  /* Exposure control */
+>  #define IMX214_REG_EXPOSURE            CCI_REG16(0x0202)
+> -#define IMX214_EXPOSURE_MIN            0
+> -#define IMX214_EXPOSURE_MAX            3184
+> +#define IMX214_EXPOSURE_OFFSET         10
+> +#define IMX214_EXPOSURE_MIN            1
+> +#define IMX214_EXPOSURE_MAX            (IMX214_VTS_MAX - IMX214_EXPOSURE=
+_OFFSET)
+this definition is never used
+>  #define IMX214_EXPOSURE_STEP           1
+>  #define IMX214_EXPOSURE_DEFAULT                3184
+>  #define IMX214_REG_EXPOSURE_RATIO      CCI_REG8(0x0222)
+> @@ -187,6 +194,8 @@ struct imx214 {
+>         struct v4l2_ctrl_handler ctrls;
+>         struct v4l2_ctrl *pixel_rate;
+>         struct v4l2_ctrl *link_freq;
+> +       struct v4l2_ctrl *vblank;
+> +       struct v4l2_ctrl *hblank;
+>         struct v4l2_ctrl *exposure;
+>         struct v4l2_ctrl *unit_size;
+>
+> @@ -202,8 +211,6 @@ static const struct cci_reg_sequence mode_4096x2304[]=
+ =3D {
+>         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+>         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
+>         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+>         { IMX214_REG_X_ADD_STA, 56 },
+>         { IMX214_REG_Y_ADD_STA, 408 },
+>         { IMX214_REG_X_ADD_END, 4151 },
+> @@ -274,8 +281,6 @@ static const struct cci_reg_sequence mode_1920x1080[]=
+ =3D {
+>         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+>         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
+>         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+>         { IMX214_REG_X_ADD_STA, 1144 },
+>         { IMX214_REG_Y_ADD_STA, 1020 },
+>         { IMX214_REG_X_ADD_END, 3063 },
+> @@ -359,6 +364,7 @@ static const struct cci_reg_sequence mode_table_commo=
+n[] =3D {
+>         { IMX214_REG_ORIENTATION, 0 },
+>         { IMX214_REG_MASK_CORR_FRAMES, IMX214_CORR_FRAMES_MASK },
+>         { IMX214_REG_FAST_STANDBY_CTRL, 1 },
+> +       { IMX214_REG_LINE_LENGTH_PCK, IMX214_PPL_DEFAULT },
+>         { CCI_REG8(0x4550), 0x02 },
+>         { CCI_REG8(0x4601), 0x00 },
+>         { CCI_REG8(0x4642), 0x05 },
+> @@ -462,18 +468,24 @@ static const struct cci_reg_sequence mode_table_com=
+mon[] =3D {
+>  static const struct imx214_mode {
+>         u32 width;
+>         u32 height;
+> +
+> +       /* V-timing */
+> +       unsigned int vts_def;
+> +
+>         unsigned int num_of_regs;
+>         const struct cci_reg_sequence *reg_table;
+>  } imx214_modes[] =3D {
+>         {
+>                 .width =3D 4096,
+>                 .height =3D 2304,
+> +               .vts_def =3D 3194,
+>                 .num_of_regs =3D ARRAY_SIZE(mode_4096x2304),
+>                 .reg_table =3D mode_4096x2304,
+>         },
+>         {
+>                 .width =3D 1920,
+>                 .height =3D 1080,
+> +               .vts_def =3D 3194,
+>                 .num_of_regs =3D ARRAY_SIZE(mode_1920x1080),
+>                 .reg_table =3D mode_1920x1080,
+>         },
+> @@ -629,9 +641,39 @@ static int imx214_set_format(struct v4l2_subdev *sd,
+>         __crop->width =3D mode->width;
+>         __crop->height =3D mode->height;
+>
+> -       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE)
+> +       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+> +               int exposure_max;
+> +               int exposure_def;
+> +               int hblank;
+> +
+>                 imx214->cur_mode =3D mode;
+>
+> +               /* Update limits and set FPS to default */
+> +               __v4l2_ctrl_modify_range(imx214->vblank, IMX214_VBLANK_MI=
+N,
+> +                                        IMX214_VTS_MAX - mode->height, 2=
+,
+> +                                        mode->vts_def - mode->height);
+> +               __v4l2_ctrl_s_ctrl(imx214->vblank,
+> +                                  mode->vts_def - mode->height);
 
-Ditto.
+Do we need to set FPS to default?
 
-Regards
-Nikunj
+> +
+> +               /* Update max exposure while meeting expected vblanking *=
+/
+> +               exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFSET;
+> +               exposure_def =3D (exposure_max < IMX214_EXPOSURE_DEFAULT)=
+ ?
+> +                       exposure_max : IMX214_EXPOSURE_DEFAULT;
+exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFAULT);
+> +               __v4l2_ctrl_modify_range(imx214->exposure,
+> +                                        imx214->exposure->minimum,
+> +                                        exposure_max, imx214->exposure->=
+step,
+> +                                        exposure_def);
+> +
+> +               /*
+> +                * Currently PPL is fixed to IMX214_PPL_DEFAULT, so hblan=
+k
+> +                * depends on mode->width only, and is not changeble in a=
+ny
+> +                * way other than changing the mode.
+> +                */
+> +               hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> +               __v4l2_ctrl_modify_range(imx214->hblank, hblank, hblank, =
+1,
+> +                                        hblank);
+> +       }
+> +
+>         return 0;
+>  }
+>
+> @@ -681,8 +723,25 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctrl)
+>  {
+>         struct imx214 *imx214 =3D container_of(ctrl->handler,
+>                                              struct imx214, ctrls);
+> +       const struct v4l2_mbus_framefmt *format;
+> +       struct v4l2_subdev_state *state;
+>         int ret;
+>
+> +       state =3D v4l2_subdev_get_locked_active_state(&imx214->sd);
+> +       format =3D v4l2_subdev_state_get_format(state, 0);
+> +
+> +       if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
+> +               int exposure_max, exposure_def;
+Not sure if the compiler will like it, but have you tried to set state
+and format under this if?
+
+> +
+> +               /* Update max exposure while meeting expected vblanking *=
+/
+> +               exposure_max =3D format->height + ctrl->val - IMX214_EXPO=
+SURE_OFFSET;
+> +               exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFAUL=
+T);
+> +               __v4l2_ctrl_modify_range(imx214->exposure,
+> +                                        imx214->exposure->minimum,
+> +                                        exposure_max, imx214->exposure->=
+step,
+> +                                        exposure_def);
+> +       }
+> +
+>         /*
+>          * Applying V4L2 control value only happens
+>          * when power is up for streaming
+> @@ -694,7 +753,10 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctrl)
+>         case V4L2_CID_EXPOSURE:
+>                 cci_write(imx214->regmap, IMX214_REG_EXPOSURE, ctrl->val,=
+ &ret);
+>                 break;
+> -
+> +       case V4L2_CID_VBLANK:
+> +               cci_write(imx214->regmap, IMX214_REG_FRM_LENGTH_LINES,
+> +                         format->height + ctrl->val, &ret);
+> +               break;
+>         default:
+>                 ret =3D -EINVAL;
+>         }
+> @@ -717,8 +779,11 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>                 .width =3D 1120,
+>                 .height =3D 1120,
+>         };
+> +       const struct imx214_mode *mode =3D &imx214_modes[0];
+>         struct v4l2_fwnode_device_properties props;
+>         struct v4l2_ctrl_handler *ctrl_hdlr;
+> +       int exposure_max, exposure_def;
+> +       int hblank;
+>         int ret;
+>
+>         ret =3D v4l2_fwnode_device_parse(imx214->dev, &props);
+> @@ -726,7 +791,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>                 return ret;
+>
+>         ctrl_hdlr =3D &imx214->ctrls;
+> -       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 6);
+> +       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 8);
+>         if (ret)
+>                 return ret;
+>
+> @@ -742,22 +807,26 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>         if (imx214->link_freq)
+>                 imx214->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
+>
+> -       /*
+> -        * WARNING!
+> -        * Values obtained reverse engineering blobs and/or devices.
+> -        * Ranges and functionality might be wrong.
+> -        *
+> -        * Sony, please release some register set documentation for the
+> -        * device.
+> -        *
+> -        * Yours sincerely, Ricardo.
+> -        */
+Please keep my message ;)
+
+
+> +       /* Initial vblank/hblank/exposure parameters based on current mod=
+e */
+> +       imx214->vblank =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
+> +                                          V4L2_CID_VBLANK, IMX214_VBLANK=
+_MIN,
+> +                                          IMX214_VTS_MAX - mode->height,=
+ 2,
+> +                                          mode->vts_def - mode->height);
+> +
+> +       hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> +       imx214->hblank =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
+> +                                          V4L2_CID_HBLANK, hblank, hblan=
+k,
+> +                                          1, hblank);
+> +       if (imx214->hblank)
+> +               imx214->hblank->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
+> +
+> +       exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFSET;
+> +       exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFAULT);
+>         imx214->exposure =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_op=
+s,
+>                                              V4L2_CID_EXPOSURE,
+> -                                            IMX214_EXPOSURE_MIN,
+> -                                            IMX214_EXPOSURE_MAX,
+> +                                            IMX214_EXPOSURE_MIN, exposur=
+e_max,
+>                                              IMX214_EXPOSURE_STEP,
+> -                                            IMX214_EXPOSURE_DEFAULT);
+> +                                            exposure_def);
+>
+>         imx214->unit_size =3D v4l2_ctrl_new_std_compound(ctrl_hdlr,
+>                                 NULL,
+> @@ -879,6 +948,12 @@ static int imx214_get_frame_interval(struct v4l2_sub=
+dev *subdev,
+>         return 0;
+>  }
+>
+> +/*
+> + * Raw sensors should be using the VBLANK and HBLANK controls to determi=
+ne
+> + * the frame rate. However this driver was initially added using the
+> + * [S|G|ENUM]_FRAME_INTERVAL ioctls with a fixed rate of 30fps.
+> + * Retain the frame_interval ops for backwards compatibility, but they d=
+o nothing.
+> + */
+>  static int imx214_enum_frame_interval(struct v4l2_subdev *subdev,
+>                                 struct v4l2_subdev_state *sd_state,
+>                                 struct v4l2_subdev_frame_interval_enum *f=
+ie)
+>
+> --
+> 2.47.0
+>
+>
 
