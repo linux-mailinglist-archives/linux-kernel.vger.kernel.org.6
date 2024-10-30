@@ -1,159 +1,74 @@
-Return-Path: <linux-kernel+bounces-389431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190A49B6D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:43:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3ED79B6D14
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5DD1F22664
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E64601C20FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA671D043C;
-	Wed, 30 Oct 2024 19:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA991D0DE2;
+	Wed, 30 Oct 2024 19:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w+BCXCiX"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnmoJZMR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139C21CFEB0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 19:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6631BD9F0;
+	Wed, 30 Oct 2024 19:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730317386; cv=none; b=sDV5ADv00CjTkXrpU7JQyS8KKuzUYJe5Hitb53LVvBr8+ucLTTus8bnFxisdqIzhJGHHh9iWkcIYb5E4ZA4triqAXf/jdlYU8OOGRcwCGt9kY39UIjpya7QXD9SE48P63UZ7OZZyFylBnla6Guu4GAYY032eeCW9FIUA91b2vG0=
+	t=1730317680; cv=none; b=ou34TCOsvOWFYQMrzMzwf5wCJPSUnwFx1WdxK1INHR4n+r/DroH1h+6uYSl7DoNg5t1xpIHebEM8wp/4sej4ur9NPbCeQbVyFmbFi0xufhplFcaYXlHB+8IDfS2+WloHt0pXFRAHqH25pXP4WqSe+PVgONDdEj7ZNkxSRp5qgz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730317386; c=relaxed/simple;
-	bh=U0+7COKqo02RjpF7uFnt4Rsajv1k7jn2NNQjdlE+ZCo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q7EsMzsh7z2J9jJKDh1JefvAlRSJWgEK33XkLsTozJXIIuC1wTWDijYSnlh+NApnZCaHd8BN0ddFkE/j3uNvUXfP+gexgpIrJ0GZj/6t/wjRrx9MRgaU0EeLDjsmI6rqJWCRvMHUWzjpuTUP6n4tEhWP6agA296uZPrjEKSaP6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w+BCXCiX; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-207115e3056so2453055ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730317383; x=1730922183; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3le7Y0Gii5QDreHgxxhBrDb8aLPtkqMWBJFzizIbbqs=;
-        b=w+BCXCiXaezUtCfGkRwYCbCrkXI3CiT8SEQsjg9tKPgzheQIh+ypufB1ocu6PIOC/c
-         xK/4rjn5C/nVkhmNiY2Io7hUx+hkhIxEjyGfOSkE3FBlxefcZX9qxG85yeNxCvwYGdr3
-         ojOEmuq0DLGhZ8W9mWMduvodHcI2bNot2TPABoSSoQwsxseX8ThWAdsiRjauy9FmC7rB
-         2e0LXQRInFfNqorhJh7uXfRfuDjsLSEYXCa2HgdpiLWGMImTIICb4oPbzL6GMF8Wskkg
-         pRmq+b96pIuJRvLYTpog9fqjE67y0u4bIyVRSAblnjqj8mZpH8lvdwZsGhVJhRnufVUD
-         J7ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730317383; x=1730922183;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3le7Y0Gii5QDreHgxxhBrDb8aLPtkqMWBJFzizIbbqs=;
-        b=lGUBQEQSp67ra+zt/JtgxBMKyYVtZsKi9kQWWTvg4OU+/ZKmzKbHpu675qS+4Vq4ZV
-         jKbqOpUd8PcHaxUAwD4J8d2z9V3ehQFHtPUbWVAcffGQsbbvCuOrRwMsOHaSBaFLa6RC
-         X87xWh2A244+IKx9TkhWL1OcKOnZGDYwTX3VQUXNi/supAp0K3VzqT7Mjt/OP9LZ2qKp
-         VXE7LxH5pV0oRmst33bwIgIRA40/vrCVl8e7VsEof6/RLpUdxQH3fZUNWGzSX+1uuKGa
-         48IRSPjwXqmvpOh09HWS7cOhQgN8aDsXlKJhz4x364s3qggLASOCAHMs96qAAhKQNbok
-         /6vA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYXo2nPObNYeF/9mbwNIRQxV1+MRFV2Ze2WOCtLolFJu7+eP7x18LURI/ewAIluWpMhBEq/E6wixevbKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQx1x+c9HfAE7pH0dGPWq4pZe+CwTIiYs4dSd0XKxg/YKAnZ73
-	G4dnEqvIV2oHJT/Mb/ZUl2xTi0bCYrEk5z2Wd43KLr/nifQx36RUJ0vly0Xrb9A=
-X-Google-Smtp-Source: AGHT+IHk8AZ9wf3uzoDfMby1k5RqREUDlcflFSi9zNXpPdV/uu6krYbXl92mEIypZxjKId/zeo/NXw==
-X-Received: by 2002:a17:902:d4ca:b0:20c:a387:7dc9 with SMTP id d9443c01a7336-210c69e32dfmr232900685ad.29.1730317383199;
-        Wed, 30 Oct 2024 12:43:03 -0700 (PDT)
-Received: from localhost ([97.126.177.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf4332fsm85099085ad.16.2024.10.30.12.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 12:43:02 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>
-Cc: linux-pm@vger.kernel.org, Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole
- <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis
- <sebin.francis@ti.com>, Markus Schneider-Pargmann <msp@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power
- mode constraints
-In-Reply-To: <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
-References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
- <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
- <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
-Date: Wed, 30 Oct 2024 12:43:02 -0700
-Message-ID: <7hv7x9qsvt.fsf@baylibre.com>
+	s=arc-20240116; t=1730317680; c=relaxed/simple;
+	bh=or2KvqJqW9neTrGs27NJV1Mi505S8IEzYJIDkgKZoEc=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=okuBjsTmx8QFUJyTPcABns0rkIrjsxnQF6SR+wGj1StQ2D3b12CD6HHrPS1gVZxJLO9V1Gu8/nY6vkgfJh59oiTFbtgbChtvrFpGxwgCuoOWTd7X2n/H0BNIHzyjPnX5pY2jTSogmBSi+uGBOQnh5PuPwKOL4i39YCZiTdQwMrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnmoJZMR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC520C4CED1;
+	Wed, 30 Oct 2024 19:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730317679;
+	bh=or2KvqJqW9neTrGs27NJV1Mi505S8IEzYJIDkgKZoEc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=GnmoJZMRD/rtg+jn7BGx08wKVT8M6G63TvnrrDXecde7e1/4BVYddIh9qHTKiKD+d
+	 Juy6Iuemeemw0Q6wZS6kRnwYXm2AFn/eNIyiUrTUTDJqukFaX7E/ue1FeYZVp85f9M
+	 yV4jet/k5v3Lbo4Bm7cDpi1Fyaa0OK6yawAYkjNyIA1jiDjmfJl43dZqFJyV0QCsr5
+	 fGTL98dbU6d/bS/kMrUYBs2jZSrk2TmF3SZcmHak5e9hydEJTkhUNhBWY5Op42El/E
+	 69wT7rXGtucgP3jDqHAF1Ry03kQrI3y1NpsuvaG6XRuIBhfiyV6fUhGpM6ftoWvyIr
+	 cNAPyHTuNTcKw==
+Message-ID: <d9d5ef74df0564cbec46c093bd611ab8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241030110120.332802-3-claudiu.beznea.uj@bp.renesas.com>
+References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com> <20241030110120.332802-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v5 02/10] clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, claudiu.beznea@tuxon.dev, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Wed, 30 Oct 2024 12:47:57 -0700
+User-Agent: alot/0.10
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
+Subject can just be "clk: Add devm_clk_hw_register_gate_parent_hw()"
 
-> On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
->>
->> Hi Kevin Hilman,
->>
->> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
->> > The latest (10.x) version of the firmware for the PM co-processor (aka
->> > device manager, or DM) adds support for a "managed" mode, where the DM
->> > firmware will select the specific low power state which is entered
->> > when Linux requests a system-wide suspend.
->> >
->> > In this mode, the DM will always attempt the deepest low-power state
->> > available for the SoC.
->> >
->> > [...]
->>
->> I have applied the following to branch ti-drivers-soc-next on [1].
->> Thank you!
->>
->> Ulf, based on your ack[2], I have assumed that you want me to pick
->> this series up. Let me know if that is not the case and I can drop the
->> series.
->
-> Well, that was a while ago. The reason was because there was a
-> dependency to another series [2], when this was posted.
->
-> If that's not the case anymore, I think it's better to funnel this via
-> my pmdomain tree. Please let me know how to proceed.
+Quoting Claudiu (2024-10-30 04:01:12)
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Add devm_clk_hw_register_gate_parent_hw() macro to allow registering
+> devres managed gate clocks providing struct clk_hw object as parent.
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
 
-The build-time dependency on [2] still exists, and since that was just
-queued up by Nishanth, I think this series should (still) go along with
-it to keep things simple.
-
-Kevin
-
-> Kind regards
-> Uffe
->
->>
->> [1/3] pmdomain: ti_sci: add per-device latency constraint management
->>       commit: 7c2c8d2651b5ffaffb2d5f723bd5b0493bd66f36
->> [2/3] pmdomain: ti_sci: add wakeup constraint management
->>       commit: 5a2d997b1bf8b05379309270063d7b9bd3767dd2
->> [3/3] pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
->>       commit: e8f35dc8de8c3216d28dab51b962bb31f20934c8
->>
->> All being well this means that it will be integrated into the linux-next
->> tree (usually sometime in the next 24 hours) and sent up the chain during
->> the next merge window (or sooner if it is a relevant bug fix), however if
->> problems are discovered then the patch may be dropped or reverted.
->>
->> You may get further e-mails resulting from automated or manual testing
->> and review of the tree, please engage with people reporting problems and
->> send followup patches addressing any issues that are reported if needed.
->>
->> If any updates are required or you are submitting further changes they
->> should be sent as incremental updates against current git, existing
->> patches will not be replaced.
->>
->> Please add any relevant lists and maintainers to the CCs when replying
->> to this mail.
->>
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
->> [2] https://lore.kernel.org/all/CAPDyKFr9isnz66B+n5y3=QO-ndB05JKZN3kgXO+kXBn7ofcwMw@mail.gmail.com/
->> --
->> Regards,
->> Nishanth Menon
->> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
->>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
