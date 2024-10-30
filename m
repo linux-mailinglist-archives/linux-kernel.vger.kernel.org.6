@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-389346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C239B6BA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF149B6BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E50928188D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C48280EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F911BC09A;
-	Wed, 30 Oct 2024 18:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbGCzYOP"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C621C3F3B;
+	Wed, 30 Oct 2024 18:07:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643851A2631;
-	Wed, 30 Oct 2024 18:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378E419E99F;
+	Wed, 30 Oct 2024 18:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730311576; cv=none; b=jBlwoZvsuX/3b97/qf/6OAzUgPL9ST/8ONLX6lMBNr4dAq1XtqYFd/XzfT14/NIPxqZly/vfUfOnLqDmFhexw/a8BIh41B1s0nAD7fHXED/SVHpO2V8tlg9rfirpAln5rHUF1N/7+3G7K87HzjhOHmlaC4iqD541z82AQV8oQQI=
+	t=1730311625; cv=none; b=nQD4BFzfIxeXhlbgudBYxgIm3g3NUpsAfAQxxmdhrRkpQh0cgm8SFUM95Zgc7ic8H1dWnga8u9PNzKw0uPkbW0JvQ9EN1v6/kVm1dn0N1MHb1To/I4gAGTZCzz1xsn7uQAB/9xCvlAVU6rpoL5Z9ocxK/j3rzlt5H1qYTWhZKNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730311576; c=relaxed/simple;
-	bh=LF9noeTji2b7N8JqoErVzO0xyU0Yhb3GiDpnpvg1GoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twJFvm7dX89aT8ayxAQMW24jwdrqvKOszQOf0/ui1DsSFIIvOqxbTaKRZW5uXd6V+G1D2PIGAhLgqj5Ccx8XXe9rYGWjvf0lor7qhHLHnhDx9+alyaQ/bGDCc2puKKdTAHt2aKiH0eREFrdrofM4/9jN/NydsDyVazfKSxYGRPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbGCzYOP; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb49510250so870121fa.0;
-        Wed, 30 Oct 2024 11:06:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730311572; x=1730916372; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LF9noeTji2b7N8JqoErVzO0xyU0Yhb3GiDpnpvg1GoY=;
-        b=XbGCzYOPxc+o8Z408htylZ0mBgGBvcg0+zf9Dtjp8h7B/y5yUfY/S4z9p2+5oklPig
-         wqwKQuufBGCKTvxKO10uKDIlQOuoBp0MXXwe3wo7MM8IUZIWnVrGTWgxBmeasC1Nn2kA
-         Wt/wDO+kFcIEDeRVLi0UPS6qi7OQrm/9dffW9nIIN0gijqskW1Y+X8NrUIR6GaukvlVM
-         9d7de/L39bLjLyD7q3znds7oTbr2fiTwnLnE9GESqQIHraNeRvjfKGciM8fmCgVYRtPV
-         L6ZlxjweCNEo9LY5wBVrOuKH+Ycsao8rh2PfB09tEVQv6AJa9Nh+5B0SAQMTPy53RDMI
-         RrhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730311572; x=1730916372;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LF9noeTji2b7N8JqoErVzO0xyU0Yhb3GiDpnpvg1GoY=;
-        b=WcFibNvYx+ZuXQfo8AZ7O3S+AdiCmadECf8ZT+7vEAGFym/pK+rBbTg9pZZLuzmhF2
-         fJPerwKlWsq+cagJp+awcF8UR+J6Fk0yJw9/8jcAzW3ZlAh6jOGI+QH++OTiGNg3bycN
-         ePdnfAnmFq6dZ/1TGNDEpn2FSXgoavTXM5GJcaqpi5I5A2CDg3F2MFTWv5Zi9vZrqA8T
-         WuLzSzLJcvBczs8gvGhcmXnl+EGkwdReUe4IXztbrRl6DsFt8WbRGGgqbobXKy+QDGsB
-         dzWZzLw65BW3KC1c7WR1qK+6gKznhnkK3uN2r1IiKaA59s1Xbc8DYkxyw8G5DiLkE7K+
-         OLYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsYwIy6q+8PWGTsgdplR2BZmIZRJR6NBEZI1+qCHDLYKh7r0qBRX6hqrmuMoBjEW7/N6NQ02FwQPMD6yY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj1KFF56SsKXe3znvXc/I70vgbOayZDW5NIN2bqZGFz7ql7l4n
-	NEeK3SO5aSoLyGzzdKlCLVhcEHUVCA/QeqdZIjHmlSaEGSF8E2UDcVaLzQ==
-X-Google-Smtp-Source: AGHT+IHayk77MRC4z7nR2NME3N5ImHKRJYje2Pp2ODSwtTF/mqu+oMiZahVSN8lWYtzUTFV/l8joWQ==
-X-Received: by 2002:a2e:743:0:b0:2fb:587d:310 with SMTP id 38308e7fff4ca-2fdecbf82eemr2635661fa.30.1730311572328;
-        Wed, 30 Oct 2024 11:06:12 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb629d8c2sm4901115a12.29.2024.10.30.11.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 11:06:11 -0700 (PDT)
-Date: Wed, 30 Oct 2024 19:06:09 +0100
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Cleanup Spreadtrum/Unisoc ARM64 DT (part 2)
-Message-ID: <ZyJ1keHD-neTNZ2J@standask-GA-A55M-S2HP>
-References: <cover.1723716331.git.stano.jakubek@gmail.com>
+	s=arc-20240116; t=1730311625; c=relaxed/simple;
+	bh=Ob3QZ/kFjZWCEJv+qE06Gp1MrNr26sKK36Jmxpv0iRM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H5C+bveRu6/Cdw1lu+Svhg3JduCAGNQMuvXRTgTAOh78VDt2GyD4oS34MiN/qjoZyaO5GKyHz3VchtJ4R+fSdLeUaPhlM/TfQTtls+uxGFZxfWzxUlfYq/ZpxnDzuSA75yPlJE0rrk/V2xfTR01XPfnxtj6+NyMCnQnb+y+9ozY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdw4f3kppz6K5vS;
+	Thu, 31 Oct 2024 02:04:34 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 44024140B39;
+	Thu, 31 Oct 2024 02:07:00 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 19:06:59 +0100
+Date: Wed, 30 Oct 2024 18:06:58 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+CC: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Kalle Niemi
+	<kaleposti@gmail.com>, Jonathan Cameron <jic23@kernel.org>, "Lars-Peter
+ Clausen" <lars@metafoo.de>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: kx022a: Fix raw read format
+Message-ID: <20241030180658.00000ac2@Huawei.com>
+In-Reply-To: <ZyIxm_zamZfIGrnB@mva-rohm>
+References: <ZyIxm_zamZfIGrnB@mva-rohm>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1723716331.git.stano.jakubek@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi all,
+On Wed, 30 Oct 2024 15:16:11 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-not sure which tree this should go through, but could someone pick this up?
-It's been sitting for ~2.5 months.
+> The KX022A provides the accelerometer data in two subsequent registers.
+> The registers are laid out so that the value obtained via bulk-read of
+> these registers can be interpreted as signed 16-bit little endian value.
+> The read value is converted to cpu_endianes and stored into 32bit integer.
+> The le16_to_cpu() casts value to unsigned 16-bit value, and when this is
+> assigned to 32-bit integer the resulting value will always be positive.
+> 
+> This has not been a problem to users (at least not all users) of the sysfs
+> interface, who know the data format based on the scan info and who have
+> converted the read value back to 16-bit signed value.
+They shouldn't be doing that. Scaninfo is for buffered values only
+This should indeed be signed.
 
-Thanks,
-Stanislav
+> 
+> This, however, will be a problem for those who use the in-kernel
+> interfaces, especially the iio_read_channel_processed_scale().
+> 
+> The iio_read_channel_processed_scale() performs multiplications to the
+> returned (always positive) raw value, which will cause strange results
+> when the data from the sensor has been negative.
+> 
+> Fix the read_raw format by casting the result of the le_to_cpu() to
+> signed 16-bit value before assigning it to the integer. This will make
+> the negative readings to be correctly reported as negative.
+> 
+> This fix will be visible to users by changing values returned via sysfs
+> to appear in correct (negative) format.
+> 
+> Reported-by: Kalle Niemi <kaleposti@gmail.com>
+> Fixes: 7c1d1677b322 ("iio: accel: Support Kionix/ROHM KX022A accelerometer")
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Tested-by: Kalle Niemi <kaleposti@gmail.com>
+> ---
+>  drivers/iio/accel/kionix-kx022a.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix-kx022a.c
+> index 53d59a04ae15..b6a828a6df93 100644
+> --- a/drivers/iio/accel/kionix-kx022a.c
+> +++ b/drivers/iio/accel/kionix-kx022a.c
+> @@ -594,7 +594,7 @@ static int kx022a_get_axis(struct kx022a_data *data,
+>  	if (ret)
+>  		return ret;
+>  
+> -	*val = le16_to_cpu(data->buffer[0]);
+> +	*val = (s16)le16_to_cpu(data->buffer[0]);
+LGTM.
+>  
+>  	return IIO_VAL_INT;
+>  }
+> 
+> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+
 
