@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-388331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0819B5E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:37:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9235C9B5E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124602842F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5115B1F23644
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D74A1E0E12;
-	Wed, 30 Oct 2024 08:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7001E1312;
+	Wed, 30 Oct 2024 08:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsyhkGiK"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N+CMdqor"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12831E0DAA
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEEC1E0DAA
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730277462; cv=none; b=OtRpAGUeH1dZC9da+LMF4jmQVotr51QQ6GAZ+1idefg23DsFNop9d3zGZED4ERx6DY13yCBjY+HLvtvkdEIw0anhAM/quufqMGYNwRjrfKXT341sRCqs9+P0W0TF0HyTui0+lWHbdaQos6PCJ0mz9C25eyVD3s9GeE/LWj2N1bk=
+	t=1730277511; cv=none; b=j3MnTNGX9O0E/bAwOmU0ZtxDqExbrPByIXos0L912rljpTqf4Wl6PuTMfGgW7gg7p4pGzLRTGLr23qUO383koqNIXcI3wQ+jARry03cZi6qAsdVw+1BsCo/2eZW8pVX5RteYMs/0035bfROUGCzE1AIdIPy3Tnb6J39mhuxKKZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730277462; c=relaxed/simple;
-	bh=aVe6LXETtn+PlIbEzta2oNAjJxYG7CwvMkigSAEOFjc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=awbymlilM6ilUxhQh7dXY6cDHrPS/2/Wm55AZxS3EKDHzJxFxXsuz8sbDtalqkE+UltFGeXuSbRscRaIW6FzhGzwfl5FjJV4fvSJSePXEg0GZF54ykXeOh+0QzgQ4hmCDK1rlZbosxBTO6Gu7UcVPuDTXdbuG6eABAXnbyMTFm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsyhkGiK; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso2211688a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:37:40 -0700 (PDT)
+	s=arc-20240116; t=1730277511; c=relaxed/simple;
+	bh=qklFbffo83/k5hmRFQEWHllNrmp5HV93e0WzW0ZPMPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CzcACsUci8WwcWirbjw2VXoNptGXFqY7BucXvQq1DM/+zftTrP91v0n8h4iZBtaxnP3sKCE0Zo45iuinKXM32CPjl6LIad394+d64zGZ9Z8Y95rVPe5n5aILOyJLFWCoJnRCoH0VUZm1kmryudN9KLiCJzvISr8FZqG315nWz7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N+CMdqor; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a5f555cfbso423453266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730277460; x=1730882260; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pK1NNN5iiYcr55Jg1jQR6cz7ApTsH5+EN3pM76pGsi4=;
-        b=RsyhkGiK0qYAHl5Jkv07SDizGF9tRQxXk/qBtgkvjqSEpswJmqZODsA+/ta6chXyXk
-         o1mtWSHDQUZ9X+fp1Mu2EswqTekV2BsPpLeqSB6+Ohrmsgutohs+yPoVyv10OVVH+iw0
-         D35S/d4DrcKwmoRGmv5V6tUiHcDOWkf1+4SQzPgAoR1pJXCs4inOlW+8QIw9qIRlpbTA
-         vzivYWstmuq3RMiKHZuOkZWFpLM1xjn5ahrS2GjWYA8qxnctOtYTK7ji2Q4ocDItgSni
-         bPdpq0BYrQt4Af2d+2669pm6G5cL+1i41wgpNoM+HIP6OWM/DfV0SJKYZcpR2TjYpUjc
-         arEQ==
+        d=suse.com; s=google; t=1730277507; x=1730882307; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aftQ683jJAo4rXGMCxZZQX10YwNrjbmnKyIyZDaOAQ4=;
+        b=N+CMdqorxLbuwFFCtrLtBIW1dmr9snI1O9/0JYH577m5GkHy0jMzFWuisQXELfudTF
+         M/xpdAjP6x4YCG1cojH+dMXSdu5VNEtoXtIX70Jt7UqDVi8KE4fYxLmAgNPWeub49pec
+         jIMf6Ge/GNGPsqLEWMmSoX0MbJiNyMOKqwi5cN5+aztdVuulKLYz9wD3MVbIJ1M+0zcU
+         /EcS7+7n+laevJKosjxk0uSgsYhj88ICSVu7HVQRtBw5lOQq9WGJGKZ1TKdK5Kj658/a
+         SHhDOgkvxZwABB2x3mPJnB6S1i/G/k587gkkZFV+i7F9vBifmE9vSjqTLBMZhU6PGZ5Y
+         Xhew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730277460; x=1730882260;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pK1NNN5iiYcr55Jg1jQR6cz7ApTsH5+EN3pM76pGsi4=;
-        b=XLEWuFzR8WqkyqeMGe4q6vRdSnIfvJFPslgZY62MeWfCnMTohovXY4Th1alaw7N59a
-         zqpVfBF+8IAnlGbndZACrL+D4W4Sv9kct1Rsv7mazo4I+LbZIQc9kMvE4tMH1IQDp5Q0
-         Ap0ZcmwVZt9JATuAopx0ekq96fpgQ49RpKqqjDpQjcF7mtEP9pek6mjxE7t5/xk4vxuo
-         AlKKROY9D49zhzEg+5OHXDLWWUi8NvuIpLkLUZFYXrpFqtTMViUuL0yG9yZK2B97kAoI
-         i7B8rX2ZNj8ccSgpHCs2yubMMwA0zbqAj6HkXkDZSbriPQ/kNtBx8mGzwndBCuyuGtaU
-         PLnA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5EGjeu0Gnm221EjpahV1K1ncDSvI9UzLpy4eNZJoD5nE4Rl07gA4F+jG/9EMMHip0gf8GRbPPwF6RaCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxopCaIVkd1y3gGmRrQu7x4tadetiidgZwWFfX9D81sliqbaPFH
-	lmAPe3YP3adOhr+V4WTJSZV5gBP/d+XeM9bXZHVEs6ImO4AER4jNm90kgg==
-X-Google-Smtp-Source: AGHT+IH27fGPifl/S1VUCnhapo2Uf3UleHjwcju3joeUSQOWLZvC9JFY4Xl/GePrl2GOWwNrtifMvA==
-X-Received: by 2002:a05:6a20:d528:b0:1d6:fb3e:78cf with SMTP id adf61e73a8af0-1d9a8506d92mr16954661637.41.1730277460124;
-        Wed, 30 Oct 2024 01:37:40 -0700 (PDT)
-Received: from localhost.localdomain ([43.153.70.29])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbfb05asm1081901a91.48.2024.10.30.01.37.39
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Oct 2024 01:37:39 -0700 (PDT)
-From: mengensun88@gmail.com
-X-Google-Original-From: mengensun@tencent.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	alexjlzheng@tencent.com,
-	MengEn Sun <mengensun@tencent.com>
-Subject: [PATCH] vmstat: call fold_vm_zone_numa_events() before show per zone NUMA event
-Date: Wed, 30 Oct 2024 16:37:37 +0800
-Message-Id: <1730277457-22725-1-git-send-email-mengensun@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
+        d=1e100.net; s=20230601; t=1730277507; x=1730882307;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aftQ683jJAo4rXGMCxZZQX10YwNrjbmnKyIyZDaOAQ4=;
+        b=Vet35zc/o2J5wxB8PZOkHDkBnoDN69CGZM1ZBmcKB4AmHzKHTzyrwKGY0RnOwaQoyV
+         1RTHiYp8yGRo+Rf3xfaQCq32XdjNwaPi0k5jjcX/bhX5sDo4YNL37lSTB3MRXtBu7lbM
+         +68DG7WKGrnrWWarSPlGJltced9UWZz1SYyxtKuJG7ZGxOp4cU2dHuxoB6HmpNrqdFiL
+         xb+fzXpUs4vW1cC3FVEMzaKFzn9XcPcj3lWhS6mNYT5cA1ZcpJ+jJsFAB70hPjRc+iJo
+         rN8IFI7YVMZ2yfZ2kO3efbxGFlANcyzcFFf+35Gwlhrij90ds1v+zfDtz2GuiZSYRymp
+         7nbg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8vWxsMIIgkfxiJGn+ZOY8DWwUtFfTYvKUqWXN9E7kiaNzLpAU7SEO22tzT1NrNmquy0Q6dU6G4i713IU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Y9laX4iF5ANcunfHQ53uaGLVwZpApwa55g1LMEVmgMHeOom8
+	7X8SEX1fl4OYK+yLHUXuMiMsOa6McMV4qdLU9vDZAhxnCGk4dFBO67VRvlwennM=
+X-Google-Smtp-Source: AGHT+IElsJPhn7Xm/au0bXMmmlRZ2SlufTEmqVxr4t9O0CeASfSKuYaq79XRGxmkxuwFdHyeeoZCeA==
+X-Received: by 2002:a05:6402:2345:b0:5ca:1598:15ad with SMTP id 4fb4d7f45d1cf-5cbbf8899ccmr13639074a12.3.1730277507395;
+        Wed, 30 Oct 2024 01:38:27 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb629f83fsm4605151a12.38.2024.10.30.01.38.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 01:38:27 -0700 (PDT)
+Date: Wed, 30 Oct 2024 09:38:26 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: gutierrez.asier@huawei-partners.com
+Cc: akpm@linux-foundation.org, david@redhat.com, ryan.roberts@arm.com,
+	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+	hannes@cmpxchg.org, hocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stepanov.anatoly@huawei.com,
+	alexander.kozhevnikov@huawei-partners.com, guohanjun@huawei.com,
+	weiyongjun1@huawei.com, wangkefeng.wang@huawei.com,
+	judy.chenhui@huawei.com, yusongping@huawei.com,
+	artem.kuzin@huawei.com, kang.sun@huawei.com
+Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
+Message-ID: <ZyHwgjK8t8kWkm9E@tiehlicka>
+References: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
 
-From: MengEn Sun <mengensun@tencent.com>
+On Wed 30-10-24 16:33:08, gutierrez.asier@huawei-partners.com wrote:
+> From: Asier Gutierrez <gutierrez.asier@huawei-partners.com>
+> 
+> Currently THP modes are set globally. It can be an overkill if only some
+> specific app/set of apps need to get benefits from THP usage. Moreover, various
+> apps might need different THP settings. Here we propose a cgroup-based THP
+> control mechanism.
+> 
+> THP interface is added to memory cgroup subsystem. Existing global THP control
+> semantics is supported for backward compatibility. When THP modes are set
+> globally all the changes are propagated to memory cgroups. However, when a
+> particular cgroup changes its THP policy, the global THP policy in sysfs remains
+> the same.
 
-NUMA events will only be folded from per-CPU statistics to per
-zone and global statistics when the user actually needs it.
+Do you have any specific examples where this would be benefitial?
 
-So, we perform this folding when reading the /proc/zoneinfo
+> New memcg files are exposed: memory.thp_enabled and memory.thp_defrag, which
+> have completely the same format as global THP enabled/defrag.
+> 
+> Child cgroups inherit THP settings from parent cgroup upon creation. Particular
+> cgroup mode changes aren't propagated to child cgroups.
 
-Fixes: f19298b9516c ("mm/vmstat: convert NUMA statistics to basic NUMA counters")
-Reviewed-by: JinLiang Zheng <alexjlzheng@tencent.com>
-Signed-off-by: MengEn Sun <mengensun@tencent.com>
----
- mm/vmstat.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index b5a4cea..2770800 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1778,6 +1778,7 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
- 			   zone_page_state(zone, i));
- 
- #ifdef CONFIG_NUMA
-+	fold_vm_zone_numa_events(zone);
- 	for (i = 0; i < NR_VM_NUMA_EVENT_ITEMS; i++)
- 		seq_printf(m, "\n      %-12s %lu", numa_stat_name(i),
- 			   zone_numa_event_state(zone, i));
+So this breaks hierarchical property, doesn't it? In other words if a
+parent cgroup would like to enforce a certain policy to all descendants
+then this is not really possible. 
 -- 
-1.8.3.1
-
+Michal Hocko
+SUSE Labs
 
