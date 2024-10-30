@@ -1,132 +1,196 @@
-Return-Path: <linux-kernel+bounces-388125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE999B5AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:56:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2CD9B5AF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:57:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF901C21E0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD9A1C20BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0E9198E9E;
-	Wed, 30 Oct 2024 04:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74DC198E89;
+	Wed, 30 Oct 2024 04:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8ZZ4u7x"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kc2XDvHc"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1629D82899;
-	Wed, 30 Oct 2024 04:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8F282899
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730264189; cv=none; b=eScySO8RvYQpstTye74KM61aRiDnTv1nPp8MUPNy3c/RI6sGXNn1snD/+9miKv8KVuHbtySW4SgAiEpD7hOOaoZLBvPYrBN7ImkeTSLI51XHBc81PTbdEVIinSMXUq6Wq9NiPVF51Jn/JHw5JVnugENRp/AtvZEFqOWp/NulmOs=
+	t=1730264257; cv=none; b=BOMA1DOSJQhSl6Q2W3htTCtbB09Wct61ot37WdCJZ20BRBH8Yfvmc+LocxQexke+VRJ8RKfoopt+hAr0/qBX9aEHwJzersNAAddWPW2rvMpFnTSauJ1awLlCqQMast4oKbBRuhwSuErKgJqBiGkqaV7SKHe/LaqWLobc/RPyjlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730264189; c=relaxed/simple;
-	bh=cNJqd8Gq9dL3pl8c/7s75ZXuAo5G6dnq2OXzKit73e4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Asq6OEv6fv/QRiwcGYfc1JvZlpAOtxyrC55ZEwAr1COQgmCsWVVQVc96O1Yco4+Zqd+9PgmECTGJTCdkYiZJPGXTLjC/6psQbORvHNXz5UY3CoklgSkKVBdyo+ODO61xy5aR3yzWu8CmeO4hQ2ZTn6Mfzm56ZLY46n454Vaikpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8ZZ4u7x; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso4452577a91.1;
-        Tue, 29 Oct 2024 21:56:25 -0700 (PDT)
+	s=arc-20240116; t=1730264257; c=relaxed/simple;
+	bh=DtIOSEQKKLpAj/+xE1AONx5IIk6McemYmz68qg3RKmY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cPf3bhWwa/R7tAfD2JQ1HbVl5EJPtKN0lCBkVPshKRaam/tbZtcldX0yH88KVQ5CSCBx22xo2wu39jb+DybRMFRlpTIIYsU7wooorvJ4XaXDMqtDdjwSRMKbdtFpdWIloccM//o8QreOQrz5Z04VF3hDVqm3HLhY9oWFqz8ULlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kc2XDvHc; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e6101877abso117561427b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:57:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730264185; x=1730868985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/3WJHo98bQyOK7leaV/ie37wgoCMdI8fncgr0igqgGk=;
-        b=P8ZZ4u7x14XNdF14Sgjl5IycLld/XjIHqw8Pt8ZxdCL0y7aEqX0w73IllXxcP7x57Y
-         ac8DOPqYawlTtPtKaUicSwEHqlFh88LXJ2mbhkiUCzb2VS2oiYI9T6rxbWfV1k1xtWQI
-         JQZqG8zd0XNGH9t11Fcqnl0BvgByMM3jyhqI45e/2kv+QZytEbTS8EfGbk0zALXiuJ6R
-         VmOyDWbwgNobofswfUqbJKvc3FnIuxMWIZn34ee8uS9SIMZutEOFKSFScS5bvCqccYvx
-         9aAtz7aEHP2jwfLRl3V0FO+dyn3XPOUTotyUYMbr2EeZ42lks5r3vEDMceAIRLp780Lz
-         IpfQ==
+        d=google.com; s=20230601; t=1730264254; x=1730869054; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OzCKlPiacY/Sq4Wm1aNv+IrNJi4b5UWZM+e8BOY3spE=;
+        b=Kc2XDvHc540i14tiZGn8y/Ec5nGzOhhBPdGIybpUVQfd8c4thUssPXnbfy/ixswg09
+         DrfHHM8MAjMLlPtendphTVFiN8JHojf3eSD+xN+E6St9bTzPrGFZwFtQnyXmC7MbgIc6
+         ULoduq03s3c5CdvQmET94tnzIY+vPyGSj9+UtIj6p7c+taC26yeG9VA/JGXyIIu+fkHT
+         /jcCDLqrNsR1oc1TKVvEi/+jDNHdysm1fZ3nOqRCLN8tH1wNAXBZtHRJOG7DUbmtUGwG
+         /kBNHYfeJX61+Bh6BZPHXCt487hAPVzIOdhaztUXuGOCP/XHtjfnkeAtZEvJaKTvPnFf
+         OUng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730264185; x=1730868985;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/3WJHo98bQyOK7leaV/ie37wgoCMdI8fncgr0igqgGk=;
-        b=NiuMBIVqioWAJ49s+u0Psm/8HJyIW4Twqx7vIGkVl3f0BP2+vEeqcEa3ZU8oTvJUQd
-         JmxVQTUfzRGefEOxVAb9iwEmr5811dIx6oabie0sL19EzRF8ENlZKs8+E5Op0RjFf3Yn
-         uxHZVhgtopzL8TvkYLoSGHa3Lke3WkSyLaTU9asQDST1NEcK7JAMOyRGSX7MOGYQpOJE
-         5uaq4sb336GnPjo+qXEvHssJsWFL6yLvsmW8fsafFZV/g/A/pYk4o2NTBfWO1S7Pepqu
-         fnTL820OHiCoAZodtDlbutH70UOyRQ5eyOBPX1ODAcJq7YMHBb9UGq4iV+bNZJ2PbKKk
-         jjLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxIKCmuWpQzRDqn+EC8eFXzvNLYRuCqZr/IH9b2WWKc34ldr+8vbV+8XnFDEzC+xXo7mj62VQrVO7A@vger.kernel.org, AJvYcCXL3ozt7NoXdzMqzCR3RnogchyhsGjdS/tyIRSaa+riczdSkYbvBUDiCvkUDHMglcyLm/KAAtjTE9hCTlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdGSpb8DKuNMqPV5U5SB05G5OKJFjgrIseL4VAtTj2bcZGdJGQ
-	eerW8ZrSrjK1RwQGFuCJdAVhxW9V6YPVMYQrKQT13MZdqyaNFFZz
-X-Google-Smtp-Source: AGHT+IH/Ox+EL92Eo+EnWlruc+lsJlrafTmbrepl9MCFSVVpK9W9JEiJ5LDD8lEUh+7dHEpokEI1JA==
-X-Received: by 2002:a17:90a:1b8e:b0:2e1:e19f:609b with SMTP id 98e67ed59e1d1-2e8f1088115mr16221063a91.24.1730264185412;
-        Tue, 29 Oct 2024 21:56:25 -0700 (PDT)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf441a4sm74657285ad.18.2024.10.29.21.56.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 21:56:24 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: dchinner@redhat.com,
-	cem@kernel.org
-Cc: chandanbabu@kernel.org,
-	djwong@kernel.org,
-	zhangjiachen.jaycee@bytedance.com,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v2] xfs: fix the entry condition of exact EOF block allocation optimization
-Date: Wed, 30 Oct 2024 12:56:17 +0800
-Message-ID: <20241030045617.2920173-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
+        d=1e100.net; s=20230601; t=1730264254; x=1730869054;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OzCKlPiacY/Sq4Wm1aNv+IrNJi4b5UWZM+e8BOY3spE=;
+        b=hIvnU0xn6HTOv3RFnybPjMDMuVvPLCPjmheJ1TKBn/WVeTq4aBb2eLP/5XrxwpfFkS
+         PizArWYFIRQ5oph4kAQ3DPYuMw7lO5FODggBNk5nt/wFGgevWfbG30nc+ocVVFCKluEZ
+         fFzC0PdD6Q+6DvXxg3J5cAVcGSjXTb+UA1laLR4ESm8HH0lAjA7l1w9lQa0d4lOg/7yA
+         qTThOCwMmd43hRrkEtC4Y0Lfd6J6WIIABju/KwF/8M6Riyg49YAA1XHSvoKsTjXZhCK+
+         Yl2J6oQs4YsOrONEa5XJSw/R+AemcjjS8MV3n2SAkVnKgzZPz3AjfQclmeMvFS37+p73
+         1PFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8u5pDxeDFpZBKbmQxfIN/MYC5MCbqeeHYak3rEQgFCNNSnq1A+1hF92onpTG16VM7as50pxcEj4gGZwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVttVcLYGBkil+3dIuZTpzTqvS++QT4IrVzICI7l6tBivsYrJO
+	fjrhU9PmMWo6U6aMEMKFFuV4yzk/7op7GLyn5r5Uop/U/He9aa6i046chji0cQ8VipVNrhFWF9c
+	H4eky4zxJUQ==
+X-Google-Smtp-Source: AGHT+IFGjEe1plkuPShegWLbmtJ5p5Somjkyq6IDW0pOxQWBMN5X1q141+OuEQVEOHATX83b25iWp11NcW8szg==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:b1:7045:ac11:6237])
+ (user=davidgow job=sendgmr) by 2002:a25:ec0b:0:b0:e30:da65:7240 with SMTP id
+ 3f1490d57ef6-e30da657350mr434276.3.1730264253682; Tue, 29 Oct 2024 21:57:33
+ -0700 (PDT)
+Date: Wed, 30 Oct 2024 12:57:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241030045719.3085147-2-davidgow@google.com>
+Subject: [PATCH v3 0/3] rust: kunit: Support KUnit tests with a user-space
+ like syntax
+From: David Gow <davidgow@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, 
+	"=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?=" <jose.exposito89@gmail.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Benno Lossin <benno.lossin@proton.me>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Matt Gilbride <mattgilbride@google.com>
+Cc: David Gow <davidgow@google.com>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When we call create(), lseek() and write() sequentially, offset != 0
-cannot be used as a judgment condition for whether the file already
-has extents.
+This series was originally written by Jos=C3=A9 Exp=C3=B3sito, and has been
+modified and updated by Matt Gilbride and myself. The original version
+can be found here:
+https://github.com/Rust-for-Linux/linux/pull/950
 
-Furthermore, when xfs_bmap_adjacent() has not given a better blkno,
-it is not necessary to use exact EOF block allocation.
+Add support for writing KUnit tests in Rust. While Rust doctests are
+already converted to KUnit tests and run, they're really better suited
+for examples, rather than as first-class unit tests.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+This series implements a series of direct Rust bindings for KUnit tests,
+as well as a new macro which allows KUnit tests to be written using a
+close variant of normal Rust unit test syntax. The only change required
+is replacing '#[cfg(test)]' with '#[kunit_tests(kunit_test_suite_name)]'
+
+An example test would look like:
+	#[kunit_tests(rust_kernel_hid_driver)]
+	mod tests {
+	    use super::*;
+	    use crate::{c_str, driver, hid, prelude::*};
+	    use core::ptr;
+
+	    struct SimpleTestDriver;
+	    impl Driver for SimpleTestDriver {
+	        type Data =3D ();
+	    }
+
+	    #[test]
+	    fn rust_test_hid_driver_adapter() {
+	        let mut hid =3D bindings::hid_driver::default();
+	        let name =3D c_str!("SimpleTestDriver");
+	        static MODULE: ThisModule =3D unsafe { ThisModule::from_ptr(ptr::n=
+ull_mut()) };
+
+        	let res =3D unsafe {
+	            <hid::Adapter<SimpleTestDriver> as driver::DriverOps>::registe=
+r(&mut hid, name, &MODULE)
+	        };
+	        assert_eq!(res, Err(ENODEV)); // The mock returns -19
+	    }
+	}
+
+
+Please give this a go, and make sure I haven't broken it! There's almost
+certainly a lot of improvements which can be made -- and there's a fair
+case to be made for replacing some of this with generated C code which
+can use the C macros -- but this is hopefully an adequate implementation
+for now, and the interface can (with luck) remain the same even if the
+implementation changes.
+
+A few small notable missing features:
+- Attributes (like the speed of a test) are hardcoded to the default
+  value.
+- Similarly, the module name attribute is hardcoded to NULL. In C, we
+  use the KBUILD_MODNAME macro, but I couldn't find a way to use this
+  from Rust which wasn't more ugly than just disabling it.
+- Assertions are not automatically rewritten to use KUnit assertions.
+
 ---
-Changelog:
-- V2: Fix the entry condition
-- V1: https://lore.kernel.org/linux-xfs/ZyFJm7xg7Msd6eVr@dread.disaster.area/T/#t
----
- fs/xfs/libxfs/xfs_bmap.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-index 36dd08d13293..c1e5372b6b2e 100644
---- a/fs/xfs/libxfs/xfs_bmap.c
-+++ b/fs/xfs/libxfs/xfs_bmap.c
-@@ -3531,12 +3531,14 @@ xfs_bmap_btalloc_at_eof(
- 	int			error;
- 
- 	/*
--	 * If there are already extents in the file, try an exact EOF block
--	 * allocation to extend the file as a contiguous extent. If that fails,
--	 * or it's the first allocation in a file, just try for a stripe aligned
--	 * allocation.
-+	 * If there are already extents in the file, and xfs_bmap_adjacent() has
-+	 * given a better blkno, try an exact EOF block allocation to extend the
-+	 * file as a contiguous extent. If that fails, or it's the first
-+	 * allocation in a file, just try for a stripe aligned allocation.
- 	 */
--	if (ap->offset) {
-+	if (ap->prev.br_startoff != NULLFILEOFF &&
-+	     !isnullstartblock(ap->prev.br_startblock) &&
-+	     xfs_bmap_adjacent_valid(ap, ap->blkno, ap->prev.br_startblock)) {
- 		xfs_extlen_t	nextminlen = 0;
- 
- 		/*
--- 
-2.41.1
+Changes since v2:
+https://lore.kernel.org/linux-kselftest/20241029092422.2884505-1-davidgow@g=
+oogle.com/T/
+- Include missing rust/macros/kunit.rs file from v2. (Thanks Boqun!)
+- The kunit_unsafe_test_suite!() macro will truncate the name of the
+  suite if it is too long. (Thanks Alice!)
+- The proc macro now emits an error if the suite name is too long.
+- We no longer needlessly use UnsafeCell<> in
+  kunit_unsafe_test_suite!(). (Thanks Alice!)
+
+Changes since v1:
+https://lore.kernel.org/lkml/20230720-rustbind-v1-0-c80db349e3b5@google.com=
+/T/
+- Rebase on top of the latest rust-next (commit 718c4069896c)
+- Make kunit_case a const fn, rather than a macro (Thanks Boqun)
+- As a result, the null terminator is now created with
+  kernel::kunit::kunit_case_null()
+- Use the C kunit_get_current_test() function to implement
+  in_kunit_test(), rather than re-implementing it (less efficiently)
+  ourselves.
+
+Changes since the GitHub PR:
+- Rebased on top of kselftest/kunit
+- Add const_mut_refs feature
+  This may conflict with https://lore.kernel.org/lkml/20230503090708.252431=
+0-6-nmi@metaspace.dk/
+- Add rust/macros/kunit.rs to the KUnit MAINTAINERS entry
+
+---
+
+Jos=C3=A9 Exp=C3=B3sito (3):
+  rust: kunit: add KUnit case and suite macros
+  rust: macros: add macro to easily run KUnit tests
+  rust: kunit: allow to know if we are in a test
+
+ MAINTAINERS          |   1 +
+ rust/kernel/kunit.rs | 191 +++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs   |   1 +
+ rust/macros/kunit.rs | 153 ++++++++++++++++++++++++++++++++++
+ rust/macros/lib.rs   |  29 +++++++
+ 5 files changed, 375 insertions(+)
+ create mode 100644 rust/macros/kunit.rs
+
+--=20
+2.47.0.163.g1226f6d8fa-goog
 
 
