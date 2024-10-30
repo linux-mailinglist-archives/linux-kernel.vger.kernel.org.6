@@ -1,147 +1,96 @@
-Return-Path: <linux-kernel+bounces-389649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5DE9B6F55
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:42:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07299B6F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:46:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D572FB24392
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:42:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C5021F21E9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CFF22A4BC;
-	Wed, 30 Oct 2024 21:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8B6219485;
+	Wed, 30 Oct 2024 21:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNRCyCUY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NJ4oxsC+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDABE22A4A6;
-	Wed, 30 Oct 2024 21:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843802170CB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730324141; cv=none; b=omBkPciPBGoMvXR7vQbuoM0NA9ShpT8SJqat56LgAIaZk7Qcs0wwz7aH8YYNWyXtMCnxSt+HzzRHJ9Mq5MU2HbWwkANvqZgGjehRYSyV1UoSWEmLWjCbZuDE5Xt7kCJF5K/1vajZQ8UWoaWH2GaMrs69a944lcN0wv7vA38dMxM=
+	t=1730324265; cv=none; b=aGBNOpQsEtUVljjzGPftcGoTu7j9TygGdAgSnlyasQT5x6VAdfAemFupnftE14J8TYTUlZ00xg9zqvi1WCenQojou3ygdC9+kde5OvOaXYSMJOKJxSAnNZzZ+/YRkxHha0kAcQ0DcntY9utvPwDU02zgqN+m8O0UqWfTbqTLCwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730324141; c=relaxed/simple;
-	bh=v5pLVI2ucbwhcoIURapql+oZOGKKOhgXmdQ2dbMOADQ=;
+	s=arc-20240116; t=1730324265; c=relaxed/simple;
+	bh=aPWpanHqZe/iGfQmkgoLw3c74T5cvbrvyuCPjHu+cPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ned4OVF8hFm6solPBOqFuEURE47V4ImQdzwp0snCYZAxOG9lsC9LrSRdB4yGDnbAiNG06rVKQgWxkMyzFimTsbTqWii5dsPyp9MUBp52WeVrUqeLDWJSguJiZUPa9lRYjXQ+Hc4s/9LBimu4M8QFLNp7e39aUOYsTHYa31RYMSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNRCyCUY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C7B1C4CECE;
-	Wed, 30 Oct 2024 21:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730324140;
-	bh=v5pLVI2ucbwhcoIURapql+oZOGKKOhgXmdQ2dbMOADQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rNRCyCUYFtBOaRu6gW4krYeC+MqSKedWai4cW33aGntkqKOYMOoZnunEQ9Rwcj6c5
-	 eDcq8piHO84drnpqV7u6z+VT37qs8BMx2wv7SIuwFOH8/FexO3aRxYh4U0oILNshap
-	 eKknqGpB9pU8hWbhk9rvZD9dcL0q6DmmY3f2pm5WrgNK/XAMqyHHVYKcmgIvJHd783
-	 8/KYgZ0YUa0UtSQT4aBQR7/62WRuSIC6FzFzG/TECTayft6Sy2sHaO8RPpk81WwuX5
-	 jzXbYTzHvnDCRWd/pVLPHTqgoS39pLNBgeuBNPKBZcn2UQyksmRfLJu+BLjsruzoQu
-	 8cFOqfo5w1krw==
-Date: Wed, 30 Oct 2024 14:35:38 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add a test for open coded
- kmem_cache iter
-Message-ID: <ZyKmquDn3SNFzzgl@google.com>
-References: <20241024074815.1255066-1-namhyung@kernel.org>
- <20241024074815.1255066-2-namhyung@kernel.org>
- <CAADnVQLA=QE9HwH+9tA+G8uppXK0-yk-hbiBHaOmjkjVENYCsA@mail.gmail.com>
- <ZyGOng76IBUs8PtY@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QQEosrXTCqx9yxS2xz3MDx4eolg2z5V5ziocL6euIYIEgqtlkaA18lU8fj8TFx/0amcdnvByTWJlu4Pzeif1MDTQI5hpQOIn/jfA2HzSvCWYVs3t4/ARac7hCkhqt08X/6CIs6GKYBtC+JRxnJS/RZh7YlRu8LgduB8YqQpPfG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NJ4oxsC+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WPRkShuQG9G71KCkfnN88++Epe286/PbVni+m8aDPM0=; b=NJ4oxsC+oftUESVtNPiyWyCrAM
+	g6vvxX5GlUM711J7h/B+kUAYS5qvmwFTwKaFdXJTOb4gtI/bhyeixqkaQmRss8k3tRG/ebG98PYeV
+	N9rIa+hDHkI0kzHWtRLTobv+oc6QwMddfmIE5MK26sr7s2ntG6IIOgfM7df0t4qFbI4JT2/H9IG5P
+	ijQMxPQwdTHNYIBAZ20nEtgGACIpxWTX6D+rv2JA3ZMlqdX9E2/MeR4qyMKuoABWNTXhiPr6piTKk
+	cyl+wHhT/e2teExqK1udb9Ok7VKXA/Dp+5u1m2VVJoBucyu1gf5ZSUC/1SPuofnvRy9OMxM7jZW9A
+	JLn5M6pw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6GNj-0000000DwRN-3Bov;
+	Wed, 30 Oct 2024 21:37:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 04154300ABE; Wed, 30 Oct 2024 22:37:36 +0100 (CET)
+Date: Wed, 30 Oct 2024 22:37:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: mingo@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, void@manifault.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 4/6] sched: Fold
+ sched_class::switch{ing,ed}_{to,from}() into the change pattern
+Message-ID: <20241030213735.GS14555@noisy.programming.kicks-ass.net>
+References: <20241030151255.300069509@infradead.org>
+ <20241030152142.711768679@infradead.org>
+ <ZyKhQFuMItKsmsnh@slm.duckdns.org>
+ <20241030211506.GR14555@noisy.programming.kicks-ass.net>
+ <ZyKlJXgXUqDpaQXp@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZyGOng76IBUs8PtY@google.com>
+In-Reply-To: <ZyKlJXgXUqDpaQXp@slm.duckdns.org>
 
-On Tue, Oct 29, 2024 at 06:40:46PM -0700, Namhyung Kim wrote:
-> Hello,
-> 
-> On Thu, Oct 24, 2024 at 11:08:00AM -0700, Alexei Starovoitov wrote:
-> > On Thu, Oct 24, 2024 at 12:48 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > >
-> > > The new subtest is attached to sleepable fentry of syncfs() syscall.
-> > > It iterates the kmem_cache using bpf_for_each loop and count the number
-> > > of entries.  Finally it checks it with the number of entries from the
-> > > regular iterator.
-> > >
-> > >   $ ./vmtest.sh -- ./test_progs -t kmem_cache_iter
-> > >   ...
-> > >   #130/1   kmem_cache_iter/check_task_struct:OK
-> > >   #130/2   kmem_cache_iter/check_slabinfo:OK
-> > >   #130/3   kmem_cache_iter/open_coded_iter:OK
-> > >   #130     kmem_cache_iter:OK
-> > >   Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
-> > >
-> > > Also simplify the code by using attach routine of the skeleton.
-> > >
-> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > ---
-[SNIP]
-> > > +SEC("fentry.s/" SYS_PREFIX "sys_syncfs")
-> > > +int open_coded_iter(const void *ctx)
-> > > +{
-> > > +       struct kmem_cache *s;
-> > > +
-> > > +       if (tgid != bpf_get_current_pid_tgid() >> 32)
-> > > +               return 0;
+On Wed, Oct 30, 2024 at 11:29:09AM -1000, Tejun Heo wrote:
+> On Wed, Oct 30, 2024 at 10:15:06PM +0100, Peter Zijlstra wrote:
+> ...
+> > > > +		if (!(queue_flags & DEQUEUE_CLASS))
+> > > > +			check_prio_changed(task_rq(p), p, p->prio);
+> > > 
+> > > Maybe prio_changed can be moved into scoped_guard?
 > > 
-> > Pls use syscall prog type and prog_run() it.
-> > No need to attach to exotic syscalls and filter by pid.
+> > It wasn't before -- do you have need for it to be inside?
 > 
-> Sure, will update in v3.
-> 
-> > 
-> > > +
-> > > +       bpf_for_each(kmem_cache, s) {
-> > > +               struct kmem_cache_result *r;
-> > > +
-> > > +               r = bpf_map_lookup_elem(&slab_result, &open_coded_seen);
-> > > +               if (!r)
-> > > +                       break;
-> > > +
-> > > +               open_coded_seen++;
-> > > +
-> > > +               if (r->obj_size != s->size)
-> > > +                       break;
-> > 
-> > The order of 'if' and ++ should probably be changed ?
-> > Otherwise the last object isn't sufficiently checked.
-> 
-> I don't think so.  The last element should be an actual slab cache and
-> then the iterator will return NULL to break the loop.  I don't expect it
-> will hit the if statement.
+> No, was just wondering whether that'd make things a bit more compact. Either
+> way is fine.
 
-Oh, it seems you meant checking the obj_size.  Ok then, I can move the
-increment after the check.
+Oh, did you perhaps mean into sched_change_end() ? I suppose that's
+possible indeed. Initially I thought that would require yet another
+flags, but looking at it again, that doesn't seem to be the case. All
+sched_change users lacking it never change the prio anyway.
 
-Thanks,
-Namhyung
+I'll have a look at doing that tomorrow, with a slightly fresher brain.
 
+I also think that adding flags to the switch*() methods isn't at all
+needed, but perhaps it makes sense anyway.
 
