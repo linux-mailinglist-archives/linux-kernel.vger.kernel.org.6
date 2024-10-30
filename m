@@ -1,242 +1,141 @@
-Return-Path: <linux-kernel+bounces-389586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FE29B6EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:22:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8EB9B6EBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91E8282589
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028E01F219FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEAF217448;
-	Wed, 30 Oct 2024 21:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B92221500A;
+	Wed, 30 Oct 2024 21:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyhqoX//"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DN1zi0nr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86FE76025;
-	Wed, 30 Oct 2024 21:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FE82144DB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730323308; cv=none; b=EgW+hiTeEYYf+2aakCnLiaKVZ4oslHBr1fZadvuvspE8p7U1bklWPb9yMs7wJPglPTJ1SB+t2Al1+Xr/DZ6h7hURr74uWnpdYhC7XQsEnfr9/fZHp+bFnEvNDuZAFefnWRnnk2RyWdZvUcWM5Ge415OHAt9UzoABk7zCcnylbGM=
+	t=1730323317; cv=none; b=OwVWPgdCNbSjpDtO/ApLd6DAY/Bdt+iziRUvJrLbQVuniYFq2nDNRolMlPT0qKwgOwKsK6K6tNt6lHf/x8v8egkvCFFOwpsZ7d9U1B16if2T1VO1pLslKsW/QE9FhnmZPqPj/7SPhWts9otMTtMTTJ52APUXgrOOy4HajWPfHqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730323308; c=relaxed/simple;
-	bh=MZxBNuATrdicFwJ312aZnhtkn7PF8So7r48yLB6hMT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mntsKurzOx3mg/u7XeeNUFnpcOyNbRFIuUQ4S6mjzF5YheZnVD9qtCUv9U9koms4qzNBEk9VQD6yTe/9O0ktZLHDmYg1Yle4dJ5l+AedEh2dbqQ3Rqudu5pNvxDNvtUOcdgL1vER7LNuClWhAcH40ADBBDl6rhwtnxfzwHLmMGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyhqoX//; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7FCCC4CECE;
-	Wed, 30 Oct 2024 21:21:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730323308;
-	bh=MZxBNuATrdicFwJ312aZnhtkn7PF8So7r48yLB6hMT4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tyhqoX//akNUUVxdh7xwlbBHw5LAlaljOlMPS7LHxqG5QZ82McPNhI4Y7lozFeQhc
-	 moEz/eCUrd+Kjq69KGcsWvaktdP8JIuOn/94XWUf1sqoo3KzulOe6XPUIxFXye3ypa
-	 uH1eZnvN3vsmZYzLdvmqr38nO69ZCZwUYua3LawHhSLSe0pZ0cmFBcaGUOelJLGtU+
-	 oV3WZH+x0OgTymCzmJ2lyYSEC3dRwhsB4mqg9oEPOz+quBh7Z6qJ7da7vOx/LQ7sAW
-	 w0RLM/KeE9srMa13Eu22PCkV/ymTAGnT8IGRAO+Q/Ae4iKcfFdf95PUuqR4MmVkW47
-	 pMo7Tkm6vAPCA==
-Date: Wed, 30 Oct 2024 18:21:45 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v4 00/19] Python module cleanup
-Message-ID: <ZyKjabJ9zHRcx-rl@x1>
-References: <20241029224431.167623-1-irogers@google.com>
+	s=arc-20240116; t=1730323317; c=relaxed/simple;
+	bh=MbbCCbjq5JrUGConaTKMydDsYPgTDYUDt9hl0GKh/J0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eDkUV8ccYzIcz7uLp0I/ytiD6DC8MDY+meWZqwwt9pe7z/TD02T4NM6kITQoMQicsrd4ZrfOVU6l1FMVL0gsA4ZNnA77Ojhoyd1USfiS1raN2WMBw57QwS5dSIrikwrmuMSN4Ks1NzuoHEcawM4rsjXF8a3h3IaxPiaT6PaPdPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DN1zi0nr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730323313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fImY0tgPhU7C7Gbsu2PvJitaPu6EoaPbjdriZ08AJg8=;
+	b=DN1zi0nrYcA/nXT0JYO9AjrC2LsbAgi/NqY3cyrUZjAkKG9g0R6L60s2mgz2nKUtVlahot
+	Wc0DM/tfVER6p37m8D4Ar5dlV8U6uI+yB9DENd5r3xyH7ONGZlxzqD4TLfx3Ue3Q1Tpn8+
+	TjxPPOZ7sSDiuIKLKeStIc2HPhaK53g=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-416-uCCV9T5jOvKfFVSqQxcj9w-1; Wed, 30 Oct 2024 17:21:51 -0400
+X-MC-Unique: uCCV9T5jOvKfFVSqQxcj9w-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbe4a123fdso5431156d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:21:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730323311; x=1730928111;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fImY0tgPhU7C7Gbsu2PvJitaPu6EoaPbjdriZ08AJg8=;
+        b=cmdlPLtZAamcH7G88NAeTw8eXtpJSmWul5qetQXtyAo6wBGD770Q6v322L5PplKHs9
+         VGdjd3b5stBzy9dT0pkzh45ZtytotM351NFu8qsGK4kohEkZYMSP+HFeWmXKuklQ+oaX
+         Cc8azKO5ZDsUX14/uykMCMwP5AM8lTfjpqwci7I+CSNf4Ff6SeGI8inzfgeZPXnemcZW
+         /PZlj8DJ/1RYHUoae8xZJmHRAwgMM5UHZIQ1I+tdh5QzhbrHyFQ/vXT4XzUWYBILNQdt
+         6rYDNk1jTDr5FUpdkLg6k9vWt0GoD+uvG016Nj0j3jj1bFjN5jWjPHlpa9gn37rTZ/L2
+         p3uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtu4G7eoyt0rf0ipUnOPkA49DbTKR6tMY5dItrkm6rCG5Qa4FlrNAvbkYHMtcdDDCVq9EkZZPhtq+5Sng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKnt6FimvUtDXVekbfzNCGCVYJ8gylGmVRLxHCaaybVOrl/3LT
+	vR7JXMmTq3RqUSjg/y+E8RNZZp7ct9a3QOumKIwCn/UmPG8Z/VXcN0I0igUCEkVLwf6hpOwEfpH
+	XmfNbnji5+V5D4d31mQ+/F+JWg3WiPArcT9atAL0kFx0Gh1BR9R84ejHRPKcCqg==
+X-Received: by 2002:a05:6214:419a:b0:6cd:5ff4:cb1f with SMTP id 6a1803df08f44-6d351a92c11mr11401316d6.3.1730323311316;
+        Wed, 30 Oct 2024 14:21:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEr0fgtvMzz0D10iM8abFx6F7KGhICxqqQgW6cfSToB9LfZyBq1dF7BOnv89yuukqJXIUPsDQ==
+X-Received: by 2002:a05:6214:419a:b0:6cd:5ff4:cb1f with SMTP id 6a1803df08f44-6d351a92c11mr11401186d6.3.1730323311045;
+        Wed, 30 Oct 2024 14:21:51 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d354189baasm486516d6.143.2024.10.30.14.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 14:21:50 -0700 (PDT)
+Message-ID: <d59b923ebd369415056c80b99ca4e0f75d60fa84.camel@redhat.com>
+Subject: Re: [PATCH v5 0/3] KVM: x86: tracepoint updates
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Paolo
+ Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, Sean
+ Christopherson <seanjc@google.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+ linux-kernel@vger.kernel.org
+Date: Wed, 30 Oct 2024 17:21:49 -0400
+In-Reply-To: <20240910200350.264245-1-mlevitsk@redhat.com>
+References: <20240910200350.264245-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241029224431.167623-1-irogers@google.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 03:44:12PM -0700, Ian Rogers wrote:
-> This patch:
->  - removes workarounds for Python 2 module support due to long
->    deprecation and challenges in developing new code;
->  - constifies variables and parameters to functions;
->  - removes python.c stub code which existed due to missing functions
->    that are defined in the builtin-* files, in general the builtin-*
->    code is moved into util;
->  - remove bench and test perf C code from the python module;
->  - adds parse_events to the python perf module.
->  - improves upon some of the existing python perf module functins.
-
-I'll review later or tomorrow, but it passes preliminary testing modulo
-a build test, see below:
-
-root@number:/home/acme/git/perf-tools-next# export PYTHONPATH=/tmp/build/perf-tools-next/python/
-root@number:/home/acme/git/perf-tools-next# strace -o /tmp/perf.openat.txt -e openat tools/perf/python/twatch.py 
-<SNIP libperf debug messages>
-cpu: 18, pid: 6023, tid: 6023 { type: fork, pid: 6023, ppid: 6023, tid: 707358, ptid: 6023, time: 94073002926291}
-cpu: 21, pid: 6023, tid: 707358 { type: comm, pid: 6023, tid: 707358, comm: StreamT~s #1565 }
-cpu: 21, pid: 6023, tid: 707358 { type: comm, pid: 6023, tid: 707358, comm: StreamT~s #1565 }
-cpu: 9, pid: 624123, tid: 624123 { type: fork, pid: 624123, ppid: 624123, tid: 707359, ptid: 624123, time: 94073240462968}
-cpu: 23, pid: 624123, tid: 707359 { type: comm, pid: 624123, tid: 707359, comm: StreamT~ns #509 }
-cpu: 23, pid: 624123, tid: 707359 { type: comm, pid: 624123, tid: 707359, comm: StreamT~ns #509 }
-cpu: 10, pid: 5800, tid: 707326 { type: exit, pid: 5800, ppid: 5554, tid: 707326, ptid: 5554, time: 94073371926048}
-^CTraceback (most recent call last):
-  File "/home/acme/git/perf-tools-next/tools/perf/python/twatch.py", line 61, in <module>
-    main()
-  File "/home/acme/git/perf-tools-next/tools/perf/python/twatch.py", line 33, in main
-    evlist.poll(timeout = -1)
-KeyboardInterrupt
-
-root@number:/home/acme/git/perf-tools-next# 
-root@number:/home/acme/git/perf-tools-next# grep perf.cpy /tmp/perf.openat.txt 
-openat(AT_FDCWD, "/tmp/build/perf-tools-next/python/perf.cpython-312-x86_64-linux-gnu.so", O_RDONLY|O_CLOEXEC) = 3
-root@number:/home/acme/git/perf-tools-next# perf -v
-perf version 6.12.rc3.g8f126aaf577f
-root@number:/home/acme/git/perf-tools-next# 
-logout
-acme@number:~$ cd git/perf-tools-next/
-acme@number:~/git/perf-tools-next$ 
-acme@number:~/git/perf-tools-next$ git log --oneline -5
-8f126aaf577fc14c (HEAD -> perf-tools-next) perf python: Correctly throw IndexError
-c43f13fa5302c897 perf python: Add __str__ and __repr__ functions to evsel
-ec01eeed20cae234 perf python: Add __str__ and __repr__ functions to evlist
-33ba8db9526a525e perf python: Add parse_events function
-e9d5ea61dd9ac48a perf build: Remove test library from python shared object
-acme@number:~/git/perf-tools-next$
-
-⬢ [acme@toolbox perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
-8f126aaf577fc14c (HEAD -> perf-tools-next) perf python: Correctly throw IndexError
-make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-- tarpkg: ./tests/perf-targz-src-pkg .
-                 make_static: cd . && make LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1 NO_LIBTRACEEVENT=1 NO_LIBELF=1 -j28  DESTDIR=/tmp/tmp.lNgk7LV5IW
-              make_with_gtk2: cd . && make GTK2=1 -j28  DESTDIR=/tmp/tmp.l1z8oz3HTv
-            make_no_libbpf_O: cd . && make NO_LIBBPF=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.0rqszvPdKm DESTDIR=/tmp/tmp.wBzOcarpDh
-cd . && make NO_LIBBPF=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.0rqszvPdKm DESTDIR=/tmp/tmp.wBzOcarpDh
-  BUILD:   Doing 'make -j28' parallel build
-Warning: Kernel ABI header differences:
-  diff -u tools/include/uapi/linux/const.h include/uapi/linux/const.h
-  diff -u tools/include/uapi/linux/bits.h include/uapi/linux/bits.h
-  diff -u tools/include/linux/bits.h include/linux/bits.h
-  diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.h
-  diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
-  diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
-  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
-  diff -u tools/include/linux/unaligned.h include/linux/unaligned.h
-  diff -u tools/perf/util/hashmap.h tools/lib/bpf/hashmap.h
-Makefile.config:687: Warning: Disabled BPF skeletons as libbpf is required
-Makefile.config:979: No libllvm 13+ found, slower source file resolution, please install llvm-devel/llvm-dev
-Makefile.config:1161: No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
-
-  GEN     /tmp/tmp.0rqszvPdKm/common-cmds.h
-<SNIP>
- CC      /tmp/tmp.0rqszvPdKm/util/env.o
-  CC      /tmp/tmp.0rqszvPdKm/tests/hists_link.o
-  CC      /tmp/tmp.0rqszvPdKm/builtin-timechart.o
-  CC      /tmp/tmp.0rqszvPdKm/tests/hists_filter.o
-  CC      /tmp/tmp.0rqszvPdKm/bench/numa.o
-util/env.c: In function ‘perf_env__arch_strerrno’:
-util/env.c:479:38: error: implicit declaration of function ‘arch_syscalls__strerrno_function’ [-Wimplicit-function-declaration]
-  479 |                 env->arch_strerrno = arch_syscalls__strerrno_function(perf_env__arch(env));
-      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-util/env.c:479:36: error: assignment to ‘const char * (*)(int)’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  479 |                 env->arch_strerrno = arch_syscalls__strerrno_function(perf_env__arch(env));
-      |                                    ^
-make[6]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/tmp.0rqszvPdKm/util/env.o] Error 1
-make[6]: *** Waiting for unfinished jobs....
-
-
- 
-> v4. Rebase. Fix the parse events evsel to be embedded in a
->     pyrf_evsel. Add __str__/__repr__ functions to evlist and
->     evsel. Throw an exception for a bad evlist index.
-> v3. Move is_directory_at to patch 6 rather than patch 7, respond to
->     review feedback on the list from Namhyung.
-> v2. Add the bottom 4 bullet points - 13 more patches.
+On Tue, 2024-09-10 at 16:03 -0400, Maxim Levitsky wrote:
+> This patch series is intended to add some selected information
+> to the kvm tracepoints to make it easier to gather insights about
+> running nested guests.
 > 
-> Ian Rogers (19):
->   perf python: Remove python 2 scripting support
->   perf python: Constify variables and parameters
->   perf python: Remove unused #include
->   perf script: Move scripting_max_stack out of builtin
->   perf kvm: Move functions used in util out of builtin
->   perf script: Move find_scripts to browser/scripts.c
->   perf stat: Move stat_config into config.c
->   perf script: Move script_spec code to trace-event-scripting.c
->   perf script: Move script_fetch_insn to trace-event-scripting.c
->   perf script: Move perf_sample__sprintf_flags to
->     trace-event-scripting.c
->   perf env: Move arch errno function to only use in env
->   perf lock: Move common lock contention code to new file
->   perf bench: Remove reference to cmd_inject
->   perf kwork: Make perf_kwork_add_work a callback
->   perf build: Remove test library from python shared object
->   perf python: Add parse_events function
->   perf python: Add __str__ and __repr__ functions to evlist
->   perf python: Add __str__ and __repr__ functions to evsel
->   perf python: Correctly throw IndexError
+> This patch series was developed together with a new x86 performance analysis tool
+> that I developed recently (https://gitlab.com/maximlevitsky/kvmon)
+> which aims to be a better kvm_stat, and allows you at glance
+> to see what is happening in a VM, including nesting.
 > 
->  tools/perf/Makefile.perf                      |   7 +-
->  tools/perf/bench/inject-buildid.c             |  13 +-
->  tools/perf/builtin-kvm.c                      |  61 ----
->  tools/perf/builtin-kwork.c                    |   3 +-
->  tools/perf/builtin-lock.c                     | 137 +------
->  tools/perf/builtin-script.c                   | 303 +---------------
->  tools/perf/builtin-stat.c                     |  27 --
->  tools/perf/builtin-trace.c                    |   1 -
->  tools/perf/builtin.h                          |   6 -
->  .../scripts/python/Perf-Trace-Util/Context.c  |  20 +-
->  tools/perf/tests/stat.c                       |  16 +-
->  tools/perf/trace/beauty/arch_errno_names.sh   |   3 +-
->  tools/perf/ui/browsers/scripts.c              | 177 ++++++++-
->  tools/perf/util/Build                         |   2 +
->  tools/perf/util/bpf_kwork.c                   |   2 +-
->  tools/perf/util/bpf_kwork_top.c               |   2 +-
->  tools/perf/util/bpf_lock_contention.c         |   2 +-
->  tools/perf/util/cgroup.c                      |   2 +-
->  tools/perf/util/config.c                      |  27 ++
->  tools/perf/util/dlfilter.c                    |   3 +-
->  tools/perf/util/env.c                         |   2 +
->  tools/perf/util/env.h                         |   2 -
->  tools/perf/util/evsel.c                       |  19 +-
->  tools/perf/util/evsel.h                       |   2 +-
->  tools/perf/util/kvm-stat.c                    |  70 ++++
->  tools/perf/util/kvm-stat.h                    |   3 +
->  tools/perf/util/kwork.h                       |   6 +-
->  tools/perf/util/lock-contention.c             | 170 +++++++++
->  tools/perf/util/lock-contention.h             |  37 +-
->  tools/perf/util/path.c                        |  10 +
->  tools/perf/util/path.h                        |   1 +
->  tools/perf/util/python.c                      | 338 ++++++++----------
->  .../scripting-engines/trace-event-python.c    |  63 +---
->  tools/perf/util/stat.h                        |   3 +-
->  tools/perf/util/trace-event-scripting.c       | 176 +++++++++
->  tools/perf/util/trace-event.h                 |   5 +-
->  36 files changed, 854 insertions(+), 867 deletions(-)
->  create mode 100644 tools/perf/util/kvm-stat.c
->  create mode 100644 tools/perf/util/lock-contention.c
+> V5: rebased on top of recent changes
+> 
+> Best regards,
+> 	Maxim Levitsky
+> 
+> Maxim Levitsky (3):
+>   KVM: x86: add more information to the kvm_entry tracepoint
+>   KVM: x86: add information about pending requests to kvm_exit
+>     tracepoint
+>   KVM: x86: add new nested vmexit tracepoints
+> 
+>  arch/x86/include/asm/kvm-x86-ops.h |   1 +
+>  arch/x86/include/asm/kvm_host.h    |   5 +-
+>  arch/x86/kvm/svm/nested.c          |  22 ++++++
+>  arch/x86/kvm/svm/svm.c             |  17 +++++
+>  arch/x86/kvm/trace.h               | 107 ++++++++++++++++++++++++++---
+>  arch/x86/kvm/vmx/main.c            |   1 +
+>  arch/x86/kvm/vmx/nested.c          |  27 ++++++++
+>  arch/x86/kvm/vmx/vmx.c             |  11 +++
+>  arch/x86/kvm/vmx/x86_ops.h         |   4 ++
+>  arch/x86/kvm/x86.c                 |   3 +
+>  10 files changed, 189 insertions(+), 9 deletions(-)
 > 
 > -- 
-> 2.47.0.163.g1226f6d8fa-goog
+> 2.26.3
 > 
+> 
+
+Hi,
+A very gentle ping on this patch series.
+
+Best regards,
+	Maxim Levitsky
+
 
