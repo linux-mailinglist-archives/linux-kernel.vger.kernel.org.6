@@ -1,141 +1,98 @@
-Return-Path: <linux-kernel+bounces-389720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5779B7071
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:26:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86289B7074
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57F52825AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7EE51C21224
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BC8217908;
-	Wed, 30 Oct 2024 23:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D2D21764B;
+	Wed, 30 Oct 2024 23:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP+yqwF/"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="oFUriJg9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C921745E;
-	Wed, 30 Oct 2024 23:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210381E8859;
+	Wed, 30 Oct 2024 23:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730330768; cv=none; b=hiDZ7jrVyHiDK3NPfdwVDuGlojJG+F3R76K7/VN1UUNk2fPG540l2NRYwge18pD8bzZket49n2vGGpc3dLJneCq7dp408dI76VsWJseZYema5Dnaf8z+UODz9eoczavdQFXK9mCnVuT+xIpxsHIw/0aiTCqVCt9XkcXJ1YCy9yk=
+	t=1730330788; cv=none; b=AEr2GSf//C3Ps2TBp2okS2EN5jjQOu6hlNZf5g26HpkEmv9xVSEFp8iqaMxPNDzO99KKSqHKtytFPMf6TAtqBak9xc6jTDgHAeCGXJSi7HbesGLG5hqzzwFAGgLJEsCyH50FMu5RHoie0AQ0zPlP/CSLoY1eRCNq5MqSDkrGqvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730330768; c=relaxed/simple;
-	bh=qG6IB3tD6+yPM/lumoXSZZ9FRa0pFVxRt2KJfcdlqPM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LZwgXjaOOv3e1t2isZOrQ5kxDzehFK5pTjm/1UMYO8colBDTZLMBbS/73wlgqY1cjFKrgei7UmBoWnU1tH9dIOYrqQsmXHmKKN0rtb7Iafpied7Up/7DmycKA91HrB2Cxf9vA/1LC81a2yIKAG+aSgPkfOlcq6rfdllqm6G2n0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP+yqwF/; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eac969aso2069495e9.1;
-        Wed, 30 Oct 2024 16:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730330764; x=1730935564; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=etFHZ0EqGWLVKcZ/IRxxgETEj6o4J8B9iZYvV9e7Iv8=;
-        b=RP+yqwF/4kICNBlmxSDI31PsnAN/TNgg7iPaVRLoA6TlMDh1SYwE2MWvny7P3IpqEj
-         OOR9s4B3ztEPXRlpsxRE4KztJtPnCsk+ZYwFQQpoBe+LgKwCfZw8A89LpsN43DZIjpYs
-         lR55LI527jzRs4ebd7pqDbM3PTC5EFaFxgXE6B+ZljPOrS7rgcYK+QZTiQRzMscRTKLL
-         zMnZwU/m/tc5ZL1pGyjgwiknVpE3tGsVd98Df+wZAfXRHO8xLMuuUADz10QkEA/Q3xFu
-         4+Evn/uin7cNPGcfHOGdKjpWVt7ZscOmEi0Qvbsgj8aMBNf3VdkSLToeEYtrQ88O/SC5
-         T/yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730330764; x=1730935564;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=etFHZ0EqGWLVKcZ/IRxxgETEj6o4J8B9iZYvV9e7Iv8=;
-        b=TJf+ivEzdf6mHndiqM8v75Khfwf6KsTOHBy8Bh/lAd+x8WFb2Xsz1CKjctapsBQqBI
-         fcm5qpGRwwTCPFGJV1IjYpGpBpeLU/ekQM2azoeFPV5Nnv9qxTElO72848gTJkWiTsFN
-         lyhNGEWj4ZZfiHDug5UL2uxbggjio5aqw/IGof+y3cncgUlxQkIz/Q1HMnGdKnVoZhSJ
-         yMh5J79oqhnRMWbgHacAPd+mIQDcahC1V6I0iMO96NqgEknk7ynJ5fC71Os8s6xAD6Vd
-         ELXIbU2n0DsoP83F8UiSBdMLdRFWyInj2uXnGhhovw8RZmATa//2Gxb9htgC6cTh10ID
-         lZFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUg9yYlPxGWRNj9U8tEYpQUIQfm299rS8dBrbaxilF21n6gA75B+TJuIhyxD2o+gzn2QakICSenuGQ=@vger.kernel.org, AJvYcCXvDWBscI/umiId/GOhjNSHXj1MfaTY/sOrJnQc35/DNBHetBFZw5oabSpN5YPWpMAGuT0g6ZI7sSUZJYjm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUPPXlTt2evNCpXQHvLAHJiDhXU00IkMvqgR6aJCnrTQOqb/b0
-	duAzo6N76CM45MompVq7raYZfvbx9Ry62hXQYsE7kKEmR1uOecmB/h1oehiX
-X-Google-Smtp-Source: AGHT+IHkWyosrXnzVUyRsA+eYkVHkUHdz/o5cdlWAuNhG2zBqgplMrWgOLtyxRKXBztlD+ybaW8eOQ==
-X-Received: by 2002:a05:600c:45cf:b0:42c:b54c:a6d7 with SMTP id 5b1f17b1804b1-4327dbcb535mr2530365e9.14.1730330764290;
-        Wed, 30 Oct 2024 16:26:04 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-fbf3-0656-23c1-5ba1.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:fbf3:656:23c1:5ba1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947b2bsm35338395e9.25.2024.10.30.16.26.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 16:26:03 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 31 Oct 2024 00:25:57 +0100
-Subject: [PATCH 2/2] clk: renesas: cpg-mssr: automate 'soc' node release in
- cpg_mssr_reserved_init()
+	s=arc-20240116; t=1730330788; c=relaxed/simple;
+	bh=wPMPLo0mta4qVpGzLolACfvuHSWiB6tecr7v0QVNiiE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=uoW2mm6jWrWL2rKDMKOLgW9azTpaojFuf1s5t+T8LujTVDg1pCqS0f7LI6Ko036Tu2MXp+PLD+sHWLOMVfvP6+oTNwoVcWv49TroqD97kbdsvqr8Odd9cl5aWpZU+ydXrbNnoyC22IWsMTD+g+CgUXHYCq7Dnw8P3W0NWOTX4Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=oFUriJg9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2DBC4CED4;
+	Wed, 30 Oct 2024 23:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730330785;
+	bh=wPMPLo0mta4qVpGzLolACfvuHSWiB6tecr7v0QVNiiE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oFUriJg92Dn4a60uaF1IBC3TaNYrQLGQvRPbLY4YNZMSGWLOgpyQrHkE7cN9ybocB
+	 EKR7ojApZlS2yHRM5OZq28OKvDu5+jREiU8oD1bwNorRmZh5zdt6zYU4mgpROhQi7w
+	 4PJpBrixkESQxiMBDqaU4jqMjqP9/ccGYLRKUlK0=
+Date: Wed, 30 Oct 2024 16:26:24 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
+ nphamcs@gmail.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+ muchun.song@linux.dev, tj@kernel.org, lizefan.x@bytedance.com,
+ mkoutny@suse.com, corbet@lwn.net, lnyng@meta.com, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
+Message-Id: <20241030162624.2ae779257e68264c4bec99fd@linux-foundation.org>
+In-Reply-To: <CAN+CAwM1FJCaGrdBMarD2YthX8jcBEKx9Sd07yj-ZcpDxinURQ@mail.gmail.com>
+References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+	<ZyIZ_Sq9D_v5v43l@tiehlicka>
+	<20241030150102.GA706616@cmpxchg.org>
+	<ZyJQaXAZSMKkFVQ2@tiehlicka>
+	<20241030183044.GA706387@cmpxchg.org>
+	<CAN+CAwM1FJCaGrdBMarD2YthX8jcBEKx9Sd07yj-ZcpDxinURQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-clk-renesas-cpg-mssr-cleanup-v1-2-628274ecbfcb@gmail.com>
-References: <20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com>
-In-Reply-To: <20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730330758; l=1461;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=qG6IB3tD6+yPM/lumoXSZZ9FRa0pFVxRt2KJfcdlqPM=;
- b=iiREKCHRI7wAcjIwWXi2Ozabkvpi9cjg2JuT0ONzaOGUI3UjRxWWL2+aAvmaJ6YSzts7+ZrsX
- Mz1KQA67g81BWG0ZJoYYaiZxncbA/NgZ4UsOn5OVkwgz4MHVr4ntqOv
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Switch to a more robust approach by means of the cleanup attribute,
-which automates the calls to of_node_put() when 'soc' goes out of scope.
+On Wed, 30 Oct 2024 16:43:42 -0400 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> I saw that it was merged into mm-unstable earlier yesterday. Would it
+> be possible
+> to add this block of text to the patch description right before the footnotes?
+> 
+> 3. Implementation Details:
+> In the alloc / free hugetlb functions, we call lruvec_stat_mod_folio
+> regardless of whether memcg accounts hugetlb. lruvec_stat_mod_folio
+> keys off of folio->memcg which is only set up if the
+> CGRP_ROOT_MEMORY_HUGETLB_ACCOUTING cgroup mount option is used, so
+> it will not try to accumulate hugetlb unless the flag is set.
+> This also ensures that memory.stat::hugetlb is the same as
+> the share of memory.current that is used by hugetlb pages.
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 5dc89b1009fe..bf85501709f0 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
- static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 					 const struct cpg_mssr_info *info)
- {
--	struct device_node *soc = of_find_node_by_path("/soc");
-+	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
- 	struct device_node *node;
- 	uint32_t args[MAX_PHANDLE_ARGS];
- 	unsigned int *ids = NULL;
-@@ -1022,7 +1022,6 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 
- 			ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
- 			if (!ids) {
--				of_node_put(soc);
- 				of_node_put(it.node);
- 				return -ENOMEM;
- 			}
-@@ -1037,7 +1036,6 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 			num++;
- 		}
- 	}
--	of_node_put(soc);
- 
- 	priv->num_reserved_ids	= num;
- 	priv->reserved_ids	= ids;
+Thanks, done.
 
--- 
-2.43.0
+> And could you also update the list of signatures to reflect the
+> responses on this version?
+> Suggested-by: Nhat Pham <nphamcs@gmail.com>
+> Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Chris Down <chris@chrisdown.name>
+> Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
+Done2.  I already had all that, plus an ack from Chris Down.
 
