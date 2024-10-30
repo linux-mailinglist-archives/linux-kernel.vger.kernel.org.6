@@ -1,308 +1,182 @@
-Return-Path: <linux-kernel+bounces-388086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAC99B5A50
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:23:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF599B5A60
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 04:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39301F2173F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:23:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7EF6B2271B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E921991B4;
-	Wed, 30 Oct 2024 03:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386C4199932;
+	Wed, 30 Oct 2024 03:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoYH8AO5"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mvtq13+I"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4280815E96;
-	Wed, 30 Oct 2024 03:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE914F90;
+	Wed, 30 Oct 2024 03:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730258576; cv=none; b=kb0mIoSu86NKeDLt8aXwJMvZcZEgI8Ivesfb/A1dmEYCJz9ma9LifkOeB+g9EHtod/LdpDPqaXWb8xIf44c3jzN7o3TMcsNda5+IZbHvYrMylrLNt9EbhpbZL1ejDO+AjHcrWg5RSp/pD0SiBkjj1DxLSJSr/0+JpWmR/lf10eE=
+	t=1730258997; cv=none; b=ed6ocFOK6lRO3Szymoi7ZRORrcK5FIl4GAT6cHJRmdQ+RAWgIcJZVp7kaiJ8gy+Sa5GnP2WarV+f3Vil1AhMVr6avDZdW6aVENpsjCV3jmY+tbbMqmrixyZV4CUBw3WuT/DstVFyCxFuihsnDdBzT7Zi/qVsec5Wa/+72aYdHrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730258576; c=relaxed/simple;
-	bh=7LdLeyC91oYolHTxW8qO5k7n1UFa1LaDj5VPQLULCuw=;
+	s=arc-20240116; t=1730258997; c=relaxed/simple;
+	bh=gB6sMqfjocTtVpdzRyKnKZUQ89s5//aBIvoYbkO8htc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HJHDOdagV8tz7ZTdMxpVwKZgG5bilq1INvmUBLObiEpNc9ayScuDT9YnKBbewFDSN76/zC6Gnof5h9V8Me/UquBFpMJw16OpujH4v3UKUkzekew5wfaKqv96rBOPGDBadRwCBkwb74YF9twXW+t8Ej3PD1TNL3qWSc3NWLOS1Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoYH8AO5; arc=none smtp.client-ip=209.85.208.53
+	 To:Cc:Content-Type; b=FJWnkXpw9RkdypNuofLD7LIjrWdJ5QNl/TqB3MJxd9SdmlBfAJAgrYgRPV1PzLfx1ftkWNZMVDqyYYOgNyVDs61peYGge0u2kfHuOvD2wUvC/fY4GK8d1HCaB3T4vuYXNZffhWckXZ6o/xXU3OOiRdTa2RhjQsqwPuUafJrO9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mvtq13+I; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1e63so7203374a12.0;
-        Tue, 29 Oct 2024 20:22:53 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e29687f4cc6so6416226276.2;
+        Tue, 29 Oct 2024 20:29:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730258572; x=1730863372; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730258994; x=1730863794; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=To+9twS6JlN4C9uCDBQQCtjCfMww1W/Bkv+Om9NWJIc=;
-        b=MoYH8AO52fg2Je3wIoMFlHxnbLTaJmrCw71etrJzU65ZUlMHZKI7fAh1alN2R2GiBL
-         shSgM+1dUjvEQu+Ey8s/7U/GXF6NpjR8UsOzuMz1QaJDL8vwTgeupw42P4i1G7QvKeAe
-         Majodwl3ngrYlPqsJIOb6qCOTrNsiDuIlWYOk/5EDi+1DiNib7QooEieFkLE7QjCu9gI
-         66RANDkDzHG1WYnje2TG1fv0s5wuDV2oeqwPbAA0iROx7R1P2CtDZHV9OFci5pmQirgM
-         Sw/PL7awbFGpPVSJQ3WVVGAxxg6/R6UUZN83ofLva0bRm6OwebFCwLbHbVpPL0mNZbOs
-         PGuA==
+        bh=JP29SaC0+NjDpQ+Q8kSclFW9qhNXYgN/YI2Vt9caTfw=;
+        b=Mvtq13+Ir2K8UrbaAH2NeinUPkSi9Pefnkri8iKtcgB5GvMbrhSHDb8aOphpnwcsX0
+         PNsLjVAh+lpbH4FFGDZ1EVmpeW24n+QlgCd8EsrR2x+xiSLozXUEYQonmPi36aiHqdJ4
+         bENhdsKn9KSPibuehm9myVWFIxZT6xcVv41McDZ8wxJwjw+lPBwCt/hZZMEXBd5PrJay
+         AX6D6hUs3+a3kFHhPiG9FfpvXPl8K9Z/VE5nPuj5Eoc5ERszHlIS9dUufys06ysqIAar
+         CVm3WvE3IYqz3uwNoEtwvnwCjfPpEMFsZeTwIdR9aoy5MNoc/UEGtFF9wRZ2JewA85cu
+         HU7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730258572; x=1730863372;
+        d=1e100.net; s=20230601; t=1730258994; x=1730863794;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=To+9twS6JlN4C9uCDBQQCtjCfMww1W/Bkv+Om9NWJIc=;
-        b=NYtBgjXpbX9Y0qV1W+5z0KiI0KwJ2RyaBAZAXTS+W/+37KW5tXX0RS4TTeRb78pE//
-         oPcUIWEGSZ8XybiT90C6I3u3Dl62a1+5Xf34fW0Bh2t3Rvy+J4fmNb8DHvT/zh4XgOLL
-         RdSjs3YZu81rx+XWVSl811luBgPMMhLVLKh0lO2Y3oEhNb4XBh4ptNSDSqTpuHJFHM9L
-         ND7gHZ+dXjR90Mv6GgCmSUnuOzrxi+Wi3BCG/7Tu7F9d+fXcGRBCzKQ1MFOJnz3uf4Gj
-         pMGDJbk/HvyU00CIL39F2Rb4O/FOJ6AuCsHHznnH+DDRLNTg7GZihq/IbzWJ0KS3KkMK
-         xDRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSA8gL/AWUebuqyuke2N32JQDC72p4gEiqzBepRqp61FW9zaS6P1DWk+mQjhXupIAb4zNc3vL5jsqP0Bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Yqy2XS8tchEs0fxg7Uafeg8dfs1Foaj7vR5NdrC8lHEuao18
-	hiLh+aiP89Rfsm6HYSBwiXLt24YbGRH7UCU6zrQFkDv8/79nE8lYFJgVOLhY2AUIO7GaRBl9sM1
-	KOfTV3DarbSpwvwLxtflAbhTagaY=
-X-Google-Smtp-Source: AGHT+IEsG/L+s3k3Lf5oCaIQBOgD8O/tG2xqN/WjAMGdKRHg1CwbulOeVA7wg43Unry5XWnV4uxM/biJS7HiMz5NgEI=
-X-Received: by 2002:a17:907:940e:b0:a99:ce2f:b0ff with SMTP id
- a640c23a62f3a-a9de5eccebcmr1418601066b.33.1730258572257; Tue, 29 Oct 2024
- 20:22:52 -0700 (PDT)
+        bh=JP29SaC0+NjDpQ+Q8kSclFW9qhNXYgN/YI2Vt9caTfw=;
+        b=hO89FkEcCQBmYKM5WXVJtzQBJuZob7iKi2pXFhlFY7qsa1W9b9fUuN060Py5OLNUtc
+         ViUKyNV+7zzBnq+pd8Y347WSTPPh/rvjvG5g/Sr24o8h0vIVJgFQ9NdWN3/BRTdc67vV
+         ysRZKwiCW8OUJ30O6VNI+2NkiEmPAfStOEfEh2R6uQvYebAfAIWK+3pk4vzbgbfeMTj6
+         VFSuvd34bjfFpPUIWMvmjdjrn+s9BUxsSew7vvcDW02AnJFJ4EBJi1FveCo5hX5hk5u6
+         gdX5RjITIpXSrLu2lVDzlbw1zhp5bo+LYrJXlHj7vbgSnIsnWZ4M1jp0LhhNNChwjBNY
+         19LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQNIcwz0ZKLloMTPO4bVeJDbg7yJ73TNR9qfndcn6PbfpOnIiCooFE1GMTi5eeuQhwa6OwTmzDvhse@vger.kernel.org, AJvYcCUay08yr5SFvtOT8GNCeim9ShS6Ic4BL4PvegXrp4TH1PRBIuRqdzsAFktYLhf1yesC8iLDjDteUWeQsQ8=@vger.kernel.org, AJvYcCVN/RKj/C/PSwSdafMvcI80W3aaZe0xXnQyeoOuROW4mw3gANIN5vAuTDkB7vllWwzmVlwRzo7xEdiEZA==@vger.kernel.org, AJvYcCW76l/H+vb7n/2qzi6emWlDis2ADdCDu4PCysuzKIKidgTxGPAshm1DIqbafBpLJYG0SiQtC8it@vger.kernel.org, AJvYcCWKnzObPVU7MCE/ltf8OOmIkNQ2xk3WAZ8vrZhh4daiRwVAnPu5KlAjE9K9cW42QI5IT9XvcaKPlKlwGLZY@vger.kernel.org, AJvYcCWaieWED+EcEew7BvG8wzdWyasreMdzR/AOhi5Cr7eITkGalp9kzOPkeHKqu40bvK3b8tEC+1aNu2wN@vger.kernel.org, AJvYcCWgaTDx0CwAdMNk7TxAncd2ObB23c/n/W+rkQUUVGCB1GeAurY13Od3XJMEqOT1taJsAEt8jZ9IkuCywbseg+s=@vger.kernel.org, AJvYcCWoSO39idEDue/hSZ0xPPoUR8AbUOwKQPvZxxReVU/ia+QigqfmEE30jIJuPROmlErHIwFPNvuYeGM=@vger.kernel.org, AJvYcCXSbIYF6dC1P6qYC0h4JGj+mAOyOzZrdm1KQ+WVcZVXWxmmQbCKvvJnJRhEgLx7D9w0Lr3Z5yRKf12s@vger.kernel.org, AJvYcCXVWD3cvMTo0jBA2awVwJxo2UpF/upb
+ Ya3AEK3C40sYJJmrbDsN9BiXs8whDlhezuYB+QgXTn1FoZ6w@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhNoPPrOQ6nHW1Tr5q6jYM3ZZYT0CZEm7lm0Tm1XaEtU6v9FlZ
+	zu7hLL1jqhbnpWVhzNZgoaqpVfODzFwRbpf13KoziEfbIudN8Oj4dL0E05k632dr4QM6q//vpDu
+	rD2rFOmNj/kkBhT1jZljb0GZ4r8g=
+X-Google-Smtp-Source: AGHT+IHPHivp//5/1F1E+KCfk4ICpoDujCclNjDxmM3AkIl+YaqACUChlZiv6jcz1YluWguSbfgvDGU/q+nvuJeLm/Y=
+X-Received: by 2002:a05:6902:2b8b:b0:e2b:ba9d:64c5 with SMTP id
+ 3f1490d57ef6-e3087c13018mr11188254276.48.1730258994399; Tue, 29 Oct 2024
+ 20:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025065448.3231672-1-haisuwang@tencent.com>
- <20241025065448.3231672-3-haisuwang@tencent.com> <4d0603d4-1503-4e8f-bfe2-ed205b598072@gmx.com>
-In-Reply-To: <4d0603d4-1503-4e8f-bfe2-ed205b598072@gmx.com>
-From: hs wang <iamhswang@gmail.com>
-Date: Wed, 30 Oct 2024 11:22:40 +0800
-Message-ID: <CALv5hoSEPXi3dNXg1DMKJQ3R3OnzVew+tNJQssWGt2g4O8aSiQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] btrfs: simplify regions mark and keep start unchanged
- in err handling
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com, 
-	dsterba@suse.com, wqu@suse.com, boris@bur.io, linux-kernel@vger.kernel.org, 
-	Haisu Wang <haisuwang@tencent.com>
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-7-tmyu0@nuvoton.com>
+ <CAH-L+nPGGhgDFge0Ov4rX_7vUyLN8uu51cks80=kt38h22N7zQ@mail.gmail.com>
+ <62ea5a91-816f-4600-bfec-8f70798051db@roeck-us.net> <CAOoeyxX=A5o5PhxpniPwPgMCBv1VwMstt=wXCxHiGPF59gm5wQ@mail.gmail.com>
+ <817d24e1-6fdd-4ce2-9408-eccc94134559@roeck-us.net> <02f05807-77ae-4a3b-8170-93dd7520c719@roeck-us.net>
+ <CAOoeyxX2Jk+76Cedu5_ZGgeRCPmT8Yhczmx7h+K-za7r2WS=Sw@mail.gmail.com> <20241028185414.65456203@jic23-huawei>
+In-Reply-To: <20241028185414.65456203@jic23-huawei>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Wed, 30 Oct 2024 11:29:43 +0800
+Message-ID: <CAOoeyxXJa05XxTg0JpZ6GRV7XMMa3Rct4+c5Q3cqCtW9KZzQLw@mail.gmail.com>
+Subject: Re: [PATCH v1 6/9] hwmon: Add Nuvoton NCT6694 HWMON support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, 
+	Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>, tmyu0@nuvoton.com, lee@kernel.org, 
+	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
+	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, jdelvare@suse.com, lars@metafoo.de, 
+	ukleinek@kernel.org, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Qu Wenruo <quwenruo.btrfs@gmx.com> =E4=BA=8E2024=E5=B9=B410=E6=9C=8830=E6=
-=97=A5=E5=91=A8=E4=B8=89 11:01=E5=86=99=E9=81=93=EF=BC=9A
->
->
->
-> =E5=9C=A8 2024/10/25 17:24, iamhswang@gmail.com =E5=86=99=E9=81=93:
-> > From: Haisu Wang <haisuwang@tencent.com>
-> >
-> > Simplify the regions mark by using cur_alloc_size only to present
-> > the reserved but may failed to alloced extent. Remove the ram_size
-> > as well since it is always consistent to the cur_alloc_size in the
-> > context. Advanced the start mark in normal path until extent succeed
-> > alloced and keep the start unchanged in error handling path.
-> >
-> > PASSed the fstest generic/475 test for a hundred times with quota
-> > enabled. And a modified generic/475 test by removing the sleep time
-> > for a hundred times. About one tenth of the tests do enter the error
-> > handling path due to fail to reserve extent.
-> >
->
-> Although this patch is already merged into for-next, it looks like the
-> next patch will again change the error handling, mostly render the this
-> one useless:
->
-> https://lore.kernel.org/linux-btrfs/2a0925f0264daf90741ed0a7ba7ed4b4888cf=
-778.1728725060.git.wqu@suse.com/
->
-> The newer patch will change the error handling to a simpler one, so
-> instead of 3 regions, there will be only 2.
->
-Sounds better and a completely rewrite, i will catch up the details.
+Dear Jonathan,
 
-> There will be no change needed from your side, I will update my patches
-> to solve the conflicts, just in case if you find the error handling is
-> different in the future.
+Thanks you for your comments,
+I tested your suggestion in both the MFD driver and the IIO driver, and
+the iio-hwmon bridge worked well.
+On the other hand, my requirements involve accessing thermal sensors,
+voltage sensors and tachometers, so I should implement it in this HWMON
+drive, right?
+
+Best regards
+Ming
+
+Jonathan Cameron <jic23@kernel.org> =E6=96=BC 2024=E5=B9=B410=E6=9C=8829=E6=
+=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=882:54=E5=AF=AB=E9=81=93=EF=BC=9A
 >
-
-Thanks. Understanding the changes, may compile and play after the polishmen=
-t.
-
-Best regards,
-Haisu Wang
-
-> Thanks,
-> Qu
+> On Mon, 28 Oct 2024 15:58:00 +0800
+> Ming Yu <a0282524688@gmail.com> wrote:
 >
-> > Suggested-by: Qu Wenruo <wqu@suse.com>
-> > Signed-off-by: Haisu Wang <haisuwang@tencent.com>
-> > ---
-> >   fs/btrfs/inode.c | 32 ++++++++++++++------------------
-> >   1 file changed, 14 insertions(+), 18 deletions(-)
+> > Dear Guenter,
 > >
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index 3646734a7e59..7e67a6d50be2 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -1359,7 +1359,6 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >       u64 alloc_hint =3D 0;
-> >       u64 orig_start =3D start;
-> >       u64 num_bytes;
-> > -     unsigned long ram_size;
-> >       u64 cur_alloc_size =3D 0;
-> >       u64 min_alloc_size;
-> >       u64 blocksize =3D fs_info->sectorsize;
-> > @@ -1367,7 +1366,6 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >       struct extent_map *em;
-> >       unsigned clear_bits;
-> >       unsigned long page_ops;
-> > -     bool extent_reserved =3D false;
-> >       int ret =3D 0;
+> > The original plan was to use the IIO driver to access the temperature
+> > and voltage sensors, and the HWMON driver to access the tachometers.
+> > However, since the device is a hot-plug USB device, as far as I know,
+> > IIO-HWMON is not applicable. I will merge the IIO driver part into the
+> > HWMON driver in the next patch.
+> > In  other words, the driver will be used to access TIN, VIN and FIN.
+> See drivers/mfd/sun4i-gpadc.c
+> for an example of an mfd using the iio-hwmon bridge.
+>
+> Jonathan
+>
 > >
-> >       if (btrfs_is_free_space_inode(inode)) {
-> > @@ -1421,8 +1419,7 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >               struct btrfs_ordered_extent *ordered;
-> >               struct btrfs_file_extent file_extent;
+> > Best regards
+> > Ming
 > >
-> > -             cur_alloc_size =3D num_bytes;
-> > -             ret =3D btrfs_reserve_extent(root, cur_alloc_size, cur_al=
-loc_size,
-> > +             ret =3D btrfs_reserve_extent(root, num_bytes, num_bytes,
-> >                                          min_alloc_size, 0, alloc_hint,
-> >                                          &ins, 1, 1);
-> >               if (ret =3D=3D -EAGAIN) {
-> > @@ -1453,9 +1450,7 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >               if (ret < 0)
-> >                       goto out_unlock;
-> >               cur_alloc_size =3D ins.offset;
-> > -             extent_reserved =3D true;
-> >
-> > -             ram_size =3D ins.offset;
-> >               file_extent.disk_bytenr =3D ins.objectid;
-> >               file_extent.disk_num_bytes =3D ins.offset;
-> >               file_extent.num_bytes =3D ins.offset;
-> > @@ -1463,14 +1458,14 @@ static noinline int cow_file_range(struct btrfs=
-_inode *inode,
-> >               file_extent.offset =3D 0;
-> >               file_extent.compression =3D BTRFS_COMPRESS_NONE;
-> >
-> > -             lock_extent(&inode->io_tree, start, start + ram_size - 1,
-> > +             lock_extent(&inode->io_tree, start, start + cur_alloc_siz=
-e - 1,
-> >                           &cached);
-> >
-> >               em =3D btrfs_create_io_em(inode, start, &file_extent,
-> >                                       BTRFS_ORDERED_REGULAR);
-> >               if (IS_ERR(em)) {
-> >                       unlock_extent(&inode->io_tree, start,
-> > -                                   start + ram_size - 1, &cached);
-> > +                                   start + cur_alloc_size - 1, &cached=
+> > Guenter Roeck <linux@roeck-us.net> =E6=96=BC 2024=E5=B9=B410=E6=9C=8826=
+=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8B=E5=8D=8810:50=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> > >
+> > > On 10/25/24 08:44, Guenter Roeck wrote:
+> > > > On 10/25/24 08:22, Ming Yu wrote:
+> > > > [ ... ]
+> > > >
+> > > >>>>> +static int nct6694_fan_write(struct device *dev, u32 attr, int=
+ channel,
+> > > >>>>> +                            long val)
+> > > >>>>> +{
+> > > >>>>> +       struct nct6694_hwmon_data *data =3D dev_get_drvdata(dev=
 );
-> >                       ret =3D PTR_ERR(em);
-> >                       goto out_reserve;
-> >               }
-> > @@ -1480,7 +1475,7 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >                                                    1 << BTRFS_ORDERED_R=
-EGULAR);
-> >               if (IS_ERR(ordered)) {
-> >                       unlock_extent(&inode->io_tree, start,
-> > -                                   start + ram_size - 1, &cached);
-> > +                                   start + cur_alloc_size - 1, &cached=
-);
-> >                       ret =3D PTR_ERR(ordered);
-> >                       goto out_drop_extent_cache;
-> >               }
-> > @@ -1501,7 +1496,7 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >                        */
-> >                       if (ret)
-> >                               btrfs_drop_extent_map_range(inode, start,
-> > -                                                         start + ram_s=
-ize - 1,
-> > +                                                         start + cur_a=
-lloc_size - 1,
-> >                                                           false);
-> >               }
-> >               btrfs_put_ordered_extent(ordered);
-> > @@ -1519,7 +1514,7 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >               page_ops =3D (keep_locked ? 0 : PAGE_UNLOCK);
-> >               page_ops |=3D PAGE_SET_ORDERED;
+> > > >>>>> +       unsigned char enable_buf[REQUEST_HWMON_CMD0_LEN] =3D {0=
+};
+> > > >>>> [Kalesh] Please try to maintain RCT order for variable declarati=
+on
+> > > >>>
+> > > >>> Ok, but that is already the case here ?
+> > > >>
+> > > >> [Ming] Is there anything that needs to be changed?
+> > > >>
+> > > >
+> > > > I don't think so, If two lines have the same length, the order is u=
+p
+> > > > to the developer to decide.
+> > > >
+> > > > Question though is if the buffer needs to be initialized. You shoul=
+d drop
+> > > > the initialization if it is not necessary. In that case the second =
+line
+> > > > would be shorter anyway, and the order question would not arise.
+> > > >
+> > >
+> > > Actually, I just noticed that you also submitted an IIO driver which
+> > > reports the same data again. If a chip has an IIO driver, there shoul=
+d
+> > > be no HWMON driver since the IIO -> HWMON bridge can then be used if
+> > > necessary. So please drop this driver.
+> > >
+> > > Thanks,
+> > > Guenter
+> > >
+> > >
 > >
-> > -             extent_clear_unlock_delalloc(inode, start, start + ram_si=
-ze - 1,
-> > +             extent_clear_unlock_delalloc(inode, start, start + cur_al=
-loc_size - 1,
-> >                                            locked_folio, &cached,
-> >                                            EXTENT_LOCKED | EXTENT_DELAL=
-LOC,
-> >                                            page_ops);
-> > @@ -1529,7 +1524,7 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >                       num_bytes -=3D cur_alloc_size;
-> >               alloc_hint =3D ins.objectid + ins.offset;
-> >               start +=3D cur_alloc_size;
-> > -             extent_reserved =3D false;
-> > +             cur_alloc_size =3D 0;
-> >
-> >               /*
-> >                * btrfs_reloc_clone_csums() error, since start is increa=
-sed
-> > @@ -1545,7 +1540,7 @@ static noinline int cow_file_range(struct btrfs_i=
-node *inode,
-> >       return ret;
-> >
-> >   out_drop_extent_cache:
-> > -     btrfs_drop_extent_map_range(inode, start, start + ram_size - 1, f=
-alse);
-> > +     btrfs_drop_extent_map_range(inode, start, start + cur_alloc_size =
-- 1, false);
-> >   out_reserve:
-> >       btrfs_dec_block_group_reservations(fs_info, ins.objectid);
-> >       btrfs_free_reserved_extent(fs_info, ins.objectid, ins.offset, 1);
-> > @@ -1599,13 +1594,12 @@ static noinline int cow_file_range(struct btrfs=
-_inode *inode,
-> >        * to decrement again the data space_info's bytes_may_use counter=
-,
-> >        * therefore we do not pass it the flag EXTENT_CLEAR_DATA_RESV.
-> >        */
-> > -     if (extent_reserved) {
-> > +     if (cur_alloc_size) {
-> >               extent_clear_unlock_delalloc(inode, start,
-> >                                            start + cur_alloc_size - 1,
-> >                                            locked_folio, &cached, clear=
-_bits,
-> >                                            page_ops);
-> >               btrfs_qgroup_free_data(inode, NULL, start, cur_alloc_size=
-, NULL);
-> > -             start +=3D cur_alloc_size;
-> >       }
-> >
-> >       /*
-> > @@ -1614,11 +1608,13 @@ static noinline int cow_file_range(struct btrfs=
-_inode *inode,
-> >        * space_info's bytes_may_use counter, reserved in
-> >        * btrfs_check_data_free_space().
-> >        */
-> > -     if (start < end) {
-> > +     if (start + cur_alloc_size < end) {
-> >               clear_bits |=3D EXTENT_CLEAR_DATA_RESV;
-> > -             extent_clear_unlock_delalloc(inode, start, end, locked_fo=
-lio,
-> > +             extent_clear_unlock_delalloc(inode, start + cur_alloc_siz=
-e,
-> > +                                          end, locked_folio,
-> >                                            &cached, clear_bits, page_op=
-s);
-> > -             btrfs_qgroup_free_data(inode, NULL, start, end - start + =
-1, NULL);
-> > +             btrfs_qgroup_free_data(inode, NULL, start + cur_alloc_siz=
-e,
-> > +                             end - start - cur_alloc_size + 1, NULL);
-> >       }
-> >       return ret;
-> >   }
 >
 
