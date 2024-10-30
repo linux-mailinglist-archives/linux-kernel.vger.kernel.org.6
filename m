@@ -1,164 +1,167 @@
-Return-Path: <linux-kernel+bounces-388745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025D39B63DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:16:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C9F9B63E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49A0AB22574
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C94C1F2220B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9562C1EABB0;
-	Wed, 30 Oct 2024 13:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60381EABD8;
+	Wed, 30 Oct 2024 13:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pjun1mSb"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ijCNjJMl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1FD1E9093;
-	Wed, 30 Oct 2024 13:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAD71EABDA
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294185; cv=none; b=aXYcqZrHqbYASxm+RZgKC7vhCj5jdXkkRCPaG2ABSt2oOYPpyumkUp3Po7gsRKZDcvdSr9Fe5Pg2WgzjTNThQ20vxqsCH9jBo8KQ9XjFkh7ryWxpEVHZgtpQGnpTPZaeiL3RUb4DRLW5fdB6MoFZXTriKUvcIZX18yxL5lAfKWQ=
+	t=1730294189; cv=none; b=ElBna5kzJQoVRu2iQ6PnVY2H9F6QML3EamgNNmiXUZ0wIQ+hNZVVDsWgK3SQRtFPK/r8wUmucMf8MHQMj2cOvgwOusQP8T5EsxE2/+3CY+p+V5Xs55GCYmAycSAeKw1eTqycn3INsScV8+XzbO1ttOSW9t0gAvd8jXIyqowamUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294185; c=relaxed/simple;
-	bh=mjpOykWQQEPD08Zedf+uqfUx3hOJDIiOsWhO6tR9sJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YYMhHX+dKOwHJB/Edp9eXmwljrfCQxHtWlmSPoqZusdOPF1Q3mLwDorTRQWKSM0JByLXo2bsp84QScHkadeo5f73lZP4PRjhvL4mJCLWXFTlzCj0Znjs85+OpcbcZhTy9aAyjqHf8C8gNtfsOKYGjw3d7rZaGV/w6kRY93005UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pjun1mSb; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso6825024e87.2;
-        Wed, 30 Oct 2024 06:16:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730294181; x=1730898981; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EwlnyAJH2YmkogP0eusSK0qgfGqw+0ITGuYRph0kP/c=;
-        b=Pjun1mSbVgfhugL494m3+/K7jJdM8J/QkOWQn4y6BgPtrJJz2PqgJfSUEaYwiLVIms
-         bx5JC8euHJAwbQQPjRM2BfPu5Z8GcIjJ8xxPQEHrucQRVjkI2HgplaE7L+k+ol+0Wt7y
-         Afm1prlFxwck2kYThD028My5vYO6JQrUHP08ZUHF5VzY+ls+upA+PhuBMzyRqlpt8Fnr
-         PIuHd/7/fLVKDgXswQfsE+1U6pSzh2WPQRFfuvvHOy3bEfRC86Tn6r+Sv6VnZn3riikr
-         5UFyA1vGIawPIGUB29rwhQfKojOU6vTrzd9xO1gWQ8Ux/K5+y1lAmpLK4WWYhqFDFB8J
-         M5Yg==
+	s=arc-20240116; t=1730294189; c=relaxed/simple;
+	bh=5iYnWc8olwUCtLtsdseFg837IfVYaFUXNV+VUmKVhy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SOm4T6sepwFl/EhIZMpLVKqRpSyFcCSd1P6vmZadZu7gjBCSVmrzjUxkESs6VgKfoXglZvOwWykcx1TnERclIW5xwr78POk4kqY/h6+CXm94zSk3a4rQ3idYQnt+UVEGxrtbO74wWDvUmyZUOQPvefsppoa2aiHOiATSUvKwX9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ijCNjJMl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730294186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IyKhuqsSDcqnKMuJnkkv0Uvk/jZHuO+vYC1KChJ/OYI=;
+	b=ijCNjJMl2EWtgzeMBwi8Bhv0vp7ZkgOIAj/fvt+F8E7V2gGr+MKj789iymMdDayV4rdGjl
+	gQb+CYDa3axh58DO7XgGSWTw9oBwPY4XAAZQVqgPjGr0giaR2ZgeXmVzrJYxZud5zY+Csc
+	aHeAXpi+vzb7TSv57cPKstGgF9NG6l0=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-212-_dRFHQlWMTmJ7gabi8g5NA-1; Wed, 30 Oct 2024 09:16:24 -0400
+X-MC-Unique: _dRFHQlWMTmJ7gabi8g5NA-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-539e91e12bbso4919774e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:16:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730294181; x=1730898981;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwlnyAJH2YmkogP0eusSK0qgfGqw+0ITGuYRph0kP/c=;
-        b=ixwpPXqOg4imbRxiKtPYqBQlFZmAlnzTnUkhJcdqFAluvzOKOgSMMbSZcZ07zW4jYn
-         ZTfkyV2+3GvAdWJye4800KWbJbpqIykjpAmm+2QCZY0vIpZxph5oplGObldOmdV3dDjg
-         ++QzpB031jZx2i4441i7QDL58g1GkJDPy5qlqnKCqeNzD1UPGh1n+FC4D/g8tTAjNhGk
-         ZJ85AkiBLc/x4PSGebkjb30OS49zsAaw93psKaXPHSWzUx453xKEZskoHipNWP0rdEzH
-         7UmChTMr6j56LQmZtKIg0kvFk6E+O9VWzeMaEby4r8p2zZW8xFioM9lwxtzA7b11k3mm
-         I0ow==
-X-Forwarded-Encrypted: i=1; AJvYcCW4VkIzKF5mPJd3vRxKtKAaMPU6mLLtQu4pTkyNFJVTKBAt4rbQWrtXvpWMFup9T8VBfwm/8j7yhQc=@vger.kernel.org, AJvYcCWkg42ALjpE5mE5p0bID8AKKYxnobWTxlEnR+saZh38yzZauJUP/54WXPBdRPspbhOPFAAkiu6JVQITMEFM@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk3GAw8+6Mqv5JQv92seMpYW5ly2v5vDHUMB6ossbXRwBHW+xP
-	n5A7ONfZJz4WbyoFdxE41Dm4E28fozvMphtSEdSoLxAl0AE5HOXV
-X-Google-Smtp-Source: AGHT+IFS8fxarz/Ajf87YTbmEN+WSlQK6b9XCgaXn95oIJM9OIcg90gyB/QNrP022LYByL9LIcA1OA==
-X-Received: by 2002:a05:6512:3406:b0:539:88f7:d3c4 with SMTP id 2adb3069b0e04-53b348ded37mr8251994e87.29.1730294180723;
-        Wed, 30 Oct 2024 06:16:20 -0700 (PDT)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bc0d6fd23sm246359e87.271.2024.10.30.06.16.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 06:16:19 -0700 (PDT)
-Date: Wed, 30 Oct 2024 15:16:11 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Kalle Niemi <kaleposti@gmail.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: kx022a: Fix raw read format
-Message-ID: <ZyIxm_zamZfIGrnB@mva-rohm>
+        d=1e100.net; s=20230601; t=1730294183; x=1730898983;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IyKhuqsSDcqnKMuJnkkv0Uvk/jZHuO+vYC1KChJ/OYI=;
+        b=QJ5/+YyebsMkf199vpBvbpITYMT20DmYU0LFLDBx0+aZ62/puBovZCPlErw/0EcUmu
+         8F3gmznNYM5/BRzaOx98QUuSSYeBdbXCD/1+Y0kdor6+Edhnql3oEF75xNRlIClru9w9
+         5Ea4RTbD7UZgIG+rpAJxuPRom00C193dQ9D4kqamHPU4YRns1Tn6+AFBhVo1HbcfotkV
+         Z+AqkwPXRGCFdbW+hin76/CgL13UAhZ5xoHyDeQHmRSxK1mO57ogPklVa7aLfCdrtA2K
+         tYpOvQFQMHP2l1cpHt3MYVtgYrQIw++YzTbL2uXvnBNUDGzk0L1A8HBnacZ9BcmO2SDx
+         b58w==
+X-Forwarded-Encrypted: i=1; AJvYcCVM1D+r2fPV497qOYhQVa7ewXOuoLMZsGcFdZqPgfi0B9QzvkNUicZ/AGo0UeeF7fv4QlTgu2QUyGs7y0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkZgZ3bAER5ROKkNIN+Bafz3CDcMyoXn6ECBpoyYgaaVrMfazz
+	w79u6SMPnAnH7iSH8zgXdxrTjHAY4R9mShw9H3/8JweN8dY+abjp6W20tsBe4yxAwBLZC77QJKv
+	JIjZSJU4/fBrKVxTB/iN5izFXJqbX/0OPjM3A0JmtrUoYUNNdnU61QGwYuA5J5DEx/xdayg==
+X-Received: by 2002:a05:6512:31c6:b0:53a:1a:cb58 with SMTP id 2adb3069b0e04-53b3491deefmr6953787e87.44.1730294183182;
+        Wed, 30 Oct 2024 06:16:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcdP1N69ftqLPwJbJcjInux4Al6kGkQDoJdvfVoc1iMHtnrcitG4ogcnXP0W3oo1BhBudYew==
+X-Received: by 2002:a05:6512:31c6:b0:53a:1a:cb58 with SMTP id 2adb3069b0e04-53b3491deefmr6953750e87.44.1730294182735;
+        Wed, 30 Oct 2024 06:16:22 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c733:7c00:d067:e327:4f99:7546? (p200300cbc7337c00d067e3274f997546.dip0.t-ipconnect.de. [2003:cb:c733:7c00:d067:e327:4f99:7546])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9cab13sm21417775e9.48.2024.10.30.06.16.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 06:16:22 -0700 (PDT)
+Message-ID: <52e1b8e1-86dd-4abd-81e6-98828284a710@redhat.com>
+Date: Wed, 30 Oct 2024 14:16:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="9YP4nW3d0VQmSZYA"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
+To: Matthew Wilcox <willy@infradead.org>, gutierrez.asier@huawei-partners.com
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, baohua@kernel.org,
+ peterx@redhat.com, hannes@cmpxchg.org, hocko@kernel.org,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ stepanov.anatoly@huawei.com, alexander.kozhevnikov@huawei-partners.com,
+ guohanjun@huawei.com, weiyongjun1@huawei.com, wangkefeng.wang@huawei.com,
+ judy.chenhui@huawei.com, yusongping@huawei.com, artem.kuzin@huawei.com,
+ kang.sun@huawei.com
+References: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
+ <ZyIxRExcJvKKv4JW@casper.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZyIxRExcJvKKv4JW@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 30.10.24 14:14, Matthew Wilcox wrote:
+> On Wed, Oct 30, 2024 at 04:33:08PM +0800, gutierrez.asier@huawei-partners.com wrote:
+>> From: Asier Gutierrez <gutierrez.asier@huawei-partners.com>
+>>
+>> Currently THP modes are set globally. It can be an overkill if only some
+>> specific app/set of apps need to get benefits from THP usage. Moreover, various
+>> apps might need different THP settings. Here we propose a cgroup-based THP
+>> control mechanism.
+> 
+> Or maybe we should stop making the sysadmin's life so damned hard and
+> figure out how to do without all of these settings?
 
---9YP4nW3d0VQmSZYA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In particular if there is no proper problem description / use case.
 
-The KX022A provides the accelerometer data in two subsequent registers.
-The registers are laid out so that the value obtained via bulk-read of
-these registers can be interpreted as signed 16-bit little endian value.
-The read value is converted to cpu_endianes and stored into 32bit integer.
-The le16_to_cpu() casts value to unsigned 16-bit value, and when this is
-assigned to 32-bit integer the resulting value will always be positive.
+-- 
+Cheers,
 
-This has not been a problem to users (at least not all users) of the sysfs
-interface, who know the data format based on the scan info and who have
-converted the read value back to 16-bit signed value.
+David / dhildenb
 
-This, however, will be a problem for those who use the in-kernel
-interfaces, especially the iio_read_channel_processed_scale().
-
-The iio_read_channel_processed_scale() performs multiplications to the
-returned (always positive) raw value, which will cause strange results
-when the data from the sensor has been negative.
-
-Fix the read_raw format by casting the result of the le_to_cpu() to
-signed 16-bit value before assigning it to the integer. This will make
-the negative readings to be correctly reported as negative.
-
-This fix will be visible to users by changing values returned via sysfs
-to appear in correct (negative) format.
-
-Reported-by: Kalle Niemi <kaleposti@gmail.com>
-Fixes: 7c1d1677b322 ("iio: accel: Support Kionix/ROHM KX022A accelerometer")
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Tested-by: Kalle Niemi <kaleposti@gmail.com>
----
- drivers/iio/accel/kionix-kx022a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix-k=
-x022a.c
-index 53d59a04ae15..b6a828a6df93 100644
---- a/drivers/iio/accel/kionix-kx022a.c
-+++ b/drivers/iio/accel/kionix-kx022a.c
-@@ -594,7 +594,7 @@ static int kx022a_get_axis(struct kx022a_data *data,
- 	if (ret)
- 		return ret;
-=20
--	*val =3D le16_to_cpu(data->buffer[0]);
-+	*val =3D (s16)le16_to_cpu(data->buffer[0]);
-=20
- 	return IIO_VAL_INT;
- }
-
-base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
---=20
-2.47.0
-
-
---9YP4nW3d0VQmSZYA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmciMZcACgkQeFA3/03a
-ocUAbAf8CemZaa8l9ZL0wm+5dOk5Q6Xqc0R6LoHRx4ub7WgqoXh2gnPzQIjZJNEa
-ZHL/M6o2GQucL0I2+mWSmXAzYaEXe/eCT3gJ3trEYN6RJxN0j9m2v59jqxCK/eO6
-OfDWKiDUk+edc5Gy0DfnmP2KOa2JfR/CX6JxEz5NSA1LbsMpAYO4YJkJRwBPiAPr
-tC1pmbJ2RitWdGGGHtF5Ip6ObuPqZy0P3y0ixayasWiar412gsGP5kRan+8I/u6K
-JKa9K7jOdVM7Lbg9PP2l+XOT6aQxm9qk7ctGWwn+QBi97vhYzvbHQGarchkqofOg
-R2b+7OrZSvVcSNhEcroCJ1c9l6rsVQ==
-=Q3JL
------END PGP SIGNATURE-----
-
---9YP4nW3d0VQmSZYA--
 
