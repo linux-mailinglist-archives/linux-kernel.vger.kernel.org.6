@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-388391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAED49B5F01
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:38:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E949B5F05
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0857A1C20D43
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:38:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1D3DB21CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036771E22F1;
-	Wed, 30 Oct 2024 09:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326D01E2314;
+	Wed, 30 Oct 2024 09:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PPS5OmUT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DZOdZhaZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hrcTSY4P"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BF71D3578
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B75C1E22ED
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730281116; cv=none; b=k633vuqIAji+S8Ph27zrUKPGxZE4b/7TwtjbX57mgJJKFDyadLkUIBshc/6gRyNW6SinWLpy6AC0JfCeIbCStOL4kEg7reD2bGvj5CU0SlnL/88tdfWfP8kJiqjBlG7mDg9Pw1mU0JQkX9+h+cxufAHzLwIZ25kozZaUxbVs/NA=
+	t=1730281156; cv=none; b=Dfm5LE7i6MeKsxBFLdfu/YCMQNmsn3pfmTXC+hphWonGcHXzs5mpBPS6yRPGcUyQ+Cl3ozjVkYWbPWFABjNICyT68Ja6S6aDjD/To6qnCAI1EF0k1FK8qp/DV15tt7qOMFHQXgvo8CAsJ/GHoeiYfJWi/VNQO58TOq5DnoYxvg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730281116; c=relaxed/simple;
-	bh=bBqDyHLK1vWpbzc4gSQ4P20VPpoRWihqbMxmBhK7XP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bk/YtlU78odTimK8IjbjLZFtm0BUr2ScXz/uXLIPJO5b0EDf82Cd+nPCMWF4OKzy6aFqjyKxFYCEkMhhwPX3R9R/36V/M8uWIoCftPpAYRFIVSqzLIZMyC9NUNrmkVY1H8UFZzuDXfB408Qf1VkE1GtDsJ8KbP5esk5dVdXXGPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PPS5OmUT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DZOdZhaZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 30 Oct 2024 10:38:30 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730281112;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TmbuJ8tIL0U0CXQgiEtrGS9NH/UsX6GKwzkR8vLmdOY=;
-	b=PPS5OmUTStezmCawOKnBMHnewKSlKMXeTiCvWGbabgx1Hef8pIRkFy18kRWnT3Wt5fiPkY
-	mIRF0Bw6KJecwAIChQJbBek05J5E5MmznHblnxfxXqAvYEpY9ua4Gq3bX96N3AdAcrQTlJ
-	kMuZQIKddG4QFnG54le2YoPvFzaWtc7K7LauO+mudy4hwUx6S+dQlEFKiqtHN2XJrxoW4F
-	Yr7AihtmIAjTssxom/OaNPKJ57GtZTX+/RvfPi5EACUOmKLAWPIQFdntLR+pun8m7McU4j
-	nHV3k7sL5Fwpwhx+Lzn/gFSFftvCLZLkIi0463MAIs4fwkCXS7s1ao20gY3ABg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730281112;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TmbuJ8tIL0U0CXQgiEtrGS9NH/UsX6GKwzkR8vLmdOY=;
-	b=DZOdZhaZeHytsofQoHf/wBsN01A1Ej43ZNjmfQct5VsSi5+1uq06LLRoZh738Df6AtU8ZK
-	iI2vKiGFr57kwDCg==
-From: Nam Cao <namcao@linutronix.de>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linux Driver Project Developer List <driverdev-devel@linuxdriverproject.org>,
-	Kalle Valo <kvalo@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dominik Karol =?utf-8?Q?Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>,
-	Xingquan Liu <b1n@b1n.io>, Tudor Gheorghiu <tudor.reda@gmail.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Manisha Singh <masingh.linux@gmail.com>,
-	Dorine Tipo <dorine.a.tipo@gmail.com>,
-	Tchadel Icard <hello@tchadelicard.fr>,
-	Felix Yan <felixonmars@archlinux.org>,
-	Moon Yeounsu <yyyynoom@gmail.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Roshan Khatri <topofeverest8848@gmail.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH] staging: rtl8712: Remove driver using deprecated API wext
-Message-ID: <20241030093830.QSofC7Cl@linutronix.de>
-References: <20241020144933.10956-1-philipp.g.hortmann@gmail.com>
+	s=arc-20240116; t=1730281156; c=relaxed/simple;
+	bh=gExNcjrUtvag1nDOnOiDLd7cvI4wjdQFmT0fqwMb11A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n4yoXy3NYe7X0rvdNivchJweTm7nOHERDDMcO2imZ3HK/ELWWS3RPlgSCcpN/uhWOicQY3S4MIAQzzgFiebQERcJnnAE+azaFOjVxCp6DGoKna5kMACWmaYcy4/lMDvzJ0sJwdMipuNqOX2FpgIWCJZvLkPSaLfYHPiBzWRC7Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hrcTSY4P; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43169902057so59808595e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730281152; x=1730885952; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gExNcjrUtvag1nDOnOiDLd7cvI4wjdQFmT0fqwMb11A=;
+        b=hrcTSY4P0PsxcOUusUi/CL6E//NGAce1CbDjPrQIjROhXQ2FL9WPCLRNiUK9lkp1xi
+         ZJ6M9pDLtAeeJxwE4H2ONZeaK0LjriLWHFKpk7L2rvSjYUhYb19PkzP7+5ipllozolKU
+         wU2/7h6HQrXRIXyF2qrWSMOijWeyENbtMjndskfwByOOEh2/QsGiEk6J0tGNciatYjh0
+         DOGleFq3eIGYYGSc5V8MgPawUAr7Rkumsw7peggkFuNA6gzqtNXIJYdZRpz4AcE3xk3L
+         LqVzPJEwpCqadtuCoe4V6iqtqqsWcEpx901Fvt6YtMPOuCbCKwrxePuaKlpw6Nv7GPVS
+         LgdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730281152; x=1730885952;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gExNcjrUtvag1nDOnOiDLd7cvI4wjdQFmT0fqwMb11A=;
+        b=NT8urB/C5fdl9dyNxyRHbaOiSr13dGz9E4W/KV1xql1f7DwMptjyCgA/y15VT60y68
+         +VI+QCLmX/dMSVRdn2XsBcwp88r399SmTCtlXJ4JC0XR2t3dUBjG8tHch50qw0zBTu5r
+         YxpiqqdE7OYonUz22xr0+ZamSgNYnSAvj2g0F9vxrQp1r1CBrAE0wICEyuPZyoZgy1QG
+         W0W93YyJlEUsI2RACeVozYMdplNAj6dYE3oJc/RHuUeTqW0oDwbHrtGm7PJ8ZaIBeulx
+         96rotGMAK/kB7Ze9COwVEmCeCRbZFjCqWW+EY4ub5alLk1dcK4ubYCydlAeCygsXSWIQ
+         m71w==
+X-Forwarded-Encrypted: i=1; AJvYcCUvn1c73mCJ4uRirtU9hFtnIhLDfdYkIooJAzxEjv76ytg0fLa6fsBblgfsP2UV2scL5Imbnz8bYyTJ47c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2I8uDc2o9N63DOxfxQQvrP6FXjYQxWmsiXC9VmEOxrmx570kG
+	NtD0XRcV7xNgf6f2U8cgFcHx5aAQeDCAxV5S+RQzkKsnSEas6dFqU9SFe8ovmTY=
+X-Google-Smtp-Source: AGHT+IE32/QWwJxt5SXFpIYLSDpj6WX3oAgieA0BND3K1CgVJXvPCDBSisVF5SvFS5ZZDNzolgjR8w==
+X-Received: by 2002:adf:ec4f:0:b0:374:c614:73df with SMTP id ffacd0b85a97d-381b710f3f4mr1868603f8f.57.1730281152021;
+        Wed, 30 Oct 2024 02:39:12 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70c44sm14816858f8f.80.2024.10.30.02.39.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 02:39:11 -0700 (PDT)
+Message-ID: <430e6dfd-4a7d-44d9-9dd6-64d99c8bc91e@linaro.org>
+Date: Wed, 30 Oct 2024 09:39:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241020144933.10956-1-philipp.g.hortmann@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/11] scsi: ufs: exynos: remove tx_dif_p_nsec from
+ exynosauto_ufs_drv_init()
+To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
+Cc: andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
+References: <20241025131442.112862-1-peter.griffin@linaro.org>
+ <20241025131442.112862-7-peter.griffin@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241025131442.112862-7-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 20, 2024 at 04:49:29PM +0200, Philipp Hortmann wrote:
-> This driver is in the staging area since 2010.
-> 
-> The following reasons lead to the removal:
-> - This driver generates maintenance workload for itself and for API wext
-> - A MAC80211 driver was available in 2016 time frame; This driver does
->   not compile anymore but would be a better starting point than the
->   current driver. Here the note from the TODO file:
->   A replacement for this driver with MAC80211 support is available
->   at https://github.com/chunkeey/rtl8192su
-> - no progress changing to mac80211
-> - Using this hardware is security wise not state of the art as WPA3 is
->   not supported.
-> 
-> The longterm kernels will still support this hardware for years.
-> 
-> Find further discussions in the Link below.
-> 
-> Link: https://lore.kernel.org/linux-staging/a02e3e0b-8a9b-47d5-87cf-2c957a474daa@gmail.com/T/#t
 
-I added owner of that "replacement driver" to CC:
-Christian Lamparter <chunkeey@gmail.com>
 
-I vaguely remembered that he mentioned the replacement driver doesn't work
-very well. But can't find that email again.
+On 10/25/24 2:14 PM, Peter Griffin wrote:
+> Firstly exynosauto sets EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR so setting
 
-Nam
+exynosauto and gs101, the users of exynosauto_ufs_drv_init().
+
+> tx_dif_p_nsec has no effect.
+
+Both set EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR, the conclusion is correct
+for gs101 as well.
+
+With this addressed:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+nitpick/personal preference: I wouldn't use the commit body as a
+continuation of the subject. I would specify what the commit does in the
+body as well. No need to address.
+
+Also, as a side note, I thought of removing tx_dif_p_nsec from
+exynos7_uic_attr, but it seems that this struct is used by
+exynos_ufs_drvs as well, which don't set
+EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR. That's a little confusing, I guess
+it's more clear if each driver has its own required settings specified.
 
