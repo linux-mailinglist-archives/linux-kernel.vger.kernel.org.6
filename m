@@ -1,126 +1,171 @@
-Return-Path: <linux-kernel+bounces-388842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104FC9B6522
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:04:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44289B652E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC396B212E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4001C220AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6931EF0B4;
-	Wed, 30 Oct 2024 14:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0361EF939;
+	Wed, 30 Oct 2024 14:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fbtewNI3"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPKyIVSJ"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBB226AC3;
-	Wed, 30 Oct 2024 14:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77D01EF084;
+	Wed, 30 Oct 2024 14:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730297023; cv=none; b=OQVGLb7aNbKyCPebIY/pn64k1LG4EUSRgmYdNWCb8ZFwT8ihT+xo6PLfivgtINXyQyscFhb2i8HSV4IpecXY9G3ezu+qAq656PLxo01vh8vMVL5Phfo082sVZUQiXzuVI/fzs5q/eKWny23kYUsn2C4V3uOwguN3pP/BBMVDGlI=
+	t=1730297058; cv=none; b=Lmnalz8F3Z499vqH4G++a+3ptlDFFGay2ixtG4dyi2KRcWq54dqQr62OzHNyOPpK9JL7um20iC7V6USHfm50r8tbYGRaXw2QZGfRd5j/LNlsoVvbM5UolIIVj1aUz/hKsEfryZ5oZxYxRWwiUodEHP6IL/UeBn0T3vOk7kwziG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730297023; c=relaxed/simple;
-	bh=WREgZgwaUpe0QqIqqKHUlleKGHjEWpMfLFBqRJaBucs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kDzRhgsbZoKjV3TbEDzHZQbKhSpUTINh1zLEdDaQH/N5iqLHApyyn9lSQOsK+4Y63DrQFa3u4SM/ZXzDw7wehyNiVpZPTx+NvM9TtZfbKkItckTyjk66a1EuiaKnoeQ3IK3/2ySkqfl2bJ8KRigPqif6BBGbgpQuFJYFOvX1Z9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fbtewNI3; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PWbT83tcerTIQi8XzpZf3kWGF9r+M/FnjfrwWbmtpWI=; b=fbtewNI3zJ1+BvW0SBmygie0hA
-	vqIruaTV/c4BX7hGkKMJzFb1sGcoumH+AnQQOhg7T5esdpVpQQGd1LRGuoZYRD3bX3lf/cMOH8VdG
-	YZ1Fgp9dkEP9imwvRuZrTMzUGulku2gFtjNW7wMPpt3jvxtESu9159M744XJZs8CTeout/PppwOEg
-	5bn3FrFOavsDw37VEFfA6CuSQzmWk6Vh6yv4OUY+2wGyWwoD3PJSg46alHErpUOP9/PryT2WrSn1S
-	3pFukxoxFad0cu39jjiMtdpydmYGIQElx9irk1hKQ5pYi8xGJD3a3dOjiFZUDZ5VOoVDNWQE35F9+
-	imuIsrhw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t69ID-0000000AGaY-2YuW;
-	Wed, 30 Oct 2024 14:03:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8A06A300ABE; Wed, 30 Oct 2024 15:03:24 +0100 (CET)
-Date: Wed, 30 Oct 2024 15:03:24 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-Message-ID: <20241030140324.GM14555@noisy.programming.kicks-ass.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <20241029135617.GB14555@noisy.programming.kicks-ass.net>
- <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
- <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
- <20241029182032.GI14555@noisy.programming.kicks-ass.net>
- <20241030021722.2d1fe6d3@rorschach.local.home>
+	s=arc-20240116; t=1730297058; c=relaxed/simple;
+	bh=riTO+YkAY0deqoxQOS9+RgcWTfT9chRhKEWcM4sn+IQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dGuwClAY5xQIYcxr0CalFNUBNVqO4yv0UxhQbssRun9U1AKw3lg958WuK32o08iouG7vNJp8F9jNOyVDfP8rzqxfXsPz562jYOsHKxHjUYuZSyg6j1r4yrDN9fLlqaw3u2Va0K28jZatfBFU2pOx4E0vbTheP54vJEOHQGOGhUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QPKyIVSJ; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb58980711so59678201fa.0;
+        Wed, 30 Oct 2024 07:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730297054; x=1730901854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s2PgkGCB9uEgJ6DAJj1+SbB2BSpBIqMTAwux+rvPO10=;
+        b=QPKyIVSJ3EGUMFqC4w5z6rXoIzJ5i6jwtOTm80EOUHBtFM/BWv2LcJPTWEwQVa4vGh
+         tCg2Jeqp2bo/TBilSaJzU6oIKe3W+IsszCEeyTv3dIKzrPA7HsxqaUSLkP7V/Q5WqE3P
+         MM7ZHpvaixfFiby+ogYaopyYHpYEnaMBjFAYy7oFzM4Cu4GpibMfZwjcOv+IPz5HAdd5
+         MCApVWEqNPjV56KEcBnv1ZDOwl4UyAdoPBuEvxq6QI7vAMnMIK5NEmU/NnMRPptvVFLr
+         BcbBYnlUwALsRh+FQiOFsvptZG76h9qLcXMg4dsZCfNBRAbkC/BQO7U+cG0qQVLUWxgR
+         8Clw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730297054; x=1730901854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s2PgkGCB9uEgJ6DAJj1+SbB2BSpBIqMTAwux+rvPO10=;
+        b=i1sZiy6545RvcZZ34ZJ8xHbsu3u1hF4XDfEjh+6cFMOzOKHj1KXxLBrENFp9ZnCPa+
+         lKnU6k5e/Ab33OEtVPpNzx4OeWS9MkcmlqxD0IFhkI+TUdMx30RwvGOdKlztwsZygWSG
+         k892heB/+zlcBMKNsKd3AxvG45TpzhvHXlLxTj/9hSph22cGs+gFn9wL2//X5R9eVuII
+         uB79/8vYYygPAxhV7hUE21kLWZA7O2VcL77gPz2+WtDlrT2Q5ioGmcExaDKSz3HxV+qb
+         658X4g3obg919/ao9RqOkiclgro18mCjuxBFvpj/iA0mIjUg3/OocmgRMAjapYPa1mMo
+         ySlA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3KvwaAb1cMDicjrW0EyI5nYTpOYY4JZQr8Fce64zpS6ncEzpuNOZBr5+/CF2duxtvwMG2Wb5/TehWxktBeeu4WA==@vger.kernel.org, AJvYcCWN7NBcXT5MatyQyYhpFGUVzNvJ4b78qncnDeq5/qYQkt7zGlG1AAskG5V6/O9967MH2Zm6v7jBIAu95mM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEwzncS2NJqO8M9bk1rNeVtqLvLdZtvEz2MK0o39jjVh0QsVOc
+	SV6k2P3FGKKXqsG37Y4uRKNbakr4NNvNwX/kurTfW41f0U6w2J/AF0ksTbbw/HgP/lpG/acs0sR
+	oxqQSUIvz5NK4442Ro0X+38MrLN0=
+X-Google-Smtp-Source: AGHT+IHnJq84m7aUxfG0ZPJwIferNLUtsSal4frhbPzaGkjLOl9PTdIGNUzgO6W6eHSANhGUNLyySnRg5jEKCK/i8WE=
+X-Received: by 2002:a2e:a99d:0:b0:2fc:9759:4e20 with SMTP id
+ 38308e7fff4ca-2fcbdf70d46mr76674701fa.12.1730297053313; Wed, 30 Oct 2024
+ 07:04:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030021722.2d1fe6d3@rorschach.local.home>
+References: <20241018110929.1646410-1-daniel.baluta@nxp.com> <ZxkW9SUr91PyH9c/@p14s>
+In-Reply-To: <ZxkW9SUr91PyH9c/@p14s>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 30 Oct 2024 16:04:00 +0200
+Message-ID: <CAEnQRZDoYvK-YXLjqbXsRAWDkHrWNOoR1OCCWxs+AfNUDuPB_w@mail.gmail.com>
+Subject: Re: [RFC PATCH] remoteproc: core: Add support for predefined notifyids
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, andersson@kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, iuliana.prodan@nxp.com, peng.fan@nxp.com, 
+	Alexandru Lastur <alexandru.lastur@nxp.com>, arnaud.pouliquen@foss.st.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 02:17:22AM -0400, Steven Rostedt wrote:
-> On Tue, 29 Oct 2024 19:20:32 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > The 48:16 bit split gives you uniqueness for around 78 hours at 1GHz.
-> 
-> Are you saying that there will be one system call per nanosecond? This
-> number is incremented only when a task enters the kernel from user
-> spaces *and* requests a stack trace. If that happens 1000 times a
-> second, that would still be around 9000 years.
+On Wed, Oct 23, 2024 at 6:32=E2=80=AFPM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> Hello Daniel,
+>
+> On Fri, Oct 18, 2024 at 02:09:29PM +0300, Daniel Baluta wrote:
+> > Currently we generate notifyids in the linux kernel and override
+> > those found in rsc_table.
+> >
+> > This doesn't play well with users expecting to use the exact ids
+> > from rsc_table.
+> >
+> > So, use predefined notifyids found in rsc_table if any. Otherwise,
+> > let Linux generate the ids as before.
+> >
+> > Keypoint is we also define an invalid notifid as 0xFFFFFFFFU. This
+> > should be placed as notifids if users want Linux to generate the ids.
+> >
+> > Signed-off-by: Alexandru Lastur <alexandru.lastur@nxp.com>
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++--
+> >  include/linux/remoteproc.h           |  1 +
+> >  2 files changed, 13 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/=
+remoteproc_core.c
+> > index f276956f2c5c..9f00fe16da38 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -332,6 +332,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int=
+ i)
+> >       int ret, notifyid;
+> >       struct rproc_mem_entry *mem;
+> >       size_t size;
+> > +     int start, end;
+> >
+> >       /* actual size of vring (in bytes) */
+> >       size =3D PAGE_ALIGN(vring_size(rvring->num, rvring->align));
+> > @@ -363,9 +364,18 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, in=
+t i)
+> >       /*
+> >        * Assign an rproc-wide unique index for this vring
+> >        * TODO: assign a notifyid for rvdev updates as well
+> > -      * TODO: support predefined notifyids (via resource table)
+> >        */
+> > -     ret =3D idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
+> > +
+> > +     start =3D 0;
+> > +     end =3D 0;
+> > +
+> > +     /* use id if specified in rsc table */
+> > +     if (rsc->vring[i].notifyid !=3D RSC_INVALID_NOTIFYID) {
+> > +             start =3D rsc->vring[i].notifyid;
+> > +             end =3D start + 1;
+> > +     }
+>
+> This will likely introduce a backward compatibility issue where anyone th=
+at
+> has more than one vring and set their notifyids to anything else than 0xF=
+FFFFFFF
+> in the resource table will see a boot failure.
+>
+> A while back the openAMP group started discussions on using the configura=
+tion
+> space of a virtio device to enhance device discovery, with exactly this k=
+ind of
+> use case in mind.  I think it is the only way to move forward with this
+> feature, though it is a big job that requires a lot of community interact=
+ions.
 
-We used to be able to do well over a million syscalls a second. I'm not
-exactly sure where we are now, the whole speculation shit-show hurt
-things quite badly.
+I also found this attempt few years ago:
 
-> > 
-> > But seriously, perf doesn't need this. It really only needs a sequence
-> > number if you care to stitch over a LOST packet (and I can't say I care
-> > about that case much) -- and doing that right doesn't really take much
-> > at all.
-> 
-> Perf may not care because it has a unique descriptor per task, right?
-> Where it can already know what events are associated to a task. But
-> that's just a unique characteristic of perf. The unwinder should give a
-> identifier for every user space stack trace that it will produce and
-> pass that back to the tracer when it requests a stack trace but it
-> cannot yet be performed. This identifier is what we are calling a
-> context cookie. Then when it wants the stack trace, the unwinder will
-> give the tracer the stack trace along with the identifier
-> (context-cookie) that this stack trace was for in the past.
+https://lkml.iu.edu/hypermail/linux/kernel/2001.2/05248.html
 
-You're designing things inside out again. You should add functionality
-by adding layers.
+I think the best way to go is to bump the resource table version and suppor=
+t
+the old behavior for v1 and the new behavior for the new version
+(which should be v2).
 
-Pass a void * into the 'request-unwind' and have the 'do-unwind'
-callback get that same pointer. Then anybody that needs identifiers to
-figure out where things came from can stuff something in there.
+We will be back next week with a patch to express this.
 
+thanks,
+Daniel.
 
