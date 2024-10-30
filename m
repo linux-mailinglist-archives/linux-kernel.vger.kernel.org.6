@@ -1,120 +1,170 @@
-Return-Path: <linux-kernel+bounces-388773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9D49B6431
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:34:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182BD9B64D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A1BF1C2123E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:34:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D124E2825F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD611EE02C;
-	Wed, 30 Oct 2024 13:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hddpBxgF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8681EBA16;
-	Wed, 30 Oct 2024 13:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C671EBA05;
+	Wed, 30 Oct 2024 13:52:13 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCA81E49B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295233; cv=none; b=Ve1hwrWbc3rdKWAtEcgKcFePRapgU7EcehOznaBUCE6tvAVZVCo539D6EUF95EW/3K5GV4u11VzLUQjbYWQdF5f3/0lGHneQ0P8iQwCNcSr9y3KRv1bGEAETKmGeKttXpCUNgelZwch+ggOSMx27lO0w1LFxPrJbEzq/wvCmGyo=
+	t=1730296332; cv=none; b=XnYJssJDoGAUpygRcIhEg7fgI28s7J9k+3wB25mOMYF3Trh+yGuyuw+ZTEEwomLK8EARPDTb/z7XX4WsdYxth4MlQGfFWGW2fGgP5OMKsuZiY0iyeFBF3peNysQgiuf6K4Be7y6N4h0iOOo4ARRqZAWbF5ivrXpzYT/JoCD1b8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295233; c=relaxed/simple;
-	bh=VTEgTYA6sgpsr3ySzrt1Dq/bsgM4F9WzEu+pngiVvnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d6V0AUwXkdMfmOrUkZlVhElgW5ksQqWUBGsiCNi9tQs0yKifmO0ipEd1gzVpjkCh6LzMl6HfTapG6jQlCL1RiPjUIvx36aGngF3KhdW0VIOVhkdNFh2DsKsbrrT3J3ofVK+Tp/o0evtLWGo4uk5rfH9794JZZIpQOVJSubZF9Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hddpBxgF; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730295232; x=1761831232;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VTEgTYA6sgpsr3ySzrt1Dq/bsgM4F9WzEu+pngiVvnU=;
-  b=hddpBxgFmOWFaZNGKtheFwuwPFo4bDqbMFohxS5TSyi3CvvyONnR+t03
-   zzgMXPJxQQdZ3AFph1juZkz8dZAT5UdQqgesMFgDkRYbjlpVutD1aWaUj
-   z+thmdnYXBag+qQC63C7nKD7UDA4NyOwRlxjyZq0I/rd/ofQK/5rev4Az
-   g7ERR8nyGTeBtX5DduqQkrwgxjw9PRBzUSa+V5JpPWthqPlmhJmGnjQ4m
-   hFsvwgSp3H+/9rwNrpxQSqRNom1NiufrL1v9wDLp8DWYAT43/Khyk/QZr
-   pltoA3XpWKv6HH0Mjs69A61H2rU9bUxBJvbDeEUHOITQtCx9qeFKPMEZt
-   w==;
-X-CSE-ConnectionGUID: dXNVfxqnTR6ZcLN1XRxCxg==
-X-CSE-MsgGUID: 75D4mzFrS1OOGDQZPqlYjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41095881"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41095881"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 06:33:46 -0700
-X-CSE-ConnectionGUID: Z9l4bGpbQKC/PBdy3zs/Gg==
-X-CSE-MsgGUID: KRDy3Qs8Q36Vsw+faOgV2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="119774212"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.244.247]) ([10.245.244.247])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 06:33:42 -0700
-Message-ID: <0a767d20-624d-494e-96b9-5e2a379550fc@linux.intel.com>
-Date: Wed, 30 Oct 2024 14:33:31 +0100
+	s=arc-20240116; t=1730296332; c=relaxed/simple;
+	bh=d/UhrnxIRgcd8zLd+YLCrItWJ/wc2ffutL+HOEFfCso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vohc5yaHXbqgDCQl1vA9xoYAV/DgUvOdaplvytGRYxoJpGnSqJDYSDcGx7XP/5cTeLzEp0Jcgb33qkWe+xqGAbHxEZdrMgS4mChSijGwtK/6yciF0lcYeWxB5oA/6s4xnUFWnkynxPTvsOi2hmTRGQndOJkTO625hnfcpggdeNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 49UDXklJ032424;
+	Wed, 30 Oct 2024 08:33:46 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 49UDXe5O032403;
+	Wed, 30 Oct 2024 08:33:40 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Wed, 30 Oct 2024 08:33:39 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: "Nysal Jan K.A." <nysal@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Peter Zijlstra <peterz@infradead.org>, linuxppc-dev@lists.ozlabs.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+        Mark Brown <broonie@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] sched/membarrier: Fix redundant load of membarrier_state
+Message-ID: <20241030133339.GQ29862@gate.crashing.org>
+References: <20241007053936.833392-1-nysal@linux.ibm.com> <20241029055133.121418-1-nysal@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] x86/smp: Allow forcing the mwait hint for play
- dead loop
-To: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
-References: <20241029101507.7188-1-patryk.wlazlyn@linux.intel.com>
- <20241029101507.7188-3-patryk.wlazlyn@linux.intel.com>
- <e332a243-5a98-49ed-81be-b6db305d5dc5@intel.com>
-Content-Language: en-US
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <e332a243-5a98-49ed-81be-b6db305d5dc5@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029055133.121418-1-nysal@linux.ibm.com>
+User-Agent: Mutt/1.4.2.3i
 
->> +void smp_set_mwait_play_dead_hint(unsigned int hint)
->> +{
->> +    WRITE_ONCE(play_dead_mwait_hint, hint);
->> +}
->
-> This all feels a bit hacky and unstructured to me.
->
-> Could we at least set up a few rules here?  Like, say what the hints
-> are, what values can they have?  Where do they come from?  Can this get
-> called more than once?  Does it _need_ to be set?  What's the behavior
-> when it is not set?  Who is responsible for calling this?
+Hi!
 
-The other idea is to first check if currently loaded idle driver provides
-enter_dead() callback first and leave the current, deepest mwait hint
-computation code as a fallback.
+On Tue, Oct 29, 2024 at 11:21:28AM +0530, Nysal Jan K.A. wrote:
+> On architectures where ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+> is not selected, sync_core_before_usermode() is a no-op.
+> In membarrier_mm_sync_core_before_usermode() the compiler does not
+> eliminate redundant branches and load of mm->membarrier_state
+> for this case as the atomic_read() cannot be optimized away.
+> 
+> Here's a snippet of the code generated for finish_task_switch() on powerpc
+> prior to this change:
+> 
+> 1b786c:   ld      r26,2624(r30)   # mm = rq->prev_mm;
+> .......
+> 1b78c8:   cmpdi   cr7,r26,0
+> 1b78cc:   beq     cr7,1b78e4 <finish_task_switch+0xd0>
+> 1b78d0:   ld      r9,2312(r13)    # current
+> 1b78d4:   ld      r9,1888(r9)     # current->mm
+> 1b78d8:   cmpd    cr7,r26,r9
+> 1b78dc:   beq     cr7,1b7a70 <finish_task_switch+0x25c>
+> 1b78e0:   hwsync
+> 1b78e4:   cmplwi  cr7,r27,128
+> .......
+> 1b7a70:   lwz     r9,176(r26)     # atomic_read(&mm->membarrier_state)
+> 1b7a74:   b       1b78e0 <finish_task_switch+0xcc>
+> 
+> This was found while analyzing "perf c2c" reports on kernels prior
+> to commit c1753fd02a00 ("mm: move mm_count into its own cache line")
+> where mm_count was false sharing with membarrier_state.
+> 
+> There is a minor improvement in the size of finish_task_switch().
+> The following are results from bloat-o-meter for ppc64le:
+> 
+> GCC 7.5.0
+> ---------
+> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
+> Function                                     old     new   delta
+> finish_task_switch                           884     852     -32
+> 
+> GCC 12.2.1
+> ----------
+> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
+> Function                                     old     new   delta
+> finish_task_switch.isra                      852     820     -32
+> 
+> LLVM 17.0.6
+> -----------
+> add/remove: 0/0 grow/shrink: 0/2 up/down: 0/-36 (-36)
+> Function                                     old     new   delta
+> rt_mutex_schedule                            120     104     -16
+> finish_task_switch                           792     772     -20
+> 
+> Results on aarch64:
+> 
+> GCC 14.1.1
+> ----------
+> add/remove: 0/2 grow/shrink: 1/1 up/down: 4/-60 (-56)
+> Function                                     old     new   delta
+> get_nohz_timer_target                        352     356      +4
+> e843419@0b02_0000d7e7_408                      8       -      -8
+> e843419@01bb_000021d2_868                      8       -      -8
+> finish_task_switch.isra                      592     548     -44
+> 
+> Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
+> ---
+> V1 -> V2:
+> - Add results for aarch64
+> - Add a comment describing the changes
+> ---
+>  include/linux/sched/mm.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> index 928a626725e6..b13474825130 100644
+> --- a/include/linux/sched/mm.h
+> +++ b/include/linux/sched/mm.h
+> @@ -531,6 +531,13 @@ enum {
+>  
+>  static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
+>  {
+> +	/*
+> +	 * The atomic_read() below prevents CSE. The following should
+> +	 * help the compiler generate more efficient code on architectures
+> +	 * where sync_core_before_usermode() is a no-op.
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE))
+> +		return;
+>  	if (current->mm != mm)
+>  		return;
+>  	if (likely(!(atomic_read(&mm->membarrier_state) &
 
-Does that sound less hacky?
+I'd say "CSE and similar transformations", but yeah, in this case CSE.
+The point is that any access to a volatile object is a necessary side-
+effect, so it has to be performed on the actual machine just as on the
+abstract machine (on all the same paths, and as often).  It might be
+nice to have an atomic_read (for PowerPC) that can generate better
+machine code.  Not a trivial task though!
 
-Unfortunately, it comes with a little problem. In case of kexec, we need to
-have a way to exit from the mwait loop and enter hlt to prevent offlined CPU
-from crashing when the old memory is being overwritten.
-
-I think, we can solve it by bringing the CPU back online before we proceed
-with kexec, but I would appreciate some feedback from someone who is more
-familiar with kexec, before merging that.
-
-We may also signal that by touching the resched flag on which enter_dead()
-code will monitor in case of mwait and enter hlt right after, but that's a
-bit hackier IMO.
+Reviewed-by: Segher Boessenkool <segher@kernel.crashing.org>
 
 
-> What good does the smp_ prefix do?  I don't think _callers_ care whether
-> this is getting optimized out or not.
-
-The prefix makes it a little bit cleaner by not exporting new global symbol
-with "set_mwait_play_dead_hint" name.
+Segher
 
