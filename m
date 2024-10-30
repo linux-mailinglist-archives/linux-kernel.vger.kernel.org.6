@@ -1,132 +1,89 @@
-Return-Path: <linux-kernel+bounces-388992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3424D9B671F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:14:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E59B673B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 683E8B232BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12EB028260C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1832141BB;
-	Wed, 30 Oct 2024 15:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MVlILVSM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5AD215F5F;
+	Wed, 30 Oct 2024 15:13:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE5E213EDC;
-	Wed, 30 Oct 2024 15:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4978F21503F;
+	Wed, 30 Oct 2024 15:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301203; cv=none; b=sVNPEur+3ELMmfdOR/iZvkl+lfkUqbV0nBU/5I5Jnjs5PWK6b+1+DDKB7BeRlKbjwPVBa3n+PF3YoLya+/UTNovUVRknm4MLjp02ZqzLFIcn84hVtvQayF8VVtexc0pael7iroHzurnVejX40v7YKP/6dpo3nyJiZGREmVeYmRQ=
+	t=1730301218; cv=none; b=eyqh1UOvIxa8bBucPlX9/5SGnwQLQyYNL1WSfkS7D7A9mhd8A7/Ooml6GQ7ZsINoaeL9xLQxrRrESrbj1KOFI2lXqnY+Z2HJSTHGPeC0TH8TL7w7wy/ssDDveBhzG8SgrXiqFGIb/LOdI1ZC1wegyfmzYREcS8VWRnvxeb2FXlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301203; c=relaxed/simple;
-	bh=LuEdHPduW79U4O3XLY1gGdLAM5ujOyiDtRI4qWqVFuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EhVlMKLhwtOnOb8GUceiCwkylh1D9zpb+vUlhbTZgHgjxyc+HE9B8XAXrpv6CeRxrilWE9USzM3WjGDt2RMplYxi1WqaD+64KQXuXKimffkczPR38tHBo8NXuCm4eLIN4F3QDRVsh7vKiUZ9MFCMIhAFRkurmfjVQGkOCIPC8c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MVlILVSM; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730301202; x=1761837202;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LuEdHPduW79U4O3XLY1gGdLAM5ujOyiDtRI4qWqVFuw=;
-  b=MVlILVSMqBqJr+ur2kOCgWTBEMgJ5f2P0hmTB626dy27BOwQZjrByH7E
-   nqoqHccGoj7q+NVJLyqQfjLVHSAnitSk7tGuB42RaAfNhUu2WBkNUqn17
-   JzT8PGPCf6jsFHrQWEATenbYpnNFnY4eWPV5q8I8VJl8Q22Lp0AFTCtgY
-   acj5bFxq5jPOukkiMVVRbC/nkP/+7XeSceKi/C/+UhuwS1jaxDQ6jgDh5
-   y8tTKRJ0SxiZ4pDOVJb47ZDp81aJVnc5MXMCyr/86eg5Q/xG+c6i/UXOS
-   4lQuPCX8mNZ3LC+eIsnemCvnsAw4g4m5KICFBJJxh4bl7TDTlRzsb7Fuw
-   g==;
-X-CSE-ConnectionGUID: hjHz78dIQ/SCIGpn8cLgdw==
-X-CSE-MsgGUID: 8LY0ubjsQkqH/LQDkLp5QQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40542002"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40542002"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 08:13:20 -0700
-X-CSE-ConnectionGUID: re2uEumQTOy26heq2IEy0A==
-X-CSE-MsgGUID: xWhHf4zATleSPYPwptJ85Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="86953417"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 08:13:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t6ANn-000000094nf-3BxU;
-	Wed, 30 Oct 2024 17:13:15 +0200
-Date: Wed, 30 Oct 2024 17:13:15 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Len Brown <lenb@kernel.org>,
-	Jarred White <jarredwhite@linux.microsoft.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] [v3] acpi: allow building without CONFIG_HAS_IOPORT
-Message-ID: <ZyJNC44r11a83FlI@smile.fi.intel.com>
-References: <20241030123701.1538919-1-arnd@kernel.org>
- <20241030123701.1538919-2-arnd@kernel.org>
+	s=arc-20240116; t=1730301218; c=relaxed/simple;
+	bh=IgNI8lgYFQbAt0dJNQpNKncmbTgA/OCnxxHvT/Lwx9Q=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e9MzI+IcMOre4VObwGBRShcBLD2VxFro0jEzf8aNuFuXpUNfxTAwpwRILhoXrdB6iChxsLlZZg0vAMRisjrHRkMkybTnRnC+AHVnMYMdQ3cRnrVmOd+PiSHMUkDDVmYoKkul7OAhAqWu0oE5lyRw7aNFGJwRmXHk7y+qdxQJJq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdr9j3MWvz6GDsD;
+	Wed, 30 Oct 2024 23:08:41 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AC7FD140498;
+	Wed, 30 Oct 2024 23:13:32 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 16:13:31 +0100
+Date: Wed, 30 Oct 2024 15:13:30 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v2 02/14] PCI/AER: Rename AER driver's interfaces to
+ also indicate CXL PCIe port support
+Message-ID: <20241030151330.00005e54@Huawei.com>
+In-Reply-To: <20241025210305.27499-3-terry.bowman@amd.com>
+References: <20241025210305.27499-1-terry.bowman@amd.com>
+	<20241025210305.27499-3-terry.bowman@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030123701.1538919-2-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Oct 30, 2024 at 12:36:41PM +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Fri, 25 Oct 2024 16:02:53 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
+
+> The AER service driver already includes support for CXL restricted host
+> (RCH) downstream port error handling. The current implementation is based
+> on CXL1.1 using a root complex event collector.
 > 
-> CONFIG_HAS_IOPORT will soon become optional and cause a build time
-> failure when it is disabled but a driver calls inb()/outb(). At the
-> moment, all architectures that can support ACPI have port I/O, but this
-> is not necessarily the case in the future on non-x86 architectures.
-> The result is a set of errors like:
+> Rename function interfaces and parameters where necessary to include
+> virtual hierarchy (VH) mode CXL PCIe port error handling alongside the RCH
+> handling.[1] The CXL PCIe port error handling will be added in a future
+> patch.
 > 
-> drivers/acpi/osl.c: In function 'acpi_os_read_port':
-> include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
+> Limit changes to renaming variable and function names. No functional
+> changes are added.
 > 
-> Nothing should actually call these functions in this configuration,
-> and if it does, the result would be undefined behavior today, possibly
-> a NULL pointer dereference.
+> [1] CXL 3.1 Spec, 9.12.2 CXL Virtual Hierarchy
 > 
-> Change the low-level functions to return a proper error code when
-> HAS_IOPORT is disabled.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-...
-
-> +	if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
-> +		/*
-> +		 * set all-1 result as if reading from non-existing
-> +		 * I/O port
-> +		 */
-
-Don't know if Rafael can / want to tweak this, but would be nice to follow
-standard style for multi-line comments.
-
-		/*
-		 * Set all-1 result as if reading from non-existing
-		 * I/O port.
-		 */
-
-> +		*value = GENMASK(width, 0);
-> +		return AE_NOT_IMPLEMENTED;
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
