@@ -1,121 +1,241 @@
-Return-Path: <linux-kernel+bounces-387982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14E99B58BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:41:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E079B58C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA711C229F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:41:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B629E1C22BBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0897208A0;
-	Wed, 30 Oct 2024 00:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770FE1DDE9;
+	Wed, 30 Oct 2024 00:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBVHil7P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DfQd6br8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE711AAD7;
-	Wed, 30 Oct 2024 00:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730248860; cv=none; b=W1d1zMwLkbKlLIRBJPiA05bUXYZHx5ehx/pqZGElkb49MyiEom7O1B6PQaiSkbR7hF1ZEzDNlV5eMs6OjlmSI5/00z2cjX5MGeog/qARPvZRzmC9JxWqtab5RjICyIJk869PDRSkxRcSDCIdN84lw6zAJh846F/ulj6X3kunDJI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730248860; c=relaxed/simple;
-	bh=VDQMFPrKxlMhz1aUAMz83CqSyTiE8wcdm2ljHR+1PUk=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ovdZ5ZwleG81R2E9TcHDJd3a4rQbAlXBZym2lQcl2qcYxtebMpoE2Lmxc8FZZHJ03VNBFVMCmLoQSKofzE01ZvH/JB6adv7QL4FxKZei7eCbQb6lC7/tNYpb56cBv0+6bEkyM/9vmtFcU5/dV1MgVWtwgwvRtXtTFgHV0IYYW1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBVHil7P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D47C4CECD;
-	Wed, 30 Oct 2024 00:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730248859;
-	bh=VDQMFPrKxlMhz1aUAMz83CqSyTiE8wcdm2ljHR+1PUk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=YBVHil7Pq3+59Lt49I5fTeu51WIHalVOcjBN/o2fLzr+kmN5B8SatNl/VlzZROn8A
-	 9J5w5eUElC2q/bQ1ATCZkw8L7SXy/+upXU1WtNuwLlnzTENT1/wzJBLIcA+uBfITcR
-	 zdIHDnpeQRLRLSQs0L9lnRvfwB6hsapDgLJ8aS6XR3kQRRFVB8N6BgQ3MeGkwbPuFy
-	 Opkn3TpcKzpq6rNDOgSrbTASoHODWeQMimjF+HoWzPUK+uh74qNgGiLwbpbBCDvcsA
-	 3AqCsBfG2kCX4lNGQNjgLZBtCo0EckfAVnibVvgkTPX78oVgG8lB9J1jvWtPsLNyuo
-	 J2dgu1uN/mVSg==
-Message-ID: <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE53125DF;
+	Wed, 30 Oct 2024 00:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730248914; cv=fail; b=EYNx8b5Wld2T4xebmnBXWFqzTg3iwaNni0JKK4bS443T/bLVI31zM36kAEnG4V0iFV/7cry2fF0cNkjjvHoLxOfTI7Qx7FDoL4w3xryNuM7bQRtGyt6lNkRFlMFhb4gWBvoPabkqTmPoiSmitFVXuvdepp/m7yyn7PNl+vMsMJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730248914; c=relaxed/simple;
+	bh=tqbZcYUkGjwCBOBHh7c2DQuE/iyuDDIf/ixVMOGZ/HQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mwPZUtCWvOgpATSmxYslVN5+DGpodgrTbkGWUb0b0QlTg6SmJh2lUPhsD8r6uasIKLMSp9cChV7DA2mmJ8dj/iNumhl69nSbNNcIEl/8j67GFOQQgmfuz3jxDSGpjaYtdPdEyA/BKKIOJlfetWL4JmgaEInslEOlMxXqaWJJtOk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DfQd6br8; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730248912; x=1761784912;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=tqbZcYUkGjwCBOBHh7c2DQuE/iyuDDIf/ixVMOGZ/HQ=;
+  b=DfQd6br8i8nFqqsPncF4VNPAOwwgqZhKm/JS6sQEIWxnOt+929yF+3tq
+   HPWky1GHrUxVo00msHkn/cdl6zpeYdKhK+X3N0ZZXbHuWzUB4nLYh4cdT
+   huoyKmkD5Vm+XVAx8lGFDZer+dpFffx9c2WCfb3HsVeTNGv/iu7TwfDf7
+   PWaxxSNIZm9mRTa1G6flil4h/Ack+ZfHnpdlRLi1caP7h3gIJ765bbZwo
+   ZSr7SJqzEix1I/ILYRRXgXEqw6HZe167P6Cy7mxNQ42rOa0HSB79qjquI
+   VURHqk/0QiB6G3+VnCqm85sqthJnmRo1BuSqWmDeR1yqrYHX1f2wcjtf7
+   g==;
+X-CSE-ConnectionGUID: yxiCRmruR5mebBDBs2LbmQ==
+X-CSE-MsgGUID: mbGiF0tLS+m60hjp236eYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30124065"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30124065"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 17:41:46 -0700
+X-CSE-ConnectionGUID: E0QsfzlJQHe+RTELNrVyZg==
+X-CSE-MsgGUID: J2pB+tvmTNiQQbx9H+E1qA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
+   d="scan'208";a="82558175"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 17:41:45 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 29 Oct 2024 17:41:45 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 17:41:45 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.171)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 29 Oct 2024 17:41:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t9YucwLUPHiWwI3mWAJdGqnlvfUS7FKE5eebl5uhrkkollS144JHWUD5f3SzF/d85A5HMpuHaOyqh8Ohu/7l/rYwx7Ttzg+LaDOnviMVMt4lNr3h4jqdAgqZe6SUX01Y7shwGaHy3HZIDD8ThPcaGzrHdO6zxSNZ4+dP3t1q4N+iiXWLzJSR6r88lUy1XvGb5pwPh4iV/bvlXMgXA8HccaRAYSbzOUEIa97A1LIGk52+vzxuIwqNNVkwXTx975iIK/DR5UolpPcnhsTORpUFwO/qTt++l94M5pX+rWpZXdF6fEvr1SeDEHhLRaouVUSK+elcQiBmkq+lOJ2+/DM5FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aldvFJ1BfUtu821Fn+oBb9WsejPxHpMmlRIq53l2lqo=;
+ b=YHQz/etBR0EL8a/heRP/HPJlR+MhwK7ny8+hi1I0XPgQuROYXuVcxMLh7w3P5vEKfI73/CpoU4E8cwjOWrw8UAaqh7/xzIhECj7C7uasettXj9OeTfylbr7tnOG0iNEZWlZIeFwUlikN15ATTlXrPl+Q0isiVVAHvf9nFxnooJ4BcKTpuLe2kG1FcYEeriIqDcXaZeGJluvqmGEhYp/5OZHpxQmpH5SASAvIxKJJ58rI02SedDY02059c8RgbPhxviN7G7LywbfQ5NKximHHHnNSXK5rx2ILxexOXT/mbN4w7GIgHnQhKemjSik+ViC4DDuvKV58bWzSTmvsG+XV+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com (2603:10b6:208:31a::21)
+ by BL1PR11MB5319.namprd11.prod.outlook.com (2603:10b6:208:31b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Wed, 30 Oct
+ 2024 00:41:33 +0000
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a]) by BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a%4]) with mapi id 15.20.8093.027; Wed, 30 Oct 2024
+ 00:41:33 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "eric.auger@redhat.com"
+	<eric.auger@redhat.com>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "mdf@kernel.org" <mdf@kernel.org>,
+	"mshavit@google.com" <mshavit@google.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "aik@amd.com"
+	<aik@amd.com>, "zhangfei.gao@linaro.org" <zhangfei.gao@linaro.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: RE: [PATCH v5 04/13] iommufd/hw_pagetable: Enforce invalidation op on
+ vIOMMU-based hwpt_nested
+Thread-Topic: [PATCH v5 04/13] iommufd/hw_pagetable: Enforce invalidation op
+ on vIOMMU-based hwpt_nested
+Thread-Index: AQHbJzjNUAV67+f8cECZZB3t9YlZFrKdaC0ggACB+wCAAJAZEA==
+Date: Wed, 30 Oct 2024 00:41:33 +0000
+Message-ID: <BL1PR11MB52712B1C48F93BE78F4203828C542@BL1PR11MB5271.namprd11.prod.outlook.com>
+References: <cover.1729897278.git.nicolinc@nvidia.com>
+ <d0cae90d891d93f4fb45731a23697c06581fe434.1729897278.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276EC0C0CBA3AAF700B57238C4B2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20241029160458.GM209124@nvidia.com>
+In-Reply-To: <20241029160458.GM209124@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5271:EE_|BL1PR11MB5319:EE_
+x-ms-office365-filtering-correlation-id: cf519ce1-feb9-473e-ffc9-08dcf87b9a54
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?jc5LujEU4fKahINlLSw43LNKG60+7tl/9nLAF930+rpBwp58HJsL2A+np05i?=
+ =?us-ascii?Q?U82X/VnjFc8uaePAtkHGkjT71khzofPO7wB6TXmEADbVktGLQKfFUH7UTWL9?=
+ =?us-ascii?Q?KAPMGz9SAGZzD6SXMIjJWf4axAP962d2fLDZ/PhHJPnMjf4sVJdn2CiqsdF5?=
+ =?us-ascii?Q?XBAX9I8W9bBWs+cq4dS2GAJOt6TwsiN21UQKB78kWgC412OmuvnbCDFkc9U6?=
+ =?us-ascii?Q?xrX7fIHknG1tEdKl+NwJofzoFayxWZm2ISHTK8afEnMtpQIZmmyYkxVzQleC?=
+ =?us-ascii?Q?OJlzraapYo9tH9FT98dSLlw1kC/ckbNL7Qnz2o3rGk77GB4M6XmOnAZr7A3+?=
+ =?us-ascii?Q?vCit48f1H1rkMAaaVSwPXUGkUc8N8EV/hCbBA7zf67z4Jk+qF+EfLeYZ375F?=
+ =?us-ascii?Q?8qeWt29wiVWmpTItFSD0ko9orVxpOb/WPKGWZltt2khksMR7Maswe0UU1Lmo?=
+ =?us-ascii?Q?pDrAvLFkn580tJQIGyPNhPW/uwUjqPCDEiYy63ob+X2wNDojgFgBGWFHjVWt?=
+ =?us-ascii?Q?q3jCapuGeWOdYlLbKKAuAdu8jZBZYtI8kyKspCl3ibPLflZrebBsDCwn9syw?=
+ =?us-ascii?Q?fTVjQGfFjppLEK56nJDigyFN8eLyRjNAg5heBapAK6Ed7kP5UzcCDNF65uZH?=
+ =?us-ascii?Q?dE9f/r2fledo3HrgmVc+mvrbBTDVYo5+p+kiiaUsMLn72ZpcyblJJgCOh0Tj?=
+ =?us-ascii?Q?DVZoHv7G1r/3l8bHiGaHOR/YB4lvF+N4KDBVwHW9o2be0JDiC8j6mQMQi920?=
+ =?us-ascii?Q?OC9Y2aO3aFokCFARZMqAyxLSHvXgA6Wpd0mYDjO7EF6mfgx3iilMPHFLNUBU?=
+ =?us-ascii?Q?KoKOfz2uotE7DqsDHJYAon0ca7Cpobb6Fg9enWq8UlyE9bp56WIQhsuyF8qV?=
+ =?us-ascii?Q?cr0zkxkYXlhw6avsR2gM77r+kToYfKgMGmwVKwCHzH7EdjmL8WxOZ4p2uCuf?=
+ =?us-ascii?Q?3BYLHC7jDEpfJPNAOGCi6kKVdk+/v6Q0Uk62DO7IW2ksiUa+y5HoBfjlX409?=
+ =?us-ascii?Q?khhoZH91Ng2vjYJCYEqfiW+5JX++RUo3NuZ3vCNC810pNQWA6Lk/xnETz5hD?=
+ =?us-ascii?Q?QK68cMcKnK5Sgy3QNx/qagVDrDzsM8aLWIP3yr5tqAgwRWBS6y3Yj6jUcej7?=
+ =?us-ascii?Q?IloO6kt+Pnu4/QHxk5ltboLKjdas9VfxKjS0T1/8L01tuUw1ebnp39qEfz9U?=
+ =?us-ascii?Q?xcFZ8cw9stij3+3yCpmaExbb9F+LPxhJxQPQ8paggK039T8Gm63dFNBbTCLO?=
+ =?us-ascii?Q?SxMjxC0Zkkw/jNtQINQ2/ZNe/kcyi1peav/18hjdhUP+tFkN+IpjZaDufZQ0?=
+ =?us-ascii?Q?QiGecA4dL8cIk2qT8bwp7nijoi2Ng1SYvSjcIZ54UXK1H3TopbAzHJMdrCNR?=
+ =?us-ascii?Q?/q7J7Bs=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5271.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hE1U4rSwTz94maFZYYX5fclEL+KKYN8IS2QWEgHyux/aYLLHRn0ooLcjthGY?=
+ =?us-ascii?Q?Hc2SPVlVsnRaikc4sy1YcSUwnJuACXiz+3KPRk4lSri1KPORAY3bk7/z95rz?=
+ =?us-ascii?Q?7xNkIXW7APLn0WcMp/6Kk3PH8PSp7o6IRNPeOHhC/7FAgZ4rZbLmfl2oB2Mu?=
+ =?us-ascii?Q?DrBO2a2ytZqP296s1qFzIhrKvizOBOSkH/Fb7lZOSNCoDSvWS9rrbMOLratn?=
+ =?us-ascii?Q?gmj/n5vbSF0I2M2V5LamxA4+aZhRXjoWBtZVZ/HUkipLd+ogdXkcG1fRQFyZ?=
+ =?us-ascii?Q?I5spHlESdVDdPJA3IvRxl3TChHMwqpWVR7mzgGaIH01ng3yXPBMB39DnpHVQ?=
+ =?us-ascii?Q?K/L3qqFp2SyUYqnwVcV40uRPORcopmBY6iYQK9PxTwute7lfRj/XHcla7Z/L?=
+ =?us-ascii?Q?j8zX/nrHZWZP8YU1tD2tYTkLXKMGlThuyp1MFjsBpK7+Px+YFw/2dLPs02wD?=
+ =?us-ascii?Q?8lrX22cFPYqdXIM1to5YX3F2/pNSmPE52CAr8Gcgw008GIYFseLL/u5p6zWF?=
+ =?us-ascii?Q?PryofNtf6kYR744fn0TdpH10Y7NrCHrAX0GQ2EzgX2KxNaYDbnWCMgMiIvCN?=
+ =?us-ascii?Q?v/+PZz/tShXWH2HO5RPiGI39oNgTWLnSks2JjHXpV4pBdXJOer31TfjG6e+m?=
+ =?us-ascii?Q?PLje0rjqTI1qCEBPtCRsQjOINzqCKWq/MvEDS+RjVrEkbPJnnmBUEJ4mQ9J/?=
+ =?us-ascii?Q?dh1E/J7/GjM1219ePANCr+so3NhMCU2WUYv1Q1Sv0jJMxrDGvRhvzb247u6J?=
+ =?us-ascii?Q?fi5DrD/7CqHLoydX9DekV2CsXJNl2lOstlPOXPEevUFdUy9xXlZk0VimKVV4?=
+ =?us-ascii?Q?ekvqg9sG1EPcb+XJhZY/Ugs8GD1EABGhfBSOBixLrZ0wWOU0a51c2W8svRuY?=
+ =?us-ascii?Q?toLfV6RB/shTUumEdcJs9byULUeWkod+ejU8BdSBnJcMCtfhJUXeuYrWu3vY?=
+ =?us-ascii?Q?j7LZIFMQFCRvx8+vTUy/kvKF0Rzn7u61L2s6hsEDbrlyTHOI1mM2ipqPmSHp?=
+ =?us-ascii?Q?SdJ//yacYhquYNEuLTMRmj/r/GBRRFGK47Y4xEluj66JjZSLMBLPjjQVvmii?=
+ =?us-ascii?Q?xhE8MoLggPD41jDXXFaV4CAmRG5f/PFV4n/DStaCGd7ixiRtz7lZWh2japkl?=
+ =?us-ascii?Q?7aM02LqrfvjxXP6APb9TU/SszgRb4MQmnoinmBsDTju2Z3TnNDQZf4UR0+9B?=
+ =?us-ascii?Q?TmyoApcq5YoOgWrdhTC99TAbOngasWdXuLczhwhZwJm2/ebR3Yhglg90st3M?=
+ =?us-ascii?Q?azOqTfYs5HuRKX+HmiH/cDv9VRpENY7CxvUBEm/ZFIozjFG/gHX04OmBLTVQ?=
+ =?us-ascii?Q?Ddz0Z2FwnMsAU2UN9w7L0T/FaKyKCyVn4ZT8g4jheCd4zSrG8EvMqus8X/1F?=
+ =?us-ascii?Q?Ma+Haf2lRQ7n38dqygCIMXwbSjCd+R35DXsL9XZrrWWH3kdSreoZcu6+3x73?=
+ =?us-ascii?Q?MqeJ9+oL8lPRf6bFX5IAR5zz8uWKxzgOJvb9mP7ftS1lJooR4LjlQDZyfjgZ?=
+ =?us-ascii?Q?53yEv8CYd0uJPW4p6rYwhz97InijEwJtndruHgiwBwYtVWJVLr3+z3uvUH+F?=
+ =?us-ascii?Q?GVXyuNCMJodZAr8HpgT6CuYik+LIQfoTo2CS0rx1?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
-References: <20241028163403.522001-1-eugen.hristev@linaro.org> <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org> <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
-Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: andersson@kernel.org, konradybcio@kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com
-To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org
-Date: Tue, 29 Oct 2024 17:40:57 -0700
-User-Agent: alot/0.10
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5271.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf519ce1-feb9-473e-ffc9-08dcf87b9a54
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 00:41:33.3136
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hOZLKk1LPV3jZlgQGEqUugOZGMD0M0hB7SevES2IV9Ez48Co+joMftf/nNORj4K0Co0cN9hCS/j1bHt3DJM58w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5319
+X-OriginatorOrg: intel.com
 
-Quoting Eugen Hristev (2024-10-29 06:12:12)
-> On 10/28/24 19:56, Stephen Boyd wrote:
-> > Quoting Eugen Hristev (2024-10-28 09:34:03)
-> >> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-> >> index 3acca067c72b..152947a922c0 100644
-> >> --- a/include/soc/qcom/tcs.h
-> >> +++ b/include/soc/qcom/tcs.h
-[....]
-> >>   /* Construct a Bus Clock Manager (BCM) specific TCS command */
-> >>   #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)             \
-> >> -       (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |                \
-> >> -       ((valid) << BCM_TCS_CMD_VALID_SHFT) |                   \
-> >> -       ((cpu_to_le32(vote_x) &                                 \
-> >> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
-> >> -       ((cpu_to_le32(vote_y) &                                 \
-> >> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-> >> +       (le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
-> >> +       le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |       \
-> >> +       le32_encode_bits(vote_x,        \
-> >> +                       BCM_TCS_CMD_VOTE_X_MASK) |              \
-> >> +       le32_encode_bits(vote_y,        \
-> >> +                       BCM_TCS_CMD_VOTE_Y_MASK))
-> >=20
-> > Why is cpu_to_le32() inside BCM_TCS_CMD at all? Is struct tcs_cmd::data
-> > supposed to be marked as __le32?
-> >=20
-> > Can the whole u32 be constructed and turned into an __le32 after setting
-> > all the bit fields instead of using le32_encode_bits() multiple times?
+> From: Jason Gunthorpe <jgg@nvidia.com>
+> Sent: Wednesday, October 30, 2024 12:05 AM
 >=20
-> I believe no. The fields inside the constructed TCS command should be=20
-> little endian. If we construct the whole u32 and then convert it from=20
-> cpu endinaness to little endian, this might prove to be incorrect as it=20
-> would swap the bytes at the u32 level, while originally, the bytes for=20
-> each field that was longer than 1 byte were swapped before being added=20
-> to the constructed u32.
-> So I would say that the fields inside the constructed item are indeed=20
-> le32, but the result as a whole is an u32 which would be sent to the=20
-> hardware using an u32 container , and no byte swapping should be done=20
-> there, as the masks already place the fields at the required offsets.
-> So the tcs_cmd.data is not really a le32, at least my acception of it.
-> Does this make sense ?
+> On Tue, Oct 29, 2024 at 08:22:43AM +0000, Tian, Kevin wrote:
+> > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > Sent: Saturday, October 26, 2024 7:51 AM
+> > >
+> > > @@ -302,7 +302,9 @@ iommufd_viommu_alloc_hwpt_nested(struct
+> > > iommufd_viommu *viommu, u32 flags,
+> > >  	}
+> > >  	hwpt->domain->owner =3D viommu->iommu_dev->ops;
+> > >
+> > > -	if (WARN_ON_ONCE(hwpt->domain->type !=3D
+> > > IOMMU_DOMAIN_NESTED)) {
+> > > +	if (WARN_ON_ONCE(hwpt->domain->type !=3D
+> > > IOMMU_DOMAIN_NESTED ||
+> > > +			 (!viommu->ops->cache_invalidate &&
+> > > +			  !hwpt->domain->ops->cache_invalidate_user))) {
+> > >  		rc =3D -EINVAL;
+> > >  		goto out_abort;
+> > >  	}
+> >
+> > According to patch5, cache invalidate in viommu only uses
+> > viommu->ops->cache_invalidate. Is here intended to allow
+> > nested hwpt created via viommu to still support the old
+> > method?
+>=20
+> I think that is reasonable?
 >=20
 
-Sort of? But I thought that the RPMh hardware was basically 32-bit
-little-endian registers. That's why write_tcs_*() APIs in
-drivers/soc/qcom/rpmh-rsc.c use writel() and readl(), right? The
-cpu_to_le32() code that's there today is doing nothing, because the CPU
-is little-endian 99% of the time. It's likely doing the wrong thing on
-big-endian machines. Looking at commit 6311b6521bcc ("drivers: qcom: Add
-BCM vote macro to header") it seems to have picked the macro version
-from interconnect vs. clk subsystem. And commit b5d2f741077a
-("interconnect: qcom: Add sdm845 interconnect provider driver") used
-cpu_to_le32() but I can't figure out why.
+Yes, just want to confirm.
 
-If the rpmh-rsc code didn't use writel() or readl() I'd believe that the
-data member is simply a u32 container. But those writel() and readl()
-functions are doing a byte swap, which seems to imply that the data
-member is a native CPU endian u32 that needs to be converted to
-little-endian. Sounds like BCM_TCS_CMD() should just pack things into a
-u32 and we can simply remove the cpu_to_l32() stuff in the macro?
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
