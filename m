@@ -1,219 +1,97 @@
-Return-Path: <linux-kernel+bounces-388029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01C59B597A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:46:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D543B9B597C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:47:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE972843B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:46:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8040A1F24244
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A0D1D07B1;
-	Wed, 30 Oct 2024 01:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D365028C;
+	Wed, 30 Oct 2024 01:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPq6wEsC"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="e/yjPJ5d"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F971D0146;
-	Wed, 30 Oct 2024 01:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F3E3398E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252629; cv=none; b=W3m1QJBzY32xpswcHNQylQUCvjiy3E1KyZ8KdQvstb0wayxW1QcUW+K4z/ZaJLX7l5gYM09FneLQa9Vlm0pcnalWvB9FV3jrcBI7YLhiRdEX1fhQJqjd3l41HvMRc8/7PNedc7EfRhNA51KHG0byHYiHLy/AtRNElGBIdNFfk7A=
+	t=1730252713; cv=none; b=iH3FHwrCl4N4ubvOGt0dN40ZvWVHWlXW8D7K5r7iJnYp5DBMhD8T94Cm2orWc2ToFVJpexMkINORCbukXqbD8JjZNqEHPrJECmlEaWhsl7F0cECmarEWyf+CeVRbR+wp6ae5Wu8wJjfPJxfeKM59+SAxJLDlLeNu29a417Felts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252629; c=relaxed/simple;
-	bh=EMREDF0iOw1a8AUc1cBDT7vV5AQ/kyb1iJVNxRQBLoE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TBjEOgXAoqrhJtT/xtgnxXvzsOjcW9xf5wU4pSwMZ5kfZ5Le2+lzFmUhpUA+zj3/khEBOUWjADml+UX7KScIrwTMQiuGhH2Mpnk9c3Vl+s8AfoavhLXg08fVKdXgB2V3MxPuLqfPHABAsVlyzLgJrOqQBVw1n+MxXt4s5Qge4B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPq6wEsC; arc=none smtp.client-ip=209.85.215.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7ea16c7759cso3110612a12.1;
-        Tue, 29 Oct 2024 18:43:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730252626; x=1730857426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BKE65jm2ZhKpehsNXTCP/V6ZnTRszfwNpxwi3OTB6Pg=;
-        b=mPq6wEsC3VaF0cNMqS8E2O4qb+s7YUK2QOWSXb417v1w+rAVU6U3s0Uobkwpd+q8HK
-         YSL60w7RPv9EU2HKksqh+MdC7QSBc5gNg6Jw1vDjer46c9gV4TEn9BEHgXm44mednJ/s
-         yyYtmLLrveaXEOi/TcKLVKwi9aWExTkWLmYKgCxgpO85UkJPU74MBDRozOT7ySRv541d
-         7PKsgd1JADJ77/Udokjypm1JWrGGTkzyN/aMziSsqr1r1sBf6s1AtgbAuyGb6/D5NuOe
-         N2ZYjGEuirZfJXztF6XClJYq8y3WUc/tfPsPhRGAPTXA8lHZykZbn72KpiDqp5NLSPqd
-         mXEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730252626; x=1730857426;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BKE65jm2ZhKpehsNXTCP/V6ZnTRszfwNpxwi3OTB6Pg=;
-        b=BQ4/vqmYRCuhRAgCMI0wEAlW6lEwKEbcqKXU7wAe/yvF8GTrHso/XbYssGH5ee3iPm
-         m4gxzWmBjSX1mAbdkm3KLrJbEjKnzU8EapatBVJjuxvn+AO3hNO2M3WEq2AZv0dwzcDo
-         thcR7vtkai505UlIr6t9HP4oPIvGFm2SkN6eFlkX3djGiodWeB+Gt9NoxFfFS13KikFJ
-         UoNFaxmeg1A4ZGrQfFxQ6qJSRmu2H1FM9cG3HI+2FpwTeIiNEgMJeFRFB7p2eVzR8uv/
-         dMHxHSfgTcoqfpSMPftLshCBTCHKmiCHOyjKMAFVEGP161Ebpz1p6q79dPXcz9Ax5ZJp
-         MwiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw3dmxa5WD+NRmjCE5D4OCDPl8D+Dzawg5oePI0+bpaesf88sHCfF0ywK/xg/4lHGA8Dg=@vger.kernel.org, AJvYcCVR3FrwqQCkuozHwubDksLppwqkD5hLhn5j7tCefHDNOX65pYZxyYpd19lVNFNHldddlI2AvfEUJ6megXuW0eur@vger.kernel.org, AJvYcCX6fla8hl8sSVR0Q45arLfT2h+cFcJjiEKT7VJ78RFmjQhSPYbObyZRDAuCbP8SQLK+Ghgjd/d5y7P2lDeU@vger.kernel.org, AJvYcCXPcWJK37ptqQcDreNET4GZEeh/sxvOlz5F7F58qTe9rv1mtT7WM+z75rDqLtzmu1YHqA2QXVvD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6RjpmOQ++ZI1ylhESwx4reCw2oL66DSRJn8VF/MX0Wd6jUDHX
-	CgLKEon6on1PTolPU8BjIzcqcLfg5eNEK/pheGTDTuF0Onu5/sin
-X-Google-Smtp-Source: AGHT+IEvIzgXUf05JXSQhRN/QPYHDdkNnuHWw6LIIFNVmixhsH0arx2gxEoTUbpvghWxKbrNn90HSw==
-X-Received: by 2002:a05:6a21:2d85:b0:1c4:9f31:ac9e with SMTP id adf61e73a8af0-1d9a8514483mr17967010637.42.1730252626407;
-        Tue, 29 Oct 2024 18:43:46 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc866906dsm8138407a12.10.2024.10.29.18.43.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 18:43:46 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: pabeni@redhat.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	roopa@nvidia.com,
-	razor@blackwall.org,
-	gnault@redhat.com,
-	bigeasy@linutronix.de,
-	hawk@kernel.org,
-	idosch@nvidia.com,
-	dongml2@chinatelecom.cn,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	bridge@lists.linux.dev,
-	bpf@vger.kernel.org
-Subject: [PATCH RESEND net-next v4 9/9] net: ip: make ip_route_use_hint() return drop reasons
-Date: Wed, 30 Oct 2024 09:41:45 +0800
-Message-Id: <20241030014145.1409628-10-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241030014145.1409628-1-dongml2@chinatelecom.cn>
-References: <20241030014145.1409628-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1730252713; c=relaxed/simple;
+	bh=+NzgqF4BSBd/lYDIw9uqFm7SCjtWGwq07O/tymB9hLQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=SN1gDkUfISP9KQRtMKbNNJduPne0MGddT11EtR9EptjTpPckOxEDoeAr2/4ujUUgXwMe+JRTDCz7I3Gp65CAOenzNPf4m+rOp2OnbSsB+X8JLz6mU5ehg9dhH+Ra/1R74cYceggNNjQ7NMKqVaOKqXJiaYZRenPabE7y7vCvdH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=e/yjPJ5d; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49U1iEC7640428
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 29 Oct 2024 18:44:15 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49U1iEC7640428
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1730252656;
+	bh=/SXochKldZHdY0qWbgDCKZifAjljwLY6zrS3QI4URGE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=e/yjPJ5d7Fb1SVjNl4ei3nrlu9rsPOdFrORh5pE2rqWglZomNGFa5R79I9rSe2wr5
+	 WYbu3cAMdc3iGlK2Ms6V4czKGLWTzkiOpGtTdMG39UGFkM0XAXMXFedKOHNt2nBPe3
+	 dxGXiNFe2uAK78SbPYAGTl8djY8B8im4Z/pU5KNzU4zqTt9Ei/HDK7Ya9Dfs9aYp+u
+	 X0nedMdBLZgP4haZMixuHQwi56+dVZ+m1oNvViCpXRkrW0odi01yAoI9IZAjFNh3bf
+	 Qx6abXDCFqI0JqePk+IT18XcuaaJklQdoEkdUZg2KzmVGFIczyYnmsf9I/x/nVHmpy
+	 foE5bARkGxUNA==
+Date: Tue, 29 Oct 2024 18:44:14 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, xin3.li@intel.com,
+        krisman@collabora.com, x86@kernel.org, linux-kernel@vger.kernel.org
+CC: ruanjinjie@huawei.com
+Subject: Re: [PATCH] x86: Remove unused _TIF_SINGLESTEP
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241030012438.358269-1-ruanjinjie@huawei.com>
+References: <20241030012438.358269-1-ruanjinjie@huawei.com>
+Message-ID: <D75E52D0-2C84-410A-BF59-4E0CDFF67237@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-In this commit, we make ip_route_use_hint() return drop reasons. The
-drop reasons that we return are similar to what we do in
-ip_route_input_slow(), and no drop reasons are added in this commit.
+On October 29, 2024 6:24:38 PM PDT, Jinjie Ruan <ruanjinjie@huawei=2Ecom> w=
+rote:
+>Since following commit, _TIF_SINGLESTEP is not used by x86 anymore,
+>remove it=2E
+>
+>Fixes: 6342adcaa683 ("entry: Ensure trap after single-step on system call=
+ return")
+>Signed-off-by: Jinjie Ruan <ruanjinjie@huawei=2Ecom>
+>---
+> arch/x86/include/asm/thread_info=2Eh | 1 -
+> 1 file changed, 1 deletion(-)
+>
+>diff --git a/arch/x86/include/asm/thread_info=2Eh b/arch/x86/include/asm/=
+thread_info=2Eh
+>index 12da7dfd5ef1=2E=2E734db7221613 100644
+>--- a/arch/x86/include/asm/thread_info=2Eh
+>+++ b/arch/x86/include/asm/thread_info=2Eh
+>@@ -110,7 +110,6 @@ struct thread_info {
+> #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+> #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+> #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+>-#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+> #define _TIF_SSBD		(1 << TIF_SSBD)
+> #define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
+> #define _TIF_SPEC_L1D_FLUSH	(1 << TIF_SPEC_L1D_FLUSH)
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- include/net/route.h |  7 ++++---
- net/ipv4/ip_input.c |  9 ++++-----
- net/ipv4/route.c    | 26 ++++++++++++++++----------
- 3 files changed, 24 insertions(+), 18 deletions(-)
-
-diff --git a/include/net/route.h b/include/net/route.h
-index f4ab5412c9c9..4debc335d276 100644
---- a/include/net/route.h
-+++ b/include/net/route.h
-@@ -206,9 +206,10 @@ ip_mc_validate_source(struct sk_buff *skb, __be32 daddr, __be32 saddr,
- enum skb_drop_reason
- ip_route_input_noref(struct sk_buff *skb, __be32 daddr, __be32 saddr,
- 		     dscp_t dscp, struct net_device *dev);
--int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
--		      dscp_t dscp, struct net_device *dev,
--		      const struct sk_buff *hint);
-+enum skb_drop_reason
-+ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
-+		  dscp_t dscp, struct net_device *dev,
-+		  const struct sk_buff *hint);
- 
- static inline enum skb_drop_reason
- ip_route_input(struct sk_buff *skb, __be32 dst, __be32 src, dscp_t dscp,
-diff --git a/net/ipv4/ip_input.c b/net/ipv4/ip_input.c
-index 513eb0c6435a..f0a4dda246ab 100644
---- a/net/ipv4/ip_input.c
-+++ b/net/ipv4/ip_input.c
-@@ -322,15 +322,14 @@ static int ip_rcv_finish_core(struct net *net, struct sock *sk,
- 	int err, drop_reason;
- 	struct rtable *rt;
- 
--	drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
--
- 	if (ip_can_use_hint(skb, iph, hint)) {
--		err = ip_route_use_hint(skb, iph->daddr, iph->saddr,
--					ip4h_dscp(iph), dev, hint);
--		if (unlikely(err))
-+		drop_reason = ip_route_use_hint(skb, iph->daddr, iph->saddr,
-+						ip4h_dscp(iph), dev, hint);
-+		if (unlikely(drop_reason))
- 			goto drop_error;
- 	}
- 
-+	drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
- 	if (READ_ONCE(net->ipv4.sysctl_ip_early_demux) &&
- 	    !skb_dst(skb) &&
- 	    !skb->sk &&
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index e248e5577d0e..7f969c865c81 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -2142,28 +2142,34 @@ ip_mkroute_input(struct sk_buff *skb, struct fib_result *res,
-  * assuming daddr is valid and the destination is not a local broadcast one.
-  * Uses the provided hint instead of performing a route lookup.
-  */
--int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
--		      dscp_t dscp, struct net_device *dev,
--		      const struct sk_buff *hint)
-+enum skb_drop_reason
-+ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
-+		  dscp_t dscp, struct net_device *dev,
-+		  const struct sk_buff *hint)
- {
-+	enum skb_drop_reason reason = SKB_DROP_REASON_NOT_SPECIFIED;
- 	struct in_device *in_dev = __in_dev_get_rcu(dev);
- 	struct rtable *rt = skb_rtable(hint);
- 	struct net *net = dev_net(dev);
--	enum skb_drop_reason reason;
--	int err = -EINVAL;
- 	u32 tag = 0;
- 
- 	if (!in_dev)
--		return -EINVAL;
-+		return reason;
- 
--	if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr))
-+	if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr)) {
-+		reason = SKB_DROP_REASON_IP_INVALID_SOURCE;
- 		goto martian_source;
-+	}
- 
--	if (ipv4_is_zeronet(saddr))
-+	if (ipv4_is_zeronet(saddr)) {
-+		reason = SKB_DROP_REASON_IP_INVALID_SOURCE;
- 		goto martian_source;
-+	}
- 
--	if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev, net))
-+	if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev, net)) {
-+		reason = SKB_DROP_REASON_IP_LOCALNET;
- 		goto martian_source;
-+	}
- 
- 	if (rt->rt_type != RTN_LOCAL)
- 		goto skip_validate_source;
-@@ -2179,7 +2185,7 @@ int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
- 
- martian_source:
- 	ip_handle_martian_source(dev, in_dev, skb, daddr, saddr);
--	return err;
-+	return reason;
- }
- 
- /* get device for dst_alloc with local routes */
--- 
-2.39.5
-
+"Following commit"?
 
