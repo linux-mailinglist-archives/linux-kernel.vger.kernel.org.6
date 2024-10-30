@@ -1,93 +1,142 @@
-Return-Path: <linux-kernel+bounces-389022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663569B67A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:25:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6919B67AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A78B283288
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:25:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78EFEB241C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5493B2170B3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96166213ECD;
 	Wed, 30 Oct 2024 15:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xsdKOMns";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B7aFnaY2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPzw67a1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4C522627D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6086226B72;
+	Wed, 30 Oct 2024 15:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301506; cv=none; b=pDj0E31+G3ZBy4tMu6MO4V5wKfHIj5sBSKN1HQurpNkXjGBdECiVXZKKYqC1IZF1PMksSmMwXgmifn3C9SsVEHBguAW9AtHTbU7fdClJO3ErUFWzjLqWN12dmYagymwj0uoHkebWScDZHn5+c7yUaQuSyiR6PbfnAI9KRx7NPAM=
+	t=1730301507; cv=none; b=BSBfPdLI726iZ+RjZ0NZGRWg4uojzPqNLyuraF1yJoRVw6oakMJlSGGRR6PVtdvufpQQCbvn981eIjelvAnafA+jFvN8MB81MSU/HN/om4wiK7XbbCBasGfq06wdjYrV1NMm4Dq8KvsBTwYDuXqPmPJe0vv4310TrVcMYI6mrJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301506; c=relaxed/simple;
-	bh=afxAXwH2i3eW3OWh6zl8p8GtacOwPD6c7K4ha0dckU4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=b6L5K/oeTT8h2d7wQofLBpsn6BTaYzmrKehrgQ+eR3X9gP11a2IBAiMZ1fUrzJby7Tg6zVRGP9CqfR1fJ2w2MQh9Y/FlMeiHoJk1J/7p3ayL2/Owjan/gWuX6MUgrs1AknA3MnCSvHisfuKhKWsLgdTsKAWrqe/2YNzZHd4wVkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xsdKOMns; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B7aFnaY2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730301499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9REH1Ut/XPLUqnVJnFKVTRuMAQB5RMyBdd/Y1Bd9Ixc=;
-	b=xsdKOMnslQaH8NevUi9l2AKfIt+ErslrSx3KeT5fIavpq1gmNuR2AM3ZF2Nzm4h8qkBBpE
-	KjMCoAn1ghfWM2wxM+WTPd3DXA/EQ3V0qKQAw5YOucw4YG5tzcZpCfwMsNh3a/vlsyWQVF
-	OSYW47RoZPUBOKQlejsrz0dV6/pVpT1wu1azABcOzsp2fTV+UKfFqetXZWkIeQDYITbtag
-	4+Ai2FVbQvBwT3fVDb2qOYTHjeTJFY/51SXTXq3kQ9v2lokcVaQh9M6eqqOyuox+BROHkH
-	Qa0Vbar5adig1SgpXhwNNszH4d0xnv6KVYQs8wkTRjTN6OdbVnXBn9N6SxO0Tg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730301499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9REH1Ut/XPLUqnVJnFKVTRuMAQB5RMyBdd/Y1Bd9Ixc=;
-	b=B7aFnaY2rPDPHBv7qyNhcZuqB81fmCLajDVpbln8Wf6YZ4njvrvOGe93jQ6Q+K8Kg/YqQf
-	jQAh7T+4CA8pdCAQ==
-To: Oliver Hartkopp <socketcan@hartkopp.net>, Nam Cao <namcao@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook
- <kees@kernel.org>, linux-kernel@vger.kernel.org, Jakub Kicinski
- <kuba@kernel.org>
-Subject: Re: [PATCH 05/21] can: bcm: Don't initialized an unused hrtimer
-In-Reply-To: <09b130f2-740d-4e16-aaa2-8802d9c28277@hartkopp.net>
-References: <cover.1729864615.git.namcao@linutronix.de>
- <4e7dc11aa9ffb116678574889cda35b3cd5b7385.1729864615.git.namcao@linutronix.de>
- <203a1560-76c9-4c47-b1b8-b44ddf40cd16@hartkopp.net>
- <20241030121533.ioTNvYpX@linutronix.de>
- <d6055bd1-c0c6-42ad-bb21-7ffad98c9882@hartkopp.net>
- <09b130f2-740d-4e16-aaa2-8802d9c28277@hartkopp.net>
+	s=arc-20240116; t=1730301507; c=relaxed/simple;
+	bh=tHopKvkAUgsyAzYyczl2WB2OzkqWxYKnMxDK56eFEpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JAwvBRqi1BEc5yWLbwRvNHgUm10azJj4Z+Vp87bcbIMKamvSXjKTrh8aXT/zeEj4gS4onWBOh/KC3EoaiYuS5oQXME3i+4OmJw1hx91B0SC03deE5Mi++h/dFvpGtyChGeLOBVPZW0eIqJbHYowpsOSXl9GFRJAHu73D4iFwAx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPzw67a1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F94AC4CECE;
+	Wed, 30 Oct 2024 15:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730301506;
+	bh=tHopKvkAUgsyAzYyczl2WB2OzkqWxYKnMxDK56eFEpE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dPzw67a1JUQJy7ASW+Ve+pa/c+WfzQtMx6Lk6QfOKI0XhTLYJQJO/qDj7wZ3yAJWX
+	 vMVUElKCE5lacWrWIgopqRaPZtrdEnUZ+K8ea11amTaJ97XQiEXHe1a0d00C6WzbA5
+	 pPLNh9StEVvxSEJCRdSCksX0imq2emWU5dGSxh/K7202/NpZaE6pFXZmnLqBkbmZOt
+	 qguY3ij+jM0lVidbLvmoDv5AnuZirFr5FlGG7prXytJKiE6e6YwJaaxgtwoPK+Mnum
+	 +03aI9qYWaamCyWQWZzSXDjBNP9edwLl4hlagO/26Rn9Nstn2RPx7eIXNdCFP1u64L
+	 WLhvT1FHHLn5g==
+Message-ID: <e4985609-0642-4ff4-b074-8c5a34f88a24@kernel.org>
 Date: Wed, 30 Oct 2024 16:18:19 +0100
-Message-ID: <87o731y5z8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: pwm-fan: add
+ retain-state-shutdown property
+To: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Billy Tsai <billy_tsai@aspeedtech.com>
+References: <20241026080535.444903-1-akinobu.mita@gmail.com>
+ <20241026080535.444903-3-akinobu.mita@gmail.com>
+ <ijdk5uuurnfd2shnwwj2nm64bno6lmrhdyqp42pzjc3i2e5cyh@v5ljkrsgo6ac>
+ <CAC5umyitFp7oGR-eYXMVaS8bY1AGe3QwEuSPoEz3DxWwH=dUsA@mail.gmail.com>
+ <e29e2c9e-60c1-4f32-ab71-e74f331e1921@kernel.org>
+ <CAC5umyhCw+62Y+h3Jvh3=0Ocs8XJsSu_vaiPpO_g=65Jo4vUFg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAC5umyhCw+62Y+h3Jvh3=0Ocs8XJsSu_vaiPpO_g=65Jo4vUFg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30 2024 at 16:01, Oliver Hartkopp wrote:
+On 28/10/2024 15:57, Akinobu Mita wrote:
+>>>>
+>>>> You described the desired Linux feature or behavior, not the actual
+>>>> hardware. The bindings are about the latter, so instead you need to
+>>>> rephrase the property and its description to match actual hardware
+>>>> capabilities/features/configuration etc.
+>>>
+>>> Is this description okay?
+>>> (Reused the description of retain-state-shutdown in leds-gpio.yaml)
+>>>
+>>> description:
+>>>   Retain the state of the PWM on shutdown. Useful in BMC systems, for
+>>>   example, when the BMC is rebooted while the host remains up, the fan
+>>>   will not stop.
+>>
+>> Nothing improved in the property. You still say what the system should
+>> do. This is user-space choice, not DT.
+> 
+> It seems better to implement it as a device attribute.
 
-> Just an additional idea:
->
-> Would it probably make sense to create a generic dummy function for all 
-> those cases like in the referenced rt2x00 driver?
->
-> E.g. as (inline?) function in hrtimer.h
->
-> enum hrtimer_restart hrtimer_nop_callback(struct hrtimer *timer)
-> {
-> 	return HRTIMER_NORESTART;
-> }
+I don't know about that. To repeat: if you say what system is supposed
+to be doing, it is a policy. Describe the hardware and its configuration
+and maybe this would be suitable for DT.
 
-Yes.
+Best regards,
+Krzysztof
+
 
