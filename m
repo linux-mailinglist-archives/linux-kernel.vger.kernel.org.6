@@ -1,175 +1,127 @@
-Return-Path: <linux-kernel+bounces-388548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182A99B6117
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4279B6119
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B3E281056
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03E0284211
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BD01E631B;
-	Wed, 30 Oct 2024 11:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1758D1E47AE;
+	Wed, 30 Oct 2024 11:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JwX+yrx2"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AakKTLIW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670DA1E501C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867D21E2833
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286495; cv=none; b=bGQCszqzLXJe4/Xv2HovSI1X6eqsidR9t++uIAoMjWPtYhQv3NxfnSGzGyo3vqeZwgp2Xj+89zIseWX2pE+ovLhHKMETUem4Ee8UtDZ10sQgeXszJuH+//qQdD1/5AOXnI7eTWRqzQatGrqKd0r5fkUKjLPxLWuy0NkALrJ1lvI=
+	t=1730286550; cv=none; b=VX3ngRRVwDKplHAshxg4cboDIOiaATzyst8qLbwS9muR5jqzhT5VEwKvUYJL7xXVpaNTPW1xHkcLt3gzTe9PsPzlscHsjbQ91EUQcP2ZrBw95Vu+STphD2r9uV7uFyNOxxk4tD7qTGOhGNUxmCNmn1oeAm/WihshF1RYYUETknM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286495; c=relaxed/simple;
-	bh=mQhweHZtfQd/nfsfIKR/19URa4f+qVo3ER/TW2Dj1Y0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UWx8Etz+MTQtwO/fcvNwcWq3cohuqkRdWfajkR6z9dEnv6OzCtlNV6UT6OlbyWcSv5+m410sBrYZmDKsQspNvj11KM3GbyeCyU+Fn5QwnBmZIJp2lZgV/A3cbMxbM60lZ8klzgvG7h3aAxQoR9G+t2acPp0RiiLoi53Gia7OKo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JwX+yrx2; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e49ef3b2bso4839730b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1730286492; x=1730891292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=SDC5+p/fN+8HeECl2TRb5z1+IbrstnK0lNDWpJYgTbY=;
-        b=JwX+yrx2D94Gjd4RigybSbwxVY/A0OgPLd6ouhUrDD40of8iU2nrSkNonIeEhMTTqc
-         ZYr2istoJr9pPvfKGB5bf1NJ24PXj+Dx+516n4yYiBT+6weuP9mQVgW55tupOpCi+jEd
-         tVakPsaHYhSeCXYEjR4bszH/IOB+q1j0ijbFg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730286492; x=1730891292;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SDC5+p/fN+8HeECl2TRb5z1+IbrstnK0lNDWpJYgTbY=;
-        b=PQ7XiwrAzlFu4R9cWy4NSl+wkHrQFH+B11YJYg6x6AttCzDA3kdg1wu8OHP2cyn6SR
-         k+O4bx6YUP95liwMR0xR9aphFpaJ+e+BkYJFp/Fz3rN43BfJgVQeprO2W5GouPwIOzmq
-         G8s1qRvKeR/uxaPwRv9/nB/GYKcidcSGvz2/aCluqJMyaJczpIwbu9Ypy6MI5wWG6286
-         qflVqyX5+jsy6UowFriaD8IgRrEc5DGJYPNYGWg+vVj6EUVwk77vbSSb4hvAADkjdHor
-         amzSfamJN6bCsAJKxAxgdCh1Tlvmn8MU6I1xfbYBqTsPH3aXCY46iTKnJGkMLsruDkQQ
-         SYkA==
-X-Gm-Message-State: AOJu0YyAbZQXFLyLv1OPwYVbUog9hMTDj+KumItTcibj+15pNsf7Eops
-	snvkA00hnMZALZ9lQNZDgGc6EsaecsiUtSDoWHYxUq8nIIX9Uq10T0g3L+wA5w==
-X-Google-Smtp-Source: AGHT+IGaKpkSr3ONj/8tkf0uNIDs04G8IQUfN4JFdlW6rWyabr4OE6nAnW+LkU/GJjSgkungmU1zJg==
-X-Received: by 2002:a05:6a00:811:b0:71e:50ef:20f3 with SMTP id d2e1a72fcca58-720ab4c705fmr3538687b3a.28.1730286492478;
-        Wed, 30 Oct 2024 04:08:12 -0700 (PDT)
-Received: from [10.176.68.61] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205793189esm8950018b3a.58.2024.10.30.04.08.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 04:08:11 -0700 (PDT)
-Message-ID: <467fd994-01f0-4057-964c-4184a23e59c4@broadcom.com>
-Date: Wed, 30 Oct 2024 12:08:07 +0100
+	s=arc-20240116; t=1730286550; c=relaxed/simple;
+	bh=4S5x0bvrZAOnJSXqbrtJSSqpf+S3NcFFvryeJ9Msr1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1TSMnd7dbqJ4I+oowY6cgBanMkRliJTm1ydHqIFZT5Dpquq2vImIIeFhldaaNBbyeO+k+Wk+GizyC9TL/fQnoKCoMecW+xyu4IjURZ5pT+tVqrUFZwiQWW703qyV1pSAuiJZGtuZO1KhSfkjjayKDSroaFjpdfHyUROeywOG9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AakKTLIW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730286547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z4gl0k9RMOgJbQRtMcfUOVUiznRtYig67HlXgTPy7Dw=;
+	b=AakKTLIW4yi1OzWaCbQxul8qhiGDQ32OPJhi2Epym+V/F7I5a7yNZm+3hLArEId+HGMcHs
+	CUARZhc8GKZF85z/O3NhRaRq/n+DgxjFzJiDxFfARkuN/obqgv6c6F1HwBUmEJG4qGXmW2
+	4tYRIuc7T/vGLeT0gFm7nc6s9235G/Q=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-VRRpXADHOcORiPwiXaomag-1; Wed,
+ 30 Oct 2024 07:09:04 -0400
+X-MC-Unique: VRRpXADHOcORiPwiXaomag-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7A73C19560B4;
+	Wed, 30 Oct 2024 11:09:01 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.140])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75A4A300018D;
+	Wed, 30 Oct 2024 11:08:52 +0000 (UTC)
+Date: Wed, 30 Oct 2024 19:08:48 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+	yi1.lai@intel.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2 3/3] block: model freeze & enter queue as lock for
+ supporting lockdep
+Message-ID: <ZyITwN0ihIFiz9M2@fedora>
+References: <20241025003722.3630252-1-ming.lei@redhat.com>
+ <20241025003722.3630252-4-ming.lei@redhat.com>
+ <ZyHV7xTccCwN8j7b@ly-workstation>
+ <ZyHchfaUe2cEzFMm@fedora>
+ <ZyHzb8ExdDG4b8lo@ly-workstation>
+ <CAFj5m9+bL23T7mMwR7g_8umTzkNJa14n8AhR3_g6QjB2YCcc5A@mail.gmail.com>
+ <ZyIM0dWzxC9zBIuf@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: incorrect shift and mask operation in
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-To: "Colin King (gmail)" <colin.i.king@gmail.com>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Antipov <dmantipov@yandex.ru>
-References: <9c02683d-c688-4e39-913e-6b20b3bd76a0@gmail.com>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <9c02683d-c688-4e39-913e-6b20b3bd76a0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZyIM0dWzxC9zBIuf@ly-workstation>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 10/15/2024 1:02 AM, Colin King (gmail) wrote:
-> Hi,
+On Wed, Oct 30, 2024 at 06:39:13PM +0800, Lai, Yi wrote:
+> On Wed, Oct 30, 2024 at 05:50:15PM +0800, Ming Lei wrote:
+> > On Wed, Oct 30, 2024 at 4:51 PM Lai, Yi <yi1.lai@linux.intel.com> wrote:
+> > >
+> > > On Wed, Oct 30, 2024 at 03:13:09PM +0800, Ming Lei wrote:
+> > > > On Wed, Oct 30, 2024 at 02:45:03PM +0800, Lai, Yi wrote:
+> > ...
+> > > >
+> > > > It should be addressed by the following patch:
+> > > >
+> > > > https://lore.kernel.org/linux-block/ZyEGLdg744U_xBjp@fedora/
+> > > >
+> > >
+> > > I have applied proposed fix patch on top of next-20241029. Issue can
+> > > still be reproduced.
+> > >
+> > > It seems the dependency chain is different from Marek's log and mine.
+> > 
+> > Can you post the new log since q->q_usage_counter(io)->fs_reclaim from
+> > blk_mq_init_sched is cut down by the patch?
+> >
 > 
-> Static analysis on drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/ 
-> phy_n.c has found an issue with a mask and shift operation in function 
-> wlc_phy_rxcal_radio_setup_nphy() as follows:
-> 
-> lines 26326-26330:
-> 
->          offtune_val =
->                  (pi->tx_rx_cal_radio_saveregs
->                   [2] & 0xF0) >> 8;
->          offtune_val =
->                  (offtune_val <= 0x7) ? 0xF : 0;
-> 
-> and similar in lines 26376-26381 too.
-> 
-> The issue is that the expression pi->tx_rx_cal_radio_saveregs[2] & 0xF0
-> when shifted 8 places right is always zero, so this looks like a mistake 
-> since some value value between 0..0xf is expected in the second statement.
-> 
-> Since pi->tx_rx_cal_radio_saveregs[2] is a u16 value the expression 
-> could plausible be:
-> 
->      (pi->tx_rx_cal_radio_saveregs[2] & 0xf0) >> 4
-> or
->      (pi->tx_rx_cal_radio_saveregs[2] & 0xf00) >> 8
-> 
-> I don't have knowledge of the hardware so I'm not sure what a suitable 
-> fix is.
+> New possible deadlock log after patch applied:
 
-Thanks, Colin
+This one looks like one real deadlock, any memory allocation with
+q->sysfs_lock held has such risk.
 
-That looks pretty redundant indeed. I look into the history of it, but 
-ended up in an old end-of-life development tree and the code was pretty 
-much the same. It is one of the finer dark arts of our phy/radio 
-development team I guess ;-)
+There is another similar report related with queue sysfs store operation:
 
-I see that Dmitry Antipov submitted a patch to address this. Again 
-thanks for reporting.
+https://lore.kernel.org/linux-scsi/ZxG38G9BuFdBpBHZ@fedora/
+ 
 
-Regards,
-Arend
+
+
+Thanks,
+Ming
+
 
