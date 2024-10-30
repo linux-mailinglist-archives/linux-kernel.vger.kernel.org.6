@@ -1,216 +1,167 @@
-Return-Path: <linux-kernel+bounces-388018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B107B9B593F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:41:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3689B594B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332751F240D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F001C21137
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63864158DD9;
-	Wed, 30 Oct 2024 01:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ABB1922EE;
+	Wed, 30 Oct 2024 01:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mpIuWVwV"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2087.outbound.protection.outlook.com [40.107.243.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P95P2GHB"
+Received: from mail-oi1-f194.google.com (mail-oi1-f194.google.com [209.85.167.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824D34437
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252490; cv=fail; b=c2aJTt4laewYHTgUFv+KWzBwyfesAdfCpvPFKOUxCi2cV/YLGunjTxWmmBqu1X75Bm/Ae67rWvxEDPZjuNfAP+U7D+vlt919ZHgI9hgOKXG2LHEhTTqBDxJmVM+U3O553EZmymU/8EM4iDz2ag9+eu1yybXQQuAciLJd4YxJu28=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252490; c=relaxed/simple;
-	bh=p/53Gs2QW0YIeC5Iv95gY0sDpT9sWruxkkSEJo+dQ28=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MVSl+bdlhW+oz7fl+e43roM2uw2BtdyDw/d988/pdArdyIa92tTzGg2fkXU5bCfwn81hIoMyLUxGzDd6QmOlKLZrzGzVkxx1Q7tMv0QRbFLujNoDS+mE4GUeMHpPXjqWaRo6z161fA2YiXVN7VicKS3OmVoYrX1clC8nGQrHU7g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mpIuWVwV; arc=fail smtp.client-ip=40.107.243.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Da5LoA5H2N3V5MuRv6iUt1IHXKsQ4RLeWQuUUfJF9mJzjCgR1v0RFKtK+WaX93mvFcQI6eYLU3RmNehS8InQ72q3YjMn/0SObHTLGK/Cy+vpCaaZp+i/VfwLUNZIap3Aec+3sTcoHuYvrQh/rLpUhU7ZpcOJ5szUiftU+SHEIXk54TkbeqGhFH8yTfg9atV7rs8bjOg25c3rZ9uRnG7T7tNAhf1n0cOKbe4jSuxzXPvcsL2cXelqPNTNLv0euyf+XGD/70VEEXxCEU88r04efzOpaKVFfThHQvGd2XBv8Y35eA3Sz7baaBLEzppewvC8qylN/ic9Gng57fyb1Le7hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=roFLcDCHW17prPBTJsp14TozwXnEZV25chNzCFaaOHY=;
- b=VKG1zWecyEFffWgy49fxYX302PF1rin/4F1hDwLYkIQfmIbHo6aJ4Xy7SlbQTfnclLQdsRgFrTwtN/g5O+6ufh8Jj945obL1SEOTjmT8o6Bp3nHPuQjN7tYEeeGJnnrj19VRfr6KlUv2aVVQ/m8ZvEbbkglzl70DctLo7BUr+NgoRi3UJbw+JuSMbCxYvTuyyNUSTvmsC4rQt2YWAtJNV9/bpldSqnWalSxbcUVAxA050cfksO5qg3P2YvbrDl27v83Gw8W7/UnXDn0nYgGCq1qEZIRg222tAFXPnZyXOu/08pZnXsFx00KRgA3eWaU5YZRuPl9ojeLjMMRRiKFhgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=roFLcDCHW17prPBTJsp14TozwXnEZV25chNzCFaaOHY=;
- b=mpIuWVwVZk9DeKhucLah/wZy6SOlR8bKq+FRbmd2Ijh5JbpMMiFFSTJr2Tfxx0yhoiLisYhKbP0ZYbU+JFIF8Nw68b6LFdxVYnYxMR8pkPmYli0cQu1L7xJLtpNRZXshRMb/w4d9NfbTYMLWE9Nw2J4ElodT8uWH1KdvA5V/js4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by MN0PR12MB5883.namprd12.prod.outlook.com (2603:10b6:208:37b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Wed, 30 Oct
- 2024 01:41:25 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8114.015; Wed, 30 Oct 2024
- 01:41:24 +0000
-Message-ID: <08add1ec-ceae-4f74-83b0-72d0df510950@amd.com>
-Date: Tue, 29 Oct 2024 20:41:22 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] amdgpu: prevent NULL pointer dereference if ATIF is not
- supported
-To: Antonio Quartulli <antonio@mandelbit.com>, alexander.deucher@amd.com,
- christian.koenig@amd.com, Xinhui.Pan@amd.com
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241029233232.27692-1-antonio@mandelbit.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20241029233232.27692-1-antonio@mandelbit.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0014.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:22c::23) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C86BE46;
+	Wed, 30 Oct 2024 01:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730252577; cv=none; b=aUYzmwBKlVZOYY0SgkVU2oZZ5OMAQLyO6ldwvSdm3J1cQZaQI9cmK3SM+8cbqj7E91xtIv6x3OehFFgRULKKdl+Hn2gTRGgHIMRa9/+4dK8P3gVfk8ELYkJh7OUXDMfG9abZxVejVG6mchNYcP+DDJMrKNgm9KXMBunMt5/QPas=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730252577; c=relaxed/simple;
+	bh=N8rGFDTUThVhTEHIJIIJx0HReyP83ZUzy0Cx8KDZfW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sA1gTeMlKbUZroDoGkKH5bLJCwi9jWbHDvvTlIfw8jztVd13u+iH8yw9WW5J4SFziMC5seZ0BhSLHmsMFfluB7vGZBvDO7Hzt+hozJYEOArbqDMqaJfJvYGFuiI0vqV204Pe4SKODGrUqDcWRbi5lYpgYCguyc+q6DIgHuUQvjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P95P2GHB; arc=none smtp.client-ip=209.85.167.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f194.google.com with SMTP id 5614622812f47-3e60fca5350so3772244b6e.2;
+        Tue, 29 Oct 2024 18:42:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730252575; x=1730857375; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gq6+xdJlSauKVvYdMuUpgAyl8qNz5z/Asf+huhDS4l8=;
+        b=P95P2GHBZm0ywCNtLGCrwuwxGL3uyvPt7Mi1D47KslU/PyHMlslJ+eM4WmVtDdIXI5
+         +4T0wBtj+HIQ1kr0AANQDGQFTjyArE8eWBLxfyVNkJu16oKab9RFVsss3kzzrsZqHb0P
+         ix+RyP0IRVqIkMKqY7CAMkER/1loVocKSB85yb/SNrcxmEtWAmTz4bs8bNqR3gtXKO/T
+         QDx/OA1T/bUf8pZX0UQZrweiY4A02IG9KoTCocDF8OVLYTn0TyfAYrtSJDGQY+QsT+yC
+         WfDTxJNdHHYbYu2s7TuTFK2lo1cRZ5Qgv8FXOVJqeVESb0M53COhkBOVGrD2k/oADgMe
+         Ygxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730252575; x=1730857375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gq6+xdJlSauKVvYdMuUpgAyl8qNz5z/Asf+huhDS4l8=;
+        b=UZVUXnTiz5MLqCm8dPoCcukk8bNH/6bWQBRZdZdJ5CXOioI86jYX7fxsDY64shzxLS
+         2fGYRIJw+jTuNCvyJF6KpmXvmgBH2Q9vkcbGDVFwOhHw2q6bzEySztmgSJ13Y1PqARxH
+         IvDwfyqjvYSCnrDV0WR0ScnpsHIXnbZL1/G/yNEY06vmFABpDDsWwt6O6pTqEs1CzOYR
+         hXSGo0MgOLlayH2PQ9bn4FirgLyDPYfMFwTABNgbcRcM05s2XVpbcmygI2AjPwiN2ITa
+         CbDZg/21ma1XzGU+myzhMaWyAqWhNiuK1pDPCjEidvSBDQOXLbw23eT4ATZ/Hj1b4c7E
+         S4WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH0XuBmXqlXV1GSGrr0XBf1o2Hp4W/+H3tIv55r/Z76M0Oli+hw1n3HbH57V6OaoJoK4IU1ECxKppMfTpM@vger.kernel.org, AJvYcCUZx0V/0Q42/17DoP9uVY2qAUWuiE3e55h+c/zwlOcgIfS8kbuQBuLg0Zv7h/m7RK0wzxc=@vger.kernel.org, AJvYcCWjzZE3xPVxPykuEKxA3yanfSSnZMbOV7nO9PeXu7AhsQXKnaw8HZXISDeg6Og4C+w2UEJKnbqr@vger.kernel.org, AJvYcCWtDONqknRM1RurtM3VtHTFFmdiEt6/zQzle/ZY9MWl87A6BHyzWVghNRULYvRrE3iVn3v8ez/VVELpvZao5YgC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2keV03C+BK/imC451zCybcMOcrl1WhtfbeahLwlCxDkV05BoQ
+	UIIgLlH2Dyytd/xNvDbL4W9p5eeLm55FKS7KDONbfi2g0/jxxftc
+X-Google-Smtp-Source: AGHT+IGLH/hZZ7hWGWLxPfmagO461IIMSWoSWP+WCb8WxZ7ERpymRfaGRQY/xzyfibXkMEpby78vsA==
+X-Received: by 2002:a05:6870:e0ca:b0:278:c6bf:fd34 with SMTP id 586e51a60fabf-29051bdaef8mr12039957fac.27.1730252574765;
+        Tue, 29 Oct 2024 18:42:54 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc866906dsm8138407a12.10.2024.10.29.18.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 18:42:54 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: pabeni@redhat.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	horms@kernel.org,
+	dsahern@kernel.org,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	roopa@nvidia.com,
+	razor@blackwall.org,
+	gnault@redhat.com,
+	bigeasy@linutronix.de,
+	hawk@kernel.org,
+	idosch@nvidia.com,
+	dongml2@chinatelecom.cn,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	bridge@lists.linux.dev,
+	bpf@vger.kernel.org
+Subject: [PATCH RESEND net-next v4 0/9] net: ip: add drop reasons to input route
+Date: Wed, 30 Oct 2024 09:41:36 +0800
+Message-Id: <20241030014145.1409628-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MN0PR12MB5883:EE_
-X-MS-Office365-Filtering-Correlation-Id: 203a093a-f7ad-469b-01fc-08dcf883f6fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bGNPMEdxeDg0L0J1VExMRVNBQjkvSEJ1R0RoRVd2ZFZDK2N2bE5xbEFYcFJt?=
- =?utf-8?B?YWZORGJxamxlVWFBeFN2SEtvQjI0WlYxYWZnRmZWU3VDV2RBM1ZGYXdvMmV2?=
- =?utf-8?B?SkdxVHAvVEZiTXNGY2FaQWlTMldvcEQxd2pSOFJiSjh0dy93a3NjMnN6bGdy?=
- =?utf-8?B?ZUxTcnJ5Z1RDOG9hODVGQ1M4cjBWNzE5eUtaVm5DYUhRb2J2SVpVUytlNHFB?=
- =?utf-8?B?YkFSRlhXaTVZOTAxS2Z5UUNFUTBIdTYyWksyd0VsMWdieWN1NTN0eWRxeWs3?=
- =?utf-8?B?a24wU1hnZVlRdGs0aThyeTcxdXhIb0QwV083N05EUzZGOWlRVWdVWk9TNmVv?=
- =?utf-8?B?NXV6V0p4aG9KdE5xUVJJcCs2UUVFTEF2RUJScS9Qai8rY0lwYzZGY0hSK0l2?=
- =?utf-8?B?TGQ4MTB2dXZyRWlpVGZQem1odDNHUUNjNzBvVWFHL0wrd0krSkF1TlhFMXRS?=
- =?utf-8?B?SmFtaGRBbTd4ZVZseUlOeHlaeWowMnM3YkEwYzU5ZVlyQXdQMHErQkFIM3ZS?=
- =?utf-8?B?ZXhkZjYzQklpWGVSZ1g2OTBFZEhlMGZWOWc4V0VzdjdVTVdxbVU1ekQwNElI?=
- =?utf-8?B?SlNCOVdUQ1UyRUYrazBHVy9rYmpzZHRXRVU5VDgyOEdYZUM5VDJ5RTA3WCtB?=
- =?utf-8?B?TlgrcXdsdjMrR2lMZzMvMWZOSzVyaENJa1NzaVM0T0FDUHhGdEx4UWh4SlpJ?=
- =?utf-8?B?OXIxTkdxeEFBOHgvSDlaYzY1REpvUklWRmVmWVlOZ3lyS3ZkSGpkVlRRNHN0?=
- =?utf-8?B?bHlNYzZ0by9xUTI4aXg3eUk3UmFFSEE4Um5DQk42cW8wWmkrR3FKM3FseHc0?=
- =?utf-8?B?enZaeFRpZ2xTSE9NM2JqYjJCVmZCSUxrQmNoeUFLL1oxTXFlYmVRVy9vR3ZQ?=
- =?utf-8?B?a3RJQmc3Qi9jakRuMWQzRkI0eUR4bFdYV01mOVlnUk5vcDEwaDJVM2Z0cVNS?=
- =?utf-8?B?dFNEK3VWaDB1b01iVFNvRG1Xd1ppd1ZmM1luOUcxN3JtN1VhT2I5bkJpK2Nz?=
- =?utf-8?B?RmZmUUgrM2k0M0JZK3ZlaXQveHZMYmNmNkxTeUFTUmNnNmpEaXZWazU3UUdM?=
- =?utf-8?B?Wi90QlBraWlPeWtSL2Z0Mk5kSXRHUXpSWEh5REhvOUJWMmlpRGtVejZpN3cr?=
- =?utf-8?B?UmZMN0daNllQd0lvdWZLR0M2N3JFeStZN0FDQWp0bmZYUjRYL2lzQ0lXZzZL?=
- =?utf-8?B?dEhVMk9vcVh1UEZqTm5oWkQzbC9QTFRSSXJnb2Zra25jZVEwN1VDc1ZLRTZ6?=
- =?utf-8?B?c21Rb0NEbHBsL3NvWmpSVmtncm0rM1VjZC9jRGR2NENSRFM5NWl0Z0kzbU5M?=
- =?utf-8?B?TEhoY3dhbWI5ZEZiVGE4cytGNFAzYlhKR0ZvNGdMNGZYdFMrU25oclR6T2JT?=
- =?utf-8?B?dHR6WWp2cSt3WkdzbjNNeEpCbmt6cC9zaHVoaGo5MXd5MDhJTE9ubDZYOG5P?=
- =?utf-8?B?NU5LU3ZlSjh2YTVCMitTeldvejRNbWdaaDF5YlNENWpLR01DL1JpTy9PaElR?=
- =?utf-8?B?eERFUnMzSmxxaUlXQ2JrWUlCVGhRRU9HNHN3REJZSnFXSVdaTkF6MW5uZUhy?=
- =?utf-8?B?RURCQ2ovb3dtalpTUDlnSld5K2hQSEIzK1lGNGMvVTcwVWJodXFJZGR5TXV1?=
- =?utf-8?B?YTVGUFFKZDRKancrNWNINTl1Zk9Wd1hRV29YUkh6VXlXVk15WFBoYjNNTndY?=
- =?utf-8?B?ejBVT1NzaEFFZFI2RVNIUVk1aitmRVZ3dVVvTll4Q216MVZXbldjZ05VZHNU?=
- =?utf-8?Q?BZuB7niOuh7rOzdXwhRJG7wkYetBi+hBpArikbh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjEwNHI1dUNUZ1BtU0lJeFVTdStiS1A5eEdDZU1lK2R2V09XaFU2NE4ybzBv?=
- =?utf-8?B?WDc4U0F5cCtBYWlXVzZENlZNR2RWS2ZseHB4TXFKakt6cWRZeVRoM1p1SExR?=
- =?utf-8?B?R0hGT2FvMStIaW5JeGNLakd4djVpbXdzMGMvUjB0NGFJSmwrdDZEc2o4Y0Rm?=
- =?utf-8?B?RDBYY3NIaG1NekV6RFZqT002aktpdUFydkdLeGhtNXdLZVZvbHQxbzA3ekRk?=
- =?utf-8?B?dG9rK0tXN25yZ0NaQWdpNHN0YmU5cEtpWC9zOVpTWGEzTjAwcG8zQlJreDEw?=
- =?utf-8?B?YmFlL05SN1B3WlFVRVdKcHFhVkgwemowTS94TGVack44Y1l1bUJKQm1NZEE2?=
- =?utf-8?B?b0UzUVNlK1FhMzFsbTVPS3c3Y2w0QUxIY2tBMFg2bytNeG5URFU0Y25TNFMv?=
- =?utf-8?B?WU1kNGcySVk0SU9HYnVGQ1NveGk0a3RiK3k3NHdFNE83dzRDRnJCY2dKVkMy?=
- =?utf-8?B?QjltMFc1SWVodjVVRzVuQ3FJb2doNlIxcHFiNC9vcW9CL1hkVGorSmxMdXJx?=
- =?utf-8?B?SUlGUTJWbit3S1NWU2h3SURrVmJFcE9TS3FORVZpNnRjZzgzRUY4Sk80bm5I?=
- =?utf-8?B?SXRQd1p4ZTJ5djF5eXR0ODAzdmp2dUltcUtUYmw0V2pBQ3lsajZQU2o5bTlv?=
- =?utf-8?B?RTNFdjN1S1VGSGZtc3VQa1gzc2laUzFmWVBLQS9VVzlXeTMwRjlrWXVTa3Br?=
- =?utf-8?B?K3RhTVdlakpNQ3FVK2YyWU1xNGFRTjJneVpST2NkSElLd0FPSE9vVSt5VVFm?=
- =?utf-8?B?RE1OYkVDSW5uUkg5M0VhUVdhdTAxOFQ1c1VkZnJjK2FBTFZJYVRieVF2YWMy?=
- =?utf-8?B?bFM2V2hNcXM3b2FYZjZsNXR6TzdVbUQ0dEUvR2JlTGplWSttbEN1cG1qMDlM?=
- =?utf-8?B?R0liUmx2MGlPTEY0QnRuZWlOYlV6N21zcnNmUkFIdWs1a1lZNmk2MlRGQmdh?=
- =?utf-8?B?K2lzUER1L3hWYWlUTFRmaXdRcmZjZzFKandkaS9wMkFRcHAzYzBUOVBNM215?=
- =?utf-8?B?UVFpTUx3WVYyM1gvYjFsVnhLNGplcTNXV1dIQ3VwRXZyZllvQXBqWU9maFdR?=
- =?utf-8?B?cmU3UXkvNlNMVzJ4dU9GVzdFbXRmYWdSWHE3SENkMDlHWXAvd2M4Q3ZKa3lq?=
- =?utf-8?B?ZzVCaHZoMHVrRitGcTZqUU1UYzdQRkszWTRkc0dQUHFZNjVrd3ZMVS83QlJz?=
- =?utf-8?B?bFUvWklQQ3YyQkhHQ2toYlpFdkRDdEVnaTVBS0NzbHpwL2JDakU5cUhzWHlu?=
- =?utf-8?B?eWJ1NkxpakJwYW8rZ1NaMGJETzVtTXIvODRkQmdWbmdSUHNvM2dweXg4WFJT?=
- =?utf-8?B?blp0SDdZU2VQN083K1RMaTV0TUxLMnk2bEhTeFFVSzFjUm1LOVdnUDFOMFJa?=
- =?utf-8?B?ZGhndDQ2NmZSUkdMRXFabEF2aEt6NDRpVmZjVkVwejl5OTZvMC9TTER6VU40?=
- =?utf-8?B?cXRQRkZ4L2lxMlphQ2Frcy9RZHN3TDNZaTFZYitBNHVrZHNiUXFaVUtmdkls?=
- =?utf-8?B?ODE1V3lnSDZBOFFKRDBtMVpUd2IrMStLZDRrNEkzNkkxOVhjWkoxWWlibEF6?=
- =?utf-8?B?RzhCdTJnNEpjZ0JPQTNNWHpkQ0dIdWVoZXF3WTEzQ1phOEVza2NYZlcrejE1?=
- =?utf-8?B?Z3Nlb01JaWtMTWRuYnN5bU1XZC9xL3JoRXhubVJBYTVFM1crdDZlVzl5T1Na?=
- =?utf-8?B?OElHUk9RWHU1NXFzbE04YjdSS0FIYmNNRk41MlFVOHVkc2tEYk00Q0ZxVUZj?=
- =?utf-8?B?Y2lwZzUvK0JHaDRVbHBVRnFlUjNiTjZGS3k5UGVyc2tYUW9oNk1ZYzJTTGZ0?=
- =?utf-8?B?K2dqYUloRjlDUmdLZ2NBWmc3Slp2Q2ZwNGFYTGl5anJySzRCazFnZUtCV2dZ?=
- =?utf-8?B?MUtoT2hxRGF3RzVMSXhnWG9TZHZjSmdnSUd3YlY5alFNRWtKcUNoeWtwUWg3?=
- =?utf-8?B?WVkwZ29MUStjeVpsYXQzWVAwS0RWREtjY3hmTjVZUTJFTk41TEEzOW43Wjlm?=
- =?utf-8?B?L0FodmFwdTI5SERaVWVmaUcycmRWblVoRXI5WENRZ2lQQnRpZWZxZDRud2ZG?=
- =?utf-8?B?TmM4S0dqcmQremhmWnB6YktjcFdoYzZGcFQ1SmgvLzRzOTFMT3dRWUtYS3NN?=
- =?utf-8?Q?ECopr9GszbASYcyUzVSYBEyWk?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 203a093a-f7ad-469b-01fc-08dcf883f6fc
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 01:41:24.9344
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dqnF4lLZCqqgq+jVFF1dsQFyQJ4aBhRXfyyv3qJhpLp04ckU9k/BE1xQdmcX7XoAAHhzz8SOSDv8vJuREzgcTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5883
+Content-Transfer-Encoding: 8bit
 
-On 10/29/2024 18:32, Antonio Quartulli wrote:
-> acpi_evaluate_object() may return AE_NOT_FOUND (failure), which
-> would result in dereferencing buffer.pointer (obj) while being NULL.
-> 
-> Bail out also when status is AE_NOT_FOUND with a proper error message.
-> 
-> This fixes 1 FORWARD_NULL issue reported by Coverity
-> Report: CID 1600951:  Null pointer dereferences  (FORWARD_NULL)
-> 
-> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
+In this series, we mainly add some skb drop reasons to the input path of
+ip routing, and we make the following functions return drop reasons:
 
-I'm not really sure how realistic this failure is.  Can you share the 
-full call trace that Coverity identified?
+  fib_validate_source()
+  ip_route_input_mc()
+  ip_mc_validate_source()
+  ip_route_input_slow()
+  ip_route_input_rcu()
+  ip_route_input_noref()
+  ip_route_input()
+  ip_mkroute_input()
+  __mkroute_input()
+  ip_route_use_hint()
 
-amdgpu_atif_pci_probe_handle() will check whether the handle is 
-available in the first place.  We'll never this this far if that failed.
+And following new skb drop reasons are added:
 
-Because of that I don't follow how this could return AE_NOT_FOUND.
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 11 +++++++----
->   1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> index cce85389427f..f10c3261a4ab 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> @@ -172,10 +172,13 @@ static union acpi_object *amdgpu_atif_call(struct amdgpu_atif *atif,
->   				      &buffer);
->   	obj = (union acpi_object *)buffer.pointer;
->   
-> -	/* Fail if calling the method fails and ATIF is supported */
-> -	if (ACPI_FAILURE(status) && status != AE_NOT_FOUND) {
-> -		DRM_DEBUG_DRIVER("failed to evaluate ATIF got %s\n",
-> -				 acpi_format_exception(status));
-> +	/* Fail if calling the method fails */
-> +	if (ACPI_FAILURE(status)) {
-> +		if (status != AE_NOT_FOUND)
-> +			DRM_DEBUG_DRIVER("failed to evaluate ATIF got %s\n",
-> +					 acpi_format_exception(status));
-> +		else
-> +			DRM_DEBUG_DRIVER("ATIF not supported\n");
->   		kfree(obj);
->   		return NULL;
->   	}
+  SKB_DROP_REASON_IP_LOCAL_SOURCE
+  SKB_DROP_REASON_IP_INVALID_SOURCE
+  SKB_DROP_REASON_IP_LOCALNET
+  SKB_DROP_REASON_IP_INVALID_DEST
+
+Changes since v3:
+- don't refactor fib_validate_source/__fib_validate_source, and introduce
+  a wrapper for fib_validate_source() instead in the 1st patch.
+- some small adjustment in the 4-7 patches
+
+Changes since v2:
+- refactor fib_validate_source and __fib_validate_source to make
+  fib_validate_source return drop reasons
+- add the 9th and 10th patches to make this series cover the input route
+  code path
+
+Changes since v1:
+- make ip_route_input_noref/ip_route_input_rcu/ip_route_input_slow return
+  drop reasons, instead of passing a local variable to their function
+  arguments.
+
+Menglong Dong (9):
+  net: ip: make fib_validate_source() support drop reasons
+  net: ip: make ip_route_input_mc() return drop reason
+  net: ip: make ip_mc_validate_source() return drop reason
+  net: ip: make ip_route_input_slow() return drop reasons
+  net: ip: make ip_route_input_rcu() return drop reasons
+  net: ip: make ip_route_input_noref() return drop reasons
+  net: ip: make ip_route_input() return drop reasons
+  net: ip: make ip_mkroute_input/__mkroute_input return drop reasons
+  net: ip: make ip_route_use_hint() return drop reasons
+
+ include/net/dropreason-core.h   |  26 ++++
+ include/net/ip_fib.h            |  12 ++
+ include/net/route.h             |  34 +++---
+ net/bridge/br_netfilter_hooks.c |  11 +-
+ net/core/lwt_bpf.c              |   6 +-
+ net/ipv4/fib_frontend.c         |  17 ++-
+ net/ipv4/icmp.c                 |   2 +-
+ net/ipv4/ip_fragment.c          |  12 +-
+ net/ipv4/ip_input.c             |  20 ++-
+ net/ipv4/ip_options.c           |   2 +-
+ net/ipv4/route.c                | 210 +++++++++++++++++++-------------
+ net/ipv6/seg6_local.c           |  14 +--
+ 12 files changed, 226 insertions(+), 140 deletions(-)
+
+-- 
+2.39.5
 
 
