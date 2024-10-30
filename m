@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-388292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966659B5D46
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:57:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239039B5D4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B50283E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC81C20E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D927A1DFE0D;
-	Wed, 30 Oct 2024 07:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8922C1C4603;
+	Wed, 30 Oct 2024 08:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/wHybIR"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZz4SeTh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C24554BD4
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3648194C69;
+	Wed, 30 Oct 2024 08:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730275068; cv=none; b=Hc15ZSIZJAdk97eqeNSHXvKPz2l9Cz/4cwTO9Jh9HYVz44K4hBPgd0vwml2IlGdNFsFXgdKXAuJleAelfdTihbcrk4qZzEtgGGkwFW1dmR5yHqTX1IE52F3sCdK5lVl/KMU5GzwPiQf6+gaxHbxGTC4OB2fGc6We3OjZZ/+BZ/U=
+	t=1730275213; cv=none; b=pgjjN3nvsIa9wK4qQtBcUHIJgmjIY3x3JZXekegVpIuhGb1/ug6LLM+EB6yrHzdJRZCFdz4i1eTcz0hwI2LEZm7Q7EKrBwn0Fcm6sRYceHu1bAQELDtohCXT6ZALtfKW36vlbLtYM9HKjy8CXaE+A/fQLmWgUbwIJfyODsTVyvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730275068; c=relaxed/simple;
-	bh=e6gmkpVmkGUFFyBEb4vmvov3+W0/2u16RMkFwzeJHu0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8WB25gG6AfEBvXoRtrfoCnI5sq13ZCGosLxNYKR0fxvotxoP9RXGMpxVxSK7pjeNc09Ud2M+wW7fnnvyVsccZzMovfrh9rIuRgEBUGVHPA+ezEhWFGO+CuT+YzwuaUjcqEJJefiNl4rlt+o2VcDzl9aaHjQwC22ycidBWI3Vzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/wHybIR; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4a47d70cd8aso2012444137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730275065; x=1730879865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=plX3x5h0hTHCjTaj8H96Ts4cSpt3nFr9HgDXxvsW4oQ=;
-        b=K/wHybIR7zJzpmCgtUpQ+pVa4o4GK05wKquMXAGRTLZBJCPROSRk7FWeprpWKKaeSf
-         mQpa6bD1nZkldrVv0YQKTvYZ76WML3d29mjDuMlC1WUbi2lAOSAzRWkp6NeUS32tV5JC
-         hcv6sgEXmPtceguEJ1lGYp4XtjuNrTyDV5sQNbqNWQJyx985Ppod4gGh3s1FYXBrozDT
-         OZ8yTBNPCFcKM59UIcXXy4hwx411z1H2pTuG1E5RbBCMfnniBOn625do7Abbo36eSKEO
-         HAjZc9Lnaz68L/wdsqEqwr1xBFhS9cW/6B+5xXuHkReKcFJPGO8UYf3pIUVR7BAziDa/
-         crPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730275065; x=1730879865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=plX3x5h0hTHCjTaj8H96Ts4cSpt3nFr9HgDXxvsW4oQ=;
-        b=W1Vb5ll1oiHFuG9zbnyMZZ2uVJ1waKCn/f3TDzcjj3bwJZMO8ulqJKNUkfyBevVt0N
-         Vw14l3z+0R8UvcfaBKuEmvqlX+P5hn3xlTpbmVYlvg1s6oiGpWteDsp3iVajvoz04vJx
-         bYEG5TT+0GpOX8Q+ogbTsIunlL6vXcVnChvw9AM6DdH4chCtcrkpY226fM7CKKZ2ajTS
-         ESV0B6YSNiJYGf1Ice8X0zeFhGG9QW1B5IzdNCjUsavtDLg5PF6myXDfTCoaqukL8mRR
-         3W2a4VfJi8vw3uA0fVnNngJlaxbJvGtqIAaSj+FJr/GlIGx/g/nnY1WfNR/H6pgjCNpg
-         ywtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPYEaOzQYGnFVP9EJuNeGgiR4l1JeF7oZ1GvJfbJC5x5E/6lMT4rUe7xvVNx4s1ZVRVfJD8T1y7WYMY4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU+dO3SxWn5bekzkvz91Z452junuWmyyREKIIOwSPKAHGY0hcz
-	0lt/aN83uElPiomX5KbIbhBZrB2vCvesuMGFAdcgRxCPmFvWCZalhaGxHTge7Ja6bhavkKKfaPA
-	yeMn859DOLRSuR+8+i54yiDNJx60=
-X-Google-Smtp-Source: AGHT+IEqiA5Q0Rv/EJu5wbAw/dqZArPeLiDTJwRLpnZjmTFmm/xf0WozX2i1W+xBiZaEBIwDQ1HBHFdv/eE2Jxda36c=
-X-Received: by 2002:a05:6102:290e:b0:4a5:e63f:3655 with SMTP id
- ada2fe7eead31-4a8cfb27a53mr14674627137.1.1730275065081; Wed, 30 Oct 2024
- 00:57:45 -0700 (PDT)
+	s=arc-20240116; t=1730275213; c=relaxed/simple;
+	bh=fa9DgDsgu4iLAoH7uVAKdBg4ZTtwtHF9kcohSHCeFWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XVezhioCUDlYAwTqEqCt7zefEBqhCTw5vmEoJec+hT4sUcDkJO+3raGXxsGepruLRhELZ3P+IjXt/9Hz3tjU9kr+zoRU7gpS1xdkNTksStY+zLb/SFY75OT6gkh7EednAqKCbQiksWPgOZuHObyGKIP27KlcoLndX1hjgNLTxxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZz4SeTh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20684C4CEE4;
+	Wed, 30 Oct 2024 08:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730275212;
+	bh=fa9DgDsgu4iLAoH7uVAKdBg4ZTtwtHF9kcohSHCeFWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jZz4SeThJU2EDv7v9n7K/mtpAg5xvefxT135neB9/UUOMaypcjARB9OMqGcmj3emn
+	 tcd1C6u4vhU83wqz/pTdD2KQORCQ/Jhw69K5KkGwrH7l3dZwjxCbRr/qUw6lBOIaiX
+	 ZhFQIe6ijMvBo/FO9uv0no7NkGUSjw+G1GHzTeX5otex7Lp/CcYT69B91SExhlYBRc
+	 qKpje9lKFecpYOWzRsIh6zaLx2YZU7B5qCpKUgXzYEuwwavBNUzOVEyJs30cPksCM/
+	 afWp5sgqkjWpUQ0pydiDbYiv2MSY2AuHpWsmBAAJaGDH3EG4inVHxBiwb3o25MgkND
+	 83CJPItmKLxbw==
+Date: Wed, 30 Oct 2024 09:00:08 +0100
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Yun Lu <luyun@kylinos.cn>, jikos@kernel.org, shuah@kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftest/hid: increase timeout to 10 min
+Message-ID: <4pfwh24gmu4ujb5iwjjo5oxh4mfja2ajtkrkbzbbshjkoz5wjx@ac4tfdc5twxe>
+References: <20241029090746.179108-1-luyun@kylinos.cn>
+ <85570e57-1af3-4d17-8a21-58c75e6bac9c@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026082423.26298-1-21cnbao@gmail.com> <87o7329s0e.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <CAGsJ_4yv0CqAyiA1WaPdNm8HSUL5pda9frgT_1H31+FZt1fGjg@mail.gmail.com> <87jzdq9n6h.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87jzdq9n6h.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 30 Oct 2024 20:57:33 +1300
-Message-ID: <CAGsJ_4wP4E8pUnhjOZ3HX1e-dgJO=0URA2RwkwpPYw4H=ZNPgw@mail.gmail.com>
-Subject: Re: [PATCH] mm: add per-order mTHP swpin counters
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	David Hildenbrand <david@redhat.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, Usama Arif <usamaarif642@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85570e57-1af3-4d17-8a21-58c75e6bac9c@linuxfoundation.org>
 
-On Wed, Oct 30, 2024 at 6:29=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Barry Song <21cnbao@gmail.com> writes:
->
-> > On Wed, Oct 30, 2024 at 4:45=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
-om> wrote:
-> >>
-> >> Barry Song <21cnbao@gmail.com> writes:
-> >>
-> >> > From: Barry Song <v-songbaohua@oppo.com>
-> >> >
-> >> > This helps profile the sizes of folios being swapped in. Currently,
-> >> > only mTHP swap-out is being counted.
-> >>
-> >> Better to describe the user space interface in patch description?
-> >>
-> >
-> > Do you mean something as below?
-> >
-> > The new interface can be found at:
-> >
-> > /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
-> >          swapin
->
-> Yes.  Some example output may be even better.
+On Oct 29 2024, Shuah Khan wrote:
+> On 10/29/24 03:07, Yun Lu wrote:
+> > If running hid testcases with command "./run_kselftest.sh -c hid",
+> 
+> NIT - When inestead of "If"
+> > the following tests will take longer than the kselftest framework
+> > timeout (now 200 seconds) to run and thus got terminated with TIMEOUT
+> > error:
+> > 
+> >    hid-multitouch.sh - took about 6min41s
+> >    hid-tablet.sh - took about 6min30s
+> > 
+> > Increase the timeout setting to 10 minutes to allow them have a chance
+> > to finish.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Yun Lu <luyun@kylinos.cn>
+> > ---
+> >   tools/testing/selftests/hid/settings | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/testing/selftests/hid/settings b/tools/testing/selftests/hid/settings
+> > index b3cbfc521b10..dff0d947f9c2 100644
+> > --- a/tools/testing/selftests/hid/settings
+> > +++ b/tools/testing/selftests/hid/settings
+> > @@ -1,3 +1,3 @@
+> >   # HID tests can be long, so give a little bit more time
+> >   # to them
+> > -timeout=200
+> > +timeout=600
+> 
+> Okay - maybe this test shouldn't be part of the default run if it needs
+> 600 seconds to run?
 
-ok. let me add some examples in changelog:
+Agree, but is it possible to be more granular?
 
-cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpin
-12809
+FWIW, there are some tests that are quick in the hid subtree that should
+probably be run regularly. For instance, the hid_bpf program is
+interesting to be run when there are bpf changes, because it's relying
+on the bpf architecture.
 
-cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/stats/swpin
-4763
+I think hid-core.sh, hid-mouse,sh and hid-keyboard.sh are fast enough
+and should also be integrated in the default runs.
 
->
-> --
-> Best Regards,
-> Huang, Ying
+hid-multitouch, hid-wacom, hid-sony are definitely taking a lot of time,
+so they should probbaly be run only when there are changes in those
+areas, i.e., not by default.
+
+Cheers,
+Benjamin
+
+> 
+> thanks,
+> -- Shuah
 
