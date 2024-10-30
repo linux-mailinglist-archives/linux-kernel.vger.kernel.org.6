@@ -1,156 +1,85 @@
-Return-Path: <linux-kernel+bounces-388000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C45E9B5907
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:20:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B218E9B5909
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC141C22B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D2D28349D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4527213BAD7;
-	Wed, 30 Oct 2024 01:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CCzLcApt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB1314A617;
+	Wed, 30 Oct 2024 01:21:01 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4DD42A8B;
-	Wed, 30 Oct 2024 01:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DACA13774B;
+	Wed, 30 Oct 2024 01:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730251246; cv=none; b=UpSKQHlIp0PWB1qxRQGDsw2cyn6AWuNMAcTRSEjEnkm5+J2LxvkwmKmV91E7CdmdM5H6yN+UZPa8Yqauf1FsBwhlQPkrXTveZShnrT7kPLZEhtREwBNIEewGQwv1HKVMrSOnNJM3VAMLH+D+JZzeu3VX16nw7bK0Xod4jfIlTao=
+	t=1730251261; cv=none; b=CUqS9a/RQeKJqzNIvx7y4UWdm/NjXInzMInuEZgxrg3Ue2YADCHbSG+aOwHV5KgXwVgtdeEQn1PULhH4tD8LpkS3F3Yto2hbf/apXU2B5FY82KBS4ZkaFA4mengTevQ1p3tK++53MUbqpeMpnaICTwQM1rL/Ns/AmqRe93ksmw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730251246; c=relaxed/simple;
-	bh=wZDiMAaOhKiJUYkYEtwy19sskMyJZD0MGmAeOQbFpJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=geYCLm0BPp6tyMsvmLrPzIhIx9wHIgtFZBuwou1KrS8jrTd2of7eO5epkSe+r6ORPX0325kJUNUhFRCfMSzHBvFs44mCmHCcN1Ivo/r33gbyJKBmY9B15ZSBXup7R9Po0PMJaTZpa4Syu8VeMVNOwQLp81DFwKVPceGPV8q8umg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CCzLcApt; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730251244; x=1761787244;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wZDiMAaOhKiJUYkYEtwy19sskMyJZD0MGmAeOQbFpJU=;
-  b=CCzLcAptPu5YC1R+K8L1Bu30P0SJ9zIIanzeF930EH59gXRLVkzNUfAV
-   Dk2cMiE/Y7KPlHwONBweXKsm/YMFDtJN+vHyNofp6et/sDhzAmKkP5KYn
-   AdNMUOpc4NFOZem6Pyr9mRwVIY5PKxzuKsgeia/BeeGWKKOMDg7EtXV4J
-   tSK+rB6IgMBFWppZw53vW2kThGAv4GboL+3IgnLfG7I8D4sbyfnTZHvvj
-   pEVVnrPETBETKyKgkZ9XUtsNkXlXvhNBD3m+urxFgr4aQWqF6Jl91MbEN
-   DqPV0+fR38NU4uuVEQbzl7DgmpJgdlVWHiPmv/BazsgLse8rXM9Zijqf3
-   Q==;
-X-CSE-ConnectionGUID: QOXhr11qR3qJmnNbq8y/lA==
-X-CSE-MsgGUID: +Sx9e+K5TkqDM6MzdwjTpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="32776934"
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="32776934"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 18:20:42 -0700
-X-CSE-ConnectionGUID: 7w0w8aZDTJqMuAYRh5XFng==
-X-CSE-MsgGUID: XTZgTvcVS7SeqeGzux2ZdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="82062035"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 29 Oct 2024 18:20:39 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5xO0-000eMm-33;
-	Wed, 30 Oct 2024 01:20:36 +0000
-Date: Wed, 30 Oct 2024 09:20:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
-	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	=?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Varshini Rajendran <varshini.rajendran@microchip.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
- newer SoC families
-Message-ID: <202410300915.VPL8EQQu-lkp@intel.com>
-References: <20241029125843.2384307-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1730251261; c=relaxed/simple;
+	bh=fme0YyjHgadUvFsmVz/SikUmPufmMWN90T1PJ9hi5+c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CZ7STTO81SSw7OsvuCYsq+gxSTDW2Gj+P43kvrTqHV9/kp1/lqfHpKoAz/2x1JPOaW3CyN0mHsM+tZ0EGNk+Xvw3m/9wLfR8NeiLNTVR6d4q4vjFa+eL2Pv+PqV9+4HQdZ9t4DLV1Gfj3g50QSNPwyF0oPWmcKWNYZwHHltdgzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XdTpf1szDz1ynhZ;
+	Wed, 30 Oct 2024 09:20:58 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9C7B91400D3;
+	Wed, 30 Oct 2024 09:20:49 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 30 Oct
+ 2024 09:20:49 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <Pierre.Gondois@arm.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] cpufreq: CPPC: Fix possible null-ptr-deref for cpufreq_cpu_get_raw()
+Date: Wed, 30 Oct 2024 09:20:19 +0800
+Message-ID: <20241030012019.357039-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029125843.2384307-1-csokas.bence@prolan.hu>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-Hi Bence,
+cpufreq_cpu_get_raw() may return NULL if the cpu is not in
+policy->cpus cpu mask and it will cause null pointer dereference.
 
-kernel test robot noticed the following build errors:
+Fixes: 740fcdc2c20e ("cpufreq: CPPC: Register EM based on efficiency class information")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[auto build test ERROR on broonie-spi/for-next]
-[also build test ERROR on soc/for-next linus/master v6.12-rc5 next-20241029]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Cs-k-s-Bence/spi-atmel-quadspi-Create-atmel_qspi_ops-to-support-newer-SoC-families/20241029-210231
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/20241029125843.2384307-1-csokas.bence%40prolan.hu
-patch subject: [PATCH] spi: atmel-quadspi: Create `atmel_qspi_ops` to support newer SoC families
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20241030/202410300915.VPL8EQQu-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410300915.VPL8EQQu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410300915.VPL8EQQu-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/spi/atmel-quadspi.c: In function 'atmel_qspi_transfer':
->> drivers/spi/atmel-quadspi.c:446:68: error: 'struct spi_device' has no member named 'master'
-     446 |         struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->master);
-         |                                                                    ^~
-
-
-vim +446 drivers/spi/atmel-quadspi.c
-
-   442	
-   443	static int atmel_qspi_transfer(struct spi_mem *mem,
-   444				       const struct spi_mem_op *op, u32 offset)
-   445	{
- > 446		struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->master);
-   447	
-   448		/* Skip to the final steps if there is no data */
-   449		if (!op->data.nbytes)
-   450			return atmel_qspi_wait_for_completion(aq,
-   451							      QSPI_SR_CMD_COMPLETED);
-   452	
-   453		/* Dummy read of QSPI_IFR to synchronize APB and AHB accesses */
-   454		(void)atmel_qspi_read(aq, QSPI_IFR);
-   455	
-   456		/* Send/Receive data */
-   457		if (op->data.dir == SPI_MEM_DATA_IN)
-   458			memcpy_fromio(op->data.buf.in, aq->mem + offset,
-   459				      op->data.nbytes);
-   460		else
-   461			memcpy_toio(aq->mem + offset, op->data.buf.out,
-   462				    op->data.nbytes);
-   463	
-   464		/* Release the chip-select */
-   465		atmel_qspi_write(QSPI_CR_LASTXFER, aq, QSPI_CR);
-   466	
-   467		return atmel_qspi_wait_for_completion(aq, QSPI_SR_CMD_COMPLETED);
-   468	}
-   469	
-
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index 2b8708475ac7..01c24c0ee9b3 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -420,6 +420,9 @@ static int cppc_get_cpu_power(struct device *cpu_dev,
+ 	struct cppc_cpudata *cpu_data;
+ 
+ 	policy = cpufreq_cpu_get_raw(cpu_dev->id);
++	if (!policy)
++		return 0;
++
+ 	cpu_data = policy->driver_data;
+ 	perf_caps = &cpu_data->perf_caps;
+ 	max_cap = arch_scale_cpu_capacity(cpu_dev->id);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
