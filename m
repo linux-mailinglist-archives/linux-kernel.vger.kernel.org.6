@@ -1,159 +1,154 @@
-Return-Path: <linux-kernel+bounces-388974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADB09B66CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:02:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B79B79B66EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A601C21794
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:02:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CDE28274D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEDA1F5859;
-	Wed, 30 Oct 2024 15:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB0920F5D5;
+	Wed, 30 Oct 2024 15:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="DYEUmdjF"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="qomTIikI"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3E21F4735
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009F200CA2;
+	Wed, 30 Oct 2024 15:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300494; cv=none; b=m76Qy6UZWkJOhKLsmjmOTUnS05d7aq8m8mstbMkYjEi09XZFuPoEVbKECOMo+aY8QbSYMPZrv7Kp1R63OnORcgt/u3O29twUYxohULG0AoionPGXpxWF9olUOn4gocRMIM8vNrTyXM5hOK5xawzpLSDI9VI/Ky+4T2pyP5upYWY=
+	t=1730300611; cv=none; b=fSLnKluJDFy8cQ5uINPhoHsKjosiiOTeF6XdRmLU/BB5HZ7On6Tto8iPB2AXUMJizjICbB/tfMHL/a8XKleFweHtFz4876vlwDvxfH7QLFP6wg1tOvRaQi+WtJwBF3pR6F4d9bRXMcsoAoiv2tdtLxDBBByIiQBGZXf2516TNkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300494; c=relaxed/simple;
-	bh=FL8y5vH2DP6OO+W2bGbV05vpOD/N9aEaxA/0pmFdX6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4PoO4Lqwo0fz396qgMqXZf2cBrKKBYtV2BxXQjf4f9nC3OkdK2j3xF8eGcJPq57sQ8cbp43M3ejsPvTs2GWNT7LC5c6JWn422GtYrphPPG4guWzQ+5gtwK3W+jAEms+vUakHmRo8jk9gy+0YI/M7fYab6jy8V6w3++FTEGhOpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=DYEUmdjF; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cd7a2ed34bso40650306d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1730300492; x=1730905292; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Q8Onf+m3kOOMRY7hbWMtGK0sJkECClNbY5UDCI4RFs=;
-        b=DYEUmdjFGdHgGK+dT9jD0zmz6subT09g6tL6rJhMKfF8dqY2awwrdV8R8S2rk6uZgA
-         vBP8DnXGob/dsbV8kRhSA8mBwkshJTMpk1wp2nZkDTS83ADsTR67Ihq4AWcPygx14/Kp
-         Cf22nv2pZBx+5OvVsUOEg4mMWMzmaMA0wqnVLHWJ6fxpGKczSSsY28721hreIn2NsgsB
-         vP1mxnvCMF58N7hP/NgsuZxEws2qmynqwhJmnDvouVcJhNmO4LVFoUw6g+lWvkVXIr/f
-         lKCW9pCjtzK1swnQ3N7HQYqQLqI8roVWKeCGycXnYPDfEFpP0tFF2oAy4xS4Ck9aPjii
-         TNxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730300492; x=1730905292;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Q8Onf+m3kOOMRY7hbWMtGK0sJkECClNbY5UDCI4RFs=;
-        b=sxBAACESmiSt0TuDFIvSRKITKAlhWJugaNHoOjPtXr4r6drqg0h9bZV2O+QY69FRGx
-         jHx/A6Mz/IdKk+Ge4d/7dsmVkwZ/vWWZ/LP9nEr43PhZJ5YK/26iIdrGSqhR4uKqYeMv
-         7o5sxlvg3rbd5tNWePC8Q5f0b21I0A5Y7Nm9sfQ/5hIUoPsJyWKripiDPWTwe+SD6L1D
-         NKKGtoCTZU5GYr1bKqu8cwzI1N2MGt0Hn/O+Xl/M1pPDZBQRhWHDAFAcbSymQy1t9cj1
-         5O0wUpDYQKXBiS2lHsuDXJPRhVXaTRDLEuSPukYZxcdcly6Z0t0n/XtBLtnhbEGMeWdi
-         YRJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVExF7ilXfeP4+G1nGzWBSjCZvcuFEpymfKdWdnjq1SKyy/7UHTfr75qtt7bdhvdcwMVTqCGX2IUA1ZPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/kB3fdDGuHIsC/+H6ChDbefUGjmyVnWkHMmcFZqxZXBeQAHvE
-	0tWSp0opt3ZuuJ9DIH4tHXjIrBnTq0Npr48aYWWT61ItKtJdmDv4s5gtbX7Whnk=
-X-Google-Smtp-Source: AGHT+IHhuKpLShK8fctWjn/NG1FZnDN5PDqypx/YhKTIWg3COMyVpTWAl/pGdOiRoamvWFhjIhqKWQ==
-X-Received: by 2002:a05:6214:398c:b0:6ce:1011:60c1 with SMTP id 6a1803df08f44-6d185849638mr176475236d6.35.1730300491405;
-        Wed, 30 Oct 2024 08:01:31 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d1798a8455sm52968066d6.32.2024.10.30.08.01.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 08:01:31 -0700 (PDT)
-Date: Wed, 30 Oct 2024 11:01:36 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
-	dave.jiang@intel.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
-	lenb@kernel.org, osalvador@suse.de, gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org, rppt@kernel.org
-Subject: Re: [PATCH v4 3/3] acpi,srat: give memory block size advice based on
- CFMWS alignment
-Message-ID: <ZyJKUAcn8iLoV7PI@PC2K9PVX.TheFacebook.com>
-References: <20241029202041.25334-1-gourry@gourry.net>
- <20241029202041.25334-4-gourry@gourry.net>
- <c47337ea-f20e-44eb-95e8-c29b2db849a7@redhat.com>
+	s=arc-20240116; t=1730300611; c=relaxed/simple;
+	bh=NAJDFpr9nmdU19C3JKcxMzbLsCujnceVqhZ/RKnEwwg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Af+TFKHbaNb+31NyYomIGXM73EbTT6cTqSu98SsoWPf9nOox0LZkrVYTYwFp+I+wNaLYmJk8frvjgX/RPZmzBKdUFVwnUGYm49zXP0bFaKHdfny3PyILmseqRbzytFLMMDTu/p8ax9QRp+1oc96YfhX0b314DFEoItACsgBOMu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=qomTIikI; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730300534; x=1730905334; i=metux@gmx.de;
+	bh=NAJDFpr9nmdU19C3JKcxMzbLsCujnceVqhZ/RKnEwwg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qomTIikI/OgfmxAbFKh1e8iCRJShu7EnlgU5G434TkB+7QieI60zcRnRQmNHY7mL
+	 26XECiyiNu12zXTWRy2asSgHeF6VwbBHM3aDnQ3uox6d+N5j3vyz2V29nf9ZEHI/7
+	 qUlSXTqxVipxXZ1JSehQTzpHDHQPSPiL/eaweFb8E7BUCEPOvfqCWNoLR7qjkN1j/
+	 p49vWpG4avdBGfWZrfUUn1QQPJYBKupzAA27zZiM0BrIysUJtE3I4oi18t2KU2Jgp
+	 NR5BKuTzLj4AssNq/jcoRi8JEym9/1eHXVRmJDUQ/Hacah+zbe10IoOhncuicwk4Q
+	 B7fK/ijaayh5nLVM0A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.178] ([77.2.112.201]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5wPh-1tCUne2tcR-003w9y; Wed, 30
+ Oct 2024 16:02:13 +0100
+Message-ID: <0369c687-db33-4665-b3dc-143000ef2e47@gmx.de>
+Date: Wed, 30 Oct 2024 16:02:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c47337ea-f20e-44eb-95e8-c29b2db849a7@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Maintainers now blocked from kernel.org mail access [WAS Re:
+ linux: Goodbye from a Linux community volunteer]
+From: metux <metux@gmx.de>
+To: Hantong Chen <cxwdyx620@gmail.com>, tytso@mit.edu
+Cc: ajhalaney@gmail.com, allenbh@gmail.com, andrew@lunn.ch,
+ andriy.shevchenko@linux.intel.com, andy@kernel.org, arnd@arndb.de,
+ bhelgaas@google.com, bp@alien8.de, broonie@kernel.org,
+ cai.huoqing@linux.dev, dave.jiang@intel.com, davem@davemloft.net,
+ dlemoal@kernel.org, dmaengine@vger.kernel.org, dushistov@mail.ru,
+ fancer.lancer@gmail.com, geert@linux-m68k.org, gregkh@linuxfoundation.org,
+ ink@jurassic.park.msu.ru, james.bottomley@hansenpartnership.com,
+ jdmason@kudzu.us, jiaxun.yang@flygoat.com, keguang.zhang@gmail.com,
+ kory.maincent@bootlin.com, krzk@kernel.org, kuba@kernel.org,
+ linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux@armlinux.org.uk, linux@roeck-us.net,
+ manivannan.sadhasivam@linaro.org, netdev@vger.kernel.org,
+ nikita.shubin@maquefel.me, nikita@trvn.ru, ntb@lists.linux.dev,
+ olteanv@gmail.com, pabeni@redhat.com, paulburton@kernel.org,
+ robh@kernel.org, s.shtylyov@omp.ru, sergio.paracuellos@gmail.com,
+ shc_work@mail.ru, siyanteng@loongson.cn, tsbogend@alpha.franken.de,
+ xeb@mail.ru, yoshihiro.shimoda.uh@renesas.com
+References: <20241024173504.GN3204734@mit.edu>
+ <20241024181917.1119-1-cxwdyx620@gmail.com>
+ <e3559794-ab4a-48f2-8c28-52ef46258051@metux.net>
+Content-Language: tl
+In-Reply-To: <e3559794-ab4a-48f2-8c28-52ef46258051@metux.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jSWmplSFQgV90c2A0bkkvj2t8ExnIUMHHQD7NlbYYqtnVH71j/A
+ Pj4uZIi6YPufmEMjudXa4dJHIygmTV1wIFJJkHGM+GIBFRAfnlev+sgkCZr+MF54lQRidxS
+ bkG2HCXJq0essmv69s27h4WdycA0Rnb+4K1fnTHuD/qBR+mEDSBS53MElG91weJLYtaeg5k
+ OTPFgaQ3fak8gIXNj4JDQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WLKWUYisdM4=;2yNj/laS7SIY5FYvJFi4MhOmvxZ
+ pHFbD0J1kye994bqbqLhdCTnBHW8Ug5JybvfzVUSlvhHAACTecoQE51xKKnV5hpKkUhCo8yLr
+ /EvJ6VglOAgdSAY02WiKyUBPuOArNFiBamR/Fukdo2XJTgsXt550Q9Uu3s0mVOwxlXCMnWMns
+ Fn7g+nMUVDwZg2peIk913PvjXMFh4d9Lkvh3kvC90QEiN4qogLfcOyB8IyykJPV3DQeeXp5hf
+ +MrDjTpn28aqOi4W0rgu+IoyVD3neDdXwidld0Di4C2B0Xjeof79KSNCRhE6HCopzETXFL3/P
+ Eq20+VJdDS4NGHO7dtKR96RqKlqckwmu3AywKAhNuZLL3xf4qG/GG7lFzucn1PmOwB9qzuDQ0
+ T83E1gkoEctHd2TIp9iZslkwtRvZoLEaBVqlMchJ2WhOacIxu0B7j2GBH/lqButUW3kxkamyr
+ QKLpEtwiYtP4mMfbOjHeKNuT587VBOcJ0soGtjcr5abLWdDOKEep1at+A6hNDrbBSP1f6/IBo
+ BK+2+hzwJ3piZW/Yn1eaXBx6/3MBI0Lr+ftdHokUiS61Mp+GLxSd3NlP9E5Ud6tWQlNEOE+TO
+ 3A3+h1iPb9qNj+J4fjqMCG2p0nA6l58zMiSBfI4P0CjndwksOOuTcigJ6T1hzsfD+NMuWWKR6
+ sAOmiaHvt7qnuiw6srIxEdbhvlRklDpq1Rv8Lrce6Ts8Z8qBYDnh7sqT0QOx+5KI9Lsu5iX3q
+ 5le4iVFFC4QhG4eqQ5l+1SnoJ0wgVAVlJ5k6YKhwZo8jzqS56dXAir9zu5tn+DGzJFsWUTgbd
+ rbwM2pncFYXiGznL6foV5OhA==
 
-On Wed, Oct 30, 2024 at 11:40:08AM +0100, David Hildenbrand wrote:
-> On 29.10.24 21:20, Gregory Price wrote:
-> > Capacity is stranded when CFMWS regions are not aligned to block size.
-> > On x86, block size increases with capacity (2G blocks @ 64G capacity).
-> > 
-> > Use CFMWS base/size to report memory block size alignment advice.
-> > 
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Signed-off-by: Gregory Price <gourry@gourry.net>
-> > ---
-> >   drivers/acpi/numa/srat.c | 19 +++++++++++++++++--
-> >   1 file changed, 17 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> > index 44f91f2c6c5d..a24aff38c465 100644
-> > --- a/drivers/acpi/numa/srat.c
-> > +++ b/drivers/acpi/numa/srat.c
-> > @@ -14,6 +14,7 @@
-> >   #include <linux/errno.h>
-> >   #include <linux/acpi.h>
-> >   #include <linux/memblock.h>
-> > +#include <linux/memory.h>
-> >   #include <linux/numa.h>
-> >   #include <linux/nodemask.h>
-> >   #include <linux/topology.h>
-> > @@ -338,12 +339,26 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
-> >   {
-> >   	struct acpi_cedt_cfmws *cfmws;
-> >   	int *fake_pxm = arg;
-> > -	u64 start, end;
-> > +	u64 start, end, align, size;
-> >   	int node;
-> >   	cfmws = (struct acpi_cedt_cfmws *)header;
-> >   	start = cfmws->base_hpa;
-> > -	end = cfmws->base_hpa + cfmws->window_size;
-> > +	size = cfmws->window_size;
-> > +	end = cfmws->base_hpa + size;
-> > +
-> > +	/* Align memblock size to CFMW regions if possible */
-> > +	for (align = SZ_64T; align >= SZ_256M; align >>= 1) {
-> > +		if (IS_ALIGNED(start, align) && IS_ALIGNED(size, align))
-> > +			break;
-> > +	}
-> 
-> Are there maybe some nice tricks bi-tricks to avoid the loop and these
-> hardcoded limits? :)
-> 
-> align = 1UL << __ffs(start | end));
-> 
-> Assuming "unsigned long" is sufficient in this code (64bit) and "start |
-> end" will never be 0.
+Resending with another address, since the other one is
+hard-blocked / censored by kernel.org mail server.
+
+On 30.10.24 15:33, Enrico Weigelt, metux IT consult wrote:
+> On 24.10.24 20:19, Hantong Chen wrote:
 >
-
-I don't think 0 itself is necessarily invalid, but it would be strange.
-
-I can look a bit.
- 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+>> What LF and Linus done will inevitably create a climate of fear where
+>> contributors and maintainers from the *Countries of Particular Concern*
+>> feels endangered.
+>
+> And it's getting worse:
+>
+> They're now blocking mail traffic on kernel.org, even from maintainers.
+> (my whole company is hard-marked as "spam"). Anything @kernel.org -
+> lists as well as invidual inboxes.
+>
+> Still in the process of compiling evidence report. Anybody out there
+> who's affected too, let me know - will be added to the report.
+>
+> I wonder when this one will be blocked, too. (I've still got many more
+> left).
+>
+>> This is clearly NOT what contributors truly want. People from around
+>> the world
+>> once firmly believed that Linux was a free and open-source project.
+>> However,
+>> Greg's commit and Linus' response deeply disappoint them.
+>
+> Indeed. The trust that had been bulit up in decades is now finally
+> destroyed - just by a few mails.
+>
+> Linux has been turned into POSS, politware.
+>
+>> Open-source projects might be international, but the people or
+>> organizations
+>> controlling them are not. This is the source of concern and
+>> disappointment.
+>
+> That's why those projects should never depend on just a few individuals
+> or organisations in one specific country.
+>
+>
+>
+> --mtx
+>
 
