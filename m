@@ -1,100 +1,76 @@
-Return-Path: <linux-kernel+bounces-389366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F2F9B6C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:26:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB649B6C1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C524DB2220F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:26:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8891C210D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46C31CBEA1;
-	Wed, 30 Oct 2024 18:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704831CC152;
+	Wed, 30 Oct 2024 18:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lycBGzGW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="BBLI19gx"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE3B1CB333;
-	Wed, 30 Oct 2024 18:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75DC1BD9DA;
+	Wed, 30 Oct 2024 18:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730312781; cv=none; b=BV5NfXZERzx0QjsGH9A36i2AacZcZMaZ6ptcZy42C9SOMplU/cNzKlABfHA451oUdHK+97WLiZjp6lB6tRlJ7mjjXG4q6VDsADGcEManls6fgI3hgxi9mcgIv0aA/rgwaXozaJ0CTbRnt1WDzD+O4FVB0ZOXGiNquJVghQupvzE=
+	t=1730312981; cv=none; b=uaPflV4Qmi2YQ/VB44/oVZ322fKGNA0SRKd6pkWinvNZ+aJ+nl9oeL0Oqfbe/yZcplq2YAkAnrj6bZhfekTCDn4eN+ErD3uGurKaCemWdQnlrw6Q5VlWijdFuKyAaKlHzbD0gbw9Im9IvqhvMWvWaOqvbNdwjF9dstahyiRz+9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730312781; c=relaxed/simple;
-	bh=+Cev3fN7SlYcH4a500XJphKTvd7miL24lc7B03UhnwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNVji2uGpL8VocRYABMFkJpbaQjq3HxWvm4K2rtnivLGJ/q8IJWTrYzLoYr+JodN3rQQwtkhXCnGLZnBjCD1B+FLAu+aCGRC5F53cI3mq8wJIkWz5NYpWVvphYY3svx/jkp55arctNDH36s6eeVWyjJN/xT3ICNXhKJBOW7D1R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lycBGzGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A940C4CECE;
-	Wed, 30 Oct 2024 18:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730312780;
-	bh=+Cev3fN7SlYcH4a500XJphKTvd7miL24lc7B03UhnwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lycBGzGWvHZvCdK9W1mbrFINMzqcu5aL3s7eL29X1Z8VBhRLldNaJfbyGvTCi3rYO
-	 t87hxuVNFd8rXh8l/ahPPuYN94L+xGzPweIsGqRRu78svDrnkeWm5B8Jo6uoMA6RGF
-	 RvHqlpaq3ZsJ/h+ySFZUppvFCL1y0VwHnAjvI9PLtG89DJ9f/9CPA5OnRa2mGafx7H
-	 sPJE3ZYh6mdSBHADzicyCCei5VHMWTmmMzgPGn4BYXpIu8nCIIiSwzT6FNz7I4AZiw
-	 JBg+6O1xEtZy/plM3dahPR3GXpiEazUwx3POpM/AF6qb2fDLlma7zYAh7HITiDlmK5
-	 8TYxgoY+LczCA==
-Received: by pali.im (Postfix)
-	id 668659D2; Wed, 30 Oct 2024 19:26:13 +0100 (CET)
-Date: Wed, 30 Oct 2024 19:26:13 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, w_armin@gmx.de,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH 1/2] dell-smbios-base: Extends support to Alienware
- products
-Message-ID: <20241030182613.xn3tl2khzuhft4sr@pali>
-References: <20241030181244.3272-2-kuurtb@gmail.com>
+	s=arc-20240116; t=1730312981; c=relaxed/simple;
+	bh=hYoR0YqPyvmejtGbq8Tt3Ox/H/FdThrUkxzrtIn2j1o=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=mURA4feeFiuoiAtJv2Qi1lelK0shtovRTw5NfrPzGLMbTAw6jvfYfouqiUan2XVexI0REZDvbEpOhShj8qrh44ehtASbfang2kFunPgGpVNSREASHxbfupG3f2NSWhs8sDwJLLJktwFYiMbF2epsHIWHjXHwcBih5t5nEcij++U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=BBLI19gx; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1730312976;
+	bh=hYoR0YqPyvmejtGbq8Tt3Ox/H/FdThrUkxzrtIn2j1o=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=BBLI19gxXBoRT2hGgIYHeg3Xte60wUM5Ul+uXHj0WHDqcuuZtR36NZ1QmmJ6QTjYd
+	 8LtSmmd3mYpk12vavBj3NbqIiQH4bwu50hnmv1OAjCRXDjq1ZV+l2JBeeSQP93lWAc
+	 5DxY2HeydBl2DYgVZ9lSl1YrdFbYileezlNKhLtE=
+Date: Wed, 30 Oct 2024 12:29:31 -0600 (CST)
+From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Message-ID: <550e1dd5-91fb-44ae-bbd5-a10ce1b73ad4@weissschuh.net>
+In-Reply-To: <ZyJtXzIReSHfKkd_@smile.fi.intel.com>
+References: <20241030162754.2110946-1-andriy.shevchenko@linux.intel.com> <63b16433-9f80-492f-9389-633a9852a223@weissschuh.net> <ZyJtXzIReSHfKkd_@smile.fi.intel.com>
+Subject: Re: [PATCH v1 1/1] ACPI: battery: Check for error code from
+ devm_mutex_init() call
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030181244.3272-2-kuurtb@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <550e1dd5-91fb-44ae-bbd5-a10ce1b73ad4@weissschuh.net>
 
-On Wednesday 30 October 2024 15:12:45 Kurt Borja wrote:
-> Fixes the following error:
-> 
-> dell_smbios: Unable to run on non-Dell system
-> 
-> Which is triggered after dell-wmi driver fails to initialize on
-> Alienware systems, as it depends on dell-smbios.
-> 
-> This effectively adds dell-wmi and dell-smbios support to Alienware
-> products.
-> 
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
->  drivers/platform/x86/dell/dell-smbios-base.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
-> index 73e41eb69..01c72b91a 100644
-> --- a/drivers/platform/x86/dell/dell-smbios-base.c
-> +++ b/drivers/platform/x86/dell/dell-smbios-base.c
-> @@ -576,6 +576,7 @@ static int __init dell_smbios_init(void)
->  	int ret, wmi, smm;
->  
->  	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
-> +	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Alienware", NULL) &&
+Oct 30, 2024 11:31:21 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
 
-Are we sure that all devices with "Alienware" OEM string supports this SMBIOS API?
+> On Wed, Oct 30, 2024 at 10:42:18AM -0600, Thomas Wei=C3=9Fschuh wrote:
+>> Oct 30, 2024 10:28:03 Andy Shevchenko <andriy.shevchenko@linux.intel.com=
+>:
+>
+> ...
 
->  	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
->  		pr_err("Unable to run on non-Dell system\n");
->  		return -ENODEV;
-> -- 
-> 2.47.0
-> 
+>> wouldn't it make sense to mark devm_mutex_init() as __must_check?
+>
+> It's macro, any idea how to do that for the macros?
+
+It should work on __devm_mutex_init().
+I don't think the expression macro=C2=A0 in between should interfere.
+Unfortunately I can't test it myself right now.
 
