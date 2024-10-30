@@ -1,74 +1,119 @@
-Return-Path: <linux-kernel+bounces-388040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F609B59A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3C59B59AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70999B22A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3159BB22A8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9508513B29F;
-	Wed, 30 Oct 2024 01:51:53 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60E118E37B;
+	Wed, 30 Oct 2024 01:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2D1Bm2w"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D3D13C69E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E431BC3F;
+	Wed, 30 Oct 2024 01:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730253113; cv=none; b=m5shRrRw9i1LJcbpUgCXaGQbAXAFSMu2X5RvbwiCd4gS8LrjXSoU5DBlBqFMArlzI3txu+NkSE3YKNpZ55b4xBQ5L3k/pcjG6wRzz2B+Li2+45BVN42tunirM+9lvodMbv+u9+ZsF5MdieEomwsvaSCDF3SKnek6TTPRQORi7u4=
+	t=1730253287; cv=none; b=D1H6BMhueM0njfkYPa03jhZr2DcpquxV/IiVnig51Ed2ZNxSKXrapC56/MGceQeWY+elBfFW9WJ1AiqaTHykW0bpDZMrXmQxGkDqBLHkvXtfrWacYhkG146w1tl46XSrad5vP36vM0YDvD+e7S8RddJ6dhTlMUJZBwZoKSBbsgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730253113; c=relaxed/simple;
-	bh=L9xR2Qk8/rGKYIwQ3/ai5YrdBem7nONHaKez3ubJN1A=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=TTbqv5mktdBfDzpSYAJVXMTwUzmyWEidl+3P6skq8vwFyrt1pn6RfG3fbU+4YjT5nk0erX0aYncuJisd/jhNrxzGg55GrUrtcamEvS4CTeppijNNNOqb50OEdWVfdQmWgvYETkWnOSTueC9/9S+KTxtSXH5ktCYHUykxDMobkLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XdVRh2786z1T8fp;
-	Wed, 30 Oct 2024 09:49:36 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9D0D718009B;
-	Wed, 30 Oct 2024 09:51:46 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Oct 2024 09:51:45 +0800
-Subject: Re: [PATCH] mm/memory-failure: Replace sprintf() with sysfs_emit()
-To: zhangguopeng <zhangguopeng@kylinos.cn>, <linux-mm@kvack.org>
-CC: <nao.horiguchi@gmail.com>, <akpm@linux-foundation.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241029101853.37890-1-zhangguopeng@kylinos.cn>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <0df802f5-43b0-7b09-4d3c-e1520218d8d2@huawei.com>
-Date: Wed, 30 Oct 2024 09:51:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1730253287; c=relaxed/simple;
+	bh=qpOOOXWMQa1lDZwHHMx3OdFflw+w+2pzxfyq06gqboM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ciaQ10FxSXw8U4A516ZkuERe1IbLlu8lxF3siFw8lDaLEmNACUnvzsSDb9sgFovIxrdpNtfJf20NXsRB6JPczhf5EzMMEjqIxs6Nyts3OVdcuse1p+rlTNWV7v5kF+81A9uw/HbgOz703n6nUEH4ip6gNhrOBNprvlZT/i9zaGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2D1Bm2w; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so3664805b3a.1;
+        Tue, 29 Oct 2024 18:54:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730253284; x=1730858084; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=avMnOGtv+fjDKb2FHdKpORq82ypriAfOKWgYRnhbdSM=;
+        b=O2D1Bm2wEBWTUxDaA7sjuuIhks9x9+nr7E0CBSjZXdNS+EF/YU+ox4kkzzOIz3krA9
+         MYRYwxpH95njrolqjPs4ANMBPbekGuYtqwkJdCRc8h6UZhTJS64h6CVD5eRZUYjD1cAU
+         R6w78M/z7Fb1k50f2pv2BR8723eSX/SmS5oWM3d2JnpuMGZl+TXLBfjGB1Avh2rcJppD
+         iHR56cLlNwAnfhgmCWQN3ZLehtOQHNrifRTW3+3+cdE/Ock+//AYEsF4prwNlHii5SgT
+         oZWAzlFEJMlES6oNonSh8/9Y3JUpiu/7I69IymyubNoAjBYh6EuutfeFVbSWwQ0oRjb4
+         egpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730253284; x=1730858084;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=avMnOGtv+fjDKb2FHdKpORq82ypriAfOKWgYRnhbdSM=;
+        b=vflOjkTn/UJjpidgE/govZ0Yb1d60AzqL240vSvHhphWkAOpv4WU3E02nxX2WG4gNH
+         UvYClWYzCLdAdVRuH/m0etKAiMpy5Y4zXxX/gqsgFP4ErIkg5GKxrIRA6hQBsFVAP/yn
+         K79sc2ap+EwAE+dx0gGKQv+qN4Jdt+mKfvnQ2RaCRuNmQmDPu7vexNJuX4q601Z5OE+L
+         7wIbAIuHHMwqeup4H3L2RFJ2n1M26OSXeSPZZ2DW1XiodYPk2S2SS8jZHmQ2P3pU4tco
+         QK85A4m70FeFcYi1SrIaUS9ATeSnvfOn+k9PPgv/DURI/QadNoae2rWF5g/Aeuc1DxQY
+         UxKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIQVEWuVDUUq6hUZPXy4+56k1xL9jCLJ74yMjhWn0NQoMtJj+GP1/CF+Hhi+I+PEVlIGaSeV8SFBxU4iU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsjU8It9bF2KfL7DINJBVJEaCGHXdqPBZ1e/gexKWorewA7L6/
+	VigAL7h0UR5c494Y9PJWW9zS4fxg233k0yLmhwm21OnapMDaQ5C7
+X-Google-Smtp-Source: AGHT+IG9wAHbREcAEMMe0SYlXgOMatkkrJkfcotPYGghnPUZpulpvkceQM8lNQX+WPxyEzVUETMmjA==
+X-Received: by 2002:a05:6a00:4fc3:b0:71e:410:4764 with SMTP id d2e1a72fcca58-72062f83b02mr21342350b3a.8.1730253284161;
+        Tue, 29 Oct 2024 18:54:44 -0700 (PDT)
+Received: from arch-pc.genesyslogic.com.tw (60-251-58-169.hinet-ip.hinet.net. [60.251.58.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a219d9sm8549476b3a.171.2024.10.29.18.54.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 18:54:43 -0700 (PDT)
+From: Ben Chuang <benchuanggli@gmail.com>
+To: adrian.hunter@intel.com,
+	ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ben.chuang@genesyslogic.com.tw,
+	benchuanggli@gmail.com,
+	greg.tu@genesyslogic.com.tw,
+	HL.Liu@genesyslogic.com.tw,
+	victor.shih@genesyslogic.com.tw,
+	dan.carpenter@linaro.org,
+	takahiro.akashi@linaro.org
+Subject: [PATCH] mmc: sdhci-uhs2: Remove unnecessary NULL check
+Date: Wed, 30 Oct 2024 09:53:26 +0800
+Message-ID: <20241030015326.2289070-1-benchuanggli@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241029101853.37890-1-zhangguopeng@kylinos.cn>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+Content-Transfer-Encoding: 8bit
 
-On 2024/10/29 18:18, zhangguopeng wrote:
-> As Documentation/filesystems/sysfs.rst suggested, show() should only
-> use sysfs_emit() or sysfs_emit_at() when formatting the value to be
-> returned to user space.
-> 
-> Signed-off-by: zhangguopeng <zhangguopeng@kylinos.cn>
+From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
 
-Acked-by: Miaohe Lin <linmiaohe@huawei.com>
-Thanks.
-.
+The "host->ops" pointer points to an offset into the "sdhci_ops" struct
+so it cannot be NULL. Remove "host->ops" check in "if" statement.
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202410271835.tqz9s9JV-lkp@intel.com/
+Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+---
+ drivers/mmc/host/sdhci-uhs2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
+index c488c6d56015..b0e4ab852a94 100644
+--- a/drivers/mmc/host/sdhci-uhs2.c
++++ b/drivers/mmc/host/sdhci-uhs2.c
+@@ -413,7 +413,7 @@ static int sdhci_uhs2_do_detect_init(struct mmc_host *mmc)
+ 
+ 	DBG("Begin do uhs2 detect init.\n");
+ 
+-	if (host->ops && host->ops->uhs2_pre_detect_init)
++	if (host->ops->uhs2_pre_detect_init)
+ 		host->ops->uhs2_pre_detect_init(host);
+ 
+ 	if (sdhci_uhs2_interface_detect(host)) {
+-- 
+2.47.0
+
 
