@@ -1,170 +1,130 @@
-Return-Path: <linux-kernel+bounces-388032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC809B5985
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:47:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C92029B598A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BE3284A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6EA285041
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3544313B29F;
-	Wed, 30 Oct 2024 01:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590E2194A7C;
+	Wed, 30 Oct 2024 01:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cVsRemNU"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="rC4A7Mfk"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D29B18E37B;
-	Wed, 30 Oct 2024 01:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430C2194AF6
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252803; cv=none; b=mh9+rfM5NGzLKTcVRMbe8UllrLYVgnE6mAbfKJSmVSVGI4jp07IviTWTLo5IUTZ6dSejgqkCezGk9/R3en1jfS/ntbQb9OjbwIDddTQaa1+rN6W9pm7eZ1UVVd/6Vi0ekMFbpWn3rx4F52himRO/dY+4sIl/26VQrOXC822QjaM=
+	t=1730252820; cv=none; b=f8Wn71XrK75TiIF6PUipRV2/68bJTOyCIMEL78u2d7n1sHUAAt3AdDX38L0bFeYvTFiz1Sh49RYf7aq3QFo8F7vQDyUojan7CvplD5zqz4SmL/pWNlaiHT9CuU5FPYZgA8PGRKrZgDK6bUomQjKRtTTTQfXRAmtqEUzrFSfGDGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252803; c=relaxed/simple;
-	bh=7pum3/JkD0BwlxJPHGGkWM5clHm8rPDq6SZ4bCR2v4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EEmuUWYyNzVbU4nBbXNVa29y7KRRlOg/V9emtJKr8blAICXAyu41sqiCXHnKfFUmkxICI8UsUxYjSuzzn5dagkVeHbxMD6HYHgRZdkppIv0zrFWdf1DrTyv1xrK57jnSUlM4ox7GOvJfWs+9W3fSraFwDkULT2J9ZyXaXAtWOes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cVsRemNU; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso4376433a91.1;
-        Tue, 29 Oct 2024 18:46:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730252801; x=1730857601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bxFMjfk3ggTn0moJ8sPpGVsqjY/2TWidvbtEhX4CnB4=;
-        b=cVsRemNUT/4Rb5OvkiD/uDtbAnWZWVGE4aIJGEf4Hd2V68jhk+Rx5AEffgd+aLIH8U
-         TAwhot+czAADbrxZZnKp9NzhwzkEIUwEvlER+ZtbeeoblGd1Y7910q6dEq4zak0qZ9bU
-         4EoehDZjHcJmPDjwwEgWZsfXV3tc50auCSzujQyylWqCv77r6rR5WTVhVOzzWvuHuYcd
-         lbr9QQ9X1cNLdOLnekNU/Md4LACAD1vN/u+XWGLjV9sHFk9+r9Nix97J5MApNd0JaIXF
-         jiLCsBYYQAbCp2qspfrAUb5L4h1TbkU5bIh/My9fTfrKTFW5z8DDVDR4MTrft59pACUq
-         DGRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730252801; x=1730857601;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bxFMjfk3ggTn0moJ8sPpGVsqjY/2TWidvbtEhX4CnB4=;
-        b=J9o8eE8Tthp3YklzEclS02+weMAGh8AxefVOyKtOOFm4zCxzzsLU1rkYLxvLgXu04z
-         Rajsb5mUccPQ4U/vKj1W2hzSlub0W7s5Bu1Aiz/Zk1/a5HTfMFE+lPyj4kfvCjt2+4tB
-         Jk0bYafZIx2VeZIZ77gvRpmanpPubPFd/n8pZS6gK4yMLClI3WlbCkGeuU+ABOiZmQw0
-         el90ABOCEILNco/9mCx/+rRObkpszLVpvc0+J3W6sAFNuMnWM5WhSt//u1eiDVtsMP3X
-         mDjG5ZOYeOeZHGe3uMBedxVVafGXZFoexoHGM8r0ZPFwCSQ9dGzvyqOYs1ggz679x2y8
-         52dA==
-X-Forwarded-Encrypted: i=1; AJvYcCURUkLvdOBBxvr8b/nvT2NVJS6sRbiB1lMG6nlS7KcByuyG2XgHoXmsK3T2QLE3u7CYaUnbYeaMFrjDOcI=@vger.kernel.org, AJvYcCWJ4YAwjPdz1kZ8oKMaLrTjKWvZ2w2sHJn3dBm7t3QxTyxBlmzdZ/PlAJup7GgHPOHegG+Z8V4fpYk0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3iFUn55kV0jt8yqZu6FPfAO5+l8GYaVjVZJzq0NWFk7d+svlX
-	wdeGocCBYNMYrhP8tgO842K1VT1aU0v3CfEsM06p0863d8TjJ4ly
-X-Google-Smtp-Source: AGHT+IFZaj6aH2mDsjSI9GjYLL9VJVuI4bzhbZhrUs/Yck/v3RydR1pivAyoeT2NdQVzHEfQvCmzpQ==
-X-Received: by 2002:a17:90b:4b06:b0:2e2:cd62:549c with SMTP id 98e67ed59e1d1-2e8f10867cemr16377916a91.22.1730252800759;
-        Tue, 29 Oct 2024 18:46:40 -0700 (PDT)
-Received: from [172.19.1.43] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa57cc3sm380550a91.32.2024.10.29.18.46.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 18:46:40 -0700 (PDT)
-Message-ID: <d6bf5b0d-7036-4636-a15e-41db6f665323@gmail.com>
-Date: Wed, 30 Oct 2024 09:46:35 +0800
+	s=arc-20240116; t=1730252820; c=relaxed/simple;
+	bh=oObshbt1qkXuKG1U4M6y64p1E1ZQLclej2sD1aCjK1U=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=U6SrO8MrcXupGR2EAjfmd7LBlT+R5WDxFayAQ0JbswzISih3iCDkgiRnYuHTNmpujCYGAdR9q5c5nwVKdCZPivWrlkPAv6fCVFjHzzy7kNvOaZ56jF8DkvOVkTMKWcMJvfNlu6/SWJ7cX2z3pn4UyrIVSwKt7RBH3KvUch7kTsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=rC4A7Mfk; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id 5eC5t1SnOVpzp5xnVtnLr3; Wed, 30 Oct 2024 01:46:57 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 5xnUtMUiBib8Q5xnVtF9Rn; Wed, 30 Oct 2024 01:46:57 +0000
+X-Authority-Analysis: v=2.4 cv=T4qKTeKQ c=1 sm=1 tr=0 ts=67219011
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=sWTCEjoW0PaFb5V99poA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KVzQnrY4wTUwbzURtByjRl3jasMwB1tF7757AlHhlmg=; b=rC4A7MfkVNeGicpSHPRI3a+Uyv
+	b1jCCXIgtkW8XEYixqZAJDlAJC6mZT3D/l+33/XNsV3+LwX3yfPqpgQJcmrwAsKicIS+xo362na4j
+	h5bI0xpsMmarSyDWsk60S0kHxkMw8I1Z/1x/4i0fvMXiEqOE0QiMgo16jAfU3GzvJwy/62y7pdiVZ
+	eLc8xeSKsViCLdKzEfPYM38SwotDZ8q/X0J0ADMhvjQs7PMwOsTOjxS7XuKhRvI//u6Fjc+LsFUXt
+	SKulO7q2HEdOe8gs5fW5PY0uLWGVZ386A4XrTJ85A1A8PfMTgbopRshBg8PLXAZKYtCnqOJOvHYCY
+	uuiSQsww==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:36552 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1t5xnS-001M3g-2W;
+	Tue, 29 Oct 2024 19:46:54 -0600
+Subject: Re: [PATCH 5.15 00/80] 5.15.170-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241028062252.611837461@linuxfoundation.org>
+In-Reply-To: <20241028062252.611837461@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <246d5cc8-fccc-c751-ed9f-401ba6ed5353@w6rz.net>
+Date: Tue, 29 Oct 2024 18:46:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- mjchen@nuvoton.com, peng.fan@nxp.com, sudeep.holla@arm.com, arnd@arndb.de,
- conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- dmitry.torokhov@gmail.com
-References: <20241022063158.5910-1-mjchen0829@gmail.com>
- <20241022063158.5910-2-mjchen0829@gmail.com>
- <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
- <871e9a4c-7a3c-4a24-8829-a079983033da@gmail.com>
- <ef407e89-950f-4874-9dca-474d107f6a52@kernel.org>
- <984781ba-9f4c-4179-84d5-4ab8bbe4c3c6@gmail.com>
- <9b0a508e-d9ae-45ab-882f-5bc1f03e13db@kernel.org>
- <5d9e89aa-db10-4367-8417-9fcc1a3bb37a@gmail.com>
- <844798ab-2910-458e-a9c5-dc69f5c8e368@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-From: Ming-Jen Chen <mjchen0829@gmail.com>
-In-Reply-To: <844798ab-2910-458e-a9c5-dc69f5c8e368@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1t5xnS-001M3g-2W
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:36552
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 61
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBiODlwrL8VMS2aXu/EBeTaDeR9BV6UQFjFDUR6nMwhiJ1IxSkXnnLFZYSY+1xff+gBPnQ7f+VxNM9QlL87KtuIinwSdZkWIvQ+8rPFtaVt965SdTd8l
+ HR7EVRbrOILhX7dscnM0kEeba0O3IiO+Xs0/cYCzMyvAcuewdYfYXUYbjZ5FWPUkOXPzO10K6hzBbNS4z8+3Kfdc4oNMm2bsi7A=
 
-
-On 2024/10/29 下午 09:19, Krzysztof Kozlowski wrote:
-> On 29/10/2024 03:00, Ming-Jen Chen wrote:
->>>>>>>> +
->>>>>>>> +  per-scale:
->>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>>>> +    description: Row Scan Cycle Pre-scale Value (1 to 256).
->>>>>>> Missing constraints
->>>>>>>
->>>>>>>> +
->>>>>>>> +  per-scalediv:
->>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>>>> +    description: Per-scale divider (1 to 256).
->>>>>>> Missing constraints
->>>>>>>
->>>>>>> Both properties are unexpected... aren't you duplicating existing
->>>>>>> properties?
->>>>>> pre-scale:
->>>>>> This value configures the IC register for the row scan cycle
->>>>>> pre-scaling, with valid values ranging from 1 to 256
->>>>>> per-scalediv:(I will change pre-scalediv to pre-scale-div)
->>>>> Please look for matching existing properties first.
->>>> I will change it to the following content:
->>>>
->>>> nuvoton,scan-time:
->>> Why? What about my request?
->> I utilized|grep|  to search for relevant properties in the|input/|  folder using keywords such as|scan|,|time|,|period|,|freq|, and|interval|.
->> While I found some similar properties, I did not locate any that completely meet my requirements.
->>
->> For example, I found|"scanning_period"|, which is described as "Time between scans. Each step is 1024 us. Valid 1-256."
->> I would like to confirm if you are suggesting that I use|scanning_period|  and explain my specific use case in the description,
->> for example:
-> Description of these properties did not tell me much about their purpose
-> and underlying hardware, so I don't know which fits here. It looks like
-> you want to configure clock... but then wording confuses me -
-> "per-scale". What is "per"? Isn't it usually "pre"?
+On 10/27/24 11:24 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.170 release.
+> There are 80 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> So in general I don't know what to recommend you because your patch is
-> really unclear.
+> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
+> Anything received after that time might be too late.
 >
-> Please also wrap emails according to mailing lists standards. And use
-> proper line separation of sentences. It's really hard to understand your
-> email.
-
-I apologize for any confusion caused by my previous responses regarding 
-this issue.
-It seems that our discussion has reached a bit of a bottleneck.
-
-I have a suggestion that I hope you might agree with: I would like to 
-upload version 2 of the code.
-In this version, I will rewrite the properties, although it may not 
-resolve their underlying issues.
-I will also continue to keep our current discussion ongoing in version 2.
-
-Thank you for your understanding, and I look forward to your thoughts on 
-this approach
-
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.170-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
 >
->> nuvoton,scanning-period:
->>       type:  uint32
->>       description:  | Set the scan time for each key, specified in terms of keypad IP clock
->> cycles. The valid range is from 1 to 256.      minimum:  1
->>       maximum:  256 Could you please confirm if this approach aligns with your suggestion,
->>    or if you have any other recommended existing properties?
-> Why this would be board dependent?
+> thanks,
 >
-> Best regards,
-> Krzysztof
->
+> greg k-h
+
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+
+Tested-by: Ron Economos <re@w6rz.net>
+
 
