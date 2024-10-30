@@ -1,170 +1,167 @@
-Return-Path: <linux-kernel+bounces-388318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111609B5DD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:28:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BFB9B5DD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340061C2122A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 281CD1F24423
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9643B1E0E14;
-	Wed, 30 Oct 2024 08:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733AF1E1A32;
+	Wed, 30 Oct 2024 08:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q0A+LHSk"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wJOpCx1G"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676921E0E12
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803661E0E10
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730276888; cv=none; b=GXONv9kgDJsvnm3/r26Z+F9yTWmjOQKmaHl9USmqk97ssoUcWCvQVWg45DGdVNXY+hSpRWUoftbCVVGHCNXgQd8KhYX3YpootUIGCOEiFgT1Y2KihUG14DmkfUPg/+rxGunX7NICljdoeIgvdIgex7wQh1QDy687wftTgrv0l+o=
+	t=1730276899; cv=none; b=E/g3Of/ggn+rbot8pJeswqZvHUM4hT3jIxKbvqoaBmXj0q4NXXfMVx9vYu6/qk/XUREG/U3c2THbOnDAPrObZlJ81lAmjRZxHkGwzPZ+mSOB+Ps+sXGHZVgcFxqyaog9ywXplIbB5QdKOKnOnHUy8/ZbYeKjPyFtSuJxPXF+2cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730276888; c=relaxed/simple;
-	bh=2EJQviS+R0eeRdt1aLK6bINveA2q82bII4Ab8JdcMJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6AmiZVhc/1J8iS0oeuCZ/otFBMsp8GJ73ymZZETwHkjM1iwmZ4ZDl/Yw0+W66G8gYRwSICNxWcxVmKmIyPHplB7NKj5MxKxtrJT7pTnA+6T46OxRQJWicMHhwEbQG1r+3OzPLJ2Q0KTAQRHxHO+4dSoGp3WdlbRpdTXV7ufI4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q0A+LHSk; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso61931921fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:28:05 -0700 (PDT)
+	s=arc-20240116; t=1730276899; c=relaxed/simple;
+	bh=intKQltl8qe04sX6ih8WJjx4/6q7A5aJSvz7oVoo5PQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mQEitHKuuwIjkfAg29Ox4xj4/HHNsj51wMJt4cwjDj+3bkek5sOz1Elbpxj/pFcRlWTwVQMgdrgO4OGNqMHBtn7A8FT0Up6GBWA7QDHv7Wshe/gQh1MR8sEkcXQegyLhrk2Pcgt7AnhgucDYrCVreqhNshFHBCcKzQzrjEs8sAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wJOpCx1G; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso59679875e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:28:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730276883; x=1730881683; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tBYL9vmtVYAL0EFLZkcBgrxKAFI5YLz3NtbAqMnDtEY=;
-        b=q0A+LHSkZgKRpQ0YsO/IS27P75R1MQGURPshorq5S1qWWvA8rWZHDqpus1rXxu8t+Q
-         ZoH1aIaCWnMw0VnUOJ/qOC4U58yOWIJA+HmI5q/jpvX8nomJbXN+5nfXSq9tUptDjKC/
-         vFN6jXxfNw2CRYiXPDIVED7XRY/KAR7bROaUtZbTEv8FfiNg+WXJ8fKjQ9GmIJBEcE9O
-         F70G26H9Lo3UXNpmf6suiFsvUXl96R9LTM3g6+HxH5BHPVqGx4Vc+KJf7v3Av2iG0cuT
-         ddRdLWBhZsB/RK8oinX7He3YRo5ApMWzKtop08GvdRPZibE8YoSjoMl/BeosAXpZsAKO
-         keJQ==
+        d=linaro.org; s=google; t=1730276896; x=1730881696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UL2HqkuSmHQ7OPeQE/93gQ+LDrEwS9SDaauaieTM4CQ=;
+        b=wJOpCx1Gaf8LTArqtp2fT6X+gmETexc+s9V98CpqALLzROINVQ7PV9/CjxJt6h9rFZ
+         ipiJi4zQ0FsCZv3jfXY+SjUfDzS6g+I/SgFF8jwTBJlmYl5XHBUGiasLTLdOFeMlkm2R
+         HFBRPfbzPOh1eVRnaq+wfJiei4iPe5KPMfFAnb5+/OjQ8j/58rDX5G6k+J+5wLqpPruE
+         bj3qyVa/00LWMvgi3lBA4vpFKMVDNQO0q5+RcrEca+0GmBlacnqewODf7OG6jXHCHHRs
+         spYq1/Ldcqd5fT6U9lQrgdKUdSdLilUplA+1yRVTyrvghVJXm+QT/BXhDVfHVo9PBZfo
+         H6+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730276883; x=1730881683;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tBYL9vmtVYAL0EFLZkcBgrxKAFI5YLz3NtbAqMnDtEY=;
-        b=V88B1HnOmsbkU3RwMlJqDWZvLKO4LW/JAWzbqSnjj4P/VwsTpdNuB35pkvzR644uMG
-         wvSvOO2FBtgNWHWdl78KxJRqAEtzP+CbeiR1BhcXcZ04mlqWXvP6UgUTHGAzzhqPttw3
-         5X/6AQ7b3TO81Qg+UoZrpNNpzY2/7fPEX59zRUiF5na3/yL3meHThMMFo9rFXf2Q9LyE
-         b/8stZ15hPVwOLI5BBIKZMpAoF1gOiW5yt2Qp7ZAkNiN7tXZu6yYH73mQsalZ8+aefNd
-         P5o3khtf5JQsbOc0L67QYxYv1Ts8hXwc5M8+T13lgxB9XfhAoN2d9nRcXQc9wI3mi50R
-         kb/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUAmnT06OjfH23y9UB/gtx6cu13PsjPHJKwgTKHm0HrZlQd7kS6rtqMnh9wd8/DKw2TOp1VHzCntH72QH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz30/uBge3p6nbj2pQrc6y7qtla8fTuwONouIga6JU/+5xhuFEa
-	W7JQ96Xge4VfNY4g5Vb4IzeGIU90C9iKoZ9Px4HG7wkMAtK7zdbKhqMxA0uRd3Y=
-X-Google-Smtp-Source: AGHT+IHLXshujnLj55pap6bOslh51Qbc83Y5ZvmdLqv/90zLHoTuLWDGQOvp4ELrigrr0rv56OxcoA==
-X-Received: by 2002:a2e:a99b:0:b0:2fb:5bb8:7c00 with SMTP id 38308e7fff4ca-2fd058fb962mr13655171fa.2.1730276883393;
-        Wed, 30 Oct 2024 01:28:03 -0700 (PDT)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d5fcsm13934505e9.28.2024.10.30.01.28.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 01:28:03 -0700 (PDT)
-Date: Wed, 30 Oct 2024 09:28:01 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Guillaume Stols <gstols@baylibre.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
-Message-ID: <iajs2rk7odutqwoih4h6besd4b4nnksap6om5r7i2cw5arqcip@rvztnliokuk3>
-References: <20241029-pwm-export-pwm_get_state_hw-v2-0-03ba063a3230@baylibre.com>
- <20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230@baylibre.com>
+        d=1e100.net; s=20230601; t=1730276896; x=1730881696;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UL2HqkuSmHQ7OPeQE/93gQ+LDrEwS9SDaauaieTM4CQ=;
+        b=a3X7qofZ0BC9dq/j12Fp3/sAb+GjYj9JdV9i5ifhB3agqu7oWnX1N6TEjlpsTRkIDk
+         QWiEpoLrf60IC3wigc++3hW4G8ZuPQeY3EEJxy4TnpxxnyiC62jLaXM9igEL9JvqOgAQ
+         /aG4GU0LL0toUIYcvr5OLn++KPFN3n2pSTIe4NPMUXVhKA1xWU2uk6AIFWOlHjNRHlR1
+         S9W+qeNOkV526Cxi/ekOI1z2B0AKDTmwJ3vSbbHnXgLq6joX+8jjGThIXSttN33g9HEv
+         FgzAqUIWsqSbuldoTk6Ns8z+7ENcwWrSBZVM0o49wGKmTuDsU8dyQ1J2pO0uzmam/f66
+         t5jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrA6kF+785pD0icRwThhZmhn2ro+xlF6BjoWljgr+AD1BokV6i6nSYS8cW99eLklU3z9qWHiZS8UNRpvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc0tqKDdOs3pdDf62unD1FqOJclwDJs2zvR2uRC4Qxekjw9/nu
+	NUwDpJC5wqhrbPcFFZ9Mjoa+zGAts8yNvruSDgV45Lb+jYkmsxfh74HcIsFFfMU=
+X-Google-Smtp-Source: AGHT+IF2VwBune3eYE6REO5H1xO9vZLSDRXCcz1HESbflFaHLwuvzmPQ13IVdJ+0j1WTo7gHVfIs0g==
+X-Received: by 2002:a05:600c:524c:b0:426:5e91:3920 with SMTP id 5b1f17b1804b1-4319ad24a7fmr142258435e9.29.1730276895897;
+        Wed, 30 Oct 2024 01:28:15 -0700 (PDT)
+Received: from [192.168.0.140] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8549sm13853315e9.10.2024.10.30.01.28.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 01:28:15 -0700 (PDT)
+Message-ID: <7b57ccc2-7060-4adf-b896-8992ec05125c@linaro.org>
+Date: Wed, 30 Oct 2024 10:28:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n5xp3y2il3quy7aj"
-Content-Disposition: inline
-In-Reply-To: <20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
+To: Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org, konradybcio@kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com,
+ evgreen@chromium.org
+References: <20241028163403.522001-1-eugen.hristev@linaro.org>
+ <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org>
+ <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
+ <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
+Content-Language: en-US
+From: Eugen Hristev <eugen.hristev@linaro.org>
+In-Reply-To: <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---n5xp3y2il3quy7aj
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
-MIME-Version: 1.0
 
-On Tue, Oct 29, 2024 at 04:18:50PM -0500, David Lechner wrote:
-> Replace the call to pwm_get_state() with a call to pwm_get_state_hw() in
-> the ad7606 driver. This allows reading the sampling_frequency attribute
-> to return the rate the hardware is actually running at rather than the
-> rate that was requested. These may differ when the hardware isn't
-> capable of running at exactly the requested frequency.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->=20
-> I went ahead and made this patch since it is trivial, but it would be
-> nice to get a Tested-by from Guillaume to make sure it actually works
-> as expected.
-> ---
->  drivers/iio/adc/ad7606.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index 8b2046baaa3e..1581eb31b8f9 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -762,11 +762,9 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
->  		*val =3D st->oversampling;
->  		return IIO_VAL_INT;
->  	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		/*
-> -		 * TODO: return the real frequency intead of the requested one once
-> -		 * pwm_get_state_hw comes upstream.
-> -		 */
-> -		pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
-> +		ret =3D pwm_get_state_hw(st->cnvst_pwm, &cnvst_pwm_state);
-> +		if (ret < 0)
-> +			return ret;
->  		*val =3D DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC, cnvst_pwm_state.period);
->  		return IIO_VAL_INT;
->  	}
+On 10/30/24 02:40, Stephen Boyd wrote:
+> Quoting Eugen Hristev (2024-10-29 06:12:12)
+>> On 10/28/24 19:56, Stephen Boyd wrote:
+>>> Quoting Eugen Hristev (2024-10-28 09:34:03)
+>>>> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+>>>> index 3acca067c72b..152947a922c0 100644
+>>>> --- a/include/soc/qcom/tcs.h
+>>>> +++ b/include/soc/qcom/tcs.h
+> [....]
+>>>>    /* Construct a Bus Clock Manager (BCM) specific TCS command */
+>>>>    #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)             \
+>>>> -       (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |                \
+>>>> -       ((valid) << BCM_TCS_CMD_VALID_SHFT) |                   \
+>>>> -       ((cpu_to_le32(vote_x) &                                 \
+>>>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
+>>>> -       ((cpu_to_le32(vote_y) &                                 \
+>>>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
+>>>> +       (le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
+>>>> +       le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |       \
+>>>> +       le32_encode_bits(vote_x,        \
+>>>> +                       BCM_TCS_CMD_VOTE_X_MASK) |              \
+>>>> +       le32_encode_bits(vote_y,        \
+>>>> +                       BCM_TCS_CMD_VOTE_Y_MASK))
+>>>
+>>> Why is cpu_to_le32() inside BCM_TCS_CMD at all? Is struct tcs_cmd::data
+>>> supposed to be marked as __le32?
+>>>
+>>> Can the whole u32 be constructed and turned into an __le32 after setting
+>>> all the bit fields instead of using le32_encode_bits() multiple times?
+>>
+>> I believe no. The fields inside the constructed TCS command should be
+>> little endian. If we construct the whole u32 and then convert it from
+>> cpu endinaness to little endian, this might prove to be incorrect as it
+>> would swap the bytes at the u32 level, while originally, the bytes for
+>> each field that was longer than 1 byte were swapped before being added
+>> to the constructed u32.
+>> So I would say that the fields inside the constructed item are indeed
+>> le32, but the result as a whole is an u32 which would be sent to the
+>> hardware using an u32 container , and no byte swapping should be done
+>> there, as the masks already place the fields at the required offsets.
+>> So the tcs_cmd.data is not really a le32, at least my acception of it.
+>> Does this make sense ?
+>>
+> 
+> Sort of? But I thought that the RPMh hardware was basically 32-bit
+> little-endian registers. That's why write_tcs_*() APIs in
+> drivers/soc/qcom/rpmh-rsc.c use writel() and readl(), right? The
+> cpu_to_le32() code that's there today is doing nothing, because the CPU
+> is little-endian 99% of the time. It's likely doing the wrong thing on
+> big-endian machines. Looking at commit 6311b6521bcc ("drivers: qcom: Add
+> BCM vote macro to header") it seems to have picked the macro version
+> from interconnect vs. clk subsystem. And commit b5d2f741077a
+> ("interconnect: qcom: Add sdm845 interconnect provider driver") used
+> cpu_to_le32() but I can't figure out why.
+> 
+> If the rpmh-rsc code didn't use writel() or readl() I'd believe that the
+> data member is simply a u32 container. But those writel() and readl()
+> functions are doing a byte swap, which seems to imply that the data
+> member is a native CPU endian u32 that needs to be converted to
+> little-endian. Sounds like BCM_TCS_CMD() should just pack things into a
+> u32 and we can simply remove the cpu_to_l32() stuff in the macro?
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+This review [1] from Evan Green on the original patch submission 
+requested the use of cpu_to_le32
 
-There is a slight inconsistency compared to ad7606_set_sampling_freq():
+So that's how it ended up there.
 
-ad7606_set_sampling_freq uses
 
-	cnvst_pwm_state.period =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
+[1] 
+https://lore.kernel.org/linux-kernel//20180806225252.GQ30024@minitux/T/#mab6b799b3f9b51725c804a65f3580ef8894205f2
 
-=2E So if cnvst_pwm_state.period happens to be 3 ns then reading
-the freq value yields 333333333, but if you feed freq=3D333333333 into
-ad7606_set_sampling_freq() it sets period =3D 4.
-
-To fix that you'd better use a plain / here in ad7606_read_raw().
-(Note that with using round-closest for both there are still corner
-cases, e.g. period =3D 31796 ns yields freq =3D 31450.496917851302 but
-setting freq =3D 31450 yields 31796.50238473768 and so 31797.)
-
-Best regards
-Uwe
-
---n5xp3y2il3quy7aj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmch7g8ACgkQj4D7WH0S
-/k5cyAf9ELnSckQLX02VlSjt88Fhbhbb+mCKMOBryiijJlYNtGhk+dfI5Yqyv6mf
-WM50/KzHu4CqA6owAQuhfqzL4og2AiOJN3QazfHKK1Dtltll/135JgUptuwu+W5n
-n9BS/HNMXCJa/TcMtHXvPbo4FgLdG1gvuXyV+/Ic5iPga+9AWTv++0PxxIENEjFK
-yN/cy7bOuvrtTwCgZ/i1DTKh3h2/IDADYoxgTWtWxJ4qKLy2a6yROYBFyAR5jE7d
-KsY2s855/TWYIRj0MCp6aOLSjo+sO1Eve5zjdzxz6kAilWwPe60BMScL7PTYevVL
-6tL+ZU4J7tKazH3J9Y6alWU+W/OZMg==
-=Gx0C
------END PGP SIGNATURE-----
-
---n5xp3y2il3quy7aj--
 
