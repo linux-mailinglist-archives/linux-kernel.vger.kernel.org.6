@@ -1,164 +1,174 @@
-Return-Path: <linux-kernel+bounces-388278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BDF9B5D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF059B5D08
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4C31C20C2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83751C20B55
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A1A1E0E1C;
-	Wed, 30 Oct 2024 07:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961521E0DD6;
+	Wed, 30 Oct 2024 07:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bomLUd2e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQ44T0Of"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB2485931;
-	Wed, 30 Oct 2024 07:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F885931;
+	Wed, 30 Oct 2024 07:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730273810; cv=none; b=Onp5kBdtbOY4Ibr9w9yRJrHkE6du5jRzEndApUVGxzCOvfVIIYOI6ZoYsGIPlZ4lKP5bNLvFRGSwAbbq7bMc7+ik207WBfpp46DTdF6RIGf/iQ1pYsIO+4Dv7/Qa4xvzrh1yOr/xiOfpEfpFC+L6tn0eJXPBKXTfIHDPuC2dlM0=
+	t=1730273801; cv=none; b=YlmxGF73z4VndlSZYIE0MMBEh5ufUrndYjg0fuo4U46QkRjESQzZcNcieRMz+8EPtq4dNKUR/fwKbptrOK5jLRdvZ7wTW4vwnLQtFhzmGQ0SmXziDujWLGIy/DoWFt4+nozFErNahJT998DSs5PlR4n0LMrr86o9DAi6NtSGJ/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730273810; c=relaxed/simple;
-	bh=JcuajlUbi+mLKwNDmwNSmyG+iuUggDWRZn1C/kccl3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LBtjf0x+xfKuBN8mMk1I+9e7mtuOjzJGqA4wZmCeEJSi9wx/xJCn4iC9QYaWw6XCsxUc8A7fUG0/JD1gSKtRans6NoeE61yiLjYSLfA7UpTTz8ZC+ev6x/6A9w+kFnOSGOnaOO1LrfUpUG7Bui+ROp152zrBByrae1FsMcl3fpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bomLUd2e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A977C4CEFF;
-	Wed, 30 Oct 2024 07:36:50 +0000 (UTC)
+	s=arc-20240116; t=1730273801; c=relaxed/simple;
+	bh=j2+oBpfnOxfoZv3A2oAIAab8c4yY5+hmdm19bV/Pioo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lubO7PVbZILVfk9BA/EUe6V4X/ffH2nQVaRIoAwBuhjAjPkcp797MjdXeJ9TCu0Civ0F780rvCbj3TE/uvfle1+71uFJgZIzVbNN3aMBF3bH0tUm+CtPmsT003viZIy2Xd0HGTX6XwdUvfG4rws1Q4IvFjOW3EivKtYZZF6LT3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQ44T0Of; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63923C4CEE4;
+	Wed, 30 Oct 2024 07:36:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730273810;
-	bh=JcuajlUbi+mLKwNDmwNSmyG+iuUggDWRZn1C/kccl3o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bomLUd2eL2qsGYNJMaiDyjIJSzXzwXcI0nDPZ+e2kNBnxpqyydUDDgAlJMxOV1GrF
-	 8D/BzeEApRrF9rsa5N63Dr/u0YRyxyswxVyYFt6nlf/EcD7haJ6oaQRB6QQiCNmzNL
-	 kpyddBVNFgmyBHDYeUW13yALL52ApNPf7fABxxat4VH0uRti/MISXgqRZuGSWXyu+U
-	 Qg4VDfkox2IiQdUoD6RCMt5uIsqRxFjzqHyjyd7mAlTYxPOthtK+KqxywpQztXRa96
-	 +cBeKFj9VAFyzVEUSM8BCEbMW9wht/m1Y2i13idOFlR/10wbmr4ilUCq/A/apDmec5
-	 CqJ3xHFH++2Ww==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so62273391fa.0;
-        Wed, 30 Oct 2024 00:36:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJhBvmtnfFS2BiZ2EC8dloac6q3kwuvEwtB8PwYPZe9Q15jkor0u/Z0twa69+OObOa4cNLagqs/4Q=@vger.kernel.org, AJvYcCWKbX9YeW594tFyshXPLElxw1LXA9rtAPG/wexfJ4j4lKDjxEwljhw4Ekw89scPhnnhjmHAvd6FpSC/@vger.kernel.org, AJvYcCX19swX3LSOsTuxwuOBlfNllCZxnahHVArZkVymFccAZXV4j91PiyE+zZuv/paI1Dp8OH2NH4vhhsd7gWU1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU8Jfu0ziOZPUnzJio3JJ/AfrT0T3sigEa4uQKeuUAiAdj9yQU
-	JAw4kVnZGkHj3IQEx/gQz+XpaIFjQhn7MNjxMAT1KOffJeTs4L6rLUedtjd9S9ZRv0+vBvqyV+D
-	1V0a9hcbKujBZoM2E65m+Du1dizo=
-X-Google-Smtp-Source: AGHT+IHEC1owlVvHeaDQCyHThIjPcHIWQqcLRHMiPQPGFvES+bevgKgmXGlSOSrzrpZSmW6ivspNh3kKshYRDPTi/yU=
-X-Received: by 2002:a2e:a99b:0:b0:2fb:5bb8:7c00 with SMTP id
- 38308e7fff4ca-2fd058fb962mr12759191fa.2.1730273807953; Wed, 30 Oct 2024
- 00:36:47 -0700 (PDT)
+	s=k20201202; t=1730273799;
+	bh=j2+oBpfnOxfoZv3A2oAIAab8c4yY5+hmdm19bV/Pioo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GQ44T0OfRUNMMz553RO/cNPlyOLavlBQMszjMUkwX6544yFSwFJz4vC6VGGC7ocZc
+	 1Uw2Ag0VbiWhZd/ZIiItoCpuPR7qxjFaBVCcGauzKq9lOxWR4wM7eYtjz7W3BOHUyI
+	 ytessGfyB4GbX3JI/fMNsYEL1ckIEh1D9EviCgC7ByzrhFtX9AwqvwsygNl1m3Ov5G
+	 B4hPn3z03ywVd5xCuX/r5SS8emvM75BHOHbVfu/I3h4e+kv0iPeAS6ogrghIISBpgW
+	 GaPNaQTIkO66LEsLyMgycbkL5wImixMOK4gIoyw8quo6RDFcZl07+X5JrJVpQu2uD7
+	 XEm8ZO2qxQ2lQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t63GE-000000007b9-1i1P;
+	Wed, 30 Oct 2024 08:36:59 +0100
+Date: Wed, 30 Oct 2024 08:36:58 +0100
+From: Johan Hovold <johan@kernel.org>
+To: jens.glathe@oldschoolsolutions.biz
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Merck Hung <merckhung@gmail.com>
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
+ definition for WDK2023
+Message-ID: <ZyHiGlDnC8uqk_LG@hovoldconsulting.com>
+References: <20241030-jg-blackrock-for-upstream-v5-0-830c938437ad@oldschoolsolutions.biz>
+ <20241030-jg-blackrock-for-upstream-v5-3-830c938437ad@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com> <20241028160917.1380714-5-alexander.shishkin@linux.intel.com>
-In-Reply-To: <20241028160917.1380714-5-alexander.shishkin@linux.intel.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 30 Oct 2024 08:36:36 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEYHWvyDgTpxa_Afu0dGjEh03G-RT-N0BwUr=Vyb=ATJQ@mail.gmail.com>
-Message-ID: <CAMj1kXEYHWvyDgTpxa_Afu0dGjEh03G-RT-N0BwUr=Vyb=ATJQ@mail.gmail.com>
-Subject: Re: [PATCH v5 04/16] init/main.c: Move EFI runtime service
- initialization to x86/cpu
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Alexey Kardashevskiy <aik@amd.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, 
-	Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Namhyung Kim <namhyung@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030-jg-blackrock-for-upstream-v5-3-830c938437ad@oldschoolsolutions.biz>
 
-On Mon, 28 Oct 2024 at 17:10, Alexander Shishkin
-<alexander.shishkin@linux.intel.com> wrote:
->
-> The EFI call in start_kernel() is guarded by #ifdef CONFIG_X86. Move
-> the thing to the arch_cpu_finalize_init() path on x86 and get rid of
-> the #ifdef in start_kernel().
->
-> No functional change intended.
->
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/common.c | 7 +++++++
->  init/main.c                  | 5 -----
->  2 files changed, 7 insertions(+), 5 deletions(-)
->
+On Wed, Oct 30, 2024 at 08:09:21AM +0100, Jens Glathe via B4 Relay wrote:
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> +&pcie2a {
+> +	aspm-no-l0s;
 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 8f41ab219cf1..b24ad418536e 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -26,6 +26,7 @@
->  #include <linux/pgtable.h>
->  #include <linux/stackprotector.h>
->  #include <linux/utsname.h>
-> +#include <linux/efi.h>
->
->  #include <asm/alternative.h>
->  #include <asm/cmdline.h>
-> @@ -2382,6 +2383,12 @@ void __init arch_cpu_finalize_init(void)
->         fpu__init_system();
->         fpu__init_cpu();
->
-> +       /*
-> +        * This needs to follow the FPU initializtion, since EFI depends on it.
-> +        */
-> +       if (efi_enabled(EFI_RUNTIME_SERVICES))
-> +               efi_enter_virtual_mode();
+There is no such property in the binding (or driver) and L0s is disabled
+for all controllers on sc8280xp.
+
+(I think I used a property like this in an early version of the patches
+that ultimately disabled L0s however).
+
+> +	max-link-speed = <16>;
+
+That's pretty fast. And not supported as this would indicate PCIe
+Gen16...
+
 > +
->         /*
->          * Ensure that access to the per CPU representation has the initial
->          * boot CPU configuration.
-> diff --git a/init/main.c b/init/main.c
-> index c4778edae797..1d3a0a82d136 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -51,7 +51,6 @@
->  #include <linux/cpu.h>
->  #include <linux/cpuset.h>
->  #include <linux/cgroup.h>
-> -#include <linux/efi.h>
->  #include <linux/tick.h>
->  #include <linux/sched/isolation.h>
->  #include <linux/interrupt.h>
-> @@ -1072,10 +1071,6 @@ void start_kernel(void)
->
->         pid_idr_init();
->         anon_vma_init();
-> -#ifdef CONFIG_X86
-> -       if (efi_enabled(EFI_RUNTIME_SERVICES))
-> -               efi_enter_virtual_mode();
-> -#endif
->         thread_stack_cache_init();
->         cred_init();
->         fork_init();
-> --
-> 2.45.2
->
+> +	perst-gpios = <&tlmm 143 GPIO_ACTIVE_LOW>;
+> +	wake-gpios = <&tlmm 145 GPIO_ACTIVE_LOW>;
+> +
+> +	vddpe-3v3-supply = <&vreg_nvme>;
+> +	vdda-supply = <&vreg_l7d>;
+> +
+> +	pinctrl-0 = <&pcie2a_default>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +};
+> +
+> +&pcie2a_phy {
+> +	vdda-phy-supply = <&vreg_l4d>;
+> +	vdda-pll-supply = <&vreg_l6d>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&pcie4 {
+> +	aspm-no-l0s;
+
+As above.
+
+> +	max-link-speed = <2>;
+> +
+> +	perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
+> +	wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
+> +
+> +	vddpe-3v3-supply = <&vreg_wlan>;
+> +	vdda-supply = <&vreg_l7d>;
+> +
+> +	pinctrl-0 = <&pcie4_default>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +};
+> +
+> +&pcie4_port0 {
+> +	wifi@0 {
+> +		compatible = "pci17cb,1103";
+> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> +
+> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
+> +		vddaon-supply = <&vreg_pmu_aon_0p8>;
+> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
+> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
+> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
+> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+> +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
+> +
+> +		qcom,ath11k-calibration-variant = "volterra";
+
+IIRC the other calibration variants use all upper case here. And is
+Volterra sufficient? No vendor prefix or similar needed?
+
+I think you need to get this acked by the ath11k maintainer (Kalle Valo)
+first.
+
+> +	};
+> +};
+
+> +&remoteproc_adsp {
+> +	firmware-name = "qcom/sc8280xp/microsoft/blackrock/qcadsp8280.mbn";
+
+Shouldn't these paths reflect the DMI values as on the X13s?
+
+> +&usb_0_hsphy {
+> +	vdda-pll-supply = <&vreg_l9d>;
+> +	vdda-phy-supply = <&vreg_l4d>;
+
+The binding does not include a vdda-phy supply (same for the other HS
+PHYs).
+
+Where did this come from?
+
+> +	vdda18-supply = <&vreg_l1c>;
+> +	vdda33-supply = <&vreg_l7d>;
+> +
+> +	status = "okay";
+> +};
+
+Johan
 
