@@ -1,192 +1,153 @@
-Return-Path: <linux-kernel+bounces-388960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6D09B66A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:56:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB689B669D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F2D282178
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:56:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0DE1C21491
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B191C1F4FD7;
-	Wed, 30 Oct 2024 14:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAB91F4726;
+	Wed, 30 Oct 2024 14:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="LczOott2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UJSmaFiJ"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IBBZdaEN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2D81F473D;
-	Wed, 30 Oct 2024 14:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B301EF92C;
+	Wed, 30 Oct 2024 14:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300177; cv=none; b=gSwVp8tWEDIyrWweDT7IWf9eVWsWp6ySz0EKhH42nYRjgNKGDqO6d7XqD6VvqjKaUMsvCQZe7NcFo1aaSZzG9XzPdwjKya296sdEdpQCsW2dLTbLs29uFG3c3jc/Fg5hikmYG0BSyJyoREqG4ADSxrVx6bxcNsSFrtOSP6E53do=
+	t=1730300171; cv=none; b=MhKQ5YPZaMq1Bw5kLsTlvfnFBYPnzUHMXuYnvNnuCFauvh8kbojGMo5Hrm/Z5Gz5aJfl55zlkTFYDK6HJ/1jJ+hlKnRhDXt/rXiMHRkJs2KB8Y7gedD/cXWx/hEsFlTGP42yZv2L7kzPcmVdbnc7oSf4K8AXorLUYePqm+7BkTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300177; c=relaxed/simple;
-	bh=XwvcOOfZOMY4BiPVUa4DIiTgiA1HZ11ISi29OEZBzg8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eZie9bw2WnSIGge6IIkQjkpWoNf2Qj148PQxYr2euCWkNSdCmKW7pcD3suLXHrt8a2TVh+nrT44rUhO99bcVmWCCFrrTg32/YDltDsi780m9NS/YmVWRx8D/A5iYV19VcBMqAnoC8DgnSerdZha7hNXEtAqx99SrNGBBH7kZw8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=LczOott2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UJSmaFiJ; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.stl.internal (Postfix) with ESMTP id 3DD361140101;
-	Wed, 30 Oct 2024 10:56:13 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-08.internal (MEProxy); Wed, 30 Oct 2024 10:56:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1730300173;
-	 x=1730386573; bh=tmIwzhdVEu36U+11NzuePr0At4eBbi9WRuSznp86bBs=; b=
-	LczOott29S5ugCmQJccz6hDnenikTFjcV0kSt2D9tNKKQTpEAtkRkGUhgchdN56N
-	SrwVGSeNi/bbz9UpYQvvW95UPvlpB7+Kwo1UnqsQq1kSjfYFNJF42liumhPtWFwz
-	4I9PENEWObg3h2E2xnASJY3hwmpqLcqwAu1jxGBhaO5aHDTNYBc0T8ODsHpKy9j7
-	5CodBQMRJsbiUnzVP1se4l1a6L3EOWnQMcGUlSewkVIgXueEBr7KoxFJ+PEKmY+w
-	gwsMnBnkj7alt715k0hFUCCz66/u1vTsWUJ+4SUVPic/4kdDNTKDdifhpgirs3/Y
-	K+IJv1qD4mIzSmePStqdSw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730300173; x=
-	1730386573; bh=tmIwzhdVEu36U+11NzuePr0At4eBbi9WRuSznp86bBs=; b=U
-	JSmaFiJgBHBGw8WYIY7GAZemaHoGLZXrcJ7ztK8sQ/HuHJiFVtrzK2AT2BB0EuGB
-	NPAlIZtLrrG11ZE77Y488/xRMGlD7EhWsMPj3IAps7D6w8vNgdjxMvxxJVeux2qJ
-	aBWGScVp5go80bNnuT/uV8iOMEunOfmf0X87NpBKQW0jqkhXca7zd74Tv8o6Gzod
-	M+LkacOVY0YPHroyPMJJTqHY8rjQfJyqrWIJbzCEw79rd8fMXEDS5uLUvS5DFCcZ
-	ogdqIh9UsNG+z1Px2OHM+Beq16ys1LNvPm/1tsaxoOi4pvMeZZMW8BUlm5qB3+DA
-	3VLQFyGwFbupvXHLgKH/w==
-X-ME-Sender: <xms:DEkiZ4pqo6bniN6Xo2klkSFKb6cqS-8ZFp41ZM7u6EMZv6AtgzwEew>
-    <xme:DEkiZ-p0evAnqVQ2dSSHYpc46rxEUUZt-e4sMjY4yh4Xir7L4sk9HNK2-km1xjfXH
-    hADcHXSyD16YX80xdw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgjedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
-    hvqeenucggtffrrghtthgvrhhnpeehtedugfelgeeltdevvedtleffhfetgfdtjefhkefg
-    udejfeeuueefvdejuddutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrihhordhlihhmohhntghivg
-    hllhhosegrmhgurdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrdgthhgrrhihsehg
-    mhgrihhlrdgtohhmpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhlphho
-    rdhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhug
-    gvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhu
-    thesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehplhgrthhfohhrmhdq
-    ughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:DEkiZ9NbRhTjW0LDt3YF7_Mv2F89UCO11y33jiD-DwFbNwcNBPqGIg>
-    <xmx:DEkiZ_4W3L3yB6eyZFqXGnENv9vAeNIxJs6Kpt6l_q22lp_Sssox4Q>
-    <xmx:DEkiZ37CyUU5bZCeAdm4aEQ-URqI8uOGzZFB7Rs4hdaU1-3kDcox8w>
-    <xmx:DEkiZ_ifswyJWJyZ0hDygowWE0PF2ZbLPTGdklacWg5zl954KA5OBg>
-    <xmx:DUkiZ6YNc7CVZu9BBLnMLQdDrHDYy6FXW5rvi4tAjwGZtR4EJkjnUluT>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C14243360079; Wed, 30 Oct 2024 10:56:12 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730300171; c=relaxed/simple;
+	bh=PJgQRoa9dILAfNfnvnH/aiHEDJBY/XzwXb7TDFNXcbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuS9FRi13C6v5Xspk/+uY56of9Aze3+zRGJY9cmRSfo+UPN+HW6+W3TrQ9l/CtgLDO69/lvldBphLz9bKTpXWOnCror3cJgtYOFr6zK1W7fvfsmB/2wPYS0C38rLknYxj972NX4HtlOQNOKm1d/DVf1t7ehUPvrMy1iBLA57vcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IBBZdaEN; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730300169; x=1761836169;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PJgQRoa9dILAfNfnvnH/aiHEDJBY/XzwXb7TDFNXcbI=;
+  b=IBBZdaENrnhbsTlYneKmZp4Imd7g0Gwlh4lZZJJd8iFOo4oFWtg5erl6
+   S8F+HCZjy9xUQUfIKSk0139nuf8R5i7n6Wwwn8TxJHLGLt76YseedRNCU
+   C2nJk+AgNf6EPIDP3lnKPlDwKZj/F+wHmCuxATcV+yF677/NNegrtYdjc
+   HDK2pnRDpX4K7a9zcK/CHB41JREdzKB0ZEVlT0rR98PNlDp7BVza2z/s3
+   TIBZZBQKGfG1lUXR3tf6gr7+YUSRn/p9qbbkmTmRQjTv2814IdPz6UUDh
+   qZ1FSzUUJ+dw2OKUHnb40VQkzdy8SQdn2QVXw4JcC0fuq3fej4Oezdl52
+   Q==;
+X-CSE-ConnectionGUID: pfab72t5RmW1TQEtaUYu5g==
+X-CSE-MsgGUID: bw52Ja7eQwWQmq1+T1gUeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="17649858"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="17649858"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 07:56:08 -0700
+X-CSE-ConnectionGUID: 0xKPsEU0S7aiJfh1R0Wc+A==
+X-CSE-MsgGUID: yADDrZNsTRaxdq4D7dk97Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="82756096"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 07:56:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6A78-000000094Vj-1vpg;
+	Wed, 30 Oct 2024 16:56:02 +0200
+Date: Wed, 30 Oct 2024 16:56:02 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 00/24] iio: Clean up acpi_match_device() use cases
+Message-ID: <ZyJJAl8AalZG9Zo9@smile.fi.intel.com>
+References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+ <a72e0950-be11-45a3-8387-5b51b9a2e78a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 30 Oct 2024 15:55:52 +0100
-From: "Luke Jones" <luke@ljones.dev>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org,
- "Jiri Kosina" <jikos@kernel.org>, platform-driver-x86@vger.kernel.org,
- "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com,
- "Mario Limonciello" <superm1@kernel.org>,
- "Mario Limonciello" <mario.limonciello@amd.com>
-Message-Id: <fa72f965-b265-425c-aa88-c15d311121a0@app.fastmail.com>
-In-Reply-To: <cb374d84-c29b-de0d-21d8-c711ccf3ea80@linux.intel.com>
-References: <20240930000046.51388-1-luke@ljones.dev>
- <20240930000046.51388-9-luke@ljones.dev>
- <33f4f13f-c5ed-ac89-9243-4356976cc042@linux.intel.com>
- <46cd22c7-e63a-4dde-aa97-f76ac9bb6b8e@app.fastmail.com>
- <cb374d84-c29b-de0d-21d8-c711ccf3ea80@linux.intel.com>
-Subject: Re: [PATCH v6 8/9] platform/x86: asus-armoury: add core count control
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a72e0950-be11-45a3-8387-5b51b9a2e78a@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Tue, Oct 29, 2024 at 08:34:48AM +0200, Matti Vaittinen wrote:
+> On 24/10/2024 22:04, Andy Shevchenko wrote:
+> > There are current uses of acpi_match_device():
+> > - as strange way of checking if the device was enumerated via ACPI
+> > - as a way to get IIO device name as ACPI device instance name
+> > - as above with accompanying driver data
+> > 
+> > Deduplicate its use by providing two new helper functions in IIO ACPI
+> > library and update the rest accordingly.
+> > 
+> > This also includes a rework of previously sent ltr501 patch.
+> > 
+> > Besides that there ie a big clean up for the kxcjk-1013 driver, started
+> > with the revert of the one patch discussed earlier today. Feel free to
+> > route that one via fixes branch of your tree.
+> > 
+> > In v3:
+> > - collected tags (Marius)
+> > - added note to the documentation about usage of new API (Jonathan)
+> > - added a handful patches for kxcjk-1013 driver
+> > 
+> > In v2:
+> > - collected tags (Hans, Jean-Baptiste)
+> > - updated SoB chain in patch 4
+> > 
+> > Andy Shevchenko (24):
+> >    iio: magnetometer: bmc150: Drop dead code from the driver
+> >    iio: adc: pac1934: Replace strange way of checking type of enumeration
+> >    iio: imu: inv_mpu6050: Replace strange way of checking type of
+> >      enumeration
+> >    iio: acpi: Improve iio_read_acpi_mount_matrix()
+> >    iio: acpi: Add iio_get_acpi_device_name_and_data() helper function
+> >    iio: accel: kxcjk-1013: Remove redundant I²C ID
+> >    iio: accel: kxcjk-1013: Revert "Add support for KX022-1020"
+> >    iio: accel: kxcjk-1013: Switch from CONFIG_PM guards to pm_ptr() etc
+> >    iio: accel: kxcjk-1013: Use local variable for regs
+> >    iio: accel: kxcjk-1013: Rename kxcjk1013_info
+> >    iio: accel: kxcjk-1013: Start using chip_info variables instead of
+> >      enum
+> >    iio: accel: kxcjk-1013: Move odr_start_up_times up in the code
+> >    iio: accel: kxcjk-1013: Convert ODR times array to variable in
+> >      chip_info
+> >    iio: accel: kxcjk-1013: Get rid of enum kx_chipset
+> >    iio: accel: kxcjk-1013: Replace a variant of
+> >      iio_get_acpi_device_name_and_data()
+> >    iio: accel: kxcjk-1013: drop ACPI_PTR() and move ID out of CONFIG_ACPI
+> >      guards
+> 
+> I missed reviewing these kxcjk changes. Not sure I loved all of them
+
+Patches are welcome! :-)
+
+> but I must admit the resulting code is looks better in general.
+> 
+> Thanks for the clean-up Andy!
+
+Thank you for looking at this!
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On Wed, 30 Oct 2024, at 3:14 PM, Ilpo J=C3=A4rvinen wrote:
-> On Wed, 30 Oct 2024, Luke Jones wrote:
->
->> Hello,
->>=20
->> On Thu, 17 Oct 2024, at 4:41 PM, Ilpo J=C3=A4rvinen wrote:
->> > On Mon, 30 Sep 2024, Luke D. Jones wrote:
->> >
->> >> Implement Intel core enablement under the asus-armoury module usin=
-g the
->> >> fw_attributes class.
->> >>=20
->> >> This allows users to enable or disable preformance or efficiency c=
-ores
->> >> depending on their requirements. After change a reboot is required.
->> >>=20
->> >> Signed-off-by: Luke D. Jones <luke@ljones.dev>
->> >> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->> >> ---
->> >>  drivers/platform/x86/asus-armoury.c        | 227 ++++++++++++++++=
-+++++
->> >>  drivers/platform/x86/asus-armoury.h        |  28 +++
->> >>  include/linux/platform_data/x86/asus-wmi.h |   4 +
->> >>  3 files changed, 259 insertions(+)
->> >>=20
->> >> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platfor=
-m/x86/asus-armoury.c
->> >> index 09e0cbf24f25..caaa55219946 100644
->> >> --- a/drivers/platform/x86/asus-armoury.c
->> >> +++ b/drivers/platform/x86/asus-armoury.c
->> >> @@ -40,6 +40,24 @@
->> >>  #define ASUS_MINI_LED_2024_STRONG 0x01
->> >>  #define ASUS_MINI_LED_2024_OFF 0x02
->> >> =20
->> >> +#define ASUS_POWER_CORE_MASK GENMASK(15, 8)
->> >> +#define ASUS_PERF_CORE_MASK GENMASK(7, 0)
->> >
->> > Align GENMASK()s.
->>=20
->> That is how clang-format put them using the .clang-format in the repo=
-.=20
->> I'm not keen on maintaining style manually as it inevitably develops=20
->> inconsistency.=20
->
-> Hi Luke,
->
-> Then you simply create your own clang-format and put=20
-> AlignConsecutiveMacros into it.
->
-> I'm not buying using a kernel-wide .clang-format as an argument becaus=
-e=20
-> there are per subsystem variations in various coding style aspects a=20
-> single file is never going to capture. It also has ColumnLimit: 80 whi=
-ch
-> is explicitly stated by Linus to not be a rigid rule so that alone pro=
-ves=20
-> your argument is on very shallow grounds.
->
-> The commit that introduced the file states: "Like most tools, it is no=
-t=20
-> perfect nor covers every single case, but it is good enough to be=20
-> helpful." It's a big set from "being helpful" to "I want to strictly=20
-> follow what it outputs". I believe that file is there to help you out =
-if=20
-> you want to get started with the style but it does not guaranteed its=20
-> output is accepted as is, you will have to tweak its configuration to =
-get=20
-> the desired output here and there if you want to use on daily basis.
-
-Understood. I'll adjust things to suit.
-
-> --=20
->  i.
 
