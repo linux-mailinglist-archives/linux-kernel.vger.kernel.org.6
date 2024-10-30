@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-389715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1899B7060
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:18:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A189B708A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0F4B214F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDEA282758
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642661E411C;
-	Wed, 30 Oct 2024 23:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24550218328;
+	Wed, 30 Oct 2024 23:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7eX305r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="crSA89ni"
+Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45EA1C4617;
-	Wed, 30 Oct 2024 23:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA30217644;
+	Wed, 30 Oct 2024 23:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730330299; cv=none; b=ZbPD9Rd+J+BpUtT5Oq0VgVjAZ1bplka0uh644iWuAxnsnifWm6Y+ObeN+3CvpCY/GAdrQzgNPWmCHRJuC8c4dCIwJtSKYYO5ZKf89R0A+xA1o26HvSpMT+D26C1RTl8dLvZe4Q+zRnboNMOCSOqAICG6lwtL0C2ytm70hoS6LBs=
+	t=1730331004; cv=none; b=pj9TVNH7KK6CK2pf0jKGrJSwHduKX0Sf0z+vMJm/iMMKvsCRV9hbH+PNjysLberv5Ob1cdvEOdP4sBGTMQ1p4VwKC6CcGW1wD+hiUCfm8VW6sdXZcxkxh2RPt7rafjefNX3ZLuEuSK3cW9tlXS1xRVh1fmUqw9XByr63+lfaXyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730330299; c=relaxed/simple;
-	bh=4E4tBAkqdhy0E489K98odwYZ5EoI6YSDjaZyuL/9XH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDzvqfvcWC+6/ItjKDpAtZITiQKfWdfDoBXNeGeE/XoUVyK5YzZxTnPB+z8e4CTSVryXQcaPiD9I6GeI/gA1PNU+nz/SXzYOV1r9u5hsmhnUIaOpgKvb/7KlMUXUqNQ1bI/P5WRA0PxcRPjRd/2BACYkoO9UBYbnQFwGXrBToNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7eX305r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC748C4CECE;
-	Wed, 30 Oct 2024 23:18:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730330298;
-	bh=4E4tBAkqdhy0E489K98odwYZ5EoI6YSDjaZyuL/9XH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O7eX305r0jTOtWcBBi5zRBGsUb4aU7Ei/DxltYsD0pwaCqvjpUoitth6jVAgVCGG/
-	 mppWG+7yLcTLOdITm79VyFoVEtmCUIRHIccwshlMjoBE2fDJAe1kmKhdIa33BeXGdk
-	 Rv1AmIHD1sgOmxWZd8qL/nGF4GKhi6hmERXOQvnz4ihaJveg+NpNioZc7WvxVJRKJ7
-	 Im5FtuKo7hljEH98BnVS6ald8voHMiP+yWrKGdOA/Y06M6ITyAdd1CyTHsQ52hk06x
-	 fHE9G0CT8hIiG5cBRSAW+3nWy/sl2HJK7KCcJHR5N/jbuhObyv/ng84KOycxTeUkzu
-	 RQm1opTupnIfA==
-Date: Wed, 30 Oct 2024 17:18:15 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] PCI/sysfs: Use __free() in reset_method_store()
-Message-ID: <ZyK-typQQqk0KKPf@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241028174046.1736-1-ilpo.jarvinen@linux.intel.com>
- <20241028174046.1736-3-ilpo.jarvinen@linux.intel.com>
- <Zx_Pt2ObNKIS8cu2@kbusch-mbp>
- <8862b34b-26b3-af75-5d23-d765fb41b5d4@linux.intel.com>
- <d07973e2-0ac1-d3e0-25f0-7b1270ca4a15@linux.intel.com>
+	s=arc-20240116; t=1730331004; c=relaxed/simple;
+	bh=ySGE6+spXq07duUYoCM1MEjMmiwjMBzSrzNtt8dRkUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KqzDjvSJIrHC0Pwdq/k60r5mobKwyWA/U2s6Wyms5sOmUIn5Ph7nJkowgXtzvv1ngnkaH3H0IKszzEW+4oBUFGdEJOF1hPOgBIQWwomgVwnT4wxXLyjHScWwcNYlN1LZRXgKjrw2XCcr70/VnaF65FWgvrov2Fmz06+sMSXLCjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=crSA89ni; arc=none smtp.client-ip=63.250.43.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4Xf38m1G3bz4wJj;
+	Wed, 30 Oct 2024 23:23:36 +0000 (UTC)
+Received: from umer-b550pro4.lan (host-92-8-254-228.as13285.net [92.8.254.228])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4Xf38c4KZ3z8sWP;
+	Wed, 30 Oct 2024 23:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1730330611;
+	bh=ySGE6+spXq07duUYoCM1MEjMmiwjMBzSrzNtt8dRkUY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=crSA89nitLEjy5kyJ6Rq1Ywgdg03QxqjJ4Is2tvO0iEzCosmZ5hDxEmrI3uLQyQ/V
+	 csXbEufYzhSqKGpllwvBqTub7lYbKbsZIxzmSrlxXP8hS63wTuNPBCl7V0ihbTHA9V
+	 Cmax7kNgrbp5jIa3xV4MRhjYNmtIryorlwo0LblPo3oBYMNMDgz/mQbrH8GhPgZ9D+
+	 BlKzAAoxJwMd+S0ihoaI/qfgFEDBr3rH8O1QmGzarlVMvsYhKOaOVf/DgZhHNoB//E
+	 RNUGCULDkm5NMcHmm2/6+Q48T6mfQeazhhsh3plcN1zv3VOrXzdpX3rxWqTTAhTT/f
+	 uDEB6dMKkVazQ==
+From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: [PATCH v3 0/4] Add minimal Samsung Galaxy S20 Series board, SM-G981B and SM-G980F support
+Date: Wed, 30 Oct 2024 23:23:04 +0000
+Message-ID: <20241030232308.72210-1-umer.uddin@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d07973e2-0ac1-d3e0-25f0-7b1270ca4a15@linux.intel.com>
 
-On Mon, Oct 28, 2024 at 08:18:39PM +0200, Ilpo Järvinen wrote:
-> I went to archives and found out it had already made itself into 
-> include/linux/cleanup.h which now says this:
-> 
-> "
->  * Now, when a function uses both __free() and guard(), or multiple
->  * instances of __free(), the LIFO order of variable definition order
->  * matters. GCC documentation says:
->  *
->  * "When multiple variables in the same scope have cleanup attributes,
->  * at exit from the scope their associated cleanup functions are run in
->  * reverse order of definition (last defined, first cleanup)."
->  *
->  * When the unwind order matters it requires that variables be defined
->  * mid-function scope rather than at the top of the file.
-> 
-> [...snip examples...]
-> 
->  * Given that the "__free(...) = NULL" pattern for variables defined at
->  * the top of the function poses this potential interdependency problem
->  * the recommendation is to always define and assign variables in one
->  * statement and not group variable definitions at the top of the
->  * function when __free() is used.
-> "
-> 
-> After reading the documentation for real now myself :-), I realized it's
-> not just about maintainer preferences but about order of releasing things, 
-> so it's a BAD PATTERN to put those declarations into the usual place when
-> using __free().
+Hi folks,
 
-Okay, I can't argue against that... It still looks unpleasant. :)
+This series adds initial support for the Samsung Galaxy S20 Series and also
+initial board support for the Samsung Galaxy S20 5G (SM-G981B)
+codenamed x1s.
+
+The S20 Series feature a lot of similarities in their configuration
+and internally Samsung named the common devicetrees in their
+downstream kernel 'hubble', please note hubble excludes the
+S20 FE series and Note20 series.
+The device trees have been tested with dtbs_check W=1
+and results in no warnings.
+
+This initial bringup consists of:
+ * pinctrl
+ * gpio-keys
+ * simple-framebuffer
+
+This is enough to reach a shell in an initramfs. More platform support
+will be added in the future.
+
+Just like SM-N981B, the preferred way to boot the upstream kernel is
+by using a shim bootloader, called uniLoader [1], which works around
+some issues with the stock, non-replacable Samsung S-LK bootloader.
+For example, the stock bootloader leaves the decon trigger control
+unset, which causes the framebuffer not to refresh.
+
+Device functionality depends on the patch series from Igor Belwon:
+"Add minimal Exynos990 SoC and SM-N981B support"
+
+[1] https://github.com/ivoszbg/uniLoader
+
+Changes in v3:
+ - Fix oversight in yaml
+ - Decommonise memory map
+
+Changes in v2:
+ - Add Samsung Galaxy S20 into device tree bindings
+ - Add support for Samsung Galaxy S20 as well as the 5G variant now
+ - Fix typo in Samsung Galaxy S20 5G commit message
+
+Kind regards,
+Umer
+
+Umer Uddin (4):
+  dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B
+    and SM-G980F board
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series
+    boards (hubble)
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G
+    (x1s)
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20
+    (x1slte)
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |  2 +
+ arch/arm64/boot/dts/exynos/Makefile           |  2 +
+ .../dts/exynos/exynos990-hubble-common.dtsi   | 98 +++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos990-x1s.dts  | 28 ++++++
+ .../boot/dts/exynos/exynos990-x1slte.dts      | 28 ++++++
+ 5 files changed, 158 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-hubble-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
+
+-- 
+2.47.0
+
 
