@@ -1,156 +1,385 @@
-Return-Path: <linux-kernel+bounces-388436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98C59B5FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:03:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AC89B5FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EB82284939
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E181F22B9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F328E1E260D;
-	Wed, 30 Oct 2024 10:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250EE1E2319;
+	Wed, 30 Oct 2024 10:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dcopkdfl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OlhKreHC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NARNE/n4"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679251E1C2F;
-	Wed, 30 Oct 2024 10:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ECD1D12E5
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730282534; cv=none; b=lqnzLwOYoMXpiIEQHs/KEQrA394m3oumXIwKfFRNzTnDPqL7wAoF+C7ksw9iqo+AgkYNIx5LjqMhT+2l02/Njsey4O5ql5NkWI8/fMQym2dLq6e++XjRze39vAkTZt4BNYtsfqNIwzAgo7YGxcu2p5VdORtmXWwf2yqGP7MV2ds=
+	t=1730282611; cv=none; b=OQspvQ3mAhHos+BPcaRaP5hgppQESe95cZlBySIu7FajAQ9In+qZMfemGERIMmhioR+4bgxavTMUJMGFzYXFozhjH0Gu96N/TI0SO+UcCDC/rpNarBBRRJIy+07h0xYzvXu/vDt6CPgswyAAZoetNqRwUJgq1z/ecPVIeXB9Lyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730282534; c=relaxed/simple;
-	bh=z6mL2fX4JMKul4M5iZSgoIjsJfF1R8Bij68rxnH6vtw=;
+	s=arc-20240116; t=1730282611; c=relaxed/simple;
+	bh=AkW03X+Q1w5V47bSiAE2bglV8nda8D5ZJFSo8fhlC3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4acfIjHeAgIjjmzaA+5k0tX7rWBm+vJr37TU/Vs8P9KqKZNNIRpaz+rd2wNx7CXcrctc6L/kaRQvDzJeE+GL6ScsbAPP3Wsfs/wRt2Wjwu9TQETEa/zHce7cTNMzSmCyT+iCldZ/Lq1giw/cxBGDhYIsyjutG129CYe61Ley3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dcopkdfl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OlhKreHC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 30 Oct 2024 11:02:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730282530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zO50zcxsIEHgZXPTC/5eQCKFakrTmKnwGXxVPcDAFiw=;
-	b=Dcopkdfl3RXhwF00kKvMUBt3X4UI3V3I6m0ByRa83Vb48NE0H71XafZ8cV1GO2XZEC8r6w
-	DIdOzBnbe8rFCB+Esd4peK34L0wcG4Kwb4fu+/HQN23ynLFeLBOv4CXFM4P0XDbsQaYYIP
-	T9HiKhCFqovXNrwL0MGv5/NCnvuuLncG5WuMhaHgn+Auye4Y9iFXSwRkxY5Xg5b28vQyDB
-	lQ7Q/lSRuZL4I1hkNxKsjAnV9TpQhr6zacICdI6jNba1d6iTgVcrZXon/jyYA1wod16WD/
-	LSdjLXtCA/3eFxHGsZ12aCggw/XncwA6L/hDXA2SjGcbEhjnfttjHW+GFdLdRA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730282530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zO50zcxsIEHgZXPTC/5eQCKFakrTmKnwGXxVPcDAFiw=;
-	b=OlhKreHCeJ97y01wOmheuaEqbwVWH2LceacW5eBtlGgUq5ga/eR/i/3ZmDfYJDV1kbiDDA
-	3EUDPr92nAlnPtCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 3/3] softirq: Use a dedicated thread for timer wakeups
- on PREEMPT_RT.
-Message-ID: <20241030100209.p9JX4qDb@linutronix.de>
-References: <20241024150413.518862-1-bigeasy@linutronix.de>
- <20241024150413.518862-4-bigeasy@linutronix.de>
- <Zx-ZUyMLWWsxR8nL@localhost.localdomain>
- <20241029135231.ScfxKhz1@linutronix.de>
- <ZyFX6R_7HptXRdsK@pavilion.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zo8t+5ftl1G7TQeGYBNT+vWWl9meQHM8VOWwkU5LhGItMoRM98yf4KYakEuvgeLYmT2XQisA7mL1NFjudZZJy1nSdd/yiE8spiFwsgy8E6O1Nmcp/FCjwijXH+E5xmXZ5N1QRMirRuDSZFE4CbRP/50zpQNgmo+w/HPhb5/YFfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NARNE/n4; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f7606199so6926592e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730282605; x=1730887405; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hv/gBvIOihm88jcP9baIrEbE/iwIamkmlzhg/EmCDXI=;
+        b=NARNE/n4/gLdHfx4SheocGjSWX74E3IyMnlwKTX3X7w4ha2p5cyVmEfDukRBB1AwKY
+         NlJ/D7L67hsehcCE7ObWCQ4ieN7cZUkrd6WBNpj/zStPG5qaAcHPSpndruTlTAXPdFJn
+         UTbUFnxTGIbngTcHABlWCvxVOBZbXppn22xu2frgXMQZqWcDytq+ptzZhL8QnmVFXgAn
+         bJxr1mgVxGwyNie13ZSUL8mJVqrtBy8rJ0YY++SHMwCssZvLo0DMI+pHU7g5Tahr+ecZ
+         kYwJ1+J4PjN+lNFAXFwrbpds92PRWtUzkCXCbkkMXLsvnZmyxvFP3by7QhfFdzYSKQAM
+         rvSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730282605; x=1730887405;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hv/gBvIOihm88jcP9baIrEbE/iwIamkmlzhg/EmCDXI=;
+        b=PFwqvzg4IIhcvIxG5cOHvkeVt3kHMXY83Q31/rqZjwOr2o+vzUmGJu/VLCN5WcZ7IX
+         vo1x/6QtCuAkdps2i+b+vhsnCqk8BjwAjoOChes3yKMdOUSUtjkiGJkrH0SOZbADMm6A
+         J2PhB7IXLKT0XoN8O3eRlVLE5vAjXVZbuABV1AqfECkA7ccmLmcJi4JC38o93LW2tpVf
+         vk0PhzJ4iNQ/3sTKZr9iHvYCkNs83KIR8qsU2p8dO7B6HHVXof6VieIyPz9+ws02kcjj
+         DIuPN7Ku/eVaiAAcSjf2fSN+TJoTFlAwQDaJbYj6lCgV+tSYxAca9nY8dBrU5tYHWMqc
+         GZzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlip/fR6jkst4YmQEQd+Zc3bP08OJMGV8kVSL4I8hiwFi8FqUVpmxay6Dd7UOPEXhxmNDWcIEJE8DnJLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBAQ1F6MuhvFvKZZdxzPIQIHzjck9Nbn5ge793H+xJHcO188vW
+	qCy98nrpwcc59Y4270qc5OewpEmT3p7mbkyPhWpmCBcqj23rinCTWGyhY3RiiHM=
+X-Google-Smtp-Source: AGHT+IGc1/N3seaHX8png3PY60rDjSKWV998xm7xnAOmUc6yHmzuKnSin7MD3bzyPJHDQEXHLHAzrw==
+X-Received: by 2002:a05:6512:3d89:b0:539:ee0a:4f8f with SMTP id 2adb3069b0e04-53b7ed18669mr1374900e87.44.1730282605029;
+        Wed, 30 Oct 2024 03:03:25 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bc0d80e1dsm204898e87.305.2024.10.30.03.03.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 03:03:23 -0700 (PDT)
+Date: Wed, 30 Oct 2024 12:03:22 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 8/9] drm/msm/dpu: allow using two SSPP blocks for a
+ single plane
+Message-ID: <6hyyi3sfi4b4iaia4asbckfjq5743rslfwkgtggfpdjeziku4g@4vpuvhfudgiz>
+References: <20241025-dpu-virtual-wide-v6-0-0310fd519765@linaro.org>
+ <20241025-dpu-virtual-wide-v6-8-0310fd519765@linaro.org>
+ <e09a547a-c123-489e-b993-a246ebe32513@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZyFX6R_7HptXRdsK@pavilion.home>
+In-Reply-To: <e09a547a-c123-489e-b993-a246ebe32513@quicinc.com>
 
-On 2024-10-29 22:47:21 [+0100], Frederic Weisbecker wrote:
-> Le Tue, Oct 29, 2024 at 02:52:31PM +0100, Sebastian Andrzej Siewior a =C3=
-=A9crit :
-> > On 2024-10-28 15:01:55 [+0100], Frederic Weisbecker wrote:
-> > > > diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> > > > index 457151f9f263d..9637af78087f3 100644
-> > > > --- a/include/linux/interrupt.h
-> > > > +++ b/include/linux/interrupt.h
-> > > > @@ -616,6 +616,50 @@ extern void __raise_softirq_irqoff(unsigned in=
-t nr);
-> > > >  extern void raise_softirq_irqoff(unsigned int nr);
-> > > >  extern void raise_softirq(unsigned int nr);
-> > > > =20
-> > > > +/*
-> > > > + * Handle timers in a dedicated thread at a low SCHED_FIFO priorit=
-y instead in
-> > > > + * ksoftirqd as to be prefred over SCHED_NORMAL tasks.
-> > > > + */
-> > >=20
-> > > This doesn't parse. How about, inspired by your changelog:
-> > =E2=80=A6
-> >=20
-> > What about this essay instead:
-> >=20
-> > | With forced-threaded interrupts enabled a raised softirq is deferred =
-to
-> > | ksoftirqd unless it can be handled within the threaded interrupt. This
-> > | affects timer_list timers and hrtimers which are explicitly marked wi=
-th
-> > | HRTIMER_MODE_SOFT.
-> > | With PREEMPT_RT enabled more hrtimers are moved to softirq for proces=
-sing
-> > | which includes all timers which are not explicitly marked HRTIMER_MOD=
-E_HARD.
-> > | Userspace controlled timers (like the clock_nanosleep() interface) is=
- divided
-> > | into two categories: Tasks with elevated scheduling policy including
-> > | SCHED_{FIFO|RR|DL} and the remaining scheduling policy. The tasks wit=
-h the
-> > | elevated scheduling policy are woken up directly from the HARDIRQ whi=
-le all
-> > | other wake ups are delayed to so softirq and so to ksoftirqd.
->=20
-> First "so" is intended?
+On Tue, Oct 29, 2024 at 03:07:30PM -0700, Abhinav Kumar wrote:
+> 
+> 
+> On 10/24/2024 5:20 PM, Dmitry Baryshkov wrote:
+> > Virtual wide planes give high amount of flexibility, but it is not
+> > always enough:
+> > 
+> > In parallel multirect case only the half of the usual width is supported
+> > for tiled formats. Thus the whole width of two tiled multirect
+> > rectangles can not be greater than max_linewidth, which is not enough
+> > for some platforms/compositors.
+> > 
+> > Another example is as simple as wide YUV plane. YUV planes can not use
+> > multirect, so currently they are limited to max_linewidth too.
+> > 
+> > Now that the planes are fully virtualized, add support for allocating
+> > two SSPP blocks to drive a single DRM plane. This fixes both mentioned
+> > cases and allows all planes to go up to 2*max_linewidth (at the cost of
+> > making some of the planes unavailable to the user).
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 163 ++++++++++++++++++++++--------
+> >   1 file changed, 119 insertions(+), 44 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > index 125db3803cf5..ad6cc469f475 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > @@ -20,7 +20,6 @@
+> >   #include "msm_drv.h"
+> >   #include "msm_mdss.h"
+> >   #include "dpu_kms.h"
+> > -#include "dpu_formats.h"
+> >   #include "dpu_hw_sspp.h"
+> >   #include "dpu_hw_util.h"
+> >   #include "dpu_trace.h"
+> > @@ -888,6 +887,28 @@ static int dpu_plane_atomic_check_nosspp(struct drm_plane *plane,
+> >   	return 0;
+> >   }
+> > +static int dpu_plane_is_multirect_parallel_capable(struct dpu_sw_pipe *pipe,
+> > +						   struct dpu_sw_pipe_cfg *pipe_cfg,
+> > +						   const struct msm_format *fmt,
+> > +						   uint32_t max_linewidth)
+> > +{
+> > +	if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
+> > +	    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect))
+> > +		return false;
+> > +
+> > +	if (pipe_cfg->rotation & DRM_MODE_ROTATE_90)
+> > +		return false;
+> > +
+> > +	if (MSM_FORMAT_IS_YUV(fmt))
+> > +		return false;
+> > +
+> > +	if (MSM_FORMAT_IS_UBWC(fmt) &&
+> > +	    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth / 2)
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
+> 
+> Dont we also need to check for
+> 
+> if (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
+> 		     !test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features))?
+> 	return false;
 
-No, it needs to go.
+In the patch I was checking that after a call to this function, but
+maybe you are right. Especially since I was checking only the pipe, not
+the r_pipe.
 
-> > |
-> > | The ksoftirqd runs at SCHED_OTHER policy at which it should remain si=
-nce it
-> > | handles the softirq in an overloaded situation (not handled everything
-> > | within its last run).
-> > | If the timers are handled at SCHED_OTHER priority then they competes =
-with all
-> > | other SCHED_OTHER tasks for CPU resources are possibly delayed.
-> > | Moving timers softirqs to a low priority SCHED_FIFO thread instead en=
-sures
-> > | that timer are performed before scheduling any SCHED_OTHER thread.
->=20
-> Works for me!
+> 
+> > +
+> >   static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+> >   				       struct drm_atomic_state *state,
+> >   				       const struct drm_crtc_state *crtc_state)
+> > @@ -901,7 +922,6 @@ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+> >   	const struct msm_format *fmt;
+> >   	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
+> >   	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
+> > -	uint32_t max_linewidth;
+> >   	uint32_t supported_rotations;
+> >   	const struct dpu_sspp_cfg *pipe_hw_caps;
+> >   	const struct dpu_sspp_sub_blks *sblk;
+> > @@ -923,8 +943,6 @@ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+> >   	fmt = msm_framebuffer_format(new_plane_state->fb);
+> > -	max_linewidth = pdpu->catalog->caps->max_linewidth;
+> > -
+> >   	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
+> >   	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
+> > @@ -940,41 +958,6 @@ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+> >   		return ret;
+> >   	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
+> > -		/*
+> > -		 * In parallel multirect case only the half of the usual width
+> > -		 * is supported for tiled formats. If we are here, we know that
+> > -		 * full width is more than max_linewidth, thus each rect is
+> > -		 * wider than allowed.
+> > -		 */
+> > -		if (MSM_FORMAT_IS_UBWC(fmt) &&
+> > -		    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) {
+> > -			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, tiled format\n",
+> > -					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
+> > -			return -E2BIG;
+> > -		}
+> > -
+> > -		if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
+> > -		    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect) ||
+> > -		    (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
+> > -		     !test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features)) ||
+> > -		    pipe_cfg->rotation & DRM_MODE_ROTATE_90 ||
+> > -		    MSM_FORMAT_IS_YUV(fmt)) {
+> > -			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, can't use split source\n",
+> > -					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
+> > -			return -E2BIG;
+> > -		}
+> > -
+> > -		/*
+> > -		 * Use multirect for wide plane. We do not support dynamic
+> > -		 * assignment of SSPPs, so we know the configuration.
+> > -		 */
+> > -		pipe->multirect_index = DPU_SSPP_RECT_0;
+> > -		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+> > -
+> > -		r_pipe->sspp = pipe->sspp;
+> > -		r_pipe->multirect_index = DPU_SSPP_RECT_1;
+> > -		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+> > -
+> >   		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
+> >   						  &crtc_state->adjusted_mode);
+> >   		if (ret)
+> > @@ -995,16 +978,16 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >   	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+> >   	struct dpu_sw_pipe *pipe = &pstate->pipe;
+> >   	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
+> > +	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
+> > +	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
+> >   	const struct drm_crtc_state *crtc_state = NULL;
+> >   	if (new_plane_state->crtc)
+> >   		crtc_state = drm_atomic_get_new_crtc_state(state,
+> >   							   new_plane_state->crtc);
+> > -	if (pdpu->pipe != SSPP_NONE) {
+> > -		pipe->sspp = dpu_rm_get_sspp(&dpu_kms->rm, pdpu->pipe);
+> > -		r_pipe->sspp = NULL;
+> > -	}
+> > +	pipe->sspp = dpu_rm_get_sspp(&dpu_kms->rm, pdpu->pipe);
+> > +	r_pipe->sspp = NULL;
+> >   	if (!pipe->sspp)
+> >   		return -EINVAL;
+> > @@ -1021,6 +1004,49 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >   	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> >   	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> > +	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
+> > +		uint32_t max_linewidth = dpu_kms->catalog->caps->max_linewidth;
+> > +		const struct msm_format *fmt;
+> > +
+> > +		fmt = msm_framebuffer_format(new_plane_state->fb);
+> > +
+> > +		/*
+> > +		 * In parallel multirect case only the half of the usual width
+> > +		 * is supported for tiled formats. If we are here, we know that
+> > +		 * full width is more than max_linewidth, thus each rect is
+> > +		 * wider than allowed.
+> > +		 */
+> > +		if (MSM_FORMAT_IS_UBWC(fmt) &&
+> > +		    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) {
+> > +			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, tiled format\n",
+> > +					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
+> > +			return -E2BIG;
+> > +		}
+> > +
+> > +		if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
+> > +		    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect) ||
+> > +		    (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
+> > +		     !test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features)) ||
+> > +		    pipe_cfg->rotation & DRM_MODE_ROTATE_90 ||
+> > +		    MSM_FORMAT_IS_YUV(fmt)) {
+> > +			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, can't use split source\n",
+> > +					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
+> > +			return -E2BIG;
+> > +		}
+> 
+> Dont the above two conditions translate to
+> !dpu_plane_is_multirect_parallel_capable()?
 
-Great.
 
-> > And with this piece of text I convinced myself to also enable this in
-> > the forced-threaded case.
->=20
-> Yes, that makes sense.
+Good idea, I'll change that.
 
-Good. Then I'm pick to up your tag for that patch. Thank you.
+> 
+> I think once we have a unified plane atomic check and not a separate one for
+> virtual planes (we had to add one to support the modparam), some duplication
+> will go away but till then I think this is the best we can do.
+> 
+> 
+> > +
+> > +		/*
+> > +		 * Use multirect for wide plane. We do not support dynamic
+> > +		 * assignment of SSPPs, so we know the configuration.
+> > +		 */
+> > +		r_pipe->sspp = pipe->sspp;
+> > +
+> > +		pipe->multirect_index = DPU_SSPP_RECT_0;
+> > +		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+> > +
+> > +		r_pipe->multirect_index = DPU_SSPP_RECT_1;
+> > +		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+> > +	}
+> > +
+> >   	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+> >   }
+> > @@ -1054,8 +1080,16 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+> >   		return 0;
+> >   	}
+> > -	/* force resource reallocation if the format of FB has changed */
+> > +	/*
+> > +	 * Force resource reallocation if the format of FB or src/dst have
+> > +	 * changed. We might need to allocate different SSPP or SSPPs for this
+> > +	 * plane than the one used previously.
+> > +	 */
+> >   	if (!old_plane_state || !old_plane_state->fb ||
+> > +	    old_plane_state->src_w != plane_state->src_w ||
+> > +	    old_plane_state->src_h != plane_state->src_h ||
+> > +	    old_plane_state->src_w != plane_state->src_w ||
+> > +	    old_plane_state->crtc_h != plane_state->crtc_h ||
+> >   	    msm_framebuffer_format(old_plane_state->fb) !=
+> >   	    msm_framebuffer_format(plane_state->fb))
+> >   		crtc_state->planes_changed = true;
+> > @@ -1075,7 +1109,10 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+> >   	struct dpu_plane_state *pstate;
+> >   	struct dpu_sw_pipe *pipe;
+> >   	struct dpu_sw_pipe *r_pipe;
+> > +	struct dpu_sw_pipe_cfg *pipe_cfg;
+> > +	struct dpu_sw_pipe_cfg *r_pipe_cfg;
+> >   	const struct msm_format *fmt;
+> > +	uint32_t max_linewidth;
+> >   	if (plane_state->crtc)
+> >   		crtc_state = drm_atomic_get_new_crtc_state(state,
+> > @@ -1084,6 +1121,8 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+> >   	pstate = to_dpu_plane_state(plane_state);
+> >   	pipe = &pstate->pipe;
+> >   	r_pipe = &pstate->r_pipe;
+> > +	pipe_cfg = &pstate->pipe_cfg;
+> > +	r_pipe_cfg = &pstate->r_pipe_cfg;
+> >   	pipe->sspp = NULL;
+> >   	r_pipe->sspp = NULL;
+> > @@ -1098,10 +1137,46 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+> >   	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
+> > +	max_linewidth = dpu_kms->catalog->caps->max_linewidth;
+> > +
+> >   	pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> >   	if (!pipe->sspp)
+> >   		return -ENODEV;
+> > +	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0) {
+> > +		pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> > +		pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> > +
+> > +		r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> > +		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> > +
+> > +		r_pipe->sspp = NULL;
+> > +	} else {
+> > +		if (dpu_plane_is_multirect_parallel_capable(pipe, pipe_cfg, fmt, max_linewidth) &&
+> > +		    dpu_plane_is_multirect_parallel_capable(r_pipe, r_pipe_cfg, fmt, max_linewidth) &&
+> > +		    (test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) ||
+> > +		     test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features))) {
+> > +			r_pipe->sspp = pipe->sspp;
+> > +
+> > +			pipe->multirect_index = DPU_SSPP_RECT_0;
+> > +			pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+> > +
+> > +			r_pipe->multirect_index = DPU_SSPP_RECT_1;
+> > +			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+> > +		} else {
+> > +			/* multirect is not possible, use two SSPP blocks */
+> > +			r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> > +			if (!r_pipe->sspp)
+> > +				return -ENODEV;
+> > +
+> > +			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> > +			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> > +
+> > +			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> > +			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> > +		}
+> > +	}
+> > +
+> >   	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+> >   }
+> > 
 
-> Thanks.
->=20
-Sebastian
+-- 
+With best wishes
+Dmitry
 
