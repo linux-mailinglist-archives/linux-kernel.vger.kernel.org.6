@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-389081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C23C9B6852
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:50:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B634E9B685A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E6611C2092A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B39B2841DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0CF213EEC;
-	Wed, 30 Oct 2024 15:50:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2A01E570E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC972141BD;
+	Wed, 30 Oct 2024 15:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gyj03+rM"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B7213EEB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303414; cv=none; b=PuGGT74YSffpel6Ne0obUCiynv5JU6K9vG3xHcW+0r9Cq+YCG8cT/b40yi58CNpsSr05ssV4T5jwCdv7imN9Jv7371YZDzS+qlyUwWMZ0dWRIQeeNCNOUJaw72NIJvkM/Lj20Gl0eeqMiRmkbAj2ReKeUB/rip4QxrzRntrubD4=
+	t=1730303459; cv=none; b=jLktT95tJ3vq1HEraAy/ek8NG+MEbx6VfGag4Z8Yz6+66PvVzoOTNPLuK3uMuSRaVBs5JovDZtGxWtv4W773lIM7yE53d4bDwQ5j+pNHHVzugGEvwi7iTJWG8vwrPhuPJD3SeNZsIZQ85WXUS+U944xOHtWu0Ak7z3rfqE7WSwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303414; c=relaxed/simple;
-	bh=5i4kwYqvsLdV1Qv9Txem/GpMbPH2msqXYSWWyDNdb3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smaUpkXiX/Od+uBXZ8ZIr0FL7J0GtrF71Y0ontRsz4tVg1rLOVFV0YnK6VwyyFg4F1OC/z+IdK+ynbbXkckMlMK14gkzEbCZ2p/Qy41TqNtawtXb+t6FW/bjOx4KCvDz3k9iS0L6ZM+VahrTzjfxzveKFVzA8LBhPafcPCYTuTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071BE113E;
-	Wed, 30 Oct 2024 08:50:40 -0700 (PDT)
-Received: from [10.1.33.15] (e127648.arm.com [10.1.33.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C91543F528;
-	Wed, 30 Oct 2024 08:50:07 -0700 (PDT)
-Message-ID: <a20ccb66-0233-4e09-94cd-586133072c3c@arm.com>
-Date: Wed, 30 Oct 2024 15:50:05 +0000
+	s=arc-20240116; t=1730303459; c=relaxed/simple;
+	bh=23QkwfFcqhnnTu6FmefpKd4JdMrTveNk4xSWj2luJoQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n9M9r8zcQkDPUoM5dK34qNOJnRwFSDv7mc84xQ2A3UgQYxNMT038yVqU3TOCRJiurjWnyrOm5a26325SD0Yku20mV4H6hQk0IjaAMnGToA2y08LkmlDy17JG1EvCF95SxjQbOOjETow68ByeLSHtLMZLBRAtsattyWyP+6rRKdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gyj03+rM; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d51055097so15103f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730303456; x=1730908256; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4tUz2kqXiEvA7bbw4cwgFhsmyYBGaK3uoBn9S65jRVo=;
+        b=Gyj03+rMxVw5QRuIVtj1VrmkgdPmOOGjXpq0cfZIX6v5soRoj1HjX7pBQH+khONYkL
+         LkEYQFSSi2JJbFlZ8wzJFiaiitloJxBJXyEOxCgyhdo6YCUqvIRZqTvYHxXmBdrBnwke
+         fI92uq1a93ZkclaFfRsiiPlLPGWOg+Kku+iVAkuGL0au2OpZjBmzzedh1gNf1BylDJyf
+         cZiMrhWJyuAsnHSBK5J3PlvDZuJ1WcSL3C/FIN5RtC2eXWOZG3ptYEibXtbrVxKOYb5X
+         ngja6u3Xr0+RWH2fiix3Pobk+Pgm8E4DTHgW2wMPuVsq+Hji+sa5M/8jd+SWta8wG/tw
+         vs2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730303456; x=1730908256;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4tUz2kqXiEvA7bbw4cwgFhsmyYBGaK3uoBn9S65jRVo=;
+        b=Y/wQQVTFgxCTg242iFVvuhl9XHSQZl617Cc42/RjerkGr09/fuemE+wKvnzxemvXyl
+         ws6BXytkGquWHyR+y0viKJ4kMMSxEjzH6SsRYuEPycVypsje1L8IUl86NJ2XBdyMeElp
+         7EWBZwZ4MvXD0+UUNh+JBD6KIEQVJURbYow6oMKTKgYVM1UDb6lhIEelMn39H7VwuYXO
+         JfGqM3w9IS0UblfNeIhOrHzFzdrWcRhw6cXxWmezUadx4/7TPs8sgm4oLi0wifHKT6He
+         dWEjF/uKuBql2NTn2JFlsq6r3xGatdesrdX/zPW9osdwBE7QcZmEdOT7K2sXYomiDQLg
+         +Xkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4R+sJ0JQu/6Q1FFPh4wda5a39STW2yd5sEGgCe1IaRlJB9xYaafDYHhJ1YbziKrczUVjEZ5bh6kgLKfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcv/qX3uuVwZMqhBjBc0RIEr4sYxktbknmCzFbcZ6nzTb9LUhL
+	/tDlfKt69vUjL0DUGP8a5R+oD7ozvFejK+m10NlmIk563aFtb63Nt9DCI0Goj8x+Epxl2YP8da3
+	KwhTIHDsa5G/upOIQPvgOntcV0vnEJ1Q0heS6
+X-Google-Smtp-Source: AGHT+IEc4hJ+rtP+KQ/RIg3dPbRWwJKL7gyG+QH18iBOl9mv4RIPLTcwUETKs5bjQ5mrWWVEy9CGfThEOh7YtbUIFX4=
+X-Received: by 2002:a5d:564e:0:b0:37d:4e80:516 with SMTP id
+ ffacd0b85a97d-38061192318mr11888207f8f.34.1730303455924; Wed, 30 Oct 2024
+ 08:50:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] sched/ext: Fix scx vs sched_delayed
-To: Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org
-Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, tj@kernel.org, void@manifault.com,
- linux-kernel@vger.kernel.org
-References: <20241030151255.300069509@infradead.org>
- <20241030152142.372771313@infradead.org>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20241030152142.372771313@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-16-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-16-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 30 Oct 2024 16:50:43 +0100
+Message-ID: <CAH5fLghVDqWiWfi2WKsNi3n=2pR_Hy3ZLwY8q2xfjAvpHuDx=w@mail.gmail.com>
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/30/24 15:12, Peter Zijlstra wrote:
-> Commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs
-> switched_from_fair()") forgot about scx :/
-> 
-> Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
-> Reported-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20241030104934.GK14555@noisy.programming.kicks-ass.net
-> ---
->  kernel/sched/ext.c |   14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -4489,11 +4489,16 @@ static void scx_ops_disable_workfn(struc
->  	scx_task_iter_start(&sti);
->  	while ((p = scx_task_iter_next_locked(&sti))) {
->  		const struct sched_class *old_class = p->sched_class;
-> +		const struct sched_class *new_class =
-> +			__setscheduler_class(p->policy, p->prio);
->  		struct sched_enq_and_set_ctx ctx;
->  
-> +		if (old_class != new_class && p->se.sched_delayed)
-> +			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+> +/// Drivers must implement this trait in order to get a platform driver =
+registered. Please refer to
+> +/// the `Adapter` documentation for an example.
+> +pub trait Driver {
+> +    /// The type holding information about each device id supported by t=
+he driver.
+> +    ///
+> +    /// TODO: Use associated_type_defaults once stabilized:
+> +    ///
+> +    /// type IdInfo: 'static =3D ();
+> +    type IdInfo: 'static;
 > +
->  		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
->  
-> -		p->sched_class = __setscheduler_class(p->policy, p->prio);
-> +		p->sched_class = new_class;
->  		check_class_changing(task_rq(p), p, old_class);
->  
->  		sched_enq_and_set_task(&ctx);
-> @@ -5199,12 +5204,17 @@ static int scx_ops_enable(struct sched_e
->  	scx_task_iter_start(&sti);
->  	while ((p = scx_task_iter_next_locked(&sti))) {
->  		const struct sched_class *old_class = p->sched_class;
-> +		const struct sched_class *new_class =
-> +			__setscheduler_class(p->policy, p->prio);
->  		struct sched_enq_and_set_ctx ctx;
->  
-> +		if (old_class != new_class && p->se.sched_delayed)
-> +			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEE_DELAYED);
+> +    /// The table of device ids supported by the driver.
+> +    const ID_TABLE: IdTable<Self::IdInfo>;
 > +
+> +    /// Platform driver probe.
+> +    ///
+> +    /// Called when a new platform device is added or discovered.
+> +    /// Implementers should attempt to initialize the device here.
+> +    fn probe(dev: &mut Device, id_info: Option<&Self::IdInfo>) -> Result=
+<Pin<KBox<Self>>>;
 
-s/DEQUEE_DELAYED/DEQUEUE_DELAYED
-Anyway, no luck for me applying the series onto sched/core scx's for-next or rc5.
-Any hint or do you mind supplying a branch?
+This forces the user to put their driver data in a KBox, but they
+might want to use an Arc instead. You don't actually *need* a KBox -
+any ForeignOwnable seems to fit your purposes.
+
+Please see my miscdevice and shrinker patchsets for examples of how
+you can extend this to allow any ForeignOwnable.
+
+Alice
 
