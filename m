@@ -1,407 +1,167 @@
-Return-Path: <linux-kernel+bounces-389143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACC19B690D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D72049B6917
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A361F22301
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B961F21D3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0D02141C2;
-	Wed, 30 Oct 2024 16:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F4A2141C7;
+	Wed, 30 Oct 2024 16:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="kRPRNLqH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FjSRHhAz"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PT4yAgI4"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511B021314C;
-	Wed, 30 Oct 2024 16:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33B41E573B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730305273; cv=none; b=R+03txWcfrilkd+8xaWIYblB4kvOKFmHLy8SdrubUytcf+owZyBjOhqmF8AvHalKqUlBYVYX+gz5ONdHjWOJxrMI0m02C6RUqbVwlMfyOW92OKLdLEY4kX2KndJUEZ+3r/elVUBnicrHiRNnGlDFQIA/OTKX08+E5yWwUPi+TQ0=
+	t=1730305579; cv=none; b=pNjjMDV0RrDNrEB9lwBvylAcYp7c4oWy7Gnho/bg4T7goh4NnmTqw5yhNXutyvCBtIsMwTCL58OurAj3riKcOX5a4PHru26F2DI1QTryz/EJQe0l+7QUoC59nDXh4iyaiWveQWlWe/J/xQ9lQ/p5QRDqZ2LkVOIO4dycdyy+GFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730305273; c=relaxed/simple;
-	bh=1p1sFkjDuCdzeMuT9ajs6NZyRhkgJdi9qGCMeX7JDZs=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=OErU+wXjZRxI0RrkUh6mIDV9DsBOMKDdrgyAR7ga3BmoF3/+GGk+NJcwHziEjluKA/SEEjHGW053MBAzLSa4RJCP64AArQ7vkOt1pBWwnfmU23PgoKwZ4LgiPN5s/VN9OPVJwVLiTPiBbrIaOaZgRI6hzCSDgduugD36g3OVU3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=kRPRNLqH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FjSRHhAz; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 08792254008B;
-	Wed, 30 Oct 2024 12:21:08 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 30 Oct 2024 12:21:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1730305267; x=1730391667; bh=i0bgNI5ER6DIumQi5vUG3oO0iwDsmVpV
-	usF+uQXLQ+M=; b=kRPRNLqHWTFDZCIC4pA78cmk0Ay7wm7RpRA2bhT4LBU2+Bud
-	1W7+GX3tHtoIo8ExI9VKpEdSSU8VK5UL/2siLzKAEyDZ6HtsFh3NrVs7z9y/YcZr
-	wQIccOf8pEi1jK8yCsAfAKt98HKg7/htEeVFgZxkaE+cCspNWpucdROR4u/ryhf+
-	z74VP5mppiHmO3nRJEHHg8t+HDgxMDWBGU191ymK+sqD2jkxzcpL/PozWDdg4fZS
-	T542axhS19bob7g432jeFLzHOimVQa4XProtAbSsaE7sxiAum/3Rq94+vHJF/aAQ
-	isnkCalky0EbZy+oxwWbGJdpLbjubBfLc2Cmiw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730305267; x=
-	1730391667; bh=i0bgNI5ER6DIumQi5vUG3oO0iwDsmVpVusF+uQXLQ+M=; b=F
-	jSRHhAzXR1pTxE42LwJjRxScMUjAp3QvZ8bGG8RxWRMVrndmx6taLSaQIq7RHuV2
-	HpVv1JeeFG3IZRFXzlVnE+bV8LpNhUdpW0/lZ0sXh4PbU1+eiWHdoVH7O+j46Mn2
-	Lfm65V0Kt9teddGOoaosYP1sgk4m8lBP5vM8qPcz6SGG1Ng1ZRCtDvmT3TMig/IX
-	BMrkzDcFmcGGGoOfqQxNbjHg5v7UiXFa2xwv8L8wX7jNhpYW7mtg7YaE56dFRrXB
-	Vw70Azd/iADULRLiols1ECEEGuK7rSc576XddsiEyKj7+/jHdv83sHeY/1oFzM38
-	/OViUKfv7jfViBhKx8SwQ==
-X-ME-Sender: <xms:81wiZ1BW-paEPpQbJy8FlkYMMHqBbW_1Hjk4N_b_SOS687pAY_4PCA>
-    <xme:81wiZzi82GtVN48t9InDDor7qnx7fxFT_j3Apfy_yyriooi4liDkaKk9EEA-UU5uW
-    v7D8iLgxJj1ABt3wew>
-X-ME-Received: <xmr:81wiZwnMYq82dStsJSJhSRkCY7KvnPrzGtlUFAt0MOqk_a4sifxnDi0AOYRrzSuwDOfEJGc3GJCCkR5a2iYOtSAkG2e9hdXQ8lmazL52c48mnQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgkeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefujghfofggtgfgfffksehtqhertdertdej
-    necuhfhrohhmpeflrgihucggohhssghurhhghhcuoehjvhesjhhvohhssghurhhghhdrnh
-    gvtheqnecuggftrfgrthhtvghrnhepgeefgffhgffhhfejgfevkefhueekvefftefhgfdt
-    uddtfeffueehleegleeiuefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhhvsehjvhhoshgsuhhrghhhrdhnvghtpdhnsggprhgtphhtthho
-    pedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhgriihorhessghlrggtkh
-    ifrghllhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
-    pdhrtghpthhtoheplhhiuhhhrghnghgsihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhguhiesghhr
-    vgihhhhouhhsvgdrnhgvthdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
-    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
-    hgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:81wiZ_xhkJuCjGDhXQvh5XUv6yj2cSWGyH9GkYZ_7DgVxXbGyrZ8pg>
-    <xmx:81wiZ6TkFQ0NyNKLhfQO6nKTsazeX5_Fg4vDC5K5C85_A8jOX9wu2A>
-    <xmx:81wiZyZO1L0P0CmHfqszqGTVy6nGaws2tfDcwCwhwGUbGoEBU4s0Bw>
-    <xmx:81wiZ7T7QAM5QSZCvsrI4XFfud3pLh6J9CzMqr_FMBOmleXC1L1yMA>
-    <xmx:81wiZ_LnDikaZw59RVJjpQJebSPTQLjpMWqIUI-EgFtIqRKfESonx0hf>
-Feedback-ID: i53714940:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 12:21:07 -0400 (EDT)
-Received: by vermin.localdomain (Postfix, from userid 1000)
-	id 4ADCF1C0479; Wed, 30 Oct 2024 09:21:05 -0700 (PDT)
-Received: from vermin (localhost [127.0.0.1])
-	by vermin.localdomain (Postfix) with ESMTP id 4A1251C0095;
-	Wed, 30 Oct 2024 17:21:05 +0100 (CET)
-From: Jay Vosburgh <jv@jvosburgh.net>
-To: Hangbin Liu <liuhangbin@gmail.com>
-cc: netdev@vger.kernel.org, Andy Gospodarek <andy@greyhouse.net>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>,
-    Nikolay Aleksandrov <razor@blackwall.org>,
-    Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 net] bonding: add ns target multicast address to slave device
-In-reply-to: <20241023123215.5875-1-liuhangbin@gmail.com>
-References: <20241023123215.5875-1-liuhangbin@gmail.com>
-Comments: In-reply-to Hangbin Liu <liuhangbin@gmail.com>
-   message dated "Wed, 23 Oct 2024 12:32:15 -0000."
-X-Mailer: MH-E 8.6+git; nmh 1.7+dev; Emacs 29.0.50
+	s=arc-20240116; t=1730305579; c=relaxed/simple;
+	bh=sDJYx4DfBWZJ9NCFQ1OJHLVtnyW937UdYk2MBzJwE4M=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rkVXy5umnrfmFnksNij8lTvUQhnhq87j6iGmUULIJHhDZ9FB15X97bhIxxzCowRl+M9T8hkZoXF54tzIqDY/1YoXexEg1nBfIKDwnhSgCAhsR2W+i95Rydw04Xd7DjWejuhuwxKDGoWtS2bjs83XXDEbAe/Q7AsjsCAgm+jKyOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PT4yAgI4; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d518f9abcso37667f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730305575; x=1730910375; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nRQIzE56a78f3UCXKUKwjgBDwr7TVubijgfr1LJ07ho=;
+        b=PT4yAgI4CXrX1ndP+ksIHOvq9OLcuMtcTZXnkMMO5Qd5Qbd9gG0JNAOQIa4ckk69LR
+         LWnCfhygf+700CEvmzC749nGzAFnsX0l1S3BkhyGOzsW71foOxEHSayKpMNDqNB967XR
+         ALNGVVhuYU0uU9yzoIB71z8P7ma2x8ty5G177RSA/XXVcuOcD1US9ZXJoiv8XKI6RKyn
+         GnW5MQwtH33zW5RwobOjdnZDML6fkilNJOmnkGnYEPlboWfwGL5gtXjDm8Zw2ExVFOdO
+         +8OV8hsm2TUyDiWFjFnWJrP+DhSzLYyP0T7YXlAWlvX4quYUJ/eqTLjupE13AlrzTYr/
+         803A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730305575; x=1730910375;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nRQIzE56a78f3UCXKUKwjgBDwr7TVubijgfr1LJ07ho=;
+        b=O+KW66gkuH+hY6PHtfJSNnlW9iqaRqVQFo4Cptk1a1CFgjYEvlb2lPx8Ewia6eFN3h
+         E2YxcyI8ozWBg4ZFNfQ2RZyMnUmX0RFoEwsJRpuQiyp0k1lSt98eMAKqF02V4O56JlIn
+         z4p+oX6pOOvWJ27HVjR4i6nDadDab3Z68Oe5PYEenraoHYbMruEWxJaedJtGChMJlnn+
+         Oz2/oN0PutfKmxB/eEAkEOqaLS6e1iIn9hKbv6mQFlgHqL4kXUNTnCXcKqoRKIUPzAiC
+         FLYtbdUP+VssC7gT9cHxRySJzcyFCqRMSqo86ATW1C4tQaqkuHwREAJw1+zUfqLNDRiC
+         q+gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ8uBdOXr8xupUsPzne17YU9lDjf8SWvJZtWk8OIan3rOsXWXexGaHAuVr4CJmAQ9SrRjiqmpAQw3Hdn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7KefwD9aMOE34dg4o+WBfWZqLE5ZA/Erq4FawK7csHSKm9vk0
+	Haj1jy5P+/LzvutIue4KPT9QUFHJ5XGWdfVxJ/BuddkCXr+TTUWCRRL5TQmx6tI=
+X-Google-Smtp-Source: AGHT+IGQ8G7g4zNKZcy/h19K3HYfsFs0a2mnCjVa1TLoKI8avaYE7I8PLXucpWqzh2b6kF4aX23e1w==
+X-Received: by 2002:adf:e304:0:b0:37d:3a2d:8577 with SMTP id ffacd0b85a97d-3806115a2e6mr12142255f8f.33.1730305574942;
+        Wed, 30 Oct 2024 09:26:14 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:201:dd6:9287:c715? ([2a01:e0a:982:cbb0:201:dd6:9287:c715])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b479a4sm15664996f8f.55.2024.10.30.09.26.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 09:26:14 -0700 (PDT)
+Message-ID: <ea885b7d-e44b-4fdd-bada-ae368bb7c1b7@linaro.org>
+Date: Wed, 30 Oct 2024 17:26:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 30 Oct 2024 17:21:05 +0100
-Message-ID: <213367.1730305265@vermin>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] drm/panel: leadtek-ltk050h3146w: transition to mipi_dsi
+ wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>,
+ Doug Anderson <dianders@chromium.org>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241026035928.183454-1-tejasvipin76@gmail.com>
+ <CAD=FV=Vps5vWD72O_kYhuKudduYed41+tZrVRB6x+FiaZrm-EA@mail.gmail.com>
+ <c389ea3e-70cb-46c5-8cf1-878a99f771ec@gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <c389ea3e-70cb-46c5-8cf1-878a99f771ec@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hangbin Liu <liuhangbin@gmail.com> wrote:
+On 30/10/2024 08:24, Tejas Vipin wrote:
+> 
+> 
+> On 10/29/24 12:24 AM, Doug Anderson wrote:
+>> Hi,
+>>
+>> On Fri, Oct 25, 2024 at 9:00 PM Tejas Vipin <tejasvipin76@gmail.com> wrote:
+>>>
+>>> @@ -418,79 +398,42 @@ static const struct ltk050h3146w_desc ltk050h3146w_data = {
+>>>                  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
+>>>   };
+>>>
+>>> -static int ltk050h3146w_a2_select_page(struct ltk050h3146w *ctx, int page)
+>>> +static void ltk050h3146w_a2_select_page(struct mipi_dsi_multi_context *dsi_ctx, int page)
+>>>   {
+>>> -       struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+>>> -       u8 d[3] = { 0x98, 0x81, page };
+>>> +       u8 d[4] = { 0xff, 0x98, 0x81, page };
+>>>
+>>> -       return mipi_dsi_dcs_write(dsi, 0xff, d, ARRAY_SIZE(d));
+>>> +       mipi_dsi_dcs_write_buffer_multi(dsi_ctx, d, ARRAY_SIZE(d));
+>>
+>> FWIW: the above might be slightly better as:
+>>
+>> mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xff, 0x98, 0x81, page);
+>>
+>> That would make it more documenting that the 0xff is the "cmd", has
+>> fewer lines of code, and also gets the array marked as "static const"
+>> which might make the compiler slightly more efficient. ;-)
+>>
+>> Not really a huge deal, though.
+>>
+> 
+> I did try this initially, but got an error because of page not being a
+> compile time constant. Not sure how I should handle this.
 
->Commit 4598380f9c54 ("bonding: fix ns validation on backup slaves")
->tried to resolve the issue where backup slaves couldn't be brought up when
->receiving IPv6 Neighbor Solicitation (NS) messages. However, this fix only
->worked for drivers that receive all multicast messages, such as the veth
->interface.
->
->For standard drivers, the NS multicast message is silently dropped because
->the slave device is not a member of the NS target multicast group.
->
->To address this, we need to make the slave device join the NS target
->multicast group, ensuring it can receive these IPv6 NS messages to validate
->the slave=E2=80=99s status properly.
->
->There are three policies before joining the multicast group:
->1. All settings must be under active-backup mode (alb and tlb do not suppo=
-rt
->   arp_validate), with backup slaves and slaves supporting multicast.
->2. We can add or remove multicast groups when arp_validate changes.
->3. Other operations, such as enslaving, releasing, or setting NS targets,
->   need to be guarded by arp_validate.
->
->Fixes: 4e24be018eb9 ("bonding: add new parameter ns_targets")
->Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
->---
->v2: only add/del mcast group on backup slaves when arp_validate is set (Ja=
-y Vosburgh)
+I think the current version is fine:
 
-	Sorry for the delay in responding, I've been traveling.
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-	For the above, I suspect I wasn't sufficiently clear in my
-commentary; what I meant wasn't just checking arp_validate being
-enabled, but that the implementation could be much less complex if it
-simply kept all of the multicast addresses added to the backup interface
-(in addition to the active interface) when arp_validate is enabled.
+> 
+>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> 
 
-	I suspect the set of multicast addresses involved is likely to
-be small in the usual case, so the question then is whether the
-presumably small amount of traffic that inadvertently passes the filter
-(and is then thrown away by the kernel RX logic) is worth the complexity
-added here.
-
-	That said, I have a few questions below.
-
->    arp_validate doesn't support 3ad, tlb, alb. So let's only do it on ab =
-mode.
->---
-> drivers/net/bonding/bond_main.c    | 18 +++++-
-> drivers/net/bonding/bond_options.c | 95 +++++++++++++++++++++++++++++-
-> include/net/bond_options.h         |  1 +
-> 3 files changed, 112 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_ma=
-in.c
->index b1bffd8e9a95..d7c1016619f9 100644
->--- a/drivers/net/bonding/bond_main.c
->+++ b/drivers/net/bonding/bond_main.c
->@@ -1008,6 +1008,9 @@ static void bond_hw_addr_swap(struct bonding *bond, =
-struct slave *new_active,
->=20
-> 		if (bond->dev->flags & IFF_UP)
-> 			bond_hw_addr_flush(bond->dev, old_active->dev);
->+
->+		/* add target NS maddrs for backup slave */
->+		slave_set_ns_maddrs(bond, old_active, true);
-> 	}
->=20
-> 	if (new_active) {
->@@ -1024,6 +1027,9 @@ static void bond_hw_addr_swap(struct bonding *bond, =
-struct slave *new_active,
-> 			dev_mc_sync(new_active->dev, bond->dev);
-> 			netif_addr_unlock_bh(bond->dev);
-> 		}
->+
->+		/* clear target NS maddrs for active slave */
->+		slave_set_ns_maddrs(bond, new_active, false);
-> 	}
-> }
->=20
->@@ -2341,6 +2347,12 @@ int bond_enslave(struct net_device *bond_dev, struc=
-t net_device *slave_dev,
-> 	bond_compute_features(bond);
-> 	bond_set_carrier(bond);
->=20
->+	/* set target NS maddrs for new slave, need to be called before
->+	 * bond_select_active_slave(), which will remove the maddr if
->+	 * the slave is selected as active slave
->+	 */
->+	slave_set_ns_maddrs(bond, new_slave, true);
->+
-> 	if (bond_uses_primary(bond)) {
-> 		block_netpoll_tx();
-> 		bond_select_active_slave(bond);
->@@ -2350,7 +2362,6 @@ int bond_enslave(struct net_device *bond_dev, struct=
- net_device *slave_dev,
-> 	if (bond_mode_can_use_xmit_hash(bond))
-> 		bond_update_slave_arr(bond, NULL);
->=20
->-
-> 	if (!slave_dev->netdev_ops->ndo_bpf ||
-> 	    !slave_dev->netdev_ops->ndo_xdp_xmit) {
-> 		if (bond->xdp_prog) {
->@@ -2548,6 +2559,11 @@ static int __bond_release_one(struct net_device *bo=
-nd_dev,
-> 	if (oldcurrent =3D=3D slave)
-> 		bond_change_active_slave(bond, NULL);
->=20
->+	/* clear target NS maddrs, must after bond_change_active_slave()
->+	 * as we need to clear the maddrs on backup slave
->+	 */
->+	slave_set_ns_maddrs(bond, slave, false);
->+
-> 	if (bond_is_lb(bond)) {
-> 		/* Must be called only after the slave has been
-> 		 * detached from the list and the curr_active_slave
->diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond=
-_options.c
->index 95d59a18c022..2554ba70f092 100644
->--- a/drivers/net/bonding/bond_options.c
->+++ b/drivers/net/bonding/bond_options.c
->@@ -1234,6 +1234,75 @@ static int bond_option_arp_ip_targets_set(struct bo=
-nding *bond,
-> }
->=20
-> #if IS_ENABLED(CONFIG_IPV6)
->+/* convert IPv6 address to link-local solicited-node multicast mac addres=
-s */
->+static void ipv6_addr_to_solicited_mac(const struct in6_addr *addr,
->+				       unsigned char mac[ETH_ALEN])
->+{
->+	mac[0] =3D 0x33;
->+	mac[1] =3D 0x33;
->+	mac[2] =3D 0xFF;
->+	mac[3] =3D addr->s6_addr[13];
->+	mac[4] =3D addr->s6_addr[14];
->+	mac[5] =3D addr->s6_addr[15];
->+}
-
-	Can we make use of ndisc_mc_map() / ipv6_eth_mc_map() to perform
-this step, instead of creating a new function that's almost the same?
-
->+
->+static bool slave_can_set_ns_maddr(struct bonding *bond, struct slave *sl=
-ave)
->+{
->+	return BOND_MODE(bond) =3D=3D BOND_MODE_ACTIVEBACKUP &&
->+	       !bond_is_active_slave(slave) &&
->+	       slave->dev->flags & IFF_MULTICAST;
->+}
->+
->+static void _slave_set_ns_maddrs(struct bonding *bond, struct slave *slav=
-e, bool add)
->+{
->+	struct in6_addr *targets =3D bond->params.ns_targets;
->+	unsigned char slot_maddr[ETH_ALEN];
->+	int i;
->+
->+	if (!slave_can_set_ns_maddr(bond, slave))
->+		return;
->+
->+	for (i =3D 0; i < BOND_MAX_NS_TARGETS; i++) {
->+		if (ipv6_addr_any(&targets[i]))
->+			break;
->+
->+		ipv6_addr_to_solicited_mac(&targets[i], slot_maddr);
->+		if (add)
->+			dev_mc_add(slave->dev, slot_maddr);
->+		else
->+			dev_mc_del(slave->dev, slot_maddr);
->+	}
->+}
->+
->+void slave_set_ns_maddrs(struct bonding *bond, struct slave *slave, bool =
-add)
->+{
->+	if (!bond->params.arp_validate)
->+		return;
->+
->+	_slave_set_ns_maddrs(bond, slave, add);
->+}
-
-	Why does this need a wrapper function vs. having the
-arp_validate test be first in the larger function?
-
-	-J
-
->+
->+static void slave_set_ns_maddr(struct bonding *bond, struct slave *slave,
->+			       struct in6_addr *target, struct in6_addr *slot)
->+{
->+	unsigned char target_maddr[ETH_ALEN], slot_maddr[ETH_ALEN];
->+
->+	if (!bond->params.arp_validate || !slave_can_set_ns_maddr(bond, slave))
->+		return;
->+
->+	/* remove the previous maddr on salve */
->+	if (!ipv6_addr_any(slot)) {
->+		ipv6_addr_to_solicited_mac(slot, slot_maddr);
->+		dev_mc_del(slave->dev, slot_maddr);
->+	}
->+
->+	/* add new maddr on slave if target is set */
->+	if (!ipv6_addr_any(target)) {
->+		ipv6_addr_to_solicited_mac(target, target_maddr);
->+		dev_mc_add(slave->dev, target_maddr);
->+	}
->+}
->+
-> static void _bond_options_ns_ip6_target_set(struct bonding *bond, int slo=
-t,
-> 					    struct in6_addr *target,
-> 					    unsigned long last_rx)
->@@ -1243,8 +1312,10 @@ static void _bond_options_ns_ip6_target_set(struct =
-bonding *bond, int slot,
-> 	struct slave *slave;
->=20
-> 	if (slot >=3D 0 && slot < BOND_MAX_NS_TARGETS) {
->-		bond_for_each_slave(bond, slave, iter)
->+		bond_for_each_slave(bond, slave, iter) {
-> 			slave->target_last_arp_rx[slot] =3D last_rx;
->+			slave_set_ns_maddr(bond, slave, target, &targets[slot]);
->+		}
-> 		targets[slot] =3D *target;
-> 	}
-> }
->@@ -1296,15 +1367,37 @@ static int bond_option_ns_ip6_targets_set(struct b=
-onding *bond,
-> {
-> 	return -EPERM;
-> }
->+
->+static void _slave_set_ns_maddrs(struct bonding *bond, struct slave *slav=
-e, bool add)
->+{
->+}
->+
->+void slave_set_ns_maddrs(struct bonding *bond, struct slave *slave, bool =
-add)
->+{
->+}
-> #endif
->=20
-> static int bond_option_arp_validate_set(struct bonding *bond,
-> 					const struct bond_opt_value *newval)
-> {
->+	bool changed =3D (bond->params.arp_validate =3D=3D 0 && newval->value !=
-=3D 0) ||
->+		       (bond->params.arp_validate !=3D 0 && newval->value =3D=3D 0);
->+	struct list_head *iter;
->+	struct slave *slave;
->+
-> 	netdev_dbg(bond->dev, "Setting arp_validate to %s (%llu)\n",
-> 		   newval->string, newval->value);
-> 	bond->params.arp_validate =3D newval->value;
->=20
->+	if (changed) {
->+		bond_for_each_slave(bond, slave, iter) {
->+			if (bond->params.arp_validate)
->+				_slave_set_ns_maddrs(bond, slave, true);
->+			else
->+				_slave_set_ns_maddrs(bond, slave, false);
->+		}
->+	}
->+
-> 	return 0;
-> }
->=20
->diff --git a/include/net/bond_options.h b/include/net/bond_options.h
->index 473a0147769e..59a91d12cd57 100644
->--- a/include/net/bond_options.h
->+++ b/include/net/bond_options.h
->@@ -161,5 +161,6 @@ void bond_option_arp_ip_targets_clear(struct bonding *=
-bond);
-> #if IS_ENABLED(CONFIG_IPV6)
-> void bond_option_ns_ip6_targets_clear(struct bonding *bond);
-> #endif
->+void slave_set_ns_maddrs(struct bonding *bond, struct slave *slave, bool =
-add);
->=20
-> #endif /* _NET_BOND_OPTIONS_H */
->--=20
->2.46.0
-
----
-	-Jay Vosburgh, jv@jvosburgh.net
 
