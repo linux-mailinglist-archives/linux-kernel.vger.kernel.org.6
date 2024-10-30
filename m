@@ -1,221 +1,124 @@
-Return-Path: <linux-kernel+bounces-389171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84969B697E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:47:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC1B9B6980
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36162B20B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF8031C21016
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0104721501E;
-	Wed, 30 Oct 2024 16:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9685215012;
+	Wed, 30 Oct 2024 16:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2YGCmmd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpnFElbe"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D112768FC;
-	Wed, 30 Oct 2024 16:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDA6768FC;
+	Wed, 30 Oct 2024 16:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730306863; cv=none; b=SK11opp6sCzK3Yw5+TFLbkGxp8H5/Y8ayc49O2iOyZQxQ48yw9UQQ4cXhVrAygQZ7+aBNw5i0zFBjsxu9Z68JdEiPLddq31Y+qQmUWExB/TCfhuF0/XAleGq4qeTICBdeuWxppEzTzDVOXZ2xjfp2C4hFkkXrf+51sTc1DsHsfw=
+	t=1730306878; cv=none; b=l2MMgW2mJyfUWWa3yLeKclSa2t/uSL8xmwAjAUYL6bI8ULzFSpP6GxwnDfW5BQCLOB53ZMdIf4oxmqMGEOGXfcNtPHTBjhrzlXHe/j4+4EGyHZLa9hoVk0ky8WcnnlZ9OAT7uR20JU3pjr3kn98PJ2/sxq0RJ6gyaTy5o6njAWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730306863; c=relaxed/simple;
-	bh=G9u9zhuA94H/fUMNkQs5qyanCAF7/yxcojMjY/sX3ZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZrjuG55osYKlzAWFEtzz/nYHS4uzSorGVidxPqo370m5J4rTaG8iH979meB9wUc2a3gYFYE4M4F6dX87MKDEnPpa3jXNx4VEaayb/TMcPyD9hvjdCfIn6wlflHrxQffGj7cCK/qlozu95er4MovePCm2m0lam638x68J1Yv56MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2YGCmmd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA1DAC4CEDA;
-	Wed, 30 Oct 2024 16:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730306862;
-	bh=G9u9zhuA94H/fUMNkQs5qyanCAF7/yxcojMjY/sX3ZU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T2YGCmmdSBZ8gg0xGA6L+5GpJbCouJJeTP/WKv2ItzgiZDaDS4/bEDxnUKeZEUBl5
-	 ue079TH0egbePlIkyn0w4Q5Ci2V2SsZi7C7Lz7yrd0wXxhHkvXAv2VjnxKiExU1Sw9
-	 +7XSQ5TsYMMSflwswMty1KA3kIMRxK4olo3q2J3uowEqjwie8joHRywRHFyOOkYOeJ
-	 S2EuO3wJlNgJmmAI8b8cDSY5XGmWnIRSBMrKAl4+Z1wvj8fA2Ib1EsrJGH/xTx6jxw
-	 tzqcMxE6jQl/u2aXlqgYLfYhuyPy8fKIOFumSXLnZRXAK86d9MWq+AFdieza7hWQge
-	 XRMT9U/38FOng==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso28494e87.2;
-        Wed, 30 Oct 2024 09:47:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZH0JrnV3ntGMIoos4k+kCrlUiTf2X2eVg+YVyE5CsJXe5hxelP12w3+rjyw70tykqH75n5TnBybre+vMZ@vger.kernel.org, AJvYcCUnM0CiODB4FEKzoODqbdyfT4HmJL5PtjbQfd+EMfNMlZHixcJfNx7OitnvadCVayclFgJ5o2OEXn3tQhed+AE=@vger.kernel.org, AJvYcCXYEoesBoLndS62lvrbts78JOrA1g8BkfoTJ7OkxHqct//ROM5C/XgRMJ0Cmta+1efjdYS3qn0sew5J@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI2YgUi+HduQrkpXju/E89qatNoQZ7cLouaF+oAvIoiAgJeIuR
-	ZZWXkR0EwEuV1ShcgLylBI96XgTOg9wLA7D59R2wZjxe+MrerlsIoOjCJqdxikaIRsCYRcYYDNG
-	DFZnxzNrI2z0yb23tPDybhF6xPQ==
-X-Google-Smtp-Source: AGHT+IGQ6H9qIhqtA2x22Lv1WNjZfStTB5wUkQiDjZODnFYdktSwlxnt6RTQXmtXnMQMYc0LM7iws8mWHFwymfjBU5U=
-X-Received: by 2002:a05:6512:32c7:b0:536:a50a:3c25 with SMTP id
- 2adb3069b0e04-53b348c1612mr8787033e87.12.1730306860915; Wed, 30 Oct 2024
- 09:47:40 -0700 (PDT)
+	s=arc-20240116; t=1730306878; c=relaxed/simple;
+	bh=D2oJYtwG9EKSoZ7I5siUsipoREy99xEvaxJ67nyWbRU=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=H6A6BzVEkhwBvFrF5EUWqx4dAFVR8B0PX5RYNMiYOfxRy+xyNSiDwcoLi8cO7grqZFuYOkZju2A/BNJHjXH0rn8+OU0Fei1Q4wErjy9LDxInPe4+nHPUYWIHNmsBY8xUGbdlo6LHW4TwwuDPwCunF+VppsMyGpk/KVVM4XNbK6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpnFElbe; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so67046f8f.2;
+        Wed, 30 Oct 2024 09:47:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730306875; x=1730911675; darn=vger.kernel.org;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pyAZDfpaHEPPobXVP0C8mBTxkDr4yKYduYhVIQw6zIQ=;
+        b=YpnFElbexnAoI4p3nm+oEnOGznhVnG70iHajdfyBa0oxavF4ooeYk8qU4A9ryLUESL
+         tbso8zUvEnmgAoFa801y+1QUzgYXkA3kpn+wEoTQU70hPD+/3VjXnXogTS/+YdExqr8m
+         fOgbnyDtY27NvD4A6wkJBOqK85lSMb6du9GLchaufOp0es7oCnkpUlL12pdUfCez4DMC
+         pzm976YB9X2/Yo5MTWEQ57odkaUCONykKLZzP7t4UyKhdLNbQl0SJ4eLmXfu1MhKRMXp
+         XL1DNjoZXXsxBYTdkgxbSDwtX3tGAEAlpmYRo70XoeVQPYzAfiKfVyZ0ZhcUjjgLIvGG
+         T3Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730306875; x=1730911675;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pyAZDfpaHEPPobXVP0C8mBTxkDr4yKYduYhVIQw6zIQ=;
+        b=MG18yXkc9mz6O9rCyNpquT9Ikp3EsBR9YTzEnyk5rq/3/nXiZmMjkyBJTYaikmRA38
+         y0HNZ3tB2Fp1j7ILFRiwgJDCBxnfVDOVWl4f8138r16HIQTIhuVTq8SaoZBNKcCJzXMp
+         lSYeicM2XGzWmhLm5G8BEtAHMwBNcv9bNbSU6ARsMgHakxLG+hkWkB8gHRccTbZgAqFk
+         YbS93heRuQLMSbqWjfuPbNJFRAa7b+YRZGaotz2fhTCw3+RtUvZxmVuYezI1uj275xzd
+         c/Or2ftArpmx1nxRccLnwF2oAzZmaSORr4IrRLZb7t2NMK+Xo0bqJ4WMQum4a73JtrO9
+         pHyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUR+4yob1g5g09XHn4NCGU56dJhYUprdklsjjWA8v6apMSIcW1WFFG/aEETOUFlYlHt1uuBhEm4gPQOkQkO@vger.kernel.org, AJvYcCXHQq52B3FL0UwOWMWSci5cc+kSo9DvQJz0GxRDPvl9bBCeNvAeC4k8PJZhpD3YhKRXOPAycT4OyR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIBWL4YoLtwODHSOaebereRuis2JQybvA+u7XLgyjVnO4llran
+	htFfEmgaiIv+I2MMeKc2zt/MER4x07iqEgVoRrRdNVcuSlwxzkLx
+X-Google-Smtp-Source: AGHT+IG57LVIgndXcx5SWpD+2PATOaWbuFrMV4s6ZZHtymFNkj3j2HhNOX8+RKbSuV0gHdI/styCyg==
+X-Received: by 2002:adf:edd1:0:b0:37d:332e:d6ab with SMTP id ffacd0b85a97d-38061228332mr15422792f8f.43.1730306874368;
+        Wed, 30 Oct 2024 09:47:54 -0700 (PDT)
+Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3b57bsm15915247f8f.26.2024.10.30.09.47.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 09:47:53 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
- <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
- <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
- <CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com>
- <CANiq72kaidDJ=81+kibMNr9jNxg467HjOm9C_4G7WRvaiddGvg@mail.gmail.com>
- <CAL_Jsq+T6T_3p2C62U3v4aSjm_oc-Ycjxi_ckF0ufh=JJDz=rg@mail.gmail.com>
- <CAH5fLggCDiKUu_dvJZeJr8UD5RvUpqRJbdYKf1F3_MvCdOVK6g@mail.gmail.com>
- <CAL_JsqL+b-f5K24qTxyA09c_QPeb07s4Hb=s1VqrdksBB4BQ=Q@mail.gmail.com> <79c47555-c9e9-4ff6-8c43-c7c26a91afd4@gmail.com>
-In-Reply-To: <79c47555-c9e9-4ff6-8c43-c7c26a91afd4@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 30 Oct 2024 11:47:27 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJkkUk6AoAdgfVHROk=wpRo0En=gi7zwXe6S7LUEsdocQ@mail.gmail.com>
-Message-ID: <CAL_JsqJkkUk6AoAdgfVHROk=wpRo0En=gi7zwXe6S7LUEsdocQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241030162013.2100253-3-andriy.shevchenko@linux.intel.com>
+References: <20241030162013.2100253-1-andriy.shevchenko@linux.intel.com> <20241030162013.2100253-3-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 2/2] iio: adc: pac1921: Check for error code from devm_mutex_init() call
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 30 Oct 2024 17:47:52 +0100
+Message-ID: <173030687241.39393.12307342500543400932@njaxe.localdomain>
+User-Agent: alot/0.11
 
-On Wed, Oct 30, 2024 at 11:03=E2=80=AFAM Dirk Behme <dirk.behme@gmail.com> =
-wrote:
->
-> On 30.10.24 15:05, Rob Herring wrote:
-> > On Wed, Oct 30, 2024 at 3:15=E2=80=AFAM Alice Ryhl <aliceryhl@google.co=
-m> wrote:
-> >>
-> >> On Tue, Oct 29, 2024 at 8:35=E2=80=AFPM Rob Herring <robh@kernel.org> =
-wrote:
-> >>>
-> >>> On Tue, Oct 29, 2024 at 1:57=E2=80=AFPM Miguel Ojeda
-> >>> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >>>>
-> >>>> On Tue, Oct 29, 2024 at 7:48=E2=80=AFPM Alice Ryhl <aliceryhl@google=
-.com> wrote:
-> >>>>>
-> >>>>> One option is to define a trait for integers:
-> >>>
-> >>> Yeah, but that doesn't feel like something I should do here. I imagin=
-e
-> >>> other things might need the same thing. Perhaps the bindings for
-> >>> readb/readw/readl for example. And essentially the crate:num already
-> >>> has the trait I need. Shouldn't the kernel mirror that? I recall
-> >>> seeing some topic of including crates in the kernel?
-> >>
-> >> You can design the trait to look similar to traits in external crates.
-> >> We did that for FromBytes/AsBytes.
-> >>
-> >> I assume you're referring to the PrimInt trait [1]? That trait doesn't
-> >> really let you get rid of the catch-all case, and it's not even
-> >> unreachable due to the u128 type.
-> >
-> > It was num::Integer which seems to be similar.
-> >
-> >>
-> >> [1]: https://docs.rs/num-traits/0.2.19/num_traits/int/trait.PrimInt.ht=
-ml
-> >>
-> >>>> +1, one more thing to consider is whether it makes sense to define a
-> >>>> DT-only trait that holds all the types that can be a device property
-> >>>> (like `bool` too, not just the `Integer`s).
-> >>>>
-> >>>> Then we can avoid e.g. `property_read_bool` and simply do it in `pro=
-perty_read`.
-> >>>
-> >>> Is there no way to say must have traitA or traitB?
-> >>
-> >> No. What should it do if you pass it something that implements both tr=
-aits?
-> >>
-> >> If you want a single function name, you'll need one trait.
-> >
-> > I'm not sure I want that actually.
-> >
-> > DT boolean is a bit special. A property not present is false.
-> > Everything else is true. For example, 'prop =3D <0>' or 'prop =3D
-> > "string"' are both true. I'm moving things in the kernel to be
-> > stricter so that those cases are errors. I recently introduced
-> > (of|device)_property_present() for that reason. There's no type
-> > information stored in DT.  At the DT level, it's all just byte arrays.
-> > However, we now have all the type information for properties within
-> > the schema. So eventually, I want to use that to warn on accessing
-> > properties with the wrong type.
-> >
-> > For example, I think I don't want this to work:
-> >
-> > if dev.property_read(c_str!("test,i16-array"))? {
-> >     // do something
-> > }
-> >
-> > But instead have:
-> >
-> > if dev.property_present(c_str!("test,i16-array")) {
-> >     // do something
-> > }
->
-> I think we have "optional" properties which can be there (=3D=3D true) or
-> not (=3D=3D false). Let's assume for this example "test,i16-array" is suc=
-h
-> kind of "optional" property. With what you gave above we need two
-> device tree accesses, then? One to check if it is there and one to
-> read the data:
+Quoting Andy Shevchenko (2024-10-30 17:19:19)
+> Even if it's not critical, the avoidance of checking the error code
+> from devm_mutex_init() call today diminishes the point of using devm
+> variant of it. Tomorrow it may even leak something. Add the missed
+> check.
+>=20
+> Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/iio/adc/pac1921.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> index f6f8f9122a78..385e86ecc441 100644
+> --- a/drivers/iio/adc/pac1921.c
+> +++ b/drivers/iio/adc/pac1921.c
+> @@ -1132,7 +1132,9 @@ static int pac1921_probe(struct i2c_client *client)
+>                 return dev_err_probe(dev, PTR_ERR(priv->regmap),
+>                                      "Cannot initialize register map\n");
+> =20
+> -       devm_mutex_init(dev, &priv->lock);
+> +       ret =3D devm_mutex_init(dev, &priv->lock);
+> +       if (ret)
+> +               return ret;
+> =20
+>         priv->dv_gain =3D PAC1921_DEFAULT_DV_GAIN;
+>         priv->di_gain =3D PAC1921_DEFAULT_DI_GAIN;
+> --=20
+> 2.43.0.rc1.1336.g36b5255a03ac
+>=20
 
-Yes, lots of properties are optional especially since any new property
-added has to be because the DT is an ABI.
+Totally agree, thanks!
 
-> let mut array =3D <empty_marker>;
-> if dev.property_present(c_str!("test,i16-array")) {
->     array =3D dev.property_read(c_str!("test,i16-array"))?;
-> }
->
-> ?
->
-> Instead of these two accesses, I was thinking to use the error
-> property_read() will return if the optional property is not there to
-> just do one access:
->
-> let mut array =3D <empty_marker>;
-> if let Ok(val) =3D dev.property_read(c_str!("test,i16-array")) {
->        array =3D val;
-> }
->
-> (and ignore the error case as its irrelvant in the optional case)
->
-> Have I missed anything?
+Acked-by: Matteo Martelli <matteomartelli3@gmail.com>
 
-If you grep "_property_present", most if not all calls never need the
-data. When you need the data, you read it and test for EINVAL if you
-want to handle "not present". The overhead of parsing the data is not
-nothing, so I think it is better to provide both.
-
-The typical pattern in the C code is:
-
-u32 val =3D DEFAULT_VALUE;
-of_property_read_u32(node, "a-property", &val);
-
-// val is now either the read property or the default. If the property
-is required, then the error code needs to be checked.
-
-Maybe we should have:
-
-let val: u32 =3D dev.property_read_optional(c_str!("test,i16-array"),
-DEFAULT_VALUE);
-
-Or looks like Option<> could be used here?:
-
-let val: u32 =3D dev.property_read(c_str!("test,i16-array"),
-Option<DEFAULT_VALUE>);
-
-One thing I'd like to improve is having fewer driver error messages
-and a printk for a missing required property is a common one. We have
-APIs like clk_get and clk_get_optional (which parse firmware
-properties). The difference is the former prints an error message on
-error case and the latter is silent.
-
-Rob
+Best regards,
+Matteo Martelli
 
