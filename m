@@ -1,549 +1,878 @@
-Return-Path: <linux-kernel+bounces-388355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7D99B5E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:00:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088759B5E5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855B51F238F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:00:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FC99B22952
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C721D1991D7;
-	Wed, 30 Oct 2024 09:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96EF1E1C3B;
+	Wed, 30 Oct 2024 09:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlcY371s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iai5eMaM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB04D1DFE16
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730278810; cv=none; b=RvBJnNG5czHkwDL+lq3h6dJ0px5PmhUzjA2PksheZSe4ll9qh89pVVNLyKHE6KIbyeQLlgMkZYILf4MiZc5WLMORlXBqrMwJ81zcIoHqOlOJOYqQ2AHCWSv4z509+Hs1dbA1yqCtX5PG5dwzj/xKWHtjnpEIM0U4MjOHVSi1XiI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730278810; c=relaxed/simple;
-	bh=oVtaDEYWTx7rZuQWiXWWNoh2sXmAyvaMiDuTT9erhL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IdL7yFr9pJNJx0W7xhkPSIXM11dzHgPmHqGqm9aXub1Z1A86piryAWjEGj+MQoTEsMu/AIHynSyJcq8opJn2Ei98Rzzw/XRxreXO8Npf5rSLPN+3xrFDrw22bgvxugyxO21YcI0jmonw9oI64WPxpVPOS4dgb4oEyJp3t1ChuO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlcY371s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F16C4CEE8
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:00:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730278810;
-	bh=oVtaDEYWTx7rZuQWiXWWNoh2sXmAyvaMiDuTT9erhL8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DlcY371sqBT7Hr+h8K48kYQIx3JObnOrKUVnlmNlT6MfVMshNiKRCDsok25aUBYDz
-	 BzokBr1SsqUQI7q6cE7c4lCSlEh93Doe7d3SF5gZNaau1bmGLYzZizkaJAFjDwYdkA
-	 cCfeY2Ug49ySlPMQefqesjGxKy9zHXvLQEFAHmT9mtWDYp5vX5i/Asos5T0UFgPnTS
-	 YgTX/OPrOSMYPPER1I41VQ9+ETYa8N6D156QGjIhQu/y+nzYfh9EZOajhyknxbB3mW
-	 jNH1ZlR8MJp3yV3aiqXzYGLNr7hqT7f2W1fU0YyGxz/t2+GBhsmY9G4/4SSk0zAwy5
-	 NrfOdw4Yb1TrQ==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99f646ff1bso802671266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:00:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVdZlZM2uTQRkSwQ0zyOC+atT7mGWq1JwLPtH/2CQUNSaIIAfYrhdd7PmOXJW6m7mbD4/rZ3YL2ATT/odg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoh6jKrjwNr7rv5bpb+0mIkyFJLeK08S3GvO8rME5tH9iVH+rO
-	gHfxnzg+gXzmBp8B0cbOCWYG432N9kRHot9f6Rf8ht5+FeBttiUm9TZnbJ+hL4uK7/NB3dXsoQ5
-	pQai8jOHcdaORngzPtn/FcZq+T9s=
-X-Google-Smtp-Source: AGHT+IGg1rQ6Q+YhBx4lektizlmsgKGAAiZCWqXB3OwLHgFl9PZy3zZmrp51kZoFkMVY0glqa36k8UyMGEhG7CBg77s=
-X-Received: by 2002:a17:907:9621:b0:a9a:1585:dd6a with SMTP id
- a640c23a62f3a-a9e3a62561cmr206751766b.36.1730278808842; Wed, 30 Oct 2024
- 02:00:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4CF153812;
+	Wed, 30 Oct 2024 09:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730278888; cv=fail; b=GJfs0lGQzGEBn03863BwLCgDTa9nJM1QVhOd0OuvdMPhD4WWfiNXffdkmyICtVPTptdIhTGRzCANd76KUnsToHxzmXOGIN+OjuBHVjTiwXi1buxJH/edov+dG5kI05XYhmAf9//Ggm+lzpYZGJtCAw+rWvPFLgKu9youDdX/LRY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730278888; c=relaxed/simple;
+	bh=BfWO0YSaerVRV3+AUZgxCm32yCouwPlFUtB4MZqX75A=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZlBo4OUxjPqQJDQyB0xlNVb/lXjIEOtj2HgE3VsiLriNsedROcQWYaEpfKzOeIHelabSQH/Q9jgvtawQ4jia2anjYzs2mhlrWGS+okxWvaoEMCkObEYXoEelZ8MqV0ywudN+Esoes64RrejyxHYiaCf1m6xngLkIbQvbogg/Wrk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iai5eMaM; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730278885; x=1761814885;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BfWO0YSaerVRV3+AUZgxCm32yCouwPlFUtB4MZqX75A=;
+  b=iai5eMaMoEtPn5tQvnFzUqIW31z4a+Q78kNzLYCOb0ujSv2QeI9Dwfbt
+   Fg24Zr86+Y1dEgWjWWIKgUX3LOXmNPIfQWpM8wWZJnAfvmUYiXBt+SbZW
+   DFhvxO5ZbAhUBWdG3WT0CgzRlbswu95NMGQK+tYi5gKPTdhzbr8c1o2mj
+   T/QC5WocqzuEVk9SBQF3nlS4CCh0dcPGzCEX8zmdhDtklGCrQ8DuaJ5bR
+   RWD5eQTeenLRoLAWStRfpZVjys4pqblxXjrP1X+t12gM0mMmG/5XjjPMF
+   yYnv9gyVTtMM+cqAGAvTk9YY28DBOUHGbVO3qt/UwUp+mhaOFo2iwZgBA
+   A==;
+X-CSE-ConnectionGUID: P0TUA/tBQjOcokcZm80+xA==
+X-CSE-MsgGUID: 8LEWidOnQrWghpv3bNw3ZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="55373928"
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="55373928"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 02:01:20 -0700
+X-CSE-ConnectionGUID: r4ABqyhKTJyI4t68MBfFxg==
+X-CSE-MsgGUID: OwwJXkC2QBCFm0IKeKWcyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="81889111"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Oct 2024 02:01:09 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 30 Oct 2024 02:00:49 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 30 Oct 2024 02:00:49 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 30 Oct 2024 02:00:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sLr+tVT+YzngHKtBUFI68xivW41r8hKiRTWNa9bEdYdgBqr6zA7xxkuxnmM3lEonHImlzHVql9d4hO67laKSh6g+r6haWm9Chey5BcDdVgk4UFJr7wZgzRm1sR9rUrA+X3N1edF6LMMv5Vhe8n8T2Nezvf1HQyyX+5pPUh2AaeDLknmNX99kN5ONI22oDfLCwrc5x519xSgXGT7zzAeNP9MQl8WYkyU5obrDqKJLDAQlfsgYLIXDt4Cs0hvSZ7ntooU+1UHSg33QlnZgoCbGLdP3qdx4u9muwHgyVaim8wVgnTrqT2dQvrFez8VyLquFrDLXdI4DkGtYwMWsWMZwtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b1zds2y4j2boQhX+VycpgrMIJxvCAnF64ATV9/LQimI=;
+ b=jEuknInMfTcNhZhZPRL8mReGoaZIbYiR6VgOGF+DiO7Cjexbq3oEqaWMsCICt5U0i9Wb1zs+7yHvR5vPwOqQkoI3aLdew6lAiE+zXR/cXF9DRuR1cm4lZTWHB2JH2yQ/J3GLYBaw6VWbgPNkzj7voYzUJRjkIgB/AbdVfFE/X3cxXylltrr2cuQA5k4owqGg2NOec0kUM32Rp0Faw1zWKbIj3+RVNTsGR3O/pq7rxlk1xv6v05ruuJV9OJVFHZuWi6hUEe7KxSGR8mnwOaQItQ506mEBne5PG8uOQzK1L8FRq6ZiiaM49PEM4pccmEkVUL+W98tYfeBKvPlxf7HQiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB8455.namprd11.prod.outlook.com (2603:10b6:510:30d::11)
+ by IA1PR11MB6468.namprd11.prod.outlook.com (2603:10b6:208:3a4::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Wed, 30 Oct
+ 2024 09:00:41 +0000
+Received: from PH7PR11MB8455.namprd11.prod.outlook.com
+ ([fe80::e4c5:6a15:8e35:634f]) by PH7PR11MB8455.namprd11.prod.outlook.com
+ ([fe80::e4c5:6a15:8e35:634f%4]) with mapi id 15.20.8093.027; Wed, 30 Oct 2024
+ 09:00:41 +0000
+Message-ID: <b8fe391e-b573-8f84-0a4c-828e790dea34@intel.com>
+Date: Wed, 30 Oct 2024 17:01:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [RFC PATCH 15/39] KVM: guest_memfd: hugetlb: allocate and
+ truncate from hugetlb
+Content-Language: en-US
+To: Ackerley Tng <ackerleytng@google.com>, <tabba@google.com>,
+	<quic_eberman@quicinc.com>, <roypat@amazon.co.uk>, <jgg@nvidia.com>,
+	<peterx@redhat.com>, <david@redhat.com>, <rientjes@google.com>,
+	<fvdl@google.com>, <jthoughton@google.com>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <zhiquan1.li@intel.com>, <fan.du@intel.com>,
+	<isaku.yamahata@intel.com>, <muchun.song@linux.dev>,
+	<mike.kravetz@oracle.com>
+CC: <erdemaktas@google.com>, <vannapurve@google.com>, <qperret@google.com>,
+	<jhubbard@nvidia.com>, <willy@infradead.org>, <shuah@kernel.org>,
+	<brauner@kernel.org>, <bfoster@redhat.com>, <kent.overstreet@linux.dev>,
+	<pvorel@suse.cz>, <rppt@kernel.org>, <richard.weiyang@gmail.com>,
+	<anup@brainfault.org>, <haibo1.xu@intel.com>, <ajones@ventanamicro.com>,
+	<vkuznets@redhat.com>, <maciej.wieczor-retman@intel.com>,
+	<pgonda@google.com>, <oliver.upton@linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <kvm@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-fsdevel@kvack.org>, "Li, Zhiquan1"
+	<zhiquan1.li@intel.com>, "Du, Fan" <fan.du@intel.com>, "Miao, Jun"
+	<jun.miao@intel.com>
+References: <cover.1726009989.git.ackerleytng@google.com>
+ <768488c67540aa18c200d7ee16e75a3a087022d4.1726009989.git.ackerleytng@google.com>
+From: Jun Miao <jun.miao@intel.com>
+In-Reply-To: <768488c67540aa18c200d7ee16e75a3a087022d4.1726009989.git.ackerleytng@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SGBP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::23)
+ To PH7PR11MB8455.namprd11.prod.outlook.com (2603:10b6:510:30d::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021080418.644342-1-maobibo@loongson.cn> <CAAhV-H4anpgfiAnPgm9h-m9pKCW0KUio+E72r1Q3F_0vm+zMRg@mail.gmail.com>
- <8c55c680-48c8-0ba3-c2a1-56dc72929a8d@loongson.cn> <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
- <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn> <CAAhV-H6+rE_7P_C0MaWzXToVcPqZQX0YMPnhyZV7Pp6aQ01mCQ@mail.gmail.com>
- <39330bb8-d267-ef02-e082-388c7bfa3b43@loongson.cn> <CAAhV-H5jGZz2MeCSuLmJb5b-ugaaj3EECD7Z3mvtHW=OQrhLBw@mail.gmail.com>
- <8d2ab78b-6706-c78d-ffad-835ceef7372c@loongson.cn> <CAAhV-H7bwJwGSyBqY3XZynzGaqamKv3BJjxrqPJ-foaP4dFbAw@mail.gmail.com>
- <f2b7283b-9db3-c961-fa11-f1aeff489479@loongson.cn>
-In-Reply-To: <f2b7283b-9db3-c961-fa11-f1aeff489479@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 30 Oct 2024 16:59:56 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4tJJqhJcrERJRVHg_FW4OOEV-OuHkX6PTP9L_ADKgfDg@mail.gmail.com>
-Message-ID: <CAAhV-H4tJJqhJcrERJRVHg_FW4OOEV-OuHkX6PTP9L_ADKgfDg@mail.gmail.com>
-Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
-To: maobibo <maobibo@loongson.cn>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, lixianglai@loongson.cn, 
-	WANG Xuerui <kernel@xen0n.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB8455:EE_|IA1PR11MB6468:EE_
+X-MS-Office365-Filtering-Correlation-Id: 445c047a-4a4b-4eea-bb70-08dcf8c154aa
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z3NwMk1oVm1SbkxvdjVha1FSSDFlR0hNYlZZR2pEcFNMYkU2YlhlekNPYTBt?=
+ =?utf-8?B?SURVYXpjTVR5anRLcWY2cWZDa3pTSXRIL3ZKYmd6d2U3elhIU3dleHJtTkNK?=
+ =?utf-8?B?YWtta2psWXA4OFFxY0JLeldzaFZJL0VRKzZnTnA3dHMxOWhTQXlSSTgyMEtV?=
+ =?utf-8?B?UmpJeC9XSTQybVlESW52cW1SdFlzQjNUamw0TVVDOGIxQmU5dVBTeFhldmtD?=
+ =?utf-8?B?V1czK3pwMUZROEh2ajVJa3N5ckZLdUhXV016UXJWTUxRN1hFZ3BiK3VHbEVP?=
+ =?utf-8?B?N1BFYXlDblNObXN2MTJQeU0wUm1naGtEajVWT0xLSXRxdGJZZm8zK0p2emZk?=
+ =?utf-8?B?bXNUcTMxMWVxbnJ6MGJGeGRxcjVwV2FjV0VDbTIyNW0rSXZaUG56bVh6RmVv?=
+ =?utf-8?B?TkNSWXhHN0lxWE1aMWlRS2ozUWtqbG4zeVlFWVcvaWhzU0lJUytib3laTFJ2?=
+ =?utf-8?B?d0ZrVnJFVnNOZ0pDZm1Vclk4TGVZeXF5NmMzK002dy9qdjZFVjRJWS84QUdl?=
+ =?utf-8?B?OHl0cktCN280L2VIbnUvTFUyUnp6YklhRXlDck5mRXg2L0o1Q240ZGJZL2Za?=
+ =?utf-8?B?MTZxejhyK1ZDMUI5R3BOcm0zOGpNYzhZZ1pKVkI4VnVtc2pvNllWRG9YNlIx?=
+ =?utf-8?B?eE92YTBxRGt1dHgrMXdqY0tFQ1RPZ3ZraHZGUnIrNTlaUjZNK0NBdE9uUzlr?=
+ =?utf-8?B?UUtvMUhEYVBLczAyTFRvYktUVmYwMVhVZ0tQdHFEcGVzV1F1ZkcvSnE2OUp4?=
+ =?utf-8?B?Tm1Ca3piYUoxV2lNeVk2c2gzeGlLNUxPK2tWdDlMUG5wL25VM2pWZ0YwLzNW?=
+ =?utf-8?B?MzBaWFYyNWJ0RE9aTHVnckt4ZVdpZ0xzbkErNFlvNk03YU5vQzBweUE0OUF2?=
+ =?utf-8?B?dlFDOHlTRWJWTWZDQjRRN05LTHd3NXlQQ2FGa2VuVUFaV3d3WlRkWTg5NFRI?=
+ =?utf-8?B?aVpFSW9kY3lUOVpmYjZIVE1Oa21yUUxZbUZIaGpIS0xWOUZBMmo1MlJIZjNV?=
+ =?utf-8?B?N29ESVkwd1VoaVZObFMvMkh6aTJTWVpTbFZHWFpCUHRvR2JqU3FEbURvU1px?=
+ =?utf-8?B?RXU5SHlyS1lMSGRxNWhyVEtHN3BZbFovYVFId3p4bnFXS0FheGE5UWVhMEdW?=
+ =?utf-8?B?cVZ5TjM1VjljakRCRzZqMG1wYWFXdFYwNGNaVit0MmtBZGt6dWRwYjVjaEdU?=
+ =?utf-8?B?MytTejJaWmtNdkk0ZGZVdnFDL1c1a1RVSTlDN3dHRlBJWUlWVkEwQUVMS1Vk?=
+ =?utf-8?B?emhtMzhqU0hQUldhbzZ6ZEJoZUt4bVlpbmhMYVJQT3R6N0Q5Z3dKYXdhelU4?=
+ =?utf-8?B?U2QySHBpWjkxVitJb3JzZXl3NXAyeU9sTmhnTjFhZmt4dFV0eVdBYmwwT1Rm?=
+ =?utf-8?B?bE9MRkJQUWdXM0pQVW53Y3l1T2RENWtCcktKYkY5aVplc2kzY29FMjBMSW9M?=
+ =?utf-8?B?RUJsVFpGbk9tUjRhajkwWHZkKzVNUEx0aXNvRDUxc0JzZUFxQVk4WEVxZkZZ?=
+ =?utf-8?B?OXlESkZFamRFWS9YeUFBR2hPWlk1UU1kd0xBL3dqcmNjOVgzQWU5dzlySnlG?=
+ =?utf-8?B?NDMwQWZIbHRDRHE4UFBiOTNuVkFxZFVXTnVyNjdVdlRMOGJGMHVLKzRUcUti?=
+ =?utf-8?B?UE5NOWQ4TytIMWlzQ3puRktYemh2U0RXNk9CZDJjQWRLL1ZjeTZKWnZzWGha?=
+ =?utf-8?B?dHdxTXZ1TWM5TUlZOG1vbEpVWk90RndrSFlzeE5kOXY1RlpYUnRFV1Fyd0VC?=
+ =?utf-8?B?NDlhQk0xeG4zdndQR29FcTgvZW9oRVVWRjZ0RnI5VGx1dkJWY05yTVFXSFlR?=
+ =?utf-8?Q?vnGCrJaWAkPSk9tjoB3SVeKvYuzyAS0h8IXq8=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB8455.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bHlZY1VpdENCdDlqa2RJcWdQUU83dkFxSnZQc1lOcW16Nzd6Y05VN0IxeUhy?=
+ =?utf-8?B?eWlxQzJWVzQvTHZIZU1XeTFET2lyME1VZG5UazRwUVdEaFpocG8vK2ZaTUFu?=
+ =?utf-8?B?eWxOWXZyRGtCY3U5ZWdWWGhPZ2YzWHZ6UmNpVDBhQ3hORUcreEUySC9zUHNN?=
+ =?utf-8?B?elBxU0tSOW5VYnlUdXdNM1RqWEFJdWFHdFNNMWorWG51TjJnUVBaMFc5Z010?=
+ =?utf-8?B?bDRIL0dNY3BUL0p1SzJYM0FURk51bzZlclJ3UnJ2aG5pL0FDM2NBN3g0dmxu?=
+ =?utf-8?B?Z1RJOWNnMjhpY296bjdnNmhMT1NWT0pDbUJYZURtb1lwZmtxeDhoMjR2dFly?=
+ =?utf-8?B?dU05ZWRaWmdxbHR4N2cyTUVHRS8wTCtDdFQyYnk5dDhWbVBGRWZNTSsvdXJq?=
+ =?utf-8?B?VWQyV0pDZnNHVnhqQzE4ZlBGanl6S256Z3pteFo4YWQzWEZ4RWlzRFF6ZS9D?=
+ =?utf-8?B?RXBLbmpjOUg1dTQvdnA3eFZLOWlOandOZWZlTTJiOGE5TmpVT2Q1MXNvazZa?=
+ =?utf-8?B?M2dTM0VTaVpYRFFrZkpsTElDRWNRbWhjcHlOSGxaVUdhcHhEak1OU040aURu?=
+ =?utf-8?B?cVZvYWhZSDJoMU1uVkQrNHdjaWlDV2c4bVVTUXFwczJDODVEbU9nZFFHUHJs?=
+ =?utf-8?B?aWlBbVVNV0laNlRibEQ2N05GcmxNdU0xVFJXRzJsUUFaeFNGdnNSTU5FZkI0?=
+ =?utf-8?B?ZmJDZ1RKTzY3KzdVdTFQaFZuY1kvNEp1RGdmd2dLaVlVcC9yRHR1dkpqaSsy?=
+ =?utf-8?B?UGFKa2ljNzlobHVUdTFQd1htbWJJRXJYRHljM2JTbDAvQThTWTFFOGF3cEhE?=
+ =?utf-8?B?YlpCbFl2bzRkT0IyWGgwaEUwL3lySjJkRW0xS29JbmE5MzVoU2RBeVNuVVE0?=
+ =?utf-8?B?VjVERkE2c3R0KzFINFd5V2NFdDB4TXZMUFRTK0NHQURJemNpRG9zU0dZc0hZ?=
+ =?utf-8?B?d0l6WTk5NUt5MEZFbFNlbzBIWUIrc2pUTjNaQXBEMmhkWG05aEZ4OW9EcGJV?=
+ =?utf-8?B?eEJ5SllxWS9GbmRrOUoyL2dXdnNGUTRtN2lrbUY1eDlkZmQ4bklpOVVEblVF?=
+ =?utf-8?B?eU42YTZwZ08xMGNMNncyWUdqVVpxNW9vNlg3UHV0TkNhMkdkdmF5ckFoVGRq?=
+ =?utf-8?B?ZnBHeUVXdG82QTJJdTFwYzBCUTlsNzB3N3dkWnVlcGNXV0hsNEhhTEFVY2dC?=
+ =?utf-8?B?Qk1KZXY2bS8yQ0t6UFlxbElRV2N1TGhaaVdRMVdtY0l4U3pyQjh6andDZndK?=
+ =?utf-8?B?RWNvK0xGQkFkbW52VjdVbkhNSnh5MHU0bmFXa3dzNlhmalprTWUwdyt0VTdq?=
+ =?utf-8?B?Rk9DcmdzMGJGa0tsT3NFd2xHYkhlQmVtTVNHWitXZUpqcTFQb2FicmJpT3BR?=
+ =?utf-8?B?UjJMaS9mOUFuQ2oyekRpaGc3R01EQ3NnRHp2R0ZOWWorbnQ0cUdybU81Nldi?=
+ =?utf-8?B?ZEVtM0cyVyt2dHFOMXRMTGxJNm12YlVrcFRGOHh0UkthWFNRSUx4N1ROU3Ew?=
+ =?utf-8?B?L0FWejlPM1pleDMySWp0R1VDZkZkZ040Z3pGSktGM3ZEc2FVYktrd1JtelNh?=
+ =?utf-8?B?YW8xb3NjdWU4cnZDOFBwcG1yOFhOcXh3cGs1RGN3QWlrcTNkN0svcG9nNWFj?=
+ =?utf-8?B?QVBrZnlSM2FkbmlyWkt4TVZZeElRb0NnUTdwMVhyeU5vWjF6N3JoMHJ4eGhY?=
+ =?utf-8?B?dDFrVkxid2NON1NrUHl0azNFeEM5cGJxS0lLMjJkNGFObjI4UnZHZGJIeVp4?=
+ =?utf-8?B?WDFBOTIzQmc0UkxFM25ZTTZMUCszdmZPVXJpV0lkczRuREVyVk1IZTNmaVVW?=
+ =?utf-8?B?dDlpNUdWazJTRW5RcEtyU3JiLzRFeUJIaXQzM2FKOWthdFFML2JXRkpIdE1v?=
+ =?utf-8?B?Mk52VTZYUFdtUTVEdVd6TXpXcytwZ3VRbUdlMmJqRjRwQzlyc0E3QVZlazdV?=
+ =?utf-8?B?dyt5QmZZM2Uxc0ljVnkrM1ZGdTc1czhlaUY3UHFPR0NLVHhEREl4NklNTXZS?=
+ =?utf-8?B?cnFKWEd2amZ4Vy94ZVRrb2huZkNxSFZmTWV4RjF1Wnc1NmdWc0lscXB0NGR5?=
+ =?utf-8?B?VmxUcXhTTDRpdmdZY3M2Z3ZPZjEvOFN4M0Y5dE4rMzQvVktJSUttM0psTktR?=
+ =?utf-8?Q?seWLJ/jeVqNGszZIKqv4eqchS?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 445c047a-4a4b-4eea-bb70-08dcf8c154aa
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB8455.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 09:00:41.6081
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ojb+O5JJa6fgp4O2GfcOX1pGjbc6dX/rkKTcffHkJ2l3Tt74AJ7IO2S6ib3Fb8y0ZYpLn7b1laVtzEnjP9C2Hw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6468
+X-OriginatorOrg: intel.com
 
-On Wed, Oct 30, 2024 at 4:48=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote=
-:
->
->
->
-> On 2024/10/30 =E4=B8=8B=E5=8D=884:34, Huacai Chen wrote:
-> > On Wed, Oct 30, 2024 at 4:25=E2=80=AFPM maobibo <maobibo@loongson.cn> w=
-rote:
-> >>
-> >>
-> >>
-> >> On 2024/10/30 =E4=B8=8B=E5=8D=884:12, Huacai Chen wrote:
-> >>> On Tue, Oct 29, 2024 at 7:49=E2=80=AFPM maobibo <maobibo@loongson.cn>=
- wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 2024/10/29 =E4=B8=8B=E5=8D=886:36, Huacai Chen wrote:
-> >>>>> On Mon, Oct 28, 2024 at 8:38=E2=80=AFPM maobibo <maobibo@loongson.c=
-n> wrote:
-> >>>>>>
-> >>>>>> Hi Huacai,
-> >>>>>>
-> >>>>>> On 2024/10/22 =E4=B8=8A=E5=8D=889:31, Huacai Chen wrote:
-> >>>>>>> On Tue, Oct 22, 2024 at 9:17=E2=80=AFAM maobibo <maobibo@loongson=
-.cn> wrote:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> On 2024/10/21 =E4=B8=8B=E5=8D=8810:32, Huacai Chen wrote:
-> >>>>>>>>> Hi, Bibo,
-> >>>>>>>>>
-> >>>>>>>>> This version still doesn't touch the round-robin method, but it
-> >>>>>>>>> doesn't matter, I think I misunderstood something since V1...
-> >>>>>>>> I do not understand why round-robin method need be modified, SRA=
-T may be
-> >>>>>>>> disabled with general function disable_srat(). Then round-robin =
-method
-> >>>>>>>> is required.
-> >>>>>>> I don't mean round-robin should be modified, I mean I misundersta=
-nd round-robin.
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Please correct me if I'm wrong: For cpus without ACPI_MADT_ENAB=
-LED, in
-> >>>>>>>>> smp_prepare_boot_cpu() the round-robin node ids only apply to
-> >>>>>>>>> cpu_to_node(), but __cpuid_to_node[] still record the right nod=
-e ids.
-> >>>>>>>>> early_cpu_to_node() returns NUMA_NO_NODE not because
-> >>>>>>>>> __cpuid_to_node[] records NUMA_NO_NODE, but because cpu_logical=
-_map()
-> >>>>>>>>> < 0.
-> >>>>>>>>>
-> >>>>>>>>> If the above is correct, we don't need so complicated, because =
-the
-> >>>>>>>>> correct and simplest way is:
-> >>>>>>>>> https://lore.kernel.org/loongarch/6b2b3e89-5a46-2d20-3dfb-7aae3=
-3839f49@loongson.cn/T/#m950eead5250e5992cc703bbe69622348cecfa465
-> >>>>>>>>>
-> >>>>>>>> It works also. Only that LoongArch kernel parsing about SRAT/MAD=
-T is
-> >>>>>>>> badly. If you do not mind, I do not mind neither. It is not my d=
-uty for
-> >>>>>>>> kernel side.
-> >>>>>>> Yes, I don't mind, please use that simplest way.
-> >>>>>> There is another problem with the simple way. eiointc reports erro=
-r when
-> >>>>>> cpu is online. The error message is:
-> >>>>>>       Loongson-64bit Processor probed (LA464 Core)
-> >>>>>>       CPU2 revision is: 0014c010 (Loongson-64bit)
-> >>>>>>       FPU2 revision is: 00000001
-> >>>>>>       eiointc: Error: invalid nodemap!
-> >>>>>>       CPU 2 UP state irqchip/loongarch/eiointc:starting (100) fail=
-ed (-1)
-> >>>>>>
-> >>>>>> The problem is that node_map of eiointc is problematic,
-> >>>>>>
-> >>>>>>
-> >>>>>> static int cpu_to_eio_node(int cpu)
-> >>>>>> {
-> >>>>>>             return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
-> >>>>>> }
-> >>>>>>
-> >>>>>> static int __init eiointc_init(struct eiointc_priv *priv, int pare=
-nt_irq,
-> >>>>>>                                    u64 node_map)
-> >>>>>> {
-> >>>>>>             int i;
-> >>>>>>
-> >>>>>>             node_map =3D node_map ? node_map : -1ULL;
-> >>>>>>             for_each_possible_cpu(i) {
-> >>>>>>                     if (node_map & (1ULL << (cpu_to_eio_node(i))))=
- {
-> >>>>>>                             node_set(cpu_to_eio_node(i), priv->nod=
-e_map);
-> >>>>>>              ...
-> >>>>>> The cause is that for possible not present cpu, *cpu_logical_map(c=
-pu)*
-> >>>>>> is -1, cpu_to_eio_node(i) will be equal to -1, so node_map of eioi=
-ntc is
-> >>>>>> problematic.
-> >>>>> The error message seems from eiointc_router_init(), but it is a lit=
-tle
-> >>>>> strange. Physical hot-add should be before logical hot-add. So
-> >>>>> acpi_map_cpu() is before cpu_up(). acpi_map_cpu() calls
-> >>>>> set_processor_mask() to setup logical-physical mapping, so in
-> >>>>> eiointc_router_init() which is called by cpu_up(), cpu_logical_map(=
-)
-> >>>>> should work well.
-> >>>>>
-> >>>>> Maybe in your case a whole node is hot-added? I don't think the
-> >>>>> eiointc design can work with this case...
-> >>>>>
-> >>>>>>
-> >>>>>> So cpu_logical_map(cpu) should be set during MADT parsing even if =
-it is
-> >>>>>> not enabled at beginning, it should not be set at hotplug runtime.
-> >>>>> This will cause the logical cpu number be not continuous after boot=
-.
-> >>>>> Physical numbers have no requirement, but logical numbers should be
-> >>>>> continuous.
-> >>>> I do not understand such requirement about logical cpu should be
-> >>>> continuous. You can check logical cpu allocation method on other
-> >>>> architectures, or what does the requirement about logical cpu contin=
-uous
-> >>>> come from.
-> >>> 1, In an internal conference, it is said that non-continuous cpu
-> >>> numbers make users think our processors have bugs.
-> >>> 2, See prefill_possible_map(), it assumes logical numbers continuous
-> >>> cpu_possible_mask and cpu_present_mask, which make it convenient for
-> >>> "nr_cpus=3Dxxx".
-> >>> 3, Can you show me an example in a real machine that "processor" in
-> >>> /proc/cpuinfo non-continues after boot and before soft hotplug?
-> >> It is really wasting my time to discuss with you. You does not
-> >> investigating implementation of other architectures, fully thinking in
-> >> yourself way.
-> > Totally wrong, I have implemented what you need, but you should make
-> > other colleagues (not me) agree with your idea.
-> > https://github.com/chenhuacai/linux/commit/d8dcf2844d5878b3ac5a42d074e7=
-81fe2ebfbae7
-> So do you mean we should internal discuss inside and post outside? You
-> can not decide this since you do not know. And actual code writer (lv
-> jianjin) does not reply to you still :(
-"Non-continuous number is unacceptable" is an internal decision, if
-you want to break this decision, you should let other colleagues
-agree, otherwise that is the real thing wastes your time.
+Hi Ackerley,
+Due to actual customer requirements(such as ByteDance), I have added 
+support for NUMA policy based on your foundation.
+Standing on the shoulders of giants, please correct me if there is 
+anyting wrong.
 
->
-> >
-> > Imagine that the cpu_possible_mask is 0b11111111, cpu_present_mask is
-> > 0b10101010 (non-continuous), how to make "nr_cpus=3D3" work in a simple
-> > way?
-> if (bitmap_weight(cpu_present_mask) >=3D  nr_cpus))
->     then new cpu fails to add.
-No,  I means cpu_possible_mask =3D 0b11111111, cpu_present_mask =3D
-0b10101010 after MADT parsing, if you need to make "nr_cpus=3D3" work,
-you should modify them to cpu_possible_mask =3D 0b10101000,
-cpu_present_mask =3D 0b10101000 before smp_init(). But it is difficult
-to implement the modification.
+--- Thanks Jun.miao
 
-> >
-> >>
-> >> Does the real machines support real cpu hotplug and memory hotplug?
-> > ACPI_MADT_ENABLED is designed for virtual machines only?
-> It is the HW board problem, the HW does not support cpu hotplug, neither
-> memory hotplug and PCIE hotplug. HW board does not support.
-So we cannot see non-continuous CPU numbers just because all HW boards
-have problems that don't support CPU hotplug, even on x86?
+On 2024/9/11 07:43, Ackerley Tng wrote:
+> If HugeTLB is requested at guest_memfd creation time, HugeTLB pages
+> will be used to back guest_memfd.
+>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> ---
+>   virt/kvm/guest_memfd.c | 252 ++++++++++++++++++++++++++++++++++++++---
+>   1 file changed, 239 insertions(+), 13 deletions(-)
+>
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 31e1115273e1..2e6f12e2bac8 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -8,6 +8,8 @@
+>   #include <linux/pseudo_fs.h>
+>   #include <linux/pagemap.h>
+>   #include <linux/anon_inodes.h>
+> +#include <linux/memcontrol.h>
+> +#include <linux/mempolicy.h>
+>   
+>   #include "kvm_mm.h"
+>   
+> @@ -29,6 +31,13 @@ static struct kvm_gmem_hugetlb *kvm_gmem_hgmem(struct inode *inode)
+>   	return inode->i_mapping->i_private_data;
+>   }
+>   
+> +static bool is_kvm_gmem_hugetlb(struct inode *inode)
+> +{
+> +	u64 flags = (u64)inode->i_private;
+> +
+> +	return flags & KVM_GUEST_MEMFD_HUGETLB;
+> +}
+> +
+>   /**
+>    * folio_file_pfn - like folio_file_page, but return a pfn.
+>    * @folio: The folio which contains this index.
+> @@ -58,6 +67,9 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
+>   	return 0;
+>   }
+>   
+> +/**
+> + * Use the uptodate flag to indicate that the folio is prepared for KVM's usage.
+> + */
+>   static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>   {
+>   	folio_mark_uptodate(folio);
+> @@ -72,13 +84,18 @@ static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>   static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+>   				  gfn_t gfn, struct folio *folio)
+>   {
+> -	unsigned long nr_pages, i;
+>   	pgoff_t index;
+>   	int r;
+>   
+> -	nr_pages = folio_nr_pages(folio);
+> -	for (i = 0; i < nr_pages; i++)
+> -		clear_highpage(folio_page(folio, i));
+> +	if (folio_test_hugetlb(folio)) {
+> +		folio_zero_user(folio, folio->index << PAGE_SHIFT);
+> +	} else {
+> +		unsigned long nr_pages, i;
+> +
+> +		nr_pages = folio_nr_pages(folio);
+> +		for (i = 0; i < nr_pages; i++)
+> +			clear_highpage(folio_page(folio, i));
+> +	}
+>   
+>   	/*
+>   	 * Preparing huge folios should always be safe, since it should
+> @@ -103,6 +120,174 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+>   	return r;
+>   }
+>   
+> +static int kvm_gmem_get_mpol_node_nodemask(gfp_t gfp_mask,
+> +					   struct mempolicy **mpol,
+> +					   nodemask_t **nodemask)
+> +{
+> +	/*
+> +	 * TODO: mempolicy would probably have to be stored on the inode, use
+> +	 * task policy for now.
+> +	 */
+> +	*mpol = get_task_policy(current);
+commit bbb0b86af11574516fe78bc1340f49c9e6b7e588 (HEAD -> 
+my-gmem-hugetlb-rfc-v2)
+Author: Jun Miao <jun.miao@intel.com>
+Date:   Wed Oct 30 11:07:16 2024 -0400
 
-Huacai
+     KVM: guest_memfd: add TDX numa policy in hugetlb support
 
->
-> Regards
-> Bibo Mao
->
-> >
-> > Huacai
-> >
-> >>
-> >> Regards
-> >> Bibo Mao
-> >>>
-> >>>
-> >>>
-> >>>
-> >>> Huacai
-> >>>>
-> >>>> Regards
-> >>>> Bibo Mao
-> >>>>
-> >>>>>
-> >>>>> Huacai
-> >>>>>
-> >>>>>>
-> >>>>>> Regards
-> >>>>>> Bibo Mao
-> >>>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Huacai
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> Bibo Mao
-> >>>>>>>>>
-> >>>>>>>>> Huacai
-> >>>>>>>>>
-> >>>>>>>>> On Mon, Oct 21, 2024 at 4:04=E2=80=AFPM Bibo Mao <maobibo@loong=
-son.cn> wrote:
-> >>>>>>>>>>
-> >>>>>>>>>> On LoongArch system, there are two places to set cpu numa node=
-. One
-> >>>>>>>>>> is in arch specified function smp_prepare_boot_cpu(), the othe=
-r is
-> >>>>>>>>>> in generic function early_numa_node_init(). The latter will ov=
-erwrite
-> >>>>>>>>>> the numa node information.
-> >>>>>>>>>>
-> >>>>>>>>>> With hot-added cpu without numa information, cpu_logical_map()=
- fails
-> >>>>>>>>>> to its physical cpuid at beginning since it is not enabled in =
-ACPI
-> >>>>>>>>>> MADT table. So function early_cpu_to_node() also fails to get =
-its
-> >>>>>>>>>> numa node for hot-added cpu, and generic function
-> >>>>>>>>>> early_numa_node_init() will overwrite with incorrect numa node=
-.
-> >>>>>>>>>>
-> >>>>>>>>>> APIs topo_get_cpu() and topo_add_cpu() is added here, like oth=
-er
-> >>>>>>>>>> architectures logic cpu is allocated when parsing MADT table. =
-When
-> >>>>>>>>>> parsing SRAT table or hot-add cpu, logic cpu is acquired by se=
-arching
-> >>>>>>>>>> all allocated logical cpu with matched physical id. It solves =
-such
-> >>>>>>>>>> problems such as:
-> >>>>>>>>>>        1. Boot cpu is not the first entry in MADT table, the f=
-irst entry
-> >>>>>>>>>> will be overwritten with later boot cpu.
-> >>>>>>>>>>        2. Physical cpu id not presented in MADT table is inval=
-id, in later
-> >>>>>>>>>> SRAT/hot-add cpu parsing, invalid physical cpu detected is add=
-ed
-> >>>>>>>>>>        3. For hot-add cpu, its logic cpu is allocated in MADT =
-table parsing,
-> >>>>>>>>>> so early_cpu_to_node() can be used for hot-add cpu and cpu_to_=
-node()
-> >>>>>>>>>> is correct for hot-add cpu.
-> >>>>>>>>>>
-> >>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >>>>>>>>>> ---
-> >>>>>>>>>> v1 ... v2:
-> >>>>>>>>>>        1. Like other architectures, allocate logic cpu when pa=
-rsing MADT table.
-> >>>>>>>>>>        2. Add invalid or duplicated physical cpuid parsing wit=
-h SRAT table or
-> >>>>>>>>>> hot-add cpu DSDT information.
-> >>>>>>>>>> ---
-> >>>>>>>>>>       arch/loongarch/include/asm/smp.h |  3 ++
-> >>>>>>>>>>       arch/loongarch/kernel/acpi.c     | 24 ++++++++++------
-> >>>>>>>>>>       arch/loongarch/kernel/setup.c    | 47 ++++++++++++++++++=
-++++++++++++++
-> >>>>>>>>>>       arch/loongarch/kernel/smp.c      |  9 +++---
-> >>>>>>>>>>       4 files changed, 70 insertions(+), 13 deletions(-)
-> >>>>>>>>>>
-> >>>>>>>>>> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch=
-/include/asm/smp.h
-> >>>>>>>>>> index 3383c9d24e94..c61b75937a77 100644
-> >>>>>>>>>> --- a/arch/loongarch/include/asm/smp.h
-> >>>>>>>>>> +++ b/arch/loongarch/include/asm/smp.h
-> >>>>>>>>>> @@ -119,4 +119,7 @@ static inline void __cpu_die(unsigned int =
-cpu)
-> >>>>>>>>>>       #define cpu_logical_map(cpu)   0
-> >>>>>>>>>>       #endif /* CONFIG_SMP */
-> >>>>>>>>>>
-> >>>>>>>>>> +int topo_add_cpu(int physid);
-> >>>>>>>>>> +int topo_get_cpu(int physid);
-> >>>>>>>>>> +
-> >>>>>>>>>>       #endif /* __ASM_SMP_H */
-> >>>>>>>>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/ker=
-nel/acpi.c
-> >>>>>>>>>> index f1a74b80f22c..84d9812d5f38 100644
-> >>>>>>>>>> --- a/arch/loongarch/kernel/acpi.c
-> >>>>>>>>>> +++ b/arch/loongarch/kernel/acpi.c
-> >>>>>>>>>> @@ -78,10 +78,10 @@ static int set_processor_mask(u32 id, u32 =
-flags)
-> >>>>>>>>>>                      return -ENODEV;
-> >>>>>>>>>>
-> >>>>>>>>>>              }
-> >>>>>>>>>> -       if (cpuid =3D=3D loongson_sysconf.boot_cpu_id)
-> >>>>>>>>>> -               cpu =3D 0;
-> >>>>>>>>>> -       else
-> >>>>>>>>>> -               cpu =3D find_first_zero_bit(cpumask_bits(cpu_p=
-resent_mask), NR_CPUS);
-> >>>>>>>>>> +
-> >>>>>>>>>> +       cpu =3D topo_add_cpu(cpuid);
-> >>>>>>>>>> +       if (cpu < 0)
-> >>>>>>>>>> +               return -EEXIST;
-> >>>>>>>>>>
-> >>>>>>>>>>              if (!cpu_enumerated)
-> >>>>>>>>>>                      set_cpu_possible(cpu, true);
-> >>>>>>>>>> @@ -203,8 +203,6 @@ void __init acpi_boot_table_init(void)
-> >>>>>>>>>>                      goto fdt_earlycon;
-> >>>>>>>>>>              }
-> >>>>>>>>>>
-> >>>>>>>>>> -       loongson_sysconf.boot_cpu_id =3D read_csr_cpuid();
-> >>>>>>>>>> -
-> >>>>>>>>>>              /*
-> >>>>>>>>>>               * Process the Multiple APIC Description Table (M=
-ADT), if present
-> >>>>>>>>>>               */
-> >>>>>>>>>> @@ -257,7 +255,7 @@ void __init numa_set_distance(int from, in=
-t to, int distance)
-> >>>>>>>>>>       void __init
-> >>>>>>>>>>       acpi_numa_processor_affinity_init(struct acpi_srat_cpu_a=
-ffinity *pa)
-> >>>>>>>>>>       {
-> >>>>>>>>>> -       int pxm, node;
-> >>>>>>>>>> +       int pxm, node, cpu;
-> >>>>>>>>>>
-> >>>>>>>>>>              if (srat_disabled())
-> >>>>>>>>>>                      return;
-> >>>>>>>>>> @@ -286,6 +284,11 @@ acpi_numa_processor_affinity_init(struct =
-acpi_srat_cpu_affinity *pa)
-> >>>>>>>>>>                      return;
-> >>>>>>>>>>              }
-> >>>>>>>>>>
-> >>>>>>>>>> +       cpu =3D topo_get_cpu(pa->apic_id);
-> >>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
-> >>>>>>>>>> +       if (cpu < 0)
-> >>>>>>>>>> +               return;
-> >>>>>>>>>> +
-> >>>>>>>>>>              early_numa_add_cpu(pa->apic_id, node);
-> >>>>>>>>>>
-> >>>>>>>>>>              set_cpuid_to_node(pa->apic_id, node);
-> >>>>>>>>>> @@ -324,12 +327,17 @@ int acpi_map_cpu(acpi_handle handle, phy=
-s_cpuid_t physid, u32 acpi_id, int *pcpu
-> >>>>>>>>>>       {
-> >>>>>>>>>>              int cpu;
-> >>>>>>>>>>
-> >>>>>>>>>> -       cpu =3D set_processor_mask(physid, ACPI_MADT_ENABLED);
-> >>>>>>>>>> +       cpu =3D topo_get_cpu(physid);
-> >>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
-> >>>>>>>>>>              if (cpu < 0) {
-> >>>>>>>>>>                      pr_info(PREFIX "Unable to map lapic to lo=
-gical cpu number\n");
-> >>>>>>>>>>                      return cpu;
-> >>>>>>>>>>              }
-> >>>>>>>>>>
-> >>>>>>>>>> +       num_processors++;
-> >>>>>>>>>> +       set_cpu_present(cpu, true);
-> >>>>>>>>>> +       __cpu_number_map[physid] =3D cpu;
-> >>>>>>>>>> +       __cpu_logical_map[cpu] =3D physid;
-> >>>>>>>>>>              acpi_map_cpu2node(handle, cpu, physid);
-> >>>>>>>>>>
-> >>>>>>>>>>              *pcpu =3D cpu;
-> >>>>>>>>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/ke=
-rnel/setup.c
-> >>>>>>>>>> index 00e307203ddb..649e98640076 100644
-> >>>>>>>>>> --- a/arch/loongarch/kernel/setup.c
-> >>>>>>>>>> +++ b/arch/loongarch/kernel/setup.c
-> >>>>>>>>>> @@ -65,6 +65,8 @@ EXPORT_SYMBOL(cpu_data);
-> >>>>>>>>>>
-> >>>>>>>>>>       struct loongson_board_info b_info;
-> >>>>>>>>>>       static const char dmi_empty_string[] =3D "        ";
-> >>>>>>>>>> +static int possible_cpus;
-> >>>>>>>>>> +static bool bsp_added;
-> >>>>>>>>>>
-> >>>>>>>>>>       /*
-> >>>>>>>>>>        * Setup information
-> >>>>>>>>>> @@ -346,10 +348,55 @@ static void __init bootcmdline_init(char=
- **cmdline_p)
-> >>>>>>>>>>              *cmdline_p =3D boot_command_line;
-> >>>>>>>>>>       }
-> >>>>>>>>>>
-> >>>>>>>>>> +int topo_get_cpu(int physid)
-> >>>>>>>>>> +{
-> >>>>>>>>>> +       int i;
-> >>>>>>>>>> +
-> >>>>>>>>>> +       for (i =3D 0; i < possible_cpus; i++)
-> >>>>>>>>>> +               if (cpu_logical_map(i) =3D=3D physid)
-> >>>>>>>>>> +                       break;
-> >>>>>>>>>> +
-> >>>>>>>>>> +       if (i =3D=3D possible_cpus)
-> >>>>>>>>>> +               return -ENOENT;
-> >>>>>>>>>> +
-> >>>>>>>>>> +       return i;
-> >>>>>>>>>> +}
-> >>>>>>>>>> +
-> >>>>>>>>>> +int topo_add_cpu(int physid)
-> >>>>>>>>>> +{
-> >>>>>>>>>> +       int cpu;
-> >>>>>>>>>> +
-> >>>>>>>>>> +       if (!bsp_added && (physid =3D=3D loongson_sysconf.boot=
-_cpu_id)) {
-> >>>>>>>>>> +               bsp_added =3D true;
-> >>>>>>>>>> +               return 0;
-> >>>>>>>>>> +       }
-> >>>>>>>>>> +
-> >>>>>>>>>> +       cpu =3D topo_get_cpu(physid);
-> >>>>>>>>>> +       if (cpu >=3D 0) {
-> >>>>>>>>>> +               pr_warn("Adding duplicated physical cpuid 0x%x=
-\n", physid);
-> >>>>>>>>>> +               return -EEXIST;
-> >>>>>>>>>> +       }
-> >>>>>>>>>> +
-> >>>>>>>>>> +       if (possible_cpus >=3D nr_cpu_ids)
-> >>>>>>>>>> +               return -ERANGE;
-> >>>>>>>>>> +
-> >>>>>>>>>> +       __cpu_logical_map[possible_cpus] =3D physid;
-> >>>>>>>>>> +       cpu =3D possible_cpus++;
-> >>>>>>>>>> +       return cpu;
-> >>>>>>>>>> +}
-> >>>>>>>>>> +
-> >>>>>>>>>> +static void __init topo_init(void)
-> >>>>>>>>>> +{
-> >>>>>>>>>> +       loongson_sysconf.boot_cpu_id =3D read_csr_cpuid();
-> >>>>>>>>>> +       __cpu_logical_map[0] =3D loongson_sysconf.boot_cpu_id;
-> >>>>>>>>>> +       possible_cpus++;
-> >>>>>>>>>> +}
-> >>>>>>>>>> +
-> >>>>>>>>>>       void __init platform_init(void)
-> >>>>>>>>>>       {
-> >>>>>>>>>>              arch_reserve_vmcore();
-> >>>>>>>>>>              arch_reserve_crashkernel();
-> >>>>>>>>>> +       topo_init();
-> >>>>>>>>>>
-> >>>>>>>>>>       #ifdef CONFIG_ACPI
-> >>>>>>>>>>              acpi_table_upgrade();
-> >>>>>>>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kern=
-el/smp.c
-> >>>>>>>>>> index 9afc2d8b3414..a3f466b89179 100644
-> >>>>>>>>>> --- a/arch/loongarch/kernel/smp.c
-> >>>>>>>>>> +++ b/arch/loongarch/kernel/smp.c
-> >>>>>>>>>> @@ -291,10 +291,9 @@ static void __init fdt_smp_setup(void)
-> >>>>>>>>>>                      if (cpuid >=3D nr_cpu_ids)
-> >>>>>>>>>>                              continue;
-> >>>>>>>>>>
-> >>>>>>>>>> -               if (cpuid =3D=3D loongson_sysconf.boot_cpu_id)
-> >>>>>>>>>> -                       cpu =3D 0;
-> >>>>>>>>>> -               else
-> >>>>>>>>>> -                       cpu =3D find_first_zero_bit(cpumask_bi=
-ts(cpu_present_mask), NR_CPUS);
-> >>>>>>>>>> +               cpu =3D topo_add_cpu(cpuid);
-> >>>>>>>>>> +               if (cpu < 0)
-> >>>>>>>>>> +                       continue;
-> >>>>>>>>>>
-> >>>>>>>>>>                      num_processors++;
-> >>>>>>>>>>                      set_cpu_possible(cpu, true);
-> >>>>>>>>>> @@ -302,7 +301,7 @@ static void __init fdt_smp_setup(void)
-> >>>>>>>>>>                      __cpu_number_map[cpuid] =3D cpu;
-> >>>>>>>>>>                      __cpu_logical_map[cpu] =3D cpuid;
-> >>>>>>>>>>
-> >>>>>>>>>> -               early_numa_add_cpu(cpu, 0);
-> >>>>>>>>>> +               early_numa_add_cpu(cpuid, 0);
-> >>>>>>>>>>                      set_cpuid_to_node(cpuid, 0);
-> >>>>>>>>>>              }
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
-> >>>>>>>>>> --
-> >>>>>>>>>> 2.39.3
-> >>>>>>>>>>
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>
-> >>>>
-> >>>>
-> >>
->
+     Support the numa policy in the gmem hugetlb. This function need the
+     corresponding QEMU patch cooperate to work, and set the numa policy
+     like this in qemu:
+     "--object host-nodes=0,policy=bind".
+
+     If no set in the Qemu, the policy uses current task policy for now.
+
+     Signed-off-by: Jun Miao <jun.miao@intel.com>
+
+diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+index a49631e47421..cf569fe0740d 100644
+--- a/include/linux/mempolicy.h
++++ b/include/linux/mempolicy.h
+@@ -91,6 +91,17 @@ static inline struct mempolicy *mpol_dup(struct 
+mempolicy *pol)
+         return pol;
+  }
+
++struct mempolicy *mpol_new(unsigned short mode, unsigned short flags,
++                           nodemask_t *nodes);
++
++int mpol_set_nodemask(struct mempolicy *pol,
++                const nodemask_t *nodes, struct nodemask_scratch *nsc);
++
++int sanitize_mpol_flags(int *mode, unsigned short *flags);
++
++int get_nodes(nodemask_t *nodes, const unsigned long __user *nmask,
++                unsigned long maxnode);
++
+  static inline void mpol_get(struct mempolicy *pol)
+  {
+         if (pol)
+@@ -202,6 +213,25 @@ static inline void mpol_cond_put(struct mempolicy *pol)
+  {
+  }
+
++struct mempolicy *mpol_new(unsigned short mode, unsigned short flags,
++                           nodemask_t *nodes);
++{
++}
++
++int mpol_set_nodemask(struct mempolicy *pol,
++                const nodemask_t *nodes, struct nodemask_scratch *nsc);
++{
++}
++
++int sanitize_mpol_flags(int *mode, unsigned short *flags);
++{
++}
++
++int get_nodes(nodemask_t *nodes, const unsigned long __user *nmask,
++                unsigned long maxnode);
++{
++}
++
+  static inline void mpol_get(struct mempolicy *pol)
+  {
+  }
+diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+index 1f9bb10d1a47..6ba4eb0935de 100644
+--- a/include/uapi/linux/mempolicy.h
++++ b/include/uapi/linux/mempolicy.h
+@@ -24,6 +24,7 @@ enum {
+         MPOL_LOCAL,
+         MPOL_PREFERRED_MANY,
+         MPOL_WEIGHTED_INTERLEAVE,
++       MPOL_INVALID,   /* Invalid parameter passing, come from and keep 
+consistent with QEMU */
+         MPOL_MAX,       /* always last member of enum */
+  };
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index f3e572e17775..b465ed5091c2 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -259,7 +259,7 @@ static int mpol_new_preferred(struct mempolicy *pol, 
+const nodemask_t *nodes)
+   * Must be called holding task's alloc_lock to protect task's mems_allowed
+   * and mempolicy.  May also be called holding the mmap_lock for write.
+   */
+-static int mpol_set_nodemask(struct mempolicy *pol,
++int mpol_set_nodemask(struct mempolicy *pol,
+                      const nodemask_t *nodes, struct nodemask_scratch *nsc)
+  {
+         int ret;
+@@ -291,12 +291,13 @@ static int mpol_set_nodemask(struct mempolicy *pol,
+         ret = mpol_ops[pol->mode].create(pol, &nsc->mask2);
+         return ret;
+  }
++EXPORT_SYMBOL_GPL(mpol_set_nodemask);
+
+  /*
+   * This function just creates a new policy, does some check and simple
+   * initialization. You must invoke mpol_set_nodemask() to set nodes.
+   */
+-static struct mempolicy *mpol_new(unsigned short mode, unsigned short 
+flags,
++struct mempolicy *mpol_new(unsigned short mode, unsigned short flags,
+                                   nodemask_t *nodes)
+  {
+         struct mempolicy *policy;
+@@ -339,6 +340,7 @@ static struct mempolicy *mpol_new(unsigned short 
+mode, unsigned short flags,
+
+         return policy;
+  }
++EXPORT_SYMBOL_GPL(mpol_new);
+
+  /* Slow path of a mpol destructor. */
+  void __mpol_put(struct mempolicy *pol)
+@@ -1429,7 +1431,7 @@ static int get_bitmap(unsigned long *mask, const 
+unsigned long __user *nmask,
+  }
+
+  /* Copy a node mask from user space. */
+-static int get_nodes(nodemask_t *nodes, const unsigned long __user *nmask,
++int get_nodes(nodemask_t *nodes, const unsigned long __user *nmask,
+                      unsigned long maxnode)
+  {
+         --maxnode;
+@@ -1463,6 +1465,7 @@ static int get_nodes(nodemask_t *nodes, const 
+unsigned long __user *nmask,
+
+         return get_bitmap(nodes_addr(*nodes), nmask, maxnode);
+  }
++EXPORT_SYMBOL(get_nodes);
+
+  /* Copy a kernel node mask to user space */
+  static int copy_nodes_to_user(unsigned long __user *mask, unsigned 
+long maxnode,
+@@ -1492,7 +1495,7 @@ static int copy_nodes_to_user(unsigned long __user 
+*mask, unsigned long maxnode,
+  }
+
+  /* Basic parameter sanity check used by both mbind() and 
+set_mempolicy() */
+-static inline int sanitize_mpol_flags(int *mode, unsigned short *flags)
++inline int sanitize_mpol_flags(int *mode, unsigned short *flags)
+  {
+         *flags = *mode & MPOL_MODE_FLAGS;
+         *mode &= ~MPOL_MODE_FLAGS;
+@@ -1509,6 +1512,7 @@ static inline int sanitize_mpol_flags(int *mode, 
+unsigned short *flags)
+         }
+         return 0;
+  }
++EXPORT_SYMBOL_GPL(sanitize_mpol_flags);
+
+  static long kernel_mbind(unsigned long start, unsigned long len,
+                          unsigned long mode, const unsigned long __user 
+*nmask,
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index f34aff971628..7570aa38e519 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -20,6 +20,7 @@ struct kvm_gmem {
+         struct kvm *kvm;
+         struct xarray bindings;
+         struct list_head entry;
++       struct mempolicy *gmemfd_policy;
+  };
+
+  struct kvm_gmem_hugetlb {
+@@ -154,21 +155,21 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, 
+struct kvm_memory_slot *slot,
+         return r;
+  }
+
+-static int kvm_gmem_get_mpol_node_nodemask(gfp_t gfp_mask,
++static int kvm_gmem_get_mpol_node_nodemask(struct kvm_gmem *gmem, gfp_t 
+gfp_mask,
+                                            struct mempolicy **mpol,
+                                            nodemask_t **nodemask)
+  {
+         /*
+-        * TODO: mempolicy would probably have to be stored on the 
+inode, use
+-        * task policy for now.
++        *  Mempolicy would probably have to be stored on the inode, if 
+no setting in qeum
++        *  use task policy for now.
+          */
+-       *mpol = get_task_policy(current);
++       *mpol = gmem->gmemfd_policy;
+
+         /* TODO: ignore interleaving (set ilx to 0) for now. */
+         return policy_node_nodemask(*mpol, gfp_mask, 0, nodemask);
+  }
+
+-static struct folio *kvm_gmem_hugetlb_alloc_folio(struct hstate *h,
++static struct folio *kvm_gmem_hugetlb_alloc_folio(struct kvm_gmem 
+*gmem, struct hstate *h,
+                                                   struct 
+hugepage_subpool *spool)
+  {
+         bool memcg_charge_was_prepared;
+@@ -195,7 +196,7 @@ static struct folio 
+*kvm_gmem_hugetlb_alloc_folio(struct hstate *h,
+         if (hugepage_subpool_get_pages(spool, 1))
+                 goto err_cancel_charge;
+
+-       nid = kvm_gmem_get_mpol_node_nodemask(htlb_alloc_mask(h), &mpol,
++       nid = kvm_gmem_get_mpol_node_nodemask(gmem, htlb_alloc_mask(h), 
+&mpol,
+                                               &nodemask);
+         /*
+          * charge_cgroup_reservation is false because we didn't make 
+any cgroup
+@@ -268,10 +269,12 @@ static struct folio 
+*kvm_gmem_hugetlb_alloc_and_cache_folio(struct inode *inode,
+  {
+         struct kvm_gmem_hugetlb *hgmem;
+         struct folio *folio;
++       struct kvm_gmem *gmem;
+         int ret;
+
+         hgmem = kvm_gmem_hgmem(inode);
+-       folio = kvm_gmem_hugetlb_alloc_folio(hgmem->h, hgmem->spool);
++       gmem = inode->i_mapping->i_private_data;
++       folio = kvm_gmem_hugetlb_alloc_folio(gmem, hgmem->h, hgmem->spool);
+         if (IS_ERR(folio))
+                 return folio;
+
+@@ -905,7 +908,7 @@ static struct file 
+*kvm_gmem_inode_create_getfile(void *priv, loff_t size,
+         return file;
+  }
+
+-static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
++static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags, 
+struct mempolicy *new)
+  {
+         struct kvm_gmem *gmem;
+         struct file *file;
+@@ -927,6 +930,8 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t 
+size, u64 flags)
+                 goto err_gmem;
+         }
+
++       file_inode(file)->i_mapping->i_private_data = gmem;
++       gmem->gmemfd_policy = new;
+         kvm_get_kvm(kvm);
+         gmem->kvm = kvm;
+         xa_init(&gmem->bindings);
+@@ -955,6 +960,40 @@ int kvm_gmem_create(struct kvm *kvm, struct 
+kvm_create_guest_memfd *args)
+  {
+         loff_t size = args->size;
+         u64 flags = args->flags;
++       nodemask_t nodes;
++       struct mempolicy *new;
++       int err, ret;
++       u64 mode = args->reserved[0];
++       u64 maxnode = args->reserved[1];
++       const unsigned long host_nodes = (unsigned long)args->reserved[2];
++       unsigned short mode_flags;
++       int lmode = mode;
++       NODEMASK_SCRATCH(scratch);
++       if(!scratch)
++               return -ENOMEM;
++
++       if (mode == MPOL_INVALID)
++               goto task_policy;
++       else {
++               err = sanitize_mpol_flags(&lmode, &mode_flags);
++               if (err)
++                       goto task_policy;
++
++               err = get_nodes(&nodes, &host_nodes, maxnode);
++               if (err)
++                       goto task_policy;
++
++               new = mpol_new(mode, mode_flags, &nodes);
++               if (IS_ERR(new))
++                       goto task_policy;
++               else
++                       goto numa_policy;
++}
++
++task_policy:
++       new = get_task_policy(current);
++numa_policy:
++       ret = mpol_set_nodemask(new, &nodes, scratch);
+
+         if (flags & KVM_GUEST_MEMFD_HUGETLB) {
+                 /* Allow huge page size encoding in flags */
+@@ -975,7 +1014,7 @@ int kvm_gmem_create(struct kvm *kvm, struct 
+kvm_create_guest_memfd *args)
+         if (size <= 0)
+                 return -EINVAL;
+
+-       return __kvm_gmem_create(kvm, size, flags);
++       return __kvm_gmem_create(kvm, size, flags, new);
+  }
+
+  int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+(END)
+
+> +
+> +	/* TODO: ignore interleaving (set ilx to 0) for now. */
+> +	return policy_node_nodemask(*mpol, gfp_mask, 0, nodemask);
+> +}
+> +
+> +static struct folio *kvm_gmem_hugetlb_alloc_folio(struct hstate *h,
+> +						  struct hugepage_subpool *spool)
+> +{
+> +	bool memcg_charge_was_prepared;
+> +	struct mem_cgroup *memcg;
+> +	struct mempolicy *mpol;
+> +	nodemask_t *nodemask;
+> +	struct folio *folio;
+> +	gfp_t gfp_mask;
+> +	int ret;
+> +	int nid;
+> +
+> +	gfp_mask = htlb_alloc_mask(h);
+> +
+> +	memcg = get_mem_cgroup_from_current();
+> +	ret = mem_cgroup_hugetlb_try_charge(memcg,
+> +					    gfp_mask | __GFP_RETRY_MAYFAIL,
+> +					    pages_per_huge_page(h));
+> +	if (ret == -ENOMEM)
+> +		goto err;
+> +
+> +	memcg_charge_was_prepared = ret != -EOPNOTSUPP;
+> +
+> +	/* Pages are only to be taken from guest_memfd subpool and nowhere else. */
+> +	if (hugepage_subpool_get_pages(spool, 1))
+> +		goto err_cancel_charge;
+> +
+> +	nid = kvm_gmem_get_mpol_node_nodemask(htlb_alloc_mask(h), &mpol,
+> +					      &nodemask);
+> +	/*
+> +	 * charge_cgroup_reservation is false because we didn't make any cgroup
+> +	 * reservations when creating the guest_memfd subpool.
+> +	 *
+> +	 * use_hstate_resv is true because we reserved from global hstate when
+> +	 * creating the guest_memfd subpool.
+> +	 */
+> +	folio = hugetlb_alloc_folio(h, mpol, nid, nodemask, false, true);
+> +	mpol_cond_put(mpol);
+> +
+> +	if (!folio)
+> +		goto err_put_pages;
+> +
+> +	hugetlb_set_folio_subpool(folio, spool);
+> +
+> +	if (memcg_charge_was_prepared)
+> +		mem_cgroup_commit_charge(folio, memcg);
+> +
+> +out:
+> +	mem_cgroup_put(memcg);
+> +
+> +	return folio;
+> +
+> +err_put_pages:
+> +	hugepage_subpool_put_pages(spool, 1);
+> +
+> +err_cancel_charge:
+> +	if (memcg_charge_was_prepared)
+> +		mem_cgroup_cancel_charge(memcg, pages_per_huge_page(h));
+> +
+> +err:
+> +	folio = ERR_PTR(-ENOMEM);
+> +	goto out;
+> +}
+> +
+> +static int kvm_gmem_hugetlb_filemap_add_folio(struct address_space *mapping,
+> +					      struct folio *folio, pgoff_t index,
+> +					      gfp_t gfp)
+> +{
+> +	int ret;
+> +
+> +	__folio_set_locked(folio);
+> +	ret = __filemap_add_folio(mapping, folio, index, gfp, NULL);
+> +	if (unlikely(ret)) {
+> +		__folio_clear_locked(folio);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * In hugetlb_add_to_page_cache(), there is a call to
+> +	 * folio_clear_hugetlb_restore_reserve(). This is handled when the pages
+> +	 * are removed from the page cache in unmap_hugepage_range() ->
+> +	 * __unmap_hugepage_range() by conditionally calling
+> +	 * folio_set_hugetlb_restore_reserve(). In kvm_gmem_hugetlb's usage of
+> +	 * hugetlb, there are no VMAs involved, and pages are never taken from
+> +	 * the surplus, so when pages are freed, the hstate reserve must be
+> +	 * restored. Hence, this function makes no call to
+> +	 * folio_clear_hugetlb_restore_reserve().
+> +	 */
+> +
+> +	/* mark folio dirty so that it will not be removed from cache/inode */
+> +	folio_mark_dirty(folio);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct folio *kvm_gmem_hugetlb_alloc_and_cache_folio(struct inode *inode,
+> +							    pgoff_t index)
+> +{
+> +	struct kvm_gmem_hugetlb *hgmem;
+> +	struct folio *folio;
+> +	int ret;
+> +
+> +	hgmem = kvm_gmem_hgmem(inode);
+> +	folio = kvm_gmem_hugetlb_alloc_folio(hgmem->h, hgmem->spool);
+> +	if (IS_ERR(folio))
+> +		return folio;
+> +
+> +	/* TODO: Fix index here to be aligned to huge page size. */
+> +	ret = kvm_gmem_hugetlb_filemap_add_folio(
+> +		inode->i_mapping, folio, index, htlb_alloc_mask(hgmem->h));
+> +	if (ret) {
+> +		folio_put(folio);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	spin_lock(&inode->i_lock);
+> +	inode->i_blocks += blocks_per_huge_page(hgmem->h);
+> +	spin_unlock(&inode->i_lock);
+> +
+> +	return folio;
+> +}
+> +
+> +static struct folio *kvm_gmem_get_hugetlb_folio(struct inode *inode,
+> +						pgoff_t index)
+> +{
+> +	struct address_space *mapping;
+> +	struct folio *folio;
+> +	struct hstate *h;
+> +	pgoff_t hindex;
+> +	u32 hash;
+> +
+> +	h = kvm_gmem_hgmem(inode)->h;
+> +	hindex = index >> huge_page_order(h);
+> +	mapping = inode->i_mapping;
+> +
+> +	/* To lock, we calculate the hash using the hindex and not index. */
+> +	hash = hugetlb_fault_mutex_hash(mapping, hindex);
+> +	mutex_lock(&hugetlb_fault_mutex_table[hash]);
+> +
+> +	/*
+> +	 * The filemap is indexed with index and not hindex. Taking lock on
+> +	 * folio to align with kvm_gmem_get_regular_folio()
+> +	 */
+> +	folio = filemap_lock_folio(mapping, index);
+> +	if (!IS_ERR(folio))
+> +		goto out;
+> +
+> +	folio = kvm_gmem_hugetlb_alloc_and_cache_folio(inode, index);
+> +out:
+> +	mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+> +
+> +	return folio;
+> +}
+> +
+>   /*
+>    * Returns a locked folio on success.  The caller is responsible for
+>    * setting the up-to-date flag before the memory is mapped into the guest.
+> @@ -114,8 +299,10 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+>    */
+>   static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+>   {
+> -	/* TODO: Support huge pages. */
+> -	return filemap_grab_folio(inode->i_mapping, index);
+> +	if (is_kvm_gmem_hugetlb(inode))
+> +		return kvm_gmem_get_hugetlb_folio(inode, index);
+> +	else
+> +		return filemap_grab_folio(inode->i_mapping, index);
+>   }
+>   
+>   static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+> @@ -240,6 +427,35 @@ static void kvm_gmem_hugetlb_truncate_folios_range(struct inode *inode,
+>   	spin_unlock(&inode->i_lock);
+>   }
+>   
+> +static void kvm_gmem_hugetlb_truncate_range(struct inode *inode, loff_t lstart,
+> +					    loff_t lend)
+> +{
+> +	loff_t full_hpage_start;
+> +	loff_t full_hpage_end;
+> +	unsigned long hsize;
+> +	struct hstate *h;
+> +
+> +	h = kvm_gmem_hgmem(inode)->h;
+> +	hsize = huge_page_size(h);
+> +
+> +	full_hpage_start = round_up(lstart, hsize);
+> +	full_hpage_end = round_down(lend, hsize);
+> +
+> +	if (lstart < full_hpage_start) {
+> +		hugetlb_zero_partial_page(h, inode->i_mapping, lstart,
+> +					  full_hpage_start);
+> +	}
+> +
+> +	if (full_hpage_end > full_hpage_start) {
+> +		kvm_gmem_hugetlb_truncate_folios_range(inode, full_hpage_start,
+> +						       full_hpage_end);
+> +	}
+> +
+> +	if (lend > full_hpage_end) {
+> +		hugetlb_zero_partial_page(h, inode->i_mapping, full_hpage_end,
+> +					  lend);
+> +	}
+> +}
+>   
+>   static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>   {
+> @@ -257,7 +473,12 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>   	list_for_each_entry(gmem, gmem_list, entry)
+>   		kvm_gmem_invalidate_begin(gmem, start, end);
+>   
+> -	truncate_inode_pages_range(inode->i_mapping, offset, offset + len - 1);
+> +	if (is_kvm_gmem_hugetlb(inode)) {
+> +		kvm_gmem_hugetlb_truncate_range(inode, offset, offset + len);
+> +	} else {
+> +		truncate_inode_pages_range(inode->i_mapping, offset,
+> +					   offset + len - 1);
+> +	}
+>   
+>   	list_for_each_entry(gmem, gmem_list, entry)
+>   		kvm_gmem_invalidate_end(gmem, start, end);
+> @@ -279,8 +500,15 @@ static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
+>   
+>   	filemap_invalidate_lock_shared(mapping);
+>   
+> -	start = offset >> PAGE_SHIFT;
+> -	end = (offset + len) >> PAGE_SHIFT;
+> +	if (is_kvm_gmem_hugetlb(inode)) {
+> +		unsigned long hsize = huge_page_size(kvm_gmem_hgmem(inode)->h);
+> +
+> +		start = round_down(offset, hsize) >> PAGE_SHIFT;
+> +		end = round_down(offset + len, hsize) >> PAGE_SHIFT;
+> +	} else {
+> +		start = offset >> PAGE_SHIFT;
+> +		end = (offset + len) >> PAGE_SHIFT;
+> +	}
+>   
+>   	r = 0;
+>   	for (index = start; index < end; ) {
+> @@ -408,9 +636,7 @@ static void kvm_gmem_hugetlb_teardown(struct inode *inode)
+>   
+>   static void kvm_gmem_evict_inode(struct inode *inode)
+>   {
+> -	u64 flags = (u64)inode->i_private;
+> -
+> -	if (flags & KVM_GUEST_MEMFD_HUGETLB)
+> +	if (is_kvm_gmem_hugetlb(inode))
+>   		kvm_gmem_hugetlb_teardown(inode);
+>   	else
+>   		truncate_inode_pages_final(inode->i_mapping);
+> @@ -827,7 +1053,7 @@ __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+>   
+>   	*pfn = folio_file_pfn(folio, index);
+>   	if (max_order)
+> -		*max_order = 0;
+> +		*max_order = folio_order(folio);
+>   
+>   	*is_prepared = folio_test_uptodate(folio);
+>   	return folio;
 
