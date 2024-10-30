@@ -1,288 +1,285 @@
-Return-Path: <linux-kernel+bounces-389085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B219B6863
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:51:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1509B6866
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4350E1F2339F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:51:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FC291C214BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100B22141A9;
-	Wed, 30 Oct 2024 15:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402A0213EFC;
+	Wed, 30 Oct 2024 15:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U6NdSzJn"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2049.outbound.protection.outlook.com [40.107.100.49])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="E4RcdNnV"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2080.outbound.protection.outlook.com [40.107.94.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DF8213EF0;
-	Wed, 30 Oct 2024 15:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC4321314E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303487; cv=fail; b=NFVHyOBUlxP9Yx5gsEsg6qCLFtn+Vb8zF+RTgdvuk3j2WU+ngLvUQUmvSbiTQe4zBqFWQEOiZR/0PwuYLIA8H5WDRFiiioPcP+A5XgF07ZTamgRp0IxkRPYHFcBV0Uj3GwlyGX6YsKe+q49JgUPnqGBX60Bj/GwQEHqVH3FoTUM=
+	t=1730303537; cv=fail; b=J4tv4NnkT31sPtTE/CUMHCGgjF/a7tnDme+MiwPh5dSCiemWsEzIXfmRKTsMaKStcuM+//B+tqrWYv3n6YplMUnYOzqQxSrRG5RlJ2/NtJzUYS/t0+FsF6l/d4Q6EGZbz28dcKPkbdMeUZTxqVwonmY2Rt8CHBeoa3BqAcJbchw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303487; c=relaxed/simple;
-	bh=fDsT3V0t5enZ09Lb4gBsjRdnA5mN5zq4lkHMixRfa7c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TbX94/DwxHLr+wMxGN++emQSnbLFs4wdQOApQ9JSwCUkkSy4MPbXz+bB2ilWb65d7/iqx01HL5is+Cn/x2MZpXKLVN6jOfMY48HJG5pgHeQhVDGYm2Ha9QaB7CsfAQ6T8SyW8V4ui14o8Miz0RquexO0dBn78HgQiJ5lwO1GFGs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U6NdSzJn; arc=fail smtp.client-ip=40.107.100.49
+	s=arc-20240116; t=1730303537; c=relaxed/simple;
+	bh=aiaG6Wvg64VS0vYoghLXnKcgD4Y+UN/oMinbtNNagpk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bPG6mZFYfIz9fYsIrtkUilvW1JYY980CZHf6lQmo7QoENSInopnEeAz5V16teGnnziLe0jAp65rJMfBaez80fFSYaSKQT+6BoEvbh6Lq8VmyjZom46S8aj3cziVptiixadkHKYn6Ng8jvx0UQUXg7MOEIqJCwlTE/GkYvCTYerM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=E4RcdNnV; arc=fail smtp.client-ip=40.107.94.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x01SC2iiex7/oQ5WsMF+JD6P0pckbfOjv8v5KeHWwPEMdOUfdnzuv6NOB54pSHmD8cXaXjdC3sGG93B3KRc7sLgx1EX4u38xUFzyXaMx5FMJieZD6kGNPSsQ/VWKKnsQuIr560RfIf+KIT7Qy3e3pDF6Flpi6oZo1v0weD8B3Q+Qr+VrSKKywL0/cYY107EJPFG2RhO9W8JDFiW+LB0DlLu+jgPqlCQEmJg7IiqpLDcMSRlVzsqYICE2Q2n9SoXHKbWnQJj0SJo0ZtiSbpOEMc/FVu7eHzrsKHfSIUY4Mn1bjEt+u2HbCqzYk600rhEggEkCiEmPgWMoFdHg8Mm7zw==
+ b=FRl9WqNo1gJdeXHVY/+xjiQUYrQNQriHBHA8lPQm/6vJOJbIOviyZil28eJnO0CsWXrFIJ3HJUTxsLq/hjoWY8Q2OcYKVMmeFUf/qpwYzTuB5STyWambwvN/jyjsXnhUeA99UdwiX4wyk5qGUTy12E3LXbOqV2dJ8EHubee3KZaas2q4JsyHTYdw2JppAvEUK2vxjbU5Wt6UwLHU1vEckmoxNRDXXiOp2u+dJPaESwWuCAECp7MssB00IdtXWNL5Xo0/Cq9kembl9XwMFIwNiiu/zsmn+WzTX5x6IfWMPkeHhlfbEFHnHt4EclKzdn90b3ygKWW6ZPryQnegq6hotQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2fFy6Hdg3gntNS0vGH9F4+YQOiCxBdKlzsTt7tc8ROs=;
- b=nON7vBJFf3dYBZPNjI72MhRIdJbj0RURjR7uUsWnb2PgkPc5mW8wAu8ZZhkxnZ2FZYvGTPrcEBHv2K6yJi5QvO5UAp6GIaEvL6j+zzOiTDz7E9beGv9E1AoZ0XJLdSIEiFRRBkZ0ybsi4CIHaDmoCPFZ5x6/7aSNz4Q8oi3sc78SYByT3+tWdcOe7XXD+jvN3K4+V92zDZDfXKNCdiyXR8jMKPVZyiMKPr9hMsmmyaTUJzBvDyCLzRLdque5fNju3F9kPdV9ooJ6JGx84SAOnRQC+XwZFjSEoGdLxT7E6VsnNPQteH0njFO5BZnzUniREulAjxyNssfvrOEo5YHFEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ bh=DQqrnKzlSxmEBXUN/2T7qUTVtWwkcA5Ru8V8fFOyIw4=;
+ b=id/6tpVRnws+zSfMwdvmKhsP+vdUBsjSFGXLalYaIAMJUXYEG7C6cVTnvwvA6iSDwoAU3eMAFRyLQhqR7vGr9v4AXB3UHC67ZFyWfa+8wqsshEShh4K771luaOk0SE2qRFsWIaruYdIPpIMCjYAxRnh+sP7qCK6ewGwZiv81gnk240yYokVLjHyNuvxadO95IELqYB/lQSCZpE+eTLAyXF8BtI0BH5ZmrMvCoc//PebFbSXyhIU09osJhYeg7x/zgtBCGMfY0w9Vb4iElujLG8ixu8pISh+F6kEstygmfwT7ePFsqUXJtw+2DSlbCDwQfr9YAmI5zWSK0byEqxOB9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2fFy6Hdg3gntNS0vGH9F4+YQOiCxBdKlzsTt7tc8ROs=;
- b=U6NdSzJnYDl+dtFq/QSj/daz346FclqYsKlxACKgW9cbDcSZRPnu7kMVrHlpMBNbBThZH5fQsemIcW1+sYM+wjZBnFp5hSJApprplfjp0K9nPGvTsCxzhGDORBxROH8dHzmkS2Im7IGrR3vxVJ3JsV1bKHBDU6dh4Sq5KLkVlZw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- SJ0PR12MB6880.namprd12.prod.outlook.com (2603:10b6:a03:485::13) with
+ bh=DQqrnKzlSxmEBXUN/2T7qUTVtWwkcA5Ru8V8fFOyIw4=;
+ b=E4RcdNnVLv9eQ7/LDEm98A2EAeT8teVR2a5N/p0Y0Ifqtti7WEMxq72Aul3R4Jw/IV8zL56FI/rcFneiHB+RzF9JuzD4fhvLgID9CeDofmy+dZP1XDqNIDGr+xtQIT6ibUt7OqqyoMWFM3dmv81nzbktASfCJwnXArYPCL3ONCA=
+Received: from MN2PR20CA0032.namprd20.prod.outlook.com (2603:10b6:208:e8::45)
+ by SA1PR12MB7176.namprd12.prod.outlook.com (2603:10b6:806:2bd::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Wed, 30 Oct
- 2024 15:51:21 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8114.015; Wed, 30 Oct 2024
- 15:51:20 +0000
-Message-ID: <e7702a99-5386-445c-9b65-cbc189eef9dd@amd.com>
-Date: Wed, 30 Oct 2024 10:51:17 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/14] PCI/AER: Add CXL PCIe port correctable error
- support in AER service driver
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, dave@stgolabs.net,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com
-References: <20241025210305.27499-1-terry.bowman@amd.com>
- <20241025210305.27499-6-terry.bowman@amd.com>
- <20241030151308.000005d5@Huawei.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <20241030151308.000005d5@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0169.namprd11.prod.outlook.com
- (2603:10b6:806:1bb::24) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.29; Wed, 30 Oct
+ 2024 15:52:11 +0000
+Received: from BN3PEPF0000B073.namprd04.prod.outlook.com
+ (2603:10b6:208:e8:cafe::a) by MN2PR20CA0032.outlook.office365.com
+ (2603:10b6:208:e8::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.19 via Frontend
+ Transport; Wed, 30 Oct 2024 15:52:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B073.mail.protection.outlook.com (10.167.243.118) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8114.16 via Frontend Transport; Wed, 30 Oct 2024 15:52:11 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Oct
+ 2024 10:52:05 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Oct
+ 2024 10:52:04 -0500
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 30 Oct 2024 10:52:04 -0500
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
+	<king.tam@amd.com>
+Subject: [PATCH V6 00/10] AMD XDNA driver
+Date: Wed, 30 Oct 2024 08:51:37 -0700
+Message-ID: <20241030155147.103908-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|SJ0PR12MB6880:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77f54a8f-aaef-46e8-dc23-08dcf8fab282
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B073:EE_|SA1PR12MB7176:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86ffb52e-2ca3-499b-3087-08dcf8fad0f7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dFo0UWR4ZG5OU1R2U2pZQ1NhL09kL1J4dFBzd3BubG9Za1FRbU1hZ1Z1bG9a?=
- =?utf-8?B?V2pQRHU3WnVMa0V0alZyTW9VUGpCdy9LOFJhVFNUcDJ1VHduTU9GbnRzTGF3?=
- =?utf-8?B?QkhydjlWbnd4NU9FY0R3UGtUQStGVTlCdGZVQ2p4ZlBrZ0xBUzN3MDJ4dEJK?=
- =?utf-8?B?Qy8vU2YxZHJOMCtsMGFaMnRIbFdZM2svUFl4MjlMMFFzbEN1VStaTXptOWpR?=
- =?utf-8?B?U3dDN2RtQTVFdWFXL0V4OWowdUsza0tJaGt4aXgxakxUYkpmcHROaHQ0TVVD?=
- =?utf-8?B?UnpmMVpNTHNDMjJOdDN5UjVTSC83cDdWeGJ2M3VrRFJrTGJvK0ZEbDVET2s4?=
- =?utf-8?B?ZTBsTEtoZERWZnM4bys4TFcwOHUzcnJQK29CQUZ1Q2FUaHNxL3QwMW9HQ0RN?=
- =?utf-8?B?OVdFOTB1aUZQdGFOQnJsbVVYSE1jeWp2c1VwdW5vaFkyMTFFcG9FWkVZc3k4?=
- =?utf-8?B?SGx0MTRvTVNwWHBic1ZvNU5LVTdSajhUYzFOTitLMlNrQ1oxUmxubXFJVkpE?=
- =?utf-8?B?VHdiejNXWmRsUVM1R1NmNVVkdHlIbDZqZUVQVjNpZlBWaUJ0R0Q1UzlWQlRH?=
- =?utf-8?B?enY4UnoyU0t5QUdwRVBjSmpTMy9KS2ZCcFdDcTBFdklZNHpoTWtYWm05T1hL?=
- =?utf-8?B?cFRPMnE0SG4yaHplanExc0hhOTVKRTZiVUlVYmNlNU5vK1c4azI4OC9sTk9k?=
- =?utf-8?B?SEdSMURrZ1hNZ3hTelNmVkNBQ2JoOERSRXZHeVhZMVlhSU1tZlRpZW1LOHhY?=
- =?utf-8?B?ZzlwWndIOWZSYUJFUldGcFl3elN6M1NHQUVEbzJqRy9FZ255b2d0RDNzak02?=
- =?utf-8?B?ZWJqSlhjK1BzbktxbFBIZTZHQitxN2s1WnR3Z3NzNEFlbVlldVUzTm54MWtK?=
- =?utf-8?B?Q284USt2NFhYQ3h6Vk1iMk5IS0FSZzRQYXpWeGlKRDFMZTF0eTZ4ckZIS0pz?=
- =?utf-8?B?cVRkTVdaUGVGTFhLMmgyeXY0ZlV1YmpPSUM0M3dKYWN2RjBDeGhTbVMwbS9K?=
- =?utf-8?B?b1BYQmVab0lHeDB3Uktnbjh6L2hpd3FmcVpzYzMweThXYXQrYjRpZGRwRXpy?=
- =?utf-8?B?YjVBKzZoN2xEYU9IOGpOb3Jzenc1ZXByMndzRURkTktRcU1hc1dob2JOZ0FS?=
- =?utf-8?B?QkxxV3ZFVzBNMVM3dzZNdktPMll5L3ZCWlJHMmhhczJjSWFvYXY0azBraTN5?=
- =?utf-8?B?T253MmRIbnpkVUdpTzlBRlN5c2dic0ZpRmhsVENBdVM0aXpSVG5SYW1QOExY?=
- =?utf-8?B?V21DQ3dNckUyRGNqZXRqdDF3Z1FVSXc1WUhPVzcvVHcrM0dMc3ZXZ1I1SXRk?=
- =?utf-8?B?SVV0TEx1VUZkL2dVYnQxZWMvSUJkQ3VLMlg1eG5ENFduQzc4MkJHQXp3cjZt?=
- =?utf-8?B?dDVhTm13UXZ5d25TMUl3RzVPc0FGTXZzemJ1NGJFOWNOU252U24vMTMyK3NG?=
- =?utf-8?B?UW5MN3cxSm5kelIxM3AyMHFVSEtaYllSSTNmOHp1WWZweUV5Mlh0bHp3MW1J?=
- =?utf-8?B?RmNNaWNYdkxTREltR0VvaytEeUJOaHJuSmtNUVUxbDd0dlJNaEU2K1FGZFcw?=
- =?utf-8?B?UUZqWkp2b0lwZ3I3YnpMWm81YWdUWDg5OTMzNkx3YXplYzcwdjhySW4ybzFW?=
- =?utf-8?B?NmZwQTFkZlBmZTdIVE5nV3VHYWxtRzVsQzMwZnZ0Mi9WREZpSTVsT1R4anVn?=
- =?utf-8?B?bEdwMGV3OG9NWENjc0cvTTlqTWNYejdyUXVXYzdCcDh3WXB0blRtUXNwOWNS?=
- =?utf-8?Q?QddVZPUD6gLDnnkl/0yUq/OJpGjAD2MXTqm20gu?=
+	=?us-ascii?Q?PwTEClSPk3sHZFZG6ZjBOk6lxSdIWOt2xalPQ0UW/JLthh5Wm64JMQ7LdjcF?=
+ =?us-ascii?Q?8PLV2XAWSlrP+48i76J0JzXrUcVM47WWjFtqRdZzBcFtVCOSkRuKaYcArx45?=
+ =?us-ascii?Q?ydD668qj9ps4D9zvtTzJKM0EiqMvlUll6Ko1/2bk0DijdZ3ZwTil+jKOoNGd?=
+ =?us-ascii?Q?s30EyOYrj7CJpZOuUcI1COjMQGpNHUcdN/ZPJLg/g4aI1hgSJJI7vFh2NQoI?=
+ =?us-ascii?Q?CXKh3BS6Gbd5mf/h4uP9EYuua2+q7xSe9iUgmZOkLcCIf3oFYB3DCFKRdrQ2?=
+ =?us-ascii?Q?38RfREqo7DMZFuKx8DWG+X0k7nHlFg4Xld3qwJkxCXbLepGiQWLdkbwWjO1D?=
+ =?us-ascii?Q?HX4zylBMDlYUsKGj6MBwffguxCQTT7CGqCAWMHb1tXkV3TZr6TT55U7DKWlS?=
+ =?us-ascii?Q?51sH2ENLXRLVw21DCEVUpScdhmPMCMUbFelff0l+UyKE/s4siE+dKqRKWIW0?=
+ =?us-ascii?Q?4VHDpCDtxJ1cxlzc7RKP3YtSNDJWIFLMpB9FvhXb+Gku2+YwgIIK+z4Siuis?=
+ =?us-ascii?Q?I5j5wJcmT45Gqga/eDjx7Zh/2J0qS1A9y/V6ho0En14HcCT+y549znqxmJY7?=
+ =?us-ascii?Q?hKtCt1BDRUEXD5ZDiimqbH7Qe6rKrcMy2A7CXLBeRqCfUamM8I3BLm+BxA6s?=
+ =?us-ascii?Q?zm6M2Z4P753f6UAZLP6WxJ3T61+3aRhjz4ugVMyKVGb00z76RgvAGifmO9Uo?=
+ =?us-ascii?Q?gQZfR1kMkZm3fmXgnOM4tbIRF5wFWeRYFxi40Cet8xQMeSILf1TAjPxbtfOO?=
+ =?us-ascii?Q?AGP7zo2iRSECjrP875v4KQoVZ8V8EFXXQu7wqqWydsljnJEJeJEYFxVX/FC2?=
+ =?us-ascii?Q?bymuNCmg/ucglxsg2jzFProRGe3NUd9OUJF2gDeRkf8lNRmfnA61v4jBhYp5?=
+ =?us-ascii?Q?09i2Ohd8ByYGKH/9WHqF2s8swkuAYTFoB+eRm7sIULfQUv4cqG+uvUPKDq5n?=
+ =?us-ascii?Q?tGQIAz3ySTBY2ju0RjlGPluWYHFlOMyntn2eALErmuFiDAAu2iSVHyihAZtN?=
+ =?us-ascii?Q?gyFCzvJ0WSG5xe1KaIQaejor+V7BpxSl5wUbyL458qWprCNa/7dgBfeoEnn/?=
+ =?us-ascii?Q?yTujvmKJNCKytGXgOY2T5hgFgPU1NnRXZT4efyC51NCGg4gYW1/CRTdvHqSG?=
+ =?us-ascii?Q?CnY8nI4Sditqxw8iwUhAWTJpm/7IDAdhdR7Njlz0LwLHg2lTDx3GP+5kSF/r?=
+ =?us-ascii?Q?ncOZ/2De8MXyjWMVji1s2vB5GJ6B9FrcATyz/UnANFKK5Mh1RsAhyRErqCwL?=
+ =?us-ascii?Q?5bCqWBSqak+mW8FNRfKzl4+PNOg+fuMgqqkqHSjpH6vml1Ko6wIVegTqoVZl?=
+ =?us-ascii?Q?eXIGrAm8wYt13ZECFvSkj8jLYgJ3NYUQJoly4fk2usnrNaefGQC4H8EqP5PU?=
+ =?us-ascii?Q?ygLOmOA=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGNaSU9GY083MkpoN2puVGxrNVpiTm9kakd6MDlmM1JmSGI0RzR2WUZ3Sjl3?=
- =?utf-8?B?WHBZTnQ1WmRDanlBME5qSDJxVG94d3hSVEtqYkhGeFIyS3V4eVJzdk5JVmE0?=
- =?utf-8?B?MUlsQVVRV1puRzdaZGxkYzNzbFJyNUJHRCt5UEVVUUM3S3hkaW4yM0xLZlVs?=
- =?utf-8?B?U2JqSVlqQzVqQVRNN1hIMUxjSnRhekR6Szhkem0yc2NDdlluR2VVL0Q0dkY5?=
- =?utf-8?B?R1VFMTB3R0V2NTJ4cnVZT3J6eW5waGlmd3A2TDhLWVpPVmpwSkdJYzhhUlhD?=
- =?utf-8?B?UHNBejg3bTA3UU5ESnNTL05uZzhhaVhxMjQyUkJEQ21tUDJzVVJWaUxEZC83?=
- =?utf-8?B?WkFJcnc1UWtpb3dSaE1sdXZXQUVDQU94bUNsa0lnc3ZmMnQ3N3ZtelVxWk95?=
- =?utf-8?B?TDBZZFZueDdmMWJNMkZHTGRMa2lFc1h3RHFOT3QxWGRvWkZLVGNpeE43cHB0?=
- =?utf-8?B?K3FjWmhYK0IzMndOWFZMcXRLSGVFa2FhcWh6VlEwcXdRbEpicnZTaVZ5VDc2?=
- =?utf-8?B?eUMrcTA4S3pMRHlkR2NjQm1mZ21UTE44MjFrMjh4Q25LT2NWaGw5TzRhekla?=
- =?utf-8?B?UDREVFFBM3Y5bmcrYUYydVRBd2xNVFhOMFhjNXVWbVBQY2RPREYvZCtPMFJo?=
- =?utf-8?B?M2xOd2svNERoRjFjam5XTEFWNW5xbS9CSGhQSlZjYitScC82YjRNK05LUGFU?=
- =?utf-8?B?L1IrS0FMZWRFYjkvYW5ENzVEbHpVY3BUZFVkSEpqMGRwV291cUNkZGhFRGx4?=
- =?utf-8?B?akJnaVhBOTZnc2ZBeG5jNzAvZXhuM3REMVVSQXE0ZjB4a3VRUHJEVkZBTnNI?=
- =?utf-8?B?NjRSQXRxUzdjYWZkSzA2YXhHMWZZNUxVRzhLYzNSdVJ0S29BMURjek5rZktx?=
- =?utf-8?B?WnF2L0p4b3lFcjJuVVNEejNRMXhPR3I1WG1EVlBMcXpVRGQ1SXBpZkhwR01X?=
- =?utf-8?B?bnN6MDFueUZqclp1VFozYmRuZE9lS25uOEk3R1RxWlRaek9XZDNxU0ViYzJI?=
- =?utf-8?B?S1FxWnZMSmxnR0dhdnhpTjNYMFVlazZFL0pocW1Xakt4NWNJckJNd1JuL0tw?=
- =?utf-8?B?S2drYjZWdy9vV0ZFbkdTUkRqVWJGREg2OVllNGxRWW54bUtHNkRKek9sUnRN?=
- =?utf-8?B?L3RKNjFTRkpsaUtmSFJmak11Qi9sTGZkcm8xeXJkUTV4eWRTd2hUaDRxNHEx?=
- =?utf-8?B?NnI1MW16MXpDWWwrVk1OVmltYzZSL3pUOWhENkl1a0ZQL0NlQ3ZyS2ZpUFFw?=
- =?utf-8?B?bkhBTnBCLzBibUMwajZkd3FyeDM1RXdOakh6YzJIVm40SGxndFJUODlYOFhR?=
- =?utf-8?B?V29WbnhSZlI4K2FscDQxcktRVWlmNGVpaXhMVUJJKzU1ajBvczdOVlRkSTZm?=
- =?utf-8?B?K0pwN1pLT0ZLcU5zK0JQQzhleFJ0NlB2bXRNRjI3c2RveisxMWFPM0txSW5I?=
- =?utf-8?B?ak9yTzhReENQdThqTmIzN2RsekZqRkNCRHpMaFUyaGllVFB4WXdDWmtlbjlK?=
- =?utf-8?B?RFdvd3l5ZEJkUGg4L2VLWnBTdkFsZHZLR3hHSXA5ZEk5SGZNa2dBUUp0aUtE?=
- =?utf-8?B?TWRPamNLZlcvZEU5YnNobXBIZHVhK2ZrOGZNSUh5THlRS2lJaE9kVzJoU215?=
- =?utf-8?B?V3NOVk56RTVYZTBLOHI3U0w2dUo0NWs0S2xaVXZRSHJoS0Z1czJJeUJYWmVi?=
- =?utf-8?B?K0l4eTd1MzFIMitMelIxZnc1UjNaUTVSNHMyMGk0Q3J3UEN3ejRlTU5HK1Zl?=
- =?utf-8?B?bEFETjdZZm9tNkYydi93SGoraitwMHJnSWt3bEhvenpzdFVTU0txMXBNNzJT?=
- =?utf-8?B?MHBLMnNoZkRRSkJwT280cUZGRnYrL3IrSzlIUGtJT2ZWQzlQd3BNc2RoS1di?=
- =?utf-8?B?MUxJNkgrUUtYTXlBRVNyL080czA3eXlLNE1Mckc3cnAyeUl2bGZRU05oVysv?=
- =?utf-8?B?VkFBUmVWUFhuRUN4a1JEK2xVZ2RjUHJIZFllY3pVY1V0QkJtc2ZrV3Vkcjls?=
- =?utf-8?B?Y1c2SzZNYjNFaHFLM1RTaitGbS9oUzdLZWh0VFdWVU5BTWFrVGJUQUh3S3J6?=
- =?utf-8?B?ejhKMDV3QURvVTJEdTJBdnQxblVyaXhnQVhESHAwY0dROXgyUytxN25LSVBu?=
- =?utf-8?Q?58QtyO0aPtINUTXfLuBkPbKZp?=
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77f54a8f-aaef-46e8-dc23-08dcf8fab282
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 15:51:20.3615
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 15:52:11.0359
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86ffb52e-2ca3-499b-3087-08dcf8fad0f7
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ge/HDHgsQgGYAlDe8YlJtR+pPQSJVOR3zjcJ3gIcsy/+lOi+wR1FHqDOfK68RCZf3ovm5jrCZnXNUs1k/pNN3Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6880
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B073.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7176
 
-Hi Jonathan,
+This patchset introduces a new Linux Kernel Driver, amdxdna for AMD NPUs.
+The driver is based on Linux accel subsystem.
 
-I added responses below.
+NPU (Neural Processing Unit) is an AI inference accelerator integrated
+into AMD client CPUs. NPU enables efficient execution of Machine Learning
+applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
+architecture [1].
 
-On 10/30/2024 10:13 AM, Jonathan Cameron wrote:
-> On Fri, 25 Oct 2024 16:02:56 -0500
-> Terry Bowman <terry.bowman@amd.com> wrote:
->
->> The AER service driver doesn't currently handle CXL protocol errors
->> reported by CXL root ports, CXL upstream switch ports, and CXL downstream
->> switch ports. Consequently, RAS protocol errors from CXL PCIe port devices
->> are not properly logged or handled.
->>
->> These errors are reported to the OS via the root port's AER correctable
->> and uncorrectable internal error fields. While the AER driver supports
->> handling downstream port protocol errors in restricted CXL host (RCH) mode
->> also known as CXL1.1, it lacks the same functionality for CXL PCIe ports
->> operating in virtual hierarchy (VH) mode.
->>
->> To address this gap, update the AER driver to handle CXL PCIe port device
->> protocol correctable errors (CE).
->>
->> Make this update alongside the existing downstream port RCH error handling
->> logic, extending support to CXL PCIe ports in VH mode.
->>
->> is_internal_error() is currently limited by CONFIG_PCIEAER_CXL kernel
->> config. Update is_internal_error()'s function declaration such that it is
->> always available regardless if CONFIG_PCIEAER_CXL kernel config is enabled
->> or disabled.
->>
->> The uncorrectable error (UCE) handling will be added in a future patch.
->>
->> [1] CXL 3.1 Spec, 12.2.2 CXL Root Ports, Downstream Switch Ports, and
->> Upstream Switch Ports
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> This is a fiddly patch to read, but that's at least partly diff going crazy
-> in a few places.
->
-> Anyhow, I think it is fine but I would call out that this changes
-> things so that the PCI error handlers are no longer called for CXL ports
-> if it's an internal error.
->
-> With a sentence on that:
->
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->
-> I'm not 100% convinced the path of separate handlers is the way to go
-> but we can always change things again if that doesn't work out.
->
-> Jonathan
-I will update the patch message to mention ports use CXL handling
-for CIE will not call the PCIe handlers or PCIe recovery.
+AMD NPU consists of the following components:
 
-Note, port devices are bound to the portdrv driver with fairly generic
-CIE handler.
+  - Tiled array of AMD AI Engine processors.
+  - Micro Controller which runs the NPU Firmware responsible for
+    command processing, AIE array configuration, and execution management.
+  - PCI EP for host control of the NPU device.
+  - Interconnect for connecting the NPU components together.
+  - SRAM for use by the NPU Firmware.
+  - Address translation hardware for protected host memory access by the
+    NPU.
 
-Regards,
-Terry
+NPU supports multiple concurrent fully isolated contexts. Concurrent
+contexts may be bound to AI Engine array spatially and or temporarily.
 
->> ---
->>  drivers/pci/pcie/aer.c | 59 ++++++++++++++++++++++++++++--------------
->>  1 file changed, 39 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->> index 53e9a11f6c0f..1d3e5b929661 100644
->> --- a/drivers/pci/pcie/aer.c
->> +++ b/drivers/pci/pcie/aer.c
->> @@ -941,8 +941,15 @@ static bool find_source_device(struct pci_dev *parent,
->>  	return true;
->>  }
->>  
->> -#ifdef CONFIG_PCIEAER_CXL
->> +static bool is_internal_error(struct aer_err_info *info)
->> +{
->> +	if (info->severity == AER_CORRECTABLE)
->> +		return info->status & PCI_ERR_COR_INTERNAL;
->>  
->> +	return info->status & PCI_ERR_UNC_INTN;
->> +}
->> +
->> +#ifdef CONFIG_PCIEAER_CXL
-> Diff was having fun.  Maybe put a blank line here? I think that's
-> what has tripped it up.
->
->>  /**
->>   * pci_aer_unmask_internal_errors - unmask internal errors
->>   * @dev: pointer to the pcie_dev data structure
->> @@ -994,14 +1001,6 @@ static bool cxl_error_is_native(struct pci_dev *dev)
->>  	return (pcie_ports_native || host->native_aer);
->>  }
->> -
->>  /**
->> @@ -1115,8 +1131,11 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->>  
->>  static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
->>  {
->> -	cxl_handle_error(dev, info);
->> -	pci_aer_handle_error(dev, info);
->> +	if (is_internal_error(info) && handles_cxl_errors(dev))
->> +		cxl_handle_error(dev, info);
->> +	else
->> +		pci_aer_handle_error(dev, info);
-> Whilst not calling this for the CXL cases probably makes sense and
-> given new code needs to be the case to avoid a double clear I think,
-> I would call that change out more explicitly in the patch description.
->> +
->>  	pci_dev_put(dev);
->>  }
->>  
+The driver is licensed under GPL-2.0 except for UAPI header which is
+licensed GPL-2.0 WITH Linux-syscall-note.
+
+User mode driver stack consists of XRT [2] and AMD AIE Plugin for IREE [3].
+
+The firmware for the NPU is distributed as a closed source binary, and has
+already been pushed to the DRM firmware repository [4].
+
+[1] https://www.amd.com/en/technologies/xdna.html
+[2] https://github.com/Xilinx/XRT
+[3] https://github.com/nod-ai/iree-amd-aie
+[4] https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu
+
+Changes since v5:
+- Remove wait_cmd ioctl and use syncobj instead
+- Cleanup spelling errors
+- Add dependencies in Kconfig
+
+Changes since v4:
+- Fix lockdep errors
+- Use __u* structure for struct aie_error
+
+Changes since v3:
+- Remove debug BO patch
+- Changes based on code review comments
+
+Changes since v2:
+- Add document amdnpu.rst
+- Change AIE2_DEVM_SIZE to 64M due to firmware change
+- Changes based on code review comments
+
+Changes since v1:
+- Remove some inline defines
+- Minor changes based on code review comments
+
+Lizhi Hou (10):
+  accel/amdxdna: Add documentation for AMD NPU accelerator driver
+  accel/amdxdna: Add a new driver for AMD AI Engine
+  accel/amdxdna: Support hardware mailbox
+  accel/amdxdna: Add hardware resource solver
+  accel/amdxdna: Add hardware context
+  accel/amdxdna: Add GEM buffer object management
+  accel/amdxdna: Add command execution
+  accel/amdxdna: Add suspend and resume
+  accel/amdxdna: Add error handling
+  accel/amdxdna: Add query functions
+
+ Documentation/accel/amdxdna/amdnpu.rst        | 281 +++++
+ Documentation/accel/amdxdna/index.rst         |  11 +
+ Documentation/accel/index.rst                 |   1 +
+ MAINTAINERS                                   |  11 +
+ drivers/accel/Kconfig                         |   1 +
+ drivers/accel/Makefile                        |   1 +
+ drivers/accel/amdxdna/Kconfig                 |  18 +
+ drivers/accel/amdxdna/Makefile                |  21 +
+ drivers/accel/amdxdna/TODO                    |   5 +
+ drivers/accel/amdxdna/aie2_ctx.c              | 957 ++++++++++++++++++
+ drivers/accel/amdxdna/aie2_error.c            | 360 +++++++
+ drivers/accel/amdxdna/aie2_message.c          | 791 +++++++++++++++
+ drivers/accel/amdxdna/aie2_msg_priv.h         | 370 +++++++
+ drivers/accel/amdxdna/aie2_pci.c              | 761 ++++++++++++++
+ drivers/accel/amdxdna/aie2_pci.h              | 255 +++++
+ drivers/accel/amdxdna/aie2_psp.c              | 146 +++
+ drivers/accel/amdxdna/aie2_smu.c              | 119 +++
+ drivers/accel/amdxdna/aie2_solver.c           | 330 ++++++
+ drivers/accel/amdxdna/aie2_solver.h           | 154 +++
+ drivers/accel/amdxdna/amdxdna_ctx.c           | 563 +++++++++++
+ drivers/accel/amdxdna/amdxdna_ctx.h           | 162 +++
+ drivers/accel/amdxdna/amdxdna_gem.c           | 631 ++++++++++++
+ drivers/accel/amdxdna/amdxdna_gem.h           |  66 ++
+ drivers/accel/amdxdna/amdxdna_mailbox.c       | 576 +++++++++++
+ drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
+ .../accel/amdxdna/amdxdna_mailbox_helper.c    |  61 ++
+ .../accel/amdxdna/amdxdna_mailbox_helper.h    |  42 +
+ drivers/accel/amdxdna/amdxdna_pci_drv.c       | 402 ++++++++
+ drivers/accel/amdxdna/amdxdna_pci_drv.h       | 122 +++
+ drivers/accel/amdxdna/amdxdna_sysfs.c         |  67 ++
+ drivers/accel/amdxdna/npu1_regs.c             | 101 ++
+ drivers/accel/amdxdna/npu2_regs.c             | 118 +++
+ drivers/accel/amdxdna/npu4_regs.c             | 118 +++
+ drivers/accel/amdxdna/npu5_regs.c             | 118 +++
+ include/trace/events/amdxdna.h                | 101 ++
+ include/uapi/drm/amdxdna_accel.h              | 436 ++++++++
+ 36 files changed, 8401 insertions(+)
+ create mode 100644 Documentation/accel/amdxdna/amdnpu.rst
+ create mode 100644 Documentation/accel/amdxdna/index.rst
+ create mode 100644 drivers/accel/amdxdna/Kconfig
+ create mode 100644 drivers/accel/amdxdna/Makefile
+ create mode 100644 drivers/accel/amdxdna/TODO
+ create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
+ create mode 100644 drivers/accel/amdxdna/aie2_error.c
+ create mode 100644 drivers/accel/amdxdna/aie2_message.c
+ create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
+ create mode 100644 drivers/accel/amdxdna/aie2_pci.c
+ create mode 100644 drivers/accel/amdxdna/aie2_pci.h
+ create mode 100644 drivers/accel/amdxdna/aie2_psp.c
+ create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+ create mode 100644 drivers/accel/amdxdna/aie2_solver.c
+ create mode 100644 drivers/accel/amdxdna/aie2_solver.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
+ create mode 100644 drivers/accel/amdxdna/npu1_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu2_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu4_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu5_regs.c
+ create mode 100644 include/trace/events/amdxdna.h
+ create mode 100644 include/uapi/drm/amdxdna_accel.h
+
+-- 
+2.34.1
 
 
