@@ -1,168 +1,171 @@
-Return-Path: <linux-kernel+bounces-388748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AAC9B63E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:18:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF119B63ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2345AB21388
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3E952828F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CC161FFE;
-	Wed, 30 Oct 2024 13:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B811D1E47CE;
+	Wed, 30 Oct 2024 13:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="UWfkbe4W"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDQrniUO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1126517579
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0514117579;
+	Wed, 30 Oct 2024 13:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294284; cv=none; b=JAFl5hHDR6rODLDQ6q50rVOe44JIfoJfj7gg0B4KYDsFufjwIU1c5r/uirg2/h/eIynwjHmthHzpVYtZkQXD82XIkLOG4P2J+0vL+wZ1GewknldntA5yjOMHTKr3qddvlmCOJ6/MTEqR/vfebRPBM4bjB7ZKFEeKcrBXavFPXPw=
+	t=1730294340; cv=none; b=mmkB6FLqVR4vMGaY/ypsW7Pq8fIBgsmtCwPc+mtl6uKjwLS6fEuTCflR7UeyfKSverrfRVQydo/nndPhZnlyWMAPkvWGQNHfV6Tusu3RRHbvfFBlYWgA0GTXMVIgIAN5k6AutdSUfNhOAHhwRPk+dkQAzGGbiT5ijbxExiMdelY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294284; c=relaxed/simple;
-	bh=YK62kQm5T1e9ZrNUJ2Vht0gCb21fSYs92yEM2f8PgYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pMhJ52qaMzdIGbqJZiTPW5Ya5AC5d0Nw0Dzs+M6npATSHav+iyCURFFbLAQz9m7YtcqHZ8nUv4d110GWaTcbY4gs1mUlEBoVJ1A/oJ+c+sKHfPCK3tTwzyJN5CwW9hWEdQI94qMt78RLARQdjXc0R8rSnUyRLmVsQacDeFQfS1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=UWfkbe4W; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730294230; x=1730899030; i=metux@gmx.de;
-	bh=i1q1UwcqkUE6v3t+YZk+4PNlPEsgo07VoaZWRDi8hLE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UWfkbe4WN5+a5ottoMJ+cZXIvylLefxM8Lr0q+SATv7ZxP413lFyKwD857wx3GxC
-	 bIo3wJWcuzn+TBrXVqkT5XAM6XkXWAog98EF50oN1rxerUNrYW6YFBEaycgAyiYHk
-	 FoI1PQYjmXDC7d/iGHdqqEC5IewjAiG2eu5NUHdJlED4y1ynzhBbmLcyWdhJIboL0
-	 2GDm6j6ZVdV23Z3qcWKJ1eLXltSgL4BAkJNKNA69oEvLlO/3OuIaI7hPz1h/WCzYo
-	 1Xgwlg+8uZta6Rs3bz6bNbCwCqQfjThHPkWwKfy1RkqJ4rLi67qHJLTGl43+oH6ad
-	 WiQU7u+JSQ69qTHzvQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.178] ([95.114.207.188]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N1fn0-1tqVw52s4e-0156B7; Wed, 30
- Oct 2024 14:17:10 +0100
-Message-ID: <70148bf0-389c-4942-a34f-7ceb5449aebb@gmx.de>
-Date: Wed, 30 Oct 2024 14:17:49 +0100
+	s=arc-20240116; t=1730294340; c=relaxed/simple;
+	bh=SGyl53QrSXt0NK+s0TZTOWpg5y0Q+SHCYZKlj5mUth0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TzKqStdT6uBNu1vvDwPrh45cE8dLbsvhiz1c3D0PTSwXxarEUt9hgsEygmSHNOvtiUcdT2lO+FvMrLNXVZ0ECQlW0jVxBz8JzNQ4HZohMBJM14GS8FzL8ly0/ZGLMwhK/UZZpzpaqx0oa4Yp/ly+rI39jwzH8pzzt67ka81vlGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDQrniUO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935F4C4AF0D;
+	Wed, 30 Oct 2024 13:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730294338;
+	bh=SGyl53QrSXt0NK+s0TZTOWpg5y0Q+SHCYZKlj5mUth0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oDQrniUOEt7Nu28y198TARsKSRQWEdfQNjz1UvtRgj3V6Fjm2/R7sWOw9T+C6ThXx
+	 BZEDiiv8ygh26EMMY+Nsdx2qC0EIteHw3YbA7NjnVXaSgb4G5biqH5WACjYkYwKte0
+	 jzYcq76H8gAcf/eXJ/bxSkJwFSZFoo1ZGXAbvSzzCvOkS8tvsku06NpP2f6pDKmAK8
+	 ZaXBpd8DI0HhQ9vdurQzxnGa4hSmnomsT3Ome8uIZGQw+LtbtHDEzWs5eozLjpJaHz
+	 a8s/TlgOCJtfB1Jd/XJqzgc595L3LEhp1YzlEql3c9AnaSXNQu8d6dCpR7QmtXtuVO
+	 wIwxB80AejVQQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e13375d3so7481341e87.3;
+        Wed, 30 Oct 2024 06:18:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSOVLPK90vfmuX7CbMxGhyD50JjXb+9cQYFI3l35w5nuK4tSQR1pTPNrzIzoXPeW0amRzdexJ6MBRc@vger.kernel.org, AJvYcCVFyfGcq5NrBZVWlUeTRSj6l1TMLpNseJjXtUIyfdSGzCHJODvfxBh6hxt++JCeIt2iQSW+jcwX6I8f9s5z@vger.kernel.org, AJvYcCW/Am8t33Z+zUNuefygExMMzYCNH2lHfg9Wif7nXoTvMH8D0CTbYveoCyK1JGX689C1fA8Rn3V5kVA5sRfD73w=@vger.kernel.org, AJvYcCWFkoCnnT+3/EU4hcprgMmTMu9720lscy/Saf4VBVR8yNlE9i1BuububNVGVxi+ZimED0aoDfdRPrQ2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT46pjCZb+M9Rtmbhp6QCUUirrmZDTmLbI9yXAVizjZxMCrvbx
+	hjB26OWO9T6Yrn7ddDtGcFBZHVZ/+LlpyjSnx21SB1zjiFr2g1CqFDgbCQPGkRT/HlyFZH7uUv6
+	rR+frKO70QvU44aGkOtd4DnkSvg==
+X-Google-Smtp-Source: AGHT+IEVKvqZU3lwKIBTDRwXuRwrMn8l0pyFDoASwjFpuJlO7j5nl3i6/F0Uq11GWp7kjD53mP60fhBKM1x1llFdaqA=
+X-Received: by 2002:a05:6512:3ba7:b0:539:530e:9de5 with SMTP id
+ 2adb3069b0e04-53b34b3bc7amr7674957e87.56.1730294336832; Wed, 30 Oct 2024
+ 06:18:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Politware vs Free Software [WAS [PATCH] Remove Huawei]
-To: Theodore Ts'o <tytso@mit.edu>, quake <quake.wang@gmail.com>
-Cc: linux-kernel@vger.kernel.org, phoronix@phoronix.com, redaktion@golem.de
-References: <20241024032637.34286-1-quake.wang@gmail.com>
- <20241024164939.GL3204734@mit.edu>
-Content-Language: tl
-From: metux <metux@gmx.de>
-In-Reply-To: <20241024164939.GL3204734@mit.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-16-dakr@kernel.org>
+ <42a5af26-8b86-45ce-8432-d7980a185bde@de.bosch.com> <Zx9lFG1XKnC_WaG0@pollux>
+ <fd9f5a0e-b2d4-4b72-9f34-9d8fcc74c00c@de.bosch.com> <ZyCh4_hcr6qJJ8jw@pollux> <8d72e37e-9e27-4857-b0eb-0b1e98cc5610@de.bosch.com>
+In-Reply-To: <8d72e37e-9e27-4857-b0eb-0b1e98cc5610@de.bosch.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 30 Oct 2024 08:18:43 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL674Mf5_QcWxEn-oStMx45_VsaQfbN-Qzh3jEtXdsyYA@mail.gmail.com>
+Message-ID: <CAL_JsqL674Mf5_QcWxEn-oStMx45_VsaQfbN-Qzh3jEtXdsyYA@mail.gmail.com>
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lv3+tjKjlmje1+y0wT8cg67WAbrYkVALCR4XIKsc41yPiBGws23
- IXqSq1TaJy6STAWvNua6jyAEqC6ruN7Q0NryhIZAX32/pqHKg59zIaqobl2Mo2/TG6cfxrf
- VfGcJb0XC4ih4DAr7zmwz3qFH5qHodljHf6DjJyIl30hM6l97qbQWzbuyRmsmGWqotI11ZM
- 3Ff/DqSt9WEQsf/rgECdQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OW0ffz0BSJc=;kcDubCnnJcf796fs72Ucirv7Dc5
- Nv/HsKB49VPuZrrLNMW0pe+39Pwt2S8OciHMxIPQwAKfo5BCXXilD+FzlYmgT4YuPqgHcGL8Q
- Rp4zY5K9D3Nrvxa3INin7ZO4YZDfMP1v7uCsAn8qZBKZqcrxfVGSnE2+BQjF/Acsx+OEddsRG
- KsdzR/3fyYWNecIJsNd8tdhbSE0Rr3Z7hmmFYZ6C1aCR4Socx2MzB9vUOP7jlPXhw+aT0iBLQ
- 9wpUXP2YoITa/BZLUkclcQ4oVtNC9vOKr1+GgSdzq684ahzqn5KFXydUj1EBSOvln+ecTPH/l
- xBmrGGZ40W2Vr7Qo9zwhGpNy0adMYB8GmqsdAgVJ5gPHu+sNLFfuKpL4YexY7EELf8NbXh5Cw
- aAt0g8HqPTzf7CwajdPVyGZaWLpZCQZaI02e9cwW+5JvYbqEeMXzSpi5WjEvcBT6SNcH8M6yd
- sXn71/iDi3LHWSAFNstPj0tfwI9C+4HjMea+eejRchOAMEubtrEfGB7NG7nR+T9GEXnE0x6vb
- GcUD6+Ka2hKwFKqvJg24CPzdGqkElDTbvYaGEpvf8qiaicW0pbKz/DLl59n/e+pgdaDAyUGp/
- 52a/a0c28CXqXM9TLXtQdnwYWqsXFoxTUmtWEyhT1kUem+qDrByYj2qAx3Zra+6uYmeJMRTdO
- 0AQLYwwnM1ZWeBzP9PSRpoyInoJrXK9tVmRtJ4RkDk2CnBoAwkr8TOwgZOpb+rIsjZHvMh61O
- vNL/e9se1netpPqoLCyCi7UhePG2GjBWn46J97W7YMJ8IsvgXN5wzI/sIA+n9inSxsDcD/45b
- 6zkfs4lWcpbPL2VjKmnF6qqpqpH/ZEorVUYpd9CKrPAa0=
 
-On 24.10.24 18:49, Theodore Ts'o wrote:
+On Tue, Oct 29, 2024 at 4:19=E2=80=AFAM Dirk Behme <dirk.behme@de.bosch.com=
+> wrote:
+>
+> On 29.10.2024 09:50, Danilo Krummrich wrote:
+> > On Tue, Oct 29, 2024 at 08:20:55AM +0100, Dirk Behme wrote:
+> >> On 28.10.2024 11:19, Danilo Krummrich wrote:
+> >>> On Thu, Oct 24, 2024 at 11:11:50AM +0200, Dirk Behme wrote:
+> >>>>> +/// IdTable type for platform drivers.
+> >>>>> +pub type IdTable<T> =3D &'static dyn kernel::device_id::IdTable<of=
+::DeviceId, T>;
+> >>>>> +
+> >>>>> +/// The platform driver trait.
+> >>>>> +///
+> >>>>> +/// # Example
+> >>>>> +///
+> >>>>> +///```
+> >>>>> +/// # use kernel::{bindings, c_str, of, platform};
+> >>>>> +///
+> >>>>> +/// struct MyDriver;
+> >>>>> +///
+> >>>>> +/// kernel::of_device_table!(
+> >>>>> +///     OF_TABLE,
+> >>>>> +///     MODULE_OF_TABLE,
+> >>>>
+> >>>> It looks to me that OF_TABLE and MODULE_OF_TABLE are quite generic n=
+ames
+> >>>> used here. Shouldn't they be somehow driver specific, e.g. OF_TABLE_=
+MYDRIVER
+> >>>> and MODULE_OF_TABLE_MYDRIVER or whatever? Same for the other
+> >>>> examples/samples in this patch series. Found that while using the *s=
+ame*
+> >>>> somewhere else ;)
+> >>>
+> >>> I think the names by themselves are fine. They're local to the module=
+. However,
+> >>> we stringify `OF_TABLE` in `module_device_table` to build the export =
+name, i.e.
+> >>> "__mod_of__OF_TABLE_device_table". Hence the potential duplicate symb=
+ols.
+> >>>
+> >>> I think we somehow need to build the module name into the symbol name=
+ as well.
+> >>
+> >> Something like this?
+> >
+> > No, I think we should just encode the Rust module name / path, which sh=
+ould make
+> > this a unique symbol name.
+> >
+> > diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
+> > index 5b1329fba528..63e81ec2d6fd 100644
+> > --- a/rust/kernel/device_id.rs
+> > +++ b/rust/kernel/device_id.rs
+> > @@ -154,7 +154,7 @@ macro_rules! module_device_table {
+> >       ($table_type: literal, $module_table_name:ident, $table_name:iden=
+t) =3D> {
+> >           #[rustfmt::skip]
+> >           #[export_name =3D
+> > -            concat!("__mod_", $table_type, "__", stringify!($table_nam=
+e), "_device_table")
+> > +            concat!("__mod_", $table_type, "__", module_path!(), "_", =
+stringify!($table_name), "_device_table")
+> >           ]
+> >           static $module_table_name: [core::mem::MaybeUninit<u8>; $tabl=
+e_name.raw_ids().size()] =3D
+> >               unsafe { core::mem::transmute_copy($table_name.raw_ids())=
+ };
+> >
+> > For the doctests for instance this
+> >
+> >    "__mod_of__OF_TABLE_device_table"
+> >
+> > becomes
+> >
+> >    "__mod_of__doctests_kernel_generated_OF_TABLE_device_table".
+>
+>
+> What implies *one* OF/PCI_TABLE per path (file)?
 
-> These exemptions may not apply in different countries, and for
+It's generally one per module, but it's one per type because it is one
+type per driver. So platform (and most other) drivers can have $bus,
+DT, and ACPI tables.
 
-The *may* - so you aren't exactly sure ?
+While you could have 1 module with N drivers, I don't think I've ever
+seen that case and certainly not something we'd encourage. Perhaps it
+is just not possible to disallow in C, but we can in rust? That may be
+a benefit, not a limitation.
 
-We're still waiting to the exact legislation that's prohibiting
-Russians from taking part in international scientific discourse
-or even just mentioning them in the CREDITS file (that part is
-probably the worst).
-
-And if so, how can Linux still call itself "free software" ?
-Or shall we better call it politware ?
-
-> different sanctioned entities.  I will note that China is not
-> currently attacking Taiwan militarily at the moment, while Russian
-> misiles and drones, some of which might be using embedded Linux
-> controllers, *
-
-*might* be using it.
-
-Do you have any actual evidence ?
-
-And if so, does banning those Russian maintainers has any practical
-impact on the SW running on that drones ?
-
-What's coming next ? Geoblocking on kernel.org ?
-
-> are* actively attacking another country even as we speak.
-
-Sure. Did we ban maintainers from US/NATO when they attacked
-other countries ?
-
-> Finally, please remember that kernel developers don't make the rules.
-
-Unless we're seeing actual evidence of the corresponding legislation
-and how exactly it forbids Russians being maintainers, we all have to
-assume that the LF clique is making these rules.
-
-OTOH, if we have that evidence, then at least every US citizen who
-values free software and free speechs now knows whom to vote against
-in a few days.
-
-In chess that's called a fork:
-
-a) the Linux leadership takes the guilt and is responsible for all of
-this - and thus a danger for Linux community and FOSS as such
-
-or
-
-b) it's pointing fingers directly to the US govt., and so accepting that
-we're dealing with a rogue govt. that's an existential thread to FOSS
-as such and thus needs to be removed on election day.
-
-choose your poison :P
-
-> P.S.  This has always been the case, even before one country invaded
-> another;
-
-Linux didn't exist *before* that. The US is built on genocide and wars
-of aggression.
-
-Just one of many interesting examples: the attack on the spy ship
-USS liberty - coordinated between US WH and Isreal - that was a set up
-to blame Egypt and bring the US into war against Egypt - there even were
-plans for using nuclear bombs (!!!). Other examples are several wars of
-aggression against Iraq, Serbia, etc with using weapons of mass
-destruction. (yes, by UN definition DU munition *is* a WoMD).
-
-Let's be realistic: Russia isn't the only bad actor in the world.
-And "the West" isn't the good guys.
-
-
-Turning the once greatest FOSS project of known history into politware
-doesn't help making peace and stop the dying. It just errects an iron
-curtain and so making things even worse, for the whole world.
-
-
-=2D-mtx
+Rob
 
