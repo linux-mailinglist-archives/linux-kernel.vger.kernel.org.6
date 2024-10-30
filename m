@@ -1,96 +1,135 @@
-Return-Path: <linux-kernel+bounces-388443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B809B5FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:10:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A01B9B5FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:13:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A042A1F21FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDF41C2159A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444E31E260C;
-	Wed, 30 Oct 2024 10:10:43 +0000 (UTC)
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEBA1E260E;
+	Wed, 30 Oct 2024 10:13:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0300194151
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0CA13CF82
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730283042; cv=none; b=frrvVlhdiFI2hly3rDAy3Zzd7DYzBcp7t3mKAujPWNC+xlWMOvcNitKNArGzAXSkMwrNscrtpsvSV/oRmYK3G4OwR2GKig6SKOEwUizyD7vM9kDCyVcdVRQDu+vguUJaczxHszpf8rUneWOmgsimsofmI/jEJub47zyaImaMleg=
+	t=1730283206; cv=none; b=IVvAoBnHRwseT1+x+Q1Z0HNMVwPcTCK859ScDz4skESgsXbX15O78Nenn5admnr0Yy6ocDQgqWdlQ3XoQxUYMtljnFcjxCEvH6pozAWtgDMNL5tmDRQM8tS2WxIkSX2Z8MCasrbEJ4uH1syMHnuBAnMMCRQQEMpRb5KSbsmeDnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730283042; c=relaxed/simple;
-	bh=0fmuAQK2yswMKUsQDSChND7wQl3uHaskzph+iucktoM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u+G/E5L4Vhka23Np5aBrhJcCinX4rhYQKFUJEHYACd2mfhQq0uFf+kWD5/5DBcw6lBlmVTtJVrkptk3q8lFW83kx7TO95cGaCKSp1NFjl6EHUlmJ6CtAL6QetNtSPKf9GiWV1r/mVp6Q1E5zq/Qs2IEpt5wyC5Q8P6M9enYmwQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4XdjYh2L04z4x4pt
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:10:32 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ceb8:3fda:3601:820f])
-	by laurent.telenet-ops.be with cmsmtp
-	id WaAP2D00D4BbGPD01aAPUS; Wed, 30 Oct 2024 11:10:25 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t65eP-005zQD-1o;
-	Wed, 30 Oct 2024 11:10:23 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t65eh-006Qar-Di;
-	Wed, 30 Oct 2024 11:10:23 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Kiran Patil <kiran.patil@intel.com>,
-	Martin Habets <mhabets@solarflare.com>
-Cc: linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] driver core: auxiliary bus: Spelling s/pecific/specific/
-Date: Wed, 30 Oct 2024 11:10:22 +0100
-Message-Id: <f232a09c377cbe11c81b4ab69d4e7bf016e746c8.1730282860.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730283206; c=relaxed/simple;
+	bh=d5UJW7t9fo/lwYCkIPNEd46l8GiWAIsHzZ3+8jA04tU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PR9TLtyvZSNXOfoWXYxhbzL4C0eI5k88JPsnUWQ1Q8rM2Y1uxPq9Rsp8iDw3RGTSWNCJk4cRwhAwV39O447KzQrssHvW2d5BYg25b4UaG4rjCfhzsUkjgwoxiRn/YJxnEkF6XozI+ySt62A9U7v0uVU7ln38kWdkcdTp2MC+A04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t65h1-0001bM-Mj; Wed, 30 Oct 2024 11:12:47 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t65gx-001B9S-3A;
+	Wed, 30 Oct 2024 11:12:44 +0100
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 837433622F0;
+	Wed, 30 Oct 2024 10:12:43 +0000 (UTC)
+Date: Wed, 30 Oct 2024 11:12:43 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v1 0/9] Add Nuvoton NCT6694 MFD devices
+Message-ID: <20241030-industrious-sidewinder-of-strength-efbe4a-mkl@pengutronix.de>
+References: <20241024085922.133071-1-tmyu0@nuvoton.com>
+ <20241024-eminent-dancing-narwhal-8f25dd-mkl@pengutronix.de>
+ <CAOoeyxV4K=jR+tofeQtsMB7+smuu+Ghas5Tqfx4JvhuVK8dXrA@mail.gmail.com>
+ <20241025-modest-hasty-angelfish-1e9193-mkl@pengutronix.de>
+ <CAOoeyxU9VwsM=mRZy5AtjH=V3iSGQxkKw18qL+yeUxkh1OVHgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="frl5xcswfbpqjn4v"
+Content-Disposition: inline
+In-Reply-To: <CAOoeyxU9VwsM=mRZy5AtjH=V3iSGQxkKw18qL+yeUxkh1OVHgQ@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Fix a misspelling of the word "specific".
 
-Fixes: 7de3697e9cbd4bd3 ("Add auxiliary bus support")
-Fixes: e1b5186810cc7d4e ("Documentation/auxiliary_bus: Move the text into the code")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-The documentation was moved and reformatted, so I used two Fixes tags.
----
- drivers/base/auxiliary.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--frl5xcswfbpqjn4v
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 0/9] Add Nuvoton NCT6694 MFD devices
+MIME-Version: 1.0
 
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 69b7c93613d6dc00..afa4df4c5a3f371b 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -92,7 +92,7 @@
-  * Auxiliary devices are created and registered by a subsystem-level core
-  * device that needs to break up its functionality into smaller fragments. One
-  * way to extend the scope of an auxiliary_device is to encapsulate it within a
-- * domain- pecific structure defined by the parent device. This structure
-+ * domain-specific structure defined by the parent device. This structure
-  * contains the auxiliary_device and any associated shared data/callbacks
-  * needed to establish the connection with the parent.
-  *
--- 
-2.34.1
+On 30.10.2024 16:30:37, Ming Yu wrote:
+> I am trying to register interrupt controller for the MFD deivce.
+> I need to queue work to call handle_nested_irq() in the callback
+> of the interrupt pipe, right?
 
+I think you can directly demux the IRQ from the interrupt endpoint
+callback. But handle_nested_irq() only works from threaded IRQ context,
+so you have to use something like generic_handle_domain_irq_safe().
+
+Have a look for how to setup the IRQ domain:
+
+| drivers/net/usb/lan78xx.c
+| drivers/net/usb/smsc95xx.c
+
+But the IRQ demux in the lan78xx only handles the PHY IRQ. The ksz
+driver does proper IRQ demux:
+
+| net/dsa/microchip/ksz_common.c
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--frl5xcswfbpqjn4v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmciBpgACgkQKDiiPnot
+vG8nUQgAjlFmdH0l/1kIMmisd2Oil+MBaXTjGPuahpQda7WUz6pZi56UHxgat+ZF
+Hr/eYxOz73BjWGuXCp3FfL1Mqp5NY66h0ZYdjgItMGN/0Dic5naFg/RnfniUnSUE
+rPYn+MI4K/R/n+O7ZFzg6LTU5isPKsCfmJhD1M4WXpd/QRX7Jv5yo6qdtlfwYFM2
+sDX5CRR4iyfcdaM4kyF/JCfhlzYqDBEQG2tLdJfU8zlqm8SW+CNGLDs7uWOIguaA
+SINbHFo2E4UONkdEhDkgn4seDDr4ykSKfazN/YbvhimF3862GtEUbeK7R8l8SJN6
+r76RxQK4oMaCy7/ydWFpcaOqfWG4qA==
+=BTYV
+-----END PGP SIGNATURE-----
+
+--frl5xcswfbpqjn4v--
 
