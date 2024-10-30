@@ -1,234 +1,232 @@
-Return-Path: <linux-kernel+bounces-388297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CF79B5D59
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:05:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72619B5D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13AA72837DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:05:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399BF1F23BA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AB01E04BC;
-	Wed, 30 Oct 2024 08:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0291E0B95;
+	Wed, 30 Oct 2024 08:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nnvI9yec"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="FCqK6955"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18041DFE3F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B915B1990B3;
+	Wed, 30 Oct 2024 08:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730275528; cv=none; b=UMWYov/tIut0X2lTXwYey0ZfEHcKPKdGD2SmisaNE+s/hpSAq2uxzN46ge4iJslnpaNsaOeXlBh3wjaN/6wwu5KQcReA04ehhIFhOjHXsakvrfvmScpb0XjXWWD6reoM1koL6Mv5Ll94LpM0zoz2ROhlgtU8xWQwqawG6wVBals=
+	t=1730275773; cv=none; b=t/JUoXRfPODnGs+y/s7jFSxvS95hSJAjOA1MrMTq3IpnFN4zKof5xUMLeIHiuvT88MnyiEnLvshWav7CFR29wGRd970Wb3yfoVI56iJkGva1pE4Kzp7eglswFHqs/Ep7cUDZkIGSMevoikqRHeMIaujThHXLFYH4Vv1HCrtpcaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730275528; c=relaxed/simple;
-	bh=xC9SDy6NXbn2MbGBsoWI1wrFZt4s6GO3mVUzc8cbiTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XYCpnuN48F2IB89g0eBA7+shwre0OZJU/SAWwLo6kmk5zkG93QMJMZotJacY9WhE3B19mRNbuvC95oJl9Kc/ho7LPTn7umi8jcck3jiPPhCJknEpKZmsb+Yo05C7B7fwYfg+uvYFau0GL1+xSlQTvpaIHec9zMz/ISraHrJszJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nnvI9yec; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso1869405f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:05:24 -0700 (PDT)
+	s=arc-20240116; t=1730275773; c=relaxed/simple;
+	bh=Hgq90Mi2xq1WygdUx6Jv674dZqV4mLdTkACqF5QjQmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gU+TO28FMv8GLSSyJck5qegv7688naCO9hoVxQbvvSnq/XN80n5UvDvvASkH3oRraUnypII9X9SgjCdgH7RvkWJdBh5ClesHSk76254R01Api+nS9XhlgpSfFhybWVegnELztt69ntOPzdyQ4IN9qN4I6J2h6XQIas99X5s+RVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=FCqK6955; arc=none smtp.client-ip=212.227.126.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730275523; x=1730880323; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PBSXK7Wg5WPAyNzi9dlLEOve6W9CQsYBAJ6iQX8H4CY=;
-        b=nnvI9yecWX5PYC3ROyrEzSdvaXYbh7IfV079+W21tejbFQoM4BaqBmsZmWObDM5VI6
-         vUSuZhvvlZR4NoQ2R8xOy3dgdzqljy53SphyB2NlEeLPm4EpCw3ODPI6Q/1LQFjxCKcj
-         y5+vt7IWx89lMtE0SS+aoR+NgRF9XlKlpgxsMZzUO0jY5t/b6J0HbTOLr8XRhfycg5lU
-         oYdTvJxZn/pefvFuccvwSkzdVdPlgH4yxFGg+O6ntwehHjKt5PZIKpXYBPCNfP5hSJZN
-         e+z6vYGHGjfmEZyY9WSZAhztY141Cj1Zd2rMPlInz75nFPQuydfgJxp9B9H9/asI0mgx
-         MyMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730275523; x=1730880323;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PBSXK7Wg5WPAyNzi9dlLEOve6W9CQsYBAJ6iQX8H4CY=;
-        b=rQfk755FNxs0LBl2lO8SgOcZ2Soc073Co0DJdMjqf1umfRkIU7xeaAJ6ZOFMgNjNRu
-         55LowSoL5T5li2CYe0VkQE38a9BxF3xB20rMlY99UUC1UCFp7qjHAp7mVbYb57HzIwjL
-         yuH3zNQp1+t3dOtOhIFZWHzNCe5jzFGFgnzAyixNF5140x56dJs1pIUOwNWzw7uGPxSt
-         SBkfUz8Cgd5rIi9Otv4O7eZHi92soYecRjZPKXv/fc79J3SJoYGFJtsyLJ/7w30u1Smi
-         sIK92AlhDugbZVuuhdHVsp+7VmczeL0oxnMRh3lx1gkvp6enomQ1kPd2elzWz6AU5teD
-         LoUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX70HpGiTvPVfbMwCoEDGOJYtwOp/j5CwbqGjw3ohHtpKK/rWzfRZo1XwekE7s+aas9hMP0LPnTmMHU9o0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU+nre+9ZY2tratxdwfgKaLJJOI4ci+hlGBdhKrF3/C9d7Dftp
-	k2uWcGWSvEx2hx9B+G+n8aBvqtM3x4O/Rlyk9/rx95AqhizHPnGOuMezJuTslJ4=
-X-Google-Smtp-Source: AGHT+IGceO7R29gh2xhL8jB1UfhwxoZLLZgd3BfsnBexJNOLf5xxbem07mn/P4nQljDwmtDKiKtHBA==
-X-Received: by 2002:a5d:484b:0:b0:37d:3705:84e7 with SMTP id ffacd0b85a97d-380611721b4mr13268064f8f.17.1730275523040;
-        Wed, 30 Oct 2024 01:05:23 -0700 (PDT)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d84bsm13254625e9.30.2024.10.30.01.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 01:05:22 -0700 (PDT)
-Date: Wed, 30 Oct 2024 09:05:21 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Guillaume Stols <gstols@baylibre.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] pwm: core: export pwm_get_state_hw()
-Message-ID: <5nhyokdabeuw73btvkyyvoohbnqqyxpe64dxkrpwa4jvdpdqjr@zmpfnngcceq3>
-References: <20241029-pwm-export-pwm_get_state_hw-v2-0-03ba063a3230@baylibre.com>
- <20241029-pwm-export-pwm_get_state_hw-v2-1-03ba063a3230@baylibre.com>
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1730275754; x=1730880554;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=ggSRrICdiwdMr2YdL9EDtoZ4FIhVMjh2oL4+lZPbHP8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=FCqK6955Ea2BQ75YwkUJwx7ap05g0iSXVyUCtlu6TQKpjSESPJ4jCW4pJ1Vfydlf
+	 e8ixDVGQj/5QTvpCZWHmJouAjIWt4k+Oc55LenZ8EX15vzN9AFfq808y2bfoW1/AM
+	 oewiYDorv2GHPX1vqvkZyzpb61T2c/yrEx+s2w+ksDizmFWf3doN+0tC5JK7o3YOJ
+	 yDfMH85WGFC3cQOsORfBXTHHG6dutLCpq6oP5H2EjbEB55tiMciZnd+w8NYOk1oKQ
+	 TntwJFOO9Au6TKBQwT6LD93A/BvOAJAY9G5nl6e90Y0ROtup+Cy7SKo06KnxgS603
+	 F0RjRL9Lb74T6g7Ugw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([62.226.38.42]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1M9Wqa-1tBa4z46fk-00BOop; Wed, 30 Oct 2024 09:09:14 +0100
+Message-ID: <1546c4f8-7d4e-41db-9ac6-ddb6284697e4@oldschoolsolutions.biz>
+Date: Wed, 30 Oct 2024 09:09:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="prvkimffi7gaxyfc"
-Content-Disposition: inline
-In-Reply-To: <20241029-pwm-export-pwm_get_state_hw-v2-1-03ba063a3230@baylibre.com>
-
-
---prvkimffi7gaxyfc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
+ definition for WDK2023
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Merck Hung <merckhung@gmail.com>
+References: <20241030-jg-blackrock-for-upstream-v5-0-830c938437ad@oldschoolsolutions.biz>
+ <20241030-jg-blackrock-for-upstream-v5-3-830c938437ad@oldschoolsolutions.biz>
+ <ZyHiGlDnC8uqk_LG@hovoldconsulting.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <ZyHiGlDnC8uqk_LG@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/2] pwm: core: export pwm_get_state_hw()
-MIME-Version: 1.0
+X-Provags-ID: V03:K1:yCLLEEpQSYb4eJnXYvApfEHM6Md1lRr0/Nag0EeEeiGFDrAp/Gx
+ OS9Im6qOndFpBgmGgfEDYlHn49Sc06VW3WW+cVcTmo2Tic9dEgNZQ1XYNS6je/YsYBJoLz4
+ kX74pKOeZKltAs83hFa/gyjoy+49x2cgQry6MOaBwkIJEhU7jEYXmySc68Glc9f9Sro8DXp
+ /BPpv3Ec33sDK4WiNiNVA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:eo97IPTglpI=;QBvD+X1rSjgWzZzjntt/vUwQQbf
+ yCzB6qm/Av9i4XShcqbLHNX3KoPtQ3IwIP6Gr6yP3DNHwY6puPK5/Gh+wajj4r2dtqHM9CeVr
+ nmFrAcq7ajj79mVwbbiKatmsNjiNjv16fHO/rdY0lq/Uc5OvFPbuFwLQlIPGbNZWOagjwVw0b
+ foGwCTY3fRBzkpGzBsY5Tca3+nrk9m13M3loQmKJLENfoedWkIXNZemuxhqDfhp9NSQhxJvrT
+ Y1EHBuzBUUpNla0+flN5K8LHeohyakD+Y1sWidu2l+R0SVDkphAAAPI8/TxMIFvG06KxnqqAH
+ rbby4ueVXz/Hz2vhsUnYsf7IaMdFjQgT0y8TzxfMT2Q5gxT+zgYiAdGud1Jl5Eep1DqqxC5zK
+ rx5ngG8z96J3lTKBkDdeOaX1p/+dG5fCYLq9NL7cQFOMhrVTVR1WJz9fgrf8iKar3FWRZgX25
+ A8Kh7ofehMy8amoP2eC6CsIMs8a+cdbJvc2j086+JL3wYtuh9oyUM0JupUxF59f2buDH9ye9M
+ R0YKFS7sMGxFe3JPj1rOKzTFOoWVZUZSAN5DCMSLqFTLF0k5WrUMPKMljLjfH8oGxbaFcgmSQ
+ KVkeotydCg6gBdy7iOAXF1XKVg8shGFvSfsVks5ORUnxM2iE2dxxZsHHA0dAwbyP8RpSW2nLc
+ H/vM0e0rpxeYuweXZ1yeXyGcaie1V2whYEEQ2Bel8aBIB/rTSkb/lOpUoel94r+VPMoVhy/4M
+ ooI1gmBpfv/2MAaa+ySc5qVTUPW5z9V4Q==
 
-Hello David,
+On 30.10.24 08:36, Johan Hovold wrote:
+> On Wed, Oct 30, 2024 at 08:09:21AM +0100, Jens Glathe via B4 Relay wrote=
+:
+>
+>> +&pcie2a {
+>> +	aspm-no-l0s;
+> There is no such property in the binding (or driver) and L0s is disabled
+> for all controllers on sc8280xp.
+>
+> (I think I used a property like this in an early version of the patches
+> that ultimately disabled L0s however).
 
-On Tue, Oct 29, 2024 at 04:18:49PM -0500, David Lechner wrote:
-> Export the pwm_get_state_hw() function. This is useful in cases where
-> we want to know what the hardware is actually doing, rather than what
-> what we requested it should do.
->=20
-> Locking had to be rearranged to ensure that the chip is still
-> operational before trying to access ops now that this can be called
-> from outside the pwm core.
+will remove (all of them)
 
-Good point, I didn't notice that in my review of v1.
-=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->=20
-> v2 changes:
-> * Dropped __pwm_get_state_hw() function.
-> * Reworded commit message.
-> ---
->  drivers/pwm/core.c  | 40 +++++++++++++++++++++++++++-------------
->  include/linux/pwm.h |  1 +
->  2 files changed, 28 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 4399e793efaf..ccbdd6dd1410 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -718,40 +718,54 @@ int pwm_apply_atomic(struct pwm_device *pwm, const =
-struct pwm_state *state)
->  }
->  EXPORT_SYMBOL_GPL(pwm_apply_atomic);
-> =20
-> -static int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *st=
-ate)
-> +/**
-> + * pwm_get_state_hw() - get the current PWM state from hardware
-> + * @pwm: PWM device
-> + * @state: state to fill with the current PWM state
-> + *
-> + * Similar to pwm_get_state() but reads the current PWM state from hardw=
-are
-> + * instead of the requested state.
-> + *
-> + * Returns: 0 on success or a negative error code on failure.
-> + * Context: May sleep.
-> + */
-> +int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *state)
->  {
->  	struct pwm_chip *chip =3D pwm->chip;
->  	const struct pwm_ops *ops =3D chip->ops;
->  	int ret =3D -EOPNOTSUPP;
-> =20
-> +	might_sleep();
+>> +	max-link-speed =3D <16>;
+> That's pretty fast. And not supported as this would indicate PCIe
+> Gen16...
 
-Maybe this should be better
+oh oops. Future-oriented ;) Will change to <4>
 
-	if (!chip->atomic)
-		might_sleep();
+>> +
+>> +	perst-gpios =3D <&tlmm 143 GPIO_ACTIVE_LOW>;
+>> +	wake-gpios =3D <&tlmm 145 GPIO_ACTIVE_LOW>;
+>> +
+>> +	vddpe-3v3-supply =3D <&vreg_nvme>;
+>> +	vdda-supply =3D <&vreg_l7d>;
+>> +
+>> +	pinctrl-0 =3D <&pcie2a_default>;
+>> +	pinctrl-names =3D "default";
+>> +
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&pcie2a_phy {
+>> +	vdda-phy-supply =3D <&vreg_l4d>;
+>> +	vdda-pll-supply =3D <&vreg_l6d>;
+>> +
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&pcie4 {
+>> +	aspm-no-l0s;
+> As above.
+>
+>> +	max-link-speed =3D <2>;
+>> +
+>> +	perst-gpios =3D <&tlmm 141 GPIO_ACTIVE_LOW>;
+>> +	wake-gpios =3D <&tlmm 139 GPIO_ACTIVE_LOW>;
+>> +
+>> +	vddpe-3v3-supply =3D <&vreg_wlan>;
+>> +	vdda-supply =3D <&vreg_l7d>;
+>> +
+>> +	pinctrl-0 =3D <&pcie4_default>;
+>> +	pinctrl-names =3D "default";
+>> +
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&pcie4_port0 {
+>> +	wifi@0 {
+>> +		compatible =3D "pci17cb,1103";
+>> +		reg =3D <0x10000 0x0 0x0 0x0 0x0>;
+>> +
+>> +		vddrfacmn-supply =3D <&vreg_pmu_rfa_cmn_0p8>;
+>> +		vddaon-supply =3D <&vreg_pmu_aon_0p8>;
+>> +		vddwlcx-supply =3D <&vreg_pmu_wlcx_0p8>;
+>> +		vddwlmx-supply =3D <&vreg_pmu_wlmx_0p8>;
+>> +		vddpcie1p8-supply =3D <&vreg_pmu_pcie_1p8>;
+>> +		vddpcie0p9-supply =3D <&vreg_pmu_pcie_0p9>;
+>> +		vddrfa0p8-supply =3D <&vreg_pmu_rfa_0p8>;
+>> +		vddrfa1p2-supply =3D <&vreg_pmu_rfa_1p2>;
+>> +		vddrfa1p8-supply =3D <&vreg_pmu_rfa_1p7>;
+>> +
+>> +		qcom,ath11k-calibration-variant =3D "volterra";
+> IIRC the other calibration variants use all upper case here. And is
+> Volterra sufficient? No vendor prefix or similar needed?
 
-but I'm open to keep it unconditional until someone wails about it.
+Yes they are of the pattern VV_Mmmmm
 
-> +	guard(pwmchip)(chip);
-> +
-> +	if (!chip->operational)
-> +		return -ENODEV;
-> +
+V =3D Vendor (uppercase)
 
-Huh, that means that __pwm_read_waveform() et al were called before
-without holding the chip lock. How embarrassing. I think nothing bad
-happens (because at this stage the PWM wasn't exposed to its consumer
-yet and so no concurrency could happen), but still.
+M =3D Model (Model name mixed case, no pattern visible)
 
->  	if (ops->read_waveform) {
->  		char wfhw[WFHWSIZE];
->  		struct pwm_waveform wf;
-> =20
->  		BUG_ON(WFHWSIZE < ops->sizeof_wfhw);
-> =20
-> -		scoped_guard(pwmchip, chip) {
-> +		ret =3D __pwm_read_waveform(chip, pwm, &wfhw);
-> +		if (ret)
-> +			return ret;
-> =20
-> -			ret =3D __pwm_read_waveform(chip, pwm, &wfhw);
-> -			if (ret)
-> -				return ret;
-> -
-> -			ret =3D __pwm_round_waveform_fromhw(chip, pwm, &wfhw, &wf);
-> -			if (ret)
-> -				return ret;
-> -		}
-> +		ret =3D __pwm_round_waveform_fromhw(chip, pwm, &wfhw, &wf);
-> +		if (ret)
-> +			return ret;
-> =20
->  		pwm_wf2state(&wf, state);
-> =20
->  	} else if (ops->get_state) {
-> -		scoped_guard(pwmchip, chip)
-> -			ret =3D ops->get_state(chip, pwm, state);
-> -
-> +		ret =3D ops->get_state(chip, pwm, state);
->  		trace_pwm_get(pwm, state, ret);
->  	}
-> =20
->  	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(pwm_get_state_hw);
-> =20
->  /**
->   * pwm_adjust_config() - adjust the current PWM config to the PWM argume=
-nts
+> I think you need to get this acked by the ath11k maintainer (Kalle Valo)
+> first.
 
-I applied that patch to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
+I will cc him.
 
-Best regards
-Uwe
+The current (?) behaviour of the ath11k driver is that when a board
+string with a variant is not found, it will search again without the
+variant and take the one it finds. So it will work with degraded
+performance, but it will work.
 
---prvkimffi7gaxyfc
-Content-Type: application/pgp-signature; name="signature.asc"
+>> +	};
+>> +};
+>> +&remoteproc_adsp {
+>> +	firmware-name =3D "qcom/sc8280xp/microsoft/blackrock/qcadsp8280.mbn";
+> Shouldn't these paths reflect the DMI values as on the X13s?
 
------BEGIN PGP SIGNATURE-----
+Will check. Names were changed in the last iterations of the patch.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmch6L4ACgkQj4D7WH0S
-/k5KDwgApe8+6qRz714F7VZDGYPSHpvJlgBvVHDUxARmJz3UbLD6bxux2z16SCft
-fNuGMLcyuEZUVDDAgkJbJisOBGmO3OdRutS35F7tFTCNlx7Ge2x2ngc08ix32RY+
-/6+3EDbDZvHGv0xvO+cSTv15u6BNN2kBri5qjyw+oH3bZEUAmcXW/+0ZIOXYTOLK
-VgpkVAu3/cWfqbeMnxesCpc+SCkJuQ5udpEYgEW0dJLB7K1pdorUxRsKE9YDjpSC
-SNkW0IdlIm1NFx8ExGUuAwY8bijNHffCSTWjz0HZFL+yf1d5MfWOosXi+n85FAdf
-s0XQ/2Osvsw9bIEeijXdOOai73gpFA==
-=Z/Pr
------END PGP SIGNATURE-----
+dmidecode says:
 
---prvkimffi7gaxyfc--
+Handle 0x0009, DMI type 1, 27 bytes
+System Information
+ =C2=A0=C2=A0 =C2=A0Manufacturer: Microsoft Corporation
+ =C2=A0=C2=A0 =C2=A0Product Name: Windows Dev Kit 2023
+ =C2=A0=C2=A0 =C2=A0Version: 124I:00097T:000M:0200000B:07
+ =C2=A0=C2=A0 =C2=A0Serial Number: 0F01C4F22373F6
+ =C2=A0=C2=A0 =C2=A0UUID: e4a4662c-8367-75d0-a54f-1d04bd404860
+ =C2=A0=C2=A0 =C2=A0Wake-up Type: Unknown
+ =C2=A0=C2=A0 =C2=A0SKU Number: 2043
+ =C2=A0=C2=A0 =C2=A0Family: Surface
+
+>
+>> +&usb_0_hsphy {
+>> +	vdda-pll-supply =3D <&vreg_l9d>;
+>> +	vdda-phy-supply =3D <&vreg_l4d>;
+> The binding does not include a vdda-phy supply (same for the other HS
+> PHYs).
+>
+> Where did this come from?
+
+ From my "research" on the ic block diagram where they were defined
+(outer and inner block). Will remove to X13s levels.
+
+with best regards
+
+Jens
+
+>> +	vdda18-supply =3D <&vreg_l1c>;
+>> +	vdda33-supply =3D <&vreg_l7d>;
+>> +
+>> +	status =3D "okay";
+>> +};
+> Johan
 
