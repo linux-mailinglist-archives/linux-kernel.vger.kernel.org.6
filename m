@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-388453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E639B5FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:19:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C069B5FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B381F21268
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836C02817E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40BA1E5705;
-	Wed, 30 Oct 2024 10:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56DA1E572A;
+	Wed, 30 Oct 2024 10:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VmDcmZMK"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3bbbHwrT"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4F51E3DEA
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0EB1E5016
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730283519; cv=none; b=IMF5pJWZFP+IZCtI1zWJL7QNpsng6H3o9akPAlUGS/sGq5Ge0abbBQAmg6Kg3bAg6haloVdCHP44JE0BMJ6T0OukLzgRYvd32ysslzGBiugYmUd7DOT3iN0wcjEU0SjpQ5MAgbAwY/aepheScptO/mU5NPMJxEBakbLjcO2u6k4=
+	t=1730283521; cv=none; b=ObbDopxZ7PCkwKwNx+xxsLqFh6tNBOPS7eFqEMZf99LJeX5NNAXv6hykDfR9DOjQoqBT43bvbNVNcqrjCrQqgvnIoNa6sq1TOTItt6G0rAJwodIwga+L+BLNa4N+8Fp6IIz1oBrDt6abXUn7siIwlA0fv6dlDEPDaU6uhgUFAGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730283519; c=relaxed/simple;
-	bh=EJDV0UcRLRtukeeXujLCdw9t54fk2oRnnAGnXfTk23g=;
+	s=arc-20240116; t=1730283521; c=relaxed/simple;
+	bh=RPurPv0asBGPwsLFH371fmYej/KST3NPJ6PSd9ncPeg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bw8/mV2VzpNFwtYvhwmkpaRkeFS2O6nfoBUT6lZh5CbSZsT3B/kELIID+tDJ/T+wzd8EGfIGx1M8k0ZjksDDfDveAl3ktrRIloIpDugYpWLus8PCu7uP8SewdG7DHVawMf8aCouSjXPPGVKfqSD911WPX9Pb2ZolkJLuc7BTCqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VmDcmZMK; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=aSyXmNZvA9GEADMnr9X+BhVgPYXgiTr6LhfmMXu5SxIQ2gsmcBZ9/XbHnvvxILQKpUX6ZFOBWXdrv/tP9NAsa5UTRNYyDkxdE1TufCmZW8iFrIYTAg9XwGxBfrxDwtEfbXQG9yykMI+r8MYkfE1RY+dglX+RkrH00gzkbwhED9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3bbbHwrT; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-37d49887a2cso459025f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:18:37 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e370139342so120135097b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730283516; x=1730888316; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730283518; x=1730888318; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=94qiCXWUuDIydTk8X4LSwVPIw3rMHWBfIZEjN6jzQTM=;
-        b=VmDcmZMKjqoyJiKdp76ZJICit277q4XWZaU5QBASwO4Af8so1MImayERtsJGzwb18P
-         Dfofny63TzLi9ntgbgF/KbcmlfEyCBw5aKCXDVop7rF5yYRdZJ/uiI49QBrLVrsgT3zR
-         QzI+9yJptTr/36/gYfDWJvAeIiPXp+wOA9jxBd+aUDaVTAFHqe6rPrmupIHFdHxXn98a
-         tN5stXo+zMvqAqyW9G/mQv9iv/Ixfes65pTdO554OGdu86T2U4V3zqqYNXh8IRjLbLuO
-         GldvR7W+8QtRElmS9PPkk/8ady1JyBTo/2t6eqi8kdYlwToSqMT3dOuE7RIDKbLNPlC8
-         nRJQ==
+        bh=0lkeE3D8+J4OcDtDEGiGIXOA7IIy99qfhKrBIJpYyvY=;
+        b=3bbbHwrThLJAB5HRcd65d41fnnF7CD53YLam9nipce6GwRuiDh/obheaJSKA2Gkg2k
+         kYGJfqy1SEo3mHA/g6l6ZPwOer2NMFILx3TXH2ksyf87AVEjND7O+b2JPufrNPSh6lST
+         u8pfgr69z3hXJoXp6VChprFtzJoZT0XAs0F2wvZuLoG69/Cb5MCjISXG1WWBi6cvd99y
+         3w5JHHkap2fpYWnXlVZUmZktBkg7j6UMGovD2IAjcTELieDI46tgE5ZGn0lYdgzIjge/
+         VESgLNfnKJ/u3XaI/PykSyyRQ4G9FnVg9lztu2WaUudtZ0Mo0ntYxK7gWTApZzJ7+a36
+         a0dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730283516; x=1730888316;
+        d=1e100.net; s=20230601; t=1730283518; x=1730888318;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=94qiCXWUuDIydTk8X4LSwVPIw3rMHWBfIZEjN6jzQTM=;
-        b=PvW3INrSPkP8bUJHNKKgfIigpsLXrXMnTC2pYPoqOJHcbOXglSsYYccpoa/hHLowv3
-         jtkmCdubpKWo8a94UZ7qCWL4LynsavyDYD/ahNRgqUo6vU6lRogLsGcB5mPUj7Bzf15n
-         a5tPdDnL4H8KoKsKFm9v7Xvnsf+zJvgjMadu/XnImZnb2QrUiU5BjRjR44Gcqrm3QQJF
-         PcTbnwelTK9uLIEi8X5bWnEg450GkRU4n0INuR4JB2g/9KIWqGDMpcPhs2Mt0OQ3U7bX
-         bi/YneImbYtSZqNP0GGhcd9rFeoLWSvFcGiT9FMn9N6avnQz9D5f5XU3lRlV5vqZdWBv
-         nD4Q==
-X-Gm-Message-State: AOJu0YzcEGVqp7yrWtIWjvx3rq3CL+iu7GY98+VsmEonIDyj7lnogaMD
-	8wlt3Xy0bJV+CXmgL64wAl/JddK6AeqROX/55sGHo24UMp7U/jRyAOgmuHSTz/Ar5QgL8A==
-X-Google-Smtp-Source: AGHT+IGgZ0OVXp37+8lR94Wvdy5onp5gAtpP8orinG9/1ZVyPMEa++a9r+U9/Ky9ZN9he1zyQEnHX9oP
+        bh=0lkeE3D8+J4OcDtDEGiGIXOA7IIy99qfhKrBIJpYyvY=;
+        b=Ztwl9yWwskDe3iC60zj1NcHmIGnLgPyHJTNAcuiJVW+y9iBtHgx7VQPUdBvGP6fPNu
+         e8DqbFy0mqs+Kab5uDEwrfTHjkzvj+PPWWq7ep3vUtqLrwK5yRmXN3kSm3NrekUETJr0
+         K5gKY8hRxRmNnjmEhLWf/vh2X6+nKRWRm+r4sEOYmMvGAFEyDM1H5JJoFPpXQdvys5wN
+         gP3VMC0Ob7s5u8iMNnIldQ5MUvq09H5de706pyh3nyb3AJ407XO1h6oC6iJ0j/IwUF1+
+         KCASGIi43g1wfwNb+X4AocTdODVpT/qu7CAC3T9Y9PzybNJ79D7iWRAMaZZqHB/lNl5x
+         I4vw==
+X-Gm-Message-State: AOJu0YwcDSV6ZFwVzRTidYJNz1i0RVZwO1uZLHmreCec6iYUK3pn6lvU
+	IFjRb2KGPrQmLGORxyjUbYQHbRQjsdZeSJl7Qo9QfEtoFnEDNBpoabcyVno1CieLygdgbQ==
+X-Google-Smtp-Source: AGHT+IGYWIKtsISSLmZozooMwTQpsr6uP8eXuzu1h8K7n8sXmZ2Z4/5RcAprTfRvs8MnaiExmLO2GGiB
 X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:adf:ee0e:0:b0:37d:3878:ff42 with SMTP id
- ffacd0b85a97d-381b97ee8ffmr2531f8f.5.1730283515784; Wed, 30 Oct 2024 03:18:35
- -0700 (PDT)
-Date: Wed, 30 Oct 2024 11:18:08 +0100
+ (user=ardb job=sendgmr) by 2002:a05:690c:6383:b0:6e2:ad08:4924 with SMTP id
+ 00721157ae682-6e9d8aacb2dmr10859077b3.4.1730283518114; Wed, 30 Oct 2024
+ 03:18:38 -0700 (PDT)
+Date: Wed, 30 Oct 2024 11:18:09 +0100
 In-Reply-To: <20241030101803.2037606-10-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,14 +71,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241030101803.2037606-10-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1441; i=ardb@kernel.org;
- h=from:subject; bh=+QSrRJ4X17z2RWinz87UiXL8BkQ2pVlA6A7QdKOdXQc=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIV2J/dGURw+Pr1WzLuW0DhebMaGOi/GdYk5ZvZjG40duz
- L8EU5s6SlkYxDgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwEQKNjL8d+ZfneP6eJnzfTPJ
- BLYfizuv/fe2Onfz2p0yJsuvOo6x9xkZpize3nbJzPLyKhHxxisTPeu/aiYZTZp5IUhcOOVRm/8 vVgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2720; i=ardb@kernel.org;
+ h=from:subject; bh=KrPhtIjOJOdsjzLuM0pYgTBMlukJZDWck1DRFJ4KhOY=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIV2J/fEK9kaevBx3Dv2e4nzmCa9FlknPUUlkW5NUe/yEu
+ OU974iOUhYGMQ4GWTFFFoHZf9/tPD1RqtZ5lizMHFYmkCEMXJwCMBGlXwz/PU99XLJ41767Ozwz
+ bmYfFnoUeIDj3XOLCeJnjs6eP+302ccM/xTyTxXuvDnz4OW0kshvCzneJLwXODqh6kHH7x95bku TGpkB
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241030101803.2037606-14-ardb+git@google.com>
-Subject: [RFC PATCH 4/8] arm64: Kconfig: eliminate 4k/48-bit VA combination
+Message-ID: <20241030101803.2037606-15-ardb+git@google.com>
+Subject: [RFC PATCH 5/8] arm64/Kconfig: Drop support for 47-bit virtual addressing
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
@@ -89,44 +89,66 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Now that LPA2 is supported seamlessly, using alternatives patching where
-appropriate to fall back to 48-bit virtual addressing when running with
-4k page size on hardware that lacks LPA support, there is no longer a
-need to keep the separate 48-bit VA size configurations. Note that LPA2
-support can be overridden at boot time by passing arm64.nolva on the
-command line, and given that no LPA2 hardware exists yet in the field,
-now is a good time to make this change.
+Drop the separate 47-bit virtual address space configuration, which is
+identical in practice to 52-bit VA configuration on all 16k pages
+capable hardware currently in the field. For future hardware that does
+implement support for 52-bit virtual addressing, this mode can be chosen
+at boot by passing 'arm64.nolva' on the kernel command line.
+
+This reduces the number of configurations that need to be supported and
+validated.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/Kconfig | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/arm64/Kconfig | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 6a73fd61b4aa..099b1a825b9f 100644
+index 099b1a825b9f..7df7d24c767d 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -382,9 +382,8 @@ config PGTABLE_LEVELS
+@@ -380,7 +380,6 @@ config PGTABLE_LEVELS
+ 	default 2 if ARM64_16K_PAGES && ARM64_VA_BITS_36
+ 	default 2 if ARM64_64K_PAGES && ARM64_VA_BITS_42
  	default 3 if ARM64_4K_PAGES && ARM64_VA_BITS_39
- 	default 3 if ARM64_16K_PAGES && ARM64_VA_BITS_47
+-	default 3 if ARM64_16K_PAGES && ARM64_VA_BITS_47
  	default 3 if ARM64_64K_PAGES
--	default 4 if ARM64_16K_PAGES && (ARM64_VA_BITS_48 || ARM64_VA_BITS_52)
--	default 4 if ARM64_VA_BITS_48
--	default 5 if ARM64_4K_PAGES && ARM64_VA_BITS_52
-+	default 4 if ARM64_16K_PAGES
-+	default 5 if ARM64_4K_PAGES
+ 	default 4 if ARM64_16K_PAGES
+ 	default 5 if ARM64_4K_PAGES
+@@ -412,12 +411,12 @@ config KASAN_SHADOW_OFFSET
+ 	hex
+ 	depends on KASAN_GENERIC || KASAN_SW_TAGS
+ 	default 0xdfff800000000000 if (ARM64_VA_BITS_48 || (ARM64_VA_BITS_52 && !ARM64_16K_PAGES)) && !KASAN_SW_TAGS
+-	default 0xdfffc00000000000 if (ARM64_VA_BITS_47 || ARM64_VA_BITS_52) && ARM64_16K_PAGES && !KASAN_SW_TAGS
++	default 0xdfffc00000000000 if ARM64_VA_BITS_52 && ARM64_16K_PAGES && !KASAN_SW_TAGS
+ 	default 0xdffffe0000000000 if ARM64_VA_BITS_42 && !KASAN_SW_TAGS
+ 	default 0xdfffffc000000000 if ARM64_VA_BITS_39 && !KASAN_SW_TAGS
+ 	default 0xdffffff800000000 if ARM64_VA_BITS_36 && !KASAN_SW_TAGS
+ 	default 0xefff800000000000 if (ARM64_VA_BITS_48 || (ARM64_VA_BITS_52 && !ARM64_16K_PAGES)) && KASAN_SW_TAGS
+-	default 0xefffc00000000000 if (ARM64_VA_BITS_47 || ARM64_VA_BITS_52) && ARM64_16K_PAGES && KASAN_SW_TAGS
++	default 0xefffc00000000000 if ARM64_VA_BITS_52 && ARM64_16K_PAGES && KASAN_SW_TAGS
+ 	default 0xeffffe0000000000 if ARM64_VA_BITS_42 && KASAN_SW_TAGS
+ 	default 0xefffffc000000000 if ARM64_VA_BITS_39 && KASAN_SW_TAGS
+ 	default 0xeffffff800000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
+@@ -1354,10 +1353,6 @@ config ARM64_VA_BITS_42
+ 	bool "42-bit"
+ 	depends on PAGE_SIZE_64KB
  
- config ARCH_SUPPORTS_UPROBES
- 	def_bool y
-@@ -1361,7 +1360,7 @@ config ARM64_VA_BITS_47
- 
+-config ARM64_VA_BITS_47
+-	bool "47-bit"
+-	depends on PAGE_SIZE_16KB
+-
  config ARM64_VA_BITS_48
  	bool "48-bit"
--	depends on !PAGE_SIZE_64KB
-+	depends on PAGE_SIZE_16KB
+ 	depends on PAGE_SIZE_16KB
+@@ -1397,7 +1392,6 @@ config ARM64_VA_BITS
+ 	default 36 if ARM64_VA_BITS_36
+ 	default 39 if ARM64_VA_BITS_39
+ 	default 42 if ARM64_VA_BITS_42
+-	default 47 if ARM64_VA_BITS_47
+ 	default 48 if ARM64_VA_BITS_48
+ 	default 52 if ARM64_VA_BITS_52
  
- config ARM64_VA_BITS_52
- 	bool "52-bit"
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
