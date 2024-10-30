@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-387995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E265D9B58F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:08:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91889B58F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:12:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82072B22B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:08:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66099284609
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ACD12C530;
-	Wed, 30 Oct 2024 01:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8344D12D1FA;
+	Wed, 30 Oct 2024 01:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R9llZ6AT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SmSbb+mK"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61433C14;
-	Wed, 30 Oct 2024 01:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5530126C0A
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 01:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730250479; cv=none; b=J94LI0JxLAt9ofxQSVIY9JN/w3yZbzfUAo8eOFNy2QR7CLmR7MMfzbQkRQsLVAZPS7fY0K+lE/MlIyYD7RwRUJQ2kP/bmOiKBXTk8+KD+nz8GMdnMZlY9U4DHjtbeoyikR1Yz8NfyiREU/WH4OHC7mM1kmE4u2vbeM9NY5XHgxs=
+	t=1730250724; cv=none; b=W0aSZoLQprhvpnSD1yhxIVYxV2J2IqasCg+LdLPAh7N0T4d3ozomZTGB4SnImFP342DeMBXNLuH+2+Pn6q7PZTHL+FwlcS7AnnxM6aE+4A/Fa893FgNTTwEcb9gU35i8m8i+DjQAVwuQLPbCSMrsV62nQIH5Pw2yJ96Ws6pyvDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730250479; c=relaxed/simple;
-	bh=ft4XDgKObfVvH/ORChaY+8sasFqA77XcHTdg0Bm6rxo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=feYLXBfcmHh7ravZVXNIV2efoSVUcEX8gEm2Nmit7V7ahxJilSBCq2jaJe3ttHeOBhs+v0B/OV5MYr/LcUJsCOEn7Zm0ecm5qZWdxrROIMzS4aqXJVT0DT6RWLgx3F+ZTt4dCBnUpMkh5OfUyk0DcuBOdf3bOVLGRkWQwKOx6ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R9llZ6AT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TKRPmh012841;
-	Wed, 30 Oct 2024 01:07:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=4W4RiRXPI3/u9cd+TQ3a5K
-	jFeAh3VtcAoOhqF4AgpK4=; b=R9llZ6ATLzU5aoFlqx0ONbYADA47fkJFTpsuo/
-	Nc7+JsUUWuCNXmmkoWE1onpx9MVNOW+GIS5SpQgeGKHlZgnak8bixb2KOhjHrS71
-	bQwKKWGXu8T0prAX3JVSbEmnMIbKOOiz5PN9oZmT3Ngw1+LryO42Aw2ehlNxVYJ5
-	1Z27oLh6kJzWpyNxeEcpmZdtt4C5oCYBfVdbRzlHjZH/D/wYuwBb+lYyOTJycz94
-	ly6b8TuF7POalgiE5UEoVZlhEsCLhwRrCIUHOS7D0EAa/up4J1mJ9toSf5X+w0Bz
-	2VoRa+2TnGTD31DXZjF9wJuwl+QQ4o4rUQj7bF5lrbtAqiKA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k6rpgh7y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 01:07:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U17g6H014328
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 01:07:42 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 29 Oct 2024 18:07:42 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        <freedreno@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <robdclark@gmail.com>, <swboyd@chromium.org>, <airlied@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <quic_jesszhan@quicinc.com>,
-        <lyude@redhat.com>, <simona@ffwll.ch>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child nodes
-Date: Tue, 29 Oct 2024 18:07:22 -0700
-Message-ID: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730250724; c=relaxed/simple;
+	bh=rkWMe+q7YE91JJSH14RGk9u52F5soEQs+wqZBxWnc0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tMZr+cslwIhBM0fPUJUgP2DmZIk5VHb8Bb8JoihGM7/9wT2UC7h029+h0CQk1LSfotjaB25PTYsGPFn3tTbcH7LT5krL2pzc41PK7zbDet1nL1S13sx2BHCj6RSb/LPsJeaNW1f6B1skQcb11V81OIDw/9ggwUNU1L4Lo+ZWHZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SmSbb+mK; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e49ef3b2bso4559228b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:12:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1730250722; x=1730855522; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DQeSwxz5uUvTcfuWV7iXLr/jIgrx+m1N8dA8FAnJTIU=;
+        b=SmSbb+mKEY6lOKL2LCn625i1usRBq/OjIy/UL8a7bT2wYgHElgWzK2uPdqM8wDrBBz
+         1o+9GvrxydMA/LoFZseIN76Dh0ASf6z22tWtySHX4xZqN5YZKEH/4oW/Wz8oOeamU6mW
+         Qdrv1UoUq2PIpObFpO2X0Uie3BNCpbwAt7plw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730250722; x=1730855522;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQeSwxz5uUvTcfuWV7iXLr/jIgrx+m1N8dA8FAnJTIU=;
+        b=pSXXNeXnO2FUAauKgxJagBxZl2uxualNDs1wL9Ss2foITaBDQhbQLCZj3cxacxfs95
+         CwQYpUvEHqMpNMftuxXlXHZ9qNHvdnViGw3SXc7yIm6NIsAWiG3/7ziUhlHwP+IuFRwM
+         WCZhJ/TTRElyU+3VkpkyUfBknmSgaS6BqA+wqNX+tYsOe5I7VUmvpdRohUA2tU2hD865
+         c7tk0Kv3rv/wIPijJ0AvC3HAy8ll0a/Y2F9+Bp8KfHY63NNO3rRJaHQIg0+jMFSvRqLz
+         qFR35wEY2JlQ4Umtc/TRAxzI0QbDY9KKjU+gI3g+ho+L9V8Wxg6/GGTX5jQX01xnyZdg
+         KLDw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/8W5d0B4qBjCutNdfNTR+KeHSkKh0vtwfTuF5paWJeDDcybytFj8KHseD4rkT7ctrjnO763p5KvymcMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOgVVg7h+zJh5E7mjs+C7EEUX1lIi25o3bSKdOXSnta0+mbPU2
+	dbdsUJy9DssPQrcmvY7350Mi1hp4lcMmAD6BE5shM8W5YHlb5LS20LlIZRzyxPU=
+X-Google-Smtp-Source: AGHT+IHMrbF8CoVpGDbrSwiNAoCRtHBAraPF1XTqZ20q8hnPphvyiRNL01Y5zDxxgb0Xh7+6RUHp5A==
+X-Received: by 2002:a05:6a00:3ccb:b0:71e:4ee1:6d78 with SMTP id d2e1a72fcca58-720ab39e56emr1862518b3a.1.1730250722137;
+        Tue, 29 Oct 2024 18:12:02 -0700 (PDT)
+Received: from [192.168.3.101] (p8535228-ipngn42701marunouchi.tokyo.ocn.ne.jp. [180.15.75.228])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a44ad0sm8165893b3a.220.2024.10.29.18.11.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 18:12:01 -0700 (PDT)
+Message-ID: <85570e57-1af3-4d17-8a21-58c75e6bac9c@linuxfoundation.org>
+Date: Tue, 29 Oct 2024 19:11:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aIoafsZEh5UdIL9g_gMRhUSRNXWQyrgE
-X-Proofpoint-GUID: aIoafsZEh5UdIL9g_gMRhUSRNXWQyrgE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- clxscore=1011 mlxlogscore=999 priorityscore=1501 spamscore=0
- malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410300007
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest/hid: increase timeout to 10 min
+To: Yun Lu <luyun@kylinos.cn>, jikos@kernel.org, bentiss@kernel.org,
+ shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241029090746.179108-1-luyun@kylinos.cn>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241029090746.179108-1-luyun@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-of_i2c_register_devices() adds all child nodes of a given i2c bus
-however in certain device trees of_alias_from_compatible() and
-of_property_read_u32() can fail as the child nodes of the device
-might not be valid i2c client devices. One such example is the
-i2c aux device for the DRM MST toplogy manager which uses the
-display controller device node to add the i2c adaptor [1] leading
-to an error spam like below
+On 10/29/24 03:07, Yun Lu wrote:
+> If running hid testcases with command "./run_kselftest.sh -c hid",
 
-i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
-i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
-i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
-i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
-i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
-i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+NIT - When inestead of "If"
+> the following tests will take longer than the kselftest framework
+> timeout (now 200 seconds) to run and thus got terminated with TIMEOUT
+> error:
+> 
+>    hid-multitouch.sh - took about 6min41s
+>    hid-tablet.sh - took about 6min30s
+> 
+> Increase the timeout setting to 10 minutes to allow them have a chance
+> to finish.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+> ---
+>   tools/testing/selftests/hid/settings | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/hid/settings b/tools/testing/selftests/hid/settings
+> index b3cbfc521b10..dff0d947f9c2 100644
+> --- a/tools/testing/selftests/hid/settings
+> +++ b/tools/testing/selftests/hid/settings
+> @@ -1,3 +1,3 @@
+>   # HID tests can be long, so give a little bit more time
+>   # to them
+> -timeout=200
+> +timeout=600
 
-Add protection against invalid child nodes before trying to register
-i2c devices for all child nodes.
+Okay - maybe this test shouldn't be part of the default run if it needs
+600 seconds to run?
 
-[1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
-
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
----
- drivers/i2c/i2c-core-of.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
-index a6c407d36800..62a2603c3092 100644
---- a/drivers/i2c/i2c-core-of.c
-+++ b/drivers/i2c/i2c-core-of.c
-@@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
- {
- 	struct device_node *bus, *node;
- 	struct i2c_client *client;
-+	u32 addr;
-+	char temp[16];
- 
- 	/* Only register child devices if the adapter has a node pointer set */
- 	if (!adap->dev.of_node)
-@@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
- 		if (of_node_test_and_set_flag(node, OF_POPULATED))
- 			continue;
- 
-+		if (of_property_read_u32(node, "reg", &addr) ||
-+		    of_alias_from_compatible(node, temp, sizeof(temp)))
-+			continue;
-+
- 		client = of_i2c_register_device(adap, node);
- 		if (IS_ERR(client)) {
- 			dev_err(&adap->dev,
--- 
-2.34.1
-
+thanks,
+-- Shuah
 
