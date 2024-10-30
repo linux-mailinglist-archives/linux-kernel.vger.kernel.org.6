@@ -1,82 +1,176 @@
-Return-Path: <linux-kernel+bounces-388800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52799B6489
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:46:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72B59B648D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F4A1F21964
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9765E2820F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5771E1E8852;
-	Wed, 30 Oct 2024 13:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF781EB9F2;
+	Wed, 30 Oct 2024 13:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgW8R+hX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gr5l+MEg"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22812EB02
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857701E2838
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295932; cv=none; b=PUiQYpyek3QzNhmWl4a3JgxnPQ/oXH9sQe7L53F/sL/Rd711uzK4BN/aGHBBQcAP1nGFAYpAP3sEZVYHu8TZZxWdZonm1N5Zq3bqgtgvRVxz2zXF+6LqHcyym5xNnkN616K13qm2n4KfOeyLu/g5ZPPEo+3SmHtCJ30aBPh2Nvw=
+	t=1730295989; cv=none; b=KyrWhZk89FFxleq7pncUPYuwoZevepW+9d6mxsUH6azzW3518cYHpHyWkhncNohFPvgAtfLaNwROyyOgUzhflOTWXa/n3GWQJgi3I++KRJFIw0a6XKGHlM1/Ct3jCKJXPI5+3k522LctKyfWQStDea9P0b5fqtdOyDIz+E2aHts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295932; c=relaxed/simple;
-	bh=7Bxt9L9WVuyMEm/Nk2GL/sQJDsMYOACIhygsoXfiub8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRNDe34rO9tUhkniCJl+x1j2E2RRTB/d8EEOWt43oYRRuIO7Z/UnzXvHbKKC9veTMkzokFSsDGA3Kw3A9dhBAh9eZXNkIM3uJoiIbTRJt2k1Oe0MSUceaY4TQNMshMDMbzn3SZhAO0Fr2AYl09S3P6geWLQ+YYRbNIRWBL+mxYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgW8R+hX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B29EBC4CEE3;
-	Wed, 30 Oct 2024 13:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730295932;
-	bh=7Bxt9L9WVuyMEm/Nk2GL/sQJDsMYOACIhygsoXfiub8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MgW8R+hXPKWGYEAF/i6jaW4933OCOxb6QwrO1fy3KmNfPSIaMhAxLDNnLzARWjlg7
-	 RdbcQRrfY0S4DAOpbI0nLX/B5QQdH1nGrC9IOvlXioRR52gAIs7N1bQ6wq9tbCRLf+
-	 3tjQQth1HOSM93PRVpvdwEsKH2gX9COOd2QhgJ+uSLQIreMWn6acUAIHDpYAGuyBJH
-	 WYWMvd3Vb3I+1pM+zmXBDJuUCefOIwR+5oR4rZ9t1v2nXVo9M93koIMTj5z1pl4QTr
-	 TfUN/1PrGjax96VnaV6n3ffX+dZ8B4QxZPbbZsoTpgePArIQtKyPphcSRYcsc6XYFh
-	 5ZKKm9GahfYCA==
-Date: Wed, 30 Oct 2024 14:45:29 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 19/26] posix-timers: Move sequence logic into struct
- k_itimer
-Message-ID: <ZyI4eYlhYXXIJff6@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.396279339@linutronix.de>
+	s=arc-20240116; t=1730295989; c=relaxed/simple;
+	bh=Y1a9aM6tWWaV5uzVx8wzzg/C3IB0sCgO5AuemKo86Jo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rM4cgnzckftk7ZW4RPVnZ2c+HopGh3DrhQwobqPPvXmaZPmVJi69U5TPVnl9+WtFDrnWpSpIVAmc9yg4krJEjSyXszAqXd2QV3qKS96XLeAZiroHIupw53jixgVWkl1Ww2e99sTM5TL/ZAxOcLykP1F7N60IzUgzz+TxicV+DHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gr5l+MEg; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7eb0a32fc5aso5489796a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730295986; x=1730900786; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtfXzQfaJ/EYKD+CJMQGAg9z8wKP66O4MQ222guzR8o=;
+        b=Gr5l+MEgTcxy1MB28zEiYeQDW7I6oTVbV++EJGlKny+0rQ0cKlEa7wbA9OARJxjWn7
+         Bm1Cv1ioADW2pW5u7SdZtMGu8Qf//aTALXfsqpfAJaCQ/LBzzpMX6W8O4vx2iu7Nd0BD
+         C+kGKHGGKzyKLj6qfgaDf+6Ed5dLcezCcbiXUc3XL11LAiym6nd4dRwRdVCOUQs5xsJo
+         ePQQIIE6crzyH05Y/U6/tEgLBGr6jyAJ+DWat++QwQCW0pp1SyPwk+dZFo/MAejZeG+u
+         U/17MudTLn5hqB207ZKFAzIch6+4t8wCN9b8g3b0GpImVe4Jy7LB/3erJJ8h/VZy4dF7
+         CR1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730295986; x=1730900786;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtfXzQfaJ/EYKD+CJMQGAg9z8wKP66O4MQ222guzR8o=;
+        b=aOgrkoEB4X7v2zUEekvmr0R/K/U5YoQjPHfTOT5LiBkH5AxuM9ZOYZhLtrldJILfh1
+         1YEmboRJYi0Q4aGFV/wYNQwT2Etkkos4MtVTZ+YK4nCiwfERKsPK8segA5UXgng7BRH9
+         XSLj+CqcxT/o4jL+YV7WLWWxf+3EhXfcb1W3/4bOhZ88ljOyxnvsmvWklv1Dy67PjOLh
+         zX3uonAidB0Pv6Rg3Jf8U4wCsTA1OhPEktRge+XarWEcM3T7CnTOeZguct6i/QGJRNOV
+         lJjRB9TEZCSgLZoYRuTe7Ehci7214iMkKbqL90UHOtEdjax4U7psX8v8t2jQS708Yfyr
+         A9sw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/ou7qfi3yn3GCCexH+xHHaSvqvWAdvMKdngcERUkEu4HEI5pEeZiJT3fre0SXPmMA++mstpqUAvwUE2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK3qv3XUp/bYFqor+hb2c78rDB2DEnGkr3zNyvzwkdpWLPLa2a
+	i59jYvGlHRvcGyLGlFXL7HInCwpRzz55cI8HybIZVT1cP0rIsiV7cV5OxPCQfAF56cHReUbCDqC
+	5jg==
+X-Google-Smtp-Source: AGHT+IFm2Yxq+cP+3QVS7378b8ToiwEaMp35x6FfIFMaHRLEbNI+8XbUnisHEWBxThlhwzgcDC7XrtglZ9o=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a63:4f62:0:b0:6d4:4eea:bd22 with SMTP id
+ 41be03b00d2f7-7edd7b857bfmr25632a12.4.1730295985486; Wed, 30 Oct 2024
+ 06:46:25 -0700 (PDT)
+Date: Wed, 30 Oct 2024 06:46:24 -0700
+In-Reply-To: <71f0fb41-d5a7-450b-ba47-ad6c39dce586@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083836.396279339@linutronix.de>
+Mime-Version: 1.0
+References: <20240905124107.6954-1-pratikrajesh.sampat@amd.com>
+ <20240905124107.6954-3-pratikrajesh.sampat@amd.com> <Zw2fW2AJU-_Yi5U6@google.com>
+ <4984cba7-427a-4065-9fcc-97b9f67163ed@amd.com> <Zx_QJJ1iAYewvP-k@google.com> <71f0fb41-d5a7-450b-ba47-ad6c39dce586@amd.com>
+Message-ID: <ZyI4cRLsaTQ3FMk7@google.com>
+Subject: Re: [PATCH v3 2/9] KVM: selftests: Add a basic SNP smoke test
+From: Sean Christopherson <seanjc@google.com>
+To: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, pgonda@google.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, shuah@kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Le Tue, Oct 01, 2024 at 10:42:26AM +0200, Thomas Gleixner a écrit :
-> The posix timer signal handling uses siginfo::si_sys_private for handling
-> the sequence counter check. That indirection is not longer required and the
-> sequence count value at signal queueing time can be stored in struct
-> k_itimer itself.
+On Mon, Oct 28, 2024, Pratik R. Sampat wro4te:
+> On 10/28/2024 12:55 PM, Sean Christopherson wrote:
+> > On Mon, Oct 21, 2024, Pratik R. Sampat wrote:
+> >>>> +		if (unlikely(!is_smt_active()))
+> >>>> +			snp_policy &= ~SNP_POLICY_SMT;
+> >>>
+> >>> Why does SNP_POLICY assume SMT?  And what is RSVD_MBO?  E.g. why not this?
+> >>>
+> >>> 		u64 policy = is_smt_active() ? SNP_POLICY_SMT : SNP_POLICY;
+> >>>
+> >>
+> >> I think most systems support SMT so I enabled the bit in by default and
+> >> only unset it when there isn't any support.
+> > 
+> > That's confusing though, because you're mixing architectural defines with semi-
+> > arbitrary selftests behavior.  RSVD_MBO on the other is apparently tightly coupled
+> > with SNP, i.e. SNP can't exist without that bit, so it makes sense that RSVD_MBO
+> > needs to be part of SNP_POLICY
+> > 
+> > If you want to have a *software*-defined default policy, then make it obvious that
+> > it's software defined.  E.g. name the #define SNP_DEFAULT_POLICY, not simply
+> > SNP_POLICY, because the latter is too easily misconstrued as the base SNP policy,
+> > which it is not.  That said, IIUC, SMT *must* match the host configuration, i.e.
+> > whether or not SMT is set is non-negotiable.  In that case, there's zero value in
+> > defining SNP_DEFAULT_POLICY, because it can't be a sane default for all systems.
+> > 
 > 
-> This removes the requirement of treating siginfo::si_sys_private special as
-> it's now always zero as the kernel does not touch it anymore.
+> Right, SMT should match the host configuration. Would a
+> SNP_DEFAULT_POLICY work if we made it check for SMT too in the macro?
 > 
-> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Instead of,
+> #define SNP_POLICY	(SNP_POLICY_SMT | SNP_POLICY_RSVD_MBO)
+> 
+> Have something like this instead to make it generic and less ambiguous?
+> #define SNP_DEFAULT_POLICY()		 			       \
+> ({								       \
+> 	SNP_POLICY_RSVD_MBO | (is_smt_active() ? SNP_POLICY_SMT : 0);  \
+> })
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+No, unless it's the least awful option, don't hide dynamic functionality in a macro
+that looks like it holds static data.  The idea is totally fine, but put it in an
+actual helper, not a macro, _if_ there's actually a need for a default policy.
+If there's only ever one main path that creates SNP VMs, then I don't see the point
+in specifying a default policy.
+
+> > Side topic, I assume one of SEV_POLICY_NO_DBG or SNP_POLICY_DBG *must* be specified, 
+> > and that they are mutualy exclusive?  E.g. what happens if the full policy is simply
+> > SNP_POLICY_RSVD_MBO?
+> 
+> SEV_POLICY_NO_DBG is mainly for the guest policy structure of SEV and
+> SEV-ES - pg 31, Table 2
+> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/programmer-references/55766_SEV-KM_API_Specification.pdf
+> 
+> and, SNP_POLICY_DBG is a bit in the guest policy structure of SNP - pg
+> 27, Table 9
+> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/56860.pdf
+> 
+> In the former, a SEV guest disables debugging if SEV_POLICY_NO_DBG is
+> set. Similarly, a SNP guest enables debugging if SNP_POLICY_DBG is set.
+
+Ugh, one is SEV_xxx, the other is SNP_xxx.  Argh!  And IIUC, they are mutually
+exclusive (totally separate thigns?), because SNP guests use an 8-byte structure,
+whereas SEV/SEV-ES use a 4-byte structure, and with different layouts.
+
+That means this is _extremely_ confusing.  Separate the SEV_xxx defines from the
+SNP_xxx defines, because other than a name, they have nothing in common.
+
++/* Minimum firmware version required for the SEV-SNP support */
++#define SNP_FW_REQ_VER_MAJOR   1
++#define SNP_FW_REQ_VER_MINOR   51
+
+Side topic, why are these hardcoded?  And where did they come from?  If they're
+arbitrary KVM selftests values, make that super duper clear.
+
++#define SNP_POLICY_MINOR_BIT   0
++#define SNP_POLICY_MAJOR_BIT   8
+
+s/BIT/SHIFT.  "BIT" implies they are a single bit, which is obviously not the
+case.  But I vote to omit the extra #define entirely and just open code the shift
+in the SNP_FW_VER_{MAJOR,MINOR} macros.
+
+ #define SEV_POLICY_NO_DBG      (1UL << 0)
+ #define SEV_POLICY_ES          (1UL << 2)
++#define SNP_POLICY_SMT         (1ULL << 16)
++#define SNP_POLICY_RSVD_MBO    (1ULL << 17)
++#define SNP_POLICY_DBG         (1ULL << 19)
++#define SNP_POLICY             (SNP_POLICY_SMT | SNP_POLICY_RSVD_MBO)
++
++#define SNP_FW_VER_MAJOR(maj)  ((uint8_t)(maj) << SNP_POLICY_MAJOR_BIT)
++#define SNP_FW_VER_MINOR(min)  ((uint8_t)(min) << SNP_POLICY_MINOR_BIT)
 
