@@ -1,117 +1,78 @@
-Return-Path: <linux-kernel+bounces-389376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8823C9B6C44
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:41:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882A49B6C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5171F213F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:41:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D8E1C213EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9146A1CCB48;
-	Wed, 30 Oct 2024 18:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF041CDA24;
+	Wed, 30 Oct 2024 18:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aTConJ/c"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyE9eonW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC071BD9E2
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B735A1BD9E2;
+	Wed, 30 Oct 2024 18:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730313664; cv=none; b=aeA1QaErkGAK0alxnXz166S7Xpm3ZAVISk8ZVjcFy5jAs4RLkZi1CVefcMXSk+3a3dI0J94bVHvLssdLX3e1AmS6Zb16CtP2acVaC6J/94HurAAVxpEoGg3rSUYVcFFJ2QESVaBoqFV7ASi08Te2DByT3ciq1rOQp2BRoHwikQg=
+	t=1730313766; cv=none; b=Q0dqwvbBHSXarPXmMSZWqtOPYMhdRbGSjXF+S4imYX5KfYkiF7HFpPyHJHSVsiU/fIK6PKFCUXJ8QUxh6seqIWGHdjQh4wW4VMDSp9tMo012jD8X9wt6mLAQZW/OXjofTieNvtqSO+qFpeEn7QD3TZEJYlkURivvCdbcJZ+ll3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730313664; c=relaxed/simple;
-	bh=uuypzrJoUw+XjZ1mZsbq0ZjXB1sfeBzYFaWwDpqOhqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVuZl2krbo6t+JBfPX2Fg96kwMSq0Tc7qhMQW7aG5/ZuakENXmfC2WCuo+MfgjHWBLNl2YCHfvfM7mqlN9ZMkzZLXqALNp8WBYiYXHCyJwl3Aexg7WIE64KuChuSAQ0Exa4tA6xzrBqNeRMHXthE0jim6P7qNH2nySVP43RJceY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aTConJ/c; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730313662; x=1761849662;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uuypzrJoUw+XjZ1mZsbq0ZjXB1sfeBzYFaWwDpqOhqg=;
-  b=aTConJ/cLeik8z2kN0cQrXa411osU66U3fpxJrJStJq4t5tWyqV/e14n
-   0eNgM6TGAz2j5noJf5ygOOzE6SsP5pe2v3HUkh8qZ8bqnxGT8tTzsFJtJ
-   7/9/tjldbILcq11PD3BUndN3D/XspaYNGY3pJ3YmbknWWAksBod3VZ7T1
-   3AOkOP+PWuoI3r40Yfr0sOaCk8z1AtTt09iZMD0SvUK7n94z7gFRHIZxq
-   f2qUVbVnCmB2DoDfv7ESLowE7ywx7oVfBlg7W0p3zbaGrECR6hEOryTxA
-   uZn7GglWiJGV/yglDeJ+QZ53MwFlH6nqVwbiA91obGTPJbFiRPesfzK+l
-   Q==;
-X-CSE-ConnectionGUID: wQL80oPJTcmZKhYus8YMkg==
-X-CSE-MsgGUID: Ui7fVNj+R4mQzQx09Poavg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="47509883"
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="47509883"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 11:41:01 -0700
-X-CSE-ConnectionGUID: CQQqovwcTqW2z8hvQj1h1Q==
-X-CSE-MsgGUID: nCjm4LyxQxycDjdyEnm6JA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="87187497"
-Received: from josephbr-mobl1.amr.corp.intel.com (HELO desk) ([10.125.147.91])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 11:41:00 -0700
-Date: Wed, 30 Oct 2024 11:40:53 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: bp@alien8.de, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/bugs: spectre user default must depend on
- MITIGATION_SPECTRE_V2
-Message-ID: <20241030183920.s4lk33ckvqtkguzm@desk>
-References: <20241015105107.496105-1-leitao@debian.org>
- <20241015105107.496105-3-leitao@debian.org>
- <20241028143453.govo3bnbayc7rqjj@desk>
- <20241029-large-perfect-bulldog-ce53b3@leitao>
+	s=arc-20240116; t=1730313766; c=relaxed/simple;
+	bh=bGVcw/sfpCroEAgkcGYhFNMz2qy28pH3vOQD5j5qYyc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BPsPk6LTblQxoajLFNzTprk+4oporXlcvl9QP0SK7bcFap/jk0UkxgqHQSNYAz/I3isTu4aCJXfjwaaB+AAVgSu4F/UJV8X0uUu/rL6vtGrzDXfXTn0T7RrueVcBaxOOn98by/5TMs5y6uhmXDGZDXMrEhOpKSvR9XIHv2r7Ums=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WyE9eonW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D308C4CECE;
+	Wed, 30 Oct 2024 18:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730313766;
+	bh=bGVcw/sfpCroEAgkcGYhFNMz2qy28pH3vOQD5j5qYyc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=WyE9eonWKCWo1OJ44wPQ2a4wLx7BWTT4XDhaG0GSBeYrKjMf3KkL7d4Ql+jV1SGO9
+	 YCsfEjpcfsjU4nSCNuZGxTGF0okmYGFKx7J4QrvWWd9g2jFDaaCyDUdvPqnrEartUn
+	 HSw3GrWvoHHp/puwjpet2uY+wM6op+WwMMu6ayZSDrckNTcGB9T9isIY+9EmaDCiOR
+	 oEVJsR3x20iZ8+8PHnjmu2x6g3Jk7S7a0JyWAdGCuLc/KCOFPjT9OwB0Z1aEHRxP4d
+	 OL8Rxj0lBxSXfvVUj41uE4QXAMBHg9dcbbSnHBAb44Bt1Pg69HWZlIsTi/R7I9shSC
+	 mJWbuaPVEhUKA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34F90380AC22;
+	Wed, 30 Oct 2024 18:42:55 +0000 (UTC)
+Subject: Re: [GIT PULL] SCSI fixes for 6.12-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <c82f3c57c5febcefdc95cf4a0b8eff0cdf4689a1.camel@HansenPartnership.com>
+References: <c82f3c57c5febcefdc95cf4a0b8eff0cdf4689a1.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <c82f3c57c5febcefdc95cf4a0b8eff0cdf4689a1.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: cb7e509c4e0197f63717fee54fb41c4990ba8d3a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4236f913808cebef1b9e078726a4e5d56064f7ad
+Message-Id: <173031377391.1432070.7105234657928897279.pr-tracker-bot@kernel.org>
+Date: Wed, 30 Oct 2024 18:42:53 +0000
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029-large-perfect-bulldog-ce53b3@leitao>
 
-On Tue, Oct 29, 2024 at 02:19:12AM -0700, Breno Leitao wrote:
-> > If this is the intention it should be
-> > clearly documented that enabling kernel mitigation does not enable user
-> > mitigation. And an explicit spectre_v2_user= is required to enable user
-> > mitigation.
-> 
-> That is fair. I didn't find a place where to document about diferent
-> behavior when CONFIG_MITIGATION_X is disabled. What would you suggest?
+The pull request you sent on Wed, 30 Oct 2024 19:57:59 +0900:
 
-You could describe the behavior in the commit message and update kernel
-parameter documentation.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-With that:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4236f913808cebef1b9e078726a4e5d56064f7ad
 
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Thank you!
 
----
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1518343bbe22..f8bc02cd10ec 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6241,6 +6241,8 @@
- 
- 			Selecting 'on' will also enable the mitigation
- 			against user space to user space task attacks.
-+			Selecting specific mitigation does not force enable
-+			user mitigations.
- 
- 			Selecting 'off' will disable both the kernel and
- 			the user space protections.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
