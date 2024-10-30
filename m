@@ -1,112 +1,143 @@
-Return-Path: <linux-kernel+bounces-387965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD089B587F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:19:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20889B5888
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4CAF284BFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3151F24F68
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E3813FEE;
-	Wed, 30 Oct 2024 00:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C920A17579;
+	Wed, 30 Oct 2024 00:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="lszRm25P"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9617E11187;
-	Wed, 30 Oct 2024 00:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="di+ZrdRm"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F822C9D;
+	Wed, 30 Oct 2024 00:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730247591; cv=none; b=s33Zc6H4PM/DuhrK2BmPLCeyofr+iEiQtVW2Ljrd8rp0Mo83+aa12q29MrfZV694jaz1djHxBz+frZrVSHPA7dtl9o2sLO1z4vMVx8ve94hoha1VCvAnSRkH+EjGVQfhZEE5Mr3P089ImkpOyCSg7QJZqDJCKmwnmUL/wxqp0JE=
+	t=1730247806; cv=none; b=L/0aMMQVYVuo1dOM32/LmQ8ZaUGkKXpIIUlUVPYfwZKU4sn0j4gamMfIh49vD7VIMwwTAHYD5Amq8v5skutkZXOCguFDo+KZnvqg22rl3m2ly8NonDRxVo0ht2psSBsEp0tyAvXZbH2K5wqLgBKd6dKjuj3OArw2wjRPf2HdXXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730247591; c=relaxed/simple;
-	bh=hkUaOJlIB8zKScdDUaJiQkjpiIOTU71FyqHIgvE07ng=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=dkuppOsWDt2tTosodAxwITd9O27mqRrvAGBSjI0V+lJI1leSlxkmE9PbGqZQ2PeK6SAixy3OlbR5/CKx/b7X6C4QCMkBbOPxn8zhuGPh+jijzrbYCyuEkUlxEe64kkuCmRq96W6bauJdsObTIW27qpVB+eBAAOTdbSt9es1oBFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=lszRm25P reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=+tKkG1OC9t/mmIgZYEEd18Rt/ZMzad35JICYVd1wwFc=; b=l
-	szRm25PSneYfYAlb3IuW787Q1TUTpVLDmuybK6dr6kQ3fQwcV8kTEAJtsY/tV2r4
-	4W8oTMqyyioRBkkjCKraQ2kOdApRnvHxv91/Iyw3482f3L1kgoBpKeMZXPy//76B
-	Wx1ICrLrGpl/FdQoIW0PqgkOP30sWR9x/IFH3b9d98=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-117 (Coremail) ; Wed, 30 Oct 2024 08:19:03 +0800
- (CST)
-Date: Wed, 30 Oct 2024 08:19:03 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Johan Jonker" <jbx6244@gmail.com>
-Cc: "Andrew Lunn" <andrew@lunn.ch>, andy.yan@rock-chips.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	david.wu@rock-chips.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re:Re: [PATCH v1 1/2] ethernet: arc: fix the device for
- dma_map_single/dma_unmap_single
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <f147c6c4-30e8-40cc-8a01-dc8df3913421@gmail.com>
-References: <dcb70a05-2607-47dd-8abd-f6cf1b012c51@gmail.com>
- <86192630-e09f-4392-9aca-9cc7e577107f@lunn.ch>
- <f147c6c4-30e8-40cc-8a01-dc8df3913421@gmail.com>
-X-NTES-SC: AL_Qu2YAv6fuE0v5SGQbelS/DNR+6hBMKv32aNaoMQOZ8UqqTHC6CwvbV1SBFDxyvqm2ZlpiLBFLC9L3ZwCE9fN
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1730247806; c=relaxed/simple;
+	bh=g97qSBk0nfVaTQ4nSQz7mm5l86i31AAhLyCvLjCxnwg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FmQGSyKcldzlfRQheEr3X11jCZ6pwkSNT2Bo6mbFG/TTCkWSYBuKl1TQ6mCOdAQaKVvBSiu1smIl1U2yY2tE4gRovoWnt2pqei//7CrB9SKCp2A9ZjJxXbX8b6dxAII16qocwcjOFYSb+ZnZbuQFfjMJg6PWt08cgY0JLz8F0sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=di+ZrdRm; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1730247801;
+	bh=g97qSBk0nfVaTQ4nSQz7mm5l86i31AAhLyCvLjCxnwg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=di+ZrdRmCd/lQns/8eExuvjbnZpOwlfJZqQhT0vk6A4dWQSREGaSjYA1NUpuSXq/9
+	 zLOKIqOjor7p9tE0dyGfw4ybWiryzyo+iipRVF2kM5VpPdFA3d+3Ou9jXOVP2gRjYg
+	 nxhaMgbcn/2U32y5829iQGbhb4KxNznUA2+K/2a0+EQ2SswvR0VQC5IX3R2gM1Hc5H
+	 qIqUDA2Y9Sx6OWg9iXKjz7Q61ZLM8qzV89E79bImydBlZ3cYU8OsnRBo4eKdTRLt29
+	 HKUqM1u67bcl+f74e72B6y7/Ev8hL3bEW1/AqAaeVkze+VI+uRfQfKCa7B551KThzG
+	 ud9Ehgxe8s9Jw==
+Received: from [192.168.68.112] (ppp118-210-190-243.adl-adc-lon-bras34.tpg.internode.on.net [118.210.190.243])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A1A9067E6D;
+	Wed, 30 Oct 2024 08:23:10 +0800 (AWST)
+Message-ID: <3c7893f5186f0c6d64c063dc0a609ec8d6c8bcf1.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] soc: Switch back to struct platform_driver::remove()
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+	Arnd Bergmann
+	 <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: Joel Stanley <joel@jms.id.au>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>, 
+ Qiang Zhao <qiang.zhao@nxp.com>, Hitomi Hasegawa
+ <hasegawa-hitomi@fujitsu.com>, Huisong Li <lihuisong@huawei.com>, Linus
+ Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Karol Gugala
+ <kgugala@antmicro.com>, Mateusz Holenko <mholenko@antmicro.com>, Gabriel
+ Somlo <gsomlo@gmail.com>, Yinbo Zhu <zhuyinbo@loongson.cn>, Matthias
+ Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Conor Dooley
+ <conor.dooley@microchip.com>, Daire McNamara
+ <daire.mcnamara@microchip.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Alim Akhtar <alim.akhtar@samsung.com>,  Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Nishanth Menon <nm@ti.com>,  Santosh Shilimkar <ssantosh@kernel.org>,
+ Michal Simek <michal.simek@amd.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Duje =?UTF-8?Q?Mihanovi=C4=87?=
+ <duje.mihanovic@skole.hr>, Mark Brown <broonie@kernel.org>, David Wu
+ <david.wu@rock-chips.com>, Jianqun Xu <jay.xu@rock-chips.com>, Jay
+ Buddhabhatti <jay.buddhabhatti@amd.com>, Radhey Shyam Pandey
+ <radhey.shyam.pandey@amd.com>,  Izhar Ameer Shaikh
+ <izhar.ameer.shaikh@amd.com>, Naman Trivedi Manojbhai
+ <naman.trivedimanojbhai@amd.com>,  linux-arm-kernel@lists.infradead.org,
+ soc@lists.linux.dev,  linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev,  linux-mediatek@lists.infradead.org,
+ linux-riscv@lists.infradead.org,  linux-arm-msm@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org,  linux-pm@vger.kernel.org
+Date: Wed, 30 Oct 2024 10:53:09 +1030
+In-Reply-To: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
+References: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <83a1022.392.192daca499a.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:dSgvCgD334V3eyFnHD8aAA--.4263W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0g2IXmchbQ23JwABs+
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-CkhpIEpvaGFu77yMCgpBdCAyMDI0LTEwLTI5IDIyOjUzOjI2LCAiSm9oYW4gSm9ua2VyIiA8amJ4
-NjI0NEBnbWFpbC5jb20+IHdyb3RlOgo+Cj4KPk9uIDEwLzI4LzI0IDE0OjAzLCBBbmRyZXcgTHVu
-biB3cm90ZToKPj4gT24gU3VuLCBPY3QgMjcsIDIwMjQgYXQgMTA6NDE6NDhBTSArMDEwMCwgSm9o
-YW4gSm9ua2VyIHdyb3RlOgo+Pj4gVGhlIG5kZXYtPmRldiBhbmQgcGRldi0+ZGV2IGFyZW4ndCB0
-aGUgc2FtZSBkZXZpY2UsIHVzZSBuZGV2LT5kZXYucGFyZW50Cj4+PiB3aGljaCBoYXMgZG1hX21h
-c2ssIG5kZXYtPmRldi5wYXJlbnQgaXMganVzdCBwZGV2LT5kZXYuCj4+PiBPciBpdCB3b3VsZCBj
-YXVzZSB0aGUgZm9sbG93aW5nIGlzc3VlOgo+Pj4KPj4+IFsgICAzOS45MzM1MjZdIC0tLS0tLS0t
-LS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQo+Pj4gWyAgIDM5LjkzODQxNF0gV0FSTklORzog
-Q1BVOiAxIFBJRDogNTAxIGF0IGtlcm5lbC9kbWEvbWFwcGluZy5jOjE0OSBkbWFfbWFwX3BhZ2Vf
-YXR0cnMrMHg5MC8weDFmOAo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IERhdmlkIFd1IDxkYXZpZC53
-dUByb2NrLWNoaXBzLmNvbT4KPj4+IFNpZ25lZC1vZmYtYnk6IEpvaGFuIEpvbmtlciA8amJ4NjI0
-NEBnbWFpbC5jb20+Cj4+IAo+PiBBIGZldyBwcm9jZXNzIGlzc3VlczoKPj4gCj4+IEZvciBhIHBh
-dGNoIHNldCBwbGVhc2UgYWRkIGEgcGF0Y2ggMC9YIHdoaWNoIGV4cGxhaW5zIHRoZSBiaWcgcGlj
-dHVyZQo+PiBvZiB3aGF0IHRoZSBwYXRjaHNldCBkb2VzLiBGb3IgYSBzaW5nbGUgcGF0Y2gsIHlv
-dSBkb24ndCBuZWVkIG9uZS4KPj4gCj4+IFBsZWFzZSByZWFkOgo+PiAKPj4gaHR0cHM6Ly93d3cu
-a2VybmVsLm9yZy9kb2MvaHRtbC9sYXRlc3QvcHJvY2Vzcy9tYWludGFpbmVyLW5ldGRldi5odG1s
-Cj4+IAo+Cj4+IEl0IGlzIG5vdCBjbGVhciB3aGljaCB0cmVlIHlvdSBpbnRlbmQgdGhlc2UgcGF0
-Y2hlcyB0byBiZSBhcHBsaWVkCj4+IHRvLiBUaGlzIG9uZSBsb29rcyBsaWtlIGl0IHNob3VsZCBi
-ZSB0byBuZXQsIGJ1dCBuZWVkcyBhIEZpeGVzOgo+PiB0YWcuIFRoZSBNRElPIHBhdGNoIG1pZ2h0
-IGJlIGZvciBuZXQtbmV4dD8gCj4KPkhpIEFuZHJldywgQW5keSwKPgo+TXkgZGVza3RvcCBzZXR1
-cCBoYXMgYSBwcm9ibGVtIGNvbXBpbGluZyBvbGRlciBrZXJuZWxzIGZvciByazMwNjYgTUs4MDgg
-dG8gdmVyaWZ5Lgo+Cj5BcmUgeW91IGFibGUgdG8gYmlzZWN0L2NvbXBpbGUgZm9yIHJrMzAzNiBi
-ZWZvcmUgdGhpcyBvbmU6CgoKIEkgd2lsbCB0cnkgdG8gZG8gaXQgaW4gdGhlIGZvbGxvd2luZyBk
-YXlzLgoKCj4KPj09PT0KPmNvbW1pdCBiYzBlNjEwYTZlYjBkNDZlNDEyM2ZhZmRiZTVlNjE0MWQ5
-ZmZmM2JlIChIRUFEIC0+IHRlc3QxKQo+QXV0aG9yOiBKaWFuZ2xlaSBOaWUgPG5pZWppYW5nbGVp
-MjAyMUAxNjMuY29tPgo+RGF0ZTogICBXZWQgTWFyIDkgMjA6MTg6MjQgMjAyMiArMDgwMAo+Cj4g
-ICAgbmV0OiBhcmNfZW1hYzogRml4IHVzZSBhZnRlciBmcmVlIGluIGFyY19tZGlvX3Byb2JlKCkK
-Pgo+PT09PQo+VGhpcyBpcyB0aGUgb2xkZXN0IEVNQUMgcmVsYXRlZCBjaGVja291dCBJIGNhbiBj
-b21waWxlLgo+QXQgdGhhdCBwYXRjaCBpdCBzdGlsbCBnaXZlcyB0aGlzIHdhcm5pbmdzIGluIHRo
-ZSBrZXJuZWwgbG9nLgo+Cj5bICAgMTYuNjc4OTg4XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0t
-LS0tLS0tLS0tLS0KPlsgICAxNi42ODQxODldIFdBUk5JTkc6IENQVTogMCBQSUQ6IDgwOSBhdCBr
-ZXJuZWwvZG1hL21hcHBpbmcuYzoxNTEgZG1hX21hcF9wYWdlX2F0dHJzKzB4MmI0LzB4MzU4Cj4K
-PlRoZSBkcml2ZXIgd2FzIG1haW50YWluZWQgb24gYXV0byBwaWxvdCByZWNlbnQgeWVhcnMgd2l0
-aG91dCBhIGNoZWNrIGJ5IFJvY2tjaGlwIHVzZXJzIHNvbWVob3cuCj5DdXJyZW50bHkgSSBkb24n
-dCBrbm93IHdoZXJlIGFuZCB3aGVuIHRoaXMgd2FzIGludHJvZHVjZWQuCj5QbGVhc2UgYWR2aXNl
-IGhvdyB0byBtb3ZlIGZvcndhcmQuIFNob3VsZCB3ZSBqdXN0IG1hcmsgaXQgbmV0LW5leHQ/Cj4K
-PkpvaGFuCj4KPj4gCj4+ICAgICBBbmRyZXcKPj4gCj4+IC0tLQo+PiBwdy1ib3Q6IGNyCj4+IAo+
-PiAKPgo+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPkxp
-bnV4LXJvY2tjaGlwIG1haWxpbmcgbGlzdAo+TGludXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFk
-Lm9yZwo+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1y
-b2NrY2hpcAo=
+On Tue, 2024-10-29 at 08:48 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement
+> for
+> platform drivers.
+>=20
+> Convert all platform drivers below drivers/soc to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is
+> done
+> by just changing the structure member name in the driver initializer.
+>=20
+> On the way do a few whitespace changes to make indention consistent.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> ---
+> Hello,
+>=20
+> I did a single patch for all of drivers/soc. While I usually prefer
+> to
+> do one logical change per patch, this seems to be overengineering
+> here
+> as the individual changes are really trivial and shouldn't be much in
+> the way for stable backports.
+>=20
+> There is no dedicated maintainer for all of drivers/soc, but I'd
+> expect
+> it to be ok to be picked up by the arm soc team.
+>=20
+> This is based on today's next, if conflicts arise when you apply it
+> at
+> some later time and don't want to resolve them, feel free to just
+> drop
+> the changes to the conflicting files. I'll notice and followup at a
+> later time then. Or ask me for a fixed resend.
+>=20
+> Best regards
+> Uwe
+>=20
+> =C2=A0drivers/soc/aspeed/aspeed-lpc-ctrl.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 2 +-
+> =C2=A0drivers/soc/aspeed/aspeed-lpc-snoop.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 2 +-
+> =C2=A0drivers/soc/aspeed/aspeed-p2a-ctrl.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 2 +-
+> =C2=A0drivers/soc/aspeed/aspeed-uart-routing.c=C2=A0=C2=A0=C2=A0 | 2 +-
+
+Acked-by: Andrew Jeffery <andrew@codeconstruct.com.au> # aspeed
 
