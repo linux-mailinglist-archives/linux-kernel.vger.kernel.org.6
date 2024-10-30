@@ -1,218 +1,132 @@
-Return-Path: <linux-kernel+bounces-388262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630289B5CE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:24:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2269B5CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:25:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B47E1B22B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8071C20FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831D21E2007;
-	Wed, 30 Oct 2024 07:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B457F1DE898;
+	Wed, 30 Oct 2024 07:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y7h3vNuZ"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4k24YWj"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0181E1C3F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFCE85931
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730272981; cv=none; b=BkiKv/VO0vpxG0CKQxxXwcQgKE8IkDvOhmhg7nsvBTkcSGkYU1LMhoCGGJcty0rNnr/5o6jgn2quqphO0boRpGoHEyqwTr2ctSBCK1ALIPZd5maxwvTfv089FGaEhdPBVP9mEqSwZwEene/qdzdWn1rschKFokzO/9Cls0uyO2Q=
+	t=1730273062; cv=none; b=U1CYYI7BVqeqqIhfLe3tek8Gmmj/4zZPKtNqOoikMTe8RU+mBFcDxt9L/QBvLsryLHpPJbV3UOUTY/lUUm3CLBlC0CCp62looPokDTMiHi0D799KZKzRhdVJ9mnAMivSTHckngjpjtPeZcfrOycLhmuZbzloHYTIJ24llmwQIdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730272981; c=relaxed/simple;
-	bh=7aq1M3psoX/kZO+uRauBs3Wo3o81OrpD0OG3KsRwDH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pc1XViQmzjcwywrsHDUNvDKxA+OIkYYYMzTcxjWerLaAxDPjMwpB3o/tOVUe1QtE5ROaEWIjIMHBzDFVyhroQ86I0B/7jsEBvzw2HcaX296b25p8S3YqT7AAhsMCux1Dw11FZCHTm4rSUrfLwcRvuvXsVdLxuT2WhUw+e+7xWpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Y7h3vNuZ; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso4636252b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:22:59 -0700 (PDT)
+	s=arc-20240116; t=1730273062; c=relaxed/simple;
+	bh=04Q1jGOylYIJlE4+xxIqfIKlz4SH9/54YIwYenDZjKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m8J9X8c5qOmmCbRY1D7OPHr1nosr0meF42m8A6dO4GJlSr54+lOPwaz7/NTY5djZ+F+f84NqdIrjCi2zUBNCbX2A2cFgut3ce49YZG0knADMMR26TFUUwHwfqeAlMfmEPNnoAQKhgQ7HXkwaylb3GSpaEWbJWfKJP/fmk3xX6yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4k24YWj; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso5143879a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:24:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730272979; x=1730877779; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qmJoXxC+Nj2No0J4gz+NFYN6UA8etQPYIirl1nYh9sw=;
-        b=Y7h3vNuZUMYIdZFYvZCWxEi63L4V4QAQXNo3MWP4/JCciBkZMSsYCAz+0t5GtXLQA0
-         FX20AjL90RRjYH+dlAAbUGBbnbtKUtqkSdX5UlrREwgoYlj8GlbEQGvdneOe7qQd6kas
-         DmV+5k9TXlhPVG+zrNyGg8Z6AcEgclbZij4yE=
+        d=gmail.com; s=20230601; t=1730273058; x=1730877858; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZbT1k0jtYtZoc6ycNC6ItDSMfqtmx2QXiTFNjmf6lrE=;
+        b=P4k24YWj5Rl289vSOKssybjdj+EAjNZ+hIFrrDvxSlX/rwCWJmnBNc4kzZfJ/4xf53
+         9hP1f9XV6k6xr4Cef1L6q65qvbbj8U4mm1mIWlaxeriBEIq2v0FHYg0HdGTOdCz7Bm8u
+         u7AfwCUoIT0ilYJiNNOg4mZ5AsGoyKYJ+QmlTbk8HOf5RE7loE1WKZo1YfFGa2Dw6ZGj
+         B+67w8f1eH/ikQsGH49oMKq8dK2gtWtF/lJPr0TYOEdYMSPEfgHGN6I5CUME9J6kZm4f
+         OqBEvdawpCAbGz5vTrY6Ej2iYPg3dIC6ZRGwJpp0ZK88ypQVwacj26+MZssj/VpS3lmt
+         ieLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730272979; x=1730877779;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qmJoXxC+Nj2No0J4gz+NFYN6UA8etQPYIirl1nYh9sw=;
-        b=iReM4Oo5IQZ7hHgZvwmNmheQ5WR+e8MgW2q/UfT6GVQMQyyUy+7NFJw25wRfZcNLFc
-         IgjjlS93y/zMEq+WUpM0jMYIakxocZfNuIh8WLuwSWUnZQngEFlVAwIaMFN3SJUDlQ1S
-         TNu8ncvxikLcK5y91eBqdPliTqE9rVEghbqKijsSgy9kGmSVat7HWJQU5PuUfIcvCL2X
-         W0kTxA8Pf3TYrBxMyUIZvSwOQFzre3n8AXQbVjs4LAZO6eTTixEkbRRd8yv08H421M7C
-         2r7k2P7rfWO/nbSqkpMy32o2rpI0NWLWTI4lhLy3Yw4iPDQF0R2NzVoN8rzmvl95cPL/
-         MozA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9PN3dvLrV1Wiqa3OmXh9IevZbGt9+z8N/I2ustGPH9yFjQlv49SGT9LiRruUJU3XuOVK+3XXv3snmwjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxQRJko4yyOlBePp9PAgu4PRjqSF8tMXwyJ6bkCvWPR6U0MhJs
-	EH0Ij+wNhDplpsbq6LAj4NEjPVOWt+DfRe0tKeoPIRTQFQsXmte6ZscgYaD4zw==
-X-Google-Smtp-Source: AGHT+IFSxHaU+3aFl8XTDiP0cVXDw2kQMTvcGtMvQxzwOF2PNEaI4ueW/fIpKEk8aXN65gsJMZV+Zg==
-X-Received: by 2002:a05:6a21:32a8:b0:1d9:278a:9ab with SMTP id adf61e73a8af0-1d9a84b8d1cmr25165541637.35.1730272979191;
-        Wed, 30 Oct 2024 00:22:59 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d1f3:aa64:657f:d8a8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02e67esm76641445ad.186.2024.10.30.00.22.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 00:22:58 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org,
-	stable+noautosel@kernel.org
-Subject: [PATCH v10 7/7] arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and trackpads as fail
-Date: Wed, 30 Oct 2024 15:22:28 +0800
-Message-ID: <20241030072229.1013235-8-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-In-Reply-To: <20241030072229.1013235-1-wenst@chromium.org>
-References: <20241030072229.1013235-1-wenst@chromium.org>
+        d=1e100.net; s=20230601; t=1730273058; x=1730877858;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZbT1k0jtYtZoc6ycNC6ItDSMfqtmx2QXiTFNjmf6lrE=;
+        b=sUQhqCSMjgGjaS2XXOMwDtFlptcFJfnDZBElmwTNCLVDlkUx4RCKkUE7ZBJ1o0nxgY
+         3dqlhUxBoWLDRd7V8aeLsup9EhaMU2dCrV/YTnK9/ibGNEzJzDhqyqGCWibvzeKBJOCd
+         gztn2C4K2H4zBwzjpYjw2gifawRd2QL9qWFT1zwpMy/sf+MP+E7/RPnJW4xoY/Bkbtzv
+         PkLLlCNWz9Vij2TFTCYKPNmdf6cZ2J89o3YX5LhMjs3w1XMd6HXtMslgAznq5mvNX5HU
+         Uy1PFGpiEfLiNyNbwXqK+BBW2UwyCTwza5nCSq1dACfXwFypJhv1P7L0O7dKBPqmnbt4
+         E5nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUawIOhtcoddKyR0Mka4UY6nJKtungr4ZIfPwNW44GQFCdS2mdDiBxfp54mz8Al9Auc1KufLodqyzHOiiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC+SMpVW4PMo112iAIb3pOYqKU96IQ9qhpE+wuypyf7s6nrBK6
+	cEqWBNy6i8c0mirqVeqYx6aTmrSjdK+GpZY+9jvrAACMK5wAO7YO
+X-Google-Smtp-Source: AGHT+IGM+v6NAXeMP4IkNaKUigE2nCoiG2YAIRRjbeoigodmsy8+M4z+pI/60s/KOdi65Cr7EMZExQ==
+X-Received: by 2002:a17:90b:360a:b0:2e2:cef9:4d98 with SMTP id 98e67ed59e1d1-2e8f10a7281mr14965333a91.25.1730273058404;
+        Wed, 30 Oct 2024 00:24:18 -0700 (PDT)
+Received: from [10.3.80.76] ([103.4.221.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa76aa6sm935500a91.36.2024.10.30.00.24.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 00:24:18 -0700 (PDT)
+Message-ID: <c389ea3e-70cb-46c5-8cf1-878a99f771ec@gmail.com>
+Date: Wed, 30 Oct 2024 12:54:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panel: leadtek-ltk050h3146w: transition to mipi_dsi
+ wrapped functions
+To: Doug Anderson <dianders@chromium.org>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241026035928.183454-1-tejasvipin76@gmail.com>
+ <CAD=FV=Vps5vWD72O_kYhuKudduYed41+tZrVRB6x+FiaZrm-EA@mail.gmail.com>
+Content-Language: en-US
+From: Tejas Vipin <tejasvipin76@gmail.com>
+In-Reply-To: <CAD=FV=Vps5vWD72O_kYhuKudduYed41+tZrVRB6x+FiaZrm-EA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Instead of having them all available, mark them all as "fail-needs-probe"
-and have the implementation try to probe which one is present.
 
-Also remove the shared resource workaround by moving the pinctrl entry
-for the trackpad interrupt line back into the individual trackpad nodes.
 
-Cc: <stable+noautosel@kernel.org> # Needs accompanying new driver to work
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
----
-Changes since v9:
-- Picked up Doug's reviewed-by
+On 10/29/24 12:24 AM, Doug Anderson wrote:
+> Hi,
+> 
+> On Fri, Oct 25, 2024 at 9:00 PM Tejas Vipin <tejasvipin76@gmail.com> wrote:
+>>
+>> @@ -418,79 +398,42 @@ static const struct ltk050h3146w_desc ltk050h3146w_data = {
+>>                 MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
+>>  };
+>>
+>> -static int ltk050h3146w_a2_select_page(struct ltk050h3146w *ctx, int page)
+>> +static void ltk050h3146w_a2_select_page(struct mipi_dsi_multi_context *dsi_ctx, int page)
+>>  {
+>> -       struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+>> -       u8 d[3] = { 0x98, 0x81, page };
+>> +       u8 d[4] = { 0xff, 0x98, 0x81, page };
+>>
+>> -       return mipi_dsi_dcs_write(dsi, 0xff, d, ARRAY_SIZE(d));
+>> +       mipi_dsi_dcs_write_buffer_multi(dsi_ctx, d, ARRAY_SIZE(d));
+> 
+> FWIW: the above might be slightly better as:
+> 
+> mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xff, 0x98, 0x81, page);
+> 
+> That would make it more documenting that the 0xff is the "cmd", has
+> fewer lines of code, and also gets the array marked as "static const"
+> which might make the compiler slightly more efficient. ;-)
+> 
+> Not really a huge deal, though.
+>
 
-Changes since v8:
-none
+I did try this initially, but got an error because of page not being a
+compile time constant. Not sure how I should handle this.
 
-Changes since v7:
-- Mark touchscreen@40 as "fail-needs-probe" as well
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Changes since v6:
-none
-
-Changes since v5:
-none
-
-Changes since v4:
-- Rebased
-
-Changes since v3:
-- Also remove second source workaround, i.e. move the interrupt line
-  pinctrl entry from the i2c node back to the components.
-
-Changes since v2:
-- Drop class from status
----
- arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi | 14 ++++++++++++++
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi      |  4 ++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-index ae0379fd42a9..dfc5c2f0ddef 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-@@ -14,6 +14,7 @@ touchscreen2: touchscreen@34 {
- 		compatible = "melfas,mip4_ts";
- 		reg = <0x34>;
- 		interrupts-extended = <&pio 88 IRQ_TYPE_LEVEL_LOW>;
-+		status = "fail-needs-probe";
- 	};
- 
- 	/*
-@@ -26,6 +27,7 @@ touchscreen3: touchscreen@20 {
- 		reg = <0x20>;
- 		hid-descr-addr = <0x0020>;
- 		interrupts-extended = <&pio 88 IRQ_TYPE_LEVEL_LOW>;
-+		status = "fail-needs-probe";
- 	};
- 
- 	/* Lenovo Ideapad C330 uses G2Touch touchscreen as a 2nd source touchscreen */
-@@ -35,6 +37,7 @@ touchscreen@40 {
- 		hid-descr-addr = <0x0001>;
- 		interrupt-parent = <&pio>;
- 		interrupts = <88 IRQ_TYPE_LEVEL_LOW>;
-+		status = "fail-needs-probe";
- 	};
- };
- 
-@@ -47,6 +50,8 @@ &i2c4 {
- 	trackpad2: trackpad@2c {
- 		compatible = "hid-over-i2c";
- 		interrupts-extended = <&pio 117 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_irq>;
- 		reg = <0x2c>;
- 		hid-descr-addr = <0x0020>;
- 		/*
-@@ -58,6 +63,7 @@ trackpad2: trackpad@2c {
- 		 */
- 		vdd-supply = <&mt6397_vgp6_reg>;
- 		wakeup-source;
-+		status = "fail-needs-probe";
- 	};
- };
- 
-@@ -82,3 +88,11 @@ pins_wp {
- 		};
- 	};
- };
-+
-+&touchscreen {
-+	status = "fail-needs-probe";
-+};
-+
-+&trackpad {
-+	status = "fail-needs-probe";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-index b4d85147b77b..eee64461421f 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-@@ -358,12 +358,12 @@ touchscreen: touchscreen@10 {
- &i2c4 {
- 	clock-frequency = <400000>;
- 	status = "okay";
--	pinctrl-names = "default";
--	pinctrl-0 = <&trackpad_irq>;
- 
- 	trackpad: trackpad@15 {
- 		compatible = "elan,ekth3000";
- 		interrupts-extended = <&pio 117 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_irq>;
- 		reg = <0x15>;
- 		vcc-supply = <&mt6397_vgp6_reg>;
- 		wakeup-source;
 -- 
-2.47.0.163.g1226f6d8fa-goog
-
+Tejas Vipin
 
