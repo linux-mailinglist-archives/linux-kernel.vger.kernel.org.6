@@ -1,143 +1,87 @@
-Return-Path: <linux-kernel+bounces-389681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD2F9B6FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:18:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F3C9B6FD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:19:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04A8284B1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:18:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5931F221E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3A41E4908;
-	Wed, 30 Oct 2024 22:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908B51E377F;
+	Wed, 30 Oct 2024 22:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Em372dfz"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="rPA/LP7h"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652FD183CD1
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 22:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB51A1D0F54;
+	Wed, 30 Oct 2024 22:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730326720; cv=none; b=kjU2gU5qcsf7qNHCEcm2jBJOpJoN5hLAoc090QAjxUQexzglZcU1cfJF2CE0W3I4hy3netp2dEahl5t9H1NicBqghsZfJiCu78skNWD6o+YkqdBbSXP8jC7KgqCSIDQyo++P7ToIFKO8Od/xm7voqBrmnwFlo88YYfY2aO5CYgw=
+	t=1730326742; cv=none; b=NOf8BTvN2/JqLX7Q/dfy7a4Ji73Kem+PlVU+CJ84PHSK8NrlXetpEO2X4m+FF+FOFpfGsEyIlEqoJqJQLF97KVFX+Qlw1JUBAUucY9K7A9T/ezP69XJk2sSpFBGddYzGaX8IymXHcGgEtk5icif9q45AnZC4U127bqYt9jmFnSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730326720; c=relaxed/simple;
-	bh=ATUKPegUcqo8YgRnCQbayM11NO//DrT2d618hoaV2QI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IR799GXUEQW1+OHuJrQojtaRwVD/JB1B52/+gCVNBIzf+tkZIYgXh3H54y8BjD/Rzmwnjdn0eIYLmHC4tuiwPE6CuWdqcXRnzQN6SOjhDcwbLms404eqcppsf03lC6eB049KwHwj548w5AyWi/4BMMtPVq0SuDqG+rXYppWreII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Em372dfz; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315ee633dcso45445e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730326717; x=1730931517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ATUKPegUcqo8YgRnCQbayM11NO//DrT2d618hoaV2QI=;
-        b=Em372dfz+qC7D98LFYu1bsMVZoA5WwTEi9653N+xQpkFPV9vsLbGyzYrexb1OmcXg3
-         TIaev95dbT70bqBvMPiADH2RfA1rv8PatmBsT1w1v48+gdO7vYcjdaToSRf04ehd6zX9
-         RDgcNlES2otPZBCw6jmQrpMKmxYgYWhz8fc2KuCYZC7wwM9fYYi9XUF4R3hxj3z6Fd5v
-         OOu/+mFyNiSoSqgRBpKhjzkrJRtxslw8F4K8VPbTN83FVoyyDH3zDlZn0vGmZ3f8dFqW
-         N5KpvzIpguV6QvzlUeCD/0UGuyRFJfIYwM8hkvnAIOVM6Z538NVx8jenIs3SmxLYK7/h
-         ubaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730326717; x=1730931517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ATUKPegUcqo8YgRnCQbayM11NO//DrT2d618hoaV2QI=;
-        b=vBGsHKM8wuKgYFqUffsD/wSSYAvx2GcMFn16NEpNhKT5GSzqwr1dyEqVRKIcCRnXX2
-         7yr6/uZjf7LYm/W/LMGbVD9eD4r9KEueABaGFNSw35kZAc1JUSZtWHOiYqzd8yf/72rQ
-         rdgdkxNZ6kuKEgfBF1X3KsPBW2QWs07RFSRFPWXcFiysuo4LlFjBKt8vdGCmVwA6sAJu
-         lfYmn6MJrVmRo/GG9n2Nuo60iqO3a52iNHo0bWkQ6s9A8zY+zlPjWz6HlwKb4+XfefHJ
-         StkE+aPTqt6cDSGPTtFnx687/eTCXGRRVBMOzfvAhDTXKp9XOjby/orf5W40XCFw9vGR
-         demw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWnNmb8kBAk3/gx6vRio0/s4g5Ipq/vedH0wWUpKKVyzuomvuu2EZ3q2IphkIgCHRSNNJnHhT2cxq8YYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDEwxG98/Yw1t55U+2zqTsmMFYg3ainOxkoGSF5PzOJONp+Gv9
-	MceKf75kzuqNjW/x+1kvmAQZfQOs+kSUT6llAiHkonXmei4AZ6ZFzWW1qQupToygxithMQWIJaq
-	ZLWh3wuUxCyHHscTUptpF8f4Ew5yZPb3TDVgu
-X-Gm-Gg: ASbGncuamcgDrV8kETmDiAzzjJDNW/AEwq/0B/a0k58JZw48PqKaZGX3Rb/PbzSVPwa
-	0x3Xvif4pIZ+tGb/8KmEMPVPkWG/M
-X-Google-Smtp-Source: AGHT+IGgBxG9itQN01XAI+q7Fq91bG06PVTigFgOg09wvSOuCtpqcUewGTf7vCbKMXJrOM8i9YvEy2dObrXwLiwtf/4=
-X-Received: by 2002:a05:600c:3acc:b0:426:66a0:6df6 with SMTP id
- 5b1f17b1804b1-4327bd7e197mr1792485e9.0.1730326716591; Wed, 30 Oct 2024
- 15:18:36 -0700 (PDT)
+	s=arc-20240116; t=1730326742; c=relaxed/simple;
+	bh=F3rCOskbgR5Tgx+Rf/5frqWmUJHOP3bkNxuCb2WvJA4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NFYZr0/BUsvskrrzWTWE8VQDx8056aydAHKxZ5TLE2RO6vguKy7XVWtRitvXQZaT57E2TtN0SDei3vD6sjtqxcMaR1cSHvkVPAai5W3C2KkA7V/xbtY836ohb1ouEeCp1CeQbYFoYFqGJ8C4pHq7+RaB3Wl7cu5QQQhrpI/VvCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=rPA/LP7h; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 343C242C0B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1730326729; bh=mcsnwyNOjL28C4fD3C7HpEhmbEgiYcyoM3bw9n6dh1s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=rPA/LP7hJ/Umkl4IcwguZH6HORv5nbibamyQjSonnFpRubxoem/dlnC7lXjKGd84t
+	 9XABCZ0AYVKnQzAMojT4sdSWY+GVF5L5hKgW/K7EvyzzTb9fIyTUjbu2S4tRoT101m
+	 FJ94f/TkpJaWFmqd/tSkZPKNFwwrEUfFmeiyAiIzzLuFwjtpm2FRlQIPl9dTbj/sJ2
+	 cEiwUW8xWIIl2hIE/Ck5J0I6uEVIriRaIOSXi4bS8U2SGKipUYzbNfEJRC20MI0M/M
+	 Zwplo1TUVkq1MvGR3Pk2TAWXTvL1L+7hm8H4UMRvfVrjPDXHAh1hif8z9/qKyhFNe9
+	 wGJIBg+EYzytQ==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 343C242C0B;
+	Wed, 30 Oct 2024 22:18:49 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: anish kumar <yesanishhere@gmail.com>, broonie@kernel.org
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH V2] ASoC: doc: update clocking
+In-Reply-To: <CABCoZhAgnkDReqdMTgEjKYX4b9y0XqocEheQR1DhsBCtp7zpHg@mail.gmail.com>
+References: <20241029235623.46990-1-yesanishhere@gmail.com>
+ <fceef9c9-f928-47fe-a6e7-cdb28af62f71@sirena.org.uk>
+ <CABCoZhAgnkDReqdMTgEjKYX4b9y0XqocEheQR1DhsBCtp7zpHg@mail.gmail.com>
+Date: Wed, 30 Oct 2024 16:18:46 -0600
+Message-ID: <874j4ts08p.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805093245.889357-1-jgowans@amazon.com> <20240805093245.889357-6-jgowans@amazon.com>
- <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
-In-Reply-To: <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
-From: Frank van der Linden <fvdl@google.com>
-Date: Wed, 30 Oct 2024 15:18:25 -0700
-Message-ID: <CAPTztWYZtO6Bfphdrfr6Pbc-v4WAgCG+iCJJK26aS1f1AdNbVw@mail.gmail.com>
-Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: James Gowans <jgowans@amazon.com>, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Steve Sistare <steven.sistare@oracle.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
-	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
-	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
-	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Oct 29, 2024 at 4:06=E2=80=AFPM Elliot Berman <quic_eberman@quicinc=
-.com> wrote:
->
-> On Mon, Aug 05, 2024 at 11:32:40AM +0200, James Gowans wrote:
-> > Make the file data usable to userspace by adding mmap. That's all that
-> > QEMU needs for guest RAM, so that's all be bother implementing for now.
-> >
-> > When mmaping the file the VMA is marked as PFNMAP to indicate that ther=
-e
-> > are no struct pages for the memory in this VMA. Remap_pfn_range() is
-> > used to actually populate the page tables. All PTEs are pre-faulted int=
-o
-> > the pgtables at mmap time so that the pgtables are usable when this
-> > virtual address range is given to VFIO's MAP_DMA.
->
-> Thanks for sending this out! I'm going through the series with the
-> intention to see how it might fit within the existing guest_memfd work
-> for pKVM/CoCo/Gunyah.
->
-> It might've been mentioned in the MM alignment session -- you might be
-> interested to join the guest_memfd bi-weekly call to see how we are
-> overlapping [1].
->
-> [1]: https://lore.kernel.org/kvm/ae794891-fe69-411a-b82e-6963b594a62a@red=
-hat.com/T/
->
-> ---
->
-> Was the decision to pre-fault everything because it was convenient to do
-> or otherwise intentionally different from hugetlb?
->
+anish kumar <yesanishhere@gmail.com> writes:
 
-It's memory that is placed outside of of page allocator control, or
-even outside of System RAM - VM_PFNMAP only. So you don't have much of
-a choice..
+>> This feels like it is (or should be) duplicating the kerneldoc generated
+>> documentation - I'm not sure that we can cross reference the two
+>> sensibly through?
+>
+> Jonathan, wondering if you know a way to link the clock functions defined
+> in https://github.com/torvalds/linux/blob/master/sound/soc/soc-dai.c here?
 
-In general, for things like guest memory or persistent memory, even if
-struct pages were available, it doesn't seem all that useful to adhere
-to the !MAP_POPULATE standard, why go through any faults to begin
-with?
+I'm not quite sure what your question is.  Kerneldoc comments can be
+brought into the documentation, of course - that's a big part of what
+the build system does.  You can link to that documentation just by
+saying function() - nothing more required.  What else are you looking
+for?
 
-For guest_memfd: as I understand it, it's folio-based. And this is
-VM_PFNMAP memory without struct pages / folios. So the main task there
-is probably to teach guest_memfd about VM_PFNMAP memory. That would be
-great, since it then ties in guest_memfd with external guest memory.
+Thanks,
 
-- Frank
+jon
 
