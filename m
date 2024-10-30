@@ -1,74 +1,70 @@
-Return-Path: <linux-kernel+bounces-388766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEF69B6420
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:30:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B1D9B6429
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F561F211E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A0941C211EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447811E47B6;
-	Wed, 30 Oct 2024 13:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ED41EE02B;
+	Wed, 30 Oct 2024 13:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UFheIvHn"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YFyqHMYq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E203FB31;
-	Wed, 30 Oct 2024 13:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED321EABD0;
+	Wed, 30 Oct 2024 13:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295045; cv=none; b=Cm0YCT9WHdfbsJH4xwNUI8byf7uitbAd92JDoKhr4XNh/nn9zC/AVnEL3Fsl1NVVwOKVGJoNnCZyNE6Gg5hUUlT0C41nz3kCan0X3gtFOEWqcQidOGcJuI+bbdT1IJCxRcuvzSXP7lISP9CzbnTm3f7v/Gxn4zeOJCoWO0ZTQHU=
+	t=1730295138; cv=none; b=ef03it4nHa6RXbL/+9Zv2mRPO4ELEGmzq2ADY5IUuLimS2rKNWJGIUnpYEYAgCLZWHjU+aMIl+MN7EA+gBMfEmP3r58wWzPLVXGdvUxKc45PGS/42aSsgag0gNP3tdMSeIAVc9f25ZTQm+KRTiQ0D1ECh/a7PeN6uJBb6Hq94No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295045; c=relaxed/simple;
-	bh=fXp4EyvDvaEHTs20lqCDCc70TkoaLFwUvrUtZ1hPBtI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=soVzs0LJ/SNCaxaXQvuYkxe7iE8rO8MOalW4nEKtxPWCvsj0ytuQcOjzMhjIN0O99o/z0iHv1CtxC9jzxVhK1OrDSqJDHhe9R0nditk5a6et9to2Jb7BqaMaiBcWpOQAVLXnbqCIQd84a5BkE2K4v3xi3GbtdAxFyD3KsPUIB1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UFheIvHn; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730295031; bh=rsvQ0cW54UNs+cmr/pqkfTzh7S6i+MSJtskvKobjuH8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UFheIvHnLqbbD/5LRTKbIYOCWj3FJB+6+jUJLuBTHBW006ZuCCoMbs4cvwEA9mC9+
-	 y8NULTYMnwA/v1qPH4wnLhcb3Dq2jkKQHKfHFbB6SKp9CS0k1FwKiSG29h7Aro2ONg
-	 SzDELE+1wMnk/rfWydoxqQR0VQVoqNNuaKfm85i8=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 79C9A88A; Wed, 30 Oct 2024 21:30:28 +0800
-X-QQ-mid: xmsmtpt1730295028tjvgbdpfv
-Message-ID: <tencent_451BB425FBBAC7BB5833E59EA31B4D4B0708@qq.com>
-X-QQ-XMAILINFO: NmGHaOBmCahzaJDE79H7nTGDoUh3WOTRfrJ46PalzlT1XYPu0GxVShDApe4zM3
-	 nDYnkFd5YJCkCY6vQe7W2TCA+Cff+KPExM1zgu5mb+SO4Z3gEkcmn07Mk/JnKJc81QCyumN9aYOC
-	 DnTobGr1lnK+kjoBiacQkCRgDPNRmfzZaU4WG25ojiQDQ9o9UqcVYqhIbanB5aDVkONAzv0TeUGV
-	 ZTo/spIufUtzz8J9NoBOKZdTcXpbcw2ju5zxkz+eSwLATOmgysWZXhC8KZHRDn6J6qrbp9r/R4AC
-	 zJzDJKArfA1/44SBaiOyLyP8+sSbOw5JilPZiVoKVB+yttWnDf1HtEcXwWgAkV/91UNiveMFjNai
-	 vRvDK3nCSBPM0njzSjo9z+t8qSm0zxmfrNmxlBfHZNOTUgoM9StF+xWGEYVf12VaS3R9546fV537
-	 BWjd76xRTpA/WAEgvLYp+nEuflFlvLYZtm9jJNdqxlyOuSg3M4L3SRjCInw0h+l1ujLfdEb/0Qa+
-	 Nh/if8tZN5xIz+X5T/Nt9yE0jXtPJMrSvB7bbqZiF+3E48zZFtN1vuzxt2CKqgt8BNQfM6wmnWJT
-	 FlOIdSCttYJQauqRkLwc4OQjO9LR+I9DvZxHALRPjFkVjGWkznEEoTC3eWcsbcvdN81ydD9ghjMl
-	 048kw/FdhPEWYK2pO8U2T62zGOLI9i71T+TCeXtaiMg2212F34FeoJUE90Yun+pz/TuULhS8rnSP
-	 w+hK/Jh8v69WDFsj6EWSE4grN+Dm/ttfJHXPTHZTN6O4P1sm1WMnX7bPagFCtysPnpBzNjwe1TZL
-	 LKI7/n6aXUGVVJHVKhUUW8a3qvduQ7cmwFPUN67fXlUYKrdNBpTdLPbLOdcS7v4nVZU2bLwkFnL6
-	 qanfYiLfU1u6zz5p/k2pxAYZn25z/QDgCnH/y7Z90LK1Yp7ILJKSfLE4Xc/b7Jg9Ayi3YhRZQZuk
-	 e3W/AsMLgDlLOkrlXyEzcGCu/51BiuvlZ6mfD1IHg0NIf1cADqb7qIkL1QlbCc
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
-Cc: amir73il@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	miklos@szeredi.hu,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] overlayfs: retry when getting the dentry fid fails due to lack of memory
-Date: Wed, 30 Oct 2024 21:30:29 +0800
-X-OQ-MSGID: <20241030133028.3754238-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <671fd40c.050a0220.4735a.024f.GAE@google.com>
-References: <671fd40c.050a0220.4735a.024f.GAE@google.com>
+	s=arc-20240116; t=1730295138; c=relaxed/simple;
+	bh=b0OnCQghW9QVElgOiB0/VJEnC3vVic8d6AT2sPgDfIo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EgZ8nll/kMpTgf+Ah0s0tll8vWuGV7zQnmXdNkonfAQ+x0CoD0OKeiv/R0JpPt7XnC8p+WSrW2ty/GvJO+F9ios2fEO/6w58T5iyQcCKz2r/JIPZsx+hpYRQPY+buND9s1gvmGJMjr+G9OFaZfebHKL4nx0MOHG3hsKdcLGGTt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YFyqHMYq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U9ZbpQ012778;
+	Wed, 30 Oct 2024 13:31:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vyOiJymB0nnDRku/t4g1pc
+	FvAC1IuzmaO9Rq+PhkWF0=; b=YFyqHMYqsy32ma3bzD6CprZA/SAH1Cmd8qLTvj
+	hlb0GqfJ3ghxdn3dkRzhFCwN0XM5kpUHAieYdu+FfENrhC0jX5iX7kl853RP/IcL
+	3QuvRFbtZINuiNIl4/vdqSNEdm1skMRj1RlL3BZO/M5aZCSP38SorpRfbmA7A90j
+	EJQo7Bmsxgi0x/0+7Ql4AelcaTf+zVoouZLQg+D//7RGgBh1rQMKr41qsIGUAv1f
+	TRfFnHoigMhMG8flqnN6rWQkoJAJruFt1WxOksUdiYCe88hz6jSHT5+ae+w3jh25
+	OzrOfYWuOm5Fog7ItpZyGWQXe7SPwSoIgWAY9qtT2VFjIl5w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k6rpjf9a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 13:31:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UDVwZi006387
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 13:31:58 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 30 Oct 2024 06:31:53 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
+        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
+        <pierre.gondois@arm.com>, <vincent.guittot@linaro.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [PATCH V6 0/1] firmware: arm_scmi: Register and handle limits change notification
+Date: Wed, 30 Oct 2024 19:01:32 +0530
+Message-ID: <20241030133133.2932722-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,51 +72,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: usyqeks7XHTCpeLJzJIGkPIOknqe9vir
+X-Proofpoint-GUID: usyqeks7XHTCpeLJzJIGkPIOknqe9vir
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ clxscore=1011 mlxlogscore=875 priorityscore=1501 spamscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410300106
 
-Syzbot report a WARNING in ovl_encode_real_fh.
-When the memory is insufficient, the allocation of fh fails, which causes
-the failure to obtain the dentry fid, and finally causes the dentry encoding
-to fail.
-Retry is used to avoid the failure of fh allocation caused by temporary
-insufficient memory.
+This series registers for scmi limits change notifications to determine
+the throttled frequency and apply HW pressure.
 
-Reported-and-tested-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ec07f6f5ce62b858579f
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/overlayfs/copy_up.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+V6:
+* Unregister the notifier in the exit path to make sure
+  the cpus work across suspend/resume cycles.
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 2ed6ad641a20..1e027a3cf084 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -423,15 +423,22 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *ofs, struct dentry *real,
- 	int fh_type, dwords;
- 	int buflen = MAX_HANDLE_SZ;
- 	uuid_t *uuid = &real->d_sb->s_uuid;
--	int err;
-+	int err, rtt = 0;
- 
- 	/* Make sure the real fid stays 32bit aligned */
- 	BUILD_BUG_ON(OVL_FH_FID_OFFSET % 4);
- 	BUILD_BUG_ON(MAX_HANDLE_SZ + OVL_FH_FID_OFFSET > 255);
- 
-+retry:
- 	fh = kzalloc(buflen + OVL_FH_FID_OFFSET, GFP_KERNEL);
--	if (!fh)
-+	if (!fh) {
-+		if (!rtt) {
-+			cond_resched();
-+			rtt++;
-+			goto retry;
-+		}
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	/*
- 	 * We encode a non-connectable file handle for non-dir, because we
+V5:
+* Drop patch 1 and use pm_qos to update constraints. [Vincent]
+* Use sdev instead of cpu_dev in dev_warn. [Christian]
+* Pass sdev directly through private data. [Christian]
+* Dropping Rb's for now.
+
+V4:
+* Use EXPORT_SYMBOL_GPL instead. [Trilok]
+* Use a interim variable to show the khz calc. [Lukasz]
+* Use driver_data to pass on the handle and scmi_dev instead of using
+  global variables. Dropped Lukasz's Rb due to adding these minor
+  changes.
+
+V3:
+* Sanitize range_max received from the notifier. [Pierre]
+* Drop patches 1/2 from v2. [Cristian]
+* Update commit message in patch 2.
+
+V2:
+* Rename opp_xlate -> freq_xlate [Viresh]
+* Export cpufreq_update_pressure and use it directly [Lukasz]
+
+base: next-20241029
+
+Sibi Sankar (1):
+  cpufreq: scmi: Register for limit change notifications
+
+ drivers/cpufreq/scmi-cpufreq.c | 38 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
 -- 
-2.43.0
+2.34.1
 
 
