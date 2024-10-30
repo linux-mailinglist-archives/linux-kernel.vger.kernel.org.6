@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-389573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925B09B6E91
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:15:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094C19B6E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F05EB20F83
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF22D282714
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB648215034;
-	Wed, 30 Oct 2024 21:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4A81CF7BA;
+	Wed, 30 Oct 2024 21:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ry2af5WU"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eFwSgTu1"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6001914F90
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E0A1BD9E8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730322889; cv=none; b=JNxFTLBGYmesQH+zy1MYUE2bsJfPzMsvXtGZR02TfsnO5gyIIcDm+orKxotYO7eyMJ1znybkck3atGdkI+fROCpwh/47p6NTBDoBncmdF4X0Pq8AOC5/mxpD7fUPeMXufFots9iZWv2/Pqd+ZBKD7CUtvOc0CmTjcMxYZkvTLjk=
+	t=1730322919; cv=none; b=CHdkxpmGJHLL7fG8cxbheSHJYKenSAAxIVBIjUziWuFoTVnnQvd/xW2TQHrNEPO4yEy+OprbUYzanB5Q0NZt7FTBSLc4mQxNI8odp+CrY3DQVAbladSlRZYsYTV2uYvp1Rltf0s1PAlyHh4aAf0NOPr7v24DkPJBc0UYXqms23c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730322889; c=relaxed/simple;
-	bh=o534AfqHtN7RldxfitzK66PsnDX4NhPFj12yRB4Rmbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WkQSAHJ731HBkuDtYvauYfUzou/nDZRyNQBX6p8iyaPLABUCGD6uiYrW4wc3YmK5HgSM02NEevdEVeWZ+ILfnpmx8SiHB7gIuzH23oKzhxrKMP2OsDWss2vIdYEWcp/pj+ZGapu/FGntcQvMLYB0/6XErwL+T+VsPQvSIXi5Yog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ry2af5WU; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so37255e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730322886; x=1730927686; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o534AfqHtN7RldxfitzK66PsnDX4NhPFj12yRB4Rmbs=;
-        b=Ry2af5WUv/skSRNxT+7siplCwQWDhKtQfIsMjY9CKz4eMhiDaZX1feC5lYAe1PYbNz
-         KNoCsxFUr1uBOAwYpDz8pWMPcz/SQtxG339IHGWDwqYztGZqfo22sfw5XoOMvVZJsl+f
-         +twacZr2LJZsSmJBtLqUo4nwKOY8IxT/enb/U243vHrgZuhK6ZdUTMg9FPxNHD8lWP+K
-         riMozXWSdTIv1OQR3UtxZU/nF3JvE8oOoKSnTlNpAMZEYs87ED4gijbier9TavT5e2pP
-         XCwBYmqUx8tfgOtIIX/fLhhgI2Jfk1fqWyDYH2f32yzgDByNWx9UEjFSvRQbKWTsKg8E
-         aABw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730322886; x=1730927686;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o534AfqHtN7RldxfitzK66PsnDX4NhPFj12yRB4Rmbs=;
-        b=DzpldrM9e13bcaP1niiXfwJrlTVO5aSYmOmIvBlWlvIiZd4EZKXHCiejnaBshfRbcA
-         /gHoUsPR8lpL/oBzDT7pmUBy4uIY9+Vscqf0NrbBpuKMJ2GH6Rk0cdMkE5gnP0097/PL
-         zc6oSUNI6OpQWN+d4LH/70GcBh2+iOqq4vQX+iAFOQf7qpJcc/THgbZcJh4fHSUGalIl
-         /KgGhXBEKqFysyvQys2attTb6j6zR6/AGbtfdCnIFrLClm0j4tbx7tDqhrAX/n+Qd9Sf
-         fBh2kgmACL3MkuAiOqnEGqJXvI1YT48Bne0H+Z9QFACrea6miSazSkumlbpY4SAQ1eeG
-         +wXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeEinrAYpRRxi70FzbzpXvG1EyYAXoZs8kgtNFgNWKQ/XyahEGKoPN2gUNr3WAsQUH3w02Gk784ClfSeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNEG1jiTlEBTUZQQ5nL+ExDRdzzIIYwPkraWU3tCdTsK5R79ze
-	LMSN7pfmSvJ3lrnR5UBIdn992T0tPE1tEdkGGPResJn83q9gmM4ObHWvKWWQ8+ty9BDx1TF/zm7
-	ptD4eX4PnhzmA4sWMqIp3rc+KyijlW6UPh9lq
-X-Gm-Gg: ASbGncvTNz56jqsonQOmcX7d7HM4aRqoL7w0l2uXsGOnnOzpb60oO0DGltjRxTUOnu8
-	J5idqiqMmtkGy2KpTBQSRvQC9jFu+igk8y/s/mwwQZLij55JrqC7Ps7wCcmxzZA==
-X-Google-Smtp-Source: AGHT+IGpbeaz+5KppTzbcYqEE1yAqTgZJWcDUhQHhbTL7VnBBuh5AYIfWrbwLxtiZ4nkFcdHa3790grpJGu5v7MdZew=
-X-Received: by 2002:a05:600c:c8c:b0:42c:b0b0:513a with SMTP id
- 5b1f17b1804b1-4327bdca213mr1401735e9.2.1730322885602; Wed, 30 Oct 2024
- 14:14:45 -0700 (PDT)
+	s=arc-20240116; t=1730322919; c=relaxed/simple;
+	bh=3NdbEY+40g2u4PJZgAGawzFFKoDnL2ekE+kgA+nNaIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBP17oMXhKcS6mTYQWxphHRTvHFR6QK+fezSyf7yxPSfDg+kHzKRpDfa4CcIt1uH9VYMOOBep6EC7tkOgGl6NPgpD6wyOrndBgBYxtYqiiJfZHG32k8cD0fUCyVUty1l7EYsS1BSdAWl4QL2KgbmadF9WKuAzonktQmJStjz7R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eFwSgTu1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=r4sF1w6wZ9YNJ5W9haXfyzIjOPf0e+55cCGv6/q1+DQ=; b=eFwSgTu1LFnfSlwKTjmCUd6d54
+	MQvJpKpcOLsXbUblt/Fe7w9l7LmtXFukgDzaoUe5Yd23tS4gaQnqHcsaYSMkyDTbScW51L+gIz3Ss
+	D3a0GpejIBZk+PVm4qvuZRlFzvDwgsRi7VhERbmTUR5Hpi2MiY4qE43OvuvY2Ccvqp3AF1os9VcE4
+	aPC6FezSaCR6QBt/W05HSWLyJ3krg96Az3zi/4M+z6OXEygFcHSyEe51lbX02eSCWcGkBLyTbXLOx
+	dRYzwutvpg7wmOXTS6NPnGzAWUFYK/UALYv6BytnFO+jOjtirMulTlMQAvqEkN+MC5j5aXhYiYMOs
+	0CuIZVAA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6G1z-0000000ALNA-0491;
+	Wed, 30 Oct 2024 21:15:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 608D9300B40; Wed, 30 Oct 2024 22:15:06 +0100 (CET)
+Date: Wed, 30 Oct 2024 22:15:06 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: mingo@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, void@manifault.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 4/6] sched: Fold
+ sched_class::switch{ing,ed}_{to,from}() into the change pattern
+Message-ID: <20241030211506.GR14555@noisy.programming.kicks-ass.net>
+References: <20241030151255.300069509@infradead.org>
+ <20241030152142.711768679@infradead.org>
+ <ZyKhQFuMItKsmsnh@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com> <CA+icZUWTdgM7HQrnR_NzgZZQE3aXXk+tAqD3srNd1Eyjr5d7EA@mail.gmail.com>
-In-Reply-To: <CA+icZUWTdgM7HQrnR_NzgZZQE3aXXk+tAqD3srNd1Eyjr5d7EA@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Wed, 30 Oct 2024 14:14:07 -0700
-Message-ID: <CABCJKuepGSFcQa0F5iO4aa4V2UbhuKO+tyfhB3_ODaTGs3sM5Q@mail.gmail.com>
-Subject: Re: [PATCH v5 00/19] Implement DWARF modversions
-To: sedat.dilek@gmail.com
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyKhQFuMItKsmsnh@slm.duckdns.org>
 
-Hi Sedat,
+On Wed, Oct 30, 2024 at 11:12:32AM -1000, Tejun Heo wrote:
+> On Wed, Oct 30, 2024 at 04:12:59PM +0100, Peter Zijlstra wrote:
+> > --- a/kernel/sched/ext.c
+> > +++ b/kernel/sched/ext.c
+> > @@ -5199,20 +5204,24 @@ static int scx_ops_enable(struct sched_e
+> >  	percpu_down_write(&scx_fork_rwsem);
+> >  	scx_task_iter_start(&sti);
+> >  	while ((p = scx_task_iter_next_locked(&sti))) {
+> > +		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+> >  		const struct sched_class *old_class = p->sched_class;
+> >  		const struct sched_class *new_class =
+> >  			__setscheduler_class(p->policy, p->prio);
+> >  
+> > +		if (old_class != new_class)
+> > +			queue_flags |= DEQUEUE_CLASS;
+> > +
+> >  		if (old_class != new_class && p->se.sched_delayed)
+> >  			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+> >  
+> >  		scoped_guard (sched_change, p, DEQUEUE_SAVE | DEQUEUE_MOVE) {
+>                                                ^
+> 					       queue_flags
+> 					       
+> >  			p->scx.slice = SCX_SLICE_DFL;
+> >  			p->sched_class = new_class;
+> > -			check_class_changing(task_rq(p), p, old_class);
+> >  		}
+> >  
+> > -		check_class_changed(task_rq(p), p, old_class, p->prio);
+> > +		if (!(queue_flags & DEQUEUE_CLASS))
+> > +			check_prio_changed(task_rq(p), p, p->prio);
+> 
+> Maybe prio_changed can be moved into scoped_guard?
 
-On Wed, Oct 30, 2024 at 2:00=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com>=
- wrote:
->
-> Hi Sami,
->
-> perfect timing: Nathan uploaded SLIM LLVM toolchain v19.1.3
->
-> KBUILD_GENDWARFKSYMS_STABLE is to be set manually?
-> What value is recommended?
-
-The usage is similar to KBUILD_SYMTYPES, you can just set
-KBUILD_GENDWARFKSYMS_STABLE=3D1 to use --stable when calculating
-versions. However, it's not normally necessary to set this flag at all
-when building your own kernel, it's mostly for distributions.
-
-Sami
+It wasn't before -- do you have need for it to be inside?
 
