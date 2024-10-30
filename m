@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-388477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A981D9B6032
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1143A9B6051
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67879283CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 433A11C22506
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E5A1E47D0;
-	Wed, 30 Oct 2024 10:32:27 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEAD1E378D;
+	Wed, 30 Oct 2024 10:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ThUP76GG"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB77F1E32D8
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F381E260C;
+	Wed, 30 Oct 2024 10:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284347; cv=none; b=S5W6d3K/1gnHkmTop7MX4QWuMQ5lrdThnvQdxqiHe8yIRFy5kpIJjLb+TNTof++XxB5++uvae+Dr4/g35gTu/8GNFC5ZK3YhlxAo/i/dyzzSXDlfgx6jsd8eyaO4NUcd3uuQXt72VKE8pdB1Kic0Q+G7JUs7ON3m7d2HpzvZKKw=
+	t=1730284630; cv=none; b=QXLWSuiKCMNrEBDP7+JlBJB/2/dyHVmzIpMkTVCbRLG+6KUo0jhuBU24Jdmrv0TYeebKFHYW3isiookAkJvgokT2aa1Kkm8GFKDLPVxaje/KnsIXz7NCz9p9IGR2HC1oQPHCkSyo/XGbr8Ng+VeDzzet8lykztcz+dU6BomOogg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284347; c=relaxed/simple;
-	bh=ByIW6xN2k1vSc+IxsAB9AEtTFIFXUpVw+1AjsVkisBc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ubl9XTH04T8NRUpaMlUGrreudIlYtAX0AJ+p8eKw69M76t95wa1BcH8734KYDwMj63i5CqDsmUgQeD11HAdpaGWWi8sJreWwdh98mqDsN004/Fzwe7waTCSHhuOf03QnUOP1uPOcnRS/li+Zw4EJBsuS3Gncbh1cWiw+XmyJGc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 49UAViG8026981;
-	Wed, 30 Oct 2024 18:31:44 +0800 (+08)
-	(envelope-from Yi.Sun@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1R4B4cz2KSK4X;
-	Wed, 30 Oct 2024 18:31:07 +0800 (CST)
-Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 30 Oct 2024 18:31:43 +0800
-From: Yi Sun <yi.sun@unisoc.com>
-To: <chao@kernel.org>, <jaegeuk@kernel.org>
-CC: <yi.sun@unisoc.com>, <sunyibuaa@gmail.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <niuzhiguo84@gmail.com>,
-        <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>
-Subject: [PATCH v2 5/5] f2fs: Optimize f2fs_truncate_data_blocks_range()
-Date: Wed, 30 Oct 2024 18:31:36 +0800
-Message-ID: <20241030103136.2874140-6-yi.sun@unisoc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241030103136.2874140-1-yi.sun@unisoc.com>
-References: <20241030103136.2874140-1-yi.sun@unisoc.com>
+	s=arc-20240116; t=1730284630; c=relaxed/simple;
+	bh=BuV9WLUxozweYH9SaJOjipfLeWosJXwHUEdtG17zscM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=aEIxzaoPPBMOqLLnFPIu+pT66j5SZzyx1TiNIf8iPrvGffypqzz+KMrrAvdyL4WeQ7/t18G96CfXTVIzN4FEY4Fw5ZfQYf2kSZhqMJYLxni7zeGjFKRYM2FKOpHjwLE+Wu6xwErddr57Ap1jQDqGP23pvjCqEqOrxnoHG45bUHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ThUP76GG; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1730284314; bh=zHfoqvcdyaOKQo7OsU+H7Hbt4PIQsWhPaOgva2OQV8w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ThUP76GGMwrFF0yxKuN72fizkLkgJyiSLnQBxphJgZccVa1qfoV4BqU7VvNla1c5h
+	 BxoEyzWyWVe7aBjxdi1cmdD/SmQRN23V7CA7GY4P3CJ3ryrDdGiayPcOD5sJSiwnXB
+	 NUcqmBggGrXytQG56XrndkI2tegS0ofjhB60L7Vo=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 7F42E2E3; Wed, 30 Oct 2024 18:31:52 +0800
+X-QQ-mid: xmsmtpt1730284312tmx4hylhw
+Message-ID: <tencent_93E0C66D49BEAEDE6ECA0C9FA7C786D2D206@qq.com>
+X-QQ-XMAILINFO: NhUkPfKlCtQwUUMh2foJjMGPnHrdYy6dHZWFs/7ZegpoND4YXmNKSDrDzjkKwS
+	 O/PkpHZrWXXm90j8YT0Eow0x0TSjMZmh3ig4jhjlb6uiBZFR/KoZO9d/dJKt4agqEV9wOl5bhss/
+	 V8Oiuk3cahMkrlnpeUmHUHv3SkZ3WUp1DLNq2w+dVKS3btiMGBMGwnJ1W8LjUFBwzTesVe4R26am
+	 zD52gptuOkzh45L1Q/tWPtkz8/ARWfulB0fDWVopV1RM13OW2qExmXUrk7FQDOlkC6cn+89jhfOR
+	 bW+ePBR+Vb73zOWUKmjP6IYL5PBHUQRkkMApEOpgx6T4Ti2VaBPxTfWuBZHY0QpV+yLquctf8Skt
+	 98XtmqtdmOqpYaLS3qpYnDZja3EG+ywgnimKKZ0RdO/WQTIrovFxAwFNeQT0835nxb18rWNcFADA
+	 5T88uzf6Yst2WA4EeXFYGqHchRVlf/WQ9OBtaAsZFsN0e9TDSOJI3NUIFagbjXNvtw7db3uQQnvV
+	 jHXFLgPOLLOuKj4zbvOcqQJ5WxTt4NLKzoxz4TXFu1U9n5/sE4fwxeszH31bcN+nWRN863AEGZjJ
+	 h+9ZlKA56BNglSDLl2VGU3vhss4accbSs90GaXm7DbmuVAYBO9M/x8WI+ZbvJ1oo/uP3KGuynFdO
+	 dtjlXf3brDlWq6awb2rGiauq6XyfCSYycFridw88FoM2baw5bYtSEC1+2t++8cvVBZQ9RB5aLIsA
+	 oX6AVPj8k89el+dSp6oHBJVssjOYnnTH8ZGRjyvZ86BePbbT/6xlvgJ3L6z0uTosQTCG+QFCShgN
+	 FVRi/H23ytxRUuoTJE66TqBEPlZn3AUCro6xM9KzVp6Zd1OTeYvqtGqV+xclNT59r7ASDdd4cBry
+	 EsZTKIvBUde1L/RNBRUAfIr1uc+Aatn7ifkOzIplHlVINeoLmM+Zmm42xd/yZFYyw6j1GquTUS
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
+Cc: amir73il@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	miklos@szeredi.hu,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
+Date: Wed, 30 Oct 2024 18:31:52 +0800
+X-OQ-MSGID: <20241030103151.3582905-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <671fd40c.050a0220.4735a.024f.GAE@google.com>
+References: <671fd40c.050a0220.4735a.024f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,135 +75,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 49UAViG8026981
 
-Function f2fs_invalidate_blocks() can process continuous
-blocks at a time, so f2fs_truncate_data_blocks_range() is
-optimized to use the new functionality of
-f2fs_invalidate_blocks().
+When the memory is insufficient, the allocation of fh fails, which causes
+the failure to obtain the dentry fid, and finally causes the dentry encoding
+to fail.
+Retry is used to avoid the failure of fh allocation caused by temporary
+insufficient memory.
 
-Signed-off-by: Yi Sun <yi.sun@unisoc.com>
----
- fs/f2fs/file.c | 72 +++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 68 insertions(+), 4 deletions(-)
+#syz test
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 13594bb502d1..3dbabe6be8e6 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -612,6 +612,15 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 	return finish_preallocate_blocks(inode);
- }
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 2ed6ad641a20..1e027a3cf084 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -423,15 +423,22 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *ofs, struct dentry *real,
+ 	int fh_type, dwords;
+ 	int buflen = MAX_HANDLE_SZ;
+ 	uuid_t *uuid = &real->d_sb->s_uuid;
+-	int err;
++	int err, rtt = 0;
  
-+static bool check_curr_block_is_consecutive(struct f2fs_sb_info *sbi,
-+					block_t curr, block_t end)
-+{
-+	if (curr - end == 1 || curr == end)
-+		return true;
-+	else
-+		return false;
-+}
-+
- void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-@@ -621,8 +630,27 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 	int cluster_index = 0, valid_blocks = 0;
- 	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
- 	bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
-+	/*
-+	 * Temporary record location.
-+	 * When the current block and @blkaddr_end can be processed
-+	 * together, update the value of @blkaddr_end.
-+	 * When it is detected that current block is not continues with
-+	 * @blkaddr_end, it is necessary to process continues blocks
-+	 * range [blkaddr_start, blkaddr_end].
-+	 */
-+	block_t blkaddr_start, blkaddr_end;
-+	/*.
-+	 * To avoid processing various invalid data blocks.
-+	 * Because @blkaddr_start and @blkaddr_end may be assigned
-+	 * NULL_ADDR or invalid data blocks, @last_valid is used to
-+	 * record this situation.
-+	 */
-+	bool last_valid = false;
-+	/* Process the last block separately? */
-+	bool last_one = true;
+ 	/* Make sure the real fid stays 32bit aligned */
+ 	BUILD_BUG_ON(OVL_FH_FID_OFFSET % 4);
+ 	BUILD_BUG_ON(MAX_HANDLE_SZ + OVL_FH_FID_OFFSET > 255);
  
- 	addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
-+	blkaddr_start = blkaddr_end = le32_to_cpu(*addr);
- 
- 	/* Assumption: truncation starts with cluster */
- 	for (; count > 0; count--, addr++, dn->ofs_in_node++, cluster_index++) {
-@@ -638,24 +666,60 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 		}
- 
- 		if (blkaddr == NULL_ADDR)
--			continue;
-+			goto next;
- 
- 		f2fs_set_data_blkaddr(dn, NULL_ADDR);
- 
- 		if (__is_valid_data_blkaddr(blkaddr)) {
- 			if (time_to_inject(sbi, FAULT_BLKADDR_CONSISTENCE))
--				continue;
-+				goto next;
- 			if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
- 						DATA_GENERIC_ENHANCE))
--				continue;
-+				goto next;
- 			if (compressed_cluster)
- 				valid_blocks++;
- 		}
- 
--		f2fs_invalidate_blocks(sbi, blkaddr, 1);
-+
-+		if (check_curr_block_is_consecutive(sbi, blkaddr, blkaddr_end)) {
-+			/*
-+			 * The current block @blkaddr is continuous with
-+			 * @blkaddr_end, so @blkaddr_end is updated.
-+			 * And the f2fs_invalidate_blocks() is skipped
-+			 * until @blkaddr that cannot be processed
-+			 * together is encountered.
-+			 */
-+			blkaddr_end = blkaddr;
-+			if (count == 1)
-+				last_one = false;
-+			else
-+				goto skip_invalid;
++retry:
+ 	fh = kzalloc(buflen + OVL_FH_FID_OFFSET, GFP_KERNEL);
+-	if (!fh)
++	if (!fh) {
++		if (!rtt) {
++			cond_resched();
++			rtt++;
++			goto retry;
 +		}
-+
-+		f2fs_invalidate_blocks(sbi, blkaddr_start,
-+					blkaddr_end - blkaddr_start + 1);
-+		blkaddr_start = blkaddr_end = blkaddr;
-+
-+		if (count == 1 && last_one)
-+			f2fs_invalidate_blocks(sbi, blkaddr, 1);
-+
-+skip_invalid:
-+		last_valid = true;
+ 		return ERR_PTR(-ENOMEM);
++	}
  
- 		if (!released || blkaddr != COMPRESS_ADDR)
- 			nr_free++;
-+
-+		continue;
-+
-+next:
-+		/* If consecutive blocks have been recorded, we need to process them. */
-+		if (last_valid == true)
-+			f2fs_invalidate_blocks(sbi, blkaddr_start,
-+					blkaddr_end - blkaddr_start + 1);
-+
-+		blkaddr_start = blkaddr_end = le32_to_cpu(*(addr + 1));
-+		last_valid = false;
-+
- 	}
- 
- 	if (compressed_cluster)
--- 
-2.25.1
+ 	/*
+ 	 * We encode a non-connectable file handle for non-dir, because we
 
 
