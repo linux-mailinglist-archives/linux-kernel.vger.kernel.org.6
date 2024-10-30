@@ -1,102 +1,120 @@
-Return-Path: <linux-kernel+bounces-388279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68B59B5D0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:38:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E1D9B5D10
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCFC1F23A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B25284273
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0F71DFD8E;
-	Wed, 30 Oct 2024 07:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F363C1DFE3F;
+	Wed, 30 Oct 2024 07:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xw+WphWp"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="Ovx/kF/E"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484941DF723
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244CD85931;
+	Wed, 30 Oct 2024 07:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730273933; cv=none; b=XLHiriAtK7IYcQsdhhjOgirZnqxwSwrMlw5nJoInB/utLN1W9NojXZCLwPIYpsRwopCLEuK/QrlsKEXMZ2ZFFWHZdDUROi8q+jyYVOY8d/gq+CSvoo2T5xnBBH0ExSut7i+SjU9G+l6OaOjSByiRgVX1Gf9ajKAfqOK9sWe0bE4=
+	t=1730273971; cv=none; b=sMTrXGpMJoYgnAVLoZ5+CbOISho10IjYD/gqp7Y+gPEXs4Bd617FbN6P/VP6gQo1GEoM2kiqN89DOUxa3Fy7c76nFK8hkpVowzG4Q+tSkO8woyVP+KlEQEVg6vfiexNRT1Vlot4lQDgk2ELEWIrgnWtPLECGcW9uScZQq/JM67M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730273933; c=relaxed/simple;
-	bh=CIfyIWKyAZopCYXAVJs0OQjdB+bx4WxORWZhQJacI6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOJpOSY+sZTD781Zkf2U6NSRg/c27CrTgAgOgv6sKpooWknQJtELbWU/gKTjR+MQbXCqxiJuYidP9rAps/NkGwzE2VGPpCOa3hhd4fws26gzAnlgj9bUqPgRbcK8UQyOn0BepBbr91AF0ksjJVOe0uX9VPJ43Tkkqn7k+0xoa20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xw+WphWp; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d49a7207cso4441572f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:38:50 -0700 (PDT)
+	s=arc-20240116; t=1730273971; c=relaxed/simple;
+	bh=nEc8gOaRix6UvtSNUq9rl1lK52vlDUP26tV9LTP2Eb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h9qCXS2JlRVaA+VZctbhwq/Q4wYpBBO6LduoDxLCRthZiitz9NRZIhovpHderAMIEXFWbHYmOnX9H7B0dLnLEb9/ijmSrmF94fzC3V0622OwfL/8Y+U2GZjie0u/8y4oplVVWNidfKRyeA/rAuysw/6uDrt2I8+qjSXpQA32WVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=Ovx/kF/E; arc=none smtp.client-ip=212.227.126.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730273929; x=1730878729; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LhuDhEZJkU9JsxAhgAFW3kJci0MRgq1vPLOeXgFWtYk=;
-        b=Xw+WphWpaaVpbkAT9sR8WlI0NKwpkeUg0wdbJkSrmH3ycxUEmCf8739/qim8tnxVYj
-         /OgRazOYtUTR2YTantULEXzSvw8aMfQqFmzQpZk7vHti/mvjDgffKxi8N+dafyn3wkIi
-         rsGmhzVvM1uCff6MbtTk7dYwrJbHRowtO15CPnhDSOTc36u+0P0oFAB6e+Acc743RzFH
-         66TyAk6llaM7AdxmlV1OLH52GNh5MUYw9UfULYtgAKfEw6W3uLN/7aiEJi9f4QY7s7JU
-         8/iXmv5XPtqSwW5tf5v/IAMDw/SheW4IRl73aK1AMIrp2sOcMOtBFF9tqOOcbdA26RQX
-         wzPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730273929; x=1730878729;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LhuDhEZJkU9JsxAhgAFW3kJci0MRgq1vPLOeXgFWtYk=;
-        b=e0sG2h1W78L7ovuuqHa58z5GYsSARB5pu90BgRZOwipeXvu+Ds/Vu7ojaN2luO4uep
-         38BiyboYNwAw6Ck1eUc8Lk1Xbyfh+NNa5GrS3xNYktIenJqNknRSn0oRagfKMkSBNkDa
-         GLODS5sY6p8DQoYRQl0BPT6v90elNsWhQI01uCiz2pytvXvcabCHrz3a2x++KP70cOku
-         KHWLbXEjfyC3em6dMzzo1BctVSn4Hx1PU2YkCEPxYEG0Qnj3uE6ZzZpao+Eibeeeg9Es
-         LqgKN1UCcRfU9BHi5DzVgWSuQAkOYHISMmSFN843wkP1G/XtTiZnnpCTyDeCDmole3ZL
-         K8HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWe/hEa03/V9e1d3Nho0qlVjQIhccL0NTv1aeXPRjhj7sqxBdAK30GqdjKEGr0PB/FrL/hj97SRLtKafdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/9hHl8pvD5Dou4G4gJKiNeToTQUUKDaVYD4TpOZOF/CgfwPMC
-	o7cCids8ielRZ/GJn4ybT0PTXKlEyvoXLNCahY7SGwMUUCftZXeo1/iXci2LZGM=
-X-Google-Smtp-Source: AGHT+IGI33jQx6+cHtP7k238HF/+0YJfRR/AYslQCtaxx4oYHXtWzKb8smj2QVp0Aloib/BJCoOhMg==
-X-Received: by 2002:a05:6000:1f06:b0:37d:481e:8e29 with SMTP id ffacd0b85a97d-38061159039mr9314149f8f.25.1730273929282;
-        Wed, 30 Oct 2024 00:38:49 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9d008sm14509226f8f.107.2024.10.30.00.38.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 00:38:48 -0700 (PDT)
-Date: Wed, 30 Oct 2024 10:38:44 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
-	~lkcamp/patches@lists.sr.ht, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] staging: rtl8723bs: change remaining printk to proper
- api
-Message-ID: <0d397004-0bfa-46a5-a184-dd85f15f1533@stanley.mountain>
-References: <20241029221544.112800-1-rodrigo.gobbi.7@gmail.com>
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1730273948; x=1730878748;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=nEc8gOaRix6UvtSNUq9rl1lK52vlDUP26tV9LTP2Eb4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ovx/kF/Eaut9Xd3+ViszWFHGCmBQ1yQzZf2O+cqbQHveE2D8UGJHQUI6GZShXAxu
+	 J/bg/ThEjSFs5UaeCsgX8gx1KikFk0RewCPh1ZQsemDZ/tjDJrleZx58iI3uQBEAG
+	 d2J4c11uvukwA0/pDhA2jeh4oKiA6yAEnYQZT8rpJSRb7FcpQP5l5ZwnIs++ZZ7qJ
+	 rDR5MbJ1Yu111MgUJmFKqvakGz/a9c0PXORIaE1SYhvRzqNaCL3h9Tx3EJbcU9B7l
+	 guwGy4PNeuqiYo27YNj/aez4wiXNOHi430GDyhm4SCTA8NLe4XbxKlq/U/dNrzxx7
+	 91B5B+09G9++d7SuHw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MKKdD-1tRAXs3Ho7-00VMfH; Wed, 30 Oct 2024 08:39:07 +0100
+Message-ID: <482522d0-49f4-4c13-9f2e-8e74a21f1fa3@oldschoolsolutions.biz>
+Date: Wed, 30 Oct 2024 08:39:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029221544.112800-1-rodrigo.gobbi.7@gmail.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v5 1/3] dt-bindings: arm: qcom: Add Microsoft Windows Dev
+ Kit 2023
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Merck Hung <merckhung@gmail.com>
+References: <20241030-jg-blackrock-for-upstream-v5-0-830c938437ad@oldschoolsolutions.biz>
+ <20241030-jg-blackrock-for-upstream-v5-1-830c938437ad@oldschoolsolutions.biz>
+ <ca46a692-3ec4-4b83-abd7-3fb82817940c@kernel.org>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <ca46a692-3ec4-4b83-abd7-3fb82817940c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:koOHil8b+q13ExNc3lAAgPM4oeJSkwUSz0WNRMj0ObxVCwFp+13
+ UBmv8fRV192f+KsCUst7lQncUamRrPwSsH4QxC4JZ0KrjBoFrlLRhEbsyUOEMIJcN7yfXcc
+ 2amJMtMxJ+Qcyw1FmmuQRBmYyBdK4fuJXaPLC96su3bD9KRLlw6BQ1Zw6+kULaHTvZLnIFt
+ zwy/fd2OESNEG41FcyK5g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vA+c6s76AlY=;r9vRNa/sivZb56WkrHqTOCFR1aU
+ iRuUByT9okjzWz9lICb9n8mOhkwgDJwpF99GpOJg4BPrjON+x9AAeKWe4wjZv4K3nSFuqjG7j
+ zf9fYrVu+O7WSxSTOeFY0bS2h183lBq/ZrsRr/lbXIvscY2Lzhq5a5htb7WN8mMvItFqy8aeu
+ K8zcFmUHWZUBXjEKBQRCkjIaIZSSCYisTLvcdqW952J9qJmxcLeMtlk4eCKcXnFX6yZRADa8K
+ BIuMoOP1501Uhn2hnXsdGoWvzf0tzJ96Syw/wAkPHITkSepLw2N1RqhxwwM+NJiSmzAOjuIiB
+ CzYIKqxN5RW9ELfDY4WddIXIZlrEXEtKrtbXyHPtEXh8z+jsBf959/Mt/I6Yq34wIlgpdiu85
+ +ketsWgJtwI9JJ8/r7DzcJp6jYB/ymrHIETRffuuG34agj6Xc04DrZIeaW77VQ5eSXMWAzhvb
+ xq5dfJPsvPgfWRYoeQR1WQeEue9ArJ4osKwYY31LwbeY0zgtvAAlc+4KyWddXAfzkVNHmQSpo
+ ODYyjstJz1W+gWNOgJMWUss739FFl1L7Mninu0WrGFha2jEzAyCKWLWo1NPcV0dUyeAlCoKJL
+ 265FwInFJjKFL9/jweW5P1FeyYYR/7sftaFEdDApzWnG08vkW3h/Yc6qFSxODTjtHPivVSJho
+ 7rch1MIAYSJdotWYZA1BPNV+vHRD8w92wDl61mwOniHPnebSavxnkg1fEvKKhD3h10YEB6dX0
+ UCWiXNoYOEc/yodAQFrK6VjPIoiMiWMbg==
 
-On Tue, Oct 29, 2024 at 07:15:44PM -0300, Rodrigo Gobbi wrote:
-> As part of TODO file for future work, use dyn debug api for
-> remaining printk statements.
-> 
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> ---
+On 30.10.24 08:25, Krzysztof Kozlowski wrote:
 
-Looks good.  Thanks.
+> On 30/10/2024 08:09, Jens Glathe via B4 Relay wrote:
+>> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>>
+>> Add compatible values for the Microsoft Windows Dev Kit (WDK2023)
+>> with its codename "blackrock". The Dev kit is a small desktop box
+>> based on the mainboard of the Surface pro 9 5G, intended for
+>> developers to test/build arm64-based Windows software.
+>> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
+>>
+>> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> You got one reply, then another with bigger instruction, yet you ignored
+> both of them.
+>
+> Best regards,
+> Krzysztof
+>
+Sorry, misunderstanding. Will be there in v6.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+with best regards
 
-regards,
-dan carpenter
+Jens
+
 
 
