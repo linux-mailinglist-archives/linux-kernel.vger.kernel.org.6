@@ -1,146 +1,112 @@
-Return-Path: <linux-kernel+bounces-388925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22C99B6644
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:44:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB4F9B6649
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:45:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59CF1C20AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:44:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC5A1C20D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5DA1F131B;
-	Wed, 30 Oct 2024 14:44:24 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5009B1F4282;
+	Wed, 30 Oct 2024 14:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6tiHAYG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ACDB672;
-	Wed, 30 Oct 2024 14:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D17A26AD4;
+	Wed, 30 Oct 2024 14:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299464; cv=none; b=TmSM71kky24xujHSgbpxtal/gQp14g8PwqqMcrbCSdQHFzx6Atg6YHEPWwmqSh/PnGpaFqPf/Nwblwfn7bUWfmzSNpu24k1cxMo97cBOnf6CcoC/W56l5uI7MTTdCdHPIimKj9W4YBqr4YE+qVQX1f/DC8Kb4xwoYdJHdLifvf0=
+	t=1730299510; cv=none; b=T/gsmomAdlOe5d2Ev+pIkBN05KSiY5O97h8QYu3PXvJ7qyC9B5PN3EorOoV8QSXxMmFeckACzHEsLJ/KV1O5JJIA6syXBC9fX82dc3fp/RIm+Ex2CDtF/sWc4JR7SW84hcRKHDKnv+RMZ0HILzv/VLXYCFfq8ar6dxjcdIOoRIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299464; c=relaxed/simple;
-	bh=F2p1CIBhsgGPCFP7JP4hFpvJnWXOIzEKAIw73T3SjtE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rV/ulRk25gKfzyKBAnEcgvwp9k7hDGA01NCZNnTkhGHkn7Uy3anUy7/uxzd9qw0yM/GNlTqRwOv9CoAFk1LdwkiZybdpg5B2v8RAVhIrbZaqFxYxXeLdZs+yxq3usxaerLsUDrOdVqo9qy22z6crn1to1rQM6KUg9BtxBwklbDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdqWs0Gy4z6GDsD;
-	Wed, 30 Oct 2024 22:39:21 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 44F3C140498;
-	Wed, 30 Oct 2024 22:44:12 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 15:44:11 +0100
-Date: Wed, 30 Oct 2024 14:44:10 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 23/27] dax/region: Create resources on sparse DAX
- regions
-Message-ID: <20241030144410.00001be7@Huawei.com>
-In-Reply-To: <20241029-dcd-type2-upstream-v5-23-8739cb67c374@intel.com>
-References: <20241029-dcd-type2-upstream-v5-0-8739cb67c374@intel.com>
-	<20241029-dcd-type2-upstream-v5-23-8739cb67c374@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730299510; c=relaxed/simple;
+	bh=z8WrrbogaEylcqJjgys2QWCe65qdGnEJNaFj0WpQtd0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=HHVlqgrt6948qeP/9UxnCrnNYPpZfU93K7E1FL/dNNScpbmHFivi/SzJSjEQo2hQDSmw9aW0c9mtDHt7h9noCeaI2bXqze6ziKjGFAhadAJ4gYERMxTcTTExhQUIy1H/9KWP7T8Ih+7+JbMbRpnfFVk7tgLq/Pdh3wBfo9FlrhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6tiHAYG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA43EC4CECE;
+	Wed, 30 Oct 2024 14:45:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730299510;
+	bh=z8WrrbogaEylcqJjgys2QWCe65qdGnEJNaFj0WpQtd0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=I6tiHAYGMTTFaAd5Au3dFvpmaqCTdxU2qYSYjlQiTkQsdVRaDtlxIWOc/Xm4XvJ+9
+	 xq9opcdJNNH6OFXtjQ2lI5t90VAnI/rsVUaLaN1HcvAxT9svBgAWbgPI/kqhPnrjQD
+	 7cXb4Ru+qaxZCk+FtC4vLXBqnU6rusNfhmVZs/KQuXxu2YdGbNXEFdyAatVsgInk4x
+	 kKLF5WMDXP9IvpQvOPE5rA1+LSEaVvDowBCBKqWUnbHE/Q3y6eolsYI6UKQ3KP2cm/
+	 xr/s0sSOKXuKtBbmjfuiPJYQQcaIjQ2Vd8PPn/TCEp/Y6uhNOYVVvnQk8hEvWxbYr/
+	 DWKFZv48I1lvg==
+Date: Wed, 30 Oct 2024 15:45:02 +0100 (GMT+01:00)
+From: Matthieu Baerts <matttbe@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, horms@kernel.org, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vlad.wing@gmail.com, max@kutsevol.com,
+	kernel-team@meta.com, aehkn@xenhub.one, stable@vger.kernel.org,
+	"open list:NETWORKING [MPTCP]" <mptcp@lists.linux.dev>
+Message-ID: <e891f590-7dd5-4207-adef-d90b90172aeb@kernel.org>
+In-Reply-To: <20241030140224.972565-1-leitao@debian.org>
+References: <20241030140224.972565-1-leitao@debian.org>
+Subject: Re: [PATCH net] mptcp: Ensure RCU read lock is held when calling
+ mptcp_sched_find()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <e891f590-7dd5-4207-adef-d90b90172aeb@kernel.org>
 
-On Tue, 29 Oct 2024 15:34:58 -0500
-ira.weiny@intel.com wrote:
+Hi Breno
 
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> DAX regions which map dynamic capacity partitions require that memory be
-> allowed to come and go.  Recall sparse regions were created for this
-> purpose.  Now that extents can be realized within DAX regions the DAX
-> region driver can start tracking sub-resource information.
-> 
-> The tight relationship between DAX region operations and extent
-> operations require memory changes to be controlled synchronously with
-> the user of the region.  Synchronize through the dax_region_rwsem and by
-> having the region driver drive both the region device as well as the
-> extent sub-devices.
-> 
-> Recall requests to remove extents can happen at any time and that a host
-> is not obligated to release the memory until it is not being used.  If
-> an extent is not used allow a release response.
-> 
-> When extents are eligible for release.  No mappings exist but data may
-> reside in caches not yet written to the device.  Call
-> cxl_region_invalidate_memregion() to write back data to the device prior
-> to signaling the release complete.  This is inefficient but is the best
-> we can do at the moment and should occur infrequently with sufficiently
-> large extents and work loads.
-> 
-> The DAX layer has no need for the details of the CXL memory extent
-> devices.  Expose extents to the DAX layer as device children of the DAX
-> region device.  A single callback from the driver aids the DAX layer to
-> determine if the child device is an extent.  The DAX layer also
-> registers a devres function to automatically clean up when the device is
-> removed from the region.
-> 
-> There is a race between extents being surfaced and the dax_cxl driver
-> being loaded.  The driver must therefore scan for any existing extents
-> while still under the device lock.
-> 
-> Respond to extent notifications.  Manage the DAX region resource tree
-> based on the extents lifetime.  Return the status of remove
-> notifications to lower layers such that it can manage the hardware
-> appropriately.
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-One typo spotted.
+30 Oct 2024 15:02:45 Breno Leitao <leitao@debian.org>:
 
-Otherwise seems fine to me but not an area I know well yet!
+> The mptcp_sched_find() function must be called with the RCU read lock
+> held, as it accesses RCU-protected data structures. This requirement was
+> not properly enforced in the mptcp_init_sock() function, leading to a
+> RCU list traversal in a non-reader section error when
+> CONFIG_PROVE_RCU_LIST is enabled.
+>
+> =C2=A0=C2=A0=C2=A0 net/mptcp/sched.c:44 RCU-list traversed in non-reader =
+section!!
+>
+> Fix it by acquiring the RCU read lock before calling the
+> mptcp_sched_find() function. This ensures that the function is invoked
+> with the necessary RCU protection in place, as it accesses RCU-protected
+> data structures.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Thank you for having looked at that, but there is already a fix:
 
-> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-> index 0867115aeef2e1b2d4c88b5c38b6648a404b1060..8ebbc4808c3509ff17ac3af045505dc42c003fb0 100644
-> --- a/drivers/dax/dax-private.h
-> +++ b/drivers/dax/dax-private.h
+https://lore.kernel.org/netdev/20241021-net-mptcp-sched-lock-v1-1-637759cf0=
+61c@kernel.org/
 
-> +/**
-> + * struct dax_resource - For sparse regions; an active resource
-> + * @region: dax_region this resources is in
-> + * @res: resource
-> + * @use_cnt: count the number of uses of this resource
-> + *
-> + * Changes to the dax_reigon and the dax_resources within it are protected by
-dax_region
+This fix has even been applied in the net tree already:
 
-> + * dax_region_rwsem
-> + *
-> + * dax_resource's are not intended to be used outside the dax layer.
-> + */
-> +struct dax_resource {
-> +	struct dax_region *region;
-> +	struct resource *res;
-> +	unsigned int use_cnt;
-> +};
+https://git.kernel.org/netdev/net/c/3deb12c788c3
 
+Did you not get conflicts when rebasing your branch on top of the
+latest version?
+
+> Additionally, the patch breaks down the mptcp_init_sched() call into
+> smaller parts, with the RCU read lock only covering the specific call to
+> mptcp_sched_find(). This helps minimize the critical section, reducing
+> the time during which RCU grace periods are blocked.
+
+I agree with Eric (thank you for the review!): this creates other issues.
+
+> The mptcp_sched_list_lock is not held in this case, and it is not clear
+> if it is necessary.
+
+It is not needed, the list is not modified, only read with RCU.
+
+Cheers,
+Matt
 
