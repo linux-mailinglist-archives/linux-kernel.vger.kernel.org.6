@@ -1,137 +1,179 @@
-Return-Path: <linux-kernel+bounces-389044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3659B67D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:29:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E279B67D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173841C21C5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797CE284A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715E42141D4;
-	Wed, 30 Oct 2024 15:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB402144A4;
+	Wed, 30 Oct 2024 15:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RRHed0TK"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R7UCFh52";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="boNEcGz0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vDxgrdLA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p1I4mEGY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6194B213ED6;
-	Wed, 30 Oct 2024 15:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35BA214412;
+	Wed, 30 Oct 2024 15:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730302102; cv=none; b=ANMOaEIZYxo9zrAysGcNYcVCh9eii3gv84SEuGrSmFYH9w0j/sk5TEb8aGME2yEHapxCZLz1uPl8/K6ZTv8yBPSZYH/22UlJg22CXcQ9Hzv2HPZAbKpy9DHOCeDeT/EaJ0bHSAygYUj1vfUq9aCdV8xpOz8ClSyEQhWFJv3/mGY=
+	t=1730302122; cv=none; b=skl/Oh2n3kwmmXLslbI0D7D4t+NeigywLxjiYTwi6D+Oftv3WTafqbDK0tMvab5pfOlHFzPAAW/ECYu4vhcp1TReoyhkri8hlZK6bW7+ednQsGOv/R6DQ0rhqy8xJizvVLMbuM7vDsVVLkZ1pzBzT9NnGtCE9GkFBoUVNo9onWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730302102; c=relaxed/simple;
-	bh=QDS4abYzVocsLQ2xjdBWlvvUnWTPAtKlT4xBgG2UpMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CapqhmBkYnQGvOZPB+BFsaeYZjSYa2TGOnvwKkKVlIyWc+VvkKVTekRcgvio21kA6AWgxNyPEilUz7pd9AqJA38wAODsUQxYgQhFNPUv+AD6EerRMSleWt35ybwSOQvnks/jNZ/8VzIGjnHMVF7tyNdgK8HRqApRqaCQI8u6WWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RRHed0TK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730302098;
-	bh=QDS4abYzVocsLQ2xjdBWlvvUnWTPAtKlT4xBgG2UpMA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RRHed0TKwfMV3pcWVbro68R5lFmx9LFgK81VZ4FqUyuhjSPXkt3NMJKn/R1HP4khn
-	 dEC5ZCVYR6qbFMBUw9/5XiwcQ9gaf7s5HYiN3PueEnUNYUii71erjCtUrT0a3s3Z3R
-	 onX+GSDptcswLVK4MDE0d7VbaTmMstTC108f4A48V+ONsu6IXi4b/4RvLGDNmNb1TL
-	 nxiYcuZ/NL1/o/vROnRogH3R2nfZwIXZ9aJipRHxhIURcbcaxLmcD8fvFMun2+q94C
-	 b/3uC5k70v9tIX6+5Gj4O9kD3TrkkZgYEhpPjYOSej4Kq06dWcf1St5YTsV0oQ2y6E
-	 xV5GiHN4RKcaw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	s=arc-20240116; t=1730302122; c=relaxed/simple;
+	bh=Znr5gmwsBT5imhqR264KDdx1UCA8syExo7CZaYuoCm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ngiRypWpR6OoX1tU5IiSH2AFew6l4VvN4Rs0raVFWjriUrJtvgD7MUEHi6LJM++0s+vMRBchNN/J2gVbFC7Mmo0ah5naOZNZhTxg6CA6O3TGVhgkfFPi7VZNrIxryJmJqQ0kX1c3UqQUK/cAWqtS2Ntq9ua2zEVlwb3DeiW9vlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R7UCFh52; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=boNEcGz0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vDxgrdLA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p1I4mEGY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DE41417E363B;
-	Wed, 30 Oct 2024 16:28:17 +0100 (CET)
-Date: Wed, 30 Oct 2024 16:28:12 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Jonathan
- Corbet <corbet@lwn.net>, Steven Price <steven.price@arm.com>,
- kernel@collabora.com, Stephen Rothwell <sfr@canb.auug.org.au>,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/gpu: Fix Panthor documentation build
- warnings
-Message-ID: <20241030162812.267750b6@collabora.com>
-In-Reply-To: <20241009214346.2308917-1-adrian.larumbe@collabora.com>
-References: <20241009214346.2308917-1-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9FFB91FDE6;
+	Wed, 30 Oct 2024 15:28:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730302118;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u89RvmZx6ZtlV0vBJVjyxNqmMJvFO7KZlmYZSLn8Wz0=;
+	b=R7UCFh52ZBo2IahFNBBLABw1CH6fBwvGCUWokC/onQxFctl0KtMy/UiAJsMaak4EHjk9SD
+	A36SazEmJ011D5nw8dHr47owxL/9FekTbkKAGqK7drnl8qkYfLb/da23tCk2LdIDVHkIP/
+	Hjo6J4nd3Oq90gDsoGPI4xwL9XV11sk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730302118;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u89RvmZx6ZtlV0vBJVjyxNqmMJvFO7KZlmYZSLn8Wz0=;
+	b=boNEcGz0y9K4rC2B+ah/S4QFnWFiEPz9dSPFr+2wWSUZmmaO/34L/fLOeBin+UfOzMazTy
+	qqHa/1hHJYV/TLBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730302117;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u89RvmZx6ZtlV0vBJVjyxNqmMJvFO7KZlmYZSLn8Wz0=;
+	b=vDxgrdLAm3e0sLy2WHDYOCAwHBqTEKU7wL7gfp/W6l0yFiLWGyvCFtFstQR4WSmqumnHw8
+	HIYjfP0MMR5haQDQbW8vHiyBJMYrly73ZXEki9cKkRo+YFoss2m/hXkvIjGR0IYliz8nC4
+	nDht1+cx2nKASHnZ2KYFPPb8Ofxd5tw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730302117;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u89RvmZx6ZtlV0vBJVjyxNqmMJvFO7KZlmYZSLn8Wz0=;
+	b=p1I4mEGYYPXl6THSQJVMgnP7Ua7NNQyVPNDXdBqC3pnIGufTLxGWUHt7N2oIOgEyboHo7i
+	rAmgsNuCoQhkLBDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7145813AD9;
+	Wed, 30 Oct 2024 15:28:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sWopG6VQImdQGwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 30 Oct 2024 15:28:37 +0000
+Date: Wed, 30 Oct 2024 16:28:36 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: iamhswang@gmail.com, linux-btrfs@vger.kernel.org, clm@fb.com,
+	josef@toxicpanda.com, dsterba@suse.com, wqu@suse.com, boris@bur.io,
+	linux-kernel@vger.kernel.org, Haisu Wang <haisuwang@tencent.com>
+Subject: Re: [PATCH 2/2] btrfs: simplify regions mark and keep start
+ unchanged in err handling
+Message-ID: <20241030152836.GA31418@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20241025065448.3231672-1-haisuwang@tencent.com>
+ <20241025065448.3231672-3-haisuwang@tencent.com>
+ <4d0603d4-1503-4e8f-bfe2-ed205b598072@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4d0603d4-1503-4e8f-bfe2-ed205b598072@gmx.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmx.com];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,fb.com,toxicpanda.com,suse.com,bur.io,tencent.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
 
-On Wed,  9 Oct 2024 22:43:30 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On Wed, Oct 30, 2024 at 01:31:15PM +1030, Qu Wenruo wrote:
+> 
+> 
+> 在 2024/10/25 17:24, iamhswang@gmail.com 写道:
+> > From: Haisu Wang <haisuwang@tencent.com>
+> >
+> > Simplify the regions mark by using cur_alloc_size only to present
+> > the reserved but may failed to alloced extent. Remove the ram_size
+> > as well since it is always consistent to the cur_alloc_size in the
+> > context. Advanced the start mark in normal path until extent succeed
+> > alloced and keep the start unchanged in error handling path.
+> >
+> > PASSed the fstest generic/475 test for a hundred times with quota
+> > enabled. And a modified generic/475 test by removing the sleep time
+> > for a hundred times. About one tenth of the tests do enter the error
+> > handling path due to fail to reserve extent.
+> >
+> 
+> Although this patch is already merged into for-next, it looks like the
+> next patch will again change the error handling, mostly render the this
+> one useless:
+> 
+> https://lore.kernel.org/linux-btrfs/2a0925f0264daf90741ed0a7ba7ed4b4888cf778.1728725060.git.wqu@suse.com/
+> 
+> The newer patch will change the error handling to a simpler one, so
+> instead of 3 regions, there will be only 2.
+> 
+> There will be no change needed from your side, I will update my patches
+> to solve the conflicts, just in case if you find the error handling is
+> different in the future.
 
-> Fix Panthor documentation build errors uncovered by the makedocs target
-> when building with extra warnings enabled.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> Fixes: f25044688b04 ("drm/panthor: add sysfs knob for enabling job profil=
-ing")
-
-Queued to drm-misc-next.
-
-BTW, the commit hash was incorrect, please make sure you pick the hash
-from the drm-misc tree not from your local branch next time.
-
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  Documentation/gpu/drivers.rst         | 1 +
->  Documentation/gpu/drm-usage-stats.rst | 1 +
->  Documentation/gpu/panthor.rst         | 2 +-
->  3 files changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/gpu/drivers.rst b/Documentation/gpu/drivers.rst
-> index b899cbc5c2b4..7b1282e2d807 100644
-> --- a/Documentation/gpu/drivers.rst
-> +++ b/Documentation/gpu/drivers.rst
-> @@ -22,6 +22,7 @@ GPU Driver Documentation
->     afbc
->     komeda-kms
->     panfrost
-> +   panthor
-> =20
->  .. only::  subproject and html
-> =20
-> diff --git a/Documentation/gpu/drm-usage-stats.rst b/Documentation/gpu/dr=
-m-usage-stats.rst
-> index a80f95ca1b2f..12ca3193bf15 100644
-> --- a/Documentation/gpu/drm-usage-stats.rst
-> +++ b/Documentation/gpu/drm-usage-stats.rst
-> @@ -186,4 +186,5 @@ Driver specific implementations
-> =20
->  * :ref:`i915-usage-stats`
->  * :ref:`panfrost-usage-stats`
-> +* :ref:`panthor-usage-stats`
->  * :ref:`xe-usage-stats`
-> diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
-> index cbf5c4429a2d..3f8979fa2b86 100644
-> --- a/Documentation/gpu/panthor.rst
-> +++ b/Documentation/gpu/panthor.rst
-> @@ -4,7 +4,7 @@
->   drm/Panthor CSF driver
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> =20
-> -.. _panfrost-usage-stats:
-> +.. _panthor-usage-stats:
-> =20
->  Panthor DRM client usage stats implementation
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
+Please take care of that, the only request I have is that it's done by
+the end of this week so we have the code in linux-next and that a fix
+should come before a refactoring (due to backports). Update for-next as
+you need.
 
