@@ -1,222 +1,230 @@
-Return-Path: <linux-kernel+bounces-388060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BB29B5A00
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:35:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8169B59FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 03:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E7228470C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721661F23E2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88331194A73;
-	Wed, 30 Oct 2024 02:35:43 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8861946C8;
+	Wed, 30 Oct 2024 02:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Onvo2YbS"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD92113B29F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730255743; cv=none; b=Fhjbf6WeLr4exQPlBmlCPb6xXSyHCan2z+OyxFI4lP9rfy84ELM/eko9ZIUEb2b4+7ZBh08oFGsRn42cBo5N7aZG4Hu0Vq3R0FHN/MVLkEO6pDW5vHooWQh0CjZ9Kp3QgEerxpce56LR2x7Mamos+2VdIIp7ZdlgPApkmiqmpo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730255743; c=relaxed/simple;
-	bh=UltIMtbRajHyqbkzlgyOpJEiBobJAoVqcdsYtEHomeA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tzSI89+/cnTJIEPs47YUQsBvrAvqn/WT9lxHDnOyphJO7O1QtzX3rMbqeij0KtmM9ge1qkwkTy94unm3H5gHoLF4CF6DXsY23WIq3cIdhWAIkvo9yOQrfdVbM5k1YbCiZNhJbls2XpdazdjnydktQbzdagNGrsDZTJW51qb23Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XdWR0245nz1SDVR;
-	Wed, 30 Oct 2024 10:34:04 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 885AB180043;
-	Wed, 30 Oct 2024 10:35:36 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 30 Oct
- 2024 10:35:35 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<dmitry.baryshkov@linaro.org>, <dave.stevenson@raspberrypi.com>,
-	<quic_jjohnson@quicinc.com>, <mcanal@igalia.com>,
-	<skhan@linuxfoundation.org>, <davidgow@google.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v4 2/3] drm/connector: hdmi: Fix memory leak in drm_display_mode_from_cea_vic()
-Date: Wed, 30 Oct 2024 10:35:03 +0800
-Message-ID: <20241030023504.530425-3-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241030023504.530425-1-ruanjinjie@huawei.com>
-References: <20241030023504.530425-1-ruanjinjie@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCB518E37B;
+	Wed, 30 Oct 2024 02:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730255715; cv=fail; b=Keq7RcAzP61c/lnHOWkKkql4b8+FhZ4UuUrgCRV1FnHXQ/PpzudgjXHqlaNy4418oc9Ej0bURId00PAbXlHZU5BrSItO+0B5OlEja7YSn+rLkL0/hSHRW/wYxcwG3CRn+37mqk+gZU6sBPtPCkzcc7VtQRi1nFAVTJoOoTKhXYE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730255715; c=relaxed/simple;
+	bh=WU1E/JghN3ZuovzPIbDhN71FJAqyUIXhFIqDFHLqaeM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lJcG3/uo5xf2+X+kjjxzYDhGGUx1AID0DDoZzpSttN30lmdA4jmIJQq/eFBldsh9yKcwHq5MRzks205BgztgsfNk3P2Xh04r36jlADPPWonusOm5SL1ZdbMEvtnxDhSkgxxt58/UQf4UXTslBM5OoOvVbOZwZnqdFQfnLRcUnMI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Onvo2YbS; arc=fail smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U1HhPq012278;
+	Tue, 29 Oct 2024 19:35:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	s2048-2021-q4; bh=WU1E/JghN3ZuovzPIbDhN71FJAqyUIXhFIqDFHLqaeM=; b=
+	Onvo2YbSiAVUci5cNEREDxs3Pzi91wL0xo8scDSq7bp73rlvEtA+rEfyjB2HsVPp
+	6/2KgtX/i43Ee+bDuokK6SSg8UBK9+CIz9QdrNYexxamO8RDs2VQdjvr3PiOaAH+
+	cWyBTS8u51F/ljDlYz2oiaCMpjzI5keI4+Y/+dvB5oCP8BV/bLMLYBbvTLCjESpE
+	QEhYmcw794lRmWGFm7r9sCA2DyDNTJiNBYCrrqGpOiPnW1bR4lLsVsOgeE7IIKfH
+	v/XO6dy+SnMpm4MVtsDQagvcJFMceTnOKr/wDTq6mq389dLNXTCNu0SuwAcOnRHj
+	9+4RCs+stpWizDRyWzYThw==
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2172.outbound.protection.outlook.com [104.47.73.172])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42k6ewa3nm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 19:35:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E4qPuhAmOyqUUIYwWdbgnVDghL4szGvyPaHL1B5Rkkd2Y4Y3BdBIbcOxsdkTPeO3SbwZ3FJ617m6vo/icDPLsfRSW+D+FnobnXRhiEPgvLl98gCFYLVHkT0nfmB9Zty/cyqBIy3DIZKFcY4qMzChRqmzRqcLoQ1OsP/KJ14tvv7wR5VE1JryC6rwNAstkJxhdYwcHiWkOeQIdDffdZ9eEtQBcBChU82hF1FWjyQmDe8louHkJKUyzGkSqx3AiTBYlpue2imh3sLVfFOX/RmHghaUI0u9MRw/8wfVs6PMWfzmaxWgadoQUQbhJVoe59pT8bdcGI3QyCfFfl3IMEGoqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WU1E/JghN3ZuovzPIbDhN71FJAqyUIXhFIqDFHLqaeM=;
+ b=onzpKbPV1GQ9N/rtJ4pGdGzlF+hNrz2FI0p9Xgf6ivKqQWxwxR+YKOsJoJpnO3Fm+y8LG+oxFxpJrB3tYo6EBZizhrL/73WbTvTTeZurIAtVeNylOTsVyrQGsvyz1a3uz+wXHHMGVGsFjZfkyWPd0nU0aIA0A1Qs1X0nWwgfqAMXqCePDFV6x4L6PYSfjhTSaWzrcr29AQ3BJhmIgK7QhYcUhVTgyFFGaZuXe1USkP98bSBR+pU9yHoRP1Pvt9vfYUed8AxskxZrxXigb4q8zA5pMLQxQQhqma7Uz+eCIadJ1Ff5MdbsPnyOGytMgXniSM4CoSqT046R+UWY5xJqRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
+ by MW3PR15MB3866.namprd15.prod.outlook.com (2603:10b6:303:50::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Wed, 30 Oct
+ 2024 02:35:04 +0000
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610%3]) with mapi id 15.20.8093.025; Wed, 30 Oct 2024
+ 02:35:03 +0000
+From: Song Liu <songliubraving@meta.com>
+To: Song Liu <songliubraving@meta.com>
+CC: Al Viro <viro@zeniv.linux.org.uk>, Song Liu <song@kernel.org>,
+        bpf
+	<bpf@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML
+	<linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@meta.com>,
+        Andrii
+ Nakryiko <andrii@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>,
+        Alexei
+ Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin
+ KaFai Lau <martin.lau@linux.dev>,
+        Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>,
+        KP Singh <kpsingh@kernel.org>,
+        Matt Bobrowski
+	<mattbobrowski@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "repnop@google.com" <repnop@google.com>,
+        "jlayton@kernel.org"
+	<jlayton@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
+ fanotify fastpath handler
+Thread-Topic: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
+ fanotify fastpath handler
+Thread-Index: AQHbKlgjXcuBZV3LVEOnRP7zXkEQ0rKea/eAgAAgGwCAAAfWAA==
+Date: Wed, 30 Oct 2024 02:35:03 +0000
+Message-ID: <C89A3382-B602-4EC7-A146-868101CBFF9D@fb.com>
+References: <20241029231244.2834368-1-song@kernel.org>
+ <20241029231244.2834368-3-song@kernel.org> <20241030001155.GF1350452@ZenIV>
+ <0D8D4346-722D-4430-B15D-FA1E40073CFE@fb.com>
+In-Reply-To: <0D8D4346-722D-4430-B15D-FA1E40073CFE@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3776.700.51)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|MW3PR15MB3866:EE_
+x-ms-office365-filtering-correlation-id: 6eee12e0-4dec-48bf-b5d3-08dcf88b75bb
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bng5T2psSE5hdEx0VUlBdUtZbXhVTEk0TU0zR25NTWJBK3grS0J0UE5RSktv?=
+ =?utf-8?B?azl6NXljVE9pWjFyRUU5ZE40OVBVUy9GbDBNWUc5cFFwQzlweThRckpZS3FL?=
+ =?utf-8?B?MDhmb3ZGRFlEUjF2SXd1VVRGSXU2aXpQcStIUGhOaVJJVXkyNGw5eWhBYlNx?=
+ =?utf-8?B?bm1ReFZyNkNVVXpTY1VLSS92YTlUVVBZakJzcmlQMElEaExpbllud1RZbWhD?=
+ =?utf-8?B?dnEvWFNrQldIRUY1Z1hBOHlwdTc3RVZRN2pKd28wNWxiYlBHNDFhWXV2Znpv?=
+ =?utf-8?B?dWRuVExjRERQNlhYTjE1bW9qcC9OdWRZeUdGdmo1T2cyanVDNFM4U2hqczQx?=
+ =?utf-8?B?L1ZSd3RNZE50OUJLcEdTUGdFbjVyaG4waktLZ2M0R3laN1lPZmpSNy9SRGsz?=
+ =?utf-8?B?aXlyWFlXTXUrdS82clozcVcyT2pUQjFLc29SL09VYmJaQUtiQ3o5VmhYWnlT?=
+ =?utf-8?B?czJCa1Azc2dmZkIxV1M5MkdlTE1QQzdzck4yVy83YmNlYmNkRnN5YWVPRGtD?=
+ =?utf-8?B?Y2lKWk5LUW1hYUZYbWxkQ1ZwWk44d1FtYm9xdTUybkl6QVJKN01ENTAyMXdz?=
+ =?utf-8?B?R0h0cDFPZ3RUaDlzSkhTR2NWSkovRDlzWC9SVWMvSnQvSDdFSjcwYUc5Q3ZO?=
+ =?utf-8?B?dFdJb3hibE91dUFDSFBmTEpIM25xZ3Z4bEZPZUZ5T04xSFNreTU5enllK085?=
+ =?utf-8?B?SzJENUxSa3FDYzdmSDFPNlJoL1NiNjN3bVNFeExheXNKakdqMG9ENjFuam5K?=
+ =?utf-8?B?KzA4ZU1KNGJFdm8rWVcveVJrVCtrblM5bjJ4RzNQdGF4U2RMYS8zOWFLVzd6?=
+ =?utf-8?B?VnRSd1U0UkZWNThMWTlUYmtFQ0tVb1gyR2NlRC9lYWlhZ2dmVUJISXdJUGhi?=
+ =?utf-8?B?ZDJobE5LTFZ3Umh5dFNXL3JWUnAzRy9aVUt0MFg5QVNHKzEyU1A1V09ldW1k?=
+ =?utf-8?B?TUZxYWY3Rmx6Z3VhWlVHOG1WbnBKejM2MWpvaEtpNzBaWkNkMzlCbGp2RUh0?=
+ =?utf-8?B?QVdFNnFyV3oyQjFrZkllUnpTY3pmK1BGWjYvRzJMVHIySWJ0NUNDRktUWVVa?=
+ =?utf-8?B?UjBUTzFVRVluWm1uWmIxWGY5STBIUG95TWlIQ1pzWW04QlYxR2phMVVqZTdC?=
+ =?utf-8?B?TWZleTNoYXlNbGEwc3JwKzRJVmo1Wnd5eWZLaysyWEsvcXgrOHlkWktTY084?=
+ =?utf-8?B?SEh5RGFNdGZzbVRXa3JrM0FJWUtiYzU5MWJQVU9pWkNoOUErRFlXdW9mSkZW?=
+ =?utf-8?B?MGprMktXajhZdHVDZ1dEdnRyNUN3T0NoTVRPeEZTOGhyUENLL0x1VkhTdUNO?=
+ =?utf-8?B?Y3I0S2NFejhkZnAyN2RSUjgxY0QzaWJwQ1dPNXBKUVo3cnhCSHZFTXExTCtx?=
+ =?utf-8?B?TG1oU1d6M2prRjBUZGxmWmpMMHQrN21ocU5mclpJTDRDSVRXcmUyN0ZyVllK?=
+ =?utf-8?B?d2lNUlA0NEp6RlhCajViWDJEVlpJNkNBQXVVeStCeGVCU29qYWVUMkJHclhR?=
+ =?utf-8?B?TlFLdTB6VExVdjFYb1NtUTB0TlVleEpDYWVzNnRqTVI2eXhmZGM0aEtld3Fp?=
+ =?utf-8?B?bVJydG1RWmE5aEFaNDNVQitkRHRVTk1yQVgyZEZQNG0vcGNoRUR6dDZRR2E5?=
+ =?utf-8?B?WGRpUEFKMzVOUjNyUzV6QkpaMXd2M3VIWHdQUGFvUmxIQUxRbGttNjl3Mm5T?=
+ =?utf-8?B?amVHS01oc25ZN1Z0MkhHV0NsNjZoeUJiVGxuTXhFa0FWRDRNSDJSY3ZqOElw?=
+ =?utf-8?B?bXhtbERaVE4zYWNTQUdyZlU2c2tReUJvRlRXNTBFQjV4TG9JZmt1ejB4NUk3?=
+ =?utf-8?Q?r2oPpN89LtN923FE9F0EVXtJwycgDK7dTHV/g=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YXI2dExObkliN2plQ3BwcVdEc2xTZGc5MUI5QmVkN3ZLbytjOGRzdllWSlUv?=
+ =?utf-8?B?anNqVFhGdzN5VzVFMHpLQm5aN2FIblpxdlBmTEs1THplVjR6ZEFnL2E5eWpF?=
+ =?utf-8?B?UXN6UncxZHBvMzFvS0FLb29DeXhjL3ZEcG8vdGRod0ptM0dubzYzWTRlVjB6?=
+ =?utf-8?B?REVCTDJmMHdJN2RGQU9HU0pqY3UxZ0N2OThKQjBOMm1FbjdWWEV4RGJTaWw5?=
+ =?utf-8?B?cGcxajRwQ0FZZ2FZelNjTzNrMlQvVkdXcjEzUGNyR2dlcWNDc0xIeFJ3a2Qz?=
+ =?utf-8?B?Um5CWXFlM0MwdHJzZGFRem5XcXZlc0FOb0dkcTVSK1pQVXVzM3lTRkJvU0ZZ?=
+ =?utf-8?B?WmdaSWg2VitjTjZmQlRZQkd0UkV2VXhzN29pMG9UbDl3ZFR2RTlOOTIydUp6?=
+ =?utf-8?B?YXl3Z1FLejRGZE5YSUwwU0gvSUxuNldKcVZaL3VwejMxd3J2VUppVmtOSzFp?=
+ =?utf-8?B?eWNUT2dqcHp1SytzcUlBbCtzYlBVMFVHdlN0d24xR0pPWFRvMHkzMVRlbDAx?=
+ =?utf-8?B?WC80b2JwREZtYzhaeW9neDlVczF2b3phaklGMm41OUJYMFhON3cvT2Q1RWl2?=
+ =?utf-8?B?Skdhd0FYWVJPZWdmcnJ2OUkxOWxGcjFmUmU3aFhvY2U2bktVNzRRbzhUL2RS?=
+ =?utf-8?B?NlFGemd1aWpTRnRyTjZSeFBleVhtYW5aZnZQOEJ0SDVHRFl0UW84UEtWa21Q?=
+ =?utf-8?B?Yytpc1E5UlY0UkIzM1c4QTZsVFJ2MjFqQm8wSVZkdGZQT3FOdzNZUTBPVmE2?=
+ =?utf-8?B?NFlITER5NDZkaUFDdW85b2x6VVBOWU50bnlGM3Bna0ZtY0RwNy93TFFVV3Y3?=
+ =?utf-8?B?QWNvaTg1Y3FqTUhaSkl2MmxPY0RuSkc4WW8rSDBwZjlvdFp4NmJ5emEzZDFz?=
+ =?utf-8?B?cjc3eGpwc3RKM0V4dStla0VCRmdsbDFNeC9UWUcxUTRrbmRFcjRNUnVVZmRo?=
+ =?utf-8?B?RGFSa1ZYaFRJc3lZY1pMcmNwV3NTdkdOQmdKVTRsdTVlRkh3TWVhTE9IZ0hh?=
+ =?utf-8?B?b2NXVmx0YkpaRE00WjVJVmlYcXJ1K0xJNEpHWHdKMENsbWJDZ2NyTlEyOFVT?=
+ =?utf-8?B?dkxHdUFLOHhLUUpaanRxYmFBVWRhd0wzS1c5TXQ5VHJtWHNFZ3d3M3dyd1Vo?=
+ =?utf-8?B?ZkNoNVlJclBGK3huU2RkbVJWeGt6ZTZMckhwRUU0NDJ4MndrOVUwRWZrTkdR?=
+ =?utf-8?B?aXkvT1pzNE1wUjhZb0NaalFXY2FiZTEyTEZEQmNhZlNEZGplNUdzSUR5UGdQ?=
+ =?utf-8?B?VlUxRU1uUnBEeGxINVcvL2svS3ZpWlNDYzRKUzFtMzNRMFNkQStUWW4rZVdP?=
+ =?utf-8?B?VFppNE9mYnAvcHBmQ1cyMWduYVpDd1BmOU1McnZDZzRPMHlqZ0ZQZDdmR25z?=
+ =?utf-8?B?aGczS003REFOa0VKNGNDR1BneUJEa3R3YXBXTU8xUUFnZ0hvbytEaU54ZnZW?=
+ =?utf-8?B?YllObnduK2JlSlQxMHJsd0F0MUlLTTNKNEpwNTNRNXdMNitDZ3RYSW9QWHJ4?=
+ =?utf-8?B?YnVGZmJBV2syVmlsQmx2OEIyRUh4V3p5a24wQitlMDJBTWMwVi8yUFNSN1Fj?=
+ =?utf-8?B?d1Z0YjhTQlhBbCs2SXVwclMvaUlmVEEyeEVSWWNJWUNKVGplSTYxeFFRQndu?=
+ =?utf-8?B?aW8xY3VvZExnUnFzMTMwL0pSWjFqa0pEUmdKemxzRUpDOWczeGl3Q1h2czJK?=
+ =?utf-8?B?TXl0VTJhUDFzM0FzREZUdmliS2d6RGdaR0l5UFZFMEhXQnh3YXBtYVk1QlAz?=
+ =?utf-8?B?WDlwY3JlRVZ5UXBGWUZmaWllN2hHNFRRc3QxckRqU0cvR0JJd2pMdmVxQjBq?=
+ =?utf-8?B?YkN4MFRnT2YrQk9MRXdLMm9rZm0xVGdwNW1tSzJCRW5rNzRWSDdtbUxiRHls?=
+ =?utf-8?B?aldzc3ladUJBQVJ6QmoxZzdIZGNJTHE3WktheHVqOCtnTzBPWkJYRmIraWha?=
+ =?utf-8?B?cTJmZjlieWhMSlFldFNKQ2x6QkNZSzEyYWtNWDN6RWdpOS9qQ2RvbkFiR05Y?=
+ =?utf-8?B?NlZqTm9iblFITjBvdjlFWXJRbjZMSmRkWk9KQ2tOT05JUVUyQnVGbC9RQmNj?=
+ =?utf-8?B?RFliemNVZDdVUlFVTlVxa1pQS1J0SktoQWN0ZmFzRXlKMElpdUZuajdXbG9r?=
+ =?utf-8?B?VmcwdGQ4V3VoQWoybHNIM25wSnB0d2MwVEVSTExDRDNRYkh6T3VuTEwrMVVT?=
+ =?utf-8?B?MHc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B430630F1F5D0C49A4A64AF4755A7190@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6eee12e0-4dec-48bf-b5d3-08dcf88b75bb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 02:35:03.8693
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bMZyzLq0HSycoky7/TqF0X2tQgwNmbXIQgA61irgXwbM+UfNlWoAVIgYqfxi0cSM0x9RzgrokAIZ/rc9y81TUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3866
+X-Proofpoint-GUID: QVVIGkOKXVJbNRiz9WIPQ_tRdBW7yz5K
+X-Proofpoint-ORIG-GUID: QVVIGkOKXVJbNRiz9WIPQ_tRdBW7yz5K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-modprobe drm_connector_test and then rmmod drm_connector_test,
-the following memory leak occurs.
-
-The `mode` allocated in drm_mode_duplicate() called by
-drm_display_mode_from_cea_vic() is not freed, which cause the memory leak:
-
-	unreferenced object 0xffffff80cb0ee400 (size 128):
-	  comm "kunit_try_catch", pid 1948, jiffies 4294950339
-	  hex dump (first 32 bytes):
-	    14 44 02 00 80 07 d8 07 04 08 98 08 00 00 38 04  .D............8.
-	    3c 04 41 04 65 04 00 00 05 00 00 00 00 00 00 00  <.A.e...........
-	  backtrace (crc 90e9585c):
-	    [<00000000ec42e3d7>] kmemleak_alloc+0x34/0x40
-	    [<00000000d0ef055a>] __kmalloc_cache_noprof+0x26c/0x2f4
-	    [<00000000c2062161>] drm_mode_duplicate+0x44/0x19c
-	    [<00000000f96c74aa>] drm_display_mode_from_cea_vic+0x88/0x98
-	    [<00000000d8f2c8b4>] 0xffffffdc982a4868
-	    [<000000005d164dbc>] kunit_try_run_case+0x13c/0x3ac
-	    [<000000006fb23398>] kunit_generic_run_threadfn_adapter+0x80/0xec
-	    [<000000006ea56ca0>] kthread+0x2e8/0x374
-	    [<000000000676063f>] ret_from_fork+0x10/0x20
-	......
-
-Free `mode` by using drm_kunit_display_mode_from_cea_vic()
-to fix it.
-
-Cc: stable@vger.kernel.org
-Fixes: abb6f74973e2 ("drm/tests: Add HDMI TDMS character rate tests")
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v3:
-- Update the commit message.
-- Add Acked-by.
-v2:
-- Fix it with new introduced helper instead of drm_mode_destroy().
-- Update the commit message.
----
- drivers/gpu/drm/tests/drm_connector_test.c | 24 +++++++++++-----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/tests/drm_connector_test.c b/drivers/gpu/drm/tests/drm_connector_test.c
-index 15e36a8db685..6bba97d0be88 100644
---- a/drivers/gpu/drm/tests/drm_connector_test.c
-+++ b/drivers/gpu/drm/tests/drm_connector_test.c
-@@ -996,7 +996,7 @@ static void drm_test_drm_hdmi_compute_mode_clock_rgb(struct kunit *test)
- 	unsigned long long rate;
- 	struct drm_device *drm = &priv->drm;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 16);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 16);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1017,7 +1017,7 @@ static void drm_test_drm_hdmi_compute_mode_clock_rgb_10bpc(struct kunit *test)
- 	unsigned long long rate;
- 	struct drm_device *drm = &priv->drm;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 16);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 16);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1038,7 +1038,7 @@ static void drm_test_drm_hdmi_compute_mode_clock_rgb_10bpc_vic_1(struct kunit *t
- 	unsigned long long rate;
- 	struct drm_device *drm = &priv->drm;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 1);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	rate = drm_hdmi_compute_mode_clock(mode, 10, HDMI_COLORSPACE_RGB);
-@@ -1056,7 +1056,7 @@ static void drm_test_drm_hdmi_compute_mode_clock_rgb_12bpc(struct kunit *test)
- 	unsigned long long rate;
- 	struct drm_device *drm = &priv->drm;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 16);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 16);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1077,7 +1077,7 @@ static void drm_test_drm_hdmi_compute_mode_clock_rgb_12bpc_vic_1(struct kunit *t
- 	unsigned long long rate;
- 	struct drm_device *drm = &priv->drm;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 1);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	rate = drm_hdmi_compute_mode_clock(mode, 12, HDMI_COLORSPACE_RGB);
-@@ -1095,7 +1095,7 @@ static void drm_test_drm_hdmi_compute_mode_clock_rgb_double(struct kunit *test)
- 	unsigned long long rate;
- 	struct drm_device *drm = &priv->drm;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 6);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 6);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_TRUE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1118,7 +1118,7 @@ static void drm_test_connector_hdmi_compute_mode_clock_yuv420_valid(struct kunit
- 	unsigned long long rate;
- 	unsigned int vic = *(unsigned int *)test->param_value;
- 
--	mode = drm_display_mode_from_cea_vic(drm, vic);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, vic);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1155,7 +1155,7 @@ static void drm_test_connector_hdmi_compute_mode_clock_yuv420_10_bpc(struct kuni
- 		drm_hdmi_compute_mode_clock_yuv420_vic_valid_tests[0];
- 	unsigned long long rate;
- 
--	mode = drm_display_mode_from_cea_vic(drm, vic);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, vic);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1180,7 +1180,7 @@ static void drm_test_connector_hdmi_compute_mode_clock_yuv420_12_bpc(struct kuni
- 		drm_hdmi_compute_mode_clock_yuv420_vic_valid_tests[0];
- 	unsigned long long rate;
- 
--	mode = drm_display_mode_from_cea_vic(drm, vic);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, vic);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1203,7 +1203,7 @@ static void drm_test_connector_hdmi_compute_mode_clock_yuv422_8_bpc(struct kunit
- 	struct drm_device *drm = &priv->drm;
- 	unsigned long long rate;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 16);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 16);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1225,7 +1225,7 @@ static void drm_test_connector_hdmi_compute_mode_clock_yuv422_10_bpc(struct kuni
- 	struct drm_device *drm = &priv->drm;
- 	unsigned long long rate;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 16);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 16);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-@@ -1247,7 +1247,7 @@ static void drm_test_connector_hdmi_compute_mode_clock_yuv422_12_bpc(struct kuni
- 	struct drm_device *drm = &priv->drm;
- 	unsigned long long rate;
- 
--	mode = drm_display_mode_from_cea_vic(drm, 16);
-+	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 16);
- 	KUNIT_ASSERT_NOT_NULL(test, mode);
- 
- 	KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
--- 
-2.34.1
-
+DQoNCj4gT24gT2N0IDI5LCAyMDI0LCBhdCA3OjA34oCvUE0sIFNvbmcgTGl1IDxzb25nbGl1YnJh
+dmluZ0BtZXRhLmNvbT4gd3JvdGU6DQo+IA0KPiANCj4gDQo+PiBPbiBPY3QgMjksIDIwMjQsIGF0
+IDU6MTHigK9QTSwgQWwgVmlybyA8dmlyb0B6ZW5pdi5saW51eC5vcmcudWs+IHdyb3RlOg0KPj4g
+DQo+PiBPbiBUdWUsIE9jdCAyOSwgMjAyNCBhdCAwNDoxMjo0MVBNIC0wNzAwLCBTb25nIExpdSB3
+cm90ZToNCj4+PiArIGlmIChzdHJzdHIoZmlsZV9uYW1lLT5uYW1lLCBpdGVtLT5wcmVmaXgpID09
+IChjaGFyICopZmlsZV9uYW1lLT5uYW1lKQ0KPj4gDQo+PiBIdWg/ICAiRmluZCB0aGUgZmlyc3Qg
+c3Vic3RyaW5nIChpZiBhbnkpIGVxdWFsIHRvIGl0ZW0tPnByZWZpeCBhbmQNCj4+IHRoZW4gY2hl
+Y2sgaWYgdGhhdCBoYXBwZW5zIHRvIGJlIGluIHRoZSB2ZXJ5IGJlZ2lubmluZyI/Pz8NCj4gDQo+
+IFJlcGxhY2VkIGl0IHdpdGggc3RyY21wIGxvY2FsbHksIGFzc3VtaW5nIHN0cm5jbXAgaXMgbm90
+IG5lY2Vzc2FyeS4NCg0KT29wcywgd2UgZG8gbmVlZCBzdHJuY21wIGFuZCBtb3JlIGNvZmZlZS4u
+DQoNCg0K
 
