@@ -1,884 +1,114 @@
-Return-Path: <linux-kernel+bounces-389336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8545C9B6B85
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:00:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D152E9B6B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156D81F22255
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CE31C233F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E333F19E83C;
-	Wed, 30 Oct 2024 18:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4801C3F01;
+	Wed, 30 Oct 2024 18:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="cOQv4DDr"
-Received: from mail-4319.protonmail.ch (mail-4319.protonmail.ch [185.70.43.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lM5KzxN9"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91DE1BD9F6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF691BD9F6;
+	Wed, 30 Oct 2024 18:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730311219; cv=none; b=jbD7nm0Ev2EB/C2YNb/LoFE7kHfYgHvPV6FyW7QWXUdqOhfU5AJHpagJIcQDE99TD05/5jwoa1+J0bTOCQePYlEFXTvstgJYRxU96oWpS4HMKUSAcVvU+o9SwVQrgi4eay3XDdAPJ5j8q0WbK2sbflE9OC8IFrnH93S6WrKOBl4=
+	t=1730311306; cv=none; b=UPgAiPPfgnCAEkP0Qx8Z7w4j7c3Ze1bQVsfDxSaSbpI8IGWYPC/eFfQeLWK1NuFxI8OYQNuckXGuwl6LB0rZe3HDEkwZOi7ciaBhmiLLS5vHADU44dAM/7YAvZI1Jv4Sl7JH3kCTAbaItNw9djAKZPBzI0nt+Os2pF/Q7Epcv3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730311219; c=relaxed/simple;
-	bh=AoM3xjsCqeIh4LERNh1j75x+qpNBfYPj/7cOdhVHXrM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TIed+hYRe/ulk3cSNdB3VycE5dYu9duNbGYVA3mdTWRWH9GWmLQzpaGiPdEfkVmbrW/uvAHj3tdtV4BzY5rXdzD6p1ZfxdzojimZLzCWYZ6sn0TBUnlYMxYSCoFFFahpUL3DFqxNWRFP7BCw4GqGJHVHuOAQEKkUIQENNY/oUmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=cOQv4DDr; arc=none smtp.client-ip=185.70.43.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1730311210; x=1730570410;
-	bh=AoM3xjsCqeIh4LERNh1j75x+qpNBfYPj/7cOdhVHXrM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cOQv4DDrzVZKMWETWopFV29EjxpBB6sRKneoh/IucQ5fUrEyOm5AKCctUcYJKG7TB
-	 dVMiwenEN6oogx5tFF+51pba4Z0SnLo7pTZJm7j/sJho/rTD/9k6us2pqMUFr+4r4e
-	 84FmLPcUE/bnPTGKqKEaIyxI4o3YOE11w6rcejn+0FOngSuKGRp6RRBwn6l9DnjbWk
-	 x9T9inR8mK1i1RmeTKg8WfKAMPzk9WeA8E8cy7fwOi/dCLTmJJRdELeaQUdTVuwI4Q
-	 lvRQgGp2qDS1O221khZA70WjoutrOGEHYLdIf26nQAdb67JMpkKjyl7/6klFc11WTl
-	 aCvLPMR2T9K8A==
-Date: Wed, 30 Oct 2024 18:00:07 +0000
-To: Guenter Roeck <linux@roeck-us.net>, "jdelvare@suse.com" <jdelvare@suse.com>, "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: M3 <mys3lf@protonmail.com>
-Cc: "christian@heusel.eu" <christian@heusel.eu>
-Subject: Re: module nct6775 reporting wrong values after resume from suspend
-Message-ID: <f37xE-WxXY0daAFO1Mi_Q_7IxzSWn2u29oqeJ2v7io0Gt_Ta6HS4P6P-bps1aendiUo6ivNsbPKvl38f7uaSeNrhE_6ZFj56PcYSI572L9E=@protonmail.com>
-In-Reply-To: <8c86b8b1-55db-43e1-a1ab-4b65905f7f05@roeck-us.net>
-References: <H72gIiX824bcqCLZswVX0V1dfbF-tiUMcWeoPM6-EzxaqNQQNaVn9NPsuDJ0_wyOxhf3gfiIUBtR-L9fEEvpnFWMzDHHyePvTBvl1xfiCeo=@protonmail.com> <193d6c42-7e0b-49c9-9e95-db458d4baaa7@roeck-us.net> <4HSarOaep_et3LczEcUF4Lh9A_pdubxt7V6hoFo6p58U1g122wUcZkg0qZ-_mCgWOntT1KpU3n1nRSGEaNTt2WfWiuMUo61rfkxQAB36OTc=@protonmail.com> <f7deecc7-cb88-4de9-942d-5db9fa903707@roeck-us.net> <Z5-0Xhu6ktFbb5Qqlw0q2sShCgCm2SPAZvnyReOZI3jZ7HbCZmFXgiI4kzVDABv9E5B-KkvgQpf6OEyHkaSHq3AEG6NsyU7rGKtbd7GVY7Q=@protonmail.com> <8c86b8b1-55db-43e1-a1ab-4b65905f7f05@roeck-us.net>
-Feedback-ID: 1225101:user:proton
-X-Pm-Message-ID: ca9204f6d8a58ccd4f6bcfb27f5da9473abd62a1
+	s=arc-20240116; t=1730311306; c=relaxed/simple;
+	bh=kxBRWNXk7mGC+D4h2OF9By5VWchwSuVSqHGRRyqZP/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XRpD545ZABGtJGlXft6I5XN3A7bZiaIjL2qY8YAeknptuT3cp9YKQD6B30DmLmIhJ7oWWlQoJC6ws+jvwVEXSvYV6zbvLll2GSn0DvUoiviz8aMUXHmWr0A0F4aM3YxTst8weCOWv0r/Iulnf6kUxhJ4hIpRlUmrl8QltF51voA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lM5KzxN9; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so983025e9.2;
+        Wed, 30 Oct 2024 11:01:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730311302; x=1730916102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ctpxKm9XupWsXHDupGH1kukdh82QDivGh8V/94jYHw4=;
+        b=lM5KzxN9c+EzgAhRTc3N+FF6tJnxJM7raem9+wBvsA6oxUT30Xfjsh8YJDnhWmZowl
+         GTY2l0JBBmweg2fm3dwp/wvdZgpUdDbfuThDJHLqLeOT9z4Y3lB4MjBT0W/EEtAX477T
+         /HkfWli81GzPPEzsMi4ObgcsyAhaeAMxtKrw3++ysF1vgAtDiOdaA+aPbZGlI9RaIxqP
+         xT7DxGVGhH8rTebRQ+uKHaoZF1vV0mn/lqiqvh20C8XW0j9e3oqnse1iWjaANc5rmoRl
+         eOu8X8ULgDx30a3pGDDA7gRKz1WoyzUQgNLKLPwyUwGPHDOSogZGw5qgi8RRkPrlt8N7
+         97BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730311302; x=1730916102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ctpxKm9XupWsXHDupGH1kukdh82QDivGh8V/94jYHw4=;
+        b=xF019qPo/ApOuGwiuw348APdA27A21fnhyTNrvSurVX3KpWbPLPh6cbgcs9RZT187b
+         xdM6Y5Pt3azhmwLuWN4Uz9mrl5be29NgrDUUg0Xv9Q8myLHM/lH8ayKRwiySNZyckREr
+         Pay3cJo9cbyj2Xsel/DryztKTYi82Fw1i7OfG8FWQw/yrEoXrMxM+gBYcIJaq/sOEyLJ
+         wKR0dk7I3I+mqISN7lonZQkwB1gp8khfa1cNQk7zDjg2CSLONL6KPngJHaDvzC26bswp
+         B3e7+hUFRXB6Op5irtx8ZUzaR9+hMtbr1D3U9ASFjiYPltpOcidwcwIdaHeW9zMyCjh/
+         eL/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU91/wZ92Zxe1lUxMxjcizwTZLaOVzsiPUMWda7athiS9EJcoxqJDnCeQQLxIhOTbr47jo1G+OG4uLjUOzX@vger.kernel.org, AJvYcCWVX+iICMRuiNIx9N9rLvj9p9/Q6T8MQmYEXYh5JGqdbbDS3wa4dRAZvxpigveti658E09xNOQJSRV2EFAC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQPkXpa7Fnn2s/CAuDk+UOSJ3/Xreo/K+9/rgCHkfvw1vjtmjG
+	y4RHxdW3TVrJhNYgf0uX6TgR1FWHJ0JsdhbMUTHY1czKqrgBnFw4
+X-Google-Smtp-Source: AGHT+IE4jn3TceKdWKChgM/nwc8RySj1R7ssBKlNau7JGawbEV3E4XIRbvEl10/byvoEDM0T9SB2bw==
+X-Received: by 2002:a05:600c:4fce:b0:431:4f29:9539 with SMTP id 5b1f17b1804b1-4319ad29f7cmr184731685e9.32.1730311301965;
+        Wed, 30 Oct 2024 11:01:41 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e7d23sm28049075e9.7.2024.10.30.11.01.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 11:01:41 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] xattr: remove redundant check on variable err
+Date: Wed, 30 Oct 2024 18:01:40 +0000
+Message-Id: <20241030180140.3103156-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-I added the other participants because I erroneously replied in the previou=
-s message. Sorry about that.
+Curretly in function generic_listxattr the for_each_xattr_handler loop
+checks err and will return out of the function if err is non-zero.
+It's impossible for err to be non-zero at the end of the function where
+err is checked again for a non-zero value. The final non-zero check is
+therefore redundant and can be removed.
 
-After resume from suspend
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-/sys/class/hwmon/hwmon5]$ grep . * 2>/dev/null
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 05ec7e7d9e87..21beb82ab5dc 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -1015,7 +1015,7 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ 			return err;
+ 	}
+ 
+-	return err ? err : buffer_size - remaining_size;
++	return buffer_size - remaining_size;
+ }
+ EXPORT_SYMBOL(generic_listxattr);
+ 
+-- 
+2.39.5
 
-beep_enable:0
-fan1_alarm:0
-fan1_beep:0
-fan1_input:0
-fan1_min:0
-fan1_pulses:2
-fan1_target:0
-fan1_tolerance:0
-fan2_alarm:0
-fan2_beep:0
-fan2_input:1162
-fan2_min:0
-fan2_pulses:2
-fan2_target:27000
-fan2_tolerance:1082
-fan3_alarm:0
-fan3_beep:0
-fan3_input:0
-fan3_min:0
-fan3_pulses:2
-fan3_target:0
-fan3_tolerance:0
-fan4_alarm:0
-fan4_beep:0
-fan4_input:0
-fan4_min:0
-fan4_pulses:2
-fan4_target:0
-fan4_tolerance:0
-fan5_alarm:0
-fan5_beep:0
-fan5_input:533
-fan5_min:0
-fan5_pulses:2
-fan5_target:0
-fan5_tolerance:0
-fan6_alarm:0
-fan6_input:534
-fan6_min:0
-fan6_pulses:2
-fan6_target:0
-fan6_tolerance:0
-fan7_input:759
-fan7_min:0
-fan7_pulses:2
-fan7_target:0
-fan7_tolerance:0
-in0_alarm:0
-in0_beep:0
-in0_input:696
-in0_max:1744
-in0_min:0
-in10_alarm:1
-in10_beep:0
-in10_input:1056
-in10_max:0
-in10_min:0
-in11_alarm:1
-in11_beep:0
-in11_input:848
-in11_max:0
-in11_min:0
-in12_alarm:1
-in12_beep:0
-in12_input:1000
-in12_max:0
-in12_min:0
-in13_alarm:1
-in13_beep:0
-in13_input:472
-in13_max:0
-in13_min:0
-in14_alarm:1
-in14_beep:0
-in14_input:1504
-in14_max:0
-in14_min:0
-in1_alarm:1
-in1_beep:0
-in1_input:1680
-in1_max:0
-in1_min:0
-in2_alarm:1
-in2_beep:0
-in2_input:3424
-in2_max:0
-in2_min:0
-in3_alarm:1
-in3_beep:0
-in3_input:3392
-in3_max:0
-in3_min:0
-in4_alarm:1
-in4_beep:0
-in4_input:1000
-in4_max:0
-in4_min:0
-in5_beep:0
-in5_input:904
-in5_max:0
-in5_min:0
-in6_alarm:1
-in6_beep:0
-in6_input:1360
-in6_max:0
-in6_min:0
-in7_alarm:1
-in7_beep:0
-in7_input:3424
-in7_max:0
-in7_min:0
-in8_alarm:1
-in8_beep:0
-in8_input:3248
-in8_max:0
-in8_min:0
-in9_alarm:1
-in9_beep:0
-in9_input:1056
-in9_max:0
-in9_min:0
-intrusion0_alarm:1
-intrusion0_beep:0
-intrusion1_alarm:1
-intrusion1_beep:0
-name:nct6798
-pwm1:158
-pwm1_auto_point1_pwm:153
-pwm1_auto_point1_temp:30000
-pwm1_auto_point2_pwm:255
-pwm1_auto_point2_temp:70000
-pwm1_auto_point3_pwm:255
-pwm1_auto_point3_temp:70000
-pwm1_auto_point4_pwm:255
-pwm1_auto_point4_temp:70000
-pwm1_auto_point5_pwm:255
-pwm1_auto_point5_temp:100000
-pwm1_crit_temp_tolerance:0
-pwm1_enable:5
-pwm1_floor:0
-pwm1_mode:1
-pwm1_start:1
-pwm1_step_down_time:400
-pwm1_step_up_time:400
-pwm1_stop_time:24000
-pwm1_target_temp:0
-pwm1_temp_sel:1
-pwm1_temp_tolerance:2000
-pwm2:101
-pwm2_auto_point1_pwm:51
-pwm2_auto_point1_temp:20000
-pwm2_auto_point2_pwm:178
-pwm2_auto_point2_temp:70000
-pwm2_auto_point3_pwm:255
-pwm2_auto_point3_temp:75000
-pwm2_auto_point4_pwm:255
-pwm2_auto_point4_temp:75000
-pwm2_auto_point5_pwm:255
-pwm2_auto_point5_temp:100000
-pwm2_crit_temp_tolerance:0
-pwm2_enable:5
-pwm2_floor:0
-pwm2_mode:1
-pwm2_start:1
-pwm2_step_down_time:800
-pwm2_step_up_time:800
-pwm2_stop_time:24000
-pwm2_target_temp:50000
-pwm2_temp_sel:7
-pwm2_temp_tolerance:2000
-pwm2_weight_duty_base:0
-pwm2_weight_duty_step:0
-pwm2_weight_temp_sel:0
-pwm2_weight_temp_step:0
-pwm2_weight_temp_step_base:0
-pwm2_weight_temp_step_tol:0
-pwm3:175
-pwm3_auto_point1_pwm:153
-pwm3_auto_point1_temp:30000
-pwm3_auto_point2_pwm:255
-pwm3_auto_point2_temp:70000
-pwm3_auto_point3_pwm:255
-pwm3_auto_point3_temp:70000
-pwm3_auto_point4_pwm:255
-pwm3_auto_point4_temp:70000
-pwm3_auto_point5_pwm:255
-pwm3_auto_point5_temp:100000
-pwm3_crit_temp_tolerance:0
-pwm3_enable:5
-pwm3_floor:0
-pwm3_mode:1
-pwm3_start:1
-pwm3_step_down_time:400
-pwm3_step_up_time:400
-pwm3_stop_time:24000
-pwm3_target_temp:0
-pwm3_temp_sel:7
-pwm3_temp_tolerance:2000
-pwm4:158
-pwm4_auto_point1_pwm:153
-pwm4_auto_point1_temp:30000
-pwm4_auto_point2_pwm:255
-pwm4_auto_point2_temp:70000
-pwm4_auto_point3_pwm:255
-pwm4_auto_point3_temp:70000
-pwm4_auto_point4_pwm:255
-pwm4_auto_point4_temp:70000
-pwm4_auto_point5_pwm:255
-pwm4_auto_point5_temp:100000
-pwm4_crit_temp_tolerance:0
-pwm4_enable:5
-pwm4_floor:0
-pwm4_mode:1
-pwm4_start:1
-pwm4_step_down_time:400
-pwm4_step_up_time:400
-pwm4_stop_time:24000
-pwm4_target_temp:0
-pwm4_temp_sel:1
-pwm4_temp_tolerance:2000
-pwm5:94
-pwm5_auto_point1_pwm:51
-pwm5_auto_point1_temp:20000
-pwm5_auto_point2_pwm:178
-pwm5_auto_point2_temp:55000
-pwm5_auto_point3_pwm:255
-pwm5_auto_point3_temp:60000
-pwm5_auto_point4_pwm:255
-pwm5_auto_point4_temp:60000
-pwm5_auto_point5_pwm:255
-pwm5_auto_point5_temp:100000
-pwm5_crit_temp_tolerance:0
-pwm5_enable:5
-pwm5_floor:0
-pwm5_mode:1
-pwm5_start:1
-pwm5_step_down_time:400
-pwm5_step_up_time:400
-pwm5_stop_time:24000
-pwm5_target_temp:0
-pwm5_temp_sel:1
-pwm5_temp_tolerance:2000
-pwm6:94
-pwm6_auto_point1_pwm:51
-pwm6_auto_point1_temp:20000
-pwm6_auto_point2_pwm:178
-pwm6_auto_point2_temp:55000
-pwm6_auto_point3_pwm:255
-pwm6_auto_point3_temp:60000
-pwm6_auto_point4_pwm:255
-pwm6_auto_point4_temp:60000
-pwm6_auto_point5_pwm:255
-pwm6_auto_point5_temp:100000
-pwm6_crit_temp_tolerance:0
-pwm6_enable:5
-pwm6_floor:0
-pwm6_mode:1
-pwm6_start:1
-pwm6_step_down_time:400
-pwm6_step_up_time:400
-pwm6_stop_time:24000
-pwm6_target_temp:0
-pwm6_temp_sel:1
-pwm6_temp_tolerance:2000
-pwm7:157
-pwm7_auto_point1_pwm:153
-pwm7_auto_point1_temp:30000
-pwm7_auto_point2_pwm:255
-pwm7_auto_point2_temp:75000
-pwm7_auto_point3_pwm:255
-pwm7_auto_point3_temp:75000
-pwm7_auto_point4_pwm:255
-pwm7_auto_point4_temp:75000
-pwm7_auto_point5_pwm:255
-pwm7_auto_point5_temp:100000
-pwm7_crit_temp_tolerance:0
-pwm7_enable:5
-pwm7_floor:0
-pwm7_mode:1
-pwm7_start:1
-pwm7_step_down_time:400
-pwm7_step_up_time:400
-pwm7_stop_time:24000
-pwm7_target_temp:0
-pwm7_temp_sel:1
-pwm7_temp_tolerance:2000
-temp10_input:0
-temp10_label:PCH_CHIP_TEMP
-temp11_input:0
-temp11_label:PCH_CPU_TEMP
-temp12_input:0
-temp12_label:PCH_MCH_TEMP
-temp1_beep:0
-temp1_crit:100000
-temp1_input:21000
-temp1_label:SYSTIN
-temp1_max:80000
-temp1_max_hyst:75000
-temp1_offset:0
-temp1_type:4
-temp2_alarm:0
-temp2_beep:0
-temp2_crit:100000
-temp2_input:21000
-temp2_label:CPUTIN
-temp2_max:121000
-temp2_max_hyst:111000
-temp2_offset:0
-temp2_type:4
-temp3_alarm:0
-temp3_beep:0
-temp3_crit:100000
-temp3_input:7000
-temp3_label:AUXTIN0
-temp3_max:80000
-temp3_max_hyst:75000
-temp3_offset:0
-temp3_type:4
-temp4_alarm:0
-temp4_beep:0
-temp4_crit:100000
-temp4_input:23000
-temp4_label:AUXTIN1
-temp4_max:80000
-temp4_max_hyst:75000
-temp4_offset:0
-temp4_type:4
-temp5_alarm:0
-temp5_beep:0
-temp5_crit:100000
-temp5_input:34000
-temp5_label:AUXTIN2
-temp5_max:80000
-temp5_max_hyst:75000
-temp5_offset:0
-temp5_type:4
-temp6_alarm:0
-temp6_beep:0
-temp6_crit:100000
-temp6_input:-1000
-temp6_label:AUXTIN3
-temp6_max:80000
-temp6_max_hyst:75000
-temp6_offset:0
-temp6_type:4
-temp7_alarm:0
-temp7_beep:0
-temp7_input:38000
-temp7_label:PECI Agent 0
-temp7_max:80000
-temp7_max_hyst:75000
-temp8_alarm:0
-temp8_beep:0
-temp8_crit:100000
-temp8_input:31000
-temp8_label:AUXTIN4
-temp8_max:80000
-temp8_max_hyst:75000
-temp9_input:0
-temp9_label:PCH_CHIP_CPU_MAX_TEMP
-
-Issuing rmmod && modprobe module nct6775
-
-/sys/class/hwmon/hwmon5]$ grep . * 2>/dev/null
-
-beep_enable:0
-fan1_alarm:0
-fan1_beep:0
-fan1_input:0
-fan1_min:0
-fan1_pulses:2
-fan1_target:0
-fan1_tolerance:0
-fan2_alarm:0
-fan2_beep:0
-fan2_input:1165
-fan2_min:0
-fan2_pulses:2
-fan2_target:27000
-fan2_tolerance:1082
-fan3_alarm:0
-fan3_beep:0
-fan3_input:0
-fan3_min:0
-fan3_pulses:2
-fan3_target:0
-fan3_tolerance:0
-fan4_alarm:0
-fan4_beep:0
-fan4_input:0
-fan4_min:0
-fan4_pulses:2
-fan4_target:0
-fan4_tolerance:0
-fan5_alarm:0
-fan5_beep:0
-fan5_input:536
-fan5_min:0
-fan5_pulses:2
-fan5_target:0
-fan5_tolerance:0
-fan6_alarm:0
-fan6_input:535
-fan6_min:0
-fan6_pulses:2
-fan6_target:0
-fan6_tolerance:0
-fan7_input:754
-fan7_min:0
-fan7_pulses:2
-fan7_target:0
-fan7_tolerance:0
-in0_alarm:0
-in0_beep:0
-in0_input:696
-in0_max:1744
-in0_min:0
-in10_alarm:1
-in10_beep:0
-in10_input:1056
-in10_max:0
-in10_min:0
-in11_alarm:1
-in11_beep:0
-in11_input:848
-in11_max:0
-in11_min:0
-in12_alarm:1
-in12_beep:0
-in12_input:1000
-in12_max:0
-in12_min:0
-in13_alarm:1
-in13_beep:0
-in13_input:472
-in13_max:0
-in13_min:0
-in14_alarm:1
-in14_beep:0
-in14_input:1504
-in14_max:0
-in14_min:0
-in1_alarm:1
-in1_beep:0
-in1_input:1680
-in1_max:0
-in1_min:0
-in2_alarm:1
-in2_beep:0
-in2_input:3424
-in2_max:0
-in2_min:0
-in3_alarm:1
-in3_beep:0
-in3_input:3392
-in3_max:0
-in3_min:0
-in4_alarm:1
-in4_beep:0
-in4_input:1000
-in4_max:0
-in4_min:0
-in5_beep:0
-in5_input:904
-in5_max:0
-in5_min:0
-in6_alarm:1
-in6_beep:0
-in6_input:1352
-in6_max:0
-in6_min:0
-in7_alarm:1
-in7_beep:0
-in7_input:3424
-in7_max:0
-in7_min:0
-in8_alarm:1
-in8_beep:0
-in8_input:3248
-in8_max:0
-in8_min:0
-in9_alarm:1
-in9_beep:0
-in9_input:1056
-in9_max:0
-in9_min:0
-intrusion0_alarm:1
-intrusion0_beep:0
-intrusion1_alarm:1
-intrusion1_beep:0
-name:nct6798
-pwm1:158
-pwm1_auto_point1_pwm:153
-pwm1_auto_point1_temp:30000
-pwm1_auto_point2_pwm:255
-pwm1_auto_point2_temp:70000
-pwm1_auto_point3_pwm:255
-pwm1_auto_point3_temp:70000
-pwm1_auto_point4_pwm:255
-pwm1_auto_point4_temp:70000
-pwm1_auto_point5_pwm:255
-pwm1_auto_point5_temp:100000
-pwm1_crit_temp_tolerance:0
-pwm1_enable:5
-pwm1_floor:0
-pwm1_mode:1
-pwm1_start:1
-pwm1_step_down_time:400
-pwm1_step_up_time:400
-pwm1_stop_time:24000
-pwm1_target_temp:0
-pwm1_temp_sel:1
-pwm1_temp_tolerance:2000
-pwm2:101
-pwm2_auto_point1_pwm:51
-pwm2_auto_point1_temp:20000
-pwm2_auto_point2_pwm:178
-pwm2_auto_point2_temp:70000
-pwm2_auto_point3_pwm:255
-pwm2_auto_point3_temp:75000
-pwm2_auto_point4_pwm:255
-pwm2_auto_point4_temp:75000
-pwm2_auto_point5_pwm:255
-pwm2_auto_point5_temp:100000
-pwm2_crit_temp_tolerance:0
-pwm2_enable:5
-pwm2_floor:0
-pwm2_mode:1
-pwm2_start:1
-pwm2_step_down_time:800
-pwm2_step_up_time:800
-pwm2_stop_time:24000
-pwm2_target_temp:50000
-pwm2_temp_sel:7
-pwm2_temp_tolerance:2000
-pwm2_weight_duty_base:0
-pwm2_weight_duty_step:0
-pwm2_weight_temp_sel:0
-pwm2_weight_temp_step:0
-pwm2_weight_temp_step_base:0
-pwm2_weight_temp_step_tol:0
-pwm3:175
-pwm3_auto_point1_pwm:153
-pwm3_auto_point1_temp:30000
-pwm3_auto_point2_pwm:255
-pwm3_auto_point2_temp:70000
-pwm3_auto_point3_pwm:255
-pwm3_auto_point3_temp:70000
-pwm3_auto_point4_pwm:255
-pwm3_auto_point4_temp:70000
-pwm3_auto_point5_pwm:255
-pwm3_auto_point5_temp:100000
-pwm3_crit_temp_tolerance:0
-pwm3_enable:5
-pwm3_floor:0
-pwm3_mode:1
-pwm3_start:1
-pwm3_step_down_time:400
-pwm3_step_up_time:400
-pwm3_stop_time:24000
-pwm3_target_temp:0
-pwm3_temp_sel:7
-pwm3_temp_tolerance:2000
-pwm4:158
-pwm4_auto_point1_pwm:153
-pwm4_auto_point1_temp:30000
-pwm4_auto_point2_pwm:255
-pwm4_auto_point2_temp:70000
-pwm4_auto_point3_pwm:255
-pwm4_auto_point3_temp:70000
-pwm4_auto_point4_pwm:255
-pwm4_auto_point4_temp:70000
-pwm4_auto_point5_pwm:255
-pwm4_auto_point5_temp:100000
-pwm4_crit_temp_tolerance:0
-pwm4_enable:5
-pwm4_floor:0
-pwm4_mode:1
-pwm4_start:1
-pwm4_step_down_time:400
-pwm4_step_up_time:400
-pwm4_stop_time:24000
-pwm4_target_temp:0
-pwm4_temp_sel:1
-pwm4_temp_tolerance:2000
-pwm5:94
-pwm5_auto_point1_pwm:51
-pwm5_auto_point1_temp:20000
-pwm5_auto_point2_pwm:178
-pwm5_auto_point2_temp:55000
-pwm5_auto_point3_pwm:255
-pwm5_auto_point3_temp:60000
-pwm5_auto_point4_pwm:255
-pwm5_auto_point4_temp:60000
-pwm5_auto_point5_pwm:255
-pwm5_auto_point5_temp:100000
-pwm5_crit_temp_tolerance:0
-pwm5_enable:5
-pwm5_floor:0
-pwm5_mode:1
-pwm5_start:1
-pwm5_step_down_time:400
-pwm5_step_up_time:400
-pwm5_stop_time:24000
-pwm5_target_temp:0
-pwm5_temp_sel:1
-pwm5_temp_tolerance:2000
-pwm6:94
-pwm6_auto_point1_pwm:51
-pwm6_auto_point1_temp:20000
-pwm6_auto_point2_pwm:178
-pwm6_auto_point2_temp:55000
-pwm6_auto_point3_pwm:255
-pwm6_auto_point3_temp:60000
-pwm6_auto_point4_pwm:255
-pwm6_auto_point4_temp:60000
-pwm6_auto_point5_pwm:255
-pwm6_auto_point5_temp:100000
-pwm6_crit_temp_tolerance:0
-pwm6_enable:5
-pwm6_floor:0
-pwm6_mode:1
-pwm6_start:1
-pwm6_step_down_time:400
-pwm6_step_up_time:400
-pwm6_stop_time:24000
-pwm6_target_temp:0
-pwm6_temp_sel:1
-pwm6_temp_tolerance:2000
-pwm7:157
-pwm7_auto_point1_pwm:153
-pwm7_auto_point1_temp:30000
-pwm7_auto_point2_pwm:255
-pwm7_auto_point2_temp:75000
-pwm7_auto_point3_pwm:255
-pwm7_auto_point3_temp:75000
-pwm7_auto_point4_pwm:255
-pwm7_auto_point4_temp:75000
-pwm7_auto_point5_pwm:255
-pwm7_auto_point5_temp:100000
-pwm7_crit_temp_tolerance:0
-pwm7_enable:5
-pwm7_floor:0
-pwm7_mode:1
-pwm7_start:1
-pwm7_step_down_time:400
-pwm7_step_up_time:400
-pwm7_stop_time:24000
-pwm7_target_temp:0
-pwm7_temp_sel:1
-pwm7_temp_tolerance:2000
-temp10_input:0
-temp10_label:PCH_CHIP_TEMP
-temp11_input:0
-temp11_label:PCH_CPU_TEMP
-temp12_input:0
-temp12_label:PCH_MCH_TEMP
-temp1_beep:0
-temp1_crit:100000
-temp1_input:30000
-temp1_label:SYSTIN
-temp1_max:80000
-temp1_max_hyst:75000
-temp1_offset:0
-temp1_type:4
-temp2_alarm:0
-temp2_beep:0
-temp2_crit:100000
-temp2_input:21000
-temp2_label:CPUTIN
-temp2_max:121000
-temp2_max_hyst:111000
-temp2_offset:0
-temp2_type:4
-temp3_alarm:0
-temp3_beep:0
-temp3_crit:100000
-temp3_input:7000
-temp3_label:AUXTIN0
-temp3_max:80000
-temp3_max_hyst:75000
-temp3_offset:0
-temp3_type:4
-temp4_alarm:0
-temp4_beep:0
-temp4_crit:100000
-temp4_input:23000
-temp4_label:AUXTIN1
-temp4_max:80000
-temp4_max_hyst:75000
-temp4_offset:0
-temp4_type:4
-temp5_alarm:0
-temp5_beep:0
-temp5_crit:100000
-temp5_input:34000
-temp5_label:AUXTIN2
-temp5_max:80000
-temp5_max_hyst:75000
-temp5_offset:0
-temp5_type:4
-temp6_alarm:0
-temp6_beep:0
-temp6_crit:100000
-temp6_input:-1000
-temp6_label:AUXTIN3
-temp6_max:80000
-temp6_max_hyst:75000
-temp6_offset:0
-temp6_type:4
-temp7_alarm:0
-temp7_beep:0
-temp7_input:37500
-temp7_label:PECI Agent 0
-temp7_max:80000
-temp7_max_hyst:75000
-temp8_alarm:0
-temp8_beep:0
-temp8_crit:100000
-temp8_input:31000
-temp8_label:AUXTIN4
-temp8_max:80000
-temp8_max_hyst:75000
-temp9_input:0
-temp9_label:PCH_CHIP_CPU_MAX_TEMP
-
-Sent with Proton Mail secure email.
-
-On Wednesday, October 30th, 2024 at 7:36 PM, Guenter Roeck <linux@roeck-us.=
-net> wrote:
-
-> On 10/30/24 09:42, M3 wrote:
->
-> > I have no clue what you are asking. I am happy to provide but...
-> > Could you please guide me ?
->
->
-> cd /sys/class/hwmon/hwmon5
->
-> grep . * 2>/dev/null
->
-> > Sent from my iDev
-> >
-> > Sent with Proton Mail secure email.
-> >
-> > On Wednesday, October 30th, 2024 at 6:34 PM, Guenter Roeck linux@roeck-=
-us.net wrote:
-> >
-> > > On 10/30/24 09:19, M3 wrote:
-> > >
-> > > > ok here are the temps of motherboard.
-> > > >
-> > > > After resume from suspend
-> > > > $ cat /sys/class/hwmon/hwmon5/temp1_input
-> > > > 20000
-> > > >
-> > > > And after rmmod nct6775 && modprobe nct6775
-> > > > $ cat /sys/class/hwmon/hwmon5/temp1_input
-> > > > 30000
-> > >
-> > > That is even more useless. I see that below. I would need to see all =
-values
-> > > to be able to determine if there are some discrepancies (for example =
-in
-> > > temperature offset values).
-> > >
-> > > Guenter
-> > >
-> > > > Sent with Proton Mail secure email.
-> > > >
-> > > > On Wednesday, October 30th, 2024 at 6:08 PM, Guenter Roeck linux@ro=
-eck-us.net wrote:
-> > > >
-> > > > > On 10/30/24 08:36, M3 wrote:
-> > > > > [ ... ]
-> > > > >
-> > > > > > sensors reporting before systemctl suspend
-> > > > > >
-> > > > > > $ sensors nct6798-isa-02a0
-> > > > > >
-> > > > > > nct6798-isa-02a0
-> > > > > > Adapter: ISA adapter
-> > > > > > CPU Fan: 1162 RPM (min =3D 0 RPM)
-> > > > > > Chassis Front Fan1: 495 RPM (min =3D 0 RPM)
-> > > > > > Chassis Rear Fan: 491 RPM (min =3D 0 RPM)
-> > > > > > Chassis Front Fan2: 742 RPM (min =3D 0 RPM)
-> > > > > > Motherboard: +30.0=C2=B0C (high =3D +80.0=C2=B0C, hyst =3D +75.=
-0=C2=B0C)
-> > > > > > (crit =3D +100.0=C2=B0C) sensor =3D thermistor
-> > > > > >
-> > > > > > ----------
-> > > > > > sensors reporting after resume from suspend (fan rpm's are now =
-similar)
-> > > > > >
-> > > > > > $ sensors nct6798-isa-02a0
-> > > > > >
-> > > > > > nct6798-isa-02a0
-> > > > > > Adapter: ISA adapter
-> > > > > > CPU Fan: 1165 RPM (min =3D 0 RPM)
-> > > > > > Chassis Front Fan1: 494 RPM (min =3D 0 RPM)
-> > > > > > Chassis Rear Fan: 510 RPM (min =3D 0 RPM)
-> > > > > > Chassis Front Fan2: 716 RPM (min =3D 0 RPM)
-> > > > > > Motherboard: +21.0=C2=B0C (high =3D +80.0=C2=B0C, hyst =3D +75.=
-0=C2=B0C)
-> > > > > > (crit =3D +100.0=C2=B0C) sensor =3D thermistor
-> > > > >
-> > > > > It is impossible to say what might be wrong from this information=
-. Any chance to provide
-> > > > > output from hwmon device attributes (from sys/class/hwmon/hwmonX/=
-) from before and after
-> > > > > re-loading the module ?
-> > > > >
-> > > > > Guenter
 
