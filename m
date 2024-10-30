@@ -1,95 +1,134 @@
-Return-Path: <linux-kernel+bounces-388963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9619B66A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:57:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B209B66B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC0A1C213E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858AD1C21386
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6F81F4735;
-	Wed, 30 Oct 2024 14:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C171F4726;
+	Wed, 30 Oct 2024 14:58:11 +0000 (UTC)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9399D26AD4;
-	Wed, 30 Oct 2024 14:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D27B43173;
+	Wed, 30 Oct 2024 14:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300243; cv=none; b=TmMVml5HcqQjy3VPGLQikG19waN6fGWD9RMdPk8Yx1ke8OJfDGxD69qsJGhfM4OyEfDoK2HwjKwuXCW/tdTlthe8409lbTXtrCkYd0m3wjICj6rqAJ6LsEy4ebB6NI0LKrm1j182LACnki+IaI+T/xWT1pHVs+QvS4NJNkf8ua0=
+	t=1730300291; cv=none; b=Eg9nc1N+7wVZ4z2rQnxzWiPeIOp5SWQImyomqUZxqyZMKJDwUidEgQA44Xic9fjEOj26BGpkcTgDz/QvMaQGrbfej8ALSGYsdH05s35THDpFiCIvaSqg2uuav8h5q8fxQqWd1Ob9kLEy36QFbkmxbjmnvSpeG8B6EmWr+igvgeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300243; c=relaxed/simple;
-	bh=NFNwA1nAENuRUepB0mrjvJghMwFFjdV9BjvwSmBmWQU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BG4yzX1EXiv9OP9JI15xdX/vhdIhEw3g0oT2KnYNoNR7Tju8tSYcOi5LsRb5ZHEfRN8Z2+F4uflvytwWr2vj8pX+AgACqS8zSeUehGziCjUJpOyErJ7Hd7Ywo3mVk2phqc5gYxJLUF50Y/JifNCmQLZi5WYsJjuqqxGSgZ/Axo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdqpz1946z6GFD4;
-	Wed, 30 Oct 2024 22:52:27 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 65FF3140158;
-	Wed, 30 Oct 2024 22:57:18 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 15:57:17 +0100
-Date: Wed, 30 Oct 2024 14:57:15 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 03/14] cxl/pci: Introduce helper functions
- pcie_is_cxl() and pcie_is_cxl_port()
-Message-ID: <20241030145715.00001d78@Huawei.com>
-In-Reply-To: <20241025210305.27499-4-terry.bowman@amd.com>
-References: <20241025210305.27499-1-terry.bowman@amd.com>
-	<20241025210305.27499-4-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730300291; c=relaxed/simple;
+	bh=WcIB+KKO5hJsYai/GyBGuuWhmswlEVCGJdwusoHNSx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ptp/dqfm3At9B96kV9hFapCU7+y41f665YBWoBWNCBHogP5V+ADLCDlaWcWphYugMFegIoqeYSQltmYh55bALdglb/423QbtoDHlLs4ct4SebKm9OGOhAanggdWEXX58QeYhW9Mwm239BjaJPZ5Iu2BMLyHEbr8WmgR5PxCw8rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xdqvy6zmCz6HJg7;
+	Wed, 30 Oct 2024 22:56:46 +0800 (CST)
+Received: from mscpeml500003.china.huawei.com (unknown [7.188.49.51])
+	by mail.maildlp.com (Postfix) with ESMTPS id 52EAE140A35;
+	Wed, 30 Oct 2024 22:58:05 +0800 (CST)
+Received: from [10.123.123.154] (10.123.123.154) by
+ mscpeml500003.china.huawei.com (7.188.49.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 30 Oct 2024 17:58:04 +0300
+Message-ID: <b74b8995-3d24-47a9-8dff-6e163690621e@huawei-partners.com>
+Date: Wed, 30 Oct 2024 17:58:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
+To: Michal Hocko <mhocko@suse.com>
+CC: <akpm@linux-foundation.org>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<baohua@kernel.org>, <willy@infradead.org>, <peterx@redhat.com>,
+	<hannes@cmpxchg.org>, <hocko@kernel.org>, <roman.gushchin@linux.dev>,
+	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>, <cgroups@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<stepanov.anatoly@huawei.com>, <alexander.kozhevnikov@huawei-partners.com>,
+	<guohanjun@huawei.com>, <weiyongjun1@huawei.com>,
+	<wangkefeng.wang@huawei.com>, <judy.chenhui@huawei.com>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>, <kang.sun@huawei.com>
+References: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
+ <ZyHwgjK8t8kWkm9E@tiehlicka>
+ <770bf300-1dbb-42fc-8958-b9307486178e@huawei-partners.com>
+ <ZyI0LTV2YgC4CGfW@tiehlicka>
+Content-Language: en-US
+From: Gutierrez Asier <gutierrez.asier@huawei-partners.com>
+In-Reply-To: <ZyI0LTV2YgC4CGfW@tiehlicka>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-ClientProxiedBy: mscpeml500003.china.huawei.com (7.188.49.51) To
+ mscpeml500003.china.huawei.com (7.188.49.51)
 
-On Fri, 25 Oct 2024 16:02:54 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
 
-> CXL and AER drivers need the ability to identify CXL devices and CXL port
-> devices.
+
+On 10/30/2024 4:27 PM, Michal Hocko wrote:
+> On Wed 30-10-24 15:51:00, Gutierrez Asier wrote:
+>>
+>>
+>> On 10/30/2024 11:38 AM, Michal Hocko wrote:
+>>> On Wed 30-10-24 16:33:08, gutierrez.asier@huawei-partners.com wrote:
+>>>> From: Asier Gutierrez <gutierrez.asier@huawei-partners.com>
+>>>>
+>>>> Currently THP modes are set globally. It can be an overkill if only some
+>>>> specific app/set of apps need to get benefits from THP usage. Moreover, various
+>>>> apps might need different THP settings. Here we propose a cgroup-based THP
+>>>> control mechanism.
+>>>>
+>>>> THP interface is added to memory cgroup subsystem. Existing global THP control
+>>>> semantics is supported for backward compatibility. When THP modes are set
+>>>> globally all the changes are propagated to memory cgroups. However, when a
+>>>> particular cgroup changes its THP policy, the global THP policy in sysfs remains
+>>>> the same.
+>>>
+>>> Do you have any specific examples where this would be benefitial?
+>>
+>> Now we're mostly focused on database scenarios (MySQL, Redis).  
 > 
-> First, add set_pcie_cxl() with logic checking for CXL Flexbus DVSEC
-> presence. The CXL Flexbus DVSEC presence is used because it is required
-> for all the CXL PCIe devices.[1]
+> That seems to be more process than workload oriented. Why the existing
+> per-process tuning doesn't work?
 > 
-> Add boolean 'struct pci_dev::is_cxl' with the purpose to cache the CXL
-> Flexbus presence.
+> [...]
+
+1st Point
+
+We're trying to provide a transparent mechanism, but all the existing per-process
+methods require to modify an app itself (MADV_HUGE, MADV_COLLAPSE, hugetlbfs)
+
+Moreover we're using file-backed THPs too (for .text mostly), which make it for
+user-space developers even more complicated.
+
+>>>> Child cgroups inherit THP settings from parent cgroup upon creation. Particular
+>>>> cgroup mode changes aren't propagated to child cgroups.
+>>>
+>>> So this breaks hierarchical property, doesn't it? In other words if a
+>>> parent cgroup would like to enforce a certain policy to all descendants
+>>> then this is not really possible. 
+>>
+>> The first idea was to have some flexibility when changing THP policies. 
+>>
+>> I will submit a new patch set which will enforce the cgroup hierarchy and change all
+>> the children recursively.
 > 
-> Add pcie_is_cxl() as a macro to return 'struct pci_dev::is_cxl',
-> 
-> Add pcie_is_cxl_port() to check if a device is a CXL root port, CXL
-> upstream switch port, or CXL downstream switch port. Also, verify the
-> CXL extensions DVSEC for port is present.[1]
-> 
-> [1] CXL 3.1 Spec, 8.1.1 PCIe Designated Vendor-Specific Extended
->     Capability (DVSEC) ID Assignment, Table 8-2
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Make sense to improve the trace point info if nothing else.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> What is the expected semantics then?
+
+2nd point (on semantics)
+1. Children inherit the THP policy upon creation
+2. Parent's policy changes are propagated to all the children
+3. Children can set the policy independently
+
+-- 
+Asier Gutierrez
+Huawei
+
 
