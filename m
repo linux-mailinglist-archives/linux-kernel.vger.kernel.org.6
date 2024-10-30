@@ -1,111 +1,81 @@
-Return-Path: <linux-kernel+bounces-388741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E189B63CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:14:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2259B63D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218D61F21766
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:14:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C091B1C20AB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056481EABC8;
-	Wed, 30 Oct 2024 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526171EABC3;
+	Wed, 30 Oct 2024 13:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZQAIhVr"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hBgKJV4r"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1CD1D1E7A;
-	Wed, 30 Oct 2024 13:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CDB1EABAC;
+	Wed, 30 Oct 2024 13:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294061; cv=none; b=hY9OTiyVwJNMFQUkaIWvoYliih6nqgfw2d8nMiLCG1Doc6tzaTsSDdMmvF90thGb2ObV0ioV6c8uLRAO5DQz11egO6Mgbw2UcrQ5pm+TXp0TR0xbGSl9kN/ZzyYVhf84OUTzFpLxxwEnd8ujFXUO4pURzVjNiF3x7HUniS4Ryz4=
+	t=1730294093; cv=none; b=Bqmr9ii1kddP6/Fcc1dbRTGs1goQd5luKankqUvTyir8+AxE1H1nvQogPf99WNA7tZDPAYFaiY9JGD6ycTSTeT9FXkbaSvBoSW5aiK1LRD3dNr5u4mzemlhupLMbh9MBxGefA+hJJ4+SA0I02s9g4QKO7hVdh7Aa4sctIFpNJhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294061; c=relaxed/simple;
-	bh=BdmExtkMA0VZuzrJ5PrYQTQ5P7R2up+kNAlU+s9OMZ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qqdqgBgEZ0DbEH4zjrz9tWPRY3Ttgw0HiIv39Dxt2kUfTsDc2NN0f1KS06gpt+1bqbMyc8aivImiabHxqknmn9Zl9iK+pzf/xqwaHmWEdfGY3n3Ddca59l2FDS6unmC+bOt/B6tsHxhKRTcfjzhgtVqfgg6WY4G3rERUzD8Bm38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZQAIhVr; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so61052145e9.3;
-        Wed, 30 Oct 2024 06:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730294058; x=1730898858; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nFu9X9ZfhRR/+8JSdiYichwPIWFG9gfOkKOe7mEGzqE=;
-        b=JZQAIhVrRIpN9M5mPF5J8hf13bCts6aHYo6SOr7lMxjWV0bWyh70ogMIVW0QUZFi3l
-         sGqfcVdkLT9IptNA3CouuTRkKPpFB7jHaIV3qWSt8jxn5gOUDL0c5YTDsMaSUemZn5Bk
-         34CEVc8jIoWLYu+uHwV9iZiRRkIgnA5YhUW97cm6/EftdWKFIbrLAxBVrSoW5JlyBmga
-         ePZsdbvhXBCpC8Q1vpd10BjvDTTtscuQ3B4DFpIlPOACF6DlTVzo9uZikAKLhv63tAqh
-         HvhKa3XzDtrTMwH6rBQIis83hyqomZtSUDVePEm1jF+nFLNCUgY0PP8f+2OQ4/qgH/F4
-         jW9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730294058; x=1730898858;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nFu9X9ZfhRR/+8JSdiYichwPIWFG9gfOkKOe7mEGzqE=;
-        b=WLWp40yRbF8l7jsGI3hUqQG1FkvNDSrzHfSIcmvLIqVeNVk7jPp03NfpMuww0/z2xF
-         VzjNjtnyLZWutbCrRZygCVAil5Z/HAkrhH9/dlws08g/jViHlpciXGbVxsSFcTHofI3E
-         jj3llDdcHG9cj6yCsL8LACLLs9v3NwENA2ncrDNAKSMxQ9c6YA0hNHOOcWgB5timWtIZ
-         jPfduWNrxQANKlXz3u0B2A106HO7YGG/cULOuScp/D7aEDyGwkrOjxEwtwga8/63ZDcK
-         FisANrVJ98998cdUOC9cRU31LYMJdG4pJjDQjp45NRUnmitSagaCF0uuI95H+PO9TOLX
-         pnLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMb919B4C+G0rEFzkQdaJg1QHzbOCMUIxgHphtso3uQq6gW3uzlhwkhwqTG5hiemJM3FXAtVsFCGG3ugXR/qs=@vger.kernel.org, AJvYcCWKxHjFj0XrMtUIfxmNTfqUJ2a5ehE6du2kCCtJDGuK28AmiEF27vYxBZpXkqqKVVKcb3TV6Kx4cFUDv7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFdcDYOkWqz8upMRucryW7jNoLDiLFissQp2Q4au5T5KpCx7kn
-	UkN4ShpWcKC7euyRT2ukeN5ncXAOZEjdNLHdXAGnFaTxiYNcIXp1
-X-Google-Smtp-Source: AGHT+IF8uQpUwo28perjaG2xI3g/LHuSBns2dWrPqR/sBur/Bi+UnRnwW1Ksp3eUVXqn7ebfyU3rkA==
-X-Received: by 2002:a05:600c:4e04:b0:431:5c7b:e937 with SMTP id 5b1f17b1804b1-4319acb42cemr157648745e9.17.1730294057359;
-        Wed, 30 Oct 2024 06:14:17 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e848csm21382295e9.3.2024.10.30.06.14.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 06:14:16 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: rtw89: 8852a: remove redundant else statement
-Date: Wed, 30 Oct 2024 13:14:16 +0000
-Message-Id: <20241030131416.3091954-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730294093; c=relaxed/simple;
+	bh=DBpB3f2LtL7b0wNdnmohkKojIifWOS9El0hw2Q97fPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5Cq4WQMakQeoAYdzyd7LmejxyqCXQCWgKSa63vb2fIChbRqbL4OW5pGSvQu4gbom1o/tpRir7mxFYFvvNYieSEefnfb0FqvY+YmR5+rNH6F3xERmzNqaM1k9ycG8NW9M3fpdVLg5mL2LYtYHVk91YWR4JT5I/+g1wM5PgQud6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hBgKJV4r; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aPn2CLHEdywlk/89aJTVPvPxOEZTzXSZFssJ/Vt2G94=; b=hBgKJV4rkBrR5hKeykMpwtktYa
+	mbR/CQVm4fPurnul+pfrdEDnmKvZk5Mw24sAUsUpH/xMvbwblJmv+YH/hKFp0VMCh4hkDv8OcIlFs
+	pb9bgnnYBE+rWXRdzdkO0ogWpi65Oq7Jg3GHpqiigBILZGdRiQtddo+Swfn+wCHwvPJSLZl40hlym
+	mf3T66fF5T1mzRSeWVdaw4BgOJXa80Xc+OEFTqdzoQdO+496H+b248y46mp3mJSlNPmJSLgkt663w
+	tm0/IYRhSuXNiEI9aUz3fo6n/6LVAvPeZOB5pNjvjZ6YPAOdjoFeW5H+bMhfE2ce+GwdzdPwI8C/Z
+	z4lHHvnw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t68X6-0000000DDen-2WSw;
+	Wed, 30 Oct 2024 13:14:44 +0000
+Date: Wed, 30 Oct 2024 13:14:44 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: gutierrez.asier@huawei-partners.com
+Cc: akpm@linux-foundation.org, david@redhat.com, ryan.roberts@arm.com,
+	baohua@kernel.org, peterx@redhat.com, hannes@cmpxchg.org,
+	hocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stepanov.anatoly@huawei.com,
+	alexander.kozhevnikov@huawei-partners.com, guohanjun@huawei.com,
+	weiyongjun1@huawei.com, wangkefeng.wang@huawei.com,
+	judy.chenhui@huawei.com, yusongping@huawei.com,
+	artem.kuzin@huawei.com, kang.sun@huawei.com
+Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
+Message-ID: <ZyIxRExcJvKKv4JW@casper.infradead.org>
+References: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
 
-The cascaded if statements covers all 16 bit values in the comparisons
-of dgain and the last else statement is not reachable and hence
-dead code. Remove it.
+On Wed, Oct 30, 2024 at 04:33:08PM +0800, gutierrez.asier@huawei-partners.com wrote:
+> From: Asier Gutierrez <gutierrez.asier@huawei-partners.com>
+> 
+> Currently THP modes are set globally. It can be an overkill if only some
+> specific app/set of apps need to get benefits from THP usage. Moreover, various
+> apps might need different THP settings. Here we propose a cgroup-based THP
+> control mechanism.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-index 9db8713ac99b..f3568c4d0af6 100644
---- a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-+++ b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-@@ -2248,8 +2248,6 @@ static s8 _dpk_dgain_mapping(struct rtw89_dev *rtwdev, u16 dgain)
- 		offset = -9;
- 	else if (dgain <= 0x155)
- 		offset = -12;
--	else
--		offset = 0x0;
- 
- 	return offset;
- }
--- 
-2.39.5
-
+Or maybe we should stop making the sysadmin's life so damned hard and
+figure out how to do without all of these settings?
 
