@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-388393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FADC9B5F07
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:41:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863D39B5F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EAEC1C21367
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:41:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45380282843
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5F61E22FD;
-	Wed, 30 Oct 2024 09:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563341E230B;
+	Wed, 30 Oct 2024 09:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gYUTxViz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PtuEior4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31D01DDC10;
-	Wed, 30 Oct 2024 09:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437CC1E1C19
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730281280; cv=none; b=ZCb0m1Ky2ugtW+AMk0F+TidAtd6fPIu0ihUjOsz36E1+8W3ZM1Y0LNnc4nbvMfnV6nXJasxW4qfiWDuOhXPuSvZx/p9hOEa61lfA6ypHGAAQh39MmRjc17+lPBiV1LIri1isauyOfj4+c1RnpijPZB8siutp+CeB5oCEUJl/xjo=
+	t=1730281334; cv=none; b=WDWEzKXtJvsaRuSdpVyKZ6CqsTr+iXxq369taRa8DlhgtS5i5Gp2DKa9mdan3H1LhvBbc8a6e3HV+D0Cby55w94WZ+oKf3BHf8uD8GMBFv+IkBGIXCca4vH5y3qd3jF2gp12Ypj1GJauPGTm1ra+q+SaIvq2+C1G7U2C3Jk4hm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730281280; c=relaxed/simple;
-	bh=NY0J1YfVmkX8Qs+Gth150sGt0ynOxPx1DD966vL8Wjw=;
+	s=arc-20240116; t=1730281334; c=relaxed/simple;
+	bh=OBE34t425vGk5znu7rwupuc8QDXh1LVpRdY9JxTbYm4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cWkMbel9GaIY17tmBrTYOIehAeT87VI9c9sfYuRhI+LRJJeqLb5b5rivY+cU7mOQL+4C7XGaIY9d/frit3+gUxnlGG6XdF4/gE0/3W7NqId8M7NpQWkeHtaMS1ST4hxEEth+zf8llMJ+k+SdCFgFw9TCTn2K5LFuIXbwHP3vQE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gYUTxViz; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730281278; x=1761817278;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NY0J1YfVmkX8Qs+Gth150sGt0ynOxPx1DD966vL8Wjw=;
-  b=gYUTxVizesMfIYS7jCJ72yIplrU7gHv6SgoUatEEXE/wFfxd01a+hdNC
-   y2U9Ye47JY2o6CzwcqiElHDbZKftI5Wuzu3OWC4oQ8APfx9s4buPSx0Hf
-   jQbuMw2fyMDKP0ixrxifX8IQNv8Nw+62N3fDIJK+TTEYQprqNxheO53FW
-   2fl1RSBZ236JvxzAbh4dTDK7fpF+BhoiDPWhMyXLth2N7clLoFZStyxEm
-   gKDpOYXnofdC4ebiOrFdQ2AY+5FFflFs/gDNEw2QFMO6CxQP8cjqBDIiS
-   JIg829NSvb8i2oMvOXHyvef86MIRCnMi+SJXermaiHOvUSzQb/BRtzinl
-   g==;
-X-CSE-ConnectionGUID: fJ2UM6JQS7qPlGknOa+EIA==
-X-CSE-MsgGUID: 6D+xnIXGQROj0ViUTpmG7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="29419521"
-X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="29419521"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 02:41:17 -0700
-X-CSE-ConnectionGUID: uW4Bhm4lS7utgiAuWMXJsA==
-X-CSE-MsgGUID: g3gnIh6aRbOzFIrSUxFGTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="105571180"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 02:41:13 -0700
-Message-ID: <3a9d2d51-81c0-407d-ad0f-2c1202f15935@intel.com>
-Date: Wed, 30 Oct 2024 11:41:08 +0200
+	 In-Reply-To:Content-Type; b=byBIlbUQxTybmCmcuP9F0UJLREZ2wBL4/zBCxj919kgq8xK2RwOyVNpesiM4OyoVV2GcOxpf1sdwNy+94oBMl2timcpHsH5Ba0DFKHQBeGM71PC9L40zhNi1FQEwo1e0nTLTYBlyHuO8aN0zpG7Z/zjVq3bM54ojCJ739r8aFn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PtuEior4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730281331;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0uqdJX+z9lUnBtJDOnaMtKo6RYm6dF3mSSpNcMlbnlE=;
+	b=PtuEior4ET1TcDd0mJoGsyJ4FkQEEVyTOaION6505lG3FuqlC4gNWoLpfXWDozvPOwPzSX
+	8Es8b0hbiueeLzigrvfLv4ZPpPirwzyuO2c0+I7KRCGtbJVPYBt4As7umbQK7zFTxiY0Nk
+	FzhFzQQqp0ImLROjI91UGAhPpe5WbjE=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-658-cKTSraL0PceMOGzx5xyQ9w-1; Wed, 30 Oct 2024 05:42:09 -0400
+X-MC-Unique: cKTSraL0PceMOGzx5xyQ9w-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d533a484aso370504f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 02:42:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730281328; x=1730886128;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0uqdJX+z9lUnBtJDOnaMtKo6RYm6dF3mSSpNcMlbnlE=;
+        b=DjwQfINuxe92XMe5jzS8N8ZMLS+PoVY67x2ktyl/4GXB+E77sx/l7yt9N6aS8HVczT
+         CNt67WMPLhtFSRJRLR7aE5CTZDppfWWV4FC98IXvE5D0rC2bbDBGEFepFmgA83C2m8iM
+         l0CC69uWwlHI0kjeSRyMP1o1Wkag9tpSF6o7/C54QW9sNTWBQ6p2OidoNuPe57o2rIM4
+         IJ53vE5ETStyuVPcNLK+CAo0YEJqjzW+k5yGKrVXmbXuVV/gM3CkdmfvbRL/yglRw27R
+         b3jxW7+67cbxpHkL5VWveWOUlF5lamU2HJJmncWJHmIjnSrUX483K1ccUQo4JuPuYrLW
+         8qgA==
+X-Gm-Message-State: AOJu0YxESRWIxa1zIjsYdhMP/mYDcKGZs/Ee+Lt349npfF3VkuyBj0Jc
+	/zl1zIwXYaoMUQbat75xK9v2BeLyYINucV8MoPGC9wvBis2OpdUgSCCANBgRzy+tV2mELr27nVA
+	k17hMJ/Tq8lA9fRszlgf3kSmcL3g2cBoZC7NADRCPWA/BvQEO2+C2jJJ8meJSmAUQ61vqbA==
+X-Received: by 2002:a5d:58fc:0:b0:37d:43a8:dee0 with SMTP id ffacd0b85a97d-381b97330efmr1285827f8f.17.1730281328402;
+        Wed, 30 Oct 2024 02:42:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxL9u1OlA5swPpZHfa8LyW94w79Ij4hpyPVFVWsJ96eNXaF2PKD2Gypfd+Ta08lk+6ZRzRXA==
+X-Received: by 2002:a5d:58fc:0:b0:37d:43a8:dee0 with SMTP id ffacd0b85a97d-381b97330efmr1285796f8f.17.1730281327957;
+        Wed, 30 Oct 2024 02:42:07 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c733:7c00:d067:e327:4f99:7546? (p200300cbc7337c00d067e3274f997546.dip0.t-ipconnect.de. [2003:cb:c733:7c00:d067:e327:4f99:7546])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b49d20sm14784530f8f.62.2024.10.30.02.42.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 02:42:07 -0700 (PDT)
+Message-ID: <35fc960b-0013-4264-93d6-6511d54ab474@redhat.com>
+Date: Wed, 30 Oct 2024 10:42:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,55 +81,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-uhs2: Remove unnecessary NULL check
-To: Ben Chuang <benchuanggli@gmail.com>, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- ben.chuang@genesyslogic.com.tw, greg.tu@genesyslogic.com.tw,
- HL.Liu@genesyslogic.com.tw, victor.shih@genesyslogic.com.tw,
- dan.carpenter@linaro.org, takahiro.akashi@linaro.org
-References: <20241030015326.2289070-1-benchuanggli@gmail.com>
+Subject: Re: [PATCH v3 3/7] s390/physmem_info: query diag500(STORAGE LIMIT) to
+ support QEMU/KVM memory devices
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+ Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Eric Farman <farman@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ Mario Casquero <mcasquer@redhat.com>
+References: <20241025141453.1210600-1-david@redhat.com>
+ <20241025141453.1210600-4-david@redhat.com>
+ <20241030092324.6264-E-hca@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241030015326.2289070-1-benchuanggli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241030092324.6264-E-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 30/10/24 03:53, Ben Chuang wrote:
-> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+On 30.10.24 10:23, Heiko Carstens wrote:
+> On Fri, Oct 25, 2024 at 04:14:48PM +0200, David Hildenbrand wrote:
+>> To support memory devices under QEMU/KVM, such as virtio-mem,
+>> we have to prepare our kernel virtual address space accordingly and
+>> have to know the highest possible physical memory address we might see
+>> later: the storage limit. The good old SCLP interface is not suitable for
+>> this use case.
+>>
+>> In particular, memory owned by memory devices has no relationship to
+>> storage increments, it is always detected using the device driver, and
+>> unaware OSes (no driver) must never try making use of that memory.
+>> Consequently this memory is located outside of the "maximum storage
+>> increment"-indicated memory range.
+>>
+>> Let's use our new diag500 STORAGE_LIMIT subcode to query this storage
+>> limit that can exceed the "maximum storage increment", and use the
+>> existing interfaces (i.e., SCLP) to obtain information about the initial
+>> memory that is not owned+managed by memory devices.
+>>
+>> If a hypervisor does not support such memory devices, the address exposed
+>> through diag500 STORAGE_LIMIT will correspond to the maximum storage
+>> increment exposed through SCLP.
+>>
+>> To teach kdump on s390 to include memory owned by memory devices, there
+>> will be ways to query the relevant memory ranges from the device via a
+>> driver running in special kdump mode (like virtio-mem already implements
+>> to filter /proc/vmcore access so we don't end up reading from unplugged
+>> device blocks).
+>>
+>> Update setup_ident_map_size(), to clarify that there can be more than
+>> just online and standby memory.
+>>
+>> Tested-by: Mario Casquero <mcasquer@redhat.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   arch/s390/boot/physmem_info.c        | 47 +++++++++++++++++++++++++++-
+>>   arch/s390/boot/startup.c             |  7 +++--
+>>   arch/s390/include/asm/physmem_info.h |  3 ++
+>>   3 files changed, 54 insertions(+), 3 deletions(-)
 > 
-> The "host->ops" pointer points to an offset into the "sdhci_ops" struct
-> so it cannot be NULL. Remove "host->ops" check in "if" statement.
+> Looks like I couldn't convince you to implement a query subcode.
 
-It is a pointer, so it could be NULL, but it never will be in this
-function.
+Well, you convinced me that it might be useful, but after waiting on 
+feedback from the KVM folks ... which didn't happen I moved on. In the 
+cover letter I have "No query function for diag500 for now."
 
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202410271835.tqz9s9JV-lkp@intel.com/
-> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+My thinking was that if we go for a query subcode, maybe we'd start 
+"anew" with a new diag and use "0=query" like all similar instructions I 
+am aware of. And that is then a bigger rework ...
 
-Apart from commit message:
+... and I am not particularly interested in extra work without a clear 
+statement from KVM people what (a) if that work is required and; (b) 
+what it should look like.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Thanks for the review Heiko!
 
-> ---
->  drivers/mmc/host/sdhci-uhs2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-> index c488c6d56015..b0e4ab852a94 100644
-> --- a/drivers/mmc/host/sdhci-uhs2.c
-> +++ b/drivers/mmc/host/sdhci-uhs2.c
-> @@ -413,7 +413,7 @@ static int sdhci_uhs2_do_detect_init(struct mmc_host *mmc)
->  
->  	DBG("Begin do uhs2 detect init.\n");
->  
-> -	if (host->ops && host->ops->uhs2_pre_detect_init)
-> +	if (host->ops->uhs2_pre_detect_init)
->  		host->ops->uhs2_pre_detect_init(host);
->  
->  	if (sdhci_uhs2_interface_detect(host)) {
+-- 
+Cheers,
+
+David / dhildenb
 
 
