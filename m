@@ -1,312 +1,116 @@
-Return-Path: <linux-kernel+bounces-389231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A85F9B6A52
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:09:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCDF9B6AAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A948281ACD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:09:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF10D1C20891
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79EA227373;
-	Wed, 30 Oct 2024 17:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B459921892B;
+	Wed, 30 Oct 2024 17:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cuBMHuRs"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="A3rfMvaQ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344F121FD97
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2D0218329
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307693; cv=none; b=pYeq6dHO2FeRVObKQp9w1VoLrgRptDRFY21BI6Ofa1BGDPYgo55Yk6TQMswwXjswKo0UN/gO962CATpAwFT+9DMhsJ3peQ3gyHcFO0/ZKJYk09050EWZWIn/+Zo7Bu+oieVX7bDySWQoF2kGtuX7dq375fV2bf7jpweS3/fRn/A=
+	t=1730308048; cv=none; b=fy77johqyf044EZ/mHdsvUULv5g382APQ9SoMSHQgDQ8QLodnD24clR1wZutQ7tSXeGlWAVQOoPmtJHpQX1vekn3odVS8VNf4FdDlFo+X0tZML9FNomCITjtRNpkRg2DKw1jqEE58aI98lLH4/0RwAQv4PfM25oj9hhbRql0Ezc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307693; c=relaxed/simple;
-	bh=Wo0OEQkHxxzX0NwaaU5R5+dQX4Z0nVXZaE0o7DtHf2A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qezZZw9hRMk6vxqKvWRC9Z73N4b2FqIq+ruuagXRA812kDe3lhQlThT6VOG2Ajm987viyFNSdqrN0POCwZyzxZh0TIHAh+vWj3YC0BngGt92av/vyqtWrjsKu1Xtf3cUKaw9+goLSbRlHwOkxoiE/ExOZqBVwnfVQFcOsuF0iOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cuBMHuRs; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e291ac8dcf3so778276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730307689; x=1730912489; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xDDQK9gzGTO8/8AzorQz8Vnlzu4aOzakypzS///c8H0=;
-        b=cuBMHuRsdGKrjD8YjeBsf2yMjKqxmHkAI/jv/2U/3ZlHMwrOcN8ospxierNG8bwzHm
-         53xidzEKVjHNN+SkuAPxxuswNNK4sddPviH4h9thK5+8A0kdky4DkHiUYDwDO+oS94ky
-         4Vm19bwRF0ltn6+PyEqDmY9QInTyWFQHXDvs5RZSJTPiY3nlI1y1DjF29lV+pbiJ8lFY
-         ewPSb+wRK1I1jManrrPmUocHW0sC4TBpFPjeFQc/vGYQOqa9hkBCQWJVIu9jt+OeQH35
-         ZEVz9mjlwVP1U0AwbYkccn7KBpOh9K66liwjXqMpigGheeXOIkYcFnP5dqai1JtIcByL
-         ozVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730307689; x=1730912489;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xDDQK9gzGTO8/8AzorQz8Vnlzu4aOzakypzS///c8H0=;
-        b=pWUF0j6kflWBgI6sVIoTCjs0G7kKR0/mKxC3HTnRKkhtXBOt5A0SnAv63zYcKMgqMk
-         t7D8Euo5d2EVphBTHkNxk2x/JawZKEkmJsPD/w6K76TI3gghZStN4axvdCJ0bqmyvklu
-         mFQegekc/NSrPV1TqDUkk/uCOA5cMscuBfTN7fmdVoFPZmSOZ/NlerA35zpjk95vHohU
-         6jQ29MuNOD1QoIfmXrBBxvdAcDNDpTAoQHShuM1XawqOIvrSE+GCrAWI9jfOceI/+Jid
-         rAGY2VR8PxZc+tLk9t3E1llhg5cg0G3qVqWFsJmx8ldiGbtdj89KYV8Jk9unFXIwl4st
-         opaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfhVZ+MxR75dFlt2UWbIWFjo8/bN1bCWNnuCOb5nJjme3uhQrVSqa6raX0cobydIApKcT+A3xF+ZVO1Jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0hohNzfIdJqIldFaLRjz7jzfGgqgu2EXhHTTCyNvD4ul9aG5d
-	cvnXXbpcLPT8WYLxciJhpQdjzWvPrQE+lQ+OAbFcdfVqA/ezB+dqAMQ78nNfWtvpwRyKEFD5Ozl
-	hWWdUexmkLgFEg5jk93b/yJxWLw==
-X-Google-Smtp-Source: AGHT+IHlmqMrhBwvTnYMb7rM3pP7ptdZQT0cmWimUmU9JVlEXGRhzGsZmLhORg0kl4WGRTLJqtJGyHjSnDXnx5NvYgY=
-X-Received: from samitolvanen.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:4f92])
- (user=samitolvanen job=sendgmr) by 2002:a25:ae64:0:b0:e20:2db0:932e with SMTP
- id 3f1490d57ef6-e3087bceae0mr61952276.6.1730307688988; Wed, 30 Oct 2024
- 10:01:28 -0700 (PDT)
-Date: Wed, 30 Oct 2024 17:01:11 +0000
-In-Reply-To: <20241030170106.1501763-21-samitolvanen@google.com>
+	s=arc-20240116; t=1730308048; c=relaxed/simple;
+	bh=LmRmAFj5mgmFzsBLiV06WnmPeH9nLkqqJJdInzflSDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bTvC2o0DP2aKmeVp804m/eDRamzHaoMTEcOwrVnYXgJnh2qpTjUh+Z88Ta35R4duAg+NfoTXBJRNZO9oVOGFi8al31vwfUqFBIu8a1d9ZYEwpUTuwUYX0t5dLd/7k7wVKgTKd8sZX1Kj/7ssp60SzrtwIBGo54G9grl+p+ENRUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=A3rfMvaQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=LmRm
+	AFj5mgmFzsBLiV06WnmPeH9nLkqqJJdInzflSDs=; b=A3rfMvaQ2+u7bA0v/QDz
+	tSLmhEPUAorgL4h8injD2nj0rfK2/wpRjAH73QlKw+guLbuMnn86oEJZiGcHx4Q2
+	WhxC9ofGvXcJL9KhdddTHKbL8ZuG4VBS90KZwiMtgsjfY+M4Tl8lSYSBTWm/cIGW
+	83gn8Z5AsjuvABl+Y7Wavdpv/upxdtBye4Djo5uExq2LeJ8nfHwtgmv0UsWjVwUK
+	GmTtnP/LUmdaQ9n2M1UlZQvEj3XjzmRYWYb/oWPntCiWJWuCjg8AGaqqegg661Qj
+	nHL2HlAGCL6gN43cVgQRxRVhpL/yjXdo5vSoEqQTPlbmiUH0wkr/hAoZCxkDVG5N
+	Lg==
+Received: (qmail 3141883 invoked from network); 30 Oct 2024 17:59:58 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 Oct 2024 17:59:58 +0100
+X-UD-Smtp-Session: l3s3148p1@+93AobQlwMrAwtcC
+Date: Wed, 30 Oct 2024 18:59:57 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mary Strodl <mstrodl@csh.rit.edu>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 2/2] gpio: sloppy-logic-analyzer: Check for error code
+ from devm_mutex_init() call
+Message-ID: <ZyJmDS7WK9U4u-rS@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mary Strodl <mstrodl@csh.rit.edu>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20241030153201.2078266-1-andriy.shevchenko@linux.intel.com>
+ <20241030153201.2078266-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5420; i=samitolvanen@google.com;
- h=from:subject; bh=Wo0OEQkHxxzX0NwaaU5R5+dQX4Z0nVXZaE0o7DtHf2A=;
- b=owGbwMvMwCEWxa662nLh8irG02pJDOlKaSGZrVp20b9PuwvmWkd7ZQv9nabMFplicojxgdvmo
- 3oL6+d1lLIwiHEwyIopsrR8Xb1193en1FefiyRg5rAygQxh4OIUgImcL2FkmKA0ke0P13c+e9uq
- t07M8o/vR8plPhdpfFfT/2qTQ3C6IyPDq49rIs6Vnei8dXDjF7XKi3zeR261dN12fHNBbsc14T9 yDAA=
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241030170106.1501763-25-samitolvanen@google.com>
-Subject: [PATCH v5 04/19] gendwarfksyms: Expand base_type
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
-	Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, 
-	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Oe26aHq0LrIkEV49"
+Content-Disposition: inline
+In-Reply-To: <20241030153201.2078266-3-andriy.shevchenko@linux.intel.com>
 
-Start making gendwarfksyms more useful by adding support for
-expanding DW_TAG_base_type types and basic DWARF attributes.
 
-Example:
+--Oe26aHq0LrIkEV49
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  $ echo loops_per_jiffy | \
-      scripts/gendwarfksyms/gendwarfksyms \
-        --debug --dump-dies vmlinux.o
-  ...
-  gendwarfksyms: process_symbol: loops_per_jiffy
-  variable base_type unsigned long byte_size(8) encoding(7)
-  ...
+On Wed, Oct 30, 2024 at 05:30:27PM +0200, Andy Shevchenko wrote:
+> Even if it's not critical, the avoidance of checking the error code
+> from devm_mutex_init() call today diminishes the point of using devm
+> variant of it. Tomorrow it may even leak something. Add the missed
+> check.
+>=20
+> Fixes: 7828b7bbbf20 ("gpio: add sloppy logic analyzer using polling")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Acked-by: Neal Gompa <neal@gompa.dev>
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
----
- scripts/gendwarfksyms/dwarf.c | 159 ++++++++++++++++++++++++++++++++++
- 1 file changed, 159 insertions(+)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
-index 81df3e2ad3ae..35fd1dfeeadc 100644
---- a/scripts/gendwarfksyms/dwarf.c
-+++ b/scripts/gendwarfksyms/dwarf.c
-@@ -3,8 +3,20 @@
-  * Copyright (C) 2024 Google LLC
-  */
- 
-+#include <stdarg.h>
- #include "gendwarfksyms.h"
- 
-+#define DEFINE_GET_ATTR(attr, type)                                    \
-+	static bool get_##attr##_attr(Dwarf_Die *die, unsigned int id, \
-+				      type *value)                     \
-+	{                                                              \
-+		Dwarf_Attribute da;                                    \
-+		return dwarf_attr(die, id, &da) &&                     \
-+		       !dwarf_form##attr(&da, value);                  \
-+	}
-+
-+DEFINE_GET_ATTR(udata, Dwarf_Word)
-+
- static bool get_ref_die_attr(Dwarf_Die *die, unsigned int id, Dwarf_Die *value)
- {
- 	Dwarf_Attribute da;
-@@ -67,6 +79,109 @@ static void process(const char *s)
- 		fputs(s, stderr);
- }
- 
-+#define MAX_FMT_BUFFER_SIZE 128
-+
-+static void process_fmt(const char *fmt, ...)
-+{
-+	char buf[MAX_FMT_BUFFER_SIZE];
-+	va_list args;
-+
-+	va_start(args, fmt);
-+
-+	if (checkp(vsnprintf(buf, sizeof(buf), fmt, args)) >= sizeof(buf))
-+		error("vsnprintf overflow: increase MAX_FMT_BUFFER_SIZE");
-+
-+	process(buf);
-+	va_end(args);
-+}
-+
-+#define MAX_FQN_SIZE 64
-+
-+/* Get a fully qualified name from DWARF scopes */
-+static char *get_fqn(Dwarf_Die *die)
-+{
-+	const char *list[MAX_FQN_SIZE];
-+	Dwarf_Die *scopes = NULL;
-+	bool has_name = false;
-+	char *fqn = NULL;
-+	char *p;
-+	int count = 0;
-+	int len = 0;
-+	int res;
-+	int i;
-+
-+	res = checkp(dwarf_getscopes_die(die, &scopes));
-+	if (!res) {
-+		list[count] = get_name_attr(die);
-+
-+		if (!list[count])
-+			return NULL;
-+
-+		len += strlen(list[count]);
-+		count++;
-+
-+		goto done;
-+	}
-+
-+	for (i = res - 1; i >= 0 && count < MAX_FQN_SIZE; i--) {
-+		if (dwarf_tag(&scopes[i]) == DW_TAG_compile_unit)
-+			continue;
-+
-+		list[count] = get_name_attr(&scopes[i]);
-+
-+		if (list[count]) {
-+			has_name = true;
-+		} else {
-+			list[count] = "<anonymous>";
-+			has_name = false;
-+		}
-+
-+		len += strlen(list[count]);
-+		count++;
-+
-+		if (i > 0) {
-+			list[count++] = "::";
-+			len += 2;
-+		}
-+	}
-+
-+	free(scopes);
-+
-+	if (count == MAX_FQN_SIZE)
-+		warn("increase MAX_FQN_SIZE: reached the maximum");
-+
-+	/* Consider the DIE unnamed if the last scope doesn't have a name */
-+	if (!has_name)
-+		return NULL;
-+done:
-+	fqn = xmalloc(len + 1);
-+	*fqn = '\0';
-+
-+	p = fqn;
-+	for (i = 0; i < count; i++)
-+		p = stpcpy(p, list[i]);
-+
-+	return fqn;
-+}
-+
-+static void process_fqn(Dwarf_Die *die)
-+{
-+	process(" ");
-+	process(get_fqn(die) ?: "");
-+}
-+
-+#define DEFINE_PROCESS_UDATA_ATTRIBUTE(attribute)                           \
-+	static void process_##attribute##_attr(Dwarf_Die *die)              \
-+	{                                                                   \
-+		Dwarf_Word value;                                           \
-+		if (get_udata_attr(die, DW_AT_##attribute, &value))         \
-+			process_fmt(" " #attribute "(%" PRIu64 ")", value); \
-+	}
-+
-+DEFINE_PROCESS_UDATA_ATTRIBUTE(alignment)
-+DEFINE_PROCESS_UDATA_ATTRIBUTE(byte_size)
-+DEFINE_PROCESS_UDATA_ATTRIBUTE(encoding)
-+
- bool match_all(Dwarf_Die *die)
- {
- 	return true;
-@@ -93,6 +208,49 @@ int process_die_container(struct state *state, Dwarf_Die *die,
- 	return 0;
- }
- 
-+static int process_type(struct state *state, Dwarf_Die *die);
-+
-+static void process_type_attr(struct state *state, Dwarf_Die *die)
-+{
-+	Dwarf_Die type;
-+
-+	if (get_ref_die_attr(die, DW_AT_type, &type)) {
-+		check(process_type(state, &type));
-+		return;
-+	}
-+
-+	/* Compilers can omit DW_AT_type -- print out 'void' to clarify */
-+	process("base_type void");
-+}
-+
-+static void process_base_type(struct state *state, Dwarf_Die *die)
-+{
-+	process("base_type");
-+	process_fqn(die);
-+	process_byte_size_attr(die);
-+	process_encoding_attr(die);
-+	process_alignment_attr(die);
-+}
-+
-+#define PROCESS_TYPE(type)                         \
-+	case DW_TAG_##type##_type:                 \
-+		process_##type##_type(state, die); \
-+		break;
-+
-+static int process_type(struct state *state, Dwarf_Die *die)
-+{
-+	int tag = dwarf_tag(die);
-+
-+	switch (tag) {
-+	PROCESS_TYPE(base)
-+	default:
-+		debug("unimplemented type: %x", tag);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Exported symbol processing
-  */
-@@ -119,6 +277,7 @@ static void process_subprogram(struct state *state, Dwarf_Die *die)
- static int __process_variable(struct state *state, Dwarf_Die *die)
- {
- 	process("variable ");
-+	process_type_attr(state, die);
- 	return 0;
- }
- 
--- 
-2.47.0.163.g1226f6d8fa-goog
+Thanks!
 
+
+--Oe26aHq0LrIkEV49
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmciZgkACgkQFA3kzBSg
+KbZsmBAAoA4XEpQgfOvezEW5F/Q4i3W6cmN5BGHKi+oZHFM2xQ/Apr1vGE6ygkzc
+HoZF1QyiqYoszdWU3f0m1pOCQS5iKNyNiIzrbb2C1/Sr/m4AFuGcQZ659i2PIsea
+bAJzZOPILRttr93EwJz5Gz4oM+8R0KJs477j5DsQJERcH0BWGkO/TAEoEHGx3wHl
+dGaLk+LbYZuOEnNX3unc2VZ5VDoAlUu/ykKexkKCWHojI90zSxID4UGxakbAa6XD
+/9t5KRaDk2qlExgaL1TdAAEDqGxpR9s2157SqsQEcvNqioiTLbkGpBlRoiyW/wHq
+Oux9Gj6YOCmsGV5ZSXX4M+SMP8XnMSHzParL2Y5QYaOAMfGm3p025P1CPL+irDxn
+A5JgWwcrEqM7Nlrt+JPl/IZr8KVFzAnT0NgZNg3FyzPu4C+65I4xFhsQ9324UOTj
+33vyKwwxbPS8obIvQieqzmi69yJDLTUr4NzN5dLRQv7dvyHlcUT/Wzpp6O+E2Phi
+i4FIdVFIInWtP1tO3wdd6I5aKbwTrUp/Q9a1GGSMEJfeEP3645BiJlWHP+WczqGf
+hxeLRPq7AMDRKNk6aRukTMdg5KA+2SjXyoVYK4+QDO5Grv0XYpk6L1E1zdHwZq5k
+OZZVkjT4/40jYehfSarHyC5YvlIKTSTXJMvbMQudqjke98XLoWI=
+=O1PK
+-----END PGP SIGNATURE-----
+
+--Oe26aHq0LrIkEV49--
 
