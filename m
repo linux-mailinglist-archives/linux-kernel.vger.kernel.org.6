@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-389115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0693E9B68C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:02:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7339B68E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3912B21F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C4E285344
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B82213ED7;
-	Wed, 30 Oct 2024 16:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A8121501F;
+	Wed, 30 Oct 2024 16:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INk/yM5l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VxN/BVz9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2F436126;
-	Wed, 30 Oct 2024 16:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D233214415;
+	Wed, 30 Oct 2024 16:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304143; cv=none; b=t0lddDHTOfDIspE5VNB3M4vNeq3VVPXzC+LuQeUu/cwRiW8gjHfYYCvnmvvvIHg3P05HBq4fV0XuBwICc71ICgsCD+E214BKrMMhBGfgQqhX2OgKJlr5hKtNa5+WrvuzGk9EzR87I94ppMdqcaP4bPq0vOPRr2lBgdlduEzY8rM=
+	t=1730304486; cv=none; b=bPWMtrC/DbILwNcyK4zNe1nsVZdRy9UB3WQ3tUmmkfHjDK8peHPkefCpLT5xzLKyUMyOE7fIR3Tx9ZFI+MKaaYXdEBB/DBsQ/GOmSeCZpD4mHP7hp5xTkIWImAC/Grgx2eON7svjDRdyCxlY6Et1x6pSdZkQF5S0VnJ+5mtZPnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304143; c=relaxed/simple;
-	bh=YIULgKbhVLl2KEUkjm5ebB+z6v8KNB9tZvb34/55RMc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NokSxImVb+sV54q97H8FlQyXitksucIefQLcBu9Lz0XBGj5Wnu9ZAdcL9kUkP2skWkkBTeMW5FWX5HHk6RoUVogdqF/Z1p0S/kMBihJi7ompRavi+NuifxL3OC8ZdoS68yq+KK5JWPS2d6U+bBf1MMo+LbVDyhKLqRvRF7x2RzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INk/yM5l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1982FC4CED0;
-	Wed, 30 Oct 2024 16:02:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730304143;
-	bh=YIULgKbhVLl2KEUkjm5ebB+z6v8KNB9tZvb34/55RMc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=INk/yM5lxlbPlzB5uUxspssKfu+Dzl+tM/QbkEjKZ6GWe7NxgZrhK7cg61luWkP+t
-	 LVmOW0Me6esngVwbOHmGIgsxMj/4kD7ALzCHB+Puew05h1mlT/9F8mKaeKyResrSJH
-	 HzBDtu8YDBKiY23rHCU5ZY1fDplTfJ2ME1ZWjZST18nU9buM59n9d8vKICVu0vwIPu
-	 iMMqhdecBbhAU5rZndJFnhEscuy0kHFI/JTs6wkBc7lCXaf7d+zfryhnu3OFRJOEBB
-	 +FeX5kSqEvJjZynt/MVdz7/mwAx6l4LgXguRuHrd5nwvCYmoY6tchvm+9eVjSPftML
-	 +O61Y7Uanib1g==
-From: Mark Brown <broonie@kernel.org>
-To: david.rhodes@cirrus.com, 
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: rf@opensource.cirrus.com, povik+lin@cutebit.org, lgirdwood@gmail.com, 
- perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org, 
- patches@opensource.cirrus.com, asahi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-In-Reply-To: <20241030021047.70543-1-jiapeng.chong@linux.alibaba.com>
-References: <20241030021047.70543-1-jiapeng.chong@linux.alibaba.com>
-Subject: Re: [PATCH -next] ASoC: cs42l84: Remove unused including
- <linux/version.h>
-Message-Id: <173030414082.39784.12603422768068027639.b4-ty@kernel.org>
-Date: Wed, 30 Oct 2024 16:02:20 +0000
+	s=arc-20240116; t=1730304486; c=relaxed/simple;
+	bh=/I07EL93xI7rksnSSU4yB8BeX/oY+UcVmAMhO1n1Wbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DSEF6W3s1Qef7MktaJtYzZ4xZKPFzywnfng7JB1cPpS2Ybu9hNT18xN7w1D5HD5VJA3AgGR8RWtK+5ydhVD7Qw3scUol2NSEBxdlWDntQmVSbVEOWf3pbqUGWu0aya3bf+Ibqc/QeUllWZyyrdpFqWORq5+eb8oPnLLfMjNeeNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VxN/BVz9; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730304485; x=1761840485;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=/I07EL93xI7rksnSSU4yB8BeX/oY+UcVmAMhO1n1Wbo=;
+  b=VxN/BVz9U/5MeCKLcUry687Rujjv7uA9KWByPDvsF7X9GUD8OTm62ezX
+   qWFv5nnTC1W/1KQiiXj8RppHg4yyvrO6JeTzp0PoYxBQ5K9o00a5dhSHK
+   AikVroORQdS/66Wq37wn7ZK3YUiZbSHSZoN3HOg83oCZpjlEntf6VweeV
+   AUdB4dP7ahpZ0LJBIjNNhDOuVm1YxMymM16PCzSffH/ElD3RBGiCh8Q2m
+   VTHVAaDob1jvNz+K/FL99orfy1cg4rWZ+xeH898iyk8uRY2zyxb3nYxlu
+   7cxS78mO4IdzjYf/SPfEdMQ2An9b1qh6LDpnF6ti4ClATGSy7R9TrGhRt
+   Q==;
+X-CSE-ConnectionGUID: sSOtmGlEScqSUBlpYq463g==
+X-CSE-MsgGUID: kG4+N+CCRD2vTpNjKveL0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29432042"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="29432042"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 09:08:02 -0700
+X-CSE-ConnectionGUID: jgASKnkcRO+9AJN9sua+yw==
+X-CSE-MsgGUID: uA8GKIUMTUScsZ8ceuvrsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="82523851"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 30 Oct 2024 09:08:00 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 826B0341; Wed, 30 Oct 2024 18:07:58 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v1 4/4] iio: light: isl29018: Check if name is valid in isl29018_probe()
+Date: Wed, 30 Oct 2024 18:02:20 +0200
+Message-ID: <20241030160756.2099326-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
+References: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Oct 2024 10:10:47 +0800, Jiapeng Chong wrote:
-> ./sound/soc/codecs/cs42l84.c: 15 linux/version.h not needed.
-> 
-> 
+Theoretically the name can be invalid if device has an ACPI handle
+but hadn't been matched via ACPI ID table. This should never happen,
+but let's make code very slightly more robust as some other drivers do.
 
-Applied to
+Fixes: dc4ecaf21c4a ("staging: iio: light: isl29018: add ACPI support")
+Depends-on: 14686836fb69 ("iio: light: isl29018: Replace a variant of iio_get_acpi_device_name_and_data()")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/iio/light/isl29018.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: cs42l84: Remove unused including <linux/version.h>
-      commit: 334d538e176ce0c70bea5321d067432df2299bca
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
+index cbe34026bda6..938fc19cfe59 100644
+--- a/drivers/iio/light/isl29018.c
++++ b/drivers/iio/light/isl29018.c
+@@ -723,6 +723,8 @@ static int isl29018_probe(struct i2c_client *client)
+ 		name = iio_get_acpi_device_name_and_data(&client->dev, &ddata);
+ 		dev_id = (intptr_t)ddata;
+ 	}
++	if (!name)
++		return -ENODEV;
+ 
+ 	mutex_init(&chip->lock);
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
