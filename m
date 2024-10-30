@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-388191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D1B9B5BCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:37:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C50E9B5BD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A6E284173
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8EE1C20BD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39EC1D27B9;
-	Wed, 30 Oct 2024 06:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D63B1D2B23;
+	Wed, 30 Oct 2024 06:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="geUyzb9V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QiAEZIGI"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/5gW3kS"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E8B1991DF;
-	Wed, 30 Oct 2024 06:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F6A63CB;
+	Wed, 30 Oct 2024 06:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730270209; cv=none; b=PB6K76jt+Z3m8gIX9bBTQebASPHV4fpsWWk2k8HuqXLWut6nLiCYpAMLVRf33cUPY8t7XbW3wHkRPbJegG261L1VP8syPDjMZLe5G2f4a7+jASQr9pCWicxZZb/o7YTQGFOIsfot8oXDYsyTmEIg8+r+uaJJUBRIAG/zYHgniQs=
+	t=1730270334; cv=none; b=aXqfBSMi/6ZKlF2c+Hf2H001yPX6bF27tWdQ3D1r7hI+jjhSCzdjGOl1h52xv7MfmsDkqPiKTfxEqPXrWwQBLXecpwOQQo74qWcweZfXKcO2Zu4Gj6Wh0r0g9dU3+zNBLE264BQtt26VS7rAHM9y5vgKeVQH3JMq22LSziXk1Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730270209; c=relaxed/simple;
-	bh=dy77vAiFl23zCx0+uO/faRJWNj+H1FMp8LkdWFPtLho=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=chrojjvWqpTw6dcRzzI/mjF2P6N5Qazqp2+/3bRqlEHnMGmlZa0KUU6qZ9Tqmsf2U8p/Zm8xrz5QgOtm1UCxTxex+4H/oCxJtsqXwJfgclPKocTCYhoESuobuwGZaJjp+8680arR4wKiNOfACGTdbSDX2cWqC04IGEV6mH5AHJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=geUyzb9V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QiAEZIGI; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4F117254011D;
-	Wed, 30 Oct 2024 02:36:45 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-03.internal (MEProxy); Wed, 30 Oct 2024 02:36:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1730270205;
-	 x=1730356605; bh=vf6UVZw2Jx/Bk5pWy/xW+BJX6Pm927G1nPmeMePZtKU=; b=
-	geUyzb9V6h+D1T6ggc9Zj+O424d77lrB1Arbg11Qqe1T7uTtD3sJdb2uIOO7cumg
-	PwABKLZeZfENhRGN6LHBXh4vCVXUs8pQwgXyZes0anH/ncRpdnGqOuBWF4qFHFxm
-	sGt2FOsEv9wIhH34O95iYpuVUlu9r6n5ON+H8u9WU+5C/W4vx9Nez6GvKSrZuU/m
-	wLTLQLEnzpmd+JRCwEZsR8Sto0orHAo5OEb34UbqDOIvFAA8Sfw6AaBxM6tXUoaz
-	SuE2riy7NiGPMkbe512ymcxZ7hPLdYeILY3unEj9SRioAk9UJcOql+uA4XA1wu5s
-	vdnzZnFbjDg/TODfI1akzQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1730270205; x=1730356605; bh=v
-	f6UVZw2Jx/Bk5pWy/xW+BJX6Pm927G1nPmeMePZtKU=; b=QiAEZIGIibMvgWfu1
-	IysSrjMiPTIwusRXuOkfiuTGDZl3uASG5zWEpBhq+2USngcnlV6vCRiHhPraaQg4
-	/t9mr/mWVPr5/HKIQ4YFFmDBYSPE31isuT+1n0ppTn8r8g3nhJ95AExfu5Xh6/uB
-	DxBZn8FEvw4+dn17IAbnE8DFJSEJJKig1Qk9fDlkVQgAQQhac77dc8Vlt7G3O7cZ
-	/qAzjh0Sja9LvLiuwZxnvHkg1qtqQwUaKq/yruHY8Oxhh6Verm5CCCZWNtq5xBNg
-	KAYMa5PabphiVD9tgrEPHvzgrfyf6qfmT3mMwZoyUJsjsz/H+Al83JmQ4y/3WvlZ
-	p2B1g==
-X-ME-Sender: <xms:_NMhZzDk4I8Q3NsIg5hKVoTLK45rSue4d8eTy6OmgIsA8VOKE1IsJw>
-    <xme:_NMhZ5hk-pNZTNgESz0w0DCgekLunRhOnFndkbkKHK6--UQfYiYZn-OdkbcuHwS8x
-    9P5ZgOkwmtoDhoNvw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekvddgleejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpefoggffhffvkfgj
-    fhfutgfgsehtjeertdertddtnecuhfhrohhmpedfffgrnhhivghlucgiuhdfuceougiguh
-    esugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepteffffffueelieffveehvdev
-    gfelveejieffleeuvdehkedvleffgfelgeefveejnecuffhomhgrihhnpehgihhthhhusg
-    drtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegugihusegugihuuhhurdighiiipdhnsggprhgtphhtthhopeegpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgt
-    phhtthhopegsphhfsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgv
-    thguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:_NMhZ-m8fXsKRAaibdVaVN08qoG7Z_h1aq8ckLdZ6odWZ97nUkavug>
-    <xmx:_NMhZ1wx8gVro7jpFZeUBFKHfJ6cigq5WWNkfdKt01_B7Hr-eQIb4g>
-    <xmx:_NMhZ4Rwi6XOLEpzQzRWosfEoiUWqe5bWbTlatOouqWGistNU3ZeYw>
-    <xmx:_NMhZ4YcDHYjqVnHMZuaWdyE6VTkij3vu7flsaGACRU2hAvfV5_YeA>
-    <xmx:_dMhZ-dMTfw8RRnfH8krpdc2bo3M3ybNxgn-9myzvvqdos6hUpwTycHJ>
-Feedback-ID: i6a694271:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 90F6718A0068; Wed, 30 Oct 2024 02:36:44 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730270334; c=relaxed/simple;
+	bh=9hv4oiZP/E3lwiZ5K3IdQqCCQA3rZPXvKf9qjI/ZlEE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lUBPsn1rZmcAxvUxJ1sU1Fas86Vb6mn7/vx4yIr2pEWF9h+HHy8k/aMmcBk18OsR5LIuq+ddTO0OeE0F43mc+kL4prTE04x8bmwWi5sjRp7pj2AE8g1BZFDSGhXFl9p8mCNpRzbtLYz3ooTfjHeO/JF40a1B8Snej6YueIsALjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/5gW3kS; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso7593062a12.2;
+        Tue, 29 Oct 2024 23:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730270331; x=1730875131; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jzqz2XOsU9I04oP6WRhYoAWHaZRwNYZPIUD+5gjKlFk=;
+        b=D/5gW3kSjsnmrVTXZSZek61EWEwpOqKGvgQwqRD2gOASfVsCllawgO+XSl5mKdsSXF
+         CXUmdbSmmnDF2se3eGDDdDK9ZVr8X1ExvWbGoG8PWBlnjoizNrIdVzU44OBrLK3iVJNE
+         gQ5UGzGiSVJICvb89uKuTOan/3/nXuP01odg0yl5U7bKT41RWDnJ8KG6dxgwxHHd76kB
+         TRz/vroJt0Ox4F7TJ53cncKLbW1osYOJmeO9rLBMK0qXGCKjdW+/xMr0Z//wDukFEISM
+         vBlxSgvSFtUoBcQfbXFAvG6wPihwC2kycl6H75YT0UM/cufo4btYgXGNVAhtJ/n/U8IB
+         IjKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730270331; x=1730875131;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jzqz2XOsU9I04oP6WRhYoAWHaZRwNYZPIUD+5gjKlFk=;
+        b=eqh1OKKS/yZ0ORis31D7WxwtyFBXu/ijEDVCOW/DbCbyJTqsN9mY1U780Je/1mlaFL
+         quu/NgevbTPWAb92i3WYpR9+7LHM6uMLjpo9mkR817OMvbCFnHuRM1DsQEy7vRNDRQhX
+         xDdO2E97twMzDnAWUy76OV2DalbJ0j3w0koySgVeBwZQmyvKydS3SDW/oUyor9/ZKOol
+         15DOXFm0LsQ7fK7BXQKwRsjBLlvDDWcU36D0QEe8ZvixK0Y51BX9wVehONz7Ks8eOAWn
+         x5nr9JTqT/6Du+/URVC8aJ3qMZYTItKxjbXFgb4U2FNxgN7CZpKba3cgkl2urOlROnw5
+         44EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVICKIaiAVPCbofXXG27KRaFcdoWikt28A9eFlvwi1z3473C/oXaI+/78dnCajT1VWVBeptZSIGAVBRqks=@vger.kernel.org, AJvYcCWLAQsYCcYBX9cr57xkrp9JjN2hlZ4qFllSx8+WVsa5awRVXYozGlS6eOeJBjnZ29SfVHZzYrShidQ=@vger.kernel.org, AJvYcCX7iLRR0JiS7K5QBP6dUbjSzk8FJe0k/mce08njS4gCWnldvH+rX8758hojSMbOyT4qBDKR2u/D@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4OUeCftASat/AXqJRCZKLu3mkbWz02ZQ6iAiRa2oRkzzOoCCM
+	rGFAQpTnH4veI6+ru4cbJkdcLidlRQQxwXsQ3zR9UXi7tRv6QPYw
+X-Google-Smtp-Source: AGHT+IF36EhAREbixa1zMQsy9eKlpMey+y0N5AWW+f8RgWv+ec40U6Sz4X8yC2pxKwFEcTv8ZriEGQ==
+X-Received: by 2002:a05:6402:350c:b0:5c9:72c7:95a2 with SMTP id 4fb4d7f45d1cf-5cbbfa6223dmr9981183a12.22.1730270330474;
+        Tue, 29 Oct 2024 23:38:50 -0700 (PDT)
+Received: from [127.0.1.1] ([213.208.157.67])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c14c4sm4473498a12.44.2024.10.29.23.38.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 23:38:49 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] cpuidle: qcom-spm: fix resource release in
+ spm_cpuidle_register
+Date: Wed, 30 Oct 2024 07:38:31 +0100
+Message-Id: <20241030-cpuidle-qcom-spm-cleanup-v1-0-04416fcca7de@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 30 Oct 2024 15:36:24 +0900
-From: "Daniel Xu" <dxu@dxuuu.xyz>
-To: "bpf@vger.kernel.org" <bpf@vger.kernel.org>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, "Daniel Borkmann" <daniel@iogearbox.net>
-Message-Id: <eb20fd2c-0fb7-48f7-9fd0-4d654363f4da@app.fastmail.com>
-In-Reply-To: <cover.1692748902.git.dxu@dxuuu.xyz>
-References: <cover.1692748902.git.dxu@dxuuu.xyz>
-Subject: Re: [RFC PATCH bpf-next 0/2] Improve prog array uref semantics
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGjUIWcC/x3MQQ5AMBBA0avIrE1SJRWuIhZMB5NQ1YZIxN01l
+ m/x/wORg3CENnsg8CVRdpdQ5BnQMriZUWwyaKWrQukGyZ9iV8aD9g2j35BWHtzp0UyqNKYZydY
+ KUu4DT3L/665/3w+KztggagAAAA==
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, 
+ Stephan Gerhold <stephan@gerhold.net>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730270327; l=951;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=9hv4oiZP/E3lwiZ5K3IdQqCCQA3rZPXvKf9qjI/ZlEE=;
+ b=MczZxuOZmmgT5NN2RIwod60ZGPQLIqnoSGKvHr2U1rSG1OE271LjqraSuVRo2RhX4U/jQ0ZDX
+ TP8Rh5W/opKBCWDx/fTsAD6wAY0XnCwObvG8JSKKZpkdXP9lKjxDSIL
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hey Daniel,
+This series addresses two issues in spm_cpuidle_register: a missing
+device_node release in an error path, and releasing a reference to a
+device after its usage.
 
-On Wed, Aug 23, 2023, at 9:08 AM, Daniel Xu wrote:
-> This patchset changes the behavior of TC and XDP hooks during attachment
-> such that any BPF_MAP_TYPE_PROG_ARRAY that the prog uses has an extra
-> uref taken.
->
-> The goal behind this change is to try and prevent confusion for the
-> majority of use cases. The current behavior where when the last uref is
-> dropped the prog array map is emptied is quite confusing. Confusing
-> enough for there to be multiple references to it in ebpf-go [0][1].
->
-> Completely solving the problem is difficult. As stated in c9da161c6517
-> ("bpf: fix clearing on persistent program array maps"), it is
-> difficult-to-impossible to walk the full dependency graph b/c it is too
-> dynamic.
->
-> However in practice, I've found that all progs in a tailcall chain
-> share the same prog array map. Knowing that, if we take a uref on any
-> used prog array map when the program is attached, we can simplify the
-> majority use case and make it more ergonomic.
->
-> I'll be the first to admit this is not a very clean solution. It does
-> not fully solve the problem. Nor does it make overall logic any simpler.
-> But I do think it makes a pretty big usability hole slightly smaller.
->
-> I've done some basic testing using a repro program [3] I wrote to debug
-> the original issue that eventually led me to this patchset. If we wanna
-> move forward with this approach, I'll resend with selftests.
->
-> [0]: 
-> https://github.com/cilium/ebpf/blob/01ebd4c1e2b9f8b3dd4fd2382aa1092c3c9bfc9d/doc.go#L22-L24
-> [1]: 
-> https://github.com/cilium/ebpf/blob/d1a52333f2c0fed085f8d742a5a3c164795d8492/collection.go#L320-L321
-> [2]: https://github.com/danobi/tc_tailcall_repro
+These issues were found while analyzing the code, and the patches have
+been successfully compiled and statically analyzed, but not tested on
+real hardware as I don't have access to it. Any volunteering for testing
+is always more than welcome.
 
-I recently remembered about this again. Was suggested I poke you in case you're interested.
-I looked again and I think this is kinda a neat hack. I probably won't have time to pick this back
-up either way.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      cpuidle: qcom-spm: fix device node release in spm_cpuidle_register
+      cpuidle: qcom-spm: fix platform device release in spm_cpuidle_register
+
+ drivers/cpuidle/cpuidle-qcom-spm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+---
+base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
+change-id: 20241029-cpuidle-qcom-spm-cleanup-6f03669bcd70
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
