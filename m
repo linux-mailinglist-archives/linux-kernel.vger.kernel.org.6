@@ -1,223 +1,220 @@
-Return-Path: <linux-kernel+bounces-388172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599D39B5B90
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:06:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6D99B5B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701D01C21099
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D03283F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB441D0E30;
-	Wed, 30 Oct 2024 06:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E7F1D0F5C;
+	Wed, 30 Oct 2024 06:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bO9/H4td"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lKi4FZd8"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2050.outbound.protection.outlook.com [40.107.103.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2053398E;
-	Wed, 30 Oct 2024 06:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730268363; cv=none; b=RdlobnJ6seCUUPMEsQVQ5D4cCrJFRK5tecHXY1km8c+qQbrWPJZd1/TLyC7Lj+obHSCkjoyipZFMgSU249uuhT6CL0DShPhQVCDHi/C0bBKt12JqzRf0oZamJ2Ox6zppvIHpDl8VCE6wJYuBEA8CYfNC6Gf4ANjuSTtrd6ECykY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730268363; c=relaxed/simple;
-	bh=0rd+rGQmI4YEvdffyJPpjxLIs/ZAPUeX/9lNkFELPPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZRODSJjeY6k0iAYt41df0MJR3GwtEv8y1QZwjwb9OmSrML1u8pTujWiw+A/Vn94Mk+L76dh/k9MtJzHWvzapKKv3vSS7i/2Je63kinR6dmN35xup8P0YDuzT7mI/n7prWtrGBhVSvT1TjWldVnY1D33zScmSSO3vM67X2URWGY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bO9/H4td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7535AC4CEE4;
-	Wed, 30 Oct 2024 06:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730268363;
-	bh=0rd+rGQmI4YEvdffyJPpjxLIs/ZAPUeX/9lNkFELPPM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bO9/H4tdpBg8nxHwsrHKPQS3Y+khT2DDEZ3GvkZy0+VvRQ+XBqDrwO27YaM+eXCWz
-	 DBhD7cQdN2upZ2fwbVY6N//mLJaBnmIQE7cuDayhU+ipoU0CaSkQp1nNanZ9v6ce6o
-	 0leqYP0v06lNySGkGcI4kDQOIaiRXAw1DR6O1Q5+s3gXX5HFd0PbvGqopnsirBsst4
-	 Jpis2QTianN/WJ5gR3VN5h+c8Pf3akOxRXMpn55fmv74x+6DQjhtMBsQfjiFxSzGrh
-	 wIYBvLm6BQr4oIPtz5O6sIFaG+dgV0xk1qaeZ9MbxLL6Ye85FH8RB1TnxWrya/lGl8
-	 IgArXtwDP+pYQ==
-Message-ID: <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org>
-Date: Wed, 30 Oct 2024 07:05:58 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090033398E;
+	Wed, 30 Oct 2024 06:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730268533; cv=fail; b=bJDS+qccoX4P6ba2wzleqbuvAfcJsGrsKLfI4uQ60bftg6BjcfpSOY3dInljnzGzG/JNbt1LRKm5Bnkg1RiKaNj3y24MtlGNxiHk7MP8OEYqf9jFxmljYsSBeHdcPhK2PMsmlDCAnYlhTxyzuvGsm2+Drdv1nJShj08aqsk70Yg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730268533; c=relaxed/simple;
+	bh=3i2K9fFXnkHzn1YClXm8gB2pYWZdmW04odXGSHTwSHk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q93Wh7RE9hdmUUkuwMyopFo5tv58wpH+OToqVmU0eodC0lvYXzRm7QqkHxD8FfvW3eMZv8xahW2atAGb3oqx8a48xUxLtvjFS/HocOvc1XbnRzQXYBH1nW72T+C7Aak+8fyHBUf8lB1t34uBie/5dXmyb2UEox6PjRSzJSJ/kmI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lKi4FZd8; arc=fail smtp.client-ip=40.107.103.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MiOzdVWbts+tCqnVJX1gyDe3UxHzKyx+tqFBmurut71dOm+gqv00Y8wAvj4tqsaGGj6YNM2kc7hWOZkAe01mv0UdGTiN4amarZ6ZYW7eJI95NeJSnmZv1NRdTxDvYWdiC7I6gNww/FfAe45260o1qy/XVBhl/8pdvKWZimQJdaXuUGUz7lFB6yLo1AOHfuvxLxq6n7gZwfZaTznDb2AqYcSlhD2fZiBOetsuc1A/eDgdWSZAmkMf8wbnsVvgIrWwfIlEsk662WNQ4lKZyZKZoRln+jip28EI0Wvcifkv5ljUIz6xjVLLsgngyAHi8UAk5UuEx/LFwsuEifsKiYF92A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=15lb1D81F3DrJWZQGQsAgyEEMm5WRPWGwD4Ria9h3oY=;
+ b=SXS8Q34rMPvjGBSZnD/teB8df6lDIq8Lb1UDRqcAmU4BOL5xNrMb4zLH6Pzs4w8Nh6tAAcRGjgZvLfnL/Nn/MQy7OC/qRn2/e5dYE8b8lS82YZgorYR2rtnGOGVWvoAEz9sP82DNsHpEHI5h6Lm4XgSg6Zj+aTm6VTUjSsd8ifWP9dWnGjnj7mSBljvSio63Ajkjx131Y6g/5TSVgd+W36lXwToXvo99sHOSqp4S+LGngwL9eL4yFTVponusoSkx47rAFHsMnlonuhKBhD+lKeSLYWxdDWy5jBCna0Pzi98JhzntSJ3jh8UF5vIJrRw4QS4MdgKh+R/jT2fSFyz3Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=15lb1D81F3DrJWZQGQsAgyEEMm5WRPWGwD4Ria9h3oY=;
+ b=lKi4FZd8cD43Lv3DY+PcRPeslpQOF+Q2r2zgYsSCkeDDR0iRorXhunq+x/L6YzHHTgUNyBRfoRrUM6eHV+0emo/C8Xld4tE7JLNkywJlnkcVRBJMtn0BIRJ8P2oZUGLKhoGkP+D++J1riY+FgNNI1En855UleWgx495CTYJ38VpiKBrAz4tX4mRfQMC154ODotPn4XySAd1yscSoStQmQi31qhBI1vXL5TA3podQXXSMiHYUaRDOrya7pzEvTwMKHKY4fqK9auRb6/j6b6Ez5uqKnz6CeIudIKCetxZJgEe4cLfpto96sp8faYyPuJTtqWWyxV7G44j9KG+kdbZTnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9244.eurprd04.prod.outlook.com (2603:10a6:20b:4e3::9)
+ by VI0PR04MB10094.eurprd04.prod.outlook.com (2603:10a6:800:247::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
+ 2024 06:08:47 +0000
+Received: from AS4PR04MB9244.eurprd04.prod.outlook.com
+ ([fe80::7303:2cc8:d109:d7c1]) by AS4PR04MB9244.eurprd04.prod.outlook.com
+ ([fe80::7303:2cc8:d109:d7c1%4]) with mapi id 15.20.8114.015; Wed, 30 Oct 2024
+ 06:08:47 +0000
+Message-ID: <1021790e-8253-4fd9-8b16-c9c5fa70de6c@nxp.com>
+Date: Wed, 30 Oct 2024 08:08:44 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXT] Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for
+ OX05B1S sensor driver
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil-cisco@xs4all.nl, laurentiu.palcu@nxp.com, robert.chiras@nxp.com,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
+ kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
+ dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
+ alain.volmat@foss.st.com, julien.vuillaumier@nxp.com, alice.yuan@nxp.com
+References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
+ <20241028190628.257249-2-mirela.rabulea@nxp.com>
+ <c32439a5-4230-4ca5-8d46-fb00d25072e5@linaro.org>
+ <20241029115747.GL22600@pendragon.ideasonboard.com>
+ <b5ada63e-31f5-4aec-8499-7e34f1943659@linaro.org>
+Content-Language: en-US
+From: Mirela Rabulea <mirela.rabulea@nxp.com>
+In-Reply-To: <b5ada63e-31f5-4aec-8499-7e34f1943659@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR02CA0188.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28e::25) To AS4PR04MB9244.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4e3::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for FIFO
- mode
-To: John Ogness <john.ogness@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Petr Mladek <pmladek@suse.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rengarajan S <rengarajan.s@microchip.com>,
- Jeff Johnson <quic_jjohnson@quicinc.com>,
- Serge Semin <fancer.lancer@gmail.com>,
- Lino Sanfilippo <l.sanfilippo@kunbus.com>,
- Wander Lairson Costa <wander@redhat.com>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-2-john.ogness@linutronix.de>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20241025105728.602310-2-john.ogness@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9244:EE_|VI0PR04MB10094:EE_
+X-MS-Office365-Filtering-Correlation-Id: b9cbf1ac-f8d6-4851-0e25-08dcf8a95122
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?RTBMcWQvTmVnVTFGaGtWRVdUTGF4cEtIY3EreE80UDRNMXB3SDl4TEVpamJM?=
+ =?utf-8?B?eDRrOEx1RVlKamtvbEdBOWJzUTBneVZyRzQwcnhzSWlXTEo1MFVPOFRxaXdk?=
+ =?utf-8?B?ZURDdnpreTNJb1hZMzZvc3lwR3lZMC9jZVBCSnIrcWRRY0hYbnMveXIvRy9n?=
+ =?utf-8?B?MTNBSVVzTHZWdm5jamlaeUdzOUFSUTVZQ0FLYjVRL3NJbndUU3ZFdDBHekZU?=
+ =?utf-8?B?cnVOcVEveGtxS1UreHZENHVWSmxHUTAvckMyQitRN1MxUTVFT1NBdE9WeU8v?=
+ =?utf-8?B?ZjZQaUtKOWxNS3ZLN2lxeHAwaGNVaWc4TmMxY3d3cXVPTjVyUDRicjVHQXU0?=
+ =?utf-8?B?TzBDMitNR2YwTGwyYmlwRTl0bm9qRW9aaFozLzJCaTdEYVpjTHlFNEtqcTZv?=
+ =?utf-8?B?RGFESTZTSDYrYWdxeW5TeTAwdFZPTXlXMENiY25SYXo2UldFTGlKSGpvd2xs?=
+ =?utf-8?B?MFhvc2FremtmcVhlUzIwbDgvYnBiT1oxek5sNGFKOVNBR0pjc01WRmlVT3dh?=
+ =?utf-8?B?djYwejZJM3FCSjgrV3Z2cHlKU2dwS3JvTFRBZHJmWFZuMWRtYUNkekJCVWxj?=
+ =?utf-8?B?QUx1bmNYeGpwQVZ2SEdpNVo0Q3Z6YzR1UER6QnczTzJoY0ZiS2tTZkZ1OTNx?=
+ =?utf-8?B?MEQ4RVBWSWpRaWcxQ1VZMGtOK1pzNU1KdzZhNDVSUWdWRzAva0JObTVtSlZR?=
+ =?utf-8?B?SHVrdHRzeUxCbUJPTDN0TVlveXE0WG1pMTl5dUhuVC94T2pvNUhONTY4UlNG?=
+ =?utf-8?B?MG1Ec0daUnU0SkY5L3JhQ0VxWmZpMTE1QXdGaW44ZnFONGYzY0tjUHBrOVdw?=
+ =?utf-8?B?ZnVNOTJoaldIcCtFUXFHU3Z6LzFCVTFQa0FJVjV1OU1BSnFwcmhSQ2NrcXB0?=
+ =?utf-8?B?eVl4OFMvaXpqWmlmRUR6KzdZQ3R0UDV5QTN2c0U0dU85OERQanZMejhSd2Z2?=
+ =?utf-8?B?VEZHNDd6c1NiNmZ2Z1FOYUZLNjdHOFdUd2oyQ2ZXVmF1YklGSmhZSHNERHAz?=
+ =?utf-8?B?UkFnVkUyaUxhODc0NUJjTko2QldPT0Z5NTRuNUhxZVJNaEpueFhFaUtFdjF0?=
+ =?utf-8?B?ZlZ1TmkyNXNaSkhjeUhwRWcwQnhPbWRXUHRWQ0pIOXJZTnZYTU1LVStORnJx?=
+ =?utf-8?B?NStaS2NLM0VrRW9Fb24raG14OHc4djlQeTMyNUlPTFExWENWek1Za3R3bFhT?=
+ =?utf-8?B?dDdGajVxZlFZRVFWcTlNRFhnSkFxQXh4MVZHbXZzU3pUc1RHNXc0VXdqc211?=
+ =?utf-8?B?bENyOVR5Mi9PY0IwSGk3VXpBejJQUzBoMzAzcThvVko0SEd1QjV1VkZjZ1Jz?=
+ =?utf-8?B?aHlyTGJYNWRtd2ZiaGF6RkszaVlPVUMwUmQza2xTNXBMMnNoUmN4dVdMZ0ov?=
+ =?utf-8?B?ckRWZVBXY0ppZitvWjYzVjJ6aktNcjlTNVh6akNwWDIxNFVxaE1lUDVDYVkw?=
+ =?utf-8?B?KzBxSndaY1gzN3VWSGpSMXBoMHBxT1lHbXNuRzhuNDhUdlBRVVhmUTRFMkhZ?=
+ =?utf-8?B?Q09INXRrc2I4S0Z6WkxCQzJScXV1R3lmb0ZWTllPZ1JrZ0FncjhhajV2dUo4?=
+ =?utf-8?B?LzV4bThiMTRFWk5CVEVWcklrR2VzZTNuUEhwU2U0a25iUUVGdFVrV3JlWTEz?=
+ =?utf-8?B?cFJxaXRFZDd5QUp4aXNTNk1zN1VPeWhkdldwQWhIQ0RVWVFjOWJRTGpCenRD?=
+ =?utf-8?B?K3hOd3F3R1ZTWVlBN0loMmRkNkxHRXJPaVRydVZDbFlGV1lxdUl1ZjAxUzgr?=
+ =?utf-8?Q?ptqRn4VaBOzOiLVPajwts3Pfyl9GcTPcIIJgpVt?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9244.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?R2crVUxpcTdmSGhGbzZsbEdvVWc1S00vQVBhUUI0b1l2YTFPYk8wTUFUSElk?=
+ =?utf-8?B?L2o2TjUrdzZmZnE2ZGhQNExqVUNiVCtGMlIyY2M2VTlpRmsyZk5TUmp3eVlx?=
+ =?utf-8?B?d05maHRLNXQ4K0pweW9zSGliUGNEU05SZWZDb1d0QUJWRk0xQTFacHB4Wmph?=
+ =?utf-8?B?WnE5Q3JLSk44M2FiNnZVS2FscjRBVDV6anVqNllmWTFKaUNmTVd6YzY1TnVP?=
+ =?utf-8?B?eUM2NCtzd0dtMU9XQzR5cHBTbjQ4L1E3SGFHaGlwTDRaYWdpWHNjUU1rV0ds?=
+ =?utf-8?B?dHlKQk90VkF4Y1oxMURjV1Y5SEhPZUh3bFNSTzNGUDNEL29HVnRVQ3NIVEZj?=
+ =?utf-8?B?OVQrWFV0Tjd4ZXpBUnlXLzRreEEyTjFEU1FyR0o1azIybjJCRnBVTmpBT1hX?=
+ =?utf-8?B?Q1gxWkZDMW9XSG95aVI4YWFMK1Y5S1lNeGVKRDM4aFpFZFIwS1AzVm96cm5J?=
+ =?utf-8?B?amZ4NmpOTmZvUjVGS1pGZ2lrMFdvSTdlZ1BKNlFhaGhndWJ1R20wYyt6cTZa?=
+ =?utf-8?B?WFVrSjV5R0t6c2EzRFdkTnJNSGpYRXQ2WDV0dHFRbGhIVmVMNnNEUUNIeHVp?=
+ =?utf-8?B?ZjQrR1hkNFF4V3daSHhoeTJPOS9CeGhlUEJBOWpGYUhSNHJxMmF1QTFmYjZJ?=
+ =?utf-8?B?UlVuNWFNRHVGeUVrSWEwb2E1K20wekJvMEdkOTNjczQ5ZEpQQmQ4TlcvQkJR?=
+ =?utf-8?B?NmpkTE1XUVVvb25JS1RScnM0ZFU5MWRubkl6QnlOT1ZHZ3NMVDY5dmdtaEsw?=
+ =?utf-8?B?bTFPczdna3MydFRWUnNFYXJkQkc5enJaclY2dUlHeVhselpOM1JHYWY0QitH?=
+ =?utf-8?B?TnFSY3o5alg0SUx2cTN4UmtBYS9PL2NoTEVSVkdOczBTVmVQUkZPTVI2OWZU?=
+ =?utf-8?B?UXZxZUFJUlZwL1JlYnNud0VsK2Q0UUFzcmE5V3gyNWZ4RHAvTk4zM3R4S2tw?=
+ =?utf-8?B?QmJwb09ITW1QaVJTOUVoNjNJT083VEJoUlByTy9VSWVYUkt1T1QwVmZacWgx?=
+ =?utf-8?B?YUt4bkFRM0daa0xnU1BnUTNqNTFxRThDVzNLeXdLRXFyYmJGVEcyWENEbzJn?=
+ =?utf-8?B?Z2hKeXk2RG9sRnJjeG93RlJEbUI1RGcrR2k5Nk04NUl3cm5tMWV0RmRGenVN?=
+ =?utf-8?B?OXJMdFp4ckZkaEN4NjhJTklxVjFlYkdaQWk0QnBNc3lhcm4rclVMZzhuUXN2?=
+ =?utf-8?B?QWRZTks4UWhUM0dJckg1cDRvUHNxWGdYNm5Cb1JlQmlFM2Y2bXoyMWVSOUNt?=
+ =?utf-8?B?Q1FldVdxVEtTWHk2V0hFdGk2dHpQMlJyTFVBc2ZUR2c1Qno0dDcvdTM5US9j?=
+ =?utf-8?B?RDRKWGpOYjZUazMvZi9kaDFjNER4YzF5Y3BObmtaWDJZd0UzOUlrUmxQeWMy?=
+ =?utf-8?B?S2Exa2FrbzFoRmlWdGZiZ3RVekpGclo4S3ZhemU1V0wvMGp4T0hVdWJ1ektu?=
+ =?utf-8?B?R1IxdlhtZzBKZ2hWSERwMEZzYWUvL25nWHFwWCtrazVXNWIvUzlIVjFYUEZC?=
+ =?utf-8?B?eWRXb3IvbEpPNCtmcUhtc3pwdEt4MFZ3YWcyeDFsTWxHWG9sN0pQSnBXWTkv?=
+ =?utf-8?B?Z1R2UWp3UGNtN3U5R2NEcEE4UHlDZ1FiVmpReWRtUnNBcXFxWTA3Vm94WXJP?=
+ =?utf-8?B?QkFZdGphYWViaEdDS2g0Ymlob3Y4ZS9zeXhZcGtHMGdIMGlqcTZsSWx2dFVz?=
+ =?utf-8?B?elpIN2gwWWdWVnZYbjRYQnBxNndUejBMRENlalFyVEVFWG9NNjFYOTRVZEx4?=
+ =?utf-8?B?SkhxVFhvd1RJT21hRE9xMlYwc3VLMWJvdlVUaU9Za2c5a3ZVWXdFUEdKQXJE?=
+ =?utf-8?B?TDZuVUQ5TEh4Y3E5d2JTS2VVbWJBOXRaTDIzME1ub2lWYzhraVZOMjRUVWcx?=
+ =?utf-8?B?SnZyd0lBakpZT3h5ZkJmeXRtZ3g1RlJqTnBvUTR1allGMlZIaUFHWjJZQlp4?=
+ =?utf-8?B?NjNIU2t5TEI2YUkzbzBjcEVjclV1VVdjS0hWU2hCeE83b0JVcWlqN0ljS2J4?=
+ =?utf-8?B?WGJmNEZDR1BCMlFOcUNTcHZOTDJ1OXZWNVg2OTVMb1R2djFhQ0FOdjhCdm5K?=
+ =?utf-8?B?a3pnVU92L1ZUNHJHVlk0UkhudXI0eHFiUlNndU5ZOFdidndoVGtab1Vvbzlz?=
+ =?utf-8?B?V1NjUVQvNWFkS0ZvRU1lSklrK092emN5NTVMQ0J1bSt2V3BoYVcyQ1R4b09s?=
+ =?utf-8?B?VVE9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9cbf1ac-f8d6-4851-0e25-08dcf8a95122
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9244.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 06:08:47.5608
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yWC/g9WmMtti8e8REndky5QFHuPfWQbCmrM5H7LJp2iVDgpN03XYyMMQlZAwV8aztuZ+SoldIpnFPF2QLy7eBA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10094
 
-On 25. 10. 24, 12:57, John Ogness wrote:
-> After a console has fed a line into TX, it uses wait_for_xmitr()
-> to wait until the data has been sent out before returning to the
-> printk code. However, wait_for_xmitr() will timeout after 10ms,
-> regardless if the data has been transmitted or not.
-> 
-> For single bytes, this timeout is sufficient even at very slow
-> baud rates, such as 1200bps. However, when FIFO mode is used,
-> there may be 64 bytes pushed into the FIFO at once. At a baud
-> rate of 115200bps, the 10ms timeout is still sufficient.
-> However, when using lower baud rates (such as 57600bps), the
-> timeout is _not_ sufficient. This causes longer lines to be cut
-> off, resulting in lost and horribly misformatted output on the
-> console.
-> 
-> When using FIFO mode, take the number of bytes into account to
-> determine an appropriate max timeout. Increasing the timeout
-> does not affect performance since ideally the timeout never
-> occurs.
-> 
-> Fixes: 8f3631f0f6eb ("serial/8250: Use fifo in 8250 console driver")
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Hi Bryan,
+
+thanks for feedback.
+
+On 29.10.2024 14:00, Bryan O'Donoghue wrote:
+>
+> On 29/10/2024 11:57, Laurent Pinchart wrote:
+>> Aren't they needed given that the binding ends with
+>>
+>> additionalProperties: false
+>
+> Yes.
+>
+> Might be nice to have
+>
+> unevaluatedProperties: false and just rely on the top level
+>
+> $ref: /schemas/media/video-interface-devices.yaml#
+>
+> Seems redundant to me to keep specifying these properties over and over
+> again.
+>
 > ---
->   drivers/tty/serial/8250/8250_port.c | 24 ++++++++++++++++++++----
->   1 file changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index 3509af7dc52b..adc48eeeac2b 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -2059,11 +2059,12 @@ static void serial8250_break_ctl(struct uart_port *port, int break_state)
->   	serial8250_rpm_put(up);
->   }
->   
-> -static void wait_for_lsr(struct uart_8250_port *up, int bits)
-> +/* Returns true if @bits were set, false on timeout. */
-> +static bool wait_for_lsr(struct uart_8250_port *up, int bits)
->   {
->   	unsigned int status, tmout = 10000;
->   
-> -	/* Wait up to 10ms for the character(s) to be sent. */
-> +	/* Wait up to 10ms for the character to be sent. */
->   	for (;;) {
->   		status = serial_lsr_in(up);
->   
-> @@ -2074,10 +2075,13 @@ static void wait_for_lsr(struct uart_8250_port *up, int bits)
->   		udelay(1);
->   		touch_nmi_watchdog();
->   	}
-> +
-> +	return (tmout != 0);
->   }
->   
->   /*
->    *	Wait for transmitter & holding register to empty
-> + *	with timeout
->    */
->   static void wait_for_xmitr(struct uart_8250_port *up, int bits)
->   {
-> @@ -3306,13 +3310,18 @@ static void serial8250_console_restore(struct uart_8250_port *up)
->   static void serial8250_console_fifo_write(struct uart_8250_port *up,
->   					  const char *s, unsigned int count)
->   {
-> -	int i;
->   	const char *end = s + count;
->   	unsigned int fifosize = up->tx_loadsz;
-> +	unsigned int tx_count = 0;
->   	bool cr_sent = false;
-> +	unsigned int i;
->   
->   	while (s != end) {
-> -		wait_for_lsr(up, UART_LSR_THRE);
-> +		/* Allow timeout for each byte of a possibly full FIFO. */
-> +		for (i = 0; i < fifosize; i++) {
-> +			if (wait_for_lsr(up, UART_LSR_THRE))
-> +				break;
-> +		}
+> bod
 
-THRE only signals there is a space for one character. Multiplying it 
-with fifosize does not make much sense to me. You perhaps want only to 
-increase the timeout. Or somehow incorporate port->frame_time into the 
-accounting (I am not sure it is available at this point already).
 
->   		for (i = 0; i < fifosize && s != end; ++i) {
->   			if (*s == '\n' && !cr_sent) {
-> @@ -3323,6 +3332,13 @@ static void serial8250_console_fifo_write(struct uart_8250_port *up,
->   				cr_sent = false;
->   			}
->   		}
-> +		tx_count = i;
-> +	}
-> +
-> +	/* Allow timeout for each byte written. */
-> +	for (i = 0; i < tx_count; i++) {
-> +		if (wait_for_lsr(up, UART_LSR_THRE))
+I'm not sure I understand all the implications of unevaluatedProperties: 
+false.
 
-This ensures you sent one character from the FIFO. The FIFO still can 
-contain plenty of them. Did you want UART_LSR_TEMT?
+Does this mean that I will have to add false for properties from 
+video-interface-devices.yaml which should, maybe, not be allowed 
+(lens-focus, flash-leds)?
 
-But what's the purpose of spinning _here_? The kernel can run and FIFO 
-too. Without the kernel waiting for the FIFO.
 
-thanks,
--- 
-js
-suse labs
+Thanks,
+
+Mirela
+
+
 
