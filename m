@@ -1,255 +1,154 @@
-Return-Path: <linux-kernel+bounces-388971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516449B66C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:01:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69099B66C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:01:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FA11F217D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87BE1C20A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FE61F4FA8;
-	Wed, 30 Oct 2024 15:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1077F1EBFF7;
+	Wed, 30 Oct 2024 15:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="HUuwUEMC"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2132.outbound.protection.outlook.com [40.107.244.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="vnFqCP7T"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A811EF0A2
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300444; cv=fail; b=EjV3HzjeanXSEUKRzc9d+kOIma9HDXdLC32/ISJiXQvJHEbZmIX3Lj6hI3xCqElu5d2w0M6I9FRF5hM7X6APp/y21BEt8kN48uqQ+QINQl8ww46AYyf4qQywjV1gmtiC7HDEVGXgWIMm84vydB33EXH9GoD+nbkuUtPdb+Lxkcs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300444; c=relaxed/simple;
-	bh=RdhnRHU1NZI5h+/PC6OmV+peAZWrG3L4G7xcAXt42jE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZFr25U9ihOv+lBV+WWByxW0GG6GD1s3hcmAyX2fWPZBIiXXxskC9P2Vlld/t9lxIXkCInIH1tHN+2qy1fhpqJgHejeS5sAY0HstrcggJGq5T0+LH5yRlGIqAOvpWydSJ+ux5I+gEcrS0PCkgTF8vuQYrlE1N8cikjtbARRNo4nU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=HUuwUEMC; arc=fail smtp.client-ip=40.107.244.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FuR29Yx8PBLJUm+StoidS1yWi9Z0PTF/ZZbKIW2z7Mzj1qqzmqShaQ4cCAeJjQs0Ohm4OW3pTapLsEcQwJJLlVqaFnlDFQSJnS9fDEvUN28rmi+CiRJZBM35S6Edu+bpoAcClt9iMxGGxj6FNg1WFtX2MNa0f/liNms3SGSbbz3xBonrH04MUs8L7j5lmDvRvApk0SuROgRMRivDGK39zU1X+K8qNTq1NEQfnqobyoOh3LifNx9QE8LCoE/i3l0Hb369bWVnruq34C+DI4YXruqc+CH9uI/Tz+CWXpSfx0nSlYeJaQ2rADJgZkZRfXhQO8XkKMyIkfqrfYGAu3hj4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X7eEFHBruordrUvclxgBfSKptx6F4JTAjGY/MSyPlAo=;
- b=AxeRbmra9d6130+XJZg7xElOlnryMMjwAcGW/SiHSGZxvzTiJrIqjrM4bC8fpT5uBcmAGNrfg1KjXL5JeYirlCtEGYCqKfq5/9+kf9kaeGFV5euXE8o1apggP9VRbYrcoyjVVBhtvM/zeUh4mqejpAqRBIpLjKQJVi0eR2aahgrwfHmc9W8Qq4r4pJr7dr5HBgdZzIIrj0hooFcuC9qKfojIJscxPR9uxyj68Vnv5witUGWhr1kb+S9GU7atAujQ9eybh4ybJAXF2L06pLhBdRztfQIbZyBSXvPzDnSIXu6uBi5hVhyjAGVvVebgoSUyzcidXdqB4Po4XMPoqUHPMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2C21EF0A2
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730300472; cv=none; b=paRj0z9maHL+OOrWq7m7RYLgKNb5xGX45D+sfLYwHmccmqU/av/wwypz04ZYLPi9kNStcuzVkbYUiNNSO3aTLQ4lX7LhBF412SA59U7VaoGpDcpS4GXgFLOU332gzdN5DDopXTjymh3nHDBl3PVIm6cjkBOzaVDXMsRqlZy6G3g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730300472; c=relaxed/simple;
+	bh=lpvecm1f5pu4GtEx3sl9tf4tvgcFxrIcvbcBaG9U6AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qhm9gJb7gbHbF+4Fqgr/BcavkUcARFnwkQN4FokCIq85wWFMggohDjuNqgbJTSY9phAYQKLQa+HI5JFoV/bEQo4pUaGdNUoxLJ4XfpIypBljcYxJro1WMevst0X8kCeKHCMIxBxIZijqktcrDq9rKbYq0m0xdaAlg5AOj7f7xf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=vnFqCP7T; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-718998df806so167786a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:01:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X7eEFHBruordrUvclxgBfSKptx6F4JTAjGY/MSyPlAo=;
- b=HUuwUEMCGZ2g5mVTReekqT9cGZNRuJpWKu549J1E6hwOKydhdefZhLb2Ehh4dZOg+POBXwmF8ulovSBPU/GFBkf3rOu8iTvwa3ZkhBeczkFOijqoBDg5XTDaQygFUPlWlAMDtvMOSW8ITr8CiMXS8UeDNtheqZREtABU8XJju4c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- CH0PR01MB6969.prod.exchangelabs.com (2603:10b6:610:106::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.20; Wed, 30 Oct 2024 15:00:40 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.8114.015; Wed, 30 Oct 2024
- 15:00:40 +0000
-Message-ID: <d8ae6912-66f3-4910-bc61-cd653d8dbf36@os.amperecomputing.com>
-Date: Wed, 30 Oct 2024 08:00:36 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hotfix 6.12 v4 4/5] mm: refactor arch_calc_vm_flag_bits()
- and arm64 MTE handling
-To: Catalin Marinas <catalin.marinas@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu
- <peterx@redhat.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>
-References: <cover.1730224667.git.lorenzo.stoakes@oracle.com>
- <ec251b20ba1964fb64cf1607d2ad80c47f3873df.1730224667.git.lorenzo.stoakes@oracle.com>
- <f5495714-19ba-40b8-a3ac-fe395c075a36@suse.cz> <ZyIRbbA-_8duD2hH@arm.com>
- <c8760d0e-acbd-4fd6-b077-58b5c374cad3@suse.cz>
- <3f184fad-e0da-470a-888e-70a17419e206@lucifer.local>
- <ZyIpAwt0MSAhgs2t@arm.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <ZyIpAwt0MSAhgs2t@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR05CA0058.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::33) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1730300468; x=1730905268; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9L+h3DakvrHLU0Mvs5EKdTAhMxHYKDitGx80mazmNoE=;
+        b=vnFqCP7TRxmBq/1uDIIU7xrvKrfeNavTDVCK9hIvEDPW7zwsKbHPnSN2pq7gsds+nA
+         vmtAEifumKq/Jb8nvqdSPeFBXVjiwqK2K/kUDShTAAYd9+aAgxeuNvKbXPszGU2npur+
+         LFhV9gEBivYYX+VPJjik230D1XUwHm+Z9ZwzeeCD1cAQ2Tm0f33xR6yhQARWU+EviCuP
+         X5aXCyPD/7C9A7f6cfo8jjZNlZjCxV8oywr4Y+a4eVHH4ReJqPJdxS/7CUwSHEpPCunF
+         RpSU9/aD7zoowY6PQWIUOvOR1Q/i7V+QKVLckdsxN90V157MFPbmkzs69v6L/ONEjwOm
+         Wz9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730300468; x=1730905268;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9L+h3DakvrHLU0Mvs5EKdTAhMxHYKDitGx80mazmNoE=;
+        b=ka0aISbbUajX55VERrTGictslrnF30rEUXEZDjOh/KzyEOJ5Wv3fGeuvZZstjZ4tsW
+         KajzsLtp10QEjDUfwUDfBLHENFEG2ESfQh4F8685X0o4BgUK4l5SC2kpm7MaUPCGl4yD
+         TGr1bAAGo7BCuxZRfZaPPaxj3xjPxDSp6eYT6iFc0Z337hAnKgJ+g8uVnmii+am/lOvG
+         Hcpl9I2M4A4dexmgmxb39s1Vyg7BicYwead29B/0EDloYo7vrYquvQ+Wt4+IAKKp61+s
+         0jgsALwenYRtfNxPh+Xq/BsITlw1NGyUGc66Bp5Mq7lrxEDbWS/93LgRjhjIJeVmSL7S
+         gX5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXJnhg4QOr1x70BxRxeMjmAKggPvmbaHaUEeD5ApJqnhk7KrmMeSsoDRFy6pbP1NA4iVsgrHsIyVZt0jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh7p2/kgjAR02ptufmObH9kCgkRfSL4Qce2EQ11MpTXSyChJ2s
+	YSQUkwdG5xUWOfox8mzblz5KBRcvXUEJubJZQis24aZJXfAMeDRm23b5DglWwmU=
+X-Google-Smtp-Source: AGHT+IG158ptjqLIj0gjGFfB685gOEBJUFjuG7Y8dRLeCk9VafXrmZFUa5vVNmgGQg2umHSprc+JtQ==
+X-Received: by 2002:a05:6358:729c:b0:1c5:e2eb:2fba with SMTP id e5c5f4694b2df-1c5e2eb32admr285161955d.18.1730300467658;
+        Wed, 30 Oct 2024 08:01:07 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-461323a1bf3sm55265351cf.81.2024.10.30.08.01.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 08:01:06 -0700 (PDT)
+Date: Wed, 30 Oct 2024 11:01:02 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, nphamcs@gmail.com,
+	shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+	muchun.song@linux.dev, tj@kernel.org, lizefan.x@bytedance.com,
+	mkoutny@suse.com, corbet@lwn.net, lnyng@meta.com,
+	akpm@linux-foundation.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
+Message-ID: <20241030150102.GA706616@cmpxchg.org>
+References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+ <ZyIZ_Sq9D_v5v43l@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CH0PR01MB6969:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7697dae3-a9ac-42d5-10c0-08dcf8f39eb2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bTR5Q0owYlJJWitzMzBXTTI3eGk0K0Y5SGh0MFFlNzNVcTNhS2owSzZsTTFP?=
- =?utf-8?B?K3BSWVlMMnBZUjgyVEZoSUJmK2JFa2ozWlZzVG56NWdwb3NOajcvK0dFMHgw?=
- =?utf-8?B?YUphYjRSSDRhcmFzM1FoZGhLaFhBTEo4WVBnWDZaeUxPMXY4eUZIUVA3Smp3?=
- =?utf-8?B?OEcySFIyNkcxOXprSzB2YWszRUdCbE81ZW9Eb0cxUlg0bEJOZVFodzJ4Rm1S?=
- =?utf-8?B?dGNtR2ZqeTVJK0tLRENROWh6TkVSb25BTFNra25UL3l6cHJXY3o3TWt3dS9q?=
- =?utf-8?B?ZTg1aTRQVUttMkpGbVRKMUE2WENZRTlxLy9FYU1yNndlaW1kNkZnUHJaK3d4?=
- =?utf-8?B?K3pxcnpDT2J3cmltNWxXNG9TVnFFTFRiTWM4NlcrdC95cjRrdktWeERDY2Fp?=
- =?utf-8?B?NFp5U2NuZXlJZkt3MjZXdXF2MzR6NDJrVitPVHc3TmVFK0lURE1VWUEyMk9o?=
- =?utf-8?B?OHY2cEJROVk1RHFZcm9rZUpwVFg3b0JQWHFUSlJLR3F4c0RoUGhnMmpMVWNn?=
- =?utf-8?B?UHpQRzl1WUFhaHlha2hFMEVzMThOUm5zUHoxZElEVWZ2cFBJK0trYk4yUk93?=
- =?utf-8?B?Zko1cktzQ0pYSnhTRVVYTytqYUs3MEZkN0ZMUVUyUWNHQTlSTS9NVnFNSWRT?=
- =?utf-8?B?NnRHZDJ1c25NTUdLVjRWdlBiWFhObXRFYVd6RDZ4a3JaSmxDeG5WWjJ6c2Y2?=
- =?utf-8?B?SXowUk1iM2dzTWFreFl2RmROeWh1aWMxaHhXeG5BL3lIVDZqanRFMEZQdHJy?=
- =?utf-8?B?cmhrWG9MQWQvR0lLTHp4US8vM1I3RVppVFFGVGVuUEpjTTFSZllhZHd3dkhz?=
- =?utf-8?B?QUs1Y1hvTXVoc3poMEYxUzVPK2pGTVhBYkl6N3VWQ0NKNUFybXh2RzY2RXlN?=
- =?utf-8?B?cmpBaGtZTHkrNC91U20xb2JsdlF1YW1Zbkdoc2xLTytKNkIxeEtmaGNVWko4?=
- =?utf-8?B?SzdoR0RPYThwRUkyMXpHdDh5ZUdaV1NsU2dYNytiMElZd0VNcUVTU2JJTmhv?=
- =?utf-8?B?QmpOSEQ5ZFg1ZEpGV2Q5Nm1pNzg5MTYyVldFZVJIemQwdkRhSUVNa1NjNlE3?=
- =?utf-8?B?NzIxNEg2MDViY3hYZDVKNjdIYVBQQnhPNG1INEtnSHdrcWNVNlptTUxXMjdq?=
- =?utf-8?B?Y0dFbUF6R21rQ0VEdkVLUXJVdUZOTjFlNU0vUWNRdjFibUxUam83SXlSaHA0?=
- =?utf-8?B?UnpYc0kxT05MSjZWMmdlb1krcndXL016NDlXNXBRSDREd20xdFdyNis1aklD?=
- =?utf-8?B?UFVPSXlRdklnSk0xRlhJUnVsREI4Z3ZiRjlUb0pHN3lXZDgxc2NheXV0TlI2?=
- =?utf-8?B?TjdVZ1M0Z3JkZWg1eTFsejhpK1RDWVlTTEIxZEVod21xU0o3SllWdUVBT2p2?=
- =?utf-8?B?Uy9DV1E1NUlqUmJTU3RiZ3V0YjJERk8xeW43YitZbWh5TTVtVDZjMUMvem1l?=
- =?utf-8?B?QzBTWXlUZFJKRXpvbEh6SHdCMVFtZk4yeEVYQmZFdU5CSHA5djB4LzVvZW5j?=
- =?utf-8?B?cjVWWlY3WlNMbkh5cEUvcFVDZWpWWXZma1V2NDJiOFd6aHREaFh3L1NWbS9x?=
- =?utf-8?B?N2k1ZWw2UUZOK2w0cnJzZHBnNXdJRDh0Yi9HRlZ4cys3NmRxQmFLVVBOSmhL?=
- =?utf-8?B?Z3ZsNmROMU5idDRCdHlvQlNucXJRdEZaRmpwNVFzN0hDM2gzbDVOSUR6azd2?=
- =?utf-8?B?b2poNVErRUZQbVJQZjJEbVhmSVBEZ2k0Y3ljSHJ5WkdBSDZzTW04M2JZb2hN?=
- =?utf-8?Q?qYBCK73IDNO8E39YT3ZGF+4Knei+2ZqiSBlcLcJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RHhCTEIwQ2FDOVZydzBLUTVPTGw3YUlJRUxHdkZVRzRnbU9nZTJBNy9Zenkx?=
- =?utf-8?B?SDg1bGdmdHRYdnVvWTIrb0wwZ2ZhUk5pR1BNbUVoeVNiazJycXhsWHhXTjZ6?=
- =?utf-8?B?Y0djcUNkK0VGdXZoeTMzMlBDTUdCTnIvNFU3V2R2ek1zRHpMcDVMUGJ4NHpq?=
- =?utf-8?B?c0pDK1JCQzhWb0JBV21NN1JFYVQ0N2xVZEVWZ1pKNkNwMncrcHRQMktUNXN1?=
- =?utf-8?B?Q0pZdzVBTmlhdHc0cERiOEhLcEtJRmpRMFhwVU82bFdvck1PMnpzZVliNHRx?=
- =?utf-8?B?U0lQcGc1TXRTT2lDdmIvQUY1L3ZxVEVGR0ZacThQTTJBenovMzROSHBlRjgw?=
- =?utf-8?B?cVo4cWZWOUVKYnRoQUJyUjJHT3VrZ3RYNzVWRjJOdGVWYWdsM2U2TFh5WkMw?=
- =?utf-8?B?MlQyS1FjN3BFWWVacXA3TldNdHp5Nk8rbFZUU0RHaHdPTlZaS3BDdm1PRW9H?=
- =?utf-8?B?VEd2SmRxY2Z4R3Q1MjV0dE9ZN0tQeVFHT1AvNE51VTZDSHdIZllTanZSV2t1?=
- =?utf-8?B?WlpSazRTUEVUVktaaHB0VUV3RVllQW1EWTA2QzE3L3BFTHBtalBPY0duM3ZV?=
- =?utf-8?B?eDBaQzJaY0hGclRxeGtBTmFBVzNET01xSE9uVTFhY0c1R0pQT21lcVhRYWtt?=
- =?utf-8?B?YTVQUVV3Rk43TTNldzRzU1BDbnlpNmdWSERmL3VBL0l4K2xwNEtveGhNZytx?=
- =?utf-8?B?S1BBOEJVc3hEM1JFL1NyUFNFS2w4Mzh1VkJ1Zi94Q3NsUWZreXRBSXhnMW14?=
- =?utf-8?B?NzF1Qmd6T1U1Tkk1WFk2TXlGejlMNWlvbjZXK0JhcFE3cDdtL01yUm9xQ2hM?=
- =?utf-8?B?cGExaENWVVdEWDJGa1M0Y2dTZ1VJbjVVM3FrV1V0bTZWSzBsejF2cC8ybkwv?=
- =?utf-8?B?SnlpMlpSNU9lVHUyQkl3aFZmdlE4SU9UM2NMZVoybHRCRXpjaVBIVmRidjJI?=
- =?utf-8?B?c0RwUnRCbzlHclZlcjJlTWhGd0F1V1lacG9pd3hXeTcvMVMvWWQxblc2QzZC?=
- =?utf-8?B?QjdHRkNUVmdrSDNMeWRCV2tTQk9JNjZsL0ZTeDBrMG1WaDRvMDVpdVRsY09u?=
- =?utf-8?B?cWw0TmM0Y2xxTjFUTEFlV3cvSHo4di9zTUJsZG9zM0pIWVFLZFA5L2VHd0RM?=
- =?utf-8?B?Zkw1Smk3Y2hMenFHQUhyd0U1ZGNMcFpuSXBKQWpOaEdpQThkc2FjSVlNbW8z?=
- =?utf-8?B?ZVpqRFNKeWJRMk1qcGw3VzJ0cEFoa3pLaGRhUW1qUllqeTFtMFZsMFVadExU?=
- =?utf-8?B?OGhMNXEzLzFOc29pTkh6bnNUSkN3STE4WXVLS2ZxT1Fjc0tTOFVuRW1EaCty?=
- =?utf-8?B?S1hLdStEZEVkc0FuN21QMzEzdmUxMzVKR281eUNKci8rR0Z2cHJwL3VRTGUy?=
- =?utf-8?B?RlliYWNJM2piaG5iUytYOXdFK3dTenhtYWhxK05ReSs0Z0xDOXhBOEVoSDdB?=
- =?utf-8?B?czZ1N0ZqS3RESFVKUFBCeEIvL2NybElwaUtFenNQRW84OGRYZlVneC92ZjMz?=
- =?utf-8?B?KzgxNU5NQmdEelAyU05RdU4yMFJKaWp2Mk9jK0NNR3lZc2J4dzBJS1lKQmRu?=
- =?utf-8?B?ZWxIQk5IUGtlVldjWCtpZE5Qai9WeTRkUXZiVWtvNFAxUDBrNmpSUnpRcTZR?=
- =?utf-8?B?NnRxZmsxT1NVNXJzcHd2WEo0TDNPRWdvQzVJM1JqRGhGYUE5L3pOS252NWdT?=
- =?utf-8?B?QlZuMzhsa2ZEZm1sV05vbVljUzhZRFVqamJjSkNFT1pWNXdZV1I2TklLSHdI?=
- =?utf-8?B?M0g3T25Qay9kY0lFMjNJMzRWWU94Z21xY2ZLc1pmSVhQclFwQzJPdXQ5dFdr?=
- =?utf-8?B?NGRNOXo5NTNPT2NEczJpdEFhRTZ2ZXgwOHdZNDBXSE1NcVA3NXJEZ1JMci9o?=
- =?utf-8?B?K1NrYXl6Y1hZK052RHNRaHBIVFBzNlUyYWlqNGZ1dGVtekF3UnVjaE40d1Fi?=
- =?utf-8?B?NUlMU2I2eWhpYmFBL0orTjhQLzZLZjBKb004TXRaQkVya2d4MjRPaE5nUWlo?=
- =?utf-8?B?ZVBPRFkvd1ZOTXk0UTZkRUptTENwQjE4WGdHVWxjcFJCbVUxQWN1YTNka3Y2?=
- =?utf-8?B?NmQ0MzNXNW8wU3U4NTlNMmN6UjdxTU55Q0E5Zng1eEFTYUFPNlRteVJLNDIw?=
- =?utf-8?B?LzlUbGw2MFJvODhsc0dBajBqakVkYU1TaU1QZWxJTVFnSTlta1dKTVorcEpz?=
- =?utf-8?Q?OjBke1h2BzWYjFxqJN77Bys=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7697dae3-a9ac-42d5-10c0-08dcf8f39eb2
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 15:00:40.5385
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xIT7ulD502Vb3RO2CZgsqkOP00yhUIIKDWhx7Zvhxz8OAi1uIyxTE7X1VfxSJitOsThMkUOLP9sE1LNGYgx8nBSJmacO8d/C7HdeYoYXPW8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB6969
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyIZ_Sq9D_v5v43l@tiehlicka>
 
+On Wed, Oct 30, 2024 at 12:35:25PM +0100, Michal Hocko wrote:
+> On Mon 28-10-24 14:05:05, Joshua Hahn wrote:
+> [...]
+> > Changelog
+> > v3:
+> >   * Removed check for whether CGRP_ROOT_HUGETLB_ACCOUNTING is on, since
+> >     this check is already handled by lruvec_stat_mod (and doing the
+> >     check in hugetlb.c actually breaks the build if MEMCG is not
+> >     enabled.
+> [...]
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 190fa05635f4..fbb10e52d7ea 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -1925,6 +1925,7 @@ void free_huge_folio(struct folio *folio)
+> >  				     pages_per_huge_page(h), folio);
+> >  	hugetlb_cgroup_uncharge_folio_rsvd(hstate_index(h),
+> >  					  pages_per_huge_page(h), folio);
+> > +	lruvec_stat_mod_folio(folio, NR_HUGETLB, -pages_per_huge_page(h));
+> >  	mem_cgroup_uncharge(folio);
+> >  	if (restore_reserve)
+> >  		h->resv_huge_pages++;
+> > @@ -3093,6 +3094,7 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+> >  
+> >  	if (!memcg_charge_ret)
+> >  		mem_cgroup_commit_charge(folio, memcg);
+> > +	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
+> >  	mem_cgroup_put(memcg);
+> >  
+> >  	return folio;
+> 
+> I do not see any specific checks for CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING
+> in these paths. I guess you wanted to say that you rely on
+> mem_cgroup_commit_charge setting memcg pointer which then __lruvec_stat_mod_folio
+> relies on when updating stats.
 
+Yes, this is what Shakeel pointed out here:
 
-On 10/30/24 5:39 AM, Catalin Marinas wrote:
-> On Wed, Oct 30, 2024 at 11:53:06AM +0000, Lorenzo Stoakes wrote:
->> On Wed, Oct 30, 2024 at 12:09:43PM +0100, Vlastimil Babka wrote:
->>> On 10/30/24 11:58, Catalin Marinas wrote:
->>>> On Wed, Oct 30, 2024 at 10:18:27AM +0100, Vlastimil Babka wrote:
->>>>> On 10/29/24 19:11, Lorenzo Stoakes wrote:
->>>>>> --- a/arch/arm64/include/asm/mman.h
->>>>>> +++ b/arch/arm64/include/asm/mman.h
->>>>>> @@ -6,6 +6,8 @@
->>>>>>
->>>>>>   #ifndef BUILD_VDSO
->>>>>>   #include <linux/compiler.h>
->>>>>> +#include <linux/fs.h>
->>>>>> +#include <linux/shmem_fs.h>
->>>>>>   #include <linux/types.h>
->>>>>>
->>>>>>   static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
->>>>>> @@ -31,19 +33,21 @@ static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
->>>>>>   }
->>>>>>   #define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
->>>>>>
->>>>>> -static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
->>>>>> +static inline unsigned long arch_calc_vm_flag_bits(struct file *file,
->>>>>> +						   unsigned long flags)
->>>>>>   {
->>>>>>   	/*
->>>>>>   	 * Only allow MTE on anonymous mappings as these are guaranteed to be
->>>>>>   	 * backed by tags-capable memory. The vm_flags may be overridden by a
->>>>>>   	 * filesystem supporting MTE (RAM-based).
->>>>> We should also eventually remove the last sentence or even replace it with
->>>>> its negation, or somebody might try reintroducing the pattern that won't
->>>>> work anymore (wasn't there such a hugetlbfs thing in -next?).
->>>> I agree, we should update this comment as well though as a fix this
->>>> patch is fine for now.
->>>>
->>>> There is indeed a hugetlbfs change in -next adding VM_MTE_ALLOWED. It
->>>> should still work after the above change but we'd need to move it over
->>> I guess it will work after the above change, but not after 5/5?
->>>
->>>> here (and fix the comment at the same time). We'll probably do it around
->>>> -rc1 or maybe earlier once this fix hits mainline.
->>> I assume this will hopefully go to rc7.
->> To be clear - this is a CRITICAL fix that MUST land for 6.12. I'd be inclined to
->> try to get it to an earlier rc-.
-> Ah, good point. So after this series is merged at rc6/rc7, the new
-> MTE+hugetlbfs in -next won't work. Not an issue, it can be sorted out
-> later.
->
->>>> I don't think we have
->>>> an equivalent of shmem_file() for hugetlbfs, we'll need to figure
->>>> something out.
->>> I've found is_file_hugepages(), could work? And while adding the hugetlbfs
->>> change here, the comment could be adjusted too, right?
->> Right but the MAP_HUGETLB should work to? Can we save such changes that
->> alter any kind of existing behaviour to later series?
->>
->> As this is going to be backported (by me...!) and I don't want to risk
->> inadvertant changes.
-> MAP_HUGETLB and is_file_hugepages() fixes can go in after 6.13-rc1. This
-> series is fine as is, we wouldn't backport any MAP_HUGETLB changes
-> anyway since the flag check wasn't the only issue that needed addressing
-> for hugetlb MTE mappings.
+https://lore.kernel.org/lkml/il346o3nahawquum3t5rzcuuntkdpyahidpm2ctmdibj3td7pm@2aqirlm5hrdh/
 
-I agree. The fix looks trivial.
+> I suspect this all is done because you want a global counter to be
+> updated as well, right? Changelog doesn't say anything about that
+> though. Why is this needed when /proc/meminfo already describes the
+> global hugetlb usage?
 
->
+Sigh.
 
+vmstats is the preferred framework for cgroup stats. It makes stat
+items consistent between global and cgroup. It provides a per-node
+breakdown as well which is useful. It avoids proliferating
+cgroup-specific hooks in generic MM code.
+
+It was a ton of work to integrate cgroup stats into vmstats and get
+rid of all the memcg special casing everywhere. You were there for all
+of it. We're not adding cgroup-specific stats unless unavoidable.
+
+Duplication doesn't matter, either. We have plenty of overlap between
+vmstat and meminfo. By all means, send a follow-up patch to have the
+meminfo one sourced from global_node_page_state().
+
+But you know all this. I'm having a hard time seeing the way you are,
+and have been, engaging with this patch as good-faithed.
 
