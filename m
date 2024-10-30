@@ -1,142 +1,93 @@
-Return-Path: <linux-kernel+bounces-389469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489419B6D6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:14:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656869B6D73
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A3F1F213EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:14:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2965D2818B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C2621766B;
-	Wed, 30 Oct 2024 20:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C81B1EB9FD;
+	Wed, 30 Oct 2024 20:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OX8QEI0k";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F9w3NrlZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elEe2qxl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FE42144D0;
-	Wed, 30 Oct 2024 20:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA6E1D14FB;
+	Wed, 30 Oct 2024 20:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730319221; cv=none; b=TYeCBrk4LenLI4OaZ4qb5dwHgB63vstDn9BR7ZHmrH77ybrioWysEBdigUB7COQIBJ3Y6cXh9HpkbetU4ReNyte60xUKBDNhW2ndTkQ6OB/jEM+CVMm4waeDisXwfOgYVt6C5GfmyzNMqdkvFbEL3LIzeFQKVT187ylMM6xgl5s=
+	t=1730319287; cv=none; b=B1x09+3rII6DopXlIMf7cwongSHpXwOtbmPJzsmvIzv9wW/RgV7VOAk2aekWRgurgVF1ZCaUvz7qje4VMSQzdX+zUvbgB/UTbfUJ+z/xy4XYsr7NpVmOtrnKYmTXx0YnMAFjaR8GOKyVE++J3+paPD8jNrXwxXsYLShpoNdFN5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730319221; c=relaxed/simple;
-	bh=t2RzM/w/VvPX4IEultyaQwmyaHCkvA5LFaPFsdMQymE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OS4RyjH4ZdQC23gtS/SJp/DJ48HtX5tsMmUeoPHVADsKrXo3qCqJU/satIFZ57JPOq90VGAwWSVt2fPm2DzU9O6118dYzaopcboIY8OakPwwGrem2tsd9EBSvWPeMEsrtIuZLj8aR+TBWsM7UJ6XZGG6i8Ti9pk1Dx5TSIoqdk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OX8QEI0k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F9w3NrlZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 30 Oct 2024 20:13:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730319217;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYJvNqRWcNNR7xHO+7w6w3aYHTAVoaKtzhomftQGPcI=;
-	b=OX8QEI0kuqmgDnYWctxnquJYmcS+WR2FvYw1V/AnTrpVZCgAdfC6JKczyeB7lLCT0DQmaX
-	YulwEsvD4JlnZ2OcQa0c+4DsYZSh1170ZOH4Rm6jErJywIYjzvRmS7SmuOADisfTAJ1JHN
-	iulzBsru6GQLrvupeVv3srL2I1D/SGFN5tjCo+8J/arYPAUp6nH5ZMacyEhlycnZGeoUCL
-	MuFOfj1AbODNl6QX74xnK+BJazgbJxAobGQmWzunZvXm20x5MkQ8R3LUfYT9iZ+ttW90NS
-	FDihUXpUmXfhjpHEsp6Ai4vAF0hoheR0yOU2mMkfY9wuK21GAFX8m111ss8xEA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730319217;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYJvNqRWcNNR7xHO+7w6w3aYHTAVoaKtzhomftQGPcI=;
-	b=F9w3NrlZkfXAa+Mzx4NEVAzhfwW8/A9RhQfT0FeN71Nl/hVM1gMGIec/Mmx5CEStiIEJrq
-	yZEeemk+i+2tJ5Bw==
-From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] clockevents: Improve clockevents_notify_released() comment
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241029125451.54574-2-frederic@kernel.org>
-References: <20241029125451.54574-2-frederic@kernel.org>
+	s=arc-20240116; t=1730319287; c=relaxed/simple;
+	bh=6kxVpaFI1ZML7mVp1gWGnEfSVv3OB1JV0EJOz3Ivvj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sT+2lFAPqDQW3WmTW+vvTrB8ZeIGt7XiETczZpf/n+TZeSm3W5NWuWmL7/hI7GGrYb9LLhRwDFeiYeofRGGSpu/BEq45ytPXs2MHHI8u0McagxFv9QCi/ZhSmgtcOkaoL8Jf3lx94Bb60SOBsh9ObeGXlHICp9v1cxQjGTmtXkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elEe2qxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6EB9C4CECE;
+	Wed, 30 Oct 2024 20:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730319286;
+	bh=6kxVpaFI1ZML7mVp1gWGnEfSVv3OB1JV0EJOz3Ivvj4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=elEe2qxlq/tq9yHVtICkU2lMPx3AKZPDGcaCzpQ7lbK6uJS68eiXV0qTOTtlnarL5
+	 erP7oaQQoLK19f37F2TbQwPB43Iw1jVfTTNm1QoRsl5EOymgCzXRkps3lxNZz8iwtQ
+	 rsHQLKTYxtVnWNhZZ/YLpnKqEUXB2CJKtctZyBYskdN7ImSTwixNIS57Yze+7Jfi2J
+	 EtEDgwjN4PaO20L6rqo2d6Nq3QyrXHZDtf1iEIywuhn9WNcHdNmJmGXnTT0+GspXR9
+	 VCvy/y5sZWLILWrBYvblwk031i4Gq/bV/R8agNZUCsjHRAbqPnSpxKN8WcaFXzIHSg
+	 TJlA8ICMqNfJA==
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71808b6246bso103843a34.2;
+        Wed, 30 Oct 2024 13:14:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV4S/1OJVexEGXd/xbz5OanmSoW83c9m4yN7TQ1elaO49KSSIhPxeoLcSexCJxif47Idda5B7gcnH2HTnE=@vger.kernel.org, AJvYcCXv+MkL1uHABnCjWkY45HqHyvZnUpF9Pr0fxRUJpjVPUoB0/pAR8mfNIfMCCzI/GsdZ+pikhz2lvlI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyzvabN2VqPpn4Vx+5wrNvWej+leH5rUGMsFxDmg3FOtZAznBP
+	FBVkhOhYuyHVslhcQ4i2VKBAFFZzgYDpbrjROt8zZOWOOu/iVNfO3JeiDSWmQqR4+7R2eWM+rTt
+	2o+JKxFz22EGUA7oZl57eLF8R8fU=
+X-Google-Smtp-Source: AGHT+IFegsDhcZQhn1bpNLDBz9XYx6v4gPhpqyRTrfwgyFhSpal8guopX09XxBD0DtFK+0WxmcPqfziQ5bFgfMx/ui0=
+X-Received: by 2002:a05:6870:b50e:b0:25e:24a0:4c96 with SMTP id
+ 586e51a60fabf-29051b73021mr15841177fac.11.1730319286119; Wed, 30 Oct 2024
+ 13:14:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173031921690.3137.8686198378080958241.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20241029101507.7188-1-patryk.wlazlyn@linux.intel.com>
+ <20241029101507.7188-3-patryk.wlazlyn@linux.intel.com> <e332a243-5a98-49ed-81be-b6db305d5dc5@intel.com>
+ <35946efe3b8b8b686ba4ea0ed5c9f15c50ca6ef8.camel@linux.intel.com>
+ <000fd68e-2b24-4eb3-b2d7-e4856b403212@intel.com> <CAJZ5v0j+Qc+5PtPdsDy5B0iAGWOxYbKdUOkVmL_jPNVO8fNK=g@mail.gmail.com>
+ <b01cc6de-8440-477a-9844-d921da9dceb7@intel.com>
+In-Reply-To: <b01cc6de-8440-477a-9844-d921da9dceb7@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 30 Oct 2024 21:14:34 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gD+QjuW6iiJS7M0H_BAdXH7tnDGa+hp5BnvSNF+Cb0aQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gD+QjuW6iiJS7M0H_BAdXH7tnDGa+hp5BnvSNF+Cb0aQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] x86/smp: Allow forcing the mwait hint for play
+ dead loop
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the timers/core branch of tip:
+On Wed, Oct 30, 2024 at 9:11=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
+>
+> On 10/30/24 12:53, Rafael J. Wysocki wrote:
+> > clearly referred to as a kexec() hack, which cannot be done in
+> > cpuidle_play_dead() because the cpuidle driver doesn't know how to get
+> > to md->control.
+>
+> What if we have an mwait_play_dead() _helper_?  It takes the hint as an
+> argument and retains all the kexec hacks.  All the cpuidle driver has to
+> do is call the helper with the hint that the cpuidle driver determines.
 
-Commit-ID:     679f8484cafa08f49a19e2947d05e96321fbed9d
-Gitweb:        https://git.kernel.org/tip/679f8484cafa08f49a19e2947d05e96321fbed9d
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Tue, 29 Oct 2024 13:54:42 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 30 Oct 2024 21:02:21 +01:00
-
-clockevents: Improve clockevents_notify_released() comment
-
-When a new clockevent device is added and replaces a previous device,
-the latter is put into the released list. Then the released list is
-added back.
-
-This may look counter-intuitive but the reason is that released device
-might be suitable for other uses. For example a released CPU regular
-clockevent can be a better replacement for the current broadcast event.
-Similarly a released broadcast clockevent can be a better replacement
-for the current regular clockevent of a given CPU.
-
-Improve comments stating about these subtleties.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241029125451.54574-2-frederic@kernel.org
-
----
- kernel/time/clockevents.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index 78c7bd6..4af2799 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -337,13 +337,21 @@ int clockevents_program_event(struct clock_event_device *dev, ktime_t expires,
- }
- 
- /*
-- * Called after a notify add to make devices available which were
-- * released from the notifier call.
-+ * Called after a clockevent has been added which might
-+ * have replaced a current regular or broadcast device. A
-+ * released normal device might be a suitable replacement
-+ * for the current broadcast device. Similarly a released
-+ * broadcast device might be a suitable replacement for a
-+ * normal device.
-  */
- static void clockevents_notify_released(void)
- {
- 	struct clock_event_device *dev;
- 
-+	/*
-+	 * Keep iterating as long as tick_check_new_device()
-+	 * replaces a device.
-+	 */
- 	while (!list_empty(&clockevents_released)) {
- 		dev = list_entry(clockevents_released.next,
- 				 struct clock_event_device, list);
+The same idea has occurred to me in the meantime, so yes, I think that
+it would work.
 
