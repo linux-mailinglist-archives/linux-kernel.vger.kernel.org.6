@@ -1,117 +1,125 @@
-Return-Path: <linux-kernel+bounces-388489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1143A9B6051
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:37:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD77B9B6027
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 433A11C22506
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:37:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59FE9B216A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEAD1E378D;
-	Wed, 30 Oct 2024 10:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574CA1E3770;
+	Wed, 30 Oct 2024 10:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ThUP76GG"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mgzygzOJ"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F381E260C;
-	Wed, 30 Oct 2024 10:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9851E2016
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284630; cv=none; b=QXLWSuiKCMNrEBDP7+JlBJB/2/dyHVmzIpMkTVCbRLG+6KUo0jhuBU24Jdmrv0TYeebKFHYW3isiookAkJvgokT2aa1Kkm8GFKDLPVxaje/KnsIXz7NCz9p9IGR2HC1oQPHCkSyo/XGbr8Ng+VeDzzet8lykztcz+dU6BomOogg=
+	t=1730284332; cv=none; b=XB0fL6p7bAd29zZ62McN6q0WktskuxAguI2Yv9I7Lioy0UtitXlTAS27x/tGDCVYo+z0FwvxdAvQyeJhbKQAKjolLatFVN6nmTjmvC3zBUkIPMkjsbOCiMcrZsXrSgojyd4xruc3eH6nVldGTkppjPOu5pGI+anpRh39l+FkUKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284630; c=relaxed/simple;
-	bh=BuV9WLUxozweYH9SaJOjipfLeWosJXwHUEdtG17zscM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=aEIxzaoPPBMOqLLnFPIu+pT66j5SZzyx1TiNIf8iPrvGffypqzz+KMrrAvdyL4WeQ7/t18G96CfXTVIzN4FEY4Fw5ZfQYf2kSZhqMJYLxni7zeGjFKRYM2FKOpHjwLE+Wu6xwErddr57Ap1jQDqGP23pvjCqEqOrxnoHG45bUHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ThUP76GG; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730284314; bh=zHfoqvcdyaOKQo7OsU+H7Hbt4PIQsWhPaOgva2OQV8w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ThUP76GGMwrFF0yxKuN72fizkLkgJyiSLnQBxphJgZccVa1qfoV4BqU7VvNla1c5h
-	 BxoEyzWyWVe7aBjxdi1cmdD/SmQRN23V7CA7GY4P3CJ3ryrDdGiayPcOD5sJSiwnXB
-	 NUcqmBggGrXytQG56XrndkI2tegS0ofjhB60L7Vo=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 7F42E2E3; Wed, 30 Oct 2024 18:31:52 +0800
-X-QQ-mid: xmsmtpt1730284312tmx4hylhw
-Message-ID: <tencent_93E0C66D49BEAEDE6ECA0C9FA7C786D2D206@qq.com>
-X-QQ-XMAILINFO: NhUkPfKlCtQwUUMh2foJjMGPnHrdYy6dHZWFs/7ZegpoND4YXmNKSDrDzjkKwS
-	 O/PkpHZrWXXm90j8YT0Eow0x0TSjMZmh3ig4jhjlb6uiBZFR/KoZO9d/dJKt4agqEV9wOl5bhss/
-	 V8Oiuk3cahMkrlnpeUmHUHv3SkZ3WUp1DLNq2w+dVKS3btiMGBMGwnJ1W8LjUFBwzTesVe4R26am
-	 zD52gptuOkzh45L1Q/tWPtkz8/ARWfulB0fDWVopV1RM13OW2qExmXUrk7FQDOlkC6cn+89jhfOR
-	 bW+ePBR+Vb73zOWUKmjP6IYL5PBHUQRkkMApEOpgx6T4Ti2VaBPxTfWuBZHY0QpV+yLquctf8Skt
-	 98XtmqtdmOqpYaLS3qpYnDZja3EG+ywgnimKKZ0RdO/WQTIrovFxAwFNeQT0835nxb18rWNcFADA
-	 5T88uzf6Yst2WA4EeXFYGqHchRVlf/WQ9OBtaAsZFsN0e9TDSOJI3NUIFagbjXNvtw7db3uQQnvV
-	 jHXFLgPOLLOuKj4zbvOcqQJ5WxTt4NLKzoxz4TXFu1U9n5/sE4fwxeszH31bcN+nWRN863AEGZjJ
-	 h+9ZlKA56BNglSDLl2VGU3vhss4accbSs90GaXm7DbmuVAYBO9M/x8WI+ZbvJ1oo/uP3KGuynFdO
-	 dtjlXf3brDlWq6awb2rGiauq6XyfCSYycFridw88FoM2baw5bYtSEC1+2t++8cvVBZQ9RB5aLIsA
-	 oX6AVPj8k89el+dSp6oHBJVssjOYnnTH8ZGRjyvZ86BePbbT/6xlvgJ3L6z0uTosQTCG+QFCShgN
-	 FVRi/H23ytxRUuoTJE66TqBEPlZn3AUCro6xM9KzVp6Zd1OTeYvqtGqV+xclNT59r7ASDdd4cBry
-	 EsZTKIvBUde1L/RNBRUAfIr1uc+Aatn7ifkOzIplHlVINeoLmM+Zmm42xd/yZFYyw6j1GquTUS
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
-Cc: amir73il@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	miklos@szeredi.hu,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
-Date: Wed, 30 Oct 2024 18:31:52 +0800
-X-OQ-MSGID: <20241030103151.3582905-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <671fd40c.050a0220.4735a.024f.GAE@google.com>
-References: <671fd40c.050a0220.4735a.024f.GAE@google.com>
+	s=arc-20240116; t=1730284332; c=relaxed/simple;
+	bh=CU1cu24+i45K2ONyDBFElC17mZkV4BvGmiF2jOuAeeI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OVd8Bj+5OsSnSAG0LfUjDu7pa7sIxBXtzrIwxpmBXSVFkF6Y7kk1Irmg8OycsuuqFOdM/+FTrfI599hugHt7lVt69JpfG4AVWen90ogkM0kUBMPTxpE4A0Hy/N4C2joF2zn30IAmpuZSUZjUFruqPGNXY78LHLkn1v8KNUqv9nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mgzygzOJ; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so63941911fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730284329; x=1730889129; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6e62zABhJgu0xsmWlRUsEgJ/DIZADPy+MDY7G9xqvTM=;
+        b=mgzygzOJcIWje4b2Bs50E75/j68lD9kPzL+Pqb3r17f5wXtsuBzZIC1ROZEeFONqRU
+         39c30p1hqmGWer+wsufR0oQkX81CaEyUL5sEDXHp/WrhX33+T2XXm6EUfCzKq21WwJQb
+         P27/JjoQEBZ6r+5pdbf2bH2jj/15J2nP+4WsLXwO5hOpvvEaEmi1vD5zeRFQEVr3sqdb
+         CdF4PwQLuyAvBaLYH0Aqp4FBiO6SqWrtt6w6wg+k1lsP7p3uDjDR3JrT8fALD304kMOG
+         W9MFs80PC2bdPPH0i/NBZGzqrhVJK0fQ6oWGK5ykWFYopkTYwV0+aeuYoBZq7zisM233
+         NFQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730284329; x=1730889129;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6e62zABhJgu0xsmWlRUsEgJ/DIZADPy+MDY7G9xqvTM=;
+        b=mMQpYdD6UeiBCKsyrlt9LBVYSot7WoVsHww3RjFP9Ly6PI+aF3SPpP2jNWZ8JJhyUt
+         QiuRyI/GJeKPwBmVIEkQDKvbIUlhpPP00fn3U5+M4hzn7oFhVqE9LIUKvZdxwYYnzP71
+         nfts36QsW+yqKoL+vUtbi8v5ztDzqeGZJWCsmrM76dnIeAcVV12I9vfQuSePHxE8jrj8
+         kvv9VYqLse9ffCZdGQiDByrLCdWoiZYjAYARztYtVfNgfb74x61UQWgrnvZ7rh0B5bkM
+         INZ1IUueX4n48w2C7/4yK5MuU10KJ77EpYbJxDh8n2KAgjByIKGY1umxSoFli1vjK3iN
+         0qnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViKrNSVqw4T/dz4mIXBqbAGHpb1IsydsmV6mRYdK4W2VTLyNK4G+UWGCqfpWhlLtktVmG9CAtDqoBzu5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRI+rTHNm/JlfHBJvLPr9deFk1DLbN95l2oKHz22QH5XNviBh9
+	cLJfCT7f9JMnRcdyYhtoIiUgfRi/ZSmrDCaqEvtQxYu82CG71vrfi+/nIWMj7uw=
+X-Google-Smtp-Source: AGHT+IHN0Q+Mdq7fYa0Zn8cYYpDEzpyE0X1QlkitrR+30fjLy2hEruXPOPZRkaCk7IohqcOaFpkJEA==
+X-Received: by 2002:a2e:bea5:0:b0:2fa:dcb6:fa7a with SMTP id 38308e7fff4ca-2fd0590bdc8mr13523571fa.11.1730284327314;
+        Wed, 30 Oct 2024 03:32:07 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca747sm17059915e9.45.2024.10.30.03.32.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 03:32:06 -0700 (PDT)
+Message-ID: <c553db69-6bb8-44f8-b571-21c631fcaee8@linaro.org>
+Date: Wed, 30 Oct 2024 10:32:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/11] scsi: ufs: exynos: add gs101_ufs_drv_init() hook
+ and enable WriteBooster
+To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
+Cc: andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
+References: <20241025131442.112862-1-peter.griffin@linaro.org>
+ <20241025131442.112862-8-peter.griffin@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241025131442.112862-8-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When the memory is insufficient, the allocation of fh fails, which causes
-the failure to obtain the dentry fid, and finally causes the dentry encoding
-to fail.
-Retry is used to avoid the failure of fh allocation caused by temporary
-insufficient memory.
 
-#syz test
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 2ed6ad641a20..1e027a3cf084 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -423,15 +423,22 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *ofs, struct dentry *real,
- 	int fh_type, dwords;
- 	int buflen = MAX_HANDLE_SZ;
- 	uuid_t *uuid = &real->d_sb->s_uuid;
--	int err;
-+	int err, rtt = 0;
- 
- 	/* Make sure the real fid stays 32bit aligned */
- 	BUILD_BUG_ON(OVL_FH_FID_OFFSET % 4);
- 	BUILD_BUG_ON(MAX_HANDLE_SZ + OVL_FH_FID_OFFSET > 255);
- 
-+retry:
- 	fh = kzalloc(buflen + OVL_FH_FID_OFFSET, GFP_KERNEL);
--	if (!fh)
-+	if (!fh) {
-+		if (!rtt) {
-+			cond_resched();
-+			rtt++;
-+			goto retry;
-+		}
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	/*
- 	 * We encode a non-connectable file handle for non-dir, because we
+On 10/25/24 2:14 PM, Peter Griffin wrote:
+> Factor out the common code into a new exynos_ufs_shareability() function
+> and provide a dedicated gs101_drv_init() hook.
+> 
+> This allows us to enable WriteBooster capability (UFSHCD_CAP_WB_EN) in a
+> way that doesn't effect other SoCs supported in this driver.
+> 
+> WriteBooster improves write speeds by enabling a pseudo SLC cache. Using
+> the `fio seqwrite` test we can achieve speeds of 945MB/s with this feature
+> enabled (until the cache is exhausted) before dropping back to ~260MB/s
+> (which are the speeds we see without the WriteBooster feature enabled).
+> 
+> Assuming the UFSHCD_CAP_WB_EN capability is set by the host then
+> WriteBooster can also be enabled and disabled via sysfs so it is possible
+> for the system to only enable it when extra write performance is required.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+While reviewing this patch I noticed few cleanups can be made. I sent
+them here:
+https://lore.kernel.org/linux-scsi/20241030102715.3312308-1-tudor.ambarus@linaro.org/
+
+Feel free to include them in your set if you're going to respin. Or not,
+if you don't want to tie your head with cleanup patches. I can respin
+them on top of yours later on.
 
