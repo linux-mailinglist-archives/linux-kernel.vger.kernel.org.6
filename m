@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-389738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBEE9B709A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:41:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EF09B709F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A441C20A3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4392A2827B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74450217446;
-	Wed, 30 Oct 2024 23:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8270D217446;
+	Wed, 30 Oct 2024 23:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KzprbEYD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVbQ6/y7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903371C4612;
-	Wed, 30 Oct 2024 23:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE831C4612
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 23:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730331684; cv=none; b=R1BsczbyLyWtAkeky0AamtijmdKZpzKj7qG88m4zjn86HXdBTp1vEOfL7tn8RvFjU3uG02mETB0kfwVZ1cD0yUJVOd0Z3pYIYCQjV8veNTxWb6sloGr0sEZoTc76EaP53MMzpV47saLTOdfcQkEP+WsKDD/UNCNGrpoLwE8ZzlQ=
+	t=1730331748; cv=none; b=GDAjdkePCCLC+QgWrCjcZubPz8iRna3M1qWN4xiNv6SXjzAthQnNtFuLdRcW/HwrQ5Un8HoUbgeQHy3IjvbR3dLG5XKmtqKFFyrxN1l+K9n1wrBPRcOF72klQR/YPBB6Thfy8FyAu1sIUcI/EUmCDJsELXB9GdbN3n3LXZswzsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730331684; c=relaxed/simple;
-	bh=bbGa8L383lbBHyiX3dMUYYHXFwaxWhrTdBBmLqW48J8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gIiHSzo0f5r4TuQCcxSYnYPZUZYVGALetDz7cayf1U+TKhaoI4OM1uwIkPoNQInj1FCTAVlWP+hpIGPy3bJntxYEnuiSvDRASND3kClaFTDqLo5S8dNx/qyXvOoKMIMaL84buEEowRlblqa2H26FLxr6U9IS4VqdhfgKy4g3Wok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KzprbEYD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C40C4E68E;
-	Wed, 30 Oct 2024 23:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730331684;
-	bh=bbGa8L383lbBHyiX3dMUYYHXFwaxWhrTdBBmLqW48J8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KzprbEYDbxB04AfEtJScziuD6t4EHGGSEhCsnxN8O4l6QWKNUXdr7Z2UyYJqP34dg
-	 Gv7/T4XGD1ziHIKkJA0Jpt/ax0qa2gOv14famm7QpvDe/56jO5X/MOq2sFSKhyPmO7
-	 fFpWpdDYMvLRzlh8ztA/3+aPso7SxopvzMtSbFwc=
-Date: Wed, 30 Oct 2024 16:41:23 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org, kasan-dev@googlegroups.com,
- Alexander Potapenko <glider@google.com>, Andrey Konovalov
- <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo
- Frascino <vincenzo.frascino@arm.com>, WANG Xuerui <kernel@xen0n.name>
-Subject: Re: [PATCH v2] mm: define general function pXd_init()
-Message-Id: <20241030164123.ff63a1c0e7666ad1a4f8944e@linux-foundation.org>
-In-Reply-To: <20241030063905.2434824-1-maobibo@loongson.cn>
-References: <20241030063905.2434824-1-maobibo@loongson.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730331748; c=relaxed/simple;
+	bh=k9bOMp2HT61Oej6gu2Ql5vK88fG8w93+kfnnHQ5wPv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GEJT5ew+ik3bPgy5hX4y8haxWbhsCOjypyqpDc0Fq1w0TpWB9ZKBB8O4KH+6KlmY03DDLoz5ST+SZrEC1xZmWisChkK/9a3ZV4FQaCVG92HdSPe94JoKIWf6jRzUcfbpzt5YYVwe+Qkcg2JKWgDnEIqgjC1pnGxAgDRS2HKVXQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVbQ6/y7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44405C4FE92;
+	Wed, 30 Oct 2024 23:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730331745;
+	bh=k9bOMp2HT61Oej6gu2Ql5vK88fG8w93+kfnnHQ5wPv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oVbQ6/y7DHsQGEQ1iugbnsUsqvrip1Ym/Ud33S9lTm+jCt+52prExPSE/FexK1l7i
+	 4oA0FGBZ3lJOYYWV0BL0jOaOyCw79lhCqq/ETR2PvqSJiLW2jxUDLwtBSvMTtHekOF
+	 9BKPM1dsePGU1VIvpfNepE0YmkHBko6nBrvc5Js27THk+dPcV+lwYd2aLjr+WQbQoT
+	 UqQi8M6GcaDxyAXF/Ut6SEUmTkacSfsfg+w6/RV7AwTs9dvX8BvpLLn5dldt907rY3
+	 mwAMrMycAaJYxct0+Z4WhaRG1kkeRxr2s/B3bbst6KmJTmGJN1xf12fBIswj90sdkN
+	 gz8xxeGc3q2Bw==
+Date: Wed, 30 Oct 2024 13:42:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Doug Nelson <doug.nelson@intel.com>, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
+	syzkaller-bugs@googlegroups.com, x86@kernel.org
+Subject: Re: BUG: Stall on adding/removing wokers into workqueue pool
+Message-ID: <ZyLEYMZP2SiVGeSD@slm.duckdns.org>
+References: <1cf7b0dbfa4190eeaf0b3401bf7a991b8db59a59.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1cf7b0dbfa4190eeaf0b3401bf7a991b8db59a59.camel@linux.intel.com>
 
-On Wed, 30 Oct 2024 14:39:05 +0800 Bibo Mao <maobibo@loongson.cn> wrote:
+Hello, Tim.
 
-> --- a/arch/loongarch/include/asm/pgtable.h
-> +++ b/arch/loongarch/include/asm/pgtable.h
-> @@ -267,8 +267,11 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
->   * Initialize a new pgd / pud / pmd table with invalid pointers.
->   */
->  extern void pgd_init(void *addr);
-> +#define pud_init pud_init
->  extern void pud_init(void *addr);
-> +#define pmd_init pmd_init
->  extern void pmd_init(void *addr);
-> +#define kernel_pte_init kernel_pte_init
->  extern void kernel_pte_init(void *addr);
+On Tue, Oct 29, 2024 at 03:03:33PM -0700, Tim Chen wrote:
+> Hi Tejun,
+> 
+> Forwarding this task hung seen by my colleague Doug Nelson. He tested
+> the 6.12-rc4 kernel with an OLTP workload running on a 2 socket with
+> Granite Rapids CPU that has 86 cores per socket. The traces 
+> seem to indicate that the acquisition 
+> of wq_pool_attach_mutex stalled in idle_cull_fn() when removing worker from
+> the pool. Doug hit this problem occasionally in his tests.
+> 
+> Searching through the bug reports, there's a similar report by szybot on the
+> 6.12-rc2 kernel. Szybot reported similar task hung when attaching workers to
+> the pool: https://lore.kernel.org/all/6706c4ba.050a0220.1139e6.0008.GAE@google.com/T/
+> So we suspect that the problem is not GNR CPU specific.
+> 
+> Wonder if this problem is a known one?
 
-Nitlet: don't we usually put the #define *after* the definition?
+First time I see it. The trace doesn't show who's holding the mutex. There
+doesn't seem to be any place where that mutex should leak at least on a
+glance, so hopefully it shouldn't be too difficult to find who's holding it.
+Can you trigger sysrq-d and sysrq-t and post the output?
 
-void foo(void);
-#define foo() foo()
+Thanks.
 
-?
-
-
-
+-- 
+tejun
 
