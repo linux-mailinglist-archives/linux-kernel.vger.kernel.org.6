@@ -1,214 +1,202 @@
-Return-Path: <linux-kernel+bounces-389309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F029B6B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:43:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F529B6B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940451C20A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:43:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03471B22832
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7371F4FCE;
-	Wed, 30 Oct 2024 17:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jr+8XwAH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d3D+8vHY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jr+8XwAH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d3D+8vHY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A15199E9D;
+	Wed, 30 Oct 2024 17:45:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FB01BD9C0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD0A1BD9D7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730310178; cv=none; b=E3FIvPduYvt3cvkIwgPxJACNRzONjgLX80LGMhmkGFYSBeAk5y33l3ezxOfsxjP2Lrc02ZzkgCpHnwwF6we5XX23sDu1OMFrkF4iz6HtdHV8LVTPqhVeQIqwBvwjy7o4YS/ZYCdptWIJkRBvQsdBC+8CdhPRlRR0UTjVOitl0mY=
+	t=1730310328; cv=none; b=NC4lrWii1Iu1kxBzabxFV/TY6YIJnFEWTNklK3zEYh656hWiYBFeJWdME6vxgIjufBVJIqX8i5mUVLZlo0j8qVCV1PRY6O6Dzj9OG5Rh8sceL2k8UngunBO9YhpxXmCBGun+u9qSLNN31b/FbkWbKwcCTEPcj3fS0Bs/2epKpHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730310178; c=relaxed/simple;
-	bh=J9SSR98UqbMybGALEkiXRbUU7SA09fjwAEE9IvtzGzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JgYD112K19V5/wQOmWbBtUPiUANhc6RzoMNxcvt+CC8bb+sqlaKKoFJKebT1FeRIfE6ocDifd449X5f00Zc7rHYQkp0Qui0QrQGtsCeIB0GyFvUTi1WW/ztyRAcT4XnUeCeFRcLM8i4Qq+GODLyxdbx3GGNFtzeoSbNPz8iEoI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jr+8XwAH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d3D+8vHY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jr+8XwAH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d3D+8vHY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F376C21DC4;
-	Wed, 30 Oct 2024 17:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730310174; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0DAJv6l/sF20AqrWcqRPWfdPD/jQcH9r1vJnOfkPhrk=;
-	b=jr+8XwAHYHL6atvk3qDyIbb3D5Fu3ApqvdqvA8AWTS1/Xsc7BcbjB3bVVpEArbX6iFh6PA
-	TP+OYGMV1KqOzUUUPUsgIOwgmKwJkjUw7Ocy5ZAveC4yLf1zQDjLkBb4Rk22YbxF/FgXlK
-	jV0RVvirHpP9XS3xYy+FGLlYyc5yMOA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730310174;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0DAJv6l/sF20AqrWcqRPWfdPD/jQcH9r1vJnOfkPhrk=;
-	b=d3D+8vHYkWQhzPuBmadrqUlz9ju7BO8hh/BYdoxwcccFE1EnphIEHMHI1Xa2cC3pmMflUz
-	6RTaqcZNif9aZ9DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730310174; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0DAJv6l/sF20AqrWcqRPWfdPD/jQcH9r1vJnOfkPhrk=;
-	b=jr+8XwAHYHL6atvk3qDyIbb3D5Fu3ApqvdqvA8AWTS1/Xsc7BcbjB3bVVpEArbX6iFh6PA
-	TP+OYGMV1KqOzUUUPUsgIOwgmKwJkjUw7Ocy5ZAveC4yLf1zQDjLkBb4Rk22YbxF/FgXlK
-	jV0RVvirHpP9XS3xYy+FGLlYyc5yMOA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730310174;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0DAJv6l/sF20AqrWcqRPWfdPD/jQcH9r1vJnOfkPhrk=;
-	b=d3D+8vHYkWQhzPuBmadrqUlz9ju7BO8hh/BYdoxwcccFE1EnphIEHMHI1Xa2cC3pmMflUz
-	6RTaqcZNif9aZ9DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA7DA13A7C;
-	Wed, 30 Oct 2024 17:42:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CZUiMR1wImceSAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 30 Oct 2024 17:42:53 +0000
-Message-ID: <87aedec7-3890-4a35-9f72-b4edb8e1c390@suse.cz>
-Date: Wed, 30 Oct 2024 18:42:53 +0100
+	s=arc-20240116; t=1730310328; c=relaxed/simple;
+	bh=Zq/og7AFoo14KZf3UG5QWOaDH7TQMemEI6G2OS0FsyU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l2KwGno4TmWYyk69BWvOz2P1oOkaLoP4nBdaoTaW8h3yqFlNzFeulH/IYMyxc7GYCeJC7CYDOe686W1EAqr8QNjfXY3S2tu+Q2XezQawXQrzlsK1NND259wDVqpW8S/zF6+99kw8IuKoD2QsqZRUKbl2uUPYjbclNUbczCYzkHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso1024605ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:45:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730310325; x=1730915125;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=za1ciVBGbO8OmadBn8zcwu8ODHnRS81vIUIVlw5CgJQ=;
+        b=XAE0Xq5ch9QTthJxpRBtrlz+gDJsEKhMHszv5OSSy3Rg9IahIWXul4APmEgm+FZxPA
+         yeewparJg/In5Og4utqY1iXcvMhBNFNCFOBUwPfZ15mRwtPC+Y0ZAaI9H4LTE5NMv/Sj
+         n0s/ehmzj6wQBKV50HgCUk6xt99Rq/xFIEl6gSaeo6cf+NJvL2QtCoLHfYmlRThJ4c8w
+         VUT0D8a5Swo/WNT7EVlrTZKAqDgR8om4DQEHCDLf1KaZCBg4nwFa72Ar6+xsCBjv7Da9
+         nGPjUz20huaGFAdeP0DKDBA2CsZMNSD0ayL5GUIghidURPpprQglfe4QhH6OS9o5VBxO
+         JRSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYceaUB00bnT5rKKfaZ7HT5VIDZ5Na6ZwMiWdeyRRxz6Mue130uf7iMnI4qkQ8Q2fjhydUOk0XsvxYqK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSiqNgswwvCVt1KOiP6yFGlvfMAILmBFDEic6l4pcv5Rj3CxOg
+	BNsStVALgVG8NQbvFFFTOtoify09wSF3r8a5BnDS2U08Hy5vJA+FgbBr8n6OXoXDaIHB/tLTfxi
+	DSn/aBqyePUTvKLwdSImy9z8gjX39vGEkl6KFozva7Rr0xylLWJVWarU=
+X-Google-Smtp-Source: AGHT+IGEahBYQ7BzD3UISV4ElGJszR1pZkIWegWM3huF35bJRhUgilgud/4NlvH8ey6+BAl9dknOWuaq+EJWn8HhTeRI3D1ZI3nu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/gup: restore the ability to pin more than 2GB at a
- time
-Content-Language: en-US
-To: John Hubbard <jhubbard@nvidia.com>, Christoph Hellwig <hch@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
- linux-stable@vger.kernel.org, Vivek Kasireddy <vivek.kasireddy@intel.com>,
- David Hildenbrand <david@redhat.com>, Dave Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>,
- Dongwon Kim <dongwon.kim@intel.com>, Hugh Dickins <hughd@google.com>,
- Junxiao Chang <junxiao.chang@intel.com>,
- Mike Kravetz <mike.kravetz@oracle.com>, Oscar Salvador <osalvador@suse.de>
-References: <20241030030116.670307-1-jhubbard@nvidia.com>
- <ZyG0VKUpFttPF30f@infradead.org>
- <249d2614-0bcc-4ca8-b24e-7c0578a81dce@nvidia.com>
- <ZyG3GAvTHpRL9tnU@infradead.org>
- <ea81f12a-95a3-4b9d-90e7-53a5d9c910be@nvidia.com>
- <87124c1d-5b95-4499-aa4b-22f2ecd376bc@suse.cz>
- <ac06dcfe-c370-4a37-9d1a-2b2c2ef076aa@nvidia.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-In-Reply-To: <ac06dcfe-c370-4a37-9d1a-2b2c2ef076aa@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-Received: by 2002:a05:6e02:174e:b0:3a3:40f0:cb8c with SMTP id
+ e9e14a558f8ab-3a61752b08cmr6920635ab.17.1730310325436; Wed, 30 Oct 2024
+ 10:45:25 -0700 (PDT)
+Date: Wed, 30 Oct 2024 10:45:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672270b5.050a0220.3c8d68.052a.GAE@google.com>
+Subject: [syzbot] [nilfs?] general protection fault in touch_buffer
+From: syzbot <syzbot+9982fb8d18eba905abe2@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/30/24 18:29, John Hubbard wrote:
-> On 10/30/24 4:03 AM, Vlastimil Babka wrote:
->> On 10/30/24 05:39, John Hubbard wrote:
->>> On 10/29/24 9:33 PM, Christoph Hellwig wrote:
->>>> On Tue, Oct 29, 2024 at 09:30:41PM -0700, John Hubbard wrote:
-> ...
->> It might be a regression even if you don't try to pin over 2GB. high-order
->> (>costly order) allocations can fail and/or cause disruptive
->> reclaim/compaction cycles even below MAX_PAGE_ORDER and it's better to use
->> kvmalloc if physical contiguity is not needed, it will attempt the physical
->> kmalloc() allocation with __GFP_NORETRY (little disruption) and fallback to
->> vmalloc() quickly.
->> 
->> Of course if there's a way to avoid the allocation completely, even beter.
-> 
-> Why not both? I'm going to ask our driver team to batch the pinning calls,
-> as recommended nearby, just to be sure that we are following best
-> practices.
-> 
-> But it also seems good to use kvmalloc() here, and avoid any other
-> regressions. That's also a best practice.
+Hello,
 
-By "avoid the allocation completely" I meant David's proof of concept
-elsewhere in this thread, that seems to replace that kmalloc_array() with no
-allocation :)
+syzbot found the following issue on:
 
-> thanks,
+HEAD commit:    c1e939a21eb1 Merge tag 'cgroup-for-6.12-rc5-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15bd4e87980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=9982fb8d18eba905abe2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e24630580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1427255f980000
 
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c1e939a2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/79a07b922222/vmlinux-c1e939a2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0a5d98e2bb0d/bzImage-c1e939a2.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e4ead0d018d8/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9982fb8d18eba905abe2@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 2048
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+CPU: 0 UID: 0 PID: 5503 Comm: syz-executor197 Not tainted 6.12.0-rc5-syzkaller-00044-gc1e939a21eb1 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:perf_trace_block_buffer+0x293/0x490 include/trace/events/block.h:24
+Code: 24 18 48 8d 58 30 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 2b 82 62 fd 4c 8b 3b 49 83 c7 34 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 6c 01 00 00 45 8b 3f 49 8d 5c 24 08 48
+RSP: 0018:ffffc9000d4ef420 EFLAGS: 00010207
+RAX: 0000000000000006 RBX: ffff888049091030 RCX: ffff88801f02c880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88801fc37928
+RBP: ffffc9000d4ef518 R08: ffffffff819e732b R09: 1ffffffff203a095
+R10: dffffc0000000000 R11: fffffbfff203a096 R12: ffffe8ffffc33cd0
+R13: dffffc0000000000 R14: ffff88801fc378a0 R15: 0000000000000034
+FS:  00007f230dad76c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffebac93808 CR3: 0000000043d34000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ trace_block_touch_buffer include/trace/events/block.h:54 [inline]
+ touch_buffer+0x1d5/0x240 fs/buffer.c:64
+ __nilfs_get_folio_block fs/nilfs2/page.c:42 [inline]
+ nilfs_grab_buffer+0x321/0x440 fs/nilfs2/page.c:61
+ nilfs_mdt_submit_block+0xdc/0x890 fs/nilfs2/mdt.c:121
+ nilfs_mdt_read_block+0xeb/0x430 fs/nilfs2/mdt.c:176
+ nilfs_mdt_get_block+0x127/0xb70 fs/nilfs2/mdt.c:251
+ nilfs_palloc_get_block+0x181/0x2a0 fs/nilfs2/alloc.c:217
+ nilfs_palloc_get_entry_block+0x8e/0xb0 fs/nilfs2/alloc.c:319
+ nilfs_ifile_get_inode_block+0xed/0x180 fs/nilfs2/ifile.c:141
+ __nilfs_read_inode fs/nilfs2/inode.c:476 [inline]
+ nilfs_iget+0x240/0x810 fs/nilfs2/inode.c:581
+ nilfs_get_root_dentry+0x28/0x230 fs/nilfs2/super.c:909
+ nilfs_fill_super+0x50b/0x720 fs/nilfs2/super.c:1090
+ nilfs_get_tree+0x4f9/0x920 fs/nilfs2/super.c:1220
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f230db220da
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f230dad7088 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f230dad70a0 RCX: 00007f230db220da
+RDX: 0000000020000000 RSI: 0000000020000040 RDI: 00007f230dad70a0
+RBP: 0000000000000004 R08: 00007f230dad70e0 R09: 0000000000000aa1
+R10: 0000000003200c00 R11: 0000000000000286 R12: 00007f230dad70e0
+R13: 0000000003200c00 R14: 0000000000000003 R15: 0000000000100000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:perf_trace_block_buffer+0x293/0x490 include/trace/events/block.h:24
+Code: 24 18 48 8d 58 30 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 2b 82 62 fd 4c 8b 3b 49 83 c7 34 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 6c 01 00 00 45 8b 3f 49 8d 5c 24 08 48
+RSP: 0018:ffffc9000d4ef420 EFLAGS: 00010207
+RAX: 0000000000000006 RBX: ffff888049091030 RCX: ffff88801f02c880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88801fc37928
+RBP: ffffc9000d4ef518 R08: ffffffff819e732b R09: 1ffffffff203a095
+R10: dffffc0000000000 R11: fffffbfff203a096 R12: ffffe8ffffc33cd0
+R13: dffffc0000000000 R14: ffff88801fc378a0 R15: 0000000000000034
+FS:  00007f230dad76c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffebac93808 CR3: 0000000043d34000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	24 18                	and    $0x18,%al
+   2:	48 8d 58 30          	lea    0x30(%rax),%rbx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 2b 82 62 fd       	call   0xfd628247
+  1c:	4c 8b 3b             	mov    (%rbx),%r15
+  1f:	49 83 c7 34          	add    $0x34,%r15
+  23:	4c 89 f8             	mov    %r15,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 6c 01 00 00    	jne    0x1a3
+  37:	45 8b 3f             	mov    (%r15),%r15d
+  3a:	49 8d 5c 24 08       	lea    0x8(%r12),%rbx
+  3f:	48                   	rex.W
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
