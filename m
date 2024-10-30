@@ -1,474 +1,281 @@
-Return-Path: <linux-kernel+bounces-388344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094D19B5E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:48:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A27C19B5E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CB5D1C212D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:48:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69F41C21088
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF571E1C2F;
-	Wed, 30 Oct 2024 08:48:06 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A309915B0F7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730278086; cv=none; b=o7KgruZvgevYH5PruyjPX0Dbu+i2I2mEuydqNOBuzHTRTr2SMujgB3l28xryAyDILuVnyiHphi+kfUAyncWg/FX9PZQ+v89BL7qgJDba0yWMvdrP+y8Ry5UMUdJ11yPHGUdfdgmOF1PiLNsYmk3yFsqIRZEsvNp2tUl9Lzkv3UQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730278086; c=relaxed/simple;
-	bh=4C3F2ipFnREUGUzumsUL8Bg4Uy6lKTO/zKqXvSG+hzc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Df3RWAHYzG12qoYkWhXgiQPrwNOoCfmiu/a9EoAeizbrEhqcCyeXRpYsfluoBa2c8Nj4sRillFqr9yqjT0oWkVGlWv5vji7YYC6LXEeKFaH0L7cbCjUrQdkWpGUO7rjS0n+dfnzTlbQ9mdHxT2ud9tBBe4W06nKJMSmycMoQWY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Axjq++8iFnZ94dAA--.38144S3;
-	Wed, 30 Oct 2024 16:47:58 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMAxlsC58iFnnQUpAA--.23935S3;
-	Wed, 30 Oct 2024 16:47:55 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, lixianglai@loongson.cn,
- WANG Xuerui <kernel@xen0n.name>
-References: <20241021080418.644342-1-maobibo@loongson.cn>
- <CAAhV-H4anpgfiAnPgm9h-m9pKCW0KUio+E72r1Q3F_0vm+zMRg@mail.gmail.com>
- <8c55c680-48c8-0ba3-c2a1-56dc72929a8d@loongson.cn>
- <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
- <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn>
- <CAAhV-H6+rE_7P_C0MaWzXToVcPqZQX0YMPnhyZV7Pp6aQ01mCQ@mail.gmail.com>
- <39330bb8-d267-ef02-e082-388c7bfa3b43@loongson.cn>
- <CAAhV-H5jGZz2MeCSuLmJb5b-ugaaj3EECD7Z3mvtHW=OQrhLBw@mail.gmail.com>
- <8d2ab78b-6706-c78d-ffad-835ceef7372c@loongson.cn>
- <CAAhV-H7bwJwGSyBqY3XZynzGaqamKv3BJjxrqPJ-foaP4dFbAw@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <f2b7283b-9db3-c961-fa11-f1aeff489479@loongson.cn>
-Date: Wed, 30 Oct 2024 16:47:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FED01E1A36;
+	Wed, 30 Oct 2024 08:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5RcYSQC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645691CCEC2;
+	Wed, 30 Oct 2024 08:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730278084; cv=fail; b=byNAa1UsJVUpwOibvJHR3IZhvaaVKplYowG85HYPQqjAKhjSUNs2hFe9MQF62mDusPqibu4RtxyR0k+LPly2DX3id0Yn2sDihBp7MtmfI9HhahjLUXtQPYTUE6eq3kHxqP2Qg7fwBkNCxumLLqYPVBrexu3wdvxT3Pp9IpJ6xow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730278084; c=relaxed/simple;
+	bh=61p1tVbtINQPBUiEfef9zh+EVvLlbqENCMJoL7GGpc0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:In-Reply-To:
+	 Content-Type:MIME-Version; b=GuvRPPk650ZtiywAQ7YwUE4dETB/e155FEkSlm2RG0+sSP90Sec30ZmxJEVvA3AoV2WFY936aPSMTgDqwGI3o1jYYNmOavgo7gx0sizKjTFjZ/ksro62Wn3XUVNcD0HKthdo7PmqPLWvfVzH7Zwz0QBDA8r5aakcqggW/N95evs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5RcYSQC; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730278082; x=1761814082;
+  h=subject:to:cc:references:from:message-id:date:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=61p1tVbtINQPBUiEfef9zh+EVvLlbqENCMJoL7GGpc0=;
+  b=F5RcYSQCXK94G1KbVain4DsGwyrbDt9chQVbtOSfOkBKbkCItw0Y91sB
+   HPmJIUKpRtKjnTmsBPBQ6DoY9Z5DR+PCpifpi8ko2xVT369RJVdWYmcN5
+   Dw+V3IZ3S5Lia+WxflCpr9Lma0ZNYeUx8vL7P28V4h2b88nla7NjiVzIv
+   D6L+v5jtus/NiSqtNNDnlCBEDUK6UyxK6iC79UxWfL4+SLwpOU4ZSGxIW
+   lIOKebKwAWvqRQO+VulUmPSPfnQgZDITJbpaTlvQ8pDOL2OZBx59dRb1c
+   +e6ujuqNIdLhhnGgHu2H916Ge3czh/i8T4CE984sWipGC/dHA/nMyt7QI
+   Q==;
+X-CSE-ConnectionGUID: /TTkq2QsQMuUvtKKTS5JKQ==
+X-CSE-MsgGUID: k3iN5UKLSDWnXZjS2KIn/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="41367886"
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="41367886"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 01:48:01 -0700
+X-CSE-ConnectionGUID: iaMaUnnsSL+CPSTH9Rp0GQ==
+X-CSE-MsgGUID: ZAZROS/DQMugOsiYpOxbng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
+   d="scan'208";a="105556178"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Oct 2024 01:48:01 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 30 Oct 2024 01:48:00 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 30 Oct 2024 01:48:00 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.49) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 30 Oct 2024 01:48:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CclO1V9P2f+FfeAh/2DUdCHe4RkGjBoEpqJLBidjXDj6hCrJoCOUf4PHyX6kK5MQUcNI/NfRReB39bRXSPco8ruq0w/2hbd1BVxh2fr5gfHusByCai38YkTHpTJSsloNGOg8HEQLaobryA1Mj53v961SUGxd+ofyjj/yE4GHSl2929RkcjTBhPkJnbGlWtjcnr02pG3pUB55hmKtK2gSamWfgyJy4yKFR1eF84vcPwZZ29XWMYl599kHol3pPJTi00SFErE61iqFb3keRLbc0qU7YpQASi1wo12T2yemQQPCHixBs3CSocyGPUvdBnbZiQrLdo/ezaty3FumStJVJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sX4VmLxVQi4YI4HuqDmn1NlqXl08grTr1uWHzWeRb2A=;
+ b=YtTCRhO2tekcBw3MNrVz+zmpGrO41GO6c3fXFyWj8RDoHnvSM2utNPameiFQGAEsdAwjM4BDukk2C/mKMAC+je2LjdPPPj2C54NFIiGpu27qoDzivVyEdB+7kLGMrqlCNF6nrPvUnso886cZnCSWG51Zw7OowaTkygKstkwNkT7p+PH8cMrPj4IA2h/kuhGjeKS+Xl+0YlBzRVIIpLmgCi1xSGmjNYvZsXnnH1N2QSHyCkrE+5YWWWHcHkGTbLmnNwdrm6mbqq8D+Mp7J21zzROrjL1Nsk4CW94+PdnkRzfJgQWFiYz5MXpZyz7IYv0OQbQkiJG/LUAfk+3Mh4ZhTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5949.namprd11.prod.outlook.com (2603:10b6:510:144::6)
+ by IA1PR11MB6291.namprd11.prod.outlook.com (2603:10b6:208:3e5::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Wed, 30 Oct
+ 2024 08:47:53 +0000
+Received: from PH0PR11MB5949.namprd11.prod.outlook.com
+ ([fe80::1c5d:e556:f779:e861]) by PH0PR11MB5949.namprd11.prod.outlook.com
+ ([fe80::1c5d:e556:f779:e861%5]) with mapi id 15.20.8093.025; Wed, 30 Oct 2024
+ 08:47:53 +0000
+Subject: Re: [PATCH iwl-next v6 1/2] igc: Link IRQs to NAPI instances
+To: Joe Damato <jdamato@fastly.com>, <netdev@vger.kernel.org>
+CC: <jacob.e.keller@intel.com>, <kurt@linutronix.de>,
+	<vinicius.gomes@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"Przemek Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, "moderated list:INTEL ETHERNET DRIVERS"
+	<intel-wired-lan@lists.osuosl.org>, open list <linux-kernel@vger.kernel.org>
+References: <20241029201218.355714-1-jdamato@fastly.com>
+ <20241029201218.355714-2-jdamato@fastly.com>
+From: "Lifshits, Vitaly" <vitaly.lifshits@intel.com>
+Message-ID: <be60aa0f-2659-d32b-646a-ce696db4c064@intel.com>
+Date: Wed, 30 Oct 2024 10:47:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
+In-Reply-To: <20241029201218.355714-2-jdamato@fastly.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TL2P290CA0006.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:2::6)
+ To PH0PR11MB5949.namprd11.prod.outlook.com (2603:10b6:510:144::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H7bwJwGSyBqY3XZynzGaqamKv3BJjxrqPJ-foaP4dFbAw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxlsC58iFnnQUpAA--.23935S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj9fXoW3uFyDAF15ZF4xXw1DJF1fGrX_yoW8XFWUCo
-	W5Jr17Jr18Jr1UJr1DG34DJr1UJw1UJr1UAr9rAr1UXF1Utw1UAr1UJr1UXF47Gr1UGr1U
-	GryUJr1UArW7Jrn8l-sFpf9Il3svdjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
-	UjIYCTnIWjp_UUUYB7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
-	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
-	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280
-	aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
-	xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
-	xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-	C2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
-	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-	CTnIWIevJa73UjIFyTuYvjxU2DUUUUUUU
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5949:EE_|IA1PR11MB6291:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75087fd9-27c4-4134-0c14-08dcf8bf8ac9
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Tzh2WkZkbU1YcnNyTUNmQTZqMS9FS0VXSmdSNEdENG05dXBHUWNJM0RiV3JF?=
+ =?utf-8?B?REtnRitCOWkySy95TnUxTTFUS3drblE1cU5nenBkdTJ2ZlFBTENKNkZ4N2oy?=
+ =?utf-8?B?bndySkI5S1d5Und4Y0VwdkZQQWFjT2pMQTBacENDM1VmVTRRblBUSmkzMld3?=
+ =?utf-8?B?ZDRUY3EzS2N5QUpGNGhYQ1pIcFdmZHpkclV1ZWZuRjNtM25oL09BampnSVJ6?=
+ =?utf-8?B?OEp1NmMrM0hHK2JGa004dU5KaER1YjVrK0FlU1pyb1FNNkVPRXhPM1QrWk85?=
+ =?utf-8?B?UW91bndkNFE0V21EL011QitVZktia1B2UHl1S2FUU2dIZ2dnQ3RaVUlXNCto?=
+ =?utf-8?B?RzBqYWR5aVloZU1ZRnFTVkFYQ2prT0QyaGF0TDVXT2QyaHR5ZkpYWmp5NkFw?=
+ =?utf-8?B?ZFpSWXdzM1JxVzNCcHI2QzlZUVhHdFozaG41aGtULzh1SC9JQ2l0bVMvYUJD?=
+ =?utf-8?B?TWN0c2ZhN0hoQUo4clY5Q1gzL0lmb1BJY3FtSzR4blJlanluMjU2ZnJ3Y2ov?=
+ =?utf-8?B?Nmp3blcxYmwxYnlXV3FYSnRZdFovWWZIMVlBdHRpSXM5ZWxwcUpseGVvekk5?=
+ =?utf-8?B?UU96OGtWSDZkT2ZjdTJVTUJVb0hKZVFXTENRQzQ3ZW5KN3RtcGRkWjFDQ0pa?=
+ =?utf-8?B?SjlUYjR3L1pxcnV0Wi91eUozcjZuWmlaOTBQUW1rR0JNUU94K3VpS09BSm1z?=
+ =?utf-8?B?RUF6R1NsUlAwa21oWHJMWWhPeEROeUdLM0RqOWZtcUhyblkrYjk2WGJFcStm?=
+ =?utf-8?B?QUZRakhyNGhxZjZVM2tsVEtOQ3NMOWNmZHY3V3RnMU5QUEVGOFpBUk95RWg0?=
+ =?utf-8?B?Z0xneVQ5d1VIZVgrWjhUSzVTZzZPOW1CTkRMb054VlJ0ZmFCOXZSWG9hNk1H?=
+ =?utf-8?B?Wk9IS3ZiTVFxa1NKeGlRUk1MVk9nMEZsVm9McTFLck95ZUFYRXN6cUNUMUts?=
+ =?utf-8?B?VjVkeTRkMVV1WDRHWTEzc2lDbWo3ajVNU3V4c1IvWm53dURRSXBDVFEzUVkr?=
+ =?utf-8?B?UWcreWdNTUptZEg1Wk9EQzN1UkhIWGU3RFFLSkd4VHlyaVB4TUt2bVFIMnBx?=
+ =?utf-8?B?SE1EVTVOSER3dmtTOHI2NFJqZ1orNzBRZmM1cWRDMzBsWFlHbHphSGNiSG96?=
+ =?utf-8?B?Z25kWEdJc0ppWTZDMk1tdDJiUG16SzYrcFBhb3ZOMEFpOGdsbjU2N2plRzVR?=
+ =?utf-8?B?UXVBbWJHblErbFRUZUFSM2NDMFdCWkszcTR3dVBzM3F2MGN3ZnJRZ1ozcTJ5?=
+ =?utf-8?B?eWMxcGRGOWhpQjA0cjU1UWVsMlRIRWhrSlc0STVrQU9YOUVWd0YzMExhYmtC?=
+ =?utf-8?B?TVV4cG1rWmM5dWlTZDVkQVUxeU9xVzJ5eC8vV1VTaDhpUDdFaHBCUDk4b1FJ?=
+ =?utf-8?B?WHRGUWJMbVVyYURpVVJ2dUZUOGhVYnBtbzhyUC9Xd1NKa0E2dDZhNTJYdHlm?=
+ =?utf-8?B?UU95TnF5VlpCTjBOVWRhQmExTFplODZMdVozVkhGcXgvM3lSUThOYjg2MFow?=
+ =?utf-8?B?NHVDZVNYenBQNG95NFNhU3BRQ0xwL2UxVFhlYTdSOEMyZGd4Q1llNTh2MUNt?=
+ =?utf-8?B?VFpxTEJBWXpuOEFsTXBzTDl6MWJZRHNyM0Mzc3ZmN0Z1bUFJc2g5dWZScW9s?=
+ =?utf-8?B?VlpuejkzcWZ3WlUxWWRmbTJuRXowcUVPQnRPTUZ0OXJoVWovY0h2VnhYR1Q3?=
+ =?utf-8?B?RmxRRVVzNnRsMVNVWHNNVFFmTEFtK2g0dkVPUFRTRlRNQVcrQUF0b0RMQnoy?=
+ =?utf-8?Q?Y+J6FEzENn3t9fL6f6ckCUN1jIWaCZaJ8TeyUtJ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5949.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Qm5iR1VrNnc3UmFkOEF3Mm1ZdkQzQkgrNjhFTzRzaTJCNU9kK3R0NExOb0E3?=
+ =?utf-8?B?YmorZ2lBZTNtc3NFVTllRnpmMVFXbm80QzVJeUU5QUU3ZDd0KzhXRDQ3b25q?=
+ =?utf-8?B?M2NKek50bzlQcld5ajROOVFEcGo2U3pvR0t6UHhUckV5Z2NFME9QK25sY1Nl?=
+ =?utf-8?B?aUM4Qm94VDk3a1RBajNabjZ1b05lK05sazVRNVVIZTZmUW9XWEo2WG1WbWlF?=
+ =?utf-8?B?OExSOVdtZkQ2bmNQVFJEYzJVdHc4T3BUL1RyVkZaYXkzK0NNU2FhelluTjZ2?=
+ =?utf-8?B?VEJoZVN3VHpMaFFQUG5rd0R6U2R5amNNWDZFTnM3dy95aW1ZZTdNaTVwMUFS?=
+ =?utf-8?B?QkltZmZOVnVLMnJrcTZGbUR5cHM4YjZNTTViN2EramI5QkJOa0RjUnF6czYy?=
+ =?utf-8?B?aTRaeEVhbXFUQnhhQTRBTHFYOGlGMkcrMW9wbXVuSHFQN24zYVVGellscTZZ?=
+ =?utf-8?B?TGdrY3BraEV2NzdGNzUvcXpmYXVTY08zd0Y5bDFnc3BtZzVmdFpCM2dFUlFQ?=
+ =?utf-8?B?YkV0bWlNTjlyL2duQVhXcDJxd3RDL254RDN5TkpPdXd5M2VXSlFSR1krL3My?=
+ =?utf-8?B?Tm9rQ3JUK0tpeGgvdi9hb2dRUENHWG1CY1N5Mm1oM3ppbUtXZWZoU3pwY3dG?=
+ =?utf-8?B?VWd2RGFoVTM0OWpMWEl4QzRiY3M5dWdwV1BIM2t5VGdrY0Q5Y21Fdm41Qi9P?=
+ =?utf-8?B?eTBVWmh6ZFRBTXRQNHRxaUpWdXlySmkxK2lvQkRxazRHcVd3K3RDeXVGS0Y4?=
+ =?utf-8?B?VHZkNmQzaXpxTHplS0Y5RXZuL2sza2VhSU9mNDJOc3dsU3libVBvQ0VzTkNZ?=
+ =?utf-8?B?NlRpSzVVWTQwalhTdHIvYm9FbElGUU1BeHBDU2kyRVBpSnR2QjRZS2FkVG5h?=
+ =?utf-8?B?ZFhxUEpYaWVuWXRKRDFtdTAxQk9sWndPWDYwNmRza1JxbFNZQlhmVzRLYkY0?=
+ =?utf-8?B?OGtUb3JLaFRJS3BSYmFVYUJiL0N4UjE3V0NuZUZmMTVYQ1BNZThvdC9CTHpF?=
+ =?utf-8?B?T3lDSm1JY2VPUUpxVnczY29hUkZ3dkllYmxmQXhMN1h5T1BQT0lFbHJndnZB?=
+ =?utf-8?B?WmIzS09IU0pxdDk2Ym52SFhNaTdCNmRtZFVJTmJzZmtFaldaeVNwZ2pKcHN4?=
+ =?utf-8?B?bk11aU1TR3oxNWh0SlJxR1ZuMVFvaE5pOXhQUkQyK0tBQm9yeW1Pa01ybW1D?=
+ =?utf-8?B?Y3BrTEtlWnMwT1huZ3BNYVMzdmJWZUl0akdtYlVkVklsZVZWRzZnMXM0WG50?=
+ =?utf-8?B?bHpEMENTNExrUm5sSHFrU2VBVnFZZThycDROcUpVUW5RT3VvcDF0MHpnY0hH?=
+ =?utf-8?B?Tk5Tc01xeDUvc1dnZUdhcjBLeHNMOTM3Z2lKeVZBSXhXb0U2akVmdG15WXpG?=
+ =?utf-8?B?UlpjR1FvYnc0YWNONXAxUTd0RC9LRnpsVVF6MCtCclE3SDFpTy9DWmd6eEZG?=
+ =?utf-8?B?a2lha3FjNU5ibEg2aldZTlpxSUhOdVBnZjg0ZzFpYjhmVGZnUndNTG9jbjhu?=
+ =?utf-8?B?TWdyTHgzSlU2ZXk2UjUrbFB6bkZieUthM3JmRDRldklwS0ExUzc0U0JXWElM?=
+ =?utf-8?B?d24xMDl5b282YUEwYmIyNkcxaitrcE9OVURvWlU5eEpsM1VCTWlwNGtrbm5Z?=
+ =?utf-8?B?b3R2eXdrZHVqZHBucmdMOWsxZ1JaL2oybHNoQXJkQWlTWXJLS0paRm5aeWxr?=
+ =?utf-8?B?bkhhZnZtVnU3czZ3TnhQWkt0T1ZSTXJGcWRYUm8zckZ1QkxHYmZkbWRwazl4?=
+ =?utf-8?B?R0J1ekJEbnc3UWJvUEcyN200T3JGSGR5azlmV21JK3FQT0I0NHA0UWNzbWxR?=
+ =?utf-8?B?OTJuaHRNUG81Y2Juc1ZDbkFGeEhzSVJub2pHLzBSQXJuOUFiTjZSaU4zUWNU?=
+ =?utf-8?B?U0hjenpNZ1ErVzZ3UWtMQ2R3Z20xSXF3ellremxhSzJEbVhzVXNSejdTdFgz?=
+ =?utf-8?B?ZlFKYnBtaGozSEhtR0lvTWM3a0pVNUlIWHZUZTZOUUtPL2hFaGNxTHByWW1w?=
+ =?utf-8?B?QmxXY3ZEYWpVL2MzNzVna2FwTnZLYzlKam5pL2ZhRmozazRrRHJyV3ZUajM2?=
+ =?utf-8?B?b1A1YmNuUGhMVVAxTWl3bzZDbVp3T0NNdEJHSHJUeHdYU0ZZQWJxWjZ4YVpw?=
+ =?utf-8?B?OVJ4d2FFdmVYNW5RZEFES0VJU0NwUjhFNFJTRTJFbXdUVTh1YmZvYUNqR1d6?=
+ =?utf-8?B?cXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75087fd9-27c4-4134-0c14-08dcf8bf8ac9
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5949.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 08:47:53.3446
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ehd+gyx3UOHy7Yo5dC9Is2h3QWdRF/AzadTQJitOwPDVbAgiUckI6bcdgwXyX7kpFxEfBDt6IRdC5xxVepghxaK483JEXNlBDH5qyHSLoq8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6291
+X-OriginatorOrg: intel.com
 
 
 
-On 2024/10/30 下午4:34, Huacai Chen wrote:
-> On Wed, Oct 30, 2024 at 4:25 PM maobibo <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2024/10/30 下午4:12, Huacai Chen wrote:
->>> On Tue, Oct 29, 2024 at 7:49 PM maobibo <maobibo@loongson.cn> wrote:
->>>>
->>>>
->>>>
->>>> On 2024/10/29 下午6:36, Huacai Chen wrote:
->>>>> On Mon, Oct 28, 2024 at 8:38 PM maobibo <maobibo@loongson.cn> wrote:
->>>>>>
->>>>>> Hi Huacai,
->>>>>>
->>>>>> On 2024/10/22 上午9:31, Huacai Chen wrote:
->>>>>>> On Tue, Oct 22, 2024 at 9:17 AM maobibo <maobibo@loongson.cn> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2024/10/21 下午10:32, Huacai Chen wrote:
->>>>>>>>> Hi, Bibo,
->>>>>>>>>
->>>>>>>>> This version still doesn't touch the round-robin method, but it
->>>>>>>>> doesn't matter, I think I misunderstood something since V1...
->>>>>>>> I do not understand why round-robin method need be modified, SRAT may be
->>>>>>>> disabled with general function disable_srat(). Then round-robin method
->>>>>>>> is required.
->>>>>>> I don't mean round-robin should be modified, I mean I misunderstand round-robin.
->>>>>>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Please correct me if I'm wrong: For cpus without ACPI_MADT_ENABLED, in
->>>>>>>>> smp_prepare_boot_cpu() the round-robin node ids only apply to
->>>>>>>>> cpu_to_node(), but __cpuid_to_node[] still record the right node ids.
->>>>>>>>> early_cpu_to_node() returns NUMA_NO_NODE not because
->>>>>>>>> __cpuid_to_node[] records NUMA_NO_NODE, but because cpu_logical_map()
->>>>>>>>> < 0.
->>>>>>>>>
->>>>>>>>> If the above is correct, we don't need so complicated, because the
->>>>>>>>> correct and simplest way is:
->>>>>>>>> https://lore.kernel.org/loongarch/6b2b3e89-5a46-2d20-3dfb-7aae33839f49@loongson.cn/T/#m950eead5250e5992cc703bbe69622348cecfa465
->>>>>>>>>
->>>>>>>> It works also. Only that LoongArch kernel parsing about SRAT/MADT is
->>>>>>>> badly. If you do not mind, I do not mind neither. It is not my duty for
->>>>>>>> kernel side.
->>>>>>> Yes, I don't mind, please use that simplest way.
->>>>>> There is another problem with the simple way. eiointc reports error when
->>>>>> cpu is online. The error message is:
->>>>>>       Loongson-64bit Processor probed (LA464 Core)
->>>>>>       CPU2 revision is: 0014c010 (Loongson-64bit)
->>>>>>       FPU2 revision is: 00000001
->>>>>>       eiointc: Error: invalid nodemap!
->>>>>>       CPU 2 UP state irqchip/loongarch/eiointc:starting (100) failed (-1)
->>>>>>
->>>>>> The problem is that node_map of eiointc is problematic,
->>>>>>
->>>>>>
->>>>>> static int cpu_to_eio_node(int cpu)
->>>>>> {
->>>>>>             return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
->>>>>> }
->>>>>>
->>>>>> static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
->>>>>>                                    u64 node_map)
->>>>>> {
->>>>>>             int i;
->>>>>>
->>>>>>             node_map = node_map ? node_map : -1ULL;
->>>>>>             for_each_possible_cpu(i) {
->>>>>>                     if (node_map & (1ULL << (cpu_to_eio_node(i)))) {
->>>>>>                             node_set(cpu_to_eio_node(i), priv->node_map);
->>>>>>              ...
->>>>>> The cause is that for possible not present cpu, *cpu_logical_map(cpu)*
->>>>>> is -1, cpu_to_eio_node(i) will be equal to -1, so node_map of eiointc is
->>>>>> problematic.
->>>>> The error message seems from eiointc_router_init(), but it is a little
->>>>> strange. Physical hot-add should be before logical hot-add. So
->>>>> acpi_map_cpu() is before cpu_up(). acpi_map_cpu() calls
->>>>> set_processor_mask() to setup logical-physical mapping, so in
->>>>> eiointc_router_init() which is called by cpu_up(), cpu_logical_map()
->>>>> should work well.
->>>>>
->>>>> Maybe in your case a whole node is hot-added? I don't think the
->>>>> eiointc design can work with this case...
->>>>>
->>>>>>
->>>>>> So cpu_logical_map(cpu) should be set during MADT parsing even if it is
->>>>>> not enabled at beginning, it should not be set at hotplug runtime.
->>>>> This will cause the logical cpu number be not continuous after boot.
->>>>> Physical numbers have no requirement, but logical numbers should be
->>>>> continuous.
->>>> I do not understand such requirement about logical cpu should be
->>>> continuous. You can check logical cpu allocation method on other
->>>> architectures, or what does the requirement about logical cpu continuous
->>>> come from.
->>> 1, In an internal conference, it is said that non-continuous cpu
->>> numbers make users think our processors have bugs.
->>> 2, See prefill_possible_map(), it assumes logical numbers continuous
->>> cpu_possible_mask and cpu_present_mask, which make it convenient for
->>> "nr_cpus=xxx".
->>> 3, Can you show me an example in a real machine that "processor" in
->>> /proc/cpuinfo non-continues after boot and before soft hotplug?
->> It is really wasting my time to discuss with you. You does not
->> investigating implementation of other architectures, fully thinking in
->> yourself way.
-> Totally wrong, I have implemented what you need, but you should make
-> other colleagues (not me) agree with your idea.
-> https://github.com/chenhuacai/linux/commit/d8dcf2844d5878b3ac5a42d074e781fe2ebfbae7
-So do you mean we should internal discuss inside and post outside? You 
-can not decide this since you do not know. And actual code writer (lv 
-jianjin) does not reply to you still :(
-
+On 10/29/2024 10:12 PM, Joe Damato wrote:
+> Link IRQs to NAPI instances via netdev-genl API so that users can query
+> this information with netlink.
 > 
-> Imagine that the cpu_possible_mask is 0b11111111, cpu_present_mask is
-> 0b10101010 (non-continuous), how to make "nr_cpus=3" work in a simple
-> way?
-if (bitmap_weight(cpu_present_mask) >=  nr_cpus))
-    then new cpu fails to add.
+> Compare the output of /proc/interrupts (noting that IRQ 128 is the
+> "other" IRQ which does not appear to have a NAPI instance):
 > 
->>
->> Does the real machines support real cpu hotplug and memory hotplug?
-> ACPI_MADT_ENABLED is designed for virtual machines only?
-It is the HW board problem, the HW does not support cpu hotplug, neither 
-memory hotplug and PCIE hotplug. HW board does not support.
-
-Regards
-Bibo Mao
-
+> $ cat /proc/interrupts | grep enp86s0 | cut --delimiter=":" -f1
+>   128
+>   129
+>   130
+>   131
+>   132
 > 
-> Huacai
+> The output from netlink shows the mapping of NAPI IDs to IRQs (again
+> noting that 128 is absent as it is the "other" IRQ):
 > 
->>
->> Regards
->> Bibo Mao
->>>
->>>
->>>
->>>
->>> Huacai
->>>>
->>>> Regards
->>>> Bibo Mao
->>>>
->>>>>
->>>>> Huacai
->>>>>
->>>>>>
->>>>>> Regards
->>>>>> Bibo Mao
->>>>>>
->>>>>>
->>>>>>>
->>>>>>> Huacai
->>>>>>>
->>>>>>>>
->>>>>>>> Bibo Mao
->>>>>>>>>
->>>>>>>>> Huacai
->>>>>>>>>
->>>>>>>>> On Mon, Oct 21, 2024 at 4:04 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>>>>>>>
->>>>>>>>>> On LoongArch system, there are two places to set cpu numa node. One
->>>>>>>>>> is in arch specified function smp_prepare_boot_cpu(), the other is
->>>>>>>>>> in generic function early_numa_node_init(). The latter will overwrite
->>>>>>>>>> the numa node information.
->>>>>>>>>>
->>>>>>>>>> With hot-added cpu without numa information, cpu_logical_map() fails
->>>>>>>>>> to its physical cpuid at beginning since it is not enabled in ACPI
->>>>>>>>>> MADT table. So function early_cpu_to_node() also fails to get its
->>>>>>>>>> numa node for hot-added cpu, and generic function
->>>>>>>>>> early_numa_node_init() will overwrite with incorrect numa node.
->>>>>>>>>>
->>>>>>>>>> APIs topo_get_cpu() and topo_add_cpu() is added here, like other
->>>>>>>>>> architectures logic cpu is allocated when parsing MADT table. When
->>>>>>>>>> parsing SRAT table or hot-add cpu, logic cpu is acquired by searching
->>>>>>>>>> all allocated logical cpu with matched physical id. It solves such
->>>>>>>>>> problems such as:
->>>>>>>>>>        1. Boot cpu is not the first entry in MADT table, the first entry
->>>>>>>>>> will be overwritten with later boot cpu.
->>>>>>>>>>        2. Physical cpu id not presented in MADT table is invalid, in later
->>>>>>>>>> SRAT/hot-add cpu parsing, invalid physical cpu detected is added
->>>>>>>>>>        3. For hot-add cpu, its logic cpu is allocated in MADT table parsing,
->>>>>>>>>> so early_cpu_to_node() can be used for hot-add cpu and cpu_to_node()
->>>>>>>>>> is correct for hot-add cpu.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>>>>>>>>> ---
->>>>>>>>>> v1 ... v2:
->>>>>>>>>>        1. Like other architectures, allocate logic cpu when parsing MADT table.
->>>>>>>>>>        2. Add invalid or duplicated physical cpuid parsing with SRAT table or
->>>>>>>>>> hot-add cpu DSDT information.
->>>>>>>>>> ---
->>>>>>>>>>       arch/loongarch/include/asm/smp.h |  3 ++
->>>>>>>>>>       arch/loongarch/kernel/acpi.c     | 24 ++++++++++------
->>>>>>>>>>       arch/loongarch/kernel/setup.c    | 47 ++++++++++++++++++++++++++++++++
->>>>>>>>>>       arch/loongarch/kernel/smp.c      |  9 +++---
->>>>>>>>>>       4 files changed, 70 insertions(+), 13 deletions(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
->>>>>>>>>> index 3383c9d24e94..c61b75937a77 100644
->>>>>>>>>> --- a/arch/loongarch/include/asm/smp.h
->>>>>>>>>> +++ b/arch/loongarch/include/asm/smp.h
->>>>>>>>>> @@ -119,4 +119,7 @@ static inline void __cpu_die(unsigned int cpu)
->>>>>>>>>>       #define cpu_logical_map(cpu)   0
->>>>>>>>>>       #endif /* CONFIG_SMP */
->>>>>>>>>>
->>>>>>>>>> +int topo_add_cpu(int physid);
->>>>>>>>>> +int topo_get_cpu(int physid);
->>>>>>>>>> +
->>>>>>>>>>       #endif /* __ASM_SMP_H */
->>>>>>>>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
->>>>>>>>>> index f1a74b80f22c..84d9812d5f38 100644
->>>>>>>>>> --- a/arch/loongarch/kernel/acpi.c
->>>>>>>>>> +++ b/arch/loongarch/kernel/acpi.c
->>>>>>>>>> @@ -78,10 +78,10 @@ static int set_processor_mask(u32 id, u32 flags)
->>>>>>>>>>                      return -ENODEV;
->>>>>>>>>>
->>>>>>>>>>              }
->>>>>>>>>> -       if (cpuid == loongson_sysconf.boot_cpu_id)
->>>>>>>>>> -               cpu = 0;
->>>>>>>>>> -       else
->>>>>>>>>> -               cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
->>>>>>>>>> +
->>>>>>>>>> +       cpu = topo_add_cpu(cpuid);
->>>>>>>>>> +       if (cpu < 0)
->>>>>>>>>> +               return -EEXIST;
->>>>>>>>>>
->>>>>>>>>>              if (!cpu_enumerated)
->>>>>>>>>>                      set_cpu_possible(cpu, true);
->>>>>>>>>> @@ -203,8 +203,6 @@ void __init acpi_boot_table_init(void)
->>>>>>>>>>                      goto fdt_earlycon;
->>>>>>>>>>              }
->>>>>>>>>>
->>>>>>>>>> -       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
->>>>>>>>>> -
->>>>>>>>>>              /*
->>>>>>>>>>               * Process the Multiple APIC Description Table (MADT), if present
->>>>>>>>>>               */
->>>>>>>>>> @@ -257,7 +255,7 @@ void __init numa_set_distance(int from, int to, int distance)
->>>>>>>>>>       void __init
->>>>>>>>>>       acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
->>>>>>>>>>       {
->>>>>>>>>> -       int pxm, node;
->>>>>>>>>> +       int pxm, node, cpu;
->>>>>>>>>>
->>>>>>>>>>              if (srat_disabled())
->>>>>>>>>>                      return;
->>>>>>>>>> @@ -286,6 +284,11 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
->>>>>>>>>>                      return;
->>>>>>>>>>              }
->>>>>>>>>>
->>>>>>>>>> +       cpu = topo_get_cpu(pa->apic_id);
->>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
->>>>>>>>>> +       if (cpu < 0)
->>>>>>>>>> +               return;
->>>>>>>>>> +
->>>>>>>>>>              early_numa_add_cpu(pa->apic_id, node);
->>>>>>>>>>
->>>>>>>>>>              set_cpuid_to_node(pa->apic_id, node);
->>>>>>>>>> @@ -324,12 +327,17 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id, int *pcpu
->>>>>>>>>>       {
->>>>>>>>>>              int cpu;
->>>>>>>>>>
->>>>>>>>>> -       cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
->>>>>>>>>> +       cpu = topo_get_cpu(physid);
->>>>>>>>>> +       /* Check whether apic_id exists in MADT table */
->>>>>>>>>>              if (cpu < 0) {
->>>>>>>>>>                      pr_info(PREFIX "Unable to map lapic to logical cpu number\n");
->>>>>>>>>>                      return cpu;
->>>>>>>>>>              }
->>>>>>>>>>
->>>>>>>>>> +       num_processors++;
->>>>>>>>>> +       set_cpu_present(cpu, true);
->>>>>>>>>> +       __cpu_number_map[physid] = cpu;
->>>>>>>>>> +       __cpu_logical_map[cpu] = physid;
->>>>>>>>>>              acpi_map_cpu2node(handle, cpu, physid);
->>>>>>>>>>
->>>>>>>>>>              *pcpu = cpu;
->>>>>>>>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
->>>>>>>>>> index 00e307203ddb..649e98640076 100644
->>>>>>>>>> --- a/arch/loongarch/kernel/setup.c
->>>>>>>>>> +++ b/arch/loongarch/kernel/setup.c
->>>>>>>>>> @@ -65,6 +65,8 @@ EXPORT_SYMBOL(cpu_data);
->>>>>>>>>>
->>>>>>>>>>       struct loongson_board_info b_info;
->>>>>>>>>>       static const char dmi_empty_string[] = "        ";
->>>>>>>>>> +static int possible_cpus;
->>>>>>>>>> +static bool bsp_added;
->>>>>>>>>>
->>>>>>>>>>       /*
->>>>>>>>>>        * Setup information
->>>>>>>>>> @@ -346,10 +348,55 @@ static void __init bootcmdline_init(char **cmdline_p)
->>>>>>>>>>              *cmdline_p = boot_command_line;
->>>>>>>>>>       }
->>>>>>>>>>
->>>>>>>>>> +int topo_get_cpu(int physid)
->>>>>>>>>> +{
->>>>>>>>>> +       int i;
->>>>>>>>>> +
->>>>>>>>>> +       for (i = 0; i < possible_cpus; i++)
->>>>>>>>>> +               if (cpu_logical_map(i) == physid)
->>>>>>>>>> +                       break;
->>>>>>>>>> +
->>>>>>>>>> +       if (i == possible_cpus)
->>>>>>>>>> +               return -ENOENT;
->>>>>>>>>> +
->>>>>>>>>> +       return i;
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +int topo_add_cpu(int physid)
->>>>>>>>>> +{
->>>>>>>>>> +       int cpu;
->>>>>>>>>> +
->>>>>>>>>> +       if (!bsp_added && (physid == loongson_sysconf.boot_cpu_id)) {
->>>>>>>>>> +               bsp_added = true;
->>>>>>>>>> +               return 0;
->>>>>>>>>> +       }
->>>>>>>>>> +
->>>>>>>>>> +       cpu = topo_get_cpu(physid);
->>>>>>>>>> +       if (cpu >= 0) {
->>>>>>>>>> +               pr_warn("Adding duplicated physical cpuid 0x%x\n", physid);
->>>>>>>>>> +               return -EEXIST;
->>>>>>>>>> +       }
->>>>>>>>>> +
->>>>>>>>>> +       if (possible_cpus >= nr_cpu_ids)
->>>>>>>>>> +               return -ERANGE;
->>>>>>>>>> +
->>>>>>>>>> +       __cpu_logical_map[possible_cpus] = physid;
->>>>>>>>>> +       cpu = possible_cpus++;
->>>>>>>>>> +       return cpu;
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +static void __init topo_init(void)
->>>>>>>>>> +{
->>>>>>>>>> +       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
->>>>>>>>>> +       __cpu_logical_map[0] = loongson_sysconf.boot_cpu_id;
->>>>>>>>>> +       possible_cpus++;
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>>       void __init platform_init(void)
->>>>>>>>>>       {
->>>>>>>>>>              arch_reserve_vmcore();
->>>>>>>>>>              arch_reserve_crashkernel();
->>>>>>>>>> +       topo_init();
->>>>>>>>>>
->>>>>>>>>>       #ifdef CONFIG_ACPI
->>>>>>>>>>              acpi_table_upgrade();
->>>>>>>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
->>>>>>>>>> index 9afc2d8b3414..a3f466b89179 100644
->>>>>>>>>> --- a/arch/loongarch/kernel/smp.c
->>>>>>>>>> +++ b/arch/loongarch/kernel/smp.c
->>>>>>>>>> @@ -291,10 +291,9 @@ static void __init fdt_smp_setup(void)
->>>>>>>>>>                      if (cpuid >= nr_cpu_ids)
->>>>>>>>>>                              continue;
->>>>>>>>>>
->>>>>>>>>> -               if (cpuid == loongson_sysconf.boot_cpu_id)
->>>>>>>>>> -                       cpu = 0;
->>>>>>>>>> -               else
->>>>>>>>>> -                       cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
->>>>>>>>>> +               cpu = topo_add_cpu(cpuid);
->>>>>>>>>> +               if (cpu < 0)
->>>>>>>>>> +                       continue;
->>>>>>>>>>
->>>>>>>>>>                      num_processors++;
->>>>>>>>>>                      set_cpu_possible(cpu, true);
->>>>>>>>>> @@ -302,7 +301,7 @@ static void __init fdt_smp_setup(void)
->>>>>>>>>>                      __cpu_number_map[cpuid] = cpu;
->>>>>>>>>>                      __cpu_logical_map[cpu] = cpuid;
->>>>>>>>>>
->>>>>>>>>> -               early_numa_add_cpu(cpu, 0);
->>>>>>>>>> +               early_numa_add_cpu(cpuid, 0);
->>>>>>>>>>                      set_cpuid_to_node(cpuid, 0);
->>>>>>>>>>              }
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
->>>>>>>>>> --
->>>>>>>>>> 2.39.3
->>>>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>
->>>>
->>>>
->>
+> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+>                           --dump napi-get --json='{"ifindex": 2}'
+> 
+> [{'defer-hard-irqs': 0,
+>    'gro-flush-timeout': 0,
+>    'id': 8196,
+>    'ifindex': 2,
+>    'irq': 132},
+>   {'defer-hard-irqs': 0,
+>    'gro-flush-timeout': 0,
+>    'id': 8195,
+>    'ifindex': 2,
+>    'irq': 131},
+>   {'defer-hard-irqs': 0,
+>    'gro-flush-timeout': 0,
+>    'id': 8194,
+>    'ifindex': 2,
+>    'irq': 130},
+>   {'defer-hard-irqs': 0,
+>    'gro-flush-timeout': 0,
+>    'id': 8193,
+>    'ifindex': 2,
+>    'irq': 129}]
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 
+Reviewed-by: Vitaly Lifshits <vitaly.lifshits@intel.com>
+
+> ---
+>   v4:
+>     - Fix typo in commit message (replacing 144 with 128)
+> 
+>   v2:
+>     - Line wrap at 80 characters
+> 
+>   drivers/net/ethernet/intel/igc/igc_main.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+> index 6e70bca15db1..7964bbedb16c 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> @@ -5576,6 +5576,9 @@ static int igc_request_msix(struct igc_adapter *adapter)
+>   				  q_vector);
+>   		if (err)
+>   			goto err_free;
+> +
+> +		netif_napi_set_irq(&q_vector->napi,
+> +				   adapter->msix_entries[vector].vector);
+>   	}
+>   
+>   	igc_configure_msix(adapter);
+> 
 
