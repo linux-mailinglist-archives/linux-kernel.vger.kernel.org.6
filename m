@@ -1,118 +1,88 @@
-Return-Path: <linux-kernel+bounces-388509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F969B6085
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A531D9B6087
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5E6EB22952
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:52:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF4ACB22A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739441E3DC2;
-	Wed, 30 Oct 2024 10:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="kHaPlzfU"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414B01E3793;
+	Wed, 30 Oct 2024 10:52:12 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4682194151;
-	Wed, 30 Oct 2024 10:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2051E2848
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730285515; cv=none; b=fk6SChCQZTAzNjjZ7GEoOLAO9f69B13GImYoNqTYVkYFM5rbavQVXzKrSZPhQVRJuuWx6tW9at5LLKjZOsi/gk+jD2ZNFzNgU74WkV491HQADLS/X+5OUAMnQVKreAdnHXxhV8Q5Wn1xr/SdZCIdMzhihFk3GDk3QEGklPGm8io=
+	t=1730285531; cv=none; b=K2A6uZQM8pwUXArJfmEPM4n0HfCzprkTpmpPcGgwvzaoTWfbuOhmvfraWdhmgVk9Xcdzna4GlLn0nxrPTP3ulV5kiwEz4vSwcle0SrvvYvICLxku3e/2Q+cxwl1+6ft9hoaj9XNWD1kAc0Vqc6xQx30U4MqlOuJjXC85rbxm9js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730285515; c=relaxed/simple;
-	bh=ySMIDfL39z7RfhOBw+kZQlr5Jw+TjEfT4XWUlkrQitY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sy59/lWYMlqiIJAb+7ikijSVG47nMZ5m3FEi7GFPk84IUWC9Bqy6jGKneIrhJ4Xr26hyYRVSAMwVJoIgRvcbF3inECPAyFMZXxG9k1UOdTerIiqw4zoqmuQNdD5jqOJAzGXk1q7ND8sZIgXUpsU/dnhne/X8THDCbVpE0H7K58o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=kHaPlzfU; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730285482; x=1730890282; i=metux@gmx.de;
-	bh=B6qn/U2iq1HtEQufXVVEjYdqzFLF7N8KdBVfPWVpjf8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=kHaPlzfUDjvsc9qW1hC4CiOvQa9AlPWikWh7OEVPiyzAeJNLVvisr4vGZ2JgQfux
-	 nlUyZX/0LEFLQ6+Pjx7gNi646eQB0mq6Qi26XJZQrtoW0m1kdEONUnvMtdfO36bMa
-	 DEseyRpL7uaSBLh2WU03bJpJPDh9mWDZOJIGhZEYbUg8UizEhlTtA7yCyJ7E/T+n6
-	 7CS7eLOpu+pGvkJrkbsecUVgyRWcf+YhfCgg3FOXSR1P9+JlTrukUa6cJgOWqNPJN
-	 ErzXLy8WHSwFUCZLddIhxG/l0moGS8a3xDNmTNv4767asHXBTRMVyIkukGHaPdjY2
-	 fBNeThK0EAuJZH6TZw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.178] ([95.114.207.188]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MDQeK-1sxsYJ0YuE-00E80s; Wed, 30
- Oct 2024 11:51:22 +0100
-Message-ID: <18854680-4ab7-4453-85ff-78351d4d4ec9@gmx.de>
-Date: Wed, 30 Oct 2024 11:51:54 +0100
+	s=arc-20240116; t=1730285531; c=relaxed/simple;
+	bh=kOe7NaPPMJKT/QbP2BkpWIMAHxP/mCEb+4qfjk7czwg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nEQwjuy6xKRvU9CieTJroVAw0NnnAMOfZZqCDgW+0mKwvNqvdjxIxF6iK41AK8JozzmVuxdyplp7Vxn1AdeSMkxXF09uwz0PbEMlzmSFNUnptKaS7Uw8jTFL23MPeivuOeIruBQBNrq2uQRi0EyGpikQr0ux5ZGCMho6eSbmvzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4f3d7d13fso33859925ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 03:52:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730285529; x=1730890329;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LeALd6KDuOuKi9qXNLq10f5153cW8xXpkk8Olr/BMoE=;
+        b=LLi2mP42x8SfIb7rUC+EU8k2zUCs13lATZLoPuiucyHFBpmsaugVVZ2POhQ/v2RBPC
+         mCJlyHNOxg42Tk65icZGBpI+nI+Ll/MMStglezJxBy3AKufaFnx8vbVAUrS6IYniRSi5
+         h6YuXfCzU81A+PfYUAHGKD2BbqndMEZz+6vH2LZLRu9SDiN5KIr5Eq9dBMNhIqbMxhdH
+         JSRRqsvTtOZUa+F4mu/uzz5o33Coztm9VyQV6cMz3X+kdf94PaX/hWJPZyjqQP2179Ov
+         kVvnnEpxWy78iSMcGr3kioizorePgc+Qbjuyf0+qn2a/LHm9N5xnKURVpDXxtD5qHhhj
+         b75w==
+X-Forwarded-Encrypted: i=1; AJvYcCUyIw0fh/jHk5D/69PCEup/MNd+bg6Mbn0CvfEBYQs9sFHVvJhgsvNJrq/F1+Mk4uGqDsJWso3dIxxmxsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8BBv+ahVxiJxhpWFewcgiO6ezhHpJDIpw6cyNY6nL0YxWqrbl
+	MwlhyfyL+sgtYZrMk9n4Ni4DgJHc4nMJi/5yzsuuVd9s2OS7vKnZw/gpHTBvbxnjnTul4otsfch
+	lQ6Oei3Kba8Pj7hRF8ex4OUxbse2+eOos05ejfNyN35Hg+Iet3HttXkE=
+X-Google-Smtp-Source: AGHT+IELt0N6Rfd0bwOsR+AY3ppoTBV7RKwQ3Uic1kzPlRch2AJQGJsyjrM2XzMl745KfBe/1rsXYFGnRoHTVp1+131sJzwZGRHM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] printf: Add struct range print specifier
-To: Ira Weiny <ira.weiny@intel.com>, Andrew Morton
- <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: Fan Ni <fan.ni@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-cxl@vger.kernel.org
-References: <20241025-cxl-pra-v2-0-123a825daba2@intel.com>
-Content-Language: tl
-From: metux <metux@gmx.de>
-In-Reply-To: <20241025-cxl-pra-v2-0-123a825daba2@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:VALWkIbQgdz4Kre0TowjBzMwKze9v87s58H0hbTgNaM6JrIrfLm
- D13G9Qn3oGlW2ADV7Pwuj4LV+lKoNx4nT4zncXWQAK8X/fEqIfsJeoaGLijxzef1cMYvNH2
- COVZ1534REOWwcb/dsFZx+Ac4X5eKo2klYmIS/wjSYNZs+oDPmcljXo5PQtFUVXI9X/24+x
- rnCH5Iea4nlxKkK4Mfi4A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:o59CQicXyQ4=;fj2WhHkOLSc3PEObbIs6JyeLJEb
- 2Ze5nC0/14dsmrww1kL8PbPLfsfT7bldeiTXYsDUewH3MyaqOzUMDDAjFMBIbqAa18h/0aeVu
- to1QEOKjNEZjWbwGhUWb2K2f4lcIhiIO3SzaO0Ac0mwWKF2yZkaxcgkLU7Cr2vKIVCszVp5E+
- I3wfDxQg2HBc+8NzBiNYFAm8B9CHQ+nKSy0cTZlpYzm8NIajNAFkYzI598fbdy0Zv4R3+szFX
- co7k6l7JSrj2KtZVYwoE782OvjML/unRJzeKqK4sjiyq2sEVyAbSEJRZttHYsyoy0STDRGPwE
- tpTgqVbIZkZBwguQjKko3wlQSiFze9laddg3EAsr0QFdMNTD5WQs5Q9mZT86oHewokpf9NLd2
- RDaJsNv0Tc++fydH4I5pHZiDFaOmuOaU06+asdGtQtUS2RHxT/p4f4+08l5Vi/eWpwySOgoo6
- lglZ4HrIG4C0lF9yWeNgHavP9fw2quXV0JnnmU7d/19yXVpfk/jiGO2i0wB6OPmyqLz/e7MJL
- IZKJjXqf5H/jqKBleNRnkbn5n1mCpiAOOdtPmkKbsaPL16b2jz1ONdIYx4mfCAcORydF6f7KN
- 1KCVsrmPeqi0fuhFC2ftHCxPqU1c1nzqcQsqISLClMQIctVeLg4LBJNsE89AroQ/kAHKv9Za6
- xcRT4A4qrkrFqmzayjCtbVv55UeubrgW8YpknAhs6cVOLLtvKHzP0dnBCnlWzPZOJGvw6qAwi
- Qar6nitWlLupXRYI76KYGWr1sb/C878oFk+JlFy5LsIn94lhArA7Ll2tMSr3it3ospHTO4kaB
- /wOnZtyMvS7JFf4StbEVIG5LNYKppCeJfVrkSWHJiXFlA=
+X-Received: by 2002:a92:c26d:0:b0:3a3:b256:f31f with SMTP id
+ e9e14a558f8ab-3a4ed2fc0a7mr139108765ab.19.1730285529327; Wed, 30 Oct 2024
+ 03:52:09 -0700 (PDT)
+Date: Wed, 30 Oct 2024 03:52:09 -0700
+In-Reply-To: <tencent_93E0C66D49BEAEDE6ECA0C9FA7C786D2D206@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67220fd9.050a0220.35b515.0012.GAE@google.com>
+Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
+From: syzbot <syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 26.10.24 02:46, Ira Weiny wrote:
-> Support for the Compute Express Link (CXL) Dynamic Capacity Devices
-> (DCD) have grown a number of uses to print struct range.[1]  Support for
-> a printf specifier '%pra' was being worked within a large series and has
-> garnered a number of comments and discussion.
+Hello,
 
-This is just printing out hex dump of a memory range, correct ?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-What I'm looking for quite some time is a sane way for dumping structs
-in a human readable form (field: value pairs, using their actual types
-eg. int vs string, ...).
+Reported-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
+Tested-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
 
-Any idea to do that in a generic way ?
-(potentially using debug info ?)
+Tested on:
 
+commit:         c1e939a2 Merge tag 'cgroup-for-6.12-rc5-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=123ee2a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35698c25466f388c
+dashboard link: https://syzkaller.appspot.com/bug?extid=ec07f6f5ce62b858579f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=123c8630580000
 
---mtx
+Note: testing is done by a robot and is best-effort only.
 
