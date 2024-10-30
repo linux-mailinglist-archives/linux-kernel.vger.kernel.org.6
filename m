@@ -1,167 +1,318 @@
-Return-Path: <linux-kernel+bounces-389489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25BD9B6DB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:31:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094D19B6DB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7733D282D43
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:31:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CC661C21C97
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD9F1E8856;
-	Wed, 30 Oct 2024 20:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D403E1D2B23;
+	Wed, 30 Oct 2024 20:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr7mwaFC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAE919CC24;
-	Wed, 30 Oct 2024 20:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Bk9IHN8I"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD421BD9DA;
+	Wed, 30 Oct 2024 20:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730320261; cv=none; b=DmIV569tY5Hh9M2Y1EjEmJ8hMvvRduMzrMddu4wlptTcZHl92iFeOakfkc9k/+0APU+CMCRDtQQYjvlViG9RYFTq1n22kPGPo4K+CwBM/tEnnH1aNi3qV0BymPXV2WmivODxeoLtEXoBHjEziXmjFjTHnsgSdB21qw1RYjRVghI=
+	t=1730320313; cv=none; b=bWaapBaKG/x6IoZYxh2LbwQQgL1/8PPWJuBAvPYQjWVEnxBE+tJyks2oWjlEIcD7FJ8d0bfOMdg78CegZldZV1oUzgqb/zHH9XHECOxnr06Am4Ab1xChsdxK1z9HCCuaX+6F+r6bwvq/c8fTDVPAuftpIo+unZnJC44Ytyju50I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730320261; c=relaxed/simple;
-	bh=cKV4S6rk2gNSyd2ElGMwF5RQwJz0BRa0abJTbXhDhFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PgHBmNhVWI1r2ZcfifrTP1jk9EASTwi8TjNmTrwTj4Bdkax7Pa52LiO8fTLhWVzKj3+gutiXWJB67tnRlbTW8nYplh0DepMt6Wt09DQWAj61qvcBAxv73fHsdV3cxlubniqOCv+ja/SuzW+2peoobPaT5Dd7ImNoT0Ipp8IEweM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nr7mwaFC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD9CC4CECE;
-	Wed, 30 Oct 2024 20:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730320260;
-	bh=cKV4S6rk2gNSyd2ElGMwF5RQwJz0BRa0abJTbXhDhFw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nr7mwaFCmM/wn1rNici20hpH4Boy5LrlbBOemodMXr4aCyfm99obML8PfY8+vbkMj
-	 Iuug02nVevoMjzeWQqiPZlKhzMPWDT/vjc/B42epn0RA9tXYLS9CbN6yf4bsONTKuT
-	 MkDSC3BV80DYJwBQ03RZQsl1iriDsaxSp7FKlqcxsYlZVd8A4+fZpqTUB88nThMbSw
-	 6tLPLTYD4m4pJj/cX1qSe0+kID//xrPPzoO3HqDEMOy0LQMt7rrA15g4uhvsUOTZMd
-	 7sHwTGUE/ryo7tC1IeRx/awMFz4uvfsqGvtvO6lXO8LvrvhkscwV6f5PJbzUmZjxi3
-	 EMqBn6+9VVFtA==
-Date: Wed, 30 Oct 2024 20:30:50 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Alisa-Dariana Roman <alisa.roman@analog.com>, Christian Eggers
- <ceggers@arri.de>, Peter Rosin <peda@axentia.se>, Paul Cercueil
- <paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] iio: consumers: copy/release available info from
- producer to fix race
-Message-ID: <20241030203050.5cdf3450@jic23-huawei>
-In-Reply-To: <173031260171.39393.109639772708550094@njaxe.localdomain>
-References: <20241021-iio-read-avail-release-v5-0-b168713fab33@gmail.com>
-	<20241021-iio-read-avail-release-v5-2-b168713fab33@gmail.com>
-	<ZyJHFp6vbQ7deLFs@black.fi.intel.com>
-	<173031260171.39393.109639772708550094@njaxe.localdomain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730320313; c=relaxed/simple;
+	bh=wj62npJF25g6YpT57BtAYjxM41PXV4GxTWhir/eJdTc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=G8NsdAOz3b1MndiXTvSeqvuf9cqbGl3j9lSrNqupmpiCY3ILhgPM0CgT3BmW18iBafjX3dJRpUBlkxm56KRqf7VGUuvn9FsQAwe7odzZC5IZDw+57ZMpKA4AVnlj9Jc/FaLwAmOGdB8hSbrhWvyOp27hN/sOurp86CwGTqX36Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Bk9IHN8I; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.1.70] (unknown [20.236.10.163])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 955982054B65;
+	Wed, 30 Oct 2024 13:31:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 955982054B65
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1730320310;
+	bh=DNxEt/29DSnttMwiZC1o312sOnRLXHvcgm62gYW98sg=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Bk9IHN8I98hd4YSqHkRC6XTZGnvIIS6ODODl9k3JuAq4WnxK7oy9g+P9Qh+zrsZSL
+	 d78ndR5n/ZmxwnCPMfi7QIZDsfohuCOGDlw9Nij9JEd7CnXPiPY/3Q/Fml58oEOa3p
+	 4hvgPfwnnrSlmtrr0Pt051AvVbpv7HvKPZwckNw8=
+Message-ID: <4d4e0c14-af3d-4bae-a599-0ccf7a3c1961@linux.microsoft.com>
+Date: Wed, 30 Oct 2024 13:31:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, John Starks <jostarks@microsoft.com>,
+ jacob.pan@linux.microsoft.com, Michael Kelley <mhklinux@outlook.com>,
+ Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+Subject: Re: [PATCH v2 1/2] Drivers: hv: vmbus: Wait for offers during boot
+To: Naman Jain <namjain@linux.microsoft.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>
+References: <20241029080147.52749-1-namjain@linux.microsoft.com>
+ <20241029080147.52749-2-namjain@linux.microsoft.com>
+Content-Language: en-US
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <20241029080147.52749-2-namjain@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 30 Oct 2024 19:23:21 +0100
-Matteo Martelli <matteomartelli3@gmail.com> wrote:
+On 10/29/2024 1:01 AM, Naman Jain wrote:
+> Channel offers are requested during VMBus initialization and resume
+> from hibernation. Add support to wait for all channel offers to be
+> delivered and processed before returning from vmbus_request_offers.
+> 
+> This is in analogy to a PCI bus not returning from probe until it has
+> scanned all devices on the bus.
+> 
+> Without this, user mode can race with VMBus initialization and miss
+> channel offers. User mode has no way to work around this other than
+> sleeping for a while, since there is no way to know when VMBus has
+> finished processing offers.
+> 
+> With this added functionality, remove earlier logic which keeps track
+> of count of offered channels post resume from hibernation. Once all
+> offers delivered message is received, no further offers are going to
+> be received. Consequently, logic to prevent suspend from happening
+> after previous resume had missing offers, is also removed.
+> 
+> Co-developed-by: John Starks <jostarks@microsoft.com>
+> Signed-off-by: John Starks <jostarks@microsoft.com>
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+> Changes since v1:
+> https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com
+> * Added Easwar's Reviewed-By tag
+> * Addressed Michael's comments:
+>   * Added explanation of all offers delivered message in comments
+>   * Removed infinite wait for offers logic, and changed it wait once.
+>   * Removed sub channel workqueue flush logic
+>   * Added comments on why MLX device offer is not expected as part of
+>     this essential boot offer list. I refrained from adding too many                                                        details on it as it felt like it is beyond the scope of this patch                                                      series and may not be relevant to this. However, please let me know if
+>     something needs to be added.
+> * Addressed Saurabh's comments:
+>   * Changed timeout value to 10000 ms instead of 10*10000
+>   * Changed commit msg as per suggestions
+>   * Added a comment for warning case of wait_for_completion timeout
+> ---
+>  drivers/hv/channel_mgmt.c | 55 ++++++++++++++++++++++++++++-----------
+>  drivers/hv/connection.c   |  4 +--
+>  drivers/hv/hyperv_vmbus.h | 14 +++-------
+>  drivers/hv/vmbus_drv.c    | 16 ------------
+>  4 files changed, 45 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+> index 3c6011a48dab..a2e9ebe5bf72 100644
+> --- a/drivers/hv/channel_mgmt.c
+> +++ b/drivers/hv/channel_mgmt.c
+> @@ -944,16 +944,6 @@ void vmbus_initiate_unload(bool crash)
+>  		vmbus_wait_for_unload();
+>  }
+>  
+> -static void check_ready_for_resume_event(void)
+> -{
+> -	/*
+> -	 * If all the old primary channels have been fixed up, then it's safe
+> -	 * to resume.
+> -	 */
+> -	if (atomic_dec_and_test(&vmbus_connection.nr_chan_fixup_on_resume))
+> -		complete(&vmbus_connection.ready_for_resume_event);
+> -}
+> -
+>  static void vmbus_setup_channel_state(struct vmbus_channel *channel,
+>  				      struct vmbus_channel_offer_channel *offer)
+>  {
+> @@ -1109,8 +1099,6 @@ static void vmbus_onoffer(struct vmbus_channel_message_header *hdr)
+>  
+>  		/* Add the channel back to the array of channels. */
+>  		vmbus_channel_map_relid(oldchannel);
+> -		check_ready_for_resume_event();
+> -
+>  		mutex_unlock(&vmbus_connection.channel_mutex);
+>  		return;
+>  	}
+> @@ -1296,13 +1284,22 @@ EXPORT_SYMBOL_GPL(vmbus_hvsock_device_unregister);
+>  
+>  /*
+>   * vmbus_onoffers_delivered -
+> - * This is invoked when all offers have been delivered.
+> + * CHANNELMSG_ALLOFFERS_DELIVERED message arrives after all the essential
+> + * boot-time offers are delivered. Other channels can be hot added
+> + * or removed later, even immediately after the all-offers-delivered
+> + * message. A boot-time offer will be any of the virtual hardware the
+> + * VM is configured with at boot.
+>   *
+> - * Nothing to do here.
+> + * Virtual devices like Mellanox NIC may not be included in the list of
+> + * these initial boot offers because it is an optional accelerator to
+> + * the synthetic VMBus NIC. It is hot added only after the VMBus NIC
+> + * channel is opened (once it knows the guest can support it, via the
+> + * sriov bit in the netvsc protocol).
+>   */
+>  static void vmbus_onoffers_delivered(
+>  			struct vmbus_channel_message_header *hdr)
+>  {
+> +	complete(&vmbus_connection.all_offers_delivered_event);
+>  }
+>  
+>  /*
+> @@ -1578,7 +1575,8 @@ void vmbus_onmessage(struct vmbus_channel_message_header *hdr)
+>  }
+>  
+>  /*
+> - * vmbus_request_offers - Send a request to get all our pending offers.
+> + * vmbus_request_offers - Send a request to get all our pending offers
+> + * and wait for all offers to arrive.
+>   */
+>  int vmbus_request_offers(void)
+>  {
+> @@ -1596,6 +1594,10 @@ int vmbus_request_offers(void)
+>  
+>  	msg->msgtype = CHANNELMSG_REQUESTOFFERS;
+>  
+> +	/*
+> +	 * This REQUESTOFFERS message will result in the host sending an all
+> +	 * offers delivered message.
+> +	 */
+>  	ret = vmbus_post_msg(msg, sizeof(struct vmbus_channel_message_header),
+>  			     true);
+>  
+> @@ -1607,6 +1609,29 @@ int vmbus_request_offers(void)
+>  		goto cleanup;
+>  	}
+>  
+> +	/*
+> +	 * Wait for the host to send all offers.
+> +	 * Keeping it as a best-effort mechanism, where a warning is
+> +	 * printed if a timeout occurs, and execution is resumed.
+> +	 */
+> +	if (!wait_for_completion_timeout(
+> +		&vmbus_connection.all_offers_delivered_event, msecs_to_jiffies(10000))) {
+> +		pr_warn("timed out waiting for all offers to be delivered...\n");
+> +	}
 
-> Quoting Andy Shevchenko (2024-10-30 15:47:50)
-> > On Mon, Oct 21, 2024 at 02:54:15PM +0200, Matteo Martelli wrote:  
-> > > Consumers need to call the producer's read_avail_release_resource()
-> > > callback after reading producer's available info. To avoid a race
-> > > condition with the producer unregistration, change inkern
-> > > iio_channel_read_avail() so that it copies the available info from the
-> > > producer and immediately calls its release callback with info_exists
-> > > locked.
-> > > 
-> > > Also, modify the users of iio_read_avail_channel_raw() and
-> > > iio_read_avail_channel_attribute() to free the copied available buffers
-> > > after calling these functions. To let users free the copied buffer with
-> > > a cleanup pattern, also add a iio_read_avail_channel_attr_retvals()
-> > > consumer helper that is equivalent to iio_read_avail_channel_attribute()
-> > > but stores the available values in the returned variable.  
-> > 
-> > ...
-> >   
-> > > +static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
-> > > +                                         struct iio_chan_spec const *chan,
-> > > +                                         const int *vals, long mask)
-> > > +{
-> > > +     kfree(vals);
-> > > +}
-> > > +
-> > >  static int dpot_dac_write_raw(struct iio_dev *indio_dev,
-> > >                             struct iio_chan_spec const *chan,
-> > >                             int val, int val2, long mask)
-> > > @@ -125,6 +132,7 @@ static int dpot_dac_write_raw(struct iio_dev *indio_dev,
-> > >  static const struct iio_info dpot_dac_info = {
-> > >       .read_raw = dpot_dac_read_raw,
-> > >       .read_avail = dpot_dac_read_avail,
-> > > +     .read_avail_release_resource = dpot_dac_read_avail_release_res,
-> > >       .write_raw = dpot_dac_write_raw,
-> > >  };  
-> > 
-> > I have a problem with this approach. The issue is that we allocate
-> > memory in one place and must clear it in another. This is not well
-> > designed thingy in my opinion. I was thinking a bit of the solution and
-> > at least these two comes to my mind:
-> > 
-> > 1) having a special callback for .read_avail_with_copy (choose better
-> > name) that will dump the data to the intermediate buffer and clean it
-> > after all;
-> > 
-> > 2) introduce a new type (or bit there), like IIO_AVAIL_LIST_ALLOC.  
-> 
-> Could you elaborate more about these potential solutions? Maybe with some
-> usage examples?
-> 
-> If I get it correctly, in both cases you are suggesting to pass ownership
-> of the vals buffer to the caller, iio_read_channel_info_avail() in this
-> case, so that it would take care of freeing the buffer after calling
-> iio_format_after_*(). We considered this approach during an initial
-> discussion with Jonathan (see read_avail_ext() in [1]), where he suggested
-> to let the driver keep the release control through a callback for two
-> reasons:
-> 
-> 1) Apparently it's a bad pattern to pass the buffer ownership to the core,
->    maybe Jonathan can elaborate why? The risk I can think of is that the driver
->    could still keep the buffer copy in its private data after giving it away,
->    resulting in fact in a double ownership. However I think it would be clear
->    enough in this case that the copy should be handled by the caller, or maybe
->    not?
-Mostly the lack of desire to have to copy for the 95% of cases where it's
-not needed and that it prevents any optimization like you mention.
+secs_to_jiffies() has been merged [1] so please update this to a call to
+secs_to_jiffies(10). A Cocinelle script will probably take care of it
+sooner or later in any case.
 
-Jonathan
-> 
-> 2) Some driver might want to avoid allocating a new copy of a big table if
->    the race does not occur (e.g. with additional checks on buffer access
->    code) and thus wouldn't call a free() in the release callback.
-> 
-> > 
-> > In any case it looks fragile and not scalable. I propose to drop this
-> > and think again.  
-> 
-> I see your concerns, I am open to reconsider this in case we come up with
-> better solution after addressing the points above.
-> 
-> > Yes, yes, I'm fully aware about the problem you are trying to solve and
-> > agree on the report, I think this solution is not good enough.
-> > 
-> > -- 
-> > With Best Regards,
-> > Andy Shevchenko
-> >   
-> 
-> [1]: https://lore.kernel.org/linux-iio/20240729211100.0d602d6e@jic23-huawei/
-> 
-> Best regards,
-> Matteo Martelli
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=b35108a51cf7bab58d7eace1267d7965978bcdb8
+
+> +
+> +	/*
+> +	 * Flush handling of offer messages (which may initiate work on
+> +	 * other work queues).
+> +	 */
+> +	flush_workqueue(vmbus_connection.work_queue);
+> +
+> +	/*
+> +	 * Flush workqueues for processing the incoming offers. Subchannel
+> +	 * offers and processing can happen later, so there is no need to
+> +	 * flush those workqueues here.
+> +	 */
+> +	flush_workqueue(vmbus_connection.handle_primary_chan_wq);
+> +
+>  cleanup:
+>  	kfree(msginfo);
+>  
+> diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
+> index f001ae880e1d..8351360bba16 100644
+> --- a/drivers/hv/connection.c
+> +++ b/drivers/hv/connection.c
+> @@ -34,8 +34,8 @@ struct vmbus_connection vmbus_connection = {
+>  
+>  	.ready_for_suspend_event = COMPLETION_INITIALIZER(
+>  				  vmbus_connection.ready_for_suspend_event),
+> -	.ready_for_resume_event	= COMPLETION_INITIALIZER(
+> -				  vmbus_connection.ready_for_resume_event),
+> +	.all_offers_delivered_event = COMPLETION_INITIALIZER(
+> +				  vmbus_connection.all_offers_delivered_event),
+>  };
+>  EXPORT_SYMBOL_GPL(vmbus_connection);
+>  
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index d2856023d53c..80cc65dac740 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -287,18 +287,10 @@ struct vmbus_connection {
+>  	struct completion ready_for_suspend_event;
+>  
+>  	/*
+> -	 * The number of primary channels that should be "fixed up"
+> -	 * upon resume: these channels are re-offered upon resume, and some
+> -	 * fields of the channel offers (i.e. child_relid and connection_id)
+> -	 * can change, so the old offermsg must be fixed up, before the resume
+> -	 * callbacks of the VSC drivers start to further touch the channels.
+> +	 * Completed once the host has offered all channels. Note that
+> +	 * some channels may still be being process on a work queue.
+>  	 */
+> -	atomic_t nr_chan_fixup_on_resume;
+> -	/*
+> -	 * vmbus_bus_resume() waits for "nr_chan_fixup_on_resume" to
+> -	 * drop to zero.
+> -	 */
+> -	struct completion ready_for_resume_event;
+> +	struct completion all_offers_delivered_event;
+>  };
+>  
+>  
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 9b15f7daf505..bd3fc41dc06b 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -2427,11 +2427,6 @@ static int vmbus_bus_suspend(struct device *dev)
+>  	if (atomic_read(&vmbus_connection.nr_chan_close_on_suspend) > 0)
+>  		wait_for_completion(&vmbus_connection.ready_for_suspend_event);
+>  
+> -	if (atomic_read(&vmbus_connection.nr_chan_fixup_on_resume) != 0) {
+> -		pr_err("Can not suspend due to a previous failed resuming\n");
+> -		return -EBUSY;
+> -	}
+> -
+>  	mutex_lock(&vmbus_connection.channel_mutex);
+>  
+>  	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
+> @@ -2456,17 +2451,12 @@ static int vmbus_bus_suspend(struct device *dev)
+>  			pr_err("Sub-channel not deleted!\n");
+>  			WARN_ON_ONCE(1);
+>  		}
+> -
+> -		atomic_inc(&vmbus_connection.nr_chan_fixup_on_resume);
+>  	}
+>  
+>  	mutex_unlock(&vmbus_connection.channel_mutex);
+>  
+>  	vmbus_initiate_unload(false);
+>  
+> -	/* Reset the event for the next resume. */
+> -	reinit_completion(&vmbus_connection.ready_for_resume_event);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -2502,14 +2492,8 @@ static int vmbus_bus_resume(struct device *dev)
+>  	if (ret != 0)
+>  		return ret;
+>  
+> -	WARN_ON(atomic_read(&vmbus_connection.nr_chan_fixup_on_resume) == 0);
+> -
+>  	vmbus_request_offers();
+>  
+> -	if (wait_for_completion_timeout(
+> -		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
+> -		pr_err("Some vmbus device is missing after suspending?\n");
+> -
+>  	/* Reset the event for the next suspend. */
+>  	reinit_completion(&vmbus_connection.ready_for_suspend_event);
+>  
 
 
