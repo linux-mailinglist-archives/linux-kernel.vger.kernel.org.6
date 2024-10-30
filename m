@@ -1,93 +1,105 @@
-Return-Path: <linux-kernel+bounces-389470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656869B6D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:15:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EA49B6D76
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2965D2818B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642B61F227F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C81B1EB9FD;
-	Wed, 30 Oct 2024 20:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5BA1D12F1;
+	Wed, 30 Oct 2024 20:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elEe2qxl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmioHDUv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA6E1D14FB;
-	Wed, 30 Oct 2024 20:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A66F1CF7BB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 20:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730319287; cv=none; b=B1x09+3rII6DopXlIMf7cwongSHpXwOtbmPJzsmvIzv9wW/RgV7VOAk2aekWRgurgVF1ZCaUvz7qje4VMSQzdX+zUvbgB/UTbfUJ+z/xy4XYsr7NpVmOtrnKYmTXx0YnMAFjaR8GOKyVE++J3+paPD8jNrXwxXsYLShpoNdFN5M=
+	t=1730319538; cv=none; b=AjWMMwYlB/tyk65FwWkHwz5duc/IRs/Jn4Y8OEX8phouCYP0yDZ3iJKfnAPDboVSEZgObvWZMN6RJbupgY39qwBccV5yvEuDj6M7Veku5tKhVroPnG84KRSB35rgOYffn1n2S2AOupsVAq4Z+O3vLQ9gc9c3Holt0/NCjsnfx4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730319287; c=relaxed/simple;
-	bh=6kxVpaFI1ZML7mVp1gWGnEfSVv3OB1JV0EJOz3Ivvj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sT+2lFAPqDQW3WmTW+vvTrB8ZeIGt7XiETczZpf/n+TZeSm3W5NWuWmL7/hI7GGrYb9LLhRwDFeiYeofRGGSpu/BEq45ytPXs2MHHI8u0McagxFv9QCi/ZhSmgtcOkaoL8Jf3lx94Bb60SOBsh9ObeGXlHICp9v1cxQjGTmtXkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elEe2qxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6EB9C4CECE;
-	Wed, 30 Oct 2024 20:14:46 +0000 (UTC)
+	s=arc-20240116; t=1730319538; c=relaxed/simple;
+	bh=+T/dC0hr1xj/RibAC47FdhmsKEe3jJW4igVaqrsYq30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BZsmndSRe5EjUupsJjVNfNdThlHR42pHLX2sMkRJ8qZhL2cOtlHZw7jzkL2R+m7HnOGelY5msk0P7pQgBlrKDDqGcuE4uIo76vbRWTcFc3IMLmUl2+OoNGrJPmwPh1LEotcydItD8s4oBGnoz0WD2jNfkqp5P6mkQFDlNtYcmfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmioHDUv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8354C4CECE;
+	Wed, 30 Oct 2024 20:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730319286;
-	bh=6kxVpaFI1ZML7mVp1gWGnEfSVv3OB1JV0EJOz3Ivvj4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=elEe2qxlq/tq9yHVtICkU2lMPx3AKZPDGcaCzpQ7lbK6uJS68eiXV0qTOTtlnarL5
-	 erP7oaQQoLK19f37F2TbQwPB43Iw1jVfTTNm1QoRsl5EOymgCzXRkps3lxNZz8iwtQ
-	 rsHQLKTYxtVnWNhZZ/YLpnKqEUXB2CJKtctZyBYskdN7ImSTwixNIS57Yze+7Jfi2J
-	 EtEDgwjN4PaO20L6rqo2d6Nq3QyrXHZDtf1iEIywuhn9WNcHdNmJmGXnTT0+GspXR9
-	 VCvy/y5sZWLILWrBYvblwk031i4Gq/bV/R8agNZUCsjHRAbqPnSpxKN8WcaFXzIHSg
-	 TJlA8ICMqNfJA==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71808b6246bso103843a34.2;
-        Wed, 30 Oct 2024 13:14:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4S/1OJVexEGXd/xbz5OanmSoW83c9m4yN7TQ1elaO49KSSIhPxeoLcSexCJxif47Idda5B7gcnH2HTnE=@vger.kernel.org, AJvYcCXv+MkL1uHABnCjWkY45HqHyvZnUpF9Pr0fxRUJpjVPUoB0/pAR8mfNIfMCCzI/GsdZ+pikhz2lvlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyzvabN2VqPpn4Vx+5wrNvWej+leH5rUGMsFxDmg3FOtZAznBP
-	FBVkhOhYuyHVslhcQ4i2VKBAFFZzgYDpbrjROt8zZOWOOu/iVNfO3JeiDSWmQqR4+7R2eWM+rTt
-	2o+JKxFz22EGUA7oZl57eLF8R8fU=
-X-Google-Smtp-Source: AGHT+IFegsDhcZQhn1bpNLDBz9XYx6v4gPhpqyRTrfwgyFhSpal8guopX09XxBD0DtFK+0WxmcPqfziQ5bFgfMx/ui0=
-X-Received: by 2002:a05:6870:b50e:b0:25e:24a0:4c96 with SMTP id
- 586e51a60fabf-29051b73021mr15841177fac.11.1730319286119; Wed, 30 Oct 2024
- 13:14:46 -0700 (PDT)
+	s=k20201202; t=1730319538;
+	bh=+T/dC0hr1xj/RibAC47FdhmsKEe3jJW4igVaqrsYq30=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BmioHDUvuVoTf9e9QSUaDAT34BwVQmTY73fld6VrI79lZjzSJSN45NMkmgadUmkRo
+	 ftc7oyrDiletULbTYOBrRfXMGv4xG8mcrKVjzMK/nMrSslz94V8g+DFEvo9ALRdQmA
+	 OKRBFg+e52RH2EB7b3qQF4YbBLbM1ppZrif1PcR6I6T+7N0tNj/wwdhSgtZRHTOLPx
+	 FL2/KWNYDMafpf+pABtPRv+8a9qktay19Vpn1Wt7eEOel4dzFbfSL83jNkv4PpQoVr
+	 8eLPBLnbeAxaAoE0OU5I3ijz1xK6PvbnO6O8HWAD4UfvQbRyEscg4n1u19pI35Vf87
+	 IvoUouyrRRyMg==
+Date: Wed, 30 Oct 2024 10:18:56 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	sched-ext@meta.com
+Subject: Re: [RFC PATCH sched/urgent] sched: Task still delay-dequeued after
+ switched from fair
+Message-ID: <ZyKUsBIXHu3NIcUb@slm.duckdns.org>
+References: <ZyF4rw_nvfpHfouv@slm.duckdns.org>
+ <20241030104934.GK14555@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029101507.7188-1-patryk.wlazlyn@linux.intel.com>
- <20241029101507.7188-3-patryk.wlazlyn@linux.intel.com> <e332a243-5a98-49ed-81be-b6db305d5dc5@intel.com>
- <35946efe3b8b8b686ba4ea0ed5c9f15c50ca6ef8.camel@linux.intel.com>
- <000fd68e-2b24-4eb3-b2d7-e4856b403212@intel.com> <CAJZ5v0j+Qc+5PtPdsDy5B0iAGWOxYbKdUOkVmL_jPNVO8fNK=g@mail.gmail.com>
- <b01cc6de-8440-477a-9844-d921da9dceb7@intel.com>
-In-Reply-To: <b01cc6de-8440-477a-9844-d921da9dceb7@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 30 Oct 2024 21:14:34 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gD+QjuW6iiJS7M0H_BAdXH7tnDGa+hp5BnvSNF+Cb0aQ@mail.gmail.com>
-Message-ID: <CAJZ5v0gD+QjuW6iiJS7M0H_BAdXH7tnDGa+hp5BnvSNF+Cb0aQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] x86/smp: Allow forcing the mwait hint for play
- dead loop
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, len.brown@intel.com, dave.hansen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030104934.GK14555@noisy.programming.kicks-ass.net>
 
-On Wed, Oct 30, 2024 at 9:11=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 10/30/24 12:53, Rafael J. Wysocki wrote:
-> > clearly referred to as a kexec() hack, which cannot be done in
-> > cpuidle_play_dead() because the cpuidle driver doesn't know how to get
-> > to md->control.
->
-> What if we have an mwait_play_dead() _helper_?  It takes the hint as an
-> argument and retains all the kexec hacks.  All the cpuidle driver has to
-> do is call the helper with the hint that the cpuidle driver determines.
+Hello,
 
-The same idea has occurred to me in the meantime, so yes, I think that
-it would work.
+On Wed, Oct 30, 2024 at 11:49:34AM +0100, Peter Zijlstra wrote:
+...
+> > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> > index 65334c13ffa5..601aad1a2625 100644
+> > --- a/kernel/sched/ext.c
+> > +++ b/kernel/sched/ext.c
+> > @@ -5205,8 +5205,12 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+> >  	while ((p = scx_task_iter_next_locked(&sti))) {
+> >  		const struct sched_class *old_class = p->sched_class;
+> >  		struct sched_enq_and_set_ctx ctx;
+> > +		int deq_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+> >  
+> > -		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
+> > +		if (p->se.sched_delayed)
+> > +			deq_flags |= DEQUEUE_SLEEP | DEQUEUE_DELAYED;
+> > +
+> > +		sched_deq_and_put_task(p, deq_flags, &ctx);
+> 
+> I don't think this is quite right, the problem is that in this case
+> ctx.queued is reporting true, even though you want it false.
+> 
+> This is why 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
+> adds a second dequeue.
+
+I see. Yeah, ctx.queued would be set incorrectly.
+
+> Also, you seem to have a second instance of all that.
+
+The disable path doesn't really need it because the transition direction is
+always scx -> fair but yeah keeping the two loops in sync is fine too.
+
+> Does the below work for you? I suppose I might as well go work on that
+> TODO item now.
+
+Yeap, it works. Will ack on the other thread.
+
+Thanks.
+
+-- 
+tejun
 
