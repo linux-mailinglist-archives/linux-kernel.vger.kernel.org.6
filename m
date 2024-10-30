@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-388293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239039B5D4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:00:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FB39B5D50
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 09:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC81C20E3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0892E2845B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8922C1C4603;
-	Wed, 30 Oct 2024 08:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA871DFE3F;
+	Wed, 30 Oct 2024 08:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZz4SeTh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwVAYNEL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3648194C69;
-	Wed, 30 Oct 2024 08:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDA921348;
+	Wed, 30 Oct 2024 08:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730275213; cv=none; b=pgjjN3nvsIa9wK4qQtBcUHIJgmjIY3x3JZXekegVpIuhGb1/ug6LLM+EB6yrHzdJRZCFdz4i1eTcz0hwI2LEZm7Q7EKrBwn0Fcm6sRYceHu1bAQELDtohCXT6ZALtfKW36vlbLtYM9HKjy8CXaE+A/fQLmWgUbwIJfyODsTVyvA=
+	t=1730275408; cv=none; b=Byht4/+MoVBVstYMp6u7RMuUDTb4LxEp+Ty+tmTUUBPF+yEjdH4gAT8zwibsKa6i+C3gOSfg5dHCINZZ+dLyqwMP4vQ8CcdPHenuzmmCAmUDfWiEjgkKvPTuKChwNeAMf4WGFjaLtAqoS3lGVsfnuHQTzg1iK3dJzbcKjh4d2d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730275213; c=relaxed/simple;
-	bh=fa9DgDsgu4iLAoH7uVAKdBg4ZTtwtHF9kcohSHCeFWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVezhioCUDlYAwTqEqCt7zefEBqhCTw5vmEoJec+hT4sUcDkJO+3raGXxsGepruLRhELZ3P+IjXt/9Hz3tjU9kr+zoRU7gpS1xdkNTksStY+zLb/SFY75OT6gkh7EednAqKCbQiksWPgOZuHObyGKIP27KlcoLndX1hjgNLTxxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZz4SeTh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20684C4CEE4;
-	Wed, 30 Oct 2024 08:00:10 +0000 (UTC)
+	s=arc-20240116; t=1730275408; c=relaxed/simple;
+	bh=Z05BLwZLTc6891MEsx1DxE+Uvc8sYJ/+30idLbMWN3U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SD9OC/fusTSZkvuC5e9LX/ga+g6hS+LsvT5aO9ptiavjompf0Zsc80KU+SbvQhxZ75s/TSJogeMIu87J9rdfth9+Cfr7sMQIutQktv3fZjMFQCzWSgyB28/Jxu/n37L62zpvvaq3MowyABPCkGIfkEE+sX/2fQps0GD1RoXXT3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwVAYNEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C361C4CEE5;
+	Wed, 30 Oct 2024 08:03:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730275212;
-	bh=fa9DgDsgu4iLAoH7uVAKdBg4ZTtwtHF9kcohSHCeFWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jZz4SeThJU2EDv7v9n7K/mtpAg5xvefxT135neB9/UUOMaypcjARB9OMqGcmj3emn
-	 tcd1C6u4vhU83wqz/pTdD2KQORCQ/Jhw69K5KkGwrH7l3dZwjxCbRr/qUw6lBOIaiX
-	 ZhFQIe6ijMvBo/FO9uv0no7NkGUSjw+G1GHzTeX5otex7Lp/CcYT69B91SExhlYBRc
-	 qKpje9lKFecpYOWzRsIh6zaLx2YZU7B5qCpKUgXzYEuwwavBNUzOVEyJs30cPksCM/
-	 afWp5sgqkjWpUQ0pydiDbYiv2MSY2AuHpWsmBAAJaGDH3EG4inVHxBiwb3o25MgkND
-	 83CJPItmKLxbw==
-Date: Wed, 30 Oct 2024 09:00:08 +0100
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Yun Lu <luyun@kylinos.cn>, jikos@kernel.org, shuah@kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftest/hid: increase timeout to 10 min
-Message-ID: <4pfwh24gmu4ujb5iwjjo5oxh4mfja2ajtkrkbzbbshjkoz5wjx@ac4tfdc5twxe>
-References: <20241029090746.179108-1-luyun@kylinos.cn>
- <85570e57-1af3-4d17-8a21-58c75e6bac9c@linuxfoundation.org>
+	s=k20201202; t=1730275405;
+	bh=Z05BLwZLTc6891MEsx1DxE+Uvc8sYJ/+30idLbMWN3U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bwVAYNELS8ZsxYT4Fngc0Yot78ySt6zACdN+yeAhfR7JVUNx3syIIHbgO3rELtmox
+	 CoTF84Wf77vAhETQ6rSGzZ2ePkASDNrqYmg6jnuHrutcwGL21JVGvxVaTWsdA61LqO
+	 HhShOXOHEPPBz+UO1EIbkLuMp09DkxQqbEyRH7vpzGG2vB/7awANHYDGOHrQSnsk78
+	 Fr4g0Vat/zCeo/d/ZFF6ecojd8a4CF10pPzgnbXKkC7iiu22mlEweP+b76U2Z3Pjws
+	 c5CUD9K5ecxMxgRKetXZBp9Jc4TG2BbkRhABjRdM6xRfTpQm/KCd5w0ETtgaItMkIl
+	 TgT3GN169vmQA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so7886315e87.1;
+        Wed, 30 Oct 2024 01:03:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUlRD/tFJAI5ijROJPyeEiHb3R17k0QK2jyEXVfHMWjsJtOkB+QgBJ13tXpdIbmNF1dKyQFkSxaaDi+DowWDA==@vger.kernel.org, AJvYcCWLbwLUDQC19oVusmNSf4QHbSC72WPa3od91DHvfn2ywO4xDAPv2FYxAJQfbnqiBwbVE/r7r2grnbZ68sLA@vger.kernel.org, AJvYcCXcaUhKrQcp75PPraogp+qHtzezxvG2gZpc6wSuaeqTr+I70tXRMoRuOAs/HF267YcwHB5hMpslYiedT5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPRSKlfoLJJcm7IiH9uChXzidvkW54F/4vwpq83PTopp396jwH
+	t+7xA3kVZhhxyO9Fr1eSqa2U7W0q0FXYKYgTObx+b8kEZcpBQdr1dZPqLtQERuadSGoEuM/8Kgk
+	f5uAhqPgL5S5xSVxjvvnSfZvC9yU=
+X-Google-Smtp-Source: AGHT+IGp9duhebvSBPuN7t1bGZWNCsbJrT3+g5gRR01jqZHhdfbmzJFgSTody/T7m5PXZY2PHYFFi3C2JyD6WYHNJsc=
+X-Received: by 2002:a05:6512:39cd:b0:539:eb82:d453 with SMTP id
+ 2adb3069b0e04-53b7ed18622mr1135426e87.39.1730275404002; Wed, 30 Oct 2024
+ 01:03:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85570e57-1af3-4d17-8a21-58c75e6bac9c@linuxfoundation.org>
+References: <20241029-remove-export-report-pl-v1-1-9cd6ccf93493@google.com>
+In-Reply-To: <20241029-remove-export-report-pl-v1-1-9cd6ccf93493@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 30 Oct 2024 09:02:46 +0100
+X-Gmail-Original-Message-ID: <CAK7LNATYQAfsvU+Gm8FqBkKV-EMgHWD8Fp_mVrR5Uq81Lv5nEw@mail.gmail.com>
+Message-ID: <CAK7LNATYQAfsvU+Gm8FqBkKV-EMgHWD8Fp_mVrR5Uq81Lv5nEw@mail.gmail.com>
+Subject: Re: [PATCH] scripts: Remove export_report.pl
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Oct 29 2024, Shuah Khan wrote:
-> On 10/29/24 03:07, Yun Lu wrote:
-> > If running hid testcases with command "./run_kselftest.sh -c hid",
-> 
-> NIT - When inestead of "If"
-> > the following tests will take longer than the kselftest framework
-> > timeout (now 200 seconds) to run and thus got terminated with TIMEOUT
-> > error:
-> > 
-> >    hid-multitouch.sh - took about 6min41s
-> >    hid-tablet.sh - took about 6min30s
-> > 
-> > Increase the timeout setting to 10 minutes to allow them have a chance
-> > to finish.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Yun Lu <luyun@kylinos.cn>
-> > ---
-> >   tools/testing/selftests/hid/settings | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/testing/selftests/hid/settings b/tools/testing/selftests/hid/settings
-> > index b3cbfc521b10..dff0d947f9c2 100644
-> > --- a/tools/testing/selftests/hid/settings
-> > +++ b/tools/testing/selftests/hid/settings
-> > @@ -1,3 +1,3 @@
-> >   # HID tests can be long, so give a little bit more time
-> >   # to them
-> > -timeout=200
-> > +timeout=600
-> 
-> Okay - maybe this test shouldn't be part of the default run if it needs
-> 600 seconds to run?
+On Tue, Oct 29, 2024 at 10:12=E2=80=AFPM Matthew Maurer <mmaurer@google.com=
+> wrote:
+>
+> This script has been broken for 5 years with no user complaints.
+>
+> It first had its .mod.c parser broken in commit a3d0cb04f7df ("modpost:
+> use __section in the output to *.mod.c"). Later, it had its object file
+> enumeration broken in commit f65a486821cf ("kbuild: change module.order
+> to list *.o instead of *.ko"). Both of these changes sat for years with
+> no reports.
+>
+> Rather than reviving this script as we make further changes to `.mod.c`,
+> this patch gets rid of it because it is clearly unused.
+>
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> ---
+>  scripts/export_report.pl | 186 -----------------------------------------=
+------
+>  1 file changed, 186 deletions(-)
 
-Agree, but is it possible to be more granular?
 
-FWIW, there are some tests that are quick in the hid subtree that should
-probably be run regularly. For instance, the hid_bpf program is
-interesting to be run when there are bpf changes, because it's relying
-on the bpf architecture.
+The top-level Makefile should be cleaned up.
 
-I think hid-core.sh, hid-mouse,sh and hid-keyboard.sh are fast enough
-and should also be integrated in the default runs.
+$ git grep export_report -- Makefile
+Makefile:       @echo  '  export_report   - List the usages of all
+exported symbols'
+Makefile:PHONY +=3D includecheck versioncheck coccicheck export_report
+Makefile:export_report:
+Makefile:       $(PERL) $(srctree)/scripts/export_report.pl
 
-hid-multitouch, hid-wacom, hid-sony are definitely taking a lot of time,
-so they should probbaly be run only when there are changes in those
-areas, i.e., not by default.
 
-Cheers,
-Benjamin
 
-> 
-> thanks,
-> -- Shuah
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
