@@ -1,115 +1,408 @@
-Return-Path: <linux-kernel+bounces-389526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00799B6E0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:49:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA409B6E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A21282DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF1328216A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6DC1F4738;
-	Wed, 30 Oct 2024 20:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C83C199FB1;
+	Wed, 30 Oct 2024 20:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQ/HI2yk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PI16AU47"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094331BD9E2;
-	Wed, 30 Oct 2024 20:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0931EF94E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 20:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730321297; cv=none; b=YAD7OgeI+ovgNIFI6ZOLH+zQPzBDzWPivb01t6Pn3fbUEM2StBwMIWjsWO3f7aD7WdAYe4ebXQO7e9jEQBD5ppnmsrlVAF2i9KaaRQRj6BCUi+8UQ/EV2dli9nJlt7iNMiadcx+oVPoijd66sQfdwihTJtjIVmmCz7+Wi+ciKhA=
+	t=1730321311; cv=none; b=Qhq++PPaqoVGcx+OR7i4GPgTiV1Ju1KW2bZzdElQ3OZV2p74tjoiZmff4sI3ZPj4qY3etNsVl8bbMnrIL1Y21BKToljcowb7UgSpb7N4ChWV7S9ox4T2hFB/VD6x4UggG0Pa+j4q3Dd0xB0xQxoAmzecAGq9M8E0if8gQbaiG8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730321297; c=relaxed/simple;
-	bh=HfeJop/UUlRuFQw/Hekxxiu9zAJhZVfSfpiAkceHfr4=;
+	s=arc-20240116; t=1730321311; c=relaxed/simple;
+	bh=KbTQVsYw8azwhXduQ1dDGEpd8mLnogaF9NDwUn5hZBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0r1KUqTBY8+lX/dIwjQYwzfKa4XKF+81NLTxGMoqaZgdR/soMamDmelfiylC53A3LZUoPuYjBaVsGLmQh7REytu3O99cRDc0PPQ461ZtS4vmBkuYAKIg52YDWl+Q2u2qbphmL3dMSMXmtmQmSZA08QWZ74/S8JZ+N3fBhsb8/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQ/HI2yk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C3E6C4CECE;
-	Wed, 30 Oct 2024 20:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730321296;
-	bh=HfeJop/UUlRuFQw/Hekxxiu9zAJhZVfSfpiAkceHfr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oQ/HI2yktVXVjMoXAvEks8mgpc2Kf6rtF1Vr0lGYkCOiEcA/i+raJxPigg6iQvQi7
-	 DQ1WubJ01OkOxCxe5V7+e4Gk12Ff3/8HYvSxSRb7NCvc6NI08mDirCx5FGplTaO3Tc
-	 gWp28BXPlvjFcz956IZ/dzZCH2GhGJOHBAFrmu2trwHs5Cucn1wASciMj4+KSuOfWM
-	 F7bPuuUVXrSyGD3wlOOIpH/JvC/AGFXAaxFxGf1mJfSFhbu8/L2OGQNWWeUZAiHUb0
-	 QyHGNaQ0z9yLkJ62FUGgMJ8Wq2rMtYZjZ5VDz5eU45qqw1y7TLvdY1rmHVFNOA5B5d
-	 2f3MgXIl9bPPw==
-Date: Wed, 30 Oct 2024 13:48:13 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=BC1WRQ6Q7X5T6x2NKYeeupxwCeyqgE2q56cECTPAGn7/9+4Bx2sMW8k9Wl+dw6T73ol+qZnBCmEY4ybKeM2uPzTxkLw2VEkKdo3XginuSNAn+sXj7b+A/y1vNtl/gRpqHvHlwFDxdyxnRrpQvtvEvOQ6M8EmzlGnCXO30AsFd8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PI16AU47; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=99kTf82GzK1ndpXdfczRfvZOLKCNQTEUCVNieLNuiSs=; b=PI16AU47aiHMO5yEPxtISu3fZA
+	uWREIXNp7coEnuY037L31MsPtG+2Jg3eH+TpdfFMDAoVzgqGJs8WypeuPXs3ww3VN98EoqHZtEQcj
+	n3QUXDqyeqUVr3cuJmjGKFkvlN4pAOijFHLqJZJ9TtWRNPxxjEBThEhDcfADy6VFJ6X5KHnl0MUA1
+	j7Wb/XyuLAwZ8jWThcX9XRH/J3X9o3uyVHIdHO00xaSFPwAEUwryIpv8b+EgaSYpUtLbSeWh2XXBC
+	0haT4Uh6IPqH3dv2PMoBMYB2cQdP5MwWY2OEJRQ6b3Tyg41EQ/UpjO+mKWhYrsgLVFjie9xO541lD
+	TMbj5Otg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6Fc0-0000000ALFy-1gjc;
+	Wed, 30 Oct 2024 20:48:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B3B51300ABE; Wed, 30 Oct 2024 21:48:15 +0100 (CET)
+Date: Wed, 30 Oct 2024 21:48:15 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marco Elver <elver@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-Message-ID: <20241030204813.q5dvtyyhpqgg5pee@treble.attlocal.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <20241029135617.GB14555@noisy.programming.kicks-ass.net>
- <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
- <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
- <20241029182032.GI14555@noisy.programming.kicks-ass.net>
- <20241030021722.2d1fe6d3@rorschach.local.home>
- <20241030140324.GM14555@noisy.programming.kicks-ass.net>
- <20241030155816.094edca5@rorschach.local.home>
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>
+Subject: Re: [PATCH] kcsan, seqlock: Support seqcount_latch_t
+Message-ID: <20241030204815.GQ14555@noisy.programming.kicks-ass.net>
+References: <20241029083658.1096492-1-elver@google.com>
+ <20241029114937.GT14555@noisy.programming.kicks-ass.net>
+ <CANpmjNPyXGRTWHhycVuEXdDfe7MoN19MeztdQaSOJkzqhCD69Q@mail.gmail.com>
+ <20241029134641.GR9767@noisy.programming.kicks-ass.net>
+ <ZyFKUU1LpFfLrVXb@elver.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030155816.094edca5@rorschach.local.home>
+In-Reply-To: <ZyFKUU1LpFfLrVXb@elver.google.com>
 
-On Wed, Oct 30, 2024 at 03:58:16PM -0400, Steven Rostedt wrote:
-> On Wed, 30 Oct 2024 15:03:24 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, Oct 29, 2024 at 09:49:21PM +0100, Marco Elver wrote:
+
+> Something like this?
 > 
-> > You're designing things inside out again. You should add functionality
-> > by adding layers.
-> > 
-> > Pass a void * into the 'request-unwind' and have the 'do-unwind'
-> > callback get that same pointer. Then anybody that needs identifiers to
-> > figure out where things came from can stuff something in there.
+> ------ >8 ------
 > 
-> What the hell should I do with a void pointer? I want a stack trace, I
-> ask for one, it gives me an identifier for it, then at the end when it
-> does my callback it gives me the stack trace I asked for with the
-> identifier that it belongs to.
->
-> The identifier should be part of the unwinder code as it has to do
-> with the stack trace and has nothing to do with tracing.
+> Author: Marco Elver <elver@google.com>
+> Date:   Tue Oct 29 21:16:21 2024 +0100
+> 
+>     time/sched_clock: Swap update_clock_read_data() latch writes
+>     
+>     Swap the writes to the odd and even copies to make the writer critical
+>     section look like all other seqcount_latch writers.
+>     
+>     With that, we can also add the raw_write_seqcount_latch_end() to clearly
+>     denote the end of the writer section.
+>     
+>     Signed-off-by: Marco Elver <elver@google.com>
+> 
+> diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
+> index 68d6c1190ac7..311c90a0e86e 100644
+> --- a/kernel/time/sched_clock.c
+> +++ b/kernel/time/sched_clock.c
+> @@ -119,9 +119,6 @@ unsigned long long notrace sched_clock(void)
+>   */
+>  static void update_clock_read_data(struct clock_read_data *rd)
+>  {
+> -	/* update the backup (odd) copy with the new data */
+> -	cd.read_data[1] = *rd;
+> -
+>  	/* steer readers towards the odd copy */
+>  	raw_write_seqcount_latch(&cd.seq);
+>  
+> @@ -130,6 +127,11 @@ static void update_clock_read_data(struct clock_read_data *rd)
+>  
+>  	/* switch readers back to the even copy */
+>  	raw_write_seqcount_latch(&cd.seq);
+> +
+> +	/* update the backup (odd) copy with the new data */
+> +	cd.read_data[1] = *rd;
+> +
+> +	raw_write_seqcount_latch_end(&cd.seq);
+>  }
+>  
+>  /*
 
-If at least most of the users would find the cookie useful -- which it
-sounds like they would, maybe even including perf -- then it makes sense
-to integrate that into the unwinder.  It also helps the unwinder
-disambiguate which callbacks have been called and whether the stack has
-already been unwound.
+That looks about right :-)
 
-That said, I'm also implementing the void pointer thing, as AFAICT perf
-needs to pass the perf_event pointer to the callback.  There's no reason
-we can't have both.
+> ------ >8 ------
+> 
+> I also noticed your d16317de9b41 ("seqlock/latch: Provide
+> raw_read_seqcount_latch_retry()") to get rid of explicit instrumentation
+> in noinstr.
+> 
+> Not sure how to resolve that. We have that objtool support to erase
+> calls in noinstr code (is_profiling_func), but that's x86 only.
+> 
+> I could also make kcsan_atomic_next(0) noinstr compatible by checking if
+> the ret IP is in noinstr, and immediately return if it is.
+> 
+> Preferences?
 
--- 
-Josh
+Something like this perhaps?
+
+---
+ arch/x86/kernel/tsc.c        |  5 +++--
+ include/linux/rbtree_latch.h | 14 ++++++++------
+ include/linux/seqlock.h      | 31 ++++++++++++++++++++++++++++++-
+ kernel/printk/printk.c       |  9 +++++----
+ kernel/time/sched_clock.c    | 20 ++++++++++++--------
+ kernel/time/timekeeping.c    | 10 ++++++----
+ 6 files changed, 64 insertions(+), 25 deletions(-)
+
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index dfe6847fd99e..67aeaba4ba9c 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -174,10 +174,11 @@ static void __set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long ts
+ 
+ 	c2n = per_cpu_ptr(&cyc2ns, cpu);
+ 
+-	raw_write_seqcount_latch(&c2n->seq);
++	write_seqcount_latch_begin(&c2n->seq);
+ 	c2n->data[0] = data;
+-	raw_write_seqcount_latch(&c2n->seq);
++	write_seqcount_latch(&c2n->seq);
+ 	c2n->data[1] = data;
++	write_seqcount_latch_end(&c2n->seq);
+ }
+ 
+ static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
+diff --git a/include/linux/rbtree_latch.h b/include/linux/rbtree_latch.h
+index 6a0999c26c7c..bc992c61b7ce 100644
+--- a/include/linux/rbtree_latch.h
++++ b/include/linux/rbtree_latch.h
+@@ -145,10 +145,11 @@ latch_tree_insert(struct latch_tree_node *node,
+ 		  struct latch_tree_root *root,
+ 		  const struct latch_tree_ops *ops)
+ {
+-	raw_write_seqcount_latch(&root->seq);
++	write_seqcount_latch_begin(&root->seq);
+ 	__lt_insert(node, root, 0, ops->less);
+-	raw_write_seqcount_latch(&root->seq);
++	write_seqcount_latch(&root->seq);
+ 	__lt_insert(node, root, 1, ops->less);
++	write_seqcount_latch_end(&root->seq);
+ }
+ 
+ /**
+@@ -172,10 +173,11 @@ latch_tree_erase(struct latch_tree_node *node,
+ 		 struct latch_tree_root *root,
+ 		 const struct latch_tree_ops *ops)
+ {
+-	raw_write_seqcount_latch(&root->seq);
++	write_seqcount_latch_begin(&root->seq);
+ 	__lt_erase(node, root, 0);
+-	raw_write_seqcount_latch(&root->seq);
++	write_seqcount_latch(&root->seq);
+ 	__lt_erase(node, root, 1);
++	write_seqcount_latch_end(&root->seq);
+ }
+ 
+ /**
+@@ -204,9 +206,9 @@ latch_tree_find(void *key, struct latch_tree_root *root,
+ 	unsigned int seq;
+ 
+ 	do {
+-		seq = raw_read_seqcount_latch(&root->seq);
++		seq = read_seqcount_latch(&root->seq);
+ 		node = __lt_find(key, root, seq & 1, ops->comp);
+-	} while (raw_read_seqcount_latch_retry(&root->seq, seq));
++	} while (read_seqcount_latch_retry(&root->seq, seq));
+ 
+ 	return node;
+ }
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index fffeb754880f..9c2751087185 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -621,6 +621,12 @@ static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *
+ 	return READ_ONCE(s->seqcount.sequence);
+ }
+ 
++static __always_inline unsigned read_seqcount_latch(const seqcount_latch_t *s)
++{
++	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);
++	return raw_read_seqcount_latch(s);
++}
++
+ /**
+  * raw_read_seqcount_latch_retry() - end a seqcount_latch_t read section
+  * @s:		Pointer to seqcount_latch_t
+@@ -635,6 +641,13 @@ raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
+ 	return unlikely(READ_ONCE(s->seqcount.sequence) != start);
+ }
+ 
++static __always_inline int
++read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
++{
++	kcsan_atomic_next(0);
++	return raw_read_seqcount_latch_retry(s, start);
++}
++
+ /**
+  * raw_write_seqcount_latch() - redirect latch readers to even/odd copy
+  * @s: Pointer to seqcount_latch_t
+@@ -716,13 +729,29 @@ raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
+  *	When data is a dynamic data structure; one should use regular RCU
+  *	patterns to manage the lifetimes of the objects within.
+  */
+-static inline void raw_write_seqcount_latch(seqcount_latch_t *s)
++static __always_inline void raw_write_seqcount_latch(seqcount_latch_t *s)
+ {
+ 	smp_wmb();	/* prior stores before incrementing "sequence" */
+ 	s->seqcount.sequence++;
+ 	smp_wmb();      /* increment "sequence" before following stores */
+ }
+ 
++static __always_inline void write_seqcount_latch_begin(seqcount_latch_t *s)
++{
++	kcsan_nestable_atomic_begin();
++	raw_write_seqcount_latch(s);
++}
++
++static __always_inline void write_seqcount_latch(seqcount_latch_t *s)
++{
++	raw_write_seqcount_latch(s);
++}
++
++static __always_inline void write_seqcount_latch_end(seqcount_latch_t *s)
++{
++	kcsan_nestable_atomic_end();
++}
++
+ #define __SEQLOCK_UNLOCKED(lockname)					\
+ 	{								\
+ 		.seqcount = SEQCNT_SPINLOCK_ZERO(lockname, &(lockname).lock), \
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index beb808f4c367..19911c8fa7b6 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -560,10 +560,11 @@ bool printk_percpu_data_ready(void)
+ /* Must be called under syslog_lock. */
+ static void latched_seq_write(struct latched_seq *ls, u64 val)
+ {
+-	raw_write_seqcount_latch(&ls->latch);
++	write_seqcount_latch_begin(&ls->latch);
+ 	ls->val[0] = val;
+-	raw_write_seqcount_latch(&ls->latch);
++	write_seqcount_latch(&ls->latch);
+ 	ls->val[1] = val;
++	write_seqcount_latch_end(&ls->latch);
+ }
+ 
+ /* Can be called from any context. */
+@@ -574,10 +575,10 @@ static u64 latched_seq_read_nolock(struct latched_seq *ls)
+ 	u64 val;
+ 
+ 	do {
+-		seq = raw_read_seqcount_latch(&ls->latch);
++		seq = read_seqcount_latch(&ls->latch);
+ 		idx = seq & 0x1;
+ 		val = ls->val[idx];
+-	} while (raw_read_seqcount_latch_retry(&ls->latch, seq));
++	} while (read_seqcount_latch_retry(&ls->latch, seq));
+ 
+ 	return val;
+ }
+diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
+index 68d6c1190ac7..4958b40ba6c9 100644
+--- a/kernel/time/sched_clock.c
++++ b/kernel/time/sched_clock.c
+@@ -71,13 +71,13 @@ static __always_inline u64 cyc_to_ns(u64 cyc, u32 mult, u32 shift)
+ 
+ notrace struct clock_read_data *sched_clock_read_begin(unsigned int *seq)
+ {
+-	*seq = raw_read_seqcount_latch(&cd.seq);
++	*seq = read_seqcount_latch(&cd.seq);
+ 	return cd.read_data + (*seq & 1);
+ }
+ 
+ notrace int sched_clock_read_retry(unsigned int seq)
+ {
+-	return raw_read_seqcount_latch_retry(&cd.seq, seq);
++	return read_seqcount_latch_retry(&cd.seq, seq);
+ }
+ 
+ unsigned long long noinstr sched_clock_noinstr(void)
+@@ -102,7 +102,9 @@ unsigned long long notrace sched_clock(void)
+ {
+ 	unsigned long long ns;
+ 	preempt_disable_notrace();
++	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);
+ 	ns = sched_clock_noinstr();
++	kcsan_atomic_next(0);
+ 	preempt_enable_notrace();
+ 	return ns;
+ }
+@@ -119,17 +121,19 @@ unsigned long long notrace sched_clock(void)
+  */
+ static void update_clock_read_data(struct clock_read_data *rd)
+ {
+-	/* update the backup (odd) copy with the new data */
+-	cd.read_data[1] = *rd;
+-
+ 	/* steer readers towards the odd copy */
+-	raw_write_seqcount_latch(&cd.seq);
++	write_seqcount_latch_begin(&cd.seq);
+ 
+ 	/* now its safe for us to update the normal (even) copy */
+ 	cd.read_data[0] = *rd;
+ 
+ 	/* switch readers back to the even copy */
+-	raw_write_seqcount_latch(&cd.seq);
++	write_seqcount_latch(&cd.seq);
++
++	/* update the backup (odd) copy with the new data */
++	cd.read_data[1] = *rd;
++
++	write_seqcount_latch_end(&cd.seq);
+ }
+ 
+ /*
+@@ -267,7 +271,7 @@ void __init generic_sched_clock_init(void)
+  */
+ static u64 notrace suspended_sched_clock_read(void)
+ {
+-	unsigned int seq = raw_read_seqcount_latch(&cd.seq);
++	unsigned int seq = read_seqcount_latch(&cd.seq);
+ 
+ 	return cd.read_data[seq & 1].epoch_cyc;
+ }
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 7e6f409bf311..2ca26bfeb8f3 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -424,16 +424,18 @@ static void update_fast_timekeeper(const struct tk_read_base *tkr,
+ 	struct tk_read_base *base = tkf->base;
+ 
+ 	/* Force readers off to base[1] */
+-	raw_write_seqcount_latch(&tkf->seq);
++	write_seqcount_latch_begin(&tkf->seq);
+ 
+ 	/* Update base[0] */
+ 	memcpy(base, tkr, sizeof(*base));
+ 
+ 	/* Force readers back to base[0] */
+-	raw_write_seqcount_latch(&tkf->seq);
++	write_seqcount_latch(&tkf->seq);
+ 
+ 	/* Update base[1] */
+ 	memcpy(base + 1, base, sizeof(*base));
++
++	write_seqcount_latch_end(&tkf->seq);
+ }
+ 
+ static __always_inline u64 __ktime_get_fast_ns(struct tk_fast *tkf)
+@@ -443,11 +445,11 @@ static __always_inline u64 __ktime_get_fast_ns(struct tk_fast *tkf)
+ 	u64 now;
+ 
+ 	do {
+-		seq = raw_read_seqcount_latch(&tkf->seq);
++		seq = read_seqcount_latch(&tkf->seq);
+ 		tkr = tkf->base + (seq & 0x01);
+ 		now = ktime_to_ns(tkr->base);
+ 		now += __timekeeping_get_ns(tkr);
+-	} while (raw_read_seqcount_latch_retry(&tkf->seq, seq));
++	} while (read_seqcount_latch_retry(&tkf->seq, seq));
+ 
+ 	return now;
+ }
 
