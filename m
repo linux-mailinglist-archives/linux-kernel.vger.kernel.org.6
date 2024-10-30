@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-388165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96FA39B5B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:48:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399C69B5B73
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E80282BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:48:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51B928283A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4901D0BA5;
-	Wed, 30 Oct 2024 05:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9B2137750;
+	Wed, 30 Oct 2024 05:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lNGMUrIS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lxVd6msk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649721991DB
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37BC1E87B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730267299; cv=fail; b=ZYW5Yi6Wr7wSq/bSp6lyuC475Y/IaFN8Ch3H4Cl/ycoORlj0KBdubEPnRhRwwscLkkEudNLBorp0T1b22Z6Cx1F5UUbEY4yMh0l0OKY65DOLUaVGmIfvrM4tN0h7B6dyoxFqjF1O3GNxiLk2F2qlO4UBfu8+t0px2ymzyfPe/Gk=
+	t=1730267202; cv=fail; b=eFt/mtqGEgIS+f81OzhwFSP7fTkWpT7m6HvnM3htFLrhs+qlWqggJKDrSVmqq3dleANrXW2v5MFxDdE4Jx72AEAfIgxCvrqOiUlshWUJ6lmScrZeqvpylk1BBThUgRDPAtwoObp/mscr8QTB8ISF0YbZ+2+NEuZ2W7rDjhnjeks=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730267299; c=relaxed/simple;
-	bh=+yew7Rny07CZ32gPvn8l2QWh8OYG5Aw4k+rzQUwUSws=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=ioQzk7D7Cg+NgFiWd/pA/RALwJQ99btK3W9DwFKSCDL2jHcvVj0uV809DNdICSlbcLDTWSwgzzb4G5GCEjeu9uPnB1Jp2XxdG6H1N0chsnyMhPZmFvSQ5DwlCcw33hTft9YQyUmPTefvDbtweINWOM9sd0F5hKuC78yCCr4P6TA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lNGMUrIS; arc=fail smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1730267202; c=relaxed/simple;
+	bh=G8H39WI0EfqF7QN8JAVlmfIsWJ7iqnoNFRx2yV/A8A8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Md+ycoVbVBlYhpztxxhHd3QYQ5+ZlTjLalAZxvDRwvtyg0fWAmlN7rOiB6JD0zejFQLmWUJMGONkVJz2VMXNJWkmV1FSsgtwDQ9+DbhpZOqM2A/BMnGJz+RTqUitK5b4oZH2W1K3JXLEn5MzZixi/e7Xi+0gOBHJjEOyh1HUP8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lxVd6msk; arc=fail smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730267296; x=1761803296;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=+yew7Rny07CZ32gPvn8l2QWh8OYG5Aw4k+rzQUwUSws=;
-  b=lNGMUrIS1dw3C6q05vEC1jmpzdTuXFX0q2Eno6MsJZzMIpqqghnJ2e8f
-   T43vTmNLovh+OBtlJ0GtcpzX6yaaFZ07vRONGUsyGI4PBgs1rbBgpkqO6
-   edrtSU+idh+YlJqycqJu+BmYbGIEyFTYQdfYUbYAhs7GICnqclZeaR6WK
-   jzrFhF9LuugMJh4D8xcnscIpYNYgHy60zZkeAJxV6W2IdVU45EStEC0F+
-   pBciRf+suf3stu9iPHB10nGoUzH6AYB3drDBzAqNPNC1CW/pjvkSiyovk
-   f3/0EOxpVLYIr+K0PVFGrgV6caC94ZhRLoUY/nKYZjz66i7v5uE40luRm
-   Q==;
-X-CSE-ConnectionGUID: ZytDVS8rR4OU6WqDJRN0tQ==
-X-CSE-MsgGUID: /lhAiBAgRCaG2vHXrf3q7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="29371442"
+  t=1730267200; x=1761803200;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=G8H39WI0EfqF7QN8JAVlmfIsWJ7iqnoNFRx2yV/A8A8=;
+  b=lxVd6msk+CTiczrAOLl9Xstm2W36V3ezcs/t55dachhRRqaGHLJ5PCNi
+   Am4DaeF2WrVV/c/FY85bawlW5AiaVbEQ/ABinPbks8YUssetGtM6g0z2t
+   0r0wtcFMEeP2GF28a49nojehV79mCl+AxiOfpVnQNUb3FuV25T2A/JxaT
+   MEh2kzjs1D9jg7LeWdzRC+qqMjB6t0PplvgplJ/KOQ5F2ZgasJLKG0AVl
+   x0MyGPVJ3ylnSqPmy1jB57UyToUUBZhbpfrY1KgTHu5xPSUT9o3V6UaKI
+   P4AiqnmpkoZiQywxBoufQknVLgj2McCPufJFfbyv4GnB4mPmLglNNcIOL
+   w==;
+X-CSE-ConnectionGUID: eYq7kzxzSc2DIolA8B/Vqg==
+X-CSE-MsgGUID: 2VhmbHL2TBeGeOcMspcWiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="33749440"
 X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="29371442"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 22:48:06 -0700
-X-CSE-ConnectionGUID: 0pi6QozETKSqmEkeVBeScA==
-X-CSE-MsgGUID: ZG2vcbmrTFCGuC2FlPpH2g==
+   d="scan'208";a="33749440"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 22:46:40 -0700
+X-CSE-ConnectionGUID: ZnUV5B0iToWznkRi6b/tTQ==
+X-CSE-MsgGUID: 1SkWM33NTdmKTqcNSU5IAg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,244,1725346800"; 
-   d="scan'208";a="82117355"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 22:48:06 -0700
+   d="scan'208";a="82285298"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 22:46:39 -0700
 Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 29 Oct 2024 22:48:06 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ 15.1.2507.39; Tue, 29 Oct 2024 22:46:38 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
  orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 22:48:06 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.40) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 22:46:38 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 29 Oct 2024 22:48:05 -0700
+ 15.1.2507.39; Tue, 29 Oct 2024 22:46:38 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ysu2/7Lffdb17lGEfprjxx/qjuebCRJcXLxYz0TGN9nwfSMmpFYAF1BON0RiUgPI5DRFlYBOuqJIL9ovWGkZbr4acErorqE63Yh3djX0Qr+fYww5y4xw811PGZMrKWUV4z/HUUI+BDYNbSYACEzHWbePKEqz9y7Cu8P99m4mVPB6hVuhqw2XGhfkuCrVrLacOThMgR0M/sVAHAnfP42GKoJpXXr/4qqhZ4G7NIeFVPPcjtg1QlhCZDLn6vuiSI98SM5XqrLMT6+PFdp+mgqfVElDGLogR5llK0Bu/jLb8VAI1VmnWWun3Bc1I0Q+KabN/a5hMeB+vzgtgxTs9Rog8A==
+ b=Gftdu8OTwd15X+0UKV1pHtyAw3QH2LLT0C9Rt4YUSHRKjWrRBPpqGIgh6lbd1iwPSlwLNCN8fuehRnJ5MUMjMbWKJBKK2jNPOw+fJLsqbSrBRboKs24DSI6TiekM4b1G/4+Ak7M6fUjwJCsc7DasJ7lSb/1KqVTUggKXIhl1zy0eR54ZeD1ISkozP3dXyYfY1HjCxheGLw7TxK/DHrL5B8nB36LUF4mFqHJ0wZUeAt1fhuh/YXkI+cbY/cTUiBIT0Rk3fF/5QnT2YqCgCJYj9S9ntGDZxLGckoFYI8MrFlW+8i1Sl9q/O/CY215LmomTyiT+GA3mAZNyJaNhUJL9XQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AfNkjXpx57XXQDPn4DBoMMSkGQpZhGlmEsqFo0hgDME=;
- b=Gycn2Xrda+/MvaxtMwt6ZV6JNvBG+Jq/GbhmE8/q4Fkdib9dzBeKiTsSsamWR7+BuYDUKekeqESEE6qxPuMlzjzZsnHIXyFZLMmMVHSkk4QmMA6posReZfSCr4K087Lsu7b2WIV4fz01XYVupLC3oYnv3Zt1NFF0S1IkiLPTID472Z4OACASpz6bDD/SPVxU72kblfIW38Vm5vfUUG4BXbS8PhqgoYTwM+xBbuGeLCMLZaiOpSW1rfn+uTWAFeEX0j9Tfq0zbSX+ILN5rs8BFeoCLaPqoZ62WJN+DmN8CWBEAYvyi1OQnL33t1yqh1z1UFYHuvPwk0j4EPR3XpprXg==
+ bh=4ejMcroMEuPHbGHzeEi1Fdq6CwpkTbGBVuafA8eRndg=;
+ b=al5vFGg4VgeGN2H3qHBLtYQJOMnYGqswj/cGPztABnShiF5QqevgUclZAmrRn1Eq6iUoNTGJ1IqeNFg1GynuTcM/LZ6nat1hHGKjTqRqvsD6x03stowWZdH1wdVATRZSV1TfNhe2j1/1zXrwS2V1MSfo998QMFBkH7HNez1BZ3GNIDgHsO5m8uWgyUl034IC7286fNRAIZ/58NSXFjE1OhGiGuNSfKFIcuxyrVIc+Qhy8LAD2U0ODcsqTne+Bih1ZOiMMOKodoB9kyn5hAggjhhaCENB0dJ3UtRNvVv8yXmiI3hIxqxnqqZyWJ8N7a2YTIAvD1T1f+0bl5HK1xkdzQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by DM4PR11MB6311.namprd11.prod.outlook.com (2603:10b6:8:a6::21) with
+Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
+ by SA1PR11MB7087.namprd11.prod.outlook.com (2603:10b6:806:2b5::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Wed, 30 Oct
- 2024 05:47:54 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.8093.025; Wed, 30 Oct 2024
- 05:47:54 +0000
-Date: Wed, 30 Oct 2024 13:47:41 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, John Stultz
-	<jstultz@google.com>, <oliver.sang@intel.com>
-Subject: [tip:timers/core] [timekeeping]  5aa6c43eca:
- BUG:KCSAN:data-race_in_timekeeping_debug_get_ns/timekeeping_update_from_shadow
-Message-ID: <202410301316.e51421de-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SI2PR06CA0008.apcprd06.prod.outlook.com
- (2603:1096:4:186::23) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Wed, 30 Oct
+ 2024 05:46:31 +0000
+Received: from DS0PR11MB7529.namprd11.prod.outlook.com
+ ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
+ ([fe80::d244:15cd:1060:941a%4]) with mapi id 15.20.8093.027; Wed, 30 Oct 2024
+ 05:46:31 +0000
+Message-ID: <ccd8352c-16e7-4845-a94e-b22bdb3ec5c7@intel.com>
+Date: Wed, 30 Oct 2024 13:51:07 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
+ prq_event_thread
+To: Baolu Lu <baolu.lu@linux.intel.com>, Joel Granados
+	<joel.granados@kernel.org>
+CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Klaus Jensen
+	<its@irrelevant.dk>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	Klaus Jensen <k.jensen@samsung.com>
+References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
+ <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
+ <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
+ <ujexsgcpvcjux2ugfes6mzjxl53j3icarfbu25imhzliqskyv6@l7f42nv4fhmy>
+ <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
+ <91d59b7d-58b0-4da2-af59-18a980273bb4@intel.com>
+ <acd5c4a6-040c-48ff-9e6b-1a33e5ff118d@linux.intel.com>
+Content-Language: en-US
+From: Yi Liu <yi.l.liu@intel.com>
+In-Reply-To: <acd5c4a6-040c-48ff-9e6b-1a33e5ff118d@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR01CA0129.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::33) To DS0PR11MB7529.namprd11.prod.outlook.com
+ (2603:10b6:8:141::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,242 +124,216 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|DM4PR11MB6311:EE_
-X-MS-Office365-Filtering-Correlation-Id: 41ffa76f-a152-4e94-1f01-08dcf8a6663b
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|SA1PR11MB7087:EE_
+X-MS-Office365-Filtering-Correlation-Id: dbc8129e-ddb5-4cf6-ed17-08dcf8a634c4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?vDXEFkvGiGoZxq/elbwqKXsYK4ni3VPZYSRTQBqivJ1gVxIIeefgN0VIWRLA?=
- =?us-ascii?Q?9MjI/rg8H7K5cza4jwzJXjGKdsplV7oBXpjxKZo8ykRp9c4xw2WwsEscs9Ef?=
- =?us-ascii?Q?Lu7Tnyc04ojn6D5bVZ9wQeqZTEvaeQTf/yJLraJFzY3E+XdO2gqabSW+vwGo?=
- =?us-ascii?Q?Ck9VsdnnYh7Qw1ZAazIkfCs8MpZuPjjERJpqYhpxIF5KzOsRhwmL9WMQngeJ?=
- =?us-ascii?Q?+wNKu6FFWhzRQjX0izYVoEHEqpRQS3tnwn6aZ2ys4cdDjOwqI86zD59RSirm?=
- =?us-ascii?Q?7GDyt/ReDpVg58gZSeNMConWx1EvcNyCF7RiAUcV5BfIW0W85RVYzjL8OeWy?=
- =?us-ascii?Q?gE+2+mT6ZMRErYYdHDHnoi/9hirvX1TUc6HeqMU3BsSsvPgGGvg0B4d3s6iO?=
- =?us-ascii?Q?gFWuFloW0hvJELwe/O1nq/bRm6r8XAH5dlV74cykzwjd5iYuaspNmgBtlRQm?=
- =?us-ascii?Q?PpWNVucDhUYdEG9rbdt7uo5v53WAX5BLkomsSZoIW60uWJDuoRTu+Iarfdh3?=
- =?us-ascii?Q?Mt8qn7s8PnmPxthAf8C1TKUJB1CdOtUSzn+zABi0UvIlu1Lou/wOcOosLBJh?=
- =?us-ascii?Q?J1yNjATgKFzmffO29cYuNs0xCoPyNVIrLgwx6KMLAl0FjxbimS47WIo+iPeQ?=
- =?us-ascii?Q?7VuVsakx/rCzzC/ZMrlduoEQdwMJSusUFDUidpNwD3QAbPAm8iupnEXnuRxj?=
- =?us-ascii?Q?f04Jz1ZtkOwhTjw0bzPoHlFGUwxkg6Sr/TNKNiOLLO+rnYvWkU+raGnc+vRU?=
- =?us-ascii?Q?Tvz1hnZBxCvnhyZ0ajIB8aTVr9CwwSoNTO7erxySMpgoevSJrm+bSscrmByA?=
- =?us-ascii?Q?qgkeKgjBl1D380bbGOOJoHjGrKy1ZSYxPwCfgnQNuNqb4H6XMHx7D460WPfC?=
- =?us-ascii?Q?H8C7RrSb1J3AmeMFu+NdD4XPZ5bY0QmYFY0ory3SNt+Cw69L4qkLYY2FoMqo?=
- =?us-ascii?Q?Xx/LlPgx7u2vCS7fAJ6JBtiP3/D0KXCZvbQpyz6Nc5U26+SasJzPBoVCWBM6?=
- =?us-ascii?Q?ML/rXqkv2Wy+akjsH30JGWlOvupkhjACK+FPiVWLG/gSInq37RXI4mG48Ue9?=
- =?us-ascii?Q?rd33jub/E/7YtkyOhNudQWfUr07aOKjOZcbyX2l7aL0Ea+PcZSGL3BoQPm+w?=
- =?us-ascii?Q?h3kXgPi2Goqi6v8y14ee1pqQ34eQqiyUb5a9WaYcv+68nSjeitNw4UlceLxw?=
- =?us-ascii?Q?NoPXMAoVqfw+9vorgspC23DOlQK0J7Jv1+tHoPIwFDdMgWj5DTYzo7gE/+tS?=
- =?us-ascii?Q?Bb8I4mG3iPEGKrKbH8JOSbE/Pga5yrSXrDYqCJ1AwA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MjZQTlBvaWRnVnRoaDMxdFN2cStUVFFjamxBdUJ1eWIyTzU0NmwxNEdTWGd0?=
+ =?utf-8?B?UmI1R1N6eFBDTXV2eE9wbERJd0RjLzdaODZFcjVhUVhjTFAzRlVsek03WDlZ?=
+ =?utf-8?B?QzRDWE9SZjlzMWtkQjN6a2kya2xLcmRZMlU4VHAyTXgrSUFtOG55OU05bUdI?=
+ =?utf-8?B?VVlzQzNUWEtzTkhOTlBjVXl3S1dYQnhXUks3dlRwdzM5NlQ2ZmhaRk00MVB1?=
+ =?utf-8?B?Yi96cEhaTkFFVFI4Wit6aXVRTWRrYmJkd1Qwdi9HRExrcHd6RGs3Z3JObXli?=
+ =?utf-8?B?c1hrNWV0MEtLUkU5c0hqRDZRM2tiY3pQSzFnMVhjVVg5dXV4V3VrZ1VPSisx?=
+ =?utf-8?B?MVEzLy9pejgybm9mQVJBQ25qQ0FXcHRMVHdJeGt1QnUrSGtSYU9KMDdrREtz?=
+ =?utf-8?B?NzM3allUZkdnQUlVUmNpWkRzUkt4Q2MyY2FrY1NtakJRbEJIczZCVXRQOGND?=
+ =?utf-8?B?ZllMaVFORG9HcVVKd04rbFlBdmtVcU05UFpydllDaWREODNKSkVodkFhSExG?=
+ =?utf-8?B?VHA2SVIwc0REdmdsRitxLzVzMHhaL1ZIUWNLQURPVUY1cW5TNk90azVpUmpx?=
+ =?utf-8?B?dC80akptaWt1Nk1pOVhubEEzcHdIYk1lRUpiNmQxMnkzNjIwZ1pLYmZWOHVP?=
+ =?utf-8?B?ZHVhcWliUmdsTWRWeUk4alVWcDBINWEvV3A3Vkx0WW5Wd3dHbS9JMW1uMzN2?=
+ =?utf-8?B?NjcxVU43K0NSZXJJWlE1WUdHem9nQXpIZ0FyQjdGeU1IRjlzajZadW5QSU1a?=
+ =?utf-8?B?N095am9FTUlubXJnM2cvYTQ5SXJobDJFY09RR0gvRWJ5blh6UFZldDEyQ0xC?=
+ =?utf-8?B?SWNiZkx3N2NNaWlzc0Z1TFpYTUErLzNlTUlLVkxsc1JldERpb2Q0OHh3eFEy?=
+ =?utf-8?B?Sm45UTl4S2dnQ0doeTduaWlBalZDSHpDSG1pNmxocU9YZUsvV0V0Y0RmaG4x?=
+ =?utf-8?B?QVZuSHowSCsxTXpKREJoNDBwcDBVTDZSWGNibHhvZUs3dStTMTE2VjVQTVUz?=
+ =?utf-8?B?Qzk3TlFBbnJlbGNqaks0OXc4dys3ZGR5dzVOYUJUa050Y2dwMXlESjc5Q3lh?=
+ =?utf-8?B?SnJGS3g4SkkrMDV4cEpJOVlPcCtjWHNNQVRjN3lhKy9UWkVLeXZ3NXdVUGhW?=
+ =?utf-8?B?VjhxWTczdytoOFVMSzZyZjRTZ2JWZkExZzZFNHpxeXA3MHIxQmRUYkQzS3B4?=
+ =?utf-8?B?Z3NHbnNSbEVPaHFlVlZIRjJNRFJFaVFQZlp4dUVwR0VtcXBwSVpScStOWTY3?=
+ =?utf-8?B?c3hRaStzcy9rMlpMMk42bGdNM1BveEorRnhiczBsVmRYVHJBVGlrSHJNVkZh?=
+ =?utf-8?B?R2Y1bmp1bEtKL3lhVWlOSEdsNmdubyt3QnhzOVl2NmFIalF4akJrQXVIYU9S?=
+ =?utf-8?B?VU85RjJkbDZwQlUzSUsrM2EzR2tuK1Q3NTAvbHVoekVnSjIrL3VQOWgrVGVY?=
+ =?utf-8?B?a1g2N0VwOFVLWEZhL2JFZXR3dTBMQWs3Q0MxTGtJVVI4ZUs0Z1ZIZTZuV2x3?=
+ =?utf-8?B?ck1rODZvSDN1OUsxZERQTnZSUXVlbHIzdDZJMldmaDBsbS9DcTlQQi9hd0Ns?=
+ =?utf-8?B?L0x2bld5M1doZTFxd0N2RFRqMGZSK28yeDZ5VVdnSGJDMjBpYk5yeG1odjFu?=
+ =?utf-8?B?VElzSVRmMFdzNXcyc2ZzbUtwdVExNFNGSTRqK0pvT0NER1JxMzd3ZWxwTmNM?=
+ =?utf-8?B?dmk5YnYvNEd3QzBrcGdWdjBqWlVMbFN0Z3p0czFpWHlyZURvRDJvRnhJNHk2?=
+ =?utf-8?Q?4E+/mMqQw0UeWcYrIGsHkXju6eYdRG1oM0EDC5N?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7MbRDtU9Fjy46yDx4gLua/lB0BaEY1QfDE/aDdgpI9kpdOywgMvSEWCu1Sy9?=
- =?us-ascii?Q?n2zesRV9dIdhg3JPLvQaKKONinBhAGyilra5LggCF6C4BqPy+4Qd3N65+ihX?=
- =?us-ascii?Q?HhjQ7FdFiihtLXnBCZrFk8JdQxnMrKzlf6D1TxLyeimzOQsJnvp/DBk+E4NX?=
- =?us-ascii?Q?9Vp8jqWlFdD7VWaUyVLEFg3FFKU/0Dn7tQrf4pizTsqaYN1DlqHv3hCs8gWI?=
- =?us-ascii?Q?jE9eB3n4EQEdwbam9ZkKkcBrdoEdVOGO6Oa04AAOEq/js0ZL6Uj0TU7PAVSv?=
- =?us-ascii?Q?Lun8beAvQNvWFAXX9vjx4uLOMJTyjkc64QTfKljXggiYNei1TOE1FsnCC4XJ?=
- =?us-ascii?Q?bTgkqmZDuWCdM/5C2hIFFezFefY91mhes3AO/D0B+tHaGXYtTEzLXt+bqPgp?=
- =?us-ascii?Q?lhRx8nLFpU8h/bo3BL8i95p584iQdrDQPnEYlC6knT1oCNIsysKC4nv3csPE?=
- =?us-ascii?Q?809rqIhsBarkLLBBjIUk7CqKeAeD8s/sUKibjwuqElPZzGg6XXFXYo9Kobc2?=
- =?us-ascii?Q?Xy8RSXK70oPQFpF3+TrHsfADRkbeaakbHpYNFJPk8SiV6V50d8OY3DtE7x8v?=
- =?us-ascii?Q?GBrljJ6ahcQ7KsFky7yDpZL8dICoM5Jw3V7K6CMN98CiKWqWD/yOxBY/xI7M?=
- =?us-ascii?Q?PTrmmGuvx6bcwLZB+HFTnyQO+ijax1W2Q5lipS9haAMWQUKoEch90y8eVaWD?=
- =?us-ascii?Q?6yTVWo5FZgnHOVArKVoDUqIfynMbfsFAz7z5BRRCko7by11QUN3whJy+8tui?=
- =?us-ascii?Q?jxQ+dO4L3vuX701bcqNGAeK8B244S+6anDOvd8jLuaJrqyJ9lPAHjAPhG/wX?=
- =?us-ascii?Q?01Ios1PU3vfBJ0qVJCSruMn8JSdsNVto23Ve5C/VFxqM2DSLVIY6tSpFP11C?=
- =?us-ascii?Q?Y/+xN2y2MBWRdVs/MPOKsV9L+Oclm1H4k6fME7RnRInYj39umvsBruD1PyAp?=
- =?us-ascii?Q?EbQ4aSU8o7XGJfa0qUt0gGx3/UT1VimoHdTfI36+jsvlAgAyJ5TNlreK0KzH?=
- =?us-ascii?Q?a4aW/p2FiM4BeUcWMi8gc+rR8trOtQTzTKjph344yAIRtoHcyE9G3X8ZuZBB?=
- =?us-ascii?Q?mmIcI8fQhqR/s+Jzu+r5QPxd1a5Od9qvG3y3VNK8PRaGxUFT37xGm2a7noky?=
- =?us-ascii?Q?zAB/sOkktbfxlWy7TAc9bjzpquF+1FUYDHzyULfcDkVJNcs/85ejPfbZsMld?=
- =?us-ascii?Q?jbbBQ7exEpzeTsnJ4/uaosXAdccgQ8usdjTGPAGK/GkF2FeDvk4vvN8skpAG?=
- =?us-ascii?Q?ARWQO2SBsB5oECuEn7VQP74XvaVLHzZ/iyGsJZd5zuLJsflCGrGk+e3bn/eM?=
- =?us-ascii?Q?1RrXuM4xvkHECUuZtDavWd0VK+Y4d+l03rFSt7N7up62MJz7j8AKLDHdOUZ5?=
- =?us-ascii?Q?PEqI2I6A1tYIugB2jsyekR+MUkE/EbHepokUTTQTBVdOonZkWRTFKCnr2iNH?=
- =?us-ascii?Q?F7qMhg3Mtyh3Kig6FPvj108ELezXg/76aBUm/deoG3yCQ2B0e5YcwaB29dZy?=
- =?us-ascii?Q?LpHx1hK6ONsWU88JZfJl7XgkgmIbghpAtYb61HOqrOv4ZDye37PWin3ef3V0?=
- =?us-ascii?Q?8bWA5xmHDeNgsZXPYe4bnHUNNLQ0Dy/D2xEdh11zFYi3QxsAM3uT+uc/RAbP?=
- =?us-ascii?Q?Eg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41ffa76f-a152-4e94-1f01-08dcf8a6663b
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?anQ4SDFWQTQ3eWQ5ZktPKy9WSW91YjBTcGRGdElIM0lHN1Z4VHdJSnMySW1l?=
+ =?utf-8?B?ZVFiSGxIdDVuQlRXeWloaHc3UzBnY3BNZ1ZCRE11ZUNlNmcvMW9KQVU2R2tW?=
+ =?utf-8?B?YjRrYmZWR2hCbkVYdHBBUXdvQUw1Z2ZNUkIvVjRXWms0R3lsRnNnazgvUG9u?=
+ =?utf-8?B?RWhvY0pTNXliZThmbThoK09CZ3BINmdYMHozQThlMnZVcUVFUGg1ZTVFcmUy?=
+ =?utf-8?B?anF6NENoaFlUZFBlMm4wbUpvdlk5QVpDc3RNMjVqSHFyaVp6U0w1RVI4dDNi?=
+ =?utf-8?B?eUYvR3V2bXg4RFFoYjNNREcvNGUrQThQQm15cWhicFpvRWZ4VWJubmdwYS9n?=
+ =?utf-8?B?UUlLaWJtdTdhL0IzZ2luZGFoSTNubzhVN3pCOGlCUmhFL1hqUG5QYkZDenJS?=
+ =?utf-8?B?dWlUcEQ1WEgvSmxYZHdKSVJEVU9QYjVrUFdxQi9XWS81akppOHl4NHdYN3dU?=
+ =?utf-8?B?SldKWHhOV0hSdjJ0RTZCUno0UFZvdVBiRG5tbGxxTUpOcTNYL2lCU1RxbjRY?=
+ =?utf-8?B?S1lURmMzeDk1dTJTM1RTa01hdXZJNVpDZHd0cURVcjRqN3R2SXpOL0h1YVRn?=
+ =?utf-8?B?WE1BU01mODZwaGVMRFcxS0t5SzdBbFRJR2JkbFVKcUV5b1htNldsOWFzOExk?=
+ =?utf-8?B?Ri9zRFMzNFhzdDRuTTRsQjlOOU5IdTE0dzluc21xZDA5eXZXTnVsNFdqQUZ6?=
+ =?utf-8?B?ZkJQM1RDNGZuVVVFWWtsdHZEOUV2dHlaSERYbGk5eklibG10VDF2RFFwcTlR?=
+ =?utf-8?B?Qko3QW5LMTVRSldWYk1BaDBpa25tcW1MVGFvZ21SUk1GdmFPMjNpZjlXRlRy?=
+ =?utf-8?B?S2d1MW1tVVNzN05ZSEVwRVZiN3g3a1o1WlZvSFFYUjFKSVRvVm1jNTE4QjJK?=
+ =?utf-8?B?czNFdnNnQzR6Nm8zbFZNQWlvb2R2R0l0ZU5KaVg0ZklLa3AxRkcxc1R6cHlB?=
+ =?utf-8?B?ckczeUtFZWpKeHhLbnNncDZLdHpMUkpVMmhNcUtvY2FrM1UrVmlnWFVwcnQ0?=
+ =?utf-8?B?a1V4WlUvUlZFRWY3RUoyZ3VpMkROSXA1WUhMVXI3WW9HNTBmWDVkdFBmV1Bi?=
+ =?utf-8?B?R29BUVdxQk9hRG9pdUVBYTZCdElOTWNxTmk2TlZGbnNmOE9wbUFoV2taVWVx?=
+ =?utf-8?B?R1h5bjdZajh5VFhKV1R0THFIT2QyaVk0RWlxaU5uaUErRC9QR0x5T1ZvYXVq?=
+ =?utf-8?B?RkNNRTFvdnJDelF4enRneUU1ejRqdzRsLzY0Y0tjMnNqbDNpS3pEUmMrNGZh?=
+ =?utf-8?B?N2dpd1VoSGlDUzFKRld6QTEyZ09PNUpoVnoza3ZyU1VBNG5nTFVMQjdYV3Jn?=
+ =?utf-8?B?ekJwZzJBR2M2RFRYWXJCa1Flelp0QndCTTZLRkFOT20rTVNHaDU2NkRXbjNZ?=
+ =?utf-8?B?RXJYSlJ5bmFPcWx2WHdZMlpJVW5Ebi9kNjRBTVlpMEgvRWZCUlRiREoybEVH?=
+ =?utf-8?B?SHc3eGcrcWFMWFMwZStwZ1NxdXJxUGJQbzZXbHV5dG5xL0tBN0gvenV0YnQ4?=
+ =?utf-8?B?Y3JMNHBoU0tCTnJQRFlJbGFCVVZoKzc1QmgrTVFucEFsdDVMTEczQUk3eFMw?=
+ =?utf-8?B?eTR3ZHY3L01TbWd0WU8raWZXOEZKRldQV09vOE1zT1cybFFPc0IxY0V5a0Iv?=
+ =?utf-8?B?TDQ3UFArTTE0TFBGTUYrTStIazh5SVpUK3pHTjRqaXQreGEvMHpjbVN5VElv?=
+ =?utf-8?B?cGN0WnhTVHVWdG9qQTROcXBKdkgwRHd6b1FrU0oxdXlWdjlaS0piK3k4WFkz?=
+ =?utf-8?B?RDA1b2dsd1RrK2lMdVpscGFZZGNNc1Ftc1V4WnljZDI5N3lVRjFFdURqeUZl?=
+ =?utf-8?B?UkdHRkhsdjhZT2pnMzBlOWZwZlBDYXJiamVVSDRQWGNNbjhkL1Zuakd5K2I4?=
+ =?utf-8?B?czdoN3ZCa2hBSkNrcVE2RndWcjFLQWRUY0Z3U3B1Nmh2dml6a3VhUy9OdDVv?=
+ =?utf-8?B?Z3VLM0k3T0ZiMnhrWFFxOFpOSS9Wd3c3cSsyd1BOMm1vTEhlUjh4U3J6YTlm?=
+ =?utf-8?B?Rk4xeUJpUGpnR05uSGh0OVR2SzFYVmxuR1Axb3NZK2dHZ1NFdDdsSXlCeDYx?=
+ =?utf-8?B?YUFScnVWT1ZvaUllakFPRDh3Y1RjdE96Q011WjA2Zmpkc09wMXZjYXBqTDZL?=
+ =?utf-8?Q?yaNrFgxH9f1rIOkZ6UN32qgeZ?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: dbc8129e-ddb5-4cf6-ed17-08dcf8a634c4
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 05:47:54.6594
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 05:46:31.4651
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gXlCRQtxMm2+ezGrIqU9BfKRxnJsPZ5hiVHPafDfecXIyHkqMpbgIUfKGBoEwjObfygIypvyp11YieOUkN5GTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6311
+X-MS-Exchange-CrossTenant-UserPrincipalName: VPTaycQc2qBxoVQINlpgM6R0c6lM3yfXv7YnGKCxv35fuLLxN8kQVOTOOUKaOulXNmQ+sirZri8DgS9rmYgNmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7087
 X-OriginatorOrg: intel.com
 
+On 2024/10/29 13:39, Baolu Lu wrote:
+> On 2024/10/29 13:13, Yi Liu wrote:
+>> On 2024/10/29 11:12, Baolu Lu wrote:
+>>> On 2024/10/28 18:24, Joel Granados wrote:
+>>>> On Mon, Oct 28, 2024 at 03:50:46PM +0800, Yi Liu wrote:
+>>>>> On 2024/10/16 05:08, Joel Granados wrote:
+>>>>>> From: Klaus Jensen<k.jensen@samsung.com>
+>>>>>>
+>>>>>> PASID is not strictly needed when handling a PRQ event; remove the check
+>>>>>> for the pasid present bit in the request. This change was not included
+>>>>>> in the creation of prq.c to emphasize the change in capability checks
+>>>>>> when handing PRQ events.
+>>>>>>
+>>>>>> Signed-off-by: Klaus Jensen<k.jensen@samsung.com>
+>>>>>> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
+>>>>>> Signed-off-by: Joel Granados<joel.granados@kernel.org>
+>>>>> looks like the PRQ draining is missed for the PRI usage. When a pasid
+>>>>> entry is destroyed, it might need to add helper similar to the
+>>>>> intel_drain_pasid_prq() to drain PRQ for the non-pasid usage.
+>>>> These types of user space PRIs (non-pasid, non-svm) are created by
+>>>> making use of iommufd_hwpt_replace_device. Which adds an entry to the
+>>>> pasid_array indexed on IOMMU_NO_PASID (0U) via the following path:
+>>>>
+>>>> iommufd_hwpt_replace_device
+>>>>    -> iommufd_fault_domain_repalce_dev
+>>>>      -> __fault_domain_replace_dev
+>>>>        -> iommu_replace_group_handle
+>>>             -> __iommu_group_set_domain
+>>>               -> intel_iommu_attach_device
+>>>                  -> device_block_translation
+>>>                    -> intel_pasid_tear_down_entry(IOMMU_NO_PASID)
+>>>
+>>> Here a domain is removed from the pasid entry, hence we need to flush
+>>> all page requests that are pending in the IOMMU page request queue or
+>>> the PCI fabric.
+>>>
+>>>>          -> xa_reserve(&group->pasid_array, IOMMU_NO_PASID, GFP_KERNEL);
+>>>>
+>>>> It is my understanding that this will provide the needed relation
+>>>> between the device and the prq in such a way that when  remove_dev_pasid
+>>>> is called, intel_iommu_drain_pasid_prq will be called with the
+>>>> appropriate pasid value set to IOMMU_NO_PASID. Please correct me if I'm
+>>>> mistaken.
+>>>
+>>> Removing a domain from a RID and a PASID are different paths.
+>>> Previously, this IOMMU driver only supported page requests on PASID
+>>> (non-IOMMU_NO_PASID). It is acceptable that it does not flush the PRQ in
+>>> the domain-removing RID path.
+>>>
+>>> With the changes made in this series, the driver now supports page
+>>> requests for RID. It should also flush the PRQ when removing a domain
+>>> from a PASID entry for IOMMU_NO_PASID.
+>>>
+>>>>
+>>>> Does this answer your question? Do you have a specific path that you are
+>>>> looking at where a specific non-pasid drain is needed?
+>>>
+>>> Perhaps we can simply add below change.
+>>>
+>>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>>> index e860bc9439a2..a24a42649621 100644
+>>> --- a/drivers/iommu/intel/iommu.c
+>>> +++ b/drivers/iommu/intel/iommu.c
+>>> @@ -4283,7 +4283,6 @@ static void intel_iommu_remove_dev_pasid(struct 
+>>> device *dev, ioasid_t pasid,
+>>>          intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+>>>          kfree(dev_pasid);
+>>>          intel_pasid_tear_down_entry(iommu, dev, pasid, false);
+>>> -       intel_drain_pasid_prq(dev, pasid);
+>>>   }
+>>>
+>>>   static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
+>>> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+>>> index 2e5fa0a23299..8639f3eb4264 100644
+>>> --- a/drivers/iommu/intel/pasid.c
+>>> +++ b/drivers/iommu/intel/pasid.c
+>>> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu 
+>>> *iommu, struct device *dev,
+>>>                  iommu->flush.flush_iotlb(iommu, did, 0, 0, 
+>>> DMA_TLB_DSI_FLUSH);
+>>>
+>>>          devtlb_invalidation_with_pasid(iommu, dev, pasid);
+>>> +       intel_drain_pasid_prq(dev, pasid);
+>>>   }
+>>>
+>>>   /*
+>>> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
+>>> index 078d1e32a24e..ff88f31053d1 100644
+>>> --- a/drivers/iommu/intel/svm.c
+>>> +++ b/drivers/iommu/intel/svm.c
+>>> @@ -304,9 +304,6 @@ void intel_drain_pasid_prq(struct device *dev, u32 
+>>> pasid)
+>>>          int qdep;
+>>>
+>>>          info = dev_iommu_priv_get(dev);
+>>> -       if (WARN_ON(!info || !dev_is_pci(dev)))
+>>> -               return;
+>>> -
+>>>          if (!info->pri_enabled)
+>>>                  return;
+>>>
+>>> Generally, intel_drain_pasid_prq() should be called if
+>>>
+>>> - a translation is removed from a pasid entry; and
+>>> - PRI on this device is enabled.
+>>
+>> If the @pasid==IOMMU_NO_PASID, PRQ drain should use the iotlb invalidation
+>> and dev-tlb invalidation descriptors. So extra code change is needed in
+>> intel_drain_pasid_prq(). Or perhaps it's better to have a separate helper
+>> for draining prq for non-pasid case.
+> 
+> According to VT-d spec, section 7.10, "Software Steps to Drain Page
+> Requests & Responses", we can simply replace p_iotlb_inv_dsc and
+> p_dev_tlb_inv_dsc with iotlb_inv_dsc and dev_tlb_inv_dsc. Any
+> significant negative performance impact?
 
-
-Hello,
-
-
-this is another report about BUG:KCSAN, the change does not introduce new KCSAN
-issue, but causes stats changes as below.
-
-
-1d72d7b5fd535923 5aa6c43eca21a929ace6a8e31ab
----------------- ---------------------------
-       fail:runs  %reproduction    fail:runs
-           |             |             |
-          6:6          -83%            :6     dmesg.BUG:KCSAN:data-race_in_timekeeping_advance/timekeeping_debug_get_ns
-           :6          100%           6:6     dmesg.BUG:KCSAN:data-race_in_timekeeping_debug_get_ns/timekeeping_update_from_shadow
-
-
-again, this report is just FYI what's the possible issue in related code.
-and if you need more tests or want us to test some patches, please let us know.
-
-thanks!
-
-
-kernel test robot noticed "BUG:KCSAN:data-race_in_timekeeping_debug_get_ns/timekeeping_update_from_shadow" on:
-
-commit: 5aa6c43eca21a929ace6a8e31ab3520ddc50dfa9 ("timekeeping: Split out timekeeper update of timekeeping_advanced()")
-https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git timers/core
-
-[test failed on linux-next/master 6fb2fa9805c501d9ade047fc511961f3273cdcb5]
-
-in testcase: boot
-
-config: x86_64-randconfig-073-20241025
-compiler: gcc-12
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202410301316.e51421de-lkp@intel.com
-
-
-[   70.265411][    C1] BUG: KCSAN: data-race in timekeeping_debug_get_ns / timekeeping_update_from_shadow
-[   70.265430][    C1]
-[   70.265433][    C1] write to 0xffffffff8483fef8 of 296 bytes by interrupt on cpu 0:
-[ 70.265440][ C1] timekeeping_update_from_shadow+0x8e/0x140 
-[ 70.265452][ C1] timekeeping_advance (kernel/time/timekeeping.c:2394) 
-[ 70.265462][ C1] update_wall_time (kernel/time/timekeeping.c:2403) 
-[ 70.265472][ C1] tick_do_update_jiffies64 (kernel/time/tick-sched.c:150) 
-[ 70.265485][ C1] tick_nohz_lowres_handler (kernel/time/tick-sched.c:232 kernel/time/tick-sched.c:290 kernel/time/tick-sched.c:1486) 
-[ 70.265498][ C1] __sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1044) 
-[ 70.265515][ C1] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1037 arch/x86/kernel/apic/apic.c:1037) 
-[ 70.265526][ C1] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-[ 70.265539][ C1] __tsan_read8 (kernel/kcsan/core.c:280 kernel/kcsan/core.c:752 kernel/kcsan/core.c:1025) 
-[ 70.265548][ C1] rcu_lockdep_current_cpu_online (kernel/rcu/tree.c:4740 kernel/rcu/tree.c:4781) 
-[ 70.265562][ C1] rcu_read_lock_held (kernel/rcu/update.c:113 kernel/rcu/update.c:349) 
-[ 70.265573][ C1] mtree_range_walk (lib/maple_tree.c:789 lib/maple_tree.c:2789) 
-[ 70.265584][ C1] mas_walk (lib/maple_tree.c:265 lib/maple_tree.c:4949) 
-[ 70.265594][ C1] lock_vma_under_rcu (mm/memory.c:6225) 
-[ 70.265606][ C1] do_user_addr_fault (arch/x86/mm/fault.c:1330) 
-[ 70.265617][ C1] exc_page_fault (arch/x86/include/asm/irqflags.h:26 arch/x86/include/asm/irqflags.h:87 arch/x86/include/asm/irqflags.h:147 arch/x86/mm/fault.c:1489 arch/x86/mm/fault.c:1539) 
-[ 70.265624][ C1] asm_exc_page_fault (arch/x86/include/asm/idtentry.h:623) 
-[   70.265634][    C1]
-[   70.265636][    C1] read to 0xffffffff8483ff18 of 8 bytes by interrupt on cpu 1:
-[ 70.265642][ C1] timekeeping_debug_get_ns (kernel/time/timekeeping.c:415 kernel/time/timekeeping.c:399 kernel/time/timekeeping.c:307) 
-[ 70.265653][ C1] ktime_get (kernel/time/timekeeping.c:431 (discriminator 4) kernel/time/timekeeping.c:897 (discriminator 4)) 
-[ 70.265660][ C1] tick_nohz_lowres_handler (kernel/time/tick-sched.c:220 kernel/time/tick-sched.c:290 kernel/time/tick-sched.c:1486) 
-[ 70.265671][ C1] __sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1044) 
-[ 70.265683][ C1] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1037 arch/x86/kernel/apic/apic.c:1037) 
-[ 70.265690][ C1] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-[ 70.265701][ C1] __tsan_unaligned_write8 (arch/x86/include/asm/current.h:49 kernel/kcsan/core.c:206 kernel/kcsan/core.c:750 kernel/kcsan/core.c:1025) 
-[ 70.265711][ C1] mntput_no_expire (fs/namespace.c:1396) 
-[ 70.265719][ C1] mntput (fs/namespace.c:1471 (discriminator 3)) 
-[ 70.265728][ C1] path_openat (fs/namei.c:3910) 
-[ 70.265738][ C1] do_filp_open (fs/namei.c:3961) 
-[ 70.265749][ C1] do_sys_openat2 (fs/open.c:1416) 
-[ 70.265760][ C1] __ia32_compat_sys_openat (fs/open.c:1488) 
-[ 70.265772][ C1] ia32_sys_call (arch/x86/entry/syscall_32.c:44) 
-[ 70.265781][ C1] __do_fast_syscall_32 (arch/x86/entry/common.c:165 arch/x86/entry/common.c:386) 
-[ 70.265792][ C1] do_fast_syscall_32 (arch/x86/entry/common.c:411) 
-[ 70.265803][ C1] do_SYSENTER_32 (arch/x86/entry/common.c:450) 
-[ 70.265814][ C1] entry_SYSENTER_compat_after_hwframe (arch/x86/entry/entry_64_compat.S:127) 
-[   70.265827][    C1]
-[   70.265829][    C1] value changed: 0x000bfafab0800000 -> 0x000c197f30800000
-[   70.265834][    C1]
-[   70.265837][    C1] Reported by Kernel Concurrency Sanitizer on:
-[   70.265841][    C1] CPU: 1 UID: 0 PID: 135 Comm: systemd-udevd Not tainted 6.12.0-rc1-00057-g5aa6c43eca21 #1 dac0ad7371e68d11ebb5ff151a0b0e46d35a6ac0
-[   70.265853][    C1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[   70.265858][    C1] ==================================================================
-[  OK  ] Started Regular background program processing daemon.
-[  OK  ] Started D-Bus System Message Bus.
-Starting Helper to synchronize boot up for ifupdown...
-Starting LSB: OpenIPMI Driver init script...
-Starting System Logging Service...
-Starting User Login Management...
-[  OK  ] Finished Helper to synchronize boot up for ifupdown.
-Starting Raise network interfaces...
-Starting LSB: Load kernel image with kexec...
-[   70.813962][  T196] IPMI message handler: version 39.2
-[  OK  ] Finished Raise network interfaces.
-[  OK  ] Reached target Network.
-[   71.021971][  T208] ipmi_si: IPMI System Interface driver
-Starting LKP bootstrap...
-[   71.073697][  T208] ipmi_si: Unable to find any System Interface(s)
-Starting /etc/rc.local Compatibility...
-Starting OpenBSD Secure Shell server...
-Starting Permit User Sessions...
-[  OK  ] Started LSB: Load kernel image with kexec.
-[  OK  ] Started User Login Management.
-[   71.125252] rc.local[223]: PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/lkp/lkp/src/bin
-[  OK  ] Started /etc/rc.local Compatibility.
-[  OK  ] Finished Permit User Sessions.
-LKP: ttyS0: 223: skip deploy intel ucode as no ucode is specified
-[   71.266778] rc.local[223]: LKP: stdout: 223: skip deploy intel ucode as no ucode is specified
-[  OK  ] Started Getty on tty1.
-[  OK  ] Reached target Login Prompts.
-[FAILED] Failed to start LSB: OpenIPMI Driver init script.
-See 'systemctl status openipmi.service' for details.
-[  OK  ] Started OpenBSD Secure Shell server.
-LKP: ttyS0: 223: Kernel tests: Boot OK!
-LKP: ttyS0: 223: HOSTNAME vm-snb, MAC 52:54:00:12:34:56, kernel 6.12.0-rc1-00057-g5aa6c43eca21 1
-LKP: ttyS0: 223:  /lkp/lkp/src/bin/run-lkp /lkp/jobs/scheduled/vm-meta-135/boot-1-debian-11.1-i386-20220923.cgz-x86_64-randconfig-073-20241025-5aa6c43eca21-20241030-925541-jrgvjy-5.yaml
-[   80.243928][  T241] is_virt=true
-[   80.243958][  T241]
-[   80.596747][    C0] ==================================================================
-[   80.597444][    C0] BUG: KCSAN: data-race in timekeeping_debug_get_ns / timekeeping_update_from_shadow
-[   80.598259][    C0]
-[   80.598445][    C0] write to 0xffffffff8483fef8 of 296 bytes by interrupt on cpu 1:
-[ 80.599035][ C0] timekeeping_update_from_shadow+0x8e/0x140 
-[ 80.599730][ C0] timekeeping_advance (kernel/time/timekeeping.c:2394) 
-[ 80.600108][ C0] update_wall_time (kernel/time/timekeeping.c:2403) 
-[ 80.600452][ C0] tick_do_update_jiffies64 (kernel/time/tick-sched.c:150) 
-[ 80.600881][ C0] tick_nohz_lowres_handler (kernel/time/tick-sched.c:232 kernel/time/tick-sched.c:290 kernel/time/tick-sched.c:1486) 
-[ 80.601309][ C0] __sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1044) 
-[ 80.601767][ C0] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1037 arch/x86/kernel/apic/apic.c:1037) 
-[ 80.602211][ C0] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-[   80.602705][    C0]
-[   80.602997][    C0] read to 0xffffffff8483ff18 of 8 bytes by interrupt on cpu 0:
-[ 80.603583][ C0] timekeeping_debug_get_ns (kernel/time/timekeeping.c:415 kernel/time/timekeeping.c:399 kernel/time/timekeeping.c:307) 
-[ 80.604050][ C0] ktime_get_update_offsets_now (kernel/time/timekeeping.c:2583 (discriminator 4)) 
-[ 80.604545][ C0] hrtimer_run_queues (kernel/time/hrtimer.c:637 kernel/time/hrtimer.c:1904) 
-[ 80.604974][ C0] update_process_times (kernel/time/timer.c:2465 kernel/time/timer.c:2517) 
-[ 80.605404][ C0] tick_nohz_lowres_handler (kernel/time/tick-sched.c:277 kernel/time/tick-sched.c:297 kernel/time/tick-sched.c:1486) 
-[ 80.605866][ C0] __sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1044) 
-[ 80.606508][ C0] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1037 arch/x86/kernel/apic/apic.c:1037) 
-[ 80.606958][ C0] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-[   80.607450][    C0]
-[   80.607656][    C0] value changed: 0x0015dff030800000 -> 0x0015fe74b0800000
-[   80.608228][    C0]
-[   80.608442][    C0] Reported by Kernel Concurrency Sanitizer on:
-[   80.608945][    C0] CPU: 0 UID: 0 PID: 241 Comm: sed Not tainted 6.12.0-rc1-00057-g5aa6c43eca21 #1 dac0ad7371e68d11ebb5ff151a0b0e46d35a6ac0
-[   80.610047][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[   80.610868][    C0] ==================================================================
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20241030/202410301316.e51421de-lkp@intel.com
-
-
+It's not about performance impact. My point is to use iotlb_inv_dsc and
+dev_tlb_inv_dsc for the @pasid==IOMMU_NO_PASID case. The existing
+intel_drain_pasid_prq() only uses p_iotlb_inv_dsc and p_dev_tlb_inv_dsc.
+The way you described in above reply works. But it needs to add if/else
+to use the correct invalidation descriptor. Since the descriptor
+composition has several lines, so just an ask if it's better to have a
+separate helper. :)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Regards,
+Yi Liu
 
