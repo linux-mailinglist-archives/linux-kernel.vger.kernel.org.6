@@ -1,101 +1,175 @@
-Return-Path: <linux-kernel+bounces-389276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F459B6ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:22:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0049B6AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6AE281067
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F92C1C217FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D92A13FEE;
-	Wed, 30 Oct 2024 17:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02A41BD9D8;
+	Wed, 30 Oct 2024 17:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="ctozl771"
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="HdM2aA/x";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jps8Tkd1"
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2036C1BD9C0;
-	Wed, 30 Oct 2024 17:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0119D1BD9C1;
+	Wed, 30 Oct 2024 17:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730308810; cv=none; b=FzO6+eR4LrL+L4Co31/BBVp7dDEd/gSjXRBnJRDnbB0ALoBIBIc9LPh5hQ4HAQe+viH50iq/xIiLLWWNmmHZ5G/L1dsf/e0MR4cNyMMzav6ScZMJit9Ry+7Kc7UuPHpXqnY+sJUleXfmpdLfbOoM6uW8v+r11ys73teNnKZesao=
+	t=1730308474; cv=none; b=vE224b1T0n4m2P02aAkTgpIElaspmLxkQbewMo+jaBUsICDSKHZbaQWEGZHDT3zP1YnHb3EbIx8wPQNIiHvuEJdmQ6lUoW7g+UnV1DuvOKVwtgY2BAKL8zcTa2JNxoqEvus/PwOmyP9GbVUcZ+kY/bMJGbEsvb4x1SGnVAF39IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730308810; c=relaxed/simple;
-	bh=ES9aQ33x+PBTD9B7jjuzsqYGBFx/xGl7/kptdXIj6sQ=;
+	s=arc-20240116; t=1730308474; c=relaxed/simple;
+	bh=fR1wu/43Tn/xy2VITfwzgyphiC6mLhU60m+KhVenjRE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpuHBWqisC8pSY95PQI5zrg26WsW1REPU7s0KEZQcVXCtMBOEl4TNXtZdvoWQHij4PihUPDGjdVHsKKKyzrk0YX+QHho3+isT2ULZvTHWzD6/3JcHnWo7mbcwDcLFXSNBnYiitP1+v+7ZNF5SBppT4kVIsHJM7x5H0ghWbi0QE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=ctozl771; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 4BB81404CC3E;
-	Wed, 30 Oct 2024 13:12:03 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
-	in-reply-to:content-disposition:content-type:content-type
-	:mime-version:references:message-id:subject:subject:from:from
-	:date:date:received:received; s=mail; t=1730308322; x=
-	1732122723; bh=ES9aQ33x+PBTD9B7jjuzsqYGBFx/xGl7/kptdXIj6sQ=; b=c
-	tozl771CzNFyV8Fr8IhvwgYwJpGU7fJfyX0vdsnnAQYuogbtNe2WPc4JQOeig72m
-	Rq/yyGW5DrlYt7QQdytYp99ydvjtCMtOa5fHuScvjka152ip1hBkCRKi42LI8RrL
-	TmL2csQK7Nemy/wr4gTLfi9KWVAnKN7VGqvDKWbR2Q=
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id 19tCsm-xNPsb; Wed, 30 Oct 2024 13:12:02 -0400 (EDT)
-Received: from freedom.csh.rit.edu (unknown [129.21.49.24])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id C4F0745735E9;
-	Wed, 30 Oct 2024 13:12:02 -0400 (EDT)
-Date: Wed, 30 Oct 2024 13:12:01 -0400
-From: Mary Strodl <mstrodl@csh.rit.edu>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 1/2] gpio: mpsse: Check for error code from
- devm_mutex_init() call
-Message-ID: <ZyJo4dvULIflwhXL@freedom.csh.rit.edu>
-References: <20241030153201.2078266-1-andriy.shevchenko@linux.intel.com>
- <20241030153201.2078266-2-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCwZuJdVcy5cOzHPQB36SLbO0nI12YBVY063HmtG/iEWKSyDm8xYij+n4z96bEeUZMEiUMssHs7P0sStkFAL6K6zW/W/puDrInVFPCMdaJCMlEkLMqmw3oiGjyHgZLpaNanVo14RcCdbuvzNxoqHQxCNpJzJ1GZEbnIfffiIEOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=HdM2aA/x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Jps8Tkd1; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.phl.internal (Postfix) with ESMTP id A86AD2002B4;
+	Wed, 30 Oct 2024 13:14:29 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Wed, 30 Oct 2024 13:14:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1730308469; x=
+	1730312069; bh=YtJGD22t0Esf05b74Px7IXGtR0E9aUFiphweZKoOEkw=; b=H
+	dM2aA/xs7By5VhGk9WShrjhxMdMoqRct9iMQ8VEaO45yg0QfCOn4Fp1iU8gi3QOI
+	Tsc6WekYvLfAevSVArc2OFHYi0o2eIyVLhZqdJ3fOhxOgobKGlvUwchO4Fac1jpg
+	8+F/K4h+z5XFem8APxRiBrWIcp8wo6OefGZ1LyVukaIyl8Seea7U8ai235ANkXzC
+	XMPcwYxYsoTpcOmFLBaWnCUnyZVQ7aSfmFacW2oJm8XV9G/SxP+2YaB9sWnon8yF
+	Z4UE+hbvMuVrL+wBQQg27gdZJ2EoyP3rc4vj4nQpkAL5DitH6dlTKBIBPvZjJq2P
+	REFoYptcuQtvbFRfq6qaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730308469; x=1730312069; bh=YtJGD22t0Esf05b74Px7IXGtR0E9aUFiphw
+	eZKoOEkw=; b=Jps8Tkd1eYgklX4OQwoZA9tVyAZfLzm+mO2ziZ0rKY59Y/E6/Yl
+	DxdabEKmVENhQNJQuWfodga2Rr3ZzMJKy1TZMhqYWZ9EttZT3Z/OiEnJy2mIbwF8
+	BQZOIQh9GKPqLUKhLWzkq8JgY0yiWkQRAP1oOjmdbribHZka0MbHaBftva4VpGcv
+	nGe+AfpwkELXguEDahyVTfkpOjPLOQeYwrVIi3vS2PZhn3tUdNEZgyOQqeu2/+ht
+	HN+fnY2LwR/3CJzNgThaNns2ZoRMSEpDVmjSs2mv9gVtk7g6CJWfRZ+jiJNXqNzy
+	u+mDXiWd+yNz1ROGCgGZqhjtdoGTWxKyiyw==
+X-ME-Sender: <xms:dWkiZ1Ui0G0mAaAaRk5Ii1CP490jacLEp3knPEocIHO4H5lQyey5DQ>
+    <xme:dWkiZ1kYyWQ1FQXZHjHver46pUVlQH27WTHlvq2mir9UnRiIO7rWf_SRhwxGLXtvk
+    jLtfY0SdYUlPEd0M6A>
+X-ME-Received: <xmr:dWkiZxas6yzxhMv05RmYjnA6isRr501X2mfY2n7MapBsclvyec5NyHZztCMg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgleejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
+    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
+    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfek
+    geetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnthhonh
+    hiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhg
+    lhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhh
+    uhhnthgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdp
+    rhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehnvghtuggvvh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:dWkiZ4V1H9rrcDU-HRgMt_XXzOeg8I87vRIOXBMyxRxs4qfZ6GrI0A>
+    <xmx:dWkiZ_lL2gvYv2Rn5fB534z2-70dBtfJKuInDP7XOLuVU3WPi0os0Q>
+    <xmx:dWkiZ1erpqS4WCqi4AiraK3oZS5i9vXU5TFloH7Tyew8Eb3e2sp1Zg>
+    <xmx:dWkiZ5GvuLGoWdoNf4qsrVowttTzTsxhG7dithLtwfFs3doqyRV8UA>
+    <xmx:dWkiZx7G1bDNw4X0LojsHZMB11VBNhxF58igXorRc9dGAHcEmJAUsVw0>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 30 Oct 2024 13:14:28 -0400 (EDT)
+Date: Wed, 30 Oct 2024 18:14:25 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v11 08/23] ovpn: implement basic TX path (UDP)
+Message-ID: <ZyJpcbHJI5MqZHVB@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-8-de4698c73a25@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241030153201.2078266-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20241029-b4-ovpn-v11-8-de4698c73a25@openvpn.net>
 
-Hello Andy!
-
-On Wed, Oct 30, 2024 at 05:30:26PM +0200, Andy Shevchenko wrote:
-> Even if it's not critical, the avoidance of checking the error code
-> from devm_mutex_init() call today diminishes the point of using devm
-> variant of it. Tomorrow it may even leak something. Add the missed
-> check.
-Totally missed this... Thanks!
-
-> @@ -430,8 +430,13 @@ static int gpio_mpsse_probe(struct usb_interface *interface,
->  	if (err)
->  		return err;
->  
-> -	devm_mutex_init(dev, &priv->io_mutex);
-> -	devm_mutex_init(dev, &priv->irq_mutex);
-> +	err = devm_mutex_init(dev, &priv->io_mutex);
-> +	if (err)
-> +		return err;
+2024-10-29, 11:47:21 +0100, Antonio Quartulli wrote:
+> +static void ovpn_send(struct ovpn_struct *ovpn, struct sk_buff *skb,
+> +		      struct ovpn_peer *peer)
+> +{
+> +	struct sk_buff *curr, *next;
 > +
-> +	ret = devm_mutex_init(dev, &priv->irq_mutex);
+> +	if (likely(!peer))
+> +		/* retrieve peer serving the destination IP of this packet */
+> +		peer = ovpn_peer_get_by_dst(ovpn, skb);
+> +	if (unlikely(!peer)) {
+> +		net_dbg_ratelimited("%s: no peer to send data to\n",
+> +				    ovpn->dev->name);
+> +		dev_core_stats_tx_dropped_inc(ovpn->dev);
+> +		goto drop;
+> +	}
+> +
+> +	/* this might be a GSO-segmented skb list: process each skb
+> +	 * independently
+> +	 */
+> +	skb_list_walk_safe(skb, curr, next)
 
-I think this should be `err = `
+nit (if you end up reposting): there should probably be some braces
+around the (multi-line) loop body.
 
-Other than that, it looks good to me (I doubt you need this, but just in case):
+> +		if (unlikely(!ovpn_encrypt_one(peer, curr))) {
+> +			dev_core_stats_tx_dropped_inc(ovpn->dev);
+> +			kfree_skb(curr);
+> +		}
 
-Reviewed-by: Mary Strodl <mstrodl@csh.rit.edu>
+> +void ovpn_udp_send_skb(struct ovpn_struct *ovpn, struct ovpn_peer *peer,
+> +		       struct sk_buff *skb)
+> +{
+[...]
+> +	/* crypto layer -> transport (UDP) */
+> +	pkt_len = skb->len;
+> +	ret = ovpn_udp_output(ovpn, bind, &peer->dst_cache, sock->sk, skb);
+> +
+> +out_unlock:
+> +	rcu_read_unlock();
+> +out:
+> +	if (unlikely(ret < 0)) {
+> +		dev_core_stats_tx_dropped_inc(ovpn->dev);
+> +		kfree_skb(skb);
+> +		return;
+> +	}
+> +
+> +	dev_sw_netstats_tx_add(ovpn->dev, 1, pkt_len);
 
-Thanks!
+If I'm following things correctly, that's already been counted:
+
+ovpn_udp_output -> ovpn_udp4_output -> udp_tunnel_xmit_skb
+                                    -> iptunnel_xmit
+                                    -> iptunnel_xmit_stats
+
+which does (on success) the same thing as dev_sw_netstats_tx_add. On
+failure it increments a different tx_dropped counter than what
+dev_core_stats_tx_dropped_inc, but they should get summed in the end.
+
+> +}
+
+-- 
+Sabrina
 
