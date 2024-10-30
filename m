@@ -1,121 +1,149 @@
-Return-Path: <linux-kernel+bounces-389529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F969B6E14
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:49:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5128A9B6E17
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC983280574
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:49:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF843B23044
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEA62178ED;
-	Wed, 30 Oct 2024 20:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076E5218318;
+	Wed, 30 Oct 2024 20:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e2OzAGta"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f8SEV7M/"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1501EC016;
-	Wed, 30 Oct 2024 20:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E8021503C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 20:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730321323; cv=none; b=MPZu1YCWOdEaVOfkYDbfkiEC3KApyoSWMY+8au5aDgF1xYKCVdnJBWrIVshcfb0Psh/uDNPbR7JHdrUpYV/Xqa63nhboyCJL/G1BRSOQnB4/xunv8EO1JfJYInbhEYfTD+vb2rF1HmeLQ8ZWe3D21p9w7UZj6zMOagWW7t1Cb9Q=
+	t=1730321332; cv=none; b=RuijQUCAFhfp63btLQALgwv9THZq/binXgNUGLNWHrxP+iN1KQKlYKqiEG5B/hUPjw6qUOJVaKAxQPGqF1PKqJIBIyPJd8rx/mURLwGpI92tQCr2cIHEMIMlE+SCahmINE2kVYir27Oy+CYzYN6m035eBFOjqb2qYg8Hy+YQtWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730321323; c=relaxed/simple;
-	bh=dQZjc7y8gqIlBQhCFx4XdLHsvRVBdaQFmbtnY4ikP9k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=eDrGb94qCGNfy7ZZ3aUvtZIvS6LtLAM11wFNsuMtSq0n6WcdmWIrApZvNXMHre0ycU7X0qRGfVLy/qc+yuyw2F7DOmONSwariwomH7rmFU5E/YiwEMYXCt+MZAmMaUzIw42QdVDb/XMcg/9fBS0zkJ4q8DUvhgh9kMh5mgNrCV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e2OzAGta; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UJDuh5007329;
-	Wed, 30 Oct 2024 20:48:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BdPiftZCGikrsqw0/qKY5H5erpVvYTx3MSTxwYAodRs=; b=e2OzAGtaMD9+PYr9
-	9ze+VoTOIdq82fgm4ygcs0EMeiYxOUwH/qHfV3PP3moPM1xUUA/EoKlqg31zJbW/
-	YR9goLkVeiqSwgHuCUjUNVZazM7qeISmc78ZAvLN+s7WMJEv/yRFA3/0WlO2xHYd
-	IGjK0ArzV3H8FImmViyaTE5n1Cnjj5WLYVpbrLPCvnHfhzHzfOMaBcYRUYBpnxEY
-	4v0UWHlg5E3GqiHolj2QLr3YP8HwSXV4bqmLVSQ+jvBPJssiLWQEhpEowHsHnogm
-	YxcMOIYFxoY46v5Ob+2Qg7C62GfrAqcwaRVpFvjm31p1TsfceksOjSU5DkF32+Pd
-	SqDg2Q==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42khqbsxb3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 20:48:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UKmWEV032026
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 20:48:32 GMT
-Received: from [10.48.242.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 13:48:31 -0700
-Message-ID: <d3f1b608-8549-4846-866e-81f785ee5a59@quicinc.com>
-Date: Wed, 30 Oct 2024 13:48:30 -0700
+	s=arc-20240116; t=1730321332; c=relaxed/simple;
+	bh=r7Szs2POrVC2wv7OjarWafvN6De9kKjAB8U9+PxACq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ffUTrpuQjP+OsDP+v+iMH6vrrpqr7adKhlahqM2JdSCYA9C7wkusyOAgKPaL4HU7cQsCAaVAqvzpugmSjUG93RD0jI/w9Gky4SRLAGenOeDNIe+HQAbhatLrFHMWKn+MsMljy+ZXoxhuR6j9yPz5YA9HSZ2aCuDVGjBefSB+D58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f8SEV7M/; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <82dff21b-0ba0-4823-bd78-d8d2105941f4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730321327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sUu3R5NznYIAyWQ0FfKhRx6rfEqKBnePWslIEbBLNsY=;
+	b=f8SEV7M/wGL9Wa/RFdfrDQLa9WkLgkBKgTq5xQBfVLMld16cK5Ywk0XEu9ByyYJx4T7ljw
+	k8pxaqMDbReQUfp+pRE9duT6qKhAjJHDC7gHfzPIfDdZLrJnc6owGXeQA9/Fo5XoaF30tl
+	I7gIJM+4b2UWNRWZETrpebVDQY3tFMw=
+Date: Wed, 30 Oct 2024 13:48:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/5] dt-bindings: net: wireless: ath12k: describe
- WSI properties for QCN9274
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241029173050.2188150-1-quic_rajkbhag@quicinc.com>
- <20241029173050.2188150-2-quic_rajkbhag@quicinc.com>
- <4d273cac-8955-4850-bd8a-0bad318c1e4f@quicinc.com>
+Subject: Re: [PATCH bpf-next] selftests/bpf: Fix compile error when MPTCP not
+ support
+To: Matthieu Baerts <matttbe@kernel.org>, Tao Chen <chen.dylane@gmail.com>
+Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev
+References: <20241030100108.2443371-1-chen.dylane@gmail.com>
+ <abb72d1b-3347-4493-9a18-43c1655b7449@kernel.org>
+ <3bc02b33-421e-4c95-8f69-33ec89782621@gmail.com>
+ <9b2b3c98-503b-45ae-bcdd-ac2fcc62e14c@kernel.org>
 Content-Language: en-US
-In-Reply-To: <4d273cac-8955-4850-bd8a-0bad318c1e4f@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mRYVMkxKpQp7PA2ctfUAP0fhLQ3TBN2d
-X-Proofpoint-ORIG-GUID: mRYVMkxKpQp7PA2ctfUAP0fhLQ3TBN2d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=848
- lowpriorityscore=0 bulkscore=0 adultscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300163
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <9b2b3c98-503b-45ae-bcdd-ac2fcc62e14c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/30/2024 12:04 PM, Jeff Johnson wrote:
-> in the description above you have two different diagrams:
-> - one that shows 3 pcie* devices in a single group with apparently one port
-> per device
-> - one that shows 4 pcie* devices split into two groups of two, again with
-> apparently one port per device
+On 10/30/24 9:31 AM, Matthieu Baerts wrote:
+> Hi Tao, BPF maintainers,
 > 
-> but in the representation that follows you describe three pcie* devices, each
-> with two distinct ports, all 6 of which are part of group 0.
+> On 30/10/2024 12:12, Tao Chen wrote:
+>> 在 2024/10/30 18:49, Matthieu Baerts 写道:
+>>> Hi Tao Chen,
+>>>
+>>> Thank you for having shared this patch.
+>>>
+>>> On 30/10/2024 11:01, Tao Chen wrote:
+>>>> Fix compile error when MPTCP feature not support, though eBPF core check
+>>>> already done which seems invalid in this situation, the error info like:
+>>>> progs/mptcp_sock.c:49:40: error: no member named 'is_mptcp' in 'struct
+>>>> tcp_sock'
+>>>>      49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ?
+>>>>
+>>>> The filed created in new definitions with eBPF core feature to solve
+>>>> this build problem, and test case result still ok in MPTCP kernel.
+>>>>
+>>>> 176/1   mptcp/base:OK
+>>>> 176/2   mptcp/mptcpify:OK
+>>>> 176     mptcp:OK
+>>>> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+>>>>
+>>>> Fixes: 8039d353217c ("selftests/bpf: Add MPTCP test base")
+>>>
+>>> The commit you mentioned here is more than 2 years old, and as far as I
+>>> can see, nobody else reported this compilation issue. I guess that's
+>>> because people used tools/testing/selftests/bpf/config file as expected
+>>> to populate the kernel config, and I suppose you didn't, right?
+>>>
+>>
+>> Hi Matt, thank you for your reply, as you said, i did not use tools/
+>> testing/selftests/bpf/config to compile kernel, i will use this helpful
+>> feature.
+>>
+>>> I don't think other BPF selftests check for missing kernel config if
+>>> they are specified in the 'config' file, but even if it is the case, I
+>>> think it would be better to skip all the MPTCP tests, and not try to
+>>> have them checking something that doesn't exist: no need to validate
+>>> these tests if the expected kernel config has not been enabled.
+>>>
+>>
+>> If i use the kernel not support MPTCP, the compile error still exists,
+>> and i can not build the bpf test successfully. Maybe skill the test case
+>> seems better when kernel not support. Now that bpf_core_field_exists
+>> check already used in the code, i think it is better to use new
+>> definition mode.
 > 
-> can we have diagrams that match the actual bindings. does the real product
-> actually have 6 ports in one group?
+> I understand it would be better, but it means more code to maintain to
+> handle that (and remembering that in future test cases). If that's not
+> necessary, then no need to do the effort.
+> 
+> @BPF maintainers: do we need to support kernels not respecting the
+> tools/testing/selftests/bpf/config file? Should we detect when a
+> required kernel config is not set and skip some tests?
 
-After stepping away and then coming back and reading the dts change I now
-understand that each device has two ports, a tx and an rx port.
+I guess it depends on the CONFIG_. Otherwise, it takes out the goodies of using 
+<vmlinux.h> when writing bpf selftests.
 
-/jeff
+If fixing the config is an option and sounds like it is for Tao, then it is 
+always good to run everything in test_progs.
+
+There are some "___local" definitions in the selftests. If mptcp test wants to 
+go this path, then Matt's request to at least test__skip() makes sense to me.
+
+pw-bot: cr
+
+> 
+>>> But again, please correct me if I'm wrong, but I don't think there is
+>>> anything to change here to fix your compilation issue: simply make sure
+>>> to use this tools/testing/selftests/bpf/config file to generate your
+>>> kernel config, no?
+> 
+> Cheers,
+> Matt
+
 
