@@ -1,119 +1,142 @@
-Return-Path: <linux-kernel+bounces-388981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3A79B66F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:05:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810589B66F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87A681F21CD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:05:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19E9DB234B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B187D1FBCB2;
-	Wed, 30 Oct 2024 15:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z9qzvw2q"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC22E20B21E;
+	Wed, 30 Oct 2024 15:05:25 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2911F80A0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2476C1FDFA0;
+	Wed, 30 Oct 2024 15:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300700; cv=none; b=SUZIMxdZeQpy6L0cwvGhkKUKYCoXtZo/YlSrWIHmCkfFeYqi7C/oo3vLU8unbEeBRCKFA8V8T+xq5/3J3rw2uXTBHD/QzuxlDxdU4RljlckKFJ9BapeGo1Gtt0e4zzVaA9pyllEgzNSxfY/a8tJ6WXdHg7bLJwvYpyMOXGi6FyA=
+	t=1730300725; cv=none; b=p5+xBLSk56xvmDHcfT1iHnShWXen+EjWvVsaX7PwBnf7kMnGMQsZRCCU8KH5NnfAUZwUl0Eh6mFO2SqHo7F8T1rUDPn2Nx5GEIMfvBVM2q3+XLxeMMTMmTiQfkkE+dYLQowPxLYyPbXbfwnpC0xaA7C7VAMGH7URIozXMiLnTuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300700; c=relaxed/simple;
-	bh=WLSXttbBN+Nchtr3DXS0Di4OQPiMn1CjhtNhKfp8TH8=;
+	s=arc-20240116; t=1730300725; c=relaxed/simple;
+	bh=goD+pGiQ0rQVe2pgjoni/ZwmQIGCuuYK5AaP0rfWv34=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RS8/ns4ib1Fu8R7P13rv3km4VZCQIO8aRMt8q9wjhTXrTqjrCg3crdVz3lqh4KTJCTy3x8ZnZiCpRTd7Uni2YJRGfLjFkn89w3J7KK5cO29MEsbkht1tYHT+EXZ3i3gPFnsSa//Fk4czropjS9XAcoHjk0+EpAccXT+UCJrlPIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z9qzvw2q; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99ebb390a5so188308566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730300696; x=1730905496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvVdPi8ansOXvDJXtgFjdjSxu3XdMpqKtWClsI507QM=;
-        b=Z9qzvw2q8Q9LNwJnIK8knRzPFiDU0Zg09LBpCY5GqxZvUVV3OxNYN3e30lrqsYQDld
-         KwV9MNGKDqpaPQveVdjyF9R4c6mXPXp5OuxA9cJiF3+6oXUQ5rXDv7lDm35+0gTJMWsT
-         ovMDAH9fT3wzZZo/drhGjIhfEiQdahiqEhgLI1UWwEiwXq69UfcXV/xHCd4u1xZ8pQ6L
-         AkTdePyW+gVObvZse+fkuhB+tHCcx/UCv2Cs2kLuDAm560soq3Q7NxRVyXwS/xwoCaQ8
-         sIZnQGm04CvpoJsHW8I4pbp6fmsCZAEIlsu+C0HdwIj3d9Lej7iDy9kUkaPYW8ZNltJs
-         rV8A==
+	 Content-Type:Content-Disposition:In-Reply-To; b=fixnNdt5yaD+A7xig2wpzuHiG1dx7dl8OtE0lKCMRqv5qwMArVLn25TSFCQg63PeVREpGiKEDJefZHqZuzTpeQTX7pIPb3dbHhcR6OrS1TII0wtYpRU9W/03sPmbMfEHUaFsxn2Q3yX6mHkeUWUEiw0ZmeVCL+lOMqTt0/RRJM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so486360266b.3;
+        Wed, 30 Oct 2024 08:05:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730300696; x=1730905496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wvVdPi8ansOXvDJXtgFjdjSxu3XdMpqKtWClsI507QM=;
-        b=jmfAeLSNOW2tNUiqc3WWWQTpmEYZ4SSGgIOxNrQX7O9vkWcg4s1ZCeAvz5xl0yAwD3
-         uFXMfBb5T7NAFHiDJ02vPaJmqZkhvH5hi38LG22Ai5CnTZWIqGSoDwHhfYASjLo2ylHi
-         544JCGhfQq3a6arUHUBi/BNwccMAbRQCbBQbF9JcHPCtqTTnPhY+SqFnuh4sva2u6wey
-         EXgEoUIN2DYCWeKtGED9In7Ytcl4kMHurNjbQfQ6pNK00biWR8xnTfXBR7sl92m2yQCr
-         e6am0eH1LxS0Q92DG7ugkclchelb6fY1/ij0LNWIp7PV4Id4dImE8fwzDjY5EP/0dBiI
-         9XNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUATeRoqOsYoigZAsGChcIZjX/1hn5A8gBllMZyNcWwkP+1/S2tAihFHW1FNzuc43PSGxzL1GduYTQcIT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjFMobEAFovg/ZPFM1MrFoPy3pNdYluYIKW6O97x+ZJqaBcB7L
-	bjZsZzYc6JEfErb9Ffi22AcFEZtRQb5KX+kG6Z7A2xhHvHXjcCcruFSdawsl2jM=
-X-Google-Smtp-Source: AGHT+IGPlZuIqSn11jkgKQPEzOuv92CbR8SdcSXqv4p+sYZbAqsDGdMUGuu2IPloDxzpWtDzRrTRrQ==
-X-Received: by 2002:a17:907:2d86:b0:a9a:130e:11fd with SMTP id a640c23a62f3a-a9e40b99491mr228194566b.5.1730300695909;
-        Wed, 30 Oct 2024 08:04:55 -0700 (PDT)
-Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1e75ff3bsm576041266b.1.2024.10.30.08.04.55
+        d=1e100.net; s=20230601; t=1730300721; x=1730905521;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JsliBAqPxcmrKVPgDw8B1SlwFR9KYGJogW4u3jch/nA=;
+        b=dYgdVehC+o9arDyIp1iypWZ7uRhHo3AEdydANQxIq17hyuIK+xRBzfxlc59crIFMc+
+         4/K7B4CK6SqApeuMb7b37hV74yKJ1rNbfOhO2WRBzxO0pP6glpCo/Y6yThr/c11r706Z
+         Ot7uoL1w0WgZFs0BkqnEjpZi18TK3EaqKIyA9s2KfZ2Z+ScKKrsdPo2caY2nXFfpnhdk
+         Kz5PKSvpiNZVMdJNqovPKC/dJMtQI6REf9knKvvmy8Tr3e5w4NoyV1Z0TcnPKwuiiloE
+         mlHn3Qk4slq5CZjilEFo57tbkct0n+BzAq7Koyh7Mqzcx7c5is2jo99053r5BfRiwfyl
+         dJlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEx+eFE83/1pmhYSnM9euHuCNzRNG+Bu5EYFQ/LFbISVaxyr9Cdm2xvBf3hrjHchgJsjuOiOQdBdLAtaw=@vger.kernel.org, AJvYcCWP0OacbBOJw4bq8Jz8sA4QL9j42VVJHZ6d1/GFy+UwrRHu8nc+/PHMYYbPT0A8jbGc0IKclHpk@vger.kernel.org, AJvYcCXulw7482hpklJkLbUSE5jcED9zGCGVgdouogi5tg3eGl/ebmybDM/RAm7z38lwQwxM87cebQCN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4iq20uBusHXdDiiqDmz4FMfr1PTdvz6+gCURY42Pgn2P85nlS
+	r++AAEtrEq8PP2BGf+Bwlj61HgiDqbcjqoU33G6vr9rquZVU35yw
+X-Google-Smtp-Source: AGHT+IFwv5tYlaHMsIZ+p3GmjDzFyvvMxeVJcS1ooiACmmXEJ/AH7Zp6UzqKlykAB7fpZidVS9XvLw==
+X-Received: by 2002:a05:6402:1d4c:b0:5cb:e6c3:d2c6 with SMTP id 4fb4d7f45d1cf-5cbe6c3d308mr10047483a12.15.1730300721025;
+        Wed, 30 Oct 2024 08:05:21 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb629c250sm4837003a12.27.2024.10.30.08.05.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 08:04:55 -0700 (PDT)
-Date: Wed, 30 Oct 2024 16:04:54 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: gutierrez.asier@huawei-partners.com, akpm@linux-foundation.org,
-	david@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
-	willy@infradead.org, peterx@redhat.com, hannes@cmpxchg.org,
-	hocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, stepanov.anatoly@huawei.com,
-	alexander.kozhevnikov@huawei-partners.com, guohanjun@huawei.com,
-	weiyongjun1@huawei.com, wangkefeng.wang@huawei.com,
-	judy.chenhui@huawei.com, yusongping@huawei.com,
-	artem.kuzin@huawei.com, kang.sun@huawei.com
-Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
-Message-ID: <ZyJLFv8TgoTyo5SH@tiehlicka>
-References: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
- <ZyJGhKu1FL1ZfCcs@chrisdown.name>
+        Wed, 30 Oct 2024 08:05:19 -0700 (PDT)
+Date: Wed, 30 Oct 2024 08:05:16 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: kuba@kernel.org, horms@kernel.org, davem@davemloft.net,
+	pabeni@redhat.com, Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vlad.wing@gmail.com, max@kutsevol.com,
+	kernel-team@meta.com, aehkn@xenhub.one, stable@vger.kernel.org,
+	"open list:NETWORKING [MPTCP]" <mptcp@lists.linux.dev>
+Subject: Re: [PATCH net] mptcp: Ensure RCU read lock is held when calling
+ mptcp_sched_find()
+Message-ID: <20241030-keen-vicugna-of-effort-bd3ab8@leitao>
+References: <20241030140224.972565-1-leitao@debian.org>
+ <CANn89iLbTAwG-GM-UBFv4fNJ+1RuUZLMFNDCbUumbXx3SxxfBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZyJGhKu1FL1ZfCcs@chrisdown.name>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iLbTAwG-GM-UBFv4fNJ+1RuUZLMFNDCbUumbXx3SxxfBA@mail.gmail.com>
 
-On Wed 30-10-24 14:45:24, Chris Down wrote:
-> gutierrez.asier@huawei-partners.com writes:
-> > New memcg files are exposed: memory.thp_enabled and memory.thp_defrag, which
-> > have completely the same format as global THP enabled/defrag.
+Hello Eric,
+
+On Wed, Oct 30, 2024 at 03:18:14PM +0100, Eric Dumazet wrote:
+> On Wed, Oct 30, 2024 at 3:02 PM Breno Leitao <leitao@debian.org> wrote:
+> >
+> > The mptcp_sched_find() function must be called with the RCU read lock
+> > held, as it accesses RCU-protected data structures. This requirement was
+> > not properly enforced in the mptcp_init_sock() function, leading to a
+> > RCU list traversal in a non-reader section error when
+> > CONFIG_PROVE_RCU_LIST is enabled.
+> >
+> >         net/mptcp/sched.c:44 RCU-list traversed in non-reader section!!
+> >
+> > Fix it by acquiring the RCU read lock before calling the
+> > mptcp_sched_find() function. This ensures that the function is invoked
+> > with the necessary RCU protection in place, as it accesses RCU-protected
+> > data structures.
+> >
+> > Additionally, the patch breaks down the mptcp_init_sched() call into
+> > smaller parts, with the RCU read lock only covering the specific call to
+> > mptcp_sched_find(). This helps minimize the critical section, reducing
+> > the time during which RCU grace periods are blocked.
+> >
+> > The mptcp_sched_list_lock is not held in this case, and it is not clear
+> > if it is necessary.
+> >
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > Fixes: 1730b2b2c5a5 ("mptcp: add sched in mptcp_sock")
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  net/mptcp/protocol.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+> > index 6d0e201c3eb2..8ece630f80d4 100644
+> > --- a/net/mptcp/protocol.c
+> > +++ b/net/mptcp/protocol.c
+> > @@ -2854,6 +2854,7 @@ static void mptcp_ca_reset(struct sock *sk)
+> >  static int mptcp_init_sock(struct sock *sk)
+> >  {
+> >         struct net *net = sock_net(sk);
+> > +       struct mptcp_sched_ops *sched;
+> >         int ret;
+> >
+> >         __mptcp_init_sock(sk);
+> > @@ -2864,8 +2865,10 @@ static int mptcp_init_sock(struct sock *sk)
+> >         if (unlikely(!net->mib.mptcp_statistics) && !mptcp_mib_alloc(net))
+> >                 return -ENOMEM;
+> >
+> > -       ret = mptcp_init_sched(mptcp_sk(sk),
+> > -                              mptcp_sched_find(mptcp_get_scheduler(net)));
+> > +       rcu_read_lock();
+> > +       sched = mptcp_sched_find(mptcp_get_scheduler(net));
+> > +       rcu_read_unlock();
 > 
-> cgroup controls exist because there are things we want to do for an entire
-> class of processes (group OOM, resource control, etc). Enabling or disabling
-> some specific setting is generally not one of them, hence why we got rid of
-> things like per-cgroup vm.swappiness. We know that these controls do not
-> compose well and have caused a lot of pain in the past. So my immediate
-> reaction is a nack on the general concept, unless there's some absolutely
-> compelling case here.
+> You are silencing the warning, but a potential UAF remains.
 > 
-> I talked a little at Kernel Recipes last year about moving away from sysctl
-> and other global interfaces and making things more granular. Don't get me
-> wrong, I think that is a good thing (although, of course, a very large
-> undertaking) -- but it is a mistake to overload the amount of controls we
-> expose as part of the cgroup interface.
+> sched could have been freed already, it is illegal to deref it.
 
-Completely agreed!
-
--- 
-Michal Hocko
-SUSE Labs
+Thanks.  I got the impression that the scheduler list was append-only,
+and the entries were never freed.
 
