@@ -1,153 +1,182 @@
-Return-Path: <linux-kernel+bounces-389457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94329B6D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:11:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7899B6D59
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBED41C218BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:11:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306081F21CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D4A1D1506;
-	Wed, 30 Oct 2024 20:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8161D1506;
+	Wed, 30 Oct 2024 20:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqnWApoN"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZAGhCtbK"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560411BD9D8;
-	Wed, 30 Oct 2024 20:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530691D14FB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 20:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730319107; cv=none; b=oWPbaAfuUscp5Jw/bPJNho5YOZCLPEZJ/goDQmi0ch9q0jmXO5vTg5fQc+W6+C5nQ42mXooB7Giir9nJ9OJigrEpC2AQ6vuKxOcAtmq/uAvx48OP7bNr6JtRtySPjpJ7EOjaLzXWvjILrywKqV5eFdPBjRI4Dyl6bZQ2kP/LDqk=
+	t=1730319144; cv=none; b=BlXFNMxM4qznWm6zBRzj6N3tXGKAQTTVoDD7l45SEU/oQnF+lOSylUpE8KLh3pYq8XGMMakBpW8YuMwXyu1evqSF7F8ivjpuxxxcw9K2xMAukefaWwmtFqkFgxxkekdghqE9Ox4aMPybd4dJxv7BH9ZWTlAYluu4pJ/uGngXLIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730319107; c=relaxed/simple;
-	bh=k1mtjuleGMBcgiyWtLhwWeMfsKRLA4FX8o1BSklIGPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bhAt3wQgb4AmAqqgdEIdCdHi+Kx46gqI3D0sHLEY3Aadta5YQakZeDSryjnHPtV51HtKEBtgo96kXCONW6iiDkmUMA2ZqGVmoQlsCZaVCnxmTsKQ78e8FT0UKPuL/dqUX+6QkdLgXtdpH7ys0a1B+dWp6ynPwZEwiwSYQYXmnDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqnWApoN; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7205646f9ebso182333b3a.0;
-        Wed, 30 Oct 2024 13:11:45 -0700 (PDT)
+	s=arc-20240116; t=1730319144; c=relaxed/simple;
+	bh=gVrwd6b20qM/KGJRtOBT5km8yh4S7D6l1yUttkg7kVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WzkNep/VhK5bK4ouvq54DJhXgtUJpc26BC5T6RjC8uUiY5dMdTqBYDT+Xx6TgHTPM/3ODHvYprnJPDSO7Is1ogCxggX5lm25KuKhc7kEY7YD6QNWLaf9oky/QhMb0xC7lBMri/CMxE/QSe35trBaLjuXwff6DBjoWBKLvLM6CbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZAGhCtbK; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so413390e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730319104; x=1730923904; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cV4eBxUtILgYqLmr7fW7UYCg6RbX9ACeOtbq1mqi1jM=;
-        b=nqnWApoNWFpxtOBr3oZZHLTfkIR4pzhDFz2FE3HbOjJtNgxIjJBnBIGPmKn+v22wSp
-         iDrfLo9eiX2de89lKGwHeqmGP0rp2StHrnBQEynCY3md15J58KCgr+D+fZfcmR7JY28z
-         qNTrh4/Yg1UKDQVzgIPLJdebNJ/wxf7KQPoe8wGZim6OC1IUrW9OfuC1HO+mKNPK6myY
-         yUxhRNtYpfqW1EZI7VEgT0O4YKR5Lgf+xzBMNy2v4geW+5SUeHOJDedTg1SEJV3QCq3c
-         i4Up7W1ISSfNiz5w2RgGEp0GA4lZ5u3qTji/GGL0w/HKZXKq8HhGo9GOLldEMG2PR6FI
-         8u6w==
+        d=chromium.org; s=google; t=1730319140; x=1730923940; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7yOu+cIxdXt/0LsD6zEL5lEadq9da0UuXDXVgDuNz3A=;
+        b=ZAGhCtbKOIXaPe0CtHHLFUn4rzP+Y/EtWUFNjuxMEOOjAXJrZrin8/PDQsSISqbks7
+         roNFu2IIqqfYhRdEFJu8Tr3RPN8U3c9Dj3FKLEN7Q6owG4nIS6HeeaaueOzMYeQHgKUH
+         ae7VPRFSmW7ufdDAF4w7sKU1lcA0NnPlU5bSQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730319104; x=1730923904;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cV4eBxUtILgYqLmr7fW7UYCg6RbX9ACeOtbq1mqi1jM=;
-        b=FIgG5PLLgbL/qGFjTc8M8JT+UUCmq3vkHOuHmkdW4X+QWT1EJSlJ2+uSImcKO0ZHQt
-         med1NH4o5SOA7NSpcARxhE8X9YbSIn77klhAM9XMSVSozsGGR1gzC55aWl26zqXC7VAf
-         bACJYaEcoPUU46WkJhCia2obMCH48UXDVkpu1fTHrIjp48Ib/gIy09CKCcLYu9broXhS
-         tnTGT2AMARL6GEIqewO0RXbDkRlxk2BGO1QjlngdFvuLshXKJSNTS5Yx04OKrnkgTOvh
-         6kzkqYhrLCwzcDhWnTjSJNOXANpAGpldqfXvusdvCoplZP7J0lk6Y7+bcJTXsCAaH5T1
-         tdlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU54qwe8pOgFYuKD+FKH6G2/dmixbWg8TyYoWD3eJpTzWGNFeDhqJEKzvfqhHfuVRlpHEiVHPdh3v4wtaE=@vger.kernel.org, AJvYcCWf/ghyWzeICyvNeP3H6reshh1K+3W7Oxqim4yX3T0EjYr6hR7Sf47F/iAMXgYI3FygdPBwaGpd9t5P1/g7RfgDBgLe3A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnVQwUZrAxrt17bPdy4hXuycROqBbTrangnCwf8N8y976quBKr
-	jgd8yyAu0rYaCZBvA3Y/Gp//Zs1avnC4xBWYLATS4VZumeSiqapA
-X-Google-Smtp-Source: AGHT+IF567BWRQM4yyOxyYEIwsjINk+0YmRbQ32Zok3RpTngOlG5nBfZ5tonj7UZq7+HPUgS3NLMYQ==
-X-Received: by 2002:a05:6a00:190f:b0:71e:795f:92f0 with SMTP id d2e1a72fcca58-720b9b84653mr1363603b3a.3.1730319104175;
-        Wed, 30 Oct 2024 13:11:44 -0700 (PDT)
-Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2e9316sm281b3a.148.2024.10.30.13.11.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 13:11:43 -0700 (PDT)
-Date: Wed, 30 Oct 2024 17:11:40 -0300
-From: Kurt Borja <kuurtb@gmail.com>
-To: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc: Dell.Client.Kernel@dell.com, hdegoede@redhat.com, 
-	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, w_armin@gmx.de
-Subject: Re: [PATCH 2/2] dell-wmi-base: Handle Win-key Lock/Unlock events
-Message-ID: <hj6jurton7ll4i475cwcqvk6dzjjire2briawxmuemnliofpyo@kpjdxpwflekm>
-References: <20241030181244.3272-2-kuurtb@gmail.com>
- <20241030181532.3594-2-kuurtb@gmail.com>
- <20241030183436.3w5po6kcg6jmqigb@pali>
+        d=1e100.net; s=20230601; t=1730319140; x=1730923940;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7yOu+cIxdXt/0LsD6zEL5lEadq9da0UuXDXVgDuNz3A=;
+        b=K8kAISvbJ4JRT41rPF06bAtOnS3s8+VfNC6aBVrpGeSynCAAvYvwspORmaLdD9RXVY
+         eHohW3mAON9n5TftydMnD/cVilJ4H1xM7So/9Xuy/GjpBkMT5G7IsEobAkj0/2qCB4Na
+         Ut5P9VUKJXTg8cSc0BRoR5foZ0Y45XtyZ596DmkFA+SftU0swOnJkJVZWVgtHrcvbTAx
+         24GUsGb69qj9ordUMtEIo/eu4jcGNLy6tnaYbl3/zUsfxSxUxCLZQ44KLQFG0PYDPyYI
+         kjPJa+7BqolBn1WzNR0fvXQ682E9Wr0C3ZA+vYvtzy5fY86WKGLzjPAri6o/eryIDCGw
+         ooPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVt2DnE7Zewi/jQFYS87zPaLDliQwBSWN4ciIslT/XMSIJbjU75rskcMOqlEwQ3m/l7vjj5hzSmoeyKYmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynpXWzNbzuwE0V+JWaTKE32a1Aikm7YhTZRiwc0LNWtUwTfRe8
+	mc93kw4WNQdNJUv2SyOlLhBAtDVPXvEKXLqK091rWgR8LL5+tkxFOORZ8Qp78e65BHb0XCjf23d
+	idA==
+X-Google-Smtp-Source: AGHT+IHXaMmDoRcwFmguvDz7nmwuUaGxhJQmnXhuozlZHKXF7nqKT/BW7EVJ2WgI31aJy3souuObHg==
+X-Received: by 2002:a05:6512:b8d:b0:539:89a8:600f with SMTP id 2adb3069b0e04-53b348cfdefmr12464558e87.23.1730319139736;
+        Wed, 30 Oct 2024 13:12:19 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bc0d5353asm333022e87.149.2024.10.30.13.12.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 13:12:18 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f2b95775so256012e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:12:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWzZMR+5oB3NGQCadP7jT/zpxAOdxjdb9p1Zn4VJDGWtGRHGGWSIUQvP3obr7scvTBojt3OXUci/qWAcq4=@vger.kernel.org
+X-Received: by 2002:a05:6512:6605:b0:53c:74a7:43de with SMTP id
+ 2adb3069b0e04-53c74a744afmr2455669e87.29.1730319138384; Wed, 30 Oct 2024
+ 13:12:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030183436.3w5po6kcg6jmqigb@pali>
+References: <92193018-8624-495e-a685-320119f78db1@paulmck-laptop>
+ <20241016161931.478592-3-paulmck@kernel.org> <c3218fbe-7bb1-4fd6-8b00-beee244ffeae@paulmck-laptop>
+ <b2b0bceacbd080e13b3aa7ad05569a787df4646d.camel@mediatek.com>
+ <adb044e2-8f62-4367-9a22-30515f5647b1@paulmck-laptop> <d0adc7d14da0f21909eef68acf19fc5706a4b1af.camel@mediatek.com>
+ <9e90d04e-081b-4730-890b-295ed52747de@paulmck-laptop>
+In-Reply-To: <9e90d04e-081b-4730-890b-295ed52747de@paulmck-laptop>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 30 Oct 2024 13:12:01 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WBcOCGbD0haRYLGgAFpDhfoqMW8mvj9DEA0CSPHG3Owg@mail.gmail.com>
+Message-ID: <CAD=FV=WBcOCGbD0haRYLGgAFpDhfoqMW8mvj9DEA0CSPHG3Owg@mail.gmail.com>
+Subject: Re: [PATCH v3 rcu 3/3] rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()
+To: paulmck@kernel.org
+Cc: =?UTF-8?B?Q2hlbmctSnVpIFdhbmcgKOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>, 
+	"sumit.garg@linaro.org" <sumit.garg@linaro.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rostedt@goodmis.org" <rostedt@goodmis.org>, 
+	"frederic@kernel.org" <frederic@kernel.org>, wsd_upstream <wsd_upstream@mediatek.com>, 
+	=?UTF-8?B?Qm9idWxlIENoYW5nICjlvLXlvJjnvqkp?= <bobule.chang@mediatek.com>, 
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "kernel-team@meta.com" <kernel-team@meta.com>, 
+	"joel@joelfernandes.org" <joel@joelfernandes.org>, "rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 07:34:36PM +0100, Pali Rohár wrote:
-> On Wednesday 30 October 2024 15:15:33 Kurt Borja wrote:
-> > Some Alienware devices have a key that locks/unlocks the Win-key. This
-> 
-> Please specify (in comment / commit message) which devices. It would
-> help other developers in future to track for which device is this event
-> needed.
+Hi,
 
-I will!
+On Wed, Oct 30, 2024 at 6:54=E2=80=AFAM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> > > We do assume that nmi_trigger_cpumask_backtrace() uses true NMIs, so,
+> > > yes, nmi_trigger_cpumask_backtrace() should use true NMIs, just like
+> > > the name says.  ;-)
+> >
+> > In the comments of following patch, the arm64 maintainers have
+> > differing views on the use of nmi_trigger_cpumask_backtrace(). I'm a
+> > bit confused and unsure which perspective is more reasonable.
+> >
+> > https://lore.kernel.org/all/20230906090246.v13.4.Ie6c132b96ebbbcddbf695=
+4b9469ed40a6960343c@changeid/
+>
+> I clearly need to have a chat with the arm64 maintainers, and thank
+> you for checking.
+>
+> > > /*
+> > >  * NOTE: though nmi_trigger_cpumask_backtrace() has "nmi_" in the
+> > name,
+> > >  * nothing about it truly needs to be implemented using an NMI, it's
+> > >  * just that it's _allowed_ to work with NMIs. If ipi_should_be_nmi()
+> > >  * returned false our backtrace attempt will just use a regular IPI.
+> > >  */
+> >
+> > > Alternatively, arm64 could continue using nmi_trigger_cpumask_backtra=
+ce()
+> > > with normal interrupts (for example, on SoCs not implementing true NM=
+Is),
+> > > but have a short timeout (maybe a few jiffies?) after which its retur=
+ns
+> > > false (and presumably also cancels the backtrace request so that when
+> > > the non-NMI interrupt eventually does happen, its handler simply retu=
+rns
+> > > without backtracing).  This should be implemented using atomics to av=
+oid
+> > > deadlock issues.  This alternative approach would provide accurate ar=
+m64
+> > > backtraces in the common case where interrupts are enabled, but allow
+> > > a graceful fallback to remote tracing otherwise.
+> > >
+> > > Would you be interested in working this issue, whatever solution the
+> > > arm64 maintainers end up preferring?
+> >
+> > The 10-second timeout is hard-coded in nmi_trigger_cpumask_backtrace().
+> > It is shared code and not architecture-specific. Currently, I haven't
+> > thought of a feasible solution. I have also CC'd the authors of the
+> > aforementioned patch to see if they have any other ideas.
+>
+> It should be possible for arm64 to have an architecture-specific hook
+> that enables them to use a much shorter timeout.  Or, to eventually
+> switch to real NMIs.
 
-> 
-> > key triggers a WMI event that should be ignored, as it's handled
-> > internally by the firmware.
-> 
-> Can be this handling in FW ignored? So OS can use this key for any other
-> functionality?
+Note that:
 
-Probably not. FW locks the Win-key regardless of how the event is
-handled.
+* Switching to real NMIs is impossible on many existing arm64 CPUs.
+The hardware support simply isn't there. Pseudo-NMIs should work fine
+and are (in nearly all cases) just as good as NMIs but they have a
+small performance impact. There are also compatibility issues with
+some pre-existing bootloaders. ...so code can't assume even Pseudo-NMI
+will work and needs to be able to fall back. Prior to my recent
+changes arm64 CPUs wouldn't even do stacktraces in some scenarios. Now
+at least they fall back to regular IPIs.
 
-> 
-> Anyway, what is that Win-key and its lock?
+* Even if we decided that we absolutely had to disable stacktrades on
+arm64 CPUs without some type of NMI, that won't fix arm32. arm32 has
+been using regular IPIs for backtraces like this for many, many years.
+Maybe folks don't care as much about arm32 anymore but it feels bad if
+we totally break it.
 
-Win-key is the LEFTMETA key and the lock key is the RIGHTMETA key.
+IMO waiting 10 seconds for a backtrace is pretty crazy to begin with.
+What about just changing that globally to 1 second? If not, it doesn't
+feel like it would be impossibly hard to make an arch-specific
+callback to choose the time and that callback could even take into
+account whether we managed to get an NMI. I'd be happy to review such
+a patch.
 
-> 
-> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> > ---
-> >  drivers/platform/x86/dell/dell-wmi-base.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/platform/x86/dell/dell-wmi-base.c b/drivers/platform/x86/dell/dell-wmi-base.c
-> > index 502783a7a..37fc0371a 100644
-> > --- a/drivers/platform/x86/dell/dell-wmi-base.c
-> > +++ b/drivers/platform/x86/dell/dell-wmi-base.c
-> > @@ -80,6 +80,12 @@ static const struct dmi_system_id dell_wmi_smbios_list[] __initconst = {
-> >  static const struct key_entry dell_wmi_keymap_type_0000[] = {
-> >  	{ KE_IGNORE, 0x003a, { KEY_CAPSLOCK } },
-> >  
-> > +	/* Win-key Lock */
-> > +	{ KE_IGNORE, 0xe000, {KEY_RESERVED} },
-> 
-> nit: code style: spaces around KEY_RESERVED.
-
-I will fix it.
-
-> 
-> Is not there some better constant for this KEY_*?
-
-We could assign it KEY_RIGHTMETA.
-
-> 
-> > +
-> > +	/* Win-key Unlock */
-> > +	{ KE_IGNORE, 0xe001, {KEY_RESERVED} },
-> > +
-> >  	/* Key code is followed by brightness level */
-> >  	{ KE_KEY,    0xe005, { KEY_BRIGHTNESSDOWN } },
-> >  	{ KE_KEY,    0xe006, { KEY_BRIGHTNESSUP } },
-> > -- 
-> > 2.47.0
-> > 
+-Doug
 
