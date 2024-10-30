@@ -1,279 +1,335 @@
-Return-Path: <linux-kernel+bounces-389633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F569B6F25
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:38:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0999B6F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:37:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 085EFB22B8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:38:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65F51F263CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DE121764B;
-	Wed, 30 Oct 2024 21:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8494721B447;
+	Wed, 30 Oct 2024 21:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BmyKI3+I"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZJCEDOIY"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5742121500E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05032219CA8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730324085; cv=none; b=aSOX+Wdl5+MS7LyuS2Z38eCNFlZ9tskvufL6dkxD+NEHKd3T1qcXNG+3qh0E/l4WA5iRk2M1s08FMlf8kChaCKUqnEEhCaPgxbqK896G0W6Mt0TurjuITvHmRJ3Fo5jfq+nlf46excpNIQAjv+2b4cPWsloX9C7mYL9fCcj3dAA=
+	t=1730324046; cv=none; b=pzTtFdPgEX2SjEXoQZheimfooyJyTbXWFArt9xCD1+t54CXnE4J5bP/Djnd1sfnNcqrmg/3Cq5tVlBC48dkqkrZINEMuRU/XsfPUguWhLfNFuP2kgxf1nfvq87a9Hmvz6p8ZrmTGBp6OPjhVs69XU06WB3Z4PR4jANdgPqiVD+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730324085; c=relaxed/simple;
-	bh=DwPw63JU7YU7EA4xKffPQMQHFNG7sL8srdFoP5jrOqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D0nAxv4TAbGvboADhQ7nxm/g8SSPYFWDzJGqKsPTn9wk7wlJdek6YVVHGGVBNYX+HAklTN05d3b5bWS9JDx+5xIW2WP6eKMEDJ3zaZsBBf3EPWzi2H2JzxwVVl69FuMJPnyztlU+9ue5wHAGOEqfKcoHOKtbv4Dkua9kgl3cqzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=BmyKI3+I; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83b2a41b81cso11755439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:34:42 -0700 (PDT)
+	s=arc-20240116; t=1730324046; c=relaxed/simple;
+	bh=hYyZJq9oegGh1gji0dswxl0W9BlepU403UQ8GeaqBPI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iXcVUMekHCfP6P4xfZxkxivSXnuGIc8Rrb42xscBKnXPpwxc8h8oyy8zARnH7nEb7ZzpIPiFHpqAFjp6G3TJ4VUuNYK77j/61VHU7zzCjmoEf5LK5/yiy42yH+x+GO9b9vUus72pgi1sO3KGXdx7Xj9hxGTHQmwz2sFoNMcstEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZJCEDOIY; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e60f6ea262so216401b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1730324082; x=1730928882; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=doqscSHfpShWQHBZSY/c6QnT4Gkd7L46DSkSZNKlIZY=;
-        b=BmyKI3+IyT9mQNM2jZdbOelveoYFZFNWGi5ps6Of3GDUgRgCjRuq+P3F/pB2R6MR5A
-         mvL/Xt+SqV76vjfQk//nfCdgq70MzyU89iJ5rOHFQB7yzF0G+J9kpYoGocs9btFosy3s
-         rta3ZMFHnBAXuqmXfaP3XJWliYzUieaETgmAs=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730324043; x=1730928843; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m9eg9vuR4Uxr9JzqBV7RypmQQey5/UtVCVxr39TgYik=;
+        b=ZJCEDOIYR4Dr5ZEAbq2019ShiHdrZc7x/SusNcfJ/pB04dRUr+waUIR4e3FdZ2MEN1
+         x9rlmmR1bDLsRK80AJ8cFXs2buju91n7Xnh8MOevxdUxAa63zALhs76hgboO2ok8dgLB
+         oulPO030b73g/LEz4XRgVrfg00mSoR/qoOIocR9YcpWyQYMIJboseWd6YXnliYLwvHD8
+         bZdO7Sib5Po+rpPwVg+6uPbOG+CkkYn0upOzQ/7A5w7CrfBvAL+M7d/LC08jwJ+oox17
+         L2SFUcvjqQG1jk13awxyRd8V9MBnuT3vF9YZQdcuvuEqjTTjvz/j9TbG44Qh4zMBwLw6
+         42hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730324082; x=1730928882;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730324043; x=1730928843;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=doqscSHfpShWQHBZSY/c6QnT4Gkd7L46DSkSZNKlIZY=;
-        b=d89Fme+YWAynBIjFMN51NgrBT+yGqTqUq1kNv6/2P/lUMOf7GupqXOswQf+ybWXFln
-         rUAelh8TfNf2qEEpc23GidvMyuRTKXODEsbjQxLA7/2X6BV8QKBzV1qgv3EhVcgwhhVl
-         raynLJ9+Vp+AcIrpLdn9eYNaD7H61lw1zipAFaDqYe9Ez19ZEunI+bLs6kzk4ALo7qE3
-         XylF0UI3Zx0BPtFoJDQpEL+CyCPDefc4B0NWUfO8o2Ii/CuRBsjZ2Fm3x+io/Bw/UqnZ
-         72fh0eKiRKveYEYO/DHqVcpXP7FH4AwdNW7QJSjYJ/ZQtCVimf3DYwEBsJqov6QFW164
-         nzxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmGqyN6UwJLOSse49A9M5ZzZtrPSDJgmratj4STiautyrLBTND+IS4y2D4PTZ76rNOnBPWr7WRKEqwN4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLJ14pv5ypVUXuiH8GpRlhjK+J/HjmCD0PWsm06wniqPCmq1bT
-	AhMJEPxHpcWREd7aFtxrs9qUPTZpnItwfI4pELZ+A0ZAREH2+yw9o+OTw3hHxw==
-X-Google-Smtp-Source: AGHT+IFUFxxXzGw5Yp5MtqvNUqpgpiZmswpQB9hlCkuvqvVD/RBmS8Oc3Oz2FDxa1m2q/bm3wo280Q==
-X-Received: by 2002:a05:6e02:b22:b0:3a4:e63e:550 with SMTP id e9e14a558f8ab-3a4ed27817dmr169550735ab.1.1730324082208;
-        Wed, 30 Oct 2024 14:34:42 -0700 (PDT)
-Received: from lbrmn-mmayer.ric.broadcom.net ([192.19.161.248])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45a13178sm33150a12.90.2024.10.30.14.34.41
+        bh=m9eg9vuR4Uxr9JzqBV7RypmQQey5/UtVCVxr39TgYik=;
+        b=R666oMdM7LEE0XyaIVGcPtT9Q3daQ/aNndKHreU3eCfnFLQlAtCmGBlu3imkoaEfyZ
+         yjwdQJv+WjPfXHvgRfFvvFfYv3QautG7/jBxkkzTXmD2TgI/IFaC76UhaN6XEWhSfddo
+         xnRQkfitUiUSzgJ8+GazqQXhBjtx0uVUuRetXgQUziCqthkXHiHT8G+A8WKYjZG/qgpy
+         kFlEFJ3MStO/+YYQDZluoZRv+z3QKlpvBDDT6CIq3ZQheCnQZPLNiBONLjio+bPR/GAc
+         ZyMvuwAjla0hK0Sf6uB54L+j+XvS4MVR9CKQz6bb0AINf7ti364bXG/yNAdO2Cqw6GTb
+         ZuSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlw7XGzbMw2QUdSMGiiT7eH8eWISnzD7YKsG8roTrl8mEzfhKP5R/tosgtq9/CzqmHIon0by4sZL+vBPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSvwK7JdAsqfYGV16+wY69oTLyKZ+V8lV38VARMaFI/iCfL+Yd
+	PkSLX4JDuOMsdeooK7QtiMdfMJhbTU5JOtKZJlU6jG+4HuYnAHJBVDoY5Aq4S+0=
+X-Google-Smtp-Source: AGHT+IEmM0uB7n+flkzd/FD/2PnqS/GZwABtKjuSILLoSXeuIU9tJloICmHLLOFmnM46RDzFy76pSQ==
+X-Received: by 2002:a05:6808:13c8:b0:3e6:2348:e6e8 with SMTP id 5614622812f47-3e6384d4ad7mr16240031b6e.38.1730324043038;
+        Wed, 30 Oct 2024 14:34:03 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e6611a661dsm52127b6e.14.2024.10.30.14.34.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 14:34:41 -0700 (PDT)
-Received: by lbrmn-mmayer.ric.broadcom.net (Postfix, from userid 1000)
-	id EDD4F88A; Wed, 30 Oct 2024 14:34:40 -0700 (PDT)
-From: Markus Mayer <mmayer@broadcom.com>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Rob Herring <robh@kernel.org>
-Cc: Markus Mayer <mmayer@broadcom.com>,
-	Device Tree Mailing List <devicetree@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] hwrng: bcm74110 - Add Broadcom BCM74110 RNG driver
-Date: Wed, 30 Oct 2024 14:33:55 -0700
-Message-ID: <20241030213400.802264-3-mmayer@broadcom.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241030213400.802264-1-mmayer@broadcom.com>
-References: <20241030213400.802264-1-mmayer@broadcom.com>
+        Wed, 30 Oct 2024 14:34:01 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 30 Oct 2024 16:33:56 -0500
+Subject: [PATCH v3 1/2] dt-bindings: dma: adi,axi-dmac: convert to yaml
+ schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241030-axi-dma-dt-yaml-v3-1-d3a9b506f96c@baylibre.com>
+References: <20241030-axi-dma-dt-yaml-v3-0-d3a9b506f96c@baylibre.com>
+In-Reply-To: <20241030-axi-dma-dt-yaml-v3-0-d3a9b506f96c@baylibre.com>
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-Add a driver for the random number generator present on the Broadcom
-BCM74110 SoC.
+Convert the AXI DMAC bindings from .txt to .yaml.
 
-Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+Acked-by: Nuno Sa <nuno.sa@analog.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/char/hw_random/Kconfig        |  14 +++
- drivers/char/hw_random/Makefile       |   1 +
- drivers/char/hw_random/bcm74110-rng.c | 125 ++++++++++++++++++++++++++
- 3 files changed, 140 insertions(+)
- create mode 100644 drivers/char/hw_random/bcm74110-rng.c
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index b51d9e243f35..90ae35aeb23a 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -99,6 +99,20 @@ config HW_RANDOM_BCM2835
- 
- 	  If unsure, say Y.
- 
-+config HW_RANDOM_BCM74110
-+	tristate "Broadcom BCM74110 Random Number Generator support"
-+	depends on ARCH_BCM2835 || ARCH_BCM_NSP || ARCH_BCM_5301X || \
-+		   ARCH_BCMBCA || BCM63XX || ARCH_BRCMSTB || COMPILE_TEST
-+	default HW_RANDOM
-+	help
-+	  This driver provides kernel-side support for the Random Number
-+	  Generator hardware found on the Broadcom BCM74110 SoCs.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called bcm74110-rng
-+
-+	  If unsure, say Y.
-+
- config HW_RANDOM_IPROC_RNG200
- 	tristate "Broadcom iProc/STB RNG200 support"
- 	depends on ARCH_BCM_IPROC || ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 01f012eab440..283791f5462d 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_HW_RANDOM_POWERNV) += powernv-rng.o
- obj-$(CONFIG_HW_RANDOM_HISI)	+= hisi-rng.o
- obj-$(CONFIG_HW_RANDOM_HISTB) += histb-rng.o
- obj-$(CONFIG_HW_RANDOM_BCM2835) += bcm2835-rng.o
-+obj-$(CONFIG_HW_RANDOM_BCM74110) += bcm74110-rng.o
- obj-$(CONFIG_HW_RANDOM_IPROC_RNG200) += iproc-rng200.o
- obj-$(CONFIG_HW_RANDOM_ST) += st-rng.o
- obj-$(CONFIG_HW_RANDOM_XGENE) += xgene-rng.o
-diff --git a/drivers/char/hw_random/bcm74110-rng.c b/drivers/char/hw_random/bcm74110-rng.c
+For the maintainer, Lars is the original author, but isn't really
+active with ADI anymore, so I have added Nuno instead since he is the
+most active ADI representative currently and is knowledgeable about this
+hardware.
+
+As in v1, the rob-bot is likely to complain with the following:
+
+	Documentation/devicetree/bindings/dma/adi,axi-dmac.yaml: properties:adi,channels:type: 'boolean' was expected
+		hint: A vendor boolean property can use "type: boolean"
+		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+	DTC [C] Documentation/devicetree/bindings/dma/adi,axi-dmac.example.dtb
+
+This is due to the fact that we have a vendor prefix on an object node.
+We can't change that since it is an existing binding. Rob said he will
+fix this in dtschema.
+---
+ .../devicetree/bindings/dma/adi,axi-dmac.txt       |  61 ---------
+ .../devicetree/bindings/dma/adi,axi-dmac.yaml      | 139 +++++++++++++++++++++
+ 2 files changed, 139 insertions(+), 61 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/dma/adi,axi-dmac.txt b/Documentation/devicetree/bindings/dma/adi,axi-dmac.txt
+deleted file mode 100644
+index cd17684aaab5..000000000000
+--- a/Documentation/devicetree/bindings/dma/adi,axi-dmac.txt
++++ /dev/null
+@@ -1,61 +0,0 @@
+-Analog Devices AXI-DMAC DMA controller
+-
+-Required properties:
+- - compatible: Must be "adi,axi-dmac-1.00.a".
+- - reg: Specification for the controllers memory mapped register map.
+- - interrupts: Specification for the controllers interrupt.
+- - clocks: Phandle and specifier to the controllers AXI interface clock
+- - #dma-cells: Must be 1.
+-
+-Required sub-nodes:
+- - adi,channels: This sub-node must contain a sub-node for each DMA channel. For
+-   the channel sub-nodes the following bindings apply. They must match the
+-   configuration options of the peripheral as it was instantiated.
+-
+-Required properties for adi,channels sub-node:
+- - #size-cells: Must be 0
+- - #address-cells: Must be 1
+-
+-Required channel sub-node properties:
+- - reg: Which channel this node refers to.
+- - adi,source-bus-width,
+-   adi,destination-bus-width: Width of the source or destination bus in bits.
+- - adi,source-bus-type,
+-   adi,destination-bus-type: Type of the source or destination bus. Must be one
+-   of the following:
+-	0 (AXI_DMAC_TYPE_AXI_MM): Memory mapped AXI interface
+-	1 (AXI_DMAC_TYPE_AXI_STREAM): Streaming AXI interface
+-	2 (AXI_DMAC_TYPE_AXI_FIFO): FIFO interface
+-
+-Deprecated optional channel properties:
+- - adi,length-width: Width of the DMA transfer length register.
+- - adi,cyclic: Must be set if the channel supports hardware cyclic DMA
+-   transfers.
+- - adi,2d: Must be set if the channel supports hardware 2D DMA transfers.
+-
+-DMA clients connected to the AXI-DMAC DMA controller must use the format
+-described in the dma.txt file using a one-cell specifier. The value of the
+-specifier refers to the DMA channel index.
+-
+-Example:
+-
+-dma: dma@7c420000 {
+-	compatible = "adi,axi-dmac-1.00.a";
+-	reg = <0x7c420000 0x10000>;
+-	interrupts = <0 57 0>;
+-	clocks = <&clkc 16>;
+-	#dma-cells = <1>;
+-
+-	adi,channels {
+-		#size-cells = <0>;
+-		#address-cells = <1>;
+-
+-		dma-channel@0 {
+-			reg = <0>;
+-			adi,source-bus-width = <32>;
+-			adi,source-bus-type = <ADI_AXI_DMAC_TYPE_MM_AXI>;
+-			adi,destination-bus-width = <64>;
+-			adi,destination-bus-type = <ADI_AXI_DMAC_TYPE_FIFO>;
+-		};
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/dma/adi,axi-dmac.yaml b/Documentation/devicetree/bindings/dma/adi,axi-dmac.yaml
 new file mode 100644
-index 000000000000..5c64148e91f1
+index 000000000000..b1f4bdcab4fd
 --- /dev/null
-+++ b/drivers/char/hw_random/bcm74110-rng.c
-@@ -0,0 +1,125 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2024 Broadcom
-+ */
++++ b/Documentation/devicetree/bindings/dma/adi,axi-dmac.yaml
+@@ -0,0 +1,139 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/adi,axi-dmac.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
++title: Analog Devices AXI-DMAC DMA controller
 +
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/kernel.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
-+#include <linux/platform_device.h>
-+#include <linux/random.h>
-+#include <linux/hw_random.h>
++description: |
++  FPGA-based DMA controller designed for use with high-speed converter hardware.
 +
-+#define HOST_REV_ID		0x00
-+#define HOST_FIFO_DEPTH		0x04
-+#define HOST_FIFO_COUNT		0x08
-+#define HOST_FIFO_THRESHOLD	0x0c
-+#define HOST_FIFO_DATA		0x10
++  http://analogdevicesinc.github.io/hdl/library/axi_dmac/index.html
 +
-+#define HOST_FIFO_COUNT_MASK		0xffff
++maintainers:
++  - Nuno Sa <nuno.sa@analog.com>
 +
-+/* Delay range in microseconds */
-+#define FIFO_DELAY_MIN_US		3
-+#define FIFO_DELAY_MAX_US		7
-+#define FIFO_DELAY_MAX_COUNT		10
++additionalProperties: false
 +
-+struct bcm74110_priv {
-+	void __iomem *base;
-+};
++properties:
++  compatible:
++    const: adi,axi-dmac-1.00.a
 +
-+static inline int bcm74110_rng_fifo_count(void __iomem *mem)
-+{
-+	return readl_relaxed(mem) & HOST_FIFO_COUNT_MASK;
-+}
++  reg:
++    maxItems: 1
 +
-+static int bcm74110_rng_read(struct hwrng *rng, void *buf, size_t max,
-+			bool wait)
-+{
-+	struct bcm74110_priv *priv = (struct bcm74110_priv *)rng->priv;
-+	void __iomem *fc_addr = priv->base + HOST_FIFO_COUNT;
-+	void __iomem *fd_addr = priv->base + HOST_FIFO_DATA;
-+	unsigned underrun_count = 0;
-+	u32 max_words = max / sizeof(u32);
-+	u32 num_words;
-+	unsigned i;
++  interrupts:
++    maxItems: 1
 +
-+	/*
-+	 * We need to check how many words are available in the RNG FIFO. If
-+	 * there aren't any, we need to wait for some to become available.
-+	 */
-+	while ((num_words = bcm74110_rng_fifo_count(fc_addr)) == 0) {
-+		if (!wait)
-+			return 0;
-+		/*
-+		 * As a precaution, limit how long we wait. If the FIFO doesn't
-+		 * refill within the allotted time, return 0 (=no data) to the
-+		 * caller.
-+		 */
-+		if (likely(underrun_count < FIFO_DELAY_MAX_COUNT))
-+			usleep_range(FIFO_DELAY_MIN_US, FIFO_DELAY_MAX_US);
-+		else
-+			return 0;
-+		underrun_count++;
-+	}
-+	if (num_words > max_words)
-+		num_words = max_words;
++  clocks:
++    maxItems: 1
 +
-+	/* Bail early if we run out of random numbers unexpectedly */
-+	for (i = 0; i < num_words && bcm74110_rng_fifo_count(fc_addr) > 0; i++)
-+		((u32 *)buf)[i] = readl_relaxed(fd_addr);
++  "#dma-cells":
++    const: 1
 +
-+	return i * sizeof(u32);
-+}
++  adi,channels:
++    type: object
++    description: This sub-node must contain a sub-node for each DMA channel.
++    additionalProperties: false
 +
-+static struct hwrng bcm74110_hwrng = {
-+	.read = bcm74110_rng_read,
-+};
++    properties:
++      "#size-cells":
++        const: 0
++      "#address-cells":
++        const: 1
 +
-+static int bcm74110_rng_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct bcm74110_priv *priv;
-+	int rc;
++    patternProperties:
++      "^dma-channel@[0-9a-f]+$":
++        type: object
++        description:
++          DMA channel properties based on HDL compile-time configuration.
++        additionalProperties: false
 +
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
++        properties:
++          reg:
++            maxItems: 1
 +
-+	bcm74110_hwrng.name = pdev->name;
-+	bcm74110_hwrng.priv = (unsigned long)priv;
++          adi,source-bus-width:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: Width of the source bus in bits.
++            enum: [8, 16, 32, 64, 128]
 +
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
++          adi,destination-bus-width:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: Width of the destination bus in bits.
++            enum: [8, 16, 32, 64, 128]
 +
-+	rc = devm_hwrng_register(dev, &bcm74110_hwrng);
-+	if (rc)
-+		dev_err(dev, "hwrng registration failed (%d)\n", rc);
-+	else
-+		dev_info(dev, "hwrng registered\n");
++          adi,source-bus-type:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: |
++              Type of the source bus.
 +
-+	return rc;
-+}
++              0: Memory mapped AXI interface
++              1: Streaming AXI interface
++              2: FIFO interface
++            enum: [0, 1, 2]
 +
-+static const struct of_device_id bcm74110_rng_match[] = {
-+	{ .compatible	= "brcm,bcm74110-rng", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, bcm74110_rng_match);
++          adi,destination-bus-type:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: Type of the destination bus (see adi,source-bus-type).
++            enum: [0, 1, 2]
 +
-+static struct platform_driver bcm74110_rng_driver = {
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = bcm74110_rng_match,
-+	},
-+	.probe	= bcm74110_rng_probe,
-+};
-+module_platform_driver(bcm74110_rng_driver);
++          adi,length-width:
++            deprecated: true
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: Width of the DMA transfer length register.
 +
-+MODULE_AUTHOR("Markus Mayer <mmayer@broadcom.com>");
-+MODULE_DESCRIPTION("BCM 74110 Random Number Generator (RNG) driver");
-+MODULE_LICENSE("GPL v2");
++          adi,cyclic:
++            deprecated: true
++            type: boolean
++            description:
++              Must be set if the channel supports hardware cyclic DMA transfers.
++
++          adi,2d:
++            deprecated: true
++            type: boolean
++            description:
++              Must be set if the channel supports hardware 2D DMA transfers.
++
++        required:
++          - reg
++          - adi,source-bus-width
++          - adi,destination-bus-width
++          - adi,source-bus-type
++          - adi,destination-bus-type
++
++    required:
++      - "#size-cells"
++      - "#address-cells"
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - "#dma-cells"
++  - adi,channels
++
++examples:
++  - |
++    dma-controller@7c420000 {
++        compatible = "adi,axi-dmac-1.00.a";
++        reg = <0x7c420000 0x10000>;
++        interrupts = <0 57 0>;
++        clocks = <&clkc 16>;
++        #dma-cells = <1>;
++
++        adi,channels {
++            #size-cells = <0>;
++            #address-cells = <1>;
++
++            dma-channel@0 {
++                reg = <0>;
++                adi,source-bus-width = <32>;
++                adi,source-bus-type = <0>; /* Memory mapped */
++                adi,destination-bus-width = <64>;
++                adi,destination-bus-type = <2>; /* FIFO */
++            };
++        };
++    };
+
 -- 
-2.46.0
+2.43.0
 
 
