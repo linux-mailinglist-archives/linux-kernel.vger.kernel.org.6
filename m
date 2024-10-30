@@ -1,132 +1,206 @@
-Return-Path: <linux-kernel+bounces-388432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650739B5F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:02:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CC19B5FA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7411F23668
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921501F23639
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD891E3795;
-	Wed, 30 Oct 2024 10:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC211E3DEC;
+	Wed, 30 Oct 2024 10:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOSuqHCA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2F9aeuq"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0011E22F1;
-	Wed, 30 Oct 2024 10:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FFE1E25E0;
+	Wed, 30 Oct 2024 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730282411; cv=none; b=SYtF+K7rPjQTJN9kbjirXI90MXpl6bqlKQbiKxAgrBQdvuYe+isA0qeaJ7DMQrpiIUmc1yDS9Z4T/jBsjvJSVdqmTRzEj27gFVOhxhY0KGt8jnaGchEgKUJm2O3hbQtGCertAZMCrDTc83+9IlQ4KPKeXKCBZlUy0DDH4qNzdQA=
+	t=1730282492; cv=none; b=M0aVZt7hHkXPKSgbc1U01rjJKS+Sc5FQVI834O73BSX3A34+swjcyAAB+dFswL4UrnAvaCbKKqoLE1S2h2AEC6q3g07n0pvEWLXdYVqcoQO6+xcIvSvROrWF5cwYCd30p1A/z9A601sM6ZPI3TYY3LA8H9sp/1jMPO14VnIk9Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730282411; c=relaxed/simple;
-	bh=gjoY2AUyYoSdaUo/j1BWkBmBZWaz3Ox9AAsiva7112k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o1oQDXcMHrNxj6jbZuZxBCV4zyykGAQFPoUxOJ8eecwKmVDwwQDKEJWxdQ6XQFZeaA43k+wD9nAaSarY0izaNFxnpO5zKtCTQuaPSV7Vo5KeFYulkFTQkbAZ92X3+65Ozg2HIZ/3189J+4tx6mF2B/bG7SID9IgLiUc1MDJWujc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOSuqHCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC2D7C4CEE4;
-	Wed, 30 Oct 2024 10:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730282411;
-	bh=gjoY2AUyYoSdaUo/j1BWkBmBZWaz3Ox9AAsiva7112k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HOSuqHCA/ftRkgHGlJtYHgRct88bdIPDz7IKTWUPrfCmO0F3VhHv0qs56du6E9ypW
-	 6zCaBV5PzUi18KyURJKdcwQIJFH1FnFEkB3NnGrxOM1VXWag57Mo4pMLcrVSHK/9VN
-	 TDP29+htidHhgh5WWp+gMc8wz0RHpPolQqwHYbRn/RQKN6bLzYn1puphfY/FxzDXlj
-	 m6i1cZGZuPSMjsGOjNfn/N3bRtpp3Niy56n4BQL65c+CV7xsayPT7Q1DEfSvVxAQ91
-	 uNWT1+4P8jDTz/FAHbQrJOQiiamOdOyUu33kF1N9FWaIhYTROHrnViEU8i2L9TqQVP
-	 BTcMfEYNOviZw==
-Message-ID: <331435ea-87ac-4fae-bf0b-3e6ae19dc3dc@kernel.org>
-Date: Wed, 30 Oct 2024 11:00:04 +0100
+	s=arc-20240116; t=1730282492; c=relaxed/simple;
+	bh=7Lb9jgXBsueULSwXmVHO9S0yQGKVhSQ+fOmcIjWvodw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lOwyHHgx5UZ/O/LsD2j2RbWqurKH5qhzLuCK0ZNIkdgFA506tSOfy9aG1Ybt4eIqpIAVQ6e2+i6qHaOhjuJl1ZnpJ+7fiX6GhI8glxilMN1XA/pRmk0WOrI3fpa23/igcXkIizlst1CT6TcDcdIL9e0uMfcIJd0+JOkA4bWs4ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U2F9aeuq; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2a999b287so5216254a91.0;
+        Wed, 30 Oct 2024 03:01:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730282490; x=1730887290; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4AzW1atrg/A1gulnP13fPkOgabCdL8saqqVxwhxHSn4=;
+        b=U2F9aeuqsZk0lyjsr4T3OSGDggYV0+fiXcDjdCRjJ0xZrDAqsCmsEOGiDb5kseGy53
+         zxmMwd8YQL8RBAw7e7V3LvBWSjQn3wSs5pOmC+PLXuL2ggxd8PAJzf098Bh8s1m9CaBb
+         KG3QcIPWup4ZxVEIUWrjWuGkrt45iuOkoQpV3jN/3aomR8Tq/GbfcLVNeENsifAtDH1U
+         a7YUAmMipve0THjVFw+JzdtitsqNvxVaxMUlYne5Seoe2HxpB55TpCdgrVRnW/Uy+zNn
+         8yBGr7ChYWCaHnpWZYDV8IUYC0hZGQ5WIK9q+90OtIwfwbQzX0KzNzmSWloZyKPDR1aY
+         S2WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730282490; x=1730887290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4AzW1atrg/A1gulnP13fPkOgabCdL8saqqVxwhxHSn4=;
+        b=tSBoVMhUCQTs8nLz73arHPMdzcNIGe1C54l0vcDpY14LasdqZL3fwXVQAPPCThTg/s
+         zxrOFqsTFAxVtGCuhhGiS5P5W16NlTU+G3dt5FUAoPBLiBwKFdxAW5FoSWTGT2wr5j56
+         Y2DuEWC7YjNrZId3UsykKo0nI9l2my5ltVlyFt0/0ys1MC/Tp37jDijEhPyaBlAXOBbM
+         9XocBPexgWxNR9xUB+juVEZA5TTb9gFlG6vrC0sErpnYRQmU1EUplk32rsXhdyPD7Sdf
+         R3kBl8+R7M6DStlRJrztCca8ftSXtoHlB7N+MDrIHk9KMXXSpP+wG9IVvW/k83mmeTcr
+         vOWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV93U7ONck6J7nE6hk9RmIIJDXkr6CQ/j8+QZBKSQfublcj0YDeKsVmEcGWZ7bBkLgzr0sken+RirtY2ax3Fzp4@vger.kernel.org, AJvYcCVDtSLxxuLObo4rCuRtbAqz+d9z2b1jIKrWbVMojAMNymgCg3s3bJFb482EnBXlA/Dv5CBCXhAtu6tCQAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKPvQ/zwqxkTLtuN38/dXiJJv5Ev764GCz4PWccGqtqxDeg7FQ
+	Hd0+rsQtnonaF+Y0VwkMSiB4+L+T354rjVVqjcjJ0XpupKYaekIx+aGDuQ==
+X-Google-Smtp-Source: AGHT+IEEymCR2vDG/9y53R5Zf9cd1nP744F8u68gMP4feSlmPSZtEdAZ4OCPtMvXE5+WpvBw4aF6Kg==
+X-Received: by 2002:a17:90a:b305:b0:2e2:9038:4a48 with SMTP id 98e67ed59e1d1-2e8f10a6e39mr16216607a91.32.1730282489470;
+        Wed, 30 Oct 2024 03:01:29 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa3dbd2sm1294830a91.20.2024.10.30.03.01.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 03:01:29 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	mptcp@lists.linux.dev,
+	Tao Chen <chen.dylane@gmail.com>
+Subject: [PATCH bpf-next] selftests/bpf: Fix compile error when MPTCP not support
+Date: Wed, 30 Oct 2024 18:01:08 +0800
+Message-Id: <20241030100108.2443371-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: bluetooth: Add qca6698 compatible string
-To: Cheng Jiang <quic_chejiang@quicinc.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
- Rocky Liao <quic_rjliao@quicinc.com>
-Cc: linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241030094728.1714034-1-quic_chejiang@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241030094728.1714034-1-quic_chejiang@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/10/2024 10:47, Cheng Jiang wrote:
-> Add QCA6698 qcom,qca6698-bt compatible strings.
-> 
-> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
-> ---
-> Changes in v2:
-> - Add the compatibility for qcom,qca6698-bt
-> 
-> ---
->  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
->  1 file changed, 2 insertions(+)
+Fix compile error when MPTCP feature not support, though eBPF core check
+already done which seems invalid in this situation, the error info like:
+progs/mptcp_sock.c:49:40: error: no member named 'is_mptcp' in 'struct
+tcp_sock'
+   49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ?
 
-Please wait with v2, v3 and so on.
+The filed created in new definitions with eBPF core feature to solve
+this build problem, and test case result still ok in MPTCP kernel.
 
-Where is any user of this? Nothing in commit msg explains why this patch
-is needed without users.
+176/1   mptcp/base:OK
+176/2   mptcp/mptcpify:OK
+176     mptcp:OK
+Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
 
-Best regards,
-Krzysztof
+Fixes: 8039d353217c ("selftests/bpf: Add MPTCP test base")
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+---
+ .../testing/selftests/bpf/progs/mptcp_sock.c  | 42 ++++++++++++++-----
+ 1 file changed, 32 insertions(+), 10 deletions(-)
+
+diff --git a/tools/testing/selftests/bpf/progs/mptcp_sock.c b/tools/testing/selftests/bpf/progs/mptcp_sock.c
+index f3acb90588c7..2f80d042686a 100644
+--- a/tools/testing/selftests/bpf/progs/mptcp_sock.c
++++ b/tools/testing/selftests/bpf/progs/mptcp_sock.c
+@@ -25,13 +25,23 @@ struct {
+ 	__type(value, struct mptcp_storage);
+ } socket_storage_map SEC(".maps");
+ 
++struct tcp_sock___new {
++	bool is_mptcp;
++} __attribute__((preserve_access_index));
++
++struct mptcp_sock___new {
++	__u32 token;
++	struct sock *first;
++	char ca_name[TCP_CA_NAME_MAX];
++} __attribute__((preserve_access_index));
++
+ SEC("sockops")
+ int _sockops(struct bpf_sock_ops *ctx)
+ {
+ 	struct mptcp_storage *storage;
+-	struct mptcp_sock *msk;
++	struct mptcp_sock___new *msk;
+ 	int op = (int)ctx->op;
+-	struct tcp_sock *tsk;
++	struct tcp_sock___new *tsk;
+ 	struct bpf_sock *sk;
+ 	bool is_mptcp;
+ 
+@@ -42,11 +52,16 @@ int _sockops(struct bpf_sock_ops *ctx)
+ 	if (!sk)
+ 		return 1;
+ 
+-	tsk = bpf_skc_to_tcp_sock(sk);
++	/* recast pointer to capture new type for compiler */
++	tsk = (void *)bpf_skc_to_tcp_sock(sk);
+ 	if (!tsk)
+ 		return 1;
+ 
+-	is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ? tsk->is_mptcp : 0;
++	if (bpf_core_field_exists(tsk->is_mptcp))
++		is_mptcp = BPF_CORE_READ(tsk, is_mptcp);
++	else
++		is_mptcp = 0;
++
+ 	if (!is_mptcp) {
+ 		storage = bpf_sk_storage_get(&socket_storage_map, sk, 0,
+ 					     BPF_SK_STORAGE_GET_F_CREATE);
+@@ -57,7 +72,7 @@ int _sockops(struct bpf_sock_ops *ctx)
+ 		__builtin_memset(storage->ca_name, 0, TCP_CA_NAME_MAX);
+ 		storage->first = NULL;
+ 	} else {
+-		msk = bpf_skc_to_mptcp_sock(sk);
++		msk = (void *)bpf_skc_to_mptcp_sock(sk);
+ 		if (!msk)
+ 			return 1;
+ 
+@@ -66,9 +81,9 @@ int _sockops(struct bpf_sock_ops *ctx)
+ 		if (!storage)
+ 			return 1;
+ 
+-		storage->token = msk->token;
+-		__builtin_memcpy(storage->ca_name, msk->ca_name, TCP_CA_NAME_MAX);
+-		storage->first = msk->first;
++		storage->token = BPF_CORE_READ(msk, token);
++		BPF_CORE_READ_STR_INTO(&storage->ca_name, msk, ca_name);
++		storage->first = BPF_CORE_READ(msk, first);
+ 	}
+ 	storage->invoked++;
+ 	storage->is_mptcp = is_mptcp;
+@@ -81,8 +96,15 @@ SEC("fentry/mptcp_pm_new_connection")
+ int BPF_PROG(trace_mptcp_pm_new_connection, struct mptcp_sock *msk,
+ 	     const struct sock *ssk, int server_side)
+ {
+-	if (!server_side)
+-		token = msk->token;
++	struct mptcp_sock___new *mskw;
++
++	if (!server_side) {
++		mskw = (void *)msk;
++		if (bpf_core_field_exists(mskw->token))
++			token = BPF_CORE_READ(mskw, token);
++		else
++			token = 0;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
 
 
