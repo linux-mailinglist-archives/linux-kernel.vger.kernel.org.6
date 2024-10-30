@@ -1,59 +1,65 @@
-Return-Path: <linux-kernel+bounces-388439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E304A9B5FB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:07:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6229B5FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:08:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208141C2169F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AE501C2138C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DBA1E25E0;
-	Wed, 30 Oct 2024 10:07:18 +0000 (UTC)
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0C91E25E8;
+	Wed, 30 Oct 2024 10:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="TSC31qEP"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CA11E1C2F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA45194151;
+	Wed, 30 Oct 2024 10:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730282837; cv=none; b=XDrxJaI20byR8cDIHqw5U7b2XoQmOctPIl0HZEM8UbYJLw7MjQ4P833/GAogqAVd1LD5vLuFTO+QvPPxp/3bUpOK24Q8DZ1ZkaOJ7L6/rExfIX1kHKdmcEmWjvbtwaG9wBRSjGX7dd/876WQHJPtb4ihuWM1ix6yOtn9bUzOdfg=
+	t=1730282905; cv=none; b=aAz8ZyHiIs7rMMN35ghSbSmyLQzyB4hRUX5vC10GTAM0UhHOpb9QImawTKdpj/yLhk/yxPoO7yqX3uvEEFnSeLyFQskFqmUUFUS1A3WLteR97GH25J5a1fYB7U7a6Rh6KcL4sOn/O32rxrx/XmjodkXnVal/bldDzSwemJ6WXFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730282837; c=relaxed/simple;
-	bh=IxWOzOcXLbCyF5KE/BHYteO5dIdffrmHNFkpJrH8kNw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q5p4/g5A2qjUu8lQ/C4rEJrN1IltOSCBpqJGL21TMde5VXl6UOndhR830aCs6o7nS4utCPx2DnhVteCyFWtgp5/afLz0gujmXl+CzGsSeTfBXNOgfTbYgRkzl6503UX2g7GUo0j2/zBFM0GnzOOVbHRRXJioh94xrbDVIKRNHd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4XdjTl2KyHz4x6kR
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:07:07 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ceb8:3fda:3601:820f])
-	by michel.telenet-ops.be with cmsmtp
-	id Wa6z2D0044BbGPD06a6zKD; Wed, 30 Oct 2024 11:07:00 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t65b6-005zPP-Ht;
-	Wed, 30 Oct 2024 11:06:59 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t65bO-006QXP-Rt;
-	Wed, 30 Oct 2024 11:06:58 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	AKASHI Takahiro <takahiro.akashi@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] mmc: sdhci: Make MMC_SDHCI_UHS2 config symbol invisible
-Date: Wed, 30 Oct 2024 11:06:55 +0100
-Message-Id: <079f2b7473d34895843ad278d79930c681385b2e.1730282633.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1730282905; c=relaxed/simple;
+	bh=7Q+MTQAKucz7iLxuJeNISzJ9qykwouLo3OSjZDpUyFs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F7Ufz7Qrvx6jeGsK29M6NMBonhVPhGvIl1xyWJL+TGkSHAWbtgMeHEL4BKKO3lFwK3o17mg0JJExL47nnle1mKj8hAgN/p3TKS18feMbeMr1k7HUIEWK58PMLzRiUjosKUcf4cCf11LmBXo6f4bnE2pdGduZ/xXcMZ9vB51w4IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=TSC31qEP; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49UA89irC3852080, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1730282889; bh=7Q+MTQAKucz7iLxuJeNISzJ9qykwouLo3OSjZDpUyFs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=TSC31qEPq6jIlmKGj1cXD/lxxj/Ke76wzyZjg1D1wt68W2Y9wguNt4kPeLZcrYDQD
+	 Ci71n+V5nv6yBLWL5PM/rtwcEFLfW9l0UHAY+JHAQIJcOi/WNCgd5eDrnSepWJVPMn
+	 54dxakyN2/M/agQCgWnebDBRJ/dKpbRjJTUuVQhhcCQBqyXkFTn7OYVQv+btMN4Ywc
+	 njAE4trr9cw4KwGi/S4E84gy430BczMIOb10mNheoTrsV2yuaRkEyWTvddnWcsFSM1
+	 E0GJYbYj7uhHp4az+IA495Ma7q0LQjtt9M+8TdrsiUwp2QShRZbjAKubDMpY7CHA1f
+	 TbCjrXO1+qZMQ==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49UA89irC3852080
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 18:08:09 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 30 Oct 2024 18:08:09 +0800
+Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 30 Oct
+ 2024 18:08:08 +0800
+From: Hilda Wu <hildawu@realtek.com>
+To: <marcel@holtmann.org>
+CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <max.chou@realtek.com>,
+        <alex_lu@realsil.com.cn>, <kidman@realtek.com>
+Subject: [PATCH] bluetooth: add quirk using packet size 60
+Date: Wed, 30 Oct 2024 18:08:04 +0800
+Message-ID: <20241030100804.2743115-1-hildawu@realtek.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,30 +68,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-There is no need to ask the user about enabling UHS-II support, as all
-drivers that support UHS2-capable devices already select MMC_SDHCI_UHS2.
-Hence make the symbol invisible, unless when compile-testing.
+The RTL8852BE-VT supports USB alternate setting 6.
+However, its descriptor does not report this capability to the host.
+Therefore, a quirk is needed to bypass the RTL8852BE-VT's descriptor
+and allow it to use USB ALT 6 directly.
 
-Fixes: 2af7dd8b64f2fd6a ("mmc: sdhci: add UHS-II module and add a kernel configuration")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Hilda Wu <hildawu@realtek.com>
 ---
- drivers/mmc/host/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/btrtl.c |  3 ++
+ drivers/bluetooth/btrtl.h |  1 +
+ drivers/bluetooth/btusb.c | 89 ++++++++++++++++++++++++++++++---------
+ 3 files changed, 73 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index fec47022558443fe..6824131b69b188ca 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -99,7 +99,7 @@ config MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
- 	  This is the case for the Nintendo Wii SDHCI.
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 0bcb44cf7b31..b75f0b36a09b 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -1312,6 +1312,9 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
+ 		    btrtl_dev->project_id == CHIP_ID_8852C)
+ 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
  
- config MMC_SDHCI_UHS2
--	tristate "UHS2 support on SDHCI controller"
-+	tristate "UHS2 support on SDHCI controller" if COMPILE_TEST
- 	depends on MMC_SDHCI
- 	help
- 	  This option is selected by SDHCI controller drivers that want to
++		if (btrtl_dev->project_id == CHIP_ID_8852BT)
++			btrealtek_set_flag(hdev, REALTEK_ALT6_FORCE);
++
+ 		hci_set_aosp_capable(hdev);
+ 		break;
+ 	default:
+diff --git a/drivers/bluetooth/btrtl.h b/drivers/bluetooth/btrtl.h
+index a2d9d34f9fb0..ffec2fca88ec 100644
+--- a/drivers/bluetooth/btrtl.h
++++ b/drivers/bluetooth/btrtl.h
+@@ -105,6 +105,7 @@ struct rtl_vendor_cmd {
+ 
+ enum {
+ 	REALTEK_ALT6_CONTINUOUS_TX_CHIP,
++	REALTEK_ALT6_FORCE,
+ 
+ 	__REALTEK_NUM_FLAGS,
+ };
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 514d593923ad..eca0b173232e 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -804,6 +804,7 @@ struct qca_dump_info {
+ #define BTUSB_USE_ALT3_FOR_WBS	15
+ #define BTUSB_ALT6_CONTINUOUS_TX	16
+ #define BTUSB_HW_SSR_ACTIVE	17
++#define BTUSB_ALT_CHANGED	18
+ 
+ struct btusb_data {
+ 	struct hci_dev       *hdev;
+@@ -2130,16 +2131,61 @@ static void btusb_notify(struct hci_dev *hdev, unsigned int evt)
+ 	}
+ }
+ 
++static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
++							int alt)
++{
++	struct usb_interface *intf = data->isoc;
++	int i;
++
++	BT_DBG("Looking for Alt no :%d", alt);
++
++	if (!intf)
++		return NULL;
++
++	for (i = 0; i < intf->num_altsetting; i++) {
++		if (intf->altsetting[i].desc.bAlternateSetting == alt)
++			return &intf->altsetting[i];
++	}
++
++	return NULL;
++}
++
+ static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
+ {
+ 	struct btusb_data *data = hci_get_drvdata(hdev);
+ 	struct usb_interface *intf = data->isoc;
+ 	struct usb_endpoint_descriptor *ep_desc;
++	struct usb_host_interface *alt;
+ 	int i, err;
+ 
+ 	if (!data->isoc)
+ 		return -ENODEV;
+ 
++	/* For some Realtek chips, they actually have the altsetting 6, but its
++	 * altsetting descriptor is not exposed. We can activate altsetting 6 by
++	 * replacing the altsetting 5.
++	 */
++	if (altsetting == 6 && !btusb_find_altsetting(data, 6) &&
++	    btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE)) {
++		alt = NULL;
++		for (i = 0; i < intf->num_altsetting; i++) {
++			if (intf->altsetting[i].desc.bAlternateSetting == 5) {
++				alt = &intf->altsetting[i];
++				break;
++			}
++		}
++		if (alt) {
++			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
++				ep_desc = &alt->endpoint[i].desc;
++				if (usb_endpoint_is_isoc_out(ep_desc) ||
++				    usb_endpoint_is_isoc_in(ep_desc))
++					ep_desc->wMaxPacketSize = 63;
++			}
++			alt->desc.bAlternateSetting = 6;
++			set_bit(BTUSB_ALT_CHANGED, &data->flags);
++		}
++	}
++
+ 	err = usb_set_interface(data->udev, data->isoc_ifnum, altsetting);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "setting interface failed (%d)", -err);
+@@ -2151,6 +2197,27 @@ static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
+ 	data->isoc_tx_ep = NULL;
+ 	data->isoc_rx_ep = NULL;
+ 
++	/* Recover alt 5 desc if alt 0 is set. */
++	if (!altsetting && test_bit(BTUSB_ALT_CHANGED, &data->flags)) {
++		alt = NULL;
++		for (i = 0; i < intf->num_altsetting; i++) {
++			if (intf->altsetting[i].desc.bAlternateSetting == 6) {
++				alt = &intf->altsetting[i];
++				break;
++			}
++		}
++		if (alt) {
++			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
++				ep_desc = &alt->endpoint[i].desc;
++				if (usb_endpoint_is_isoc_out(ep_desc) ||
++				    usb_endpoint_is_isoc_in(ep_desc))
++					ep_desc->wMaxPacketSize = 49;
++			}
++			alt->desc.bAlternateSetting = 5;
++			clear_bit(BTUSB_ALT_CHANGED, &data->flags);
++		}
++	}
++
+ 	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
+ 		ep_desc = &intf->cur_altsetting->endpoint[i].desc;
+ 
+@@ -2213,25 +2280,6 @@ static int btusb_switch_alt_setting(struct hci_dev *hdev, int new_alts)
+ 	return 0;
+ }
+ 
+-static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
+-							int alt)
+-{
+-	struct usb_interface *intf = data->isoc;
+-	int i;
+-
+-	BT_DBG("Looking for Alt no :%d", alt);
+-
+-	if (!intf)
+-		return NULL;
+-
+-	for (i = 0; i < intf->num_altsetting; i++) {
+-		if (intf->altsetting[i].desc.bAlternateSetting == alt)
+-			return &intf->altsetting[i];
+-	}
+-
+-	return NULL;
+-}
+-
+ static void btusb_work(struct work_struct *work)
+ {
+ 	struct btusb_data *data = container_of(work, struct btusb_data, work);
+@@ -2269,7 +2317,8 @@ static void btusb_work(struct work_struct *work)
+ 			 * MTU >= 3 (packets) * 25 (size) - 3 (headers) = 72
+ 			 * see also Core spec 5, vol 4, B 2.1.1 & Table 2.1.
+ 			 */
+-			if (btusb_find_altsetting(data, 6))
++			if (btusb_find_altsetting(data, 6) ||
++			    btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE))
+ 				new_alts = 6;
+ 			else if (btusb_find_altsetting(data, 3) &&
+ 				 hdev->sco_mtu >= 72 &&
 -- 
 2.34.1
 
