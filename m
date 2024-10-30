@@ -1,123 +1,114 @@
-Return-Path: <linux-kernel+bounces-389291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD1B9B6B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:31:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661CF9B6B0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B3C282B23
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:31:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E305EB21670
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683021C3F04;
-	Wed, 30 Oct 2024 17:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E0C1993B7;
+	Wed, 30 Oct 2024 17:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CN4x54XE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsvQqO0h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D531BD9E2;
-	Wed, 30 Oct 2024 17:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE851BD9C1;
+	Wed, 30 Oct 2024 17:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730309501; cv=none; b=qLKMjV4zowEjNl7yJkR1GvBJAZKdyhcHqYbIyBHZVX9SDCj61txIFLYz93x22CWWA3gYERq+gtp1kVCRsybJAiijnwJejOFuZEEpc5KNs2YD9m7+bWPCdRFbKYo3D8e8ch7DxWS7JpEdZBhhvNB5/BHF5XA8+IoT9p19EAZovx4=
+	t=1730309577; cv=none; b=dusJ1JObmzvb2kvcNvlYsJ7eznZmA8xUZW5nfOFU+++7Jn313A63YofGSCHw0plVBXgTFlRrKdIpaHIYcA6KaUbnJgyQ33HBnGlJ3zoGDlJhgNtEkuEe8ET9NnIp/gR487AHffvkkUXlKo3JOaivXEiEZsRlqX+LEILuvwwegvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730309501; c=relaxed/simple;
-	bh=XW7RJZx1sP9q6TXqI9l2Urrnb4a67wAySZqs1jvelWk=;
+	s=arc-20240116; t=1730309577; c=relaxed/simple;
+	bh=xD3fbQXh0ADlv6ZOptn1aGGPtRMLbGY+tnrT42LdKQE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DeCDjbzL7ir3KQ0GM3ylMwCxR+uvHP5Bmotqsk695PaVGHcuX9KBfLru9jt8nOiIo5kgx9npMxvq75+NijgIeqoAZi0JeSJS442haMn2VXjFR4KMX+tZcfpg2FWk2eLzdrfXz2OOlHXMgywvTqFUGzHQkC+EWkILWEbztyFfWK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CN4x54XE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D30EBC4CECE;
-	Wed, 30 Oct 2024 17:31:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTjfqYWfZS6ehlKDmYNJHaIgo0b4i4I9KaXRyNL/8AeaCNvNw8oN5rbifGCvWLfrF022LK3MOFS8+I8LZggDhFR4lgUGnGotgUNwXRhf0gLjSrIvrHuswBZTLGbO4/HerK3xAEvyQwfDXlg0FTpZpIoTZFh6Y9VHWbWvRY+jlpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsvQqO0h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DEFC4CECE;
+	Wed, 30 Oct 2024 17:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730309501;
-	bh=XW7RJZx1sP9q6TXqI9l2Urrnb4a67wAySZqs1jvelWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CN4x54XEb9tbYCE19JNWOq0DiqvRyu6hQIAYVkeC1tzgVAJiq6JeFYnKJwXCc6SSG
-	 asTz+gd8+lhB9iFZ0KUUk6umD+UPDl8gFeAjS9E3bSBntnL1M0NFnRr9zrVl5q0W2j
-	 9+2vuFGyLA1vliTh9GPNB2sYiHUhbiN/x9xCCsV1ceARqIrCJ54k1Xa+3Rf2pqwsY8
-	 xh1PFT7qqOhGTHMiVEEH8UX2Ae7uGpj5ICMaTvMn8f07j4LzSJdq7gP75K3c3BO9Uw
-	 EMYSy6WPf/C+Oxn/AydzaqrkuXFWZN+LattnDI9NWmFAQRn6Ntox7NIErn93kgaUB5
-	 hc6hclgSHdNQw==
-Date: Wed, 30 Oct 2024 17:31:34 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v2 11/18] regulator: Add support for power
- budget description
-Message-ID: <8c5df9b8-2ee9-4baa-a7f3-1d7f633cc908@sirena.org.uk>
-References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
- <20241030-feature_poe_port_prio-v2-11-9559622ee47a@bootlin.com>
- <578d2348-9a17-410e-b7c8-772c0d82c10f@sirena.org.uk>
- <20241030182211.748c216e@kmaincent-XPS-13-7390>
+	s=k20201202; t=1730309576;
+	bh=xD3fbQXh0ADlv6ZOptn1aGGPtRMLbGY+tnrT42LdKQE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=NsvQqO0hMPepYn6kSvR2+zBfpxBRcHrK9CeDHrTi4hiB5OyWoQL9iDUjQnMd6ekBG
+	 8Bzzc2fdNa/E57e7UWIsRzSwETI10c3FQP1eCdGLEagEOSA3oik4A4xss1Ldpjyvem
+	 0egifEgr+Dabr05b2l7y37qdbXaEpVcTBawnIFNKCO2VAyLO5L344L3SBYeTT9cqaN
+	 kO7Dsz0As6Z1dcND8X5yvPg1nK1PTZi+bcmr2O8nhfp8O/c0UFmXpAZpKr54Qf/hoH
+	 4I9PfcMgtts931boEk2q/nJTZFbkNdOZyNgQuwE+pgz71xEllmW8o+sPJ3yZl6tx4a
+	 /LM7S++SmYRhA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 815CBCE0BB3; Wed, 30 Oct 2024 10:32:56 -0700 (PDT)
+Date: Wed, 30 Oct 2024 10:32:56 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <cb2af1b4-5ce0-4e91-9456-1c88f4eef4fc@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <ZyAUO0b3z_f_kVnj@sashalap>
+ <c936a7f6-e532-4f6a-b55a-bbf0fe6c6f32@paulmck-laptop>
+ <ZyJpu5QdGho6cOUs@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="el+qXin1X1ZKUea9"
-Content-Disposition: inline
-In-Reply-To: <20241030182211.748c216e@kmaincent-XPS-13-7390>
-X-Cookie: I feel partially hydrogenated!
-
-
---el+qXin1X1ZKUea9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZyJpu5QdGho6cOUs@sashalap>
 
-On Wed, Oct 30, 2024 at 06:22:11PM +0100, Kory Maincent wrote:
-> Mark Brown <broonie@kernel.org> wrote:
-> > On Wed, Oct 30, 2024 at 05:53:13PM +0100, Kory Maincent wrote:
+On Wed, Oct 30, 2024 at 01:15:39PM -0400, Sasha Levin wrote:
+> On Wed, Oct 30, 2024 at 10:08:57AM -0700, Paul E. McKenney wrote:
+> > On Mon, Oct 28, 2024 at 06:46:19PM -0400, Sasha Levin wrote:
+> > > On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
+> > > > On Mon, Oct 21, 2024 at 09:54:53PM -0700, Kees Cook wrote:
+> > > > > For example, for a given PR, the bot can report:
+> > > > >
+> > > > > - Were the patches CCed to a mailing list?
+> > > > > - A histogram of how long the patches were in next (to show bake times)
+> > > > > - Are any patches associated with test failures? (0day and many other
+> > > > > CIs are already running tests against -next; parse those reports)
+> > > > >
+> > > > > We could have a real pre-submit checker! :)
+> > > >
+> > > > That would be very useful.  Items 1 and 2 should be trivial, 3 would
+> > > > require a bit of work but would still be very useful.
+> > > 
+> > > If you've been following so far, there is a bot that is capable of doing
+> > > most of the above
+> > > (https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/).
+> > 
+> > Nice!!!
+> > 
+> > What does this make of these commits of mine?
+> > 
+> > 744e87210b1ae rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()
+> > cbe644aa6fe17 rcu: Stop stall warning from dumping stacks if grace period ends
+> > 26ff1fb02991e rcu: Delete unused rcu_gp_might_be_stalled() function
+> 
+> Days in linux-next:
+> ----------------------------------------
+>  1 |
+>  2 |
+>  3 |
+>  4 |
+>  5 |
+>  6 | +++ (3)
 
-> > > +int regulator_get_power_budget(struct regulator *regulator)
-> > > +{
-> > > +	return regulator->rdev->constraints->pw_budget;
-> > > +} =20
+Very good!
 
-> > This is going to go badly with multiple consumers...
+Any indications of errors for any of them?
 
-> On my series the available power budget of the PIs (which are consumers) =
-is
-> managed in the PSE core in the PSE power domain (patch 13). We could move=
- it
-> directly to regulator API.
-
-It feels like it's going to need joining up at some point.
-
---el+qXin1X1ZKUea9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcibXUACgkQJNaLcl1U
-h9ADDgf+K4s+GOUMO5jmJWqeNUJYp+6ocvIZ7QnpOTh37qAM6qG+h8XVM9Oe8f04
-9MtmNBGEle1dyji0jjOyDoBvKALX3Yo6bjt2vAKqNJ5i/9wO1GA8M1DCbazjs9sb
-Mx0nD4PNNMUIAfgLtEJyfK7HrxW91Hp22EucF7t5mBSNlF8gYI61p2RCVSFm5BZE
-YJvSoHOG4A63f3bWwiLTRQHoX0ZO7onl1Ctucog10znV/kp9K9r7EEGPzZWeSoPg
-/Ttdjn8u36c7R/ZvGnEJg3XYYFeQ9njVbAg2YqSU6XYfduaJxfCtYv4263uGbzhi
-RjL+TbbqhPxieaiC/dLE9aVoUd/jZw==
-=rb83
------END PGP SIGNATURE-----
-
---el+qXin1X1ZKUea9--
+							Thanx, Paul
 
