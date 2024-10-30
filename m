@@ -1,115 +1,214 @@
-Return-Path: <linux-kernel+bounces-388649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A189B6292
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EC99B6243
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6399F1F210CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1608E1F216F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE4F1D0E01;
-	Wed, 30 Oct 2024 12:06:07 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B951E6DC2;
+	Wed, 30 Oct 2024 11:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c40xq9/3"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C531D1E7C37
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 12:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B4F1E3DF7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730289965; cv=none; b=I3prBsQrrbGQrFvG/HnlLX3/a+9+3nh3C64Mb4JqC0/6R6SmBHKFWCIeyo74sPdjzJpCKHIwxQYNrGki0sr2SxRupuzMw0iHY3UE/gR5Z5qeOcKN8Eeh8JaUo1qpcF8RZNL2eTDGQ+BgIKgoG40zXCBMEnC+5Tp/sO/ml4lsbVs=
+	t=1730289065; cv=none; b=RdKpvcpJcP7dTnCuJ5rsImFm2UifUxcSFH3P1U2TEOqz2lHnNKkDMCKVVEzJuLes6pgQJlynejmMJ5/Q0oBL20f32i2Im8/yeh+jPWgEqhHPAylYBLIGfw2B35q0IKTNwzyakEjnKOJhs6ykYEpgWAq6z9iWagg6sVXJrkrwP4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730289965; c=relaxed/simple;
-	bh=aqvLgt8FFUE4MsG4eAfhwUHsbyslgXMm4Wym7zn1eOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DZ3vbBRze+BKtbwYSY3YREC9pg77T4n9rkdpnOx1squYBrgsx5K/S03yT6Bz+pQH3sVNuvXP3z7+Qzjd7G/+tMf7HZxM6VMEavrxWcVt0LEQwYh3Qp5vgkwepXqzJn2UXmSMfKZV/uU7Jzf8GwbBmUsbgVB1D1Qs4A9HvWdoWyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XdlKf4Vm1z9v7Hq
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 19:30:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 12F5F1408F9
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 19:50:34 +0800 (CST)
-Received: from [10.81.211.136] (unknown [10.81.211.136])
-	by APP1 (Coremail) with SMTP id LxC2BwD3aDl+HSJnRP20AA--.14581S2;
-	Wed, 30 Oct 2024 12:50:33 +0100 (CET)
-Message-ID: <ba2b6c1d-4930-4ede-ba21-d7a2fa46e5e1@huaweicloud.com>
-Date: Wed, 30 Oct 2024 12:50:19 +0100
+	s=arc-20240116; t=1730289065; c=relaxed/simple;
+	bh=xHnbl8g0V4QH/+Ugzu89HnjvhxqRTUgMdyw4DrGod4M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QKBfaxmiyqApU7G4B6BOy6eoiC1ilm/aNuy1rGBYqSwHk8Ac6dGstQFVbLb0fl6rJ3X56TyQq4n+VSFaBGR04FOPqkQSr2P+7LOdoGbSKLDQ/NwsTkZD7sCRFWXQzBJCX8iDv4qmaaBke5H4+dyVfzxxOQ6itbmN34x+usEdVDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c40xq9/3; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so7432662e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730289061; x=1730893861; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YCBgmMfrXbxb3z1IBjMjZjyuJ1oQU80IT7Cfbnn2k3E=;
+        b=c40xq9/3uf8T1gmCI8od52aoLc9vW9rlF/oDdvEZ3DWlq3tVRmjnbFdLHosUUjR6JF
+         AW6xLYCebDQpO6W/29FyYQJ0vUPmJ4SLzgpN4iX217vpHxW7SQrhLZ64isJmP7pPB0kv
+         zwhF47RV52HD2o9XkyJ4hemmgXNYPLCWuNJjzgME9fXbQ9+d2gdaND4vYxfbWiwlaa+b
+         Wtvnlxu7S/rvQUJPEpjFTBnvdsO1FqZrjTtwbfE3SjfNlMIEsU+cw/xMyz5f4oVvmtxd
+         XwjNaYKkC4sv04AvSxwEsq6zKmuBeVEQ0HPrkmJsjOSDsktS3Rv7R1aOkG+O0pWOiloO
+         jzVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730289061; x=1730893861;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YCBgmMfrXbxb3z1IBjMjZjyuJ1oQU80IT7Cfbnn2k3E=;
+        b=USkMtUmZCQtKPDoTyoP8BYYhsYRHECQV61Nlisjle/pY0Gn/OUSKPzMXCRJ7uzgo/D
+         TrUnLTABJzs3u9+g83atlovnX0YDkRaGq1YI+bXVZL2gmaI1zQozmjegFZHpHxJU7yCo
+         0ymIJ1xncFAeNnJAf9dBH4U0lp6Z9SywSHGoMhNNtFAPs/KYYA2gY77M41WJQPtfVjOi
+         /3OFCtf8PtqZA4kx83EyhPglflMGsQJXjF6MiaK2yxdBnLscvAv48wP1RrtDeTrEoShN
+         DlGYTyJjdnqEydBMbMZAwJ/Dx8qBaj/71h38KGRk38Dvb8P/PrPlqMGGTfTULhrwM0IB
+         9unw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh8R3shIl2DBBWYx8Q+lj8nCg1sdAUfatAjfQeKiExE15Qlyy0waHbnSgzuUM4EysTtVSJX+fzNI8qrCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLLybhi4wfVPeBtH4EI2l22sjBjMnz9R4slv1Ryfkq83Y53KN/
+	Hx0voSnXZgbLBUXTP/muZ0Mgt69tJG2IfAXqMa92wUBvYsYhtgVkky/eynpMf5E=
+X-Google-Smtp-Source: AGHT+IEU6KPP2CX/jkpICMP6eEpb+vo0AfQxg4mfYxCBgONVrAdzBEavS2CXmXyPMC4epUUfftpaFw==
+X-Received: by 2002:a05:6512:318c:b0:536:53e3:fe9d with SMTP id 2adb3069b0e04-53b348d62e0mr7304803e87.18.1730289060910;
+        Wed, 30 Oct 2024 04:51:00 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bb81a5760sm233049e87.84.2024.10.30.04.50.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 04:51:00 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/4] arm64: dts: qcom: add QAR2130P support
+Date: Wed, 30 Oct 2024 13:50:53 +0200
+Message-Id: <20241030-sar2130p-dt-v2-0-027364ca0e86@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] tools/memory-model: Switch to softcoded herd7 tags
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: paulmck@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
- will@kernel.org, peterz@infradead.org, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
- hernan.poncedeleon@huaweicloud.com
-References: <20240930105710.383284-1-jonas.oberhauser@huaweicloud.com>
- <20240930105710.383284-5-jonas.oberhauser@huaweicloud.com>
- <ZyAmlh5GDBsqY0sZ@Boquns-Mac-mini.local>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <ZyAmlh5GDBsqY0sZ@Boquns-Mac-mini.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwD3aDl+HSJnRP20AA--.14581S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GrWkuw15ZF4kXFW3ZryxKrg_yoWDJrb_Wa
-	47Aa1xJrn8tr1UK3WDJr1Utry7Jr1UJr1UXr1UXw47Z3s7GF1UJr4UJrs8Zw1UXFs8Gr15
-	Wr1UCryUXr17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7sRRKZX5UUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+X-B4-Tracking: v=1; b=H4sIAJ0dImcC/42Ty27cMAxFf2XgdRXoZVHyqv9RZCGRVEbo+FHLY
+ yQI5t+rSRYJ0BTxkgLOvRTJ+9pVXgvXbji9divvpZZ5aoX+cerwHKcnFoVa3WmprZIaRI2rVkY
+ ugjbhPBlm9i6A6RqxrJzL85var8f3euU/1ya6vT9+aDaLfxQj1UVkNDlSb4nJDLvqPjfyFbRVn
+ qqQKkUmoKB7+z9KfaLKPI5XYZHBGdmrLNWw62+pBYsglKh14uiBjzgt55cqrHZgTPJSuXDE6Fq
+ TkBwQibNT5I4Y4XLNbdqCIEWndKZAcIS7XBBF+5NTDgCa47Cbb6Exzc9C5QyaPKce/RGnaR95F
+ H32vaMQUkpwZBbjiAKyT0Z7H9ioQ0MnFKodZ5Y+JkqHFoWXGX/X1l4iCilLyw3r71iKlQW2iyn
+ bcIomaCMZs0vtciD3PkBCC9ZGCFKCxJwYou/uATiXus3ry1u6Wgv3BHwZpF0JKcAEMo6MQmN+X
+ soU1/lhXp+6x9vt9heH9PkiqAMAAA==
+X-Change-ID: 20241027-sar2130p-dt-68d3eee86973
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Krishna Kurapati <quic_kriskura@quicinc.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5655;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=xHnbl8g0V4QH/+Ugzu89HnjvhxqRTUgMdyw4DrGod4M=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnIh2hr09Ccx5whJZo+l5B/YKFPavneoR1SXGC/
+ K7ivHCMMK2JAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZyIdoQAKCRAU23LtvoBl
+ uJe3D/97h/cuywI3zpEes3S7xXzdFZaT+k05Rheh7kmCdwhTpJXBuc+uwVWTLFtk1LmHQtN7f14
+ c0FqL5mgI7TaK0GVJTFI8rTeQ/S2+E5YY61KohVct67HAApYZYdSsl3zlIgCmPBXWplQ7qPsAf4
+ LxPbXObTo2FngXe0uR7wFggb0TrBtE3xeA4p3BnFenhmG6taW9Bw3WvMECI2OofUw0uTqWPAnwJ
+ yL7a1BTzt/j3Ve7rhhXIeepi0hlDtKbu6DjA8vG1uI4G8etWxbdmnVK/vLiiUFEH39waEXIp2Wg
+ Og2VOqJye/WLdCv9/TraqSn14zFRYEHsIekiNP+h6g676sKUmvaWHik87Ynuvgp/2UV2iBfDrnB
+ eWEmc0H5E4PRQn//plY42LXrKpr2JVe/a9Cbtutw0sfwr3kBoSREdgTFhUWhS9WCbEqBZjP/UR3
+ 33R6BLrad0Sg6elCfsvx/u5V9ST3gGWxJHNSurkCs0300xkVrFfDmd7196BV/irvsFAy6Mq8dhy
+ 9VlFYXqkSSxLGaYpPH1NTc1jRY3u4fG9QSJITyyU+bBV4xiHxP6NHMz8FlW5lUOYN2/aLKQ5+OY
+ 77ROTF2Hi4w9Lj7oRI6C5SfAjZFJ2EC/Qq0zld+yNLUm2QHU76fmfufdrb1KvuJjZiyM2qfHSwt
+ AsDqo++D9pNCQgg==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+Add device tree bindings for the QAR2130P also known as Qualcomm
+Snapdragon AR2 Gen1 Smart Viewer Development Kit. The device boots,
+provides serial console, I2C / SPI interfaces, WiFi (requires external
+BDF) and BT (requires external firmware).
 
+Dependencies:
+    - https://lore.kernel.org/r/20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org
+      (clocks bindings)
+    - https://lore.kernel.org/r/20241017-sar2130p-nvmem-v1-1-6cc32789afc6@linaro.org
+      (critical bugfix)
 
-Am 10/29/2024 um 1:04 AM schrieb Boqun Feng:
->
-> One bit below:
- >
-> On Mon, Sep 30, 2024 at 12:57:09PM +0200, Jonas Oberhauser wrote:
->>       ------------------------------------------------------------------------------
->>       |       RMW ops w/o return value |                                           |
->>       ------------------------------------------------------------------------------
->> -    |                     atomic_add | R*[noreturn] ->rmw W*[once]               |
->> +    |                     atomic_add | R*[noreturn] ->rmw W*[noreturn]           |
-> 
-> Not in this patch, but don't you need to update this again to all cap
-> to match your changes in patch #5? ;-)
-> 
+Additional bindings and drivers required for the device to function (on
+top of linux-next):
+    - https://lore.kernel.org/r/20241027-sar2130p-adsp-v1-0-bd204e39d24e@linaro.org
+    - https://lore.kernel.org/r/20241027-sar2130p-tsens-v1-1-8dee27fc02ae@linaro.org
+    - https://lore.kernel.org/r/20241018-sar2130p-iommu-v2-1-64c361fceac8@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-pci-v1-1-5b95e63d9624@linaro.org
+    - https://lore.kernel.org/r/20241021-sar2130p-phys-v2-0-d883acf170f7@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-usb-v1-1-21e01264b70e@linaro.org
+    - https://lore.kernel.org/r/20241018-sar2130p-cpufreq-v1-1-822e00b9a663@linaro.org
+    - https://lore.kernel.org/r/20241026-sar2130p-llcc-v3-0-2a58fa1b4d12@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-mbox-v1-1-906aa78b1358@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-mmc-v1-1-c84da16a001e@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-pdc-v1-1-cf9ccd9c37da@linaro.org
 
-Hmmm, probably that is a good idea.
-I actually had thought about it for some of the other places in the doc 
-that mention the tags, and concluded that we'll just use the semantic 
-tags there.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Added sar2130p to qcom-soc.yaml (Krzysztof)
+- Provided the value for USB's hs_phy_irq (Krishna)
+- Fixed uart7 node name to be serial@.
+- Link to v1: https://lore.kernel.org/r/20241027-sar2130p-dt-v1-0-739d36d31c33@linaro.org
 
-But in fact, this file is about the syntactic representation in herd, 
-and there is no noreturn semantic tag on the W*, so it wouldn't match it 
-even if it were correct.
+---
+Dmitry Baryshkov (4):
+      dt-bindings: arm: qcom-soc: extend to support SAR2130P platform
+      dt-bindings: arm: qcom: add QAR2130P board
+      arm64: dts: qcom: sar2130p: add support for SAR2130P
+      arm64: dts: qcom: sar2130p: add QAR2130P board file
 
-So I think this needs to be addressed in 5/5.
+ .../devicetree/bindings/arm/qcom-soc.yaml          |    4 +-
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/sar2130p-qar2130p.dts     |  551 ++++
+ arch/arm64/boot/dts/qcom/sar2130p.dtsi             | 3091 ++++++++++++++++++++
+ 5 files changed, 3653 insertions(+), 2 deletions(-)
+---
+base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+change-id: 20241027-sar2130p-dt-68d3eee86973
+prerequisite-change-id: 20241027-sar2130p-adsp-fc3fad54ded3:v1
+prerequisite-patch-id: a19263ac2521636a3a7b0ed846cf1714326832c7
+prerequisite-patch-id: 7401c6f72aa9e510a01774b82586e5941980fbcc
+prerequisite-patch-id: 0b132b0936dda8e4c7443b4e7e23ff427dc0d798
+prerequisite-change-id: 20241027-sar2130p-tsens-01baed7d9254:v1
+prerequisite-patch-id: 20d50df9440a16e1cea78fb674794ebb7dc9e352
+prerequisite-change-id: 20241017-sar2130p-iommu-4ce763051f01:v2
+prerequisite-patch-id: 22f9d4a5b0c8d50b5a7317375060ff07ebcae4c3
+prerequisite-change-id: 20241017-sar2130p-pci-dc0c22bea87e:v1
+prerequisite-patch-id: 70ad0a8594e6d224648e0206f9d783fcbb69887d
+prerequisite-change-id: 20241017-sar2130p-phys-426733b80169:v2
+prerequisite-patch-id: 263dca689cc6e8334d825b19ec9005a44cdc979b
+prerequisite-patch-id: fcb8d377116bbcf9f165abba416d25c9be86d930
+prerequisite-patch-id: da7fe2737145e858d9572ff51dff3478cf15e1b0
+prerequisite-patch-id: 14e7540ecc4d365d2cea78016b2f9ffbac366921
+prerequisite-patch-id: 6b2ecc0490d903cee517301c462053d2472e6992
+prerequisite-patch-id: 874e118cd420166faa6247754c5f0a3f24de8a1b
+prerequisite-change-id: 20241017-sar2130p-usb-0e9ccdef61d6:v1
+prerequisite-patch-id: 283d975b372781bc4ab258583c82aa7edaa11edf
+prerequisite-change-id: 20241017-sar2130p-cpufreq-d7ba612fd9d7:v1
+prerequisite-patch-id: f0e7e53020e954149fc06988a583d4ca9deb7209
+prerequisite-change-id: 20241017-sar2130p-llcc-0c2616777cde:v3
+prerequisite-patch-id: 6ca6eacd9ceca6d060d23ef95594fb892e51a506
+prerequisite-patch-id: dc04e235391820e4ab04c72ac64fd852e73fade5
+prerequisite-patch-id: cdb161d351ba3ff4f9e53efaa67eb32b603af435
+prerequisite-change-id: 20241017-sar2130p-mbox-1ff72d8eb5c8:v1
+prerequisite-patch-id: f3975127d993dadf15bcffb81feb99d213471a22
+prerequisite-change-id: 20241017-sar2130p-nvmem-5f856d99bbb7:v2
+prerequisite-patch-id: a5520c74bc1a96a952ff6f744ea57636893f6278
+prerequisite-patch-id: 7a260ae7850d966e8fecd3ebc5114ac157d23c87
+prerequisite-change-id: 20241017-sar2130p-mmc-7f8b32889e31:v1
+prerequisite-patch-id: 76b640936b8b98775f8e17f719b98147dbb7be4f
+prerequisite-change-id: 20241017-sar2130p-pdc-18d3f08abdbe:v1
+prerequisite-patch-id: aa2d8a846ea684d1e127f94e01414ded8b599763
+prerequisite-change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee:v5
+prerequisite-patch-id: e6927fe4ae24ab139d5fe595b36b9a9182960b70
+prerequisite-patch-id: 7cb0ec3c7122856fc33337b9e1e54693a6a7d0fa
+prerequisite-patch-id: ec05d49fb2cabbd37a462cee2761bb9509a6aa5d
+prerequisite-patch-id: 6c2171274b0615cef421498695bb61b3f1ec44d2
+prerequisite-patch-id: 3e7615c0e77e3dbe18267fe556bec7bd5b413c56
+prerequisite-patch-id: 8c0359d6075820139b0658ffcf74f8cd91f50875
+prerequisite-patch-id: a500c056466cd165fbe3acf824e0b96ee225794e
+prerequisite-patch-id: 0abbc5930afb89780a8d833b4fb7cf16865dedcd
+prerequisite-patch-id: a8016b8cda7f0f766acd92e6ba8644f45b04f30d
+prerequisite-patch-id: ddb641d43225f1165b30bb03b0243fc5bc3e7a96
+prerequisite-patch-id: 0e7dbc6cf1359f2611ec19422139f9a95f389f51
 
-
-   jonas
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
