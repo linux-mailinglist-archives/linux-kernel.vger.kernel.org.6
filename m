@@ -1,94 +1,55 @@
-Return-Path: <linux-kernel+bounces-389672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C579B6F94
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:49:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0F49B6FA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C496BB21B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4850D1F22256
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3EC1D0BAD;
-	Wed, 30 Oct 2024 21:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1725B1E2007;
+	Wed, 30 Oct 2024 22:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VmDTSfIh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xj8E1uEJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VmDTSfIh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xj8E1uEJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="jfiewKPu"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B281BD9E8;
-	Wed, 30 Oct 2024 21:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C61F1991DF;
+	Wed, 30 Oct 2024 22:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730324941; cv=none; b=AsYPjUr5xQldxNZElhJDPapt8MzQ+DNAHJjGFcPCjAGjvbSC1+rdw9Tr4N8bQ4e6CIZaNX3bNV7Ap2RL92WsgDUAvQbeJA+ZjpQRyP/wcCAZZo03udFjLu2j26Zalpng/b6OB1DuLLECOezRwfk44rz0lkgf1KDwsveoXdDMHu0=
+	t=1730325718; cv=none; b=qIr9T6W9i00xqZFB1o9YlnrpZguF1BRU0P/dZBQkTo5thBr97FhmOnatu49Bg45T5tam8KMHdNduI/gb/HItPbExjQYqa57uM5Il2tQBKbsDI7wiRmqOLuexCTPSxUHCBrjS6/+TI8FRyxzRNC8ZXX2KCRcdgmVXsUyxupNdLRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730324941; c=relaxed/simple;
-	bh=N2h6GxQ9mevybEktMBvmIcYJX7OZ4S8tI5/Upa3MHYU=;
+	s=arc-20240116; t=1730325718; c=relaxed/simple;
+	bh=rJV2D6Plr4LfbnmTXbxs2ZMIPn0FTjvTS2EdkNm+PaU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cXwwnqZ6sruYYltmbJaqMrH8N+9IzhoqlJhRiVCKjpZ2JkmxBjHUOV0NBDJF4VmcViCmFoUG71ZlSF37kz1Fu9KWd36t/+nv4lzXySh+BmEU8DEU53YFy+h/Q/TSqwce99vw+wadhhwJ2rppRlFoag7pQOduk5IP4rC47L4HdxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VmDTSfIh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xj8E1uEJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VmDTSfIh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xj8E1uEJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 17EFC1F7CC;
-	Wed, 30 Oct 2024 21:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730324931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wS6Qj4yMwAu8JhKUkSlwL1XLNze6T0zoqEv8RVutyPI=;
-	b=VmDTSfIhNk23K/rwty3EU7n0Xb0c2aG1w1I1GVeVVrq2tumCt4eFWHWqdaSHdq+CT+aU3K
-	Na8jZGd2ZciFS/Itc2piDW3nSVXyKU7f3qrYGFitwvHpSJcD3bdqyBPaoVPVpQzg86jwEI
-	seffK0QvUbtM1tM+VtFzZjFCiPAn80E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730324931;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wS6Qj4yMwAu8JhKUkSlwL1XLNze6T0zoqEv8RVutyPI=;
-	b=Xj8E1uEJTI8SL+SNwJHNfvsNvIPMsy4pFTxDYz0W/thWSnHyfGm5yXmFevwBvOhCTHI8yo
-	vWefvAIEAgwCeaCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730324931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wS6Qj4yMwAu8JhKUkSlwL1XLNze6T0zoqEv8RVutyPI=;
-	b=VmDTSfIhNk23K/rwty3EU7n0Xb0c2aG1w1I1GVeVVrq2tumCt4eFWHWqdaSHdq+CT+aU3K
-	Na8jZGd2ZciFS/Itc2piDW3nSVXyKU7f3qrYGFitwvHpSJcD3bdqyBPaoVPVpQzg86jwEI
-	seffK0QvUbtM1tM+VtFzZjFCiPAn80E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730324931;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wS6Qj4yMwAu8JhKUkSlwL1XLNze6T0zoqEv8RVutyPI=;
-	b=Xj8E1uEJTI8SL+SNwJHNfvsNvIPMsy4pFTxDYz0W/thWSnHyfGm5yXmFevwBvOhCTHI8yo
-	vWefvAIEAgwCeaCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E03AA13A7C;
-	Wed, 30 Oct 2024 21:48:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZEhXNsKpImfeBQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 30 Oct 2024 21:48:50 +0000
-Message-ID: <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
-Date: Wed, 30 Oct 2024 22:48:50 +0100
+	 In-Reply-To:Content-Type; b=c2sL2pjkovRXzL+vRrM9E4FEUqlEuw1bOtHhnSc6O9yXCNhs5khBVKR31L3Rc5g5dRb07gxeUFBP6gmNy0pWcnpi9EgVszVWxOALRMUcZp1Se8yMkEmjE6MrSAS6Uh6IT0P0Wno85zLi4CmDSCg6W+em/JfNxTFO9kTpzX834iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=jfiewKPu; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1730325701; x=1730930501; i=quwenruo.btrfs@gmx.com;
+	bh=rJV2D6Plr4LfbnmTXbxs2ZMIPn0FTjvTS2EdkNm+PaU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=jfiewKPu0kc+D8vZfch32OjP0dQrOe1UUQyxwL9K/JZ+5lQXX20DJmVOQ5/pQHtU
+	 i7JI8eE3svi7dNLvrz/+be/yzTrZAh6BtEGpNARSpr/sBKeF6b8+8Iq6H0e5BdW/k
+	 zwEF3lYT3Ry+XEm24UyLfnxvqRcrc6TqPnnc8rh+bQYEc8/a2+lS6lYioY5UfE+Y/
+	 WUGyjOFcsZoWQpURoPGFTUKluCRuWhVS6kUYLQ5V40RA6Y/EWq8Ho97vGth4kneZR
+	 iD+0nkgCD6/EzbriIen9YJTJJjQCTdyHzRz9CsYmeLPxYp/lzEiiHlZQU2QsvpuVL
+	 v8geFChxVgDPsnXvfQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MyKHm-1u4hTc2Hm8-00qr5P; Wed, 30
+ Oct 2024 23:01:41 +0100
+Message-ID: <19596057-5403-4ecd-a817-efdc5d69adc6@gmx.com>
+Date: Thu, 31 Oct 2024 08:31:32 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,180 +57,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] -next lockdep invalid wait context
+Subject: Re: [PATCH 2/2] btrfs: simplify regions mark and keep start unchanged
+ in err handling
+To: dsterba@suse.cz
+Cc: iamhswang@gmail.com, linux-btrfs@vger.kernel.org, clm@fb.com,
+ josef@toxicpanda.com, dsterba@suse.com, wqu@suse.com, boris@bur.io,
+ linux-kernel@vger.kernel.org, Haisu Wang <haisuwang@tencent.com>
+References: <20241025065448.3231672-1-haisuwang@tencent.com>
+ <20241025065448.3231672-3-haisuwang@tencent.com>
+ <4d0603d4-1503-4e8f-bfe2-ed205b598072@gmx.com>
+ <20241030152836.GA31418@twin.jikos.cz>
 Content-Language: en-US
-To: paulmck@kernel.org, linux-next@vger.kernel.org,
- linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-mm@kvack.org
-Cc: sfr@canb.auug.org.au, bigeasy@linutronix.de, longman@redhat.com,
- boqun.feng@gmail.com, elver@google.com, cl@linux.com, penberg@kernel.org,
- rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[canb.auug.org.au,linutronix.de,redhat.com,gmail.com,google.com,linux.com,kernel.org,lge.com,linux-foundation.org];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20241030152836.GA31418@twin.jikos.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YQl52prO9scIDpgld1zYeo/yD238m14tPdwLTacSkOfpIfpK5U1
+ HwJGFgsnQ3TyP5Kq6reG7nP6x65JsNF2qyOZ1JL2/46xiDJQcoDiSPvZ+lve3bPq/wObKxG
+ etbWYTkBk/cfmrxvmjT/CigMBye8tMQoSv/B1N7gm2g+3DvqSZiTIylRxnKqAns+SZ7oulV
+ /llMHVrtjvDaWkLzCvo/g==
 X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XacmrmYyPko=;h5NZ5d0hO2VLLvewvuNljg6jQ2/
+ NEyZ9Z5LaWnTcvpnh4GA5WkSnG0NT5mN5/FzGH3QDJSwTgISTVZjRTgm8/124a+guqkU1uoqA
+ gRClmVeHKgaP75GNG7lxo7Q1E83//MjtffrxunP6SlEndtBLmX3wFg0EOOmDYsg6IrS3NZlAe
+ X3ZfLc0RXBzcxG7LTFCDra+lvk905LesIcdbYWkxYCHRN9iosUdwIU1fPRkyGCW6xcOm2OZE/
+ iqE10DF/iO0h9rVMaHDzksCo+WAoQrdLpMrr0zpDoBS+JBuQcVshhOGor4DoBPY+NqRVlGOXN
+ GFCxgqt0nygzEbMLzRyjM57YFnFnyDih1LLQHJ9+c/41uLmDWDwGlsayJNg54MVp0e8717FgV
+ h/D7BZY2a6z4K7QbmPiAXV4jw2R5Slshk29ZsTo2zz38/oM0ifhj5oQRK7RKnQnottQlvdbbO
+ XjZfmF0iTd4apcm3D4cES2gikAdh7mLFkfNIrCBSYGv9WDF3nkfzJ70GScbFAGhWI6HUyrhSU
+ V5GAs75HlPv84hIxmqLlMgOZSpzniCGexalF9J/9haWtk3jZiAEnm6JZuj+Mh9UfYWgxoRN4h
+ 2zkF6+yMtO5d/sdyixvx1Ex2lz3/VIXC9Mug7jWY15fZ2VY592d6kOWjx19AWg3hvPj7sXY1P
+ IPv74INqWmuV5ZQylos6qLutrLPfN6wTcbjcrQLWQ/oqcK+g2TE5yLS3dJKp4qwFAE9Jz02dF
+ /bAvBb94WrxzQybfJzsQwVcaXyx784TkyIxbqy94//eG0WK3uEQUT8o5w5mUSYWyFscNig6zZ
+ O6H+KaiCZ+s/qaG2YMBNzy6w==
 
-On 10/30/24 22:05, Paul E. McKenney wrote:
-> Hello!
 
-Hi!
 
-> The next-20241030 release gets the splat shown below when running
-> scftorture in a preemptible kernel.  This bisects to this commit:
-> 
-> 560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING")
-> 
-> Except that all this is doing is enabling lockdep to find the problem.
-> 
-> The obvious way to fix this is to make the kmem_cache structure's
-> cpu_slab field's ->lock be a raw spinlock, but this might not be what
-> we want for real-time response.
+=E5=9C=A8 2024/10/31 01:58, David Sterba =E5=86=99=E9=81=93:
+> On Wed, Oct 30, 2024 at 01:31:15PM +1030, Qu Wenruo wrote:
+>>
+>>
+>> =E5=9C=A8 2024/10/25 17:24, iamhswang@gmail.com =E5=86=99=E9=81=93:
+>>> From: Haisu Wang <haisuwang@tencent.com>
+>>>
+>>> Simplify the regions mark by using cur_alloc_size only to present
+>>> the reserved but may failed to alloced extent. Remove the ram_size
+>>> as well since it is always consistent to the cur_alloc_size in the
+>>> context. Advanced the start mark in normal path until extent succeed
+>>> alloced and keep the start unchanged in error handling path.
+>>>
+>>> PASSed the fstest generic/475 test for a hundred times with quota
+>>> enabled. And a modified generic/475 test by removing the sleep time
+>>> for a hundred times. About one tenth of the tests do enter the error
+>>> handling path due to fail to reserve extent.
+>>>
+>>
+>> Although this patch is already merged into for-next, it looks like the
+>> next patch will again change the error handling, mostly render the this
+>> one useless:
+>>
+>> https://lore.kernel.org/linux-btrfs/2a0925f0264daf90741ed0a7ba7ed4b4888=
+cf778.1728725060.git.wqu@suse.com/
+>>
+>> The newer patch will change the error handling to a simpler one, so
+>> instead of 3 regions, there will be only 2.
+>>
+>> There will be no change needed from your side, I will update my patches
+>> to solve the conflicts, just in case if you find the error handling is
+>> different in the future.
+>
+> Please take care of that, the only request I have is that it's done by
+> the end of this week so we have the code in linux-next and that a fix
+> should come before a refactoring (due to backports). Update for-next as
+> you need.
 
-But it's a local_lock, not spinlock and it's doing local_lock_irqsave(). I'm
-confused what's happening here, the code has been like this for years now.
+Then everything is done.
 
-> This can be reproduced deterministically as follows:
-> 
-> tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration 2 --configs PREEMPT --kconfig CONFIG_NR_CPUS=64 --memory 7G --trust-make --kasan --bootargs "scftorture.nthreads=64 torture.disable_onoff_at_boot csdlock_debug=1"
-> 
-> I doubt that the number of CPUs or amount of memory makes any difference,
-> but that is what I used.
-> 
-> Thoughts?
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> [   35.659746] =============================
-> [   35.659746] [ BUG: Invalid wait context ]
-> [   35.659746] 6.12.0-rc5-next-20241029 #57233 Not tainted
-> [   35.659746] -----------------------------
-> [   35.659746] swapper/37/0 is trying to lock:
-> [   35.659746] ffff8881ff4bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x49/0x1b0
-> [   35.659746] other info that might help us debug this:
-> [   35.659746] context-{2:2}
-> [   35.659746] no locks held by swapper/37/0.
-> [   35.659746] stack backtrace:
-> [   35.659746] CPU: 37 UID: 0 PID: 0 Comm: swapper/37 Not tainted 6.12.0-rc5-next-20241029 #57233
-> [   35.659746] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-> [   35.659746] Call Trace:
-> [   35.659746]  <IRQ>
-> [   35.659746]  dump_stack_lvl+0x68/0xa0
-> [   35.659746]  __lock_acquire+0x8fd/0x3b90
-> [   35.659746]  ? start_secondary+0x113/0x210
-> [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> [   35.659746]  lock_acquire+0x19b/0x520
-> [   35.659746]  ? put_cpu_partial+0x49/0x1b0
-> [   35.659746]  ? __pfx_lock_acquire+0x10/0x10
-> [   35.659746]  ? __pfx_lock_release+0x10/0x10
-> [   35.659746]  ? lock_release+0x20f/0x6f0
-> [   35.659746]  ? __pfx_lock_release+0x10/0x10
-> [   35.659746]  ? lock_release+0x20f/0x6f0
-> [   35.659746]  ? kasan_save_track+0x14/0x30
-> [   35.659746]  put_cpu_partial+0x52/0x1b0
-> [   35.659746]  ? put_cpu_partial+0x49/0x1b0
-> [   35.659746]  ? __pfx_scf_handler_1+0x10/0x10
-> [   35.659746]  __flush_smp_call_function_queue+0x2d2/0x600
+The patch itself is not touched and already in for-next branch.
 
-How did we even get to put_cpu_partial directly from flushing smp calls?
-SLUB doesn't use them, it uses queue_work_on)_ for flushing and that
-flushing doesn't involve put_cpu_partial() AFAIK.
+The new one is part of the subpage enhancement series now, which is not
+that urgent.
+The subpage compression write support is already large enough for the
+next release cycle.
 
-I think only slab allocation or free can lead to put_cpu_partial() that
-would mean the backtrace is missing something. And that somebody does a slab
-alloc/free from a smp callback, which I'd then assume isn't allowed?
-
-> [   35.659746]  __sysvec_call_function_single+0x50/0x280
-> [   35.659746]  sysvec_call_function_single+0x6b/0x80
-> [   35.659746]  </IRQ>
-> [   35.659746]  <TASK>
-> [   35.659746]  asm_sysvec_call_function_single+0x1a/0x20
-> [   35.659746] RIP: 0010:default_idle+0xf/0x20
-> [   35.659746] Code: 4c 01 c7 4c 29 c2 e9 72 ff ff ff 90 90 90 90 90 90 90 90 90
->  90 90 90 90 90 90 90 f3 0f 1e fa eb 07 0f 00 2d 33 80 3e 00 fb f4 <fa> c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
-> [   35.659746] RSP: 0018:ffff888100a9fe68 EFLAGS: 00000202
-> [   35.659746] RAX: 0000000000040d75 RBX: 0000000000000025 RCX: ffffffffab83df45
-> [   35.659746] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffa8a5f7ba
-> [   35.659746] RBP: dffffc0000000000 R08: 0000000000000001 R09: ffffed103fe96c3c
-> [   35.659746] R10: ffff8881ff4b61e3 R11: 0000000000000000 R12: ffffffffad13f1d0
-> [   35.659746] R13: 1ffff11020153fd2 R14: 0000000000000000 R15: 0000000000000000
-> [   35.659746]  ? ct_kernel_exit.constprop.0+0xc5/0xf0
-> [   35.659746]  ? do_idle+0x2fa/0x3b0
-> [   35.659746]  default_idle_call+0x6d/0xb0
-> [   35.659746]  do_idle+0x2fa/0x3b0
-> [   35.659746]  ? __pfx_do_idle+0x10/0x10
-> [   35.659746]  cpu_startup_entry+0x4f/0x60
-> [   35.659746]  start_secondary+0x1bc/0x210
-> [   35.659746]  common_startup_64+0x12c/0x138
-> [   35.659746]  </TASK>
-
+Thanks,
+Qu
 
