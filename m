@@ -1,78 +1,156 @@
-Return-Path: <linux-kernel+bounces-389377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882A49B6C49
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED45A9B6C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D8E1C213EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:42:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1044A1C21312
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF041CDA24;
-	Wed, 30 Oct 2024 18:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB6A1CCB3F;
+	Wed, 30 Oct 2024 18:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyE9eonW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IB8Degks";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4y5BaFYw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B735A1BD9E2;
-	Wed, 30 Oct 2024 18:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37D21BD9F1;
+	Wed, 30 Oct 2024 18:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730313766; cv=none; b=Q0dqwvbBHSXarPXmMSZWqtOPYMhdRbGSjXF+S4imYX5KfYkiF7HFpPyHJHSVsiU/fIK6PKFCUXJ8QUxh6seqIWGHdjQh4wW4VMDSp9tMo012jD8X9wt6mLAQZW/OXjofTieNvtqSO+qFpeEn7QD3TZEJYlkURivvCdbcJZ+ll3o=
+	t=1730314342; cv=none; b=lk8TLxjGdbR6e/QjuBn9U71tufIcmFUvjHidJPGwSE4WJ5GcJztcsGZmYwv28v7uWJuLOJtE2qWAutqk/NrRd2qyJOfB/fy49I92dh6mDxWNZWvx1sEO3CCvUKtpDUvVeHv9ZzmnATpMDcnAPmrJx2O/1OdUGzmLreuf4hLNKEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730313766; c=relaxed/simple;
-	bh=bGVcw/sfpCroEAgkcGYhFNMz2qy28pH3vOQD5j5qYyc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BPsPk6LTblQxoajLFNzTprk+4oporXlcvl9QP0SK7bcFap/jk0UkxgqHQSNYAz/I3isTu4aCJXfjwaaB+AAVgSu4F/UJV8X0uUu/rL6vtGrzDXfXTn0T7RrueVcBaxOOn98by/5TMs5y6uhmXDGZDXMrEhOpKSvR9XIHv2r7Ums=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WyE9eonW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D308C4CECE;
-	Wed, 30 Oct 2024 18:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730313766;
-	bh=bGVcw/sfpCroEAgkcGYhFNMz2qy28pH3vOQD5j5qYyc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=WyE9eonWKCWo1OJ44wPQ2a4wLx7BWTT4XDhaG0GSBeYrKjMf3KkL7d4Ql+jV1SGO9
-	 YCsfEjpcfsjU4nSCNuZGxTGF0okmYGFKx7J4QrvWWd9g2jFDaaCyDUdvPqnrEartUn
-	 HSw3GrWvoHHp/puwjpet2uY+wM6op+WwMMu6ayZSDrckNTcGB9T9isIY+9EmaDCiOR
-	 oEVJsR3x20iZ8+8PHnjmu2x6g3Jk7S7a0JyWAdGCuLc/KCOFPjT9OwB0Z1aEHRxP4d
-	 OL8Rxj0lBxSXfvVUj41uE4QXAMBHg9dcbbSnHBAb44Bt1Pg69HWZlIsTi/R7I9shSC
-	 mJWbuaPVEhUKA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34F90380AC22;
-	Wed, 30 Oct 2024 18:42:55 +0000 (UTC)
-Subject: Re: [GIT PULL] SCSI fixes for 6.12-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <c82f3c57c5febcefdc95cf4a0b8eff0cdf4689a1.camel@HansenPartnership.com>
-References: <c82f3c57c5febcefdc95cf4a0b8eff0cdf4689a1.camel@HansenPartnership.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <c82f3c57c5febcefdc95cf4a0b8eff0cdf4689a1.camel@HansenPartnership.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-X-PR-Tracked-Commit-Id: cb7e509c4e0197f63717fee54fb41c4990ba8d3a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4236f913808cebef1b9e078726a4e5d56064f7ad
-Message-Id: <173031377391.1432070.7105234657928897279.pr-tracker-bot@kernel.org>
-Date: Wed, 30 Oct 2024 18:42:53 +0000
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1730314342; c=relaxed/simple;
+	bh=y8lFIgy8LvpfbzjeuL9QrPl9tbF9syJv0VBzXOKXqoI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Ku7/YoB4CPukBzRXp6BWryTh0OJNU8ufilqQxjp9UhjLqqvaPQTYoEBFApymwgRElPi/D0sP3M+GK7ODDxUtH0VX9gmlTST6oTy88jiTKEOAT/19aaOt4dTrjjkWjk58M6QkfGmIvRXSb7QDrtHO1b0bPpvA+ERyujTif+TPVrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IB8Degks; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4y5BaFYw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 30 Oct 2024 18:52:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730314338;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kxxx8p0XKtu8bVbEDpeAhQxkcC7JFjewS7Nf0CWll4M=;
+	b=IB8DegksEebQGFkTdcqEZSBbTdQZsVZw6yMkqse2RUFAkmJ1DvQsKOK1aL1Feb2ftG+zfY
+	R+Dx9Hb+T2aTASMFUVn01OH7VDorOboti/i8doYghib7BMR3mLWHx/NYT3O+Lyc74c4ppC
+	enI723gefnyXcgMAWHY/kvPGmnrZEsAgMSq2H/9zvmPMFqbzZx8ajohv5bRAqBbknRaj0Z
+	i3XgWuyT9JXgm0VUV8ea3aFX7aG+hvhHhLHrq2JyVPa3TPUpr16eS4gSNoSEAabjMqSR6a
+	iJZ6h17p1/tRnwkTNwqgJVmHo1tZpwvTAiK3YPoIWaGz0+PGotoaDpKMqHobrQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730314338;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kxxx8p0XKtu8bVbEDpeAhQxkcC7JFjewS7Nf0CWll4M=;
+	b=4y5BaFYwlvgNkI8yAaxgj7WTyQFARhbdJl6RNPJQevmImer92O6hf05Kqi2+RUaNgnyIdP
+	MY9tKuTEgSTI07AQ==
+From: "tip-bot2 for Easwar Hariharan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] jiffies: Define secs_to_jiffies()
+Cc: Michael Kelley <mhklinux@outlook.com>,
+ Easwar Hariharan <eahariha@linux.microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <20241030-open-coded-timeouts-v3-1-9ba123facf88@linux.microsoft.com>
+References:
+ <20241030-open-coded-timeouts-v3-1-9ba123facf88@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Message-ID: <173031433772.3137.8495312302559502216.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Wed, 30 Oct 2024 19:57:59 +0900:
+The following commit has been merged into the timers/core branch of tip:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+Commit-ID:     b35108a51cf7bab58d7eace1267d7965978bcdb8
+Gitweb:        https://git.kernel.org/tip/b35108a51cf7bab58d7eace1267d7965978bcdb8
+Author:        Easwar Hariharan <eahariha@linux.microsoft.com>
+AuthorDate:    Wed, 30 Oct 2024 17:47:35 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 30 Oct 2024 19:47:20 +01:00
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4236f913808cebef1b9e078726a4e5d56064f7ad
+jiffies: Define secs_to_jiffies()
 
-Thank you!
+secs_to_jiffies() is defined in hci_event.c and cannot be reused by
+other call sites. Hoist it into the core code to allow conversion of the
+~1150 usages of msecs_to_jiffies() that either:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+ - use a multiplier value of 1000 or equivalently MSEC_PER_SEC, or
+ - have timeouts that are denominated in seconds (i.e. end in 000)
+
+It's implemented as a macro to allow usage in static initializers.
+
+This will also allow conversion of yet more sites that use (sec * HZ)
+directly, and improve their readability.
+
+Suggested-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Link: https://lore.kernel.org/all/20241030-open-coded-timeouts-v3-1-9ba123facf88@linux.microsoft.com
+---
+ include/linux/jiffies.h   | 13 +++++++++++++
+ net/bluetooth/hci_event.c |  2 --
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+index 5d21dac..ed945f4 100644
+--- a/include/linux/jiffies.h
++++ b/include/linux/jiffies.h
+@@ -526,6 +526,19 @@ static __always_inline unsigned long msecs_to_jiffies(const unsigned int m)
+ 	}
+ }
+ 
++/**
++ * secs_to_jiffies: - convert seconds to jiffies
++ * @_secs: time in seconds
++ *
++ * Conversion is done by simple multiplication with HZ
++ *
++ * secs_to_jiffies() is defined as a macro rather than a static inline
++ * function so it can be used in static initializers.
++ *
++ * Return: jiffies value
++ */
++#define secs_to_jiffies(_secs) ((_secs) * HZ)
++
+ extern unsigned long __usecs_to_jiffies(const unsigned int u);
+ #if !(USEC_PER_SEC % HZ)
+ static inline unsigned long _usecs_to_jiffies(const unsigned int u)
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 1c82dcd..4bd94d4 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -42,8 +42,6 @@
+ #define ZERO_KEY "\x00\x00\x00\x00\x00\x00\x00\x00" \
+ 		 "\x00\x00\x00\x00\x00\x00\x00\x00"
+ 
+-#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * 1000)
+-
+ /* Handle HCI Event packets */
+ 
+ static void *hci_ev_skb_pull(struct hci_dev *hdev, struct sk_buff *skb,
 
