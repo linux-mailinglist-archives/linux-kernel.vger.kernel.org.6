@@ -1,146 +1,202 @@
-Return-Path: <linux-kernel+bounces-389124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA509B68DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:06:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34679B68DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06051C21DA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7241C28557B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516982141B7;
-	Wed, 30 Oct 2024 16:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UbPoSezr"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1212141A2;
+	Wed, 30 Oct 2024 16:07:56 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834212141A1;
-	Wed, 30 Oct 2024 16:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3836126;
+	Wed, 30 Oct 2024 16:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304364; cv=none; b=bQfa8wn6zuhnHZ0MM+qfZ7At4/sKLM4o0BNKX2TU8D0/W/3vuKPxJSOjdtzyYT5THy2MsmObmxNOdQiAnnBZOPiPthWOnIoujBaXVNr1KM9pGXm+oexZAahcxGZ1jdwOvUeGFtpTszEticS6ePKTxIEnREHifplCJmR3tUiL6wc=
+	t=1730304476; cv=none; b=kJTP6OuiVtg+am/T/x4DxcqfiZA26JD7YhAzD0DLYuFyE/L+QUhsFcu6SdTHLJsacjfRgmkL/rezvd/i9/GEGwhVFWblS55PuSGaEcNuNMuPiYN1/JCSJf/xMq/6RDD17wOhgRZIod+iKpW6hjpVq5tNrBbZPAgkCMhNjdzyr9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304364; c=relaxed/simple;
-	bh=K5RfbokEe9SJslqHAgTzxGIKwLTk4MjbTLj0WPI4qmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMKaOhauoh5EuV7FhXiR2xsHsEafv/E/+CqUwL8Fmt3kSM12W6JkTYx2uLhKeIXoht1P5NQZdUOWvNgfPw9ZcwIiRgQgtd/qw2Tdb7oaoUGLbprS6UAXD6KhmNawCekEzylekqTuCUzWnyvZJEd+yCFcBHtGC6gxg9hl0dyHEyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UbPoSezr; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0B8B440E019C;
-	Wed, 30 Oct 2024 16:05:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id rxmd0Gl-QDop; Wed, 30 Oct 2024 16:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730304338; bh=jnR65QrcFCF7T2SN80xCHIA06Ync0z3yyPLSbAqJc0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbPoSezrnWSzk29OkIzZxt0ufSto8If09wJIBV8PWJSKlUBXEAT1HmdpVfaoEP0Ed
-	 GxmEJcaDelvtKK0SE7Ro1mwEcCDMbrTNjIHmFJY7Gm7FlZB/J6l66m3bFT19QcITWH
-	 EHTOLTEjC+w5zPlsRL80JfjYIylHmm8ALBEhK8jYb8zFXUU3jn/45rfA1WXCDR047v
-	 DZbrQoLBUdWijQ7csuBZzNYSKoL4Qtbcc+631JlZYAIxihjwuOnUcq+mT8cfbwsXzI
-	 lJNusLL0LMiPOuE+usMRiR7hUKwfaWKjvE2on9KKcd5JFctgNHhDIz9Cu8c7roifRq
-	 4xw10/mQUqYLlHBp3tN02LAPJfcRu8EiBSUsd0e1t6deX0DjKOncml6/nScYjZnn0C
-	 KSsg1TJmzavkwOxfUoJu8Tdq3ejM6Hryg8qOkk+38I0aSIo40ZofHoXVv9nA3FbTbw
-	 0XF/DBhtJHu+neRrpNsLNxu+cqfmpH2HjJZiKkZ0ObpnT6dWgPG7qvYzHBgCOxvISp
-	 b9rfP/ZBlDaFmlxECm8B8HdqbOb6qKV8/YxSO7x9x17Ivuv/El9Iu3gVpCGB1tyW7m
-	 MiCj5vq3fUwAg0Hnum8ijKl+0N8mqNWK8A37mHCYU02YDax1r1uIiaIxUHR+2dvmK4
-	 CGqTvrt1gUopgCTVMdB18kWM=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 530FB40E0219;
-	Wed, 30 Oct 2024 16:05:25 +0000 (UTC)
-Date: Wed, 30 Oct 2024 17:05:18 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: x86@kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, qiuxu.zhuo@intel.com, tglx@linutronix.de,
-	mingo@redhat.com, rostedt@goodmis.org, mchehab@kernel.org,
-	yazen.ghannam@amd.com, john.allen@amd.com
-Subject: Re: [PATCH v7 5/5] EDAC/mce_amd: Add support for FRU Text in MCA
-Message-ID: <20241030160518.GEZyJZPrEL7G0eYac4@fat_crate.local>
-References: <20241022194158.110073-1-avadhut.naik@amd.com>
- <20241022194158.110073-6-avadhut.naik@amd.com>
+	s=arc-20240116; t=1730304476; c=relaxed/simple;
+	bh=sYrCCtSJMM/vNIM5bemKiWX1x209eI6n/2Wtl3Rrhiw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ovPc7mrZ2pu7Lx5VQocKKB5dPnCxEcaWJfpVh+avdkbl7uj/iZXI3KagnV7nChorCKFIy/fDx/0mbD9ns5Oqqbtei7LTC4n5Wo7ot0N2iaxPZH8e+Jgm6mlF60bFoXaz5FTvA0ABxyRyX+gP7SE2uvRfqcrLNLuRNBzGafrjeps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdsQk6fm8z6K6kk;
+	Thu, 31 Oct 2024 00:05:02 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 65497140B38;
+	Thu, 31 Oct 2024 00:07:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
+ 2024 17:07:27 +0100
+Date: Wed, 30 Oct 2024 16:07:26 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<shiju.jose@huawei.com>, <M.Chehab@huawei.com>
+Subject: Re: [PATCH v2 13/14] cxl/pci: Add trace logging for CXL PCIe port
+ RAS errors
+Message-ID: <20241030160726.0000533e@Huawei.com>
+In-Reply-To: <20241025210305.27499-14-terry.bowman@amd.com>
+References: <20241025210305.27499-1-terry.bowman@amd.com>
+	<20241025210305.27499-14-terry.bowman@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241022194158.110073-6-avadhut.naik@amd.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Oct 22, 2024 at 07:36:31PM +0000, Avadhut Naik wrote:
-> @@ -853,8 +850,18 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
+On Fri, 25 Oct 2024 16:03:04 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
+
+> The CXL drivers use kernel trace functions for logging endpoint and
+> RCH downstream port RAS errors. Similar functionality is
+> required for CXL root ports, CXL downstream switch ports, and CXL
+> upstream switch ports.
+> 
+> Introduce trace logging functions for both RAS correctable and
+> uncorrectable errors specific to CXL PCIe ports. Additionally, update
+> the PCIe port error handlers to invoke these new trace functions.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
++CC Mauro and Shiju to give the tracepoint a sanity check and for
+awareness that we have something new to feed rasdaemon :)
+
+Jonathan
+
+> ---
+>  drivers/cxl/core/pci.c   | 16 ++++++++++----
+>  drivers/cxl/core/trace.h | 47 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 59 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index adb184d346ae..eeb4a64ba5b5 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -661,10 +661,14 @@ static void __cxl_handle_cor_ras(struct device *dev,
 >  
->  		if (m->status & MCI_STATUS_SYNDV) {
->  			pr_cont(", Syndrome: 0x%016llx\n", m->synd);
-> -			pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
-> -				 err->vendor.amd.synd1, err->vendor.amd.synd2);
-> +			if (mca_config & MCI_CONFIG_FRUTEXT) {
-> +				char frutext[17];
+>  	addr = ras_base + CXL_RAS_CORRECTABLE_STATUS_OFFSET;
+>  	status = readl(addr);
+> -	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
+> -		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
+> +	if (!(status & CXL_RAS_CORRECTABLE_STATUS_MASK))
+> +		return;
+> +	writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
 > +
-> +				frutext[16] = '\0';
-> +				memcpy(&frutext[0], &err->vendor.amd.synd1, 8);
-> +				memcpy(&frutext[8], &err->vendor.amd.synd2, 8);
+> +	if (is_cxl_memdev(dev))
+>  		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status);
+> -	}
+> +	else if (dev_is_pci(dev))
+How would you get here otherwise? Is it useful to know it is a pci device
+here?
+> +		trace_cxl_port_aer_correctable_error(dev, status);
+>  }
+>  
+>  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
+> @@ -720,7 +724,11 @@ static bool __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+>  	}
+>  
+>  	header_log_copy(ras_base, hl);
+> -	trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
+> +	if (is_cxl_memdev(dev))
+> +		trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
+> +	else if (dev_is_pci(dev))
+as above.
+
+> +		trace_cxl_port_aer_uncorrectable_error(dev, status, fe, hl);
 > +
-> +				pr_emerg(HW_ERR "FRU Text: %s", frutext);
-> +			} else {
-> +				pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
-> +					 err->vendor.amd.synd1, err->vendor.amd.synd2);
-> +			}
->  		}
+>  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
+>  
+>  	return true;
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index 8672b42ee4d1..1c4368a7b50b 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
+> @@ -48,6 +48,34 @@
+>  	{ CXL_RAS_UC_IDE_RX_ERR, "IDE Rx Error" }			  \
+>  )
+>  
+> +TRACE_EVENT(cxl_port_aer_uncorrectable_error,
+> +	TP_PROTO(struct device *dev, u32 status, u32 fe, u32 *hl),
+> +	TP_ARGS(dev, status, fe, hl),
+> +	TP_STRUCT__entry(
+> +		__string(devname, dev_name(dev))
+> +		__string(host, dev_name(dev->parent))
+> +		__field(u32, status)
+> +		__field(u32, first_error)
+> +		__array(u32, header_log, CXL_HEADERLOG_SIZE_U32)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(devname);
+> +		__assign_str(host);
+> +		__entry->status = status;
+> +		__entry->first_error = fe;
+> +		/*
+> +		 * Embed the 512B headerlog data for user app retrieval and
+> +		 * parsing, but no need to print this in the trace buffer.
+I'm not sure any printing as such goes on in the trace buffer. It is from
+the data in the trace buffer I think.
 
-Right, so let's turn this into:
+> +		 */
+> +		memcpy(__entry->header_log, hl, CXL_HEADERLOG_SIZE);
+> +	),
+> +	TP_printk("device=%s host=%s status: '%s' first_error: '%s'",
+> +		  __get_str(devname), __get_str(host),
+> +		  show_uc_errs(__entry->status),
+> +		  show_uc_errs(__entry->first_error)
+> +	)
+> +);
+> +
+>  TRACE_EVENT(cxl_aer_uncorrectable_error,
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status, u32 fe, u32 *hl),
+>  	TP_ARGS(cxlmd, status, fe, hl),
+> @@ -96,6 +124,25 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
+>  	{ CXL_RAS_CE_PHYS_LAYER_ERR, "Received Error From Physical Layer" }	\
+>  )
+>  
+> +TRACE_EVENT(cxl_port_aer_correctable_error,
+> +	TP_PROTO(struct device *dev, u32 status),
+> +	TP_ARGS(dev, status),
+> +	TP_STRUCT__entry(
+> +		__string(devname, dev_name(dev))
+> +		__string(host, dev_name(dev->parent))
+> +		__field(u32, status)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(devname);
+> +		__assign_str(host);
+> +		__entry->status = status;
+> +	),
+> +	TP_printk("device=%s host=%s status='%s'",
+> +		  __get_str(devname), __get_str(host),
+> +		  show_ce_errs(__entry->status)
+> +	)
+> +);
+> +
+>  TRACE_EVENT(cxl_aer_correctable_error,
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
+>  	TP_ARGS(cxlmd, status),
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index bc5e67306f77..edc2c8033de8 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -208,8 +208,6 @@ static void __print_mce(struct mce_hw_err *err)
- 			pr_cont("SYND2 %llx ", err->vendor.amd.synd2);
- 		if (m->ipid)
- 			pr_cont("IPID %llx ", m->ipid);
--		if (err->vendor.amd.config)
--			pr_cont("CONFIG %llx ", err->vendor.amd.config);
- 	}
- 
- 	pr_cont("\n");
-diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-index d69a1466f0bc..62fcd92bf9d2 100644
---- a/drivers/edac/mce_amd.c
-+++ b/drivers/edac/mce_amd.c
-@@ -858,9 +858,6 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
- 				memcpy(&frutext[8], &err->vendor.amd.synd2, 8);
- 
- 				pr_emerg(HW_ERR "FRU Text: %s", frutext);
--			} else {
--				pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
--					 err->vendor.amd.synd1, err->vendor.amd.synd2);
- 			}
- 		}
- 
-and simply treat synd1 and synd2 as FRU text. I don't want to expose
-mca_config to userspace yet but use it in the RAS code only. If a case appears
-that we want to really expose it to userspace, we can talk about a proper
-design then.
-
-This patch doesn't make it part of the tracepoint either so...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
