@@ -1,155 +1,112 @@
-Return-Path: <linux-kernel+bounces-388575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138449B6168
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 214B69B616C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05E21F21F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14A21F245CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514F01E47D9;
-	Wed, 30 Oct 2024 11:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE2B1E571D;
+	Wed, 30 Oct 2024 11:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufAlKkUA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nSg/orIa"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1283156F54;
-	Wed, 30 Oct 2024 11:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8431E3DD8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287543; cv=none; b=k+7aYQWQiyXLMrI3cNIfeS+mLZOk5Wy5EitAG1edoEogD+Q4VlzHBxkCpQ33DZrISoq0qT7YKdq40+uz0IiQS0PvklpFgAcf4M5hLfQkh6r1hlE5c7HpbpHGb/0XOHvRydbbJ3YO/enZ2N6+bq0maxrQRC6d5zpNRvLRJI5r6AA=
+	t=1730287554; cv=none; b=D6DvmjkRPaRT0rYTNNJ9JSfAAk+RL71u0H2oDBkQWTcqW1U1RdiKXrSlGLOUlMfdEVzkJ5GCoFJNr1BufNDXGuaBtBUCdv+ixjpWzF3/rGuzs4rAP7ShVv1bzYH2ZPV6dF3nHgDEgnoEk7iTi9e0FHFCpjRVFmWdyLfClno0HAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287543; c=relaxed/simple;
-	bh=pNa+VsBVYyKIrBAGRVMBxaWvEJvSkXNDNmc5rWOx9YM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kwDY1MNcTSm2dAH6x75cIBc4GN+zpftioRWMyaPjStUhJ9Qud8imzp/g7WNV0psUQdyFItZPEOwdRXThn0EqFpNJHG0sr79UGO5vQhBtAkfdVkNhgdH3CPKsvBFNBZtYB6JMQDKotGMZtpyg/RLokDWcPC5RKVyh1pLBF/5xMEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufAlKkUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D551C4CEE7;
-	Wed, 30 Oct 2024 11:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730287543;
-	bh=pNa+VsBVYyKIrBAGRVMBxaWvEJvSkXNDNmc5rWOx9YM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ufAlKkUAhCGPj/auQF6rHYED8CFspclfKoB94a1VTC1cJGnkDFMT5ORqK1lWTv88e
-	 9Bfo/G9Q3nAb9Jm1YTxj7vB3xiaf9lxaWm1MSxQ2iVKPyPNv3z3Fg7HRhu0oPP8Snc
-	 Nm86ZopAxQki9Opnce+PwMKtlI8HHFRPAX4LyHRuA3emzRrTYMnpSj1vASCxQ/ilce
-	 UyJS8lRdMuEfhgZjZLh8eCyeXgHgwoJu39VQaexeHGLpUe9JdpCptuB/XCHiD+e2HW
-	 hgKaYwWK7v0fmg4yIOI52e5Yf9uQl3ac9miMUAodgpxmMSD0xVCUDEMqti6D3JSxes
-	 lKyHUwCbnoaeA==
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-84fd057a993so2061402241.3;
-        Wed, 30 Oct 2024 04:25:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOizf2QYypZvFWcmBxuhRgOSD7TFIU26MkD+/tQl9G2S2AGdGlFQYU2cB3rv+prYbxsI5xupRfz2EeTwc=@vger.kernel.org, AJvYcCWBJI2qFYFV1Z6g6jnII0hICKkAsA0uDSuMK/RHCrZpYlBfUEoiJ2eCZzTinmKXzzR7Ngpw7SfpyD9Gj98=@vger.kernel.org, AJvYcCXwFrbfebpP70uvtUdq4Jd7s6KGeL4n0HREM4bstjVeQmT0efgwQSrusG+kkE6i7cKZjA7fAbhsVPovbHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiL23V+uQ90dD4QEZeTLObjlWnpn45iUK5bHYuQ+tK9IQYVpRw
-	IJp+35w8jE1LZoq1lkKCv5qDZo2zjrVhzg8wpuTuo2LRaeXlmrtL/5JCdkS96u4CLfUthXQVfRN
-	4+30xjDI6TDmUvHq9zdPH5b+43k4=
-X-Google-Smtp-Source: AGHT+IFcj4ArYSXy6RowfeL0PKK8BGT1Y7OSex/rX6l5UUiTFAxTX0iZ0k+liK3/QVIlTGgMUBgbDIP+9OeBwQ9oGPI=
-X-Received: by 2002:a05:6102:943:b0:4a5:ba3b:665e with SMTP id
- ada2fe7eead31-4a8cfb8287emr14789540137.13.1730287542275; Wed, 30 Oct 2024
- 04:25:42 -0700 (PDT)
+	s=arc-20240116; t=1730287554; c=relaxed/simple;
+	bh=i/1lFAiCUmr8MozzsQANkNXi63EHwNpndZyFrvfM+q4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VFo+uI/3vVEi/gOk1zyZm2kQabLZo+J00XzjudWlr/wNINMh2m5ytfcmcsG3uNE24ItA7pgKXNAeRTets1yuEfbF2q1j4Xc2hQheGuxomgTD3jVhlFRdLE7PvSSnIQBM8COuJ1Rit5yVz4lsjeGxGcE7YSK7uy1/Kwia88J9djs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nSg/orIa; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso50614071fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:25:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730287550; x=1730892350; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bMES1QAhfgu7bIQDYk1EUlu+RGSHNt1/K65I4mR80e4=;
+        b=nSg/orIadb2AFsxHM/8a2bnuVpIJtpt1I/jLdUgXg0ikJ2Zb0/6vlOCt6wm3RwxvBd
+         qp6Y8NKmPvGa3Ecd2LaIsO+9hiuVcCvgyreLqivSq0BASgz1nhVgR+DTxNyGp+fLDCGE
+         oBWSaimrzi4dY04qOAjL91JsC6l79yiVc2g8sDy0VBDzcHCxp1H0krMx+++MW2zcT2Kw
+         F7RNKOle20XqbBP8YeZHblRDncG6VgqgjSjTlN3kEPMAwFXHkySUjA0Aftj1nFiqJYp9
+         NONH3uUgLzsXeJpm2Pf/hGsBwu770BsavmjDpF0L/9ecMmfwqZ8NiDRMXeTwYdwC6NUU
+         2D/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730287550; x=1730892350;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bMES1QAhfgu7bIQDYk1EUlu+RGSHNt1/K65I4mR80e4=;
+        b=nkWdes3/v/Cys3fY5ZGC+ExThNdgA+gL+EMSLb2EOqFrc9AQ3zILr+UAfefA6JGaMK
+         Uh9O3zP/zF8LZyREjQR/JB8gHCaRCe9Zy+/f+Mj0ZeF/KFjhKoGQVLI23WJcR+nEC8IO
+         Fyk6uJU+3CKkiq7edMUBQDR4628BAvuSyGrbOWI+1CpdMBw0UTXntjVcnkUZZTvBtGq6
+         aQqB00H23Ij/V/FIM+PzwpylV8hqg73TCuRlQqGiy4owza7bZoUutkZ5G5LR3OnfpV/A
+         mn8c8mynXIUWagOyTpldItOO0VtvUvC+s5ncbiLt80pRJgFPPNIIn2U86Fuvr02vNrKX
+         IG3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVdv93KFGwSI0qtykzd3xD+Tvra3nq2Zuz3zX2B7U+4o6aHJU5B/XiyuYIthWz6FRtg/nP7U09n8UcNsSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXAkkiGHSYc7KYit/z0slVgGIN7CRTl+39V+UmgPXu09/fqNLq
+	cgwxE0M42410lrymCby83yegyJFzAyHbWGy/PPHxooVYkEGGwacU0Ln/lK+Jamc=
+X-Google-Smtp-Source: AGHT+IGY4OdrV2g1gR/OZMrvjE/lAI6jJHYq/NY61VEtXYCuq6a/kfZIDfbwe86CLVK3+WjNbtSP5w==
+X-Received: by 2002:a05:651c:1508:b0:2fb:6465:3198 with SMTP id 38308e7fff4ca-2fcbdf60348mr75079871fa.5.1730287550241;
+        Wed, 30 Oct 2024 04:25:50 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9207d4sm18412585e9.20.2024.10.30.04.25.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 04:25:49 -0700 (PDT)
+Message-ID: <436b02c6-a262-4015-92e3-454d444e877f@linaro.org>
+Date: Wed, 30 Oct 2024 11:25:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu> <20241021-imx214-v2-1-fbd23e99541e@apitzsch.eu>
-In-Reply-To: <20241021-imx214-v2-1-fbd23e99541e@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Wed, 30 Oct 2024 12:25:25 +0100
-X-Gmail-Original-Message-ID: <CAPybu_0o+csbkyS7bbMUjB+VSUwj2DK_STy=wubCT_frH0DzgA@mail.gmail.com>
-Message-ID: <CAPybu_0o+csbkyS7bbMUjB+VSUwj2DK_STy=wubCT_frH0DzgA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/13] media: i2c: imx214: Fix link frequency
-To: git@apitzsch.eu
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andre
-
-On Mon, Oct 21, 2024 at 12:14=E2=80=AFAM Andr=C3=A9 Apitzsch via B4 Relay
-<devnull+git.apitzsch.eu@kernel.org> wrote:
->
-> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
->
-> The driver defines IMX214_DEFAULT_LINK_FREQ 480000000, and then
-> IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10),
-> which works out as 384MPix/s. (The 8 is 4 lanes and DDR.)
->
-> Parsing the PLL registers with the defined 24MHz input. We're in single
-> PLL mode, so MIPI frequency is directly linked to pixel rate.  VTCK ends
-> up being 1200MHz, and VTPXCK and OPPXCK both are 120MHz.  Section 5.3
-> "Frame rate calculation formula" says "Pixel rate
-> [pixels/s] =3D VTPXCK [MHz] * 4", so 120 * 4 =3D 480MPix/s, which basical=
-ly
-> agrees with my number above.
->
-> 3.1.4. MIPI global timing setting says "Output bitrate =3D OPPXCK * reg
-> 0x113[7:0]", so 120MHz * 10, or 1200Mbit/s. That would be a link
-> frequency of 600MHz due to DDR.
-> That also matches to 480MPix/s * 10bpp / 4 lanes / 2 for DDR.
->
-I think your calculations are correct and the value should be 600M...
-but if we land this change, there will be boards that will stop
-working until they update their dts.
-Not sure if we allow that.
-
-Can we move this change to the last one of the series and add something lik=
-e:
-
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 2aca3d88a0a7..8b4ded4cb5ce 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -1281,13 +1281,9 @@ static int imx214_parse_fwnode(struct device
-*dev, struct imx214 *imx214)
-                if (bus_cfg.link_frequencies[i] =3D=3D IMX214_DEFAULT_LINK_=
-FREQ)
-                        break;
-
--       if (i =3D=3D bus_cfg.nr_of_link_frequencies) {
--               dev_err_probe(dev, -EINVAL,
--                             "link-frequencies %d not supported,
-Please review your DT\n",
-+       if (i =3D=3D bus_cfg.nr_of_link_frequencies)
-+               dev_warn(dev, "link-frequencies %d not supported,
-Please review your DT. Continuing anyway\n",
-                              IMX214_DEFAULT_LINK_FREQ);
--               ret =3D -EINVAL;
--               goto done;
--       }
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/11] scsi: ufs: exynos: enable write line unique
+ transactions on gs101
+To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
+Cc: andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
+References: <20241025131442.112862-1-peter.griffin@linaro.org>
+ <20241025131442.112862-9-peter.griffin@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241025131442.112862-9-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> ---
->  drivers/media/i2c/imx214.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 4962cfe7c83d62425aeccb46a400fa93146f14ea..5d411452d342fdb177619cd1c=
-9fd9650d31089bb 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -24,7 +24,7 @@
->  #define IMX214_MODE_STREAMING          0x01
->
->  #define IMX214_DEFAULT_CLK_FREQ        24000000
-> -#define IMX214_DEFAULT_LINK_FREQ 480000000
-> +#define IMX214_DEFAULT_LINK_FREQ 600000000
->  #define IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10=
-)
->  #define IMX214_FPS 30
->  #define IMX214_MBUS_CODE MEDIA_BUS_FMT_SRGGB10_1X10
->
-> --
-> 2.47.0
->
->
+On 10/25/24 2:14 PM, Peter Griffin wrote:
+> Previously just AXIDMA_RWDATA_BURST_LEN[3:0] field was set to 8.
+
+where was this set?
+
+> 
+> To enable WLU transaction additionally we need to set Write Line
+> Unique enable [31], Write Line Unique Burst Length [30:27] and
+> AXIDMA_RWDATA_BURST_LEN[3:0].
+> 
+> To support WLU transaction, both burth length fields need to be 0x3.
+> 
+
+typo, s/burth/burst
 
