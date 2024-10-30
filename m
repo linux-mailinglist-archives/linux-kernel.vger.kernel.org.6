@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-388143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873C39B5B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:36:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAB49B5B42
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2F21F2187E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:36:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6A51B22082
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 05:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1161CF5F5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906711CFEA7;
 	Wed, 30 Oct 2024 05:36:12 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33371CF289
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7ED1CF5EC
 	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 05:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730266571; cv=none; b=Tj1zMjm0BLm/427S7GCironuexLtGAG7LI3VaY0BVCw7MNSjt8iOMrsi0BBJvLJmqXY/HguUIS+mYYRYFTWRe/NZXPG02B3mU9228vw7M2YadUktx+RWCKPZTNHE9ib3+Shz9VwArwInniANlxdG04FFMOp9MtExH1EvP5Jn2H4=
+	t=1730266572; cv=none; b=jegcVQZz8ehJQPMjV30y1dYEV2WtlyN7xzRHsSPD4G0NswdmW5uu2JHYqOMMmck8cUNELRhLKlp3rHu3eULXakruMFOiUEazE5ninQe2CsVOvDLvGY2WErnWCZGV18pthD1Vn6E28UnBTcH/mfc0grxMbxMRj9xssV9UgNBquvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730266571; c=relaxed/simple;
-	bh=XNUK0TECBAjRZzXRzwjfDmT9lMeI7Lr7DwwAmU30QsM=;
+	s=arc-20240116; t=1730266572; c=relaxed/simple;
+	bh=4JFa/lks/etTOtrtpJZCxlzJzGohLAQHk7UPWvizd+E=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=hE+lTc7OFzcI0VwvDWYbecuOIiUHkOOMijG2vCFTDoPt4OplX+Tsl9j+hB0ua+Oo1s9pjQGh3ZNa2pRt53vo0xY21+KPZ0/F4xnJRBPviB2iyG22lBl1Cd9GrDzo/7FW0NpjOO2mAHkGTKnr+7s7kSfD90VBYgJ89Kt60BRlZvg=
+	 Content-Type; b=QVU9JizQ4JcwX89t61M73lRh6+c9gkUjFTuAV/sy/tEF9RXoIZe2XUqmSo/X9U0imw8Cvkca6ZOCp0PbbuoWNi4jKZK6zcqSP60NgD1ejBRvlwz7dRFqVH69kpQXDMsnmuflrH4yiYEwCY0j78Xzg4/MRH/Zeu6QIu+msuWHwkw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A8AAC4CEE4;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E1FC4CEEB;
 	Wed, 30 Oct 2024 05:36:11 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1t61OC-00000005BD8-3qGF;
-	Wed, 30 Oct 2024 01:37:04 -0400
-Message-ID: <20241030053704.781457290@goodmis.org>
+	id 1t61OD-00000005BDe-0KBa;
+	Wed, 30 Oct 2024 01:37:05 -0400
+Message-ID: <20241030053704.935817830@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 30 Oct 2024 01:36:52 -0400
+Date: Wed, 30 Oct 2024 01:36:53 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>
-Subject: [for-next][PATCH 2/7] fgraph: Give ret_stack its own kmem cache
+ Thomas Gleixner <tglx@linutronix.de>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: [for-next][PATCH 3/7] fgraph: Use guard(mutex)(&ftrace_lock) for unregister_ftrace_graph()
 References: <20241030053650.956861738@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,113 +55,55 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The ret_stack (shadow stack used by function graph infrastructure) is
-created for every task on the system when function graph is enabled. Give
-it its own kmem_cache. This will make it easier to see how much memory is
-being used specifically for function graph shadow stacks.
+The ftrace_lock is held throughout unregister_ftrace_graph(), use a guard
+to simplify the error paths.
 
-In the future, this size may change and may not be a power of two. Having
-its own cache can also keep it from fragmenting memory.
-
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Link: https://lore.kernel.org/20241026063210.7d4910a7@rorschach.local.home
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/20241028071307.770550792@goodmis.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/fgraph.c | 33 ++++++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+ kernel/trace/fgraph.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 4ce87982966a..001abf376c0c 100644
+index 001abf376c0c..0bf78517b5d4 100644
 --- a/kernel/trace/fgraph.c
 +++ b/kernel/trace/fgraph.c
-@@ -172,6 +172,8 @@ enum {
- DEFINE_STATIC_KEY_FALSE(kill_ftrace_graph);
- int ftrace_graph_active;
+@@ -1381,17 +1381,17 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
+ {
+ 	int command = 0;
  
-+static struct kmem_cache *fgraph_stack_cachep;
-+
- static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
- static unsigned long fgraph_array_bitmask;
+-	mutex_lock(&ftrace_lock);
++	guard(mutex)(&ftrace_lock);
  
-@@ -1022,8 +1024,11 @@ static int alloc_retstack_tasklist(unsigned long **ret_stack_list)
- 	int start = 0, end = FTRACE_RETSTACK_ALLOC_SIZE;
- 	struct task_struct *g, *t;
+ 	if (unlikely(!ftrace_graph_active))
+-		goto out;
++		return;
  
-+	if (WARN_ON_ONCE(!fgraph_stack_cachep))
-+		return -ENOMEM;
-+
- 	for (i = 0; i < FTRACE_RETSTACK_ALLOC_SIZE; i++) {
--		ret_stack_list[i] = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
-+		ret_stack_list[i] = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
- 		if (!ret_stack_list[i]) {
- 			start = 0;
- 			end = i;
-@@ -1054,7 +1059,7 @@ static int alloc_retstack_tasklist(unsigned long **ret_stack_list)
- 	rcu_read_unlock();
- free:
- 	for (i = start; i < end; i++)
--		kfree(ret_stack_list[i]);
-+		kmem_cache_free(fgraph_stack_cachep, ret_stack_list[i]);
- 	return ret;
+ 	if (unlikely(gops->idx < 0 || gops->idx >= FGRAPH_ARRAY_SIZE ||
+ 		     fgraph_array[gops->idx] != gops))
+-		goto out;
++		return;
+ 
+ 	if (fgraph_lru_release_index(gops->idx) < 0)
+-		goto out;
++		return;
+ 
+ 	fgraph_array[gops->idx] = &fgraph_stub;
+ 
+@@ -1413,7 +1413,5 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
+ 		unregister_pm_notifier(&ftrace_suspend_notifier);
+ 		unregister_trace_sched_switch(ftrace_graph_probe_sched_switch, NULL);
+ 	}
+- out:
+ 	gops->saved_func = NULL;
+-	mutex_unlock(&ftrace_lock);
  }
- 
-@@ -1117,9 +1122,12 @@ void ftrace_graph_init_idle_task(struct task_struct *t, int cpu)
- 	if (ftrace_graph_active) {
- 		unsigned long *ret_stack;
- 
-+		if (WARN_ON_ONCE(!fgraph_stack_cachep))
-+			return;
-+
- 		ret_stack = per_cpu(idle_ret_stack, cpu);
- 		if (!ret_stack) {
--			ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
-+			ret_stack = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
- 			if (!ret_stack)
- 				return;
- 			per_cpu(idle_ret_stack, cpu) = ret_stack;
-@@ -1139,7 +1147,10 @@ void ftrace_graph_init_task(struct task_struct *t)
- 	if (ftrace_graph_active) {
- 		unsigned long *ret_stack;
- 
--		ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
-+		if (WARN_ON_ONCE(!fgraph_stack_cachep))
-+			return;
-+
-+		ret_stack = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
- 		if (!ret_stack)
- 			return;
- 		graph_init_task(t, ret_stack);
-@@ -1154,7 +1165,11 @@ void ftrace_graph_exit_task(struct task_struct *t)
- 	/* NULL must become visible to IRQs before we free it: */
- 	barrier();
- 
--	kfree(ret_stack);
-+	if (ret_stack) {
-+		if (WARN_ON_ONCE(!fgraph_stack_cachep))
-+			return;
-+		kmem_cache_free(fgraph_stack_cachep, ret_stack);
-+	}
- }
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
-@@ -1294,6 +1309,14 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 
- 	guard(mutex)(&ftrace_lock);
- 
-+	if (!fgraph_stack_cachep) {
-+		fgraph_stack_cachep = kmem_cache_create("fgraph_stack",
-+							SHADOW_STACK_SIZE,
-+							SHADOW_STACK_SIZE, 0, NULL);
-+		if (!fgraph_stack_cachep)
-+			return -ENOMEM;
-+	}
-+
- 	if (!fgraph_initialized) {
- 		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph:online",
- 					fgraph_cpu_init, NULL);
 -- 
 2.45.2
 
