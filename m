@@ -1,259 +1,171 @@
-Return-Path: <linux-kernel+bounces-388017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244719B593C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:41:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651849B5943
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A671B1F23FFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8863A1C224EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0903717A5BE;
-	Wed, 30 Oct 2024 01:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107E6191F60;
+	Wed, 30 Oct 2024 01:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1wDC+e0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J4YPlHoH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274D94437;
-	Wed, 30 Oct 2024 01:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03715146D40;
+	Wed, 30 Oct 2024 01:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252450; cv=none; b=o7Gfd4TwTCZovxzN3TF/9YO3aVLvnkTpGK9jmY+GGRDnMZIoC2nZN9PaK50h96cy0gN2P6JRKoOOO1toF9eFfGnHEthvvHwJvlfECULkKrlz1kuTYUgOIszPPulULuwufiNfqRc0vtPSxqAfQvyBcg8bWVmpHpZjHFRdGxKh0v8=
+	t=1730252507; cv=none; b=G5ybXEQ4l+pQnb4DBPi+OI3A6UM+gGBVwNpFeAn8N02alhalzo3b/31EwVFgly59jxivS+YU/H47TqvY24OPXhaBPB/cEtOft0s3IiawJtGgWxm9yWfeq1qyH/3xK1nyxxhF+OKbXwgP+rht9q+MHYf6xls9BI7f36iKH6RizzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252450; c=relaxed/simple;
-	bh=enJIsrboZbV/jiq1NYxRCBEDiaUeijBIjXWIGNL4D6A=;
+	s=arc-20240116; t=1730252507; c=relaxed/simple;
+	bh=WcMfb/ZXzjJ5ndEdwQHbHhsDGnvuFA3OHZX79Q4P304=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDXLrL9b99lCucXRx4D0fPpzQVXfQZcG6A6dnSKW823hClvzEz3Zg5uuA/SiG1aynHif1lctN8UZ4wkshPK/w200hgFZi4N5Q/zuG9gamCP6KjOPShjDuIDx9zOn1d37xzJnSu0FqcYYNn4JY3J2vCKX/lQouE3OJYKy0bwRsPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1wDC+e0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9545C4CECD;
-	Wed, 30 Oct 2024 01:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730252449;
-	bh=enJIsrboZbV/jiq1NYxRCBEDiaUeijBIjXWIGNL4D6A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m1wDC+e0paXoDcn9gnQzyMX/g5ei9EqANcNC3ksKuzs/b9pcE8o0kVO11JEc5BHwT
-	 CP8DS4fiRAWmpYKu41iHn7poD5sQFsWiD3uYMbO4zWgHxbuWsDnHl1Fj7TL/Sjattu
-	 oUeJLYvD0u+0YC1+NSy/Nxi3XylvlCC6WmKSmgTvRIOcob781komIbXj877DJ/OA2A
-	 +7415a0w7wnuESKNDHFLFoT4DCroDnkFHuXhlhTGYIqKNntJW3r23CGZAaJUD3g/jW
-	 pg02EW8IbpaREcu/JdqKuXNckYDkdnfRo/oOneWJz4IhcxoKDyIkCNkbp2ljZReKq2
-	 hm/49Qc2MlhgQ==
-Date: Tue, 29 Oct 2024 18:40:46 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add a test for open coded
- kmem_cache iter
-Message-ID: <ZyGOng76IBUs8PtY@google.com>
-References: <20241024074815.1255066-1-namhyung@kernel.org>
- <20241024074815.1255066-2-namhyung@kernel.org>
- <CAADnVQLA=QE9HwH+9tA+G8uppXK0-yk-hbiBHaOmjkjVENYCsA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhH1J9Mut6BZYjerWmFJbPi0v4uZlUSwR6TTIFN4bYLZJHFQ/HED47VrdPgWmV3NUhX0Ehd944UPEfcP+ExSwxV+HhwJIPLH0fhMahLpvygYHqhR4Gr3ad+dVpbK2LduAIlwlcAJVWZjawpUMALYbzwyHCjq3xiDAOqBa3BjaIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J4YPlHoH; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730252505; x=1761788505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WcMfb/ZXzjJ5ndEdwQHbHhsDGnvuFA3OHZX79Q4P304=;
+  b=J4YPlHoHYBdnA5kpqNlIMavjWMJZQR5cIgFlTYeGmIjQ7pl3/aCdvEUu
+   BoQS2XSCFYk/w2wvY4ik1msErXTpyw7GEubJkyCE2RMtsOj9R5PvN/W60
+   sHSJEygCDEiLam4XWZI0GustDkreHfd7jzQt+8BdwiWDqOuYNasbhYTRp
+   n9I3xcz+9qus+ILKJupllqr0ZPHNBaCc6hFydfzxPo+407f22b3Im1GI1
+   4XX0t06iqfG7wfHrvrMoSVU9QkDA3JkHoHxgGkaG3n3HdppkwTU3ld05h
+   8YvLggcnXgRSrbI/fLs/glAoznqP75XgbMKGnFyjkddQMnuAgzGPJqOR3
+   Q==;
+X-CSE-ConnectionGUID: /KfYJmWuQI2S7hogsRUafA==
+X-CSE-MsgGUID: M6mQaQsWShai+no5HumT/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="30043181"
+X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
+   d="scan'208";a="30043181"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 18:41:45 -0700
+X-CSE-ConnectionGUID: Cd5FePhgSs6Fqha/z81raQ==
+X-CSE-MsgGUID: e13lZlRITLa/bV3qpXk1EQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
+   d="scan'208";a="82086912"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 29 Oct 2024 18:41:40 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5xiL-000eNw-23;
+	Wed, 30 Oct 2024 01:41:37 +0000
+Date: Wed, 30 Oct 2024 09:41:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
+	manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+	konrad.dybcio@linaro.org, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com, agross@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_narepall@quicinc.com,
+	quic_nitirawa@quicinc.com, Can Guo <quic_cang@quicinc.com>
+Subject: Re: [PATCH V2 3/3] scsi: ufs: qcom: Add support for multiple ICE
+ allocators
+Message-ID: <202410300901.9B3oDYwL-lkp@intel.com>
+References: <20241029113003.18820-4-quic_rdwivedi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLA=QE9HwH+9tA+G8uppXK0-yk-hbiBHaOmjkjVENYCsA@mail.gmail.com>
+In-Reply-To: <20241029113003.18820-4-quic_rdwivedi@quicinc.com>
 
-Hello,
+Hi Ram,
 
-On Thu, Oct 24, 2024 at 11:08:00AM -0700, Alexei Starovoitov wrote:
-> On Thu, Oct 24, 2024 at 12:48 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > The new subtest is attached to sleepable fentry of syncfs() syscall.
-> > It iterates the kmem_cache using bpf_for_each loop and count the number
-> > of entries.  Finally it checks it with the number of entries from the
-> > regular iterator.
-> >
-> >   $ ./vmtest.sh -- ./test_progs -t kmem_cache_iter
-> >   ...
-> >   #130/1   kmem_cache_iter/check_task_struct:OK
-> >   #130/2   kmem_cache_iter/check_slabinfo:OK
-> >   #130/3   kmem_cache_iter/open_coded_iter:OK
-> >   #130     kmem_cache_iter:OK
-> >   Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
-> >
-> > Also simplify the code by using attach routine of the skeleton.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> > v2)
-> >  * remove unnecessary detach  (Martin)
-> >  * check pid in syncfs to prevent surprise  (Martin)
-> >  * remove unnecessary local variable  (Andrii)
-> >
-> >  .../testing/selftests/bpf/bpf_experimental.h  |  6 ++++
-> >  .../bpf/prog_tests/kmem_cache_iter.c          | 28 +++++++++++--------
-> >  .../selftests/bpf/progs/kmem_cache_iter.c     | 28 +++++++++++++++++++
-> >  3 files changed, 50 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-> > index b0668f29f7b394eb..cd8ecd39c3f3c68d 100644
-> > --- a/tools/testing/selftests/bpf/bpf_experimental.h
-> > +++ b/tools/testing/selftests/bpf/bpf_experimental.h
-> > @@ -582,4 +582,10 @@ extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
-> >                 unsigned int flags__k, void *aux__ign) __ksym;
-> >  #define bpf_wq_set_callback(timer, cb, flags) \
-> >         bpf_wq_set_callback_impl(timer, cb, flags, NULL)
-> > +
-> > +struct bpf_iter_kmem_cache;
-> > +extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym;
-> > +extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
-> > +extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
-> > +
-> >  #endif
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-> > index 848d8fc9171fae45..778b55bc1f912b98 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-> > @@ -68,12 +68,20 @@ static void subtest_kmem_cache_iter_check_slabinfo(struct kmem_cache_iter *skel)
-> >         fclose(fp);
-> >  }
-> >
-> > +static void subtest_kmem_cache_iter_open_coded(struct kmem_cache_iter *skel)
-> > +{
-> > +       skel->bss->tgid = getpid();
-> > +
-> > +       /* To trigger the open coded iterator attached to the syscall */
-> > +       syncfs(0);
-> > +
-> > +       /* It should be same as we've seen from the explicit iterator */
-> > +       ASSERT_EQ(skel->bss->open_coded_seen, skel->bss->kmem_cache_seen, "open_code_seen_eq");
-> > +}
-> > +
-> >  void test_kmem_cache_iter(void)
-> >  {
-> > -       DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-> >         struct kmem_cache_iter *skel = NULL;
-> > -       union bpf_iter_link_info linfo = {};
-> > -       struct bpf_link *link;
-> >         char buf[256];
-> >         int iter_fd;
-> >
-> > @@ -81,16 +89,12 @@ void test_kmem_cache_iter(void)
-> >         if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
-> >                 return;
-> >
-> > -       opts.link_info = &linfo;
-> > -       opts.link_info_len = sizeof(linfo);
-> > -
-> > -       link = bpf_program__attach_iter(skel->progs.slab_info_collector, &opts);
-> > -       if (!ASSERT_OK_PTR(link, "attach_iter"))
-> > +       if (!ASSERT_OK(kmem_cache_iter__attach(skel), "skel_attach"))
-> >                 goto destroy;
-> >
-> > -       iter_fd = bpf_iter_create(bpf_link__fd(link));
-> > +       iter_fd = bpf_iter_create(bpf_link__fd(skel->links.slab_info_collector));
-> >         if (!ASSERT_GE(iter_fd, 0, "iter_create"))
-> > -               goto free_link;
-> > +               goto destroy;
-> >
-> >         memset(buf, 0, sizeof(buf));
-> >         while (read(iter_fd, buf, sizeof(buf) > 0)) {
-> > @@ -105,11 +109,11 @@ void test_kmem_cache_iter(void)
-> >                 subtest_kmem_cache_iter_check_task_struct(skel);
-> >         if (test__start_subtest("check_slabinfo"))
-> >                 subtest_kmem_cache_iter_check_slabinfo(skel);
-> > +       if (test__start_subtest("open_coded_iter"))
-> > +               subtest_kmem_cache_iter_open_coded(skel);
-> >
-> >         close(iter_fd);
-> >
-> > -free_link:
-> > -       bpf_link__destroy(link);
-> >  destroy:
-> >         kmem_cache_iter__destroy(skel);
-> >  }
-> > diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-> > index 72c9dafecd98406b..e62807caa7593604 100644
-> > --- a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-> > +++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-> > @@ -2,6 +2,8 @@
-> >  /* Copyright (c) 2024 Google */
-> >
-> >  #include "bpf_iter.h"
-> > +#include "bpf_experimental.h"
-> > +#include "bpf_misc.h"
-> >  #include <bpf/bpf_helpers.h>
-> >  #include <bpf/bpf_tracing.h>
-> >
-> > @@ -30,9 +32,12 @@ struct {
-> >
-> >  extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __ksym;
-> >
-> > +unsigned int tgid;
-> > +
-> >  /* Result, will be checked by userspace */
-> >  int task_struct_found;
-> >  int kmem_cache_seen;
-> > +int open_coded_seen;
-> >
-> >  SEC("iter/kmem_cache")
-> >  int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
-> > @@ -85,3 +90,26 @@ int BPF_PROG(check_task_struct)
-> >                 task_struct_found = -2;
-> >         return 0;
-> >  }
-> > +
-> > +SEC("fentry.s/" SYS_PREFIX "sys_syncfs")
-> > +int open_coded_iter(const void *ctx)
-> > +{
-> > +       struct kmem_cache *s;
-> > +
-> > +       if (tgid != bpf_get_current_pid_tgid() >> 32)
-> > +               return 0;
-> 
-> Pls use syscall prog type and prog_run() it.
-> No need to attach to exotic syscalls and filter by pid.
+kernel test robot noticed the following build errors:
 
-Sure, will update in v3.
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on mkp-scsi/for-next jejb-scsi/for-next linus/master v6.12-rc5 next-20241029]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> > +
-> > +       bpf_for_each(kmem_cache, s) {
-> > +               struct kmem_cache_result *r;
-> > +
-> > +               r = bpf_map_lookup_elem(&slab_result, &open_coded_seen);
-> > +               if (!r)
-> > +                       break;
-> > +
-> > +               open_coded_seen++;
-> > +
-> > +               if (r->obj_size != s->size)
-> > +                       break;
-> 
-> The order of 'if' and ++ should probably be changed ?
-> Otherwise the last object isn't sufficiently checked.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ram-Kumar-Dwivedi/dt-bindings-ufs-qcom-Document-ice-configuration-table/20241029-193301
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241029113003.18820-4-quic_rdwivedi%40quicinc.com
+patch subject: [PATCH V2 3/3] scsi: ufs: qcom: Add support for multiple ICE allocators
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20241030/202410300901.9B3oDYwL-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410300901.9B3oDYwL-lkp@intel.com/reproduce)
 
-I don't think so.  The last element should be an actual slab cache and
-then the iterator will return NULL to break the loop.  I don't expect it
-will hit the if statement.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410300901.9B3oDYwL-lkp@intel.com/
 
-Thanks,
-Namhyung
+All error/warnings (new ones prefixed by >>):
 
+   drivers/ufs/host/ufs-qcom.c: In function 'ufs_qcom_hce_enable_notify':
+>> drivers/ufs/host/ufs-qcom.c:656:23: error: implicit declaration of function 'ufs_qcom_config_ice_allocator'; did you mean 'ufs_qcom_config_ice'? [-Wimplicit-function-declaration]
+     656 |                 err = ufs_qcom_config_ice_allocator(host);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                       ufs_qcom_config_ice
+   drivers/ufs/host/ufs-qcom.c: At top level:
+>> drivers/ufs/host/ufs-qcom.c:412:12: warning: 'ufs_qcom_config_ice' defined but not used [-Wunused-function]
+     412 | static int ufs_qcom_config_ice(struct ufs_qcom_host *host)
+         |            ^~~~~~~~~~~~~~~~~~~
+
+
+vim +656 drivers/ufs/host/ufs-qcom.c
+
+   635	
+   636	static int ufs_qcom_hce_enable_notify(struct ufs_hba *hba,
+   637					      enum ufs_notify_change_status status)
+   638	{
+   639		struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+   640		int err;
+   641	
+   642		switch (status) {
+   643		case PRE_CHANGE:
+   644			err = ufs_qcom_power_up_sequence(hba);
+   645			if (err)
+   646				return err;
+   647	
+   648			/*
+   649			 * The PHY PLL output is the source of tx/rx lane symbol
+   650			 * clocks, hence, enable the lane clocks only after PHY
+   651			 * is initialized.
+   652			 */
+   653			err = ufs_qcom_enable_lane_clks(host);
+   654			break;
+   655		case POST_CHANGE:
+ > 656			err = ufs_qcom_config_ice_allocator(host);
+   657			if (err) {
+   658				dev_err(hba->dev, "failed to configure ice, ret=%d\n", err);
+   659				break;
+   660			}
+   661			/* check if UFS PHY moved from DISABLED to HIBERN8 */
+   662			err = ufs_qcom_check_hibern8(hba);
+   663			ufs_qcom_enable_hw_clk_gating(hba);
+   664			ufs_qcom_ice_enable(host);
+   665			break;
+   666		default:
+   667			dev_err(hba->dev, "%s: invalid status %d\n", __func__, status);
+   668			err = -EINVAL;
+   669			break;
+   670		}
+   671		return err;
+   672	}
+   673	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
