@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel+bounces-388478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA5D9B6033
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A35E99B6031
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A3251C217A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C551C2132B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 10:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0B11E2848;
-	Wed, 30 Oct 2024 10:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1651E47AB;
+	Wed, 30 Oct 2024 10:32:26 +0000 (UTC)
 Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCA71E3784
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFFD1E2848
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730284347; cv=none; b=h5AlDQk7dJ54aXOYOtny2g48rlzyUoEPFWJBeKklhdeMZOFAr0lTWQYr44lViNL2RJh+NKdLCQ/w7ZkKZUaHna+vGQvQGBhpdoJnZOGfwacw7RM+7U41Cnn/xanWgaVQ358UxnKzrJzPASW1kurVL1v4K5hvOhTR4zJlyFX++ms=
+	t=1730284346; cv=none; b=BbU9/j4saAcMrMoNfYv4rkWcqIVr6XYxSB4YVSzOWogNN7i0vFFZNgpk75PQTATOV1Bu7LwWFoLekUFord8oadVm3zNHufYZUcnGihIK0UafNyQyGfHFoCaEylrRj78XnK/c2++z89CSiie2K8zAk1eyFCTDVyhilP+gD5xdIss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730284347; c=relaxed/simple;
-	bh=ONljCAaXxr7CvIpXfPSLakG9YzdXAgNj39DDo3OpjOQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tpr29FG4kWzZ3Ndsho2xwmtt7ZB3LoEW0bNgbdywIf1M35LrbvXfjNTJC7cmcqGZzoHDeJvVecV/uIuUiqGs1a2aDG2Muq7henDf71L6DG/M8QXUn/tgVHVE2pCGeVd6kqEvdR03gtXGKkyn0AQXiUfr/Q5d3F1Um4nahSuzuQI=
+	s=arc-20240116; t=1730284346; c=relaxed/simple;
+	bh=JZ286Romoe06+GRgPc3jaV6GDufMbsUVU9Tunn0/Avc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wsuvkjp1kaKVdPXqfnNespTO18ZPgDWz+JA4BemICTZuiPk+hh2d7x8ufEkWkQH/RaRkSBXv0/JFde4eYZsh0ZUNTZTC618Cob8sJRYGTu6gOl8KaSpkARLkuK5Njh9WuacZzTyQeXHWnVNHQRJBkitaxawKdYcz3s/UgcoXOXE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
 Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 49UAVevu026664;
-	Wed, 30 Oct 2024 18:31:40 +0800 (+08)
+	by SHSQR01.spreadtrum.com with ESMTP id 49UAVfg6026716;
+	Wed, 30 Oct 2024 18:31:41 +0800 (+08)
 	(envelope-from Yi.Sun@unisoc.com)
 Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1L6f7gz2K4lHM;
-	Wed, 30 Oct 2024 18:31:02 +0800 (CST)
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1M63kyz2KSK4X;
+	Wed, 30 Oct 2024 18:31:03 +0800 (CST)
 Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
  BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 30 Oct 2024 18:31:38 +0800
+ 15.0.1497.23; Wed, 30 Oct 2024 18:31:39 +0800
 From: Yi Sun <yi.sun@unisoc.com>
 To: <chao@kernel.org>, <jaegeuk@kernel.org>
 CC: <yi.sun@unisoc.com>, <sunyibuaa@gmail.com>,
         <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>, <niuzhiguo84@gmail.com>,
         <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>
-Subject: [PATCH v2 0/5] Speed up f2fs truncate
-Date: Wed, 30 Oct 2024 18:31:31 +0800
-Message-ID: <20241030103136.2874140-1-yi.sun@unisoc.com>
+Subject: [PATCH v2 1/5] f2fs: blocks need to belong to the same segment when using update_sit_entry()
+Date: Wed, 30 Oct 2024 18:31:32 +0800
+Message-ID: <20241030103136.2874140-2-yi.sun@unisoc.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241030103136.2874140-1-yi.sun@unisoc.com>
+References: <20241030103136.2874140-1-yi.sun@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,45 +60,54 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 49UAVevu026664
+X-MAIL:SHSQR01.spreadtrum.com 49UAVfg6026716
 
-Deleting large files is time-consuming, and a large part
-of the time is spent in f2fs_invalidate_blocks()
-->down_write(sit_info->sentry_lock) and up_write().
+When using update_sit_entry() to release consecutive blocks,
+ensure that the consecutive blocks belong to the same segment.
+Because after update_sit_entry_for_realese(), @segno is still
+in use in update_sit_entry().
 
-If some blocks are continuous, we can process these blocks
-at the same time. This can reduce the number of calls to
-the down_write() and the up_write(), thereby improving the
-overall speed of doing truncate.
+Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+---
+ fs/f2fs/segment.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Test steps:
-Set the CPU and DDR frequencies to the maximum.
-dd if=/dev/random of=./test.txt bs=1M count=100000
-sync
-rm test.txt
-
-Time Comparison of rm:
-original        optimization            ratio
-7.17s           3.27s                   54.39%
-
-Yi Sun (5):
-  f2fs: blocks need to belong to the same segment when using
-    update_sit_entry()
-  f2fs: expand f2fs_invalidate_compress_page() to
-    f2fs_invalidate_compress_pages_range()
-  f2fs: add parameter @len to f2fs_invalidate_internal_cache()
-  f2fs: add parameter @len to f2fs_invalidate_blocks()
-  f2fs: Optimize f2fs_truncate_data_blocks_range()
-
- fs/f2fs/compress.c | 11 +++---
- fs/f2fs/data.c     |  2 +-
- fs/f2fs/f2fs.h     | 16 +++++----
- fs/f2fs/file.c     | 78 ++++++++++++++++++++++++++++++++++++++----
- fs/f2fs/gc.c       |  2 +-
- fs/f2fs/node.c     |  4 +--
- fs/f2fs/segment.c  | 84 +++++++++++++++++++++++++++++++++++++++-------
- 7 files changed, 161 insertions(+), 36 deletions(-)
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bb2fd98331cd..a5bd101c63a1 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2424,6 +2424,10 @@ static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr,
+ 		SIT_I(sbi)->max_mtime = ctime;
+ }
+ 
++/*
++ * NOTE: when updating multiple blocks at the same time, please ensure
++ * that the consecutive input blocks belong to the same segment.
++ */
+ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_entry *se,
+ 				block_t blkaddr, unsigned int offset, int del)
+ {
+@@ -2434,6 +2438,8 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
+ 	int i;
+ 	int del_count = -del;
+ 
++	f2fs_bug_on(sbi, GET_SEGNO(sbi, blkaddr) != GET_SEGNO(sbi, blkaddr + del_count - 1));
++
+ 	for (i = 0; i < del_count; i++) {
+ 		exist = f2fs_test_and_clear_bit(offset + i, se->cur_valid_map);
+ #ifdef CONFIG_F2FS_CHECK_FS
+@@ -2476,6 +2482,11 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
+ 	return del;
+ }
+ 
++/*
++ * If releasing blocks, this function supports updating multiple consecutive blocks
++ * at one time, but please note that these consecutive blocks need to belong to the
++ * same segment.
++ */
+ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ {
+ 	struct seg_entry *se;
 -- 
 2.25.1
 
