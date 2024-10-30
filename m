@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-389354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F229B6BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:14:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302739B6BE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 19:14:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236D81C20D96
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6E81F222C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A6B1CC161;
-	Wed, 30 Oct 2024 18:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7A11CEACA;
+	Wed, 30 Oct 2024 18:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrtg4v2F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spd94i9O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A9982899;
-	Wed, 30 Oct 2024 18:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4EB1C461C;
+	Wed, 30 Oct 2024 18:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730312049; cv=none; b=ZuAY5WC5bpvxnEEX8P7q8WslCnyze1P9JBMQDMYTyaAbqhFMVt1cbKzq3MoL/t2Tlxd1v9WPWcP0mphSVdxlKWhjOat6nxTlqTXv7nnHF85cykFxuNcq4xSkhHATD0LP9EDddv6pcebtKffE0ebIh22BNLfVJ/V8+iuQ+pB/sLs=
+	t=1730312058; cv=none; b=b5aTN/rOzeZbekJysiqyMNV8R94JcflLzyY0eqj+YtYL39pY7+MfvWEN5NDsIyK0l78dm6+BODtU70hB3VG4CQxDXoF1lQOizU0Hapve7J7VAFZRE7LvRIj4Unjo2NKEzlKe/tpTpWrqkpCkdQlWmLB7jGbxfHVdvtjcvnLl1+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730312049; c=relaxed/simple;
-	bh=gPom55NrJIdbKpm1OIV8sl9jUaW8THjT/W08qytNduY=;
+	s=arc-20240116; t=1730312058; c=relaxed/simple;
+	bh=Hp4P5E8ely9zsB83xiSQXu4DK6HwPjHt34n6+iI16kg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RiQqfpZQb0Dp4CRn6NRdVdVLUP/pzBcvJgLeQRjBDRV620PmM6YjqcejU3+AZV017xZOLdqDOUvhuolZ0X9Si4dwR84L5keZLCKIJpzpxyqBZPd6/Y5R79SVWrW5AzGLfvQvtQUp7pCDbeKSvfS2bWYsYfMr/3E+iEZbz14DeaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrtg4v2F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF14C4CED2;
-	Wed, 30 Oct 2024 18:14:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cs2bx72ZeJepf8djEyIzrPvOo6uZrUaBGljYioHvm4FXuT+UEXInFHC6MgWjGuJiUQQaMZwp47OTif7eMUtGKMCMVmUPOJBYIFQ5IuUCCa+wndNMY2C10J3YjmRnLJABXjfHvvxrVRTbayiZv7b9oP2QOQAKzsShzgwDvLFdggI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spd94i9O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98360C4CECE;
+	Wed, 30 Oct 2024 18:14:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730312048;
-	bh=gPom55NrJIdbKpm1OIV8sl9jUaW8THjT/W08qytNduY=;
+	s=k20201202; t=1730312057;
+	bh=Hp4P5E8ely9zsB83xiSQXu4DK6HwPjHt34n6+iI16kg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lrtg4v2F6vLvgHtFFIiNEK8+MjINfH8XZyiQKGsB9f2m4CdhP5wbSNPOBOdGFjF6s
-	 q9x8cw+TXo3Tt/72B2PYAbDnWOiGISanNNE24eUH1FbuCwReCBW/CHLK/Us4OqRJzw
-	 BjX4vItTnYSgXIbrMaSV5T+ni9z44y8jlvTmeWJBy4hza7/EEeQn8AqP8ckO68mNDA
-	 53YiMRdvzcsFDL58KaPXEyMYIQ5/O1KV7l1edIgNr88UksVk5vGsNBpM9FFetq5jD5
-	 56Pf7WqdyDmlrex0iiLGoTcXZbR9dmjIF+QYCdxyGczP+A95eS9oAmztbNbvNp9MC0
-	 7dXjUVU8zFIgQ==
-Date: Wed, 30 Oct 2024 18:14:03 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: sound: sprd,pcm-platform: convert to
- YAML
-Message-ID: <97cb13bf-b1b8-4a8e-bb6e-7662ed28bde1@sirena.org.uk>
-References: <9fc646b70a73e7a6c513771d69b0edcd140f09d7.1730310275.git.stano.jakubek@gmail.com>
+	b=spd94i9OUodgg7FbaNHdc7Lz92HUvi9IstXOX9DMPMlG7CR1cuZLV+ZDgwaZW3NIE
+	 iqSWWdMXfM5ZEe5WanBcpiOVVS5rW5scAHWvhDm7B0CBls8amAzzGcsblbruo35zf3
+	 lqU7wVfFUY/hi1Ihqx48Z80CBjoy3Za/SkCDMXpstS5oWmvNx8KSQ2e85ENy5wHfeu
+	 k8ZVqy5WWuYXKnAFPt11Ys1e307uT2SUGH1/V01THA8OB2tNMZU0kIQqeeCk3hSorH
+	 UrsxOLEMyeA5/OpMsNKHS2Mslo9DygZ7OlfrUUKuk+5lk09Z+Gsbnn3WIz2Z8HSnxq
+	 xm1MwgY56tvvg==
+Date: Wed, 30 Oct 2024 08:14:16 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Luca Boccassi <bluca@debian.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
+Message-ID: <ZyJ3eG8YHeyxqOe_@slm.duckdns.org>
+References: <ZyAnSAw34jwWicJl@slm.duckdns.org>
+ <1998a069-50a0-46a2-8420-ebdce7725720@redhat.com>
+ <ZyF858Ruj-jgdLLw@slm.duckdns.org>
+ <CABgObfYR6e0XV94USugVOO5XcOfyctr1rAm+ZWJwfu9AHYPtiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gOI4wYstUM9HsCLk"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9fc646b70a73e7a6c513771d69b0edcd140f09d7.1730310275.git.stano.jakubek@gmail.com>
-X-Cookie: I feel partially hydrogenated!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABgObfYR6e0XV94USugVOO5XcOfyctr1rAm+ZWJwfu9AHYPtiA@mail.gmail.com>
 
+Hello,
 
---gOI4wYstUM9HsCLk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Oct 30, 2024 at 01:05:16PM +0100, Paolo Bonzini wrote:
+> On Wed, Oct 30, 2024 at 1:25 AM Tejun Heo <tj@kernel.org> wrote:
+> > > I'm not sure if the KVM worker thread should process signals.  We want it
+> > > to take the CPU time it uses from the guest, but otherwise it's not running
+> > > on behalf of userspace in the way that io_wq_worker() is.
+> >
+> > I see, so io_wq_worker()'s handle signals only partially. It sets
+> > PF_USER_WORKER which ignores fatal signals, so the only signals which take
+> > effect are STOP/CONT (and friends) which is handled in do_signal_stop()
+> > which is also where the cgroup2 freezer is implemented.
+> 
+> What about SIGKILL? That's the one that I don't want to have for KVM
+> workers, because they should only stop when the file descriptor is
+> closed.
 
-On Wed, Oct 30, 2024 at 06:48:38PM +0100, Stanislav Jakubek wrote:
-> Convert the Spreadtrum DMA plaform bindings to DT schema.
-> Adjust filename to match compatible.
+I don't think SIGKILL does anything for PF_USER_WORKER threads. Those are
+all handled in the fatal: label in kernel/signal.c::get_signal() and the
+function just returns for PF_USER_WORKER threads. I haven't used it myself
+but looking at io_uring usage, it seems pretty straightforward.
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+> (Replying to Luca: the kthreads are dropping some internal data
+> structures that KVM had to "de-optimize" to deal with processor bugs.
+> They allow the data structures to be rebuilt in the optimal way using
+> large pages).
+> 
+> > Given that the kthreads are tied to user processes, I think it'd be better
+> > to behave similarly to user tasks as possible in this regard if userspace
+> > being able to stop/cont these kthreads are okay.
+> 
+> Yes, I totally agree with you on that, I'm just not sure of the best
+> way to do it.
+> 
+> I will try keeping the kthread and adding allow_signal(SIGSTOP).  That
+> should allow me to process the SIGSTOP via get_signal().
 
---gOI4wYstUM9HsCLk
-Content-Type: application/pgp-signature; name="signature.asc"
+I *think* you can just copy what io_wq_worker() is doing.
 
------BEGIN PGP SIGNATURE-----
+Thanks.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcid2oACgkQJNaLcl1U
-h9BOkgf+JtiwxnUsmi1LQ1DAbES3Mn8VD56Dkoe8ji5V7KVMAMP3JMqXUZBHWhMT
-shdLHUEY9d8H1gmLZfZcE59NYdfPATsN56Ck/arp3pFX8cJTn+xX0vSSixfdw1fn
-LSf4Mraf+yS8567FB7RTYxhFFWAKogO/SAIYt2iETRFmCCO8RSm0MlwhTC/XEd9I
-ke7aLn7qWciXVR7rtTb9mrdHEAV9rUnylyJ+6rt4EsK07CPPvJaLoj7UBJ/csAG4
-SLhaVP+pQrXeIp/plSpXKNUUUA5id5CrtfrzuEmIPIHuvHX4WUzuQ+ljkHJxddHI
-pfZRoXRWVWDYHwBRswcRA/gRdmCzgA==
-=uAbo
------END PGP SIGNATURE-----
-
---gOI4wYstUM9HsCLk--
+-- 
+tejun
 
