@@ -1,178 +1,336 @@
-Return-Path: <linux-kernel+bounces-389225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927319B6A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:08:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7499B6A43
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:08:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B944B203AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18911C21BD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C310221A702;
-	Wed, 30 Oct 2024 16:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90142215023;
+	Wed, 30 Oct 2024 17:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ThTJtD6V"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jh9S7BiA"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D68821745E;
-	Wed, 30 Oct 2024 16:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BAC1E7C3A
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307533; cv=none; b=c0+yVoUF6Atg/KPa3reGIKwDSy0i35Kqj59jbGR1Q8iE5otoAAUfTsr9W5egAW2SYRpKWLJPmUoNXAou9YM0GLJnG90hjzJyBxSFc0zKSZubReMxLc9Lm9WcewLjxKG0kEsZhz5t6IHdWMGmhTFAQSNbPdCbPUZUBRU59nYyr34=
+	t=1730307623; cv=none; b=Ty1WWZhZj/6hBFojP3MkA8gLhbV7abcyghbHSl4P+rg3PJHDCwa3NAsANl+84ctvRsvM1HSmppY+XtIexA/gqnaPGkzE4N9kTyDwHSET1sLFMRc/s4iU/ZGVam2ABk6vogtSAdgTjExl7XdEJUSbV0TUH9Mlp6jT73KBZ4KqWSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307533; c=relaxed/simple;
-	bh=ZaNj72bHwwAgPrYGtNeBr2dlriKJWTyEW9RryZ6X9Ok=;
+	s=arc-20240116; t=1730307623; c=relaxed/simple;
+	bh=xEKWkEQ0dsTDVGsrZdU0x7/Ytc30fsIoqz1nb6OTFK0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g0jftW0n/ceL2gE0diQNRb+heoaTyJrCGmpKAJLbQTxSeabhMMMFevwsQ7YB4sReYJImhnvz06CooisoYlm9/eqQBbIgX1UpB2P7rBGYH3iWKGp151KBggLoEUB2KRCskAZwYr69xfGDmPVoPFXAm8N3BIl3wM8Gzsw0AO2zbEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ThTJtD6V; arc=none smtp.client-ip=209.85.166.173
+	 To:Cc:Content-Type; b=Oeo4EiUbyL3NLvvH/4Jri+O4fTA9gMtetENRqp+9eFaybaWyTToal32QH/dDjnb76uCYI+XqDHu5PQHEvhP8iGasdAX/uq9t2ofaGgL8LV3GqiGSaKF0D4jm5pTKMkQ5d0lTOVGCbhv6TBkyElPi0nZQAG/ix8I0KgyL33B1eNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jh9S7BiA; arc=none smtp.client-ip=209.85.221.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a3a5cd2a3bso69755ab.3;
-        Wed, 30 Oct 2024 09:58:50 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5101bd018ceso30968e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 10:00:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730307530; x=1730912330; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730307620; x=1730912420; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TSgEGqLSHYW5dJnL+akJvNntnbwcTcLxiNTHrobsiFM=;
-        b=ThTJtD6VFpkxuTR7Ql0rZp4tZQA/KDkFD5UzJvMbPXAH2yfktUbo5Q/TRKENFftReg
-         cJDZ32GdUs7yFjuPyFce+phj8ctR/+aM0EP581K0t0/K1BIWKPEXYR2hiGrI/dTKrf4+
-         ARd872PbZ551kFlfBIWwMwiXcHAtYIgQsUxoxjdiBlSDxoFhVpWVRHlT3xYAgDeogr/t
-         mPYIAhObsksslxjdCKT2LruBNbD17X3zn6/nsksceqOQTTBETvegRJi8rdNEyl6pRByF
-         /xpG/rLSNgz7Xu8ku2TpIGSdUi55n6pxyH5y1MhX/gVgxq82FKKX8H2phPsJZrI9TYBx
-         bTjg==
+        bh=wWrbK7fnh9whln3CNHKOj//EVVMSdORA+MSC2o/MTY0=;
+        b=jh9S7BiAZlYQAiLnUTJkPDY3Jrd1ys7bMTbyU/WBEEveqOJ7y6GkdhDW+JuMbGB2YG
+         oi8uMlDE36T8s0TcR+sPpFSWTzMoqd4Fbt3TuyZf4+BoaceIm9o/TRiuASwt+jbo6O3A
+         8dPO1VQ6qlCxlXZQQicwhE4JU25ddC9r9fr0SenqpOsqmnu8WIDr1sX86o9zB1M3Tkb6
+         KCyORARKPa8WVsBx5Zraatftq75z08bmSeaLhpATLwbabqOH+TV61wXKgJuHQI9e+LiV
+         /Lob0MWBFdqg6/QgWdSx717cHnhYTlU62NfSdNhymWytczBP5+r6GjO41LNbb/Fzt2o4
+         Nkkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730307530; x=1730912330;
+        d=1e100.net; s=20230601; t=1730307620; x=1730912420;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TSgEGqLSHYW5dJnL+akJvNntnbwcTcLxiNTHrobsiFM=;
-        b=iKAoYClNQgNWI0DW6WhVyTMZDs9SNPXI0qR1e4m9sdJ2gxcEJARd5rF1oN8DVMYx1g
-         TluCaPc5RWBXNGvtnGE5lE9vgsuIttN3FcnpBJFJemO9b60TXBNYkrg5Yvj/kCsZBqcj
-         HEaQF+0Zii4YK8GQhir3H51fEtx9+Ue714fmnoIOBbCi6GgXRIlEdZSKf5CcjK1czPYx
-         zMlSb4b1XiyLZdxMSR2z+9LzWg8SBiu2GsTzSvTjlq3ZWfyCM/ht3Kt4pLny4exm5isH
-         YMyFJumm3m1x7rLACA2IOUE3X1qQjfKjH9BvIapBZFY22Rwj+36rjXo6RvUBC80AYcXD
-         i9aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyPV+u8+UZB+SBcRYZBHZQVQ2kUrQDpACRHYq36f6VNE7M2VKLNJIkwkq5l592LgwdFwJNFoma4PSDJljD@vger.kernel.org, AJvYcCWT6tZBSa2nRsahlD9BtP3uc1sVSMkLY1Vq1jA5uJpQYFJbHAeAFWyeimn8PS/1n9n27fojN7OegdohTEdn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcXwpby+ErBld9fdUEo6QGnqfgRkd7+nQgZmTVPlWlAZrBaakb
-	YcgQBOFo9wbh+EmtiCATc4utT4fp3S6JSnMTHB6K9jixsJRg6ZQqV7VOcH2SLN2ainjimtfR6In
-	Mxcbxm5TqkugjOa3x9C2wwUCZ5lk=
-X-Google-Smtp-Source: AGHT+IGmbmSXox8oAVQKBdxqprSBcxGpJ91Xocq6QrwRiJgePmhF7ve9q4dPiAMajWeQWmKzteD5uHeTwomcrUrLAXY=
-X-Received: by 2002:a05:6e02:1a4e:b0:3a3:b4ec:b400 with SMTP id
- e9e14a558f8ab-3a4ed2df0f2mr181154985ab.17.1730307530123; Wed, 30 Oct 2024
- 09:58:50 -0700 (PDT)
+        bh=wWrbK7fnh9whln3CNHKOj//EVVMSdORA+MSC2o/MTY0=;
+        b=xDzvlDMp6P9uP+J0TtU4LQMmAepdhQbbSHDV+KSLiWuVF1QsM4WTf5SQhB4qFkmP6z
+         sFtETlZ6qj7eBsbHFYeTLkJ1u/xa1VWkXi3czlWQL9QZJOxzkwuYihFOwtF0qyoKsJDz
+         L40lia6w5rDai8Mc7PAsLvsxl9tzdAZvD5UZvMx43LS4vM6hKzADWzpbFLLddbI1t/6L
+         hXROWjTmHsrZ32bh2nQ16jiYbq0Ln0zn8VjpGmzS0MCyQ2I5++4Fc32lBvHVgTqcD0mo
+         LIK1XGrtZFnfDX7dKLn+HY+XleHN40K79YjEe8lc/0vKPGcsaMHgNmBMyz/RDBtCoTUl
+         fJyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXZrGxPMTEuMRyj0rgMHuB5TRrAAmf6UuS3lnF9PWj/LNLcqf+1Ix2LtCxPeLXhZT4hClf7E/7upV2IyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMV47uof06ncxjqVNBWN/X9qyd/zFKn7E01ciyFfa93lMlYP9Y
+	Vp1kYjxpufdtvQAD6E+eKfeGc/tyyKhCKUPBeSyTBsyZiyoio/9xaK+ZyZTLMgGPK9YoDmwiyUm
+	Qzk9wgWpqmmLCM4asB6X4XgtbXoAQ/2Xu
+X-Google-Smtp-Source: AGHT+IE+a/Gf/q8ZCJNrbPIEjOQEQW/h0iSkBlQV8DZREUM2G66zLJ+sF8UsnR1zsQnuSlZqupomzOXFiVHLrgYaFWM=
+X-Received: by 2002:a05:6122:d90:b0:50d:35d9:ad5a with SMTP id
+ 71dfb90a1353d-51015045ccemr13184984e0c.5.1730307618102; Wed, 30 Oct 2024
+ 10:00:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
- <20241008125410.3422512-4-quic_bibekkum@quicinc.com> <2d651f1b-4f51-4984-903f-7f5a14151f84@arm.com>
- <531d0144-e027-4589-b4ef-79f02583df8b@quicinc.com> <65132b36-49f6-4b08-8e7d-6d6cb8da5960@arm.com>
-In-Reply-To: <65132b36-49f6-4b08-8e7d-6d6cb8da5960@arm.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 30 Oct 2024 09:58:38 -0700
-Message-ID: <CAF6AEGvAYeY-fuk1Dg-0gsrod7Dy91qifKvChCd03=bs_zfs-g@mail.gmail.com>
-Subject: Re: [PATCH v16 3/5] iommu/arm-smmu: add support for PRR bit setup
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Bibek Kumar Patro <quic_bibekkum@quicinc.com>, will@kernel.org, joro@8bytes.org, 
-	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, 
-	dmitry.baryshkov@linaro.org, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20241030103136.2874140-1-yi.sun@unisoc.com> <20241030103136.2874140-5-yi.sun@unisoc.com>
+In-Reply-To: <20241030103136.2874140-5-yi.sun@unisoc.com>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Wed, 30 Oct 2024 10:00:06 -0700
+Message-ID: <CACOAw_zn0ov0b2h9+zHn2gYVCDVGYPkXFNcx-j7OkhU0Y=i94g@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v2 4/5] f2fs: add parameter @len to f2fs_invalidate_blocks()
+To: Yi Sun <yi.sun@unisoc.com>
+Cc: chao@kernel.org, jaegeuk@kernel.org, ke.wang@unisoc.com, 
+	linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	sunyibuaa@gmail.com, hao_hao.wang@unisoc.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 8:23=E2=80=AFAM Robin Murphy <robin.murphy@arm.com>=
- wrote:
+On Wed, Oct 30, 2024 at 3:35=E2=80=AFAM Yi Sun <yi.sun@unisoc.com> wrote:
 >
-> On 30/10/2024 1:14 pm, Bibek Kumar Patro wrote:
-> >
-> >
-> > On 10/29/2024 6:59 PM, Robin Murphy wrote:
-> >> On 2024-10-08 1:54 pm, Bibek Kumar Patro wrote:
-> >>> Add an adreno-smmu-priv interface for drm/msm to call
-> >>> into arm-smmu-qcom and initiate the PRR bit setup or reset
-> >>> sequence as per request.
-> >>>
-> >>> This will be used by GPU to setup the PRR bit and related
-> >>> configuration registers through adreno-smmu private
-> >>> interface instead of directly poking the smmu hardware.
-> >>>
-> >>> Suggested-by: Rob Clark <robdclark@gmail.com>
-> >>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> >>> ---
-> >>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 37 +++++++++++++++++++=
-+++
-> >>>   drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
-> >>>   include/linux/adreno-smmu-priv.h           | 10 +++++-
-> >>>   3 files changed, 48 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/
-> >>> iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>> index 6e0a2a43e45a..38ac9cab763b 100644
-> >>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>> @@ -25,6 +25,7 @@
-> >>>
-> >>>   #define CPRE            (1 << 1)
-> >>>   #define CMTLB            (1 << 0)
-> >>> +#define GFX_ACTLR_PRR        (1 << 5)
-> >>>
-> >>>   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
-> >>>   {
-> >>> @@ -109,6 +110,40 @@ static void
-> >>> qcom_adreno_smmu_resume_translation(const void *cookie, bool termina
-> >>>       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg);
-> >>>   }
-> >>>
-> >>> +static void qcom_adreno_smmu_set_prr_bit(const void *cookie, bool se=
-t)
-> >>> +{
-> >>> +    struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
-> >>> +    struct arm_smmu_device *smmu =3D smmu_domain->smmu;
-> >>> +    const struct device_node *np =3D smmu->dev->of_node;
-> >>> +    struct arm_smmu_cfg *cfg =3D &smmu_domain->cfg;
-> >>> +    u32 reg =3D 0;
-> >>> +
-> >>> +    if (of_device_is_compatible(np, "qcom,smmu-500") &&
-> >>> +            of_device_is_compatible(np, "qcom,adreno-smmu")) {
-> >>
-> >> These conditions aren't going to change between calls - wouldn't it
-> >> make more sense to conditionally assign the callbacks in the first
-> >> place? Not the biggest deal if this is a one-off context-setup type
-> >> thing, just that it looks a little funky.
-> >>
-> >
-> > Let me know if you want to pursue this still.
-> >  From the current PRR implementation in the graphics
-> > vendor layer, this seems to be just setup kind-of thing.
-> > Also if we keep this conditional check before assigning callbacks,
-> > and vendor layer caller won't be having any such check,
-> > wouldn't it be an issue in unsupported platforms (!qcom,smmu-500 or
-> > !qcom,adreno-smmu)
-> > as the callbacks won't be assigned?
-> > So as per my understanding I think it would be safe to keep the
-> > condition check here?
+> New function can process some consecutive blocks at a time.
 >
-> Like I say, it makes more sense to me personally if SMMUs which don't
-> have a PRR don't offer a callback for setting the PRR which they don't
-> have, and for it to be the caller's responsibility not to call a NULL
-> callback where they wouldn't need to call one anyway. But the
-> adreno_priv interface is kind of Rob's thing, so I'll leave it to his
-> preference.
+> Function f2fs_invalidate_blocks()->down_write() and up_write()
+> are very time-consuming, so if f2fs_invalidate_blocks() can
+> process consecutive blocks at one time, it will save a lot of time.
+>
+> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+> ---
+>  fs/f2fs/compress.c |  4 +--
+>  fs/f2fs/f2fs.h     |  3 +-
+>  fs/f2fs/file.c     |  8 +++---
+>  fs/f2fs/node.c     |  4 +--
+>  fs/f2fs/segment.c  | 69 ++++++++++++++++++++++++++++++++++++++--------
+>  5 files changed, 68 insertions(+), 20 deletions(-)
+>
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index e607a7885b57..02ad0ff29cf2 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1374,7 +1374,7 @@ static int f2fs_write_compressed_pages(struct compr=
+ess_ctx *cc,
+>                         if (blkaddr =3D=3D COMPRESS_ADDR)
+>                                 fio.compr_blocks++;
+>                         if (__is_valid_data_blkaddr(blkaddr))
+> -                               f2fs_invalidate_blocks(sbi, blkaddr);
+> +                               f2fs_invalidate_blocks(sbi, blkaddr, 1);
+>                         f2fs_update_data_blkaddr(&dn, COMPRESS_ADDR);
+>                         goto unlock_continue;
+>                 }
+> @@ -1384,7 +1384,7 @@ static int f2fs_write_compressed_pages(struct compr=
+ess_ctx *cc,
+>
+>                 if (i > cc->valid_nr_cpages) {
+>                         if (__is_valid_data_blkaddr(blkaddr)) {
+> -                               f2fs_invalidate_blocks(sbi, blkaddr);
+> +                               f2fs_invalidate_blocks(sbi, blkaddr, 1);
+>                                 f2fs_update_data_blkaddr(&dn, NEW_ADDR);
+>                         }
+>                         goto unlock_continue;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index addd49af57ec..4bb459157adf 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3716,7 +3716,8 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, nid_=
+t ino);
+>  int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
+>  int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
+>  void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free)=
+;
+> -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+> +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr,
+> +                                               unsigned int len);
+>  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr=
+);
+>  int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
+>  void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 75a8b22da664..13594bb502d1 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -652,7 +652,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_=
+data *dn, int count)
+>                                 valid_blocks++;
+>                 }
+>
+> -               f2fs_invalidate_blocks(sbi, blkaddr);
+> +               f2fs_invalidate_blocks(sbi, blkaddr, 1);
+>
+>                 if (!released || blkaddr !=3D COMPRESS_ADDR)
+>                         nr_free++;
+> @@ -750,7 +750,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 =
+from, bool lock)
+>                 unsigned int i;
+>
+>                 for (i =3D 0; i < ei.len; i++)
+> -                       f2fs_invalidate_blocks(sbi, ei.blk + i);
+> +                       f2fs_invalidate_blocks(sbi, ei.blk + i, 1);
+>
+>                 dec_valid_block_count(sbi, inode, ei.len);
+>                 f2fs_update_time(sbi, REQ_TIME);
+> @@ -1319,7 +1319,7 @@ static int __roll_back_blkaddrs(struct inode *inode=
+, block_t *blkaddr,
+>                 ret =3D f2fs_get_dnode_of_data(&dn, off + i, LOOKUP_NODE_=
+RA);
+>                 if (ret) {
+>                         dec_valid_block_count(sbi, inode, 1);
+> -                       f2fs_invalidate_blocks(sbi, *blkaddr);
+> +                       f2fs_invalidate_blocks(sbi, *blkaddr, 1);
+>                 } else {
+>                         f2fs_update_data_blkaddr(&dn, *blkaddr);
+>                 }
+> @@ -1571,7 +1571,7 @@ static int f2fs_do_zero_range(struct dnode_of_data =
+*dn, pgoff_t start,
+>                         break;
+>                 }
+>
+> -               f2fs_invalidate_blocks(sbi, dn->data_blkaddr);
+> +               f2fs_invalidate_blocks(sbi, dn->data_blkaddr, 1);
+>                 f2fs_set_data_blkaddr(dn, NEW_ADDR);
+>         }
+>
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index af36c6d6542b..db15d6a90f67 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -916,7 +916,7 @@ static int truncate_node(struct dnode_of_data *dn)
+>         }
+>
+>         /* Deallocate node address */
+> -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
+> +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
+>         dec_valid_node_count(sbi, dn->inode, dn->nid =3D=3D dn->inode->i_=
+ino);
+>         set_node_addr(sbi, &ni, NULL_ADDR, false);
+>
+> @@ -2761,7 +2761,7 @@ int f2fs_recover_xattr_data(struct inode *inode, st=
+ruct page *page)
+>         if (err)
+>                 return err;
+>
+> -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
+> +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
+>         dec_valid_node_count(sbi, inode, false);
+>         set_node_addr(sbi, &ni, NULL_ADDR, false);
+>
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 92ddff285a65..67f2bfdeb6ec 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -245,7 +245,7 @@ static int __replace_atomic_write_block(struct inode =
+*inode, pgoff_t index,
+>                 if (!__is_valid_data_blkaddr(new_addr)) {
+>                         if (new_addr =3D=3D NULL_ADDR)
+>                                 dec_valid_block_count(sbi, inode, 1);
+> -                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr);
+> +                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr, 1);
+>                         f2fs_update_data_blkaddr(&dn, new_addr);
+>                 } else {
+>                         f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
+> @@ -2558,29 +2558,76 @@ static void update_sit_entry(struct f2fs_sb_info =
+*sbi, block_t blkaddr, int del)
+>                 get_sec_entry(sbi, segno)->valid_blocks +=3D del;
+>  }
+>
+> -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+> +static void __f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
+> +                                       block_t addr, block_t end)
+>  {
+>         unsigned int segno =3D GET_SEGNO(sbi, addr);
+>         struct sit_info *sit_i =3D SIT_I(sbi);
+> +       unsigned int seg_num =3D GET_SEGNO(sbi, end) - segno + 1;
+> +       unsigned int i =3D 1, max_blocks =3D sbi->blocks_per_seg, len;
+> +       block_t addr_start =3D addr;
+>
+> -       f2fs_bug_on(sbi, addr =3D=3D NULL_ADDR);
+> -       if (addr =3D=3D NEW_ADDR || addr =3D=3D COMPRESS_ADDR)
+> -               return;
+> -
+> -       f2fs_invalidate_internal_cache(sbi, addr, 1);
+> +       f2fs_invalidate_internal_cache(sbi, addr, end - addr + 1);
+>
+>         /* add it into sit main buffer */
+>         down_write(&sit_i->sentry_lock);
+>
+> -       update_segment_mtime(sbi, addr, 0);
+> -       update_sit_entry(sbi, addr, -1);
+> +       if (seg_num =3D=3D 1)
+> +               len =3D end - addr + 1;
+> +       else
+> +               len =3D max_blocks - GET_BLKOFF_FROM_SEG0(sbi, addr);
+>
+> -       /* add it into dirty seglist */
+> -       locate_dirty_segment(sbi, segno);
+> +       do {
+> +               update_segment_mtime(sbi, addr_start, 0);
+> +               update_sit_entry(sbi, addr_start, -len);
+> +
+> +               /* add it into dirty seglist */
+> +               locate_dirty_segment(sbi, segno);
+> +
+> +               /* update @addr_start and @len and @segno */
+> +               addr_start =3D START_BLOCK(sbi, ++segno);
+> +               if (++i =3D=3D seg_num)
+> +                       len =3D GET_BLKOFF_FROM_SEG0(sbi, end) + 1;
+> +               else
+> +                       len =3D max_blocks;
+> +       } while (i <=3D seg_num);
+>
+>         up_write(&sit_i->sentry_lock);
+>  }
+>
+> +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
+> +                               block_t addr, unsigned int len)
+> +{
+> +       unsigned int i;
+> +       /* Temporary record location */
+> +       block_t addr_start =3D addr, addr_end;
+> +
+> +       if (len =3D=3D 0)
+> +               return;
+> +
+> +       for (i =3D 0; i < len; i++) {
+> +               addr_end =3D addr + i;
+> +
+> +               f2fs_bug_on(sbi, addr_end =3D=3D NULL_ADDR);
 
-We can go the route of NULL cb if it is not supported (but should make
-note of that in the adreno-smmu-priv.h header comment)
+Looks like this line should be out of this loop, right?
 
-BR,
--R
+> +
+> +               if (addr_end =3D=3D NEW_ADDR || addr_end =3D=3D COMPRESS_=
+ADDR) {
 
-> Thanks,
-> Robin.
+ditto?
+Could you help with enhancing the readability here? a little bit
+confused with using addr_start, addr_end and NEW_ADDR, COMPRESS_ADDR,
+here.
+
+> +                       if (addr_start =3D=3D addr_end) {
+> +                               addr_end =3D addr_start =3D addr_end + 1;
+> +                               continue;
+> +                       }
+> +
+> +                       __f2fs_invalidate_blocks(sbi, addr_start, addr_en=
+d - 1);
+> +                       addr_end =3D addr_start =3D addr_end + 1;
+> +               }
+> +       }
+> +
+> +       if (addr_end >=3D (addr + len))
+> +               return;
+> +
+> +       __f2fs_invalidate_blocks(sbi, addr_start, addr_end);
+> +
+> +}
+> +
+>  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr=
+)
+>  {
+>         struct sit_info *sit_i =3D SIT_I(sbi);
+> --
+> 2.25.1
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
