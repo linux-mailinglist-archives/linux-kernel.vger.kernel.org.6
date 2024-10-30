@@ -1,51 +1,71 @@
-Return-Path: <linux-kernel+bounces-387989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787419B58D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:48:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BD89B58D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:54:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9EBF1C21F0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7F91F23C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7556222F19;
-	Wed, 30 Oct 2024 00:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABFB282FE;
+	Wed, 30 Oct 2024 00:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMnT1SV1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ao/Vx4mR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18344C70;
-	Wed, 30 Oct 2024 00:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564A5C13C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 00:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730249328; cv=none; b=SiC+dOQyMTjZHSF34oWuc/AMnNjMC+6khQaXBAESqbNSH2EI7u+Dp6Iya7OVEfADEyXzmmCwnhxqgBCR1d0qcp6Zpgr/XTHMX+KNVKu5ajSG/FDKPSA6zklYEOB4oZeIks4nqYAmkJMIuzXKPBcfcRRSq6WsSPa7hpzMtFg4kGc=
+	t=1730249639; cv=none; b=KXxVek+ZHI7nu8cGI9PgiDkC5AuLahLiioAxZ5eTlV3PyFYc6CL1fb3HyUtWS6dWD2sS4AR7grpZVrwdy6LkZn1w4mTm9PBHoO9KRnbC38qR6NSimsWnsE3gHCg65N2OpZ6uxz4DifENq94nJ8cgiKPJVhOgSfA834GqoWS3DNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730249328; c=relaxed/simple;
-	bh=97w9E5ZcD4Tld5FFeLVUkMm+FoGOknYL9VY1icR2+OU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IErxMllW9AL5KZJbLpIurUD8s698PJxbhqD4n8a8xccjBuB7T3iOfA1LsMxuSeF7aE9sgUjoCoJpuPjhuQAXU+97wj+gMX3RmPu8NsKYi7qBetUtLHCR1S8/91wEjbf7CzOwIJTvA8TDnPUBgMhIc8mo5q3vGjgnsTNQMKY3CHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMnT1SV1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4468AC4CECD;
-	Wed, 30 Oct 2024 00:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730249328;
-	bh=97w9E5ZcD4Tld5FFeLVUkMm+FoGOknYL9VY1icR2+OU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GMnT1SV1C3tVwJG+j3WErsYbxElkeiSuFj0vBPnf/Rps4WHjTbpeqiPHyehXXSIWw
-	 zEIXVI6nPqBhNxbo+ka/kbDpJnulq+qazLfuRo3qgA8mevs6xre9bzjS5BjxaSu7Uv
-	 hqZCfwZWaUr6AlGuFTGsV9Gad4fpr50D6bmsM1YZ39CPxd8D/brqjzgTWvciq9/rzY
-	 5GBO+sTn1XrN8PzhWeA6QAhkhxfgBeujbBCvzcCrnMOTjLSutDRQwYHXT2SSbLBuRp
-	 X8L6JUasAn+aRL4LEgFPe70b3UuY9+07Bm2kd98LMTVMvyUo9yHsfoxCnGZrzMra3Q
-	 xSHeWqFcyLb0w==
-Date: Tue, 29 Oct 2024 14:48:47 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: [GIT PULL] cgroup: Fixes for v6.12-rc5
-Message-ID: <ZyGCb34Fcj3yoVL2@slm.duckdns.org>
+	s=arc-20240116; t=1730249639; c=relaxed/simple;
+	bh=gZIHW5xlucMMTF92OTkejlmYFNysbrWsEcXX1MF0Xc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Id9nYpEQDNBq4I6Udu4eVFgVpJV7cDJG9WphDOxUnkpkcp1CDR5r7yQ9ckI8u7aWZp+mKHEXtGhYblnDM3vf5cERvp08Mdo1s7AW8VZ4b4F1j/q8FYRmMJ7CROmCObrjx1PvvePGbDlPin0FBocm2SUxk/M7ErruOEw+FDkhAac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ao/Vx4mR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730249636;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RysMNn00bfjiieSchZk4oQjSR3YgZyjt5uPFsZQEN1k=;
+	b=ao/Vx4mRtoM3HKwlKzM4pmVQTffUuHoDPlf5cLWkTcCY8xVWx0MZZpweUCz8l7FvmLwawT
+	TvnzXB7tGkQ/B38javV1eBS8/4jE+d4jPG5/QEeFovMAKc1Lxv3RnZge78XG0vfSsshVoh
+	KVFOv2T0vAZxnrEC0kOTp6tMbZCzVVw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-AGGzzpJ_MseSwJEw_nko5Q-1; Tue,
+ 29 Oct 2024 20:53:54 -0400
+X-MC-Unique: AGGzzpJ_MseSwJEw_nko5Q-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EE0691955EAB;
+	Wed, 30 Oct 2024 00:53:47 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.14])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2E752300018D;
+	Wed, 30 Oct 2024 00:53:45 +0000 (UTC)
+Date: Wed, 30 Oct 2024 08:53:41 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Borislav Petkov <bp@alien8.de>, thomas.lendacky@amd.com
+Cc: linux-kernel@vger.kernel.org, dyoung@redhat.com,
+	daniel.kiper@oracle.com, noodles@fb.com, lijiang@redhat.com,
+	kexec@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
+ early_memremap_is_setup_data()
+Message-ID: <ZyGDlYsg6YWNXSVo@MiWiFi-R3L-srv>
+References: <20240911081615.262202-1-bhe@redhat.com>
+ <20240911081615.262202-2-bhe@redhat.com>
+ <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,40 +74,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+On 10/29/24 at 07:11pm, Borislav Petkov wrote:
+> On Wed, Sep 11, 2024 at 04:16:14PM +0800, Baoquan He wrote:
+> > In function early_memremap_is_setup_data(), parameter 'size' passed has
+> > the same name as the local variable inside the while loop. That
+> > confuses people who sometime mix up them when reading code.
+> > 
+> > Here rename the local variable 'size' inside while loop to 'sd_size'.
+> > 
+> > And also add one local variable 'sd_size' likewise in function
+> > memremap_is_setup_data() to simplify code. In later patch, this can also
+> > be used.
+> > 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
+> > ---
+> >  arch/x86/mm/ioremap.c | 18 +++++++++++-------
+> >  1 file changed, 11 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> > index aa7d279321ea..f1ee8822ddf1 100644
+> > --- a/arch/x86/mm/ioremap.c
+> > +++ b/arch/x86/mm/ioremap.c
+> > @@ -640,7 +640,7 @@ static bool memremap_is_setup_data(resource_size_t phys_addr,
+> 
+> Huh?
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+Thanks for looking into this.
 
-are available in the Git repository at:
+I ever doubted this, guess it could use the unused 'size' to avoid
+warning? Noticed Tom introduced it at the beginning. It's better idea to
+remove it if it's useless.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.12-rc5-fixes
+commit 8f716c9b5febf6ed0f5fedb7c9407cd0c25b2796
+Author: Tom Lendacky <thomas.lendacky@amd.com>
+Date:   Mon Jul 17 16:10:16 2017 -0500
 
-for you to fetch changes up to 3cc4e13bb1617f6a13e5e6882465984148743cf4:
+    x86/mm: Add support to access boot related data in the clear
 
-  cgroup: Fix potential overflow issue when checking max_depth (2024-10-14 13:39:25 -1000)
+Hi Tom,
 
-----------------------------------------------------------------
-cgroup: Fixes for v6.12-rc5
+Can you help check and tell your intention why the argument 'size' is
+added into early_memremap_is_setup_data() and memremap_is_setup_data().
 
-- cgroup_bpf_release_fn() could saturate system_wq with
-  cgrp->bpf.release_work which can then form a circular dependency leading
-  to deadlocks. Fix by using a dedicated workqueue. The system_wq's max
-  concurrency limit is being increased separately.
+Thanks
+Baoquan
 
-- Fix theoretical off-by-one bug when enforcing max cgroup hierarchy depth.
+> 
+> ---
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index 70b02fc61d93..e461d8e26871 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -632,8 +632,7 @@ static bool memremap_is_efi_data(resource_size_t phys_addr,
+>   * Examine the physical address to determine if it is boot data by checking
+>   * it against the boot params setup_data chain.
+>   */
+> -static bool memremap_is_setup_data(resource_size_t phys_addr,
+> -				   unsigned long size)
+> +static bool memremap_is_setup_data(resource_size_t phys_addr)
+>  {
+>  	struct setup_indirect *indirect;
+>  	struct setup_data *data;
+> @@ -769,7 +768,7 @@ bool arch_memremap_can_ram_remap(resource_size_t phys_addr, unsigned long size,
+>  		return false;
+>  
+>  	if (cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT)) {
+> -		if (memremap_is_setup_data(phys_addr, size) ||
+> +		if (memremap_is_setup_data(phys_addr) ||
+>  		    memremap_is_efi_data(phys_addr, size))
+>  			return false;
+>  	}
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
+> 
 
-----------------------------------------------------------------
-Chen Ridong (1):
-      cgroup/bpf: use a dedicated workqueue for cgroup bpf destruction
-
-Xiu Jianfeng (1):
-      cgroup: Fix potential overflow issue when checking max_depth
-
- kernel/bpf/cgroup.c    | 19 ++++++++++++++++++-
- kernel/cgroup/cgroup.c |  4 ++--
- 2 files changed, 20 insertions(+), 3 deletions(-)
-
---
-tejun
 
