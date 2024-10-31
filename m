@@ -1,89 +1,73 @@
-Return-Path: <linux-kernel+bounces-390911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1409B7FF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:23:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4FF9B7FF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:23:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328192813D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD011F222D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3111719D89E;
-	Thu, 31 Oct 2024 16:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8208E1BBBDA;
+	Thu, 31 Oct 2024 16:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="A4qPUJdB"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC0YxoPp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B1319D082
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD1719D082;
+	Thu, 31 Oct 2024 16:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730391800; cv=none; b=c7F+dw2ObMTTZdtaaLfWsw/xOhPQaRpeancRb52cFIFSj0hYIbFyy96BdMEPe+qSGl/mCDgSjWtMMvUR0gsEpX0aofIKl8TEwjEoXey0QIpYZmBj0XiDJ/MIXUBqrtR8pM6JwS45gukROXeFPnoY3qA/CQKTIllQu43DVYxWUYQ=
+	t=1730391813; cv=none; b=DZPws87EVUM6aEx6ycYkWyuDtZCLwpPpLjPJCx22+hvhfWs8AFyGfOUftxiMrpOPz51gFUDaEN2Q2dHJcdaeU/XHGC5+W/OLld6SmkbU4jcn7pwfSxyV1w8+Y8qA7f4/2rO4+7WrQffafitCyL+CNdUdmUafC9MRVHKn2jZH6Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730391800; c=relaxed/simple;
-	bh=pHyLyRq9icEl7h1hajof/4uWohbq3D4kb9tZ1Q3TxCQ=;
+	s=arc-20240116; t=1730391813; c=relaxed/simple;
+	bh=RRfz1nNuXVubsejbLWVePhc2pbS8lDWqOzVyNPvpWwU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVq5/dmih9LIEPNIoG590N1TpoahZkhpeLPI0e4Du2piHIkGaN/hI6YhDfybFJLNcA4aV8xqHG04xXOJ7XhB66YAK9q3OnyLg/sYWxBITFVHBTlFtr10Ca9aygrEAd0tZdiQkhMRHZj+bbZS5i/ujs9ewvUV5WtK03qJczNbqQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=A4qPUJdB; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b155da5b0cso79698685a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1730391797; x=1730996597; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WrPPGPtF1r4JJPagnUAwxTz8GU4YzNxLE+E5DMVXteY=;
-        b=A4qPUJdBc0zjzPz59IM7rTHfXyvkBIURVIMdaOLECvzsczBDu9kG7T4zUuKhn4Oa1j
-         59SqusMgAemTsGgSuAjquTbuOCdOMz+N1ebOiZMAXUxCV5BAlikhw/FQgBmdJKSNc8Mk
-         /btFMqhC2rI8z5M/gWqfczSjg/aC9pNnfz/D0MpFQ0IX7r9Givev7q2sETHKXKI9ek0G
-         nGWY/OXevb+VnSE+r542TUqy2vwnJOcbTty9uTdWumpaBP4zoYBcY8i6bFjYA8gKCcwK
-         ffBlWEs6WeAM0Vcwwo4XmwRbSNaCDc/RQplQ5v0fY2E+TO+8yR/EdETbZviBJYg+004d
-         yZaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730391797; x=1730996597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WrPPGPtF1r4JJPagnUAwxTz8GU4YzNxLE+E5DMVXteY=;
-        b=uaVUKQMyzU/qcIVjoigcLsWu3p5AdSRtACpR5tOudcpe5x9SlXnzInLOX56lz5gehv
-         q0xiEKnvw2dEoXYJyhvy5JdvCsAAWMUNuz0m9MaVxUWuwARkdCSB0uk49qZ1WJ+xuDhw
-         zRgKeXI3GTyjgCqqfDqC0PLZu4BBbplCImDbI9NzIL74y5kFK3YPaq+ufwMAUBL14liJ
-         4+S6jt3G1KxAnULyMOeydCYgdUmSCIRD6qtz8Nr9ncfFaQuS5QpAMgSWtatYz+1WNj85
-         XYkdCESLTFjc0ghOvt06YxcACoTX+FHDXN8pP5CmGdekeQmUi47IZAxQG1Rrg0VUYLVK
-         cagQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnsuorXafUGKHJJXkR7haMRllE0xTB7rxqWT75U7H+hX07bYEeDKWB79hoCGuNM19/KoyNsewPoYe2ZEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrTbhIJiwldCdrMj3Tp4ZfibLk8wW2ASwFB+BBnV9Qzb8CVeDa
-	fC2pgUZiHSk7zqjsxYgyY2jRv18YdeJrmY0b/dq9Hcgp/FD/UFBiTbxM0GJMb1k=
-X-Google-Smtp-Source: AGHT+IG0mJPHTCww3DZQuqv9nxseKwFokKX1MWnv7+XcE4NElcJk7zAVUMyfqkFKAZ8kX5Mw9dP5qg==
-X-Received: by 2002:a05:620a:318b:b0:7a4:d685:caa9 with SMTP id af79cd13be357-7b1aee2c038mr1047669385a.48.1730391797615;
-        Thu, 31 Oct 2024 09:23:17 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f39ebab8sm83428485a.8.2024.10.31.09.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 09:23:17 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:23:23 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
-	dave.jiang@intel.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
-	lenb@kernel.org, david@redhat.com, osalvador@suse.de,
-	gregkh@linuxfoundation.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v4 1/3] memory: implement
- memory_block_advise/probe_max_size
-Message-ID: <ZyOu-7MeTYGa7tf9@PC2K9PVX.TheFacebook.com>
-References: <20241029202041.25334-1-gourry@gourry.net>
- <20241029202041.25334-2-gourry@gourry.net>
- <ZyOUp5Juz5x3Ivrn@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YEXoO7oMedjG0Ryy+pt4KZEXYIjR13laDDkLbA59yUxF2qQaNkKSYp0QNMPbDQYzumfzcTa7AlTSBkSXtRRXJJluV5//f+aYvZgfGIKoKX+4JZcrDOgZioC1MQS3u9C3spmSt2SddlVz47VkokfqUhNcJ1z+QorZk7tMPY6J59I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pC0YxoPp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A5E5C4CEE5;
+	Thu, 31 Oct 2024 16:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730391813;
+	bh=RRfz1nNuXVubsejbLWVePhc2pbS8lDWqOzVyNPvpWwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pC0YxoPpS80Zc6ELbbZ+TbDyuTkQF5d9e71F4HKlNzW2W5qbyi63uEr6B+nzSpCqS
+	 HZvpnlwAtKHP7VHI4ts0KMbHWGXKOuwgg4uaVeJoSKT3OrWCaXGQQ2fl7iJW0sUFAZ
+	 R0VTQd9ZBBclJFYoWcDRkwbtO+nuBzaOmPFPxikcr76JJcvqHfPiQ+Pd/Eqty3VlOo
+	 n5WEYqjCB665Kg/5OQh7wFyv7qM/i5BFjeSpn3TE+jGbjo3KvUuiNWtUsjTWSRiy48
+	 JhWd8JxHPXpOMRyOR/aOtWGRrE+x32N9+HXzMaf5ST5u3byA4fTIzzd0BA/TZjg6AV
+	 tTxirWOuo7fPQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t6XxK-0000000076v-3Mgh;
+	Thu, 31 Oct 2024 17:23:31 +0100
+Date: Thu, 31 Oct 2024 17:23:30 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: neil.armstrong@linaro.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+Message-ID: <ZyOvAqnuxbNnGWli@hovoldconsulting.com>
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
+ <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+ <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+ <751a4ab5-acbf-4e57-8cf4-51ab10206cc9@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,24 +76,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyOUp5Juz5x3Ivrn@kernel.org>
+In-Reply-To: <751a4ab5-acbf-4e57-8cf4-51ab10206cc9@linux.dev>
 
-On Thu, Oct 31, 2024 at 04:31:03PM +0200, Mike Rapoport wrote:
-> On Tue, Oct 29, 2024 at 04:20:39PM -0400, Gregory Price wrote:
-> > + * Return: 0 on success
-> > + *	   -EINVAL if size is 0 or not pow2 aligned
-> > + *	   -EBUSY if value has already been probed
-> > + */
-> > +static size_t memory_block_advised_sz;
-> > +static bool memory_block_advised_size_queried;
-> 
-> kernel-doc will be unhappy about variable declarations between the doc
-> block and the function it describes
-> 
+On Thu, Oct 31, 2024 at 11:06:38PM +0800, Sui Jingfeng wrote:
 
-Yup, that was the warning I was waiting to clear KLP.
+> But I think Johan do need more times to understand what exactly
+> the real problem is. We do need times to investigate new method.
 
-Learning new things n.n;; - new version shortly
+No, I know perfectly well what the (immediate) problem is here (I was
+the one adding support for the of_node_reused flag some years back).
 
-~Gregory
+I just wanted to make sure that the commit message was correct and
+complete before merging (and also to figure out whether this particular
+patch needed to be backported).
+
+Johan
 
