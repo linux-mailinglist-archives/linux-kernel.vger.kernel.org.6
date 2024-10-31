@@ -1,145 +1,183 @@
-Return-Path: <linux-kernel+bounces-389832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008009B7203
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:34:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87819B7207
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A6A2856B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:34:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E072B241CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48946F06A;
-	Thu, 31 Oct 2024 01:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0EE6F06A;
+	Thu, 31 Oct 2024 01:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="Rp5zyH0D"
-Received: from toucan.tulip.relay.mailchannels.net (toucan.tulip.relay.mailchannels.net [23.83.218.254])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kOAMTMWR"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831621F5FD;
-	Thu, 31 Oct 2024 01:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.254
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730338489; cv=pass; b=k5OTCes2nJF5CqSqmXukjS8qkkUDNTtobGW+wu/O/92/We8+efG8G7BoBkOiXwS3UGhc5L+8183w+Be8i5EOIeaMvYNcugpuS7R0kcPIATkKZ2O7uIKSavzZdZWyq7hSI0DYz2U3LShabG7AGa8rYx+RP5N+yX+Ytx7aMh6R36o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730338489; c=relaxed/simple;
-	bh=rNY4ZEsKz1XcAvfQ3B7Ej6wRo9eCFo6EpoMo41PYFgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PwmnJTevWJeCSyvml1bAc/MWncPiC+JyItxgUfoxPfOJwOqUC9Y89zh/pkVIyeTQnSPukgHtv41ADhK7o3B7UjyliefEsK4arkDGcDWKu+Ex+rqtjbsIujO9JYmpXgQ5Rh+GvRLVALsgtFyxxq3mF5gwFIGUFZRBeDvndkK0f7M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=Rp5zyH0D; arc=pass smtp.client-ip=23.83.218.254
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id C103D81DF2;
-	Thu, 31 Oct 2024 01:34:45 +0000 (UTC)
-Received: from pdx1-sub0-mail-a302.dreamhost.com (100-101-211-53.trex-nlb.outbound.svc.cluster.local [100.101.211.53])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 4793281AE1;
-	Thu, 31 Oct 2024 01:34:45 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1730338485; a=rsa-sha256;
-	cv=none;
-	b=pPgL2BH4D1O320WRi6wXpIm4KJqWpTYwnSyI/NsCy6j4rY7aL43kXomYW44GLv4B8SKUhe
-	NWeSH55Yg7C+XS7ImUXzL7TrqVj6tohceLFipOKCZE5QbEPiqxDxVVkd0w/6fpH6G4db27
-	Aegn26H/8mUh/uieaHjymY9ACVJZHtdSpZ4etO0+lLitzA+LmMempgAV66lW5DtJI7Hbf7
-	eIHrOVycZ5eEtn7ka9JSbgAHtd8maXtkZ6W5dszu7ka0ufylhhVsjxyBIjc+03tTHxMWrk
-	oW49OkigmiEuYlHwd4vt+1U0TwQiqe10vxCoIRlfKfYUiCQ4k5Nw1LyHd2iJtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1730338485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=RG/uXRPHc0RIEwtk48jA5QoUoXx5IObwxDejHafllLQ=;
-	b=DLRmi6oqmm6JypnXglUVRdlg1qEmpa5k2SHlcD1PzATs4hlPYKzOdky8/Ueanlv/qS/nxT
-	z8GvughOk5jDRq9SbgFOV1qaHlCzNEcx3NPdEY9WMdNqKZTyMqMl8M01TLzB8VovL8Ulza
-	e2Bm90Rv/vT6LLwhex9SrLodly38QuctaX2Q80gBJKEEkAa1PrHl7I4mnFQF/aGuhWf4V/
-	S5GeYENIKUum5h6UtGB5CK9BZlLf7SOTA1YSA5VetpDJxw2Apk/JCuVoUO+FKcftJh8wwv
-	zhTmLJlpvBYlFY9c3gb+LFE1Pebokr1dSeYJpeJfWy32BoEkME/fykwMLkJOKg==
-ARC-Authentication-Results: i=1;
-	rspamd-77cfccfb8-fr6hp;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Inform-Spot: 47ec64386e760ba2_1730338485657_2876808699
-X-MC-Loop-Signature: 1730338485657:1963751466
-X-MC-Ingress-Time: 1730338485657
-Received: from pdx1-sub0-mail-a302.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.101.211.53 (trex/7.0.2);
-	Thu, 31 Oct 2024 01:34:45 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a302.dreamhost.com (Postfix) with ESMTPSA id 4Xf6440KMnz4F;
-	Wed, 30 Oct 2024 18:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1730338485;
-	bh=RG/uXRPHc0RIEwtk48jA5QoUoXx5IObwxDejHafllLQ=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=Rp5zyH0D3vQoov9tU7mIKSQT3ghl2d8YMauHrveQ0Fn/uPNcGFDx1EHYSlguRW+7V
-	 uNiQ0JxdnCHDOq8hE9Pl0SvGVokt/2zHdkvt2UY3YlD90zBaQhbakgLm7Toz7TUjBw
-	 JkHUUcS+x0pnl8b5BFp9mjDzUGPOS0WkZZamOSJjWDcukGEpFUiUvhXvVHcvDLOgYR
-	 dOqbShMYCIe4FN7X2Hp26TcF5Gwz/XkVcBi78T6V0ynYzgWeo+RfyRnrmpWHVH6kGH
-	 O/qbDkjKSHF8osegaIexo0DUXnMl7c+z8W6HwXq3d+RC/agy81CSeT7EkbhQvRl0Ez
-	 t45epL8qEdlxw==
-Date: Wed, 30 Oct 2024 18:34:41 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: ira.weiny@intel.com
-Cc: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v5 08/27] cxl/mem: Read dynamic capacity configuration
- from the device
-Message-ID: <20241031013441.tsuqkrbqbhwsv2ui@offworld>
-References: <20241029-dcd-type2-upstream-v5-0-8739cb67c374@intel.com>
- <20241029-dcd-type2-upstream-v5-8-8739cb67c374@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0145D2FB;
+	Thu, 31 Oct 2024 01:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730338631; cv=none; b=aLwdno6xPZ9RN5F/VdI2c6K9ppH7BfAlx8NHAwYj0oQTAlkc3qXbZZsJ3mjyuF5lC/rGWRQCwZmwts/fhMksGtgJP458YJYGsAfcjs/s14j7x2DpHJhLssYJQJfODYF3eula7HcJMVnjHEJIiJyMiJ0BokT9Qc99Pi5193u60dY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730338631; c=relaxed/simple;
+	bh=lfjgKJ5opjQCVR3WWil6/01M2fEvUAOzIvEdpGyNQbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QiGCRVbMEWrzTmWUV1v3ikfmtzQRZ98Qet+zwCvFmSsdVperBVppQkFtUX44b1cEkSz726VeU8N0NHg+GMnfT1VPl1Ihj8jWq/uPGnkV93mIiV5lQ+i0BgH3rwf2KUWobtXa4XzMwYwasjm/UIAefE7DIHhYD62drXM39Rr99rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kOAMTMWR; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730338624; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ZwUq071psuIhKucSfF2WgOJ4JR/ocIDnq9dWFuR/ybI=;
+	b=kOAMTMWRCU1vpoeHvxLJW8MujHzxBgBVg2M/BupAYkMSqv2rEP2/zl/mp2bVpzX0be+q20VTO0ZlMig5GPcFGrPuV9+uADhiz7CWp2ktlEvifXLGGKlCFG8kPzFKQXPI//gUk6Za6K7FRzGJ2vC6MrFYsk/7nGB0/x3eWmgr7Vs=
+Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIGN02O_1730338618 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 31 Oct 2024 09:37:02 +0800
+Message-ID: <6979b369-7aeb-4157-a89e-3fc4b7f39333@linux.alibaba.com>
+Date: Thu, 31 Oct 2024 09:36:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241029-dcd-type2-upstream-v5-8-8739cb67c374@intel.com>
-User-Agent: NeoMutt/20220429
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
+ robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
+ rafael@kernel.org, wangkefeng.wang@huawei.com, tanxiaofei@huawei.com,
+ mawupeng1@huawei.com, tony.luck@intel.com, linmiaohe@huawei.com,
+ naoya.horiguchi@nec.com, james.morse@arm.com, tongtiangen@huawei.com,
+ gregkh@linuxfoundation.org, will@kernel.org, jarkko@kernel.org,
+ linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20241028081142.66028-2-xueshuai@linux.alibaba.com>
+ <20241029204848.GA1229628@yaz-khff2.amd.com>
+ <d62d775e-08e3-4a2d-88a8-437a4c04ebd3@linux.alibaba.com>
+ <20241030140800.GA1288714@yaz-khff2.amd.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20241030140800.GA1288714@yaz-khff2.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 29 Oct 2024, ira.weiny@intel.com wrote:
 
->+/* See CXL 3.1 Table 8-164 get dynamic capacity config Output Payload */
->+struct cxl_mbox_get_dc_config_out {
->+	u8 avail_region_count;
->+	u8 regions_returned;
->+	u8 rsvd[6];
->+	/* See CXL 3.1 Table 8-165 */
->+	struct cxl_dc_region_config {
->+		__le64 region_base;
->+		__le64 region_decode_length;
->+		__le64 region_length;
->+		__le64 region_block_size;
->+		__le32 region_dsmad_handle;
->+		u8 flags;
->+		u8 rsvd[3];
->+	} __packed region[] __counted_by(regions_retunred);
->+	/* Trailing fields unused */
->+} __packed;
->+#define CXL_DYNAMIC_CAPACITY_SANITIZE_ON_RELEASE_FLAG BIT(0)
 
-Fan, is this something qemu wants to support?
+在 2024/10/30 22:08, Yazen Ghannam 写道:
+> On Wed, Oct 30, 2024 at 09:54:00AM +0800, Shuai Xue wrote:
+>>
+>>
+>> 在 2024/10/30 04:48, Yazen Ghannam 写道:
+>>> On Mon, Oct 28, 2024 at 04:11:40PM +0800, Shuai Xue wrote:
+>>>> Synchronous error was detected as a result of user-space process accessing
+>>>> a 2-bit uncorrected error. The CPU will take a synchronous error exception
+>>>> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
+>>>> memory_failure() work which poisons the related page, unmaps the page, and
+>>>> then sends a SIGBUS to the process, so that a system wide panic can be
+>>>> avoided.
+>>>>
+>>>> However, no memory_failure() work will be queued when abnormal synchronous
+>>>> errors occur. These errors can include situations such as invalid PA,
+>>>> unexpected severity, no memory failure config support, invalid GUID
+>>>> section, etc. In such case, the user-space process will trigger SEA again.
+>>>> This loop can potentially exceed the platform firmware threshold or even
+>>>> trigger a kernel hard lockup, leading to a system reboot.
+>>>>
+>>>> Fix it by performing a force kill if no memory_failure() work is queued
+>>>> for synchronous errors.
+>>>>
+>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>>> ---
+>>>>    drivers/acpi/apei/ghes.c | 10 ++++++++++
+>>>>    1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>>>> index ada93cfde9ba..f2ee28c44d7a 100644
+>>>> --- a/drivers/acpi/apei/ghes.c
+>>>> +++ b/drivers/acpi/apei/ghes.c
+>>>> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
+>>>>    		}
+>>>>    	}
+>>>> +	/*
+>>>> +	 * If no memory failure work is queued for abnormal synchronous
+>>>> +	 * errors, do a force kill.
+>>>> +	 */
+>>>> +	if (sync && !queued) {
+>>>> +		pr_err("%s:%d: hardware memory corruption (SIGBUS)\n",
+>>>> +			current->comm, task_pid_nr(current));
+>>>
+>>> I think it would help to include the GHES_PFX to indicate where this
+>>> message is coming from. The pr_fmt() macro could also be introduced
+>>> instead.
+>>
+>> Yes, GHES_PFX is a effective prefix and will be consistent to other message
+>> in GHES driver. Will add it in next version.
+>>
+>> What do you mean about pr_fmt()?
+> 
+> This can be used to set a prefix for an entire section of code. The
+> pr_*() macros will pick it up without needing to include a prefix for
+> each call.
+> 
+> This is described in "Documentation/core-api/printk-basics.rst".
+
+Got you point, a pr_fmt is much more convenient, but it is beyond this 
+patch. I would like to send a patch to add pr_fmt and then replace each 
+call after this patch merged.
+
+> 
+>>
+>>>
+>>> Also, you may want to include the HW_ERR prefix. Not all kernel messages
+>>> related to hardware errors have this prefix today. But maybe that should
+>>> be changed so there is more consistent messaging.
+>>>
+>>
+>> Do we really need a HW_ERR prefix? The other case which use HW_ERR prefix
+>> are for hardware registers. The messages which send SIGBUS does
+>> not include HW_ERR, e.g. in kill_proc(), kill_procs().
+>>
+>>      pr_err("%#lx: Sending SIGBUS to %s:%d due to hardware memory
+>> corruption\n",...
+>>      pr_err("%#lx: forcibly killing %s:%d because of failure to unmap
+>> corrupted page\n",...
+>>
+>>
+> 
+> Correct, HW_ERR isn't used there. My interpretation is that it can be
+> used whenever an event is due to a hardware error (real or simulated).
+> This is a very clear message to a user.
+> 
+> It may be redundant in some cases (like here where the message already
+> says "hardware memory corruption"). But I think it would be go to use it
+> anyway for consistency.
+> 
+> I think other relevant places in the kernel should also be updated. But
+> that is beyond this patch, and I don't expect it to be done here and
+> now.
+
+Ok, I will add the HW_ERR in next version, if no one else objects.
+> 
+> Thanks,
+> Yazen
+
+Thank you.
+Best Regards,
+Shuai
+
 
