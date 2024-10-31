@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-389928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0169B731E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:41:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969DC9B731F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:43:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD9A1F2593F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:41:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29994B215D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74827139D03;
-	Thu, 31 Oct 2024 03:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C2213A256;
+	Thu, 31 Oct 2024 03:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PQoHyQfH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WS3UNF9W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC05826AD0
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CEA12D1FA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730346087; cv=none; b=jmt967pro8d0jnmkt/l23Z/8znvKg/QRSt+KEofkPJfdC/Io+cqjUup0hCn3648VECRjUL7d1uJN9Y/tdkxr457x1NEbwk2zb35VEqs2V2NOgsg25npllkJqzc9bjN1eSgymRDbVBHWYgYEKKt1/JUAnajYNHYuMvtIJ0paEOh8=
+	t=1730346187; cv=none; b=h2ICKQrn0qQnXq5MoXpoTTCtPioa1fBOjAbxwz1Y72qGYjCTL8jxCyBRJyxGy45LVEQN2sFVAgdABpalbhxI7dAzBvrU/YbuFQEn1eIt7xl945K1ER953WwNisVc9LoS0ElpMQtXA7CdBbD7Y3s9l3RFbmuso7o9QznTJTPVbwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730346087; c=relaxed/simple;
-	bh=jgKiNzsGrXxxV0JsFN98yJ1rNKKThkpUguht9lLu4yU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fQTHKIhGupZUT6AssZ2bshr0opPd56VD2FdfyFAEvDmvYS26nk+JexAZVFbcIp56fkapOXhGkKWwonYEsguvnQx96cKdUSYkU96nBsGDIpzHbEo2NZSxTI//Z/PckuGZLxgRoTzTrC+BwKzrLVXOAY0t3G0hdl25Zp+Hg/8lX3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PQoHyQfH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730346084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mzos0guM5CCjsx4ktHYZDA2/aTNVPouGHC3JHAxwbeI=;
-	b=PQoHyQfHSvO7eixAYtjDzledyCxiNP3NaorzeWMGgX9s0dy8jJ9ZrdwDTmy30bbrtLNH/9
-	XOGb1DDI+/jPgttJ5mqDkLBHhTwcmTYTF/beYxDYSWOw1HcWz4RannfEXX92bN1oGq85Tp
-	PPtzgPxjFVrvsLgrMnik2VRsun17LW8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-73-bWcVKkV5MF678Gqq89Il1g-1; Wed,
- 30 Oct 2024 23:41:21 -0400
-X-MC-Unique: bWcVKkV5MF678Gqq89Il1g-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 99ECE19560B1;
-	Thu, 31 Oct 2024 03:41:19 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.132])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4AA2A1956054;
-	Thu, 31 Oct 2024 03:41:16 +0000 (UTC)
-Date: Thu, 31 Oct 2024 11:41:12 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, dyoung@redhat.com,
-	daniel.kiper@oracle.com, noodles@fb.com, lijiang@redhat.com,
-	kexec@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
- early_memremap_is_setup_data()
-Message-ID: <ZyL8WDTw9F3laupG@MiWiFi-R3L-srv>
-References: <20240911081615.262202-1-bhe@redhat.com>
- <20240911081615.262202-2-bhe@redhat.com>
- <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
- <ZyGDlYsg6YWNXSVo@MiWiFi-R3L-srv>
- <8c81835b-97fe-a0b3-a860-0bbd5c0341f6@amd.com>
+	s=arc-20240116; t=1730346187; c=relaxed/simple;
+	bh=9NF32TNj4ZYmr4oveqUOvSWtxMqVol++8yROTpzjYA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KnZTs06kFgClZiQDBKHf5wN23gRLtxiGfPc6WB/1i5saj9epAqe3aCSP+U1+Jz8gqbNtx+Sp9Yrf6v0+qcOuBzBgbaVh0I6RDWDMd2VqQPItPNsTSJ1GIuWd7EcoNUhB61840/HaXVPyodW4J/VtGkNikaBYhLWytCNnSWiLh64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WS3UNF9W; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730346186; x=1761882186;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9NF32TNj4ZYmr4oveqUOvSWtxMqVol++8yROTpzjYA4=;
+  b=WS3UNF9WzCQbN7NWdK9WzIx4Jw9d14Hj7HkGTlCed0N6DcONSHE/3Lc2
+   d3v3kwNu3wt2WKlVuAAsW8S4mj657HygyCHROIX6TJOFI3dWtz6jma5r7
+   VfzY3THG8B5GjO3xHacJFet0lbeM5CC8Bkc06+AMPC3ISd4HlQ+lx9wYO
+   ClVFbCIv+eAkGgMzaD8hRbmMasJw6XflQvpY8682RXmW/akQeb2v2f+3A
+   sw9xSqH8fKbqq29LoOk0vV/NPQ0M3CihSwRl7UBgsSTenlKvrSZrXeula
+   CYS4Ylvr3OGuZmBo+GYTkvGFQShc4J7lTREdSPvVsnYqbTnSdJm8P7QP3
+   Q==;
+X-CSE-ConnectionGUID: xF+s6GSARsyiHMRwsy7L4g==
+X-CSE-MsgGUID: K0FFOPmBSzeEjKPoHJA3YQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29514043"
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="29514043"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 20:43:05 -0700
+X-CSE-ConnectionGUID: daw9IZ7ITHaqHf9TrL7mbw==
+X-CSE-MsgGUID: g9mamfELTcG7K2r/u1X2/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="82159153"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 20:43:03 -0700
+Message-ID: <e4460731-a13f-479d-b092-649123fe079f@linux.intel.com>
+Date: Thu, 31 Oct 2024 11:42:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c81835b-97fe-a0b3-a860-0bbd5c0341f6@amd.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
+ prq_event_thread
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Yi Liu <yi.l.liu@intel.com>, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ Klaus Jensen <k.jensen@samsung.com>
+References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
+ <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
+ <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
+ <ujexsgcpvcjux2ugfes6mzjxl53j3icarfbu25imhzliqskyv6@l7f42nv4fhmy>
+ <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
+ <pdslu36mhfxbzs254tlte2wavfkmecm53xhdtdelm4nfnemt3f@m5ed4hn6zmbl>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <pdslu36mhfxbzs254tlte2wavfkmecm53xhdtdelm4nfnemt3f@m5ed4hn6zmbl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/30/24 at 07:49am, Tom Lendacky wrote:
-> On 10/29/24 19:53, Baoquan He wrote:
-> > On 10/29/24 at 07:11pm, Borislav Petkov wrote:
-> >> On Wed, Sep 11, 2024 at 04:16:14PM +0800, Baoquan He wrote:
-> >>> In function early_memremap_is_setup_data(), parameter 'size' passed has
-> >>> the same name as the local variable inside the while loop. That
-> >>> confuses people who sometime mix up them when reading code.
-> >>>
-> >>> Here rename the local variable 'size' inside while loop to 'sd_size'.
-> >>>
-> >>> And also add one local variable 'sd_size' likewise in function
-> >>> memremap_is_setup_data() to simplify code. In later patch, this can also
-> >>> be used.
-> >>>
-> >>> Signed-off-by: Baoquan He <bhe@redhat.com>
-> >>> Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
-> >>> ---
-> >>>  arch/x86/mm/ioremap.c | 18 +++++++++++-------
-> >>>  1 file changed, 11 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> >>> index aa7d279321ea..f1ee8822ddf1 100644
-> >>> --- a/arch/x86/mm/ioremap.c
-> >>> +++ b/arch/x86/mm/ioremap.c
-> >>> @@ -640,7 +640,7 @@ static bool memremap_is_setup_data(resource_size_t phys_addr,
-> >>
-> >> Huh?
-> > 
-> > Thanks for looking into this.
-> > 
-> > I ever doubted this, guess it could use the unused 'size' to avoid
-> > warning? Noticed Tom introduced it at the beginning. It's better idea to
-> > remove it if it's useless.
-> > 
-> > commit 8f716c9b5febf6ed0f5fedb7c9407cd0c25b2796
-> > Author: Tom Lendacky <thomas.lendacky@amd.com>
-> > Date:   Mon Jul 17 16:10:16 2017 -0500
-> > 
-> >     x86/mm: Add support to access boot related data in the clear
-> > 
-> > Hi Tom,
-> > 
-> > Can you help check and tell your intention why the argument 'size' is
-> > added into early_memremap_is_setup_data() and memremap_is_setup_data().
+On 10/30/24 22:28, Joel Granados wrote:
+>>    /*
+>> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
+>> index 078d1e32a24e..ff88f31053d1 100644
+>> --- a/drivers/iommu/intel/svm.c
+>> +++ b/drivers/iommu/intel/svm.c
+>> @@ -304,9 +304,6 @@ void intel_drain_pasid_prq(struct device *dev, u32
+>> pasid)
+>>           int qdep;
+>>
+>>           info = dev_iommu_priv_get(dev);
+>> -       if (WARN_ON(!info || !dev_is_pci(dev)))
+>> -               return;
+> Did you mean to take out both checks?:
+>    1. The info pointer check
+>    2. the dev_is_pci check
 > 
-> That was a long time ago... I probably used it while I was developing the
-> support and then never removed it in the final version where it wasn't used.
+> I can understand the dev_is_pci check, but we should definitely take
+> action if info is NULL. Right?
 
-Thanks for confirming. Then we can remove it to avoid confusion.
+WARN_ON(!info) is duplicate as far as I can see. Accessing
+info->pri_enable when info is NULL will cause a null pointer dereference
+warning. This appears irrelevant to this patch though.
 
-Hi Boris,
+> 
+>> -
+>>           if (!info->pri_enabled)
+>>                   return;
+>>
+>> Generally, intel_drain_pasid_prq() should be called if
+>>
+>> - a translation is removed from a pasid entry; and
+> This is the path that is already mentiond
+> 
+>> - PRI on this device is enabled.
+> And this path is:
+>    -> intel_iommu_enable_iopf
+>      -> context_flip_pri
+>        -> intel_context_flush_present
+>          -> qi_flush_pasid_cache
+> 
+> Right?
 
-Should I send the fixing patch alone and clean up the useless argument
-'size' later, or squash them into one patch?
+Sorry that I didn't make it clear. It should be "PRI on this device was
+enabled", a.k.a. info->pri_enabled is true. I didn't meant to say in the
+PRI enabling path.
 
-Thanks
-Baoquan
-
+--
+baolu
 
