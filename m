@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-389803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66139B7186
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:13:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB0C9B718F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6A52827B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:13:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0781C210B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE4B3D994;
-	Thu, 31 Oct 2024 01:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE54F4779F;
+	Thu, 31 Oct 2024 01:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQFnaBIg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDg4PJzd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87C14438B;
-	Thu, 31 Oct 2024 01:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB3C4C80;
+	Thu, 31 Oct 2024 01:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730337221; cv=none; b=XSmDcZ/ooz89/zkm1QcehPh40tWjQHGB33MQi/oEqQ45MJaKsI5GoiVyxocEDCz0mN4JkU9i2JqrUHI9Ck+XhwU4k+N2QuAeZWnDF/fR7QuY7EQiw1fUZmxk47eO1EKQ3EAYrkPHvUz8RNQTVb7wlvpM08A6fKgV45/w8N8atB0=
+	t=1730337542; cv=none; b=iT3QYgsAXdZXTen++41X50ID5RyavWYmhyzZXPKoiYWovLetck4fzAmKFhWHKX7Dm6BUJOwLWixy6QxyUYMxhW8CI49qzbRSNzIqwjHAz/ZupIVMKBY97Fzrd3VLtrYSFq6wmbNqCG2OoVElUopNly6UWTEnYuApKuZkxWZAF6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730337221; c=relaxed/simple;
-	bh=WbRptb7FCqv60HSIIaD84GGUKPtD6/MInRYEUgylKqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uRfLYgRqiS8si2HbaglzBGI0AzI/c/UDcIbCPwj+DtadOVnOgu4QfeQdecjiSWVmhWJVjUUEGKgk50mGwm4U4JOhlpacOrwCw03AbsrpAvUSmkU59VbWQwqu77amG0q8JhHa5lZNcBmksJBuIwGwCDnw1EFRSJqC8tossZHbMzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQFnaBIg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43539C4AF0C;
-	Thu, 31 Oct 2024 01:13:41 +0000 (UTC)
+	s=arc-20240116; t=1730337542; c=relaxed/simple;
+	bh=k6H+CiBEJWddN02hdN0mo06Ec/Er8fguVn5cPFWrTyE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fr5mLTcXvMgxTaDl4VuhtRW0t7ifCmyZdRY3S3LTBqIkdjoP8w2Ew5525eF9rJu8/J6nan8FeIde6cyLEM/IO8RZzFKAO0KL+jBqcjPILN2gz/fO2IiaFR3yEavXO6+aWxecCCDDdqOqPVE46V3c1W26sCuRct6wCWsLyvv9FpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDg4PJzd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3FEC4CECE;
+	Thu, 31 Oct 2024 01:18:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730337221;
-	bh=WbRptb7FCqv60HSIIaD84GGUKPtD6/MInRYEUgylKqs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CQFnaBIgu2VJo5I+vqPnQnQya2dHbKnwlw4s5esPxZr2KCwiPFuIEHv6DrTdVcG0P
-	 rUmRAxH/fJbdU7KBd/Qy4wplwFFJ27zTgER9Agrvdeve1v8zwMqXCZR1Xnr0Bj5HEq
-	 j40z/03nX6Rp5wiFyV6rMoYEnTtjU3wDXxoBH4c/JJtDjnMj75M+dhyA0JmJMAZm54
-	 dLeFSXOiNPIjFQbimyrT3iQa+E7OFRUt+kvmWcpeAX+EPee1AphnyCYN/E3+genhG3
-	 ZPeC44LCSz7ye3ZMnB/3ys4yN0lfAUY7satO3jS9ItjL8U0V0yav/Bm/V4USZgC4pN
-	 TTe9z+BWh7wpA==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99e3b3a411so237212966b.0;
-        Wed, 30 Oct 2024 18:13:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQBj3Id8Q2M4+KXXvC2HPxE+MLJNb2Lnhvr+IGaFNfSee4rL7zvEo5q2Wpcq0EYvZk8l1YypL8pA0OL/o=@vger.kernel.org, AJvYcCXlOQmollY823oJ5LmF3AVVm5HTynNPlXaJgD6JTgsdyO1KyoumlXqzWHrc9T2WoaFgN/2POI7i1nE5DA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvofuGDLN/yFEgLx2KsaYERJfwA/Tu1mG5T/3zNh6MMoxwMc54
-	RF+nYMDZ7wwTB0tjZ/PMVdp5FtFrksry0k2YZdHlTAoAo4Rq4GgC2Uy1ysgMD0nJkYwKkmSKi+i
-	i0Y/2dLA92dXi9ed259BMNjW0Mmk=
-X-Google-Smtp-Source: AGHT+IHNI0GAvdwr25dkpNoHJw8i/LubG55Z749FdRTKFrX6ZwKdMY40mOPZLmY7D520K17tiZfHEOM/OqdIomb8BBM=
-X-Received: by 2002:a17:907:97d6:b0:a9a:c57f:964b with SMTP id
- a640c23a62f3a-a9e55a29239mr50707566b.8.1730337219900; Wed, 30 Oct 2024
- 18:13:39 -0700 (PDT)
+	s=k20201202; t=1730337541;
+	bh=k6H+CiBEJWddN02hdN0mo06Ec/Er8fguVn5cPFWrTyE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mDg4PJzdtOtjUR3WsftvwH4KB5eO0CKN6FDp6lq4Tj+Z0uwKUIlQ+WW3yy2drijwS
+	 zTcebee4TmLSLhvTDeh1g0+O/xGWUtWMnI30LnwTuhbF6I+h3iA30h5ac2IjMPHNmp
+	 425sD+fPKmTI04Kw2TKo9oolPguB6Wq2dzxNtupzXOxmZEOSyPc7qYIDYqaC0y0IwA
+	 xX9EV8ShzI47iEOzNVw5nxt79FLrsCxxd8TVgbpaHnP7bkEgelxWNOQfdwM9oFz9JH
+	 jI73jIUbbrMK9LpQhvrsAPKlPeROh7aBP8fdm9uwghY0q7MD/QWKGuQ6Ui0vMkaMD0
+	 Dv1cC48tFrABQ==
+Date: Thu, 31 Oct 2024 10:18:53 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao
+ <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v18 01/17] fgraph: Pass ftrace_regs to entryfunc
+Message-Id: <20241031101853.898b866a21732350b5f02614@kernel.org>
+In-Reply-To: <20241028152512.GB2484@willie-the-truck>
+References: <172991731968.443985.4558065903004844780.stgit@devnote2>
+	<172991733069.443985.15154246733356205391.stgit@devnote2>
+	<20241028152512.GB2484@willie-the-truck>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241030063905.2434824-1-maobibo@loongson.cn> <20241030164123.ff63a1c0e7666ad1a4f8944e@linux-foundation.org>
-In-Reply-To: <20241030164123.ff63a1c0e7666ad1a4f8944e@linux-foundation.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 31 Oct 2024 09:13:27 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7AyjyGT=4pW9X-ZrdN3JThs8ukC3dnoZW_dOxZLQsQtQ@mail.gmail.com>
-Message-ID: <CAAhV-H7AyjyGT=4pW9X-ZrdN3JThs8ukC3dnoZW_dOxZLQsQtQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: define general function pXd_init()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Bibo Mao <maobibo@loongson.cn>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	kasan-dev@googlegroups.com, Alexander Potapenko <glider@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, WANG Xuerui <kernel@xen0n.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi, Andrew,
+On Mon, 28 Oct 2024 15:25:13 +0000
+Will Deacon <will@kernel.org> wrote:
 
-On Thu, Oct 31, 2024 at 7:41=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Wed, 30 Oct 2024 14:39:05 +0800 Bibo Mao <maobibo@loongson.cn> wrote:
->
-> > --- a/arch/loongarch/include/asm/pgtable.h
-> > +++ b/arch/loongarch/include/asm/pgtable.h
-> > @@ -267,8 +267,11 @@ extern void set_pmd_at(struct mm_struct *mm, unsig=
-ned long addr, pmd_t *pmdp, pm
-> >   * Initialize a new pgd / pud / pmd table with invalid pointers.
-> >   */
-> >  extern void pgd_init(void *addr);
-> > +#define pud_init pud_init
-> >  extern void pud_init(void *addr);
-> > +#define pmd_init pmd_init
-> >  extern void pmd_init(void *addr);
-> > +#define kernel_pte_init kernel_pte_init
-> >  extern void kernel_pte_init(void *addr);
->
-> Nitlet: don't we usually put the #define *after* the definition?
->
-> void foo(void);
-> #define foo() foo()
-Is there any convention or documents about this? In kernel code there
-are both before definitions and after definitions.
+> On Sat, Oct 26, 2024 at 01:35:30PM +0900, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Pass ftrace_regs to the fgraph_ops::entryfunc(). If ftrace_regs is not
+> > available, it passes a NULL instead. User callback function can access
+> > some registers (including return address) via this ftrace_regs.
+> > 
+> > Note that the ftrace_regs can be NULL when the arch does NOT define:
+> > HAVE_DYNAMIC_FTRACE_WITH_ARGS or HAVE_DYNAMIC_FTRACE_WITH_REGS.
+> > More specifically, if HAVE_DYNAMIC_FTRACE_WITH_REGS is defined but
+> > not the HAVE_DYNAMIC_FTRACE_WITH_ARGS, and the ftrace ops used to
+> > register the function callback does not set FTRACE_OPS_FL_SAVE_REGS.
+> > In this case, ftrace_regs can be NULL in user callback.
+> > 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Huacai Chen <chenhuacai@kernel.org>
+> > Cc: WANG Xuerui <kernel@xen0n.name>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > Cc: Naveen N Rao <naveen@kernel.org>
+> > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> > Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> > Cc: Albert Ou <aou@eecs.berkeley.edu>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: x86@kernel.org
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > 
+> > ---
+> >  Changes in v18:
+> >   - Remove unclear comment about `regs->fp` access on arm64.
+> >  Changes in v16:
+> >   - Add a note when the ftrace_regs can be NULL.
+> >   - Update against for the latest kernel.
+> >  Changes in v11:
+> >   - Update for the latest for-next branch.
+> >  Changes in v8:
+> >   - Just pass ftrace_regs to the handler instead of adding a new
+> >     entryregfunc.
+> >   - Update riscv ftrace_graph_func().
+> >  Changes in v3:
+> >   - Update for new multiple fgraph.
+> > ---
+> >  arch/arm64/kernel/ftrace.c               |   15 ++++++++-
+> 
+> For the arm64 bits:
+> 
+> Acked-by: Will Deacon <will@kernel.org>
+> 
 
-Huacai
+Thank you for ack for arm64!
 
->
-> ?
->
->
->
->
+> Will
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
