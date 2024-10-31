@@ -1,74 +1,142 @@
-Return-Path: <linux-kernel+bounces-390998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6DD9B80F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:16:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A059B80FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF051C21F62
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:16:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B550B22D0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8620E1BE87C;
-	Thu, 31 Oct 2024 17:16:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C31194C6B;
-	Thu, 31 Oct 2024 17:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519191BE235;
+	Thu, 31 Oct 2024 17:16:57 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9619084DF5;
+	Thu, 31 Oct 2024 17:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730394969; cv=none; b=rLF/i3VmqYQbZSL9o1pFQ6rwc8bONilNsjFi1TLInHztQbGWtmCi8PIcZpuN5yYf95Klgd8zDZw+MXQwHZRejuyCbLJZA9vYSbRMIpxZoOByrHzZSr6VzhQMCAloFZNN313cVgAB3BNLyK9bh0YbFdRv1WZOxFo/QubJe1vYRV0=
+	t=1730395016; cv=none; b=sZl3j8ZZSWkjiH/cNzSEQPybKV9I1gOA+H2JNUdbDFg47kuqqPVRReHIv7dAs7wv3UkrPr6yL1uEop+hi+Ae7Iyk/e2EMDSlfCxcZHj7bpAXUqsZZKUfJ5FXUUnlK0GMx07aeiZmxXFfyQBxAeSwWkGtauux3pcdcghAJAfZgWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730394969; c=relaxed/simple;
-	bh=005xkjtnlU6oyk/+0nHfJS1oRRgb6Ml20SVYLTsG7yc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WsVzu1ThemlDdKsyipMAeL3Yw4mr2ZtqhUIF9ia8A93ghAjhfLlslob/CEnDO1IEYjrZX2sBRrgFoC6nFrFfs4Ys9VnsaLY9xir1eQ3SLkLY+iE4l5ZnYqvH44T27KFjtSnpt1AXyoPkQjHW4H7O4h92zTaYBB0IlBzeib6uvn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23D1A1063;
-	Thu, 31 Oct 2024 10:16:35 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 91A933F73B;
-	Thu, 31 Oct 2024 10:16:04 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] firmware: arm_scmi: Reject clear channel request on A2P
-Date: Thu, 31 Oct 2024 17:16:02 +0000
-Message-Id: <173039475222.3108069.291513539121527165.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241021171544.2579551-1-cristian.marussi@arm.com>
-References: <20241021171544.2579551-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1730395016; c=relaxed/simple;
+	bh=U7fEcGd6I9omS7BM9DDR6R83sClSKy7hwILHeDZsreg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMYNqnzEMpv8GhQStreeZvHlZk0R1uBHy37laSEoTt94LU8FWqaHJM2KzX8D5M4H3wL25bHRu1ZGRwTDGdxkPHJDHCQRz4yaM0cSnYbgQ0SQXL9L/7iHONWR63n3cPIrZIofcHrehtYfPDUHZPgcqd+yGaKSvcFp1usLgLtXAa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 178D61A09B0;
+	Thu, 31 Oct 2024 18:16:47 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 00D0B1A0B21;
+	Thu, 31 Oct 2024 18:16:47 +0100 (CET)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 57A87203CD;
+	Thu, 31 Oct 2024 18:16:46 +0100 (CET)
+Date: Thu, 31 Oct 2024 18:16:46 +0100
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v4 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
+ glue driver
+Message-ID: <ZyO7fn3NWULA9bGG@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
+ <20241028-upstream_s32cc_gmac-v4-14-03618f10e3e2@oss.nxp.com>
+ <xanb4j56u2rjwpkyj5gwh6y6t36gpvawph62jw72ksh7jximhr@cjwlp7wsxgp6>
+ <ZyOXgdqUgg2qlCah@lsv051416.swis.nl-cdc01.nxp.com>
+ <b9aefcf2-8f0d-431c-865b-34c9b8e69c4d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9aefcf2-8f0d-431c-865b-34c9b8e69c4d@kernel.org>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Mon, 21 Oct 2024 18:15:44 +0100, Cristian Marussi wrote:
-> The clear channel transport operation is supposed to be called exclusively
-> on the P2A channel from the agent, since it relinquishes the ownership of
-> the channel to the platform, after this latter has initiated some sort of
-> P2A communication.
+On Thu, Oct 31, 2024 at 04:44:45PM +0100, Krzysztof Kozlowski wrote:
+> On 31/10/2024 15:43, Jan Petrous wrote:
+> > On Tue, Oct 29, 2024 at 08:13:40AM +0100, Krzysztof Kozlowski wrote:
+> >> On Mon, Oct 28, 2024 at 09:24:56PM +0100, Jan Petrous (OSS) wrote:
+> >>> +	plat->init = s32_gmac_init;
+> >>> +	plat->exit = s32_gmac_exit;
+> >>> +	plat->fix_mac_speed = s32_fix_mac_speed;
+> >>> +
+> >>> +	plat->bsp_priv = gmac;
+> >>> +
+> >>> +	return stmmac_pltfr_probe(pdev, plat, &res);
+> >>> +}
+> >>> +
+> >>> +static const struct of_device_id s32_dwmac_match[] = {
+> >>> +	{ .compatible = "nxp,s32g2-dwmac" },
+> >>> +	{ .compatible = "nxp,s32g3-dwmac" },
+> >>> +	{ .compatible = "nxp,s32r-dwmac" },
+> >>
+> >> Why do you need three same entries?
+> >>
+> > 
+> > We have three different SoCs and in v3 review you told me
+> > to return all back:
+> > https://patchwork.kernel.org/comment/26067257/
 > 
-> Make sure that, if it is ever called on a A2P, is logged and ignored.
+> It was about binding, not driver.
 > 
-> [...]
+> I also asked there: use proper fallback and compatibility. Both comments
+> of course affect your driver, but why choosing only first part?
+> 
 
-Applied to sudeep.holla/linux (for-next/scmi/fixes), thanks!
+Does it mean I should remove first two (G2/G3) members from match array
+and use "nxp,s32r-dwmac" as fallback for G2/G3? And similarly change
+the bindings to:
 
-[1/1] firmware: arm_scmi: Reject clear channel request on A2P
-      https://git.kernel.org/sudeep.holla/c/a0a18e91eb3a
---
-Regards,
-Sudeep
+  compatible:
+    oneOf:
+      - const: nxp,s32r-dwmac
+      - items:
+	  - enum:
+	      - nxp,s32g2-dwmac
+	      - nxp,s32g3-dwmac
+          - const: nxp,s32r-dwmac
 
+And add here, into the driver, those members back when some device
+specific feature will be needed? Am I understand your hints right?
+
+Thanks.
+/Jan
 
