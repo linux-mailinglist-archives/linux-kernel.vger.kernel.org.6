@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-391152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A974D9B8342
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:22:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0AFC9B8343
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E109281247
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3CA1F213C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D331CBE86;
-	Thu, 31 Oct 2024 19:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12851CB508;
+	Thu, 31 Oct 2024 19:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAotM7qd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0reAsTC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB021CB50D;
-	Thu, 31 Oct 2024 19:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6DD1CB316;
+	Thu, 31 Oct 2024 19:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402505; cv=none; b=PY42mS2EibO2OCKTw0XKwiVv9Eg2ONQ9Z/DRQlkEXurzsIusUMNgvf0TAeYmFP++kRqFhvH26SyN4pMsTKp1VtPZwoPQcJntWThVSOqc9H/UXRFv3Lw2IZ09dzK54ujxLMF/Gqm3463LcHjsnKfuMERSmZpbvg2uS2oL+n03oMA=
+	t=1730402517; cv=none; b=Ng3qPAzNz7DznJKTWE/jZJTwx12wYrysQ5eeTuyfjExu74MiO0CSBBwTPkjA197AE318TmjVtAfwa2oaXswFksl1pUJwkh/D/yrbPoJ3IxsQqWKf008IpnRs8t7RxBVpVQQQZ2n/O4gHr1dYvzlm4libbBrxAEVV6GCBpNAZhGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402505; c=relaxed/simple;
-	bh=0ZSgsybRkNgA//hqHaFbgWNG+1PnzRnJxZ3UfA4h9Rs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=baj/cIlTsE3+H0jT3h9LQrr7BeBMrYUtsmOHzq4yX+9I98SLUz6lzMDcbxSGRHLUb5DMtA3bQ/4ih6iWsYjGHbywS9JEoDlQJfIIpIZFXq2v35x3p9aAdkN58Wb7iwJ/f58+RMg435LMvo5DD4adLi1Cu8ocZs7QfP4vq7hEISo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAotM7qd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D72CC4CED3;
-	Thu, 31 Oct 2024 19:21:43 +0000 (UTC)
+	s=arc-20240116; t=1730402517; c=relaxed/simple;
+	bh=W6kgg88zrHCrf22nJfw8tbSKKqNxH1rsErpXBmKqqIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AX6/IYPTZCq8UV6e+QU6/fjvzuDQ85JEXu32gE7LHZGfQeWGwMlWI7KgVOL/fE5BZK2h2GwSZ+vr6u3oQGYHR4mdfhZ/in8b3xUUa4SgkrQtqZ8ksMdE+TetFGgtl+r8Fri1uqP6s6lIxdAsjfkwu7tsFBBwyCQ3RUo3nXXdKTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0reAsTC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37482C4CEC3;
+	Thu, 31 Oct 2024 19:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730402504;
-	bh=0ZSgsybRkNgA//hqHaFbgWNG+1PnzRnJxZ3UfA4h9Rs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=jAotM7qdJB81uguvOPNpxfpjVngo51BMHoiWwhXcNwIr86J2udKL3utXN7I8nPX9D
-	 0i5FNYPAvnweqqvT0bm0XYe1PtZ4mKOgF9eoqRskXUjc/MV0MJOAxvbjx8vDBLL7P1
-	 IznFmDgKZJ7m4+clMiJKYbYRyJU4OKXSAaSTe6KFtu/wypGH16NGKR5dtJ8HUyWrwK
-	 hP1l9PZWShs9wx8rvpOQOXdW8JG7Xn42JrzsKZWz6Qs/Eue1hHS889sSa5NlOJYFPo
-	 bqg91tOQdWR2/9gmviQwUdmeISpwPXAxxQ35CttsiqQfOsDQ8Q+NPVHYR5rKsPIGtb
-	 UOSjGJZfOXQSg==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 31 Oct 2024 19:21:38 +0000
-Subject: [PATCH] arm64/gcs: Fix outdated ptrace documentation
+	s=k20201202; t=1730402517;
+	bh=W6kgg88zrHCrf22nJfw8tbSKKqNxH1rsErpXBmKqqIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p0reAsTCzI9m/gsCnevKqHdMu7DPT/h1LRQbt/l7flSGB0zevYA49tibPDwtnK61Q
+	 sGgb3eGX4bMhIepY2+I7nwWEOaEQF6ljMqFk7ySH998BW9EVN6fq5pNBOUK96UNm3S
+	 UWo25kaCAYCIVRLZJuVuZ4hExMsYegZwNGso5URcjLmwJMdArn3GfJyBxKcWy47aW7
+	 N6zLuuwYXM7zVUeGokhnUrdhVM5pIOWgiwE5EAzxNDtAAzbGjVzBdtXBLBSrdd3Kwf
+	 qoEdIdMrRAQeiLEZieo0zVk/j3OyincbEp3F3hrJZplNSxNm9fGjifSOQ9MJtb5NQr
+	 xCkYg08fRzwHA==
+Date: Thu, 31 Oct 2024 16:21:52 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 17/21] perf build: Remove test library from python
+ shared object
+Message-ID: <ZyPY0JGMOp25FWm6@x1>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-18-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-arm64-gcs-doc-disable-v1-1-d7f6ded62046@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMHYI2cC/x3MwQqDMAyA4VeRnA0krp2wVxkeahtdwLWjARHEd
- 1/x+B3+/wSTqmLw6k6osqtpyQ3cdxA/Ia+CmpphoMExPRhD/T4drtEwlYhJLcyboDiKxOz9SAK
- t/VVZ9Li/7+m6/vrBbvZnAAAA
-X-Change-ID: 20241031-arm64-gcs-doc-disable-e40c0115570e
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1804; i=broonie@kernel.org;
- h=from:subject:message-id; bh=0ZSgsybRkNgA//hqHaFbgWNG+1PnzRnJxZ3UfA4h9Rs=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnI9jG+FCHClvg5NARf9CZ3l7Gnyt4LVv9jrok91J5
- qnOg2QOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZyPYxgAKCRAk1otyXVSH0GolB/
- 9x7Rxxvu35bazi1kYivVoC5b5L6KYYjB5ulPK+yCDLHX1M2g2elshC33kBGGBQfzRF3JggFfO+88p8
- n20h9PE6vHwLrVDuNFBtsQrhgsVJ/rw+HfLsPeYmQCRljuCtnUUcmGX23ZtPv6h3rfIYE2WJh+lqlj
- vZWgVQyxmUNdT+moVsN+2SRNllvrhzUVbob4Z2ynSYARcreMguOwoOJ3tGLUAYLxNjshJuKLVF/DcL
- 88+iglT8m6AMP5OQN0oWaVN14FBlUNvt8uL3JSwQaMEtO2wfKYq+r4HpnjmXb23NY7hbmSWihugV69
- twT6cz31E1oSFzQJj4edC/qPaQK0Rz
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031014252.753588-18-irogers@google.com>
 
-The ptrace documentation for GCS was written prior to the implementation of
-clone3() when we still blocked enabling of GCS via ptrace. This restriction
-was relaxed as part of implementing clone3() support since we implemented
-support for the GCS not being managed by the kernel but the documentation
-still mentions the restriction. Update the documentation to reflect what
-was merged.
+On Wed, Oct 30, 2024 at 06:42:48PM -0700, Ian Rogers wrote:
+> With the attr.c code moved to a shell test, there is no need to link
+> the test code into the python dso to avoid a missing reference to
+> test_attr__open. Drop the test code from the python library.
+> 
+> With the bench and test code removed from the python library on my x86
+> debian derived laptop the python library is reduced in size by 508,712
+> bytes or nearly 5%.
 
-We have not yet merged clone3() itself but all the support other than in
-clone() itself is there.
-
-Fixes: 7058bf87cd59 ("arm64/gcs: Document the ABI for Guarded Control Stacks")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/arch/arm64/gcs.rst | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/arch/arm64/gcs.rst b/Documentation/arch/arm64/gcs.rst
-index af58d9151cb72df9058ddccadb2602127b479c95..1f65a3193e7765dce9bfd6ad88b9fbd6a225ed86 100644
---- a/Documentation/arch/arm64/gcs.rst
-+++ b/Documentation/arch/arm64/gcs.rst
-@@ -204,11 +204,8 @@ When returning from a signal handler:
- * A new regset NT_ARM_GCS is defined for use with PTRACE_GETREGSET and
-   PTRACE_SETREGSET.
+Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
  
--* Due to the complexity surrounding allocation and deallocation of stacks and
--  lack of practical application it is not possible to enable GCS via ptrace.
--  GCS may be disabled via the ptrace interface.
--
--* Other GCS modes may be configured via ptrace.
-+* The GCS mode, including enable and disable, may be configured via ptrace.
-+  If GCS is enabled via ptrace no new GCS will be allocated for the thread.
- 
- * Configuration via ptrace ignores locking of GCS mode bits.
- 
-
----
-base-commit: 9b9be78258511e67767e4aa51f587cf22feb5065
-change-id: 20241031-arm64-gcs-doc-disable-e40c0115570e
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/Makefile.perf | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index ef1b39b5042d..2059f1c4b78d 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -487,7 +487,7 @@ endif
+>  EXTLIBS := $(call filter-out,$(EXCLUDE_EXTLIBS),$(EXTLIBS))
+>  LIBS = -Wl,--whole-archive $(PERFLIBS) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+>  
+> -PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH),$(PERFLIBS))
+> +PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH) $(LIBPERF_TEST),$(PERFLIBS))
+>  LIBS_PY = -Wl,--whole-archive $(PERFLIBS_PY) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+>  
+>  export INSTALL SHELL_PATH
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
 
