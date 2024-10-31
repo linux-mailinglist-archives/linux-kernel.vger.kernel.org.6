@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-390149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3449B7626
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:15:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFE79B7627
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02182284B52
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1ED11C21389
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D65154C07;
-	Thu, 31 Oct 2024 08:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1AD15534E;
+	Thu, 31 Oct 2024 08:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Vadr0rah"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fsTeXRU0"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5B5187323
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094F6187323
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730362468; cv=none; b=R/+XYFdLBo3nkOY/mnlGFzAKxwhf3nrs1x7J+Lh9lFJ6LtNuMSfYB6ARh+IZhQ5biKiUd4uR7lHRUIFNG5sy6aRoxVpBYcZd1LY93KhLBalI6DGFgYFRYY6hxk+33zEU69dbyOOe+Leh4cFLjreoC8kwvJbzJvQqAKkH6YlFPGU=
+	t=1730362474; cv=none; b=MZXrkkWQ4eY0MA0IP42Pr/PSC98rqTGjl5YR7BIEfgKZOGfcnE/AujNgw/XiNa7M0Wz6hAMme/1VwJdSW8ngefBFTlEzeKuRHIzXWSCjbn1miJsOs3hLBghm1xfo3tLsvm3K9ksGKL+uzmi6C6njadhGGkJ138/EozWdwWIMFU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730362468; c=relaxed/simple;
-	bh=4i8PRUnaVqGvMO4RXt6asLg2xN9z/UY9Zi1Qe/JX+bs=;
+	s=arc-20240116; t=1730362474; c=relaxed/simple;
+	bh=8PV9Chaa8T7WeXJAYQ/SP4YBbi1NrEJGvTUgFb1bqDk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JcL+K8Zp9r+nIwbfG58tv63vgfhRWUxzDqrxnUHKG4n99j4HhoCzLuVh0Vq8WFZhQhFl08lc2QEoxywm1OcMiYWFxQrLS+laF96AvtYHv1YVHxJEey8YzIRVmCLvliEmUuyA+EoKpOI0O3pdv2/HR6bp1t+eYzVlT/lZ7D4nqag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Vadr0rah; arc=none smtp.client-ip=209.85.216.52
+	 MIME-Version; b=cZSrXl7mbe2hQ0Jdh54OyvAeYCXXQ/PFO6CDUuBI6WoPoff/S6nB5hvN0CPrUGFjX/0HkpLxP4kLCouhoXwCIrolprQxCgCjAhgOku1ktziY9iB0+xOAyva/auL59to87o4I1xvOVIefBClRXoHnnINiKVORRRQhwT+cN9eu4D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fsTeXRU0; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2ed2230d8so512503a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:14:26 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2e050b1c3so1354736a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1730362466; x=1730967266; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1730362472; x=1730967272; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zhaSq+JiwY2eXMq9iHjNOMwdUtMvBCWvXjuj5WTX7eI=;
-        b=Vadr0rahN3LtIc/4HFmONWQ0dawrkUofE6EaJ4NdXKnzJxbV+7CxSloIGBSVNACEZc
-         ApDc8rsiyWgummM9XS4y72DPIEguyIwr8ycTILJ98oPZk6/xihhryuVEoZQ+/s/x597y
-         VtORjERIs6rrghtzgaypMIZYJHgvTdMn918ger6GQ7FnD5VUsH9p1VuGckfT4OixDoEa
-         we7FxaHCr7DQCn6H6xaWu6rNwABt41sBecOGaw3Wq1ZTzSGk8ljD5Emq1v/QkjPXjrCG
-         +filO8FgmsSTPLbofejQKss47TBRqEC6APpJuLgq8w059XewB9X54g9MvxfOJbTcS61r
-         AEPA==
+        bh=PXIV/VGyywoEEnyyPnCjvRn11K4iZ53lY17h1S4nRMU=;
+        b=fsTeXRU0cMHgMtYycW0HWy0X3ztgIyIyYEF2T1G+19xVLL6WslEewpYkwNWEt0kAoT
+         T/BMg7N1uDifbMHG77UIlKmfFnC1ChDSZ6wgEM6q4ReE+VTinr355Kv356APspUwbjpK
+         2650id3cOCewMgSxGzr3GgYEylQc3RTvvcNNDXDxStV5Ba6Mi/z1RawM4cr6AlWmPRfF
+         eOsvzTh+Vibi/dKAs8Ulo5OiPDSa+8i4n8xMAKF8JpDOH0vbw8ZNbQCQyOVUk/W7ni0W
+         dqLFcXpJS2WetvDAyXNvgN5piEDrxhDUghuLG4ADy4CjM3nibrmDL2ofXZj/j0yL2/Nv
+         Jp1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730362466; x=1730967266;
+        d=1e100.net; s=20230601; t=1730362472; x=1730967272;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zhaSq+JiwY2eXMq9iHjNOMwdUtMvBCWvXjuj5WTX7eI=;
-        b=g+nrrN3jzYkG5jrdtjFTO10skJLYm/cfev+B92WKPTgeWfQKjEcDu8r4p9cEngkM0Z
-         D/xKWTgc9ib9e95SzoMNvLBDs3QSOCsKCv6SOs1dbrCh/qsZYpAjaeVfBABbBAAtOe9x
-         /KV24YRwwbyh+anIHsbWCYQuMBI8uiBJful7896caZq1ATBhfozRArAN4UMmBG1CKRQ5
-         AMhMoF55meSR/PNWmaTtNlpbSU9KGTjCzTiVoNFp8PZiKt5LTu+bCecRJazboEDuhQFI
-         v6AxU5tpY1SfRYgRM+yH85p3zjt/1HbutLMkfZV5JZDHVGMDXaReC8zWlfmHntlU2KvX
-         B5xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuBNMbglO2W94UH1Cr10dgRRggaCegHWEIZOowJ9HFLm71TH4fzOL5xW1V3GdIgPu/gGll1as3DfsEFvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsBdC4IxVyB3XaBZc/pqT5QKJbaXYFK9Nu2IaG59zgXRdLOwwb
-	zvFCAdlb3YzPoIGxqdIF4bfCpFxpFBGKWm6fVS+X3EYNdcBSRdBQ6nha6IbMW7U=
-X-Google-Smtp-Source: AGHT+IHK1eQB1HIOVcDML9/U+qgad2lrGxmYCIjO8Kr0cktQfTqjB9fcEN6v3D+sRskXXQsEGQyaZA==
-X-Received: by 2002:a17:90a:bc83:b0:2e2:d17e:1ef7 with SMTP id 98e67ed59e1d1-2e8f1054a67mr19337853a91.3.1730362465831;
-        Thu, 31 Oct 2024 01:14:25 -0700 (PDT)
+        bh=PXIV/VGyywoEEnyyPnCjvRn11K4iZ53lY17h1S4nRMU=;
+        b=J03siAjM86Gap5HqDbcn6t8ibLFPhlnrlg5+n6lH2oxrRPn8uKZL6WgUxH4PKTCpBZ
+         AO4ul66Ed2gNheOuOgKC/gY1acGlTkLbx2A5qa+ATEVYJerIVt8q5QuR80VnryuDxPX4
+         B4yuNqyvDZVTXorxX5e0V1L3+pDTOgbd0RC7uKuZfDROGK5Iwn4xtuLz2DDECKHRS3l7
+         I9qkgGHae27Lq8SUjQOzkq1yyXKxCJ0b2ndNuPA+G5XkGNfJ+XP5ahjhzXTroZpScTur
+         4IFD88nf6feFLOox7MAAyrbian2NiSm+GjwcaG2iOTdP1qtYXOkG5vz19/FxxIGtCbKc
+         iXPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNjlWZbFpN9r+rxQ6sYm9nEFVq2VICI0Rylk1P3cMUvRVWSk97enP8UbXuVugqX7hnTYdUdMXTW2vN8WQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5eiaaN62p2w1h69Vc1ZurnpQo+tRqtuix4VflxmJHVODyI17C
+	BWg00aNyHkXNNoeX9Wsu4e1OSp2iLzcuQ2cOmp41HEQLeobLEeFqrjzalHRFqkY=
+X-Google-Smtp-Source: AGHT+IHX23XnGunJsTXB9lUCwZL9x2plTKY2+aB5lG85OOgVbjA/C6wsUFYSS/R0cYtYXLJhUsQsBA==
+X-Received: by 2002:a17:90b:1b4a:b0:2e9:20d8:414c with SMTP id 98e67ed59e1d1-2e93e0139a2mr2423394a91.5.1730362472334;
+        Thu, 31 Oct 2024 01:14:32 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.149])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9201b2586sm5163996a91.0.2024.10.31.01.14.19
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9201b2586sm5163996a91.0.2024.10.31.01.14.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 01:14:24 -0700 (PDT)
+        Thu, 31 Oct 2024 01:14:31 -0700 (PDT)
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 To: david@redhat.com,
 	jannh@google.com,
@@ -83,9 +83,9 @@ Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	x86@kernel.org,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2 3/7] mm: introduce do_zap_pte_range()
-Date: Thu, 31 Oct 2024 16:13:19 +0800
-Message-Id: <1639ac32194f2b2590852f410fd3ce3595eb730b.1730360798.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v2 4/7] mm: make zap_pte_range() handle full within-PMD range
+Date: Thu, 31 Oct 2024 16:13:20 +0800
+Message-Id: <63c92f1e2a2fa6267490ab9fad5b090316b39b98.1730360798.git.zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <cover.1730360798.git.zhengqi.arch@bytedance.com>
 References: <cover.1730360798.git.zhengqi.arch@bytedance.com>
@@ -97,82 +97,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit introduces do_zap_pte_range() to actually zap the PTEs, which
-will help improve code readability and facilitate secondary checking of
-the processed PTEs in the future.
-
-No functional change.
+In preparation for reclaiming empty PTE pages, this commit first makes
+zap_pte_range() to handle the full within-PMD range, so that we can more
+easily detect and free PTE pages in this function in subsequent commits.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- mm/memory.c | 45 ++++++++++++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 19 deletions(-)
+ mm/memory.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/mm/memory.c b/mm/memory.c
-index bd9ebe0f4471f..c1150e62dd073 100644
+index c1150e62dd073..002aa4f454fa0 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -1657,6 +1657,27 @@ static inline int zap_nonpresent_ptes(struct mmu_gather *tlb,
- 	return nr;
+@@ -1691,6 +1691,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 	pte_t *pte;
+ 	int nr;
+ 
++retry:
+ 	tlb_change_page_size(tlb, PAGE_SIZE);
+ 	init_rss_vec(rss);
+ 	start_pte = pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
+@@ -1730,6 +1731,13 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 	if (force_flush)
+ 		tlb_flush_mmu(tlb);
+ 
++	if (addr != end) {
++		cond_resched();
++		force_flush = false;
++		force_break = false;
++		goto retry;
++	}
++
+ 	return addr;
  }
- 
-+static inline int do_zap_pte_range(struct mmu_gather *tlb,
-+				   struct vm_area_struct *vma, pte_t *pte,
-+				   unsigned long addr, unsigned long end,
-+				   struct zap_details *details, int *rss,
-+				   bool *force_flush, bool *force_break)
-+{
-+	pte_t ptent = ptep_get(pte);
-+	int max_nr = (end - addr) / PAGE_SIZE;
-+
-+	if (pte_none(ptent))
-+		return 1;
-+
-+	if (pte_present(ptent))
-+		return zap_present_ptes(tlb, vma, pte, ptent, max_nr,
-+					addr, details, rss, force_flush,
-+					force_break);
-+
-+	return zap_nonpresent_ptes(tlb, vma, pte, ptent, max_nr, addr,
-+					 details, rss);
-+}
-+
- static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 				struct vm_area_struct *vma, pmd_t *pmd,
- 				unsigned long addr, unsigned long end,
-@@ -1679,28 +1700,14 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 	flush_tlb_batched_pending(mm);
- 	arch_enter_lazy_mmu_mode();
- 	do {
--		pte_t ptent = ptep_get(pte);
--		int max_nr;
--
--		nr = 1;
--		if (pte_none(ptent))
--			continue;
--
- 		if (need_resched())
- 			break;
- 
--		max_nr = (end - addr) / PAGE_SIZE;
--		if (pte_present(ptent)) {
--			nr = zap_present_ptes(tlb, vma, pte, ptent, max_nr,
--					      addr, details, rss, &force_flush,
--					      &force_break);
--			if (unlikely(force_break)) {
--				addr += nr * PAGE_SIZE;
--				break;
--			}
--		} else {
--			nr = zap_nonpresent_ptes(tlb, vma, pte, ptent, max_nr,
--						 addr, details, rss);
-+		nr = do_zap_pte_range(tlb, vma, pte, addr, end, details, rss,
-+				      &force_flush, &force_break);
-+		if (unlikely(force_break)) {
-+			addr += nr * PAGE_SIZE;
-+			break;
- 		}
- 	} while (pte += nr, addr += PAGE_SIZE * nr, addr != end);
  
 -- 
 2.20.1
