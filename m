@@ -1,131 +1,144 @@
-Return-Path: <linux-kernel+bounces-390381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366009B7920
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:55:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1D69B7921
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:55:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF09E281D47
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9ED41F2265E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEB1199E9C;
-	Thu, 31 Oct 2024 10:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2B1199E9F;
+	Thu, 31 Oct 2024 10:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpsh03mg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BD45STXZ"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC513199EB0
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECE613A25F
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372113; cv=none; b=nkowcS2nbg5/T2cCXPBi+/bP+h9DOLm0qLLMkZ5CCFRZIJd2PAeNpd8vnOc0gXC7pD8rWFl6gOZ6hh5ETFwt4fd2E3x/oLSE1EaV6t2OPMKzoL4kzJvLFoGXiJFWQ2WkcNBcl0l/BxB4wRJq+qMlQ3NBPPpeQbyZ/rb1hb387jU=
+	t=1730372140; cv=none; b=D/3kC7mIrXLoanSGV/Q2QyMOqp6A7HZFTMRKOyvPQ1fT6nEaCcCkHKh+tNdd6mW5WqgfdXmryMD3B781Uw3ZtYMlD0YAS4GOpCL9tydaIhWbOVQ6sFnjlEEqp2xw27HtrmqQiU0oyQk1WL9E8MIDERCDVDZq/lFQISfWqxQjbCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372113; c=relaxed/simple;
-	bh=ecYjbnODmCzrBa7RlMNJgPSwNS9hjFXL+H+kwpDNdrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BJ5cJbAB9NqAjk/9oXP9XVYVufwRJZ1AwlgzER0kVDn10ft71RqGCf2y0TXANl2Hgkv5rIKtbUnlucq/LSetGN3gVwRwLNqgwXSoLA62w7z9A0MuSGW+KYiMxUr88Y6O0ju3xjmlKFyRad+SSceFjRO0FPYT/AyoaKtSTIx+b58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpsh03mg; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730372111; x=1761908111;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ecYjbnODmCzrBa7RlMNJgPSwNS9hjFXL+H+kwpDNdrI=;
-  b=mpsh03mgzm+bKDIh+aAOCrQeKC22dQXlQdriEkKv5a+m9lCioFzVjkhQ
-   jdm7jIdOXniwgBe1e/hRmKZBykNeIM7/roNcXmEfTnM6dosC6ulYNkyms
-   I06yhEKjyKCBQGkprP9ln7dFGU2H6dHlFMU+ESv0cGWgf1SNSifuZkAu9
-   1Lt6mNQWTs4KeaE0L3jG+aU3LY6pHT4g+JT7CySVs5bj18yXrz+uBXSkf
-   0gfv3/q2x9KqFfXHHREY2U5x7L0IrUSXApGJmc6anZQf+efqRLPgQNHuh
-   JyWfDyPOZ1r0aOE7uYvzneWkSt2gi/ZVs4e8GtOWoyr8r5lL02IQt5oZg
-   g==;
-X-CSE-ConnectionGUID: dlC4o7VpSU2xRQAfoUfPTA==
-X-CSE-MsgGUID: 5xEfqxV8ReCqk83ZtlKDmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="47578512"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="47578512"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:55:11 -0700
-X-CSE-ConnectionGUID: 6W5owVfaQGWRl3fGJSBNGA==
-X-CSE-MsgGUID: ayhbZiP6Sp+/EtFSbZMMEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="87380423"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 31 Oct 2024 03:55:10 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6SpX-000g0e-1N;
-	Thu, 31 Oct 2024 10:55:07 +0000
-Date: Thu, 31 Oct 2024 18:55:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Baoquan He <bhe@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: include/linux/ioremap.h:21 is_ioremap_addr() warn: always true
- condition '(addr >= (0)) => (0-u32max >= 0)'
-Message-ID: <202410311824.fJAhvOUy-lkp@intel.com>
+	s=arc-20240116; t=1730372140; c=relaxed/simple;
+	bh=I2kWhSn8aENuSjRYLbfTtVZqAafY2D3IXG9eCyhkJHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QSBIhO53x6ER6cV1KAjaaIxtXQMrEd8f1NiNJB5HbbNXgCEpF8lQ+q1gYeq2Mt9mVvYF7fFzVJRBLoTEld5vgUmmFuPDLPU5gCWPu0lPOgYf44nbhAwmf7KTzZggmTGosJOhwrnSsgT/1fu7u2Ve5B44w+E7/wBd2XuekLqQwWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BD45STXZ; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ea4add8a5fso7438477b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730372137; x=1730976937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vHNRb+kQOoIzK3RlYlUwYxMLFnjUn6/EMjgF1j51zD8=;
+        b=BD45STXZlKfld/tGPeOWk5hU6ablzJchrRkqni+88D3pJ1ZAUUYdjfLXy67JMXFMcU
+         dvX5yd10bj9YajlHAtcaN8JalAIz4U6Y2JVlyI1CNmGlPc+rLNqpUFVLKOZHfCCG44h4
+         AF9669qvDi1gHmNpCTx9KmFSErHnEpKeVabd9wgofg3okgsA/7VoN6e+UF+JniVUFpIZ
+         ENxfr84BJTe5ve3Or/fgn+PpHDiIDMrI/XKsWcU4gp3pISh0IY+fmGOZXTOv7HLC0eAl
+         rEeIPoz8PIVDANMwSHiQfruvzwnlpF4QOsaBBNF17hMjjI/XcRVZlqi7UUYbaDTLCskz
+         /bmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730372137; x=1730976937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vHNRb+kQOoIzK3RlYlUwYxMLFnjUn6/EMjgF1j51zD8=;
+        b=eXoDJA4wcGcuyq0YKd7ps4e4sCbMCQZmt/5kfCMzZCcV+D86k3thu4Bj5InM2AGguJ
+         nE2A3zEMgvOOZLIEr8W1cDlpp+RMB2oJfHp+tb0gUU1rDdg9qnKVHWRwmPFEyNvusTdu
+         aB8DJFxhwxossig0syJYODMwNEfMlpLm8FA8x17SaI852pBZHc+1Y5qcfbaYTO8P1OFE
+         JuN886uhYis6q07AtSbh9KjLflqc7XMt+778IOLrlT4DY/FG88aZTMu+CnvNejpF+X5s
+         +NlyeIrfLSzzQBYTtcAecyAbGX2VNzpoze6afX6ibFNwshKxctb/PBu/c436IXCUEl8h
+         9zAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNj3ClgAZfLE41IXDusvCVlcYbXJQy+2EtkC8J2p1Cyl+oPjewyav3pPgalk7itqWI2UCy6+mtMJbblVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEVczR0Mp8sWDedGFDUKUV5+6PzfDkJT0p1zpNCoxQLsyC1ryK
+	Uhm9CF+JHSX4Hc48gELCpEo8vrSsQDgBoepbf38U+SQMzBuoqlrs
+X-Google-Smtp-Source: AGHT+IEkuvKipKcZUa/w/oJLu7XXuSvnRybQdKUGtgrHvr1s3fNV5JdwZUYSaRSJ6dd/HO8FSlWZmQ==
+X-Received: by 2002:a05:690c:4c01:b0:6e3:14b0:ff86 with SMTP id 00721157ae682-6ea524e28c9mr27632317b3.27.1730372137224;
+        Thu, 31 Oct 2024 03:55:37 -0700 (PDT)
+Received: from hemlock.fiveisland.rocks (dhcp-213-15-2-159.pbband.net. [159.2.15.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9f201sm6618476d6.16.2024.10.31.03.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 03:55:36 -0700 (PDT)
+From: Marc Dionne <marc.c.dionne@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: [PATCH v4] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
+Date: Thu, 31 Oct 2024 07:55:34 -0300
+Message-ID: <20241031105534.565533-1-marc.c.dionne@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0fc810ae3ae110f9e2fcccce80fc8c8d62f97907
-commit: ac88ff6b9d7dea9f0907c86bdae204dde7d5c0e6 riscv: fix VMALLOC_START definition
-date:   11 months ago
-config: riscv-randconfig-r071-20241030 (https://download.01.org/0day-ci/archive/20241031/202410311824.fJAhvOUy-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+From: Marc Dionne <marc.dionne@auristor.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410311824.fJAhvOUy-lkp@intel.com/
+The number of slabs can easily exceed the hard coded MAX_SLABS in the
+slabinfo tool, causing it to overwrite memory and crash.
 
-smatch warnings:
-include/linux/ioremap.h:21 is_ioremap_addr() warn: always true condition '(addr >= (0)) => (0-u32max >= 0)'
+Increase the value of MAX_SLABS, and check if that has been exceeded for
+each new slab, instead of at the end when it's already too late.  Also
+move the check for MAX_ALIASES into the loop body.
 
-vim +21 include/linux/ioremap.h
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+---
+ tools/mm/slabinfo.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-016fec91013cfb Baoquan He 2023-07-06   7  
-016fec91013cfb Baoquan He 2023-07-06   8  #if defined(CONFIG_HAS_IOMEM) || defined(CONFIG_GENERIC_IOREMAP)
-016fec91013cfb Baoquan He 2023-07-06   9  /*
-016fec91013cfb Baoquan He 2023-07-06  10   * Ioremap often, but not always uses the generic vmalloc area. E.g on
-016fec91013cfb Baoquan He 2023-07-06  11   * Power ARCH, it could have different ioremap space.
-016fec91013cfb Baoquan He 2023-07-06  12   */
-016fec91013cfb Baoquan He 2023-07-06  13  #ifndef IOREMAP_START
-016fec91013cfb Baoquan He 2023-07-06  14  #define IOREMAP_START   VMALLOC_START
-016fec91013cfb Baoquan He 2023-07-06  15  #define IOREMAP_END     VMALLOC_END
-016fec91013cfb Baoquan He 2023-07-06  16  #endif
-016fec91013cfb Baoquan He 2023-07-06  17  static inline bool is_ioremap_addr(const void *x)
-016fec91013cfb Baoquan He 2023-07-06  18  {
-016fec91013cfb Baoquan He 2023-07-06  19  	unsigned long addr = (unsigned long)kasan_reset_tag(x);
-016fec91013cfb Baoquan He 2023-07-06  20  
-016fec91013cfb Baoquan He 2023-07-06 @21  	return addr >= IOREMAP_START && addr < IOREMAP_END;
-016fec91013cfb Baoquan He 2023-07-06  22  }
-016fec91013cfb Baoquan He 2023-07-06  23  #else
-016fec91013cfb Baoquan He 2023-07-06  24  static inline bool is_ioremap_addr(const void *x)
-016fec91013cfb Baoquan He 2023-07-06  25  {
-016fec91013cfb Baoquan He 2023-07-06  26  	return false;
-016fec91013cfb Baoquan He 2023-07-06  27  }
-016fec91013cfb Baoquan He 2023-07-06  28  #endif
-016fec91013cfb Baoquan He 2023-07-06  29  
-
-:::::: The code at line 21 was first introduced by commit
-:::::: 016fec91013cfb27c9f5a101a87ae8266537fed1 mm: move is_ioremap_addr() into new header file
-
-:::::: TO: Baoquan He <bhe@redhat.com>
-:::::: CC: Andrew Morton <akpm@linux-foundation.org>
-
+diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
+index cfaeaea71042..1a9b807a48c3 100644
+--- a/tools/mm/slabinfo.c
++++ b/tools/mm/slabinfo.c
+@@ -21,7 +21,7 @@
+ #include <regex.h>
+ #include <errno.h>
+ 
+-#define MAX_SLABS 500
++#define MAX_SLABS 2000
+ #define MAX_ALIASES 500
+ #define MAX_NODES 1024
+ 
+@@ -1228,6 +1228,8 @@ static void read_slab_dir(void)
+ 				continue;
+ 		switch (de->d_type) {
+ 		   case DT_LNK:
++			if (alias - aliasinfo == MAX_ALIASES)
++				fatal("Too many aliases\n");
+ 			alias->name = strdup(de->d_name);
+ 			count = readlink(de->d_name, buffer, sizeof(buffer)-1);
+ 
+@@ -1242,6 +1244,8 @@ static void read_slab_dir(void)
+ 			alias++;
+ 			break;
+ 		   case DT_DIR:
++			if (slab - slabinfo == MAX_SLABS)
++				fatal("Too many slabs\n");
+ 			if (chdir(de->d_name))
+ 				fatal("Unable to access slab %s\n", slab->name);
+ 			slab->name = strdup(de->d_name);
+@@ -1310,10 +1314,6 @@ static void read_slab_dir(void)
+ 	slabs = slab - slabinfo;
+ 	actual_slabs = slabs;
+ 	aliases = alias - aliasinfo;
+-	if (slabs > MAX_SLABS)
+-		fatal("Too many slabs\n");
+-	if (aliases > MAX_ALIASES)
+-		fatal("Too many aliases\n");
+ }
+ 
+ static void output_slabs(void)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
