@@ -1,307 +1,127 @@
-Return-Path: <linux-kernel+bounces-391266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C401F9B8498
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:47:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7879B8496
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2672837AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD20D1C21B82
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C3D1CCEF1;
-	Thu, 31 Oct 2024 20:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D94E1CC88C;
+	Thu, 31 Oct 2024 20:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPWzQuY8"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YdMogtKY"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1621CC16B;
-	Thu, 31 Oct 2024 20:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA41014A4F3
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730407657; cv=none; b=X4LREVP/ZycnycY7VJFDT3Q+aw+DnDegkp7i7K6u4za7wbqBqaUZ//+u9sDi3BssiRykU2BOXUwZo3b+jLWWSwnBjj5UVkW4ZQami79s06a6gx2HYo49Ye6TLJ7LpTKPtDZsU2I71iaBF/S06ZO+sYsPEaHO78KHJUEdJhL0xII=
+	t=1730407650; cv=none; b=p4edwxJfzYu+H43497VxhD82jWM/zQ3S6NLeY3oqPEgEZkJKRFf7UkLFhqcPQC8jlQPKXdiLFV1chjp2hupSofnjvforym8DlvAlTYfsaGroSCb7CKyzQr4Pt35aoj6TDMxFR2bUTGLwGY8tmXIrjueWsa1k1bcCNZsel1umuCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730407657; c=relaxed/simple;
-	bh=bW3r1GOUjnmEEut23Zy60HfbXPwBmvZhv/Bh41WLJqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uDxDGqguejc1C4dbDQvTqzc2USjchVNPV2frhayzq0X9ptxKjcsfSVBXL11pIlELj0AhqbkQAgIPWmwz6/FHHbEvxMeAG8v+V6iO+Bso8pZFeT9h9oGsyLXbfdMRNf4Z2slgY7Ta7jl1u446+Fz0uuyXGRQmT5q9el1KMcwZ7hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPWzQuY8; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so13015241fa.1;
-        Thu, 31 Oct 2024 13:47:30 -0700 (PDT)
+	s=arc-20240116; t=1730407650; c=relaxed/simple;
+	bh=2ymDuLHrHKOZIPEp/lcgflCSWmXraKrwxJnAV43fOzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F458dX/MWKMKMwTTCtFIsuMN80w5bzwIxQmvZ2pn3Qhh4bmXUPO9/b230rN7CE4Atc4OIY8mAe4u3HBV158CHxdTw+JlYFdmn8Sz/X9JXD9KrifZaMfThp9axmsaZLQs6YOkOM3NI3RpbgETDcyATQoBOWax0WoIIr4nJb33xaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YdMogtKY; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f84907caso1549411e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:47:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730407649; x=1731012449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Db2U4domOiBP4WMLgKckjIoAtbkP3qo2IgLmobbYplg=;
-        b=dPWzQuY8vma9gHsg2vXPQk+29NwQffnQqp88GMmsZRjh2GzvLLaxOeT0tlXbBfVUOC
-         Q2lCYN7OnxGBQ+TPCul20MGGe1wduj1wYc8LaS2D9g0mcfhUrYl2BaDiY4HBsYgj0qNe
-         kX7huGgSC0oJ4ie6Y5YsNIOJ18bSX40tBCxHqLoRXehD7WsQvtsd0DvA+yk27OwzN/IM
-         tVDzzfv89t26ejkXHpU21e9nyfGgu6aaA9idpOw8m3tmcJH+jJgWt80oycQoJTs833mQ
-         k+irszooYwLXb4o1M6UP3GVD9teVsLt3szhPj2RtpRrfJ/d422HFuVE0QoCOTCYRxaoV
-         7iSg==
+        d=linaro.org; s=google; t=1730407643; x=1731012443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sgPmCiNggr8Eodac2WJsUSL23THVr2DjeTdd/A/XD6A=;
+        b=YdMogtKY28UVlL+yngg941fPcPiO5cPbwYottDY6FZHgnxjOPCsTSEWeNs/U9EKzxH
+         InYFrs6+OFbV45tIbXFNhRffowi3s5WHw9am6OkIBafSzoNyHydVI9wqs4B9KH1i9l2C
+         Nh+AW/w2imivuc+LhLrFtG41lP9imLmBx0EV0tAVC7WK86E/iaPtjYoOGXKTL1MEyEqW
+         8wyz5aC+LYgrMN50Rd3P8XulCwBSYdzKkWe+WqHQjAqUirxhnm/s7hqfelgDWtqICxaz
+         3pNY1eJ+bnJGqvxWMaUErN1nj/maxLqB3Y5l0Es0fF+CFByILzw1kgyjR6NTgIK74Acz
+         NaPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730407649; x=1731012449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Db2U4domOiBP4WMLgKckjIoAtbkP3qo2IgLmobbYplg=;
-        b=n3t+lvExCjRhAIvSTmEGSXOw0Ffrh6dy+sEEZzMcGSO/9qPViw6P5D0N60+uilw/9F
-         JU42NJfyH7aSMyy3kD2dFJImqVDuLBoHYCKqLb9fox5pjqndPE2tYaeJX15ERQR/rw20
-         CIKFd0/hVpO9xdm++efv25WAMxLVB3T0+4w4VH5PH7VD/5ZYli9F7gLpNn6HKGyoDl1d
-         rfcR04aYJ5QWq/2ZU7FzqJKd/C5SkbXvb4/L1guVqD5JGHaOFirJjFjooyEGv9P1K8Fy
-         LkgUed14gucZsVaM7A+pNyRbGqY7k37m9Jvlw0SYncWRoNlsuwEkTZIZy2IY8QAh55+T
-         5VXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyhcz/ctunfmauF8LOKual/T69Cdcl5uvfzDH+lQfCmXSj1iYnXLvO0zntDD0eMQ5W7Ab4Y6e6skY13LV6Vw8=@vger.kernel.org, AJvYcCWrfIwJlFqGQ7QM+iPAoh0aUdVv81C32tQOlbpXjLBUn3l111jS2Z1Ki8ITB6lN3qRdOtyLy6qTvVRAe5Gi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS01mx8jovNkfmIEJlOCCdL3SyGMQCRAfjXL7V8JDtyB51uIuw
-	wH8DOVIbs7H1jxhFbwW+8Vja8ppe12tTL0YEVAKnEXoMnqoOXOkoKUtLiSQaBmVFJs3Yr3estyT
-	KezYzlC+d7zPpgY4AFSr+0FDypRCTgkhE
-X-Google-Smtp-Source: AGHT+IHsUr/DNAdmQCIknS2S/u7lhrVaZNdQYO4mhVofV8UcsuCwyyvpmg9M4/FQF0X0BMZ+zwFHg2vnhcnEbXu8qlc=
-X-Received: by 2002:a2e:d1a:0:b0:2fa:fc3f:d603 with SMTP id
- 38308e7fff4ca-2fdecc2f1b2mr20662631fa.43.1730407648915; Thu, 31 Oct 2024
- 13:47:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730407643; x=1731012443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sgPmCiNggr8Eodac2WJsUSL23THVr2DjeTdd/A/XD6A=;
+        b=Enn46Vq//NIqECdOfyFfPXbM03lWZI/Pjl2SoOxxtfZWc8GHw4RJjrvR0cSqCwFNIK
+         IMOAYcFtoqoHJJoJogjN3cYPqaZ393xwpWgHJslS1713f8WOf8U1LLjKIimiixpBdcVo
+         zyVjeDJ7+v0ybf+iyVGV1gs5K08M+BjiTWibDOTpfTwvQc2HFSp0T9rRaJgut6OCMRRX
+         zbjguE65l21SukP5D50SrQVryOapiaKSF6NazbOqhERa69Qn/Lum6PV7mL/zQ+jDf+lL
+         xlT5ptzGGUBas9na2oXrGVSNnKCxUWBGKF5Fdw1m2GssTkIWx1+uxwe2dhT3kwqAK8cB
+         CVVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0oha8ffQquVm3JQs6l7iA69vabt2O7SieGZJZqmTjXSgdFnWdWaDlQZU3iusgoTmYGDxkBfW0XlLdbXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXx+bTfE0fRXJiwJk4I6qcR23PnZLKY1Qjt2o6R38QAsh+HvH0
+	Yee34GAemc5YjHtLlaABYo27qxHPvq7m+IKVxdGFsD4tz8gwGOk9ODYxw9O77BM=
+X-Google-Smtp-Source: AGHT+IFAR1erl04uTQLkmDRo3rHixZEn9QHV9hdNp48+CB7xxjvrtCViOjmu2yETWU9yo4NgP1yaoQ==
+X-Received: by 2002:a05:6512:3b08:b0:539:e97c:cb10 with SMTP id 2adb3069b0e04-53b34c5f73fmr12025275e87.40.1730407642941;
+        Thu, 31 Oct 2024 13:47:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde0ab4sm321225e87.258.2024.10.31.13.47.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 13:47:21 -0700 (PDT)
+Date: Thu, 31 Oct 2024 22:47:19 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
+	quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
+	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v3 05/23] drm/msm/dpu: move resource allocation to CRTC
+Message-ID: <4rxvkk2ky2rwgr6bpeezbr5oy4c55ntioequu5uwpcgwddjbrf@ogp5b5bs4dsr>
+References: <20241016-concurrent-wb-v3-0-a33cf9b93835@quicinc.com>
+ <20241016-concurrent-wb-v3-5-a33cf9b93835@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030100804.2743115-1-hildawu@realtek.com>
-In-Reply-To: <20241030100804.2743115-1-hildawu@realtek.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 31 Oct 2024 16:47:16 -0400
-Message-ID: <CABBYNZ+PtSR-b1gpxdeDCV7qdDFP2ZxqBDS1ic4i=H1LUGBdWA@mail.gmail.com>
-Subject: Re: [PATCH] bluetooth: add quirk using packet size 60
-To: Hilda Wu <hildawu@realtek.com>
-Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, max.chou@realtek.com, alex_lu@realsil.com.cn, 
-	kidman@realtek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-concurrent-wb-v3-5-a33cf9b93835@quicinc.com>
 
-Hi Hilda,
-
-On Wed, Oct 30, 2024 at 6:08=E2=80=AFAM Hilda Wu <hildawu@realtek.com> wrot=
-e:
->
-> The RTL8852BE-VT supports USB alternate setting 6.
-> However, its descriptor does not report this capability to the host.
-> Therefore, a quirk is needed to bypass the RTL8852BE-VT's descriptor
-> and allow it to use USB ALT 6 directly.
-
-It is getting very hackish trying to fixup the descriptor in software,
-isn't it possible to update the USB descriptors via firmware update?
-Not to mention you didn't include any logs of how this was tested, I
-suppose this is for HFP/SCO wideband (using msbc), is that just plain
-broken right now?
-
-> Signed-off-by: Hilda Wu <hildawu@realtek.com>
+On Wed, Oct 16, 2024 at 06:21:11PM -0700, Jessica Zhang wrote:
+> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> All resource allocation is centered around the LMs. Then other blocks
+> (except DSCs) are allocated basing on the LMs that was selected, and LM
+> powers up the CRTC rather than the encoder.
+> 
+> Moreover if at some point the driver supports encoder cloning,
+> allocating resources from the encoder will be incorrect, as all clones
+> will have different encoder IDs, while LMs are to be shared by these
+> encoders.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> [quic_abhinavk@quicinc.com: Refactored resource allocation for CDM]
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> [quic_jesszhan@quicinc.com: Changed to grabbing exising global state]
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 > ---
->  drivers/bluetooth/btrtl.c |  3 ++
->  drivers/bluetooth/btrtl.h |  1 +
->  drivers/bluetooth/btusb.c | 89 ++++++++++++++++++++++++++++++---------
->  3 files changed, 73 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-> index 0bcb44cf7b31..b75f0b36a09b 100644
-> --- a/drivers/bluetooth/btrtl.c
-> +++ b/drivers/bluetooth/btrtl.c
-> @@ -1312,6 +1312,9 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct =
-btrtl_device_info *btrtl_dev)
->                     btrtl_dev->project_id =3D=3D CHIP_ID_8852C)
->                         set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &h=
-dev->quirks);
->
-> +               if (btrtl_dev->project_id =3D=3D CHIP_ID_8852BT)
-> +                       btrealtek_set_flag(hdev, REALTEK_ALT6_FORCE);
-> +
->                 hci_set_aosp_capable(hdev);
->                 break;
->         default:
-> diff --git a/drivers/bluetooth/btrtl.h b/drivers/bluetooth/btrtl.h
-> index a2d9d34f9fb0..ffec2fca88ec 100644
-> --- a/drivers/bluetooth/btrtl.h
-> +++ b/drivers/bluetooth/btrtl.h
-> @@ -105,6 +105,7 @@ struct rtl_vendor_cmd {
->
->  enum {
->         REALTEK_ALT6_CONTINUOUS_TX_CHIP,
-> +       REALTEK_ALT6_FORCE,
->
->         __REALTEK_NUM_FLAGS,
->  };
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 514d593923ad..eca0b173232e 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -804,6 +804,7 @@ struct qca_dump_info {
->  #define BTUSB_USE_ALT3_FOR_WBS 15
->  #define BTUSB_ALT6_CONTINUOUS_TX       16
->  #define BTUSB_HW_SSR_ACTIVE    17
-> +#define BTUSB_ALT_CHANGED      18
->
->  struct btusb_data {
->         struct hci_dev       *hdev;
-> @@ -2130,16 +2131,61 @@ static void btusb_notify(struct hci_dev *hdev, un=
-signed int evt)
->         }
->  }
->
-> +static struct usb_host_interface *btusb_find_altsetting(struct btusb_dat=
-a *data,
-> +                                                       int alt)
-> +{
-> +       struct usb_interface *intf =3D data->isoc;
-> +       int i;
-> +
-> +       BT_DBG("Looking for Alt no :%d", alt);
-> +
-> +       if (!intf)
-> +               return NULL;
-> +
-> +       for (i =3D 0; i < intf->num_altsetting; i++) {
-> +               if (intf->altsetting[i].desc.bAlternateSetting =3D=3D alt=
-)
-> +                       return &intf->altsetting[i];
-> +       }
-> +
-> +       return NULL;
-> +}
-> +
->  static inline int __set_isoc_interface(struct hci_dev *hdev, int altsett=
-ing)
->  {
->         struct btusb_data *data =3D hci_get_drvdata(hdev);
->         struct usb_interface *intf =3D data->isoc;
->         struct usb_endpoint_descriptor *ep_desc;
-> +       struct usb_host_interface *alt;
->         int i, err;
->
->         if (!data->isoc)
->                 return -ENODEV;
->
-> +       /* For some Realtek chips, they actually have the altsetting 6, b=
-ut its
-> +        * altsetting descriptor is not exposed. We can activate altsetti=
-ng 6 by
-> +        * replacing the altsetting 5.
-> +        */
-> +       if (altsetting =3D=3D 6 && !btusb_find_altsetting(data, 6) &&
-> +           btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE)) {
-> +               alt =3D NULL;
-> +               for (i =3D 0; i < intf->num_altsetting; i++) {
-> +                       if (intf->altsetting[i].desc.bAlternateSetting =
-=3D=3D 5) {
-> +                               alt =3D &intf->altsetting[i];
-> +                               break;
-> +                       }
-> +               }
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  86 ++++++++++++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 201 +++++++++++-----------------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  19 +++
+>  3 files changed, 183 insertions(+), 123 deletions(-)
+> 
 
-I believe you can replace the code above with btusb_find_altsetting so
-please use that instead of duplicating its logic.
+I tried applying the seamingly ready part of the series (patches 3-12),
+but this one fails with too many rejects because of the 3ae133b0192b
+("drm/msm/dpu: move CRTC resource assignment to
+dpu_encoder_virt_atomic_check"), which we picked through msm-fixes.
+Unfortunately I can not pick those without a preliminary rebase and
+cross-check of this patch and the next one.
 
-> +               if (alt) {
-> +                       for (i =3D 0; i < alt->desc.bNumEndpoints; i++) {
-> +                               ep_desc =3D &alt->endpoint[i].desc;
-> +                               if (usb_endpoint_is_isoc_out(ep_desc) ||
-> +                                   usb_endpoint_is_isoc_in(ep_desc))
-> +                                       ep_desc->wMaxPacketSize =3D 63;
-> +                       }
-> +                       alt->desc.bAlternateSetting =3D 6;
-> +                       set_bit(BTUSB_ALT_CHANGED, &data->flags);
-> +               }
-> +       }
-> +
->         err =3D usb_set_interface(data->udev, data->isoc_ifnum, altsettin=
-g);
->         if (err < 0) {
->                 bt_dev_err(hdev, "setting interface failed (%d)", -err);
-> @@ -2151,6 +2197,27 @@ static inline int __set_isoc_interface(struct hci_=
-dev *hdev, int altsetting)
->         data->isoc_tx_ep =3D NULL;
->         data->isoc_rx_ep =3D NULL;
->
-> +       /* Recover alt 5 desc if alt 0 is set. */
-> +       if (!altsetting && test_bit(BTUSB_ALT_CHANGED, &data->flags)) {
-> +               alt =3D NULL;
-> +               for (i =3D 0; i < intf->num_altsetting; i++) {
-> +                       if (intf->altsetting[i].desc.bAlternateSetting =
-=3D=3D 6) {
-> +                               alt =3D &intf->altsetting[i];
-> +                               break;
-> +                       }
-> +               }
-
-Ditto.
-
-> +               if (alt) {
-> +                       for (i =3D 0; i < alt->desc.bNumEndpoints; i++) {
-> +                               ep_desc =3D &alt->endpoint[i].desc;
-> +                               if (usb_endpoint_is_isoc_out(ep_desc) ||
-> +                                   usb_endpoint_is_isoc_in(ep_desc))
-> +                                       ep_desc->wMaxPacketSize =3D 49;
-> +                       }
-> +                       alt->desc.bAlternateSetting =3D 5;
-> +                       clear_bit(BTUSB_ALT_CHANGED, &data->flags);
-> +               }
-> +       }
-> +
->         for (i =3D 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) =
-{
->                 ep_desc =3D &intf->cur_altsetting->endpoint[i].desc;
->
-> @@ -2213,25 +2280,6 @@ static int btusb_switch_alt_setting(struct hci_dev=
- *hdev, int new_alts)
->         return 0;
->  }
->
-> -static struct usb_host_interface *btusb_find_altsetting(struct btusb_dat=
-a *data,
-> -                                                       int alt)
-> -{
-> -       struct usb_interface *intf =3D data->isoc;
-> -       int i;
-> -
-> -       BT_DBG("Looking for Alt no :%d", alt);
-> -
-> -       if (!intf)
-> -               return NULL;
-> -
-> -       for (i =3D 0; i < intf->num_altsetting; i++) {
-> -               if (intf->altsetting[i].desc.bAlternateSetting =3D=3D alt=
-)
-> -                       return &intf->altsetting[i];
-> -       }
-> -
-> -       return NULL;
-> -}
-> -
->  static void btusb_work(struct work_struct *work)
->  {
->         struct btusb_data *data =3D container_of(work, struct btusb_data,=
- work);
-> @@ -2269,7 +2317,8 @@ static void btusb_work(struct work_struct *work)
->                          * MTU >=3D 3 (packets) * 25 (size) - 3 (headers)=
- =3D 72
->                          * see also Core spec 5, vol 4, B 2.1.1 & Table 2=
-.1.
->                          */
-> -                       if (btusb_find_altsetting(data, 6))
-> +                       if (btusb_find_altsetting(data, 6) ||
-> +                           btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE)=
-)
->                                 new_alts =3D 6;
->                         else if (btusb_find_altsetting(data, 3) &&
->                                  hdev->sco_mtu >=3D 72 &&
-> --
-> 2.34.1
->
-
-
---=20
-Luiz Augusto von Dentz
+-- 
+With best wishes
+Dmitry
 
