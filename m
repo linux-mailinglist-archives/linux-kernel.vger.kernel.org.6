@@ -1,57 +1,81 @@
-Return-Path: <linux-kernel+bounces-390268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E150A9B77BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:40:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6703B9B77BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BEBBB251D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55D51F22EBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8D7197A72;
-	Thu, 31 Oct 2024 09:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2q/BaCs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A15C196D98;
+	Thu, 31 Oct 2024 09:41:27 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CAD194C8F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5237E1BD9D7;
+	Thu, 31 Oct 2024 09:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367600; cv=none; b=FryidfcBoZVbGWyEnVsf6Cw/fNwlQQXkdpqpwMtAz/WmvtCIYuyXNpwPL3as3qEnuoUc5Senh02jojicoVXZK6Fxg8DoOxmNqb0V3F2fd+brRUer63wFGfpIn73ffh83r1j62d3/G8T/g1EBaftZvGmL9CriZXEvFYltOmxWCDY=
+	t=1730367686; cv=none; b=Y8Qo4uPEV6chLwdnBQqiKuCU1V1biLvdrgLF7bwnk3kqyuRkYXz4ocJaygvaDquckRrFcw3zorIy002nuvpB38w+8OkjYn+miYmeRTtja5BQLu454mIDwfVU2lW96907D2t4GmypZudUAh/4b8sHzFIiX26YT2z0sKPSVFnW9sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367600; c=relaxed/simple;
-	bh=vKIaj0aijU4XjLmVObUic0stD9F+UK51qt/abR2zG+I=;
+	s=arc-20240116; t=1730367686; c=relaxed/simple;
+	bh=txG8v2OtMMx1Fo0i5XM+jltjYAWWH+6tWU45ggqtooo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qhLnC7ND+QCIdFKOGqDL6l83ZL0PLg59oLBPir5+HHbXFgaUh/UEjMab3UnqoQwPrCUr86uQ6E94CGKzq8MQ7gUv7/ECG620AJW33w6V7JugwkwF7x/UJH18UXJ7lTjo18iLmjGiLuEVq8K47HGAzXw9MxG8yEG7wABqHMPOmMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2q/BaCs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC37C4CEC3;
-	Thu, 31 Oct 2024 09:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730367599;
-	bh=vKIaj0aijU4XjLmVObUic0stD9F+UK51qt/abR2zG+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M2q/BaCsSHZEiLE7uSZkWaRfCOHJchAnY9ZLmMdHjWG+6VN/dIuBZliWhON+hEBtl
-	 oq4Ia5pqNj2gSIvHrXvS0IcIAjm8q8tK1dJ2qpHu4BfH6B6viobG5nGteM9yXKw3Zn
-	 uXzIwAZPXul6S1mXD5z3+v6QovD7F//OlLSlR5e/LfZLh8/qXouXyWZV1oejC2LbFr
-	 i25vm95aKr/4vOunLDfS5CbYvLqfy2u4Xo0H8FSg9BMhHS/3AdcXw3YuS+Ut1K2GZi
-	 nF+bg3AGaM27o52XRtxERTmc3hiPIjXLL/4VqOu+co/Cjg2+utyqpEPp4a7idRINw2
-	 s05r/mqtpq1ag==
-Date: Thu, 31 Oct 2024 10:39:39 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Wen Yang <wen.yang@linux.dev>
-Cc: "Eric W . Biederman" <ebiederm@xmission.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Joel Granados <j.granados@samsung.com>, Christian Brauner <brauner@kernel.org>, 
-	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: Re: [RESEND PATCH v3] sysctl: simplify the min/max boundary check
-Message-ID: <4rrwkbj5sh4anblrxzhehcir2z2w5qhrdxfu4gc4irfg4ubb7q@hjt3e6agz42i>
-References: <20240905134818.4104-1-wen.yang@linux.dev>
- <5yfnu64fqsuahcmifvqdaynvdesqvaehhikhjff46ndoaacxyd@jvjrd3ivdpyz>
- <4cce154a-1115-4371-a9f2-8bdb4879ea16@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8lI/W3crm3ZuvRsaUrLFctkWOxCtE0eLe/H4JZzd4tAxhen1JQUm3xWkIC7jKlxVaYJGJs8Ffuqtl0AygU6lb7EcvD+b9LCZHesOpw3oZRkxREDsr9mfCtriMvYG2tZUT4A3XG/NnGMtqu4+sFKOw1FXTXMonUAajrvPZ8FUxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a4031f69fso101699566b.0;
+        Thu, 31 Oct 2024 02:41:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730367683; x=1730972483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r8YMe+HVyTJX0cz4Ucfp6CZUcxhiMf5Ln2/Nt+kpjOY=;
+        b=sPujmo7I4Y04QhCp3Zuyyvh2o4NFhODNwGAvTLGgtSMUj7B/3DqRdtpUImaUZt15tM
+         ll4rAlWOQwd8UkWyOUjAPcvIyxKyK5I381h1YTlZLHyOt9jIawvvAX6qeGAaYx04gvE1
+         tMRbjvhS3FDJrmsCxDDygmXEjNi73xnOkU+hBiWsCDeqeV1MTygyplFKnVe31IR4FEoJ
+         O3n0GsNKxpCfXZ0gF7v/J9Alhr2d5fqFZKf4yn9N1I2WNhfTXG0QBwLv9tGn4XddOmO5
+         601BfdiEcGUIw5aJKvwdCuYQkiDhGV3EIJV1/P0HAx0ERCzejqmpko7V3+myDIUxnqZ8
+         kasA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMb79/rLBpRxqZhrS2MymODnP0UPzzkqDBCWTDPDTZ23iZlE1XrZ/5BBX3NEH6IWn53iDAOpwFLiyGJ0YQ@vger.kernel.org, AJvYcCWd2oDxu3PWCqD/bd+AimZGgafOFIpbK2C7IIPF080xiLyDWnUmkjut3hhA+4y48kuHmx1ps0Xr@vger.kernel.org, AJvYcCXpkSsRgZja0vKcR8S/3aPZeOSHVhW17iTaoRbbL+qxfKnAr+/eZAYpw8JzS6BVEtvgF6g4j+FY5PA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgcCQEVbl60Po+z0J4VtRehJhf4uEtwHxrieEa7Alu45gYT6ro
+	IfZh+HZIukhTSOmnKuL5jlIKxWVplzbGOPetImjw0maZjynh7YaL
+X-Google-Smtp-Source: AGHT+IFxi7l2UNspW21BnqrIkXzWdf8TMP0a8bF0HOME3IbPCK1Ie4/exTacUAQr+3FbeB3nPl2SEg==
+X-Received: by 2002:a17:906:c14d:b0:a99:fe71:bd76 with SMTP id a640c23a62f3a-a9de5ee3295mr1724290666b.34.1730367681921;
+        Thu, 31 Oct 2024 02:41:21 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564942c8sm46481066b.28.2024.10.31.02.41.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 02:41:21 -0700 (PDT)
+Date: Thu, 31 Oct 2024 02:41:18 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Akinobu Mita <akinobu.mita@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@meta.com,
+	Thomas Huth <thuth@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v4] net: Implement fault injection forcing skb
+ reallocation
+Message-ID: <20241031-hallowed-bizarre-curassow-ea16cc@leitao>
+References: <20241023113819.3395078-1-leitao@debian.org>
+ <20241030173152.0349b466@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,120 +84,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4cce154a-1115-4371-a9f2-8bdb4879ea16@linux.dev>
+In-Reply-To: <20241030173152.0349b466@kernel.org>
 
-On Wed, Oct 30, 2024 at 12:26:17AM +0800, Wen Yang wrote:
-> 
-> 
-> On 2024/10/23 03:12, Joel Granados wrote:
-> > On Thu, Sep 05, 2024 at 09:48:18PM +0800, Wen Yang wrote:
-...
+Hello Jakub,
 
-> >> @@ -936,10 +921,10 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
-> >>   int proc_douintvec_minmax(const struct ctl_table *table, int write,
-> >>   			  void *buffer, size_t *lenp, loff_t *ppos)
-> >>   {
-> >> -	struct do_proc_douintvec_minmax_conv_param param = {
-> >> -		.min = (unsigned int *) table->extra1,
-> >> -		.max = (unsigned int *) table->extra2,
-> >> -	};
-> >> +	struct proc_minmax_conv_param param;
-> >> +
-> >> +	param.min = (table->extra1) ? *(unsigned int *) table->extra1 : 0;
-> >> +	param.max = (table->extra2) ? *(unsigned int *) table->extra2 : UINT_MAX;
-> > This is one of the cases where there is potential issues. Here, if the
-> >  value of table->extra{1,2}'s value is greater than when
-> > the maximum value of a signed long, then the value assigned would be
-> > incorrect. Note that the problem does not go away if you remove the
-> > "unsigned" qualifier; it remains if table->extra{1,2} are originally
-> > unsigned.
-> > 
-> 
-> I set up a CentOS 7.9 32-bit VM on Virtuanbox:
-> # uname  -a
-> Linux osboxes.org 3.10.0-1160.2.2.el7.centos.plus.i686 #1 SMP Mon Oct 26 
-> 11:56:29 UTC 2020 i686 i686 i386 GNU/Linux
-> 
-> And the following test code:
-> 
-> #include <stdio.h>
-> #include <stdlib.h>
-> 
-> int main()
-> {
-> 	unsigned int i = 4294967294;
-> 	long j = i;
-> 
-> 	printf("original hex(i) = 0x%x\n", i);
-> 	printf("unsigned int(i) = %lu\n", i);
-> 	printf("---------------------\n");
-> 	printf("hex(j) = 0x%x\n", j);
-> 	printf("long(j) = %ld\n", j);
-> 	printf("unsigned long(j) = %lu\n", j);
-> 	printf("int(j) = %d\n", j);
-> 	printf("unsigned int(j) = %lu\n", j);
-> 	return 0;
-> }
-> 
-> 
-> ./a.out
-> 
-> original hex(i) = 0xfffffffe
-> unsigned int(i) = 4294967294
-> ---------------------
-> hex(j) = 0xfffffffe
-> long(j) = -2
-This ^^^^^ is exactly what I expected. Thx for the test!
+On Wed, Oct 30, 2024 at 05:31:52PM -0700, Jakub Kicinski wrote:
+> On Wed, 23 Oct 2024 04:38:01 -0700 Breno Leitao wrote:
 
-When you transfer that to your patch, it means that for certain cases
-[1] the value resulting from the interpretation of param.{min,max}
-(signed long) is going to be different than the value resulting from the
-interpretation of table-extra{1,2} (unsigned int).
-
-Here is another way of thinking about it:
-We are avoiding bugs where a developer thinks they are handling longs,
-when in reality they are handling unsinged ints; The result of
-subtracting 1 from (-2) is very different from subtracting 1 from
-4294967294.
-
-> unsigned long(j) = 4294967294
-> int(j) = -2
-> unsigned int(j) = 4294967294
+> > +  no longer reference valid memory locations. This deliberate invalidation
+> > +  helps expose code paths where proper pointer updating is neglected after a
+> > +  reallocation event.
+> > +
+> > +  By creating these controlled fault scenarios, the system can catch instances
+> > +  where stale pointers are used, potentially leading to memory corruption or
+> > +  system instability.
+> > +
+> > +  To select the interface to act on, write the network name to the following file:
+> > +  `/sys/kernel/debug/fail_skb_realloc/devname`
+> > +  If this field is left empty (which is the default value), skb reallocation
+> > +  will be forced on all network interfaces.
 > 
-> 
-> The original hexadecimal values are the same, using unsigned int, int, 
-> unsigned long, or long is just interpreted in different ways.
-Exactly. Hex remains the same but the interpretation changes. And it is
-there where pain lies.
+> Should we mention here that KASAN or some such is needed to catch 
+> the bugs? Chances are the resulting UAF will not crash and go unnoticed
+> without KASAN.
 
-Please re-work the patch without merging everything into
-do_proc_douintvec_minmax_conv_param
+What about adding something like this in the fail_skb_realloc section in
+the fault-injection.rst file:
 
-> 
-> We also ensure consistency in numerical writing and type conversion in 
-> the patch. For example, in proc_rointvec_jiffies, convert to int; And in 
-> proc_rouintvec_minmax, it is converted to unsigned int.
-> 
-> 
-> --
-> Best wishes,
-> Wen
-> 
-> 
-> > I'm not sure if there are more, but just having one of these things
-> > around make me uncomfortable. Please re-work the patch in order to
-> > remove this issue in order to continue review.
-> > 
-> > best
-> > 
-Best
 
-[1] This is one case that I can imagine
-  1. On 32 bit architectures
-  2. Where UINT_MAX > LONG_MAX
-  3. The value being assigned is greater LONG_MAX
+	The effectiveness of this fault detection is enhanced when KASAN is
+	enabled, as it helps identify invalid memory references and
+	use-after-free (UAF) issues.
 
--- 
 
-Joel Granados
+> > --- /dev/null
+> > +++ b/net/core/skb_fault_injection.c
+> > @@ -0,0 +1,103 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +#include <linux/fault-inject.h>
+> > +#include <linux/netdevice.h>
+> > +#include <linux/debugfs.h>
+> > +#include <linux/skbuff.h>
+> 
+> alphabetic sort, please?
+
+I thought I should use the reverse xmas tree structure. I will re-order
+them alphabetically.
+
+> > +static void reset_settings(void)
+> > +{
+> > +	skb_realloc.filtered = false;
+> > +	memzero_explicit(&skb_realloc.devname, IFNAMSIZ);
+> 
+> why _explicit ?
+
+I thought the extra barrier would be helpful, but, it might not. I will
+change it to a regular memset() if you think it is better.
+
+> > +static ssize_t devname_write(struct file *file, const char __user *buffer,
+> > +			     size_t count, loff_t *ppos)
+> > +{
+> > +	ssize_t ret;
+> > +
+> > +	reset_settings();
+> > +	ret = simple_write_to_buffer(&skb_realloc.devname, IFNAMSIZ,
+> > +				     ppos, buffer, count);
+> > +	if (ret < 0)
+> > +		return ret;
+> 
+> the buffer needs to be null terminated, like:
+> 
+> skb_realloc.devname[IFNAMSIZ - 1] = '\0';
+> 
+> no?
+
+Yes, but isn't it what the next line do, with strim()?
+
+> > +	strim(skb_realloc.devname);
+> > +
+> > +	if (strnlen(skb_realloc.devname, IFNAMSIZ))
+> > +		skb_realloc.filtered = true;
+> > +
+> > +	return count;
+> > +}
+
+Thanks for the review!
+--breno
 
