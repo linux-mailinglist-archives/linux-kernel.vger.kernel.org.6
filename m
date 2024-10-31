@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-390093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D2A9B7562
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:32:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854829B7566
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC56A282E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306421F217DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B0613E8AE;
-	Thu, 31 Oct 2024 07:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B67D14A09F;
+	Thu, 31 Oct 2024 07:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uck0mrUo"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QB1HPFBL"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEFF10A3E;
-	Thu, 31 Oct 2024 07:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E2A12CDBF;
+	Thu, 31 Oct 2024 07:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730359937; cv=none; b=W20aYMeA6ZbbILB9Dd7nMMqhCpXHsy8QTuyD++uoIPTI1BhJyIAIUcGbtBwssaAF1FfVnq/Su5Gw9nEQ6m2hpySAr1QP1+7C2PKaORjqotuvsQTRwojtBu3mIf72tUHX+C90n6klhAoTDC9mEKclLa2IpJxiCd6LHJyj0j/a92M=
+	t=1730359977; cv=none; b=JhHJfTXAown/9XvUfoBbTaaszKXpWGhMkudY5xsXdtoA987had4dtsjWWnwvEmJl1Q7pf9wBUV8Q8fxQ3DuJbhrG9uSDNAb/n73zB0Rhf/w7wbCvhYI/Kg2k04o47linPRHnKUJGSFeNR9HLAJrpzq2Ak/5pRr/V7JKcLX/nXVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730359937; c=relaxed/simple;
-	bh=ByNryT807jPQO2/Nq8j6KK8oRmiXZmFa/Dm/RwytioE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i7DJFOiEf+UApIhOy4zFM9YBy7V39+OWNtOTrVow6DDGU6Nb4yxdpz4IpjJhOk/+9ZaCqbpIoL8jrPncLCu2UrSn+4scoi4Tpe025POnBC3HsH3NsLFGUXm+ze48KDZ6vUPheYNiGX3vsA+tUv5yfAl/awAq12zun6rPEY0Hl1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uck0mrUo; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so981769e87.1;
-        Thu, 31 Oct 2024 00:32:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730359933; x=1730964733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nXBCAE5YFs7bIo9qj6bwIQiECKD+0RVcggJ63Dxnmlg=;
-        b=Uck0mrUoQMzrT0LO7yuBtGjjMA5fawcnAOW/FKSAnyrLcxh5Ao/JyK0JD9640gY/0p
-         mI5Mb6sah3BsSLXtlU8n9BPmjVG2dfaRODHNf0DBe6klpqc0e5Wqph5cj5Ld7+3ugnMu
-         v38w279LQvm+Mgh0LQtakeDJI/fijDRKBnI01ai+bxALPRNeWqyP07Z5xOclhjL+fU+3
-         ErPY1R9sNfg9q7W/W8dDt/E1+U7Wo/DwmDjQZwVYBwC0ylZPOdlM90VtvuKXdZPktKkl
-         vYwI9zcZBY7RAqLzHs8Rp9Uio2iLgYE6O4mZNKuUGuCka1Ex3k578ZEw66lzQqTmREtr
-         YELQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730359933; x=1730964733;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nXBCAE5YFs7bIo9qj6bwIQiECKD+0RVcggJ63Dxnmlg=;
-        b=KnIqnzoU6qQUHka74DWL4udMgc9e4UB947DCDxqEDxyyB71c3TlJ90yqRiLCmPaN5k
-         q1/oLQzkYClQjFPFGR7B8GP1A15oBykqAZm/zU2T536knDP5ysB3EMDBjvgj6hChRwZq
-         pHpe/gqN0Tu9ZPpIJ4ZAy+ANEwizMl/j8fJwYS2c5x3MZs8LHZshwVzlg9xd+EFVBQ6O
-         0thJLgYIrXE+JE5tOTQoAgSKNhjpU9b07e+XfrqkNx2GxJPVKwA63vcvLGV3ihC1Gc8b
-         Bqbv1OxfrfZu2ZtqLgfg49C3x6TKwa+WemneWMjV6F87zfWc55y9KCGVc7OANnPObgUy
-         jt9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMc+9mauOdhYkvVbuNM1RidKHUud+Y25RK9Cbe03HunYbElgHl1nR9fTqmnUx/fk+1YEJlV1Si9K4=@vger.kernel.org, AJvYcCX2z55H+oLHOqLWV5ZHfXIITeAogeW8ENWTo4oHxis8cwvGGzQ/cxl7+VEuFaDHYpprKlWn5pUD+WLzYzz8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRnA6P0aJKdA4/HH85U12jzoDXRMgruPEEq1jpgLhUZfdBJlu
-	WZjWUD/ujmF5knNwRMozzUbjDxTqvnYobLmE8E3uBwrjlQtXb31r
-X-Google-Smtp-Source: AGHT+IHhXTBpS0JMzRUCqX+rY8GoD1Grx/DK8687++qnb7Sryc7gUhJGbtTkg+njK3XB+s1bvdTD2g==
-X-Received: by 2002:a05:6512:1090:b0:539:f13c:e5d1 with SMTP id 2adb3069b0e04-53b7ed18ccemr3441270e87.38.1730359932788;
-        Thu, 31 Oct 2024 00:32:12 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde02easm112589e87.250.2024.10.31.00.32.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 00:32:12 -0700 (PDT)
-Message-ID: <9ee46109-8503-4b5d-bfd4-45b7ac03029a@gmail.com>
-Date: Thu, 31 Oct 2024 09:32:11 +0200
+	s=arc-20240116; t=1730359977; c=relaxed/simple;
+	bh=ZCZgVRk+zO7UMA6+ytUIaXNf7YEOn7KOWBHyoaTQF/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o1kEjcNlhwN9Gk8s+YVE98gUc0tIxhWL59eb6gXRM4BNUZpaBEpGzjU7VuxGI5V+FG4Z4lyrxmNESCL5JTF3Qk3Np49+SWzkyGT5/0OuWSQ8gZ9LobNRAbsOPuXkiX449Mx+FHQ+HBIa4xBbVfC9jahlgd6HnYiMVYPacOpqrH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=QB1HPFBL; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=VcSkoPVnn13uM0IHmlXrzCxiaYdSJeBZvUKAKpZqyQc=; b=QB1HPFBLAaHKD7cfINabzvDIPX
+	SjYJNr/GerRzuRqyA6cGsujAemzS+l5z1zsPCrmd2ynP2Ceau9FeXagO71rlGvRJnFoouFV+E98xB
+	WXMKGq9BLNBaPTgoIGlU3rQBGenE4CTGiddBg0iDhhPGQS/SSu6fHCvPaLbvhiqAvpjKkcL0efLLT
+	posLKiGJo8v/iKd/upZFQY2p6SZWYk197NeTbSVJoic8NWIkZRMFmO5BTLgZ7Q3KWbnxjmthoBZXv
+	J/1U6S0dG7hRKe5Mpo11yz3qujPiSv/GvPPSodopt4MYw9Vppit1/2WQEVsozLJKiGdDqkSuu5h8x
+	WXRZXVZw==;
+Date: Thu, 31 Oct 2024 08:32:48 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mithil Bavishi <bavishimithil@gmail.com>
+Cc: aaro.koskinen@iki.fi, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ khilman@baylibre.com, krzk+dt@kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, robh@kernel.org,
+ rogerq@kernel.org, tony@atomide.com
+Subject: Re: [PATCH v2 2/6] arm/dts: Add common device tree for Samsung
+ Galaxy Tab 2 series
+Message-ID: <20241031083248.043d25d0@akair>
+In-Reply-To: <20241031065524.546-1-bavishimithil@gmail.com>
+References: <20241030234219.2d918b34@akair>
+	<20241031065524.546-1-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: fix memory leak for
- iio_gts_build_avail_scale_table()
-To: Zicheng Qu <quzicheng@huawei.com>, jic23@kernel.org, lars@metafoo.de,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
-References: <20241031014743.2313121-1-quzicheng@huawei.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241031014743.2313121-1-quzicheng@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Zicheng
+Hi,
 
-On 31/10/2024 03:47, Zicheng Qu wrote:
-> In iio_gts_build_avail_scale_table(), the memory allocated for
-> per_time_gains is freed using kfree(per_time_gains) before return 0.
-> However, the type per_time_gains is 'int **', and the memory allocated
-> for its inner elements is not being freed, leading to a memory leak.
+Am Thu, 31 Oct 2024 06:55:24 +0000
+schrieb Mithil Bavishi <bavishimithil@gmail.com>:
+
+> > this has to be system-power-controller;  
 > 
-> Cc: stable@vger.kernel.org # v6.6+
-> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-> ---
->   drivers/iio/industrialio-gts-helper.c | 2 ++
->   1 file changed, 2 insertions(+)
+> I am so sorry for the mess up, I was on the wrong branch which is
+> almost the same as pmOS but a bit older, hence the entire mess up.
+> I'll run a quick diff from pmOS and this patch and fix them
+> accordingly.
 > 
-> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
-> index 59d7615c0f56..f2450b2e740d 100644
-> --- a/drivers/iio/industrialio-gts-helper.c
-> +++ b/drivers/iio/industrialio-gts-helper.c
-> @@ -307,6 +307,8 @@ static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
->   	if (ret)
->   		goto err_free_out;
->   
-> +	for (j = 0; j < gts->num_itime; j++)
-> +		kfree(per_time_gains[i]);
->   	kfree(per_time_gains);
->   	gts->per_time_avail_scale_tables = per_time_scales;
->   
+> > There is still a lot other stuff to fix here but I want to make
+> > sure we are looking at the right thing.  
+> 
+> Could you please go ahead and mention them as well.
+> 
+well, that takes time, I wanted to start that on the right thing.
 
-You're right, thanks!
-This, however, was already fixed by:
-https://lore.kernel.org/all/20241011095512.3667549-1-ruanjinjie@huawei.com/
+1. make dtbs shows warnings
 
-Out of the curiosity (and no need to respond if you don't feel like) - 
-are you using the gts helpers in some of your project(s)? I am glad 
-seeing these fixes coming in and just wondered if all these bugs are 
-found because these helpers are being used outside the ROHM drivers :)
+2. make CHECK_DTBS=y ti/omap/omap4-samsung-espresso7.dtb is too noisy
+(probably same for espresso10).
 
-Yours,
-	-- Matti
+a lot comes from the dtsi files, so you need to ignore a lot, probably
+either strip down the new dts to almost nothing besides dtsi includes
+to determine the background noise or take a similar device, redirect
+output and errors, diff that output with the full devicetree.
+I am trying to clean that dtsi warning mess up, linux-next shows a lot
+less warnings but that takes time.
+
+One of the warnings that should be fixed:
+dts/ti/omap/omap4-samsung-espresso7.dtb: lvds-encoder: compatible:
+'oneOf' conditional failed, one must be fixed: ['lvds-encoder'] is too
+short 'lvds-encoder' is not one of ['ti,ds90c185', 'ti,ds90c187',
+'ti,sn75lvds83'] 'lvds-encoder' is not one of ['ti,ds90cf364a',
+'ti,ds90cf384a', 'ti,sn65lvds94'] 'lvds-encoder' is not one of
+['thine,thc63lvdm83d'] from schema $id:
+	http://devicetree.org/schemas/display/bridge/lvds-codec.yaml
+
+Regards,
+Andreas
 
 
