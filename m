@@ -1,72 +1,74 @@
-Return-Path: <linux-kernel+bounces-390120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25B59B75CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:55:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C25D9B7615
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D7EAB21BC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:55:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF924B211BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D343814EC60;
-	Thu, 31 Oct 2024 07:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB780153836;
+	Thu, 31 Oct 2024 08:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r57rkDgx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MBi+cQkB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="jP1K4KOJ"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7B9146019;
-	Thu, 31 Oct 2024 07:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D6D13B592;
+	Thu, 31 Oct 2024 08:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730361317; cv=none; b=eRSBQYKnYwzlh7xj/BeHDveQJRG2BNCw2Pct5mUuTRfRZO1Z8mukKqcncn2BlPemrjpdX4HiK0G1AGwTaG3iirv/mguxJshQG0DjmWyZCmc7tigT2DPBU2iWIpCKHQrvjzirSRNjRJ+eZ/5Nu5ltMuH7WqVuDpaOf+iV+7qvOHA=
+	t=1730362213; cv=none; b=duRxPZhJDDcDwRhY/06kPf3C3Lpf92vCFcMsFtN3lwg8ocnH7z0MGrChetF1shoVJO6Sl6vcPMIcsPUQY1rmMD134AI47zuTcX/wnd0BTcW/zkpceRk4w3QPMoACypyJ9sXaPiNz+q3GRt5anCyG6vu3/IkQjCNwYvHgUSUMSK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730361317; c=relaxed/simple;
-	bh=igDCE/xG8z7PFzU8jpeANhIbhJWsYql4+5a6fEQ+Mn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDEZ4QPFK7CunbUVpPf/u0GSHLvtlauYlq4S/bFBiMsE9bWfFDmtGayrd8rcvrYBgYaSTC3Org/C+mpuJNY386AyXUUUuv7pX4ayEZMhbRN9JWTuvw59sAt4r+5uH2sMM9HTt070xRL+ERjEtcuvrdgFpQTU1YlsW65/+142SQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r57rkDgx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MBi+cQkB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 31 Oct 2024 08:55:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730361313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=smZJ3gWMsDVgdSzoTnaukuVPFfiZhLlX964GA+Dzwz8=;
-	b=r57rkDgx2HVFzvFRmHdzOPKiNYr2WC/mCEprOskCaVU16cITkS4wBwAhrS0hXUnbgpiTlF
-	rKfGhLeOQTShY9mnZ4Y8qL1mHuSu5xqzDZVtUEAU//NKbB6vF78MKOLBphHJMZp2TAQy5I
-	fN2hPNtIrJ6j2Ay+AhquClKVpqYNGJdgzlDxGBwTT62/FGOIrPFBywu9r3dE+ocogDweur
-	q+i7YBzVSpAuCop239hjgaalhoA9DqwrJbTzkCbfHxP2tbdzcpBVF+ZBOytIFNcEnHoBAe
-	8Trf2EbRSSH83GGch+pQIPGJlrwBvDnHqrl3PTCvv/k2++pdv/ZMEtKv6Pe/ag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730361313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=smZJ3gWMsDVgdSzoTnaukuVPFfiZhLlX964GA+Dzwz8=;
-	b=MBi+cQkBAQDm1M1gu/pI18xCKC3V4DeEjZf4fFzBoP2Q6yoJkeeGw6GiblkENg8XrvD+YP
-	C23QF+2m4Kfqe1AQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Marco Elver <elver@google.com>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	sfr@canb.auug.org.au, longman@redhat.com, boqun.feng@gmail.com,
-	cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <20241031075509.hCS9Amov@linutronix.de>
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
- <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
- <20241031072136.JxDEfP5V@linutronix.de>
- <cca52eaa-28c2-4ed5-9870-b2531ec8b2bc@suse.cz>
+	s=arc-20240116; t=1730362213; c=relaxed/simple;
+	bh=u0zFcieJJl0UQTPUsFEEH8w12flh7zNg0ag0l4Sfq6k=;
+	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
+	 Content-Disposition; b=pTDLZTMqaQNDSy2H8Z/2RcVguEm7cfytH1sLx13sP2Dwod9VBUIxU2PMkTPOMRwD5VioR+etcA5KLy6B1odyzKStqV3Wb8sl0SlnPIXsWq8gAT4MYuw7cBrKk/it4qoMc7wiexYZP2BV7CURu4bhQITRFEf5BFtp+GxXKaRkB6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=jP1K4KOJ; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1730361902;
+	bh=qUbaFb4MFBE/T7Ht8F3AzaMcELszwC4DmF2bIEdangs=;
+	h=Date:From:To:Cc:Subject;
+	b=jP1K4KOJeekM3nPqKdua/QGr6nPwylx1Ikl/EqIzlnYgI2WqkMi/U3Ebz0suLWgYX
+	 AsFAJbVCz9cmNfTSoyeYNEVGB21AivQ514/3mZq8DchgiU/c+x9/Ro/JHwv6NL25ZN
+	 JCR33V5xuB6hCE7ij+Fqbd95prZGNJ7FO06E0vCY=
+Received: from localhost ([223.70.160.239])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id EB12561D; Thu, 31 Oct 2024 15:58:49 +0800
+X-QQ-mid: xmsmtpt1730361529t99aoe8ge
+Message-ID: <tencent_99262A4B390D43E22441268D3D8CC0AF2E05@qq.com>
+X-QQ-XMAILINFO: M9VsxC5s0NEwFtHcyBd85QE1DUV1fQrmY0tQ+gIl85UsPr34Dk9SMUBfjr/mXc
+	 4e3+ebYpzUZRrebZXm2YYpYhGY0s8mTKXH1mEhQjD7s37houAa1xKf3+N4UhG1CKhuAg/hqlQBhm
+	 bwCWmoOAQAV445XKIEvgMETXEOZ4VsBFegw6japE9w0JOX3zwGfVZJtTczCCafyEJD9mQDxOgQED
+	 PHAwvkzmo+qJ8fEY7gJIbTJl6eFViIlAeeRI1H4SC/cDUD2gL8P4P/bs3K4gg+yZiILJXxuuGsQ7
+	 q25cUNHlPFMhSSNlcoBdrAefUUtWjs3OyedhpTkq+weHFaA0bXwSNBT7DkUEaqWgues6PSWkt8AP
+	 uLL84MHX8HlVD7ppucUai0Xdcd1wZo9pd3yG0O4Ab/c549AMc0R16yXa3NqtXWNVyKu+08BUYVuJ
+	 YUy4QHDVcAX8aJmGpwDFT5mzZhEPnoIDvodlUBstrqYOjtbN5uOTYSFTKNN2P/z8fy703ts6BKi8
+	 oYPdGQeTf6qVvxvL60+XCycfxa95fYZ0kYFqRoPAM5ARHAoEv4Vjo07lSxXDCBUSkcf9SOreZrsn
+	 9AySzJJhk+DCeNVNsPETuw70lWdJKbTSu9JeLa+BhkFRiE4Qd6RmuR8PLO+Mw3Zzz2ROQQugSpqy
+	 0ETDS2hrL9lWN+08fueqdW4xySgS+7u8r6SArmD9RTwonWfbx0RBhBteIiNx7jK3xYu3Gx5j6NTD
+	 v1+MhjYLC8jJRmB/3GDonCmvCsadGPrTVOYOs29X99SeUJ8EC07NaYxQj4oYo/p/JgHTVLSoRIa9
+	 DA1pxTLDmfv5d5YMfhF/MTyFNYR2Zjp/uoOoxJm6GPRafRQcWQxgplY2GETXpDdUVkIBTANt+Hhk
+	 qhh6ct4rQzNf7e5Cd/4SyPRkM6eTXiLrZN/qc0c6UCV5ivMic4KXe8+UgQeKn+X2nDPcwxpvAXHT
+	 N7O63/Eh5DNNU3okhBQ9oOTHhRQ+YLve/7+0Q+qGx3fg4t01UBUoXUuOoHxo5T/LSENolhGmEECw
+	 iR8fsMRG3yTPa89C5UT01Ky48jYPzb7c2kdDwvpLbizvfZ+V95bKkQuYH8Sg0=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+Date: Thu, 31 Oct 2024 15:58:49 +0800
+From: Gang Yan <gang_yan@foxmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Inquiry Regarding PXE Installation Issue with Network Driver
+ Configuration
+X-OQ-MSGID: <ZyM4uTK5OUiOLEJz@yangang-TM1701>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,28 +77,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cca52eaa-28c2-4ed5-9870-b2531ec8b2bc@suse.cz>
 
-On 2024-10-31 08:35:45 [+0100], Vlastimil Babka wrote:
-> On 10/31/24 08:21, Sebastian Andrzej Siewior wrote:
-> > On 2024-10-30 16:10:58 [-0700], Paul E. McKenney wrote:
-> >> 
-> >> So I need to avoid calling kfree() within an smp_call_function() handler?
-> > 
-> > Yes. No kmalloc()/ kfree() in IRQ context.
-> 
-> However, isn't this the case that the rule is actually about hardirq context
-> on RT, and most of these operations that are in IRQ context on !RT become
-> the threaded interrupt context on RT, so they are actually fine? Or is smp
-> call callback a hardirq context on RT and thus it really can't do those
-> operations?
+Dear Maintainers:
 
-interrupt handlers as of request_irq() are forced-threaded on RT so you
-can do kmalloc()/ kfree() there. smp_call_function.*() on the other hand
-are not threaded and invoked directly within the IRQ context.
+I am writing to seek your expertise regarding an issue I have encountered 
+recently while using PXE (Preboot Execution Environment) for system 
+installation.
 
-> Vlastimil
-> 
-Sebastian
+Specifically, the problem arises when the PXE network card driver is 
+compiled as a kernel module (.ko file). During the installation process, 
+the kernel gets stuck in the 'ip_auto_config' stage, waiting for the network
+interface to become ready, displaying the message "Waiting up to xx more 
+seconds for network." However, it appears that the system does not proceed 
+to the ramdisk stage to load the .ko driver, ultimately leading to a failed
+ installation.
+
+Based on my analysis, it seems that for a successful PXE installation,
+ the corresponding network card driver must be compiled directly into the 
+kernel rather than as a loadable module. I would like to confirm if my
+ understanding is correct. If so, would it be necessary to adjust the 
+relevant code? Because it is not suitable to compile too much ehernet drivers into vmlinux.
+
+Best regards,
+
+Gang Yan
 
 
