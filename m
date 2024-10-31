@@ -1,212 +1,201 @@
-Return-Path: <linux-kernel+bounces-390429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129989B79BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:34:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF069B79BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:34:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FCE5B20F87
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA9C2849F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F230F19AD7B;
-	Thu, 31 Oct 2024 11:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE0519C547;
+	Thu, 31 Oct 2024 11:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VCjaktVR"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnf/3hqB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAA7149C53
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730374443; cv=fail; b=FzKtrw9PQn65D1/9nfaaK5TBgrp6ImFTC/cCKv5KqQ3AyBQ2MhT4ubGdkt9sC3yzB6RMkcFMK/4hSvMv/DiuJMQMIutAUhEKc3mdmOX4iSMuFMIbWwQHal7llvIlBoXLeop2nZ0w6hV/l/xPvYzO2dFEShPeSlI8oQBv01UYVNM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730374443; c=relaxed/simple;
-	bh=7hvznawxOglC8R1iuKb4713cgFFOEYlQeZiZAEERo4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jEm5OAg2TVN5rIoXgvsxU2275OLEdLAjtQkl5/Cli1KogKiNuAISxEaEg412VzBBP/2JLmgU/alM//h6Oj2UIwLOI28OBPMI+NSM+OvIYZ6C5xt25GvNP6GppBYx6HpnD6YkGKO6XiJvU+J3S6y4eg1hQND7VE9NaR7HmO2JXdA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VCjaktVR; arc=fail smtp.client-ip=40.107.93.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jbpNtXZacDkhO2M3woOCc7Zy2oz0qtoIBl898WgksXLl8+Lwlhay69252GpaFrtoXc5jhTRsFgQmgc4T4otm3/fqz1vAFHVDeNpvotMPyouFPhK8jFLVLPozPqvaIbmPcEeUsQ/YEfIQpKwTst/yDV9DttiZ9oVNW0pU8I8Whp97k7Sx9glwmTRJ76qWEGVkb+HJZtWEU9L8V6tDR2sTT3/2zebiqNn/VirjqDj4FTpNlCv9Yc3T6kilWBLfxifcLjAYlsp03AVuW1SXgj5xir40fOBfU+Ep0LAg4AHkiNdEQisidOIvsaNa2HC2tcU4X0NHntDjlDJtbu7zj4LtZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hBTwdJA/17XGEblqvoCHTux//aUD71XjRmZr8xs5juU=;
- b=XokUE8mEWUoUhwIljJIZ9hAAQWvJYBMRRNrb19+cYmuSo/31BGp/a5ezEnKL9Ch76zOMDzk2l1UZDITLgPt0VUSgpUhqsjFxpOkXTnfc38XQtTaE930QKv6yhanBUo3VjjEeYi6lct5lL4MmNyp4WoV/WzJieNvEsMrJkUOIZx1oFXEhp+/wCmhF+3hzMIQ42G14tIcP42/MbQq9exxEbeLkXBzE+ziBuGdf6yMbcPfoJaUlFVbrJc/xUi9TKMICTMeBJgHacZN8V7rowanscl5TTLz4iPh0tyvNF8waQzMgcLn+rM8eeUuf/FO3yPGLvAC/Xhm+TcIRTx+8QPeE3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hBTwdJA/17XGEblqvoCHTux//aUD71XjRmZr8xs5juU=;
- b=VCjaktVReinbIC0SlPpyy6G10Y2CFHfFfOwccGSZFi4CiLl2Wx05KEsdGbQdKVyfu+/xXjzrkW5QNrEykr4sRt96aUaswZavchQGgCIHc9lvlr6508MghpcHc2ocWJ8LoCtct0Rj0ZMA6vvdNDkMudM7gAhHta2/SWK4lgpqpB94WjNsZLMsPh6CuYLnaBf/RZ/sqEv12zil/iB/5FSgDjc09rUxAx+XbmImWkNOgdFv514jo0endWzBnpGTQG7JlA+Uy8fXeufSSF6s157zhwlt8A/SnzBviJWFy2MiX6Ev/uox6AdtajYHFH4S4xMG9dTrymKlho5BsVC+MPCUrw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SA3PR12MB8804.namprd12.prod.outlook.com (2603:10b6:806:31f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Thu, 31 Oct
- 2024 11:33:57 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Thu, 31 Oct 2024
- 11:33:56 +0000
-Date: Thu, 31 Oct 2024 08:33:55 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
-	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
-	kumaranand@google.com
-Subject: Re: [PATCH v6 0/9] iommu/amd: Use 128-bit cmpxchg operation to
- update DTE
-Message-ID: <20241031113355.GC10193@nvidia.com>
-References: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
- <20241016142237.GP3559746@nvidia.com>
- <e617c4ae-c5fb-444a-9649-ffc7d41f79ba@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e617c4ae-c5fb-444a-9649-ffc7d41f79ba@amd.com>
-X-ClientProxiedBy: BN9PR03CA0575.namprd03.prod.outlook.com
- (2603:10b6:408:10d::10) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68F319ABBB
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730374446; cv=none; b=MmW0XcHnlsAgQoawRXBEZnkHlDrzonZVtmgxu+qNIUTCbqSf30+A5OP5GXICKqwUFwFeUxT4zKQ85SvRvi1dgTVkQ6qNPlcGqElP9G/jZc3v+YN/TNuzq7lcMMnlFtfyNstS2T3NRouANsCLD56FpU7Oom/U8gxmUK1V4ax60bw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730374446; c=relaxed/simple;
+	bh=rad7u463xWi2MhcMG4ACZLpipTH5MAEkEWxnR7IUYzI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kYdOxxSJE3zYq3glx3gBlpOzr1CTF0HYigSWmpCV3UFdKJkFNq0/u6ZJLTlbQdQcl5yeUNWZkITFlXkXVgYj2+HEXvEgoVl1NYTSw0afDJmm/r9lBgE7AU+ZaNm5qykdYBxztFQ/0BJQX8EpgDPOFmTRJdKeNef8bCn5xRzm3+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnf/3hqB; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730374443; x=1761910443;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=rad7u463xWi2MhcMG4ACZLpipTH5MAEkEWxnR7IUYzI=;
+  b=fnf/3hqBrUp7nek6inX+8wAcZ7PhWFb3xgK/ElS/+Ww1eFDMcHmXKE6/
+   MMsrR8Hjr2TerIiRr5CYRa/x7LLKMiZ7Z+AjEAmHx1bZeXVfeTuq7bj+c
+   io9E1ysWlQKzfS9cm27UIt9wUL0zPjugBnm58VXI/XFitA8W92KyT5yjh
+   +ww3X6z4Ty9/zk3gXf3QfLCw6Q1GGAoFy8VlGzN5+dNg5qtpy3TB5+p7m
+   9PUy7N83MGlifYJTr1H2WqDvhSFtfqmNHojtmFdWhaKdXrvaeY3DOeqUt
+   4TS6xu0noTOqvwNF2NTxqELr5PM/JfoZVzl2Pp8Cau2HVEETHqRmixID/
+   Q==;
+X-CSE-ConnectionGUID: DBWKIEfYRqGvAYOgAGDFjg==
+X-CSE-MsgGUID: /hFiem//RhS/KyrJVvTtXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="17748621"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="17748621"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 04:34:02 -0700
+X-CSE-ConnectionGUID: n9sV0ysrS3+sj260hNjB0A==
+X-CSE-MsgGUID: H+CxxR49Tbedvhi14tGNmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="87202121"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.204])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 04:33:58 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [RFC][PATCH] drm: i915: do not NULL deref hdmi attached_connector
+In-Reply-To: <20241031105145.2140590-1-senozhatsky@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241031105145.2140590-1-senozhatsky@chromium.org>
+Date: Thu, 31 Oct 2024 13:33:55 +0200
+Message-ID: <87y124jyl8.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA3PR12MB8804:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa0337b4-9e30-49c8-2b00-08dcf99fe7f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+mD9pUEpo1Ov9qlp9F4iGYh9qvBuJtFQlSgB8LMsuMZsao36P5xf05TJRysx?=
- =?us-ascii?Q?9AjDIfemSaqOi4S0oBbWiDS7yttkuqHvOz3dmHSUdmrAZkAY03cHJEbfpf0J?=
- =?us-ascii?Q?AtKQ6AxlWW0D4ab6ANXoqXqNO1TAqGMD8DV7PztA0mKjJ8vMui/pDFpWTM+1?=
- =?us-ascii?Q?caSwqc71NXq9pRH9AUi6S5nQCl3Rv8WiWY4XaLj6RWV4XGmMkylTdMYRIaOT?=
- =?us-ascii?Q?Cu+Rb6ZIMzRsIuuHkppCsw7qg6Vpn6zhUwpcPpFSZYuaRfex1BoFYNa6QzOW?=
- =?us-ascii?Q?OgPFm5QkHaPYbhwHLcncv8cq59FaUBAZTUONCTndn90yWdccXgXussnl1s3M?=
- =?us-ascii?Q?4WicrUmsKNJTqskNiUNU8+lAbj6r+E+PVGy4fDvC53qfnZ7bpANp5G2Q5KEI?=
- =?us-ascii?Q?b6p3x/ug25mvyjXBjGdhIiXQd3xTxlgqcxjdu6slEgKUhH4raFexGLp0NWbH?=
- =?us-ascii?Q?dAoVkZlIue2gPkaw3jzwDNdtFm1bUNm27ejtbBcUGousSFeIMeXHBgRK69HG?=
- =?us-ascii?Q?tww32k4wRvdcDrEdwpgZUTvl0Qa+39puSP9aDPqAKaJPJh+1oq8tdkefWokn?=
- =?us-ascii?Q?ZkYvVOI2b+zZLSeASa/GuZHPAWPxJWDUL8Jv8V280X7jua7mi44JxckYiiOU?=
- =?us-ascii?Q?ZsUEKhfyV9m+saZqezaj29npYBgqPWtpwh6zV875s8ENsslNS8FbfTfpm8mq?=
- =?us-ascii?Q?m6wONyUliKhEOXF52kqw+PdUjmeJC192fiIT4LZyZGxlz1BpOajKeMeZ7QPk?=
- =?us-ascii?Q?hIbQrbFu9/235h2SYobMAQhe1Zhp9m4tSGWemlkxLLbi/9Vuuv5Jxvt13gN+?=
- =?us-ascii?Q?rTw38r6k/IoWTizdwTOsq2iDc+t16egS/FvsOABUAg2DoZLPCMqD/YaEwi8i?=
- =?us-ascii?Q?XVIWzp//D5peUelsiUVTJGzlqALMJQg+hvLNCsErsdLPwDTZAvKcqTGhMAiH?=
- =?us-ascii?Q?1UpcMziphVNToXxeydsB4Wer6VDPH6HC1kFwH6a7e/B7WzGAFHvvRzckowiY?=
- =?us-ascii?Q?vP2xTf7uP9hLRJx/os3PeqUJq+P6uTh6qcHHH1GO2lbqsYwoq6pH7xkf6HHH?=
- =?us-ascii?Q?RlXAnyvIgHvWvxj2frT+PrXpTbWfrao9WokTbugI54XM8yoyksDuFtpo9Hnz?=
- =?us-ascii?Q?tOKO9Xi/C8o853Ck+I1xPu3ft7pu4bEEz12o4f76J9yx9FQaZamYAMAprHKA?=
- =?us-ascii?Q?hHcSeRSLMiWlr6sTa5sy7cXeW+JvSqLlUiOv6S4zf8jETa/CvPvDA7wQh9WU?=
- =?us-ascii?Q?ybkld0CSh+ZO4fYWlbIK4AI7fs8WZhwYtqJuIAXf4m/Zf5yflmziIzjfIklv?=
- =?us-ascii?Q?CQDModO8WzWI4ytkTVhpmm9N?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GvfYAdH/Qx2yYk9HrZsEB+hu28vbLoZ/YV+hgTdYQU2kJYv37mh4i1+Uhy8c?=
- =?us-ascii?Q?QDaGcgrTfLY/z6XmurcH1Gwjoo6cfuRILC+rycDFdQUD/OZBYteeMZnUlRTS?=
- =?us-ascii?Q?KcBnAeQ03xqLDZ6IKCAPVeyZLJJMZBusEVJADLEyaFmpbxBltCpxca/lkyiK?=
- =?us-ascii?Q?G5t8minIDZ4P8+soFcfmJVox/JouIqxZb5cuYBYGYX13IP+ML4/cYqzEk4r4?=
- =?us-ascii?Q?8T1tlESnPOt7n84TsNISYhivSXMiocGfQ+9hHSJblEvCysfiWGKhX162OdCj?=
- =?us-ascii?Q?+5ntk3EON2LdlqSYfyPGW5/9yIOxY+0IHO5zOZNyO8JPiYut2V81RI0K35Vf?=
- =?us-ascii?Q?BgbjjAqY4V+23DSj0eqvAYPpUlHR1eFj5gndNJpsVKK5aQsR5cfbPSJXCU4q?=
- =?us-ascii?Q?CIRwvy99lbfVuZk7H351BjWOFBhFLDvREBtJE+/SQ2LyMCbCJbIzeI8UGS2S?=
- =?us-ascii?Q?aFPdLrfgZZbjqNFE0xIv9IP4boylmtkOreYyaJt0JeOrWKlwm/xbw0w3qsxq?=
- =?us-ascii?Q?HOv5r5aHfSSCUBrBgypq8dTqrwVwNOZgI9t5IjBV3/p3OAnnOFqeWpj/wgTH?=
- =?us-ascii?Q?av/LVji5iJRqJcp9Ku+cNvgLeWMlIFx50KIe7bv0muyufDM1fzDfDMid5NUi?=
- =?us-ascii?Q?+pvh+Ryye2bCUdGP7egxm8O4TrLxjcx/ewWZfQPG38yFIZ0Ejb42aJ/4ELha?=
- =?us-ascii?Q?N/KDZAE8fA7r2KnjPw2//r1v+6tQreC8kFFGRWEEJSqzyAzsoKSgzEYSULhm?=
- =?us-ascii?Q?ZJwyriD1NBLwTappTveGjWW3+4L0akkFXQfmAOtCNA1C3cBO6ldyn/6bNNHj?=
- =?us-ascii?Q?cTDMklLPFwilO1S7Gsgb+A2SgBKQBLSDf3ruwT5svdU9tXYH1rK8pfXn/Nr6?=
- =?us-ascii?Q?Qt7PCb0RIxiue3ru37DghQ529I+OrbCZ8/oe39Iuc8x5XK+ab/hTN3p2jO5u?=
- =?us-ascii?Q?5us3th9OE0RSZeIzOoQuXEw4Hmw7CTGRw35Ea9k5AuNXWN/ZHA8IRazmipEN?=
- =?us-ascii?Q?vzdfKK/cQrebo0X6A7Vr7F9sUJGp0+ypJbAtvX0+maVES2mrfel2tpybtUU2?=
- =?us-ascii?Q?ZozXgckPolLerz6tkLPMA2s3oaKv4ZwTlBL0knET2AORBTyIavY7HSRts3yj?=
- =?us-ascii?Q?lHZt7vkh970YW5YfI8eZAQXkFznhdGXKAO/YC7FXdtnPUt9WahF2yFRjN5ws?=
- =?us-ascii?Q?a8rXsNZB8SxhFpSpsG2QuTOFBzh/lOLdcyhFjoP10KpYFdSI2oRii5681oZQ?=
- =?us-ascii?Q?hVkzMBZfzGXlNMXcHOj8WMGQbKK2Xw6BZS1wWxTTUkFj09cNEQEGo1afYkQb?=
- =?us-ascii?Q?OGWpiwpAzg0a/C0pQNntVsbvJXtBYjfdc9HX9cJmr0DDASmoVlgrnuAUsm6n?=
- =?us-ascii?Q?XX2T9iY+5oeuRxR5ZGodnujBnKoZBuHMZSmBhipRsIH9RZ9rN6t4pzhZlu1h?=
- =?us-ascii?Q?5m8yL6Bf5VP0O4eXrChMI6VZR/aquEkl8Fzt+5JsvlHYdSL5S2/y7QTFNd50?=
- =?us-ascii?Q?7U3P/IeBloPl9rLoGE2kDMP43DHh7smo4qciVLPFX5Jlv+042OH9NvNR2TRd?=
- =?us-ascii?Q?J6IF9VDLScWCl415GE4=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa0337b4-9e30-49c8-2b00-08dcf99fe7f4
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 11:33:56.8667
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8kxDC/yoG/QedNb6XEI2cu6gDtM3s7g7npMzNrTppwMdF0H7BZQGOkwdLB+Krzp3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8804
+Content-Type: text/plain
 
-On Thu, Oct 31, 2024 at 04:15:02PM +0700, Suthikulpanit, Suravee wrote:
-> On 10/16/2024 9:22 PM, Jason Gunthorpe wrote:
-> > 
-> > ....
-> > 
-> > I wanted to see how far this was to being split up neatly like ARM is,
-> > I came up with this, which seems pretty good to me. This would
-> > probably be the next step to get to, then you'd lift the individual
-> > set functions higher up the call chain into their respective attach
-> > functions.
-> 
-> I like this idea and will look into adopting this code when I submit the
-> nested translation stuff (right after this series) since it will affect the
-> set_dte_entry().
+On Thu, 31 Oct 2024, Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
+> 	*** RFC ***
+>
+> intel_ddi_init() may skip connector initialization, for instance,
+> both intel_ddi_init_dp_connector() and intel_ddi_init_hdmi_connector()
+> are optional.  This leads to situation that ->attached_connector may
+> be NULL for some connectors.  For instance, on my setup 'DDI A/PHY A'
+> and 'DDI TC1/PHY TC1' are not initialized.
+>
+> However, functions like intel_dp_dual_mode_set_tmds_output() and
+> friends don't take this into consideration.  This leads to NULL
+> ptr-derefs:
+>
+> KASAN: null-ptr-deref in range [0x0000000000000848-0x000000000000084f]
+> RIP: 0010:intel_hdmi_encoder_shutdown+0x105/0x230
+> Call Trace:
+> <TASK>
+> i915_driver_shutdown+0x2d8/0x490
+> pci_device_shutdown+0x83/0x150
+> device_shutdown+0x4ad/0x660
+> __se_sys_reboot+0x29c/0x4d0
+> do_syscall_64+0x60/0x90
+>
+> Add a new helper to avoid NULL ->attached_connector derefs and
+> switch some intel_hdmi function to it.  I'm not sure if we need
+> to switch all or just intel_dp_dual_mode_set_tmds_output() (I
+> have only seen this one doing NULL derefs so far).
 
-Yes, I definitely want to see this kind of code structure before
-nested translation.
+I think the question is, what are we doing running this code if the
+connector initialization was skipped?
 
-> > static void set_dte_entry(struct amd_iommu *iommu,
-> > 			  struct iommu_dev_data *dev_data)
-> > {
-> > 	u32 old_domid;
-> > 	struct dev_table_entry new = {};
-> > 	struct protection_domain *domain = dev_data->domain;
-> > 	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-> > 	struct dev_table_entry *dte = &get_dev_table(iommu)[dev_data->devid];
-> > 
-> > 	make_clear_dte(dev_data, dte, &new);
-> > 	if (gcr3_info && gcr3_info->gcr3_tbl)
-> > 		set_dte_gcr3_table(iommu, dev_data, &new);
-> > 	else if (domain->iop.mode == PAGE_MODE_NONE)
-> > 		set_dte_identity(iommu, dev_data, &new);
-> > 	else
-> > 		set_dte_paging(iommu, dev_data, &new);
-> 
-> This will need to be change once we add nested translation support because
-> we need to call both set_dte_paging() and set_dte_gcr3().
+BR,
+Jani.
 
-The idea would be to remove set_dte_entry() because the attach
-functions just call their specific set_dte_xx() directly, like how arm
-is structured.
+>
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
+>  drivers/gpu/drm/i915/display/intel_hdmi.c | 27 ++++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+> index e1a1351bc94f..c089dd20972b 100644
+> --- a/drivers/gpu/drm/i915/display/intel_hdmi.c
+> +++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+> @@ -1256,12 +1256,19 @@ static void hsw_set_infoframes(struct intel_encoder *encoder,
+>  			      &crtc_state->infoframes.drm);
+>  }
+>  
+> +static struct i2c_adapter *to_ddc(struct intel_hdmi *hdmi)
+> +{
+> +	if (hdmi->attached_connector)
+> +		return hdmi->attached_connector->base.ddc;
+> +	return NULL;
+> +}
+> +
+>  void intel_dp_dual_mode_set_tmds_output(struct intel_hdmi *hdmi, bool enable)
+>  {
+>  	struct intel_display *display = to_intel_display(hdmi);
+> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
+> +	struct i2c_adapter *ddc = to_ddc(hdmi);
+>  
+> -	if (hdmi->dp_dual_mode.type < DRM_DP_DUAL_MODE_TYPE2_DVI)
+> +	if (!ddc || hdmi->dp_dual_mode.type < DRM_DP_DUAL_MODE_TYPE2_DVI)
+>  		return;
+>  
+>  	drm_dbg_kms(display->drm, "%s DP dual mode adaptor TMDS output\n",
+> @@ -1275,7 +1282,7 @@ static int intel_hdmi_hdcp_read(struct intel_digital_port *dig_port,
+>  				unsigned int offset, void *buffer, size_t size)
+>  {
+>  	struct intel_hdmi *hdmi = &dig_port->hdmi;
+> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
+> +	struct i2c_adapter *ddc = to_ddc(hdmi);
+>  	int ret;
+>  	u8 start = offset & 0xff;
+>  	struct i2c_msg msgs[] = {
+> @@ -1292,6 +1299,10 @@ static int intel_hdmi_hdcp_read(struct intel_digital_port *dig_port,
+>  			.buf = buffer
+>  		}
+>  	};
+> +
+> +	if (!ddc)
+> +		return -EINVAL;
+> +
+>  	ret = i2c_transfer(ddc, msgs, ARRAY_SIZE(msgs));
+>  	if (ret == ARRAY_SIZE(msgs))
+>  		return 0;
+> @@ -1302,11 +1313,14 @@ static int intel_hdmi_hdcp_write(struct intel_digital_port *dig_port,
+>  				 unsigned int offset, void *buffer, size_t size)
+>  {
+>  	struct intel_hdmi *hdmi = &dig_port->hdmi;
+> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
+> +	struct i2c_adapter *ddc = to_ddc(hdmi);
+>  	int ret;
+>  	u8 *write_buf;
+>  	struct i2c_msg msg;
+>  
+> +	if (!ddc)
+> +		return -EINVAL;
+> +
+>  	write_buf = kzalloc(size + 1, GFP_KERNEL);
+>  	if (!write_buf)
+>  		return -ENOMEM;
+> @@ -1335,9 +1349,12 @@ int intel_hdmi_hdcp_write_an_aksv(struct intel_digital_port *dig_port,
+>  {
+>  	struct intel_display *display = to_intel_display(dig_port);
+>  	struct intel_hdmi *hdmi = &dig_port->hdmi;
+> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
+> +	struct i2c_adapter *ddc = to_ddc(hdmi);
+>  	int ret;
+>  
+> +	if (!ddc)
+> +		return -EINVAL;
+> +
+>  	ret = intel_hdmi_hdcp_write(dig_port, DRM_HDCP_DDC_AN, an,
+>  				    DRM_HDCP_AN_LEN);
+>  	if (ret) {
 
-That will make everything much clearer.
-
-Then the nested attach function would call some set_dte_nested() and
-it would use set_dte_paging() internally.
-
-Getting to this level is necessary to get the hitless replace, which
-is important..
-
-I hope this series gets landed this cycle, next cycle you should try
-to get to hitless replace on the domain path, including this stuff,
-then adding the nested domain should be straightforward!
-
-Jason
+-- 
+Jani Nikula, Intel
 
