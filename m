@@ -1,95 +1,148 @@
-Return-Path: <linux-kernel+bounces-390318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB7A9B785D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:08:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B7B9B7862
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612012818CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:08:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB45FB24250
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5E91953BB;
-	Thu, 31 Oct 2024 10:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57631991B5;
+	Thu, 31 Oct 2024 10:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bb3tBctS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e6vK9Blq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A93C1990B7;
-	Thu, 31 Oct 2024 10:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3F7195FEC;
+	Thu, 31 Oct 2024 10:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730369283; cv=none; b=vEcBvBgQ7WIz70tJnDNXZ+bhkI8z/P/P4AX5eLl6SJo6O++C/BBoFZCAQQnRHIPyl19VADpkLKc0UP4gdi4V0aA84fflUCe3L1XSBrai9Cyenp4ielwkuOR+SbwvI2Hm505Co9RFgro42zecV1gns4KHSu2k93jq+3Ji+uogoG4=
+	t=1730369311; cv=none; b=dWwEJ0PsJmdwIe5ss27hzmJWBjVjwFNJBi1Ejk7lvU+zHEp83/EMxl9YfQy87b9Ah+cXAUSiR1dJYfzcw4a3ePawpd2Io7p0v1e9tMfY9PpQmr2aqN+U3JaisfZurO5fZekpED2PjhOlH1LVb0JAkCPmxMNTKoPw0DO/4qE58O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730369283; c=relaxed/simple;
-	bh=xnxIa7h+9xLmfUxdr0QYpkj9ql7Nv78tG+yBmVfcPeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTlMNrC5sQJB0bAnBNnmhycULbdvmjCe61gLNmilWBiRfidTrTdCDq+HXoU/aOf3QsdJ8cudIoYnq3oKfdjfNq3LJpqgJdCDA16YYuMTxwcFOeHoJaN/vlXRGkhFrQsgOBdaHP5zAUuH84nxefNwmRA2qu6GouzuupR/N7f0a2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bb3tBctS; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1730369311; c=relaxed/simple;
+	bh=i+hteVqCnXc++rzyU2MY4vtu6c9jhIdsix/DJbeDlZE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=orR7RuFhQatmCps9fdNUkAk6OB/YmmoYlsfYEaDLVri7sNtPfaoIBPb9GtlCrDYUVOgXw7Bi9SuU3MEyATebw5TNQsxxLXK82Um2xBnLtDfvQhjTIYjjgyF3dPauSp/ARDOV0b2t81jRzDHZMGEgI3XVIs4ajZ6NHKnlwoEUD6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e6vK9Blq; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730369281; x=1761905281;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xnxIa7h+9xLmfUxdr0QYpkj9ql7Nv78tG+yBmVfcPeg=;
-  b=Bb3tBctS1tKXtupzcCan0AioyJWw0+nOl1Dz1duT3/6QmQNa5gSKj0rh
-   ZNkP0CB/cTBKYzKEzP7RR0aq1zH90SenRQ7qZ4TFAW/Piknt/xWfpaWs5
-   rMQ4XnG0kEGdc/AXBjUPcOKEWoIAtzKhN6INraRawZx+NfIdjhWpAZ9pM
-   I9vKJRjoL3jgQc3WrcBqAIPSVbnxCfk9AHwfQ4g5VVMASXoMehAsRiiwa
-   n5ftdDnzSOkZXLM+wnf1XqMxImOknNj4HYLBBs0KKROCR/Rn2wMmORXuD
-   W2BPCMQnO4X5vszLznX+bNVg3jONR0MyxlqawF3zrbdD21zqygxSqoin6
-   w==;
-X-CSE-ConnectionGUID: Ft6j4kyoR0iYS1j1UC6FGg==
-X-CSE-MsgGUID: LTlV6xhwS6yjiZ84NZmwHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40646707"
+  t=1730369309; x=1761905309;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=i+hteVqCnXc++rzyU2MY4vtu6c9jhIdsix/DJbeDlZE=;
+  b=e6vK9BlqsET8X8Rf5hpK1F5pLbmoB3bkfSDL8bCC/XNJqGwlcmGneWjd
+   Tscmx/eQLYq5nzGNQeJbaIPMtFT8bMpsMP5eFiv7/kaumckvM/w0nfJea
+   ud2rmmvepuIJWLkm3lJGtny6Qbjn5fNRWsYQGV8DrvEij7EfbPN+4M/sm
+   sQPogrGXrdf3ClVecn8mpzeF1eXpsxXdlJOQaZJWw0aaUDWV2O6y+F5aF
+   2FNrp2XnnKD7OlBdlQI5EDbRbiWsAcBGoHeeVQ5kmSzkFRUgC3AALBTs/
+   G+lwXvQc/6dDyEmnTHuzoD68JQH7nDq2Psik7Z3EjDl7TuA0nrlD7WtIr
+   Q==;
+X-CSE-ConnectionGUID: tJnErQwRQMmaiEnPWko7ow==
+X-CSE-MsgGUID: zFBxadd7TqquUNoPu9C1aA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29955805"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40646707"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:08:01 -0700
-X-CSE-ConnectionGUID: jHetEqXtRIaSdGFJgMr1tg==
-X-CSE-MsgGUID: 3yyP+9U0T5ec0ij+QY8OUA==
+   d="scan'208";a="29955805"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:08:29 -0700
+X-CSE-ConnectionGUID: W6SPskMlQiyn/wK1TPI9qw==
+X-CSE-MsgGUID: dWkMTl2ZTguOT55YPzXk+A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="82704658"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:07:59 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t6S5s-00000009bOI-3uPc;
-	Thu, 31 Oct 2024 12:07:56 +0200
-Date: Thu, 31 Oct 2024 12:07:56 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mun Yew Tham <mun.yew.tham@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 1/1] gpio: altera: Drop legacy-of-mm-gpiochip.h header
-Message-ID: <ZyNW_A42ecbu3LAD@smile.fi.intel.com>
-References: <20241031100608.2401209-1-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="82742336"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.160])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:08:23 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 31 Oct 2024 12:08:20 +0200 (EET)
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, 
+    Yazen Ghannam <yazen.ghannam@amd.com>
+cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, 
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+    "Luck, Tony" <tony.luck@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+    "avadhut.naik@amd.com" <avadhut.naik@amd.com>, 
+    "john.allen@amd.com" <john.allen@amd.com>, 
+    "mario.limonciello@amd.com" <mario.limonciello@amd.com>, 
+    "bhelgaas@google.com" <bhelgaas@google.com>, 
+    "Shyam-sundar.S-k@amd.com" <Shyam-sundar.S-k@amd.com>, 
+    "richard.gong@amd.com" <richard.gong@amd.com>, 
+    "jdelvare@suse.com" <jdelvare@suse.com>, 
+    "linux@roeck-us.net" <linux@roeck-us.net>, 
+    "clemens@ladisch.de" <clemens@ladisch.de>, 
+    "hdegoede@redhat.com" <hdegoede@redhat.com>, 
+    "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
+    "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>, 
+    "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, 
+    "naveenkrishna.chatradhi@amd.com" <naveenkrishna.chatradhi@amd.com>, 
+    "carlos.bilbao.osdev@gmail.com" <carlos.bilbao.osdev@gmail.com>
+Subject: RE: [PATCH 06/16] x86/amd_nb: Simplify root device search
+In-Reply-To: <CY8PR11MB7134D716377B0C5E40E5C8FF89552@CY8PR11MB7134.namprd11.prod.outlook.com>
+Message-ID: <77c96d66-02b9-965d-4c43-c588aedd1d48@linux.intel.com>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com> <20241023172150.659002-7-yazen.ghannam@amd.com> <CY8PR11MB7134D716377B0C5E40E5C8FF89552@CY8PR11MB7134.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031100608.2401209-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Oct 31, 2024 at 12:06:08PM +0200, Andy Shevchenko wrote:
-> Remove legacy-of-mm-gpiochip.h header file, replace of_* functions
-> and structs with appropriate alternatives.
+On Thu, 31 Oct 2024, Zhuo, Qiuxu wrote:
 
-It missed to drop selections in Kconfig, I'll send v2 soon.
+> > From: Yazen Ghannam <yazen.ghannam@amd.com>
+> > [...]
+> > +struct pci_dev *amd_node_get_root(u16 node) {
+> > +	struct pci_dev *df_f0 __free(pci_dev_put) = NULL;
+> 
+> NULL pointer initialization is not necessary.
+
+It is, because __free() is used...
+
+> > +	struct pci_dev *root;
+> > +	u16 cntl_off;
+> > +	u8 bus;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_ZEN))
+> > +		return NULL;
+
+...This would try to free() whatever garbage df_f0 holds...
+
+> > +	/*
+> > +	 * D18F0xXXX [Config Address Control] (DF::CfgAddressCntl)
+> > +	 * Bits [7:0] (SecBusNum) holds the bus number of the root device for
+> > +	 * this Data Fabric instance. The segment, device, and function will be
+> > 0.
+> > +	 */
+> > +	df_f0 = amd_node_get_func(node, 0);
+
+...However, the recommended practice when using __free() is this (as 
+documented in include/linux/cleanup.h):
+
+ * Given that the "__free(...) = NULL" pattern for variables defined at
+ * the top of the function poses this potential interdependency problem
+ * the recommendation is to always define and assign variables in one
+ * statement and not group variable definitions at the top of the
+ * function when __free() is used.
+
+I know the outcome will look undesirable to some, me included, but 
+there's little that can be done to that because there's no other way for 
+the compiler to infer the order.
+
+That being said, strictly speaking it isn't causing issue in this function 
+as is but it's still a bad pattern to initialize to = NULL because in 
+other instances it will cause problems. So better to steer away from the
+pattern entirely rather than depend on reviewers noticing the a cleaup 
+ordering problem gets introduced by some later change to the function.
+
+> > +	if (!df_f0)
+> > +		return NULL;
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+ i.
 
 
