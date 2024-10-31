@@ -1,148 +1,187 @@
-Return-Path: <linux-kernel+bounces-390249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247F39B7768
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8019B776A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:26:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B3E71C22900
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520141C22BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3CD195FF1;
-	Thu, 31 Oct 2024 09:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C191946CF;
+	Thu, 31 Oct 2024 09:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0BRaxfe8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G0iEi24X"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="q+uQKR6p"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A43219580A;
-	Thu, 31 Oct 2024 09:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0179F192B9E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366746; cv=none; b=FWtfEHIl/j0wfZUMh5AE8CGh3ZbSpKhUseTEDew7tw13/25kfQIOG6nK2i65XUo9yO/jFTCPD5RrIjs5DCgwqATYOHlnboEeMNw7dz1rcQYr/PLRldHXc1R8PE3EyZsyflQLPbEsc55HxCVnTy2yETfEE3puPG1BL4KtcRJWfig=
+	t=1730366790; cv=none; b=pMdmoAUKz24h8FXnGYlY8T5sDoxGKA0Pb45NZbphh/3XtbdzG4SGh/ZGNt3gCbux+5byZ0A3Qkd1G0Ztknyn3XIS/FjOkjf3mGQgi2slT8yCI8MANDipZLUHHfQJbXvx/XFS7QBXbsK8LB8Bz1I4J+10VROH9Mrnd9HePuGWbQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366746; c=relaxed/simple;
-	bh=R9P3BdZPMugAhiXUvDfpQpJdWt09YfI6FBbcP0deauY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tyrhc9Opl2rSCuowbk1k3S00nE1hxfKUI6eknyKuA3M1OfEdS9WTZ83Gs3qL0Qa4WHGs4pM2ES+Col+IkppECjFDerjkCoFlQ9O4Sru9DJTGzPfwl64SuW5rW1QS4O91U3MaQFTsRVMLlxrbMj1hXF8O0b1iUw0OQJw7QK7iobU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0BRaxfe8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G0iEi24X; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730366742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4XOhA+qbKcOxUwuBV6wIIlJrCI0gaIgvaqmgKGx/kE=;
-	b=0BRaxfe8HIoM+0ljJwS/7adDuXuq9rl9de0yDWJxJwSue5d5K6g5HrxPVIfeqeF4wI7y6w
-	n9GK10fBMidSxW1W0UsW3g/hRlP3/ZFRkuQ4FsSn2BR+k4kMjeG9Bc/5TosfGKU7httKiD
-	3HguzmcMtbA1E/WHWdTfNAMFNdX0kDFqvAeOcfHcr+XVtYF3f5kY3dVnqfh9pc1CLyaiu4
-	6oUOCVeHLXEzm74OG7hUqyAQpsLVlnrAmdkRBHDwXGbfQibPTDFtgIMHo/wm0ntVvIluKQ
-	dHUJbm9S+m1MiewcFNOHIMUPSxpOyQ4IJTm2e9u/RqxzSIzop9MF/qK1/oXL5w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730366742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4XOhA+qbKcOxUwuBV6wIIlJrCI0gaIgvaqmgKGx/kE=;
-	b=G0iEi24XT31tI4NdGX5W4gMg1rJdLA/f3QtfC1PUJ49OZLA7TVBHwtDdNtiXuBMenO6Llu
-	Nab2V6gtyCtocdDw==
-To: Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Thomas
- Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>, Uwe =?utf-8?Q?K?=
- =?utf-8?Q?leine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
- Rengarajan S <rengarajan.s@microchip.com>, Peter Collingbourne
- <pcc@google.com>, Serge Semin <fancer.lancer@gmail.com>, Lino Sanfilippo
- <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 5/6] serial: 8250: Switch to nbcon console
-In-Reply-To: <419edf13-3f5e-4d30-90d8-88118f77f704@kernel.org>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-6-john.ogness@linutronix.de>
- <419edf13-3f5e-4d30-90d8-88118f77f704@kernel.org>
-Date: Thu, 31 Oct 2024 10:31:41 +0106
-Message-ID: <84msiklj3e.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1730366790; c=relaxed/simple;
+	bh=W+7WITvQz2ZgCwS9oNFaKkBroXYi4X6KRO4xqfT+YUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TrgII9fU0S6NQi/tDCJKYCZmrJgJszB3hsyN2HWppTplgRVo74n9t8s0fHQIQ0hGgeZ6XIS1MZ8A55WUsc8FG2XZSvublN9G2Ae/FnvyASAxf6FPDL8+HJP5kAJDUrTzds3IWS47dfG21eXhhcmcI4g50BNcw5As1FGzmBnLrl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=q+uQKR6p; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53a007743e7so766853e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:26:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1730366786; x=1730971586; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WPySU9GG1bDdptaowyq3VjxeujL5zBs3sjWS8sIYgHw=;
+        b=q+uQKR6pkACB75xQMn3++eVBRS7sJIf7dk+y3++vj9EYnyBUzJVi1HvR+OL9uJRzIf
+         mqKetllPpd8T/2jYbu5bh2G/v1lkywjkCeZQiXD5DyDRpnww3Q14AfK5fmsjYpblaWnf
+         o/sgTrFl3hfU6wLKcvBXlNdhrfCBbKX0BPV2fqlROpJGvXOJ3yOnBJpuxBevp94k5pvO
+         wZI8K1LU9c/oooBTQyHVgVI7DH3FRRewgf2P5TCfvVTK7uNnuJ+Q/u8F0cV42/8NLZAX
+         Q5WYtwok1dOGng+OTpqsZbSuhCBSyLI4NrUMurGqpLVU/IingGWFAPeFU7hiuKTayMn7
+         5svw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730366786; x=1730971586;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WPySU9GG1bDdptaowyq3VjxeujL5zBs3sjWS8sIYgHw=;
+        b=d0106jSDGrKyBbDR0iz6QAQUvn+SGE9L6/0ZoTgZMeyhS6EMijdA7gM5Qtylqocuh2
+         4Ogs5Sh8tSfKIXzRJVp33TblOefhYVUs8MVegVNnQpl464NuWlX8VesiAMv16c9LM+7I
+         43XKovRCaUDqh+2BUjX1BWBxDvYbNNZLO4swmFOfGEcvaizzxl9HxirVb1RXxlcR7k+d
+         eJ2fKVQBIkEi4Plua2UIQfOeWNS6i2y7ZBluWIUidAQbNxQZ5or3Mc7Cwf+cCPjnpGRc
+         JGu6cVPIlEpIJPXQWTCQl+6V7H3aaHNYIed9n2rhFqTE66JzIgUq60kvLEb+sb07LnUI
+         hKqA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7q54YuYypmqU+bJQxNPcUwSaFO9ztWrS47kIFfJan4Eni8b3sfhy7hVwk5/YIMeWKvJ7CHWroCsNi7lI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJnX3FoOECTK2WN5v3xkCXp0LmhrjkQbVEeVBhIApY7GZqcjok
+	ZtMD23wGUXKwuCk5yTVIaUpDnOHmY962bkGcpclLkG/ETyNojip/AAbX/mkVySM=
+X-Google-Smtp-Source: AGHT+IFx8MLTqlbYOXV70FjxcgUiPu/8my35yVrkTf/0/c/FdNoy8F04GpO/K6glzhe+yo4QhhnwIg==
+X-Received: by 2002:a05:6512:b94:b0:539:f7ab:e161 with SMTP id 2adb3069b0e04-53c79e8ec22mr1531829e87.45.1730366785959;
+        Thu, 31 Oct 2024 02:26:25 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.190])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd917fefsm48372175e9.16.2024.10.31.02.26.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 02:26:25 -0700 (PDT)
+Message-ID: <ee94a802-97ec-4a9b-9ca4-5c14e0eba116@tuxon.dev>
+Date: Thu, 31 Oct 2024 11:26:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 03/10] clk: renesas: clk-vbattb: Add VBATTB clock
+ driver
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com,
+ magnus.damm@gmail.com, p.zabel@pengutronix.de,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241030110120.332802-4-claudiu.beznea.uj@bp.renesas.com>
+ <mg2ugyg65ke3tngzqyyixfkawf4iop4o373dc6fosy7bfydbe5@pm43dhkd7asu>
+ <CAMuHMdUcw_UHAZRVGt=Tr0jv3NOPDibtPy1E-46Pq74YKFZxWg@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdUcw_UHAZRVGt=Tr0jv3NOPDibtPy1E-46Pq74YKFZxWg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-30, Jiri Slaby <jirislaby@kernel.org> wrote:
->> -static void univ8250_console_write(struct console *co, const char *s,
->> -				   unsigned int count)
->> +static void univ8250_console_write_atomic(struct console *co,
->
-> Once 'co'.
+Hi, Geert, Krzysztof,
 
->> +static void univ8250_console_write_thread(struct console *co,
->
-> Second time co.
+On 31.10.2024 10:43, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
+> 
+> On Thu, Oct 31, 2024 at 8:48 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Wed, Oct 30, 2024 at 01:01:13PM +0200, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that is used
+>>> by the RTC. The input to the VBATTB could be a 32KHz crystal
+>>> or an external clock device.
+>>>
+>>> The HW block diagram for the clock generator is as follows:
+>>>
+>>>            +----------+ XC   `\
+>>> RTXIN  --->|          |----->| \       +----+  VBATTCLK
+>>>            | 32K clock|      |  |----->|gate|----------->
+>>>            | osc      | XBYP |  |      +----+
+>>> RTXOUT --->|          |----->| /
+>>>            +----------+      ,
+>>>
+>>> After discussions w/ Stephen Boyd the clock tree associated with this
+>>> hardware block was exported in Linux as:
+>>>
+>>> vbattb-xtal
+>>>    xbyp
+>>>    xc
+>>>       mux
+>>>          vbattbclk
+>>>
+>>> where:
+>>> - input-xtal is the input clock (connected to RTXIN, RTXOUT pins)
+>>> - xc, xbyp are mux inputs
+>>> - mux is the internal mux
+>>> - vbattclk is the gate clock that feeds in the end the RTC
+>>>
+>>> to allow selecting the input of the MUX though assigned-clock DT
+>>> properties, using the already existing clock drivers and avoid adding
+>>> other DT properties. If the crystal is connected on RTXIN,
+>>> RTXOUT pins the XC will be selected as mux input. If an external clock
+>>> device is connected on RTXIN, RTXOUT pins the XBYP will be selected as
+>>> mux input.
+>>>
+>>> The load capacitance of the internal crystal can be configured
+>>> with renesas,vbattb-load-nanofarads DT property.
+>>>
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+>>> --- a/drivers/clk/renesas/Kconfig
+>>> +++ b/drivers/clk/renesas/Kconfig
+>>> @@ -237,6 +237,10 @@ config CLK_RZV2H
+>>>       bool "RZ/V2H(P) family clock support" if COMPILE_TEST
+>>>       select RESET_CONTROLLER
+>>>
+>>> +config CLK_RENESAS_VBATTB
+>>> +     bool "Renesas VBATTB clock controller"
+>>
+>> tristate
+> 
+> Good point.
+> However, does it work as a module, or would that break the RTC?
 
->> +static void univ8250_console_device_lock(struct console *con, unsigned long *flags)
->
-> And suddenly, it is 'con'.
+On RZ/G3S the RTC counter needs the clock provided by VBATTB.
 
-Sorry. The printk folks like "con". The 8250 folks seem to like "co". I
-will switch to "co" for the 8250 changes.
+I'll try with this as a module.
 
->>   static void serial8250_console_putchar(struct uart_port *port, unsigned char ch)
->>   {
->> +	struct uart_8250_port *up = up_to_u8250p(port);
->> +
->>   	serial_port_out(port, UART_TX, ch);
->> +
->> +	if (ch == '\n')
->> +		up->console_line_ended = true;
->> +	else
->> +		up->console_line_ended = false;
->
-> So simply:
->     up->console_line_ended = ch == '\n';
+> 
+> And this is missing
+> 
+>         depends on ARCH_RENESAS || COMPILE_TEST
+> 
+> which I can add while applying.
 
-OK, although I would also add parenthesis to make the inline boolean
-evaluation visually more obvious:
+Thank you!
 
-	up->console_line_ended = (ch == '\n');
+Claudiu
 
->>   	/*
->> -	 *	First save the IER then disable the interrupts
->> +	 * First save IER then disable the interrupts. The special variant
->
-> When you are at it:
-> "First, save the IER, then"
-
-OK.
-
-> (BTW why did you remove the "the"?)
-
-If IER is the name of a register, the "the" is inappropriate. If IER is
-just an abbreviation for "interrupt enable register" then the "the" is
-correct. In this case, both are correct, so it depends on how you read
-it. ;-)
-
-Anyway, I have no problems leaving the "the" in place.
-
->> +	up->console_line_ended = true;
->> +	up->modem_status_work = IRQ_WORK_INIT(modem_status_handler);
->
-> Looks weird ^^^.
->
-> Do:
->    init_irq_work(&up->modem_status_work, modem_status_handler)
-
-Right. Thanks.
-
-John
+> 
+>>
+>>> +     select RESET_CONTROLLER
+>>> +
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
