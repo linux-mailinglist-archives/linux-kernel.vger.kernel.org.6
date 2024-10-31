@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-389881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8949B726D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:19:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA55D9B7274
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A696E1C2368C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262151F213ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B2984E11;
-	Thu, 31 Oct 2024 02:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F4912C473;
+	Thu, 31 Oct 2024 02:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LEZYtP1b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nfc2Q/E0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7DA12C465
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF445026;
+	Thu, 31 Oct 2024 02:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730341193; cv=none; b=E3d/i2s0hkNrGRgk72KV8zLrxByqHdb53PzpIIyeq4IlGcB/QEpzq/FXFAVzv8n9+3aOy5VYdhGUEcOkh/JaHIxB3+2LnbKDrmqEeqzQpaFY925GQWhU5b2XONLd9RxPg3lkX4hxSBBG37hzgDS+rmrcEoYIMeY6YPC1XxdUiLg=
+	t=1730341230; cv=none; b=f9yTm6n+U003NOJkMFlYpFITvGwkclODKQuyU//yodKmoIlR9P3v3wB38ULvfPX8eMaTwgfUhVPhU+yNvGS1Hb2bHMeggnOpQaYGu76Ap4bmw060TIc4AHZK7b1fR/OLkQ74/IqVargl6bRvwsapiYt+/fsJhgvOvVdtxkfwBu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730341193; c=relaxed/simple;
-	bh=YH+r+Dbnbl3Hh+y/hm/qgXZvFD8Qdh/Re1nEgUi7fU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=neUYpXx+8CWtSfseo4ZAmr5OVQP5RQWFFzM3FSE16AbPyE/nVtK8Yue8Deg/K94JBWxEatPEd+sup9OGkR2bHj61QGJ7SHk+ZNLELxql19Qn3zTgxnGNEwwAJjt4K12C2QC7rqztz1E0qVlT9dqMIIolANK3OUGu+81rmeWl4X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LEZYtP1b; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730341191; x=1761877191;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YH+r+Dbnbl3Hh+y/hm/qgXZvFD8Qdh/Re1nEgUi7fU8=;
-  b=LEZYtP1bMgr/M9cD7XmrcPn7Zq0b4RH7CEQ4iJrrYoMYKV6NuwabmLQP
-   k2F0Fk2uX31BdnLll6iEnEAzqWukE984mZLBVkNOt8SDAi7jS07efhaAa
-   kMjDqNngujbc8MQRckrVQbWGp+cgNnfHcd3KUr6/HAgU5eThphZiZxgpI
-   TguS1sX7TQ5kQmzBqHpAF56X1Fhhj+itHqKuVbZrTJys7wg7r/QeGY+gm
-   zED3dPK7cI9F63t3MzDgsd1nurGxpF1eKu+MM0iZlj0YfA4uRDx7R+LKt
-   yh3LT35934vrLWCy4C+0r2cCF64lTGNkT+XpGnQHnJY9gQg+aUYFZkcu4
-   A==;
-X-CSE-ConnectionGUID: 5fg1iMKpR6OIa7J+RbbrGA==
-X-CSE-MsgGUID: 0+4FnBaPQtu8hdqtPFJaVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47528333"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="47528333"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 19:19:50 -0700
-X-CSE-ConnectionGUID: mI53XOwBRq+BGEaUiyP8pg==
-X-CSE-MsgGUID: Ce3NF40AQsq8i8qE4BOJKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="82039774"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 30 Oct 2024 19:19:47 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6Kmm-000fY8-1k;
-	Thu, 31 Oct 2024 02:19:44 +0000
-Date: Thu, 31 Oct 2024 10:19:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: alice.guo@oss.nxp.com, alexander.stein@ew.tq-group.com,
-	wahrenst@gmx.net, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, "alice.guo" <alice.guo@nxp.com>
-Subject: Re: [PATCH v3] soc: imx: Add SoC device register for i.MX9
-Message-ID: <202410311056.PBPPOYmg-lkp@intel.com>
-References: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+	s=arc-20240116; t=1730341230; c=relaxed/simple;
+	bh=drU3KW7IEWpok2cJ6SbKWoKUJDEAts5QmVDexHgPN7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZkP5WxYzszpwoO8TOcP4k8BdynRG31BJSMCtn0CtgIUQ4MxiesuygrLoRkmSPNLtIbPoqjxEhnzUoF9D0fstKBvIDZLA7oSMBKE/OeZ5ZkW21kqgqIfl6q7upHF2xh5sIdSyu5d+51ijfP5EaYbFN3FVTsl0nm1uzoomCclIKgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nfc2Q/E0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730341222;
+	bh=xqQt8+HgzhSe91OSWjrnVK5r+keJ18ApvAwnw2ZwvF4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nfc2Q/E0GC5j/opUbRiHRLrThE3HEGjNimf56MjinQUgzobOwED6Q9HwHx86pNH/w
+	 zK2+3eo5l0NY1/ve0/ZBL20JD0ggi2Bd5UFN474+iXTbIl24ysml7Q+6hCYNXqRpCb
+	 DI5q4fuNkSi0nMfxYm+4iqmLO6O7sZjyFYT9Dshec1K14E7Mv3NxyKX8c89MVp9vsX
+	 gKktFje9JchEFCGtv1hruSUeTNY7XRRyz+WzN9PQITxGJwtIfSbgbGDPwOvML2HYYW
+	 G5mKT4BtlDAQw/pjbSgEKTpRStsMY9W8I7oGHwQtSnZUG8pfjO5TEYBSvr4wCbDmEY
+	 h6DO7zyL6Dqmw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xf74j2jjmz4xPF;
+	Thu, 31 Oct 2024 13:20:21 +1100 (AEDT)
+Date: Thu, 31 Oct 2024 13:20:21 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg
+ <johannes@sipsolutions.net>, Wireless <linux-wireless@vger.kernel.org>,
+ Aditya Kumar Singh <quic_adisi@quicinc.com>, Johannes Berg
+ <johannes.berg@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Miri Korenblit
+ <miriam.rachel.korenblit@intel.com>, Networking <netdev@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Message-ID: <20241031132021.6c7eedb2@canb.auug.org.au>
+In-Reply-To: <20241028123621.7bbb131b@canb.auug.org.au>
+References: <20241028123621.7bbb131b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+Content-Type: multipart/signed; boundary="Sig_/tnRE6..8MI65nh6OXU0jFZM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi,
+--Sig_/tnRE6..8MI65nh6OXU0jFZM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+Hi all,
 
-[auto build test WARNING on shawnguo/for-next]
-[also build test WARNING on linus/master v6.12-rc5 next-20241030]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Mon, 28 Oct 2024 12:36:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the wireless-next tree got a conflict in:
+>=20
+>   drivers/net/wireless/intel/iwlwifi/mvm/mld-mac80211.c
+>=20
+> between commit:
+>=20
+>   cbe84e9ad5e2 ("wifi: iwlwifi: mvm: really send iwl_txpower_constraints_=
+cmd")
+>=20
+> from the wireless tree and commit:
+>=20
+>   188a1bf89432 ("wifi: mac80211: re-order assigning channel in activate l=
+inks")
+>=20
+> from the wireless-next tree.
+>=20
+> I fixed it up (the latter removed some code that the former moved some
+> other cde around - so I effectively just used the latter) and can carry
+> the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the
+> conflicting tree to minimise any particularly complex conflicts.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/alice-guo-oss-nxp-com/soc-imx-Add-SoC-device-register-for-i-MX9/20241030-171525
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241030091336.3901440-1-alice.guo%40oss.nxp.com
-patch subject: [PATCH v3] soc: imx: Add SoC device register for i.MX9
-config: hexagon-randconfig-001-20241031 (https://download.01.org/0day-ci/archive/20241031/202410311056.PBPPOYmg-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410311056.PBPPOYmg-lkp@intel.com/reproduce)
+This is now a conflict between the net tree and the net-next tree.
+--=20
+Cheers,
+Stephen Rothwell
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410311056.PBPPOYmg-lkp@intel.com/
+--Sig_/tnRE6..8MI65nh6OXU0jFZM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-All warnings (new ones prefixed by >>):
+-----BEGIN PGP SIGNATURE-----
 
->> drivers/soc/imx/soc-imx9.c:84:34: warning: unused variable 'imx9_soc_match' [-Wunused-const-variable]
-   static const struct of_device_id imx9_soc_match[] = {
-                                    ^
-   1 warning generated.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmci6WUACgkQAVBC80lX
+0GxPxQf9FqLkRiEWj82juUiZPr9wMOiyF4uQDIPt0jxdY0Ipv33sN98/byCOjcLs
+U4tUVDB8ok7Wd6WAsoS9okoLovZCv8xYvMFk6ngV3iWmrR4y5clA1B2Stp7DKCtH
+1wOJPy+IGleTTdc8+BMDAZ/T9iXjEhkDdKkQH0qSKAc7vsYJB/WgplzC/T4kyMK5
+/44spSzjoDZG0t7Myvg1EU4S/KFPeo+CmkbzB8c7EK/YwMzXlTBUNLqb0wvN4HJg
+GJdtQxWy/dvjxXzzygeTPBaLjjmplLXQFHHFeOqdI7wz68CJ50mOtVfxi+aJ815H
+EmaBK70IitkmNeO4SSNPQHL3TNSauA==
+=trsc
+-----END PGP SIGNATURE-----
 
-
-vim +/imx9_soc_match +84 drivers/soc/imx/soc-imx9.c
-
-    83	
-  > 84	static const struct of_device_id imx9_soc_match[] = {
-    85		{ .compatible = "fsl,imx93", },
-    86		{ .compatible = "fsl,imx95", },
-    87		{ }
-    88	};
-    89	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--Sig_/tnRE6..8MI65nh6OXU0jFZM--
 
