@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-389866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353B09B7247
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE89D9B724C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:58:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDAA528575B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C2728571B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B46683CDB;
-	Thu, 31 Oct 2024 01:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HkPSf/B2"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E96184A3F;
+	Thu, 31 Oct 2024 01:57:47 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA408288B5;
-	Thu, 31 Oct 2024 01:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD6F288B5;
+	Thu, 31 Oct 2024 01:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730339849; cv=none; b=uioJ2j0ywkVuF5sjRLlIKNTTlZxF6h2P6nQ+MeJL/bxu28lB2Af6/O8xNEogwM0RkGOJWVLEqkWnpZxk7TzHV9N5IghidTjA6EYv4B8KNqpxoUH/tHJNC1zS+k6XosjhTbpMzK4P+V88xlIOxn0xuKY3AS5p3Ph881SAtHj0fp8=
+	t=1730339866; cv=none; b=tEI4+tLO7kRZ46WiPBrZ9G1zWTNtmk9m76H+mb8AS6x1TnUCrgoQ2po1M+IHBM8cq59Gbe9h6vt9DdwkSldufxVDNUHs2IpGYHfanZU5fNT+wHdctEBrKBNVlq4yZ838e2HJ67KNuxbFSPvNptpVuC/avRIdBUV8KX9ni3AbORc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730339849; c=relaxed/simple;
-	bh=0nGzX7cvoxaUK7ySnJHlrYRZOHqiEXeRUQ9nAXlxSN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NSeRNs8TuQRkDBxcl17gEEaW4RDZF8/JLTGdLNnMEiriCrjhKQtPMIC435fNM1A45xUO+2HFSlmok0tlgNW6b8IhKfX+BBS9miLScslExcbTeVf37CU5m03aCn29Q3TVjzMGFFVI1tNp8qSlBW/MYgHnUOEaNHsf0CxTUbHTvjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HkPSf/B2; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53c78ebe580so564464e87.1;
-        Wed, 30 Oct 2024 18:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730339846; x=1730944646; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0nGzX7cvoxaUK7ySnJHlrYRZOHqiEXeRUQ9nAXlxSN0=;
-        b=HkPSf/B2eGHIwjFgZWu6BsigBGLzhM3zbbQoJk+yhHFbPA41jaWiDyvfdEZ1gNbk6N
-         Iq60/QQI0sjTBzfSmT2Iv690I7oqfjQxxh2BRYwUrOUmZduMgU77NxEgLc1ACVU79Zt4
-         PdDQCh/O3Nqzfz5pm8jQHhFKaPiYZnvyHQjQYQdl5oG+hxkoGuhF25hzjfhGHsD99OoL
-         5eDm1ihFCjuFR2y9JemukzoPnjqgFuRCazkXPkK6kQciSnlrseBmARO0kkYGEHIIzuad
-         jlG2qLBy1d6zP0N0IE2RVtVctuSNR+lwR7CniEWhUN6alw48qts6DfhcApkdXnDUp02U
-         E1AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730339846; x=1730944646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0nGzX7cvoxaUK7ySnJHlrYRZOHqiEXeRUQ9nAXlxSN0=;
-        b=nkOPp+dmE6GoeCPk/PyN/tCn3R63zc28n8DwHUGzb+GDbBx5Sbz9Uxl2/yEqztKpSV
-         nB+V2pJctAtMwWgig/YXb9CPxtGibBC9CS6wldEROBEecBywpxz0pNh6AguNgIMI/zqf
-         e8jfQBUIZCF6aMPaHfiFFo089b6BY37VDhHK/7XdioGmJmsgSUGwls6GAMtjVoCmooR5
-         sgDt/toW2SncKR/qCK6UfCeFW0KwPLxQkXelM07QM/3eYK7vZm35mQdfFvztuAP1BxSx
-         UsXH3vt5+cJCRmIH9PDg1DXMv14u55SZI1AGd8hTKkKEQ9X5fwt7z5TJDkJUfUVzGgi1
-         sazA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpj1EViFoO13B77p3zQFobQZYYsF/5Yoe0lP4UMslQgSQHILJEkXRavFgmbDA7fIthn7CixZUZpnSNeXJ8uw==@vger.kernel.org, AJvYcCVzylGvv34/NNayAK6xedJ0dYVp4cC3e5EOfamf3XGZkWwimDG5HtjIUuTejgTyUT0h2C8pDPECWdAd5Gw=@vger.kernel.org, AJvYcCW8AplY1RxLdvFOVOnzo9/SQxNnBVjnu6PBG9GVnkDGFGwBRb3PrHi2hEy2MXNoOD5PqtwV+VjA25XE8743kIM=@vger.kernel.org, AJvYcCWtgHMfOgWfyj0FZyLuQMyDZvo3ZGkSEAup/44N23bD4XZlq45C4ARVOWJAII/x3L7WMMeeFjmMtNQRJ1V8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFw2SJddSj5WL+AFGzqxvJXatGgw4fN1CJtOCyd+XD/xXmT91C
-	J3k6xTxYMWrnH1jI2QQLVfhcDHSNhozO48Oa8ueFZltMBGOYKIW+irfJgVsIaZq3o0nd+ILnkkm
-	ZgEiDXD7v4Y+vUMdnOlF75JYsA7U=
-X-Google-Smtp-Source: AGHT+IGpPkVwwPSIxo8IYBpRNuyJN+Nwt4EGdkKqDyMJU+J6uO8LH84FTUGSBjjnWzI6pB8h3tfIYXFF2CGMvBU+BYY=
-X-Received: by 2002:a05:6512:39c8:b0:539:f23b:59cc with SMTP id
- 2adb3069b0e04-53c7bc36922mr218912e87.22.1730339845561; Wed, 30 Oct 2024
- 18:57:25 -0700 (PDT)
+	s=arc-20240116; t=1730339866; c=relaxed/simple;
+	bh=Nvk6gtzOUBBKduL7W20nZi58AzXjD2xlg9jDt0cmKuQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MJWB6a681CwCFIMTo2meA2IVC9oxDNJs7BGAlc6xgfNN4Pj0N+lrf1QURv/070jnpXvlEB9PNVtcRue3J1WwxnRgX/RGuHfh0J+5FWv/qiiQC9ZMSv4dn6QUhfZi/HhVOeagZR651DLk6e0HUm35TjHIFIhBSyi3W/IwSvk7xp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xf6ZG3rWJz4f3jkV;
+	Thu, 31 Oct 2024 09:57:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 28F101A058E;
+	Thu, 31 Oct 2024 09:57:39 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYoYR5CJnOgSvAQ--.50242S3;
+	Thu, 31 Oct 2024 09:57:39 +0800 (CST)
+Subject: Re: [PATCH v2 4/5] md/raid1: Atomic write support
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
+ hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241030094912.3960234-1-john.g.garry@oracle.com>
+ <20241030094912.3960234-5-john.g.garry@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <d4d9d0cf-08ff-6494-172a-44694b6d13f9@huaweicloud.com>
+Date: Thu, 31 Oct 2024 09:57:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
- <CA+icZUWTdgM7HQrnR_NzgZZQE3aXXk+tAqD3srNd1Eyjr5d7EA@mail.gmail.com> <CABCJKuepGSFcQa0F5iO4aa4V2UbhuKO+tyfhB3_ODaTGs3sM5Q@mail.gmail.com>
-In-Reply-To: <CABCJKuepGSFcQa0F5iO4aa4V2UbhuKO+tyfhB3_ODaTGs3sM5Q@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Thu, 31 Oct 2024 02:56:49 +0100
-Message-ID: <CA+icZUXdMGk5uTZ_as0UOw-zmZuxTXc6J3U2_He00UOca86Gig@mail.gmail.com>
-Subject: Re: [PATCH v5 00/19] Implement DWARF modversions
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241030094912.3960234-5-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHYoYR5CJnOgSvAQ--.50242S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww48GFy7tF1xAF18Cr45KFg_yoW8Wr1rp3
+	9Iga4Yyr4Ut3W2kasrAFWUCa1Fyw4kKFWIkF1fJ3yFvrnIgrWDKF4FqFWDWr1jvFyfX34U
+	tanYkrZrGF13JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Oct 30, 2024 at 10:14=E2=80=AFPM Sami Tolvanen <samitolvanen@google=
-.com> wrote:
->
-> Hi Sedat,
->
-> On Wed, Oct 30, 2024 at 2:00=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.co=
-m> wrote:
-> >
-> > Hi Sami,
-> >
-> > perfect timing: Nathan uploaded SLIM LLVM toolchain v19.1.3
-> >
-> > KBUILD_GENDWARFKSYMS_STABLE is to be set manually?
-> > What value is recommended?
->
-> The usage is similar to KBUILD_SYMTYPES, you can just set
-> KBUILD_GENDWARFKSYMS_STABLE=3D1 to use --stable when calculating
-> versions. However, it's not normally necessary to set this flag at all
-> when building your own kernel, it's mostly for distributions.
->
-> Sami
+Hi,
 
-OK, thanks.
+ÔÚ 2024/10/30 17:49, John Garry Ð´µÀ:
+> Set BLK_FEAT_ATOMIC_WRITES_STACKED to enable atomic writes.
+> 
+> For an attempt to atomic write to a region which has bad blocks, error
+> the write as we just cannot do this. It is unlikely to find devices which
+> support atomic writes and bad blocks.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>   drivers/md/raid1.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index a10018282629..b57f69e3e8a7 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1524,6 +1524,13 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>   				blocked_rdev = rdev;
+>   				break;
+>   			}
+> +
+> +			if (is_bad && bio->bi_opf & REQ_ATOMIC) {
+> +				/* We just cannot atomically write this ... */
+> +				error = -EFAULT;
+> +				goto err_handle;
+> +			}
 
-# cat /proc/version
-Linux version 6.12.0-rc5-1-amd64-clang19-kcfi
-(sedat.dilek@gmail.com@iniza) (ClangBuiltLinux clang version 19.1.3
-(https://github.com/llvm/llvm-project.git
-ab51eccf88f5321e7c60591c5546b254b6afab99), ClangBuiltLinux LLD 19.1.3
-(https://github.com/llvm/llvm-project.git
-ab51eccf88f5321e7c60591c5546b254b6afab99)) #1~trixie+dileks SMP
-PREEMPT_DYNAMIC 2024-10-30
+One nit here. If the write range are all badblocks, then this rdev is
+skipped, and bio won't be splited, so I think atomic write is still fine
+in this case. Perhaps move this conditon below?
 
-Tested-by: Sedat Dilek <sedat,dilek@gmail.com> # LLVM/Clang v19.1.3 on x86-=
-64
+Same for raid10.
 
-Best regards,
--Sedat-
+Thanks,
+Kuai
+
+> +
+>   			if (is_bad && first_bad <= r1_bio->sector) {
+>   				/* Cannot write here at all */
+>   				bad_sectors -= (r1_bio->sector - first_bad);
+> @@ -3220,6 +3227,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>   
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_write_zeroes_sectors = 0;
+> +	lim.features |= BLK_FEAT_ATOMIC_WRITES_STACKED;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err) {
+>   		queue_limits_cancel_update(mddev->gendisk->queue);
+> 
+
 
