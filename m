@@ -1,214 +1,158 @@
-Return-Path: <linux-kernel+bounces-391305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D949B84F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:09:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A629B84F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8555A1C21422
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:09:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48ABBB24221
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA81CCB41;
-	Thu, 31 Oct 2024 21:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D291CDA3F;
+	Thu, 31 Oct 2024 21:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="QBUwCMA0"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMmSnzG4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915E71C8FCF;
-	Thu, 31 Oct 2024 21:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0301CCB5E;
+	Thu, 31 Oct 2024 21:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408988; cv=none; b=r5sbzTlRQLjr1KpxQxLb6HMUkX1LGwS2+FIkTHA0j6VIcbOI0eYvKtY3azknMYMAyJJijDhMmiPhPPvweMMX+wXhMjglSUyqBvT+yt2UMguBRrL4or/X/xXWVjkFNIbz/rUamwdAIqh1tYGM4myeGM+upvpkCWa1fJC3jZbRlpE=
+	t=1730408990; cv=none; b=DFasd46F95FmL2k/TiCDQRX/JR7SyaHi16RgRUWKOI3ftuwK9Rddy32i++/MUEKwdz2QZ5nimHCDCzjRxjRWcA0/52nEAhJCh/skXuyp3qhkY2GjC6hGmwR0jsRk9CXZr9YEfkYLz7/r3MS1Rt/nYQ60iCoW2wLpmmvPfBK38EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408988; c=relaxed/simple;
-	bh=NdurZ/NBP7x7LqrfoxvKIbp94Yk9bYEzP2yheuFUc0U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m/4ZZnRsw1XxOlqnuUfQsDmqNBIaVMmg9rfBFaMOOjoSlh5nKbHj5VcvNTQwf7E1I8kAz/RMlNHI88pi4QZiJFEAyTwcR9VAebZoR9GpTIMCJcRr7y69pYhn/oDhZY1xBlBNV35jz3Igt0GE5vH4IUkz5f3AG0GhAPBqhhxn67A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=QBUwCMA0; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=bazgfx7c4verjag4v5qvooaeem.protonmail; t=1730408970; x=1730668170;
-	bh=NdurZ/NBP7x7LqrfoxvKIbp94Yk9bYEzP2yheuFUc0U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=QBUwCMA0/d8beloFvNJumNwqaEhJx6kwdp1G3J/qwUcuWoxdXbgrHmhRL4mBinbcw
-	 nV9R3cDi8/ztV0jqb8zz+CUg/x5bWmXyfSM4krWC2G0Fmr1W2MHsNIdCqtl1CGkjRd
-	 AqzNXnrAK6k3kSuwbXojyXISEBUg5LU+Qjwu9WdEGluFxmgeOB6/Y+NKwBGwKUkNie
-	 /obyiGmocfoYW0MvPuQjkXnQgxICOC7J+5jypNiAyWv+0d1QxdGGWRBmsQ/A3WFuoY
-	 C31sYFmerXOutigInS+CWli/ycOamU/kXlkspubGAPrsSkVxERSOdFKnG3Cp1p/+DU
-	 tTDMnVsmciQRQ==
-Date: Thu, 31 Oct 2024 21:09:26 +0000
-To: syzbot <syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_inconsistent_error
-Message-ID: <xWUrkQdz22oyF70btKkFvnHqFVu1-HlxAus6ppSVOtgv5ElyqdWca-q4pJAKiCIeKKrplp6EkfCRtpzoa_U7DbJL8QtaFdk67xRXIVr7T0k=@proton.me>
-In-Reply-To: <671db974.050a0220.2b8c0f.01c0.GAE@google.com>
-References: <671db974.050a0220.2b8c0f.01c0.GAE@google.com>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: b9a99bbbf84d92d85f13e3b25fe4b1d9e30f8b82
+	s=arc-20240116; t=1730408990; c=relaxed/simple;
+	bh=xJTzBD6BpyYMRten0/IhV3TKzrQ+ciwoPgRAuiCLgWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BYXLUXqh2Rc2QBNyikmyNDxtuem5swGImND2md7E8XaWxID9w5I22h52rdten6HrzIy058yXJgY2ZCM79kyxIMAg8xO0vbuLmizs2Ca3t8elEfI5H+nsUnr7GW0DQgsSHJuxxIV0CN6D4bDgEobAUNQz52mrt7RFKAHBdipi8X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMmSnzG4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81545C4CEC3;
+	Thu, 31 Oct 2024 21:09:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730408989;
+	bh=xJTzBD6BpyYMRten0/IhV3TKzrQ+ciwoPgRAuiCLgWQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DMmSnzG4loA5DacydVvt+7G3FA4+p8BSEYnMRcKB+WLGHWGE9BEXHso4bTYx7U+0k
+	 xBBAWNfE/MljIp60YTwR6joAoniDiI2Oksa1jDa0iv0/tiWhOuUcGAcDCxMNbIiddj
+	 hK05uvLv7B1lbsNRebel2cP3B65bED2smZRy9DSnFk1W5bOf4ZCv9HwyQu31uumgy3
+	 8TSVAvbScK+Dvfw//5tZuIi7yO2i6bJXWxD9F6Op0VdM5ZW1GV/wKd0dmETzyFNaxm
+	 6SSu5OU/Ta5etKDSNIyiqUDDOIcNE5jE9FXB/ly1sPWprpvAZ5c4bAag+XPu6scKWj
+	 zw9cQqjlooXzQ==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	rostedt@goodmis.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@kernel.org
+Cc: mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	mhiramat@kernel.org,
+	peterz@infradead.org,
+	paulmck@kernel.org,
+	jrife@google.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH trace/for-next 1/3] bpf: put bpf_link's program when link is safe to be deallocated
+Date: Thu, 31 Oct 2024 14:09:36 -0700
+Message-ID: <20241031210938.1696639-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+In general, BPF link's underlying BPF program should be considered to be
+reachable through attach hook -> link -> prog chain, and, pessimistically,
+we have to assume that as long as link's memory is not safe to free,
+attach hook's code might hold a pointer to BPF program and use it.
 
-It reads garbage error options from superblock. Proper way to handle this
-seems to be checking if read option value is valid (within range, error
-options are represented on 4 bits but <=3D 3 values are used) and if it's n=
-ot=20
-- set/leave the default.
+As such, it's not (generally) correct to put link's program early before
+waiting for RCU GPs to go through. More eager bpf_prog_put() that we
+currently do is mostly correct due to BPF program's release code doing
+similar RCU GP waiting, but as will be shown in the following patches,
+BPF program can be non-sleepable (and, thus, reliant on only "classic"
+RCU GP), while BPF link's attach hook can have sleepable semantics and
+needs to be protected by RCU Tasks Trace, and for such cases BPF link
+has to go through RCU Tasks Trace + "classic" RCU GPs before being
+deallocated. And so, if we put BPF program early, we might free BPF
+program before we free BPF link, leading to use-after-free situation.
 
-Hacky way - treat error options of value >=3D 4 as BCH_ON_ERROR_fix_safe (t=
-he
-default) in bch2_inconsistent_error.
+So, this patch defers bpf_prog_put() until we are ready to perform
+bpf_link's deallocation. At worst, this delays BPF program freeing by
+one extra RCU GP, but that seems completely acceptable. Alternatively,
+we'd need more elaborate ways to determine BPF hook, BPF link, and BPF
+program lifetimes, and how they relate to each other, which seems like
+an unnecessary complication.
 
-On Sunday, October 27th, 2024 at 4:54 AM, syzbot <syzbot+bee87a0c3291c06aa8=
-c6@syzkaller.appspotmail.com> wrote:
+Note, for most BPF links we still will perform eager bpf_prog_put() and
+link dealloc, so for those BPF links there are no observable changes
+whatsoever. Only BPF links that use deferred dealloc might notice
+slightly delayed freeing of BPF programs.
 
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit: c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
-> git tree: upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D14202a5f98000=
-0
-> kernel config: https://syzkaller.appspot.com/x/.config?x=3Dfc6f8ce8c53690=
-43
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbee87a0c3291c06=
-aa8c6
-> compiler: Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2=
-.40
-> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=3D11468c30580000
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=3D166fa640580000
->=20
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7=
-feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinu=
-x-c2ee9f59.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/b=
-zImage-c2ee9f59.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/7da30fa866=
-89/mount_0.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
->=20
-> ------------[ cut here ]------------
-> kernel BUG at fs/bcachefs/error.c:29!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 5094 Comm: syz-executor353 Not tainted 6.12.0-rc4-syzk=
-aller-00047-gc2ee9f594da8 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
-16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:bch2_inconsistent_error+0x14c/0x150 fs/bcachefs/error.c:29
-> Code: fb 02 75 20 e8 f5 53 67 fd 49 81 c7 cc 01 00 00 e8 09 0c d1 fd 48 c=
-7 c7 20 74 53 8c 4c 89 fe e8 2a cb 95 07 e8 d5 53 67 fd 90 <0f> 0b 66 90 90=
- 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f
->=20
-> RSP: 0018:ffffc9000b0965f8 EFLAGS: 00010293
-> RAX: ffffffff842d840b RBX: 0000000000000004 RCX: ffff8880359c8000
-> RDX: 0000000000000000 RSI: ffffffff8ef57290 RDI: 0000000000000004
-> RBP: ffffc9000b0967a8 R08: 0000000000000001 R09: ffffffff842d8324
-> R10: 0000000000000004 R11: ffff8880359c8000 R12: dffffc0000000000
-> R13: ffffc9000b0966c0 R14: ffff888044c00000 R15: ffff888044c00000
-> FS: 00005555742e5380(0000) GS:ffff88801fc00000(0000) knlGS:00000000000000=
-00
-> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffe064e9e68 CR3: 000000003df88000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> <TASK>
->=20
-> bch2_topology_error+0x83/0xc0 fs/bcachefs/error.c:37
-> __btree_err+0x610/0x760 fs/bcachefs/btree_io.c:597
-> validate_bset+0x157b/0x2640 fs/bcachefs/btree_io.c:807
-> bch2_btree_node_read_done+0x2108/0x5e90 fs/bcachefs/btree_io.c:1126
-> btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1327
-> bch2_btree_node_read+0x2433/0x2a10
-> __bch2_btree_root_read fs/bcachefs/btree_io.c:1753 [inline]
-> bch2_btree_root_read+0x617/0x7a0 fs/bcachefs/btree_io.c:1775
-> read_btree_roots+0x296/0x840 fs/bcachefs/recovery.c:524
-> bch2_fs_recovery+0x2585/0x39c0 fs/bcachefs/recovery.c:854
-> bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
-> bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
-> vfs_get_tree+0x90/0x2b0 fs/super.c:1800
-> do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-> do_mount fs/namespace.c:3847 [inline]
-> __do_sys_mount fs/namespace.c:4057 [inline]
-> __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1aa39038fa
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 8=
-4 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
->=20
-> RSP: 002b:00007ffddefb1b08 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffddefb1b20 RCX: 00007f1aa39038fa
-> RDX: 0000000020000300 RSI: 0000000020005900 RDI: 00007ffddefb1b20
-> RBP: 0000000000000004 R08: 00007ffddefb1b60 R09: 00000000000058c4
-> R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
-> R13: 00007ffddefb1b60 R14: 0000000000000003 R15: 0000000001000000
-> </TASK>
->=20
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:bch2_inconsistent_error+0x14c/0x150 fs/bcachefs/error.c:29
-> Code: fb 02 75 20 e8 f5 53 67 fd 49 81 c7 cc 01 00 00 e8 09 0c d1 fd 48 c=
-7 c7 20 74 53 8c 4c 89 fe e8 2a cb 95 07 e8 d5 53 67 fd 90 <0f> 0b 66 90 90=
- 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f
->=20
-> RSP: 0018:ffffc9000b0965f8 EFLAGS: 00010293
-> RAX: ffffffff842d840b RBX: 0000000000000004 RCX: ffff8880359c8000
-> RDX: 0000000000000000 RSI: ffffffff8ef57290 RDI: 0000000000000004
-> RBP: ffffc9000b0967a8 R08: 0000000000000001 R09: ffffffff842d8324
-> R10: 0000000000000004 R11: ffff8880359c8000 R12: dffffc0000000000
-> R13: ffffc9000b0966c0 R14: ffff888044c00000 R15: ffff888044c00000
-> FS: 00005555742e5380(0000) GS:ffff88801fc00000(0000) knlGS:00000000000000=
-00
-> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffe064e9e68 CR3: 000000003df88000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
+Also, to reduce code and logic duplication, extract program put + link
+dealloc logic into bpf_link_dealloc() helper.
+
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ kernel/bpf/syscall.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index a8f1808a1ca5..aa7246a399f3 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2976,12 +2976,24 @@ void bpf_link_inc(struct bpf_link *link)
+ 	atomic64_inc(&link->refcnt);
+ }
+ 
++static void bpf_link_dealloc(struct bpf_link *link)
++{
++	/* now that we know that bpf_link itself can't be reached, put underlying BPF program */
++	if (link->prog)
++		bpf_prog_put(link->prog);
++
++	/* free bpf_link and its containing memory */
++	if (link->ops->dealloc_deferred)
++		link->ops->dealloc_deferred(link);
++	else
++		link->ops->dealloc(link);
++}
++
+ static void bpf_link_defer_dealloc_rcu_gp(struct rcu_head *rcu)
+ {
+ 	struct bpf_link *link = container_of(rcu, struct bpf_link, rcu);
+ 
+-	/* free bpf_link and its containing memory */
+-	link->ops->dealloc_deferred(link);
++	bpf_link_dealloc(link);
+ }
+ 
+ static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)
+@@ -3003,7 +3015,6 @@ static void bpf_link_free(struct bpf_link *link)
+ 		sleepable = link->prog->sleepable;
+ 		/* detach BPF program, clean up used resources */
+ 		ops->release(link);
+-		bpf_prog_put(link->prog);
+ 	}
+ 	if (ops->dealloc_deferred) {
+ 		/* schedule BPF link deallocation; if underlying BPF program
+@@ -3014,8 +3025,9 @@ static void bpf_link_free(struct bpf_link *link)
+ 			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
+ 		else
+ 			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
+-	} else if (ops->dealloc)
+-		ops->dealloc(link);
++	} else if (ops->dealloc) {
++		bpf_link_dealloc(link);
++	}
+ }
+ 
+ static void bpf_link_put_deferred(struct work_struct *work)
+-- 
+2.43.5
+
 
