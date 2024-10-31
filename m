@@ -1,99 +1,83 @@
-Return-Path: <linux-kernel+bounces-390892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48E99B7FC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:14:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1D49B7FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994BE282387
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FAA928278F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EDA19DF49;
-	Thu, 31 Oct 2024 16:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EA91BBBE8;
+	Thu, 31 Oct 2024 16:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pVHehoUF"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlirAf+A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C180C1B6539;
-	Thu, 31 Oct 2024 16:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6B91BBBCF;
+	Thu, 31 Oct 2024 16:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730391252; cv=none; b=NVSQFjpI9laTsaML2NBYN4wJcizBbjbawTeq9G5qKayNKfyfPd6ljgz+9ivz5fBMvJ1aCAYegkrtUsU2vMXTp69SGjWog75gpCUl330n37pKHuK8IEUKRupfX6wKnbNNxcT8QEDEib6joT0WrUEumMXbqLutVxs+tLvscEGnQt0=
+	t=1730391279; cv=none; b=T3XIvdfIHoCfJbyJze8+RUQJOXLIq/PHuKSp2KHzdkdyvNWh6Ye7OdXBaSyVyduBVKWfBdqKSVlbfwxa2TzQBb5mpFv46rYVx5u9O5dXmNaKN3xxBth60TgTmuu/ZMFIrhr3eIjgUn7Vjx+/xS6iuLaHCzv3CglVVOx1+Pt4Q8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730391252; c=relaxed/simple;
-	bh=n0o+s3aiY3Bsw3fqfqelZWwzh9qVu/lo25kdUzlaTJI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=auBSdNUp02zvQEJPOBOjoW17exQiAsVdbF6przzJ2LBwCLuYxnOzof31MR4j9hV7+Gfz6dd/JhWRHGA+CUSBKhrWtGae96MpEekmKVmK4yDaM435N6F1QmcikobyzhxaLCY8VroBF6JDW17nz1diBQCeVYVnZOmg2sK1oIA0X9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pVHehoUF; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 23BFEC0006;
-	Thu, 31 Oct 2024 16:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730391248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n0o+s3aiY3Bsw3fqfqelZWwzh9qVu/lo25kdUzlaTJI=;
-	b=pVHehoUF8pW4Qa2282JzDFtPU04KfzlzIxAbszb4P968e5MJa90O1zSyM+ikSZDVsVvLcE
-	RtyQsl9G9LymtJRvP1c1NLx+JsSRL/ALz3qfBWuinM4hZRDqWsnOWF6+57Mqf77U2JIXsF
-	nl52gOg46uHvXvw3VHK6UkMmjNZhVXsCGVc+4GlcKx8l97af1+PXPDSfnznH187Ll4GofN
-	jaO5j8DvGgyiAp6o5ns62uVWzkxjHc0Vudr8B5kDWY1DbCM1U9fAfIBUIsSw7+MZFhbPiU
-	VAbW7oGRhTcTfXSvt+3azmrUnExu7Rg80E3ZrNiZhH8GeipwyUcNX5I8RRgcYw==
+	s=arc-20240116; t=1730391279; c=relaxed/simple;
+	bh=R16jEihtij72jhU79U17+UGgLHWFyv+Fwd4ynu0ol6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBI8sr9PLn0Sd8wHBgOdCgsthvQML6u6o6nffVJKSU9IqkF4tURYzweDcdIuqtK5KqCo/5+nFqiO2Ksu90ZNZnQKRn1aj3RwsAIBHWwEF1yJBwywvY0LHUgR5cMKUdE5jrL6PjZEfYksCntA+A7yT8Wwy3p2EyfAriWtAULhzVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlirAf+A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4886FC4CEF8;
+	Thu, 31 Oct 2024 16:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730391278;
+	bh=R16jEihtij72jhU79U17+UGgLHWFyv+Fwd4ynu0ol6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mlirAf+A2xp3PkD0iJVtXWAo2MUQSueqiZplctyc/s8vUAxLB9g9hTt74rw5zgJ1N
+	 GOhxvsPME9NgGPirdihbdw+2F8UUSYouzLC9o6NHpAYJoLz1uvrwdbVuEyLjSjRD2o
+	 CYdGGoZ3o/9PzahYcTG/2va6WrMawGVebsdHgfdjbJ2lUahuMkJEBh262l9GkVaP5f
+	 RJxo/YuM6NOAggDcYLMUZhcjAsijn4e5reIFhSW1Pnb37wXY9Ad4Ezy6pipH7XAPwr
+	 G/KuhtSNcopONIMmqrSYQk8gJCzBiREa9fSxmSrIuwsIclmY250CIs8c182zqWmU1T
+	 WAVU7ywSPGtVA==
+Date: Thu, 31 Oct 2024 16:14:34 +0000
+From: Lee Jones <lee@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Naresh Solanki <Naresh.Solanki@9elements.com>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] leds: max5970: use cleanup facility for
+ fwnode_handle led_node
+Message-ID: <20241031161434.GK10824@google.com>
+References: <20241019-max5970-of_node_put-v1-0-e6ce4af4119b@gmail.com>
+ <20241019-max5970-of_node_put-v1-2-e6ce4af4119b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 17:14:06 +0100
-Message-Id: <D5A4I4MRPY8J.OBNCJBOHUTM5@bootlin.com>
-Cc: <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Andi Shyti" <andi.shyti@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v3 0/6] i2c: nomadik: support >=1MHz & Mobileye EyeQ6H
- platform
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241009-mbly-i2c-v3-0-e7fd13bcf1c4@bootlin.com>
-In-Reply-To: <20241009-mbly-i2c-v3-0-e7fd13bcf1c4@bootlin.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241019-max5970-of_node_put-v1-2-e6ce4af4119b@gmail.com>
 
-Hi Andi,
+On Sat, 19 Oct 2024, Javier Carrasco wrote:
 
-On Wed Oct 9, 2024 at 4:01 PM CEST, Th=C3=A9o Lebrun wrote:
-> Three patches are about adding Mobileye EyeQ6H support to the Nomadik
-> I2C controller driver, in the same vein as was done a few months ago
-> for EyeQ5.
-[...]
-> Three patches are about supporting higher speeds (fast-plus and
-> high-speed).
+> Add the automatic cleanup facility for 'led_node' to simplify the code
+> and make it more robust against new error paths where omitting a call to
+> fwnode_handle_put() would leak memory.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  drivers/leds/leds-max5970.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 
-I come in checking. What's your state of mind about that series?
+This makes patch 1 completely pointless.
 
-Rob has given his Reviewed-By on both dt-bindings patches, and Linus
-gave his on all patches. I can send a new revision taking the three
-Reviewed-By trailers from this V3 if you like.
+Please squash them and resubmit.
 
-Also, i2c-host-next is free of conflicts on Nomadik files.
-
-Thanks!
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+Lee Jones [李琼斯]
 
