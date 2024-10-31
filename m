@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-390087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0054B9B7552
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:25:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C219B7553
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC31F1F213A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5FB61F2158A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C31149C41;
-	Thu, 31 Oct 2024 07:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3FA1494B5;
+	Thu, 31 Oct 2024 07:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNjsDuDA"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSvhssAp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97DA1494B2;
-	Thu, 31 Oct 2024 07:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B0414831D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730359525; cv=none; b=CWjsbPL+XtMlLoMU5RoyTsPvz4hIgrg5mj/JmLZiEq22oFJIZMg4lV56E7ZyBPq1ylQTDk4qzSneHVGc1VRAebQkBSjw7bfMvGb7KXpR3NQScH2znq5Mczb5TRFt7nsjURgX0VZncPPOyhfTNx6ZGX9WyoCYCvWj2lhMFFsUhqE=
+	t=1730359606; cv=none; b=SbHQuMtSmupMoTYWwIiwRM8q/qvG8veSex4MyrCJLuxh0f1oE1nCEvtYf3SectzWZXDL5KEtTU3+rYxdU47XYzvRAAhilIrR2QbnYhvFh1tYZY5SQfwYziefg3gYKJ+kPwx5vNGn9Zr38U+RGudp2Dz7awQjLddFvbebSH3M6Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730359525; c=relaxed/simple;
-	bh=Sz7qDKICTc5bBuDPsYR42CI3Rb1sCu9teJwpA4RUY2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JDe0WaJkXz//58zMbYG0ZCGurqjdJ8yIhntxjsXoDUuIxlUfMws0sDFxlZJISctndkM7qfR4Pq9VPIVSI8oOXaHRhM5cBlw4r8fbM0YCbdS8r/EaEh6TBiFmR/r9xONXs0ECK6bSm+riJecn85Y6fmIcJ/nEvhlhDCFW3ghE/R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNjsDuDA; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso5217641fa.0;
-        Thu, 31 Oct 2024 00:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730359521; x=1730964321; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x7I6q0OWTgGB2347r7NhGbbFs0GMHHfMCetjtNNAxog=;
-        b=JNjsDuDAx10hJd7nhaxF+9Z+9aTk62oDk1ATsh0Pyr1+wZ4qGFIosxXUBnMN2jsu4B
-         n/Q/S4udY4GlKfWM+iV65VDbKCbLnt4BkLTqZP3NJZgssjHZpu4mXsWHHg1Zvn5Dj2ss
-         6lnubIHRbtA65EsD9B8n14UkW/usikO9HTvM9qikfUo+ConyD2npnPjrOljkzNN/SiT6
-         yPnkmpVElo8k3RjdgMsxQwQpDNKM6Zl5PMpn96r8M/ILd0bSxqF8jyy2/Eb6zh1oVmuT
-         YeWMEzlSphXe8d7IJi1ywTYYSl1MtsI+G3b+nrdo1avJMdZ5hGFrgKq7+QCvAoAQeXZE
-         1cBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730359521; x=1730964321;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x7I6q0OWTgGB2347r7NhGbbFs0GMHHfMCetjtNNAxog=;
-        b=ZfppbXqu043Kc/yxrPKUxHLUHliy5XUcLFo0IMesiOAjhsVF134i+gAbWVk9PNRv2e
-         q7/kC8e8wO+yEoaa2kxp8bWAxJAqjrncS1c9QpWnwZZebZ2lnX6p5zW4ywOT1UR2LMgn
-         glNXkdjTMb+uNnSQbThjB0ynL1NnedLkerkT0YjvNQ6jp3fz3UmF/Hnk8QhUU8H61qkB
-         GO9dR8xOw+A+IzvQRlWPnp/xMblzT/i/1uRZGEuNUHQ0tZtN2VxoWWj3p9gcUs/wsHZt
-         zFLGDkZaBajFonDmeiXKl8fHZHNnes3VtSx/OHaYdes8kBlbjPFewwGYkHXg4Wu9FGQC
-         PX6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUv6f7jf5bzj4ib3ye+0y/bMQhAK7+Q6JzKq7qn+yyaI4ti9DQfaZKODcl9VbFhT3IHCn6jVWqj1m0=@vger.kernel.org, AJvYcCXecG29sBqLaPRKnUmR5uyXRy63YL/ynVk/CVQveMFMbZo+3VYdfgUoZhUA3OwFAXj90waHzyQQ8OUkLnw8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDefBDbSPOfkuly/vKs677e5NvamTGAfaTDWiGOQ/jYKaLTtyL
-	vP7P5oyWZ0RPoFZYy9YxLEpfI1n6w/3i7edLEHJ8zSu2bvHk2V6ZxbLeRVkk
-X-Google-Smtp-Source: AGHT+IFFkKLJwxLXGkUZpjP6xjSxY1TOEzKg5XHG5OP1/9/PxTLmE9TVCN4SvKx9SZw59oBG/SYFCw==
-X-Received: by 2002:a05:651c:b22:b0:2fb:51e0:951 with SMTP id 38308e7fff4ca-2fdec47a727mr11068841fa.7.1730359520619;
-        Thu, 31 Oct 2024 00:25:20 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef5d5ca0sm1344081fa.30.2024.10.31.00.25.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 00:25:18 -0700 (PDT)
-Message-ID: <5dae4924-5c07-48b6-a818-809cd4dd1c80@gmail.com>
-Date: Thu, 31 Oct 2024 09:25:16 +0200
+	s=arc-20240116; t=1730359606; c=relaxed/simple;
+	bh=R5MrToygnAnWBRaIJo+U8dMwcxWH2k2sEzsW0crF64E=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XwweMZkE/YKCjGB9U7JFaCHPmAGbQBCuwG90vxUb4AKq0uGUMqGAxD1NIlYk0G4OuOc4sLR9xXco8I9kLXly3sQDQUsHaOy/u94XhAKN//tPSAsb1SXn4kApq/c83TRWtgKtlk5HJ/XEw2Z+I/caKQ/cdlG0Syb4k0sBNeGmF5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSvhssAp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EF5C4CEC3;
+	Thu, 31 Oct 2024 07:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730359605;
+	bh=R5MrToygnAnWBRaIJo+U8dMwcxWH2k2sEzsW0crF64E=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=oSvhssApEEiqkdIQnOFF3OUyV6oLukghXdSuqQIJOzy7v7i5GWhGa75tD+yH18pEU
+	 l/b+hISBipwGpURQXghWZMVNb50QFGkN346S+doBxFEvq8B+zawTsPsiJCc3TdnvXi
+	 F+wtJHLxK0CMtW0qA5EDZ7DLkJqgTaphrXhAhfwRahshtYvATaN8uTOTLGaLuad96k
+	 2uongINHyddqj5LVTYwoXu/o+0lpnC/596g+HWDei39NfmNkzMp0HLlgEd0oQ6Z2Su
+	 QxQXhS6UQc8qbKmIzglH76+aSn7EaGyRQX6digLy+usfEZjOgRXV+FBRhECMpmTebC
+	 7lzUPJtBVtgVA==
+Message-ID: <036ed265-23c1-4a16-a1bb-452b90e8cf1f@kernel.org>
+Date: Thu, 31 Oct 2024 15:26:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,57 +49,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: fix infinite loop for gain_to_scaletables()
-To: Zicheng Qu <quzicheng@huawei.com>, jic23@kernel.org, lars@metafoo.de,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
-References: <20241031014626.2313077-1-quzicheng@huawei.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241031014626.2313077-1-quzicheng@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, sunyibuaa@gmail.com,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com
+Subject: Re: [PATCH v2 2/5] f2fs: expand f2fs_invalidate_compress_page() to
+ f2fs_invalidate_compress_pages_range()
+To: Yi Sun <yi.sun@unisoc.com>, jaegeuk@kernel.org
+References: <20241030103136.2874140-1-yi.sun@unisoc.com>
+ <20241030103136.2874140-3-yi.sun@unisoc.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20241030103136.2874140-3-yi.sun@unisoc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Thanks again Zicheng!
-
-On 31/10/2024 03:46, Zicheng Qu wrote:
-> In iio_gts_build_avail_time_table(), it is checked that gts->num_itime is
-> non-zero, but gts->num_itime is not checked in gain_to_scaletables(). The
-> variable time_idx is initialized as gts->num_itime - 1. This implies that
-> time_idx might initially be set to -1 (0 - 1 = -1). Consequently, using
-> while (time_idx--) could lead to an infinite loop.
+On 2024/10/30 18:31, Yi Sun wrote:
+> New function f2fs_invalidate_compress_pages_range() adds the @len
+> parameter. So it can process some consecutive blocks at a time.
 > 
-> Cc: stable@vger.kernel.org # v6.6+
-> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
 > ---
->   drivers/iio/industrialio-gts-helper.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   fs/f2fs/compress.c | 7 ++++---
+>   fs/f2fs/f2fs.h     | 9 +++++----
+>   2 files changed, 9 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
-> index 59d7615c0f56..f3acd392f4fc 100644
-> --- a/drivers/iio/industrialio-gts-helper.c
-> +++ b/drivers/iio/industrialio-gts-helper.c
-> @@ -205,7 +205,7 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->   	memcpy(all_gains, gains[time_idx], gain_bytes);
->   	new_idx = gts->num_hwgain;
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 7f26440e8595..e607a7885b57 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1903,11 +1903,12 @@ struct address_space *COMPRESS_MAPPING(struct f2fs_sb_info *sbi)
+>   	return sbi->compress_inode->i_mapping;
+>   }
 >   
-> -	while (time_idx--) {
-> +	while (time_idx-- > 0) {
->   		for (j = 0; j < gts->num_hwgain; j++) {
->   			int candidate = gains[time_idx][j];
->   			int chk;
+> -void f2fs_invalidate_compress_page(struct f2fs_sb_info *sbi, block_t blkaddr)
+> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
+> +				block_t blkaddr, unsigned int len)
+>   {
+> -	if (!sbi->compress_inode)
+> +	if (!sbi->compress_inode || len == 0)
 
-This, too, brings the question if supporting 0 times is worth.
+We can remove len == 0 check condition? Or any caller can pass 0 here?
 
-At least this shows that it'd be nice to cover the "only times, no 
-hw-gains" and "no times, only hw-gains" cases in the Kunit tests...
+Thanks,
 
-Anyways - Thanks!
-
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
-Yours,
-	-- Matti
+>   		return;
+> -	invalidate_mapping_pages(COMPRESS_MAPPING(sbi), blkaddr, blkaddr);
+> +	invalidate_mapping_pages(COMPRESS_MAPPING(sbi), blkaddr, blkaddr + len - 1);
+>   }
+>   
+>   void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 3c6f3cce5779..d3fe66a93a56 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -4384,7 +4384,8 @@ void f2fs_destroy_page_array_cache(struct f2fs_sb_info *sbi);
+>   int __init f2fs_init_compress_cache(void);
+>   void f2fs_destroy_compress_cache(void);
+>   struct address_space *COMPRESS_MAPPING(struct f2fs_sb_info *sbi);
+> -void f2fs_invalidate_compress_page(struct f2fs_sb_info *sbi, block_t blkaddr);
+> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
+> +					block_t blkaddr, unsigned int len);
+>   void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+>   						nid_t ino, block_t blkaddr);
+>   bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+> @@ -4439,8 +4440,8 @@ static inline int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi) { return
+>   static inline void f2fs_destroy_page_array_cache(struct f2fs_sb_info *sbi) { }
+>   static inline int __init f2fs_init_compress_cache(void) { return 0; }
+>   static inline void f2fs_destroy_compress_cache(void) { }
+> -static inline void f2fs_invalidate_compress_page(struct f2fs_sb_info *sbi,
+> -				block_t blkaddr) { }
+> +static inline void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
+> +				block_t blkaddr, unsigned int len) { }
+>   static inline void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi,
+>   				struct page *page, nid_t ino, block_t blkaddr) { }
+>   static inline bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi,
+> @@ -4759,7 +4760,7 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
+>   								block_t blkaddr)
+>   {
+>   	f2fs_truncate_meta_inode_pages(sbi, blkaddr, 1);
+> -	f2fs_invalidate_compress_page(sbi, blkaddr);
+> +	f2fs_invalidate_compress_pages_range(sbi, blkaddr, 1);
+>   }
+>   
+>   #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
 
 
