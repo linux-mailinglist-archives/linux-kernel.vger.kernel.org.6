@@ -1,247 +1,199 @@
-Return-Path: <linux-kernel+bounces-390224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842449B7731
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:16:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875C09B7738
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DB31F21D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2611C21954
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955521940A1;
-	Thu, 31 Oct 2024 09:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C998D194C65;
+	Thu, 31 Oct 2024 09:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dVLD1SsQ"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kc2A52+7"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2087.outbound.protection.outlook.com [40.107.212.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C822019408B
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366142; cv=none; b=oeCU6ReuXCQHTJ2CwHJJVdqQqCWnUxzxXBjxWT3bcbWPBZEnRdwaB7ZhCzFJtAkWCK0OTjj84C9n1fpHp8pbnq1r4Lz9fR6XAUD0Jjb6DdXbGkWJtr09jIcjJss/m7q2jfXZ72fURx9MCU9uMqN8KTo1if0Og0XolExxwL2jOCk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366142; c=relaxed/simple;
-	bh=9ZHRxZumObj39ZvDw0426iS1eCvx4QwbXyn0KE00mX0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1Lat2h4XhqQZmUycHSmahcqxslRw8S5jSJD5KVbhzl1zcKgF7/GiE1HCfyx3FUJqnJJMY8gr5v4SIudMY0NYxPxXwAxKBJJIyUNTm8jgErnC+YKZPLRnFFb8SCQoLmgJZnfijHd61sf0DOIm/0A7mdA6IcbHBi6wc80yBgvbzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dVLD1SsQ; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso95346066b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:15:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730366137; x=1730970937; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GoiG2q7mPENxGqV2o9EotirCxP1iVZskztD3m7IMwvo=;
-        b=dVLD1SsQpW2pxIdAtUf3HJCQWRGwNodLgt6denM2hzckJ3lZCnXLAmQCpDCE9lsA2e
-         mNoYjK8p2RWqeAkVx91NELoTDXkRgICI3J1Ldet5I0iTg7gUmpqFakfEgtE7K/y71jS2
-         hl7RB5y99fej5Xw88LaU+mRdIRjS7RRLNrOy1ccOa4c+WHcHRzV2jmt6mwUzAkLOT5wj
-         xsIyCipu4zEf7KzMocVUGT+PgAmYSTO34+W75MRrxTvDJQex8u/FtwqSKi+INVTIkBpu
-         kqUsE0723xGqCo1ivNk8k+sIwiDLEeAE7pu2SWHxZJUGMD51W1S2NnzIM7tv2/+OvUzZ
-         vuBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730366137; x=1730970937;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GoiG2q7mPENxGqV2o9EotirCxP1iVZskztD3m7IMwvo=;
-        b=M+uLMhpr5CXmo0h++Edzj0E7r6A7lus5iPNKQbTGb7QT9VdSgxrEmg9wmTctoHi4RV
-         5FxcYmuAGSBDv63KAXPhYucZaTp7keQlDps4CDnBg1O8HeGsEtHsK4hY12HClje1eaK3
-         AmC5jlU8ehunHvENGkK5ZTbv68QtyxLinU7iwKlXKxUdjW+jA6YygrHoGPyjT4o6FIGv
-         l0oIU4nQsIYSwry4KrR6XYMF8eviOWVSGWHuMuzdQLWq7cu9PnjXNglybNVuNg8CYu48
-         udHco3dLwWVcTLSNb/jRaxBjCtBgPGU3tA7W4/aO+Z5IMr+DrinHwq4n6GLcxpssVwNU
-         pClg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlPLO+SuWUTti9oq22ZM3sSVSXE0n7INKXzBxwvodKVk8gPMadfR8eJw3RiFuoKtW+uISkkC91i6ztKBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw49XyUoLRXz0UMREhAc/cLcN5AjQmt+9kRrdSlGoIdNMqze8mB
-	0k+Y4IB7/1Bc/SMvnswyPuD65sv0XzkKpGXl2F89yGZ9paTa/8VtrXOPla3QVkg=
-X-Google-Smtp-Source: AGHT+IGqY9TZJZkR9s1c+Lyk4eQ/ILwNYxPHLn7zzQfTeVpg9i8pEvuNeYMcJ+P8ngwF9rXjQzp9hw==
-X-Received: by 2002:a17:907:8686:b0:a9a:212d:4ecb with SMTP id a640c23a62f3a-a9de5d702eemr1922884766b.12.1730366137085;
-        Thu, 31 Oct 2024 02:15:37 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565df8c2sm43663366b.102.2024.10.31.02.15.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 02:15:36 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 31 Oct 2024 10:16:01 +0100
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 01/12] dt-bindings: clock: Add RaspberryPi RP1 clock
- bindings
-Message-ID: <ZyNK0RxJKdNCV11N@apocalypse>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <914978925d34cfb5bee10fe92603f98763af48b0.1730123575.git.andrea.porta@suse.com>
- <cxwzmlzafgdu2uarcx7mdv4p32zig7efatcg4dzmctho6mvykl@dgwvf3ltcjmo>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDBA19408B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730366208; cv=fail; b=akspLNQcEYn2gD8yE1wx+X1I9x3qME6rHm9WviRKHZlNmaQrq89umY9URuC5+Yo5v50V7Q/EDhHw3VYNI7NtxYvmq6JRbWGWoaJhSj8/h3Xim3j0fUzfr9jiez7c+WziSGtjsNvmlrupopAoEWnwrx16JKbXNmdTFzED5ceqglE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730366208; c=relaxed/simple;
+	bh=yV+ZBja/BS0A4/mBU/QLmJHmRknoiJW0DV5e+gYLpOE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FXbicFSwDYsVsFwdPBeZNJlP+x5E6VzAWVBv353lJU3nAREftuUPIhd9ohyGvsXmEoZ//E4eTuivjVvbOamb2aKo3G9JD1GOwWA6ANCIAuPVjozP/hlhRS1uTdwg2MuVRIH2URzkSpvxR2Wg0aqAnOY5Z7IrJ2Y+DaaChGKapVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kc2A52+7; arc=fail smtp.client-ip=40.107.212.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SjSWx8C0gJvGDlNow15F0VmN8sXg072HHMe8uLs0BWLSDVPXWpoGdjG2fVZy463DW6XZFma7BowCnoA7xUIXxqQmZ38HyD0eKZ14Tn8gJK5BVEwySILbvL12SLKabf3yy3og9p7TiWHHGw+HQNBdRxhUdjT+zTKNle2IltR451CXT/m17srnpuQAHCwmKAJIkOTCXMdTlK3W+rOL1agoliDsBZk+YfBANIpYXVxmLOLrXwUiPGS7vv0I5S1QG+6k2vMywmBZg09kKvA7sRDXl86/vcNKLeBFD03NypdIqF3jtvHA3MhmdzqyYMi6LCpU0jqVxjUuC+KhjHeB+wCK3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E4CxbGhuDLHxEL6AfsdEstNVfjyUyBWx6Frt97jC9DQ=;
+ b=XnIUUrBBJcesbfK9uFTVrwPQx5Wkt52s1T1rW2BBWwOz9Mk0+yMrudSGf2nOvj02J+s9jspuqo6LLal0TSmw2FkzskiwwxbvAbGUoPjw70tTiknTvutV5JYAI6HFHLfedjx1JK6gB5oZz/LMsGf+SMs+BvKWRXanr+dZQKPaUrxbB5WHixudkf4vRqqnC4QnrHxuRrr/X6OOtwp6CdNNrSROknlyiW3VKIzS9qHYDSjk06o25ZxF/KdN1WSVHRsp5zNjjMrfwQLQ+nN7A6FBHSOm7+/B7uFpu70FcLAITaxRrq0L9HEbb4q32EOTYKoCCausBjb7GW72O+758Yrvug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E4CxbGhuDLHxEL6AfsdEstNVfjyUyBWx6Frt97jC9DQ=;
+ b=kc2A52+78Xm/U/vlm2CK0y96X+i8Obg5E88NP2aboo3V3gZCJyouhCTZcTHe51FpmaFErYgvnxeQWEIObZ1wiPmhHTqvsGO/ShH0160B1pCj1YyD42u3+3CER73tHj3aZcce8Cu+2dTIXAw4GsPOZ9Oyj3mYnBB/hHTlH/l0hcQ=
+Received: from BY3PR05CA0014.namprd05.prod.outlook.com (2603:10b6:a03:254::19)
+ by MW3PR12MB4489.namprd12.prod.outlook.com (2603:10b6:303:5e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Thu, 31 Oct
+ 2024 09:16:42 +0000
+Received: from CO1PEPF000042AC.namprd03.prod.outlook.com
+ (2603:10b6:a03:254:cafe::af) by BY3PR05CA0014.outlook.office365.com
+ (2603:10b6:a03:254::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.7 via Frontend
+ Transport; Thu, 31 Oct 2024 09:16:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000042AC.mail.protection.outlook.com (10.167.243.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8114.16 via Frontend Transport; Thu, 31 Oct 2024 09:16:42 +0000
+Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 31 Oct
+ 2024 04:16:38 -0500
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
+	<jgg@nvidia.com>, <kevin.tian@intel.com>, <jon.grimm@amd.com>,
+	<santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: [PATCH v7 00/10] iommu/amd: Use 128-bit cmpxchg operation to update DTE
+Date: Thu, 31 Oct 2024 09:16:14 +0000
+Message-ID: <20241031091624.4895-1-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cxwzmlzafgdu2uarcx7mdv4p32zig7efatcg4dzmctho6mvykl@dgwvf3ltcjmo>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042AC:EE_|MW3PR12MB4489:EE_
+X-MS-Office365-Filtering-Correlation-Id: 218ef602-77ff-4b66-4eda-08dcf98cbc11
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MXjf6VHY2sTnc6E/mrncekcEG2Bzb+5wAj90hXvsEkd7P4VhD0pNW2r7Ce+e?=
+ =?us-ascii?Q?2SIBFRGEn2kNv6omtbmXt1KpdRobvS3P2yHU0rbHh+DbJybu8SX37rm4fYhd?=
+ =?us-ascii?Q?cl25H9urPnviA51qUL6ckd0H5MufrQrywgoKYdVCqpzKVbpo7LOo9ZRwns85?=
+ =?us-ascii?Q?eBc+aEQ+LkN2ffn0gSodlyKD88dVrKC1dZPcnmK8mYjBZJE3EqE7+qM4by5i?=
+ =?us-ascii?Q?Qw/QmunLVVt0BFU17v7B+tHP+N8j1qeJKZvElxc91CCquZxuKG5fLg1INnui?=
+ =?us-ascii?Q?JgycvLieL43qAoZg1KnGU5OEYDu/mk35LVKzdNFgZIhGfCvi7tvRq3821pj8?=
+ =?us-ascii?Q?ERYZPOaKGuL3U83wMY5iRtA0ypce6NIJm8t2YsUXdvaH+bN3dVHjPN/LKSkh?=
+ =?us-ascii?Q?hSrn2M+OAB+KU+D/hEteejoYRPDnT2YNUEB1qXSz6gitRNVBhkL7aT7bn6sQ?=
+ =?us-ascii?Q?9OV0ynA0QZTUNFK4CwwRQyvtyb9FDVi5o465U6Vs49BHVktxiErXKQU3F/J7?=
+ =?us-ascii?Q?zGRfXbxSw4OMNj9lSZ+Rj4uXhQcpPqzqrrKp7APPFaW5RfgERYUyn0zgEhKX?=
+ =?us-ascii?Q?9hlE7IHsfhAn9n8+R+/B1cRIaKSckjzhcN/xqY8WgaI3YSkOGFoQuGfo/jdE?=
+ =?us-ascii?Q?zyrGRhqyoQo3NAwuHilPfVYQVKWpwTLwLyudvw8r89XTXuPPEmIw7NJ+nmFI?=
+ =?us-ascii?Q?kPTvXhFQmqWuHPIbW7fLNH5kr4qiR1j2iPYhqZDghbmzsmpIzbo/DAXKnu7l?=
+ =?us-ascii?Q?LV+qDLMDKnQJsk0Pe4KXXpxqxehyJTydRoxLeJzF7h/RG9DgE2LDTmuM50b4?=
+ =?us-ascii?Q?TSwrrqr/UH74VEK9uGSGq5OmEVT6wrG4Nmn+F+YmtAQAoxWKbeOUbVKiPsJW?=
+ =?us-ascii?Q?IujFn8TjSkwArqwl0AC0tdnSe7TNgG7qxF6RBksCUOutDZdgZ3W1n/875bxN?=
+ =?us-ascii?Q?F0Ulej/DRfH80BEFeC9KeAVL+Wcng0Dg+/MpWLVEdSpcmlNsPzmr4Gd5EZ6M?=
+ =?us-ascii?Q?JpR6URtZLfon3OejXrznqBtWgs6qKqw1T1TgxT+KgBQyslvbFSK+aWFbsL+S?=
+ =?us-ascii?Q?SIKfCj/bz8Q2Wx56peCjEUxa850lrAZ7cZlowMsegQqSd+fpOIiEKjq99ieQ?=
+ =?us-ascii?Q?Orh0GQcQ3Xfa1Z+AZxhVktx+c93OVWyGE8AF1ZV/9cQBqDjofJp0wM/iH19l?=
+ =?us-ascii?Q?Q9RfKWkRTda6TuyweJ0e1NVGUGLVIFxOEWBD5iI4nZpkLWiJeraB4Odaww7p?=
+ =?us-ascii?Q?i2nQyX9zv1uwHnFnZzrMSSwomZHinupDAe6WD+4wdy+9JqTr9UWkHp1x7/f0?=
+ =?us-ascii?Q?olwCy+I+jj7QoNmVaQ6Kx02KUh/7PtBcN67m/HPe7UWF4VxBdzoGKQymFQRb?=
+ =?us-ascii?Q?yykaKoEEAJAVJYhvZiLjK/PILOF6XP04yQlN14ylYDDZlkdIEf6m1RFl89l1?=
+ =?us-ascii?Q?tiUIzSb4Gfo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 09:16:42.4037
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 218ef602-77ff-4b66-4eda-08dcf98cbc11
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042AC.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4489
 
-Hi Krzysztof,
+This series modifies current implementation to use 128-bit cmpxchg to
+update DTE when needed as specified in the AMD I/O Virtualization
+Techonology (IOMMU) Specification.
 
-On 08:23 Tue 29 Oct     , Krzysztof Kozlowski wrote:
-> On Mon, Oct 28, 2024 at 03:07:18PM +0100, Andrea della Porta wrote:
-> > Add device tree bindings for the clock generator found in RP1 multi
-> > function device, and relative entries in MAINTAINERS file.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../clock/raspberrypi,rp1-clocks.yaml         | 62 +++++++++++++++++++
-> >  MAINTAINERS                                   |  6 ++
-> >  .../clock/raspberrypi,rp1-clocks.h            | 61 ++++++++++++++++++
-> >  3 files changed, 129 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> >  create mode 100644 include/dt-bindings/clock/raspberrypi,rp1-clocks.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > new file mode 100644
-> > index 000000000000..a123dd619f8e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > @@ -0,0 +1,62 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 clock generator
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description: |
-> > +  The RP1 contains a clock generator designed as three PLLs (CORE, AUDIO,
-> > +  VIDEO), and each PLL output can be programmed though dividers to generate
-> > +  the clocks to drive the sub-peripherals embedded inside the chipset.
-> > +
-> > +  Link to datasheet:
-> > +  https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: raspberrypi,rp1-clocks
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    description:
-> > +      The index in the assigned-clocks is mapped to the output clock as per
-> > +      definitions in include/dt-bindings/clock/raspberrypi,rp1-clocks.h.
-> 
-> You still describe how current driver matches assigned-clocks to your
-> output clocks. That's not the property of clock-cells and that's not how
-> assigned-clocks work.
+Please note that I have verified with the hardware designer, and they have
+confirmed that the IOMMU hardware has always been implemented with 256-bit
+read. The next revision of the IOMMU spec will be updated to correctly
+describe this part.  Therefore, I have updated the implementation to avoid
+unnecessary flushing.
 
-This description is taken by another upstream binding, please see
-Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+Changes in v7:
 
-Its purpose is to let the user know how clock-cell number specified
-in assigned-clocks is mapped to the clock provided by this generator.
-Since some of these clocks are shared among peripherals, their frequency
-cannot be set by consumers, so it's the provider itself (i.e. the clock
-device described with this binding) that should take care of them.
-The renesas example has assigned-clocks specified though, please see below.
+* Patch 1: Newly added
 
-> 
-> There are no assigned clocks in your DTS, so this is really irrelevant
-> (or not correct, choose).
+* Patch 4: Newly added
+  Replace struct dev_data.initial_dte with global amd_ivhd_dev_flags_list
+  to store persistent DTE fields for devices. The previous design has a major
+  drawbacks where it needs to allocate the struct dev_data unnecessarily for
+  non-existing devices to store initial DTE values.
 
-In the first revision of this patchset (please see [1] and following messages)
-I had the assigned-clocks setup in the example while trying to explain their
-purpose, but Conor said those didn't seem to be relevant, hence I dropped them.
-Maybe I had to be more incisive on that.
-So, I'd be inclined to retain the description as it is and reintroduce some
-assigned-clocks in the example as in the renesas one, would it be ok for you?
+* Patch 6: Clean up per Jason
 
-> 
-> 
-> > +    const: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  clock-names:
-> > +    const: xosc
-> 
-> What is the purpose of clock-names if you do not use it? Drop.
+* Patch 10: Newly added
 
-Ack.
+v6: https://lore.kernel.org/lkml/20241016051756.4317-1-suravee.suthikulpanit@amd.com/ 
+v5: https://lore.kernel.org/lkml/20241007041353.4756-1-suravee.suthikulpanit@amd.com/
+v4: https://lore.kernel.org/lkml/20240916171805.324292-1-suravee.suthikulpanit@amd.com/
+v3: https://lore.kernel.org/lkml/20240906121308.5013-1-suravee.suthikulpanit@amd.com/
+v2: https://lore.kernel.org/lkml/20240829180726.5022-1-suravee.suthikulpanit@amd.com/
+v1: https://lore.kernel.org/lkml/20240819161839.4657-1-suravee.suthikulpanit@amd.com/
 
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - '#clock-cells'
-> > +  - clocks
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/raspberrypi,rp1-clocks.h>
-> > +
-> > +    rp1 {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        clocks@c040018000 {
-> > +            compatible = "raspberrypi,rp1-clocks";
-> > +            reg = <0xc0 0x40018000 0x0 0x10038>;
-> > +            #clock-cells = <1>;
-> > +            clocks = <&clk_rp1_xosc>;
-> > +            clock-names =  "xosc";
-> 
-> Only one space after '='.
+Thanks,
+Suravee
 
-I will drop the name since the driver will not refer to it via clk_get()
-but will use clk_parent_data::index.
+Suravee Suthikulpanit (9):
+  iommu/amd: Misc ACPI IVRS debug info clean up
+  iommu/amd: Disable AMD IOMMU if CMPXCHG16B feature is not supported
+  iommu/amd: Introduce struct ivhd_dte_flags to store persistent DTE
+    flags
+  iommu/amd: Introduce helper function to update 256-bit DTE
+  iommu/amd: Modify set_dte_entry() to use 256-bit DTE helpers
+  iommu/amd: Introduce helper function get_dte256()
+  iommu/amd: Modify clear_dte_entry() to avoid in-place update
+  iommu/amd: Lock DTE before updating the entry with WRITE_ONCE()
+  iommu/amd: Remove amd_iommu_apply_erratum_63()
 
-Many thanks,
-Andrea
+Uros Bizjak (1):
+  asm/rwonce: Introduce [READ|WRITE]_ONCE() support for __int128
 
-[1] - https://lore.kernel.org/all/20240822-refutable-railroad-a3f111ab1e3f@spud/
+ drivers/iommu/amd/amd_iommu.h       |   4 +-
+ drivers/iommu/amd/amd_iommu_types.h |  40 ++-
+ drivers/iommu/amd/init.c            | 224 +++++++++--------
+ drivers/iommu/amd/iommu.c           | 370 ++++++++++++++++++++--------
+ include/asm-generic/rwonce.h        |   2 +-
+ include/linux/compiler_types.h      |   8 +-
+ 6 files changed, 434 insertions(+), 214 deletions(-)
 
-> 
-> Best regards,
-> Krzysztof
-> 
+-- 
+2.34.1
+
 
