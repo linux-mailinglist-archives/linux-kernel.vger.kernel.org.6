@@ -1,72 +1,52 @@
-Return-Path: <linux-kernel+bounces-391157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6578B9B834B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:23:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D65F9B834C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A024F1C228BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D48112810B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736291CB331;
-	Thu, 31 Oct 2024 19:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF911CB331;
+	Thu, 31 Oct 2024 19:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqiCf/AG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="RVM72kHQ"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBBF347C7;
-	Thu, 31 Oct 2024 19:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4D21CB30A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402624; cv=none; b=EW/VkPiNS1e+df7N5+WUClBDSY5J1Q0kZYnDntFHy3+2B47RZbw1wRM1tRPe4j+Ms+eQsdC+mtyJUh+4UipiQV9sFSjSdgEAkC+SAUr+E8Dm9YCtd4tXAb0j0P5RR01bLiRCgTqWeOCZv2mzHtfuPipOHdoohSpo/W0m5wILffg=
+	t=1730402640; cv=none; b=Z9t2UKqt1aCzRgMEYWDEbsBDpy49IBx3vhJYDIzLxz0K5BiWUC08HrtMrD6EJuQyKZ5D4lJfqk3S5XgzfMeCGNLE4mIvCXj62FdCWHc+b1H2jpGmi1c8G8Ka4mYVrZn/wnpOSFocCAFBg7CyQumhKlLVKVK5YlfvXWLj3YHkOqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402624; c=relaxed/simple;
-	bh=OqHzbT3W6OUzCW6HNPgRXYBBlYhhv7Stk2knreBpnjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OngDTrAPX0L+OCBqjqBWDW1wKL8bwZvohxpe+GycF0/41ivmREWtCIjeTlRGeMIpB5ofQYh2D0K+URsEpSm404/vhmN4732OMcrF9edApdTZTTDIDKk3Ul1viZ7NlVPkMgk1XSn/xWJM/gDlLHWyEE1iSnRjVShRvq/oVDSx2XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqiCf/AG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA8E8C4CEC3;
-	Thu, 31 Oct 2024 19:23:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730402624;
-	bh=OqHzbT3W6OUzCW6HNPgRXYBBlYhhv7Stk2knreBpnjE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YqiCf/AGbUZQOaNE8OI36OiQsFiBpq2yXa8ZSuxhdkB7ZuQdHOo2jz+DswOk3rFOv
-	 pZNWII/nGrJC50CCmyDjuI98OkcpufFeQn3YHOclfvRt5bmoRVtZq96Bi4FoFZ7fkf
-	 m/7inUrj35a4RnCofMMym++FH1Y7635suRm9qD9nJkgQelFZCSiZq3CIBr36TgcRVC
-	 XQAzHxVAb16KZRKPiFjENbXMtqargUJ3XMEWTsTX8uDQ4sVd7i0D2lVVaxixLHMcXA
-	 f5mg5ToMINg3q5z4IICpNbnwcoAvx8mqtUmZzoNb4kf4FZxB/3m9dgzaGdsU16lwwu
-	 GX65iB1dTG4RQ==
-Date: Thu, 31 Oct 2024 16:23:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 21/21] perf python: Correctly throw IndexError
-Message-ID: <ZyPZPMPuzzZHSGB_@x1>
-References: <20241031014252.753588-1-irogers@google.com>
- <20241031014252.753588-22-irogers@google.com>
+	s=arc-20240116; t=1730402640; c=relaxed/simple;
+	bh=Z4KeyIcbprGtOTaec8vZfmbB4gJ4wGlEBAMEKl3A/k0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kiRm4bBy26J5NN+2d4WGT6wwh22893srr7aQKqTAlFpcLQx7zs0RU1mgQpvJfECbWD9WYcrsHKl/EjIljXoRimdBIGh23SlvGE8y5It1jNVt02TQht5F7MP/Y7jIJJMMW+uppAfPij00uHEXHz0hys7NoT6KnfMAISyZsdvNH9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=RVM72kHQ; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id D3F031770C0; Thu, 31 Oct 2024 19:23:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1730402630; bh=Z4KeyIcbprGtOTaec8vZfmbB4gJ4wGlEBAMEKl3A/k0=;
+	h=Date:From:To:Subject:From;
+	b=RVM72kHQtCjw/s/UWD1n8TY7K/40kvd4HkUoOcQ7KISSfp6p/c5UI+WTTsdqHykYg
+	 Ge4yUPYxpEZexKQWT7q7/2Bfwk0xJViSwm7ZQWbT4TrKEjlnxgzPtIG/8QPrK0/7q8
+	 c9jNH20c9jg+zVn7YL4LY6C4jDo+Ob1yqQLbY3Efvuxkp4fP7HOmFCwWX7zI6Sgs6W
+	 71pJJNOH2cVsQwGMIgXUq2aVw2gdpewoHvsBxtgHX/txI9GIxwqydO+LPzMeYB4QuO
+	 3p6twEEmgmO/4caLP6jxZZHq+tQlUNvIeAPuyOcfAEcD8YN4tDe/j8WzDfBrKNjWK9
+	 oTeAh9DdA69zg==
+Date: Thu, 31 Oct 2024 19:23:50 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	dianders@chromium.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kdb: Fix incorrect naming of history arrow keys in code
+Message-ID: <20241031192350.GA26688@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,48 +55,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241031014252.753588-22-irogers@google.com>
 
-On Wed, Oct 30, 2024 at 06:42:52PM -0700, Ian Rogers wrote:
-> Correctly throw IndexError for out-of-bound accesses to evlist:
-> ```
-> Python 3.11.9 (main, Jun 19 2024, 00:38:48) [GCC 13.2.0] on linux
-> Type "help", "copyright", "credits" or "license" for more information.
-> >>> import sys
-> >>> sys.path.insert(0, '/tmp/perf/python')
-> >>> import perf
-> >>> x=perf.parse_events('cycles')
-> >>> print(x)
-> evlist([cycles])
-> >>> x[2]
-> Traceback (most recent call last):
->   File "<stdin>", line 1, in <module>
-> IndexError: Index out of range
-> ```
+Problem: The kdb CLI code that handles the history up and down
+navigation incorrectly names the up and down arrows as ctrl p and n.
 
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Details: This could be some kind of left over legacy.
+(maybe inspired by ddb which only reacts to ctrl p and n for history nav).
+kdb doesn't react to ctrl p and n, and following the code flow with GDB
+reveals that these values map to the up and down arrows.
+
+Solution: Rename the macros accordingly and rename the function name
+to reflect that it relates to arrows and not ctrl commands.
+
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
+---
+ kernel/debug/kdb/kdb_main.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index f5f7d7fb5936..d4b407afb888 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -1123,22 +1123,22 @@ int kdb_parse(const char *cmdstr)
+ }
  
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/python.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 0d71ec673aa3..25114dcadd21 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -1071,8 +1071,10 @@ static PyObject *pyrf_evlist__item(PyObject *obj, Py_ssize_t i)
->  	struct pyrf_evlist *pevlist = (void *)obj;
->  	struct evsel *pos;
->  
-> -	if (i >= pevlist->evlist.core.nr_entries)
-> +	if (i >= pevlist->evlist.core.nr_entries) {
-> +		PyErr_SetString(PyExc_IndexError, "Index out of range");
->  		return NULL;
-> +	}
->  
->  	evlist__for_each_entry(&pevlist->evlist, pos) {
->  		if (i-- == 0)
-> -- 
-> 2.47.0.163.g1226f6d8fa-goog
+ 
+-static int handle_ctrl_cmd(char *cmd)
++static int handle_arrow_cmd(char *cmd)
+ {
+-#define CTRL_P	16
+-#define CTRL_N	14
++#define ARROW_UP	16
++#define ARROW_DOWN	14
+ 
+ 	/* initial situation */
+ 	if (cmd_head == cmd_tail)
+ 		return 0;
+ 	switch (*cmd) {
+-	case CTRL_P:
++	case ARROW_UP:
+ 		if (cmdptr != cmd_tail)
+ 			cmdptr = (cmdptr + KDB_CMD_HISTORY_COUNT - 1) %
+ 				 KDB_CMD_HISTORY_COUNT;
+ 		strscpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+ 		return 1;
+-	case CTRL_N:
++	case ARROW_DOWN:
+ 		if (cmdptr != cmd_head)
+ 			cmdptr = (cmdptr+1) % KDB_CMD_HISTORY_COUNT;
+ 		strscpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+@@ -1351,7 +1351,7 @@ static int kdb_local(kdb_reason_t reason, int error, struct pt_regs *regs,
+ 					*(cmd_hist[cmd_head] +
+ 					  strlen(cmd_hist[cmd_head])-1) = '\0';
+ 				}
+-				if (!handle_ctrl_cmd(cmdbuf))
++				if (!handle_arrow_cmd(cmdbuf))
+ 					*(cmd_cur+strlen(cmd_cur)-1) = '\0';
+ 				cmdbuf = cmd_cur;
+ 				goto do_full_getstr;
+-- 
+2.39.2
 
