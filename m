@@ -1,123 +1,172 @@
-Return-Path: <linux-kernel+bounces-391176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942FD9B837E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:35:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4139B9B8380
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491C028207E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626951C21321
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32521CB320;
-	Thu, 31 Oct 2024 19:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D40F1CB331;
+	Thu, 31 Oct 2024 19:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I6gpoXGk"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBvMknrS"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415DF1C9DFC
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198538C0B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730403315; cv=none; b=ARL8lQyOxwyyUyah+bu+FG9VK4yNQqHvN/pFSkFLrX9Wg5TsrN/2ub9vB4yW4sNO+Z7ZYdFxURI6UuQ4rixgQyWJjo0gZHi20AGSgmYGMjHrwmqeG+Dnyc4QE1Hp2llxNhwTjUS+6samNvmLCyy0ZjZH39Jq6QzY5AtdDsM/3eM=
+	t=1730403379; cv=none; b=W/UIZZ1GP8e9pFcYpC3KFMnsvKnGtKIcH6O8GfyP8cCvmPeRKR2s/5OOYBY/XbEP9hROyIZhzbOlbmIPYGJB0dfGQxKKaVrgRx7gJFg4S8wBJoXvSlW0vf8ocoSSNUGHVfBHsQ469kCRdbCVcGiHPI3DwOeGcFVZZGOK36Z1GMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730403315; c=relaxed/simple;
-	bh=BCXAO6MrcBYVJSUeWAqVK0/QIlQriCU+ES43nF0ki/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SIYmUgCrRepLnXUdAqhJV6ENG9+ynWZpYBZKU1YtFRBk9wNFdYQGw0+66yhPCAIJwGml2gmJ5fx7hy8eNtUEg0ovy9cppZVBnQ9VcwQ5agzxpol3iyFFsm05vo1M4LM4n46Z8HO+npfP275dwkZGuvDpNomL/0h5hDFg2k6CRtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I6gpoXGk; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730403310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7k0lhlqVUH2PRuKZimC+zuSQ9tywYvWdXQj8NJnprjw=;
-	b=I6gpoXGk4WpkxHpqqw7B0hi70vPzUkPh1qxplJi+Yww9CwVFeFqJQDR4mycBdi0D6ZBbqu
-	ccQdynerUPnHzj3IKoShuccqmsyFi7CDokBvhRmxXrKiG2UzT7r4Oxfb+qZt3C3IOqrA9h
-	y9e1FBHwej5C57edUWznZzAULvg9XNc=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev,
-	Oliver Upton <oliver.upton@linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [PATCH v4 00/18] KVM: arm64: nv: Support for EL2 PMU controls
-Date: Thu, 31 Oct 2024 19:34:55 +0000
-Message-ID: <173040329116.3311297.4818685036404939787.b4-ty@linux.dev>
-In-Reply-To: <20241025182354.3364124-1-oliver.upton@linux.dev>
-References: <20241025182354.3364124-1-oliver.upton@linux.dev>
+	s=arc-20240116; t=1730403379; c=relaxed/simple;
+	bh=Ss71kMZkB3nVBqGdR/PxkFCC6+zFDRf4WUm385aXJIk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DgJGFn/JdhDRPMnRxMjwZmmNWGW3TdrHwvbakvbFMHNf56FUdf8YnAzdXrkhPNVpEzABPibP600DTIPheyRqX0oiUVhzIWKNvjCkEtVHTHfFJQNiz+U3s/+E+G3k+aWrx6vtvd4kcf/qYmq0UskynELX7ySyIIRpxEAlg+HB5uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBvMknrS; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720b173a9ebso1092043b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:36:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730403376; x=1731008176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JP34bMLyU2ULdaARQ1dvvtCxqm+pYihhRf8aqhhtSoU=;
+        b=SBvMknrSQKrL4b/ECHyhq8C2QJQjjHD5YEKX9l39GHhm22zyCGf7QTMf5p/GmLXeWM
+         z0hUD99esCHKWFzx2THjcwY9HcyONmp8jtL502An7Cje6yv4HoyKbCmTFKoNV4AFD8L5
+         YdwInieGe0sHdhIU0rpk1CSbTOcV9G51Bh7/aKa8YSS88wHGwHX+iPHrFymLy8W2y6dI
+         wGaiqCKNt30sa7S+uyF31YfMumh+Yd9QDpvEL1pPg8GOJdJG0j82Tz1jXFwQZAR2Ovf/
+         kfP5d9gAz7DhGQtOjkPvKuA55DDMfOKsF0pEdsqhCe9P48Uj5+X6sUopNxKoSB+flI/9
+         yzKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730403376; x=1731008176;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JP34bMLyU2ULdaARQ1dvvtCxqm+pYihhRf8aqhhtSoU=;
+        b=OBB955S79Oo2fxmfebBpbnpru0QybUvfGjKBSnN0PIsL+kRHvLun8hjxlm+9glai1C
+         sSHmSikwDNEI5qf/7RQ+EEiBI/9qRzLLqS3pyO4draDWOw5qNtv5ROuEnn1HQnLRnX3v
+         zmGqOEwxqdqY2qGLaYjTm17XHMJaKr2P3m1Mo15HywdZOA55xa5Nj891QQ9y/NskBM8L
+         ImdFZ1PB8Gg2TfwHZptmHk5i8qdVuz6DnJpGIsKEPBD1Egvx8kF6Ex7xDDrHguTD6ifB
+         4v2v63N4RSiI8V4eAuDG0p9mYI8y1LO1S4t+YucWDy2AmAsv4mqknbWl6e46r343ytTf
+         NSlA==
+X-Gm-Message-State: AOJu0YxN+/dbqjELCe8KQlqHqO2KHplRj2Elwed53goCgFQNE8MYOxNr
+	SqaMGGnPtSExAZe3cbjxZAhjaVYR8M3nLmr/e3QmiSpwAN5xDKCA
+X-Google-Smtp-Source: AGHT+IH0x9Hdi48zugBq3IX7CYinSg5EUVVjQ/7qFowXhJdtwKokqcdkv7kHX/SOoimn7Q48GoBWzg==
+X-Received: by 2002:a05:6a21:38f:b0:1d9:282f:3d17 with SMTP id adf61e73a8af0-1db91e53617mr5150201637.35.1730403376356;
+        Thu, 31 Oct 2024 12:36:16 -0700 (PDT)
+Received: from advait-kdeneon.. ([103.170.81.86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc316987sm1453210b3a.206.2024.10.31.12.36.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 12:36:15 -0700 (PDT)
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Subject: [PATCH-next] irqchip/renesas-rzv2h: Fix potentially mismatched datatype
+Date: Fri,  1 Nov 2024 01:06:06 +0530
+Message-Id: <20241031193606.87970-1-advaitdhamorikar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On Fri, 25 Oct 2024 18:23:35 +0000, Oliver Upton wrote:
-> v3 -> v4:
->  - Align sysreg definitions with DDI0601 2024-09
->  - Fix 'accessible' counter mask construction
->  - Fix MDCR_EL2.MTPME RES0 logic
-> 
-> v3: https://lore.kernel.org/kvmarm/20241007174559.1830205-1-oliver.upton@linux.dev/
-> 
-> [...]
+This patch updates the type of hw_irq to unsigned long to 
+match irq_hw_number_t.
 
-Applied to kvmarm/next, thanks!
+The variable hw_irq is defined as unsigned int at places,
+However when it is initialized using irqd_to_hwirq(), it returns 
+an irq_hw_number_t, which inturn is a typedef for unsigned long.
 
-[01/18] KVM: arm64: Extend masking facility to arbitrary registers
-        https://git.kernel.org/kvmarm/kvmarm/c/a0162020095e
-[02/18] arm64: sysreg: Describe ID_AA64DFR2_EL1 fields
-        https://git.kernel.org/kvmarm/kvmarm/c/93d7356e4b30
-[03/18] arm64: sysreg: Migrate MDCR_EL2 definition to table
-        https://git.kernel.org/kvmarm/kvmarm/c/641630313e9c
-[04/18] arm64: sysreg: Add new definitions for ID_AA64DFR0_EL1
-        https://git.kernel.org/kvmarm/kvmarm/c/3ecb1fe3842c
-[05/18] KVM: arm64: Describe RES0/RES1 bits of MDCR_EL2
-        https://git.kernel.org/kvmarm/kvmarm/c/eb609638da55
-[06/18] KVM: arm64: nv: Allow coarse-grained trap combos to use complex traps
-        https://git.kernel.org/kvmarm/kvmarm/c/18aeeeb57b93
-[07/18] KVM: arm64: nv: Rename BEHAVE_FORWARD_ANY
-        https://git.kernel.org/kvmarm/kvmarm/c/a4063b5aa0bd
-[08/18] KVM: arm64: nv: Reinject traps that take effect in Host EL0
-        https://git.kernel.org/kvmarm/kvmarm/c/d97e66fbcba7
-[09/18] KVM: arm64: nv: Honor MDCR_EL2.{TPM, TPMCR} in Host EL0
-        https://git.kernel.org/kvmarm/kvmarm/c/4ee5d5ff4b4d
-[10/18] KVM: arm64: nv: Describe trap behaviour of MDCR_EL2.HPMN
-        https://git.kernel.org/kvmarm/kvmarm/c/336afe0c832d
-[11/18] KVM: arm64: nv: Advertise support for FEAT_HPMN0
-        https://git.kernel.org/kvmarm/kvmarm/c/166b77a2f423
-[12/18] KVM: arm64: Rename kvm_pmu_valid_counter_mask()
-        https://git.kernel.org/kvmarm/kvmarm/c/a3034dab74fc
-[13/18] KVM: arm64: nv: Adjust range of accessible PMCs according to HPMN
-        https://git.kernel.org/kvmarm/kvmarm/c/9a1c58cfefb0
-[14/18] KVM: arm64: Add helpers to determine if PMC counts at a given EL
-        https://git.kernel.org/kvmarm/kvmarm/c/9d15f8290a22
-[15/18] KVM: arm64: nv: Honor MDCR_EL2.HPME
-        https://git.kernel.org/kvmarm/kvmarm/c/fe827f916662
-[16/18] KVM: arm64: nv: Honor MDCR_EL2.HLP
-        https://git.kernel.org/kvmarm/kvmarm/c/16535d55e91f
-[17/18] KVM: arm64: nv: Apply EL2 event filtering when in hyp context
-        https://git.kernel.org/kvmarm/kvmarm/c/8a34979030f6
-[18/18] KVM: arm64: nv: Reprogram PMU events affected by nested transition
-        https://git.kernel.org/kvmarm/kvmarm/c/ae323e035801
+Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+---
+ drivers/irqchip/irq-renesas-rzv2h.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---
-Best,
-Oliver
+diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
+index fe2d29e91026..f7f27ee5c732 100644
+--- a/drivers/irqchip/irq-renesas-rzv2h.c
++++ b/drivers/irqchip/irq-renesas-rzv2h.c
+@@ -102,7 +102,7 @@ static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *data)
+ static void rzv2h_icu_eoi(struct irq_data *d)
+ {
+ 	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+-	unsigned int hw_irq = irqd_to_hwirq(d);
++	unsigned long hw_irq = irqd_to_hwirq(d);
+ 	unsigned int tintirq_nr;
+ 	u32 bit;
+ 
+@@ -128,7 +128,7 @@ static void rzv2h_icu_eoi(struct irq_data *d)
+ static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
+ {
+ 	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+-	unsigned int hw_irq = irqd_to_hwirq(d);
++	unsigned long hw_irq = irqd_to_hwirq(d);
+ 	u32 tint_nr, tssel_n, k, tssr;
+ 
+ 	if (hw_irq < ICU_TINT_START)
+@@ -184,7 +184,7 @@ static int rzv2h_nmi_set_type(struct irq_data *d, unsigned int type)
+ 
+ static void rzv2h_clear_irq_int(struct rzv2h_icu_priv *priv, unsigned int hwirq)
+ {
+-	unsigned int irq_nr = hwirq - ICU_IRQ_START;
++	unsigned long irq_nr = hwirq - ICU_IRQ_START;
+ 	u32 isctr, iitsr, iitsel;
+ 	u32 bit = BIT(irq_nr);
+ 
+@@ -204,8 +204,8 @@ static void rzv2h_clear_irq_int(struct rzv2h_icu_priv *priv, unsigned int hwirq)
+ static int rzv2h_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+-	unsigned int hwirq = irqd_to_hwirq(d);
+-	u32 irq_nr = hwirq - ICU_IRQ_START;
++	unsigned long hwirq = irqd_to_hwirq(d);
++	unsigned long irq_nr = hwirq - ICU_IRQ_START;
+ 	u32 iitsr, sense;
+ 
+ 	switch (type & IRQ_TYPE_SENSE_MASK) {
+@@ -241,7 +241,7 @@ static int rzv2h_irq_set_type(struct irq_data *d, unsigned int type)
+ 
+ static void rzv2h_clear_tint_int(struct rzv2h_icu_priv *priv, unsigned int hwirq)
+ {
+-	unsigned int tint_nr = hwirq - ICU_TINT_START;
++	unsigned long tint_nr = hwirq - ICU_TINT_START;
+ 	int titsel_n = ICU_TITSR_TITSEL_N(tint_nr);
+ 	u32 tsctr, titsr, titsel;
+ 	u32 bit = BIT(tint_nr);
+@@ -265,9 +265,9 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 	u32 titsr, titsr_k, titsel_n, tien;
+ 	struct rzv2h_icu_priv *priv;
+ 	u32 tssr, tssr_k, tssel_n;
+-	unsigned int hwirq;
++	unsigned long hwirq;
+ 	u32 tint, sense;
+-	int tint_nr;
++	unsigned long tint_nr;
+ 
+ 	switch (type & IRQ_TYPE_SENSE_MASK) {
+ 	case IRQ_TYPE_LEVEL_LOW:
+@@ -329,7 +329,7 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 
+ static int rzv2h_icu_set_type(struct irq_data *d, unsigned int type)
+ {
+-	unsigned int hw_irq = irqd_to_hwirq(d);
++	unsigned long hw_irq = irqd_to_hwirq(d);
+ 	int ret;
+ 
+ 	if (hw_irq >= ICU_TINT_START)
+-- 
+2.34.1
+
 
