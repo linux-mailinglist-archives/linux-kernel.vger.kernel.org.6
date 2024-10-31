@@ -1,409 +1,97 @@
-Return-Path: <linux-kernel+bounces-389814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0AC9B71C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:22:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47DAC9B71C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28041F22EB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC57283DCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8D914431B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02262142E67;
 	Thu, 31 Oct 2024 01:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="dScqxvqn"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9Rvt7D0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713CE84A46;
-	Thu, 31 Oct 2024 01:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4548713B280;
+	Thu, 31 Oct 2024 01:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730337606; cv=none; b=bqQqbEHu/VERkJfSUGIVZWmIL+WAxIAVEZuAqng4mLrwuzZwtPD//C1KDNuXgVifZvVZ2wxRn4K6tONUz2ig1tstXdFVssz7vxhvKjJdWhXB+PnG0bQ0KzgUVncmbvjUQOBamNfYfKlkSa6Nnmwmc8oxW2cBjOHM/FqIkSUWyj0=
+	t=1730337606; cv=none; b=iRDUg5F6IwIp9pe+qz4bKgX29rJDze6y0OXnNZTMrLNbEVPz6JGd/A7yRCpyK0cbEVYox5I39dYCE1dpiSZ5Wg6VG7iZnJUvlxx3wJqB4zgQj7aR3PnPkb+S2xBCzzVhTMhqW8jTmc2eo5ZvCaKX0llZYxeoL3imIBOt+DYIJAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730337606; c=relaxed/simple;
-	bh=6VFpzBX749Ky6GBTNvLeB0ILml8lCt3fuTlOb1J/bpA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Aeo6myTWe02uOhYKTKkoBBqTip2SWzAZLB+gSHAJpb9CR4wdbJKj4VP+vFFS7v3L3gOs3l9CyFR6IT/dqeSfQNZefoA78FQftPb1HNzDSzU0lFDEgKMG6g057sHi6ONwroztaYi8JQMDoJnr9HnJnfuHgztka9KvJQsNDWY/fFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=dScqxvqn; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.0.162] (BC24936A.dsl.pool.telekom.hu [188.36.147.106])
-	by mail.mainlining.org (Postfix) with ESMTPSA id A3809E45C2;
-	Thu, 31 Oct 2024 01:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1730337599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KhVc4fc6MvL86wTmQvRxkzV2p4YQX42LNKxfWgbdW7s=;
-	b=dScqxvqnK7CfLwpkjnCDlz9ELYBEVmNKdKt7MXhvhVZamnb9/5PlXFc6S660F232UiyKEl
-	fjtPfOLbKDMDTJAlMH8TtLYsWwqsU6bY3zRuoqyUrb6LU26SnDPJwQ1H8xKVqlKBMlIOM0
-	6vCehYz7MPSZ4zWmhhPR+CjUKPiXCJxML9YRPlyehr00wAXlSwpMV/rKuOh0iKCT/ARbuQ
-	ArSUR5FeKg3LdN3rVgTX0K796Male1xtgrshOkQV3HDmNmw8wMEnkqZufwKsvCbmZmd8Tz
-	IB2xCjvToiVCJ2Gj2B03RqCLmtZryEjVoB3T2dp2tz9yhff8pbup8IqbneTLxQ==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Thu, 31 Oct 2024 02:19:56 +0100
-Subject: [PATCH v2 15/15] arm64: dts: qcom: Add Xiaomi Redmi 5A
+	bh=n7MVTWqgW2sq1pNmrEu9M8ySxqOFlO6+vLFgYzO8lYQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=G+YQ6eI2xIWLg7BXWyxSoUjxrVZgL2zKFn5LWQQOoOAZn5PYIVR9vJb2IuvZaeMBp0Eao6HdaY6aaqenx0VcOb3FpBeTggUCKYgloOWMMp4iAbuHlBs9Vp2SfWdxCO+B0aRZ9VExy/PnrhNfcNyzOV6kyVgiOmxTjckAe2t1MYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9Rvt7D0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209E8C4CEF6;
+	Thu, 31 Oct 2024 01:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730337605;
+	bh=n7MVTWqgW2sq1pNmrEu9M8ySxqOFlO6+vLFgYzO8lYQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y9Rvt7D0BGIZbUFnBH1Hi0pPO212QDc3dichA8Myyphu4i3m/6HWTLfvYxGG2ankf
+	 XWZE2R9sTCx54+7Uq/xqybOtL6kWlXpk4bf8HJhXvCG4h58jBqwDd+D4G1KHZD4ke1
+	 Y81xNSAKL+uEVUYw+zziQBRUL5UnMZvjImxmrVj4RqQjFwx8aeYHTbNKXDTDoYupRT
+	 MjDZvdoASNaGslKqh7GVxJc44hBxjik+PForP/Pfiy6zRPKL0w1CT7LWYF20XcsEi7
+	 7VnosdvI32kfRGZ+so2SfDjj6bWAn4NVGd6o7IDLoKFq8ILhOt/L7I8/t0v9RiCfLc
+	 ule/WzKhi5ORw==
+Date: Thu, 31 Oct 2024 10:20:01 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Sven Schnelle <svens@linux.ibm.com>
+Cc: "Steven Rostedt" <rostedt@goodmis.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>
+Subject: Re: [PATCH 0/1] s390: enable HAVE_FTRACE_GRAPH_FUNC
+Message-Id: <20241031102001.a5fe04365acdecbf84f54dd6@kernel.org>
+In-Reply-To: <20241028082738.3293096-1-svens@linux.ibm.com>
+References: <172991731968.443985.4558065903004844780.stgit@devnote2>
+	<20241028082738.3293096-1-svens@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241031-msm8917-v2-15-8a075faa89b1@mainlining.org>
-References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org>
-In-Reply-To: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730337585; l=8022;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=6VFpzBX749Ky6GBTNvLeB0ILml8lCt3fuTlOb1J/bpA=;
- b=+Gbn0nlWFxjuytB56VI8IFQC2JSULCUaE5NBuSA2N0rVGL5D6az47Zc2u2AWF6i7mgS1s1WxX
- r2u8wih66TACgZzwQfvQEOyR3rzbzJHbwG1kDoEGMJYRQGlFjmV+K1U
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add initial support for Xiaomi Redmi 5A (riva).
+On Mon, 28 Oct 2024 09:27:37 +0100
+Sven Schnelle <svens@linux.ibm.com> wrote:
 
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- arch/arm64/boot/dts/qcom/Makefile                |   1 +
- arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts | 293 +++++++++++++++++++++++
- 2 files changed, 294 insertions(+)
+> Hi Masami,
+> 
+> this enables HAVE_FTRACE_GRAPH_FUNC for s390. It is based on your
+> ftrace/fprope-on-fgraph patchset. I talked to Heiko, and we agreed that it
+> would be best if you include this patch in your "fprobe: function_graph:
+> Multi-function graph and fprobe on fgraph" patchset.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 065bb19481c16db2affd291826d420c83a89c52a..79add0e07d8a5f3362d70b0aaaaa9b8c48e31239 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86518.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86528.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8917-xiaomi-riva.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..e451784a80f2d7df658ee4bc2a014ae93c317fdb
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
-@@ -0,0 +1,293 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2023, Barnabas Czeman
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/arm/qcom,ids.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/linux-event-codes.h>
-+#include <dt-bindings/leds/common.h>
-+#include "msm8917.dtsi"
-+#include "pm8937.dtsi"
-+
-+/ {
-+	model = "Xiaomi Redmi 5A (riva)";
-+	compatible = "xiaomi,riva", "qcom,msm8917";
-+	chassis-type = "handset";
-+
-+	qcom,msm-id = <QCOM_ID_MSM8917 0>;
-+	qcom,board-id = <0x1000b 2>, <0x2000b 2>;
-+
-+	battery: battery {
-+		compatible = "simple-battery";
-+		charge-full-design-microamp-hours = <3000000>;
-+		energy-full-design-microwatt-hours = <11500000>;
-+		constant-charge-current-max-microamp = <1000000>;
-+		constant-charge-voltage-max-microvolt = <4400000>;
-+		precharge-current-microamp = <256000>;
-+		charge-term-current-microamp = <60000>;
-+		voltage-min-design-microvolt = <3400000>;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		stdout-path = "framebuffer0";
-+
-+		framebuffer0: framebuffer@90001000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0x90001000 0x0 (720 * 1280 * 3)>;
-+			width = <720>;
-+			height = <1280>;
-+			stride = <(720 * 3)>;
-+			format = "r8g8b8";
-+
-+			clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+				 <&gcc GCC_MDSS_AXI_CLK>,
-+				 <&gcc GCC_MDSS_VSYNC_CLK>,
-+				 <&gcc GCC_MDSS_MDP_CLK>,
-+				 <&gcc GCC_MDSS_BYTE0_CLK>,
-+				 <&gcc GCC_MDSS_PCLK0_CLK>,
-+				 <&gcc GCC_MDSS_ESC0_CLK>;
-+			power-domains = <&gcc MDSS_GDSC>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-volup {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
-+			debounce-interval = <15>;
-+		};
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reserved-memory {
-+		/delete-node/ reserved@85b00000;
-+		qseecom_mem: reserved@84a00000 {
-+			reg = <0x0 0x84a00000 0x0 0x1900000>;
-+			no-map;
-+		};
-+
-+		framebuffer_mem: memory@90001000 {
-+			reg = <0x0 0x90001000 0x0 (720 * 1280 * 3)>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&blsp_i2c3 {
-+	status = "okay";
-+
-+	touchscreen@38 {
-+		compatible = "edt,edt-ft5306";
-+		reg = <0x38>;
-+		interrupt-parent = <&tlmm>;
-+		interrupts = <65 0x2008>;
-+		reset-gpios = <&tlmm 64 GPIO_ACTIVE_LOW>;
-+		vcc-supply = <&pm8937_l10>;
-+		iovcc-supply = <&pm8937_l5>;
-+
-+		touchscreen-size-x = <720>;
-+		touchscreen-size-y = <1280>;
-+	};
-+};
-+
-+&blsp_i2c5 {
-+	status = "okay";
-+
-+	bq27426@55 {
-+		compatible = "ti,bq27426";
-+		reg = <0x55>;
-+		monitored-battery = <&battery>;
-+	};
-+
-+	bq25601@6b{
-+		compatible = "ti,bq25601";
-+		reg = <0x6b>;
-+		monitored-battery = <&battery>;
-+
-+		interrupt-parent = <&tlmm>;
-+		interrupts = <61 IRQ_TYPE_EDGE_FALLING>;
-+
-+		input-voltage-limit-microvolt = <4400000>;
-+		input-current-limit-microamp = <1000000>;
-+	};
-+};
-+
-+&pm8937_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators-0 {
-+		compatible = "qcom,rpm-pm8937-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_s2-supply = <&vph_pwr>;
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+
-+		vdd_l1_l19-supply = <&pm8937_s3>;
-+		vdd_l2_l23-supply = <&pm8937_s3>;
-+		vdd_l3-supply = <&pm8937_s3>;
-+		vdd_l4_l5_l6_l7_l16-supply = <&pm8937_s4>;
-+		vdd_l8_l11_l12_l17_l22-supply = <&vph_pwr>;
-+		vdd_l9_l10_l13_l14_l15_l18-supply = <&vph_pwr>;
-+
-+		pm8937_s1: s1 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1225000>;
-+		};
-+
-+		pm8937_s3: s3 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+		};
-+
-+		pm8937_s4: s4 {
-+			regulator-min-microvolt = <2050000>;
-+			regulator-max-microvolt = <2050000>;
-+		};
-+
-+		pm8937_l2: l2 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+
-+		pm8937_l5: l5 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l6: l6 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l7: l7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l8: l8 {
-+			regulator-min-microvolt = <2850000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l9: l9 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l10: l10 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <3000000>;
-+		};
-+
-+		pm8937_l11: l11 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+		};
-+
-+		pm8937_l12: l12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2950000>;
-+		};
-+
-+		pm8937_l13: l13 {
-+			regulator-min-microvolt = <3075000>;
-+			regulator-max-microvolt = <3075000>;
-+		};
-+
-+		pm8937_l14: l14 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l15: l15 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l16: l16 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l17: l17 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l19: l19 {
-+			regulator-min-microvolt = <1225000>;
-+			regulator-max-microvolt = <1350000>;
-+		};
-+
-+		pm8937_l22: l22 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+		};
-+
-+		pm8937_l23: l23 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+	};
-+
-+};
-+
-+&sdhc_1 {
-+	vmmc-supply = <&pm8937_l8>;
-+	vqmmc-supply = <&pm8937_l5>;
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	cd-gpios = <&tlmm 67 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&pm8937_l11>;
-+	vqmmc-supply = <&pm8937_l12>;
-+	status = "okay";
-+};
-+
-+&sleep_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&wcnss {
-+	vddpx-supply = <&pm8937_l5>;
-+	status = "okay";
-+};
-+
-+&wcnss_iris {
-+	compatible = "qcom,wcn3620";
-+	vddxo-supply = <&pm8937_l7>;
-+	vddrfa-supply = <&pm8937_l19>;
-+	vddpa-supply = <&pm8937_l9>;
-+	vdddig-supply = <&pm8937_l5>;
-+};
-+
-+&wcnss_mem {
-+	status = "okay";
-+};
-+
-+&xo_board {
-+	clock-frequency = <19200000>;
-+};
+Great! Thanks!
+
+> 
+> Thanks,
+> Sven
+> 
+> Sven Schnelle (1):
+>   s390/tracing: Enable HAVE_FTRACE_GRAPH_FUNC
+> 
+>  arch/s390/Kconfig              |  1 +
+>  arch/s390/include/asm/ftrace.h |  5 ++++
+>  arch/s390/kernel/entry.h       |  1 -
+>  arch/s390/kernel/ftrace.c      | 48 ++++++++++------------------------
+>  arch/s390/kernel/mcount.S      | 11 --------
+>  5 files changed, 20 insertions(+), 46 deletions(-)
+> 
+> -- 
+> 2.45.2
+> 
+
 
 -- 
-2.47.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
