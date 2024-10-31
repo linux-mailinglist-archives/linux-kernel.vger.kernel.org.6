@@ -1,222 +1,172 @@
-Return-Path: <linux-kernel+bounces-390639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D7F9B7CA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D8A9B7CA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:19:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0AE1C209C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:20:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249881C20A00
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E32E1A0B12;
-	Thu, 31 Oct 2024 14:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366E11A0732;
+	Thu, 31 Oct 2024 14:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="MElCisaX"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PWs9TC7W"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D4C1A0718
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF741A0718
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730384419; cv=none; b=WTxTMZ8OLBOTZ6dwzgq9ooAY6PLhssAqsapkRkv/huzXxmxn+zmo+FAAzSJBZJ6HN2RWl7ZJPlc2cChuFvjMW3TjXnt0gQEY4pC1xm13l2u7rqjFHltGCeO5tNLWTYXqA+ckOm7VqHEBi7QtpekpaCkaGp/ENvr9Nkdcj1DuQnc=
+	t=1730384390; cv=none; b=iBsGX2CGkOMg8roLzWjjvqlST6GA29JZR5Zgu07ZYOqm0sBlEimZuwW4WbVfzKB9JqnowtcTGDMK8W5ErG1lgH9ku3li87a/z2etjLHOkKTVpznPDpQSfHJbrXTO8n8Cv+awy7uK+jOTNbBn5QGbDKPO+jwZaRXWpKIJrn1blHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730384419; c=relaxed/simple;
-	bh=l2hyfqAJXg9tKTsASSLgWaBLbApxQC/IUedeczyE7dA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NfUHTdhWKs14G3druCoT6R9jFOLOEAmZaLZl7mRX3nNONaOxqVh+bb0zxk55aaD7YGeHT/6CFbMJmentPU/M2HebOQk3ZgGf3nheT8zljFfwJZLRQmUnTKlRedJ9ycx/0qR2J2WVMACZ9JmWrzrHABHKEy7fXB1yvHoxnHJJS1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=MElCisaX; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
-	by cmsmtp with ESMTPS
-	id 61PJtXHVjrKrb6W1zt1Go8; Thu, 31 Oct 2024 14:20:11 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id 6W1wtvJJwzWaB6W1ytIz4j; Thu, 31 Oct 2024 14:20:10 +0000
-X-Authority-Analysis: v=2.4 cv=dfaG32Xe c=1 sm=1 tr=0 ts=6723921a
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=-pn6D5nKLtMA:10 a=6Ujbnq6iAAAA:8
- a=vU9dKmh3AAAA:8 a=UQ0gWoj1K6JKIvSkpFIA:9 a=QEXdDO2ut3YA:10
- a=-sNzveBoo8RYOSiOai2t:22 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+jxM7lRle7VcSb1cHFDpbe2ijsT2r/j9mqp7JE6/0QY=; b=MElCisaXm1Z0+gopzkxIofO/XC
-	+bkgABtUvhl7xIE1PLBpyq9jFI7iHPGc6lOLzoTPbeRP4d6rtjGAq1K0QB83bWCnZR/sInsKWQnl4
-	ip/MD9ihA/DsKWRDpRSau8c3zk5rcrL4ZIVZBDAPWdXPfkf5CLNimFRm80eEOEyoPbto/+ZDoOp5t
-	OO5nny7KBgSUcN526T+uBC716GoaxD0A+Gv0RJdwTKaEq5N800HkDG/rpNqez1wRabx+h3MX+MeAp
-	QGDtNqgxeyeKKUXiiBuh+89gz2WYaPxPACvKWio8Wx+H1AoG45aWwWzCRNN7kcakWMWSk7zFfrAuK
-	io09hJAg==;
-Received: from [122.165.245.213] (port=32784 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1t6W1o-003EHK-1D;
-	Thu, 31 Oct 2024 19:50:00 +0530
-Message-ID: <4c2afef1-dd0d-48e8-a9bc-650edf44b399@linumiz.com>
-Date: Thu, 31 Oct 2024 19:49:55 +0530
+	s=arc-20240116; t=1730384390; c=relaxed/simple;
+	bh=PWQX7SnfjbZidOlrXf4jY4+SlsOeBgBtUEt8Ddtd0jg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjIcubudhlIgR6lqb5vAHbR5rzCqY4JX0E2E+dfBl4eAF/8OyW7BL8UF0eSNMciqa1mXXfmcJM1UaMDU177/5LV2mxlUM5hwGmaN8BKronGI9w2mcfEe914Wm7IV0+q93iuCmVkZMLeAKV6jD5Wn0CVKis8SI9E21ztjiPgjJK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PWs9TC7W; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5c957d8bce2so614290a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730384386; x=1730989186; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PVUmTxmFHTbxuLXdUJhPx7kX3ILoUiW3IeTmfpkoY6o=;
+        b=PWs9TC7W258qgA7r2mOpVUFUNwAFjm4i3dxxATRXQbbiBW1++MEMpazUw+9ZCf2xKi
+         eAB+wO5fGKu+mhRO2gxTbELc8o+t0FEh34rAkU7Znd0Zo1oJvtk8enu+nGFPg8uOYACW
+         UWoHG/7QcnBn6eJU6fNCHoUhyAG0DB1wG6OY/dI8TzfE9XagEzJ+YNtLSIS7udOYyjZC
+         zhVPx8Q6dgjDyHstru6HNuCk6Jpo53glBlas8AOsMakwpWCDIQ0mv+olK89J8sHSmZ70
+         uw1WFPynGqB8/e+qooW/g9cu+slA4tw8r8y1APUkYwQ088NUPAqM3RVYwg9FXIxBnFpb
+         90Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730384386; x=1730989186;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PVUmTxmFHTbxuLXdUJhPx7kX3ILoUiW3IeTmfpkoY6o=;
+        b=A3/yn0BtDvigZNi2axpFh5b5ccuMgC6DTufyFtqNdHQomAAeuhkDhY7YbQPrAnXOvq
+         DmphJ+xavCgr0Xo1PbkAczQebD+nqaLBesnUW6q4+nOjqq9DPrtuuEUXO5uwDRqld72x
+         GNPfks/GsjdV+Ttn625DwALIoKThJAGcVbe3EZihG3LrF0rTO3suqVHOe8EtRUQGjRTq
+         qhogu05ImFpI7DhFgnRb1Ir7v60C+FD/Zp54sq/JhY3gzRXLdGAmcC09bggP+M2yJ6XT
+         lAXtY2uPZFEIG83VeHunhKdlXgNyZt2WY1kr0VjtNUe/dSAlRljVtBYfe2BzabUkUNvM
+         S1kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAHTWnsNEAFXmPMY4U3e+jnljZxM71Po/xqbLGo6tUF/52qsgeJsUMWivf2XPjN6ZCVMILOPOJfCQcq9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5g3VvTR6kCdAUPOST6pZSYfrr2dPB3nQMPU/58g6H5Bvffa4k
+	MEe5PPdBFhl4NPovMLErq44+C32AK9TUuRLGuKSrGncxXs+9L0tsWbo0VxVwVXs=
+X-Google-Smtp-Source: AGHT+IFBlmMQ8BF9VGOE8p6eOCCFYLNGVsY0KuYK2zU9xVixT1ZKB8UzaLusANFsmSbOvc8av3xycg==
+X-Received: by 2002:a05:6402:278e:b0:5c9:5745:de9a with SMTP id 4fb4d7f45d1cf-5cbbf8a40c4mr17455994a12.9.1730384386255;
+        Thu, 31 Oct 2024 07:19:46 -0700 (PDT)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7700dbsm627152a12.34.2024.10.31.07.19.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 07:19:45 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 31 Oct 2024 15:20:10 +0100
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 03/12] dt-bindings: pci: Add common schema for devices
+ accessible through PCI BARs
+Message-ID: <ZyOSGgJ4zb31Posb@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <2948fdf8ccf8d83f59814d0b2a85ce8dac938764.1730123575.git.andrea.porta@suse.com>
+ <fwqcbnub36fk4abmhbtuwsoxdlf64mx4v65mxahsxmiv2sz6er@bfjddapvb75v>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Ripard
- <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Nishanth Menon <nm@ti.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Viresh Kumar <vireshk@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 12/13] cpufreq: sun50i: add a100 cpufreq support
-To: Cody Eksal <masterr3c0rd@epochal.quest>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
- <20241031070232.1793078-13-masterr3c0rd@epochal.quest>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <20241031070232.1793078-13-masterr3c0rd@epochal.quest>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1t6W1o-003EHK-1D
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:32784
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 26
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHrBmt29lXbpCcSWYfRz3JnFTmglT9HYxdi+3EBTqurbN52PqY8iwhxE2sJ5RYQ5hT9I3bmARlugk23m7LPaXiFqlcFsbLR8Z0DQ1x1i40p8pBS9+MYR
- krwtV1+OuRa2vw6Euij7OjfBk6Yufuc28ZFkDVt0ztjYfksBGyOEMVxIO+5sm7aj7bX3dFIuCddIp5YnaD81OsQTz5Khz3bCvAY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fwqcbnub36fk4abmhbtuwsoxdlf64mx4v65mxahsxmiv2sz6er@bfjddapvb75v>
 
-On 10/31/24 12:32 PM, Cody Eksal wrote:
-> From: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+Hi Krzysztof,
+
+On 08:28 Tue 29 Oct     , Krzysztof Kozlowski wrote:
+> On Mon, Oct 28, 2024 at 03:07:20PM +0100, Andrea della Porta wrote:
+> > Common YAML schema for devices that exports internal peripherals through
+> > PCI BARs. The BARs are exposed as simple-buses through which the
+> > peripherals can be accessed.
+> > 
+> > This is not intended to be used as a standalone binding, but should be
+> > included by device specific bindings.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 58 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 59 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > new file mode 100644
+> > index 000000000000..e532621f226b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > @@ -0,0 +1,58 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Common Properties for PCI MFD Endpoints with Peripherals Addressable from BARs
+> > +
+> > +maintainers:
+> > +  - Andrea della Porta  <andrea.porta@suse.com>
+> > +
+> > +description:
+> > +  Define a generic node representing a PCI endpoint which contains several sub-
+> > +  peripherals. The peripherals can be accessed through one or more BARs.
+> > +  This common schema is intended to be referenced from device tree bindings, and
 > 
-> Let's add cpufreq nvmem based for allwinner a100 soc. It's similar to h6,
-> let us use efuse_xlate to extract the differentiated part.
+> Please wrap code according to coding style (checkpatch is not a coding
+> style description but only a tool).
 > 
-> Signed-off-by: Shuosheng Huang <huangshuosheng@allwinnertech.com>
-> [masterr3c0rd@epochal.quest: add A100 to opp_match_list]
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> Above applies to all places here and other bindings.
 
-Although I couldn't get the secondary CPU's running because of missing BL31 support,
-it works fine in CPU0.
+Are you referring to the title being longer than 80 column here, right?
+Because the description seems correctly wrapped... or should I add a
+newline for each paragraph?
 
-Tested-by: Parthiban Nallathambi <parthiban@linumiz.com>
+Many thanks,
+Andrea
 
-Thanks,
-Parthiban
-
-> ---
-> Changes in V2:
->  - Add the A100 to the cpufreq-dt-platdev blacklist.
 > 
->  drivers/cpufreq/cpufreq-dt-platdev.c   |  1 +
->  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 28 ++++++++++++++++++++++++++
->  2 files changed, 29 insertions(+)
+> Best regards,
+> Krzysztof
 > 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index 18942bfe9c95..2a3e8bd317c9 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -103,6 +103,7 @@ static const struct of_device_id allowlist[] __initconst = {
->   * platforms using "operating-points-v2" property.
->   */
->  static const struct of_device_id blocklist[] __initconst = {
-> +	{ .compatible = "allwinner,sun50i-a100" },
->  	{ .compatible = "allwinner,sun50i-h6", },
->  	{ .compatible = "allwinner,sun50i-h616", },
->  	{ .compatible = "allwinner,sun50i-h618", },
-> diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> index 293921acec93..3a29c026d364 100644
-> --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> @@ -22,6 +22,9 @@
->  #define NVMEM_MASK	0x7
->  #define NVMEM_SHIFT	5
->  
-> +#define SUN50I_A100_NVMEM_MASK	0xf
-> +#define SUN50I_A100_NVMEM_SHIFT	12
-> +
->  static struct platform_device *cpufreq_dt_pdev, *sun50i_cpufreq_pdev;
->  
->  struct sunxi_cpufreq_data {
-> @@ -45,6 +48,23 @@ static u32 sun50i_h6_efuse_xlate(u32 speedbin)
->  		return 0;
->  }
->  
-> +static u32 sun50i_a100_efuse_xlate(u32 speedbin)
-> +{
-> +	u32 efuse_value;
-> +
-> +	efuse_value = (speedbin >> SUN50I_A100_NVMEM_SHIFT) &
-> +		      SUN50I_A100_NVMEM_MASK;
-> +
-> +	switch (efuse_value) {
-> +	case 0b100:
-> +		return 2;
-> +	case 0b010:
-> +		return 1;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
->  static int get_soc_id_revision(void)
->  {
->  #ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
-> @@ -108,6 +128,10 @@ static struct sunxi_cpufreq_data sun50i_h6_cpufreq_data = {
->  	.efuse_xlate = sun50i_h6_efuse_xlate,
->  };
->  
-> +static struct sunxi_cpufreq_data sun50i_a100_cpufreq_data = {
-> +	.efuse_xlate = sun50i_a100_efuse_xlate,
-> +};
-> +
->  static struct sunxi_cpufreq_data sun50i_h616_cpufreq_data = {
->  	.efuse_xlate = sun50i_h616_efuse_xlate,
->  };
-> @@ -116,6 +140,9 @@ static const struct of_device_id cpu_opp_match_list[] = {
->  	{ .compatible = "allwinner,sun50i-h6-operating-points",
->  	  .data = &sun50i_h6_cpufreq_data,
->  	},
-> +	{ .compatible = "allwinner,sun50i-a100-operating-points",
-> +	  .data = &sun50i_a100_cpufreq_data,
-> +	},
->  	{ .compatible = "allwinner,sun50i-h616-operating-points",
->  	  .data = &sun50i_h616_cpufreq_data,
->  	},
-> @@ -291,6 +318,7 @@ static struct platform_driver sun50i_cpufreq_driver = {
->  
->  static const struct of_device_id sun50i_cpufreq_match_list[] = {
->  	{ .compatible = "allwinner,sun50i-h6" },
-> +	{ .compatible = "allwinner,sun50i-a100" },
->  	{ .compatible = "allwinner,sun50i-h616" },
->  	{ .compatible = "allwinner,sun50i-h618" },
->  	{ .compatible = "allwinner,sun50i-h700" },
-
 
