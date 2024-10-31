@@ -1,109 +1,92 @@
-Return-Path: <linux-kernel+bounces-390132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4889B75F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:00:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A159B75FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20374285FD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:00:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35AA1F21787
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467DE1547ED;
-	Thu, 31 Oct 2024 07:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA2414F123;
+	Thu, 31 Oct 2024 08:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSE0qfi9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABuOf0UU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8248314D2BD;
-	Thu, 31 Oct 2024 07:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F1F12CDB6;
+	Thu, 31 Oct 2024 08:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730361574; cv=none; b=i7N6c3wlAu6Ko939RcrInEo/CXNNxvXvDyC/rrPZeZj2gQwJ0uJFagrSzR/YpozNJtd7tu76zZ3nERmRaBsazblCJbVJ4iyskMWj5myvbbcl1ItUkQ+F83wmj0icyfpc7dn9oo9rYr45eBtV1kX6iFEinnCyHGRATOTE3Eo8hDc=
+	t=1730361641; cv=none; b=lwAfEmnnJ++jYcDehoEthsrzuIwOKusXmNVG2xoZcgeVV56Nu9kSW5Y6OYulxgUVNclYU6ORSPiGZtm1XC3ug7dZSYamxsMnkGBg5oivhhGgaIdOnqgVm64q7KZ4hvFV6OCmPHpT//Y6pVpvNFurhznR1ATb6peEshR6d8BM+Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730361574; c=relaxed/simple;
-	bh=r4WvFfTJfMdRUmFzrlSoIGEf8BKQg/IhRD4qnokJQvg=;
+	s=arc-20240116; t=1730361641; c=relaxed/simple;
+	bh=/lcem0/na5hpUEq0FSk7UNYC0n854xl8K8X1eIkKK0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsnBx/V7/NQ5tIcul5WSbkatoRqNQMlug8lvecIHPIJ8ogC+GOg9YuGCC6JB0uzN1sdLUvN0Xk7YpsKIa9jeoOEBfhrOV6biQWi5vpQfR2S++TQcyQqlpsT5m1kf/fymy3cybNCLslirgt/Jptpa7Pm6wgWtp5Rae0L4hlL57GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSE0qfi9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31A22C4CEC3;
-	Thu, 31 Oct 2024 07:59:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HNfqa9hYDkRoSn6KUJd7scFObX+Y5uFvi6swDXoqThGaFYSxhoD2MBgDo3mXNi9cnUxv+Hz6XhTMjPdww5H4N5i/iUfaubEPcq24e/mPG3Mvj9oCRNe0TMclnmpiXhJ/f2ADwdl2II5MORp2KNBzyN0OZh0WhVM9mbA2jONwFu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABuOf0UU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF5EC4CED0;
+	Thu, 31 Oct 2024 08:00:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730361574;
-	bh=r4WvFfTJfMdRUmFzrlSoIGEf8BKQg/IhRD4qnokJQvg=;
+	s=k20201202; t=1730361639;
+	bh=/lcem0/na5hpUEq0FSk7UNYC0n854xl8K8X1eIkKK0A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YSE0qfi9lLOBn1EH9BGdBYxYLpBIBHIK0QaNCb5Z2f/3ZU0SiPGduT5S8BZpZzVhE
-	 QsE8znEvky7HGyINHWNHZtUimXc0OyWjetPBBGPw4IpeX6whHRZ0Squq75I9D2OXoh
-	 Dj4A2PcDjtD53WxZ8CfoENNGNXS3uZ1vTjYJ05qe8rdIM0RAaKg01VZUsT2btH90gN
-	 3IfJ20Y+iAFHW1y+lpY5HZMEPNs5tEjpoTUkB7qMwux7hxpqN1+o4tJ7RVpOBKxrIT
-	 w9KRIYFGI2KFLA4w2wF7IkinK0w9y+ewKYwfXPBFWw7JG53t4IL192NVOKYAlQAK8j
-	 0+j+mdz3I8PxQ==
-Date: Thu, 31 Oct 2024 09:59:28 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 09/17] docs: core-api: document the IOVA-based API
-Message-ID: <20241031075928.GA7473@unreal>
-References: <cover.1730298502.git.leon@kernel.org>
- <881ef0bcf9aa971e995fbdd00776c5140a7b5b3d.1730298502.git.leon@kernel.org>
- <19cf7d58-4a28-4ce8-9524-8c99fdc79062@infradead.org>
+	b=ABuOf0UU2rrlUl5SunupXLXdIHGcTmiKNXrcQOSjBgQJpYBZW9gpdUOF8AQvG3mXT
+	 V7f86biGefFlMZu7uCyH8h/+6AYIsU5Vx7ZF7VBeHikrTiWFtn3AZWQ69xAHaEPdRV
+	 KC6qTWjqTB3S8jvoUnZVyqN83FFF5fQk2dE2HI1EBk5tibzVOsWNUbAqP4bJNqV2q+
+	 eqB9JXQkpDMcp8bAGDYecefYD5oAY/p3FLm7WMAcy4XaRjIDURXM2m0WMnv1f3wRJc
+	 ZpeNn/9wq0kGVl94H3AR6wBPq1fvagWLlScEnjeDzSVemzUUDGXIIObc+P/LZO/GUq
+	 jjmKxuUwnC6WA==
+Date: Thu, 31 Oct 2024 09:00:35 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
+Message-ID: <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
+References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+ <20241028053220.346283-2-TroyMitchell988@gmail.com>
+ <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
+ <dbeea869-54cd-43fe-9021-783d641f1278@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <19cf7d58-4a28-4ce8-9524-8c99fdc79062@infradead.org>
+In-Reply-To: <dbeea869-54cd-43fe-9021-783d641f1278@gmail.com>
 
-On Wed, Oct 30, 2024 at 06:41:21PM -0700, Randy Dunlap wrote:
-> (nits)
-> 
-> On 10/30/24 8:12 AM, Leon Romanovsky wrote:
-> > From: Christoph Hellwig <hch@lst.de>
+On Tue, Oct 29, 2024 at 04:36:00PM +0800, Troy Mitchell wrote:
+> On 2024/10/28 15:38, Krzysztof Kozlowski wrote:
+> > On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
+> >> The I2C of K1 supports fast-speed-mode and high-speed-mode,
+> >> and supports FIFO transmission.
+> >>
+> >> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> >> ---
 > > 
-> > Add an explanation of the newly added IOVA-based mapping API.
+> > Where is the changelog? Nothing here, nothing in cover letter.
 > > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  Documentation/core-api/dma-api.rst | 70 ++++++++++++++++++++++++++++++
-> >  1 file changed, 70 insertions(+)
-
-<...>
-
-> > +These APIs allow a very efficient mapping when using an IOMMU.  They are an
-> > +optional path that requires extra code and are only recommended for drivers
-> > +where DMA mapping performance, or the space usage for storing the DMA addresses
-> > +matter.  All the consideration from the previous section apply here as well.
+> > I asked for several changes, so now I don't know if you implemented
+> > them.
 > 
->                     considerations
-
-<...>
-
-> > +is used to unmap a range previous mapped, and
+> I deleted the FIFO property because I believe your suggestion is correct.
+> this should be decided by the driver, even though the FIFO is provided
+> by the hardware.
 > 
->                             previously
+> Apologies for missing the changelog. To correct this, should I send a v3 
+> version with the changelog or resend v2?
 
-Thanks
+Reply now with changelog. Your binding has some other unrelated and
+incorrect changes, which I do not understand.
+
+Best regards,
+Krzysztof
+
 
