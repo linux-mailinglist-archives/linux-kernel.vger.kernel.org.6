@@ -1,179 +1,241 @@
-Return-Path: <linux-kernel+bounces-390302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF52E9B781D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:58:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2398F9B7837
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58EC1B26890
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47AF21C2252E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF071990AB;
-	Thu, 31 Oct 2024 09:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1129E19ABA3;
+	Thu, 31 Oct 2024 09:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="nJTIFcni"
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W8cjyKtE";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KsygdnpZ"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94914197A9A;
-	Thu, 31 Oct 2024 09:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368667; cv=none; b=DW5mu5EAebSrCRgskIKVIvQD0gFPaHsHnKo612ExzXvp5aROznihyiKt6noCQyOktA+pA6oDA0v9jR0dQLmqcNikbCiVpKB9W9WfmkYCSBxPT6AnPSFg/xOUuhJN0dVtfp6Q2j8V+YuaTpM+6CWuJrdVXflUoZtU9iUHhMFa+hk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368667; c=relaxed/simple;
-	bh=pxgGzth4IoWDkB1mXKh2V+epPBdJxqmOD5Ygrsdyuyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rs3eYuhI8LSi5vOHy8gv6Zk1KiuoE573jF5lr5BiISwvbshrSgGbBffed0qiBf1lhMY+mVPmClrUDJ8LSRuX7enIxxXxbErqyubAtmzxvYr1FQEktxcUVGmh0LEzQamU9BBan2thj4W6Hs0IkNKEalL1repuQ7wBwqKXJs31muQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=nJTIFcni; arc=none smtp.client-ip=88.97.38.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1730368655; bh=pxgGzth4IoWDkB1mXKh2V+epPBdJxqmOD5Ygrsdyuyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nJTIFcnisahWBn9pWTB2osHgg6GfrgCfzGBNKQ4eHRN/9TvluuxXELkoSBq4iouEB
-	 uNOQMWSaEAva6Wz5NMBPpj0SkX1jacZZ/g0X2K5gS+uQ8kZEOxrVjNBZbcVBE2JtLr
-	 eH7Cf3VrCHhlmYQymUbf55fZRtnmo/zIDgt8N5UD1XixT06eEzm3Uhc4yW6p0Rek6o
-	 CtnC6PZ8RFdxsU5gA0w2scgixhJzEicMBcp6G+tAfeRYMRQCO7eaPbU7LmNPiO+TJ3
-	 tss2J7fFg7cfXJSrRns9c5uCP0ZWAIh3GEcR+nycp4uGTilyn/nkXmwAiEePSQd4a9
-	 e6/CC9O+msq0Q==
-Received: by gofer.mess.org (Postfix, from userid 1000)
-	id C73821000C4; Thu, 31 Oct 2024 09:57:35 +0000 (GMT)
-Date: Thu, 31 Oct 2024 09:57:35 +0000
-From: Sean Young <sean@mess.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux@treblig.org, awalls@md.metrocast.net, mchehab@kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: cx18: Remove unused cx18_reset_ir_gpio
-Message-ID: <ZyNUj4CxU2_2Zhc_@gofer.mess.org>
-References: <20241012233932.255211-1-linux@treblig.org>
- <Zx_s76gUaQwAxzip@gofer.mess.org>
- <b580805b-8f00-40d1-bc1c-3ac19a19ac45@xs4all.nl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2A6198E61;
+	Thu, 31 Oct 2024 09:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730368797; cv=fail; b=QBpvopwzPkKTjUGUfEzKj8/xzpxqcIMxnwzS48O/3wNHqy5sdsNk30Wi5g8NGPJwwTYtGNtgXGA84SEcewLRBRgWE7x2lf8yC4AH/cN94H3Os547asvONr1q2ynT+HoyI86mubU+wLcnH+giz6P3+3va7XHsYHBO9PBf7oeipz0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730368797; c=relaxed/simple;
+	bh=kH/HFZgWYsjWb0U4X3ikVcIN3HXatozJV19MZnWxdpY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=p+A1gwcbBTFwCYadO5ab893paut586ed1kCqo9gGurlZYz5nfnn+9a3r54iay04glvczYYKPnaXPInj1ranotHV9AHpRR5R+EMKkKZr+kDX8CQf0nfggiQzUBT1hK3fhluza9ew1JBUXN72I/Rvd/D8Qi57gQ984O06uQ3AE/Gc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=W8cjyKtE; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KsygdnpZ; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V8uF6Y018249;
+	Thu, 31 Oct 2024 09:59:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=6p6zvuCwuQwetvuC
+	U3pRBrMrpoVNVFC2Hl8o4gQ+dZk=; b=W8cjyKtEO92jhQH71bMncOvfOocicE+j
+	3zw4SsKiEkxm1ToMQPvk0pBF5Pp6A1nVSKMURigRjewgo/q4OT+dop9eo/+mVNFx
+	heGcWm3qS9QTTff5lQEuug3R4iPkrrOAHxN5n+2KAjF3boh8P19z/OJ1A9agomh9
+	f2umFUyHWMqKDfH/g7rvu4LO6dL9NvUD+feObL8OHFx4XIqkqphwfxIQDMw6GXbI
+	vPptM3kv15uefSXYWx6EAp9UquDeERK0SdynlGok3/c7nzPFvicQHvbBd9mQgD/L
+	/qFZwL8MoMOdB6XvpWHoZRi9NCK8KGhrh32FhWMkvEQTubvUEcwjfg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grdp9wq5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 09:59:32 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49V81xtO010074;
+	Thu, 31 Oct 2024 09:59:31 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2043.outbound.protection.outlook.com [104.47.70.43])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42hn90ct53-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 09:59:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=du4dwuQya5zA1AWRKs5fZwjslvDbJp6tbVo1wRcrabySvlseZ+G5jon9TdnUiudsspiiDmmuCCrMS3xBf85AqRXmRzAB/zc/xoVbZKiBweSirAo/lm5OXLDucrYovqhSHxXx+2ytY6V3GmtCno9ca0n4d7KUN3rogSQHc+aOrZ7Jktqo432rRVc0zUS2e/TxoXZVmFqwNFakBpoNYLqqKCmgq67t3xnWnV15Z5y7zI0jrqoeX06jVL7bjrKAPRwkSKxjcrgrPtFbg+IHyev/NPFLyEfkbGQLjs0ftrbVz2NlI1MPrvtWZ1KxSGWfHMgQHFbhutcF60P6zIHNyqpVcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6p6zvuCwuQwetvuCU3pRBrMrpoVNVFC2Hl8o4gQ+dZk=;
+ b=qzunVK0gMvnls0deC9RDip9HfRIVzJETxZCKFjNvbcMndXeAYqC/in8T26N2b1jHrMnvyqFMzMQ9kI3V7VQpFPJg15u4YOE25it/e3w+1WNvenZfpu8+s9XM0At/1rzGxeBEHo/4WDtSdGXGgDaB4oX6YvgD4/43NE1wbkwNsWUazpNKopNgPUU+qQjMbVMvrbMLj+jT5dCflBSoD7lBhqcxyTiI2HXtliajZedQvTqY1f7+fLjO8hHOKysT66hCUeILc3Vl1erI/b8vZXMOFQdP5g711VGmKtgVUqGVxDffUPkAnJMGdI1FXpPdjchBbFYkbdwSGU/jIzjjQ9l2AA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6p6zvuCwuQwetvuCU3pRBrMrpoVNVFC2Hl8o4gQ+dZk=;
+ b=KsygdnpZHLSVoMeSt5xJ2nhBlVLzFGLn9pz6+j+p0JuF6CNmOFPaKn5/T+qs63dp7q247R1z3ODbCQ6+JQumOlqPA8Qe7CofMaNHxvE41oIeBK/gp/s0cBKEtIcEgmb9V/Lw1Vo4n1mcNImiTDEHdVDJpP1NpZFHsd8Ufocix90=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CO1PR10MB4708.namprd10.prod.outlook.com (2603:10b6:303:90::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.22; Thu, 31 Oct
+ 2024 09:59:28 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
+ 09:59:28 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, hch@lst.de
+Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
+        Johannes.Thumshirn@wdc.com, John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v3 0/6] bio_split() error handling rework
+Date: Thu, 31 Oct 2024 09:59:12 +0000
+Message-Id: <20241031095918.99964-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN0PR05CA0028.namprd05.prod.outlook.com
+ (2603:10b6:208:52c::12) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b580805b-8f00-40d1-bc1c-3ac19a19ac45@xs4all.nl>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CO1PR10MB4708:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac962c44-23e8-4f44-bba8-08dcf992b54a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?I1nas1r35KWNLe7LKJX5yhbKSgp9nbKRnqRwdUuSDRQpv5cUZGiDoU4O9A/s?=
+ =?us-ascii?Q?0f9Xor4JnXUMzOwziUzFyyq1cwxIWEztAkOzodxdjx78lM/DoPpUI+R4tVBm?=
+ =?us-ascii?Q?WP/q2TFq6hAC9JDmtFbrGfkKpZUQemZ7rYOktowC+89JVo+klLmhd0Q6a6on?=
+ =?us-ascii?Q?liHLkH5cDgwTSZMXABMHJ4jJrhPVr3kCZfsoSZkDDv4s3zQHKK2TrkYkP337?=
+ =?us-ascii?Q?jiPGNCgF0aZZewGlkxFWzQaaH2Liv4bGdwdMfN98aATiO7btivOTzJm5F5vK?=
+ =?us-ascii?Q?HKmszmP2Rsa9Qcby0DyM7/GHUdHibT5NsjBjB0BGba34qFQ68S1mWF+wci2v?=
+ =?us-ascii?Q?oO+TCKDhJJ2+3YhbIzs7RQM+zcjw+f0IyfQB4QMaJpTwQIMOed61XnlLfpE9?=
+ =?us-ascii?Q?tb1xxzzibZcrxY+EyHFkGRIeA3iL14GKNPfD/ps15vgcC3Y3mSzjF5YVb2lW?=
+ =?us-ascii?Q?nADO79d5X7Vl0F5F2J3McQhZvkjqJvBrEsOanoDKPlEyBCkCJfX+ooc/bigL?=
+ =?us-ascii?Q?TsNHQamuDy0DikkMajYl+KZ0mr/iPeXw/vwF12UXCzxcP1UnrKeuUm/pFbx+?=
+ =?us-ascii?Q?U8VmhR6GPiOFK5PdS4FqGgRO3a4Q/fyAw/oZsbeptZB5gM3/NM9fE0vgZSpl?=
+ =?us-ascii?Q?Vm1NFpK3boGxhJfCeElnAz70UYkqQwO2VWvMiq4gPPUJCt0MJRhZb7+AzRab?=
+ =?us-ascii?Q?duNdLINFwA4Xgmii6VgBXn5lIZrmea8BFdBQj/ZU/jjSNoyMqdI1R4/nI9BL?=
+ =?us-ascii?Q?I+eubBi8sRWQADdBqB1jFJHfYVg+oCLaIx4yFsCl9bGevriSHhxpgWfTy1lg?=
+ =?us-ascii?Q?gyhG8/gg+HlydzypBJJT9JCdl66eVn/Vu5DRjLLGuFkPOezoxcQTufEwRuzB?=
+ =?us-ascii?Q?VRR//H4Je2xOivsCc3zHO65Mc20a223asN9/8bzztwd2Mb1gydaMoV2VYLFM?=
+ =?us-ascii?Q?n+HUIMpTp29q8z+0FnZ3aKW4Xynz1l1BfEH8gxPHE2X6vAdssuV7kaIj9xKx?=
+ =?us-ascii?Q?wBZMWyT8lMBNh2vRY/R56xJHbgTPhP/mYXbK1Z5OhlN0Gus/hEZgGBPrzaKD?=
+ =?us-ascii?Q?l8IxHQHM7NhE63fhWj9T5lBQCJ+87TyATQ0+pFniSPSV5+rFS3ubrJORrOwp?=
+ =?us-ascii?Q?I/vP+zSGk36IIp4QV/VTXjFHL/o9yztZ+z1Obxhul0ZFlAT+4Bx4lEhXUs9J?=
+ =?us-ascii?Q?fV92vcIFJegNtGXe43bGVTI/buwcjAnKKON/shz2CT0XflG5us2EqS+KHzCg?=
+ =?us-ascii?Q?2i5usRWVVeS6ynrcxicPLlWW3XSiH8181CjwUJcR2qEThnKaIh3wFRgdgW3o?=
+ =?us-ascii?Q?ixOdcS8Ts1rnvhngVFwAawYu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ijc9KBTeIgMcwiYpP9K67flmetjzYl9qXG1jaNLzIoxyqQmzxSl9GWolgB2g?=
+ =?us-ascii?Q?UV1qBTrgvg68jMYTQjzfc62u6/zT9LifjIfihBrN7p6Lnh7yT8z1vFDb3hDf?=
+ =?us-ascii?Q?yijWrIaoNJTsV7ueEkV24usM2PZvVhDOjxWMsTpzImfwqWIf4ssxsAW62ul1?=
+ =?us-ascii?Q?e59A2l0o0toopo2q8jn/Oy9w3dUk3YauZsoV6Rd6Cj4wJX1N46DY9kPhkQZr?=
+ =?us-ascii?Q?4T9rDtMZATsezD9a0xEAnOXN8DEQFUltVWJ8r4Z5AjyiocBWnwva/sPXFmcb?=
+ =?us-ascii?Q?20jJkYOKVTbDDsIrsWVhpC/l5T/xvLxa4Gp6ICbk5CbRNXJ6WPjC96LSwEh0?=
+ =?us-ascii?Q?h0AB3I9WOx0QnRyZvsd6ho7Cij8fsOMqPVITlmn0TBpPGgXEw2YCbvNjp2TC?=
+ =?us-ascii?Q?VJ9FlFC3ingonLiHbkm2ru8xxBq1WK9C0so38RC+7tHpvEmP23ZKL7nkEUYF?=
+ =?us-ascii?Q?Wq7hvGJO0kIHAgFUB/HGLugl8I+qWuW1+uSQMSpEeFDyLl1uf/hMEKqclkpJ?=
+ =?us-ascii?Q?Kues/N7DxpvWwGYHM4LBFJYV2kndkPrH77ZkOnJq7eXlgNwqeXDFp3iNhVq5?=
+ =?us-ascii?Q?UN2cIVSom81k6lM9VWcNV/jJq4j6zi54SJ63FWhb2kWyEbEKq356daprJ4KW?=
+ =?us-ascii?Q?pHyGniUOOTEMt2zbAR1hvohYau4j4/iL6h3b4BlRmmakqnADn0Wn0YPBBT2T?=
+ =?us-ascii?Q?vTu7LC+jZBEr6caCrznkOAvBHFzSnVzjG3N+C4Wjxbnl6nJuOazzH/1uDo0s?=
+ =?us-ascii?Q?v2jVU4IM77poK/kBYTCmpPpHRooma0sjGAMoQpCunalssWBIbXdwnYYjMIUw?=
+ =?us-ascii?Q?14nNnDAB/mDfOo/D4bNaz4FZNpSEFW2rS34NbKRQI3Aq9RSn/G76yuF3bcqI?=
+ =?us-ascii?Q?FvuhIubWH2cM9X+E/ClyZUq9QUPGYsX5c6Z4Fk4l7Q0L6UZ6a2er3ueeO2A0?=
+ =?us-ascii?Q?CO5/4A2KL3u37lleE6QuJ2lZdP9dax7c8htPY6NXmyOAuYQtvJTXXN7Uv1jW?=
+ =?us-ascii?Q?4TzknAntcpOv/etRXFJfOJDmS5kr60+xdq0zGq42ZiWnY09Kq/SPHBxwSQsq?=
+ =?us-ascii?Q?H7Yt2nd9pn9sYaIuvz9PIPQA7Not7u8gZFoYG18x21nr8hO82AbBcaBqOWyA?=
+ =?us-ascii?Q?T268h7QG3feUpvVa4/dDrR4ialkMT9iJsFBVpgIDgme/1Cd2d3cBZwWshhp2?=
+ =?us-ascii?Q?NfmRwSHO5EVe79NuXAUYb8KZQqN0vVkubgdDk9DfuwaEnys2XdYaod3O1LwQ?=
+ =?us-ascii?Q?7n+pvocpCdccqTb0XU6X47CtATzySDNlxpve6k/xBCsw8dAis2sWVzdijyXT?=
+ =?us-ascii?Q?Jvh2sNr4PCrylRFIXc6j93MWFGogDUKd0xhIUYHodSwK+hsgIP+RCGzNaQnm?=
+ =?us-ascii?Q?n8eC8PtJE+VJZb8WAB5iBWeCSLnMRRsgAsgWSK3BWw0v6um63IvAZhNklmy4?=
+ =?us-ascii?Q?deFFJEODBhYNeljwyUn2xGyRakC7ClkMC6RB6gEMBxcxe6FUjTUXBh3rUQfm?=
+ =?us-ascii?Q?+gji2Em9CzncXjMLvrT2m2geLWWi1rgzUmvi2OUBy05e38OsFqxD9fwANtT3?=
+ =?us-ascii?Q?eJSLSvh5v1rHKssI3GYvyTQz36/nMQCg7uHVgaMYyv1MLPyVNr4Gy7jJrtoQ?=
+ =?us-ascii?Q?EQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	gI3mj7bTItXxhoOt0TiOPtzklXFSfEmJ4vS+z5dnrVlYQK25eeW0Ym2XpPecATHshnKpbS7eeh5L62MTCSvoknxrb7pmAI0+Wk4Nfeep6DRz58W8usmfkezAdQH86VvreqvlYv+58BXEp4LgHQtDzwVqvrS7uzGuaAFWOSqFP/Cx/CPyRf19pyvEc3lZv1MBIimnGnTKOplwRcR6+fQ3DS7e/cNfOFnQlBOilDiKiVSBnYxuFtZKK9kh3HRrNOuyCQa5BH3yE8XHTeFquRNToJSH1A0q9IPMddLVxJXx0KWyLBe22DMM2ZaGjJLrO30ccud/LpihbuG8eivDyAe+NFBXVP6q7xbmPq9yi1dzBGG7uK6/tAJzpu05YCaxzMukeDgemaL8ihTHpI+Qom+4OJpVpG5HEHfRMfD8XDmPITMipCLpqHi643d1kZXeP68t1k6g6WdRK5XvagwSW3dvNy97Bd8Y36qEwkWUwRrmJWx7Sop4wFQrYDReb/4aRKzC1I7pDAg6/irQ6JBN76CKmcw+E/Is8mnDwP2cPlkj9CbIfFex5Pd44AwKb2Wl3wJ/pRCfkHrDAJkfpgZ1MnBOODwNE+RtnoZbVlwtPrEpuiI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac962c44-23e8-4f44-bba8-08dcf992b54a
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 09:59:28.3140
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eNjY5aarGsKXZwanr9QYOKEocH+ih9CbhaebZLbdn1vBIfcWIrAWuu6Sp0uElr7hjiFBOmOD9qEzaGDSluE/uQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4708
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-31_01,2024-10-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410310075
+X-Proofpoint-ORIG-GUID: TjESwjearFWxhmq77eSvVVH5aaq6DR01
+X-Proofpoint-GUID: TjESwjearFWxhmq77eSvVVH5aaq6DR01
 
-On Tue, Oct 29, 2024 at 11:57:16AM +0100, Hans Verkuil wrote:
-> On 10/28/24 20:58, Sean Young wrote:
-> > On Sun, Oct 13, 2024 at 12:39:32AM +0100, linux@treblig.org wrote:
-> >> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >>
-> >> cx18_reset_ir_gpio() has been unused in tree since 2009
-> >> commit eefe1010a465 ("V4L/DVB (10759): cx18: Convert GPIO connected
-> >> functions to act as v4l2_subdevices")
-> >>
-> >> It has a comment saying it's exported for use by 'lirc_pvr150' but I don't
-> >> see any sign of it in the lirc git, and I see it removed support
-> >> for lirc_i2c.c 'Flavors of the Hauppage PVR-150...' in 2014.
-> >>
-> >> Remove it.
-> > 
-> > Interesting, I can't find any call site either. The ir-i2c-kbd driver could
-> > potentially use this, but it would to know the correct v4l2_dev for the
-> > device; also there are devices other than the cx18 which use the same IR
-> > module, so they would not have a way to force a reset or need a different
-> > mechanism (e.g. ivtv driver).
-> > 
-> > So I don't understand how this could be wired up or how it was ever wired
-> > up.
-> > 
-> > This could be great because if done correctly, we could remove the
-> > VIDIOC_INT_RESET ioctl completely. Then again, I don't know how often the
-> > device hangs. With the current driver the IR module I don't know of any
-> > hangs -- maybe the ioctl could just go anyway.
-> > 
-> > 
-> > Sean
-> > 
-> >>
-> >> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> >> ---
-> >>  drivers/media/pci/cx18/cx18-gpio.c | 15 ---------------
-> >>  drivers/media/pci/cx18/cx18-gpio.h |  1 -
-> >>  2 files changed, 16 deletions(-)
-> >>
-> >> diff --git a/drivers/media/pci/cx18/cx18-gpio.c b/drivers/media/pci/cx18/cx18-gpio.c
-> >> index c85eb8d25837..485a6cbeb15a 100644
-> >> --- a/drivers/media/pci/cx18/cx18-gpio.c
-> >> +++ b/drivers/media/pci/cx18/cx18-gpio.c
-> >> @@ -305,21 +305,6 @@ int cx18_gpio_register(struct cx18 *cx, u32 hw)
-> >>  	return v4l2_device_register_subdev(&cx->v4l2_dev, sd);
-> >>  }
-> >>  
-> >> -void cx18_reset_ir_gpio(void *data)
-> >> -{
-> >> -	struct cx18 *cx = to_cx18(data);
-> >> -
-> >> -	if (cx->card->gpio_i2c_slave_reset.ir_reset_mask == 0)
-> >> -		return;
-> >> -
-> >> -	CX18_DEBUG_INFO("Resetting IR microcontroller\n");
-> >> -
-> >> -	v4l2_subdev_call(&cx->sd_resetctrl,
-> >> -			 core, reset, CX18_GPIO_RESET_Z8F0811);
-> 
-> Ah, this calls core.reset. But VIDIOC_INT_RESET in cx18_default() does the
-> same (actually, it calls this for all subdevs). So dropping this code should
-> be fine since you can still do the same thing with cx18-ctl --reset.
+bio_split() error handling could be improved as follows:
+- Instead of returning NULL for an error - which is vague - return a
+  PTR_ERR, which may hint what went wrong.
+- Remove BUG_ON() calls - which are generally not preferred - and instead
+  WARN and pass an error code back to the caller. Many callers of
+  bio_split() don't check the return code. As such, for an error we would
+  be getting a crash still from an invalid pointer dereference.
 
-That's true.
+Most bio_split() callers don't check the return value. However, it could
+be argued the bio_split() calls should not fail. So far I have just
+fixed up the md RAID code to handle these errors, as that is my interest
+now.
 
-> This function was probably used a long time ago by lirc_pvr150, but I can't
-> even find the source for that anymore. I assume it has a modern replacement.
+The motivator for this series was initial md RAID atomic write support in
+https://lore.kernel.org/linux-block/20241030094912.3960234-1-john.g.garry@oracle.com/T/#m5859ee900de8e6554d5bb027c0558f0147c32df8
 
-ir-kbd-i2c.c handles this now, both receiving and sending. I've done some work
-on this driver and done a fair amount of testing. It certainly is possible
-to make the firmware hang - by sending it the wrong commands.
+There I wanted to ensure that we don't split an atomic write bio, and it
+made more sense to handle this in bio_split() (instead of the bio_split()
+caller).
 
-With the current driver I've never seen any hangs or heard of reports of hangs.
+Based on 133008e84b99 (block/for-6.13/block) blk-integrity: remove
+seed for user mapped buffers
 
-> This is the original commit adding this function:
-> 
-> commit 02fa272fcb6edda9059d6dbaab20dfe919f4f4d2
-> Author: Andy Walls <awalls@radix.net>
-> Date:   Sun Jul 13 19:30:15 2008 -0300
-> 
->     V4L/DVB (8332): cx18: Suport external reset of the Z8F0811 IR controller on HVR-1600 for lirc
-> 
->     cx18: added in cx18_ir_reset_gpio function for lirc_pvr150 like module.  Also
->     added the ability to reset the IR chip via ioctl like ivtv.  This needs the
->     mutex to protect gpio_dir and gpio_val in struct cx18 as gpio changes can
->     come from a few different asynchronous sources now.
-> 
->     Signed-off-by: Andy Walls <awalls@radix.net>
->     Signed-off-by: Mauro Carvalho Chehab <mchehab@infradead.org>
-> 
-> Perhaps Andy remembers how frequent the lock ups were.
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> >> -}
-> >> -EXPORT_SYMBOL(cx18_reset_ir_gpio);
+Changes since v2:
+- Drop "block: Use BLK_STS_OK in bio_init()" change (Christoph)
+- Use proper rdev indexing in raid10_write_request() (Kuai)
+- Decrement rdev nr_pending in raid1 read error path (Kuai)
+- Add RB tags from Christoph, Johannes, and Kuai (thanks!)
 
-So I've been looking everywhere including the lirc cvs repo, and I can't where 
-this function is used. Looking at the history with cvs is awful of course,
-so I may have missed something.
+Changes since RFC:
+- proper handling to end the raid bio in all cases, and also pass back
+  proper error code (Kuai)
+- Add WARN_ON_ERROR in bio_split() (Johannes, Christoph)
+- Add small patch to use BLK_STS_OK in bio_init()
+- Change bio_submit_split() error path (Christoph)
 
-I think since we don't know of any lockups and we don't know of any users,
-we can safely remove the function, i.e. let's apply this patch.
+John Garry (6):
+  block: Rework bio_split() return value
+  block: Error an attempt to split an atomic write in bio_split()
+  block: Handle bio_split() errors in bio_submit_split()
+  md/raid0: Handle bio_split() errors
+  md/raid1: Handle bio_split() errors
+  md/raid10: Handle bio_split() errors
 
+ block/bio.c                 | 14 +++++++----
+ block/blk-crypto-fallback.c |  2 +-
+ block/blk-merge.c           | 15 ++++++++----
+ drivers/md/raid0.c          | 12 ++++++++++
+ drivers/md/raid1.c          | 33 ++++++++++++++++++++++++--
+ drivers/md/raid10.c         | 47 ++++++++++++++++++++++++++++++++++++-
+ 6 files changed, 110 insertions(+), 13 deletions(-)
 
-The reason I was looking for users of this function is that I thought it
-would be nice if ir-kbd-i2c could use this function directly, and therefore
-the cx18-ctl --reset is no longer needed (and no need for the ioctl either).
+-- 
+2.31.1
 
-Something for another day.
-
-
-Sean
 
