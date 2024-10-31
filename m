@@ -1,102 +1,79 @@
-Return-Path: <linux-kernel+bounces-390696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130699B7D77
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:00:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1079B7D79
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCBFF2810AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:59:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245122811A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015C11A2567;
-	Thu, 31 Oct 2024 14:59:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5484D19F416;
-	Thu, 31 Oct 2024 14:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233CA1A3056;
+	Thu, 31 Oct 2024 14:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVd5Ixm6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8316319D899
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386782; cv=none; b=Bkkf0JIb4NlzDnB8P6fXDLPqv/BUMg/XH1Za2CfVaV1CulDIb52ZLulLf3/G/ZBLGVWjQ1ATrpIxNLNP6DGZzxlf1xEy+k0V2DfVAG7W0QNjvqJSL0nVdtq6eK1d5+5aBU18ea02xeBZt6DoC8jxiu3ZkNY8v2mk03gB3BXTFW4=
+	t=1730386788; cv=none; b=QhwuTrSCcDkAwm6jk9IRGgZG11+LxYFM6HuPcmp0tu2UPIb2tD7Uw9Ph5JlXNQ6LuUOf+usKjmLsyFfU5t0ZmUPo27oXIr/vB78ZfQD5TGCwaB7D7fnw2CDcqSiC3xvGpYO0gsVSrhTysP8sl5CbfwNbE7ublcJjxxIfLDoEtfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386782; c=relaxed/simple;
-	bh=bZbMDzCl2ajV0uKqlXS0XAIIzVATrstjD9UlfB5hl+A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VdCd0KO7qeF3+d9pwGcZAVpAD3b+TG9zorqHlAIyIRDS2NdBuRmd1pD0nf9Icg4b1Ep5WkadQXf69CB0wf72GHjo1R3Zl6L31RDPJzX7UdQucYblfbRq2WqqY90pmmyKaXzarFN+dk4BQE+jOxXtGBT9M+FES0TQlzo+CyP9Vuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E590F1063;
-	Thu, 31 Oct 2024 08:00:07 -0700 (PDT)
-Received: from [10.1.32.17] (e127648.arm.com [10.1.32.17])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C70C3F73B;
-	Thu, 31 Oct 2024 07:59:35 -0700 (PDT)
-Message-ID: <a6bb15d0-7ac9-4a32-93a7-ea7e3c5ffe9e@arm.com>
-Date: Thu, 31 Oct 2024 14:59:34 +0000
+	s=arc-20240116; t=1730386788; c=relaxed/simple;
+	bh=FFmQ1JHNHn/xiIla3dEgbhTtdnSwKyO09XwWOiUvx4E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KahAbKnjeDyf6cqy9+fxAZJQZrITozEYWhbAKtzP2zmdjmoTspgwL8Rpem7OUpE6o9DnH5IoOm4QasyRmGlTxpVMgUqdEdV1lRx6VH0OcYyjRzjMzgG7ZYaMWlbAGQY/cwqWAddVXUy9GBVzAWl0ZAtCQzFgQqtSG8NhYVM+rqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVd5Ixm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5166DC4FF63;
+	Thu, 31 Oct 2024 14:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730386788;
+	bh=FFmQ1JHNHn/xiIla3dEgbhTtdnSwKyO09XwWOiUvx4E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=PVd5Ixm6Ch1TJHLQJ1QOdA/ma0AT3rq+6oymJLflYH5rfWuR7rgmZJ7vHYhSUNs7E
+	 wb71IcWvMyZC1TMqxUXHK5XxmCzOTfBOW2XFd0HuNox5rtuqW3LOFHT+EJRiW59DW/
+	 sU7D8gRM6AefvzTnzpeY/B8mI0QVbaqpWqlM7g3V9SkG00aUMXQytIX9tUHkuNL857
+	 dNZRMp5Mw048WgEin457LHlrs+jcPb2QafhFzaG+ZaORy+ssHfnfyniyiF5Vic7lvD
+	 1MlAQehvoskep2aTWlcp3UZ7uUIV05Xu50cvUkPoFGQt32EnrPIN4lNVheUh9jv60D
+	 UqYiYruBF/1tA==
+From: Lee Jones <lee@kernel.org>
+To: linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee@kernel.org>
+In-Reply-To: <20241016130023.872277-1-andriy.shevchenko@linux.intel.com>
+References: <20241016130023.872277-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: (subset) [PATCH v1 1/1] mfd: ipaq-micro: Add missing break for
+ the default case
+Message-Id: <173038678706.1764347.4740781144807850497.b4-ty@kernel.org>
+Date: Thu, 31 Oct 2024 14:59:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2] cpufreq/schedutil: Only bind threads if needed
-From: Christian Loehle <christian.loehle@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Qais Yousef
- <qyousef@layalina.io>, Vincent Guittot <vincent.guittot@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-pm <linux-pm@vger.kernel.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Pierre Gondois <pierre.gondois@arm.com>, Juri Lelli <juri.lelli@redhat.com>
-References: <a4a70646-98a4-4b85-955e-62d66ba68927@arm.com>
- <CAJZ5v0jpdZBX5tJgdiOvEZbdRJ0kXxT6+uX=s++NG=dNrCMntQ@mail.gmail.com>
- <e09f3682-ee0c-4abc-b387-5358bbdf6e79@arm.com>
- <b60bd51b-14e9-4b5c-adfe-bf546691a94d@arm.com>
-Content-Language: en-US
-In-Reply-To: <b60bd51b-14e9-4b5c-adfe-bf546691a94d@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On 10/24/24 10:13, Christian Loehle wrote:
-> On 10/7/24 11:42, Christian Loehle wrote:
->> On 10/1/24 19:31, Rafael J. Wysocki wrote:
->>> On Fri, Sep 27, 2024 at 10:59 AM Christian Loehle
->>> <christian.loehle@arm.com> wrote:
->>>>
->>>> Remove the unconditional binding of sugov kthreads to the affected CPUs
->>>> if the cpufreq driver indicates that updates can happen from any CPU.
->>>> This allows userspace to set affinities to either save power (waking up
->>>> bigger CPUs on HMP can be expensive) or increasing performance (by
->>>> letting the utilized CPUs run without preemption of the sugov kthread).
->>>>
->>>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->>>
->>> Acked-by: Rafael J. Wysocki <rafael@kernel.org>
->>>
->>> and I'm assuming that this will go in via tip.
->>
->> Peter, is that fine with you?
->>
->> @Juri: I didn't add your (somewhat implied?) ACK on v2, so I'd be happy to
->> get it on the dl_task_check_affinity() part.
->>
+On Wed, 16 Oct 2024 16:00:23 +0300, Andy Shevchenko wrote:
+> Even default case should have a break statement to make code robust
+> against changes (e.g., adding a case after the default one).
 > 
-> Peter,
-> gentle ping on this.
-> Thank you.
+> Add missing break for the default case.
+> 
+> 
 
-Hi Peter,
-Another gentle ping.
+Applied, thanks!
 
-The accumulated ACKs are:
+[1/1] mfd: ipaq-micro: Add missing break for the default case
+      commit: 3d1c3272a80952617158a9149bebcebb4463a4fd
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
+--
+Lee Jones [李琼斯]
 
-Regards,
-Christian
 
