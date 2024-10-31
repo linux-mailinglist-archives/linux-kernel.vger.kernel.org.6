@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-390031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E419B74B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:49:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297BF9B74B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:48:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0301F24D34
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586DF1C22072
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD9B146D59;
-	Thu, 31 Oct 2024 06:49:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA870146D6E;
+	Thu, 31 Oct 2024 06:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMXSXAm8"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C0A14658C
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D2B282F0;
+	Thu, 31 Oct 2024 06:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730357355; cv=none; b=UHyMPnEG/7EulC0B9BknbAVXulOFcDHTmZNNMrEHmisL5dRxtrsPoILJa4Dn2Xx49+vReaq8xVkmbxufBfmokXcHIgBjYi8MmFbzvGdNQ00D2kNa7OFnh52jNgv6HjrGWOueafwMFunIO6RkX8+BiczwgkYQTkoQ/tQtxz7k30U=
+	t=1730357291; cv=none; b=Uojn/pOQvt8YqAUkRcw5dy13vDbdaSx9cDzDO58nGwxQ8y2J+UMTXVecIQWl4isUNxH+++v1S11DQs62faOejcU49ooNxeoUfyybYmub2XB5omuajNxosZSi5wpo5/vXcUULzEwZtVvFD7KYw9ELm3vlrowe0y+hi6szVE3+hDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730357355; c=relaxed/simple;
-	bh=QRqzZoAa+uJkjRdmaiG2qG8eeoWvvqL+ID5dorhR7mA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HtV5cuhQQUqJDHGIGYwVN59AaxxhQ650Trewz0iey9G0VtSY2WPuyadJwoFhUD/1nE6XcdBVNPDDo0vjxfQg2LO9XTk5MQPQzAPvvfO0pXGDBBoburb6gwFQlJB9kJ17eF2XJ7k0eUagz9KJWdSYKqpwdfDFxzv9yWsv4mZdsF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XfDxg6jNPz1HLfd;
-	Thu, 31 Oct 2024 14:44:39 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id 612E61401F3;
-	Thu, 31 Oct 2024 14:49:09 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 31 Oct
- 2024 14:49:08 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<yi.zhang@huawei.com>, <leo.lilong@huawei.com>, <yangerkun@huawei.com>,
-	<lonuxli.64@gmail.com>
-Subject: [PATCH 2/2] Revert "f2fs: fix to avoid use-after-free in f2fs_stop_gc_thread()"
-Date: Thu, 31 Oct 2024 14:45:53 +0800
-Message-ID: <20241031064553.55283-2-leo.lilong@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241031064553.55283-1-leo.lilong@huawei.com>
-References: <20241031064553.55283-1-leo.lilong@huawei.com>
+	s=arc-20240116; t=1730357291; c=relaxed/simple;
+	bh=Kw8QFxFU1wEHbXD//dpZ7KV5ZDZYB/USspUlkMhmf2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AegpBJBHuYc7glF7Hdeq/4hRWyW4u7WdAUaHLHQ4lvr1PvH4be156LfFlXpFA7mOpMFvpWqMz/CMR2Elg5Hys1I/9frZVrNHf7BDMs+cH5llDG2GWul7Ygf0igh1MsmeCfLmgz51CSaUs6xWuxKOLUA7baQyC5zeqiC9aEjS6p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMXSXAm8; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7181caa08a3so299057a34.0;
+        Wed, 30 Oct 2024 23:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730357288; x=1730962088; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xIujQdPr/P3RSPSwz63VyOAHXFOS9a2kSi46SoQmK/s=;
+        b=BMXSXAm8xMlZ3q/1FCiJRoq/RixHH4X+DQXbzuoiN6TPjfADDzYcJg99V/l+6wTmOl
+         eq2E2Ca6FKIoEaYaTiw0WOLaQ3kVLTzPqpjFb4pMnEzC8bVNVKWfazYEjT2o64P+vOUu
+         qxyVEDVU+rImsOetlGL+q+8V87r1hWIxdNizwk4iRlllXQ2ILKzcXBepTgJsgv/ZPIIe
+         PzLX6Tvnvs6D0onMK0gE5ULBQnjZKgFTUWO+tc8KOPsRyhpEUKOqduuJBdMtIRjMSfD8
+         4I3bKrYdTIOA6u4zxYyFmuOnSwCTCwKeZQohTjkw/kXcPBaTj15yZ/cQTiMZSY2oH20K
+         AxMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730357288; x=1730962088;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xIujQdPr/P3RSPSwz63VyOAHXFOS9a2kSi46SoQmK/s=;
+        b=MGbCJkQ2aIe+fEKuPsYOadeRDZlraeJ6s600BTq1n5ecz+xod1Wv4UJ8lmcr813uoa
+         TPkOIG0HUbov86P6vzUIIY7lHOHBdzeO+rL/qr7R7aZrIXhL246LSL7H3T6P7vWL/pH4
+         yvVMpZHO7LXTwn7U/KYAEqnAZF6+C0xqHKfofYKiLhboox3+dzyul2AJtq2SapuDDcsg
+         TTUsWOHmvcVr4iPaLpoMSfIsxFVOeUw94ISf0idCU+21N1lBIfo8ty62cBs+756yNwEi
+         mQHtLzo4SgbTgVOeUgGNUnlykLayNE7dToyajJoneLDC2M+8F/SQwhbdHzLY8FHldGzZ
+         8RYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCndQg7wwDI/+neewFe+Tz1MwjKodgq4Fr0j9YMZHE782HydFLSE09Kke1tX3VqhcGzLoiDYYYPVFQSts=@vger.kernel.org, AJvYcCVB1JsV789wgqW0MXLINUl+Koq5X3RCjDvV4DzV37r4PEcHDM8teatb/xU1Hym0k5vdV0/hRLFCFTIGuQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbE/aPshv/63sqR1Dg/gYNrUejSQwe3F/tZjOMjNdMZ76QJC3Z
+	Yyl5xzLuHWTkSFFmK0z6C9ZYcBTJDJCm0nqSEVPafIBLNHIGomAq
+X-Google-Smtp-Source: AGHT+IFvZlgdjtoOCLMVGrmQDYsML8yIOrG+sCMD7cqOax3ZfTRL5E7MQV0NjvcEV2lUlLPT1b1h0w==
+X-Received: by 2002:a05:6830:3786:b0:717:f666:9559 with SMTP id 46e09a7af769-718681188e9mr16500167a34.9.1730357288414;
+        Wed, 30 Oct 2024 23:48:08 -0700 (PDT)
+Received: from ?IPV6:2409:40f2:e:4b75:a7f4:68e1:fad8:f425? ([2409:40f2:e:4b75:a7f4:68e1:fad8:f425])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee455a73d2sm558031a12.46.2024.10.30.23.48.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 23:48:08 -0700 (PDT)
+Message-ID: <a4039ca2-6c76-4431-8e27-caebe1a56deb@gmail.com>
+Date: Thu, 31 Oct 2024 12:17:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sound: fix uninit-value in i2s_dma_isr
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241030170829.36161-1-surajsonawane0215@gmail.com>
+ <635f1691-74e9-4e48-8ebf-8e7ce0c6d1e3@sirena.org.uk>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <635f1691-74e9-4e48-8ebf-8e7ce0c6d1e3@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500017.china.huawei.com (7.185.36.126)
 
-This reverts commit c7f114d864ac91515bb07ac271e9824a20f5ed95.
+On 30/10/24 22:44, Mark Brown wrote:
+> On Wed, Oct 30, 2024 at 10:38:29PM +0530, Suraj Sonawane wrote:
+>> Fix an issue detected by the Smatch tool:
+>>
+>> sound/soc/bcm/bcm63xx-pcm-whistler.c:264 i2s_dma_isr()
+>> error: uninitialized symbol 'val_1'.
+>> sound/soc/bcm/bcm63xx-pcm-whistler.c:264 i2s_dma_isr()
+>> error: uninitialized symbol 'val_2'.
+>>
+>> These errors occurred because the variables 'val_1' and 'val_2' are
+>> declared but may not be assigned a value before they are used.
+>> Specifically, if the loop that assigns values to 'val_1' and 'val_2'
+>> does not execute (for example, when 'offlevel' is zero), these
+>> variables remain uninitialized, leading to potential undefined
+>> behavior.
+>>
+>> To resolve this issue, initialize 'val_1' and 'val_2' to 0 at the
+>> point of declaration. This ensures that 'val_1' and 'val_2' have
+>> defined values before they are used in subsequent calculations,
+>> preventing any warnings or undefined behavior in cases where the
+>> loop does not run.
+> 
+> This will shut the warning up, but why are these values valid?  Are we
+> handling the cases where the loops do not execute properly?
 
-The race conditions between concurrent f2fs_stop_gc_thread() calls
-are now protected by a dedicated lock, making the additional s_umount
-lock protection unnecessary. Therefore, revert this patch.
+Thank you for the feedback and your time.
 
-Signed-off-by: Long Li <leo.lilong@huawei.com>
----
- fs/f2fs/f2fs.h  |  2 +-
- fs/f2fs/file.c  | 11 ++---------
- fs/f2fs/super.c |  2 +-
- 3 files changed, 4 insertions(+), 11 deletions(-)
+The uninitialized warning for val_1 and val_2 arises because, in some 
+cases, the offlevel value is zero, and as a result, the loop does not 
+execute, leaving these variables potentially undefined. The subsequent 
+code calculates prtd->dma_addr_next using val_1 + val_2, so it's 
+necessary to have val_1 and val_2 initialized to a known value, even 
+when the loop does not run.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7ae1e2a4789f..2143604ce416 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3522,7 +3522,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- int f2fs_truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
- void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count);
- int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
--						bool readonly, bool need_lock);
-+							bool readonly);
- int f2fs_precache_extents(struct inode *inode);
- int f2fs_fileattr_get(struct dentry *dentry, struct fileattr *fa);
- int f2fs_fileattr_set(struct mnt_idmap *idmap,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 75a8b22da664..5d7b4fdae9c4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2318,7 +2318,7 @@ static int f2fs_ioc_abort_atomic_write(struct file *filp)
- }
- 
- int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
--						bool readonly, bool need_lock)
-+							bool readonly)
- {
- 	struct super_block *sb = sbi->sb;
- 	int ret = 0;
-@@ -2365,19 +2365,12 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 	if (readonly)
- 		goto out;
- 
--	/* grab sb->s_umount to avoid racing w/ remount() */
--	if (need_lock)
--		down_read(&sbi->sb->s_umount);
--
- 	f2fs_stop_gc_thread(sbi);
- 	f2fs_stop_discard_thread(sbi);
- 
- 	f2fs_drop_discard_cmd(sbi);
- 	clear_opt(sbi, DISCARD);
- 
--	if (need_lock)
--		up_read(&sbi->sb->s_umount);
--
- 	f2fs_update_time(sbi, REQ_TIME);
- out:
- 
-@@ -2414,7 +2407,7 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 		}
- 	}
- 
--	ret = f2fs_do_shutdown(sbi, in, readonly, true);
-+	ret = f2fs_do_shutdown(sbi, in, readonly);
- 
- 	if (need_drop)
- 		mnt_drop_write_file(filp);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 47a15050ea9c..a720fb9ef196 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2569,7 +2569,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 
- static void f2fs_shutdown(struct super_block *sb)
- {
--	f2fs_do_shutdown(F2FS_SB(sb), F2FS_GOING_DOWN_NOSYNC, false, false);
-+	f2fs_do_shutdown(F2FS_SB(sb), F2FS_GOING_DOWN_NOSYNC, false);
- }
- 
- #ifdef CONFIG_QUOTA
--- 
-2.39.2
+Initializing them to zero ensures prtd->dma_addr_next has a defined 
+value without triggering undefined behavior. However, if a zero 
+initialization could cause unintended behavior in dma_addr_next, I could 
+alternatively handle this case by setting dma_addr_next conditionally 
+when offlevel is non-zero.
 
+Let me know if there’s a preferred approach, or if you'd suggest a 
+different initial value for these variables based on the expected use.
 
