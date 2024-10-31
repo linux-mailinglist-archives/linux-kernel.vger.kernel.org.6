@@ -1,179 +1,279 @@
-Return-Path: <linux-kernel+bounces-389760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CC99B70DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:03:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDA79B70E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19A028397F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3231C20F1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8413ECF;
-	Thu, 31 Oct 2024 00:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8AA1862;
+	Thu, 31 Oct 2024 00:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="aYcRNT3l"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YrbfxZ5q"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88CE1E871;
-	Thu, 31 Oct 2024 00:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C346360;
+	Thu, 31 Oct 2024 00:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730333027; cv=none; b=b0JLm7RRRW6infKdshS/DEO8j1jWTtRiMgZqlZJCwSEGA1RoqV5qWrov/r5J3ld99w0yf7otZrBfWy2poOQiQRgIyvXqyQZXuG7O3kUSrZ48zDaJHlsgYAdDKUIarSbbSIqN+b/JVQ9TfcRUQdollzYr5l5dtRBOyO298MfLEpM=
+	t=1730333177; cv=none; b=AHwjfiChXRWLSc+yhvctOvOdXiSDQRH7xQdVsYHnjwG3OEBMucAq5SYOHdJylDt5MFxrx58jfBxn41BkvGc4688FBp7iwbNVSuUkqPxdIeNOy/qp+209PDpZ5U1qk5UiNVI++tkq4BOvZh5zKfgN3FesdvEJYqADszjA+EXWMF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730333027; c=relaxed/simple;
-	bh=xc5ZhhXo/gWIrs2j2AOR39cKfT8DQtAKCu+KIkXurXA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SyilFSLySRGoWxBHSRWE0SQP9AjWLFyDBD4ml8A3iPjU/vpNNpkyqIWBm88trJkYOBjgf8xS2PQmYN/jJy5jHdv3bBNTSHY+sCHlHCiZgdT+4N9mjP4q25q59Cc2U19StLH5stCXznFBiBL+Bs8Nfh2ZqXRZFto5siO2jv15Nns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=aYcRNT3l; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1730333022;
-	bh=xc5ZhhXo/gWIrs2j2AOR39cKfT8DQtAKCu+KIkXurXA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=aYcRNT3lml8xgiJsfP5jRciAzTh4OloBLCinNRvj569OU5RdJfXowZFVzIuxPymyh
-	 RDyrevHTnjTJ27lML1OaqXBxhdpzO6iCkf51kyw0Xud2/IVdQc81CDzB+eMS3p/pIP
-	 IflWDu4NJdcO42e0vHX6GKO9Mo5c5cGQxGuKbyG7wfRJuwWo/pT0oZRrmrRZBtZVtj
-	 s7LIXLmO4/zDPohg6NCujM75c6Rv5/xxRh6DXlC4IZKGXMKHVzZ7fQ0zRxDVNhq8gx
-	 SQ156ib5ANwcNM/4P+Y/GdzFmtRV3EN3SUhkNNT4URKk1qql2X71b6dfx9OabDTHjs
-	 062bpRRwDEvaQ==
-Received: from [192.168.68.112] (ppp14-2-95-239.adl-apt-pir-bras31.tpg.internode.on.net [14.2.95.239])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 2BCE06A536;
-	Thu, 31 Oct 2024 08:03:41 +0800 (AWST)
-Message-ID: <f7148ed6d4ef835d60fd1aa7141b5f0a9cb69eff.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v3 2/2] watchdog: aspeed: Add support for SW restart
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, patrick@stwcx.xyz, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
- wim@linux-watchdog.org, linux@roeck-us.net,
- linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org,  linux-watchdog@vger.kernel.org
-Cc: Peter.Yin@quantatw.com, Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
-  DELPHINE_CHIU@wiwynn.com, bmc-sw@aspeedtech.com,
- chnguyen@amperecomputing.com
-Date: Thu, 31 Oct 2024 10:33:40 +1030
-In-Reply-To: <20241030104717.168324-3-chin-ting_kuo@aspeedtech.com>
-References: <20241030104717.168324-1-chin-ting_kuo@aspeedtech.com>
-	 <20241030104717.168324-3-chin-ting_kuo@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1730333177; c=relaxed/simple;
+	bh=VgqGqBWzQNnoOa7tSUK/E3WohvnlLcWAeqAyQDnlsq4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r+fX/kZEEzqg/Sa9YW2eBagje5CT6hpdDlLXBbn07xwROFtkQ+SJf0kHojoQgXUKnwrVjLTNvwMTx6Db0iC9xRxYKUxBrJPaDTRunkSGxXqN6uIoPJRC0dVrc7wpRvWadlRViOCTHiyh+n//GRa66i2R1KlTFTDqNa/3Mlk3iZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YrbfxZ5q; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDHvvr027500;
+	Thu, 31 Oct 2024 00:06:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Xgt8vpa5ZkFXfZJU5MN+ra
+	pPRoKRHw0wEGUMzYQCp6A=; b=YrbfxZ5q84c0Ygo3qSBSzhKOR4ZnmNcqKjBMvg
+	RN+gDyNKQXcpdCpUH4uqGp8kq1W1GKm+O7QRH1CFQLLSJYxHXX7/sKd+/tKo9aE+
+	h+c4JwtOzPRt3gpTTHhZnsMj6Fg/mL12cbSj+rrdXFlnmuDaCRvPfscYk/mpXO7y
+	MX+a3IU0EjUAU2cfqllnBPi+oIbspFz2hbM685/FEum2urXwpRqca5pkBt7K8E6l
+	2kPm+ENfkoCWNDHxIg4EtzCk9w6oDZH7m/IM8PdzrF6mc0YQKMwqHRo93WioT5Z6
+	FD/hUtNY4gLhr9r9NLl00sW0IX0x+iVS6kixae/sJsRYSH3Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p350fs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 00:06:04 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49V063hq022882
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 00:06:03 GMT
+Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 30 Oct 2024 17:06:01 -0700
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+To: <kvalo@kernel.org>
+CC: <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Miaoqing
+ Pan" <quic_miaoqing@quicinc.com>
+Subject: [PATCH] wifi: ath11k: add support for QCA6698AQ
+Date: Thu, 31 Oct 2024 08:05:41 +0800
+Message-ID: <20241031000541.3331606-1-quic_miaoqing@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -DTfQI27SQ8japcyAzuH5NsxGvEl41qY
+X-Proofpoint-ORIG-GUID: -DTfQI27SQ8japcyAzuH5NsxGvEl41qY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300182
 
-T24gV2VkLCAyMDI0LTEwLTMwIGF0IDE4OjQ3ICswODAwLCBDaGluLVRpbmcgS3VvIHdyb3RlOgo+
-IFNpbmNlIEFTVDI2MDAsIGV4Y2VwdCBmb3IgSFcgV0RUIGNvdW50ZXIgdGltZW91dCwgSFcgV0RU
-Cj4gcmVzZXQgY2FuIGFsc28gYmUgdHJpZ2dlcmVkIGJ5IGp1c3QgY2luZmlndXJpbmcgc29tZQo+
-IEhXIHJlZ2lzdGVycyBieSBTVyBkaXJlY3RseS4gV2UgbmFtZWQgaXQgIlNXIHJlc3RhcnQiLgo+
-IEFsdGhvdWdoIGl0IGlzICJTVyIgcmVzdGFydCwgaXRzIG1lY2hhbmlzbSBpcyBpbXBsZW1lbnRl
-ZAo+IGJ5IEhXLgo+IAo+IE9yaWdpbmFsbHksIHN5c3RlbSBjYW4gb25seSBrbm93IGl0IGlzIHJl
-c2V0IGJ5IFdEVAo+IHRocm91Z2ggYSByZXNldCBmbGFnLiBIb3dldmVyLCBzaW5jZSBBU1QyNjAw
-LCBTVyBjYW4KPiB0cmlnZ2VyIHRoZSByZXNldCBldmVudCBjb25zY2lvdXNseSBhbmQgZGlyZWN0
-bHkgd2l0aG91dAo+IHdhaXQgZm9yIFdEVCB0aW1lb3V0LiBXRFQgY291bnRlciBpcyBub3QgZW5h
-YmxlZCB3aGVuCj4gU1cgcmVzdGFydCBpcyBhZG9wdGVkLiBBZnRlciB0aGF0LCBhbiBpbmRlcGVu
-ZGVudCByZXNldAo+IGV2ZW50IGZsYWcgd2lsbCBiZSBzZXQgYWZ0ZXIgc3lzdGVtaXMgcmVzZXQg
-YnkgU1cuCj4gCj4gU2lnbmVkLW9mZi1ieTogQ2hpbi1UaW5nIEt1byA8Y2hpbi10aW5nX2t1b0Bh
-c3BlZWR0ZWNoLmNvbT4KPiAtLS0KPiDCoGRyaXZlcnMvd2F0Y2hkb2cvYXNwZWVkX3dkdC5jIHwg
-NDAKPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+IMKgMSBmaWxlIGNoYW5n
-ZWQsIDQwIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy93YXRjaGRvZy9h
-c3BlZWRfd2R0LmMKPiBiL2RyaXZlcnMvd2F0Y2hkb2cvYXNwZWVkX3dkdC5jCj4gaW5kZXggYWRk
-NzZiZTNlZTQyLi4xZTk4MDhkNDIwMjMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy93YXRjaGRvZy9h
-c3BlZWRfd2R0LmMKPiArKysgYi9kcml2ZXJzL3dhdGNoZG9nL2FzcGVlZF93ZHQuYwo+IEBAIC00
-Miw2ICs0Miw5IEBAIE1PRFVMRV9QQVJNX0RFU0Mobm93YXlvdXQsICJXYXRjaGRvZyBjYW5ub3Qg
-YmUKPiBzdG9wcGVkIG9uY2Ugc3RhcnRlZCAoZGVmYXVsdD0iCj4gwqAKPiDCoCNkZWZpbmUgV0RU
-X1JFR19PRkZTRVRfTUFTS8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDB4MDAwMDBmZmYKPiDCoAo+
-ICsvKiBXRFQgYmVoYXZpb3IgY29udHJvbCBmbGFnICovCj4gKyNkZWZpbmUgV0RUX1JFU1RBUlRf
-U1lTVEVNX1NXX1NVUFBPUlTCoMKgMHgwMDAwMDAwMQo+ICsKPiDCoHN0cnVjdCBhc3BlZWRfd2R0
-X3NjdSB7Cj4gwqDCoMKgwqDCoMKgwqDCoGNvbnN0IGNoYXIgKmNvbXBhdGlibGU7Cj4gwqDCoMKg
-wqDCoMKgwqDCoHUzMiByZXNldF9zdGF0dXNfcmVnOwo+IEBAIC01NSw2ICs1OCw3IEBAIHN0cnVj
-dCBhc3BlZWRfd2R0X2NvbmZpZyB7Cj4gwqDCoMKgwqDCoMKgwqDCoHUzMiBpcnFfc2hpZnQ7Cj4g
-wqDCoMKgwqDCoMKgwqDCoHUzMiBpcnFfbWFzazsKPiDCoMKgwqDCoMKgwqDCoMKgdTMyIHJlZ19z
-aXplOwo+ICvCoMKgwqDCoMKgwqDCoHUzMiBmbGFnczsKCldoeSBhZGQgdGhlIGZsYWdzIG1lbWJl
-ciByYXRoZXIgdGhhbiBjaGFuZ2UgdGhlIHJlc3RhcnQgY2FsbGJhY2sgZm9yCnRoZSAyNjAwPyBU
-aGUgbGF0dGVyIHNlZW1zIG1vcmUgZGlyZWN0IHRvIG1lLgoKPiDCoMKgwqDCoMKgwqDCoMKgc3Ry
-dWN0IGFzcGVlZF93ZHRfc2N1IHNjdTsKPiDCoH07Cj4gwqAKPiBAQCAtNzEsNiArNzUsNyBAQCBz
-dGF0aWMgY29uc3Qgc3RydWN0IGFzcGVlZF93ZHRfY29uZmlnCj4gYXN0MjQwMF9jb25maWcgPSB7
-Cj4gwqDCoMKgwqDCoMKgwqDCoC5pcnFfc2hpZnQgPSAwLAo+IMKgwqDCoMKgwqDCoMKgwqAuaXJx
-X21hc2sgPSAwLAo+IMKgwqDCoMKgwqDCoMKgwqAucmVnX3NpemUgPSAweDIwLAo+ICvCoMKgwqDC
-oMKgwqDCoC5mbGFncyA9IDAsCj4gwqDCoMKgwqDCoMKgwqDCoC5zY3UgPSB7Cj4gwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAuY29tcGF0aWJsZSA9ICJhc3BlZWQsYXN0MjQwMC1zY3Ui
-LAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLnJlc2V0X3N0YXR1c19yZWcgPSBB
-U1QyNDAwX1NDVV9TWVNfUkVTRVRfU1RBVFVTLAo+IEBAIC04NSw2ICs5MCw3IEBAIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgYXNwZWVkX3dkdF9jb25maWcKPiBhc3QyNTAwX2NvbmZpZyA9IHsKPiDCoMKg
-wqDCoMKgwqDCoMKgLmlycV9zaGlmdCA9IDEyLAo+IMKgwqDCoMKgwqDCoMKgwqAuaXJxX21hc2sg
-PSBHRU5NQVNLKDMxLCAxMiksCj4gwqDCoMKgwqDCoMKgwqDCoC5yZWdfc2l6ZSA9IDB4MjAsCj4g
-K8KgwqDCoMKgwqDCoMKgLmZsYWdzID0gMCwKPiDCoMKgwqDCoMKgwqDCoMKgLnNjdSA9IHsKPiDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC5jb21wYXRpYmxlID0gImFzcGVlZCxhc3Qy
-NTAwLXNjdSIsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAucmVzZXRfc3RhdHVz
-X3JlZyA9IEFTVDI0MDBfU0NVX1NZU19SRVNFVF9TVEFUVVMsCj4gQEAgLTk5LDYgKzEwNSw3IEBA
-IHN0YXRpYyBjb25zdCBzdHJ1Y3QgYXNwZWVkX3dkdF9jb25maWcKPiBhc3QyNjAwX2NvbmZpZyA9
-IHsKPiDCoMKgwqDCoMKgwqDCoMKgLmlycV9zaGlmdCA9IDAsCj4gwqDCoMKgwqDCoMKgwqDCoC5p
-cnFfbWFzayA9IEdFTk1BU0soMzEsIDEwKSwKPiDCoMKgwqDCoMKgwqDCoMKgLnJlZ19zaXplID0g
-MHg0MCwKPiArwqDCoMKgwqDCoMKgwqAuZmxhZ3MgPSBXRFRfUkVTVEFSVF9TWVNURU1fU1dfU1VQ
-UE9SVCwKPiDCoMKgwqDCoMKgwqDCoMKgLnNjdSA9IHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoC5jb21wYXRpYmxlID0gImFzcGVlZCxhc3QyNjAwLXNjdSIsCj4gwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAucmVzZXRfc3RhdHVzX3JlZyA9IEFTVDI2MDBfU0NVX1NZ
-U19SRVNFVF9TVEFUVVMsCj4gQEAgLTEzNiw2ICsxNDMsMTEgQEAgTU9EVUxFX0RFVklDRV9UQUJM
-RShvZiwgYXNwZWVkX3dkdF9vZl90YWJsZSk7Cj4gwqAjZGVmaW5lwqDCoCBXRFRfQ0xFQVJfVElN
-RU9VVF9BTkRfQk9PVF9DT0RFX1NFTEVDVElPTsKgwqDCoMKgQklUKDApCj4gwqAjZGVmaW5lIFdE
-VF9SRVNFVF9NQVNLMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMHgxYwo+IMKgI2Rl
-ZmluZSBXRFRfUkVTRVRfTUFTSzLCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDB4MjAK
-PiArI2RlZmluZSBXRFRfU1dfUkVTRVRfQ1RSTMKgwqDCoMKgwqDCoDB4MjQKPiArI2RlZmluZcKg
-wqAgV0RUX1NXX1JFU0VUX0NPVU5UX0NMRUFSwqDCoMKgwqDCoDB4REVBRERFQUQKPiArI2RlZmlu
-ZcKgwqAgV0RUX1NXX1JFU0VUX0VOQUJMRcKgwqAweEFFRURGMTIzCj4gKyNkZWZpbmUgV0RUX1NX
-X1JFU0VUX01BU0sxwqDCoMKgwqDCoDB4MjgKPiArI2RlZmluZSBXRFRfU1dfUkVTRVRfTUFTSzLC
-oMKgwqDCoMKgMHgyYwo+IMKgCj4gwqAvKgo+IMKgICogV0RUX1JFU0VUX1dJRFRIIGNvbnRyb2xz
-IHRoZSBjaGFyYWN0ZXJpc3RpY3Mgb2YgdGhlIGV4dGVybmFsCj4gcHVsc2UgKGlmCj4gQEAgLTI1
-NSwxMCArMjY3LDMxIEBAIHN0YXRpYyBpbnQgYXNwZWVkX3dkdF9zZXRfcHJldGltZW91dChzdHJ1
-Y3QKPiB3YXRjaGRvZ19kZXZpY2UgKndkZCwKPiDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIDA7Cj4g
-wqB9Cj4gwqAKPiArc3RhdGljIHZvaWQgYXNwZWVkX3dkdF9zd19yZXNldChzdHJ1Y3Qgd2F0Y2hk
-b2dfZGV2aWNlICp3ZGQpCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgYXNwZWVkX3dkdCAq
-d2R0ID0gdG9fYXNwZWVkX3dkdCh3ZGQpOwo+ICvCoMKgwqDCoMKgwqDCoHUzMiBjdHJsID0gV0RU
-X0NUUkxfUkVTRVRfTU9ERV9TT0MgfAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIFdEVF9DVFJMX1JFU0VUX1NZU1RFTTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgd3JpdGVsKGN0
-cmwsIHdkdC0+YmFzZSArIFdEVF9DVFJMKTsKPiArwqDCoMKgwqDCoMKgwqB3cml0ZWwoV0RUX1NX
-X1JFU0VUX0NPVU5UX0NMRUFSLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3ZHQtPmJh
-c2UgKyBXRFRfU1dfUkVTRVRfQ1RSTCk7Cj4gK8KgwqDCoMKgwqDCoMKgd3JpdGVsKFdEVF9TV19S
-RVNFVF9FTkFCTEUsIHdkdC0+YmFzZSArIFdEVF9TV19SRVNFVF9DVFJMKTsKPiArCj4gK8KgwqDC
-oMKgwqDCoMKgLyogc3lzdGVtIG11c3QgYmUgcmVzZXQgaW1tZWRpYXRlbHkgKi8KPiArwqDCoMKg
-wqDCoMKgwqBtZGVsYXkoMTAwMCk7Cj4gK30KPiArCj4gwqBzdGF0aWMgaW50IGFzcGVlZF93ZHRf
-cmVzdGFydChzdHJ1Y3Qgd2F0Y2hkb2dfZGV2aWNlICp3ZGQsCj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBsb25nIGFj
-dGlvbiwgdm9pZCAqZGF0YSkKPiDCoHsKPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IGFzcGVlZF93
-ZHQgKndkdCA9IHRvX2FzcGVlZF93ZHQod2RkKTsKPiArwqDCoMKgwqDCoMKgwqBjb25zdCBzdHJ1
-Y3QgYXNwZWVkX3dkdF9jb25maWcgKmNmZyA9IHdkdC0+Y2ZnOwo+ICsKPiArwqDCoMKgwqDCoMKg
-wqBpZiAoY2ZnLT5mbGFncyAmIFdEVF9SRVNUQVJUX1NZU1RFTV9TV19TVVBQT1JUKSB7Cj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGFzcGVlZF93ZHRfc3dfcmVzZXQod2RkKTsKPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIDA7Cj4gK8KgwqDCoMKgwqDCoMKg
-fQo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoHdkdC0+Y3RybCAmPSB+V0RUX0NUUkxfQk9PVF9TRUNP
-TkRBUlk7Cj4gwqDCoMKgwqDCoMKgwqDCoGFzcGVlZF93ZHRfZW5hYmxlKHdkdCwgMTI4ICogV0RU
-X1JBVEVfMU1IWiAvIDEwMDApOwo+IEBAIC01MjksNiArNTYyLDEzIEBAIHN0YXRpYyBpbnQgYXNw
-ZWVkX3dkdF9wcm9iZShzdHJ1Y3QKPiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKG5yc3RtYXNrID4gMSkK
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgd3JpdGVsKHJlc2V0X21hc2tbMV0sIHdkdC0+YmFzZSArCj4gV0RUX1JFU0VUX01B
-U0syKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiArCj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmICh3ZHQtPmNmZy0+ZmxhZ3MgJiBXRFRfUkVTVEFSVF9T
-WVNURU1fU1dfU1VQUE9SVCkKClRoaXMgY29uZGl0aW9uIGNvdWxkIGJlIGEgbWF0Y2ggYWdhaW5z
-dCB0aGUgY29tcGF0aWJsZSBpZiB5b3UgZHJvcCB0aGUKZmxhZ3MgbWVtYmVyLgoKT3IsIGFzc3Vt
-aW5nIHRoZSBzb2Z0d2FyZSByZXNldCBtYXNrcyBhcmUgbm90IGFkanVzdGVkIGVsc2V3aGVyZSwg
-bW92ZQp0aGUgY29waWVzIGJlbG93IGludG8gdGhlIGFzdDI2MDAtc3BlY2lmaWMgcmVzdGFydCBj
-YWxsYmFjawppbXBsZW1lbnRhdGlvbj8KCkFuZHJldwoKPiB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZWcgPSByZWFkbCh3ZHQtPmJhc2UgKyBXRFRf
-UkVTRVRfTUFTSzEpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgd3JpdGVsKHJlZywgd2R0LT5iYXNlICsgV0RUX1NXX1JFU0VUX01BU0sxKTsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9IHJlYWRsKHdk
-dC0+YmFzZSArIFdEVF9SRVNFVF9NQVNLMik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqB3cml0ZWwocmVnLCB3ZHQtPmJhc2UgKyBXRFRfU1dfUkVTRVRf
-TUFTSzIpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gwqDCoMKgwqDCoMKg
-wqDCoH0KPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqBpZiAoIW9mX3Byb3BlcnR5X3JlYWRfdTMyKG5w
-LCAiYXNwZWVkLGV4dC1wdWxzZS1kdXJhdGlvbiIsCj4gJmR1cmF0aW9uKSkgewoK
+QCA6698AQ IP core is the same as WCN6855 hw2.1, they share the same
+PCI device ID, the same major and minor version numbers, the same
+register address, and same HAL descriptors, etc. The most significant
+difference is that QCA6698AQ has different RF, IPA, thermal, etc.
+
+Follow the approach done in commit 5dc9d1a55e95 ("wifi: ath11k: add
+support for QCA2066"), enumerate the subversion number to identify the
+specific card.
+
+Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04479-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+
+Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+---
+ drivers/net/wireless/ath/ath11k/core.c | 87 ++++++++++++++++++++++++++
+ drivers/net/wireless/ath/ath11k/core.h |  1 +
+ drivers/net/wireless/ath/ath11k/mhi.c  |  1 +
+ drivers/net/wireless/ath/ath11k/pci.c  |  3 +
+ drivers/net/wireless/ath/ath11k/pcic.c | 13 +++-
+ 5 files changed, 104 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+index be67382c00f6..f8c57c074423 100644
+--- a/drivers/net/wireless/ath/ath11k/core.c
++++ b/drivers/net/wireless/ath/ath11k/core.c
+@@ -803,6 +803,93 @@ static const struct ath11k_hw_params ath11k_hw_params[] = {
+ 			.end = 0x0177ffff,
+ 		},
+ 
++		.tcl_ring_retry = true,
++		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
++		.smp2p_wow_exit = false,
++		.support_fw_mac_sequence = true,
++		.support_dual_stations = true,
++	},
++	{
++		.name = "qca6698aq hw2.1",
++		.hw_rev = ATH11K_HW_QCA6698AQ_HW21,
++		.fw = {
++			.dir = "QCA6698AQ/hw2.1",
++			.board_size = 256 * 1024,
++			.cal_offset = 128 * 1024,
++		},
++		.max_radios = 3,
++		.bdf_addr = 0x4B0C0000,
++		.hw_ops = &wcn6855_ops,
++		.ring_mask = &ath11k_hw_ring_mask_qca6390,
++		.internal_sleep_clock = true,
++		.regs = &wcn6855_regs,
++		.qmi_service_ins_id = ATH11K_QMI_WLFW_SERVICE_INS_ID_V01_QCA6390,
++		.host_ce_config = ath11k_host_ce_config_qca6390,
++		.ce_count = 9,
++		.target_ce_config = ath11k_target_ce_config_wlan_qca6390,
++		.target_ce_count = 9,
++		.svc_to_ce_map = ath11k_target_service_to_ce_map_wlan_qca6390,
++		.svc_to_ce_map_len = 14,
++		.single_pdev_only = true,
++		.rxdma1_enable = false,
++		.num_rxdma_per_pdev = 2,
++		.rx_mac_buf_ring = true,
++		.vdev_start_delay = true,
++		.htt_peer_map_v2 = false,
++
++		.spectral = {
++			.fft_sz = 0,
++			.fft_pad_sz = 0,
++			.summary_pad_sz = 0,
++			.fft_hdr_len = 0,
++			.max_fft_bins = 0,
++			.fragment_160mhz = false,
++		},
++
++		.interface_modes = BIT(NL80211_IFTYPE_STATION) |
++					BIT(NL80211_IFTYPE_AP) |
++					BIT(NL80211_IFTYPE_P2P_DEVICE) |
++					BIT(NL80211_IFTYPE_P2P_CLIENT) |
++					BIT(NL80211_IFTYPE_P2P_GO),
++		.supports_monitor = false,
++		.supports_shadow_regs = true,
++		.idle_ps = true,
++		.supports_sta_ps = true,
++		.coldboot_cal_mm = false,
++		.coldboot_cal_ftm = false,
++		.cbcal_restart_fw = false,
++		.fw_mem_mode = 0,
++		.num_vdevs = 2 + 1,
++		.num_peers = 512,
++		.supports_suspend = true,
++		.hal_desc_sz = sizeof(struct hal_rx_desc_wcn6855),
++		.supports_regdb = true,
++		.fix_l1ss = false,
++		.credit_flow = true,
++		.max_tx_ring = DP_TCL_NUM_RING_MAX_QCA6390,
++		.hal_params = &ath11k_hw_hal_params_qca6390,
++		.supports_dynamic_smps_6ghz = false,
++		.alloc_cacheable_memory = false,
++		.supports_rssi_stats = true,
++		.fw_wmi_diag_event = true,
++		.current_cc_support = true,
++		.dbr_debug_support = false,
++		.global_reset = true,
++		.bios_sar_capa = &ath11k_hw_sar_capa_wcn6855,
++		.m3_fw_support = true,
++		.fixed_bdf_addr = false,
++		.fixed_mem_region = false,
++		.static_window_map = false,
++		.hybrid_bus_type = false,
++		.fixed_fw_mem = false,
++		.support_off_channel_tx = true,
++		.supports_multi_bssid = true,
++
++		.sram_dump = {
++			.start = 0x01400000,
++			.end = 0x0177ffff,
++		},
++
+ 		.tcl_ring_retry = true,
+ 		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
+ 		.smp2p_wow_exit = false,
+diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
+index 09c37e19a168..4764ded58610 100644
+--- a/drivers/net/wireless/ath/ath11k/core.h
++++ b/drivers/net/wireless/ath/ath11k/core.h
+@@ -148,6 +148,7 @@ enum ath11k_hw_rev {
+ 	ATH11K_HW_WCN6750_HW10,
+ 	ATH11K_HW_IPQ5018_HW10,
+ 	ATH11K_HW_QCA2066_HW21,
++	ATH11K_HW_QCA6698AQ_HW21,
+ };
+ 
+ enum ath11k_firmware_mode {
+diff --git a/drivers/net/wireless/ath/ath11k/mhi.c b/drivers/net/wireless/ath/ath11k/mhi.c
+index 6974a551883f..6e45f464a429 100644
+--- a/drivers/net/wireless/ath/ath11k/mhi.c
++++ b/drivers/net/wireless/ath/ath11k/mhi.c
+@@ -398,6 +398,7 @@ int ath11k_mhi_register(struct ath11k_pci *ab_pci)
+ 	case ATH11K_HW_WCN6855_HW20:
+ 	case ATH11K_HW_WCN6855_HW21:
+ 	case ATH11K_HW_QCA2066_HW21:
++	case ATH11K_HW_QCA6698AQ_HW21:
+ 		ath11k_mhi_config = &ath11k_mhi_config_qca6390;
+ 		break;
+ 	default:
+diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
+index be9d2c69cc41..b93f04973ad7 100644
+--- a/drivers/net/wireless/ath/ath11k/pci.c
++++ b/drivers/net/wireless/ath/ath11k/pci.c
+@@ -846,6 +846,9 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+ 				case 0x1019D0E1:
+ 					ab->hw_rev = ATH11K_HW_QCA2066_HW21;
+ 					break;
++				case 0x001e60e1:
++					ab->hw_rev = ATH11K_HW_QCA6698AQ_HW21;
++					break;
+ 				default:
+ 					ab->hw_rev = ATH11K_HW_WCN6855_HW21;
+ 				}
+diff --git a/drivers/net/wireless/ath/ath11k/pcic.c b/drivers/net/wireless/ath/ath11k/pcic.c
+index debe7c5919ef..3fe77310c71f 100644
+--- a/drivers/net/wireless/ath/ath11k/pcic.c
++++ b/drivers/net/wireless/ath/ath11k/pcic.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: BSD-3-Clause-Clear
+ /*
+  * Copyright (c) 2019-2021 The Linux Foundation. All rights reserved.
+- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ #include "core.h"
+@@ -126,6 +126,17 @@ static const struct ath11k_msi_config ath11k_msi_config[] = {
+ 		},
+ 		.hw_rev = ATH11K_HW_QCA2066_HW21,
+ 	},
++	{
++		.total_vectors = 32,
++		.total_users = 4,
++		.users = (struct ath11k_msi_user[]) {
++			{ .name = "MHI", .num_vectors = 3, .base_vector = 0 },
++			{ .name = "CE", .num_vectors = 10, .base_vector = 3 },
++			{ .name = "WAKE", .num_vectors = 1, .base_vector = 13 },
++			{ .name = "DP", .num_vectors = 18, .base_vector = 14 },
++		},
++		.hw_rev = ATH11K_HW_QCA6698AQ_HW21,
++	},
+ };
+ 
+ int ath11k_pcic_init_msi_config(struct ath11k_base *ab)
+-- 
+2.25.1
 
 
