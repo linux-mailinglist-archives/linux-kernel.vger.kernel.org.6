@@ -1,84 +1,134 @@
-Return-Path: <linux-kernel+bounces-390716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76289B7DB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:05:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D858E9B7DB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8546C1F214F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB931F214A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B5B1ADFFE;
-	Thu, 31 Oct 2024 15:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A4B1B5820;
+	Thu, 31 Oct 2024 15:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWX9pe8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rT5xIYSf"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F601A3BDA;
-	Thu, 31 Oct 2024 15:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29DE1A264C;
+	Thu, 31 Oct 2024 15:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386892; cv=none; b=dQ5PDFjAgOWdXqz53eTthLy6+VVn8A7ZVzToCTSgHhrT8XUQ4BB36UXJda0i/lYnBm4aYaQhdfkBCknzifQQQ2p5C5P19sjTzfE++4TdqLGqEtSVa+KZMCWkuGT0gbf9HP/IAjhFhI2VUGNYrvlAt62/3rpMseWW4J0mYnvSFqU=
+	t=1730386917; cv=none; b=YwVxCbQftPxDKeuVC1hxLhxhzkyIf+4xqmZbrsB4GEg1LWpLw30VDQZoEUmFnUrIPbWIHDJDhcg1B+tpEcWJ/2jDxrvHg8OLVvHsc4WR/UjILFEoY5/NuJOZoATNwDszbaZC7o6THJkzJWLo6VR435xt9FCzyGJW41V36+jpvYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386892; c=relaxed/simple;
-	bh=evGkl4OpbxppikKpNtC9am/G1AS6QcQxgBBCserdnjA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tpwcTxhuwLcKPSjnrV1mSDbGG4dBpmfWcRmlLrOLjpyVVPQV+jzti2UnD3qcLnS77pkFp4jGJMbUBfTgEBLkKpAbUV6jgRKoH5Pv/4cDQO5T4Io93gS4Jbt0ShowGIgxsRS0kYrBDQQkm9aRvJ+pTTcICY/5apKM8WWPGOKlj2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWX9pe8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5E6C56860;
-	Thu, 31 Oct 2024 15:01:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730386891;
-	bh=evGkl4OpbxppikKpNtC9am/G1AS6QcQxgBBCserdnjA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mWX9pe8qEReqw5vdbppACcxeBCnRjy8GbyDGiOQAgKMjeWKwKzesCHXkpeOa/vSPj
-	 gjq0yXkPIeV6Ts0+QYsrS1WrMyjjJ/2OTh9QEsX9V3Ms7UiAqSNQqtcJbc6++kIqat
-	 i8jMEb/8KtHry1jg9CSV+sIW6tMFEnd91uJbJkgj273obN6VGaB+iXj6Dn134GhFpS
-	 rQuj8AWRruYTf/Le9cjX1+p7A+/cT8xGyp7c/A7Zlmi5RSelVJp0uhXtnfqpANfR7o
-	 tOnYU/uSie8F4JW5jRZ0v2V4v+qgzw5pYoC3+EK4LIBrp2ZjrZHI3jTS7Zm5Qnryjn
-	 SfFzoFUwlC/6w==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Michal_Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Cc: Christian Marangi <ansuelsmth@gmail.com>, 
- Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20241017150812.3563629-1-michal.vokac@ysoft.com>
-References: <20241017150812.3563629-1-michal.vokac@ysoft.com>
-Subject: Re: (subset) [PATCH v2] leds: lp55xx: Remove redundant test for
- invalid channel number
-Message-Id: <173038688951.1765401.5004620749954474851.b4-ty@kernel.org>
-Date: Thu, 31 Oct 2024 15:01:29 +0000
+	s=arc-20240116; t=1730386917; c=relaxed/simple;
+	bh=DRNAKqCWl6xr2DzwTZ1pWCQyLy5rgo/LXTxk5+5jp9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mo9X0DF8HrOxbMgCRGAHsGRjueH0a9LtoZfb3qfELjQ5eQ8W0bV/SKNASmnU9R4A0W8nQW5jEyAKQ/UcEEK6xoQRt6xEu8tUdKE8wMArVLxtaG9MrCXJdzs/Xdvn6nB0W+wzYjDxedtUYxSufCWb/MDI+s6EoNrRTAdVTtzOUhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com; spf=pass smtp.mailfrom=de.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rT5xIYSf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V2j1rd012836;
+	Thu, 31 Oct 2024 15:01:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=cDdOD8
+	eZhdmi15wTlhn2ZOdGiuux+Hscb5nk0qtazGw=; b=rT5xIYSfO4XLgq76ad7K+N
+	YzZZXFBVO8+CsPdM81Cdbaa5bQvlM9If2yVDDZnG/O7MLTM5B9/yegUQAJ3rnQoj
+	fd5uyKR8VGYzTIFGTthFCbc1GTKha9iWupR42SaUigbIZWXPc59XUf6CvAQ/3YL6
+	sAITrNONgk9cNgXvIBoAvlzU/rVMtUxKixWlMBEejHVEEYb75RPuPqjBynrQVfKE
+	60aKDkGsB9BuS0p1qmtcvL6SO5ulx/u2+OCmA1sdDjcaEYtoT3pHbW3gPgHYuSeX
+	JVHHh83mHhx94tndcsLOJnvzCwSdFdteXT6HTCoYUqQqYLMtnx3iXItJ5hdy5HZg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j3nt5e5n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 15:01:54 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VD8hPT017353;
+	Thu, 31 Oct 2024 15:01:53 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42harsnj5q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 15:01:53 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VF1oWV59703648
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 15:01:50 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1FB3E2004E;
+	Thu, 31 Oct 2024 15:01:50 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E78720040;
+	Thu, 31 Oct 2024 15:01:49 +0000 (GMT)
+Received: from [9.152.224.204] (unknown [9.152.224.204])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 31 Oct 2024 15:01:48 +0000 (GMT)
+Message-ID: <8a9aa0c1-ff20-4d01-8884-590f77a13758@de.ibm.com>
+Date: Thu, 31 Oct 2024 16:01:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] s390/kvm: mask extra bits from program interrupt
+ code
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: nsg@linux.ibm.com, nrb@linux.ibm.com, frankja@linux.ibm.com,
+        seiden@linux.ibm.com, hca@linux.ibm.com, agordeev@linux.ibm.com,
+        gor@linux.ibm.com, kvm@vger.kernel.org, linux-s390@vger.kernel.org
+References: <20241031120316.25462-1-imbrenda@linux.ibm.com>
+Content-Language: en-US
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+In-Reply-To: <20241031120316.25462-1-imbrenda@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NcFY3BJBVtvUSVpHTqWGUqTyIsI_ZUED
+X-Proofpoint-GUID: NcFY3BJBVtvUSVpHTqWGUqTyIsI_ZUED
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=832 clxscore=1011 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310113
 
-On Thu, 17 Oct 2024 17:08:12 +0200, Michal Vokáč wrote:
-> Since commit 92a81562e695 ("leds: lp55xx: Add multicolor framework
-> support to lp55xx") there are two subsequent tests if the chan_nr
-> (reg property) is in valid range. One in the lp55xx_init_led()
-> function and one in the lp55xx_parse_common_child() function that
-> was added with the mentioned commit.
+
+
+Am 31.10.24 um 13:03 schrieb Claudio Imbrenda:
+> The program interrupt code has some extra bits that are sometimes set
+> by hardware for various reasons; those bits should be ignored when the
+> program interrupt number is needed for interrupt handling.
 > 
-> There are two issues with that.
+> Fixes: ce2b276ebe51 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
+> Reported-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+
+seems to fix my issue:
+Tested-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+
+> ---
+>   arch/s390/kvm/kvm-s390.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] leds: lp55xx: Remove redundant test for invalid channel number
-      commit: 09b1ef9813a0742674f7efe26104403ca94a1b4a
-
---
-Lee Jones [李琼斯]
-
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 8b3afda99397..f2d1351f6992 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -4737,7 +4737,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
+>   	if (kvm_s390_cur_gmap_fault_is_write())
+>   		flags = FAULT_FLAG_WRITE;
+>   
+> -	switch (current->thread.gmap_int_code) {
+> +	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {
+>   	case 0:
+>   		vcpu->stat.exit_null++;
+>   		break;
 
