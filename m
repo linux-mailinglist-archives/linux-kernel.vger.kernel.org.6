@@ -1,177 +1,193 @@
-Return-Path: <linux-kernel+bounces-390657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AAF9B7CDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:30:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC1B9B7CFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1EA1F21009
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:30:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB406B20AF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C48A1A0718;
-	Thu, 31 Oct 2024 14:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5142127B56;
+	Thu, 31 Oct 2024 14:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="NuSRizWg"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzERKkIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2736F06A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D920219DF99;
+	Thu, 31 Oct 2024 14:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385038; cv=none; b=gAICmiEJF0f8FeHa8xNC2NhbmGZVF5hAMZheIg/SuMIEWijKMeEUpURsSphJN2V1yYSxUPjqgSL0Xckr7WcbpbV8dnuzZ6+yQmTOlqmqD2VEYYgp5VpZQ9ImLrfhb0Zn1a3hgTeBthdikCLC1WSeAqgTj7q0bJUXNZeAnJOr494=
+	t=1730385307; cv=none; b=YeFMOElMj5F7DFSqHuZpSF7y4vBVRl64VfqogF3oy4SJGB3Bgqlo5gnCqgkAasfW/mSeeu82Nsc+rtkMM+ml+jh+J3gUmwg5VoFDgVHmo5O+5tm2B3iAErhqeftF1CYSgLMswcbuuBRbNDT5f1Aos+ULftLG8KknzxbPWDYNiCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385038; c=relaxed/simple;
-	bh=sf5Edl6OUhWsEI6hsK/f/VAjBnY0HljV6kRGy3xX104=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g321c3F3yf0UUkuhmNRTbYF4RJ0kSz5fPG3gvBLp+3fJA41YVd/Qj1zpR/wH056aaF0Gndg9xJ3LdUHwM+5OlLIYaioYFd4dNdR8QKhhancXdG60/fJ5ms40mzZLSp/bE2e5ktmVsiPCi9wYyAPWPp6LePb2QuGtLVkJrcoRVA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=NuSRizWg; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9aa8895facso150394466b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:30:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1730385034; x=1730989834; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=36vCp20jB6EpXAGLlnLrA4E+EFdE8ahvTSL6cu1oL24=;
-        b=NuSRizWgiG6mFdbkidfcnpTNduu34SvzMmoEhy6nkCsosnxRuX3+nW4hXh0oDijA7E
-         ROx6NWOqf4mAKTrdl4PyIhgrpITmx+U1MZsYAm5aA5XdSfAWiiapV4eDJ+7gL2fXBNJe
-         vurRxpG54fSX4OAL4cEs8cS2w266wEjmPU4iR80+PDUVUL/UxGZRbc1HwHlQGPdugsR7
-         /Cicsx9vYn4h1gnX5tU5KA7MHWsHtthvPBFjzxqYxnwGnFko/qwKuk7+k3iGW5RPM/mu
-         85TKBPHtQSCxAnpqU+9BAO3gTE2uiYVtu4ZLKDUni53vhas54P0TLWGby2p4h48S0S+C
-         yPzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730385034; x=1730989834;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=36vCp20jB6EpXAGLlnLrA4E+EFdE8ahvTSL6cu1oL24=;
-        b=Km4dAQLB3spi2HOPKhXGNuo9on1L9LlN04NKrOxZPMGSzi0MZJsTqmBt3Bt/d/sWYw
-         pMlSbG7lFNouO7YmG2AzDl7FFJjGCtfAICyz+IHfiw46Fndr+3EWzyYqTFHfKnk9BjZL
-         VtA+NduiWC6KqV79p6AgtUyE4OZqNoWnk12xc/GCO/gx6Tuf4hUfpbmjkPfcfaMX2n61
-         aZiwajgnn2hm7iiZ15ZPX2cSda3JJXTH0vrPKU5XGLok9CzyFdGycNMbzdtkvXVCb1g+
-         dH655G1qWc+iLB97aQyVySnhwKZU0HqqQoz34mlNqFeQPhhJVqZ/dk4Mvv2zMaclHnzv
-         FqfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnZ5czDSeohNjdHVmoHdlZZXHwbhLcRFmxqCGBrouIsoD+JCu/mDGCOkBJO6l560GQqpGlEHT703lGtag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/70axdHa8DCrUQ2Uvcc4ugg4ZZSA6nEEKt9xL6dPktpxAFNz4
-	41oN56aQouHcZKdJMRC/xny/FTMXlN3N3sOY920OdHWVhx2AGDxuVBa8cBSyTQk=
-X-Google-Smtp-Source: AGHT+IF5Bg251mik3LoFKpoC9lOkrQj4vtOc8BKiQBo2Rp/7AcrfUz5H7OhmqB9uWxMcp5Yj9wGc0g==
-X-Received: by 2002:a17:907:9405:b0:a9a:a3a:6c58 with SMTP id a640c23a62f3a-a9de5ed3e2emr1930012666b.22.1730385034287;
-        Thu, 31 Oct 2024 07:30:34 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:634e:2582:d0aa:ee79? ([2001:67c:2fbc:1:634e:2582:d0aa:ee79])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c4d98sm74941266b.66.2024.10.31.07.30.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 07:30:33 -0700 (PDT)
-Message-ID: <7d00738e-ad12-41e4-a0f8-eebc30c4fcda@openvpn.net>
-Date: Thu, 31 Oct 2024 15:30:50 +0100
+	s=arc-20240116; t=1730385307; c=relaxed/simple;
+	bh=908GH7IBG1XfA0L7MNM6eq8gsxx7GOrv1X37ET8DUyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZ0VvXxEUGkrJyO4bOPGNnUZUQA/9/2U0NOJaX8Y0Lc1D9KWE/vVv144CMm/uZgREIVaxrfq0fGitNMXxYq2B5GkKxxhfjgILW1DJuGAd6wVHYAXCBmgET98XFGehKiwljRR0e0QuA1DSSGq6l9pCkPMPKlgUayNp9KWnLiAgd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzERKkIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84EEAC4AF1B;
+	Thu, 31 Oct 2024 14:34:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730385306;
+	bh=908GH7IBG1XfA0L7MNM6eq8gsxx7GOrv1X37ET8DUyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AzERKkIRwC/O4kQ8lXH0L4xaw8lcCpG9teRlnbXLQORdNS/jid5oXobAIqrFBvnMj
+	 8TavotafNAjfch6gf0LzZd7t4y0STCY6OrBp4+pmufLdZw1Fob2IJ4RKCx1QlAfwV9
+	 igjdjueqvbXLikgcF2avFhhxK4GjtzcQFneRgzqKo5j+kDvdftzhJhDxhFK67/RAo3
+	 ZZnTPKmuxzBoEiw+4Nr6Ej07BMw2Avy0n+cNU0B+udrtpRzcAdUbRXmmbF8dH36io5
+	 ZNTxQC63JDz1vnx9yl/KoBYUc48LeRNVURbhd+I75R8XMmmDJU2+T05l6ZtsAZv4qg
+	 xvwr8D+8DX0Bg==
+Date: Thu, 31 Oct 2024 16:31:03 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
+	dave.jiang@intel.com, ira.weiny@intel.com,
+	alison.schofield@intel.com, dave.hansen@linux.intel.com,
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
+	lenb@kernel.org, david@redhat.com, osalvador@suse.de,
+	gregkh@linuxfoundation.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v4 1/3] memory: implement
+ memory_block_advise/probe_max_size
+Message-ID: <ZyOUp5Juz5x3Ivrn@kernel.org>
+References: <20241029202041.25334-1-gourry@gourry.net>
+ <20241029202041.25334-2-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 12/23] ovpn: implement TCP transport
-To: sd@queasysnail.net
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew@lunn.ch>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-12-de4698c73a25@openvpn.net>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <20241029-b4-ovpn-v11-12-de4698c73a25@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029202041.25334-2-gourry@gourry.net>
 
-On 29/10/2024 11:47, Antonio Quartulli wrote:
-[...]
+On Tue, Oct 29, 2024 at 04:20:39PM -0400, Gregory Price wrote:
+> Hotplug memory sources may have opinions on what the memblock size
+> should be - usually for alignment purposes.  For example, CXL memory
+> extents can be 256MB with a matching alignment. If this size/alignment
+> is smaller than the block size, it can result in stranded capacity.
+> 
+> Implement memory_block_advise_max_size for use prior to allocator init,
+> for software to advise the system on the max block size.
+> 
+> Implement memory_block_probe_max_size for use by arch init code to
+> calculate the best block size. Use of advice is architecture defined.
+> 
+> The probe value can never change after first probe. Calls to advise
+> after probe will return -EBUSY to aid debugging.
+> 
+> On systems without hotplug, always return -ENODEV and 0 respectively.
+> 
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/base/memory.c  | 48 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/memory.h | 10 +++++++++
+>  2 files changed, 58 insertions(+)
+> 
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 67858eeb92ed..099a972c52dc 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -110,6 +110,54 @@ static void memory_block_release(struct device *dev)
+>  	kfree(mem);
+>  }
+>  
+> +/**
+> + * memory_block_advise_max_size() - advise memory hotplug on the max suggested
+> + *				    block size, usually for alignment.
+> + * @size: suggestion for maximum block size. must be aligned on power of 2.
+> + *
+> + * Early boot software (pre-allocator init) may advise archs on the max block
+> + * size. This value can only decrease after initialization, as the intent is
+> + * to identify the largest supported alignment for all sources.
+> + *
+> + * Use of this value is arch-defined, as is min/max block size.
+> + *
+> + * Return: 0 on success
+> + *	   -EINVAL if size is 0 or not pow2 aligned
+> + *	   -EBUSY if value has already been probed
+> + */
+> +static size_t memory_block_advised_sz;
+> +static bool memory_block_advised_size_queried;
+
+kernel-doc will be unhappy about variable declarations between the doc
+block and the function it describes
+
+> +int memory_block_advise_max_size(size_t size)
+> +{
+> +	if (!size || !is_power_of_2(size))
+> +		return -EINVAL;
 > +
-> +	/* DATA_V2 packets are handled in kernel, the rest goes to user space */
-> +	if (likely(ovpn_opcode_from_skb(skb, 0) == OVPN_DATA_V2)) {
-> +		/* hold reference to peer as required by ovpn_recv().
-> +		 *
-> +		 * NOTE: in this context we should already be holding a
-> +		 * reference to this peer, therefore ovpn_peer_hold() is
-> +		 * not expected to fail
-> +		 */
-> +		if (WARN_ON(!ovpn_peer_hold(peer)))
-> +			goto err;
+> +	if (memory_block_advised_size_queried)
+> +		return -EBUSY;
 > +
-> +		ovpn_recv(peer, skb);
-> +	} else {
-
-As pointed out by Sabrina, we are indeed sending DATA_V1 packets to 
-userspace.
-Not a big deal because userspace will likely ignore or drop them.
-
-However, I will change this and mirror what we do for UDP.
-
-Thanks.
-
-Regards,
-
-
-> +		/* The packet size header must be there when sending the packet
-> +		 * to userspace, therefore we put it back
-> +		 */
-> +		skb_push(skb, 2);
-> +		ovpn_tcp_to_userspace(peer, strp->sk, skb);
-> +	}
+> +	if (memory_block_advised_sz)
+> +		memory_block_advised_sz = min(size, memory_block_advised_sz);
+> +	else
+> +		memory_block_advised_sz = size;
 > +
-> +	return;
-
-
+> +	return 0;
+> +}
+> +
+> +/**
+> + * memory_block_advised_max_size() - query advised max hotplug block size.
+> + *
+> + * After the first call, the value can never change. Callers looking for the
+> + * actual block size should use memory_block_size_bytes. This interface is
+> + * intended for use by arch-init when initializing the hotplug block size.
+> + *
+> + * Return: advised size in bytes, or 0 if never set.
+> + */
+> +size_t memory_block_advised_max_size(void)
+> +{
+> +	memory_block_advised_size_queried = true;
+> +	return memory_block_advised_sz;
+> +}
+> +
+>  unsigned long __weak memory_block_size_bytes(void)
+>  {
+>  	return MIN_MEMORY_BLOCK_SIZE;
+> diff --git a/include/linux/memory.h b/include/linux/memory.h
+> index c0afee5d126e..07e20a77b717 100644
+> --- a/include/linux/memory.h
+> +++ b/include/linux/memory.h
+> @@ -149,6 +149,14 @@ static inline int hotplug_memory_notifier(notifier_fn_t fn, int pri)
+>  {
+>  	return 0;
+>  }
+> +static inline int memory_block_advise_max_size(size_t size)
+> +{
+> +	return -ENODEV;
+> +}
+> +static inline size_t memory_block_advised_max_size(void)
+> +{
+> +	return 0;
+> +}
+>  #else /* CONFIG_MEMORY_HOTPLUG */
+>  extern int register_memory_notifier(struct notifier_block *nb);
+>  extern void unregister_memory_notifier(struct notifier_block *nb);
+> @@ -181,6 +189,8 @@ int walk_dynamic_memory_groups(int nid, walk_memory_groups_func_t func,
+>  void memory_block_add_nid(struct memory_block *mem, int nid,
+>  			  enum meminit_context context);
+>  #endif /* CONFIG_NUMA */
+> +int memory_block_advise_max_size(size_t size);
+> +size_t memory_block_advised_max_size(void);
+>  #endif	/* CONFIG_MEMORY_HOTPLUG */
+>  
+>  /*
+> -- 
+> 2.43.0
+> 
 
 -- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Sincerely yours,
+Mike.
 
