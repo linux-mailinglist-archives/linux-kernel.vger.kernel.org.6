@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-389786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C969B7148
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:45:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7088A9B7143
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3172825BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:45:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271751F217CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF25B1EB48;
-	Thu, 31 Oct 2024 00:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE08282FD;
+	Thu, 31 Oct 2024 00:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TrV3EIYK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYe5dU0l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A288C2FD;
-	Thu, 31 Oct 2024 00:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38440156CF;
+	Thu, 31 Oct 2024 00:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730335550; cv=none; b=axfkpejWxDlxF3LynBByCS0rlsInuh/tF9FNEkL7AfyiKEwPMxFZlgKQ9Dy/Qj+sZb7MvHNDbf/TpvFmXKjeNkBJSkWzVUw87EGOuFqJEluIZPXZjkLdF0s93/3S/mfXQrch705RC4bPjprmubAoUNof2pDPuFA0bUiW9p+jMkM=
+	t=1730335509; cv=none; b=qOCTztoPaNrOLkSSHCglt1DlsFxWGcKxPpkG6NsATn7bn2D3ah3WClYOgMYKJi55NfyhwDlGw+m0NLcpjmaAnrlK1vIWEq2qMSuQFpMfaSgrJ+9Ft17MObo5PxBadw13GPaQ0UOyqVNaOnepmNZda56/EsWgIzNHrrjsUmGoYWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730335550; c=relaxed/simple;
-	bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MH3XKgoXTRAaGL4+Hp8MG5sKnA4nNviJzK+SeWAFEZD5mq+X8hTqgz+fOreSwcrrLj7xzRG0HO/AYdte/d94Q6E3OPwotgLfVZIghaW5eRuNl5HPjiQz6EhcROQOgxLputjOrb9Lh0EVbW8x8B+2iPZa3apmzjkmH24xpbRUoiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TrV3EIYK; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730335548; x=1761871548;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
-  b=TrV3EIYKA05jJUu3v56RFE41aWGRuc8AZK9WjXOc0LgVijBropSuoGYh
-   mEoZzccSFGb5SFvqVPhfevntmY+TZo5PEusSpjDhDwOWk8NM3nbwEwugl
-   h0NxEXQAaVQc8Y5tfpYBusAyn9D9fV6+96B5CMJEuI8P/kclCV5yEjonh
-   HLB1zTP7qt/gkWUpikt+ktfvkaoHLzHRuspIJkXUtaj6UZ1Xx3o4ErlGL
-   aBDIrvP9vB3rV3JS9mDC73MvPapNoU7qV8Z4moz3RwWgjMZhg65dG00Gl
-   B/zCuCpi6XJ+PdNlN0ZaUzEzY2qy55wwwCKWwkXEVeV7KoL4Lu9sYnN7o
-   g==;
-X-CSE-ConnectionGUID: pBbrpmWVTxy5luXuIjeOpA==
-X-CSE-MsgGUID: HOhj0uCgSF2aE7SRWOyvxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40637955"
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="40637955"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 17:45:47 -0700
-X-CSE-ConnectionGUID: X4k+Gr8wTfSo4COVZJWTZg==
-X-CSE-MsgGUID: bS1Vd3qcQn2WxqGo5GafTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="82790697"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 30 Oct 2024 17:45:43 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6JJk-000fSq-2D;
-	Thu, 31 Oct 2024 00:45:40 +0000
-Date: Thu, 31 Oct 2024 08:44:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-	andrew@codeconstruct.com.au, mturquette@baylibre.com,
-	sboyd@kernel.org, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
-Message-ID: <202410310827.OOitgPg0-lkp@intel.com>
-References: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1730335509; c=relaxed/simple;
+	bh=L9TwB0ET8ic5Y1NDlL9zdzcEuTRfwOrfk8W3N9skWyI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GvoMLEsIJZTC1kRJBJUZN0CCJ0t3DonRH26ipHf1BPhRb0v9px3DfIax1RXmy843CLD5EDtUoXjFqx46MGuSbFOU5O3Shy8iM+Uzqo05dpbbK1bekvp7Hx+C+vSsq8x1mQmdUNb+nrTanHumCuLpYA0B9WtJgrzmGb1sckKs8Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYe5dU0l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5972FC4CED4;
+	Thu, 31 Oct 2024 00:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730335508;
+	bh=L9TwB0ET8ic5Y1NDlL9zdzcEuTRfwOrfk8W3N9skWyI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QYe5dU0lkJnPHBlc/5STC0DRhfE6NID7VgLv8zjxrPS5yLbS1UjcAFtScmxyum8HV
+	 DnQIc9e18/ZiZQAlPNsICXIaJu5rkC57AfCSvSKZtz9vyULkuzRUSfy5T+6yGWsjkN
+	 n29RxR9ILcvD2DD9PvpsWo7mKnWKKH7HVJHscPhZjQakJF80bli+v4/s4qcl+8kYpy
+	 lQRtPh4y8ROZvqG2p/dxloVX0q9WXpJtla23d+tTm4iRfYdj/U3HpIGaXF5rEL4g6O
+	 mLrGY/8gUSKURZD0LLceucVRD8S2q19Xq0/gben8RlmB2rOruieAH2O4pUlTzeWTk7
+	 04y7hOvTl+Jbw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: stable@vger.kernel.org,
+	Mike Seo <mikeseohyungjin@gmail.com>,
+	linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] tpm: Lock TPM chip in tpm_pm_suspend() first
+Date: Thu, 31 Oct 2024 02:45:00 +0200
+Message-ID: <20241031004501.165027-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Ryan,
+Setting TPM_CHIP_FLAG_SUSPENDED in the end of tpm_pm_suspend() can be racy
+according to the bug report, as this leaves window for tpm_hwrng_read() to
+be called while the operation is in progress.
 
-kernel test robot noticed the following build errors:
+To address this, lock the TPM chip before checking any possible flags.
+This will guarantee that tpm_hwrng_read() and tpm_pm_suspend() won't
+conflict with each other.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc5 next-20241030]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Cc: stable@vger.kernel.org # v6.4+
+Fixes: 99d464506255 ("tpm: Prevent hwrng from activating during resume")
+Reported-by: Mike Seo <mikeseohyungjin@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219383
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2:
+- Addressed my own remark:
+  https://lore.kernel.org/linux-integrity/D59JAI6RR2CD.G5E5T4ZCZ49W@kernel.org/
+---
+ drivers/char/tpm/tpm-interface.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241028-133255
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20241028053018.2579200-4-ryan_chen%40aspeedtech.com
-patch subject: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
-config: csky-randconfig-001-20241031 (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410310827.OOitgPg0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   csky-linux-ld: drivers/clk/clk-ast2700.o: in function `ast2700_soc_clk_probe':
-   clk-ast2700.c:(.text+0x530): undefined reference to `aspeed_reset_controller_register'
->> csky-linux-ld: clk-ast2700.c:(.text+0x558): undefined reference to `aspeed_reset_controller_register'
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 8134f002b121..e37fcf9361bc 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -370,6 +370,13 @@ int tpm_pm_suspend(struct device *dev)
+ 	if (!chip)
+ 		return -ENODEV;
+ 
++	rc = tpm_try_get_ops(chip);
++	if (rc) {
++		/* Can be safely set out of locks, as no action cannot race: */
++		chip->flags |= TPM_CHIP_FLAG_SUSPENDED;
++		goto out;
++	}
++
+ 	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+ 		goto suspended;
+ 
+@@ -377,23 +384,22 @@ int tpm_pm_suspend(struct device *dev)
+ 	    !pm_suspend_via_firmware())
+ 		goto suspended;
+ 
+-	rc = tpm_try_get_ops(chip);
+-	if (!rc) {
+-		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-			tpm2_end_auth_session(chip);
+-			tpm2_shutdown(chip, TPM2_SU_STATE);
+-		} else {
+-			rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
+-		}
+-
+-		tpm_put_ops(chip);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
++		tpm2_end_auth_session(chip);
++		tpm2_shutdown(chip, TPM2_SU_STATE);
++		goto suspended;
+ 	}
+ 
++	rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
++
+ suspended:
+ 	chip->flags |= TPM_CHIP_FLAG_SUSPENDED;
++	tpm_put_ops(chip);
+ 
++out:
+ 	if (rc)
+ 		dev_err(dev, "Ignoring error %d while suspending\n", rc);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(tpm_pm_suspend);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
