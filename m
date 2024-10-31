@@ -1,303 +1,300 @@
-Return-Path: <linux-kernel+bounces-390035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812F39B74BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:53:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04DF9B74B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EB41F24714
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8432818D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1601474B2;
-	Thu, 31 Oct 2024 06:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D96146D6E;
+	Thu, 31 Oct 2024 06:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VUPyZkrN"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f1CHPdMq"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1C013B7B3;
-	Thu, 31 Oct 2024 06:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB99E13D516
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730357581; cv=none; b=DP4j1TnFtWPtasZZg7aVRJQdSixiHTmWZWreaiteAJzFTJvcvaUkfDhTflz/8SRiUpnJ/lz4prZXDK7l7ORr7Dqfr1MigxCTVzkCl68XvzRfcbu0cT/1waJKzPph2t1mYmzlFQtHLe5tk+8m5SXg/LL8CE+24ZAWm8387N/d9kg=
+	t=1730357544; cv=none; b=dJpdi34PiaOHO6ItgdUwmZ21hFkYxeDKw4ZqukrXnTX3v/jNPsIyjcaL14W/h1kmmlRH3LWoYPu3VWIAfw7+TTDSWPt6lvVoUT3WEUO9/KIGUcqfBONOwpindh2LcELXLiXzaL8iZpIuSnR3bknukf0gL6utRvR+MCflzymDLv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730357581; c=relaxed/simple;
-	bh=qeer1kcG6Rrt9N7t9xff6/AxPGGMumIvHuxnkuoA0o0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hdrueE39GvCaDSBFwpN3359stlO55eNGUwpTfa6dYyPjpTUG1DoILu8SkSksd+d7/FmrIp+MYpIuU3dA+77O8HdCbEXhQkjAKc2y+aiHmC0HmOb466ELoz1Y1kb6Yj28/iWPFdDMQAsWLbQbp1d9Ocfwh93WAv1P4Ze+zXp3Llw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VUPyZkrN; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1730357578; x=1761893578;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=qeer1kcG6Rrt9N7t9xff6/AxPGGMumIvHuxnkuoA0o0=;
-  b=VUPyZkrNhscmhydev7kCTwL2zrSannw6kv4CiIL0ymGSGXlMxUgzORYn
-   Kixu+58P0Mt4rbJwLx2DX+3sAVE8Brzrfp8wP66W/Blltlm8lO6RPqFHU
-   enzUeOPJ0SrvZtWUb6JTosHsp5aaHb2TELjX99VV96NbJ2nhWhP1hEFKs
-   kXqt0cKlr9y0p8LPny000ddIC95l9BzKUuxQ9Ab35Iq0Ul4McWw1gNAK7
-   vwF40sAkfvUQ1AgP2PIuRgKk1GlJoLP2GCdtErz5Omf4Df7js6/ABEH7Y
-   qC7dHzENlRteUqb53etOq5oZuVGL2oEsXXBxjBdhLJp1/8eAKSjs4uPVD
-   Q==;
-X-CSE-ConnectionGUID: 8YQN047qTAmKFCMPLpdrLg==
-X-CSE-MsgGUID: 50sPAILrQkaR/pGgxJQQmQ==
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="201134074"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Oct 2024 23:52:51 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 30 Oct 2024 23:52:22 -0700
-Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 30 Oct 2024 23:52:21 -0700
-From: <victor.duicu@microchip.com>
-To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>
-CC: <marius.cristea@microchip.com>, <victor.duicu@microchip.com>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7] iio: adc: pac1921: Add ACPI support to Microchip pac1921
-Date: Thu, 31 Oct 2024 08:52:05 +0200
-Message-ID: <20241031065205.50154-1-victor.duicu@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730357544; c=relaxed/simple;
+	bh=Hpc19UvuOAgM7DLU7J0IV7Im2WpnYRLz2nMo8Iaf7pI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=een4KO4VYUyRoTHhQa02rTFfU6vRIQvUrtbkhUHqRifQM2aq8TBmIA/TCpGMAJLN/gPMQYwxyjfTmylZY0+s9+6trUlYynXcGoL1KgVVppnwSmA7ryOXRlKF8sPup2saEQ8cyHuqB2t0hHGTQNBITyIY/skKjl6R7jDgfN6lHnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f1CHPdMq; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43169902057so4768325e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 23:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730357538; x=1730962338; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IizVsT/GHCokG6ch8Vz2KAn7z8iSbuR7G4okx8PJozc=;
+        b=f1CHPdMqdedRkgfRiFs5PZwIDlbKdOz+VnU9AIDdB/d5V3r9zKYDA7lnNuNFx2qLd5
+         xfgpkJGzskm6/1ldTd5stlvPHBjWRHdCT0WXdgMGr4vheT/vQJvWF1sCqAspHzkarV/r
+         OFgYlo+S/HVe0ziclA3D5yCXWPJWVppegbUxe7lN0GcjpuwqoXz9wW8c+bmGZDUwAsY8
+         GbscZ49Rm7YadC8fOJpY8TVkaen2qCqZNFyZ8xDVu4ys4Qmg18KK3W0o2QjjybVtZ+I4
+         g/C3KndYSP4+ZSSNvWfrF6foLaopoP3Wi/lelGFwKVK8zyH/CMu0OIcOQJBlbffvfSOS
+         0WxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730357538; x=1730962338;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IizVsT/GHCokG6ch8Vz2KAn7z8iSbuR7G4okx8PJozc=;
+        b=Dr23MW6hnMJ/FjNE7GoVaw1Zum0vXuKIpX3mv0v5KhWtjd/WDBfXx8F3+FjQFLB/CG
+         leZDAeG8gG8d0W3VFC+leNOLS6GOOuEoDJqn4RiQlRAXTHyfhi+RI0UXvS9JBmNTjpn3
+         2WdvASPek6CAl5uofP1ZrjiAORwopAxGBNZcnUn09jcYTibj19996srZOEqJcJs0rzNM
+         470g4zrN9SCsKjWtSsQu15nWRRUxdzSAtdF+LGx6lJ187yw/DBTlyQyrzQ+eKJfSJBlP
+         eC6qbpxm3sGvF7z8Vhf0Uh6jtDITdR+AZaKa5tKS0fNn/BeY528jd/xLQHve9Y/Z0o4l
+         07Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYIXNDh54r8OI0CqAUU2ljQAfT32Qf3bmVR3x6jcdyIE8Z5BgUmJpywwtoG0iieKxeXp9UXMDq7gaqa1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9lQHb1e9K6NLnDhdTwmeedkUgdtxrJsp6vvQPUKnMkgU9XBtz
+	HDs3mNlF7qwHRaQ6M5ifjlzT1uDYBPg+kp9ztkwKwJSzsA7ypTX8Z/hTJd/CYKM=
+X-Google-Smtp-Source: AGHT+IH4qddoN1+U0MbhWmJDa+VnavcPzI2xaGtcVbjz7mSSqTDKJfqNz6qwKOPhNncZR4OKRDuBwA==
+X-Received: by 2002:a05:600c:1c29:b0:431:588a:4498 with SMTP id 5b1f17b1804b1-431bb985df9mr48408435e9.14.1730357538111;
+        Wed, 30 Oct 2024 23:52:18 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7d15sm1117170f8f.8.2024.10.30.23.52.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 23:52:17 -0700 (PDT)
+Date: Thu, 31 Oct 2024 09:52:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Anup Patel <apatel@ventanamicro.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
+Subject: drivers/irqchip/irq-riscv-imsic-state.c:854 imsic_setup_state()
+ error: we previously assumed 'mmios_va' could be null (see line 745)
+Message-ID: <d954517a-ec1d-43b6-beef-b15f9f289612@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Victor Duicu <victor.duicu@microchip.com>
+Hi Anup,
 
-This patch implements ACPI support to Microchip pac1921.
-The driver can read shunt resistor value and label from ACPI table.
+First bad commit (maybe != root cause):
 
-Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
----
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4236f913808cebef1b9e078726a4e5d56064f7ad
+commit: 0eebc69db358fd2f6fe34cc4db6428df6a540dd7 RISC-V: Select APLIC and IMSIC drivers
+date:   7 months ago
+config: riscv-randconfig-r071-20241030 (https://download.01.org/0day-ci/archive/20241031/202410310641.Nrmy8Sr0-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
 
-The patch was tested on minnowboard and sama5.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202410310641.Nrmy8Sr0-lkp@intel.com/
 
-Differences related to previous versions:
-v7:
-- in pac1921_shunt_is_invalid remove brackets in return.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw move checking of
-  shunt value and scale calculation to pac1921_probe.
-- in pac1921_match_acpi_device change devm_kmemdup to devm_kstrdup
-and add label check for NULL.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw remove unnecessary
-entry arguments. Now indio_dev is the only entry argument.
-- in pac1921_probe, pac1921_match_acpi_device and pac1921_parse_of_fw
-  standardised structure accesing.
+New smatch warnings:
+drivers/irqchip/irq-riscv-imsic-state.c:854 imsic_setup_state() error: we previously assumed 'mmios_va' could be null (see line 745)
 
-v6:
-- set maximum acceptable value of shunt resistor to INT_MAX UOHMS
-in devicetree, ACPI table and user input.
-- in pac1921_match_acpi_device remove temp variable.
+vim +/mmios_va +854 drivers/irqchip/irq-riscv-imsic-state.c
 
-v5:
-- set maximum acceptable value of shunt resistor to 2KOHM in devicetree,
-ACPI table and user input. The chosen value is lesser than INT_MAX,
-which is about 2.1KOHM.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw change to only
-  read 32b values for resistor shunt.
+21a8f8a0eb35ce Anup Patel 2024-03-07  691  int __init imsic_setup_state(struct fwnode_handle *fwnode)
+21a8f8a0eb35ce Anup Patel 2024-03-07  692  {
+21a8f8a0eb35ce Anup Patel 2024-03-07  693  	u32 i, j, index, nr_parent_irqs, nr_mmios, nr_handlers = 0;
+21a8f8a0eb35ce Anup Patel 2024-03-07  694  	struct imsic_global_config *global;
+21a8f8a0eb35ce Anup Patel 2024-03-07  695  	struct imsic_local_config *local;
+21a8f8a0eb35ce Anup Patel 2024-03-07  696  	void __iomem **mmios_va = NULL;
+21a8f8a0eb35ce Anup Patel 2024-03-07  697  	struct resource *mmios = NULL;
+21a8f8a0eb35ce Anup Patel 2024-03-07  698  	unsigned long reloff, hartid;
+21a8f8a0eb35ce Anup Patel 2024-03-07  699  	phys_addr_t base_addr;
+21a8f8a0eb35ce Anup Patel 2024-03-07  700  	int rc, cpu;
+21a8f8a0eb35ce Anup Patel 2024-03-07  701  
+21a8f8a0eb35ce Anup Patel 2024-03-07  702  	/*
+21a8f8a0eb35ce Anup Patel 2024-03-07  703  	 * Only one IMSIC instance allowed in a platform for clean
+21a8f8a0eb35ce Anup Patel 2024-03-07  704  	 * implementation of SMP IRQ affinity and per-CPU IPIs.
+21a8f8a0eb35ce Anup Patel 2024-03-07  705  	 *
+21a8f8a0eb35ce Anup Patel 2024-03-07  706  	 * This means on a multi-socket (or multi-die) platform we
+21a8f8a0eb35ce Anup Patel 2024-03-07  707  	 * will have multiple MMIO regions for one IMSIC instance.
+21a8f8a0eb35ce Anup Patel 2024-03-07  708  	 */
+21a8f8a0eb35ce Anup Patel 2024-03-07  709  	if (imsic) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  710  		pr_err("%pfwP: already initialized hence ignoring\n", fwnode);
+21a8f8a0eb35ce Anup Patel 2024-03-07  711  		return -EALREADY;
+21a8f8a0eb35ce Anup Patel 2024-03-07  712  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  713  
+21a8f8a0eb35ce Anup Patel 2024-03-07  714  	if (!riscv_isa_extension_available(NULL, SxAIA)) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  715  		pr_err("%pfwP: AIA support not available\n", fwnode);
+21a8f8a0eb35ce Anup Patel 2024-03-07  716  		return -ENODEV;
+21a8f8a0eb35ce Anup Patel 2024-03-07  717  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  718  
+21a8f8a0eb35ce Anup Patel 2024-03-07  719  	imsic = kzalloc(sizeof(*imsic), GFP_KERNEL);
+21a8f8a0eb35ce Anup Patel 2024-03-07  720  	if (!imsic)
+21a8f8a0eb35ce Anup Patel 2024-03-07  721  		return -ENOMEM;
+21a8f8a0eb35ce Anup Patel 2024-03-07  722  	imsic->fwnode = fwnode;
+21a8f8a0eb35ce Anup Patel 2024-03-07  723  	global = &imsic->global;
+21a8f8a0eb35ce Anup Patel 2024-03-07  724  
+21a8f8a0eb35ce Anup Patel 2024-03-07  725  	global->local = alloc_percpu(typeof(*global->local));
+21a8f8a0eb35ce Anup Patel 2024-03-07  726  	if (!global->local) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  727  		rc = -ENOMEM;
+21a8f8a0eb35ce Anup Patel 2024-03-07  728  		goto out_free_priv;
+21a8f8a0eb35ce Anup Patel 2024-03-07  729  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  730  
+21a8f8a0eb35ce Anup Patel 2024-03-07  731  	/* Parse IMSIC fwnode */
+21a8f8a0eb35ce Anup Patel 2024-03-07  732  	rc = imsic_parse_fwnode(fwnode, global, &nr_parent_irqs, &nr_mmios);
+21a8f8a0eb35ce Anup Patel 2024-03-07  733  	if (rc)
+21a8f8a0eb35ce Anup Patel 2024-03-07  734  		goto out_free_local;
+21a8f8a0eb35ce Anup Patel 2024-03-07  735  
+21a8f8a0eb35ce Anup Patel 2024-03-07  736  	/* Allocate MMIO resource array */
+21a8f8a0eb35ce Anup Patel 2024-03-07  737  	mmios = kcalloc(nr_mmios, sizeof(*mmios), GFP_KERNEL);
+21a8f8a0eb35ce Anup Patel 2024-03-07  738  	if (!mmios) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  739  		rc = -ENOMEM;
+21a8f8a0eb35ce Anup Patel 2024-03-07  740  		goto out_free_local;
+21a8f8a0eb35ce Anup Patel 2024-03-07  741  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  742  
+21a8f8a0eb35ce Anup Patel 2024-03-07  743  	/* Allocate MMIO virtual address array */
+21a8f8a0eb35ce Anup Patel 2024-03-07  744  	mmios_va = kcalloc(nr_mmios, sizeof(*mmios_va), GFP_KERNEL);
+21a8f8a0eb35ce Anup Patel 2024-03-07 @745  	if (!mmios_va) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  746  		rc = -ENOMEM;
+21a8f8a0eb35ce Anup Patel 2024-03-07  747  		goto out_iounmap;
 
-v4:
-- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
-- fix coding style.
-- in pac1921_parse_of_fw change back to device_property_read_u32.
+mmios_va is NULL here.
 
-v3:
-- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
-- fix link to DSM documentation.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
-read as u64.
-- in pac1921_parse_of_fw remove code for reading label value from
-devicetree.
-- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
-to fix overflow.
+21a8f8a0eb35ce Anup Patel 2024-03-07  748  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  749  
+21a8f8a0eb35ce Anup Patel 2024-03-07  750  	/* Parse and map MMIO register sets */
+21a8f8a0eb35ce Anup Patel 2024-03-07  751  	for (i = 0; i < nr_mmios; i++) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  752  		rc = imsic_get_mmio_resource(fwnode, i, &mmios[i]);
+21a8f8a0eb35ce Anup Patel 2024-03-07  753  		if (rc) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  754  			pr_err("%pfwP: unable to parse MMIO regset %d\n", fwnode, i);
+21a8f8a0eb35ce Anup Patel 2024-03-07  755  			goto out_iounmap;
+21a8f8a0eb35ce Anup Patel 2024-03-07  756  		}
+21a8f8a0eb35ce Anup Patel 2024-03-07  757  
+21a8f8a0eb35ce Anup Patel 2024-03-07  758  		base_addr = mmios[i].start;
+21a8f8a0eb35ce Anup Patel 2024-03-07  759  		base_addr &= ~(BIT(global->guest_index_bits +
+21a8f8a0eb35ce Anup Patel 2024-03-07  760  				   global->hart_index_bits +
+21a8f8a0eb35ce Anup Patel 2024-03-07  761  				   IMSIC_MMIO_PAGE_SHIFT) - 1);
+21a8f8a0eb35ce Anup Patel 2024-03-07  762  		base_addr &= ~((BIT(global->group_index_bits) - 1) <<
+21a8f8a0eb35ce Anup Patel 2024-03-07  763  			       global->group_index_shift);
+21a8f8a0eb35ce Anup Patel 2024-03-07  764  		if (base_addr != global->base_addr) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  765  			rc = -EINVAL;
+21a8f8a0eb35ce Anup Patel 2024-03-07  766  			pr_err("%pfwP: address mismatch for regset %d\n", fwnode, i);
+21a8f8a0eb35ce Anup Patel 2024-03-07  767  			goto out_iounmap;
+21a8f8a0eb35ce Anup Patel 2024-03-07  768  		}
+21a8f8a0eb35ce Anup Patel 2024-03-07  769  
+21a8f8a0eb35ce Anup Patel 2024-03-07  770  		mmios_va[i] = ioremap(mmios[i].start, resource_size(&mmios[i]));
+21a8f8a0eb35ce Anup Patel 2024-03-07  771  		if (!mmios_va[i]) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  772  			rc = -EIO;
+21a8f8a0eb35ce Anup Patel 2024-03-07  773  			pr_err("%pfwP: unable to map MMIO regset %d\n", fwnode, i);
+21a8f8a0eb35ce Anup Patel 2024-03-07  774  			goto out_iounmap;
+21a8f8a0eb35ce Anup Patel 2024-03-07  775  		}
+21a8f8a0eb35ce Anup Patel 2024-03-07  776  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  777  
+21a8f8a0eb35ce Anup Patel 2024-03-07  778  	/* Initialize local (or per-CPU )state */
+21a8f8a0eb35ce Anup Patel 2024-03-07  779  	rc = imsic_local_init();
+21a8f8a0eb35ce Anup Patel 2024-03-07  780  	if (rc) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  781  		pr_err("%pfwP: failed to initialize local state\n",
+21a8f8a0eb35ce Anup Patel 2024-03-07  782  		       fwnode);
+21a8f8a0eb35ce Anup Patel 2024-03-07  783  		goto out_iounmap;
+21a8f8a0eb35ce Anup Patel 2024-03-07  784  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  785  
+21a8f8a0eb35ce Anup Patel 2024-03-07  786  	/* Configure handlers for target CPUs */
+21a8f8a0eb35ce Anup Patel 2024-03-07  787  	for (i = 0; i < nr_parent_irqs; i++) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  788  		rc = imsic_get_parent_hartid(fwnode, i, &hartid);
+21a8f8a0eb35ce Anup Patel 2024-03-07  789  		if (rc) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  790  			pr_warn("%pfwP: hart ID for parent irq%d not found\n", fwnode, i);
+21a8f8a0eb35ce Anup Patel 2024-03-07  791  			continue;
+21a8f8a0eb35ce Anup Patel 2024-03-07  792  		}
+21a8f8a0eb35ce Anup Patel 2024-03-07  793  
+21a8f8a0eb35ce Anup Patel 2024-03-07  794  		cpu = riscv_hartid_to_cpuid(hartid);
+21a8f8a0eb35ce Anup Patel 2024-03-07  795  		if (cpu < 0) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  796  			pr_warn("%pfwP: invalid cpuid for parent irq%d\n", fwnode, i);
+21a8f8a0eb35ce Anup Patel 2024-03-07  797  			continue;
+21a8f8a0eb35ce Anup Patel 2024-03-07  798  		}
+21a8f8a0eb35ce Anup Patel 2024-03-07  799  
+21a8f8a0eb35ce Anup Patel 2024-03-07  800  		/* Find MMIO location of MSI page */
+21a8f8a0eb35ce Anup Patel 2024-03-07  801  		index = nr_mmios;
+21a8f8a0eb35ce Anup Patel 2024-03-07  802  		reloff = i * BIT(global->guest_index_bits) *
+21a8f8a0eb35ce Anup Patel 2024-03-07  803  			 IMSIC_MMIO_PAGE_SZ;
+21a8f8a0eb35ce Anup Patel 2024-03-07  804  		for (j = 0; nr_mmios; j++) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  805  			if (reloff < resource_size(&mmios[j])) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  806  				index = j;
+21a8f8a0eb35ce Anup Patel 2024-03-07  807  				break;
+21a8f8a0eb35ce Anup Patel 2024-03-07  808  			}
+21a8f8a0eb35ce Anup Patel 2024-03-07  809  
+21a8f8a0eb35ce Anup Patel 2024-03-07  810  			/*
+21a8f8a0eb35ce Anup Patel 2024-03-07  811  			 * MMIO region size may not be aligned to
+21a8f8a0eb35ce Anup Patel 2024-03-07  812  			 * BIT(global->guest_index_bits) * IMSIC_MMIO_PAGE_SZ
+21a8f8a0eb35ce Anup Patel 2024-03-07  813  			 * if holes are present.
+21a8f8a0eb35ce Anup Patel 2024-03-07  814  			 */
+21a8f8a0eb35ce Anup Patel 2024-03-07  815  			reloff -= ALIGN(resource_size(&mmios[j]),
+21a8f8a0eb35ce Anup Patel 2024-03-07  816  			BIT(global->guest_index_bits) * IMSIC_MMIO_PAGE_SZ);
+21a8f8a0eb35ce Anup Patel 2024-03-07  817  		}
+21a8f8a0eb35ce Anup Patel 2024-03-07  818  		if (index >= nr_mmios) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  819  			pr_warn("%pfwP: MMIO not found for parent irq%d\n", fwnode, i);
+21a8f8a0eb35ce Anup Patel 2024-03-07  820  			continue;
+21a8f8a0eb35ce Anup Patel 2024-03-07  821  		}
+21a8f8a0eb35ce Anup Patel 2024-03-07  822  
+21a8f8a0eb35ce Anup Patel 2024-03-07  823  		local = per_cpu_ptr(global->local, cpu);
+21a8f8a0eb35ce Anup Patel 2024-03-07  824  		local->msi_pa = mmios[index].start + reloff;
+21a8f8a0eb35ce Anup Patel 2024-03-07  825  		local->msi_va = mmios_va[index] + reloff;
+21a8f8a0eb35ce Anup Patel 2024-03-07  826  
+21a8f8a0eb35ce Anup Patel 2024-03-07  827  		nr_handlers++;
+21a8f8a0eb35ce Anup Patel 2024-03-07  828  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  829  
+21a8f8a0eb35ce Anup Patel 2024-03-07  830  	/* If no CPU handlers found then can't take interrupts */
+21a8f8a0eb35ce Anup Patel 2024-03-07  831  	if (!nr_handlers) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  832  		pr_err("%pfwP: No CPU handlers found\n", fwnode);
+21a8f8a0eb35ce Anup Patel 2024-03-07  833  		rc = -ENODEV;
+21a8f8a0eb35ce Anup Patel 2024-03-07  834  		goto out_local_cleanup;
+21a8f8a0eb35ce Anup Patel 2024-03-07  835  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  836  
+21a8f8a0eb35ce Anup Patel 2024-03-07  837  	/* Initialize matrix allocator */
+21a8f8a0eb35ce Anup Patel 2024-03-07  838  	rc = imsic_matrix_init();
+21a8f8a0eb35ce Anup Patel 2024-03-07  839  	if (rc) {
+21a8f8a0eb35ce Anup Patel 2024-03-07  840  		pr_err("%pfwP: failed to create matrix allocator\n", fwnode);
+21a8f8a0eb35ce Anup Patel 2024-03-07  841  		goto out_local_cleanup;
+21a8f8a0eb35ce Anup Patel 2024-03-07  842  	}
+21a8f8a0eb35ce Anup Patel 2024-03-07  843  
+21a8f8a0eb35ce Anup Patel 2024-03-07  844  	/* We don't need MMIO arrays anymore so let's free-up */
+21a8f8a0eb35ce Anup Patel 2024-03-07  845  	kfree(mmios_va);
+21a8f8a0eb35ce Anup Patel 2024-03-07  846  	kfree(mmios);
+21a8f8a0eb35ce Anup Patel 2024-03-07  847  
+21a8f8a0eb35ce Anup Patel 2024-03-07  848  	return 0;
+21a8f8a0eb35ce Anup Patel 2024-03-07  849  
+21a8f8a0eb35ce Anup Patel 2024-03-07  850  out_local_cleanup:
+21a8f8a0eb35ce Anup Patel 2024-03-07  851  	imsic_local_cleanup();
+21a8f8a0eb35ce Anup Patel 2024-03-07  852  out_iounmap:
+21a8f8a0eb35ce Anup Patel 2024-03-07  853  	for (i = 0; i < nr_mmios; i++) {
+21a8f8a0eb35ce Anup Patel 2024-03-07 @854  		if (mmios_va[i])
+                                                            ^^^^^^^^^^^
+NULL dereference.  It's unfortunate that the zero day bot doesn't include the
+next lines in the email...
 
-v2:
-- remove name variable from priv. Driver reads label attribute with
-sysfs.
-- define pac1921_shunt_is_valid function.
-- move default assignments in pac1921_probe to original position.
-- roll back coding style changes.
-- add documentation for DSM(the linked document was used as reference).
-- remove acpi_match_device in pac1921_match_acpi_device.
-- remove unnecessary null assignment and comment.
-- change name of function pac1921_match_of_device to
-pac1921_parse_of_fw.
+   881                          iounmap(mmios_va[i]);
+   882          }
 
-v1:
-- initial version for review.
+Add a new label here.
 
- drivers/iio/adc/pac1921.c | 95 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 86 insertions(+), 9 deletions(-)
+   883          kfree(mmios_va);
+   884          kfree(mmios);
+   885  out_free_local:
+   886          free_percpu(imsic->global.local);
+   887  out_free_priv:
+   888          kfree(imsic);
+   889          imsic = NULL;
+   890          return rc;
+   891  }
 
-diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-index a96fae546bc1..c6c8d85e3092 100644
---- a/drivers/iio/adc/pac1921.c
-+++ b/drivers/iio/adc/pac1921.c
-@@ -67,6 +67,12 @@ enum pac1921_mxsl {
- #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
- #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
- 
-+#define PAC1921_ACPI_GET_UOHMS_VALS             0
-+#define PAC1921_ACPI_GET_LABEL			1
-+#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236-7a7a742e55cb"
-+/* The maximum accepted value of shunt_resistor in UOHMS <= INT_MAX */
-+#define PAC1921_MAX_SHUNT_VALUE_OHMS		2147
-+
- /*
-  * Pre-computed scale factors for BUS voltage
-  * format: IIO_VAL_INT_PLUS_NANO
-@@ -204,6 +210,11 @@ struct pac1921_priv {
- 	} scan;
- };
- 
-+static inline bool pac1921_shunt_is_invalid(u32 shunt_val)
-+{
-+	return shunt_val == 0 || shunt_val > INT_MAX;
-+}
-+
- /*
-  * Check if first integration after configuration update has completed.
-  *
-@@ -781,7 +792,7 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 					    const char *buf, size_t len)
- {
- 	struct pac1921_priv *priv = iio_priv(indio_dev);
--	u64 rshunt_uohm;
-+	u32 rshunt_uohm;
- 	int val, val_fract;
- 	int ret;
- 
-@@ -792,8 +803,12 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 	if (ret)
- 		return ret;
- 
-+	/* This check is to ensure val * MICRO won't overflow */
-+	if (val < 0 || val > PAC1921_MAX_SHUNT_VALUE_OHMS)
-+		return -EINVAL;
-+
- 	rshunt_uohm = val * MICRO + val_fract;
--	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
-+	if (pac1921_shunt_is_invalid(rshunt_uohm))
- 		return -EINVAL;
- 
- 	guard(mutex)(&priv->lock);
-@@ -1150,6 +1165,60 @@ static void pac1921_regulator_disable(void *data)
- 	regulator_disable(regulator);
- }
- 
-+/*
-+ * documentation related to the ACPI device definition
-+ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
-+ */
-+static int pac1921_match_acpi_device(struct iio_dev *indio_dev)
-+{
-+	acpi_handle handle;
-+	union acpi_object *rez;
-+	guid_t guid;
-+	char *label;
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	struct device *dev = &priv->client->dev;
-+
-+	guid_parse(PAC1921_DSM_UUID, &guid);
-+	handle = ACPI_HANDLE(dev);
-+
-+	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
-+	if (!rez)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Could not read shunt from ACPI table\n");
-+
-+	priv->rshunt_uohm = rez->package.elements[0].integer.value;
-+	ACPI_FREE(rez);
-+
-+	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
-+	if (!rez)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Could not read label from ACPI table\n");
-+
-+	label = devm_kstrdup(dev, rez->package.elements->string.pointer, GFP_KERNEL);
-+	if (!label)
-+		return dev_err_probe(dev, -EINVAL, "Label is NULL\n");
-+
-+	indio_dev->label = label;
-+	ACPI_FREE(rez);
-+
-+	return 0;
-+}
-+
-+static int pac1921_parse_of_fw(struct iio_dev *indio_dev)
-+{
-+	int ret;
-+	struct pac1921_priv *priv = iio_priv(indio_dev);
-+	struct device *dev = &priv->client->dev;
-+
-+	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
-+				       &priv->rshunt_uohm);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Cannot read shunt resistor property\n");
-+
-+	return 0;
-+}
-+
- static int pac1921_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -1176,14 +1245,16 @@ static int pac1921_probe(struct i2c_client *client)
- 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
- 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
- 
--	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
--				       &priv->rshunt_uohm);
--	if (ret)
-+	if (ACPI_HANDLE(dev))
-+		ret = pac1921_match_acpi_device(indio_dev);
-+	else
-+		ret = pac1921_parse_of_fw(indio_dev);
-+	if (ret < 0)
- 		return dev_err_probe(dev, ret,
--				     "Cannot read shunt resistor property\n");
--	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
--		return dev_err_probe(dev, -EINVAL,
--				     "Invalid shunt resistor: %u\n",
-+				     "Parameter parsing error\n");
-+
-+	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
-+		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
- 				     priv->rshunt_uohm);
- 
- 	pac1921_calc_current_scales(priv);
-@@ -1243,11 +1314,17 @@ static const struct of_device_id pac1921_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, pac1921_of_match);
- 
-+static const struct acpi_device_id pac1921_acpi_match[] = {
-+	{ "MCHP1921" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
- static struct i2c_driver pac1921_driver = {
- 	.driver	 = {
- 		.name = "pac1921",
- 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
- 		.of_match_table = pac1921_of_match,
-+		.acpi_match_table = pac1921_acpi_match
- 	},
- 	.probe = pac1921_probe,
- 	.id_table = pac1921_id,
 
-base-commit: e2687d0723257db5025a4cf8cefbd80bed1e2681
+
 -- 
-2.43.0
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
