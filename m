@@ -1,214 +1,159 @@
-Return-Path: <linux-kernel+bounces-390883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0DB9B7FA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:06:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2495A9B7FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF981C2174C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9612281AE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C426C1B3B2E;
-	Thu, 31 Oct 2024 16:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B601B533F;
+	Thu, 31 Oct 2024 16:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ckeyLuvh"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011027.outbound.protection.outlook.com [52.101.70.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Rp81pflZ"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B80D1A08BC;
-	Thu, 31 Oct 2024 16:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730390787; cv=fail; b=LVd050l+KFKu0SIm+XFUq9IE8PXt3zPfURrawtx/WB+9xjrudZ6lhRtDdCU+swYveO6si5rzq5Q6verJpvh9+iNp2SbNNKhF51Iyu52aR6mY6M0pY3WzeTRax1mLwluZL6Q2A5UEdlz2QYE7wr/54hSMVh5OXGsPUJAxzh9SvPc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730390787; c=relaxed/simple;
-	bh=3EvOqpsDoMklYvVD77dSDNhKOkks+FHWfqNpI4gVA/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cQeQmbqX10IpaKEw1JYCtbyc+Y/dMaTHn51GbQ9jIDMXR+Hh84RGHl+GWbUVVXphC+ljNlTBcrXagdJxD0HXlK4ZGULw1tgKV3MrmMO0i5mw2Kb5Bc+omRW/K5Ea4toO/7pruE0KUx1raUiZL9x5a3qguPaHXnPlPUtCx2nL7Ow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ckeyLuvh; arc=fail smtp.client-ip=52.101.70.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=buVTE4qhM2XWSNBvd2AtV7s7rpqCM9Xr6sRbBlk++DtdOn39AucSMi5MMY9vFrfIG9Lj81a3eZ/HmuM2EXFaoqWdKrJBYAnTjES5ZELeoYASErKzrtq6+aOSOS6tXlMx+0HeshE+Wy4YWwydu1XbaugcHOEUjZvdSXqL79T1ejdktXc8PxHWsBLUO+i8fNKMPKyJyx9y0naRZwGekxFXvnoUTQ2FF6Lfe60X6lz6W7xwiYrpokRBuB/D5loc6xxr+Oi3FQvVA3pfJco121JFDLhHiqbuv0yKQVq3NMLT7yk6VPRVeO0JVqW3vgCa0LD1PWcQhJP+x4ii8ZwgzWhyIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k1qYkgBVG1y5mHB+S915qnWna6ZLcDart7cxwK+YZGU=;
- b=GeS5cF6iHHnrkJWugNTZMbIEu1IMRjpy3/CtQ3qmn3zek/3QQG4IkUxtjQZchzgg9XdoMsfugOCNinASwgTzGRHbwbUq2yWn5Aw9GrgkAdbtJFymqRB5L20/VNe2jCT1QDBJPP+YD27a56pyH7fOlRcdK4BCy05VwHEOjw1L6R5SfyrquRKh6Dy97WVObSwDUniRM9XM+Ob/dYl/tsy935/eF2yaVqHOKDvipc//K0Atn0I+aR4S2pkHLqf8mcNhYr/JP7RvjvXobmKqMoFbpVZ3Umo4BxwqMnhKLr7A+znDS+wZQtBtzfffaKbLlqRSvIilFz1SnXVAL217SJhHiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k1qYkgBVG1y5mHB+S915qnWna6ZLcDart7cxwK+YZGU=;
- b=ckeyLuvhT7fV2uJ/KeNGrgdADPuNcD22JfzhhNYKVEgv2Z7Hm/RSkGkaIdaT0vb5OgZgaEYYU55O14CUEmbHJIN2A1oCh4lHiQ+BRRsNIWOpibM83DKnJJbbmqfjQx2yDZcari1lSf769xc6qyD1wCPAtwhImxUf+YPGSh+0J9V5qXssH+JirvyKEXGRJGDMVE1Fd50A8R2cA1Z9lSxZL6Yd3qJTu8JQZZ0fuMW/0YeA9tLbCfU+wmT7ajwv4VfifpsXm9lzqKuoWneMFoPdDjR4WxFsctAPxlimKrdEeNfK7XdHjugR0r2180cCC0aaDiGRaA2CE+y0SO4Ww3HD2A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM0PR04MB6772.eurprd04.prod.outlook.com (2603:10a6:208:188::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Thu, 31 Oct
- 2024 16:06:19 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
- 16:06:19 +0000
-Date: Thu, 31 Oct 2024 12:06:10 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
-	kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	kernel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 03/10] PCI: imx6: Fetch dbi2 and iATU base addesses
- from DT
-Message-ID: <ZyOq8hnQ6zXNM8VW@lizhi-Precision-Tower-5810>
-References: <20241031080655.3879139-1-hongxing.zhu@nxp.com>
- <20241031080655.3879139-4-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031080655.3879139-4-hongxing.zhu@nxp.com>
-X-ClientProxiedBy: BY3PR05CA0004.namprd05.prod.outlook.com
- (2603:10b6:a03:254::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6217113342F
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730390801; cv=none; b=ouNlvV3Bk/FmgUqsBMUIEmi49SpmwMsGkFHG+eSNCPKQ1TyXduu3//jxvMnbJpFkmp5O/vvWvvXFY1QYi4cAkJja2uYPvnWV3zBmVJkofsr1NT39Cb2cka9l1gScAl2gzFAEQ9l54L2bm4u+LeR7+bCfqISVet9Kyapdh3TeQXk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730390801; c=relaxed/simple;
+	bh=3L16LhwJhmR5YVUl5G1cLEUacyJlZ/KxsP8N3vb0Qi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dezBIn/JVT9hA49LwsS+Y0VWDXNZC/XsHyAlCiJyCUKKoKDAVstQwuKQtY2CyFceZv6EjNFTAc6srh1hZ+nFpp0V7nY0bornt3VDgXQV9OkKw3lvekNxVzzgYSrzJo4unDdXy5AvTxlq7Qhe95yzMazy1hWa21n6gUTXe4g7l5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Rp81pflZ; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460ab1bc2aeso6977041cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:06:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1730390798; x=1730995598; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SO7v+RfZoLfypZ4KKZMOHUyo7JMuVsRRPoIxDWu9s38=;
+        b=Rp81pflZkiAq1uY40rfspUrHNd3Y5gYKXtqfQuLjJxahBYKUaIAanunovQ2NG0vHYT
+         194vXatq99nOfPYCRvLSw7sklpStP8Mt/XVacQlO2VRBJhOgSjghCcjYxO+22yEZdy/n
+         8YwVqksefroZdtm9iny3ecDJ2X7AJyQXWemnSsK6/ft8eI1QmsWWPACQP+ZhyLUc7NQb
+         jCl1odvbVRVAiamnS4Ef5BK5ZKTbnQV7VxpcN42GlZk5yMAXvm83lNxdQ7akRojO/XIY
+         8wozGof9zy3up+/BeZTiypyYybcvdwA/D2F0/oBnaObWam+n3yK+orY9jb1olvV3UgFD
+         yGhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730390798; x=1730995598;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SO7v+RfZoLfypZ4KKZMOHUyo7JMuVsRRPoIxDWu9s38=;
+        b=lorb+3rLBka+ctJ4QhZUxchIvTz4SwAm8tQfzrDYWH+KyPL9S4tK+y5412tx9G3tJK
+         ZRYwkJAwOOTezC0lniXpT8kbqgi27n5mGdbLurcx7bcwF683Rjv5OR5q5B0oS98xCa86
+         7glJrLRftbi33XnF5UFGokrsDgJ6Ly/l+WDhUNHmL45rHaqk9NdHPzo1l1mbP+H7rvIB
+         y2Xlq+AWKGEmxh2fS3xBhMdTgXl52Tkfqs0xenVABDYgATZrfSp7JGHHoSvPVEi72OEz
+         K7o04auPtTDJEYo6Mc9clG5K4twLpw6rTSnAQUc8D4P9hWHMA3RqMMh6grVolVBvMTrG
+         vZyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgohgOc4juRbjnixcxMM7kzai93OLoSLVkFATHVRIZPTJNtSQNQZKf55vR8JbupIPTTCr5oIbu7PmWaVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkm20Q2arPxJLGPu3vurP/jB0fRm7djIWMjsAdByK4YXOhrM8H
+	NfCeHAhdxxYePP7PjDXYfeWmYGLkw0j9zr2tmrA0Sstu2X9a4OS07ynueabQGXI=
+X-Google-Smtp-Source: AGHT+IED7ZEPsYL/J2+WAEkVhkkEbmae8OqhC99bUW9D4jOFLXnCuUGOPCgezgCfHDV8eABlx8kETQ==
+X-Received: by 2002:a05:622a:144b:b0:461:15fc:7fe7 with SMTP id d75a77b69052e-462b86a6a75mr989681cf.28.1730390796638;
+        Thu, 31 Oct 2024 09:06:36 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d354177d2fsm9043376d6.107.2024.10.31.09.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 09:06:35 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t6Xgx-00000000Ic7-0kQP;
+	Thu, 31 Oct 2024 13:06:35 -0300
+Date: Thu, 31 Oct 2024 13:06:35 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Gowans, James" <jgowans@amazon.com>
+Cc: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"rppt@kernel.org" <rppt@kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"Graf (AWS), Alexander" <graf@amazon.de>,
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
+	"Durrant, Paul" <pdurrant@amazon.co.uk>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
+Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
+Message-ID: <20241031160635.GA35848@ziepe.ca>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+ <20240805093245.889357-6-jgowans@amazon.com>
+ <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB6772:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6fa9b35-d501-4803-896a-08dcf9c5f4f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Zj7z7ga+Sx8dzpz94L1iiX01AzoJ0qWgA7zgDUQ8mFDpIr8iYFQk1uIRopx+?=
- =?us-ascii?Q?YzZ+gGtG/D4XoMtCy5B1mi2RsS6b/5Wol5p3ZPSgeuk5pfYCTDJPlZjdfpqB?=
- =?us-ascii?Q?fJpSbVYbbDluEM5S2nfitUYIN4SgdCiZ6spLbWMzwswKOjUiydtp3X0FVs6E?=
- =?us-ascii?Q?YxJf8nMlOefzItHOz61T5r9IadWsUYof+LyJBkx1Etbbv+kS1yKfgw2CwRHA?=
- =?us-ascii?Q?KiYQsQKc6tYOkyZBftLSXSCAFsuJPIlkFTBhl14URSngkNLDHzmLMiuBaTGp?=
- =?us-ascii?Q?g1H4U5PsxpY0JE8JgHGTWeB8E6jkKkabCzIAJ3yb5gXQLelpqFTRUbA0DkQk?=
- =?us-ascii?Q?oiGhZ1lijQBb0t4DZ6/w9Ec6/dzWu2slJFIyv/HUd0RmvFdPzlyG6rhy68nH?=
- =?us-ascii?Q?gXB7rzNKaht5+Zf+WR7g7l2/pEC5l++6PaSFmDslOEIGqNnrFS+Yzp9iU82A?=
- =?us-ascii?Q?BKgdZoT/1XEQIHDCb1yjC9Y2CRn9N3jST7VKs7GWQFbRCGPLM1LXQLtWPTGK?=
- =?us-ascii?Q?L+gps8RGWZOrLfFjDOTynWC7fD+ye271yPt440Ija/JRHZ2XfHBsKyPnXY4P?=
- =?us-ascii?Q?zuCguElp36g1FmdNeF7eYzemWPjwav9AcQIBZSspRBT7z2yL8PPIZzt5P/7b?=
- =?us-ascii?Q?UYuiocacH6X88QKcs2xVHAJCmLO6mXGHhsai3R/wAWT7XML1jT9hy5M6ixKC?=
- =?us-ascii?Q?poRikPhbpr9RGPcH+1MAvIlAeTOVXzsBUdJxUvvT73z3u/AdNEHHbQzeh/v2?=
- =?us-ascii?Q?colbNOFio1MLGNDcz3N5OBIY8px3iBx6FFzDViczaI4KnO8kwRUASPfNtQuM?=
- =?us-ascii?Q?J/DN3lfOcVERmeGX+P44ossOl+jGWwRfnN3OPEs689RKDu2Muq/0KmmG+KBA?=
- =?us-ascii?Q?dzRyy1YTrzId9fDQVNX3WQqYY7vp/fTAEoBS5sWccxDwx4nS8fKON5mVWzw6?=
- =?us-ascii?Q?9kG9RoJf9OiNoEAbRkYeT4iXXt2uor64oEqqnoNk/OueklJsV/0NtRVZAtq6?=
- =?us-ascii?Q?S9cicU8cAJNW/CGiK0pqvtTosS7EqBrLX4/05LL+lUO22gcJxXDxYCVT4XKI?=
- =?us-ascii?Q?Te7a8OwbkHGVtyJXU49Pw5Rj0D3dTKVeDOKaThgby9zMH22EvOv4AlRjAklM?=
- =?us-ascii?Q?yw5fhODp7vwXvFXA2vRdDLYHl+Sp7FcQwr6fXiewcYSbpy2mUe24zEpSvdAI?=
- =?us-ascii?Q?DJchB5bgfTYjNInbVoodFcjZMiA67eLivLGdgzbnxcyvhgENp0yPnSyugtAr?=
- =?us-ascii?Q?WieDW7Xh9OzFSyDo5CBiXxSipM0oTG3fmCM78mLKHN27uiMoDtDFZUG+pMCw?=
- =?us-ascii?Q?DS8B6oweePAl1QZ8Kpa800FxcqAKjZYmcpfl8nZSmhRDY/srs0pGAFX5lKPT?=
- =?us-ascii?Q?6BayRjQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Hbdyy9JgsOP+SghFI8FvQwGKt0eE88DmDNRzutv4K0rel11crcCa05erNvMg?=
- =?us-ascii?Q?ZGG9cwP1bIgZ+Mmq2Avh3q9oPbIFN7zu9/XW9vy2BRgHxPC1rb9tdDPfMw9I?=
- =?us-ascii?Q?9BaUVnd4WqvRzm5lBxBMXnL0T6SMbr2HNroXNnlfRbW0IslsLbLinCKRAn7+?=
- =?us-ascii?Q?5m3a+kHT9+RY/AZ7LZSRk4MjVPTIpwa1KgOMLFyBdS/+YTYI+ULKvbL4wd/0?=
- =?us-ascii?Q?+23ls7MxeuFs0xoqg8EV8Ni4FDN75xMiza1WqxrFYwM0Mx1lRXkNqk1G4EQ2?=
- =?us-ascii?Q?d0MuWlH8LlHuz0f5wowf+n/fmBYLkoCOhOsVDAqyzi+T6kELU/q7g/8Thjn7?=
- =?us-ascii?Q?mWx7vCrWa4Qv+/Z5v7dMAtDMMo+pjTL1lkEnaPMqMX/PILLqXwgoagX2hOZk?=
- =?us-ascii?Q?ilOlP9gqxweq9RW+KcAHBaltmnV+lFcHR0qiNE/rXnu61ul30wqsxBVlqp11?=
- =?us-ascii?Q?O62P0zutdHGIkGLkT+PJ1+HSUoR5yFGS4wkkt4NQWPlw9gV+qMoYscKqWbeX?=
- =?us-ascii?Q?9XnX9lHdYc+KGaiIUDucqs7gXmGyCiZ8l2oVnmlD2uguYCpM9Dlt661AgMiZ?=
- =?us-ascii?Q?AfNg6gXBPfltCHhYhnh6pEDxCaNBTsX3T5GMWu1OjRzH/jFYOS5xYJR8VJ4e?=
- =?us-ascii?Q?AXFxjbGPBEn+PwKya7ZRYOhQDyAlu7JjrumeCp47+vsIkHZ99R5O5o5k1Mqa?=
- =?us-ascii?Q?07K0AJ0KGbw+R9Rsnf1zE7v3zHPa/+W57Iqe7KsIhIAP8O9f9OeZ/uhjJTrQ?=
- =?us-ascii?Q?GZfT7gruH/RF+ON0983w0lz9dMUqr4CkiRf9a7pPMnrSrr4nR199JdLpOllP?=
- =?us-ascii?Q?6cM9TKOeVP7HG2B3hfZXgpJYc4ZTRg1ye7XwkJFmAGYvGrIz6YJ0o6Q81ppa?=
- =?us-ascii?Q?w0B5PmzbRwBvXHK56kLUfNUxIdL3UtF8tbayIvC7x/BeOROMxzOfsDsm2nG9?=
- =?us-ascii?Q?lT8MbAHqSJa/NWbZYTpJtjO8nmvlhYFOCrcDUjFHTB0JMNCdPuB6aXyhOqMW?=
- =?us-ascii?Q?MrhDGXLZ36X8Oe3F4QsqznIQcJwIoMxnfskQ0JdQXYlq5MGg5UbXu+kgzA2S?=
- =?us-ascii?Q?dHsXCHdzEwM431hTCHdcmTZmPA60Hv/GR2tnovMk94DafowbyGOKxfOQ96Ds?=
- =?us-ascii?Q?A6GR2ECHjbZ1eoUnjpdnZxE1MJ3vVVzF0w3KjNbMi2+6Aau4JmAOfaUck7lX?=
- =?us-ascii?Q?wBpmogdogt1Gd/jbLKq2UOHoKcNNUYDR4tjgb2uYaP/tUZwRlt6QsSsfyUVJ?=
- =?us-ascii?Q?/sfXJlzAcaigAz1bWUu5zzMwvSIlFqqg9UY09leq49YQ0SyhbyLhEnEnCsXg?=
- =?us-ascii?Q?X1RzXC+fFf//D55nM+7f9KmO+S/p110fkjzVEDl0OGJaZPGRsSCa5WEcGQAY?=
- =?us-ascii?Q?cB66lt+7FxESC23ZXaprkbIdbWTUDl1iMF3irQhngU7qePqrCVxOXQL9lEFf?=
- =?us-ascii?Q?ZbgD0x84u1LLzqHyhjbitooKrrvTMIGykokMBtBvOE02kw6lNw3uGf65+0ms?=
- =?us-ascii?Q?Q17p9TrlttlXR5UHcHlyBx3+wl1BWak8xwHzhJ/PMHu9iV6PYbmiaxS0kJjF?=
- =?us-ascii?Q?HXSVHvlv6DYBab/xSh8GReGnhYUJLoZIXgb3+uER?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6fa9b35-d501-4803-896a-08dcf9c5f4f4
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 16:06:19.4428
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VEGGCc3nxZIZdDEmeJEVzUT5Xf900ahuFScXiEld+UQzaHFN+pDmV0jPCdwT6GQmob2mU4Q8jqH0BZLwuZt6ng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
 
-On Thu, Oct 31, 2024 at 04:06:48PM +0800, Richard Zhu wrote:
-> Since dbi2 and atu regs are added for i.MX8M PCIes. Fetch the dbi2 and iATU
-> base addresses from DT directly, and remove the useless codes.
->
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
+On Thu, Oct 31, 2024 at 03:30:59PM +0000, Gowans, James wrote:
+> On Tue, 2024-10-29 at 16:05 -0700, Elliot Berman wrote:
+> > On Mon, Aug 05, 2024 at 11:32:40AM +0200, James Gowans wrote:
+> > > Make the file data usable to userspace by adding mmap. That's all that
+> > > QEMU needs for guest RAM, so that's all be bother implementing for now.
+> > > 
+> > > When mmaping the file the VMA is marked as PFNMAP to indicate that there
+> > > are no struct pages for the memory in this VMA. Remap_pfn_range() is
+> > > used to actually populate the page tables. All PTEs are pre-faulted into
+> > > the pgtables at mmap time so that the pgtables are usable when this
+> > > virtual address range is given to VFIO's MAP_DMA.
+> > 
+> > Thanks for sending this out! I'm going through the series with the
+> > intention to see how it might fit within the existing guest_memfd work
+> > for pKVM/CoCo/Gunyah.
+> > 
+> > It might've been mentioned in the MM alignment session -- you might be
+> > interested to join the guest_memfd bi-weekly call to see how we are
+> > overlapping [1].
+> > 
+> > [1]: https://lore.kernel.org/kvm/ae794891-fe69-411a-b82e-6963b594a62a@redhat.com/T/
+> 
+> Hi Elliot, yes, I think that there is a lot more overlap with
+> guest_memfd necessary here. The idea was to extend guestmemfs at some
+> point to have a guest_memfd style interface, but it was pointed out at
+> the MM alignment call that doing so would require guestmemfs to
+> duplicate the API surface of guest_memfd. This is undesirable. Better
+> would be to have persistence implemented as a custom allocator behind a
+> normal guest_memfd. I'm not too sure how this would be actually done in
+> practice, specifically: 
+> - how the persistent pool would be defined
+> - how it would be supplied to guest_memfd
+> - how the guest_memfds would be re-discovered after kexec
+> But assuming we can figure out some way to do this, I think it's a
+> better way to go.
 
-Need declear not compatible broken for upstreams' dts because not dts
-enable EP function in upstream tree.
+I think the filesystem interface seemed reasonable, you just want
+open() on the filesystem to return back a normal guest_memfd and
+re-use all of that code to implement it.
 
->  drivers/pci/controller/dwc/pci-imx6.c | 20 --------------------
->  1 file changed, 20 deletions(-)
->
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 73cb69ba8933..d21f7d2e79dc 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1114,7 +1114,6 @@ static int imx_add_pcie_ep(struct imx_pcie *imx_pcie,
->  			   struct platform_device *pdev)
->  {
->  	int ret;
-> -	unsigned int pcie_dbi2_offset;
->  	struct dw_pcie_ep *ep;
->  	struct dw_pcie *pci = imx_pcie->pci;
->  	struct dw_pcie_rp *pp = &pci->pp;
-> @@ -1124,25 +1123,6 @@ static int imx_add_pcie_ep(struct imx_pcie *imx_pcie,
->  	ep = &pci->ep;
->  	ep->ops = &pcie_ep_ops;
->
-> -	switch (imx_pcie->drvdata->variant) {
-> -	case IMX8MQ_EP:
-> -	case IMX8MM_EP:
-> -	case IMX8MP_EP:
-> -		pcie_dbi2_offset = SZ_1M;
-> -		break;
-> -	default:
-> -		pcie_dbi2_offset = SZ_4K;
-> -		break;
-> -	}
-> -
-> -	pci->dbi_base2 = pci->dbi_base + pcie_dbi2_offset;
-> -
-> -	/*
-> -	 * FIXME: Ideally, dbi2 base address should come from DT. But since only IMX95 is defining
-> -	 * "dbi2" in DT, "dbi_base2" is set to NULL here for that platform alone so that the DWC
-> -	 * core code can fetch that from DT. But once all platform DTs were fixed, this and the
-> -	 * above "dbi_base2" setting should be removed.
-> -	 */
->  	if (device_property_match_string(dev, "reg-names", "dbi2") >= 0)
->  		pci->dbi_base2 = NULL;
->
-> --
-> 2.37.1
->
+When opened through the filesystem guest_memfd would get hooked by the
+KHO stuff to manage its memory, somehow.
+
+Really KHO just needs to keep track of the addresess in the
+guest_memfd when it serializes, right? So maybe all it needs is a way
+to freeze the guest_memfd so it's memory map doesn't change anymore,
+then a way to extract the addresses from it for serialization?
+
+Jason
 
