@@ -1,121 +1,104 @@
-Return-Path: <linux-kernel+bounces-390263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5620A9B77AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AAD9B77B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889EA1C224F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA4C1C234D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B25A195FF1;
-	Thu, 31 Oct 2024 09:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E785197A87;
+	Thu, 31 Oct 2024 09:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jubE+MuV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTQP7PS+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FE6193078;
-	Thu, 31 Oct 2024 09:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A7D18DF6B;
+	Thu, 31 Oct 2024 09:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367404; cv=none; b=PpBpeJj8psrZA/bS7Fjwv3GWMTWd5cc/IAEzMUebDnVFIhz99fB4VQCeXDKeDNySFWSUGJfkEmhqboMbqu113TFG+K6nYVBsZKg0Ql/dW5t4v3J3qaB4V23NZMI3qdF3wyIXmzvsN+y2weIfPoJ10Kd+6cBoLHidFN3s60LxOG0=
+	t=1730367471; cv=none; b=gnx3mAItE3349SQP3Nbx1fRxBv1HoyZZGYcG9npJiiHawN/o0qrNGeKQvxJ9rAXkGwt2WzzTO9Ng5wD15yaMTyq0sx0sbHMiI5ptaPAKV/LMysD+g48kXBGD9XFbmzi1lyAEmBPGI3nbfgj1DFvxIfiTrqHkZ3mV74UaC2TQJpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367404; c=relaxed/simple;
-	bh=Jk/UL+5rTj1PV/YoegypnMhOCixtc3MMVbc/scCFjOE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQXJ1n3FZUo/v4m6jOisjixUaWHdwVbib/NfeTg+WGsJT1ccVCeD7/D3FmfpeQj7wPXu7VdEKqTlLWgsYv7p7darLhr52uBNnDLJVLWKTyLyhJtoEm7hpJItxtylcinzXXwgQBXLBlX0Whk6nRCy43Kx6dDBFAU2F24zzvSHQEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jubE+MuV; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1730367402; x=1761903402;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Jk/UL+5rTj1PV/YoegypnMhOCixtc3MMVbc/scCFjOE=;
-  b=jubE+MuVTxyQuBiUO+J29NNC7KOpMVE6nvODKhQymuilXDPlWY7I2Sws
-   S8xG2ll7XO6Hy9HvH+F75D0WE2p6IaJ9zn4MN0lZs9+vsPwQWIk9JP8Hh
-   xqJhnbFnPU8A140WHlFSr4XzdYKREw52in1/UTS1lGogzthks/fTznATz
-   KVXxbSB8EbOG/7F1wfvQ2cWS7ptMTSaELsoC5H6J4nhQZt3nXBXvXOtBh
-   4K69wsDf/xk3NTxXX1JeGz+4rjpGl1nqcUKOf75rGJh6d19t5YkhiMpDX
-   Uocjl3k9vun3HEGlU5sb6OC62c2GUvcnozpcwUx9Nya2mHPqcHKkwlabi
-   Q==;
-X-CSE-ConnectionGUID: U7/DaQSZR9qiaEJq3md8kg==
-X-CSE-MsgGUID: BBxWSfWVS0+qtiQRUILoGg==
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="34234608"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Oct 2024 02:36:41 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 31 Oct 2024 02:36:33 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 31 Oct 2024 02:36:29 -0700
-Date: Thu, 31 Oct 2024 09:36:28 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, <horatiu.vultur@microchip.com>,
-	<jensemil.schulzostergaard@microchip.com>,
-	<Parthiban.Veerasooran@microchip.com>, <Raju.Lakkaraju@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, <jacob.e.keller@intel.com>,
-	<ast@fiberby.net>, <maxime.chevallier@bootlin.com>, <horms@kernel.org>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 10/15] net: lan969x: add PTP handler function
-Message-ID: <20241031093628.faiupqqny7oco7uz@DEN-DL-M70577>
-References: <20241024-sparx5-lan969x-switch-driver-2-v2-0-a0b5fae88a0f@microchip.com>
- <20241024-sparx5-lan969x-switch-driver-2-v2-10-a0b5fae88a0f@microchip.com>
- <20241030180742.2143cb59@kernel.org>
+	s=arc-20240116; t=1730367471; c=relaxed/simple;
+	bh=tqzJLh5GYRL2KEmKB06uhDKvLABRYtBWXtB3Y8bMEKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COhqTqf8iZbulguVzzjipvG112iSLyNCP7lYG/JfS/7MRWKU/0UTMrG94RvabryQB35LcklOkAPHfyhh93N5qV9Zi2SUdYT+a/cyf5QCGW4PFDaZ2vAK5t47+NsiG6Y6+485Fh/79wbseMnto1my9VEsHMGxDVQATasWRJ9H2bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTQP7PS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04050C4CEC3;
+	Thu, 31 Oct 2024 09:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730367470;
+	bh=tqzJLh5GYRL2KEmKB06uhDKvLABRYtBWXtB3Y8bMEKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dTQP7PS+/MTyTtUMPwFCdUdEd1qWr3BPPQ8pvyYPVrtbourx/L8sdNPTr9lPj1QPB
+	 g933lrXQqvAJxMV1kQiG2xyG7NF8LnS9wKQBA9lsBXrn5RHD1+siwDoEBnl+zfB8NV
+	 DrhOyVxwnAVdg5G2IeaEo3cxX9HtNdkNEj0b51HcYMeCY5S9sSDgNsPLzN1l7uwEAl
+	 8UAGh7dlC4XLOOvyRno1rlDrgXdZkQFymJIkdmkKL/RzKkO8mH98WS4qTpitL+TrzB
+	 j4UfpaLbeZXfuUbC0SIp4WAe0T7KDxaEbIsTC03s3SAkoAGz9+Sya4ZfdJPQPVNS6T
+	 b1awtly2cL7Qw==
+Date: Thu, 31 Oct 2024 11:37:46 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 00/17] Provide a new two step DMA mapping API
+Message-ID: <20241031093746.GA88858@unreal>
+References: <cover.1730298502.git.leon@kernel.org>
+ <3144b6e7-5c80-46d2-8ddc-a71af3c23072@kernel.dk>
+ <20241031083450.GA30625@lst.de>
+ <20241031090530.GC7473@unreal>
+ <20241031092113.GA1791@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030180742.2143cb59@kernel.org>
+In-Reply-To: <20241031092113.GA1791@lst.de>
 
-> On Thu, 24 Oct 2024 00:01:29 +0200 Daniel Machon wrote:
-> > +             spin_lock_irqsave(&port->tx_skbs.lock, flags);
-> > +             skb_queue_walk_safe(&port->tx_skbs, skb, skb_tmp) {
-> > +                     if (SPARX5_SKB_CB(skb)->ts_id != id)
-> > +                             continue;
-> > +
-> > +                     __skb_unlink(skb, &port->tx_skbs);
-> > +                     skb_match = skb;
-> > +                     break;
-> > +             }
-> > +             spin_unlock_irqrestore(&port->tx_skbs.lock, flags);
+On Thu, Oct 31, 2024 at 10:21:13AM +0100, Christoph Hellwig wrote:
+> On Thu, Oct 31, 2024 at 11:05:30AM +0200, Leon Romanovsky wrote:
+> > This series is a subset of the series you tested and doesn't include the
+> > block layer changes which most likely were the cause of the performance
+> > regression.
+> > 
+> > This is why I separated the block layer changes from the rest of the series
+> > and marked them as RFC.
+> > 
+> > The current patch set is viable for HMM and VFIO. Can you please retest
+> > only this series and leave the block layer changes for later till Christoph
+> > finds the answer for the performance regression?
 > 
-> For a followup for both drivers -- you're mixing irqsave and bare
-> spin_lock() here. The _irqsave/_irqrestore is not necessary, let's
-> drop it.
-> 
-> > +             spin_lock(&sparx5->ptp_ts_id_lock);
+> As the subset doesn't touch block code or code called by block I don't
+> think we need Jens to benchmark it, unless he really wants to.
 
-Hi Jakub,
+He wrote this sentence in his email, while responding on subset which doesn't change
+anything in block layer: "just want to make sure something like this doesn't get merged
+until that is both fully understood and sorted out."
 
-I agree it seems wrong to mix these.
+This series works like a charm for RDMA (HMM) and VFIO.
 
-I just talked to Horatiu, and he mentioned posting a similar fix for the
-lan966x driver some time ago [1]. Only this fix added
-_irqsave/_irqrestore to the ptp_ts_id_lock - so basically the opposite
-of what you are suggesting. Why do you think that the
-_irqsave/_irqrestore is not necessary?
-
-[1] 3a70e0d4c9d7 ("net: lan966x: Fix possible deadlock inside PTP")
-
-/Daniel
+Thanks
 
