@@ -1,288 +1,150 @@
-Return-Path: <linux-kernel+bounces-390956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF5B9B807E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:45:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416609B8081
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:46:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B66B1F223A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE45F287889
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145E313AA2E;
-	Thu, 31 Oct 2024 16:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A621D1C1AB6;
+	Thu, 31 Oct 2024 16:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bgOScP/2"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QMdQCxcC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A933C19E7F9
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93821BD027
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730393130; cv=none; b=RWCKe+hEXjpcx417dFV0dcnRlccOmjd/nwrELxwnQfE1kKUHlxGK9ualTeBkVVQ3tLn6U0VKzMg5/JN55E5nodf7ki0818lo04oGFaCO+D57lRtyxzFC9rlXBEXgYvBY1U86EPlg2kIzd3y1TccZn21P3wGCLwQ1IWg7oxXbA5U=
+	t=1730393134; cv=none; b=l41oG8Ul/zobTa+WeJVIeyjsOVCZzPNb5AQ3Bz/WPDCGvgbScJSYhFLIXZ/noCc3qf4ywebHWb9VjUwq2xUUnHFzVQIY7U4MHyQ3+VCdzOadAglTpgHMBT/ZbK4Up2jh0x0lcUt4/xdJ+Ef1qbm0pyJZuZ/0ItR8q8YPKkuzQ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730393130; c=relaxed/simple;
-	bh=rkdqG/nrgIcJqGiS/dstGzJE2Pk4kvgZxSdqcJxcBuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJI5V+cK00Cf/tpJq2uUFlOHQtecJCc796C/t3BZI72OwrW6JGTxXLh2uVFoivgQDXqp2njCglIr9LgPrBsm+PcCxJjTpg5jR1ijiPUgru6hFBKX2dlZdDS4RXrdXnbXjwiWncDDex0gV4S6h364NnOmpZQRBCCPZYoR+lYSw5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bgOScP/2; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4608dddaa35so4891cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730393126; x=1730997926; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ajSNpZ+3WMV4SP4tjIDU9tWATJdss3I7t5t7CZg1K/c=;
-        b=bgOScP/2JM0L3JJj/LvvA0/jas9W+D1S5C71iEi5YHbtbA+wQVl8iH7J+Ka5/lCDQH
-         evoNB1R2GnmLIb/dS8w6z9LLoMxTEyYpgNHz8fLXsTVI62jxgdRdEtBF+iuvfZpF+0x3
-         +HwDOvRpH05LqXTZiXVsVUhaDMV/enEvhaMu8mPhNrF4OacYlgRSyra/ofQRPWlnOul0
-         NHoxZZzV3fyUQd2r9mS+uYURMnlqFemxlLcxQvlHUWdq413ikJy4GiKFhib/Zwvf3UWv
-         AUIhAZbDeD1LRTyjiV+2B8nVEckVmmsJVYt7b0EQGQ6n/3tJiUUY3g3lbeYWGGcnCGIS
-         QNyg==
+	s=arc-20240116; t=1730393134; c=relaxed/simple;
+	bh=182pqmxJKzOagD+mCIwZct3+5F1kCCVclBMGYB3B2rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZ28mUsZwt2yeYHB4so2dK1jfJlBrSiOjH5Dno/N+KMYnIKqm2roB3lbp2mju/kPS4IA4nmv+zc/0rSL/+jeQeicjddXpIz2d6vHKS+3HiB+yQGz5jMnUsZ6eLdNSwA8ObaT60PhCrPxcS1sKboFnhFLUhb/ChN0iWGlaL6VJIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QMdQCxcC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730393130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=182pqmxJKzOagD+mCIwZct3+5F1kCCVclBMGYB3B2rI=;
+	b=QMdQCxcCz+li+qDqf2k3Vvp/3LQ96qN4yENUirBhJxWszhRj9S7XJ7HK6y/xqp6zZ1nVV4
+	/o3MXHrouNuLBkTO3UkLsvJ7KLcXLjKZ32e9jo9tuTDJ/G2sGTUyr13LEM+fbrBD7KT0CD
+	6cZulagzq2Km0kYeiA7hgbMwJnL83tQ=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-546-qQcL_twXOQSsjkh00XGDfg-1; Thu, 31 Oct 2024 12:45:26 -0400
+X-MC-Unique: qQcL_twXOQSsjkh00XGDfg-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-539ebb67c28so816729e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:45:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730393126; x=1730997926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ajSNpZ+3WMV4SP4tjIDU9tWATJdss3I7t5t7CZg1K/c=;
-        b=oLp2NsvHyrDXdx6/w+MIX3v7fMjvJ19qdDw10RlpIFvQ83mBa0B29U1CJJ65xmUb1l
-         oGvFK1nJIYo7l49kiQPo5/M8b69Od9fDr03beYGlVLMulmfsr69p1LQ3DdDJCVrduUaj
-         XKpiMuQI0abhTUsG+/bcYRK4GWK7yW3ZGFdz4bbtOhAstJUgIaRXLb5CWw7KKkIErUAH
-         ITOwKGYwkvzQbwVMbkIBMr/OSIO0IYxmQ95XfB80eiBjMbmiLhQs0kHiS/uVFW73i+ZQ
-         4+k0rTLWOGVufepnj8XQ0VS4kyNRRdyG/zfHvwntf+xz4dr2qaFnDBSFWM93bZsc3n9N
-         GI8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXc6ow5NXCMXP/tzjix33gBLpWKnaWumXlWPS7IQjEyI6jr1xQsiwDqYXXISXM4kG+aOED2kELpieutg4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGGJWLOiM3rVm1/oI8hSnbIP8GIQ95Bt54ZEnLeClT2nNRUGdg
-	Nl7QB1YR1dYRzQcf5oTbXZJ04nUbTRmkRmN+Xao2pG1i2+55+3zG90TcPOEVIO2mYZfpxlxRMDP
-	aiQZgp6eN0r8zVKWdgqUbz/98lRupC8+BaleO
-X-Gm-Gg: ASbGncsX8cq2EE2ByUrCyQbK/yYYp8I9SQ6XykY9+P3otKsjjuCGrN7+kHL+hJR2x+K
-	3TwDnpT1AHMPdaS/5g+JrStzy00XY9CtzHWzQtJpYdAwqQvsN45ofBF6ucrHANw==
-X-Google-Smtp-Source: AGHT+IG/0R3i1ODpwp7LvGfwHIDqYpiF6xbdGWgqEnkqUJcQZ6mUNfG/1HplzFp3uMaUggF77XP54VKzykRwvgeAa/4=
-X-Received: by 2002:ac8:5f0a:0:b0:461:6bb5:99ba with SMTP id
- d75a77b69052e-462ad0feedbmr3752101cf.5.1730393126111; Thu, 31 Oct 2024
- 09:45:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730393125; x=1730997925;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=182pqmxJKzOagD+mCIwZct3+5F1kCCVclBMGYB3B2rI=;
+        b=BdNVyJY0tYluFDnyBFDvw2nNkzCwg59QGpFuJfLpYMvYkvgUDkgsNiV5R4MmnB/xry
+         bpVcgIk+i/cwiD1iUOdMVGHfdDwuCureFsh5mxxeNUo5qlYIeGJE2/tgnRO4gbgKq96G
+         GpfxgQgHv6P/lGOcFHCPubdPhueJuxw+98dGChX0YS6Eydzu0pAFt9PC6lyBVipGs63g
+         khbjqFtNVnaIy2WCiGSQ8oZAWGqtfZjGNSGPJLvsWh1cbMlnlwYIp8LlxWBVqyFdxGyh
+         i6O6BtJ+SY072wiQ+UydAZu9OA62rwtgcS9WBf9smQeYKhSUn/K/QpcXYZNAy8zz8ejw
+         4q6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVmfSk/ca+UJ5w4nEKmTh4J+4HS8F1ADzfylryJXurHUFyMqOy+oZJwjIVIH5KxygZbhIBvslPqbC7GkAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3I8xpvHrVOWNHsUntlDL0XlxpCydzal1Fq8mJSbUKGOZJim2f
+	H77Cko9dUF6CPSRg0K95nVq3ATPJFj9yGEg8/ATD5fwW/rn7JmHMOogOU0gHKWSKU9uEqsfAL6P
+	6nPCJqeWdLZZStZtsX74LG+pbaS8AW1Tb1j/0S3CtqXmVOhk77WucNOoLZYnUrw==
+X-Received: by 2002:a05:6512:32c8:b0:535:82eb:21d1 with SMTP id 2adb3069b0e04-53d65e1781fmr431490e87.57.1730393125212;
+        Thu, 31 Oct 2024 09:45:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHouLo3TF+7LJo+6trZy9gzmL/37JvOLD2BMFURyxuRnX3R17ZHSmy2W/qUwbYYI/LTZymFXg==
+X-Received: by 2002:a05:6512:32c8:b0:535:82eb:21d1 with SMTP id 2adb3069b0e04-53d65e1781fmr431467e87.57.1730393124704;
+        Thu, 31 Oct 2024 09:45:24 -0700 (PDT)
+Received: from localhost ([2a01:e0a:b25:f902::ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4342sm2618972f8f.32.2024.10.31.09.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 09:45:24 -0700 (PDT)
+Date: Thu, 31 Oct 2024 17:45:23 +0100
+From: Maxime Ripard <mripard@redhat.com>
+To: metux <metux@gmx.de>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: Requirements to merge new heaps in the kernel
+Message-ID: <20241031-bouncy-cute-shrimp-cd2530@houat>
+References: <20241022-macaw-of-spectacular-joy-8dcefa@houat>
+ <35deac48-4220-4889-833d-1b57b417e968@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030142722.2901744-1-sdf@fomichev.me> <CAHS8izOBp4yXBg-nOSouD+A7gOGs9MPmdFc9_hB8=Ni0QdeZHg@mail.gmail.com>
- <ZyJM_dVs1_ys3bFX@mini-arch> <CAHS8izN6-5RJgKX08sgntYDVgETkBGpgoYToq8ezcy+tYHdaSA@mail.gmail.com>
- <ZyJSpBrhz7UJ0r7c@mini-arch>
-In-Reply-To: <ZyJSpBrhz7UJ0r7c@mini-arch>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 31 Oct 2024 09:45:14 -0700
-Message-ID: <CAHS8izPCFVd=opRiGMYu3u0neOP7yCJDX8Ff+TdURq2U-Pi27A@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 00/12] selftests: ncdevmem: Add ncdevmem to ksft
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	andrew+netdev@lunn.ch, shuah@kernel.org, horms@kernel.org, willemb@google.com, 
-	petrm@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="e7ghtd5lwxlkxgfh"
+Content-Disposition: inline
+In-Reply-To: <35deac48-4220-4889-833d-1b57b417e968@gmx.de>
+
+
+--e7ghtd5lwxlkxgfh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: Requirements to merge new heaps in the kernel
+MIME-Version: 1.0
 
-On Wed, Oct 30, 2024 at 8:37=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
-l.com> wrote:
->
-> On 10/30, Mina Almasry wrote:
-> > On Wed, Oct 30, 2024 at 8:13=E2=80=AFAM Stanislav Fomichev <stfomichev@=
-gmail.com> wrote:
-> > >
-> > > On 10/30, Mina Almasry wrote:
-> > > > On Wed, Oct 30, 2024 at 7:27=E2=80=AFAM Stanislav Fomichev <sdf@fom=
-ichev.me> wrote:
-> > > > >
-> > > > > The goal of the series is to simplify and make it possible to use
-> > > > > ncdevmem in an automated way from the ksft python wrapper.
-> > > > >
-> > > > > ncdevmem is slowly mutated into a state where it uses stdout
-> > > > > to print the payload and the python wrapper is added to
-> > > > > make sure the arrived payload matches the expected one.
-> > > > >
-> > > > > v6:
-> > > > > - fix compilation issue in 'Unify error handling' patch (Jakub)
-> > > > >
-> > > >
-> > > > Since I saw a compilation failures on a couple of iterations I
-> > > > cherry-picked this locally and tested compilation. I'm seeing this:
-> > >
-> > > Are you cherry picking the whole series or just this patch? It looks
-> > > too broken.
-> > >
-> > > > sudo CFLAGS=3D"-static" make -C ./tools/testing/selftests/drivers/n=
-et/hw
-> > > > TARGETS=3Dncdevmem 2>&1
-> > > > make: Entering directory
-> > > > '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selfte=
-sts/drivers/net/hw'
-> > > >   CC       ncdevmem
-> > > > In file included from ncdevmem.c:63:
-> > > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftes=
-ts/../../../tools/net/ynl/generated/ethtool-user.h:23:43:
-> > > > warning: =E2=80=98enum ethtool_header_flags=E2=80=99 declared insid=
-e parameter list
-> > > > will not be visible outside of this definition or declaration
-> > > >    23 | const char *ethtool_header_flags_str(enum ethtool_header_fl=
-ags value);
-> > > >       |                                           ^~~~~~~~~~~~~~~~~=
-~~~
-> > > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftes=
-ts/../../../tools/net/ynl/generated/ethtool-user.h:25:41:
-> > > > warning: =E2=80=98enum ethtool_module_fw_flash_status=E2=80=99 decl=
-ared inside
-> > > > parameter list will not be visible outside of this definition or
-> > > > declaration
-> > > >    25 | ethtool_module_fw_flash_status_str(enum
-> > > > ethtool_module_fw_flash_status value);
-> > > >       |                                         ^~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~
-> > > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftes=
-ts/../../../tools/net/ynl/generated/ethtool-user.h:6766:45:
-> > > > error: field =E2=80=98status=E2=80=99 has incomplete type
-> > > >  6766 |         enum ethtool_module_fw_flash_status status;
-> > > >       |                                             ^~~~~~
-> > >
-> > > This has been fixed via '#include <linux/ethtool_netlink.h>'
-> > >
-> > > > ncdevmem.c: In function =E2=80=98do_server=E2=80=99:
-> > > > ncdevmem.c:517:37: error: storage size of =E2=80=98token=E2=80=99 i=
-sn=E2=80=99t known
-> > > >   517 |                 struct dmabuf_token token;
-> > >
-> > > And this, and the rest, don't make sense at all?
-> > >
-> > > I'll double check on my side.
-> >
-> > Oh, whoops, I forgot to headers_install first. This works for me:
-> >
-> > =E2=9E=9C  cos-kernel git:(tcpdevmem-fixes-1) =E2=9C=97 sudo make heade=
-rs_install &&
-> > sudo CFLAGS=3D"-static" make -C ./tools/testing/selftests/drivers/net/h=
-w
-> > TARGETS=3Dncdevmem 2>&1
-> >   INSTALL ./usr/include
-> > make: Entering directory
-> > '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/=
-drivers/net/hw'
-> > make: Nothing to be done for 'all'.
-> > make: Leaving directory
-> > '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/=
-drivers/net/hw'
-> > =E2=9E=9C  cos-kernel git:(tcpdevmem-fixes-1) =E2=9C=97 find . -iname n=
-cdevmem
-> > ./tools/testing/selftests/drivers/net/hw/ncdevmem
-> >
-> > Sorry for the noise :D
->
-> Whew, thanks and no worries!
+On Wed, Oct 30, 2024 at 12:16:22PM +0100, metux wrote:
+> On 22.10.24 10:38, Maxime Ripard wrote:
+> > I'm still interested in merging a carve-out driver[1], since it seems t=
+o be
+> > in every vendor BSP and got asked again last week.
+> >=20
+> > I remember from our discussion that for new heap types to be merged, we
+> > needed a kernel use-case. Looking back, I'm not entirely sure how one
+> > can provide that given that heaps are essentially facilities for
+> > user-space.
+>=20
+> For those who didn't follow your work, could you please give a short
+> intro what's that all about ?
+>=20
+> If I understand you correctly, you'd like the infrastructure of
+> kmalloc() et al for things / memory regions that aren't the usual heap,
+> right ?
 
-Sorry, 2 issues testing this series:
+No, not really. The discussion is about dma-buf heaps. They allow to
+allocate buffers suitable for DMA from userspace. It might or might not
+=66rom the system memory, at the heap driver discretion.
 
-1. ipv4 addresses seem broken, or maybe i'm using them wrong.
+> What's the practical use case ? GPU memory ? Shared memory between
+> nodes in a multi-CPU / cluster machine ?
+>=20
+> Is it related to NUMA ?
 
-Client command:
-yes $(echo -e \\x01\\x02\\x03\\x04\\x05\\x06) | tr \\n \\0 | head -c
-1G | nc 192.168.1.4 5224 -p 5224
+And since it's about DMA, it doesn't have much to do with CPUs either.
 
-Server command and logs:
-mina-1 /home/almasrymina # ./ncdevmem -s 192.168.1.4 -c 192.168.1.5 -l
--p 5224 -v 7 -f eth1
-here: ynl.c:887:ynl_req_trampoline
-using queues 15..16
-Running: sudo ethtool -K eth1 ntuple off >&2
-Running: sudo ethtool -K eth1 ntuple on >&2
-Running: sudo ethtool -n eth1 | grep 'Filter:' | awk '{print $2}' |
-xargs -n1 ethtool -N eth1 delete >&2
-ethtool: bad command line argument(s)
-For more information run ethtool -h
-here: ynl.c:887:ynl_req_trampoline
-TCP header split: on
-Running: sudo ethtool -X eth1 equal 15 >&2
-Running: sudo ethtool -N eth1 flow-type tcp6 src-ip 192.168.1.5 dst-ip
-192.168.1.4 src-port 5224 dst-port 5224 queue 15 >&2
-Invalid src-ip value[192.168.1.5]
-ethtool: bad command line argument(s)
-For more information run ethtool -h
-./ncdevmem: Failed to configure flow steering
+Maxime
 
-The ethtool command to configure flow steering is not working for me.
-It thinks it's in v6 mode, when the ip address is a v4 address.
-(notice `-s 192.168.1.4 -c 192.168.1.5`). flow-type should be tcp in
-this case.
+--e7ghtd5lwxlkxgfh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reverting patch 9e2da4faeccf ("Revert "selftests: ncdevmem: Switch to
-AF_INET6"") resolves this issue. Leading to the second issue:
+-----BEGIN PGP SIGNATURE-----
 
-2. Validation is now broken:
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZyO0HQAKCRAnX84Zoj2+
+dsaIAYDSLs4vqC2W23GWmQw+nLt61ihhhwXON5VrB1bS7hVzaX7P2Gu1Vl0ygras
+mpk+w40Bf2OSx3W0bmcLT2VATGEiKE8QZJt+N49J3WfSZwJOPvQjXudAGBe5XxGj
+WjSuaDPXug==
+=PFmP
+-----END PGP SIGNATURE-----
 
-Client command:
-yes $(echo -e \\x01\\x02\\x03\\x04\\x05\\x06) | tr \\n \\0 | head -c
-1G | nc 192.168.1.4 5224 -p 5224
+--e7ghtd5lwxlkxgfh--
 
-Server command and logs: mina-1 /home/almasrymina # ./ncdevmem -s
-192.168.1.4 -c 192.168.1.5 -l -p 5224 -v 7 -f eth1
-here: ynl.c:887:ynl_req_trampoline
-using queues 15..16
-Running: sudo ethtool -K eth1 ntuple off >&2
-Running: sudo ethtool -K eth1 ntuple on >&2
-Running: sudo ethtool -n eth1 | grep 'Filter:' | awk '{print $2}' |
-xargs -n1 ethtool -N eth1 delete >&2
-ethtool: bad command line argument(s)
-For more information run ethtool -h
-here: ynl.c:887:ynl_req_trampoline
-TCP header split: on
-Running: sudo ethtool -X eth1 equal 15 >&2
-Running: sudo ethtool -N eth1 flow-type tcp4 src-ip 192.168.1.5 dst-ip
-192.168.1.4 src-port 5224 dst-port 5224 queue 15 >&2
-Added rule with ID 19999
-here: ynl.c:887:ynl_req_trampoline
-got dmabuf id=3D1
-binding to address 192.168.1.4:5224
-Waiting or connection on 192.168.1.4:5224
-Got connection from 192.168.1.5:5224
-recvmsg ret=3D8192
-received frag_page=3D15997, in_page_offset=3D0, frag_offset=3D65523712,
-frag_size=3D4096, token=3D1, total_received=3D4096, dmabuf_id=3D1
-Failed validation: expected=3D1, actual=3D0, index=3D0
-Failed validation: expected=3D2, actual=3D0, index=3D1
-Failed validation: expected=3D3, actual=3D0, index=3D2
-Failed validation: expected=3D4, actual=3D0, index=3D3
-Failed validation: expected=3D5, actual=3D0, index=3D4
-Failed validation: expected=3D6, actual=3D0, index=3D5
-Failed validation: expected=3D1, actual=3D0, index=3D7
-Failed validation: expected=3D2, actual=3D0, index=3D8
-Failed validation: expected=3D3, actual=3D0, index=3D9
-Failed validation: expected=3D4, actual=3D0, index=3D10
-Failed validation: expected=3D5, actual=3D0, index=3D11
-Failed validation: expected=3D6, actual=3D0, index=3D12
-Failed validation: expected=3D1, actual=3D0, index=3D14
-Failed validation: expected=3D2, actual=3D0, index=3D15
-Failed validation: expected=3D3, actual=3D0, index=3D16
-Failed validation: expected=3D4, actual=3D0, index=3D17
-Failed validation: expected=3D5, actual=3D0, index=3D18
-Failed validation: expected=3D6, actual=3D0, index=3D19
-Failed validation: expected=3D1, actual=3D0, index=3D21
-Failed validation: expected=3D2, actual=3D0, index=3D22
-Failed validation: expected=3D3, actual=3D0, index=3D23
-./ncdevmem: validation failed.
-
-I haven't debugged issue #2 yet, but both need to be resolved before
-merge. I'm happy to provide more details if you can't repro. My setup:
-
-mina-1 /home/almasrymina # cat /boot/config-6.12.0-rc4  | grep -i ipv6
-CONFIG_IPV6=3Dy
-mina-1 /home/almasrymina # cat /proc/sys/net/ipv6/bindv6only
-0
-
---=20
-Thanks,
-Mina
 
