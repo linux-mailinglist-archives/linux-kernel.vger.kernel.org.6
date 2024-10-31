@@ -1,104 +1,153 @@
-Return-Path: <linux-kernel+bounces-390467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1F89B7A4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:10:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E919B7A4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8B81F2436C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:10:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BFA1C21D2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AE019C575;
-	Thu, 31 Oct 2024 12:10:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D46191F65;
-	Thu, 31 Oct 2024 12:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A750C19C559;
+	Thu, 31 Oct 2024 12:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IF6pfreW"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65DD191F65;
+	Thu, 31 Oct 2024 12:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376637; cv=none; b=U1ICYBTQlNMfxv8Q48Bbtwr5Q0wWLKBeh5xgNy9i2AgfJ4O/pYM862Lymt/jsiwMqdtch1YMf08jkD15m12vtfIt3AisiYpgfK+ZF7ogZcHmcnt+G2tiV9FAvYgUVvB74Uj0nt4hFOV6Fvl9jIEPvHJLhagJk/nnurMKE9qgN4I=
+	t=1730376696; cv=none; b=hMT+MQD1AWu+udl1VEH7LaG3wKeK2Heq0evlQfkSCSaL0XG+hxzEwrr+nMWFTCdxYbuXV++pHcNxoJ7Zy8WZsH11XWEx0BzkwfEY9JvEqbdJ/4Q0dB2Nc4ZAIQeL1tPUTukVC1ImsGEw7HIFl2+jtSwH0Ydj6Pp4lYJrkhrymPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376637; c=relaxed/simple;
-	bh=v+GFapRcuIgRaWTWqmWiHxyJW99cGUvwV95nSLXuFWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rlp+edgzeMRLSTvXHVCW/GX8KxqQXkkAKK/GOaDQbcL8Wp6X7u7WxUlIADnqyL0Ka7/evU4ugI/mGF89cI+7T2DOZtrQ31YBDh8pp5Q/4sMQfFV+r/S0j3BTSOpmt4nPZ6xNlJ7FBpnA9HAFLRdV1Q6cbRBAjK5wnz6nAQUw7Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 027171063;
-	Thu, 31 Oct 2024 05:11:05 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D3153F66E;
-	Thu, 31 Oct 2024 05:10:31 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:10:28 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: Yangtao Li <tiny.windzz@gmail.com>, Viresh Kumar <vireshk@kernel.org>,
- Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Maxime
- Ripard <mripard@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Vinod Koul <vkoul@kernel.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Parthiban <parthiban@linumiz.com>,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/13] dt-bindings: opp: h6: Add A100 operating
- points
-Message-ID: <20241031121028.5624c6e4@donnerap.manchester.arm.com>
-In-Reply-To: <20241031070232.1793078-12-masterr3c0rd@epochal.quest>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-	<20241031070232.1793078-12-masterr3c0rd@epochal.quest>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1730376696; c=relaxed/simple;
+	bh=AjcIyXaZAHmbI0poOFGfWCd9nLkYloalU6kHRzskv64=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=utkKEv+tMuicQfXpZtfH7VGhw/yri8lF5VQdzQuoDAdUA8noZNLW/shbTRqhIpa266xIn5e9HoXCB6TBHv4jbt7nlTXfDHKRbYH3Q5KeTz4Hhp5A2q9AgwhBWoZRA6l8wZSTZsof3GkC/EcInh9S6kYaayO4C1/oGCTsQRw/wzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IF6pfreW; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d3ecad390so1246971f8f.1;
+        Thu, 31 Oct 2024 05:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730376692; x=1730981492; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CYIf2HjwWeOrqyA8bh/VYoTm/NYlT2fenLJBBh/Gdo4=;
+        b=IF6pfreWiMmTYXEXM3tHOVyokLAXViEvZsBpmxofxh3NIwnG3kHRiHB2nYvqvTIX+q
+         5+v1A4+rvjF+sWMYT+0WG+npljl7UTvVe1K5iwikCijwPahdHqtaS6eJK4cKO8JuuJAM
+         ofKQt3N6y9wGc/mHxYbWit+vkH38Aoh8aQoKn0jQeNqUPGORcc3A0VYk96gAt1rJJHiD
+         J1Jko3+pUw1B1jFDl1Q7uAbqyLWk36b3UZaW3qujT8EpFoFlgaDi+lE9Vyyfyaw16RlT
+         8Tfn5XNEpssKJopp2ZkQUIVh6Xd11gw8gpglJo/pQ2of+RySyJL5jrzW63ZpyiowHETl
+         1DKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730376692; x=1730981492;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CYIf2HjwWeOrqyA8bh/VYoTm/NYlT2fenLJBBh/Gdo4=;
+        b=MPyNyBRAqQfmr3RUBpbTXCRhoagCIc79PcovL/N46aLdbkvu6J0xUSo/ejsdFgcAry
+         pPkDjtuzixOKIUyr0pbSOG6lq2dknMHJs+OVytxd323XwxEIU5VmgdvHfQBZzuSPno2e
+         gyq9bueORYrfctJ7l0DORcVNIxS3dta5fFFjFsVJhnBfwK9i/ZKdt5lJIU6mc0Nhd0pl
+         1hUHjSaQzWP0KKxnXfRkhJp+fBaFLt1VB5PsYa9SCx1jPSV+jG/Uol5PtHYEOV8VYY7l
+         mb0TrwA93hXTI4BHaehSP70TjECKPOKWBwK6MRqsqVr721ZP0JMjl/nRGhDtBCtHm2Ni
+         gf9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWH5mgQmdBFSeeRgHY1ebvyTcosGLrm9zGQbEubpqDK95QRb699WOtYyqFroRoRJ229ErL63DNNtTjrndA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCXZngb2qZh5sxSHhWjmCTFn4I2yAyXgpbZmrPA5SgFH+kohJc
+	XFjK2+rHbSy49gMtmbo5EH6TC5yd0q4BMoS2zpePu1frN7X+Fvlx
+X-Google-Smtp-Source: AGHT+IHrtzPOed5WE1Vq4z6/4B4q2Z4fqgyHnICqO/NAWJS6QBh9edI/rR9gby1IvXiHxk/u92vSyA==
+X-Received: by 2002:a05:6000:18a5:b0:367:8e57:8 with SMTP id ffacd0b85a97d-381c14a4ba2mr1880976f8f.19.1730376691594;
+        Thu, 31 Oct 2024 05:11:31 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab305sm24111195e9.7.2024.10.31.05.11.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 05:11:31 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Thu, 31 Oct 2024 13:11:23 +0100
+Subject: [PATCH v2] Bluetooth: btbcm: fix missing of_node_put() in
+ btbcm_get_board_name()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241031-bluetooth-btbcm-node-cleanup-v2-1-482d52910bfa@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAOpzI2cC/43NSw6CMBSF4a2Qjr2mDxLEkfswDPq4hZtAa9pCN
+ IS9W1mBw+8M/rOzjIkws3uzs4QbZYqhQl4aZicdRgRy1Uxy2QquOJh5xRJjmcAUYxcI0SHYGXV
+ YXyCVk0J36tZxy2rildDT+8w/h+qJconpc75t4rf+Gd4EcPDOtqZ3vveoHuOiab7auLDhOI4vW
+ ddVQsgAAAA=
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730376690; l=2032;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=AjcIyXaZAHmbI0poOFGfWCd9nLkYloalU6kHRzskv64=;
+ b=UFumaFTuD+2/+/a2o79kaW1AW71drF7RL8PCZyZR5PuresyBgB1FaVpSSB6P2/JnT7aH6v5lc
+ jcGAKQxMggwDEE3l9Rr5y/1E3RfI5pYDswdGydrOfoVrxyLJyo2mbdn
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, 31 Oct 2024 04:02:24 -0300
-Cody Eksal <masterr3c0rd@epochal.quest> wrote:
+of_find_node_by_path() returns a pointer to a device_node with its
+refcount incremented, and a call to of_node_put() is required to
+decrement the refcount again and avoid leaking the resource.
 
-> The A100, similar to the H6 and H616, use an NVMEM value to determine
-> speed binnings. The method used is similar to that of the H6. However,
-> the information is stored at a slightly different bit offset.
-> 
-> Add a new compatible for the A100.
-> 
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+If 'of_property_read_string_index(root, "compatible", 0, &tmp)' fails,
+the function returns without calling of_node_put(root) before doing so.
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+The automatic cleanup attribute can be used by means of the __free()
+macro to automatically call of_node_put() when the variable goes out of
+scope, fixing the issue and also accounting for new error paths.
 
-Cheers,
-Andre
+Fixes: 63fac3343b99 ("Bluetooth: btbcm: Support per-board firmware variants")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- Squash patches for mainline solution without intermediate steps.
+- Link to v1: https://lore.kernel.org/r/20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com
+---
+ drivers/bluetooth/btbcm.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> ---
-> Changes in V2:
->  - Fix ordering of compatibles
-> 
->  .../bindings/opp/allwinner,sun50i-h6-operating-points.yaml       | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> index ec5e424bb3c8..75ab552f6ecd 100644
-> --- a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> +++ b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> @@ -22,6 +22,7 @@ allOf:
->  properties:
->    compatible:
->      enum:
-> +      - allwinner,sun50i-a100-operating-points
->        - allwinner,sun50i-h6-operating-points
->        - allwinner,sun50i-h616-operating-points
->  
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index eef00467905e..a1153ada74d2 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -541,11 +541,10 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
+ static const char *btbcm_get_board_name(struct device *dev)
+ {
+ #ifdef CONFIG_OF
+-	struct device_node *root;
++	struct device_node *root __free(device_node) = of_find_node_by_path("/");
+ 	char *board_type;
+ 	const char *tmp;
+ 
+-	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return NULL;
+ 
+@@ -555,7 +554,6 @@ static const char *btbcm_get_board_name(struct device *dev)
+ 	/* get rid of any '/' in the compatible string */
+ 	board_type = devm_kstrdup(dev, tmp, GFP_KERNEL);
+ 	strreplace(board_type, '/', '-');
+-	of_node_put(root);
+ 
+ 	return board_type;
+ #else
+
+---
+base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
+change-id: 20241030-bluetooth-btbcm-node-cleanup-23d21a73870c
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
