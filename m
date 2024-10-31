@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-389782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A8C9B7139
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:42:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA259B713D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06111C21028
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4490D281FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2081F5FD;
-	Thu, 31 Oct 2024 00:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAFB1DFED;
+	Thu, 31 Oct 2024 00:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Me2qE0hM"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PxX1AMZx"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E8217991;
-	Thu, 31 Oct 2024 00:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45AC1EB44
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730335312; cv=none; b=B/LIVO1wuE8tTXccGMwIc1AaOrAbfJARwrq1P4bjEy/ouyahd4EeJjUnVPSGXMhpBhs8mWE8G+YVqW8AYxVXwCuKIxrFprBTgvSQTVDRRuuznn3jCRNNNsbJQB1LgKkjiXAm2n7+JY6VQhM5SsjrSoPjvKKfmyfEWdC8W8aJabo=
+	t=1730335417; cv=none; b=XK3IZBnTyRx5syaD0IBVk5W4K8/nEQczR7cBMQKMUUT0OnjXr6KZjIJjYkMcn2yLLAQAqE+itkA6ZrGlrAc8sKkPpfPLAh7Gl/7ijU+5g4c/3QIcXFMCfiKEh8ieqyWCXuni4LHxwAHZKP+yEreT7ThHSn10KZUWQb+Fu50wp6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730335312; c=relaxed/simple;
-	bh=qA1rYBoTcRGu4j/brwnbXznrXHIEbVFk3fpviSwXAOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k6r9452eBEYwzmW763gLWv2xkp2OIumie2YtkrI6Jp4wBLr8oYCWLR3rEBqp+g4jdydn/8vmDPC72bQlT8E1jpnvUtA+bzBY4TiaY6lYUY1SHkl88Pd7SzNNcM47k/+U7t4yIbzlmT803aV477U++6gdPDoL0UJUgCRlsx8c47U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Me2qE0hM; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2d1b7bd57so59477a91.1;
-        Wed, 30 Oct 2024 17:41:50 -0700 (PDT)
+	s=arc-20240116; t=1730335417; c=relaxed/simple;
+	bh=mQwaKkURbifMZiDHraDc/5oFkvSgynWluwX7GIK9IV0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JnbcGzjMzimr+bsSjEmuq13wHhBYI/nnjBYQN90ezhZABTtXIyA6KY7CLz8nSGSwt6WSAMiM2s1WKjO2nD8Tr2X7755zeUPdqaZHphztV/uv7FbuAObFQhTeAojSDrV0f3Kv/iE05/MHxDJ5Ik9ENaprIW/X3sxWAb/UC8ZgDKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PxX1AMZx; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e9e897852fso7742787b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730335310; x=1730940110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qA1rYBoTcRGu4j/brwnbXznrXHIEbVFk3fpviSwXAOE=;
-        b=Me2qE0hMyl7+XHSRyNetog+H1FcStNGG1QeWD6kJDn9yaXsq7gy7zySxYA2wrzpaa+
-         Ki3HV73kP7AHtIFZUT/k+d/bxiVNksqTvdTbpuxCe+BN6cZShZyUkiPtTjiDz0eje9ZB
-         zXks1Sz6HB9PfO/3u14r6g3TMMvMeAePRZ6NmV5jrCWd0idYk0K5dTZADpOQBJ+TRkIe
-         hs5/IG9NoREkwh9scF4Po9QQeAS0bv9LV3SRcgqJYYxjN/k48oSK+R7ByyGdQ55ji+JQ
-         D/lsOgjrDpOqHxqpXUmpS+svIVwSTeN69dpigshaLgk8mCVszWixfCqcuwZURd1xLehn
-         8v2A==
+        d=google.com; s=20230601; t=1730335415; x=1730940215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lc9Ko3rusE2y1usfYJVqx+IQsEW0RdfxueyJA1MxufY=;
+        b=PxX1AMZxqDqKmcfpXTv2cz7P86pNe/hXtXI55ZzMYmX/MGFHGNrYWTMtvEAlF3dsls
+         J54gUbwPRKAlF5aIOzB5kmtLnSDTr/wa7JWH4epeF98JEo8D5na0i2hRWyTcueByXkg5
+         y83yNp6P8M838388rAvXkRsE5qZrxvmxzY77iOZPrdg6aulGbJzY2iI6S+S2S0PgyNzC
+         Q6DcwBcOQlaIqLSA3ReMm4QKFycik3oz7xRGTzjrPGXcq9ESz1blEbHfa3g3wC9SzdqG
+         AJd/93DcyiMCmXqv9ZJdv4pQG93rY1Y2EKoqBZCzRmRhvCdvRGXrhBaSy3aAe/TTqPkZ
+         uvNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730335310; x=1730940110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qA1rYBoTcRGu4j/brwnbXznrXHIEbVFk3fpviSwXAOE=;
-        b=w4b+zDwefBJqFxQPo3aRREmRnk+B9JKUm0/K4+1BB8QjFA7Xp809406a/F5EkT4hw1
-         Mn9fJnSxDzLoXYzNvz9YBVU/K7aB1NpgEmPt5W/P51Qjb2aY6jHkqw5/OGeut1QBGCb9
-         AndS9sfFd+T+5wWGdjqu5UBInq4umjjAnprFXE9NEMoj6wez6rg1G/hQoElly6cEzMwP
-         8sYS8UFTCdkUIBqL3QYJbWwfr5f6qUnihfGY3q8EEPpBUsksEsbYd2AI5plTF+VOMcrO
-         bTuovbCP0gpxEbavc3A26chhclj5zNCVPhW2/2TsZZhVxtICjwUpmHM2UrebAqI6iDt0
-         GFKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzyRMf7euxJfHQZPCua/cG+4PKEXv/hYResZqq8vsHlHXQUOz6rOt5gBuQ/PDt0qoRZgIkR6feFkkG4AYpsd8=@vger.kernel.org, AJvYcCX7StFzbBCxuPZ8iceHMYx0VXnfXx09wtzmdMuKvBIRYajB4F014My1Y21xXyrKrIKL6BabeWIUh8wmP7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDWD+73QG/cVevFE5hEfdt4N16/56/bbgqwcYCzrRPQj4JwfqZ
-	up5qkDfLxTxGu6FOhAlp/Ox9Z9Ati9blFlJyFrB3Q8s9pclSF8JdbmUX4dT4aPe+G4p48v2lYOC
-	0GI7VOnT/Vq2TjvuzRgTwGuIOGl8=
-X-Google-Smtp-Source: AGHT+IHhV0Xkp1Tr39p6coxF85Ir1uMvPPvrs9jINbR+k5GV/0iQHouMzFAY9zvvFItUs3YR8ROUukzamuV6Gzynz0E=
-X-Received: by 2002:a17:90b:3594:b0:2e2:9026:8bee with SMTP id
- 98e67ed59e1d1-2e8f12e2bcamr8883272a91.9.1730335310165; Wed, 30 Oct 2024
- 17:41:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730335415; x=1730940215;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lc9Ko3rusE2y1usfYJVqx+IQsEW0RdfxueyJA1MxufY=;
+        b=NSQOeTy/L7Au/hutz4BOuGC9DENSLPRcumnF8DCMtz+3gpn+Nanjwo7fW3utXXQbDn
+         s8xfwSyo9Y0vMUCt0bzgiUc09ryIFoY6s91+XvBzyyulmGvhPSl6+JAf9ceC5CYBQmLu
+         F9yHNDFdzB/6pP1EfQ5ZfM84eszr4uo7Tv4J71dtbP5uSUh5W+J+ytHTShiFEOEQNaeN
+         cjc6ynV0Mh7kDOeSGyjvycnqgC+P5P3s26Ih/mPWQnLp4wNKC5OomSvNHgWejjagXJCG
+         gc6OzXUUN/HATVjCojlFIFARm3ryX1ZKi10KFVY9qzJipP96k9fuiTiZgZrdVqspcPuG
+         XzyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEXuHMSCZy7JgMMR3zneYTVeAUI/y0BUuzF4t6TeIHsyll037ycF+AQT5PGmKLI9rhJK08k6ZBzYuw7rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTXR5MG3Pqtf8+Pds4Ek82Vua/SIFjPFGLBa2DpTRpnA4bX4Aj
+	vF8Umgi0wbvgZymjqiVA9ugO18+96f6grxoR1hbncxCTFMMeICbN9Kknktl9jokM1wcpRw9+RUT
+	7dA==
+X-Google-Smtp-Source: AGHT+IE5CV6w7aHkdUCJhDlcvvVHFUDLTLIJOE4n078/KB1R9SLnbLrJSAMahhcc96u9kY1YecUcK67MDbo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:3808:b0:6e2:12e5:356f with SMTP id
+ 00721157ae682-6e9d8b214c0mr13625677b3.3.1730335414769; Wed, 30 Oct 2024
+ 17:43:34 -0700 (PDT)
+Date: Wed, 30 Oct 2024 17:43:33 -0700
+In-Reply-To: <20240906221824.491834-2-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241030-cfi-icall-1913-v1-1-ab8a26e13733@google.com>
-In-Reply-To: <20241030-cfi-icall-1913-v1-1-ab8a26e13733@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 31 Oct 2024 01:41:37 +0100
-Message-ID: <CANiq72nUBuqbKm6Z0mWRcZ_J3=LOEPEdTiPEq3vYTWtrfLpwvg@mail.gmail.com>
-Subject: Re: [PATCH] cfi: tweak llvm version for HAVE_CFI_ICALL_NORMALIZE_INTEGERS
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240906221824.491834-1-mlevitsk@redhat.com> <20240906221824.491834-2-mlevitsk@redhat.com>
+Message-ID: <ZyLStWMyar0D8PY3@google.com>
+Subject: Re: [PATCH v4 1/4] KVM: x86: drop x86.h include from cpuid.h
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 11:31=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> The llvm fix [1] did not make it for 19.0.0, but ended up getting
-> backported to llvm 19.1.3 [2]. Thus, fix the version requirement to
-> correctly specify which versions have the bug.
->
-> Link: https://github.com/llvm/llvm-project/pull/104826 [1]
-> Link: https://github.com/llvm/llvm-project/pull/113938 [2]
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202410281414.c351044e-oliver.sang@=
-intel.com
-> Fixes: 8b8ca9c25fe6 ("cfi: fix conditions for HAVE_CFI_ICALL_NORMALIZE_IN=
-TEGERS")
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Fri, Sep 06, 2024, Maxim Levitsky wrote:
+> Drop x86.h include from cpuid.h to allow the x86.h to include the cpuid.h
+> instead.
+>=20
+> Also fix various places where x86.h was implicitly included via cpuid.h
+>=20
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> ---
+>  arch/x86/kvm/cpuid.h      | 1 -
+>  arch/x86/kvm/mmu.h        | 1 +
+>  arch/x86/kvm/vmx/hyperv.c | 1 +
+>  arch/x86/kvm/vmx/nested.c | 2 +-
+>  arch/x86/kvm/vmx/sgx.c    | 3 +--
+>  5 files changed, 4 insertions(+), 4 deletions(-)
 
-Applied to `rust-fixes` -- thanks everyone!
+This missed a necessary include in mtrr.c (maybe only for W=3D1 builds?)
 
-Cheers,
-Miguel
+arch/x86/kvm/mtrr.c:95:5: error: no previous prototype for =E2=80=98kvm_mtr=
+r_set_msr=E2=80=99 [-Werror=3Dmissing-prototypes]
+   95 | int kvm_mtrr_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data)
+      |     ^~~~~~~~~~~~~~~~
+arch/x86/kvm/mtrr.c:110:5: error: no previous prototype for =E2=80=98kvm_mt=
+rr_get_msr=E2=80=99 [-Werror=3Dmissing-prototypes]
+  110 | int kvm_mtrr_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
+      |     ^~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
 
