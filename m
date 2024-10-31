@@ -1,115 +1,174 @@
-Return-Path: <linux-kernel+bounces-391162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDE59B8357
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:25:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C389B8377
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517B01F2381B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:25:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96AF1C24A38
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B980A1CB33D;
-	Thu, 31 Oct 2024 19:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605BC1CB33D;
+	Thu, 31 Oct 2024 19:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vjv/af64";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O304umbi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6LmsYRQ"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B1A1C9DD5;
-	Thu, 31 Oct 2024 19:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB01BBBF8
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402719; cv=none; b=tF081hnKn4uKCu9Y16qrTStV5uUHV8i+9gz3MWiW7SiLqE4wIuFzJpIcnwIrysWV0g58/8KDiPABX34/+LR0cKwWt3pdHkR2ta1RvA1tjLWK82JGGNwHubkqRAhSH2RA8BSFIlM+PdHQ7UP92YtJGrqr22PaOoFZd2M7hSnQio0=
+	t=1730403014; cv=none; b=kfkUpOHq9uv9KlCR/SP428knyA13CKsqTiCiQ7KTK3pIGc9xs1PT+qcI9dkOmu8O9Q8YgIgzad3V7E7df0LvR/odSoBJxtZ/rAKtoo8ekT8EHt6XkdFsNYIYGYJeqcIrdvNPKUQIHBrPSnMU5dfkNuaAF9QAGzxG4U695D4uzSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402719; c=relaxed/simple;
-	bh=EH1NxSt+Pdnf7Bw+M0iBaivcvXqmL0RJLwQ2N7+oIGk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hrPmeaWqxpje1usT9cD+WQCd8MBLYImk6qk1trgqo4mSodLZE3KddihgDSYKdSF2+xwR0i6ONR8sN3yf2sdOoboXaqfdvCEVB/h+THXzeY0i6LdDQBODKvUYEZzdL/G0JhMN5J/7EpYwANkWyXP7UJqYyIXGeux+rERCgFF6fyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vjv/af64; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O304umbi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730402715;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQ+EOPL/V+hQ49Yycx1LmMX/gDzsFgIKjYT1P4zOubs=;
-	b=vjv/af64u6mEzqmtnnI2LLHwiqEAbrxeScDOJDQ+xzgfhak0wuopvAH75wdHaIGtILg7Kp
-	LBDNN9rPonxWJ3T8l0/HV9iryIEYfgsBQUF7r5Zox6rqNLupQFThwE8ly2YxgrkxPa3CSg
-	PQ82uXnIJ6u+kIKsgqNiA1TG0v3YV3DOtR7hk0lMhdv3ZRjXU4sIV/dr5oTriImAIGnyvn
-	HebLhfFGMDQtogeuUdmDzfhYi8MAoL8vmU4sCzAIig+g6oeq8werbC0UFQDPGjt+fFl3hu
-	0Fk4o8uuFPl/rHsJGYUO4vgPg5P1k3AkC4/pzZXkFGKiLPowTyt1u8E9aRU2wA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730402715;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQ+EOPL/V+hQ49Yycx1LmMX/gDzsFgIKjYT1P4zOubs=;
-	b=O304umbi8H6l/f1CHjtv+6rKM+lfYXngXWnPnxmhIZB2RBZrwBkxEAZinNpNMu0Vi+7AWR
-	5tv90Kg2ggamzjAg==
-To: Ross Philipson <ross.philipson@oracle.com>,
- linux-kernel@vger.kernel.org, x86@kernel.org,
- linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
- mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
- James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
- jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, ebiederm@xmission.com, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
- andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-In-Reply-To: <20240913200517.3085794-1-ross.philipson@oracle.com>
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
-Date: Thu, 31 Oct 2024 20:25:14 +0100
-Message-ID: <87wmhoulb9.ffs@tglx>
+	s=arc-20240116; t=1730403014; c=relaxed/simple;
+	bh=JEt1Up+INIfm+iJKDjNzXaZiC7OBpJytxAHxjP01YCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BmYLshT2ooZmyf79pstjddA+Apni4mvJ16pH3xNoL/NR6tbPRP2Rv9Ln6SQGe7LZ1XGYyhRs2UYbzC79sbZiKACGaiTA8RFP3I9tQgEig8f88hYwK32RI9f9RYYRGRWnXFHMsATs9YI1tb3MQZjJGB6Y0VqyaArQmi14packqiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6LmsYRQ; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e3f35268so1689371e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730403010; x=1731007810; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=31snwxEgII8Vk6u+4+11z3gM5zDzJPBD0BIeCBrJcCw=;
+        b=N6LmsYRQPsbxTlgQ4Jd8czMlAOWqdy7WA6XC9tRN+pCFUm6oe8wP4kcOjn4fMuAAFv
+         Y+YoIpBZ/lY8z6BqJ+v4hlYioO9ekP1jwt5H/gLr2lt+ggRpDEbly7lG2T8eUFdBtnv7
+         RR9TzTant81/WB9j/F7YYiXHHNEULksAQB3rDb4y3ydH9PNBsXESUTWmm+po+IxpAgw5
+         BDV+mxmtW/EqK6hneHEFqFH+W7gPpTiK4cJTc18niGnqnpSFC3HGhQbU16941Q4Yd4Ba
+         SPVkaGNBVu7eSzV7eAsigJeLlWmY2LhucAMNXuG82MbVfEgDw01ORdIvMSBD9SYoRoQV
+         V4yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730403010; x=1731007810;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=31snwxEgII8Vk6u+4+11z3gM5zDzJPBD0BIeCBrJcCw=;
+        b=G6YZMBPkROE6X/+H5fnWaOkT8wFSAl+/8vmssHJ+KCWJgtf3oHEr9b/fjohsnRbwlx
+         fw63au3Iy7K+s87Hkbru9hIuX++k12r0QKN2EFSgI3ih2kAfsYqCO4gH0sIXEaK0EBhf
+         gJhMvCsdIPJGB/EPVDEWsx44TJK58GZnlKrFSYpNLwqKpnaXc3KAyTbm3gZ9eAHiFdZM
+         BYXLpGmNmcc59dF+FHph26Mh3HhQ3QDqdCm6HeiLcVqhLyIzoLPZ4BhCR73rCHUACoVx
+         Hix4pQmX+a4zWT6LxaWBJNEOr/6ZnVXL0AIKZzG6fd+G1FyguANPHqPaVS5mTpNexFE9
+         aDCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOI5QmUQNxRpWgFwMadk5NbfUzwktJXReS/jI5r760S/og2/LlsK+hxvW8V6hAwsJApSQf0cbOfpL6cRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymHWQ4+ARY7a4OTF/2Fw5MQJhmJ1OJbdfIkWBM2lkEU3Qgcqa7
+	P769mrsPrkOSAMIB5K9zCDydsa9jjcS3XwWkxDokoTmH1nfaLlFIgBFVvWtyYDw=
+X-Google-Smtp-Source: AGHT+IEXOiLypbvMGxd2hyzMiKYXFJFT2FTyEhMspQ58nB+nmG3OjYg+hM8a0VciWysPPE0vTAJ4cA==
+X-Received: by 2002:a05:6512:2315:b0:536:a6c6:33f with SMTP id 2adb3069b0e04-53d65df22e7mr753424e87.13.1730403010310;
+        Thu, 31 Oct 2024 12:30:10 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9bed5sm307283e87.74.2024.10.31.12.30.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 12:30:08 -0700 (PDT)
+Date: Thu, 31 Oct 2024 21:30:07 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org, robdclark@gmail.com, 
+	swboyd@chromium.org, airlied@gmail.com, quic_jesszhan@quicinc.com, lyude@redhat.com, 
+	simona@ffwll.ch, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child
+ nodes
+Message-ID: <mlpiuko7n6rp3x55z4qterdns2wzqnfwgjxikbshrvakrscsak@antl2vzla5bd>
+References: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
+ <CAA8EJppKou84MZm0JS_4bPveMO2UxpMs5ejCoL7OMWd-umtDmQ@mail.gmail.com>
+ <92217ec6-c21c-462a-a934-9e93183c1230@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <92217ec6-c21c-462a-a934-9e93183c1230@quicinc.com>
 
-On Fri, Sep 13 2024 at 13:04, Ross Philipson wrote:
-> The larger focus of the TrenchBoot project (https://github.com/TrenchBoot) is to
-> enhance the boot security and integrity in a unified manner. The first area of
-> focus has been on the Trusted Computing Group's Dynamic Launch for establishing
-> a hardware Root of Trust for Measurement, also know as DRTM (Dynamic Root of
-> Trust for Measurement). The project has been and continues to work on providing
-> a unified means to Dynamic Launch that is a cross-platform (Intel and AMD) and
-> cross-architecture (x86 and Arm), with our recent involvment in the upcoming
-> Arm DRTM specification. The order of introducing DRTM to the Linux kernel
-> follows the maturity of DRTM in the architectures. Intel's Trusted eXecution
-> Technology (TXT) is present today and only requires a preamble loader, e.g. a
-> boot loader, and an OS kernel that is TXT-aware. AMD DRTM implementation has
-> been present since the introduction of AMD-V but requires an additional
-> component that is AMD specific and referred to in the specification as the
-> Secure Loader, which the TrenchBoot project has an active prototype in
-> development. Finally Arm's implementation is in specification development stage
-> and the project is looking to support it when it becomes available.
->
-> This patchset provides detailed documentation of DRTM, the approach used for
-> adding the capbility, and relevant API/ABI documentation. In addition to the
-> documentation the patch set introduces Intel TXT support as the first platform
-> for Linux Secure Launch.
+On Thu, Oct 31, 2024 at 11:45:53AM -0700, Abhinav Kumar wrote:
+> 
+> 
+> On 10/31/2024 11:23 AM, Dmitry Baryshkov wrote:
+> > On Wed, 30 Oct 2024 at 03:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+> > > 
+> > > of_i2c_register_devices() adds all child nodes of a given i2c bus
+> > > however in certain device trees of_alias_from_compatible() and
+> > > of_property_read_u32() can fail as the child nodes of the device
+> > > might not be valid i2c client devices. One such example is the
+> > > i2c aux device for the DRM MST toplogy manager which uses the
+> > > display controller device node to add the i2c adaptor [1] leading
+> > > to an error spam like below
+> > > 
+> > > i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+> > > i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+> > > i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+> > > i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+> > > i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+> > > i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+> > > 
+> > > Add protection against invalid child nodes before trying to register
+> > > i2c devices for all child nodes.
+> > > 
+> > > [1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
+> > > 
+> > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > > ---
+> > >   drivers/i2c/i2c-core-of.c | 6 ++++++
+> > >   1 file changed, 6 insertions(+)
+> > > 
+> > > diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+> > > index a6c407d36800..62a2603c3092 100644
+> > > --- a/drivers/i2c/i2c-core-of.c
+> > > +++ b/drivers/i2c/i2c-core-of.c
+> > > @@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+> > >   {
+> > >          struct device_node *bus, *node;
+> > >          struct i2c_client *client;
+> > > +       u32 addr;
+> > > +       char temp[16];
+> > > 
+> > >          /* Only register child devices if the adapter has a node pointer set */
+> > >          if (!adap->dev.of_node)
+> > > @@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+> > >                  if (of_node_test_and_set_flag(node, OF_POPULATED))
+> > >                          continue;
+> > > 
+> > > +               if (of_property_read_u32(node, "reg", &addr) ||
+> > > +                   of_alias_from_compatible(node, temp, sizeof(temp)))
+> > > +                       continue;
+> > 
+> > I think just of_property_read_u32() should be enough to skip
+> > non-I2C-device children. If of_alias_from_compatible() fails, it is a
+> > legit error.
+> > 
+> 
+> Thanks for the review.
+> 
+> of_alias_from_compatible() looks for a compatible string but all child nodes
+> such as ports will not have the compatible. Hence below error will still be
+> seen:
+> 
+> i2c i2c-20: of_i2c: modalias failure on
+> /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
 
-So this looks pretty reasonable to me by now and I'm inclined to take it
-through the tip x86 tree, but that needs reviewed/acked-by's from the
-crypto and TPM folks. EFI has been reviewed already.
+But ports node don't have a reg property too, so it should be skipped
+based on that.
 
-Can we make progress on this please?
+> 
+> > > +
+> > >                  client = of_i2c_register_device(adap, node);
+> > >                  if (IS_ERR(client)) {
+> > >                          dev_err(&adap->dev,
+> > > --
+> > > 2.34.1
+> > > 
+> > 
+> > 
 
-Thanks,
-
-        tglx
-
+-- 
+With best wishes
+Dmitry
 
