@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-391054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E4B9B81F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:58:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA34A9B81F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:58:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8741F22622
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0CF282872
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD591C2307;
-	Thu, 31 Oct 2024 17:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0611C4612;
+	Thu, 31 Oct 2024 17:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TE3YMvI3"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZA/UIs0C"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6B61BC097
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3797C1C2443
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730397485; cv=none; b=FhZCeHDn8+OSiAURz0PbMwb0u9ujS+UP1/GSbo5z6C8yNPEZacUcRUYaM4YJE6Euoq+Qt2pJfSGsnNYzedSnMlFlitPKK1vAPM1gi8AFnUWZKyY4Q8SdWUqbes9EpwmrklCqRExqhQqsxphjkKU0YOrCgMgn5+/bLSTugexIOGs=
+	t=1730397510; cv=none; b=ZXEfbryXAt02rPtG0XY1/lRd7Wz2W3QGO0mUckxBqeQ4k81dRzLdi0zLnEpdlzmijBX51UiWEGynqGEwECK+kUJzMTULWmd76BD/3LAsQ4T4s6HnIvoe7b3GHT4nBaT7aqPv81LwMv9xw96PUWRH4bsEFwfvbQDLIXr4BlYxAsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730397485; c=relaxed/simple;
-	bh=s98ZX28OsVpUZzWaaWrFm/+3vCU+Pr78M3qXyvNi430=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVupOeSnnef/nDJcdBBkg9LPdiPBpqhv3uKoLwtI7aJLN7sTfafmSNAlJIRtottzdFjzDoGiS5N9Zqy5+8ax997c501nv0ZRSm47KQ/cyV8KbvETvLqy+i0YfzTQzy16wLl6inNMvzPSjlqEAkIi29V9UKLNDi1Fu1ZJvbB5PdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TE3YMvI3; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53b34ed38easo1160700e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:58:02 -0700 (PDT)
+	s=arc-20240116; t=1730397510; c=relaxed/simple;
+	bh=GprtLr3+fDuoA1kbr5iV1i1OWpC+hVzEb/dgPxI6zjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u0n+ZwEfU4J7n7zSAluGKaz4C1eecZPABtmUmtqq+ZbbWcTKSfVjOAIq5aJEQIp82vgFGekpM4bnCiNrX555B5npx04neM36lr/8dGojxYy8Z0GXtkp46lWIz23yrNZ0LKnoZQ+s/VQbC8pLMY11IV1s7CW0CZwie80BekoEprk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZA/UIs0C; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f58c68c5so2310066e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:58:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730397481; x=1731002281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P83QC4divwjdwrOkzc0beaK7x66pdeMqgQ1qbe4pGZQ=;
-        b=TE3YMvI3gX8v3czSKkqhq73RscaYYFOYVzLdo4u52ig90xybOIIpbe5iR1r5IMPxdr
-         0qMZaYYfEaEbr88BieHkHhE1TBpfSZ1mJtr4bwI6Tfk9x9bzfu/3GRanxP+wSSZeHAqc
-         8zTnpenvflZw391sG/a3Yp7wHaDJs0xbWcnxo0kJAByYxCvZsZVF7O6BwsuV9xan8VJW
-         DHqdjRep895ikJ+hbw53gWmZRtii3CwsSSuWV9tklMhJN0rLiCUTaGusecGgMUtXvyF9
-         o345UfGapyOlYSOAGu4P7gQtZ/mAxFl2vbnw4mKEBIDsLdX1K2gXKWyNw4iUtrGk0Wrp
-         H3oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730397481; x=1731002281;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1730397505; x=1731002305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P83QC4divwjdwrOkzc0beaK7x66pdeMqgQ1qbe4pGZQ=;
-        b=SkpjsFy0PjlV0E8Z/e0uT3NZVo6sTNI07JCtNkIRhyipJKz41JdHWwqttv5dMcGOHD
-         l4I8nzVlvkOrhghutAEGW3VioLwlKdkjz2IYNPzwDstFTbdlUzzVYC7xvrvxwjrwudFL
-         M99w/mrZxs4fIhtzpb8posdhNl08TpebaaAMuqgqZ2jLmTr8J08it1ign7/d/PMd6GZU
-         9IK57CrH6VI6X27hHhIzwHxeGI4mdqZY7uJ+ZtkLgF309+E6Mkkz5M6j0P/46daX/BeO
-         HA6bAnOTswDjqP832TTgTO+BFNkaWzLYLfX1J4W8uDXXEMK9Xcxfi8W2Jb+N1ve8rgF4
-         eazg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnTkYXFFYM3FBgo7I8cuCwUEoyKJ1EOoj9wc1iyi2cLtfU+vZu3IJeO3qo5VMeeaIw7CKvQIWGwaqBMVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+mndHDaAu+LOhD6xrQWur38Ca7MpRdZ8ONusncz3fl7O68/k0
-	/NVTbzOrYM92vdFsWqKsIYE7ioczMWt0zdmOOioYugiks/QwY001zYpLtGv1fvc=
-X-Google-Smtp-Source: AGHT+IGSV5srlEIwYq4ukshM4Ah7sMYFPuqhx1GlJEoXoE2aV6eQnDSC8Wx080gm6OXkRcNzRUro1A==
-X-Received: by 2002:a05:6512:687:b0:536:581c:9d9f with SMTP id 2adb3069b0e04-53b348d6ademr10336086e87.24.1730397481275;
-        Thu, 31 Oct 2024 10:58:01 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9c9f3sm282595e87.116.2024.10.31.10.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 10:58:00 -0700 (PDT)
-Date: Thu, 31 Oct 2024 19:57:58 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jishnu Prakash <quic_jprakash@quicinc.com>
-Cc: jic23@kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org, 
-	konrad.dybcio@linaro.org, daniel.lezcano@linaro.org, sboyd@kernel.org, 
-	quic_subbaram@quicinc.com, quic_collinsd@quicinc.com, quic_amelende@quicinc.com, 
-	quic_kamalw@quicinc.com, amitk@kernel.org, lee@kernel.org, rafael@kernel.org, 
-	rui.zhang@intel.com, lukasz.luba@arm.com, lars@metafoo.de, quic_skakitap@quicinc.com, 
-	neil.armstrong@linaro.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	cros-qcom-dts-watchers@chromium.org
-Subject: Re: [PATCH V4 2/4] dt-bindings: iio: adc: Add support for QCOM PMIC5
- Gen3 ADC
-Message-ID: <ag3wqsjdec7ujcba2jpvhzgcbbc5vnyjyes5ljyyf5b4edw7j3@rj23a25wvoyd>
-References: <20241030185854.4015348-1-quic_jprakash@quicinc.com>
- <20241030185854.4015348-3-quic_jprakash@quicinc.com>
+        bh=lp+SkhbwfifV7k5hA8ZYEm0WPfNORR7rjsrxe7EFMug=;
+        b=ZA/UIs0CJ75GwI1qVdNbiHQ+SlbD9/yNHnMSJS/l2Z3nuQH4xalqfFnWIlcbUHaTjL
+         89Stwcu86JTvV7WwbIGapdgs/p2gnekFFZcZsGvxSPwiKyf6NWMVR76s0ZV7k6oslNhI
+         hnxLddHxIW2HKsJtI3bPAMPc8q5A5CALWnX+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730397505; x=1731002305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lp+SkhbwfifV7k5hA8ZYEm0WPfNORR7rjsrxe7EFMug=;
+        b=Auc9u9bLWyjfrAIjvaSIJZEIhrT2H0ja4g2aAnuIwogiEE5lWm2OOk0Y8hvincW+oK
+         4VzQtXaZWf58OiU8nZtsBLDHmyMDk0z506q9drZtWUMVUO7dcuDDEYpOe1V7x98H7wgU
+         RjHxbxaFwpXKf4sWOfJ+PWVP3XBXVEd243dKJkkULZ8LbvKxQXHi26grdkrIUn0dH41x
+         YdDEBv0Sza6wTRIej/q3JPgBWIgRjND+ttf5gRlqikSKD3gAkjkY96kWpH68slCW/SF9
+         3IajKqoXgy2Im2oBxgmnMJb7NRyqrDh9blkfE5NOKz9bJzrBZXg0cS/sXJjIzFklnBkL
+         0a4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtZjmTmhHv1NxQwjFKYmYjKDii1vdn+y6I4bxqINETfagWWxLpt9jB1PfAQBjDidJ5TsmFghIriIkVDFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/QZI3VTC6G6/lKPFsp3vyHNolJLzuiFGHuZH5qainSvPnIqP4
+	Zp3I0+NPxyLfI99ltGq+k+0CHOuNo8AFdPwaKHe+6r5Z+CRx5wgBJ9EUzfYARY7S3JWREyyGcgv
+	h1ezn
+X-Google-Smtp-Source: AGHT+IEogQf8+4y2iCWGOgXY1/v5lyEdS7oQ+ZStkqigGBzN8KXzivIHMGhENM7aRXBDDJQGCCDzOQ==
+X-Received: by 2002:a05:6512:12d6:b0:536:a7a4:c3d4 with SMTP id 2adb3069b0e04-53d65e0a8c9mr915180e87.39.1730397504907;
+        Thu, 31 Oct 2024 10:58:24 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc957aasm281537e87.42.2024.10.31.10.58.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 10:58:23 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539fb49c64aso1820272e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:58:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9/dJ4WsKcTMZkJcvWX6gAGMEEM5BQLlKPNS369oGYRxV1raOqjUuAbZVFc1cVpsbtZHLKqRWm20GMfYo=@vger.kernel.org
+X-Received: by 2002:a05:6512:605:b0:53b:1508:468d with SMTP id
+ 2adb3069b0e04-53d65e1686bmr748585e87.54.1730397503175; Thu, 31 Oct 2024
+ 10:58:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030185854.4015348-3-quic_jprakash@quicinc.com>
+References: <20241025114642.40793-2-charles.goodix@gmail.com>
+ <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3> <ZyLtYdwoJWx9FsdS@ux-UP-WHL01>
+In-Reply-To: <ZyLtYdwoJWx9FsdS@ux-UP-WHL01>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 31 Oct 2024 10:58:07 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UNKECLn=3VrjsJfA+HTNa9Gag1qw5jOcBvw7=ZtkZEnw@mail.gmail.com>
+Message-ID: <CAD=FV=UNKECLn=3VrjsJfA+HTNa9Gag1qw5jOcBvw7=ZtkZEnw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, dmitry.torokhov@gmail.com, hbarnor@chromium.org, 
+	conor.dooley@microchip.com, jikos@kernel.org, bentiss@kernel.org, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 12:28:52AM +0530, Jishnu Prakash wrote:
-> For the PMIC5-Gen3 type PMICs, ADC peripheral is present in HW for the
-> following PMICs: PMK8550, PM8550, PM8550B and PM8550VX PMICs.
-> 
-> It is similar to PMIC5-Gen2, with SW communication to ADCs on all PMICs
-> going through PBS(Programmable Boot Sequence) firmware through a single
-> register interface. This interface is implemented on an SDAM (Shared
-> Direct Access Memory) peripheral on the master PMIC PMK8550 rather
-> than a dedicated ADC peripheral.
-> 
-> Add documentation for PMIC5 Gen3 ADC and macro definitions for ADC
-> channels and virtual channels (combination of ADC channel number and
-> PMIC SID number) per PMIC, to be used by clients of this device.
-> 
-> Co-developed-by: Anjelique Melendez <quic_amelende@quicinc.com>
-> Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
-> Signed-off-by: Jishnu Prakash <quic_jprakash@quicinc.com>
-> ---
-> Changes since v3:
-> - Added ADC5 Gen3 documentation changes in existing qcom,spmi-vadc.yaml file
->   instead of adding separate file and updated top-level constraints in documentation
->   file based on discussion with reviewers.
+Hi,
 
-I think it has been better, when it was a separate file. Krzysztof asked
-for rationale, not for merging it back. Two different things.
+On Wed, Oct 30, 2024 at 7:37=E2=80=AFPM Charles Wang <charles.goodix@gmail.=
+com> wrote:
+>
+> > > +  goodix,hid-report-addr:
+> >
+> > I do not see this patch addressing previous review. Sending something
+> > like this as v1 after long discussions also does not help.
+> >
+> > No, you keep sending the same and the same, without improvements.
+> >
+>
+> I apologize for overlooking the discussions regarding this issue.
+>
+> I would like to clarify that while the current boards use the same addres=
+s,
+> but newly designed boards in the future may require different addresses.
+>
+> Retaining this property would likely offer more flexibility.
 
-> - Dropped default SID definitions.
-> - Addressed other reviewer comments.
-> 
-> Changes since v2:
-> - Moved ADC5 Gen3 documentation into a separate new file.
-> 
-> Changes since v1:
-> - Updated properties separately for all compatibles to clarify usage
->   of new properties and updates in usage of old properties for ADC5 Gen3.
-> - Avoided updating 'adc7' name to 'adc5 gen2' and just left a comment
->   mentioning this convention.
-> - Used predefined channel IDs in individual PMIC channel definitions
->   instead of numeric IDs.
-> - Addressed other comments from reviewers.
-> 
+I don't feel very strongly about it, but maybe Krzysztof does?
+Possibly the path of least resistance would be:
 
--- 
-With best wishes
-Dmitry
+1. You drop the property from the bindings.
+
+2. You hardcode it in the driver to be the normal value.
+
+3. If/when someone actually needs a different value then we can add it
+as an optional property in the bindings and fall back to the default
+value if the property isn't present.
+
+What do you think? If you feel strongly about keeping the
+"hid-report-addr" then you can certainly keep making your case.
+However, it's probably best to wait to get agreement from Krzysztof
+(or one of the other DT maintainers) before sending your next version
+unless you're going to take the "path of least resistance" that I talk
+about above.
+
+-Doug
 
