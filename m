@@ -1,131 +1,200 @@
-Return-Path: <linux-kernel+bounces-391294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EDF29B84D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:00:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECD39B84D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 144D8B25E84
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F4EB24359
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2A21CCEF1;
-	Thu, 31 Oct 2024 21:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9461C1CCB3C;
+	Thu, 31 Oct 2024 21:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I8UHixsH"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="eTRi7RP7"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531201CC8B3
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E2813A87C;
+	Thu, 31 Oct 2024 21:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408443; cv=none; b=lEISzyvFe7Tkupge33/08KV5M8jcf9S7DwE++j//KZE5MyVoRQ7mSdHNpCp4O+n/2Ofa6M0JOmB6KIuKa6BktyznAA80Fi4AuYqHXUezVfthgaLueTawd624ZF+kgD4z/bR8zewq4R3OtitwRc9jRFFm3UK2DTfetaL24op0Bhw=
+	t=1730408567; cv=none; b=bUW+CBM8G9JmMvX1tw88BjY1YOkw6lrUYWHfnv8noyKZo8IJZN/SScDuDh1DdWv20ODgKZTCKFBXB6EtyMQ83boIq3N3c7Zb/FwGoTapVEnjktfAZARaFE6jn9CFSX5oHnTqmKZH/KErx1daWd7wKGfnwDcWcn0tbMEzYynPmaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408443; c=relaxed/simple;
-	bh=yrh0IbJWmE/SDvjrn89FK0yLCRVdpcCFuJ7Cz4CbP/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XXB91GmmJtYk5D4jUp0jJosucLF3Eaa099VQI2dtuK50EPrGg3OccXgG/V+K7r/hmkybB/EZtSPnsqQbegIxzAa65EHomCiKE2I9Ms05ZWuQGdimASomn1wBdI4zuGeYE4nsZDJTBUad0tNNoC10URi8IcBJeqE8l6hLXdGCIK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I8UHixsH; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2ed2230d8so1060865a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730408437; x=1731013237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dSkq3bj3+pAy/gZDSqj43W1LapD3B4u639cQdLu4St8=;
-        b=I8UHixsH+byPFarayGP2H4wUlMhVengvMPXnW+qv4n4RCotcbnJf0rfU7tXV+iABvU
-         EyUigyJntROwR1g/g229PCVziznmjsxKoAlJQJKC9wRMrkc1sQ+ovjGIJXWr0bYScuvd
-         ImMMuXoP1wuT+DTXpBXCrDAcu7CXC5bZzklInKM4J8Ow9TmQc98K7iHH9xABK3zWqRLl
-         PhF7xN7fy6VEJ18t81A0OIKdG4g78feZ8VZNpyiQzdRF6zqimBGG72zOluoD/+YGkusJ
-         9+qh5dnd1jENJviWBVrl1YkfiFoqVC3CPwk0Gak4Ehsy4i2pdsRuJqKq0duE36S1+sXO
-         qGYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408437; x=1731013237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dSkq3bj3+pAy/gZDSqj43W1LapD3B4u639cQdLu4St8=;
-        b=pc93fYWwluX63xG2Lvjp1kCTJ+1Yu2iDCSHWtVtyyvogQBwtCEQ1JT+Acu9ffKuY3t
-         dfxACWsM3HIH/i8Nd66i0kuZfDssM0Ms9ONDWRcYBu/kw2VU7Xp7pvdyyE/UIG1SVA2F
-         xPWXWNsdtR60tstSEsknJpVd53oqdapk0wuwnUo4ORoHuzZ9Sg2GSaX8nIvWRllTQgza
-         5e80MQuQ2xdv8igJ0UZsA7J+SGcSjrl5Oiv6J7Nm2aQGp+RhF1WN5WYPH9YqNDz7IYFm
-         iDqe/H2cR8MEdiVmXxHASVY5vdeXeoKumXiAHWLKpiuuQS2DSGFLPI9MAx4sH0JPqPuq
-         Hgag==
-X-Forwarded-Encrypted: i=1; AJvYcCXg2b7tObqeDrxCKaR4mtnxDbJVUNZMmXkt2z8OXhERSdPdz+dBBy2vpiJMRSuAK4cVf6Go5/6cRzVsjs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnAKxr9mlBca5XGV02fSnVg2zDDTVcH0Kr66HtLOAkFj2OZOJX
-	SEhV3UeiSJNHM2BYi+970FywYPf6itEfXDzUE6YMXEiYsHvXzBFwng1ybm6RPRdCpDCgNbB7ip3
-	0mjGXpoqWp9Bx68qO006ei5TDaP/uM3vjhLcp
-X-Google-Smtp-Source: AGHT+IEL8+W+Z1C0xOOPCRSi2hJJhzO7Ib1+CZea32cQtShRUM9YeK8I+VSn4y3/d4BSuhAUjYNQGbBeHtZ0/M6cuPE=
-X-Received: by 2002:a17:90b:5306:b0:2e2:c15f:1ffe with SMTP id
- 98e67ed59e1d1-2e94bdf49acmr1819149a91.0.1730408437329; Thu, 31 Oct 2024
- 14:00:37 -0700 (PDT)
+	s=arc-20240116; t=1730408567; c=relaxed/simple;
+	bh=9ogiSBCPi/Ij4wMiM+eoF11Iv+v0ajw3Tj9OgF3t5Sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=caJNhmoRGI24gzc+fBTg2lecmkMdLDh/z4s9uaOljpnPxMSO7qObz32JKPa/YYMiOp1gaKxaavdSSqtg0CkPTftVblUsAcG3s1bYZ1XblS06FgfWlBFP5kWWbFyEbS9Ryht6ROQM0cWue8WY/ZEErSs2BEkcvice3UzKEJUKzC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=eTRi7RP7; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730408489; x=1731013289; i=w_armin@gmx.de;
+	bh=9ogiSBCPi/Ij4wMiM+eoF11Iv+v0ajw3Tj9OgF3t5Sc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=eTRi7RP77Ygg02U+HR4RNIURv0CPfFS+gr/6KBPTgL29U6KivvfXKeCnelXcjzqZ
+	 uK9D6/lM/3fE2qy6uPcwrL3kAY00HtRZLR4CEvCg6OAA2+SXHwelu+s4kWLVt/xeo
+	 cTNQFqm1qSOmUmLX6VbClmandKMYFaFFTvISVA4T5Y17Sg5AguyMPynhVuXTDZiT0
+	 S6nSJAd/eNo7PxprADFvwHKH7cOs+Ml+XGOT/NHrvB7+/gIJ5WPV6XzdoeQe+NeZl
+	 7GgE9w43sPbvID52LgR5GxQbZvKkFQGh4QhwjLkffgyNNvPd56wTPLyLZ9COxt8ul
+	 iPESOMcjFvHO9SOwXg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mw9UE-1tyJPZ1LYy-00xRjz; Thu, 31
+ Oct 2024 22:01:29 +0100
+Message-ID: <62756516-21cf-49c8-851f-f7fe3a0b0345@gmx.de>
+Date: Thu, 31 Oct 2024 22:01:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730150953.git.jpoimboe@kernel.org> <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
- <20241030055314.2vg55ychg5osleja@treble.attlocal.net> <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
-In-Reply-To: <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 31 Oct 2024 14:00:24 -0700
-Message-ID: <CAKwvOdmZYFhz0djG0_CgQ94BLaW8rUmdW+zaoZ0G+r76Esf2+Q@mail.gmail.com>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
-	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
-	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
-	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	Arthur Eubanks <aeubanks@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 13/22] ACPI: platform_profile: Require handlers to
+ support balanced profile
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241031040952.109057-1-mario.limonciello@amd.com>
+ <20241031040952.109057-14-mario.limonciello@amd.com>
+ <40b52d41-e3d6-4223-b9e9-0db6b2a19265@gmx.de>
+ <a95ed9c4-a112-4087-aca9-8323902273b2@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <a95ed9c4-a112-4087-aca9-8323902273b2@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nitKPwsm+sUk2qj32a7KZXTO6fRl2IGCIeJa6oeRmAD/QaIdEuV
+ kRFfmKCcyfuA/OF0tlJ61iaV6JZdYbCTQ+3f6TgeKy/qdUmFVsqBZzphrix5TocM8lzsxB4
+ GwKNUG1OQJK0e58sCDS0UFMINU9/HPg0pAN6EGbhEgFtJKqSpof8EJsiMVSokyjF7dDPGq9
+ Ti0XteIFJRPARmXtcSHpg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CFqAKbzVAnA=;lw0Sn/3Uk9uFo1yIrORsxptSK1E
+ mSNOEI3qA3RAm4A5aOvFAcVeFeLw+bKB0brwaSN+QkCeNVHZ2qzq9L8CGDlWNnDiEI5MgvH7E
+ qKs4fqTI77Cq2izn0crt75vACM6AtcEFE7ACXpHZJ8sd6DdnarUNkWQwvvgTjtWM1zDp/u+3q
+ sdrgqd7uXtKHu0YcaPJSXpdu/wlEQT0/BfslABk1u4XLSD5bQBCd3I+WnnJTsIdwS6HuES+An
+ ep06dqPPdNughd/ZNizvIsaecpDg4mdQdDVRMR8Q0fYwkQa81BmPEWq/rl4il8Y28vTAQvmHS
+ +i6dt2JfiMweYL2Xtu8sfJsN93wn1sntnLsy3xAVcSnsiZRzKg2ElL4S9rMYlm8B/1g8anq45
+ brdmXNFNWC1xsvVLGpjEOorNd9fEWw/Y0a9/WXRIRYbFskTCVDz8NPPE8ELTg1bfrsN9C35hX
+ fk3SzGr3Asj2nlU649HRqX4VbPRWrHaEW9Un6uspekTsX0FpQAh42ZRwXdLaPknXkonQK7PiF
+ 6KOLRS2m1BtPeYStg4Tp0v+H5rfaOToHgOkd3oXWcF3aHjWYaIhHmVdxDa/Ll/VJTvqu9dQm1
+ IrZRi7Fvhkza0p0ViiFrqDa0o4v1wOXixffNJuemRvL0DXfT51PHE3EuvUInNQ9OlRQfEYvgF
+ IZ5yrLjjlmFWdJU6iuQrRmfEYepVDGCfZGA+FAYXjBxQTeUTnJgMdCdrPXMQfqEzQiPJ0UPsI
+ VpuHV/U16FBQn9J/O8Y+ApOJcqHETAqywtxpcRU/UoXGwR0ZepnhWblIMlmtuZu31r5U3CbR1
+ DYqdR6HGPvvrB3rSmicyi+fA==
 
-On Thu, Oct 31, 2024 at 1:57=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Tue, Oct 29, 2024 at 10:53=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.=
-org> wrote:
-> >
-> > On Tue, Oct 29, 2024 at 04:32:40PM -0700, Andrii Nakryiko wrote:
-> > > > +static int find_fde(struct sframe_section *sec, unsigned long ip,
-> > > > +                   struct sframe_fde *fde)
-> > > > +{
-> > > > +       struct sframe_fde __user *first, *last, *found =3D NULL;
-> > > > +       u32 ip_off, func_off_low =3D 0, func_off_high =3D -1;
-> > > > +
-> > > > +       ip_off =3D ip - sec->sframe_addr;
-> > >
-> > > what if ip_off is larger than 4GB? ELF section can be bigger than 4GB=
-, right?
-> >
-> > That's baked into sframe v2.
->
-> I believe we do have large production binaries with more than 4GB of
-> text, what are we going to do about them? It would be interesting to
-> hear sframe people's opinion. Adding such a far-reaching new format in
-> 2024 with these limitations is kind of sad. At the very least maybe we
-> should allow some form of chaining sframe definitions to cover more
-> than 4GB segments? Please CC relevant folks, I'm wondering what
-> they're thinking about this.
+Am 31.10.24 um 21:43 schrieb Mario Limonciello:
 
-FWIW, Google has such large binaries, too.
-https://llvm.org/devmtg/2023-10/slides/quicktalks/Eubanks-CompromisesWithLa=
-rgeX86-64Binaries.pdf
---=20
+> On 10/31/2024 15:39, Armin Wolf wrote:
+>> Am 31.10.24 um 05:09 schrieb Mario Limonciello:
+>>
+>>> As support for multiple simultaneous platform handers is introduced
+>>> it's
+>>> important they have at least the balanced profile in common.
+>>>
+>>> This will be used as a fallback in case setting the profile across
+>>> one of the
+>>> handlers happens to fail.
+>>
+>> Do we actually need this patch anymore now that we have the "custom"
+>> platform profile?
+>> If setting the platform profile fails for some handlers, then we
+>> simply display the current
+>> platform profile as "custom".
+>
+> Yes; it's still needed because 'balanced' is used as the fallback of
+> something failed.=C2=A0 If you fail to write to a handler it gets you ba=
+ck
+> to a known place for all GPUs.
+>
+> Now I suppose it's up for discussion if that's really the right thing
+> to do.
+>
+> Maybe because of custom we don't even need that.
+>
+> If I have 3 profile handlers in
+> low-power
+> balanced
+> balanced
+>
+> IE I'm already in 'custom'.
+>
+> If I try to write performance and the first two succeed but the third
+> fails what's better:
+>
+> performance
+> performance
+> balanced
+>
+> Or
+>
+> balanced
+> balanced
+> balanced
+>
+I think the first is better, as we cannot really guarantee that setting "b=
+alanced" for all handlers
+will always work.
+
 Thanks,
-~Nick Desaulniers
+Armin Wolf
+
+>>
+>> Thanks,
+>> Armin Wolf
+>>
+>>> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+>>> Suggested-by: Hans de Goede <hdegoede@redhat.com>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>> =C2=A0 drivers/acpi/platform_profile.c | 4 ++++
+>>> =C2=A0 1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
+>>> platform_profile.c
+>>> index b70ceb11947d0..57c66d7dbf827 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -164,6 +164,10 @@ int platform_profile_register(struct
+>>> platform_profile_handler *pprof)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("platfor=
+m_profile: handler is invalid\n");
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0 if (!test_bit(PLATFORM_PROFILE_BALANCED, pprof->ch=
+oices)) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("platform_profile: =
+handler does not support balanced
+>>> profile\n");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!pprof->dev) {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("platfor=
+m_profile: handler device is not set\n");
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>
 
