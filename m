@@ -1,308 +1,336 @@
-Return-Path: <linux-kernel+bounces-391345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121C99B8564
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:35:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC06E9B856A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F5E282E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6391F243B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABD01CCEFE;
-	Thu, 31 Oct 2024 21:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE191CCEF1;
+	Thu, 31 Oct 2024 21:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="W5cGWHUt"
-Received: from BL0PR05CU006.outbound.protection.outlook.com (mail-eastusazon11021140.outbound.protection.outlook.com [52.101.52.140])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScDkG2Dc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531C81BBBE0;
-	Thu, 31 Oct 2024 21:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730410539; cv=fail; b=uNbqPy7UscNY9n8DRTNx8MLxjegPIAiWCJFBZGPN48JiziidimhQKFXx+YkxaXZ4BLZqU8IStFk+kqJLeKVQ2TvpaVkmJFu+lwerxyQyle+p8YJHq+QcbmvsWEBLASQOhceiC7oLAjApqSD8nNBVoKM3meNpeWABY5Lf01UEQCw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730410539; c=relaxed/simple;
-	bh=omV2AR2gfqjWTiG1RkJcOifMFSgoYPeg7HpVJAGUN2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Lz7tYFx1X4A0wVADp08yNHkUxa+NSlGE+Ka9yXWZcOi9A/8vCazmB5ff1fIHnKOwRWuqBgJ4VZfILW3fG2MsLnmq+ZbLa327c9ZOfVqBASIm4WsgpxPYyIsPcIHGDe5rnNkRUhv0fEuYTgTKmd0VIhDAy9K43L9BX6SZUvdUjTk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=W5cGWHUt; arc=fail smtp.client-ip=52.101.52.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZqOIuPwqj0YAxl+Lxuj4TOer2yRLpmi9osaL5ioz9rdWCwSXDWWe1KNglc5UV4Zi1pb5o5GL/0DsZdv0E949fX6ToZtHTSweDIaIkSPFbLiOGSgHPPcAynFur1WYZhr+yUi/U8tvcsNWVwTLBOcnQRNOj4+ZKt15Qe+4IonqiEhEwgRKlGD7YkLbjslpArZTKnu/k0wlYqhEFzopNctdIgR+amhWRVurrFO1j4Tp015LHt2K1+hxIYO1n2W4849uLZV2nvT8IHGhvfIvmYhYkGy3ZlpxZDChf3jx3gTpduGUWtL6N7dDb8fT5BQ6q4d7xHtQXN2tmZo/o4iY34QO+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mBibkdyjZV/1/ppByaipvOqsJDfDzCiJZNCKX7z2dUI=;
- b=s3o9FfZkbbO4vwkIrLf/A4tJcmxs2NDDPDesrP5XLsdvrAsWRAhrHDpJ6w+bXkcT1phvR7sr55R7kgjYydZzUwzcgv63YEmxwLghtwEtEEOy++dNaRFaGX4DgQxtBDAPBn4sIB9dnhUt6ZtG6DzGkVlzeK/uvSsOQUQcwmIzHrfE6Op5vU3LG/JASChw2bSPJqQAqmojS1WRTwRIjx8ohxz/JjoTdSfsqfK33plRa0CSucpBo3R9xuCugkhBEB/AJO+DGfB7dx9he68mZApT94rLfo13JpGUFKInOmeFXHKS1RaMg4LNKgzvEDY4Whttyvg6sEYpyzHcVtrX77r+Sg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mBibkdyjZV/1/ppByaipvOqsJDfDzCiJZNCKX7z2dUI=;
- b=W5cGWHUt8QQMjfEJy8vBHSAE9zGyC/5UhgepceVl2WeKv/N1Wq/nwa2GvBIefK+J6VvWmnSopf24nbj0wJvWVSwqdWHgSIIB3Yaap4keQYOpIuYIgDxrYWct4xSKiduDCyu3bZfWDgPNziegw+JiySy5m7HElCKVNcrxwsB2Iek=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- PH7PR01MB7871.prod.exchangelabs.com (2603:10b6:510:1de::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.7; Thu, 31 Oct 2024 21:35:24 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8137.008; Thu, 31 Oct 2024
- 21:35:21 +0000
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Graham Woodward <graham.woodward@arm.com>
-Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] perf arm-spe: Add support for SPE Data Source packet on AmpereOne
-Date: Thu, 31 Oct 2024 21:35:33 +0000
-Message-ID: <20241031213533.11148-3-ilkka@os.amperecomputing.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241031213533.11148-1-ilkka@os.amperecomputing.com>
-References: <20241031213533.11148-1-ilkka@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH5P222CA0013.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:610:1ee::14) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1727C13C9B8;
+	Thu, 31 Oct 2024 21:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730410602; cv=none; b=l239bj9t0QC1/0lEoCLQNJ94JxGe0IVm58j1LJgGONkS58J7ZWlVU2iegCwBZVFZKyI1dOC7qqwKgMMUt1XlY2/S0qPDCG8S6tHs+3CqWVDtvRmeO6fcjnwCz9JpolEBBzQafT+LeMxVLlypLInhAVKSFB6vygvqwkPej5/9j6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730410602; c=relaxed/simple;
+	bh=Hhb9PnYKWfCqNVzkuy+HjAehT9iVXkzZwdZ2m8mSnGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4AOG5TB0TuVt1QOoCeuNuLCtMPPSyKBn9eFgIdYkj3TWJzXou7hi6xzQZ3wlMGdCkK81btUV5yWwBRzeaH3DtI0+/u72XyfSXdvbbb4vO4h3huQ03HfOLZKqt4P+sEwGjEVysHQFusPX0biZCsJ+94wFWXwerAmvTH8ObEtyaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScDkG2Dc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E77C4CECF;
+	Thu, 31 Oct 2024 21:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730410601;
+	bh=Hhb9PnYKWfCqNVzkuy+HjAehT9iVXkzZwdZ2m8mSnGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ScDkG2Dcn+IFkpGqZrISI4vjpzidzUmvQMjHXjdmAMU37l2safHHLNV9uRN/QpgoG
+	 zbU4AGyXJAzy/1BFHlIlsLjZvy6sqNYhHZF5sM+2NNeiRJzdZXuy2FjiBGILdc2Yhj
+	 Zgk4Wf/zipgEc4EP6RxQrKyb0gGlFMkhsWuUrAQo5PNokq5yH754lpbbIsSOCmxO8b
+	 0NxbTpE6Xlm9dypJHvk4PVUxBZTl1EUe9NH/j2uA7M+HxTiIcY20nWC32hJf8CZZs9
+	 ajYVC/9BHSr8RbtPEq7s0WxK1JBb3Lfuwf/8dy8K3MYf52DRzqREyNSCQDMtCRw8NA
+	 wwbNc84QW0T1Q==
+Date: Thu, 31 Oct 2024 14:36:40 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, John Garry <john.g.garry@oracle.com>,
+	linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
+Message-ID: <20241031213640.GB21832@frogsfrogsfrogs>
+References: <fc6fddee-2707-4cca-b0b7-983c8dd17e16@oracle.com>
+ <87v7xgmpwo.fsf@gmail.com>
+ <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com>
+ <87ttd0mnuo.fsf@gmail.com>
+ <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com>
+ <87r084mkat.fsf@gmail.com>
+ <509180f3-4cc1-4cc2-9d43-5a1e728fb718@oracle.com>
+ <87plnomfsy.fsf@gmail.com>
+ <20241025182858.GM2386201@frogsfrogsfrogs>
+ <87jzdvmqfz.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|PH7PR01MB7871:EE_
-X-MS-Office365-Filtering-Correlation-Id: efe4b449-e20b-41ec-c074-08dcf9f3ec1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jtTDmf6299F/q9xikAip3HnVb8EAKm08OiruNzWoj5U8o/jiwOoh6JfqCrSg?=
- =?us-ascii?Q?0JPJNgMXwVuWb2BYilmGVwUmAV9Wxmu4TxzCHeuf6Vj89S42pTcoqoBMq7Ki?=
- =?us-ascii?Q?2lzCTenuaFRYv9LliE9hhIlSlhYPdxVS/qKpbQZ0VYmxQZAFChPoE3sZlHVa?=
- =?us-ascii?Q?PRAVVW1mh//wNxS/NIWazaC7jVb4Cdp8pBytHEj7QRJuwnW847yMBejgjVT/?=
- =?us-ascii?Q?drDqO90B3bJVPLpJEGf/Sq0LlLfOFh80UaEmzQVduY3lADlBVk6/QL/MbPG+?=
- =?us-ascii?Q?2uW3dywa1tADWUoALQbIbPyXzBzbmpyeKXfPPX7FVWuHScwIlZkw588iMacH?=
- =?us-ascii?Q?lznL6iL22ylmp4nzPOvZmxZLvhSkIbCQbb7qS5+Bsu06Zeuv5O72wC2u1vEG?=
- =?us-ascii?Q?ZePARe+x8WI2dE5K4N3U4WtIXLy/OZBQ+7i0DCttX5xXl/mf4YHJUQVdfuPH?=
- =?us-ascii?Q?ZliabKKFoZ4KFPN0W+QEX1ar+rfK1La2IvENfbHlwvBP+lEZKjEMyIgngurU?=
- =?us-ascii?Q?p7WvdzNfjsJBI1p0TBuA/Va8LP4gzgbhutqsLsHCYSigX0NekZzNYXNV3SS/?=
- =?us-ascii?Q?NbThRobJaE4bb07+uFaPxOW7rr2SFZ5qIluu2LTv2N8pFQL7jui8KUvZmKUC?=
- =?us-ascii?Q?0ih1pD6qQK93RJ0cAF4isiAzgti8v7+uczBxNdr5YqD2fwunR8rLxzWtLdsu?=
- =?us-ascii?Q?inpfJ2AiJJ0YYZCLaTumNvMDalMDGLvHM3vSl/w5kjK5RzXeDQxTmUD0TClR?=
- =?us-ascii?Q?NXhw8pa/PX2chkUUK/P2c51y1Vs3XaQHuWb60Hpz6dx1YTw9oxD265fRaIxU?=
- =?us-ascii?Q?98lK9H6HMGlqDcKchNTJCjHsp1IrDX6z6EqolqXMtAXXp0FroPen9j7WRsVs?=
- =?us-ascii?Q?AjEpD9Z8XBvNZJ/wa/jwYszGQ5uZl5l/H9vXVm8hZXN8orZW3s1YLjYlWVtg?=
- =?us-ascii?Q?yyo+hTAkyuNqbaARLcRpKTRiK0fUDr4/YSIT2CpfNABu1+npLBEROi3bVvP6?=
- =?us-ascii?Q?J9sl6ET64gR3Xsx42hNzUTpSIhyhhOQWyMhysgw9c1IOLZ65+6n9TKZAoJ6C?=
- =?us-ascii?Q?vRy4od8qxZ9fcx9bWEbUBVacyMbVkk4LW9SsNi1bqg11bAviAbMzDrx9ebVe?=
- =?us-ascii?Q?G2xDuGwoCGFq+Y6yeZcoYBqi8gibfSkTICsIBfNrGfZjrd3cC1eW7ok7qKDN?=
- =?us-ascii?Q?kTb1pIKpdbPq2yKxCAE2Y/HjClv9MPTs0stnNOuWQQYdUaINIboSEbWiqB+d?=
- =?us-ascii?Q?myFCVROGocJnjDDO6G566/N4Qhpd7rT6jGsNFcgNfDzNBs0SdxVjbEzl3TF+?=
- =?us-ascii?Q?nCXZe3YC3kOPDL6MZqgKuKwp1gmlPPoJA99egQgTYAo88USyN+XaPcO0IX1E?=
- =?us-ascii?Q?bHaBtlyYABKWlZyNQfHHqTO2/pfF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NSdyNIcHf73k4zoXPwnggE/bd7EsxVpep91U3KNHbQqL+uKo5YsZ/YZqNHK1?=
- =?us-ascii?Q?0OnnKu7WB3+C/ytc3Na+lsuMV9hy3JGtM5/atQyf6wlnyZvUumbYS2gwaNS6?=
- =?us-ascii?Q?k/9JgP2r8JgcJjy+PD1xd7vYvzMLdftAYKl0jEguVrVe1EXzNFW/eD8f8TpH?=
- =?us-ascii?Q?1uXoISOA+654/4iRi+dDtw4tCbLJ4usMGz+Uqf4KJXo9D+hqEGxz5Cfto2hb?=
- =?us-ascii?Q?wpuVjWljivHbFpLYDy/T8L8WTC4/UKydNOufLfHfSAyUJYzhYnkU8iYEsM9T?=
- =?us-ascii?Q?8/nG96nIsr61qWdtLCFNO/s22vRrk5zIybm/CDe/oXYepYYgEpLcdzKbYgKS?=
- =?us-ascii?Q?pvUS1kmGY+IBA7cDDky1gJarBhOr153+8NCul2uDGMz6vQ71yJfcmVtep9Gm?=
- =?us-ascii?Q?XHjslxfbhcfWL37C55IkYWT4lm7nCn5FJqBzEFQ0fKzA3vNrzX9asCEnOBNs?=
- =?us-ascii?Q?0uovVc8f4V8JkvOCkZ3O5PMyABf9JgHsDNWdEZBGO8xCDY1Jc/7lB3dIMif6?=
- =?us-ascii?Q?htiHwzySPlJakwbK2IkrV9Mxh03tyS/jAAO9NmZHTzC5pz8lSU1g9wdZqNrg?=
- =?us-ascii?Q?3lXQVwk5BIdCvvukxSI0x7hd8SzpogZAK/YDMBYfovfjG2HQhtI+3UEMaY8W?=
- =?us-ascii?Q?BPCWgjzC0KQjw8NSPqPAZyO+5tqE9NiVwSWz3ybjLF/i452ljU0Zu6620UTK?=
- =?us-ascii?Q?Jw2FeH38InpIddYlkMpTEqnD5fWGRk9dKru3yr1ducF5kENWzszVniIn7Qvh?=
- =?us-ascii?Q?k0EQlrEfLYcgvtP4yWcl3c9kXuW/8+44pUcKvbovNnOtfsnsayh0O1iZiVWy?=
- =?us-ascii?Q?ntbLYJcn+M7lqxQMLqmIB/IGvt7xJGC3Rc1hp08lPAvJmjgZk1oJlIl7N4Nu?=
- =?us-ascii?Q?YY6dPhm8U/0bFj3U3Eh/agvftjCH4L82fXNGO2kTR9OKXmK5RH7937EDYNIt?=
- =?us-ascii?Q?HEB2Nv/o7Qs6BOpkKZMEyMgJod8Gh1R9FQcmgY+2Hug1NI40vhY6MX78f2pu?=
- =?us-ascii?Q?aTQa9BYW/FD7Z52ikxzww5chgTH7ycdf/CCaxkoIVRp0+Hx5yFyvfVbERO8r?=
- =?us-ascii?Q?tOn+UPTUNUAMgOatD7bV2Dm4JCLNKOI61viXGGXHK2n4qODzji8TGTyNMehs?=
- =?us-ascii?Q?cOe6iC/R5NQH+dlz4DiOWErlaitCDorwjPaadeqs+Vnn2n/gtwvySf5awpC5?=
- =?us-ascii?Q?naMpPl0crkoLCHEJWxRP1BKdt+1w8+Aw806HSlC7dMHmKtHfM36VNYGR9Vkq?=
- =?us-ascii?Q?W11gb5xLM8IDbsIlgnCE9IeChTCZZY0E6EsRYAZeich1VXfWsFfbR8Z96+ha?=
- =?us-ascii?Q?4fkyIpnX5rUVr39BlZTW1PNriR7XKwOziouhCFN/Hzpbe4vAaagwvZRYq/w+?=
- =?us-ascii?Q?SZ3HMhn09Rhk3pmWlTdG1DxzrfM+naqgbEJXQhyYI9F2SHMB+wq6lM3xekwR?=
- =?us-ascii?Q?ZjV6/g6t4NUaqmoDT67hxg+6SLsc8l48ZbVIdSYQulOv1Eiitvcd5IMjc9vO?=
- =?us-ascii?Q?DMAkFLpuGQbuSrY5A32Xq5V57MToBNQCVhoujbOLPb8IkFPFrmzQYc2+rGR6?=
- =?us-ascii?Q?0YI8SmUZlN+4AjahZAi8C5+prkXdsJldPGeJzP42CP2KxbgQh4dYDDzIuQ5F?=
- =?us-ascii?Q?hvOHqDWw0eMHiL3pBip8dQ8=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efe4b449-e20b-41ec-c074-08dcf9f3ec1a
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 21:35:21.4605
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k3NSLxWXMFLtYsalpVv6y8dFJXOMMJA6R4YgQe3odnM5A2vBMWSC/Ql30d6NYU8BYVdvEUQR0qS1girSWivh1e3GtVdw9lpffPJJm4+So7B3qd2g4ME0PM7Z7oQwN/lq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB7871
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jzdvmqfz.fsf@gmail.com>
 
-Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
+On Sat, Oct 26, 2024 at 10:05:44AM +0530, Ritesh Harjani wrote:
+> "Darrick J. Wong" <djwong@kernel.org> writes:
+> 
+> > On Fri, Oct 25, 2024 at 07:43:17PM +0530, Ritesh Harjani wrote:
+> >> John Garry <john.g.garry@oracle.com> writes:
+> >> 
+> >> > On 25/10/2024 13:36, Ritesh Harjani (IBM) wrote:
+> >> >>>> So user will anyway will have to be made aware of not to
+> >> >>>> attempt writes of fashion which can cause them such penalties.
+> >> >>>>
+> >> >>>> As patch-6 mentions this is a base support for bs = ps systems for
+> >> >>>> enabling atomic writes using bigalloc. For now we return -EINVAL when we
+> >> >>>> can't allocate a continuous user requested mapping which means it won't
+> >> >>>> support operations of types 8k followed by 16k.
+> >> >>>>
+> >> >>> That's my least-preferred option.
+> >> >>>
+> >> >>> I think better would be reject atomic writes that cover unwritten
+> >> >>> extents always - but that boat is about to sail...
+> >> >> That's what this patch does.
+> >> >
+> >> > Not really.
+> >> >
+> >> > Currently we have 2x iomap restrictions:
+> >> > a. mapping length must equal fs block size
+> >> > b. bio created must equal total write size
+> >> >
+> >> > This patch just says that the mapping length must equal total write size 
+> >> > (instead of a.). So quite similar to b.
+> >> >
+> >> >> For whatever reason if we couldn't allocate
+> >> >> a single contiguous region of requested size for atomic write, then we
+> >> >> reject the request always, isn't it. Or maybe I didn't understand your comment.
+> >> >
+> >> > As the simplest example, for an atomic write to an empty file, there 
+> >> > should only be a single mapping returned to iomap_dio_bio_iter() and 
+> >> > that would be of IOMAP_UNWRITTEN type. And we don't reject that.
+> >> >
+> >> 
+> >> Ok. Maybe this is what I am missing. Could you please help me understand
+> >> why should such writes be rejected? 
+> >> 
+> >> For e.g. 
+> >> If FS could allocate a single contiguous IOMAP_UNWRITTEN extent of
+> >> atomic write request size, that means - 
+> >> 1. FS will allocate an unwritten extent.
+> >> 2. will do writes (using submit_bio) to the unwritten extent. 
+> >> 3. will do unwritten to written conversion. 
+> >> 
+> >> It is ok if either of the above operations fail right? If (3) fails
+> >> then the region will still be marked unwritten that means it will read
+> >> zero (old contents). (2) can anyway fail and will not result into
+> >> partial writes. (1) will anyway not result into any write whatsoever.
+> >> 
+> >> So we can never have a situation where there is partial writes leading
+> >> to mix of old and new write contents right for such cases? Which is what the
+> >> requirement of atomic/untorn write also is?
+> >> 
+> >> Sorry am I missing something here?
+> >
+> > I must be missing something; to perform an untorn write, two things must
+> > happen --
+> >
+> > 1. The kernel writes the data to the storage device, and the storage
+> > device either persists all of it, or throws back an error having
+> > persisted none of it.
+> >
+> > 2. If (1) completes successfully, all file mapping updates for the range
+> > written must be persisted, or an error is thrown back and none of them
+> > are persisted.
+> >
+> > iomap doesn't have to know how the filesystem satisfies (2); it just has
+> > to create a single bio containing all data pages or it rejects the
+> > write.
+> >
+> > Currently, it's an implementation detail that the XFS directio write
+> > ioend code processes the file mapping updates for the range written by
+> > walking every extent mapping for that range and issuing separate
+> > transactions for each mapping update.  There's nothing that can restart
+> > the walk if it is interrupted.  That's why XFS cannot support multi
+> > fsblock untorn writes to blocks with different status.
+> >
+> > As I've said before, the most general solution to this would be to add a
+> > new log intent item that would track the "update all mappings in this
+> > file range" operation so that recovery could restart the walk.  This is
+> > the most technically challenging, so we decided not to implement it
+> > until there is demand.
+> >
+> > Having set aside the idea of redesigning ioend, the second-most general
+> > solution is pre-zeroing unwritten extents and holes so that
+> > ->iomap_begin implementations can present a single mapping to the bio
+> > constructor.  Technically if there's only one unwritten extent or hole
+> > or cow, xfs can actually satisfy (2) because it only creates one
+> > transaction.
+> >
+> > This gets me to the third and much less general solution -- only allow
+> > untorn writes if we know that the ioend only ever has to run a single
+> > transaction.  That's why untorn writes are limited to a single fsblock
+> > for now -- it's a simple solution so that we can get our downstream
+> > customers to kick the tires and start on the next iteration instead of
+> > spending years on waterfalling.
+> >
+> > Did you notice that in all of these cases, the capabilities of the
+> > filesystem's ioend processing determines the restrictions on the number
+> > and type of mappings that ->iomap_begin can give to iomap?
+> >
+> > Now that we have a second system trying to hook up to the iomap support,
+> > it's clear to me that the restrictions on mappings are specific to each
+> > filesystem.  Therefore, the iomap directio code should not impose
+> > restrictions on the mappings it receives unless they would prevent the
+> > creation of the single aligned bio.
+> >
+> > Instead, xfs_direct_write_iomap_begin and ext4_iomap_begin should return
+> > EINVAL or something if they look at the file mappings and discover that
+> > they cannot perform the ioend without risking torn mapping updates.  In
+> > the long run, ->iomap_begin is where this iomap->len <= iter->len check
+> > really belongs, but hold that thought.
+> >
+> > For the multi fsblock case, the ->iomap_begin functions would have to
+> > check that only one metadata update would be necessary in the ioend.
+> > That's where things get murky, since ext4/xfs drop their mapping locks
+> > between calls to ->iomap_begin.  So you'd have to check all the mappings
+> > for unsupported mixed state every time.  Yuck.
+> >
+> 
+> Thanks Darrick for taking time summarizing what all has been done
+> and your thoughts here.
+> 
+> > It might be less gross to retain the restriction that iomap accepts only
+> > one mapping for the entire file range, like Ritesh has here.
+> 
+> less gross :) sure. 
+> 
+> I would like to think of this as, being less restrictive (compared to
+> only allowing a single fsblock) by adding a constraint on the atomic
+> write I/O request i.e.  
+> 
+> "Atomic write I/O request to a region in a file is only allowed if that
+> region has no partially allocated extents. Otherwise, the file system
+> can fail the I/O operation by returning -EINVAL."
+> 
+> Essentially by adding this constraint to the I/O request, we are
+> helping the user to prevent atomic writes from accidentally getting
+> torned and also allowing multi-fsblock writes. So I still think that
+> might be the right thing to do here or at least a better start. FS can
+> later work on adding such support where we don't even need above
+> such constraint on a given atomic write I/O request.
 
-Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
----
- .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++
- tools/perf/util/arm-spe.c                     | 65 +++++++++++++++++++
- 2 files changed, 74 insertions(+)
+On today's ext4 call, Ted and Ritesh and I realized that there's a bit
+more to it than this -- it's not possible to support untorn writes to a
+mix of written/(cow,unwritten) mappings even if they all point to the
+same physical space.  If the system fails after the storage device
+commits the write but before any of the ioend processing is scheduled, a
+subsequent read of the previously written blocks will produce the new
+data, but reads to the other areas will produce the old contents (or
+zeroes, or whatever).  That's a torn write.
 
-diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-index 358c611eeddb..4bcd627e859f 100644
---- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-+++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-@@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
- 	ARM_SPE_COMMON_DS_DRAM		= 0xe,
- };
- 
-+enum arm_spe_ampereone_data_source {
-+	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
-+	ARM_SPE_AMPEREONE_SLC                           = 0x3,
-+	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
-+	ARM_SPE_AMPEREONE_DDR                           = 0x7,
-+	ARM_SPE_AMPEREONE_L1D                           = 0x8,
-+	ARM_SPE_AMPEREONE_L2D                           = 0x9,
-+};
-+
- struct arm_spe_record {
- 	enum arm_spe_sample_type type;
- 	int err;
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 9586416be30a..700d4bc8d8ec 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -103,6 +103,30 @@ struct arm_spe_queue {
- 	u32				flags;
- };
- 
-+struct arm_spe_source_mapping {
-+	u16 source;
-+	enum arm_spe_common_data_source common_src;
-+};
-+
-+#define MAP_SOURCE(src, common)				\
-+	{						\
-+		.source = ARM_SPE_##src,		\
-+		.common_src = ARM_SPE_COMMON_##common,  \
-+	}
-+
-+static int arm_spe__map_to_common_source(u16 source,
-+					 struct arm_spe_source_mapping *tbl,
-+					 int nr_sources)
-+{
-+	while (nr_sources--) {
-+		if (tbl->source == source)
-+			return tbl->common_src;
-+		tbl++;
-+	}
-+
-+	return -1;
-+}
-+
- static void arm_spe_dump(struct arm_spe *spe __maybe_unused,
- 			 unsigned char *buf, size_t len)
- {
-@@ -443,6 +467,11 @@ static const struct midr_range common_ds_encoding_cpus[] = {
- 	{},
- };
- 
-+static const struct midr_range ampereone_ds_encoding_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
-+	{},
-+};
-+
- static void arm_spe__sample_flags(struct arm_spe_queue *speq)
- {
- 	const struct arm_spe_record *record = &speq->decoder->record;
-@@ -532,6 +561,38 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
- 	}
- }
- 
-+static struct arm_spe_source_mapping ampereone_sources[] = {
-+	MAP_SOURCE(AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE, DS_PEER_CORE),
-+	MAP_SOURCE(AMPEREONE_SLC, DS_SYS_CACHE),
-+	MAP_SOURCE(AMPEREONE_REMOTE_CHIP_CACHE, DS_REMOTE),
-+	MAP_SOURCE(AMPEREONE_DDR, DS_DRAM),
-+	MAP_SOURCE(AMPEREONE_L1D, DS_L1D),
-+	MAP_SOURCE(AMPEREONE_L2D, DS_L2),
-+};
-+
-+/*
-+ * Source is IMPDEF. Here we convert the source code used on AmpereOne cores
-+ * to the common (Neoverse, Cortex) to avoid duplicating the decoding code.
-+ */
-+static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
-+						 union perf_mem_data_src *data_src)
-+{
-+	int common_src;
-+	struct arm_spe_record common_record;
-+
-+	common_src = arm_spe__map_to_common_source(record->source,
-+						   ampereone_sources,
-+						   ARRAY_SIZE(ampereone_sources));
-+	if (common_src < 0)
-+		 /* Assign a bogus value that's not used for common coding */
-+		common_record.source = 0xfff;
-+	else
-+		common_record.source = common_src;
-+
-+	common_record.op = record->op;
-+	arm_spe__synth_data_source_common(&common_record, data_src);
-+}
-+
- static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
- 					union perf_mem_data_src *data_src)
- {
-@@ -606,6 +667,8 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
- 	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
- 	bool is_common = arm_spe__is_ds_encoding_supported(speq,
- 						common_ds_encoding_cpus);
-+	bool is_ampereone = arm_spe__is_ds_encoding_supported(speq,
-+						ampereone_ds_encoding_cpus);
- 
- 	if (record->op & ARM_SPE_OP_LD)
- 		data_src.mem_op = PERF_MEM_OP_LOAD;
-@@ -616,6 +679,8 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
- 
- 	if (is_common)
- 		arm_spe__synth_data_source_common(record, &data_src);
-+	else if (is_ampereone)
-+		arm_spe__synth_data_source_ampereone(record, &data_src);
- 	else
- 		arm_spe__synth_memory_level(record, &data_src);
- 
--- 
-2.47.0
+Therefore, iomap ought to stick to requiring that ->iomap_begin returns
+a single iomap to cover the entire file range for the untorn write.  For
+an unwritten extent, the post-recovery read will see either zeroes or
+the new contents; for a single-mapping COW it'll see old or new contents
+but not both.
 
+(Obviously this still requires that the fs can perform the mapping
+updates without tearing too.)
+
+--D
+
+> > Users
+> > might be ok with us saying that you can't do a 16k atomic write to a
+> > region where you previously did an 8k write until you write the other
+> > 8k, even if someone has to write zeroes.  Users might be ok with the
+> > kernel allowing multi-fsblock writes but only if the stars align.
+> 
+> > But
+> > to learn the answers to those questions, we have to put /something/ in
+> > the hands of our users.
+> 
+> On this point, I think ext4 might already has those users who might be
+> using atomic write characteristics of devices to do untorn writes. e.g. 
+> 
+> In [1], Ted has talked about using bigalloc with ext4 for torn write
+> prevention. [2] talks about using ext4 with bigalloc to prevent torn
+> writes on aws cloud.
+> 
+> [1]: https://www.youtube.com/watch?v=gIeuiGg-_iw
+> [2]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configure-twp.html
+> 
+> My point being - Looks like the class of users who are using untorn
+> writes to improve their database performances are already doing so even
+> w/o any such interfaces being exposed to them (with ext4 bigalloc).
+> 
+> The current feature support of allowing atomic writes to only single
+> fsblock might not be helpful to these users who can provide that
+> feedback, who are using ext4 on bs = ps systems with bigalloc. But maybe
+> let's wait and hear from them whether it is ok if -   
+> 
+> "Atomic write I/O request to a region in a file is only allowed if that
+> region has no partially allocated extents. Otherwise, the file system
+> can fail the I/O operation by returning -EINVAL."
+> 
+> >
+> > For now (because we're already at -rc5), let's have xfs/ext4's
+> > ->write_iter implementations restrict atomic writes to a single fsblock,
+> > and get both merged into the kernel.
+> 
+> Yes, I agree with the approach. I agree that we should get a consensus
+> on this from folks.
+> 
+> Let me split this series up and address the review comments on patch
+> [1-4]. Patch-5 & 6 can be worked once we have conclusion on this and can
+> be eyed for 6.14.
+> 
+> > Let's defer the multi fsblock work
+> > to 6.14, though I think we could take this patch.
+> 
+> It's ok to consider this patch along with multi-fsblock work then i.e.
+> for 6.14.
+> 
+> >
+> > Does that sound cool?
+> >
+> > --D
+> 
+> Thanks Darrick :)
+> 
+> -ritesh
+> 
+> >> >> 
+> >> >> If others prefer - we can maybe add such a check (e.g. ext4_dio_atomic_write_checks())
+> >> >> for atomic writes in ext4_dio_write_checks(), similar to how we detect
+> >> >> overwrites case to decide whether we need a read v/s write semaphore.
+> >> >> So this can check if the user has a partially allocated extent for the
+> >> >> user requested region and if yes, we can return -EINVAL from
+> >> >> ext4_dio_write_iter() itself.
+> >> >  > > I think this maybe better option than waiting until ->iomap_begin().
+> >> >> This might also bring all atomic write constraints to be checked in one
+> >> >> place i.e. during ext4_file_write_iter() itself.
+> >> >
+> >> > Something like this can be done once we decide how atomic writing to 
+> >> > regions which cover mixed unwritten and written extents is to be handled.
+> >> 
+> >> Mixed extent regions (written + unwritten) is a different case all
+> >> together (which can lead to mix of old and new contents).
+> >> 
+> >> 
+> >> But here what I am suggesting is to add following constraint in case of
+> >> ext4 with bigalloc - 
+> >> 
+> >> "Writes to a region which already has partially allocated extent is not supported."
+> >> 
+> >> That means we will return -EINVAL if we detect above case in
+> >> ext4_file_write_iter() and sure we can document this behavior.
+> >> 
+> >> In retrospect, I am not sure why we cannot add a constraint for atomic
+> >> writes (e.g. for ext4 bigalloc) and reject such writes outright,
+> >> instead of silently incurring a performance penalty by zeroing out the
+> >> partial regions by allowing such write request.
+> >> 
+> >> -ritesh
+> >> 
+> 
 
