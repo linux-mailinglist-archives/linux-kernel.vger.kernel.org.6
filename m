@@ -1,240 +1,189 @@
-Return-Path: <linux-kernel+bounces-389774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328E59B711F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:24:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE9D9B7122
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8721FB2151C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606D51C21A2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC9D4D8CF;
-	Thu, 31 Oct 2024 00:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346491BC3C;
+	Thu, 31 Oct 2024 00:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf4K0k17"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bqCqN9Kl"
+Received: from mail-qv1-f98.google.com (mail-qv1-f98.google.com [209.85.219.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBE617C7C;
-	Thu, 31 Oct 2024 00:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E512941C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730334194; cv=none; b=r8mEceAb5pSxg9n/glODE71eFWUMjmX2TB1a2SqD5YlsBkjKRB4ivubxfb8pAhL0/q/W6Tnd/hfP1tI9LVdFqqqkN2Ale3u/RAx7XpmINGN5B3AsalPpz4ExTsochE6SZQmEmX5Mi3xqFkAhROz5J5D31yRLNlL8T2Dje1G9dK4=
+	t=1730334227; cv=none; b=hOtBVqPuolrCQeE9Lw6kdkjQHvc9DsrgDQCFr3awDpp7iqn3YpKLYI+h4hDpkKonJxH8O3Pt3nyT7yN0FDaRZzvsot2ORJlQkTB4uIDK2G6hv6AI/U4xXpr2bxaHjufoobc5wRogvg8NQrDPescDxHZ7y6KG2ZSkuY3q9+qg1f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730334194; c=relaxed/simple;
-	bh=mKf/hEPMwc/jLqf3HBq9mRvqTO+tlZ8H3qrguKAlDOE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iW4WwzzgrcCWyU1Df+54Y7b1mnju+7c4FTPY+oR9puJ6sTnGUNi69VRMkayN43DUZkPnCIwSA5O0oaYfCHpTo19NmGUj7SVpC6aqor+HKXhZvyjm/Z9tVRwXNmFKdBxsR0DP+H8MZar/dTGBZuRTOdBzkQ4v7wnRvY3/nS74IaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf4K0k17; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18F6C4CECE;
-	Thu, 31 Oct 2024 00:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730334193;
-	bh=mKf/hEPMwc/jLqf3HBq9mRvqTO+tlZ8H3qrguKAlDOE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Zf4K0k17wKkjMKmfVhkD25lVVrReqEEkIAE/OtAyzIxzEAonus1C7ZX6n5gdSw7IB
-	 JOEjLc2x39F2QQ2LtRs5PEKn69MDsPu30xof5Wc3/F7k+pUlpdOdLIC3uBoDJ7IPCH
-	 gzPU9qspKRGRAULpGyGtW4WItQL0FYlHxXdMWVE1e0oK1QSu+FEPNdHTqSugzHlvR3
-	 c7sOsSSBGmnd6iDjcWsMNVVHfefCiABMIrH6jImw1ffq1l1SsRgma5Xh2W4hixvK/I
-	 7r7LSiXYhwET6btyLo3lljoVKWUfBL+hiAqlX3Nj0H3LDlcbIh3fQt5oql0wWzLzy/
-	 YvTkUcwGzcvDw==
-Message-ID: <22c12708ceadcdc3f1a5c9cc9f6a540797463311.camel@kernel.org>
-Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
- fanotify fastpath handler
-From: Jeff Layton <jlayton@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, Linux-Fsdevel	
- <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Kernel Team <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman	 <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann	 <daniel@iogearbox.net>, Martin KaFai Lau
- <martin.lau@linux.dev>, Al Viro	 <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara	 <jack@suse.cz>, KP Singh
- <kpsingh@kernel.org>, Matt Bobrowski	 <mattbobrowski@google.com>, Amir
- Goldstein <amir73il@gmail.com>,  "repnop@google.com"	 <repnop@google.com>,
- Josef Bacik <josef@toxicpanda.com>
-Date: Wed, 30 Oct 2024 20:23:10 -0400
-In-Reply-To: <D21DC5F6-A63A-4D94-A73D-408F640FD075@fb.com>
-References: <20241029231244.2834368-1-song@kernel.org>
-	 <20241029231244.2834368-3-song@kernel.org>
-	 <5b8318018dd316f618eea059f610579a205c05db.camel@kernel.org>
-	 <D21DC5F6-A63A-4D94-A73D-408F640FD075@fb.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41app1) 
+	s=arc-20240116; t=1730334227; c=relaxed/simple;
+	bh=z3nAQNKQ8EPpdG3q4GCW/62oF7r6Z6P5c1Z3MZCXaUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYnfKcErhRFzzfzO6K0SsxBc/88u1Uhw0hlBhofEro+sN+OyrfEt+uieep87Wc6cuKkK+vEekcwQwIkEJppWN0hG/Jb0OgKvXnAGyDUXWp/4kw9LqdGo5FAPlWNSyIExImw5UnS3pTdpLIkjNd5T6YjvUa4MfJKkHIMtSxP01MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bqCqN9Kl; arc=none smtp.client-ip=209.85.219.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-qv1-f98.google.com with SMTP id 6a1803df08f44-6cbf6b2e6caso652856d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1730334224; x=1730939024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tf88+MjxuRscGCJUWSV+JgU09beZteKvue7KtOwrEjg=;
+        b=bqCqN9KlSIQ3gYJVsIYw8zzBPxZ4Baam5ErLZXiwyDakHYWYUMRaQOhFNWXqJEq1/3
+         Lb4j3wC6VDbbe340UzvNwCHYWsJtGsTPrJvudE4Vrbr09rp66z+q1bKZ+0bgy8+tfZfw
+         jYa66OGkTXosd2C7edv9I6D8AgdcbanIg01FYULfgQnWD+16DZQfhjjqfiGohNPsFpGg
+         yAp29zNsaWw21TnCWPTqRfOYNCt7DCO6cZGiT2USBLpoEYWiv7lbZOOwLANXnY6eAQoS
+         O6IGPWZ5upM9faK8RpPLQbbTWdkZnoZgwI7zWnJjsWzX08rqxaoCa3L3ipTl5/8S4Ri2
+         1jrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730334224; x=1730939024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tf88+MjxuRscGCJUWSV+JgU09beZteKvue7KtOwrEjg=;
+        b=F60A89PH/wY+uXLpYILJGi1RRNUMFWrLYKHU5Cu5tn1+35jBw1d770DhjjwTbcj61s
+         mluyUJ6qxyibX0YA2uvmGOZn8Wug6sl9+QN/C9Ojq6LOsFrI3TbZRXt/aXnbbJI3EMNt
+         IuCiP+jPMpJ0mWIt0pp19W43Qj2LJcbzvD3MoIE9Dj5DDe5xmPd3ATSecGDNbWSJV7bQ
+         FbXo3W0rps7Bu7ZQ3z4BiPGX2NKtdRi3wsh4V0Y83t9iXZnCJZglgRY99G2sY/IyZtgD
+         Kq+789CD/k34cSpd37y1Pb1pcH9C16ZgPZBJZ1Y/FHCMIt3E0VqzBgfb/oCe1AE+8LVy
+         Uolw==
+X-Forwarded-Encrypted: i=1; AJvYcCVm514Bnq0ZVnh8LTdwg1m4mYAMlq0bGnZkot+6T2SQ/Y8/D8SpXf173HA6Au+5ohejuFfBfMc3wS+4lac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNcwInGfoQkoQHjZGba/uuwDnC2u64HaTUCu4V2yjY3gJ7vYoW
+	ANZniopanlaiD7O4PZm0j8CkvYj/cegyM7jBYFnYgJIBPylSApgcadVPO5QUC1AgNmyhOJzpAic
+	O1lFoYE6cqcyK/1NcEz0XFGEp5c2ZQdc3
+X-Google-Smtp-Source: AGHT+IFWsRmOrMEqCX2JKpYyyP20jT4EjhYF6nfkwiWrX3lyx/J6drAHCyLE8ycuPc1ryiPw8RvCWPQOnpw6
+X-Received: by 2002:ad4:5c8a:0:b0:6c3:662f:8e09 with SMTP id 6a1803df08f44-6d185817c9cmr122847176d6.9.1730334223990;
+        Wed, 30 Oct 2024 17:23:43 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-6d353f9cd82sm197576d6.3.2024.10.30.17.23.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 17:23:43 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E22DE340748;
+	Wed, 30 Oct 2024 18:23:42 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id D5083E40A10; Wed, 30 Oct 2024 18:23:42 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Arthur Kiyanovski <akiyano@amazon.com>,
+	Brett Creeley <brett.creeley@amd.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	David Arinzon <darinzon@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Doug Berger <opendmb@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Felix Fietkau <nbd@nbd.name>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jason Wang <jasowang@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Leon Romanovsky <leon@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Louis Peens <louis.peens@corigine.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Noam Dagan <ndagan@amazon.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Roy Pledge <Roy.Pledge@nxp.com>,
+	Saeed Bishara <saeedb@amazon.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Shay Agroskin <shayagr@amazon.com>,
+	Simon Horman <horms@kernel.org>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Tal Gilboa <talgi@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	intel-wired-lan@lists.osuosl.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org,
+	oss-drivers@corigine.com,
+	virtualization@lists.linux.dev
+Subject: [resend PATCH 1/2] dim: make dim_calc_stats() inputs const pointers
+Date: Wed, 30 Oct 2024 18:23:25 -0600
+Message-ID: <20241031002326.3426181-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-10-30 at 20:30 +0000, Song Liu wrote:
-> Hi Jeff,=20
->=20
-> Thanks for your review!
->=20
-> I will update 1/2 based on the feedback. (Replying here to save everyone=
-=20
-> an email..)
->=20
-> > On Oct 30, 2024, at 6:03=E2=80=AFAM, Jeff Layton <jlayton@kernel.org> w=
-rote:
->=20
-> [...]
->=20
-> > > +
-> > > +static int sample_fp_handler(struct fsnotify_group *group,
-> > > +     struct fanotify_fastpath_hook *fp_hook,
-> > > +     struct fanotify_fastpath_event *fp_event)
-> > > +{
-> > > + const struct qstr *file_name =3D fp_event->file_name;
-> > > + struct sample_fp_data *fp_data;
-> > > + struct prefix_item *item;
-> > > +
-> > > + if (!file_name)
-> > > + return FAN_FP_RET_SEND_TO_USERSPACE;
-> > > + fp_data =3D fp_hook->data;
-> > > +
-> > > + list_for_each_entry(item, &fp_data->item_list, list) {
-> > > + if (strstr(file_name->name, item->prefix) =3D=3D (char *)file_name-=
->name)
-> > > + return FAN_FP_RET_SKIP_EVENT;
-> > > + }
-> > > +
-> > > + return FAN_FP_RET_SEND_TO_USERSPACE;
-> > > +}
-> >=20
-> > The sample is a little underwhelming and everyone hates string parsing
-> > in the kernel ;). It'd be nice to see a more real-world use-case for
-> > this.
-> >=20
-> > Could this be used to implement subtree filtering? I guess you'd have
-> > to walk back up the directory tree and see whether it had a given
-> > ancestor?
->=20
-> If the subtree is all in the same file system, we can attach fanotify to=
-=20
-> the whole file system, and then use some dget_parent() and follow_up()=
-=20
-> to walk up the directory tree in the fastpath handler. However, if there
-> are other mount points in the subtree, we will need more logic to handle
-> these mount points.=20
->=20
+Make the start and end arguments to dim_calc_stats() const pointers
+to clarify that the function does not modify their values.
 
-My 2 cents...
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ include/linux/dim.h | 3 ++-
+ lib/dim/dim.c       | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-I'd just confine it to a single vfsmount. If you want to monitor in
-several submounts, then you need to add new fanotify watches.
+diff --git a/include/linux/dim.h b/include/linux/dim.h
+index 1b581ff25a15..84579a50ae7f 100644
+--- a/include/linux/dim.h
++++ b/include/linux/dim.h
+@@ -349,11 +349,12 @@ void dim_park_tired(struct dim *dim);
+  *
+  * Calculate the delta between two samples (in data rates).
+  * Takes into consideration counter wrap-around.
+  * Returned boolean indicates whether curr_stats are reliable.
+  */
+-bool dim_calc_stats(struct dim_sample *start, struct dim_sample *end,
++bool dim_calc_stats(const struct dim_sample *start,
++		    const struct dim_sample *end,
+ 		    struct dim_stats *curr_stats);
+ 
+ /**
+  *	dim_update_sample - set a sample's fields with given values
+  *	@event_ctr: number of events to set
+diff --git a/lib/dim/dim.c b/lib/dim/dim.c
+index 83b65ac74d73..97c3d084ebf0 100644
+--- a/lib/dim/dim.c
++++ b/lib/dim/dim.c
+@@ -52,11 +52,12 @@ void dim_park_tired(struct dim *dim)
+ 	dim->steps_left   = 0;
+ 	dim->tune_state   = DIM_PARKING_TIRED;
+ }
+ EXPORT_SYMBOL(dim_park_tired);
+ 
+-bool dim_calc_stats(struct dim_sample *start, struct dim_sample *end,
++bool dim_calc_stats(const struct dim_sample *start,
++		    const struct dim_sample *end,
+ 		    struct dim_stats *curr_stats)
+ {
+ 	/* u32 holds up to 71 minutes, should be enough */
+ 	u32 delta_us = ktime_us_delta(end->time, start->time);
+ 	u32 npkts = BIT_GAP(BITS_PER_TYPE(u32), end->pkt_ctr, start->pkt_ctr);
+-- 
+2.45.2
 
-Alternately, maybe there is some way to designate that an entire
-vfsmount is a child of a watched (or ignored) directory?
-
-> @Christian, I would like to know your thoughts on this (walking up the=
-=20
-> directory tree in fanotify fastpath handler). It can be expensive for=20
-> very very deep subtree.=20
->=20
-
-I'm not Christian, but I'll make the case for it. It's basically a
-bunch of pointer chasing. That's probably not "cheap", but if you can
-do it under RCU it might not be too awful. It might still suck with
-really deep paths, but this is a sample module. It's not expected that
-everyone will want to use it anyway.
-
-> How should we pass in the subtree? I guess we can just use full path in
-> a string as the argument.
->=20
-
-I'd stay away from string parsing. How about this instead?
-
-Allow a process to open a directory fd, and then hand that fd to an
-fanotify ioctl that says that you want to ignore everything that has
-that directory as an ancestor. Or, maybe make it so that you only watch
-dentries that have that directory as an ancestor? I'm not sure what
-makes the most sense.
-
-Then, when you get a dentry-based event, you just walk the d_parent
-pointers back up to the root of the vfsmount. If one of them matches
-the dentry in your fd then you're done. If you hit the root of the
-vfsmount, then you're also done (and know that it's not a child of that
-dentry).
---=20
-Jeff Layton <jlayton@kernel.org>
 
