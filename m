@@ -1,250 +1,127 @@
-Return-Path: <linux-kernel+bounces-390599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838EA9B7C03
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:45:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064D59B7C00
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428A3281BC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:45:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298A01C211F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBE01B07AE;
-	Thu, 31 Oct 2024 13:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08F91A254F;
+	Thu, 31 Oct 2024 13:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k4cRaQxm"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PZ4OLf7c"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148611A3031
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7C219E98E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730382210; cv=none; b=jN4a6Lcapa6GSFewGq+/7EtA18dGtOm5iGJM6JQPH2x6DKeLtOCa067OHF/HmmoS8RFEmTYDIPxmJb30EswEpX2Q/wIXNgTjI5QvHstujbHdebiXjIkBipeP/j4PHPPdXyzZTQKnMCtMTLVjIv1MSjp1P9LeNYWvqiP3ENddXeU=
+	t=1730382209; cv=none; b=AqLzgyqw+mKO94y2TV3ho67kQUELBQxO73cSqy3UmkNaDZg2usSOyQmaVCSomONjBcpSegE0f8dIlK4OGbNgFExcZnPUnBv5aF9OnAJedWQhjdOZqi/fAszbJhRNQ8MYkXgTemWZsE2vBjmA/7uz9OS2K73Xra02SFxn6i5EFNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730382210; c=relaxed/simple;
-	bh=XAuQri7r83r7UrrPiZpMw36VK0lmC8P7Lm6jAuq7hQY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CNvWogtuJHXm6a/AomXyP85AdHfAHCn2ySdKeaUbzbOhhjQe3u7vuAfJ5X30Vo+XswQMzBxamd86ZdKx9HhArGtA4RgoosTvGny8wECJBGq423lzHDj5gAv9hGIlEcTOdZlEK2vCOtSaWYBdSlwyZVwG3FRHgjW8sSF9o/QZJXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k4cRaQxm; arc=none smtp.client-ip=209.85.219.41
+	s=arc-20240116; t=1730382209; c=relaxed/simple;
+	bh=a0mFecBgNuD9c1b6XGh4mZAiv/pFVHebfT+E8XzHrNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QVMoT8U5XM9ZH38w4mwmTzqJaoKD/2IUCkI3UwHUS31UthpBJudTGB/Mvy8oGVVh2m6wK3EAnUu6YCBUdjKEaJoH8FoIPgB2Z8kO6gXIUJKvGjvQ14WZgc9nDOgvxHtda9h5wFhTeXjWIcNKYJsgG/2q012onGOIrTc97cr+rAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PZ4OLf7c; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cc2ea27a50so17737446d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:43:26 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c70abba48so8246805ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:43:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google; t=1730382206; x=1730987006; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mdfYX4pDnMcuiGGGMc2I3sYePXU0/ipv/UNJ6CbzEgg=;
-        b=k4cRaQxmvi/ZmxaVNGduwSHBPClLr91T6DsldnxXYcTfh9BCQpcIEx2GCgaXI/sAg/
-         YCw/ovUSLm5vhxMUUWjahJVkaDKPeRdXW6Lxz/2kr4BNtYRrBk51apqKDFJ1HVrTsQ9i
-         LJdGC5Pbkg18ySyp41yAZSwNsKmNCRHDyViUw=
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XgqLVJtUS6V/VxSplDk69LNhyYJQoAiM+I9RcwTlMEQ=;
+        b=PZ4OLf7crmDp0BMd7Jg07829aytoy2bXHNAuEdA5BVQ2gbiEu0dqEpOwYT8pHOyBmV
+         V+SKuCZhILxjm1e8SyJ6AWSouSSJ2NBiNt2Oldttd1TWbPzq3Ivs/+6xUWknwijya/6i
+         uSxn4ZP615mdAleuZB6K0u7KmyBSYwOUrzNZo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1730382206; x=1730987006;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mdfYX4pDnMcuiGGGMc2I3sYePXU0/ipv/UNJ6CbzEgg=;
-        b=pTQ2t3JpGEJcEb4WwrQ86rC4CXly4r3iJY2T1EeH1ei8rHuZ16wF07wwbWMOdBHO8y
-         3zyqyNVdBgT/LhWh9k81hM8i4wfrcFbSR0Mcalp4CSwuGG16VkXzdd9s5tGoCuTW+PR7
-         2yc58U8zdtiYzuF2JOakGRp9eCYtF2ArWBgWzWxLFqXji1kbGzWvGJfPUCYY0iOvgdWR
-         nECdHCUTUqqTayUoo7OYOwxXUXbQ96X6j2vHMMRqwBgwWQ5e5DHLD0XOr57Df5yuOBDJ
-         yQG+Lj95F1gwccjpQwdegtkAmc1EiKpuex7qd44H8u7nQLdvlKc/ObxlFPtBXHIzdVcN
-         b8iw==
-X-Gm-Message-State: AOJu0YxOwi5QcSDyCETF6xD/fPCa3JHHnS9GZXFavNG6TCIcWTrUHBYv
-	y+qZR7yKC1VvFDLZAZ+zEWlMxqOU9Wea59uL/BDgV9CebL49VDlKvPYB/fi20Q==
-X-Google-Smtp-Source: AGHT+IFVLV7yvPMMB7uMkf5gM87MCX9H9id1mCqPzY7DKuqs39zQEJrBzuTMVcPV3lfquCXZJIgu3g==
-X-Received: by 2002:a05:6214:1308:b0:6cb:c845:ed0f with SMTP id 6a1803df08f44-6d35b9529afmr402756d6.17.1730382206036;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XgqLVJtUS6V/VxSplDk69LNhyYJQoAiM+I9RcwTlMEQ=;
+        b=f3ScZR5FnaQjt6rFBbfeOFeQaXbUpAJZ0qavxzpljsHcvdaKt/NWrBZS7GPSZbnhT5
+         t0AHXN4UBnG4v38dnayYL3rG2Oa9iU4397J6NM06PcR4ebYOmnLxFWJQ2tAo1NoLpWLW
+         n9LjWBIVvi5CZGwhZBWMCo5YwSbxAsTfB8FIA39EVCT0QWpQjyOy51XvfdD/zdc9QcIG
+         Qg+2xQ/9hgd7yzOTzqDVsx8L8O4+BhTHtGBRez0J56YRNAAAnCRn1lTQViib4qxlR436
+         kBDsgQr/s5fALsOgBVWK3bxgw7iZqy8SSfPv0LDY2xLmKRdBombt44xvFWvXu/unaNAC
+         rkAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYcAVM6VeG9axHVv8AQSbHNT9EP9MJPR8RHY7KR1aMgZ6lU+GhHt7kLplVgZxfpXeDI1ig6t6gAs3tOQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm1O9Yzm2RU+aX9Rvkw2eRF/JVDEWHYILaR3rG5MKJocCoc7Ou
+	NlADkVJpq8XTGj4QrZ7p+932KmuY5ufTgD5jH59t6cnOOBNq3DGVqfqlc/sbmg==
+X-Google-Smtp-Source: AGHT+IHG9QcftBtYNodIEgxQElxzpG4w1S/ex0D6O3laQzIHMUa8PmFjj80z7pXz8hO02AkecLyFPQ==
+X-Received: by 2002:a17:902:e74c:b0:20b:7ece:322c with SMTP id d9443c01a7336-210c6c16965mr264141835ad.29.1730382206203;
         Thu, 31 Oct 2024 06:43:26 -0700 (PDT)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d354177d2fsm7837776d6.107.2024.10.31.06.43.24
+Received: from google.com ([2401:fa00:8f:203:4470:8fa8:957a:6c05])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105707e43sm9009905ad.97.2024.10.31.06.43.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 31 Oct 2024 06:43:25 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 31 Oct 2024 13:43:20 +0000
-Subject: [PATCH 7/7] media: uvcvideo: Introduce
- UVC_QUIRK_PRIVACY_DURING_STREAM
+Date: Thu, 31 Oct 2024 22:43:21 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] drm: i915: do not NULL deref hdmi attached_connector
+Message-ID: <20241031134321.GW1279924@google.com>
+References: <20241031105145.2140590-1-senozhatsky@chromium.org>
+ <87y124jyl8.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-uvc-subdev-v1-7-a68331cedd72@chromium.org>
-References: <20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org>
-In-Reply-To: <20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y124jyl8.fsf@intel.com>
 
-Some devices power the GPIO pull-up with the same power-supply as the
-camera. Avoid reading the GPIO if the device is not streaming.
+On (24/10/31 13:33), Jani Nikula wrote:
+> > intel_ddi_init() may skip connector initialization, for instance,
+> > both intel_ddi_init_dp_connector() and intel_ddi_init_hdmi_connector()
+> > are optional.  This leads to situation that ->attached_connector may
+> > be NULL for some connectors.  For instance, on my setup 'DDI A/PHY A'
+> > and 'DDI TC1/PHY TC1' are not initialized.
+> >
+> > However, functions like intel_dp_dual_mode_set_tmds_output() and
+> > friends don't take this into consideration.  This leads to NULL
+> > ptr-derefs:
+> >
+> > KASAN: null-ptr-deref in range [0x0000000000000848-0x000000000000084f]
+> > RIP: 0010:intel_hdmi_encoder_shutdown+0x105/0x230
+> > Call Trace:
+> > <TASK>
+> > i915_driver_shutdown+0x2d8/0x490
+> > pci_device_shutdown+0x83/0x150
+> > device_shutdown+0x4ad/0x660
+> > __se_sys_reboot+0x29c/0x4d0
+> > do_syscall_64+0x60/0x90
+> >
+> > Add a new helper to avoid NULL ->attached_connector derefs and
+> > switch some intel_hdmi function to it.  I'm not sure if we need
+> > to switch all or just intel_dp_dual_mode_set_tmds_output() (I
+> > have only seen this one doing NULL derefs so far).
+> 
+> I think the question is, what are we doing running this code if the
+> connector initialization was skipped?
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_gpio.c  | 47 +++++++++++++++++++++++++++++++++++++++
- drivers/media/usb/uvc/uvc_video.c |  4 ++++
- drivers/media/usb/uvc/uvcvideo.h  |  7 ++++--
- 3 files changed, 56 insertions(+), 2 deletions(-)
+I'm not in position to answer that question, I guess it wasn't even
+asked to me.  But...
 
-diff --git a/drivers/media/usb/uvc/uvc_gpio.c b/drivers/media/usb/uvc/uvc_gpio.c
-index e02d46ef9566..b49a7fbd5adf 100644
---- a/drivers/media/usb/uvc/uvc_gpio.c
-+++ b/drivers/media/usb/uvc/uvc_gpio.c
-@@ -5,6 +5,7 @@
-  *      Copyright 2024 Google LLC
-  */
- 
-+#include <linux/dmi.h>
- #include <linux/kernel.h>
- #include <linux/gpio/consumer.h>
- #include <media/v4l2-ctrls.h>
-@@ -16,6 +17,9 @@ static int uvc_gpio_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
- 	struct uvc_gpio *gpio =
- 		container_of(ctrl->handler, struct uvc_gpio, hdl);
- 
-+	if (!gpio->gpio_ready)
-+		return -EBUSY;
-+
- 	ret = gpiod_get_value_cansleep(gpio->gpio_privacy);
- 	if (ret < 0)
- 		return ret;
-@@ -43,6 +47,24 @@ static irqreturn_t uvc_gpio_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static const struct dmi_system_id privacy_valid_during_streamon[] = {
-+	{
-+		.ident = "HP Elite c1030 Chromebook",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Jinlon"),
-+		},
-+	},
-+	{
-+		.ident = "HP Pro c640 Chromebook",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Dratini"),
-+		},
-+	},
-+	{ } /* terminate list */
-+};
-+
- int uvc_gpio_parse(struct uvc_device *dev)
- {
- 	struct gpio_desc *gpio_privacy;
-@@ -64,6 +86,15 @@ int uvc_gpio_parse(struct uvc_device *dev)
- 	if (IS_ERR(unit))
- 		return PTR_ERR(unit);
- 
-+	/*
-+	 * Note: This quirk will not match external UVC cameras,
-+	 * as they will not have the corresponding ACPI GPIO entity.
-+	 */
-+	if (dmi_check_system(privacy_valid_during_streamon))
-+		dev->quirks |= UVC_QUIRK_PRIVACY_DURING_STREAM;
-+	else
-+		unit->gpio.gpio_ready = true;
-+
- 	unit->gpio.gpio_privacy = gpio_privacy;
- 	unit->gpio.irq = irq;
- 	strscpy(unit->name, "GPIO", sizeof(unit->name));
-@@ -74,6 +105,20 @@ int uvc_gpio_parse(struct uvc_device *dev)
- 	return 0;
- }
- 
-+void uvc_gpio_quirk(struct uvc_device *dev, bool stream_on)
-+{
-+	if (!dev->gpio_unit || !(dev->quirks & UVC_QUIRK_PRIVACY_DURING_STREAM))
-+		return;
-+
-+	dev->gpio_unit->gpio.gpio_ready = stream_on;
-+	if (stream_on) {
-+		enable_irq(dev->gpio_unit->gpio.irq);
-+		uvc_gpio_irq(0, &dev->gpio_unit->gpio);
-+	} else {
-+		disable_irq(dev->gpio_unit->gpio.irq);
-+	}
-+}
-+
- int uvc_gpio_init(struct uvc_device *dev)
- {
- 	struct uvc_entity *unit = dev->gpio_unit;
-@@ -97,6 +142,8 @@ int uvc_gpio_init(struct uvc_device *dev)
- 		goto cleanup;
- 	}
- 
-+	uvc_gpio_quirk(dev, false);
-+
- 	unit->gpio.privacy_ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE |
- 					  V4L2_CTRL_FLAG_READ_ONLY;
- 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index cd9c29532fb0..0d542176ccde 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -2296,6 +2296,8 @@ int uvc_video_start_streaming(struct uvc_streaming *stream)
- 	if (ret < 0)
- 		goto error_video;
- 
-+	uvc_gpio_quirk(stream->dev, true);
-+
- 	return 0;
- 
- error_video:
-@@ -2308,6 +2310,8 @@ int uvc_video_start_streaming(struct uvc_streaming *stream)
- 
- void uvc_video_stop_streaming(struct uvc_streaming *stream)
- {
-+	uvc_gpio_quirk(stream->dev, false);
-+
- 	uvc_video_stop_transfer(stream, 1);
- 
- 	if (stream->intf->num_altsetting > 1) {
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 37991d35088c..f154cb2932a0 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -77,6 +77,7 @@
- #define UVC_QUIRK_NO_RESET_RESUME	0x00004000
- #define UVC_QUIRK_DISABLE_AUTOSUSPEND	0x00008000
- #define UVC_QUIRK_INVALID_DEVICE_SOF	0x00010000
-+#define UVC_QUIRK_PRIVACY_DURING_STREAM	0x00020000
- 
- /* Format flags */
- #define UVC_FMT_FLAG_COMPRESSED		0x00000001
-@@ -173,10 +174,11 @@ struct uvc_control {
- #define UVC_ENTITY_FLAG_DEFAULT		(1 << 0)
- 
- struct uvc_gpio {
--	struct gpio_desc *gpio_privacy;
-+	bool gpio_ready;
- 	int irq;
--	struct v4l2_ctrl_handler hdl;
- 	struct v4l2_ctrl *privacy_ctrl;
-+	struct v4l2_ctrl_handler hdl;
-+	struct gpio_desc *gpio_privacy;
- };
- 
- struct uvc_entity {
-@@ -821,5 +823,6 @@ size_t uvc_video_stats_dump(struct uvc_streaming *stream, char *buf,
- int uvc_gpio_init(struct uvc_device *dev);
- int uvc_gpio_parse(struct uvc_device *dev);
- void uvc_gpio_cleanup(struct uvc_entity *entity);
-+void uvc_gpio_quirk(struct uvc_device *dev, bool stream_on);
- 
- #endif
-
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+For instance, intel_ddi_init_hdmi_connector()->intel_hdmi_init_connector()
+can "error out" and leave ->attached_connector NULL; I can count 3
+conditional returns before `->attached_connector = intel_connector`
+assignment, yet none of the upper functions would even know, because
+intel_hdmi_init_connector() returns void.  And this is not the only case.
+So there are several ways to have ->attached_connector == NULL.
 
