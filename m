@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-391155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D09B834A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:23:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0019B8348
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:23:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5856CB22F62
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090A91F220A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374401CB335;
-	Thu, 31 Oct 2024 19:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AF81CB307;
+	Thu, 31 Oct 2024 19:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IkLuRVtH"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhxLCSdY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF351CB32B
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD64913AD03;
+	Thu, 31 Oct 2024 19:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402554; cv=none; b=Csb9PbBHfiCvQposIaQhidNC23jCEID8aZ9Nio+Zq9YV9Tfy5UY+5pqm14iM2dbLR7Red4GA7iPxRQcwpTmLyL3xWQlunCk9iGu6N7/vHIfRNZ3UPtL3BKNd5N9ek4If9/yRxBflkXeN4vTQVbkYgGgaADa6fVfhxhsiWBQzCek=
+	t=1730402573; cv=none; b=spCFLoiF6glxwZ6+SWqZoIIC5n8ZZ7LKSdwpBmmkUC2U3R2nBIBK5aoS49osdoFBCuq2pQXcREDDadAAA8KrRKK0b6KL4PKdJqG6FpEA5KFwJD771pnfcNNvagPsoS24B9/HZ7rELUPGQf8LX2OUi5bLmP9HeDLlnpPRMrH90hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402554; c=relaxed/simple;
-	bh=USu9utoOUDjF9pGXsZgvak+zLkm8GncKJ4y8O8eezOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aLE9ghuhdOKUTpZdXKTP+u55qvRn7AmG9n0KhSCdo/9GhPyXsYDoH+FI4yAB4EaBIOyTc9Fhgq/sHAFxpNUa6Xg1ZZW1rWh7Fzx0xQVriZ+kqsCTMYHtKOjunq7GRR08H5JyXcTYzKHUpeA5UMb2BMxgS2aOdAUg2VLtLsq6DRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IkLuRVtH; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83ac05206c9so46647239f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730402551; x=1731007351; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eAP/bAcV3XycEinBatq5XdsCa8IJPkmp6YdIv9sxUp4=;
-        b=IkLuRVtHhkoyRrL4Hou51z+ny3ihZ7h38Pr+w206N02350y7BRy618Fk5geKdIqUbc
-         LpJRx9BFxA5nX6nDwxMj5xyDlD6SkxKnvd+q4NEqNPhh5wSZPC0+gLMTeYGdg73Kon42
-         WysP4KKJBmMj9VRXqZ3zysgV8Ad08cC26s4A8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730402551; x=1731007351;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eAP/bAcV3XycEinBatq5XdsCa8IJPkmp6YdIv9sxUp4=;
-        b=QZtzsu+O0RPzOw9DTxiQ7LxOidbfbatQIlbBnxJfZmXJftBVjMa3d3LDuxzhKPu1uK
-         hL4mFggwoI+VIIrOecwo+SEkbewt765fuycrR04nEqqw+C/qmefzcFwTAnlR9SlUCrZp
-         i3TwiuyBnO/GLIaPXDUO+we5b5vXsOSJq+cq9XPFqjToXmtpg9C0EeZ8NgE3R6+sUXlV
-         D2PMfP5zyS/bgX1FoK5kPX7DDFsxH3U19OoLqjuLg0a0ykHAFTYxLC3bMrI4FcU7cACa
-         tMkL2usHoXU++wq/oZVgr7jfaIgF2RLP/EqnlIsAB1fAAPvrYy8sp9ti78P6O3wQvRAb
-         Whtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXri9nMfve+i+rteNfApS7GcLq+dNm85MxrM9MnspOTa30jhpwFXaR2/QBGbrQlIQPt3eUAIso2lX8Uyyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFlJSak3AJ1pHjCFdcofnz1cK01ho+/y879PHvxnWURnUhwha9
-	jM44rQ+F4Wq2CWH9yUGPLKxs/bXfkC8SHgwIBk4a/XwSjYU96G8KP8dwX2FLcExKlerEbgP3dbH
-	v
-X-Google-Smtp-Source: AGHT+IGHYwu7LubJxPhGnVJYDPgVe7Q8KaU4aEUk4n8hC7hyzO6sNgIWfF8p8HCYVRIjvyvx62mx6A==
-X-Received: by 2002:a05:6602:1508:b0:83a:b33a:5e08 with SMTP id ca18e2360f4ac-83b719f3db1mr102629339f.10.1730402551341;
-        Thu, 31 Oct 2024 12:22:31 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de04977a96sm399294173.110.2024.10.31.12.22.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 12:22:30 -0700 (PDT)
-Message-ID: <3f71da6a-ab96-42c6-9c61-c73f2b6dceb0@linuxfoundation.org>
-Date: Thu, 31 Oct 2024 13:22:30 -0600
+	s=arc-20240116; t=1730402573; c=relaxed/simple;
+	bh=DJUCf3ljFjSD5vA8Dx1qWfX0hrTWyHwLabFgpdIEa8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/3U8+UIDl+Ra+54YYFKgS/IxCxpVQi2AV+9T7mlbAybPynE6fkKd6EuD2GX18BRtlEp5tRCCf1vEBV2BHUzY8pmceLB3KRAduG36bgNaCGhh6leNAF5hDHy2o8c6md+xPmock1HLmI5XGBOlXNSMBQ/tGBhtDXrpiUiTiROxbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhxLCSdY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3157C4CEC3;
+	Thu, 31 Oct 2024 19:22:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730402573;
+	bh=DJUCf3ljFjSD5vA8Dx1qWfX0hrTWyHwLabFgpdIEa8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QhxLCSdY74d1bHTnusqvxOjc5b7HsCQ+oNG2L4xRcf1Pv9hvISTxM/Cyh2kSksBbp
+	 2WpGeMoQD0+jLu5ZyaTvoGVWZtBeVDlqK58oG7ZvRn4jIrIO0aYf+AMwsecVfeKN8u
+	 bZa3fOACZFwibvIh6dF6pfUsPaT6TvNoAEMjcnoA2glHzfY0rwpWSLaWAtRADWiwDX
+	 zNcBN2+zaCqzaupakg87h9BeBuWVccTU4fdcZcuv4kyKHLn3CQsk2zkqRc91vgrtvt
+	 xiu6eQbjbCJCi1z1ZDfW4anOBSR2y44QRkDO9XWoP+iPQK4NyMXULU4N+6uxX79o2V
+	 sy4eGxk5mAtCQ==
+Date: Thu, 31 Oct 2024 16:22:49 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 19/21] perf python: Add __str__ and __repr__ functions
+ to evlist
+Message-ID: <ZyPZCbwBdypPhDHA@x1>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-20-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-To: Thorsten Leemhuis <linux@leemhuis.info>, Mark Brown <broonie@kernel.org>
-Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <6dbbc85e-5a87-4605-8db6-92b191878d97@sirena.org.uk>
- <bae547a8-0a16-4173-9aa3-5c31e0a0b1e1@leemhuis.info>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <bae547a8-0a16-4173-9aa3-5c31e0a0b1e1@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031014252.753588-20-irogers@google.com>
 
-On 10/22/24 03:10, Thorsten Leemhuis wrote:
-> On 21.10.24 23:41, Mark Brown wrote:
->> On Mon, Oct 21, 2024 at 12:07:13PM -0400, Sasha Levin wrote:
->>
->>> In an attempt to address the concerns, we're trying out a new "linus-next"
->>> tree is being created and maintained with the following characteristics:
+On Wed, Oct 30, 2024 at 06:42:50PM -0700, Ian Rogers wrote:
+> This allows the values in the evlist to be shown in the REPL like:
+> ```
+> Python 3.11.9 (main, Jun 19 2024, 00:38:48) [GCC 13.2.0] on linux
+> Type "help", "copyright", "credits" or "license" for more information.
+> >>> import sys
+> >>> sys.path.insert(0,'/tmp/perf/python')
+> >>> import perf
+> >>> perf.parse_events('cycles,data_read')
+> evlist([cycles,uncore_imc_free_running_0/data_read/,uncore_imc_free_running_1/data_read/])
+> ```
+
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/python.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
-> BTW, in case anyone cares: I fully agree with what Kees wrote earlier
-> today elsewhere in this thread, e.g. things like "improve -next instead"
-> and "pre-merge bot":
-> http://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E%40kernel.org\
-
-I am catching up on this thread. I agree with Kees and others on improve
-next instead. Adding one more next-like-thing will add to the confusion.
-
-> 
-> Regarding that bot: a few of the CI folks and a developer or two told me
-> they want regzbot to react to PRs for Linus as well, so it can send
-> mails like "hey Linus, just so you know, this PR contains changes that
-> cause the following regressions not yet fixed". I think I like the idea,
-> but well, quite a few other improvements around regzbot and its use have
-> a much higher priority currently.
-> 
->>> 	4. Continuous tree (not daily tags like in linux-next),
->>> 	facilitating easier bisection
->>
->> Is this a pressing problem?  I routinely bisect -next, you have to base
->> things on Linus' tree (or pending-fixes) but otherwise it's not
->> especially problematic.
-> 
-> I wonder if part of this is a "don't know how to do that" aka "lack of
-> documentation" problem. I've recently seen some good guide or mailing
-> list post how to bisect -next somewhere, but I think it wasn't in our
-> Documentation/ directory. I need to search where that was (Mark, I might
-> misremember, but wasn't it you who posted it somewhere?) and could work
-> towards upstreaming that or some other guide. And don't worry, due to
-> the different target audience it would be much shorter text than other
-> documents I contributed. ;-)
-> 
-
-Documentation could help. Tailoring the workflow to linux-next could help.
-All my branches are in linux-next. I don't send my PRs without keeping
-the content in linux-next for 3 days to week after rc1 - it is usually
-longer for merge-window content.
-
-This helps me find conflicts if any between all the tree selftest go
-through and mine. It helps work out conflicts in linux-next prior to
-sending pull request.
-
-My vote is for improving next instead of re-inventing next-like-thing.
-
-thanks,
--- Shuah
-
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 1a53a97c513d..a71bad3418da 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -1069,6 +1069,30 @@ static PyObject *pyrf_evlist__item(PyObject *obj, Py_ssize_t i)
+>  	return Py_BuildValue("O", container_of(pos, struct pyrf_evsel, evsel));
+>  }
+>  
+> +static PyObject *pyrf_evlist__str(PyObject *self)
+> +{
+> +	struct pyrf_evlist *pevlist = (void *)self;
+> +	struct evsel *pos;
+> +	struct strbuf sb = STRBUF_INIT;
+> +	bool first = true;
+> +	PyObject *result;
+> +
+> +	strbuf_addstr(&sb, "evlist([");
+> +	evlist__for_each_entry(&pevlist->evlist, pos) {
+> +		if (!first)
+> +			strbuf_addch(&sb, ',');
+> +		if (!pos->pmu)
+> +			strbuf_addstr(&sb, evsel__name(pos));
+> +		else
+> +			strbuf_addf(&sb, "%s/%s/", pos->pmu->name, evsel__name(pos));
+> +		first = false;
+> +	}
+> +	strbuf_addstr(&sb, "])");
+> +	result = PyUnicode_FromString(sb.buf);
+> +	strbuf_release(&sb);
+> +	return result;
+> +}
+> +
+>  static PySequenceMethods pyrf_evlist__sequence_methods = {
+>  	.sq_length = pyrf_evlist__length,
+>  	.sq_item   = pyrf_evlist__item,
+> @@ -1086,6 +1110,8 @@ static PyTypeObject pyrf_evlist__type = {
+>  	.tp_doc		= pyrf_evlist__doc,
+>  	.tp_methods	= pyrf_evlist__methods,
+>  	.tp_init	= (initproc)pyrf_evlist__init,
+> +	.tp_repr        = pyrf_evlist__str,
+> +	.tp_str         = pyrf_evlist__str,
+>  };
+>  
+>  static int pyrf_evlist__setup_types(void)
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
 
