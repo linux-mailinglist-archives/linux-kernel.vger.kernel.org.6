@@ -1,149 +1,137 @@
-Return-Path: <linux-kernel+bounces-391233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A3C9B8430
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:09:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B489B8433
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10361F23DEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 216E51F23326
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4925D1CBE97;
-	Thu, 31 Oct 2024 20:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B5A1CBEAE;
+	Thu, 31 Oct 2024 20:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kv8LQkLo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fWHuCx5c"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB9B19ABB4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277D71C9EB5
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730405372; cv=none; b=K/h16VQZCv41KwiQH20IGCQxSmMW51YtnkXRKda8wk2vhLN3gFMfKd3ddPpU5magvwReBSuFxvmrSn40n99MQ4G2UxvtxhtATRH9ornScMuNB5T1GjYdoJ7i1dAk1XCrQ9LVX90Virqvlad38rT/04nzIy5rJQJ44rQXCPJ50Ts=
+	t=1730405391; cv=none; b=LZ7Ua7XDVqjHU70tc5nDv8m/BACLr0pVY89jE4hGiY3lL5Bsp7JwNKdnSxLWD6JAlYoFCUsFKca5czTtF2D/n8+yHJOPN1ONSINsSvWuhcwVtKb9kUA83XmbqFG5sZ+UnbS7+ku5vSvQFTnplpZB6cyU7KfdgA+QGJDc8gxj0pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730405372; c=relaxed/simple;
-	bh=WdfzmdvRT7ZJcUGSjkVMQ4SLqD+YFgbQoldqkxD7JBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qh7LKRle57PmX3bsPLdlC6aYMMXGF3if/1GMrQwoYz1nb0q+k68RGqmrxRSPtDFB9dMiXjwofHG2xwBebigmZ0fZoTosG/7z0xafyQsD1HW8peFJlXeWgHdQUdn/LAaWIFefuyLjwVyqyyd3s6HMOUNeDAoOI8RSzC3gE0Ge1T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kv8LQkLo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VBrohD002303
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:09:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sGczH8GGr0JmTYS/kWsyaeudWlmO9htY2Q69KxduKq0=; b=kv8LQkLoFjJ8xZrl
-	om8ZYs7UMb0vENv0UU1APUuo87iEMnQFGTXax2LHAOD4xOgnKqfrOE0Oo6GUaXbl
-	Mnwy54DBrieH4gQ5sMaYoIqeyisARVFa6P1zuJfEJpfviq6qdOBj5THe2y60l/6b
-	Txgdn5qqnBEZxIslTHBNjrDCAmh21WEADKTh7gyToIuF+aggA40RL0kNYq380VS7
-	xDW9nEY6LqmhXeqkKCqsrxk8XG18ZXoAdQXU8+UA6DspcidJgds4q25/CiYGSr/h
-	Gky42+O+nKPlDFSjGMEnuGu8OEUODFBAmnZbqWoT8xgXPbBGx7XJ9X4bL9/hB69k
-	Wno/AA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmn5cse1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:09:28 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4609e2c72feso1820021cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:09:28 -0700 (PDT)
+	s=arc-20240116; t=1730405391; c=relaxed/simple;
+	bh=Udpm6RI+vAu4DeQK4HRqdmPK9pOT5qP8mLEQJwd46mE=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=eRGnxj702or++oYmwY6HDJFR2GA5N0Pka7i4aus3GPJIP6pKCudOVegPWTLcN06t7lssRDMq1UNlxwn0bh0dPzFg+7EnSOjDg/EydPLoJ8coCnilUkODVaXU99A65DTsrQLBlH6v38zz/ffoslKI1oPgGM6ef9NKQ2mayCwnN9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fWHuCx5c; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3231725c9so26086807b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730405387; x=1731010187; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YYJVMBm1bZbfZ8BXA7U0ACFO0AHr0DoTfzETRNw+mrQ=;
+        b=fWHuCx5cDIIHZelGrsgLNx3xD+DnQeNFUTgNS8W1QPsGNgJcnIsA3fsViyrnxkxkpe
+         HW6xUxtayRY+3g1jiHnEG19m9fJ14qghiibOSvdwBv3BEDU/fyqkJen5D2JxFuKehIC8
+         vxivbQiAEbR+PWnzhVzKXtdm+heBGrQV1yRjl8I64AopbBXOrc/k3nBsAnGPN+Edu0CG
+         WabkXHum7FNXq8uayR6SrMo/U9gYMT/LOTEN0TgXqp0PoRBLDNAKVBp3pvumzQjmSvGN
+         NwL3BQN3Dp0D6AMCpjq7qLTpTOROFhrZFerBU/B1AmsSFSsabSYPgPnhvmEBin2/CbbL
+         2e9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730405368; x=1731010168;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1730405387; x=1731010187;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sGczH8GGr0JmTYS/kWsyaeudWlmO9htY2Q69KxduKq0=;
-        b=uQPLipFp/k8K49ZycJ6xwh5r4sYn9TxWzj/U6f6lPAEASvEpIMeqeTULSyQCr6xJ+S
-         GEQD58AS0EKSzAL/6P6WNRPq6yMKKZTWhWlO0lTyhGx2woWVvD9GFPN1HocBgP3c6eJ7
-         /yk3My7MayFtBfwtqS6h220yCPL3DcrhB53FnlxEQwND6n+uo5AaQ11OmHmJDHlxxBi8
-         rOHPdonzJan4bo+40fhbmaa3ebke++74qETe7ufIMcUzk9vzFU1ZHCg1ZJavdeDgvFnu
-         m2bca003S2rxEF8EN+4vz7D054s/ROzu1TOTPNvYBN7BmuFKQBomt/HJ8n/8K0GE/Myj
-         pX9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3qpb7irPayaQqFgVRo/p22un8oia6PnpeqxF0k+c7ixx29Nsj+U6OgM17O9MRzrY6NkYDjhy3iAcCPss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2wQdBRGm2Ncy/0mv6P9zW6FQP2oqWCLrC6St9v4WYcfFmhB0M
-	3s1Fu7BoLxHdcril/Mgg3YE+K2lGJ3ujNzDlobBO4C8DSIi2cFDlElEj3ZGXXxKPlQdj7zgsEq7
-	q2x1udN49M7rSU9yRlqfQPxlVdobUFEpNl2PuDxBvAF8yi8B8Itx3SzltEZj94jQ=
-X-Received: by 2002:a05:622a:1892:b0:458:3297:806f with SMTP id d75a77b69052e-4613c1a1ed3mr143010071cf.10.1730405368158;
-        Thu, 31 Oct 2024 13:09:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGa1eTPRI3Ri0qspxBGjmk0aMURoXtsm0kF82iK8cLqr+JxpJdzEw3rKYXC8B3ozddmP/1TCA==
-X-Received: by 2002:a05:622a:1892:b0:458:3297:806f with SMTP id d75a77b69052e-4613c1a1ed3mr143009831cf.10.1730405367677;
-        Thu, 31 Oct 2024 13:09:27 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac74d485sm847824a12.19.2024.10.31.13.09.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 13:09:27 -0700 (PDT)
-Message-ID: <c48f70c4-30ed-4df4-b2b3-826be77da799@oss.qualcomm.com>
-Date: Thu, 31 Oct 2024 21:09:24 +0100
+        bh=YYJVMBm1bZbfZ8BXA7U0ACFO0AHr0DoTfzETRNw+mrQ=;
+        b=TISJxhFfw4sYotAR409Jr6q0EU7xoDTbQwjM+VTeA5zv9Qh+R2rI3dNTyaRu4ekLoQ
+         1w57zN5B87oTWDpwEGmhvNOEtRGC6+ulYNcL6MXpXeS4RcyxpeA8syJtyd6iare8jWsb
+         rcnvBrgLiL81G0loEGwrwj/egv7mmwZz3a9575NiI8tncMuCuLPcZh/UoS49ehhgowyE
+         /2LaL7jPoWEg26buZm0uOxfwI25L8sgC4iQ9mwwAT92tClXbTcvWYEIPROQ6NjX9qAnA
+         U5yNPVxLSgg5tly/faLFgkCrrac+4pPvl/YOPLC8IhApgBNuKFbVosC6Lg8+bLYZ4Mzy
+         DBkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLchSqEsziF85DCZMOlZQkoEgWoY4Fv86b9sN/ErBlXU4Hhnhg2itBg+Ewz76BnM1+MvLWV5FEk1bYGzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywtMc3QFvTf4zS/EeoT6UvxqSPb6pUuidXv7Fp+OE7jdUFU2+4
+	gt3uAaPRSPc+hd1N9FLqCRw0vdD5ER7BGYWjf4MtZJa4lKTDOwpyMlFdhrr9mZE1+3qbLVejPTj
+	twW3UmDnzLjisiQlgO6esYw==
+X-Google-Smtp-Source: AGHT+IEpU/nsqHw2HNdrnKe90ZcgMwiw8711EjVnoYy7bqvyFHs6zt8GYUXoJCH86l1eGdVB7BBA9qy0Bkl/MtaP4g==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
+ (user=coltonlewis job=sendgmr) by 2002:a05:690c:6407:b0:6e3:8562:ffa with
+ SMTP id 00721157ae682-6e9d8b5f046mr14345247b3.5.1730405387276; Thu, 31 Oct
+ 2024 13:09:47 -0700 (PDT)
+Date: Thu, 31 Oct 2024 20:09:45 +0000
+In-Reply-To: <20240918205319.3517569-1-coltonlewis@google.com> (message from
+ Colton Lewis on Wed, 18 Sep 2024 20:53:13 +0000)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] arm64: dts: qcom: x1e80100-crd: add rtc offset to
- set rtc time
-To: Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20241015004945.3676-1-jonathan@marek.ca>
- <20241015004945.3676-5-jonathan@marek.ca>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241015004945.3676-5-jonathan@marek.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: eLEihNzfYrWExA4U47QubXuT9dUoo-nL
-X-Proofpoint-GUID: eLEihNzfYrWExA4U47QubXuT9dUoo-nL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=910
- priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310152
+Mime-Version: 1.0
+Message-ID: <gsnth68sf306.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH v2 0/6] Extend pmu_counters_test to AMD CPUs
+From: Colton Lewis <coltonlewis@google.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, mizhang@google.com, ljr.kernel@gmail.com, 
+	jmattson@google.com, aaronlewis@google.com, seanjc@google.com, 
+	pbonzini@redhat.com, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On 15.10.2024 2:47 AM, Jonathan Marek wrote:
-> See commit e67b45582c5e for explanation.
-> 
-> Note: the 0xbc offset is arbitrary, it just needs to not be already in use.
-> 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> index 6dfc85eda3540..eb6b735c41453 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> @@ -1224,6 +1224,17 @@ edp_bl_en: edp-bl-en-state {
->  	};
->  };
->  
-> +&pmk8550_rtc {
-> +	nvmem-cells = <&rtc_offset>;
-> +	nvmem-cell-names = "offset";
-> +};
-> +
-> +&pmk8550_sdam_2 {
-> +	rtc_offset: rtc-offset@bc {
-> +		reg = <0xbc 0x4>;
-> +	};
-> +};
+Bumping this for Mingwei
 
-Setting random bits in SDAM is a very very very very bad idea
+Colton Lewis <coltonlewis@google.com> writes:
 
-I'll try to get a good spot for the offset internally
+> Extend pmu_counters_test to AMD CPUs.
 
-Konrad
+> As the AMD PMU is quite different from Intel with different events and
+> feature sets, this series introduces a new code path to test it,
+> specifically focusing on the core counters including the
+> PerfCtrExtCore and PerfMonV2 features. Northbridge counters and cache
+> counters exist, but are not as important and can be deferred to a
+> later series.
+
+> The first patch is a bug fix that could be submitted separately.
+
+> The series has been tested on both Intel and AMD machines, but I have
+> not found an AMD machine old enough to lack PerfCtrExtCore. I have
+> made efforts that no part of the code has any dependency on its
+> presence.
+
+> I am aware of similar work in this direction done by Jinrong Liang
+> [1]. He told me he is not working on it currently and I am not
+> intruding by making my own submission.
+
+> [1]  
+> https://lore.kernel.org/kvm/20231121115457.76269-1-cloudliang@tencent.com/
+
+> v2:
+> * Test all combinations of VM setup rather than only the maximum
+>    allowed by hardware
+> * Add fixes tag to bug fix in patch 1
+> * Refine some names
+
+> v1:
+> https://lore.kernel.org/kvm/20240813164244.751597-1-coltonlewis@google.com/
+
+> Colton Lewis (6):
+>    KVM: x86: selftests: Fix typos in macro variable use
+>    KVM: x86: selftests: Define AMD PMU CPUID leaves
+>    KVM: x86: selftests: Set up AMD VM in pmu_counters_test
+>    KVM: x86: selftests: Test read/write core counters
+>    KVM: x86: selftests: Test core events
+>    KVM: x86: selftests: Test PerfMonV2
+
+>   .../selftests/kvm/include/x86_64/processor.h  |   7 +
+>   .../selftests/kvm/x86_64/pmu_counters_test.c  | 304 ++++++++++++++++--
+>   2 files changed, 277 insertions(+), 34 deletions(-)
+
+
+> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+> --
+> 2.46.0.662.g92d0881bb0-goog
 
