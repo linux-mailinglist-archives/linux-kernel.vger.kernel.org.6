@@ -1,132 +1,175 @@
-Return-Path: <linux-kernel+bounces-390358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D7A9B78D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:42:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62739B78DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC75B24CAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5C61F2500C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7369199945;
-	Thu, 31 Oct 2024 10:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E97199E9C;
+	Thu, 31 Oct 2024 10:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWDERBAv"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="eE2nQMdK"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EB31953A2;
-	Thu, 31 Oct 2024 10:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2D6199395;
+	Thu, 31 Oct 2024 10:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730371316; cv=none; b=INgEIhL8w0DWcZIKF3OzpSFGgM0T/9httRsCARgOboN2q6hTVSu5PmNZPem/5fmQVIXVMrZ29tXIdEq/o1PIncdoaKIWIFIqarc542vE0bdr9d8xOf41/HP9/4A6avt2lKwNqtWlu/2jcV7y0J5iamnFpCAX98JD8g0diA6v8bg=
+	t=1730371346; cv=none; b=gnI2TVUtl5K/AJDuVZcHf1TtdelpCBH0YuoVQ/sYYWDFRxo7pSFV2AoaKuGTIMRT6os3Y8X7IDIyLERAwPr1rjd23w3BzJ5k3ahkS04jgid+8ISpmfUHKhG/ThrHRjoBzBfiapDlM/XMS/4QD21+IuPuhghq4e0J7884+kmH88w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730371316; c=relaxed/simple;
-	bh=q2m+OHJQe9VEbpZccvcxyWYrsG45lMP+Rd3vJL1KHms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QkEhXis1RbKvlXm/XVt+4DGczv21uDuSo/7j/UT8ARTcqaU4tlYwJ0oaeA2KUnggkCyJYJMgWn2653NJlUDybVp2JKHGst9ApXVQA+EeCjKvlfPYZr6s/VSl9flP7f2sJ/dJN2l2/IPMq2/9zci+8wgQBhp/ZXIhxZcrNR2HiJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWDERBAv; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20e6981ca77so8681045ad.2;
-        Thu, 31 Oct 2024 03:41:54 -0700 (PDT)
+	s=arc-20240116; t=1730371346; c=relaxed/simple;
+	bh=LirR3kzbScaAvwOKGcEk0tU8aX0hkYtaRdjnyAUg0cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gMCcwrT8qGm18JX3KLTwGt8USSqCHAPTWHPx8psi55r7JDjVkLjHf2eWazlM0J7uF9yfY5HzBCpdd7qWG9Zzb8to1TBEtPx9yXeVpXYB1iq3sLyGzNgIA34P/726lzshHlrusc4RKRE05XnE3CODNjkcNDWBtOTk+gvUkVse31Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=eE2nQMdK; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730371314; x=1730976114; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5GNro7YWC/FjezeaKCH9xRHgSznLSEnftFlQE0TrdM=;
-        b=lWDERBAvcs16YHCtTdnWtu75E+sGf/YxzaJRFbEpZ5rma/jsYxaKsNHEIhNtXzbPFL
-         YgtvorLaxziu6Gx4YyFq3pm3TFLURiVzhnWVZFL68Pa35PNdrWujaIJg5rvFYsOy4Gje
-         08T1k9yh6B3NtY8mL3XMMf95wKPbctd5+kKfN6BR9IKs1ytmCjZ0itvnYlJh9MXC6Nfv
-         G3/lziIP75xqBQ/bnWPfkVh9RqzA+Zq3kF+8yjB12pNOd/vyKY+HhOHHg/87HC+ISwWQ
-         2dvPabZayxQ4AN7BNDVUMXglFzsJWZQgf72FAssCxV9xGv7c2kO1yBuI78xbPy0Yfvyc
-         yMcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730371314; x=1730976114;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r5GNro7YWC/FjezeaKCH9xRHgSznLSEnftFlQE0TrdM=;
-        b=GiwA6xs21Sh8MdUYRFCXizuGwGBGvinC8QjTRMbmMpJsNewMgRDHC5sjNz//JELR/D
-         KpiZujG5QXq9Yin6MRYoa8D/kCOhHgQ6afpjpgvjFDhPHFNj1/b+Nhr47c+R3iaDqq5g
-         pw63SnMH66mECIIH9dKNIn3XOTUQTYAOx2Ot/s1N0RnSnV24qv2ikgT1/OQ2PVu+kDFD
-         QoYZANtCwJHRtuuvBgVgiENKx545vqPnyCMKqSxMBmxpID5RgKx9GggRXKjdd+QBtbZi
-         Hb2LU58q7WzlSr4YFj6qtmunDwHqAL/clRC31zxZeWYvhUEV7cKNjoiSjdLPPU4BnYSp
-         yeUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKVn6v4bbThuXYQPc/dpzXPKZFbqWY2++X1FfbHvGqFRucND+aqSFY9WL/18MBc3LphYpEy0UlZkSRjw==@vger.kernel.org, AJvYcCVQHJ9Z3hhhT9hY0lywcWSsiLLaE131Aa3nMscodGyCstDgAJ41dLs6N6EfsieQTpPOaGGCGMedVC9qZnTN@vger.kernel.org, AJvYcCVqOSlJgyo3gRVLyhtMO1tlHSpuf4yyb2DPq8+NWnnUxTxXdkqsLwC+T9zAnq1qXS59R6KEPstNvB8Q@vger.kernel.org, AJvYcCXTfzmcbnD9aEJnDUkmT4Qmw+Ehf9qBQijvbVRQ8Ulk62kQGmONR02TIXRkdDSzDyAb6gOCdEKozsV40NmMs4le@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF4y+78KoqAFz4PLj8ckOCgwToecB6oOxauGDQI7HOcDylmnVG
-	6hTGIjj342bOIFlZiBouGnKdbqbR2yi67wNB32fsNmgl5QPxXc5Z
-X-Google-Smtp-Source: AGHT+IFxKgky6EqyTOIn7AIkk0TZ6xVCr1/Y3di4h7lNHH2Vcs437U3ctPeYZl6ScCv0XhCeKnA8vA==
-X-Received: by 2002:a17:902:ea04:b0:20c:f9ec:cd9e with SMTP id d9443c01a7336-21103c59c36mr32515255ad.41.1730371313557;
-        Thu, 31 Oct 2024 03:41:53 -0700 (PDT)
-Received: from mighty.kangaroo-insen.ts.net ([120.88.183.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ed995sm7067045ad.39.2024.10.31.03.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 03:41:52 -0700 (PDT)
-From: Mithil Bavishi <bavishimithil@gmail.com>
-To: andreas@kemnade.info
-Cc: aaro.koskinen@iki.fi,
-	bavishimithil@gmail.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	khilman@baylibre.com,
-	krzk+dt@kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	robh@kernel.org,
-	rogerq@kernel.org,
-	tony@atomide.com
-Subject: Re: [PATCH v2 2/6] arm/dts: Add common device tree for Samsung Galaxy Tab 2 series
-Date: Thu, 31 Oct 2024 10:41:45 +0000
-Message-ID: <20241031104146.4538-1-bavishimithil@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241031083248.043d25d0@akair>
-References: <20241031083248.043d25d0@akair>
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1730371345; x=1761907345;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2XSQmg9XPL/tUl5Uy9X9cqzqndsoHfM/nyIda+DnmYs=;
+  b=eE2nQMdKcNLuqicCNqHp/j4fLUzG++kDn/aXTaIkjrxy5eY2/n2qc5ry
+   EzFguMwjRcOQS5VGG5a41lkhKP6ZfTWaqVDNzaPKrgKQYgBX0k0gFbeLE
+   JPgqQh8ZhswAKPqQP8H1Rp4WrKhK2Ha3PN+RHSxJuaQgS+TfABckgWvzv
+   0=;
+X-IronPort-AV: E=Sophos;i="6.11,247,1725321600"; 
+   d="scan'208";a="37873631"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 10:42:19 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:53488]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.121:2525] with esmtp (Farcaster)
+ id f575b9e2-c87c-4dc7-9ccf-8641a67b176b; Thu, 31 Oct 2024 10:42:18 +0000 (UTC)
+X-Farcaster-Flow-ID: f575b9e2-c87c-4dc7-9ccf-8641a67b176b
+Received: from EX19D003UWB002.ant.amazon.com (10.13.138.11) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 31 Oct 2024 10:42:09 +0000
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
+ EX19D003UWB002.ant.amazon.com (10.13.138.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 31 Oct 2024 10:42:09 +0000
+Received: from email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Thu, 31 Oct 2024 10:42:08 +0000
+Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
+	by email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com (Postfix) with ESMTPS id 524C0804C3;
+	Thu, 31 Oct 2024 10:42:02 +0000 (UTC)
+Message-ID: <27646c08-f724-49f7-9f45-d03bad500219@amazon.co.uk>
+Date: Thu, 31 Oct 2024 10:42:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
+To: David Hildenbrand <david@redhat.com>, <tabba@google.com>,
+	<quic_eberman@quicinc.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<jthoughton@google.com>, <ackerleytng@google.com>, <vannapurve@google.com>,
+	<rppt@kernel.org>
+CC: <graf@amazon.com>, <jgowans@amazon.com>, <derekmn@amazon.com>,
+	<kalyazin@amazon.com>, <xmarcalx@amazon.com>, <linux-mm@kvack.org>,
+	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<chenhuacai@kernel.org>, <kernel@xen0n.name>, <paul.walmsley@sifive.com>,
+	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <hca@linux.ibm.com>,
+	<gor@linux.ibm.com>, <agordeev@linux.ibm.com>, <borntraeger@linux.ibm.com>,
+	<svens@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <luto@kernel.org>, <peterz@infradead.org>,
+	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <loongarch@lists.linux.dev>,
+	<linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+References: <20241030134912.515725-1-roypat@amazon.co.uk>
+ <4aa0ccf4-ebbe-4244-bc85-8bc8dcd14e74@redhat.com>
+From: Patrick Roy <roypat@amazon.co.uk>
+Content-Language: en-US
+Autocrypt: addr=roypat@amazon.co.uk; keydata=
+ xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
+ NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
+ wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
+ CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
+ AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
+ AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
+ IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
+ 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
+ 8hlxFQM=
+In-Reply-To: <4aa0ccf4-ebbe-4244-bc85-8bc8dcd14e74@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-> well, that takes time, I wanted to start that on the right thing.
+On Thu, 2024-10-31 at 09:50 +0000, David Hildenbrand wrote:
+> On 30.10.24 14:49, Patrick Roy wrote:
+>> Unmapping virtual machine guest memory from the host kernel's direct map
+>> is a successful mitigation against Spectre-style transient execution
+>> issues: If the kernel page tables do not contain entries pointing to
+>> guest memory, then any attempted speculative read through the direct map
+>> will necessarily be blocked by the MMU before any observable
+>> microarchitectural side-effects happen. This means that Spectre-gadgets
+>> and similar cannot be used to target virtual machine memory. Roughly 60%
+>> of speculative execution issues fall into this category [1, Table 1].
+>>
+>> This patch series extends guest_memfd with the ability to remove its
+>> memory from the host kernel's direct map, to be able to attain the above
+>> protection for KVM guests running inside guest_memfd.
+>>
+>> === Changes to v2 ===
+>>
+>> - Handle direct map removal for physically contiguous pages in arch code
+>>    (Mike R.)
+>> - Track the direct map state in guest_memfd itself instead of at the
+>>    folio level, to prepare for huge pages support (Sean C.)
+>> - Allow configuring direct map state of not-yet faulted in memory
+>>    (Vishal A.)
+>> - Pay attention to alignment in ftrace structs (Steven R.)
+>>
+>> Most significantly, I've reduced the patch series to focus only on
+>> direct map removal for guest_memfd for now, leaving the whole "how to do
+>> non-CoCo VMs in guest_memfd" for later. If this separation is
+>> acceptable, then I think I can drop the RFC tag in the next revision
+>> (I've mainly kept it here because I'm not entirely sure what to do with
+>> patches 3 and 4).
+> 
+> Hi,
+> 
+> keeping upcoming "shared and private memory in guest_memfd" in mind, I
+> assume the focus would be to only remove the direct map for private memory?
+> 
+> So in the current upstream state, you would only be removing the direct
+> map for private memory, currently translating to "encrypted"/"protected"
+> memory that is inaccessible either way already.
+> 
+> Correct?
 
-Yes indeed, I'll be more careful the next time, again sorry for the 
-trouble, I am not used to the process of mailing lists and may have done
-some mistakes there as well.
+Yea, with the upcomming "shared and private" stuff, I would expect the
+the shared<->private conversions would call the routines from patch 3 to
+restore direct map entries on private->shared, and zap them on
+shared->private.
 
-> 1. make dtbs shows warnings
+But as you said, the current upstream state has no notion of "shared"
+memory in guest_memfd, so everything is private and thus everything is
+direct map removed (although it is indeed already inaccessible anyway
+for TDX and friends. That's what makes this patch series a bit awkward
+:( )
 
-> 2. make CHECK_DTBS=y ti/omap/omap4-samsung-espresso7.dtb is too noisy
-> (probably same for espresso10).
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
-> a lot comes from the dtsi files, so you need to ignore a lot, probably
-> either strip down the new dts to almost nothing besides dtsi includes
-> to determine the background noise or take a similar device, redirect
-> output and errors, diff that output with the full devicetree.
-> I am trying to clean that dtsi warning mess up, linux-next shows a lot
-> less warnings but that takes time.
-
-Oh, I was not aware of such tool, ran it and yeah there are a ton of
-warnings, where can I ask for assitance if I need it while fixing them.
-
-> One of the warnings that should be fixed:
-> dts/ti/omap/omap4-samsung-espresso7.dtb: lvds-encoder: compatible:
-> 'oneOf' conditional failed, one must be fixed: ['lvds-encoder'] is too
-> short 'lvds-encoder' is not one of ['ti,ds90c185', 'ti,ds90c187',
-> 'ti,sn75lvds83'] 'lvds-encoder' is not one of ['ti,ds90cf364a',
-> 'ti,ds90cf384a', 'ti,sn65lvds94'] 'lvds-encoder' is not one of
-> ['thine,thc63lvdm83d'] from schema $id:
-> 	http://devicetree.org/schemas/display/bridge/lvds-codec.yaml
-
-Ah right, I have to add the encoder (doestek, dtc34lm85am) in bindings and
-in vendor, this patchset may grow too big I assume.
-
-Best Regards,
-Mithil
+Best, 
+Patrick
 
