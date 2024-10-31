@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-390757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4429B7E27
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:19:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8909B7E28
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D794D1F222EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:19:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CEBE1C21A9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C3D1CC8B3;
-	Thu, 31 Oct 2024 15:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038A71CCEF0;
+	Thu, 31 Oct 2024 15:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3oLfX19B";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dYr0dnRr"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D/xG8kr+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D2pvWG87"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047DC1C9EC0
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7249E1CB307
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730387716; cv=none; b=iHgLx8SPA29LD2hRfDkpkmOBpNDOab5qd2M7l1OSuWTUhC56bpKfARGCuHg+K81aXGUB2Zc5ihDu2lOlJsvQqo2/Dxc8TXWyci9zG6ml7b1+PfogXPmN1z+tXZrshw/y1E0ocKi1dPNlW0bvBqJG4um03BW4179S/iztgyAjrgY=
+	t=1730387717; cv=none; b=rm97Gnr8qTW1hg5SjNHxaFuuNKJiiGHGo5iN2l/cl0J+lYBYj2qHKscM/FtIlVXJy/vRELt3WrPN7N00WQtjppx7+t3XsHP7DlX9doKlzw5i00/1swT/NbQAGxjGQIGRIByKDbKrxH0N3syYMPEX97Bf9SNThYs8SzII3XyXXs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730387716; c=relaxed/simple;
-	bh=dl9A3y/7DWwcSmaoC9X28xC0xRgkB4mTKJespZKBbGI=;
+	s=arc-20240116; t=1730387717; c=relaxed/simple;
+	bh=fAmxbllysH9EcW872wKMtTlLhbFGHlUzSTQmmo+32mU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ihV5UgfMrjVLG7hXdyhHK2wuUmGZs61QUlZYRv9Pyy8wn4PeUM8Jq9+ll1XqNdVzz2HeKnTczeL1zuRfoEG8zd44fu4r7t2kDmjXp1JkeycNwPFYISLa77CQD8CLdvyyt9bb5OVZppwTbo6WLiHDrfH+p/DKD8+l6wgTGjDZzh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3oLfX19B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dYr0dnRr; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=MIWyk9asLFeTO3rcM8+rMyQWYe+BSUK0QZ5r5cDKPbgFL0zRlJnosGP9X06jKjGWT33baSuxTN1LIOLvfQ6faqCIwFlFYg92RQpN6zz3Y4D6eJwnHFo/Ox9ZjtjGRyiRlaUc13L2jaxQthU3MNSyh0pkTa5xL1c6zrAk18LSCWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D/xG8kr+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D2pvWG87; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730387712;
+	s=2020; t=1730387713;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GU2XVazw0GjbHPIfXGHM1SlNEVDhVGkrGNW/ZVs0bq8=;
-	b=3oLfX19B9bkmjYpuep2ukDT9RuM0sjRNPZ1LYWuFrCC22OqBkClmt3FGa1f0TmYHvs3Fzy
-	Nt1TSZJJIf/FDLz9S8eYlidHGwP/eeBF87HrvPGmeC9giczGNZt2ER7L3fM8x3cLogaG4f
-	mKdn5xQ3hkcuX7KJxwF5XCXrXPOB2Wh2Sv8I1GtVyWKK2a2iXmkEuHKpbOYYVrLqNNPkhl
-	9XRR/YcmKfHqnMYFa56FS6bcRu6XOyhl6++OIktbbjNKSoOag8KL0mi3Ts/lVmoNjY5ZHl
-	I21szVK1FUyr0b7W516opP0/Bv+rBINOlXzsRMN1MjTkKahKYZuePy2m41wsSA==
+	bh=FyamRs/0EaIVuqQPB5WehumUy+LlGp/xnGmtDyoDFVM=;
+	b=D/xG8kr+UzsvOcpBfyWcjyng7sjzcG0K9EcKPyWNMvYeG261TZrnXlHKGVEei6kOb1mF9g
+	hrf9gXxIuOMPQRKyOSOVUxjL11yKt4rbweVKNokjzjIFnwVrW+5V2Cc/vuOAZ2fL4CTsCZ
+	iccJSgXg8Wtx8tp/N4FoCAyHAXDn9cSBwesyyv6Qh0is6BA1IN5r8JG47+fdncBCpv5tHD
+	GZtOfPE9YAEKqjwvnlpEVYJp8uihxzJnF3hTylqAqj47IkbIXhyap9W9XpR7hXpPj9b7ak
+	gR3um/D30x2wY5n+dA4mfvE6H1WXu7ybo7KKtsESP+2NzirZT49CCRQmUMs5Pg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730387712;
+	s=2020e; t=1730387713;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GU2XVazw0GjbHPIfXGHM1SlNEVDhVGkrGNW/ZVs0bq8=;
-	b=dYr0dnRr4PeCWO2kuEc2e2LCz/omiE1Ka36qPy0pqIZZGqW9NhLdUPz8PRZuMEClwAngpf
-	CDGJ1gl+OGraXyBQ==
+	bh=FyamRs/0EaIVuqQPB5WehumUy+LlGp/xnGmtDyoDFVM=;
+	b=D2pvWG87LT2hKQ4zyhtS4dnMNig7h3FvWA2cslB8Pl369L5ZejnCak3vfTJBRhReZzEGAU
+	wlIlMFS825QVE4Aw==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -74,9 +74,9 @@ Cc: Jani Nikula <jani.nikula@linux.intel.com>,
 	John Stultz <jstultz@google.com>,
 	Nam Cao <namcao@linutronix.de>,
 	Oliver Hartkopp <socketcan@hartkopp.net>
-Subject: [RESEND PATCH v2 18/19] alarmtimer: Switch to use hrtimer_setup() and hrtimer_setup_on_stack()
-Date: Thu, 31 Oct 2024 16:14:32 +0100
-Message-Id: <2bae912336103405adcdab96b88d3ea0353b4228.1730386209.git.namcao@linutronix.de>
+Subject: [RESEND PATCH v2 19/19] hrtimers: Delete hrtimer_init_on_stack()
+Date: Thu, 31 Oct 2024 16:14:33 +0100
+Message-Id: <510ce0d2944c4a382ea51e51d03dcfb73ba0f4f7.1730386209.git.namcao@linutronix.de>
 In-Reply-To: <cover.1730386209.git.namcao@linutronix.de>
 References: <cover.1730386209.git.namcao@linutronix.de>
 Precedence: bulk
@@ -87,58 +87,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-hrtimer_setup() and hrtimer_setup_on_stack() take the callback function
-pointer as argument and initialize the timer completely.
-
-Replace the hrtimer_init*() variants and the open coded initialization of
-hrtimer::function with the new setup mechanism.
-
-Switch to use the new functions.
+hrtimer_init_on_stack() is now unused. Delete it.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: John Stultz <jstultz@google.com>
 ---
- kernel/time/alarmtimer.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ include/linux/hrtimer.h |  2 --
+ kernel/time/hrtimer.c   | 17 -----------------
+ 2 files changed, 19 deletions(-)
 
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 452d8aa2f6e0..f581868e1b3e 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -337,7 +337,6 @@ __alarm_init(struct alarm *alarm, enum alarmtimer_type =
-type,
- 	     enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
- {
- 	timerqueue_init(&alarm->node);
--	alarm->timer.function =3D alarmtimer_fired;
- 	alarm->function =3D function;
- 	alarm->type =3D type;
- 	alarm->state =3D ALARMTIMER_STATE_INACTIVE;
-@@ -352,8 +351,8 @@ __alarm_init(struct alarm *alarm, enum alarmtimer_type =
-type,
- void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
- 		enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
- {
--	hrtimer_init(&alarm->timer, alarm_bases[type].base_clockid,
--		     HRTIMER_MODE_ABS);
-+	hrtimer_setup(&alarm->timer, alarmtimer_fired, alarm_bases[type].base_clo=
-ckid,
-+		      HRTIMER_MODE_ABS);
- 	__alarm_init(alarm, type, function);
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index 4e4f04b3c0c2..7ef5f7ef31a9 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -230,8 +230,6 @@ extern void hrtimer_init(struct hrtimer *timer, clockid=
+_t which_clock,
+ 			 enum hrtimer_mode mode);
+ extern void hrtimer_setup(struct hrtimer *timer, enum hrtimer_restart (*fu=
+nction)(struct hrtimer *),
+ 			  clockid_t clock_id, enum hrtimer_mode mode);
+-extern void hrtimer_init_on_stack(struct hrtimer *timer, clockid_t which_c=
+lock,
+-				  enum hrtimer_mode mode);
+ extern void hrtimer_setup_on_stack(struct hrtimer *timer,
+ 				   enum hrtimer_restart (*function)(struct hrtimer *),
+ 				   clockid_t clock_id, enum hrtimer_mode mode);
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 376b8182b72e..55e9ffbcd49a 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1629,23 +1629,6 @@ void hrtimer_setup(struct hrtimer *timer, enum hrtim=
+er_restart (*function)(struc
  }
- EXPORT_SYMBOL_GPL(alarm_init);
-@@ -816,8 +815,8 @@ static void
- alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
- 		    enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
- {
--	hrtimer_init_on_stack(&alarm->timer, alarm_bases[type].base_clockid,
--			      HRTIMER_MODE_ABS);
-+	hrtimer_setup_on_stack(&alarm->timer, alarmtimer_fired, alarm_bases[type]=
-.base_clockid,
-+			       HRTIMER_MODE_ABS);
- 	__alarm_init(alarm, type, function);
- }
+ EXPORT_SYMBOL_GPL(hrtimer_setup);
 =20
+-/**
+- * hrtimer_init_on_stack - initialize a timer in stack memory
+- * @timer:	The timer to be initialized
+- * @clock_id:	The clock to be used
+- * @mode:       The timer mode
+- *
+- * Similar to hrtimer_init(), except that this one must be used if struct =
+hrtimer is in stack
+- * memory.
+- */
+-void hrtimer_init_on_stack(struct hrtimer *timer, clockid_t clock_id,
+-			   enum hrtimer_mode mode)
+-{
+-	debug_init_on_stack(timer, clock_id, mode);
+-	__hrtimer_init(timer, clock_id, mode);
+-}
+-EXPORT_SYMBOL_GPL(hrtimer_init_on_stack);
+-
+ /**
+  * hrtimer_setup_on_stack - initialize a timer on stack memory
+  * @timer:	The timer to be initialized
 --=20
 2.39.5
 
