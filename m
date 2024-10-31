@@ -1,93 +1,110 @@
-Return-Path: <linux-kernel+bounces-390588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776F39B7BD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:38:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11C19B7BE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD7228235F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:38:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84E1328263C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95BF19F130;
-	Thu, 31 Oct 2024 13:38:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C7819E98A;
+	Thu, 31 Oct 2024 13:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gui+Z2wr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F6D19E7F9
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59913D886;
+	Thu, 31 Oct 2024 13:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730381885; cv=none; b=FfaTKBfVBwMIZOTvOj/DCnutXZ8Rh1TBlaeOiYn3l4ANpMuB8QlirCnAIs6V6JNRgsY5oe/1vNroJp/9lIdu9SwIKq9v4xkFRHK9067euflBV+2WRzGsDERLVw4wWKHQbJyTXnoa2pqLV5muZwyylDDMw89P2TaNWppV2v6W4nw=
+	t=1730382104; cv=none; b=nOCCkqNYoKjoWF769PFzh65fXeO9W/G4CTmji0lLigr27d0/35FQIIuZybbCXCYWa1SkyP7M7tqGV4/+CNXV/awZvdsmmIUx9UyLxlppKu+7kLBtAmjhRRmH8e+j3D3/aZFnI/Z+WUs2cKXjkdhNBpWnDBFuhG9kk/BFYhb5WBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730381885; c=relaxed/simple;
-	bh=m8js9PKWrGpGx/94c0m/t/kG4l17mJ472kJ3T9476rQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HHaCC1Gly4T1CCShFaBiFPsxRM1vX6iosneAiLXRl8N6QzePe9+UsLyMrPnP13NEWlmnmgc+JDJnRoWMCCzbmNf5qLr6++pmie4MH5GMUSAh7iknnbe3lF4q7alNKXtcfSagIsXT9mxZPLNHG4Z0A166zjskYzqvyRI1xKt9ErI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4f3d7d13fso8417715ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:38:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730381882; x=1730986682;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z2wb21YsWwCYTNPoCuhRPi219SLTEoWZUiwx8XtsEeA=;
-        b=TUHzHI2Y9/OzbYA/YXuVI3UzuR04IzCfUUFLTTyxQ3Tzlb5ANC7Rti2ZR0NR1JOvHU
-         L5zGIYs4+wxscjQXWCOtC/xpKVbrms/yv9UQPaGV0AwKEgjEgJPU3u/eNPHnh6cZqaOs
-         P0+yfxJEl3QOZdo5kEe890V4i8L+K9KYUXau/xqpEoOxrPZNSobvQCWstpOw47bT/c/l
-         2r032X/LvfFXxmN8W+skvslsIsUpCRdHIAtFSJOmQJjTrk/8MNKJdW7seDQxObbLWk6x
-         xKBnH+dj1s5NxjyGRM6oIz9gPWKplJonKz8Huu1tKLi2VgTi0dc/dz6oHQ0fs6Ec82ql
-         uE0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrbJqkaIlknD+6ImgwDGQ7ykzC3vjbi4JfVRM5UesVl3cqmcm8GYfsxYjA9/Jhk0yvG9KUI90YMr8lZTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwixrEmtIp0QYbm+HCpGwPoNf5S+QxudJ3E/tUS0X4g4SnnJvWR
-	HxTa5/Q8kMRtk0ZPWpur1h/Ou3oi9agxtNdvVs+vChQyBoz9TMmH7UQU7EFjzsYQ/w+OwzF72Oa
-	fkVcjXk/q8PrLqIqwV9dWMU1JX1qLmw7P1kjxuvV6H23nKTwCQ+AzJXc=
-X-Google-Smtp-Source: AGHT+IE5AIK7chWjS9Qwruux0+MNbD0t873UJxKTJhPolIL7YKITplTj5kAbNAFrJUQcFTBg6qRbpSHAOE1fNivkZ+r2aqTjy8NZ
+	s=arc-20240116; t=1730382104; c=relaxed/simple;
+	bh=IYiMGXa/2aCFsI+WTnL2IWIGtncE8MUDNQypusWI5cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pP8xhXWWO9n5c0LNqSkCu9DTfeDh9yIxK+JXx2tkj4jkikOzYCMUlEiEW030vNB822Pui8ync74+smPZ4Ci5k8ykeZxd/i6FMLrrUps5xf5RFO3hy4g7SQkwiyx86qAPdcpxRqyMhyzivOlibpSQdJIB14EBnXo0yJ0/JTqMMj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gui+Z2wr; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730382102; x=1761918102;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=IYiMGXa/2aCFsI+WTnL2IWIGtncE8MUDNQypusWI5cE=;
+  b=gui+Z2wr25Kn80GBoANxHX4dG1D80pLE+nU9LZFmh3yRknVQaHloxPgq
+   Omv0G9yCRhiHIHDiaVmsYQGvXBI/1S7T6Saxg/d+Xu3ZksQ05XXr3Rxw/
+   kJwGqqKnv5JkxKIJCTC5pySe3ThUBJ0LB8KKSJ6513ZGJ/EfOayDyN1nK
+   tMnXO8k3cyYoTUbkUc+7fdvk0hN4f3Mb0+/GoziPTH9fCV6zIbq/z5GFf
+   W0IHhIY9DJ4sosaRFE60nsbtN2vfgc2XrYpW9W8XOeyAk7HWpO3qwruWE
+   ukihb9rvVX9x7XpKkE9sVsjBWkvuLJ71l6+wviZkjNuiGBMukroDo5HuB
+   Q==;
+X-CSE-ConnectionGUID: ts/6tKyyTf2qV7NB0SWfqQ==
+X-CSE-MsgGUID: eC6QFK65RDaVBxOKnCvqtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52672904"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="52672904"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 06:41:41 -0700
+X-CSE-ConnectionGUID: uSalgK3OSNCsBQLWphpfKA==
+X-CSE-MsgGUID: LeG7h8kITZ+eqWfgWDpm9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="113477991"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 06:41:40 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6VQf-00000009enI-2Va6;
+	Thu, 31 Oct 2024 15:41:37 +0200
+Date: Thu, 31 Oct 2024 15:41:37 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mun Yew Tham <mun.yew.tham@intel.com>
+Subject: Re: [PATCH v2 1/1] gpio: altera: Drop legacy-of-mm-gpiochip.h header
+Message-ID: <ZyOJEYU16YsvIh2N@smile.fi.intel.com>
+References: <20241031101836.2434308-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdbOy1Gj+MrAAAtQGQT=jZ+Zb-NV+Tc5nTrJ7OWT35sfwg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa8:b0:3a3:f86f:2d0f with SMTP id
- e9e14a558f8ab-3a609a2add2mr39984325ab.3.1730381882619; Thu, 31 Oct 2024
- 06:38:02 -0700 (PDT)
-Date: Thu, 31 Oct 2024 06:38:02 -0700
-In-Reply-To: <000000000000e6432a06046c96a5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6723883a.050a0220.35b515.015f.GAE@google.com>
-Subject: Re: [syzbot] [fs] INFO: task hung in __fdget_pos (4)
-From: syzbot <syzbot+e245f0516ee625aaa412@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, david@fromorbit.com, 
-	djwong@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, llvm@lists.linux.dev, 
-	mjguzik@gmail.com, nathan@kernel.org, ndesaulniers@google.com, 
-	nogikh@google.com, syzkaller-bugs@googlegroups.com, trix@redhat.com, 
-	tytso@mit.edu, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdbOy1Gj+MrAAAtQGQT=jZ+Zb-NV+Tc5nTrJ7OWT35sfwg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-syzbot suspects this issue was fixed by commit:
+On Thu, Oct 31, 2024 at 02:16:07PM +0100, Linus Walleij wrote:
+> On Thu, Oct 31, 2024 at 11:18 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > Remove legacy-of-mm-gpiochip.h header file, replace of_* functions
+> > and structs with appropriate alternatives.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Thanks for cleaning out this!
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Thanks for reviewing!
 
-    fs: Block writes to mounted block devices
+It seems we have only 6 (six) drivers left, anybody to clean that in this /
+next cycle?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11fc5540580000
-start commit:   3b47bc037bd4 Merge tag 'pinctrl-v6.7-2' of git://git.kerne..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c2c74446ab4f0028
-dashboard link: https://syzkaller.appspot.com/bug?extid=e245f0516ee625aaa412
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11026e54e80000
+-- 
+With Best Regards,
+Andy Shevchenko
 
-If the result looks correct, please mark the issue as fixed by replying with:
 
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
