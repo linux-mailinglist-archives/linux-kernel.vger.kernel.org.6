@@ -1,123 +1,96 @@
-Return-Path: <linux-kernel+bounces-391438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5BB9B86C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:13:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BF99B86CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9075B2110F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F76B1F220E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694351E1A12;
-	Thu, 31 Oct 2024 23:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900B81CF280;
+	Thu, 31 Oct 2024 23:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbbPtvAa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j7T+fE8k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD08C19F430;
-	Thu, 31 Oct 2024 23:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF521E1A23;
+	Thu, 31 Oct 2024 23:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416405; cv=none; b=ayLAuNlIgUAzbQ97jJfmfMq2IHyc5IVZZXXlX6BDOIlytCWxHLfJlKi9v/JrztHJ8xw2G3XbQNWdnJ4p6XdnS1RGs/ZCl8I0+pFhsacjpN+bq8noidDRHzLyGVcDthe04gKwaI1oTHh2t2mVyJViAWIryxr9H5CVnvXWZEMG9o8=
+	t=1730416424; cv=none; b=qBMkqSFSSCcxKftDYa72y6s0KhWqh6YjJnWOzS2bjtw7geBBS8Md5LRzE3A5BM+jTZMjoBIfbXgNrkdyfP8Jbsslpf2ldQ3nAwro2boYzUQLQcOx4q05VOKzsSOpIJc5GRFcPlzoePzF5Ch+7gyMQKiXt14/i25VMwBLEr9YW8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416405; c=relaxed/simple;
-	bh=mEmnzC1xd/KNq1I/xUPwImaQnTcCICieDIqR5sZlge0=;
+	s=arc-20240116; t=1730416424; c=relaxed/simple;
+	bh=PK+1p6s/avx7imwFKci0SiByVtzGXBl6H2kZeOjRglg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSZ9ZgL8SI4PzD2D6IeAaIlZeE5wWJ/7uLsp/0SkFOGb5H1J+cH3mvp5r4yNKW8BRSzQWDmsCum80VXThJDFnzCI8MngVjxYLwBe/luN93aBPojWgmQg1dfRnrUskY53V6eorb7iasgqNP4+S9jMUD6g/Qtbnr8EF1E4Pl9uSFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbbPtvAa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A756C4CEC3;
-	Thu, 31 Oct 2024 23:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730416405;
-	bh=mEmnzC1xd/KNq1I/xUPwImaQnTcCICieDIqR5sZlge0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KbbPtvAadCEec6g5GZf7sJSw3tl4vL8IN6rFF8ukYp3L1h6X6jzJ0INLRS+k4/bZF
-	 N0mQbSswrOqLejTR4tccjDEh2LoevQeO0lxpygKlR1BvKlFAKgZHCAp9BDCY7+T1fU
-	 IEAH9MTIyScXl3wEnEmq5pe0yUve+PQsqeKgueK+yz6hSyJyu2p5s2ltc/xIEfsugk
-	 bPLSwWjfNwLgiTuLko6ZYwz8Nci0Wsfm9RfB14Le4t1fnOslEIVet1EAYalYqBNR01
-	 96rcMRYo3LYsXaMtNMY15C/hJEt2EEaczO1vD8/ZFOXeFN8wHXZx7susoOaIijcso/
-	 x9yAUaqcBMznw==
-Date: Thu, 31 Oct 2024 16:13:20 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-Message-ID: <20241031231320.h2hwns367e5byvyy@jpoimboe>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY3xJ=W2qPD8i6UbSB=zNqpiA1gSd+SC3wKxQAJWjeHhA@mail.gmail.com>
- <20241030061043.eo2vuqgsoqmjytjr@treble.attlocal.net>
- <CAEf4BzYd5OT9COBS4va435jqMzkjvvAHbe55AR6giv8pitUvAg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFwDeGelq2mnv8+60We9z/0yeBdmXYgHuIM/+rNKmbUa2VRWUMVAB4AidFhRkRmqV2fKIThG2E+nykFuFdTbhOl77m/WzYgPHedvstqSVt+qLn1cgqV1g2k7XqhxAPC1Bx5Vt1LU3YESph/iP7aMC35HlNXtSx7KMhdOEsgiUm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j7T+fE8k; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730416420; x=1761952420;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PK+1p6s/avx7imwFKci0SiByVtzGXBl6H2kZeOjRglg=;
+  b=j7T+fE8k5tZCe6gY3URZfAh09D27OoDUoroE80RYDp1YDg/Lcuymy3fN
+   ZS4+r+0H5MhIAU8aotMe4KaAHQEXzrJOmubefWTmBUZT+O/M2CJZvBmO9
+   hR7wAOWVAK4fd9BNNsTfIn/cjwaf229BQTk1ebpk4NB1FH38HScqSGBtu
+   WQeef3ExHMvMd2NkyZ9S6UiOeW71R4u8RHP73d6YflBsqZwzPUgt7z51I
+   4YMWWeIiMyQB4l/nUH4/zOW3WwY++LBQM/RFKDirDR0wFs/CXHgvmz7vT
+   /nW38tjRQgnhVHPircCdth46Vk3j7zP0eF2FvKnk1qkfx8OaUJXSC7rK8
+   g==;
+X-CSE-ConnectionGUID: VWAZsNVpSgO+LsR9+fLpLw==
+X-CSE-MsgGUID: epF5WaEYRnqyjJcADlfHRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34115017"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="34115017"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 16:13:38 -0700
+X-CSE-ConnectionGUID: Od6sHebZR8iOh+dngIWUSA==
+X-CSE-MsgGUID: 5mo4JC8tQGeruZYHg5dlqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="87604745"
+Received: from adande-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.235])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 16:13:38 -0700
+Date: Thu, 31 Oct 2024 16:13:32 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Amit Shah <amit@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
+	peterz@infradead.org, jpoimboe@kernel.org, corbet@lwn.net,
+	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	seanjc@google.com, pbonzini@redhat.com,
+	daniel.sneddon@linux.intel.com, kai.huang@intel.com,
+	sandipan.das@amd.com, boris.ostrovsky@oracle.com,
+	Babu.Moger@amd.com, david.kaplan@amd.com
+Subject: Re: [PATCH 2/2] x86: kvm: svm: add support for ERAPS and
+ FLUSH_RAP_ON_VMRUN
+Message-ID: <20241031231332.tdfbjcesjnkq435k@desk>
+References: <20241031153925.36216-1-amit@kernel.org>
+ <20241031153925.36216-3-amit@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzYd5OT9COBS4va435jqMzkjvvAHbe55AR6giv8pitUvAg@mail.gmail.com>
+In-Reply-To: <20241031153925.36216-3-amit@kernel.org>
 
-On Thu, Oct 31, 2024 at 02:22:48PM -0700, Andrii Nakryiko wrote:
-> > Problem is, the unwinder doesn't know in advance which tasks will be
-> > unwound.
-> >
-> > Its first clue is unwind_user_register(), would it make sense for the
-> > caller to clarify whether all tasks need to be unwound or only a
-> > specific subset?
-> >
-> > Its second clue is unwind_user_deferred(), which is called for the task
-> > itself.  But by then it's too late because it needs to access the
-> > per-task data from (potentially) irq context so it can't do a lazy
-> > allocation.
-> >
-> > I'm definitely open to ideas...
-> 
-> The laziest thing would be to perform GFP_ATOMIC allocation, and if
-> that fails, oops, too bad, no stack trace for you (but, generally
-> speaking, no big deal). Advantages are clear, though, right? Single
-> pointer in task_struct, which most of the time will be NULL, so no
-> unnecessary overheads.
-
-GFP_ATOMIC is limited, I don't think we want the unwinder to trigger
-OOM.
-
-> It's the last point that's important to make usability so much
-> simpler, avoiding unnecessary custom timeouts and stuff like that.
-> Regardless whether stack trace capture is success or not, user is
-> guaranteed to get a "notification" about the outcome.
-> 
-> Hope this helps.
-> 
-> But basically, if I I called unwind_user_deferred(), I expect to get
-> some callback, guaranteed, with the result or failure. The only thing
-> that's not guaranteed (and which makes timeouts bad) is *when* this
-> will happen. Because stack trace capture can be arbitrarily delayed
-> and stuff. That's fine, but that also shows why timeout is tricky and
-> necessarily fragile.
-
-That sounds reasonable.  In the OOM error case I can just pass a small
-(stack allocated) one-entry trace with only regs->ip.
-
--- 
-Josh
+On Thu, Oct 31, 2024 at 04:39:25PM +0100, Amit Shah wrote:
+> @@ -3559,6 +3582,27 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+>  
+>  		trace_kvm_nested_vmexit(vcpu, KVM_ISA_SVM);
+>  
+> +		if (boot_cpu_has(X86_FEATURE_ERAPS)
+> +		    && vmcb_is_larger_rap(svm->vmcb01.ptr)) {
+		    ^
+		    This should be at the end of previous line.
 
