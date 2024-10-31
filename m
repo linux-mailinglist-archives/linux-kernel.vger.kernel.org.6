@@ -1,192 +1,210 @@
-Return-Path: <linux-kernel+bounces-390312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373B79B783D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:02:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B0D9B7852
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:05:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB33B28819E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E761C21453
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1117E199252;
-	Thu, 31 Oct 2024 10:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86851946CF;
+	Thu, 31 Oct 2024 10:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="FvFtVW8d"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YPvEQJ9H"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EC91991BE;
-	Thu, 31 Oct 2024 10:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0C712C478
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368868; cv=none; b=mpeDGDxwe6e4czKyS05yWSHlguwx5+fTObpR9NG+4wdJSM6kPjv4iSmCBQepHMWhacwrx5Wzb+KSTpP6Ju+x2zJdPjmgiMbOTUzMNnqSlYkaZhdJuXtsMmr0RCuVwv/0NGCQMPClk/YfPio7OMcdLaRF40ScXP6Ree/hUFTyJgw=
+	t=1730369101; cv=none; b=bMruDEuvutxdSTs3hmLkGsve7au8UWZBaVy1QY4KQdsKLVdiWmA3jSQxn1/C+4D2TtykkBJrtbZNZWdxBGhHuKyTdkSBNF2g33fI18ZrMbsEdR8CAI3ffSBBK3IlOK/u8uQOi1lk1mc4uPTEM3BTuhPAt66iBkPIA6hIIwmKwqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368868; c=relaxed/simple;
-	bh=cFDTkS/Sa+PzAEz7WhmTzdLNszjGc6G/uOYhgfigvhc=;
+	s=arc-20240116; t=1730369101; c=relaxed/simple;
+	bh=K6NzIsrGcuy/xHh3It5KMNcd5z0UZVTKwLw8HkUoQ98=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V5nKP5IOklR8b9kRPXY1doZVO7MrGg495mTBvvT+/OQYCi4zByAdQJ0jKr9E3uhfzh42qPusbBKZJgdGKYJV+ZR1fFdLJoKqAht2zps+Zh/IR137Ph6G8rQONpFJeuk5eV3THk8M6SHM7304MshozOQ5zDdA9zp8rPT7SWN4P3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=FvFtVW8d; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1730368843; x=1730973643;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=w6KxghVJUqBJRJO3HvVS8uKSOJoergi/DuFpwoGgi7M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FvFtVW8dGneQNojsB2SOOoe8FADGFj0gBGE3V+YVKj1xo7sxV7G4wx3tinbih3+1
-	 WAhvJxIiE02mfw3seH2ni1++OfIR9FJMT6/ZrmYYkJjpNl87q4Wh7lIQJGctrV6Jh
-	 35obAz7TBMpjvprIr8mHlNZEeWl1TB6g40o1WJ9YsbT9yK2ioCuQxZ03Yq5e/fAmD
-	 y9ode3lkxCUXrSrgQ5q6wEph52qCgpWA98kVD1WJFWjoFXT+GG88/GNFPOiWFrqxy
-	 D61LVp8QkzVfezu9rdIbs+XPpoW0fDDxUSd6umLOqp+08Yt+SxRZ5mc+0b/FGjqlm
-	 OqpiNLDqORCgthuMkA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MuUWi-1twlgW3ZgY-00xZEv; Thu, 31 Oct 2024 11:00:42 +0100
-Message-ID: <5d8ec8c4-f473-4849-a428-f7a7283ff478@oldschoolsolutions.biz>
-Date: Thu, 31 Oct 2024 11:00:40 +0100
+	 In-Reply-To:Content-Type; b=gZkq1V77B1Y4vGI1RtkIj4ihJ4EMN1pdRvQnxfcDNCWi3sb+dcNdQvHUfCAZYlrtj+mef6/j4xIGEBj23aqSfooGLD04jpeEgaFIWqgwHdjfQcFqPoEaFETXtN6HQpRyP5qj90bLgpWg1j0cQpO0PI/9xGiRrxNJ8S3lIisDTsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YPvEQJ9H; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730369095; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kxW54KB/34Dmh3dGyprdwmde4eQJWorML/uKda4ik4w=;
+	b=YPvEQJ9HdhlFVyeu4fIp5KzfcVDtmt/yoGFRSKvdlm6wLv/Mn6nu326t2ImQ8+Z0DdSP6DX6bkfz9itebENdWGlegdr92P2IBv8MxD/LTeuH7xTNHN5Epb8Ii4r/EpMWlGJCr40/x11pBnP8CAooVsmyUdlUe7A1nmTIuDDCEy4=
+Received: from 30.74.144.119(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WII9li5_1730369092 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 31 Oct 2024 18:04:53 +0800
+Message-ID: <2782890e-09dc-46bd-ab86-1f8974c7eb7a@linux.alibaba.com>
+Date: Thu, 31 Oct 2024 18:04:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH V3 0/3] X1E001DE Snapdragon Devkit for Windows
-To: Abel Vesa <abel.vesa@linaro.org>, Marc Zyngier <maz@kernel.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org,
- dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- conor+dt@kernel.org, srinivas.kandagatla@linaro.org,
- quic_jjohnson@quicinc.com
-References: <20241025123227.3527720-1-quic_sibis@quicinc.com>
- <86y1251q3b.wl-maz@kernel.org> <ZyNR5MD/HAS5w7N/@linaro.org>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <ZyNR5MD/HAS5w7N/@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+To: David Hildenbrand <david@redhat.com>, Daniel Gomez <d@kruces.com>,
+ Daniel Gomez <da.gomez@samsung.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+ hughd@google.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <Zw_IT136rxW_KuhU@casper.infradead.org>
+ <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
+ <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
+ <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
+ <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com>
+ <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
+ <D51IU4N746MI.FDS6C7GYO4RP@samsung.com>
+ <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com>
+ <486a72c6-5877-4a95-a587-2a32faa8785d@redhat.com>
+ <7eb412d1-f90e-4363-8c7b-072f1124f8a6@linux.alibaba.com>
+ <1b0f9f94-06a6-48ac-a68e-848bce1008e9@redhat.com>
+ <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
+ <cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com>
+ <7ca333ba-f9bc-4f78-8f5b-1035ca91c2d5@redhat.com>
+ <0b7671fd-3fea-4086-8a85-fe063a62fa80@linux.alibaba.com>
+ <d758a4f4-e0e6-4a78-beb4-e513de229310@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <d758a4f4-e0e6-4a78-beb4-e513de229310@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DE26g/zePNYl7lt3v0o9/f8BjRVz9bk0Vw03sLytJZszJHXgnNP
- 9VIPB6kK+G6UxA8R03AIqL6jsTKMRwlMKlMLuA4qUAkrx/WYgnO1Jdm0TW73O/T8wEkF2O7
- grjD7Z6v6KiX9ULuX5iUgZ8vCZN9YBK5FFjBnMokqKcQBNOJerLoQgdUnPDTcYwCdWFmlyN
- LeVt4gmN2clnKIVk1Xqxg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MTf5hyfXXWA=;wXxb0MhGplrUnuMDME6kxlFa8qN
- yXjJWsFLiAuV7z/FK10V5sv2pqx7VP14GS78j/y6ONJzaiQgnPrWSAMsVxHGlxYbt8DWFaMmh
- 9wzexyxzcYgZqkpKsyuqDyV+AqvU6XWs+9eDVseHE7TIDK0Zpp+pw2cR0b3PFn46av+dA12Pb
- apjVZaR2eZCEL9todm467T/EKb0GOHTMJfyEI5M/aBWsRY8wej7E+immnkNdyD0mfRpVEfXca
- SD0K/xhCtWVK7D11aMzuIvf5zEDbzx5xGGi47oy7t+45kGooUDhSnHdUPPnI7K/rP9r5p1fqH
- mP6x8DKsVt3n9ZnydFNGIoFoQhkV8rNXp1cWAj6Z5lW3JYjO6/K+dx6WaH2aQ5nB7nWBnVWRw
- le0Ului5bxMviIN/RMU61vlzT56DRip+g7etGMPHDOe9Hu1uFbaTHU4L2dr4sEfcX/UP9M5LD
- Q2Y2tNqvyKuPKX3K8/mt51sFJUxTTrVi8nshrRWD6Ks8UjyLHgW5+ayWpnloP/p5M786ulEwn
- 7zMoPViydnxwPPTEe0oQb7yEpgWbvfRfrtjZffmZuRRrfR0ypvrKyZtDqmZwTpydXeSVUnDLY
- s+luIOo+SQwQFYfCDhWflskxQ01TsOhM7qN1R7yQVv7VF8gXskNbTm8HAg9wHwq6FfiNfsUQ1
- DOGnB8gNBAdvwriOBzkKXHiOEMw6o7GwJ27pq+wYRhnHdXCP762DFLY4uwmlw99rS57kmLHJ0
- zSL/3KR1KEmyJcelqJaj9Gf4Pb+cXNWUg==
+Content-Transfer-Encoding: 8bit
 
-On 31.10.24 10:46, Abel Vesa wrote:
-> On 24-10-30 17:02:32, Marc Zyngier wrote:
->> On Fri, 25 Oct 2024 13:32:24 +0100,
->> Sibi Sankar <quic_sibis@quicinc.com> wrote:
->>> Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001=
-DE
->>> is the speed binned variant of X1E80100 that supports turbo boost up t=
-o
->>> 4.3 Ghz. The initial support includes the following:
->>>
->>> -DSPs
->>> -Ethernet (RTL8125BG) over the pcie 5 instance.
->>> -NVme
->>> -Wifi
->>> -USB-C ports
->>>
->>> V3:
->>> * Asked around and looked at the firmware, couldn't find a codename so
->>>    will keep it as DEVKIT. Will update it if someone from the communit=
-y
->>>    finds something else.
->> My machine has the following information as part of its DMI tables:
->>
->> Handle 0x0005, DMI type 1, 27 bytes
->> System Information
->> 	Manufacturer: Qualcomm
->> 	Product Name: Snapdragon-Devkit
->> 	Version: 2.1
->> 	Serial Number: 5
->> 	UUID: 63b5fc8b-9c50-89aa-fd0f-3fcef93dc291
->> 	Wake-up Type: Power Switch
->> 	SKU Number: 6
->> 	Family: SCP_HAMOA
->>
->> So I guess that Snapdragon-Devkit is another possible name. But given
->> that it is a bit of a mouthful, devkit, Devkit, or any other variation
->> on the case would work for me.
-> The point was to have something unique A codename would be unique.
-> Naming it Snapdragon-Devkit (or just devkit) will be confusing since
-> there was already a 2023 devkit (from Microsoft) with the Snapdragon
-> 8cx Gen 3, and probably the next compute platform will also have a devki=
-t
-> as well. So probably "X Elite devkit" could be the right option..
-As for The Windows Dev Kit 2023, dmidecode says this:
 
-Handle 0x0009, DMI type 1, 27 bytes
-System Information
- =C2=A0=C2=A0 =C2=A0Manufacturer: Microsoft Corporation
- =C2=A0=C2=A0 =C2=A0Product Name: Windows Dev Kit 2023
- =C2=A0=C2=A0 =C2=A0Version: 124I:00097T:000M:0200000B:07
- =C2=A0=C2=A0 =C2=A0Serial Number: 0F01C4F22373F6
- =C2=A0=C2=A0 =C2=A0UUID: e4a4662c-8367-75d0-a54f-1d04bd404860
- =C2=A0=C2=A0 =C2=A0Wake-up Type: Unknown
- =C2=A0=C2=A0 =C2=A0SKU Number: 2043
- =C2=A0=C2=A0 =C2=A0Family: Surface
 
-That's also really a mouthful. In my patchset for it there were some
-name / path changes, microsoft/blackrock it is now. Would be cool to
-have short and unique names. In the end, whatever works and is unique.
-Like those UUIDs?
+On 2024/10/31 16:53, David Hildenbrand wrote:
+>>>>
+>>>> If we don't want to go with the shmem_enabled toggles, we should
+>>>> probably still extend the documentation to cover "all THP sizes", like
+>>>> we did elsewhere.
+>>>>
+>>>> huge=never: no THPs of any size
+>>>> huge=always: THPs of any size (fault/write/etc)
+>>>> huge=fadvise: like "always" but only with fadvise/madvise
+>>>> huge=within_size: like "fadvise" but respect i_size
+>>>
+>>> Thinking some more about that over the weekend, this is likely the way
+>>> to go, paired with conditionally changing the default to
+>>> always/within_size. I suggest a kconfig option for that.
+>>
+>> I am still worried about adding a new kconfig option, which might
+>> complicate the tmpfs controls further.
+> 
+> Why exactly?
 
->>> * Update type c roles as reported by ucsi. [Dmitry]
->>> * Update THUNDERCOMM to Thundercomm. [Dmitry]
->>> * Update regulator names and sort Order. [Dmitry]
->>> * Add x1e001DE devkit to the safe list.
->>> * Mark regulator-nmve as boot enabled.
->>>
->>>
->>> V2:
->>> * Fix Ghz -> GHz  [Jeff]
->>> * Pick up Ab tag from Rob.
->>> * Use Vendor in ADSP/CDSP firmware path [Dmitry]
->>> * Fix reserved gpios [Dmitry]
->>> * Only port0 supports DRD update the dt accordingly [Dmitry]
->>>
->>> Sibi Sankar (3):
->>>    dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
->>>    firmware: qcom: uefisecapp: Allow X1E Devkit devices
->>>    arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
->>>
->>>   .../devicetree/bindings/arm/qcom.yaml         |   6 +
->>>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
->>>   arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  | 814 ++++++++++++++++=
-++
->>>   drivers/firmware/qcom/qcom_scm.c              |   1 +
->>>   4 files changed, 822 insertions(+)
->>>   create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
->> FWIW, I'm running this as part of my KVM test rig with minor changes
->> to expose the SMMU and allow the ITS on pcie5, and things work as well
->> as you can expect. FWIW:
+There will be more options to control huge pages allocation for tmpfs, 
+which may confuse users and make life harder? Yes, we can add some 
+documentation, but I'm still a bit cautious about this.
+
+> If we are changing a default similar to 
+> CONFIG_TRANSPARENT_HUGEPAGE_NEVER -> CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS, 
+> it would make perfectly sense to give people building a kernel control 
+> over that.
+> 
+> If we want to support this feature in a distro kernel like RHEL we'll 
+> have to leave the default unmodified. Otherwise I see no way (excluding 
+> downstream-only hacks) to backport this into distro kernels.
+> 
 >>
->> Acked-by: Marc Zyngier <maz@kernel.org>
->> Tested-by: Marc Zyngier <maz@kernel.org>
+>>> That should probably do as a first shot; I assume people will want more
+>>> control over which size to use, especially during page faults, but that
+>>> can likely be added later.
+> 
+> I know, it puts you in a bad position because there are different 
+> opinions floating around. But let's try to find something that is 
+> reasonable and still acceptable. And let's hope that Hugh will voice an 
+> opinion :D
+
+Yes, I am also waiting to see if Hugh has any inputs :)
+
+>> After some discussions, I think the first step is to achieve two goals:
+>> 1) Try to make tmpfs use large folios like other file systems, that
+>> means we should avoid adding more complex control options (per Matthew).
+>> 2) Still need maintain compatibility with the 'huge=' mount option (per
+>> Kirill), as I also remembered we have customers who use
+>> 'huge=within_size' to allocate THPs for better performance.
+> 
 >>
->> 	M.
->>
->> --
->> Without deviation from the norm, progress is not possible.
+>> Based on these considerations, my first step is to neither add a new
+>> 'huge=' option parameter nor introduce the mTHP interfaces control for
+>> tmpfs, but rather to change the default huge allocation behavior for
+>> tmpfs. That is to say, when 'huge=' option is not configured, we will
+>> allow the huge folios allocation based on the write size. As a result,
+>> the behavior of huge pages for tmpfs will change as follows:
+>  > > no 'huge=' set: can allocate any size huge folios based on write size
+>  > huge=never: no any size huge folios> huge=always: only PMD sized THP 
+> allocation as before
+>  > huge=fadvise: like "always" but only with fadvise/madvise> 
+> huge=within_size: like "fadvise" but respect i_size
+> 
+> I don't like that:
+> 
+> (a) there is no way to explicitly enable/name that new behavior.
+
+But this is similar to other file systems that enable large folios 
+(setting mapping_set_large_folios()), and I haven't seen any other file 
+systems supporting large folios requiring a new Kconfig. Maybe tmpfs is 
+a bit special?
+
+If we all agree that tmpfs is a bit special when using huge pages, then 
+fine, a Kconfig option might be needed.
+
+> (b) "always" etc. are only concerned about PMDs.
+
+Yes, currently maintain the same semantics as before, in case users 
+still expect THPs.
+
+> So again, I suggest:
+> 
+> huge=never: No THPs of any size
+> huge=always: THPs of any size
+> huge=fadvise: like "always" but only with fadvise/madvise 
+> huge=within_size: like "fadvise" but respect i_size
+> 
+> "huge=" default depends on a Kconfig option.
+> 
+> With that we:
+> 
+> (1) Maximize the cases where we will use large folios of any sizes
+>      (which Willy cares about).
+> (2) Have a way to disable them completely (which I care about).
+> (3) Allow distros to keep the default unchanged.
+> 
+> Likely, for now we will only try allocating PMD-sized THPs during page 
+> faults, and allocate different sizes only during write(). So the effect 
+> for many use cases (VMs, DBs) that primarily mmap() tmpfs files will be 
+> completely unchanged even with "huge=always".
+> 
+> It will get more tricky once we change that behavior as well, but that's 
+> something to likely figure out if it is a real problem at at different 
+> day :)
+> 
+> 
+> I really preferred using the sysfs toggles (as discussed with Hugh in 
+> the meeting back then), but I can also understand why we at least want 
+> to try making tmpfs behave more like other file systems. But I'm a bit 
+> more careful to not ignore the cases where it really isn't like any 
+> other file system.
+
+That's also my previous thought, but Matthew is strongly against that. 
+Let's step by step.
+
+> If we start making PMD-sized THPs special in any non-configurable way, 
+> then we are effectively off *worse* than allowing to configure them 
+> properly. So if someone voices "but we want only PMD-sized" ones, the 
+> next one will say "but we only want cont-pte sized-ones" and then we 
+> should provide an option to control the actual sizes to use differently, 
+> in some way. But let's see if that is even required.
+
+Yes, I agree. So what I am thinking is, the 'huge=' option should be 
+gradually deprecated in the future and eventually tmpfs can allocate any 
+size large folios as default.
 
