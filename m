@@ -1,106 +1,77 @@
-Return-Path: <linux-kernel+bounces-390885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1059B7FA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:09:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216D19B7FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAF41C2156E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1BAD1F21BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6601B3727;
-	Thu, 31 Oct 2024 16:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC0A1A705B;
+	Thu, 31 Oct 2024 16:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="LX4Vkoml"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epWd+AoE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E162613342F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1529E13342F;
+	Thu, 31 Oct 2024 16:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730390961; cv=none; b=UACqwb5laUEpEn+7wMptyUTMaO5EVTJO0oS3dhUgnHRQC52/V44jZ+RT1yqxYRkLQwRSrJqoiv2+x2y7+saz5CATU0QuyFLOD+LPYFs5vzEW/KCGXkbno7pdiF3p0/IpF1JwdHczP0+BUWlkt6/pRD1hDXFjaixuC0X74n9Jso4=
+	t=1730391042; cv=none; b=iqCxy+y1OmJHkp6uCZEKugXNF3cdQrfxYMCz7+8dRIgFeIDzKjd+JlLYaoDLwosuR3VCUPiJyedXA6sguL+Oitc4WuZvf9z9F+IxQAVAwtfYZHHK48jgum+izKgFXpUhT9Zi7l55I4zNxw9vARa+tdvSL2O2/YLkMn7M/Z+vLHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730390961; c=relaxed/simple;
-	bh=0MP1EJU+2Idek3AiA2s9w530Zbh818fE5dZH3t/ZqUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HwWqAvLw5wkUZ94ksrC/IKdTf4TUaNj2pfkJ/JgOt56+tOWt0AQjAVJEeJe9UVhhiMaTFyXZOcmgCZF34LRth+l/LBbdDIsGvBIlsPZyj8gitUweKQ8FfrSFUPbgrs+OdrheYXRt+HSKY6ivb/OM9uEN25n5SDSfaNy1TklvRyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=LX4Vkoml; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b15416303aso76159385a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1730390957; x=1730995757; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0MP1EJU+2Idek3AiA2s9w530Zbh818fE5dZH3t/ZqUU=;
-        b=LX4Vkomldp3PlS2TddkaLUebVvBZA+L+UFx9PV32mXmz/a47f44I1SQQz+1gCPqwe4
-         2QLoTRQGpsEGbzT1NZAx3prKe9QFG8/ui21iK9E9X/3OTOhurcCIywv/ms5nvusmnfa8
-         n5z08vZJCSxSdHje8P0qvmE+X+I7ffrpaR4eryL4i7tf4LaJbv7e+JopUpB4ohUJjhRH
-         IKKImh/aL3C9/H6BhNfhHEh4BcquV6jhB7reKqmIzU6PqKneroUhQoGPl/DTiKWa8KGa
-         eNVrFse5rGv1pcM22mfHEcb2EpM0nmRy4T3Vs77RDBDBhrqVp3pmtEivSy74EYe+joIS
-         jlXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730390957; x=1730995757;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0MP1EJU+2Idek3AiA2s9w530Zbh818fE5dZH3t/ZqUU=;
-        b=vBvGfMi+WgE7gH76VnHLWp/I9duJW1VODS4+CPNMk/QbrQUlEbUZQ1dumb38o0lhQc
-         +T+7trMNAUYISHmPUQxPNaX54lM/8SeXjYphBDXpllHyVFSzxDGYdG7Ew52nqe+f8Oq0
-         IzOmRBkUDBbZh6szOSZz44COujGL15/oczMKsKunV+nw7HxiAO9QwnpNS6nqVCMrNyOu
-         bVMs83LUkGNlPiJAhyfjVAHrQGPwi7OAX5x62Lx0TffjwdqR1BKXq8nUqOf7STzn4mir
-         B8ge6Xm4aSGT1t4lZUDMo8WiSMOEm7zXcTJxdQGFfWYC3vKwCmY7gD3dWbZUSwi/BDwU
-         6NVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuWotE/KhWOHK2XSRUApfPnI1HFW18iBaET5Mox32Qb+NI7SaP3j4kJKlRKNqR4CUizD7Sk1SS/S7cl5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd6LnHNKVs0bX3Qs/mweXAFjs5oLQzN2sx09VSEuOyqJrVzQ4A
-	ORZSDZSt2JElY4O3oNfYhGspsZgA/72MjjHWTyRgJ/gg2teycxnSBL612jdudds=
-X-Google-Smtp-Source: AGHT+IEnjifKtBJHoQrQwgD4KdMGYeT83HWXRNYBXlmFZgg8SK4wbJtKEMJF5yR99revJMvIDc8S8g==
-X-Received: by 2002:a05:620a:4108:b0:7b1:5089:4867 with SMTP id af79cd13be357-7b2fb9bfe02mr17647685a.62.1730390956566;
-        Thu, 31 Oct 2024 09:09:16 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a708c6sm81355185a.91.2024.10.31.09.09.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 09:09:15 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:09:11 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, nphamcs@gmail.com,
-	shakeel.butt@linux.dev, roman.gushchin@linux.dev,
-	muchun.song@linux.dev, tj@kernel.org, lizefan.x@bytedance.com,
-	mkoutny@suse.com, corbet@lwn.net, lnyng@meta.com,
-	akpm@linux-foundation.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
-Message-ID: <20241031160911.GB799903@cmpxchg.org>
-References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
- <ZyIZ_Sq9D_v5v43l@tiehlicka>
- <20241030150102.GA706616@cmpxchg.org>
- <ZyJQaXAZSMKkFVQ2@tiehlicka>
- <20241030183044.GA706387@cmpxchg.org>
- <CAN+CAwM1FJCaGrdBMarD2YthX8jcBEKx9Sd07yj-ZcpDxinURQ@mail.gmail.com>
- <ZyM7_i1HFnFfUmIR@tiehlicka>
+	s=arc-20240116; t=1730391042; c=relaxed/simple;
+	bh=4d6mgxmGridH9gvLS7zUL+14pujQhNdiYCfvRt2QC18=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=a3FWqq7GmFVrcGI0yqAXT8HTOyQNuQMQDYjMkLlu6GwnTv58fIr9Y50w7+30fkWlJE7QPz7QRf1Hu0QlwzCEGKSdUq23Y4zft4aItLh1ENZOZq2BXLKV8a2CXQSupJk8ucMkGso6HLwidz5Y9/BaNzKIjJbOP9LOjDkO/LrbbEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epWd+AoE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F05BC4DDF9;
+	Thu, 31 Oct 2024 16:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730391040;
+	bh=4d6mgxmGridH9gvLS7zUL+14pujQhNdiYCfvRt2QC18=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=epWd+AoEaThNnPV86I89LKI3zw1z3K21lCh2mfHx5yqkb0T6dswRrZpjjlmoiip13
+	 3SItJf7s8l4tD4pj4Ok8YA6py95yf6mEF8p85NWarFtTt2CB9RSQ/+VzTaoj9gp3I7
+	 aaNHMLNaHzo8S3xfRPQtSyPScpoMZ+AL59iarG31BM/B3hCIn+rIuQL7HuW166BmwM
+	 BLDTuGmjzSUa/Fk3Dejms0YYCfR2WLjkcRv3AJ3OV/Mxhc0bFwunW+49f2ogvFkmbI
+	 XSCa54Dunm6cJrm+H2RT7J99dD3qJ5vHAv+gkc2q5042FvnC/bsRxuruem27y/Wxj/
+	 BZgtKsZQDMVtg==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, pavel@ucw.cz, Dipendra Khadka <kdipendra88@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241019073302.35499-1-kdipendra88@gmail.com>
+References: <20241019073302.35499-1-kdipendra88@gmail.com>
+Subject: Re: (subset) [PATCH v2] leds: bcm6328: Replace divide condition
+ with comparison for shift value
+Message-Id: <173039103924.1797070.1959784060223429346.b4-ty@kernel.org>
+Date: Thu, 31 Oct 2024 16:10:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyM7_i1HFnFfUmIR@tiehlicka>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Thu, Oct 31, 2024 at 09:12:46AM +0100, Michal Hocko wrote:
-> I will leave up to you whether to add above paragraphs but I believe
-> they clarify the intention and the implementation.
+On Sat, 19 Oct 2024 07:33:01 +0000, Dipendra Khadka wrote:
+> Fixes the following Smatch warnings:
+> drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+> drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+> 
+> 
 
-Both seem reasonable to me to add to the changelog as well.
+Applied, thanks!
 
-> Acked-by: Michal Hocko <mhocko@suse.com>
+[1/1] leds: bcm6328: Replace divide condition with comparison for shift value
+      commit: 5f57672cf4629542b525cfef027e293656915368
 
-Thanks!
+--
+Lee Jones [李琼斯]
+
 
