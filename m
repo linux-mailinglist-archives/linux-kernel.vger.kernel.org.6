@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-391129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E179B8305
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:04:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CAA9B830D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17419B21418
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EBE3283274
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB961CB304;
-	Thu, 31 Oct 2024 19:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841381CB331;
+	Thu, 31 Oct 2024 19:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RNvtUg4c"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D2C80BF8;
-	Thu, 31 Oct 2024 19:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hpo6SU0a"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1738980BF8;
+	Thu, 31 Oct 2024 19:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730401432; cv=none; b=LaOVD8+rzhImT8iKtFRa46OwlGQ2adJ6hGxIZJHf0oxUrj90NLrUgCNdDirRxAU8dyJXdrT3QCAyrYbSt7VCWw01le/BjdPzMpFmwUmaNJ015iu8sSjkhZFsfe6RoGBlToYnXNiV9+OVTHVMQG8cs8Nft2IokhKaCYtp/9RY7XE=
+	t=1730401544; cv=none; b=cy2mElxQsX1gBOfnOS9D4DD9Gzh2MX5rcvYoahRVUbQEVILv07QquuvqIhoSOoQdiBhY3xz+fD7vrn7/c6BAf3GKMvqyn6Ee9CTl5zw4a9NJJ0S8rySzjTLaCVv0xHRPlTwppN01mTug95spUMCwplXqhbuFLD0djathUajb7UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730401432; c=relaxed/simple;
-	bh=uZESYCwSy02piR+29ifqwWC+ET5V5TOOXfN7NXL/460=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ANyzSGnhcCdAAqFSoVhTK+C15EgHAqVlKeIp9T7h8Ija9Jck8YHRAbTKuzK5VCWr6lJfIKdS6fI77cDGnv3NkslKe4bpuLBy8Rfus4kjhn5cNWNNVfg+V3Z2zAOBzGZ8OPsNoRgegNhLqYsYZW8BkX/wqW+6JxXCQJs683Y6yj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RNvtUg4c; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c94c4ad9d8so1673957a12.2;
-        Thu, 31 Oct 2024 12:03:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730401428; x=1731006228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZESYCwSy02piR+29ifqwWC+ET5V5TOOXfN7NXL/460=;
-        b=RNvtUg4cXEsaH/wvEbZ/V9m472OJ/YniYkFDGCixHMXYOidIff1ZxrNYbytkCTn+H1
-         vSs43DTIFmLBQw5Rev40DBldL+jNsZB4jsVQWgP+S5wBt8Gxre3tMVBg8SvIzu5CFGdG
-         4fVs+4n53T0m+7Y/FSGGYT3d/vZNUyAn6h7LGkMohlH9r3qFKBj97xCj6hdIPzXGUuMi
-         cMy1SGG8q1D9+DgNQQNXfQ7Gwvl3um1H7PwuJ/XG6MzIEFRCvjCqTc0aW9ebKvZbsqDp
-         Srzya2d0WSIksMrIAPon1nCLfRdjElmLtTYYpnpLFJUHjfDLoij790q+2Ono4Wvmiocq
-         AHUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730401428; x=1731006228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uZESYCwSy02piR+29ifqwWC+ET5V5TOOXfN7NXL/460=;
-        b=w8GN85WcjM/EU6Oi08pPWZ+9DP+c4Ui4CkL/q3x/HMs6Ezi2+mXQ4XNPXr8suXgq2w
-         l91BPPw3xMjNWs/AtBEGkkNmE5QZ5D950EJriFVHXlvgG7hcGZpscLy+cDsWV/TpgOn+
-         rYrWYL+xciy4xh+Ho8f9hnSPiUcr/QUdSZYFtpZkn2NdmpNm+v5x1wajfcNSyoKk/sme
-         yH/JvGBhRjdQI4+BDf9pl+QndIyE2GQ49gkapGMzE72OufZ0auuck89hQvv6fBcvlsyO
-         fzgJbQNCJr9Ruo2lrdKa0GzHYCPR6T65tvYXA17x4hLlUBmQWJ6i5kg/DaK3esFoTK6+
-         nYjg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9fjfNCPzQ60v6Yg4LeOTKWmIRyjCGmjx8OwgD5SUPgGgl7gPYuoMBZaj5Ipan6PES6eUZmfpA@vger.kernel.org, AJvYcCVNu78HFgAMF4kg+mciBDO0pIgj7fcMBhpI2B2X7OEqre0hS7foBHt7Y4INXretbQT8sFYMVodAuIcsGEbP@vger.kernel.org, AJvYcCVYLe1ay78FQ0QyHl3IvQ9Qrsqm+JO2KuTbuEDv4OP1czduvP96+H1n4ekS9x6r282v4WJKT+8D2L8b@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB1s7vcYBwLvXdeNMAMEQhoX+oRewOF6UM2VfA71wQywYkEwsv
-	Z1BK+dSaJmiTPILdiZA/VjRuGndFem+0tTYSAHw1NCrv4q/wqTfqTJGQkWh0YHGn1ZV7Zo69deC
-	Sa1O3Su5VjGenvoC7TUFoAKecYsw=
-X-Google-Smtp-Source: AGHT+IFrpwGE0LJQq69tNQQsCndtpIAHUJ6FP3dpoTvWpaJX4mOBqsgxY7fkpk4UaRiczuaoWI/jB/OMed7/7+JLSic=
-X-Received: by 2002:a05:6402:354f:b0:5c9:4a35:7a20 with SMTP id
- 4fb4d7f45d1cf-5cea967920amr3734778a12.14.1730401428267; Thu, 31 Oct 2024
- 12:03:48 -0700 (PDT)
+	s=arc-20240116; t=1730401544; c=relaxed/simple;
+	bh=zUCcq0xYQ2KKg0AT6UPYv9J6GsZf4ooeo11L3JZIdKE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=F0OOs7WmQ5t0ngfo0gbHUOx9YB0YDEEwS4g/6jUID/s8bVuYTymdcJJNKWvyxV81FoOQeCuwaffhJv0mvKwX9WPVoMJJiM4mgGCo55nTx15j97Hd6tMzbrcSAPcKPVDPeg2lh/GtMdB2eJISyyQVIzF7YLpXK37BDY7dCF2XzJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hpo6SU0a; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 88002206941B;
+	Thu, 31 Oct 2024 12:05:41 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 88002206941B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1730401542;
+	bh=cN8Xg10U0hJwzdbYn0VLyyefwmZ46aiJ79KkG/dl5eA=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=hpo6SU0afc10BLlq+7xOtaqNTlNryyZQ1hVTr2+F0JZkMwx6tqTL8xrReF0N6K2rS
+	 vHSMJHOSxp9ExDGq/GZb95dKbKIUW276jmEdymGvMLyCodqFAUiZhHl17EitlPUL5+
+	 XN7PgRReK+aW6PF7Bcp7ugC2kCaxM5XtYbtJB7r4=
+Message-ID: <fc47d535-ed52-4ca5-80cc-30003efdd464@linux.microsoft.com>
+Date: Thu, 31 Oct 2024 12:05:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
- <ZyIZ_Sq9D_v5v43l@tiehlicka> <20241030150102.GA706616@cmpxchg.org>
- <ZyJQaXAZSMKkFVQ2@tiehlicka> <20241030183044.GA706387@cmpxchg.org>
- <CAN+CAwM1FJCaGrdBMarD2YthX8jcBEKx9Sd07yj-ZcpDxinURQ@mail.gmail.com> <ZyM7_i1HFnFfUmIR@tiehlicka>
-In-Reply-To: <ZyM7_i1HFnFfUmIR@tiehlicka>
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-Date: Thu, 31 Oct 2024 15:03:34 -0400
-Message-ID: <CAN+CAwMioguv6itTSYVUO9__kQVv6HZO2-i0NWt10-x7f6JVSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
-To: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, nphamcs@gmail.com, shakeel.butt@linux.dev, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, tj@kernel.org, 
-	lizefan.x@bytedance.com, mkoutny@suse.com, corbet@lwn.net, lnyng@meta.com, 
-	akpm@linux-foundation.org, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: Re: [PATCH 0/5] Add new headers for Hyper-V Dom0
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, iommu@lists.linux.dev,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org, virtualization@lists.linux.dev
+Cc: eahariha@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, catalin.marinas@arm.com,
+ will@kernel.org, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+ bhelgaas@google.com, arnd@arndb.de, sgarzare@redhat.com,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com,
+ tyhicks@linux.microsoft.com
+References: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Michal,
-
-On Thu, Oct 31, 2024 at 4:12=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
-e:
+On 10/3/2024 12:50 PM, Nuno Das Neves wrote:
+> To support Hyper-V Dom0 (aka Linux as root partition), many new
+> definitions are required.
+> 
+> The plan going forward is to directly import headers from
+> Hyper-V. This is a more maintainable way to import definitions
+> rather than via the TLFS doc. This patch series introduces
+> new headers (hvhdk.h, hvgdk.h, etc, see patch #3) directly
+> derived from Hyper-V code.
+> 
+> This patch series replaces hyperv-tlfs.h with hvhdk.h, but only
+> in Microsoft-maintained Hyper-V code where they are needed. This
+> leaves the existing hyperv-tlfs.h in use elsewhere - notably for
+> Hyper-V enlightenments on KVM guests.
+> 
+> An intermediary header "hv_defs.h" is introduced to conditionally
+> include either hyperv-tlfs.h or hvhdk.h. This is required because
+> several headers which today include hyperv-tlfs.h, are shared
+> between Hyper-V and KVM code (e.g. mshyperv.h).
+> 
+> Summary:
+> Patch 1-2: Cleanup patches
+> Patch 3: Add the new headers (hvhdk.h, etc..) in include/hyperv/
+> Patch 4: Add hv_defs.h and use it in mshyperv.h, svm.h,
+>          hyperv_timer.h
+> Patch 5: Switch to the new headers, only in Hyper-V code
+> 
+> Nuno Das Neves (5):
+>   hyperv: Move hv_connection_id to hyperv-tlfs.h
+>   hyperv: Remove unnecessary #includes
+>   hyperv: Add new Hyper-V headers
+>   hyperv: Add hv_defs.h to conditionally include hyperv-tlfs.h or
+>     hvhdk.h
+>   hyperv: Use hvhdk.h instead of hyperv-tlfs.h in Hyper-V code
 >
-> I would also add the following
->
-> The global counter is added because vmstats is the preferred framework
-> for cgroup stats. It makes stat items consistent between global and
-> cgroup. It provides a per-node breakdown as well which is useful. It
-> avoids proliferating cgroup-specific hooks in generic MM code.
->
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Thanks!
-> --
-> Michal Hocko
-> SUSE Labs
 
-Thank you for your feedback and review. I think this makes sense,
-I will add a new paragraph to the implementation details section!
+What is the model for Hyper-V code that has both guest and host roles
+where the corresponding hypercalls are available for both? As I
+understand it, those are supposed to be in hvgdk*.h.
 
-Andrew -- I am sorry to ask again, but do you think you can replace
-the 3rd section in the patch (3. Implementation Details) with the
-following paragraphs? Thank you so much!
+For a specific example, IOMMU hypercalls can operate on stage 2 or stage
+1 translations depending on the role of the (hyper) caller and the input
+values provided. Should a driver using these hypercalls import both
+hvhdk* and hvgdk*? What about hyperv-tlfs?
 
-In the alloc / free hugetlb functions, we call lruvec_stat_mod_folio
-regardless of whether memcg accounts hugetlb. mem_cgroup_commit_charge
-which is called from alloc_hugetlb_folio will set memcg for the folio
-only if the CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING cgroup mount option is
-used, so lruvec_stat_mod_folio accounts per-memcg hugetlb counters
-only if the feature is enabled. Regardless of whether memcg accounts
-for hugetlb, the newly added global counter is updated and shown
-in /proc/vmstat.
+Patches 4 and 5 seem to draw a bright line between host and guest roles
+while the reality is more gray. Please do correct me if I'm wrong here,
+perhaps the picture would be clearer if Stas' suggestion of a new header
+file is implemented.
 
-The global counter is added because vmstats is the preferred framework
-for cgroup stats. It makes stat items consistent between global and
-cgroups. It also provides a per-node breakdown, which is useful.
-Because it does not use cgroup-specific hooks, we also keep generic
-MM code separate from memcg code.
-
-Thank you Johannes & Michal for your continued feedback and interest
-in my work, and thank you Andrew for reviewing and allowing me to
-fix the patch messages.
-
-I hope you all have a great rest of your day!
-Joshua
+Thanks,
+Easwar
 
