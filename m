@@ -1,129 +1,136 @@
-Return-Path: <linux-kernel+bounces-390766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FB79B7E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:23:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E5D9B7E3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9721F21818
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DC4CB21311
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDDE1AD9ED;
-	Thu, 31 Oct 2024 15:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEE219EEC0;
+	Thu, 31 Oct 2024 15:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="q7RzlL20"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zksPgy2w"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EEA19EEC0;
-	Thu, 31 Oct 2024 15:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F86127B56
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388161; cv=none; b=cS6sIS8a5xN+iFWls+lq9r2utvyDYwD+ZeNr/vRiLfboO6sU6v/cVckigLR2kEAfYahAqE/OHJAqb4DOJvMG44FsBhgGaPrLd6oaFNjsKI6iVvv4GBoJ43s7oejVATZ5igPZbZ95KD5yUGWLQWKyM1fakI7vvcQ2LZnvwSUCHEQ=
+	t=1730388108; cv=none; b=rjXztNygauDZtLXM5HUfYmHcfFO2O+GfQUE1fEvsjHF0gq3pZUqXPb4QkZO8bH98gL2OcrKBWvDm+HlnJdCxsuRxojnEZpxZnuUrhwRt3yZqZz3vbzq84Z2gQ1jxSEXwiDMMRqx0ooNfy0RTSixpyI3QyZaiyKAQSQV6CIkFVKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730388161; c=relaxed/simple;
-	bh=1JG3SedAvu6H20LverMfft7wKhK0l6XRFxFKT0bDtNY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QxW+Usryr+u43y/MpUY6d67xsJ5KiSWSDHrtTQaEiSGETAdUDP352Tl00YMqwUoF2jy3Zk/ih9HAb8XQVRfrLy+0e2SReYe5+oOb5r0u1p5yCcwJZXH9fR3SEsaDATbV90CQ6Pxr7gQTEvm7EskjrIPeYDk29ckzGgUCIjX31E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=q7RzlL20; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730388158;
-	bh=1JG3SedAvu6H20LverMfft7wKhK0l6XRFxFKT0bDtNY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q7RzlL20hK5IMI78YT99IFbNkuxbPnWE61ntFTjEAZ9zUs2WIdTrBSDp03Mlgrm0k
-	 5/LXPja03k1+FSHzGv1YyXAPHZsxdhXi2fWPqR+oRvxjSjBjp45KDHhm5dmS5YgddB
-	 RzosnGeIoePA9VPEld3MMAdW9PCNsNwq2EVxAwEQGisow1Sw+HGZkr2H3Ae4x/lq5h
-	 lM6/nkavFjVm05w7dSRRPJfIrQOapbmRiO0AM41zPWBWnZ8JoOmyRYMQVshxYT9tEL
-	 SjDl8vcvApISIUQ+G0gQVtKqNMtzx+VUjYTHkKdhLiIw1E2TBx7GxX24qbHxdyD/EZ
-	 wKIvYXfTNolGA==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XfSRL0KgbzYlN;
-	Thu, 31 Oct 2024 11:22:38 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jordan Rife <jrife@google.com>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v5 resend 4/4] tracing: Add might_fault() check in __DECLARE_TRACE_SYSCALL
-Date: Thu, 31 Oct 2024 11:20:56 -0400
-Message-Id: <20241031152056.744137-5-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241031152056.744137-1-mathieu.desnoyers@efficios.com>
-References: <20241031152056.744137-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1730388108; c=relaxed/simple;
+	bh=j6+Ya2SW+yfJz5lrOlTFeC8zmrf2vACRaRbpgHJ+iNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BS6YdA8uj7W/IRDHP47p//VxGKlUPapjzn/JxMKtLopDZ7HSuyyaK8DEeb4miOBoFB/aDdh7n+BebWgwK1dQV8cGow9jUiHpp66+AUp3mYp2pxdzyCiSJBe2WnqV6PMI7AZE1A7Oz2nt+WYIvDGayN9GHotq0hscLT5hCXmcsU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zksPgy2w; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-83aacecc8efso63855139f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730388106; x=1730992906; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h6DRLiaAF06vSTpnmWA/JzrGwHB4JSnoNRs6CjLzTOo=;
+        b=zksPgy2wkfOvFPnJaUulb9pmzbh+6mnwVa2yNLjIsqacy9IaUcPve6VBoNyTtMfvQU
+         L33GxhvNpDSxAQJn/huMi993HGk/81ZVtfDurC/r3PO0nZkQmJXgAooG/a5ueZJBUX48
+         LPtTjorasapaosiOl8j2hS3CPV/bUUFR41S8JLJyelqkxwnk61pk5is7T5TfKuoVUwgj
+         f1BlNrTsVx1O+9y2QAji0NopYlYU9InQaaVpgmcf24F71ccqeYS+UMt//2aadSew3mwc
+         fH9OjKdDWxpuA+NeMY+4hQ1myGE5Ldh5MImZZ6B4pYQlAuXf3sE54UZvkfmmwV+RK3zo
+         yOaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730388106; x=1730992906;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6DRLiaAF06vSTpnmWA/JzrGwHB4JSnoNRs6CjLzTOo=;
+        b=d0qlvb+THDbci4Avdzu481Qn4dShUp6XOVBxj3LZJNC/oPKoWi8N3l7TnlWJ5uxa+d
+         4bhmpqr9l7VrIiwZvBjXygCiDXWKnGJlLBdnTmx2CYaX0rsdp8P6yPMC6NZAuYA1V1g3
+         7gxxCxFaCKNmo4uoSE5QavhzOKfxEZ7LCZcapbMyvGWZ4wc1NDGo8vGfxnVOB8B+gGdr
+         gciOS7ZownaaX+wXSJJjuXcVTJ0yzaFFia0YZyCuRx/n+DZPcGIWYi+zWVZICEziVL18
+         oEhAN7l9j8ejcq4qZbx2Q4a30ib8fOY1gtyP/qzKSN5H6hi3fru8At4X4jTCdfDzDpg0
+         QH3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkr6pOVgx7j2Kl9rOBJxwshkQsh30GwGiRKAbcxJ55xuvHmdqyV8UQtsXS8BdKT2+YmXcJ1hOEj5pNFxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUkOZSAR3Yx5GJF4L35IkQB0CsnC345M9L1lnMePHRdZbDHCEZ
+	Sp3XWxivLENYwFyXOO2NB4LVurrg2ov88F+5M9PIr1p5n/hlIvVX2HlF4TVvSgQ=
+X-Google-Smtp-Source: AGHT+IGGUaCMfX5oSCNwHpwRyR3bCSWZZozym4dVHbPqPiHULcwzzh+N6aXDrwQ+xURGyI+4gG/rGw==
+X-Received: by 2002:a92:4b0b:0:b0:3a0:abd0:122 with SMTP id e9e14a558f8ab-3a6aff502e2mr2996645ab.8.1730388105857;
+        Thu, 31 Oct 2024 08:21:45 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de049a43efsm332466173.128.2024.10.31.08.21.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 08:21:45 -0700 (PDT)
+Message-ID: <878a0ef4-2870-49a8-83dd-ede33b513c40@kernel.dk>
+Date: Thu, 31 Oct 2024 09:21:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v2 05/19] io_uring: Remove redundant hrtimer's
+ callback function setup
+To: Nam Cao <namcao@linutronix.de>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
+ linux-kernel@vger.kernel.org
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+ intel-gfx@lists.freedesktop.org, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
+ Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, John Stultz <jstultz@google.com>,
+ Oliver Hartkopp <socketcan@hartkopp.net>
+References: <cover.1730386209.git.namcao@linutronix.de>
+ <07b28dfd5691478a2d250f379c8b90dd37f9bb9a.1730386209.git.namcao@linutronix.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <07b28dfd5691478a2d250f379c8b90dd37f9bb9a.1730386209.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Catch incorrect use of syscall tracepoints even if no probes are
-registered by adding a might_fault() check in trace_##name()
-emitted by __DECLARE_TRACE_SYSCALL.
+On 10/31/24 9:14 AM, Nam Cao wrote:
+> The IORING_OP_TIMEOUT command uses hrtimer underneath. The timer's callback
+> function is setup in io_timeout(), and then the callback function is setup
+> again when the timer is rearmed.
+> 
+> Since the callback function is the same for both cases, the latter setup is
+> redundant, therefore remove it.
+> 
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> ---
+>  io_uring/timeout.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+> index 9973876d91b0..2ffe5e1dc68a 100644
+> --- a/io_uring/timeout.c
+> +++ b/io_uring/timeout.c
+> @@ -76,7 +76,6 @@ static void io_timeout_complete(struct io_kiocb *req, struct io_tw_state *ts)
+>  			/* re-arm timer */
+>  			spin_lock_irq(&ctx->timeout_lock);
+>  			list_add(&timeout->list, ctx->timeout_list.prev);
+> -			data->timer.function = io_timeout_fn;
+>  			hrtimer_start(&data->timer, timespec64_to_ktime(data->ts), data->mode);
+>  			spin_unlock_irq(&ctx->timeout_lock);
+>  			return;
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jordan Rife <jrife@google.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Jeanson <mjeanson@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Jordan Rife <jrife@google.com>
-Cc: linux-trace-kernel@vger.kernel.org
----
-Changes since v4:
-- Move might_fault() to trace_##name() emitted by __DECLARE_TRACE_SYSCALL
-  so it is validated even when the tracepoint is disabled.
----
- include/linux/tracepoint.h | 1 +
- 1 file changed, 1 insertion(+)
+Should be fine, io_timeout_complete() is only used for non-linked
+timeouts.
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 906f3091d23d..425123e921ac 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -301,6 +301,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), cond, PARAMS(data_proto)) \
- 	static inline void trace_##name(proto)				\
- 	{								\
-+		might_fault();						\
- 		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
+Reviewed-by: Jens Axboe <axboe@kernel.dk:
+
 -- 
-2.39.5
-
+Jens Axboe
 
