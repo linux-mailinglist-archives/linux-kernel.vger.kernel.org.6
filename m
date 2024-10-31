@@ -1,130 +1,278 @@
-Return-Path: <linux-kernel+bounces-390793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C099B7E91
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:32:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D475B9B7E95
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90DA5B21EE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:32:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 043E41C21FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A993F1A263F;
-	Thu, 31 Oct 2024 15:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE0C19E7EB;
+	Thu, 31 Oct 2024 15:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g3TCnlZo"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d1LbBZ5C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16531A2872
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB111A3038
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388715; cv=none; b=gHxSF4Tn18Zf/mAmN1kxUrrg+3yUZHi/hyLRuv6lr/HuCCEuplSeD7WrOzKkcCt77pJ/ERM9BA+3cOYxMPpu3UiUIFTjMu8Ing0DL6Ja1yinSfrwFBjW29BQwNxTJFiqaTvQYW09LBiL6zxCX1ZwcD1WNEXSLtuuYRnZFWoEYOk=
+	t=1730388818; cv=none; b=Or0cW6DDS9Rln3IQWeTmJpJt/oD/efGjBqq3qwTgaaW6hwnAQxQpFwF8ir+Or1YrGA/DO60QprWhpv6SqRgh1FRJfJAyxwgBtg3Ad/RPLNXjEOp7MvxMcqTpjmPuReFXSyQPJZ00dTYazwScSRai/WgopQb46GwA1nv96tcyz/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730388715; c=relaxed/simple;
-	bh=kKdz1fUu1s/fMJEdwaAtVgGUNN/sK5LY8qFij3jZWW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tc1uazkNOSm1N0aEXdIynhqs7VeH6GRd1ec7Fnj9SWi4lYCR7ZGTYAmpqB4jR8Uxnt30XsuH8oIrtoonFB93jrS481E3rysOK4FqowMT9S/FXzKcNWuUYa4mzNnp67nPeInHZs9SEgKzADIA6d9JSxuxYw+Vovnw/7JSKGhGBhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g3TCnlZo; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <664a1251-203d-4d29-86c4-6edd36c23eb9@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730388710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1FsbTOlKbKVtI/UbvwBD7+VePpEQEZip+EtLwmeq1hc=;
-	b=g3TCnlZooYIDOinnZd6O2mliVhJVxCI4EWURNoQ5SGuegjVoMZka6XQCMwC2VcreiTLoSY
-	eKw6S5DC7gG6/cOqbaMg/J77oLm0vCF3h59a+2MNz0fRnrk7nVaSayVvXfKy1mZFGA99pq
-	rbDWupTLmeS5G5KTPttnp5qQ+7mK8/A=
-Date: Thu, 31 Oct 2024 23:31:41 +0800
+	s=arc-20240116; t=1730388818; c=relaxed/simple;
+	bh=2MiGTdyBVR0Ocm9gKax0hp6cNin++4RDhHCQAIawbvk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=GduN6x0BDwdpuTKM1KZrcmvRZaxZyIVUK6EPHnWErfRg3gNxU5lAS49OMITFfcMUSFSxlQABEVfQDGPbgDZGCLBO1e5SOSAw9XIyea2cNthD5DlwEP5YfJVWmFxoDB2to4wljq+a8o7bZ9eF7qbd/WgyiCfmsz/6hbR2OJWjnPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d1LbBZ5C; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730388816; x=1761924816;
+  h=date:from:to:cc:subject:message-id;
+  bh=2MiGTdyBVR0Ocm9gKax0hp6cNin++4RDhHCQAIawbvk=;
+  b=d1LbBZ5CzFBD/kMAff7YKkY2DTRtHazhO6/Lq0TDNOF/1HBkLAyjjAVS
+   nAzG89w8mUf1ODu1397CY67B/wA03GkdXLCokQBY+EJC+5DBygYT0IEPf
+   QlJNZzktxw2baYx8qcrivCUqzP6UDkHkou79IWrm7bfHs5L4JRf2oycl9
+   PGEjj9O48dB+fwJziZxzjIprtvc2Sqm7uyleBHSz9dxuqf4FVjmQuKIOC
+   CtY1vke05E3whRqhy8GWaMnOrkaz+C49J+IPdXr6OoWWz//JXjh7OrhYQ
+   ngcYOBgAhAH6kFBWo1Bh5chQIbVAYQ+E6PYRpyDVJfArXS0u6xjPqMtRv
+   A==;
+X-CSE-ConnectionGUID: 2q0cwt4pQFWAMgO7SIYrsQ==
+X-CSE-MsgGUID: KLavgauTRk2DGYHl+G9Jfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30243819"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="30243819"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 08:33:35 -0700
+X-CSE-ConnectionGUID: NGEZuHHFSXKMvRypwutSkg==
+X-CSE-MsgGUID: s1oK5qSoSOWLP0OmF5GY/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="87255914"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 31 Oct 2024 08:33:33 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6XAx-000gTE-2p;
+	Thu, 31 Oct 2024 15:33:31 +0000
+Date: Thu, 31 Oct 2024 23:32:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/core] BUILD SUCCESS
+ d1cb1437b785f312d63f447e2e79ff768e7ccc29
+Message-ID: <202410312329.rm1sANBj-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-To: Johan Hovold <johan@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Abel Vesa <abel.vesa@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
- <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
- <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
- <ZyOOEGsnjYreKQN8@hovoldconsulting.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <ZyOOEGsnjYreKQN8@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+branch HEAD: d1cb1437b785f312d63f447e2e79ff768e7ccc29  irqchip/mips-gic: Prevent indirect access to clusters without CPU cores
 
-On 2024/10/31 22:02, Johan Hovold wrote:
-> On Thu, Oct 31, 2024 at 01:31:47PM +0100, Neil Armstrong wrote:
->> On 30/10/2024 15:49, Sui Jingfeng wrote:
->>> On 2024/10/21 21:08, Neil Armstrong wrote:
->>>> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
->>>>> The assignment of the of_node to the aux bridge needs to mark the
->>>>> of_node as reused as well, otherwise resource providers like pinctrl will
->>>>> report a gpio as already requested by a different device when both pinconf
->>>>> and gpios property are present.
->>>>> Fix that by using the device_set_of_node_from_dev() helper instead.
->>>>>
->>>>>
->>>>> [...]
->>>> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
->>>
->>> It's quite impolite to force push patches that still under reviewing,
->>> this prevent us to know what exactly its solves.
->> It's quite explicit.
-> It's still disrespectful and prevents reviewers' work from being
-> acknowledged as I told you off-list when you picked up the patch.
->
-> You said it would not happen again, and I had better things to do so I
-> let this one pass, but now it seems you insist that you did nothing
-> wrong here.
->
-> We do development in public and we should have had that discussion in
-> public, if only so that no one thinks I'm ok with this.
+elapsed time: 1483m
 
+configs tested: 186
+configs skipped: 3
 
-Yeah, extremely correct, Johan!
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-While I am really don't know why a child device have to
-share the referencing of the OF device node with its parent device?
-Is possible to pass a child device node via the platform data to reference?
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                            allyesconfig    gcc-13.3.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                          axs101_defconfig    gcc-14.1.0
+arc                   randconfig-001-20241031    gcc-14.1.0
+arc                   randconfig-002-20241031    gcc-14.1.0
+arc                           tb10x_defconfig    gcc-14.1.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                       imx_v4_v5_defconfig    gcc-14.1.0
+arm                            mmp2_defconfig    gcc-14.1.0
+arm                        mvebu_v7_defconfig    gcc-14.1.0
+arm                        neponset_defconfig    gcc-14.1.0
+arm                   randconfig-001-20241031    gcc-14.1.0
+arm                   randconfig-002-20241031    gcc-14.1.0
+arm                   randconfig-003-20241031    gcc-14.1.0
+arm                   randconfig-004-20241031    gcc-14.1.0
+arm                         s3c6400_defconfig    gcc-14.1.0
+arm                         socfpga_defconfig    gcc-14.1.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                 randconfig-001-20241031    gcc-14.1.0
+arm64                 randconfig-002-20241031    gcc-14.1.0
+arm64                 randconfig-003-20241031    gcc-14.1.0
+arm64                 randconfig-004-20241031    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                  randconfig-001-20241031    gcc-14.1.0
+csky                  randconfig-002-20241031    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon               randconfig-001-20241031    gcc-14.1.0
+hexagon               randconfig-002-20241031    gcc-14.1.0
+i386                             allmodconfig    clang-19
+i386                              allnoconfig    clang-19
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-19
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20241031    clang-19
+i386        buildonly-randconfig-002-20241031    clang-19
+i386        buildonly-randconfig-003-20241031    clang-19
+i386        buildonly-randconfig-004-20241031    clang-19
+i386        buildonly-randconfig-005-20241031    clang-19
+i386        buildonly-randconfig-006-20241031    clang-19
+i386                                defconfig    clang-19
+i386                  randconfig-001-20241031    clang-19
+i386                  randconfig-002-20241031    clang-19
+i386                  randconfig-003-20241031    clang-19
+i386                  randconfig-004-20241031    clang-19
+i386                  randconfig-005-20241031    clang-19
+i386                  randconfig-006-20241031    clang-19
+i386                  randconfig-011-20241031    clang-19
+i386                  randconfig-012-20241031    clang-19
+i386                  randconfig-013-20241031    clang-19
+i386                  randconfig-014-20241031    clang-19
+i386                  randconfig-015-20241031    clang-19
+i386                  randconfig-016-20241031    clang-19
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch             randconfig-001-20241031    gcc-14.1.0
+loongarch             randconfig-002-20241031    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                          amiga_defconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+mips                       bmips_be_defconfig    gcc-14.1.0
+mips                      bmips_stb_defconfig    gcc-14.1.0
+mips                         rt305x_defconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+nios2                 randconfig-001-20241031    gcc-14.1.0
+nios2                 randconfig-002-20241031    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20241031    gcc-14.1.0
+parisc                randconfig-002-20241031    gcc-14.1.0
+powerpc                    adder875_defconfig    gcc-14.1.0
+powerpc                     akebono_defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+powerpc                     asp8347_defconfig    gcc-14.1.0
+powerpc                    gamecube_defconfig    gcc-14.1.0
+powerpc                       holly_defconfig    gcc-14.1.0
+powerpc                      mgcoge_defconfig    gcc-14.1.0
+powerpc                      pasemi_defconfig    gcc-14.1.0
+powerpc                         ps3_defconfig    gcc-14.1.0
+powerpc               randconfig-001-20241031    gcc-14.1.0
+powerpc               randconfig-002-20241031    gcc-14.1.0
+powerpc               randconfig-003-20241031    gcc-14.1.0
+powerpc                     sequoia_defconfig    gcc-14.1.0
+powerpc64             randconfig-001-20241031    gcc-14.1.0
+powerpc64             randconfig-002-20241031    gcc-14.1.0
+powerpc64             randconfig-003-20241031    gcc-14.1.0
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+riscv                    nommu_k210_defconfig    gcc-14.1.0
+riscv                 randconfig-001-20241031    gcc-14.1.0
+riscv                 randconfig-002-20241031    gcc-14.1.0
+s390                             allmodconfig    clang-20
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20241031    gcc-14.1.0
+s390                  randconfig-002-20241031    gcc-14.1.0
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sh                        dreamcast_defconfig    gcc-14.1.0
+sh                         ecovec24_defconfig    gcc-14.1.0
+sh                        edosk7705_defconfig    gcc-14.1.0
+sh                    randconfig-001-20241031    gcc-14.1.0
+sh                    randconfig-002-20241031    gcc-14.1.0
+sh                      rts7751r2d1_defconfig    gcc-14.1.0
+sh                           se7721_defconfig    gcc-14.1.0
+sh                           se7722_defconfig    gcc-14.1.0
+sh                             sh03_defconfig    gcc-14.1.0
+sh                   sh7724_generic_defconfig    gcc-14.1.0
+sh                          urquell_defconfig    gcc-14.1.0
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20241031    gcc-14.1.0
+sparc64               randconfig-002-20241031    gcc-14.1.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20241031    gcc-14.1.0
+um                    randconfig-002-20241031    gcc-14.1.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20241031    clang-19
+x86_64      buildonly-randconfig-002-20241031    clang-19
+x86_64      buildonly-randconfig-003-20241031    clang-19
+x86_64      buildonly-randconfig-004-20241031    clang-19
+x86_64      buildonly-randconfig-005-20241031    clang-19
+x86_64      buildonly-randconfig-006-20241031    clang-19
+x86_64                              defconfig    clang-19
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-19
+x86_64                randconfig-001-20241031    clang-19
+x86_64                randconfig-002-20241031    clang-19
+x86_64                randconfig-003-20241031    clang-19
+x86_64                randconfig-004-20241031    clang-19
+x86_64                randconfig-005-20241031    clang-19
+x86_64                randconfig-006-20241031    clang-19
+x86_64                randconfig-011-20241031    clang-19
+x86_64                randconfig-012-20241031    clang-19
+x86_64                randconfig-013-20241031    clang-19
+x86_64                randconfig-014-20241031    clang-19
+x86_64                randconfig-015-20241031    clang-19
+x86_64                randconfig-016-20241031    clang-19
+x86_64                randconfig-071-20241031    clang-19
+x86_64                randconfig-072-20241031    clang-19
+x86_64                randconfig-073-20241031    clang-19
+x86_64                randconfig-074-20241031    clang-19
+x86_64                randconfig-075-20241031    clang-19
+x86_64                randconfig-076-20241031    clang-19
+x86_64                               rhel-8.3    gcc-12
+x86_64                           rhel-8.3-bpf    clang-19
+x86_64                         rhel-8.3-kunit    clang-19
+x86_64                           rhel-8.3-ltp    clang-19
+x86_64                          rhel-8.3-rust    clang-19
+xtensa                            allnoconfig    gcc-14.1.0
+xtensa                randconfig-001-20241031    gcc-14.1.0
+xtensa                randconfig-002-20241031    gcc-14.1.0
+xtensa                    xip_kc705_defconfig    gcc-14.1.0
 
-I means that, in DT systems, the child device can easily
-have(find) its own device node to attached.
-I'm imagining that it probably should be belong to the USB
-connector device node or something like that.
-
-Sorry, I'm confused. I understand that you also might be busy.
-I think I probably should go back alone to think for a while.
-
-
-> Johan
-
--- 
-Best regards,
-Sui
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
