@@ -1,111 +1,103 @@
-Return-Path: <linux-kernel+bounces-390136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC7C9B7605
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:04:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F70F9B7608
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BD71F21C29
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:04:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2C91F21DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B331531C0;
-	Thu, 31 Oct 2024 08:04:10 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E5414F102;
+	Thu, 31 Oct 2024 08:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tfcs1zbt"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FC312CDB6;
-	Thu, 31 Oct 2024 08:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2061112CDB6
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730361850; cv=none; b=tKlfUvLP8jSLwYh7RMdlY/gWNnKfkCwCOLTJ3rxsBnx1uhzhfCMy6V+0Yx6Od/gPef/4k2Q0mtGjjcMw1dGYyvHhjcq7WSSYWpw5IudHooiKu+7Ie9W9jusmESzzB/RRmLuHfehvmaxY/M2wAKfgAdIuwsNTEBhurZ9RSfQ8A2Q=
+	t=1730361976; cv=none; b=CfCWpTRi3JBFeyMu1cl5Y2amNQazAQDXjTRkxjRW9gKK7gfJW6mdtHZUj4DbkWAzX8DyUuHO2J19knq5TxpFz56qJzUs+kVf+WvOAPJfOdE5Qbk2gboFge0mpNKwa1hFp8AHRCqM2HtuXw7TDxfrKlJ3I29iELu+lDqDb0eSD94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730361850; c=relaxed/simple;
-	bh=M2HXVbpzDsTg+HwYe96n52wNzDV2Oii+fM5cd4T49Nk=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=S1gvo8SeCT/p0neCx8MSse6y6Z3a+Ue3PpJfNCz5RKIAGDyWfTWWDj2T71bQwq6MZkcPAv6tNhJOFdT/m5C8j1GZ0ei6rk+GCW8YpTXn83DDaoymZLMyralZ3VqlO3POVJM4qZW/f/u3BPBqf5B7evyKF2NL4c1nGa567m5PZ9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XfGht543zz4f3lfg;
-	Thu, 31 Oct 2024 16:03:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4275D1A018C;
-	Thu, 31 Oct 2024 16:04:01 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCHYobwOSNnHfjGAQ--.59788S3;
-	Thu, 31 Oct 2024 16:04:01 +0800 (CST)
-Subject: Re: [PATCH v2 1/5] blk-cgroup: add a new helper blkg_print_dev_name()
-To: Tejun Heo <tj@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240930085302.1558217-1-yukuai1@huaweicloud.com>
- <20240930085302.1558217-2-yukuai1@huaweicloud.com>
- <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <33183043-335f-fd07-1068-c873656f51d6@huaweicloud.com>
-Date: Thu, 31 Oct 2024 16:04:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730361976; c=relaxed/simple;
+	bh=3GKuoXlUb4sBHFWEGDEa7EAC85UjktUUX5dthpginkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a0HNJyb64sF5hIKLkF1RGKkLw00r95aMBmIbpbJiWOPujC57mHqlWWM+eCV5/RNBWO5ONC+FyZOL4Ta3BbEEcj+PQLpN4LiqY/hf4KvDFBE6YwU95U68bWQcTqQxLe1DbirbwtyF8c8L1rXSQKATQfmaygYVNZdsCkmd9Qx8O4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tfcs1zbt; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <da24a338-72ba-4148-be01-359d740a5aba@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730361971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UfcjOajrwVtzKxTiqzYZ6vGRTnzD9EP7krs6nuwewyo=;
+	b=tfcs1zbtqVGnx7PsU8mKRhY+mgweXgvO6BdXN+qzUUtYAAFyjgUDTTM1MtvKNFLYFloL2C
+	BVgPquef0W7jNQuf+S+gOOBSRDfLFqqTS2e6uxnHKT9Y/h+uSQa6q1t6L89iegkVn3UCem
+	g97QwT+eMAHpojAPGnSEFZVMtECc22A=
+Date: Thu, 31 Oct 2024 16:05:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk; format=flowed
+Subject: Re: [PATCH] bcachefs: Correct the description of the '--bucket=size'
+ options
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Youling Tang <tangyouling@kylinos.cn>
+References: <20241016015026.1555670-1-youling.tang@linux.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <20241016015026.1555670-1-youling.tang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHYobwOSNnHfjGAQ--.59788S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	W8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
-	F9a9DUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-Migadu-Flow: FLOW_OUT
 
-Hi, Tejun!
+Hi, Kent
 
-ÔÚ 2024/10/01 1:11, Tejun Heo Ð´µÀ:
-> Hello,
-> 
-> On Mon, Sep 30, 2024 at 04:52:58PM +0800, Yu Kuai wrote:
->> +static inline bool blkg_print_dev_name(struct seq_file *sf,
->> +				       struct blkcg_gq *blkg)
->> +{
->> +	struct gendisk *disk = blkg->q->disk;
->> +
->> +	if (!disk)
->> +		return false;
->> +
->> +	seq_printf(sf, "%u:%u", disk->major, disk->first_minor);
->> +	return true;
->> +}
->> +
-> 
-> I wonder whether we just should add a name field to disk.
+Give you a friendly ping. ðŸ™‚
 
-And suggestions on this set now? I guess add a name filed is not
-appropriate. :(
+BTW, is the following patch needed?
+[1] 
+https://lore.kernel.org/linux-bcachefs/20240709011134.79954-1-youling.tang@linux.dev/
+[2] 
+https://lore.kernel.org/linux-bcachefs/20240924025350.3948674-1-youling.tang@linux.dev/
+[3] 
+https://lore.kernel.org/linux-bcachefs/20240927084042.1516361-1-youling.tang@linux.dev/
+[4] 
+https://lore.kernel.org/linux-bcachefs/20241016014911.1555607-1-youling.tang@linux.dev/
 
 Thanks,
-Kuai
+Youling.
 
-> 
-> Thanks.
-> 
-
+On 2024/10/16 09:50, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
+>
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+> ---
+>   fs/bcachefs/opts.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/bcachefs/opts.h b/fs/bcachefs/opts.h
+> index cb2e244a2429..92eae5636f2b 100644
+> --- a/fs/bcachefs/opts.h
+> +++ b/fs/bcachefs/opts.h
+> @@ -487,7 +487,7 @@ enum fsck_err_opts {
+>   	  OPT_DEVICE,							\
+>   	  OPT_UINT(0, S64_MAX),						\
+>   	  BCH2_NO_SB_OPT,		0,				\
+> -	  "size",	"Size of filesystem on device")			\
+> +	  "size",	"Specifies the bucket size; must be greater than the btree node size")\
+>   	x(durability,			u8,				\
+>   	  OPT_DEVICE|OPT_SB_FIELD_ONE_BIAS,				\
+>   	  OPT_UINT(0, BCH_REPLICAS_MAX),				\
 
