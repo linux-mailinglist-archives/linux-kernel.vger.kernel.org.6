@@ -1,290 +1,158 @@
-Return-Path: <linux-kernel+bounces-391292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A029B84CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:00:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BD99B84D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C89661C22057
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82EA281795
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1339B1CC8B3;
-	Thu, 31 Oct 2024 21:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B7B1CCEF0;
+	Thu, 31 Oct 2024 21:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpXbOC6P"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OqRzQIFa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BCC45BE3
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7669183CAA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408413; cv=none; b=baBkWXo+B3O8lrypCjk3JHfQ33QTxK+KJsJo9DDXznbMS9djtrM3ALEQO+UJtQEROQWmm8qloSwGoCKt+Xjp/pO6//A0DGu7lsDZ+skuVw5LZsFlPvrtrpEC0CRTFhhq2t9itudzfXNxNAYN3sRAQpus34uzDsmeBsCCRniJbLY=
+	t=1730408433; cv=none; b=KuAfvlw+iGgUmyYdH48XXLeffK1HheqvXaRQYGMcyTQguRZWEthwaibUAwh+ToiuPylLMPqdQMYkbR1jN+rHAcUD8BLazqiTBXnZy9m71RHH1RxEnUkiCuWz3Fha3GIrYuJAlB5ldwPBHB9TqNwisoXvvh/gUd7I3ZdmCKWB1U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408413; c=relaxed/simple;
-	bh=R0mM4eVJAHQ6yAQOVfa42KZ0TT+rHuIWWRPrkqlRgIY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gIlQJy168OuN+DPykpQbCAG0L2Je1+e986/ugJQT2vfZHM6QOFipq7iFkYHCEMQn51d/kyUgovLgEKY5b/YYftbAQkKwmyKqQG/+2E6ZPN4xmKUmegdBic4GSC8SkpASiFZFEOAu3+Ai55J/lWcHtrnmh7j0oFp+Oz6Ql4BO/uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpXbOC6P; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-50d3998923dso526646e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:00:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730408406; x=1731013206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9km22R6VbIz/XP5lzm/qJwR2jWzEfYA7dERxsxLJjyg=;
-        b=YpXbOC6PS5WLcZ5ImcbhIh/g39koh7U5J7aj+S2o022icWlq7dvY10IRRXDQwT+vgf
-         1XXI3lCQnObnV9cPSUx+qkXiN8t79JHdk5ZIgs1iu4eP1B9Y4+LkiXE9TjfjIa/hOX2x
-         DKw2XtcAbZyn7UC0jQMqzfZYG2fbPW3cepmKi+YpCNwIhgms9u3BK2GqDJUy3CVR2Zmz
-         tZJESyQT7d3wB656r/tMqfBqCqFhyagWfaVS+p+Q3VVpuq0wUYebBNlPYsTm8Ym+Dcju
-         UzRznueO3yUtOdB5rvYH11B7Mta6bbCxy4FPJOHV5m69KOWYo5vTiV2zHwp+SHuC6x0o
-         tEUA==
+	s=arc-20240116; t=1730408433; c=relaxed/simple;
+	bh=9p2L/gsUOtDAw0oVvraU/aabiEdBTQXQnBMzEvVuzpA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yxb4+OutAh72PMdtyjjgadSlvKreLlP44gfMI8ukuXZlckXM752xiAVUmpSo87jIzVv3kpsJZp7RfrRexSIfGUZo65yv9/y0g6lkYqwhOviSyFsOJXCt8Bzv9YAvHIOcno3P4Jvq0JywWjr3UNf3EeP+dEEUrmxU0LYkr4RPEiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OqRzQIFa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VCgKFO026712
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cQXYDYwMp5w/UPDufraPkZVemoBNsCrL5WS+2fWGtzI=; b=OqRzQIFasekmk0bc
+	Qr98VHXL1g4GLDFS12CKQ6aGI+NuaA6ZWBLeCvJw2yTr2S/gC/1a7twRR8NcCDDq
+	68J9z3yNluVj1eEORquAkEqY3nEhCoYHiqLGNK156VGalNvF3qAtDwqrqKUBsGdM
+	IH0SoGwZ0lAnz3PAyUbxZVlAYzV728VulNOXHbGN0ocp+NlelBsTkTc+ptXnrsL6
+	E0EzDOevLfEGYJ/nPzwxvNjmgtsYP3S11673quQLB1MaMhg9bXkgewHJ/hg/bdug
+	rf+vVhS39+qfJjoT3wF63z0MgY0k0+LuT5WjOaX0dGaSPgRzvqc2mQKVheF+VNsI
+	vnvLsA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p386ne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:25 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b1b20170c0so13354685a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:00:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408406; x=1731013206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9km22R6VbIz/XP5lzm/qJwR2jWzEfYA7dERxsxLJjyg=;
-        b=PtU//s4Se5GKAOaa0142KTHpMqJRnrhvBhojyei7eWL8GDkc00G8SxSmK3pqU9q0jk
-         f5X7uGZ+QIWgo69gm90Z6++tN7jDatFmbEH0a/Xh7HBH4jzXQUqP6Pvc4oseVBsPjPrV
-         HL7YnQycciTO9bdIjFMMINpWyBYqo7lFDXiLMTIqbCZi/XtqBuICgoLHVN5Z2TLUlZRf
-         noAmEfAWaZJAenFo0kbineVHgvKEKwzqXM1ClWa5GHuj39GbdYNQAONj9JvURja9f/fw
-         PPGVhLg6rU9JYHgyxjI7fvFSl0eLUSbh2+r/1Ij0yTT4/MCt2AOHW6A9xntX798E5hII
-         rKFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAhSCTe0GG2+8DOSbIzdoIAvIbiO3HBt0GIkvvppgYAmYhLTE3YDT9oqLkYeW9VoF83n/s9r6Bs1ijMPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKkZ+ebGx/aUR640ou/VdNayCyxoLX97BE2PK4ynoDsaVU9Ryz
-	+yrdW4BRPQLV738B0arsELBBqLILEJeJ9qF6XAqI5JGsxGoSsqBv2KTth4qTKIG/WoofBNDiz5l
-	lmZeTXJ52WYXQ5jbIOP/u+6SRoCA=
-X-Google-Smtp-Source: AGHT+IFKiKEE53VEDcXDHyv6tp/prlHPl31FvqnxoqblM6+nwxnRktgJEn05e9ZchnKt5bIk1zysg5Y2yP9J/JQcXlY=
-X-Received: by 2002:a05:6122:2a01:b0:50c:99da:4f70 with SMTP id
- 71dfb90a1353d-512270c6c20mr1511401e0c.2.1730408405717; Thu, 31 Oct 2024
- 14:00:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730408425; x=1731013225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cQXYDYwMp5w/UPDufraPkZVemoBNsCrL5WS+2fWGtzI=;
+        b=groE9dfNG28TPWd9GlMEvkMmiaW8AlkuZmznWekd0ljOZ7hTBwRhvwOyTTmG34Xnbm
+         so7D82AoBHjwF9CgUKB/er8x1ryHnQfAiMHEqZEp7PpLK7kZbiv/KItXVJKctbLH97Vo
+         BwGNE5WeU/Fzd3WNx2lxhhBUPh3whFBE0gln8xWqiuMEGFUvwd6zwvYr+H1q4AXs/BnJ
+         D1BEPJuCPBT9fgRrw7/6npL/9T2fbwCHk86iQ8393JcB/cXQToYudSywyOFsOb6DuUJ5
+         fjZZX+gMSKuBjGMcU1eHK/HTM9eVHDMq4tnfFzXXsoFfkDBoKwlCEkHUJPw3tx2SZb/e
+         yUrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzCZkh23It8LTorRiJ9BxwSywXXZoGfzR0eSEsEdXRqY1clR3mcRfGnlUUZqp8X1v9aycOPQ/mthRJPCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhVjA84DwTB9pGllUGQLemU+nGltWjqTCrwlO7AsTvk+Dizsim
+	LCFzjNS44k8L2NSaIF2cohmFMs05iPiMTZUHAKRPz7EqMGvT4lT7h/oIlpiEEWPJb69pRA3pa/e
+	eo6588RCSBPQCqSWBC2ZHX3CPLYna6HkoNDLlWM8iBHmbZsODPKz7xbDdEOtrs9M=
+X-Received: by 2002:a05:620a:4244:b0:7ac:bb36:599a with SMTP id af79cd13be357-7b193f68d9dmr1396483285a.13.1730408423701;
+        Thu, 31 Oct 2024 14:00:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7X3DXyUEHB5jUA7SsCpLG6ODedxFLxLwr5aSO7qvzGjyUq4xOk1NXhSiKUvlHHhYkltCg/g==
+X-Received: by 2002:a05:620a:4244:b0:7ac:bb36:599a with SMTP id af79cd13be357-7b193f68d9dmr1396480785a.13.1730408423177;
+        Thu, 31 Oct 2024 14:00:23 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c4f2dsm103158466b.52.2024.10.31.14.00.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 14:00:22 -0700 (PDT)
+Message-ID: <304b909d-bf2d-446c-acc9-e65b94627468@oss.qualcomm.com>
+Date: Thu, 31 Oct 2024 22:00:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027001444.3233-1-21cnbao@gmail.com> <33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
- <CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
- <e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com> <CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
- <852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com> <CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
- <c76635d7-f382-433a-8900-72bca644cdaa@gmail.com> <CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
- <20241031153830.GA799903@cmpxchg.org> <CAJD7tkZ_xQHMoze_w3yBHgjPhQeDynJ+vWddbYKFzi2c63sT7w@mail.gmail.com>
-In-Reply-To: <CAJD7tkZ_xQHMoze_w3yBHgjPhQeDynJ+vWddbYKFzi2c63sT7w@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 1 Nov 2024 09:59:54 +1300
-Message-ID: <CAGsJ_4yTuQMH2MMUnXRiSMbstOuoC2-fvNBsmb2noK9Axte5Gg@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
- for nearly full memcg
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Usama Arif <usamaarif642@gmail.com>, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, 
-	David Hildenbrand <david@redhat.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: x1e80100-crd: describe HID supplies
+To: Johan Hovold <johan+linaro@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+        Stephan Gerhold <stephan.gerhold@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241029075258.19642-1-johan+linaro@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241029075258.19642-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: u4fal6slEeWdz3IeasmlMYbo9xildQeW
+X-Proofpoint-ORIG-GUID: u4fal6slEeWdz3IeasmlMYbo9xildQeW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=824 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310159
 
-On Fri, Nov 1, 2024 at 5:00=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> On Thu, Oct 31, 2024 at 8:38=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.o=
-rg> wrote:
-> >
-> > On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
-> > > On Wed, Oct 30, 2024 at 2:13=E2=80=AFPM Usama Arif <usamaarif642@gmai=
-l.com> wrote:
-> > > > On 30/10/2024 21:01, Yosry Ahmed wrote:
-> > > > > On Wed, Oct 30, 2024 at 1:25=E2=80=AFPM Usama Arif <usamaarif642@=
-gmail.com> wrote:
-> > > > >>>> I am not sure that the approach we are trying in this patch is=
- the right way:
-> > > > >>>> - This patch makes it a memcg issue, but you could have memcg =
-disabled and
-> > > > >>>> then the mitigation being tried here wont apply.
-> > > > >>>
-> > > > >>> Is the problem reproducible without memcg? I imagine only if th=
-e
-> > > > >>> entire system is under memory pressure. I guess we would want t=
-he same
-> > > > >>> "mitigation" either way.
-> > > > >>>
-> > > > >> What would be a good open source benchmark/workload to test with=
-out limiting memory
-> > > > >> in memcg?
-> > > > >> For the kernel build test, I can only get zswap activity to happ=
-en if I build
-> > > > >> in cgroup and limit memory.max.
-> > > > >
-> > > > > You mean a benchmark that puts the entire system under memory
-> > > > > pressure? I am not sure, it ultimately depends on the size of mem=
-ory
-> > > > > you have, among other factors.
-> > > > >
-> > > > > What if you run the kernel build test in a VM? Then you can limit=
- is
-> > > > > size like a memcg, although you'd probably need to leave more roo=
-m
-> > > > > because the entire guest OS will also subject to the same limit.
-> > > > >
-> > > >
-> > > > I had tried this, but the variance in time/zswap numbers was very h=
-igh.
-> > > > Much higher than the AMD numbers I posted in reply to Barry. So fou=
-nd
-> > > > it very difficult to make comparison.
-> > >
-> > > Hmm yeah maybe more factors come into play with global memory
-> > > pressure. I am honestly not sure how to test this scenario, and I
-> > > suspect variance will be high anyway.
-> > >
-> > > We can just try to use whatever technique we use for the memcg limit
-> > > though, if possible, right?
-> >
-> > You can boot a physical machine with mem=3D1G on the commandline, which
-> > restricts the physical range of memory that will be initialized.
-> > Double check /proc/meminfo after boot, because part of that physical
-> > range might not be usable RAM.
-> >
-> > I do this quite often to test physical memory pressure with workloads
-> > that don't scale up easily, like kernel builds.
-> >
-> > > > >>>> - Instead of this being a large folio swapin issue, is it more=
- of a readahead
-> > > > >>>> issue? If we zswap (without the large folio swapin series) and=
- change the window
-> > > > >>>> to 1 in swap_vma_readahead, we might see an improvement in lin=
-ux kernel build time
-> > > > >>>> when cgroup memory is limited as readahead would probably caus=
-e swap thrashing as
-> > > > >>>> well.
-> >
-> > +1
-> >
-> > I also think there is too much focus on cgroup alone. The bigger issue
-> > seems to be how much optimistic volume we swap in when we're under
-> > pressure already. This applies to large folios and readahead; global
-> > memory availability and cgroup limits.
->
-> Agreed, although the characteristics of large folios and readahead are
-> different. But yeah, different flavors of the same problem.
->
-> >
-> > It happens to manifest with THP in cgroups because that's what you
-> > guys are testing. But IMO, any solution to this problem should
-> > consider the wider scope.
->
-> +1, and I really think this should be addressed separately, not just
-> rely on large block compression/decompression to offset the cost. It's
-> probably not just a zswap/zram problem anyway, it just happens to be
-> what we support large folio swapin for.
+On 29.10.2024 8:52 AM, Johan Hovold wrote:
+> Add the missing HID supplies to avoid relying on other consumers to keep
+> them on.
+> 
+> This also avoids the following warnings on boot:
+> 
+> 	i2c_hid_of 0-0010: supply vdd not found, using dummy regulator
+> 	i2c_hid_of 0-0010: supply vddl not found, using dummy regulator
+> 	i2c_hid_of 1-0015: supply vdd not found, using dummy regulator
+> 	i2c_hid_of 1-0015: supply vddl not found, using dummy regulator
+> 	i2c_hid_of 1-003a: supply vdd not found, using dummy regulator
+> 	i2c_hid_of 1-003a: supply vddl not found, using dummy regulator
+> 
+> Note that VREG_MISC_3P3 is also used for things like the fingerprint
+> reader which are not yet fully described so mark the regulator as always
+> on for now.
+> 
+> Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
 
-Agreed these are two separate issues and should be both investigated
-though 2 can offset the cost of 1.
-1. swap thrashing
-2. large block compression/decompression
+[...]
 
-For point 1, we likely want to investigate the following:
+>  
+> +	vreg_misc_3p3: regulator-misc-3p3 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_MISC_3P3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&pm8550ve_8_gpios 6 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&misc_3p3_reg_en>;
 
-1. if we can see the same thrashing if we always perform readahead
-(rapidly filling
-the memcg to full again after reclamation).
+property-n
+property-names
 
-2. Whether there are any issues with balancing file and anon memory
-reclamation.
+for consistency, please
 
-The 'refault feedback loop' in mglru compares refault rates between anon an=
-d
-file pages to decide which type should be prioritized for reclamation.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-type =3D get_type_to_scan(lruvec, swappiness, &tier);
-
-static int get_type_to_scan(struct lruvec *lruvec, int swappiness, int
-*tier_idx)
-{
-        ...
-        read_ctrl_pos(lruvec, LRU_GEN_ANON, 0, gain[LRU_GEN_ANON], &sp);
-        read_ctrl_pos(lruvec, LRU_GEN_FILE, 0, gain[LRU_GEN_FILE], &pv);
-        type =3D positive_ctrl_err(&sp, &pv);
-
-        read_ctrl_pos(lruvec, !type, 0, gain[!type], &sp);
-        for (tier =3D 1; tier < MAX_NR_TIERS; tier++) {
-                read_ctrl_pos(lruvec, type, tier, gain[type], &pv);
-                if (!positive_ctrl_err(&sp, &pv))
-                        break;
-        }
-
-        *tier_idx =3D tier - 1;
-        return type;
-}
-
-In this case, we may want to investigate whether reclamation is primarily
-targeting anonymous memory due to potential errors in the statistics path
-after mTHP is involved.
-
-3. Determine if this is a memcg-specific issue by setting mem=3D1GB and
-running the same test on the global system.
-
-Yosry, Johannes, Usama,
-Is there anything else that might interest us?
-
-I'll get back to you after completing the investigation mentioned above.
-
->
-> >
-> > > > >>> I think large folio swapin would make the problem worse anyway.=
- I am
-> > > > >>> also not sure if the readahead window adjusts on memory pressur=
-e or
-> > > > >>> not.
-> > > > >>>
-> > > > >> readahead window doesnt look at memory pressure. So maybe the sa=
-me thing is being
-> > > > >> seen here as there would be in swapin_readahead?
-> > > > >
-> > > > > Maybe readahead is not as aggressive in general as large folio
-> > > > > swapins? Looking at swap_vma_ra_win(), it seems like the maximum =
-order
-> > > > > of the window is the smaller of page_cluster (2 or 3) and
-> > > > > SWAP_RA_ORDER_CEILING (5).
-> > > > Yes, I was seeing 8 pages swapin (order 3) when testing. So might
-> > > > be similar to enabling 32K mTHP?
-> > >
-> > > Not quite.
-> >
-> > Actually, I would expect it to be...
-> >
-> > > > > Also readahead will swapin 4k folios AFAICT, so we don't need a
-> > > > > contiguous allocation like large folio swapin. So that could be
-> > > > > another factor why readahead may not reproduce the problem.
-> > >
-> > > Because of this ^.
-> >
-> > ...this matters for the physical allocation, which might require more
-> > reclaim and compaction to produce the 32k. But an earlier version of
-> > Barry's patch did the cgroup margin fallback after the THP was already
-> > physically allocated, and it still helped.
-> >
-> > So the issue in this test scenario seems to be mostly about cgroup
-> > volume. And then 8 4k charges should be equivalent to a singular 32k
-> > charge when it comes to cgroup pressure.
->
-> In this test scenario, yes, because it's only exercising cgroup
-> pressure. But if we want a general solution that also addresses global
-> pressure, I expect large folios to be worse because of the contiguity
-> and the size (compared to default readahead window sizes). So I think
-> we shouldn't only test with readahead, as it won't cover some of the
-> large folio cases.
-
-Thanks
-barry
+Konrad
 
