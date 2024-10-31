@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-390550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962189B7B42
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:01:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27FC9B7B47
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:02:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16AE9B21AD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF3D283F74
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE4919D89E;
-	Thu, 31 Oct 2024 13:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BC419D897;
+	Thu, 31 Oct 2024 13:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rN06I9Gs"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYZ2tSSx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305E1993B8;
-	Thu, 31 Oct 2024 13:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA0013A869
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730379685; cv=none; b=H4ykaCIHHIq7Bd0jR/z8Sz9YUs0/sn6OUL4MsDi61kEGpw2G0EXElWwT4p8g/DCu7QvQpjyAGLGW2AcW0zvDIlPeYUHuJtad8gN46qmQgwush2bqTrUvoM4Cko+BYEOfYqgFrs38Kz8tfKLiEQ56U+oPxVNONHF+OHtAuCXa+s4=
+	t=1730379757; cv=none; b=ITPNJawrVT1OphM7Qp3oI0ahSPVGEuCkA8Tyq5gbsaHwVZCvzTndvVDn9x3KjZeiVh2U/mYMjO+jLG4DPiXObflvEhi9diGeM3Wn64bL9jxi2R9fgDUGM7VxAdFqMYm7VZrzjbr3szCr7+cOKS+nM/mMUsJAvN98RxEA0dNvsB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730379685; c=relaxed/simple;
-	bh=rGbfQlvxOIBnio1glGZ6S7OGHst0uidBCoTgBtQWo1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OjhXwnw7f0/g8Q6SPjlpI3+0MLQ2i6Qo4tB338WpJwKQ71cYMwNNdDP7Q1bWOprOnSvp1a1zfY2NLitVm4B7WZ5UJT3DRDIfyMlUZr/RuB6ODr7ADRFkFu31q51eAoWD6zTH4bssT55re80L89u7yM5iMMI3+BbEcNgV79u+8pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rN06I9Gs; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V3ap61020063;
-	Thu, 31 Oct 2024 13:01:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=iCvJ6x
-	hDa8zzog4s6D1T+YAvcVnnpjVu/GXqq1D8nbg=; b=rN06I9GsQNT+JAB7kmNpj1
-	jtQ6biymaqxqWIUsMnScxnP/KTWPadCZ0o6TzPFfbcC7t8QslLa37byfF66H9AY5
-	niTB4wdonEQt3Ec0qYjavkvx4lYB1jlOyPK7vpg+9s+AaATnbzi+qOEcAEW7pWAP
-	ErB4O3SjdYBL6nLf5vJFeP7pciYhodSicJE5aBPI/LvVuESGjLpzUYkRAAbi5fB1
-	A00VN+hzV9ycqK8sdDqmrv5NYyu0GRCTDY0U4PhY6vgh1hM7IeMEZDpVZXCIxSUW
-	leczqOzdfCSwZbLeq792ZvCwVOVRWR9oXzzVDcGNT0EF5bkOBIbpHIFmQHXEh62Q
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jyhbua9v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 13:01:21 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VAoiM0024557;
-	Thu, 31 Oct 2024 13:01:20 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hcyjmn65-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 13:01:20 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VD1HxC52101552
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 13:01:17 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 26F8320040;
-	Thu, 31 Oct 2024 13:01:17 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5B44620043;
-	Thu, 31 Oct 2024 13:01:16 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.171.69.120])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Thu, 31 Oct 2024 13:01:16 +0000 (GMT)
-Date: Thu, 31 Oct 2024 14:01:13 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] s390/kvm: mask extra bits from program interrupt
- code
-Message-ID: <20241031140113.4123b8ee@p-imbrenda>
-In-Reply-To: <20241031123815.8297-A-hca@linux.ibm.com>
-References: <20241031120316.25462-1-imbrenda@linux.ibm.com>
-	<20241031123815.8297-A-hca@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730379757; c=relaxed/simple;
+	bh=M0D70IamMVOUtlYaX3c1QqMzfw1QA/z6aOA3jm/EdbY=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=fQaxnCrWEumLBKxzB02FviCmYslFqtV13UG4ruymOFvAwCdUunz6dbAF03K0gdn9gYQ/D+d2Phak1pxFY0cGV9PMxgz0aQv9aUep5OPLn4WUsS36tBMf+UB7Dg6T4kVKDmULyLv7LcPWKI7UPumMsAG6D2iijeAlVmvrSlxlfwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYZ2tSSx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730379754;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RKUe4Pa/R9hlbyMzR4jy1hOyGYkrTgtlKEhJgNXsdu4=;
+	b=TYZ2tSSx6fmYXTYqatGpllrG1jV8R8S5jIcO+QDE0z6fr/8ceWIwdsKjxe0CuM+REREPQ9
+	Ne8x4bS0NUzIYOidcTtGfU9XaDIjoN03fPglbRTDb37ZMqckLqWkbzEQ3EACEwU5tEC6BH
+	xKc/Xvsx+vrDWf49NuUYcMUI5rbA8bg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-615-Ikp4entDNiagHn3Fq2JFdw-1; Thu,
+ 31 Oct 2024 09:02:30 -0400
+X-MC-Unique: Ikp4entDNiagHn3Fq2JFdw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D1C1195608D;
+	Thu, 31 Oct 2024 13:02:28 +0000 (UTC)
+Received: from segfault.usersys.redhat.com (unknown [10.22.64.4])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A76231956086;
+	Thu, 31 Oct 2024 13:02:25 +0000 (UTC)
+From: Jeff Moyer <jmoyer@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Mohammed Anees <pvmohammedanees2003@gmail.com>,  willy@infradead.org,
+  bcrl@kvack.org,  brauner@kernel.org,  linux-aio@kvack.org,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: aio: Transition from Linked List to Hash Table for
+ Active Request Management in AIO
+References: <ZxW3pyyfXWc6Uaqn@casper.infradead.org>
+	<20241022070329.144782-1-pvmohammedanees2003@gmail.com>
+	<20241031120423.5rq6uykywklkptkv@quack3>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date: Thu, 31 Oct 2024 09:02:23 -0400
+In-Reply-To: <20241031120423.5rq6uykywklkptkv@quack3> (Jan Kara's message of
+	"Thu, 31 Oct 2024 13:04:23 +0100")
+Message-ID: <x491pzwtogw.fsf@segfault.usersys.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HGKRJ_HIWd9C1it-FL5xJoXD30_o_8zU
-X-Proofpoint-ORIG-GUID: HGKRJ_HIWd9C1it-FL5xJoXD30_o_8zU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 phishscore=0 impostorscore=0 mlxlogscore=961 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310099
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, 31 Oct 2024 13:38:15 +0100
-Heiko Carstens <hca@linux.ibm.com> wrote:
+Jan Kara <jack@suse.cz> writes:
 
-> On Thu, Oct 31, 2024 at 01:03:16PM +0100, Claudio Imbrenda wrote:
-> > The program interrupt code has some extra bits that are sometimes set
-> > by hardware for various reasons; those bits should be ignored when the
-> > program interrupt number is needed for interrupt handling.
-> > 
-> > Fixes: ce2b276ebe51 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
-> > Reported-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-> > Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> > ---
-> >  arch/s390/kvm/kvm-s390.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> > index 8b3afda99397..f2d1351f6992 100644
-> > --- a/arch/s390/kvm/kvm-s390.c
-> > +++ b/arch/s390/kvm/kvm-s390.c
-> > @@ -4737,7 +4737,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
-> >  	if (kvm_s390_cur_gmap_fault_is_write())
-> >  		flags = FAULT_FLAG_WRITE;
-> >  
-> > -	switch (current->thread.gmap_int_code) {
-> > +	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {  
-> 
-> Can you give an example? When reviewing your patch I was aware of this, but
-> actually thought we do want to know when this happens, since the kernel did
-> something which causes such bits to be set; e.g. single stepping with PER
-> on the sie instruction. If that happens then such program interruptions
-> should not be passed for kvm handling, since that would indicate a host
-> kernel bug (the sie instruction is not allowed to be single stepped).
-> 
-> Or in other words: this should never happen. Of course I might have missed
-> something; so when could this happen where this is not a bug and the bits
-> should be ignored?
+> Hi!
+>
+> On Tue 22-10-24 12:33:27, Mohammed Anees wrote:
+>> > Benchmarks, please.  Look at what operations are done on this list.
+>> > It's not at all obvious to me that what you've done here will improve
+>> > performance of any operation.
+>>=20
+>> This patch aims to improve this operation in io_cancel() syscall,
+>> currently this iterates through all the requests in the Linked list,
+>> checking for a match, which could take a significant time if the=20
+>> requests are high and once it finds one it deletes it. Using a hash
+>> table will significant reduce the search time, which is what the comment
+>> suggests as well.
+>>=20
+>> /* TODO: use a hash or array, this sucks. */
+>> 	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
+>> 		if (kiocb->ki_res.obj =3D=3D obj) {
+>> 			ret =3D kiocb->ki_cancel(&kiocb->rw);
+>> 			list_del_init(&kiocb->ki_list);
+>> 			break;
+>> 		}
+>> 	}
+>>=20
+>> I have tested this patch and believe it doesn=E2=80=99t affect the=20
+>> other functions. As for the io_cancel() syscall, please let=20
+>> me know exactly how you=E2=80=99d like me to test it so I can benchmark=
+=20
+>> it accordingly.
+>
+> Well, I'd say that calling io_cancel() isn't really frequent operation. Or
+> are you aware of any workload that would be regularly doing that? Hence
+> optimizing performance for such operation isn't going to bring much benef=
+it
+> to real users. On the other hand the additional complexity of handling
+> hashtable for requests in flight (although it isn't big on its own) is
+> going to impact everybody using AIO. Hence I agree with Matthew that
+> changes like you propose are not a clear win when looking at the bigger
+> picture and need good justification.
 
-in some cases some guest indication bits might be set when a
-host exception happens.
+... and cancelation is only supported by usb gadgetfs.  I'd say submit a
+patch that gets rid of that todo so nobody else wastes time on it.
 
-I was also unaware of those and found out the hard way.
+Cheers,
+Jeff
 
 
