@@ -1,78 +1,107 @@
-Return-Path: <linux-kernel+bounces-391427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503F19B8695
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:03:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE8A9B8699
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1366C284E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:03:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96DCCB210AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C940F1E6DD5;
-	Thu, 31 Oct 2024 23:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F251E1A12;
+	Thu, 31 Oct 2024 23:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gov8hTH9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GsHWpqDp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED891E47BC;
-	Thu, 31 Oct 2024 23:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459361CF280;
+	Thu, 31 Oct 2024 23:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730415804; cv=none; b=L1iBS43Z8RMqE6EvPIH8UYR/kks/6bEDW5qc6y9FVEyoumdIihfo4sB+fN4fycveQn5zS6N4AFBVvpf8yxziMHFRi0WgY831FLkeg8uW55D5on0KdCt2dcGsjfX8vWEq5sW4ESl1XLUIU4ZwicK4poBYQpQILU5gguxQ5y3yr54=
+	t=1730415861; cv=none; b=hE264WCURBCsMDk1zILuoO9MD6eWGJMuA8C8ZzGDecDwaB96sCdtbD6NG1hMqSeDQrhPFzNip+kw87deMAYjVThlh5K4fqjjCvl4hAgvP9cr9dJcn35GTQQzGe4jBhdsT4VsZqhhBmYmVC5Pn4B5X7VrsRQK4JJCy8IyhSOhtSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730415804; c=relaxed/simple;
-	bh=Q7VmlL8x2IQAiiRMu3bsnDBoaFjg0O2WHqVJfKrxeo8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=W3yE/SI4OIJXW9IfuaEh5QY60AKQpT50U73KedX9bFMljbjRj0FV8imlozrkgOXUneYcQ4yklF9fIZl/Zc+CCDkqzxqlxsGO25seKu2+PfEb7a0tRahLyjzm9vckdu5Vd00jDaMFB/tulrwIyEU7zX1ClOc3Y3N/E8LkfossmCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gov8hTH9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01646C4CEC3;
-	Thu, 31 Oct 2024 23:03:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730415804;
-	bh=Q7VmlL8x2IQAiiRMu3bsnDBoaFjg0O2WHqVJfKrxeo8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=gov8hTH9TSxUoX/AGIui67hT4+4qPmkYWQuConW3rZhSa/n8GRFfBuNfC5QDLZYxm
-	 WS9nl3zzSqR4lb3sJAkUjtGKN7a8viHuNqVWXRwseAhIQaiaOA5dovRw+DlROZN6pe
-	 9D+3Rv1ZuG6bIC/1X0MqQM4/8qftwYwZbiXK7S7p+xpXL+zzQNdb+3/EkJGnm4xMCa
-	 kDWiyisksSE4cG6yCRd9ECCdy0Q2mp7O0wWpTOSG8qGgahIdlNJg1inu9Xm8RtZX4g
-	 25W5IfICrSK3sO3YVnhRZ5Z9dyHiBGbqGx/6Gsjy2QCEPDNhEm4TPRWjjDEVWYCC8b
-	 pjDve9ECInr5Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E72380AC02;
-	Thu, 31 Oct 2024 23:03:33 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.12-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241031141748.160214-1-pabeni@redhat.com>
-References: <20241031141748.160214-1-pabeni@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241031141748.160214-1-pabeni@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.12-rc6
-X-PR-Tracked-Commit-Id: 50ae879de107ca2fe2ca99180f6ba95770f32a62
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 90602c251cda8a1e526efb250f28c1ea3f87cd78
-Message-Id: <173041581170.2114557.15895995326087684060.pr-tracker-bot@kernel.org>
-Date: Thu, 31 Oct 2024 23:03:31 +0000
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1730415861; c=relaxed/simple;
+	bh=g6mgr1PiSpqyrNl30sSjTkEcTnFjsET5qcjpTWm2Pzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwGziNkL9mz0mqCwGLX6ZWrx28A9vB58xeQwcgXR+Gk9KaWD0ik+B7slvml6dsC1eZrLbuBdADkpFtM0qopFwrB0/OguEASUYFo2YsreaEF5oVYwIhwOxOKKs9f2y9NqSLaHe82dJ3WHtAE1awrdPBzEvjS5JzNG4yaaiGeEDv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GsHWpqDp; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730415856; x=1761951856;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g6mgr1PiSpqyrNl30sSjTkEcTnFjsET5qcjpTWm2Pzo=;
+  b=GsHWpqDpiXXxeuSjrttl81hepIFmiKpPtXqRxwV0drpYqIyJHGPyZBpf
+   OjE2uAXj/TY/rBPfYlol31kAg1r9FX4BU/lhIfVBzzaIIXrRgDpPUOvBr
+   iZhV1f74wZrLosCYZpJYIPi5WTw6vF9DjSlqi7DxYgqGxAtXsxq1z85rI
+   y6jz2NC5l6vVGLl9gxbnDL2Dtx3Sv9Swr4od6rkUmbNgDR5APUSz10FDV
+   wcKvHHBbF30B5gMwGTtySR2VomvmcbUygU8NWaJkSKy4+CGBNl7gNvx1K
+   JjkZDrRGg79xq2Z4RTO5udZChx3Qc2S93rt6hsoFCtgRqI+Dbd3NFgH4C
+   A==;
+X-CSE-ConnectionGUID: 6rIjlog6SgKzohIScB1CCg==
+X-CSE-MsgGUID: xoMlOg3LSK+SKzkKm75b9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34114358"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="34114358"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 16:04:05 -0700
+X-CSE-ConnectionGUID: xlWR6pseQeWhTQ5qLJxk6w==
+X-CSE-MsgGUID: zKlYlmxTRS6cTKeVIy+vAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82700487"
+Received: from adande-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.235])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 16:04:05 -0700
+Date: Thu, 31 Oct 2024 16:03:58 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Amit Shah <amit@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
+	peterz@infradead.org, jpoimboe@kernel.org, corbet@lwn.net,
+	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	seanjc@google.com, pbonzini@redhat.com,
+	daniel.sneddon@linux.intel.com, kai.huang@intel.com,
+	sandipan.das@amd.com, boris.ostrovsky@oracle.com,
+	Babu.Moger@amd.com, david.kaplan@amd.com
+Subject: Re: [PATCH 1/2] x86: cpu/bugs: add support for AMD ERAPS feature
+Message-ID: <20241031225900.k3epw7xej757kz4d@desk>
+References: <20241031153925.36216-1-amit@kernel.org>
+ <20241031153925.36216-2-amit@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031153925.36216-2-amit@kernel.org>
 
-The pull request you sent on Thu, 31 Oct 2024 15:17:48 +0100:
+On Thu, Oct 31, 2024 at 04:39:24PM +0100, Amit Shah wrote:
+> From: Amit Shah <amit.shah@amd.com>
+> 
+> Remove explicit RET stuffing / filling on VMEXITs and context
+> switches on AMD CPUs with the ERAPS feature (Turin+).
+> 
+> With the Enhanced Return Address Prediction Security feature,  any
+> hardware TLB flush results in flushing of the RSB (aka RAP in AMD spec).
+> This guarantees an RSB flush across context switches.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.12-rc6
+Is it that the mov to CR3 triggers the RSB flush?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/90602c251cda8a1e526efb250f28c1ea3f87cd78
+> Feature documented in AMD PPR 57238.
 
-Thank you!
+I couldn't find ERAPS feature description here, I could only manage to find
+the bit position:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+24 	ERAPS. Read-only. Reset: 1. Indicates support for enhanced return
+	address predictor security.
+
+Could you please point me to the document/section where this is described?
 
