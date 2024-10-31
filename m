@@ -1,108 +1,129 @@
-Return-Path: <linux-kernel+bounces-389880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110279B726B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:16:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8949B726D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D921C23248
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A696E1C2368C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47AC86131;
-	Thu, 31 Oct 2024 02:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B2984E11;
+	Thu, 31 Oct 2024 02:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZQRg8/AO"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LEZYtP1b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801082E401;
-	Thu, 31 Oct 2024 02:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7DA12C465
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730340985; cv=none; b=GfCZB3+OWQEGGfjq5WMgLJxhhkyrPAImjIEN5pFMlsvh+2Djnl7jpFpwVWthiMtA/EuQn3A55C+Ro0bqBW8TFwuxnEISoL0uJxgetRUQGQ+9CD3Wjo5D7IPPRFFRsnXSkDy3olki6UwdRKF+HInm5zru7TSXLehtm+NaDgaFqkk=
+	t=1730341193; cv=none; b=E3d/i2s0hkNrGRgk72KV8zLrxByqHdb53PzpIIyeq4IlGcB/QEpzq/FXFAVzv8n9+3aOy5VYdhGUEcOkh/JaHIxB3+2LnbKDrmqEeqzQpaFY925GQWhU5b2XONLd9RxPg3lkX4hxSBBG37hzgDS+rmrcEoYIMeY6YPC1XxdUiLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730340985; c=relaxed/simple;
-	bh=vhdnE9JA5pT9fw4J2PrJS8MGAPAdj0Foe/ClAeCnIHw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XyOmrOp+/oc/SB3tJLQpzl7waaZ3wYhTTnD5jVc9NL5Xx2NFufeUtr8E7PCGO5CgPR+SXlMB9jvMBF6xmdfjzsvG1McOsa6OCJs+4Tqc3LFNaM8Ocnb+HnL5BdojwsnmATO4HthRzUp2k7ZbGivNbCopzuDkYRz9FnQcOxrQb/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZQRg8/AO; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49V2Fd382697773, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1730340939; bh=vhdnE9JA5pT9fw4J2PrJS8MGAPAdj0Foe/ClAeCnIHw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=ZQRg8/AO85UwWA3ecJ8u+bRapJZYuNJLVenU4VHcEL94itQGC8ceAqG/zQRQAoLSP
-	 StVYQ/GNYRF4nOeDbTbu5g9Q++a8GG9XzDx+qziz4WdUJXVknjHcq9n2TNIQk0FrBp
-	 t8mkfuBKktHaUSKJq8X3STyawXK4gmEv/hYAMBhQwAANnc2cPOsQbhfaCyG5P3TBgM
-	 c63zA0DOTLv4OH0Df24tbQlrgdvQKpl/+pZQgA7/6Nrgeda4Sjp5RPQXOht8q83rG7
-	 LxSzF4guIDltztjNfLIoVikuTU7DIBuVPwB4mliYWUrLNrUUsCe3/hDtwwi+iKmVRH
-	 3k1843z4AFf/w==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49V2Fd382697773
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 10:15:39 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 31 Oct 2024 10:15:39 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 31 Oct 2024 10:15:38 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Thu, 31 Oct 2024 10:15:38 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-CC: "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
-        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
-        "rtl8821cerfe2@gmail.com"
-	<rtl8821cerfe2@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com"
-	<syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
-Subject: Re: [PATCH V2] wifi: rtlwifi: Drastically reduce the attempts to read efuse in case of failures
-Thread-Topic: [PATCH V2] wifi: rtlwifi: Drastically reduce the attempts to
- read efuse in case of failures
-Thread-Index: AQHbKtYZmZEqsJWd+ECeMgNDFqDflLKgHpmT
-Date: Thu, 31 Oct 2024 02:15:38 +0000
-Message-ID: <4d9471f600224d23bb1f49a8ed4943c2@realtek.com>
-References: <20241030141440.1153887-1-gpiccoli@igalia.com>
-In-Reply-To: <20241030141440.1153887-1-gpiccoli@igalia.com>
-Accept-Language: en-US, zh-TW
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1730341193; c=relaxed/simple;
+	bh=YH+r+Dbnbl3Hh+y/hm/qgXZvFD8Qdh/Re1nEgUi7fU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=neUYpXx+8CWtSfseo4ZAmr5OVQP5RQWFFzM3FSE16AbPyE/nVtK8Yue8Deg/K94JBWxEatPEd+sup9OGkR2bHj61QGJ7SHk+ZNLELxql19Qn3zTgxnGNEwwAJjt4K12C2QC7rqztz1E0qVlT9dqMIIolANK3OUGu+81rmeWl4X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LEZYtP1b; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730341191; x=1761877191;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YH+r+Dbnbl3Hh+y/hm/qgXZvFD8Qdh/Re1nEgUi7fU8=;
+  b=LEZYtP1bMgr/M9cD7XmrcPn7Zq0b4RH7CEQ4iJrrYoMYKV6NuwabmLQP
+   k2F0Fk2uX31BdnLll6iEnEAzqWukE984mZLBVkNOt8SDAi7jS07efhaAa
+   kMjDqNngujbc8MQRckrVQbWGp+cgNnfHcd3KUr6/HAgU5eThphZiZxgpI
+   TguS1sX7TQ5kQmzBqHpAF56X1Fhhj+itHqKuVbZrTJys7wg7r/QeGY+gm
+   zED3dPK7cI9F63t3MzDgsd1nurGxpF1eKu+MM0iZlj0YfA4uRDx7R+LKt
+   yh3LT35934vrLWCy4C+0r2cCF64lTGNkT+XpGnQHnJY9gQg+aUYFZkcu4
+   A==;
+X-CSE-ConnectionGUID: 5fg1iMKpR6OIa7J+RbbrGA==
+X-CSE-MsgGUID: 0+4FnBaPQtu8hdqtPFJaVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47528333"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="47528333"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 19:19:50 -0700
+X-CSE-ConnectionGUID: mI53XOwBRq+BGEaUiyP8pg==
+X-CSE-MsgGUID: Ce3NF40AQsq8i8qE4BOJKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="82039774"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 30 Oct 2024 19:19:47 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6Kmm-000fY8-1k;
+	Thu, 31 Oct 2024 02:19:44 +0000
+Date: Thu, 31 Oct 2024 10:19:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: alice.guo@oss.nxp.com, alexander.stein@ew.tq-group.com,
+	wahrenst@gmx.net, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, "alice.guo" <alice.guo@nxp.com>
+Subject: Re: [PATCH v3] soc: imx: Add SoC device register for i.MX9
+Message-ID: <202410311056.PBPPOYmg-lkp@intel.com>
+References: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030091336.3901440-1-alice.guo@oss.nxp.com>
+
+Hi,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on shawnguo/for-next]
+[also build test WARNING on linus/master v6.12-rc5 next-20241030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/alice-guo-oss-nxp-com/soc-imx-Add-SoC-device-register-for-i-MX9/20241030-171525
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241030091336.3901440-1-alice.guo%40oss.nxp.com
+patch subject: [PATCH v3] soc: imx: Add SoC device register for i.MX9
+config: hexagon-randconfig-001-20241031 (https://download.01.org/0day-ci/archive/20241031/202410311056.PBPPOYmg-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410311056.PBPPOYmg-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410311056.PBPPOYmg-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/soc/imx/soc-imx9.c:84:34: warning: unused variable 'imx9_soc_match' [-Wunused-const-variable]
+   static const struct of_device_id imx9_soc_match[] = {
+                                    ^
+   1 warning generated.
 
 
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/efuse.c b/drivers/net/w=
-ireless/realtek/rtlwifi/efuse.c
-> index 82cf5fb5175f..f741066c06de 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/efuse.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-> @@ -164,7 +164,17 @@ void read_efuse_byte(struct ieee80211_hw *hw, u16 _o=
-ffset, u8 *pbuf)
->         struct rtl_priv *rtlpriv =3D rtl_priv(hw);
->         u32 value32;
->         u8 readbyte;
-> -       u16 retry;
-> +       u16 retry, max_attempts;
-> +
+vim +/imx9_soc_match +84 drivers/soc/imx/soc-imx9.c
 
-Declarations should be in reverse X'mas tree order.
-Just add max_attempts to a new line at proper position.=20
+    83	
+  > 84	static const struct of_device_id imx9_soc_match[] = {
+    85		{ .compatible = "fsl,imx93", },
+    86		{ .compatible = "fsl,imx95", },
+    87		{ }
+    88	};
+    89	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
