@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-390283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B579B77EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:50:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A309B77F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3FF286DDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184202878D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16009198A22;
-	Thu, 31 Oct 2024 09:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E13198A2F;
+	Thu, 31 Oct 2024 09:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGLX1NZD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ATuJevDZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jGrE2PMp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A26197A81;
-	Thu, 31 Oct 2024 09:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A11193427;
+	Thu, 31 Oct 2024 09:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368249; cv=none; b=Y/waqhqY76EGZWRSIWOpughdXTg3MLigktqt/W1RPbKIZc8gIKibHrd7AG9xZ4pthEO18VV1KcBDG/lHD5g7CPrfyZ3DNLuZNQUEMl0KpFQQisKSmq6hFadhRK8yiz/OJyNkTiqP6LCfhXjfyHmmmzXCRb027rlV0oVeavA59OY=
+	t=1730368276; cv=none; b=Jqvu46b6S8k2s7sDrbWN7h5tvzHSMVFBRppmB3BID2Mil3o3aXBRy72Dd0mvDhZ1o6Z4FXHJNhPenQ856esvvPnJzufnD6B4u3FcvpIiwUULmXBZpdLVkz3dfDexd2EuegMB2iCfkc0DIasx+FcKCNlZoTFBXfByvi6ZaWKh1lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368249; c=relaxed/simple;
-	bh=1SfMoq9aQDPstkesMct3OWKZK5E4xbvfUSf6uoOtSq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZF6doVD8ZHqtYFVeSw8Wj73GzSIT2boDj77sAWslyLb7RmT/IUXzL9+FfBCm/zDINN/HE4ZlNhK0Ii2dd1vHqktUQHOZRzXbHnOSY4yczXhKEjv7CdSqERVYpzW388GYqYEtD/sSO/n+u71GpIrKpV7GcqkFo33qASo2BlOIv3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGLX1NZD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996BAC4CED0;
-	Thu, 31 Oct 2024 09:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730368249;
-	bh=1SfMoq9aQDPstkesMct3OWKZK5E4xbvfUSf6uoOtSq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BGLX1NZDTSK3O6Wl5vFevq5jODfed+vvbcU5URvZwVeqrPcjwu6K67yRvHmqZoIwd
-	 SQsirCaYnFCLHSeF3dx+7CSkkAmryh1EcrluFdTcgbDKtuPA0BSHk1E4mhalkd5M35
-	 utkXiYmujB+bOqBSDFC7tOVwY4u7J7YyFTPy0oY2/MXvz+v0/8VGhoTAAue50LvJxT
-	 gfNk+nNaYeB7EboaAFbajX+fyTIzQPoG1IjnnEZ2ZquhudSdyR+LLsSbHbKwg8ARfP
-	 Rm+hONCoiv9QrdkkiWYYF3PRhlUbPC38rrjLg+0F3wR0o/kq2m83HPfxqKlyihnoJI
-	 hd8YHmOJW6UoA==
-Date: Thu, 31 Oct 2024 10:50:44 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: Andrei Vagin <avagin@google.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] ucounts: fix counter leak in inc_rlimit_get_ucounts()
-Message-ID: <ZyNS9J7TOQ84AkYz@example.org>
-References: <20241031045602.309600-1-avagin@google.com>
+	s=arc-20240116; t=1730368276; c=relaxed/simple;
+	bh=wlOq8gEb2DgkuOYk87YvKkPUL36YuiCQFr8S9YW/bKI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=fVMz6aw1VaJn/BcMgzS5ne/vROU3RuQvA9iUhM1YCK+GDomc0o2QhCQa79OksyYNXV0YZbsVmzSEvDOOcx1+TeSWZCvvMp8gZx0LbPloBTIHwmlrYpHsljbRL9V6qkGpdbDq0hzu178NBqkD3Wp83x1ntdP83xvJpiJF5gJZcdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ATuJevDZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jGrE2PMp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 31 Oct 2024 09:51:11 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730368273;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qTsRVWRoZXjpJi9E9xfwnpzFr8fuigWeKrJNuIDNf/U=;
+	b=ATuJevDZcE4fUc517BvUqxF8BMnS2bLqOTwhum4m13XD8eMctYkJ9/ck5JLNKc3jW/pSYQ
+	P+GZIS1oXb6qBcFRElSAlRhHD8t57fO1KM5askzuV7Ns4Rx5G/d0gxkQAZOR6LVxfqikBI
+	oga1QWGtyEBenp7emN/XO/awpYEDydQELFoSjoD8wdGKwoMxM7leS3AxXIK4XKDXbc/liX
+	66lbgfqoh3QZg5XrJqjLPz58NkbccTAr74SnpIoBWrvDsp3kFU1LP1oZ9TO/nUd6dUpmF0
+	KRmr+W06y8MRzNRdhv6ODe3EfILK1KX1ks9Sj1QAJigQYrwWgsSlmQ10FinU+Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730368273;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qTsRVWRoZXjpJi9E9xfwnpzFr8fuigWeKrJNuIDNf/U=;
+	b=jGrE2PMpiKEcsSi5QQuhp2B0Vu+8epFCQ5nSDjAqhuA877NV9+a3h0VXHyDAGUWfbIybMn
+	NgL7nVXOXCPnUGDQ==
+From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] clocksource/drivers/timer-tegra: Remove
+ clockevents shutdown call on offlining
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241029125451.54574-11-frederic@kernel.org>
+References: <20241029125451.54574-11-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031045602.309600-1-avagin@google.com>
+Message-ID: <173036827152.3137.12415773273788477374.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 04:56:01AM +0000, Andrei Vagin wrote:
-> The inc_rlimit_get_ucounts() increments the specified rlimit counter and
-> then checks its limit. If the value exceeds the limit, the function
-> returns an error without decrementing the counter.
-> 
-> Fixes: 15bc01effefe ("ucounts: Fix signal ucount refcounting")
-> Tested-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Co-debugged-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Andrei Vagin <avagin@google.com>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Alexey Gladkov <legion@kernel.org>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Andrei Vagin <avagin@google.com>
-> ---
->  kernel/ucount.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/ucount.c b/kernel/ucount.c
-> index 8c07714ff27d..16c0ea1cb432 100644
-> --- a/kernel/ucount.c
-> +++ b/kernel/ucount.c
-> @@ -328,13 +328,12 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
->  		if (new != 1)
->  			continue;
->  		if (!get_ucounts(iter))
-> -			goto dec_unwind;
-> +			goto unwind;
->  	}
->  	return ret;
-> -dec_unwind:
-> +unwind:
->  	dec = atomic_long_sub_return(1, &iter->rlimit[type]);
->  	WARN_ON_ONCE(dec < 0);
-> -unwind:
->  	do_dec_rlimit_put_ucounts(ucounts, iter, type);
->  	return 0;
->  }
+The following commit has been merged into the timers/core branch of tip:
 
-Agree. The do_dec_rlimit_put_ucounts() decreases rlimit up to iter but
-does not include it.
+Commit-ID:     bf9a001fb8e46a23c43d4964523963e717d9e972
+Gitweb:        https://git.kernel.org/tip/bf9a001fb8e46a23c43d4964523963e717d9e972
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Tue, 29 Oct 2024 13:54:51 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 31 Oct 2024 10:41:43 +01:00
 
-Except for a small NAK because the patch changes goto for get_ucounts()
-and not for rlimit overflow check.
+clocksource/drivers/timer-tegra: Remove clockevents shutdown call on offlining
 
-Acked-by: Alexey Gladkov <legion@kernel.org>
+The clockevents core already detached and unregistered it at this stage.
 
--- 
-Rgrds, legion
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20241029125451.54574-11-frederic@kernel.org
 
+---
+ drivers/clocksource/timer-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+index e9635c2..35b6ce9 100644
+--- a/drivers/clocksource/timer-tegra.c
++++ b/drivers/clocksource/timer-tegra.c
+@@ -158,7 +158,6 @@ static int tegra_timer_stop(unsigned int cpu)
+ {
+ 	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
+ 
+-	to->clkevt.set_state_shutdown(&to->clkevt);
+ 	disable_irq_nosync(to->clkevt.irq);
+ 
+ 	return 0;
 
