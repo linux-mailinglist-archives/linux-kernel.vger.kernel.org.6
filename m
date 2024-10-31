@@ -1,138 +1,180 @@
-Return-Path: <linux-kernel+bounces-390461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33C09B7A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:04:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DF69B7A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:04:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D2D1C21E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97E52816CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489DA19CC05;
-	Thu, 31 Oct 2024 12:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5329319C553;
+	Thu, 31 Oct 2024 12:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x5dG4y+i";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fl1iFoiX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bbvLfPq+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WS4vXqwP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bbvLfPq+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WS4vXqwP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C008A187864
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBD419B3D7;
+	Thu, 31 Oct 2024 12:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376252; cv=none; b=YN3R6MH5+7muPFX/K4dYEFWe+DRJ6h8E1dlndPDz7Pg8XzjzdPGm2BF7R4Zrv62UzNykCDIKi8gRjIm4siWpnt1dYebOJRdaDGJQhVhhVS+htm7MsiGFZGQeMvYk66kOUz+IOmBsHCTpF3eR6Bwe47zr970Ah28jeUR3Z61cvyk=
+	t=1730376275; cv=none; b=D0QovwFT4zJ3U9IJsENj5WqVo+vAzhsT2W5xnhfj1xNnzKDU7kGKFfArSO+zcOwaSspDho2umgs+utcGbf4P1rZyKIo+4GQbuPMf011lKqhcsEAU5jQ9QoewvK25LRXlC1NuiapQDh5uvPKxR7LKDKtoXZKDLI7LJglZ8kzuEOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376252; c=relaxed/simple;
-	bh=M1eA656eEJ8giqV6WMmEz6tHJn2jOoQrnrwnna6laKc=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=u0SF4CTmEidW9q4k+1+YOQpQEJrz35mjbJ71w+VKYsv2y5HfEIqqpcJeRfmjwHKXjxR932XChWwXAiRdJvDjam/5IpUSH6VglESLVk0u+X14SA9IBk9MCnvH8MVYyP25sXBv+vL8RqoHxx8BYSoYO+UmSvpxueDBR0XmfjrjiYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x5dG4y+i; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fl1iFoiX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241031120328.599430157@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730376249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=H0Ct+JGAdNC6UcNJLqKMgCSUbsdDOHXxBCiXizWGKOQ=;
-	b=x5dG4y+idX0lxOlu/AlhnI6u/IbCUuXRUpGAs8S7LfqShEs3U4KuLEEymhG2A9EhSVTRtq
-	oSoE//IkB+nHc7kcTdE4Xg2Bg+vyNsUbFwdZ4sRHE91o3CEWrz568snnX0RhnlVI7EbCxu
-	nMS9/lUzknd1Y5UAfJdZEast63roShIBJbDRZWHau2vaO421JUFtTIpN1OHQfHReU/bcYl
-	lrfA6LNkOfoEvdGQFS6HOA6mgr/4bXK+O8s6Egh0Gdr/01lgIykC32HeZk9/ZlVwv61Xoa
-	ZwlBSyLHnGwuaG9KD/Mzo+vWrV4YMhhR3FBtH4n+rMVNcQILx5Bankkhy8YhoQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730376249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=H0Ct+JGAdNC6UcNJLqKMgCSUbsdDOHXxBCiXizWGKOQ=;
-	b=fl1iFoiXWpJigTbu3wyOFanr5dIv5NB8Qc3zFYYXSFiapN0tKysF8147D3GSOI0vhP6Cjk
-	RXGs+SezWtBmV0CA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: [patch 2/2] timekeeping: Always check for negative motion
-References: <20241031115448.978498636@linutronix.de>
+	s=arc-20240116; t=1730376275; c=relaxed/simple;
+	bh=0C54W+tTXjTJqd5bzYLh931xiqxblrK1rsSjSruSmpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWvK99N5mQLWB7AJw2LnTn/L4U4DEqDntNaPaokRW2j5XZQ8XvBo2mKLfBBsM6gl4/BkZci0kXoXbrJd8IIt61SkQl1o04q6bPwPNEmMIJBeQGyRjMLR+bqrRHzePi0Vsb94vylnLcQmdhnJA8RGFKL2dqZVZBJbDiSGiliv2Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bbvLfPq+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WS4vXqwP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bbvLfPq+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WS4vXqwP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7DC4E1FC04;
+	Thu, 31 Oct 2024 12:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730376271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=afIfZ7ClCntBvNj+WXktFt5DIvv5SvlX7V5d7aVUsRg=;
+	b=bbvLfPq+iWwbvRnGaisD1tGhgUyRCdGSL8at6WA9pVTFV7FkBn74l8hFIJZPYmgkrYR+xF
+	tzbsCHGRydbqr0nh6mw2qs7u4Bf8rA9Pbb9K3i0P5xqiQ7tKSBV4fmLKEwIOHmFx493YzG
+	25LuQ3NdTQ2Xz00+BdctAzZFGO2YGIE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730376271;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=afIfZ7ClCntBvNj+WXktFt5DIvv5SvlX7V5d7aVUsRg=;
+	b=WS4vXqwPruMvNw0rPdvNGYwikAi0ifoHNhIhoFQ3riStX2EeekqBr558ZrL4Up2HU68Njn
+	Uk0Z+UEzW/LcaHCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730376271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=afIfZ7ClCntBvNj+WXktFt5DIvv5SvlX7V5d7aVUsRg=;
+	b=bbvLfPq+iWwbvRnGaisD1tGhgUyRCdGSL8at6WA9pVTFV7FkBn74l8hFIJZPYmgkrYR+xF
+	tzbsCHGRydbqr0nh6mw2qs7u4Bf8rA9Pbb9K3i0P5xqiQ7tKSBV4fmLKEwIOHmFx493YzG
+	25LuQ3NdTQ2Xz00+BdctAzZFGO2YGIE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730376271;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=afIfZ7ClCntBvNj+WXktFt5DIvv5SvlX7V5d7aVUsRg=;
+	b=WS4vXqwPruMvNw0rPdvNGYwikAi0ifoHNhIhoFQ3riStX2EeekqBr558ZrL4Up2HU68Njn
+	Uk0Z+UEzW/LcaHCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 737C113A53;
+	Thu, 31 Oct 2024 12:04:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ne8vHE9yI2fGXAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 31 Oct 2024 12:04:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0ECA2A086F; Thu, 31 Oct 2024 13:04:23 +0100 (CET)
+Date: Thu, 31 Oct 2024 13:04:23 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Cc: willy@infradead.org, bcrl@kvack.org, brauner@kernel.org, jack@suse.cz,
+	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: aio: Transition from Linked List to Hash Table for
+ Active Request Management in AIO
+Message-ID: <20241031120423.5rq6uykywklkptkv@quack3>
+References: <ZxW3pyyfXWc6Uaqn@casper.infradead.org>
+ <20241022070329.144782-1-pvmohammedanees2003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 13:04:08 +0100 (CET)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241022070329.144782-1-pvmohammedanees2003@gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-clocksource_delta() has two variants. One with a check for negative motion,
-which is only selected by x86. This is a historic leftover as this function
-was previously used in the time getter hot paths.
+Hi!
 
-Since 135225a363ae timekeeping_cycles_to_ns() has unconditional protection
-against this as a by-product of the protection against 64bit math overflow.
+On Tue 22-10-24 12:33:27, Mohammed Anees wrote:
+> > Benchmarks, please.  Look at what operations are done on this list.
+> > It's not at all obvious to me that what you've done here will improve
+> > performance of any operation.
+> 
+> This patch aims to improve this operation in io_cancel() syscall,
+> currently this iterates through all the requests in the Linked list,
+> checking for a match, which could take a significant time if the 
+> requests are high and once it finds one it deletes it. Using a hash
+> table will significant reduce the search time, which is what the comment
+> suggests as well.
+> 
+> /* TODO: use a hash or array, this sucks. */
+> 	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
+> 		if (kiocb->ki_res.obj == obj) {
+> 			ret = kiocb->ki_cancel(&kiocb->rw);
+> 			list_del_init(&kiocb->ki_list);
+> 			break;
+> 		}
+> 	}
+> 
+> I have tested this patch and believe it doesn’t affect the 
+> other functions. As for the io_cancel() syscall, please let 
+> me know exactly how you’d like me to test it so I can benchmark 
+> it accordingly.
 
-clocksource_delta() is only used in the clocksource watchdog and in
-timekeeping_advance(). The extra conditional there is not hurting anyone.
+Well, I'd say that calling io_cancel() isn't really frequent operation. Or
+are you aware of any workload that would be regularly doing that? Hence
+optimizing performance for such operation isn't going to bring much benefit
+to real users. On the other hand the additional complexity of handling
+hashtable for requests in flight (although it isn't big on its own) is
+going to impact everybody using AIO. Hence I agree with Matthew that
+changes like you propose are not a clear win when looking at the bigger
+picture and need good justification.
 
-Remove the config option and unconditionally prevent negative motion of the
-readout.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/Kconfig                   |    1 -
- kernel/time/Kconfig                |    5 -----
- kernel/time/timekeeping_internal.h |    7 -------
- 3 files changed, 13 deletions(-)
-
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -145,7 +145,6 @@ config X86
- 	select ARCH_HAS_PARANOID_L1D_FLUSH
- 	select BUILDTIME_TABLE_SORT
- 	select CLKEVT_I8253
--	select CLOCKSOURCE_VALIDATE_LAST_CYCLE
- 	select CLOCKSOURCE_WATCHDOG
- 	# Word-size accesses may read uninitialized data past the trailing \0
- 	# in strings and cause false KMSAN reports.
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -17,11 +17,6 @@ config ARCH_CLOCKSOURCE_DATA
- config ARCH_CLOCKSOURCE_INIT
- 	bool
- 
--# Clocksources require validation of the clocksource against the last
--# cycle update - x86/TSC misfeature
--config CLOCKSOURCE_VALIDATE_LAST_CYCLE
--	bool
--
- # Timekeeping vsyscall support
- config GENERIC_TIME_VSYSCALL
- 	bool
---- a/kernel/time/timekeeping_internal.h
-+++ b/kernel/time/timekeeping_internal.h
-@@ -30,7 +30,6 @@ static inline void timekeeping_inc_mg_fl
- 
- #endif
- 
--#ifdef CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE
- static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
- {
- 	u64 ret = (now - last) & mask;
-@@ -41,12 +40,6 @@ static inline u64 clocksource_delta(u64
- 	 */
- 	return ret & ~(mask >> 1) ? 0 : ret;
- }
--#else
--static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
--{
--	return (now - last) & mask;
--}
--#endif
- 
- /* Semi public for serialization of non timekeeper VDSO updates. */
- unsigned long timekeeper_lock_irqsave(void);
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
