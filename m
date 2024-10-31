@@ -1,114 +1,153 @@
-Return-Path: <linux-kernel+bounces-389926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9792D9B7319
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:37:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE309B731B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A981F258F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5505F2856AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CF413A89A;
-	Thu, 31 Oct 2024 03:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJq4yMTV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E02139D03;
+	Thu, 31 Oct 2024 03:40:50 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB6443173;
-	Thu, 31 Oct 2024 03:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E2043173
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730345854; cv=none; b=Cc8OaotAhuSeJe44ZqaU6ybIPKc5dk5/iWbeBi6HiQNd2BBIyJSPqFHnPPopCTuooJ8PE9fcp0MRlTexEwWKk7Kr2YoUqKCYB7CpVmBVxTCbaJkg73f00Iy2d3ghd08Ubg80sSjyrrflOfc+tY7x6qDnMQyXhcfmnae8jHP/kpQ=
+	t=1730346050; cv=none; b=eWoLM6Dv1iUUzew0qCNK3f14vUYV10HU9s9zqmRtTclvG4rFxU5+wDUfky0aYjZTFPVTNCBlS+hO2AjTkL6C/LJNEj3Erejp0R4m6INDbm0Sd29+4GDdbgIgVBA6eqhjYMQkVO0YTULs4E6L/X45XYK7vOvmU/3Qs3sArI5rNOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730345854; c=relaxed/simple;
-	bh=nl24gnirAeRT6ICg5IzDTBd/x5bFHbr+jMPsT5ofn+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n3jODeZbyBks0bI+v1OMT7chwEQtcx4cSfWeXgms+bPwUqeVqReBzL71UPjHIJOs5fxPDl74MmENyaBNeio4GgyAQNNUDc5lb0Uy8XfSDuYllg5YtDS75jX3jIQ1IquEWDZOlIRwyZfUu8XwsvdtwoaSTe2EmztLCTJ4+cGJHSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJq4yMTV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75EE4C4CECE;
-	Thu, 31 Oct 2024 03:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730345854;
-	bh=nl24gnirAeRT6ICg5IzDTBd/x5bFHbr+jMPsT5ofn+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jJq4yMTVr89KdBh8rJyEGqX2fuqDY7isRs1sKdolk+z4cqo0d9xaCgA11FRvHel11
-	 083zHjEll0Ex/L2AwUx90ca7E83i7MsGRbtElFTDLO7Yqkjjkw4dDGsXrvcHorGQIE
-	 TnyHcpA8ItfHkAK3+V2zgT2EAs4ac3GIUNhUKw1KFK9EYVn33AAyGgoOmDc4XwCOiT
-	 DNGqlz5oXfFzPVdba7qjS++3bO6Ighr/zMXyKZSvtBOCU7Oz2fA5V9ZO5/zE8rYvRy
-	 oiEBoIFk3g1/6Q9wstOnJzjQLx/P4sBrhzRlQVafcfcP/QzHNlAXyzypa08OrRmr28
-	 qHHgPYjH+DJvA==
-Date: Wed, 30 Oct 2024 20:37:31 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Naveen N Rao <naveen@kernel.org>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH 1/2] kprobes: Fix __get_insn_slot() after __counted_by
- annotation
-Message-ID: <20241031033731.GA2553234@thelio-3990X>
-References: <20241030-kprobes-fix-counted-by-annotation-v1-0-8f266001fad0@kernel.org>
- <20241030-kprobes-fix-counted-by-annotation-v1-1-8f266001fad0@kernel.org>
- <20241031105827.08b362cf0dcf558f9cf59ad8@kernel.org>
+	s=arc-20240116; t=1730346050; c=relaxed/simple;
+	bh=2a1jYQPzOjR08hTDlpjepZM/451MWSlA7VtYt6781vE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GCK7Gnlpmk+FaHaVvRllJYnPfAsixC3mRZFAmgif+WaLykEaNpuOeljmUrFaWWvt6RMc72qLnynJjkVQL3EYONXB+Nv4v8COkP8bFSEys4HLNc8lXfcOFdYInFjd27oGbbArFZzLVEXfdkht8pv9AwMTDCtoVKG0iJnnLB2JU6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xf8pw1JPKz1T9TY;
+	Thu, 31 Oct 2024 11:38:32 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id E13B4180103;
+	Thu, 31 Oct 2024 11:40:43 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 31 Oct 2024 11:40:41 +0800
+Message-ID: <bcce44bc-5047-18d9-6cb3-4e664d99a129@huawei.com>
+Date: Thu, 31 Oct 2024 11:40:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031105827.08b362cf0dcf558f9cf59ad8@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next v4 03/19] arm64: entry: Remove
+ __enter_from_user_mode()
+Content-Language: en-US
+To: Mark Rutland <mark.rutland@arm.com>
+CC: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <sstabellini@kernel.org>, <maz@kernel.org>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
+	<kees@kernel.org>, <wad@chromium.org>, <akpm@linux-foundation.org>,
+	<samitolvanen@google.com>, <arnd@arndb.de>, <ojeda@kernel.org>,
+	<rppt@kernel.org>, <hca@linux.ibm.com>, <aliceryhl@google.com>,
+	<samuel.holland@sifive.com>, <paulmck@kernel.org>, <aquini@redhat.com>,
+	<petr.pavlu@suse.com>, <viro@zeniv.linux.org.uk>,
+	<rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
+	<wangkefeng.wang@huawei.com>, <surenb@google.com>,
+	<linus.walleij@linaro.org>, <yangyj.ee@gmail.com>, <broonie@kernel.org>,
+	<mbenes@suse.cz>, <puranjay@kernel.org>, <pcc@google.com>,
+	<guohanjun@huawei.com>, <sudeep.holla@arm.com>,
+	<Jonathan.Cameron@huawei.com>, <prarit@redhat.com>, <liuwei09@cestc.cn>,
+	<dwmw@amazon.co.uk>, <oliver.upton@linux.dev>, <kristina.martsenko@arm.com>,
+	<ptosi@google.com>, <frederic@kernel.org>, <vschneid@redhat.com>,
+	<thiago.bauermann@linaro.org>, <joey.gouly@arm.com>,
+	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<xen-devel@lists.xenproject.org>
+References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
+ <20241025100700.3714552-4-ruanjinjie@huawei.com>
+ <ZyD0WJeAhESLIBJp@J2N7QTR9R3.cambridge.arm.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZyD0WJeAhESLIBJp@J2N7QTR9R3.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Thu, Oct 31, 2024 at 10:58:27AM +0900, Masami Hiramatsu wrote:
-> On Wed, 30 Oct 2024 09:14:48 -0700
-> Nathan Chancellor <nathan@kernel.org> wrote:
+
+
+On 2024/10/29 22:42, Mark Rutland wrote:
+> On Fri, Oct 25, 2024 at 06:06:44PM +0800, Jinjie Ruan wrote:
+>> The __enter_from_user_mode() is only called by enter_from_user_mode(),
+>> so replaced it with enter_from_user_mode().
 > 
-> > Commit 0888460c9050 ("kprobes: Annotate structs with __counted_by()")
-> > added a __counted_by annotation without adjusting the code for the
-> > __counted_by requirements, resulting in a panic when UBSAN_BOUNDS and
-> > FORTIFY_SOURCE are enabled:
-> > 
-> >   | memset: detected buffer overflow: 512 byte write of buffer size 0
-> >   | WARNING: CPU: 0 PID: 1 at lib/string_helpers.c:1032 __fortify_report+0x64/0x80
-> >   | Call Trace:
-> >   |  __fortify_report+0x60/0x80 (unreliable)
-> >   |  __fortify_panic+0x18/0x1c
-> >   |  __get_insn_slot+0x33c/0x340
-> > 
-> > __counted_by requires that the counter be set before accessing the
-> > flexible array but ->nused is not set until after ->slot_used is
-> > accessed via memset(). Even if the current ->nused assignment were moved
-> > up before memset(), the value of 1 would be incorrect because the entire
-> > array is being accessed, not just one element.
+> As with the next two patches, all the __enter_from_*() and __exit_to_*()
+> are supposed to handle the raw entry, closely matching the generic code,
+> and the non-underscored enter_from_*() and exit_to_*() functions are
+> supposed to be wrappers that handle (possibly instrumentable)
+
+Sure, the __enter_from_*() and __exit_to_*() is all about the generic
+code, and the enter_from_*() and exit_to_*() includes arm64-specific MTE
+  check.
+
+> arm64-specific post-entry and pre-exit logic.
 > 
-> Ah, I think I misunderstood the __counted_by(). If so, ->nused can be
-> smaller than the accessing element of slot_used[]. I should revert it.
-> The accessing index and ->nused should have no relationship.
+> I would prefer to keep that split, even though enter_from_user_mode() is
+> a trivial wrapper.
 > 
-> for example, slots_per_page(c) is 10, and 10 kprobes are registered
-> and then, the 1st and 2nd kprobes are unregistered. At this moment,
-> ->nused is 8 but slot_used[9] is still used. To unregister this 10th
-> kprobe, we have to access slot_used[9].
+> Am I missing some reason we must remove the wrappers?
 
-Ah, I totally missed that bit of the code, sorry about that. Thanks for
-the explanation!
+It is not necessary to remove these functions, just found it by chance
+and cleanup them by the way, originally I thought that removing the
+underline function might make the relative order of the MTE functions
+look clearer.
 
-> So let's just revert the commit 0888460c9050.
-
-Reverting that change sounds totally reasonable to me based on the
-above. Will you take care of that?
-
-For what it's worth, I think patch #2 should still be applicable, if you
-are okay with that one.
-
-Cheers,
-Nathan
+> 
+> Mark.
+> 
+>>
+>> No functional changes.
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  arch/arm64/kernel/entry-common.c | 7 +------
+>>  1 file changed, 1 insertion(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
+>> index 68a9aecacdb9..ccf59b44464d 100644
+>> --- a/arch/arm64/kernel/entry-common.c
+>> +++ b/arch/arm64/kernel/entry-common.c
+>> @@ -109,7 +109,7 @@ static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
+>>   * Before this function is called it is not safe to call regular kernel code,
+>>   * instrumentable code, or any code which may trigger an exception.
+>>   */
+>> -static __always_inline void __enter_from_user_mode(void)
+>> +static __always_inline void enter_from_user_mode(struct pt_regs *regs)
+>>  {
+>>  	lockdep_hardirqs_off(CALLER_ADDR0);
+>>  	CT_WARN_ON(ct_state() != CT_STATE_USER);
+>> @@ -118,11 +118,6 @@ static __always_inline void __enter_from_user_mode(void)
+>>  	mte_disable_tco_entry(current);
+>>  }
+>>  
+>> -static __always_inline void enter_from_user_mode(struct pt_regs *regs)
+>> -{
+>> -	__enter_from_user_mode();
+>> -}
+>> -
+>>  /*
+>>   * Handle IRQ/context state management when exiting to user mode.
+>>   * After this function returns it is not safe to call regular kernel code,
+>> -- 
+>> 2.34.1
+>>
+> 
 
