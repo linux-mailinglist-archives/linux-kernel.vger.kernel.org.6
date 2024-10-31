@@ -1,107 +1,124 @@
-Return-Path: <linux-kernel+bounces-390215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704A49B771F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1A59B7720
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7BA1F24E2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BCE1F24E9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351FA193417;
-	Thu, 31 Oct 2024 09:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAFA19343F;
+	Thu, 31 Oct 2024 09:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nMWdmpKY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rj7zytZF"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813CA1EB48
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006DA18453F;
+	Thu, 31 Oct 2024 09:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730365997; cv=none; b=MdtYjPMlkKSK4JHD0xrhfb5YBuxFhwaP6synx4yJ+njZldaSLwcTR68mHboQytkS8nhvnPqacDVC/mkJ5MXke7XcIIvBSnDNX2bO6qDy+iJFycSCHz5mYT2aebbC2aZzxSLp3euNUzXvVjbBGeKXT/23DAkR7sCEFMY/gRywBvM=
+	t=1730366007; cv=none; b=ksgt2lENy50Z0A/tD6MbvLKwsBCihEHY9mDbuMVYVbvLf9iGXEqpu+5dI6ne+mn7Q/0J63d4pzIX9A6NtP5W3spDFJnKapYtW1T73IrvGbpjp9E/SFCoR80n1oJAq/5XCRuPsH9WHUbbpGJWfH7TsU/c0ZKxmYqDj96Dy5lyFMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730365997; c=relaxed/simple;
-	bh=xaldQxhW7oCmRcLqWy5zJTMCyvuaa8BmD2wBGHg9ljc=;
+	s=arc-20240116; t=1730366007; c=relaxed/simple;
+	bh=gqnaDtZtuISCM8zTQgzltHmUGJlE1EtGHbAL+f5QyvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=We1h9D60PsfAUWAih5vSzESt2DLzCDwBTKwhEEubkCZiLz8qOFQ/A3GAQFLo6xB4keKv72SyskvSVSczwUWZBTviVRHlJ1e9Z+ZVhWBUZpGukWIoxPfCf9F3bJHvELcEwSkJFbCq2470JvmaZi4Ledzb8Av+h/poxONjvCbtb9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nMWdmpKY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xaldQxhW7oCmRcLqWy5zJTMCyvuaa8BmD2wBGHg9ljc=; b=nMWdmpKYIbU15Jw1QbSINxX/K/
-	DtPSZxWx8kDY8ocqt/fY/uvhJl1ee3plfxZrjbXMFAfynf5/nQHXP6Vp82HEYSFMvvfJO84leyvXN
-	/cg8zfCDoqNM0XEFmjCY3AlCR8YkZf5/uo0QSJTDN08aeAkpSyhZseo+CUio6tIX+TTtTfboaa30m
-	5TSVR7Mmoh6yzFBDi5zQ3wqEpOGuasd3FWYuqZsdf+J4yHd8Glhc13k8YiXhQCYGMLNR11NBXCCoY
-	lSOuPVtJaOpruGmYdZjJLEOO/B6N5jbb1rk0vWm38WBji+2JpEKfXsQSmbRDDHgFm9rwJeXR2aw94
-	kaPPfk8A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6REo-0000000EWD8-3XBr;
-	Thu, 31 Oct 2024 09:13:07 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8C756300599; Thu, 31 Oct 2024 10:13:06 +0100 (CET)
-Date: Thu, 31 Oct 2024 10:13:06 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [RFC PATCH 2/3] futex: Add basic infrastructure for local task
- local hash.
-Message-ID: <20241031091306.GU9767@noisy.programming.kicks-ass.net>
-References: <20241026224306.982896-1-bigeasy@linutronix.de>
- <20241026224306.982896-3-bigeasy@linutronix.de>
- <87cyjl4u1h.ffs@tglx>
- <20241028103058.tERYBWZu@linutronix.de>
- <87y128335h.ffs@tglx>
- <20241028110035.GQ9767@noisy.programming.kicks-ass.net>
- <87r080306d.ffs@tglx>
- <20241030210819.GS9767@noisy.programming.kicks-ass.net>
- <878qu5xjxz.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pAOYgf5842puTn6RnJNTjUBR6mvpSrp3Dk2kFWuB9FYDAIYIug3ZBSVagE/9GMjFxugH/cH3SR46sRFsETjMiTS+5VwMr/RwtIDHhT4D8cKTm00DlCbHrGKse26STfCwi1VfNiEJPrvVHYZTMboTZ824Og4ZVIUwrjHNgHLKwno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rj7zytZF; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:c433:a011:b9cf:d32c])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3AD8D842;
+	Thu, 31 Oct 2024 10:13:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730365993;
+	bh=gqnaDtZtuISCM8zTQgzltHmUGJlE1EtGHbAL+f5QyvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rj7zytZFTQ42WfgEkXHKy4HFyxdM9Hq1aTmwWll4DJ7Ef8BjlMeS7EBlHyuiSkTm4
+	 5/hc8hV39g36KoSRArCTygpEjYWmM+kcF4OOy4Y3w4936Bj38dNTn+XsnBUgI9/i6z
+	 kT/G4th/M+9kE1Ylm/v0fom1TwJU+b1YwUTUE5Ls=
+Date: Thu, 31 Oct 2024 10:13:13 +0100
+From: Stefan Klug <stefan.klug@ideasonboard.com>
+To: Umang Jain <umang.jain@ideasonboard.com>
+Cc: libcamera-devel@lists.libcamera.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] media: imx283: Report correct V4L2_SEL_TGT_CROP
+Message-ID: <nr7wzo7smtq2mbtorhw4slgtvmj6nyk3witjcymwzk7efrftlc@obgey7ky5hpp>
+References: <20241030163439.245035-1-stefan.klug@ideasonboard.com>
+ <04ae3f0b-c2f8-4553-9b49-302cc638c0c7@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <878qu5xjxz.ffs@tglx>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <04ae3f0b-c2f8-4553-9b49-302cc638c0c7@ideasonboard.com>
 
-On Thu, Oct 31, 2024 at 12:14:16AM +0100, Thomas Gleixner wrote:
+Hi Umang,
 
-> If that's handled, then it falls flat when a futex is used as a wait
-> queue. There might be a thread sitting on it waiting for an event which
-> never happens, which means the old hash never gets removed. Then the
-> process gets another pile of threads and can't expand the hash because
-> there are already two instances.
+On Thu, Oct 31, 2024 at 11:07:00AM +0530, Umang Jain wrote:
+> Hi Stefan
+> 
+> On 30/10/24 10:04 pm, Stefan Klug wrote:
+> > The target crop rectangle is initialized with the crop of the default
+> > sensor mode. This is incorrect when a different sensor mode gets
+> > selected. Fix that by updating the crop rectangle when changing the
+> > sensor mode.
+> > 
+> > Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+> > ---
+> >   drivers/media/i2c/imx283.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
+> > index 3174d5ffd2d7..c8863c9e0ccf 100644
+> > --- a/drivers/media/i2c/imx283.c
+> > +++ b/drivers/media/i2c/imx283.c
+> > @@ -1123,6 +1123,7 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
+> >   				 struct v4l2_subdev_state *sd_state,
+> >   				 struct v4l2_subdev_format *fmt)
+> >   {
+> > +	struct v4l2_rect *crop;
+> >   	struct v4l2_mbus_framefmt *format;
+> >   	const struct imx283_mode *mode;
+> >   	struct imx283 *imx283 = to_imx283(sd);
+> > @@ -1149,6 +1150,9 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
+> >   	*format = fmt->format;
+> > +	crop = v4l2_subdev_state_get_crop(sd_state, IMAGE_PAD);
+> > +	*crop = mode->crop;
+> > +
+> 
+> One thing to note, is the crop for binning modes.
+> 
+> Do you need to report
+> 
+>     mode->crop.width / mode->hbin_ratio
+>     mode->crop.height / mode->vbin_ratio
+> 
+> for those modes?
 
-Damn... I mean it means a userspace thread is basically stuck forever,
-but that's not our problem. Yes this is annoying.
+Good point. I was naively assuming that it has the same semantics as we
+use for ScalerCrop in libcamera where it is explicitly stated that the
+coordinates are in sensor pixels without binning. That has the added
+advantage that we can deduce the binning factor from TGT_CROP and the
+actual output size. However I couldn't find a precise specification for
+that in the linux docs. 
 
-The whole requeue on lookup and hb->waiters thing looks simple enough,
-but this is a bit annoying. I can probably make it work though,
-however..
+Maybe Sakari or Laurent have a definiteve answer there?
 
-> I really want to start simple and let the process' futex usage come to a
-> grinding halt when the resizing and rehashing takes place.
+Best regards,
+Stefan
 
-Fair enough. Lets do the simple thing first.
-
-> I really want to know who thought that futexes are a good idea to begin
-> with. Once we figured that out I need to find those who added all the
-> other complexity on top of that bad idea :)
-
-If memory serves me, it was some tall German dude that did most of that.
+> 
+> >   	return 0;
+> >   }
+> 
 
