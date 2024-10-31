@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-391308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3C59B84FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:10:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018209B8501
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C567E2833A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:10:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79180B213E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE631E0E03;
-	Thu, 31 Oct 2024 21:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC33E1CCEF8;
+	Thu, 31 Oct 2024 21:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPXjVi3g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B2LUiHxs"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0F31D131E;
-	Thu, 31 Oct 2024 21:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAD41C2DA4;
+	Thu, 31 Oct 2024 21:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408996; cv=none; b=UUTScjeb8scG7VEMpKlSvKg6LMWhEbzE2+G7xMauiyEYJl6X3O7Doa4/42baZvW/WZDP50tcVdWc4DPQhie8DWe3QJl8p7uHUJHw/9yZnKAG7b7Gh4/3Op0bF41E2/F0PGxw8li9QZuf/Vz8MXCt/d1Qrkqnv7itH4RR7tpz6ig=
+	t=1730409097; cv=none; b=IlwodQ0aMilOa+/lITvvBk+KUXyQxz1uqDm2vckk8YMgcmyiOW3Jno4H5Mg4NOlDdTU0t3hgc7vYd8XZpz/OiUFNr663hSjPlJSLmhwVf5IdpJZZZRGim24KrxyeI6xJn31lEDbOyt1FRHrKE4grdkoYGTSBGBCRFe0nHxWYwJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408996; c=relaxed/simple;
-	bh=aa+8Ty0bzdDp3GnvBMFsb/72+qrBl2HEaLiCKUzVr9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PxeN+hOHHofXEFl5Pkpa5VvoqymfH3dHuvfINu4WFxEJxXArDLoVNvpDxqUTcZiJFvxsQ8UVMPtsbl+Cvlft4Mp8qUSxFZC3VaXK344HIeTWsBt4ViiauIlAjkDKy8Kjb+AIPjhdpowsn559CyVebALrr2/JH6f8tdMVaB/4ccI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPXjVi3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 079B2C4CEC3;
-	Thu, 31 Oct 2024 21:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730408996;
-	bh=aa+8Ty0bzdDp3GnvBMFsb/72+qrBl2HEaLiCKUzVr9s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iPXjVi3g+TFRX4AgT+3dtWGZhUpkcUOXHMkv8+7QA0GuyC2X/+H9Dus4Sff3lkNfr
-	 ATHbTF48HMmm2wsXFQERU21dhyvVhzq7gg1YFIxNOxH6RUpjJ4d4o1UDkPxAFtRCvE
-	 5V0gvZLYxGfAMmUFJs/AoMx5fUTqJ2yXYIr0uGSMrO6x7cLSFAogsBfzmwdYmdFRWo
-	 TJSsXDm+GLIDnShumoeUOsp+xQkV2Jpm1F/+KNhWps/db6/Lz8lJcVBsUBltBMP8FR
-	 yRWY5xY4E3jgwzgHyTkJP4FbCmZsWvhUlyH0YI8DsFDj5KwdSkT2cLFbFTwh1zoOvN
-	 yfguitZWq9Frw==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	rostedt@goodmis.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@kernel.org
-Cc: mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org,
-	mhiramat@kernel.org,
-	peterz@infradead.org,
-	paulmck@kernel.org,
-	jrife@google.com,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH trace/for-next 3/3] bpf: ensure RCU Tasks Trace GP for sleepable raw tracepoint BPF links
-Date: Thu, 31 Oct 2024 14:09:38 -0700
-Message-ID: <20241031210938.1696639-3-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241031210938.1696639-1-andrii@kernel.org>
-References: <20241031210938.1696639-1-andrii@kernel.org>
+	s=arc-20240116; t=1730409097; c=relaxed/simple;
+	bh=zJycXNzwaNgn4ci0EBST+oGnYoZHWasgXjEBU4OI52U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXaGJphmMeAttyS+QRrXBdIoPz6D5fRjJx7f+oydpmuuxSVDgiw6jmlP4gFwqwrv1pEAhlh5PeTGm9VqNU5w9NW3+VJ4c3g/g8ne7f0LAwxMG+nOrZbKljHF3UYueE1fS0dGkw7lqz5v63ut+rX1xFBTj2MJs4q/jac0bIjX5xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B2LUiHxs; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YCTs6BqS9ZgBaULSmac4Uouh4bUhMEp9TLAj0m9+Ols=; b=B2LUiHxsZ25aru8BQuH2hExiJN
+	YfqxN2Eyx9ZT12xG0bY8PpP05aEdiIx7ZAcRlNRUQ3Be0Mcmbf1Rx73lacVU4hIHsrePB0GCtp7MV
+	XgRAWTlVkC3d4mlT6drBC/n+P/1aR8UwMZa7ir0J2HoqinO9PT4AM9pI9j6E6L5xMLvU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t6cRq-00BotB-Pk; Thu, 31 Oct 2024 22:11:18 +0100
+Date: Thu, 31 Oct 2024 22:11:18 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v2 03/18] net: pse-pd: tps23881: Use helpers
+ to calculate bit offset for a channel
+Message-ID: <0e9ecb5a-3a6a-4b99-8177-1532134e3e25@lunn.ch>
+References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
+ <20241030-feature_poe_port_prio-v2-3-9559622ee47a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030-feature_poe_port_prio-v2-3-9559622ee47a@bootlin.com>
 
-Now that kernel supports sleepable tracepoints, the fact that
-bpf_probe_unregister() is asynchronous, i.e., that it doesn't wait for
-any in-flight tracepoints to conclude before returning, we now need to
-delay BPF raw tp link's deallocation and bpf_prog_put() of its
-underlying BPF program (regardless of program's own sleepable semantics)
-until after full RCU Tasks Trace GP. With that GP over, we'll have
-a guarantee that no tracepoint can reach BPF link and thus its BPF program.
+> +	val = tps23881_set_val(ret, chan, 0, BIT(chan % 4), BIT(chan % 4));
+> +		val = tps23881_set_val(val, chan, 0, BIT(chan % 4),
+> +				       BIT(chan % 4));
+> +	val = tps23881_set_val(ret, chan, 4, BIT(chan % 4), BIT(chan % 4));
+> +		val = tps23881_set_val(val, chan, 4, BIT(chan % 4),
+> +				       BIT(chan % 4));
+> +	val = tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
+> +		val = tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
+> +	val = tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
+> +	val = tps23881_calc_val(ret, chan, 4, BIT(chan % 4));
+> +		val = tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
+> +		val = tps23881_calc_val(ret, chan, 4, BIT(chan % 4));
 
-We use newly added tracepoint_is_faultable() check to know when this RCU
-Tasks Trace GP is necessary and utilize BPF link's own sleepable flag
-passed through bpf_link_init_sleepable() initializer.
+It looks like all the callers of this helper pass BIT(chan % 4) as the
+last parameter. Maybe move that into the helper as well?
 
-Reported-by: Jordan Rife <jrife@google.com>
-Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to handle page faults")
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- kernel/bpf/syscall.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 0f5540627911..db2a987504b2 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -35,6 +35,7 @@
- #include <linux/rcupdate_trace.h>
- #include <linux/memcontrol.h>
- #include <linux/trace_events.h>
-+#include <linux/tracepoint.h>
- 
- #include <net/netfilter/nf_bpf_link.h>
- #include <net/netkit.h>
-@@ -3845,8 +3846,9 @@ static int bpf_raw_tp_link_attach(struct bpf_prog *prog,
- 		err = -ENOMEM;
- 		goto out_put_btp;
- 	}
--	bpf_link_init(&link->link, BPF_LINK_TYPE_RAW_TRACEPOINT,
--		      &bpf_raw_tp_link_lops, prog);
-+	bpf_link_init_sleepable(&link->link, BPF_LINK_TYPE_RAW_TRACEPOINT,
-+				&bpf_raw_tp_link_lops, prog,
-+				tracepoint_is_faultable(btp->tp));
- 	link->btp = btp;
- 	link->cookie = cookie;
- 
--- 
-2.43.5
-
+     Andrew
 
