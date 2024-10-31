@@ -1,90 +1,128 @@
-Return-Path: <linux-kernel+bounces-390166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D339B765C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:25:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47239B7661
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:25:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4A728102D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D595E1C21391
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EBF153836;
-	Thu, 31 Oct 2024 08:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EED16132F;
+	Thu, 31 Oct 2024 08:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="GRXKztcz"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXcy5aH5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC092148832;
-	Thu, 31 Oct 2024 08:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7541547E3;
+	Thu, 31 Oct 2024 08:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730363099; cv=none; b=TuCc8vcIZCyFB5sLw5crA/IZpSSMp6pFWYZl9Gd40ICtCS19kqSU6V0T868yT8OUH4ebfVhH3vpjM+bkZLcFL/yOejQHaapwSWSbpLzmNUX34jWBYxY2/wdx3g/oUdkRF5BvNGqDxD4sp5vawEjVCvchRkyCd71jRsuAyZ4kYUs=
+	t=1730363100; cv=none; b=WdA/jTENq3M1UzgUYKBDjYcmA1O5hzVlgmkNkgMGe6OQ5+WUQWbobJ02nmWh7WwB5RadtfatwlqUFAjcL3kMH+mHtFgYh4y+pXtbXfcag9YMy1jcx/AgCWDBDOfn6lX+kgwpiQCIavmLuKvDs/mwWG6hMzjCZhkoLOfBeouc3Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730363099; c=relaxed/simple;
-	bh=2085cZKK6NaG0KrwCVHxh820iAnqFr3Y1AcKVVhLgkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ADoEOXRQkYa88N6E7gVVMRCIbhVCoa09lYj3b2JlboWpiJlcMhgTxERgjOxM1y+r0LB1GiLoqeuTBxCQmzvvyCyqkXRs3ttgUXpfWOg5DQKSiGFsfH/6Q8enoFWV6EAaybnLvgUbE2UfkMYLxAgt8vuqpHKszOoKbjb5P1M3NYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=GRXKztcz; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=6fYt6Ir4IwWERhFI8y9nZlCwwzecjaJidhXVGcwCvWU=; b=GRXKztczpc2nfDqLML9r55eXzN
-	skITUHmY4UpkyXHopvjrM/mJWs+las4ozm2fsXQLPE6XjG8kdlYZH1EXmj7OsBCsLpNoSUIYybD92
-	qf+VV9PNh9oiDWjTo6OeyhTvJras5kzr4+XgkUYKYanLlbMXOQ9pH9pqL3gYvlK2wSM538IRCLbeJ
-	yFjkHkR4nzpEctZANHHkRrg83QDQTmKEv2VXb7qxX1OQlOmuH1W5zsukxdLBuDn+5QX5H71iusLVk
-	zo5BYl9rJe62L343dl+9PkfI+Az47vbJ+7uzrmh4nKsFDcxRzBskd0DssxQWc7N7qZ2nsAaOGKpAu
-	5WHHVfgA==;
-Date: Thu, 31 Oct 2024 09:24:48 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mithil Bavishi <bavishimithil@gmail.com>, Aaro Koskinen
- <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>, Roger Quadros
- <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-omap@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] dt-bindings: omap: Add Samaung Galaxy Tab 2 7.0
-Message-ID: <20241031092448.174402c3@akair>
-In-Reply-To: <46rktrrcnpl53nt3o7qe24cd4wp3cjq2v4sbno5oxdrgyazzfj@uqr5kt7pm2x5>
-References: <20241030211847.413-1-bavishimithil@gmail.com>
-	<46rktrrcnpl53nt3o7qe24cd4wp3cjq2v4sbno5oxdrgyazzfj@uqr5kt7pm2x5>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730363100; c=relaxed/simple;
+	bh=Y2VeVrh7q8W6feFZvrcIbYqCZQdMbSAUHcDW1rUmOo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=csjdh8+Eil9ISLLFSCCyIo5qGfQl5hF6l+8NPnSNSEuHT3TYRb7iK/VW//uHQiRPdoGH+AjuOERq8M5WIv0S2ZDVEzDTOZnXTjKpoTFM9wTJJofvpfmdxNkKt+0JpFU0kio9YuBbCU27wRSYRmnnhTdoXFEUyRdbSmzEv8ahBm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXcy5aH5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1287AC4CEC3;
+	Thu, 31 Oct 2024 08:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730363100;
+	bh=Y2VeVrh7q8W6feFZvrcIbYqCZQdMbSAUHcDW1rUmOo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KXcy5aH5rjgmfnqJd6wcDTOnZV3NO3SLtyNb91xL83l3uPYr27/anqNaqR7Xu4LT8
+	 0WM3wmR4WnlYQkR/kX9dDuug5TVk/bIN5RDs+Sz/H2zYhji3pGpYqtwhPIc0lrlhIK
+	 A7kVHV/VlPdBgmFMgtLuYtq2bekO9gpmhmc/U3iBHK7B7EjsslhC0/Znq8mlGmQmIV
+	 qhmZTprP2X4pc5Fj/pSjrAP9CKcEqTv3gjI79liYTEc5747qoklgP8G1128B+ie6qE
+	 uuBDmbnecVkcvBodHqkx/cxVpk+qIUHsLkVy+pb7W983S8Y8jV0yoOGK24RGTJzfE+
+	 AO9CGbbb3Aczw==
+Date: Thu, 31 Oct 2024 09:24:56 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH v2 06/15] dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
+ bindings
+Message-ID: <rjfaxoxy5oko22ute6ttgtnm5oawudw5z2ykcrjztpajjnz5zk@gaapriqclxyw>
+References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org>
+ <20241031-msm8917-v2-6-8a075faa89b1@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241031-msm8917-v2-6-8a075faa89b1@mainlining.org>
 
-Am Thu, 31 Oct 2024 09:18:49 +0100
-schrieb Krzysztof Kozlowski <krzk@kernel.org>:
+On Thu, Oct 31, 2024 at 02:19:47AM +0100, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wr=
+ote:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  gpio-reserved-ranges: true
 
-> On Wed, Oct 30, 2024 at 09:18:43PM +0000, Mithil Bavishi wrote:
-> > Add samsung-espresso7 codename for the 7 inch variant
-> > 
-> > Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/arm/ti/omap.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >  
-> 
-> This is v2, so where is the changelog? Same for all other patches. No
-> cover letter, no changelogs in patches.
-> 
-The cover letter including changelog is here:
-https://lore.kernel.org/linux-omap/20241030211215.347710-1-bavishimithil@gmail.com/T/#t
+minItems: 1
+maxItems: 66
 
-seems like it was ripped apart somehow.
+No gpio-line-names allowed?
 
-Regards,
-Andreas
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/qcom-msm8917-tlmm-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/qcom-msm8917-tlmm-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  qcom-msm8917-tlmm-state:
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configu=
+ration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          oneOf:
+> +            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-3][0-9]|14[01])$"
+
+You have 134 GPIOs, not 142.
+
+> +            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk, sdc2_clk,
+> +                      sdc2_cmd, sdc2_data, qdsd_clk, qdsd_cmd, qdsd_data=
+0,
+> +                      qdsd_data1, qdsd_data2, qdsd_data3 ]
+> +        minItems: 1
+> +        maxItems: 16
+
+Best regards,
+Krzysztof
+
 
