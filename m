@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-390792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D230E9B7E8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:32:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C099B7E91
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:32:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE1B1F2166A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:32:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90DA5B21EE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47911BB6BC;
-	Thu, 31 Oct 2024 15:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A993F1A263F;
+	Thu, 31 Oct 2024 15:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hoeUYX/C"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g3TCnlZo"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC93137747
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16531A2872
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388707; cv=none; b=jCkDLkU8FCR9FpDg8P9dWJSCX8YufX3Y0OghlYbQEbWIVDYaZ52gD3W6kAfCFJheecr8F0VfbHLBKDdYKlLOfAXj1Th2VA+JmhtiwrNdtX58LushF2gMg9hmRQFlCx4x5+4yYl6Evn/o97GN+aUnxmRijVT7UVmuqGCeRri/Jdw=
+	t=1730388715; cv=none; b=gHxSF4Tn18Zf/mAmN1kxUrrg+3yUZHi/hyLRuv6lr/HuCCEuplSeD7WrOzKkcCt77pJ/ERM9BA+3cOYxMPpu3UiUIFTjMu8Ing0DL6Ja1yinSfrwFBjW29BQwNxTJFiqaTvQYW09LBiL6zxCX1ZwcD1WNEXSLtuuYRnZFWoEYOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730388707; c=relaxed/simple;
-	bh=CLn75NGygwynyS5wWXARtZWyikh4gsjLmayNvmdQzRQ=;
+	s=arc-20240116; t=1730388715; c=relaxed/simple;
+	bh=kKdz1fUu1s/fMJEdwaAtVgGUNN/sK5LY8qFij3jZWW8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFxOxNRlbyevkDi8/JYIMWbL035od5Ti3V8XBj2OIweCujbdBdItS8UfOc/jDCBKopzKpi+vWauWrqH8nQ9MTRk2ARnoy/eVjHglK8qR6+jCS4RmdSx1GUL8TzjpVHbkLHXLrSKMj/deB6VrKMmCj15Yf7Te3b1BWSRJiDC8M2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hoeUYX/C; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso688197f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730388702; x=1730993502; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SYbrKwbw3BAA3+t49U7pyQ6oV5144cNwkG87g9CyP+o=;
-        b=hoeUYX/CsnGkgCMJn19/d99NVFe7MqyO4wpAi55Iby+REaNsDi+jRWh3dOVvRYM4L5
-         lA//6bQpY0OYRdEvve0fk0FCcSD6xr2YkLLN664zOAUZGz+YTar3iM0zx3I+99F4fV/r
-         BvsYNA7lVyTnHFGJypIuDTgjhAFxo9F21wMM0e8FgZ17VpcqU28mQeFPy+pnqD08Cd/z
-         tRrVXhHrlCLzllZAVr+hicmmB/jzLrHTMAjLz96acwUxT3bqzOoC0WbUyhlkPEpz/Y20
-         2VlzVdvwHLnWXet8wiM8jPCjmxJbyblgeKZu9JyhMslLxgS237FekXqpGskYuaB20RSP
-         W6Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730388702; x=1730993502;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SYbrKwbw3BAA3+t49U7pyQ6oV5144cNwkG87g9CyP+o=;
-        b=laNn7ZrNeQcbN7pN3qoSb8V2kFZiJKyXfdh3a6N9/YXGIP5N732olODTCxyhNPujzg
-         vbo5sYOOxh4JPqWaHy8TUcKVP+5ASa//U2efl7f79wblcfGXFXjoDzMmpUQFMyCoB+05
-         7XpsYrri+hZOr3bEm519dkzkbpGd1XGwfmCfxUVIji1SEiTXXFi6nOG9ROT2JZ9Yu/CG
-         hI8i6F3++EL/OznFRK2EmbWev883zF7JVbbmgbzG7x1/2PNxnDiHdyq2CXXLJHfKTLdk
-         33480XXvmPjhoLaSLCPo28O4MnxTuz/3yXpJQibFQjEHYpSfHSpUbUSwaPzRw6IZKLOZ
-         YzWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW07frrSY8beKX+i1mKV8urppIg8sra3/6miGQwU2VPh1bBsf8ZRvU3JeEtx69QlH4Xzit6ntwsSmj4tJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFHglbVcX/MXe8nshZAR6NW1Rj1l5pGerTfOjqJavpUXi6EIr7
-	iOeFn159W26mIhvnh2EdEyK9zfO9xoAtGXbyq1iNgtrmdenn63YtOqtgK6akRL4=
-X-Google-Smtp-Source: AGHT+IHq4BAfihy45utt2HuZFBKUWEdxRO+WgQHNsFD7CYtEQlEJVW+AsKh3p9Kl295OkYT0fhfpzg==
-X-Received: by 2002:a5d:49c2:0:b0:37d:39c1:4d3 with SMTP id ffacd0b85a97d-380610f2ea6mr15001892f8f.6.1730388702331;
-        Thu, 31 Oct 2024 08:31:42 -0700 (PDT)
-Received: from [192.168.0.157] ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4a46sm2481206f8f.41.2024.10.31.08.31.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 08:31:41 -0700 (PDT)
-Message-ID: <9a2c9541-8b88-43af-84a9-7b39d3251ac6@linaro.org>
-Date: Thu, 31 Oct 2024 15:31:38 +0000
+	 In-Reply-To:Content-Type; b=tc1uazkNOSm1N0aEXdIynhqs7VeH6GRd1ec7Fnj9SWi4lYCR7ZGTYAmpqB4jR8Uxnt30XsuH8oIrtoonFB93jrS481E3rysOK4FqowMT9S/FXzKcNWuUYa4mzNnp67nPeInHZs9SEgKzADIA6d9JSxuxYw+Vovnw/7JSKGhGBhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g3TCnlZo; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <664a1251-203d-4d29-86c4-6edd36c23eb9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730388710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1FsbTOlKbKVtI/UbvwBD7+VePpEQEZip+EtLwmeq1hc=;
+	b=g3TCnlZooYIDOinnZd6O2mliVhJVxCI4EWURNoQ5SGuegjVoMZka6XQCMwC2VcreiTLoSY
+	eKw6S5DC7gG6/cOqbaMg/J77oLm0vCF3h59a+2MNz0fRnrk7nVaSayVvXfKy1mZFGA99pq
+	rbDWupTLmeS5G5KTPttnp5qQ+7mK8/A=
+Date: Thu, 31 Oct 2024 23:31:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/14] scsi: ufs: exynos: Add
- EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR check
-To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
-Cc: ebiggers@kernel.org, andre.draszik@linaro.org, kernel-team@android.com,
- willmcvicker@google.com, linux-scsi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241031150033.3440894-1-peter.griffin@linaro.org>
- <20241031150033.3440894-7-peter.griffin@linaro.org>
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+To: Johan Hovold <johan@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Abel Vesa <abel.vesa@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
+ <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+ <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+ <ZyOOEGsnjYreKQN8@hovoldconsulting.com>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241031150033.3440894-7-peter.griffin@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <ZyOOEGsnjYreKQN8@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+
+Hi,
+
+On 2024/10/31 22:02, Johan Hovold wrote:
+> On Thu, Oct 31, 2024 at 01:31:47PM +0100, Neil Armstrong wrote:
+>> On 30/10/2024 15:49, Sui Jingfeng wrote:
+>>> On 2024/10/21 21:08, Neil Armstrong wrote:
+>>>> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
+>>>>> The assignment of the of_node to the aux bridge needs to mark the
+>>>>> of_node as reused as well, otherwise resource providers like pinctrl will
+>>>>> report a gpio as already requested by a different device when both pinconf
+>>>>> and gpios property are present.
+>>>>> Fix that by using the device_set_of_node_from_dev() helper instead.
+>>>>>
+>>>>>
+>>>>> [...]
+>>>> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
+>>>
+>>> It's quite impolite to force push patches that still under reviewing,
+>>> this prevent us to know what exactly its solves.
+>> It's quite explicit.
+> It's still disrespectful and prevents reviewers' work from being
+> acknowledged as I told you off-list when you picked up the patch.
+>
+> You said it would not happen again, and I had better things to do so I
+> let this one pass, but now it seems you insist that you did nothing
+> wrong here.
+>
+> We do development in public and we should have had that discussion in
+> public, if only so that no one thinks I'm ok with this.
 
 
+Yeah, extremely correct, Johan!
 
-On 10/31/24 3:00 PM, Peter Griffin wrote:
-> The values calculated in exynos_ufs_specify_phy_time_attr() are only
-> used in exynos_ufs_config_phy_time_attr() which is only called if the
-> EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR flag is not set.
-> 
-> Add a check for this flag to exynos_ufs_specify_phy_time_attr() and
-> return for platforms that don't set it.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+While I am really don't know why a child device have to
+share the referencing of the OF device node with its parent device?
+Is possible to pass a child device node via the platform data to reference?
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+I means that, in DT systems, the child device can easily
+have(find) its own device node to attached.
+I'm imagining that it probably should be belong to the USB
+connector device node or something like that.
 
-> ---
-> v3: update commit message (Tudor)
-> ---
->  drivers/ufs/host/ufs-exynos.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-> index 2c2fed691b95..0ac940690a15 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -541,6 +541,9 @@ static void exynos_ufs_specify_phy_time_attr(struct exynos_ufs *ufs)
->  	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
->  	struct ufs_phy_time_cfg *t_cfg = &ufs->t_cfg;
->  
-> +	if (ufs->opts & EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR)
-> +		return;
-> +
->  	t_cfg->tx_linereset_p =
->  		exynos_ufs_calc_time_cntr(ufs, attr->tx_dif_p_nsec);
->  	t_cfg->tx_linereset_n =
+Sorry, I'm confused. I understand that you also might be busy.
+I think I probably should go back alone to think for a while.
+
+
+> Johan
+
+-- 
+Best regards,
+Sui
+
 
