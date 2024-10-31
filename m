@@ -1,106 +1,145 @@
-Return-Path: <linux-kernel+bounces-391154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B005F9B8345
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:22:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D09B834A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18E41C20895
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5856CB22F62
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562EB1CBE84;
-	Thu, 31 Oct 2024 19:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374401CB335;
+	Thu, 31 Oct 2024 19:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/rEIjVU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IkLuRVtH"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2861CB339;
-	Thu, 31 Oct 2024 19:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF351CB32B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402527; cv=none; b=jdq8cWXjvRs9gARb/Os3YjqE+v3kH7/woXF85abtoLfqBSrxV2pnOkbWcFD4j1Jbhg5vawlAQowX7XWjV7v3rEZd0w2QjoZC0VwCfu2Bo9mQ8fNUsGLeDwRJOO+Hkge5KU5gcV0WcI9wOt1iI3D5dlj1TrMoKZKY5YtKeZRzOM0=
+	t=1730402554; cv=none; b=Csb9PbBHfiCvQposIaQhidNC23jCEID8aZ9Nio+Zq9YV9Tfy5UY+5pqm14iM2dbLR7Red4GA7iPxRQcwpTmLyL3xWQlunCk9iGu6N7/vHIfRNZ3UPtL3BKNd5N9ek4If9/yRxBflkXeN4vTQVbkYgGgaADa6fVfhxhsiWBQzCek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402527; c=relaxed/simple;
-	bh=NQExuNwmSmnXRwubYNqVJYHcQFwZjkDDNWdIBUCeMCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AngPJzhFsSeC+lYHhQEAD/YIpU9h577ZfxuY3aLSgNVEPbhbJU1h9VuYdCKI0IJVwTeN+BGUMF2Wicbo0ZSI5wbOkkgn0DPG+KBRaXNWw537dnkcOKe1XHkVecJp51zkru1do/bRlAu1sd6QKwS4mzHXGtg1W2tIMKP80un+Qp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/rEIjVU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E470CC4CEC3;
-	Thu, 31 Oct 2024 19:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730402527;
-	bh=NQExuNwmSmnXRwubYNqVJYHcQFwZjkDDNWdIBUCeMCA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F/rEIjVUGk4yDusxok4rBAzll+GAHu1NW97ceZQmsC2p/XP9sr71iBcwY4OIlxWSb
-	 4PYx+BFRntiOpNKLjinj5i/tz84ZNp6EYV4dM0MdrolulKkFhG0+8JLnuYZMX041IJ
-	 ewVlmv4dl+v7cpnBQqRDgf7uBiixX35ClkJU1zfjNO/2OGSKdGMUQeXLu4ACZMBI6w
-	 x3MkNgXpztahPSTeJwssquBK6ZGPfRBJlKR5apeRUftPtvrHIlUkSR+SmXfckjA7ee
-	 qqKrQz/azcyMKfi14o/Y3L7FCPUkU4vdp+HKyiAKW2XIcxLNHTAQ01TMp2AuibLir8
-	 dR9hlLVMJuGpg==
-Date: Thu, 31 Oct 2024 19:22:00 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: dan.carpenter@linaro.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] iio: chemical: bme680: use s16 variable for temp
- value to avoid casting
-Message-ID: <20241031192200.649a0ea1@jic23-huawei>
-In-Reply-To: <20241030235424.214935-2-vassilisamir@gmail.com>
-References: <20241030235424.214935-1-vassilisamir@gmail.com>
-	<20241030235424.214935-2-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730402554; c=relaxed/simple;
+	bh=USu9utoOUDjF9pGXsZgvak+zLkm8GncKJ4y8O8eezOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aLE9ghuhdOKUTpZdXKTP+u55qvRn7AmG9n0KhSCdo/9GhPyXsYDoH+FI4yAB4EaBIOyTc9Fhgq/sHAFxpNUa6Xg1ZZW1rWh7Fzx0xQVriZ+kqsCTMYHtKOjunq7GRR08H5JyXcTYzKHUpeA5UMb2BMxgS2aOdAUg2VLtLsq6DRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IkLuRVtH; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83ac05206c9so46647239f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1730402551; x=1731007351; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eAP/bAcV3XycEinBatq5XdsCa8IJPkmp6YdIv9sxUp4=;
+        b=IkLuRVtHhkoyRrL4Hou51z+ny3ihZ7h38Pr+w206N02350y7BRy618Fk5geKdIqUbc
+         LpJRx9BFxA5nX6nDwxMj5xyDlD6SkxKnvd+q4NEqNPhh5wSZPC0+gLMTeYGdg73Kon42
+         WysP4KKJBmMj9VRXqZ3zysgV8Ad08cC26s4A8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730402551; x=1731007351;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAP/bAcV3XycEinBatq5XdsCa8IJPkmp6YdIv9sxUp4=;
+        b=QZtzsu+O0RPzOw9DTxiQ7LxOidbfbatQIlbBnxJfZmXJftBVjMa3d3LDuxzhKPu1uK
+         hL4mFggwoI+VIIrOecwo+SEkbewt765fuycrR04nEqqw+C/qmefzcFwTAnlR9SlUCrZp
+         i3TwiuyBnO/GLIaPXDUO+we5b5vXsOSJq+cq9XPFqjToXmtpg9C0EeZ8NgE3R6+sUXlV
+         D2PMfP5zyS/bgX1FoK5kPX7DDFsxH3U19OoLqjuLg0a0ykHAFTYxLC3bMrI4FcU7cACa
+         tMkL2usHoXU++wq/oZVgr7jfaIgF2RLP/EqnlIsAB1fAAPvrYy8sp9ti78P6O3wQvRAb
+         Whtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXri9nMfve+i+rteNfApS7GcLq+dNm85MxrM9MnspOTa30jhpwFXaR2/QBGbrQlIQPt3eUAIso2lX8Uyyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFlJSak3AJ1pHjCFdcofnz1cK01ho+/y879PHvxnWURnUhwha9
+	jM44rQ+F4Wq2CWH9yUGPLKxs/bXfkC8SHgwIBk4a/XwSjYU96G8KP8dwX2FLcExKlerEbgP3dbH
+	v
+X-Google-Smtp-Source: AGHT+IGHYwu7LubJxPhGnVJYDPgVe7Q8KaU4aEUk4n8hC7hyzO6sNgIWfF8p8HCYVRIjvyvx62mx6A==
+X-Received: by 2002:a05:6602:1508:b0:83a:b33a:5e08 with SMTP id ca18e2360f4ac-83b719f3db1mr102629339f.10.1730402551341;
+        Thu, 31 Oct 2024 12:22:31 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de04977a96sm399294173.110.2024.10.31.12.22.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 12:22:30 -0700 (PDT)
+Message-ID: <3f71da6a-ab96-42c6-9c61-c73f2b6dceb0@linuxfoundation.org>
+Date: Thu, 31 Oct 2024 13:22:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+To: Thorsten Leemhuis <linux@leemhuis.info>, Mark Brown <broonie@kernel.org>
+Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <6dbbc85e-5a87-4605-8db6-92b191878d97@sirena.org.uk>
+ <bae547a8-0a16-4173-9aa3-5c31e0a0b1e1@leemhuis.info>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <bae547a8-0a16-4173-9aa3-5c31e0a0b1e1@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 31 Oct 2024 00:54:24 +0100
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-
-> Use local s16 variable for the temperature channel to avoid casting it
-> later before passing it to the bme680_read_temp() function. This way,
-> possible endianness and initialization issues are avoided.
+On 10/22/24 03:10, Thorsten Leemhuis wrote:
+> On 21.10.24 23:41, Mark Brown wrote:
+>> On Mon, Oct 21, 2024 at 12:07:13PM -0400, Sasha Levin wrote:
+>>
+>>> In an attempt to address the concerns, we're trying out a new "linus-next"
+>>> tree is being created and maintained with the following characteristics:
 > 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> BTW, in case anyone cares: I fully agree with what Kees wrote earlier
+> today elsewhere in this thread, e.g. things like "improve -next instead"
+> and "pre-merge bot":
+> http://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E%40kernel.org\
 
-Applied.
+I am catching up on this thread. I agree with Kees and others on improve
+next instead. Adding one more next-like-thing will add to the confusion.
 
-> ---
->  drivers/iio/chemical/bme680_core.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> index 871921d81e70..6d11f9188367 100644
-> --- a/drivers/iio/chemical/bme680_core.c
-> +++ b/drivers/iio/chemical/bme680_core.c
-> @@ -741,6 +741,7 @@ static int bme680_read_raw(struct iio_dev *indio_dev,
->  {
->  	struct bme680_data *data = iio_priv(indio_dev);
->  	int chan_val, ret;
-> +	s16 temp_chan_val;
->  
->  	guard(mutex)(&data->lock);
->  
-> @@ -757,11 +758,11 @@ static int bme680_read_raw(struct iio_dev *indio_dev,
->  	case IIO_CHAN_INFO_PROCESSED:
->  		switch (chan->type) {
->  		case IIO_TEMP:
-> -			ret = bme680_read_temp(data, (s16 *)&chan_val);
-> +			ret = bme680_read_temp(data, &temp_chan_val);
->  			if (ret)
->  				return ret;
->  
-> -			*val = chan_val * 10;
-> +			*val = temp_chan_val * 10;
->  			return IIO_VAL_INT;
->  		case IIO_PRESSURE:
->  			ret = bme680_read_press(data, &chan_val);
+> Regarding that bot: a few of the CI folks and a developer or two told me
+> they want regzbot to react to PRs for Linus as well, so it can send
+> mails like "hey Linus, just so you know, this PR contains changes that
+> cause the following regressions not yet fixed". I think I like the idea,
+> but well, quite a few other improvements around regzbot and its use have
+> a much higher priority currently.
+> 
+>>> 	4. Continuous tree (not daily tags like in linux-next),
+>>> 	facilitating easier bisection
+>>
+>> Is this a pressing problem?  I routinely bisect -next, you have to base
+>> things on Linus' tree (or pending-fixes) but otherwise it's not
+>> especially problematic.
+> 
+> I wonder if part of this is a "don't know how to do that" aka "lack of
+> documentation" problem. I've recently seen some good guide or mailing
+> list post how to bisect -next somewhere, but I think it wasn't in our
+> Documentation/ directory. I need to search where that was (Mark, I might
+> misremember, but wasn't it you who posted it somewhere?) and could work
+> towards upstreaming that or some other guide. And don't worry, due to
+> the different target audience it would be much shorter text than other
+> documents I contributed. ;-)
+> 
+
+Documentation could help. Tailoring the workflow to linux-next could help.
+All my branches are in linux-next. I don't send my PRs without keeping
+the content in linux-next for 3 days to week after rc1 - it is usually
+longer for merge-window content.
+
+This helps me find conflicts if any between all the tree selftest go
+through and mine. It helps work out conflicts in linux-next prior to
+sending pull request.
+
+My vote is for improving next instead of re-inventing next-like-thing.
+
+thanks,
+-- Shuah
 
 
