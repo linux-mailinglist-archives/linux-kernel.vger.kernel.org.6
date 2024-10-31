@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-389850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F293B9B7224
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:46:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF969B7225
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC741C21B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC061F21429
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670B6146599;
-	Thu, 31 Oct 2024 01:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7F71482E3;
+	Thu, 31 Oct 2024 01:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uZalzd1W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZXrYtOr2"
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07155142E67
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4AD142E9F
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730339026; cv=none; b=dfCKy5mkQCuwK6fCUu6/+4xWHBJSYmPtxXzqk7rS9FQTlQvoGGtplvYAXBh0QMfY2epbJv8unLsHAJdvImj+C9Y/f8XYkqNoIkiWbY3FE8+AFRO/VSgPYkCnz3P8HteAKz2VSKYYuw/1IYd7SxCbxO1wrAEYatbtleglD/m3Ysk=
+	t=1730339029; cv=none; b=hw3B/dp1jvoVk8zsAApuIDel39asKZUZttYDVVcxFuNNYHHi2KobTmilB50HHhxAQRgRWhMbdiaOze287W0wNlRKrIRfxUlD8yRiMxi9eGMMHGFcX2XCEMbLPC/y5rJQdhA9UVZuiCq3uhOoV7SZqrWNytRPpyzS4bO7Cv3Y7gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730339026; c=relaxed/simple;
-	bh=DLQSr6SnK+8kn/RmCu+SnzxGcgCWeuDWyrx6+bcBl+s=;
+	s=arc-20240116; t=1730339029; c=relaxed/simple;
+	bh=Y7k15MkT30/A8lyrkiuyGM2T9Ad6ytcpFrWreD4e5Yc=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=LA1c0jGjAJxBZvH8dnAqpXQvn7Gu0yk3B/2+vV0CZXJs8o1jvSqnMvswKhhp14cUEHJJ3jdR/DAnxOgbLBR4AWkokqja9Z2A+3QceWNTvr3pDVgtmZ8bi0LdM3mNeOZNVyMYSbz9UApfF4OWR0Rl20LpCjENLAPFfhArn3P+erM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uZalzd1W; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=KEbZb81La+kDdNNMBz5iOzzxlnCLyG/Txg26lxMOr12vH8ipz8WQCV9CRgqPBQZ0aQb4G0L5W8fEtPz2d84mPeWnF1DulwKYnlBeoSQXWLaN5Oej6qNchWO/dDXjFd4ggl+vh9+ogtaJLQgs7U7HHw5Nw1zV0aF4QN+zU1hSt6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZXrYtOr2; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e9e897852fso8707637b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:43:44 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e7fb84f99cso8862267b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730339024; x=1730943824; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730339026; x=1730943826; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5AVgUHfJDItQA9RxyoIMfq8JR0bFjxdZgjCoy85Lj8s=;
-        b=uZalzd1WLyPminW80awrnT6fZCE4DZhhU2wg03xE4GF4iBpHQ6xADO6gg2nQKU1fZO
-         /iDcP9mxiGegnuL1nRf/KH/VQf6z7lVIx8PMspV2qsFnmXjszzIFShQ8cnrF27P/fy8s
-         XfNnAMg3k6FkW7MYdWf/jyvzd5sFcNRudzotcVUim2L+95vM/IlAgoEeUNTsPd5C4L6Q
-         Zg5SQXwt5u2UnkqYeJsCQ3DFBvenbkSq8HGM2E/IDzHXHdebdssuCHJ2MNSTwlnLEVrr
-         GjRy6QKn/5qBr4eUKyLSP6YTFCwq0OJRgzddJXrWaDlyFeD5lRbrnvctfNs2VL2Ytr9Y
-         k+ew==
+        bh=Bgmf/JpaloLQYHqwCvUuDV8PrkKL2cewLYYHkwF5BH4=;
+        b=ZXrYtOr2BfISzNN+dFvLdv2h0EBVztVo/9K09ZQLbGBWct5fHEvwQ9ANMYfuszjBme
+         lp91dtEb3JmQo0p1sCDyIVm+NZm5aBBmIKsaDgc8frT/FQ97inM3nptDvHOBY3unnKyv
+         CWUnUrq8BqcbdNa/qswjAULnvUvwzY7EUWG90OVZ+gXNK6Z3Q5NZLZFReWEGtvw/hjLL
+         suEgNYl36dtmDdwraMyU3aigE+lCRX42xoW4PSmZHgMhFTWjnYaFrbzgpiA+DbcZIt2o
+         3nNSpWi2/jqv4P66m6K5ml7LoGBrSE0yC+xxxPqPiM6HlwnuGt5J8ME+WBD+GMKkdzym
+         Cw5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730339024; x=1730943824;
+        d=1e100.net; s=20230601; t=1730339026; x=1730943826;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5AVgUHfJDItQA9RxyoIMfq8JR0bFjxdZgjCoy85Lj8s=;
-        b=EGe9ktQl265DSMmg9TLKugYCBI+9gliLwn6mDopcIkUThDnkjGUxzHqfzkOTNE/a5Z
-         zSPory039Gf+nY4O/DG2PeQZcRgnORA1dF4+Iu76aVDc4x5fCSQGFiZztH4/b8lhNeij
-         e48j6p2AWeh8lhP1yxdQL3c4M7Acsp4me5yf/uZVieRtySAxsYWdU1kt9Wgln62RVFVO
-         aSbBQIWZrUirt//7CO2im5niWiD4qTFAmyusntnBRF6F0pzE5dEItUB602Y6PRIVLy7y
-         8o0/Tpvjwr8P4zq5pZuqhlK+/8zy80wr3l2Q0uvvmuxAIu8XpNnthMwurmiuKpNxEnJV
-         bALg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJGaJdyCcf+lG4H7J5KNOoDnM3RZmw7Q26acRO9tppyPN8SsxNT5lZd7wU6WGPm7wXSAjBoNqrprDhWU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUhOCiVk9w8S833M9zFyQbbFFm277rAXXu0/CaPvR+jt0Hs+t6
-	dvHzpBECK/5yXkDQTuqJ+yfUjKxdBwWiAPdrLO4Zrh+uEHxhTlFI7rK1Knw8XL7nNVNVR+53cVl
-	J/YCjmw==
-X-Google-Smtp-Source: AGHT+IGWaNJtf4/sIlqPPGJnBicFjuTejugTBGvCf+W6KOXLnebs9Hw1u+rJ+APnqGqmZvtWD0iNxWHEowVb
+        bh=Bgmf/JpaloLQYHqwCvUuDV8PrkKL2cewLYYHkwF5BH4=;
+        b=oafovBwCvhwdSzDZlyZm0yUvjqPtWO7lzHOnWEcSkgPA1gVymvO5IXUeEJfmuf5JW0
+         zvbmrEG0NerSQex3svnCPHKFr5DoWjufeE8C7Gyx44EO7cp3l4liM7MkZU1/2BH/nJlB
+         3yTPkjwXiVaIFlse9wMLlBRUE9zNER/PbRrMBym+4tY6aGi6hn9QHyuhEeFZQiMD5qou
+         ivMNT2RE9f/yPZ14GZyVLhdFIKjM/+Kx9+n46eNR1FqaCbx3pDZ9SheyzJ3ylAP3hID7
+         +J8wZysDEdLZiPZYHvSCNfgi+WF+ADCwl5moOKWU62igVLybAtoFh6rqwLiIr1MQKeNo
+         wQBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWag5Zs6e2z7rfOfn7eCwm7J2fwhn26J8ZbveBDhjAbcztNs1Ws5EMEJvW/YBhUQ0EVBOULl1RndI/gyDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa9T5aJgYkm4I+LVn8brr+9PEveSSEFvVZ02YQOxXxwHuG6Suj
+	l8GCPQ7I1S7fXBbaoO4m/vnfTvC22uoCOcCYv79VY+mABetgWJxjekpUcgFg5i9rZUztoVppob5
+	/N1yvbg==
+X-Google-Smtp-Source: AGHT+IEndKaU9Rg6Vbq1IfTDr5MuubT+9yr9iLYbMbcYGark7QvH+rUTuEDXrJ85fBxDVmbmN1K9W9CyRsAE
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ad0f:67e7:f1a6:84c4])
- (user=irogers job=sendgmr) by 2002:a05:690c:f:b0:6e3:6414:80c5 with SMTP id
- 00721157ae682-6e9d87b4522mr7889527b3.0.1730339024226; Wed, 30 Oct 2024
- 18:43:44 -0700 (PDT)
-Date: Wed, 30 Oct 2024 18:42:43 -0700
+ (user=irogers job=sendgmr) by 2002:a25:2d28:0:b0:e2b:d0e9:1cdc with SMTP id
+ 3f1490d57ef6-e3087c2be5emr93866276.10.1730339026305; Wed, 30 Oct 2024
+ 18:43:46 -0700 (PDT)
+Date: Wed, 30 Oct 2024 18:42:44 -0700
 In-Reply-To: <20241031014252.753588-1-irogers@google.com>
-Message-Id: <20241031014252.753588-13-irogers@google.com>
+Message-Id: <20241031014252.753588-14-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241031014252.753588-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v5 12/21] perf intel-pt: Remove stale build comment
+Subject: [PATCH v5 13/21] perf env: Move arch errno function to only use in env
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,27 +91,99 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Commit 00a263902ac3 ("perf intel-pt: Use shared x86 insn decoder")
-removed the use of diff, so remove stale busybox comment.
+Move arch_syscalls__strerrno_function out of builtin-trace.c to env.c
+so that there isn't a util to builtin function call. This allows the
+python.c stub to be removed. Also, remove declaration/prototype from
+env.h and make static to reduce scope. The include is moved inside
+ifdefs to avoid, "defined but unused warnings".
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/intel-pt-decoder/Build | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/builtin-trace.c                  | 1 -
+ tools/perf/trace/beauty/arch_errno_names.sh | 3 ++-
+ tools/perf/util/env.c                       | 4 ++++
+ tools/perf/util/env.h                       | 2 --
+ tools/perf/util/python.c                    | 6 ------
+ 5 files changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/util/intel-pt-decoder/Build b/tools/perf/util/intel-pt-decoder/Build
-index f99d150059b9..5b8f0149167d 100644
---- a/tools/perf/util/intel-pt-decoder/Build
-+++ b/tools/perf/util/intel-pt-decoder/Build
-@@ -7,8 +7,6 @@ $(OUTPUT)util/intel-pt-decoder/inat-tables.c: $(inat_tables_script) $(inat_table
- 	$(call rule_mkdir)
- 	@$(call echo-cmd,gen)$(AWK) -f $(inat_tables_script) $(inat_tables_maps) > $@ || rm -f $@
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 748b061f8678..5d0345480140 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1108,7 +1108,6 @@ static bool syscall_arg__strtoul_btf_type(char *bf __maybe_unused, size_t size _
+ 	    .strtoul	= STUL_STRARRAY_FLAGS, \
+ 	    .parm	= &strarray__##array, }
  
--# Busybox's diff doesn't have -I, avoid warning in the case
+-#include "trace/beauty/arch_errno_names.c"
+ #include "trace/beauty/eventfd.c"
+ #include "trace/beauty/futex_op.c"
+ #include "trace/beauty/futex_val3.c"
+diff --git a/tools/perf/trace/beauty/arch_errno_names.sh b/tools/perf/trace/beauty/arch_errno_names.sh
+index 30d3889b2957..b22890b8d272 100755
+--- a/tools/perf/trace/beauty/arch_errno_names.sh
++++ b/tools/perf/trace/beauty/arch_errno_names.sh
+@@ -57,7 +57,8 @@ create_arch_errno_table_func()
+ 	archlist="$1"
+ 	default="$2"
+ 
+-	printf 'arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch)\n'
++	printf 'static arch_syscalls__strerrno_t *\n'
++	printf 'arch_syscalls__strerrno_function(const char *arch)\n'
+ 	printf '{\n'
+ 	for arch in $archlist; do
+ 		arch_str=$(arch_string "$arch")
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index ccb464026642..e58f56412fbb 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -470,6 +470,10 @@ const char *perf_env__arch(struct perf_env *env)
+ 	return normalize_arch(arch_name);
+ }
+ 
++#if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
++#include "trace/beauty/arch_errno_names.c"
++#endif
++
+ const char *perf_env__arch_strerrno(struct perf_env *env __maybe_unused, int err __maybe_unused)
+ {
+ #if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+index ae604c4edbb7..e9db89395dab 100644
+--- a/tools/perf/util/env.h
++++ b/tools/perf/util/env.h
+@@ -56,8 +56,6 @@ struct pmu_caps {
+ 
+ typedef const char *(arch_syscalls__strerrno_t)(int err);
+ 
+-arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch);
 -
- ifeq ($(SRCARCH),x86)
-   perf-util-y += inat.o insn.o
- else
+ struct perf_env {
+ 	char			*hostname;
+ 	char			*os_release;
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 77e02fcc51dd..35d84a96dbec 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -16,7 +16,6 @@
+ #include "thread_map.h"
+ #include "trace-event.h"
+ #include "mmap.h"
+-#include "util/env.h"
+ #include "util/kwork.h"
+ #include "util/sample.h"
+ #include "util/lock-contention.h"
+@@ -1305,11 +1304,6 @@ PyMODINIT_FUNC PyInit_perf(void)
+ /* The following are stubs to avoid dragging in builtin-* objects. */
+ /* TODO: move the code out of the builtin-* file into util. */
+ 
+-arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch __maybe_unused)
+-{
+-	return NULL;
+-}
+-
+ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
+ 				       struct kwork_class *class __maybe_unused,
+ 				       struct kwork_work *key  __maybe_unused)
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
