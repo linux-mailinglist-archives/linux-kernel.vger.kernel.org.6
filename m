@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-391442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAA29B86E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:17:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22AD9B86F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:18:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C191F229C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D0E1B21F18
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A3D1E283F;
-	Thu, 31 Oct 2024 23:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528571E0DE5;
+	Thu, 31 Oct 2024 23:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bn2fG+8+"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cI8nZhkJ"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41CC1CC8B7;
-	Thu, 31 Oct 2024 23:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A791E1A12
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416658; cv=none; b=DR/A2L1EedYNlL/eei+LkJuN/ifjJuLnbgphEvyfuikPuO13BI8/VOXK7dqxZlK2rgMqWFAWam0o9O5CIp0gwQyJLp/ytRhhfnsIM4kBMuqEhJ6y3FJs/s8dDzz4JGoMP3LL653XirTiIJYLRbGLv9uzGBoNPKwa/WndlMr1diI=
+	t=1730416674; cv=none; b=upu6IA1yMTD1sDvW5/sbdiHaMMcFTyCSOWfTGnsnJewcJkdM6F0uZZWE7c1SMtKxe1UQ1fbiG/d5452KDThi+OaT4XngBDM9iz4dY94Qskm1z3vkm6zKdK8ltCT59/vVKzDeEkZ7egJe5D4+6N3ZlAkWm/QX/su/1IfB4QTARqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416658; c=relaxed/simple;
-	bh=guKQZ269YoJkWNOHN8n+zpW1sLw/rcZPJRVDIFG7ssQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IcRUiFMJJrI9Onyh7j/raIVjbloR6cdzrFBSwhFT34ri8UarMq1XOSP45o9BuMjh9HlXPdH/iH5FyJ6f5QGCBD5ouBYb3eNbFIOKEtPQ0v3ykaMKgtX8HH8QED3sZXVYemQ2B+4LvYMhNebuuNgSVm6mgLF6fNFaaSdAp/b0eXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bn2fG+8+; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 038AE20002;
-	Thu, 31 Oct 2024 23:17:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730416650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q2N3NKmH49hjRiqnrVgcxvKSV4bVv8lUQzTG26S2d3Y=;
-	b=bn2fG+8+pXP2OIG5T46ZntHVHumfx4xU2hVMnhQuJ0sX3uPBQlHbiUl8Tr+WHUjbwvYqPP
-	sx+mKsfBDuoCjVzFeyumLm7B+ttWP5/ZzPeTO9f1D3KWdkJ1RehsIGLwytozpfoGFnZZ8j
-	atWicNRrYbfkVY+jje2eoTo3oSby7g4dOgJnU6LBHvhPIm5awdpcj0Gl9c4erLIIj4VrK1
-	gQMvCk0NZ3DZ4+aE98JcxX5+5ws5Pju+ox4zxRNI62UNW/chM/4iKZPCBV+rjfO3M5UVAd
-	4qaWLxpxrLJY/c+Cx95/wPVuJbFtPjnCbrlpcCJwCS1k05muZTYVjEiST3utQg==
-Date: Fri, 1 Nov 2024 00:17:28 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: (subset) [PATCH v5 00/10] Add RTC support for the Renesas RZ/G3S
- SoC
-Message-ID: <173041660392.2394403.11154347678487291985.b4-ty@bootlin.com>
-References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1730416674; c=relaxed/simple;
+	bh=iIpPnqL50A/jarcK5/fv4DxrO6sb+ob1MtvXevZUq04=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qm7cXq8wC+pB4iEBB8M1V9H9DZZkBZKbAx+jcfMlT338PYT4R6Um/JLs8ic1sWxTdCZYRnF554wZjIZeJ6VPlcQasV3/JFCkYJAuTVRip9JXZ0g+SZVb0N/M5+2reF0ofXUZ3XDiu/UNanb7a3bUKK4EVP5fFrbA6v8+oYHyXMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cI8nZhkJ; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb58980711so14068521fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730416667; x=1731021467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=frsp46Okfb5QiVmFNAXVWYtRI09WjPuac7vIqiSQUO4=;
+        b=cI8nZhkJXSD23lR0RpW4XXpm3jDRZAZVp/+CehJI68wKvUzJuAdC9h/4F2gEz5+R55
+         ANtzqDEYbNA+6e/0fjeKvgUI+AGdJc4++pN+9BrkJ7vcHC3BGvGC6jXRXXKZ+3s9BRMS
+         KDvO7MzCctklT6NG2kR6ZwYH/l+9utQ6uwmcztG0uyykz/5QUR976jI5xxzPV58BwmPn
+         AktBpSZ7E+F1ZH2BhPtzsN2xDwi7jhEuWGcBk1aiT1McaR1X3VxdWkto5yijd5CBMKgT
+         ecBEKY9QAGV9NFYCobpv9DRxi7sX6nKlKf0td7buuKcYpL0Z/hR6jsqZrTWMFoxdVyiR
+         9B8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730416667; x=1731021467;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=frsp46Okfb5QiVmFNAXVWYtRI09WjPuac7vIqiSQUO4=;
+        b=nuSp0PkQM2CR8aBGHhErCjEmLbga4q2XAuKvCEU7jjv6X1+vi0XN5bYeTmiAEjPrQq
+         0hIeDNf3hTXItcwB+qpR0FtvcssH4iorh9arDXxygsWIA4m8ta+GhZjh8Rwb2jPj+PVw
+         gi/e7Rq4hS0hAslMVYOAKtkn7v7NuVJqTlshD5VC9sX5iFhNvxmPWjZI3Rgiwt1NHHeB
+         clSRQgmGaCyxsqVWQcRoGmSva8mx/mvt0wgUmKNY0eEVqx37zYtsbSmloZ/Gq5aP5WK6
+         jciJKLCuhrUB0utauqkIh3mciaTwy37ZXf+5pQWkZIWvLv767J86e/gPePO2qa6CRaqy
+         OuzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPeCxU14ekz3f1a/jtxLJmZerqcpoTCEq+kZeBw1lTtitPEKxs7XPGd6QcLVTR3bW4BdXnFzlk6xyqxeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwetWBBp+h9VUVXolx1z6JbYkqlT7C0t0EVOzGtTrsawlhIu55x
+	+hoJJfhEa7xDgAmQ0YQ0aVYVNu8C/5f+tyEOlbYxz88aP+ds9uVvCtRkJjKEKsM=
+X-Google-Smtp-Source: AGHT+IErIn+8tk3gc2319GvFqnOquZWc1mPt8zpg0mrwwWOluM01t+jVj4/jowjH3KFQAqp0pQvtuw==
+X-Received: by 2002:a2e:5109:0:b0:2fb:4428:e0fa with SMTP id 38308e7fff4ca-2fcbe04f435mr79462881fa.36.1730416666587;
+        Thu, 31 Oct 2024 16:17:46 -0700 (PDT)
+Received: from umbar.unikie.fi ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef617ad0sm3536041fa.67.2024.10.31.16.17.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 16:17:45 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] drm/msm: minor msm_drv.h cleanup
+Date: Fri,  1 Nov 2024 01:17:41 +0200
+Message-Id: <173041664077.3797608.17754324846652823290.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241031-dpu-move-topology-v1-0-8ffa8122d3b6@linaro.org>
+References: <20241031-dpu-move-topology-v1-0-8ffa8122d3b6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Oct 2024 13:01:10 +0200, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+On Thu, 31 Oct 2024 23:44:05 +0200, Dmitry Baryshkov wrote:
+> As I stumbled upon msm_display_topology define, perform minor cleanup of
+> msm_drv.h incldue file.
 > 
-> Hi,
 > 
-> On the Renesas RZ/G3S SoC the RTC clock is provided by the VBATTB
-> IP. A 32 KHz crystall oscillator could be connected to the VBATTB
-> input pins. The logic to control this clock (and pass it to RTC)
-> is inside the VBATTB IP. For this, the clk-vbattb driver was added
-> (patches 01-03/12).
-> 
-> [...]
 
 Applied, thanks!
 
-[04/10] dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RTCA-3 IP
-        https://git.kernel.org/abelloni/c/71c61a45c951
-[05/10] rtc: renesas-rtca3: Add driver for RTCA-3 available on Renesas RZ/G3S SoC
-        https://git.kernel.org/abelloni/c/d4488377609e
+[1/3] drm/msm: move msm_display_topology to the DPU driver
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/f8706bff68cb
+[2/3] drm/msm: move MAX_H_TILES_PER_DISPLAY to the DPU driver
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/858b64e21217
+[3/3] drm/msm: drop MAX_BRIDGES define
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/26d841fd1c15
 
 Best regards,
-
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
