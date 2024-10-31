@@ -1,151 +1,126 @@
-Return-Path: <linux-kernel+bounces-390071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9035C9B7522
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:16:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468EE9B7529
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:18:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED99286549
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:16:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14A31F250B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AB215383E;
-	Thu, 31 Oct 2024 07:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAE3149E0E;
+	Thu, 31 Oct 2024 07:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RKvZX0fD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cGZMBBh7"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA9E14F9CF;
-	Thu, 31 Oct 2024 07:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455921465BB
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730358919; cv=none; b=a6fk0OwtJ7Ai5AXPkHDEXdWWn9CuCnCilNn0TkQYNNLnATnKX270TAYGrjJjhAJEmO4LORxooV30zJTkBrbnx/oBLNAK1qprfWYbKnikeoZ5EawrQgZi7FjLFyQtz6tObS5IUAVS7lbGRAvnYIUCzCiJly52bCu70NCg4VKAKaY=
+	t=1730359075; cv=none; b=rSVC5n+rnGqcTmNFUNLiZTGOXcYnv2MXs9sn7uwNdGZEoXjIaTkTPlk76HZc3VUbeCrLcGG6VF0YpmgDr8B/28Fra7KrKgWWBOWLC7iVAl61Om60yvQ8s0Uyzo9U8IJAMBBqehlb7YgqioMuZMoJsZKhXQr880FUhT6r1z1mEK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730358919; c=relaxed/simple;
-	bh=KKADGg4fhP70Q8Sv9Ts9TzJFOLVMeaGzC3aBONqd458=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Nj47NJAb3wBVEu4Wk7zRDRQHEVwCcm/QraTVIlgnZ59EAFlD5OY+Ut399BK9TJ5PBgMLa4HJqhf6aO0ZwwB7qOleesy7Gx87xKCF5RnLrrPt5FSV10wNhSE+7DQSf8zp4yrtKTvCk1ipcI1pl2+/YWHBSzAI0f466DGWg5GiFNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RKvZX0fD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V49mG9002953;
-	Thu, 31 Oct 2024 07:15:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PLXiN84XlWpoiOzk9GoclO/n8YC+gWC3SFMTyLbC9BE=; b=RKvZX0fDDvWADTBX
-	nZYbcsd2TWBCP8R5IxqyaaR6ZeCEa0TZBgRQw9DrsW21HUJKFnEvHODsxR1k9F2Z
-	Hpt0eV2Ii9saV0iAAritHPB4V2pLAWZ6YhntmKG0v9Q687TIw/Som3UK6rUEIHuw
-	n1B8RDEbP6nPkQ1tnZYUS/gxxm2F0Wqmi+TkTXIM46UPTct/wH3p4bWaAGxwQbi+
-	6lcBjUb6V+/cWqIZAd8Nb/IRGEVaX3o+3M0JXcURDisElKeqzQgez6XnF4l491uo
-	DJ/QejEmyNG/KZchCUlQ2k5h+yZJMqdSuiYc0C+5d/T5BWmyEpLW2+nlwVMaeAUt
-	N2o9rw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kns3jg5d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 07:15:13 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49V7FDMH014210
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 07:15:13 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 31 Oct 2024 00:15:09 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-Date: Thu, 31 Oct 2024 15:14:38 +0800
-Subject: [PATCH v3 3/3] arm64: dts: qcom: qcs8300: Add LLCC support for
- QCS8300
+	s=arc-20240116; t=1730359075; c=relaxed/simple;
+	bh=BnctoaThzk9TCtG6Rxw+H7YIyitDA6GU43ZIVeyO6HE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J3zGY16H1iX4MguYqbHwp8HVnER7vdzLi/sLmGS8hl7K8eIWvUkOxvyLgDCExr8FLt2/zi1xNqotclVJljm5OjtbX8YqqG4Q6r/vpiWHkZwBURCw19ZZP1HN8eDPdxU2Cwlq+ERSol2XrpQAvVHNhF6Ytd1btShNjl0SFl7vZco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cGZMBBh7; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso419936f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730359070; x=1730963870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vbdfq8Je3d3l1JKu54Y52BJh8JgRsihwOk8O/lVTfe0=;
+        b=cGZMBBh7q3rAMIzrVkPom8YzdLggcV+PrDTMNBOg1j82O5cUHJebHkcr9CimlZDoUW
+         AD/WOgbl1Miw0kZIs+sFjXPkHZN7eARgC18LFYJgNixJLhaesW6I0Vv+E/SIW/l30BlO
+         3/OdjzZ4BlkepY2h8mo6QEyfLwREF/M1VPh3fhf7ZRq0Xzu6fNNByGCIxqYfE+AWbRiq
+         2BLsjN4AaKn0boDgiyRHZhOAcYNj8tbtI3rjXrh3eCEt1/zk6zsoPpOg43SSqe5JMRjc
+         0RUly4Uo7GiQ2SCfpDUyyLHUzfrf7N6LS0wTZMCOm5We9k8JwQWMWV+zQkmoi2zZyU6W
+         Qn1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730359070; x=1730963870;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vbdfq8Je3d3l1JKu54Y52BJh8JgRsihwOk8O/lVTfe0=;
+        b=uQmyi17r4ogPZMrV5zlFbvhsEFE33UUOjuTS/hso/t+tvIznzOiQ886k5+Dp++1Foe
+         6XYv+kpCOxy8GVpLiA+NDtiiF3SWefJUqCp7W3MUEhTj1fkrlwzalEZlncQMA3Tsihvj
+         i3/2S77EI2HcKNQCp2OOL5ynz0ECyDRiCsqPzA1+FeXnRRFZiYZdQBTXKde26TkcYkw1
+         f6AjG9tAUAFbRAyRPZKhXx8CgFAwUmyBI6Q36yCo3IVFA8mYvhu9wYAxe2JO5HvGy+Rb
+         ds126y1EVKQtIoDlGH3pQq43pTNJjx76glPW7774I1d0TYHtvQJbKBSPvZ04fatpd4PX
+         zF3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVGDp39vjoD7QFH1XlnzgS3OTgeM8SGDs9oWJxFUBb+COb2PA3V9Sb9kUE2UyupXY8u0aHnIS6ctAtdECc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd3Xfan3s7amdIpt6hIXoeqGs64WchdJiq/Em+CcuMTij3jhVU
+	DMq5LYvXs6hjydSKkBfXbxLj0o44S9Tq048wLjo1exVBT0s80HdI897UhL3NFCc=
+X-Google-Smtp-Source: AGHT+IH0ecoJmTJyGmkK2ASaEkXcOU4g+2rVZqrKqcLhxnzq14TG+MSD/Flf10ahMxtm5wkcwC2XhQ==
+X-Received: by 2002:a5d:4106:0:b0:37c:d558:a931 with SMTP id ffacd0b85a97d-3806115902emr13662094f8f.31.1730359069635;
+        Thu, 31 Oct 2024 00:17:49 -0700 (PDT)
+Received: from axelh-ThinkPad-T450s.home (lfbn-nic-1-251-169.w2-15.abo.wanadoo.fr. [2.15.94.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e694sm1187547f8f.86.2024.10.31.00.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 00:17:49 -0700 (PDT)
+From: ahaslam@baylibre.com
+To: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	nuno.sa@analog.com,
+	dlechner@baylibre.com
+Cc: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Axel Haslam <ahaslam@baylibre.com>
+Subject: [PATCH v3 0/6] Improvements and Enhancements for AD5791 DAC Driver
+Date: Thu, 31 Oct 2024 08:17:40 +0100
+Message-Id: <20241031071746.848694-1-ahaslam@baylibre.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241031-qcs8300_llcc-v3-3-bb56952cb83b@quicinc.com>
-References: <20241031-qcs8300_llcc-v3-0-bb56952cb83b@quicinc.com>
-In-Reply-To: <20241031-qcs8300_llcc-v3-0-bb56952cb83b@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        Jingyi Wang
-	<quic_jingyw@quicinc.com>,
-        <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>,
-        <20241026-sar2130p-llcc-v3-0-2a58fa1b4d12@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730358896; l=1244;
- i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
- bh=KKADGg4fhP70Q8Sv9Ts9TzJFOLVMeaGzC3aBONqd458=;
- b=Ouyzq45V+bVjK2ZWupWQqwwqS+CDQt5iC/rTKyEK3RFt4/4KXwryW2oZdmLfPn5Wmd7PiHnao
- C+qSe+fwPB9BmWQoEvBSyJpKP+BsDWrSukTfGT5NKZybBeoemx6QaHo
-X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
- pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4RrFyLbE1eoYJqUOKuMhE7QjfrhbaqkT
-X-Proofpoint-ORIG-GUID: 4RrFyLbE1eoYJqUOKuMhE7QjfrhbaqkT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- adultscore=0 spamscore=0 phishscore=0 mlxlogscore=611 malwarescore=0
- bulkscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310052
+Content-Transfer-Encoding: 8bit
 
-Add Last Level Cache Controller node on the QCS8300 platform.
+From: Axel Haslam <ahaslam@baylibre.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+These patches aim to improve on the ad5791 driver:
+ - make use of chip_info / match tables, and drop device enum id.
+ - Add reset, clr and ldac gpios that have to be set to the correct level in case they
+   are not hardwired on the setup/PCB.
+ - simplify probe by using the devm_* functions to automatically free resources.
 ---
- arch/arm64/boot/dts/qcom/qcs8300.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Changes in v3:
+- v2 is missing the version prefix. Im sending v3 just with the added review-by tag.
+- Add review-by tag from David Lechner
+- Link to V2: https://lore.kernel.org/all/94a03835-bdd1-4243-88c7-0ad85784fe36@baylibre.com/
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-index 2c35f96c3f28..811c926c94f4 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-@@ -882,6 +882,21 @@ gem_noc: interconnect@9100000 {
- 			qcom,bcm-voters = <&apps_bcm_voter>;
- 		};
- 
-+		llcc: system-cache-controller@9200000 {
-+			compatible = "qcom,qcs8300-llcc";
-+			reg = <0x0 0x09200000 0x0 0x80000>,
-+			      <0x0 0x09300000 0x0 0x80000>,
-+			      <0x0 0x09400000 0x0 0x80000>,
-+			      <0x0 0x09500000 0x0 0x80000>,
-+			      <0x0 0x09a00000 0x0 0x80000>;
-+			reg-names = "llcc0_base",
-+				    "llcc1_base",
-+				    "llcc2_base",
-+				    "llcc3_base",
-+				    "llcc_broadcast_base";
-+			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,qcs8300-pdc", "qcom,pdc";
- 			reg = <0x0 0xb220000 0x0 0x30000>,
+Changes in v2:
+- Fix probe error print using uninitialized ret.
+- Add documentation for new struct parameters
+- Add review-by tags to device tree bindings
+- Link to V1: https://lore.kernel.org/all/CAKXjFTPwN2TYW6sq1kj3miZ0f5OqKX0aTk8eGf1sj9TBk1_e=A@mail.gmail.com/T/
+
+Axel Haslam (6):
+  dt-bindings: iio: dac: ad5791: Add optional reset, clr and ldac gpios
+  dt-bindings: iio: dac: ad5791: Add required voltage supplies
+  iio: dac: ad5791: Include chip_info in device match tables
+  iio: dac: ad5791: Add reset, clr and ldac gpios
+  iio: dac: ad5791: Use devm_regulator_get_enable_read_voltage
+  iio: dac: ad5791: Use devm_iio_device_register
+
+ .../bindings/iio/dac/adi,ad5791.yaml          |  39 ++++
+ drivers/iio/dac/ad5791.c                      | 203 ++++++++----------
+ 2 files changed, 131 insertions(+), 111 deletions(-)
 
 -- 
-2.25.1
+2.34.1
 
 
