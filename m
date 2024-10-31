@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-390384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DC39B7929
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:56:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A5C9B7927
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B744285CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E0011F22B67
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9908119AD4F;
-	Thu, 31 Oct 2024 10:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B21199FCD;
+	Thu, 31 Oct 2024 10:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AGmG8ygU"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIdPDcS9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70BF13A25F;
-	Thu, 31 Oct 2024 10:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951D51494AB;
+	Thu, 31 Oct 2024 10:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372172; cv=none; b=oFNzizW1rBhySRuzK7AGwCdfHiGgGQL2DsCh8W/j9M2GrO5snDIKhNYkzI66DEfgTEJIqG5AX0qrZk87Y6/3o5T0/nKcfo8szeJeLdEzK/vuAtOVBC0sFXuHLhqMYx9A6XftRcgr4f0g3znnIbx0cbJFb/fwnzv88trAWlYuH7Y=
+	t=1730372169; cv=none; b=fyrKlSVS63SEMt76B8JD4e4pf1sjzvmjBcqwbsk1RxXhizC2avMuzuAUOT1T/IeKILZ35ps8QVgZDj4/hiHQCbhkwxR8EU3mLlAOp3quEkDUzV/gJ/dDhidFgI1fBceByaF1XZXn9oOIh1LHkN1UenvYx6ZNky7lkft3qcrECws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372172; c=relaxed/simple;
-	bh=jLofZIwivoLG+7s6ZAAzJLv64dhFLgAvPyWSQFGY6Ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kYQl32ifrIdD4tCpuwS57i4UvCVouehuiZX5B+lrNDxZLiSOJR1aSgpugVEGHNvuJYRaaV9dx60eLjPHt2XKlb2EsgKgZlrXL7W/Namy0cBDWmnFiT/3be6Q/pI6glt7mS3N2dhuCJMH2rO9N17o4ewrCO5lZMfCPFAky+L8q2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AGmG8ygU; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1e1Pem+qp2w/Akjj6dWKUEh4AeuCe5dpoYvS12Rnvgk=; b=AGmG8ygUmt9zRxbe2HYj47fYd2
-	EiRCxeRBJhijKoPrVolQe3tPVfysPtMjYtfTkYC0HlELl1ad+sr4YTi26PSK3Pq6lXHeCk4BHRDyF
-	Z6KZ5gMf6p+XnvldU6r/AUir8KBGsjcuWD8L8fk1fW+Y7Bpg7j6ENGCB+QC0B8LbUC6gY1Gg+QhXk
-	ldArIjA3eFO430UEK26691k2vzg+aqSImfJBCTfeNHNiaGw2sEcSyz2PD8lmYdGjbzRjYtmFwKYXu
-	mpTp9wyEzy+y5aKhz/x/O19EIGbFgEiLCMAvsiDxRE96AMCONwG34ZmhgPp8JtkVSwn0MlrqiU6F6
-	RnFAcbFQ==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t6SqD-00HZkr-Lv; Thu, 31 Oct 2024 11:55:50 +0100
-Message-ID: <b31bd54c-400c-4432-8b4b-0ba12bcf8011@igalia.com>
-Date: Thu, 31 Oct 2024 07:55:42 -0300
+	s=arc-20240116; t=1730372169; c=relaxed/simple;
+	bh=MA12dVLrm+VqZ/ae3pjPtbILpAB3JA5KVkEPvjBUlMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMbuCce4qWU7loVzqY2i7VRCjCWRbH+V5Qt7k0tmns+PozY3AnnrFVVsND4T26q1XpmsrhZgja3oFX88cigTLxfbP+deWRMD4bPTJ76DeCEFStwntf740SMvbbyWa49dDwJAFxhFM2sHxQJn1DfquEG83TsH2APM/uLDU1ngBx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIdPDcS9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730372167; x=1761908167;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MA12dVLrm+VqZ/ae3pjPtbILpAB3JA5KVkEPvjBUlMY=;
+  b=lIdPDcS9U3VcNuj2INuN98I0Zj0S9aqku5ZeZFML+CpD5KVl69X+DLle
+   7VyzzK8W+wwJoAaZEK1R/PzLMwxrUGPmrFc+ct91oPq/bwWrgQQo6IKO8
+   oz92BKwaM1tkmY/qAZv6RN7o8rY3PC306Kabs9K6Vxb3sghBP6AsYNMUc
+   uP6lAd7QxLvqSZGSPCTVVnZliQdVJTkkRjANWz+LMZcEkiQRYPPhJCZkB
+   KZnSTof/03PLR1agf7h5S4+dVvBwz7yzSBgGjCLu71hBl8Oigh4ktiMLj
+   Ffla2qxNTTeUe1MAhKk75VPI7rJQacO1yU5Ll0/32XMgzdPSvAn0UPBmI
+   Q==;
+X-CSE-ConnectionGUID: 9Tf0XJjERCGaxilXzrvqnQ==
+X-CSE-MsgGUID: Z8SmUm50QraIjaRmjY0Crg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="41473384"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="41473384"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:56:06 -0700
+X-CSE-ConnectionGUID: 0kV5mYYyTy2NRvL6hEOUhw==
+X-CSE-MsgGUID: hnSDvds3SZmG+Nxh0hgtLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82245396"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa007.fm.intel.com with SMTP; 31 Oct 2024 03:56:02 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 31 Oct 2024 12:56:01 +0200
+Date: Thu, 31 Oct 2024 12:56:01 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Rex Nie <rex.nie@jaguarmicro.com>
+Cc: bryan.odonoghue@linaro.org, gregkh@linuxfoundation.org,
+	linux@roeck-us.net, caleb.connolly@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, angus.chen@jaguarmicro.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] usb: typec: qcom-pmic: init value of
+ hdr_len/txbuf_len earlier
+Message-ID: <ZyNiQUKPdUwE8EQZ@kuha.fi.intel.com>
+References: <20241030022753.2045-1-rex.nie@jaguarmicro.com>
+ <20241030133632.2116-1-rex.nie@jaguarmicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] mm: huge_memory: Use strscpy() instead of strcpy()
-To: Barry Song <baohua@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
- <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20241030130308.1066299-1-mcanal@igalia.com>
- <20241030130308.1066299-5-mcanal@igalia.com>
- <CAGsJ_4zMppHY29XXepOVTdEu2-1U6mGyZ8FqXZfP_in+2T3NAA@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <CAGsJ_4zMppHY29XXepOVTdEu2-1U6mGyZ8FqXZfP_in+2T3NAA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030133632.2116-1-rex.nie@jaguarmicro.com>
 
-Hi Barry,
-
-On 30/10/24 20:07, Barry Song wrote:
-> On Thu, Oct 31, 2024 at 2:03 AM Maíra Canal <mcanal@igalia.com> wrote:
->>
->> Replace strcpy() with strscpy() in mm/huge_memory.c
->>
->> strcpy() has been deprecated because it is generally unsafe, so help to
->> eliminate it from the kernel source.
->>
->> Link: https://github.com/KSPP/linux/issues/88
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->> ---
->>   mm/huge_memory.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index f92068864469..8f41a694433c 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -989,7 +989,7 @@ static int __init setup_thp_anon(char *str)
->>
->>          if (!str || strlen(str) + 1 > PAGE_SIZE)
->>                  goto err;
->> -       strcpy(str_dup, str);
->> +       strscpy(str_dup, str);
+On Wed, Oct 30, 2024 at 09:36:32PM +0800, Rex Nie wrote:
+> If the read of USB_PDPHY_RX_ACKNOWLEDGE_REG failed, then hdr_len and
+> txbuf_len are uninitialized. This commit stops to print uninitialized
+> value and misleading/false data.
 > 
-> What is the difference between strcpy and strscpy without a size parameter?
+> Cc: stable@vger.kernel.org
+> Fixes: a4422ff22142 (" usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
+> Signed-off-by: Rex Nie <rex.nie@jaguarmicro.com>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+> V2 -> V3:
+> - add changelog, add Fixes tag, add Cc stable ml. Thanks heikki
+> - Link to v2: https://lore.kernel.org/all/20241030022753.2045-1-rex.nie@jaguarmicro.com/
+> V1 -> V2:
+> - keep printout when data didn't transmit, thanks Bjorn, bod, greg k-h
+> - Links: https://lore.kernel.org/all/b177e736-e640-47ed-9f1e-ee65971dfc9c@linaro.org/
+> ---
+>  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> we have already a check and goto err. strcpy() is entirely safe.
->           if (!str || strlen(str) + 1 > PAGE_SIZE)
->                   goto err;
-> 
-> My understanding is that we don't need this patch.
+> diff --git a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
+> index 5b7f52b74a40..726423684bae 100644
+> --- a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
+> +++ b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
+> @@ -227,6 +227,10 @@ qcom_pmic_typec_pdphy_pd_transmit_payload(struct pmic_typec_pdphy *pmic_typec_pd
+>  
+>  	spin_lock_irqsave(&pmic_typec_pdphy->lock, flags);
+>  
+> +	hdr_len = sizeof(msg->header);
+> +	txbuf_len = pd_header_cnt_le(msg->header) * 4;
+> +	txsize_len = hdr_len + txbuf_len - 1;
+> +
+>  	ret = regmap_read(pmic_typec_pdphy->regmap,
+>  			  pmic_typec_pdphy->base + USB_PDPHY_RX_ACKNOWLEDGE_REG,
+>  			  &val);
+> @@ -244,10 +248,6 @@ qcom_pmic_typec_pdphy_pd_transmit_payload(struct pmic_typec_pdphy *pmic_typec_pd
+>  	if (ret)
+>  		goto done;
+>  
+> -	hdr_len = sizeof(msg->header);
+> -	txbuf_len = pd_header_cnt_le(msg->header) * 4;
+> -	txsize_len = hdr_len + txbuf_len - 1;
+> -
+>  	/* Write message header sizeof(u16) to USB_PDPHY_TX_BUFFER_HDR_REG */
+>  	ret = regmap_bulk_write(pmic_typec_pdphy->regmap,
+>  				pmic_typec_pdphy->base + USB_PDPHY_TX_BUFFER_HDR_REG,
+> -- 
+> 2.17.1
 
-strcpy() is a deprecated interface [1]. From the GitHub issue I linked
-in the commit description, Kees states: "A lot of kernel code is still
-using strcpy(). While the CONFIG_FORTIFY_SOURCE wrapper macros tend to
-make its use mostly safe, it would be nice to eliminate the function
-from the kernel entirely."
-
-[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
-
-Best Regards,
-- Maíra
-
-> 
->>
->>          always = huge_anon_orders_always;
->>          madvise = huge_anon_orders_madvise;
->> @@ -4175,7 +4175,7 @@ static ssize_t split_huge_pages_write(struct file *file, const char __user *buf,
->>
->>                  tok = strsep(&buf, ",");
->>                  if (tok) {
->> -                       strcpy(file_path, tok);
->> +                       strscpy(file_path, tok);
->>                  } else {
->>                          ret = -EINVAL;
->>                          goto out;
->> --
->> 2.46.2
->>
-> 
-> Thanks
-> barry
-
+-- 
+heikki
 
