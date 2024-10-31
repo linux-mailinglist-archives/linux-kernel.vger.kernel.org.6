@@ -1,218 +1,177 @@
-Return-Path: <linux-kernel+bounces-390485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718EA9B7A80
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:29:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA02F9B7A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5801F24475
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD24284A88
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309EC19CC2E;
-	Thu, 31 Oct 2024 12:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08A919CCF9;
+	Thu, 31 Oct 2024 12:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hf6A/JPz"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaehoI2R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1103519CC16
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3563319CC1D;
+	Thu, 31 Oct 2024 12:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730377770; cv=none; b=uD+Jcc1zOoL5QPJsO5xLsjUPW4L0PxCHYe4X9SEWPvj5ontJVOJc06AhcglAffm+/ES5lX3UE1k9JmypB1Eg+YAQewaGACXj6RONnsRta79XtgMjdUlPYpN2svfGm1hJ2AqZvPNrEVLxREQnA+jXAvA/dWzNAmYgrAKXX58UqLE=
+	t=1730377784; cv=none; b=YYF06nNP/T3n2xNRrmCkz0SJRxLXyVOqUC12X05PVa6aZSc5P02KstSWenTjcXAb+kvbCLAie3ntsuJqVtliyyK6XnfQycWNskEBwQ2MQgPlWMaXJ/MtZxppWuX8HOxvatrgPzOzdJNoK/37ME11Vj54Vb8zvHGzab1YBk8jcec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730377770; c=relaxed/simple;
-	bh=icFn/ulmOaFGaIVeWNkZxZlfkklmMO8RAk9Xs+6yFBM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=K51wuXXhIm9RJ7ymA678spwQM9uQUiciFSEQPYiu0O1PQtKmX45UHV4u3rEatlRyMasqkpGaLUIjiqbhtE+n5NIBTTh8gJ5JDkE5jQjbKi3vY7ONxrNl1DGAhKXCJrA/WqHqpU54NPO5B+CrQaQRCgRDDUPl56Xqlp+yHrdDL/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hf6A/JPz; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so6919895e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730377765; x=1730982565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UQjZxBSmS0nagomVi07puYwXxun+vOekud8EvxwhAn4=;
-        b=hf6A/JPzu2SyBKZNiqKXUBqLG6fWpNyRgFracSIsEvYghjT7GTcz6oSQzl2T0mUJSt
-         vgm0zvc3b7qLstyXGuXgIV57Ff2thkZIoD8eUKQR1Qi6VvaH1bUfNC2mTa+M97l22Ucv
-         SIVLm7qojw4JZy4rkoBT1CMt7+c8wRCTI36DnTANVUvWOZCB9UQ/C0kVj+GtWT6RR4RZ
-         ldE/Tzn6G5lZQbSoHFK7n0OKZ6UYDcsqpDru51878UGjVegGbKaTM1sybMNBp6hnifnw
-         W35QUmU7PaDvBYTusxz21TlHhX47I3mWLwy61MNNbIBqdhyHtTFNv+7zratq+x09Ipke
-         Ww0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730377765; x=1730982565;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UQjZxBSmS0nagomVi07puYwXxun+vOekud8EvxwhAn4=;
-        b=KZXTISgNLYhSrqcGvMDSMmCKpAL+YdH54DbuRKKsbJ/QPIBJZLBPjz8pCLXfsJMOqP
-         c4z4WBcud/M2zJ71Bp+akSH8H/s+HiDjJrkT8ndVgfNiWQF4mOx0BfoScjD9cTf2JU4N
-         aFiGVJRtl6mn2zhqHcSFgN2nyrDGRFCqR2e3n3DGnDf5UOX8S9/9GqDAksLDbz4voLJz
-         ta6i1zk9zc5CTldg3yawtmmpmWqMRyOHAKDYzyyWrizK6KDiN2pUpYfAWzvD7fWqQ+fU
-         jjKGISEbfe/3x1+qzjVBGK8jscaQo0yMLsd47UaCWlMMzudaIMNaDZh7HwyQPZTlRU+4
-         6ATQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1IStQ3iKLZfuQkez651UB2p5/i7QqhU5PBc4HBUX1bWlRZKmnCWjTuBxO6yKy6ObPBmZ6ilmFGqdWksA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBjgq6LWBlydasEpIS7fbTtmLuqi+j8W/p/y8OCGoZTKkHOgh+
-	x0s4yObxjuLkbtSot5tMt2F3dMRjlx9STyPg3QfSyRmsTEBCPBqSDmTq4d8Xdl0=
-X-Google-Smtp-Source: AGHT+IGV3ikK4LIVn2AEbWDsvCMNTGZrNaaz9Bv2gNUYQPFFcoac/gExNqwApmsNW+NykCyyZ64SOA==
-X-Received: by 2002:a05:600c:a01:b0:42c:ba83:3f01 with SMTP id 5b1f17b1804b1-431bb984e8cmr62424155e9.8.1730377765149;
-        Thu, 31 Oct 2024 05:29:25 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:de28:ccc7:fdcf:6514? ([2a01:e0a:982:cbb0:de28:ccc7:fdcf:6514])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab305sm24596425e9.7.2024.10.31.05.29.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 05:29:24 -0700 (PDT)
-Message-ID: <eb0c7296-ed5d-4bf3-8fab-130216a6d87b@linaro.org>
-Date: Thu, 31 Oct 2024 13:29:23 +0100
+	s=arc-20240116; t=1730377784; c=relaxed/simple;
+	bh=0pgnrKFCd7krk9HzGqlDXM26z+itSZVYEdeZBHDof1g=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VPVsWh+ygioITjaRfCcauSYUr0qSKgoizo6XU0kl0NDZongt5Lojw/6OiJYhkR7F0UZ6MgkfzUTVgmpVRD5/AUALydcNfj2mUPhjRZp/2pYlH0G0mHn2yRf+PjQ422uzDKJc9FuE7u2STaUYIVKN2CAZ5Se2QRBYJ3ejcFjzjS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaehoI2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5382C4DDED;
+	Thu, 31 Oct 2024 12:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730377783;
+	bh=0pgnrKFCd7krk9HzGqlDXM26z+itSZVYEdeZBHDof1g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MaehoI2R2yl2V53Xv7oZeuswyGfMw7HTFfLGktq2oxSMwXSi/PmmLutEYJGJDGnmK
+	 MnkZTXH8ytwV4XK/UXmv03vEHrs9p5ZCZkQ5T7roMAN2HgYbeBzMzAx+NigK92oloe
+	 ahPylV40f9+BPXY1+1SSoMXkAhyJcBVta+Kpb1PL6D0X+/XCGTzE7uNECjdVcH1mNC
+	 RpqMSC25ktseTmZZvtyETRhZfTsWN1hl7KAkkRpuL21iQ1Tnn7YNJxQcTWNIqDDCXS
+	 Afq3t1HxSPoaS4thfeSEat5WJs6XoZyhWtS+K2UzckYFyqrmUANgHBmkUfqo0V29+G
+	 TRQR+IMfw86vQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t6UJ3-008YcM-DV;
+	Thu, 31 Oct 2024 12:29:41 +0000
+Date: Thu, 31 Oct 2024 12:29:40 +0000
+Message-ID: <86v7x81mmj.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Cc: 	Sibi Sankar <quic_sibis@quicinc.com>,
+	andersson@kernel.org,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	robh+dt@kernel.org,
+	dmitry.baryshkov@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	conor+dt@kernel.org,
+	srinivas.kandagatla@linaro.org,
+	quic_jjohnson@quicinc.com
+Subject: Re: [PATCH V3 0/3] X1E001DE Snapdragon Devkit for Windows
+In-Reply-To: <5d8ec8c4-f473-4849-a428-f7a7283ff478@oldschoolsolutions.biz>
+References: <20241025123227.3527720-1-quic_sibis@quicinc.com>
+	<86y1251q3b.wl-maz@kernel.org>
+	<ZyNR5MD/HAS5w7N/@linaro.org>
+	<5d8ec8c4-f473-4849-a428-f7a7283ff478@oldschoolsolutions.biz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-To: Sui Jingfeng <sui.jingfeng@linux.dev>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <ux2lfkaeoyakulhllitxraduqjldtxrcmpgsis3us7msixiguq@ff5gfhtkakh2>
- <f2119a4d-7ba3-4f11-91d7-54aac51ef950@linux.dev>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <f2119a4d-7ba3-4f11-91d7-54aac51ef950@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: abel.vesa@linaro.org, jens.glathe@oldschoolsolutions.biz, quic_sibis@quicinc.com, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org, srinivas.kandagatla@linaro.org, quic_jjohnson@quicinc.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 30/10/2024 17:45, Sui Jingfeng wrote:
-> Hi,
-> 
-> On 2024/10/18 23:43, Dmitry Baryshkov wrote:
->> On Fri, Oct 18, 2024 at 03:49:34PM +0300, Abel Vesa wrote:
->>> The assignment of the of_node to the aux bridge needs to mark the
->>> of_node as reused as well, otherwise resource providers like pinctrl will
->>> report a gpio as already requested by a different device when both pinconf
->>> and gpios property are present.
->>> Fix that by using the device_set_of_node_from_dev() helper instead.
->>>
->>> Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
->>> Cc: stable@vger.kernel.org      # 6.8
->>> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>> ---
->>> Changes in v2:
->>> - Re-worded commit to be more explicit of what it fixes, as Johan suggested
->>> - Used device_set_of_node_from_dev() helper, as per Johan's suggestion
->>> - Added Fixes tag and cc'ed stable
->>> - Link to v1: https://lore.kernel.org/r/20241017-drm-aux-bridge-mark-of-node-reused-v1-1-7cd5702bb4f2@linaro.org
->>> ---
->>>   drivers/gpu/drm/bridge/aux-bridge.c | 3 ++-
->>>   1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> 
-> Technically speaking, your driver just move the burden to its caller.
-> Because this driver requires its user call drm_aux_bridge_register()
-> to create an AUX child device manually, you need it call ida_alloc()
-> to generate a unique id.
-> 
-> Functions symbols still have to leak to other subsystems, which is
-> not really preserve coding sharing.
+On Thu, 31 Oct 2024 10:00:40 +0000,
+Jens Glathe <jens.glathe@oldschoolsolutions.biz> wrote:
+>=20
+> On 31.10.24 10:46, Abel Vesa wrote:
+> > On 24-10-30 17:02:32, Marc Zyngier wrote:
+> >> On Fri, 25 Oct 2024 13:32:24 +0100,
+> >> Sibi Sankar <quic_sibis@quicinc.com> wrote:
+> >>> Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E00=
+1DE
+> >>> is the speed binned variant of X1E80100 that supports turbo boost up =
+to
+> >>> 4.3 Ghz. The initial support includes the following:
+> >>>=20
+> >>> -DSPs
+> >>> -Ethernet (RTL8125BG) over the pcie 5 instance.
+> >>> -NVme
+> >>> -Wifi
+> >>> -USB-C ports
+> >>>=20
+> >>> V3:
+> >>> * Asked around and looked at the firmware, couldn't find a codename so
+> >>>    will keep it as DEVKIT. Will update it if someone from the communi=
+ty
+> >>>    finds something else.
+> >> My machine has the following information as part of its DMI tables:
+> >>=20
+> >> Handle 0x0005, DMI type 1, 27 bytes
+> >> System Information
+> >> 	Manufacturer: Qualcomm
+> >> 	Product Name: Snapdragon-Devkit
+> >> 	Version: 2.1
+> >> 	Serial Number: 5
+> >> 	UUID: 63b5fc8b-9c50-89aa-fd0f-3fcef93dc291
+> >> 	Wake-up Type: Power Switch
+> >> 	SKU Number: 6
+> >> 	Family: SCP_HAMOA
+> >>=20
+> >> So I guess that Snapdragon-Devkit is another possible name. But given
+> >> that it is a bit of a mouthful, devkit, Devkit, or any other variation
+> >> on the case would work for me.
+> > The point was to have something unique A codename would be unique.
+> > Naming it Snapdragon-Devkit (or just devkit) will be confusing since
+> > there was already a 2023 devkit (from Microsoft) with the Snapdragon
+> > 8cx Gen 3, and probably the next compute platform will also have a devk=
+it
+> > as well. So probably "X Elite devkit" could be the right option..
 
-???
+Odd, I didn't get that email.
 
-> 
-> What's worse, the action that allocating unique device id traditionally
-> is the duty of driver core. Why breaks (so called) perfect device driver
-> model by moving that out of core. Especially in the DT world that the
-> core knows very well how to populate device instance and manage the
-> reference counter.
+My point was the the HW already comes with a full description as part
+of the existing tables. If you really want something that is truly
+unique to that platform and that can be used by a tool (be it
+firmware, kernel or userspace) to understand what it is running on,
+then you cannot have *less* information.
 
-This has nothing to do with DT, auxiliary device is a nice way to actually
-use the driver model to handle devices sub-functions without overloading
-drivers. It's still young and we need to collectively solve some issues,
-but it's now agreed auxiliary device helps designing multi-functions drivers.
+At the very least, you would need Manufacturer, Product Name, Version
+and Family.
 
-> 
-> HPD handling is traditionally belongs to connector, create standalone
-> driver like this one *abuse* to both Maxime's simple bridge driver and
-> Laurent's display-connector bridge driver or drm_bridge_connector or
-> whatever. Why those work can't satisfy you? At least, their drivers
-> are able to passing the mode setting states to the next bridge.
+But does it really matter? I don't think it is *that* crucial. At the
+end of the day, this is only used to pick the correct DT out of a set
+for a given SoC, or worse case a family of SoCs that are closely
+related.
 
-HPD handling is now shared along all the bridges, because it corresponds
-to a reality.
+> As for The Windows Dev Kit 2023, dmidecode says this:
+>=20
+> Handle 0x0009, DMI type 1, 27 bytes
+> System Information
+> =C2=A0=C2=A0 =C2=A0Manufacturer: Microsoft Corporation
+> =C2=A0=C2=A0 =C2=A0Product Name: Windows Dev Kit 2023
+> =C2=A0=C2=A0 =C2=A0Version: 124I:00097T:000M:0200000B:07
+> =C2=A0=C2=A0 =C2=A0Serial Number: 0F01C4F22373F6
+> =C2=A0=C2=A0 =C2=A0UUID: e4a4662c-8367-75d0-a54f-1d04bd404860
+> =C2=A0=C2=A0 =C2=A0Wake-up Type: Unknown
+> =C2=A0=C2=A0 =C2=A0SKU Number: 2043
+> =C2=A0=C2=A0 =C2=A0Family: Surface
+>=20
+> That's also really a mouthful. In my patchset for it there were some
+> name / path changes, microsoft/blackrock it is now. Would be cool to
+> have short and unique names. In the end, whatever works and is unique.
+> Like those UUIDs?
 
-It simply takes in account complex uses-cases like Type-C Altmode where
-we need to describe the connection between the DP controller and the
-Type-C retimers/muxes and properly propagate HPD events to synchronize
-all the chain.
+Are those actually per platform? or per unit? On my box, the serial
+number is probably a dud. What does the UUID reports on your X1E box?
 
-> 
-> Basically those AUX drivers implementation abusing the definition of
-> bridge, abusing the definition of connector and abusing the DT.
-> Its just manually populate instances across drivers.
+Thanks,
 
-It abuses nothing, the DT representation of the full signal path
-in the Type-C complex was required by DT bindings maintainers.
+	M.
 
-The fact we can describe an element of the Type-C Altmode DP
-path is very handy, and we have the full control of the data
-path unlike x86 platforms where all this handling is hidden in
-closed firmwares.
-
-If you have an issue with the aux-bridge design please open a separate
-thread, because the actual patch has nothing to do with aux devices or DRM
-bridge implementation.
-
-Please do not respond to this thread except concerning this fix.
-
-Neil
-
-> 
-> 
-> 
-
+--=20
+Without deviation from the norm, progress is not possible.
 
