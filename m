@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-390216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1A59B7720
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:13:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAB19B7722
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BCE1F24E9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0891F24DF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAFA19343F;
-	Thu, 31 Oct 2024 09:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F4E193439;
+	Thu, 31 Oct 2024 09:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rj7zytZF"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hAziTByn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006DA18453F;
-	Thu, 31 Oct 2024 09:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A11C18453F;
+	Thu, 31 Oct 2024 09:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366007; cv=none; b=ksgt2lENy50Z0A/tD6MbvLKwsBCihEHY9mDbuMVYVbvLf9iGXEqpu+5dI6ne+mn7Q/0J63d4pzIX9A6NtP5W3spDFJnKapYtW1T73IrvGbpjp9E/SFCoR80n1oJAq/5XCRuPsH9WHUbbpGJWfH7TsU/c0ZKxmYqDj96Dy5lyFMk=
+	t=1730366018; cv=none; b=YsZOOSAkp9LQJ/NjQRPS8u9bzbTUokOVOUbtBqBUDx3st+dkE/YS29X7l2tkSMmTelHZ4RBkq8CWYZvDbZQ8+j+Xy+OlTwNYXro4XjXxIjanV+M0LRCSYHvWO2s7iq9ju+1AN4wthTTgfWeN4MqerZkIKTz6+mighk4WZbuCfrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366007; c=relaxed/simple;
-	bh=gqnaDtZtuISCM8zTQgzltHmUGJlE1EtGHbAL+f5QyvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pAOYgf5842puTn6RnJNTjUBR6mvpSrp3Dk2kFWuB9FYDAIYIug3ZBSVagE/9GMjFxugH/cH3SR46sRFsETjMiTS+5VwMr/RwtIDHhT4D8cKTm00DlCbHrGKse26STfCwi1VfNiEJPrvVHYZTMboTZ824Og4ZVIUwrjHNgHLKwno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rj7zytZF; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:c433:a011:b9cf:d32c])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3AD8D842;
-	Thu, 31 Oct 2024 10:13:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730365993;
-	bh=gqnaDtZtuISCM8zTQgzltHmUGJlE1EtGHbAL+f5QyvY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rj7zytZFTQ42WfgEkXHKy4HFyxdM9Hq1aTmwWll4DJ7Ef8BjlMeS7EBlHyuiSkTm4
-	 5/hc8hV39g36KoSRArCTygpEjYWmM+kcF4OOy4Y3w4936Bj38dNTn+XsnBUgI9/i6z
-	 kT/G4th/M+9kE1Ylm/v0fom1TwJU+b1YwUTUE5Ls=
-Date: Thu, 31 Oct 2024 10:13:13 +0100
-From: Stefan Klug <stefan.klug@ideasonboard.com>
-To: Umang Jain <umang.jain@ideasonboard.com>
-Cc: libcamera-devel@lists.libcamera.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] media: imx283: Report correct V4L2_SEL_TGT_CROP
-Message-ID: <nr7wzo7smtq2mbtorhw4slgtvmj6nyk3witjcymwzk7efrftlc@obgey7ky5hpp>
-References: <20241030163439.245035-1-stefan.klug@ideasonboard.com>
- <04ae3f0b-c2f8-4553-9b49-302cc638c0c7@ideasonboard.com>
+	s=arc-20240116; t=1730366018; c=relaxed/simple;
+	bh=RleJ9bkyyK1txBNGu05KPSL7U4P4vwzC+UqQeQmLP4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YzSs5zaSC4A7P8/EmmjESrjUfEbWhAa1zJ9mc/aJ+PgQYnGdhjmcv48qNk3BHfQksI+B5ALYP+o23sNzySVHTMdFZiUvC0UxzHzqsSONQTKqz7/i9hkNEc5+NKNYS+vNPRn7bxdbKcgR/tiY50A/v4IZcO2Kzj0N8z0qPmF2Hsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hAziTByn; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730366017; x=1761902017;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=RleJ9bkyyK1txBNGu05KPSL7U4P4vwzC+UqQeQmLP4g=;
+  b=hAziTByn/Fe8jZa48ZXmnvDvBsG4njJMcdFZO1wDeIDoD1L6B3PLlno/
+   w7U9xCYZhaDsK0O15W4ktT3gMt2A5kp6gmY2fzpkV2VtQdNy0q+TPGlpu
+   TswBE8xxnoBDw5GHJiEITkqGwWMyJr9b4MKI7hhFdB8NdaA6YCRt0zvHa
+   4JkixDDgPux6UVYHeu9IQ1i4t4wEciovEgpdtBoyc3tWA/iRLBQTgJuW7
+   x/syDJ/2pws1mdR0vuRH8TWP/8oS2BTmilOXxQ6e/nVn2O+lBBpwkWbDA
+   WxmIdzc8kPsTXeubCkKx1+RljQfJaDbhO4UlpeT+O4v4ZgivPGjOJ/BOk
+   Q==;
+X-CSE-ConnectionGUID: mcxROTtcQ++Bz+KU/oajLw==
+X-CSE-MsgGUID: UUAwdn60QN2UGvezt4dEeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="30310885"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="30310885"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:13:36 -0700
+X-CSE-ConnectionGUID: tEBJj+bWSLOpZdD9L9pVAw==
+X-CSE-MsgGUID: IZe097ktT1ao7GHvKSRp7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82485756"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:13:28 -0700
+Message-ID: <fde6078a-8f74-4858-acc9-950ca9bbcfcc@intel.com>
+Date: Thu, 31 Oct 2024 11:13:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <04ae3f0b-c2f8-4553-9b49-302cc638c0c7@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 12/21] perf intel-pt: Remove stale build comment
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+ James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>,
+ Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+ Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova
+ <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich
+ <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>,
+ Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-13-irogers@google.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241031014252.753588-13-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Umang,
+On 31/10/24 03:42, Ian Rogers wrote:
+> Commit 00a263902ac3 ("perf intel-pt: Use shared x86 insn decoder")
+> removed the use of diff, so remove stale busybox comment.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-On Thu, Oct 31, 2024 at 11:07:00AM +0530, Umang Jain wrote:
-> Hi Stefan
-> 
-> On 30/10/24 10:04 pm, Stefan Klug wrote:
-> > The target crop rectangle is initialized with the crop of the default
-> > sensor mode. This is incorrect when a different sensor mode gets
-> > selected. Fix that by updating the crop rectangle when changing the
-> > sensor mode.
-> > 
-> > Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-> > ---
-> >   drivers/media/i2c/imx283.c | 4 ++++
-> >   1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
-> > index 3174d5ffd2d7..c8863c9e0ccf 100644
-> > --- a/drivers/media/i2c/imx283.c
-> > +++ b/drivers/media/i2c/imx283.c
-> > @@ -1123,6 +1123,7 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
-> >   				 struct v4l2_subdev_state *sd_state,
-> >   				 struct v4l2_subdev_format *fmt)
-> >   {
-> > +	struct v4l2_rect *crop;
-> >   	struct v4l2_mbus_framefmt *format;
-> >   	const struct imx283_mode *mode;
-> >   	struct imx283 *imx283 = to_imx283(sd);
-> > @@ -1149,6 +1150,9 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
-> >   	*format = fmt->format;
-> > +	crop = v4l2_subdev_state_get_crop(sd_state, IMAGE_PAD);
-> > +	*crop = mode->crop;
-> > +
-> 
-> One thing to note, is the crop for binning modes.
-> 
-> Do you need to report
-> 
->     mode->crop.width / mode->hbin_ratio
->     mode->crop.height / mode->vbin_ratio
-> 
-> for those modes?
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Good point. I was naively assuming that it has the same semantics as we
-use for ScalerCrop in libcamera where it is explicitly stated that the
-coordinates are in sensor pixels without binning. That has the added
-advantage that we can deduce the binning factor from TGT_CROP and the
-actual output size. However I couldn't find a precise specification for
-that in the linux docs. 
-
-Maybe Sakari or Laurent have a definiteve answer there?
-
-Best regards,
-Stefan
-
+> ---
+>  tools/perf/util/intel-pt-decoder/Build | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> >   	return 0;
-> >   }
-> 
+> diff --git a/tools/perf/util/intel-pt-decoder/Build b/tools/perf/util/intel-pt-decoder/Build
+> index f99d150059b9..5b8f0149167d 100644
+> --- a/tools/perf/util/intel-pt-decoder/Build
+> +++ b/tools/perf/util/intel-pt-decoder/Build
+> @@ -7,8 +7,6 @@ $(OUTPUT)util/intel-pt-decoder/inat-tables.c: $(inat_tables_script) $(inat_table
+>  	$(call rule_mkdir)
+>  	@$(call echo-cmd,gen)$(AWK) -f $(inat_tables_script) $(inat_tables_maps) > $@ || rm -f $@
+>  
+> -# Busybox's diff doesn't have -I, avoid warning in the case
+> -
+>  ifeq ($(SRCARCH),x86)
+>    perf-util-y += inat.o insn.o
+>  else
+
 
