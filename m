@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-390458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832E29B7A2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:03:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1506C9B7A31
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD121F21352
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:03:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C140E1F214C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD6E19B5A3;
-	Thu, 31 Oct 2024 12:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DCB19ADA4;
+	Thu, 31 Oct 2024 12:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qqJjygng"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GJV5GjYL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CWKTuAV7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9007E1BC20;
-	Thu, 31 Oct 2024 12:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47031BC20
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376204; cv=none; b=d2xqgD4ZKL0yA9W/NE51u9qNGSvL26eqKt4WULYHElyJ12W/t1JjTwQ6vFo6MKAxBz2NDHpWQbfy35QNU5/Wg3xiUpOJXzmVVs6HS19irJOjhoSgr5Q/OhlQMpqRg/cwN88gl1EwLK7pWVgAyl06uBUDrQdbNamgm6Lzgzj+v9k=
+	t=1730376250; cv=none; b=riKswQEeIA0CRcVoAXjhMEh8xaNKliHLF6U4RtZ9l72tZawMtz+ALGKprlIsBXpW2MwyUYXSB8QdIjEeTUA3xNGNNZCNANs/EqzW/rEhthQqduAQKtYJdAY6n48POid0Zv2Ix1TBtuJ/PycjvPvfbwexiYsZhCWSTPZM3Rap00s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376204; c=relaxed/simple;
-	bh=Qg4mJxs4fXCmXS7KB5laOTg+7yxkd7M8r4nAAkZ9adQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KfM96zXXUrJF/f1vlUD0A3Q9pLyLAzcIQOU8PV5WSBc8vHGlJVfipmG+l61EPehHqdhvfPBWl0b6mpJoC4Qitjhrw5VJKfMSpjQn9XMqfjcT0CYymYdJ4zrT9WPcyUHJWoBn7K3aqI4gYfZgqPqZBfN0V88W9UO7V2foHS9xg9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qqJjygng; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V6vL49013181;
-	Thu, 31 Oct 2024 12:03:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=9APeEwQXPLuuVKK42xBYkPKUFePEi9WFCzuJSO91+
-	GE=; b=qqJjygngaYB5kwBLfuqTHlQH2fza25uBLy7IB6m9ylAPeEqz0yOhQaZq2
-	7uwmZC6QGWzFT1tKjtfO5FkcvRUJGtQ8RaQij8zpSdj7/UbltIBWGVrKwYgIMm0C
-	Npjg9W6nyFaxazNelj5q37KZR3sbafLkFMnKAELpLCFRHdvAOrXF1mVeAi2XG3U2
-	s3FaGsr6Zz1qoM7/X0ZbzvaLrO16SCVCCTyzaEqZXxW0K3BEqgNDXMvIyWTztiu8
-	aqJPYRPsyLvMbYIshgr1F4Sbxtf4y+V8Ey0wyyDshM5oqp26DEKwbhWGxmxM0otW
-	yUpFhl1JM8WvFR6qyAdHtV6HrFpqg==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42m52c97rk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 12:03:21 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VBI8p4015899;
-	Thu, 31 Oct 2024 12:03:20 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hdf1mbxg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 12:03:20 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VC3H0t40698144
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 12:03:17 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2F66320043;
-	Thu, 31 Oct 2024 12:03:17 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 83FAC2004B;
-	Thu, 31 Oct 2024 12:03:16 +0000 (GMT)
-Received: from p-imbrenda.ibmuc.com (unknown [9.171.69.120])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 31 Oct 2024 12:03:16 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
-        frankja@linux.ibm.com, seiden@linux.ibm.com, hca@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH v1 1/1] s390/kvm: mask extra bits from program interrupt code
-Date: Thu, 31 Oct 2024 13:03:16 +0100
-Message-ID: <20241031120316.25462-1-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730376250; c=relaxed/simple;
+	bh=7DyCwb7VlNvvBsHiz7RddaJwmn+ou0DGlvZtBs2bsnU=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=otnbq/S4TvslseB4gv/SaGRfYWOT+mazOTRa7oFCu/y6co9DTpYNXuOWKBd9jejAORNEBMlBk4Ql6GJqngj9ZXs0HI3JmnH5rqmAayfrh05Huv3hvzGkSbmP4Hq2wHWTMO9H8RW+muAbOarW6yz8wpDibaepRZNgrhZDknNHIZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GJV5GjYL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CWKTuAV7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20241031115448.978498636@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730376246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=NRv8pxWWkjQg0v6CM20mzf5/kbe20oZIZzJbrvdHpzk=;
+	b=GJV5GjYLAq6gGF0KmrQio0HyVWAQ2eM8F1er0dPhdU3MLkPi3/I9xiF8mwDky36oAdrZaf
+	VS7aZfOMP3uiTC8u37blJoRcn8hNDD4ZX7Gak/49hmBnr1M8C8yciweuhtrBzoZF0Fo3fZ
+	vh/mCdKhFq32LJZZsJaWFj12RvTWyHzsItodUlOCwNQilgna78YVqcaYET+bTTRkPUhtcI
+	5zUK385slrdwQW6ujhuBWegzh4jDRQ/rf8ebMZbhMJvy8M1+obthjUj1oVPeT+txxkh/Ul
+	Mq9vQAAvbuzSnnleyBQPkYKMoqN+QFCcBIBd6tgauQ5Xw8TNHTyeoGJHhk43lw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730376246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=NRv8pxWWkjQg0v6CM20mzf5/kbe20oZIZzJbrvdHpzk=;
+	b=CWKTuAV7Z9n7CVSeVBSUgGULWb8ypE4dm28a/kLF6KJKM0w914IEjJa7xaHUD00cFuSMZ0
+	EmLNJBwulZh54zDQ==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: [patch 0/2] timekeeping: Fall cleaning
+Date: Thu, 31 Oct 2024 13:04:06 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Qj_0wnjad3No7P3g8mDomxTi9CIg2yz4
-X-Proofpoint-ORIG-GUID: Qj_0wnjad3No7P3g8mDomxTi9CIg2yz4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxlogscore=587 mlxscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- clxscore=1015 phishscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410310091
 
-The program interrupt code has some extra bits that are sometimes set
-by hardware for various reasons; those bits should be ignored when the
-program interrupt number is needed for interrupt handling.
+The sanity checks under CONFIG_TIMEKEEPING_DEBUG have served their purpose
+for some time, but now that timekeeping handles potential 64bit math
+overflow correctly and is unconditionally protected against negative motion
+of time, these checks have no real value anymore.
 
-Fixes: ce2b276ebe51 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
-Reported-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE, which contains a protection against
+negative motion of time is only used on x86. It used to be in the
+timekeeper hot path, but now it's only in relative slow paths (watchdog and
+timekeeping_advance()). This protection is useful in general and the extra
+conditional in these usage sites does not really matter.
+
+This series removes CONFIG_TIMEKEEPING_DEBUG and related code and makes the
+negative protected variant of clocksource_delta() unconditional.
+
+The series applies on top of
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+
+Thanks,
+
+	tglx
 ---
- arch/s390/kvm/kvm-s390.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 8b3afda99397..f2d1351f6992 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -4737,7 +4737,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
- 	if (kvm_s390_cur_gmap_fault_is_write())
- 		flags = FAULT_FLAG_WRITE;
- 
--	switch (current->thread.gmap_int_code) {
-+	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {
- 	case 0:
- 		vcpu->stat.exit_null++;
- 		break;
--- 
-2.47.0
-
+ arch/riscv/configs/defconfig                        |    1 
+ arch/x86/Kconfig                                    |    1 
+ include/linux/timekeeper_internal.h                 |   16 --
+ kernel/time/Kconfig                                 |    5 
+ kernel/time/timekeeping.c                           |  108 --------------------
+ kernel/time/timekeeping_internal.h                  |    7 -
+ lib/Kconfig.debug                                   |   13 --
+ tools/testing/selftests/wireguard/qemu/debug.config |    1 
+ 8 files changed, 3 insertions(+), 149 deletions(-)
 
