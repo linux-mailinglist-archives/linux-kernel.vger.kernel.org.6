@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-391254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CB39B8473
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:34:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A039B847F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18891F240E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4239728259F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595241BCA0F;
-	Thu, 31 Oct 2024 20:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BC31CC17C;
+	Thu, 31 Oct 2024 20:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IX4HBNS9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Sx49+CvE"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885FD146A66;
-	Thu, 31 Oct 2024 20:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B270197A6C;
+	Thu, 31 Oct 2024 20:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730406871; cv=none; b=Wjp4u6unWa7/ftmlJekLXw5wzEqw5dG5pdDb3Zn/M4fUYuEbEuR1J/215rsoXfhhQsQjqmFTU6rjyY/lTTwF4FMnpR9D0+IrN7HxufSuRozNJu44PlHYB0SygMMqhONQu7lFbc+25V7FAagFjcYtyxm7l0XaQ00+5ZXaSAvRdjU=
+	t=1730407231; cv=none; b=pGUVgtCnnT8syW5JsDfADDWwprYlza4MQxqqTQeFXOCD9dncpj8yZbOkoRoXA5AwYrX5zD9VmtCFciSZORW2AkdD0NQTB0MO3ijXErSRKZnK2953Nqo+fDyRjC9j0N3OlNGuJ7T5urb0PwWR/9e881qzLEvtzZddeh2vL5kjJZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730406871; c=relaxed/simple;
-	bh=t3hCvbfzuZ4R1fdeegEZFGmVI5GxAInqbwI/XyrlHNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Al6IufzjtHLTu9UbOP6PaqIAB8YJgApNBuMGiawg0aZvgySv93NllJZjjVYNf4iSouG+78BpsT5kcmbijU47AEWXE5k6+OrhokIyQdsqFLb/2QvKF6mITvABRK3TS65BGxYCcR0hCW2amVIb25jijTCMy7h9n1IVpp/UOGkHxV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IX4HBNS9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VAHosw009566;
-	Thu, 31 Oct 2024 20:34:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mMLJI7Zwou0AIfa5DBCGV8tXsi5TaBK6b4xbCUPc4mA=; b=IX4HBNS9ubgXkUOY
-	ll0KEMC3Rr0iZW2NE6WNZWzir+ImtEys8M/LfgiMvAGOEfGIscVArTwRQvcwCleS
-	bAlF4EPEiACxL0TQTDBudVQVokvCFIp+GiDOXocVfsuv6fhq1KkjXj2pIIcNBZ3L
-	7mf05NSfO0a4QpkGj8zqLse4gW1e2WGOWCE3QLA/LwqUMyyQaWupMTD2GWBwCg9o
-	0lPV+MXuyuacf+qipoIFInK9U8U+fbHsdzX+VRBaxMorL+bXGMpTmhakKi02f0Zf
-	uRMbUzIKrscR/GbbPRphSfHQAiihWA5b3dTXtVSNneExZ9pFRTMjRjuTEkOKE06x
-	3rwNNw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kjm1d6x9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 20:34:22 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49VKYKXg007835
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 20:34:20 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 31 Oct
- 2024 13:34:19 -0700
-Message-ID: <52f47e00-8da8-4b02-8a36-bbfad015ed66@quicinc.com>
-Date: Thu, 31 Oct 2024 13:34:17 -0700
+	s=arc-20240116; t=1730407231; c=relaxed/simple;
+	bh=MV2PZMdCgyZVwxQqXYwbEL4UaF0wRJVB3Wcckw8d4vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DdtJ1zsJKkcw2tZi2dL2DNJIPX1IgKvjYH3nXOeONe0VyajFObE+G1DV/sTrcaJ5jJVyjIcHb6czeWGt/4o8OP+zqZYSGNtyKDWKE1NJpOCW4b6f+yMSH3Qzuf5gbCc/BhzVT6B77NHuRo4/J9PkJaAGnhVq+HGs+Z1RKFPMMlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Sx49+CvE; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730407150; x=1731011950; i=w_armin@gmx.de;
+	bh=BXG43c4ilcZXIfs6uhHqCHjCjELoxxdYvZiqLVDmo/M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Sx49+CvEpA1KmgUAoDY71gw3MySZfBSPPwuvxH7mXXvOFeugVuDwsi/Vt1jR8ueB
+	 dKiE0OV07v9Nz4CweI6fks+GZOYbo/kKS8kzp8RQ1YP9PtR1JXFwP3CI0KKPRtVvh
+	 shPA9z5/ZRoBynL184fKdoCZId0A9c2HVjMsmaCB/jNP9cAymYHpVuwbYgKttryPe
+	 oEl2K4iMn+IdY2nWHtPy7WB6dbyPdwV1fG7qszpJ68+ykWdAikVK5MudLhQOEVSzM
+	 PglRzG6jD2wsJPJ8QS0fbSb3NEo2mnRtD6t74EoVeQuhTAvdwYD3xYAEFzSBlo5iA
+	 BcB/d/2jBmOPobd1uA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MGQjH-1t5DQh2ISz-009IZ2; Thu, 31
+ Oct 2024 21:39:10 +0100
+Message-ID: <40b52d41-e3d6-4223-b9e9-0db6b2a19265@gmx.de>
+Date: Thu, 31 Oct 2024 21:39:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,126 +57,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child
- nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <freedreno@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <robdclark@gmail.com>, <swboyd@chromium.org>, <airlied@gmail.com>,
-        <quic_jesszhan@quicinc.com>, <lyude@redhat.com>, <simona@ffwll.ch>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
- <CAA8EJppKou84MZm0JS_4bPveMO2UxpMs5ejCoL7OMWd-umtDmQ@mail.gmail.com>
- <92217ec6-c21c-462a-a934-9e93183c1230@quicinc.com>
- <mlpiuko7n6rp3x55z4qterdns2wzqnfwgjxikbshrvakrscsak@antl2vzla5bd>
+Subject: Re: [PATCH v3 13/22] ACPI: platform_profile: Require handlers to
+ support balanced profile
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241031040952.109057-1-mario.limonciello@amd.com>
+ <20241031040952.109057-14-mario.limonciello@amd.com>
 Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <mlpiuko7n6rp3x55z4qterdns2wzqnfwgjxikbshrvakrscsak@antl2vzla5bd>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241031040952.109057-14-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _lT_b00_izNCYu-5d_JS0vLEL-HnIb-V
-X-Proofpoint-ORIG-GUID: _lT_b00_izNCYu-5d_JS0vLEL-HnIb-V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 adultscore=0
- mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310155
+X-Provags-ID: V03:K1:9zQAKx0lk662rnl5CmEQRvMpMRajJCGH1oxs7owsE6gIQ6QBDJu
+ R1xPtxAIVX8LvLVwPX0Ryw6MXqZvUXhWZGdWd77LpjMcP5kd1EXMqXDOo0KBseV6VpA4XHG
+ AoZz1o8KX0Xf6Jav9WRWfv/flQeOVorWOa3tv9nL8DDsCMMYm9aLKXhyoVzzGS9aqvejdev
+ sTgUTU2uR6xLjKD+86+sg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:woXGqM+HeUU=;rAsgkzCdSQPkIiKVBZ8ELlIGNA0
+ ad2TN95RxXYCaQHi5re4V03ES3MmMgIS2fAI5RQ6y5mOt9pEtmNrR09ynUGdAFBZTlutRyREP
+ 4lKLiMXaGkrxgZSJK0KldHKcCpRg71js+MYvOtyhaiige+Uyxu1gO6r//8uOSTOpNNz1ItBtF
+ hgh05YhOUuP6DE03kJpdmMNLD/iTK7+VadT3VdvHyC/cVKlX42sV7PT3JaRKaRWPFg2OAmwGD
+ rpiTMoYizNDpLs+g6Eik7LHATLWH346LKT+Jc/gOi4qwqhb3beHEqOcwnRadqQ+YLtoKRx5kC
+ dFry1ryhhzng/0s5sdyyzvvA95d4JkB/QJuqZOFKk2VrVTRwMvTCFuYA+VciA/jGmz/e50G8Y
+ GyYySX8f1hcdn4FBuTgV4bSyePsK7oB0Ud7chfjWWmdUTtUh1yPUffUQa6pY/ogW0sF41vOtk
+ WYJkdG1UR3/KyHmlY7dFa/Eah1f3//8GMri+ltldvqjwOX1PGvVhhB5nZzUvuwIDN4Li2+0vO
+ dSiu71Pu9YPtwkgZnljh2Ex39oKNs80WdKKtA9F79Fikr/l2wK3coQeL0+lF//+4vdK2jfKXD
+ rez5oYofBJy7LTtog5yN88Sebe0ARqDh8ojPeF3OhOuD170txjkOJH0Ae4X99OoAPAs6tdUeq
+ pLg459TtF7yvYjrf9KgBHNFqcBkuICUfJRysQhxmYBidzZQcIGwOC9rol9W8KdrQinuBNoICM
+ ETqdYV5Mbnry6jn3QOoPj+g8xdDD5LKZ19hCtJkQEsv0qwR1K9Ex7DQzFtdOYDlHHo3GuZRzn
+ qUuPS9/30Se7172+Gsu56oew==
 
+Am 31.10.24 um 05:09 schrieb Mario Limonciello:
 
+> As support for multiple simultaneous platform handers is introduced it's
+> important they have at least the balanced profile in common.
+>
+> This will be used as a fallback in case setting the profile across one of the
+> handlers happens to fail.
 
-On 10/31/2024 12:30 PM, Dmitry Baryshkov wrote:
-> On Thu, Oct 31, 2024 at 11:45:53AM -0700, Abhinav Kumar wrote:
->>
->>
->> On 10/31/2024 11:23 AM, Dmitry Baryshkov wrote:
->>> On Wed, 30 Oct 2024 at 03:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->>>>
->>>> of_i2c_register_devices() adds all child nodes of a given i2c bus
->>>> however in certain device trees of_alias_from_compatible() and
->>>> of_property_read_u32() can fail as the child nodes of the device
->>>> might not be valid i2c client devices. One such example is the
->>>> i2c aux device for the DRM MST toplogy manager which uses the
->>>> display controller device node to add the i2c adaptor [1] leading
->>>> to an error spam like below
->>>>
->>>> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
->>>> i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
->>>> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
->>>> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
->>>> i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
->>>> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
->>>>
->>>> Add protection against invalid child nodes before trying to register
->>>> i2c devices for all child nodes.
->>>>
->>>> [1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
->>>>
->>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>>> ---
->>>>    drivers/i2c/i2c-core-of.c | 6 ++++++
->>>>    1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
->>>> index a6c407d36800..62a2603c3092 100644
->>>> --- a/drivers/i2c/i2c-core-of.c
->>>> +++ b/drivers/i2c/i2c-core-of.c
->>>> @@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
->>>>    {
->>>>           struct device_node *bus, *node;
->>>>           struct i2c_client *client;
->>>> +       u32 addr;
->>>> +       char temp[16];
->>>>
->>>>           /* Only register child devices if the adapter has a node pointer set */
->>>>           if (!adap->dev.of_node)
->>>> @@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
->>>>                   if (of_node_test_and_set_flag(node, OF_POPULATED))
->>>>                           continue;
->>>>
->>>> +               if (of_property_read_u32(node, "reg", &addr) ||
->>>> +                   of_alias_from_compatible(node, temp, sizeof(temp)))
->>>> +                       continue;
->>>
->>> I think just of_property_read_u32() should be enough to skip
->>> non-I2C-device children. If of_alias_from_compatible() fails, it is a
->>> legit error.
->>>
->>
->> Thanks for the review.
->>
->> of_alias_from_compatible() looks for a compatible string but all child nodes
->> such as ports will not have the compatible. Hence below error will still be
->> seen:
->>
->> i2c i2c-20: of_i2c: modalias failure on
->> /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
-> 
-> But ports node don't have a reg property too, so it should be skipped
-> based on that.
-> 
+Do we actually need this patch anymore now that we have the "custom" platform profile?
+If setting the platform profile fails for some handlers, then we simply display the current
+platform profile as "custom".
 
-hmmm this is a good point. I see that individual port@ nodes do have a 
-reg but ports node does not.
+Thanks,
+Armin Wolf
 
-I will re-test this once without the of_alias_from_compatible() and drop 
-the of_alias_from_compatible in v2.
-
->>
->>>> +
->>>>                   client = of_i2c_register_device(adap, node);
->>>>                   if (IS_ERR(client)) {
->>>>                           dev_err(&adap->dev,
->>>> --
->>>> 2.34.1
->>>>
->>>
->>>
-> 
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/acpi/platform_profile.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index b70ceb11947d0..57c66d7dbf827 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -164,6 +164,10 @@ int platform_profile_register(struct platform_profile_handler *pprof)
+>   		pr_err("platform_profile: handler is invalid\n");
+>   		return -EINVAL;
+>   	}
+> +	if (!test_bit(PLATFORM_PROFILE_BALANCED, pprof->choices)) {
+> +		pr_err("platform_profile: handler does not support balanced profile\n");
+> +		return -EINVAL;
+> +	}
+>   	if (!pprof->dev) {
+>   		pr_err("platform_profile: handler device is not set\n");
+>   		return -EINVAL;
 
