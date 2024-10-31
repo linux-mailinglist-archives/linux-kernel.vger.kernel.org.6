@@ -1,159 +1,161 @@
-Return-Path: <linux-kernel+bounces-391408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8529B8643
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:48:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB709B8645
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A61B21FEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:48:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE541F2264C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13401D130B;
-	Thu, 31 Oct 2024 22:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BF81D0F66;
+	Thu, 31 Oct 2024 22:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIQkmEMx"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nynm8vLk"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B159D1CF5E2
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 22:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A745A1991AB
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 22:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730414890; cv=none; b=SkRtWM2zl4nLBatohOq23TAF5mx6i2pTZ7Hu7XecerXojxrAEa+H0LnxEcP+vLMCvdFMlDZXtJf0NPtMvUbMDXOGW0aCio7tgVbKr0DXKD0jgPdStWXuw4Orf5ds8kNjrCHlcLljE7ffuWLU7k69n1CunKN5zJsvSxv9mnKo26E=
+	t=1730414945; cv=none; b=EfQqRKmiw0BPTn1S7iCRds1PjjVIPnfasNOnJdE+1nJ8TCwdrG8vfBhRmoW+ljM5YporaIm9YwHv1GvDfL02LHZ8sD7gfSsBtrIKjzrVlgXV5ANWexISG3mDE0vGOLhdPHZXNEME+FPeG6u6RA96xtZ4FEzlcTEvfGPQSy71c1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730414890; c=relaxed/simple;
-	bh=dKICqskpU+lDAaVFQjimpvgZuImNCCQ5RSIvqwp71xE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uPW2XjoJoCJgG7swHPBZ4HKw0b50wTWEyYQn/9AKaBx4h23dZS3W+dWICtSfZ6WCPtvpyaG1P6wxr/107XsIbnl5YyrEOFBuVm7Qv9y0H4eOThy52aXvCI6q6UyOqi55NlLJ9YW/W9l3jFG0pftSFTFF1gThUx9n9biqk3N4s80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIQkmEMx; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43158625112so12029265e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:48:02 -0700 (PDT)
+	s=arc-20240116; t=1730414945; c=relaxed/simple;
+	bh=YMlzBx+z9aaRa2t9CsTC7J8zOTayJPPNSKPZfiTQhdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l9IKR1gS+U/ATGR0qzGfkfydsoUmX+Gc6ix7rFBtxisCNruHyURGcCUe7BP2XpJKi9o3MKHF905UFB+FZijHxZXsIFEf2HQ8IKsd2oq9FRJJFVfJtk6RfvJt4Bloc/dPXqfj8OfSg9AWLEKZEpA2IuRH/Q52DR3hRb04FF+nTa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nynm8vLk; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e2e41bd08bso15660847b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:48:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730414881; x=1731019681; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1730414937; x=1731019737; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eTGe9PwYvoojfRJpUZgUhAxbJHxiXthHeHJW83hgHu8=;
-        b=BIQkmEMxnpj+5iaC/CJK6UU8d4cJ8C2yB2NauBlOmp03k5MYdgr0yGjGgJ4m9NuWES
-         GUT8TX45unHLjBQeFEYD/WamKwJd2vFET+aei9cV9AIr1HXEhTPjpREZg5bfC6HQXCg6
-         MY6r1yA2I8lmH5qLl+FL22iPSe9e9O/wzCm3UrBm545gl/m//I39pVbxaGmEsE9f1xCl
-         EQbE5dZ20ks+BeeMnDM6uUmCVUPCARw9OZVt6BnRlc8HaIsIUJZpC93MlhPEbV5mN/gg
-         HBo3lFlQpn1cENHD2ssErDLurTFB3v/qqwOwOwNQWPSc9JIynweHYAEqadAms0CojruC
-         KH3g==
+        bh=G6qFeMz2fz5TUQHmgzOfA0YHFIKSZWtlwhdHVsEY4Ls=;
+        b=nynm8vLkXC4r9VS7uMggot5UJaUMw+R0ysBxOSXqB54O/cY+FeTDHACztW6yuYxgqd
+         iFGDI7hIeZvzT6qE53U5jBLeedQPeeEGwMR+I3Qn0I7DMLhf6yId3FzYX71pcTIy/+v9
+         wOuPFnlt7T93W2rZg/If55NLfeDAKbb3BAufc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730414881; x=1731019681;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eTGe9PwYvoojfRJpUZgUhAxbJHxiXthHeHJW83hgHu8=;
-        b=RMcIaW9vVizbfw6ypvEqQUt2Oua8pWre8OOIYMRoNFvHc0PunhCFU9xht/5oKCt8vA
-         mkX2lCO+xWlVrLZD5IdcsL/ysFnfapIIMntbjmeaGc3gt0iuVe6UJk3u4oKtXMUug9Fq
-         eLw8iGw5/MK5W7HfadV+qIrJbVio4bS8Rc1c84trpFA2aT2DcxOXt5gJ4JZQVf/083gs
-         22NFUHY8fSn2toaQbBfZQ9bhC8rcCt0DtzfAEHC7oDUFtAaG5LShK4h9aXl9OVr4YqSl
-         V3nG4/CAWhGFv9NXlc5Ynv09nZ8hWSKYpBwooZfAlkhOrkrjrGHOlyCUqBa6Ba6+fljq
-         Qprw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaDgNnlI305eQolOMUbpYuScwib/vrv5Xf7NI4gaRSq6+2iVNX1tsHjhCJSj38OarDzdSvm2YG9gge9oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp7nL2q+X1H4QNIPqEvA+7Rx+D4p7nEsji5jsan4inAFoUh/jN
-	H4pavvtfmTK4opQl3hlbII36vHUb9VzEh5KZY5tLiEPZekhai3eLIcVzsXuMfuQ=
-X-Google-Smtp-Source: AGHT+IEmzHNzE7hvDqBmKYm1F0qTKl7W/SJiQtEF8C1xj5fDoK069HdbTE+fuTkxJTbnplMq+3q1PA==
-X-Received: by 2002:a05:600c:1d21:b0:431:518a:683b with SMTP id 5b1f17b1804b1-43283255a45mr13080605e9.18.1730414880954;
-        Thu, 31 Oct 2024 15:48:00 -0700 (PDT)
-Received: from localhost ([2.222.231.247])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d439esm3327963f8f.44.2024.10.31.15.47.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 15:47:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730414937; x=1731019737;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G6qFeMz2fz5TUQHmgzOfA0YHFIKSZWtlwhdHVsEY4Ls=;
+        b=ibdO1AOiyNl0hkawgUKnhSdjItILx36Ty5Jn8OjBixkKOSJV/s0Xc0ZOFoHqidsam2
+         Rgf9nWM8yWzJE1wMSG9UyOslZoYm12Up6skR53rER1YFS4Kl+Fh/8OZsFCs6iNEw9Zub
+         zYHj+6ixdUn3tR78sDvCUV76y0uIkXK6pysi5gdwU8bVjhT8TA7OIjAKblCIiBzOHilQ
+         57e2yxSgSXb4pD326cDTko0XltRoD4ozraZSuKpK+0PCSdXAfh/TbxcW/QZGC/lcbyEk
+         0PE6nnBQy6BxPg2pCXSKWnuTFGdq+OsXlkVhV/mlZft7us3Q3qDPUCjHj4net8VQyeJa
+         xNwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrAhCeLL4B48TChIiUdpqjINXLDrZrmhn4PnbPTuTJF0b/hlq7Ew0Dx0HlLu05ajp2hqG4do20cGDJY1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTQBCXjb75tS0324o5kw17Igj/XU9B91VCEunSsDkL++TKdjzQ
+	ahzQIt3Qnzxb6EqObm580v1P8oiI+uyzMHU3+pg3dC9T6QTSXIqREmAeyDbeR9xZfw99p2JMVTb
+	XRKHE2wlluFFSbfxVSqUmP3cXJyUvfNe4IaKB
+X-Google-Smtp-Source: AGHT+IEeT+MuyLEbw9zpD7r5OibCxa+4DfQKki/EuwTyOa3LAohYFUTmEiVK47uXYyOB48zQ65odB1tWbGP1fgXoPyY=
+X-Received: by 2002:a05:690c:883:b0:6e5:e714:3bdf with SMTP id
+ 00721157ae682-6ea64a9f501mr20113947b3.5.1730414937682; Thu, 31 Oct 2024
+ 15:48:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20241030212854.998318-1-abhishekpandit@chromium.org>
+ <20241030142833.v2.3.I439cffc7bf76d94f5850eb85980f1197c4f9154c@changeid> <ZyOVIKGlrlj7kc9-@kuha.fi.intel.com>
+In-Reply-To: <ZyOVIKGlrlj7kc9-@kuha.fi.intel.com>
+From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date: Thu, 31 Oct 2024 15:48:45 -0700
+Message-ID: <CANFp7mX-DkyFqwoaq_4V1XEDBqK7bj6-nz2aJi7idM=Q2TT49w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] usb: typec: Auto enter control for alternate modes
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, dmitry.baryshkov@linaro.org, 
+	jthies@google.com, akuchynski@google.com, pmalani@chromium.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 22:47:58 +0000
-Message-Id: <D5ACVOXF0KJK.1ZUDOAK4X9EP8@linaro.org>
-Cc: <lgirdwood@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
- <perex@perex.cz>, <tiwai@suse.com>, <linux-arm-msm@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
- <krzysztof.kozlowski@linaro.org>, <caleb.connolly@linaro.org>,
- <linux-kernel@vger.kernel.org>, <a39.skl@gmail.com>
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: qrb4210-rb2: add HDMI audio
- playback support
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>,
- <linux-sound@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
- <broonie@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241018025452.1362293-1-alexey.klimov@linaro.org>
- <20241018025452.1362293-6-alexey.klimov@linaro.org>
- <33736e2e-7ac2-4ec1-9d83-eb8360942bbb@oss.qualcomm.com>
-In-Reply-To: <33736e2e-7ac2-4ec1-9d83-eb8360942bbb@oss.qualcomm.com>
 
-On Fri Oct 25, 2024 at 8:09 PM BST, Konrad Dybcio wrote:
-> On 18.10.2024 4:54 AM, Alexey Klimov wrote:
-> > Add sound node and dsp-related piece to enable HDMI audio
-> > playback support on Qualcomm QRB4210 RB2 board. That is the
-> > only sound output supported for now.
-> >=20
-> > The audio playback is verified using the following commands:
-> >=20
-> > amixer -c0 cset iface=3DMIXER,name=3D'SEC_MI2S_RX Audio Mixer MultiMedi=
-a1' 1
-> > aplay -D hw:0,0 /usr/share/sounds/alsa/Front_Center.wav
-> >=20
-> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+On Thu, Oct 31, 2024 at 7:33=E2=80=AFAM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> On Wed, Oct 30, 2024 at 02:28:34PM -0700, Abhishek Pandit-Subedi wrote:
+> > Add controls for whether an alternate mode is automatically entered whe=
+n
+> > a partner connects. The auto_enter control is only available on ports
+> > and applies immediately after a partner connects. The default behavior
+> > is to enable auto enter and drivers must explicitly disable it.
+> >
+> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 > > ---
-> >  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 55 ++++++++++++++++++++++++
-> >  1 file changed, 55 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot=
-/dts/qcom/qrb4210-rb2.dts
-> > index 1888d99d398b..5f671b9c8fb9 100644
-> > --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> > +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> > @@ -6,6 +6,8 @@
-> >  /dts-v1/;
-> > =20
-> >  #include <dt-bindings/leds/common.h>
-> > +#include <dt-bindings/sound/qcom,q6afe.h>
-> > +#include <dt-bindings/sound/qcom,q6asm.h>
-> >  #include <dt-bindings/usb/pd.h>
-> >  #include "sm4250.dtsi"
-> >  #include "pm6125.dtsi"
-> > @@ -103,6 +105,51 @@ led-wlan {
-> >  		};
-> >  	};
-> > =20
-> > +	sound {
-> > +		compatible =3D "qcom,qrb4210-rb2-sndcard";
-> > +		pinctrl-0 =3D <&lpi_i2s2_active>;
-> > +		pinctrl-names =3D "default";
-> > +		model =3D "Qualcomm-RB2-WSA8815-Speakers-DMIC0";
-> > +		audio-routing =3D "MM_DL1",  "MultiMedia1 Playback",
-> > +				"MM_DL2",  "MultiMedia2 Playback";
->
-> I'm seeing a lot of double spaces in this patch
->
+> >
+> > (no changes since v1)
+> >
+> >  Documentation/ABI/testing/sysfs-bus-typec |  9 +++++++
+> >  drivers/usb/typec/altmodes/displayport.c  |  6 +++--
+> >  drivers/usb/typec/altmodes/thunderbolt.c  |  3 ++-
+> >  drivers/usb/typec/class.c                 | 31 +++++++++++++++++++++++
+> >  include/linux/usb/typec.h                 |  2 ++
+> >  include/linux/usb/typec_altmode.h         |  2 ++
+> >  6 files changed, 50 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-typec b/Documentation/=
+ABI/testing/sysfs-bus-typec
+> > index 205d9c91e2e1..f09d05727b82 100644
+> > --- a/Documentation/ABI/testing/sysfs-bus-typec
+> > +++ b/Documentation/ABI/testing/sysfs-bus-typec
+> > @@ -12,6 +12,15 @@ Description:
+> >
+> >               Valid values are boolean.
+> >
+> > +What:                /sys/bus/typec/devices/.../auto_enter
+> > +Date:                September 2024
+> > +Contact:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > +Description:
+> > +             Controls whether a mode will be automatically entered whe=
+n a partner is
+> > +             connected.
 > > +
-> > +		mm1-dai-link {
-> > +			link-name =3D "MultiMedia1";
-> > +			cpu {
+> > +             This field is only valid and displayed on a port. Valid v=
+alues are boolean.
 >
-> Please add a newline between the subnode
+> So, why can't this be controlled with the "active" property of the
+> port altmode instead? That's why it's there.
 >
-> Looks nice otherwise
+> Sorry if I missed something in v1 related to this question.
 
-Thanks for noticing this! I'll update it and resend.
-I put one space between audio-routing widgets, not sure if even one
-is needed though, maybe there should be no space at all.
+There was a bit of discussion around this in another patch in v1:
+https://patchwork.kernel.org/project/chrome-platform/patch/20240925092505.8=
+.Ic14738918e3d026fa2d85e95fb68f8e07a0828d0@changeid/
+And this patch is probably a good place to continue that discussion.
 
-Best regards,
-Alexey
+With the way altmodes drivers currently work, they will auto-enter
+when probed. So if you have a partner that supports both displayport
+and thunderbolt, they will both attempt to auto-enter on probe. I
+think I could use the `active` field instead so that the port altmode
+blocks entry until userspace enables it -- this would avoid the need
+to add one more sysfs ABI. I'll actually go ahead and do this for the
+next patch series I send up.
+
+However, the underlying problem I'm trying to solve still exists: how
+do you choose a specific altmode to enter if there are multiple to
+choose from? I tried to implement a method that first tries USB4 and
+then Thunderbolt and then DP but I realized that the altmode drivers
+don't necessarily bind immediately after a partner altmode is
+registered so I can't just call `activate` (since no ops are attached
+to the partner altmode yet). Do you have any thoughts about how to
+handle multiple modes as well as how to handle fallback mode entry
+(i.e. thunderbolt fails so you try DPAM next)?
+
+>
+> thanks,
+>
+> --
+> heikki
 
