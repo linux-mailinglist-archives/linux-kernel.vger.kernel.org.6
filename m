@@ -1,202 +1,288 @@
-Return-Path: <linux-kernel+bounces-390955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30769B8078
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:45:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF5B9B807E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64F21C21D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B66B1F223A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE8D1BD032;
-	Thu, 31 Oct 2024 16:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145E313AA2E;
+	Thu, 31 Oct 2024 16:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LEbDjhzg"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2088.outbound.protection.outlook.com [40.107.22.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bgOScP/2"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8122B1BD515;
-	Thu, 31 Oct 2024 16:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730393106; cv=fail; b=VImRMJNLJ+mj3zxoe3WYFdEfrR5b3Ras6q7Cl+F94d/8NG5mDz9ycGKTQhSUT4HZZltc64lk0cJbIS5zGYvWjwVY7FjCKQW2DEeeUhRVegCbJjGvf7iYzmOP5fc1BK6s0iyevOk5R/1G5mvZInbwld9Az56Vk9GIYM3im7R04bA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730393106; c=relaxed/simple;
-	bh=ds0KlMwwK8+ZoacY4YgrlK88ZoF77QS+IEBY63fWBek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=R0XMHmiudO2PgvGg14xzzTXtgLhew59vemmwXpIioadOlUj9jbB4NISgooZy19F2TtOomtXvQm728PYkhDZ75UecujMJ/Id+AbIAXwIn0tZE328dBioouSUHmlCAO1RnB57B+/ZFDWXha4uOskgO8rDGFVyX7b59IfZoYYBZgy4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LEbDjhzg; arc=fail smtp.client-ip=40.107.22.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ttxjmpbokx9a3RUz2EqaSHPcsiD346EKyXq1l1IVD+2XGXhz1f3GdCXSiYJfRUmU65lnvmUXkAIhx1Xh+T331kVJKFoKN4LS6QnUVCh6jcK3YAKR2d45vcVlFrqzQo5/nKTTddVIcZot0hR8Rn9IQA3pgXdFWfcDUL0Vn1jyBzm+Q5gQ7XQVcxcWJd559uXoERn98RjAsiplYYfdTI0O/ZMzssA3s3h2Phn59LwQRN3EXqKPU6HIkCfhipPv7QmIGzIn9G+6fyT1n/f8l6OOrYGTw3JYnGO2dQf4JxULg0yih5LpOmj4afRQ4HRShOFnHFUqfEfTDhmpBPAuZaWPvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8cP+A4+/zIKX/hTj8QtQL6JQG5l6PTiSzrXTMwJmi+8=;
- b=O3Mn+KmL1Lh0SvhA/lH5kWs0wzF3mpkt9G3zA9G19YoRNjTsSl0Srsds7QQ2c0jbTQky62wR8FRwT7PBAf2zAIFf2SRnhQKCxy194Sdsayeh+SYoyzzFbJ5TqIKqdD4qcz8nAxFVaohssEPWtq3WpCUcTzRz85keDy/yOtfv9O2pKFUonDEEycrl1aIzlT5R9Ie+xhwsh/IbzWF140MTF+cq8ehoQfM0108t+qHpZEpm0U90F+Vbe698R1AWSqFEEuJ0JCzpad4TJfrzip3HWniUODgTUYJQk6xYZxvLZpiH9DNEb2Ypuy2Nps1NVvDZsO1AO7ACeGPq90B9b0shdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8cP+A4+/zIKX/hTj8QtQL6JQG5l6PTiSzrXTMwJmi+8=;
- b=LEbDjhzgJVihBFK1/L4oIwabZGEXk0N2JcQllJ+lOcbuTuhdXNOf6N1/246ltEx/Is1J8P39iPd71JeajGyTKTzhPdHKTmjO2owFIdDO8dsKYfAg+IHwX8kTKVp0pT7ppynVaUA5pkocIsQp8MLL2u4RQQpVFGjUI4WTMdVmIR965oheg+AnWsaBWvA3CouK0PVuxLk8ZmW/Ue4vPEO1xGTLvQLpgcDeB5R8DKOoYsmwNaMQRA6uxB7aU1RYW7AX+1BSOcXUY+jTGbZDOa6XIFeM0535cvA505tdYucZ9XnUjOZ1rR+2onaHzlPoI+mFiVOamDlrHdvRWcFlELkbfw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by DBBPR04MB7801.eurprd04.prod.outlook.com (2603:10a6:10:1eb::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Thu, 31 Oct
- 2024 16:45:01 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
- 16:45:01 +0000
-Date: Thu, 31 Oct 2024 18:44:56 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Arthur Kiyanovski <akiyano@amazon.com>,
-	Brett Creeley <brett.creeley@amd.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	David Arinzon <darinzon@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Doug Berger <opendmb@gmail.com>, Eric Dumazet <edumazet@google.com>,
-	Eugenio =?utf-8?B?UMODwqlyZXo=?= <eperezma@redhat.com>,
-	Felix Fietkau <nbd@nbd.name>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	hariprasad <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
-	Jason Wang <jasowang@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Leon Romanovsky <leon@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Louis Peens <louis.peens@corigine.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Michael Chan <michael.chan@broadcom.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Noam Dagan <ndagan@amazon.com>, Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Roy Pledge <Roy.Pledge@nxp.com>, Saeed Bishara <saeedb@amazon.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Shay Agroskin <shayagr@amazon.com>, Simon Horman <horms@kernel.org>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Sunil Goutham <sgoutham@marvell.com>, Tal Gilboa <talgi@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	intel-wired-lan@lists.osuosl.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-rdma@vger.kernel.org,
-	netdev@vger.kernel.org, oss-drivers@corigine.com,
-	virtualization@lists.linux.dev
-Subject: Re: [resend PATCH 1/2] dim: make dim_calc_stats() inputs const
- pointers
-Message-ID: <20241031164456.rifatscfu6gzht7z@skbuf>
-References: <20241031002326.3426181-1-csander@purestorage.com>
- <20241031002326.3426181-1-csander@purestorage.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031002326.3426181-1-csander@purestorage.com>
- <20241031002326.3426181-1-csander@purestorage.com>
-X-ClientProxiedBy: VI1PR09CA0138.eurprd09.prod.outlook.com
- (2603:10a6:803:12c::22) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A933C19E7F9
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730393130; cv=none; b=RWCKe+hEXjpcx417dFV0dcnRlccOmjd/nwrELxwnQfE1kKUHlxGK9ualTeBkVVQ3tLn6U0VKzMg5/JN55E5nodf7ki0818lo04oGFaCO+D57lRtyxzFC9rlXBEXgYvBY1U86EPlg2kIzd3y1TccZn21P3wGCLwQ1IWg7oxXbA5U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730393130; c=relaxed/simple;
+	bh=rkdqG/nrgIcJqGiS/dstGzJE2Pk4kvgZxSdqcJxcBuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PJI5V+cK00Cf/tpJq2uUFlOHQtecJCc796C/t3BZI72OwrW6JGTxXLh2uVFoivgQDXqp2njCglIr9LgPrBsm+PcCxJjTpg5jR1ijiPUgru6hFBKX2dlZdDS4RXrdXnbXjwiWncDDex0gV4S6h364NnOmpZQRBCCPZYoR+lYSw5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bgOScP/2; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4608dddaa35so4891cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:45:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730393126; x=1730997926; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ajSNpZ+3WMV4SP4tjIDU9tWATJdss3I7t5t7CZg1K/c=;
+        b=bgOScP/2JM0L3JJj/LvvA0/jas9W+D1S5C71iEi5YHbtbA+wQVl8iH7J+Ka5/lCDQH
+         evoNB1R2GnmLIb/dS8w6z9LLoMxTEyYpgNHz8fLXsTVI62jxgdRdEtBF+iuvfZpF+0x3
+         +HwDOvRpH05LqXTZiXVsVUhaDMV/enEvhaMu8mPhNrF4OacYlgRSyra/ofQRPWlnOul0
+         NHoxZZzV3fyUQd2r9mS+uYURMnlqFemxlLcxQvlHUWdq413ikJy4GiKFhib/Zwvf3UWv
+         AUIhAZbDeD1LRTyjiV+2B8nVEckVmmsJVYt7b0EQGQ6n/3tJiUUY3g3lbeYWGGcnCGIS
+         QNyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730393126; x=1730997926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ajSNpZ+3WMV4SP4tjIDU9tWATJdss3I7t5t7CZg1K/c=;
+        b=oLp2NsvHyrDXdx6/w+MIX3v7fMjvJ19qdDw10RlpIFvQ83mBa0B29U1CJJ65xmUb1l
+         oGvFK1nJIYo7l49kiQPo5/M8b69Od9fDr03beYGlVLMulmfsr69p1LQ3DdDJCVrduUaj
+         XKpiMuQI0abhTUsG+/bcYRK4GWK7yW3ZGFdz4bbtOhAstJUgIaRXLb5CWw7KKkIErUAH
+         ITOwKGYwkvzQbwVMbkIBMr/OSIO0IYxmQ95XfB80eiBjMbmiLhQs0kHiS/uVFW73i+ZQ
+         4+k0rTLWOGVufepnj8XQ0VS4kyNRRdyG/zfHvwntf+xz4dr2qaFnDBSFWM93bZsc3n9N
+         GI8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXc6ow5NXCMXP/tzjix33gBLpWKnaWumXlWPS7IQjEyI6jr1xQsiwDqYXXISXM4kG+aOED2kELpieutg4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGGJWLOiM3rVm1/oI8hSnbIP8GIQ95Bt54ZEnLeClT2nNRUGdg
+	Nl7QB1YR1dYRzQcf5oTbXZJ04nUbTRmkRmN+Xao2pG1i2+55+3zG90TcPOEVIO2mYZfpxlxRMDP
+	aiQZgp6eN0r8zVKWdgqUbz/98lRupC8+BaleO
+X-Gm-Gg: ASbGncsX8cq2EE2ByUrCyQbK/yYYp8I9SQ6XykY9+P3otKsjjuCGrN7+kHL+hJR2x+K
+	3TwDnpT1AHMPdaS/5g+JrStzy00XY9CtzHWzQtJpYdAwqQvsN45ofBF6ucrHANw==
+X-Google-Smtp-Source: AGHT+IG/0R3i1ODpwp7LvGfwHIDqYpiF6xbdGWgqEnkqUJcQZ6mUNfG/1HplzFp3uMaUggF77XP54VKzykRwvgeAa/4=
+X-Received: by 2002:ac8:5f0a:0:b0:461:6bb5:99ba with SMTP id
+ d75a77b69052e-462ad0feedbmr3752101cf.5.1730393126111; Thu, 31 Oct 2024
+ 09:45:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DBBPR04MB7801:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9735c66-0446-4f39-511d-08dcf9cb5ce6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hoq/KtHorIomLu/jaYJfBOaXa0hXrKIBGRHe3hi+ScJfWNWNBqFRYJYK7hbj?=
- =?us-ascii?Q?GknBv0Emx9DF/YW+DidYhTQNNpwmxLvd4HpO3Pd5uA78kDLty3Nz6K5CQuF2?=
- =?us-ascii?Q?ii7MHR/tTogFeGaIDq0mZDu8MByT/rqeBF7cPTd3Ec+wd0d4x//3PVjzqXYd?=
- =?us-ascii?Q?zVDCrn+7z3ohfpvxTqVGtiwNWi7V4kV85ueUrN3QSsUaQAomhnD9MXF3uVR7?=
- =?us-ascii?Q?e6NZTXAJBIOxtUYzbVPfC+AE4j/158ohmpEV2eLsVyF2AG+Hnp7PFT1pSFxR?=
- =?us-ascii?Q?ZGub5VLj39a1ja9RN0atmWiHPyM4rdY0mizj7uDlcec1IW6RNxi1AySTv0go?=
- =?us-ascii?Q?qGxOz5b3ifpd2gEzw/ZuYhmBJyH+rdgaaD3ALW1wgtdgJyPHlKJW1/VGXfLM?=
- =?us-ascii?Q?j+Q1A1kHkqZR5NuSdASQaS921kCMBp8Ol1x8m/4zFr1zC4HHphBbXTfkcRCm?=
- =?us-ascii?Q?Htgp83g4O8j5Fm0hPsr5ooFE+LIjTKD+DCwFlqXB0ZxvtUCwD7xmmOVwuDuX?=
- =?us-ascii?Q?4cEPJwMvPm21XXy9ezQtk+oGkxp65/DNY3Dr83gwAvjhMajCZqBZnbABa4pe?=
- =?us-ascii?Q?6W5SpKz2XqdJU0izaJI0JY9QOnCg08pGuwRofSm5SgQey/DaihzxtF7BXFPF?=
- =?us-ascii?Q?XOPgAXN+elk9OigCbRQ8bGNGN07ZBG/PEHlVP9o04w+/ekl/xikCjIFad2mI?=
- =?us-ascii?Q?S4YXyKVKurOldAx+nK0xuO+AzD+UI/quRFpUY/SG1hZoUtOeSN6r9HLG262H?=
- =?us-ascii?Q?lFvm67lhNAJeIh+1ykDNe13O4KIN8q66wm3rPPU1zq6Fo+6HgqVBRPy24UPU?=
- =?us-ascii?Q?R3ftPhDA4UdbHqb5Iiz7Ei65KWXA2LRhRahf/fDWEhTxO3rzQruLfKNjshff?=
- =?us-ascii?Q?1KcAb8W7AUXTmvyX5FjphdXx57UfGx0Y6Tw50UchDUrP9KDqEGpB4J8j/vNP?=
- =?us-ascii?Q?MmzmWD4qzZFJ1/sE0jscOetp8ORfNL3TQYCw/23TsCMuadl3tq/Jv6y9Ncy7?=
- =?us-ascii?Q?HxTP8ujgXepdCIXSX/XCYmS7yu4bE0aCN9QbTzBanQt4oNjwMOB0AN/FZ7gW?=
- =?us-ascii?Q?jLcQFZiiOF23F0HrkWPWRVenodR5YFBn8uKgBcU3of0Qb8nv5xj78IdaYGUN?=
- =?us-ascii?Q?U3wfzdqOPFquga9SFYt5wvpSIks0YUGuWWGI5fNArWsIjQV4b5Wm1AQlGv3Q?=
- =?us-ascii?Q?BBrPeVibGzpZOnHh+e7XQwKhfE/D8YX9FyR8nvJwQsC5AtNiYqSK/vbewQBZ?=
- =?us-ascii?Q?fRZSsy12UNKZcDespUysPNPYJJ82ThNHRwTvG6jW7C2/IkTwOGDVP4oBVTJg?=
- =?us-ascii?Q?W2oREsCYnG99ZZ9zyQYuweBf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Jurdo9911Pa6E7fwXxeRLdntxNkPhfgCIiEIpUdNI3haM9KEecWK1KusJq0M?=
- =?us-ascii?Q?fD1Y3jmdnHXab2RUuYdUMo3zI0kg7DFWwss1nhI8npDZtLFZLJX19uoCVjEr?=
- =?us-ascii?Q?7ivZXaZfMn/Bn79lw0VXClMy4/G8Np+0BbuoFJQtwhvxe7XjjLjL1hPeR/VB?=
- =?us-ascii?Q?uuZQhN6xHttd2TTEnlK5ck5iourwXq9VuGwu5o5OnjKYYIezM6waHOa+i46v?=
- =?us-ascii?Q?kgP+IM/l2T2pLiguobNlkl0+vxLLrhQa3Uvpb3b1e50Dmn/4XQaakxg5i1aA?=
- =?us-ascii?Q?TRne+bDom9jQcXi93b8OhduibKwwK9vpzWZF+6LFZCVD7Q/awFBNmgIZ4F2s?=
- =?us-ascii?Q?2OayjpJ+/t589Xz9h243pJ9m9L04Stl1lvDeGye2DPHBZDmofCxQz+gcMRkB?=
- =?us-ascii?Q?F73S5NFd4TmjRaJxhejQvNoQQQuCV3fN+PQ293kJCwL9/NBr/bsuIEVm7IMF?=
- =?us-ascii?Q?dOFeKGHsQEM1oum3YJ2jBkeIdOOz1U/ph42OH8WEgUl31wbYKo0wFD6mJN+5?=
- =?us-ascii?Q?8RCSLCEKObcLjWRSTPYPbIwWliefytAfF/uP0w7AGpBrghgL9Yki68WOJH70?=
- =?us-ascii?Q?QUcyDDmJZudltAC6BBZ9jjcBaoWevmBX6pKXHqccnqxXk3zf7zXl0Xp02htH?=
- =?us-ascii?Q?yMjyGXUXr/OV2qoezR3wjZkYCjnsR4JLZy/s+KMMpD9jhYPgeVtxoMzyu1GX?=
- =?us-ascii?Q?bLPyvM7yIU3IoNVisD65EYd1EkupRl33wD2KiMJc3iXyJMOPd1z0GeKvexP3?=
- =?us-ascii?Q?1QnGBKM6iybcnt6WzzBKpZGQEtzUsnfMIpkzm5bEw1lT1qi13VDJtKf/u5Cz?=
- =?us-ascii?Q?wxClLEBVby7iMsyTCjRhLzorqeC7I55Vk72rkOPQkwqhfpENqV2ccwisDhiY?=
- =?us-ascii?Q?VJ8eOOo0A87Lx5AAqDEhGec6oOoj+n9cbwOn9xCIMBvk/VtlQgBEVNkQ0JeK?=
- =?us-ascii?Q?fJJQaScEzJL/k2LXcFaUdFGfs8jBDDy6egGBv7HjkbyZfaFrLJ9OsT9ayNm3?=
- =?us-ascii?Q?MC8xqePhjxA0gcB0sWSkxvs4Jsax99x/IFG8HGqklhrdr1qu92BzEu+bvhfM?=
- =?us-ascii?Q?cevQ7ayaShrWohmUmBvy8aZHQ8JQdAHr9+O9lorr+vcI35sCzvjR9+AgtKvJ?=
- =?us-ascii?Q?AgtZI8/ENED6XWi/qnFeWWIDNBwULw0ApQ0ZqBjPwXp0dPZfTm1lV628Bob9?=
- =?us-ascii?Q?tqsEg6HkRNlurDEFDET2kPHYGmOY8DlFBQCo+ImcyPeib643/31cS4O+jF6T?=
- =?us-ascii?Q?5yYekeAgNAU74yg1bUVu9GM3I4sblHbX0AEGaZUPjO4uQJDr0KAdg4AhTJmL?=
- =?us-ascii?Q?pqws9kvjpdybadeMQBMjDzC3GvWTNd1TE7BoF5r2pqCTcbi6dZf7R88su+KJ?=
- =?us-ascii?Q?+jn0IoH4YekKK7mnq7fQ2BBclhADbfBj4u1g9L9P8vy3i+HgcytU6T9gtoDX?=
- =?us-ascii?Q?lvwYkb5gJWUNKLJjG4AykcXRHPyJm+skbs9txpG+vgABbmqBz78TWbs3naeb?=
- =?us-ascii?Q?17ar+D8eaCN/S+boGUuH0H4HkmiBtTwkKuxl3zB6I65tdalKkrNX/gdEb9Vh?=
- =?us-ascii?Q?93UkVDPhJ3KL3AkJOOx04MmBIEVVXahLe2NHyov2lnyI38GDCxJB4VruTjM2?=
- =?us-ascii?Q?AA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9735c66-0446-4f39-511d-08dcf9cb5ce6
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 16:45:01.4503
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BD2jmB3mdMF+Tm+pICQa/YQ7v7oWTRwJp8V/OWR6M5keSrsWE7LM17IV6VEU9LFeZu80oPgir6Y8642WxkeZmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7801
+References: <20241030142722.2901744-1-sdf@fomichev.me> <CAHS8izOBp4yXBg-nOSouD+A7gOGs9MPmdFc9_hB8=Ni0QdeZHg@mail.gmail.com>
+ <ZyJM_dVs1_ys3bFX@mini-arch> <CAHS8izN6-5RJgKX08sgntYDVgETkBGpgoYToq8ezcy+tYHdaSA@mail.gmail.com>
+ <ZyJSpBrhz7UJ0r7c@mini-arch>
+In-Reply-To: <ZyJSpBrhz7UJ0r7c@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 31 Oct 2024 09:45:14 -0700
+Message-ID: <CAHS8izPCFVd=opRiGMYu3u0neOP7yCJDX8Ff+TdURq2U-Pi27A@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 00/12] selftests: ncdevmem: Add ncdevmem to ksft
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	andrew+netdev@lunn.ch, shuah@kernel.org, horms@kernel.org, willemb@google.com, 
+	petrm@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 06:23:25PM -0600, Caleb Sander Mateos wrote:
-> Make the start and end arguments to dim_calc_stats() const pointers
-> to clarify that the function does not modify their values.
-> 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
+On Wed, Oct 30, 2024 at 8:37=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
+l.com> wrote:
+>
+> On 10/30, Mina Almasry wrote:
+> > On Wed, Oct 30, 2024 at 8:13=E2=80=AFAM Stanislav Fomichev <stfomichev@=
+gmail.com> wrote:
+> > >
+> > > On 10/30, Mina Almasry wrote:
+> > > > On Wed, Oct 30, 2024 at 7:27=E2=80=AFAM Stanislav Fomichev <sdf@fom=
+ichev.me> wrote:
+> > > > >
+> > > > > The goal of the series is to simplify and make it possible to use
+> > > > > ncdevmem in an automated way from the ksft python wrapper.
+> > > > >
+> > > > > ncdevmem is slowly mutated into a state where it uses stdout
+> > > > > to print the payload and the python wrapper is added to
+> > > > > make sure the arrived payload matches the expected one.
+> > > > >
+> > > > > v6:
+> > > > > - fix compilation issue in 'Unify error handling' patch (Jakub)
+> > > > >
+> > > >
+> > > > Since I saw a compilation failures on a couple of iterations I
+> > > > cherry-picked this locally and tested compilation. I'm seeing this:
+> > >
+> > > Are you cherry picking the whole series or just this patch? It looks
+> > > too broken.
+> > >
+> > > > sudo CFLAGS=3D"-static" make -C ./tools/testing/selftests/drivers/n=
+et/hw
+> > > > TARGETS=3Dncdevmem 2>&1
+> > > > make: Entering directory
+> > > > '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selfte=
+sts/drivers/net/hw'
+> > > >   CC       ncdevmem
+> > > > In file included from ncdevmem.c:63:
+> > > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftes=
+ts/../../../tools/net/ynl/generated/ethtool-user.h:23:43:
+> > > > warning: =E2=80=98enum ethtool_header_flags=E2=80=99 declared insid=
+e parameter list
+> > > > will not be visible outside of this definition or declaration
+> > > >    23 | const char *ethtool_header_flags_str(enum ethtool_header_fl=
+ags value);
+> > > >       |                                           ^~~~~~~~~~~~~~~~~=
+~~~
+> > > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftes=
+ts/../../../tools/net/ynl/generated/ethtool-user.h:25:41:
+> > > > warning: =E2=80=98enum ethtool_module_fw_flash_status=E2=80=99 decl=
+ared inside
+> > > > parameter list will not be visible outside of this definition or
+> > > > declaration
+> > > >    25 | ethtool_module_fw_flash_status_str(enum
+> > > > ethtool_module_fw_flash_status value);
+> > > >       |                                         ^~~~~~~~~~~~~~~~~~~=
+~~~~~~~~~~~
+> > > > /usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftes=
+ts/../../../tools/net/ynl/generated/ethtool-user.h:6766:45:
+> > > > error: field =E2=80=98status=E2=80=99 has incomplete type
+> > > >  6766 |         enum ethtool_module_fw_flash_status status;
+> > > >       |                                             ^~~~~~
+> > >
+> > > This has been fixed via '#include <linux/ethtool_netlink.h>'
+> > >
+> > > > ncdevmem.c: In function =E2=80=98do_server=E2=80=99:
+> > > > ncdevmem.c:517:37: error: storage size of =E2=80=98token=E2=80=99 i=
+sn=E2=80=99t known
+> > > >   517 |                 struct dmabuf_token token;
+> > >
+> > > And this, and the rest, don't make sense at all?
+> > >
+> > > I'll double check on my side.
+> >
+> > Oh, whoops, I forgot to headers_install first. This works for me:
+> >
+> > =E2=9E=9C  cos-kernel git:(tcpdevmem-fixes-1) =E2=9C=97 sudo make heade=
+rs_install &&
+> > sudo CFLAGS=3D"-static" make -C ./tools/testing/selftests/drivers/net/h=
+w
+> > TARGETS=3Dncdevmem 2>&1
+> >   INSTALL ./usr/include
+> > make: Entering directory
+> > '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/=
+drivers/net/hw'
+> > make: Nothing to be done for 'all'.
+> > make: Leaving directory
+> > '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/=
+drivers/net/hw'
+> > =E2=9E=9C  cos-kernel git:(tcpdevmem-fixes-1) =E2=9C=97 find . -iname n=
+cdevmem
+> > ./tools/testing/selftests/drivers/net/hw/ncdevmem
+> >
+> > Sorry for the noise :D
+>
+> Whew, thanks and no worries!
 
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Sorry, 2 issues testing this series:
+
+1. ipv4 addresses seem broken, or maybe i'm using them wrong.
+
+Client command:
+yes $(echo -e \\x01\\x02\\x03\\x04\\x05\\x06) | tr \\n \\0 | head -c
+1G | nc 192.168.1.4 5224 -p 5224
+
+Server command and logs:
+mina-1 /home/almasrymina # ./ncdevmem -s 192.168.1.4 -c 192.168.1.5 -l
+-p 5224 -v 7 -f eth1
+here: ynl.c:887:ynl_req_trampoline
+using queues 15..16
+Running: sudo ethtool -K eth1 ntuple off >&2
+Running: sudo ethtool -K eth1 ntuple on >&2
+Running: sudo ethtool -n eth1 | grep 'Filter:' | awk '{print $2}' |
+xargs -n1 ethtool -N eth1 delete >&2
+ethtool: bad command line argument(s)
+For more information run ethtool -h
+here: ynl.c:887:ynl_req_trampoline
+TCP header split: on
+Running: sudo ethtool -X eth1 equal 15 >&2
+Running: sudo ethtool -N eth1 flow-type tcp6 src-ip 192.168.1.5 dst-ip
+192.168.1.4 src-port 5224 dst-port 5224 queue 15 >&2
+Invalid src-ip value[192.168.1.5]
+ethtool: bad command line argument(s)
+For more information run ethtool -h
+./ncdevmem: Failed to configure flow steering
+
+The ethtool command to configure flow steering is not working for me.
+It thinks it's in v6 mode, when the ip address is a v4 address.
+(notice `-s 192.168.1.4 -c 192.168.1.5`). flow-type should be tcp in
+this case.
+
+Reverting patch 9e2da4faeccf ("Revert "selftests: ncdevmem: Switch to
+AF_INET6"") resolves this issue. Leading to the second issue:
+
+2. Validation is now broken:
+
+Client command:
+yes $(echo -e \\x01\\x02\\x03\\x04\\x05\\x06) | tr \\n \\0 | head -c
+1G | nc 192.168.1.4 5224 -p 5224
+
+Server command and logs: mina-1 /home/almasrymina # ./ncdevmem -s
+192.168.1.4 -c 192.168.1.5 -l -p 5224 -v 7 -f eth1
+here: ynl.c:887:ynl_req_trampoline
+using queues 15..16
+Running: sudo ethtool -K eth1 ntuple off >&2
+Running: sudo ethtool -K eth1 ntuple on >&2
+Running: sudo ethtool -n eth1 | grep 'Filter:' | awk '{print $2}' |
+xargs -n1 ethtool -N eth1 delete >&2
+ethtool: bad command line argument(s)
+For more information run ethtool -h
+here: ynl.c:887:ynl_req_trampoline
+TCP header split: on
+Running: sudo ethtool -X eth1 equal 15 >&2
+Running: sudo ethtool -N eth1 flow-type tcp4 src-ip 192.168.1.5 dst-ip
+192.168.1.4 src-port 5224 dst-port 5224 queue 15 >&2
+Added rule with ID 19999
+here: ynl.c:887:ynl_req_trampoline
+got dmabuf id=3D1
+binding to address 192.168.1.4:5224
+Waiting or connection on 192.168.1.4:5224
+Got connection from 192.168.1.5:5224
+recvmsg ret=3D8192
+received frag_page=3D15997, in_page_offset=3D0, frag_offset=3D65523712,
+frag_size=3D4096, token=3D1, total_received=3D4096, dmabuf_id=3D1
+Failed validation: expected=3D1, actual=3D0, index=3D0
+Failed validation: expected=3D2, actual=3D0, index=3D1
+Failed validation: expected=3D3, actual=3D0, index=3D2
+Failed validation: expected=3D4, actual=3D0, index=3D3
+Failed validation: expected=3D5, actual=3D0, index=3D4
+Failed validation: expected=3D6, actual=3D0, index=3D5
+Failed validation: expected=3D1, actual=3D0, index=3D7
+Failed validation: expected=3D2, actual=3D0, index=3D8
+Failed validation: expected=3D3, actual=3D0, index=3D9
+Failed validation: expected=3D4, actual=3D0, index=3D10
+Failed validation: expected=3D5, actual=3D0, index=3D11
+Failed validation: expected=3D6, actual=3D0, index=3D12
+Failed validation: expected=3D1, actual=3D0, index=3D14
+Failed validation: expected=3D2, actual=3D0, index=3D15
+Failed validation: expected=3D3, actual=3D0, index=3D16
+Failed validation: expected=3D4, actual=3D0, index=3D17
+Failed validation: expected=3D5, actual=3D0, index=3D18
+Failed validation: expected=3D6, actual=3D0, index=3D19
+Failed validation: expected=3D1, actual=3D0, index=3D21
+Failed validation: expected=3D2, actual=3D0, index=3D22
+Failed validation: expected=3D3, actual=3D0, index=3D23
+./ncdevmem: validation failed.
+
+I haven't debugged issue #2 yet, but both need to be resolved before
+merge. I'm happy to provide more details if you can't repro. My setup:
+
+mina-1 /home/almasrymina # cat /boot/config-6.12.0-rc4  | grep -i ipv6
+CONFIG_IPV6=3Dy
+mina-1 /home/almasrymina # cat /proc/sys/net/ipv6/bindv6only
+0
+
+--=20
+Thanks,
+Mina
 
