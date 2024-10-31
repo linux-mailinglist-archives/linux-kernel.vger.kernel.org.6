@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-390476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D119B7A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:21:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4F09B7A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD252858BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0507D1F24E6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C34119C563;
-	Thu, 31 Oct 2024 12:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EA919CC1F;
+	Thu, 31 Oct 2024 12:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eefrCz6b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqR9rz9o"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2AE14E2C0
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFDE14E2C0;
+	Thu, 31 Oct 2024 12:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730377276; cv=none; b=NuWoNaHFnvpoAZB0PV7yip3DgNH3js/KyT0Gyog0aDSdSVUO7ASV03mxSwd51de/Y5Ntw79hQpeMwj4SGBxdaw/uRXUuTVQ65R1c2gjc7LwOjgMAaogRUF7OtTR4dZ0XSDtFEBRUIpGOHzuLhrLz9ChS3OFGk7BCd4DxaPGP/7w=
+	t=1730377287; cv=none; b=Jgi2C+x7T6Cd01HTsBGWR21XAtWWka9jCg+4T5Cg2Zn3FY4FDgkwoMp4sYHSDvITkwa/Uaqo8VOxFecKhCZrcoSZ2YS9mmCogI9iSV+lsVLNl0n/8yqyFPpkNngpWdVAlWIi1Nn/xLG7BXRJvxlRDXuynmxequbVHnorESiK7o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730377276; c=relaxed/simple;
-	bh=qodMBThkJ8Qg5NovyEpNiI2b3mZA8zAdhIhXFKEldZo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a2cyh/gyRrFavL/7kBp9SFFLLOlu+Ak3WfyOgren5QLD0MLSFL31VDcCcljmBHuYorGkbiCb5zT6FejwaLJNzY8Ytav812mVvuQ/50iAYML1rWZK3Wy0eTy00zi+s9CZQztP20YdV42qziW6lbNaZguwz1S5o7ct5UohLP73v6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eefrCz6b; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730377275; x=1761913275;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=qodMBThkJ8Qg5NovyEpNiI2b3mZA8zAdhIhXFKEldZo=;
-  b=eefrCz6baMGdSxohkf7nUiciAOIg4dbThGt505brX8NiTQC/oxcKjHhI
-   59AC/MZrdjWyKx+NZsPe2y9NUMjQLkiR/t/ucyOONJyDkWY9Rcpo5Gvpe
-   7Ek7lv4rZrTEoiQ+t69k7EV7XhrAnyKcaEf5smL2LQTqVZLp5imI5NTW+
-   uQRwH+b0q9MZgAKvS1IFxRLANtrJitbb1oIPYXCpp2ueDr0aUoR7UvgwY
-   uoTKz740WUR/w/pLeMY46bZ1C7M1rEAFUj8rNXc5h/rFvRdm2Ca+P76N1
-   NX3ixJaB2qq6uE/w4vBKEtTtpK1FWg8vS3bMoEvN6iXAzPsUtP/oHM0Ou
-   w==;
-X-CSE-ConnectionGUID: jDXJXaN5R5ea72RejbDQug==
-X-CSE-MsgGUID: u5F63L+nSECrlc5CfuFkDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40657445"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40657445"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 05:21:14 -0700
-X-CSE-ConnectionGUID: D0TlqUX3Qhanf7c9Kfr7RQ==
-X-CSE-MsgGUID: UbvOLnNFQZ2MD8MAvtLQmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="86544152"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.204])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 05:21:06 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Nam Cao <namcao@linutronix.de>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Andreas Hindborg
- <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda
- <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
- linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel
- <sre@kernel.org>, Will Deacon <will@kernel.org>, Jon Mason
- <jdmason@kudzu.us>, Jaehoon Chung <jh80.chung@samsung.com>, Hans Verkuil
- <hverkuil-cisco@xs4all.nl>, Jassi Brar <jassisinghbrar@gmail.com>, Pavel
- Machek <pavel@ucw.cz>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Alex Deucher
- <alexander.deucher@amd.com>, Rob Clark <robdclark@gmail.com>, Lucas De
- Marchi <lucas.demarchi@intel.com>, Zack Rusin <zack.rusin@broadcom.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Uwe
- =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Takashi Iwai
- <tiwai@suse.com>
-Subject: Re: [PATCH 00/44] hrtimers: Switch to new hrtimer interface
- functions (4/5)
-In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1729865485.git.namcao@linutronix.de>
-Date: Thu, 31 Oct 2024 14:21:03 +0200
-Message-ID: <87v7x8jweo.fsf@intel.com>
+	s=arc-20240116; t=1730377287; c=relaxed/simple;
+	bh=z7qRdrc/aNJJoVPFpdm9WaJa+syCyVzHfCsRPb9pirs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rQDvWox77sYLsId9buMqS4tE3Aj8mObJDYQLHsCn6K/XoU+hqEReB20nzBxPkZfjQ3yq1ZExRgEivI34YmgOlT449UT1StSUI1Wc35WRgl9xKOS77zLQMZM+uIAV3+T2jVGnXKcwllHRAJ0L+/BqE3k41aOEWt7utmw4uUJA3dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqR9rz9o; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so6842165e9.3;
+        Thu, 31 Oct 2024 05:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730377283; x=1730982083; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tifA01aEwpCB7k+rl2olkAmgjeZifjZgKwXOFawd/9Q=;
+        b=mqR9rz9o/bjjAzc6PINtEcvflhJVJ1qvAx0NEmEWS6bqNmzx5Jtxv6a4UBRSsT9CuR
+         QElwqmkA/2/YUfCj1UrTxtR3U42e3lIXh44O5POdDEJuWsbFsYbx4i0HfMf63kicpShN
+         iwcR5Vj5+fT3zbFwr/UBPjsJ2rh6AvrxKrYebOkEX0x+cEiMgHx6X+Ac7bKaC82K3eIN
+         XjyDKMzJbWbuAfdAQC9honNUpWnl2KcJA2q84ja6cFApgNxLqePDOupaa1C8R7qqBN7K
+         TJRYY/HxNjnBy8tlPfZugwkX7jiHrTjwaDFrWqt8h6XDVNz2ztBSVqKPsX7EdAh/5m9N
+         qUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730377283; x=1730982083;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tifA01aEwpCB7k+rl2olkAmgjeZifjZgKwXOFawd/9Q=;
+        b=Z4J8ZeKSMVW0vIXZHHAxRVS8mxu4ajCfNvCbDCxiGDseDELsLC94lru0MTiQpda3Ko
+         l+gpW9p3BHK4oum5KvExqd57Y/A64+Rsevvg065+5bsKn1JAhPjwesOoTm6OCD548yMK
+         M6cn4sm18/yyppZD86MhDGBbEAu4/tZ5T91DHkvwPciPZ4FKATWLEdEMtMbnwSEgEpta
+         5N/y7DqRCkqL1S6ai0HYhFe1ywnE15oJXgvGg1X1Uj5Gi7YxONxEv/lCljkMrAh2fsOL
+         Z8i9LsjADHIlCOh59lRLELiu78b9LzSb+AbO6DT9w6J+MXCM9+vuLYv4kxz6iWnPggER
+         SwDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJr2CMSjUo4q/rYS2CtA8mpnartdZfAUoSBfazRLP6SDr0gyfV6wk8U/c4zF2HRfjLl5F/hFQ4bc6mw3w=@vger.kernel.org, AJvYcCVXEm0uAJYhyuZuizb+GEZ/Z3RZM22KK99lOIx4YvU1kkNzu5f2IoB/P8mwc5Fq2nds3kJsFXcGfsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM0XnHUYGNwt3rJ0NocLkAHU5jtE1UIoaonYyHmETU2npJf66d
+	WdgphugAF/nJsmo/X/93cRONDIuppmuM8IK5Lh8zjnTFmDvHIVqsJVpmoj01
+X-Google-Smtp-Source: AGHT+IHBp1TxQM76X7gohSGb17rZI4WDJf50xd41RLJtG/+yD5bf+XGvKdhWF0CXlWSUO85e3Qvd4A==
+X-Received: by 2002:a05:600c:19d3:b0:431:5044:e388 with SMTP id 5b1f17b1804b1-431bb9d0aeamr60992515e9.22.1730377283328;
+        Thu, 31 Oct 2024 05:21:23 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7e1bsm1975728f8f.1.2024.10.31.05.21.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 05:21:22 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Thu, 31 Oct 2024 13:21:17 +0100
+Subject: [PATCH v2] cpuidle: riscv-sbi: fix device node release in early
+ exit of for_each_possible_cpu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241031-cpuidle-riscv-sbi-cleanup-v2-1-aae62d383118@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADx2I2cC/32Nyw6CMBBFf4XM2jFtQWJd8R+GRRlGmIRXWmk0h
+ H+3Etcuz0nuuRsE9sIBbtkGnqMEmacE5pQB9W7qGKVNDEaZQitjkZZV2oHRS6CIoRGkgd20Lsi
+ 2yamxJeuyhbRfPD/kdbTvdeJewnP27+Mq6q/9VXP1pxo1KrywujpjyBbKVt3oZDjTPEK97/sH7
+ jkudcIAAAA=
+To: Anup Patel <anup@brainfault.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Atish Patra <atishp@rivosinc.com>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-pm@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730377282; l=1974;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=z7qRdrc/aNJJoVPFpdm9WaJa+syCyVzHfCsRPb9pirs=;
+ b=CB9ImtE+5I0MlaIX2MMtoX1tMIgGy+QmeqoCgGwhOl6uPJ//3TZYqNIhCtenKmP9r5lbBf99l
+ Wiw5cWse1/6ApwFEAY3rtmazsgzl3CVlgSV3VpPNZdA+lgRrQprlUkw
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Mon, 28 Oct 2024, Nam Cao <namcao@linutronix.de> wrote:
->   drm/i915/huc: Switch to use hrtimer_setup()
->   drm/i915/gvt: Switch to use hrtimer_setup()
->   drm/i915/perf: Switch to use hrtimer_setup()
->   drm/i915/pmu: Switch to use hrtimer_setup()
->   drm/i915/uncore: Switch to use hrtimer_setup()
->   drm/i915/request: Switch to use hrtimer_setup()
+The 'np' device_node is initialized via of_cpu_device_node_get(), which
+requires explicit calls to of_node_put() when it is no longer required
+to avoid leaking the resource.
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+Instead of adding the missing calls to of_node_put() in all execution
+paths, use the cleanup attribute for 'np' by means of the __free()
+macro, which automatically calls of_node_put() when the variable goes
+out of scope. Given that 'np' is only used within the
+for_each_possible_cpu(), reduce its scope to release the nood after
+every iteration of the loop.
 
-for merging the above via whichever tree you find convenient.
+Fixes: 6abf32f1d9c5 ("cpuidle: Add RISC-V SBI CPU idle driver")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- Squash patches for mainline solution without intermediate steps.
+- Link to v1: https://lore.kernel.org/r/20241030-cpuidle-riscv-sbi-cleanup-v1-0-5e08a22c9409@gmail.com
+---
+ drivers/cpuidle/cpuidle-riscv-sbi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidle-riscv-sbi.c
+index 14462c092039..3a78d6b7598b 100644
+--- a/drivers/cpuidle/cpuidle-riscv-sbi.c
++++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+@@ -504,12 +504,13 @@ static int sbi_cpuidle_probe(struct platform_device *pdev)
+ 	int cpu, ret;
+ 	struct cpuidle_driver *drv;
+ 	struct cpuidle_device *dev;
+-	struct device_node *np, *pds_node;
++	struct device_node *pds_node;
+ 
+ 	/* Detect OSI support based on CPU DT nodes */
+ 	sbi_cpuidle_use_osi = true;
+ 	for_each_possible_cpu(cpu) {
+-		np = of_cpu_device_node_get(cpu);
++		struct device_node *np __free(device_node) =
++			of_cpu_device_node_get(cpu);
+ 		if (np &&
+ 		    of_property_present(np, "power-domains") &&
+ 		    of_property_present(np, "power-domain-names")) {
+
+---
+base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
+change-id: 20241029-cpuidle-riscv-sbi-cleanup-e9b3cb96e16d
+
+Best regards,
 -- 
-Jani Nikula, Intel
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
