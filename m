@@ -1,166 +1,113 @@
-Return-Path: <linux-kernel+bounces-391449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF619B8710
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:23:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0639B8719
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8563282042
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68421F22B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F1A1E32A8;
-	Thu, 31 Oct 2024 23:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYKxfh4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C9B1E47B9;
+	Thu, 31 Oct 2024 23:24:03 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55011CCB27;
-	Thu, 31 Oct 2024 23:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268301C2DA4;
+	Thu, 31 Oct 2024 23:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416975; cv=none; b=XdVl7gOntH2bMiA0X7/+QBiuSdbFyncLNPmucqzCY+I5DDPm0vM95PSg3NIl2t2EUpBU9xLkRJeIaBsN88ez4krzN9GS+NK48dtAF2h+4V6CbPV6uZAh82ovNLCyemzUqB3VYH3H0dB/YsyNNWtSsv+2m+t9UslH0Cr7B6Koz70=
+	t=1730417043; cv=none; b=SbWOHzJGy9aHXbPrSq+gnbCfE0cbnwZhpaTDYH7uuEPEjA6KMyJ9nC2IutKsU69L6ovBiYGU2SSx8oyRDm+oR4xdNB+fpfCXz037MC6IsmRPSFx2dkkkFxQXPaceLLCtXSoadxkWa0LWl8HFVYHHRHPatC6JHRx1QIvBEauKXMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416975; c=relaxed/simple;
-	bh=asZM7vDHeArgA2yrx4dv6iD1NBcGk2IAAZr0BMlUTAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WT6D2HDItk53FPe0OvY6N8/yj+fWeSjkjugEvAQqk+BChxj4cnetyN2ljlyvPN1Pfozxn5/xJ5pEVdUEQtbadlSJriWFFN1XB7piT+TZKef+5t6A3UPwu+o0KSBzf8s4GXfdoFXPTjW9i6paXTsXf9ZSBqRsDWPG+51ewth7nuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYKxfh4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7005C4CEC3;
-	Thu, 31 Oct 2024 23:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730416974;
-	bh=asZM7vDHeArgA2yrx4dv6iD1NBcGk2IAAZr0BMlUTAY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OYKxfh4sBbe89S9W1hTXqjGFqBeNgcbnilwzgb5GtKLDDHlrm99ZBD0j1LXbFdCoq
-	 nM2aXnxNRDTeFmO9WdTbvfh7fzkTjSWKHkYIt1T1mc0BxZJEDzxmzJaUNh8hhb4FTK
-	 nSscXi2E7vQO8eKkUuRdQ7xZHwuptW+wutLwyp13IS6hcWn1/7gjQs1X30RZ7NBe3e
-	 alIPRCNd9d85VKLWtKx8trYAHeAKZYBLXtsLsz41thxafIJOw4mspQXiJgMOk9cHPF
-	 Og0PH+cDf7yUiIZ+S5CJJe9IdHuAulz1z9hhYzxIdOMzzFIVzzMiQpLg7hil/6EXxA
-	 wvAqVMBRqrxpg==
-Date: Thu, 31 Oct 2024 18:22:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
-Message-ID: <20241031232252.GA1268406@bhelgaas>
+	s=arc-20240116; t=1730417043; c=relaxed/simple;
+	bh=yA8/PxB1ZNGlnijaN4Aqh0lVtHlcXbLEsy1Fm/LvYek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ms9v9EhBblHC1MGsY+RBp7bBPwPCF+CdJAs6goGFvi1PQGBXztq8ZNFYz8YaMGQvz00xX7hjHGAeE2AxFzcUUDw2BEZdJoR6arWud3w202cV2EdiTgs4CYsSEEeCH6yXp74fq1qN3G8s0XXd6EEKPESncw/B7iTQabxmii3K51k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=49206 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1t6eW1-00HMRV-MX; Fri, 01 Nov 2024 00:23:52 +0100
+Date: Fri, 1 Nov 2024 00:23:44 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+	linux-security-module@vger.kernel.org, jmorris@namei.org,
+	serge@hallyn.com, keescook@chromium.org,
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org,
+	audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
+Message-ID: <ZyQRgL_jWdvKgRl-@calendula>
+References: <20241023212158.18718-3-casey@schaufler-ca.com>
+ <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
+ <ZyQPfFvPD72rx4ME@calendula>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241030000450.GA1180398@bhelgaas>
+In-Reply-To: <ZyQPfFvPD72rx4ME@calendula>
+X-Spam-Score: -1.9 (-)
 
-[+cc LKML etc, should PCI VPD be readable by non-root?]
-
-On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
-> On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > The Virtual Product Data (VPD) attribute is not readable by regular
-
-("Vital Product Data" is the term in the spec)
-
-> > user without root permissions. Such restriction is not really needed,
-> > as data presented in that VPD is not sensitive at all.
-> > 
-> > This change aligns the permissions of the VPD attribute to be accessible
-> > for read by all users, while write being restricted to root only.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: d93f8399053d ("PCI/sysfs: Convert "vpd" to static attribute")
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+On Fri, Nov 01, 2024 at 12:15:16AM +0100, Pablo Neira Ayuso wrote:
+> Hi Paul,
 > 
-> Applied to pci/vpd for v6.13, thanks!
+> This patch breaks nf_conntrack_netlink, Casey mentioned that he will
+> post another series.
 
-I think this deserves a little more consideration than I gave it
-initially.
+Please, see:
 
-Obviously somebody is interested in using this; can we include some
-examples so we know there's an actual user?
+https://lore.kernel.org/netfilter-devel/ZxpxZuErvXSLApsf@calendula/
 
-Are we confident that VPD never contains anything sensitive?  It may
-contain arbitrary vendor-specific information, so we can't know what
-might be in that part.
-
-Reading VPD is fairly complicated and we've had problems in the past
-(we have quirk_blacklist_vpd() for devices that behave
-"unpredictably"), so it's worth considering whether allowing non-root
-to do this could be exploited or could allow DOS attacks.
-
-For reference, here are the fields defined in PCIe r6.0, sec 6.27.2
-(although VPD can contain anything a manufacturer wants to put there):
-
-  PN Add-in Card Part Number
-  EC Engineering Change Level of the Add-in Card
-  FG Fabric Geography
-  LC Location
-  MN Manufacture ID
-  PG PCI Geography
-  SN Serial Number
-  TR Thermal Reporting
-  Vx Vendor Specific
-  CP Extended Capability
-  RV Checksum and Reserved
-  FF Form Factor
-  Yx System Specific
-  YA Asset Tag Identifier
-  RW Remaining Read/Write Area
-
-The Conventional PCI spec, r3.0, sec 6.4, says:
-
-  Vital Product Data (VPD) is the information that uniquely defines
-  items such as the hardware, software, and microcode elements of a
-  system. The VPD provides the system with information on various FRUs
-  (Field Replaceable Unit) including Part Number, Serial Number, and
-  other detailed information. VPD also provides a mechanism for
-  storing information such as performance and failure data on the
-  device being monitored. The objective, from a system point of view,
-  is to collect this information by reading it from the hardware,
-  software, and microcode components.
-
-Some of that, e.g., performance and failure data, might be considered
-sensitive in some environments.
-
-> > ---
-> > I added stable@ as it was discovered during our hardware ennoblement
-> > and it is important to be picked by distributions too.
-> > ---
-> >  drivers/pci/vpd.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Oct 31, 2024 at 06:53:38PM -0400, Paul Moore wrote:
+> > On Oct 23, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > 
+> > > Replace the (secctx,seclen) pointer pair with a single
+> > > lsm_context pointer to allow return of the LSM identifier
+> > > along with the context and context length. This allows
+> > > security_release_secctx() to know how to release the
+> > > context. Callers have been modified to use or save the
+> > > returned data from the new structure.
+> > > 
+> > > security_secid_to_secctx() and security_lsmproc_to_secctx()
+> > > will now return the length value on success instead of 0.
+> > > 
+> > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > Cc: netdev@vger.kernel.org
+> > > Cc: audit@vger.kernel.org
+> > > Cc: netfilter-devel@vger.kernel.org
+> > > Cc: Todd Kjos <tkjos@google.com>
+> > > ---
+> > >  drivers/android/binder.c                |  5 ++-
+> > >  include/linux/lsm_hook_defs.h           |  5 ++-
+> > >  include/linux/security.h                |  9 +++---
+> > >  include/net/scm.h                       |  5 ++-
+> > >  kernel/audit.c                          |  9 +++---
+> > >  kernel/auditsc.c                        | 16 ++++------
+> > >  net/ipv4/ip_sockglue.c                  |  4 +--
+> > >  net/netfilter/nf_conntrack_netlink.c    |  8 ++---
+> > >  net/netfilter/nf_conntrack_standalone.c |  4 +--
+> > >  net/netfilter/nfnetlink_queue.c         | 27 +++++++---------
+> > >  net/netlabel/netlabel_unlabeled.c       | 14 +++------
+> > >  net/netlabel/netlabel_user.c            |  3 +-
+> > >  security/apparmor/include/secid.h       |  5 ++-
+> > >  security/apparmor/secid.c               | 26 +++++++--------
+> > >  security/security.c                     | 34 +++++++++-----------
+> > >  security/selinux/hooks.c                | 23 +++++++++++---
+> > >  security/smack/smack_lsm.c              | 42 +++++++++++++++----------
+> > >  17 files changed, 118 insertions(+), 121 deletions(-)
 > > 
-> > diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
-> > index e4300f5f304f..2537685cac90 100644
-> > --- a/drivers/pci/vpd.c
-> > +++ b/drivers/pci/vpd.c
-> > @@ -317,7 +317,7 @@ static ssize_t vpd_write(struct file *filp, struct kobject *kobj,
-> >  
-> >  	return ret;
-> >  }
-> > -static BIN_ATTR(vpd, 0600, vpd_read, vpd_write, 0);
-> > +static BIN_ATTR_RW(vpd, 0);
-> >  
-> >  static struct bin_attribute *vpd_attrs[] = {
-> >  	&bin_attr_vpd,
-> > -- 
-> > 2.46.2
-> > 
+> > See my note on patch 1/5, merging into lsm/dev.
+> 
 
