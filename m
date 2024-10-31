@@ -1,177 +1,115 @@
-Return-Path: <linux-kernel+bounces-390486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA02F9B7A84
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:29:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDB89B7A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD24284A88
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:29:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 465C2B21BE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08A919CCF9;
-	Thu, 31 Oct 2024 12:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE88D19CC34;
+	Thu, 31 Oct 2024 12:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaehoI2R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7r+lORv"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3563319CC1D;
-	Thu, 31 Oct 2024 12:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274FEA94F;
+	Thu, 31 Oct 2024 12:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730377784; cv=none; b=YYF06nNP/T3n2xNRrmCkz0SJRxLXyVOqUC12X05PVa6aZSc5P02KstSWenTjcXAb+kvbCLAie3ntsuJqVtliyyK6XnfQycWNskEBwQ2MQgPlWMaXJ/MtZxppWuX8HOxvatrgPzOzdJNoK/37ME11Vj54Vb8zvHGzab1YBk8jcec=
+	t=1730377888; cv=none; b=ga+48xFoqTOejDPlIFUpL+78TVvF3Mm65T+RZdfeV7flitghbtg1xgTulSnGBMxeoJAKc+dvmvJo04PBFU+gx70TP/zAnUcKybUwitA/byoMRSXw4xbqmnezohNDlMsnjQJH3Kh785hVvrL/ttG5AAS+slC13DpUw0otfXie6ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730377784; c=relaxed/simple;
-	bh=0pgnrKFCd7krk9HzGqlDXM26z+itSZVYEdeZBHDof1g=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VPVsWh+ygioITjaRfCcauSYUr0qSKgoizo6XU0kl0NDZongt5Lojw/6OiJYhkR7F0UZ6MgkfzUTVgmpVRD5/AUALydcNfj2mUPhjRZp/2pYlH0G0mHn2yRf+PjQ422uzDKJc9FuE7u2STaUYIVKN2CAZ5Se2QRBYJ3ejcFjzjS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaehoI2R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5382C4DDED;
-	Thu, 31 Oct 2024 12:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730377783;
-	bh=0pgnrKFCd7krk9HzGqlDXM26z+itSZVYEdeZBHDof1g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MaehoI2R2yl2V53Xv7oZeuswyGfMw7HTFfLGktq2oxSMwXSi/PmmLutEYJGJDGnmK
-	 MnkZTXH8ytwV4XK/UXmv03vEHrs9p5ZCZkQ5T7roMAN2HgYbeBzMzAx+NigK92oloe
-	 ahPylV40f9+BPXY1+1SSoMXkAhyJcBVta+Kpb1PL6D0X+/XCGTzE7uNECjdVcH1mNC
-	 RpqMSC25ktseTmZZvtyETRhZfTsWN1hl7KAkkRpuL21iQ1Tnn7YNJxQcTWNIqDDCXS
-	 Afq3t1HxSPoaS4thfeSEat5WJs6XoZyhWtS+K2UzckYFyqrmUANgHBmkUfqo0V29+G
-	 TRQR+IMfw86vQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t6UJ3-008YcM-DV;
-	Thu, 31 Oct 2024 12:29:41 +0000
-Date: Thu, 31 Oct 2024 12:29:40 +0000
-Message-ID: <86v7x81mmj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Cc: 	Sibi Sankar <quic_sibis@quicinc.com>,
-	andersson@kernel.org,
-	konradybcio@kernel.org,
-	krzk+dt@kernel.org,
-	robh+dt@kernel.org,
-	dmitry.baryshkov@linaro.org,
+	s=arc-20240116; t=1730377888; c=relaxed/simple;
+	bh=7KQLhlTZZ/idjYbtmyqThGw1b34M97RpaZQusgDjnOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IK2am2u7tHSe3zJ+lVZf+9COQI2HgPH98If/OVM8Doo8pG8xc4GaGKMfWj1f9SE6PNQ4vYX0aMUo7nks6xjZ26eOhU8piR4j3KaiffUhDbvzwsONKrfa1WVa/XW0v9Q1n14FIfV/XVxDvSOdHNhUn4MXkaQaw5l1kwQ3t9YRyzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7r+lORv; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so1503520a12.0;
+        Thu, 31 Oct 2024 05:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730377884; x=1730982684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VNZ88FaZIO7aRSNkwkfEE/oge+Y1t62q8aDtRS3m5II=;
+        b=X7r+lORv00gI/GXe0gGtsKKrPibC4KyLm4b8Dq8KCrSwuYYUs4ayPT51RDzlmHXMQB
+         5M2T7uury9Z1Occjqp0eI4zc7BrCvRE5velVTpAK1v0R6Z2P7cQ1gQ1kKHOrmZ2qMXTN
+         BXTL0LqChGNoTlq4qYttyqGfsSH4Xg6SJaVfLWdQhH091yxAepz0su4NmjS9U9up9bMW
+         pa2mt9Bvfjy90BCDVa3G7Z3LQRpwnJLId745dNzBpdRQg1ojRsbx2Kz4hojo30Igof0Z
+         lKWwbLOI/YkGxEj5C+IupD+Wq0UAh7Bdpx3zxR2mBwvORSw56Ci2b1JbiCpHHWDcuXDm
+         6+hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730377884; x=1730982684;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VNZ88FaZIO7aRSNkwkfEE/oge+Y1t62q8aDtRS3m5II=;
+        b=KZ05k46lBVdtBUbKt1IXbWAV6w3V83YCIy6BOd4RZEQgmjeMyFsD96Wfd0nEz/thJW
+         WwYA8YG3+g97SONpQETXWqA1T2LDyVQ5dOarf56Lg+bw60dFpD8BM4EYHq2GcbF4Mg1Q
+         u54m1QN4ElUU+r1z0ip7/t10B26V+j+1wF3qwQBnGzfTN1oHu9tbrhSWgwsn5FdnnwJr
+         swQj7TRH3EBtaUsUjWE9RGYEu8gWo2gYpdyaVOdd/cvVK76A2rjWJHIu5A8Z2r0cpHdk
+         q42+3yX4x5zwv5mYHH/xVEoO1iVoUPTH5AQhZQmFE34yqaPFzi3g8ei+LZqqHlpl3ftq
+         94tg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9wzVpyeHAp82P3dpmRqfmAp+HXHpqkWOMTaynlMMpdclRyKJ1luq1rFPQj/g6msv6KS/VnT7XnQtpRboo@vger.kernel.org, AJvYcCWOt9aM04CRh6L418cgpHnWPsJjiSrAlZvua4b9JlkFnBa8xRmt0tqDlAHZUYpfhUPi9Tt8s5K3QkFYXw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA4X3OBxRmxgTi1B0zmFWfUx+hIsApQ5jjdkXv3pp8yVJaIqAd
+	UN3sBwpCGY6jmf7AtYpPBDeaeT/FKhn6DLmHhtGLpKgoPpefOSM6
+X-Google-Smtp-Source: AGHT+IGvpY8qdTKYRVzsPSnh+ugsYpMLtNlBkGUgnrxYFMgKulxPn8c8pIFSEXn1hXruoMW95u3Zgw==
+X-Received: by 2002:a05:6402:440e:b0:5cb:6715:3498 with SMTP id 4fb4d7f45d1cf-5ceabee80f2mr2795812a12.3.1730377884039;
+        Thu, 31 Oct 2024 05:31:24 -0700 (PDT)
+Received: from ux-UP-WHL01.. (mailgw01.goodix.com. [45.117.96.243])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac77051csm526749a12.32.2024.10.31.05.31.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 05:31:23 -0700 (PDT)
+From: Charles Wang <charles.goodix@gmail.com>
+To: dmitry.torokhov@gmail.com,
+	hbarnor@chromium.org
+Cc: jikos@kernel.org,
+	bentiss@kernel.org,
+	dianders@chromium.org,
+	dan.carpenter@linaro.org,
+	linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	conor+dt@kernel.org,
-	srinivas.kandagatla@linaro.org,
-	quic_jjohnson@quicinc.com
-Subject: Re: [PATCH V3 0/3] X1E001DE Snapdragon Devkit for Windows
-In-Reply-To: <5d8ec8c4-f473-4849-a428-f7a7283ff478@oldschoolsolutions.biz>
-References: <20241025123227.3527720-1-quic_sibis@quicinc.com>
-	<86y1251q3b.wl-maz@kernel.org>
-	<ZyNR5MD/HAS5w7N/@linaro.org>
-	<5d8ec8c4-f473-4849-a428-f7a7283ff478@oldschoolsolutions.biz>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Charles Wang <charles.goodix@gmail.com>
+Subject: [PATCH v2 0/2] HID: hid-goodix: Improve handling of HID feature reports
+Date: Thu, 31 Oct 2024 20:31:11 +0800
+Message-ID: <20241031123113.18843-1-charles.goodix@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: abel.vesa@linaro.org, jens.glathe@oldschoolsolutions.biz, quic_sibis@quicinc.com, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org, srinivas.kandagatla@linaro.org, quic_jjohnson@quicinc.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024 10:00:40 +0000,
-Jens Glathe <jens.glathe@oldschoolsolutions.biz> wrote:
->=20
-> On 31.10.24 10:46, Abel Vesa wrote:
-> > On 24-10-30 17:02:32, Marc Zyngier wrote:
-> >> On Fri, 25 Oct 2024 13:32:24 +0100,
-> >> Sibi Sankar <quic_sibis@quicinc.com> wrote:
-> >>> Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E00=
-1DE
-> >>> is the speed binned variant of X1E80100 that supports turbo boost up =
-to
-> >>> 4.3 Ghz. The initial support includes the following:
-> >>>=20
-> >>> -DSPs
-> >>> -Ethernet (RTL8125BG) over the pcie 5 instance.
-> >>> -NVme
-> >>> -Wifi
-> >>> -USB-C ports
-> >>>=20
-> >>> V3:
-> >>> * Asked around and looked at the firmware, couldn't find a codename so
-> >>>    will keep it as DEVKIT. Will update it if someone from the communi=
-ty
-> >>>    finds something else.
-> >> My machine has the following information as part of its DMI tables:
-> >>=20
-> >> Handle 0x0005, DMI type 1, 27 bytes
-> >> System Information
-> >> 	Manufacturer: Qualcomm
-> >> 	Product Name: Snapdragon-Devkit
-> >> 	Version: 2.1
-> >> 	Serial Number: 5
-> >> 	UUID: 63b5fc8b-9c50-89aa-fd0f-3fcef93dc291
-> >> 	Wake-up Type: Power Switch
-> >> 	SKU Number: 6
-> >> 	Family: SCP_HAMOA
-> >>=20
-> >> So I guess that Snapdragon-Devkit is another possible name. But given
-> >> that it is a bit of a mouthful, devkit, Devkit, or any other variation
-> >> on the case would work for me.
-> > The point was to have something unique A codename would be unique.
-> > Naming it Snapdragon-Devkit (or just devkit) will be confusing since
-> > there was already a 2023 devkit (from Microsoft) with the Snapdragon
-> > 8cx Gen 3, and probably the next compute platform will also have a devk=
-it
-> > as well. So probably "X Elite devkit" could be the right option..
+The patchset introduces the following two changes:
 
-Odd, I didn't get that email.
+1) Align with the i2c-hid driver by returning 0 instead of -EINVAL when
+an empty response is received, ensuring that userspace programs utilizing
+the hidraw node receive consistent return values.
 
-My point was the the HW already comes with a full description as part
-of the existing tables. If you really want something that is truly
-unique to that platform and that can be used by a tool (be it
-firmware, kernel or userspace) to understand what it is running on,
-then you cannot have *less* information.
+2) Implement the hid get/set feature report function using a separate
+address, rather than sharing an address with coordinate reporting, to
+prevent feature events from being overwritten by coordinate events.
 
-At the very least, you would need Manufacturer, Product Name, Version
-and Family.
+Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+---
+Changes in v2:
+- Split the commit into two patches.
 
-But does it really matter? I don't think it is *that* crucial. At the
-end of the day, this is only used to pick the correct DT out of a set
-for a given SoC, or worse case a family of SoCs that are closely
-related.
+---
+Charles Wang (2):
+  HID: hid-goodix: Return 0 when receiving an empty HID feature package
+  HID: hid-goodix: Fix HID get/set feature operation overwritten problem
 
-> As for The Windows Dev Kit 2023, dmidecode says this:
->=20
-> Handle 0x0009, DMI type 1, 27 bytes
-> System Information
-> =C2=A0=C2=A0 =C2=A0Manufacturer: Microsoft Corporation
-> =C2=A0=C2=A0 =C2=A0Product Name: Windows Dev Kit 2023
-> =C2=A0=C2=A0 =C2=A0Version: 124I:00097T:000M:0200000B:07
-> =C2=A0=C2=A0 =C2=A0Serial Number: 0F01C4F22373F6
-> =C2=A0=C2=A0 =C2=A0UUID: e4a4662c-8367-75d0-a54f-1d04bd404860
-> =C2=A0=C2=A0 =C2=A0Wake-up Type: Unknown
-> =C2=A0=C2=A0 =C2=A0SKU Number: 2043
-> =C2=A0=C2=A0 =C2=A0Family: Surface
->=20
-> That's also really a mouthful. In my patchset for it there were some
-> name / path changes, microsoft/blackrock it is now. Would be cool to
-> have short and unique names. In the end, whatever works and is unique.
-> Like those UUIDs?
+ drivers/hid/hid-goodix-spi.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-Are those actually per platform? or per unit? On my box, the serial
-number is probably a dud. What does the UUID reports on your X1E box?
+-- 
+2.43.0
 
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
 
