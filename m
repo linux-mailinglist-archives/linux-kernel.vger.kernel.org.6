@@ -1,249 +1,123 @@
-Return-Path: <linux-kernel+bounces-391113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089FF9B82CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:45:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88A09B82C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:44:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C24F1C21591
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:45:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 337CAB2395D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337EE1CF5DB;
-	Thu, 31 Oct 2024 18:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F971CBE80;
+	Thu, 31 Oct 2024 18:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fp0Q9Lu0"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="puFaYlxX"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025441CDFB4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730400225; cv=fail; b=nFIXXtj06JN91u1FgimyN5+hnVq7RkrkK/6fqtW0PLnL/VnPjpwiRK4hisKl5go5yUocjtDj5TtQuYaOJrtb4AUec0ImANkkXIhFXQazNzZ5qe/G8HNBc/I5f7yBvd3fFOqazqqRaOjsVHfgVXD0uAu2qwuTr+8tFoMdVk/aoeg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730400225; c=relaxed/simple;
-	bh=xeRWW4zvUqOpuR1sVQhIMdgRFyuKd3lvLAJ/acdf0LI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vb2mVSl/tMGdVcdSBh0C4UtomZFhizny5PeF9wiaG++kJbO7DxKCttHJxv2agS7yjzhO5ecJoo2tz6+1HC/K7dY2mcsgGwmfQb71rtePccNZdmm5MvjTMvudVhvsyBIYljzlp1un9PCnUWL6vohX5EpkHes302UnuTVv8znvxLE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fp0Q9Lu0; arc=fail smtp.client-ip=40.107.94.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=muLgBFReyxBG0VooTCaB2du00i2lnoknTVUitgyflbtWgnMDPJnqX0SVO3eWOWO/g4S5v+EnlulNXkKcEQiXd99+qCVjA76V0HjucFdXjQmo/ZbDi2fwO2ubD5B97LVeVlvNVwnQtlUDOcvf+J4rfCRU9JwfplD6JhyBs/95N6Z1eBTMt259MHsOv4bbWexiD6vLFvg61xm/ejiFmoAxxE8qvX6t2BWMCw7ytKmFyvSCPHWMc0SfvY2dCS+tMT16vy64d30mRQtWs6yM1O7tmsT+zIPcQK9DHafS4AezHUluDWz7GQIpE21imRJB2k1a1YpyBWWDDj7rpnKEk7evHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uD4cARgDgWSDiPEKNunLs9w1VM/I4QbMZNF8q0H489I=;
- b=eBY3IvvFMgKCB/1SevtD2GpIhlGrADhn/3/z8aJvxJfW0Z2ECdMt+/WDIaV6BALI9W0tasY/J7lxp2uXtJa+7bMZsWyGxNWG5Cd4daZxamHryNVJSCJCXIZhHeAX4fIwD5ZHaUZlZ0z3R7FpBQgkzrFIoHChO/hvcUUs6/hZmy6xjImvsp7pPh46z5Uh9cTrHAxTaTYllqgKU9EfEb8qHrL0zM1rvr+V83QSHm8t9RsOyynSJx0ZNx38FIZVwKKB7Z4+wMU34pFacJp+flOYW5DgrY8r4SNQjT3V72MJeabUbVO9N7Xzwuq9dT4WFUkEdkTz5mkRJHMURckwCe3ehg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uD4cARgDgWSDiPEKNunLs9w1VM/I4QbMZNF8q0H489I=;
- b=Fp0Q9Lu0nFvD7mdtKviUjTYW7wh4nDcsyZdsgk/Llb4bi/veYO6wGb9TsPQjx+Qr8poUcM7S/uEit5AfM60s8r4uFPuTMRPrI51ir9eLEOMvSQL94SyGP7TQuaGDF9V2d5hpy6iRCAclJt0xcdDq1ER3IWGTv4vFjEXsD+MhwHg=
-Received: from CH0PR07CA0026.namprd07.prod.outlook.com (2603:10b6:610:32::31)
- by DS0PR12MB7512.namprd12.prod.outlook.com (2603:10b6:8:13a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Thu, 31 Oct
- 2024 18:43:39 +0000
-Received: from CH2PEPF00000141.namprd02.prod.outlook.com
- (2603:10b6:610:32:cafe::c4) by CH0PR07CA0026.outlook.office365.com
- (2603:10b6:610:32::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.22 via Frontend
- Transport; Thu, 31 Oct 2024 18:43:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8114.16 via Frontend Transport; Thu, 31 Oct 2024 18:43:39 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 31 Oct
- 2024 13:43:34 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
-	<jgg@nvidia.com>, <kevin.tian@intel.com>, <jon.grimm@amd.com>,
-	<santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v8 10/10] iommu/amd: Remove amd_iommu_apply_erratum_63()
-Date: Thu, 31 Oct 2024 18:42:43 +0000
-Message-ID: <20241031184243.4184-11-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241031184243.4184-1-suravee.suthikulpanit@amd.com>
-References: <20241031184243.4184-1-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26991CC888
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730400211; cv=none; b=DDDj2BwXIG5pQN+b0LjiYgw2J2i/KZgrHusFcGhVhtyZEvWasLNIUXcRAl0wq7/fPwl05wylaGZntQbBuNklxoU7vjLWo13TzgV618hHTtf5svznFuvXgXopp3tNuFbz4QLN5sfT+38vqNnZRO//rUiB6WbyDIvB/fXbPn0Ul1U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730400211; c=relaxed/simple;
+	bh=5J+G815Wbq7EpxKxEC5plPgUMW1Atv6u30idwn6WjuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2UXuWSyuC7pWEq7H/ZJPzXaTCdAT1BDg9GXS13iEKj9NjHA5CaKEPiGB2ImBAiV/MDuW3Vk1L/wmRfjQkjNK9/v+erBPF/4uqIc0PmML0paaqVrZzjdIotpAxy/3UbpixJqqxr52y5kMgIA578T35PqxHNHrjb5WSsEg52QNkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=puFaYlxX; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay9-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::229])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id A75E0C0952
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:43:24 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 62BA2FF805;
+	Thu, 31 Oct 2024 18:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730400197;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsTHOm+NWP4BjSQVtsW8n2E1wPttB+19xqsC8SoC5nU=;
+	b=puFaYlxXCiq9fLS4yVt0sYr7svq8GEuGKgCqab46unRHyuCepv/eDBk2aOlCuY41Bzkr5s
+	68IILRex1aQxMiPcx73+Vm0/cT5vhF1BNHlfJhaowJ4hpgTk3fP0lYS5pP7cKkMgTI8fQ0
+	sv58ZAuaT2e3SH5QB5k6oi84ji1RkSkxVOz/HbgBvRyLGqt1v9VAFljYyqb+NA9UoCy3S9
+	iS+IkxWZkM3Riv31fi+I0D39Rjn9ciqXS4UIy/fcggCKskh22pJcmS8DjWYR2Cnw8zgeHW
+	qF6sDDF63oWZ2qRDdGEmZs/OPQhVnpJeA2fceFO6U+5zDn9FSh7NsAC2storug==
+Date: Thu, 31 Oct 2024 19:43:15 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/vkms: Drop unnecessary call to drm_crtc_cleanup()
+Message-ID: <ZyPPw6m827Ef1_eQ@louis-chauvet-laptop>
+Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241031183835.3633-1-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|DS0PR12MB7512:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4f7f344-3a8f-4ab2-7cef-08dcf9dbefb9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SfcWFkeysRjH9Hztau43tGyc+QQ30p0sRaSCKqulHqy4zAxgFgHpWKGpru/7?=
- =?us-ascii?Q?wbkpLmvy7XeBRhrZsjFqTHC65Kw1f5ArdhMmKxUm54q77cd8y9XNL1DYAkN1?=
- =?us-ascii?Q?l+57ShrB9qNzX4EcyGcmfFi4SfyntE630obCz+LVFUdKEnmhbStcCcsj9K8/?=
- =?us-ascii?Q?FgCyeWZ9hLwXaYVFbea2ptuPMv2PhddZ+kNG5dOA0/XywVrgaQOwp8F657Ow?=
- =?us-ascii?Q?XYUxrToXlrxMaqVdN13sPZyGoquDeUJR7yt3bXhw48fOn94wzM8M6Hma7V+6?=
- =?us-ascii?Q?RsHPfyzHemfahnfIaKT3toh9/5aQ3aaBD95z/zZmRxDFBb5Vw6/bYh1wJq0Q?=
- =?us-ascii?Q?dE0Pol6L8FhKBAb3UML3xhbxKM5bnDkqN5kvpmR8JeiZKomX7o4mvvAZ+oCJ?=
- =?us-ascii?Q?rj99qpLG2LBgXaB1EXFMfk64zsX4AN60u25mcbP0I7KqEUpKzUr+kg/fW8h2?=
- =?us-ascii?Q?yNjItVS3FBm3AdKFoLPxlyZ+c2cXgiWoGIAnoV3qOB8EhZV6Flx4QmBx6onM?=
- =?us-ascii?Q?OfTJzf2UQOMX5ILqALnwBzGDk1pT0gcSSVMXeaKeNC6bCfMXFBZV64momj2k?=
- =?us-ascii?Q?/fxgElJn8mlZZC1IXKnZ4XKeQZGsonks5luEbHjvUD1TSb+1LqjHGD9a7Gmk?=
- =?us-ascii?Q?IwhAQ5l03rEAaFVn1vi+H2Mh+eDBWoiFut7FJbI30/e8a/+LaDJodZZeSFbB?=
- =?us-ascii?Q?XZOZ1aUruOh6EMWQpP3MaqsWVJroNDaagI9s33o/gEtQFozCNbSbjzQ7oyFN?=
- =?us-ascii?Q?xX9mcBO4HPctWbrlmMLEnT3rVUrs1Uz2mhrIcZKdm2Jxe6lv/uc9wnCQXx61?=
- =?us-ascii?Q?fu/yGXrx+LhMsBx6Myho5OxyeIyfl7RR9qMl2F57p+lsG87I6qE6ssDv/yuv?=
- =?us-ascii?Q?k5IEi3tQzOG9KrMYYm8W9fxfLlJn7hxca5sVmFp7msvAXx9miWyWrBs1BHha?=
- =?us-ascii?Q?AEpqFF7CHKZGK1ecD3t5Gr8rCWu++HJI5oh28dcmXt7M/A3sOpfbi3/lbO+0?=
- =?us-ascii?Q?G6PG0at/APvLLv5JFxECmCziONegt3qYMWNUfUeJElMZp3Hj6WcQzE46t3zy?=
- =?us-ascii?Q?TZCCRIIzArZd6eaiF+Yeqa3BHL/TG58qcLMEGrBQ4PV9mFwAE2UFDFBZm58q?=
- =?us-ascii?Q?hqggDo/ZlDXubYpth7HEMgU2JHgn8gAmB/jw7IRNiV2sPK8MbghPsPJWJsP8?=
- =?us-ascii?Q?rg6wr1kmhyJjQ/8Xb7ra8ywnJ+u8i7OJvgN8QaU3Kd48EdgVbRI1nD8GtaOx?=
- =?us-ascii?Q?aqtgNnS1Kqoi83QIDoaagBlDjWUSRyXNtWsHEppm1afMaMEvjH+qiT9oGlOI?=
- =?us-ascii?Q?bh8sMlgDE2RzseIdwkqIklfCnITxyXJSB1t6cfOc0IxWtCD4uL5YH8uE38Y3?=
- =?us-ascii?Q?q5JdZfyzPP5qCPERpg5IFuTQCeHg+VQqRyAC2dUGxujEdwMzkg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 18:43:39.3895
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4f7f344-3a8f-4ab2-7cef-08dcf9dbefb9
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000141.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7512
+In-Reply-To: <20241031183835.3633-1-jose.exposito89@gmail.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Also replace __set_dev_entry_bit() with set_dte_bit() and remove unused
-helper functions.
+On 31/10/24 - 19:38, José Expósito wrote:
+> CRTC creation uses drmm_crtc_init_with_planes(), which automatically
+> handles cleanup. However, an unnecessary call to drm_crtc_cleanup() is
+> still present in the vkms_output_init() error path.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd/amd_iommu.h |  1 -
- drivers/iommu/amd/init.c      | 50 +++--------------------------------
- 2 files changed, 3 insertions(+), 48 deletions(-)
+Thanks!
 
-diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
-index 3bdceff30abf..ae7332995d8d 100644
---- a/drivers/iommu/amd/amd_iommu.h
-+++ b/drivers/iommu/amd/amd_iommu.h
-@@ -16,7 +16,6 @@ irqreturn_t amd_iommu_int_thread_evtlog(int irq, void *data);
- irqreturn_t amd_iommu_int_thread_pprlog(int irq, void *data);
- irqreturn_t amd_iommu_int_thread_galog(int irq, void *data);
- irqreturn_t amd_iommu_int_handler(int irq, void *data);
--void amd_iommu_apply_erratum_63(struct amd_iommu *iommu, u16 devid);
- void amd_iommu_restart_log(struct amd_iommu *iommu, const char *evt_type,
- 			   u8 cntrl_intr, u8 cntrl_log,
- 			   u32 status_run_mask, u32 status_overflow_mask);
-diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-index 6821ec7f3f8f..84c0fd483550 100644
---- a/drivers/iommu/amd/init.c
-+++ b/drivers/iommu/amd/init.c
-@@ -1001,38 +1001,6 @@ static void set_dte_bit(struct dev_table_entry *dte, u8 bit)
- 	dte->data[i] |= (1UL << _bit);
- }
- 
--static void __set_dev_entry_bit(struct dev_table_entry *dev_table,
--				u16 devid, u8 bit)
--{
--	int i = (bit >> 6) & 0x03;
--	int _bit = bit & 0x3f;
--
--	dev_table[devid].data[i] |= (1UL << _bit);
--}
--
--static void set_dev_entry_bit(struct amd_iommu *iommu, u16 devid, u8 bit)
--{
--	struct dev_table_entry *dev_table = get_dev_table(iommu);
--
--	return __set_dev_entry_bit(dev_table, devid, bit);
--}
--
--static int __get_dev_entry_bit(struct dev_table_entry *dev_table,
--			       u16 devid, u8 bit)
--{
--	int i = (bit >> 6) & 0x03;
--	int _bit = bit & 0x3f;
--
--	return (dev_table[devid].data[i] & (1UL << _bit)) >> _bit;
--}
--
--static int get_dev_entry_bit(struct amd_iommu *iommu, u16 devid, u8 bit)
--{
--	struct dev_table_entry *dev_table = get_dev_table(iommu);
--
--	return __get_dev_entry_bit(dev_table, devid, bit);
--}
--
- static bool __copy_device_table(struct amd_iommu *iommu)
- {
- 	u64 int_ctl, int_tab_len, entry = 0;
-@@ -1184,17 +1152,6 @@ static bool search_ivhd_dte_flags(u16 segid, u16 first, u16 last)
- 	return false;
- }
- 
--void amd_iommu_apply_erratum_63(struct amd_iommu *iommu, u16 devid)
--{
--	int sysmgt;
--
--	sysmgt = get_dev_entry_bit(iommu, devid, DEV_ENTRY_SYSMGT1) |
--		 (get_dev_entry_bit(iommu, devid, DEV_ENTRY_SYSMGT2) << 1);
--
--	if (sysmgt == 0x01)
--		set_dev_entry_bit(iommu, devid, DEV_ENTRY_IW);
--}
--
- /*
-  * This function takes the device specific flags read from the ACPI
-  * table and sets up the device table entry with that information
-@@ -2650,9 +2607,9 @@ static void init_device_table_dma(struct amd_iommu_pci_seg *pci_seg)
- 		return;
- 
- 	for (devid = 0; devid <= pci_seg->last_bdf; ++devid) {
--		__set_dev_entry_bit(dev_table, devid, DEV_ENTRY_VALID);
-+		set_dte_bit(&dev_table[devid], DEV_ENTRY_VALID);
- 		if (!amd_iommu_snp_en)
--			__set_dev_entry_bit(dev_table, devid, DEV_ENTRY_TRANSLATION);
-+			set_dte_bit(&dev_table[devid], DEV_ENTRY_TRANSLATION);
- 	}
- }
- 
-@@ -2680,8 +2637,7 @@ static void init_device_table(void)
- 
- 	for_each_pci_segment(pci_seg) {
- 		for (devid = 0; devid <= pci_seg->last_bdf; ++devid)
--			__set_dev_entry_bit(pci_seg->dev_table,
--					    devid, DEV_ENTRY_IRQ_TBL_EN);
-+			set_dte_bit(&pci_seg->dev_table[devid], DEV_ENTRY_IRQ_TBL_EN);
- 	}
- }
- 
--- 
-2.34.1
+I discussed about this with Maíra on Monday, I agree with this patch!
 
+I will test your patch next week (checkpatch, sparse, CI) before adding
+my Acked-by. One less cleanup line in configFS work, thanks!
+
+Thanks,
+Louis Chauvet
+ 
+> Fixes: 99cc528ebe92 ("drm/vkms: Use drmm_crtc_init_with_planes()")
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_output.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index 0a5a185aa0b0..25a99fde126c 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -92,7 +92,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  				 DRM_MODE_CONNECTOR_VIRTUAL);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to init connector\n");
+> -		goto err_connector;
+> +		return ret;
+>  	}
+>  
+>  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+> @@ -131,8 +131,5 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  err_encoder:
+>  	drm_connector_cleanup(connector);
+>  
+> -err_connector:
+> -	drm_crtc_cleanup(crtc);
+> -
+>  	return ret;
+>  }
+> -- 
+> 2.47.0
+> 
 
