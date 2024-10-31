@@ -1,105 +1,85 @@
-Return-Path: <linux-kernel+bounces-390626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DEA9B7C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:10:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEA49B7C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D52282757
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC8F1F219B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BBA1A0BC5;
-	Thu, 31 Oct 2024 14:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BcHIgDM7"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF97F1A0730;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8AD1A01C6;
 	Thu, 31 Oct 2024 14:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruM8qATr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B22019538D;
+	Thu, 31 Oct 2024 14:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730383815; cv=none; b=uczM8OLmgiWsOjAc+n2gxywZlV0VR2XlKMM+sbv4Bx+HVLiVtEWWJfNb2O6zakBE5bBZd5fJcJesqz81ROp7YEfIAln58kFkZbc2Za4OJIBLwUgxQFIloNJM+Rqlr6K5TJMM4BqAjHEtlHMNHcjyWx1VsLjGuGeilhS7ktveQlI=
+	t=1730383812; cv=none; b=Qv3BX2GZ1Rt8BHBtrv7d6NnClZ2tvluTbJRRboLnistrX8wZDZ0kF9Ir4EUPNyqGLkeXTCks5Wjwph/0OAHRYPba460564tnMy4SDM8c55fP5AQUMcRUNFJfnqE/INDgYXCZRO8Y84NSmPyaTQx99M+krfvVXSCIMF5CpHdorE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730383815; c=relaxed/simple;
-	bh=ZOirEjwoVyKsr9B7zI9+5sVH12vbyRc/ixY45nVUD1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lK/LvVwoAQE/XOL285UuNkBFHIiLpqqkWW7XUued6rWFSmkz270+E91Z29RSVmI1ZoXErkgSzpjOzNdFECMfgIglCZc6xgCzoyySzDq7tsGhS1pTIgK6TPcFhv2xI9G12XsLsvjmbW9sC8qcYbi13ThCAenHlHur9rAbCcwOKKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BcHIgDM7; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83ab94452a7so39173639f.3;
-        Thu, 31 Oct 2024 07:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730383813; x=1730988613; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fGapzIuvflb8DMomsECaOF4DzIXKNMU6ZtxGVo61eig=;
-        b=BcHIgDM7dgDAv1C5NmCD9T77R/XAkryMFsv9/uRdYsAIzB453NsAjOymdkajBw7h1B
-         MdPQnpum7APv5Zw23SV2kNfnI+9udoSu5iuI4bb+o5YY6vY5E5wFC1LxnN3jv0puhIb8
-         JdyJMfxT0FRTCdwc4dRX6FC334eWmS2sNwvP5qD9xLrwqiFXw85rxAoLBoGGJnxOnYVJ
-         kXRW08m9kiLUeLe4KNirnhCCONx8Gt7j5eZUvatFldPVk7AzKJeuWP4ED18WG5fs+PxO
-         nZTaCf7MCIzDR/0d85eHkTlmOZm4Rm4hYNemr3eO4bXKv9Lw6AA8u7QPRu+XxEmFntdh
-         7WCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730383813; x=1730988613;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fGapzIuvflb8DMomsECaOF4DzIXKNMU6ZtxGVo61eig=;
-        b=UDiDFla4rKGKpoaFx2H7u7ZXnKibvJITf0iuwptDn808w0FSafM+ZV3keoAPWdWBSt
-         ExI1+7j44eUK3f+Fp1vY/AuWxmpEUs0R8RNmEZlCBLA9n1XbWdm/ycDwS6M+a4utjsnZ
-         Ype/CeZREDR0yy4vcBTfv8BM2xyd+ZnS/e4vYHzMbUKo5OX0NqPZOk+aeD4+QsMC4Uni
-         gHzmq9C1Alx4F2WplkzsPew9hbkhzuamEQrCi8b9yrR7ch6csrFXxQG1vuHpjlWJT7uW
-         6a2JttX4Cka4zRJ3WXxYXVQvLVAvI7u8520XYPhxc0wjvImUgnHDDQAYHWobSsSuS53n
-         IUgg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Cjo7rWSRNcGYYR1IuzbuWRd8JPjp4ezbzzgm2VPL0k8AKzZmMXgrHxvOjTbZD4wwcY8mMdg21q2a4Rw=@vger.kernel.org, AJvYcCX3rZ6GdGv/m2ylUgUMBjrBQ85Pf9qsRhiMQwd0n6us8ogZHobdVCSbcPSQViTxW0p/5uV6golxaIytROkKb6r7@vger.kernel.org, AJvYcCXSn8dYOAoutDcARoMYze6sAIRiUuEI/ujZy8/qOSR5F1VzLlmqajiI3toMdrys5m8ms2M8VsGu@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx0DiVKBD/s3XBdxkrsXNm0SYbpP5yYMkwx/PQlcLZM834GrDk
-	Y4H1sqEiq1naXtit0106wUC9pB0KQIMnLFzSvNz5ST5dCfl/yV3I
-X-Google-Smtp-Source: AGHT+IGbgq1ksw8UcbLciUbszieiqw3+Qq2pAxekHHQzxo6i2O9Z7UYOH19oJAPum3hUsEqsFoqrDA==
-X-Received: by 2002:a05:6602:1507:b0:82c:d67d:aa91 with SMTP id ca18e2360f4ac-83b566cc65dmr936862939f.1.1730383812577;
-        Thu, 31 Oct 2024 07:10:12 -0700 (PDT)
-Received: from ?IPV6:2601:284:8200:b700:1848:120e:c56:3740? ([2601:284:8200:b700:1848:120e:c56:3740])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4de04887facsm311707173.26.2024.10.31.07.10.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 07:10:11 -0700 (PDT)
-Message-ID: <7ae73a73-fba4-4692-97df-1a88ccc5f576@gmail.com>
-Date: Thu, 31 Oct 2024 08:10:10 -0600
+	s=arc-20240116; t=1730383812; c=relaxed/simple;
+	bh=8WGos1x+oBTF5bVQR3G5t0JfZpgS3k3J6doGA/QaG4w=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=TB67kimaFPlmcJi/wlcGZ04yVS/3/Skl0gRaLMsrcTt9MXVvUaVPNxKf4H+yQhnd3t1OdiudhbTvYf5paXd5l+oWZY6r/hhMYSxJNT2VpQ8swRefThAX5iJWy66qdBlenbDYe146VJqELT0Qd9xvP6E7AgL4t8JuAzk9ysYB9YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruM8qATr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE065C567C7;
+	Thu, 31 Oct 2024 14:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730383812;
+	bh=8WGos1x+oBTF5bVQR3G5t0JfZpgS3k3J6doGA/QaG4w=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=ruM8qATrIIYZIbc5vVWHZ1DibbllBNorwrIv5GFdGvKKFz7GshhbtZTfnbn8Z27q2
+	 tU9uM7qAyzwCrkgGDAVJ9carz8/hnE5gQ4wdHF+Yc8Vvz6NjaL1wkhPI9iDAIE+0Ue
+	 FBUMupBwPT8FEhcpHMcoa8PHlzO9JdcMSVwP68PMZoQCucHKDr2bNB90kKNxpYZNuU
+	 06LG4DDp7ys5Zo4JyvQiGYDFNfnbpXz+w3I2O2Bu2lYtZqAHJWkIVcwNJT8ZLx7/to
+	 qMJ5RyDNnfY6eKF386fSp/S1q0wjwg3+JjtNppjithk2hFnOZjvB8A8Ih79GkYNnEc
+	 O1uucZB2FSFYg==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v6] ipv6: Fix soft lockups in fib6_select_path under
- high next hop churn
-Content-Language: en-US
-To: Paolo Abeni <pabeni@redhat.com>,
- Omid Ehtemam-Haghighi <omid.ehtemamhaghighi@menlosecurity.com>,
- netdev@vger.kernel.org
-Cc: adrian.oliver@menlosecurity.com, Adrian Oliver <kernel@aoliver.ca>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Ido Schimmel <idosch@idosch.org>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Simon Horman <horms@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241025073003.2079945-1-omid.ehtemamhaghighi@menlosecurity.com>
- <0dc8c829-23f0-4904-8017-fc98c079f0ab@redhat.com>
-From: David Ahern <dsahern@gmail.com>
-In-Reply-To: <0dc8c829-23f0-4904-8017-fc98c079f0ab@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH -next] ipw2x00: fix bad alignments
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20241017020113.122029-1-jiapeng.chong@linux.alibaba.com>
+References: <20241017020113.122029-1-jiapeng.chong@linux.alibaba.com>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: stas.yakovlev@gmail.com, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+ Abaci Robot <abaci@linux.alibaba.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <173038380901.539202.10384642881814927293.kvalo@kernel.org>
+Date: Thu, 31 Oct 2024 14:10:10 +0000 (UTC)
 
-On 10/31/24 4:13 AM, Paolo Abeni wrote:
-> Given the issue is long-standing, and the fix is somewhat invasive, I
-> suggest steering this patch on net-next.
+Jiapeng Chong <jiapeng.chong@linux.alibaba.com> wrote:
+
+> No functional modification involved.
 > 
+> ./drivers/net/wireless/intel/ipw2x00/libipw_rx.c:871:2-3: code aligned with following code on line 882.
+> ./drivers/net/wireless/intel/ipw2x00/libipw_rx.c:886:2-3: code aligned with following code on line 900.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11381
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
+It's cleaner to use '&&' operator than two if statements. Please also
+add 'wifi: ' to subject.
 
-FWIW, I think net-next is best.
+Patch set to Changes Requested.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20241017020113.122029-1-jiapeng.chong@linux.alibaba.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
 
