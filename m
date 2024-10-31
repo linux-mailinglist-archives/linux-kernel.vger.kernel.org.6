@@ -1,104 +1,141 @@
-Return-Path: <linux-kernel+bounces-390530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72679B7AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:44:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891B09B7AF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8961F23064
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:44:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3B21C21C6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25CD19DF61;
-	Thu, 31 Oct 2024 12:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AA519E81F;
+	Thu, 31 Oct 2024 12:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzYii7EL"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M97F/5F3"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21611E495
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76D51E871;
+	Thu, 31 Oct 2024 12:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378532; cv=none; b=RRKqIYpqniA3mfFRjzyYXU7cIwTun25NIbEPS91D9gTvF6zQ8VXWJUAby1D6TToVs7gH3RhgBCx5VqmOnamrtiHablfYVCDJc6ixEAQFXgCT2E3VB/HXmmlZQetySn7zY9K8cQr0rXEjVWjH6+uWKZblzHqNT5uDq4ijsWBfjks=
+	t=1730378609; cv=none; b=mwy+fWI9z2thCXNIwhoI3R0Zjb+jnsZrPQBTXNZdtDB9pMv35qyahsSvv3yVPrgErxdXuyrY9XGdO3Wrp49DdC6H5E8A8f5GhHCGvMDupUqGOZGocm3N61S/oG0m6loGUl4ecTfJ+3uGzbGPEaz0NZEhFqeuYCnDsEN6Z5PiKRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378532; c=relaxed/simple;
-	bh=LFQR7eBo0ij1wczV7lkAC0M5sAHFTroNUUMbeBATbc0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HHaFRfJdSweQoNoXqZWu7th/W7XwkRtmMLIGGGeWPPeM643ad5UGRrV/wLfOitU8Xl1AxsI6XNEpXdv+QKd4zVvmJGdGZ+LL595o0zjA2Se6LA4wa3r5+0fxfn/qzqQqRnthFRLCFCBIuySGoVuDlIbSJQjQl7FtkP8u+CTMLq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzYii7EL; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1730378609; c=relaxed/simple;
+	bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z2CPP8Fe8n3HgNRerhhODjALshm8wlwlvk1E1jM231A67vkIvOpUAvupFSMH7Gw9x8r2EJ3TuXknoBQp58uxPghDSW1KYB8Jks3VolgT32viVH/uOnhiswEgLop/8XqwXU3mtiM5blHIZR0TzWKa+MSXZobWIRpUQwZ7pIpTJa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M97F/5F3; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2110a622d76so3814295ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:42:10 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so626865f8f.0;
+        Thu, 31 Oct 2024 05:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730378530; x=1730983330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Zxu6U1/EeE9hsOSQ/DZR977RvLIqZxhKQgAobJ0lU4=;
-        b=EzYii7ELO9xCDf48wI/+sWE/DyGaJG3dEJx0xtXW0x3JIEqCGobOv62vhPlpob0lhy
-         Lk32ou1sH80VqazysyGjUeB3hflWUXb+mkWIPNDu9g455tTJBXHZDPVuMiqOeGtpzMyI
-         3V89XyjicNLRMZSLrJYNYJVaSm3hYR25mVHekPthgLI0NjjZhzm3KjQykOYuJdsddNOl
-         w60Q35DdKeUwR4wJR+/rkTujn+ySZq+Q7yJJttQoDW8sVSJ7ILntLIiMTVortM41/cJ6
-         jHbgWKeQfYLx1z3h8ZHOq4NyoCkH3UXPRq/IcKXfmnncbMK+5GK3EwwgMLulAp6+QEAd
-         zhYw==
+        d=gmail.com; s=20230601; t=1730378605; x=1730983405; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
+        b=M97F/5F3N+UC6jyrvEqN5JZOpkwa0m3w99GPE8xGV7N/V0aLhIBBFFBFKtklE9S84n
+         D0fUw+fzZeXyNzdC1goPBESkO30G/5p6ExgG7WLCD9Q+6Wc3HZ5nmNYo6nkQvXM2utAX
+         DvWo3CZ5MolavU4pTfFzmbL8pVxxdjRGTfprVqae+dgd6l+x2j51TE8wWYSWhKGHj/a4
+         7Pb4VigNZ3sE5jmURDMkE0VVW0ed28Qf0Ddt6uxfiP7ffPetAj8KCjVwJVnYNa1ONksA
+         V0XhSYMDHxZEOQfArsuu7S0EbYhsGLOwBaYJkbAJvtNbt3NT4bvYck1BUZM9BkvotUWi
+         XNlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730378530; x=1730983330;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Zxu6U1/EeE9hsOSQ/DZR977RvLIqZxhKQgAobJ0lU4=;
-        b=jS0WEBZPiH58jlCG2z5hdEM9U5MVMRC3Ozohavlxh0/BoT4hRjYdDisd6EKh1EU+8p
-         rw9xftRHuwyFTU1LEUIyv5n82ghEtSwimlWDGoSQeDK0Ipk0TWvmRc87zDeeQpGWX1Yw
-         GnM/5lY/MqfFVbe0++Pff7Qx4GSzUrrAk2X6e7NHfT3QSdymyr86iUPCEzzieDGCxWaT
-         Uy6NSp0mF4i+C7SwzKSgymkrBhJOAo2C3+QBj4ZhGpS90QN7+HX54oz5Q+zkNhLcD+g5
-         ZeT5kjwuO27RU6G8IPk28a1i66t8YV/8x/Jz+cbVtbDvRPKHZA4xmmtI3xHwC6oCfseI
-         aWtw==
-X-Gm-Message-State: AOJu0YwMF0libDKaj6kDG65QUNNk64pzxCq5DWFwIt39vRISo2A/bsy/
-	eSZ0fErXdQuIAaSmHhenRX5F88apa8+jJ33LED47sSLigKzy4fSQdr4KEZaI
-X-Google-Smtp-Source: AGHT+IFVEm4EVV3sQFHWX6aa2RsWkkXY83kKkN3vrooeHpj47xma64lpbqfEl+2gcUHFwAAN8MfR6Q==
-X-Received: by 2002:a17:902:f691:b0:20c:dbff:b9e5 with SMTP id d9443c01a7336-210c6c0e54dmr240529125ad.33.1730378529864;
-        Thu, 31 Oct 2024 05:42:09 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056edc71sm8307845ad.60.2024.10.31.05.42.08
+        d=1e100.net; s=20230601; t=1730378605; x=1730983405;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
+        b=DyHAyIQd3MwUaDTrDR0f0TY6NdG/ydDJmOR09wKPK8FdiBA5R+PXNKuwxXRS3ryQAs
+         7AQqJQ3lU9RDkpPE+twmCXj5nehMIw1LRmQ/stoGhPJbuW/v3wuwqFBCuB2PPS1Gi3ZA
+         uLhELry5YB5H9Zz880abGTU6CMb7yLLUZ1MAQMgKpOToDms11a9v5B9wuyuAX34NDhbP
+         gCtqex6UJXK18jHXZMLGJVqcJ0WPHWcV+ZuRx4i5PK6p1AFJsZOH3gjwrn90JCOKFyIu
+         xezUC4LmkyZO70MpS3GNkZ2y39Gq1C+vd9Ywy5MJQD2tXzXtlf+X79qvBWsCt1TExlcA
+         G6EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVc7MPuIAFDoU2gUCh+nAzxRmrd+USZYgiFXsGQGt4oRj7ViEEoekmFdojyD3+PTkYopV5XnqGcJpc=@vger.kernel.org, AJvYcCXBUXd25F8wJbFvgvRwfyyxEe9t425RKW/MpKlYo1vRmqklKVwup1z1RcetzCL7D0PWoMczpqemzhagoNNy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/uN08U8w+XsUTecWm6z6C1Hm40twuHvlyl0YhQ/EBYpY4U/Ls
+	MwGp2/7dJDDw3xEm0ChyvSZ5jupzDe1JAszRiK5pwuBtz+4lPLkz
+X-Google-Smtp-Source: AGHT+IFEIVQ6pPS463YcejXrPDyaSA/UtTd61XxgHxKzbLgWYHBucBJA9TZFt3elDzGAGWQm/OFVzA==
+X-Received: by 2002:adf:fdd2:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-381b707641bmr5307715f8f.17.1730378604792;
+        Thu, 31 Oct 2024 05:43:24 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abdasm2021810f8f.97.2024.10.31.05.43.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 05:42:09 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+41ebd857f013384237a9@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [syzbot] [exfat?] KMSAN: kernel-infoleak in pipe_read
-Date: Thu, 31 Oct 2024 21:42:05 +0900
-Message-Id: <20241031124205.10372-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <67234aeb.050a0220.35b515.015a.GAE@google.com>
-References: <67234aeb.050a0220.35b515.015a.GAE@google.com>
+        Thu, 31 Oct 2024 05:43:23 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Thu, 31 Oct 2024 13:43:16 +0100
+Subject: [PATCH v2] clk: renesas: cpg-mssr: fix 'soc' node handling in
+ cpg_mssr_reserved_init()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241031-clk-renesas-cpg-mssr-cleanup-v2-1-0010936d1154@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGN7I2cC/42NQQ6CMBAAv2L27BraEhRP/sNwKMsCG6GQrhIN4
+ e9WXuBx5jCzgnIUVrgeVoi8iMoUEtjjAaj3oWOUJjHYzOYmcwZpeGDkwOoVae5wVI1Jsg+vGU3
+ pXNMWrqaSICXmyK289/y9StyLPqf42W+L+dk/w4vBDAt7seecqW6pvnWjl+FE0wjVtm1f95hVV
+ sgAAAA=
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730378603; l=1720;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
+ b=nmTqZwyudmz5MVr0qhXTgTM6WrccGhKYgvQPFOc06zJIc77Np2zcshJVVb7+oFt+kYmHvXAz4
+ to57HC7fXWXAcYSj+HjgVn17U31E7DgDCAlrHsrOwSm/SAFrMJ7qptw
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+A device_node reference obtained via of_find_node_by_path() requires
+explicit calls to of_node_put() after it is no longer required to avoid
+leaking the resource.
+
+Instead of adding the missing calls to of_node_put() in all execution
+paths, use the cleanup attribute for 'soc' by means of the __free()
+macro, which automatically calls of_node_put() when the variable goes
+out of scope.
+
+Fixes: 6aa175476490 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- Squash patches for mainline solution without intermediate steps.
+- Link to v1: https://lore.kernel.org/r/20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 79e7a90c3b1b..bf85501709f0 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
+ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
+ 					 const struct cpg_mssr_info *info)
+ {
+-	struct device_node *soc = of_find_node_by_path("/soc");
++	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
+ 	struct device_node *node;
+ 	uint32_t args[MAX_PHANDLE_ARGS];
+ 	unsigned int *ids = NULL;
 
 ---
- fs/pipe.c | 1 +
- 1 file changed, 1 insertion(+)
+base-commit: 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
+change-id: 20241031-clk-renesas-cpg-mssr-cleanup-1933df63bc9c
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 12b22c2723b7..596780490a32 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -324,6 +324,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 				break;
- 			}
- 
-+			printk(KERN_INFO "%p %u %lu", &buf->page, buf->offset, chars);
- 			written = copy_page_to_iter(buf->page, buf->offset, chars, to);
- 			if (unlikely(written < chars)) {
- 				if (!ret)
---
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
