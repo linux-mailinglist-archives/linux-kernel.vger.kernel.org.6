@@ -1,277 +1,116 @@
-Return-Path: <linux-kernel+bounces-390901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4799B7FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:18:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0146E9B7FD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:19:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1721C21AE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6CFF2823DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47ED1BC07B;
-	Thu, 31 Oct 2024 16:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BB71BBBE4;
+	Thu, 31 Oct 2024 16:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hl0k/Fo4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="el+SnhpX"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFA81B5ED8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8041B6541
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730391496; cv=none; b=V/9EEuvjLuzARPezcqNPM4iGh6aP6dDUSurAfsER0ThttfsIqe+LUrAT9HdyvhaJAEB9BWPfaVf475bQgBRP+EFeJu8qPDOP5BtTrTKnlob8NqoA3CljTr2Y7rDRmBK0oKTMFGS7Zv3xhEbv1IWL0MICTVpCrmNR73aPINJLZjU=
+	t=1730391548; cv=none; b=dPiV8QovI7G/Ki9nMAEDbMVNlVMMDfI6oQbcNj7x6CzxXSyidDHd/i4dYFvWpSbZI2w0g3EFvzlnrtToI8Kk+BAU4RRFYBX5Da5AyksCJKOt5GUF2vnf1lemnBqVachBDXcx29jYTYh2KdlRAOnmfqWSaL+bfiRHZ8tgzjh+fJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730391496; c=relaxed/simple;
-	bh=WouSwHJcHzje0C4fi/eRSrY/1YS4kqLVQgfsDSaSVsI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fnfn572ityLbcOu2UNTqJ2q9NqUVqhTv9vmocxgzx6PzJf9WK2F5Pk6uPg2cvI6TRyqJGDFFdT6/wleOtVWrYhBgfsxhMdpUIDhtNxdcCJCzmr0LNRxxUyE5nE6mTrCYixuPkramncsb6huEapREq9On4pA8G3qs8q1s2IRj23k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hl0k/Fo4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730391492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cxx09rhPXBW0+fbvKhcDxytRWwt5G4IT/stJwiAJCe0=;
-	b=Hl0k/Fo4nyI92MtzoO9zfEN9oCWahbH6IdLP6YBgYY+sPuNDDeoX3WTugl8ZxEZlFDr0lL
-	/rt4gLS8zxfpwZQDNV8lo6grwpKLTlL5Se8XAEvlBeUcmrQOAyQDkmtY7BjocKBFFU2wVH
-	ZaX4EzF/eQ1uOLxRBBEMkcdmGc3RzU8=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-149-Xzd368teNWafhqAbAbtvlA-1; Thu, 31 Oct 2024 12:18:11 -0400
-X-MC-Unique: Xzd368teNWafhqAbAbtvlA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a99fa9f0c25so83618266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:18:11 -0700 (PDT)
+	s=arc-20240116; t=1730391548; c=relaxed/simple;
+	bh=yFWSmwfok6oEYTTLTKkQ9rZWC2l0aHvY4z6ZJ+NQcCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PpxhJxHqhYLhi3ccExCMFeK5Ehra0xqvHgUifg/xw4AV8lEJPcJ28fE2+bLekM7ZieiLvxMHnHBu+h2f90Bwz29ybpn+Ki7cybXuE4vTAb6cEKq/+IC7NaQg+LI+AD03fUKjHYX5A9FNZPvtUh2mUDrnoitRg0WBiKIF7uAUqY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=el+SnhpX; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c94cee0c8so994335ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:19:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730391546; x=1730996346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MjLvyMXm9JZDYRseN0Kp+gNlDM9ARjQNJ6AjRKfsYIw=;
+        b=el+SnhpXLGdThIHmAg93So/sSCsGkGv3wbCgcL4qXSNxrkCCwKDN0XBaayxDiPwGXc
+         YOovLShvH38oOAPN5+vNWRYfZu3yly/29Yf+bIh/1A9PMXVdG8wYmKy1i6QCs89oPlOy
+         LscWrPSFBaenATWRLIVMP6ZK3obt1MK0/dWqc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730391490; x=1730996290;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730391546; x=1730996346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cxx09rhPXBW0+fbvKhcDxytRWwt5G4IT/stJwiAJCe0=;
-        b=p8oGXN/5wiiK25OHh/BhC9ra25v1HkqBlm0tuow/1NnGlkE4O2j0c6Vu/dt8SD5Rz6
-         S10Yv2o+ADfVAbuo77/H0xsb/gcNBrCoLl3hiCkk68OSTGyvkLtK8K39oKgp9K1B0iaz
-         Wi8joPU9AevOTJDOsWrrhHUQYv+P08pA06KlgOEyGClmKx8GzXskaIchLU8IGRbLdaf7
-         yTafPZiCCRIqMDQ7OYlceF7nDvNhtU9iRa19KpFU/arDMhCJuXXzKgus3aSgnabdV7Xv
-         SQ5hj9mZ0Jg7JIke8H+9jhNKB/aiQ9nFBelSv9kb1hRDZDpWHccGVtWivu1cBdKYKD4v
-         ZuLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkdTOQFspKkK9W9/zlaLFQodSd4gL6HBvtM1bOBKIDsTuDGlNpKP3Eo9HeZh0t0S63KsUJppOefJb8zac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9+BJk7g7BcJ1A0AewFPmIbxCzy8IhXDf2vNjVY8wTeYtgE1By
-	In/fc8lNmWLq8ci1CDWtAUYv/5tnhMhOk8/0a1E56thC7jZWapidhyqbnoxdf+qL+5/ZFlCxAUg
-	ZN78BrZwlEwCIJBQ7Bp5ur5rWFwJKFnPjmYn9UPeFVSw34zEfxehkHBMPhh7eRA==
-X-Received: by 2002:a17:907:96ac:b0:a9a:1796:30d0 with SMTP id a640c23a62f3a-a9de63327c3mr2013678966b.62.1730391489866;
-        Thu, 31 Oct 2024 09:18:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcPr4JkEYqmPz2R4rXU5fH3oMbGqzpFoCe3YaKkRKxGz/Uy/aeNVT/TYWyZnSar5vduQlf6g==
-X-Received: by 2002:a17:907:96ac:b0:a9a:1796:30d0 with SMTP id a640c23a62f3a-a9de63327c3mr2013674966b.62.1730391489327;
-        Thu, 31 Oct 2024 09:18:09 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56645ecesm84789766b.178.2024.10.31.09.18.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 09:18:08 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id CEC11164B7AF; Thu, 31 Oct 2024 17:18:07 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
-Cc: zhangkun09@huawei.com, fanghaiqing@huawei.com, liuyonglong@huawei.com,
- Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
- <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew Morton
- <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-team
- <kernel-team@cloudflare.com>
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-In-Reply-To: <023fdee7-dbd4-4e78-b911-a7136ff81343@huawei.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <cf1911c5-622f-484c-9ee5-11e1ac83da24@huawei.com> <878qu7c8om.fsf@toke.dk>
- <1eac33ae-e8e1-4437-9403-57291ba4ced6@huawei.com> <87o731by64.fsf@toke.dk>
- <023fdee7-dbd4-4e78-b911-a7136ff81343@huawei.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Thu, 31 Oct 2024 17:18:07 +0100
-Message-ID: <874j4sb60w.fsf@toke.dk>
+        bh=MjLvyMXm9JZDYRseN0Kp+gNlDM9ARjQNJ6AjRKfsYIw=;
+        b=ECkVX9QSdcnLsTSns4QGu5n4+aLKKd8VIdQRGIkv2/1RzaEtLiIKPUzXzs+9Ickhxg
+         8K48nPCj/9sLswnIalRF7FOda+IBiA/UI84dX4U/ulwXEpNNPkkuBH3vGeSV3kYr2o2s
+         1bj1jnJL7zKOcRCEwAtR71vVNZWO9+pyVI9rlb2KQg+FqicDZL/7IpPorI9RnyV6prhu
+         vlnOg3uyA12UtE8jtLskUj4vSMGncCSXDYOi5vf7ij9U8wM5N/92mLtCSZokIWYZWPLW
+         HsmBrOeS/zS6b797nmUZ70cx81jb9tGdOwbCkKV3Fq9nGZguFu1sBQd+tQIqZ+4/7fGw
+         257g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAmmX6Vp9YXW9lxHhe7OZe7LwpPILrPJocLeLSROkFshfcaz4GtaIWRADtcQ1CExc3hYQtRRG/v19MNYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6o3nAuTjCgexztyfzOuL/EqnJ9vMt8nzLnkBOPvKBvh9yXuQG
+	OpEuBCYZii+Mzzw6rxM3DFVEzdKOL8E85oynCPVTYxRhCm58pxHcQyv3v8vm749WQtmpZ7gipBj
+	lQjsG/5u4lAe0VeVeSXMWFhfiU3thwy0ft+7f
+X-Google-Smtp-Source: AGHT+IEYEulEG8uwOdZ6nHWVRi6xht4GwFzjK7BexdW1RrCf5iD6UAW7Vc5bcQ9XIli0/7HCgS3q1a8Cpyo8PwB8l68=
+X-Received: by 2002:a17:903:1104:b0:20b:99cd:c27e with SMTP id
+ d9443c01a7336-210c68866afmr117631165ad.3.1730391546355; Thu, 31 Oct 2024
+ 09:19:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20241028195343.2104-1-rabbelkin@mail.ru> <20241028195343.2104-3-rabbelkin@mail.ru>
+ <b5aed7cd-3a1b-4d0a-a9fe-e8a2a7778cdd@linux.dev>
+In-Reply-To: <b5aed7cd-3a1b-4d0a-a9fe-e8a2a7778cdd@linux.dev>
+From: Florent Revest <revest@chromium.org>
+Date: Thu, 31 Oct 2024 17:18:55 +0100
+Message-ID: <CABRcYmKyrDEwGiwWiixsjc49g9ypkVVBQAYEsHu-QifiFSvWLw@mail.gmail.com>
+Subject: Re: [PATCH bpf v2 2/2] selftests/bpf: Add test cases for various
+ pointer specifiers
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: Ilya Shchipletsov <rabbelkin@mail.ru>, bpf@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Nikita Marushkin <hfggklm@gmail.com>, lvc-project@linuxtesting.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Yunsheng Lin <linyunsheng@huawei.com> writes:
+Thank you!
 
-> On 2024/10/30 19:57, Toke H=C3=B8iland-J=C3=B8rgensen wrote:
->> Yunsheng Lin <linyunsheng@huawei.com> writes:
->>=20
->>>> But, well, I'm not sure it is? You seem to be taking it as axiomatic
->>>> that the wait in itself is bad. Why? It's just a bit memory being held
->>>> on to while it is still in use, and so what?
->>>
->>> Actually, I thought about adding some sort of timeout or kicking based =
-on
->>> jakub's waiting patch too.
->>>
->>> But after looking at more caching in the networking, waiting and kickin=
-g/flushing
->>> seems harder than recording the inflight pages, mainly because kicking/=
-flushing
->>> need very subsystem using page_pool owned page to provide a kicking/flu=
-shing
->>> mechanism for it to work, not to mention how much time does it take to =
-do all
->>> the kicking/flushing.
->>=20
->> Eliding the details above, but yeah, you're right, there are probably
->> some pernicious details to get right if we want to flush all caches. S
->> I wouldn't do that to start with. Instead, just add the waiting to start
->> with, then wait and see if this actually turns out to be a problem in
->> practice. And if it is, identify the source of that problem, deal with
->> it, rinse and repeat :)
+Acked-by: Florent Revest <revest@chromium.org>
+
+On Tue, Oct 29, 2024 at 7:19=E2=80=AFAM Yonghong Song <yonghong.song@linux.=
+dev> wrote:
 >
-> I am not sure if I have mentioned to you that jakub had a RFC for the wai=
-ting,
-> see [1]. And Yonglong Cc'ed had tested it, the waiting caused the driver =
-unload
-> stalling forever and some task hung, see [2].
 >
-> The root cause for the above case is skb_defer_free_flush() not being cal=
-led
-> as mentioned before.
-
-Well, let's fix that, then! We already logic to flush backlogs when a
-netdevice is going away, so AFAICT all that's needed is to add the
-skb_defer_free_flush() to that logic. Totally untested patch below, that
-we should maybe consider applying in any case.
-
-> I am not sure if I understand the reasoning behind the above suggestion t=
-o 'wait
-> and see if this actually turns out to be a problem' when we already know =
-that there
-> are some cases which need cache kicking/flushing for the waiting to work =
-and those
-> kicking/flushing may not be easy and may take indefinite time too, not to=
- mention
-> there might be other cases that need kicking/flushing that we don't know =
-yet.
+> On 10/28/24 12:53 PM, Ilya Shchipletsov wrote:
+> > Extend snprintf negative tests to cover pointer specifiers to prevent p=
+ossible
+> > invalid handling of %p% from happening again.
+> >
+> >   ./test_progs -t snprintf
+> >   #302/1   snprintf/snprintf_positive:OK
+> >   #302/2   snprintf/snprintf_negative:OK
+> >   #302     snprintf:OK
+> >   #303     snprintf_btf:OK
+> >   Summary: 2/2 PASSED, 0 SKIPPED, 0 FAILED
+> >
+> > Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
+> > Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
+> > Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
 >
-> Is there any reason not to consider recording the inflight pages so that =
-unmapping
-> can be done for inflight pages before driver unbound supposing dynamic nu=
-mber of
-> inflight pages can be supported?
+> Acked-by: Yonghong Song <yonghong.song@linux.dev>
 >
-> IOW, Is there any reason you and jesper taking it as axiomatic that recor=
-ding the
-> inflight pages is bad supposing the inflight pages can be unlimited and r=
-ecording
-> can be done with least performance overhead?
-
-Well, page pool is a memory allocator, and it already has a mechanism to
-handle returning of memory to it. You're proposing to add a second,
-orthogonal, mechanism to do this, one that adds both overhead and
-complexity, yet doesn't handle all cases (cf your comment about devmem).
-
-And even if it did handle all cases, force-releasing pages in this way
-really feels like it's just papering over the issue. If there are pages
-being leaked (or that are outstanding forever, which basically amounts
-to the same thing), that is something we should be fixing the root cause
-of, not just working around it like this series does.
-
--Toke
-
-
-Patch to flush the deferred free list when taking down a netdevice;
-compile-tested only:
-
-
-
-diff --git a/net/core/dev.c b/net/core/dev.c
-index ea5fbcd133ae..6e64e24ad6fa 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -5955,6 +5955,27 @@ EXPORT_SYMBOL(netif_receive_skb_list);
-=20
- static DEFINE_PER_CPU(struct work_struct, flush_works);
-=20
-+static void skb_defer_free_flush(struct softnet_data *sd)
-+{
-+	struct sk_buff *skb, *next;
-+
-+	/* Paired with WRITE_ONCE() in skb_attempt_defer_free() */
-+	if (!READ_ONCE(sd->defer_list))
-+		return;
-+
-+	spin_lock(&sd->defer_lock);
-+	skb =3D sd->defer_list;
-+	sd->defer_list =3D NULL;
-+	sd->defer_count =3D 0;
-+	spin_unlock(&sd->defer_lock);
-+
-+	while (skb !=3D NULL) {
-+		next =3D skb->next;
-+		napi_consume_skb(skb, 1);
-+		skb =3D next;
-+	}
-+}
-+
- /* Network device is going away, flush any packets still pending */
- static void flush_backlog(struct work_struct *work)
- {
-@@ -5964,6 +5985,8 @@ static void flush_backlog(struct work_struct *work)
- 	local_bh_disable();
- 	sd =3D this_cpu_ptr(&softnet_data);
-=20
-+	skb_defer_free_flush(sd);
-+
- 	backlog_lock_irq_disable(sd);
- 	skb_queue_walk_safe(&sd->input_pkt_queue, skb, tmp) {
- 		if (skb->dev->reg_state =3D=3D NETREG_UNREGISTERING) {
-@@ -6001,6 +6024,9 @@ static bool flush_required(int cpu)
- 		   !skb_queue_empty_lockless(&sd->process_queue);
- 	backlog_unlock_irq_enable(sd);
-=20
-+	if (!do_flush && READ_ONCE(sd->defer_list))
-+		do_flush =3D true;
-+
- 	return do_flush;
- #endif
- 	/* without RPS we can't safely check input_pkt_queue: during a
-@@ -6298,27 +6324,6 @@ struct napi_struct *napi_by_id(unsigned int napi_id)
- 	return NULL;
- }
-=20
--static void skb_defer_free_flush(struct softnet_data *sd)
--{
--	struct sk_buff *skb, *next;
--
--	/* Paired with WRITE_ONCE() in skb_attempt_defer_free() */
--	if (!READ_ONCE(sd->defer_list))
--		return;
--
--	spin_lock(&sd->defer_lock);
--	skb =3D sd->defer_list;
--	sd->defer_list =3D NULL;
--	sd->defer_count =3D 0;
--	spin_unlock(&sd->defer_lock);
--
--	while (skb !=3D NULL) {
--		next =3D skb->next;
--		napi_consume_skb(skb, 1);
--		skb =3D next;
--	}
--}
--
- #if defined(CONFIG_NET_RX_BUSY_POLL)
-=20
- static void __busy_poll_stop(struct napi_struct *napi, bool skip_schedule)
-
 
