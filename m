@@ -1,146 +1,207 @@
-Return-Path: <linux-kernel+bounces-390258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4A89B7799
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:34:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EC69B7796
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96659B23322
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAEF52820A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8731E197A6C;
-	Thu, 31 Oct 2024 09:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADF61953B9;
+	Thu, 31 Oct 2024 09:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ke17hcOn"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UTDG52Ie"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0320194C8F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243D219341D;
+	Thu, 31 Oct 2024 09:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367274; cv=none; b=qu8pXaX61NJlHnhgxaJ16nn7ksQNkyegAaSiUjrUaMugFW8MkUtivzvWhHJp6yr30Y6v5wg8wdxqhduMdruXRvi//PGhyBseic1SDT/8SZjnuVvnS4laCeNvRup3+eN8OnyEzqamdhe5Kh3jl+m4bRlVBF/iqAFWfaO2a5yMllU=
+	t=1730367272; cv=none; b=PzIe1fvXOi3JvJmt6C1nEj7NHwFEKKy811JgecmcTj6ZmiL/ZuZYrkbBqcKZ9eeE9hDIdm8ZuZN7ZuOc+z0+s6qPYG0tonyBbF4R79U1Yt2p8ob3gaitg/qd8N2I1wH5NvUtWNHEDKFB4O9X1cHA7zCKl0CaXg33njoUD+LB5bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367274; c=relaxed/simple;
-	bh=InN1xFa4g9RMlT4oK3tOjutPsAyzphU02LuhXMsZALM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioHdsQFNQBopD8YL0YZlNT2Fk8KaDILuwo2MARrCx3lhf83/ry7YLiDIh4b/ItbrgntgWshi4zE47duIKNDoBoIVESMwmGzT1Fm9qsHrA0hHdAAMDwjntuw9RA0w5pVEO4m5vXRJOgQKKavYjKPCq6Te9Mod+ZXpGcaBjD3NACg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ke17hcOn; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e4b7409fso717485e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:34:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730367270; x=1730972070; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=InN1xFa4g9RMlT4oK3tOjutPsAyzphU02LuhXMsZALM=;
-        b=Ke17hcOnDzJiqjA9Uny7rwHvWTv8vj/X5J/DQSrtPlwqWJaWdjWjTm8rnSsfHd9iTV
-         sGn5HhFJmjp2fXjWm4r8dWOkJ/Eb2HhKYE9JeGkGSZSdTnDJaJ6hVA6mB4KdeQ3BnHr2
-         3kz031oqrT/PvXLwdS1IT4aZMz3By3hNLQiVg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730367270; x=1730972070;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=InN1xFa4g9RMlT4oK3tOjutPsAyzphU02LuhXMsZALM=;
-        b=FnZsGoKil2Jt1z86I0exGEZ9NEDoVmHIKtnvTWj4u8nVS8/xzALuOTTov/dpJ492E7
-         gEo15rEGwXujCNGaqLr/jka4Zl4xBCg8qccC6JCZ86azSbH1YFjokZ2saVxKg7KefSDu
-         55MlhCGoTwNFC3aQDr9rgXL4tgdRQpEA16qlOHK3HjU1zOQJ8IHB7pAkboADLtIqJiU/
-         PursyKFgDDt+lJihmWMwMa9gHX85gxdhobKEVTlITBKK7MRC1nnn0dwPwUT+V7a7rUrb
-         So5+GA+/euEt9Mjg/IxfOu96lnaEJ1BqBPbidwS85X7mq9dedrvhr6NL5yhchahbLCJa
-         Yw2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnbVeMhcELis+R9d6jKlCnjUQCotKRtQutwKaJ45g5m6c926OZezBZ1CYXxjDAIDkB2HJuyz2nrxXvl3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBrG6d+U54nmRjWw5HjY9axjIn2K5oRPtpghvFFsiaim+PWVmY
-	j/H+tcGu0FoJU5TgV+7aI/exjZ31wH7VCs0p7xMHcjCL9d0CR5BOAqEqKpMmn/XHNi4+17Zsqoz
-	gYilXLmMgxn2Nc+QNvbFf/fVrEl5oTKHYETib
-X-Google-Smtp-Source: AGHT+IHX8IaTSony3Ug7y1qw915U2fjctGRizSyZJqMGGKqXUXcFSb5o6pqwOsBeJtryiF2PWRQTbhcS2j/8glKC0bU=
-X-Received: by 2002:a05:6512:3d10:b0:539:fd75:2b6c with SMTP id
- 2adb3069b0e04-53c7bc369b8mr554550e87.21.1730367269718; Thu, 31 Oct 2024
- 02:34:29 -0700 (PDT)
+	s=arc-20240116; t=1730367272; c=relaxed/simple;
+	bh=KzXWMDLRfMdfDQrOsNXAzug58/U0hAyF/zMB+BIyayM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eizd4dRPVmujpFrsvpxCWWBbohpyyVlxdBkRYQJJvbm8gqeD15R3uLgydsdNFC0rr5dRMPL/sbqzKAE1hhclXQS/l6aKdRTydpruK/o/lxTy0ZUsADJqMR4D0hKAlvE3CBEJ5Z7GbvOA6l6L/6QPfZ07H7EfXae+Ut2LYk7dsA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UTDG52Ie; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730367270; x=1761903270;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=KzXWMDLRfMdfDQrOsNXAzug58/U0hAyF/zMB+BIyayM=;
+  b=UTDG52IeGN14Fz0hvROkM/3u+lqB64rzRE8tglom//QYrKBPXi0+uVNZ
+   5d8UYNzdWwbzx2XihQ7uqBT/n8bBuzNlPBNl55IWHLTiKPIYdwGZZMAGo
+   dYUgRYnaJtVLgIcBaWUwsK7imLJl18GOBRAeBvBAPN5dVR1ypdMMEy8gd
+   /zbgSmYxpcXuklQIPHGfyPgwMbgti1rSBbtgAeFsdxAE4QVU/zmli+9o8
+   c1MZkf7YIQ/3TJQmG/j4dfRTCvpi14E9epjlRAHz9aPJyvwaNM9Z6NPv8
+   amDp4sHwq2JeK3N5sRQ6J4FqszHjL1htZExzzDqYic7C8kf0SLHQr84O4
+   g==;
+X-CSE-ConnectionGUID: 0COvOGXkQ9C03vFP+ME1+w==
+X-CSE-MsgGUID: ojgvXaFbROin84HqJGMWCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="32934983"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="32934983"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:34:29 -0700
+X-CSE-ConnectionGUID: D8ENRO6FQTOyxff13KOEsw==
+X-CSE-MsgGUID: SaWoexyeSkq5NR8DoyKrPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82501368"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.160])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:34:27 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 31 Oct 2024 11:34:24 +0200 (EET)
+To: Kurt Borja <kuurtb@gmail.com>
+cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v11 0/5] Dell AWCC platform_profile support
+In-Reply-To: <czxn66wpaigpyje3i3ruzcrj2j57gwlh3x2qfivoy6pnzafwj3@5jpsfs6kr7et>
+Message-ID: <3823e202-7f21-02a9-267e-3cec6241a1af@linux.intel.com>
+References: <20241030000904.7205-2-kuurtb@gmail.com> <f972eabf-58b5-3b0b-ea5f-930894ac840b@linux.intel.com> <2e9fb24e-9652-4087-963e-cbcf3b1f2c56@gmx.de> <czxn66wpaigpyje3i3ruzcrj2j57gwlh3x2qfivoy6pnzafwj3@5jpsfs6kr7et>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029111309.737263-1-wenst@chromium.org> <d9177ba80fc78b1f74dc54260c0c43440ec5a804.camel@mediatek.com>
- <20241030-hot-peridot-falcon-57bdbb@houat> <0cfba5bdc9443fb4b9719c47ee93c2a467cc66bd.camel@mediatek.com>
- <CAGXv+5EWyGGKYo+NNQ3Ykd3QUUO2cOManSnhZQaVhhCnupNx=Q@mail.gmail.com> <20241031-turkey-of-astonishing-reputation-d1de20@houat>
-In-Reply-To: <20241031-turkey-of-astonishing-reputation-d1de20@houat>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 31 Oct 2024 17:34:18 +0800
-Message-ID: <CAGXv+5HkxbjTH6oidYMYo9vQafev2S+a-+Yrs=+TNqs9sSUtZg@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Drop dependency on ARM
-To: "mripard@kernel.org" <mripard@kernel.org>
-Cc: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, 
-	"ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "airlied@gmail.com" <airlied@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-1948131612-1730367264=:939"
 
-On Thu, Oct 31, 2024 at 5:30=E2=80=AFPM mripard@kernel.org <mripard@kernel.=
-org> wrote:
->
-> On Wed, Oct 30, 2024 at 04:52:17PM +0800, Chen-Yu Tsai wrote:
-> > On Wed, Oct 30, 2024 at 4:48=E2=80=AFPM CK Hu (=E8=83=A1=E4=BF=8A=E5=85=
-=89) <ck.hu@mediatek.com> wrote:
-> > >
-> > > On Wed, 2024-10-30 at 09:25 +0100, mripard@kernel.org wrote:
-> > > > On Wed, Oct 30, 2024 at 03:30:34AM +0000, CK Hu (=E8=83=A1=E4=BF=8A=
-=E5=85=89) wrote:
-> > > > > Hi, Chen-yu:
-> > > > >
-> > > > > On Tue, 2024-10-29 at 19:13 +0800, Chen-Yu Tsai wrote:
-> > > > > > External email : Please do not click links or open attachments =
-until you have verified the sender or the content.
-> > > > > >
-> > > > > >
-> > > > > > The recent attempt to make the MediaTek DRM driver build for no=
-n-ARM
-> > > > > > compile tests made the driver unbuildable for arm64 platforms. =
-Since
-> > > > > > this is used on both ARM and arm64 platforms, just drop the dep=
-endency
-> > > > > > on ARM.
-> > > > >
-> > > > > Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> > > > >
-> > > > > I find this days ago, but I don't know there is someone who apply=
- it.
-> > > > > Let this patch go through drm-misc tree which already has the bug=
- patch.
-> > > >
-> > > > If you are ok with this patch, why didn't you apply it yourself?
-> > > >
-> > > > I think that's very much the expectation, so it's probably took a w=
-hile to merge.
-> > >
-> > > That's ok for me to apply it if drm-misc has no plan to apply it.
-> >
-> > I'm confused. The culprit patch is already in drm-misc. So this one has
-> > to go in drm-misc as well.
-> >
-> > I can try to apply it to drm-misc myself, or have a colleague assist wi=
-th
-> > that. I'll let it sit for another day in case anyone has something to s=
-ay
-> > about it.
->
-> Sorry, I was under the assumption that CK had drm-misc commit rights? It
-> should go through drm-misc indeed.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-CK has always maintained a separate tree on git.kernel.org, so I don't know
-if drm-misc commit rights were ever granted?
+--8323328-1948131612-1730367264=:939
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-ChenYu
+On Wed, 30 Oct 2024, Kurt Borja wrote:
+
+> On Wed, Oct 30, 2024 at 08:54:37PM +0100, Armin Wolf wrote:
+> > Am 30.10.24 um 13:10 schrieb Ilpo J=E4rvinen:
+> >=20
+> > > On Tue, 29 Oct 2024, Kurt Borja wrote:
+> > >=20
+> > > > This patch adds platform_profile support for Dell devices which imp=
+lement
+> > > > WMAX thermal interface, that are meant to be controlled by Alienwar=
+e Command
+> > > > Center (AWCC). These devices may include newer Alienware M-Series, =
+Alienware
+> > > > X-Series and Dell's G-Series.
+> > > >=20
+> > > > Tested on an Alienware x15 R1.
+> > > > ---
+> > > > v11:
+> > > >   - Minor changes on patch 4/5
+> > > > v10:
+> > > >   - `thermal` and `gmode` quirks are now manually selected because =
+some
+> > > >     models with the WMAX interface don't have the necessary thermal
+> > > >     methods.
+> > > >   - Added force_platform_profile and force_gmode patch for a better=
+ user
+> > > >     experience
+> > > > v9:
+> > > >   - Minor changes on patch 3/4
+> > > > v8:
+> > > >   - Aesthetic and readibility fixes on patch 3/4
+> > > >   - Better commit message for patch 3/4
+> > > > v7:
+> > > >   - Platform profile implementation refactored in order to efficent=
+ly
+> > > >     autodetect available thermal profiles
+> > > >   - Added GameShiftStatus method to documentation
+> > > >   - Implemented GameShiftStatus switch for devices that support it
+> > > > v6:
+> > > >   - Removed quirk thermal_ustt.
+> > > >   - Now quirk thermal can take canonical thermal profile _tables_ d=
+efined
+> > > >     in enum WMAX_THERMAL_TABLES
+> > > >   - Added autodetect_thermal_profile
+> > > >   - Proper removal of thermal profile
+> > > > v5:
+> > > >   - Better commit messages
+> > > >   - insize renamed to in_size in alienware_wmax_command() to match =
+other
+> > > >     arguments.
+> > > >   - Kudos in documentation now at the end of the file
+> > > > v4:
+> > > >   - Fixed indentation on previous code
+> > > >   - Removed unnecessary (acpi_size) and (u32 *) casts
+> > > >   - Return -EIO on ACPI_FAILURE
+> > > >   - Appropiate prefixes given to macros
+> > > >   - 0xFFFFFFFF named WMAX_FAILURE_CODE
+> > > >   - Added support for a new set of thermal codes. Old ones now have=
+ USTT
+> > > >     in their names
+> > > >   - A new quirk has been added to differantiate between the two set=
+s.
+> > > >     thermal and thermal_ustt are mutually exclusive
+> > > >   - Added documentation for WMAX interface
+> > > > v3:
+> > > >   - Removed extra empty line
+> > > >   - 0x0B named WMAX_ARG_GET_CURRENT_PROF
+> > > >   - Removed casts to the same type on functions added in this patch
+> > > >   - Thermal profile to WMAX argument is now an static function and =
+makes
+> > > >     use of in-built kernel macros
+> > > >   - Platform profile is now removed only if it was created first
+> > > >   - create_platform_profile is now create_thermal_profile to avoid
+> > > >     confusion
+> > > >   - profile_get and profile_set functions renamed too to match the =
+above
+> > > > v2:
+> > > >   - Moved functionality to alienware-wmi driver
+> > > >   - Added thermal and gmode quirks to add support based on dmi matc=
+h
+> > > >   - Performance profile is now GMODE for devices that support it
+> > > >   - alienware_wmax_command now is insize agnostic to support new th=
+ermal
+> > > >     methods
+> > > >=20
+> > > > Kurt Borja (5):
+> > > >    alienware-wmi: fixed indentation and clean up
+> > > >    alienware-wmi: alienware_wmax_command() is now input size agnost=
+ic
+> > > >    alienware-wmi: added platform profile support
+> > > >    alienware-wmi: added force module parameters
+> > > >    alienware-wmi: WMAX interface documentation
+> > > >=20
+> > > >   Documentation/wmi/devices/alienware-wmi.rst | 388 +++++++++++++++=
++
+> > > >   MAINTAINERS                                 |   1 +
+> > > >   drivers/platform/x86/dell/Kconfig           |   1 +
+> > > >   drivers/platform/x86/dell/alienware-wmi.c   | 477 +++++++++++++++=
++----
+> > > >   4 files changed, 791 insertions(+), 76 deletions(-)
+> > > >   create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+> > > Huge thanks to you both Kurt and Armin for all the work done to impro=
+ve
+> > > this series! :-)
+> > >=20
+> > > I've applied this series to the review-ilpo branch now.
+> >=20
+> > Nice.
+> >=20
+> > Would it be possible to apply a small fixup to patch 4?
+> > Because pr_warn("force_gmode requieres platform profile support") seems=
+ to be missing a newline.
+>=20
+> Should I send a new patch with that fixup or v12?=20
+>=20
+> Kurt.
+
+Neither. I took care of this for you inside review-ilpo branch. :-)
+
+--=20
+ i.
+
+--8323328-1948131612-1730367264=:939--
 
