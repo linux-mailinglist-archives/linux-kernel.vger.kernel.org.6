@@ -1,133 +1,101 @@
-Return-Path: <linux-kernel+bounces-389872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66849B7251
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:59:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 480829B7253
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8FF1F25CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:59:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79BB31C232A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368C6823D1;
-	Thu, 31 Oct 2024 01:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBA57581F;
+	Thu, 31 Oct 2024 02:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWn0hqsU"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="U6/41/ts"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28EE4A35
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DD61BD9F7
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730339975; cv=none; b=eIbworRx+buVmA7s1onYL/2W5m/xFCwot/7aQdImy336RqxACS9wbXxGgPe9qghPriBwhD+fmurLSGVE9Ce08RmiVLyoFf46VWewcOoKKBuI/wo9p3BAqRRk+qJADd3cF0aBYTS5y5aIkv3Av19tDq22KuDZtP+FU39YIaAZxQM=
+	t=1730340013; cv=none; b=jJX88XN/OQUh6t6BBUuLlxMIl4Rm8l8ceX2z6NKvQA8ZntG7Ux61v383Z2W1IQhIapwjUrHqTkjt+vyMwWeP/Z8xlN0EUx5UorM6w+k7S1vtaIN7UA8AWqtyUUQevA0ViSVNV4e/nfPgCfd+xJWCVi8/QelVvHpICQI4KEoSDVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730339975; c=relaxed/simple;
-	bh=1YMmtYM4Lz45x2w4MeS1rdbS7c8KgOV0UTXgky2BM0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qetNPYtl15FOZ06M/P32YcST+HU0wjvsjgoEMtrO6ds+Y3mrUcJ0Xys7pRh2wcY1QEtPE+LDgGZJYgeejvUOBiQ91FWM7r5xBzX+aCPBbKOgbflwL5SIu0Pef/MgJHTU7iYr81QFfB5I4xn7FRbPfFSn1WNs9URD0KvT9/yrIl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWn0hqsU; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ede82dbb63so370753a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730339973; x=1730944773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ynFW5xtxd+8iX2/i2+qR8o0VfxX1NPyp2FCK1MSrQ4I=;
-        b=UWn0hqsU3uzHOguUE6iMmXrwX0HLGkXaZNA9P9yFBzL0uFJ9cwud4HNWDRR1jvfrS7
-         3tM6BXG0+P203vd9raBbk/46a6CmmXLozOS5piv52upcjLChSyk9pO8HYCOhx0+5ZDcx
-         NRNY42L0dnpoUwbMsKunrrL2dVrsqxp8fjsNCW6rYRSrFwqFSiXnEUJb0YxRYrRq0PWK
-         kuoShlDK+/Uta77SXwP8bqjH6pIuKim72zqKYRL0USiijtMyAUSnNyR2v84sSh3X7Rvb
-         mReI2Ud+k4PSqeuzpJQeEd64uCbxdEP/bBGJsnsXLmUNpC8/LngWSin4IJolSmElq6by
-         nTbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730339973; x=1730944773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ynFW5xtxd+8iX2/i2+qR8o0VfxX1NPyp2FCK1MSrQ4I=;
-        b=IyG8WjyucS8+ZkDrPmWrid4KDrnOuDwOp2Khene291CXMm81XztURubjylRRnWruUZ
-         Qv7FvTHH7MwYnMleXBI21S+bN7NlxwHC6ss6NJQnEF06s52Di+9wG8kDvum0V7wAZvMc
-         FEx3UmiSzll3rljwVRbKPgvZicNzKa7aRM/9LYgglUxhLaDTolQzU6HwOgA71DOjCa66
-         oiK9A3KJjZMEo63/V/CfNxnuU/S+UtmaP9hMjyfz3Rr7gaPGw8uUpASiiOiYps/5XtD4
-         Vin2H3CkR0HNGEcX5xYA6+fvf2v2XWrXdtVmdOUhxsXVNreK9ArU72lsaNnyOFI6giGS
-         4sRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViUuL9QXhNX0ySb39QeJzywNBhGuOvNsjJ6/XaHsxbw2ASHIgU1h81HSPgcDvFQrm/EglDyEd2O2bb/Tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySwppKyGbF7Z5EQ99MlvDecibBoET1Tn3NF5IGF3+yMhLkiWTf
-	jiWrhU79bOky9amaI9QiqrTJAjR0cwKf6tSw3RrQ1Ou4DN4OUFHtp1Ez8unkSxHA7dX4JiemBXL
-	wFACG9H1v2aZM8Aug/tACZQi4fL0=
-X-Google-Smtp-Source: AGHT+IEQhTled4Rz6KFrJ2IKyQkoEnKEtdZKw+2W8R45nlgXhdOiQjXP9bHvdIwNwjEKbTltHi0BzL+5It6TevR+0/I=
-X-Received: by 2002:a05:6a20:d80b:b0:1d9:9c6:5e7f with SMTP id
- adf61e73a8af0-1d9a83a3e2bmr23611975637.4.1730339973074; Wed, 30 Oct 2024
- 18:59:33 -0700 (PDT)
+	s=arc-20240116; t=1730340013; c=relaxed/simple;
+	bh=5/9Bf38jWpUc1sB2BMaJK5i5eHSVtQz9Hk+KmwAkHZY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=YT207D3IpfMqD5R8jRbczp23uwieakwXKMLKfl05Al7YZRLiKqJ4graAEFYAA8IEhxF+0jgN2bq+lU+RROp06gj7LuthSZB4QfsOrcLLNjKvekI9V5P9sIpIZ/YSkVwaNagxOrK8IxTQK3Vq3TwoUgcB+iAxIwxPo6xGimCPdHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=U6/41/ts; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49V1x41R1245834
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 30 Oct 2024 18:59:05 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49V1x41R1245834
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1730339946;
+	bh=BdSS5F+Lwp/NT4DvaNBs5FbYuSucnsfNLc+OHCQB+2s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=U6/41/tsDGo4xUJUSMy0RcX3J7ZfolpHGazRatga4+R3LixtnfHsOAdyZ+v08fx5+
+	 VNk1c2RJhJofJ7QAgb+jyphqOvqBC0aD2CEgKnG+jTmbUrzyRY5y7Spx/w3qQ9glx9
+	 MBhHqKQ9hpFVxF5Rrx8h1avX6EdVPjdd+MBOmmJI9/XR/2H6k2Y4NlYifVbIE4lFWw
+	 scIUXvKMwBmnIXF93HbQ4vvja6CVpbxv58xUEAxQyHLOZtZAEjySt+04baKNB0dlOz
+	 q7iI61P87n85lAoXnNJVAe2vjjPba6VdxX5d/8RmURr1n1rSubm85D8HloArUADrj+
+	 D/Sw8fWb2AmnA==
+Date: Wed, 30 Oct 2024 18:59:02 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Luck, Tony" <tony.luck@intel.com>, "Mehta, Sohil" <sohil.mehta@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Uros Bizjak <ubizjak@gmail.com>, Sandipan Das <sandipan.das@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Nikolay Borisov <nik.borisov@suse.com>,
+        Eric Biggers <ebiggers@google.com>, "Li, Xin3" <xin3.li@intel.com>,
+        "Shishkin, Alexander" <alexander.shishkin@intel.com>,
+        Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] x86/cpufeature: Add feature dependency checks
+User-Agent: K-9 Mail for Android
+In-Reply-To: <SJ1PR11MB60836BD27B436E3E8B404AA2FC542@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20241030233118.615493-1-sohil.mehta@intel.com> <SJ1PR11MB60836BD27B436E3E8B404AA2FC542@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Message-ID: <84E58634-C57A-4841-BD52-2E15BD9DF592@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010134351.1884580-1-ghanshyam1898@gmail.com>
- <fa5dd074-0045-4f37-894f-861081f4cfdd@oracle.com> <7ad9c139-6627-4401-a7d6-0e488f39c5ad@oracle.com>
-In-Reply-To: <7ad9c139-6627-4401-a7d6-0e488f39c5ad@oracle.com>
-From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-Date: Thu, 31 Oct 2024 07:28:56 +0530
-Message-ID: <CAG-BmodOM5p=hEs8E0DUAPX5skyGZ3FusjQ7o2W374pLFjFQrQ@mail.gmail.com>
-Subject: Re: [PATCH] jfs: fix array-index-out-of-bounds in dtInsertEntry
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: osmtendev@gmail.com, ghandatmanas@gmail.com, eadavis@qq.com, 
-	jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 3:09=E2=80=AFAM Dave Kleikamp <dave.kleikamp@oracle=
-.com> wrote:
+On October 30, 2024 4:44:59 PM PDT, "Luck, Tony" <tony=2Eluck@intel=2Ecom> =
+wrote:
+>> +void filter_feature_dependencies(struct cpuinfo_x86 *c)
+>> +{
+>> +     const struct cpuid_dep *d;
+>> +
+>> +     for (d =3D cpuid_deps; d->feature; d++) {
+>> +             if (cpu_has(c, d->feature) && !cpu_has(c, d->depends))
+>> +                     do_clear_cpu_cap(c, d->feature);
+>> +     }
+>> +}
 >
-> On 10/29/24 6:03PM, Dave Kleikamp wrote:
-> > On 10/10/24 8:43AM, Ghanshyam Agrawal wrote:
-> >> The value of p->header.freelist can be less than zero which
-> >> causes an error in dtInsertEntry. Added a check in dtInsert
-> >> to address it.
-> >>
-> >> Reported-by: syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com
-> >> Closes: https://syzkaller.appspot.com/bug?extid=3D5f7f0caf9979e9d09ff8
-> >> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-> >
-> > Looks good. I'll apply this one.
+>The dependency check found something very wrong=2E Should there be
+>a pr_warn() to give some clue that Linux papered over this problem?
 >
-> Unapplying it. This caused regressions running xfstests. I'll need to
-> look into it more carefully.
->
-> Shaggy
->
-> >
-> >> ---
-> >>   fs/jfs/jfs_dtree.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
-> >> index 5d3127ca68a4..51bb3e14551b 100644
-> >> --- a/fs/jfs/jfs_dtree.c
-> >> +++ b/fs/jfs/jfs_dtree.c
-> >> @@ -834,7 +834,7 @@ int dtInsert(tid_t tid, struct inode *ip,
-> >>        * the full page.
-> >>        */
-> >>       DT_GETSEARCH(ip, btstack->top, bn, mp, p, index);
-> >> -    if (p->header.freelist =3D=3D 0)
-> >> +    if (p->header.freelist <=3D 0)
-> >>           return -EINVAL;
-> >>       /*
+>-Tony
 >
 
-Hello Dave,
-
-Thank you for reviewing and testing my patch. Let me go through the
-xfstests results, find the issue and send a v2 for this patch.
-
-Thanks & Regards,
-Ghanshyam Agrawal
+Not necessarily=2E Linux is free to impose restrictions that don't necessa=
+rily match the hardware thermometers=2E For example, letting LAM depend on =
+LASS=2E
 
