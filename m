@@ -1,140 +1,134 @@
-Return-Path: <linux-kernel+bounces-390254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E739B7789
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:31:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E919B9B778E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3EB6B23CC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:30:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265B61C22CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8F41946CF;
-	Thu, 31 Oct 2024 09:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A380194C9E;
+	Thu, 31 Oct 2024 09:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5N/3ulf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Z4utpWuL"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A75B13F42F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98E5131BDD;
+	Thu, 31 Oct 2024 09:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367050; cv=none; b=AG3iOulIC9aYr4l+1qDUdtwCJMShgASEfzQfhPU/jhMMqQQTGSKESZM5q8NvZ7JKt+dbpWb4lrxJAQCFhD5Wb6taiymZlK8hnd+8thhKdXuvQQK0O6jxSq6ml/xHKjh03UTZKoThShgFM7hALTMb6/JglilrrqW4g6mTkPgNAYg=
+	t=1730367091; cv=none; b=XniyKoB7BsFjpA0PqvkByx2yj8C44lHnoi+ooNG/12AHtuVACtVUFtV1KPotrR5X06RWXDvx2rZpCN8l0KzpMnKNvWzU6pLvMyt0OLwn5a5IhxSjijfVHN4E7XbuFHFZNfN8dJUwJFJX/8AjFO7QyzlaDdxI4eH+AWlCD6cNRQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367050; c=relaxed/simple;
-	bh=z8IQtCmj33W86d21B+EaX/sCF/MzMV/EOSoJK7YNil8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mikaciu8Syrz11PfqFIlSBmzco1y9fgIW3GLod1q4qhhg/iIX3TvveOKMJm+ACH+eagyuUqkALLlOkkiA79HONCJSw4b4fesT5mnMRSFJJk+psNfmakqqjw2Sy1LF9iI31QjjSDjHUumaM0o38JPzZcpy74aJ9WCUatRXaiWCtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5N/3ulf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F95CC4CED0;
-	Thu, 31 Oct 2024 09:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730367050;
-	bh=z8IQtCmj33W86d21B+EaX/sCF/MzMV/EOSoJK7YNil8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m5N/3ulfWm/A8PLepngAlXzNbpeeLQfnD0G7bPYVYejO8c18/o7VmfMh7mFffzx+4
-	 UFV7bLwarSbu0TNS1PFo+tlaarasjjtzs8zg3GCpGgQ7g6SsOj0SFJVVJcsK183JIB
-	 AeaObIsRydHOpJubLMPInAlOpUzpSmSoH8Dzi2TqMc+6O+YMdQD5BOuhUqkEa1f9A9
-	 KxLQw8yKQPcKs5xzDccNtxg/aiU2CwItZzATuR/tq8uQcjfoZursvtA1mTtCZAW6Je
-	 rGjDnppAvxurWmixQVN2e3Yr7H1v7Fxq+iQNF1ggCOvYjoxUtxsheYs+NCc0veN/En
-	 R2rku15wijgoA==
-Date: Thu, 31 Oct 2024 10:30:47 +0100
-From: "mripard@kernel.org" <mripard@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: CK Hu =?utf-8?B?KOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, 
-	"tzimmermann@suse.de" <tzimmermann@suse.de>, "simona@ffwll.ch" <simona@ffwll.ch>, 
-	"ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "airlied@gmail.com" <airlied@gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Drop dependency on ARM
-Message-ID: <20241031-turkey-of-astonishing-reputation-d1de20@houat>
-References: <20241029111309.737263-1-wenst@chromium.org>
- <d9177ba80fc78b1f74dc54260c0c43440ec5a804.camel@mediatek.com>
- <20241030-hot-peridot-falcon-57bdbb@houat>
- <0cfba5bdc9443fb4b9719c47ee93c2a467cc66bd.camel@mediatek.com>
- <CAGXv+5EWyGGKYo+NNQ3Ykd3QUUO2cOManSnhZQaVhhCnupNx=Q@mail.gmail.com>
+	s=arc-20240116; t=1730367091; c=relaxed/simple;
+	bh=M7n9ArN1pF/j++L+7rpatjFM0gfuXP/agcXResfeXIw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwiNhKxM3dfKlG5HOpPjcisiNuGN327LDTR4x6He6qk1OGg6jTiJ+0B5MAAi3n8DoXcT8rf7jZEcPADhplnP/A/+l6HFGYwYoSytT3mQPw4ZsK55Sr4sWdPtDLGiH6u2BI9q52ObvivkjFVL15tLxiOcsl0i7qPxvBiyRAZ3pdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Z4utpWuL; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1730367088; x=1761903088;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M7n9ArN1pF/j++L+7rpatjFM0gfuXP/agcXResfeXIw=;
+  b=Z4utpWuLk7p8JdYp16lZM29QZshlIVz5vMUVXMo8R51fhri+D+QQ1GTD
+   jYl/iRUB3rAk+yq3G33S+SDcy4ARqzD2sjVs7fPK1+NaPpsa0QboMilLl
+   uFml84Zx+IBHGqX0UBk+7MKhiC+08KRnF7iI6+KkZkvP+8j98qsKtqO8k
+   EMWtpwoh+0U+d6zkjkhjPuTapM6hhxCA/mkGEm5DTfx3HmkLZ9LXXhitz
+   LqvYyAY+vv7qg23d3S1+vjWMC+hHCQHI6QrwH+loZbgdLPeykcH2Fu+ca
+   ctidWQc7phhJFbS6xXVm2lS2OTfdaH/cdvxTbZRPU6yvldjhbj1lh4igS
+   A==;
+X-CSE-ConnectionGUID: 49pURKPtTNqTvY80gZRRCQ==
+X-CSE-MsgGUID: KxhHOITaRC6Jo4IAeI9sKA==
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="201138544"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Oct 2024 02:31:27 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 31 Oct 2024 02:30:57 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 31 Oct 2024 02:30:55 -0700
+Date: Thu, 31 Oct 2024 09:30:54 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+CC: Vladimir Oltean <olteanv@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Masahiro Yamada <masahiroy@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [PATCH net-next v2 0/9] lib: packing: introduce and use
+ (un)pack_fields
+Message-ID: <20241031093054.p5gz2defkbytsjcx@DEN-DL-M70577>
+References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="yyz2c2rl56su2opo"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAGXv+5EWyGGKYo+NNQ3Ykd3QUUO2cOManSnhZQaVhhCnupNx=Q@mail.gmail.com>
+In-Reply-To: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
 
+> This series improves the packing library with a new API for packing or
+> unpacking a large number of fields at once with minimal code footprint. The
+> API is then used to replace bespoke packing logic in the ice driver,
+> preparing it to handle unpacking in the future. Finally, the ice driver has
+> a few other cleanups related to the packing logic.
+> 
+> The pack_fields and unpack_fields functions have the following improvements
+> over the existing pack() and unpack() API:
+> 
+>  1. Packing or unpacking a large number of fields takes significantly less
+>     code. This significantly reduces the .text size for an increase in the
+>     .data size which is much smaller.
+> 
+>  2. The unpacked data can be stored in sizes smaller than u64 variables.
+>     This reduces the storage requirement both for runtime data structures,
+>     and for the rodata defining the fields. This scales with the number of
+>     fields used.
+> 
+>  3. Most of the error checking is done at compile time, rather than
+>     runtime via CHECK_PACKED_FIELD_* macros. This saves wasted computation
+>     time, *and* catches errors in the field definitions immediately instead
+>     of only after the offending code executes.
+> 
+> The actual packing and unpacking code still uses the u64 size
+> variables. However, these are converted to the appropriate field sizes when
+> storing or reading the data from the buffer.
+> 
+> One complexity is that the CHECK_PACKED_FIELD_* macros need to be defined
+> one per size of the packed_fields array. This is because we don't have a
+> good way to handle the ordering checks otherwise. The C pre-processor is
+> unable to generate and run variable length loops at compile time.
+> 
+> This is a significant amount of macro code, ~22,000 lines of code. To
+> ensure it is correct and to avoid needing to store this directly in the
+> kernel history, this file is generated as <generated/packing-checks.h> via
+> a small C program, gen_packing_checks. To generate this, we need to update
+> the top level Kbuild process to include the compilation of
+> gen_packing_checks and execution to generate the packing-checks.h file.
+> 
 
---yyz2c2rl56su2opo
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/mediatek: Drop dependency on ARM
-MIME-Version: 1.0
+Hi Jacob,
 
-On Wed, Oct 30, 2024 at 04:52:17PM +0800, Chen-Yu Tsai wrote:
-> On Wed, Oct 30, 2024 at 4:48=E2=80=AFPM CK Hu (=E8=83=A1=E4=BF=8A=E5=85=
-=89) <ck.hu@mediatek.com> wrote:
-> >
-> > On Wed, 2024-10-30 at 09:25 +0100, mripard@kernel.org wrote:
-> > > On Wed, Oct 30, 2024 at 03:30:34AM +0000, CK Hu (=E8=83=A1=E4=BF=8A=
-=E5=85=89) wrote:
-> > > > Hi, Chen-yu:
-> > > >
-> > > > On Tue, 2024-10-29 at 19:13 +0800, Chen-Yu Tsai wrote:
-> > > > > External email : Please do not click links or open attachments un=
-til you have verified the sender or the content.
-> > > > >
-> > > > >
-> > > > > The recent attempt to make the MediaTek DRM driver build for non-=
-ARM
-> > > > > compile tests made the driver unbuildable for arm64 platforms. Si=
-nce
-> > > > > this is used on both ARM and arm64 platforms, just drop the depen=
-dency
-> > > > > on ARM.
-> > > >
-> > > > Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> > > >
-> > > > I find this days ago, but I don't know there is someone who apply i=
-t.
-> > > > Let this patch go through drm-misc tree which already has the bug p=
-atch.
-> > >
-> > > If you are ok with this patch, why didn't you apply it yourself?
-> > >
-> > > I think that's very much the expectation, so it's probably took a whi=
-le to merge.
-> >
-> > That's ok for me to apply it if drm-misc has no plan to apply it.
->=20
-> I'm confused. The culprit patch is already in drm-misc. So this one has
-> to go in drm-misc as well.
->=20
-> I can try to apply it to drm-misc myself, or have a colleague assist with
-> that. I'll let it sit for another day in case anyone has something to say
-> about it.
+As for the rest of the patches:
 
-Sorry, I was under the assumption that CK had drm-misc commit rights? It
-should go through drm-misc indeed.
+Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
 
-Maxime
+I can confirm that smatch does not complain anymore, after Dan's recent
+commit that skips the macros.
 
---yyz2c2rl56su2opo
-Content-Type: application/pgp-signature; name="signature.asc"
+/Daniel
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZyNORgAKCRAnX84Zoj2+
-dirAAXwMtocqqWOLJX3eed/G1RYDirHeRZPuWU/rPZByXJzFkdOx2CbomE6jbcW0
-37L5Zj0Bf3ZbGUBxEnKE2qlLavUFFw6P3brl86LznSy2iz0l7SD9zGdrx/ojiRkC
-Vf2QI/XF3w==
-=L+1s
------END PGP SIGNATURE-----
-
---yyz2c2rl56su2opo--
 
