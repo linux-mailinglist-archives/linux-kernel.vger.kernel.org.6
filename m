@@ -1,167 +1,186 @@
-Return-Path: <linux-kernel+bounces-390341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0909B789D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:25:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4A89B789F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:26:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1F51C208CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:25:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF450282D16
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E77199248;
-	Thu, 31 Oct 2024 10:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73E51990AE;
+	Thu, 31 Oct 2024 10:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JRc3REek"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blljDZwE"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13891991B8;
-	Thu, 31 Oct 2024 10:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6619198E8C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730370330; cv=none; b=aQU94EQf8N8hUuJG/YVLra8xgLp6udRXzQ/5wvUIJr6ar1x7tfiVcOusFMOdj0EMwCHrl0HInEF/ctMSampM0+XYDq1qgcqchR0yFsG3vKzWmUS9FkVxG/LM/QwrJvgYCMeZyF/DYZ6zN92aX2AfrtqczAzx6YaMhm2lsGDqyxM=
+	t=1730370368; cv=none; b=uoAleVFdkWLwzoCp93ZsqtDRCF0x5XKxltx5aGtXJPrMTLNXM7pAwnGSbE7u7RdwpR8EareCBq4bDU2/yenZT2n5pfDtF22M4wmjy8pNdRLe2qMZ95gPX4yIZUmXRIrqlPqe+MjDZokOZbN2RrH6NZyHK74ZDNqx9JiahS2j76k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730370330; c=relaxed/simple;
-	bh=QIs65bpp+AcjInZmsO+y+Ca2r4ViGo32+ltAm0FB+bQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lOsUMGuUudVe7Vw3V0hrML8uvBaY5S8HMyqliJquHz/6O8xLQPgqqJNShHteQ4hNRnI+EFr/MTlbeVuDL67h0RpP341DhQzcK+BoMiDpxrhlQmhxNkHI+w7/fXIyIPPLGLyETiwQPzb9gQXH65payyfjaOHOHeikVGhZT99LzJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JRc3REek; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730370327; x=1761906327;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=QIs65bpp+AcjInZmsO+y+Ca2r4ViGo32+ltAm0FB+bQ=;
-  b=JRc3REekBMW/XwFoWa2jUzYqR6ArKYi/4zExDjhed0vjs1ehtWfUR+oD
-   +ciHRI7bAVsJNqLyDbpMNZnIXjllFUpkrJLUq0E2oJc8J4sfTYHtm6WXb
-   8LBuPOwQzxeYVbft0MxTYhp83T4puA6jMYSreP9mgA7cfdBtvOxmIPw5x
-   efqr4WkYhtcU27rcrScT8VfbxexYrXOlEPwMvLZWA4twsq2RVwn7hqftO
-   0SkmrPYXgjMj/2RajkQZDvAJlVOrXF2VnZmXz8o48bdcJoXhZC1WH8Sr3
-   0dDFel++jpaZw0XnXaZibAH5iyO9DfL2WBfNjTbyLIAOqAv+m1BJsJesa
-   g==;
-X-CSE-ConnectionGUID: yVj3l5lIQuak5lBHK6fBtw==
-X-CSE-MsgGUID: Up5E+dK3SAWIPQWHr2YC9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29868121"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29868121"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:25:27 -0700
-X-CSE-ConnectionGUID: b91zI+x/R6i0z62Exve9Hw==
-X-CSE-MsgGUID: ApzWE2hjSEKEabnDkPQZ7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="105911123"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.160])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:25:19 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 31 Oct 2024 12:25:16 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>
-Subject: Re: [PATCH v3 16/22] ACPI: platform_profile: Set profile for all
- registered handlers
-In-Reply-To: <20241031040952.109057-17-mario.limonciello@amd.com>
-Message-ID: <7e2c26ab-9172-fa82-cd96-7f725d6c7687@linux.intel.com>
-References: <20241031040952.109057-1-mario.limonciello@amd.com> <20241031040952.109057-17-mario.limonciello@amd.com>
+	s=arc-20240116; t=1730370368; c=relaxed/simple;
+	bh=jdoVubndjXT0Snb1ihqLSb57sLn8R4s6WkzBF1b6vKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LDnjsGvdwiCzixEIsbIZdRN45+27adYURBzaX+Kppw65igberixLTL25L1SRvtvoFxBkW5YfOqztudsKWYx33hgCfpLmzNRP4hXTbSaKKY6LSYCfSr2bU6wsgMdltUbFkmupriBiFT9+tSflwyTl+DKBPb4joEBAK5UTSJltLKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blljDZwE; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e30eca40dedso335304276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730370365; x=1730975165; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=f5+EavlWdyO9mIBzplaKVzqRvhj0odhaF59om4fXhNI=;
+        b=blljDZwEPjGoCVN0iCMZW3JXX7J9vEQRSpsUHwysbX4xH76il89q0odMAr3DvO1C0d
+         dRHtMJiaNVhNZTksQnXAUsya6Ly6MSep2WsN+wLEHKPF2TQyj0jPyRGIWrmRSPJcW4yN
+         wAWFqzBGYm9e1eiqwOICJHERyaHkQYl+vtZWuAu8m/vuf5dRvrsm4tVEnvceXeLHues0
+         B8IQjvZydJoFpnwcwoXGYrPov0O6Ki8pW/ph9mchLfyD5pnl7qJnb8+F4Lwehq1EaIVe
+         UflVT7CnTr0Q/vARvlGSo6wigFtqAZAtLRddrYNgLQm8ZYUtI3OCgyP/s2qwFDVwMl2y
+         /7EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730370365; x=1730975165;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f5+EavlWdyO9mIBzplaKVzqRvhj0odhaF59om4fXhNI=;
+        b=P8cIb8siyJL0UZQ3ptekzZIS7gHyi70C4h6oDrKHL/1eAdaSs1CE3Uj5saGcpC9RNs
+         N9TAqYQAJiocB8onoTDJ6apOvCxUmKHo3ALqhCpKmtHgRJKxYzlBbxAuU3dzeKQ90/xT
+         JOc+QCy6RTAyI2H3Sjav+dflM/bUjlTKeWck6CK92Za7XtaFhTu3KO77T6p/vJSJoyE3
+         70j8A43e7nEF72QoQND/f37ECtlHWRehf8+3YEDDu9YmYJnRoOY92uzOvOPOflVeV8FQ
+         SJroaPry1Pj7Hps6Lnt2qzQx1uDZW0zbsJFhBn3fYWLghr7xdhtZKE86E/TBbzNIDYez
+         K8Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVD6uOJqwKYYXmBv65ZxYm8XHDue878DfW9wZqpmrc+vPjUIPNJ38OUHXxkWpRCVwca8hQDTu7sMczmNpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzevgObp4pb8nMUFS5AMyCta1AmYPjlM/P4APmL7BypeJ2//W3X
+	wbondRJxHjY+cYY7lxY2MBD/UNJfNyCXuaUwgLOrhY3kNI6QKIjEpsxIbQikC2CwsfqjslnxNwL
+	1qifPW48DDKnbzq3Gi4P802ibdv2mCLDVvdq9Gw==
+X-Google-Smtp-Source: AGHT+IED7ORvK8ZV2gzBVmXLObiKch/Cqk/NhnIXHt1YeB2LkWDkoQQR0h/2v8YDvtpi/KE6By4guMk7YscOzcSA2Kk=
+X-Received: by 2002:a05:690c:6a0a:b0:6e2:1b8c:ad28 with SMTP id
+ 00721157ae682-6e9d897c900mr199964757b3.24.1730370364810; Thu, 31 Oct 2024
+ 03:26:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com>
+ <7hmsilqrw3.fsf@baylibre.com> <0f027b8e-9c41-4754-923b-2a285fb9593a@ideasonboard.com>
+In-Reply-To: <0f027b8e-9c41-4754-923b-2a285fb9593a@ideasonboard.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 31 Oct 2024 11:25:29 +0100
+Message-ID: <CAPDyKFqoXfooy-ipo_aE91TwFQOaj=Z5SZJ4G_4Hh7jCvkyTVQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] pmdomain: ti-sci: Set PD on/off state according to
+ the HW state
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, vishalm@ti.com, 
+	sebin.francis@ti.com, d-gole@ti.com, Devarsh Thakkar <devarsht@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 30 Oct 2024, Mario Limonciello wrote:
+On Thu, 31 Oct 2024 at 08:39, Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> Hi,
+>
+> On 30/10/2024 22:04, Kevin Hilman wrote:
+> > Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> writes:
+> >
+> >> At the moment the driver sets the power state of all the PDs it creates
+> >> to off, regardless of the actual HW state. This has two drawbacks:
+> >>
+> >> 1) The kernel cannot disable unused PDs automatically for power saving,
+> >>     as it thinks they are off already
+> >>
+> >> 2) A more specific case (but perhaps applicable to other scenarios
+> >>     also): bootloader enabled splash-screen cannot be kept on the screen.
+> >>
+> >> The issue in 2) is that the driver framework automatically enables the
+> >> device's PD before calling probe() and disables it after the probe().
+> >> This means that when the display subsystem (DSS) driver probes, but e.g.
+> >> fails due to deferred probing, the DSS PD gets turned off and the driver
+> >> cannot do anything to affect that.
+> >>
+> >> Solving the 2) requires more changes to actually keep the PD on during
+> >> the boot, but a prerequisite for it is to have the correct power state
+> >> for the PD.
+> >>
+> >> The downside with this patch is that it takes time to call the 'is_on'
+> >> op, and we need to call it for each PD. In my tests with AM62 SK, using
+> >> defconfig, I see an increase from ~3.5ms to ~7ms. However, the added
+> >> feature is valuable, so in my opinion it's worth it.
+> >>
+> >> The performance could probably be improved with a new firmware API which
+> >> returns the power states of all the PDs.
+> >
+> > Agreed.  I think we have to pay this performance price for correctness,
+> > and we can optimizie it later with improvements to the SCI firmware and
+> > a new API.
+> >
+> >> There's also a related HW issue at play here: if the DSS IP is enabled
+> >> and active, and its PD is turned off without first disabling the DSS
+> >> display outputs, the DSS IP will hang and causes the kernel to halt if
+> >> and when the DSS driver accesses the DSS registers the next time.
+> >
+> > Ouch.
+> >
+> >> With the current upstream kernel, with this patch applied, this means
+> >> that if the bootloader enables the display, and the DSS driver is
+> >> compiled as a module, the kernel will at some point disable unused PDs,
+> >> including the DSS PD. When the DSS module is later loaded, it will hang
+> >> the kernel.
+> >>
+> >> The same issue is already there, even without this patch, as the DSS
+> >> driver may hit deferred probing, which causes the PD to be turned off,
+> >> and leading to kernel halt when the DSS driver is probed again. This
+> >> issue has been made quite rare with some arrangements in the DSS
+> >> driver's probe, but it's still there.
+> >>
+> >> So, because of the DSS hang issues, I think this patch is still an RFC.
+> >
+> > Like you said, I think that DSS hang is an issue independently of this
+> > patch, so it shouldn't hold this up IMO.
+>
+> In current upstream, if the bootloader has enabled the display, we most
+> likely won't hit the DSS hang issue as the PD will stay on until the DSS
+> driver has had a chance to probe, and the driver takes actions to avoid
+> the hang issue.
+>
+> With this patch applied, the PD may be turned off before the DSS driver
+> has had a chance to probe, causing the board to hang when the DSS driver
+> probes the first time.
+>
+> That's why I'm a bit hesitant to apply this. It could mean that for some
+> people their board stops booting.
+>
+> I'm not even sure what would be the perfect fix for this hang problem...
+>
+> We could have some built-in early boot code which checks if the DSS is
+> enabled, and disables it, so that the hang issue won't happen. But
+> that's not good if we try to keep the boot splash on the screen until
+> the userspace takes over.
+>
+> Alternatively we could, somehow, mark the DSS powerdomain to be handled
+> in a special way: if the PD is enabled at boot time, it will be kept
+> enabled until the DSS driver (somehow) changes the PD back to normal
+> operation (and if DSS driver is never loaded, PD will stay on).
 
-> If multiple platform profile handlers have been registered then when
-> setting a profile verify that all profile handlers support the requested
-> profile and set it to each handler.
-> 
-> If this fails for any given handler, revert all profile handlers back to
-> balanced and log an error into the kernel ring buffer.
-> 
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/acpi/platform_profile.c | 25 ++++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index 90cbc0de4d5bc..c2bb325ba531c 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -99,6 +99,8 @@ static ssize_t platform_profile_store(struct device *dev,
->  			    struct device_attribute *attr,
->  			    const char *buf, size_t count)
->  {
-> +	struct platform_profile_handler *handler;
-> +	unsigned long choices;
->  	int err, i;
->  
->  	/* Scan for a matching profile */
-> @@ -107,16 +109,29 @@ static ssize_t platform_profile_store(struct device *dev,
->  		return -EINVAL;
->  
->  	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> -		if (!cur_profile)
-> +		if (!platform_profile_is_registered())
->  			return -ENODEV;
->  
-> -		/* Check that platform supports this profile choice */
-> -		if (!test_bit(i, cur_profile->choices))
-> +		/* Check that all handlers support this profile choice */
-> +		choices = platform_profile_get_choices();
-> +		if (!test_bit(i, &choices))
->  			return -EOPNOTSUPP;
->  
-> -		err = cur_profile->profile_set(cur_profile, i);
-> -		if (err)
-> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +			err = handler->profile_set(handler, i);
-> +			if (err) {
-> +				pr_err("Failed to set profile for handler %s\n", handler->name);
-> +				break;
-> +			}
-> +		}
-> +		if (err) {
-> +			list_for_each_entry_continue_reverse(handler, &platform_profile_handler_list, list) {
+This option is kind of what I am working on. Although, the goal is to
+keep the code generic, so ideally we should not need any changes in
+the DSS driver to make this work. Let's see.
 
-Too long line.
+That said, it sounds like we should defer $subject patch until we have
+a solution for the above, right?
 
-This looks an error rollback though so instead of break inside the loop 
-you could goto into a label at the end of the function and have much less 
-indentation to begin with.
+[...]
 
-> +				if (handler->profile_set(handler, PLATFORM_PROFILE_BALANCED))
-> +					pr_err("Failed to revert profile for handler %s\n",
-> +					       handler->name);
-> +			}
->  			return err;
-> +		}
->  	}
->  
->  	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> 
-
--- 
- i.
-
+Kind regards
+Uffe
 
