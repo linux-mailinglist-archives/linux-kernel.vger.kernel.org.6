@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-390722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F2B9B7DC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:07:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE939B7DCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FEEA1F2165D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B863B1C215C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC631A01D4;
-	Thu, 31 Oct 2024 15:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626F01A262D;
+	Thu, 31 Oct 2024 15:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XNEyP1wm"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VkQyjN8W"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F5B19D88D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6FB19C552
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730387162; cv=none; b=Yr+G97O91Nc24q2tCoTXNmfDiFAjsmm3Zac00ORtJlxbHL1prsg9VdffDYRbNxhXDEVz7aKefoUU+/BRO/zbZ1Qdf9E6U4FckmHslxre+FAplZairBOlbVAgfEw6C1X1vDitQShZJn+L/YMl/X+U+JWwjmvslYUVtWLqYjrp5gw=
+	t=1730387227; cv=none; b=u7dXT5go0mG1Fby624UmD0Qzo9q/doSZbecALyKNyf2cdIezJfhRyQayD5EcGiarjYVR+o61oVYYU5dMPc+/+LZxP400Qo/FFFr1n2Ep2K4ecvbwOf6WJMIu+RnSspEcGpm836ARRsvJiAv4LyGe+UQWyJdvARLHt7pNXFmuDYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730387162; c=relaxed/simple;
-	bh=okN6iKADsHDU5G1xc79CsdDuAzz4fO12E3NBBKkipAM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iAnpa9yj7iy8XMZvqiH7IqAPlKrUpvN1Sxp3//aXxX0XOgPfl9XJzE/EAWZxciEoemakTsXWru+pgZF13+yaj4B5jkVuphUJCqFhULisW1hfSQKNAhVZ8l4LGv4TY2ulbzFms3/TjnDwuEGuqrjve9HEbtMGGBLAgoIfoE/U3SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XNEyP1wm; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a6af694220so918255ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730387159; x=1730991959; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p9gmY1X+Z6HaiDqI0rcQKxzw47LjvFY8Hd6hj/Hqn7c=;
-        b=XNEyP1wmSQQiBdcR/uEfmgP18Cr2x3O5ite3FrX66XP4mrqvv0bg0yvD83fR7fgypO
-         QXDiGnknz1SQ6runJ/idP5UZe5OaHkWTjy5Y2iZzThpOuK0D1eegNdVI7Imp14HavPQF
-         xNn4GipGeeN3sYO6cgzfoinIdIlyt3jds1NrA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730387159; x=1730991959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p9gmY1X+Z6HaiDqI0rcQKxzw47LjvFY8Hd6hj/Hqn7c=;
-        b=cihuyiSdzuTF+U7MWa0ZpCY75r3v71MeRv5HNaOfcdCjcXP9A6hEgwMDbZ1us/ZqnY
-         0rkZ86uY40gH6tfiFAxAh6c4mRTGjC10HIV2vBDs1edxDxCZVWXCXtMlS4KpHVsrRRO4
-         UDTJxeCNgG7vdpsYsgodokwIZzelvuFjKXv+OLomMl7a+UteSHVXY+fXbYWZemeNxYr2
-         Z0Jz7CDcKCTgIaGvYJ8mXmTapunjVLufsnWIFbfLEH96KpbqqP2oCoKCRoGnRH8EjxMh
-         rAVHXloouNwVzMtDGMZGKWCO/Pcd4YiMWe9ZUqFrMt1l0+Rn4nXaySlmHbdDkgIgroK1
-         9NUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2gOWBvT4iHuBfkdiFooMXqNvvdpVf9SRmO9Te3NQvBW74DtRJeH0yiipp23ycSFuIsBLa40MTu/K8uj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYBSGSMzqhRzChQFJRIeUrI7Es1KOYn01ixDxFhEVh/ezhXG71
-	wBk0jfCDnb8L77vZursV0684JdPrrDZWnfd15eMW4MsP94QUvw5TSXC6j10DgwGOFeulzig84sg
-	+uA==
-X-Google-Smtp-Source: AGHT+IEtnAyHdFNGw83qQQ2TpCMZRoeVO8WNPS5dAK1NlQ56AmOpj1ee/qAGdMEGAgaA9PNi2by6Pw==
-X-Received: by 2002:a05:6e02:b2e:b0:3a3:b45b:fb92 with SMTP id e9e14a558f8ab-3a6b03bfd5emr1254805ab.23.1730387158820;
-        Thu, 31 Oct 2024 08:05:58 -0700 (PDT)
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com. [209.85.166.174])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6a9a2a14bsm3668325ab.61.2024.10.31.08.05.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 08:05:57 -0700 (PDT)
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso226675ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:05:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWI60LIXFihircK77TYeK593w10j6jF0PzDPMQRAn0QDOq45q9dEfJZZtHt6h58hnFpYyIGpDNdv5k+9VA=@vger.kernel.org
-X-Received: by 2002:a05:6e02:2141:b0:3a0:a3cd:f23d with SMTP id
- e9e14a558f8ab-3a6a9361423mr2927785ab.5.1730387156524; Thu, 31 Oct 2024
- 08:05:56 -0700 (PDT)
+	s=arc-20240116; t=1730387227; c=relaxed/simple;
+	bh=RjuxSppiBq3w5/JKbYGq8GoAHjzsNyjHTYkHz/iAfBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PvPAMH3eM9iK9mnA/4CiL4e7ZwjBAAb4l8oGNqADC2lrM4/Gu4RozQrdsxzM7b5T14M1a8YI7ZlGS3FMK3PXsaWZM1YqCZZT0pHmQRFBa9VgR6J+qd/HKlD1kmI2UPJ1kKoFTQAtVkB4kUVaeXSwxqzsf7yU31U+iEuI5RlGJF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VkQyjN8W; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <751a4ab5-acbf-4e57-8cf4-51ab10206cc9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730387220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w4U6SCFjDt3RFRuNzC5QvY8+3i7nEcu3/ZcBbDN5c4g=;
+	b=VkQyjN8WNBI0oCCjXz7F5Wp+EptgxTa3J6nnBjquraUwZAfRGV6npP7KRjnrzGC5S+YpNc
+	+sPNwwkDQLuts1YhSWuwfwyU38Mzgqj1rHgzyY8hsT79Oij0b1AMVi7c6JlWF7jr8LJRmX
+	AIOove+nInVVaCXBnxug+gsjRaMQBek=
+Date: Thu, 31 Oct 2024 23:06:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910191117.1001581-1-jettrink@chromium.org>
- <D43HINLZGMXS.FYJOK0SVQFQW@kernel.org> <ZxckGbxzpWDuXG_q@google.com> <D59JJFBKKJ14.2KQSUSXP649DE@kernel.org>
-In-Reply-To: <D59JJFBKKJ14.2KQSUSXP649DE@kernel.org>
-From: Jett Rink <jettrink@chromium.org>
-Date: Thu, 31 Oct 2024 09:05:45 -0600
-X-Gmail-Original-Message-ID: <CAK+PMK45YwcV9S+nvB-QcjAKete889QATvv5jtVm=TbgRHZW2A@mail.gmail.com>
-Message-ID: <CAK+PMK45YwcV9S+nvB-QcjAKete889QATvv5jtVm=TbgRHZW2A@mail.gmail.com>
-Subject: Re: [PATCH v6] tpm: Add new device/vendor ID 0x50666666
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+To: neil.armstrong@linaro.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
+ <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+ <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Looks good, thank you!
+Hi, Dears maintainers
 
--Jett
+On 2024/10/31 20:31, Neil Armstrong wrote:
+> On 30/10/2024 15:49, Sui Jingfeng wrote:
+>> Hi,
+>>
+>> On 2024/10/21 21:08, Neil Armstrong wrote:
+>>> Hi,
+>>>
+>>> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
+>>>> The assignment of the of_node to the aux bridge needs to mark the
+>>>> of_node as reused as well, otherwise resource providers like 
+>>>> pinctrl will
+>>>> report a gpio as already requested by a different device when both 
+>>>> pinconf
+>>>> and gpios property are present.
+>>>> Fix that by using the device_set_of_node_from_dev() helper instead.
+>>>>
+>>>>
+>>>> [...]
+>>> Thanks, Applied to 
+>>> https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
+>>
+>>
+>> It's quite impolite to force push patches that still under reviewing,
+>> this prevent us to know what exactly its solves.
+>
+> It's quite explicit.
+>
+>>
+>> This also prevent us from finding a better solution.
+>
+> Better solution of ? This needed to be fixed and backported to stable,
 
-On Wed, Oct 30, 2024 at 5:48=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
+We were thinking about
+
+1) if possible to add a proper DT binding for those drives.
+
+Or alternatively, as Laurent pointed out that
+
+2) Invent some extra techniques to move the idr allocation
+    procedure back to the AUX bus core. Make the core maintained
+    device ID happens can help to reduce some boilerplate.
+
+And those really deserve yet an another deeper thinking? no?
+    
+
+> if there's desire to redesign the driver, then it should be discussed 
+> in a separate thread.
 >
-> On Tue Oct 22, 2024 at 7:03 AM EEST, Tzung-Bi Shih wrote:
-> > Hi Jarkko,
-> >
-> > On Wed, Sep 11, 2024 at 04:21:24PM +0300, Jarkko Sakkinen wrote:
-> > > I applied this (will push later to my remote tree).
-> >
-> > I failed to find the patch in [1].  Is it somehow overlooked?
-> >
-> > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd=
-.git/log/?h=3Dnext
+No, please don't misunderstanding. We are admire your work
+and we both admit that this patch is a valid fix.
+
+But I think Johan do need more times to understand what exactly
+the real problem is. We do need times to investigate new method.
+This bug can be a good chance to verify/test new ideas,
+at the least, allow us to talk and to discussion.
+
+
+>>
+>>> [1/1] drm/bridge: Fix assignment of the of_node of the parent to aux 
+>>> bridge
+>>> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/85e444a68126a631221ae32c63fce882bb18a262
+>>>
 >
-> It is applied to my master branch now:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/lo=
-g/
->
-> Can you sanity check that it looks good? Thanks and sorry for the
-> delay!
->
-> BR, Jarkko
+-- 
+Best regards,
+Sui
+
 
