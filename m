@@ -1,75 +1,65 @@
-Return-Path: <linux-kernel+bounces-390191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB659B76BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:50:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDE49B76C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E600EB2212C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF01E1F21E80
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3564A16F8EB;
-	Thu, 31 Oct 2024 08:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D12194A6F;
+	Thu, 31 Oct 2024 08:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JfEsqwDT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LXxf7UR0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhN8NuN5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8F08F5C;
-	Thu, 31 Oct 2024 08:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DC08F5C;
+	Thu, 31 Oct 2024 08:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730364603; cv=none; b=SrRv34F1Ekr4KF7PhGUU0oE6G8h8QTZreaDPCEXa5H2MWAk1ya1mnxwnig6bfnIsj5GXxTlcpTenz8AsCpYqIfpUi3B5Q1TZgCXmJDeeHIYIXWSmXi6KR8spTtqd/GuP9ra9XAUhnABI/teweShQgnZRL1pQM6QpFc0bA/+mPyE=
+	t=1730364658; cv=none; b=Lf0C6nPny57Rp7y3C/pMMD5fGsBEr8g91/U9eQzdahnckgxzquntFVseUeddxK6o4PVZ3PSjddaI4lTZNZ4sIGghDYO5OhbhU9x4zfZRR4YOUGUBUFFnJFTslcwVwYV0yXvcCt2MmXCFlwah5v468xSnCwJ4ppWgg/YCfIhVzFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730364603; c=relaxed/simple;
-	bh=qPNZfpWGmQ4SZQhBy1CM/jUxXNqfNcI4vpm/jDmtCFg=;
+	s=arc-20240116; t=1730364658; c=relaxed/simple;
+	bh=5nxsWTrLROjlD6GbFhe70Ry68Ml5itSMkuGKF63D778=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jiuELfet/niMgK6jUWkW1AOjUenQdD2ihHVUlBesWZK5KNU7DLJLAj1TQAC74SFp9JvtkKGAhq4dE0PM2jLA2jYwZgQ2/WyNt76YufNWiWfYiPfsPkQcwGcqfMGCnkZY4wxquppcbGbH8cELpRrRPQ2zpOE0kovPFC/n1b9Jpgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JfEsqwDT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LXxf7UR0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730364599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DpxwBF9Vc6S9Oo/ZnENALOc4p6XbTTIle427JY74bWU=;
-	b=JfEsqwDT+jNaAVqy+m4ihk4P0USAe7j2pEbujSRC6OieWFmEWsG4HSqPdNYdfZelSKKbYm
-	uqXIeSv+IByGjz3DVRsz/bTExQdUC5n5G/41rS7p8q6Q3k0nj1a3IcoGqSXRNZScLD6Bsz
-	Be/90XnsWlsvfLUOb4rWF44NkTENHVPPdPT4G6h+3KC0osryRxXDqg+LyX6EqfO0FIg1Q+
-	YTtQTQJJIWLyue+l6N+py7kiAEc7mK64GpGAiF4sPN77cyqbmx7aWc4OZXAckh+29BRQxB
-	rbhIZzJmD8MudJ5P4f1LeioqWKTM8zyD4DK4zforyKPodrTvzAmPEaeEusq/Yw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730364599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DpxwBF9Vc6S9Oo/ZnENALOc4p6XbTTIle427JY74bWU=;
-	b=LXxf7UR0fjXUlAbe1R+P9MNVLarVlcPR8h6a1QB0dT6fj5dr9GY7fV04iUaadGe4qXw2Fb
-	0E00vW1fLGM7RNCA==
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>, Jiri Slaby <jirislaby@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Petr Mladek
- <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, Steven
- Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Esben
- Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Rengarajan S
- <rengarajan.s@microchip.com>, Jeff Johnson <quic_jjohnson@quicinc.com>,
- Serge Semin <fancer.lancer@gmail.com>, Lino Sanfilippo
- <l.sanfilippo@kunbus.com>, Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
- FIFO mode
-In-Reply-To: <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-2-john.ogness@linutronix.de>
- <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org>
- <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
-Date: Thu, 31 Oct 2024 09:55:58 +0106
-Message-ID: <84sesclkqx.fsf@jogness.linutronix.de>
+	 MIME-Version:Content-Type; b=D12TG+1Re3K+iLl6H/RDpds56B3sSmW5jbCcUMzOjBe2I+mjZjUI7vtunwjVr/WMJbkTDFplTXRFA5csUHmreORgzjAyw/mjs7HnTaeBhk9kFQZHEliQqP9wK6r0dF77GmNs16bM6SzEasYG2KETLKld84nLaCSF1myJ8NDS/gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhN8NuN5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4F3C4CEC3;
+	Thu, 31 Oct 2024 08:50:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730364657;
+	bh=5nxsWTrLROjlD6GbFhe70Ry68Ml5itSMkuGKF63D778=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FhN8NuN5eZnvWxnJp3LChAmf/7n923ddxGyXM5v0FFwAWlPO4hFWc7dT6WCEz4a2P
+	 YP2bcuTEuzDIcZZ03UhiknY9NzWR9CzZzzF+fbFo8jdGSSNqKR5EmUCxt6qzFHx4A4
+	 fkOdCL/m5cLK6r/XDf8czMRyUDvKE15mygnSh3n6oxOJMhjXxEXd5AGe7LdoPoTk4c
+	 tAENdZV6qXuCMkvCxUXMgtGDvrPvcHFd/SRzPqZFrl6/DKPMgh9vpry0YMCfKNb1D9
+	 JFJa2XjpomSlZSwDATXOjfCBIT51EJu8F+fAvNizxkBXEU62LvkeZWVx1OwoSYx1Cl
+	 7GbGT2Rs/AYxQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  "Martin Rodriguez Reboredo"
+ <yakoyoku@gmail.com>
+Subject: Re: [PATCH 5/5] rust: add improved version of
+ `ForeignOwnable::borrow_mut`
+In-Reply-To: <20241030-borrow-mut-v1-5-8f0ceaf78eaf@gmail.com> (Tamir
+	Duberstein's message of "Wed, 30 Oct 2024 16:46:42 -0400")
+References: <20241030-borrow-mut-v1-0-8f0ceaf78eaf@gmail.com>
+	<dRdemlQoKKeflc1Ti5B10auAxUEmuuQYkbPZdUjE3AR-Snp03qz4q-JqVcp91_LW9Q-PY0PJut6RMzDMEP3-aA==@protonmail.internalid>
+	<20241030-borrow-mut-v1-5-8f0ceaf78eaf@gmail.com>
+Date: Thu, 31 Oct 2024 09:50:27 +0100
+Message-ID: <87ttcsodv0.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,91 +68,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Hi Maciej,
+"Tamir Duberstein" <tamird@gmail.com> writes:
 
-Thanks for jumping in with some ref-manual quotes. Some more comments
-from me below...
-
-On 2024-10-31, "Maciej W. Rozycki" <macro@orcam.me.uk> wrote:
-> On Wed, 30 Oct 2024, Jiri Slaby wrote:
->> > @@ -3306,13 +3310,18 @@ static void serial8250_console_restore(struct
->> > uart_8250_port *up)
->> >   static void serial8250_console_fifo_write(struct uart_8250_port *up,
->> >   					  const char *s, unsigned int count)
->> >   {
->> > -	int i;
->> >   	const char *end = s + count;
->> >   	unsigned int fifosize = up->tx_loadsz;
->> > +	unsigned int tx_count = 0;
->> >   	bool cr_sent = false;
->> > +	unsigned int i;
->> >     	while (s != end) {
->> > -		wait_for_lsr(up, UART_LSR_THRE);
->> > +		/* Allow timeout for each byte of a possibly full FIFO. */
->> > +		for (i = 0; i < fifosize; i++) {
->> > +			if (wait_for_lsr(up, UART_LSR_THRE))
->> > +				break;
->> > +		}
->> 
->> THRE only signals there is a space for one character.
+> From: Alice Ryhl <aliceryhl@google.com>
 >
->  Nope[1]:
+> Previously, the `ForeignOwnable` trait had a method called `borrow_mut`
+> that was intended to provide mutable access to the inner value. However,
+> the method accidentally made it possible to change the address of the
+> object being modified, which usually isn't what we want. (And when we
+> want that, it can be done by calling `from_foreign` and `into_foreign`,
+> like how the old `borrow_mut` was implemented.)
 >
-> "In the FIFO mode, THRE is set when the transmit FIFO is empty; it is 
-> cleared when at least one byte is written to the transmit FIFO."
+> In this patch, we introduce an alternate definition of `borrow_mut` that
+> solves the previous problem. Conceptually, given a pointer type `P` that
+> implements `ForeignOwnable`, the `borrow_mut` method gives you the same
+> kind of access as an `&mut P` would, except that it does not let you
+> change the pointer `P` itself.
 >
-> It seems common enough a misconception that once I actually had to fix the 
-> bad interpretation of THRE in an unpublished platform driver to get decent 
-> performance out of it at higher rates such as 230400bps, as it only pushed 
-> one byte at a time to the FIFO while it had it all available once THRE has 
-> been set.
-
-I do not know if this is true for all 8250-variants. If there is some
-variant where it functions as Jiri expected, then it would mean
-significant text loss during longer messages. But that would already be
-a problem in the current mainline driver.
-
->> > +	/* Allow timeout for each byte written. */
->> > +	for (i = 0; i < tx_count; i++) {
->> > +		if (wait_for_lsr(up, UART_LSR_THRE))
->> 
->> This ensures you sent one character from the FIFO. The FIFO still can contain
->> plenty of them. Did you want UART_LSR_TEMT?
+> This is analogous to how the existing `borrow` method provides the same
+> kind of access to the inner value as an `&P`.
 >
->  The difference between THRE and TEMT is the state of the shift register 
-> only[2]:
+> Note that for types like `Arc`, having an `&mut Arc<T>` only gives you
+> immutable access to the inner `T`. This is because mutable references
+> assume exclusive access, but there might be other handles to the same
+> reference counted value, so the access isn't exclusive. The `Arc` type
+> implements this by making `borrow_mut` return the same type as `borrow`.
 >
-> "In the FIFO mode, TEMT is set when the transmitter FIFO and shift 
-> register are both empty."
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
 
-If we wait for TEMT, we lose significant advantages of having the FIFO.
 
->> But what's the purpose of spinning _here_? The kernel can run and FIFO
->> too. Without the kernel waiting for the FIFO.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-When serial8250_console_fifo_write() exits, the caller just does a
-single wait_for_xmitr() ... with a 10ms timeout. In the FIFO case, for
-<=56k baudrates, it can easily hit the timeout and thus continue before
-the FIFO has been emptied.
+Best regards,
+Andreas Hindborg
 
-By waiting on UART_LSR_THRE after filling the FIFO,
-serial8250_console_fifo_write() waits until the hardware has had a
-chance to shift out all the data. Then the final wait_for_xmitr() in the
-caller only waits for the final byte to go out on the line.
 
-Please keep in mind that none of these timeouts should trigger during
-normal operation.
-
-For v4 I am doing some refactoring (as suggested by Andy) so that the
-wait-code looks a bit cleaner.
-
-John
-
-> References:
->
-> [1] "TL16C550C, TL16C550CI Asynchronous Communications Element with 
->     Autoflow Control", Texas Instruments, SLLS177F -- March 1994 -- 
->     Revised March 2001, p. 30
->
-> [2] same
 
