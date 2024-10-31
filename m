@@ -1,211 +1,212 @@
-Return-Path: <linux-kernel+bounces-390222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60A89B772A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:15:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B7A9B772B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949CD286DDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB2C1F217BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C53B16C453;
-	Thu, 31 Oct 2024 09:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F393C1953BA;
+	Thu, 31 Oct 2024 09:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oWdj/43+"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2079.outbound.protection.outlook.com [40.107.223.79])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XzP9zy21"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D04154C12
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366119; cv=fail; b=fV98P00l7a7pQ2IRgK3h4d5JySXe/9H+pTCxK0FehheNyNhWC887OrgFA/B9hsZce3a57tIQJuVObdd7Yk/lmEU757A3F1YVtKP74HRQtKTZe4Ez9fcnKJf1GYb9JsCBlYY2uL/UO0JGqI2Gl9JQQJKIDoIsVFyJ4sBmOKMiFXw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366119; c=relaxed/simple;
-	bh=Gsd7s5yLCC3gyDGKmUFO03aZcYMmi8v6cLYYe6WFdhM=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=V+BKFmb7TVkgd/fcxkomEfjFM47t0cWr33ko27nbUiAH0LamVUlafRxIQ9l0h4lDz2JLG8DP33i/0czSBgaDovmXq15roNgjLp/9jsmkwMjN1awHatgxyVjoHxQUy1CdiaHFMgi1XhTgl24AOAEYZ04dBhE+MuWK8yAHEPLQuyw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oWdj/43+; arc=fail smtp.client-ip=40.107.223.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DWlZZhaQj5hWaEcF5+uQDn29qSPEr/av9/CjVLmPrBmFfKQTdkWw7E+CaCq3KinxcEktGLCtHXcGPayBw8P7ZDNpiDLEi+PH2Qq5+z/eGS7iUbiEc/IKrn7CAA6goZ5HyQN21WShCrF4PC82e+Q87vpyhlKA5FNTJuTKq8WywBXcjCDPDk21303JmVk107yQq3ftzL3rv8wYXTdzhZOYFMCj3/OK7aaKnbun/lz8YyXov+ji7FG1pxl67QU/y7f6e7Ci+bzFkSWYKFoA0M868MJEnDGneg/HjW3DrpFasDPNMnFpEb7ordVKuuUnSqYjKcqlHi23ZdWspvlm3e8q4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JXD6aKspWGiMFA7MWaAimBP8eiSwavbDY6KdRbNXkek=;
- b=aVvpC6hDsEmwqWPGn1Nd4Iq9LP5dYLWFjVJvj8m4kuuId5jnVLfWM1Z8ziTGQQ+aSpEkLCzyoBoggNKpZn2LZgHxshbZ0+ZjuOu6Ix+b2NlWf55spXWhqhUcQaWrOiJ5716Wwn7e/jnCMKmF6WbMjOyad6/pL2uGQ07AWOxtBhs8BydQLUqhzMgnxths/7Wf1U6hxJirAPk5H38JCgay7XBw3H5LJJ56z5YgcrJMhHhfOzFXKMav9SVSzb0khwgHHQEZ/N0c6qiLWBF/2I/RhObWpPJqmladjYudcl5ugmEKq1ImqOw4von7BiJ8jmDLUBsqzpVAPyHwn6It/1Ax2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JXD6aKspWGiMFA7MWaAimBP8eiSwavbDY6KdRbNXkek=;
- b=oWdj/43+gnlfbIJ7KXbGe5t24V8QhsbTlrAmXTiGSc76Wla+SB0Hfa+tDzS0xzlI7DCDqpONipsn1TDMuNKz6Ox8LCl+LVLWv8uxSG1YnF7rhr/z5ukWZFJBgvjr0JkiX89UgXbV52OYnTlzW+ls9hruL49VHYxlAl9hTJngSPw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- SA0PR12MB7076.namprd12.prod.outlook.com (2603:10b6:806:2d5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.18; Thu, 31 Oct
- 2024 09:15:15 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%4]) with mapi id 15.20.8114.015; Thu, 31 Oct 2024
- 09:15:15 +0000
-Message-ID: <e617c4ae-c5fb-444a-9649-ffc7d41f79ba@amd.com>
-Date: Thu, 31 Oct 2024 16:15:02 +0700
-User-Agent: Mozilla Thunderbird
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v6 0/9] iommu/amd: Use 128-bit cmpxchg operation to update
- DTE
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
- robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
- jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
- kumaranand@google.com
-References: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
- <20241016142237.GP3559746@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20241016142237.GP3559746@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1PR01CA0022.apcprd01.prod.exchangelabs.com
- (2603:1096:820::34) To DM8PR12MB5445.namprd12.prod.outlook.com
- (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071081946B8;
+	Thu, 31 Oct 2024 09:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730366124; cv=none; b=iVRat4QVmteZpMFmg5VcqIMP/f9HwKOTIs4AdNUoACeKTB2Tsea9ouyNbG1qpACvZOocLk4Cn9F4l4m5c8vApG3Xl4/3/1xxOsMYuvFk1hvgMGkFo3k4wqHxsYQQJJOoeYqaV/h0MDC5Jx2oMHnvmKeRJ647UDoQr2Rc8G6lQEE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730366124; c=relaxed/simple;
+	bh=5TAZTObtoVI57LD372kZHMXLpPH9kIIf+X9qKx648gM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhZuF43jtS8fT/6VeojhbU15Q43aEkN8ri+5RO+cP8kBTpRWM/mkGMCIkhCvjwl0ImvxWC4m43tITB5FoCbW+IjEmwKw/G8ClznUl9MzDxQJsFqC5Aju1BX4b5ZX2Bxv4GcuFIlqlJadaQWADExAsoDIFDbDRPb4f387wQ927rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XzP9zy21; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730366122; x=1761902122;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=5TAZTObtoVI57LD372kZHMXLpPH9kIIf+X9qKx648gM=;
+  b=XzP9zy21/1aBhtsoaMUmgrgGE1XvdG5mpdy1VTJmo+vhmCZkgVWYIjYc
+   J5xdXFAqjQ7semn9y2KbjbRwkQENaDaS7+43X6DkFabqEe5w1QNXY7Cs4
+   IAWv0f5QCh0UelfkjNTDavT3l7rMJvjSl9mFWsYB7p6lqRN38domKxcu0
+   nY97Y3jNCtqq2pXUI4xr89NaYK9hrgq0szJulanb2UVo5SyMzbeyTllFM
+   OhC1eHhGQ1QkMceeQe23G4a1Aux5zx7Tuza176FuvM9WZbujeB23ZWoBM
+   qkM3nwH/7phaR+/O3PMNyZxKQyJAf1PHpsTBcNo18yM4g5SmegkLg3D0R
+   g==;
+X-CSE-ConnectionGUID: ALmgIoLCRheGxqeTOkMtAw==
+X-CSE-MsgGUID: 7mBSEVqJR1WqcnUO9hvznw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="34023725"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="34023725"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:15:21 -0700
+X-CSE-ConnectionGUID: bpSmqIzfTxWikrD5Rn3esw==
+X-CSE-MsgGUID: oXSebj6qQ1O0XI44SirHiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="113364515"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:15:19 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6RGv-00000009aVY-0eT8;
+	Thu, 31 Oct 2024 11:15:17 +0200
+Date: Thu, 31 Oct 2024 11:15:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] gpio: Use traditional pattern when checking error
+ codes
+Message-ID: <ZyNKpC_3E3GFsyXL@smile.fi.intel.com>
+References: <20241028134454.1156852-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=Mc_PW32jNO+C5AEQK6ej_CsCSV-HY76aJoQ6bjZ=JPOtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|SA0PR12MB7076:EE_
-X-MS-Office365-Filtering-Correlation-Id: e01d42a1-6839-420a-2188-08dcf98c87c7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?KzBLR2VzaVpjcnhRMFBwOTdreW14UjVEb1o5MDdqaVM2bTN2S2c2ekhnQ1h0?=
- =?utf-8?B?bVk3Sk1kYUJWbzI1V1Q4VTJmaGxCOC9ja29UQzNZS3FQaDZuM01qeCsrVE9G?=
- =?utf-8?B?YkJkT0U2Mms2SXRIZmkwYnYzRWkyZnl3QWV1WWcwcEVBUzVOSVRBd1MwOEJ1?=
- =?utf-8?B?SlhDTVRGVnN5ZGZ0cElWbHo3VndlWDE1RWlNOWRUN0Z3Q1JueE4velVtN3hk?=
- =?utf-8?B?WktYVnlPVGxjWHBML3hpUjJvQ0d4RDFiYWt0anNoZnNNUUVCdlFpU3ZFU0JU?=
- =?utf-8?B?a2w2MXVZYnN6TDl4bm5KSitHbXM0U1ZLQnA4a3luUUIwQmlJczNIekpDZUNl?=
- =?utf-8?B?VllxN1dXKzFOSWlCRmJJUitXR0dvWi9aWmEweC95VU15Sko0UVRVdExKUzRC?=
- =?utf-8?B?VjNzRXNaWlUxVkQzREJMUnFYQksrcldHOEx0M2ozcUtmUWptQVkwZjdnOFY1?=
- =?utf-8?B?UU82d2dxRSswOUgxdnBkRDNNNDRmdnh3T0IranlwUmFkdHIxYTR2S1REZGVF?=
- =?utf-8?B?ekFyY2dPSVArbWNNNWV3NllvbTlyT2lnWHRkdzRtcHMxa1ZxelJrQzJGOWMy?=
- =?utf-8?B?TkJ1MEFJL3hrL0cvUlQzNlE4TzFvYUhaeFIvckFpZlBYaEpaUDlQR0dIbVU0?=
- =?utf-8?B?YXI3dDNjRDRkeEdwV2FRcXZHcVFDN3NaMkZQYU5aaE5xNUNiam1QNEJsdU1v?=
- =?utf-8?B?cWJBZ0lWQktPTlQ4WDMydTVQQktDcHRaTTc3SFZBVUJNZ1Z4TlJOa0hwOGIv?=
- =?utf-8?B?c1RPcDRNQmpMdkFLb1VpSDhYbFJyNXN1RHVJbVpqS0t1cDR3ZkpQN0k5UGRF?=
- =?utf-8?B?R2d2NStMVE1vR3NpaDJxbDlXUlNlN0E1bUFiaFYrVVVlNXdmb1JvUXFNMkp0?=
- =?utf-8?B?ZUlOYmhNNjd5YlhCUERCc0pQUDVLZFIxZ3lBanBvWXB4U0xRWlJvbitFSHlF?=
- =?utf-8?B?RUx5cGxvbnFBUE9RRG1nTWFGMEF2eUk0NmZrb3BDOW5DK0ZRZklLQzM5d1kr?=
- =?utf-8?B?aUFxQndMUEJtNGdRRlQrUWlmdUdmT3Q2R0FIUUY4QWc2N0J5cms4L09McENK?=
- =?utf-8?B?TDcwbGFvNW9zeVNMZ0V6WFkzOUExekVTTHJad215UXJlSTdnendPQUZuNnRo?=
- =?utf-8?B?OFhEQTN5SGJqbmU0ZUpPYlhJS3NLTWljWEZwMk4wdjRnMzd0SW5xMkVrWW00?=
- =?utf-8?B?ME00WTRNeHNGdDA4TkU4YmVydEZiSGM0L3J2VnNZazZQWlhSbllHKyszR2VP?=
- =?utf-8?B?ZHRTcU9sMkpDbG9uK3gxVndVSWRQWU44Tk1aMFB6d1FPakloV0pXbGtySUQy?=
- =?utf-8?B?Y0xNQnlkRjlBMStkd042M2hWOHlkOVdmQXFyb084anBzWVNYdkptcXlIOHcz?=
- =?utf-8?B?VFJiOGZsYlFrbFZpeEVhbCt4dzJITER4U1ZhRTZIcERpYUdiWElxa3VZUHJu?=
- =?utf-8?B?SElaRitJRytVUFhObUJQKzJKTzZidDNWeFRLQkppYkNkUUQ5NVRyci9ZZmRW?=
- =?utf-8?B?SnRYQWc4SGJLTW1pa0J2YW0yd0Z6WXI3SGQ1NGJITE9HMWxYelhKeVNHUFl1?=
- =?utf-8?B?M2JtK2YxNnd6YVhUdjlYQk1BYTF3T0NOSGwrL1luTGM3SU1EQWpOWG80UG9F?=
- =?utf-8?B?QkhIQVhMbEhRdWR6MzNjd2hYeEVtZHVRNE1kcVFrYUtMN1o1ZUV6ZVMxUHpR?=
- =?utf-8?B?bUNUZWhoNmh4K09LZjh6MjNpN0RBK2RQYlF5VW9HWEZrRmVlVlZGOTc0M1Zj?=
- =?utf-8?Q?m116/o8mK7V1QOGg9Irjw5iJhlrz/TxzTrwOJIn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QmtqK25WY0lCaElXLzl5VlJBYWRKVTRXQXFpY3FTWHkyWE9Ba1FNeEx2WjFC?=
- =?utf-8?B?S1RzRkNDTEZ6VCs1R1VZT21ueDNpcmR0Rzl1STBTUnRvbXljWFB1Szk2WWN0?=
- =?utf-8?B?ZUJCRWhiSFZWRnFoQTUwRlpZQWtheUpWRTJIWGdvTURqSXRBTlg3bnZCS2o0?=
- =?utf-8?B?d2xoOUsweEk1QmpKUG5jaGJ2MXlnYTU5RDlLTjlveno3a1lsN1AwTy9oWFY0?=
- =?utf-8?B?RnQ0eTZOVHNRSlFWcmhjcUNMdHlOQUNBRkVsTTNHVkZKL1puTWpWY2pRM2or?=
- =?utf-8?B?aisvd1JNVHQ2Yk50TWxKRWFNbkYrUzF0ZTNIYWhHWklTTzVNaHZCckdFa2Fv?=
- =?utf-8?B?VzFjSjNrbDRRWXFWZDVlUzQzSjFjNXkydi92SDl5YjhYT0hvSGN0VC90QzZz?=
- =?utf-8?B?empnL29FdVJnZE00bnlMYUVJdTNsVnN0Y29XcDFQenJMNThKcjBBMm9NZTk2?=
- =?utf-8?B?dDkrWEx0U29SbmppY3NtKzE4OCtLdU9aNmFYb1hoME1tQ2xnZkhuSGtBV05h?=
- =?utf-8?B?a2FpbFhnTStvR1Y3b3VOcUg2eVFlc0RVaFMxZGNYdStWTEtrYVRkUnZ5STEz?=
- =?utf-8?B?aFROenlRdFRPNHNMTWUvSGVPQUR5a3lOQ1VoaFlLYTFvdjR5d1NkTm9ESlJl?=
- =?utf-8?B?UVRhSGZiQThPNVJMYmFrMFQxUVBYeEpWNS9pUHc3RzF4SXRzQUtEcHZiYmN6?=
- =?utf-8?B?L1o1TTl0MzcreEFvSnVGQTI1ZU0yT0hvUUVyYmhnZWFUUFN5RVM2NHlWeEFK?=
- =?utf-8?B?MUdRZEZ3OHYxSmNOSzlxNzFEazNJNWREYzg3d1ZJdFZkQ3Azdm5LTk5JYVFG?=
- =?utf-8?B?bTNveXF2eWxTLzd0Q3Y5N0ZVSUJyMGRHbVdlRTdhRXdYYzAzTGlia3k0dmdw?=
- =?utf-8?B?UWZEVElzMHhWQ3JXN2x4eWN5eVo5RVg5U1M2K0RDSTZidjhydmNuSXlvSzVH?=
- =?utf-8?B?cDBJRGNERmRjOWo4bWhnM0hKQ0dQcFFIMFduaGxXOGQ1N0xOSkZBM2pBK0hK?=
- =?utf-8?B?SXRWb0xIbDlDWG9XNjkyS1RUYVZEa1ZKak5rNTJ4VzdEaEJsQ1U3aG52Qkds?=
- =?utf-8?B?cXFqSjNydnEwUDhwT1EyelE1TjNnMlBuWkhVTS9VNWZJRWpkZFVEMWxGbHVM?=
- =?utf-8?B?Mm42WURhMk5oT2dTMHBNL0tDWXJpN1V0aysram0vVmtma2V3cFF4ekcwYnkx?=
- =?utf-8?B?bHp3WnFLTjNiWURaUUJ5aWhoTlRWR0l4dUZUTlJBOTJpbUFnUU4va0drZUpG?=
- =?utf-8?B?V2FsTndXbjkwQy9yczZ1Q3VsRDFLSVYvdDRlZU1qdjcrUHVNdkRvdS93Lzkw?=
- =?utf-8?B?N2I2SElHRm5JNjRaeFF0TDNucVQwN0k2UFgyVmorRTd6UVZmb1kxK2FkOVVJ?=
- =?utf-8?B?bUcxNEl5cjAzcFBsL1pWVzNhOGE5OGFJRUhvQjRoM2JGcDlOc2RKQStFQ3NP?=
- =?utf-8?B?Sm5xaDNhT29GTG1wSGN6elRnSEUyNHFkSzhsekpOZ242d01NRnI2RjNGTVk1?=
- =?utf-8?B?UGpoVlBEeWQyc3l2L09oUVljZ1d3TE96RGl2bnpEZitCZmIvWS9oZnVNSys3?=
- =?utf-8?B?SVd5YU9vMkFJb01sbkdSaytKbXNRZ3FGMmhoNHY2cm45UTdXeWVNUXFDb3Na?=
- =?utf-8?B?NFNNMTZpbWFjUmNpcmRKZEtQSU5Za1d0TlB1bmN0MFVUMENWQUFMYk84NlZD?=
- =?utf-8?B?UFF6a2M5QWVTK1BJS1phR1ZGYzBOeWQ3UFN0WDdtMVF4eGVXUlZTeUdMazVF?=
- =?utf-8?B?cG5WTkxtcmVhQ28zL3I2MXFUakd6Q2tpWE5pQ0FMNU50M0hqdkpESnZSd1Rl?=
- =?utf-8?B?dHFvc3ZmU2FwcCtCeUhxcEN5c0V1QVh4YVRZQ1FqNTZOYU9EY1B5MGNGbEV5?=
- =?utf-8?B?UFYzdDFkQzhaejR0SU9vdTVaZkhvb0lBS1VldUxNMi83eUdIS3ppRnpCOWt5?=
- =?utf-8?B?QzFKWWhVcFRnTTVYWnR0RStNYm80aHk4RHNXb0FKd3FWeXZ1V1R4NWdVUkdS?=
- =?utf-8?B?UndZSUZIVCtzNEhzdHI2Z0FzdHpkNE9XTFFyc05meDN0dnZKTE96YmNKeVht?=
- =?utf-8?B?cE1ndStQYnhCVUdWNDMzblBkLytEN0hHd1Q1RnZsNjlCZlJNQ3gxbDM5WFhM?=
- =?utf-8?Q?y8diqLi7jGBZibKgK3vhK0sEa?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e01d42a1-6839-420a-2188-08dcf98c87c7
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 09:15:15.2227
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KRXepcUaVLT8Qp/ZY99wOY7bP1EWX6q8c5gZ3Ggjnx1pjY4RzqKZZ3yoVjHa7gpyH2xNWx9fN9uNI0A6Tcx4cA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7076
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mc_PW32jNO+C5AEQK6ej_CsCSV-HY76aJoQ6bjZ=JPOtg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 10/16/2024 9:22 PM, Jason Gunthorpe wrote:
->
-> ....
->
-> I wanted to see how far this was to being split up neatly like ARM is,
-> I came up with this, which seems pretty good to me. This would
-> probably be the next step to get to, then you'd lift the individual
-> set functions higher up the call chain into their respective attach
-> functions.
-
-I like this idea and will look into adopting this code when I submit the 
-nested translation stuff (right after this series) since it will affect 
-the set_dte_entry().
-
-> .....
+On Wed, Oct 30, 2024 at 09:20:45PM +0100, Bartosz Golaszewski wrote:
+> On Mon, Oct 28, 2024 at 2:44 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > Instead of 'if (ret == 0)' switch to "check for the error first" rule.
 > 
-> static void set_dte_entry(struct amd_iommu *iommu,
-> 			  struct iommu_dev_data *dev_data)
-> {
-> 	u32 old_domid;
-> 	struct dev_table_entry new = {};
-> 	struct protection_domain *domain = dev_data->domain;
-> 	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-> 	struct dev_table_entry *dte = &get_dev_table(iommu)[dev_data->devid];
+> Well there's much more to this patch than that and I have some issues with it.
 > 
-> 	make_clear_dte(dev_data, dte, &new);
-> 	if (gcr3_info && gcr3_info->gcr3_tbl)
-> 		set_dte_gcr3_table(iommu, dev_data, &new);
-> 	else if (domain->iop.mode == PAGE_MODE_NONE)
-> 		set_dte_identity(iommu, dev_data, &new);
-> 	else
-> 		set_dte_paging(iommu, dev_data, &new);
+> > While it gives a "+" (plus) statistics it makes the code easier to read
+> 
+> Not only does it increase the footprint but it also adds completely
+> unnecessary goto labels.
 
-This will need to be change once we add nested translation support 
-because we need to call both set_dte_paging() and set_dte_gcr3().
+These pieces can be dropped.
 
-Thanks,
-Suravee
+...
+
+> > and maintain (when, e.g., want to add somethning in between touched lines).
+> 
+> The single line calls to the notifier chain are unlikely to be
+> extended anytime soon but even then I think we should cross that
+> bridge when we get there.
+
+Okay.
+
+...
+
+> > -       if (!ret)
+> > -               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > +       if (ret)
+> > +               return ret;
+> >
+> > -       return ret;
+> > +       gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > +       return 0;
+> >  }
+> 
+> I really don't see how this makes it better. The logic here is: if the
+> underlying set config worked fine - emit the event. Otherwise continue
+> with the function (even if there's nothing there now). If anything
+> you're making it more difficult to modify later because logically the
+> notification is just an optional step on the way to returning from the
+> function.
+
+Optional steps are covered by flags, and not by checking the previous call for
+failure. So, I barely see the "optionality" of the notifications in these calls.
+
+...
+
+> >         ret = gpiod_direction_input_nonotify(desc);
+> > -       if (ret == 0)
+> > -               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > +       if (ret)
+> > +               return ret;
+> 
+> Ok, for consistency I could take it but please put this into a
+> separate commit doing just that (here and elsewhere).
+
+Based on the other comments from you in this email I'm not sure I understood
+this correctly. Do you want to reject the complete patch, or do you agree on
+some pieces out of it.
+
+> > -       return ret;
+> > +       gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > +       return 0;
+
+...
+
+> >         ret = gpio_do_set_config(desc, config);
+> > -       if (!ret) {
+> > -               /* These are the only options we notify the userspace about. */
+> > -               switch (pinconf_to_config_param(config)) {
+> > -               case PIN_CONFIG_BIAS_DISABLE:
+> > -               case PIN_CONFIG_BIAS_PULL_DOWN:
+> > -               case PIN_CONFIG_BIAS_PULL_UP:
+> > -               case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> > -               case PIN_CONFIG_DRIVE_OPEN_SOURCE:
+> > -               case PIN_CONFIG_DRIVE_PUSH_PULL:
+> > -               case PIN_CONFIG_INPUT_DEBOUNCE:
+> > -                       gpiod_line_state_notify(desc,
+> > -                                               GPIO_V2_LINE_CHANGED_CONFIG);
+> > -                       break;
+> > -               default:
+> > -                       break;
+> > -               }
+> 
+> If you really want to get rid of one level of indentation here,
+> I suggest moving it into a separate function.
+
+Perhaps you suggested a separate change for that?
+
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* These are the only options we notify the userspace about */
+> > +       switch (pinconf_to_config_param(config)) {
+> > +       case PIN_CONFIG_BIAS_DISABLE:
+> > +       case PIN_CONFIG_BIAS_PULL_DOWN:
+> > +       case PIN_CONFIG_BIAS_PULL_UP:
+> > +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> > +       case PIN_CONFIG_DRIVE_OPEN_SOURCE:
+> > +       case PIN_CONFIG_DRIVE_PUSH_PULL:
+> > +       case PIN_CONFIG_INPUT_DEBOUNCE:
+> > +               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > +               break;
+> > +       default:
+> > +               break;
+> >         }
+> >
+> > -       return ret;
+> > +       return 0;
+
+...
+
+> Most of this is IMO pointless churn. You typically do a lot of great
+> cleanups but this just doesn't make sense. Sorry but NAK.
+
+OK, I do one change out of that with deduplication of the direction input call,
+the rest is up to you, let's it be less readable.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
