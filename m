@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-390460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A4E9B7A32
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33C09B7A33
 	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EACAB2304D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D2D1C21E1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0538B19C57C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489DA19CC05;
 	Thu, 31 Oct 2024 12:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sqO74uje";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XYbMMdYF"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x5dG4y+i";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fl1iFoiX"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBE6187328
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C008A187864
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376252; cv=none; b=YBnHcuEyS+PhHVY0O/C/+ytp+sbMRPj11PejjZS7s8y+wQE34myIVyDyKpGTm8bny/EIYGm61qKOwr4hb/nYeB5JeQsmEP15Nr9yTo2xIUeRwnBcsZF8qLA/XVD6N7iGBKNhZMwUgZyvLi2Pv24lzmSydbmnvyLoRd+Q3brZ6a4=
+	t=1730376252; cv=none; b=YN3R6MH5+7muPFX/K4dYEFWe+DRJ6h8E1dlndPDz7Pg8XzjzdPGm2BF7R4Zrv62UzNykCDIKi8gRjIm4siWpnt1dYebOJRdaDGJQhVhhVS+htm7MsiGFZGQeMvYk66kOUz+IOmBsHCTpF3eR6Bwe47zr970Ah28jeUR3Z61cvyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730376252; c=relaxed/simple;
-	bh=YpzKu8nEoV96Wt3cSqQgtIZpcMUeZ9ZtHUGIdaBhKqk=;
+	bh=M1eA656eEJ8giqV6WMmEz6tHJn2jOoQrnrwnna6laKc=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=VaQHx91ya4EoYBCaCYD0aqxM245uJU1IEDqu2A1h/lgTpu5SF6lVDivudpV+3DZJ51G5JkMozslz89tbOmU4dws4cZfs7bsvbPhf5FbOxP++TB/Z7ntQKnbuaJU/68s26wCIZPIUzwaecHytGPG7Ime/kOfxzqHPzSU/s2gN3Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sqO74uje; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XYbMMdYF; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=u0SF4CTmEidW9q4k+1+YOQpQEJrz35mjbJ71w+VKYsv2y5HfEIqqpcJeRfmjwHKXjxR932XChWwXAiRdJvDjam/5IpUSH6VglESLVk0u+X14SA9IBk9MCnvH8MVYyP25sXBv+vL8RqoHxx8BYSoYO+UmSvpxueDBR0XmfjrjiYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x5dG4y+i; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fl1iFoiX; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241031120328.536010148@linutronix.de>
+Message-ID: <20241031120328.599430157@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730376247;
+	s=2020; t=1730376249;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=woHrHx/gxc6YVl/Sb4xrXymxodu7bcblbuZnmSYwSvo=;
-	b=sqO74uje4QsJF/7E7KPm81N/DTNzKFCwLnQzy995AAQrKw23h64GvKY9mGAvLXA8yOv7i2
-	QpVAwJnCJExdsHrTt3oo45xKR4z1Gm4NwVnvrxSD+kbJkhxoZolnKELrCii2cY483aimfE
-	knJZLahuhV58i+euJrEgRtv6uSlEasKaXwgzvylo9rJ98LSCCQCaPB8pAtyCuTAgQ1EfFk
-	/R6ioj8Hjyg08MPiTuxR9jo3GKR92o8z4bq0gvUUjOn7z8bIS9uXCk/gcKb4aKczTBjcoQ
-	TXZDMZPT5D7HbaWoIVioPedyvxbYpFbzcAKMtd6OF5UNXpclnfKrPg8sbJfBnQ==
+	 references:references; bh=H0Ct+JGAdNC6UcNJLqKMgCSUbsdDOHXxBCiXizWGKOQ=;
+	b=x5dG4y+idX0lxOlu/AlhnI6u/IbCUuXRUpGAs8S7LfqShEs3U4KuLEEymhG2A9EhSVTRtq
+	oSoE//IkB+nHc7kcTdE4Xg2Bg+vyNsUbFwdZ4sRHE91o3CEWrz568snnX0RhnlVI7EbCxu
+	nMS9/lUzknd1Y5UAfJdZEast63roShIBJbDRZWHau2vaO421JUFtTIpN1OHQfHReU/bcYl
+	lrfA6LNkOfoEvdGQFS6HOA6mgr/4bXK+O8s6Egh0Gdr/01lgIykC32HeZk9/ZlVwv61Xoa
+	ZwlBSyLHnGwuaG9KD/Mzo+vWrV4YMhhR3FBtH4n+rMVNcQILx5Bankkhy8YhoQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730376247;
+	s=2020e; t=1730376249;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=woHrHx/gxc6YVl/Sb4xrXymxodu7bcblbuZnmSYwSvo=;
-	b=XYbMMdYFLzp/8MVQNq2XAxVe4YnVhEhGVzH3Elwk7xikDKagNv3V4douiXJjd0acv6arsh
-	O56tAcC2R7ENr2CA==
+	 references:references; bh=H0Ct+JGAdNC6UcNJLqKMgCSUbsdDOHXxBCiXizWGKOQ=;
+	b=fl1iFoiXWpJigTbu3wyOFanr5dIv5NB8Qc3zFYYXSFiapN0tKysF8147D3GSOI0vhP6Cjk
+	RXGs+SezWtBmV0CA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: John Stultz <jstultz@google.com>,
@@ -56,7 +56,7 @@ Cc: John Stultz <jstultz@google.com>,
  Frederic Weisbecker <frederic@kernel.org>,
  Stephen Boyd <sboyd@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Subject: [patch 1/2] timekeeping: Remove CONFIG_DEBUG_TIMEKEEPING
+Subject: [patch 2/2] timekeeping: Always check for negative motion
 References: <20241031115448.978498636@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,251 +65,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 13:04:07 +0100 (CET)
+Date: Thu, 31 Oct 2024 13:04:08 +0100 (CET)
 
-Since 135225a363ae timekeeping_cycles_to_ns() handles large offsets which
-would lead to 64bit multiplication overflows correctly. It's also protected
-against negative motion of the clocksource unconditionally, which was
-exclusive to x86 before.
+clocksource_delta() has two variants. One with a check for negative motion,
+which is only selected by x86. This is a historic leftover as this function
+was previously used in the time getter hot paths.
 
-timekeeping_advance() handles large offsets already correctly.
+Since 135225a363ae timekeeping_cycles_to_ns() has unconditional protection
+against this as a by-product of the protection against 64bit math overflow.
 
-That means the value of CONFIG_DEBUG_TIMEKEEPING which analyzed these cases
-is very close to zero. Remove all of it.
+clocksource_delta() is only used in the clocksource watchdog and in
+timekeeping_advance(). The extra conditional there is not hurting anyone.
+
+Remove the config option and unconditionally prevent negative motion of the
+readout.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/riscv/configs/defconfig                        |    1 
- include/linux/timekeeper_internal.h                 |   16 --
- kernel/time/timekeeping.c                           |  108 --------------------
- lib/Kconfig.debug                                   |   13 --
- tools/testing/selftests/wireguard/qemu/debug.config |    1 
- 5 files changed, 3 insertions(+), 136 deletions(-)
+ arch/x86/Kconfig                   |    1 -
+ kernel/time/Kconfig                |    5 -----
+ kernel/time/timekeeping_internal.h |    7 -------
+ 3 files changed, 13 deletions(-)
 
-
-
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -301,7 +301,6 @@ CONFIG_DEBUG_MEMORY_INIT=y
- CONFIG_DEBUG_PER_CPU_MAPS=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
- CONFIG_WQ_WATCHDOG=y
--CONFIG_DEBUG_TIMEKEEPING=y
- CONFIG_DEBUG_RT_MUTEXES=y
- CONFIG_DEBUG_SPINLOCK=y
- CONFIG_DEBUG_MUTEXES=y
---- a/include/linux/timekeeper_internal.h
-+++ b/include/linux/timekeeper_internal.h
-@@ -76,9 +76,6 @@ struct tk_read_base {
-  *				ntp shifted nano seconds.
-  * @ntp_err_mult:		Multiplication factor for scaled math conversion
-  * @skip_second_overflow:	Flag used to avoid updating NTP twice with same second
-- * @last_warning:		Warning ratelimiter (DEBUG_TIMEKEEPING)
-- * @underflow_seen:		Underflow warning flag (DEBUG_TIMEKEEPING)
-- * @overflow_seen:		Overflow warning flag (DEBUG_TIMEKEEPING)
-  *
-  * Note: For timespec(64) based interfaces wall_to_monotonic is what
-  * we need to add to xtime (or xtime corrected for sub jiffy times)
-@@ -147,19 +144,6 @@ struct timekeeper {
- 	u32			ntp_error_shift;
- 	u32			ntp_err_mult;
- 	u32			skip_second_overflow;
--
--#ifdef CONFIG_DEBUG_TIMEKEEPING
--	long			last_warning;
--	/*
--	 * These simple flag variables are managed
--	 * without locks, which is racy, but they are
--	 * ok since we don't really care about being
--	 * super precise about how many events were
--	 * seen, just that a problem was observed.
--	 */
--	int			underflow_seen;
--	int			overflow_seen;
--#endif
- };
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -145,7 +145,6 @@ config X86
+ 	select ARCH_HAS_PARANOID_L1D_FLUSH
+ 	select BUILDTIME_TABLE_SORT
+ 	select CLKEVT_I8253
+-	select CLOCKSOURCE_VALIDATE_LAST_CYCLE
+ 	select CLOCKSOURCE_WATCHDOG
+ 	# Word-size accesses may read uninitialized data past the trailing \0
+ 	# in strings and cause false KMSAN reports.
+--- a/kernel/time/Kconfig
++++ b/kernel/time/Kconfig
+@@ -17,11 +17,6 @@ config ARCH_CLOCKSOURCE_DATA
+ config ARCH_CLOCKSOURCE_INIT
+ 	bool
  
- #ifdef CONFIG_GENERIC_TIME_VSYSCALL
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -226,97 +226,6 @@ static inline u64 tk_clock_read(const st
- 	return clock->read(clock);
- }
+-# Clocksources require validation of the clocksource against the last
+-# cycle update - x86/TSC misfeature
+-config CLOCKSOURCE_VALIDATE_LAST_CYCLE
+-	bool
+-
+ # Timekeeping vsyscall support
+ config GENERIC_TIME_VSYSCALL
+ 	bool
+--- a/kernel/time/timekeeping_internal.h
++++ b/kernel/time/timekeeping_internal.h
+@@ -30,7 +30,6 @@ static inline void timekeeping_inc_mg_fl
  
--#ifdef CONFIG_DEBUG_TIMEKEEPING
--#define WARNING_FREQ (HZ*300) /* 5 minute rate-limiting */
--
--static void timekeeping_check_update(struct timekeeper *tk, u64 offset)
--{
--
--	u64 max_cycles = tk->tkr_mono.clock->max_cycles;
--	const char *name = tk->tkr_mono.clock->name;
--
--	if (offset > max_cycles) {
--		printk_deferred("WARNING: timekeeping: Cycle offset (%lld) is larger than allowed by the '%s' clock's max_cycles value (%lld): time overflow danger\n",
--				offset, name, max_cycles);
--		printk_deferred("         timekeeping: Your kernel is sick, but tries to cope by capping time updates\n");
--	} else {
--		if (offset > (max_cycles >> 1)) {
--			printk_deferred("INFO: timekeeping: Cycle offset (%lld) is larger than the '%s' clock's 50%% safety margin (%lld)\n",
--					offset, name, max_cycles >> 1);
--			printk_deferred("      timekeeping: Your kernel is still fine, but is feeling a bit nervous\n");
--		}
--	}
--
--	if (tk->underflow_seen) {
--		if (jiffies - tk->last_warning > WARNING_FREQ) {
--			printk_deferred("WARNING: Underflow in clocksource '%s' observed, time update ignored.\n", name);
--			printk_deferred("         Please report this, consider using a different clocksource, if possible.\n");
--			printk_deferred("         Your kernel is probably still fine.\n");
--			tk->last_warning = jiffies;
--		}
--		tk->underflow_seen = 0;
--	}
--
--	if (tk->overflow_seen) {
--		if (jiffies - tk->last_warning > WARNING_FREQ) {
--			printk_deferred("WARNING: Overflow in clocksource '%s' observed, time update capped.\n", name);
--			printk_deferred("         Please report this, consider using a different clocksource, if possible.\n");
--			printk_deferred("         Your kernel is probably still fine.\n");
--			tk->last_warning = jiffies;
--		}
--		tk->overflow_seen = 0;
--	}
--}
--
--static inline u64 timekeeping_cycles_to_ns(const struct tk_read_base *tkr, u64 cycles);
--
--static inline u64 timekeeping_debug_get_ns(const struct tk_read_base *tkr)
--{
--	struct timekeeper *tk = &tk_core.timekeeper;
--	u64 now, last, mask, max, delta;
--	unsigned int seq;
--
--	/*
--	 * Since we're called holding a seqcount, the data may shift
--	 * under us while we're doing the calculation. This can cause
--	 * false positives, since we'd note a problem but throw the
--	 * results away. So nest another seqcount here to atomically
--	 * grab the points we are checking with.
--	 */
--	do {
--		seq = read_seqcount_begin(&tk_core.seq);
--		now = tk_clock_read(tkr);
--		last = tkr->cycle_last;
--		mask = tkr->mask;
--		max = tkr->clock->max_cycles;
--	} while (read_seqcount_retry(&tk_core.seq, seq));
--
--	delta = clocksource_delta(now, last, mask);
--
--	/*
--	 * Try to catch underflows by checking if we are seeing small
--	 * mask-relative negative values.
--	 */
--	if (unlikely((~delta & mask) < (mask >> 3)))
--		tk->underflow_seen = 1;
--
--	/* Check for multiplication overflows */
--	if (unlikely(delta > max))
--		tk->overflow_seen = 1;
--
--	/* timekeeping_cycles_to_ns() handles both under and overflow */
--	return timekeeping_cycles_to_ns(tkr, now);
--}
--#else
--static inline void timekeeping_check_update(struct timekeeper *tk, u64 offset)
--{
--}
--static inline u64 timekeeping_debug_get_ns(const struct tk_read_base *tkr)
--{
--	BUG();
--}
--#endif
--
- /**
-  * tk_setup_internals - Set up internals to use clocksource clock.
-  *
-@@ -421,19 +330,11 @@ static inline u64 timekeeping_cycles_to_
- 	return ((delta * tkr->mult) + tkr->xtime_nsec) >> tkr->shift;
- }
+ #endif
  
--static __always_inline u64 __timekeeping_get_ns(const struct tk_read_base *tkr)
-+static __always_inline u64 timekeeping_get_ns(const struct tk_read_base *tkr)
+-#ifdef CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE
+ static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
  {
- 	return timekeeping_cycles_to_ns(tkr, tk_clock_read(tkr));
+ 	u64 ret = (now - last) & mask;
+@@ -41,12 +40,6 @@ static inline u64 clocksource_delta(u64
+ 	 */
+ 	return ret & ~(mask >> 1) ? 0 : ret;
  }
- 
--static inline u64 timekeeping_get_ns(const struct tk_read_base *tkr)
+-#else
+-static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
 -{
--	if (IS_ENABLED(CONFIG_DEBUG_TIMEKEEPING))
--		return timekeeping_debug_get_ns(tkr);
--
--	return __timekeeping_get_ns(tkr);
+-	return (now - last) & mask;
 -}
--
- /**
-  * update_fast_timekeeper - Update the fast and NMI safe monotonic timekeeper.
-  * @tkr: Timekeeping readout base from which we take the update
-@@ -477,7 +378,7 @@ static __always_inline u64 __ktime_get_f
- 		seq = raw_read_seqcount_latch(&tkf->seq);
- 		tkr = tkf->base + (seq & 0x01);
- 		now = ktime_to_ns(tkr->base);
--		now += __timekeeping_get_ns(tkr);
-+		now += timekeeping_get_ns(tkr);
- 	} while (raw_read_seqcount_latch_retry(&tkf->seq, seq));
+-#endif
  
- 	return now;
-@@ -593,7 +494,7 @@ static __always_inline u64 __ktime_get_r
- 		tkr = tkf->base + (seq & 0x01);
- 		basem = ktime_to_ns(tkr->base);
- 		baser = ktime_to_ns(tkr->base_real);
--		delta = __timekeeping_get_ns(tkr);
-+		delta = timekeeping_get_ns(tkr);
- 	} while (raw_read_seqcount_latch_retry(&tkf->seq, seq));
- 
- 	if (mono)
-@@ -2333,9 +2234,6 @@ static bool timekeeping_advance(enum tim
- 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
- 		return false;
- 
--	/* Do some additional sanity checking */
--	timekeeping_check_update(tk, offset);
--
- 	/*
- 	 * With NO_HZ we may have to accumulate many cycle_intervals
- 	 * (think "ticks") worth of time at once. To do this efficiently,
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1328,19 +1328,6 @@ config SCHEDSTATS
- 
- endmenu
- 
--config DEBUG_TIMEKEEPING
--	bool "Enable extra timekeeping sanity checking"
--	help
--	  This option will enable additional timekeeping sanity checks
--	  which may be helpful when diagnosing issues where timekeeping
--	  problems are suspected.
--
--	  This may include checks in the timekeeping hotpaths, so this
--	  option may have a (very small) performance impact to some
--	  workloads.
--
--	  If unsure, say N.
--
- config DEBUG_PREEMPT
- 	bool "Debug preemptible kernel"
- 	depends on DEBUG_KERNEL && PREEMPTION && TRACE_IRQFLAGS_SUPPORT
---- a/tools/testing/selftests/wireguard/qemu/debug.config
-+++ b/tools/testing/selftests/wireguard/qemu/debug.config
-@@ -31,7 +31,6 @@ CONFIG_SCHED_DEBUG=y
- CONFIG_SCHED_INFO=y
- CONFIG_SCHEDSTATS=y
- CONFIG_SCHED_STACK_END_CHECK=y
--CONFIG_DEBUG_TIMEKEEPING=y
- CONFIG_DEBUG_PREEMPT=y
- CONFIG_DEBUG_RT_MUTEXES=y
- CONFIG_DEBUG_SPINLOCK=y
+ /* Semi public for serialization of non timekeeper VDSO updates. */
+ unsigned long timekeeper_lock_irqsave(void);
 
 
