@@ -1,112 +1,119 @@
-Return-Path: <linux-kernel+bounces-391139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E3A9B832C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:16:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CAD9B832F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B579D2835EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:16:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1DA21F23630
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6331CB324;
-	Thu, 31 Oct 2024 19:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF4F1CB30A;
+	Thu, 31 Oct 2024 19:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HAO/lXId"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h20r/HXl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7791E347C7;
-	Thu, 31 Oct 2024 19:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D17347C7;
+	Thu, 31 Oct 2024 19:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402154; cv=none; b=U4CbbPH3KHqOX1f3SeutZfuTk0KfHLbyw935gJG+RADZ+MTslZmzQEXEdI3phFYEcRzFH3OpLyNGySahL5PDiO+0F5wfBlgNAEQvkPQsXwVKEbXr0ZzWaDoGMssIqfFbdJszWe9Kynx5c0H1r3yxIiq8dPeIZ7UygqLUqxdPL5M=
+	t=1730402245; cv=none; b=FivZfk1fYZF3sWy3PNwos7OwcBoq7NHS5eU16Q7iqY6vHzM9OWY7ZY/GarE9L3HJryLoMCVlXaWwrMxTJD5+Z9OnFQX7LdY9ph2zUEHqVYa/elt9efB5mVDOFaplVWyV+ralGZ66hOY3HFWiKd9uHKC6+ks2Iz81pU0WMtM0YQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402154; c=relaxed/simple;
-	bh=iz/mcCGKzKAF+54183Qep4jiiK7skiftWfkF3ZQ9fck=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=D+BEr9nHiDAecP0GwEd3JjuWA6q0kTApWXSMY9vngc25MwiDPfsvyM5CKcVibLp8URtchZc2G7yBjw0Bsux1HjWbrTIznmay7GL3wPyFgTRMsRLXOpeGp2TMa9Q8stkdLWzkt9K9MRpPRTGDB5wnIPAk9E+196DfDIz9NFy+Cs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HAO/lXId; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8E54E40E021C;
-	Thu, 31 Oct 2024 19:15:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ODtb6AuBZVDC; Thu, 31 Oct 2024 19:15:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730402142; bh=TjBac+vUXA/VaGYTwTi6FQkjFjIMoAJ+klVbchu+St0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=HAO/lXIdBMw3mLgc3LD9+uFBFW9EQDK2KX2jeJPdfe92n1O18NX440RAsMqu2qUmY
-	 J7DvHEU0App/3VYoCssSdJ/NrxFFZEdVW8sIhgfmoy6CwM0Iuqfj+ZCG6ivc8J72cV
-	 10ihGjL/FAFv1GH2Wi5EIz5P/oBuEHPnsO358Dc3Dm6DYXy06zBqGL5VSmmDIDvYNC
-	 l2GXMMAN56VMz3X/kYfU8FNLrLHKgyAkqnNJwnmztwRAlPTBNRfko79Aty0+JR9Xwt
-	 YBkwfJL92K+pRbcmvP9d6INbvsUb+pUVE2+ywlrhfWYP2KYRn9zcR/1BaiLpfvWY/x
-	 P0YXcmi45qC5jjwhDKvn1uzUTvUdPZfpaUhcZSu5VOtDZ6ylssbBuU1fovpvZe+x5K
-	 4Bsh/fWrnItoPSymNIaTMQm0noPkM5fW78zxq71os9XkbycSh0HzVpEtnSImIjjf8S
-	 /vZTn66Kzkyo04GAzIRZfiBUvWjRsDCxwKJcQKLG3gH/tX6XUL9VevKnSwrlncQMeR
-	 W96nGkXqaHuxtoRisIo5EHzIOCPcNJ3T5EPsh2401NKSrsp+irERAFk1+cOhrQ8+Yt
-	 9YM57SRGpAUxb6fO4wEzdgm19sVqS1uT0P2T6M0nPFrsLp1xym/Qhi5yRaI1iSwztx
-	 Cu8EgO60eyhxE5dQT77PGhGs=
-Received: from [IPv6:::1] (unknown [IPv6:2a02:3033:209:eccc:5132:adc4:8c65:1ae1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B42940E0219;
-	Thu, 31 Oct 2024 19:15:18 +0000 (UTC)
-Date: Thu, 31 Oct 2024 20:15:11 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sohil Mehta <sohil.mehta@intel.com>
-CC: Yazen Ghannam <yazen.ghannam@amd.com>, "Luck, Tony" <tony.luck@intel.com>,
- Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "avadhut.naik@amd.com" <avadhut.naik@amd.com>,
- "john.allen@amd.com" <john.allen@amd.com>,
- "mario.limonciello@amd.com" <mario.limonciello@amd.com>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "Shyam-sundar.S-k@amd.com" <Shyam-sundar.S-k@amd.com>,
- "richard.gong@amd.com" <richard.gong@amd.com>,
- "jdelvare@suse.com" <jdelvare@suse.com>,
- "linux@roeck-us.net" <linux@roeck-us.net>,
- "clemens@ladisch.de" <clemens@ladisch.de>,
- "hdegoede@redhat.com" <hdegoede@redhat.com>,
- "ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- "naveenkrishna.chatradhi@amd.com" <naveenkrishna.chatradhi@amd.com>,
- "carlos.bilbao.osdev@gmail.com" <carlos.bilbao.osdev@gmail.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/cpufeature=3A_Document_cpu?=
- =?US-ASCII?Q?=5Ffeature=5Fenabled=28=29_as_the_default_to_use?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <f9cd603d-8a3f-43fc-a670-75b4d9a6c729@intel.com>
-References: <20241023172150.659002-1-yazen.ghannam@amd.com> <20241023172150.659002-4-yazen.ghannam@amd.com> <20241025155830.GQZxvAJkJnfLfNpSRx@fat_crate.local> <20241029143928.GA1011322@yaz-khff2.amd.com> <20241029150847.GLZyD6f-Hk6pRTEt2c@fat_crate.local> <SJ1PR11MB6083AA7B2E28F2DA24E4B456FC4B2@SJ1PR11MB6083.namprd11.prod.outlook.com> <20241030142138.GA1304646@yaz-khff2.amd.com> <c2894e47-f902-4603-84e7-a9aca545b18c@intel.com> <20241031103401.GBZyNdGQ-ZyXKyzC_z@fat_crate.local> <f9cd603d-8a3f-43fc-a670-75b4d9a6c729@intel.com>
-Message-ID: <74D1358D-952F-4D33-8A5A-1D6F87B49443@alien8.de>
+	s=arc-20240116; t=1730402245; c=relaxed/simple;
+	bh=YF+XtBwianWfnGOhO4q0gH+LPuCSKvryQB8Ejf+k/qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cahb4ZNwcw+rtaJZTpW8/BCAC+dr+WUd3e8AY8EbS6/3gk6dfrChnpZhou2Zm2E62z6g33Gt0UUP04S2qSXm8rB02fQTtBOW5h3Ej62H7eQQ9oWnNvUeQeCSgAE3nyX3VL3TJXe6hueOJpkbLoKbhYokaTW2+3ibCOinngUGy4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h20r/HXl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4E8C4CEC3;
+	Thu, 31 Oct 2024 19:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730402244;
+	bh=YF+XtBwianWfnGOhO4q0gH+LPuCSKvryQB8Ejf+k/qg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h20r/HXlVt2UNyklb/EkzYCghRuWSN9YfQB+6hACEi0IPJhtxEe82PfKEj5PUoHKq
+	 ELmiTGFghrQRTVNQhVgWrDEGm/fcOyXdlu5RCb+V/nU+ny1R3rb1w1K9RUJVI+jaeB
+	 Z/KToI1C7qrHt1PmKbSQUxTXBrXHk/5qURUM0PWhWyk3CZGQngqJbUwcfKBD5ovbj+
+	 D7YAq0gk7hE8d/GDYNCOcMVC0BVLOdc8zl7JsKx1n7/2ZjbqYB+FpS0nI2ucqpusmF
+	 ZCOETC0kVwUt5bph66JJ9GReiYhpulFJ6UyRoIVpqaIvrF1pq56kFPlF1yBYIJOutV
+	 NrJt3lKgQzZ9g==
+Date: Thu, 31 Oct 2024 19:17:17 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Dan
+ Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v1 1/4] iio: acpi: Fill data with NULL when
+ iio_get_acpi_device_name_and_data() fails
+Message-ID: <20241031191717.1a521f03@jic23-huawei>
+In-Reply-To: <20241030160756.2099326-2-andriy.shevchenko@linux.intel.com>
+References: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
+	<20241030160756.2099326-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On October 31, 2024 7:26:27 PM GMT+01:00, Sohil Mehta <sohil=2Emehta@intel=
-=2Ecom> wrote:
->Does "default CPU feature testing macro" roll better than "default CPU
->features testing macro"?
+On Wed, 30 Oct 2024 18:02:17 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Waaay too finicky to me=2E No one cares, I'd say=2E =F0=9F=A4=97=F0=9F=98=
-=82
+> Fill data with NULL, if provided, when returning NULL from
+> iio_get_acpi_device_name_and_data(). Note, the current users check
+> for name to be valid, except one case which was initially doing
+> like that and has to be fixed separately.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/54fac4a7-b601-40ce-8c00-d94807f5e214@stanley.mountain
+> Fixes: dc60de4eb0a4 ("iio: acpi: Add iio_get_acpi_device_name_and_data() helper function")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+This is counter intuitive as usual expectation would be no side effects on an
+error return.  How hard to fix all the users to initialize to NULL if they
+care about that?
+
+There is still a chance we set it to NULL in here anyway, but that should only happen
+if we know the return is good in the sense of no error (missing ACPI etc)
+but not necessarily that dev_name() won't return NULL.
+
+Don't think dev_name() can currently return NULL but 'maybe' it could...
+
+
+
+> ---
+>  drivers/iio/industrialio-acpi.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/industrialio-acpi.c b/drivers/iio/industrialio-acpi.c
+> index d67a43843799..33c737c7a2f8 100644
+> --- a/drivers/iio/industrialio-acpi.c
+> +++ b/drivers/iio/industrialio-acpi.c
+> @@ -102,13 +102,17 @@ EXPORT_SYMBOL_GPL(iio_read_acpi_mount_matrix);
+>   * NOTE: This helper function exists only for backward compatibility,
+>   * do not use in a new code!
+>   *
+> - * Returns: ACPI device instance name or %NULL.
+> + * Returns: ACPI device instance name or %NULL When returning %NULL, the @data,
+> + * if provided, will be also initialised to %NULL.
+>   */
+>  const char *iio_get_acpi_device_name_and_data(struct device *dev, const void **data)
+>  {
+>  	const struct acpi_device_id *id;
+>  	acpi_handle handle;
+>  
+> +	if (data)
+> +		*data = NULL;
+> +
+>  	handle = ACPI_HANDLE(dev);
+>  	if (!handle)
+>  		return NULL;
+
 
