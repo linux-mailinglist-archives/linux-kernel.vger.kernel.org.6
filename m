@@ -1,79 +1,92 @@
-Return-Path: <linux-kernel+bounces-390369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6E59B78F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:47:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604939B78F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC171C241DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:47:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24ADB281544
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF40519994D;
-	Thu, 31 Oct 2024 10:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5E4199FAE;
+	Thu, 31 Oct 2024 10:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZXI3izTC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TntjoUqJ"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925BD19AA41
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535A718593C;
+	Thu, 31 Oct 2024 10:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730371599; cv=none; b=pY1vdjMZWFeCNqGQxsUJmpwpblWuW4s3FCKj2o55imJ5zIhu63iauyMBZ0EeUyyXw34Fr8W+nmr0P+WjD/+vmqDgXH+DJhs7erwQMwdhp1LS35F7HipPemzphOy0jE85Af9ln7QzNSDZpVCA33XcyCFgo1UiBWDoed3RxI7SgZA=
+	t=1730371628; cv=none; b=Lv/lfmtloXmowpT3CWEGgMHc6L8qsrd76Ak4g+Ge8QFVj9CAiUYHYtnQIHCI006uJouVbOYCH4/H3ubuZBESnwTxOnLIkP4AGMwgaV0JV3oH5f/ANG3KzT5bBdgXY0+zcVZYwcisEdoWy5Km6CSSn8ZAyUxjcfDYUuIj6oycpVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730371599; c=relaxed/simple;
-	bh=6PfFS6UMQ7cHAb8+W0ohRERtD1jmi9haCx++tPkMiPo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XINSilqJeiQVvTORsyd1qG24TbumbZ8JxFe7daEU0knJz9CieACYL3bL4Kn2P+DFMubEiwZ7dF52MXWCisLUawLVX+Oq9T8wObdIadyRJmyJwQf+Wg6hFdEV0iYlQBxK4E93VQpZTa8N32Vp78bTNPzmei7LmRVWONYpUTfU4ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZXI3izTC; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730371596; x=1761907596;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6PfFS6UMQ7cHAb8+W0ohRERtD1jmi9haCx++tPkMiPo=;
-  b=ZXI3izTCQowZc57qEr+3mTRHjgTvnAtg+fX/yyVFleIOlP3TnGnQ1hnf
-   gPKmKL8QRR3q2zBX1SReybCmLumdrpZlSkY4TZGpXya+S/qCMzUYJu7fq
-   7VR3aOWa+Bycah0vdTccJksFkVYL60v5bv1t4htD1kH3dG+gH5c0EjdGN
-   FxkQfXhCcbPmwjZOry57KXDhuvVpufr18w5WFJ1fa4BOlJPrbm4L61opg
-   KUrIv1N3AzAG8LIbd845od3Cd6cHYrPHMAISCUseuquCdutRu9T2sNRfS
-   +RgkFsRwj2ZeJJUFKU8kkKUi3QZdrOehV9bK0VItD/z4l7o8IgEZjera0
-   w==;
-X-CSE-ConnectionGUID: Vt05IZKBTDSYVVWM5ZaLzw==
-X-CSE-MsgGUID: 5IFgZ3tXSj2tj3VCmVL/lQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="34032578"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="34032578"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:46:36 -0700
-X-CSE-ConnectionGUID: wS9ww3noQ76p2kiP9/Y0Uw==
-X-CSE-MsgGUID: d7gYKt+VTIKQBMX8fjg2Zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="113442251"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 31 Oct 2024 03:46:33 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 281A317D; Thu, 31 Oct 2024 12:46:31 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] phy: sun4i-usb: Remove unused of_gpio.h
-Date: Thu, 31 Oct 2024 12:46:31 +0200
-Message-ID: <20241031104631.2454581-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1730371628; c=relaxed/simple;
+	bh=2MRXlISGofpJy6zOhWH0qDgXeEfKav+2/JB+H24ewGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=so6EnnMCDv1bFvHC8IIei9cCNuUJWGWxRgLcq8iFuzmGBdwANnbG6Ke+BNVg9vBU10QZEsZBlgy9ev6LbsYDapiPq9jnVb7DgIA4WHgkb8641BIXYckt9dZ2GIlxDM5kEu29xhTzPzog2Da/yT0M9IVhK4IjJ74CtHG/pCjADtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TntjoUqJ; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ee386ce3dfso945374a12.1;
+        Thu, 31 Oct 2024 03:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730371625; x=1730976425; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MRXlISGofpJy6zOhWH0qDgXeEfKav+2/JB+H24ewGY=;
+        b=TntjoUqJZVU/V4Qj33IDDgfl0KS0W1UMZ+FS3VmnIylKLXY0ltAd5PyDWf2o6UZJQL
+         xpoo//29WjZAg0FJE/JGaCKT49FO0KsR7tcuC/1m89Ob5NAObrR4/xbzWuWKSWGEMVyu
+         OxXp/no6HZCNlVHRJNHS5WsNinXFIZj+0fAfYmjBxwr9JivLiJDwUfqVyvn2hyTVmdah
+         XJYuJBsSQlayshU8BA8FthSkPJDqStLmXAflukMlXg7iYzfkD0fy0cII1qeboSNp2lPj
+         wTdBNxL6/KUOxVbDFQOuLRcLlGdqXslBzyxLAOmLnxL0h1/a0uJydjZjJnZIHqdKHKcL
+         KVHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730371625; x=1730976425;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2MRXlISGofpJy6zOhWH0qDgXeEfKav+2/JB+H24ewGY=;
+        b=DOR0N6c8f5tvzMRFmc24kWXMWRo1xnniT8qmKyCbn26xReBKwrnQM6CEkF9jvDWv8t
+         6vsJnK0ZXXLe7mKRxe+rtrfTRnvkS5uocTLaYkgGug/Oez2lIKW3M8UOtUgqrv/Iu0yw
+         m63jAdOUryMMDKrvT+197ODTNlWFaleEUT7i1DY8ek4Q1fliOmP+wQQua+zTdV5RcUNm
+         g9CQ9qx1K2JnIA19xzqA7xGiJoIUcTz+OuVNT+T/aIrNBxumsXEVUDH4zQRe7p90cVGN
+         OwhBCMRQnUkgsLFiapcY7BdnlnDmO3UUMmI/8mu1ACm5AregKbrUgQwAtXNjTIn3VCDT
+         tCow==
+X-Forwarded-Encrypted: i=1; AJvYcCU84faoaYSEzvwIu7/S8daEyVaDzkfYkbnioKPzqKIcQbtkqSg8ROen1yC/tux2pBXgj8aCB87phalQAWpQ@vger.kernel.org, AJvYcCUJjqEreKPmWo3wbF9H7FRH84kxecL1ocDj6GcWCAYNRd8Wbn2K4Cbe4c8Az7aSwWJDDD5SQSugt87B2it9xmEq@vger.kernel.org, AJvYcCVo8V9FViIAX+JX0Im2EgE0N5BpACi+CtCQDvFc/CnqFvOt1L+V6DlDSTk8+bRCnoPW9VU4v14GyLs0@vger.kernel.org, AJvYcCWEJQ0LlukVRb49+EIb2giIgWlCtSRr2bgFyqxeVkdesItaeF7TLZ5dWl/JgjhESN2IG8SkE5KZFCohAg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMNhl7bGjrePfry1bFNNsUZ7Er+QYFP9jxGClnc9Lx8/7XFnzh
+	bnomhqwJb4PIAhnznOJF9OR8MlBmUQR//bmiNzlSiPHhklZkYYoc
+X-Google-Smtp-Source: AGHT+IHZV6eC22Bo2eCDMSor9E97BFyEdYp1eJ4AZtfisxfZOZWlRXG1K3+CB5e0rWgTxFoZq056BQ==
+X-Received: by 2002:a17:90b:38c6:b0:2d8:3f7a:edf2 with SMTP id 98e67ed59e1d1-2e93e0407bcmr2867863a91.12.1730371625623;
+        Thu, 31 Oct 2024 03:47:05 -0700 (PDT)
+Received: from mighty.kangaroo-insen.ts.net ([120.88.183.44])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45a12337sm822291a12.91.2024.10.31.03.47.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 03:47:05 -0700 (PDT)
+From: Mithil Bavishi <bavishimithil@gmail.com>
+To: krzk@kernel.org
+Cc: aaro.koskinen@iki.fi,
+	andreas@kemnade.info,
+	bavishimithil@gmail.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	khilman@baylibre.com,
+	krzk+dt@kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	robh@kernel.org,
+	rogerq@kernel.org,
+	tony@atomide.com
+Subject: Re: [PATCH v2 3/6] dt-bindings: omap: Add Samaung Galaxy Tab 2 7.0
+Date: Thu, 31 Oct 2024 10:46:57 +0000
+Message-ID: <20241031104657.5016-1-bavishimithil@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <b3d51c31-3bcc-4319-8857-e16ddb636328@kernel.org>
+References: <b3d51c31-3bcc-4319-8857-e16ddb636328@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,27 +95,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-of_gpio.h is deprecated and subject to remove. The drivers in question
-don't use it, simply remove the unused header.
+> It's not attached to this thread. I don't have it in my mailbox. Neither
+> did b4 when applying entire thread for review. Sending something
+> separately or making it not accessible for review means it does not
+> exist.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/phy/allwinner/phy-sun4i-usb.c | 1 -
- 1 file changed, 1 deletion(-)
+I am not sure why was sent seperately, I'm trying to learn this workflow
+so it may have been a ametuer mistake from my side, apologies for that.
+I have notes the changes you requested and will try to apply them in v3
+along with others mentioned.
 
-diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
-index cd159a71b23c..29b8fd4b9351 100644
---- a/drivers/phy/allwinner/phy-sun4i-usb.c
-+++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-@@ -23,7 +23,6 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/phy/phy.h>
- #include <linux/phy/phy-sun4i-usb.h>
- #include <linux/platform_device.h>
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Thanks a lot for your patience.
 
+Best Regards,
+Mithil
 
