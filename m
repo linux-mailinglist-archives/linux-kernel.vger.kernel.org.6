@@ -1,172 +1,126 @@
-Return-Path: <linux-kernel+bounces-391221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D429B83F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:03:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECA89B840D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E181F23623
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B2A1C21CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256491CEEBB;
-	Thu, 31 Oct 2024 20:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8951CF5FF;
+	Thu, 31 Oct 2024 20:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KukWMSYm"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rCGZ/gDy"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0661CCEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844DE19ABB4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730404931; cv=none; b=cqBwdoH5RLNDrHaem1QpF5Mi8dchWAvpOQscqlAId4dChNlYfJj0yjGddvXySBzH445T13e01Tr4YKe2SQd8Cjn9AVRpQbWnaU7WOHkmfJv/NO1WDVmkHzeXHc20u79ASddGkAsu7AuEiHfmS5WHXRS7fHDKTFNJd5ASjSd+t6Y=
+	t=1730405047; cv=none; b=eD+tQHJD18jSdEGoY0neQh28g8DbIOfU5eFdk9sn0gjmK9+Eaqycme6t2F4XNu64AZe8JvH6dvXQdl1NfIMf51XSGj6p+0FtTUaRoDgubMNxV9x6coOa/Wau139LK+iSkUlONRMCXNkAIh9WwyMysY8xHzWROAEAxuN6QsltL5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730404931; c=relaxed/simple;
-	bh=grXFaneMr1ISdxB6vm0ixLnCulIRiajDw5Hs4ZGd2QI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p30kw5J6vpYOqz9UKPuVEs11igy9z2wV5J7uy5sxeBSkbwTsCHqCq/h2IvW1iv7wVr7RqEmdq8WPYMzWQZW8Vhsj6stfiDse8JmwPFly3cM3LZvkVuf/SoNL9VdafZ00ZJZy8jNlGAKMHm3rGFXQmns0vTpgjRoE/sLoGC9vgkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KukWMSYm; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43152b79d25so11629815e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:02:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730404928; x=1731009728; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HG0t4NeqbVLn85G3sOjEZke50iDELODkv6ssAwuGw0k=;
-        b=KukWMSYmZAP0rQRob9dCMV93pkgneMVxONCqrE3ElMEVOCe0Oyl4YnCVYc7iLw4Ho7
-         KzJHTBznIQr2yhKI+F3iohjJnXM6YcXeUbfRbZra7jdYbxhcICd1c/QRA2fu6DLhxnDI
-         IKS2SspLtmzE5PVE2Aj6fOk/N5zbHMcNqLXvkqY9kMy2uhTdNUgCVmTKd+Fe8BNf510d
-         DKIjTuVxdbrNQ9OxV4kvESKM+KgYyd9iYzIjVQ9uu45kleEPBsGunm2mzePVrc2A+hut
-         drQsmii/J2ECn9JcFuzRw5b4TD8E9RBLkTjZxPoWkHwIFvxc1EU4wlUjpJ73G+m7/wlB
-         eR6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730404928; x=1731009728;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HG0t4NeqbVLn85G3sOjEZke50iDELODkv6ssAwuGw0k=;
-        b=dZ3vei++hQ6xZ/92phGg08hluSdqMgq8QK/UFyQ5sGPmfxX1+Qc85Bt2pNJB3hxtpG
-         CyUbmaimzXnsIY1gOBRVxaCu6G8EReBLTqvb/dUnU8hoONe8FnV+9vhLbCLKJtDngoLW
-         gO+TD6c/paZ4aF8kFgBszGEn7aHSQxGK607BERb4Cw98+YAqCCXl5JF93BZtrKQGOnAz
-         i9JhjCacd9JhOFQ+q57LkPwq+lFenuVkB5FkHw4zsrcORJw6XWl4gLdZKtMY4oSw3+q2
-         at4aK+1JivqP+gdTC8A7VrZQazvomQQCypqnmwZhe9JOAXemljhH6zdLIbmD9lFxnwIb
-         J2YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaRSli/MPACh0Bvy4k38UeryJznjabTBjFT0/myDQefCrZmKC7eaOiWsgRz9wIXUlLfjLVgnyhD5eoLkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAViuSapYI4psNr506BPpivWLsnW9MC3aGno7HXK76ssfNugmj
-	+F6vN7VpF5zQDn9kxZLq4/GqsLwELaNi3vyYrcpbtVknZa1uOEU5D5N1uAg33pI=
-X-Google-Smtp-Source: AGHT+IFdJz3U9m7KPLf0+/MvSmAS4Ua279P5RD6u7ZsSqyiraKix7E62FxZs6WZVT7OQXDxf0bMwtw==
-X-Received: by 2002:a5d:64e7:0:b0:37d:49cc:cadc with SMTP id ffacd0b85a97d-381be7c20ebmr3290683f8f.32.1730404927612;
-        Thu, 31 Oct 2024 13:02:07 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:f39e:5519:d578:740])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c1189123sm3003993f8f.115.2024.10.31.13.02.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 13:02:06 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 31 Oct 2024 21:01:55 +0100
-Subject: [PATCH v4 5/5] gpio: sysfs: emit chardev line-state events on edge
- store
+	s=arc-20240116; t=1730405047; c=relaxed/simple;
+	bh=DeB184f4TFb79JnTdhyFsFvAi0f64OZa5QexDRja9ug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W6PUOkx2KOW8h5g54r8Apda9KSpLuczNboDqEy7MciU2i37WmQKcF65xwrH0JuS4fi6Czoo0cw1p812nQRoLnWpQY5HFVvH8mmT0dRf0L85qf85jnGXQ0F6VSOvb/wnVxIFbqfNOe5QayuJKIitMyG3YkhB0ltdy3cfnl4Z4XdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=rCGZ/gDy; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 26D5D2C012B;
+	Fri,  1 Nov 2024 09:03:53 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1730405033;
+	bh=Y2rVrxEzenf5xW4+rr7fG8RlWJBZNxoLoDtBnZKILFw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rCGZ/gDyeyHK0KGrod56Bhs/2FYIqUPQ0umGZEihgzt64oVlDbZlXBv0AsUKNRVqa
+	 3fmsfqJ5zclDE1krPa1rnacRhbqhiru1wF/93OOiBaHk6iQu8+bh7lxjgQTfUkmgFI
+	 vwr3U2WN3bK0S2CoVqVPN2rN1We2nPaeHGmlCWxhVp5IYfMnw3C46r7yr462Jn3Gvl
+	 XvvMcnJVis8GfPhSVwRTWEppDCTyGIEqbYftfoyjx+7GSoR2ksSFnnjXumqe12bK1L
+	 FoUV9BOj4ZzVR/f678Al7pOazMFcuitMAK8T9/ykDlfbSzBGFq1HnJvnVdWCkSjTd9
+	 ZyY1+sRqiOH/Q==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6723e2a80000>; Fri, 01 Nov 2024 09:03:52 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id D308B13EE32;
+	Fri,  1 Nov 2024 09:03:52 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id CB832280964; Fri,  1 Nov 2024 09:03:52 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andi.shyti@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	lee@kernel.org,
+	sre@kernel.org,
+	tsbogend@alpha.franken.de
+Cc: linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v8 0/7] RTL9300 support for reboot and i2c
+Date: Fri,  1 Nov 2024 09:03:43 +1300
+Message-ID: <20241031200350.274945-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-gpio-notify-sysfs-v4-5-142021c2195c@linaro.org>
-References: <20241031-gpio-notify-sysfs-v4-0-142021c2195c@linaro.org>
-In-Reply-To: <20241031-gpio-notify-sysfs-v4-0-142021c2195c@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2143;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=VPwlZ8nGOi8NK4NOOYE429uUxxX6CyDyQfdMC7P82fI=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnI+I4WmYgaN7hopWfPfyg4/7kgpmKSho8uMiuI
- hmLg4nTrsuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZyPiOAAKCRARpy6gFHHX
- chfJD/9xX94dUejypKQ2wDpArGCpy1bvkeHW93n1gGrPEIHITENtbuA7vJ/bVDI8pTXHocA6WuK
- oPPppHXRoqSZT2iV5Gx+CjftykF/fnHH0r8ICbZKa9hZ1vzB33XSlbAgLTR7/KZJLO+sZ0hMGzP
- ZiCAxXRpoR4a0x3JBkDMEiRqWUwXNcHkOeZBWNZTPfDV0KacyVWpBadl//yWM+c2QZwVYAFt3Fj
- YzWrZXNUNRlXHxXb4j7KxNOTx/xaaIulu9hHBOZWkz9hjNY+9EwocM4U5pUj8FzdgMKJd5VEa+o
- KtS44V4S+OjYJsHTFuNmmMzQnUhUrfZTee5LYCWTjn3A/K3wkq2lV4VGpC/3zA2+xI+eG3JbdGq
- cQP1DMVdS0f6pZX924SbP6fYGbnLqaKA2T+a5uzD/AZxpXjxu7SnAyEnbxKAwAqHB+Ufk7uzP5g
- NhhvZr9Wcx7CXy31GsztEf5J6GqGxkWhZUkeUvMRZ9QvzEkvHvoMj/qsUmNGVo91KUB+6ZMl3Ro
- CAOTOvIqnMhB14UAK4nCLlFSYQdKt9PZ47ztVNhfujHTNkcLYqfHQZuRBzVjeUR6/5gAkepdIlu
- 7pGKaVcfSK9+h0/HUniQQBgtIOovr2R9t9aJVjU3xt1XL0abW9tfJHt5nnGrJXMZqhHcz7CUvgm
- Y4G1BDstItyFFDg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=6723e2a8 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=VlfZXiiP6vEA:10 a=Ecff0wTpLh6po_UDYMwA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The first two patches have already been applied by Sebastian (thanks),
+they're just included for context. At Lee's request I've split the
+binding patch so the mfd change can go via a different tree to the i2c
+one. As the mfd binding has a $ref to the i2c binding I've put the i2c
+patch first. They should apply cleanly but various automated checkers
+might complain until they land in the same tree. The mips dts and i2c
+driver itself haven't changed since v6 of this series.
 
-In order to emit line-state events on edge changes in sysfs, update the
-EDGE flags in the descriptor in gpio_sysfs_request_irq() and emit the
-event on a successful store.
+--
+2.46.1
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpiolib-sysfs.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Chris Packham (7):
+  dt-bindings: reset: syscon-reboot: Add reg property
+  power: reset: syscon-reboot: Accept reg property
+  dt-bindings: i2c: Add Realtek RTL I2C Controller
+  dt-bindings: mfd: Add Realtek RTL9300 switch peripherals
+  mips: dts: realtek: Add syscon-reboot node
+  mips: dts: realtek: Add I2C controllers
+  i2c: Add driver for the RTL9300 I2C controller
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 49a5aa89cafc..5d7e8e64783c 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -179,12 +179,16 @@ static int gpio_sysfs_request_irq(struct device *dev, unsigned char flags)
- 		return -ENODEV;
- 
- 	irq_flags = IRQF_SHARED;
--	if (flags & GPIO_IRQF_TRIGGER_FALLING)
-+	if (flags & GPIO_IRQF_TRIGGER_FALLING) {
- 		irq_flags |= test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
- 			IRQF_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
--	if (flags & GPIO_IRQF_TRIGGER_RISING)
-+		set_bit(FLAG_EDGE_FALLING, &desc->flags);
-+	}
-+	if (flags & GPIO_IRQF_TRIGGER_RISING) {
- 		irq_flags |= test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
- 			IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
-+		set_bit(FLAG_EDGE_RISING, &desc->flags);
-+	}
- 
- 	/*
- 	 * FIXME: This should be done in the irq_request_resources callback
-@@ -210,6 +214,8 @@ static int gpio_sysfs_request_irq(struct device *dev, unsigned char flags)
- err_unlock:
- 	gpiochip_unlock_as_irq(guard.gc, gpio_chip_hwgpio(desc));
- err_put_kn:
-+	clear_bit(FLAG_EDGE_RISING, &desc->flags);
-+	clear_bit(FLAG_EDGE_FALLING, &desc->flags);
- 	sysfs_put(data->value_kn);
- 
- 	return ret;
-@@ -231,6 +237,8 @@ static void gpio_sysfs_free_irq(struct device *dev)
- 	data->irq_flags = 0;
- 	free_irq(data->irq, data);
- 	gpiochip_unlock_as_irq(guard.gc, gpio_chip_hwgpio(desc));
-+	clear_bit(FLAG_EDGE_RISING, &desc->flags);
-+	clear_bit(FLAG_EDGE_FALLING, &desc->flags);
- 	sysfs_put(data->value_kn);
- }
- 
-@@ -282,6 +290,8 @@ static ssize_t edge_store(struct device *dev,
- 	if (status)
- 		return status;
- 
-+	gpiod_line_state_notify(data->desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
- 	return size;
- }
- static DEVICE_ATTR_RW(edge);
+ .../bindings/i2c/realtek,rtl9301-i2c.yaml     |  69 +++
+ .../bindings/mfd/realtek,rtl9301-switch.yaml  | 114 +++++
+ .../bindings/power/reset/syscon-reboot.yaml   |  11 +-
+ MAINTAINERS                                   |   7 +
+ .../cameo-rtl9302c-2x-rtl8224-2xge.dts        |   2 +-
+ arch/mips/boot/dts/realtek/rtl9302c.dtsi      |  15 +
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       |  29 ++
+ drivers/i2c/busses/Kconfig                    |  10 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-rtl9300.c              | 425 ++++++++++++++++++
+ drivers/power/reset/syscon-reboot.c           |   3 +-
+ 11 files changed, 683 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9301=
+-i2c.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl9301=
+-switch.yaml
+ create mode 100644 arch/mips/boot/dts/realtek/rtl9302c.dtsi
+ create mode 100644 drivers/i2c/busses/i2c-rtl9300.c
 
--- 
-2.45.2
+--=20
+2.47.0
 
 
