@@ -1,158 +1,89 @@
-Return-Path: <linux-kernel+bounces-390890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E962C9B7FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:13:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BB79B7FBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:14:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD329281361
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DC11F21D69
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4465E1B1D63;
-	Thu, 31 Oct 2024 16:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44A71B5ED4;
+	Thu, 31 Oct 2024 16:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T6VHh3kS"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJtiNksE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8FD19DF49
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099991A705C;
+	Thu, 31 Oct 2024 16:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730391231; cv=none; b=su85ch0s0DYcWQ9Pz2nqpOK+ZO7N9h8D63ucs6rGXywGG+fBcVCi738KCoFiP0QiKkzP2cDEjFWtB7qLpoc5I03xmNcb9l04S7tjDc9AYQLHv8Ub9SD4TfmD2Q2doy3m3lFjg0Y/ojTwRIjd6JH4m8QknryOYgJ3hHoUN3jKiWI=
+	t=1730391249; cv=none; b=UVAvzVpE7QqOMpShI7PW/jGKj80aTTUYtS37wFf9QKLQL2QAv/a7Fa2bbXkMLxXLWxCQY6KXueCj2E2E2ebwHJWRp9K8qrX6s5p+pV9U/+3mM/zu8XGITWKjuM1K4dVAuQNbkWA2La+kvruShguNYOCEX9QCCDdWEeJzGx3ei4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730391231; c=relaxed/simple;
-	bh=VvHPgknTQfkkPRYxQDkWVhBjIcD9nECdjixWNWNz9Ns=;
+	s=arc-20240116; t=1730391249; c=relaxed/simple;
+	bh=5t6VVJNafCgV1I0Ifghcn9yyrAvs5qpB5kVMtgOn5cc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=osYL5VZOmIYPZ+ZUu/krRsJ3dcWwEXoVc6jTIgjJjhUBQLdrtrPZw0/Gh4OQK0cWerhqy0/uxuhbjJDEE4dxo3/g7BHLjMp5LELf7iaPGCeiHIq5zqy24PE8ePo/qfDMHP/lhNYUEIfUyFGo+7c7VgtI+4flemHdTiyWrhiP+3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T6VHh3kS; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so9084565e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730391228; x=1730996028; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7CakDXS6c1DhzA9TEtNxJdDyagqdPs+BWOzw82gUl7A=;
-        b=T6VHh3kSDIeLX3z+/Y5FEvnArpPXyc9rZr8sFFYNiFMhwNi9VelXgEHU2L21BvnCzx
-         tBq1Fl6g1ORkjvkCt91gr/qsEwcUfp5LFrXOCz8uEMPtLwmbKt/ObLLk/QTq9HTNys++
-         51al8Y5aNalXGxFiyS5/ygYB8KQ78BPpYifdvkTIB361rK6K3EyxO744LIuQE/e9otCp
-         U+KepFKqabzRwTsmX4icFIJ5oHijaxKyDXyR8x0UneSxU9wslgyeT7Row8D0u43+TbHn
-         KHn9DPfWr1MSrP8iRMQPhewlJjpQYGeg0odkQ9mca/D+Qmb+XAvXWdyZe84HIfVgzNd+
-         2fsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730391228; x=1730996028;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7CakDXS6c1DhzA9TEtNxJdDyagqdPs+BWOzw82gUl7A=;
-        b=dMllAyqmhAvcbyJiS/DtBRg5EbG/bzC3k1+KDp95eelwk7X4PoIES4di+KreLvNNxa
-         TRYteY1MVDdTAvTc2uK1w9mk1HO5nS9ie0od9eYaJZijPI+jA6yzQ2F2kZzqfaBgdHuL
-         A/NmBQ9gOF7WClhHY8eXErqWtzvvJKyUBECUN+cp6UbedoAnxwYhO7InrDCGBgbSrbGG
-         RkpMKN1nqd2+YfSegsku6of8ZJj5PLmdR7G92zLu0Q7IdK+h/TKqlWqO1ofShIWfDkMi
-         bPn3JGyyTyk3m6Bikot1KEmMXeUEzatoWCIXiTqpcoDu97AaFO3Xv7cWgffv/X9kSmdr
-         l5QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYE87y/4pKjQVq3awZUVo85yphZz7EaVpxbTaLm1ojdiUOd9kKh9PEMvtX8BIBtX70LiaF7mVXaj5WPWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQt/6U5+QBrFHF/LaFTftgQzBRPyaWjYwztYdZmZP+AYiGzoua
-	ZKlNWisS5wXuxxxRiaZllb5zJ4hLDFIRD4UjRqiNgHq22sdsZV91uggGKCfNFdZ95LIv5570htG
-	W
-X-Google-Smtp-Source: AGHT+IHCYxSGmVXNdG6HbEGSCE6KOxPf10odxndDOKvnEQsVM7GhMv1g4/6VDhU24xOmBDFWwJuNug==
-X-Received: by 2002:a05:600c:a04:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-431bb8a01dfmr66125375e9.0.1730391227625;
-        Thu, 31 Oct 2024 09:13:47 -0700 (PDT)
-Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6852fdsm31030365e9.34.2024.10.31.09.13.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 09:13:47 -0700 (PDT)
-Date: Thu, 31 Oct 2024 18:13:45 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhBIfI9QQTsYbeDO4LpS502kNKBNX03zWnwJEaCgnAbMc4okhl3isjk+RXg1ho5u5b/+nAgwL6M9m2TNibjg8UVc3UNqJE+lzERUgvgMIm1/k02j4vw9+QEdqGPytt9UuySDwSxm2l+pJaXnRTMUWCglKYoxx3v1jj0B3uKPFuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJtiNksE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26109C4CEF5;
+	Thu, 31 Oct 2024 16:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730391248;
+	bh=5t6VVJNafCgV1I0Ifghcn9yyrAvs5qpB5kVMtgOn5cc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aJtiNksE+JeI8iORMT8f807ZRfCr2GnEmB195WPrqxwtRl+Tum1vXeGnfekhN6hSM
+	 aqatg9kLMCcJkXHTdyYgWZmROusT1SDyYbfa2nqknRh4v1v2nsNC5kE/JETiz9UIcw
+	 81+4qAtvqs5gvz0uFcQSus4PgNINN9ETgD2RuEOeknJRW2ZCMB5G5xLtmAayJjVpVh
+	 SgmSQjqNY/PwXUv1pjO5iVLhuEQ66yfaCWXe2ldThVwcvG0EHISgfeRqEalJHXdEOS
+	 xdMdtp8EHs9alfswbeVhWQwhiSrH/ibHl0IpL+OJ1dAFVkWDUXwTzUU4PPSNxb8fbm
+	 1/r/042Zk9Fxw==
+Date: Thu, 31 Oct 2024 16:14:04 +0000
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Naresh Solanki <Naresh.Solanki@9elements.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-Message-ID: <ZyOsuTr4XBU3ogRx@linaro.org>
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <ZxYBa11Ig_HHQngV@hovoldconsulting.com>
- <ZyOOwEPB9NLNtL4N@hovoldconsulting.com>
+Subject: Re: (subset) [PATCH 1/2] leds: max5970: fix unreleased fwnode_handle
+ in probe function
+Message-ID: <20241031161404.GJ10824@google.com>
+References: <20241019-max5970-of_node_put-v1-0-e6ce4af4119b@gmail.com>
+ <20241019-max5970-of_node_put-v1-1-e6ce4af4119b@gmail.com>
+ <173039113720.1798167.5364741747242416515.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZyOOwEPB9NLNtL4N@hovoldconsulting.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <173039113720.1798167.5364741747242416515.b4-ty@kernel.org>
 
-On 24-10-31 15:05:52, Johan Hovold wrote:
-> On Mon, Oct 21, 2024 at 09:23:24AM +0200, Johan Hovold wrote:
-> > On Fri, Oct 18, 2024 at 03:49:34PM +0300, Abel Vesa wrote:
-> > > The assignment of the of_node to the aux bridge needs to mark the
-> > > of_node as reused as well, otherwise resource providers like pinctrl will
-> > > report a gpio as already requested by a different device when both pinconf
-> > > and gpios property are present.
+On Thu, 31 Oct 2024, Lee Jones wrote:
+
+> On Sat, 19 Oct 2024 21:36:43 +0200, Javier Carrasco wrote:
+> > An object initialized via device_get_named_child_node() requires calls
+> > to fwnode_handle_put() when it is no longer required to avoid leaking
+> > memory.
 > > 
-> > I don't think you need a gpio property for that to happen, right? And
-> > this causes probe to fail IIRC?
-
-Yes, I think this is actually because of the pinctrl property in the node,
-so no gpio needed.
-
-Yes, probe fails.
-
+> > Add the missing calls to fwnode_handle_put() in the different paths
+> > (error paths and normal exit).
 > > 
-> > > Fix that by using the device_set_of_node_from_dev() helper instead.
-> > > 
-> > > Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
-> > 
-> > This is not the commit that introduced the issue.
-
-The proper fixes tag here is actually:
-
-Fixes: 2a04739139b2 ("drm/bridge: add transparent bridge helper")
-
-> > 
-> > > Cc: stable@vger.kernel.org      # 6.8
-
-> > 
-> > I assume there are no existing devicetrees that need this since then we
-> > would have heard about it sooner. Do we still need to backport it?
-
-None of the DTs I managed to scan seem to have this problem.
-
-Maybe backporting it is not worth it then.
-
-> > 
-> > When exactly are you hitting this?
-
-Here is one of the examples.
-
-[    5.768283] x1e80100-tlmm f100000.pinctrl: error -EINVAL: pin-185 (aux_bridge.aux_bridge.3)
-[    5.768289] x1e80100-tlmm f100000.pinctrl: error -EINVAL: could not request pin 185 (GPIO_185) from group gpio185 on device f100000.pinctrl
-[    5.768293] aux_bridge.aux_bridge aux_bridge.aux_bridge.3: Error applying setting, reverse things back
-
+> > [...]
 > 
-> Abel, even if Neil decided to give me the finger here, please answer the
-> above so that it's recorded in the archives at least.
+> Applied, thanks!
 > 
-> Johan
-> 
+> [1/2] leds: max5970: fix unreleased fwnode_handle in probe function
+>       commit: 42c04062ba3cd1f2aef96dc160e0ab4b45b5e10a
 
-Sorry for not replying in time before the patch was merge.
+Unapplied.
 
-Abel.
+-- 
+Lee Jones [李琼斯]
 
