@@ -1,153 +1,174 @@
-Return-Path: <linux-kernel+bounces-390468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E919B7A4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:11:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A222C9B7A4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BFA1C21D2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B0F5B212F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A750C19C559;
-	Thu, 31 Oct 2024 12:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8092B19C553;
+	Thu, 31 Oct 2024 12:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IF6pfreW"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DUqKM+eU"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65DD191F65;
-	Thu, 31 Oct 2024 12:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B62B191F65;
+	Thu, 31 Oct 2024 12:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376696; cv=none; b=hMT+MQD1AWu+udl1VEH7LaG3wKeK2Heq0evlQfkSCSaL0XG+hxzEwrr+nMWFTCdxYbuXV++pHcNxoJ7Zy8WZsH11XWEx0BzkwfEY9JvEqbdJ/4Q0dB2Nc4ZAIQeL1tPUTukVC1ImsGEw7HIFl2+jtSwH0Ydj6Pp4lYJrkhrymPc=
+	t=1730376744; cv=none; b=rvQfBv3RmEblAkcZHGY2qzzUFStAudhWo2CaPPn0kGPcrMLuK5Bq0uQoEK5fLpOzulZ+zAvthl/wS73fc5S52hPB017O5dmXoxML1rsgyJ3yWJUU07MdW5bohYOPsWgHFScCE3XueJpDCAkzY4ntJGsKG1oSCuGGQsTYg3R+D0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376696; c=relaxed/simple;
-	bh=AjcIyXaZAHmbI0poOFGfWCd9nLkYloalU6kHRzskv64=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=utkKEv+tMuicQfXpZtfH7VGhw/yri8lF5VQdzQuoDAdUA8noZNLW/shbTRqhIpa266xIn5e9HoXCB6TBHv4jbt7nlTXfDHKRbYH3Q5KeTz4Hhp5A2q9AgwhBWoZRA6l8wZSTZsof3GkC/EcInh9S6kYaayO4C1/oGCTsQRw/wzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IF6pfreW; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d3ecad390so1246971f8f.1;
-        Thu, 31 Oct 2024 05:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730376692; x=1730981492; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CYIf2HjwWeOrqyA8bh/VYoTm/NYlT2fenLJBBh/Gdo4=;
-        b=IF6pfreWiMmTYXEXM3tHOVyokLAXViEvZsBpmxofxh3NIwnG3kHRiHB2nYvqvTIX+q
-         5+v1A4+rvjF+sWMYT+0WG+npljl7UTvVe1K5iwikCijwPahdHqtaS6eJK4cKO8JuuJAM
-         ofKQt3N6y9wGc/mHxYbWit+vkH38Aoh8aQoKn0jQeNqUPGORcc3A0VYk96gAt1rJJHiD
-         J1Jko3+pUw1B1jFDl1Q7uAbqyLWk36b3UZaW3qujT8EpFoFlgaDi+lE9Vyyfyaw16RlT
-         8Tfn5XNEpssKJopp2ZkQUIVh6Xd11gw8gpglJo/pQ2of+RySyJL5jrzW63ZpyiowHETl
-         1DKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730376692; x=1730981492;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CYIf2HjwWeOrqyA8bh/VYoTm/NYlT2fenLJBBh/Gdo4=;
-        b=MPyNyBRAqQfmr3RUBpbTXCRhoagCIc79PcovL/N46aLdbkvu6J0xUSo/ejsdFgcAry
-         pPkDjtuzixOKIUyr0pbSOG6lq2dknMHJs+OVytxd323XwxEIU5VmgdvHfQBZzuSPno2e
-         gyq9bueORYrfctJ7l0DORcVNIxS3dta5fFFjFsVJhnBfwK9i/ZKdt5lJIU6mc0Nhd0pl
-         1hUHjSaQzWP0KKxnXfRkhJp+fBaFLt1VB5PsYa9SCx1jPSV+jG/Uol5PtHYEOV8VYY7l
-         mb0TrwA93hXTI4BHaehSP70TjECKPOKWBwK6MRqsqVr721ZP0JMjl/nRGhDtBCtHm2Ni
-         gf9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWH5mgQmdBFSeeRgHY1ebvyTcosGLrm9zGQbEubpqDK95QRb699WOtYyqFroRoRJ229ErL63DNNtTjrndA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCXZngb2qZh5sxSHhWjmCTFn4I2yAyXgpbZmrPA5SgFH+kohJc
-	XFjK2+rHbSy49gMtmbo5EH6TC5yd0q4BMoS2zpePu1frN7X+Fvlx
-X-Google-Smtp-Source: AGHT+IHrtzPOed5WE1Vq4z6/4B4q2Z4fqgyHnICqO/NAWJS6QBh9edI/rR9gby1IvXiHxk/u92vSyA==
-X-Received: by 2002:a05:6000:18a5:b0:367:8e57:8 with SMTP id ffacd0b85a97d-381c14a4ba2mr1880976f8f.19.1730376691594;
-        Thu, 31 Oct 2024 05:11:31 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab305sm24111195e9.7.2024.10.31.05.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 05:11:31 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 31 Oct 2024 13:11:23 +0100
-Subject: [PATCH v2] Bluetooth: btbcm: fix missing of_node_put() in
- btbcm_get_board_name()
+	s=arc-20240116; t=1730376744; c=relaxed/simple;
+	bh=rn0aWTTY0KMqfLPWnH+E/QS8/fTDFhq3wxJYiBjO97k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hINYQfOXR/jvgOGhnOiJXIaqCjsPVSYx4nwnfXjKVZAX/ScUBe6f42YX3HPAonm5FUSWQr8SUssa7JzpR3EHijWmqnOrVJSiR9Ut5GxQ/hAuVScRHnsXNk3/3VnrwC8eORKFw43MMYqJWKfQM8wpFU1SjxlZphFJTdfu3yvBde0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DUqKM+eU; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TOQW25mPDvS9JYuVAn2I5kSOsF/BA7sQILr6dKumHd4=; b=DUqKM+eUK2OqqeWbA+h6k90pKj
+	G0gZ26I/zbHoWKFGqBJXoFtz/L6ongHy928Am/6rt4c+c6o1T0O6cHOF5TR3/zx9DpIgCqKW+0FQO
+	aC6ITTWca5gEklq2JiMaX6GdVBUVY+yFSynG2ziYLqakdewuic4Mk2gdcroApT6A3HPpo22QQyx0w
+	NJPP9imkeQhGxipk5BvKCuynetHu2ZW/LPNgY+XZjcrYhkPleXD/C2WVyvEYsw07mZzDT0DQbjpiz
+	+ESZsxuIaw40ZbC5DAQAbLdHNo8zAvY67DJpbjPH1TrpXHvUt/VzMiym6r2+rsfXSWtyovI9xBobJ
+	muSM5W3w==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t6U20-0000Ej-F2; Thu, 31 Oct 2024 13:12:04 +0100
+Message-ID: <d3549d00-3f58-4f62-8903-4b7b8b3a42b1@igalia.com>
+Date: Thu, 31 Oct 2024 09:11:56 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-bluetooth-btbcm-node-cleanup-v2-1-482d52910bfa@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAOpzI2cC/43NSw6CMBSF4a2Qjr2mDxLEkfswDPq4hZtAa9pCN
- IS9W1mBw+8M/rOzjIkws3uzs4QbZYqhQl4aZicdRgRy1Uxy2QquOJh5xRJjmcAUYxcI0SHYGXV
- YXyCVk0J36tZxy2rildDT+8w/h+qJconpc75t4rf+Gd4EcPDOtqZ3vveoHuOiab7auLDhOI4vW
- ddVQsgAAAA=
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730376690; l=2032;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=AjcIyXaZAHmbI0poOFGfWCd9nLkYloalU6kHRzskv64=;
- b=UFumaFTuD+2/+/a2o79kaW1AW71drF7RL8PCZyZR5PuresyBgB1FaVpSSB6P2/JnT7aH6v5lc
- jcGAKQxMggwDEE3l9Rr5y/1E3RfI5pYDswdGydrOfoVrxyLJyo2mbdn
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] mm: huge_memory: Use strscpy() instead of strcpy()
+To: Barry Song <21cnbao@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
+ <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com, kees@kernel.org
+References: <20241030130308.1066299-1-mcanal@igalia.com>
+ <20241030130308.1066299-5-mcanal@igalia.com>
+ <CAGsJ_4zMppHY29XXepOVTdEu2-1U6mGyZ8FqXZfP_in+2T3NAA@mail.gmail.com>
+ <b31bd54c-400c-4432-8b4b-0ba12bcf8011@igalia.com>
+ <CAGsJ_4wKdCq8HnH=R3dWefZAqbLjyX06WdJ4T_UMogFZDS7Wqg@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <CAGsJ_4wKdCq8HnH=R3dWefZAqbLjyX06WdJ4T_UMogFZDS7Wqg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-of_find_node_by_path() returns a pointer to a device_node with its
-refcount incremented, and a call to of_node_put() is required to
-decrement the refcount again and avoid leaking the resource.
++cc Kees Cook
 
-If 'of_property_read_string_index(root, "compatible", 0, &tmp)' fails,
-the function returns without calling of_node_put(root) before doing so.
+Hi Barry,
 
-The automatic cleanup attribute can be used by means of the __free()
-macro to automatically call of_node_put() when the variable goes out of
-scope, fixing the issue and also accounting for new error paths.
+On 31/10/24 09:01, Barry Song wrote:
+> On Thu, Oct 31, 2024 at 6:55 PM Maíra Canal <mcanal@igalia.com> wrote:
+>>
+>> Hi Barry,
+>>
+>> On 30/10/24 20:07, Barry Song wrote:
+>>> On Thu, Oct 31, 2024 at 2:03 AM Maíra Canal <mcanal@igalia.com> wrote:
+>>>>
+>>>> Replace strcpy() with strscpy() in mm/huge_memory.c
+>>>>
+>>>> strcpy() has been deprecated because it is generally unsafe, so help to
+>>>> eliminate it from the kernel source.
+>>>>
+>>>> Link: https://github.com/KSPP/linux/issues/88
+>>>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+>>>> ---
+>>>>    mm/huge_memory.c | 4 ++--
+>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index f92068864469..8f41a694433c 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -989,7 +989,7 @@ static int __init setup_thp_anon(char *str)
+>>>>
+>>>>           if (!str || strlen(str) + 1 > PAGE_SIZE)
+>>>>                   goto err;
+>>>> -       strcpy(str_dup, str);
+>>>> +       strscpy(str_dup, str);
+>>>
+>>> What is the difference between strcpy and strscpy without a size parameter?
+>>>
+>>> we have already a check and goto err. strcpy() is entirely safe.
+>>>            if (!str || strlen(str) + 1 > PAGE_SIZE)
+>>>                    goto err;
+>>>
+>>> My understanding is that we don't need this patch.
+>>
+>> strcpy() is a deprecated interface [1]. From the GitHub issue I linked
+>> in the commit description, Kees states: "A lot of kernel code is still
+>> using strcpy(). While the CONFIG_FORTIFY_SOURCE wrapper macros tend to
+>> make its use mostly safe, it would be nice to eliminate the function
+>> from the kernel entirely."
+> 
+> I don't see any value added here since strscpy() has no size parameter and
 
-Fixes: 63fac3343b99 ("Bluetooth: btbcm: Support per-board firmware variants")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Changes in v2:
-- Squash patches for mainline solution without intermediate steps.
-- Link to v1: https://lore.kernel.org/r/20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com
----
- drivers/bluetooth/btbcm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+As `str_dup` is a sized buffer, we don't need to specify the size
+parameter.
 
-diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-index eef00467905e..a1153ada74d2 100644
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -541,11 +541,10 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
- static const char *btbcm_get_board_name(struct device *dev)
- {
- #ifdef CONFIG_OF
--	struct device_node *root;
-+	struct device_node *root __free(device_node) = of_find_node_by_path("/");
- 	char *board_type;
- 	const char *tmp;
- 
--	root = of_find_node_by_path("/");
- 	if (!root)
- 		return NULL;
- 
-@@ -555,7 +554,6 @@ static const char *btbcm_get_board_name(struct device *dev)
- 	/* get rid of any '/' in the compatible string */
- 	board_type = devm_kstrdup(dev, tmp, GFP_KERNEL);
- 	strreplace(board_type, '/', '-');
--	of_node_put(root);
- 
- 	return board_type;
- #else
+> we have checked strlen(str) + 1 > PAGE_SIZE to avoid parsing any pointless
+> bootcmd longer than PAGE_SIZE.
 
----
-base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
-change-id: 20241030-bluetooth-btbcm-node-cleanup-23d21a73870c
+ From my point of view, this is an extra layer of safety. A developer
+could change `str_dup` to SZ_4K and leave PAGE_SIZE in the check. This
+could pass by in a review and we would have a check that allows strings
+bigger than the destination buffer in systems using 16KB pages.
 
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+But see that `split_huge_pages_write` uses `strcpy` without any checks.
+
+I can remove the internal check from `setup_thp_anon` if you feel it
+would be more suitable.
+
+Best Regards,
+- Maíra
+
+ > > But I have no objection to this patch if other people like it.
+> 
+>>
+>> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
+>>
+>> Best Regards,
+>> - Maíra
+>>
+>>>
+>>>>
+>>>>           always = huge_anon_orders_always;
+>>>>           madvise = huge_anon_orders_madvise;
+>>>> @@ -4175,7 +4175,7 @@ static ssize_t split_huge_pages_write(struct file *file, const char __user *buf,
+>>>>
+>>>>                   tok = strsep(&buf, ",");
+>>>>                   if (tok) {
+>>>> -                       strcpy(file_path, tok);
+>>>> +                       strscpy(file_path, tok);
+>>>>                   } else {
+>>>>                           ret = -EINVAL;
+>>>>                           goto out;
+>>>> --
+>>>> 2.46.2
+>>>>
+>>>
+> Thanks
+> barry
 
 
