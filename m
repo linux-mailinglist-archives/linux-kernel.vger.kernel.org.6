@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-390270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765DE9B77C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F419B77C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229261F2332E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3F91F22EBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01D4195FEC;
-	Thu, 31 Oct 2024 09:42:18 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73D4196C7B;
+	Thu, 31 Oct 2024 09:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s83G6sty";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oyyTImzd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E79D194C65
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C0D17B436;
+	Thu, 31 Oct 2024 09:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367738; cv=none; b=LWweu/Ceyg6EgywpNIRfUZpKsNr6b0WIbF3J/RuNiuoYfJe2yOfiBU6GDVwX749ZGZVBOWyId1jkLjVKc2HaL4Tj4QGh6fqQIkWxnmP3mm+Yn3gbS9UfHYMObrNVw1JAW+xzl0w12OscoiYmgSbSitPOdrgQ75pLvrK+qKfKemE=
+	t=1730367770; cv=none; b=uiqSdiFeTEsPVPJBzjzTKxMqF4EAH8/OfXwgZXTYQIBFbyHELx0zQN+qPCPKqRXKnRjyLXZc8WppIdynjQmjmEnMTYFDk0XzwPQR4sb0JyljHKA0y7mSy/Ih99Wy9UrgtuWeEshADwPpNZ/avcLrMjUNscV/7XlgDuHtdvVu8rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367738; c=relaxed/simple;
-	bh=A2IaCG+DDz9Mkq2IEmOoYi35S55ux1K8Km4pU5hqmBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oXK0m4XwgPc8upywd2/I397dFcLPrtXLPOHoK9WSft/sNvRvLifCu7dMdynAlh35eE2R83pX7pRad0v0J+vWusqWwR6+uqP16sichLCHjN0Fc4+ZXfJll3eBU0C2knE9Gi28BxyHCxAYKKTDh/nMVOPNZpWy/hdidCO7I89k4w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a0472306cso93172666b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:42:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730367735; x=1730972535;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z3gbF0jbVNATgdlKALkxAF4j3DYG+tZbqUqbaS3H890=;
-        b=TI5izCSn3NP20qaTlWxkKvO2VWr4ZmTxH8wyoU71a8N4JYZoScXCFiGq18ZOnqQjWM
-         iN/kXiJgXz1Sg4aW9CuRoh7hIVYEG31ebSIN1+jOXZVmZdNN+rssjHGO93r0QRVvTjzc
-         yqqwBOO6v5MmM7dMipPlZCOti5womzz+o0nQJ8vJPqNCRKZT6NZPr2fZMcu4b6t4qMf3
-         rdXUtvXLTs1OE43ahNxU6YAZ55zWWwYvv+2UljGqM7aqRtdxBseb+/R9H5wBDoHse/CD
-         T+JNuGN7BAWZCPtFDSOMWUGTcHZvNrfngJCWLRheD4eT445ucCfIQHSaI0lMqih4vCWC
-         IUpg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7qGi9epcB/C3ik/rnxnvNtggOk+cTs5LmJHRDvCmQ7/b1KpUakDJifCdi4mgKK4o5geByJrASqlRoEG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxczXefI6nEsM9OcoDAnq9n2eqfB36QKbkDB3OtXalnYruVsKi5
-	Ff6H2niTMH9UlxIBBwOUYUTz2u9yrvLtRqzO0H4juBi4eoyDnvbx
-X-Google-Smtp-Source: AGHT+IFH6dXFVyTgu3CJIoORadnJQZzAQnBsT133x+mK+vd53zFt0Lh5GFERCXyDz8dWXQsOI8aq4Q==
-X-Received: by 2002:a17:906:dac1:b0:a9a:66a9:2c55 with SMTP id a640c23a62f3a-a9e508aade9mr256692366b.6.1730367734630;
-        Thu, 31 Oct 2024 02:42:14 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5663cd43sm47016666b.143.2024.10.31.02.42.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 02:42:14 -0700 (PDT)
-Date: Thu, 31 Oct 2024 02:42:12 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: bp@alien8.de, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/bugs: spectre user default must depend on
- MITIGATION_SPECTRE_V2
-Message-ID: <20241031-romantic-active-spider-5bccd8@leitao>
-References: <20241015105107.496105-1-leitao@debian.org>
- <20241015105107.496105-3-leitao@debian.org>
- <20241028143453.govo3bnbayc7rqjj@desk>
- <20241029-large-perfect-bulldog-ce53b3@leitao>
- <20241030183920.s4lk33ckvqtkguzm@desk>
+	s=arc-20240116; t=1730367770; c=relaxed/simple;
+	bh=gvIolUj3GPlr1v9Qqq8NCLwsd+Y00rCxC2cPy5H86zE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OlAZ2BCvV1qdaCXloVrIh4GqCMa0Dt6keIlAU9XVZLTpsUICEc9Y5WvdSjRYkIcp0mYanRfX1ZixkVt81TWx8ZyiyRAA9JAU6kIE9XyVV7Zefwb8yplFouv328HU1dUhMprjgMzfoP39VI9AMrXKfeH2AkzLcuFDIkL3HkLkAjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s83G6sty; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oyyTImzd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730367766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hnGraNEP/rz5O8q33kitqbhHCgnpJ/YmvKLNCF0vYpQ=;
+	b=s83G6styN8bgmTOKXbhnhzTwe1neMnP/IpGepXQT7lX+qFFWLfa1JAALy/5s/UDFw+e9Is
+	bWN4An2XBNJf//s8S3rU7M4QZ9tW/s8n+d7qe0IPa0PFV8uXRDQ8jpz4smkRquwI9563H0
+	BWZUZC50qQ/7deg/5m9O7B7x+bsRXd2dJT6dhYvot1HbXtcdOglrUjODmchKNiWY88aERW
+	B7S8QXHIXqKfzHg5PRrTnoSWpxONFzCX2ZxU7STM06NHPwu2lFHbE1Rp031323f8dF81Dz
+	n3nE+LRcrLXQI8Yx/DHg0s/otWtPbd4IJbK4+YnBKMtk4IFTCSpO3tFOm+TjeA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730367766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hnGraNEP/rz5O8q33kitqbhHCgnpJ/YmvKLNCF0vYpQ=;
+	b=oyyTImzdRYppbqXbvspmSJ48xaqRz2JgQX5pq2j23MXY1W3SVMnYhCx5MHCGxCTDOE6EGH
+	cn8sejRYV+V+e6CA==
+To: Naresh Kamboju <naresh.kamboju@linaro.org>, Linux ARM
+ <linux-arm-kernel@lists.infradead.org>, open list
+ <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, Linux
+ Regressions <regressions@lists.linux.dev>, rcu <rcu@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Mark Brown <broonie@kernel.org>, Alex =?utf-8?Q?Be?=
+ =?utf-8?Q?nn=C3=A9e?=
+ <alex.bennee@linaro.org>, Peter Maydell <peter.maydell@linaro.org>, "Paul
+ E. McKenney" <paulmck@kernel.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Anders Roxell <anders.roxell@linaro.org>,
+ Aishwarya TCV <aishwarya.tcv@arm.com>
+Subject: Re: next-20241031: kernel/time/clockevents.c:455
+ clockevents_register_device
+In-Reply-To: <CA+G9fYtb5vAnEiHupwsnaeZ7uzdko_WAcjw9ZAFkHNXBVhi1EA@mail.gmail.com>
+References: <CA+G9fYtb5vAnEiHupwsnaeZ7uzdko_WAcjw9ZAFkHNXBVhi1EA@mail.gmail.com>
+Date: Thu, 31 Oct 2024 10:42:45 +0100
+Message-ID: <87zfmkwqui.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030183920.s4lk33ckvqtkguzm@desk>
+Content-Type: text/plain
 
-Hello Pawan,
+On Thu, Oct 31 2024 at 14:10, Naresh Kamboju wrote:
+> The QEMU-ARM64 boot has failed with the Linux next-20241031 tag.
+> The boot log shows warnings at clockevents_register_device and followed
+> by rcu_preempt detected stalls.
+>
+> However, the system did not proceed far enough to reach the login prompt.
+> The fvp-aemva, Qemu-arm64, Qemu-armv7 and Qemu-riscv64 boot failed.
+>
+> Please find the incomplete boot log links below for your reference.
+> The Qemu version is 9.0.2.
+> <4>[ 0.220657] WARNING: CPU: 1 PID: 0 at kernel/time/clockevents.c:455
+> clockevents_register_device (kernel/time/clockevents.c:455
+> <4>[ 0.225218] clockevents_register_device+0x170/0x188 P
+> <4>[ 0.225367] clockevents_config_and_register+0x34/0x50 L
+> <4>[ 0.225487] clockevents_config_and_register (kernel/time/clockevents.c:523)
+> <4>[ 0.225553] arch_timer_starting_cpu
+> (drivers/clocksource/arm_arch_timer.c:1034)
+> <4>[ 0.225602] cpuhp_invoke_callback (kernel/cpu.c:194)
+> <4>[ 0.225649] __cpuhp_invoke_callback_range (kernel/cpu.c:965)
+> <4>[ 0.225691] notify_cpu_starting (kernel/cpu.c:1604)
 
-On Wed, Oct 30, 2024 at 11:40:53AM -0700, Pawan Gupta wrote:
-> On Tue, Oct 29, 2024 at 02:19:12AM -0700, Breno Leitao wrote:
-> > > If this is the intention it should be
-> > > clearly documented that enabling kernel mitigation does not enable user
-> > > mitigation. And an explicit spectre_v2_user= is required to enable user
-> > > mitigation.
-> > 
-> > That is fair. I didn't find a place where to document about diferent
-> > behavior when CONFIG_MITIGATION_X is disabled. What would you suggest?
-> 
-> You could describe the behavior in the commit message and update kernel
-> parameter documentation.
-> 
-> With that:
-> 
-> Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> 
-> ---
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1518343bbe22..f8bc02cd10ec 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6241,6 +6241,8 @@
->  
->  			Selecting 'on' will also enable the mitigation
->  			against user space to user space task attacks.
-> +			Selecting specific mitigation does not force enable
-> +			user mitigations.
->  
->  			Selecting 'off' will disable both the kernel and
->  			the user space protections.
+That's obvious what happens here. notify_cpu_starting() is invoked
+before the CPU is marked online, which triggers the new check in
+clockevents_register_device().
 
-Sure, I will update it.
+I removed the warning and force pushed the fixed up branch, so that
+should be gone by tomorrow.
 
-Thanks for the review!
---breno
+Thanks,
+
+        tglx
 
