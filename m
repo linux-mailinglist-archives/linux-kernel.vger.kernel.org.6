@@ -1,266 +1,222 @@
-Return-Path: <linux-kernel+bounces-389833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209C89B7204
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:35:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A259B71FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DDC1F262F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4BB11C24316
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18D649638;
-	Thu, 31 Oct 2024 01:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D1249641;
+	Thu, 31 Oct 2024 01:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZlUJaWlR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ago83/Mb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F47D2FB
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2995A1F5FD;
+	Thu, 31 Oct 2024 01:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730338528; cv=none; b=SPSA34TlX8yD4MVpCSeYxVIIXUMn8ucyrEoOW+222SfmCrj99kCFZ0OL5nRKeYK+Zi5UQAjVljwIyzCZPpbu74rHjPzXbJQ/gp0USfzIV3IxvqUu81JIoAZdebi+UYIqveVfECxlAcNcnWixZMiXgHP1bykvQxqJbusFfRTUOuI=
+	t=1730338382; cv=none; b=Ngowok+MiZbz5jyZcT9r5THEHLul3TDUXnumyVLOZwVzb1UT0nUk3qxOS0fjX6id6HeQmVKO46fEOAS16hD2YYQWqUQGrGh/YMSgFWZlVPwfqzoPurw01GQukqm3TyuZVlQzSwMWEQvBNV8aRhPcDoCa7yqxE1568nOfDAMkTzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730338528; c=relaxed/simple;
-	bh=WuF36lZjHaYlPv9BbCV28pQgEqIcnbHQ6qVMkSkkZmY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s5GZHwYMm95xAwOw2L3qLvqyHkcEmfNKuVrYeToyGe7MhVHmwNRmTFHif16Xv3qHAJM4aaV2k6o9ACjCbhxyaXfqE/HiR+xphhXAvADe4pH4koMYdlf7cxXmLyDHN4O09t938Z2NcFCDZgl5Ht7Fv5kGP9SHEpQhWVGE2hnS+Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZlUJaWlR; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730338525; x=1761874525;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=WuF36lZjHaYlPv9BbCV28pQgEqIcnbHQ6qVMkSkkZmY=;
-  b=ZlUJaWlR2AlXokEol8hQEoxPMHH/lckOKvhj6lDq1a4bjol7W7QSlrbE
-   FK6s+HGsYsdC7hNXNkcevuzdsb3qzQ1EpU115URuokg2gI6kDlDh+5a2O
-   VW2K95eA+DwUCPyxEdGYSM0mbtvl37/pUtm2pYkQEgGtRuQAqK1NSjCpu
-   +bnjvVdrBePHUoL2DfpjYej+fE0cEvdAploB/taPhzSc4VnAxoFwGAJii
-   rRZhcYV9J5n/0k1zWpqo5WhkUEsG7zCFZBZwDkC+D4Dotgu6fAXlRZWpO
-   x0QJ74HppPIoOP1qJFajCQ1H6zCOCVc1vS5HpBpQy55ZphN3yghpLiCVq
-   w==;
-X-CSE-ConnectionGUID: sYOGP6vjR2CHOGi3Ryg+WA==
-X-CSE-MsgGUID: Txbdn7tlRom3fmRgsgqtDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="32905321"
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="32905321"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 18:35:25 -0700
-X-CSE-ConnectionGUID: wHR1di9uTNG5o719ddQRoA==
-X-CSE-MsgGUID: UJv52kH3So2KKh/nVFQeDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="87088100"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 18:35:21 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,
-  Baolin Wang <baolin.wang@linux.alibaba.com>,  David Hildenbrand
- <david@redhat.com>,  Chris Li <chrisl@kernel.org>,  Yosry Ahmed
- <yosryahmed@google.com>,  Kairui Song <kasong@tencent.com>,  Ryan Roberts
- <ryan.roberts@arm.com>,  Kanchana P Sridhar
- <kanchana.p.sridhar@intel.com>,  Usama Arif <usamaarif642@gmail.com>
-Subject: Re: [PATCH v2] mm: add per-order mTHP swpin counters
-In-Reply-To: <CAGsJ_4wemLBdoV4TMaeSWThMtVJtU+HjyAVwKDV978mAOqkhBA@mail.gmail.com>
-	(Barry Song's message of "Thu, 31 Oct 2024 14:13:04 +1300")
-References: <20241030233423.80759-1-21cnbao@gmail.com>
-	<87cyjh9khr.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAGsJ_4wemLBdoV4TMaeSWThMtVJtU+HjyAVwKDV978mAOqkhBA@mail.gmail.com>
-Date: Thu, 31 Oct 2024 09:31:49 +0800
-Message-ID: <878qu59hx6.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730338382; c=relaxed/simple;
+	bh=LM69VNH2TsJahDR8b3xaQhyWbfS+Rx4YGdCl+rOEuAI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=V6NV9XMKKUqnYafuBC4w4x7JgQ3N4aIMXDLmkyl8gN7D8Niq8r1SoXf5qJ60XJuo4oJVC16eDc48Bg/D+0RYt/njXegHcDw36a5NO3yLplzD7QmXNUxd+K0bMHlehnCFEtvN9HNrIk8Er467+1OMp1G9CRHTWWxh5hKpqBzlZ5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ago83/Mb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64BA2C4CECE;
+	Thu, 31 Oct 2024 01:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730338381;
+	bh=LM69VNH2TsJahDR8b3xaQhyWbfS+Rx4YGdCl+rOEuAI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ago83/MbmMlAF7moq8XakPQr9rvX5vqIsmGl9AOCjYWUI531+pE2191Mv92U+QlW5
+	 yegqRxVCLz+1u8oZowVhw8j9Z0f/gx8e1UhlQVKwkxw1Ey6FaxCtxlOVgyzoUAtjvT
+	 g+5eaBSd04VBcYOpakro7OLTQIx/mfx3ZLCRT4wDL/ycv4tSg6sVEzpdq8NZOhTr9N
+	 i6upYLw3Mx7r+mmYwzXGu+TOQ5AYVfx81IKg91ipNLbaAANhq8/vHOp7mlAdWlzORx
+	 hAbYvtVg8iuc/FEo4eSvEsIkXXor4fIkoVbL63phSFI9QnwwnYX7c+Zk5BQm+6zCAB
+	 klmocpOw9HlRA==
+Date: Thu, 31 Oct 2024 10:32:56 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, naveen@kernel.org,
+ anil.s.keshavamurthy@intel.com, davem@davemloft.net, kees@kernel.org,
+ gustavoars@kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/3] kprobes: Annotate structs with __counted_by()
+Message-Id: <20241031103256.9cbb33ec091305805ec64888@kernel.org>
+In-Reply-To: <20241022205557.GA3004519@thelio-3990X>
+References: <20240813115334.3922580-1-ruanjinjie@huawei.com>
+	<20240813115334.3922580-2-ruanjinjie@huawei.com>
+	<20241022205557.GA3004519@thelio-3990X>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Barry Song <21cnbao@gmail.com> writes:
+Hi Nathan,
 
-> On Thu, Oct 31, 2024 at 1:39=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
-> wrote:
->>
->> Barry Song <21cnbao@gmail.com> writes:
->>
->> > From: Barry Song <v-songbaohua@oppo.com>
->> >
->> > This helps profile the sizes of folios being swapped in. Currently,
->> > only mTHP swap-out is being counted.
->> > The new interface can be found at:
->> > /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
->> >          swpin
->>
->> This looks strange, why isn't it
->>
->> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats/swpin
->>
->> ?
->
-> I might be mistaken, but I want to highlight the path and new interface
-> separately, as I=E2=80=99ve done in ec33687c67493 ("mm: add per-order mTHP
-> anon_fault_alloc and anon_fault_fallback counters"):
->
-> If you prefer it on the same line, I=E2=80=99m completely fine with sendi=
-ng v3
-> to make the change.
+On Tue, 22 Oct 2024 13:55:57 -0700
+Nathan Chancellor <nathan@kernel.org> wrote:
 
-I am fine to highlight the new interface.  May be something like
+> Hi,
+> 
+> On Tue, Aug 13, 2024 at 07:53:32PM +0800, Jinjie Ruan wrote:
+> > Add the __counted_by compiler attribute to the flexible array member
+> > stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> > CONFIG_FORTIFY_SOURCE.
+> > 
+> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> > ---
+> >  kernel/kprobes.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index da59c68df841..e6f7b0d3b29c 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -92,7 +92,7 @@ struct kprobe_insn_page {
+> >  	struct kprobe_insn_cache *cache;
+> >  	int nused;
+> >  	int ngarbage;
+> > -	char slot_used[];
+> > +	char slot_used[] __counted_by(nused);
+> >  };
+> >  
+> >  #define KPROBE_INSN_PAGE_SIZE(slots)			\
+> > -- 
+> > 2.34.1
+> > 
+> 
+> This change was not properly tested. In next-20241022, where this
+> changes appears as commit 0888460c9050 ("kprobes: Annotate structs with
+> __counted_by()"), I get a fortify failure because ->nused is initialized
+> after the call to memset(). For example, with Debian's powerpc64le
+> configuration (which is just the first configuration I happened to see
+> this warning in, I don't think it is architecture specific):
+> 
+>   $ curl -LSso .config https://github.com/nathanchance/llvm-kernel-testing/raw/096eeab130a9077206d3ddd6f0c6e39187113869/configs/debian/powerpc64le.config
+> 
+>   $ make -skj"$(nproc)" ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- LLVM=1 olddefconfig zImage.epapr
+> 
+>   $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20230707-182910/ppc64le-rootfs.cpio.zst | zstd -d >rootfs.cpio
+> 
+>   $ qemu-system-ppc64 \
+>       -display none \
+>       -nodefaults \
+>       -device ipmi-bmc-sim,id=bmc0 \
+>       -device isa-ipmi-bt,bmc=bmc0,irq=10 \
+>       -machine powernv \
+>       -kernel arch/powerpc/boot/zImage.epapr \
+>       -initrd rootfs.cpio \
+>       -m 2G \
+>       -serial mon:stdio
+>   ...
+>   [    0.000000] Linux version 6.12.0-rc4-next-20241022 (nathan@n3-xlarge-x86) (ClangBuiltLinux clang version 19.1.2 (https://github.com/llvm/llvm-project.git 7ba7d8e2f7b6445b60679da826210cdde29eaf8b), ClangBuiltLinux LLD 19.1.2 (https://github.com/llvm/llvm-project.git 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)) #1 SMP Tue Oct 22 20:24:37 UTC 2024
+>   ...
+>   [    0.138628] ------------[ cut here ]------------
+>   [    0.138816] memset: detected buffer overflow: 512 byte write of buffer size 0
+>   [    0.140141] WARNING: CPU: 0 PID: 1 at lib/string_helpers.c:1033 __fortify_report+0x60/0x80
+>   [    0.142208] Modules linked in:
+>   [    0.142722] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc4-next-20241022 #1
+>   [    0.143379] Hardware name: IBM PowerNV (emulated by qemu) POWER10 0x801200 opal:v7.1 PowerNV
+>   [    0.143810] NIP:  c000000000900920 LR: c00000000090091c CTR: 0000000000000000
+>   [    0.144098] REGS: c000000002acf290 TRAP: 0700   Not tainted  (6.12.0-rc4-next-20241022)
+>   [    0.144457] MSR:  9000000002029033 <SF,HV,VEC,EE,ME,IR,DR,RI,LE>  CR: 24800280  XER: 00000000
+>   [    0.145048] CFAR: c00000000014e414 IRQMASK: 0
+>   [    0.145048] GPR00: c00000000090091c c000000002acf530 c0000000017bf0e0 0000000000000041
+>   [    0.145048] GPR04: c0000000025911f8 c0000000ffffefff 0000000000000003 0000000000000001
+>   [    0.145048] GPR08: 0000000000000003 0000000000000004 0000000000000000 9000000002001033
+>   [    0.145048] GPR12: 0000000000800000 c00000000289e000 c000000000010eb8 0000000000000000
+>   [    0.145048] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+>   [    0.145048] GPR20: 0000000000000000 0000000000000000 0000000000000000 c0000000027fba70
+>   [    0.145048] GPR24: 61c8864680b583eb 0000000000000000 0000000000001000 0000000000000000
+>   [    0.145048] GPR28: c000000002a83400 c00000000262de68 c00000000262de30 c000000002acf5b0
+>   [    0.147696] NIP [c000000000900920] __fortify_report+0x60/0x80
+>   [    0.147934] LR [c00000000090091c] __fortify_report+0x5c/0x80
+>   [    0.148277] Call Trace:
+>   [    0.148465] [c000000002acf530] [c00000000090091c] __fortify_report+0x5c/0x80 (unreliable)
+>   [    0.148855] [c000000002acf590] [c000000000900958] __fortify_panic+0x18/0x40
+>   [    0.149133] [c000000002acf5b0] [c0000000002e3508] __get_insn_slot+0x308/0x320
+>   [    0.149413] [c000000002acf620] [c0000000000586c4] arch_prepare_kprobe+0x1e4/0x270
+>   [    0.149699] [c000000002acf6b0] [c0000000002e496c] register_kprobe+0x4cc/0x8e0
+>   [    0.149975] [c000000002acf930] [c0000000020154ac] arch_init_kprobes+0x30/0x54
+>   [    0.150262] [c000000002acf960] [c0000000020411bc] init_kprobes+0x80/0x120
+>   [    0.150524] [c000000002acf9d0] [c000000000010630] do_one_initcall+0x120/0x3e0
+>   [    0.150798] [c000000002acfd50] [c000000002005cb8] do_pre_smp_initcalls+0x70/0x114
+>   [    0.151082] [c000000002acfd90] [c000000002005b70] kernel_init_freeable+0x14c/0x224
+>   [    0.151365] [c000000002acfde0] [c000000000010eec] kernel_init+0x3c/0x250
+>   [    0.151622] [c000000002acfe50] [c00000000000de3c] ret_from_kernel_user_thread+0x14/0x1c
+>   [    0.151935] --- interrupt: 0 at 0x0
+>   [    0.152433] Code: 3cc2fffc 70630001 3c62ffa0 78841f48 38c6f388 38636489 7c86202a 3cc2ff9c 38c62f30 7cc8305e 4b84d9e1 60000000 <0fe00000> 38210060 e8010010 7c0803a6
+>   [    0.153155] ---[ end trace 0000000000000000 ]---
+>   ...
+> 
+> Even if the current ->nused assignment is moved before the call to
+> memset(), the failure still occurs because 1 is clearly wrong for the
+> size of memset(), which is 512 bytes for this configuration. Could this
+> instance of memset() be avoided by using kzalloc() for the kip
+> allocation? Could also take the opportunity to use struct_size(). The
+> following diff fixes this issue for me but I did not do any further
+> testing. If this does not work for some reason and there is no other
+> obvious solution, I think this change should be reverted.
 
-In /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats, 'swpin'
-is added for ...
+Yeah, it looks good to me. As Jinije said, can you send this as a
+fix patch? I will pick it.
 
-However, I have no strong opinion here.  If everyone except me feels
-confusing, that should be fine.
+Thank you,
 
->>
->> > For example,
->> > cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpin
->> > 12809
->> > cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/stats/swpin
->> > 4763
->>
->> You miss "$"?
->
-> Yes.
->
->>
->> $ cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpin
->> 12809
->> $ cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/stats/swpin
->> 4763
->>
->> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
->> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> > Acked-by: David Hildenbrand <david@redhat.com>
->> > Cc: Chris Li <chrisl@kernel.org>
->> > Cc: Yosry Ahmed <yosryahmed@google.com>
->> > Cc: "Huang, Ying" <ying.huang@intel.com>
->> > Cc: Kairui Song <kasong@tencent.com>
->> > Cc: Ryan Roberts <ryan.roberts@arm.com>
->> > Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
->> > Cc: Usama Arif <usamaarif642@gmail.com>
->> > ---
->> >  -v2:
->> >  * collect Baolin's reviewed-by and David's acked-by, thanks!
->> >  * add some examples for the interface in the changelog, Per
->> >    Huang, Ying. thanks!
->> >  * add a blank line in doc which was missed in v1.
->> >
->> >  Documentation/admin-guide/mm/transhuge.rst | 4 ++++
->> >  include/linux/huge_mm.h                    | 1 +
->> >  mm/huge_memory.c                           | 3 +++
->> >  mm/page_io.c                               | 3 +++
->> >  4 files changed, 11 insertions(+)
->> >
->> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentatio=
-n/admin-guide/mm/transhuge.rst
->> > index 2a171ed5206e..5caa3fb2feb1 100644
->> > --- a/Documentation/admin-guide/mm/transhuge.rst
->> > +++ b/Documentation/admin-guide/mm/transhuge.rst
->> > @@ -534,6 +534,10 @@ zswpout
->> >       is incremented every time a huge page is swapped out to zswap in=
- one
->> >       piece without splitting.
->> >
->> > +swpin
->> > +     is incremented every time a huge page is swapped in from a non-z=
-swap
->> > +     swap device in one piece.
->> > +
->> >  swpout
->> >       is incremented every time a huge page is swapped out to a non-zs=
-wap
->> >       swap device in one piece without splitting.
->> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> > index c59e5aa9b081..b94c2e8ee918 100644
->> > --- a/include/linux/huge_mm.h
->> > +++ b/include/linux/huge_mm.h
->> > @@ -120,6 +120,7 @@ enum mthp_stat_item {
->> >       MTHP_STAT_ANON_FAULT_FALLBACK,
->> >       MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
->> >       MTHP_STAT_ZSWPOUT,
->> > +     MTHP_STAT_SWPIN,
->> >       MTHP_STAT_SWPOUT,
->> >       MTHP_STAT_SWPOUT_FALLBACK,
->> >       MTHP_STAT_SHMEM_ALLOC,
->> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> > index b26c6503e993..f92068864469 100644
->> > --- a/mm/huge_memory.c
->> > +++ b/mm/huge_memory.c
->> > @@ -616,6 +616,7 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_=
-ANON_FAULT_ALLOC);
->> >  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLB=
-ACK);
->> >  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAUL=
-T_FALLBACK_CHARGE);
->> >  DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
->> > +DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
->> >  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
->> >  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
->> >  #ifdef CONFIG_SHMEM
->> > @@ -635,6 +636,7 @@ static struct attribute *anon_stats_attrs[] =3D {
->> >       &anon_fault_fallback_charge_attr.attr,
->> >  #ifndef CONFIG_SHMEM
->> >       &zswpout_attr.attr,
->> > +     &swpin_attr.attr,
->> >       &swpout_attr.attr,
->> >       &swpout_fallback_attr.attr,
->> >  #endif
->> > @@ -666,6 +668,7 @@ static struct attribute_group file_stats_attr_grp =
-=3D {
->> >  static struct attribute *any_stats_attrs[] =3D {
->> >  #ifdef CONFIG_SHMEM
->> >       &zswpout_attr.attr,
->> > +     &swpin_attr.attr,
->> >       &swpout_attr.attr,
->> >       &swpout_fallback_attr.attr,
->> >  #endif
->> > diff --git a/mm/page_io.c b/mm/page_io.c
->> > index c69fab5060a1..5d9b6e6cf96c 100644
->> > --- a/mm/page_io.c
->> > +++ b/mm/page_io.c
->> > @@ -487,6 +487,7 @@ static void sio_read_complete(struct kiocb *iocb, =
-long ret)
->> >               for (p =3D 0; p < sio->pages; p++) {
->> >                       struct folio *folio =3D page_folio(sio->bvec[p].=
-bv_page);
->> >
->> > +                     count_mthp_stat(folio_order(folio), MTHP_STAT_SW=
-PIN);
->> >                       count_memcg_folio_events(folio, PSWPIN, folio_nr=
-_pages(folio));
->> >                       folio_mark_uptodate(folio);
->> >                       folio_unlock(folio);
->> > @@ -573,6 +574,7 @@ static void swap_read_folio_bdev_sync(struct folio=
- *folio,
->> >        * attempt to access it in the page fault retry time check.
->> >        */
->> >       get_task_struct(current);
->> > +     count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
->> >       count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
->> >       count_vm_events(PSWPIN, folio_nr_pages(folio));
->> >       submit_bio_wait(&bio);
->> > @@ -589,6 +591,7 @@ static void swap_read_folio_bdev_async(struct foli=
-o *folio,
->> >       bio->bi_iter.bi_sector =3D swap_folio_sector(folio);
->> >       bio->bi_end_io =3D end_swap_bio_read;
->> >       bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
->> > +     count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
->> >       count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
->> >       count_vm_events(PSWPIN, folio_nr_pages(folio));
->> >       submit_bio(bio);
->>
+> 
+> Cheers,
+> Nathan
+> 
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index 98d71a5acb72..6adb0cc4e45c 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -95,10 +95,6 @@ struct kprobe_insn_page {
+>  	char slot_used[] __counted_by(nused);
+>  };
+>  
+> -#define KPROBE_INSN_PAGE_SIZE(slots)			\
+> -	(offsetof(struct kprobe_insn_page, slot_used) +	\
+> -	 (sizeof(char) * (slots)))
+> -
+>  static int slots_per_page(struct kprobe_insn_cache *c)
+>  {
+>  	return PAGE_SIZE/(c->insn_size * sizeof(kprobe_opcode_t));
+> @@ -175,7 +171,7 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+>  		goto retry;
+>  
+>  	/* All out of space.  Need to allocate a new page. */
+> -	kip = kmalloc(KPROBE_INSN_PAGE_SIZE(slots_per_page(c)), GFP_KERNEL);
+> +	kip = kzalloc(struct_size(kip, slot_used, slots_per_page(c)), GFP_KERNEL);
+>  	if (!kip)
+>  		goto out;
+>  
+> @@ -185,10 +181,8 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+>  		goto out;
+>  	}
+>  	INIT_LIST_HEAD(&kip->list);
+> -	memset(kip->slot_used, SLOT_CLEAN, slots_per_page(c));
+> -	kip->slot_used[0] = SLOT_USED;
+>  	kip->nused = 1;
+> -	kip->ngarbage = 0;
+> +	kip->slot_used[0] = SLOT_USED;
+>  	kip->cache = c;
+>  	list_add_rcu(&kip->list, &c->pages);
+>  	slot = kip->insns;
 
---
-Best Regards,
-Huang, Ying
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
