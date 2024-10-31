@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-390382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1D69B7921
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:55:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DC39B7929
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:56:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9ED41F2265E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B744285CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2B1199E9F;
-	Thu, 31 Oct 2024 10:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9908119AD4F;
+	Thu, 31 Oct 2024 10:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BD45STXZ"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AGmG8ygU"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECE613A25F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70BF13A25F;
+	Thu, 31 Oct 2024 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372140; cv=none; b=D/3kC7mIrXLoanSGV/Q2QyMOqp6A7HZFTMRKOyvPQ1fT6nEaCcCkHKh+tNdd6mW5WqgfdXmryMD3B781Uw3ZtYMlD0YAS4GOpCL9tydaIhWbOVQ6sFnjlEEqp2xw27HtrmqQiU0oyQk1WL9E8MIDERCDVDZq/lFQISfWqxQjbCM=
+	t=1730372172; cv=none; b=oFNzizW1rBhySRuzK7AGwCdfHiGgGQL2DsCh8W/j9M2GrO5snDIKhNYkzI66DEfgTEJIqG5AX0qrZk87Y6/3o5T0/nKcfo8szeJeLdEzK/vuAtOVBC0sFXuHLhqMYx9A6XftRcgr4f0g3znnIbx0cbJFb/fwnzv88trAWlYuH7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372140; c=relaxed/simple;
-	bh=I2kWhSn8aENuSjRYLbfTtVZqAafY2D3IXG9eCyhkJHo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QSBIhO53x6ER6cV1KAjaaIxtXQMrEd8f1NiNJB5HbbNXgCEpF8lQ+q1gYeq2Mt9mVvYF7fFzVJRBLoTEld5vgUmmFuPDLPU5gCWPu0lPOgYf44nbhAwmf7KTzZggmTGosJOhwrnSsgT/1fu7u2Ve5B44w+E7/wBd2XuekLqQwWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BD45STXZ; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ea4add8a5fso7438477b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730372137; x=1730976937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vHNRb+kQOoIzK3RlYlUwYxMLFnjUn6/EMjgF1j51zD8=;
-        b=BD45STXZlKfld/tGPeOWk5hU6ablzJchrRkqni+88D3pJ1ZAUUYdjfLXy67JMXFMcU
-         dvX5yd10bj9YajlHAtcaN8JalAIz4U6Y2JVlyI1CNmGlPc+rLNqpUFVLKOZHfCCG44h4
-         AF9669qvDi1gHmNpCTx9KmFSErHnEpKeVabd9wgofg3okgsA/7VoN6e+UF+JniVUFpIZ
-         ENxfr84BJTe5ve3Or/fgn+PpHDiIDMrI/XKsWcU4gp3pISh0IY+fmGOZXTOv7HLC0eAl
-         rEeIPoz8PIVDANMwSHiQfruvzwnlpF4QOsaBBNF17hMjjI/XcRVZlqi7UUYbaDTLCskz
-         /bmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730372137; x=1730976937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vHNRb+kQOoIzK3RlYlUwYxMLFnjUn6/EMjgF1j51zD8=;
-        b=eXoDJA4wcGcuyq0YKd7ps4e4sCbMCQZmt/5kfCMzZCcV+D86k3thu4Bj5InM2AGguJ
-         nE2A3zEMgvOOZLIEr8W1cDlpp+RMB2oJfHp+tb0gUU1rDdg9qnKVHWRwmPFEyNvusTdu
-         aB8DJFxhwxossig0syJYODMwNEfMlpLm8FA8x17SaI852pBZHc+1Y5qcfbaYTO8P1OFE
-         JuN886uhYis6q07AtSbh9KjLflqc7XMt+778IOLrlT4DY/FG88aZTMu+CnvNejpF+X5s
-         +NlyeIrfLSzzQBYTtcAecyAbGX2VNzpoze6afX6ibFNwshKxctb/PBu/c436IXCUEl8h
-         9zAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNj3ClgAZfLE41IXDusvCVlcYbXJQy+2EtkC8J2p1Cyl+oPjewyav3pPgalk7itqWI2UCy6+mtMJbblVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEVczR0Mp8sWDedGFDUKUV5+6PzfDkJT0p1zpNCoxQLsyC1ryK
-	Uhm9CF+JHSX4Hc48gELCpEo8vrSsQDgBoepbf38U+SQMzBuoqlrs
-X-Google-Smtp-Source: AGHT+IEkuvKipKcZUa/w/oJLu7XXuSvnRybQdKUGtgrHvr1s3fNV5JdwZUYSaRSJ6dd/HO8FSlWZmQ==
-X-Received: by 2002:a05:690c:4c01:b0:6e3:14b0:ff86 with SMTP id 00721157ae682-6ea524e28c9mr27632317b3.27.1730372137224;
-        Thu, 31 Oct 2024 03:55:37 -0700 (PDT)
-Received: from hemlock.fiveisland.rocks (dhcp-213-15-2-159.pbband.net. [159.2.15.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9f201sm6618476d6.16.2024.10.31.03.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 03:55:36 -0700 (PDT)
-From: Marc Dionne <marc.c.dionne@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: [PATCH v4] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
-Date: Thu, 31 Oct 2024 07:55:34 -0300
-Message-ID: <20241031105534.565533-1-marc.c.dionne@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730372172; c=relaxed/simple;
+	bh=jLofZIwivoLG+7s6ZAAzJLv64dhFLgAvPyWSQFGY6Ms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kYQl32ifrIdD4tCpuwS57i4UvCVouehuiZX5B+lrNDxZLiSOJR1aSgpugVEGHNvuJYRaaV9dx60eLjPHt2XKlb2EsgKgZlrXL7W/Namy0cBDWmnFiT/3be6Q/pI6glt7mS3N2dhuCJMH2rO9N17o4ewrCO5lZMfCPFAky+L8q2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AGmG8ygU; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1e1Pem+qp2w/Akjj6dWKUEh4AeuCe5dpoYvS12Rnvgk=; b=AGmG8ygUmt9zRxbe2HYj47fYd2
+	EiRCxeRBJhijKoPrVolQe3tPVfysPtMjYtfTkYC0HlELl1ad+sr4YTi26PSK3Pq6lXHeCk4BHRDyF
+	Z6KZ5gMf6p+XnvldU6r/AUir8KBGsjcuWD8L8fk1fW+Y7Bpg7j6ENGCB+QC0B8LbUC6gY1Gg+QhXk
+	ldArIjA3eFO430UEK26691k2vzg+aqSImfJBCTfeNHNiaGw2sEcSyz2PD8lmYdGjbzRjYtmFwKYXu
+	mpTp9wyEzy+y5aKhz/x/O19EIGbFgEiLCMAvsiDxRE96AMCONwG34ZmhgPp8JtkVSwn0MlrqiU6F6
+	RnFAcbFQ==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t6SqD-00HZkr-Lv; Thu, 31 Oct 2024 11:55:50 +0100
+Message-ID: <b31bd54c-400c-4432-8b4b-0ba12bcf8011@igalia.com>
+Date: Thu, 31 Oct 2024 07:55:42 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] mm: huge_memory: Use strscpy() instead of strcpy()
+To: Barry Song <baohua@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
+ <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+References: <20241030130308.1066299-1-mcanal@igalia.com>
+ <20241030130308.1066299-5-mcanal@igalia.com>
+ <CAGsJ_4zMppHY29XXepOVTdEu2-1U6mGyZ8FqXZfP_in+2T3NAA@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <CAGsJ_4zMppHY29XXepOVTdEu2-1U6mGyZ8FqXZfP_in+2T3NAA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Marc Dionne <marc.dionne@auristor.com>
+Hi Barry,
 
-The number of slabs can easily exceed the hard coded MAX_SLABS in the
-slabinfo tool, causing it to overwrite memory and crash.
+On 30/10/24 20:07, Barry Song wrote:
+> On Thu, Oct 31, 2024 at 2:03 AM Maíra Canal <mcanal@igalia.com> wrote:
+>>
+>> Replace strcpy() with strscpy() in mm/huge_memory.c
+>>
+>> strcpy() has been deprecated because it is generally unsafe, so help to
+>> eliminate it from the kernel source.
+>>
+>> Link: https://github.com/KSPP/linux/issues/88
+>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+>> ---
+>>   mm/huge_memory.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index f92068864469..8f41a694433c 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -989,7 +989,7 @@ static int __init setup_thp_anon(char *str)
+>>
+>>          if (!str || strlen(str) + 1 > PAGE_SIZE)
+>>                  goto err;
+>> -       strcpy(str_dup, str);
+>> +       strscpy(str_dup, str);
+> 
+> What is the difference between strcpy and strscpy without a size parameter?
+> 
+> we have already a check and goto err. strcpy() is entirely safe.
+>           if (!str || strlen(str) + 1 > PAGE_SIZE)
+>                   goto err;
+> 
+> My understanding is that we don't need this patch.
 
-Increase the value of MAX_SLABS, and check if that has been exceeded for
-each new slab, instead of at the end when it's already too late.  Also
-move the check for MAX_ALIASES into the loop body.
+strcpy() is a deprecated interface [1]. From the GitHub issue I linked
+in the commit description, Kees states: "A lot of kernel code is still
+using strcpy(). While the CONFIG_FORTIFY_SOURCE wrapper macros tend to
+make its use mostly safe, it would be nice to eliminate the function
+from the kernel entirely."
 
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
----
- tools/mm/slabinfo.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
 
-diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
-index cfaeaea71042..1a9b807a48c3 100644
---- a/tools/mm/slabinfo.c
-+++ b/tools/mm/slabinfo.c
-@@ -21,7 +21,7 @@
- #include <regex.h>
- #include <errno.h>
- 
--#define MAX_SLABS 500
-+#define MAX_SLABS 2000
- #define MAX_ALIASES 500
- #define MAX_NODES 1024
- 
-@@ -1228,6 +1228,8 @@ static void read_slab_dir(void)
- 				continue;
- 		switch (de->d_type) {
- 		   case DT_LNK:
-+			if (alias - aliasinfo == MAX_ALIASES)
-+				fatal("Too many aliases\n");
- 			alias->name = strdup(de->d_name);
- 			count = readlink(de->d_name, buffer, sizeof(buffer)-1);
- 
-@@ -1242,6 +1244,8 @@ static void read_slab_dir(void)
- 			alias++;
- 			break;
- 		   case DT_DIR:
-+			if (slab - slabinfo == MAX_SLABS)
-+				fatal("Too many slabs\n");
- 			if (chdir(de->d_name))
- 				fatal("Unable to access slab %s\n", slab->name);
- 			slab->name = strdup(de->d_name);
-@@ -1310,10 +1314,6 @@ static void read_slab_dir(void)
- 	slabs = slab - slabinfo;
- 	actual_slabs = slabs;
- 	aliases = alias - aliasinfo;
--	if (slabs > MAX_SLABS)
--		fatal("Too many slabs\n");
--	if (aliases > MAX_ALIASES)
--		fatal("Too many aliases\n");
- }
- 
- static void output_slabs(void)
--- 
-2.47.0
+Best Regards,
+- Maíra
+
+> 
+>>
+>>          always = huge_anon_orders_always;
+>>          madvise = huge_anon_orders_madvise;
+>> @@ -4175,7 +4175,7 @@ static ssize_t split_huge_pages_write(struct file *file, const char __user *buf,
+>>
+>>                  tok = strsep(&buf, ",");
+>>                  if (tok) {
+>> -                       strcpy(file_path, tok);
+>> +                       strscpy(file_path, tok);
+>>                  } else {
+>>                          ret = -EINVAL;
+>>                          goto out;
+>> --
+>> 2.46.2
+>>
+> 
+> Thanks
+> barry
 
 
