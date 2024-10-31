@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-390804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D019B7EB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:40:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543199B7EB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A815F1C21498
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F393F1F21A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03841A254F;
-	Thu, 31 Oct 2024 15:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BE41A2554;
+	Thu, 31 Oct 2024 15:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kdBisITm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lJdZyhEG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFKEd740"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A52C13342F;
-	Thu, 31 Oct 2024 15:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152E913342F;
+	Thu, 31 Oct 2024 15:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389224; cv=none; b=tI2KOn1I/HosqdIU5ZUsDdEFug8be77v35lJQb4TexaJGq2CtkvqHMysXHWpkUHD2S3ZszhXCSPx6MwVKbLvlu9fLJBFlB6Gf/hifrp6T73XUIHLwjYRbuyk1rZOx/2yvCFYOB71m9ctS70/MhVqkKwltYnfwft++3jJ+GlyF1s=
+	t=1730389312; cv=none; b=k/8OjhqtXmLRgwtzFzrhN/kE+YE6tXaEs3MKLDd53LzYyRPb+F4m329JdPpk/dHHcrtZeQKXx8rov6vr6RJjQqvhU23D9omnIj0GhoCo17+Rr4Zz5SWL6C9coYo29h3ThaQ0fW7bJn2vV/0oeY5507xvnFFdMCloMlRI14LuIe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389224; c=relaxed/simple;
-	bh=b3tU87K3qE0vBZb9A0HfD1aCBXZQpIa0W8dvxWB2NaE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HzJ9X5dmNvbUOy+XYKKIDKC31JGO7HwvtQx6XNDzIzflBaBjozKSNO1IhL4rpH2SkDktEUM9zoMWsurZXk0QlzM6orAe0RJMsaiUsXhtKME/sSH72R6TbhctbZ7AM8EQHMAZAlbmnijZbm1yt4vv16sQYur9i5lWixv+t/nO3gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kdBisITm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lJdZyhEG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 31 Oct 2024 15:40:19 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730389220;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6T33aR6hI+FfIZYgzVkL7mZtWmN85aXd2kUD0PyCcF4=;
-	b=kdBisITmaTjVCPtyLPkg2KnyJMGtMiYfkTE61cNJ3iXtmRh1u8gdI/D5rlECwMKNWZz/ET
-	twMt+4pSyLnTBWw+E8CanU7zyhSBJurMZKR7JqwVkUY8/wj2+k4tpTCJrSUB1AuTkhgfz4
-	c1Wu/hzGOqMJsjCZpfsLsfYXkr9CMrMNR79Dn/C2FgwGruFtGp4jfp87xwyAG3R4H3qEz+
-	QYPN7c9YIQHuZ0lEQLVZHkmIBGK33+mgBFtu6f+35AUsNi45SAkxPojf6VyMfGrDP3A6CJ
-	3nVI55Sni9pAk8lr/TjaC0GIeWqAd3jJ/g+Qap3+VccA+yAlq3aO3Wqb8MG3jw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730389220;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6T33aR6hI+FfIZYgzVkL7mZtWmN85aXd2kUD0PyCcF4=;
-	b=lJdZyhEGRrmsp392AZfRs1Xm+7m+/8KR6ng/PJLlZfiedBWI9Hyh5n7QU5abw6OLW/d1kJ
-	rCU8PNYDIEofTJDg==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/ext: Fix scx vs sched_delayed
-Cc: Tejun Heo <tj@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241030104934.GK14555@noisy.programming.kicks-ass.net>
-References: <20241030104934.GK14555@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1730389312; c=relaxed/simple;
+	bh=PmzVfunua11rD3Db47ULrY+vEbNJ2UjH9io9RnmyE9U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LIs46f7LMa7KQCiQK7I9u/DKtjg3KUBLQfaCyhjOa/AzuqSJbny7AT6iZkEeoSDS13VPd36o7o42NDiKcy5zrEan6Wf3MIpKnxKh1WS/eoQQBNo5a5asQHMESJOO9TcswPEicTlZ6jgT5lsgrra+gxSocU5Zeuk5JzAjUJDbQE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFKEd740; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c767a9c50so10721205ad.1;
+        Thu, 31 Oct 2024 08:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730389310; x=1730994110; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GiRYxZ7xEXmSUSt3r1VJDfRar6Dp6i3XxT1Xm8dQUN0=;
+        b=eFKEd740drgrFvnfg3D2Ki4w6uGG7yqllEq5MCq9wU6DTy63Ojwi/2N7cdTR6uQVde
+         7qm8Qb4NCdMgQ2hnyitpmOPPudNjsNmTOcbmfVGlSKnbyQZ6ZaYQDkvRrkGchIb2YeYC
+         8+pK/Y2eq9LeQjhaRc4JjBjRcI/AJdpPKxrmoZDEWsBZQDontid+UXIhh6A93DBUJZc0
+         ytKff9wOcfx//ldKcpqkQBjTc725ZbkgoVfpjEeFeuPMkbrV+NE3rTRg93t48FO18rcM
+         wPsulQgWcEuiai4KMZTOxJZf0GME7TsDPhDw9bQYnOFV+nBMWHJCUhfa9VF2D7/LtfY6
+         XGcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730389310; x=1730994110;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GiRYxZ7xEXmSUSt3r1VJDfRar6Dp6i3XxT1Xm8dQUN0=;
+        b=KzhdSssCF4NgVPRhVtPKAZjaagvpI7/hZ63B3XnAspLrJQhS6W9blRzLas0F0h7u9G
+         3O3lkQJwvjR1M3kyyeP8EUURHDKNKx9xT9PCHiuor9WzdioAObaFidJaC8A3UGZdeE4C
+         cmXRYuG9MPUxboLJGqv4efOyPhIkG8hUjAo3NgcWiEuvWP01n4wvuNx5xHARB+FhJvRn
+         3ugYpozQEsbhlNdJkgv5wq5x1WwYWPEvezv7A8HS2W0QQm7kBzF5UykXe3oy9Y1nMwOi
+         sBy7AGx4GWAKHRP/3NNc9iWmj4OQ5SKTritg5N00myg6pE4xJ1PyMfYe4fAZ3Gd4E4mt
+         ejQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxvQ8b71XQ/hTWWZfxp7FHozye1f7L59a8qf89DScNi+JK9KouMVE9JFj3hb1iTnTyC+Wd4NS7Qs+eCLhBl4/UG//6Yw==@vger.kernel.org, AJvYcCXZZvnO5mdoq0V3+HpzhhkIwJjwDn/YSU5bnOqGMNYeKGfrx21W0uHOIJELtn5c/+++g6mL3YfBKQZC55U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC0u9YF9vq0vLaolDC6CF1zUoVdfrR5bSf6KP+s7taJc1QbOwe
+	sFr/tKlmAznWGvaAwft2ujzCK1niPAkQfL8Gww4B37d9gnp3qIKe
+X-Google-Smtp-Source: AGHT+IFe24WVhIbzOIFz5j56t53mW2JYdH4+Labl9yr5hfQNEx4iRMtdK3HnW32afYHFEhfgIcchFQ==
+X-Received: by 2002:a17:902:d2d0:b0:20c:e2ff:4a2e with SMTP id d9443c01a7336-2111b00690bmr357795ad.53.1730389310181;
+        Thu, 31 Oct 2024 08:41:50 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0f11sm10091135ad.200.2024.10.31.08.41.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 08:41:49 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	pali@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [PATCH v2 1/2] dell-smbios-base: Extends support to Alienware products
+Date: Thu, 31 Oct 2024 12:40:24 -0300
+Message-ID: <20241031154023.6149-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173038921961.3137.2036792013503366045.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the sched/urgent branch of tip:
+Fixes the following error:
 
-Commit-ID:     69d5e722be949a1e2409c3f2865ba6020c279db6
-Gitweb:        https://git.kernel.org/tip/69d5e722be949a1e2409c3f2865ba6020c279db6
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 30 Oct 2024 11:49:34 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 30 Oct 2024 22:42:12 +01:00
+dell_smbios: Unable to run on non-Dell system
 
-sched/ext: Fix scx vs sched_delayed
+Which is triggered after dell-wmi driver fails to initialize on
+Alienware systems, as it depends on dell-smbios.
 
-Commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs
-switched_from_fair()") forgot about scx :/
+This effectively extends dell-wmi, dell-smbios and dcdbas support to
+Alienware devices, that might share some features of the SMBIOS intereface
+calling interface with other Dell products.
 
-Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
-Reported-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Link: https://lkml.kernel.org/r/20241030104934.GK14555@noisy.programming.kicks-ass.net
+Tested on an Alienware X15 R1.
+
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- kernel/sched/ext.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+v2:
+ - Commit message reflects Alienware devices may not necessarily support
+   the SMBIOS interface
+ - Commit message now has "Tested on"
+---
+ drivers/platform/x86/dell/dell-smbios-base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 40bdfe8..721a754 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -4489,11 +4489,16 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
- 	scx_task_iter_start(&sti);
- 	while ((p = scx_task_iter_next_locked(&sti))) {
- 		const struct sched_class *old_class = p->sched_class;
-+		const struct sched_class *new_class =
-+			__setscheduler_class(p->policy, p->prio);
- 		struct sched_enq_and_set_ctx ctx;
+diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
+index 73e41eb69..01c72b91a 100644
+--- a/drivers/platform/x86/dell/dell-smbios-base.c
++++ b/drivers/platform/x86/dell/dell-smbios-base.c
+@@ -576,6 +576,7 @@ static int __init dell_smbios_init(void)
+ 	int ret, wmi, smm;
  
-+		if (old_class != new_class && p->se.sched_delayed)
-+			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
-+
- 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
- 
--		p->sched_class = __setscheduler_class(p->policy, p->prio);
-+		p->sched_class = new_class;
- 		check_class_changing(task_rq(p), p, old_class);
- 
- 		sched_enq_and_set_task(&ctx);
-@@ -5199,12 +5204,17 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 	scx_task_iter_start(&sti);
- 	while ((p = scx_task_iter_next_locked(&sti))) {
- 		const struct sched_class *old_class = p->sched_class;
-+		const struct sched_class *new_class =
-+			__setscheduler_class(p->policy, p->prio);
- 		struct sched_enq_and_set_ctx ctx;
- 
-+		if (old_class != new_class && p->se.sched_delayed)
-+			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
-+
- 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
- 
- 		p->scx.slice = SCX_SLICE_DFL;
--		p->sched_class = __setscheduler_class(p->policy, p->prio);
-+		p->sched_class = new_class;
- 		check_class_changing(task_rq(p), p, old_class);
- 
- 		sched_enq_and_set_task(&ctx);
+ 	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
++	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Alienware", NULL) &&
+ 	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
+ 		pr_err("Unable to run on non-Dell system\n");
+ 		return -ENODEV;
+-- 
+2.47.0
+
 
