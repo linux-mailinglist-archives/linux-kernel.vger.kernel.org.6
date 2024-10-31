@@ -1,137 +1,219 @@
-Return-Path: <linux-kernel+bounces-390670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C7F9B7D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:36:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FFC9B7D08
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:37:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE48281BB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACB41F22286
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10101A254F;
-	Thu, 31 Oct 2024 14:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41DC127B56;
+	Thu, 31 Oct 2024 14:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QkxjHHWw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P2Pk2/hy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DRTvOd23"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2BD1A0BFA;
-	Thu, 31 Oct 2024 14:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03682175BF
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385383; cv=none; b=R8wj6y/ZXul6TFDYhY5Sj7dKQeUI0EFAs1YT+xpVnm82EFavedMma5oO5jnNwq5meNPodfxmhyS3Wkrq+7171WpeWrN/KwRLmRu81IVJ+OH1eTpZoLU3dRh+Tg/81AFJWzSYa3H423cPYLkG55jvy72feL3gBwHcqHa11JesSAE=
+	t=1730385434; cv=none; b=A/E4iwrseJorT/3RGuM8Ebgje0XcnXWD5r/jpCqAIsjVLmgs8ZWrAYU2zf1XDTF/ELBufymBM01Pwsixg7RHgP4hHFdB0shLG5vq0bKzl/HBNp8+oLose4IdK2J4VUSoXBMIiwTrftrHvOpZGp4Kb/kESgOvrtrd7r3+DwrJfOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385383; c=relaxed/simple;
-	bh=MlUBwT++RbBkyEa3T3TimRZQSnvqIO7eCYZnB8HFFJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FhzUjhRJzY9GmK63tHon7+Mq7KB5j+zqh6a8b9QkI99Ajsl+dn/bGB6pF1RtsyNwJW1EVqRNq/4yUCEKv0bJn1AGa1un3nXcDg0iFVZ7o1O+14oN6UGJe7iNww+Z3buIBRwf31Uob3ZmKY4sN+Fmb3NzU0dTg4cdkuo4T1fDOLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QkxjHHWw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P2Pk2/hy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 31 Oct 2024 15:36:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730385377;
+	s=arc-20240116; t=1730385434; c=relaxed/simple;
+	bh=YEUISV/64SzjZW8yf+F9ak/Z634GVYmrT+x+0I2OYqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eX7wplFBMRJXLQdubogn76NKu37wQKWgAsrTqVPXYjZWOH8DL9ngX9+AwlNuSZV7aqFRzJVMd+lUkeaUOJRDbS1T4GSX2MB7swGUCqub2p4bJAEW4075jI3zT7y3BufTE+L2zt8xhwGWF7YCotubSn9xYf0I+M5cmU4aiuyXSzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DRTvOd23; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730385431;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zFWtjZRQTdWduLAor0O9LykkVJ5XjmX1JLbKlMKlkpk=;
-	b=QkxjHHWwmKJ1qdobe4I2Y+atw8qx+ISgFF1tjNZwtDSp0ORfysW1Jcz5dp7zR6Js79bRy0
-	i226xrqs413mzDeBgw1jRomNbeGJzDtZ7nBO8IhD3ecS8/pVOatosqp4tnkxCAtEL79Rzw
-	AOwBVAxC7aT6UbutjROR9VsFXnKPNja80g5Bbudr1qkS/7EXziQvg4/kUep7ghULm/MhJq
-	CPy4J2UlWVH4QqRN7yanD/6ZWYAmHUF0rieqmdbhcgHGxoEUG6WmEKhoEtF+ZlJZVuiams
-	KVYeGXjlzGMc6rW3IS9kkkUjYwTDunfgJIxnWdO+pv5552kLTu4iVR2YXuJ/EQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730385377;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zFWtjZRQTdWduLAor0O9LykkVJ5XjmX1JLbKlMKlkpk=;
-	b=P2Pk2/hy3uejlXJUrAHf0UJ4GdC6Jir4eJmEy04sEuesJqD6RKJD3sEgNSp8aqGq+J/BLQ
-	+Y3OU1IHoExp3wDQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	John Stultz <jstultz@google.com>,
-	Oliver Hartkopp <socketcan@hartkopp.net>, kvm@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v2 00/19] hrtimers: Consolidate hrtimer initialization -
- Part 1
-Message-ID: <20241031143609.bX-WHDeK@linutronix.de>
-References: <20241031-hrtimer_setup_p1_v2-v2-0-23400656575a@linutronix.de>
+	bh=X6O/3GBw63p0l5BBCUi73LPu6bFx6muuGDbHydYXVPs=;
+	b=DRTvOd23LsUsnlhT8t8EmZsa91pRNSz9+alapXE80oMItZ3qLf75iX0hS4wAzF34HD5/48
+	XplLBstFUsfImuqCPs6VUdJ2S8Db4l/A+ovnEkf1Pr2BExnQufgrhqmlyW8t5JKaOlvHw+
+	R2cJmeO4CJTfUS9xR/a7bL8RwAzYioc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-640-Zlk4RYMzPvqHg_Xn8aLYRg-1; Thu, 31 Oct 2024 10:37:09 -0400
+X-MC-Unique: Zlk4RYMzPvqHg_Xn8aLYRg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316e350d6aso6193515e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:37:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730385428; x=1730990228;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X6O/3GBw63p0l5BBCUi73LPu6bFx6muuGDbHydYXVPs=;
+        b=MNADfqV6J035QEKR0g62mp05R7JGILMUKMocN2D+II9FoWAN/FiWgoY1EoQYjovUKm
+         o4NOI8MH69jFSWLrCGtMmi6Patl/w71R0vkGr+0W6lEb+Awj35+mJ5wAK5ymLMiVMyVh
+         s0HJ7TXHiKeRZbFI+S3eGVaBCeOY5VUDSkIx8vzRGUXzGlZ/PJxDGBtUy4ThzlhGxAr6
+         Xqt9R0k+OQOTmMoTY55z/W0db6hRqSIn3Sejv7qBI13dD4GIVUvOHuJu3gZieE2buwmp
+         tnFWjwk9etN0x7Nc5S3dMM05kFFIozQM2a6jdbeI+RXdaJB+HdYcpeIdMVXlVrZA6Rat
+         8nWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJPY//zsiFOz/n8/zu4XulmP1o+/WGiEm+c4WDSVoldv7+F2YRNCVrUuh/Vydu/ieu/A84zR4ysTm9Lk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOe27bpgBqnoaYmezRbedQT3HpWcIWMtiso64DZoPdz0yW4pea
+	BbiODla0H4iJufUjiXxNPbAkB+u554bWwdnQiufH5sz2S5xGiKkacXHCBWjT/UyptT/QZZwi2eP
+	hVrIqltm4xoregLwHv2zsL3wdvflyx4XNSYnSKv3l3iTbDs23B+CyQ5kvpRTdCA==
+X-Received: by 2002:a05:600c:1ca9:b0:431:50cb:2398 with SMTP id 5b1f17b1804b1-4328323f576mr839915e9.2.1730385428448;
+        Thu, 31 Oct 2024 07:37:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEF4O9nwX/ru8zq05nFqcPwDY9v0i5+K7TjXF+z12dzOML3szYJAwB82EVvIHl/2zaVGkEuAw==
+X-Received: by 2002:a05:600c:1ca9:b0:431:50cb:2398 with SMTP id 5b1f17b1804b1-4328323f576mr839685e9.2.1730385428000;
+        Thu, 31 Oct 2024 07:37:08 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7387sm2268534f8f.51.2024.10.31.07.37.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 07:37:07 -0700 (PDT)
+Message-ID: <96516e40-5b1b-4bce-a041-7618c03c5de3@redhat.com>
+Date: Thu, 31 Oct 2024 15:37:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031-hrtimer_setup_p1_v2-v2-0-23400656575a@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/4] net: hsr: Add VLAN CTAG filter support
+To: MD Danish Anwar <danishanwar@ti.com>, geliang@kernel.org,
+ liuhangbin@gmail.com, dan.carpenter@linaro.org, jiri@resnulli.us,
+ n.zhandarovich@fintech.ru, aleksander.lobakin@intel.com, lukma@denx.de,
+ horms@kernel.org, jan.kiszka@siemens.com, diogo.ivo@siemens.com,
+ shuah@kernel.org, kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+ andrew+netdev@lunn.ch
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>,
+ m-malladi@ti.com
+References: <20241024103056.3201071-1-danishanwar@ti.com>
+ <20241024103056.3201071-3-danishanwar@ti.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241024103056.3201071-3-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I just learned the hard way that git-send-email doesn't work for a .mbox
-file including multiple emails. Sorry for the noises, please ignore this
-one. I will resend it shortly.
 
-On Thu, Oct 31, 2024 at 03:19:21PM +0100, Nam Cao wrote:
-> This is a follow up to version 1, which can be found here:
+
+On 10/24/24 12:30, MD Danish Anwar wrote:
+> From: Murali Karicheri <m-karicheri2@ti.com>
 > 
->     https://lore.kernel.org/lkml/cover.1729864615.git.namcao@linutronix.de/
+> This patch adds support for VLAN ctag based filtering at slave devices.
+> The slave ethernet device may be capable of filtering ethernet packets
+> based on VLAN ID. This requires that when the VLAN interface is created
+> over an HSR/PRP interface, it passes the VID information to the
+> associated slave ethernet devices so that it updates the hardware
+> filters to filter ethernet frames based on VID. This patch adds the
+> required functions to propagate the vid information to the slave
+> devices.
 > 
-> hrtimers must be initialized with a hrtimer_init() variant, and after that
-> the timer's callback function must be setup separately.
+> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
+>  net/hsr/hsr_device.c | 71 +++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 70 insertions(+), 1 deletion(-)
 > 
-> This seperate initialization is error prone and awkward to use. The
-> seperate initialization is also problematic for a clean Rust abstraction.
-> 
-> A combined setup function like timer_setup() is less error prone and
-> simpler to use.
-> 
-> This first part of the conversion provides:
-> 
->   - a set of hrtimer_setup*() variants, which take the function pointer as
->     argument.
-> 
->   - hrtimer_update_function() which allows to change the callback function
->     after initialization with the proper safety checks in place.
-> 
->   - conversion of the hrtimer_init*_on_stack() variants
-> 
->   - some minor cleanups
-> 
-> The remaining users will be converted in follow up series.
-> 
-> Most conversions were done with Coccinelle. See sematic patch below.
-> 
-> Changes versus v1:
->   - Open code kvm_xen_init_vcpu() (Sean)
->   - Drop the can/bcm patch (Oliver)
->   - Folded the removal of hrtimer_init_sleeper() (tglx)
->   - Update change logs and cover letter
-> 
-> The series applies on top of:
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-> 
-> and is also available from git:
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git hrtimer-setup-part1-v2
-> 
-> Best regards,
-> 
-> Nam
+> diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+> index 0ca47ebb01d3..ff586bdc2bde 100644
+> --- a/net/hsr/hsr_device.c
+> +++ b/net/hsr/hsr_device.c
+> @@ -515,6 +515,68 @@ static void hsr_change_rx_flags(struct net_device *dev, int change)
+>  	}
+>  }
+>  
+> +static int hsr_ndo_vlan_rx_add_vid(struct net_device *dev,
+> +				   __be16 proto, u16 vid)
+> +{
+> +	struct hsr_port *port;
+> +	struct hsr_priv *hsr;
+> +	int ret = 0;
+> +
+> +	hsr = netdev_priv(dev);
+> +
+> +	hsr_for_each_port(hsr, port) {
+> +		if (port->type == HSR_PT_MASTER)
+> +			continue;
+
+If the desired behavior is to ignore INTERLINK port, I think you should
+explicitly skip them here, otherwise you will end-up in a
+nondeterministic state.
+
+> +		ret = vlan_vid_add(port->dev, proto, vid);
+> +		switch (port->type) {
+> +		case HSR_PT_SLAVE_A:
+> +			if (ret) {
+> +				netdev_err(dev, "add vid failed for Slave-A\n");
+> +				return ret;
+> +			}
+> +			break;
+> +
+> +		case HSR_PT_SLAVE_B:
+> +			if (ret) {
+> +				/* clean up Slave-A */
+> +				netdev_err(dev, "add vid failed for Slave-B\n");
+> +				vlan_vid_del(port->dev, proto, vid);
+
+This code relies on a specific port_list order - which is actually
+respected at list creation time. Still such assumption looks fragile and
+may lead to long term bugs.
+
+I think would be better to refactor the above loop handling arbitrary
+HSR_PT_SLAVE_A, HSR_PT_SLAVE_B order. Guestimate is that the complexity
+will not increase measurably.
+
+> +				return ret;
+> +			}
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hsr_ndo_vlan_rx_kill_vid(struct net_device *dev,
+> +				    __be16 proto, u16 vid)
+> +{
+> +	struct hsr_port *port;
+> +	struct hsr_priv *hsr;
+> +
+> +	hsr = netdev_priv(dev);
+> +
+> +	hsr_for_each_port(hsr, port) {
+> +		if (port->type == HSR_PT_MASTER)
+> +			continue;
+
+I think it would be more consistent just removing the above statement...
+
+> +		switch (port->type) {
+> +		case HSR_PT_SLAVE_A:
+> +		case HSR_PT_SLAVE_B:
+> +			vlan_vid_del(port->dev, proto, vid);
+> +			break;
+> +		default:> +			break;
+
+... MASTER and INTERLINK port will be ignored anyway.
+
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct net_device_ops hsr_device_ops = {
+>  	.ndo_change_mtu = hsr_dev_change_mtu,
+>  	.ndo_open = hsr_dev_open,
+
+Cheers,
+
+Paolo
+
 
