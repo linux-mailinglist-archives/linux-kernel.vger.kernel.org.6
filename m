@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-389929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969DC9B731F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:43:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B18A19B7320
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:43:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29994B215D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:43:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 137FCB214B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C2213A256;
-	Thu, 31 Oct 2024 03:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DFD13A25F;
+	Thu, 31 Oct 2024 03:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WS3UNF9W"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="C7ZoZKiK"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CEA12D1FA
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6149912D1FA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730346187; cv=none; b=h2ICKQrn0qQnXq5MoXpoTTCtPioa1fBOjAbxwz1Y72qGYjCTL8jxCyBRJyxGy45LVEQN2sFVAgdABpalbhxI7dAzBvrU/YbuFQEn1eIt7xl945K1ER953WwNisVc9LoS0ElpMQtXA7CdBbD7Y3s9l3RFbmuso7o9QznTJTPVbwc=
+	t=1730346195; cv=none; b=aERQCixRKsFLRyqES07TI05dmYqoPWf38w2hJmG3knIQAOBykGzhzp9+nBWa51thx7Z9WfCNgZ8q6fWhX+UXSwudpZ0mLOLfH7ikhHs3tBK9/vJtbFKAgtuNmONk0Egh2+WVvmHxVRiWhyVgiJbyucY1x0trz0CGW51WTtdWbAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730346187; c=relaxed/simple;
-	bh=9NF32TNj4ZYmr4oveqUOvSWtxMqVol++8yROTpzjYA4=;
+	s=arc-20240116; t=1730346195; c=relaxed/simple;
+	bh=jCeFJy/cIpzXwCHzLg5OqehWQ4edXE1UB6a5XNLlazs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KnZTs06kFgClZiQDBKHf5wN23gRLtxiGfPc6WB/1i5saj9epAqe3aCSP+U1+Jz8gqbNtx+Sp9Yrf6v0+qcOuBzBgbaVh0I6RDWDMd2VqQPItPNsTSJ1GIuWd7EcoNUhB61840/HaXVPyodW4J/VtGkNikaBYhLWytCNnSWiLh64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WS3UNF9W; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730346186; x=1761882186;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9NF32TNj4ZYmr4oveqUOvSWtxMqVol++8yROTpzjYA4=;
-  b=WS3UNF9WzCQbN7NWdK9WzIx4Jw9d14Hj7HkGTlCed0N6DcONSHE/3Lc2
-   d3v3kwNu3wt2WKlVuAAsW8S4mj657HygyCHROIX6TJOFI3dWtz6jma5r7
-   VfzY3THG8B5GjO3xHacJFet0lbeM5CC8Bkc06+AMPC3ISd4HlQ+lx9wYO
-   ClVFbCIv+eAkGgMzaD8hRbmMasJw6XflQvpY8682RXmW/akQeb2v2f+3A
-   sw9xSqH8fKbqq29LoOk0vV/NPQ0M3CihSwRl7UBgsSTenlKvrSZrXeula
-   CYS4Ylvr3OGuZmBo+GYTkvGFQShc4J7lTREdSPvVsnYqbTnSdJm8P7QP3
-   Q==;
-X-CSE-ConnectionGUID: xF+s6GSARsyiHMRwsy7L4g==
-X-CSE-MsgGUID: K0FFOPmBSzeEjKPoHJA3YQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29514043"
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="29514043"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 20:43:05 -0700
-X-CSE-ConnectionGUID: daw9IZ7ITHaqHf9TrL7mbw==
-X-CSE-MsgGUID: g9mamfELTcG7K2r/u1X2/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="82159153"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 20:43:03 -0700
-Message-ID: <e4460731-a13f-479d-b092-649123fe079f@linux.intel.com>
-Date: Thu, 31 Oct 2024 11:42:24 +0800
+	 In-Reply-To:Content-Type; b=cUzF6Aoiv/TfEkhap1MCR6WzZLsFZrHnDSwZNUHHmQEAbK1hx24CXJlUTq13J4TUHAy3EPYTbwRRXyI8PaOZYDqDOf6cu2w8KirzgB1vHzYtja1Bu06v1ZCp5k63IrYKN5Qi/FkyzGMhGw7vjQhWeeTc9tOhulG29Y7rcuzKhgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=C7ZoZKiK; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730346188; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hY/BROjL9uyLBnQrHr87O2iu41QP3pQ9lVSaFNpvhuM=;
+	b=C7ZoZKiK5ViMsK5xgRRlhH3Z6yf+ALBUC6KM9kr4HTDbO3MzKODfeZmnYK3g7m+GD/izZGOqgV8FJ2u5KtzUprZsWBxA5XtrutZ+iSI8HPbvV4oreKxtvZi3uq9fE1NsfqITNKtSrbsgalk2gODc4Te675riv0/fHZ6MHRS48QI=
+Received: from 30.74.144.119(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIGvBCH_1730346185 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 31 Oct 2024 11:43:06 +0800
+Message-ID: <0b7671fd-3fea-4086-8a85-fe063a62fa80@linux.alibaba.com>
+Date: Thu, 31 Oct 2024 11:43:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,74 +47,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
- prq_event_thread
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Yi Liu <yi.l.liu@intel.com>, David Woodhouse <dwmw2@infradead.org>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- Klaus Jensen <k.jensen@samsung.com>
-References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
- <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
- <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
- <ujexsgcpvcjux2ugfes6mzjxl53j3icarfbu25imhzliqskyv6@l7f42nv4fhmy>
- <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
- <pdslu36mhfxbzs254tlte2wavfkmecm53xhdtdelm4nfnemt3f@m5ed4hn6zmbl>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <pdslu36mhfxbzs254tlte2wavfkmecm53xhdtdelm4nfnemt3f@m5ed4hn6zmbl>
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+To: David Hildenbrand <david@redhat.com>, Daniel Gomez <d@kruces.com>,
+ Daniel Gomez <da.gomez@samsung.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+ hughd@google.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <Zw_IT136rxW_KuhU@casper.infradead.org>
+ <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
+ <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
+ <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
+ <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com>
+ <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
+ <D51IU4N746MI.FDS6C7GYO4RP@samsung.com>
+ <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com>
+ <486a72c6-5877-4a95-a587-2a32faa8785d@redhat.com>
+ <7eb412d1-f90e-4363-8c7b-072f1124f8a6@linux.alibaba.com>
+ <1b0f9f94-06a6-48ac-a68e-848bce1008e9@redhat.com>
+ <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
+ <cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com>
+ <7ca333ba-f9bc-4f78-8f5b-1035ca91c2d5@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <7ca333ba-f9bc-4f78-8f5b-1035ca91c2d5@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/30/24 22:28, Joel Granados wrote:
->>    /*
->> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
->> index 078d1e32a24e..ff88f31053d1 100644
->> --- a/drivers/iommu/intel/svm.c
->> +++ b/drivers/iommu/intel/svm.c
->> @@ -304,9 +304,6 @@ void intel_drain_pasid_prq(struct device *dev, u32
->> pasid)
->>           int qdep;
+Sorry for late reply.
+
+On 2024/10/28 17:48, David Hildenbrand wrote:
+> On 25.10.24 22:21, David Hildenbrand wrote:
+>> Sorry for the late reply!
 >>
->>           info = dev_iommu_priv_get(dev);
->> -       if (WARN_ON(!info || !dev_is_pci(dev)))
->> -               return;
-> Did you mean to take out both checks?:
->    1. The info pointer check
->    2. the dev_is_pci check
-> 
-> I can understand the dev_is_pci check, but we should definitely take
-> action if info is NULL. Right?
-
-WARN_ON(!info) is duplicate as far as I can see. Accessing
-info->pri_enable when info is NULL will cause a null pointer dereference
-warning. This appears irrelevant to this patch though.
-
-> 
->> -
->>           if (!info->pri_enabled)
->>                   return;
+>>>>>>> IMHO, as I discussed with Kirill, we still need maintain 
+>>>>>>> compatibility
+>>>>>>> with the 'huge=' mount option. This means that if 'huge=never' is 
+>>>>>>> set
+>>>>>>> for tmpfs, huge page allocation will still be prohibited (which can
+>>>>>>> address Hugh's request?). However, if 'huge=' is not set, we can
+>>>>>>> allocate large folios based on the write size.
+>>>
+>>> So, in order to make tmpfs behave like other filesystems, we need to
+>>> allocate large folios by default. Not setting 'huge=' is the same as
+>>> setting it to 'huge=never' as per documentation. But 'huge=' is meant to
+>>> control THP, not large folios, so it should not have a conflict here, or
+>>> else, what case are you thinking?
 >>
->> Generally, intel_drain_pasid_prq() should be called if
+>> I think we really have to move away from "huge/thp == PMD", that's a
+>> historical artifact. Everything else will simply be inconsistent and
+>> confusing in the future -- and I don't see any real need for that. For
+>> anonymous memory and anon shmem we managed the transition. (there is a
+>> longer writeup from me about this topic, so I won't go into detail).
 >>
->> - a translation is removed from a pasid entry; and
-> This is the path that is already mentiond
+>>
+>> I think I raised this in the past, but tmpfs/shmem is just like any
+>> other file system .. except it sometimes really isn't and behaves much
+>> more like (swappable) anonymous memory. (or mlocked files)
+>>
+>> There are many systems out there that run without swap enabled, or with
+>> extremely minimal swap (IIRC until recently kubernetes was completely
+>> incompatible with swapping). Swap can even be disabled today for shmem
+>> using a mount option.
+>>
+>> That's a big difference to all other file systems where you are
+>> guaranteed to have backend storage where you can simply evict under
+>> memory pressure (might temporarily fail, of course).
+>>
+>> I *think* that's the reason why we have the "huge=" parameter that also
+>> controls the THP allocations during page faults (IOW possible memory
+>> over-allocation). Maybe also because it was a new feature, and we only
+>> had a single THP size.
+>>
+>> There is, of course also the "fallocate() might not free up memory if
+>> there is an unexpected reference on the page because splitting it will
+>> fail" problem, that even exists when not over-allocating memory in the
+>> first place ...
+>>
+>>
+>> So ...I don't think tmpfs behaves like other file system in some cases.
+>> And I don't think ignoring these points is a good idea.
+>>
+>> Fortunately I don't maintain that code :)
+>>
+>>
+>> If we don't want to go with the shmem_enabled toggles, we should
+>> probably still extend the documentation to cover "all THP sizes", like
+>> we did elsewhere.
+>>
+>> huge=never: no THPs of any size
+>> huge=always: THPs of any size (fault/write/etc)
+>> huge=fadvise: like "always" but only with fadvise/madvise
+>> huge=within_size: like "fadvise" but respect i_size
 > 
->> - PRI on this device is enabled.
-> And this path is:
->    -> intel_iommu_enable_iopf
->      -> context_flip_pri
->        -> intel_context_flush_present
->          -> qi_flush_pasid_cache
-> 
-> Right?
+> Thinking some more about that over the weekend, this is likely the way 
+> to go, paired with conditionally changing the default to 
+> always/within_size. I suggest a kconfig option for that.
 
-Sorry that I didn't make it clear. It should be "PRI on this device was
-enabled", a.k.a. info->pri_enabled is true. I didn't meant to say in the
-PRI enabling path.
+I am still worried about adding a new kconfig option, which might 
+complicate the tmpfs controls further.
 
---
-baolu
+> That should probably do as a first shot; I assume people will want more 
+> control over which size to use, especially during page faults, but that 
+> can likely be added later.
+
+After some discussions, I think the first step is to achieve two goals: 
+1) Try to make tmpfs use large folios like other file systems, that 
+means we should avoid adding more complex control options (per Matthew).
+2) Still need maintain compatibility with the 'huge=' mount option (per 
+Kirill), as I also remembered we have customers who use 
+'huge=within_size' to allocate THPs for better performance.
+
+Based on these considerations, my first step is to neither add a new 
+'huge=' option parameter nor introduce the mTHP interfaces control for 
+tmpfs, but rather to change the default huge allocation behavior for 
+tmpfs. That is to say, when 'huge=' option is not configured, we will 
+allow the huge folios allocation based on the write size. As a result, 
+the behavior of huge pages for tmpfs will change as follows:
+
+no 'huge=' set: can allocate any size huge folios based on write size
+huge=never: no any size huge folios
+huge=always: only PMD sized THP allocation as before
+huge=fadvise: like "always" but only with fadvise/madvise
+huge=within_size: like "fadvise" but respect i_size
+
+The next step is to continue discussing whether to add a new Kconfig 
+option or FADV_* in the future.
+
+So what do you think?
 
