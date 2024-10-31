@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-391433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80CA9B86AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:08:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D04F9B86B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1243A1C231E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:08:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FE98B21004
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00DE1E2609;
-	Thu, 31 Oct 2024 23:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1B01E1A23;
+	Thu, 31 Oct 2024 23:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="se5Xgp53";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s6ZB5YV2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AoeayQui"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF8E1CDFB4;
-	Thu, 31 Oct 2024 23:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBC019F430
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416123; cv=none; b=GiaRLycDh9WSpKchxfwNjiZLSt3tmvukd4EyCuQhZVTSb7BwRVfnh5+QpCcZ8fE91Aag+9oVcK/KBFxgqfPlBYHHHtSgGBl2MbsudGSbvzc+rDkqkHHAMMJsZcBcn7zvX8sAramupxPzaNxwiILMXOU7kDEbfJAsvQr/JLn2T6g=
+	t=1730416242; cv=none; b=dR86ATku+dPCgzTwOub+7M0+YkvUVtXQk1Hg834850L1jPUYTMB39J8DTLSkVEp4KFdpKZYlP3ldbiHZitV3YbAvauCgJD3QfPT4rGJwmDBEoa9GsdCCDgwJ4mjO7gC6tyQqJiZhZMVNPMYsNuiggFqG2dSFtHeoo3zlbK+Fc4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416123; c=relaxed/simple;
-	bh=t5kudjeNUZ1aRqDlkJODNg0WxGYF3b7fXMYAj3ZS57k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jwvvumgdzqOyrqKizuv6bDy9fEy2qrWWcVFkUfeGZmfs6m/3/BHdmerNyfOxVFU3WljwVxe5K1o259gYHQSjilMwasLijIHOOoJJ6RhHgCGDeBTwo5BQxXxTC43kVzJ+If1n9AnOnQZJUG3aY9ZYuTKsS2vOzj6S1cVSgX38Ksg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=se5Xgp53; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s6ZB5YV2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730416115;
+	s=arc-20240116; t=1730416242; c=relaxed/simple;
+	bh=alNJz6/ehpAYL13/0qVZvJMm5KppznbEqNHWox1Q89k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kpWOG6TT6N4lOj6tVDpUdLIRBkmcpPmKIO2hEm8PJ2jwLfS3eb0POVJe1OsreGVBm5F0p92JHOxg2P+N+3/E3W1sGMtr1j9Hz/PPvVadaNIhw88QGxGdbnDtp+VLsTpTSEzNLcnwFRHHmXEPUEqh+7Z48VOaIcc+nGLgA+ZUbeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AoeayQui; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730416235;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X43PY2/hEbcwBt7Pbr1N5jc7wEXE8dAimnVrIUPcOUE=;
-	b=se5Xgp53tVB20jyRaaH2iLjXvXwdVsngVIXx9grBEo+lfKa20ugZbbEHcGZhaUpww0RoiY
-	EXWxDRXyp/5faxfVpX5j/HOnWJYwef48MKnqdLSdvRM+SzcC1UZFRSJg9BI8kwdSD2BHp/
-	nhk3F3EKXMN6sHSp0wCKuprK38Y4dIXmLxkF/8Q9LaxZMHrSg3gXcdsJN+btBRaSTYSPph
-	5blEOt0hGuEUHTfEFiNEXw+ofxhlFgZ17QaVFDdq27ezhnrMNksI+PJWPa+WgTBVDwz/5o
-	yOoLg/budsRsV6AywMk3nLc/CDR9rIfvLZDG/1VMgbwz7rZxbiTVpKZTIKOAkg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730416115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X43PY2/hEbcwBt7Pbr1N5jc7wEXE8dAimnVrIUPcOUE=;
-	b=s6ZB5YV2NU3xPp/8Y/vclO3GDuEX/ui6tits119rcH2YQb1nCQFRLUCWuey0wof92SceYv
-	CsFSTGLmEip3OrDg==
-To: Jarkko Sakkinen <jarkko@kernel.org>, Ross Philipson
- <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
- linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: dpsmith@apertussolutions.com, mingo@redhat.com, bp@alien8.de,
- hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org,
- mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, ebiederm@xmission.com, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
- andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-In-Reply-To: <D5ACNMVX5LXB.1L0S9P2J3UDJH@kernel.org>
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
- <87wmhoulb9.ffs@tglx> <D5ACNMVX5LXB.1L0S9P2J3UDJH@kernel.org>
-Date: Fri, 01 Nov 2024 00:08:34 +0100
-Message-ID: <87ldy3vpjh.ffs@tglx>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6tLpKsOz+MCKUgMitGvEfOZC/jPhgg37ybWqVjxcw8c=;
+	b=AoeayQuiY6XDlhDzsGP3D95Qha9T6BEP3sA2ZPe1Vn3dyqzQrUy21Gz0le3U2OP90cL6I/
+	3FeP7q5q/uVTV3NyWOXJCg4RyACY6Yy64ARsJw9J2Nm/w9db54sCpdgRV65dZiApN91VYs
+	Sz1/QeRjrYOXeGogGk62oTbPUXYJxPk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-gSjDu7Q4PCa0GJGyRMzRrA-1; Thu,
+ 31 Oct 2024 19:10:31 -0400
+X-MC-Unique: gSjDu7Q4PCa0GJGyRMzRrA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBA891955EA5;
+	Thu, 31 Oct 2024 23:10:29 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.88.202])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 07C2F1956052;
+	Thu, 31 Oct 2024 23:10:26 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: [PATCH v3 0/2] rust: Add Lock::from_raw() and expose Guard::new()
+Date: Thu, 31 Oct 2024 19:08:43 -0400
+Message-ID: <20241031231025.3466571-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Nov 01 2024 at 00:37, Jarkko Sakkinen wrote:
-> On Thu Oct 31, 2024 at 9:25 PM EET, Thomas Gleixner wrote:
->> So this looks pretty reasonable to me by now and I'm inclined to take it
->> through the tip x86 tree, but that needs reviewed/acked-by's from the
->> crypto and TPM folks. EFI has been reviewed already.
->>
->> Can we make progress on this please?
->
-> So TPM patches do have bunch of glitches:
->
-> - 15/20: I don't get this. There is nothing to report unless tree
->   is falling. The reported-by tag literally meaningless. Maybe this
->   is something that makes sense with this feature. Explain from that
->   angle.
-> - 16/20: Is this actually a bug fix? If it is should be before 15/20.
-> - 17/20: the commit message could do a better job explaining how the
->   locality can vary. I'm not sure how this will be used by rest of
->   the patch set.
-> - 18/20: I'm not confident we want to give privilege to set locality
->   to the user space. The commit message neither makes a case of this.
->   Has this been tested to together with bus encryption (just checking)?
+This is the third version of a small patch series to introduce
+interfaces for working with locks that we've acquired from raw C
+pointers, something that is quite useful for bindings like the rust
+bindings - where there's a number of interfaces protected by BFLs, or
+which require the implementation of callbacks that are known to occur
+under lock.
 
-Can you please explicitely voice your detailed technical concerns in
-replies to the actual patches?
+Lyude Paul (2):
+  rust: sync: Add Lock::from_raw() for Lock<(), B>
+  rust: sync: Make Guard::new() public
 
-Thanks,
+ rust/kernel/sync/lock.rs | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-        tglx
+
+base-commit: 718c4069896cabba5c39b637cbb7205927f16ae0
+-- 
+2.47.0
+
 
