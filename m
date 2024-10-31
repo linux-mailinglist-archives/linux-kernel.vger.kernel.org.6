@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-391087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA219B8284
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4809B8287
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48ADD1F225F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:22:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298161F22532
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0541C9EA1;
-	Thu, 31 Oct 2024 18:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17A61C9DCD;
+	Thu, 31 Oct 2024 18:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="MB+JSeOz"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UVoVVPG+"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2781C8FD7;
-	Thu, 31 Oct 2024 18:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3561974F4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730398964; cv=none; b=Yln9Vj8rbPsiQpQzVb1FIki7nSv/lfqBa+Am6zh4OayIgtFRZRM9OdLpKwrqgy4q9cAfI4jOR4xwtcj8c6Loan/3GgwM6wu6Os9gdbVMRVGzSbjzEpftp9K2+PRTnSSaOkt65WdFmr2/1F7hwZjMYG8lT8T3UNa/pw/7GAnfYYw=
+	t=1730398994; cv=none; b=HZJdPshLFeiC28d0kehL4zrCOTGpRO9OblhtzK5nbIbZhmKVNBTpy1r77AuJKxEzIBeVcFj0Rtqg3XChqxHpij5C12e6bnNBnVKv7+F6nunT9InPU9cDOfWBMp/BNahsCf5JYCtLyVH9MrfBUxgGLnpZt897u5qVJch+FO0iS4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730398964; c=relaxed/simple;
-	bh=W9ptO2AWHJvDBqBcplJ9x7hVH9AqEur0XDGEUTb8INw=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pNWQrB/Uw+v+SRPTWbydT3xQ1BI4bps0e6E/Znt2gTBqauuY9tgD1dCkKVxrs75p2+u5d+QEkZpykKyQGXsICuxcwde5jlNcXaA7+wEX1uOBWF05WRFN2pQmuEGDL7WOJJ8IG6MGyERi1UzEn1D0Ztq9KbzbbJadtYy2spdgtj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=MB+JSeOz; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1730398994; c=relaxed/simple;
+	bh=OB6s1nAC/DchLbBPGMjThIla6sAG/IuVlX/Cm9GqCag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=piRqwpC8puNs+m+DdOL2qussEsvafIvbTc1UFIqbhLsz8/JCohzyNr6rFqOT5jtBlbgNtByVbU8c3q42WV0rzwRSXEjVilCYfimBdVae/yk2igD7eBQJjmbiS9y3WPDCTj6w4VI5tzZNGFgjuAtJ5GiG86AZSQXbxBQEEpMyJ/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UVoVVPG+; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e3a97a6010so13913097b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730398963; x=1761934963;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=W9ptO2AWHJvDBqBcplJ9x7hVH9AqEur0XDGEUTb8INw=;
-  b=MB+JSeOzCQxKvAEf02S6awjA1Gbmh0Wgxkb3wyddJVLQcyDycp8lVTIa
-   4j77XVRpQQAAc1OIm18g006dUj53q+P6XMXxjKpbz2R/puag2D3pwYjQ1
-   mgj+3I0KcKWCaEBkYN6rFIiEPJ63bvo52QtulM3c6+7y1fDC6URUVD/Tf
-   s=;
-X-IronPort-AV: E=Sophos;i="6.11,247,1725321600"; 
-   d="scan'208";a="771897177"
-Subject: RE: [resend PATCH 1/2] dim: make dim_calc_stats() inputs const pointers
-Thread-Topic: [resend PATCH 1/2] dim: make dim_calc_stats() inputs const pointers
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 18:22:33 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:61073]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.2.199:2525] with esmtp (Farcaster)
- id 5b69f371-b19a-4292-b4a0-5c7f596b7e5d; Thu, 31 Oct 2024 18:22:32 +0000 (UTC)
-X-Farcaster-Flow-ID: 5b69f371-b19a-4292-b4a0-5c7f596b7e5d
-Received: from EX19D005EUA001.ant.amazon.com (10.252.50.159) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 31 Oct 2024 18:22:31 +0000
-Received: from EX19D022EUA002.ant.amazon.com (10.252.50.201) by
- EX19D005EUA001.ant.amazon.com (10.252.50.159) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Thu, 31 Oct 2024 18:22:31 +0000
-Received: from EX19D022EUA002.ant.amazon.com ([fe80::7f87:7d63:def0:157d]) by
- EX19D022EUA002.ant.amazon.com ([fe80::7f87:7d63:def0:157d%3]) with mapi id
- 15.02.1258.034; Thu, 31 Oct 2024 18:22:31 +0000
-From: "Kiyanovski, Arthur" <akiyano@amazon.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, Caleb Sander Mateos
-	<csander@purestorage.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Brett
- Creeley" <brett.creeley@amd.com>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Claudiu Manoil <claudiu.manoil@nxp.com>,
-	"Arinzon, David" <darinzon@amazon.com>, "David S. Miller"
-	<davem@davemloft.net>, Doug Berger <opendmb@gmail.com>, Eric Dumazet
-	<edumazet@google.com>, =?utf-8?B?RXVnZW5pbyBQw6lyZXo=?=
-	<eperezma@redhat.com>, Felix Fietkau <nbd@nbd.name>, Geetha sowjanya
-	<gakula@marvell.com>, hariprasad <hkelam@marvell.com>, Jakub Kicinski
-	<kuba@kernel.org>, Jason Wang <jasowang@redhat.com>, Jonathan Corbet
-	<corbet@lwn.net>, Leon Romanovsky <leon@kernel.org>, Lorenzo Bianconi
-	<lorenzo@kernel.org>, Louis Peens <louis.peens@corigine.com>, Mark Lee
-	<Mark-MC.Lee@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Michael Chan <michael.chan@broadcom.com>, "Michael S. Tsirkin"
-	<mst@redhat.com>, "Dagan, Noam" <ndagan@amazon.com>, Paolo Abeni
-	<pabeni@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, "Roy
- Pledge" <Roy.Pledge@nxp.com>, "Bshara, Saeed" <saeedb@amazon.com>, "Saeed
- Mahameed" <saeedm@nvidia.com>, Sean Wang <sean.wang@mediatek.com>, "Shannon
- Nelson" <shannon.nelson@amd.com>, "Agroskin, Shay" <shayagr@amazon.com>,
-	Simon Horman <horms@kernel.org>, Subbaraya Sundeep <sbhatta@marvell.com>,
-	Sunil Goutham <sgoutham@marvell.com>, Tal Gilboa <talgi@nvidia.com>, "Tariq
- Toukan" <tariqt@nvidia.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>, Xuan Zhuo
-	<xuanzhuo@linux.alibaba.com>
-CC: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "oss-drivers@corigine.com"
-	<oss-drivers@corigine.com>, "virtualization@lists.linux.dev"
-	<virtualization@lists.linux.dev>
-Thread-Index: AQHbKys/FLYzAvitdkSVBoM6s5J6lrKhGqwAgAARw2A=
-Date: Thu, 31 Oct 2024 18:22:15 +0000
-Deferred-Delivery: Thu, 31 Oct 2024 18:21:26 +0000
-Message-ID: <7bf7d713339e4854bfcb80c866aa55fe@amazon.com>
-References: <20241031002326.3426181-1-csander@purestorage.com>
- <d9c01354-853c-459b-9da4-3c1d77102749@broadcom.com>
-In-Reply-To: <d9c01354-853c-459b-9da4-3c1d77102749@broadcom.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google; t=1730398991; x=1731003791; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oyFaR/Nqjo7VFSddLUYVyYGruB0Du5lv6wuap1vCS68=;
+        b=UVoVVPG+630ZfSRCJv+YxjWY2+2aoZqSmG8qfgMiXpk937x5cqdaJgal8ZEBS6K0qJ
+         FR0J2ZrWbob9HPoxon9amFnBXIKKnxF2mVECfw/+sqZ/fCgg5wvL/FImuilBx3Xnle+p
+         Bel2ktwWBkED5DtYKpXxAQJxLYuEIsIa4Y/DzdejRw/fizU+EtKcspp27pWKn51omhZ9
+         7teG2YPeW7UxqNMyMJbBYlfNrri8Bv2mm4PbL1C0tpjI6SIsO5AgpCCC1yOFK0S/ft2X
+         YkYU8WFMJQ9xAd/H3RCp+gkPB9fcrhSEXdvb7F0JEd0YvW3KoBNW69NAl+k0xs3tKx2y
+         RRjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730398991; x=1731003791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oyFaR/Nqjo7VFSddLUYVyYGruB0Du5lv6wuap1vCS68=;
+        b=VdTs8flyGC+W+koTe2OsWh8ILVsorPDJSL9pynCln+6YuUvi/wF8JZZo1k+3yUPpSy
+         t4rPKTa9IIenW99yZlObMtq4RzYEvis4YoKzAvY3rxIaBCLp643xfzUjPyyDCNZ/HHek
+         NMdtQSDU+HrkXQcIOAIxTsttUSDRoo+jV+5yLUmDJLHsUcdq2UY3k2mLHsAK0iCW4h4w
+         btRsFfpIp8gU60TbKX+rG25EzNn7m/3idDULzrLO6/CTrE3+QkqTqFeux6YrbIw/eHOX
+         K3xeuCibEV4gKFtVndc1zL/jbnN4FOuyTj4digadyMxv7g6T8jMjK3QKyDSj5PenAsz1
+         Pc9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvtWdT8b31aPqxzzZ+AhTwRBrFrhTQc2sYp+1GqdDD6zibMLnEhfNiVym05gDsPpG4UsboThGxGv4VFQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5JDwSGisLXO5XFOxwcMANiFt3qUMsOajSEmkoT7UPtwQR9eTc
+	nkq3bAIoRRDCghfuAXsDFYa0hlBu1kgAtf/xWlC8Mnt2/9RsxXDwaV3WlktxJxFMo9x46u2cG1u
+	S/BaKfByt/5P6s/DydVWz6a9QLIvoa8sTSZEGOw==
+X-Google-Smtp-Source: AGHT+IFq8R0CLiSKN/KyW3w8yrGdFcwHeCP7az6vUpHoYzraiFHMKDOSyj3hQcHE8V/hDNjDyyFp/YsnTwuwz+WSQKo=
+X-Received: by 2002:a05:690c:fc2:b0:6e2:a962:d7ec with SMTP id
+ 00721157ae682-6e9d88e8babmr217442787b3.6.1730398991054; Thu, 31 Oct 2024
+ 11:23:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
+In-Reply-To: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 31 Oct 2024 20:23:00 +0200
+Message-ID: <CAA8EJppKou84MZm0JS_4bPveMO2UxpMs5ejCoL7OMWd-umtDmQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child nodes
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, freedreno@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, robdclark@gmail.com, swboyd@chromium.org, 
+	airlied@gmail.com, quic_jesszhan@quicinc.com, lyude@redhat.com, 
+	simona@ffwll.ch, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-T24gMTAvMzAvMjQgMTc6MjMsIENhbGViIFNhbmRlciBNYXRlb3Mgd3JvdGU6DQo+IE1ha2UgdGhl
-IHN0YXJ0IGFuZCBlbmQgYXJndW1lbnRzIHRvIGRpbV9jYWxjX3N0YXRzKCkgY29uc3QgcG9pbnRl
-cnMgdG8gDQo+IGNsYXJpZnkgdGhhdCB0aGUgZnVuY3Rpb24gZG9lcyBub3QgbW9kaWZ5IHRoZWly
-IHZhbHVlcy4NCj4NCj4gU2lnbmVkLW9mZi1ieTogQ2FsZWIgU2FuZGVyIE1hdGVvcyA8Y3NhbmRl
-ckBwdXJlc3RvcmFnZS5jb20+DQoNClJldmlld2VkLWJ5OiBBcnRodXIgS2l5YW5vdnNraSA8YWtp
-eWFub0BhbWF6b24uY29tPg0KDQpUaGFua3MsDQpBcnRodXINCg==
+On Wed, 30 Oct 2024 at 03:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+> of_i2c_register_devices() adds all child nodes of a given i2c bus
+> however in certain device trees of_alias_from_compatible() and
+> of_property_read_u32() can fail as the child nodes of the device
+> might not be valid i2c client devices. One such example is the
+> i2c aux device for the DRM MST toplogy manager which uses the
+> display controller device node to add the i2c adaptor [1] leading
+> to an error spam like below
+>
+> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+> i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+> i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+>
+> Add protection against invalid child nodes before trying to register
+> i2c devices for all child nodes.
+>
+> [1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
+>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/i2c/i2c-core-of.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+> index a6c407d36800..62a2603c3092 100644
+> --- a/drivers/i2c/i2c-core-of.c
+> +++ b/drivers/i2c/i2c-core-of.c
+> @@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+>  {
+>         struct device_node *bus, *node;
+>         struct i2c_client *client;
+> +       u32 addr;
+> +       char temp[16];
+>
+>         /* Only register child devices if the adapter has a node pointer set */
+>         if (!adap->dev.of_node)
+> @@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+>                 if (of_node_test_and_set_flag(node, OF_POPULATED))
+>                         continue;
+>
+> +               if (of_property_read_u32(node, "reg", &addr) ||
+> +                   of_alias_from_compatible(node, temp, sizeof(temp)))
+> +                       continue;
+
+I think just of_property_read_u32() should be enough to skip
+non-I2C-device children. If of_alias_from_compatible() fails, it is a
+legit error.
+
+> +
+>                 client = of_i2c_register_device(adap, node);
+>                 if (IS_ERR(client)) {
+>                         dev_err(&adap->dev,
+> --
+> 2.34.1
+>
+
+
+-- 
+With best wishes
+Dmitry
 
