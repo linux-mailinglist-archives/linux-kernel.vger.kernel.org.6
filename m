@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-390098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F11A9B7570
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:35:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D2A9B7562
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15BD0B2398F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:35:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC56A282E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169DE1537B9;
-	Thu, 31 Oct 2024 07:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B0613E8AE;
+	Thu, 31 Oct 2024 07:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpSfXsTC"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uck0mrUo"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7526314AD1A;
-	Thu, 31 Oct 2024 07:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEFF10A3E;
+	Thu, 31 Oct 2024 07:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730360075; cv=none; b=r20qzNkLIZn6Qpj+LlZTTFLYhhF4+9Hrie136HYtb2SLqrFcfJc57ElmrZhk/jiM2XxufcwscSzpnyZG7cG4PhSLzjTmkICqyScpSYtcpVKae4xVsktZ6ZjqOyM1U+ABD8rL7RDB4WkQf4wU5e59itf5H7qYSVJWuYpvjvnFk30=
+	t=1730359937; cv=none; b=W20aYMeA6ZbbILB9Dd7nMMqhCpXHsy8QTuyD++uoIPTI1BhJyIAIUcGbtBwssaAF1FfVnq/Su5Gw9nEQ6m2hpySAr1QP1+7C2PKaORjqotuvsQTRwojtBu3mIf72tUHX+C90n6klhAoTDC9mEKclLa2IpJxiCd6LHJyj0j/a92M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730360075; c=relaxed/simple;
-	bh=fHyL0O4T5JbEOMzjGGSZF5351215zmI6JGSKKxIAqk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LsSg8g7rBTX0w9i7Py8zCcnrpHVdmWMxhKMdccx921SS2DjjLZiOhd4h0YwsWUcxJ6OWxpaxySVsCBc1J2bpIp8Vfy0gOH9mrFEs+hMNajsECXGGvQp5MDIBvYCPR2qfDmj2rizINeptjHeSyCkJovt80I3JBqCiETq6YuSMeWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OpSfXsTC; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1730359937; c=relaxed/simple;
+	bh=ByNryT807jPQO2/Nq8j6KK8oRmiXZmFa/Dm/RwytioE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i7DJFOiEf+UApIhOy4zFM9YBy7V39+OWNtOTrVow6DDGU6Nb4yxdpz4IpjJhOk/+9ZaCqbpIoL8jrPncLCu2UrSn+4scoi4Tpe025POnBC3HsH3NsLFGUXm+ze48KDZ6vUPheYNiGX3vsA+tUv5yfAl/awAq12zun6rPEY0Hl1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uck0mrUo; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431481433bdso5310215e9.3;
-        Thu, 31 Oct 2024 00:34:33 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so981769e87.1;
+        Thu, 31 Oct 2024 00:32:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730360072; x=1730964872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aVkvrLFdCTfWMavnxrW9/fdQDSbj240jTDkaE5rsp5w=;
-        b=OpSfXsTCvdSUX5JE+s5rS3YUvoo3wm4T0XYSMwDfTpu6TZVYwYOAoH3edseJ1oj/wI
-         G6WDlHU+KuOV9n2PU5HF5hdiAOzuqUVh7iP2/1TEFn+08aIFqQBlExCYDm9wIzll6rCv
-         bl1GqPZlqPdWEHqJC9TEEP+2SQ8rp31f7irm0SlEqkgCeNxp22xs0fpaGfEeFEmpao8U
-         vwAzao8lpzJS40iAaYFK5ZrYXs1XUX0gi/WQGXrzAfMs/1Cog5uGcBKO/G3y5Dh7y9sz
-         K1BESQfqxN+3mBNuiX9va2m0G6FN4r3DCHYypATEaQKktcdeJmqLFQ9+PsLaxcFSpAiw
-         ih6w==
+        d=gmail.com; s=20230601; t=1730359933; x=1730964733; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nXBCAE5YFs7bIo9qj6bwIQiECKD+0RVcggJ63Dxnmlg=;
+        b=Uck0mrUoQMzrT0LO7yuBtGjjMA5fawcnAOW/FKSAnyrLcxh5Ao/JyK0JD9640gY/0p
+         mI5Mb6sah3BsSLXtlU8n9BPmjVG2dfaRODHNf0DBe6klpqc0e5Wqph5cj5Ld7+3ugnMu
+         v38w279LQvm+Mgh0LQtakeDJI/fijDRKBnI01ai+bxALPRNeWqyP07Z5xOclhjL+fU+3
+         ErPY1R9sNfg9q7W/W8dDt/E1+U7Wo/DwmDjQZwVYBwC0ylZPOdlM90VtvuKXdZPktKkl
+         vYwI9zcZBY7RAqLzHs8Rp9Uio2iLgYE6O4mZNKuUGuCka1Ex3k578ZEw66lzQqTmREtr
+         YELQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730360072; x=1730964872;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aVkvrLFdCTfWMavnxrW9/fdQDSbj240jTDkaE5rsp5w=;
-        b=GytZHux8+9xw6hnE7LPWKbfJVDLIHJU2VRDopI2cva7cV8ZfP44qJF+Gqn84EaytDt
-         7Dlnv1GDZdnw4u0mquVezYWisztEL0iRZsOHWjzGVFU8+arBL9/J6xMdUoyz6QPtHsdL
-         KiFCstXpJ8lSA8A5oY3ne7lASbpoX6P3SQpz8LE5KKDqCEXiT+dVDryTC0UFR2GslSh6
-         VnC69mLJOSpXaBMrThhitglAbQe8mhQMFk2Q2UrRjUJ5c56yc3vwUCX/Tv+c9oEZONID
-         5Bs6g3rVnzH0DNXAWB+qUgmDWcznLF84HEmPYf/4yPxaQi7YyvrKHVUHQ9+MY/LivtFV
-         V9jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWi1QLS8SBR7HXmYKbRN5HT4w6MTjs6bOZyaf8zCbRlvnD8op/MKIAkebZD6tOnXn+ez6fl9UaQ2Tj/jBtU@vger.kernel.org, AJvYcCXsBFNqiCpJLCEnPYTs0fuOodEvVTBQjKBAvlbBBaDnThVR+nXMMFYdogCrcMQ+U3OVMcZKmUgL4OhnXA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlXM0a63RXlVaNwumF5c1Tr3oSX5v2E3kpne10flLK26/b1r9z
-	J237w3WxeYgsyeWj3EVeA1dCn4XdOKsnsahxCIwp1zIdjgai+wYqtFnM/4g=
-X-Google-Smtp-Source: AGHT+IGYUe3+hPL228rZ8KYhwjulTyVfF6wzY+21e7eFzFBqF/ZMAuUvYJI/JMQYYHkvZPMAGgH0uQ==
-X-Received: by 2002:a05:6000:42c2:b0:37d:f4b:b6ab with SMTP id ffacd0b85a97d-381bea29202mr1577840f8f.59.1730360071404;
-        Thu, 31 Oct 2024 00:34:31 -0700 (PDT)
-Received: from localhost.. (mob-194-230-148-189.cgn.sunrise.net. [194.230.148.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116a781sm1248951f8f.96.2024.10.31.00.34.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 00:34:31 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Benjamin Tissoires <bentiss@kernel.org>,
-	Bryan.Kemp@dell.com,
-	laurentiu.tudor1@dell.com,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Subject: [PATCH v2 2/2] HID: i2c-hid: introduce qtec vendor, enable re-power-on quirk
-Date: Thu, 31 Oct 2024 08:31:42 +0100
-Message-ID: <20241031073419.9189-3-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241031073419.9189-1-alex.vinarskis@gmail.com>
-References: <20241031073419.9189-1-alex.vinarskis@gmail.com>
+        d=1e100.net; s=20230601; t=1730359933; x=1730964733;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nXBCAE5YFs7bIo9qj6bwIQiECKD+0RVcggJ63Dxnmlg=;
+        b=KnIqnzoU6qQUHka74DWL4udMgc9e4UB947DCDxqEDxyyB71c3TlJ90yqRiLCmPaN5k
+         q1/oLQzkYClQjFPFGR7B8GP1A15oBykqAZm/zU2T536knDP5ysB3EMDBjvgj6hChRwZq
+         pHpe/gqN0Tu9ZPpIJ4ZAy+ANEwizMl/j8fJwYS2c5x3MZs8LHZshwVzlg9xd+EFVBQ6O
+         0thJLgYIrXE+JE5tOTQoAgSKNhjpU9b07e+XfrqkNx2GxJPVKwA63vcvLGV3ihC1Gc8b
+         Bqbv1OxfrfZu2ZtqLgfg49C3x6TKwa+WemneWMjV6F87zfWc55y9KCGVc7OANnPObgUy
+         jt9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMc+9mauOdhYkvVbuNM1RidKHUud+Y25RK9Cbe03HunYbElgHl1nR9fTqmnUx/fk+1YEJlV1Si9K4=@vger.kernel.org, AJvYcCX2z55H+oLHOqLWV5ZHfXIITeAogeW8ENWTo4oHxis8cwvGGzQ/cxl7+VEuFaDHYpprKlWn5pUD+WLzYzz8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeRnA6P0aJKdA4/HH85U12jzoDXRMgruPEEq1jpgLhUZfdBJlu
+	WZjWUD/ujmF5knNwRMozzUbjDxTqvnYobLmE8E3uBwrjlQtXb31r
+X-Google-Smtp-Source: AGHT+IHhXTBpS0JMzRUCqX+rY8GoD1Grx/DK8687++qnb7Sryc7gUhJGbtTkg+njK3XB+s1bvdTD2g==
+X-Received: by 2002:a05:6512:1090:b0:539:f13c:e5d1 with SMTP id 2adb3069b0e04-53b7ed18ccemr3441270e87.38.1730359932788;
+        Thu, 31 Oct 2024 00:32:12 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde02easm112589e87.250.2024.10.31.00.32.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 00:32:12 -0700 (PDT)
+Message-ID: <9ee46109-8503-4b5d-bfd4-45b7ac03029a@gmail.com>
+Date: Thu, 31 Oct 2024 09:32:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: fix memory leak for
+ iio_gts_build_avail_scale_table()
+To: Zicheng Qu <quzicheng@huawei.com>, jic23@kernel.org, lars@metafoo.de,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
+References: <20241031014743.2313121-1-quzicheng@huawei.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241031014743.2313121-1-quzicheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This solves keyboard not working until suspend&resume issue  on Dell XPS
-9345 13" (codenamed 'tributo').
+Hi Zicheng
 
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
----
- drivers/hid/hid-ids.h              | 2 ++
- drivers/hid/i2c-hid/i2c-hid-core.c | 5 +++++
- 2 files changed, 7 insertions(+)
+On 31/10/2024 03:47, Zicheng Qu wrote:
+> In iio_gts_build_avail_scale_table(), the memory allocated for
+> per_time_gains is freed using kfree(per_time_gains) before return 0.
+> However, the type per_time_gains is 'int **', and the memory allocated
+> for its inner elements is not being freed, leading to a memory leak.
+> 
+> Cc: stable@vger.kernel.org # v6.6+
+> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> ---
+>   drivers/iio/industrialio-gts-helper.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
+> index 59d7615c0f56..f2450b2e740d 100644
+> --- a/drivers/iio/industrialio-gts-helper.c
+> +++ b/drivers/iio/industrialio-gts-helper.c
+> @@ -307,6 +307,8 @@ static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
+>   	if (ret)
+>   		goto err_free_out;
+>   
+> +	for (j = 0; j < gts->num_itime; j++)
+> +		kfree(per_time_gains[i]);
+>   	kfree(per_time_gains);
+>   	gts->per_time_avail_scale_tables = per_time_scales;
+>   
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 30728997f4c0..cc9b9bdca117 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1088,6 +1088,8 @@
- #define USB_VENDOR_ID_PRODIGE		0x05af
- #define USB_DEVICE_ID_PRODIGE_CORDLESS	0x3062
- 
-+#define I2C_VENDOR_ID_QTEC              0x6243
-+
- #define USB_VENDOR_ID_QUANTA		0x0408
- #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH		0x3000
- #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3001		0x3001
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index ad386ae878ef..29c75e390a7d 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -136,6 +136,11 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_BAD_INPUT_SIZE },
- 	{ I2C_VENDOR_ID_CIRQUE, I2C_PRODUCT_ID_CIRQUE_1063,
- 		I2C_HID_QUIRK_NO_SLEEP_ON_SUSPEND },
-+	/*
-+	 * Without additional power on command, at least some QTEC devices send garbage
-+	 */
-+	{ I2C_VENDOR_ID_QTEC, HID_ANY_ID,
-+		I2C_HID_QUIRK_RE_POWER_ON },
- 	/*
- 	 * Sending the wakeup after reset actually break ELAN touchscreen controller
- 	 */
--- 
-2.45.2
+You're right, thanks!
+This, however, was already fixed by:
+https://lore.kernel.org/all/20241011095512.3667549-1-ruanjinjie@huawei.com/
+
+Out of the curiosity (and no need to respond if you don't feel like) - 
+are you using the gts helpers in some of your project(s)? I am glad 
+seeing these fixes coming in and just wondered if all these bugs are 
+found because these helpers are being used outside the ROHM drivers :)
+
+Yours,
+	-- Matti
 
 
