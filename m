@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-390102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13A49B7583
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FEAE9B7586
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206A4281A3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 253FD281A49
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BE714B084;
-	Thu, 31 Oct 2024 07:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003C51494C2;
+	Thu, 31 Oct 2024 07:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wsqz2dvT"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhzZduIs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBBD1494C2;
-	Thu, 31 Oct 2024 07:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8FA14A619;
+	Thu, 31 Oct 2024 07:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730360554; cv=none; b=UfLeMv7u0B2yVgAyNNTLdWtVkBquNIDmDKrbt4PfXFLhE6Dw+7hgb98njpLKdzKmHhy7EMXk9KQQahiztVyLSi6WcJBjt/n9NBdZ0b61bHQkFHMiH0YTKpPg+jIt4VqzWitL6+jnF/31s7nfqOZ26G4lzS33IILRnNVhFO/t6kY=
+	t=1730360573; cv=none; b=AooP4ZcQeXP2BQtRdGG24liZvh9CYw9hckn8UwMODNYfJ2VVLyIvaQs0A0zACiRnVNm2j3VzLP8HqcfaIVTJ1aUepMXjiQUxVhIIY3sf+0nvzeU2dm9cuCE1rfagQNEwsSI+AAos7l42dr9+XEh+83v2wn9vkPXh/75BJfTR0lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730360554; c=relaxed/simple;
-	bh=Cm1ePPY50HvXXACjlxjtVpKghXaONxJD6t8CIkZJam8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nP4mfg+YeHGjAD1k63uTzf17Z7Oo8LyxwMyMKvKrTuNXUuK0JzO0LewyAaH+ys3RJBSUOODxlV6b2u4h/nofo0Myp3tHewZ2hAh34zCIssu5/qZAkjCKzpgcvEIqi8ty5mmiOpBYJYAo73RS9TkHSyhLWDcOS9ph/2Zax3/+9zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wsqz2dvT; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso88349566b.1;
-        Thu, 31 Oct 2024 00:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730360551; x=1730965351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cm1ePPY50HvXXACjlxjtVpKghXaONxJD6t8CIkZJam8=;
-        b=Wsqz2dvTSRP97nbFKnE2xx6nhBe6DciuBBG8PLdvjq2qrAih/gBfJGpe0XbueFVzQp
-         SSYwNL06aYU/SKbcG9pL3fIiX9dyJkoLG62Q99fwdc+j1kFxcfLYKsv+fFXadO6zN4vG
-         XJIvV+uVu57WFNvIFdR/4g5vxsqkZydoHSBLUQIbAdRBmK/PNj1oNSvVca9wpIzFgZGm
-         QKC37ZjrQoV0I0gVFFtXk6/IEeshxGOvBxcSVlJScTXBB+GvMKItveIe1H6fk7MkpC8t
-         HDZRB71hT8kgS5MT3l+z1BmpLSXyXCSg74PEi6IMwH6zJhsOvFNEvBmytKLD8uDZLagX
-         zvsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730360551; x=1730965351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cm1ePPY50HvXXACjlxjtVpKghXaONxJD6t8CIkZJam8=;
-        b=iLuyD/y591ysZI+0M1zsbu+RorTvkyg4KmX7nTlJMIdUWfVVE49wPwx0RP3Jc/+1d0
-         YcCJcpJ6O/bSViMVlghmcrDNN/sBfgRPuchrtTcsTq26qTuQfUyuQGtJSkkWkoFhCr+g
-         xY14da9xtBnaJk/LtTuGKGIDkqB4eTzQS2H7VTtDyllS4JdJp8dDI2JR1N8p8qKvXPmR
-         n/It9xXdzorEnaV6iXE8+6pGcd9EKTObYZIPzPIQMJVItgqb7d52KEVFESBEQrx/Zu9k
-         x49efKibXxhYJ8/vzfXWQqoqZR7WsaGGqSEsAHS9rN+NcDJ8skBrGO/EqPORYdruWa+q
-         btvA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8FZLK0FZO/P0ApHtokU0aPsZng/aTn1V7GhLBpxCJDh0MvrqHcMqsonq5UMNFLyRGLSQG0yAY6w/63xwx@vger.kernel.org, AJvYcCW9N+/qFVQzvfTsX/eUCfjjGEF+p1BcqQZk5GdBP9U2DWnkQSb11F9kR+nPnbLCf7x2/fLMafxMbpbQUYZG@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTOoxtNRA6LHTsm0pBu0rx7oA6LsEXzQ/WFnEXoxf5FKZcBSF0
-	n12ndmWVp3xSG+kQo51Ohzp5UYd1XnYtokM66KZW1Yw6Kb1bNAj5mPVKnt5EmeOJyRAu/3zSwhS
-	Sz/7J6RtWVNNDMxkk8PGlQlmoq68=
-X-Google-Smtp-Source: AGHT+IEAsrZ04qOp5HUPiMXHSYCKf7ywUxkMsfYUIUBhyrjq2ngvTN436ihH6lVXI09jaLuNlZJdvsDck7l2NJnAVzU=
-X-Received: by 2002:a17:907:72ce:b0:a99:7539:2458 with SMTP id
- a640c23a62f3a-a9de6455bf8mr1576175566b.65.1730360550601; Thu, 31 Oct 2024
- 00:42:30 -0700 (PDT)
+	s=arc-20240116; t=1730360573; c=relaxed/simple;
+	bh=cKqO+HacNDsYOGX1oXC/gkePXadnPjS5KOgqUQC17uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWDmRfWL3WbTjpUBqMli/Qu5YKgdxX+1B5XqYG74SMDVKNlrjq8CVlmlWAtFXvaeVInkuX1qZ3P/91KA+9uUPlL00OqZqix9JPE0JxjLvgjBRoVsopocDv0VWhlrRFMwouR1sEFN4x4Ha1+MbRvwDnceQ1uOYsch02OriM5p/5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhzZduIs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7621C4CEC3;
+	Thu, 31 Oct 2024 07:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730360572;
+	bh=cKqO+HacNDsYOGX1oXC/gkePXadnPjS5KOgqUQC17uw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LhzZduIsTLE6KmsEKbW1O8sF8COg0PID66sl16MUGDwWFLNDMt4WnDIxrgUdQIb85
+	 bY9WRwqdcj5/n5SfhLufBmHB7Ao6fZD1ZBCBC45+pRCJ1/Z7IBLuC4SNza/FkujWP9
+	 JVfy7d7o7Tx9hhjauRbtg10ChC0bDwV6wkZUyhd7BlZsXt1hgnqGNNw8YsFVN+TAVS
+	 teqzBBA8m8s3c1+rzIxw6IRE9LHhHxllIC1gZ5OoUX2soOKrtV3k66za5iEd7BrWXV
+	 SixWZapnydK8F1EbKgrC7JsI5/ep/eQmSsOn2VwyAIJA2jsBfY3w3X3uEwIIBBsIao
+	 yXV6wZ7YYHARQ==
+Date: Thu, 31 Oct 2024 08:42:49 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: Yangtao Li <tiny.windzz@gmail.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Parthiban <parthiban@linumiz.com>, 
+	Andre Przywara <andre.przywara@arm.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/13] dt-bindings: opp: h6: Add A100 operating points
+Message-ID: <4flk2ub5dldqfv7wd7ytmmnvyvwqb7fxhw6eut2fpatnoms5li@kwehlp4mhytf>
+References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
+ <20241031070232.1793078-12-masterr3c0rd@epochal.quest>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614163416.728752-1-yu.ma@intel.com> <20240717145018.3972922-1-yu.ma@intel.com>
- <20240717145018.3972922-2-yu.ma@intel.com> <20240814213835.GU13701@ZenIV>
- <d5c8edc6-68fc-44fd-90c6-5deb7c027566@intel.com> <20240815034517.GV13701@ZenIV>
-In-Reply-To: <20240815034517.GV13701@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 31 Oct 2024 08:42:18 +0100
-Message-ID: <CAGudoHEu07q72u_XFH61kGXyKr+vAqGFhn_tSSu6U2uMDABLdw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
- likely/unlikely in alloc_fd()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Ma, Yu" <yu.ma@intel.com>, brauner@kernel.org, jack@suse.cz, edumazet@google.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
-	tim.c.chen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241031070232.1793078-12-masterr3c0rd@epochal.quest>
 
-On Thu, Aug 15, 2024 at 5:45=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Thu, Aug 15, 2024 at 10:49:40AM +0800, Ma, Yu wrote:
->
-> > Yes, thanks Al, fully agree with you. The if (error) could be removed h=
-ere
-> > as the above unlikely would make sure no 0 return here. Should I submit
-> > another version of patch set to update it, or you may help to update it
-> > directly during merge? I'm not very familiar with the rules, please let=
- me
-> > know if I'd update and I'll take action soon. Thanks again for your car=
-eful
-> > check here.
->
-> See the current work.fdtable...
+On Thu, Oct 31, 2024 at 04:02:24AM -0300, Cody Eksal wrote:
+> The A100, similar to the H6 and H616, use an NVMEM value to determine
+> speed binnings. The method used is similar to that of the H6. However,
+> the information is stored at a slightly different bit offset.
+> 
+> Add a new compatible for the A100.
+> 
+> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> ---
+> Changes in V2:
+>  - Fix ordering of compatibles
 
-this patchset seems to have fallen through the cracks. anything
-holding up the merge?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Best regards,
+Krzysztof
+
 
