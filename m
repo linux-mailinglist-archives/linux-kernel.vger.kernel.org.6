@@ -1,243 +1,143 @@
-Return-Path: <linux-kernel+bounces-391297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B199B84E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:03:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B979B84E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57B2FB25A70
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:03:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA6B1F2281A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C8A1CDA25;
-	Thu, 31 Oct 2024 21:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0536D1CC8B3;
+	Thu, 31 Oct 2024 21:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLidn0Bp"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTOLrK8/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7038B1C9DF3;
-	Thu, 31 Oct 2024 21:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EDC13A87C;
+	Thu, 31 Oct 2024 21:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408621; cv=none; b=BqWgxgxMo9c79CV0IKFXKCINIQxlBjOz96aeeePCdxRHXQAekDgei9m/GZQ6PSMOeUWNUlcQVN52gtE7FwULjPj1ktxv7GT8qaBZe9wxdWn0/grZWwMhR7Kkxjz8xohxeEXOUAG8ENBTWc1z4ln4uFu8481Xa4z+cQ7aq2hOG9I=
+	t=1730408711; cv=none; b=R0rrTt3eY47354uf9NCCZ0tjkoYi60GyoKQp9x+SNVO9zfxwZ88K4dnubHJSi0u0oIP2NRpbipzA034wFhIexqG+iVNtds3L9F8EkPyxvIjIQ8k6yC2YMmOnLyYl1yZk9XvmxNWE3PUK4qsyrClQQRlUx5uqszCrJSt4yrCoC08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408621; c=relaxed/simple;
-	bh=oguIzsXbO0GU/KjTNvE+xCY3Mo9rAxoVPL11fv1xcCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XvvVqEVJ+S0fLKW8+3P6vgG/o+qNMg5u5UWxtxoVgHphuOMkoyX43ejMdWnCBIH36Vx/aDFTgD5aZHGo7iQ2yaKxfPcMQwUNZ415mTOTYyfph+3PHscRYMs9jjrcRuw5VU9Bb7ubt/0q8Nnq11jhLhccFkz73drFI1BJvbowm4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLidn0Bp; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e2e340218daso1530263276.0;
-        Thu, 31 Oct 2024 14:03:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730408613; x=1731013413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PzQXq7XhxpTP+PwRlgBStzXT4waoPXFXg/qtJ44GAfA=;
-        b=hLidn0Bpz9JLAPirstBwoMMhACFooJgmKs5YIRPi0tUbdPyL2TqED0vNQRhX+x1fsE
-         uVw17nrtf3UQpLS/uDpm20IL/sEa2/Q/JXb5LHC7haxLs0aEu30U2HaM/0pt02vByIcj
-         q2J7cuL0Wx/Pgt5xj3rE37A7J8rGfx7ikAXGPrdlmR7THV8wTNIXt25N0a9N2q4FralN
-         U6IGsDxnPWzdyVoX5agaKTowc7sTi93gG//4c4Bklm8rERMIKV1UIJ7Q1xuFgm+UndKB
-         FVFwkn8Py2kPVggjlfB1DSqnDiILT3QVI5an7OibXO0jlNbP3DK3buAUZeaqbW1ykCx5
-         0yEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408613; x=1731013413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PzQXq7XhxpTP+PwRlgBStzXT4waoPXFXg/qtJ44GAfA=;
-        b=AkAfOmrFj7tzvJLRCfUgODO73TgNMBZnnKmTjLMuHm9mDC+79OpZTBedFuFYSkRx5D
-         LVqa1Nfa4Kj5xbXr8s/ApQdeqvysv7d8e+xuxHamos8taYyz19JC7fr/cE0K2ypL5LWv
-         SaT8Fvvj5LRipZh+x0xnMW36VpjZLMmwyaCAnqAJdamx3OL8+Z5xi6aBpDAwI6mFTkDz
-         t/Nqp1nIzzB1Y+fL4mg+KoQTdRivjDqDO8uqZ1DQe8/hcpD8NtgBUrnFUaoyzlqm/GKr
-         DO7k2OjAgFLHLa8mHvI29LhAun/8c4ZoXHQPGN9XHbL31Q+sXUla+PYqKiYdfumVgeDC
-         AlbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUN+O/zzItWHOiVzBY6PLEujQWtXdhRFpd6JJsUVc6dgx8aEFqkmlGn3+9RX3a9az8po2He6E3YveOI+COx@vger.kernel.org, AJvYcCVqg5xd5fpr3kd727WUgNdrrKi+6uls8M6FkRVcwxvrtbipEsKqsNr4omr29AgHa/RMtWY=@vger.kernel.org, AJvYcCXTN8vgeTHsB/CUJCnna+KyE+X3xvvHcwerlALisrn2Tf3/B3fg0jE++z89I9qcdYRY4OgswQxV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjUF/vMYetftc5yyL2IBzzwRDrxdCHFkwd2vvViUJbFp21C+OJ
-	DTQZ+rRjs2yjFLqFi+X93Ce7qu3xYyFybAm9UGBh22EcABI3/nX7ndXy++aJJIN4GfGHCBBtnBV
-	wjn6g83J3J/wJ+n6LIaXi3H5aPvk=
-X-Google-Smtp-Source: AGHT+IHy8DQ1HGI9zkUS8yokJKso/acy/GTv8smDz5u00ITmraTSJlnFkEub2JffNHXzVENVysSrQhtA0eFO1024aTA=
-X-Received: by 2002:a05:690c:4513:b0:6ea:3075:1fb5 with SMTP id
- 00721157ae682-6ea525205e0mr57010167b3.33.1730408613135; Thu, 31 Oct 2024
- 14:03:33 -0700 (PDT)
+	s=arc-20240116; t=1730408711; c=relaxed/simple;
+	bh=mW5IIozQlNT2A5ZHrPGjs33jauF9bNKcg8hGob0g10w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SsAuRG3O21rZM/5ebYgejanauPSeDoIDBReOOHAuQfNE5r9+wqFJ2H2yLpj3s4tZgXbIoqhbwnM6sl2ivzib138dpNSkwgfDluBiV1F3EwAOq51wDcmWfH2xdRB1fViZVPUMOucsvKYu6tJSQv9oglP3/R6jNBFaQErBDmcmJFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTOLrK8/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89407C4CEC3;
+	Thu, 31 Oct 2024 21:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730408710;
+	bh=mW5IIozQlNT2A5ZHrPGjs33jauF9bNKcg8hGob0g10w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WTOLrK8/JvxYZpf+qH4PUa27ZRSjx02bwZ4Qa6q+kX1s5adPsWHwIMDnKslChXZP1
+	 IN5yklFgwkNb1yr/zTN3MFXun5/l2Ylc6sZ2986LpCWOWLBnV3L9GUHwKdR9/c4mPX
+	 iVFAZMKlsU9Gi7SMYEJ0N7tMVE0ImDZ+IxmNs89P3hnC2NPp5ZuugQIVVUu/t9NMQ7
+	 pLuqY+LasQmLEzcJtO4FtX4V+L9tKtr90CAgZHcCJuhuZ7+SHRlN8WoKlxTlpcECOp
+	 cG8ervHvOWibgTJLtYaoci3xWkZ2EErcvXN50Lpup1iL6fD54GgeLjE2ak4nArFOLD
+	 6mWAbipNQGi6w==
+Date: Thu, 31 Oct 2024 21:05:01 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Zicheng Qu <quzicheng@huawei.com>, nuno.sa@analog.com, lars@metafoo.de,
+ Michael.Hennerich@analog.com, djunho@gmail.com,
+ alexandru.ardelean@analog.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tanghui20@huawei.com, zhangqiao22@huawei.com,
+ judy.chenhui@huawei.com
+Subject: Re: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and
+ ring_xfer
+Message-ID: <20241031210501.3da82113@jic23-huawei>
+In-Reply-To: <4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
+References: <20241028142357.1032380-1-quzicheng@huawei.com>
+	<20241029134637.2261336-1-quzicheng@huawei.com>
+	<4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025201713.286074-1-rosenp@gmail.com> <ca89f03e-6dc1-44fa-bfd1-aac95ede0cbe@intel.com>
- <CAKxU2N9hhwfdZN28kTDf3qUT8GXuxLDPFsA04jBaJSWqPRaHqQ@mail.gmail.com> <59f4a6e6-23ad-4f99-b168-047f1d0d801a@intel.com>
-In-Reply-To: <59f4a6e6-23ad-4f99-b168-047f1d0d801a@intel.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Thu, 31 Oct 2024 14:03:22 -0700
-Message-ID: <CAKxU2N9gE_OZgfmTimMUcN=-P-SMSyFfCkHCd9xLqXKGabNtyw@mail.gmail.com>
-Subject: Re: [PATCHv2 net-next iwl-next] net: intel: use ethtool string helpers
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, netdev@vger.kernel.org, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 12:46=E2=80=AFAM Przemek Kitszel
-<przemyslaw.kitszel@intel.com> wrote:
->
-> On 10/30/24 23:52, Rosen Penev wrote:
-> > On Mon, Oct 28, 2024 at 3:13=E2=80=AFAM Przemek Kitszel
-> > <przemyslaw.kitszel@intel.com> wrote:
-> >>
-> >> On 10/25/24 22:17, Rosen Penev wrote:
-> >>> The latter is the preferred way to copy ethtool strings.
-> >>>
-> >>> Avoids manually incrementing the pointer. Cleans up the code quite we=
-ll.
-> >>>
-> >>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> >>> ---
-> >>>    v2: add iwl-next tag. use inline int in for loops.
-> >>>    .../net/ethernet/intel/e1000/e1000_ethtool.c  | 10 ++---
-> >>>    drivers/net/ethernet/intel/e1000e/ethtool.c   | 14 +++----
-> >>>    .../net/ethernet/intel/fm10k/fm10k_ethtool.c  | 10 ++---
-> >>>    .../net/ethernet/intel/i40e/i40e_ethtool.c    |  6 +--
-> >>>    drivers/net/ethernet/intel/ice/ice_ethtool.c  | 37 +++++++++++----=
-----
-> >>>    drivers/net/ethernet/intel/igb/igb_ethtool.c  | 35 ++++++++++-----=
+On Thu, 31 Oct 2024 15:20:24 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+
+> On Tue, 2024-10-29 at 13:46 +0000, Zicheng Qu wrote:
+> > The AD7923 was updated to support devices with 8 channels, but the size
+> > of tx_buf and ring_xfer was not increased accordingly, leading to a
+> > potential buffer overflow in ad7923_update_scan_mode().
+> >=20
+> > Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the ad7908/ad79=
+18/ad7928")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Nuno S=C3=A1 <noname.nuno@gmail.com>
+> > Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> > --- =20
+>=20
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>=20
+
+Confusing one. I'll fix the authorship up for your analog address
+
+Zicheng, usually a Suggested-by after checking with the author if it's
+a patch in a review thread.
+
+You can't really give someone elses' SoB without them explicitly sending it.
+If Nuno let you know that was fine off the list, then just mention that und=
+er
 ---
-> >>>    drivers/net/ethernet/intel/igbvf/ethtool.c    | 10 ++---
-> >>>    drivers/net/ethernet/intel/igc/igc_ethtool.c  | 36 +++++++++------=
----
-> >>>    .../net/ethernet/intel/ixgbe/ixgbe_ethtool.c  | 32 ++++++++-------=
--
-> >>
-> >> for ice, igb, igc, and ixgbe the current code already uses ethtool
-> >> string helpers, and in many places you are just changing variable name=
-,
-> >> "p" to "data", I would rather avoid that.
-> > well, since I'm cleaning some of this code up, might as well get rid
-> > of variables. That was suggested to me with other similar patches.
-> >>
-> >> sorry for not spotting that earlier, and apologies that we have so man=
-y
-> >> drivers to fix up in the first place
-> >>
-> >>> diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/n=
-et/ethernet/intel/ice/ice_ethtool.c
-> >>> index 2924ac61300d..62a152be8180 100644
-> >>> --- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
-> >>> +++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
-> >>> @@ -83,7 +83,7 @@ static const char ice_gstrings_test[][ETH_GSTRING_L=
-EN] =3D {
-> >>>        "Link test   (on/offline)",
-> >>>    };
-> >>>
-> >>> -#define ICE_TEST_LEN (sizeof(ice_gstrings_test) / ETH_GSTRING_LEN)
-> >>> +#define ICE_TEST_LEN ARRAY_SIZE(ice_gstrings_test)
-> >>>
-> >>>    /* These PF_STATs might look like duplicates of some NETDEV_STATs,
-> >>>     * but they aren't. This device is capable of supporting multiple
-> >>> @@ -1481,48 +1481,53 @@ static void
-> >>>    __ice_get_strings(struct net_device *netdev, u32 stringset, u8 *da=
-ta,
-> >>>                  struct ice_vsi *vsi)
-> >>>    {
-> >>> +     const char *str;
-> >>>        unsigned int i;
-> >>> -     u8 *p =3D data;
-> >>>
-> >>>        switch (stringset) {
-> >>>        case ETH_SS_STATS:
-> >>> -             for (i =3D 0; i < ICE_VSI_STATS_LEN; i++)
-> >>> -                     ethtool_puts(&p, ice_gstrings_vsi_stats[i].stat=
-_string);
-> >>> +             for (i =3D 0; i < ICE_VSI_STATS_LEN; i++) {
-> >>> +                     str =3D ice_gstrings_vsi_stats[i].stat_string;
-> >>> +                     ethtool_puts(&data, str);
-> >>> +             }
-> >>>
-> >>>                if (ice_is_port_repr_netdev(netdev))
-> >>>                        return;
-> >>>
-> >>>                ice_for_each_alloc_txq(vsi, i) {
-> >>> -                     ethtool_sprintf(&p, "tx_queue_%u_packets", i);
-> >>> -                     ethtool_sprintf(&p, "tx_queue_%u_bytes", i);
-> >>> +                     ethtool_sprintf(&data, "tx_queue_%u_packets", i=
-);
-> >>> +                     ethtool_sprintf(&data, "tx_queue_%u_bytes", i);
-> >>>                }
-> >>>
-> >>>                ice_for_each_alloc_rxq(vsi, i) {
-> >>> -                     ethtool_sprintf(&p, "rx_queue_%u_packets", i);
-> >>> -                     ethtool_sprintf(&p, "rx_queue_%u_bytes", i);
-> >>> +                     ethtool_sprintf(&data, "rx_queue_%u_packets", i=
-);
-> >>> +                     ethtool_sprintf(&data, "rx_queue_%u_bytes", i);
-> >>>                }
-> >>>
-> >>>                if (vsi->type !=3D ICE_VSI_PF)
-> >>>                        return;
-> >>>
-> >>> -             for (i =3D 0; i < ICE_PF_STATS_LEN; i++)
-> >>> -                     ethtool_puts(&p, ice_gstrings_pf_stats[i].stat_=
-string);
-> >>> +             for (i =3D 0; i < ICE_PF_STATS_LEN; i++) {
-> >>> +                     str =3D ice_gstrings_pf_stats[i].stat_string;
-> >>> +                     ethtool_puts(&data, str);
-> >>> +             }
-> >>>
-> >>>                for (i =3D 0; i < ICE_MAX_USER_PRIORITY; i++) {
-> >>> -                     ethtool_sprintf(&p, "tx_priority_%u_xon.nic", i=
-);
-> >>> -                     ethtool_sprintf(&p, "tx_priority_%u_xoff.nic", =
-i);
-> >>> +                     ethtool_sprintf(&data, "tx_priority_%u_xon.nic"=
-, i);
-> >>> +                     ethtool_sprintf(&data, "tx_priority_%u_xoff.nic=
-", i);
-> >>>                }
-> >>>                for (i =3D 0; i < ICE_MAX_USER_PRIORITY; i++) {
-> >>> -                     ethtool_sprintf(&p, "rx_priority_%u_xon.nic", i=
-);
-> >>> -                     ethtool_sprintf(&p, "rx_priority_%u_xoff.nic", =
-i);
-> >>> +                     ethtool_sprintf(&data, "rx_priority_%u_xon.nic"=
-, i);
-> >>> +                     ethtool_sprintf(&data, "rx_priority_%u_xoff.nic=
-", i);
-> >>>                }
-> >>>                break;
-> >>>        case ETH_SS_TEST:
-> >>> -             memcpy(data, ice_gstrings_test, ICE_TEST_LEN * ETH_GSTR=
-ING_LEN);
-> >>> +             for (i =3D 0; i < ICE_TEST_LEN; i++)
-> >>> +                     ethtool_puts(&data, ice_gstrings_test[i]);
-> >>>                break;
-> >>>        case ETH_SS_PRIV_FLAGS:
-> >>>                for (i =3D 0; i < ICE_PRIV_FLAG_ARRAY_SIZE; i++)
-> >>> -                     ethtool_puts(&p, ice_gstrings_priv_flags[i].nam=
-e);
-> >>> +                     ethtool_puts(&data, ice_gstrings_priv_flags[i].=
-name);
-> >>>                break;
-> >>>        default:
-> >>>                break;
-> >>
-> >> really no need to git-blame touch most of the code here>
-> >
-> > Actually the function should be taking a double pointer here I think
-> > in case something gets called after it in the main function.
-> I mean that both @p and @data are (u8 *).
-> I'm fine getting rid of tmp var, and updating the originally passed
-> argument is fine. But you could achieve it by just changing param name.
->
-> BTW I guess it was @p to fit into 80 chars more easily ;)
-Yeah I think so too.
+
+This time I'm going to take Nuno's RB as fine to indicate no objection
+to the SoB. Nuno, feel free to shout if you want to handle this differently.
+
+Applied.
+
+Jonathan
+
+
+> > v2:
+> > - Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due to=
+=20
+> > insufficient tx_buf and ring_xfer size for 8-channel devices.
+> > - Issue: Original patch attempted to fix the overflow by limiting the=20
+> > length, but did not address the root cause of buffer size mismatch.
+> > - Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno to=
+=20
+> > support all 8 channels, ensuring adequate buffer capacity.
+> > - Previous patch link:=20
+> > https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@hu=
+awei.com/T/#u
+> > =C2=A0drivers/iio/adc/ad7923.c | 4 ++--
+> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
+> > index 09680015a7ab..acc44cb34f82 100644
+> > --- a/drivers/iio/adc/ad7923.c
+> > +++ b/drivers/iio/adc/ad7923.c
+> > @@ -48,7 +48,7 @@
+> > =C2=A0
+> > =C2=A0struct ad7923_state {
+> > =C2=A0	struct spi_device		*spi;
+> > -	struct spi_transfer		ring_xfer[5];
+> > +	struct spi_transfer		ring_xfer[9];
+> > =C2=A0	struct spi_transfer		scan_single_xfer[2];
+> > =C2=A0	struct spi_message		ring_msg;
+> > =C2=A0	struct spi_message		scan_single_msg;
+> > @@ -64,7 +64,7 @@ struct ad7923_state {
+> > =C2=A0	 * Length =3D 8 channels + 4 extra for 8 byte timestamp
+> > =C2=A0	 */
+> > =C2=A0	__be16				rx_buf[12] __aligned(IIO_DMA_MINALIGN);
+> > -	__be16				tx_buf[4];
+> > +	__be16				tx_buf[8];
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0struct ad7923_chip_info { =20
+>=20
+
 
