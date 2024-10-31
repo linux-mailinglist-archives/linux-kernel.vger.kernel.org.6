@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-391029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAB39B8167
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:41:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B439B816E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BCA2B21423
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AABF31C2200A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B411BE852;
-	Thu, 31 Oct 2024 17:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61FB1C3F2B;
+	Thu, 31 Oct 2024 17:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yHCgWUph"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="txQX41zQ"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C651BE239
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657811A0BD1
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730396474; cv=none; b=QhjWqFK32L3uY5msjeSlKmv0hbOHlLuwvmwF/PZ2ONR0hp8iLmx+FCIcjlp9HankuyQEg86lFYCaMu/pvWre1XtSfZcr8/kI2shiOvhlmrcbS5SG0YuAJ3WG6WBxu3e/F0cK30DBKkg5U4TLAsYkf59hN5wahv2AW7G+9skvMOs=
+	t=1730396533; cv=none; b=DpsXQOoZOv1dEnFjGxHB4JC9ToA43AjD6CB4hfJi9kOLwjd2+/VDlCOsvAl9v6g78okAZyTi6/2Ghb5SeU22IDvQ30fSM2geni7mv8QvWno0hW0cqp0rS6odkanmNKVRM0AQBeT4iZQF9qwf2FJSOutl4QfHCLykENKW4wV8RY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730396474; c=relaxed/simple;
-	bh=rjfli0tBFoUX1/voONhYE8T0CoIEjN4qiViiUnRARk4=;
+	s=arc-20240116; t=1730396533; c=relaxed/simple;
+	bh=Rf6mnPpy9l06l6dtMxbRoYeknemanNGyXKBqhdu+XDA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JtahcU2ZZfqoUTuM26ZJo4vphGUiOAOR/+rC7sq6OlYQQiSaJoBSQGik84/iIwD4o5JGs3zfcHdgPo0eyMFSmn6O7Cmy08XaQ16GjumT/DMflBFDW3pjO+vTv3/FPrx8ZYKQc6Ms+yZMClIFIJD0KDEvYCSqtTf6n4jDQ7/TnuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yHCgWUph; arc=none smtp.client-ip=209.85.166.182
+	 In-Reply-To:Content-Type; b=axr+7N7AEJJYGz03Gm///6hWs6nxB6e7KH2I4ogvIH/2AZgX7GEFPp6NhS4uXpZT49Ton+Q6r0y45ZAfj+0Mf/q3Lqb3AwMT8TiKOrV1s59w/96pGkKXruPzcCNWlnER9+rlpjLjRZxF9N9xOIIkOIS1p4V41wAsjaqfh3HlAMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=txQX41zQ; arc=none smtp.client-ip=209.85.166.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a3bd42955bso4541255ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:41:11 -0700 (PDT)
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83a9cd37a11so44978339f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:42:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730396470; x=1731001270; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730396530; x=1731001330; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yx1Qac1de1Zs6DaCXK6vx+CLfs1Hn/NJAOE3KhROYK0=;
-        b=yHCgWUph95hJEGV9AHSk8BB+kKu0d7uc1Qt26l9QDXURVOP5KCphJrdwgttzObwmYC
-         dpiS0mcUKp8AID/m+LnMGLgI1ShIKjGafnLbZ2Wyvo4b027y6skH9kLawV7GEmihhLay
-         atmBTFLx49vC8Aq8NGscK8SpuBB0OWsn5eEmK7tA7Zo4eEQLfxwxIRjfuc8HMa7dFAFw
-         DKAL9Hi3VoNSzCwew8BEplTn4E2SomoHyw01uWL1/Zye+occYW0bmdYA81UOB8hKkCaP
-         +87zESscMGVsD2X07oXzk2FsB1VHG6X8mal2Jt+nscd1bp9/qQ9Uukbwd8BeBjmAbphT
-         dZjA==
+        bh=x40+SjEaq5943TtiP/UXom9Wy7SciOs8xRpZ9sdjGNw=;
+        b=txQX41zQgMYFvp8EGoQK9Ckb1lRZIDT0QGY+GktWrrYaCVhOREhzDL4Hbh87LiexHY
+         0Wk/OY2SFmuGxtJB8Am2ukTVipM9VX4jfHp23oXDjKtIfQMe5V5mfZpkt9XqqYcuuYjn
+         i4vcJUHNuQbHxPf5JQvW0XtBTimyE4Gpe4xbe6ksoMKJb9py91Gqdfoolng1OmA+qEBo
+         d/SlzYamivnRYj/xWiMJAJcab0Gb0ZszImZZqMG5nGiMVnidiYFS8+H8hfBuqSFltyq2
+         6hgCjOJvyRlT8/iENBRpRDKrRE/uR4LqSXZl2QZxqJrj/HUPY3BVGph5nLYEBWDSGLM4
+         xKgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730396470; x=1731001270;
+        d=1e100.net; s=20230601; t=1730396530; x=1731001330;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yx1Qac1de1Zs6DaCXK6vx+CLfs1Hn/NJAOE3KhROYK0=;
-        b=wIz2LRcwdNZs/Javie4EOaNtEwnX4QSqeWnPVvI6rY0wXi/MaTE7+pmqYIQ8PUIX0F
-         e7vj6KpKyZxXMKHrZZQVFEBcgZ4fmhEl7kc2lWHKESh6JBUwOO9WwKLYEkiXe5KVUIi2
-         mZa9JQHybnvzhWfbqgD6OpGK/aojd/vZweOfcq3dMtGC2+kKbnRzdQAtXWENz8rJps3d
-         wIbvOsZYLZ+YORJRMdolx5U7NvalGhBeqibnsOMQ6hzXEUyel3GD3zd0RggfT0TZ44vi
-         gXmCrFHdXFVpxiqJKM5Z021Fg5tc+o1KxLjDDzQRkazJnCoW8lCT2uwfK8JyvkQQOsf+
-         +hEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4PWTtWJQJfZ5Uqs3dHGZPQUw/OxqR65VCJyZep2yu379gQUeq/rZBWFINjMwLRS5McjKBVOetLtBI0AI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJfT92RC5hOQaZAz4cZDMyEGkQEBc2+jVD+nrI0W0B4qDEtwDb
-	iZawSjHMp0OM+NnijL6Hnu9ttv8J+nnTkium0yqPr9cq8w1n9ZF1oTZcyxkLxq8=
-X-Google-Smtp-Source: AGHT+IFyXNo+4SkkDpMF9EOTb5M/8YLNvanS4IsBDAEKJMERveCtkiHuWa2Wiv0xiuh0/9TvWImYxQ==
-X-Received: by 2002:a92:cd88:0:b0:3a1:a619:203c with SMTP id e9e14a558f8ab-3a5e262e89cmr84852595ab.23.1730396470496;
-        Thu, 31 Oct 2024 10:41:10 -0700 (PDT)
+        bh=x40+SjEaq5943TtiP/UXom9Wy7SciOs8xRpZ9sdjGNw=;
+        b=j0gM4yYwN9fa0PFzl+Qxpdv81dvQ845naMYURHWjIDdGPdVd0cmBq3cor5q+nBX92w
+         OZMWbSxQayQ+XaZ0pEy7BfK68HVD9nk2INPr52sSDoZkrX3WFswrolFw8dul7ZymBX8H
+         7YKJndyzwwAUwhrfKY1M1VyydVPvXjj8Hb11krfjgU7AKbWfU/2CtpTb+iKrIImCWhll
+         JZOodsqJav0wZEJdPGT6PRWOdVumdtH6fCtxKLw8mCb9C/VEp5SJEkXDzwMLF9ZBBwdM
+         jIaj5PKzhz4xMxaNZmGf74SeV84iPz6V+Bov2Ger8dlhRFlC7DYvD29ulv5bSJa2W29n
+         mQ6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUzcdnMc/X7Sm1R9+Z9DA/CGK1SxoMrT4Dj9YtEvOEceakYFncayvXQlonezm0IjZdJJLFWndjBMhkM9jU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzexDzTjNT9wZMK/Thqf4EZ8RwAyiPEzcgayTiegMlgzDkWgYnC
+	u8D/LSQdZuH0WSjP6SIJ4K683191r5n8SRACb+y2lf8H+VgsBAP8d+/rezdp8N8=
+X-Google-Smtp-Source: AGHT+IG0ksmejkYn/tsWOFj5UDq65mB5fTjw0uagwhlJwyCNesDEnrmSpfLQj8+GbqVblFhVpBgdOw==
+X-Received: by 2002:a05:6602:15d4:b0:83a:c242:82aa with SMTP id ca18e2360f4ac-83b1c5cd123mr2127656539f.13.1730396530549;
+        Thu, 31 Oct 2024 10:42:10 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6b073f258sm563215ab.79.2024.10.31.10.41.09
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67b4b157sm40604339f.22.2024.10.31.10.42.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 10:41:09 -0700 (PDT)
-Message-ID: <780facb8-b308-4e11-a7e7-7c258545e9e1@kernel.dk>
-Date: Thu, 31 Oct 2024 11:41:08 -0600
+        Thu, 31 Oct 2024 10:42:09 -0700 (PDT)
+Message-ID: <2a0fc88a-53af-4d7e-b8fd-8cee3f0804a1@kernel.dk>
+Date: Thu, 31 Oct 2024 11:42:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,43 +75,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: rdma: Add check for queue in
- nvmet_rdma_cm_handler()
-To: George Rurikov <grurikov@gmail.com>, Christoph Hellwig <hch@lst.de>
-Cc: MrRurikov <grurikov@gmal.com>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>,
- Israel Rukshin <israelr@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, George Rurikov <g.ryurikov@securitycode.ru>
-References: <20241031173327.663-1-grurikov@gmail.com>
+Subject: Re: [PATCH v1 00/17] Provide a new two step DMA mapping API
+To: Christoph Hellwig <hch@lst.de>
+Cc: Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+ Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+ iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
+References: <cover.1730298502.git.leon@kernel.org>
+ <3144b6e7-5c80-46d2-8ddc-a71af3c23072@kernel.dk>
+ <20241031083450.GA30625@lst.de>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241031173327.663-1-grurikov@gmail.com>
+In-Reply-To: <20241031083450.GA30625@lst.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-> diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-> index 1b6264fa5803..becebc95f349 100644
-> --- a/drivers/nvme/target/rdma.c
-> +++ b/drivers/nvme/target/rdma.c
-> @@ -1770,8 +1770,10 @@ static int nvmet_rdma_cm_handler(struct rdma_cm_id *cm_id,
->  		ret = nvmet_rdma_queue_connect(cm_id, event);
->  		break;
->  	case RDMA_CM_EVENT_ESTABLISHED:
-> -		nvmet_rdma_queue_established(queue);
-> -		break;
-> +		if (!queue) {
-> +			nvmet_rdma_queue_established(queue);
-> +			break;
-> +		}
+On 10/31/24 2:34 AM, Christoph Hellwig wrote:
+> On Wed, Oct 30, 2024 at 07:44:13PM -0600, Jens Axboe wrote:
+>> On Christoph's request, I tested this series last week and saw some
+>> pretty significant performance regressions on my box. I don't know what
+>> the status is in terms of that, just want to make sure something like
+>> this doesn't get merged until that is both fully understood and sorted
+>> out.
+> 
+> Working on it, but I have way too many things going on at once.  Note
+> that the weird thing about your setup was that we apparently dropped into
+> the slow path, which still puzzles me.  But I should probably also look
+> into making that path a little less slow.
 
-This, and the other hunks, just look like nonsense. Why on earth verify
-that the queue is NULL, then not use NULL after that. Let alone that
-whatever you pass it into happily dereference it, and now you've also
-got fallthrough errors all over the place.
-
-This needs to go back to the drawing board. I'd worry a lot more about
-bad code than "potentially malicious hardware", to be honest.
+That's fine, just wanted to ensure that no push was being done on this
+before that was resolved.
 
 -- 
 Jens Axboe
