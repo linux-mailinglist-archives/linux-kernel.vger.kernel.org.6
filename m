@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-389767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8614A9B70F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:15:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD309B70F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:16:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 320C91F21E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:15:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB03B213BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38B04C80;
-	Thu, 31 Oct 2024 00:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCAC4C62;
+	Thu, 31 Oct 2024 00:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NeTHfkwF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="alroabwX"
+Received: from toucan.tulip.relay.mailchannels.net (toucan.tulip.relay.mailchannels.net [23.83.218.254])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8650FEC2
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730333716; cv=none; b=EAoWGvaM9ABui8Jf0O3YFJYwU2bi+njRs53PSKLKXhCuF0QfKzMTCXn3iS8AulFXu1eWJde5TI7aJaL1WWSTdppcilrn0gzisytpHxJ4yT+S+XHoWozr9czdY4YButC+d0QyAlTBQDIEAJHhPLV6mknj1OjnodfdrAwPVxWXGdY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730333716; c=relaxed/simple;
-	bh=uHbbEMAlsuPt5NdNN9X2F9Zupra3ioP3BN0z5R7Qa88=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C297FA23;
+	Thu, 31 Oct 2024 00:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.254
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730333782; cv=pass; b=ryCXZFDB9wE4fOTkjq0tMtU/9Cic+cWHsXKkeX0JlLjVlkYMD9Nr/utqRar8XAOIa5KvF9Kum64qwYUyKSLJaDxdbUA4rm6xSaDu/iBom6qD1ssB9ABYWmO0rpfN5qRwF+JAjV+JjM85VLqSra8uXOJY0S2p6ODHTpE2SkLgxO8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730333782; c=relaxed/simple;
+	bh=S93jTs0T/Pz6vwp0A5bpRuNy7QZZyewYmfCPIEckU5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdxZwFNyWy3VDd2qAOXJ/ZswQE5/9npIQo8zQG3EpnB9lPmZOZD9g7ZJdGTEjjsKVkb9aFi2Nzh0as3amg7zGYON+5xerbrdp+QqdCDXm3iQ/RqStvHrKUl02gWi4Hpwk4nvvoatMPQu0NsdW5MYRLeQNT9haHl3OdLS8VcYlDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NeTHfkwF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730333712;
+	 Content-Type:Content-Disposition:In-Reply-To; b=cP3cTeyWDl8ETG3VGSd0vs0TRgqP1LnAZv4RZNpis6ess3Xg+dfGHrOstlHVb63M344GLrNwYY30rYLCwakFtw8vL66iE97pJAaZxkTErM6s3qrK/uW1Rir+bMD+1aTeEpSVtDhrCChUPS8gL0pKU10Y3Tm/q1XHkjpztg/crjM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=alroabwX; arc=pass smtp.client-ip=23.83.218.254
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 7F41A8444A8;
+	Thu, 31 Oct 2024 00:16:11 +0000 (UTC)
+Received: from pdx1-sub0-mail-a201.dreamhost.com (trex-10.trex.outbound.svc.cluster.local [100.103.28.225])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id E2ACE844796;
+	Thu, 31 Oct 2024 00:16:10 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1730333771; a=rsa-sha256;
+	cv=none;
+	b=jSyUmiGmwl5BVFmugR62fdfwTfnLTdNnYLV58x8SktxY8JyX4Qh73kSkVTCGRbRE8nKEHC
+	OtjDoKMJcUqx/3O6PMjpYEHgkKVuPBd3+BskJnwHu3lz1ZbIwQyTH4+kNWPup7/suIECz9
+	27Iv2ZSrLKN1m7c/dj3jaG2XFUVQJabLHlpHJ9IQjGedQCOHCzzfygS8cFFNn9NjsDySLT
+	+r1wsYhXcGdqIdnsK8TVMvXkEjvrXwbyrMfJnmg77FeaGY/DPlvxWFzh+Ke3duQivxccUj
+	r6hJBktnzelCBMiOzZNCr6soUiAV/lMDpO4mjIV/M3amYabStXDUw+Zabga2fA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1730333771;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NBeNK9NFh5JOCEfAA5ML5dOmjPRbM5/5eyvk78NXjys=;
-	b=NeTHfkwFWReQsmVcLhhqLsslKyNwNZEqCmR8tU5HxjAxLcIrigevkqite+v0aIq7ID8aE2
-	mauFxQTIeKEz4PMJyu4q2Dn0emS7iwVptP6aXZymXrSqjmnsAzAt5E6+PPPsqVq/pXF7ry
-	BKkVMB28sFktyzOXZELChWbvpIKOMMY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-kEeXRQzDPMytemAEJ99l6Q-1; Wed,
- 30 Oct 2024 20:15:05 -0400
-X-MC-Unique: kEeXRQzDPMytemAEJ99l6Q-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=S93jTs0T/Pz6vwp0A5bpRuNy7QZZyewYmfCPIEckU5A=;
+	b=NiBqEyBlq0zc6EHHdIGI6O0bOBAGkWy5SuXnY8qVcN39LuFniQGq7BIvK8Coy0+mHdrVd6
+	2xHLb6xD2jw4XA0Xt6jXS/RFdpHIA8EAiOsDBUiwUly7Ggic5BREUWRJDLEP1reKpYXydC
+	wsSCphQraZXk0qKWV0aYKVn1f3qtH5wkqiqR/2I8dbmdDKsJseGCiX9EuZIYVyAe5Cs0lM
+	h9ydKT0d8eh/3+L2YlNVb6Myq78oWN9g7WYl+Ht97iBqkC5Yv1PMgI8Zqt31eYI+aKzocF
+	BO9k/pxMsgMsrBEnk3eM28rUl9NrOvkFD2UOmig6vqY2KfHkaLm/EcrbvyTtIQ==
+ARC-Authentication-Results: i=1;
+	rspamd-65cf4487d9-9nv87;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Cold-Print: 7f661b066fcffcc3_1730333771339_2064918239
+X-MC-Loop-Signature: 1730333771339:793382286
+X-MC-Ingress-Time: 1730333771339
+Received: from pdx1-sub0-mail-a201.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.103.28.225 (trex/7.0.2);
+	Thu, 31 Oct 2024 00:16:11 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 070B41956046;
-	Thu, 31 Oct 2024 00:15:03 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.15])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 987571956086;
-	Thu, 31 Oct 2024 00:14:55 +0000 (UTC)
-Date: Thu, 31 Oct 2024 08:14:49 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Klara Modin <klarasmodin@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk,
-	akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-	dhowells@redhat.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	klara@kasm.eu
-Subject: Re: [PATCH] iov_iter: don't require contiguous pages in
- iov_iter_extract_bvec_pages
-Message-ID: <ZyLL-eXIntwBY5q2@fedora>
-References: <20241024050021.627350-1-hch@lst.de>
- <fa2f2722-fab2-4108-8d3a-f7da87bb9efa@gmail.com>
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a201.dreamhost.com (Postfix) with ESMTPSA id 4Xf4KP58K1z76;
+	Wed, 30 Oct 2024 17:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1730333770;
+	bh=S93jTs0T/Pz6vwp0A5bpRuNy7QZZyewYmfCPIEckU5A=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=alroabwX7ltwrthsa2X/P4eC6LcOuDEvjDugX/zmyx5hSmk/KYeANKElaBrQ62zDF
+	 ZBc9y7rhbY0GUWOmUWQbscp6noUBFGemoRKEqNpfuL4jRu0mq59d2s2ST0qRQ1JOzv
+	 7cXfeDr6UIl4SnUHhVVz0FavqyudJ8rRunExEEZITT1x+rT4DuhaUWOGCeHGfx9ULu
+	 NXUBgpzCywq1NXcE/dtS9OpWw1zvCw604ZhpvDEltvYsyptZJClK7IER08r73Mj0oc
+	 OigvZEq1z5XWO9RjXDaAy5EHFnkdLA6lR6JOHMIUAfD/IA2qCJ+YVr6XtpJ5ZB8uy/
+	 otw0TlbEGpeBg==
+Date: Wed, 30 Oct 2024 17:16:06 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 05/27] cxl/hdm: Use guard() in cxl_dpa_set_mode()
+Message-ID: <20241031001606.6notvdsajoebalhd@offworld>
+References: <20241029-dcd-type2-upstream-v5-0-8739cb67c374@intel.com>
+ <20241029-dcd-type2-upstream-v5-5-8739cb67c374@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <fa2f2722-fab2-4108-8d3a-f7da87bb9efa@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20241029-dcd-type2-upstream-v5-5-8739cb67c374@intel.com>
+User-Agent: NeoMutt/20220429
 
-On Wed, Oct 30, 2024 at 06:56:48PM +0100, Klara Modin wrote:
-> Hi,
-> 
-> On 2024-10-24 07:00, Christoph Hellwig wrote:
-> > From: Ming Lei <ming.lei@redhat.com>
-> > 
-> > The iov_iter_extract_pages interface allows to return physically
-> > discontiguous pages, as long as all but the first and last page
-> > in the array are page aligned and page size.  Rewrite
-> > iov_iter_extract_bvec_pages to take advantage of that instead of only
-> > returning ranges of physically contiguous pages.
-> > 
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > [hch: minor cleanups, new commit log]
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> With this patch (e4e535bff2bc82bb49a633775f9834beeaa527db in next-20241030),
-> I'm unable to connect via nvme-tcp with this in the log:
-> 
-> nvme nvme1: failed to send request -5
-> nvme nvme1: Connect command failed: host path error
-> nvme nvme1: failed to connect queue: 0 ret=880
-> 
-> With the patch reverted it works as expected:
-> 
-> nvme nvme1: creating 24 I/O queues.
-> nvme nvme1: mapped 24/0/0 default/read/poll queues.
-> nvme nvme1: new ctrl: NQN
-> "nqn.2018-06.eu.kasm.int:freenas:backup:parmesan.int.kasm.eu", addr
-> [2001:0678:0a5c:1204:6245:cbff:fe9c:4f59]:4420, hostnqn:
-> nqn.2018-06.eu.kasm.int:parmesan
+On Tue, 29 Oct 2024, Ira Weiny wrote:
 
-I can't reproduce it by running blktest 'nvme_trtype=tcp ./check nvme/'
-on both next tree & for-6.13/block.
+>Additional DCD functionality is being added to this call which will be
+>simplified by the use of guard() with the cxl_dpa_rwsem.
+>
+>Convert the function to use guard() prior to adding DCD functionality.
+>
+>Suggested-by: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+>Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-Can you collect the following bpftrace log by running the script before
-connecting to nvme-tcp?
-
-Please enable the following kernel options for bpftrace:
-
-	CONFIG_KPROBE_EVENTS_ON_NOTRACE=y
-	CONFIG_NVME_CORE=y
-	CONFIG_NVME_FABRICS=y
-	CONFIG_NVME_TCP=y
-
-Btw, bpftrace doesn't work on next tree if nvme is built as module.
-
-
-# cat extract.bt
-#!/usr/bin/bpftrace
-
-kprobe:nvmf_connect_io_queue
-{
-	@connect[tid]=1;
-}
-
-kretprobe:nvmf_connect_io_queue
-{
-	@connect[tid]=0;
-}
-
-kprobe:iov_iter_extract_pages
-/@connect[tid]/
-{
-	$i = (struct iov_iter *)arg0;
-	printf("extract pages: iter(cnt %lu off %lu) maxsize %u maxpages %u offset %lu\n",
-		$i->count, $i->iov_offset, arg2, arg3, *((uint32 *)arg4));
-	printf("\t bvec(off %u len %u)\n", $i->bvec->bv_offset, $i->bvec->bv_len);
-}
-
-kretprobe:iov_iter_extract_pages
-/@connect[tid]/
-{
-	printf("extract pages: ret %d\n", retval);
-}
-
-END {
-	clear(@connect);
-}
-
-
-
-Thanks,
-Ming
-
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
