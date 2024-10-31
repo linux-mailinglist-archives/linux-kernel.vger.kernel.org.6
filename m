@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-390869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5379B7F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:58:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A479B7F6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E87D283224
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:58:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6C81F235A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93C1A76D5;
-	Thu, 31 Oct 2024 15:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3BA1A08AB;
+	Thu, 31 Oct 2024 15:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KekujGEX"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hHAHLUDd"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B12413AA5F;
-	Thu, 31 Oct 2024 15:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E1819B59C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730390269; cv=none; b=rq8/1298RsptZSQgykfd/UKDquKUnWqjuVDKv5baWsB8pe1kPJbFWcvGdPKKwR9CnUtRnD2xX2Yfm7JzRQn53ENyUjM7rB19wJRsIrvBLCppM3feQ912ZIH+MBvIg55D7Hjqnv2wx4+WBadG8kVW7XN0V9DOrdoo+Ah+PK1j0lo=
+	t=1730390192; cv=none; b=T9g2YxZVgpMruKDOqU4f32DMn7OT/pegtMHXTiOxcvKkiZkow7eGkhI0LloAX28qtjZW/PFDSnqI8WVvtTedLizzZL7nqKNOVMqqHu3i/HbhHmXfF5+7BBJAav8gnfTBOqWd8WiSUQuC09ZMAaVEXM9MOFs1x/jc/evfgvf4i30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730390269; c=relaxed/simple;
-	bh=Bdy/W+WJwywtZb0g+ERgxY7Nzc7gW9/k4nPsAb43oAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s2rYRCUiL1orScsf20ukM23uTQ6EBZiHGKI9Ec0+vp8KDyBqs3uc74/kES1MXM0dhNx6YgkJD1lHuVWhcMG0qbxgpXCj2BHZjbCA/aacW/XKKiGenzmJGv7OEqI+zcCvJaF67es5zlE5BjNxQQrnjWgwHJADyIowHWCxY+LFkqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KekujGEX; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=th6G0fEyoOFS+Otf2yPw97DjiY2mX5pgf7XrHARRmzY=; b=KekujGEXXdz//Zd4FJmxYDxXCF
-	IlkOWbnl6cmgP4E8zS8gW903vhg1o0uHkVduOgf1xaCKHMbNFP736uJ/dIN9bv7hrj9ImjZqio6T4
-	vRd5ELso+mxNLG+Pm0MERmAyDFWCkEuDSwFmU+6SHjKFPUayYt/YPsAuis+4U8oP2fzpwiaCJUxPV
-	/I45WEIWaryk/OUfGyLNNWwpQhP1S7V+fKAvfcC46BeghoB9QJnlnlnZqspPlo2Sx3T/6006sg+kk
-	fcQC/quxfAABgvZ1NEii9GxNX7fiJ/3n0XSMiOifYPKHZeR+vojxjsjlxHDSy8ITH2jTyIC8uVPQ0
-	6I8DhhnQ==;
-Received: from [189.79.117.125] (helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t6XYI-000547-GQ; Thu, 31 Oct 2024 16:57:39 +0100
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To: pkshih@realtek.com,
-	linux-wireless@vger.kernel.org
-Cc: kvalo@kernel.org,
+	s=arc-20240116; t=1730390192; c=relaxed/simple;
+	bh=BiDxiDH0PQD5cCk6exGvlq0C2VOXs+ukciiEL3KVru0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XhAf/UAbwbUAOBwYwNGAvXdion7+3nG3czcpIC61OdbYeuZcDfltN+i9TgmTpn7G4KYcRWSzKUul5woUd6paUZwgkmc/lwk7DT0f+4xal2re/QzxIQneuWvTwKlt3irdqRDMaCiqngMZIOv46C0RBp5fklO6ybw0KtYL0uaHRhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hHAHLUDd; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730390188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ce50T52Mg3KtaLG7W7v0gI2ull5wlkcCd0a72TjlbNQ=;
+	b=hHAHLUDdljPxC8yGeBEnHSwWzpimYR7nrNXjt9QnjOQdisshMN6PHiaZdEc8BzBxMrQeXG
+	mJluXxeCMeCLz6xWYN5L5zNxqyNSwx0ZkT+m22af832CSJfkpqxEgy5XcsRM0OwYwgV3Td
+	izWXL+6XXVhi83SGbdM77B85r1VoLBY=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	kernel@gpiccoli.net,
-	kernel-dev@igalia.com,
-	rtl8821cerfe2@gmail.com,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	stable@vger.kernel.org,
-	syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-Subject: [PATCH V3] wifi: rtlwifi: Drastically reduce the attempts to read efuse in case of failures
-Date: Thu, 31 Oct 2024 12:55:27 -0300
-Message-ID: <20241031155731.1253259-1-gpiccoli@igalia.com>
-X-Mailer: git-send-email 2.46.2
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [etnaviv-next v3] drm/etnaviv: Print an error message if inserting IOVA range fails
+Date: Thu, 31 Oct 2024 23:56:16 +0800
+Message-Id: <20241031155616.2451084-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,126 +59,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Syzkaller reported a hung task with uevent_show() on stack trace. That
-specific issue was addressed by another commit [0], but even with that
-fix applied (for example, running v6.12-rc5) we face another type of hung
-task that comes from the same reproducer [1]. By investigating that, we
-could narrow it to the following path:
+Print an error message to help debug when such an error happens,
+since there meight have other CPU page size & GPU page size combinations.
 
-(a) Syzkaller emulates a Realtek USB WiFi adapter using raw-gadget and
-dummy_hcd infrastructure.
-
-(b) During the probe of rtl8192cu, the driver ends-up performing an efuse
-read procedure (which is related to EEPROM load IIUC), and here lies the
-issue: the function read_efuse() calls read_efuse_byte() many times, as
-loop iterations depending on the efuse size (in our example, 512 in total).
-
-This procedure for reading efuse bytes relies in a loop that performs an
-I/O read up to *10k* times in case of failures. We measured the time of
-the loop inside read_efuse_byte() alone, and in this reproducer (which
-involves the dummy_hcd emulation layer), it takes 15 seconds each. As a
-consequence, we have the driver stuck in its probe routine for big time,
-exposing a stack trace like below if we attempt to reboot the system, for
-example:
-
-task:kworker/0:3 state:D stack:0 pid:662 tgid:662 ppid:2 flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- __schedule+0xe22/0xeb6
- schedule_timeout+0xe7/0x132
- __wait_for_common+0xb5/0x12e
- usb_start_wait_urb+0xc5/0x1ef
- ? usb_alloc_urb+0x95/0xa4
- usb_control_msg+0xff/0x184
- _usbctrl_vendorreq_sync+0xa0/0x161
- _usb_read_sync+0xb3/0xc5
- read_efuse_byte+0x13c/0x146
- read_efuse+0x351/0x5f0
- efuse_read_all_map+0x42/0x52
- rtl_efuse_shadow_map_update+0x60/0xef
- rtl_get_hwinfo+0x5d/0x1c2
- rtl92cu_read_eeprom_info+0x10a/0x8d5
- ? rtl92c_read_chip_version+0x14f/0x17e
- rtl_usb_probe+0x323/0x851
- usb_probe_interface+0x278/0x34b
- really_probe+0x202/0x4a4
- __driver_probe_device+0x166/0x1b2
- driver_probe_device+0x2f/0xd8
- [...]
-
-We propose hereby to drastically reduce the attempts of doing the I/O reads
-in case of failures, restricted to USB devices (given that they're inherently
-slower than PCIe ones). By retrying up to 10 times (instead of 10000), we
-got reponsiveness in the reproducer, while seems reasonable to believe
-that there's no sane USB device implementation in the field requiring this
-amount of retries at every I/O read in order to properly work. Based on
-that assumption, it'd be good to have it backported to stable but maybe not
-since driver implementation (the 10k number comes from day 0), perhaps up
-to 6.x series makes sense.
-
-[0] Commit 15fffc6a5624 ("driver core: Fix uevent_show() vs driver detach race").
-
-[1] A note about that: this syzkaller report presents multiple reproducers
-that differs by the type of emulated USB device. For this specific case,
-check the entry from 2024/08/08 06:23 in the list of crashes; the C repro
-is available at https://syzkaller.appspot.com/text?tag=ReproC&x=1521fc83980000.
-
-Cc: stable@vger.kernel.org # v6.1+
-Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
 ---
+v3:
+ - Pick up tags and resend.
+ - Slightly improve commit message.
+---
+ drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-
-V3:
-- Switch variable declaration to reverse xmas tree order
-(thanks Ping-Ke Shih for the suggestion).
-
-V2:
-- Restrict the change to USB device only (thanks Ping-Ke Shih).
-- Tested in 2 USB devices by Bitterblue Smith - thanks a lot!
-
-V1: https://lore.kernel.org/lkml/20241025150226.896613-1-gpiccoli@igalia.com/
-
-
- drivers/net/wireless/realtek/rtlwifi/efuse.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/efuse.c b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-index 82cf5fb5175f..0ff553f650f9 100644
---- a/drivers/net/wireless/realtek/rtlwifi/efuse.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-@@ -162,9 +162,19 @@ void efuse_write_1byte(struct ieee80211_hw *hw, u16 address, u8 value)
- void read_efuse_byte(struct ieee80211_hw *hw, u16 _offset, u8 *pbuf)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
-+	u16 retry, max_attempts;
- 	u32 value32;
- 	u8 readbyte;
--	u16 retry;
-+
-+	/*
-+	 * In case of USB devices, transfer speeds are limited, hence
-+	 * efuse I/O reads could be (way) slower. So, decrease (a lot)
-+	 * the read attempts in case of failures.
-+	 */
-+	if (rtlpriv->rtlhal.interface == INTF_PCI)
-+		max_attempts = 10000;
-+	else
-+		max_attempts = 10;
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+index 7e065b3723cf..47b6242e24a0 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+@@ -298,8 +298,12 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_context *context,
+ 		ret = etnaviv_iommu_insert_exact(context, node, etnaviv_obj->size, va);
+ 	else
+ 		ret = etnaviv_iommu_find_iova(context, node, etnaviv_obj->size);
+-	if (ret < 0)
++	if (ret) {
++		dev_err_ratelimited(context->global->dev,
++				    "Insert iova failed: 0x%llx(0x%x)\n",
++				    va, etnaviv_obj->size);
+ 		goto unlock;
++	}
  
- 	rtl_write_byte(rtlpriv, rtlpriv->cfg->maps[EFUSE_CTRL] + 1,
- 		       (_offset & 0xff));
-@@ -178,7 +188,7 @@ void read_efuse_byte(struct ieee80211_hw *hw, u16 _offset, u8 *pbuf)
- 
- 	retry = 0;
- 	value32 = rtl_read_dword(rtlpriv, rtlpriv->cfg->maps[EFUSE_CTRL]);
--	while (!(((value32 >> 24) & 0xff) & 0x80) && (retry < 10000)) {
-+	while (!(((value32 >> 24) & 0xff) & 0x80) && (retry < max_attempts)) {
- 		value32 = rtl_read_dword(rtlpriv,
- 					 rtlpriv->cfg->maps[EFUSE_CTRL]);
- 		retry++;
+ 	mapping->iova = node->start;
+ 	ret = etnaviv_iommu_map(context, node->start, etnaviv_obj->size, sgt,
 -- 
-2.46.2
+2.34.1
 
 
