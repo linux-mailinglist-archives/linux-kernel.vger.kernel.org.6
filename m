@@ -1,67 +1,113 @@
-Return-Path: <linux-kernel+bounces-390606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37B59B7C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:50:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CB39B7C29
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA67B1F22045
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91932829AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C0719F111;
-	Thu, 31 Oct 2024 13:50:42 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FB71A01BE;
+	Thu, 31 Oct 2024 13:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbFX9ihm"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51F118858A;
-	Thu, 31 Oct 2024 13:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4B019E98E;
+	Thu, 31 Oct 2024 13:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730382641; cv=none; b=eYRp3yNNrgfCQvZwRPtQC32YIgZOrKzqPlCmu7FXja8KPRllbR8gw4DiJSr811s1e1npS+7GX7DA32WDqnL2oKW7S2rRbQe3UQJ6jusYvM6SHlLPioR4F1hfIFkkKOnKwn5y0gpujQBvb4uX1ztztntl7vQpI3+mfS3Tu1gWShY=
+	t=1730382648; cv=none; b=L/343AnlHLuXm/V6rAYeLSrKQCQmMOGJ2VJ4ziMHi5d00IHdxe+0ID3GaLfk3Ac6vqo97CeZ92Lg5OAwyyI6eJdbEy0YumcNZCuPNcuCHngJz9YbdzFm+lZumIER06hDqAP4kbpsP+gZJzuc1zpJK5iZczS1litijsRJtFaCDps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730382641; c=relaxed/simple;
-	bh=hJhqOrb9icJdn9+eoAEG23GR1NmmQfebcODBfmoq4AU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=md6EUXqriE+7lB5BmkE0jHgUxCnCjQf9zPjyN9jHtGrE2PjLc9wOyVF4yrlrzJu7K5i+lcAOVYgZ3mdyuCSLod3qP8vEHWp6VlZxHygJQnZxYGzO4czROmvNiZoahyL+9/yvCPitf6lOf2v2V9rOvHfDt+DXfc3dw4GIAl+mOlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XfQMt0zcPz20qwQ;
-	Thu, 31 Oct 2024 21:49:30 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 981581A016C;
-	Thu, 31 Oct 2024 21:50:30 +0800 (CST)
-Received: from [10.67.109.114] (10.67.109.114) by
- kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 31 Oct 2024 21:50:29 +0800
-Message-ID: <d38c2b1a-3527-421b-a122-fcec0e48b4c4@huawei.com>
-Date: Thu, 31 Oct 2024 21:50:21 +0800
+	s=arc-20240116; t=1730382648; c=relaxed/simple;
+	bh=BMVTcutHhu+6ZQGryNtLyz86LcuO3vePR57Y+9HCDkE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pTAsU7QBIAF0x3zHYaxfXBJHfr2QcYcH+7ED4kehjji8BtR9UbWpL67xrdmV4uOH6XfzhkZ8sJMuLwrzLOIfONncbG0t1YENE1ymyLev6HgchwBM9R2clDSMWhKhN4vTA9M+CLvrfnfThNURIftm2058pqy2eFPxuhV5o6hULEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbFX9ihm; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43163667f0eso7973645e9.0;
+        Thu, 31 Oct 2024 06:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730382644; x=1730987444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVhYO33vVqCBdciqa+kZPbAFcZzbjS6IKLArecWVdrs=;
+        b=WbFX9ihmlK8yiAvT/pYuAyDRPRFRC1Vn1hhSQ+/2yZh1mMinek6wj6CkYJsmiNpPCB
+         lyYRdsVS2rkDW4odoZeSzgax/Xavkd49fVqTZji7vFSma+6gNPIkerkE8v07whI3Bkiz
+         rT0RIKlTtXSrK+Uo1+rfbV/0givcwotI9GOMjeRqlV6QVJ5bCyXTWlujDPFFrXEea0Cw
+         +4N6Unha+dGn7G5ubCja21M7maO9cTk9uATXjHEZQaGjFPqOrIi9nmQvevkKg39JieCK
+         DmgevlhyWol3MFARJYWVnyJP3qopPXpHG0fgEQ0N58eRWBmDbgcqGtFxrow95Jcakcev
+         45kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730382644; x=1730987444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UVhYO33vVqCBdciqa+kZPbAFcZzbjS6IKLArecWVdrs=;
+        b=MvO9VIa19J4KqKrR0wyc+KdhRduPd/DwnaapGLAL0blo6NLw5pxkI5AARofrb5YYfE
+         ZUL2DE2BsO7pqoL4leC2KgUfMqZoAi/qfiQfznRLWGZOYceSICSca5PzPsK3SGKvZXnA
+         Lu5jsrBWwMe0HfJ9sPxQrm09/MjU+Q9Ax7s5ZuH2AgUI3OWYlcI5SNLhCCYkTAkD2jIQ
+         0KNQNTUONUS0oO4bT8oexIyUuaf0Eop2otUDTpGF2Zqa+/f5uLr+rhIaVFglJTdvhmR5
+         Jv8B13fx4fNsx/v6JFET/cH8HtW9WlqcOcWDsfHr7PNMxVI54CcNwrjY7UWKLyQHIY/r
+         54aA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/jdNIPOnZuqtv/FECU0OO0YtDcE/qdzo2Ut7UGlj+WY+rfoYUYM5daWjcqsySmdnjYI2s1s+5EpOQUFs=@vger.kernel.org, AJvYcCVL10qd3qevYqz1J+Uc2Ith0WOZFPIZ3xVuH8BKQNut82vF6/7yPCaV/sjIrisw2vt5HLpy8tuR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXGYPOMENIosfduv3yalKPr0/+4hAUtuzAZZjFAUeql3Zd0P5n
+	sE8B6lPJ+5qOLyScJBEGGLqJQqB0Vdo+Uef75P3JQz8TLY4B/ST+
+X-Google-Smtp-Source: AGHT+IECcaSiBC7aXgNY1F0gkPYapD18wbQsdxVx/0i2rpGtbk3yjipiZw0BjGDrX5iSplBMT8GKtQ==
+X-Received: by 2002:a7b:c5cc:0:b0:431:52a3:d9ea with SMTP id 5b1f17b1804b1-431aa80275cmr119037755e9.0.1730382644164;
+        Thu, 31 Oct 2024 06:50:44 -0700 (PDT)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5e8562sm27143775e9.23.2024.10.31.06.50.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 06:50:43 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Richard Cochran <richardcochran@gmail.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ptp: fc3: remove redundant check on variable ret
+Date: Thu, 31 Oct 2024 13:50:42 +0000
+Message-Id: <20241031135042.3250614-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: clk-axi-clkgen: fix division by zero in
- axi_clkgen_calc_params()
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <lars@metafoo.de>,
-	<mturquette@linaro.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>
-References: <20241026072344.976154-1-quzicheng@huawei.com>
-From: Zicheng Qu <quzicheng@huawei.com>
-In-Reply-To: <20241026072344.976154-1-quzicheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpeml500009.china.huawei.com (7.185.36.209) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Gentle ping.
+The check on ret has already been performed a few statements earlier
+and ret has not been re-assigned and so the re-checking is redundant.
+Clean up the code by removing the redundant check.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/ptp/ptp_fc3.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/ptp/ptp_fc3.c b/drivers/ptp/ptp_fc3.c
+index e14e149b746e..879b82f03535 100644
+--- a/drivers/ptp/ptp_fc3.c
++++ b/drivers/ptp/ptp_fc3.c
+@@ -986,11 +986,6 @@ static int idtfc3_probe(struct platform_device *pdev)
+ 
+ 	mutex_unlock(idtfc3->lock);
+ 
+-	if (err) {
+-		ptp_clock_unregister(idtfc3->ptp_clock);
+-		return err;
+-	}
+-
+ 	platform_set_drvdata(pdev, idtfc3);
+ 
+ 	return 0;
+-- 
+2.39.5
 
 
