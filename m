@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-391298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B979B84E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:05:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3429B84E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA6B1F2281A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:05:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FD611C20FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0536D1CC8B3;
-	Thu, 31 Oct 2024 21:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C361CCEEC;
+	Thu, 31 Oct 2024 21:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTOLrK8/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BOVW/0+1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EDC13A87C;
-	Thu, 31 Oct 2024 21:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C00A199FAF;
+	Thu, 31 Oct 2024 21:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408711; cv=none; b=R0rrTt3eY47354uf9NCCZ0tjkoYi60GyoKQp9x+SNVO9zfxwZ88K4dnubHJSi0u0oIP2NRpbipzA034wFhIexqG+iVNtds3L9F8EkPyxvIjIQ8k6yC2YMmOnLyYl1yZk9XvmxNWE3PUK4qsyrClQQRlUx5uqszCrJSt4yrCoC08=
+	t=1730408732; cv=none; b=U8OTrcE+SftaaaIWgD43Q6a2EZYFyReCC/9pGt9kLsAJkz7+WzYRwXApSMB46AlDQl4WxXFtHAX/SIXlvdOsKZ74SkGssnXsMG0+QD1M+swiQExZZz+fllfwBbvcRdWTmNPvRWSs9yydQ+4nkkHixHNlr7zp/Ix9JF1Tv4uWbSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408711; c=relaxed/simple;
-	bh=mW5IIozQlNT2A5ZHrPGjs33jauF9bNKcg8hGob0g10w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SsAuRG3O21rZM/5ebYgejanauPSeDoIDBReOOHAuQfNE5r9+wqFJ2H2yLpj3s4tZgXbIoqhbwnM6sl2ivzib138dpNSkwgfDluBiV1F3EwAOq51wDcmWfH2xdRB1fViZVPUMOucsvKYu6tJSQv9oglP3/R6jNBFaQErBDmcmJFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTOLrK8/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89407C4CEC3;
-	Thu, 31 Oct 2024 21:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730408710;
-	bh=mW5IIozQlNT2A5ZHrPGjs33jauF9bNKcg8hGob0g10w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WTOLrK8/JvxYZpf+qH4PUa27ZRSjx02bwZ4Qa6q+kX1s5adPsWHwIMDnKslChXZP1
-	 IN5yklFgwkNb1yr/zTN3MFXun5/l2Ylc6sZ2986LpCWOWLBnV3L9GUHwKdR9/c4mPX
-	 iVFAZMKlsU9Gi7SMYEJ0N7tMVE0ImDZ+IxmNs89P3hnC2NPp5ZuugQIVVUu/t9NMQ7
-	 pLuqY+LasQmLEzcJtO4FtX4V+L9tKtr90CAgZHcCJuhuZ7+SHRlN8WoKlxTlpcECOp
-	 cG8ervHvOWibgTJLtYaoci3xWkZ2EErcvXN50Lpup1iL6fD54GgeLjE2ak4nArFOLD
-	 6mWAbipNQGi6w==
-Date: Thu, 31 Oct 2024 21:05:01 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Zicheng Qu <quzicheng@huawei.com>, nuno.sa@analog.com, lars@metafoo.de,
- Michael.Hennerich@analog.com, djunho@gmail.com,
- alexandru.ardelean@analog.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, tanghui20@huawei.com, zhangqiao22@huawei.com,
- judy.chenhui@huawei.com
-Subject: Re: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and
- ring_xfer
-Message-ID: <20241031210501.3da82113@jic23-huawei>
-In-Reply-To: <4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
-References: <20241028142357.1032380-1-quzicheng@huawei.com>
-	<20241029134637.2261336-1-quzicheng@huawei.com>
-	<4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730408732; c=relaxed/simple;
+	bh=OO4A1ZXhvnE/2XJOeAiNO8KhYr/w+ARRaSfPUdDCdws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fta2A/goBNnlLdXvzyOxb4gbHLYFBQgKlEFBWOpNEVTq8xWqwc4v9Z/WAStfFWrVcdWT72PMpl+u68yFYPMFZxIz5PbInluvng/kFtS+Qh3q6QAqgUVjZYC4tgpwk3/x1XtO656zJUhiVBdmqBJVLYSuYpD17Bcmr8wds0jbNfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BOVW/0+1; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730408726; x=1761944726;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=OO4A1ZXhvnE/2XJOeAiNO8KhYr/w+ARRaSfPUdDCdws=;
+  b=BOVW/0+1OLiZFeLNjjbiBF7bsjjsZS3nj5dT1aYMvlsn+DhU9LD29B1f
+   MycoYUUu1Zs/OWPhTY1y1yWhJo1Ic4rrpjagbI+OCw55EN10AqJdqwz4r
+   J5xN9n16D2Edez0SISjXq68Ij6Z1Ex53uwIrAIeAy1IN7gNwLV0wrJ+l0
+   35/xqFmi8xH+RAaDDsfb1ND1Oj2+C35Q3vG3X3d9ZfRM454aEn23n+rtS
+   XxcC/whol8bgKETmTiv5KKN5ToQGhibcYQhQkLp9Wo3pdu0pSSRdV3mjt
+   9NKBulniv0i6ZB1ALGz27e/ZnKws1GnzJ3r6RSvUTldYFEf4qeHvwif9C
+   Q==;
+X-CSE-ConnectionGUID: w1P2X7QDTUqALWkDM+VFxQ==
+X-CSE-MsgGUID: eD54R3SET1K2TwqA0vLKcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="55575487"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="55575487"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 14:05:24 -0700
+X-CSE-ConnectionGUID: 5foGy5bPQLqQElX3moR8kA==
+X-CSE-MsgGUID: EkRWfefLSq27SEFwoMicWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="83566317"
+Received: from ideak-desk.fi.intel.com ([10.237.72.78])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 14:05:18 -0700
+Date: Thu, 31 Oct 2024 23:05:50 +0200
+From: Imre Deak <imre.deak@intel.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH RFC 1/4] drm/dp: Add helper to set LTTPRs in transparent
+ mode
+Message-ID: <ZyPxLpykHkO9Xx_R@ideak-desk.fi.intel.com>
+Reply-To: imre.deak@intel.com
+References: <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-0-cafbb9855f40@linaro.org>
+ <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-1-cafbb9855f40@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-1-cafbb9855f40@linaro.org>
 
-On Thu, 31 Oct 2024 15:20:24 +0100
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+On Thu, Oct 31, 2024 at 05:12:45PM +0200, Abel Vesa wrote:
+> According to the DisplayPort standard, LTTPRs have two operating
+> modes:
+>  - non-transparent - it replies to DPCD LTTPR field specific AUX
+>    requests, while passes through all other AUX requests
+>  - transparent - it passes through all AUX requests.
+> 
+> Switching between this two modes is done by the DPTX by issuing
+> an AUX write to the DPCD PHY_REPEATER_MODE register.
+> 
+> Add a generic helper that allows switching between these modes.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/gpu/drm/display/drm_dp_helper.c | 17 +++++++++++++++++
+>  include/drm/display/drm_dp_helper.h     |  1 +
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
+> index 6ee51003de3ce616c3a52653c2f1979ad7658e21..38d612345986ad54b42228902ea718a089d169c4 100644
+> --- a/drivers/gpu/drm/display/drm_dp_helper.c
+> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
+> @@ -2694,6 +2694,23 @@ int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE])
+>  }
+>  EXPORT_SYMBOL(drm_dp_lttpr_max_link_rate);
+>  
+> +/**
+> + * drm_dp_lttpr_set_transparent_mode - set the LTTPR in transparent mode
+> + * @aux: DisplayPort AUX channel
+> + * @enable: Enable or disable transparent mode
+> + *
+> + * Returns 0 on success or a negative error code on failure.
 
-> On Tue, 2024-10-29 at 13:46 +0000, Zicheng Qu wrote:
-> > The AD7923 was updated to support devices with 8 channels, but the size
-> > of tx_buf and ring_xfer was not increased accordingly, leading to a
-> > potential buffer overflow in ad7923_update_scan_mode().
-> >=20
-> > Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the ad7908/ad79=
-18/ad7928")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Nuno S=C3=A1 <noname.nuno@gmail.com>
-> > Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-> > --- =20
->=20
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->=20
+Should be "Returns 1 on success".
 
-Confusing one. I'll fix the authorship up for your analog address
-
-Zicheng, usually a Suggested-by after checking with the author if it's
-a patch in a review thread.
-
-You can't really give someone elses' SoB without them explicitly sending it.
-If Nuno let you know that was fine off the list, then just mention that und=
-er
----
-
-This time I'm going to take Nuno's RB as fine to indicate no objection
-to the SoB. Nuno, feel free to shout if you want to handle this differently.
-
-Applied.
-
-Jonathan
-
-
-> > v2:
-> > - Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due to=
-=20
-> > insufficient tx_buf and ring_xfer size for 8-channel devices.
-> > - Issue: Original patch attempted to fix the overflow by limiting the=20
-> > length, but did not address the root cause of buffer size mismatch.
-> > - Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno to=
-=20
-> > support all 8 channels, ensuring adequate buffer capacity.
-> > - Previous patch link:=20
-> > https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@hu=
-awei.com/T/#u
-> > =C2=A0drivers/iio/adc/ad7923.c | 4 ++--
-> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
-> > index 09680015a7ab..acc44cb34f82 100644
-> > --- a/drivers/iio/adc/ad7923.c
-> > +++ b/drivers/iio/adc/ad7923.c
-> > @@ -48,7 +48,7 @@
-> > =C2=A0
-> > =C2=A0struct ad7923_state {
-> > =C2=A0	struct spi_device		*spi;
-> > -	struct spi_transfer		ring_xfer[5];
-> > +	struct spi_transfer		ring_xfer[9];
-> > =C2=A0	struct spi_transfer		scan_single_xfer[2];
-> > =C2=A0	struct spi_message		ring_msg;
-> > =C2=A0	struct spi_message		scan_single_msg;
-> > @@ -64,7 +64,7 @@ struct ad7923_state {
-> > =C2=A0	 * Length =3D 8 channels + 4 extra for 8 byte timestamp
-> > =C2=A0	 */
-> > =C2=A0	__be16				rx_buf[12] __aligned(IIO_DMA_MINALIGN);
-> > -	__be16				tx_buf[4];
-> > +	__be16				tx_buf[8];
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0struct ad7923_chip_info { =20
->=20
-
+> + */
+> +
+> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable)
+> +{
+> +	u8 val = enable ? DP_PHY_REPEATER_MODE_TRANSPARENT :
+> +			  DP_PHY_REPEATER_MODE_NON_TRANSPARENT;
+> +
+> +	return drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE, val);
+> +}
+> +EXPORT_SYMBOL(drm_dp_lttpr_set_transparent_mode);
+> +
+>  /**
+>   * drm_dp_lttpr_max_lane_count - get the maximum lane count supported by all LTTPRs
+>   * @caps: LTTPR common capabilities
+> diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
+> index 279624833ea9259809428162f4e845654359f8c9..8821ab2d36b0e04d38ccbdddcb703b34de7ed680 100644
+> --- a/include/drm/display/drm_dp_helper.h
+> +++ b/include/drm/display/drm_dp_helper.h
+> @@ -625,6 +625,7 @@ int drm_dp_read_lttpr_phy_caps(struct drm_dp_aux *aux,
+>  			       u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
+>  int drm_dp_lttpr_count(const u8 cap[DP_LTTPR_COMMON_CAP_SIZE]);
+>  int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
+> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable);
+>  int drm_dp_lttpr_max_lane_count(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
+>  bool drm_dp_lttpr_voltage_swing_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
+>  bool drm_dp_lttpr_pre_emphasis_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
+> 
+> -- 
+> 2.34.1
+> 
 
