@@ -1,192 +1,235 @@
-Return-Path: <linux-kernel+bounces-390938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0469B8047
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:38:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3869B8042
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9E32838D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:38:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E4A1C218F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B8D1BC092;
-	Thu, 31 Oct 2024 16:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579B61BC088;
+	Thu, 31 Oct 2024 16:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UbCX4rll"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGuWtCPt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D750E1974F4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE724CA6B;
+	Thu, 31 Oct 2024 16:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730392685; cv=none; b=ou029usQ07jpzbMWCTEbmVRa9aywR5/zXmgrf+aFhx5dSWCPsBInI2fsgI80ov+Kv/KBxydHJ1ReUfufWIh3d9krU6kwZyurAf9hgHklJlOdOzf/SKqhRMq/bt0d8xzNyVHYtejNDa0/X4xxMIiTtJO1rFRoTzBJ/fqlAoAJ6rI=
+	t=1730392643; cv=none; b=Ds3kV/VEcgcapU4T3Z998p4Fg87l9Zs/U36mecfjHYi/8daZ5xSwobA7wNj71/b3Pz30z4y17son9RWJcoTTsI2MGu2hV5rYrcy4BMkm84gBbEJdlNnjepkwarXRQ7GFn2xHFMsJY2o1PxPVNhhM3Bq1ZVhXpRb6vyTxdsDhp2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730392685; c=relaxed/simple;
-	bh=3U1ZiJmvD8aZd3Ni/hhC3pmLL4CmGo8yEdwrbILytnA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cr84r1xZxqR7IxBr1Fk0c2JQ+ahUvDq80BipWbMPwPnAk7u1RLcS6EE0mBe3Ace4POqMm6m5aZU5rU3i9GC+R0J3T+373CcmbHA6epBmFTv69gCJ/EH5WLc4F895TtfzrMBi5XGZXef3jL2XGAKpQIReld5mRHGJ2yp02XcqU/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UbCX4rll; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730392680;
-	bh=3U1ZiJmvD8aZd3Ni/hhC3pmLL4CmGo8yEdwrbILytnA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=UbCX4rllqBK0swe0Lwu9c0QkxjTiFXSs7qdvb3Shr6E0boLSfcTCXe6fT3I4LsqMW
-	 YRxcZxsOM+MqkkcOB+Rfl+fQmIF4uuUDKhCfKGnnnGMn2+IFjf9tMEvMmXs1gxubN6
-	 3OxP1vfxWiwdg3AFmJAPuT9nHrC38OmYaI36fmoZFELcnTVtPwb/TqV/A7llr0kTAf
-	 D5EEdQvq7/34FdIgJgCLEv7mGYRyPvLdgP9ibutl709xeeaikIKV5hny2g2l1+oj5s
-	 sFHSIotyu75wrCHSWsdozav0rfuTMwqmr336s+YSC0UoQe3GjxzytY3cM2TPhqWMsL
-	 M0xH7ZilTUJLg==
-Received: from localhost (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BEAF617E3692;
-	Thu, 31 Oct 2024 17:38:00 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Thu, 31 Oct 2024 18:37:04 +0200
-Subject: [PATCH RFC v2] regmap: maple: Provide lockdep (sub)class for maple
- tree's internal lock
+	s=arc-20240116; t=1730392643; c=relaxed/simple;
+	bh=CWuytdwFjVNhOZ5aXDIDvQbiDmrTte+EhXq6nl7T+IQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=O/FqcyYkKA2pdXzPb1Mylae3aSXVRMh6fOwDwdpAUT+vwuQQKqQZRedC7gxA2X959VYG2nSoKh0/cymKBxOE+6HH7Rw2upLDpb6iMHpvY/yz7ZDuXKKXWFT4E6erjZxT+eY3SDjeWePw3cDX0AgbLgd7DzxJ0F8QjeVmt6aY/EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGuWtCPt; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730392641; x=1761928641;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=CWuytdwFjVNhOZ5aXDIDvQbiDmrTte+EhXq6nl7T+IQ=;
+  b=gGuWtCPtrrHmGptXCm+fQ+M6zwXXicH0oMl0sU2sWY1C0K7g9kvL1yyj
+   RMEl5jrSLvhEVVBcPgQgThjgGXqdVAXwAJV1VbpySeDlsbw9VZ1Dd07L4
+   MGteav02A+0nvMoBcXCHtVrWFZGrbX1vQ4zFqf9BIXOfmFKM4sTFL8AYz
+   qKqUZqmAUVqPsAvfTvSRNQy8q8jfURxQsplFjJc5+Vf9GYmaOLB/8c/0M
+   qMsQyNEUsAEEfVN7InU5DX0rHOLYYHmX3sVkOhmPDY8Gdx4ziexKbgp4t
+   9rsCkf34ArNHmsVydFXOCvfZJmvF8NzilZARewOj8bVF5pyuMbvPPzRhz
+   w==;
+X-CSE-ConnectionGUID: MqjzAEyGTtm3MKw2atOtEA==
+X-CSE-MsgGUID: CQuv9RFvThGBhFwodsc+Bg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="32980106"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="32980106"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 09:37:18 -0700
+X-CSE-ConnectionGUID: IQ+MNz/hQPinjJ0TXR7bkg==
+X-CSE-MsgGUID: hEk4zaQETkmywsQMJ/qirw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82577912"
+Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.108.232]) ([10.125.108.232])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 09:37:17 -0700
+Message-ID: <9e602b57-c064-43a3-ab57-343773c07863@intel.com>
+Date: Thu, 31 Oct 2024 09:37:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/14] PCI/AER: Add CXL PCIe port correctable error
+ support in AER service driver
+To: Terry Bowman <terry.bowman@amd.com>, ming4.li@intel.com,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com
+References: <20241025210305.27499-1-terry.bowman@amd.com>
+ <20241025210305.27499-6-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20241025210305.27499-6-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-regmap-maple-lockdep-fix-v2-1-06a3710f3623@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAC+yI2cC/4WNTQqDMBSEryJv3VfyU/+6KhR6gG6Li5g8NRiNJ
- EVaxLs3eIEuZjEzzDcbRAqWIlyzDQKtNlo/JyNOGehBzT2hNcmDYOLCmagxUD+pBZMcofN6NLR
- gZz/YyaLSVFApCwlpvgRK8YF+wfNxhyaFg41vH77H3cqP6j955cixzKua8lLWrDU37Z1TrQ/qr
- P0Ezb7vP+EyT8TJAAAA
-X-Change-ID: 20241029-regmap-maple-lockdep-fix-f368ce6e7363
-To: Mark Brown <broonie@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
- kernel@collabora.com, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
 
-In some cases when using the maple tree register cache, the lockdep
-validator might complain about invalid deadlocks:
 
-[7.131886]  Possible interrupt unsafe locking scenario:
 
-[7.131890]        CPU0                    CPU1
-[7.131893]        ----                    ----
-[7.131896]   lock(&mt->ma_lock);
-[7.131904]                                local_irq_disable();
-[7.131907]                                lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
-[7.131916]                                lock(&mt->ma_lock);
-[7.131925]   <Interrupt>
-[7.131928]     lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
-[7.131936]
-                *** DEADLOCK ***
+On 10/25/24 2:02 PM, Terry Bowman wrote:
+> The AER service driver doesn't currently handle CXL protocol errors
+> reported by CXL root ports, CXL upstream switch ports, and CXL downstream
+> switch ports. Consequently, RAS protocol errors from CXL PCIe port devices
+> are not properly logged or handled.
+> 
+> These errors are reported to the OS via the root port's AER correctable
+> and uncorrectable internal error fields. While the AER driver supports
+> handling downstream port protocol errors in restricted CXL host (RCH) mode
+> also known as CXL1.1, it lacks the same functionality for CXL PCIe ports
+> operating in virtual hierarchy (VH) mode.
+> 
+> To address this gap, update the AER driver to handle CXL PCIe port device
+> protocol correctable errors (CE).
+> 
+> Make this update alongside the existing downstream port RCH error handling
+> logic, extending support to CXL PCIe ports in VH mode.
+> 
+> is_internal_error() is currently limited by CONFIG_PCIEAER_CXL kernel
+> config. Update is_internal_error()'s function declaration such that it is
+> always available regardless if CONFIG_PCIEAER_CXL kernel config is enabled
+> or disabled.
+> 
+> The uncorrectable error (UCE) handling will be added in a future patch.
+> 
+> [1] CXL 3.1 Spec, 12.2.2 CXL Root Ports, Downstream Switch Ports, and
+> Upstream Switch Ports
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 
-[7.131939] no locks held by swapper/0/0.
-[7.131944]
-               the shortest dependencies between 2nd lock and 1st lock:
-[7.131950]  -> (&mt->ma_lock){+.+.}-{2:2} {
-[7.131966]     HARDIRQ-ON-W at:
-[7.131973]                       lock_acquire+0x200/0x330
-[7.131986]                       _raw_spin_lock+0x50/0x70
-[7.131998]                       regcache_maple_write+0x68/0xe0
-[7.132010]                       regcache_write+0x6c/0x90
-[7.132019]                       _regmap_read+0x19c/0x1d0
-[7.132029]                       _regmap_update_bits+0xc0/0x148
-[7.132038]                       regmap_update_bits_base+0x6c/0xa8
-[7.132048]                       rk8xx_probe+0x22c/0x3d8
-[7.132057]                       rk8xx_spi_probe+0x74/0x88
-[7.132065]                       spi_probe+0xa8/0xe0
+With the commit log update from what Jonathan suggested,
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-[...]
-
-[7.132675]   }
-[7.132678]   ... key      at: [<ffff800082943c20>] __key.0+0x0/0x10
-[7.132691]   ... acquired at:
-[7.132695]    _raw_spin_lock+0x50/0x70
-[7.132704]    regcache_maple_write+0x68/0xe0
-[7.132714]    regcache_write+0x6c/0x90
-[7.132724]    _regmap_read+0x19c/0x1d0
-[7.132732]    _regmap_update_bits+0xc0/0x148
-[7.132741]    regmap_field_update_bits_base+0x74/0xb8
-[7.132751]    vop2_plane_atomic_update+0x480/0x14d8 [rockchipdrm]
-[7.132820]    drm_atomic_helper_commit_planes+0x1a0/0x320 [drm_kms_helper]
-
-[...]
-
-[7.135112] -> (rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock){-...}-{2:2} {
-[7.135130]    IN-HARDIRQ-W at:
-[7.135136]                     lock_acquire+0x200/0x330
-[7.135147]                     _raw_spin_lock_irqsave+0x6c/0x98
-[7.135157]                     regmap_lock_spinlock+0x20/0x40
-[7.135166]                     regmap_read+0x44/0x90
-[7.135175]                     vop2_isr+0x90/0x290 [rockchipdrm]
-[7.135225]                     __handle_irq_event_percpu+0x124/0x2d0
-
-In the example above, the validator seems to get the scope of
-dependencies wrong, since the regmap instance used in rk8xx-spi driver
-has nothing to do with the instance from vop2.
-
-Improve validation by sharing the regmap's lockdep class with the maple
-tree's internal lock, while also providing a subclass for the latter.
-
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
-Changes in v2:
-- Rebased onto next-20241031 to fix the conflicts reported by Mark
-- Link to v1: https://lore.kernel.org/r/20241029-regmap-maple-lockdep-fix-v1-1-7589e57390bd@collabora.com
----
- drivers/base/regmap/internal.h       | 1 +
- drivers/base/regmap/regcache-maple.c | 3 +++
- drivers/base/regmap/regmap.c         | 1 +
- 3 files changed, 5 insertions(+)
-
-diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
-index 83acccdc1008976de681396a300b78b701bbfa3c..bdb450436cbc53031c3d921f9f6067d26eca2549 100644
---- a/drivers/base/regmap/internal.h
-+++ b/drivers/base/regmap/internal.h
-@@ -59,6 +59,7 @@ struct regmap {
- 			unsigned long raw_spinlock_flags;
- 		};
- 	};
-+	struct lock_class_key *lock_key;
- 	regmap_lock lock;
- 	regmap_unlock unlock;
- 	void *lock_arg; /* This is passed to lock/unlock functions */
-diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
-index 8d27d3653ea3e71e7b134cd3e47be385860e7375..23da7b31d7153450e1b16528be47216d7fbdd872 100644
---- a/drivers/base/regmap/regcache-maple.c
-+++ b/drivers/base/regmap/regcache-maple.c
-@@ -355,6 +355,9 @@ static int regcache_maple_init(struct regmap *map)
- 
- 	mt_init(mt);
- 
-+	if (!mt_external_lock(mt) && map->lock_key)
-+		lockdep_set_class_and_subclass(&mt->ma_lock, map->lock_key, 1);
-+
- 	if (!map->num_reg_defaults)
- 		return 0;
- 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 4ded93687c1f0ab3584947c61398cd6333b2e72c..53131a7ede0a6aad54bc85e970124f6b166a8010 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -745,6 +745,7 @@ struct regmap *__regmap_init(struct device *dev,
- 						   lock_key, lock_name);
- 		}
- 		map->lock_arg = map;
-+		map->lock_key = lock_key;
- 	}
- 
- 	/*
-
----
-base-commit: f9f24ca362a4d84dd8aeb4b8f3ec28cb6c43dd06
-change-id: 20241029-regmap-maple-lockdep-fix-f368ce6e7363
+> ---
+>  drivers/pci/pcie/aer.c | 59 ++++++++++++++++++++++++++++--------------
+>  1 file changed, 39 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 53e9a11f6c0f..1d3e5b929661 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -941,8 +941,15 @@ static bool find_source_device(struct pci_dev *parent,
+>  	return true;
+>  }
+>  
+> -#ifdef CONFIG_PCIEAER_CXL
+> +static bool is_internal_error(struct aer_err_info *info)
+> +{
+> +	if (info->severity == AER_CORRECTABLE)
+> +		return info->status & PCI_ERR_COR_INTERNAL;
+>  
+> +	return info->status & PCI_ERR_UNC_INTN;
+> +}
+> +
+> +#ifdef CONFIG_PCIEAER_CXL
+>  /**
+>   * pci_aer_unmask_internal_errors - unmask internal errors
+>   * @dev: pointer to the pcie_dev data structure
+> @@ -994,14 +1001,6 @@ static bool cxl_error_is_native(struct pci_dev *dev)
+>  	return (pcie_ports_native || host->native_aer);
+>  }
+>  
+> -static bool is_internal_error(struct aer_err_info *info)
+> -{
+> -	if (info->severity == AER_CORRECTABLE)
+> -		return info->status & PCI_ERR_COR_INTERNAL;
+> -
+> -	return info->status & PCI_ERR_UNC_INTN;
+> -}
+> -
+>  static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
+>  {
+>  	struct aer_err_info *info = (struct aer_err_info *)data;
+> @@ -1033,14 +1032,23 @@ static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
+>  
+>  static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>  {
+> -	/*
+> -	 * Internal errors of an RCEC indicate an AER error in an
+> -	 * RCH's downstream port. Check and handle them in the CXL.mem
+> -	 * device driver.
+> -	 */
+> -	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC &&
+> -	    is_internal_error(info))
+> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC)
+>  		pcie_walk_rcec(dev, cxl_rch_handle_error_iter, info);
+> +
+> +	if (info->severity == AER_CORRECTABLE) {
+> +		struct pci_driver *pdrv = dev->driver;
+> +		int aer = dev->aer_cap;
+> +
+> +		if (aer)
+> +			pci_write_config_dword(dev, aer + PCI_ERR_COR_STATUS,
+> +					       info->status);
+> +
+> +		if (pdrv && pdrv->cxl_err_handler &&
+> +		    pdrv->cxl_err_handler->cor_error_detected)
+> +			pdrv->cxl_err_handler->cor_error_detected(dev);
+> +
+> +		pcie_clear_device_status(dev);
+> +	}
+>  }
+>  
+>  static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
+> @@ -1058,9 +1066,13 @@ static bool handles_cxl_errors(struct pci_dev *dev)
+>  {
+>  	bool handles_cxl = false;
+>  
+> -	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC &&
+> -	    pcie_aer_is_native(dev))
+> +	if (!pcie_aer_is_native(dev))
+> +		return false;
+> +
+> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC)
+>  		pcie_walk_rcec(dev, handles_cxl_error_iter, &handles_cxl);
+> +	else
+> +		handles_cxl = pcie_is_cxl_port(dev);
+>  
+>  	return handles_cxl;
+>  }
+> @@ -1078,6 +1090,10 @@ static void cxl_enable_internal_errors(struct pci_dev *dev)
+>  static inline void cxl_enable_internal_errors(struct pci_dev *dev) { }
+>  static inline void cxl_handle_error(struct pci_dev *dev,
+>  				    struct aer_err_info *info) { }
+> +static bool handles_cxl_errors(struct pci_dev *dev)
+> +{
+> +	return false;
+> +}
+>  #endif
+>  
+>  /**
+> @@ -1115,8 +1131,11 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>  
+>  static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
+>  {
+> -	cxl_handle_error(dev, info);
+> -	pci_aer_handle_error(dev, info);
+> +	if (is_internal_error(info) && handles_cxl_errors(dev))
+> +		cxl_handle_error(dev, info);
+> +	else
+> +		pci_aer_handle_error(dev, info);
+> +
+>  	pci_dev_put(dev);
+>  }
+>  
 
 
