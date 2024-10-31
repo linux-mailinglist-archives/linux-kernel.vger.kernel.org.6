@@ -1,134 +1,112 @@
-Return-Path: <linux-kernel+bounces-390107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1254C9B7593
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:46:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C01F9B75A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:47:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4EB282241
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:46:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9ED1C220F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695ED1537B9;
-	Thu, 31 Oct 2024 07:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D027E1547CE;
+	Thu, 31 Oct 2024 07:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wx8/ZtVi"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JU9NToMG"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984D514C5A1
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A76145335;
+	Thu, 31 Oct 2024 07:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730360770; cv=none; b=cED7+J1NNiKT621jZl9S8pdktheodKXJ5+RX9IOEYUZBlHgrZ7K53FUa9fu6d4UO7hvZx8DhZJNtnfYa+6k7rRwwcXq/ri37f8i8Aq9tNTjo2SSWj9dOfoluKKYHvN9i8W5GDkC46KDsELHMQfH7MXxnpNyZBJ6u8OXw9tTS/nM=
+	t=1730360794; cv=none; b=Pe8Tj0fLpK3nuBoMNM9mICSZJONQWkd6LE74s4CpnU5x8tT1UxQyOG2BS3/C3Z88nqonnNZNgNwh4fKUcuTHW6IYwaf5wNVz3WEaKXcHX1x7tmFCIyvf61IEOTpzLWzD/1o5YDTAZZOdHaZuVhbcdgkA31HmK4KKeFcxB43uWw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730360770; c=relaxed/simple;
-	bh=LdbOM/BwIk/pN2XjwYTzGXq4hdCfnupmnuaDAJjI/qE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hEB2XcQYmCIIOFu32dohLfaiXOmfBc4OIQH4qV8LXA5s84kFk8LYLGkQWzziBrys+BzV0IhxV/QgRu60TQM1GV99YhKQvNfUj7RmLsJDoD+Nr5h4K9u8Sxrq36jTS5y5DLlIoSUPWhjLMucpuyvq6U6Tt0C57Yekl58m0coiC2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wx8/ZtVi; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e59dadebso769583e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730360767; x=1730965567; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z34kmNIYPZBu2E2byTLklxAtzQXRWwOn/Bq4zHtatFA=;
-        b=Wx8/ZtViouNtFAdIYOVccXH66eCghCEXxnlsg1saQH+mOhwk48d6OIFrgbRfD9gUIE
-         HvLw3GLyjhXN/H5uElTQ8eVtZc8OJ7k0QRVrfNsLMog797TAoorm+i138t/vun37h3dx
-         5Hgm78/p/iBaxnI36eDzKoegOKlWjoPIHJgK9lkTN8i1FbWARvdfCUsPYfT3zOBJ31jp
-         paKwhSwg49gkYueo3PKY2Qss43IXD8uSUyzjLJ9Du48M6IJY0J6cImhhfqCp93FnqOCs
-         RMVauZ/EafaV3xBOEUnM8jJZ5QSuGdz+IdUuhvgwCWMTdz8ANswOoetpqAgHJCDUHUmQ
-         7qYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730360767; x=1730965567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z34kmNIYPZBu2E2byTLklxAtzQXRWwOn/Bq4zHtatFA=;
-        b=GZowKXGphCPA23DjJdrZbaJ7Jbvpdxw0cWEHWs2AVgw+J3vbarrvbC9JsZB99w//Jb
-         2IVWeAWky0FH1jzHRFGUUHknFT9ORmLbt5o9YGqJpHx7/rCK9JRASLHLBm3of8U8jpdJ
-         Z7Hb8hsXVHEJwl5cqUC2JdNdHg0TNn2tyKMbDUeel6qO716WTAb3k5BeQUeJdTEwGip9
-         vzRHgZVzwFAOzJqCQnFbtju7x4zQV0XAbBO7tbXBUGVA/vt4SYcIUgFLHpj+Ck5PBaUH
-         sUkYRSN35LxixTHWH4h0ubl+keZ+Nftqe55b5jqvZB1Hx1Pcd8/ah+1xQqvgitUp239H
-         0ebQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1nufgBIBDypklCLo458NSDVq0S83pxIKt+AlZpWckYq5T/32+ZjMWq9HFkpVS/cMHKucxeyxXQzSeGqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWrqxv3UwLdj/S0g7yiotFfXbbscfh6L0tE1zwnhIDTHJkivHJ
-	s+kmdcGLNtbiDbYKel5CGskJPyTp2xgmHkJPmpCcg9eNZ+bDf5bb/1Rkw8Nur0k=
-X-Google-Smtp-Source: AGHT+IEyV5MIRRCLQdmK7UjBg34Gzl/bEwH7BHu5682+naCccZ2ArZURIDYl2Ep7HMv9K2PTTsfJNg==
-X-Received: by 2002:a05:6512:b84:b0:539:f886:31d6 with SMTP id 2adb3069b0e04-53b348ec0bbmr8246954e87.2.1730360766487;
-        Thu, 31 Oct 2024 00:46:06 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9aa09fsm45693025e9.37.2024.10.31.00.46.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 00:46:06 -0700 (PDT)
-Date: Thu, 31 Oct 2024 10:46:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Daniel Machon <daniel.machon@microchip.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 6/9] ice: use <linux/packing.h> for Tx and Rx
- queue context data
-Message-ID: <cdbf7a65-024b-40e0-b096-29537476c82a@stanley.mountain>
-References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
- <20241025-packing-pack-fields-and-ice-implementation-v2-6-734776c88e40@intel.com>
- <20241029145011.4obrgprcaksworlq@DEN-DL-M70577>
- <8e1a742c-380c-4faf-a6c2-3fa67689c57e@intel.com>
- <62387bab-f42a-4981-9664-76c439e2aadb@intel.com>
- <bda38b6e-73df-4ca5-8606-b4701a4db482@stanley.mountain>
- <5ff708b8-1c6e-4d53-ad64-d370c081121a@intel.com>
+	s=arc-20240116; t=1730360794; c=relaxed/simple;
+	bh=LO8Ci0ae9Y8Y0UdUGzx5luX8NEoGnj562SvJpkzsmdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CIcH9N+F+a/LAHYo/SoOm3+MzYhzW6PM30Lmns51B10O7yJ8HiVDkPb1lPfW8BTXc3IbY6olnGMqhT6e6gmeZK36UsGYJJiAHcl0IeM6GIlu0slIc5vsourvfjBApKe5PKN13X376KncvBcZ2uE1ALq4TUoVsAg/mYbC6eIHE2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JU9NToMG; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730360781; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=HcJhglacALWuErvFcSYaoS/PumrISEPMTBp9tpEVtaY=;
+	b=JU9NToMG1NE7dhLQugwOCUH+LDb9TZJJBrcUimBaTXgPIY02Sx2eesIXcRCiUxapEKrGMRjxP++wdYXg47e5GXn5aE63wLuxuQDjC1jHONKfnvWay1eQRjZ2K1i7aYj2QgSDlPOiLiPQgEXJiX6x+sb52ne6p/Og21jBYlwL9g0=
+Received: from localhost(mailfrom:guanjun@linux.alibaba.com fp:SMTPD_---0WIHa4Ov_1730360778 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 31 Oct 2024 15:46:19 +0800
+From: 'Guanjun' <guanjun@linux.alibaba.com>
+To: corbet@lwn.net,
+	axboe@kernel.dk,
+	mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	vgoyal@redhat.com,
+	stefanha@redhat.com,
+	miklos@szeredi.hu,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	thuth@redhat.com,
+	rostedt@goodmis.org,
+	bp@alien8.de,
+	xiongwei.song@windriver.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Cc: guanjun@linux.alibaba.com
+Subject: [PATCH RFC v1 0/2] Support for limiting the number of managed interrupts on every node per allocation.
+Date: Thu, 31 Oct 2024 15:46:16 +0800
+Message-ID: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ff708b8-1c6e-4d53-ad64-d370c081121a@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 01:34:47PM -0700, Jacob Keller wrote:
-> 
-> 
-> On 10/30/2024 4:19 AM, Dan Carpenter wrote:
-> > Always just ignore the tool when it if it's not useful.
-> > 
-> > CHECK_PACKED_FIELDS_ macros are just build time asserts, right?  I can easily
-> > just hard code Smatch to ignore CHECK_PACKED_FIELDS_* macros.  I'm just going to
-> > go ahead an do that in the ugliest way possible.  If we have a lot of these then
-> > I'll do it properly.
-> > 
-> 
-> We have 2 for ice, and likely a handful for some of the drivers Vladimir
-> is working on. More may happen in the future, but the number is likely
-> to unlikely to grow quickly.
-> 
-> I was thinking of making them empty definitions if __CHECKER__, but
-> ignoring them in smatch would be easier on my end :D
-> 
+From: Guanjun <guanjun@linux.alibaba.com>
 
-Adding them to __CHECKER__ works too.
+We found that in scenarios with a large number of devices on the system,
+for example, 256 NVMe block devices, each with 2 I/O queues, about a few
+dozen of interrupts cannot be allocated, and get the error code -ENOSPC.
+The reason for this issue is that the io queue interrupts are set to managed
+interrupts (i.e., affinity is managed by the kernel), which leads to a
+excessive number of the IRQ matrix bits being reserved.
 
-> > regards,
-> > dan carpenter
-> > 
-> Looking at how smatch works, it actually seems like we could implement
-> the desired sanity checks in smatch, though I wasn't quite able to
-> figure out how to hook into struct/array assignments to do that yet.
+This patch series support for limiting the number of managed interrupt
+per allocation to address this issue.
 
-I'd do it the way you have.  It's better to be close to the code.  It's way
-harder in Smatch and it's not like you need flow analysis.
+Thanks,
+Guanjun
 
-regards,
-dan carpenter
+
+Guanjun (2):
+  genirq/affinity: add support for limiting managed interrupts
+  genirq/cpuhotplug: Handle managed IRQs when the last CPU hotplug out
+    in the affinity
+
+ .../admin-guide/kernel-parameters.txt         | 12 ++++
+ block/blk-mq-cpumap.c                         |  2 +-
+ drivers/virtio/virtio_vdpa.c                  |  2 +-
+ fs/fuse/virtio_fs.c                           |  2 +-
+ include/linux/group_cpus.h                    |  2 +-
+ include/linux/irq.h                           |  2 +
+ kernel/cpu.c                                  |  2 +-
+ kernel/irq/affinity.c                         | 11 ++--
+ kernel/irq/cpuhotplug.c                       | 51 +++++++++++++++++
+ lib/group_cpus.c                              | 55 ++++++++++++++++++-
+ 10 files changed, 130 insertions(+), 11 deletions(-)
+
+-- 
+2.43.5
+
 
