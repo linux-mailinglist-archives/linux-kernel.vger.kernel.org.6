@@ -1,167 +1,94 @@
-Return-Path: <linux-kernel+bounces-390674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBAC9B7D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:39:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513869B7CDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12392283574
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06C61F2237E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19181A0BF2;
-	Thu, 31 Oct 2024 14:39:46 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B862C1A0718;
+	Thu, 31 Oct 2024 14:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2QsuzYb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA143156CF;
-	Thu, 31 Oct 2024 14:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E0219D07A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385586; cv=none; b=Kvec4E1kXdlSfJ2qZJMBx8G77iD2cpbRbzb7jLIVxrMGD88bJ9DjaRIzAIOFisQ35tjJYXpAd+hxZcOkuwmSnY1fgN1ntw/nSKIs4bH7dqwaeyNAia0O7+pKgRDh85PXWjDSC9efMDxVkNcVuhJxi08jnq5EVU/rr/QkioXk0HE=
+	t=1730384991; cv=none; b=Wwaqb3llxWqycGrzM1vzbTz8UhkCTD5WX3U9G1cRaSApDvjLMB6ChPzYK5Ak8vg3+jFB/mlWF2WjvCJemWgGJK+eThfWkPd8K0gNtrPzpCrkEGnyQqNoQQXX3VZZLDrSzYH4VlfBbJoIK1Mvv2Qf5zDKmhlZzvmuBPnZkX+KHx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385586; c=relaxed/simple;
-	bh=wPyDz5ZOCbGsu9cjNU3R/aJsJzADof3DW/0MCSkhKOE=;
+	s=arc-20240116; t=1730384991; c=relaxed/simple;
+	bh=LPKfUGyf1Rsh5zeNhU0UoGiA9NuM5MTlSpatdTPCOXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FX2tFuz5HaTEL97ApCQqTIzvcZnclNdEI++SMVMY9BeD3pY2x90Jj7iRJ98hk+4VAXWtZGbWRIKd/la/0I36jdQFPrpVm6QGXV3WCPxow+TRmBVp1/MLloRd7VdVMrXPXoPVy/LK1xqtK6S1wNGZmtmq8oCYAg/pOlxztm1ar7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 28DF8201059;
-	Thu, 31 Oct 2024 15:29:30 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 10B5320102E;
-	Thu, 31 Oct 2024 15:29:30 +0100 (CET)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 719D52033F;
-	Thu, 31 Oct 2024 15:29:29 +0100 (CET)
-Date: Thu, 31 Oct 2024 15:29:30 +0100
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v4 13/16] dt-bindings: net: Add DT bindings for DWMAC on
- NXP S32G/R SoCs
-Message-ID: <ZyOUSgMo0chsGnCa@lsv051416.swis.nl-cdc01.nxp.com>
-References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
- <20241028-upstream_s32cc_gmac-v4-13-03618f10e3e2@oss.nxp.com>
- <erg5zzxgy45ucqv2nq3fkcv4sr7cxqzxz6ejdikafwfpgkkmse@7eigsyq245lu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAT2FmQar11ccstRq1+w8CKRHlpwRfJqO6kSJGuRyEHlSnmnTgLKduF5/WZmVs7vaPTyj8cqUifAK9RnHCc4g5gwpYlPo63zQAh2tQCIi6E5qXI/3dmQkIYLwgzVO/v3CsBVGA9OnfofWJa4xE3hkuPG7abNITa7TZgF7uviiTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2QsuzYb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B3FBC4CED3;
+	Thu, 31 Oct 2024 14:29:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730384990;
+	bh=LPKfUGyf1Rsh5zeNhU0UoGiA9NuM5MTlSpatdTPCOXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B2QsuzYbUzT7EmoAikiBWF2nlT9NRz8NjySM+6doVansy4faGCSFGi8WFMI0lD0wQ
+	 +Rf1PsTTHgrPq9ttfw6wmOGvAtYwXEPo4RDziaY5OwH7Udk85pfiF5foZUB0dC5OaR
+	 GLjUuNRR7POpJYj6349v0QOi3CGvYcs3LQxL5Ii7RtTrMFtl4L+GlRK+9kXtuWkiwk
+	 O2LzolegRZYqC4jCKrTmr8P5Kfkq2XgtRxwTrAPFvDHJfGog9vWinwlx3FxS03Ax6h
+	 IyAz8Q1qwFZ8QaeIGUUkifIBdWsbyAWxA8p09vvkMdKvdDe+a3mWZgHC/+bMbzZTpM
+	 sTJCQAsZ/a9CA==
+Date: Thu, 31 Oct 2024 14:29:46 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, kernel@collabora.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] regmap: maple: Provide lockdep (sub)class for maple
+ tree's internal lock
+Message-ID: <5e6291c5-06a6-490e-b4b0-18a6563d336f@sirena.org.uk>
+References: <20241029-regmap-maple-lockdep-fix-v1-1-7589e57390bd@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t4k/L2yyjNYa4AkX"
+Content-Disposition: inline
+In-Reply-To: <20241029-regmap-maple-lockdep-fix-v1-1-7589e57390bd@collabora.com>
+X-Cookie: Make a wish, it might come true.
+
+
+--t4k/L2yyjNYa4AkX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <erg5zzxgy45ucqv2nq3fkcv4sr7cxqzxz6ejdikafwfpgkkmse@7eigsyq245lu>
-X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Tue, Oct 29, 2024 at 08:12:37AM +0100, Krzysztof Kozlowski wrote:
-> On Mon, Oct 28, 2024 at 09:24:55PM +0100, Jan Petrous (OSS) wrote:
-> > Add basic description for DWMAC ethernet IP on NXP S32G2xx, S32G3xx
-> > and S32R45 automotive series SoCs.
-> > 
-> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > ---
-> >  .../devicetree/bindings/net/nxp,s32-dwmac.yaml     | 98 ++++++++++++++++++++++
-> >  .../devicetree/bindings/net/snps,dwmac.yaml        |  3 +
-> >  2 files changed, 101 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml b/Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml
-> > new file mode 100644
-> > index 000000000000..b11ba3bc4c52
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml
-> > @@ -0,0 +1,98 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +# Copyright 2021-2024 NXP
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/nxp,s32-dwmac.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NXP S32G2xx/S32G3xx/S32R45 GMAC ethernet controller
-> > +
-> > +maintainers:
-> > +  - Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > +
-> > +description:
-> > +  This device is a Synopsys DWC IP, integrated on NXP S32G/R SoCs.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nxp,s32g2-dwmac
-> > +      - nxp,s32g3-dwmac
-> > +      - nxp,s32r-dwmac
-> 
-> Your driver says these are fully compatible, why this is not expressed
-> here?
-> 
+On Tue, Oct 29, 2024 at 11:50:12PM +0200, Cristian Ciocaltea wrote:
+> In some cases when using the maple tree register cache, the lockdep
+> validator might complain about invalid deadlocks:
 
-They are compatible on current stage of driver implementation, the
-RGMII interface has no any difference. But later there shall be
-added SGMII and this provides some level of difference, at least
-from max-speed POV.
+This doesn't apply against current code, please check and resend.
 
-The S32R allows higher speed (2G5) on SGMII, but S32G2/S32G3 has
-1G as maximum.
+--t4k/L2yyjNYa4AkX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > +
-> > +  reg:
-> > +    items:
-> > +      - description: Main GMAC registers
-> > +      - description: GMAC PHY mode control register
-> >
-> 
-> ...
-> 
-> > +        mdio {
-> > +          #address-cells = <1>;
-> > +          #size-cells = <0>;
-> > +          compatible = "snps,dwmac-mdio";
-> > +
-> > +          phy0: ethernet-phy@0 {
-> > +              reg = <0>;
-> 
-> Messed indentation. Keep it consistent.
-> 
+-----BEGIN PGP SIGNATURE-----
 
-Thanks. I will fix it in v5.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcjlFkACgkQJNaLcl1U
+h9BBfAf8C7QlvqB6+H4p0p/bWs+K8p3OanOpC3PVo6fS1RtB2SvIOieHKZFa4iXl
+p0O2dctjm4/mPzFg2biYiWPkfM5j40Ipo71pVQXR+kXWq3plf9AsKUJsJP8IuM6z
+lgtVq+nWhL5ga5KV/Hkq/q7ngj8xo+tvDtyZQSE+YNhzKj8nTJlTbqjdbYmAXA7Q
+upsgeQHcQOPRv2QCmLirYt3uiHy/jFuU/WJXINNLZB2fFH1e93QbZ/ksJqwxmk+e
+/7t1obZs0wHVSABBo/IAmqnpZoTv1uP9PYc8/9VLlDl036dqzg8+LYFHWHhivaJd
+rSvmqfXCCvfJhE7VKjYyGLuTghivtA==
+=r/PW
+-----END PGP SIGNATURE-----
 
-> Best regards,
-> Krzysztof
-> 
+--t4k/L2yyjNYa4AkX--
 
