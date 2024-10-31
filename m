@@ -1,75 +1,80 @@
-Return-Path: <linux-kernel+bounces-390491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E899B7A92
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:33:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DC99B7A95
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:33:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE851F222C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975CD1F22CC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E5719CC3E;
-	Thu, 31 Oct 2024 12:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CC719E833;
+	Thu, 31 Oct 2024 12:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jGxZ8mXn"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FazrPV9m"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B56F1990AB
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5A719CD17
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730377912; cv=none; b=qWIVhSAlt/nf+z7RvJ29CdkcFnXXAtV17jpiRX+mK+DHnzqRaqWVvcLtuZRF1ALvbF0hL5LjHF9bX0uCd4EJEhJyTIL7SMHgEtKS8wx5FdloBNfkM7RCBBFQYRy79VfRk44exICWraASNbIEKb4ZU34o3OnylL703xbOJuL3DF4=
+	t=1730377936; cv=none; b=WcSufhT4nDE/YcS2T0/ClBx//98kjHZcu7GH/vJF6hx2KlJxWGGF0PEjUziOcBBYyciKOOZI11DnKLPkfB4CoJbsedGbCdc8+sINFXBxu92idnZyarj/bhmVShB7cvTKAifS8d930zKpfgnCDkOOgKmURpUpSL+2f8kgruQqIjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730377912; c=relaxed/simple;
-	bh=2WBeAOc65UgvsrNyTTVdRO4WKKV/eMXAr8WX6bShZJk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=R2MVfJXGoqhK1SF9QWxvToVjs/qxWiFDLeGJd5fy4iOJerzxhB5EbSPrehZEeRncqcEmZsf9v1vdkn7Ncvg3DMsL2sm2KVRtuwe3c9CJvOWP70PLhXgSgO4OkMQNSowl9w29zn0DuEkeOwyPkTc8hFHKDAvJP9obMMaAM7OXgvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jGxZ8mXn; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d47b38336so698122f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730377909; x=1730982709; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TtULGftwvkV6PBeqGDEzspAud7gcNgJ/xN3Giran/QY=;
-        b=jGxZ8mXnO4mBtaBLNgh3XqJYku0c7VL7nhhxcekJS69xKKjMnZ8addG36JrDvjJ+7U
-         pA9CdfGWp4GKIPuys3//xElkq1tZ9Oa++HbYbd9/evHxNCVdf/uYXZw3yDSfooX9klDv
-         UT2AJEEcl8XFQSwK2ctQxPsIQKwBFB0jlrxHn/dubevxTwGIr25PCOUkKd/r22bNBj/n
-         BWk5XSm3SRUW2ycEJV9DGohup76DNVOAOaSQtbRDQoPyX/52IR1nQW1vzgOetmlBUtkG
-         K7RFveeiFnQY4o/skXgQJRr29+N9cWj1Q25TKO5na+sBUHdP8WdB7SOQ/FJRnWNbz8cb
-         Vcng==
+	s=arc-20240116; t=1730377936; c=relaxed/simple;
+	bh=FH5I3Wai2PmcuMB0QzacofP1XL4+KCIHsuePUvm+ZJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZdM1eg3DkrH3kuZ2Qu5lktVkDoa5TsID6EWJLgDcbIW266/hO0E1sljRn5bRxt0MIOK+60hpJ7VcwKeCRLlwPOW4wnNVpfdPajngM1a3OvHJz7IjZuuITJZ+GZreItpMEfqaifHtjAmxHC33y1L2/OEudeE2VUY+eW1HUc/AldI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FazrPV9m; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730377933;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uKrPAKxKq1Jx7vedNmeCC6agMwFMSyba5+2s6PfI3BE=;
+	b=FazrPV9mIDDthsEUXgrUat5ZvJ0A1l5AHBL+sQXsmIus62eCF5mhDExtpxIjqLlqaEk0ql
+	mqyeDXT7ulDP8BkTjNbhq51Z717sjHtilNDaLLLtyUowxrs+Tw8xK0h1sIRMasuavyT+No
+	CE2eRr7cInk0aCpWrguDivJEkxAsGTU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-339-guSGMLh6Opubp7slFsWroA-1; Thu, 31 Oct 2024 08:32:11 -0400
+X-MC-Unique: guSGMLh6Opubp7slFsWroA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d49887a2cso499352f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:32:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730377909; x=1730982709;
+        d=1e100.net; s=20230601; t=1730377931; x=1730982731;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=TtULGftwvkV6PBeqGDEzspAud7gcNgJ/xN3Giran/QY=;
-        b=Rz21pIai6J/3Uk4vSXwHRcyfeOIRKfpnb9zVa06S2fHwbtjfWGwQETL+oX+N7DyJg2
-         sFy2BvGjQTth+9ftXuSMYbVYSHDcun5FNO1UGgp++BvqG9doxo71sarsXmFPGHLizaAu
-         koxlwYIsVXkDRPjDzuNPFZ0fadLoF9yRTu7mS6ufFGb5N5LBqytLSbUNSx/ZzM2bvF5v
-         GQC327acDj2tov4yDPyJg4F0SKd99bQSH4oXrTiUrpTmHMN6Bgvo1fam1aH+iYGopfiU
-         9uO3qo2XF0psmpuV1QDn5IvQMouuB+jC5lX0oD8DOPCgGKnnyTX/FdysPFQA1UUJrAYC
-         QlGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD6zdJ0zPi1We16d7d01M81X5nDmSQ9KusZVBQ8+KvB9338doI+0/KbPKihtuqFUO4tYVI+CJrZowdhRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdt+x4HLxrhVPLxodQS9w7sYDiZdfcctrSp6EGGYIWJxrzI1uL
-	qlWXLsatOXDMfPfM8uz77CjsQ2KbEy/vhblMofUD/O2BP2OE61VvxpckE0prw7c=
-X-Google-Smtp-Source: AGHT+IGkHR0OvxDEr7PMMN5pZS2wB+wRi7rYAoUIxvk8EKhcVrYCEcy8oIPQET5ElU3EYFZKT+iwFQ==
-X-Received: by 2002:adf:f1cd:0:b0:374:c8a0:5d05 with SMTP id ffacd0b85a97d-3806121ff99mr13664108f8f.50.1730377908520;
-        Thu, 31 Oct 2024 05:31:48 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:de28:ccc7:fdcf:6514? ([2a01:e0a:982:cbb0:de28:ccc7:fdcf:6514])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5230d5sm24947215e9.0.2024.10.31.05.31.47
+        bh=uKrPAKxKq1Jx7vedNmeCC6agMwFMSyba5+2s6PfI3BE=;
+        b=RFUzjZCgM4QJzi+7SdGMUeIxLMq8JpPQIdyRIJ5f+VQT2QiYn7u3K/TBJYPgv2rJOv
+         NxVat6CT3GtFuvu9N0gPSbga6UNupbOG+v3BNekfY4GeYMh6jXk+5Mcg+grW4GBUSS5b
+         ZKhyRz1f4PFHlV29QumUPdfCSoCTDLPiC1IzVz8bHLGUhBtdL2Eei3lM3Ec1X0LL6ATd
+         Ml55Mp/B4umE4mzwfx1c4toUrE4aPMRlxL6tv4708w67iKvFTUBTdamGh/XfjstYeWIy
+         hI3lGyJbC1hidXicujjRIQXYZUwUbJ/mmKu9Vu7A6PtV0YRLQzYC4C3zjIngezgxJ6bo
+         A/3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3pBli/KmABTUqQktnPZPdITpkVDz+z7HgIeO9JeU1fcpCSbrHUUjyJIDi8HBp+VpjpfAsBojAlOhW/U4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysg5dL9A6w3sPsGLvmWHw9iWblwsh+SCor6xIoNjXPis7k0bjK
+	sI8NNc3lmdsEiCmeKiViJW1dSo6YoaIYKosqMh964fVuP20SearE3xvUPOs+/dC+kRO1CINBgJJ
+	e0mf2P76zjLGwkGy3CpU/dDyzr65G+M5ycZaA8ukSNuTDlTM33FTdO49ta2xhMg==
+X-Received: by 2002:a5d:59a5:0:b0:37d:3b31:7a9d with SMTP id ffacd0b85a97d-381c14bb067mr1633438f8f.23.1730377930688;
+        Thu, 31 Oct 2024 05:32:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEu82J0PIR+pp4nUH/6upDWBeLgmtjty7qYAPHYGLGOrQCvA2FcAzeK4yv20KNlMVeyZpEHrw==
+X-Received: by 2002:a5d:59a5:0:b0:37d:3b31:7a9d with SMTP id ffacd0b85a97d-381c14bb067mr1633399f8f.23.1730377930212;
+        Thu, 31 Oct 2024 05:32:10 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c70a:ed00:7ddf:1ea9:4f7a:91fe? (p200300cbc70aed007ddf1ea94f7a91fe.dip0.t-ipconnect.de. [2003:cb:c70a:ed00:7ddf:1ea9:4f7a:91fe])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e595sm1994177f8f.77.2024.10.31.05.32.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 05:31:48 -0700 (PDT)
-Message-ID: <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
-Date: Thu, 31 Oct 2024 13:31:47 +0100
+        Thu, 31 Oct 2024 05:32:09 -0700 (PDT)
+Message-ID: <73d19983-b97c-49fc-be9e-89728626dbed@redhat.com>
+Date: Thu, 31 Oct 2024 13:32:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,87 +82,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-To: Sui Jingfeng <sui.jingfeng@linux.dev>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
- <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+Subject: Re: [PATCH v3 2/4] mm: shmem: control THP support through the kernel
+ command line
+To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+ Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang <ioworker0@gmail.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+References: <20241030130308.1066299-1-mcanal@igalia.com>
+ <20241030130308.1066299-3-mcanal@igalia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241030130308.1066299-3-mcanal@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 30/10/2024 15:49, Sui Jingfeng wrote:
-> Hi,
+On 30.10.24 13:58, Maíra Canal wrote:
+> Add a new kernel command line to control the hugepage allocation policy
+> for the internal shmem mount, ``transparent_hugepage_shmem``. The
+> parameter is similar to ``transparent_hugepage`` and has the following
+> format:
 > 
-> On 2024/10/21 21:08, Neil Armstrong wrote:
->> Hi,
->>
->> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
->>> The assignment of the of_node to the aux bridge needs to mark the
->>> of_node as reused as well, otherwise resource providers like pinctrl will
->>> report a gpio as already requested by a different device when both pinconf
->>> and gpios property are present.
->>> Fix that by using the device_set_of_node_from_dev() helper instead.
->>>
->>>
->>> [...]
->> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
+> transparent_hugepage_shmem=<policy>
 > 
+> where ``<policy>`` is one of the seven valid policies available for
+> shmem.
 > 
-> It's quite impolite to force push patches that still under reviewing,
-> this prevent us to know what exactly its solves.
+> By configuring the default hugepage allocation policy for the internal
+> shmem mount, applications that use shmem, such as the DRM GEM objects,
+> can take advantage of mTHP before it's been configured through sysfs.
+> 
+> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+> ---
+>   .../admin-guide/kernel-parameters.txt         |  7 ++
+>   Documentation/admin-guide/mm/transhuge.rst    |  6 ++
+>   mm/shmem.c                                    | 72 +++++++++++++------
+>   3 files changed, 62 insertions(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 1666576acc0e..acabb04d0dd4 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6926,6 +6926,13 @@
+>   			See Documentation/admin-guide/mm/transhuge.rst
+>   			for more details.
+>   
+> +	transparent_hugepage_shmem= [KNL]
+> +			Format: [always|within_size|advise|never|deny|force]
+> +			Can be used to control the hugepage allocation policy for
+> +			the internal shmem mount.
+> +			See Documentation/admin-guide/mm/transhuge.rst
+> +			for more details.
+> +
 
-It's quite explicit.
+LGTM, and it's consistent with the parameter for anon.
 
-> 
-> This also prevent us from finding a better solution.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Better solution of ? This needed to be fixed and backported to stable,
-if there's desire to redesign the driver, then it should be discussed in a separate thread.
+-- 
+Cheers,
 
-> 
->> [1/1] drm/bridge: Fix assignment of the of_node of the parent to aux bridge
->>        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/85e444a68126a631221ae32c63fce882bb18a262
->>
+David / dhildenb
 
 
