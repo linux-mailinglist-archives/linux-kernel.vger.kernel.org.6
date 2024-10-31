@@ -1,237 +1,206 @@
-Return-Path: <linux-kernel+bounces-390838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807509B7EFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:50:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354559B7EFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D29A0B21C83
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79F52811F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5DC1CC889;
-	Thu, 31 Oct 2024 15:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D261AD9ED;
+	Thu, 31 Oct 2024 15:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BUfur+30";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7x/ek1kz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQtdHwh+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359D71CB9F9
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88B71B1D65;
+	Thu, 31 Oct 2024 15:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389611; cv=none; b=d0JW639e8tyVof48wpZmX8BX7f6WUrnJCQ9Wx4vdfwvR6AfsHLTPJJEXgqnD58o7a76wQUFwffrkkE4tOmXvoq6+8tJW44YqGXyMAS/24gYh5QeiY/EOeoF0pkp0Q93+H/gV5FGvI8vzqeYkjc2kK3u98/iPXS/Xq1CxwtcYTbA=
+	t=1730389637; cv=none; b=A4AVIyMY91O/GEHsta8yYlQmBCzh19J7WUOBSN4NaIcTScjsbnaJyRDyH6iDNxeGWBwey6uhQPoyXdkRiNFppJ+0HAZmM+RHnbuxlykdgcFFc44m50cCT6DsiGAxoNbJKm3DNhD6XQy5JhDYMQ78DxYoHTusz1Y/gu+SdwgoVnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389611; c=relaxed/simple;
-	bh=pcOy4Ch+2qNU2o58NMhqPNimeFTq5CWfkqW9pKoDuEQ=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=g321ViNdzIVT3MRiCNd10Nz9jvmuVum5J/vmCZ9rmLD7l1N+RG8daS96gy+Xr8WrYKwJdvqLtXXT14Mn0b081CBzklYjIwC5zzKM0Ky+OUTEDtVoyveFaLBSn6uIIGih4lKxN6kUIoRDir3J6zwhjTnC73LV+ta/nM6/C8IMYvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BUfur+30; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7x/ek1kz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241031154425.814629453@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730389607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=CPnchhOLepqueHqgrg5lKLbIFHFsL+lVYOmF9AdWSew=;
-	b=BUfur+30iKJlqVboS2F74y3/ZfuCUINKW+VNSLL7zB4fRB53HORU6zsN29BZT/Y4ty/XD8
-	fXbuaK4Hj25w5cYM/DddcSyZT9WGmyMv9OGI3ZON7XQgMDMHbUnkZa0+vqnVIxxqWUWbhu
-	034NUISfD4TJfKmENUVxxkYqgc7Sxm3JhL+so244TSwVXZ8zzT0e3J9G+f2etUiu3/hSBv
-	PYe4zd7JCUFxwG2Pifa3JjdbvXvPbtiE0IwK9Is84gf2N8MY/TQw/7ELDHoSdVfm3V0rcD
-	2kk2j97/UpyeNZ4DpZYwe/xIjjEl8pR0vkKb1eXkPZrqkOx49Ut5WqNkZyWvvQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730389607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=CPnchhOLepqueHqgrg5lKLbIFHFsL+lVYOmF9AdWSew=;
-	b=7x/ek1kzjJXV++1MM3ugxpcy3kuLSomY00no8jhCuqu/6e6otpGqzcbYM5lGmanq0GS9oM
-	Te1nKnOhCtN1hfCw==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- John Stultz <jstultz@google.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Oleg Nesterov <oleg@redhat.com>
-Subject: [patch v6 20/20] alarmtimers: Remove return value from alarm
- functions
-References: <20241031151625.361697424@linutronix.de>
+	s=arc-20240116; t=1730389637; c=relaxed/simple;
+	bh=eLD1L3pOCvIKzVFRBDgbKqCNjetNAo1mLqnfG0Jk5to=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecw+RBw2EkH/7ldiwdE4wbXH2qZSCgLgXt27HK1PFXtKVrlwRGMAGholUvpkavIi6QtU2UhUTjydT82cPAjOY/VQhjwaRB0wnVcsjyQ0mTNNALinlDYTZvuUwUzQWfbSYsPsLkaVJ6+E0G8SecAUoFz8Xf9VRYKLPIDjfHQMrbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQtdHwh+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32326C55DF4;
+	Thu, 31 Oct 2024 15:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730389636;
+	bh=eLD1L3pOCvIKzVFRBDgbKqCNjetNAo1mLqnfG0Jk5to=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vQtdHwh+DFZmo36yZ4iGGgNSVbh5Crhu2gI0MaJlhVrWehYcHmacU6dgRbvLhRbxo
+	 t6bQfZ58mrd+uGeD8EFxgfRGDvDUO379lfkcJLakRKp7RIYmZ51E0Ep6CFQmUA9Br6
+	 CSA4zgQMzZ5UFBU/UpANlfvMNqpyN2Hbx+/kMoWxW3hprrloyI8WNHOHlp0gmvj4DK
+	 Bj/Aq/At+cJFNZBlcEB5N4Ui4x+uA/kq7Bm4Oe4IjGpzP0icgL9J6YsFRXYgIzmb4T
+	 nqUEV4L0Cpj5c92qY5wtxiDDz5UlqbiyvyKVt8d4P9gBFRXNgdef/LyhCbARzafSv7
+	 7aETUVlW66YVQ==
+Message-ID: <0712919e-300f-4eef-aa3f-ad5533743296@kernel.org>
+Date: Thu, 31 Oct 2024 16:47:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/10] dma-engine: sun4i: Add has_reset option to quirk
+To: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>,
+ dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Mesih Kilinc <mesihkilinc@gmail.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>
+References: <20241031123538.2582675-1-csokas.bence@prolan.hu>
+ <20241031123538.2582675-2-csokas.bence@prolan.hu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241031123538.2582675-2-csokas.bence@prolan.hu>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 16:46:47 +0100 (CET)
+Content-Transfer-Encoding: 8bit
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On 31/10/2024 13:35, Csókás, Bence wrote:
+> From: Mesih Kilinc <mesihkilinc@gmail.com>
+> 
+> Allwinner suniv F1C100s has a reset bit for DMA in CCU. Sun4i do not
+> has this bit but in order to support suniv we need to add it. So add
+> support for reset bit.
+> 
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> [ csokas.bence: Rebased and addressed comments ]
+> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> ---
+> 
+> Notes:
+>     Changes in v2:
+>     * Call reset_control_deassert() unconditionally, as it supports optional resets
+>     * Use dev_err_probe()
+>     * Whitespace
+>     Changes in v3:
+>     * More dev_err_probe() fixes
+>     Changes in v3:
+>     * Use return value of dev_err_probe()
+> 
+>  drivers/dma/sun4i-dma.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
+> index d472f57a39ea..4626cc8ad114 100644
+> --- a/drivers/dma/sun4i-dma.c
+> +++ b/drivers/dma/sun4i-dma.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/of_dma.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  
+> @@ -159,6 +160,7 @@ struct sun4i_dma_config {
+>  	u8 ddma_drq_sdram;
+>  
+>  	u8 max_burst;
+> +	bool has_reset;
+>  };
+>  
+>  struct sun4i_dma_pchan {
+> @@ -208,6 +210,7 @@ struct sun4i_dma_dev {
+>  	int				irq;
+>  	spinlock_t			lock;
+>  	const struct sun4i_dma_config *cfg;
+> +	struct reset_control *rst;
+>  };
+>  
+>  static struct sun4i_dma_dev *to_sun4i_dma_dev(struct dma_device *dev)
+> @@ -1215,6 +1218,15 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+>  		return PTR_ERR(priv->clk);
+>  	}
+>  
+> +	if (priv->cfg->has_reset) {
+> +		priv->rst = devm_reset_control_get_exclusive(&pdev->dev,
+> +							     NULL);
 
-Now that the SIG_IGN problem is solved in the core code, the alarmtimer
-callbacks do not require a return value anymore.
+Unnecessary wrapping.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- drivers/power/supply/charger-manager.c |    3 +--
- fs/timerfd.c                           |    4 +---
- include/linux/alarmtimer.h             |   10 ++--------
- kernel/time/alarmtimer.c               |   16 +++++-----------
- net/netfilter/xt_IDLETIMER.c           |    4 +---
- 5 files changed, 10 insertions(+), 27 deletions(-)
----
+> +		if (IS_ERR(priv->rst)) {
 
---- a/drivers/power/supply/charger-manager.c
-+++ b/drivers/power/supply/charger-manager.c
-@@ -1412,10 +1412,9 @@ static inline struct charger_desc *cm_ge
- 	return dev_get_platdata(&pdev->dev);
- }
- 
--static enum alarmtimer_restart cm_timer_func(struct alarm *alarm, ktime_t now)
-+static void cm_timer_func(struct alarm *alarm, ktime_t now)
- {
- 	cm_timer_set = false;
--	return ALARMTIMER_NORESTART;
- }
- 
- static int charger_manager_probe(struct platform_device *pdev)
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -79,13 +79,11 @@ static enum hrtimer_restart timerfd_tmrp
- 	return HRTIMER_NORESTART;
- }
- 
--static enum alarmtimer_restart timerfd_alarmproc(struct alarm *alarm,
--	ktime_t now)
-+static void timerfd_alarmproc(struct alarm *alarm, ktime_t now)
- {
- 	struct timerfd_ctx *ctx = container_of(alarm, struct timerfd_ctx,
- 					       t.alarm);
- 	timerfd_triggered(ctx);
--	return ALARMTIMER_NORESTART;
- }
- 
- /*
---- a/include/linux/alarmtimer.h
-+++ b/include/linux/alarmtimer.h
-@@ -20,12 +20,6 @@ enum alarmtimer_type {
- 	ALARM_BOOTTIME_FREEZER,
- };
- 
--enum alarmtimer_restart {
--	ALARMTIMER_NORESTART,
--	ALARMTIMER_RESTART,
--};
--
--
- #define ALARMTIMER_STATE_INACTIVE	0x00
- #define ALARMTIMER_STATE_ENQUEUED	0x01
- 
-@@ -42,14 +36,14 @@ enum alarmtimer_restart {
- struct alarm {
- 	struct timerqueue_node	node;
- 	struct hrtimer		timer;
--	enum alarmtimer_restart	(*function)(struct alarm *, ktime_t now);
-+	void			(*function)(struct alarm *, ktime_t now);
- 	enum alarmtimer_type	type;
- 	int			state;
- 	void			*data;
- };
- 
- void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
--		enum alarmtimer_restart (*function)(struct alarm *, ktime_t));
-+		void (*function)(struct alarm *, ktime_t));
- void alarm_start(struct alarm *alarm, ktime_t start);
- void alarm_start_relative(struct alarm *alarm, ktime_t start);
- void alarm_restart(struct alarm *alarm);
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -321,7 +321,7 @@ static int alarmtimer_resume(struct devi
- 
- static void
- __alarm_init(struct alarm *alarm, enum alarmtimer_type type,
--	     enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+	     void (*function)(struct alarm *, ktime_t))
- {
- 	timerqueue_init(&alarm->node);
- 	alarm->timer.function = alarmtimer_fired;
-@@ -337,7 +337,7 @@ static void
-  * @function: callback that is run when the alarm fires
-  */
- void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
--		enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+		void (*function)(struct alarm *, ktime_t))
- {
- 	hrtimer_init(&alarm->timer, alarm_bases[type].base_clockid,
- 		     HRTIMER_MODE_ABS);
-@@ -530,14 +530,12 @@ static enum alarmtimer_type clock2alarm(
-  *
-  * Return: whether the timer is to be restarted
-  */
--static enum alarmtimer_restart alarm_handle_timer(struct alarm *alarm, ktime_t now)
-+static void alarm_handle_timer(struct alarm *alarm, ktime_t now)
- {
- 	struct k_itimer *ptr = container_of(alarm, struct k_itimer, it.alarm.alarmtimer);
- 
- 	guard(spinlock_irqsave)(&ptr->it_lock);
- 	posix_timer_queue_signal(ptr);
--
--	return ALARMTIMER_NORESTART;
- }
- 
- /**
-@@ -698,18 +696,14 @@ static int alarm_timer_create(struct k_i
-  * @now: time at the timer expiration
-  *
-  * Wakes up the task that set the alarmtimer
-- *
-- * Return: ALARMTIMER_NORESTART
-  */
--static enum alarmtimer_restart alarmtimer_nsleep_wakeup(struct alarm *alarm,
--								ktime_t now)
-+static void alarmtimer_nsleep_wakeup(struct alarm *alarm, ktime_t now)
- {
- 	struct task_struct *task = alarm->data;
- 
- 	alarm->data = NULL;
- 	if (task)
- 		wake_up_process(task);
--	return ALARMTIMER_NORESTART;
- }
- 
- /**
-@@ -761,7 +755,7 @@ static int alarmtimer_do_nsleep(struct a
- 
- static void
- alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
--		    enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+		    void (*function)(struct alarm *, ktime_t))
- {
- 	hrtimer_init_on_stack(&alarm->timer, alarm_bases[type].base_clockid,
- 			      HRTIMER_MODE_ABS);
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -107,14 +107,12 @@ static void idletimer_tg_expired(struct
- 	schedule_work(&timer->work);
- }
- 
--static enum alarmtimer_restart idletimer_tg_alarmproc(struct alarm *alarm,
--							  ktime_t now)
-+static void idletimer_tg_alarmproc(struct alarm *alarm, ktime_t now)
- {
- 	struct idletimer_tg *timer = alarm->data;
- 
- 	pr_debug("alarm %s expired\n", timer->attr.attr.name);
- 	schedule_work(&timer->work);
--	return ALARMTIMER_NORESTART;
- }
- 
- static int idletimer_check_sysfs_name(const char *name, unsigned int size)
+Drop {}.
+
+> +			return dev_err_probe(&pdev->dev, PTR_ERR(priv->rst),
+> +						  "Failed to get reset control\n");
+
+And this should be aligned with opening (. Run checkpatch --strict.
+
+> +		}
+> +	}
+> +
+>  	platform_set_drvdata(pdev, priv);
+>  	spin_lock_init(&priv->lock);
+>  
+> @@ -1287,6 +1299,14 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	/* Deassert the reset control */
+> +	ret = reset_control_deassert(priv->rst);
+> +	if (ret) {
+> +		dev_err_probe(&pdev->dev, ret,
+> +			"Failed to deassert the reset control\n");
+
+Missing alignment.
+
+
+
+Best regards,
+Krzysztof
 
 
