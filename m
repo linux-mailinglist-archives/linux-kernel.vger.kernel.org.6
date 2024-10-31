@@ -1,140 +1,117 @@
-Return-Path: <linux-kernel+bounces-390416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDC39B798D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:19:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3939B7996
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECF691C20C63
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:19:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915331C216A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D9E19B3C5;
-	Thu, 31 Oct 2024 11:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA4919AD78;
+	Thu, 31 Oct 2024 11:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uj8RLqMB"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="N6yNuIJy"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B13B19ADB0
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CB1175BF;
+	Thu, 31 Oct 2024 11:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730373530; cv=none; b=jC1BLT9xBVBsjENd7NBlU+XPJ0aXRvCmjVB3ajCV8Ol0wuxFA2m35QORfpjAx1FdH8zzhjBlESCPOqF9UUhCVLFnIrLRj6D4gEhaxTOQaUNm5qxRA0f7lVKOQk0v2MFgTr3jqf9AoI1rrtdVVuPJVnZy4xgXzbbiD6Gs0k+lbKA=
+	t=1730373658; cv=none; b=pf95BxZYdOHjn3xG5PCShsSw8AIaYAQn6Kv64XdeQP8R4w1C5ipVdAt4+kLeVfhQ9WPrcHNlMXFZzkE98SZkKrEibeEc4J/i+IbneNCY1bdJG5Gb+H19YPYTvcQbLlkG8QgSNAlBC/ziGOtJJHOSByAtgD+UlsnXo4hNPV6xuOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730373530; c=relaxed/simple;
-	bh=P1m23rwMnx54MjRVtY546V3j5gxJtS/n0bt5NNfdIIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uG5coCtU4Z+/SOeRqlfzNLieANSWIAYKzju7WBro2XNc1usdMUM7QIRC3XzJqqEyakPLa8bBA2pHDxrGrKUmotiXaX3Jq+LEhnTSzx7PbjkkqZLPE3mHycaz+jxgoYsq3zYoXHP0p1dfYQ1iFrp7g0sJ/xC/xeD2Y894LWG/pBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uj8RLqMB; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5ebc52deca0so415985eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:18:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730373527; x=1730978327; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6tOVqDGIVkJ6VSlfAnQKasdgXF9e/3uyEUG7DpZuXhY=;
-        b=Uj8RLqMBBtP4jTmovogATZJXH7b5FznTvEAuLO3kU03Pep561isNfkVkGWsp1oOqCQ
-         RC+4rMettWCIp0zUjeGEun4UqyEp1TYgBRIbfhHRkisHnbtxBWbMgu0vzdU7syJI1L6I
-         8EsfXgE8tmjK+IGKUhdrOhC6i0q/MaCJcCnxcD287E4gpCrs7/jSq1Bc+AU6Pl/8qDqB
-         ZrQr9Dg7JGsfN7UjhrFIbvPPOv4FKTE5IaW1iOmgh+4Gldc6mLA/R4DERltqIvhkMCD+
-         BIxhEr7QHnVZz72COQxW5e0bBtMVMidcTMwShm6mJWaxkZQgYLo9ADzbug5EamsezYNB
-         p5Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730373527; x=1730978327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6tOVqDGIVkJ6VSlfAnQKasdgXF9e/3uyEUG7DpZuXhY=;
-        b=n/sMHWiXWBQ/ffogKqI8evHaV1pCH5t6PU7dz+JNgk/mJM8jKYUZvyqVPXrXoxX2SP
-         Gqqv27Kn8GFyIQGt1riAgIKDZ+tnCrHjJUQ9paU/O8gKO1QXpwIG94+/IlL+u3keqnes
-         DyXflC/ibs0FuCEZeojISQL74X0cmiExZR/CXe5ADfnV7zu2U69SPhi7UHUieQsssKsY
-         +Usqoua3vmJ+722hGzXNwsdHxsybkzmTMQDeNifck5RqkaU6GV4hYOe+wuZSRER8UFy4
-         Jo+YP/iZCg2FvXBxoWGfHIzB/GY6FrpL5J6Xc+ZV5Wdd4hbCyEWzN1j5l8xUyaMFYodS
-         W0xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJY4HZGZ+owAAQ5lsM4PeOOvh/9hh64ZOI7aTDtP7otzfrC6XMAjMdNb0BASSS8aePmincWcGPDVd4dDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPFoPdEqYiMjFpj7Jd0Efb4234QShdU4ojqSN4r4Q5WcU5KDXO
-	Ycu3PKiqMdbF3Zwnb34ruT1RU1tvhTjmPSqKTNx/DeaJTL0bd7JeUv/4zPGFtJksQpuxCj2fTvf
-	opwt3rzPY6UVr+OR4I9mrW6D+HhLYG/H2BvqAuA==
-X-Google-Smtp-Source: AGHT+IFQY0jyd6E8l4ZVxaxh5x5SVk1SxFaa6tSUf7REkjjSQjNyJIZv7P8E7RYon6B3a5PLGcKeZNWF/nmdRTVbnGc=
-X-Received: by 2002:a4a:a701:0:b0:5ec:5922:ddb with SMTP id
- 006d021491bc7-5ec592219f4mr4806888eaf.2.1730373527001; Thu, 31 Oct 2024
- 04:18:47 -0700 (PDT)
+	s=arc-20240116; t=1730373658; c=relaxed/simple;
+	bh=upHPwx55hxxZ+6K0pfkfoQMLECjDZs0A7t7naqRPHvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9qs+oY16Z+G1+3susBSIuI+kzBWvtD7DmmJBKsxjy/JYzAvzLcwdOg9/Px7sNdseU4L5dbL4DKLwc7DVfSqvv5omAg3/htieFAWuNmBNo9KBYL6kIVipVaS3zaFM4aINyKeHTz/SpkA2mz4Id9E4MB8y4lE/oWLxi3WYydYaOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=N6yNuIJy; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9093340E015F;
+	Thu, 31 Oct 2024 11:20:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id nxVPQm6v3gQU; Thu, 31 Oct 2024 11:20:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730373649; bh=4kgxj+Oy+aos2Q4VuRMB7uY4sjDqeuK8/GP9QzylIOQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N6yNuIJyRW9ePKvpyv3Z9ShFCuOfo5KYH5g/0PVXJBZOYNwECXjty8dAkfmSP+E0E
+	 GJa02a/OuBOsDQLmP56rtp9pkEt+TSLapaGIz/8jwwDy2/ENCVo+wYmHmai18YZRtN
+	 TSIxbECsFVNpKqdquj086NZaCDkZL3E0w0etmSAFJsV+qWYi8Y4rdL5YLVdU54tRGr
+	 0ZMMblwbw4R0SYNuF3nRltNV9KNRH4QEeJa4NFVGmdZVsN/KV9uTlEOsVJ554PtZpf
+	 MX08LucSwAMCRWtWl8fmBvUB9EZU4IF7eFLAvUDhLJNjS4ttgy0H1GMtvtbQ/9++Qw
+	 i9GnKs4z86mZnB6+Cu94ZcPrS9HpQ98su9Az3bC8Jbah2upcYPvQB5MrG6L6s2Eh/q
+	 e1yfC1EiBxn6xVJ8fi5MghK3SxcDuWFqsAeNnOjeuq0P1yYwgGA757jwwSa9mgW5Rq
+	 gw1BNaGR25CDI381pYM8sPBdtgrds4+hr0awuzsoidTl07FKrMidgMYpMPOo6slR7n
+	 3SyZoPeE0LMs6S5pi3ZVdhG/Rxb7+sVtx9hIN77D4GBY753bQ91TDWmW/hJ4X3saSZ
+	 cmpmJYEBQbOzbwv2zSskPOdrXKvnfSf/suvcB6vr5Pvx4nFvE6tIieoIFtl97hv3Kh
+	 RaFpcyOX2H4dGHvr1xSpJp2g=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9791540E019C;
+	Thu, 31 Oct 2024 11:20:28 +0000 (UTC)
+Date: Thu, 31 Oct 2024 12:20:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
+	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
+	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 06/16] x86/amd_nb: Simplify root device search
+Message-ID: <20241031112027.GIZyNn-2JkbpnNJhw1@fat_crate.local>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-7-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025131442.112862-1-peter.griffin@linaro.org>
- <20241025131442.112862-5-peter.griffin@linaro.org> <f5ac07e3-3fde-4ac8-8cfc-fb7918ffb2a7@linaro.org>
-In-Reply-To: <f5ac07e3-3fde-4ac8-8cfc-fb7918ffb2a7@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 31 Oct 2024 11:18:36 +0000
-Message-ID: <CADrjBPpYQQNdYya_95KXRYBrfSD91E-rfYcw6Q-ZNOgh5-4VJw@mail.gmail.com>
-Subject: Re: [PATCH v2 04/11] scsi: ufs: exynos: Add EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR
- check
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	krzk@kernel.org, andre.draszik@linaro.org, kernel-team@android.com, 
-	willmcvicker@google.com, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ebiggers@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241023172150.659002-7-yazen.ghannam@amd.com>
 
-Hi Tudor,
+On Wed, Oct 23, 2024 at 05:21:40PM +0000, Yazen Ghannam wrote:
+> The "root" device search was introduced to support SMN access for Zen
+> systems. This device represents a PCIe root complex. It is not the
+> same as the "CPU/node" devices found at slots 0x18-0x1F.
+> 
+> There may be multiple PCIe root complexes within an AMD node. Such is
+> the case with server or HEDT systems, etc. Therefore it is not enough to
 
-On Wed, 30 Oct 2024 at 08:56, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 10/25/24 2:14 PM, Peter Griffin wrote:
-> > The values calculated in exynos_ufs_specify_phy_time_attr() are only used
-> > in exynos_ufs_config_phy_time_attr() and exynos_ufs_config_phy_cap_attr()
->
-> all values set in exynos_ufs_specify_phy_time_attr() are used *only* in
-> exynos_ufs_config_phy_time_attr(). Or did I miss something?
+HEDT?
 
-Yes you're right, I'll update the commit message.
+...
 
->
-> > if EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR flag is not set.
->
-> yep, wonderful.
->
-> >
-> > Add a check for this flag to exynos_ufs_specify_phy_time_attr() and
-> > return for platforms that don't set it.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/ufs/host/ufs-exynos.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-> > index d685d3e93ea1..a1a2fdcb8a40 100644
-> > --- a/drivers/ufs/host/ufs-exynos.c
-> > +++ b/drivers/ufs/host/ufs-exynos.c
-> > @@ -546,6 +546,9 @@ static void exynos_ufs_specify_phy_time_attr(struct exynos_ufs *ufs)
-> >       struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
-> >       struct ufs_phy_time_cfg *t_cfg = &ufs->t_cfg;
-> >
-> > +     if (ufs->opts & EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR)
-> > +             return;
-> > +
-> >       t_cfg->tx_linereset_p =
-> >               exynos_ufs_calc_time_cntr(ufs, attr->tx_dif_p_nsec);
-> >       t_cfg->tx_linereset_n =
->
-> tx_linereset_n, rx_hibern8_wait is set but not used anywhere. Can we
-> remove it? Not related to this patch though.
+> +struct pci_dev *amd_node_get_root(u16 node)
+> +{
+> +	struct pci_dev *df_f0 __free(pci_dev_put) = NULL;
+> +	struct pci_dev *root;
+> +	u16 cntl_off;
+> +	u8 bus;
+> +
+> +	if (!boot_cpu_has(X86_FEATURE_ZEN))
 
-Yes they can be removed if they are unused.
+check_for_deprecated_apis: WARNING: arch/x86/kernel/amd_node.c:67: Do not use boot_cpu_has() - use cpu_feature_enabled() instead
 
-Peter
+> +		return NULL;
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
