@@ -1,144 +1,115 @@
-Return-Path: <linux-kernel+bounces-389918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819C69B7309
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:35:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396D59B7317
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4708284272
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 734301C2460C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1957013D89D;
-	Thu, 31 Oct 2024 03:34:33 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E79B13C9A9;
+	Thu, 31 Oct 2024 03:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QFH4x62Q"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C0313A86A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D93113C8FF;
+	Thu, 31 Oct 2024 03:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730345672; cv=none; b=J87qAMiDzhbPPdUmHmzlWLm3lLfQaemaOznkjr3y+tcT2PxIXjIfhAarb4Kk3ec3KorDY1PepbTGuTTNwzGBV4CdUYSLP8xvYPvDdqQKjdoWHfwISS10p6g1UhKVP2CgtiHxYMAoIuA46QFUuo91pUN8Cna7ycsXI15gvWhBLkg=
+	t=1730345745; cv=none; b=WCULO2OCFfmX18+TW4UoVDCFuxdc+ZfaQnIifBdGTNnD76771Tih0CWnU1/kRfLdV06woUDLq1ZNW5X0qQpO8AdEwZDE0HZPexrtwgsOklHYVczUenHA5h2WyKBH4eckAWH2iPbcWl1wrGtXFZsVEDe/JrSiYx+g/tLgO/rXa8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730345672; c=relaxed/simple;
-	bh=voJJnS9Ahgn97P3nrcnPWCmLEPfPS1ajSd6csfb3PBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZAD88QBg/rCnlQ/u/6bDPQmvU8UxFqX7T21ZpoMA+pefB6NweFQG1GIE14sszGs2L7I/c0VMsZ95fH9DQlSeykM2Gy4jEtGwsRgz7Fv0AYFu9jTZkamnYA+zPHeI6acSSo4FWbu3jtbyUDbbADTXzxmkMgm/ZnasJ1ljAblMsfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xf8gw2BpVzpXgN;
-	Thu, 31 Oct 2024 11:32:28 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id AA015180115;
-	Thu, 31 Oct 2024 11:34:23 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 31 Oct 2024 11:34:21 +0800
-Message-ID: <d1293fb3-6516-8680-d676-a68d648b904b@huawei.com>
-Date: Thu, 31 Oct 2024 11:34:21 +0800
+	s=arc-20240116; t=1730345745; c=relaxed/simple;
+	bh=26i46pRdPzompy+NrkcNeMv7dtfpjcrfXnWfv5yixR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pftefpvhpSICjyU/r1NAjph/oRae2BVhQYdi6RvNG4oxFCFzwagORhxgyxTs26ihTju/pozrRQ2wxsNqz2VwZDiLP4hamE06xch/jsmagPSgI3/KbUlWaFrkGxJq4Z8wnRfPnHKWQCysjzHVSiHX4T7wYExCW+FIbHBTLrtakvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QFH4x62Q; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730345737;
+	bh=BDnVGbphNvmoHA9jNQU2vj5qIFGIsTc0ddmwPV6jeIQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QFH4x62Q8VLMfohNB3QAGy+8ID7gIHYoJ2GsGK2wwvnrl28Seqi1/babe7BzQ7ml6
+	 DAoNajC6iH3LO10sEO82ElV6QKiXG1i2qeSrUP4EhvriPDWe1VsEsvMOLED9wK62Qo
+	 txq1Xpsr53cD4eHIg6b1Y378eZIsEDYF+nLv1s1gzh3Zhy9Q1uyaKxzN96r/gF+64+
+	 HM5JDv3dlwyEwTHm131zoB9Oz6cqO2r30dJt3EXIqijwYNmXMl9CqNoq5l8J9JuJqa
+	 /7LDG2RPq54HK4QNUeQhxQh/YqSgZcY6/6qvHTMvuw1lEpv7PYYNrgbppW550+zvB3
+	 fFkFCovKdEJGg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xf8lX52Qlz4xPQ;
+	Thu, 31 Oct 2024 14:35:36 +1100 (AEDT)
+Date: Thu, 31 Oct 2024 14:35:19 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20241031143519.73eca58b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next v4 01/19] arm64: ptrace: Replace
- interrupts_enabled() with regs_irqs_disabled()
-Content-Language: en-US
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <sstabellini@kernel.org>, <maz@kernel.org>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
-	<kees@kernel.org>, <wad@chromium.org>, <akpm@linux-foundation.org>,
-	<samitolvanen@google.com>, <arnd@arndb.de>, <ojeda@kernel.org>,
-	<rppt@kernel.org>, <hca@linux.ibm.com>, <aliceryhl@google.com>,
-	<samuel.holland@sifive.com>, <paulmck@kernel.org>, <aquini@redhat.com>,
-	<petr.pavlu@suse.com>, <viro@zeniv.linux.org.uk>,
-	<rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
-	<wangkefeng.wang@huawei.com>, <surenb@google.com>,
-	<linus.walleij@linaro.org>, <yangyj.ee@gmail.com>, <broonie@kernel.org>,
-	<mbenes@suse.cz>, <puranjay@kernel.org>, <pcc@google.com>,
-	<guohanjun@huawei.com>, <sudeep.holla@arm.com>,
-	<Jonathan.Cameron@huawei.com>, <prarit@redhat.com>, <liuwei09@cestc.cn>,
-	<dwmw@amazon.co.uk>, <oliver.upton@linux.dev>, <kristina.martsenko@arm.com>,
-	<ptosi@google.com>, <frederic@kernel.org>, <vschneid@redhat.com>,
-	<thiago.bauermann@linaro.org>, <joey.gouly@arm.com>,
-	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<xen-devel@lists.xenproject.org>
-References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
- <20241025100700.3714552-2-ruanjinjie@huawei.com>
- <ZyDu9XHNmxMHBMSI@J2N7QTR9R3.cambridge.arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZyDu9XHNmxMHBMSI@J2N7QTR9R3.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Type: multipart/signed; boundary="Sig_/foNkk=YMbxreuP_=4Z4W8Jt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/foNkk=YMbxreuP_=4Z4W8Jt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/10/29 22:19, Mark Rutland wrote:
-> On Fri, Oct 25, 2024 at 06:06:42PM +0800, Jinjie Ruan wrote:
->> Implement regs_irqs_disabled(), and replace interrupts_enabled() macro
->> with regs_irqs_disabled() all over the place.
->>
->> No functional changes.
->>
-> 
-> Please say why, e.g.
-> 
-> | The generic entry code expects architecture code to provide
-> | regs_irqs_disabled(regs), but arm64 does not have this and provides
-> | interrupts_enabled(regs), which has the opposite polarity.
-> | 
-> | In preparation for moving arm64 over to the generic entry code,
-> | replace arm64's interrupts_enabled() with regs_irqs_disabled() and
-> | update its callers under arch/arm64.
-> |
-> | For the moment, a definition of interrupts_enabled() is provided for
-> | the GICv3 driver. Once arch/arm implement regs_irqs_disabled(), this
-> | can be removed.
-> 
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-Thank you！ Will expand the commit message and describe the cause of the
-patch also for other patches.
+  arch/arm64/tools/sysreg
 
->> Suggested-by: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
-> 
-> [...]
-> 
->>  arch/arm/include/asm/ptrace.h       | 4 ++--
->>  arch/arm/kernel/hw_breakpoint.c     | 2 +-
->>  arch/arm/kernel/process.c           | 2 +-
->>  arch/arm/mm/alignment.c             | 2 +-
->>  arch/arm/mm/fault.c                 | 2 +-
-> 
->>  drivers/irqchip/irq-gic-v3.c        | 2 +-
-> 
-> I hadn't realised that the GICv3 driver was using this and hence we'd
-> need to update a few places in arch/arm at the same time. Please update
-> just the arch/arm64 bits, and add:
-> 
-> | /* 
-> |  * Used by the GICv3 driver, can be removed once arch/arm implements
-> |  * regs_irqs_disabled() directly.
-> |  */
-> | #define interrupts_enabled(regs)	(!regs_irqs_disabled(regs))
-> 
-> ... and then once 32-bit arm implements this we can update the GIC
-> driver and remove the architecture definitions.
-> 
-> That way we avoid the risk of conflicts with 32-bit arm.
-> 
-> Mark.
-> 
+between commit:
+
+  034993461890 ("arm64/sysreg: Update ID_AA64MMFR1_EL1 to DDI0601 2024-09")
+
+from the arm64 tree and commit:
+
+  9ae424d2a1ae ("arm64: Define ID_AA64MMFR1_EL1.HAFDBS advertising FEAT_HAF=
+T")
+
+from the kvm-arm tree.
+
+I fixed it up (the former is a superset of the latter) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/foNkk=YMbxreuP_=4Z4W8Jt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmci+vcACgkQAVBC80lX
+0GyBtwf/QzePuoFKop4OFs+6D8og5FLQ4p5lMWOYIFcg0dLtRYmpTJ4fzZNDpzBl
+a7V1aL5j2qrpcvWaO3ZULcepMq2wGqJQU4IQD1nqjzbQW517+a0atePwDmzOu4tp
+1XdnIQrA4CwBoDyLSIfTx4LtsHSI32wMDFZuMxfrsBwxkwt8JAGmo+/DWb1sZmm4
+035KeFwZk8sWRChVMh1Ly6iMy6NTu6hus4OVQ1utKW/vj+ILl0eqTTbTsDhvvi99
+1ekmjJt1D6CgcolHQcQ/zZDyK/4MyE+bprIbepcE7O8K6naXMtAeCjODn9c6OOG3
+dPwCo+OBhrHVVXluiQEiV5JMJluG4w==
+=YjvS
+-----END PGP SIGNATURE-----
+
+--Sig_/foNkk=YMbxreuP_=4Z4W8Jt--
 
