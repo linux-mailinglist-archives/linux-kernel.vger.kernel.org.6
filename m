@@ -1,153 +1,188 @@
-Return-Path: <linux-kernel+bounces-391451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D59B8726
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:28:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BB49B8729
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:31:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A861C21A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 535E0282412
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279FE1E47B6;
-	Thu, 31 Oct 2024 23:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8441CF29C;
+	Thu, 31 Oct 2024 23:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbGb8gwV"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="WuQnTROm"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52971BD9DC;
-	Thu, 31 Oct 2024 23:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C177F1946BC
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730417311; cv=none; b=eZCcx9y0QMfc7gheGWy3TFODLRuOldrDXo2gQzlrWSPnA6YEnqfUURBQsK/9CekhD1zXQvwbCCEHHO1Rl7fiHzQgPfLzGarVLT8C9QMl81yhB4V8vFt4MIoj2LnTPMjbzfWQXxIfmYdVBiy0thucMO7D+a2fGB1Uf20f6oYtdX8=
+	t=1730417506; cv=none; b=sPiiZn2LNr3WP4rHjw/Aey1mBkha2mOgIaBNbsxa/HOrjtm77rjsvdQPeb5T+8YhIEXCJ/9h9dIhMWzIQ6HhKrNSrAQhQX5AD1lufv+5FKegYJh7zbpkSpaWmy8bMMOug7+mD35WFg58RGXRRok1exff79tNkJr0gXFoDccX804=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730417311; c=relaxed/simple;
-	bh=ihn1bJ13O+ICGeD46Kou/82Z2V4tl7Akt0tFFGiiYtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dpz3P2xUDynmzE5bsXtGHRFfAXV73j1Nf1EvC+urbDjIehJFyG340zazHv+yU5EUvkN4+qbM3Pod8lz9UR10Ge1JeEnjGZ+yxrqMSUJnHtGN+lnFmeO59VnY3sIuzu/81SdeFcxd1MQ+Y/Or5JoHy9yDnzDhBsMgrNNBAS935+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbGb8gwV; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a16b310f5so213266866b.0;
-        Thu, 31 Oct 2024 16:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730417304; x=1731022104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hefIWSSLnXcBqftg5nsPi5v85nNJiSjiEC3JHtAntbU=;
-        b=VbGb8gwV/IQsp1Lo1OwhLFzeSitoqjIwCDqBDyIQ7Ts+PntsZjITgTSSfJYSC4ySPV
-         2IspDADeVcvLwytmapb/Xr81Qk6oTFnucPdJAVy4hFtmq/CO6O4VLvUBbnmtXOx1oUyU
-         GfqKfeiNeHTyltWjUOnuUvdtd+wtKga2v1geQZeFXXZojguSotS4/jY+tcyIr47QzaOl
-         TKhj/ziaC37fO/QdrvTHYcL5ufbWnjlFG99c8z3wbmHYzpCpbTwZSlo8TMuZ9dEuFrFe
-         Q9aF4aMQKnZlV2wyKWEeNGDKHaoidU6fVqYOBPTj/Em3mmQJaavRq86MVLWHKdIEgz7N
-         /uQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730417304; x=1731022104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hefIWSSLnXcBqftg5nsPi5v85nNJiSjiEC3JHtAntbU=;
-        b=gM1+iLHS1yxLgYwtBOtloG2UiCJci2NUeA9ocpTkqw3T0/OIK+KvmyesM4vSVGwk5a
-         hT+dkSWTVWUFAS/WcFpzaLnUJ/WXPNOGkux+1rzwi4xqAci6b0gsjfcJOIVgAoNPah0s
-         UbPpGhIWwp+QCcunW2d6bhzE8YPG2dEMxuU4Ss5hs59XZ0lpH7xyVvgMaCW/OhNkZfdX
-         HgT3KnSyR4Zn1XrrsPJUNkMd/FHk6M6kg9cea1E5yKy6PtBbKx+e6Eg/jysjtcewLZY3
-         RJ8Nvc5zU89oobBN7jJYtewuXuUZRjeE5n9oTP97NKx6aNgN5WHB+9Piqi59RMb0eJ1v
-         F/9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUWRGb++4D79PJ6KXmlYOECXHIC/owXICFmAaDQWISyNXbxnwcjvURmJfaIOn/DLLmftYbZdZ+xQVJE5xOh2AFojA==@vger.kernel.org, AJvYcCVU0eTX2ks2wzeh4je0nUi6HTtUB05YVXbNZoNLnH5o9CCGCy9oBDSP46aGvZ0bLliCU35Q/GvLKVHpcDY=@vger.kernel.org, AJvYcCVWMat6zcVDsRrFBdgy9KY5Be+trJvICBFP0I0E3VMDFRZvNKOB8S1fliNM1gyW8zEBwa0HCrM7q48km0LfQvBugg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YycO0WIDwUh+NcWXIQTyHgo/d38oTFLMPLrFxUDQFy4O/QIM3Nk
-	3AYOLFNusOkYwdEfdFGZLQQjgCH3zrINWFf40P6iEfNdcqjrjwrV/23uaSvzJI8caViRqO/f3pd
-	gZx9E8ELsaSbbuV/v5o93PH7mxuE=
-X-Google-Smtp-Source: AGHT+IGTC95RMplTXIl7pdwB3Xefp6E7/dapQh+1QehK1yKeaffEy3sTOv2KING0JBmtpOOXvlQk7L+Z39psP0sM3qk=
-X-Received: by 2002:a17:907:72cc:b0:a9a:3ca0:d55a with SMTP id
- a640c23a62f3a-a9e50cae005mr432051466b.57.1730417303621; Thu, 31 Oct 2024
- 16:28:23 -0700 (PDT)
+	s=arc-20240116; t=1730417506; c=relaxed/simple;
+	bh=IVJLAb8y0oM8o/EKypnDgVIQwAzhFWgQyO0aaKjb1o4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ePEgeYV8AvwrS1qzS2yduVyrcJX9U6/y96uErdXAnYY2ilD6p3E6lRyYsJUwisP25lT5Ub6bhqhx9H7LH2qjsIJXQxm8g0gYKWaWroNuuAXVn4U1Beidxh1wommyCnmRGguUG0pzVflZqNCK9FBrj2LtrAKVJdB4xkOlgMMRcg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=WuQnTROm; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id 6BCxtZXHdrKrb6edet5QYp; Thu, 31 Oct 2024 23:31:38 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 6eddtyMJ0ib8Q6edetnD6I; Thu, 31 Oct 2024 23:31:38 +0000
+X-Authority-Analysis: v=2.4 cv=T4qKTeKQ c=1 sm=1 tr=0 ts=6724135a
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=K0Ap-pyKWWmxKUwgzmsA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jCG9Z1bZRYqbrYLvyKfqUnIB12xsUdtxtavULjifs9c=; b=WuQnTROm7pWPymN5HZgz3UKChH
+	HGoAc/i2oW0qaEChDgX1l7agfO9/EmhnnYVzH0iA9a8C53/F7EUTMXp651tyCu3ku+GdL0N5oCR/i
+	bcVJSkxkGM5raRHZl2cXth1NFUgb+0WhYopcVTwVQlBhUNVmyhLNTOEZUSTucUEFX1hJBVPvslg5l
+	s1lrlu3RXWI01ZlL8j9wwM06cXCg5uJcx8BVr1Taq9e/Myz/0yl6B3P6GLJmBjVr3wn9H9M9rkRc4
+	rRgsLd21IbtF77QECf2dvcqTpld+31tOXSDS6ydMqroi8dQtXRCawHCFk8r/39GeMXku5HB/WD5g/
+	SKD4vJpw==;
+Received: from [177.238.21.80] (port=63018 helo=[192.168.0.27])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1t6edd-000M8L-0a;
+	Thu, 31 Oct 2024 18:31:37 -0500
+Message-ID: <ca7be9f4-3f33-48ba-b61a-0a40ea1f17a6@embeddedor.com>
+Date: Thu, 31 Oct 2024 17:31:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730150953.git.jpoimboe@kernel.org> <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY3xJ=W2qPD8i6UbSB=zNqpiA1gSd+SC3wKxQAJWjeHhA@mail.gmail.com>
- <20241030061043.eo2vuqgsoqmjytjr@treble.attlocal.net> <CAEf4BzYd5OT9COBS4va435jqMzkjvvAHbe55AR6giv8pitUvAg@mail.gmail.com>
- <20241031231320.h2hwns367e5byvyy@jpoimboe>
-In-Reply-To: <20241031231320.h2hwns367e5byvyy@jpoimboe>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 31 Oct 2024 16:28:08 -0700
-Message-ID: <CAEf4BzZksT=GTs268KBiCsYxUcvWz5KUghjKQQR8OxGdoBt=6A@mail.gmail.com>
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
-	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
-	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
-	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] jbd2: Avoid dozens of
+ -Wflex-array-member-not-at-end warnings
+To: Jan Kara <jack@suse.cz>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+ linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <ZxvyavDjXDaV9cNg@kspp> <20241031123313.dfcuttwzzs5f5i7a@quack3>
+ <fe0e9c86-fa44-425e-a955-aa9e401b6334@embeddedor.com>
+ <20241031213208.gzr5jv2kg5eobjuo@quack3>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20241031213208.gzr5jv2kg5eobjuo@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.21.80
+X-Source-L: No
+X-Exim-ID: 1t6edd-000M8L-0a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.27]) [177.238.21.80]:63018
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJcCDaRk7ZUsMXsZVzTjSkbr1UPTEKvdqoj5G+4PBUaRL1DuEtzDGaJd12f2x91uObRqaasF0TzMC6ePwHZDDswHvy1niHnSWpx9imkDQt9d5cvuamFh
+ nrI+sLWXI8rXykiYKMAmZrkNLSmpWMlCIjRIc/sc6pJx11OfCFILNGQBkmPuHCNyEbS9/z9cx/zQwSl2dMtrPAYTXqQRgWQZzF0AM/2y7SVsOtwg6/H8YlpE
 
-On Thu, Oct 31, 2024 at 4:13=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
-> wrote:
->
-> On Thu, Oct 31, 2024 at 02:22:48PM -0700, Andrii Nakryiko wrote:
-> > > Problem is, the unwinder doesn't know in advance which tasks will be
-> > > unwound.
-> > >
-> > > Its first clue is unwind_user_register(), would it make sense for the
-> > > caller to clarify whether all tasks need to be unwound or only a
-> > > specific subset?
-> > >
-> > > Its second clue is unwind_user_deferred(), which is called for the ta=
-sk
-> > > itself.  But by then it's too late because it needs to access the
-> > > per-task data from (potentially) irq context so it can't do a lazy
-> > > allocation.
-> > >
-> > > I'm definitely open to ideas...
-> >
-> > The laziest thing would be to perform GFP_ATOMIC allocation, and if
-> > that fails, oops, too bad, no stack trace for you (but, generally
-> > speaking, no big deal). Advantages are clear, though, right? Single
-> > pointer in task_struct, which most of the time will be NULL, so no
-> > unnecessary overheads.
->
-> GFP_ATOMIC is limited, I don't think we want the unwinder to trigger
-> OOM.
->
 
-So all task_structs on the system using 104 bytes more, *permanently*
-and *unconditionally*, is not a concern, but lazy GFP_ATOMIC
-allocation when you actually need it is?
 
-> > It's the last point that's important to make usability so much
-> > simpler, avoiding unnecessary custom timeouts and stuff like that.
-> > Regardless whether stack trace capture is success or not, user is
-> > guaranteed to get a "notification" about the outcome.
-> >
-> > Hope this helps.
-> >
-> > But basically, if I I called unwind_user_deferred(), I expect to get
-> > some callback, guaranteed, with the result or failure. The only thing
-> > that's not guaranteed (and which makes timeouts bad) is *when* this
-> > will happen. Because stack trace capture can be arbitrarily delayed
-> > and stuff. That's fine, but that also shows why timeout is tricky and
-> > necessarily fragile.
->
-> That sounds reasonable.  In the OOM error case I can just pass a small
-> (stack allocated) one-entry trace with only regs->ip.
->
+On 31/10/24 15:32, Jan Kara wrote:
+> On Thu 31-10-24 09:54:36, Gustavo A. R. Silva wrote:
+>> On 31/10/24 06:33, Jan Kara wrote:
+>>> On Fri 25-10-24 13:32:58, Gustavo A. R. Silva wrote:
+>>>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we
+>>>> are getting ready to enable it, globally.
+>>>>
+>>>> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+>>>> a flexible structure (`struct shash_desc`) where the size of the
+>>>> flexible-array member (`__ctx`) is known at compile-time, and
+>>>> refactor the rest of the code, accordingly.
+>>>>
+>>>> So, with this, fix 77 of the following warnings:
+>>>>
+>>>> include/linux/jbd2.h:1800:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>>>> ---
+>>>>    include/linux/jbd2.h | 13 +++++--------
+>>>>    1 file changed, 5 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+>>>> index 8aef9bb6ad57..ce4560e62d3b 100644
+>>>> --- a/include/linux/jbd2.h
+>>>> +++ b/include/linux/jbd2.h
+>>>> @@ -1796,22 +1796,19 @@ static inline unsigned long jbd2_log_space_left(journal_t *journal)
+>>>>    static inline u32 jbd2_chksum(journal_t *journal, u32 crc,
+>>>>    			      const void *address, unsigned int length)
+>>>>    {
+>>>> -	struct {
+>>>> -		struct shash_desc shash;
+>>>> -		char ctx[JBD_MAX_CHECKSUM_SIZE];
+>>>> -	} desc;
+>>>> +	DEFINE_RAW_FLEX(struct shash_desc, desc, __ctx, 1);
+>>>
+>>> Am I missing some magic here or the 1 above should be
+>>> JBD_MAX_CHECKSUM_SIZE?
+>>
+>> This seems to be 32-bit code, and the element type of the flex-array
+>> member `__ctx` is `void *`. Therefore, we have:
+> 
+> Why do you think the code is 32-bit? It is used regardless of the
+> architecture...
 
-SGTM
+Right, sorry, I got a bit confused...
 
-> --
-> Josh
->
+> 
+>> `sizeof(ctx) == 4` when `char ctx[JBD_MAX_CHECKSUM_SIZE];`
+>>
+>> To maintain the same size, we tell `DEFINE_RAW_FLEX()` to allocate `1`
+>> element for the flex array, as in 32-bit `sizeof(void *) == 4`.
+> 
+> So I agree we end up allocating enough space on stack but it is pretty
+> subtle and if JBD_MAX_CHECKSUM_SIZE definition changes, we have a problem.
+> I think we need something like (JBD_MAX_CHECKSUM_SIZE + sizeof(*desc->__ctx)
+> - 1) / sizeof(*desc->__ctx))?
+
+I see. Well, in that case it'd be something more like:
+
+-       struct {
+-               struct shash_desc shash;
+-               char ctx[JBD_MAX_CHECKSUM_SIZE];
+-       } desc;
++       DEFINE_RAW_FLEX(struct shash_desc, desc, __ctx,
++                       (JBD_MAX_CHECKSUM_SIZE +
++                        sizeof(*((struct shash_desc *)0)->__ctx)) /
++                        sizeof(*((struct shash_desc *)0)->__ctx));
+
+Notice that `desc` is created inside `DEFINE_RAW_FLEX()`
+
+Thanks
+--
+Gustavo
+
+
+
+
+
+
+
 
