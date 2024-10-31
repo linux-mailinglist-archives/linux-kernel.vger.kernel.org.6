@@ -1,113 +1,105 @@
-Return-Path: <linux-kernel+bounces-391034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6FD9B8180
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:47:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BC39B8183
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB387282B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:47:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC78282D46
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD3E1C463F;
-	Thu, 31 Oct 2024 17:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34111C2333;
+	Thu, 31 Oct 2024 17:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wGh4HOXk"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nPdNQhib";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WBeHgelZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B600F1C2DB8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A7212D1EA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730396835; cv=none; b=MOeYxg4p0QGy6bZnsa5ziJ5qEItDR1048ircxt36KbCW9lfBbOcd6hM0xo8wjWp3njupn1eNjQwoHFxC36FYLBwHUVfyAMN5AEvrrlvwTrGyVvQ40bBuit3iD7rkUu6r12drEPfQV8/i9mIUagwKWDR0uNj9PdRq01awaHP7XJ4=
+	t=1730396864; cv=none; b=opE8fg3NP0MhtyMGUwXlkYDQB/PKhGP5PydHl7X6OaRhWkWT9XwwTm60pib5MxeMv1YQCevD6xp8H8pCrTiaFcJqsHY58MuXW5s5KJXSzeUaeH0ILxeCouanOhPzWACczDHAN3ZPHjqS3wCzwQr7QpKOoknZi1sN8ZaK+I5kMUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730396835; c=relaxed/simple;
-	bh=etimWnUfHOZ0ie66fb4DurfrF26rdEKMghR+1nBtEh4=;
+	s=arc-20240116; t=1730396864; c=relaxed/simple;
+	bh=1qvyEbQD769gmRTPMK9uPkEqgbrEct+sTg9j1bZBOx4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOBnxCsjh3iDRXNnumxlVWE+KSxHgELulijkdHgRqKcNhrl9eZc+D/FdQqLrc01TFsiD4jKHxNC6uQdYcAMQn2JRoK7iMhdxHw137EHJlBpQfLnOGYBTNqRNgzzwrrDcB9qWNDF2ob+cDdsh6p5tNPNOe1hgcb1mxx9v4s0JAnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wGh4HOXk; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53c78ebe580so1316042e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:47:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730396832; x=1731001632; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=icT0Jwpo8GGddZPXkZjIKzOMTai62xp7VfV8yD5nylk=;
-        b=wGh4HOXkCu1+o9YkFCfVlb8iANFgw1xutulXFRDEberquzBUP1LDXIDwlBKCU1g/Co
-         66TlMA8bAYxNPp0p4Yk4yDHkTCmPOCmYpxjeMaD1rIPsKRGi9KpVr2h1PXml4Bo8XsvT
-         mnv6NHe3Ws3nKMmlUYRubo3RAbYpb+r9g+ZfwHQDNMkLUXWz0r/7QtKW+HZDwJgpYfy5
-         VevOA+mtmzPtfL5xWMrYLyRNclu6BrAf6hQQe8if3OZtqbQF0/MG1Ty8/P5DbFkroJwJ
-         igaC+JuQiXyvDW8Jm+MTb4pUFsxKvgg+P/+x2u1U0OFaMfGeQ0qYshk9Ewsn3KjGioib
-         O7ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730396832; x=1731001632;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=icT0Jwpo8GGddZPXkZjIKzOMTai62xp7VfV8yD5nylk=;
-        b=LJbcnsqBpabcOSL2vfspgFZ3W/OZlo7pvM0aVPtJoJyZrIzSro0Q77KzYJOxwVpiH9
-         6mGZ2Gr7y498sAQV9HMXglWDcZ+p2I6lDwdocWU7x/Pv6R+WeUQNtAbdW5AU+sHgtcjV
-         utnB2TKS3MQ2xdLFRfPG6Mtj6abhWf6rs3fcc2I/pY2qVy8RjoqF+ENmSCj5ue0s9om3
-         ccTDNWPkbt3obZJGlpZYIm6bo4kqH3EXl6TxIiIL9ECDffgHAc9yJBrycRQrs/78+qXZ
-         xSgmVtz7glOykoGsiFo6mu/O3278EbbCU4wTqxmRWO9i6g6P8m4umbHtf3ylWdslKV7U
-         Lwuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEyQPE8jIhpi5IrQWcQ1ZmEilPvN9MjHRH4LdLIzoXTwZV+N1MrWxdIFC1Mo/xZxtmToQySrg/iqcUUZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyCbYC//qlTRglguuWNffcxlLsrp5aKOYMBTXkNOA9UXMmnaHd
-	mEbxaVVcBIzVI5CsclJMBC7Av6n4pNecgjlSpUTRo3BQdhly+/7ZLFwilLDPGnM=
-X-Google-Smtp-Source: AGHT+IEjo7YeCGMc9+HFLWiOPZE+phU9MZtgtYpYPR3hQQmX7N1+hAOUoR8z5B0maKvphxFM4B9a5A==
-X-Received: by 2002:a05:6512:3f12:b0:539:fd1b:bb0c with SMTP id 2adb3069b0e04-53d65d96dcfmr304797e87.11.1730396831927;
-        Thu, 31 Oct 2024 10:47:11 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9c133sm280042e87.100.2024.10.31.10.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 10:47:11 -0700 (PDT)
-Date: Thu, 31 Oct 2024 19:47:09 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
-	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [PATCH v2 04/15] pinctrl: qcom: spmi-mpp: Add PM8937 compatible
-Message-ID: <ucmcr4pbmmgkuaxvrky5376jtsxu5zejuo6tp3z5l4zbm43hok@a6fzyhvjxhaz>
-References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org>
- <20241031-msm8917-v2-4-8a075faa89b1@mainlining.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ty0gR8BZPzxEwlpwrArwqFKKchm78v5Ozfvbe+EfSFZkvMzo6d6kNYaY5F4DwMryDPZTz08EhLTBwkkJF0uAO5Td+QbBeTQHkXy6IQ33T9wCYgeSGKCXxRSfRNkR1ORTPmB9klrwfmItTMERS4r8WczUb/mXE4FtgsHusWj1t6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nPdNQhib; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WBeHgelZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 31 Oct 2024 18:47:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730396860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QkgSKfShph4pWoE9L3MXmhssHtVtwLvgwKyGCu7Gyaw=;
+	b=nPdNQhibOJJLFWs04vqg92UGfollFVR+0HNbtc5KinU+nI61xfBcyXRiqMoW4hSUjujBkM
+	QkNw/l1G8mjBc9D200GK3/Pwz9u/mzSD1d2K8r8/8YPngQWKErH0LpBhMQ+S6QPBBeY1dV
+	h07+zGvpR4rfPkoIjEsRJeKoBEenozt1JYceoiYlvvbvfcZDUlthjvWG8+axugBoyJA9qZ
+	MCpRfcyceCxlP50YduEIkIu5jTNRt64NkkMKG2MB3ctJXW9Fl3Kfh/zmIdzwBebdPLwvBG
+	ELCSIWL9lcaUST1k4ZCR9AJM6T8cA8G98Q3JrVLqUoiN7JB2rwDbCmaEvrYk2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730396860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QkgSKfShph4pWoE9L3MXmhssHtVtwLvgwKyGCu7Gyaw=;
+	b=WBeHgelZWB8tJE2wi15afyUV7rrLEXhGYoLGLNnChYd9Cesw3nwLIDKqLvk7bZoQxtRENx
+	nwESeSSuyzOv95Dg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [RFC v2 PATCH 0/4] futex: Add support task local hash maps.
+Message-ID: <20241031174736.apc_hFru@linutronix.de>
+References: <20241028121921.1264150-1-bigeasy@linutronix.de>
+ <20241031155640.Fhtm3uFD@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241031-msm8917-v2-4-8a075faa89b1@mainlining.org>
+In-Reply-To: <20241031155640.Fhtm3uFD@linutronix.de>
 
-On Thu, Oct 31, 2024 at 02:19:45AM +0100, Barnabás Czémán wrote:
-> The PM8937 provides 4 MPPs.
-> Add a compatible to support them.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On 2024-10-31 16:56:43 [+0100], To linux-kernel@vger.kernel.org wrote:
+> Pinning the bench to individual CPUs belonging to a NUMA node and
+> running the same test with 110 threads only (avg over 5 runs):
+>           ops/sec global	ops/sec local
+> node 0		2278572.2	2534827.4
+> node 1		2229838.6	2437498.8
+> node 0+1	2542602.4	2535749.8
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Running on node 1, with variable slot size:
+ hash slots	ops/sec
+    2            43292.2
+    4            81829.2
+    8           156903.4
+   16           297063.6
+   32           554229.4
+   64           962158.4
+  128          1615859.6
+  256          2106941.4
+  512          2269494.8
+ 1024          2328782.6
+ 2048          2342981.6
+ 4096          2337705.2
+ 8192          2334141.4
+16384          2334237.6
+32768          2339262.2
+65536          2438800.4
 
--- 
-With best wishes
-Dmitry
+Sebastian
 
