@@ -1,217 +1,251 @@
-Return-Path: <linux-kernel+bounces-391173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182149B8379
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:32:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDA99B837B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF46284218
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34AE1C22173
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F161119FA8D;
-	Thu, 31 Oct 2024 19:32:30 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28C1CB50A;
+	Thu, 31 Oct 2024 19:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X03OYFeu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBC04C80
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A574C80;
+	Thu, 31 Oct 2024 19:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730403150; cv=none; b=cegjNhami47nVNQtEo7ETw8CysXJJlk54iuU5HVJ2FjkKHNM/IbtifjNc6aUbl9jJTMMEyjWAVkD7lgL+eQrl7Ulew4MytfuSwYdWe3J8U513VvbyKnlGdapm8hX/H4f1j7McEeCUTD9PrCiNddvTJ9/FZCHPljMLp1e6m/o6f4=
+	t=1730403209; cv=none; b=S0XK111eSM2bJLtvsSIuNB5gk5E3K87/6CRUAPi8uAwVN9Km8laNk4xFlZV1ZqP5zpTTZUeuE93jod2cSv168mEp7Y4iSVXkkkqzeZzgLGIKt9SEEIas3j4khhxS3vxLuIQ/QRsiWFerP0JPsWdA6XJ5JxRAXhLZepL7d4fnPHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730403150; c=relaxed/simple;
-	bh=r1tLnTJ3PkKxqfQ8VQZhwgRSFZ2oHY+mhBKDujdy0pU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FVNhLOV5WW+OCozNv5xenJm5Upv3DfZDA3mZVPOwoHB70yOfBS1ZlKkQBdNtwND9lxGATPDjZlPFQp55i2Qc06dkz+196XTv0qVY2IDAEO9f6TE48HDpPD8O5u/uvwm6xfhAs2/RQS5HgjYAbJaqLpxuoQ7OeGVgjl7/p32EbAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6add3a52eso4237945ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:32:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730403147; x=1731007947;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mWBfLUqmRVzaB5gmoSMl/IKqtWBVlT8PhQ9WpCfa1H8=;
-        b=WiS20rJJCpWmV+RlH8E485Bve8XGv7fpfoS1/F1SkBaTVTMqQ/FQkaSWc0b37Q9qpt
-         4iediAXyD5hvWuLazCqyjm96K7LLkJLtAvGJ41snXDnXe519EPq1bI8PN/2nY4+L+iQe
-         vlb0wGHMzBBQ34uijZMN6fB/sW2z1D3yzKMwwbce73EZb2OzN151fkoXqJDgrm7R/qcJ
-         cevzkEX9SBr8OKMNfc/8LNR4fLDSKWHoGzf6i7ylm8WaWYJx4anX9q5yllA/0l2lEcOU
-         8zOFo4gLMR0D9y4Q6YAVvFDk2Q6uK2u0ZWpYAew1vrAeEoFBA5szT/lX0v1/rEIBr6eP
-         b0aA==
-X-Forwarded-Encrypted: i=1; AJvYcCUREeCUs4V6x6KJEJNsOTMCiltre3vvYSsBXq1MTSi3n66cvkLYFZtzuxjyquUbwd8SzsOZCHizOFr27HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCfdpq2woYJTGdj+zsruRwHs4VpIiNqcipmcpVDe4TlAhJ/iee
-	WxAJ6AFHoNT0IAgrhdyfsDK5RFVSHuoPrRDSClUC12B4cGd/b3l7ziM/dxZdsRNxKbOlXKcC64B
-	18PRiRe7Rln/R8QeOxxRJvgjHYPBsFHWLnfYy9RYvusHn6ZSHLM8smew=
-X-Google-Smtp-Source: AGHT+IG0aM2/1nEWp1URkw+xnzdmXk6hXnW/ExoUJu6dyH9Jj3laNX9lAwtjgqEi67byXpa8C6pTZAcktsHJSLk6yqspX4hpUHaI
+	s=arc-20240116; t=1730403209; c=relaxed/simple;
+	bh=8T4Zv392sdQH71AUU0geXyuXvlgzntF7zrArxAKPUfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ULW5Y3xHUDPVnxFVbxsbz757g8nVud49bcZmNBDoDwsp+HdeuwyYwRy3D/asIJPkTAHCPJLagqQQ18fpoON6lwNtZAslz9ej4zPcN21vbUTYhfCSjkyJpEu5lK0sQZvkclqSOtv4uds4ZJeOMzDHsGGcVTW568e9Tz2xY6egQss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X03OYFeu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDD6C4CEC3;
+	Thu, 31 Oct 2024 19:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730403206;
+	bh=8T4Zv392sdQH71AUU0geXyuXvlgzntF7zrArxAKPUfg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X03OYFeujB4MzKIvqJph5AhTd7SB0UIqDqi9P9t88hS1T2+kuuWz2U10fxZLYZIYd
+	 7BODMvzj6+VtqCAYbIkY97Sdj1BDTxBq7k7davVsZGaLIYnNZY7xc/LE70O33u7k/j
+	 qKMRt3h0nzjIPyZ1FNZ5D6cuKYmtWFrm7+B/JeEAsvG1iDP2FF1tQxDSgzKEQfutdL
+	 GiWu5JPQqK1k25elra46Ex5tOJBgT8pNpKR1kWZonYCj++/YUkh6QDk5wkgnow25SA
+	 l13oCeAn6KWEpDZbHsfImHQYXBMz5zpDbixKVkTCkroon732+TMsK14yRnFybGPe3W
+	 n3/MOeT8zoHTQ==
+Date: Thu, 31 Oct 2024 16:33:22 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 09/21] perf script: Move script_fetch_insn to
+ trace-event-scripting.c
+Message-ID: <ZyPbggG8jC9MYQbo@x1>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-10-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a3:b0:3a5:e0df:57ba with SMTP id
- e9e14a558f8ab-3a6a947d5bemr24758385ab.1.1730403146834; Thu, 31 Oct 2024
- 12:32:26 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:32:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6723db4a.050a0220.35b515.0168.GAE@google.com>
-Subject: [syzbot] [bpf?] WARNING: locking bug in trie_delete_elem
-From: syzbot <syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031014252.753588-10-irogers@google.com>
 
-Hello,
+On Wed, Oct 30, 2024 at 06:42:40PM -0700, Ian Rogers wrote:
+> Add native_arch as a parameter to script_fetch_insn rather than
+> relying on the builtin-script value that won't be initialized for the
+> dlfilter and python Context use cases. Assume both of those cases are
+> running natively.
 
-syzbot found the following issue on:
+Adrian, can you take a look? Maybe have some machine__native_arch() that
+would use the perf_env struct, uname, etc?
 
-HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1387c6f7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=b506de56cbbb63148c33
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1387655f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ac5540580000
+So, as you noticed builtin-script.c does it, sets a global variable
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+        uname(&uts);
+        if (data.is_pipe) { /* Assume pipe_mode indicates native_arch */
+                native_arch = true;
+        } else if (session->header.env.arch) {
+                if (!strcmp(uts.machine, session->header.env.arch))
+                        native_arch = true;
+                else if (!strcmp(uts.machine, "x86_64") &&
+                         !strcmp(session->header.env.arch, "i386"))
+                        native_arch = true;
+        }
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+So instead of doing it we should move that global variable to
+env->native_arch and then use it?
 
-=============================
-[ BUG: Invalid wait context ]
-6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
------------------------------
-swapper/0/0 is trying to lock:
-ffff8880261e7a00 (&trie->lock){....}-{3:3}, at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
-other info that might help us debug this:
-context-{3:3}
-5 locks held by swapper/0/0:
- #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3}, at: vp_vring_interrupt drivers/virtio/virtio_pci_common.c:80 [inline]
- #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3}, at: vp_interrupt+0x142/0x200 drivers/virtio/virtio_pci_common.c:113
- #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3}, at: stats_request+0x6f/0x230 drivers/virtio/virtio_balloon.c:438
- #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: __queue_work+0x199/0xf50 kernel/workqueue.c:2259
- #3: ffff8880b863dd18 (&pool->lock){-.-.}-{2:2}, at: __queue_work+0x759/0xf50
- #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2339 [inline]
- #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run1+0x1d6/0x520 kernel/trace/bpf_trace.c:2380
-stack backtrace:
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
- check_wait_context kernel/locking/lockdep.c:4898 [inline]
- __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
- bpf_prog_2c29ac5cdc6b1842+0x43/0x47
- bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
- __bpf_prog_run include/linux/filter.h:701 [inline]
- bpf_prog_run include/linux/filter.h:708 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
- bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
- trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue.h:59
- __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:662 [inline]
- stats_request+0x1a3/0x230 drivers/virtio/virtio_balloon.c:441
- vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
- vp_vring_interrupt drivers/virtio/virtio_pci_common.c:82 [inline]
- vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:113
- __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
- handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
- handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
- handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
- generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
- handle_irq arch/x86/kernel/irq.c:247 [inline]
- call_irq_handler arch/x86/kernel/irq.c:259 [inline]
- __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
- common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
- </IRQ>
- <TASK>
- asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-RIP: 0010:finish_task_switch+0x1ea/0x870 kernel/sched/core.c:5201
-Code: c9 50 e8 29 05 0c 00 48 83 c4 08 4c 89 f7 e8 4d 39 00 00 0f 1f 44 00 00 4c 89 f7 e8 a0 45 69 0a e8 4b 9e 38 00 fb 48 8b 5d c0 <48> 8d bb f8 15 00 00 48 89 f8 48 c1 e8 03 49 be 00 00 00 00 00 fc
-RSP: 0018:ffffffff8e607ae8 EFLAGS: 00000282
-RAX: 467bb178e56b5700 RBX: ffffffff8e6945c0 RCX: ffffffff9a3d4903
-RDX: dffffc0000000000 RSI: ffffffff8c0ad3a0 RDI: ffffffff8c604dc0
-RBP: ffffffff8e607b30 R08: ffffffff901d03b7 R09: 1ffffffff203a076
-R10: dffffc0000000000 R11: fffffbfff203a077 R12: 1ffff110170c7e74
-R13: dffffc0000000000 R14: ffff8880b863e580 R15: ffff8880b863f3a0
- context_switch kernel/sched/core.c:5330 [inline]
- __schedule+0x1857/0x4c30 kernel/sched/core.c:6707
- schedule_idle+0x56/0x90 kernel/sched/core.c:6825
- do_idle+0x567/0x5c0 kernel/sched/idle.c:353
- cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:423
- rest_init+0x2dc/0x300 init/main.c:747
- start_kernel+0x47f/0x500 init/main.c:1102
- x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
- x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
- common_startup_64+0x13e/0x147
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	c9                   	leave
-   1:	50                   	push   %rax
-   2:	e8 29 05 0c 00       	call   0xc0530
-   7:	48 83 c4 08          	add    $0x8,%rsp
-   b:	4c 89 f7             	mov    %r14,%rdi
-   e:	e8 4d 39 00 00       	call   0x3960
-  13:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-  18:	4c 89 f7             	mov    %r14,%rdi
-  1b:	e8 a0 45 69 0a       	call   0xa6945c0
-  20:	e8 4b 9e 38 00       	call   0x389e70
-  25:	fb                   	sti
-  26:	48 8b 5d c0          	mov    -0x40(%rbp),%rbx
-* 2a:	48 8d bb f8 15 00 00 	lea    0x15f8(%rbx),%rdi <-- trapping instruction
-  31:	48 89 f8             	mov    %rdi,%rax
-  34:	48 c1 e8 03          	shr    $0x3,%rax
-  38:	49                   	rex.WB
-  39:	be 00 00 00 00       	mov    $0x0,%esi
-  3e:	00 fc                	add    %bh,%ah
+Your patch doesn't introduce problems and shows this is a limitation, so
+no problem with it being merged:
 
+Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+But maybe this would be the time to try to fix this? Adrian,
+cross-platform use of dlfilter seems not to be something you would be
+interested on, but using a python script to process something from
+another arch is interesting, as we advertise cross-platorm perf.data
+file analysis as a feature for perf.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+- Arnaldo
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-script.c                       | 15 +--------------
+>  .../perf/scripts/python/Perf-Trace-Util/Context.c |  2 +-
+>  tools/perf/util/dlfilter.c                        |  3 ++-
+>  tools/perf/util/python.c                          |  6 ------
+>  tools/perf/util/trace-event-scripting.c           | 14 ++++++++++++++
+>  tools/perf/util/trace-event.h                     |  2 +-
+>  6 files changed, 19 insertions(+), 23 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 11c0ee8c1afc..22d78a9d8f27 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -1586,19 +1586,6 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
+>  	return len + dlen;
+>  }
+>  
+> -__weak void arch_fetch_insn(struct perf_sample *sample __maybe_unused,
+> -			    struct thread *thread __maybe_unused,
+> -			    struct machine *machine __maybe_unused)
+> -{
+> -}
+> -
+> -void script_fetch_insn(struct perf_sample *sample, struct thread *thread,
+> -		       struct machine *machine)
+> -{
+> -	if (sample->insn_len == 0 && native_arch)
+> -		arch_fetch_insn(sample, thread, machine);
+> -}
+> -
+>  static int perf_sample__fprintf_insn(struct perf_sample *sample,
+>  				     struct evsel *evsel,
+>  				     struct perf_event_attr *attr,
+> @@ -1608,7 +1595,7 @@ static int perf_sample__fprintf_insn(struct perf_sample *sample,
+>  {
+>  	int printed = 0;
+>  
+> -	script_fetch_insn(sample, thread, machine);
+> +	script_fetch_insn(sample, thread, machine, native_arch);
+>  
+>  	if (PRINT_FIELD(INSNLEN))
+>  		printed += fprintf(fp, " ilen: %d", sample->insn_len);
+> diff --git a/tools/perf/scripts/python/Perf-Trace-Util/Context.c b/tools/perf/scripts/python/Perf-Trace-Util/Context.c
+> index d742daaa5d5a..60dcfe56d4d9 100644
+> --- a/tools/perf/scripts/python/Perf-Trace-Util/Context.c
+> +++ b/tools/perf/scripts/python/Perf-Trace-Util/Context.c
+> @@ -93,7 +93,7 @@ static PyObject *perf_sample_insn(PyObject *obj, PyObject *args)
+>  	if (c->sample->ip && !c->sample->insn_len && thread__maps(c->al->thread)) {
+>  		struct machine *machine =  maps__machine(thread__maps(c->al->thread));
+>  
+> -		script_fetch_insn(c->sample, c->al->thread, machine);
+> +		script_fetch_insn(c->sample, c->al->thread, machine, /*native_arch=*/true);
+>  	}
+>  	if (!c->sample->insn_len)
+>  		Py_RETURN_NONE; /* N.B. This is a return statement */
+> diff --git a/tools/perf/util/dlfilter.c b/tools/perf/util/dlfilter.c
+> index 7d180bdaedbc..ddacef881af2 100644
+> --- a/tools/perf/util/dlfilter.c
+> +++ b/tools/perf/util/dlfilter.c
+> @@ -234,7 +234,8 @@ static const __u8 *dlfilter__insn(void *ctx, __u32 *len)
+>  			struct machine *machine = maps__machine(thread__maps(al->thread));
+>  
+>  			if (machine)
+> -				script_fetch_insn(d->sample, al->thread, machine);
+> +				script_fetch_insn(d->sample, al->thread, machine,
+> +						  /*native_arch=*/true);
+>  		}
+>  	}
+>  
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 3d938fe2de6a..22edadd64e5f 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -1317,12 +1317,6 @@ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
+>  	return NULL;
+>  }
+>  
+> -void script_fetch_insn(struct perf_sample *sample __maybe_unused,
+> -		struct thread *thread __maybe_unused,
+> -		struct machine *machine __maybe_unused)
+> -{
+> -}
+> -
+>  int perf_sample__sprintf_flags(u32 flags __maybe_unused, char *str __maybe_unused,
+>  			size_t sz __maybe_unused)
+>  {
+> diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
+> index ad62d8e5a368..beac456260ae 100644
+> --- a/tools/perf/util/trace-event-scripting.c
+> +++ b/tools/perf/util/trace-event-scripting.c
+> @@ -13,6 +13,7 @@
+>  #include <traceevent/event-parse.h>
+>  #endif
+>  
+> +#include "archinsn.h"
+>  #include "debug.h"
+>  #include "trace-event.h"
+>  #include "evsel.h"
+> @@ -269,3 +270,16 @@ void setup_perl_scripting(void)
+>  }
+>  #endif
+>  #endif
+> +
+> +__weak void arch_fetch_insn(struct perf_sample *sample __maybe_unused,
+> +		     struct thread *thread __maybe_unused,
+> +		     struct machine *machine __maybe_unused)
+> +{
+> +}
+> +
+> +void script_fetch_insn(struct perf_sample *sample, struct thread *thread,
+> +		       struct machine *machine, bool native_arch)
+> +{
+> +	if (sample->insn_len == 0 && native_arch)
+> +		arch_fetch_insn(sample, thread, machine);
+> +}
+> diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
+> index 81fceaf297ba..e0bb42e6509e 100644
+> --- a/tools/perf/util/trace-event.h
+> +++ b/tools/perf/util/trace-event.h
+> @@ -120,7 +120,7 @@ struct scripting_ops *script_spec__lookup(const char *spec);
+>  int script_spec__for_each(int (*cb)(struct scripting_ops *ops, const char *spec));
+>  
+>  void script_fetch_insn(struct perf_sample *sample, struct thread *thread,
+> -		       struct machine *machine);
+> +		       struct machine *machine, bool native_arch);
+>  
+>  void setup_perl_scripting(void);
+>  void setup_python_scripting(void);
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
+> 
 
