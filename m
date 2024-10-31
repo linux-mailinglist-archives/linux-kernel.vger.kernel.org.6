@@ -1,609 +1,300 @@
-Return-Path: <linux-kernel+bounces-391276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343629B84A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:52:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340829B84A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B540C1F22CC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:52:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580DF1C21A62
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADBA1CCB27;
-	Thu, 31 Oct 2024 20:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352C41CB306;
+	Thu, 31 Oct 2024 20:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aO2D/A//"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAN/+hYX"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045351C8FA8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486601411EE
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730407920; cv=none; b=ckAx9EOtnhjBpFUjHsN6tr2cF3fWStNyAmbBsRqTThCLE40O7wG5gTYq6kZeF8AOXYt2vwLbmVkEytqJA7+gsxlV2sLSJGO72Il6KmojN6PvYUM67Ae7Y4UfOWo7tu/hMQYg/OXxR+yLHGJALSc4qN9MVlblje2VHbuTghc1yhA=
+	t=1730407912; cv=none; b=e/UCCqYZpHx7iAJxOS3irptizFHkVx3DC2s7OBgmIHB23FdDTtPba1S8bdFotgPOWRRaQc7P133isk5kYviATgkBO6ccvDPSYnhxTO3KrBdtID/EMCxQn++2CWtpBG2MI4ARCkKqZaolocKwnz1AxpDZvh51Onx6auKT5q7GCxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730407920; c=relaxed/simple;
-	bh=lZESHEGiFlewzONfLwmnR0L4kLalHnyJemRudnPWb0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbUj5GyULyGqJeXnqyNMFG9Egm4hQe+LhZDpTOkIrZBazNGuHzWKfs2a9ONWr9pTDU9hp6m3rcvxhdAsdvb+GjkdgG4WC/0N1mhC6xpAeaX2IP4tQYXcaCjGZGR1IsZlvm8vxKzqKD/kaufqw4ffvOF59Kc0LZyaomSZFQSHKlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aO2D/A//; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso16275ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:51:52 -0700 (PDT)
+	s=arc-20240116; t=1730407912; c=relaxed/simple;
+	bh=OQuhFSR77dCOBBVb5+5+2TWkQQE1onU7NDs8wBl9TYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c6kdbCTBdptlRa5TeEsUSELN3XAiCTwHZ085J9CBX70M2AulTozbVccSnpdHXLEjjrFziNk38jgh4ClSCwHpA01MpDp2IaFI07iYj4vA6Rd1s5UImpVfdjuBUPWIZ0QCU2ZwtpguX87mtbVEpYNVygSrDvYfp1KjSdUjX8i7hCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAN/+hYX; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d808ae924so765840f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730407912; x=1731012712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4j5kt1ocDA4MtclEjyfoMTiBG+3sa0dA4NxxIwxCzr8=;
-        b=aO2D/A//XepwTy8Hz8r3Bnqrkc8Yja+d95yKWxbYVctGhImVhyPiD/qXywYWFoYibq
-         Eew/0uT7i9a+sxiPStY7jkozKlfyHwnnXSoKuI+PTUnFkT16RMLCR/cqwNQGmfBFiCPA
-         Bid3Qarxsms2hLAvIh18CwjvVEl3yfWRF2J7asjMleVu+6VadBTnI++HSbQIfMRZW0w9
-         e6Hc4fcvBYQyoVCJuO6heZGHftOOIkD0kkADlx9WcVfRrZ03gzbQh+K7AeBgTV92D7Uw
-         NEG+gLgW3aT2lMRBqHXqtRO9t1hvJyC0r6hOavpcAEbKYDft5s5chbdlCgYRRhBf4HVg
-         FoaA==
+        d=gmail.com; s=20230601; t=1730407904; x=1731012704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7TKLW+tNyc+ixhto9+v9npiESfus2TEfzItXeH9SqQ4=;
+        b=SAN/+hYX9KUmgUd7KG2XJFTdgHcZpupWau+uysrUcDCPvrwJSTOe9xLDQ5WuXvNg9k
+         FimT2lhc9WShJlXGeFvQdKh/u2Duk7x6J/Cfe4O8jUheethhUPifRvGjothcNSu5LEQe
+         gngBuHJUh7Vq6chaP08kJJop5habbQEJVpyOfvHEeLxa/ikeiUmMCUKAaGY7ze561HWN
+         sh3qeihJmr/hR8H3BmxRNwUa9SNfPpmWfS2YLWzFJV8mH559vegndYDc7F3U6ls641iv
+         sJoyQCoi/aMM5zC6sWkosx3K3XjcWrK3ZrT8ly9OVZoE+Fo5tnC0mGtlhqDLSIC4jBlb
+         ruow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730407912; x=1731012712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4j5kt1ocDA4MtclEjyfoMTiBG+3sa0dA4NxxIwxCzr8=;
-        b=JqaGfp2qQTSfE9w3ml83HdAHBAow51ZD+MBlG0L+vGTp7020bQK0MgM9TiiNU1rbBF
-         ZsgEhFoLnFtoIe4t/Za/p9zYWbwEoOWU3a7NP8K8G4rTEVR0gKgvNW1epmNHNoIsGGkG
-         AKaQKVVUKXOcgGUCYegr7xKWTZcUNp3Jjjol/1VWE4sIrzCsJ4hRzZ7VyKDD3CjMoHmf
-         Qw6lG+nnME486P8yX3uCsjhIDcWTSaXEY8DjMLlueXBwwZ5fJXkTge9q97pFJyf2Yi5p
-         G7EiGSs/n9UMLbckhXq75pklM/sc73WgihsrUCN/bNO5y7v+T5LfBm1xFdWW+zIzhq9e
-         GN2w==
-X-Forwarded-Encrypted: i=1; AJvYcCU8uNFVMKF6/b1+o/Ps2Fs/62zr1gpnhBNn0ruJY0Dfbr2IHtsjTias7IoawdZ8Kqhod28Z1zk060+PAS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJGlqvLMptYPefdMIGKjNe8yrusuWTrZ72U3yT7sN8RQXPUZXu
-	Rybf9AUVqw5VVGJZlF6kZN6Z4NkQlrOxJImydkqH3H3LH4Re+Ds5f3UhLB9n1QNkxTM2Gm04Lxv
-	0ABq3Xd08yMWP/AtOYIzL/WP3PfNlL7740P5D
-X-Gm-Gg: ASbGnculvtsMNlbH5PP1dA2FCJUkXClnnHEVRP0kpg8Ee/2VaUZDLggC2rTJRkmN/rs
-	a7RpBaXscdPqO2Bz2TOgX8YTDJCRbuWVl6q6NJYO5JhhugSQnFZ1TStbMLqRLPns=
-X-Google-Smtp-Source: AGHT+IGs/FF6/8vovt6WmMF/T9mNZN20YKzkrv8O+rpPf3Li5Rtx4BaUuNoHWm1YaDlCIj/5TAJYuss31w0aMWqqwr0=
-X-Received: by 2002:a05:6e02:2141:b0:3a0:a3cd:f23d with SMTP id
- e9e14a558f8ab-3a6a9361423mr4143115ab.5.1730407911757; Thu, 31 Oct 2024
- 13:51:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730407904; x=1731012704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7TKLW+tNyc+ixhto9+v9npiESfus2TEfzItXeH9SqQ4=;
+        b=dPLkbZ4AFlUu9GL/VcpthCgi7EYfH+lHmGQOLL8plE6SR4H9jecVvWMbBXK0oHjPJz
+         etOvTOSCFKmm75szBQlkUo3aRLdK8uoRmVy9sFjFd7fOuY7Aur8OJ48vbjrF6o1Z7aSp
+         LQ01IIFxiK5Kxc/I9kYlQGXpuVVZCgQIL+KWdbueJSwxIDy+/b/D5RlfZWMexrdmdao9
+         iZYx0DlsHBnQMLMq3hRXw4mFK6b18rf6GncBuvuLtLf1qDYw9Yl2f6C6IoGZyhe9gWA2
+         Wo1OVSB/Jbl4v9Ta3Cw3BCOPv3GyFApCXh/as3hg/YRXuv4j16ZMIph/qwvuWbwrrSB+
+         FQcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqj6IFHwubbH7YjjI1AtZZTTHjFD6nF/MStbW5nHAdRi/7OCmqt4dT2lO1HVrBQT0nC8m8ZEWs+khPZ5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlDp2Ziek8H4eVXmDLKRS5T4+QGC95KzNIyWPEMSW1daTDNp4M
+	gxT2ndov6/lxneMiS6O0yHPC3lCW/1wrsTrpHp/O5ri5JOacyf2O
+X-Google-Smtp-Source: AGHT+IEsUj0VmR8SbEGLFZOPMwI3LzTQblury6cZ3YW7j5hSI35+WSoXpyO8ZD9Z9ppE+mwAJmqexg==
+X-Received: by 2002:adf:e3c9:0:b0:37d:4a80:c395 with SMTP id ffacd0b85a97d-3806113ce39mr14122019f8f.21.1730407904116;
+        Thu, 31 Oct 2024 13:51:44 -0700 (PDT)
+Received: from localhost.localdomain (62-178-82-42.cable.dynamic.surfer.at. [62.178.82.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7435sm3141796f8f.52.2024.10.31.13.51.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 13:51:43 -0700 (PDT)
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+To: Melissa Wen <mwen@igalia.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel-dev@igalia.com,
+	Christian Gmeiner <cgmeiner@igalia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/v3d: Add DRM_IOCTL_V3D_PERFMON_SET_GLOBAL
+Date: Thu, 31 Oct 2024 21:51:38 +0100
+Message-ID: <20241031205140.541907-1-christian.gmeiner@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031014252.753588-1-irogers@google.com> <20241031014252.753588-7-irogers@google.com>
- <ZyPX7ayIO4teziDX@x1>
-In-Reply-To: <ZyPX7ayIO4teziDX@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 31 Oct 2024 13:51:36 -0700
-Message-ID: <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
-Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to browser/scripts.c
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 12:18=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Wed, Oct 30, 2024 at 06:42:37PM -0700, Ian Rogers wrote:
-> > The only use of find_scripts is in browser/scripts.c but the
-> > definition in builtin causes linking problems requiring a stub in
-> > python.c. Move the function to allow the stub to be removed.
-> >
-> > Rewrite the directory iteration to use openat so that large character
-> > arrays aren't needed. The arrays are warned about potential buffer
-> > overflows by GCC now that all the code exists in a single C file.
->
-> Introducing is_directory_at() should be done as a prep patch, as the
-> rest of the patch below could end up being reverted after some other
-> patch used it, making the process more difficult.
->
-> I mentioned cases like this in the past, so doing it again just for the
-> record.
+From: Christian Gmeiner <cgmeiner@igalia.com>
 
-This is highlighted in the commit message:
-```
-Rewrite the directory iteration to use openat so that large character
-arrays aren't needed. The arrays are warned about potential buffer
-overflows by GCC now that all the code exists in a single C file.
-```
-so without the change the code wouldn't build. The new is_directory_at
-function is effectively 2 statements fstatat and S_ISDIR on the
-result, it is put next to is_directory for consistency but could have
-been a static function in the only C file to use it.
+Add a new ioctl, DRM_IOCTL_V3D_PERFMON_SET_GLOBAL, to allow
+configuration of a global performance monitor (perfmon).
+Use the global perfmon for all jobs to ensure consistent
+performance tracking across submissions.
 
-For the record, patches introducing 2 line long functions can be
-excessively noisy, especially in a 21 patch series. There is always
-the declared but not used build error to worry about - here things
-couldn't just be simply moved due to triggering a different build
-error. Given the simplicity of the function here I made a decision not
-to split up the work - the commit message would likely be longer than
-the function. The work never intended to introduce is_directory_at but
-was forced into it through a desire not to disable compiler warnings.
+Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
 
-Thanks,
-Ian
+---
+Changes in v2:
+- Reworked commit message.
+- Removed num_perfmon counter for tracking perfmon allocations.
+- Allowing allocation of perfmons when the global perfmon is active.
+- Return -EAGAIN for submissions with a per job perfmon if the global perfmon is active.
+---
+ drivers/gpu/drm/v3d/v3d_drv.c     |  1 +
+ drivers/gpu/drm/v3d/v3d_drv.h     |  8 ++++++++
+ drivers/gpu/drm/v3d/v3d_perfmon.c | 34 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/v3d/v3d_sched.c   | 14 ++++++++++---
+ drivers/gpu/drm/v3d/v3d_submit.c  | 10 +++++++++
+ include/uapi/drm/v3d_drm.h        | 15 ++++++++++++++
+ 6 files changed, 79 insertions(+), 3 deletions(-)
 
->
-> - Arnaldo
->
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/builtin-script.c      | 138 ------------------------
-> >  tools/perf/builtin.h             |   6 --
-> >  tools/perf/ui/browsers/scripts.c | 177 ++++++++++++++++++++++++++++++-
-> >  tools/perf/util/path.c           |  10 ++
-> >  tools/perf/util/path.h           |   1 +
-> >  tools/perf/util/python.c         |   6 --
-> >  6 files changed, 186 insertions(+), 152 deletions(-)
-> >
-> > diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> > index 5d5a1a06d8c6..e9ec74056f71 100644
-> > --- a/tools/perf/builtin-script.c
-> > +++ b/tools/perf/builtin-script.c
-> > @@ -3521,144 +3521,6 @@ static void free_dlarg(void)
-> >       free(dlargv);
-> >  }
-> >
-> > -/*
-> > - * Some scripts specify the required events in their "xxx-record" file=
-,
-> > - * this function will check if the events in perf.data match those
-> > - * mentioned in the "xxx-record".
-> > - *
-> > - * Fixme: All existing "xxx-record" are all in good formats "-e event =
-",
-> > - * which is covered well now. And new parsing code should be added to
-> > - * cover the future complex formats like event groups etc.
-> > - */
-> > -static int check_ev_match(char *dir_name, char *scriptname,
-> > -                     struct perf_session *session)
-> > -{
-> > -     char filename[MAXPATHLEN], evname[128];
-> > -     char line[BUFSIZ], *p;
-> > -     struct evsel *pos;
-> > -     int match, len;
-> > -     FILE *fp;
-> > -
-> > -     scnprintf(filename, MAXPATHLEN, "%s/bin/%s-record", dir_name, scr=
-iptname);
-> > -
-> > -     fp =3D fopen(filename, "r");
-> > -     if (!fp)
-> > -             return -1;
-> > -
-> > -     while (fgets(line, sizeof(line), fp)) {
-> > -             p =3D skip_spaces(line);
-> > -             if (*p =3D=3D '#')
-> > -                     continue;
-> > -
-> > -             while (strlen(p)) {
-> > -                     p =3D strstr(p, "-e");
-> > -                     if (!p)
-> > -                             break;
-> > -
-> > -                     p +=3D 2;
-> > -                     p =3D skip_spaces(p);
-> > -                     len =3D strcspn(p, " \t");
-> > -                     if (!len)
-> > -                             break;
-> > -
-> > -                     snprintf(evname, len + 1, "%s", p);
-> > -
-> > -                     match =3D 0;
-> > -                     evlist__for_each_entry(session->evlist, pos) {
-> > -                             if (evsel__name_is(pos, evname)) {
-> > -                                     match =3D 1;
-> > -                                     break;
-> > -                             }
-> > -                     }
-> > -
-> > -                     if (!match) {
-> > -                             fclose(fp);
-> > -                             return -1;
-> > -                     }
-> > -             }
-> > -     }
-> > -
-> > -     fclose(fp);
-> > -     return 0;
-> > -}
-> > -
-> > -/*
-> > - * Return -1 if none is found, otherwise the actual scripts number.
-> > - *
-> > - * Currently the only user of this function is the script browser, whi=
-ch
-> > - * will list all statically runnable scripts, select one, execute it a=
-nd
-> > - * show the output in a perf browser.
-> > - */
-> > -int find_scripts(char **scripts_array, char **scripts_path_array, int =
-num,
-> > -              int pathlen)
-> > -{
-> > -     struct dirent *script_dirent, *lang_dirent;
-> > -     char scripts_path[MAXPATHLEN], lang_path[MAXPATHLEN];
-> > -     DIR *scripts_dir, *lang_dir;
-> > -     struct perf_session *session;
-> > -     struct perf_data data =3D {
-> > -             .path =3D input_name,
-> > -             .mode =3D PERF_DATA_MODE_READ,
-> > -     };
-> > -     char *temp;
-> > -     int i =3D 0;
-> > -
-> > -     session =3D perf_session__new(&data, NULL);
-> > -     if (IS_ERR(session))
-> > -             return PTR_ERR(session);
-> > -
-> > -     snprintf(scripts_path, MAXPATHLEN, "%s/scripts", get_argv_exec_pa=
-th());
-> > -
-> > -     scripts_dir =3D opendir(scripts_path);
-> > -     if (!scripts_dir) {
-> > -             perf_session__delete(session);
-> > -             return -1;
-> > -     }
-> > -
-> > -     for_each_lang(scripts_path, scripts_dir, lang_dirent) {
-> > -             scnprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
-> > -                       lang_dirent->d_name);
-> > -#ifndef HAVE_LIBPERL_SUPPORT
-> > -             if (strstr(lang_path, "perl"))
-> > -                     continue;
-> > -#endif
-> > -#ifndef HAVE_LIBPYTHON_SUPPORT
-> > -             if (strstr(lang_path, "python"))
-> > -                     continue;
-> > -#endif
-> > -
-> > -             lang_dir =3D opendir(lang_path);
-> > -             if (!lang_dir)
-> > -                     continue;
-> > -
-> > -             for_each_script(lang_path, lang_dir, script_dirent) {
-> > -                     /* Skip those real time scripts: xxxtop.p[yl] */
-> > -                     if (strstr(script_dirent->d_name, "top."))
-> > -                             continue;
-> > -                     if (i >=3D num)
-> > -                             break;
-> > -                     snprintf(scripts_path_array[i], pathlen, "%s/%s",
-> > -                             lang_path,
-> > -                             script_dirent->d_name);
-> > -                     temp =3D strchr(script_dirent->d_name, '.');
-> > -                     snprintf(scripts_array[i],
-> > -                             (temp - script_dirent->d_name) + 1,
-> > -                             "%s", script_dirent->d_name);
-> > -
-> > -                     if (check_ev_match(lang_path,
-> > -                                     scripts_array[i], session))
-> > -                             continue;
-> > -
-> > -                     i++;
-> > -             }
-> > -             closedir(lang_dir);
-> > -     }
-> > -
-> > -     closedir(scripts_dir);
-> > -     perf_session__delete(session);
-> > -     return i;
-> > -}
-> > -
-> >  static char *get_script_path(const char *script_root, const char *suff=
-ix)
-> >  {
-> >       struct dirent *script_dirent, *lang_dirent;
-> > diff --git a/tools/perf/builtin.h b/tools/perf/builtin.h
-> > index 94f4b3769bf7..a07e93c53848 100644
-> > --- a/tools/perf/builtin.h
-> > +++ b/tools/perf/builtin.h
-> > @@ -2,10 +2,6 @@
-> >  #ifndef BUILTIN_H
-> >  #define BUILTIN_H
-> >
-> > -#include <stddef.h>
-> > -#include <linux/compiler.h>
-> > -#include <tools/config.h>
-> > -
-> >  struct feature_status {
-> >       const char *name;
-> >       const char *macro;
-> > @@ -56,6 +52,4 @@ int cmd_ftrace(int argc, const char **argv);
-> >  int cmd_daemon(int argc, const char **argv);
-> >  int cmd_kwork(int argc, const char **argv);
-> >
-> > -int find_scripts(char **scripts_array, char **scripts_path_array, int =
-num,
-> > -              int pathlen);
-> >  #endif
-> > diff --git a/tools/perf/ui/browsers/scripts.c b/tools/perf/ui/browsers/=
-scripts.c
-> > index e437d7889de6..2d04ece833aa 100644
-> > --- a/tools/perf/ui/browsers/scripts.c
-> > +++ b/tools/perf/ui/browsers/scripts.c
-> > @@ -1,16 +1,18 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> > -#include "../../builtin.h"
-> > -#include "../../perf.h"
-> >  #include "../../util/util.h" // perf_exe()
-> >  #include "../util.h"
-> > +#include "../../util/evlist.h"
-> >  #include "../../util/hist.h"
-> >  #include "../../util/debug.h"
-> > +#include "../../util/session.h"
-> >  #include "../../util/symbol.h"
-> >  #include "../browser.h"
-> >  #include "../libslang.h"
-> >  #include "config.h"
-> > +#include <linux/err.h>
-> >  #include <linux/string.h>
-> >  #include <linux/zalloc.h>
-> > +#include <subcmd/exec-cmd.h>
-> >  #include <stdlib.h>
-> >
-> >  #define SCRIPT_NAMELEN       128
-> > @@ -77,6 +79,177 @@ static int scripts_config(const char *var, const ch=
-ar *value, void *data)
-> >       return 0;
-> >  }
-> >
-> > +/*
-> > + * Some scripts specify the required events in their "xxx-record" file=
-,
-> > + * this function will check if the events in perf.data match those
-> > + * mentioned in the "xxx-record".
-> > + *
-> > + * Fixme: All existing "xxx-record" are all in good formats "-e event =
-",
-> > + * which is covered well now. And new parsing code should be added to
-> > + * cover the future complex formats like event groups etc.
-> > + */
-> > +static int check_ev_match(int dir_fd, const char *scriptname, struct p=
-erf_session *session)
-> > +{
-> > +     char line[BUFSIZ];
-> > +     FILE *fp;
-> > +
-> > +     {
-> > +             char filename[FILENAME_MAX + 5];
-> > +             int fd;
-> > +
-> > +             scnprintf(filename, sizeof(filename), "bin/%s-record", sc=
-riptname);
-> > +             fd =3D openat(dir_fd, filename, O_RDONLY);
-> > +             if (fd =3D=3D -1)
-> > +                     return -1;
-> > +             fp =3D fdopen(fd, "r");
-> > +             if (!fp)
-> > +                     return -1;
-> > +     }
-> > +
-> > +     while (fgets(line, sizeof(line), fp)) {
-> > +             char *p =3D skip_spaces(line);
-> > +
-> > +             if (*p =3D=3D '#')
-> > +                     continue;
-> > +
-> > +             while (strlen(p)) {
-> > +                     int match, len;
-> > +                     struct evsel *pos;
-> > +                     char evname[128];
-> > +
-> > +                     p =3D strstr(p, "-e");
-> > +                     if (!p)
-> > +                             break;
-> > +
-> > +                     p +=3D 2;
-> > +                     p =3D skip_spaces(p);
-> > +                     len =3D strcspn(p, " \t");
-> > +                     if (!len)
-> > +                             break;
-> > +
-> > +                     snprintf(evname, len + 1, "%s", p);
-> > +
-> > +                     match =3D 0;
-> > +                     evlist__for_each_entry(session->evlist, pos) {
-> > +                             if (evsel__name_is(pos, evname)) {
-> > +                                     match =3D 1;
-> > +                                     break;
-> > +                             }
-> > +                     }
-> > +
-> > +                     if (!match) {
-> > +                             fclose(fp);
-> > +                             return -1;
-> > +                     }
-> > +             }
-> > +     }
-> > +
-> > +     fclose(fp);
-> > +     return 0;
-> > +}
-> > +
-> > +/*
-> > + * Return -1 if none is found, otherwise the actual scripts number.
-> > + *
-> > + * Currently the only user of this function is the script browser, whi=
-ch
-> > + * will list all statically runnable scripts, select one, execute it a=
-nd
-> > + * show the output in a perf browser.
-> > + */
-> > +static int find_scripts(char **scripts_array, char **scripts_path_arra=
-y, int num,
-> > +              int pathlen)
-> > +{
-> > +     struct dirent *script_dirent, *lang_dirent;
-> > +     int scripts_dir_fd, lang_dir_fd;
-> > +     DIR *scripts_dir, *lang_dir;
-> > +     struct perf_session *session;
-> > +     struct perf_data data =3D {
-> > +             .path =3D input_name,
-> > +             .mode =3D PERF_DATA_MODE_READ,
-> > +     };
-> > +     char *temp;
-> > +     int i =3D 0;
-> > +     const char *exec_path =3D get_argv_exec_path();
-> > +
-> > +     session =3D perf_session__new(&data, NULL);
-> > +     if (IS_ERR(session))
-> > +             return PTR_ERR(session);
-> > +
-> > +     {
-> > +             char scripts_path[PATH_MAX];
-> > +
-> > +             snprintf(scripts_path, sizeof(scripts_path), "%s/scripts"=
-, exec_path);
-> > +             scripts_dir_fd =3D open(scripts_path, O_DIRECTORY);
-> > +             pr_err("Failed to open directory '%s'", scripts_path);
-> > +             if (scripts_dir_fd =3D=3D -1) {
-> > +                     perf_session__delete(session);
-> > +                     return -1;
-> > +             }
-> > +     }
-> > +     scripts_dir =3D fdopendir(scripts_dir_fd);
-> > +     if (!scripts_dir) {
-> > +             close(scripts_dir_fd);
-> > +             perf_session__delete(session);
-> > +             return -1;
-> > +     }
-> > +
-> > +     while ((lang_dirent =3D readdir(scripts_dir)) !=3D NULL) {
-> > +             if (lang_dirent->d_type !=3D DT_DIR &&
-> > +                 (lang_dirent->d_type =3D=3D DT_UNKNOWN &&
-> > +                  !is_directory_at(scripts_dir_fd, lang_dirent->d_name=
-)))
-> > +                     continue;
-> > +             if (!strcmp(lang_dirent->d_name, ".") || !strcmp(lang_dir=
-ent->d_name, ".."))
-> > +                     continue;
-> > +
-> > +#ifndef HAVE_LIBPERL_SUPPORT
-> > +             if (strstr(lang_dirent->d_name, "perl"))
-> > +                     continue;
-> > +#endif
-> > +#ifndef HAVE_LIBPYTHON_SUPPORT
-> > +             if (strstr(lang_dirent->d_name, "python"))
-> > +                     continue;
-> > +#endif
-> > +
-> > +             lang_dir_fd =3D openat(scripts_dir_fd, lang_dirent->d_nam=
-e, O_DIRECTORY);
-> > +             if (lang_dir_fd =3D=3D -1)
-> > +                     continue;
-> > +             lang_dir =3D fdopendir(lang_dir_fd);
-> > +             if (!lang_dir) {
-> > +                     close(lang_dir_fd);
-> > +                     continue;
-> > +             }
-> > +             while ((script_dirent =3D readdir(lang_dir)) !=3D NULL) {
-> > +                     if (script_dirent->d_type =3D=3D DT_DIR)
-> > +                             continue;
-> > +                     if (script_dirent->d_type =3D=3D DT_UNKNOWN &&
-> > +                         is_directory_at(lang_dir_fd, script_dirent->d=
-_name))
-> > +                             continue;
-> > +                     /* Skip those real time scripts: xxxtop.p[yl] */
-> > +                     if (strstr(script_dirent->d_name, "top."))
-> > +                             continue;
-> > +                     if (i >=3D num)
-> > +                             break;
-> > +                     scnprintf(scripts_path_array[i], pathlen, "%s/scr=
-ipts/%s/%s",
-> > +                             exec_path,
-> > +                             lang_dirent->d_name,
-> > +                             script_dirent->d_name);
-> > +                     temp =3D strchr(script_dirent->d_name, '.');
-> > +                     snprintf(scripts_array[i],
-> > +                             (temp - script_dirent->d_name) + 1,
-> > +                             "%s", script_dirent->d_name);
-> > +
-> > +                     if (check_ev_match(lang_dir_fd, scripts_array[i],=
- session))
-> > +                             continue;
-> > +
-> > +                     i++;
-> > +             }
-> > +             closedir(lang_dir);
-> > +     }
-> > +
-> > +     closedir(scripts_dir);
-> > +     perf_session__delete(session);
-> > +     return i;
-> > +}
-> > +
-> >  /*
-> >   * When success, will copy the full path of the selected script
-> >   * into  the buffer pointed by script_name, and return 0.
-> > diff --git a/tools/perf/util/path.c b/tools/perf/util/path.c
-> > index 00adf872bf00..9712466c51e2 100644
-> > --- a/tools/perf/util/path.c
-> > +++ b/tools/perf/util/path.c
-> > @@ -68,6 +68,16 @@ bool is_directory(const char *base_path, const struc=
-t dirent *dent)
-> >       return S_ISDIR(st.st_mode);
-> >  }
-> >
-> > +bool is_directory_at(int dir_fd, const char *path)
-> > +{
-> > +     struct stat st;
-> > +
-> > +     if (fstatat(dir_fd, path, &st, /*flags=3D*/0))
-> > +             return false;
-> > +
-> > +     return S_ISDIR(st.st_mode);
-> > +}
-> > +
-> >  bool is_executable_file(const char *base_path, const struct dirent *de=
-nt)
-> >  {
-> >       char path[PATH_MAX];
-> > diff --git a/tools/perf/util/path.h b/tools/perf/util/path.h
-> > index d94902c22222..fbafbe7015dd 100644
-> > --- a/tools/perf/util/path.h
-> > +++ b/tools/perf/util/path.h
-> > @@ -12,6 +12,7 @@ int path__join3(char *bf, size_t size, const char *pa=
-th1, const char *path2, con
-> >
-> >  bool is_regular_file(const char *file);
-> >  bool is_directory(const char *base_path, const struct dirent *dent);
-> > +bool is_directory_at(int dir_fd, const char *path);
-> >  bool is_executable_file(const char *base_path, const struct dirent *de=
-nt);
-> >
-> >  #endif /* _PERF_PATH_H */
-> > diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> > index ab67abf3b607..5f11ae88943d 100644
-> > --- a/tools/perf/util/python.c
-> > +++ b/tools/perf/util/python.c
-> > @@ -1306,12 +1306,6 @@ PyMODINIT_FUNC PyInit_perf(void)
-> >  /* The following are stubs to avoid dragging in builtin-* objects. */
-> >  /* TODO: move the code out of the builtin-* file into util. */
-> >
-> > -int find_scripts(char **scripts_array  __maybe_unused, char **scripts_=
-path_array  __maybe_unused,
-> > -             int num  __maybe_unused, int pathlen __maybe_unused)
-> > -{
-> > -     return -1;
-> > -}
-> > -
-> >  void perf_stat__set_no_csv_summary(int set __maybe_unused)
-> >  {
-> >  }
-> > --
-> > 2.47.0.163.g1226f6d8fa-goog
-> >
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+index d7ff1f5fa481..3c89f0daa5b8 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.c
++++ b/drivers/gpu/drm/v3d/v3d_drv.c
+@@ -214,6 +214,7 @@ static const struct drm_ioctl_desc v3d_drm_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_VALUES, v3d_perfmon_get_values_ioctl, DRM_RENDER_ALLOW),
+ 	DRM_IOCTL_DEF_DRV(V3D_SUBMIT_CPU, v3d_submit_cpu_ioctl, DRM_RENDER_ALLOW | DRM_AUTH),
+ 	DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_COUNTER, v3d_perfmon_get_counter_ioctl, DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(V3D_PERFMON_SET_GLOBAL, v3d_perfmon_set_global_ioctl, DRM_RENDER_ALLOW),
+ };
+ 
+ static const struct drm_driver v3d_drm_driver = {
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+index cf4b23369dc4..a0d920ec2b1d 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.h
++++ b/drivers/gpu/drm/v3d/v3d_drv.h
+@@ -179,6 +179,12 @@ struct v3d_dev {
+ 		u32 num_allocated;
+ 		u32 pages_allocated;
+ 	} bo_stats;
++
++	/* To support a performance analysis tool in user space, we require
++	 * a single, globally configured performance monitor (perfmon) for
++	 * all jobs.
++	 */
++	struct v3d_perfmon *global_perfmon;
+ };
+ 
+ static inline struct v3d_dev *
+@@ -584,6 +590,8 @@ int v3d_perfmon_get_values_ioctl(struct drm_device *dev, void *data,
+ 				 struct drm_file *file_priv);
+ int v3d_perfmon_get_counter_ioctl(struct drm_device *dev, void *data,
+ 				  struct drm_file *file_priv);
++int v3d_perfmon_set_global_ioctl(struct drm_device *dev, void *data,
++				 struct drm_file *file_priv);
+ 
+ /* v3d_sysfs.c */
+ int v3d_sysfs_init(struct device *dev);
+diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
+index 156be13ab2ef..bf42303c292b 100644
+--- a/drivers/gpu/drm/v3d/v3d_perfmon.c
++++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
+@@ -312,6 +312,9 @@ static int v3d_perfmon_idr_del(int id, void *elem, void *data)
+ 	if (perfmon == v3d->active_perfmon)
+ 		v3d_perfmon_stop(v3d, perfmon, false);
+ 
++	/* If the global perfmon is being destroyed, set it to NULL */
++	cmpxchg(&v3d->global_perfmon, perfmon, NULL);
++
+ 	v3d_perfmon_put(perfmon);
+ 
+ 	return 0;
+@@ -451,3 +454,34 @@ int v3d_perfmon_get_counter_ioctl(struct drm_device *dev, void *data,
+ 
+ 	return 0;
+ }
++
++int v3d_perfmon_set_global_ioctl(struct drm_device *dev, void *data,
++				 struct drm_file *file_priv)
++{
++	struct v3d_file_priv *v3d_priv = file_priv->driver_priv;
++	struct drm_v3d_perfmon_set_global *req = data;
++	struct v3d_dev *v3d = to_v3d_dev(dev);
++	struct v3d_perfmon *perfmon;
++
++	if (req->flags & ~DRM_V3D_PERFMON_CLEAR_GLOBAL)
++		return -EINVAL;
++
++	perfmon = v3d_perfmon_find(v3d_priv, req->id);
++	if (!perfmon)
++		return -EINVAL;
++
++	/* If the request is to clear the global performance monitor */
++	if (req->flags & DRM_V3D_PERFMON_CLEAR_GLOBAL) {
++		if (!v3d->global_perfmon)
++			return -EINVAL;
++
++		xchg(&v3d->global_perfmon, NULL);
++
++		return 0;
++	}
++
++	if (cmpxchg(&v3d->global_perfmon, NULL, perfmon))
++		return -EBUSY;
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/v3d/v3d_sched.c b/drivers/gpu/drm/v3d/v3d_sched.c
+index 08d2a2739582..38690740f593 100644
+--- a/drivers/gpu/drm/v3d/v3d_sched.c
++++ b/drivers/gpu/drm/v3d/v3d_sched.c
+@@ -120,11 +120,19 @@ v3d_cpu_job_free(struct drm_sched_job *sched_job)
+ static void
+ v3d_switch_perfmon(struct v3d_dev *v3d, struct v3d_job *job)
+ {
+-	if (job->perfmon != v3d->active_perfmon)
++	struct v3d_perfmon *perfmon = v3d->global_perfmon;
++
++	if (!perfmon)
++		perfmon = job->perfmon;
++
++	if (perfmon == v3d->active_perfmon)
++		return;
++
++	if (perfmon != v3d->active_perfmon)
+ 		v3d_perfmon_stop(v3d, v3d->active_perfmon, true);
+ 
+-	if (job->perfmon && v3d->active_perfmon != job->perfmon)
+-		v3d_perfmon_start(v3d, job->perfmon);
++	if (perfmon && v3d->active_perfmon != perfmon)
++		v3d_perfmon_start(v3d, perfmon);
+ }
+ 
+ static void
+diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
+index d607aa9c4ec2..9e439c9f0a93 100644
+--- a/drivers/gpu/drm/v3d/v3d_submit.c
++++ b/drivers/gpu/drm/v3d/v3d_submit.c
+@@ -981,6 +981,11 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+ 		goto fail;
+ 
+ 	if (args->perfmon_id) {
++		if (v3d->global_perfmon) {
++			ret = -EAGAIN;
++			goto fail_perfmon;
++		}
++
+ 		render->base.perfmon = v3d_perfmon_find(v3d_priv,
+ 							args->perfmon_id);
+ 
+@@ -1196,6 +1201,11 @@ v3d_submit_csd_ioctl(struct drm_device *dev, void *data,
+ 		goto fail;
+ 
+ 	if (args->perfmon_id) {
++		if (v3d->global_perfmon) {
++			ret = -EAGAIN;
++			goto fail_perfmon;
++		}
++
+ 		job->base.perfmon = v3d_perfmon_find(v3d_priv,
+ 						     args->perfmon_id);
+ 		if (!job->base.perfmon) {
+diff --git a/include/uapi/drm/v3d_drm.h b/include/uapi/drm/v3d_drm.h
+index 87fc5bb0a61e..709724fe28e6 100644
+--- a/include/uapi/drm/v3d_drm.h
++++ b/include/uapi/drm/v3d_drm.h
+@@ -43,6 +43,7 @@ extern "C" {
+ #define DRM_V3D_PERFMON_GET_VALUES                0x0a
+ #define DRM_V3D_SUBMIT_CPU                        0x0b
+ #define DRM_V3D_PERFMON_GET_COUNTER               0x0c
++#define DRM_V3D_PERFMON_SET_GLOBAL                0x0d
+ 
+ #define DRM_IOCTL_V3D_SUBMIT_CL           DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_SUBMIT_CL, struct drm_v3d_submit_cl)
+ #define DRM_IOCTL_V3D_WAIT_BO             DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_WAIT_BO, struct drm_v3d_wait_bo)
+@@ -61,6 +62,8 @@ extern "C" {
+ #define DRM_IOCTL_V3D_SUBMIT_CPU          DRM_IOW(DRM_COMMAND_BASE + DRM_V3D_SUBMIT_CPU, struct drm_v3d_submit_cpu)
+ #define DRM_IOCTL_V3D_PERFMON_GET_COUNTER DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_PERFMON_GET_COUNTER, \
+ 						   struct drm_v3d_perfmon_get_counter)
++#define DRM_IOCTL_V3D_PERFMON_SET_GLOBAL  DRM_IOW(DRM_COMMAND_BASE + DRM_V3D_PERFMON_SET_GLOBAL, \
++						   struct drm_v3d_perfmon_set_global)
+ 
+ #define DRM_V3D_SUBMIT_CL_FLUSH_CACHE             0x01
+ #define DRM_V3D_SUBMIT_EXTENSION		  0x02
+@@ -765,6 +768,18 @@ struct drm_v3d_perfmon_get_counter {
+ 	__u8 reserved[7];
+ };
+ 
++#define DRM_V3D_PERFMON_CLEAR_GLOBAL    0x0001
++
++/*
++ * struct drm_v3d_perfmon_set_global - ioctl to define a
++ * global performance counter that is used if a job has
++ * not assigned one on its own.
++ */
++struct drm_v3d_perfmon_set_global {
++	__u32 flags;
++	__u32 id;
++};
++
+ #if defined(__cplusplus)
+ }
+ #endif
+-- 
+2.47.0
+
 
