@@ -1,236 +1,189 @@
-Return-Path: <linux-kernel+bounces-391240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A339B8445
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:20:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B079B8441
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9FFD1F23FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260201F23FD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999B31CC142;
-	Thu, 31 Oct 2024 20:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BB51C9B6F;
+	Thu, 31 Oct 2024 20:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MBIp9phN"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2081.outbound.protection.outlook.com [40.107.241.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SQ69r03r"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78911A2562;
-	Thu, 31 Oct 2024 20:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730406029; cv=fail; b=dALpu3qCbOPAFcV4qST1EXfcrkaL7+jHmMw+sZWo8zplwfjtvhzwKxzzJBMNZs4ue82z6gPQrexvbPblhF+LisJWeXiNrCLIpijwWm7BeaCIDO3hUqFv1UVU1rzY5Vcco683N8UEKtuvkmuIGwViYpYJ7t/neCPr2rpd1h5fAKs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730406029; c=relaxed/simple;
-	bh=s18vhTPrk0+yOPzwEZ7Ae8tzIHYk7DVHRDgyfcD8GLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FCwAJCr5csXr6Ulqnn1hrE6muBr6h6qmVh6j/8KCc6sCwtO6O4PtEPqtWyeGak3aHe4ZQ1jLkl1ZTcRisbk6wDEqxBcBAhGa+4RlBhXsUM3h1YP79UVjAgYJZMV5+oUN/PczwtQVuoLhow3ehH/QVNqmHN2MAbPtZ7Xkb8tkaaE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MBIp9phN; arc=fail smtp.client-ip=40.107.241.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MtZDJz+pm9vXXkNISLrADkyW2lmaP+rNS/kaTXMykJx4GD3cxCB1u9a2w8jwkCoh+NGyTKTla8IytSbOJ030/ItH31wdNNYEGe1QtODED/KDui7eMTdeKX7ZC2EK1+NoLzqbN2gfXZx/OLu2F201FNRb8r06WdQDBgVMznS7caYwBJaNYIpFNrOGK3ez0IdMXss1k5kWe9MUUp5PvCilvgilcY49imBtK4tB8yQLus52fvjxHJRny8plGg5bvn2AeFDi6nlF24bPrRRwH/w+ZucEDmrk32UInTpIKdctwaRMzruoRGz0Kd0LBsTBxgBinwEfW12rSNPw9SFWakwL5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z7qKzBQp/SA7Cw4i9p3QZCc3JFNsiVWm9vd5mo58wms=;
- b=DHolAbhg/C1A8XLtp3BCuvH0+mipYeRAA5RiX8o2kiH3ihcWw4CCqgvRsrC6J5//XVWAjRBLHF1m2FAKORb3ZJx0lGX+8oH8lAY1+Sd5LWF0kdCk5pdO6XLtSTwuQG6QLTZgsD4JqawnYVf5meUK8Da1UrN50B2DirOGK4hSIcB/SEAFn4deHh2Bz/Z5nxNUcSU0IgfcrHNLYvAAahqqAqK4TTvq8OeCTKUus4Tbts5EXxDONX7vaXpe22ctkRNzjrGN75tS81DUcHFJx1eRNVK5OtANOwavW1xjGrIC7aIHEYlWb0OlBUm8tBEhWUm6LTdPOPb22TrpzrpDFECjLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z7qKzBQp/SA7Cw4i9p3QZCc3JFNsiVWm9vd5mo58wms=;
- b=MBIp9phNKDMtJPY1C+R5JKduYqazrhjm1T4rBTZfQbT0k9oel41wbBziRzS55HSYZJaQZFCgfDKl7ruc7xfJA5y3OSbXqtX8iqETK0QbrUsEOapnh15tKnkUHf1vsSsqWCm11xtIkwWxCSAosNjbYV2DFWKY+ZQtN2SWlwrTowCiCxQkwCUFCazVIJkU0tTGtXyRYs6+4LpTXEjdB84dhB3aco+okXakURWspflYz38Gtoj2LTdX94Mem7/yK0dJBz/3JxxLEB7SVcValHEEpSt9sU0WZgoYQNzKlnk96pvzbvF5uA2+FPNAwPRcO8n7hS5pWt6EDsA/NHdNproc2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PR3PR04MB7433.eurprd04.prod.outlook.com (2603:10a6:102:86::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Thu, 31 Oct
- 2024 20:20:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
- 20:20:20 +0000
-Date: Thu, 31 Oct 2024 16:20:10 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guido =?iso-8859-1?Q?G=FAnther?= <agx@sigxcpu.org>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: display: nwl-dsi: Allow 'data-lanes'
- property for port@1
-Message-ID: <ZyPmeippTU8SQLkH@lizhi-Precision-Tower-5810>
-References: <20241031194714.2398527-1-Frank.Li@nxp.com>
- <gz3ifraqt7ga4isxhx6negcmfngen5jmhmcecnvy7gu7mpfffw@j65umo6arwc7>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <gz3ifraqt7ga4isxhx6negcmfngen5jmhmcecnvy7gu7mpfffw@j65umo6arwc7>
-X-ClientProxiedBy: BYAPR11CA0091.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981EA1CB51C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730406018; cv=none; b=LaqfSAwFoUcFwYZ0MVIEcMmQEs8C2dW18I49BRDFJNSaVFLpbEFom16HBkCntfJxT1sKROB1YJP9uP1/VCUeTqObJ1qGQxHL8UvzpsviEw76Zgf6BM82TFsMCojHflD+qr/C0Zdvfo2QHP9rflTysNRKyugOdB+w+RKt4xApa0g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730406018; c=relaxed/simple;
+	bh=ibguVxv5ys3EG+bTYwAwYyEFPl4BfLP061AdL88v55g=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=G8f/wf7zmWXmMe70fTlBIueOTdM3tgUOYmFy4vWu3NwWwqtN5JZDWTJwroOQa+Rx0AalPX4qyW09tzP8KljgG9a8lFV5v1JU6BQ/jIHT+3O/Tb7LuFpt76ZiC+Z2HxfLJTShPfS1vqpRGkVgk1QxTio16hHzo4UBCovQIklKLjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SQ69r03r; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e35a643200so29964767b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730406015; x=1731010815; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jZhenKn3T1lSjjdyHpwG37r5ky1yYEV/H0p+NeciZMA=;
+        b=SQ69r03rBEjwIP11WMj2DKbafqz46+LhQnb6q/iFVs3s6UJ2QfGS5qPNTyAQNAtMb/
+         9o1AI00H0vylpQE2JDf1iTYVy8Vj8wNW7SEXCDBBABfmeOdVWqYNShOxeIloW3BKFW8Z
+         FWEvRN3qwqf8Pw5MIMbNrvCdRAjag64sCDIRwQkO8Qjy9nlggo7YX1638nGvJFx4kIYZ
+         nw99Yk7EuwMztnHEsqJv472BvPrJxEtvgmG25/8A58h3HcFIrYxUUgdid3oxGdsgm8dX
+         gBm9BXUHrGUlABCRB7z9duLxpvrZlzW87uXeyx/4+q5G8gu6XXMYR/6jF9saNBCvW9LQ
+         d5zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730406015; x=1731010815;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jZhenKn3T1lSjjdyHpwG37r5ky1yYEV/H0p+NeciZMA=;
+        b=rcnIkMvy1H1mIoJPmLQMGX2EzSZrMqQPODwY7Ia6yuQG1yHDZkTIbViKlpTvOOXqrn
+         +D5G6x5QvWseyCNMcfc/F2EiuGuqCroIrmwj+rJNuw1bvecCRfK1pq3Ff0fKuciJUJDT
+         8CnJ7MvMj4XGcZa/mF3GB1Y+TpZHoe6fEuHnHLMSGhRaUUN6s/ZA9nHLBBwrj2rK8EZD
+         hqdi1vmf+9y1dl/mGs23C7b4nxlWYBDNOgdXKMKrnDKzFvNAI629KQ6WamBjySe8MEWM
+         BMnwq20XdKM0Fz6L1Lu3QDw69LqTiJ9RrZlKYvHc4+w9M8SLkiZexF/DasuE9mIm7FBK
+         QXBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEpqR0P6MHRL+JSr6/zAM79ElW0ZjQ2w8UEZEi7jZkYopnQIhLJ3/Y7d7JHed5KFxeUEbJQeRN23Bdo/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/pc+MubBkTUOpTC3W7KLk1SgcemyVjcElVvvx6twQcx7qQBVC
+	GnbvWS/Kcqos20KiktZi3v8gfeukJbB3nPEkh8QawKMVKtdhAupqbi14tNT/66oA6+KCi/xL7mD
+	Ajw==
+X-Google-Smtp-Source: AGHT+IFrERFxys/nFxJS2UFqRSq8jptFMXlQLla0whmxS+Xa4ijJlHYJjILBUPjl0bRKEkidO9eZEYX5Z+E=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a81:a888:0:b0:6db:c3b8:c4ce with SMTP id
+ 00721157ae682-6ea52557dffmr73077b3.7.1730406015706; Thu, 31 Oct 2024 13:20:15
+ -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 31 Oct 2024 13:20:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PR3PR04MB7433:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d1c8648-38dd-4467-df01-08dcf9e9711d
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?srfwuOgBx3YhYR+G6sOKqDsSCXQknU0XZQmupYnuEO24oy6yCi9gw7Qxv/mq?=
- =?us-ascii?Q?QsSpiH7JI1wYEus1+dNC7kU2ByPihhL1gEjabnw2gA8npyScZ11SBHIU7hlF?=
- =?us-ascii?Q?ZrmVcJ7MPlnqpcTXHW9HkG3oU/HC8o4fv+2lokXwZmmIejmL1ovn2PWJk4ip?=
- =?us-ascii?Q?B+CfUr+mwT1jqNs5zZP/kfpzHwIyu69fdORuTVG6LlvZLM4ivL3/2sEcECg4?=
- =?us-ascii?Q?XFwHsYVpAJ7pRm+N/vKs45euYG4nIgZbQ7EtWuZtbFxS0bnJFwjB7IrbX94C?=
- =?us-ascii?Q?kjTwlJrKrwvOlI64ms+63ayvrSSdgVHnn7n7fLoO1ZE2cKjkB0U2T/lWpQ+c?=
- =?us-ascii?Q?ArPiBESrTmxkeSRSwbE2yYUeLcjfIS6Kl8YMRKZeyumQBtDtf2mH3rk99ck2?=
- =?us-ascii?Q?yG3UvKN7WYB3MnBzWSI34kEAmyZ+Tk/TJA9Jto9/mryubQXR2aws+Y2yhBHg?=
- =?us-ascii?Q?XiUEqRDdN3oKXTUzJCFoHHXT5L2uj7TgTO8KKJbR//wkYVSGGZXSzoUOi4dM?=
- =?us-ascii?Q?xysKoYugy5BlNM+YEEwksb3UbefnnSFXl7ikAdmoNHI5JQvK2h1E1ID6R33L?=
- =?us-ascii?Q?vDsomEUdxk8MXIRkmWMLxaZp93yy0z2xp1YyJ3Uv8EGUdr8UUWDnhXFUtmQ5?=
- =?us-ascii?Q?D9wuSOwUDOWt+XRG3iWejnOfYSb4FZBRL62Y2SuBABHm/8xyGIU4wYNa/lPw?=
- =?us-ascii?Q?UKvGvHT76MG1t4REyY+X+7TdzG3atyQsV9U4tK2PrDYfDODkYzvQCV0qWwQ9?=
- =?us-ascii?Q?+fSdwvMiXFz14cT7sWQAZDOqZiOdYziL+zA8itYAI7N/LkQs+PxAkgoPT2EH?=
- =?us-ascii?Q?zNyyqAAaUjKDvoxXQWQWIfZUwUDhQai3+90ZHr1s92ibdG52c+Q4gHdp5wda?=
- =?us-ascii?Q?oE7w0TCnPYXWIA6IQkcqygl35Yj7ZJeCVBXlWfBVxaUsixWZbnn2888XcmYT?=
- =?us-ascii?Q?lPG4Ysbq2Gy25CmyGo6oJITw0L8hIWB9Oz4/kd3S/EAOVdasDoH6KQWEnmRe?=
- =?us-ascii?Q?dbHSQSeWB08c4WVnzgtCAITGF+483zBW1Md/oYjZ9ZcbJlYdr0BXYh/afcC4?=
- =?us-ascii?Q?ts6WS64vhOKpba0n7oeqSrGrfnXjrIGM8g16buEMPyjmvrc4J7iUz26iV/de?=
- =?us-ascii?Q?jwm1pxBhTH3ntqOWzDhq9T8fTFnH1/p5R4co2uOC8uw+FeV4D6KCnUVDqfYT?=
- =?us-ascii?Q?9fmjH6UNcEyZdICWYLzub2w8mmGR0vqHdiRNFqnLwPaArL8+cJ9QJmP0zaFP?=
- =?us-ascii?Q?oJI1eyb2tGomzXIMU0AksdqfyEhar1GY9aSfHXefKmSGtJgKxIYGPUaBHmDH?=
- =?us-ascii?Q?sb5YO7hho+6ddRMOaUtLkXCXG8QMoYqWP4uGT4T3Nsoe5E7D1c3J/uSbwWwQ?=
- =?us-ascii?Q?XgYjRw0=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?vpj/Kc+yNy1TGUrZATocib7I+awe9Zxr7FBE04JDT0daGtihcHHbFvD7LLzc?=
- =?us-ascii?Q?tV5/XBZNZpoen+/yISEBWFwCPp1F1yyP73OuVA8Eynh3qsr1M/C0BjKGuqxx?=
- =?us-ascii?Q?Fn38jqccvrqvzOwA1Ub7rextd5nxPcIuTkRogf3f2AGKFMVS2b4PmGbOkEaS?=
- =?us-ascii?Q?c9SLXCCX4PL/DquicD3FBxFnap78vioJFP3Zs69LjdfA0VT6xVIKILoxp/tD?=
- =?us-ascii?Q?gztTL8TBx3NqVJccgYateFzr4W+TnDHOSXjCUx/FBue5/VtnEgs5jrMFlVO6?=
- =?us-ascii?Q?iPdWfncIuuJgQBm4A5dp25q/wa8UepIzy3ATIuBBOzhKRbF5+G1whtoz90nG?=
- =?us-ascii?Q?6gGZgWTOrrecyOmBepHcViojMFbM+ET+jz9V/y/3nvatUnq8vzD+2+9tlKBT?=
- =?us-ascii?Q?FHwCRXbbPVop3mH+r/xKu52rBjt1wFs4wYe9Xh7/6Jz2LpuZsoa2QLwKF1VF?=
- =?us-ascii?Q?clfjePGvBIpIZviiGWbzNrM0badWeOMb2ayumDhilycIjqxJFNc+3DpaJ7cv?=
- =?us-ascii?Q?Uink6dpxVZrOIJ2EZF0IpFsyqmDWWsnCI5QDk2NJxVCruJXVwnf/SjeAVri5?=
- =?us-ascii?Q?tdYLtCR5yzeX2ze+GzFse1ddmimb/IJUi/q4tBf46w4hTgY9rIYnMLWrzUqg?=
- =?us-ascii?Q?RiCRhK/lpPg3HpltPpu4Jd+iC+TASTmImDNfDFhDBuvGaMdJrdwJ3gg8c6U3?=
- =?us-ascii?Q?NTyzdf6+V2HNvhtaOK8SUTHuFvwCXoVCYKjeuDBKlVVX+OcjGK9LXhxPo+DC?=
- =?us-ascii?Q?UrbcPRBhPQnBerVL3Vp41J8QnCaN8jxdj4Zk8ETAjNwINO/L/JS/X9JElX49?=
- =?us-ascii?Q?hmMOrAFmCXUGDwiRxkmg5gDsSaZieG0floRc6AcQZ3jV227tRxY2gxOgXpJY?=
- =?us-ascii?Q?djG9BoFDE49eRqfDUNOSzk5raIhtcvA6uUMPM1S8BdA7Wq43W8CWyQAEQ/kl?=
- =?us-ascii?Q?0m09UanHrhUoHHLFuuGKxg7n/m6u/kq4b8y9+FbEKQv1V5pYJKQlxjUB9mMu?=
- =?us-ascii?Q?Zhvnk3pHj/3krlhWB282Jz5vXEGPvIwmeJfW80mBoF+fWdjA5IzrbBpLB2eL?=
- =?us-ascii?Q?1xfotnglkSaXJzDH5aLDt6G5M0SA0AeY1hi0Dn0aHBSzGKm85mcKXoFPjxwE?=
- =?us-ascii?Q?0oWCIFRkrmXrz097ZKWh37eowNIP5Sjk5XKkkMRvUmFs0Oa/XB0SC5eSoa2h?=
- =?us-ascii?Q?EHLugmlYJqy1n4teKIcWHaXAybiM2UnTxHskfsSm+4i68JsM3qwKl97teuBe?=
- =?us-ascii?Q?ewYfpTKDEKAIPyF77jiaGo9K0sX+kmUooG8XGyppZUFEtRFxf6MUys7KYEeu?=
- =?us-ascii?Q?d2R/7Fsc1Ec7jPCHql+lq3Zwn18kPUM8O/eniJfyp9wuzhE23N8WOu0RkoUJ?=
- =?us-ascii?Q?vp3Ab1SVLOwtOP/SBAv2eDuV+KokT9Rg07fsC91+Zqbm7BNJWDrmrgwSX2lB?=
- =?us-ascii?Q?0m1ImK/3E7yeQOQP8qLZcuxU4XAFThUD1OxPyvmRjXDvluHfvv4lixdrT4+A?=
- =?us-ascii?Q?Jr19ZROqkQO7wmECZC6FRN3ajnr3WMa18TWg1onx/AMSfcigw+ntzmYgp12p?=
- =?us-ascii?Q?+xAmwdiH4aNE0z7diqN8VD1/Qy25GB2BJOQIXm6W?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d1c8648-38dd-4467-df01-08dcf9e9711d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 20:20:20.1445
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aQe+WhCmgBtjvDOncKkN1fWp+HEa7onHaRJ4oov6Z52gt51PuQwJarVJs63ax4aVGDoAObCm3X114J4/izztug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7433
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241031202011.1580522-1-seanjc@google.com>
+Subject: [PATCH] KVM: nVMX: Treat vpid01 as current if L2 is active, but with
+ VPID disabled
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Like Xu <like.xu.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 31, 2024 at 09:59:26PM +0200, Dmitry Baryshkov wrote:
-> On Thu, Oct 31, 2024 at 03:47:14PM -0400, Frank Li wrote:
-> > Change $ref of port@1 from 'port' to 'port-base' and add 'endpoint'
-> > property referencing video-interfaces.yaml. Allow 'data-lanes' values
-> > 1, 2, 3, and 4 for port@1.
-> >
-> > Fix below CHECK_DTB warnings:
-> > arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx-lvds-tm070jvhg33.dtb:
-> >  dsi@30a00000: ports:port@1:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpected)
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  .../bindings/display/bridge/nwl-dsi.yaml       | 18 +++++++++++++++++-
-> >  1 file changed, 17 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > index 350fb8f400f02..5952e6448ed47 100644
-> > --- a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > +++ b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > @@ -111,11 +111,27 @@ properties:
-> >          unevaluatedProperties: false
-> >
-> >        port@1:
-> > -        $ref: /schemas/graph.yaml#/properties/port
-> > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > +        unevaluatedProperties: false
-> >          description:
-> >            DSI output port node to the panel or the next bridge
-> >            in the chain
-> >
-> > +        properties:
-> > +          endpoint:
-> > +            $ref: /schemas/media/video-interfaces.yaml#
-> > +            unevaluatedProperties: false
-> > +
-> > +            properties:
-> > +              data-lanes:
-> > +                description: array of physical DSI data lane indexes.
-> > +                minItems: 1
-> > +                items:
-> > +                  - const: 1
-> > +                  - const: 2
-> > +                  - const: 3
-> > +                  - const: 4
->
-> Why are they indexed starting from 1?
+When getting the current VPID, e.g. to emulate a guest TLB flush, return
+vpid01 if L2 is running but with VPID disabled, i.e. if VPID is disabled
+in vmcs12.  Architecturally, if VPID is disabled, then the guest and host
+effectively share VPID=0.  KVM emulates this behavior by using vpid01 when
+running an L2 with VPID disabled (see prepare_vmcs02_early_rare()), and so
+KVM must also treat vpid01 as the current VPID while L2 is active.
 
-Not sure, git grep -r data-lanes Documentation/devicetree/bindings/
-Most start from 1. Not sure latest DT team's intention.
+Unconditionally treating vpid02 as the current VPID when L2 is active
+causes KVM to flush TLB entries for vpid02 instead of vpid01, which
+results in TLB entries from L1 being incorrectly preserved across nested
+VM-Enter to L2 (L2=>L1 isn't problematic, because the TLB flush after
+nested VM-Exit flushes vpid01).
 
-Frank
+The bug manifests as failures in the vmx_apicv_test KVM-Unit-Test, as KVM
+incorrectly retains TLB entries for the APIC-access page across a nested
+VM-Enter.
 
->
-> > +
-> >      required:
-> >        - port@0
-> >        - port@1
-> > --
-> > 2.34.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+Opportunisticaly add comments at various touchpoints to explain the
+architectural requirements, and also why KVM uses vpid01 instead of vpid02.
+
+All credit goes to Chao, who root caused the issue and identified the fix.
+
+Link: https://lore.kernel.org/all/ZwzczkIlYGX+QXJz@intel.com
+Fixes: 2b4a5a5d5688 ("KVM: nVMX: Flush current VPID (L1 vs. L2) for KVM_REQ_TLB_FLUSH_GUEST")
+Cc: stable@vger.kernel.org
+Cc: Like Xu <like.xu.linux@gmail.com>
+Debugged-by: Chao Gao <chao.gao@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/vmx/nested.c | 30 +++++++++++++++++++++++++-----
+ arch/x86/kvm/vmx/vmx.c    |  2 +-
+ 2 files changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 746cb41c5b98..aa78b6f38dfe 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -1197,11 +1197,14 @@ static void nested_vmx_transition_tlb_flush(struct kvm_vcpu *vcpu,
+ 	kvm_hv_nested_transtion_tlb_flush(vcpu, enable_ept);
+ 
+ 	/*
+-	 * If vmcs12 doesn't use VPID, L1 expects linear and combined mappings
+-	 * for *all* contexts to be flushed on VM-Enter/VM-Exit, i.e. it's a
+-	 * full TLB flush from the guest's perspective.  This is required even
+-	 * if VPID is disabled in the host as KVM may need to synchronize the
+-	 * MMU in response to the guest TLB flush.
++	 * If VPID is disabled, then guest TLB accesses use VPID=0, i.e. the
++	 * same VPID as the host, and so architecturally, linear and combined
++	 * mappings for VPID=0 must be flushed at VM-Enter and VM-Exit.  KVM
++	 * emulates L2 sharing L1's VPID=0 by using vpid01 while running L2,
++	 * and so KVM must also emulate TLB flush of VPID=0, i.e. vpid01.  This
++	 * is required if VPID is disabled in KVM, as a TLB flush (there are no
++	 * VPIDs) still occurs from L1's perspective, and KVM may need to
++	 * synchronize the MMU in response to the guest TLB flush.
+ 	 *
+ 	 * Note, using TLB_FLUSH_GUEST is correct even if nested EPT is in use.
+ 	 * EPT is a special snowflake, as guest-physical mappings aren't
+@@ -2315,6 +2318,17 @@ static void prepare_vmcs02_early_rare(struct vcpu_vmx *vmx,
+ 
+ 	vmcs_write64(VMCS_LINK_POINTER, INVALID_GPA);
+ 
++	/*
++	 * If VPID is disabled, then guest TLB accesses use VPID=0, i.e. the
++	 * same VPID as the host.  Emulate this behavior by using vpid01 for L2
++	 * if VPID is disabled in vmcs12.  Note, if VPID is disabled, VM-Enter
++	 * and VM-Exit are architecturally required to flush VPID=0, but *only*
++	 * VPID=0.  I.e. using vpid02 would be ok (so long as KVM emulates the
++	 * required flushes), but doing so would cause KVM to over-flush.  E.g.
++	 * if L1 runs L2 X with VPID12=1, then runs L2 Y with VPID12 disabled,
++	 * and then runs L2 X again, then KVM can and should retain TLB entries
++	 * for VPID12=1.
++	 */
+ 	if (enable_vpid) {
+ 		if (nested_cpu_has_vpid(vmcs12) && vmx->nested.vpid02)
+ 			vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->nested.vpid02);
+@@ -5957,6 +5971,12 @@ static int handle_invvpid(struct kvm_vcpu *vcpu)
+ 		return nested_vmx_fail(vcpu,
+ 			VMXERR_INVALID_OPERAND_TO_INVEPT_INVVPID);
+ 
++	/*
++	 * Always flush the effective vpid02, i.e. never flush the current VPID
++	 * and never explicitly flush vpid01.  INVVPID targets a VPID, not a
++	 * VMCS, and so whether or not the current vmcs12 has VPID enabled is
++	 * irrelevant (and there may not be a loaded vmcs12).
++	 */
+ 	vpid02 = nested_get_vpid02(vcpu);
+ 	switch (type) {
+ 	case VMX_VPID_EXTENT_INDIVIDUAL_ADDR:
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 6ed801ffe33f..3d4a8d5b0b80 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -3213,7 +3213,7 @@ void vmx_flush_tlb_all(struct kvm_vcpu *vcpu)
+ 
+ static inline int vmx_get_current_vpid(struct kvm_vcpu *vcpu)
+ {
+-	if (is_guest_mode(vcpu))
++	if (is_guest_mode(vcpu) && nested_cpu_has_vpid(get_vmcs12(vcpu)))
+ 		return nested_get_vpid02(vcpu);
+ 	return to_vmx(vcpu)->vpid;
+ }
+
+base-commit: e466901b947d529f7b091a3b00b19d2bdee206ee
+-- 
+2.47.0.163.g1226f6d8fa-goog
+
 
