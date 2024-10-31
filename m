@@ -1,237 +1,173 @@
-Return-Path: <linux-kernel+bounces-390811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9DE9B7ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:44:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD729B7EC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE7D81C2175C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:44:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18E91B2145C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905DC1A4F09;
-	Thu, 31 Oct 2024 15:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D401B1A3BC3;
+	Thu, 31 Oct 2024 15:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="KeLHJaz0"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DHxDqkNb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCrJBWAr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DHxDqkNb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCrJBWAr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6B21A2872;
-	Thu, 31 Oct 2024 15:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B3D13342F;
+	Thu, 31 Oct 2024 15:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389487; cv=none; b=WRcpr5EdFAbhe6OFLE1FLEyLSTGnm/1HK0zJAiNGnpDRxWjKRV381NSBjAzGRZHNDCgT3M+J5dfEQZ1/bjwBexUlskNeD4J+K5n4tgt2XEmqyWzK1C2W0mXc4FAUe9Oo3GJSikQ4qJ/LPv+EyUd/bW/aBBqfCKiPHI/DHZSDb7o=
+	t=1730389404; cv=none; b=n25ai6LxaoripCHQodr7rt/wXlmZzOcK5KnB//hXleqDoSQ1FtshBEVEDSzbF5p7JFs6wpoFTm8KEGMqw1sY3JmVyvWB3KijB9QRC9hTlyeVpXJA3DJAfSbbn4mlCbBiR0lIu8izXNYbQt5vy/Z3gY5221aMeHtKtbDpNJjdKDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389487; c=relaxed/simple;
-	bh=xUvoEm3kIjTyucH25w+0XkAce5Kv8YDiDuMz0Af7/O8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pd5Ugvx88BZ4VuTJZKPZdyVzNwmkuMeDhndNq0r9OnvLb9SyzfPW7v5QPC58Gm0zKQ1zrajfyVNE1XS54ZbixSt4TqlMaaWyGIuSWT8cZeYsgX6tAd+3jCWFJVlHASaR51m2OycjXYfsM0I2BwqQKASrQJRaNqUx6jHGnVPlcug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=KeLHJaz0; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730389484;
-	bh=xUvoEm3kIjTyucH25w+0XkAce5Kv8YDiDuMz0Af7/O8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=KeLHJaz0HXeOrDW94fqR2mfCIAFbRkFoITUBpj46/tWtdw9jYNe/ubhq3IL3RoAIZ
-	 R15415gS+T+A+icM3hz4p3WVrkL9KDEX+anRCshS6TbJ3JCHrScI8LBRQQ2HHHi5qg
-	 lli9SEs5VmpsNcOCaGpw8n9HYTy3vzWjn6XQMswc0Mj6ha/GJv0dA2vCJdkgwYPNHC
-	 b164kPFD0aAKhfcABhEBWW0IvXXQ1EKvsHREmcaeAoavoD1pGnXWUDbF9/Na+suDZU
-	 fJL1NgIlazJfFafq0p0aVdRvxXe93dEgHH4f0sBTvh1ApoJnrb7CU20CPiB24DnkRF
-	 vEdNbBJPEoBSw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XfSwq6VSHzZ4J;
-	Thu, 31 Oct 2024 11:44:43 -0400 (EDT)
-Message-ID: <b8e01a00-0405-41af-8316-9cfa28e698db@efficios.com>
-Date: Thu, 31 Oct 2024 11:43:07 -0400
+	s=arc-20240116; t=1730389404; c=relaxed/simple;
+	bh=QIb+KiWW445jTY1jXtXhMes2+kcSRYXHrtlb1c57A/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aq7shM8R6l1SII4bH19EJ1+coBL0G9+NbGmlhDCYS0PsJzCNrbfuyCXmNrWxTZbzJnUexDtwzmjizhJjuW4fTBmv1JzF6cmQbYSxilUduyxWAHilM2K/iCU6/yjPxQ3ybNdKW/k7RT3FpH9Tj8J+hh1Vp8K54nPoxdLySPsLGJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DHxDqkNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCrJBWAr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DHxDqkNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCrJBWAr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 153B11FC05;
+	Thu, 31 Oct 2024 15:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730389399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=DHxDqkNbHxL8nFIB458dOVAhK40c8/5lPlJ9cMLv7Gh2/gfVxUeOo+n7ltlwM/waCPhAaG
+	trX5tptLZ9JKdwNzdNKM0ixt8sqf2UMW7VbOngH88q68/w2c2AzMDzBZVhGWWL4T7d0zEU
+	wEDFQZ5L8B6eTgwUHw8AXu0i23k+jjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730389399;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=UCrJBWAr6RyYmQCmVFq25CHGbrmwwMLPwBfZ8OWYcAlfAT+5WST/GnMLR8xIVynsQ31fYX
+	ED4OEW+BMLkC13CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730389399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=DHxDqkNbHxL8nFIB458dOVAhK40c8/5lPlJ9cMLv7Gh2/gfVxUeOo+n7ltlwM/waCPhAaG
+	trX5tptLZ9JKdwNzdNKM0ixt8sqf2UMW7VbOngH88q68/w2c2AzMDzBZVhGWWL4T7d0zEU
+	wEDFQZ5L8B6eTgwUHw8AXu0i23k+jjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730389399;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=UCrJBWAr6RyYmQCmVFq25CHGbrmwwMLPwBfZ8OWYcAlfAT+5WST/GnMLR8xIVynsQ31fYX
+	ED4OEW+BMLkC13CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 069FD13A53;
+	Thu, 31 Oct 2024 15:43:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LbKXAZelI2fjJgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 31 Oct 2024 15:43:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B2E57A086F; Thu, 31 Oct 2024 16:43:14 +0100 (CET)
+Date: Thu, 31 Oct 2024 16:43:14 +0100
+From: Jan Kara <jack@suse.cz>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] xattr: remove redundant check on variable err
+Message-ID: <20241031154314.576ksnwaruuqqwq2@quack3>
+References: <20241030180140.3103156-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 3/3] tracing: Fix syscall tracepoint use-after-free
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>,
- syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
-References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com>
- <20241026154629.593041-3-mathieu.desnoyers@efficios.com>
- <CAEf4BzaD24V=Z6T3wNh27pv9OV_WaLNQeAPbUANQJYN0h5zHKw@mail.gmail.com>
- <7ef1d403-e6ca-4dee-85c6-e32446e52aa7@efficios.com>
-Content-Language: en-US
-In-Reply-To: <7ef1d403-e6ca-4dee-85c6-e32446e52aa7@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030180140.3103156-1-colin.i.king@gmail.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.978];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2024-10-28 15:19, Mathieu Desnoyers wrote:
-> On 2024-10-27 21:22, Andrii Nakryiko wrote:
->> On Sat, Oct 26, 2024 at 8:48 AM Mathieu Desnoyers
->> <mathieu.desnoyers@efficios.com> wrote:
->>>
->>> The grace period used internally within tracepoint.c:release_probes()
->>> uses call_rcu() to batch waiting for quiescence of old probe arrays,
->>> rather than using the tracepoint_synchronize_unregister() which blocks
->>> while waiting for quiescence.
->>>
->>> With the introduction of faultable syscall tracepoints, this causes
->>> use-after-free issues reproduced with syzkaller.
->>>
->>> Fix this by using the appropriate call_rcu() or call_rcu_tasks_trace()
->>> before invoking the rcu_free_old_probes callback. This can be chosen
->>> using the tracepoint_is_syscall() API.
->>>
->>> A similar issue exists in bpf use of call_rcu(). Fixing this is left to
->>> a separate change.
->>>
->>> Reported-by: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
->>> Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to 
->>> handle page faults")
->>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->>> Cc: Michael Jeanson <mjeanson@efficios.com>
->>> Cc: Steven Rostedt <rostedt@goodmis.org>
->>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Alexei Starovoitov <ast@kernel.org>
->>> Cc: Yonghong Song <yhs@fb.com>
->>> Cc: Paul E. McKenney <paulmck@kernel.org>
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->>> Cc: Namhyung Kim <namhyung@kernel.org>
->>> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
->>> Cc: bpf@vger.kernel.org
->>> Cc: Joel Fernandes <joel@joelfernandes.org>
->>> Cc: Jordan Rife <jrife@google.com>
->>> ---
->>> Changes since v0:
->>> - Introduce tracepoint_call_rcu(),
->>> - Fix bpf_link_free() use of call_rcu as well.
->>>
->>> Changes since v1:
->>> - Use tracepoint_call_rcu() for bpf_prog_put as well.
->>>
->>> Changes since v2:
->>> - Do not cover bpf changes in the same commit, let bpf developers
->>>    implement it.
->>> ---
->>>   kernel/tracepoint.c | 11 +++++++----
->>>   1 file changed, 7 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
->>> index 5658dc92f5b5..47569fb06596 100644
->>> --- a/kernel/tracepoint.c
->>> +++ b/kernel/tracepoint.c
->>> @@ -106,13 +106,16 @@ static void rcu_free_old_probes(struct rcu_head 
->>> *head)
->>>          kfree(container_of(head, struct tp_probes, rcu));
->>>   }
->>>
->>> -static inline void release_probes(struct tracepoint_func *old)
->>> +static inline void release_probes(struct tracepoint *tp, struct 
->>> tracepoint_func *old)
->>>   {
->>>          if (old) {
->>>                  struct tp_probes *tp_probes = container_of(old,
->>>                          struct tp_probes, probes[0]);
->>>
->>> -               call_rcu(&tp_probes->rcu, rcu_free_old_probes);
->>> +               if (tracepoint_is_syscall(tp))
->>> +                       call_rcu_tasks_trace(&tp_probes->rcu, 
->>> rcu_free_old_probes);
->>
->> should this be call_rcu_tasks_trace() -> call_rcu() chain instead of
->> just call_rcu_tasks_trace()? While currently call_rcu_tasks_trace()
->> implies RCU GP (as evidenced by rcu_trace_implies_rcu_gp() being
->> hardcoded right now to returning true), this might not always be the
->> case in the future, so it's best to have a guarantee that regardless
->> of sleepable or not, we'll always have have RCU GP, and for sleepable
->> tracepoint *also* RCU Tasks Trace GP.
+On Wed 30-10-24 18:01:40, Colin Ian King wrote:
+> Curretly in function generic_listxattr the for_each_xattr_handler loop
+> checks err and will return out of the function if err is non-zero.
+> It's impossible for err to be non-zero at the end of the function where
+> err is checked again for a non-zero value. The final non-zero check is
+> therefore redundant and can be removed.
 > 
-> Given that faultable tracepoints only use RCU tasks trace for the
-> read-side and do not rely on preempt disable, I don't see why we would
-> need to chain both grace periods there ?
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Hi Andrii,
+Yeah, makes sense. Feel free to add:
 
-AFAIU, your question above is rooted in the way bpf does its sleepable
-program grace periods (chaining RCU tasks trace + RCU GP), e.g.:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-bpf_map_free_mult_rcu_gp
-bpf_link_defer_dealloc_mult_rcu_gp
+								Honza
 
-and
-
-bpf_link_free:
-                 /* schedule BPF link deallocation; if underlying BPF program
-                  * is sleepable, we need to first wait for RCU tasks trace
-                  * sync, then go through "classic" RCU grace period
-                  */
-
-This is introduced in commit 1a80dbcb2db ("bpf: support deferring bpf_link dealloc to after RCU grace period")
-which has a bit more information in the commit message, but what I'm not seeing
-is an explanation of *why* chaining RCU tasks trace and RCU grace periods is
-needed for sleepable bpf programs. What am I missing ?
-
-As far as tracepoint.c release_probes() is concerned, just waiting for
-RCU tasks trace before freeing memory of faultable tracepoints is
-sufficient.
-
-Thanks,
-
-Mathieu
-
+> ---
+>  fs/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Thanks,
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 05ec7e7d9e87..21beb82ab5dc 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -1015,7 +1015,7 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+>  			return err;
+>  	}
+>  
+> -	return err ? err : buffer_size - remaining_size;
+> +	return buffer_size - remaining_size;
+>  }
+>  EXPORT_SYMBOL(generic_listxattr);
+>  
+> -- 
+> 2.39.5
 > 
-> Mathieu
-> 
->>
->>> +               else
->>> +                       call_rcu(&tp_probes->rcu, rcu_free_old_probes);
->>>          }
->>>   }
->>>
->>> @@ -334,7 +337,7 @@ static int tracepoint_add_func(struct tracepoint 
->>> *tp,
->>>                  break;
->>>          }
->>>
->>> -       release_probes(old);
->>> +       release_probes(tp, old);
->>>          return 0;
->>>   }
->>>
->>> @@ -405,7 +408,7 @@ static int tracepoint_remove_func(struct 
->>> tracepoint *tp,
->>>                  WARN_ON_ONCE(1);
->>>                  break;
->>>          }
->>> -       release_probes(old);
->>> +       release_probes(tp, old);
->>>          return 0;
->>>   }
->>>
->>> -- 
->>> 2.39.5
->>>
-> 
-
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
