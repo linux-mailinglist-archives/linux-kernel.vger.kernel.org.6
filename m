@@ -1,58 +1,108 @@
-Return-Path: <linux-kernel+bounces-390680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26FED9B7D2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:44:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EE39B7D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:44:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5421C209ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:44:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D874B1C20BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF961A0BFB;
-	Thu, 31 Oct 2024 14:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF181A08CC;
+	Thu, 31 Oct 2024 14:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b="STxAeMni"
-Received: from cloud.peff.net (cloud.peff.net [104.130.231.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vi15AuLy"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678EB19C556
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.130.231.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A71A257C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385836; cv=none; b=XyZaU5RoUdOJir9chu67yNUGaN2FXQ4Ger4tjMl/M6FGRcm+ekd0lWLBXoP0DGycpgbHm0/YdP5NZJE4ABjuy4+2rG3QmBpbc7w9v0ESzzS4g2U0FM+71BQgTc2jDPzynGweBobZeTEzWn2hfSfzYr3grzh4Eq1FRDXX8I/PUUA=
+	t=1730385859; cv=none; b=OIebRUofgEDw6PoshFGS6GFO2qi9uezNwjdyf40Oa96n6cHHQPD23V6Hk0zVHc/BQrDcWVa/zypOscQBDlazlwih36GQk5/F1zYcR6bvcQljBaFePQqGOwz5d1o8ASZWrLFSBjvaKMFRBMbkuu81UP6IZHp4AlXNNNBG317GgnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385836; c=relaxed/simple;
-	bh=rpw9RsKT9H0m6OMWubJcr2P9iSXC7bmIUa0tmwt8Spo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QaE6GZlDnke35ZriFq2PyAULNeolTuweA7MWrKofGicrVVmjqAxlt5AgebzAE2b+9OBchG+W0NgVo7fvW66Btu8kY8pI9BQEEqolsLJJF9evePU2mkovF1371wnET8f4M23RYtvywrzN45mW3qC8fMW3pSXoT6tNnlxW0xEpXuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net; spf=pass smtp.mailfrom=peff.net; dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b=STxAeMni; arc=none smtp.client-ip=104.130.231.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peff.net
-Received: (qmail 19854 invoked by uid 109); 31 Oct 2024 14:43:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=peff.net; h=date:from:to:cc:subject:message-id:references:mime-version:content-type:in-reply-to; s=20240930; bh=rpw9RsKT9H0m6OMWubJcr2P9iSXC7bmIUa0tmwt8Spo=; b=STxAeMniz92Vy5FshWHDR1zvVFOmWckd/sCdpC0R2GBtOThacLdPpCH52t6G1alO76uacba78YZE3VjWRHnsy7P3BNYP9TLTWP5kwI9F82paVkfNejwEe+zAdgimHO6Zs11PQUeDgzLeeNJwT1Fi+/PRl+FEMOvljrtmENu7qkyYOPh0GBCMgPa6XZGMWcxNpe1kVuYn+IJ16jdzVMz/1L/rCJliWjcxb0FenABxQbYJ+lcESH520Y3IAGzZVULOgdzeVvsqzn/8rZWM+PLD5O4DZUJ6DWlq+nyNclSQf5sqiuK2Q5aSEaaX66HvavMheLw7BnNoaiiEvORNjGLc2w==
-Received: from Unknown (HELO peff.net) (10.0.1.2)
- by cloud.peff.net (qpsmtpd/0.94) with ESMTP; Thu, 31 Oct 2024 14:43:52 +0000
-Authentication-Results: cloud.peff.net; auth=none
-Received: (qmail 1983 invoked by uid 111); 31 Oct 2024 14:43:51 -0000
-Received: from coredump.intra.peff.net (HELO coredump.intra.peff.net) (10.0.0.2)
- by peff.net (qpsmtpd/0.94) with (TLS_AES_256_GCM_SHA384 encrypted) ESMTPS; Thu, 31 Oct 2024 10:43:51 -0400
-Authentication-Results: peff.net; auth=none
-Date: Thu, 31 Oct 2024 10:43:51 -0400
-From: Jeff King <peff@peff.net>
-To: Rasmus Villemoes <ravi@prevas.dk>
-Cc: Benno Evers <benno@bmevers.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	s=arc-20240116; t=1730385859; c=relaxed/simple;
+	bh=eOYQp7aWWVMoeFl5I5k3uYp1tjZFG3I0RD12yVcpB7o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RC+Y4H7PdxS9IdmHPv7vlczwKLIYWvmMKduQdUt3hm9Lz6Zw5vCvMZbhs2pgFGXIeWZ0A8SL+syKKMgY25z+O/wRLXhrtG25YCqbc+eb3gGrXHLaJuosW795B62fIWq6nwuzGWagr8/SxfBKlBic6e5hyHGO059SFwG1Ba9ijsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vi15AuLy; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1e63so1140364a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730385856; x=1730990656; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wdMedbl2sdFWgBMBruWMRMeZv3n9L1bFDpOOup4ylAQ=;
+        b=Vi15AuLyh6VAKlAEi8jNL659YK53+ob0v7BHs/j3HBrOt64D2tHf3JL3hrTKjejlU5
+         wtmpe3/90uF96dqNmuZ+L1bG+IDpGWicussYl4Pzs9py23GVISGURN3hlduAP2bBhPBc
+         NLUNlYSeAxSIruus9VvwyLYiAcyEPcaedAE1+cPSrH1WZ3cqSrir3TjXE3FSP36eri1S
+         28ROgW5qPwi+7XPTLnNfqlb3V89VtyeGxEIDk2R+ZHicmlc3WBVt6LiygR+LenoHGMPJ
+         sHpPylptQagtWj+zVFBaz9L8tth2bcV70myeHpnnU0DBFPLF8UCXDdiFbnRtLfCQVlHP
+         suxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730385856; x=1730990656;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wdMedbl2sdFWgBMBruWMRMeZv3n9L1bFDpOOup4ylAQ=;
+        b=OqP7+kxSwp1EzDy+CjN+O6dlsGwOlKkAuGpeBidEjcO9f9YMeY53wenWGupmcLZhmK
+         lGRKZeUZG8DIF4zC3ny2CE721XjvM+5erSNltGcU931YCsmBNS3rQ9r9SCem1X/CBVNE
+         XALUTbV+NLGWxqNILpwLW9TNlv//78UyHokMFdJujjrmXEhZWcUfL0Arcxh/C6o41lvc
+         E8IG/+D0Ub8MW3vYhufrs5zsQq1KcfjJy135WaDWRFIe5j7MJn8aG0tc6LxVgd8rCLfP
+         XKZRa8WwdPceb32oh9Zf+2/kQIREg15ZV+54a9S1GheF0FRUlUWrUTANtuvNiEC/8toH
+         f2Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCViYH6u7pZicq7DkdyffGNX8mapf8Pj6GljdoKBQY9xf2tib0LEG/Kw5A4kaSQj/Aku5GT+FEyRFSLxzpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8mCyM00B7TEBHDzJGt6kH4Jrvi/YgbWSOknRcM4OxnZjB1R/9
+	cfuymeg0C42ObsazUFJa++r4vnNL2PijWBJtCn5nRuYQGHxiLgtIWCQ6cDcWXho=
+X-Google-Smtp-Source: AGHT+IHrQIPsgatcH/eK9/hWnih/oaz1AFfeCB1NJO1AFOuD3BregfgaBS5jDWycv+GxWHT8f0qvoQ==
+X-Received: by 2002:a05:6402:2111:b0:5c9:72c7:95a2 with SMTP id 4fb4d7f45d1cf-5cea971bac6mr2932118a12.22.1730385855511;
+        Thu, 31 Oct 2024 07:44:15 -0700 (PDT)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac78cd44sm634736a12.55.2024.10.31.07.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 07:44:14 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 31 Oct 2024 15:44:39 +0100
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
 	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	git@vger.kernel.org
-Subject: Re: [PATCH] setlocalversion: Add workaround for "git describe"
- performance issue
-Message-ID: <20241031144351.GA1720940@coredump.intra.peff.net>
-References: <309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org>
- <87bjz0k17c.fsf@prevas.dk>
- <20241031114210.GA593548@coredump.intra.peff.net>
- <20241031122456.GB593548@coredump.intra.peff.net>
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 08/12] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+Message-ID: <ZyOX16-Fq4mDeHvP@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <b189173d893f300e81b18844a1c164fe4ad5bc20.1730123575.git.andrea.porta@suse.com>
+ <CACRpkdajY9efD_DMwoE0wpKDVf=+kcWzYQXOQMHC+pQS-ntsvA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,97 +111,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241031122456.GB593548@coredump.intra.peff.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdajY9efD_DMwoE0wpKDVf=+kcWzYQXOQMHC+pQS-ntsvA@mail.gmail.com>
 
-On Thu, Oct 31, 2024 at 08:24:56AM -0400, Jeff King wrote:
+Hi Linus,
 
-> We have to feed at least one commit with the "within" flag into the
-> traversal so that it can let us end things. But I don't think it really
-> matters if that commit is the one we found, or if it's a parent of one
-> that we happened to pass "within" bits down to.
+On 23:18 Mon 28 Oct     , Linus Walleij wrote:
+> On Mon, Oct 28, 2024 at 3:07 PM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
 > 
-> So I think we can just set "gave_up_on" to the final element we found
-> (whether from max_candidates or from finding every possible name). I.e.,
-> what I showed earlier, or what you were proposing.
+> > +config PINCTRL_RP1
+> > +       bool "Pinctrl driver for RP1"
+> > +       select PINMUX
+> > +       select PINCONF
+> > +       select GENERIC_PINCONF
+> > +       select GPIOLIB
+> > +       select GPIOLIB_IRQCHIP
+> 
+> Just a quick thing:
+> 
+> You don't happen to want:
+> depends on MISC_RP1
+> default MISC_RP1
+> 
+> So it will always come in tandem with
+> MISC_RP1?
 
-Hmph. So I don't think this is quite true, but now I'm puzzled again.
+You're right! Added.
+However I will postpone the "default MISC_RP1" line after checking why
+the pinctrl driver does not work when compiled as a module (right now
+it's bool, not tristate).
 
-It is accurate to say that we must make sure _some_ commit with the
-those flag bits set remains in "list". And I don't think it matters if
-it's the candidate we found, or its parent.
+Many thanks,
+Andrea
 
-But there's other stuff happening in that loop, after we process that
-max candidate (where we'd proposed to break) but before we hit the next
-possible candidate. Stuff like adding onto the depth of the other
-candidates. Josh's example doesn't show that because it only has one
-candidate, but I could imagine a case where it does matter (though I
-didn't construct one).
-
-So I'd have thought that this:
-
-diff --git a/builtin/describe.c b/builtin/describe.c
-index 7330a77b38..b0f645c41d 100644
---- a/builtin/describe.c
-+++ b/builtin/describe.c
-@@ -366,6 +366,12 @@ static void describe_commit(struct object_id *oid, struct strbuf *dst)
- 		struct commit_name **slot;
- 
- 		seen_commits++;
-+
-+		if (match_cnt == max_candidates) {
-+			gave_up_on = c;
-+			break;
-+		}
-+
- 		slot = commit_names_peek(&commit_names, c);
- 		n = slot ? *slot : NULL;
- 		if (n) {
-@@ -381,10 +387,6 @@ static void describe_commit(struct object_id *oid, struct strbuf *dst)
- 				if (n->prio == 2)
- 					annotated_cnt++;
- 			}
--			else {
--				gave_up_on = c;
--				break;
--			}
- 		}
- 		for (cur_match = 0; cur_match < match_cnt; cur_match++) {
- 			struct possible_tag *t = &all_matches[cur_match];
-
-would do it, by just finishing out the loop iteration and bailing on the
-next commit. After all, that commit _could_ be a candidate itself. But
-it causes a test in t6120 to fail. We have a disjoint history like this:
-
-                 B
-                 o
-                  \
-    o-----o---o----x
-          A
-
-and we expect that "x" is described as "A-3" (because we are including
-the disjoint B). But after the patch above and with --candidates=2
-(since there are only two tags and part of our goal is to limit
-candidates to the number of tags), we find "B-4". Which is worse (at
-least by some metrics).
-
-I think this comes from 30b1c7ad9d (describe: don't abort too early when
-searching tags, 2020-02-26). And given the problem description there, I
-can see how quitting early in a disjoint history will give you worse
-answers. But the patch above is triggering a case that already _could_
-trigger.
-
-So it feels like 30b1c7ad9d is incomplete. Without any patches, if I
-limit it to --candidates=2 but make A^ a tag, then it gets the same
-wrong answer (for the exact same reason). And I don't see a way to make
-it correct without losing the ability to break out of the traversal
-early when we hit max_candidates (which is obviously a very important
-optimization in general). But maybe I'm missing something.
-
-I do think my patch above is not introducing a new problem that wasn't
-already there. It's just that the toy repo, having so few tags, means
-any logic to reduce max_candidates will trigger there.
-
-+cc the author of 30b1c7ad9d for any wisdom
-
--Peff
+> 
+> Yours,
+> Linus Walleij
 
