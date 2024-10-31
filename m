@@ -1,133 +1,128 @@
-Return-Path: <linux-kernel+bounces-390661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2519B7CEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:33:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E959B7CEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A822817AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DF0A281D8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2B71A08CC;
-	Thu, 31 Oct 2024 14:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFFA1A0AFE;
+	Thu, 31 Oct 2024 14:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BadDpcVD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mUxE6R6l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0300319C57F;
-	Thu, 31 Oct 2024 14:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA8181B8D;
+	Thu, 31 Oct 2024 14:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385176; cv=none; b=LiLykRb/tsyV8VjSx/0yDDJOx8gtxnoBUiz2G4KoggL66w1ywABQ8VS51qO0HGITD+iG7Q4+lWheY1wzpeAEeEliNJ5mMyHdbGJ8ZulL6OiowDvPYDGFY7DwMMoFj5m980RH9FbVHE1UhtD+vOKgCSG6UxQ01wpu+3CXzjSKvJc=
+	t=1730385192; cv=none; b=ihwhHeCc20TED5jyfxjC5atrSkCCe8o7xcMaqS2r1nlDkQj/Ii/4Yh61f6ZJEoo8u9yXW3A0J5RlKrPFS1n5EtAT4bmFhKb5IV4ocQI9faXD1g5FkEmxHfujPCrlJQofQ/8D9wZ6TU3rx1WwFVMpZ43ilzKbaebDq5TVBiIeRrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385176; c=relaxed/simple;
-	bh=GdvBqgA9us7PRKsGay4ZUGodHWRvXjW1Th8o7CsH9Os=;
+	s=arc-20240116; t=1730385192; c=relaxed/simple;
+	bh=ynPJoLvXglmyEg/wsGynZevUE2X2f/JoNLwfJ1zvlCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADmedCp2LZieohTMBvBKUZTjSNhnUZe2S4bBWrJxD1a5nM2wTu+AFg2LAo2PY/Gjfd0gXTLOJJ0W63aEdvmjOj1EsNbfMEIPfHHaRW5TH+H8RHgPQZEg/fXQcfAHKXIzUlRFUrG53RdP0Rr7QD6HXoeVz+Tqs5uQqWq/nxCpzX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BadDpcVD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A89C4CED0;
-	Thu, 31 Oct 2024 14:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730385175;
-	bh=GdvBqgA9us7PRKsGay4ZUGodHWRvXjW1Th8o7CsH9Os=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BadDpcVDHkEHKOItwoeeX8Vwio08SysKCwRsexowF/sLGr5NgYb3Wt13+/J5/H8YX
-	 k8eIg/tL99B+Ebxwff1lUqB2s/bKZNmaKaIRMexERMw6JALpoOzLdE2LYC7yP3+mZ1
-	 Bz06UaS4wualVrZ5PFA1fh6N2O/Q3hhuVH6XCSqnvlPOGP1f8ZYhs7BCdhta3y1Ym+
-	 Uu6uMPUoBOreDh7N8nF8Hru3QmDR3DlZaQWiPUXDdhlGn8+yDolVlXhVkenIYuWXaH
-	 fyTWL72AG9e9Fp5sFwdGhswxEpnP0mr84oU87v0Op37ZRaMrb2eBOiPMcHM7GKqjVi
-	 1ioujHHYsgjwA==
-Date: Thu, 31 Oct 2024 14:32:50 +0000
-From: Lee Jones <lee@kernel.org>
-To: George Stark <gnstark@salutedevices.com>
-Cc: pavel@ucw.cz, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@salutedevices.com
-Subject: Re: [PATCH 2/2] leds: pwm: Add optional DT property
- default-brightness
-Message-ID: <20241031143250.GH10824@google.com>
-References: <20241015151410.2158102-1-gnstark@salutedevices.com>
- <20241015151410.2158102-3-gnstark@salutedevices.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6am7neuXrpaBr9YWm4fd6R6fIIMh7yfVE4OIUkvSBuKhBQlzhZsZc84ZOxCipxX06BYhOPUDakO30orJIdP0fIHpLGTOC6zFqw2kwrNrvS7QUGERZ977lfnVLc3+46qj++BdIDa2MoXxbQQ270AlNkCMpppAQgGGGM6i7PDxEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mUxE6R6l; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730385190; x=1761921190;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ynPJoLvXglmyEg/wsGynZevUE2X2f/JoNLwfJ1zvlCg=;
+  b=mUxE6R6lPriGl2JQ0aUchsY6TMWsqKFBieWgJFb0fkdM3r42F5kdxHdj
+   GRIj6IE8MKsONkdRNcxK/aGSkTFGBPsKloj/AOgQ8IVYH7WqTVWYpfriE
+   zp0WqLoYdOEVPXDY7YiPcCrTd4UP5X+dwZhr03exzhLCQsiGH3YkkU1xR
+   RZSLpm+wgDUrCf6220zAJAExxKahd2Kqmfu37MK316SBV+3KFZWk3mjXZ
+   ww9G2h2cG8CF76THY3QVBVNX8Ezb3eWVqCKctSj0ybIjnWzc7sMYJmobC
+   C3T5PRzcQt0kzc8mXTe1AaD8a0UMJUdlFmUOM3qiSFkaS0rC7LIslVLJg
+   A==;
+X-CSE-ConnectionGUID: jexEkTjSRlChI9y2QDTPxA==
+X-CSE-MsgGUID: bVYE8268TACIRemOcANF4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="41492948"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="41492948"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 07:33:09 -0700
+X-CSE-ConnectionGUID: 7RIA3JY0S6ih93TR62tj0Q==
+X-CSE-MsgGUID: axgnRfM8SoyjurbkOhcMdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="87778818"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa004.jf.intel.com with SMTP; 31 Oct 2024 07:33:05 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 31 Oct 2024 16:33:04 +0200
+Date: Thu, 31 Oct 2024 16:33:04 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev, dmitry.baryshkov@linaro.org,
+	jthies@google.com, akuchynski@google.com, pmalani@chromium.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] usb: typec: Auto enter control for alternate modes
+Message-ID: <ZyOVIKGlrlj7kc9-@kuha.fi.intel.com>
+References: <20241030212854.998318-1-abhishekpandit@chromium.org>
+ <20241030142833.v2.3.I439cffc7bf76d94f5850eb85980f1197c4f9154c@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241015151410.2158102-3-gnstark@salutedevices.com>
+In-Reply-To: <20241030142833.v2.3.I439cffc7bf76d94f5850eb85980f1197c4f9154c@changeid>
 
-On Tue, 15 Oct 2024, George Stark wrote:
-
-> When probing if default LED state is on then default brightness will be
-> applied instead of max brightness.
+On Wed, Oct 30, 2024 at 02:28:34PM -0700, Abhishek Pandit-Subedi wrote:
+> Add controls for whether an alternate mode is automatically entered when
+> a partner connects. The auto_enter control is only available on ports
+> and applies immediately after a partner connects. The default behavior
+> is to enable auto enter and drivers must explicitly disable it.
 > 
-> Signed-off-by: George Stark <gnstark@salutedevices.com>
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 > ---
->  drivers/leds/leds-pwm.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index 7961dca0db2f..514fc8ca3e80 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -65,7 +65,8 @@ static int led_pwm_set(struct led_classdev *led_cdev,
+> (no changes since v1)
+> 
+>  Documentation/ABI/testing/sysfs-bus-typec |  9 +++++++
+>  drivers/usb/typec/altmodes/displayport.c  |  6 +++--
+>  drivers/usb/typec/altmodes/thunderbolt.c  |  3 ++-
+>  drivers/usb/typec/class.c                 | 31 +++++++++++++++++++++++
+>  include/linux/usb/typec.h                 |  2 ++
+>  include/linux/usb/typec_altmode.h         |  2 ++
+>  6 files changed, 50 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-typec b/Documentation/ABI/testing/sysfs-bus-typec
+> index 205d9c91e2e1..f09d05727b82 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-typec
+> +++ b/Documentation/ABI/testing/sysfs-bus-typec
+> @@ -12,6 +12,15 @@ Description:
 >  
->  __attribute__((nonnull))
->  static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
-> -		       struct led_pwm *led, struct fwnode_handle *fwnode)
-> +		       struct led_pwm *led, struct fwnode_handle *fwnode,
-> +		       unsigned int default_brightness)
->  {
->  	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
->  	struct led_init_data init_data = { .fwnode = fwnode };
-> @@ -104,7 +105,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->  	/* set brightness */
->  	switch (led->default_state) {
->  	case LEDS_DEFSTATE_ON:
-> -		led_data->cdev.brightness = led->max_brightness;
-> +		led_data->cdev.brightness = default_brightness;
->  		break;
->  	case LEDS_DEFSTATE_KEEP:
->  		{
-> @@ -141,6 +142,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->  static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
->  {
->  	struct led_pwm led;
-> +	unsigned int default_brightness;
->  	int ret;
+>  		Valid values are boolean.
 >  
->  	device_for_each_child_node_scoped(dev, fwnode) {
-> @@ -160,7 +162,12 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
->  
->  		led.default_state = led_init_default_state_get(fwnode);
->  
-> -		ret = led_pwm_add(dev, priv, &led, fwnode);
-> +		ret = fwnode_property_read_u32(fwnode, "default-brightness",
-> +					       &default_brightness);
-> +		if (ret < 0 || default_brightness > led.max_brightness)
-> +			default_brightness = led.max_brightness;
+> +What:		/sys/bus/typec/devices/.../auto_enter
+> +Date:		September 2024
+> +Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> +Description:
+> +		Controls whether a mode will be automatically entered when a partner is
+> +		connected.
 > +
-> +		ret = led_pwm_add(dev, priv, &led, fwnode, default_brightness);
+> +		This field is only valid and displayed on a port. Valid values are boolean.
 
-This creates a lot more hopping around than is necessary.
+So, why can't this be controlled with the "active" property of the
+port altmode instead? That's why it's there.
 
-Since led_pwm_add() already has access to the fwnode, why not look up
-the property in there instead, thus massively simplifying things.
+Sorry if I missed something in v1 related to this question.
 
-
->  		if (ret)
->  			return ret;
->  	}
-> -- 
-> 2.25.1
-> 
+thanks,
 
 -- 
-Lee Jones [李琼斯]
+heikki
 
