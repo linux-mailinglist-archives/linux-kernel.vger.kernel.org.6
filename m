@@ -1,228 +1,216 @@
-Return-Path: <linux-kernel+bounces-391002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F799B810C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:19:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A8D9B810D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 170D81C22CB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35261C22EE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA851BE87E;
-	Thu, 31 Oct 2024 17:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2701BDA9A;
+	Thu, 31 Oct 2024 17:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m7uBDVMh"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTRwBQsi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA5D84DF5;
-	Thu, 31 Oct 2024 17:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4C71B140D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730395155; cv=none; b=EZjg1VEfBpuQCe71Xjwf6tHF2jPzVT7HM6bHZnCEX7lDM7deYznx4ZxXU51bZztNy57n35TPyJiyhelTV5t1cycTa2dV52wp834FTSQ4A6aKTwUizK4zCnoq20FR8LSxjODwt99EgxsMyNdykuAabpPJRR1Qa/Kh66jcEZaGCzc=
+	t=1730395182; cv=none; b=WAisD+fpmqoQVzwnGd/7K7tf7HcjDDluIHz54u1mtO6zLnGAQxsFxk9iKC9caW/YteeYnwMctjpiLzrSaVAvHORg6OSoYj3gUdWatCwT93cV5betGDykRwcIV6POTw6kG16BdV+8+x3p0iiEPAiIMXWrxhGZl8W4nzy0e0MW6IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730395155; c=relaxed/simple;
-	bh=Z81RgYI7DX9G0+oJwfOUwwqUhMbmKggB/1r3M9LqC34=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f1lN6Z+Tj6pf3tEMq3feR+2fe8MDI+lMOfPwzueEaoFqCbZz2wLefCd+qrXolI4zJDoJwEAjTP57ALhSENEEBz4YpIOMBpb2Vu1d/2zw/4nCrUdM+De3cKgwlQ4G9KAalXkZSMD14taQ//pPrW+HEzJxWzIFAABhxzlYJju06+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m7uBDVMh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Z81RgYI7DX9G0+oJwfOUwwqUhMbmKggB/1r3M9LqC34=; b=m7uBDVMhZmFnzJTU02VOUAj1JO
-	5oah4hOzZo/B/uebEzBLchYE2rro6TK1xzFgKevotqIacDpsjarydZMrlJSZ3aHzqsfJi79WYfRHp
-	Qn9we5vYNY9hduyxrwCmLQ25pmkS4f0v+p/QAbjvDeJDwsUiDuGw5E50b5YOmE6MgXbnpVgtXQwlY
-	7xQiAa9V3VZUS54Ql0cMSlTYS7oHEIcdKNFrotQRaCdKhrCQPTZNBQyALXlofGvflK9XkHeJGPfk4
-	oJUPGgUt43SdCHT+UbmKL5Y54y9QsFxes1Qy7WZ0UOSX7x3OcQTebRERrJ929b7Bq/lNP5Jnfotth
-	E77gJ25Q==;
-Received: from [2605:ed00:430b:e0:59ee:279e:5c98:9214] (helo=syn-2605-ed00-430b-00e0-59ee-279e-5c98-9214.inf6.spectrum.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6Yp4-0000000ExZ6-0dY7;
-	Thu, 31 Oct 2024 17:19:03 +0000
-Message-ID: <74db59658c40fad82d681bd1ebcf893c7ec27322.camel@infradead.org>
-Subject: Re: (subset) [PATCH v6 0/6] Add PSCI v1.3 SYSTEM_OFF2 support for
- hibernation
-From: David Woodhouse <dwmw2@infradead.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, Oliver Upton
-	 <oliver.upton@linux.dev>
-Cc: Zenghui Yu <yuzenghui@huawei.com>, James Morse <james.morse@arm.com>, 
- linux-doc@vger.kernel.org, Marc Zyngier <maz@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, kvmarm@lists.linux.dev, Len Brown <len.brown@intel.com>, 
- Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, Pavel
- Machek <pavel@ucw.cz>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
- Suzuki K Poulose <suzuki.poulose@arm.com>,  Miguel Luis
- <miguel.luis@oracle.com>, Will Deacon <will@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>,  Paolo Bonzini <pbonzini@redhat.com>,
- linux-kselftest@vger.kernel.org, Francesco Lavra
- <francescolavra.fl@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Thu, 31 Oct 2024 17:18:57 +0000
-In-Reply-To: <ZyN09BSZqKLXLi6_@arm.com>
-References: <20241019172459.2241939-1-dwmw2@infradead.org>
-	 <172989416837.3684225.4795897590830335669.b4-ty@linux.dev>
-	 <ZyN09BSZqKLXLi6_@arm.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-0dHbCxxpnyAOzGGh7YUT"
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1730395182; c=relaxed/simple;
+	bh=SATOlhjXAD0UWcD77yheOERGFx293ESqTUgEsVi2oFE=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=tpl9Az+E0zTjCX/PVlxLoMvrWhqMS7vD1k0JA4HXOlvASNHWrwX0UNIC+8g7Vmp8OILscFCV2R5YJ3MNtSxzO49ipSWKlcZjh8iIOG4lMF7HpE0AdNB0+SSr6wNusKKUz31TJDlq1nqpkctzV4foEbjKmm7gEMSBZ5sKqxjbIkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTRwBQsi; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730395180; x=1761931180;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to;
+  bh=SATOlhjXAD0UWcD77yheOERGFx293ESqTUgEsVi2oFE=;
+  b=WTRwBQsi8Zcf2uBonr5On2HH7/9x63EVJJLPm9ZJ/kwtwi5PmZkH40Zt
+   pwbRhKKkz5HdwaV4DthqFwVKRToUD0gYC5DzA5NwrnajGsnSA/BILcS14
+   b7PxA6Wy4VbMdlFuwwhXSSur0UyVpF0yNysS09FrovIf0qxg4sZ/xzAw0
+   XKYD3w/Es3grV1Nvk97knZhjIYtw/O3f5L1EJpfcZotfIZbEmfRNu1TUH
+   hZHSRDW7AybyTJws1+HeKZbsgWDwsrg5buVxY8vblmtQVL3ARSSrWo88Y
+   nq9VQT6lRsbWivGDMUC3/wRsnvsbObnRO0xlyTveyrziJGewBX7/PKcir
+   g==;
+X-CSE-ConnectionGUID: 8BW+U7lDQmS96RAp5XLFLA==
+X-CSE-MsgGUID: Rj91vAH7ShCzLr3LJEsvdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="40727841"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="40727841"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 10:19:38 -0700
+X-CSE-ConnectionGUID: 60HWjv43TXKqeprBWd5OHQ==
+X-CSE-MsgGUID: IzIzxF4VTHGuhzv0v6577A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="113474512"
+Received: from msangele-mobl.amr.corp.intel.com (HELO [10.124.220.39]) ([10.124.220.39])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 10:19:38 -0700
+Content-Type: multipart/mixed; boundary="------------29wdsN1UIlcYDRTjohlXVOCI"
+Message-ID: <4d606240-a8c8-40e5-80da-57c9b4d48179@intel.com>
+Date: Thu, 31 Oct 2024 10:19:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/11] x86/cpu: Make all all CPUID leaf names consistent
+To: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+ rafael@kernel.org, lenb@kernel.org
+References: <20241030213310.C4861EC0@davehans-spike.ostc.intel.com>
+ <20241030213329.3253F5F3@davehans-spike.ostc.intel.com>
+ <20241031101834.GGZyNZejzr5A9bNL8J@fat_crate.local>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20241031101834.GGZyNZejzr5A9bNL8J@fat_crate.local>
 
+This is a multi-part message in MIME format.
+--------------29wdsN1UIlcYDRTjohlXVOCI
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---=-0dHbCxxpnyAOzGGh7YUT
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 10/31/24 03:18, Borislav Petkov wrote:
+> On Wed, Oct 30, 2024 at 02:33:29PM -0700, Dave Hansen wrote:
+>> diff -puN arch/x86/include/asm/cpuid.h~xsave-leaf-checks-3 arch/x86/include/asm/cpuid.h
+>> --- a/arch/x86/include/asm/cpuid.h~xsave-leaf-checks-3	2024-10-30 12:26:59.222216332 -0700
+>> +++ b/arch/x86/include/asm/cpuid.h	2024-10-30 12:26:59.238216364 -0700
+>> @@ -19,12 +19,12 @@ enum cpuid_regs_idx {
+>>  	CPUID_EDX,
+>>  };
+>>  
+>> -#define CPUID_MWAIT_LEAF	0x5
+>> -#define CPUID_DCA_LEAF		0x9
+>> -#define XSTATE_CPUID		0x0d
+>> -#define CPUID_TSC_LEAF		0x15
+>> -#define CPUID_FREQ_LEAF		0x16
+>> -#define TILE_CPUID		0x1d
+>> +#define CPUID_LEAF_MWAIT	0x5
+>> +#define CPUID_LEAF_DCA		0x9
+>> +#define CPUID_LEAF_XSTATE	0x0d
+>> +#define CPUID_LEAF_TSC		0x15
+>> +#define CPUID_LEAF_FREQ		0x16
+>> +#define CPUID_LEAF_TILE		0x1d
+> 
+> ... and just to confuse things even more, there's enum cpuid_leafs too which
+> start with the "CPUID_" prefix too.
+> 
+> Pfff.
 
-On Thu, 2024-10-31 at 12:15 +0000, Catalin Marinas wrote:
-> On Fri, Oct 25, 2024 at 10:12:41PM +0000, Oliver Upton wrote:
-> > On Sat, 19 Oct 2024 18:15:41 +0100, David Woodhouse wrote:
-> > > The PSCI v1.3 spec (https://developer.arm.com/documentation/den0022)
-> > > adds support for a SYSTEM_OFF2 function enabling a HIBERNATE_OFF stat=
-e
-> > > which is analogous to ACPI S4. This will allow hosting environments t=
-o
-> > > determine that a guest is hibernated rather than just powered off, an=
-d
-> > > ensure that they preserve the virtual environment appropriately to
-> > > allow the guest to resume safely (or bump the hardware_signature in t=
-he
-> > > FACS to trigger a clean reboot instead).
-> > >=20
-> > > [...]
-> >=20
-> > I grabbed the KVM portions of this series, as they look ready to go. Ha=
-ppy
-> > to take the last one through kvmarm tree w/ acks, and can toss it on to=
-p.
->=20
-> Happy for you to take the last patch as well through the KVM tree. Feel
-> free to adjust the code comment as you see fit.
+Yeah, lovely.  'enum cpuid_leafs' does appear misnamed though.  It is a
+list of *words*, not actual leaf numbers.  There's also very little
+overlap between those leafs and the newly-renamed ones in this series.
+I think that's because most of the leaves we dump into the CPU caps have
+random feature bits that aren't logically grouped and resist naming.
 
-Thanks. that's probably the best option, as it depends on the
-definitions in psci.h.
+The one exception to that is the CPUID_D_1_EAX aka. CPUID_LEAF_XSTATE.
+We could do something like the attached patch, but I don't think it
+really helps much.
 
+> I'd like to unify them and I *think* kvm_cpu_cap_mask() should be able to
+> stomach that (or fixed if not)...
 
+Do you mean we could unify the CPUID_8000_0001_EDX enum values and the
+CPUID_LEAF_* defines from this series?
 
---=-0dHbCxxpnyAOzGGh7YUT
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
+I'm not quite sure how that would look.  I think we'd end up doing
+something like:
+
+#define CPUID_LEAF_C000_0001 	0xC0000001
+
+and we'd still need some macro magic to munge the word "number" into
+there, like:
+
+#define FOO(x,reg) ((x)<<2 | CPUID_##reg)
+
+that could be used this way:
+
+enum cpuid_leafs
+{
+	...
+        FOO(CPUID_LEAF_C000_0001, EDX),
+
+It would let us do stuff like this:
+
+-        case 0xC0000001:
++        case CPUID_LEAF_C000_0001:
+                cpuid_entry_override(entry, CPUID_C000_0001_EDX);
+                break;
+
+But I'm not sure that makes things all that much more readable or greppable.
+
+--------------29wdsN1UIlcYDRTjohlXVOCI
+Content-Type: text/x-patch; charset=UTF-8; name="leafd.patch"
+Content-Disposition: attachment; filename="leafd.patch"
 Content-Transfer-Encoding: base64
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMDMxMTcxODU3WjAvBgkqhkiG9w0BCQQxIgQgXj4JjBxS
-GpJRHt4R/QigzKQdZ0AQGY+kiQkvx1wgwl8wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgATPJ2hSFJxp8lcIdp1Blm/djS4vOdPyZyV
-z/SzILzJZTPHjmYVj1XQbE8654zMpShdYvnyqgwjNJKAcbBRjBko4Ac+irNbJDLWSjlrwMM9cCym
-vqB6csy3ojsGMvg/NI5iW6fPTRYd5s3UOAU3xxG+YsX0Poaeicb4C6xpchcX2wzWL6tOka+1LCWg
-q5fnneDafbvQH1yj/GNu3kcldmdMZud/H8BiVOG0jdxDyrryZNFotcnqeo4Lc4FisNDqXL8n4/yv
-xourtqk/zauPWx4H0z0vgtsTDQ4w4RKWJnjPx85HLyoNK2fc93zAnMQKXF5s64nQO70smj/Q2JPv
-hq5dm4/AUqJkFqg/UddQ2785htFUw+sff35usc5xeS9MBI4+40Wewyt9f29A/S293DAU/oH/UUcW
-C2iRrOkTQfgBfgYTJWEUnN1wRt6ynZPRzfg1MRStGHoBXrHfKZ8y4B2LEPOWtwrVP1CzOjiqNDcu
-t38MJo8xyZeJ/l6TzeisP+PbTL4FGIQ55HcriktLh7cv4zxwx87kHihwi8MxI+8/I37x936KR7GK
-Ww2q83Mr0QKd0MRpofThAOAUnuRdA/haDNld0hI4U3EShsrY40d3Eh+4CPTUrr0RV8/QIf0Cf/4R
-RG16dKo4rJMs9R8JmupuFmWjbwaHCkX5dudfRAgF+wAAAAAAAA==
+ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9jcHUvY29tbW9uLmMgYi9hcmNoL3g4Ni9r
+ZXJuZWwvY3B1L2NvbW1vbi5jCmluZGV4IGE1ZjIyMWVhNTY4OC4uYjQ0ZGJiOTUyZDhjIDEw
+MDY0NAotLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2NvbW1vbi5jCisrKyBiL2FyY2gveDg2
+L2tlcm5lbC9jcHUvY29tbW9uLmMKQEAgLTEwMDEsOCArMTAwMSw4IEBAIHZvaWQgZ2V0X2Nw
+dV9jYXAoc3RydWN0IGNwdWluZm9feDg2ICpjKQogCX0KIAogCS8qIEV4dGVuZGVkIHN0YXRl
+IGZlYXR1cmVzOiBsZXZlbCAweDAwMDAwMDBkICovCi0JaWYgKGMtPmNwdWlkX2xldmVsID49
+IDB4MDAwMDAwMGQpIHsKLQkJY3B1aWRfY291bnQoMHgwMDAwMDAwZCwgMSwgJmVheCwgJmVi
+eCwgJmVjeCwgJmVkeCk7CisJaWYgKGMtPmNwdWlkX2xldmVsID49IENQVUlEX0xFQUZfWFNU
+QVRFKSB7CisJCWNwdWlkX2NvdW50KENQVUlEX0xFQUZfWFNUQVRFLCAxLCAmZWF4LCAmZWJ4
+LCAmZWN4LCAmZWR4KTsKIAogCQljLT54ODZfY2FwYWJpbGl0eVtDUFVJRF9EXzFfRUFYXSA9
+IGVheDsKIAl9Cg==
 
-
---=-0dHbCxxpnyAOzGGh7YUT--
+--------------29wdsN1UIlcYDRTjohlXVOCI--
 
