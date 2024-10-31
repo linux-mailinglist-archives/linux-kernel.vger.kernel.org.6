@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-391385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA0A9B85EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:10:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B4E9B85F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:13:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C251F223B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98A01C20BD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFA91D0157;
-	Thu, 31 Oct 2024 22:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085B61CF5E2;
+	Thu, 31 Oct 2024 22:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCGMVt5Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZfJlibne"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CA61CC16B;
-	Thu, 31 Oct 2024 22:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601A81CC16B;
+	Thu, 31 Oct 2024 22:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730412646; cv=none; b=XOh0mKV2IqQYZ8cOqgmLDdwDNvulF7bBVtcDfG/1Zszx8G7CJ39dAma2kRjAYFYD9boEp6voKb/bPiDT8ZXLZAA/dfubaCWdSNWIol4DAdQsgSqvDT3XFP95hLCftozGb4fobwGeZAweBkUyhPOXmcX0+kCaI1/noIE17KDIpb8=
+	t=1730412774; cv=none; b=M7HIyLsvyuf/aUudDXABzWKPvphT3JI20+J5u+LzDZEHxKC59n/RVHkV4lJGIHKIy+zVpK08TiyVYhZTIG9fcrZef/rUoka2ZZLdEb5Gfmn0z0dj0YIuaBPh0Rqo59WNmPGnMFW419yflnXJTzPRN9L/OzvurVuielHtlUzz06A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730412646; c=relaxed/simple;
-	bh=eJWDa4aohLV/Z7xA2xETjGrhQOcKItwfm9HyMbigK1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YMKzt4JVkTP+BIGpnpQXl9MvasiCAXYg30AlIGj+BPyNPTpFOhp+7MNOp3OuOezrLDeEg9Zf9CzuB3m/9vfndybGvmrEp3zts3JZSYvmUh/KzmwoeAcA5BxQkG56xIEBHwnr/+DdwhWzC8v7nQL/o43FInSdoLlcj7Eeh91se38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCGMVt5Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D429C4CED1;
-	Thu, 31 Oct 2024 22:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730412645;
-	bh=eJWDa4aohLV/Z7xA2xETjGrhQOcKItwfm9HyMbigK1A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mCGMVt5QnrQFSrrinkV6U6+X6+MbhpZLeHAntZF6ihcuMVMPN1Co/j9fNo45bs4td
-	 62u3Y1eVaNTlbHr0INFpD53agamzafgSyLdrkDsVVW9vXlFnyZAX2qORqgwsWQIeHh
-	 vDXY7QuM2biKlOHjiEV3W+EHbcy1BaO8QGsdEalUYYCo4pREXCBpmnvn5RyDgA9QY4
-	 MWcDS4aOkk440yHIr5l94Jha7RwixiFHV8xfACXnb8IFPmoOmc8rbskDbID9E8LLXP
-	 gDhQvA3CkHjagc9bUFGrqv+BxsDhLhvUWcnsADCUpkPUQNCwjaU0xjRa4KbtGn+N2M
-	 ESz24DC7k+iBA==
-From: Kees Cook <kees@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Tycho Andersen <tycho@tycho.pizza>
-Cc: Kees Cook <kees@kernel.org>,
-	=?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>
-Subject: Re: [PATCH 1/2] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
-Date: Thu, 31 Oct 2024 15:10:37 -0700
-Message-Id: <173041263505.1781237.9706368369948860422.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241030203732.248767-1-tycho@tycho.pizza>
-References: <20241030203732.248767-1-tycho@tycho.pizza>
+	s=arc-20240116; t=1730412774; c=relaxed/simple;
+	bh=Mnps1z9CZtcTCg/nw8sc3JoBrVpV1M2y3lSJa3PYIrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KL+Q30PC3xWPTwfutAOTGCZsm5E3ZY/69uYuvUMsOsGxFCbFPc3+cZWszJYEvCNcuVjiIMhxzweFCnjjF7kyhBDS4B67SPAfZkmGBOwbdnF4ihbCBRl5+/FPBKMxR4KVTSjLRIOs3FeSo037v7uoYEBC0sVZ9ClRAc8Q9SJzA3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZfJlibne; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VHf4dV004296;
+	Thu, 31 Oct 2024 22:12:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Qazp29QFIHfzgw2taJxyDQXXd2ZNnIt+g2Q+yY9pOes=; b=ZfJlibneOalJElAB
+	skxx8vAuePmAU8qv5jC+ysfauIn53a2H8VRbRjgvtFzvRRKWVLoFG2HdtRov7jN7
+	l214IcFSggXBaKwZS5/m7yDfdTULAYdI3G2IU4IhIHVtD7HoqfdYGK+Zhl7p2LAg
+	fnmHCd56lomkQqkTPehPXRwfN9YjEapYwPV7lAePpzFDuVjpVyX1+Oy0KeqNOYkc
+	5mX1dRVqTFl8/0H/2urOV3iP9FG8Y00sl32UbiFPipOR1aYmK/Daq3PSkbEBB4DN
+	6YtRTNI8eaz5ZvmrHvkPGE7x04MSRl9Cvsfn4m+CGOy424tDr9gBVxgHtkvR+8KC
+	bWaRTw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42m65pa7sf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 22:12:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49VMCdpg003479
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 22:12:39 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 31 Oct
+ 2024 15:12:36 -0700
+Message-ID: <5ff5e7fe-0901-4099-9e9a-890c2001b46e@quicinc.com>
+Date: Thu, 31 Oct 2024 15:12:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm/msm: move msm_display_topology to the DPU driver
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241031-dpu-move-topology-v1-0-8ffa8122d3b6@linaro.org>
+ <20241031-dpu-move-topology-v1-1-8ffa8122d3b6@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241031-dpu-move-topology-v1-1-8ffa8122d3b6@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: t9xJaZ_xNQO7h3tl6vMk-C5Dr7vKhoN3
+X-Proofpoint-GUID: t9xJaZ_xNQO7h3tl6vMk-C5Dr7vKhoN3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ phishscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ mlxlogscore=893 suspectscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310168
 
-On Wed, 30 Oct 2024 14:37:31 -0600, Tycho Andersen wrote:
-> Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> switching to execveat() for service execution, but can't, because the
-> contents of /proc/pid/comm are the file descriptor which was used,
-> instead of the path to the binary. This makes the output of tools like
-> top and ps useless, especially in a world where most fds are opened
-> CLOEXEC so the number is truly meaningless.
+
+
+On 10/31/2024 2:44 PM, Dmitry Baryshkov wrote:
+> The struct msm_display_topology is only used by the DPU driver. Remove
+> it from the global header and move it to DPU-specific header.
 > 
-> [...]
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h | 16 ++++++++++++++++
+>   drivers/gpu/drm/msm/msm_drv.h          | 16 ----------------
+>   2 files changed, 16 insertions(+), 16 deletions(-)
+> 
 
-Applied to for-next/execve, thanks!
 
-[1/2] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
-      https://git.kernel.org/kees/c/7bdc6fc85c9a
-[2/2] selftests/exec: add a test for execveat()'s comm
-      https://git.kernel.org/kees/c/bd104872311a
-
-Take care,
-
--- 
-Kees Cook
-
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
