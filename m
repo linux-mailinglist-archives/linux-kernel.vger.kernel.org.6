@@ -1,297 +1,198 @@
-Return-Path: <linux-kernel+bounces-389974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED279B73F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 05:55:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A6C9B73F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 05:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7924285BC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:55:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6511F221B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D67413C9A9;
-	Thu, 31 Oct 2024 04:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kxblf9Ye"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7DC13A89A;
+	Thu, 31 Oct 2024 04:54:25 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1780E13D882;
-	Thu, 31 Oct 2024 04:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E466813174B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730350500; cv=none; b=anWrQ/uq53Mz8ZE/fAZIHHAipGqZc8rMNHKTdeQAZcr+mQVurUBIrVMfJS2yYOJ5gih01ISAlnVMoBoSc/qXRN2i/3VTaQeFMQc09j810Rcec5CyPdv5q+bTD34V4FcuWmOwz3vJpPS3ZALY8vJ/YjZAvMuxC6FfnThz7zuf95Y=
+	t=1730350465; cv=none; b=Fx2a+2avwdtMAR10WPLVkEF2kZJQnD7ecdvP1EhIM4i4BfQOAoNFeDQI3laXVq4rH2yLKMwjh8mU5Zbh33vgHokBtbglrKCobxYF47TF1ZqUdqqYO/S6UyEIFHJkZQXEQ5swjBH8DGCOQDNHqHlW9LWrmkhF57RvwXJEjpe0g+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730350500; c=relaxed/simple;
-	bh=k2EJmP2CuBz2UPbonz6DNMdjH6Oi+YKfrabtGtG0sjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ExKUF25CCSgKammN9/Dv+NY5jxLQdagFB3AMktVwnK3tbCv0xggsGlEXZr4M1PpihnDHt4zd2SA0roumCLIcUQjU1mTyKQaBpWmhd2nV1A/yyQMCTkbWcke4fkDRuerKh0Qn8FHvFesRGZ8FBxTw8mt71cjftmjsTc1abV4y8Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kxblf9Ye; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730350498; x=1761886498;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k2EJmP2CuBz2UPbonz6DNMdjH6Oi+YKfrabtGtG0sjk=;
-  b=Kxblf9YeFMKQB9APDjHyITu1OMh44UR6PgX0xr9Dffy7O46yrk8QpriP
-   nrVajgCqnqP/EbUn/YKLvdOqI5KCpOxYJiYG6BqY6235GNfr9LhYZ0DqU
-   tHkBvfDjEQQ8wrSUpmm0DKONYa29c7sVBe7IKkiEzzez4rjrgVA2vVsJx
-   rCsM/red/WhPtceaiZQKMtyumDUbbXb3M2pYvbaqDTsn3manraRPTd8kk
-   1V2842bgIYAH39zZvpyFbJb10pbp334/BGFE8ghj2WhNHBoslxfDQcYnV
-   1LX3BfwbO/oP5OBk5KUVHu9vzOsX44fJO+lAoruDTOJgJOlrS8Cy31RVa
-   Q==;
-X-CSE-ConnectionGUID: 9mpQL2zHQDGkWkwqbqp9Og==
-X-CSE-MsgGUID: v6Y/27vXQpil1sfhIxvzsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="30285868"
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="30285868"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 21:54:57 -0700
-X-CSE-ConnectionGUID: UUM1N/cCQZOfkYnFWiY4Qw==
-X-CSE-MsgGUID: iGGApLbIT0KUw4YadyfFHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="82435844"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 30 Oct 2024 21:54:54 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6NCu-000ffw-16;
-	Thu, 31 Oct 2024 04:54:52 +0000
-Date: Thu, 31 Oct 2024 12:53:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
-	yukuai3@huawei.com, hch@lst.de
-Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-	martin.petersen@oracle.com, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v2 5/5] md/raid10: Atomic write support
-Message-ID: <202410311223.WHxXOaS2-lkp@intel.com>
-References: <20241030094912.3960234-6-john.g.garry@oracle.com>
+	s=arc-20240116; t=1730350465; c=relaxed/simple;
+	bh=y6I2wuZK7ZvBbjMtA4s6V/h9dZcFJgKi76oAoACAN70=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kBSKhqgGxiKZibU4MPSz9HaDOc/jWkhMrd3DzZ9YtWZmkw/8nND2iADF3CALSbUtID23Ku/2eUuGTNyedSM1HhoejyMW5tSk52ZOTGiwZVbJ8yYP3uDWHbxNVBA+zoj8EnHYfGxZ8AcI8cxWnFfmo1dMfHgfvOe2F8+bPgsh39k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so5097315ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 21:54:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730350462; x=1730955262;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gtDbAjdsgzcWKz/FOa3oeNb8HB5AJBpHDCiEvwdNOgs=;
+        b=Ji5Eb1ANjjNZQCjvc+qQVnBuznSM1+vYrocl4cnJod6fcYARZfkYZNV9/oXInfNxKg
+         w054TRQVqiGRlCwLtni9XP1X+3Obp0I4RXNQUHOrjnx268PPeUUM1ul+EMyAAf6lpaOn
+         /wJEN+S3rASxCB2hBwobYX4RkJ++LDDSZouFg5vfyRU0cRD0b5iw7ixb3wO4aVIY4gC8
+         fm03u3WCzTuPH4CxVOShuFHGpESLGCbPD8LU2279x/s363yKfbUxXRQzDGD4CKgsOBfI
+         ihshXICyn5HKE/WX57vM2A8SPgW/6EkSZFiBUa704nO1k3IXbpzHxbcvAGvFObfomSCp
+         jMRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyy6y0NingH8HAdAWPU5SH09zZbBuwhDkPQtFP2xEHaq6qGVjmdvMYbYAukM6WJUXdc2d03ICzXMYFz5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuKFYXRa9lAb64yeaQHupeZXz1fvxmn8+Eraj0khAIgIZyai6E
+	PdtR5cDJpiIvwahZo+5OkWKKj77gRJw9nt6YOmzMYj2QtAmr2V8N9NJCXQXnmp8zaEsoIck2vJx
+	2AhVP8RNCTK/pM/4WgaZlgNy29NfIubHdp2fvJIl0b/c5lrdLZ3OH3V0=
+X-Google-Smtp-Source: AGHT+IHIH8j2LHXa9325YhwJBFYe+BcCApf331ZrDE2/kvziFBEGKho65ZAR/dwGZzL4hYMvzJJhqotuwtc+AQEbpSZeu4zICcDo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030094912.3960234-6-john.g.garry@oracle.com>
+X-Received: by 2002:a92:ca4f:0:b0:3a6:ac17:13e5 with SMTP id
+ e9e14a558f8ab-3a6ac171810mr1430135ab.11.1730350462032; Wed, 30 Oct 2024
+ 21:54:22 -0700 (PDT)
+Date: Wed, 30 Oct 2024 21:54:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67230d7e.050a0220.529b6.0005.GAE@google.com>
+Subject: [syzbot] [mm?] kernel BUG in __page_table_check_zero (2)
+From: syzbot <syzbot+ccc0e1cfdb72b664f0d8@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, pasha.tatashin@soleen.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi John,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on linus/master v6.12-rc5 next-20241030]
-[cannot apply to song-md/md-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    850925a8133c Merge tag '9p-for-6.12-rc5' of https://github..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1346c940580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
+dashboard link: https://syzkaller.appspot.com/bug?extid=ccc0e1cfdb72b664f0d8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=158ab65f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120e6a87980000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/John-Garry/block-Add-extra-checks-in-blk_validate_atomic_write_limits/20241030-175428
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20241030094912.3960234-6-john.g.garry%40oracle.com
-patch subject: [PATCH v2 5/5] md/raid10: Atomic write support
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241031/202410311223.WHxXOaS2-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410311223.WHxXOaS2-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/da8019730dec/disk-850925a8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b1ee80babbbc/vmlinux-850925a8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/462580e2ad54/bzImage-850925a8.xz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410311223.WHxXOaS2-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ccc0e1cfdb72b664f0d8@syzkaller.appspotmail.com
 
-All errors (new ones prefixed by >>):
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffede422258 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007ffede422280 RCX: 00007f69e1b3c569
+RDX: 0000000002000005 RSI: 0000000000003000 RDI: 000000002001a000
+RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000080000000
+R10: 0000000000011012 R11: 0000000000000246 R12: 00007ffede42227c
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+------------[ cut here ]------------
+kernel BUG at mm/page_table_check.c:157!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 5850 Comm: syz-executor279 Not tainted 6.12.0-rc4-syzkaller-00261-g850925a8133c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__page_table_check_zero+0x274/0x350 mm/page_table_check.c:157
+Code: c1 0f 8c 39 fe ff ff 48 89 df e8 87 28 f3 ff e9 2c fe ff ff e8 dd 6a 89 ff 90 0f 0b e8 d5 6a 89 ff 90 0f 0b e8 cd 6a 89 ff 90 <0f> 0b f3 0f 1e fa 4c 89 f6 48 81 e6 ff 0f 00 00 31 ff e8 95 6f 89
+RSP: 0018:ffffc900046bf6d8 EFLAGS: 00010293
+RAX: ffffffff820b7fa3 RBX: dffffc0000000000 RCX: ffff88802fc13c00
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88801e97380c
+RBP: ffff88801e97380c R08: ffff88801e97380f R09: 1ffff11003d2e701
+R10: dffffc0000000000 R11: ffffed1003d2e702 R12: ffff88801e9737c0
+R13: 1ffffffff34887b4 R14: 0000000000000002 R15: 0000000000000000
+FS:  0000555570714380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f69e1b92385 CR3: 0000000073ae6000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ page_table_check_free include/linux/page_table_check.h:41 [inline]
+ free_pages_prepare mm/page_alloc.c:1109 [inline]
+ free_unref_page+0xd0f/0xf20 mm/page_alloc.c:2638
+ dec_usb_memory_use_count+0x259/0x350 drivers/usb/core/devio.c:198
+ mmap_region+0x2180/0x2a30 mm/mmap.c:1574
+ do_mmap+0x8f0/0x1000 mm/mmap.c:496
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+ ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f69e1b3c569
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffede422258 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007ffede422280 RCX: 00007f69e1b3c569
+RDX: 0000000002000005 RSI: 0000000000003000 RDI: 000000002001a000
+RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000080000000
+R10: 0000000000011012 R11: 0000000000000246 R12: 00007ffede42227c
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__page_table_check_zero+0x274/0x350 mm/page_table_check.c:157
+Code: c1 0f 8c 39 fe ff ff 48 89 df e8 87 28 f3 ff e9 2c fe ff ff e8 dd 6a 89 ff 90 0f 0b e8 d5 6a 89 ff 90 0f 0b e8 cd 6a 89 ff 90 <0f> 0b f3 0f 1e fa 4c 89 f6 48 81 e6 ff 0f 00 00 31 ff e8 95 6f 89
+RSP: 0018:ffffc900046bf6d8 EFLAGS: 00010293
+RAX: ffffffff820b7fa3 RBX: dffffc0000000000 RCX: ffff88802fc13c00
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88801e97380c
+RBP: ffff88801e97380c R08: ffff88801e97380f R09: 1ffff11003d2e701
+R10: dffffc0000000000 R11: ffffed1003d2e702 R12: ffff88801e9737c0
+R13: 1ffffffff34887b4 R14: 0000000000000002 R15: 0000000000000000
+FS:  0000555570714380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f69e1b92385 CR3: 0000000073ae6000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess):
+   0:	28 00                	sub    %al,(%rax)
+   2:	00 00                	add    %al,(%rax)
+   4:	75 05                	jne    0xb
+   6:	48 83 c4 28          	add    $0x28,%rsp
+   a:	c3                   	ret
+   b:	e8 a1 1a 00 00       	call   0x1ab1
+  10:	90                   	nop
+  11:	48 89 f8             	mov    %rdi,%rax
+  14:	48 89 f7             	mov    %rsi,%rdi
+  17:	48 89 d6             	mov    %rdx,%rsi
+  1a:	48 89 ca             	mov    %rcx,%rdx
+  1d:	4d 89 c2             	mov    %r8,%r10
+  20:	4d 89 c8             	mov    %r9,%r8
+  23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+  28:	0f 05                	syscall
+* 2a:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax <-- trapping instruction
+  30:	73 01                	jae    0x33
+  32:	c3                   	ret
+  33:	48 c7 c1 b8 ff ff ff 	mov    $0xffffffffffffffb8,%rcx
+  3a:	f7 d8                	neg    %eax
+  3c:	64 89 01             	mov    %eax,%fs:(%rcx)
+  3f:	48                   	rex.W
 
-   drivers/md/raid10.c: In function 'raid10_write_request':
->> drivers/md/raid10.c:1448:33: error: 'error' undeclared (first use in this function); did you mean 'md_error'?
-    1448 |                                 error = -EFAULT;
-         |                                 ^~~~~
-         |                                 md_error
-   drivers/md/raid10.c:1448:33: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/md/raid10.c:1449:33: error: label 'err_handle' used but not defined
-    1449 |                                 goto err_handle;
-         |                                 ^~~~
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-vim +1448 drivers/md/raid10.c
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-  1345	
-  1346	static void raid10_write_request(struct mddev *mddev, struct bio *bio,
-  1347					 struct r10bio *r10_bio)
-  1348	{
-  1349		struct r10conf *conf = mddev->private;
-  1350		int i;
-  1351		sector_t sectors;
-  1352		int max_sectors;
-  1353	
-  1354		if ((mddev_is_clustered(mddev) &&
-  1355		     md_cluster_ops->area_resyncing(mddev, WRITE,
-  1356						    bio->bi_iter.bi_sector,
-  1357						    bio_end_sector(bio)))) {
-  1358			DEFINE_WAIT(w);
-  1359			/* Bail out if REQ_NOWAIT is set for the bio */
-  1360			if (bio->bi_opf & REQ_NOWAIT) {
-  1361				bio_wouldblock_error(bio);
-  1362				return;
-  1363			}
-  1364			for (;;) {
-  1365				prepare_to_wait(&conf->wait_barrier,
-  1366						&w, TASK_IDLE);
-  1367				if (!md_cluster_ops->area_resyncing(mddev, WRITE,
-  1368					 bio->bi_iter.bi_sector, bio_end_sector(bio)))
-  1369					break;
-  1370				schedule();
-  1371			}
-  1372			finish_wait(&conf->wait_barrier, &w);
-  1373		}
-  1374	
-  1375		sectors = r10_bio->sectors;
-  1376		if (!regular_request_wait(mddev, conf, bio, sectors))
-  1377			return;
-  1378		if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
-  1379		    (mddev->reshape_backwards
-  1380		     ? (bio->bi_iter.bi_sector < conf->reshape_safe &&
-  1381			bio->bi_iter.bi_sector + sectors > conf->reshape_progress)
-  1382		     : (bio->bi_iter.bi_sector + sectors > conf->reshape_safe &&
-  1383			bio->bi_iter.bi_sector < conf->reshape_progress))) {
-  1384			/* Need to update reshape_position in metadata */
-  1385			mddev->reshape_position = conf->reshape_progress;
-  1386			set_mask_bits(&mddev->sb_flags, 0,
-  1387				      BIT(MD_SB_CHANGE_DEVS) | BIT(MD_SB_CHANGE_PENDING));
-  1388			md_wakeup_thread(mddev->thread);
-  1389			if (bio->bi_opf & REQ_NOWAIT) {
-  1390				allow_barrier(conf);
-  1391				bio_wouldblock_error(bio);
-  1392				return;
-  1393			}
-  1394			mddev_add_trace_msg(conf->mddev,
-  1395				"raid10 wait reshape metadata");
-  1396			wait_event(mddev->sb_wait,
-  1397				   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags));
-  1398	
-  1399			conf->reshape_safe = mddev->reshape_position;
-  1400		}
-  1401	
-  1402		/* first select target devices under rcu_lock and
-  1403		 * inc refcount on their rdev.  Record them by setting
-  1404		 * bios[x] to bio
-  1405		 * If there are known/acknowledged bad blocks on any device
-  1406		 * on which we have seen a write error, we want to avoid
-  1407		 * writing to those blocks.  This potentially requires several
-  1408		 * writes to write around the bad blocks.  Each set of writes
-  1409		 * gets its own r10_bio with a set of bios attached.
-  1410		 */
-  1411	
-  1412		r10_bio->read_slot = -1; /* make sure repl_bio gets freed */
-  1413		raid10_find_phys(conf, r10_bio);
-  1414	
-  1415		wait_blocked_dev(mddev, r10_bio);
-  1416	
-  1417		max_sectors = r10_bio->sectors;
-  1418	
-  1419		for (i = 0;  i < conf->copies; i++) {
-  1420			int d = r10_bio->devs[i].devnum;
-  1421			struct md_rdev *rdev, *rrdev;
-  1422	
-  1423			rdev = conf->mirrors[d].rdev;
-  1424			rrdev = conf->mirrors[d].replacement;
-  1425			if (rdev && (test_bit(Faulty, &rdev->flags)))
-  1426				rdev = NULL;
-  1427			if (rrdev && (test_bit(Faulty, &rrdev->flags)))
-  1428				rrdev = NULL;
-  1429	
-  1430			r10_bio->devs[i].bio = NULL;
-  1431			r10_bio->devs[i].repl_bio = NULL;
-  1432	
-  1433			if (!rdev && !rrdev) {
-  1434				set_bit(R10BIO_Degraded, &r10_bio->state);
-  1435				continue;
-  1436			}
-  1437			if (rdev && test_bit(WriteErrorSeen, &rdev->flags)) {
-  1438				sector_t first_bad;
-  1439				sector_t dev_sector = r10_bio->devs[i].addr;
-  1440				int bad_sectors;
-  1441				int is_bad;
-  1442	
-  1443				is_bad = is_badblock(rdev, dev_sector, max_sectors,
-  1444						     &first_bad, &bad_sectors);
-  1445	
-  1446				if (is_bad && bio->bi_opf & REQ_ATOMIC) {
-  1447					/* We just cannot atomically write this ... */
-> 1448					error = -EFAULT;
-> 1449					goto err_handle;
-  1450				}
-  1451	
-  1452				if (is_bad && first_bad <= dev_sector) {
-  1453					/* Cannot write here at all */
-  1454					bad_sectors -= (dev_sector - first_bad);
-  1455					if (bad_sectors < max_sectors)
-  1456						/* Mustn't write more than bad_sectors
-  1457						 * to other devices yet
-  1458						 */
-  1459						max_sectors = bad_sectors;
-  1460					/* We don't set R10BIO_Degraded as that
-  1461					 * only applies if the disk is missing,
-  1462					 * so it might be re-added, and we want to
-  1463					 * know to recover this chunk.
-  1464					 * In this case the device is here, and the
-  1465					 * fact that this chunk is not in-sync is
-  1466					 * recorded in the bad block log.
-  1467					 */
-  1468					continue;
-  1469				}
-  1470				if (is_bad) {
-  1471					int good_sectors = first_bad - dev_sector;
-  1472					if (good_sectors < max_sectors)
-  1473						max_sectors = good_sectors;
-  1474				}
-  1475			}
-  1476			if (rdev) {
-  1477				r10_bio->devs[i].bio = bio;
-  1478				atomic_inc(&rdev->nr_pending);
-  1479			}
-  1480			if (rrdev) {
-  1481				r10_bio->devs[i].repl_bio = bio;
-  1482				atomic_inc(&rrdev->nr_pending);
-  1483			}
-  1484		}
-  1485	
-  1486		if (max_sectors < r10_bio->sectors)
-  1487			r10_bio->sectors = max_sectors;
-  1488	
-  1489		if (r10_bio->sectors < bio_sectors(bio)) {
-  1490			struct bio *split = bio_split(bio, r10_bio->sectors,
-  1491						      GFP_NOIO, &conf->bio_split);
-  1492			bio_chain(split, bio);
-  1493			allow_barrier(conf);
-  1494			submit_bio_noacct(bio);
-  1495			wait_barrier(conf, false);
-  1496			bio = split;
-  1497			r10_bio->master_bio = bio;
-  1498		}
-  1499	
-  1500		md_account_bio(mddev, &bio);
-  1501		r10_bio->master_bio = bio;
-  1502		atomic_set(&r10_bio->remaining, 1);
-  1503		mddev->bitmap_ops->startwrite(mddev, r10_bio->sector, r10_bio->sectors,
-  1504					      false);
-  1505	
-  1506		for (i = 0; i < conf->copies; i++) {
-  1507			if (r10_bio->devs[i].bio)
-  1508				raid10_write_one_disk(mddev, r10_bio, bio, false, i);
-  1509			if (r10_bio->devs[i].repl_bio)
-  1510				raid10_write_one_disk(mddev, r10_bio, bio, true, i);
-  1511		}
-  1512		one_write_done(r10_bio);
-  1513	}
-  1514	
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
