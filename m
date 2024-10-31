@@ -1,152 +1,113 @@
-Return-Path: <linux-kernel+bounces-391471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B719B8796
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:19:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEFE9B876A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010FC1F225AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:19:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD41DB21D74
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADD217BCE;
-	Fri,  1 Nov 2024 00:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C7213211F;
+	Fri,  1 Nov 2024 00:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="k6z5/x2Y"
-Received: from sonic313-22.consmr.mail.bf2.yahoo.com (sonic313-22.consmr.mail.bf2.yahoo.com [74.6.133.196])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R56GkXfw"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF5717C8D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.133.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0102E1E47A4
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730420326; cv=none; b=bwoyOkIXriyRWnCZheJ8lTTQJbYTe5ltfPMN0n9hyX6onXbf0zcXqxcisF8Pu/MuVKGYlJ+xZ2bjU0rzMKeaZIPvR/22svgPJ6X+/BmSwCznnA22O/8oiwDLNeYrNDLKfBwsyIabMWVuc9IMbGfrz8Hbn/urO1XsAAh3MuEB39M=
+	t=1730419206; cv=none; b=MQgl9l8C64s8TS2oVBUyEIVt5sA2Trnh/GmhiUtce+Fp1h6hBq2xgJEj4j1tzRYfgqxIYgBJOBVgZKOp6HY6pA3cpH0NGZ2wTgNeqWOnSnoKeSedKzwWX1X554/bg6DdH8+oMrTLglAuo1baJ9hYTj/gQKo9pCJY7UY5/nji/7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730420326; c=relaxed/simple;
-	bh=bGeCFlDKVwcUrsRrfOolRi92r08DaTcp1HW8qctO0ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LyFDMsq+I2cGxNcbY9fPk/SNz7qNouUTOVxaLZtYJ7XRskwKR+0DYAM5PStKuOUK+CQGzDvzbLsLNbqnIzWO/0jHS+IMXJTJzhXDNMmuw50EHNjkCB7l5Qg2oJ/BT47JkSauJW6eWaz8cgRISurMrUnrRJe+g5MVXp3Ne2gDLEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=k6z5/x2Y; arc=none smtp.client-ip=74.6.133.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1730420318; bh=eu4JLi7eLmvP4ETQmNluHXDkiwbXDA/WottlZNR6SF0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=k6z5/x2YzVXc95KjUvSka2gJeZJYTPhJFdoIL7CHZPCjhRqArxpIQUOvj4XZwUzsxYo8bwPRLtYdjIHvrhcG5nUAnVD0n8x6kdmEdfnwqh/DSgT7s/Qn721BM/hp2sFYhSV+7ADIgb/DiPBwUrDd9gn/xNBTLYPdW2blk0gPPR2gx6keFIcVvEoL2XyCIaEpf+fufzBxgu89ZAxRpytSzCQ08PFceQ7F1CtSQygqqrTv9dfStu14Y60T6uudp0KUwgNGqAxDpvPs9FNLZz7LmtxeC1QCTajhk8IOuWn75vwUod6iIs6u5BzbWkMHn7Urwkj508oddp4y1Y2JP10dfw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1730420318; bh=eicSnjg8lltBsBAkQc/0iuED1EGrelighHMnNM1kdBt=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=UE3AoxupwXkREEnRnYgL7aXZqiKKYYgaepTCZv39Kljon3hP5SBoDRn/ern86OiD8l2uTXVNUxjfkmOdpMChI7C3rXJYf977RREGVt11k569n6c/0V7zqdNY4CkjG0U7luX5Cr3QDfPz5DnoAgsslHXZ0OSzBPmbjZRlDBTkpSSGOOjCEkC3THGAum8ZLxGZCxjyw+x3Sfb0pDo3E7dNKW0MMOxPuBXoHHr8XDetTZJzh3RW3IdHmO8OyZSe+lsVDbH4EvTI1GCHKNmpyQrK4u8QaSLFiinKJkuD+rRxZwjzY8vZzDI63GAB84nyXldbrVPROUzenh7tWzfIWLrg5g==
-X-YMail-OSG: JdQfgtYVM1n5tcS3SqmucOjrTFRw.RVpYkQtxq_APZq4BSI31ret4rbPS3lqWNI
- Zd5OhcVOUzZ3jx78ZLx9KfrUstkrllRV8flBe.59bGngygJ2oE67YSEMl4a8D4obFQyRophaulhB
- 6AO28jMh89u_thyvVdxMd1wOmJdOGFjyZlTK97Y6cy_r9BfzCiekRZTRGqaWrxdhjGP.NTC.0AkO
- 93AHqaKpIGgoCEjtdNnqMANm8RmEXTY60df7O3TUzIsOgHwBfkbYYbvwxDD7Rn7uw6R7wafM5GLo
- A6W21rLP2MKUtXGPxYiczuW8McJDabECNwBK3SqyHlPUrdcHoHoxKMozMRCTTReg9_ch24jCOGLH
- 4MMPHiFHQ8Xh_Ax78SFRg8U8ol1nwJ4NRvq7E58ZT.5JGLW7omJ3BQMxvS5Sbuy8M6qay0MjVyfZ
- qXQl7qinJrlV4fAZYkyoYJTI2iLAOEoylPh8QcxhIRFuq__f8LM72tfZvQTk2tflHlB5I6bhbU9n
- oXG6llfg28chQGGeBJNuL9d7zfnF9deZgzQq5ublpbSQLspLdLspsiIRFA3TIdL9qoDjbhblXd1y
- ZnBncnUolv1U8d.KzqDqJTwNQzT8gQLXUbvEevP1iGny_JLm.jIj9OJsRGL2RTcuutNMgtPzcXLO
- diSEmB0Vw0VjaCi_BbmQvyWUbMMYUmYcJP1IFPiZJMeT1JiTEv3J6mHRPBkoUfL_xyyt87Ikjj0j
- qIO7bWPzyazA08j_P3hNTvgfWlQves2YZBpBZgxQcQ65EobL4qn9q1XccUCxVyut.bxSb5psOqRA
- jOMqEJATd8xES9u.EhrcjiFLk5VnpUYPE0q4k2cq3vQUVG979CNlXO8CTKVBGsVdGh7RD7M5CbQo
- vMMUp2lcp4QKq4arnAKIwn8DNnd4epjKFltjlvM_XuTbWu2q6rf6pVEVUe63pxXsxrWhkDMkEfjE
- Mjvd2RXbUnBV81lVKK33pJBZwcLzaPiMt01Myzl8sew6pEcmWFkjsyT0L90BiMv.Geaa7_iFVnjc
- X7AWonIwEMIXzXkCK9MF8pGNJIn0sOnoJvE1p0ytwaEcMH4tCodNPNsDc6MuNjZgU7OAxzw7VaGf
- 8N82sRc1M.ArbRF9wMzuZWsQ6tWJlzeBMvrn_0zBinoCbtrPFeuT3LbkyL02UnRCABf5o0nHKdkT
- o9NP2sh0lg9gChaa9LM3CUZDwuIuiNRBSEkUj8c2vML76UNAcFf9OVTGhua6H3dK.SVZtZvybGvZ
- BlDciz0UPENNr5MkmTzIB89xPuCNS6YIAqpTkyiufbSv9.hf8XESWuJkDq0M95tWSAt6Y1x6Q1yO
- _xdDGjWtDs7YFaugkDgzO.fjXH4yA2uiJOWLOmHrxo39Q2c1I.bkEtMOTfuGpaB41wyJceEIk90q
- 4uNRBhp87tTI0mT2vRJZxqLnvqaLjbTQdEZO4cCqmLyhbp1GF6rIlov9wrAOibBz8fOH_06UOfnl
- jdnNMOclf1dphshxxvttD1lwaDZAF719yBeKJ6ZP.GsycGt6uVIX_z.90AgUH3Bz7tGIjQLoFVKH
- usrgvEyDKDBUlb_BbYK5gGoOF3nPKh_gVV85D0.t43_hk5ippRFxAx2PEWVZfdh9FRNR2JZnaCh7
- dV6LfLGIII0X90tGSkCxusA99woXMRs_CUXpDtr6jwHH_rE7bTjyOFwh4AMjStEO9LDm5crKvbSY
- HX2zjZ.9Cuflnp24ZpuIcc_C_JvuTLmPWy24aVBj5grlc7pfRWzgfWEaXX7I24R5WBLTqrBFsuhH
- h52qh6uTWhgT2ck1KKylKqDy1vH9UTHX4mAOnlhK5Fre8VHuolQGIRBs.SS5PAEL2peTcZ8J2RdC
- O6CMZAvp5ocYn3GRR5VP17R_qmYjtXY1hzTN57T5nDfK7qTS_SymXR9C1K5hKZuEEEKDNaq0OEt_
- qQaDoc7VP4ngkWkLU19otSZHM5EMhnOy7.VOKCC43cZ3YXQG_YBNNA6Lc88yd9M.yNzl2.8Zgekw
- XQB6yYSclI.W6mVe0u_ZecI7NmeWaelD8ClGOk9RP7ArL4w7Wed8xyvLUuYywsIt0cupsJtWkIsj
- drB3SskGLMIdig1UQdugwPF_GPZBubmseLta_Fi3gq0CO8KLttwt7_XxLe.EhWwS6hKq7q2_uROa
- 6IVzUCEmug3SXNCmVW68JhI97oCtQurk.7qol.djB7GppriU.qLswG9h0i8wDQpkQv3X3Qjk_YuC
- KpvXtBXPWykvrjFSd9Zc4nm.X2.PeEu.Xk50iHPLv712ATHW7kUi34QS36djBEp4VgyPywoAzYjh
- WXcPrlYMObDr3SRvMyE1r
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 23c0fe68-1315-4fb8-8fd1-1cbca2149f8b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Fri, 1 Nov 2024 00:18:38 +0000
-Received: by hermes--production-gq1-5dd4b47f46-xx4tp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a32cda00a9a9713e3e947b5095f6c21c;
-          Thu, 31 Oct 2024 23:58:17 +0000 (UTC)
-Message-ID: <dd727620-9823-4701-aaf1-080b03fb6ccd@schaufler-ca.com>
-Date: Thu, 31 Oct 2024 16:58:13 -0700
+	s=arc-20240116; t=1730419206; c=relaxed/simple;
+	bh=dwDn0TURDpWQmYISsxqoCtZReaNWkDo/PboWB6G0Owk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Kjlwvhr+7YErgzTDVOHrb7BnfBSdFykKipvXcBamKyEKdcnXAo4VQ/8+x7+LwTpKrjy8w7mv70fevZ+RaGFVwfMCkiXZWAu+WyIpBu4BQeTCsBzPqjA2Mg4MSi0VVFsD/UkTEqsG5ZEC4Fl4StfNx77P/HsU8ktQCw7A+rae5pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R56GkXfw; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e297a366304so2490006276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730419200; x=1731024000; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cEt3MVqqxDBbCecmuXKd75lsXhmWRHU5J08RIUulB2g=;
+        b=R56GkXfwinT9W16ByaGxSoECb/FeGethy5g0k1W96PZIrwQZfLH8H5+znGLkuiYM3J
+         f1azHLTsdALoqPNyuhpknq7cnRPOqr0JQsCs+PU9SWgWqeKSzNA2NEB85VVtq/AHn7kS
+         Fq4GK5L5rdXgSgXndkFCZNtNXBKZO8cvWqZv+DwpZ9rImdt2Tbk6YNv53OaW5qZ7ZtGs
+         y5gPIUlBukw/LDivvCcNDB3/3qQ88EvW+hJDtAhI7A2g3gSurook4WosrntMNZ750yaa
+         X2JmnFh9wsC3s7JL0TCfY59UqbW7facYJfTdS8g5zVq1qmkA9ArQRnMmMxYDyNF8typ3
+         GooA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730419200; x=1731024000;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cEt3MVqqxDBbCecmuXKd75lsXhmWRHU5J08RIUulB2g=;
+        b=nYQ1k0pueub692PBR7HX3bOtXo0Gm1wNiXqum6VAbKPtoXJcMyzJy2aFDu9mnURcin
+         qLywCD8IO66RacvlgJeFYuDpU9LH32g2NdwGquEWRrXQAr6ojGD5xfJeGBcxVVwA3ZPB
+         TXugBLEYBcoQqHkUnWHat4UFW8nFsL9OSNJsBcYJFdUSN6fbHqde0UB1PoT01qr9gxil
+         xhjJHv5CQ8amQMIiDytzO2ufy7oKw7puUwSez2sSlQ4D2kN8VVM2yOXGaEG1d/X1Wf3A
+         mfwQ4pC3NZlaiJgmui/baWe9zuoEWp67tzcVWrvSI3qwDpggEYLe225pl7akwXvI0yMf
+         yy0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUNZ8m7Cgelm1O9+eg9r450Uh/1553cxoz4Tv9jvw+++1ye8JMmEcaeUSyHDkaiU7/i1015HxPJ8EVkONM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTx5nYvZ4LbeMtQoM488D2TyCWaKkU7682gAtaUUnD3xtHS7c/
+	GdyTSUknMXlkqbh82JTjDXsi5IJb1FSOXaVJ/fT2mTmKd4nPPzRjcwXIVGUL2U2hzQ/saE+H6BX
+	3mw==
+X-Google-Smtp-Source: AGHT+IEXZV3G3jh5U5saB7BhlzBPRlhCsxeQIBe08kK/8AySWU+uLXqwjkKqdarvd1ytRanLG3qi1O/CSHg=
+X-Received: from amitsd-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:827])
+ (user=amitsd job=sendgmr) by 2002:a25:abc1:0:b0:e30:cee4:1431 with SMTP id
+ 3f1490d57ef6-e30cee41523mr14871276.1.1730419199960; Thu, 31 Oct 2024 16:59:59
+ -0700 (PDT)
+Date: Thu, 31 Oct 2024 16:59:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
-To: Pablo Neira Ayuso <pablo@netfilter.org>, Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
- serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
- penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net,
- netdev@vger.kernel.org, audit@vger.kernel.org,
- netfilter-devel@vger.kernel.org, Todd Kjos <tkjos@google.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20241023212158.18718-3-casey@schaufler-ca.com>
- <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
- <ZyQPfFvPD72rx4ME@calendula> <ZyQRgL_jWdvKgRl-@calendula>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <ZyQRgL_jWdvKgRl-@calendula>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241031235957.1261244-1-amitsd@google.com>
+Subject: [PATCH v1 0/3]  Add new time property for battery charger type detection
+From: Amit Sunil Dhamne <amitsd@google.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com
+Cc: dmitry.baryshkov@linaro.org, kyletso@google.com, rdbabiera@google.com, 
+	badhri@google.com, linux@roeck-us.net, xu.yang_2@nxp.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, Amit Sunil Dhamne <amitsd@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/31/2024 4:23 PM, Pablo Neira Ayuso wrote:
-> On Fri, Nov 01, 2024 at 12:15:16AM +0100, Pablo Neira Ayuso wrote:
->> Hi Paul,
->>
->> This patch breaks nf_conntrack_netlink, Casey mentioned that he will
->> post another series.
+This patchset adds a new time DT property to handle time taken by
+battery charger type detection completion.
 
-I have a fix, it is pretty simple. How about I send a 6/5 patch for it?
-Or, if you want to fix it yourself, in ctnetlink_secctx_size() remove the
-declaration of "len" and replace its use in the return with "ret".
+Note that BC detection is based on
+"Battery Charging Specification Revision 1.2".
 
-> Please, see:
->
-> https://lore.kernel.org/netfilter-devel/ZxpxZuErvXSLApsf@calendula/
->
->> On Thu, Oct 31, 2024 at 06:53:38PM -0400, Paul Moore wrote:
->>> On Oct 23, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Replace the (secctx,seclen) pointer pair with a single
->>>> lsm_context pointer to allow return of the LSM identifier
->>>> along with the context and context length. This allows
->>>> security_release_secctx() to know how to release the
->>>> context. Callers have been modified to use or save the
->>>> returned data from the new structure.
->>>>
->>>> security_secid_to_secctx() and security_lsmproc_to_secctx()
->>>> will now return the length value on success instead of 0.
->>>>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> Cc: netdev@vger.kernel.org
->>>> Cc: audit@vger.kernel.org
->>>> Cc: netfilter-devel@vger.kernel.org
->>>> Cc: Todd Kjos <tkjos@google.com>
->>>> ---
->>>>  drivers/android/binder.c                |  5 ++-
->>>>  include/linux/lsm_hook_defs.h           |  5 ++-
->>>>  include/linux/security.h                |  9 +++---
->>>>  include/net/scm.h                       |  5 ++-
->>>>  kernel/audit.c                          |  9 +++---
->>>>  kernel/auditsc.c                        | 16 ++++------
->>>>  net/ipv4/ip_sockglue.c                  |  4 +--
->>>>  net/netfilter/nf_conntrack_netlink.c    |  8 ++---
->>>>  net/netfilter/nf_conntrack_standalone.c |  4 +--
->>>>  net/netfilter/nfnetlink_queue.c         | 27 +++++++---------
->>>>  net/netlabel/netlabel_unlabeled.c       | 14 +++------
->>>>  net/netlabel/netlabel_user.c            |  3 +-
->>>>  security/apparmor/include/secid.h       |  5 ++-
->>>>  security/apparmor/secid.c               | 26 +++++++--------
->>>>  security/security.c                     | 34 +++++++++-----------
->>>>  security/selinux/hooks.c                | 23 +++++++++++---
->>>>  security/smack/smack_lsm.c              | 42 +++++++++++++++----------
->>>>  17 files changed, 118 insertions(+), 121 deletions(-)
->>> See my note on patch 1/5, merging into lsm/dev.
+This patchset depends on the patch series:
+ - https://lore.kernel.org/all/20241022-pd-dt-time-props-v1-0-fea96f51b302@google.com/
+
+Amit Sunil Dhamne (3):
+  dt-bindings: connector: Add time property for Sink BC12 detection
+    completion
+  dt-bindings: usb: maxim,max33359.yaml: add usage of sink bc12 time
+    property
+  usb: typec: tcpm: Add support for sink-bc12-completion-time-ms DT
+    property
+
+ .../bindings/connector/usb-connector.yaml        | 11 +++++++++++
+ .../devicetree/bindings/usb/maxim,max33359.yaml  |  1 +
+ drivers/usb/typec/tcpm/tcpm.c                    | 16 +++++++++++++++-
+ 3 files changed, 27 insertions(+), 1 deletion(-)
+
+
+base-commit: 0fc810ae3ae110f9e2fcccce80fc8c8d62f97907
+prerequisite-patch-id: c08696694dabcbb86b458a935a9cbbcbabb75672
+prerequisite-patch-id: 634924883df820956acb33941b659e8c9ef85d1e
+-- 
+2.47.0.199.ga7371fff76-goog
+
 
