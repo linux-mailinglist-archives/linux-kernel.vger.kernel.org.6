@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-389845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E699B721F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AEAE9B7220
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:45:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D20285C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEAAF2862FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739B413AD32;
-	Thu, 31 Oct 2024 01:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DB013C906;
+	Thu, 31 Oct 2024 01:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fBiGvLyM"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OeazsVk5"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB9213957C
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D199213AA41
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730339016; cv=none; b=YKAgKoFqRNA3Exs5aynejcgxir9HhF/R1jxzuFcO0XmipccKtXs6YzF2VvrteNaODPTPhX4rZX1gVfUaE5n5qGeOxLtjjs2vEUZcDmPL8Sk1wjZTWQPlfPi8RPI2zKdN07fn4X/ZON16ewWq8G8AO0Nffp9xbaVSRNh5gBDBNrw=
+	t=1730339019; cv=none; b=YV75ROKazl7BGez3hPVOZ8i+WxxDyQKJq5/Vk4VJVVR+LqQotyGXj4swfyhlfWpsUc2c+1OexH+44GjfV/G4/ugHaG/ld5GkuGSi3m2Gv3VNiNnIF+Daf9bLSi3bPKy3dY/DJasMS7NI2SAzsWM6pQGSf7a+Pg0wDQE+bfk0wiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730339016; c=relaxed/simple;
-	bh=OkgfakVEBzNhVQvYPoWUWgsb9ea6uiwfv7CjO2/5vxs=;
+	s=arc-20240116; t=1730339019; c=relaxed/simple;
+	bh=qKQOsPnZUvFJyIQxLl3j+FlzyZDOhBy3IVqiYH6w9gc=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=deFakQX3fi9w6yqx+ymYwJaUEkjqfTeXt+8uX+JqCTIuewrd76eefJwDC3gsxQfPlizffsheQcfdaT5IyVzuIdf/uach19qKWRYisRVipLMj8iChRrM+SXezZ54xXNOQs1RuoUsh61P34cCKrExg4Rn2wKDda0FJ2EvOYZS4mcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fBiGvLyM; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=tVDPamqV1o2mHYxA/l4gGUCAWQmVzKsj2Lkf0XqwsxPC23jIzUc1qrfw5sqv6kfdL5YWayG48gBa0Ly/1kt8Tx9yUXEam2VZM7jgDGyZM+eBFYWWfYgAjwF2CNfKqCS8vENRSulCi3632NlwK8Ks0FaTR61d/tgmCEuTJ5qYHvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OeazsVk5; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e24a31ad88aso750751276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:43:34 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30daaf5928so914181276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730339013; x=1730943813; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730339016; x=1730943816; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zVk767eKKMka2fJeUsflenyL0QHm0J7Og37hcfkqc+Q=;
-        b=fBiGvLyMq42/oAsJG5k/cqpY+JGLqjgeSUtNLy3Bu4ya4bNDFMkgqgBu++mAxghhdX
-         JnETCbuO53ZbNfnUjd3xSf/9UcT72mvViU7cUFPdwvzF3NqXHg00Lz5tNlttsFKX2Jrd
-         lmSO/vWuaB56UKnyebSj525XlXEso1GTsB9xykk1zLXSoSf5q9qK4I23KEXwEfE37eCI
-         1jPyR2oUOh28fvFxc4mdjEYoofC7w4oW7AhsiHFlVA8wwWK4bGFDFdfn3qukWFh08kZW
-         TUYRDWas4npBpA34inscwMA//cibAY6A4x3nJyQxgSvFmgYRAElM30M7WcXNqVL+5zIx
-         zIYg==
+        bh=6uiHAaKIX2yVkUStL8pjT7UngaZd5XqJSnRpP3LDu9o=;
+        b=OeazsVk5jyYpSMIKFio1cE88jSGj3g3EzvrjzIGGLEzLHUqE9RkbjwTajJ+l178Tou
+         kFRRjSKGsQTvLkzOz44o9NvjXRkIa/oTfx9LG8Agr8SPB9Hwch3z01SgAMV5JCOleCIC
+         6LtLYIPe+izW+ikG8gSOWZcu0VPjwczxJgbTQ/JjmdLSw1ISJQJCTJRo8JrMYdz5JUD4
+         OuUoALx8l1gzcTxjoveTLooNpeFK6BTBQKBhAn56lmbGgL1Xz0EhjhCyaLNtgnUR3H5Z
+         CSMqCexaFDW7Z/lBO6VGcM7fkrea29WAlXCcaGeA8okoOEs90j4C0pj5R0Rkq4kBdVXm
+         U+NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730339013; x=1730943813;
+        d=1e100.net; s=20230601; t=1730339016; x=1730943816;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zVk767eKKMka2fJeUsflenyL0QHm0J7Og37hcfkqc+Q=;
-        b=MSh8M3ZY6X0v3doQxl6IYye6WIY0tt9QoOFiZy1jfTLNqB6MBgVST7BTVy5NlqW9Mu
-         tYp9iIcAAknTxYKuI4GGYLhOMHWVvnVnYIcEizjT1u/3Dn7kk5mXgQ8vYxLk3p3u7q3x
-         zim7mqIlc0PnjtUK/RJxFw1CvnsoEUe8T7Pwo/2m9CqtaB6wfOrASVUyr7Szk/HNuiz9
-         dFRzmUaGHGnCAOsvtmhSZ6ESICj3Aph41M9eWE26O+G4vWCbXhZ8v7qmM3y6b8n8BKu0
-         qdrCurBR8h8HdyCj7NhJWZQwtU+8ZBa9l1+Zc/wekGtumdAVMZGG7mo378Hl0mjaNXw0
-         6eaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyQoaVJ5/AR3fPi5E3X4NATWiu3Y8ijoN1+QpkWmIPGigjvy4lzA7xA/WePfpgJRfc0cC3BvQQBouNyIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYs9LLnf5hktBquMhJHRhQvOjYHBOiDoPte4hWqdg60ROMH2pe
-	svsIvFK7N99DTmRSee58aY2YcnFRW3QHJJKxCizETjQ4SoX3vucAUkRvyXEQpX0kT8O+UZ5nQFU
-	jy8grPA==
-X-Google-Smtp-Source: AGHT+IGpHHG8N7FxAL6vCvTXmjIng8pUhJCdXh7OTikcvfaqC5gJYr1V+cxcaRgy8j8lsb6l5WCpw3LtqDl5
+        bh=6uiHAaKIX2yVkUStL8pjT7UngaZd5XqJSnRpP3LDu9o=;
+        b=kIWhu4FzoHfXQCjVXymAwwed/XEYc4UldShfZvxbhys16KdDW19vcPtRb3AuJcc+CO
+         bple0cGywcca8G52n6kOSwuDth6u90o09HsPIr+umf5OY5VD9acJ+LtcIJBKok6McTES
+         XQeNHM76qUolvYh9LDhACNxJmcZLg9/COL1GzAWpTAAqNawvp/Vt5cyfbbrsMKjvci1C
+         k7Y0WducDEqgwrqGYSmyk7ms9iJ6SJWTYoPaJ8tCNAz4Y+kpo5xjQWGIDaQK79J0/Gl1
+         dsiG9jZ+/fah5TYirCMBm8qFhe0cy6O7hVHKmYPgF45ehJpsKDF6Tbxk0LIvjK0ouFts
+         OMpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXv8NzqbwPqxApm0vsg9VIVtPqKbozIeTJTeDsSqgLd+gv/ybHeRGAHJolAJw9UdufGUfftmNw0QXqAQ+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcdpTpPg5aMNVW8MIfXMTN1Dks3tSDSDsVCsezIy67Ct9zu4N2
+	LGqRCFMdHglWA5d9hn0mDKQssvDRjGW6AgDUDGd+/5bL4pEiYs1Fnpre/n2ZXqzrDEtU5MO0cdh
+	i/wBfxQ==
+X-Google-Smtp-Source: AGHT+IGtW8phYXnOQvoQ0KuBpkZCVibLaAtDznaAlEOwKPQIEuGdac2PNuOtYTpak5scuI/HZig8HpOMqpeg
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ad0f:67e7:f1a6:84c4])
- (user=irogers job=sendgmr) by 2002:a25:9086:0:b0:e29:74e3:616c with SMTP id
- 3f1490d57ef6-e3087a4f19cmr12068276.3.1730339013331; Wed, 30 Oct 2024 18:43:33
+ (user=irogers job=sendgmr) by 2002:a5b:bcd:0:b0:e29:b6d7:20e2 with SMTP id
+ 3f1490d57ef6-e3087736bf6mr95579276.0.1730339015284; Wed, 30 Oct 2024 18:43:35
  -0700 (PDT)
-Date: Wed, 30 Oct 2024 18:42:38 -0700
+Date: Wed, 30 Oct 2024 18:42:39 -0700
 In-Reply-To: <20241031014252.753588-1-irogers@google.com>
-Message-Id: <20241031014252.753588-8-irogers@google.com>
+Message-Id: <20241031014252.753588-9-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241031014252.753588-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v5 07/21] perf stat: Move stat_config into config.c
+Subject: [PATCH v5 08/21] perf script: Move script_spec code to trace-event-scripting.c
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,229 +91,223 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-stat_config is accessed by config.c via helper functions, but declared
-in builtin-stat. Move to util/config.c so that stub functions aren't
-needed in python.c which doesn't link against the builtin files.
-
-To avoid name conflicts change builtin-script to use the same
-stat_config as builtin-stat. Rename local variables in tests to avoid
-shadow declaration warnings.
+The script_spec code is referenced in util/trace-event-scripting but
+the list was in builtin-script, accessed via a function that required
+a stub function in python.c. Move all the logic to
+trace-event-scripting, with lookup and foreach functions exposed for
+builtin-script's benefit.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-script.c |  1 -
- tools/perf/builtin-stat.c   | 27 ---------------------------
- tools/perf/tests/stat.c     | 16 +++++++++-------
- tools/perf/util/config.c    | 27 +++++++++++++++++++++++++++
- tools/perf/util/python.c    |  9 ---------
- tools/perf/util/stat.h      |  3 ++-
- 6 files changed, 38 insertions(+), 45 deletions(-)
+ tools/perf/builtin-script.c             | 67 +---------------------
+ tools/perf/util/python.c                |  5 --
+ tools/perf/util/trace-event-scripting.c | 75 +++++++++++++++++++++++++
+ tools/perf/util/trace-event.h           |  3 +-
+ 4 files changed, 80 insertions(+), 70 deletions(-)
 
 diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index e9ec74056f71..62e851fdf5ca 100644
+index 62e851fdf5ca..11c0ee8c1afc 100644
 --- a/tools/perf/builtin-script.c
 +++ b/tools/perf/builtin-script.c
-@@ -85,7 +85,6 @@ static bool			system_wide;
- static bool			print_flags;
- static const char		*cpu_list;
- static DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
--static struct perf_stat_config	stat_config;
- static int			max_blocks;
- static bool			native_arch;
- static struct dlfilter		*dlfilter;
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index c12158d99353..a1625443e5a5 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -112,8 +112,6 @@ static struct target target = {
- 	.uid	= UINT_MAX,
- };
+@@ -2956,79 +2956,18 @@ static int __cmd_script(struct perf_script *script)
+ 	return ret;
+ }
  
--#define METRIC_ONLY_LEN 20
--
- static volatile sig_atomic_t	child_pid			= -1;
- static int			detailed_run			=  0;
- static bool			transaction_run;
-@@ -151,21 +149,6 @@ static struct perf_stat		perf_stat;
- 
- static volatile sig_atomic_t done = 0;
- 
--static struct perf_stat_config stat_config = {
--	.aggr_mode		= AGGR_GLOBAL,
--	.aggr_level		= MAX_CACHE_LVL + 1,
--	.scale			= true,
--	.unit_width		= 4, /* strlen("unit") */
--	.run_count		= 1,
--	.metric_only_len	= METRIC_ONLY_LEN,
--	.walltime_nsecs_stats	= &walltime_nsecs_stats,
--	.ru_stats		= &ru_stats,
--	.big_num		= true,
--	.ctl_fd			= -1,
--	.ctl_fd_ack		= -1,
--	.iostat_run		= false,
+-struct script_spec {
+-	struct list_head	node;
+-	struct scripting_ops	*ops;
+-	char			spec[];
 -};
 -
- /* Options set from the command line. */
- struct opt_aggr_mode {
- 	bool node, socket, die, cluster, cache, core, thread, no_aggr;
-@@ -1071,16 +1054,6 @@ static void sig_atexit(void)
- 	kill(getpid(), signr);
- }
- 
--void perf_stat__set_big_num(int set)
--{
--	stat_config.big_num = (set != 0);
+-static LIST_HEAD(script_specs);
+-
+-static struct script_spec *script_spec__new(const char *spec,
+-					    struct scripting_ops *ops)
++static int list_available_languages_cb(struct scripting_ops *ops, const char *spec)
+ {
+-	struct script_spec *s = malloc(sizeof(*s) + strlen(spec) + 1);
+-
+-	if (s != NULL) {
+-		strcpy(s->spec, spec);
+-		s->ops = ops;
+-	}
+-
+-	return s;
 -}
 -
--void perf_stat__set_no_csv_summary(int set)
+-static void script_spec__add(struct script_spec *s)
 -{
--	stat_config.no_csv_summary = (set != 0);
+-	list_add_tail(&s->node, &script_specs);
 -}
 -
- static int stat__set_big_num(const struct option *opt __maybe_unused,
- 			     const char *s __maybe_unused, int unset)
- {
-diff --git a/tools/perf/tests/stat.c b/tools/perf/tests/stat.c
-index 6468cc0d0204..d60983657bad 100644
---- a/tools/perf/tests/stat.c
-+++ b/tools/perf/tests/stat.c
-@@ -27,7 +27,7 @@ static int process_stat_config_event(const struct perf_tool *tool __maybe_unused
- 				     struct machine *machine __maybe_unused)
- {
- 	struct perf_record_stat_config *config = &event->stat_config;
--	struct perf_stat_config stat_config = {};
-+	struct perf_stat_config test_stat_config = {};
- 
- #define HAS(term, val) \
- 	has_term(config, PERF_STAT_CONFIG_TERM__##term, val)
-@@ -39,25 +39,27 @@ static int process_stat_config_event(const struct perf_tool *tool __maybe_unused
- 
- #undef HAS
- 
--	perf_event__read_stat_config(&stat_config, config);
-+	perf_event__read_stat_config(&test_stat_config, config);
- 
--	TEST_ASSERT_VAL("wrong aggr_mode", stat_config.aggr_mode == AGGR_CORE);
--	TEST_ASSERT_VAL("wrong scale",     stat_config.scale == 1);
--	TEST_ASSERT_VAL("wrong interval",  stat_config.interval == 1);
-+	TEST_ASSERT_VAL("wrong aggr_mode", test_stat_config.aggr_mode == AGGR_CORE);
-+	TEST_ASSERT_VAL("wrong scale",     test_stat_config.scale == 1);
-+	TEST_ASSERT_VAL("wrong interval",  test_stat_config.interval == 1);
+-static struct script_spec *script_spec__find(const char *spec)
+-{
+-	struct script_spec *s;
+-
+-	list_for_each_entry(s, &script_specs, node)
+-		if (strcasecmp(s->spec, spec) == 0)
+-			return s;
+-	return NULL;
+-}
+-
+-int script_spec_register(const char *spec, struct scripting_ops *ops)
+-{
+-	struct script_spec *s;
+-
+-	s = script_spec__find(spec);
+-	if (s)
+-		return -1;
+-
+-	s = script_spec__new(spec, ops);
+-	if (!s)
+-		return -1;
+-	else
+-		script_spec__add(s);
+-
++	fprintf(stderr, "  %-42s [%s]\n", spec, ops->name);
  	return 0;
  }
  
- static int test__synthesize_stat_config(struct test_suite *test __maybe_unused,
- 					int subtest __maybe_unused)
+-static struct scripting_ops *script_spec__lookup(const char *spec)
+-{
+-	struct script_spec *s = script_spec__find(spec);
+-	if (!s)
+-		return NULL;
+-
+-	return s->ops;
+-}
+-
+ static void list_available_languages(void)
  {
--	struct perf_stat_config stat_config = {
-+	struct perf_stat_config test_stat_config = {
- 		.aggr_mode	= AGGR_CORE,
- 		.scale		= 1,
- 		.interval	= 1,
- 	};
- 
- 	TEST_ASSERT_VAL("failed to synthesize stat_config",
--		!perf_event__synthesize_stat_config(NULL, &stat_config, process_stat_config_event, NULL));
-+		!perf_event__synthesize_stat_config(NULL, &test_stat_config,
-+						    process_stat_config_event,
-+						    NULL));
- 
- 	return 0;
- }
-diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
-index 68f9407ca74b..2d07c9257a1a 100644
---- a/tools/perf/util/config.c
-+++ b/tools/perf/util/config.c
-@@ -13,6 +13,7 @@
- #include <sys/param.h>
- #include "cache.h"
- #include "callchain.h"
-+#include "header.h"
- #include <subcmd/exec-cmd.h>
- #include "util/event.h"  /* proc_map_timeout */
- #include "util/hist.h"  /* perf_hist_config */
-@@ -34,6 +35,22 @@
- 
- #define DEBUG_CACHE_DIR ".debug"
- 
-+#define METRIC_ONLY_LEN 20
-+
-+struct perf_stat_config stat_config = {
-+	.aggr_mode		= AGGR_GLOBAL,
-+	.aggr_level		= MAX_CACHE_LVL + 1,
-+	.scale			= true,
-+	.unit_width		= 4, /* strlen("unit") */
-+	.run_count		= 1,
-+	.metric_only_len	= METRIC_ONLY_LEN,
-+	.walltime_nsecs_stats	= &walltime_nsecs_stats,
-+	.ru_stats		= &ru_stats,
-+	.big_num		= true,
-+	.ctl_fd			= -1,
-+	.ctl_fd_ack		= -1,
-+	.iostat_run		= false,
-+};
- 
- char buildid_dir[MAXPATHLEN]; /* root dir for buildid, binary cache */
- 
-@@ -455,6 +472,16 @@ static int perf_ui_config(const char *var, const char *value)
- 	return 0;
+-	struct script_spec *s;
+-
+ 	fprintf(stderr, "\n");
+ 	fprintf(stderr, "Scripting language extensions (used in "
+ 		"perf script -s [spec:]script.[spec]):\n\n");
+-
+-	list_for_each_entry(s, &script_specs, node)
+-		fprintf(stderr, "  %-42s [%s]\n", s->spec, s->ops->name);
+-
++	script_spec__for_each(&list_available_languages_cb);
+ 	fprintf(stderr, "\n");
  }
  
-+void perf_stat__set_big_num(int set)
-+{
-+	stat_config.big_num = (set != 0);
-+}
-+
-+static void perf_stat__set_no_csv_summary(int set)
-+{
-+	stat_config.no_csv_summary = (set != 0);
-+}
-+
- static int perf_stat_config(const char *var, const char *value)
- {
- 	if (!strcmp(var, "stat.big-num"))
 diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 5f11ae88943d..0fa8e27769be 100644
+index 0fa8e27769be..3d938fe2de6a 100644
 --- a/tools/perf/util/python.c
 +++ b/tools/perf/util/python.c
-@@ -17,7 +17,6 @@
- #include "trace-event.h"
- #include "mmap.h"
- #include "util/env.h"
--#include "util/kvm-stat.h"
- #include "util/kwork.h"
- #include "util/sample.h"
- #include "util/lock-contention.h"
-@@ -1306,14 +1305,6 @@ PyMODINIT_FUNC PyInit_perf(void)
+@@ -1305,11 +1305,6 @@ PyMODINIT_FUNC PyInit_perf(void)
  /* The following are stubs to avoid dragging in builtin-* objects. */
  /* TODO: move the code out of the builtin-* file into util. */
  
--void perf_stat__set_no_csv_summary(int set __maybe_unused)
+-int script_spec_register(const char *spec __maybe_unused, struct scripting_ops *ops __maybe_unused)
 -{
+-	return -1;
 -}
 -
--void perf_stat__set_big_num(int set __maybe_unused)
--{
--}
--
- int script_spec_register(const char *spec __maybe_unused, struct scripting_ops *ops __maybe_unused)
+ arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch __maybe_unused)
  {
- 	return -1;
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 6f8cff3cd39a..2fda9acd7374 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -117,8 +117,9 @@ struct perf_stat_config {
- 	unsigned int		topdown_level;
- };
+ 	return NULL;
+diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
+index 8abb7a7b6888..ad62d8e5a368 100644
+--- a/tools/perf/util/trace-event-scripting.c
++++ b/tools/perf/util/trace-event-scripting.c
+@@ -24,6 +24,81 @@ unsigned int scripting_max_stack = PERF_MAX_STACK_DEPTH;
  
-+extern struct perf_stat_config stat_config;
+ struct scripting_context *scripting_context;
+ 
++struct script_spec {
++	struct list_head	node;
++	struct scripting_ops	*ops;
++	char			spec[];
++};
 +
- void perf_stat__set_big_num(int set);
--void perf_stat__set_no_csv_summary(int set);
++static LIST_HEAD(script_specs);
++
++static struct script_spec *script_spec__new(const char *spec,
++					    struct scripting_ops *ops)
++{
++	struct script_spec *s = malloc(sizeof(*s) + strlen(spec) + 1);
++
++	if (s != NULL) {
++		strcpy(s->spec, spec);
++		s->ops = ops;
++	}
++
++	return s;
++}
++
++static void script_spec__add(struct script_spec *s)
++{
++	list_add_tail(&s->node, &script_specs);
++}
++
++static struct script_spec *script_spec__find(const char *spec)
++{
++	struct script_spec *s;
++
++	list_for_each_entry(s, &script_specs, node)
++		if (strcasecmp(s->spec, spec) == 0)
++			return s;
++	return NULL;
++}
++
++static int script_spec_register(const char *spec, struct scripting_ops *ops)
++{
++	struct script_spec *s;
++
++	s = script_spec__find(spec);
++	if (s)
++		return -1;
++
++	s = script_spec__new(spec, ops);
++	if (!s)
++		return -1;
++
++	script_spec__add(s);
++	return 0;
++}
++
++struct scripting_ops *script_spec__lookup(const char *spec)
++{
++	struct script_spec *s = script_spec__find(spec);
++
++	if (!s)
++		return NULL;
++
++	return s->ops;
++}
++
++int script_spec__for_each(int (*cb)(struct scripting_ops *ops, const char *spec))
++{
++	struct script_spec *s;
++	int ret = 0;
++
++	list_for_each_entry(s, &script_specs, node) {
++		ret = cb(s->ops, s->spec);
++		if (ret)
++			break;
++	}
++	return ret;
++}
++
+ void scripting_context__update(struct scripting_context *c,
+ 			       union perf_event *event,
+ 			       struct perf_sample *sample,
+diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
+index bbf8b26bc8da..81fceaf297ba 100644
+--- a/tools/perf/util/trace-event.h
++++ b/tools/perf/util/trace-event.h
+@@ -116,7 +116,8 @@ struct scripting_ops {
  
- void update_stats(struct stats *stats, u64 val);
- double avg_stats(struct stats *stats);
+ extern unsigned int scripting_max_stack;
+ 
+-int script_spec_register(const char *spec, struct scripting_ops *ops);
++struct scripting_ops *script_spec__lookup(const char *spec);
++int script_spec__for_each(int (*cb)(struct scripting_ops *ops, const char *spec));
+ 
+ void script_fetch_insn(struct perf_sample *sample, struct thread *thread,
+ 		       struct machine *machine);
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
