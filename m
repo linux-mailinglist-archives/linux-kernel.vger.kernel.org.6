@@ -1,90 +1,123 @@
-Return-Path: <linux-kernel+bounces-390525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675719B7AE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A839B7AE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:42:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E786281316
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996122823E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782D91BBBF1;
-	Thu, 31 Oct 2024 12:39:24 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B88F19E99A;
+	Thu, 31 Oct 2024 12:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EDAx1V2Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18931B5325
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F801AC456;
+	Thu, 31 Oct 2024 12:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378364; cv=none; b=FCHOw3O8FobXJJM5DXWfGU48k6dB69jiPM7T97tIJNzT9YbklTqUpjK6uFbe6EyECMWOB8/oTZgw+QJGnRQ6F1wox5QxtBNaGfb2UX/3q+ozJtDcjPfOOJmxNh1HpET+GwL/DGt6JGd+V9e3+LYOk27LSVtVqC3qldPqpzr+4pU=
+	t=1730378360; cv=none; b=l/AJ5MK+BR+CEwNazGwNnOjrbFrZi+wFuGEZRXr4aeWn6wQ10f3a1etuvcn/UM9qfSqrTcjpYsFL2Iav2yx10TsUmWY2A0RGZk6aSas1VhX/11WeBEhT9lWjO0scBwliEcir8f1KoL+rK5FxqpyT2ZJrRFspYuosR0kh0sPw6m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378364; c=relaxed/simple;
-	bh=x+4k3ScXmc6pGd49ulluPwEZUnA9RxZJMnNu26rSZ3g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pEiy2q0uEDlqu69vzKkJLh8gzIZC7/3wp31gRZL7Vz81W9poViGHkc6ULDt6GwD1UQby4nJcwM7iPdWOqBF9MCGIx1jCm8Om8ATS10xh4ihzr5wEwijATn2Cc/UO5CfkAfJbETkZTv7VRQyy8zdvKYJzEXarMsgQtLYTNWHTqSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XfNn20clWz2Fbsd;
-	Thu, 31 Oct 2024 20:37:42 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 90A66140156;
-	Thu, 31 Oct 2024 20:39:15 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 31 Oct
- 2024 20:39:14 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <linus.walleij@linaro.org>,
-	<treding@nvidia.com>, <florian.fainelli@broadcom.com>,
-	<krzysztof.kozlowski@linaro.org>, <colin.foster@in-advantage.com>,
-	<davem@davemloft.net>, <linux-phy@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] phy: ocelot-serdes: Fix IS_ERR vs NULL bug in serdes_probe()
-Date: Thu, 31 Oct 2024 20:38:47 +0800
-Message-ID: <20241031123847.1356808-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730378360; c=relaxed/simple;
+	bh=iu68N23NzUdf3Fg/DJ9+sppAEqS00Ptnyod+avC9IQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DXyMKIPkRkXVjzTid/SWuucFpz3c/jx88gbCQpF23EyX1BBpxw8w1vExu8ncilmJ47GaXyqBr7HHSrb0IDpAFWp8IYfpy2ZYoWEoy58uv6O0NiYobBsMAI4zSGlOgrgzLwNnO2krU1tl97N2bg6pTFeQpaJNypcnw39Uabf8Hqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EDAx1V2Q; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730378358; x=1761914358;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iu68N23NzUdf3Fg/DJ9+sppAEqS00Ptnyod+avC9IQs=;
+  b=EDAx1V2Qp2PJqOFVex+6QPDumHHj17gm3Mo/jAeoxmMoZyZpdrup9fBR
+   XgJNNwBjTn6HJB5aD6XVsf1vItTjY/yYtmxk8+ZFR9R1mgmWw4LTR3/RL
+   Ljw06ja0Kyf83QU9YYgZUG3ivAjyF8GO1uptzOHoBLR1JLCS3q9BMD+Vy
+   5fV1IJeHsYn88SV8n9zF047IPQPBzLMY0ArUzjDCH6acSXRi5epN/pIq/
+   28Lcq2UkOZOWJdqdpP2Wd9iW1oiLVh188B1C51wRVb5NE5LOqdl9qPMLH
+   Dpn+01yE6kuUWL9w568wZf++S5Zkb2ZOvcXAqcdPGbRnrnTIcYtLNgiTj
+   w==;
+X-CSE-ConnectionGUID: LGhpIDK+RvOCXZuFedJKQg==
+X-CSE-MsgGUID: laDLKxhTQreTGa6+j2BM9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29970059"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29970059"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 05:39:18 -0700
+X-CSE-ConnectionGUID: W+vvptvCRPWl5E7ce60jZA==
+X-CSE-MsgGUID: Ja2+anJoRGucNQ4pbtw1Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="113462624"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 31 Oct 2024 05:39:15 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6USG-000g5q-1J;
+	Thu, 31 Oct 2024 12:39:12 +0000
+Date: Thu, 31 Oct 2024 20:38:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH v6 2/2] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202410312023.JZ5q2dNz-lkp@intel.com>
+References: <20241029165414.58746-3-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029165414.58746-3-admiyo@os.amperecomputing.com>
 
-dev_get_regmap() return NULL and never return ERR_PTR().
-check NULL to fix it.
+Hi,
 
-Cc: stable@vger.kernel.org
-Fixes: 672faa7bbf60 ("phy: phy-ocelot-serdes: add ability to be used in a non-syscon configuration")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/phy/mscc/phy-ocelot-serdes.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/phy/mscc/phy-ocelot-serdes.c b/drivers/phy/mscc/phy-ocelot-serdes.c
-index 1cd1b5db2ad7..77ca67ce6e91 100644
---- a/drivers/phy/mscc/phy-ocelot-serdes.c
-+++ b/drivers/phy/mscc/phy-ocelot-serdes.c
-@@ -512,8 +512,8 @@ static int serdes_probe(struct platform_device *pdev)
- 						    res->name);
- 	}
- 
--	if (IS_ERR(ctrl->regs))
--		return PTR_ERR(ctrl->regs);
-+	if (!ctrl->regs)
-+		return -EINVAL;
- 
- 	for (i = 0; i < SERDES_MAX; i++) {
- 		ret = serdes_phy_create(ctrl, i, &ctrl->phys[i]);
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.12-rc5 next-20241031]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20241030-005644
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241029165414.58746-3-admiyo%40os.amperecomputing.com
+patch subject: [PATCH v6 2/2] mctp pcc: Implement MCTP over PCC Transport
+config: arm64-kismet-CONFIG_ACPI-CONFIG_MCTP_TRANSPORT_PCC-0-0 (https://download.01.org/0day-ci/archive/20241031/202410312023.JZ5q2dNz-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20241031/202410312023.JZ5q2dNz-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410312023.JZ5q2dNz-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for ACPI when selected by MCTP_TRANSPORT_PCC
+   WARNING: unmet direct dependencies detected for ACPI
+     Depends on [n]: ARCH_SUPPORTS_ACPI [=n]
+     Selected by [y]:
+     - MCTP_TRANSPORT_PCC [=y] && NETDEVICES [=y] && MCTP [=y]
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
