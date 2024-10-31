@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-390781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256989B7E6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:29:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE529B7E6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E861C2242F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5273F280FCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1941C2DB8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66E11A2C04;
 	Thu, 31 Oct 2024 15:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rDECpU8L"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QFNOXxQc"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E591BD501
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B4B1BDA87
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388443; cv=none; b=p8Vp7coQ19XgPDkUdgItHzJNRsmgI7aM9jCNG+O/0Ky2Xzk5t9XREsWNa88FcD2E8Bil8ojOBFnVkFPQZ+27m0f3hV69G38TE3OmZPIdwztrqloE+NVH+BC53Mb6JHh551XWLAYONFYfOk/qkknjnwpHJaTZhR5FwiCKsxE7ymk=
+	t=1730388443; cv=none; b=p78NwSkUJZJyihu41GQw0tBnue0e5v4J64LtGKy4tWpvla8jfx1FCyCXKIwWFR6NnfO3IWx4dPKucRs+V56/4sGQR2k3+Vv81PBvx2MIj6u8vAFhDrrBp4z9LAicFtlrQdsNm2Sls2gPdBVdowegDDqmyy3r/vgxjtkyVR7uOGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730388443; c=relaxed/simple;
-	bh=PmGalM7Ef6Ks5hbegfAqXArWEMF8OjNxmIq7YA4FlKk=;
+	bh=s19xiscdrxWoyhnH6+9SM+7lYdKPqidKN1eD+lS5570=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DHlf0kX+SLuIfbbSxB8vg7a6C+gyZZMDfazlD/NRHBhyoGiVMZoUUoWfKBt7pXEcmSn4yASb/OuDvdLQpn4AuA11o9LILS4kxXUuLUE3iALaoQEnTgSSUMlsdWeWCScsfyNKy6KLoBlll2Cyyaoubxrhw8WCIxEWXMuvBXFHuvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rDECpU8L; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:To:Cc; b=FnItV3FoIdbp/21mQV2vTLkEzPWvtnYUg1DNxRqS4yBtB1iKv/XWVAhjTM0xVWYXBiBt+kpJwUbDA6C0V7FATwldVcQtLcc5Nzd3bL+MT4/qUm3P56mvKirx+lYRvrQPzfIc6il8Jefh0/rnc4hHUE13KV62x1J3v+C6EcIE3iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QFNOXxQc; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315baec69eso8784485e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:27:20 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43169902057so8739355e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730388439; x=1730993239; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730388440; x=1730993240; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=E+Wt5gEXGTTMFhAf0TDuO7kCimt1FNZkZpqrNk88/+4=;
-        b=rDECpU8LLFZNExbnFx3LPyTbxhRbjy+IHzff9CkDrdLdngzlmF3rVQgDWKISkXwNZo
-         siJueAzN6qWTeVGie1eIHUHv7RRWZ+3VMzQ1cQZwzzQfJs5r1HMpefIVIzF9473Scvyl
-         SvsoiVbCmVvVKi2ceFUAMPP1xqUI0x4k1x+ERF20OlH15hyLKW9dmgQwxhd/40LeOIvL
-         9J9zw/rsfEjBJ9k2BDpNedgjsUx+3PZPyPdG8t36vPUk5rkOs1EoDmIAlrOFzFOarEaQ
-         Eu0kd9xHmwUdQK5JeZgzlpqgc5WPGkGmhPu8+sNd9Kh9LfhynDwnSClH2Z1uy6msvXLj
-         RVhQ==
+        bh=CuKYisz+WfuMrY46Ard53ju2b4imnRFwr+IipE+GsB0=;
+        b=QFNOXxQcYF3P09I6NeAK4Ne+d+4qQg5ClILyzktm5eFd0lXZKVVs3RDzqgziD1Irm+
+         wP9TVCrOfuCpMMW8Yy0usUiF8QkPdNezYgMrJA97UrKYiNB5C7eSHqBCat/N6ip1vT6z
+         +DRXk/pdbJyP3XP6bKuUB3dsq3UNewlZnJx6YY5vJ96HpX3TG8njwJslXwErbZ8Yu9oh
+         t0dKGZXnNSEpTM9wYRM3uxudXSyuGHdQDMiZemvp/rYGr5J+/3xxXitsVZIUZsNS1l9r
+         A/TQh0kwW8d+te9ySkk+KyNlBAK36N88M34OrLKD/PU5DUT9sUVSAzlMQ5imLp5PetBP
+         knmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730388439; x=1730993239;
+        d=1e100.net; s=20230601; t=1730388440; x=1730993240;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E+Wt5gEXGTTMFhAf0TDuO7kCimt1FNZkZpqrNk88/+4=;
-        b=P7gc8NE8IVxJh+m/3EF0WWX806j/zxFTaHZt2qcVr1nzKeG30Ue2+FWeZuzKyFa9cg
-         qUyFRWiuiYPeLEmsaJ1jXGitKU6T6hwAZLnNLUbgIO3CWtMJ7feYfQrTnCGcWkfr4XV1
-         2ezY5UXP3XrM6ER1CXy1Edg3cCmuCgnTxvNRc5pKljADzOoa+TjHVcOdgKHyXva1u/zZ
-         D4IS1014qLdErgdtFIbrK6gR5YSFWtNi4ER1+hy/sA0bvV1sADpObFCKui2X1w4M6hqU
-         8XAJKoodSXc497xyV+Uj1sFcpj2+716/UyBvtThGWaz2/3ql2128J8FBpdPjsyWsr9ea
-         ULBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfKzBJtGaFEbezV5t2zhrRFK8q2YNv9VPYUdpONlU00Gh+qVjFWDyYboxDU00WoeQ/Cw9gRh9A+ghzXrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznNWCx2nxELEsMgDfn+oJWies0k+gAVe/EaeLylcQftVbmUrEs
-	eniF+XqZrbNtIXWLvFGrfltUertZY6ld0pyJXk3rmiNpqPAUlEY/lsfq8/QRFxs=
-X-Google-Smtp-Source: AGHT+IEyu6FJS8+aBQtlI/2iMWr0qg8SLYMIc2U9veyCeAFrXBtLbW2/W+xR+K+a9Ow41bs7++cXAQ==
-X-Received: by 2002:a05:600c:3ca1:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-43283255489mr2254255e9.16.1730388438884;
-        Thu, 31 Oct 2024 08:27:18 -0700 (PDT)
+        bh=CuKYisz+WfuMrY46Ard53ju2b4imnRFwr+IipE+GsB0=;
+        b=TRPq768ncETk2xWonz8h1W/RfE8QNybb947gJ5CcQ60AhQQRS9XxFI+9s9YSW3a2CT
+         rBhjqTpvhfxDLDLyOLpyztK6kz3fV6/2R72yfVWcOy6qI5O68+vkoZSL6p1+yOLXBFe9
+         Ke2QsaaqsHcd1djt36brQ2NjjwY6I3oVbc/ISIokN2xTKtwy2X5mrupSrmny9ICph4Zx
+         NduxRiKi6Ilrao+yo21YaOmPaq9kw8lDpgWBmQq/DL5gpki2UX4VSxCjTHMzDoQXN6K2
+         ykhr7oZke/VTHyDBgyw9weyas12ttrkm889KZG2x1yboxO/mCEggWusNtGD2lYdaL/TH
+         hw+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVzA5EJNgyXNS2NqKM465mg0s8doFMV9SyqOLxX1aMKoW/GJ6syvaJg29Z1aDrYGW8P3ZT03WGJk5LCv2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwqPK5r6yYZS8YZKlDfOipJIWof91s1QK4K9ZcSFZ5Y3aVnT7I
+	pviby6Bs4Jm3ist+cWh17spzYdYSj7zN18TDOkohRRFZsgVxcnToPTLgJeHVqqo=
+X-Google-Smtp-Source: AGHT+IF6/i3o0ia+iwTXrJkK/PpU7s5AqPYFhPt+pBzmwQ1VaBg1134R2wQ1oOCceXnLNgNRe+dsWA==
+X-Received: by 2002:a05:600c:a04:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-431bb8a01dfmr64636815e9.0.1730388439775;
+        Thu, 31 Oct 2024 08:27:19 -0700 (PDT)
 Received: from [192.168.1.64] (2a02-8428-e55b-1101-1e41-304e-170b-482f.rev.sfr.net. [2a02:8428:e55b:1101:1e41:304e:170b:482f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf429sm29399475e9.12.2024.10.31.08.27.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf429sm29399475e9.12.2024.10.31.08.27.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 08:27:18 -0700 (PDT)
+        Thu, 31 Oct 2024 08:27:19 -0700 (PDT)
 From: Julien Stephan <jstephan@baylibre.com>
-Date: Thu, 31 Oct 2024 16:27:06 +0100
-Subject: [PATCH v2 11/15] iio: imu: st_lsm6dsx: use bool for event state
+Date: Thu, 31 Oct 2024 16:27:07 +0100
+Subject: [PATCH v2 12/15] iio: light: apds9300: use bool for event state
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-iio-fix-write-event-config-signature-v2-11-2bcacbb517a2@baylibre.com>
+Message-Id: <20241031-iio-fix-write-event-config-signature-v2-12-2bcacbb517a2@baylibre.com>
 References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
 In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
 To: Mudit Sharma <muditsharma.info@gmail.com>, 
@@ -107,26 +107,51 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.14.2
 
 Since the write_event_config callback now uses a bool for the state
-parameter, update the signature of the function it calls accordingly.
+parameter, update apds9300_set_intr_state accordingly and change intr_en
+to bool.
+
+Also update apds9300_set_power_state and power_state for consistency.
 
 Signed-off-by: Julien Stephan <jstephan@baylibre.com>
 ---
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/light/apds9300.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-index caefa15e559b8808051ff1c7f82c3f36c947933c..509e0169dcd54e773540c4e3f1b56e5b737f80c3 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-@@ -1865,7 +1865,7 @@ static int st_lsm6dsx_write_raw(struct iio_dev *iio_dev,
- 	return err;
+diff --git a/drivers/iio/light/apds9300.c b/drivers/iio/light/apds9300.c
+index 95861b2a5b2d94011d894959289c5c4f06cc1efe..98bdf8bc298b664aba71d3c38d7f224808e5997d 100644
+--- a/drivers/iio/light/apds9300.c
++++ b/drivers/iio/light/apds9300.c
+@@ -46,10 +46,10 @@
+ struct apds9300_data {
+ 	struct i2c_client *client;
+ 	struct mutex mutex;
+-	int power_state;
++	bool power_state;
+ 	int thresh_low;
+ 	int thresh_hi;
+-	int intr_en;
++	bool intr_en;
+ };
+ 
+ /* Lux calculation */
+@@ -148,7 +148,7 @@ static int apds9300_set_thresh_hi(struct apds9300_data *data, int value)
+ 	return 0;
  }
  
--static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, int state)
-+static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, bool state)
+-static int apds9300_set_intr_state(struct apds9300_data *data, int state)
++static int apds9300_set_intr_state(struct apds9300_data *data, bool state)
  {
- 	const struct st_lsm6dsx_reg *reg;
- 	unsigned int data;
+ 	int ret;
+ 	u8 cmd;
+@@ -169,7 +169,7 @@ static int apds9300_set_intr_state(struct apds9300_data *data, int state)
+ 	return 0;
+ }
+ 
+-static int apds9300_set_power_state(struct apds9300_data *data, int state)
++static int apds9300_set_power_state(struct apds9300_data *data, bool state)
+ {
+ 	int ret;
+ 	u8 cmd;
 
 -- 
 2.47.0
