@@ -1,329 +1,223 @@
-Return-Path: <linux-kernel+bounces-389779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513D59B7132
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:32:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9CCC9B7134
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992681C22C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F4C28215D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EA91E885;
-	Thu, 31 Oct 2024 00:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26D81BC20;
+	Thu, 31 Oct 2024 00:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4V5Qp12"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PyYI2esn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EF7360;
-	Thu, 31 Oct 2024 00:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792C7819
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730334714; cv=none; b=hxdvvkq7dTElTDQFrIw4917wqSt+yPXc7thcGTUOW/7dqwZFfpwHWE4rgZN6uF9XPN0GMZam+nbwIISAtYW/B66lD1tSWhlnlN0G1J0c855kikA+GWZwDJj7FEeGgSXiyM0ihGHTO9rsqSyRCKJQ0pWK4NjxomzCX6jtl2D4l74=
+	t=1730335196; cv=none; b=SDkPGqfg/eKHPcTm2DvaerL9hfs/pVb0BYoi/+8cp3+oBH7bdAX55ZC11QvvUVeHHwodFwlVvgtUHNGhYC5Qe01Yv2VBGPIxbCT7Hn/AMd7irwzRVLhpTdVsrbgLnbfCT5ReD7EfTCEgDAVXgAfJiEQuXEelzfl6rpShcFvk+h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730334714; c=relaxed/simple;
-	bh=A4dRY4eH4YbXkwbpbPcRMGQgIKn3Mq9XborynAEqih4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T6HIn6zfJXd32evUFz+xSYN4m8SiCu9qHAzUe9wy+ijcEiwwIzYcilY3uq0gQ/pOoCqh77BUu5IJDhJRiXVzIEsL07J0zl9UgP8qfpXeQtklQMlC0d1Vw58+jkP/nAub5NeMqQ3sl3gYjaHnlUbJ8H37JQEncfDzmiE3UR2dR5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4V5Qp12; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29394C4CECE;
-	Thu, 31 Oct 2024 00:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730334714;
-	bh=A4dRY4eH4YbXkwbpbPcRMGQgIKn3Mq9XborynAEqih4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J4V5Qp12LY5EeOcgR0buUcw72ZwRGWsulAbVYjtJtpNpcAfefeNEOjOwIGd9T+c+N
-	 kOp5GNxGL8C5ruWRPeTaljv4JWHN0XcNBsS7v/5LcQx9q5CU1HJzSh3q7x5mhrmTmy
-	 PqNFDiwbcUNVA3HJmeSVWsuBVAtVloqwqomQmFNsgS6xDhriobUC0XrwmNAIU4B2ck
-	 /uzCcxKc8uwYmWmpPng1togWANntCnbBqlNhkT3l4xc/LuGXrUACE6nyykORIocjrr
-	 LCLmh5h9RKgqZXcNMjpAOWN2eDpERQTmX6IiypxFhJCK8jyOeZfKZrtlARrCdct5NI
-	 NyqXxIpLS0oJQ==
-Date: Wed, 30 Oct 2024 17:31:52 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Akinobu Mita <akinobu.mita@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, kernel-team@meta.com, Thomas Huth
- <thuth@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Borislav
- Petkov (AMD)" <bp@alien8.de>, Steven Rostedt <rostedt@goodmis.org>,
- Xiongwei Song <xiongwei.song@windriver.com>, Mina Almasry
- <almasrymina@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, Alexander
- Lobakin <aleksander.lobakin@intel.com>, Oleksij Rempel
- <o.rempel@pengutronix.de>, linux-doc@vger.kernel.org (open
- list:DOCUMENTATION), linux-kernel@vger.kernel.org (open list),
- netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
-Subject: Re: [PATCH net-next v4] net: Implement fault injection forcing skb
- reallocation
-Message-ID: <20241030173152.0349b466@kernel.org>
-In-Reply-To: <20241023113819.3395078-1-leitao@debian.org>
-References: <20241023113819.3395078-1-leitao@debian.org>
+	s=arc-20240116; t=1730335196; c=relaxed/simple;
+	bh=BVVc/SXQ4JbqD4u61eN858mgOHeLPYYZ0jA5cibVNuE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W+1lAjuS174rh2QvNoTDwVSBbJXkkOMmK88h7PH4gXHVLGrsDEfLF9mYvZqnryKipOmZMrUHhQfmm1W8AvFmrrmUeSesazJilc1L+JqtXaSgkPNlTbLiXDv/SK6LtHv91neeUN7EX802xAvEsvfKCJ+HxuDbc5/Hhn3Ui3nEcww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PyYI2esn; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730335193; x=1761871193;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=BVVc/SXQ4JbqD4u61eN858mgOHeLPYYZ0jA5cibVNuE=;
+  b=PyYI2esn7lPzFsF8ZgSo4mcoAsfIxtucZrlxf+DyF97C6pA4bWN/kmqp
+   6khXOrS1bH/979VLy7SGl4v5z3N3cPtEwtElDNSrxTqy/gQ5xoWGQM+U3
+   CbZvn2fnSK251kDhjWEIbBI4D2CNbV5Tc4qLQZWG+v94Vek3wxd3XXSLf
+   kTwMJdkPYUUcipW2lLgI2ev2F+e1nbxSdgQK24JEpD4kAd9WPOnI0PL6A
+   QmM8TLnVShVHb1bJPpsZqcw5GKyC85tKIHYiOz+EZHHd8hD0RQHOYD9J8
+   t5tg9bLNWC7TR0/6L1aIU1tW5P0hNUA7AEigHfcVFAGdXhOhDmvCd7Cyi
+   g==;
+X-CSE-ConnectionGUID: PnrVkWvlSw6wjiQKJCDsAg==
+X-CSE-MsgGUID: E1i6ZZzdTrOg9Fh471srjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40637601"
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="40637601"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 17:39:53 -0700
+X-CSE-ConnectionGUID: 8ldWuHaXQx6I/nZdzXZAXw==
+X-CSE-MsgGUID: IWYVHXq2SrW276DWBeKiag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="105800185"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 17:39:49 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,
+  Baolin Wang <baolin.wang@linux.alibaba.com>,  David Hildenbrand
+ <david@redhat.com>,  Chris Li <chrisl@kernel.org>,  Yosry Ahmed
+ <yosryahmed@google.com>,  Kairui Song <kasong@tencent.com>,  Ryan Roberts
+ <ryan.roberts@arm.com>,  Kanchana P Sridhar
+ <kanchana.p.sridhar@intel.com>,  Usama Arif <usamaarif642@gmail.com>
+Subject: Re: [PATCH v2] mm: add per-order mTHP swpin counters
+In-Reply-To: <20241030233423.80759-1-21cnbao@gmail.com> (Barry Song's message
+	of "Thu, 31 Oct 2024 12:34:23 +1300")
+References: <20241030233423.80759-1-21cnbao@gmail.com>
+Date: Thu, 31 Oct 2024 08:36:16 +0800
+Message-ID: <87cyjh9khr.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-On Wed, 23 Oct 2024 04:38:01 -0700 Breno Leitao wrote:
-> +- fail_skb_realloc
-> +
-> +  inject skb (socket buffer) reallocation events into the network path. The
-> +  primary goal is to identify and prevent issues related to pointer
-> +  mismanagement in the network subsystem.  By forcing skb reallocation at
-> +  strategic points, this feature creates scenarios where existing pointers to
-> +  skb headers become invalid.
-> +
-> +  When the fault is injected and the reallocation is triggered, these pointers
+Barry Song <21cnbao@gmail.com> writes:
 
-s/these pointers/cached pointers to skb headers and data/
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> This helps profile the sizes of folios being swapped in. Currently,
+> only mTHP swap-out is being counted.
+> The new interface can be found at:
+> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
+>          swpin
 
-> +  no longer reference valid memory locations. This deliberate invalidation
-> +  helps expose code paths where proper pointer updating is neglected after a
-> +  reallocation event.
-> +
-> +  By creating these controlled fault scenarios, the system can catch instances
-> +  where stale pointers are used, potentially leading to memory corruption or
-> +  system instability.
-> +
-> +  To select the interface to act on, write the network name to the following file:
-> +  `/sys/kernel/debug/fail_skb_realloc/devname`
-> +  If this field is left empty (which is the default value), skb reallocation
-> +  will be forced on all network interfaces.
+This looks strange, why isn't it
 
-Should we mention here that KASAN or some such is needed to catch 
-the bugs? Chances are the resulting UAF will not crash and go unnoticed
-without KASAN.
+/sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats/swpin
 
->  - NVMe fault injection
+?
+
+> For example,
+> cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpin
+> 12809
+> cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/stats/swpin
+> 4763
+
+You miss "$"?
+
+$ cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpin
+12809
+$ cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/stats/swpin
+4763
+
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: Yosry Ahmed <yosryahmed@google.com>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> Cc: Usama Arif <usamaarif642@gmail.com>
+> ---
+>  -v2:
+>  * collect Baolin's reviewed-by and David's acked-by, thanks!
+>  * add some examples for the interface in the changelog, Per
+>    Huang, Ying. thanks!
+>  * add a blank line in doc which was missed in v1.
+>
+>  Documentation/admin-guide/mm/transhuge.rst | 4 ++++
+>  include/linux/huge_mm.h                    | 1 +
+>  mm/huge_memory.c                           | 3 +++
+>  mm/page_io.c                               | 3 +++
+>  4 files changed, 11 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> index 2a171ed5206e..5caa3fb2feb1 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -534,6 +534,10 @@ zswpout
+>  	is incremented every time a huge page is swapped out to zswap in one
+>  	piece without splitting.
 >  
->    inject NVMe status code and retry flag on devices permitted by setting
-> @@ -216,6 +238,19 @@ configuration of fault-injection capabilities.
->  	use a negative errno, you better use 'printf' instead of 'echo', e.g.:
->  	$ printf %#x -12 > retval
+> +swpin
+> +	is incremented every time a huge page is swapped in from a non-zswap
+> +	swap device in one piece.
+> +
+>  swpout
+>  	is incremented every time a huge page is swapped out to a non-zswap
+>  	swap device in one piece without splitting.
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index c59e5aa9b081..b94c2e8ee918 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -120,6 +120,7 @@ enum mthp_stat_item {
+>  	MTHP_STAT_ANON_FAULT_FALLBACK,
+>  	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>  	MTHP_STAT_ZSWPOUT,
+> +	MTHP_STAT_SWPIN,
+>  	MTHP_STAT_SWPOUT,
+>  	MTHP_STAT_SWPOUT_FALLBACK,
+>  	MTHP_STAT_SHMEM_ALLOC,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index b26c6503e993..f92068864469 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -616,6 +616,7 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>  DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+> +DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+>  #ifdef CONFIG_SHMEM
+> @@ -635,6 +636,7 @@ static struct attribute *anon_stats_attrs[] = {
+>  	&anon_fault_fallback_charge_attr.attr,
+>  #ifndef CONFIG_SHMEM
+>  	&zswpout_attr.attr,
+> +	&swpin_attr.attr,
+>  	&swpout_attr.attr,
+>  	&swpout_fallback_attr.attr,
+>  #endif
+> @@ -666,6 +668,7 @@ static struct attribute_group file_stats_attr_grp = {
+>  static struct attribute *any_stats_attrs[] = {
+>  #ifdef CONFIG_SHMEM
+>  	&zswpout_attr.attr,
+> +	&swpin_attr.attr,
+>  	&swpout_attr.attr,
+>  	&swpout_fallback_attr.attr,
+>  #endif
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index c69fab5060a1..5d9b6e6cf96c 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -487,6 +487,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>  		for (p = 0; p < sio->pages; p++) {
+>  			struct folio *folio = page_folio(sio->bvec[p].bv_page);
 >  
-> +- /sys/kernel/debug/fail_skb_realloc/devname:
-> +
-> +        Specifies the network interface on which to force SKB reallocation.  If
-> +        left empty, SKB reallocation will be applied to all network interfaces.
-> +
-> +        Example usage::
-> +
-> +          # Force skb reallocation on eth0
-> +          echo "eth0" > /sys/kernel/debug/fail_skb_realloc/devname
-> +
-> +          # Clear the selection and force skb reallocation on all interfaces
-> +          echo "" > /sys/kernel/debug/fail_skb_realloc/devname
-> +
->  Boot option
->  ^^^^^^^^^^^
->  
-> @@ -227,6 +262,7 @@ use the boot option::
->  	fail_usercopy=
->  	fail_make_request=
->  	fail_futex=
-> +	fail_skb_realloc=
->  	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
->  
->  proc entries
-> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-> index 48f1e0fa2a13..285e36a5e5d7 100644
-> --- a/include/linux/skbuff.h
-> +++ b/include/linux/skbuff.h
-> @@ -2681,6 +2681,12 @@ static inline void skb_assert_len(struct sk_buff *skb)
->  #endif /* CONFIG_DEBUG_NET */
->  }
->  
-> +#if defined(CONFIG_FAIL_SKB_REALLOC)
-> +void skb_might_realloc(struct sk_buff *skb);
-> +#else
-> +static inline void skb_might_realloc(struct sk_buff *skb) {}
-> +#endif
-> +
->  /*
->   *	Add data to an sk_buff
->   */
-> @@ -2781,6 +2787,7 @@ static inline enum skb_drop_reason
->  pskb_may_pull_reason(struct sk_buff *skb, unsigned int len)
->  {
->  	DEBUG_NET_WARN_ON_ONCE(len > INT_MAX);
-> +	skb_might_realloc(skb);
->  
->  	if (likely(len <= skb_headlen(skb)))
->  		return SKB_NOT_DROPPED_YET;
-> @@ -3216,6 +3223,7 @@ static inline int __pskb_trim(struct sk_buff *skb, unsigned int len)
->  
->  static inline int pskb_trim(struct sk_buff *skb, unsigned int len)
->  {
-> +	skb_might_realloc(skb);
->  	return (len < skb->len) ? __pskb_trim(skb, len) : 0;
->  }
->  
-> @@ -3970,6 +3978,7 @@ int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
->  
->  static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
->  {
-> +	skb_might_realloc(skb);
->  	if (likely(len >= skb->len))
->  		return 0;
->  	return pskb_trim_rcsum_slow(skb, len);
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 7315f643817a..52bb27115185 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2115,6 +2115,16 @@ config FAIL_SUNRPC
->  	  Provide fault-injection capability for SunRPC and
->  	  its consumers.
->  
-> +config FAIL_SKB_REALLOC
-> +	bool "Fault-injection capability forcing skb to reallocate"
-> +	depends on FAULT_INJECTION_DEBUG_FS
-> +	help
-> +	  Provide fault-injection capability that forces the skb to be
-> +	  reallocated, caughting possible invalid pointers to the skb.
+> +			count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
+>  			count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>  			folio_mark_uptodate(folio);
+>  			folio_unlock(folio);
+> @@ -573,6 +574,7 @@ static void swap_read_folio_bdev_sync(struct folio *folio,
+>  	 * attempt to access it in the page fault retry time check.
+>  	 */
+>  	get_task_struct(current);
+> +	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
+>  	count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>  	count_vm_events(PSWPIN, folio_nr_pages(folio));
+>  	submit_bio_wait(&bio);
+> @@ -589,6 +591,7 @@ static void swap_read_folio_bdev_async(struct folio *folio,
+>  	bio->bi_iter.bi_sector = swap_folio_sector(folio);
+>  	bio->bi_end_io = end_swap_bio_read;
+>  	bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
+> +	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
+>  	count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>  	count_vm_events(PSWPIN, folio_nr_pages(folio));
+>  	submit_bio(bio);
 
-catching
-
-> +	  For more information, check
-> +	  Documentation/dev-tools/fault-injection/fault-injection.rst
-> +
->  config FAULT_INJECTION_CONFIGFS
->  	bool "Configfs interface for fault-injection capabilities"
->  	depends on FAULT_INJECTION
-> diff --git a/net/core/Makefile b/net/core/Makefile
-> index 5a72a87ee0f1..d9326600e289 100644
-> --- a/net/core/Makefile
-> +++ b/net/core/Makefile
-> @@ -46,3 +46,4 @@ obj-$(CONFIG_OF)	+= of_net.o
->  obj-$(CONFIG_NET_TEST) += net_test.o
->  obj-$(CONFIG_NET_DEVMEM) += devmem.o
->  obj-$(CONFIG_DEBUG_NET_SMALL_RTNL) += rtnl_net_debug.o
-> +obj-$(CONFIG_FAIL_SKB_REALLOC) += skb_fault_injection.o
-> diff --git a/net/core/skb_fault_injection.c b/net/core/skb_fault_injection.c
-> new file mode 100644
-> index 000000000000..21b0ea48c139
-> --- /dev/null
-> +++ b/net/core/skb_fault_injection.c
-> @@ -0,0 +1,103 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/fault-inject.h>
-> +#include <linux/netdevice.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/skbuff.h>
-
-alphabetic sort, please?
-
-> +static struct {
-> +	struct fault_attr attr;
-> +	char devname[IFNAMSIZ];
-> +	bool filtered;
-> +} skb_realloc = {
-> +	.attr = FAULT_ATTR_INITIALIZER,
-> +	.filtered = false,
-> +};
-> +
-> +static bool should_fail_net_realloc_skb(struct sk_buff *skb)
-> +{
-> +	struct net_device *net = skb->dev;
-> +
-> +	if (skb_realloc.filtered &&
-> +	    strncmp(net->name, skb_realloc.devname, IFNAMSIZ))
-> +		/* device name filter set, but names do not match */
-> +		return false;
-> +
-> +	if (!should_fail(&skb_realloc.attr, 1))
-> +		return false;
-> +
-> +	return true;
-> +}
-> +ALLOW_ERROR_INJECTION(should_fail_net_realloc_skb, TRUE);
-> +
-> +void skb_might_realloc(struct sk_buff *skb)
-> +{
-> +	if (!should_fail_net_realloc_skb(skb))
-> +		return;
-> +
-> +	pskb_expand_head(skb, 0, 0, GFP_ATOMIC);
-> +}
-> +EXPORT_SYMBOL(skb_might_realloc);
-> +
-> +static int __init fail_skb_realloc_setup(char *str)
-> +{
-> +	return setup_fault_attr(&skb_realloc.attr, str);
-> +}
-> +__setup("fail_skb_realloc=", fail_skb_realloc_setup);
-> +
-> +static void reset_settings(void)
-> +{
-> +	skb_realloc.filtered = false;
-> +	memzero_explicit(&skb_realloc.devname, IFNAMSIZ);
-
-why _explicit ?
-
-> +}
-> +
-> +static ssize_t devname_write(struct file *file, const char __user *buffer,
-> +			     size_t count, loff_t *ppos)
-> +{
-> +	ssize_t ret;
-> +
-> +	reset_settings();
-> +	ret = simple_write_to_buffer(&skb_realloc.devname, IFNAMSIZ,
-> +				     ppos, buffer, count);
-> +	if (ret < 0)
-> +		return ret;
-
-the buffer needs to be null terminated, like:
-
-skb_realloc.devname[IFNAMSIZ - 1] = '\0';
-
-no?
-
-> +	strim(skb_realloc.devname);
-> +
-> +	if (strnlen(skb_realloc.devname, IFNAMSIZ))
-> +		skb_realloc.filtered = true;
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t devname_read(struct file *file,
-> +			    char __user *buffer,
-> +			    size_t size, loff_t *ppos)
-> +{
-> +	if (!skb_realloc.filtered)
-> +		return 0;
-> +
-> +	return simple_read_from_buffer(buffer, size, ppos, &skb_realloc.devname,
-> +				       strlen(skb_realloc.devname));
-> +}
-> +
-> +static const struct file_operations devname_ops = {
-> +	.write = devname_write,
-> +	.read = devname_read,
-> +};
-> +
-> +static int __init fail_skb_realloc_debugfs(void)
-> +{
-> +	umode_t mode = S_IFREG | 0600;
-> +	struct dentry *dir;
-> +
-> +	dir = fault_create_debugfs_attr("fail_skb_realloc", NULL,
-> +					&skb_realloc.attr);
-> +	if (IS_ERR(dir))
-> +		return PTR_ERR(dir);
-> +
-> +	debugfs_create_file("devname", mode, dir, NULL, &devname_ops);
-> +
-> +	return 0;
-> +}
-> +
-> +late_initcall(fail_skb_realloc_debugfs);
--- 
-pw-bot: cr
+--
+Best Regards,
+Huang, Ying
 
