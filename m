@@ -1,89 +1,99 @@
-Return-Path: <linux-kernel+bounces-390891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BB79B7FBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:14:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48E99B7FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DC11F21D69
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:14:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994BE282387
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44A71B5ED4;
-	Thu, 31 Oct 2024 16:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EDA19DF49;
+	Thu, 31 Oct 2024 16:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJtiNksE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pVHehoUF"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099991A705C;
-	Thu, 31 Oct 2024 16:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C180C1B6539;
+	Thu, 31 Oct 2024 16:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730391249; cv=none; b=UVAvzVpE7QqOMpShI7PW/jGKj80aTTUYtS37wFf9QKLQL2QAv/a7Fa2bbXkMLxXLWxCQY6KXueCj2E2E2ebwHJWRp9K8qrX6s5p+pV9U/+3mM/zu8XGITWKjuM1K4dVAuQNbkWA2La+kvruShguNYOCEX9QCCDdWEeJzGx3ei4g=
+	t=1730391252; cv=none; b=NVSQFjpI9laTsaML2NBYN4wJcizBbjbawTeq9G5qKayNKfyfPd6ljgz+9ivz5fBMvJ1aCAYegkrtUsU2vMXTp69SGjWog75gpCUl330n37pKHuK8IEUKRupfX6wKnbNNxcT8QEDEib6joT0WrUEumMXbqLutVxs+tLvscEGnQt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730391249; c=relaxed/simple;
-	bh=5t6VVJNafCgV1I0Ifghcn9yyrAvs5qpB5kVMtgOn5cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GhBIfI9QQTsYbeDO4LpS502kNKBNX03zWnwJEaCgnAbMc4okhl3isjk+RXg1ho5u5b/+nAgwL6M9m2TNibjg8UVc3UNqJE+lzERUgvgMIm1/k02j4vw9+QEdqGPytt9UuySDwSxm2l+pJaXnRTMUWCglKYoxx3v1jj0B3uKPFuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJtiNksE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26109C4CEF5;
-	Thu, 31 Oct 2024 16:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730391248;
-	bh=5t6VVJNafCgV1I0Ifghcn9yyrAvs5qpB5kVMtgOn5cc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aJtiNksE+JeI8iORMT8f807ZRfCr2GnEmB195WPrqxwtRl+Tum1vXeGnfekhN6hSM
-	 aqatg9kLMCcJkXHTdyYgWZmROusT1SDyYbfa2nqknRh4v1v2nsNC5kE/JETiz9UIcw
-	 81+4qAtvqs5gvz0uFcQSus4PgNINN9ETgD2RuEOeknJRW2ZCMB5G5xLtmAayJjVpVh
-	 SgmSQjqNY/PwXUv1pjO5iVLhuEQ66yfaCWXe2ldThVwcvG0EHISgfeRqEalJHXdEOS
-	 xdMdtp8EHs9alfswbeVhWQwhiSrH/ibHl0IpL+OJ1dAFVkWDUXwTzUU4PPSNxb8fbm
-	 1/r/042Zk9Fxw==
-Date: Thu, 31 Oct 2024 16:14:04 +0000
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Naresh Solanki <Naresh.Solanki@9elements.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/2] leds: max5970: fix unreleased fwnode_handle
- in probe function
-Message-ID: <20241031161404.GJ10824@google.com>
-References: <20241019-max5970-of_node_put-v1-0-e6ce4af4119b@gmail.com>
- <20241019-max5970-of_node_put-v1-1-e6ce4af4119b@gmail.com>
- <173039113720.1798167.5364741747242416515.b4-ty@kernel.org>
+	s=arc-20240116; t=1730391252; c=relaxed/simple;
+	bh=n0o+s3aiY3Bsw3fqfqelZWwzh9qVu/lo25kdUzlaTJI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=auBSdNUp02zvQEJPOBOjoW17exQiAsVdbF6przzJ2LBwCLuYxnOzof31MR4j9hV7+Gfz6dd/JhWRHGA+CUSBKhrWtGae96MpEekmKVmK4yDaM435N6F1QmcikobyzhxaLCY8VroBF6JDW17nz1diBQCeVYVnZOmg2sK1oIA0X9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pVHehoUF; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 23BFEC0006;
+	Thu, 31 Oct 2024 16:14:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730391248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n0o+s3aiY3Bsw3fqfqelZWwzh9qVu/lo25kdUzlaTJI=;
+	b=pVHehoUF8pW4Qa2282JzDFtPU04KfzlzIxAbszb4P968e5MJa90O1zSyM+ikSZDVsVvLcE
+	RtyQsl9G9LymtJRvP1c1NLx+JsSRL/ALz3qfBWuinM4hZRDqWsnOWF6+57Mqf77U2JIXsF
+	nl52gOg46uHvXvw3VHK6UkMmjNZhVXsCGVc+4GlcKx8l97af1+PXPDSfnznH187Ll4GofN
+	jaO5j8DvGgyiAp6o5ns62uVWzkxjHc0Vudr8B5kDWY1DbCM1U9fAfIBUIsSw7+MZFhbPiU
+	VAbW7oGRhTcTfXSvt+3azmrUnExu7Rg80E3ZrNiZhH8GeipwyUcNX5I8RRgcYw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <173039113720.1798167.5364741747242416515.b4-ty@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 31 Oct 2024 17:14:06 +0100
+Message-Id: <D5A4I4MRPY8J.OBNCJBOHUTM5@bootlin.com>
+Cc: <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Andi Shyti" <andi.shyti@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v3 0/6] i2c: nomadik: support >=1MHz & Mobileye EyeQ6H
+ platform
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241009-mbly-i2c-v3-0-e7fd13bcf1c4@bootlin.com>
+In-Reply-To: <20241009-mbly-i2c-v3-0-e7fd13bcf1c4@bootlin.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Thu, 31 Oct 2024, Lee Jones wrote:
+Hi Andi,
 
-> On Sat, 19 Oct 2024 21:36:43 +0200, Javier Carrasco wrote:
-> > An object initialized via device_get_named_child_node() requires calls
-> > to fwnode_handle_put() when it is no longer required to avoid leaking
-> > memory.
-> > 
-> > Add the missing calls to fwnode_handle_put() in the different paths
-> > (error paths and normal exit).
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/2] leds: max5970: fix unreleased fwnode_handle in probe function
->       commit: 42c04062ba3cd1f2aef96dc160e0ab4b45b5e10a
+On Wed Oct 9, 2024 at 4:01 PM CEST, Th=C3=A9o Lebrun wrote:
+> Three patches are about adding Mobileye EyeQ6H support to the Nomadik
+> I2C controller driver, in the same vein as was done a few months ago
+> for EyeQ5.
+[...]
+> Three patches are about supporting higher speeds (fast-plus and
+> high-speed).
 
-Unapplied.
+I come in checking. What's your state of mind about that series?
 
--- 
-Lee Jones [李琼斯]
+Rob has given his Reviewed-By on both dt-bindings patches, and Linus
+gave his on all patches. I can send a new revision taking the three
+Reviewed-By trailers from this V3 if you like.
+
+Also, i2c-host-next is free of conflicts on Nomadik files.
+
+Thanks!
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
