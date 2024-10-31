@@ -1,153 +1,164 @@
-Return-Path: <linux-kernel+bounces-391406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 102589B863D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:47:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A98A9B8640
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F55284591
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494331C213B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A94D1BBBED;
-	Thu, 31 Oct 2024 22:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679DA1D1F7A;
+	Thu, 31 Oct 2024 22:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hrCEItuH"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRbMg9by"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5065E1C9ECA
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 22:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2234013D8AC;
+	Thu, 31 Oct 2024 22:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730414822; cv=none; b=NscH18umbHeE9k21ux4/KyuO8Fu0ARVJHMXvj+ZtmqU7yUNr74I9lHQs7c8odetIdl78oUKFVTLL3+XwH+Hy5Wd1JrSTCcTgux9l6cA1efe4Fqnm+n7Lrt4Cn4syu1IZZIst37BfhrER9GOiS6ZzKEOCNdxb9u27l0ioLZJ9H04=
+	t=1730414837; cv=none; b=k1FageP0xEh7BEIABqlbcfRMCoSd2VM4QlKh7nNng1MapsSvR3z5Olcv0Vlj2cryYmFgvBeD19i0/caadEg5WOzBaFf56PbPjui47+SCl8agMalcz2QpAU8k4lN1o/n03SO8Ss8cYdSGSDkDjCq1u/xl/MdcNfQotYK1BQECXSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730414822; c=relaxed/simple;
-	bh=04KvvfgHt4U76Y7cMYLzYC1kJSgpABtfwHo8vWKZHTo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IEtiYbSjaNj4leZk+MubwZ6+eWXaB30u5Ef9m06QXPtqov4gt0LgsQY2D77j0g9udcOHBgFmw0blbDNkrHrG2aN3Xctcd2If25VYohlfuUOsGdCzoXZ1dFSVM5okhd7if3bDUCPZBg3cxo7g3y/X6LgWXpMQ44/7TyQNa+f7n5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hrCEItuH; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d4dee4dfdcso1611901a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:46:56 -0700 (PDT)
+	s=arc-20240116; t=1730414837; c=relaxed/simple;
+	bh=ZP6nBZqbC05NsUiSMvtmgAFARItsZ76FKZK56Ia0yY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjueJDOqqX7asAQ4MPSwY66cDYZCRWmBciaGoXKMeCnGLfOGKeUq3Cg8d3fWgfMJCLc9oUavWAMim5UmnpYirriWgHfU5MsChl+Ak8x3aoTg6L4u4n9UzXSdCV/b3HgOSEZO7Hz54Qwc1uXWTrJsLzKJ9ZHIrxBRoejXUrQdAds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRbMg9by; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c805a0753so14014605ad.0;
+        Thu, 31 Oct 2024 15:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730414816; x=1731019616; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xsh0ecj9Etn04xB/gBU/50JDS6BBsG2RgrIM+NKe2T8=;
-        b=hrCEItuHj0gaHJOSLsiz9a6G9n5EaeDUIgvd5SPoiX4w6CJ9UXgG7Mi7n3YsV2h1q/
-         izFcnd6/GKm1bvwXJzKe6WVoqsYdmPRtWY5nCIHJRNEWODloKh0mUEbEZW2afPPLGFWT
-         +R+YgSV8sWiwySx0wGUYOcL/Lgz4X4FL0UeFg7YjSW9gmOCxM1pIeiohYE8eAbtIk0GD
-         t7K4gRDtadQewUho6+/iGL1SeYg5nMQ/bKKSrIJM+2Wj+k5DFpBTZq/L3vMMymQARejf
-         DL+PTp9Ol/VIEo0ho9eFj8blJHYXI1csHvumfp0Tfn+IdhIht7gz/w0/DW5gk1DPlKjG
-         z5YA==
+        d=gmail.com; s=20230601; t=1730414831; x=1731019631; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wQCrudqNvXdy7lrxuF49N08JEGcOIqKAEAmppY5ECKA=;
+        b=TRbMg9byooxf3vfHg4jBUBsSD4K9IZnR9/5bdSaVcIExWW/axVZdZWvi/86nXDsrfg
+         0yHosV2aK3RMr61khEjJiYO60Ff3DbiH3p/gunNP9ode8J2eXRWygtBTcUVSnsfZUqP6
+         JXL4dB6SnEQF6gAfNMQ4LKGUv/EAIpIy6x/ljlEwvizgSXev1/6yuEqPm5RXCaZbpExK
+         z7AIQphgDjS1RZlcRdSgiBiJUGxijxGM+VkpRhqo3nnhUxu9RxPOPq3qaXGlEX5fOCwK
+         ecuRRLcAo+GRduMwLUkW5tvXlH+scDhJdTG7GAV43dTHIn1TJSqrzsmHroC4bLr8nBuw
+         WJTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730414816; x=1731019616;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xsh0ecj9Etn04xB/gBU/50JDS6BBsG2RgrIM+NKe2T8=;
-        b=Oc2u9UKoG4EIx0oNwfRlRKElQgJnFuh96eySTPnIradSyfNI23XWboyHtOzuu0eVmn
-         0XmjBQlQdw/skDOTH3/AE8U7CRgiMT6SG49SAhDUIOsv8uw7FKui8lO4Vn8nIF+WCWJ6
-         VLoEJUEqtwC2LGgcXsWCfyt7W4DMQGq+NMyC2BqpxAPj5c4kZ/gLMjFtDsAqsSvUQmxj
-         JyAS792v1rqUyevr1VegztL8dTSGZaA/XxvhoXHzzZsFdYp6M4S8GLgfD2jOurRRZvb3
-         K1MUS0R3zYCB5V6LWyTXLkbEx+doC9JXOXTDaXv7DqgkVrDwE3eq3QMVs9Iy/oKPq5zt
-         oz2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUoyKONnMyVbnqIfDlgK4h4qgqNAF6QSPqNAWrS4mpbeFFabZVFP6bqN/KY/D5Wd2m6rs48R6VwPf0PLa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRGVnqq3Ev6kX3i0WgOOao/G4W48003RpWNNV0kY8pVS6m6s/O
-	uSVQXlJBVRHLxtS9f1gLiDDLtSFqq3KxwPkxBcpyFRWrlpdZ8xvEQ/2T0jTjveykVCeHpNJQ6nI
-	aZGWQ/sHV+Q==
-X-Google-Smtp-Source: AGHT+IHArSVwIyggeWsU6JRSK21WNKSRntcwjMdlKacSUh+G18VKzCn39+gQ7DKViVCf1aeNUXLCZjBpRJnC0A==
-X-Received: from kinseyct.c.googlers.com ([fda3:e722:ac3:cc00:a1:836b:ac13:31a5])
- (user=kinseyho job=sendgmr) by 2002:a63:34c1:0:b0:7ea:c554:d831 with SMTP id
- 41be03b00d2f7-7ee290c2030mr8465a12.7.1730414815657; Thu, 31 Oct 2024 15:46:55
- -0700 (PDT)
-Date: Thu, 31 Oct 2024 22:45:51 +0000
-In-Reply-To: <20241031224551.1736113-1-kinseyho@google.com>
+        d=1e100.net; s=20230601; t=1730414831; x=1731019631;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wQCrudqNvXdy7lrxuF49N08JEGcOIqKAEAmppY5ECKA=;
+        b=RUP2fVykZ9t5fxDQPV0WyRxmqUHGjtWqN+tguwOra/ZoG2xoSiWoggFJ25VDbSm6H2
+         u3BbCX2NRznnWTe95Wuun5WXY76axWiDLvpskCw+OvU9+SVHHxzxX+8rQJtHTtxbFNh7
+         tr+EqYU97lnMFyuZjVjnzlRsP5dA5LJeR22tpaW+/cqq343N9NorolQ54DZygiKQokp1
+         /jiIDigyQnW1tlpRRVzS5tBkg4inKH0DvOZTRiuaHLvB5Oxztv7itxG8Le+eAA1n7eWk
+         UcNcobkKBICS8ja9ixUApGRGGpm2I/DqDVOIvQwVOppWnvTSJkC4tnqcmWnGw3Wqo7cy
+         DbeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdw9Xy7h/vThf+YUY/BzpvCc7q9UhvErdQKIbA4iGBd376kMPbqkSaoWGAKxXgdTc6EGXnkI9Bhpbk6qBw@vger.kernel.org, AJvYcCWal0MAJyu4XXE/mtmB56yecIPYnKjsN1Z9wyAZlTwK/XwD6TqwXH9hXdDHCk0yie3AJB0SrOxW@vger.kernel.org, AJvYcCWeQIIFMrtOTKwqCqilotNSu1O3HsRwtdBiHoQGcv8BXRXIHRH9sYv3mvMmekbeANMEBl9NvBIgWvwp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPbHN/iJ7AbnxjFEYICxIImaGene9qryr7d4kZ0LLzGbfnpGPz
+	I6m6aWYwKCr9aj+on1CmGvPcIoRuhMe2Zo3rrIG4xCkK7ZnF/UVA
+X-Google-Smtp-Source: AGHT+IHG/sKyN58dDIoIT5G3OVlXe0NhTIIngTp1CVkh2jnU+eHCNSuLvxChS6xstMqP1z4RZCpBEw==
+X-Received: by 2002:a17:902:e5c2:b0:20b:6188:fc5e with SMTP id d9443c01a7336-210c6ae9baemr269872565ad.28.1730414830985;
+        Thu, 31 Oct 2024 15:47:10 -0700 (PDT)
+Received: from localhost ([121.250.214.124])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93daacb29sm1700296a91.14.2024.10.31.15.47.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 15:47:10 -0700 (PDT)
+Date: Fri, 1 Nov 2024 06:46:39 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Richard Cochran <richardcochran@gmail.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] riscv: dts: sophgo: Add ethernet configuration for cv18xx
+Message-ID: <nkydxanwucqmbzzz2fb24xyelrouj6gvhuuou2ssbf4tvvhfea@6uiuueim7m3a>
+References: <20241028011312.274938-1-inochiama@gmail.com>
+ <87e215a7-0b27-4336-9f9c-e63ade0772ef@lunn.ch>
+ <wgggariprpp2wczsljy3vw6kp7vhnrifg6soxdgiio2seyctym@4owbzlg3ngum>
+ <ftfp2rwkytqmzruogcx66d5qkn4tzrgyjtlz4hdduxhwit3tok@kczgzrjdxx46>
+ <e389a60d-2fe3-46fd-946c-01dd3a0a0f6f@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241031224551.1736113-1-kinseyho@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241031224551.1736113-3-kinseyho@google.com>
-Subject: [PATCH mm-unstable v1 2/2] mm, swap: add pages allocated for struct
- swap_cgroup to vmstat
-From: Kinsey Ho <kinseyho@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	David Rientjes <rientjes@google.com>, willy@infradead.org, Vlastimil Babka <vbabka@suse.cz>, 
-	David Hildenbrand <david@redhat.com>, Kinsey Ho <kinseyho@google.com>, 
-	Joel Granados <joel.granados@kernel.org>, Kaiyang Zhao <kaiyang2@cs.cmu.edu>, 
-	Sourav Panda <souravpanda@google.com>, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e389a60d-2fe3-46fd-946c-01dd3a0a0f6f@lunn.ch>
 
-Export the number of pages allocated for storing struct swap_cgroup in
-vmstat using global system-wide counters.
+On Thu, Oct 31, 2024 at 02:04:31PM +0100, Andrew Lunn wrote:
+> > > > > +		gmac0: ethernet@4070000 {
+> > > > > +			compatible = "snps,dwmac-3.70a";
+> > > > > +			reg = <0x04070000 0x10000>;
+> > > > > +			clocks = <&clk CLK_AXI4_ETH0>, <&clk CLK_ETH0_500M>;
+> > > > > +			clock-names = "stmmaceth", "ptp_ref";
+> > > > > +			interrupts = <31 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > +			interrupt-names = "macirq";
+> > > > > +			phy-handle = <&phy0>;
+> > > > > +			phy-mode = "rmii";
+> > > > > +			rx-fifo-depth = <8192>;
+> > > > > +			tx-fifo-depth = <8192>;
+> > > > > +			snps,multicast-filter-bins = <0>;
+> > > > > +			snps,perfect-filter-entries = <1>;
+> > > > > +			snps,aal;
+> > > > > +			snps,txpbl = <8>;
+> > > > > +			snps,rxpbl = <8>;
+> > > > > +			snps,mtl-rx-config = <&gmac0_mtl_rx_setup>;
+> > > > > +			snps,mtl-tx-config = <&gmac0_mtl_tx_setup>;
+> > > > > +			snps,axi-config = <&gmac0_stmmac_axi_setup>;
+> > > > > +			status = "disabled";
+> > > > > +
+> > > > > +			mdio {
+> > > > > +				compatible = "snps,dwmac-mdio";
+> > > > > +				#address-cells = <1>;
+> > > > > +				#size-cells = <0>;
+> > > > > +
+> > > > > +				phy0: phy@0 {
+> > > > > +					compatible = "ethernet-phy-ieee802.3-c22";
+> > > > > +					reg = <0>;
+> > > > > +				};
+> > > > > +			};
+> > > > 
+> > > > It is not clear to me what cv18xx.dtsi represents, 
+> > > 
+> > > This is a include file to define common ip for the whole
+> > > cv18xx series SoCs (cv1800b, cv1812h, sg2000, sg2000).
+> > > 
+> > > > and where the PHY node should be, here, or in a .dts file. 
+> > > > Is this a SOM, and the PHY is on the SOM? 
+> > > 
+> > > The phy is on the SoC, it is embedded, and no external phy
+> > > is supported. So I think the phy node should stay here, not 
+> > > in the dts file.
+> > 
+> > There is a mistake, Some package supports external rmii/mii
+> > phy. So I will move this phy definition to board specific.
+> 
+> When there is an external PHY, does the internal PHY still exists? If
+> it does, it should be listed, even if it is not used.
+> 
+> Do the internal and external PHY share the same MDIO bus? 
 
-Signed-off-by: Kinsey Ho <kinseyho@google.com>
----
- include/linux/vmstat.h | 3 +++
- mm/swap_cgroup.c       | 3 +++
- mm/vmstat.c            | 3 +++
- 3 files changed, 9 insertions(+)
+They share the same MDIO bus and phy id setting. When an external phy
+is select, the internal one is not initialized and can not be accessed
+by the SoC.
 
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index ac4d42c4fabd..227e951d1219 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -41,6 +41,9 @@ enum vm_stat_item {
- 	NR_DIRTY_BG_THRESHOLD,
- 	NR_MEMMAP_PAGES,	/* page metadata allocated through buddy allocator */
- 	NR_MEMMAP_BOOT_PAGES,	/* page metadata allocated through boot allocator */
-+#if defined(CONFIG_MEMCG) && defined(CONFIG_SWAP)
-+	NR_SWAP_CGROUP_PAGES,	/* allocated to store struct swap_cgroup */
-+#endif
- 	NR_VM_STAT_ITEMS,
- };
- 
-diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-index da1278f0563b..82eda8a3efe1 100644
---- a/mm/swap_cgroup.c
-+++ b/mm/swap_cgroup.c
-@@ -53,6 +53,8 @@ static int swap_cgroup_prepare(int type)
- 		if (!(idx % SWAP_CLUSTER_MAX))
- 			cond_resched();
- 	}
-+	mod_global_page_state(NR_SWAP_CGROUP_PAGES, ctrl->length);
-+
- 	return 0;
- not_enough_page:
- 	max = idx;
-@@ -228,6 +230,7 @@ void swap_cgroup_swapoff(int type)
- 			if (!(i % SWAP_CLUSTER_MAX))
- 				cond_resched();
- 		}
-+		mod_global_page_state(NR_SWAP_CGROUP_PAGES, -length);
- 		vfree(map);
- 	}
- }
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index e5a6dd5106c2..259574261ec1 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1295,6 +1295,9 @@ const char * const vmstat_text[] = {
- 	"nr_dirty_background_threshold",
- 	"nr_memmap_pages",
- 	"nr_memmap_boot_pages",
-+#if defined(CONFIG_MEMCG) && defined(CONFIG_SWAP)
-+	"nr_swap_cgroup_pages",
-+#endif
- 
- #if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
- 	/* enum vm_event_item counters */
--- 
-2.47.0.163.g1226f6d8fa-goog
+> I've seen some SoCs with complex MDIO muxes for internal vs external
+> PHYs.
+> 
+> 	Andrew
 
+There is a switch register on the SoC to decide which phy/mode is used. 
+By defaut is internal one with rmii mode. I think a driver is needed to
+handle this properly.
+
+Regards,
+Inochi
 
