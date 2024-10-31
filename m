@@ -1,230 +1,583 @@
-Return-Path: <linux-kernel+bounces-391179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F2B9B8382
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:37:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7999B8381
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC82EB2222F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE9A01C20BDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9561CB512;
-	Thu, 31 Oct 2024 19:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584981CB512;
+	Thu, 31 Oct 2024 19:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nh3F3BpY";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wwXUoE3g"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjiSiw1s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A034A8C0B
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730403414; cv=fail; b=iQErqb6ltk8kbNSw899PS/M4vUkUDU7c9oj0KSwFzD4p/tHlqY0Rg5eAJonddOqCL4FXkQuP5bd6r+q5++sZOusyaKpnz4wgBhe/v5LoXLDE1cfgkPbYrrq3pJRONwRQesB6GmyltQsqSSU3GsSRqmsqRCU5WqZlbdWDv3/F8Hs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730403414; c=relaxed/simple;
-	bh=zqBPkn0BPu4MkJRetNYB3BRBAUCwI7kx1Ih93+rNYc4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=g7csqRjwYHz+6CmJYR8Q8cIihv282+HkFc/y11o7pTbwwWO3oT0icEH6ecH+A1H+4puNMs6bNi1s+GnVv3l9+A2UuR7xtSD+NLHtsDaFkXRbpTMRGAUMiKdvYBBx3MOrMKTpRqGcbufCmK3dOq/dSJuhjH+JAniUbZQpRufmGM0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nh3F3BpY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wwXUoE3g; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VJBYeT016279;
-	Thu, 31 Oct 2024 19:36:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=nNqC0MbqfEx+oQLV
-	E6fCxxrXvKyhvBNCi/r1d36lGuk=; b=nh3F3BpYE86iuau6ppZ861bd/gMlCoD7
-	VggtvWUMXHw4sb2vvOETw8ZhIP27pBXh5CnDMs6Q2NTyWfdziScj33Ubbu/gIebI
-	f7002V/U039elHm1X7v4MsvjDg09e6Rw6GbonIU6O5IPPFdjgS0v8k1gAvP/ObxW
-	FxVNYmBkJXfzbLHfA414NoD0/NsZTj14DcVEJvIzGvNn2VdHa/G0ABJrAI6RYUE7
-	GJWx+JJsAMuogveumhD/osGUkYKso9iDJQixJSg7hlc55O0Sm3lgy4DA1uVA1Cp7
-	rZJhOoEqc3sJzyWFNxheEgnH3eo8GPyB5ZmiSsAnrydyya8PDSRVKg==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grdxu355-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 19:36:41 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49VHp2Hp004745;
-	Thu, 31 Oct 2024 19:36:40 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2049.outbound.protection.outlook.com [104.47.56.49])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42jb2xbrve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 19:36:40 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WMSKju8MibgiL9YPEA93DwbNHkfglRjHC2ra8TEgjjTQxI+1glbiI+ISLZ5VVnCeZrVQLD/zFbt9zV7yqW7ylITM3yB/R9dEqCj6LzJmmsccuxT+abOheaPjE0fysR0dcdOmAeDObRnfxu2XamFZWL9PqjwVhLcfkjpAfpnhiztHwuPodhHo9tUAN3t+Qes03UcV4uq64j+2bn5XNuacjuCLuxilYCiAEyUjzBtWd2pw37JE6WzH8QX0xoJeoDCjW54n47vtpJ1Hv5NQ0fErexLCmQpiNt38YrYUw/3+5m23wjOhgsL4VmWyVeFX9sSo9I9jsgH9vqDgv3qjo3kMFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nNqC0MbqfEx+oQLVE6fCxxrXvKyhvBNCi/r1d36lGuk=;
- b=c9d1i6lTI/HAzwqybY4M3DqUCn08DfyD2CVd8t6qzFNNmcrN9zeClIyHMoD9EL3BK+i5ythHKDouYSISoFy4wuklqB9z6uvBtLLRVktekyBGU7Gexi4Tig6Bd6aOgkNQVCJGUVwF71l3qGpwjkoSrFMQPy41hZ88MMD8is545tgwup3AS5LOLtUi9+sbsv8um8F2s52T7OfQGNYmGWdG0dsbEKCLXELo0CmF55G2AjXNLXFRPTvUzYnBiNDsQo0jw3EF98GNYPc7pOOzKeg0VF7w5OOggs2LiHu0OuwnUSa2rMgeTbzRntosBK4vMxyevQVWUvhmA9xD1z/aUsUgCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nNqC0MbqfEx+oQLVE6fCxxrXvKyhvBNCi/r1d36lGuk=;
- b=wwXUoE3g8cKn1bw8t1qt60yAu9gsxtw+ePJfwEHkNu2RH6GQfCiZrb8H6LrqCj9GAt1np5q2fufpQ7C+Zcro9Yc5F2ebagpW626XUrcKTQElrjKkz6nWsrlXgL5JGatASPqsApZHlV+tkhrvAG4ueefm6a0ivK/9erGI+StAG3k=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by MN2PR10MB4271.namprd10.prod.outlook.com (2603:10b6:208:199::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.24; Thu, 31 Oct
- 2024 19:36:37 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
- 19:36:37 +0000
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
-Subject: [PATCH v2] vma: Detect infinite loop in vma tree
-Date: Thu, 31 Oct 2024 15:36:08 -0400
-Message-ID: <20241031193608.1965366-1-Liam.Howlett@oracle.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: YT4PR01CA0044.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:fe::19) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644471C9DFC;
+	Thu, 31 Oct 2024 19:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730403403; cv=none; b=pBPUNM1LYrhYaC44wIQ/i3xe4znjn4y31U1fJb1krxn0/cJZII3XW96/FN+Duyv+3bOEkeECi5r3qOuwYlTQdl2UYynBurtPLwOlIzqK3p+S4yY5CIMXWzeD5cej9o6eFP/0RanYNEpwQ3z7iDx8kwgeZS802metFOvQGDyfbOE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730403403; c=relaxed/simple;
+	bh=Z+MNBNPcIJbe79s24w92JEM2jmiPbQ2E95lxShI9ddE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X83ixyIdPc/wzBUuGCgExZ0Pg7PZba5O0ah9iiSG6VtgLftAH0flQjvh1bdt9FhYcaMlCht86xG94U5RpRMfgrf4gteMciMzQ7X8paFDrXNDzzPHg5Zk9SnVCQSyOr7sUJLo7TSgP7lry9WZSrNXIy9grAOsaGu89AtYUsBfm3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjiSiw1s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E57C4CEC3;
+	Thu, 31 Oct 2024 19:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730403402;
+	bh=Z+MNBNPcIJbe79s24w92JEM2jmiPbQ2E95lxShI9ddE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fjiSiw1sRok26s2IuSoRWt11nOrMcW7IQFvr3pwmkp25DcfOjkU67KBJMi/ag6ucx
+	 9BQAcNnlVQKACbeqx9bUx2As7KLVtPimXftAKVLnIoU/ySXzb5R4jAC1MuvecJihTY
+	 7njwN197UPZwLYO8oWTTWHuXg9q42W7/wDOV7xR6jOxldaM5JgAF6cUXysGFen28Nx
+	 5/JC+rwkzE31XTO5WxceKUVeG0z742QjPsE4WgM1GevMaaWI/3vVYqOoapVC1MyeYB
+	 VBm8mIkvfhsjpIUwF4GjejgAwhlRNtX6/pu8YKz+8Dd2vPkS1VvzD256QAJ7aRbOZP
+	 60G120K5GvJyQ==
+Date: Thu, 31 Oct 2024 16:36:38 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 14/21] perf lock: Move common lock contention code to
+ new file
+Message-ID: <ZyPcRn9UdigvUmuE@x1>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-15-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|MN2PR10MB4271:EE_
-X-MS-Office365-Filtering-Correlation-Id: d20dd6e8-1890-4c2f-8951-08dcf9e355fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/KMqxWjQxa00UnFi0NBUuy4y0esIQAqd8ueyMq9CRQUewVpSwTqnwDx2ZVFw?=
- =?us-ascii?Q?8QgApB+KpVcPAzdccG+GKO/dYFAUpqKG6WhQ46Akh50Muzb2q5awMpxLSwWI?=
- =?us-ascii?Q?6u/+OEJm464WzDddV5rlatKg5GR0vs7WxI8CfI9vhXI9g3tX848OkgUW+A7N?=
- =?us-ascii?Q?Aeyv0h5b24dVKcIcJsuzE0vcWGeDcPkVnSmW791o3pezwY8wowCZ1Y/ss6yZ?=
- =?us-ascii?Q?oRTLOxsMs0FYNqHwdlk0B/RLhI3gbWMD8tQVCundHbgoq6arMwM3T2nOCNv+?=
- =?us-ascii?Q?164qr92oc8PW2pa8vQLqBFmq5wSfBABdX+SzuIf4ahGE7dibMuDB8pugGGIJ?=
- =?us-ascii?Q?WugogqnqnHGK6f6wvI/qSojrUgjH4joEIujQbklsxTqteyAYsyScMsLXPC5j?=
- =?us-ascii?Q?t7+0TC+1rJ456qN36uOkONb8DNdPtCo7S8zZC26eQhmrzAUtj1gyHe2taf3k?=
- =?us-ascii?Q?V+1nZvnvC/MXJh2N4zIRe3iILEyt8xQ+uZwpexeiy23xFpxUL51/5T0wawUD?=
- =?us-ascii?Q?93dRIGhHuMNZ1P6cTV3ZjXp7r4eGqRAaUBt4VSEZWsKAyxYX+JYs8d8ULf1O?=
- =?us-ascii?Q?PXHGjdScF2DUezOZBdY50EudSXtGdflJhr1bhOo78GxGsxsSJN6fWzY4fQAN?=
- =?us-ascii?Q?hscQ4++vxUfpVyHQWv/q7YgX7dIYZyMztHIbOUjtWOpQ0ZP5gQF+UesU1dWS?=
- =?us-ascii?Q?XaKBXUq+cljSelD0lyl1Q+pTHvkE6P/jvDwKiO1Wy+VR6UluGKFLvNJmKYlm?=
- =?us-ascii?Q?OexIotWeAwoV/C0JTRKT6bDHEFjkGOuOoARhZRiKtAwy8qsy/Nw6VNAEC5i5?=
- =?us-ascii?Q?2HouAgxEwKwN8qqhbk85RVvXg9sZ4yg7L5rrX1hkzfLrfo6Sk+5/0I3cFWfI?=
- =?us-ascii?Q?89zrcxygerhA0fldaOIxs1yWT+CGCoSM2LqcUy1a7rT1QIdIJHKRxfSPV9au?=
- =?us-ascii?Q?HFgxn88asJhK2j50zQPyWLSpG4rCBoM3EFaCh/P7MoQ2ssu0/vbIZaG4PENg?=
- =?us-ascii?Q?CkJVAzrs1JivLZDkoe2Hv9IVWiTLCoPbj19U4f0UonTyeSLMuHFeD2UpAu+X?=
- =?us-ascii?Q?44ataIfzjHoQCGKTGa/mmHknAbuzvvvmkmWeDacOcYvzkB/DHHH/9JDReBIV?=
- =?us-ascii?Q?duHZUIJ8+athzPShMc4IkaNzrtx+bdDpxOalOz3CdPD9DQ+svzJnhBEibr14?=
- =?us-ascii?Q?qr5kRcLuDik9tMPYDqeYiJCAL9rHuG/L16i1g45Zqt4fY4EryFDmXLiAQaTu?=
- =?us-ascii?Q?R19tnN4lRa0V+bVBr8cn+4IGJ9BgMyyXoddkwPrM4qffMx9UlU6DM2pja13M?=
- =?us-ascii?Q?MnYhtrQ9yBNFuvXl159Y7t3L?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?21HSL+BK/pj88Kf/yJdTZim0i7FttI/gBxQlRbNDj23cS6qYR9mCHCt0/hmf?=
- =?us-ascii?Q?CSBeIWmbkdbWj0wfW6Ryp4ZGQi1vFLLgKlm7CnfalQDW0LZVytK8CjP0rlzj?=
- =?us-ascii?Q?rkHP4OPMXhGULWWde4ZXZVDZ1VonLTbl4Ri8ZDWLQ8PaR8E2J3C/01QfKt/u?=
- =?us-ascii?Q?u6swWsC3HmxOFIh4eEHK60BjV7QF+FfrK/dF7T264bDaTfsnYkYro+9GIDqX?=
- =?us-ascii?Q?9ptQ5pYvIq9P7MfEMFW9nMqUXTdw9OOWz3ppK6t3IHUyR2iyLrFNLdRDYo9m?=
- =?us-ascii?Q?GNWfn/PJxSpfjrjRycxc4SyycD5UZQZ1eJWknQ+U/B6ndk/DGq9J1VjJT/yK?=
- =?us-ascii?Q?EU2xOpEuz7Ryu89gw6l7WF5YvWw4XWUHGNW3TaXnSAP3LC7aFxZ02zfPfO7Q?=
- =?us-ascii?Q?NwL7dtUXFpxhRJrohNa37BRa4MpAtW3OnhitYK+qTJ4hwpMeKaPJKPMBoK7Y?=
- =?us-ascii?Q?0qsAuamfmVBT0YVhbNRHSBxUSRAD41g89T9oz9IG3G4c4JAZ/b8DKzxE5lYY?=
- =?us-ascii?Q?6vsuub/D+6FD9O0dn35MYaWDCTM7Z8/83cWIO9FMHkRFyxgD5hzzy+GK1oQt?=
- =?us-ascii?Q?7E1sQL7ihGOQSWyvTbXwKHj1fNbff+yIwc9j6rfnYATjivZiGR8yUP402LVe?=
- =?us-ascii?Q?A7/tJdJUnb2qAhPze7rsnhbN8UgIzDeFLQcQj8wEd7EthTj/mLQI4ICsiFss?=
- =?us-ascii?Q?NaM8smQNycSUrvnpJsEQXckPoid/bg44MzlEJadTDTbNJR9QlFiYayVd6ATs?=
- =?us-ascii?Q?ELSSfi8TIornC6bRlvwLY35VoBu5N4I25mpPT/br0fIEMxrfcG7T4xNSeQ8n?=
- =?us-ascii?Q?pv3y2ckx2W+36Viw9rsJPYP856wZIhcYGW1k4n5E4QbQJJBE0bP9ftq+5d+H?=
- =?us-ascii?Q?IiQgx0Rd0zXMyvbKgcOfdWaUVnkWa7ALaWEFr7gKPDpLxJZQ+oppHTGY6OyH?=
- =?us-ascii?Q?98EnyL8NdqC18etCLoQsbQWTglWoG3WfiiiURmDJWLLu0y1NPNRRWVb1+xOy?=
- =?us-ascii?Q?agAfQc20/XxIv2wIjI1WZr8J2kyeqxPPqqRd2dOLTI0aka8+AabFWnsApcMG?=
- =?us-ascii?Q?imjOVrW7a584GhYhurEQTMGJhujk2Uj3igsiv90c9LD8J3Nuj7b/vTJL5AKM?=
- =?us-ascii?Q?DkaHrnvJvtsmDWKLE6URpzk4FbJHTAdBBF06Usw/uC2T2aMb/Sm+Nt4PxiT/?=
- =?us-ascii?Q?G2w5PZl0t/NI4D77eCDMvZYYT3zCf2QyY3vVgLARi598k+5fQ1fGzNGToj81?=
- =?us-ascii?Q?v4qVhx7eq7PxDlO0lDeBAR3lmlJBeMfOf4bhVnq6bQaMUx6gggT3khh/TfUv?=
- =?us-ascii?Q?slW+GHef9g3kwFY2Y33vJNOQ7+JEV4Gbz2SvqZ6UO+x0nQ+WYImzcl6G3Lyp?=
- =?us-ascii?Q?OTK7oKyqjNGos1Ak9ckjDEZNofFzKahFCOa2T79KWRvxNtTF8e14Fe2fullx?=
- =?us-ascii?Q?Hzbf2K31MTCBFevakRkzs/UlWVv9jRVwSjinW3p8dMCPgZQT9+BRvf0Yf4qc?=
- =?us-ascii?Q?KcmhJpOtU7zXGGmdP1X9AyKB9aB3Vz3SxBe14ceriHOsmPEI2rkxYcqO2r3w?=
- =?us-ascii?Q?s2U+PuZXYemdF8Z7v9hT8273XAtNAHUIFzD7RtXS?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jN9ZLCR909Kk8ujYORdbMpgkjCzPMJI4qD7ke0idzUYSoiXRcWDwlEYwkroVLdgn4n0jlXamXr4Kb97k+WHEguFRh4CHhuO4oblTIROv61ClomnkHVOGdU/rxRITaXc66ERKaG5Gp4/dWiEAw2Y2XcNaDB86x/D0veKcxB8GckQmogTf4og7BIf+aBzoUMsodGRDaYua/2ILQuWW2TEYbKXN7weemjIqAXf53HQqTs58e86V2M8QYiKbbcQgVt8z9MIUVJRbMcqinfBqI0hULgVv1fMjGooTIzv7XVXjH0HSX3rhHJ/3yhNo0Mudq0wrNBtDW0efYT0ukW009ei0IJn8N4OO2e+64fMdtVXFXF6TW0G8h2ZfJ9WV1gjCszV8pt0GiB0ITw23Tj5CX91jDEnoO8pTK6ZNXPt2XVlYZak8EcqK2HseKSS6tWI/wENSNcKKON625AD/LwjwXQqMk7M8QBGh9zCl53FIBv8ZIWq/IqMXByZVJCKTHy3fkTHIyulB+uOPYhZBEvuw35iMEC95q3dhBbO3wSCm5cGtWHjNI/g9pJxox1U073ApUHK8klmQ5+hoWz/YqTpYpzQ/TzS7YGqI0JqGWViy1pHDq8s=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d20dd6e8-1890-4c2f-8951-08dcf9e355fc
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 19:36:37.7316
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5kvakmwe69gboKksGQAQWmW90T6J+wR/TTngL3xgo2v3+P2wXlUqs1b2jFgs/l+pnUBLJ0ryjpbKItMK7qlFCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4271
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-31_10,2024-10-31_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 bulkscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=818 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410310148
-X-Proofpoint-GUID: Ek16I4ON8IcULoYFWbXZkGn8mzefRBkV
-X-Proofpoint-ORIG-GUID: Ek16I4ON8IcULoYFWbXZkGn8mzefRBkV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031014252.753588-15-irogers@google.com>
 
-From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+On Wed, Oct 30, 2024 at 06:42:45PM -0700, Ian Rogers wrote:
+> Avoid references from util code to builtin-lock that require python
+> stubs. Move the functions and related variables to
+> util/lock-contention.c. Add max_stack_depth parameter to
+> match_callstack_filter to avoid sharing a global variable.
 
-There have been no reported infinite loops in the tree, but checking the
-detection of an infinite loop during validation is simple enough.  Add
-the detection to the validate_mm() function so that error reports are
-clear and don't just report stalls.
-
-This does not protect against internal maple tree issues, but it does
-detect too many vmas being returned from the tree.
-
-The variance of +10 is to allow for the debugging output to be more useful for
-nearly correct counts.  In the event of more than 10 over the map_count, the
-count will be set to -1 for easier identification of a potential infinite loop.
-
-Note that the mmap lock is held to ensure a consistent tree state during the
-validation process.
-
-Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Jann Horn <jannh@google.com>
----
- mm/vma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/mm/vma.c b/mm/vma.c
-index 68138e8c153e..283e6bc4884f 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -615,7 +615,10 @@ void validate_mm(struct mm_struct *mm)
- 			anon_vma_unlock_read(anon_vma);
- 		}
- #endif
--		i++;
-+		if (++i > mm->map_count + 10) {
-+			i = -1;
-+			break;
-+		}
- 	}
- 	if (i != mm->map_count) {
- 		pr_emerg("map_count %d vma iterator %d\n", mm->map_count, i);
--- 
-2.43.0
-
+Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-lock.c             | 137 +--------------------
+>  tools/perf/util/Build                 |   1 +
+>  tools/perf/util/bpf_lock_contention.c |   2 +-
+>  tools/perf/util/lock-contention.c     | 170 ++++++++++++++++++++++++++
+>  tools/perf/util/lock-contention.h     |  37 ++----
+>  tools/perf/util/python.c              |  17 ---
+>  6 files changed, 185 insertions(+), 179 deletions(-)
+>  create mode 100644 tools/perf/util/lock-contention.c
+> 
+> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> index 062e2b56a2ab..f66948b1fbed 100644
+> --- a/tools/perf/builtin-lock.c
+> +++ b/tools/perf/builtin-lock.c
+> @@ -46,15 +46,6 @@
+>  static struct perf_session *session;
+>  static struct target target;
+>  
+> -/* based on kernel/lockdep.c */
+> -#define LOCKHASH_BITS		12
+> -#define LOCKHASH_SIZE		(1UL << LOCKHASH_BITS)
+> -
+> -static struct hlist_head *lockhash_table;
+> -
+> -#define __lockhashfn(key)	hash_long((unsigned long)key, LOCKHASH_BITS)
+> -#define lockhashentry(key)	(lockhash_table + __lockhashfn((key)))
+> -
+>  static struct rb_root		thread_stats;
+>  
+>  static bool combine_locks;
+> @@ -67,24 +58,13 @@ static unsigned long bpf_map_entries = MAX_ENTRIES;
+>  static int max_stack_depth = CONTENTION_STACK_DEPTH;
+>  static int stack_skip = CONTENTION_STACK_SKIP;
+>  static int print_nr_entries = INT_MAX / 2;
+> -static LIST_HEAD(callstack_filters);
+>  static const char *output_name = NULL;
+>  static FILE *lock_output;
+>  
+> -struct callstack_filter {
+> -	struct list_head list;
+> -	char name[];
+> -};
+> -
+>  static struct lock_filter filters;
+>  
+>  static enum lock_aggr_mode aggr_mode = LOCK_AGGR_ADDR;
+>  
+> -static bool needs_callstack(void)
+> -{
+> -	return !list_empty(&callstack_filters);
+> -}
+> -
+>  static struct thread_stat *thread_stat_find(u32 tid)
+>  {
+>  	struct rb_node *node;
+> @@ -477,93 +457,6 @@ static struct lock_stat *pop_from_result(void)
+>  	return container_of(node, struct lock_stat, rb);
+>  }
+>  
+> -struct lock_stat *lock_stat_find(u64 addr)
+> -{
+> -	struct hlist_head *entry = lockhashentry(addr);
+> -	struct lock_stat *ret;
+> -
+> -	hlist_for_each_entry(ret, entry, hash_entry) {
+> -		if (ret->addr == addr)
+> -			return ret;
+> -	}
+> -	return NULL;
+> -}
+> -
+> -struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags)
+> -{
+> -	struct hlist_head *entry = lockhashentry(addr);
+> -	struct lock_stat *ret, *new;
+> -
+> -	hlist_for_each_entry(ret, entry, hash_entry) {
+> -		if (ret->addr == addr)
+> -			return ret;
+> -	}
+> -
+> -	new = zalloc(sizeof(struct lock_stat));
+> -	if (!new)
+> -		goto alloc_failed;
+> -
+> -	new->addr = addr;
+> -	new->name = strdup(name);
+> -	if (!new->name) {
+> -		free(new);
+> -		goto alloc_failed;
+> -	}
+> -
+> -	new->flags = flags;
+> -	new->wait_time_min = ULLONG_MAX;
+> -
+> -	hlist_add_head(&new->hash_entry, entry);
+> -	return new;
+> -
+> -alloc_failed:
+> -	pr_err("memory allocation failed\n");
+> -	return NULL;
+> -}
+> -
+> -bool match_callstack_filter(struct machine *machine, u64 *callstack)
+> -{
+> -	struct map *kmap;
+> -	struct symbol *sym;
+> -	u64 ip;
+> -	const char *arch = perf_env__arch(machine->env);
+> -
+> -	if (list_empty(&callstack_filters))
+> -		return true;
+> -
+> -	for (int i = 0; i < max_stack_depth; i++) {
+> -		struct callstack_filter *filter;
+> -
+> -		/*
+> -		 * In powerpc, the callchain saved by kernel always includes
+> -		 * first three entries as the NIP (next instruction pointer),
+> -		 * LR (link register), and the contents of LR save area in the
+> -		 * second stack frame. In certain scenarios its possible to have
+> -		 * invalid kernel instruction addresses in either LR or the second
+> -		 * stack frame's LR. In that case, kernel will store that address as
+> -		 * zero.
+> -		 *
+> -		 * The below check will continue to look into callstack,
+> -		 * incase first or second callstack index entry has 0
+> -		 * address for powerpc.
+> -		 */
+> -		if (!callstack || (!callstack[i] && (strcmp(arch, "powerpc") ||
+> -						(i != 1 && i != 2))))
+> -			break;
+> -
+> -		ip = callstack[i];
+> -		sym = machine__find_kernel_symbol(machine, ip, &kmap);
+> -		if (sym == NULL)
+> -			continue;
+> -
+> -		list_for_each_entry(filter, &callstack_filters, list) {
+> -			if (strstr(sym->name, filter->name))
+> -				return true;
+> -		}
+> -	}
+> -	return false;
+> -}
+> -
+>  struct trace_lock_handler {
+>  	/* it's used on CONFIG_LOCKDEP */
+>  	int (*acquire_event)(struct evsel *evsel,
+> @@ -1165,7 +1058,7 @@ static int report_lock_contention_begin_event(struct evsel *evsel,
+>  		if (callstack == NULL)
+>  			return -ENOMEM;
+>  
+> -		if (!match_callstack_filter(machine, callstack)) {
+> +		if (!match_callstack_filter(machine, callstack, max_stack_depth)) {
+>  			free(callstack);
+>  			return 0;
+>  		}
+> @@ -2449,34 +2342,6 @@ static int parse_lock_addr(const struct option *opt __maybe_unused, const char *
+>  	return ret;
+>  }
+>  
+> -static int parse_call_stack(const struct option *opt __maybe_unused, const char *str,
+> -			   int unset __maybe_unused)
+> -{
+> -	char *s, *tmp, *tok;
+> -	int ret = 0;
+> -
+> -	s = strdup(str);
+> -	if (s == NULL)
+> -		return -1;
+> -
+> -	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
+> -		struct callstack_filter *entry;
+> -
+> -		entry = malloc(sizeof(*entry) + strlen(tok) + 1);
+> -		if (entry == NULL) {
+> -			pr_err("Memory allocation failure\n");
+> -			free(s);
+> -			return -1;
+> -		}
+> -
+> -		strcpy(entry->name, tok);
+> -		list_add_tail(&entry->list, &callstack_filters);
+> -	}
+> -
+> -	free(s);
+> -	return ret;
+> -}
+> -
+>  static int parse_output(const struct option *opt __maybe_unused, const char *str,
+>  			int unset __maybe_unused)
+>  {
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 340544a6f5ec..3c6cd8d81d88 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -121,6 +121,7 @@ perf-util-y += topdown.o
+>  perf-util-y += iostat.o
+>  perf-util-y += stream.o
+>  perf-util-y += kvm-stat.o
+> +perf-util-y += lock-contention.o
+>  perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+>  perf-util-y += intel-pt-decoder/
+>  perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
+> diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_lock_contention.c
+> index 41a1ad087895..37e17c56f106 100644
+> --- a/tools/perf/util/bpf_lock_contention.c
+> +++ b/tools/perf/util/bpf_lock_contention.c
+> @@ -458,7 +458,7 @@ int lock_contention_read(struct lock_contention *con)
+>  		if (con->save_callstack) {
+>  			bpf_map_lookup_elem(stack, &key.stack_id, stack_trace);
+>  
+> -			if (!match_callstack_filter(machine, stack_trace)) {
+> +			if (!match_callstack_filter(machine, stack_trace, con->max_stack)) {
+>  				con->nr_filtered += data.count;
+>  				goto next;
+>  			}
+> diff --git a/tools/perf/util/lock-contention.c b/tools/perf/util/lock-contention.c
+> new file mode 100644
+> index 000000000000..841bb18b1f06
+> --- /dev/null
+> +++ b/tools/perf/util/lock-contention.c
+> @@ -0,0 +1,170 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "debug.h"
+> +#include "env.h"
+> +#include "lock-contention.h"
+> +#include "machine.h"
+> +#include "symbol.h"
+> +
+> +#include <limits.h>
+> +#include <string.h>
+> +
+> +#include <linux/hash.h>
+> +#include <linux/zalloc.h>
+> +
+> +#define __lockhashfn(key)	hash_long((unsigned long)key, LOCKHASH_BITS)
+> +#define lockhashentry(key)	(lockhash_table + __lockhashfn((key)))
+> +
+> +struct callstack_filter {
+> +	struct list_head list;
+> +	char name[];
+> +};
+> +
+> +static LIST_HEAD(callstack_filters);
+> +struct hlist_head *lockhash_table;
+> +
+> +int parse_call_stack(const struct option *opt __maybe_unused, const char *str,
+> +		     int unset __maybe_unused)
+> +{
+> +	char *s, *tmp, *tok;
+> +	int ret = 0;
+> +
+> +	s = strdup(str);
+> +	if (s == NULL)
+> +		return -1;
+> +
+> +	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
+> +		struct callstack_filter *entry;
+> +
+> +		entry = malloc(sizeof(*entry) + strlen(tok) + 1);
+> +		if (entry == NULL) {
+> +			pr_err("Memory allocation failure\n");
+> +			free(s);
+> +			return -1;
+> +		}
+> +
+> +		strcpy(entry->name, tok);
+> +		list_add_tail(&entry->list, &callstack_filters);
+> +	}
+> +
+> +	free(s);
+> +	return ret;
+> +}
+> +
+> +bool needs_callstack(void)
+> +{
+> +	return !list_empty(&callstack_filters);
+> +}
+> +
+> +struct lock_stat *lock_stat_find(u64 addr)
+> +{
+> +	struct hlist_head *entry = lockhashentry(addr);
+> +	struct lock_stat *ret;
+> +
+> +	hlist_for_each_entry(ret, entry, hash_entry) {
+> +		if (ret->addr == addr)
+> +			return ret;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags)
+> +{
+> +	struct hlist_head *entry = lockhashentry(addr);
+> +	struct lock_stat *ret, *new;
+> +
+> +	hlist_for_each_entry(ret, entry, hash_entry) {
+> +		if (ret->addr == addr)
+> +			return ret;
+> +	}
+> +
+> +	new = zalloc(sizeof(struct lock_stat));
+> +	if (!new)
+> +		goto alloc_failed;
+> +
+> +	new->addr = addr;
+> +	new->name = strdup(name);
+> +	if (!new->name) {
+> +		free(new);
+> +		goto alloc_failed;
+> +	}
+> +
+> +	new->flags = flags;
+> +	new->wait_time_min = ULLONG_MAX;
+> +
+> +	hlist_add_head(&new->hash_entry, entry);
+> +	return new;
+> +
+> +alloc_failed:
+> +	pr_err("memory allocation failed\n");
+> +	return NULL;
+> +}
+> +
+> +bool match_callstack_filter(struct machine *machine, u64 *callstack, int max_stack_depth)
+> +{
+> +	struct map *kmap;
+> +	struct symbol *sym;
+> +	u64 ip;
+> +	const char *arch = perf_env__arch(machine->env);
+> +
+> +	if (list_empty(&callstack_filters))
+> +		return true;
+> +
+> +	for (int i = 0; i < max_stack_depth; i++) {
+> +		struct callstack_filter *filter;
+> +
+> +		/*
+> +		 * In powerpc, the callchain saved by kernel always includes
+> +		 * first three entries as the NIP (next instruction pointer),
+> +		 * LR (link register), and the contents of LR save area in the
+> +		 * second stack frame. In certain scenarios its possible to have
+> +		 * invalid kernel instruction addresses in either LR or the second
+> +		 * stack frame's LR. In that case, kernel will store that address as
+> +		 * zero.
+> +		 *
+> +		 * The below check will continue to look into callstack,
+> +		 * incase first or second callstack index entry has 0
+> +		 * address for powerpc.
+> +		 */
+> +		if (!callstack || (!callstack[i] && (strcmp(arch, "powerpc") ||
+> +						(i != 1 && i != 2))))
+> +			break;
+> +
+> +		ip = callstack[i];
+> +		sym = machine__find_kernel_symbol(machine, ip, &kmap);
+> +		if (sym == NULL)
+> +			continue;
+> +
+> +		list_for_each_entry(filter, &callstack_filters, list) {
+> +			if (strstr(sym->name, filter->name))
+> +				return true;
+> +		}
+> +	}
+> +	return false;
+> +}
+> +
+> +#ifndef HAVE_BPF_SKEL
+> +int lock_contention_prepare(struct lock_contention *con __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> +int lock_contention_start(void)
+> +{
+> +	return 0;
+> +}
+> +
+> +int lock_contention_stop(void)
+> +{
+> +	return 0;
+> +}
+> +
+> +int lock_contention_finish(struct lock_contention *con __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> +int lock_contention_read(struct lock_contention *con __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +#endif  /* !HAVE_BPF_SKEL */
+> diff --git a/tools/perf/util/lock-contention.h b/tools/perf/util/lock-contention.h
+> index 1a7248ff3889..bfa5c7db0a5d 100644
+> --- a/tools/perf/util/lock-contention.h
+> +++ b/tools/perf/util/lock-contention.h
+> @@ -67,10 +67,11 @@ struct lock_stat {
+>   */
+>  #define MAX_LOCK_DEPTH 48
+>  
+> -struct lock_stat *lock_stat_find(u64 addr);
+> -struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags);
+> +/* based on kernel/lockdep.c */
+> +#define LOCKHASH_BITS		12
+> +#define LOCKHASH_SIZE		(1UL << LOCKHASH_BITS)
+>  
+> -bool match_callstack_filter(struct machine *machine, u64 *callstack);
+> +extern struct hlist_head *lockhash_table;
+>  
+>  /*
+>   * struct lock_seq_stat:
+> @@ -148,7 +149,14 @@ struct lock_contention {
+>  	bool save_callstack;
+>  };
+>  
+> -#ifdef HAVE_BPF_SKEL
+> +struct option;
+> +int parse_call_stack(const struct option *opt, const char *str, int unset);
+> +bool needs_callstack(void);
+> +
+> +struct lock_stat *lock_stat_find(u64 addr);
+> +struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int flags);
+> +
+> +bool match_callstack_filter(struct machine *machine, u64 *callstack, int max_stack_depth);
+>  
+>  int lock_contention_prepare(struct lock_contention *con);
+>  int lock_contention_start(void);
+> @@ -156,25 +164,4 @@ int lock_contention_stop(void);
+>  int lock_contention_read(struct lock_contention *con);
+>  int lock_contention_finish(struct lock_contention *con);
+>  
+> -#else  /* !HAVE_BPF_SKEL */
+> -
+> -static inline int lock_contention_prepare(struct lock_contention *con __maybe_unused)
+> -{
+> -	return 0;
+> -}
+> -
+> -static inline int lock_contention_start(void) { return 0; }
+> -static inline int lock_contention_stop(void) { return 0; }
+> -static inline int lock_contention_finish(struct lock_contention *con __maybe_unused)
+> -{
+> -	return 0;
+> -}
+> -
+> -static inline int lock_contention_read(struct lock_contention *con __maybe_unused)
+> -{
+> -	return 0;
+> -}
+> -
+> -#endif  /* HAVE_BPF_SKEL */
+> -
+>  #endif  /* PERF_LOCK_CONTENTION_H */
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 35d84a96dbec..91fd444615cd 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -18,7 +18,6 @@
+>  #include "mmap.h"
+>  #include "util/kwork.h"
+>  #include "util/sample.h"
+> -#include "util/lock-contention.h"
+>  #include <internal/lib.h>
+>  #include "../builtin.h"
+>  
+> @@ -1311,22 +1310,6 @@ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
+>  	return NULL;
+>  }
+>  
+> -bool match_callstack_filter(struct machine *machine __maybe_unused, u64 *callstack __maybe_unused)
+> -{
+> -	return false;
+> -}
+> -
+> -struct lock_stat *lock_stat_find(u64 addr __maybe_unused)
+> -{
+> -	return NULL;
+> -}
+> -
+> -struct lock_stat *lock_stat_findnew(u64 addr __maybe_unused, const char *name __maybe_unused,
+> -				int flags __maybe_unused)
+> -{
+> -	return NULL;
+> -}
+> -
+>  int cmd_inject(int argc __maybe_unused, const char *argv[] __maybe_unused)
+>  {
+>  	return -1;
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
+> 
 
