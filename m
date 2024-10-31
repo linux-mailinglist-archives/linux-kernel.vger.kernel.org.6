@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-389894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1599B729B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:44:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 807FE9B7299
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:44:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F53B237B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41918285D25
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFFE13698B;
-	Thu, 31 Oct 2024 02:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8750912FF9C;
+	Thu, 31 Oct 2024 02:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="XApF2sli"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="l65h0Xuk"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A4012C465
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A9512C473
 	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730342669; cv=none; b=r3KBpN1DH6DSQjry5XVI9hAEyVWga2qIhtHgLvVKfJoWdnCCjObQK2+XIkHhKfRH7RGqh/vJEoKnmqsNEGZs6pCTRGF6wU+PDBqQ4zsVs+EogkgVhUtCYDLFSeXa0SkeozYfPVxynsFSW37N4YjbGBYvv3iQBoZkdwv/iFY/mhg=
+	t=1730342668; cv=none; b=pfz3gNQYvRjYoAVjz0mzdesE9EhCAqRrp0wNq6llEtzb+ZKgOs8nswfTBPCRcdG5KckLfiQJnMwB8MW/xyHpd0RgMBNf3D4by3Njqg9htl9gudtvO5/omGhBMX5H3S71euFUgKOwBa3+Srl13GNIlpVAdHk5RDfHHfC0RI6agSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730342669; c=relaxed/simple;
-	bh=8AtT8YEFyRyHbeCzOHAzfEyWKhHdPX8SGO4p9v6hc5w=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kso7cipGyVSe+ZyUb7G+OUZeZxGa8iqovBQIhL9d3TxqlzrFKL+NldohnKJ9Kky68H54EpgAii6Yl1Ud4xs6DqrbjLAS95/NbXxfvckeg2Ka7eI+Nmcq1Go5MflIiOvLbpGGf6lieRlTb2CsHx/iSy7D7FAVpBsAlfxbuoywwB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=XApF2sli; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1730342668; c=relaxed/simple;
+	bh=iCkq/n0ScNs19XGEBHP6SQ4H+TMRU4fkw8iLrhzrW/Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bVlMx2SVjY/r2kEnqNBseEM1yWUDjHq79NZD3/o2/UEDBGdKGPuEWi0lpVCUzuFbMNxqXfmeAy5fsT5NzDjLd/G8+BC/DujhFfMOCFrFkrIDnSM8ZBcT+fzL9QHyWWDaEUhQdp632w056+0/Z4jukHCDHBVDZ/aGjs9fpAIrsU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=l65h0Xuk; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1730342662;
-	bh=8AtT8YEFyRyHbeCzOHAzfEyWKhHdPX8SGO4p9v6hc5w=;
-	h=From:Subject:Date:To:Cc:From;
-	b=XApF2sli1RJhht12/2Cov6k96jP7OjyvBdg/8Cyd9yU+uvuAlJC11CB6r5aCg8pte
-	 mTceOzyRdvxvxm7PHNRfbkPM3zjuaLWC4QUruaP8pqpQUHlLYA1NckdBngJLMRXHFu
-	 kBWDvlsLh/bsVTa4zMZGHR/OTu0lmx+mFffoAlfQ=
+	bh=iCkq/n0ScNs19XGEBHP6SQ4H+TMRU4fkw8iLrhzrW/Q=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=l65h0XukiXN4BdEFyncTp/UBZ/U+9z2UHbM7gGX5BRcepfcPGG3g1bjTahnAUznic
+	 8mEylLJBmZq0meuuE8fnMZ1FFJ6KKZwSoRC8RI1AwG2RqARi+lAt9htYpxhcRUrYgJ
+	 rtrgLQ+9pyfwJASs6Z7VnrabXJn9ic23Mzlwgeyg=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: [PATCH RFC 00/10] sysfs: constify struct bin_attribute (Part 1)
-Date: Thu, 31 Oct 2024 02:43:49 +0000
-Message-Id: <20241031-sysfs-const-bin_attr-v1-0-2281afa7f055@weissschuh.net>
+Date: Thu, 31 Oct 2024 02:43:50 +0000
+Subject: [PATCH RFC 01/10] sysfs: explicitly pass size to
+ sysfs_add_bin_file_mode_ns()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,91 +49,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAOXuImcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDAyML3eLK4rRi3eT8vOIS3aTMvPjEkpIi3UQDAwtLMxMLwxSDJCWg1oK
- i1LTMCrCx0UpBbs5KsRDBotTCUqAVJRCZ2NpaAMyfSdWAAAAA
-X-Change-ID: 20241028-sysfs-const-bin_attr-a00896481d0b
+Message-Id: <20241031-sysfs-const-bin_attr-v1-1-2281afa7f055@weissschuh.net>
+References: <20241031-sysfs-const-bin_attr-v1-0-2281afa7f055@weissschuh.net>
+In-Reply-To: <20241031-sysfs-const-bin_attr-v1-0-2281afa7f055@weissschuh.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Rafael J. Wysocki" <rafael@kernel.org>
 Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730342657; l=3307;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730342657; l=3118;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=8AtT8YEFyRyHbeCzOHAzfEyWKhHdPX8SGO4p9v6hc5w=;
- b=+0orQpJ2VcD7pMRj9s5+VuhwlBoS1z1cM/RJ76YDJIrc95VkSwKwHUDdslBwqTO6Vy1fsBWoG
- WX0RwBXi9NoDCA7+zz1MQt91jDdOPksn6rYtNdEjxJS2GjKDMlViKtc
+ bh=iCkq/n0ScNs19XGEBHP6SQ4H+TMRU4fkw8iLrhzrW/Q=;
+ b=8H9UXNcwMtfvH+tc1LRO3oWJXPSganB+Ds3czbDy342RiLa9+en5+xsI7j/4TFrUP1CsXi9/A
+ PqXxTTG2hkSAEv9yr5X59lCoVpcfZm5RM1rFjc0VgO4YYnApqsTSARS
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-struct bin_attribute contains a bunch of pointer members, which when
-overwritten by accident or malice can lead to system instability and
-security problems.
-Moving the definitions of struct bin_attribute to read-only memory
-makes these modifications impossible.
-The same change has been performed for many other structures in the
-past. (struct class, struct ctl_table...)
-
-For the structure definitions throughout the core to be moved to
-read-only memory the following steps are necessary.
-
-1) Change all callbacks invoked from the sysfs core to only pass const
-   pointers
-2) Adapt the sysfs core to only work in terms of const pointers
-3) Adapt the sysfs core APIs to allow const pointers
-4) Change all structure definitions through the core to const
-
-This series provides the foundation for step 1) above.
-It converts some callbacks in a single step to const and provides a
-foundation for those callbacks where a single step is not possible.
-
-This series is marked as RFC and only sent to the sysfs maintainers to
-get some feedback on the general aproach.
-The same techniques employed by this series can later be reused for the
-same change for 'struct attribute'.
+Upcoming changes to the sysfs core require the size of the created file
+to be overridable by the caller.
+Add a parameter to enable this.
+For now keep using attr->size in all cases.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
-Thomas Weißschuh (10):
-      sysfs: explicitly pass size to sysfs_add_bin_file_mode_ns()
-      sysfs: introduce callback attribute_group::bin_size
-      PCI/sysfs: Calculate bin_attribute size through bin_size()
-      nvmem: core: calculate bin_attribute size through bin_size()
-      sysfs: treewide: constify attribute callback of bin_is_visible()
-      sysfs: treewide: constify attribute callback of bin_attribute::mmap()
-      sysfs: drop callback bin_attribute::llseek
-      sysfs: implement all BIN_ATTR_* macros in terms of __BIN_ATTR()
-      sysfs: bin_attribute: add const read/write callback variants
-      driver core: Constify attribute arguments of binary attributes
+ fs/sysfs/file.c  | 8 ++++----
+ fs/sysfs/group.c | 3 ++-
+ fs/sysfs/sysfs.h | 2 +-
+ 3 files changed, 7 insertions(+), 6 deletions(-)
 
- drivers/base/node.c                     |   4 +-
- drivers/base/topology.c                 |   4 +-
- drivers/cxl/port.c                      |   2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |   2 +-
- drivers/infiniband/hw/qib/qib_sysfs.c   |   2 +-
- drivers/misc/ocxl/sysfs.c               |   2 +-
- drivers/mtd/spi-nor/sysfs.c             |   2 +-
- drivers/nvmem/core.c                    |  16 ++++-
- drivers/pci/p2pdma.c                    |   2 +-
- drivers/pci/pci-sysfs.c                 |  36 +++++++-----
- drivers/pci/vpd.c                       |   2 +-
- drivers/platform/x86/amd/hsmp.c         |   2 +-
- drivers/platform/x86/intel/pmt/class.c  |   2 +-
- drivers/platform/x86/intel/sdsi.c       |   2 +-
- drivers/scsi/scsi_sysfs.c               |   2 +-
- drivers/uio/uio_hv_generic.c            |   2 +-
- drivers/usb/core/sysfs.c                |   2 +-
- fs/sysfs/file.c                         |  32 +++++-----
- fs/sysfs/group.c                        |   5 +-
- fs/sysfs/sysfs.h                        |   2 +-
- include/linux/sysfs.h                   | 100 +++++++++++++++++++-------------
- 21 files changed, 132 insertions(+), 93 deletions(-)
----
-base-commit: e42b1a9a2557aa94fee47f078633677198386a52
-change-id: 20241028-sysfs-const-bin_attr-a00896481d0b
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index d1995e2d6c943a644ff9f34cf2488864d57daf81..6d39696b43069010b0ad0bdaadcf9002cb70c92c 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -315,7 +315,7 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+ }
+ 
+ int sysfs_add_bin_file_mode_ns(struct kernfs_node *parent,
+-		const struct bin_attribute *battr, umode_t mode,
++		const struct bin_attribute *battr, umode_t mode, size_t size,
+ 		kuid_t uid, kgid_t gid, const void *ns)
+ {
+ 	const struct attribute *attr = &battr->attr;
+@@ -340,7 +340,7 @@ int sysfs_add_bin_file_mode_ns(struct kernfs_node *parent,
+ #endif
+ 
+ 	kn = __kernfs_create_file(parent, attr->name, mode & 0777, uid, gid,
+-				  battr->size, ops, (void *)attr, ns, key);
++				  size, ops, (void *)attr, ns, key);
+ 	if (IS_ERR(kn)) {
+ 		if (PTR_ERR(kn) == -EEXIST)
+ 			sysfs_warn_dup(parent, attr->name);
+@@ -580,8 +580,8 @@ int sysfs_create_bin_file(struct kobject *kobj,
+ 		return -EINVAL;
+ 
+ 	kobject_get_ownership(kobj, &uid, &gid);
+-	return sysfs_add_bin_file_mode_ns(kobj->sd, attr, attr->attr.mode, uid,
+-					   gid, NULL);
++	return sysfs_add_bin_file_mode_ns(kobj->sd, attr, attr->attr.mode,
++					  attr->size, uid, gid, NULL);
+ }
+ EXPORT_SYMBOL_GPL(sysfs_create_bin_file);
+ 
+diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+index d22ad67a0f3291f4702f494939528d5d13c31fae..45b2e92941da1f49dcc71af3781317c61480c956 100644
+--- a/fs/sysfs/group.c
++++ b/fs/sysfs/group.c
+@@ -87,6 +87,7 @@ static int create_files(struct kernfs_node *parent, struct kobject *kobj,
+ 	if (grp->bin_attrs) {
+ 		for (i = 0, bin_attr = grp->bin_attrs; *bin_attr; i++, bin_attr++) {
+ 			umode_t mode = (*bin_attr)->attr.mode;
++			size_t size = (*bin_attr)->size;
+ 
+ 			if (update)
+ 				kernfs_remove_by_name(parent,
+@@ -104,7 +105,7 @@ static int create_files(struct kernfs_node *parent, struct kobject *kobj,
+ 
+ 			mode &= SYSFS_PREALLOC | 0664;
+ 			error = sysfs_add_bin_file_mode_ns(parent, *bin_attr,
+-							   mode, uid, gid,
++							   mode, size, uid, gid,
+ 							   NULL);
+ 			if (error)
+ 				break;
+diff --git a/fs/sysfs/sysfs.h b/fs/sysfs/sysfs.h
+index 3f28c9af57562f61a00a47935579f0939cbfd4dc..8e012f25e1c06e802c3138cc2715b46c1f67fa48 100644
+--- a/fs/sysfs/sysfs.h
++++ b/fs/sysfs/sysfs.h
+@@ -31,7 +31,7 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+ 		const struct attribute *attr, umode_t amode, kuid_t uid,
+ 		kgid_t gid, const void *ns);
+ int sysfs_add_bin_file_mode_ns(struct kernfs_node *parent,
+-		const struct bin_attribute *battr, umode_t mode,
++		const struct bin_attribute *battr, umode_t mode, size_t size,
+ 		kuid_t uid, kgid_t gid, const void *ns);
+ 
+ /*
 
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+2.47.0
 
 
