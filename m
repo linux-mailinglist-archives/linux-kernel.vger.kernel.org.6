@@ -1,196 +1,95 @@
-Return-Path: <linux-kernel+bounces-390125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C779B75DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:58:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57ED49B760A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3819A1F23555
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:58:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B5CB231FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D77E15383E;
-	Thu, 31 Oct 2024 07:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB26E15098A;
+	Thu, 31 Oct 2024 08:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gPTM4lE3"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2055.outbound.protection.outlook.com [40.107.249.55])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="L2fKUInm"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DAF16A92E;
-	Thu, 31 Oct 2024 07:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730361442; cv=fail; b=Jj/bKxFPsOYdWbSEBJtrBDEQsH3aDJJ0CuJxmJyojRQUTsMmHcv4GepVL9NUpaZEY7xYGbU9m5R5zQyA3klvbXX/fXtMm6NZ2OLhalMf0upSkJPTWR/7XLH47F5jhsVHaCE3C94/hbUkW6h5o7WTsz7V0k/X3I4SG9t0sqIRPnI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730361442; c=relaxed/simple;
-	bh=Lywi4pVRf6RPgUcGteQFVbPR3c+UAZ6EQsPmZyaXHBY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aSuxJ9fUfwLtihRaD8+fQMcDe04jPbTdkSp7SN1i4Vk+//V8BsfyIAPKTZrXa3ewb+tY5hDknnoC0BxT+0pVDI8xeKUiuGgFTtMwKDVu9IqQmShHOjLFtfQL4KLQc0Js4VO290ISs6UBWdJyBqQecV9Vm99j3USFlXm698cMa/M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gPTM4lE3; arc=fail smtp.client-ip=40.107.249.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bNr9qi1Pkfz7uJpM1bS71dqcUjkJNUJmssEJ0Po/7/BFRdhc1l2uo+tp/6IXMpPAVjAEeTGQqlUXzPg6yjMw4yg0j5+yTfbfFmovOSQMiNZEh5KlJppXW6QXs4RfOw7wwUArBUxOCUWg2rs4h0BmEj5yaLzCfNASu+wjyStXWcvH6XjXoUNrD+C+7YU2BQeuGyX7cEXsF3TyMy8pN8n1F8YDbYYfTD1IbN09iRLfG5vukzfBBqSmJAcX+/NzIHFhfE4DuMU3dMefw9tprCa6EwZBTHjgqoom11EFZc+Fc0mKemUfBjzhQDV7DZG3Vc+XB7ptQ/TDgQBBPT3SVgxWLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n/foMJLXbrz0qbnxNQ57gS/EpLf9dk983dskH5fpV0w=;
- b=hYk3BCpz/QycFgaXKbWe4a+XDTVxeagaS+RWIXHECN0gkTRwa+xq+ejpAH/an5e8Duti/Q04LeKGLQ6yyplvtQL4ghvG9RSJNcrDS2huIsI/F7bYKWpfD1tOjHOoI4TWdmnXLFSR9ouYazRNsI7WVIwjPaIjgolRpl22nWdm79lcjEOTNxAn08eKAPiFcM745tv8OON1fbWcLV49iNJGAoWawQA7gkHyv2EM50LCpg3c1ZLETuLJAIIwdKarfz0zSHzUxMRjkVLkqEYVx3yPbWlVpSp5f4y3sC81X0qLJIQhXlIPja4+ZIL6oyZ13JoNeqTGoFyDS2meWWHK+02PCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n/foMJLXbrz0qbnxNQ57gS/EpLf9dk983dskH5fpV0w=;
- b=gPTM4lE33rv7qriY0jiI/4w1BKgXtV8UdiBFPghTJ63U8utzNd5lEVnSTSSrpgqUMfEG9Wn3AfNFzEEAZ2xISAdxwazBEcZM8OorFXiUevbpozvmlJ3SH5Rq2otBqkh4IZXPcEInI6lDWZZ2Gi90CDfUriDyaS0A1tbBbsNGDJWpjTjl8kV0QWgtWOfvUC1CmwS+ilyLDR1NDK4AldnIoj9Z+6I2X4nx8EcV7bVhGa3vg1KeE/pbPYJWlodhnsTV3cCI25mdpZL2s3JtTWY2vkc/HvJiJm31UpPLtvvIrvGPEUZgFxoXulKHywutA7z+VN6iqJIkvrNTxXTvL2tYnw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
- by DB9PR04MB8139.eurprd04.prod.outlook.com (2603:10a6:10:248::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Thu, 31 Oct
- 2024 07:57:17 +0000
-Received: from AS8PR04MB8676.eurprd04.prod.outlook.com
- ([fe80::28b2:de72:ad25:5d93]) by AS8PR04MB8676.eurprd04.prod.outlook.com
- ([fe80::28b2:de72:ad25:5d93%6]) with mapi id 15.20.8114.015; Thu, 31 Oct 2024
- 07:57:17 +0000
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: l.stach@pengutronix.de,
-	bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	frank.li@nxp.com,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com
-Cc: imx@lists.linux.dev,
-	kernel@pengutronix.de,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v5 04/10] PCI: imx6: Correct controller_id generation logic for i.MX7D
-Date: Thu, 31 Oct 2024 16:06:49 +0800
-Message-Id: <20241031080655.3879139-5-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20241031080655.3879139-1-hongxing.zhu@nxp.com>
-References: <20241031080655.3879139-1-hongxing.zhu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0184.apcprd04.prod.outlook.com
- (2603:1096:4:14::22) To AS8PR04MB8676.eurprd04.prod.outlook.com
- (2603:10a6:20b:42b::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0372212CDB6;
+	Thu, 31 Oct 2024 08:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730362016; cv=none; b=XxjNgEIyFrPyJD03OlBTlKg6qW1PQNGwEvqU1y1znSITyIj2lhlqAjpyRxYdMUMxZhz/UmqgoXKiO1lIuds16P/Dvvfg3SAVZ9gDeRUbAlsEHBMlbCjyoonXzr8U+niqRlYnTkfwmcIxflUvHOfyRK3/uKHbBxRyJhdTKXMzJf0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730362016; c=relaxed/simple;
+	bh=JshBYHnAdXkkdibADmLAopnBhhJnB+6PF+Xrg/aavks=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aVKx16QlEqVW8x5YI/ZlHv6syUqUsU3pImZb3TNVj5K3fg7CNCAQ3NxwNiwbmrM9a5Ly9/tGxKz/xkDidnWTnvTbnP6rzk2psGczKgEvy217UmBODSCfYAqFiOu1ms/Jz9ab9qn0Egaac01hm0X2cbPruxmveGEwZuSQbEBUGsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=L2fKUInm; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=24AuO80wjvZozr8N8J3CkNyuIKUrNV1vyAER/sIwQtg=;
+	t=1730362014; x=1731571614; b=L2fKUInm8AuQYxI7x/PQBGrhrY7hDi+AVC+ZdCSj9O9GCL5
+	rNyosN3Gf81uZW0TDmvb624eK7WXfrjETeZn2JyxVKGmiXVE/JX5vcdEfqztEjul36+DwO6H0HSSz
+	i5B7//CxkJDAu9RIhQFFElywNkXaRXVLy8Jqk1MobI2hPGAndJ4LGtrBt7xTsj9ektUMqYE1V4aC7
+	HW7nc4L7ZXiRs0/+DBhF/uI0dATNdqlaYJ/sMd++Wfjhp67Me07h8Y2iOOcgSJK7rgpsDMicYiyTl
+	sU2WQcXoNlE30cg1DevW0TsVhn2w9O7uX/VUViTjpDdb+4pMmjJSF8rosQEQ+ISA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1t6QCg-0000000ALco-1cgV;
+	Thu, 31 Oct 2024 09:06:50 +0100
+Message-ID: <7100cb98b8e46793cfb1197c3af0f151a9628c9d.camel@sipsolutions.net>
+Subject: Re: Issue with iwlwifi Firmware Loading When Compiled into the
+ Kernel
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Gang Yan <gang_yan@foxmail.com>, Miri Korenblit
+	 <miriam.rachel.korenblit@intel.com>, Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 31 Oct 2024 09:06:49 +0100
+In-Reply-To: <tencent_2C31282B61589DFCC908B3831384D569440A@qq.com>
+References: <tencent_2C31282B61589DFCC908B3831384D569440A@qq.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8676:EE_|DB9PR04MB8139:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9cfbcf3-d6ec-41b8-f257-08dcf981a3d3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d4CMnpC6izbMfSo3TsK15okcFcMoq1KOpf2z/zZMdOWPQGoUaQ+JWiTgF3EU?=
- =?us-ascii?Q?1sNfclBR5Xn2I/QDifT5ksJauIXYs9Y0xdlGmebslNI8Bv7x3498FwsZ7QPh?=
- =?us-ascii?Q?3P9KC9xHVTajIk8C8EVtfGBNRCDF0c7ElVroDRAewg0sRZrpWiPvtE72cpK7?=
- =?us-ascii?Q?bcLcbVCzlicqtTSFSl6UMYTjIE37IGDnLWXBpLGNAesQaaXjRENehtgFEpp5?=
- =?us-ascii?Q?XpLZfyIocsO/XXuBOi2pImUq23uc2hErqiyZu0MQOKTSh+5KXEFoYCRc4RL7?=
- =?us-ascii?Q?dV5BNzXGIVJaQ6zQcg87TyqpY13eJseKaciU4ea7V5hX0lJ/NAFnxrtdrfCD?=
- =?us-ascii?Q?ynf7k0u2YVuBrrIRdT3gnwjXivivwhH1VrJxq383570C11LnxiSbutlRdT5T?=
- =?us-ascii?Q?LlxAtSidofsVhByw+ubQg3cwNTgoE6gAysCGJKpI2IDXEdtySoA1+Faa8daA?=
- =?us-ascii?Q?+1ilHDN+mlPciSyRNKLxYBSOjxwOxRtnWqzjYRWoPlhdc3uNey1YUOqLQKqW?=
- =?us-ascii?Q?1UCu8enTuCcYEoHZ0r5JhyUtrxKlqVc1U8yL70TqsC2kadXDhFBlfpCMvmtM?=
- =?us-ascii?Q?/+pPS5DSn1GguIRnJamffTmvK1b++F8zxxDjd683othdM5r/7CtXQtLrit5c?=
- =?us-ascii?Q?JHZNvygUWYM0lBAyjFIx6idtY26CEUB0S/iDMQ7h2Zka0WsmoTSDkCXfWmWx?=
- =?us-ascii?Q?Qix7yR+bK95iTIY9zyU2JLEzUsQ6I9Zz3iwJVMNtdSH9uvukxhGiISJPy7ek?=
- =?us-ascii?Q?zyg3kERCPGu97IPia/3P17HZSD8yeOjqVsZkVhOz0FItj/Ii+Q3OaF8lhYGx?=
- =?us-ascii?Q?6fN9318JT6xE5Ogk4LfCNoLmEFawqEK9rvXSfEcFQHx1LYh8DirVzDgHADjm?=
- =?us-ascii?Q?SGHuQrXETWffyWtlsrpPwbEAQpmYcSdSXaF90cdHwSfORl9GwxW2smk9RslZ?=
- =?us-ascii?Q?nUEiJP0ouQ53XvfZMwkxH4GxwvetcWlY0tQDnpC8hMsBMkrSxlQhnmoCiz/r?=
- =?us-ascii?Q?/AIbDomHjkmx0XwqtnhIMTjtIC6oNUs2mrDIhqOmN5b6dR/OSkf88jF6GKoL?=
- =?us-ascii?Q?tONg+OOUkYVCUuQEawiodymazIbZKIW2bndWSBVJ12i6fjdTphHvu9D4myi1?=
- =?us-ascii?Q?MAIrIrZqXdH1B4xb5hIvI5hMQpJtif36pVORro+38u7ahZJb310lf1qOGqYK?=
- =?us-ascii?Q?FeD+9bvCrSj5XDnvuEOwYlmTL5r+pztcHf/zTyNe3YqCGe0Fs+dVzoBx8dPK?=
- =?us-ascii?Q?qqLD2OQmqQ8EiUHd+njU7tqji9HEMZ/0LW2U6DIeTvfYErnBR/AjZvxwMeA2?=
- =?us-ascii?Q?84BqViuZ3TBaLWbHplBJkp1XK/FO/DMvcC8Xi/WFlj/8hK6M6Rfdqh2YE6ne?=
- =?us-ascii?Q?VSEEEdFUPF0x13nVfoB+2KGQRgAj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8676.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mSiEmeNe2fDiwLyXILcwqsBWwSV8/8R9sbekQeMcUZCw5u22nB4ibW6o40jn?=
- =?us-ascii?Q?KL3ci4sk2RlWiKivtcPZZwe63HQEzot8XoSfk3t2+Zr3PaKGYD76VlMTWlEu?=
- =?us-ascii?Q?MeoxG0Fmqiwccjv7MTkg6P7lMuFL5IKHjeK6fGc6aVUGe7DqbH1E2yldJk/t?=
- =?us-ascii?Q?mCxjW3NQOWZBR6eiLabw0peSS2M3wIUzI9IbIGfmhcKYnnDpy7gDYzqQq0kA?=
- =?us-ascii?Q?fhQ+mK5Ov+J4BlDrLcMf/SgsTGUTEdeOJAOmz2+8oyNlAGHj31fa/RsrmD+9?=
- =?us-ascii?Q?dcFT6aBcbQa3ng7W14aqQkz0rYw9h4rPZaA+RQOCV3hTCRcNfBIoZ/cC/Ua3?=
- =?us-ascii?Q?j4Kuo+UUfvAshTzcZvvU/VyLLdCIMNT/U2lnS6z+y8SwgvJquexfX5GbZAtp?=
- =?us-ascii?Q?VJq9gmkwLT06g5ZFyHitszJtfSuMhHC0QwxUYmUcR7yPMk5Np1RkH6+oaREb?=
- =?us-ascii?Q?pfiXgNq16AhnqS6mORyNDxX/mOX0eymrvq/YmefWNauQDJNwSOmR5x7eud8f?=
- =?us-ascii?Q?ank2c4wZuvYT6v3dHyWgH25EcZ/qQ/oojp1lyfD+WqAIVpIQVpJcfoX99gfT?=
- =?us-ascii?Q?lPOJH+ox0UbrtPViGBTow6HVViCTp7xDjoW7IXIGVEp7UOINGiciCtsJboM+?=
- =?us-ascii?Q?/3e28VWBL87/wH8/6DwhIuEkSnb4UUXv3Y7COxGwIY/z7luq3ZdFYJdD35Gz?=
- =?us-ascii?Q?76ZWbe7IzHPfRCoJCM96Wze/JxwQtxeXMBeYAORB6ZuCguSj7g4El/EHdXRd?=
- =?us-ascii?Q?3VZ+/nkGmNAOqSGlnQMBpAy3llXFOmt4berpOitf/Tt3T7JxqMkBIbyqr4m5?=
- =?us-ascii?Q?UBT22yaZt2YzUa/h2WQjZpf/nN0uKrNalK/7LzG7T46mdPx4G2eP/mTynIBm?=
- =?us-ascii?Q?L2MvuOmA84n473HoeVgmnfhJ54EeXVYGhJsqw8EXzXyR5w29cOzD5VSdSwde?=
- =?us-ascii?Q?aMqUy4X6IymBNTVCQvow50yA10TeseWh7pwVcJ9s97QTCv97aZeY5yK5p74x?=
- =?us-ascii?Q?Qj3YAT5swc+PUPFv8WN+Sd3pdBDZjMniniHMz/w/vYRVh+VJtirFgm3mR1Pp?=
- =?us-ascii?Q?cDBQEwF3iEO3HzggEYd9iJ8gpavmmhdETfoS6XNBiL8ftaXA0IiA/tpvQPo6?=
- =?us-ascii?Q?iupK+v2ubzD7OeNTEK0oZCFSIoo1nSDHY7OdWuije2pNKanaf11MRPXZdxCU?=
- =?us-ascii?Q?Dgd+bsU0qmOGF0Q2dUVqShnONg8sDfJS/rgvPAC4DzXai00ELr8DalzmZUdf?=
- =?us-ascii?Q?+uZtFJsOA+bnLE+Y5jDMbPvFEUCr6vtJFbfNFO1IBDvUSVHAQyhGXEeXxcRS?=
- =?us-ascii?Q?/DoFUTDdfGyUe0gIFXbiD20gFS/Aimsn6UsiqKr0/Bu1rn1EKEokvTP38Rmv?=
- =?us-ascii?Q?m7/xn3BbRWdFJ6E3QnWdmnI6KuBWKvEL++qrRKQX7d5WZb/+OAMwQu3BCQdr?=
- =?us-ascii?Q?jlKjWD8i5kMzCcgSIo9GQnih/5uN9StTMZ3ZfEQtJ3FFcLygv95/6DpO9OwZ?=
- =?us-ascii?Q?ygqe/w78eA/Z+sey7gViOdAhij8O/Zvd+BTGmYvQxoIGd8Y2mZB4qb8WAty7?=
- =?us-ascii?Q?q8QW32RA21cmrCL5Xn2rRDXuCvT8wDPzHFcbIn+8?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9cfbcf3-d6ec-41b8-f257-08dcf981a3d3
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8676.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 07:57:17.7557
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9XCQMS2KmhpDXyEt6+5jhee3PuB6/NReMTmvSLjQkHTEzYX6qXa21jIRXeoHeIcgmXqBCRPMSd0q/kDMBFyBvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8139
+X-malware-bazaar: not-scanned
 
-i.MX7D only has one PCIe controller, so controller_id should always be 0.
-The previous code is incorrect although yielding the correct result. Fix by
-removing IMX7D from the switch case branch.
+>=20
+> To address this issue, I have considered two potential solutions:
+>=20
+> 1=E3=80=81Modify the Driver Code: Implement a mechanism, such as delayed_=
+work, to=20
+> give iwlwifi another chance to load the firmware after the filesystem has=
+=20
+> been mounted. This would involve adding additional logic to the driver to=
+=20
+> handle retries for firmware loading.
+>=20
+> 2=E3=80=81Modify the Kconfig: Change the configuration to allow iwlwifi t=
+o be=20
+> compiled only as a module [CONFIG_IWLWIFI=3Dm]. This way, the module can =
+be=20
+> loaded after the filesystem is fully mounted, ensuring that the firmware
+>  can be found and loaded successfully.
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/pci/controller/dwc/pci-imx6.c | 1 -
- 1 file changed, 1 deletion(-)
+Neither of those is going to happen - you should just build the firmware
+into the kernel (or initramfs might be enough?) if you want it built-in.
+Or set up firmware loading userspace, and set it up appropriately to
+only respond after / is mounted.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index d21f7d2e79dc..7479d3253f20 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -1344,7 +1344,6 @@ static int imx_pcie_probe(struct platform_device *pdev)
- 	switch (imx_pcie->drvdata->variant) {
- 	case IMX8MQ:
- 	case IMX8MQ_EP:
--	case IMX7D:
- 		if (dbi_base->start == IMX8MQ_PCIE2_BASE_ADDR)
- 			imx_pcie->controller_id = 1;
- 		break;
--- 
-2.37.1
+In any case, not a kernel problem. You need to fix it on your userspace.
 
+johannes
 
