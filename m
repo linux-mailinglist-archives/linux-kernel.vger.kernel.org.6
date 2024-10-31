@@ -1,163 +1,164 @@
-Return-Path: <linux-kernel+bounces-391138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80029B8327
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:15:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398079B8325
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF622812F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3B21C22950
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EF91CB331;
-	Thu, 31 Oct 2024 19:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C231CB304;
+	Thu, 31 Oct 2024 19:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TonD/T6D"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jbvunouG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D1YHTUUc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FC141987
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B524F347C7;
+	Thu, 31 Oct 2024 19:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402112; cv=none; b=EOFyOsd4O/6Py7qzx9HPS8wD3JE7ELj6cPkv2NZB5aCl7NeMZFcTxBcYfNRECl0dSOkEmW8DjW5LgvAzwAiSST+8jCQgIJ8x9FShDLmIBavQimiZ4UVPBbqTK2XOyYRyId3TO4CxxH10RPk1lyICWfsfHprQaDeDCIJhhmYuxIk=
+	t=1730402111; cv=none; b=sWLxo05Ke1ADIJlDIck3+jv4TXRYz8d/W7AuUE5iIF3/Cx7H6N3e85XiOFJccfvao4YfsqJREX3lGiceN+jJPpT8JjIATZlVY1SftuKMZ75qEKRqL4WTbs7P64YkeJe13x9HKbz10saaijHSJDc574WDUXIv10/6bG4Tp5Twyg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402112; c=relaxed/simple;
-	bh=N1fYzkm6fzUz+e+vRiqxfL0N2wW6fQWiDTiPtOgJChY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZzpoGakc5WvCyDEbY317hoSuU1mhOneQthIsiq6s4iOUlWLaNs/S1KR5R+aMXdHRWAi4jwsa+w24oXJMRGUSpBF0qHsSme5EQkqiObXa02Tu+IV4nA7s07Lqx+AbCPOuhaRDehTWqhyrn6wZBpXa8Cz2+f3LxCojNfkSvMQgOHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TonD/T6D; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a007743e7so1477583e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730402108; x=1731006908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HAwsPMZV145BtHwYn6jGE8nEqAn9J+nFJ3D93oIIBmw=;
-        b=TonD/T6Dm0Rkag5OAc+Ynhdk8S5aQ7zu2hdfQ5IlEwXWc8WAjxk7wS7wHoKDxiPVOc
-         R4lw+Cuizfx22Gf8ug1NfjEiPvoYutPaNI/iWtp91JZi/GT0KqURdzceHulwJYGkEsCb
-         5iTFISI34A2K9JQ74Wpxin3zQBjSZKSmCzNX6MeN1Ogp836yeffykDkIaa70Ut+FHv0v
-         8l2fyEQ11JtUmm5ybyzsLdRVdwg3j/bAxG5krBpo0z259CemcUDtcSDdlcZ3FeEz6lG2
-         3MxXdW0snvpg8oUjnqreAzCjiMVvCBYerwEf5tXgnYTPtzrFWcAFdXKULiOnM3izjrRl
-         3wwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730402108; x=1731006908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HAwsPMZV145BtHwYn6jGE8nEqAn9J+nFJ3D93oIIBmw=;
-        b=s5KfYKcDqbjqroYempOQWjvt5fzvfjnyGz+xzCDuN43eGhcChKWY5L6X+lDYORnIvj
-         YeAuHEhKbNMtryFtriUlLHkRJm5A8f5PnoKilWw7oXU4S9dgm6PycbtAN0UTX9E606sf
-         Xg4VcnjtcK/rP1FEUtnzcxWipWsOVrnZh45D+/7UWwB7ZvvJ/Sb3LqRwWmxy2FCt/AIa
-         xKbl9zBGnIbrvd2vNLmlCrHccixBIRbtj6xSI+okEQXUX8nt9Xhxft8u/d7/Yc+2dVmL
-         HtcYaOb9xRiwzhNTbAHkq0Q9SfZqYR1GKWE9QsqrqtP1nAkqxeD5gvYz3RaGjQHqjvuy
-         xCNw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0h6sFOt+xLB237YELemXeAhQvJf4a2g+97bdg6xfqzu5qZhs2O6OW+OdB5ofjTyYoMhvErM/Qrv24V50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLyma1UsrNXN9NgFqQYkTQSuMWK2UuN/F1VOYEjEYn+XcV8ce9
-	LwCdbIfqJxT5bFNNko6JDvxaJt9O64Tk2r+4hoLTaGpkxoL5oj6cJAPV97nryloldWaYMi1dBsn
-	7LQ31BTTyiQetoJN7fJ66IjsljruPRwkHn7YMHA==
-X-Google-Smtp-Source: AGHT+IFhGKzyho6e6TzBRPsG2H6OQLFu8aDknW6VG5e0GIr5eAiCAh62PBm4LRyEsQlB9wiETJ4VA9Ni8RZte4XtyxE=
-X-Received: by 2002:a05:6512:3a91:b0:52e:e3c3:643f with SMTP id
- 2adb3069b0e04-53c79e158c3mr2531913e87.2.1730402107655; Thu, 31 Oct 2024
- 12:15:07 -0700 (PDT)
+	s=arc-20240116; t=1730402111; c=relaxed/simple;
+	bh=a9zdZQVhyhietWCzukDywxWWXo7tU+BDB0BdBCgRcTM=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Pl+CmPUnzzEOgYOVUqMwR0UCYs6PllSPJF4y7vRz4v5BUJ32sWZzJ58o7rOSuRca6r+JU15xOm+oUCMtIooDsSfRgPo7UeP+p+kJici2gTE8FrWMjoYfPcEHVjcek3HYfmliU+sdUsoKRj91qDabyY2jFBce/Y/yeiZZFWzBzn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jbvunouG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D1YHTUUc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 31 Oct 2024 19:15:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730402106;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=xbsNjuZ+1drHrTtwHznaQPv1UpzwFIOh1lASH+nXJmE=;
+	b=jbvunouGyPZOput6dpWXduQGK4abMWnEs30p3vQYayR7IboktOAdKpywtsfz7JpTODZJDE
+	/tSGoz4j/jsRKQeLr6DfgKNbUqJpTn3wACZ/APjin88iVXNtD1BdwmAtzKpIcakVMFooLp
+	DY2kcwhw3yweJWu4XAhqZENaNh4+JOuGxRdjI3HHBCMcbujrvdOVERZ3is6cJR9RzFpxAd
+	BoufbYP6Z5uNzq04T1I7pr8d0oX09qEM/zJR4XEblElxnoxNjobWXE144jJCT0lop0/m4f
+	+p2TbQLjkrofT+fmHREtBFACxt4xVfbDjMQueJD1CRYv43CA00HGQvKDixuLvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730402106;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=xbsNjuZ+1drHrTtwHznaQPv1UpzwFIOh1lASH+nXJmE=;
+	b=D1YHTUUcNT4ZNfILP38PTusfV/zZ/GvSxRZi7QcjBkJcLRS8Qn+euTmkk8DCOb+NsV10cq
+	U341lHFIDmt5n3Dw==
+From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu: Fix FAM5_QUARK_X1000 to use X86_MATCH_VFM()
+Cc: Tony Luck <tony.luck@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031092154.2244728-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20241031092154.2244728-1-andriy.shevchenko@linux.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 31 Oct 2024 20:14:56 +0100
-Message-ID: <CAMRc=MeiZ_U0UoU1atWxyWxEhcKwUcCK_cbYu_p-DQar27Fw+A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpiolib: Deduplicate gpiod_direction_input_nonotify()
- call
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <173040210499.3137.9772207552880255501.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 10:22=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Deduplicate gpiod_direction_input_nonotify() call in
-> gpiod_direction_output_nonotify() when emulating open-drain
-> or open-source behaviour. It also aligns the error check
-> approaches in set_output_value and set_output_flag labels.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/gpio/gpiolib.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 5666c462248c..9376dd270344 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2877,19 +2877,15 @@ int gpiod_direction_output_nonotify(struct gpio_d=
-esc *desc, int value)
->                 if (!ret)
->                         goto set_output_value;
->                 /* Emulate open drain by not actively driving the line hi=
-gh */
-> -               if (value) {
-> -                       ret =3D gpiod_direction_input_nonotify(desc);
-> +               if (value)
->                         goto set_output_flag;
-> -               }
->         } else if (test_bit(FLAG_OPEN_SOURCE, &flags)) {
->                 ret =3D gpio_set_config(desc, PIN_CONFIG_DRIVE_OPEN_SOURC=
-E);
->                 if (!ret)
->                         goto set_output_value;
->                 /* Emulate open source by not actively driving the line l=
-ow */
-> -               if (!value) {
-> -                       ret =3D gpiod_direction_input_nonotify(desc);
-> +               if (!value)
->                         goto set_output_flag;
-> -               }
->         } else {
->                 gpio_set_config(desc, PIN_CONFIG_DRIVE_PUSH_PULL);
->         }
-> @@ -2901,15 +2897,17 @@ int gpiod_direction_output_nonotify(struct gpio_d=
-esc *desc, int value)
->         return gpiod_direction_output_raw_commit(desc, value);
->
->  set_output_flag:
+The following commit has been merged into the x86/cpu branch of tip:
 
-Ok, I'll take it but please change this label to "emulate_output" or
-something similar that's more indicative on what the goal here is.
+Commit-ID:     110213b8f0e7021819d4db273facb27701bc3381
+Gitweb:        https://git.kernel.org/tip/110213b8f0e7021819d4db273facb27701bc3381
+Author:        Tony Luck <tony.luck@intel.com>
+AuthorDate:    Thu, 31 Oct 2024 11:57:33 -07:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Thu, 31 Oct 2024 12:02:21 -07:00
 
-Bart
+x86/cpu: Fix FAM5_QUARK_X1000 to use X86_MATCH_VFM()
 
-> +       ret =3D gpiod_direction_input_nonotify(desc);
-> +       if (ret)
-> +               return ret;
->         /*
->          * When emulating open-source or open-drain functionalities by no=
-t
->          * actively driving the line (setting mode to input) we still nee=
-d to
->          * set the IS_OUT flag or otherwise we won't be able to set the l=
-ine
->          * value anymore.
->          */
-> -       if (ret =3D=3D 0)
-> -               set_bit(FLAG_IS_OUT, &desc->flags);
-> -       return ret;
-> +       set_bit(FLAG_IS_OUT, &desc->flags);
-> +       return 0;
->  }
->
->  /**
-> --
-> 2.43.0.rc1.1336.g36b5255a03ac
->
+This family 5 CPU escaped notice when cleaning up all the family 6
+CPUs.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lore.kernel.org/all/20241031185733.17327-1-tony.luck%40intel.com
+---
+ arch/x86/include/asm/intel-family.h             | 1 -
+ arch/x86/platform/efi/quirks.c                  | 3 +--
+ arch/x86/platform/intel-quark/imr.c             | 2 +-
+ arch/x86/platform/intel-quark/imr_selftest.c    | 2 +-
+ drivers/thermal/intel/intel_quark_dts_thermal.c | 2 +-
+ 5 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 7367644..6d7b04f 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -177,7 +177,6 @@
+ #define INTEL_XEON_PHI_KNM		IFM(6, 0x85) /* Knights Mill */
+ 
+ /* Family 5 */
+-#define INTEL_FAM5_QUARK_X1000		0x09 /* Quark X1000 SoC */
+ #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
+ 
+ /* Family 19 */
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index f0cc000..846bf49 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -656,8 +656,7 @@ static int qrk_capsule_setup_info(struct capsule_info *cap_info, void **pkbuff,
+ }
+ 
+ static const struct x86_cpu_id efi_capsule_quirk_ids[] = {
+-	X86_MATCH_VENDOR_FAM_MODEL(INTEL, 5, INTEL_FAM5_QUARK_X1000,
+-				   &qrk_capsule_setup_info),
++	X86_MATCH_VFM(INTEL_QUARK_X1000, &qrk_capsule_setup_info),
+ 	{ }
+ };
+ 
+diff --git a/arch/x86/platform/intel-quark/imr.c b/arch/x86/platform/intel-quark/imr.c
+index d3d4569..ee25b03 100644
+--- a/arch/x86/platform/intel-quark/imr.c
++++ b/arch/x86/platform/intel-quark/imr.c
+@@ -569,7 +569,7 @@ static void __init imr_fixup_memmap(struct imr_device *idev)
+ }
+ 
+ static const struct x86_cpu_id imr_ids[] __initconst = {
+-	X86_MATCH_VENDOR_FAM_MODEL(INTEL, 5, INTEL_FAM5_QUARK_X1000, NULL),
++	X86_MATCH_VFM(INTEL_QUARK_X1000, NULL),
+ 	{}
+ };
+ 
+diff --git a/arch/x86/platform/intel-quark/imr_selftest.c b/arch/x86/platform/intel-quark/imr_selftest.c
+index 84ba715..657925b 100644
+--- a/arch/x86/platform/intel-quark/imr_selftest.c
++++ b/arch/x86/platform/intel-quark/imr_selftest.c
+@@ -105,7 +105,7 @@ static void __init imr_self_test(void)
+ }
+ 
+ static const struct x86_cpu_id imr_ids[] __initconst = {
+-	X86_MATCH_VENDOR_FAM_MODEL(INTEL, 5, INTEL_FAM5_QUARK_X1000, NULL),
++	X86_MATCH_VFM(INTEL_QUARK_X1000, NULL),
+ 	{}
+ };
+ 
+diff --git a/drivers/thermal/intel/intel_quark_dts_thermal.c b/drivers/thermal/intel/intel_quark_dts_thermal.c
+index 47296a1..89498eb 100644
+--- a/drivers/thermal/intel/intel_quark_dts_thermal.c
++++ b/drivers/thermal/intel/intel_quark_dts_thermal.c
+@@ -401,7 +401,7 @@ err_ret:
+ }
+ 
+ static const struct x86_cpu_id qrk_thermal_ids[] __initconst  = {
+-	X86_MATCH_VENDOR_FAM_MODEL(INTEL, 5, INTEL_FAM5_QUARK_X1000, NULL),
++	X86_MATCH_VFM(INTEL_QUARK_X1000, NULL),
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(x86cpu, qrk_thermal_ids);
 
