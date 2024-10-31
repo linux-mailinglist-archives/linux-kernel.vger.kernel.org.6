@@ -1,106 +1,138 @@
-Return-Path: <linux-kernel+bounces-391205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A47E9B83CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:56:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 373019B83D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:57:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 036DFB2274F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080E41C2033D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4521CCEC3;
-	Thu, 31 Oct 2024 19:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D491CCB30;
+	Thu, 31 Oct 2024 19:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RoShhWas"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kU42oUR5"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDD71CBE8D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C3C1CBE8D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730404548; cv=none; b=EoNO8cI1EJVmwGeGucNPvsE+hud5TKpS2288AiHe/m0F1aJJiXvVqa3lPsYXgB1Igq5EtphZTmThjBlYrmeLXPCqBhRKehjUUU6PR+6FPDXDko1+1DVGDOFYwoNZ3aueXERN1OMJ3eKoVcBgZQV60fMI9T/b62b99VCM55RJxic=
+	t=1730404580; cv=none; b=BNYeJRtkud1T/PczwCfSQk/LeDAZKBuVVFeGRq6L1yF9j3QAOISpz20ClD+3GOGj0EF3NRYSFt7upM4VfzEbBygyGzluCOXEFK/1rH4BSSKSW1GYtHW6iWvDLv4GPet4q0T5ayBNPRxJfoJvSKD8Fo96RDRIYzFBb0CxLXgHPA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730404548; c=relaxed/simple;
-	bh=JIuKZte/KWDp0u3PEseHuVJAQKETV1NshrdQcivIQaw=;
+	s=arc-20240116; t=1730404580; c=relaxed/simple;
+	bh=BRrXataTRR4Ms36tXkzOTbXr5RIoMk9XasFjsN9WXKM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IgMTvM+l0C5yDXZ0mmGpThLy9LOvrqUpW1EfgCuE/t88kWCHdqM/uShb24WQjgxkO/KT7EKDdisnqrM+ooFZ96BIIFWKov3lLzr0AQ3h+jZVJ7Gtvf2CK9meamK4FNc4lx4ovNUyCAOdLXLacIfEqQikrM5hwlTVDGYT/2kB9Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RoShhWas; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=s93+UwsDe4yLiwEvgTvo6YRZ+w2wnsLX1mBIZhcu8nkyQwYxJoWx+oTBlDplMREA0I5B7fSqoSsHy9XbZKXPs67/uEiBzaDAKWxHt9m+pRJXejClGgunKpx3tlefHn2KYCKPqkTRi7ao3NBidtbz9HpNPbLOnvJzW2yecErybVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kU42oUR5; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e35a643200so29361307b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:55:44 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e28fc8902e6so2640234276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:56:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730404544; x=1731009344; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730404578; x=1731009378; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0/oR659VY2W8KZYWHDyQb/k0R5l7UZuyfkJK3fpV6U=;
-        b=RoShhWasXVJzCTRC5ZsyYrWqYWZSHxjTlr+5UYnNSqsnzW2zJDOjNqRywxr+gKiaAC
-         QR3r1Rov4/p+mJt/7R4eVv/2o+k1jpDBlbMjPK5Ujfq5QdKviwVGHKwn5WiqEbBI1zzp
-         TCnSqcfzoKtGFOwlakkYHKMMU9cE7Iiv2d81g7JbOke/wO1VkE87HAtS3MZQszXU6xGr
-         X2pouTbgZ1e6Pjd8o/yLVjANvSc2KKhtk75emAncxh8r37fOcJcYVRF546y79g3dUi5w
-         OLq7AFUqK4qqD/Duu2cDd1pxbiiiLH7UD+C2ODwkLYdcUnxyfZxGIzD4QDmpmNlBitC2
-         6ulg==
+        bh=txZjjV9RcIShW3nVjFWlvOpvL41tXBbYireztk+Aubg=;
+        b=kU42oUR5/SFSIUKy3VCzRyTaP4efeWOD1Vh1CZQd02kEbWlTBwMNcXcgpNZRCRktEW
+         Qhzw0LXbdK5BrTxEX8lqKXX4OMWQn5PDq7uo1djEa2LkcKSL8K2Xnqs6tE6P1vRj86Sw
+         SQ/hvVvaJU2RI7R80nFXIWL6yW41fPHT7sDXFia3VXpkmck+Fdi0/rKx40SLqG1OrJBp
+         x7OdPxaam3uJb+QengnkWC7SncFgkcmRez4nr9wZmZggFCkf+/f5UVmEnH9zBY6WgXHC
+         BDt02VaMpE9kuezLh5+Ed4acrkX8PTj+om7r7A8NS8JA7ANecAXK7xKJw4/Yh2ZBHuAj
+         yCvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730404544; x=1731009344;
+        d=1e100.net; s=20230601; t=1730404578; x=1731009378;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0/oR659VY2W8KZYWHDyQb/k0R5l7UZuyfkJK3fpV6U=;
-        b=bgw5uGRmEfMtPF4QjzvMWTK2bARXzKdFlTxtNDotyBVPIqMJk9WG2XrEEByc82BF77
-         YrcvOcV4oglwmJbdXmoPgsdRXe4zNw4Lu51dy+N4ub4kYjIhKexgwUUhEK/cYJBk/+0m
-         l+3ggZYy5KLxExEpbyr0YOWi5nxYBdHHum+m/GeHJYdbwQ5rhkezW5VP1xz0aNTkm6mA
-         5yuKJ2a1NQQ3GwVFg4clgQWm5H44BSx3r4Z/RLEehC+5eul6RPoKqdwv5TN/Xh+Rbhgq
-         pJTHvJ/ayq3oKhbmHiAXQDPOty/cuSI11CMLIKsVmmX9Rf3gf36Ky5ljmhlaizEXrmkU
-         dVZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWgt3KoRzXWOOpTKijk/U4zmsgjhGUm9111aqYUHupyeoY7jwLsJIWb0ZV0I/db6dX1TRb/UJOWCxWcFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2oUYAOmL1aWD5lMiVOzkshhAg5FBDZK2vhTo3m5gbLSP0D//e
-	n3oA35L3+etWYxwF8TocAGrgYZjxdr/H0KPTKljl7HSc17lDvCwnahg1qjF2Z2OZeWdGqnQxpGf
-	XzA==
-X-Google-Smtp-Source: AGHT+IGFyWNtS3LxS1sbvinW/tnRcG6q4cNMH3IbMweReCN5sAKq2SwnuczE7aSWqqVeI7xwI0JVItWfbrE=
+        bh=txZjjV9RcIShW3nVjFWlvOpvL41tXBbYireztk+Aubg=;
+        b=MAGdk5TXA4/rBRRD1CXrSIWnC5FUqEtWhnTHG45KljaMcKLsU46K/1czYgHcZQuIc4
+         DSIaJKCrDCRwvJVwHq9vebkLkV1ipiQxhoG1IjCGJYgBQrNFx1oOv4b04geOKBvdnIrt
+         4v4lwDEhxGho2qFToCKeSkUvdv7Dqe/XSw9L24qvqVfxlaQuNXOxv21KNs7K8NajtQ9N
+         yIBuEj3PVZ2/vLbLHIprEErjU2sDBFmst+OE23ULJebEkyCRIda/KY5heJu/rWpbrqw6
+         LWPpQbvVFix1ReMWldYcxYCu99R/VjlQnH3OQJRN2eS242ZNULR6uzDtDUi8SpU4DiW6
+         L0mA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzHlb+6PeOs1wxeaGfZFAe0wu7bAGpDSog5OwCTj4iPW7r5VDN/r8heLv4xh7DS+9xo3+Oqd5juudxsKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFVxvrmAtA1PnFKR7wwYFmbr0fzrX5tw+WJu8TVdAOhgry7Alr
+	Ryoi9BA88sOXKemEIGR4dZMpJtKRrButTgjnDbAdMZ69EpibrdXV/3aflORsCSpRkjw6buHlsyJ
+	auQ==
+X-Google-Smtp-Source: AGHT+IFq1n0hln1PuXIug0g9U4zAlW/fXzKfAeWXs5tiH8N8rfYic8hDm2ig51IotN0LdGwVjOczliRMcT0=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:67ca:b0:6e3:d670:f62a with SMTP id
- 00721157ae682-6ea52518e31mr104197b3.3.1730404543886; Thu, 31 Oct 2024
- 12:55:43 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:51:46 -0700
-In-Reply-To: <20241009175002.1118178-1-seanjc@google.com>
+ (user=seanjc job=sendgmr) by 2002:a25:ba0d:0:b0:e28:fb8b:9155 with SMTP id
+ 3f1490d57ef6-e3087bfc93amr51693276.9.1730404577846; Thu, 31 Oct 2024 12:56:17
+ -0700 (PDT)
+Date: Thu, 31 Oct 2024 12:51:48 -0700
+In-Reply-To: <20241011021051.1557902-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20241009175002.1118178-1-seanjc@google.com>
+References: <20241011021051.1557902-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <173039501630.1508013.8131245116314575241.b4-ty@google.com>
-Subject: Re: [PATCH v4 0/4] KVM: x86: Fix and harden reg caching from !TASK context
+Message-ID: <173039527562.1510435.10161508474712301971.b4-ty@google.com>
+Subject: Re: [PATCH 00/18] KVM: x86/mmu: A/D cleanups (on top of kvm_follow_pfn)
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>
+	Yan Zhao <yan.y.zhao@intel.com>, Sagi Shahar <sagis@google.com>, 
+	"=?UTF-8?q?Alex=20Benn=C3=A9e?=" <alex.bennee@linaro.org>, David Matlack <dmatlack@google.com>, 
+	James Houghton <jthoughton@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Wed, 09 Oct 2024 10:49:58 -0700, Sean Christopherson wrote:
-> Fix a (VMX only) bug reported by Maxim where KVM caches a stale SS.AR_BYTES
-> when involuntary preemption schedules out a vCPU during vmx_vcpu_rest(), and
-> ultimately clobbers the VMCS's SS.AR_BYTES if userspace does KVM_GET_SREGS
-> => KVM_SET_SREGS, i.e. if userspace writes the stale value back into KVM.
+On Thu, 10 Oct 2024 19:10:32 -0700, Sean Christopherson wrote:
+> This is effectively an extensive of the kvm_follow_pfn series[*] (and
+> applies on top of said series), but is x86-specific and is *almost*
+> entirely related to Accessed and Dirty bits.
 > 
-> v4, as this is a spiritual successor to Maxim's earlier series.
+> There's no central theme beyond cleaning up things that were discovered
+> when digging deep for the kvm_follow_pfn overhaul, and to a lesser extent
+> the series to add MGLRU support in KVM x86.
 > 
 > [...]
 
-Applied 1 and 3-4 to kvm-x86 misc.  Patch 2 went into 6.12.  Thanks!
+Applied to kvm-x86 mmu, with Paolo's suggestions (the guard(rcu) trick in
+particular was quite nice).
 
-[1/4] KVM: x86: Bypass register cache when querying CPL from kvm_sched_out()
-      https://github.com/kvm-x86/linux/commit/8c8e90f79c56
-[2/4] KVM: VMX: reset the segment cache after segment init in vmx_vcpu_reset()
-      (no commit info)
-[3/4] KVM: x86: Add lockdep-guarded asserts on register cache usage
-      https://github.com/kvm-x86/linux/commit/21abefc6958d
-[4/4] KVM: x86: Use '0' for guest RIP if PMI encounters protected guest state
-      https://github.com/kvm-x86/linux/commit/a395d143ef40
+[01/18] KVM: x86/mmu: Flush remote TLBs iff MMU-writable flag is cleared from RO SPTE
+        https://github.com/kvm-x86/linux/commit/081976992f43
+[02/18] KVM: x86/mmu: Always set SPTE's dirty bit if it's created as writable
+        https://github.com/kvm-x86/linux/commit/cc7ed3358e41
+[03/18] KVM: x86/mmu: Fold all of make_spte()'s writable handling into one if-else
+        https://github.com/kvm-x86/linux/commit/0387d79e24d6
+[04/18] KVM: x86/mmu: Don't force flush if SPTE update clears Accessed bit
+        https://github.com/kvm-x86/linux/commit/b7ed46b201a4
+[05/18] KVM: x86/mmu: Don't flush TLBs when clearing Dirty bit in shadow MMU
+        https://github.com/kvm-x86/linux/commit/856cf4a60cff
+[06/18] KVM: x86/mmu: Drop ignored return value from kvm_tdp_mmu_clear_dirty_slot()
+        https://github.com/kvm-x86/linux/commit/010344122dca
+[07/18] KVM: x86/mmu: Fold mmu_spte_update_no_track() into mmu_spte_update()
+        https://github.com/kvm-x86/linux/commit/67c93802928b
+[08/18] KVM: x86/mmu: WARN and flush if resolving a TDP MMU fault clears MMU-writable
+        https://github.com/kvm-x86/linux/commit/1a175082b190
+[09/18] KVM: x86/mmu: Add a dedicated flag to track if A/D bits are globally enabled
+        https://github.com/kvm-x86/linux/commit/a5da5dde4ba4
+[10/18] KVM: x86/mmu: Set shadow_accessed_mask for EPT even if A/D bits disabled
+        https://github.com/kvm-x86/linux/commit/3835819fb1b3
+[11/18] KVM: x86/mmu: Set shadow_dirty_mask for EPT even if A/D bits disabled
+        https://github.com/kvm-x86/linux/commit/53510b912518
+[12/18] KVM: x86/mmu: Use Accessed bit even when _hardware_ A/D bits are disabled
+        https://github.com/kvm-x86/linux/commit/7971801b5618
+[13/18] KVM: x86/mmu: Process only valid TDP MMU roots when aging a gfn range
+        https://github.com/kvm-x86/linux/commit/526e609f0567
+[14/18] KVM: x86/mmu: Stop processing TDP MMU roots for test_age if young SPTE found
+        https://github.com/kvm-x86/linux/commit/51192ebdd145
+[15/18] KVM: x86/mmu: Dedup logic for detecting TLB flushes on leaf SPTE changes
+        https://github.com/kvm-x86/linux/commit/c9b625625ba3
+[16/18] KVM: x86/mmu: Set Dirty bit for new SPTEs, even if _hardware_ A/D bits are disabled
+        https://github.com/kvm-x86/linux/commit/85649117511d
+[17/18] KVM: Allow arch code to elide TLB flushes when aging a young page
+        https://github.com/kvm-x86/linux/commit/2ebbe0308c29
+[18/18] KVM: x86: Don't emit TLB flushes when aging SPTEs for mmu_notifiers
+        https://github.com/kvm-x86/linux/commit/b9883ee40d7e
 
 --
 https://github.com/kvm-x86/linux/tree/next
