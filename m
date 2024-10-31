@@ -1,134 +1,111 @@
-Return-Path: <linux-kernel+bounces-390135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587039B7601
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:01:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC7C9B7605
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8892810EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BD71F21C29
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011C21514CE;
-	Thu, 31 Oct 2024 08:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBi4N3ZF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B331531C0;
+	Thu, 31 Oct 2024 08:04:10 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535B8148310;
-	Thu, 31 Oct 2024 08:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FC312CDB6;
+	Thu, 31 Oct 2024 08:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730361695; cv=none; b=P0OTcZBykqzJmEu7B6R4CjCjUe9yW9ZGZ83DFv3J0LXnkdNwazgCQk7FUs3UQ+dftU+2T5T2o1CFdcrmR2tgK9wm7fERmgfoPenYPDpBwrwxZB6R6n8rr4gIwUTHzYTyn3b4gf7eLM8thufHlt/bYo/T0OEJdoMpcIhBlo5PaJo=
+	t=1730361850; cv=none; b=tKlfUvLP8jSLwYh7RMdlY/gWNnKfkCwCOLTJ3rxsBnx1uhzhfCMy6V+0Yx6Od/gPef/4k2Q0mtGjjcMw1dGYyvHhjcq7WSSYWpw5IudHooiKu+7Ie9W9jusmESzzB/RRmLuHfehvmaxY/M2wAKfgAdIuwsNTEBhurZ9RSfQ8A2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730361695; c=relaxed/simple;
-	bh=ZPSuHtXiv9KKbKncCUTkQbLPvPAYcIqiVV2yOclbiyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gefTyPkOfoV9cQxEo1KtQ5Ijn6onxd2Vf7FY957echthsHc0oLXUV1xeX0/Rfw1nB/KdkAN//yn4wUQ4CfO9bdXBS1D4CWtPfNPHxRRdAya/yyXs1Qsrp+SYKOMf8pMTmjyWNEQf1R6kiMddG4X3u0Nadk/ZNNEfVxXLGjAtn0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBi4N3ZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD105C4CEC3;
-	Thu, 31 Oct 2024 08:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730361694;
-	bh=ZPSuHtXiv9KKbKncCUTkQbLPvPAYcIqiVV2yOclbiyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KBi4N3ZFmIGz/EGq5Pojb1W/HhOy23rTrcTg4bP8W0biAYv8X5ehwTbJKtlsUyZ+d
-	 JPbRc61jxGZ7wDFpW3LEyLjRFb/9Z/97wElo/d8VHNwCzTi1DcaFGjLEmsCjCVR7/a
-	 hnUdn0+6DNX/eUuqLa8+ahFHv9whs9i83QCyrbCz1IH0txsKUuj20TDCVdS81NoCDe
-	 uzELGkj9xLb3MkzSOPvmrz/QCQUnKtCEJJj3/vOdQ0yd58t71dB6l3lnJESL1MpD+z
-	 Urgg9u/e15wN54QoJGpzTBNlxZzqMTvJhi4MGUNmxrEs4QLW9hnyhwIuMorybvkNNS
-	 y1m0+CaYQZk6Q==
-Date: Thu, 31 Oct 2024 09:01:30 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Troy Mitchell <troymitchell988@gmail.com>
-Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-Message-ID: <jhwf5xe5h6sfxirjavczs6txihsqukoqqhrrmfoipugsgjkynb@5o72xm5sjr6t>
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <20241028053220.346283-2-TroyMitchell988@gmail.com>
+	s=arc-20240116; t=1730361850; c=relaxed/simple;
+	bh=M2HXVbpzDsTg+HwYe96n52wNzDV2Oii+fM5cd4T49Nk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=S1gvo8SeCT/p0neCx8MSse6y6Z3a+Ue3PpJfNCz5RKIAGDyWfTWWDj2T71bQwq6MZkcPAv6tNhJOFdT/m5C8j1GZ0ei6rk+GCW8YpTXn83DDaoymZLMyralZ3VqlO3POVJM4qZW/f/u3BPBqf5B7evyKF2NL4c1nGa567m5PZ9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XfGht543zz4f3lfg;
+	Thu, 31 Oct 2024 16:03:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4275D1A018C;
+	Thu, 31 Oct 2024 16:04:01 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYobwOSNnHfjGAQ--.59788S3;
+	Thu, 31 Oct 2024 16:04:01 +0800 (CST)
+Subject: Re: [PATCH v2 1/5] blk-cgroup: add a new helper blkg_print_dev_name()
+To: Tejun Heo <tj@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240930085302.1558217-1-yukuai1@huaweicloud.com>
+ <20240930085302.1558217-2-yukuai1@huaweicloud.com>
+ <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <33183043-335f-fd07-1068-c873656f51d6@huaweicloud.com>
+Date: Thu, 31 Oct 2024 16:04:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028053220.346283-2-TroyMitchell988@gmail.com>
+In-Reply-To: <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHYobwOSNnHfjGAQ--.59788S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
+	1l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
+	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
+	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
+	W8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
+	F9a9DUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
-> The I2C of K1 supports fast-speed-mode and high-speed-mode,
-> and supports FIFO transmission.
+Hi, Tejun!
+
+ÔÚ 2024/10/01 1:11, Tejun Heo Ð´µÀ:
+> Hello,
 > 
-> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> ---
->  .../bindings/i2c/spacemit,k1-i2c.yaml         | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+> On Mon, Sep 30, 2024 at 04:52:58PM +0800, Yu Kuai wrote:
+>> +static inline bool blkg_print_dev_name(struct seq_file *sf,
+>> +				       struct blkcg_gq *blkg)
+>> +{
+>> +	struct gendisk *disk = blkg->q->disk;
+>> +
+>> +	if (!disk)
+>> +		return false;
+>> +
+>> +	seq_printf(sf, "%u:%u", disk->major, disk->first_minor);
+>> +	return true;
+>> +}
+>> +
 > 
-> diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> new file mode 100644
-> index 000000000000..57af66f494e7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i2c/spacemit,k1-i2c.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: I2C controller embedded in SpacemiT's K1 SoC
-> +
-> +maintainers:
-> +  - Troy Mitchell <troymitchell988@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k1-i2c
-> +
-> +  reg:
-> +    maxItems: 2
+> I wonder whether we just should add a name field to disk.
 
-Provide changelog explaining why you are doing some changes.
+And suggestions on this set now? I guess add a name filed is not
+appropriate. :(
 
-List and describe items here instead.
+Thanks,
+Kuai
 
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-frequency:
-> +    description:
-> +      Desired I2C bus clock frequency in Hz. As only fast and high-speed
-> +      modes are supported by hardware, possible values are 100000 and 400000.
-> +    enum: [100000, 400000]
-> +    default: 100000
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c@d4010800 {
-> +        compatible = "spacemit,k1-i2c";
-> +        reg = <0x0 0xd4010800 0x0 0x38>;
-
-Missing second item.
-
-Best regards,
-Krzysztof
+> 
+> Thanks.
+> 
 
 
