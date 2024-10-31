@@ -1,73 +1,83 @@
-Return-Path: <linux-kernel+bounces-390496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBF79B7A9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:34:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583B99B7A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24D68B21225
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB04281BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF0519D8A7;
-	Thu, 31 Oct 2024 12:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F1D19C562;
+	Thu, 31 Oct 2024 12:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frf9+YQW"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="U0iHJF39"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED0119D07A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BFE187864
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378024; cv=none; b=sCX+KxXdlWELGw19mJyGzvwVsUFe+AQfmcFYgZ0fZvw8MN8hOgXUcnt6aY6H+JlQNR0RXDJjK2obpqvqeeFH83fjcIY9tDY6EDRlJvFRsO9oVBbTMw68S/uBvguemGkMcEYM4GyEY//o76p4Kb63Y38veiRo5rn33TKbN0tRvBI=
+	t=1730378067; cv=none; b=ko1gRskQ+g+a85wYfaMHBuVpaPLRqhlbCti3sYITvZTs2QYkURoCxEj9YZ7X4rfgGjJMLfdNz3jDT+B/n17eIVlN2Hhv6z0mKZDypPpfV7tYT38gK/mCq9FfjL85hik25fYalVaEMzoUiJkbXvtECY70pJhT4X4dZcTwzeD9Bbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378024; c=relaxed/simple;
-	bh=XY/e+qqPS7e0meMx5s4+Qz6L5qELEoWgsNV6AMJ2Cko=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OITQFwAZom8DcGb1HGMHxpenRweCjQxtd5+EvpvIGSuamX6/80zSi4gRP3V2pR8rzmKU9NoDzJbXsjR2MA2SXkaSXBaq9qwBx5ST62FUR6mYSrWlMh/TyezzfQYL+1qbbesPZFQUL9e2ZhxuSeFw8Zy+6LIN5UAw6TS1gb8P/yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frf9+YQW; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so6956455e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:33:42 -0700 (PDT)
+	s=arc-20240116; t=1730378067; c=relaxed/simple;
+	bh=m48n008ctBtYqrvJex1KITkek7KCiQquXwKklYAXLWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dUuj0OYTXNvcoopZYxAYKvV2EMf4a90fLxtpMmbm7ljV8tPPQHJRLtxkT0d5nK2/xN3QO9anO4ZvQeQQgshXcy4iX5MEzYcptj4Zh0pW1tbe4WoTb2Gh37fgEEKOQiGVVr3xsBXg1SGy50L+cPGc5NKG2NGLO5lH4UlKdCR+aAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=U0iHJF39; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so7659115e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730378021; x=1730982821; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xblh8h/kAs6iXd31tRjqnAQ6XZmMD34sBupGmOL7KPY=;
-        b=frf9+YQW1IALvSQ2rQgp9OXYNnqz27C6icVbvcTEvKqFbHw5kj1jwUc865uKm8N0vr
-         69v9GlB0u2TUkldinnEGj7LNwPCm5FlHuq3AYAh0wviM3BWYhPcr6Wm4cmn3BB3UJEZ2
-         OhdC+H1P3M/TDYLzQMDOl32eJ4ccZTZh6AWT/1IgEZcYOLxQAGozuxMQkmSAZdkOxFMA
-         2LwjdLAkSiLR3BL7yKFJsuxzONs0tMmEHYNgncDxGCQHBgIlrrteIJ75Nj5pCkpeuDAx
-         Oi+B65kHnE433nlXXpZNeCqtITzYponUGAeyEz/7em6KKGbGMILjiUH9RxA6HAzpJNRn
-         Z4Yw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730378064; x=1730982864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fzl3Xa9C7yODRffDmu7ydBj4yLwByepcumnubkJz5KE=;
+        b=U0iHJF39Y0H8ZkUEbxZ73rNqxpMIj4sWkjcLpwhRmYrf5uyPV92nYiMZKvleCanWje
+         NWd0u9sldlktIXDRYfPRIVkRhVxnuBhUerOaNtaYQAWbFTZSXiLivW341nXd9IZS/G+7
+         osvh7Kbf5zWORj462DuCF68sX1UpMkpfzfOgeqUFfNTZfr9BW4RLUfaXpxd29b/+s5lM
+         oaduGNkPQl8ZKWkbyacKajLHMLRC74oCE9afVbXGZFMuC/7kVta4ni4DwkNhAUKtpyPB
+         IcL+Dit7j9qDNUOA3+eDcKPTGPOqk3/lLg41RhUAZA3wDbBSj+aofa3AR9YzVoLKRKzG
+         9CKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730378021; x=1730982821;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xblh8h/kAs6iXd31tRjqnAQ6XZmMD34sBupGmOL7KPY=;
-        b=rDFlSXji6cXxFroXDWMFHmgzG4WiunyRpJRLWcQCDIBzEU6M3E58vM7v9MeoUf2+TH
-         7EPHtZi/nn49GuvKWOtKfpCBV5gW3JsGkk1pxpfDRZcchoq/8YfhkJkiHZ19kNGrSnZp
-         oAceWXBSeYnoyz545nNaXa3XBmsp4RJzoFDwx7KkHI/YUXbVAwQ7x/OiOCXLni1rdTGC
-         YSCXavDEVkhXnFvOCUGsrQ0J1R991iqf7/aJR4l0c5U7GCEbxz8QDBJeiqNa51GZzfEf
-         TIFQAZgYL83ob8UEzr9vWq03OvTaNT3ojp4VHDXHgllTepSzXza8Iha8e/wtDKsSgrtY
-         B6rw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0tVsnGe22/MwHUoYiriTSPrUAN8Nlnpu+IFp40jLpAiqCLa/74819//09YBjuV8vPg+SiG7CGtKaGM+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysQ4JpEa00EQ1ChchuSH+dWhilGulx/71vl71LH5ZD45YAprtY
-	8IEoIyyEGg5DDcOZpAjY6cDWPo52+e4Ad6E5axDGckqROHGEoRLM
-X-Google-Smtp-Source: AGHT+IFeyhhAwD+U7wvpGW1to0bqTyogY7pqH01jXa1OXe1oSVmcsTNTQEvgBNoc9bsK9FR5T/WTMA==
-X-Received: by 2002:a05:600c:5114:b0:431:60ac:9aef with SMTP id 5b1f17b1804b1-431bb9de94bmr64537225e9.29.1730378020647;
-        Thu, 31 Oct 2024 05:33:40 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ac002sm24703855e9.5.2024.10.31.05.33.39
+        d=1e100.net; s=20230601; t=1730378064; x=1730982864;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fzl3Xa9C7yODRffDmu7ydBj4yLwByepcumnubkJz5KE=;
+        b=FqjFZNZ7OhMmuXmX+Bu5iLa/Vh81s/CLCb2wmw1aOrf+BkqU0Tsh1pk69o12USR/E7
+         fN8EDtZyaVsVzEtk+3560pD+B/lLBGLYi6TQkRm/0Lo6wiDlI2dFaLljE9CGw2nOR6+8
+         Ez1f7JrM48AONKKIj32XweEzSgQ5gMWTHRbQRILyxSUhCjrUJ5UA9d3nkLbzyxEsB7z2
+         FSs3wQUmzfrIbZsyb5cgt8YtAMRbdUyK5fkfFucpkOw0ogZShPI6qeNVBKwwZmsSCu0r
+         icjaokDd0BoJXV5pjIbLM/DVm1iJM1/HHP0C043ld+5QOWCTLAR7EJ/XiJW9gSRGE24u
+         +MXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMaGkmtYJhVnXQaiUbyXCLXxo+BHb0hTCZI7Jb7eRNqAaIRBswyugy/s+HpkYRQY0aVmRwi67hvZwVsJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKhk8j7py7lEq5CkS+WMo93HRz6b3hwii1lZ39gzWHc2KtBt/a
+	WiYNkjQv29z3Z4xkD5ctDJIVfPPFBsrCDxi4JNMtCsBt2qy/j4G5qg+lI0GUK4M=
+X-Google-Smtp-Source: AGHT+IEEO7DvzSltFuSOOW7tGilfwME6cwZASRB5gd9U1RoN4BL+MSsBkr+M1gSe6V2EUA3IAfJTCg==
+X-Received: by 2002:a05:600c:548a:b0:42c:c003:edd1 with SMTP id 5b1f17b1804b1-4319ac9c555mr173232775e9.10.1730378064138;
+        Thu, 31 Oct 2024 05:34:24 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a6bc:32f9:21fc:be97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5abfefsm24871935e9.4.2024.10.31.05.34.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 05:33:39 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 31 Oct 2024 13:33:36 +0100
-Subject: [PATCH v2] soc: atmel: fix device_node release in
- atmel_soc_device_init()
+        Thu, 31 Oct 2024 05:34:23 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: sysfs: demote warning messages on invalid user input to debug
+Date: Thu, 31 Oct 2024 13:34:21 +0100
+Message-ID: <173037805747.6410.14300588256259138318.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241021185717.96449-1-brgl@bgdev.pl>
+References: <20241021185717.96449-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,66 +85,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-soc-atmel-soc-cleanup-v2-1-73f2d235fd98@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAB95I2cC/4WNQQqDMBBFryKzbkoyEdSueo/iIklHHVAjiQ0tk
- rs39QLd/ffhv39ApMAU4VYdEChxZL8WwEsFbjLrSIKfhQEl1kpqKaJ3wuwLzWdyM5n1tYl2cIO
- W2FmLLZTtFmjg9+l99IUnjrsPn/MmqV/7z5iUkEKj7Ug2jbaqvo+L4fnq/AJ9zvkLeGMpqroAA
- AA=
-To: Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730378019; l=1518;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=XY/e+qqPS7e0meMx5s4+Qz6L5qELEoWgsNV6AMJ2Cko=;
- b=qqq3DIRvNYIGMvKD6DUlQ2EMYsP2DULjMXQz9qGUrSWrumJ4JKW7+uyvvZ2gOy8GQsxB+7V+t
- 5pKfY3wsTniCd7wWKjfOa1//T6yOwSbdWIlkym1nnYMcyaCGb6m0pqv
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Transfer-Encoding: 8bit
 
-A device_node acquired via of_find_node_by_path() requires explicit
-calls to of_node_put() when it is no longer needed to avoid leaking the
-resource.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Instead of adding the missing calls to of_node_put() in all execution
-paths, use the cleanup attribute for 'np' by means of the __free()
-macro, which automatically calls of_node_put() when the variable goes
-out of scope.
 
-Fixes: 960ddf70cc11 ("drivers: soc: atmel: Avoid calling at91_soc_init on non AT91 SoCs")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Changes in v2:
-- Squash patches for mainline solution without intermediate steps.
-- Link to v1: https://lore.kernel.org/r/20241030-soc-atmel-soc-cleanup-v1-0-32b9e0773b14@gmail.com
----
- drivers/soc/atmel/soc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 21 Oct 2024 20:57:17 +0200, Bartosz Golaszewski wrote:
+> We should not emit a non-ratelimited warning everytime a user passes an
+> invalid value to /sys/class/gpio/export as it's an easy way to spam the
+> kernel log. Change the relevant messages to pr_debug_ratelimited().
+> 
+> 
 
-diff --git a/drivers/soc/atmel/soc.c b/drivers/soc/atmel/soc.c
-index 2a42b28931c9..298b542dd1c0 100644
---- a/drivers/soc/atmel/soc.c
-+++ b/drivers/soc/atmel/soc.c
-@@ -399,7 +399,7 @@ static const struct of_device_id at91_soc_allowed_list[] __initconst = {
- 
- static int __init atmel_soc_device_init(void)
- {
--	struct device_node *np = of_find_node_by_path("/");
-+	struct device_node *np __free(device_node) = of_find_node_by_path("/");
- 
- 	if (!of_match_node(at91_soc_allowed_list, np))
- 		return 0;
+Applied, thanks!
 
----
-base-commit: 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
-change-id: 20241030-soc-atmel-soc-cleanup-8fcf3029bb28
+[1/1] gpio: sysfs: demote warning messages on invalid user input to debug
+      commit: 37d5a6d6f406322ed0850fc2af1d377aced16340
 
 Best regards,
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
