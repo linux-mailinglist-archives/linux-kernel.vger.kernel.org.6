@@ -1,211 +1,146 @@
-Return-Path: <linux-kernel+bounces-390065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C789B7512
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8259B7514
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5918B1C21C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4036E1C21EB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4510148855;
-	Thu, 31 Oct 2024 07:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E125514883F;
+	Thu, 31 Oct 2024 07:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVp4vsf2"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cvxhs6lI"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50C91BD9D4;
-	Thu, 31 Oct 2024 07:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281EC1487D1;
+	Thu, 31 Oct 2024 07:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730358706; cv=none; b=FAH4GnKV9Cg4kJMdZ5RkT3WbIAMu4FzMzU8eYooGJVBMaTI2m7sYY0Q5DlL9ye0lTmFPFt7Rf55sGhugdoA+VkhckHSb4rSE+wMKyuEPrnBEZ9/MwrrV3P0uaTnKl9tw0/ZdqDD2rf9ZQP9c/c+4T42g4K9lvVonCIi9dVV8vWY=
+	t=1730358805; cv=none; b=A7pcfSqYIcTBRqKiA0y8Pz36T+dbh+gXbv8O3PJm8edn6d8yiOFNOQGK8/jB8tTZmWu72T69YEaRhgiACHrC51nTyyef9iqDJ9VtaFXTiURe/JMSIbAGwQFKJxCKJI5y9LCOcGFRfLHV5X8L8ua+glAAICV90tgVxPit/Mlyml4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730358706; c=relaxed/simple;
-	bh=KmEQQ1s6Mv96zNVsmm/PGUzclVUeYqkmH1f/zLli7+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P8aaUHhe4Q9LrY+ykupbP5NX9PwTBl7uc+c6aj0Rcyuhr9XZ45lKXvzT1h8wqWO7T/EiAAr6zBPhcXO8YnYHsEL2gjJd4qK4n0UhI1SyamQ+nicjDZoBq+pVliSrb48CRPK1DgBUJWOkhyYCqmltfrQAQU5u6CfN0C0/9G/APlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVp4vsf2; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1730358805; c=relaxed/simple;
+	bh=n5s7BqFiTVpjwTRoFk2o50PhU1UZYPkhkSQjRdzBSsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GZuHDjGBTUDNfXx1tDR5/Nfro0/YTG6w9+0l0i9/4XyMOryijJLs/mfcBoyLyL9i9sQ/ASYs0iksqmY8IPNXrGWRSM3vq5vKAykmq5e+KTHLqYyOgxEwqFlV2QrUxETqqwOjZcWHPczKEKCUeVwO68fAz21M1QhYSb9tRfEm9eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cvxhs6lI; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e70c32cd7so471877b3a.1;
-        Thu, 31 Oct 2024 00:11:43 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53c779ef19cso633262e87.3;
+        Thu, 31 Oct 2024 00:13:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730358703; x=1730963503; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=F8kx/Q3WV6oV1a8lTuJyAF8FReeIGHyPGyomJSeRgH8=;
-        b=hVp4vsf2j5/gE1N3eXEpns8BFu1t+25bP2UUC+i2c3/438BlwHl0PvP1QHbEkSKtry
-         BTJ4H/6TO5VjG3DK2W2zI5pfr5c/r8vmc1har+NkQNQQz1B8b7KgGevx23oULOBB7EbK
-         OC1jacEoRbFZ93S37L6+n3+I+whNZOK13ioQUNqMdyV7p9dA2sjGzo8upLkAIlHNqqJh
-         ddGQZbNiw+oAeC5ywUo+s95Ua+Iwxpd5N3rxn+4eXcaopo4tF0MDnsN2nxgf5qKo1wmy
-         2ijJKCYADiNL0qwYWD1SIEbGwnFHuyf95H0sFbwQZ6uMoWZr7fbnnUbEW8s3qfA3fjO2
-         tdYw==
+        d=gmail.com; s=20230601; t=1730358801; x=1730963601; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xYNKPpW5+LOAj9rPQp09PnGF4rkl3/FgO55cWEjPbcI=;
+        b=Cvxhs6lIdsOxZAmEV5Fpssss4TNO+ZyPMVewKhno7oijkwdxzhoEiUPb/1FR8oZPTs
+         7Pfukg4WLw5XT68E5cTzPl5mWUK8rd4JtVgc0MlCtpAHC+7hUlE67UztcWw1OsTjB7EQ
+         NtZwT6ayrAVk6e599B0T/ByHDHZ3I7cdsTvZMb48nkxxsjtsdWO/Z3ahAy0xArLoqnQj
+         yFXQD01BxxFrHNQ5Tgx2M3X7XF+q5dwbfUck+JrUfQeskyshazWTCeXqdSniQN4RVnl+
+         a66jxwsLWP77C1Hq6MspWbzbmztsIiMbw5NEiDAPmXZAQgLDeLlV+DiqkXHP+zWtgdRP
+         TOww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730358703; x=1730963503;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1730358801; x=1730963601;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F8kx/Q3WV6oV1a8lTuJyAF8FReeIGHyPGyomJSeRgH8=;
-        b=gDUdCtThA36G04lEE1GUOk0tzE9ed54P8b8jWOfgvv6rbuPEElQDOiUlpiQHnTrvvP
-         8SYwJGqdhwRnuYNf1ZJj0mQloUH97zqqjqhywgdYQ5wwyTgCrfCp0xXAj6T/YnAkbaof
-         bXYEuwMI+lpGBhkt++hqkW0ojUt3lYmwCx80N6Upox4J4yCyrl8FRFtCLSQewHpTA2Mu
-         QowwQJOCQXs3VVw3MfAoSFXhT+ddIOtYPKprHVDDQWoW/R+p/QRPK5dQE9HqxxJYdp6F
-         W65PVoHvq/oZAl3rdhlgrxunOGGM2yqRUPgLpWQ5y/gNrteqpl5KY+I0zEVNvb1fmAhV
-         C4fg==
-X-Forwarded-Encrypted: i=1; AJvYcCULq1vwP1faUN3Be/kyioKWDDD6Rpxitk82t4wOTPiA5GzMSUCU230YEYPJhQ6LELW6a8sJ6HIHIGCHVBg=@vger.kernel.org, AJvYcCUk7M5VsUBT/il00ccbd3i7x2I2TSPfAZeLLR/okTQvjRGO+G9Aloe9sXNMhhk37M0wGs1VEPj/4JVm@vger.kernel.org, AJvYcCWpJavMu9rs5XlOQ+pUi6nN9/+mNIpLXpTGcwnJ5qCj/PDfo+ftwpj9b9JgcxYQiLZuPy90QSRrpuf+4WS8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvVRMBjIJTfo4QCJLwghvI1z3cII6Qkc57W5KXF4rkAlp6w3Au
-	HOILTss2aD83HAnN/wJ7uQH/Bh3LjFJfRU5ahf/dcjTqiaRuBbsz
-X-Google-Smtp-Source: AGHT+IHlT1ly2KZHCHWRKW2rHfaZSrWxzDKTGW1GCGmqFUlvEOGZPgfcDgXjuS+I6C3x4NVHtADn2Q==
-X-Received: by 2002:a05:6a20:b30a:b0:1d9:c6c5:70c with SMTP id adf61e73a8af0-1d9c6c62035mr13190038637.5.1730358703112;
-        Thu, 31 Oct 2024 00:11:43 -0700 (PDT)
-Received: from ux-UP-WHL01 ([240e:47e:2ed8:ab06:94f5:966b:9066:6b36])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c3e08sm629364b3a.105.2024.10.31.00.11.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 00:11:42 -0700 (PDT)
-Date: Thu, 31 Oct 2024 15:11:15 +0800
-From: Charles Wang <charles.goodix@gmail.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, dmitry.torokhov@gmail.com,
-	hbarnor@chromium.org, conor.dooley@microchip.com, jikos@kernel.org,
-	bentiss@kernel.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
-Message-ID: <ZyMtk4_z0gvF4Fhj@ux-UP-WHL01>
-References: <20241025114642.40793-2-charles.goodix@gmail.com>
- <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3>
- <CAD=FV=X1F3QC=eSXcCn-78iQBzHMzT3z9Sis3yXKW_Bzun3+EA@mail.gmail.com>
- <CAL_JsqLwOekE1mz+3g8NTE3o4GhE9PWwR1Jfk_tL0RYKQmCg-A@mail.gmail.com>
- <CAD=FV=VHMfc2kJo2N3jkB9BR0H7SN2g9JqoDkZuZOOuq0OV6gw@mail.gmail.com>
- <ZyHYw40duPrm0ZeF@ux-UP-WHL01>
- <CAD=FV=WtbBnCX6fcqBFYPO3C=zw8YhKmJ35hW920JWt0MvDqPw@mail.gmail.com>
+        bh=xYNKPpW5+LOAj9rPQp09PnGF4rkl3/FgO55cWEjPbcI=;
+        b=uMHlsyCROt4oW43wDoYq4osxWqJiwyglOgqiv6/Y/vTXzBLwVIo5xvimn7quBX3xR9
+         2wrPq7LSt7CIDIlV39GNQGtXzuMERfXd6bXjB4tGMqixEyApuYA4/RiEXe0aTOaPoZ2V
+         cS/c5H5AE4AINMWRref6RUbBPlGrSqq3mluTOEp6GIHH73MjGpxqjpdp3RlGLtT6J9J0
+         l22IF+RWUgVqNzt8Xe9q/aGphBBUK/jlJxc3mJGmH5nkJ7yHN2FbZ2o+aT8TBJItgiQH
+         sC5qJqRnMGuUHygwRdc8jTbTI7l7qnlYX0yvRL2evTQia4znennXWlK+MmIQPCN+vrY9
+         nGTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0yqtQsp8SVmz28icHEJXHd9jk2uJPE4oj4uz6DceK6RR86GLzTAxM+zmTAfuKGn9j7yBcOQciabI=@vger.kernel.org, AJvYcCXrkm7XRTZ2zJgqebk9KmkRF+H3n2YHB1dIflC3Bf6K+bb2KzvrIzFcABFhH7JHnDdVqVAsPl8kTVeuEksR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy99QSAj6QxjJp24ORFP7/Ix2SPlH6o9dk2eP2Um0wNF4ReX8T2
+	z7q2lkq/aKq5KlU6FK4kWZEGGVlHGjqEDA/7xCEzRZlMKJcomFIHJD8+g5A2
+X-Google-Smtp-Source: AGHT+IGaq/3cf1ZA6yndcd7zOvzovZRCdC7n8N9ta65eO3kLRkR97DVsBL2jOkPLcT0ci6t/nnvjeg==
+X-Received: by 2002:a05:6512:4012:b0:539:f26f:d285 with SMTP id 2adb3069b0e04-53c79e15c9fmr963931e87.3.1730358800885;
+        Thu, 31 Oct 2024 00:13:20 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcbfa6sm108212e87.208.2024.10.31.00.13.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 00:13:19 -0700 (PDT)
+Message-ID: <5f80c1a2-118a-4685-ac1b-81b3479f5064@gmail.com>
+Date: Thu, 31 Oct 2024 09:13:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=WtbBnCX6fcqBFYPO3C=zw8YhKmJ35hW920JWt0MvDqPw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: Fix uninitialized symbol 'ret'
+To: Zicheng Qu <quzicheng@huawei.com>, jic23@kernel.org, lars@metafoo.de,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
+References: <20241031014505.2313035-1-quzicheng@huawei.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241031014505.2313035-1-quzicheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 11:14:26AM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, Oct 29, 2024 at 11:57 PM Charles Wang <charles.goodix@gmail.com> wrote:
-> >
-> > On Fri, Oct 25, 2024 at 09:19:14AM -0700, Doug Anderson wrote:
-> > > Hi,
-> > >
-> > > On Fri, Oct 25, 2024 at 8:59 AM Rob Herring <robh@kernel.org> wrote:
-> > > >
-> > > > On Fri, Oct 25, 2024 at 10:29 AM Doug Anderson <dianders@chromium.org> wrote:
-> > > > >
-> > > > > Charles,
-> > > > >
-> > > > > On Fri, Oct 25, 2024 at 5:03 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > > > >
-> > > > > > > +properties:
-> > > > > > > +  compatible:
-> > > > > > > +    enum:
-> > > > > > > +      - goodix,gt7986u-spi
-> > > > > >
-> > > > > > Compatible is already documented and nothing here explains why we should
-> > > > > > spi variant.
-> > > > > >
-> > > > > > > +
-> > > > > > > +  reg:
-> > > > > > > +    maxItems: 1
-> > > > > > > +
-> > > > > > > +  interrupts:
-> > > > > > > +    maxItems: 1
-> > > > > > > +
-> > > > > > > +  reset-gpios:
-> > > > > > > +    maxItems: 1
-> > > > > > > +
-> > > > > > > +  goodix,hid-report-addr:
-> > > > > >
-> > > > > > I do not see this patch addressing previous review. Sending something
-> > > > > > like this as v1 after long discussions also does not help.
-> > > > >
-> > > > > Krzysztof is right that it's better to wait until we get consensus on
-> > > > > the previous discussion before sending a new patch. I know you were
-> > > > > just trying to help move things forward, but because of the way the
-> > > > > email workflow works, sending a new version tends to fork the
-> > > > > discussion into two threads and adds confusion.
-> > > > >
-> > > > > I know Krzysztof and Rob have been silent during our recent
-> > > > > discussion, but it's also a long discussion. I've been assuming that
-> > > > > they will take some time to digest and reply in a little bit. If they
-> > > > > didn't, IMO it would have been reasonable to explicitly ask them for
-> > > > > feedback in the other thread after giving a bit of time.
-> > > >
-> > > > If the firmware creates fundamentally different interfaces, then
-> > > > different compatibles makes sense. If the same driver handles both bus
-> > > > interfaces, then 1 compatible should be fine. The addition of '-spi'
-> > > > to the compatible doesn't give any indication of a different
-> > > > programming model. I wouldn't care except for folks who will see it
-> > > > and just copy it when their only difference is the bus interface and
-> > > > we get to have the same discussion all over again. So if appending
-> > > > '-spi' is the only thing you can come up with, make it abundantly
-> > > > clear so that others don't blindly copy it. The commit msg is useful
-> > > > for convincing us, but not for that purpose.
-> > >
-> > > OK, makes sense. Charles: Can you think of any better description for
-> > > this interface than "goodix,gt7986u-spi"? I suppose you could make it
-> > > super obvious that it's running different firmware with
-> > > "goodix,gt7986u-spifw" and maybe that would be a little better.
-> > >
-> > > I think what Rob is asking for to make it super obvious is that in the
-> > > "description" of the binding you mention that in this case we're
-> > > running a substantially different firmware than GT7986U touchscreens
-> > > represented by the "goodix,gt7986u" binding and thus is considered a
-> > > distinct device.
-> > >
-> > > At this point, IMO you could wait until Monday in case Krzysztof wants
-> > > to add his $0.02 worth and then you could send a "v2" patch addressing
-> > > the comments so far, though of course you could continue to reply to
-> > > this thread if you have further questions / comments.
-> > >
-> >
-> > Thank you for your explanation, I understand your point. I want to clarify
-> > that the gt7986u-spi and gt7986u indeed use two entirely different drivers
-> > and two distinct firmware.
-> >
-> > Using "goodix,gt7986u-spi" could indeed cause confusion. How about modifying
-> > it to "goodix,gt7986u-losto" by adding a special code?
-> 
-> If "lotso" somehow means something real to people using this product
-> then that seems OK to me. If "lotso" is just a made up word because
-> you don't want to use "spi" or "spifw" then it's not great. In either
-> case you'll want to summarize our discussion here in your
-> "description" in the yaml and in the commit message.
-> 
+Hi Zicheng,
 
-Okay, got it.
+Thanks for the patch.
 
+On 31/10/2024 03:45, Zicheng Qu wrote:
+> Initialize the variable ret at the time of declaration to prevent it from
+> being returned without a defined value. Fixes smatch warning:
+> drivers/iio/industrialio-gts-helper.c:256 gain_to_scaletables() error:
+> uninitialized symbol 'ret'.
 > 
-> > Additionally, I would like to confirm: when submitting the v2 patch, should
-> > it be based on this thread or the previous discussion thread?
+> Cc: stable@vger.kernel.org # v6.6+
+> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> ---
+>   drivers/iio/industrialio-gts-helper.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> No, v2 should _not_ be In-Reply-To this thread. It'll start a new
-> thread. You can add a link (via lore.kernel.org/r/<message-id>) to the
-> old discussion in your cover letter and/or version history.
-> 
-> Said another way:
-> * New versions of patches create new threads.
-> * The fact that new versions of patches create new threads is why
-> people usually want open questions answered before the next version is
-> sent.
-> 
+> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
+> index 59d7615c0f56..c5dc5b51693d 100644
+> --- a/drivers/iio/industrialio-gts-helper.c
+> +++ b/drivers/iio/industrialio-gts-helper.c
+> @@ -167,7 +167,7 @@ static int iio_gts_gain_cmp(const void *a, const void *b)
+>   
+>   static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
+>   {
+> -	int ret, i, j, new_idx, time_idx;
+> +	int i, j, new_idx, time_idx, ret = 0;
+>   	int *all_gains;
+>   	size_t gain_bytes;
+>   
 
-Okay, thank you very much for your patient explanation.
+So, if I read it right, this handles a (corner) case where there is no 
+times given. I am not sure how well such use has been considered because 
+the point of GTS is helping out with cases where the gain and 
+integration time both impact to scale.
 
-Best regards,
-Charles
+How do you see the benefits of the gts if there is no such shared impact 
+to scale? Sure the gts could still provide the 'standard table format' 
+to present the gains (or times), and conversions from the register 
+values to gains (or times), and perhaps the available scale table(s) - 
+but I suppose it also brings a lot of unused code and some 
+initialization overhead. (I have a vague feeling this was discussed with 
+Jonathan during the reviews).
+
+Reason I am asking these questions is that I wonder if the usage should 
+be limited to cases where we have both gains and times? We could check 
+this in the iio_gts_sanity_check(). (And, I am actually a bit surprized 
+this check was not implemented).
+
+Well, initialization fixes a potential bug here and does not really cost 
+much - so big thanks to you :)
+
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Yours,
+  -- Matti Vaittinen
+
 
