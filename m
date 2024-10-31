@@ -1,279 +1,192 @@
-Return-Path: <linux-kernel+bounces-390934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529269B8035
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:35:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0469B8047
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75DAF1C21C81
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9E32838D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6380D1BC9ED;
-	Thu, 31 Oct 2024 16:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B8D1BC092;
+	Thu, 31 Oct 2024 16:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETAoXiwu"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UbCX4rll"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6001A76D1;
-	Thu, 31 Oct 2024 16:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D750E1974F4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730392527; cv=none; b=TipWJ0nxaFwri2GELdQIIxHX02FH0g7na/RkxSU566BFHFYjzJawzjSnKKot4BwTfVGDn860cMX8p4O5ihszS85kUOFFq8HtQ/YtNBsf7/iCUM3yfj0ObQC+wN+bJydlUMxOruGG7YmoTBD6eKVFgcy1vh9YYn5qyjmTE/GgAA4=
+	t=1730392685; cv=none; b=ou029usQ07jpzbMWCTEbmVRa9aywR5/zXmgrf+aFhx5dSWCPsBInI2fsgI80ov+Kv/KBxydHJ1ReUfufWIh3d9krU6kwZyurAf9hgHklJlOdOzf/SKqhRMq/bt0d8xzNyVHYtejNDa0/X4xxMIiTtJO1rFRoTzBJ/fqlAoAJ6rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730392527; c=relaxed/simple;
-	bh=y7UPaCjN2pG5bT2k2hZl8m/wpg+0Sw6xm37P4p3ePe8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XfXAyREkMBVcTND5GyXJso6ErKeP5dZMxYcFBg1t4htKp8EFxo30uOBeSY8oa4oX0Qf51tuJO9wR7sQFX0Rt60gvJs+DZ1vIuYIiGzdqFU5ICdU3IkLgA0VYcs2IdNXvYKnRLZFp8GEgv9U+RaaIACdv5DM9AS8Wta11SxlkjRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ETAoXiwu; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2bb1efe78so834938a91.1;
-        Thu, 31 Oct 2024 09:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730392524; x=1730997324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQZjHPdQc1Js4W5rgZSXXL43yAZqAF4/KkLoJSshr48=;
-        b=ETAoXiwuTWEm9G/S/yfxg8POH+AKyOop1ytRlWyG00AIUcHx814P6RDcToRpdNhC+r
-         DkL9OWHq40f8ZQgwv5lmRw/e0HOxoog0DgipGGK2Tlf7UEAU6FROX0fTym32G4lwzNuh
-         zOr/UXp3hl4hie4Twko9qtwgyxsrZnLUlStcgK+5SnanWuR3UrfLxmBIXJwjr5yL/laL
-         gV1VpTPIMKj0oUJPlz6spxxajt98QAS2dPXBUvtCsy/x+LfuRQnKspA1YkLcjqk2gWE+
-         2MyJ0s0Zs6NJegyElHfelqImBIT0zHRHztIrRdE4V351UV0j61J7TwQ+qquA44K5RCyF
-         mn2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730392524; x=1730997324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kQZjHPdQc1Js4W5rgZSXXL43yAZqAF4/KkLoJSshr48=;
-        b=rVbS+vaRXtrwYU5HIRrFVfplkVhZBXvpQnha5BL4dLA8K5WhN36i1nbkpZlRW+vSsG
-         sRA1ojknR5tuJLfNiFJ6n/KlrHWU1AnLanx8t/MZ/vr9JgyjCITGVYtMf0gThItTQxt3
-         orfcMyy2qcZLl084FcUO1Ij4zTWZX98q+FrdMxFeS9SLbswRECEILojG+RWlZE6Hw+5E
-         XW7NAv64BXjumA5O3FHyb0zjuwDIyU/JfQGEisgDTYqxNbKRUcaUqw0Q0C6Nlqt1tH5e
-         CNF+cpcqGl609gLSE7EUC8nfa6PDgWFiZYH0HN9S0VjlLZ2QDj7s2KEk3a51oCTqEV9S
-         xIIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUATeNTBhm7G1kreaaHrn1W7V7Uj8M8RwSsCcwTupmuYywnaiKX64v9WWhXT7MzDqZswlk=@vger.kernel.org, AJvYcCVRneylxd7CXo5DXedgdysWjoUlXN1YyzGDGxHGxq+joeDDdKetDHViujPDxRwVhLgw51u27tFXu0TL5OLb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnKNmWXKjropaSn1HrMJQsj2JgKTGa60XwVPc/90I6TAYhRCBs
-	gT7QBf2y25xAbX+q0C060m6ljrr9Yrc9OEgraylzkvHN7rijVIknbcJCKtzUn44UjqZD2z85Snt
-	tskkWyWqkrfPoPCAwklVoQoe8Vmk=
-X-Google-Smtp-Source: AGHT+IGct5Z81LnXrpCq5iaq/LuLEXgtvp+LltQofm6TuFzJDBxpvxfF/+6rACkNAg6nnWucRfqkWm2J/39zXua2elY=
-X-Received: by 2002:a17:90b:4f44:b0:2e2:c2b0:d03e with SMTP id
- 98e67ed59e1d1-2e93e0768damr4782503a91.5.1730392524531; Thu, 31 Oct 2024
- 09:35:24 -0700 (PDT)
+	s=arc-20240116; t=1730392685; c=relaxed/simple;
+	bh=3U1ZiJmvD8aZd3Ni/hhC3pmLL4CmGo8yEdwrbILytnA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cr84r1xZxqR7IxBr1Fk0c2JQ+ahUvDq80BipWbMPwPnAk7u1RLcS6EE0mBe3Ace4POqMm6m5aZU5rU3i9GC+R0J3T+373CcmbHA6epBmFTv69gCJ/EH5WLc4F895TtfzrMBi5XGZXef3jL2XGAKpQIReld5mRHGJ2yp02XcqU/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UbCX4rll; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730392680;
+	bh=3U1ZiJmvD8aZd3Ni/hhC3pmLL4CmGo8yEdwrbILytnA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=UbCX4rllqBK0swe0Lwu9c0QkxjTiFXSs7qdvb3Shr6E0boLSfcTCXe6fT3I4LsqMW
+	 YRxcZxsOM+MqkkcOB+Rfl+fQmIF4uuUDKhCfKGnnnGMn2+IFjf9tMEvMmXs1gxubN6
+	 3OxP1vfxWiwdg3AFmJAPuT9nHrC38OmYaI36fmoZFELcnTVtPwb/TqV/A7llr0kTAf
+	 D5EEdQvq7/34FdIgJgCLEv7mGYRyPvLdgP9ibutl709xeeaikIKV5hny2g2l1+oj5s
+	 sFHSIotyu75wrCHSWsdozav0rfuTMwqmr336s+YSC0UoQe3GjxzytY3cM2TPhqWMsL
+	 M0xH7ZilTUJLg==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BEAF617E3692;
+	Thu, 31 Oct 2024 17:38:00 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Thu, 31 Oct 2024 18:37:04 +0200
+Subject: [PATCH RFC v2] regmap: maple: Provide lockdep (sub)class for maple
+ tree's internal lock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com>
- <20241026154629.593041-3-mathieu.desnoyers@efficios.com> <CAEf4BzaD24V=Z6T3wNh27pv9OV_WaLNQeAPbUANQJYN0h5zHKw@mail.gmail.com>
- <7ef1d403-e6ca-4dee-85c6-e32446e52aa7@efficios.com> <b8e01a00-0405-41af-8316-9cfa28e698db@efficios.com>
-In-Reply-To: <b8e01a00-0405-41af-8316-9cfa28e698db@efficios.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 31 Oct 2024 09:35:12 -0700
-Message-ID: <CAEf4BzYrZZH7uTuBG=feL+AORgxqtAKhG3hJ=vUJvQd1xSOe0Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/3] tracing: Fix syscall tracepoint use-after-free
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
-	Michael Jeanson <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
-	Jordan Rife <jrife@google.com>, syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241031-regmap-maple-lockdep-fix-v2-1-06a3710f3623@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAC+yI2cC/4WNTQqDMBSEryJv3VfyU/+6KhR6gG6Li5g8NRiNJ
+ EVaxLs3eIEuZjEzzDcbRAqWIlyzDQKtNlo/JyNOGehBzT2hNcmDYOLCmagxUD+pBZMcofN6NLR
+ gZz/YyaLSVFApCwlpvgRK8YF+wfNxhyaFg41vH77H3cqP6j955cixzKua8lLWrDU37Z1TrQ/qr
+ P0Ezb7vP+EyT8TJAAAA
+X-Change-ID: 20241029-regmap-maple-lockdep-fix-f368ce6e7363
+To: Mark Brown <broonie@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+ kernel@collabora.com, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Thu, Oct 31, 2024 at 8:44=E2=80=AFAM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2024-10-28 15:19, Mathieu Desnoyers wrote:
-> > On 2024-10-27 21:22, Andrii Nakryiko wrote:
-> >> On Sat, Oct 26, 2024 at 8:48=E2=80=AFAM Mathieu Desnoyers
-> >> <mathieu.desnoyers@efficios.com> wrote:
-> >>>
-> >>> The grace period used internally within tracepoint.c:release_probes()
-> >>> uses call_rcu() to batch waiting for quiescence of old probe arrays,
-> >>> rather than using the tracepoint_synchronize_unregister() which block=
-s
-> >>> while waiting for quiescence.
-> >>>
-> >>> With the introduction of faultable syscall tracepoints, this causes
-> >>> use-after-free issues reproduced with syzkaller.
-> >>>
-> >>> Fix this by using the appropriate call_rcu() or call_rcu_tasks_trace(=
-)
-> >>> before invoking the rcu_free_old_probes callback. This can be chosen
-> >>> using the tracepoint_is_syscall() API.
-> >>>
-> >>> A similar issue exists in bpf use of call_rcu(). Fixing this is left =
-to
-> >>> a separate change.
-> >>>
-> >>> Reported-by: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
-> >>> Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to
-> >>> handle page faults")
-> >>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> >>> Cc: Michael Jeanson <mjeanson@efficios.com>
-> >>> Cc: Steven Rostedt <rostedt@goodmis.org>
-> >>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> >>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>> Cc: Alexei Starovoitov <ast@kernel.org>
-> >>> Cc: Yonghong Song <yhs@fb.com>
-> >>> Cc: Paul E. McKenney <paulmck@kernel.org>
-> >>> Cc: Ingo Molnar <mingo@redhat.com>
-> >>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> >>> Cc: Mark Rutland <mark.rutland@arm.com>
-> >>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> >>> Cc: Namhyung Kim <namhyung@kernel.org>
-> >>> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> >>> Cc: bpf@vger.kernel.org
-> >>> Cc: Joel Fernandes <joel@joelfernandes.org>
-> >>> Cc: Jordan Rife <jrife@google.com>
-> >>> ---
-> >>> Changes since v0:
-> >>> - Introduce tracepoint_call_rcu(),
-> >>> - Fix bpf_link_free() use of call_rcu as well.
-> >>>
-> >>> Changes since v1:
-> >>> - Use tracepoint_call_rcu() for bpf_prog_put as well.
-> >>>
-> >>> Changes since v2:
-> >>> - Do not cover bpf changes in the same commit, let bpf developers
-> >>>    implement it.
-> >>> ---
-> >>>   kernel/tracepoint.c | 11 +++++++----
-> >>>   1 file changed, 7 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-> >>> index 5658dc92f5b5..47569fb06596 100644
-> >>> --- a/kernel/tracepoint.c
-> >>> +++ b/kernel/tracepoint.c
-> >>> @@ -106,13 +106,16 @@ static void rcu_free_old_probes(struct rcu_head
-> >>> *head)
-> >>>          kfree(container_of(head, struct tp_probes, rcu));
-> >>>   }
-> >>>
-> >>> -static inline void release_probes(struct tracepoint_func *old)
-> >>> +static inline void release_probes(struct tracepoint *tp, struct
-> >>> tracepoint_func *old)
-> >>>   {
-> >>>          if (old) {
-> >>>                  struct tp_probes *tp_probes =3D container_of(old,
-> >>>                          struct tp_probes, probes[0]);
-> >>>
-> >>> -               call_rcu(&tp_probes->rcu, rcu_free_old_probes);
-> >>> +               if (tracepoint_is_syscall(tp))
-> >>> +                       call_rcu_tasks_trace(&tp_probes->rcu,
-> >>> rcu_free_old_probes);
-> >>
-> >> should this be call_rcu_tasks_trace() -> call_rcu() chain instead of
-> >> just call_rcu_tasks_trace()? While currently call_rcu_tasks_trace()
-> >> implies RCU GP (as evidenced by rcu_trace_implies_rcu_gp() being
-> >> hardcoded right now to returning true), this might not always be the
-> >> case in the future, so it's best to have a guarantee that regardless
-> >> of sleepable or not, we'll always have have RCU GP, and for sleepable
-> >> tracepoint *also* RCU Tasks Trace GP.
-> >
-> > Given that faultable tracepoints only use RCU tasks trace for the
-> > read-side and do not rely on preempt disable, I don't see why we would
-> > need to chain both grace periods there ?
->
-> Hi Andrii,
->
-> AFAIU, your question above is rooted in the way bpf does its sleepable
-> program grace periods (chaining RCU tasks trace + RCU GP), e.g.:
->
-> bpf_map_free_mult_rcu_gp
-> bpf_link_defer_dealloc_mult_rcu_gp
->
-> and
->
-> bpf_link_free:
->                  /* schedule BPF link deallocation; if underlying BPF pro=
-gram
->                   * is sleepable, we need to first wait for RCU tasks tra=
-ce
->                   * sync, then go through "classic" RCU grace period
->                   */
->
-> This is introduced in commit 1a80dbcb2db ("bpf: support deferring bpf_lin=
-k dealloc to after RCU grace period")
-> which has a bit more information in the commit message, but what I'm not =
-seeing
-> is an explanation of *why* chaining RCU tasks trace and RCU grace periods=
- is
-> needed for sleepable bpf programs. What am I missing ?
+In some cases when using the maple tree register cache, the lockdep
+validator might complain about invalid deadlocks:
 
-At least one of the reasons are BPF maps that can be used from both
-sleepable and non-sleepable BPF programs *at the same time*. So in BPF
-everything is *at least* protected with rcu_read_lock(), and then
-sleepable-capable things are *additionally* supported by
-rcu_read_tasks_trace(). So on destruction, we chain both RCU GP kinds
-to make sure that all users can't see BPF map/prog/(and soon links).
+[7.131886]  Possible interrupt unsafe locking scenario:
 
-It might not be strictly necessary in general, but you are right that
-I asked because of how we do this in BPF. Also, in practice, tasks
-trace RCU GP implies RCU GP, so there is no overhead for how we do
-this for BPF maps (and progs? didn't check).
+[7.131890]        CPU0                    CPU1
+[7.131893]        ----                    ----
+[7.131896]   lock(&mt->ma_lock);
+[7.131904]                                local_irq_disable();
+[7.131907]                                lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
+[7.131916]                                lock(&mt->ma_lock);
+[7.131925]   <Interrupt>
+[7.131928]     lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
+[7.131936]
+                *** DEADLOCK ***
 
-Anyways, this might be fine as is.
+[7.131939] no locks held by swapper/0/0.
+[7.131944]
+               the shortest dependencies between 2nd lock and 1st lock:
+[7.131950]  -> (&mt->ma_lock){+.+.}-{2:2} {
+[7.131966]     HARDIRQ-ON-W at:
+[7.131973]                       lock_acquire+0x200/0x330
+[7.131986]                       _raw_spin_lock+0x50/0x70
+[7.131998]                       regcache_maple_write+0x68/0xe0
+[7.132010]                       regcache_write+0x6c/0x90
+[7.132019]                       _regmap_read+0x19c/0x1d0
+[7.132029]                       _regmap_update_bits+0xc0/0x148
+[7.132038]                       regmap_update_bits_base+0x6c/0xa8
+[7.132048]                       rk8xx_probe+0x22c/0x3d8
+[7.132057]                       rk8xx_spi_probe+0x74/0x88
+[7.132065]                       spi_probe+0xa8/0xe0
 
->
-> As far as tracepoint.c release_probes() is concerned, just waiting for
-> RCU tasks trace before freeing memory of faultable tracepoints is
-> sufficient.
->
-> Thanks,
->
-> Mathieu
->
-> >
-> > Thanks,
-> >
-> > Mathieu
-> >
-> >>
-> >>> +               else
-> >>> +                       call_rcu(&tp_probes->rcu, rcu_free_old_probes=
-);
-> >>>          }
-> >>>   }
-> >>>
-> >>> @@ -334,7 +337,7 @@ static int tracepoint_add_func(struct tracepoint
-> >>> *tp,
-> >>>                  break;
-> >>>          }
-> >>>
-> >>> -       release_probes(old);
-> >>> +       release_probes(tp, old);
-> >>>          return 0;
-> >>>   }
-> >>>
-> >>> @@ -405,7 +408,7 @@ static int tracepoint_remove_func(struct
-> >>> tracepoint *tp,
-> >>>                  WARN_ON_ONCE(1);
-> >>>                  break;
-> >>>          }
-> >>> -       release_probes(old);
-> >>> +       release_probes(tp, old);
-> >>>          return 0;
-> >>>   }
-> >>>
-> >>> --
-> >>> 2.39.5
-> >>>
-> >
->
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
->
+[...]
+
+[7.132675]   }
+[7.132678]   ... key      at: [<ffff800082943c20>] __key.0+0x0/0x10
+[7.132691]   ... acquired at:
+[7.132695]    _raw_spin_lock+0x50/0x70
+[7.132704]    regcache_maple_write+0x68/0xe0
+[7.132714]    regcache_write+0x6c/0x90
+[7.132724]    _regmap_read+0x19c/0x1d0
+[7.132732]    _regmap_update_bits+0xc0/0x148
+[7.132741]    regmap_field_update_bits_base+0x74/0xb8
+[7.132751]    vop2_plane_atomic_update+0x480/0x14d8 [rockchipdrm]
+[7.132820]    drm_atomic_helper_commit_planes+0x1a0/0x320 [drm_kms_helper]
+
+[...]
+
+[7.135112] -> (rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock){-...}-{2:2} {
+[7.135130]    IN-HARDIRQ-W at:
+[7.135136]                     lock_acquire+0x200/0x330
+[7.135147]                     _raw_spin_lock_irqsave+0x6c/0x98
+[7.135157]                     regmap_lock_spinlock+0x20/0x40
+[7.135166]                     regmap_read+0x44/0x90
+[7.135175]                     vop2_isr+0x90/0x290 [rockchipdrm]
+[7.135225]                     __handle_irq_event_percpu+0x124/0x2d0
+
+In the example above, the validator seems to get the scope of
+dependencies wrong, since the regmap instance used in rk8xx-spi driver
+has nothing to do with the instance from vop2.
+
+Improve validation by sharing the regmap's lockdep class with the maple
+tree's internal lock, while also providing a subclass for the latter.
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v2:
+- Rebased onto next-20241031 to fix the conflicts reported by Mark
+- Link to v1: https://lore.kernel.org/r/20241029-regmap-maple-lockdep-fix-v1-1-7589e57390bd@collabora.com
+---
+ drivers/base/regmap/internal.h       | 1 +
+ drivers/base/regmap/regcache-maple.c | 3 +++
+ drivers/base/regmap/regmap.c         | 1 +
+ 3 files changed, 5 insertions(+)
+
+diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
+index 83acccdc1008976de681396a300b78b701bbfa3c..bdb450436cbc53031c3d921f9f6067d26eca2549 100644
+--- a/drivers/base/regmap/internal.h
++++ b/drivers/base/regmap/internal.h
+@@ -59,6 +59,7 @@ struct regmap {
+ 			unsigned long raw_spinlock_flags;
+ 		};
+ 	};
++	struct lock_class_key *lock_key;
+ 	regmap_lock lock;
+ 	regmap_unlock unlock;
+ 	void *lock_arg; /* This is passed to lock/unlock functions */
+diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
+index 8d27d3653ea3e71e7b134cd3e47be385860e7375..23da7b31d7153450e1b16528be47216d7fbdd872 100644
+--- a/drivers/base/regmap/regcache-maple.c
++++ b/drivers/base/regmap/regcache-maple.c
+@@ -355,6 +355,9 @@ static int regcache_maple_init(struct regmap *map)
+ 
+ 	mt_init(mt);
+ 
++	if (!mt_external_lock(mt) && map->lock_key)
++		lockdep_set_class_and_subclass(&mt->ma_lock, map->lock_key, 1);
++
+ 	if (!map->num_reg_defaults)
+ 		return 0;
+ 
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 4ded93687c1f0ab3584947c61398cd6333b2e72c..53131a7ede0a6aad54bc85e970124f6b166a8010 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -745,6 +745,7 @@ struct regmap *__regmap_init(struct device *dev,
+ 						   lock_key, lock_name);
+ 		}
+ 		map->lock_arg = map;
++		map->lock_key = lock_key;
+ 	}
+ 
+ 	/*
+
+---
+base-commit: f9f24ca362a4d84dd8aeb4b8f3ec28cb6c43dd06
+change-id: 20241029-regmap-maple-lockdep-fix-f368ce6e7363
+
 
