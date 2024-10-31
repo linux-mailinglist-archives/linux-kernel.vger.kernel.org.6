@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-390681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06509B7D31
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:44:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5066B9B7D29
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38E8CB21F4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:44:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81B121C21245
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB3F1A0BFA;
-	Thu, 31 Oct 2024 14:44:13 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E9A1A08CC;
-	Thu, 31 Oct 2024 14:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851311A0BFB;
+	Thu, 31 Oct 2024 14:43:24 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C04742AA5;
+	Thu, 31 Oct 2024 14:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385852; cv=none; b=fcMAHSdI269RI4CSkDFpyssWowIFDZ2wfQDENVjDa5ZS4CgLIhUs5+0a0jGWKLDl6mO+oK1q9SSibGJCZdPmR6XshsBBc8oi8Dhn2ktyDvWZH9wJHlOJFtYjkXUPndPZ3JXLra0Hbqz92QvuusLraLcbOJJK5gxGhWAWBFRRuVI=
+	t=1730385804; cv=none; b=F6bX11ipumbPIWX7JKXCgcz6DUwn3d5I0rOIcuy2V0pR5m2bew5qr5qm9ZaV+qD1nhnH+Aj7ZuWfb39JTulLRkKd0aGXjUj4jDe3YYHk3jjCo7B78QjrIHPDc+g56B+dexLo7NFFzaPDd2v5wKnDifODFRslAsilUqdW5s3L8uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385852; c=relaxed/simple;
-	bh=gpARlhMd+jMUQZ0z3fOHRWkGCLUpFJQ59B5vavO6d/I=;
+	s=arc-20240116; t=1730385804; c=relaxed/simple;
+	bh=+fEjFkpn0K/hzvDNkuVd7TQd5eDuuY7AlrXCWDM26JQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CP1yW+21yelO3jihsWLWEVyo6GqXOrt9+Cn9Mp3k1zPa98cl6mKgscavrO+fD/xIfeIkKewahlme+DoQHhs8zJ33UBVQkWTF5zn43aN6ivqHQkLWqy/JGSybsF5MJEny7pv+qNb5/xG42q5YfpBb+QX85fTFZmRyoA84MPe1+FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1t6WOD-0000MK-00; Thu, 31 Oct 2024 15:43:09 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 08969C0161; Thu, 31 Oct 2024 15:42:58 +0100 (CET)
-Date: Thu, 31 Oct 2024 15:42:58 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0UJ8CJWpFCRYOIyX3RKFEXmGkWOxQhFAsjLkG20clXiz2rGa+xhcMJsdwyHY9sYC2sjvw3GfPE0YwTRLzr5MuU3Lx0WCwjM5IvMCTBs6Pn87R96Ihu/RR/7urNA/WJGjxfR6Xttxff8tk4eqm91NYxpeoHdpkG5Hklp/hAcjnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4DCAB20187D;
+	Thu, 31 Oct 2024 15:43:20 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1ED58201879;
+	Thu, 31 Oct 2024 15:43:20 +0100 (CET)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 6181020579;
+	Thu, 31 Oct 2024 15:43:13 +0100 (CET)
+Date: Thu, 31 Oct 2024 15:43:13 +0100
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Theo Lebrun <theo.lebrun@bootlin.com>,
-	Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
-	Djordje Todorovic <djordje.todorovic@htecgroup.com>,
-	Chao-ying Fu <cfu@wavecomp.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
-	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	"paulburton@kernel.org" <paulburton@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v8 10/13] dt-bindings: mips: cpu: Add property for broken
- HCI information
-Message-ID: <ZyOXcrS/7txCQU3B@alpha.franken.de>
-References: <20241028175935.51250-1-arikalo@gmail.com>
- <20241028175935.51250-11-arikalo@gmail.com>
- <avz4crm2yrk3fg7r4qxkgkt3ka5hmk54v2wtcms453tsnewu5w@jzjxmyd4b7yg>
- <CAGQJe6p6QgSQKByVQ8G+HpWbdEHnfNb8vRureOrS2VZa6Lk74A@mail.gmail.com>
- <29d7688e-5fac-4821-8764-bdc760112370@app.fastmail.com>
- <378f8b70-12d9-4ec3-a1e5-35bd992bfc90@app.fastmail.com>
- <87jzdoadve.fsf@BLaptop.bootlin.com>
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v4 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
+ glue driver
+Message-ID: <ZyOXgdqUgg2qlCah@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
+ <20241028-upstream_s32cc_gmac-v4-14-03618f10e3e2@oss.nxp.com>
+ <xanb4j56u2rjwpkyj5gwh6y6t36gpvawph62jw72ksh7jximhr@cjwlp7wsxgp6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87jzdoadve.fsf@BLaptop.bootlin.com>
+In-Reply-To: <xanb4j56u2rjwpkyj5gwh6y6t36gpvawph62jw72ksh7jximhr@cjwlp7wsxgp6>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Thu, Oct 31, 2024 at 09:13:57AM +0100, Gregory CLEMENT wrote:
-> Hi Jiaxun,
+On Tue, Oct 29, 2024 at 08:13:40AM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Oct 28, 2024 at 09:24:56PM +0100, Jan Petrous (OSS) wrote:
+> > +	plat->init = s32_gmac_init;
+> > +	plat->exit = s32_gmac_exit;
+> > +	plat->fix_mac_speed = s32_fix_mac_speed;
+> > +
+> > +	plat->bsp_priv = gmac;
+> > +
+> > +	return stmmac_pltfr_probe(pdev, plat, &res);
+> > +}
+> > +
+> > +static const struct of_device_id s32_dwmac_match[] = {
+> > +	{ .compatible = "nxp,s32g2-dwmac" },
+> > +	{ .compatible = "nxp,s32g3-dwmac" },
+> > +	{ .compatible = "nxp,s32r-dwmac" },
 > 
-> > 在2024年10月29日十月 下午4:11，Jiaxun Yang写道：
-> >> 在2024年10月29日十月 下午12:21，Aleksandar Rikalo写道：
-> >> [...]
-> >>>
-> >>>> Is this property applicable for all MIPS vendors? There is no vendor
-> >>>> prefix here, so this is generic for this architecture, right?
-> >>
-> >> I'd say the best vendor prefix is mti in this case.
-> >>
-> >> CM3 IP block is supplied by MIPS Technology, it is not a part of MIPS
-> >> architecture spec.
-> >
-> > I just tried to revise this problem and I think a better approach would
-> > be picking my CM binding [1] patch and add this as a property to CM binding.
-> >
-> > You don't need to pick rest of that series, this binding alone is sufficient,
-> > and it's already being reviewed.
-> >
-> > Thanks
-> > [1]:
-> > https://lore.kernel.org/all/20240612-cm_probe-v2-5-a5b55440563c@flygoat.com/
+> Why do you need three same entries?
 > 
-> I had a look at your series and it seems that all the issues raised were
-> solved, so why wasn't it merged?
 
-https://lore.kernel.org/all/2xkut5pyzk4b4ugl4ku72y4rfqrfsoxj4aww2jwlgkc3lmd464@zwf773fr7fpq/
+We have three different SoCs and in v3 review you told me
+to return all back:
+https://patchwork.kernel.org/comment/26067257/
 
-so it's still unclear to me, whether there is something to fix or not.
+I'm not sure if we need s32g3 variant, it should depend on
+changes between s32g2 and s32g3, but s32r will definitely
+carry the interface max-speed value when SGMII support will
+be added.
 
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+BR.
+/Jan
 
