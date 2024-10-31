@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-389871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E549B7250
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:59:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66849B7251
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C13BA1C230DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:59:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8FF1F25CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D77C84A32;
-	Thu, 31 Oct 2024 01:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368C6823D1;
+	Thu, 31 Oct 2024 01:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="klAsBjv8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWn0hqsU"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AA2823D1;
-	Thu, 31 Oct 2024 01:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28EE4A35
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730339941; cv=none; b=H4tHyjL3RqolM3XXLPWzNpwITIZ90Z714MP8T3eICiPBV3g9efA8/69VwAHIQSevkKxJIuQWkv/ec5XFmB0m766mlQX+lAeuWRtF1GnLL1Tp/5qnnT79T08taQozTBlBWURRUyStuPR1T1/NuBp2IZnogwKhsTPUaja/3NsFrq0=
+	t=1730339975; cv=none; b=eIbworRx+buVmA7s1onYL/2W5m/xFCwot/7aQdImy336RqxACS9wbXxGgPe9qghPriBwhD+fmurLSGVE9Ce08RmiVLyoFf46VWewcOoKKBuI/wo9p3BAqRRk+qJADd3cF0aBYTS5y5aIkv3Av19tDq22KuDZtP+FU39YIaAZxQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730339941; c=relaxed/simple;
-	bh=ZshjuPjqLkToNERmxK+afu2pEYJV/tJCEPHg3M5Jeyk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Ta2oBXDmu4nM5QOS8dYxosXgjminU+Pn7RA8hZFvagWrvaloDJAn8rF/IsBSfFRt0Pbwt/MlmSKOgcPiL8owAY5+ZE8c9zScylRTRul5o0g9iWDZLWNk25Y9yHKZbvurcEPHAaH9LeBivMWecD8zRVUCUMxq1DzZ9rLF+LRaNlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=klAsBjv8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E63C4CECE;
-	Thu, 31 Oct 2024 01:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730339940;
-	bh=ZshjuPjqLkToNERmxK+afu2pEYJV/tJCEPHg3M5Jeyk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=klAsBjv8rYZyJa+gA2bSXseUHsCXFsivGnJFC9PEh3h0ZMnBXHOtKfoZTpOxAhCSE
-	 TBQWIF+tmcdVgWoVoguO3Nxwu2rhJzyB3pc9SkNYIPZKZO3nGgnhrC2aH2AwsiH9KS
-	 RcJebV61F+UjSUvy34g+kjlz63JZRutaXLS+/ukLgYDW/23i65tUxOXmnQ5khMx4Qi
-	 aWuEaW1QupsDCHjolwXlL7yKEpuwsL8VYTvSw/0w+WqMetYjhZwPTFAA/QXlE3QsUJ
-	 09WY5rzNvIrUSxsUYInoqxPRn+6TN13cffUDIhNsRNCRHGHZto0EqABayufKHq3NYM
-	 DUbCYntMaYP3Q==
-Date: Thu, 31 Oct 2024 10:58:55 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Naveen N Rao <naveen@kernel.org>, Anil S Keshavamurthy
- <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- patches@lists.linux.dev
-Subject: Re: [PATCH 2/2] kprobes: Use struct_size() in __get_insn_slot()
-Message-Id: <20241031105855.6d88db454041f3cbd9723aab@kernel.org>
-In-Reply-To: <20241030-kprobes-fix-counted-by-annotation-v1-2-8f266001fad0@kernel.org>
-References: <20241030-kprobes-fix-counted-by-annotation-v1-0-8f266001fad0@kernel.org>
-	<20241030-kprobes-fix-counted-by-annotation-v1-2-8f266001fad0@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730339975; c=relaxed/simple;
+	bh=1YMmtYM4Lz45x2w4MeS1rdbS7c8KgOV0UTXgky2BM0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qetNPYtl15FOZ06M/P32YcST+HU0wjvsjgoEMtrO6ds+Y3mrUcJ0Xys7pRh2wcY1QEtPE+LDgGZJYgeejvUOBiQ91FWM7r5xBzX+aCPBbKOgbflwL5SIu0Pef/MgJHTU7iYr81QFfB5I4xn7FRbPfFSn1WNs9URD0KvT9/yrIl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWn0hqsU; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ede82dbb63so370753a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730339973; x=1730944773; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ynFW5xtxd+8iX2/i2+qR8o0VfxX1NPyp2FCK1MSrQ4I=;
+        b=UWn0hqsU3uzHOguUE6iMmXrwX0HLGkXaZNA9P9yFBzL0uFJ9cwud4HNWDRR1jvfrS7
+         3tM6BXG0+P203vd9raBbk/46a6CmmXLozOS5piv52upcjLChSyk9pO8HYCOhx0+5ZDcx
+         NRNY42L0dnpoUwbMsKunrrL2dVrsqxp8fjsNCW6rYRSrFwqFSiXnEUJb0YxRYrRq0PWK
+         kuoShlDK+/Uta77SXwP8bqjH6pIuKim72zqKYRL0USiijtMyAUSnNyR2v84sSh3X7Rvb
+         mReI2Ud+k4PSqeuzpJQeEd64uCbxdEP/bBGJsnsXLmUNpC8/LngWSin4IJolSmElq6by
+         nTbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730339973; x=1730944773;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ynFW5xtxd+8iX2/i2+qR8o0VfxX1NPyp2FCK1MSrQ4I=;
+        b=IyG8WjyucS8+ZkDrPmWrid4KDrnOuDwOp2Khene291CXMm81XztURubjylRRnWruUZ
+         Qv7FvTHH7MwYnMleXBI21S+bN7NlxwHC6ss6NJQnEF06s52Di+9wG8kDvum0V7wAZvMc
+         FEx3UmiSzll3rljwVRbKPgvZicNzKa7aRM/9LYgglUxhLaDTolQzU6HwOgA71DOjCa66
+         oiK9A3KJjZMEo63/V/CfNxnuU/S+UtmaP9hMjyfz3Rr7gaPGw8uUpASiiOiYps/5XtD4
+         Vin2H3CkR0HNGEcX5xYA6+fvf2v2XWrXdtVmdOUhxsXVNreK9ArU72lsaNnyOFI6giGS
+         4sRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViUuL9QXhNX0ySb39QeJzywNBhGuOvNsjJ6/XaHsxbw2ASHIgU1h81HSPgcDvFQrm/EglDyEd2O2bb/Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySwppKyGbF7Z5EQ99MlvDecibBoET1Tn3NF5IGF3+yMhLkiWTf
+	jiWrhU79bOky9amaI9QiqrTJAjR0cwKf6tSw3RrQ1Ou4DN4OUFHtp1Ez8unkSxHA7dX4JiemBXL
+	wFACG9H1v2aZM8Aug/tACZQi4fL0=
+X-Google-Smtp-Source: AGHT+IEQhTled4Rz6KFrJ2IKyQkoEnKEtdZKw+2W8R45nlgXhdOiQjXP9bHvdIwNwjEKbTltHi0BzL+5It6TevR+0/I=
+X-Received: by 2002:a05:6a20:d80b:b0:1d9:9c6:5e7f with SMTP id
+ adf61e73a8af0-1d9a83a3e2bmr23611975637.4.1730339973074; Wed, 30 Oct 2024
+ 18:59:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20241010134351.1884580-1-ghanshyam1898@gmail.com>
+ <fa5dd074-0045-4f37-894f-861081f4cfdd@oracle.com> <7ad9c139-6627-4401-a7d6-0e488f39c5ad@oracle.com>
+In-Reply-To: <7ad9c139-6627-4401-a7d6-0e488f39c5ad@oracle.com>
+From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+Date: Thu, 31 Oct 2024 07:28:56 +0530
+Message-ID: <CAG-BmodOM5p=hEs8E0DUAPX5skyGZ3FusjQ7o2W374pLFjFQrQ@mail.gmail.com>
+Subject: Re: [PATCH] jfs: fix array-index-out-of-bounds in dtInsertEntry
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: osmtendev@gmail.com, ghandatmanas@gmail.com, eadavis@qq.com, 
+	jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Oct 2024 09:14:49 -0700
-Nathan Chancellor <nathan@kernel.org> wrote:
+On Thu, Oct 31, 2024 at 3:09=E2=80=AFAM Dave Kleikamp <dave.kleikamp@oracle=
+.com> wrote:
+>
+> On 10/29/24 6:03PM, Dave Kleikamp wrote:
+> > On 10/10/24 8:43AM, Ghanshyam Agrawal wrote:
+> >> The value of p->header.freelist can be less than zero which
+> >> causes an error in dtInsertEntry. Added a check in dtInsert
+> >> to address it.
+> >>
+> >> Reported-by: syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com
+> >> Closes: https://syzkaller.appspot.com/bug?extid=3D5f7f0caf9979e9d09ff8
+> >> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+> >
+> > Looks good. I'll apply this one.
+>
+> Unapplying it. This caused regressions running xfstests. I'll need to
+> look into it more carefully.
+>
+> Shaggy
+>
+> >
+> >> ---
+> >>   fs/jfs/jfs_dtree.c | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+> >> index 5d3127ca68a4..51bb3e14551b 100644
+> >> --- a/fs/jfs/jfs_dtree.c
+> >> +++ b/fs/jfs/jfs_dtree.c
+> >> @@ -834,7 +834,7 @@ int dtInsert(tid_t tid, struct inode *ip,
+> >>        * the full page.
+> >>        */
+> >>       DT_GETSEARCH(ip, btstack->top, bn, mp, p, index);
+> >> -    if (p->header.freelist =3D=3D 0)
+> >> +    if (p->header.freelist <=3D 0)
+> >>           return -EINVAL;
+> >>       /*
+>
 
-> __get_insn_slot() allocates 'struct kprobe_insn_page' using a custom
-> structure size calculation macro, KPROBE_INSN_PAGE_SIZE. Replace
-> KPROBE_INSN_PAGE_SIZE with the struct_size() macro, which is the
-> preferred way to calculate the size of flexible structures in the kernel
-> because it handles overflow and makes it easier to change and audit how
-> flexible structures are allocated across the entire tree.
-> 
+Hello Dave,
 
-But I like this patch. I'll pick this.
+Thank you for reviewing and testing my patch. Let me go through the
+xfstests results, find the issue and send a v2 for this patch.
 
-Thank you!
-
-
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  kernel/kprobes.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 2cf4628bc97ce2ae18547b513cd75b6350e9cc9c..d452e784b31fa69042229ce0f5ffff9d8b671e92 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -95,10 +95,6 @@ struct kprobe_insn_page {
->  	char slot_used[] __counted_by(nused);
->  };
->  
-> -#define KPROBE_INSN_PAGE_SIZE(slots)			\
-> -	(offsetof(struct kprobe_insn_page, slot_used) +	\
-> -	 (sizeof(char) * (slots)))
-> -
->  static int slots_per_page(struct kprobe_insn_cache *c)
->  {
->  	return PAGE_SIZE/(c->insn_size * sizeof(kprobe_opcode_t));
-> @@ -177,7 +173,7 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
->  		goto retry;
->  
->  	/* All out of space.  Need to allocate a new page. */
-> -	kip = kmalloc(KPROBE_INSN_PAGE_SIZE(num_slots), GFP_KERNEL);
-> +	kip = kmalloc(struct_size(kip, slot_used, num_slots), GFP_KERNEL);
->  	if (!kip)
->  		goto out;
->  
-> 
-> -- 
-> 2.47.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks & Regards,
+Ghanshyam Agrawal
 
