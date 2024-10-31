@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-391293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BD99B84D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:00:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EDF29B84D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:00:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82EA281795
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 144D8B25E84
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B7B1CCEF0;
-	Thu, 31 Oct 2024 21:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2A21CCEF1;
+	Thu, 31 Oct 2024 21:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OqRzQIFa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I8UHixsH"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7669183CAA
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531201CC8B3
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408433; cv=none; b=KuAfvlw+iGgUmyYdH48XXLeffK1HheqvXaRQYGMcyTQguRZWEthwaibUAwh+ToiuPylLMPqdQMYkbR1jN+rHAcUD8BLazqiTBXnZy9m71RHH1RxEnUkiCuWz3Fha3GIrYuJAlB5ldwPBHB9TqNwisoXvvh/gUd7I3ZdmCKWB1U4=
+	t=1730408443; cv=none; b=lEISzyvFe7Tkupge33/08KV5M8jcf9S7DwE++j//KZE5MyVoRQ7mSdHNpCp4O+n/2Ofa6M0JOmB6KIuKa6BktyznAA80Fi4AuYqHXUezVfthgaLueTawd624ZF+kgD4z/bR8zewq4R3OtitwRc9jRFFm3UK2DTfetaL24op0Bhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408433; c=relaxed/simple;
-	bh=9p2L/gsUOtDAw0oVvraU/aabiEdBTQXQnBMzEvVuzpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yxb4+OutAh72PMdtyjjgadSlvKreLlP44gfMI8ukuXZlckXM752xiAVUmpSo87jIzVv3kpsJZp7RfrRexSIfGUZo65yv9/y0g6lkYqwhOviSyFsOJXCt8Bzv9YAvHIOcno3P4Jvq0JywWjr3UNf3EeP+dEEUrmxU0LYkr4RPEiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OqRzQIFa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VCgKFO026712
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cQXYDYwMp5w/UPDufraPkZVemoBNsCrL5WS+2fWGtzI=; b=OqRzQIFasekmk0bc
-	Qr98VHXL1g4GLDFS12CKQ6aGI+NuaA6ZWBLeCvJw2yTr2S/gC/1a7twRR8NcCDDq
-	68J9z3yNluVj1eEORquAkEqY3nEhCoYHiqLGNK156VGalNvF3qAtDwqrqKUBsGdM
-	IH0SoGwZ0lAnz3PAyUbxZVlAYzV728VulNOXHbGN0ocp+NlelBsTkTc+ptXnrsL6
-	E0EzDOevLfEGYJ/nPzwxvNjmgtsYP3S11673quQLB1MaMhg9bXkgewHJ/hg/bdug
-	rf+vVhS39+qfJjoT3wF63z0MgY0k0+LuT5WjOaX0dGaSPgRzvqc2mQKVheF+VNsI
-	vnvLsA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p386ne-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:25 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b1b20170c0so13354685a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:00:25 -0700 (PDT)
+	s=arc-20240116; t=1730408443; c=relaxed/simple;
+	bh=yrh0IbJWmE/SDvjrn89FK0yLCRVdpcCFuJ7Cz4CbP/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XXB91GmmJtYk5D4jUp0jJosucLF3Eaa099VQI2dtuK50EPrGg3OccXgG/V+K7r/hmkybB/EZtSPnsqQbegIxzAa65EHomCiKE2I9Ms05ZWuQGdimASomn1wBdI4zuGeYE4nsZDJTBUad0tNNoC10URi8IcBJeqE8l6hLXdGCIK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I8UHixsH; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2ed2230d8so1060865a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730408437; x=1731013237; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dSkq3bj3+pAy/gZDSqj43W1LapD3B4u639cQdLu4St8=;
+        b=I8UHixsH+byPFarayGP2H4wUlMhVengvMPXnW+qv4n4RCotcbnJf0rfU7tXV+iABvU
+         EyUigyJntROwR1g/g229PCVziznmjsxKoAlJQJKC9wRMrkc1sQ+ovjGIJXWr0bYScuvd
+         ImMMuXoP1wuT+DTXpBXCrDAcu7CXC5bZzklInKM4J8Ow9TmQc98K7iHH9xABK3zWqRLl
+         PhF7xN7fy6VEJ18t81A0OIKdG4g78feZ8VZNpyiQzdRF6zqimBGG72zOluoD/+YGkusJ
+         9+qh5dnd1jENJviWBVrl1YkfiFoqVC3CPwk0Gak4Ehsy4i2pdsRuJqKq0duE36S1+sXO
+         qGYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408425; x=1731013225;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cQXYDYwMp5w/UPDufraPkZVemoBNsCrL5WS+2fWGtzI=;
-        b=groE9dfNG28TPWd9GlMEvkMmiaW8AlkuZmznWekd0ljOZ7hTBwRhvwOyTTmG34Xnbm
-         so7D82AoBHjwF9CgUKB/er8x1ryHnQfAiMHEqZEp7PpLK7kZbiv/KItXVJKctbLH97Vo
-         BwGNE5WeU/Fzd3WNx2lxhhBUPh3whFBE0gln8xWqiuMEGFUvwd6zwvYr+H1q4AXs/BnJ
-         D1BEPJuCPBT9fgRrw7/6npL/9T2fbwCHk86iQ8393JcB/cXQToYudSywyOFsOb6DuUJ5
-         fjZZX+gMSKuBjGMcU1eHK/HTM9eVHDMq4tnfFzXXsoFfkDBoKwlCEkHUJPw3tx2SZb/e
-         yUrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzCZkh23It8LTorRiJ9BxwSywXXZoGfzR0eSEsEdXRqY1clR3mcRfGnlUUZqp8X1v9aycOPQ/mthRJPCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhVjA84DwTB9pGllUGQLemU+nGltWjqTCrwlO7AsTvk+Dizsim
-	LCFzjNS44k8L2NSaIF2cohmFMs05iPiMTZUHAKRPz7EqMGvT4lT7h/oIlpiEEWPJb69pRA3pa/e
-	eo6588RCSBPQCqSWBC2ZHX3CPLYna6HkoNDLlWM8iBHmbZsODPKz7xbDdEOtrs9M=
-X-Received: by 2002:a05:620a:4244:b0:7ac:bb36:599a with SMTP id af79cd13be357-7b193f68d9dmr1396483285a.13.1730408423701;
-        Thu, 31 Oct 2024 14:00:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7X3DXyUEHB5jUA7SsCpLG6ODedxFLxLwr5aSO7qvzGjyUq4xOk1NXhSiKUvlHHhYkltCg/g==
-X-Received: by 2002:a05:620a:4244:b0:7ac:bb36:599a with SMTP id af79cd13be357-7b193f68d9dmr1396480785a.13.1730408423177;
-        Thu, 31 Oct 2024 14:00:23 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c4f2dsm103158466b.52.2024.10.31.14.00.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 14:00:22 -0700 (PDT)
-Message-ID: <304b909d-bf2d-446c-acc9-e65b94627468@oss.qualcomm.com>
-Date: Thu, 31 Oct 2024 22:00:20 +0100
+        d=1e100.net; s=20230601; t=1730408437; x=1731013237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dSkq3bj3+pAy/gZDSqj43W1LapD3B4u639cQdLu4St8=;
+        b=pc93fYWwluX63xG2Lvjp1kCTJ+1Yu2iDCSHWtVtyyvogQBwtCEQ1JT+Acu9ffKuY3t
+         dfxACWsM3HIH/i8Nd66i0kuZfDssM0Ms9ONDWRcYBu/kw2VU7Xp7pvdyyE/UIG1SVA2F
+         xPWXWNsdtR60tstSEsknJpVd53oqdapk0wuwnUo4ORoHuzZ9Sg2GSaX8nIvWRllTQgza
+         5e80MQuQ2xdv8igJ0UZsA7J+SGcSjrl5Oiv6J7Nm2aQGp+RhF1WN5WYPH9YqNDz7IYFm
+         iDqe/H2cR8MEdiVmXxHASVY5vdeXeoKumXiAHWLKpiuuQS2DSGFLPI9MAx4sH0JPqPuq
+         Hgag==
+X-Forwarded-Encrypted: i=1; AJvYcCXg2b7tObqeDrxCKaR4mtnxDbJVUNZMmXkt2z8OXhERSdPdz+dBBy2vpiJMRSuAK4cVf6Go5/6cRzVsjs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnAKxr9mlBca5XGV02fSnVg2zDDTVcH0Kr66HtLOAkFj2OZOJX
+	SEhV3UeiSJNHM2BYi+970FywYPf6itEfXDzUE6YMXEiYsHvXzBFwng1ybm6RPRdCpDCgNbB7ip3
+	0mjGXpoqWp9Bx68qO006ei5TDaP/uM3vjhLcp
+X-Google-Smtp-Source: AGHT+IEL8+W+Z1C0xOOPCRSi2hJJhzO7Ib1+CZea32cQtShRUM9YeK8I+VSn4y3/d4BSuhAUjYNQGbBeHtZ0/M6cuPE=
+X-Received: by 2002:a17:90b:5306:b0:2e2:c15f:1ffe with SMTP id
+ 98e67ed59e1d1-2e94bdf49acmr1819149a91.0.1730408437329; Thu, 31 Oct 2024
+ 14:00:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: x1e80100-crd: describe HID supplies
-To: Johan Hovold <johan+linaro@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
-        Stephan Gerhold <stephan.gerhold@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241029075258.19642-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241029075258.19642-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: u4fal6slEeWdz3IeasmlMYbo9xildQeW
-X-Proofpoint-ORIG-GUID: u4fal6slEeWdz3IeasmlMYbo9xildQeW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
- phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=824 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310159
+References: <cover.1730150953.git.jpoimboe@kernel.org> <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+ <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
+ <20241030055314.2vg55ychg5osleja@treble.attlocal.net> <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
+In-Reply-To: <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 31 Oct 2024 14:00:24 -0700
+Message-ID: <CAKwvOdmZYFhz0djG0_CgQ94BLaW8rUmdW+zaoZ0G+r76Esf2+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
+	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
+	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
+	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
+	Arthur Eubanks <aeubanks@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29.10.2024 8:52 AM, Johan Hovold wrote:
-> Add the missing HID supplies to avoid relying on other consumers to keep
-> them on.
-> 
-> This also avoids the following warnings on boot:
-> 
-> 	i2c_hid_of 0-0010: supply vdd not found, using dummy regulator
-> 	i2c_hid_of 0-0010: supply vddl not found, using dummy regulator
-> 	i2c_hid_of 1-0015: supply vdd not found, using dummy regulator
-> 	i2c_hid_of 1-0015: supply vddl not found, using dummy regulator
-> 	i2c_hid_of 1-003a: supply vdd not found, using dummy regulator
-> 	i2c_hid_of 1-003a: supply vddl not found, using dummy regulator
-> 
-> Note that VREG_MISC_3P3 is also used for things like the fingerprint
-> reader which are not yet fully described so mark the regulator as always
-> on for now.
-> 
-> Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
-> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
+On Thu, Oct 31, 2024 at 1:57=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Tue, Oct 29, 2024 at 10:53=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.=
+org> wrote:
+> >
+> > On Tue, Oct 29, 2024 at 04:32:40PM -0700, Andrii Nakryiko wrote:
+> > > > +static int find_fde(struct sframe_section *sec, unsigned long ip,
+> > > > +                   struct sframe_fde *fde)
+> > > > +{
+> > > > +       struct sframe_fde __user *first, *last, *found =3D NULL;
+> > > > +       u32 ip_off, func_off_low =3D 0, func_off_high =3D -1;
+> > > > +
+> > > > +       ip_off =3D ip - sec->sframe_addr;
+> > >
+> > > what if ip_off is larger than 4GB? ELF section can be bigger than 4GB=
+, right?
+> >
+> > That's baked into sframe v2.
+>
+> I believe we do have large production binaries with more than 4GB of
+> text, what are we going to do about them? It would be interesting to
+> hear sframe people's opinion. Adding such a far-reaching new format in
+> 2024 with these limitations is kind of sad. At the very least maybe we
+> should allow some form of chaining sframe definitions to cover more
+> than 4GB segments? Please CC relevant folks, I'm wondering what
+> they're thinking about this.
 
-[...]
-
->  
-> +	vreg_misc_3p3: regulator-misc-3p3 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_MISC_3P3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&pm8550ve_8_gpios 6 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&misc_3p3_reg_en>;
-
-property-n
-property-names
-
-for consistency, please
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
+FWIW, Google has such large binaries, too.
+https://llvm.org/devmtg/2023-10/slides/quicktalks/Eubanks-CompromisesWithLa=
+rgeX86-64Binaries.pdf
+--=20
+Thanks,
+~Nick Desaulniers
 
