@@ -1,129 +1,93 @@
-Return-Path: <linux-kernel+bounces-391327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8A69B853A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:24:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30FC9B853D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA97281F39
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:24:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4E11F212E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF96C18593E;
-	Thu, 31 Oct 2024 21:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAA81CB50C;
+	Thu, 31 Oct 2024 21:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0Q7UE81Z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ow2QXq/w"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPnjcPo5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2FF15665E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4932E18593E;
+	Thu, 31 Oct 2024 21:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730409889; cv=none; b=Jg2EvUya3vZNP+18LDajCRcU5tia/WEpOq8QQIMMYaCp42n4J42S4gorhmUx0o8rCVpmR8O5+ZVwchsqKyvkP0jKP3R1Cq2NJDU8cbgva2as9KLerTv/s0tILiRaZkV0a4ovSPzWf5je2QHW3filUjxf+dup8E8qKAbsSCuY/wI=
+	t=1730409920; cv=none; b=T5D2T9JNhOKXS9Tina94/3z4REf8ULKJfqzVj08Yu3fmghpF39aSuay2VdjeSc2gA8THoa/Lix5s73EGhcAV4dTqAsOZW2o+nZX2OAzrpmp4Bwtojw+s/weh8Na7h29H/+CTeTnQqe0ectyyFAznHqqG+LijWXlusVUVVLPYOpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730409889; c=relaxed/simple;
-	bh=6BVDSbH2vS7SMF4QyozPGzlzCjuY1VkukLgTiWH9QDc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MwkC1/7KdjoP9EJb6+JgrzpKzMPwHsyPPMdUDmxI4ZeDx655KJIERTm74hGci5R7nRBJcgRuWnrRgETqXfEY4SUpHnUbjeGJLZUTFGGTqvcaJjTcinUuWhJ0JVw47c0VWDC7ymYy7jzcxDjSQV9t4k6+4twfZ3ZCQNivSZy86yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0Q7UE81Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ow2QXq/w; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730409880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FxNDeRq5WlhIXX91HnXcotAtlmHYvT9yH2MLjCKZAKQ=;
-	b=0Q7UE81ZkuTqy7syu4FwnI+Ux9T6nKG2K16kXFL7DtOa8sbmNbIaDnpq3juq3gR7l+wbB7
-	k6mQuT0+kfUkjky3sGQVqFt/azbYbytupd6wZ6nR2UyU99z2ULP/m0Bsizxl5owyBjTVr7
-	XB7g2PybWW4R1e1FE4L5Ql++bQyP8GNl2vHl6+mjP2DuoW5+1kHGA3ryZSE965Xja7ttUx
-	yjq1WdrZONPp2P2lXk1Eh80Uu7TqUV+TDKhHeUJYPQvzACvU3j2YSLoNlN1tsUcGaLPb+/
-	SjHziSsgGbWqU4cKRlQSyKWEpjxd4dzgtCt8NognDOtZEJsryjEVeJZiacI6bw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730409880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FxNDeRq5WlhIXX91HnXcotAtlmHYvT9yH2MLjCKZAKQ=;
-	b=ow2QXq/wSvgqtlKuukTqUoUgVM+Fz6mq9pFwbzwH75rkSlHNbJ+uWUjxhWOretwGb08jlC
-	mBOAXzbP07/zQiCg==
-To: Advait Dhamorikar <advaitdhamorikar@gmail.com>, Fabrizio Castro
- <fabrizio.castro.jz@renesas.com>
-Cc: linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- anupnewsmail@gmail.com, Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Subject: Re: [PATCH-next] irqchip/renesas-rzv2h: Fix potentially mismatched
- datatype
-In-Reply-To: <20241031193606.87970-1-advaitdhamorikar@gmail.com>
-References: <20241031193606.87970-1-advaitdhamorikar@gmail.com>
-Date: Thu, 31 Oct 2024 22:24:40 +0100
-Message-ID: <87r07wufs7.ffs@tglx>
+	s=arc-20240116; t=1730409920; c=relaxed/simple;
+	bh=BpBApsHwFr03qfbUQXPEP9hsiehvNVIMqJuy5belJLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oKXRq4iY5GUVYrcgmcrMAFqU24nSQJpO8xGfM9eOBmq0VrJonMSGm4Cm9MIrTQF4mBebMYpX0njH6GEpIzwgxn5NQ/ITFHL70YfqxJApUjDnGpsu8hm1CdNuAqeoEKRZV1Gf4+upRUrj9KHTMmwYU3ZWkZl7+XZFlgCJ97FVNiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPnjcPo5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B39C4CEC3;
+	Thu, 31 Oct 2024 21:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730409919;
+	bh=BpBApsHwFr03qfbUQXPEP9hsiehvNVIMqJuy5belJLo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QPnjcPo5LPDxOInSvU8IapJ5DtAIH0ZpbM7LeVRylCRClDNR4d0N/0CmUarDO1aiv
+	 yRtH+Hr+ACO2HPNsLQwG9SylaVwClKTbFRBUzeBBw8AyZSQ5wJu3oG1d/dmdCzX84M
+	 Kn2kJkXL7JXkSg5JRPJF7Sve3dgZu7c4fsSh+qIxvRsFuoLTqO/MP9L3iGNX17c0YV
+	 t3KXAQTXv1HW0bd3sRutU5IPokx2qMRXQ5Hz9tgXSyh4YOOvtjQ2JqBO6Q4zKe4EbI
+	 iZu/MuagSMmSQ7qU0NeU3/FKp9ZDYlnDepDqwMYyn3NS+1+3EYXxEshHlJC0z5DGdF
+	 1pPiCum+0S5pA==
+Date: Thu, 31 Oct 2024 21:25:11 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <angelo@kernel-space.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com, Mark Brown <broonie@kernel.org>, Angelo Dureghello
+ <adureghello@baylibre.com>
+Subject: Re: [PATCH v9 7/8] iio: dac: ad3552r: add high-speed platform
+ driver
+Message-ID: <20241031212511.57ec5d6e@jic23-huawei>
+In-Reply-To: <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-7-f6960b4f9719@kernel-space.org>
+References: <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-0-f6960b4f9719@kernel-space.org>
+	<20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-7-f6960b4f9719@kernel-space.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 01 2024 at 01:06, Advait Dhamorikar wrote:
-> This patch updates the type of hw_irq to unsigned long to 
+On Mon, 28 Oct 2024 22:45:34 +0100
+Angelo Dureghello <angelo@kernel-space.org> wrote:
 
-Please do:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Add High Speed ad3552r platform driver.
+> 
+> The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
+> through the current AXI backend, or similar alternative IIO backend.
+> 
+> Compared to the existing driver (ad3552r.c), that is a simple SPI
+> driver, this driver is coupled with a DAC IIO backend that finally
+> controls the ad3552r by a fpga-based "QSPI+DDR" interface, to reach
+> maximum transfer rate of 33MUPS using dma stream capabilities.
+> 
+> All commands involving QSPI bus read/write are delegated to the backend
+> through the provided APIs for bus read/write.
+> 
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+Missing bitfield.h include. I added whilst applying.
 
-git grep 'This patch' Documentation/process/
-
-and read through the matching documentation.
-
-> match irq_hw_number_t.
->
-> The variable hw_irq is defined as unsigned int at places,
-> However when it is initialized using irqd_to_hwirq(), it returns 
-> an irq_hw_number_t, which inturn is a typedef for unsigned long.
-
-We know that, but what is the problem this patch is actually solving?
-
->  static void rzv2h_icu_eoi(struct irq_data *d)
->  {
->  	struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
-> -	unsigned int hw_irq = irqd_to_hwirq(d);
-> +	unsigned long hw_irq = irqd_to_hwirq(d);
->  	unsigned int tintirq_nr;
-
-It moves the type mismatch and potential truncation a few lines further
-down:
-
-	tintirq_nr = hw_irq - ICU_TINT_START;
-
-In fact there is no problem with the existing code because the hardware
-interrupt number range for this interrupt chip is guaranteed to be
-smaller than UINT_MAX. IOW, a truncation from unsigned long to unsigned
-int (on a 64-bit system) does not matter at all.
-
-I'm all for being type safe, but what you are doing is purely cosmetic.
-
-If at all, then the proper change is either
-
- 1) to make the related variables type irq_hw_number_t
-
-    You cannot make assumptions about the type which is behind
-    irq_hw_number_t today. The type can change tomorrow, no?
-
-or
-
- 2) Use a proper type cast which documents that the type conversion
-    including the potential truncation is intentional and correct.
-
-    This should not be an actual type cast, but a helper inline which
-    has the cast and explicitely returns an unsigned int.
-
-I leave it to you to decide which variant is the correct one, but I'm
-happy to answer your questions.
-
-Thanks,
-
-        tglx
+Jonathan
 
