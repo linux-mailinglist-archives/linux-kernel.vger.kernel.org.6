@@ -1,283 +1,290 @@
-Return-Path: <linux-kernel+bounces-391291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FD79B84CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:00:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A029B84CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D34281234
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C89661C22057
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2384D1CCB4E;
-	Thu, 31 Oct 2024 20:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1339B1CC8B3;
+	Thu, 31 Oct 2024 21:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMjT0LfM"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpXbOC6P"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964B31BBBC1
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BCC45BE3
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408398; cv=none; b=GYqGOC9Oc0uiQAIULpfCVngpCQESA5tWDMZ45WyBSN61ChWro5y9GQCmj2XX5xdggMuC0EWnt2/opRQSg3eQAhOeAEOvf+SGV+9C7vADfpXGiM75KkKijHbimv3G/Nze5GYlIA+uSkJ1/r0/24TT8Q0hdyGgDNjRpLjGXQPbgcc=
+	t=1730408413; cv=none; b=baBkWXo+B3O8lrypCjk3JHfQ33QTxK+KJsJo9DDXznbMS9djtrM3ALEQO+UJtQEROQWmm8qloSwGoCKt+Xjp/pO6//A0DGu7lsDZ+skuVw5LZsFlPvrtrpEC0CRTFhhq2t9itudzfXNxNAYN3sRAQpus34uzDsmeBsCCRniJbLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408398; c=relaxed/simple;
-	bh=i1gEsVd4qqBrQgYogd2sBLsQPjC49si6pgYU4NXOqug=;
+	s=arc-20240116; t=1730408413; c=relaxed/simple;
+	bh=R0mM4eVJAHQ6yAQOVfa42KZ0TT+rHuIWWRPrkqlRgIY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FvSROgKrD0EJQRodeAOmo57QMZVg4e8Q0793S1KTEIVGm+tiJQ4YXuWG2v3WAw/9Vb5DcrvktjfAn06uVmMpOqrvw02s4E8bJH3vGdPJlYsPKCOVPRIHO2y8SSdqVBzYOFjpJg9WR5m4CxTAKaS4bb2U2X7qd78WtgKzft9bJjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YMjT0LfM; arc=none smtp.client-ip=209.85.216.54
+	 To:Cc:Content-Type; b=gIlQJy168OuN+DPykpQbCAG0L2Je1+e986/ugJQT2vfZHM6QOFipq7iFkYHCEMQn51d/kyUgovLgEKY5b/YYftbAQkKwmyKqQG/+2E6ZPN4xmKUmegdBic4GSC8SkpASiFZFEOAu3+Ai55J/lWcHtrnmh7j0oFp+Oz6Ql4BO/uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpXbOC6P; arc=none smtp.client-ip=209.85.221.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2b549799eso1040873a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:59:52 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-50d3998923dso526646e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730408392; x=1731013192; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730408406; x=1731013206; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oGab+KxLHPuFXQ9hG7daF5kjEcZZ8gRZMKHDGf/QQdc=;
-        b=YMjT0LfM24JU+hFoUvZU8eqsvv6pPKkkMp+8Az+UMunh90Kb5Uy94I4uCjrrBMarhN
-         ZVOOKkMrzzpjt9VzM85CgTup0d9aSWJQAytDTuy2B9A2ihyvyL6Uc6caEt+RrOA3E3Jr
-         DsEYLj0KOHEYkmVAVfH4OS8wlAyIkXtRrmwwUGQEBtmQuQhp68CNJT8UtKFNSt7Dntxn
-         k+k+0WO6q7RXB3SBC7G7DwYy8iJiyZ3yaiUskbjiurokfKRCFMRB75tl4alxviu14Et5
-         eUmtce3c51JCKVtLyYFIcrn9+cKptozkkUVMFLP+2buzOorrSy0nJWq9ADVViJPvDlVr
-         2uKg==
+        bh=9km22R6VbIz/XP5lzm/qJwR2jWzEfYA7dERxsxLJjyg=;
+        b=YpXbOC6PS5WLcZ5ImcbhIh/g39koh7U5J7aj+S2o022icWlq7dvY10IRRXDQwT+vgf
+         1XXI3lCQnObnV9cPSUx+qkXiN8t79JHdk5ZIgs1iu4eP1B9Y4+LkiXE9TjfjIa/hOX2x
+         DKw2XtcAbZyn7UC0jQMqzfZYG2fbPW3cepmKi+YpCNwIhgms9u3BK2GqDJUy3CVR2Zmz
+         tZJESyQT7d3wB656r/tMqfBqCqFhyagWfaVS+p+Q3VVpuq0wUYebBNlPYsTm8Ym+Dcju
+         UzRznueO3yUtOdB5rvYH11B7Mta6bbCxy4FPJOHV5m69KOWYo5vTiV2zHwp+SHuC6x0o
+         tEUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408392; x=1731013192;
+        d=1e100.net; s=20230601; t=1730408406; x=1731013206;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oGab+KxLHPuFXQ9hG7daF5kjEcZZ8gRZMKHDGf/QQdc=;
-        b=UWIvnurWEcmef4hS4lA0nEOlP321t6bmhACmdokcRoO/8pCNfMbT/SQNtsBD8BLyfw
-         kLPPiywq/wWGvZfFTbqLzyBG/44h9wQLuYXN+5ojnJv6PTFPAHQp/7kMTzBqo/SujAGK
-         7TCxhihMgZN808S3458JJpxb3FE9MrttRClVP3xl7LW4t7Gs4Pk6FDmOTw2qwNbMSHvO
-         tCYISnyPqOOn8ZVS2p3skNu5bMbUsuAny6sqL0UgfpXCGeHVNU0NVjBjAFuK+tQqBfkU
-         snJXaX/K1YYC4Ndx7+W6CPWdd0Q9sW1pZpYQ1AwmKiZSjtVZkdB3L1lHPsoa8x1JfYO+
-         X9+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXX5cbkOAUuTboWl1G4Jm+yHz+jSKLC3STnSR8m0RHlUJyrA/jv2zkcf2pHudh86/Q0XE2KgdH7RPukExY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd05AfdjjmuvzED290Nd2DmdFQpq2FFkzlWTX5zmTB/CNpIii6
-	6vhMfxpVIEPG2FnenRvw4VpNWGrDSfGNPKyPZ8K+OY+uyUqud32Safs+zWlK3bvJjhnel+mjxok
-	5hAmPS8KH5auyKfAW0gSrKjV0kaY=
-X-Google-Smtp-Source: AGHT+IE+jpP0JfCSCbQvbKZeCa03Zlrpa7LsOh+lzNCvcuY1bcZXXG8bDmJYLuycfQgzWZe4txy04PHQL3ByX8zNh18=
-X-Received: by 2002:a17:90b:4a42:b0:2e2:e2f8:100 with SMTP id
- 98e67ed59e1d1-2e94c531243mr1674463a91.38.1730408391666; Thu, 31 Oct 2024
- 13:59:51 -0700 (PDT)
+        bh=9km22R6VbIz/XP5lzm/qJwR2jWzEfYA7dERxsxLJjyg=;
+        b=PtU//s4Se5GKAOaa0142KTHpMqJRnrhvBhojyei7eWL8GDkc00G8SxSmK3pqU9q0jk
+         f5X7uGZ+QIWgo69gm90Z6++tN7jDatFmbEH0a/Xh7HBH4jzXQUqP6Pvc4oseVBsPjPrV
+         HL7YnQycciTO9bdIjFMMINpWyBYqo7lFDXiLMTIqbCZi/XtqBuICgoLHVN5Z2TLUlZRf
+         noAmEfAWaZJAenFo0kbineVHgvKEKwzqXM1ClWa5GHuj39GbdYNQAONj9JvURja9f/fw
+         PPGVhLg6rU9JYHgyxjI7fvFSl0eLUSbh2+r/1Ij0yTT4/MCt2AOHW6A9xntX798E5hII
+         rKFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAhSCTe0GG2+8DOSbIzdoIAvIbiO3HBt0GIkvvppgYAmYhLTE3YDT9oqLkYeW9VoF83n/s9r6Bs1ijMPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKkZ+ebGx/aUR640ou/VdNayCyxoLX97BE2PK4ynoDsaVU9Ryz
+	+yrdW4BRPQLV738B0arsELBBqLILEJeJ9qF6XAqI5JGsxGoSsqBv2KTth4qTKIG/WoofBNDiz5l
+	lmZeTXJ52WYXQ5jbIOP/u+6SRoCA=
+X-Google-Smtp-Source: AGHT+IFKiKEE53VEDcXDHyv6tp/prlHPl31FvqnxoqblM6+nwxnRktgJEn05e9ZchnKt5bIk1zysg5Y2yP9J/JQcXlY=
+X-Received: by 2002:a05:6122:2a01:b0:50c:99da:4f70 with SMTP id
+ 71dfb90a1353d-512270c6c20mr1511401e0c.2.1730408405717; Thu, 31 Oct 2024
+ 14:00:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020204156.113853-1-christian.gmeiner@gmail.com> <c6899aa3-84cc-4288-866d-533dcb478b4c@igalia.com>
-In-Reply-To: <c6899aa3-84cc-4288-866d-533dcb478b4c@igalia.com>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Thu, 31 Oct 2024 21:59:39 +0100
-Message-ID: <CAH9NwWe7mrcV4RQTiKL+05bqbgVRTO_Nqb0iLhGcCd=6rY2LpA@mail.gmail.com>
-Subject: Re: [PATCH] drm/v3d: Add DRM_IOCTL_V3D_PERFMON_SET_GLOBAL
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: kernel-dev@igalia.com, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Melissa Wen <mwen@igalia.com>, 
-	David Airlie <airlied@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
-	Christian Gmeiner <cgmeiner@igalia.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Simona Vetter <simona@ffwll.ch>
+References: <20241027001444.3233-1-21cnbao@gmail.com> <33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
+ <CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
+ <e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com> <CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
+ <852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com> <CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
+ <c76635d7-f382-433a-8900-72bca644cdaa@gmail.com> <CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
+ <20241031153830.GA799903@cmpxchg.org> <CAJD7tkZ_xQHMoze_w3yBHgjPhQeDynJ+vWddbYKFzi2c63sT7w@mail.gmail.com>
+In-Reply-To: <CAJD7tkZ_xQHMoze_w3yBHgjPhQeDynJ+vWddbYKFzi2c63sT7w@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 1 Nov 2024 09:59:54 +1300
+Message-ID: <CAGsJ_4yTuQMH2MMUnXRiSMbstOuoC2-fvNBsmb2noK9Axte5Gg@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
+ for nearly full memcg
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Usama Arif <usamaarif642@gmail.com>, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, 
+	David Hildenbrand <david@redhat.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andr=C3=A9
-
+On Fri, Nov 1, 2024 at 5:00=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
+wrote:
 >
-> Em 20/10/2024 17:41, Christian Gmeiner escreveu:
-> > From: Christian Gmeiner <cgmeiner@igalia.com>
+> On Thu, Oct 31, 2024 at 8:38=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.o=
+rg> wrote:
 > >
-> > This patch adds a new ioctl, DRM_IOCTL_V3D_PERFMON_SET_GLOBAL, which
-> > allows the configuration of a global performance monitor (perfmon).
-> > The global perfmon is used for all jobs, ensuring consistent performanc=
+> > On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
+> > > On Wed, Oct 30, 2024 at 2:13=E2=80=AFPM Usama Arif <usamaarif642@gmai=
+l.com> wrote:
+> > > > On 30/10/2024 21:01, Yosry Ahmed wrote:
+> > > > > On Wed, Oct 30, 2024 at 1:25=E2=80=AFPM Usama Arif <usamaarif642@=
+gmail.com> wrote:
+> > > > >>>> I am not sure that the approach we are trying in this patch is=
+ the right way:
+> > > > >>>> - This patch makes it a memcg issue, but you could have memcg =
+disabled and
+> > > > >>>> then the mitigation being tried here wont apply.
+> > > > >>>
+> > > > >>> Is the problem reproducible without memcg? I imagine only if th=
 e
-> > tracking across submissions.
+> > > > >>> entire system is under memory pressure. I guess we would want t=
+he same
+> > > > >>> "mitigation" either way.
+> > > > >>>
+> > > > >> What would be a good open source benchmark/workload to test with=
+out limiting memory
+> > > > >> in memcg?
+> > > > >> For the kernel build test, I can only get zswap activity to happ=
+en if I build
+> > > > >> in cgroup and limit memory.max.
+> > > > >
+> > > > > You mean a benchmark that puts the entire system under memory
+> > > > > pressure? I am not sure, it ultimately depends on the size of mem=
+ory
+> > > > > you have, among other factors.
+> > > > >
+> > > > > What if you run the kernel build test in a VM? Then you can limit=
+ is
+> > > > > size like a memcg, although you'd probably need to leave more roo=
+m
+> > > > > because the entire guest OS will also subject to the same limit.
+> > > > >
+> > > >
+> > > > I had tried this, but the variance in time/zswap numbers was very h=
+igh.
+> > > > Much higher than the AMD numbers I posted in reply to Barry. So fou=
+nd
+> > > > it very difficult to make comparison.
+> > >
+> > > Hmm yeah maybe more factors come into play with global memory
+> > > pressure. I am honestly not sure how to test this scenario, and I
+> > > suspect variance will be high anyway.
+> > >
+> > > We can just try to use whatever technique we use for the memcg limit
+> > > though, if possible, right?
+> >
+> > You can boot a physical machine with mem=3D1G on the commandline, which
+> > restricts the physical range of memory that will be initialized.
+> > Double check /proc/meminfo after boot, because part of that physical
+> > range might not be usable RAM.
+> >
+> > I do this quite often to test physical memory pressure with workloads
+> > that don't scale up easily, like kernel builds.
+> >
+> > > > >>>> - Instead of this being a large folio swapin issue, is it more=
+ of a readahead
+> > > > >>>> issue? If we zswap (without the large folio swapin series) and=
+ change the window
+> > > > >>>> to 1 in swap_vma_readahead, we might see an improvement in lin=
+ux kernel build time
+> > > > >>>> when cgroup memory is limited as readahead would probably caus=
+e swap thrashing as
+> > > > >>>> well.
+> >
+> > +1
+> >
+> > I also think there is too much focus on cgroup alone. The bigger issue
+> > seems to be how much optimistic volume we swap in when we're under
+> > pressure already. This applies to large folios and readahead; global
+> > memory availability and cgroup limits.
 >
-> Usually we write in the imperative form:
+> Agreed, although the characteristics of large folios and readahead are
+> different. But yeah, different flavors of the same problem.
 >
-> Add a new ioctl, ...
+> >
+> > It happens to manifest with THP in cgroups because that's what you
+> > guys are testing. But IMO, any solution to this problem should
+> > consider the wider scope.
 >
+> +1, and I really think this should be addressed separately, not just
+> rely on large block compression/decompression to offset the cost. It's
+> probably not just a zswap/zram problem anyway, it just happens to be
+> what we support large folio swapin for.
 
-I switched to imperative from v2.
+Agreed these are two separate issues and should be both investigated
+though 2 can offset the cost of 1.
+1. swap thrashing
+2. large block compression/decompression
 
-> >
-> > Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
-> > ---
-> >   drivers/gpu/drm/v3d/v3d_drv.c                 |  3 ++
-> >   drivers/gpu/drm/v3d/v3d_drv.h                 | 10 ++++
-> >   drivers/gpu/drm/v3d/v3d_perfmon.c             | 49 ++++++++++++++++++=
-+
-> >   .../gpu/drm/v3d/v3d_performance_counters.h    |  6 +++
-> >   drivers/gpu/drm/v3d/v3d_sched.c               | 10 +++-
-> >   include/uapi/drm/v3d_drm.h                    | 15 ++++++
-> >   6 files changed, 91 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_dr=
-v.c
-> > index d7ff1f5fa481..f1753ee2af25 100644
-> > --- a/drivers/gpu/drm/v3d/v3d_drv.c
-> > +++ b/drivers/gpu/drm/v3d/v3d_drv.c
-> > @@ -214,6 +214,7 @@ static const struct drm_ioctl_desc v3d_drm_ioctls[]=
- =3D {
-> >       DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_VALUES, v3d_perfmon_get_values_=
-ioctl, DRM_RENDER_ALLOW),
-> >       DRM_IOCTL_DEF_DRV(V3D_SUBMIT_CPU, v3d_submit_cpu_ioctl, DRM_RENDE=
-R_ALLOW | DRM_AUTH),
-> >       DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_COUNTER, v3d_perfmon_get_counte=
-r_ioctl, DRM_RENDER_ALLOW),
-> > +     DRM_IOCTL_DEF_DRV(V3D_PERFMON_SET_GLOBAL, v3d_perfmon_set_global_=
-ioctl, DRM_RENDER_ALLOW),
-> >   };
-> >
-> >   static const struct drm_driver v3d_drm_driver =3D {
-> > @@ -350,6 +351,8 @@ static int v3d_platform_drm_probe(struct platform_d=
-evice *pdev)
-> >       if (ret)
-> >               goto drm_unregister;
-> >
-> > +     atomic_set(&v3d->num_perfmon, 0);
-> > +
-> >       return 0;
-> >
-> >   drm_unregister:
-> > diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_dr=
-v.h
-> > index cf4b23369dc4..9491d730d99f 100644
-> > --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> > +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> > @@ -61,6 +61,8 @@ struct v3d_queue_state {
-> >       struct v3d_stats stats;
-> >   };
-> >
-> > +struct v3d_dev;
-> > +
->
-> Forward declarations go in the beginning of the file, along with the
-> other ones:
->
-> struct clk;
-> struct platform_device;
-> struct reset_control;
-> +struct v3d_dev;
->
+For point 1, we likely want to investigate the following:
 
-I am happy that I do not need this in v2 anymore.
+1. if we can see the same thrashing if we always perform readahead
+(rapidly filling
+the memcg to full again after reclamation).
 
-> >   /* Performance monitor object. The perform lifetime is controlled by =
-userspace
-> >    * using perfmon related ioctls. A perfmon can be attached to a submi=
-t_cl
-> >    * request, and when this is the case, HW perf counters will be activ=
-ated just
-> > @@ -68,6 +70,9 @@ struct v3d_queue_state {
-> >    * done. This way, only events related to a specific job will be coun=
-ted.
-> >    */
-> >   struct v3d_perfmon {
-> > +     /* Pointer back to v3d instance this perfmon belongs. */
-> > +     struct v3d_dev *v3d;
-> > +
-> >       /* Tracks the number of users of the perfmon, when this counter r=
-eaches
-> >        * zero the perfmon is destroyed.
-> >        */
-> > @@ -179,6 +184,9 @@ struct v3d_dev {
-> >               u32 num_allocated;
-> >               u32 pages_allocated;
-> >       } bo_stats;
-> > +
-> > +     /* Keep track of current number of allocated perfmons. */
-> > +     atomic_t num_perfmon;
-> >   };
+2. Whether there are any issues with balancing file and anon memory
+reclamation.
+
+The 'refault feedback loop' in mglru compares refault rates between anon an=
+d
+file pages to decide which type should be prioritized for reclamation.
+
+type =3D get_type_to_scan(lruvec, swappiness, &tier);
+
+static int get_type_to_scan(struct lruvec *lruvec, int swappiness, int
+*tier_idx)
+{
+        ...
+        read_ctrl_pos(lruvec, LRU_GEN_ANON, 0, gain[LRU_GEN_ANON], &sp);
+        read_ctrl_pos(lruvec, LRU_GEN_FILE, 0, gain[LRU_GEN_FILE], &pv);
+        type =3D positive_ctrl_err(&sp, &pv);
+
+        read_ctrl_pos(lruvec, !type, 0, gain[!type], &sp);
+        for (tier =3D 1; tier < MAX_NR_TIERS; tier++) {
+                read_ctrl_pos(lruvec, type, tier, gain[type], &pv);
+                if (!positive_ctrl_err(&sp, &pv))
+                        break;
+        }
+
+        *tier_idx =3D tier - 1;
+        return type;
+}
+
+In this case, we may want to investigate whether reclamation is primarily
+targeting anonymous memory due to potential errors in the statistics path
+after mTHP is involved.
+
+3. Determine if this is a memcg-specific issue by setting mem=3D1GB and
+running the same test on the global system.
+
+Yosry, Johannes, Usama,
+Is there anything else that might interest us?
+
+I'll get back to you after completing the investigation mentioned above.
+
+>
 > >
-> >   static inline struct v3d_dev *
-> > @@ -584,6 +592,8 @@ int v3d_perfmon_get_values_ioctl(struct drm_device =
-*dev, void *data,
-> >                                struct drm_file *file_priv);
-> >   int v3d_perfmon_get_counter_ioctl(struct drm_device *dev, void *data,
-> >                                 struct drm_file *file_priv);
-> > +int v3d_perfmon_set_global_ioctl(struct drm_device *dev, void *data,
-> > +                              struct drm_file *file_priv);
+> > > > >>> I think large folio swapin would make the problem worse anyway.=
+ I am
+> > > > >>> also not sure if the readahead window adjusts on memory pressur=
+e or
+> > > > >>> not.
+> > > > >>>
+> > > > >> readahead window doesnt look at memory pressure. So maybe the sa=
+me thing is being
+> > > > >> seen here as there would be in swapin_readahead?
+> > > > >
+> > > > > Maybe readahead is not as aggressive in general as large folio
+> > > > > swapins? Looking at swap_vma_ra_win(), it seems like the maximum =
+order
+> > > > > of the window is the smaller of page_cluster (2 or 3) and
+> > > > > SWAP_RA_ORDER_CEILING (5).
+> > > > Yes, I was seeing 8 pages swapin (order 3) when testing. So might
+> > > > be similar to enabling 32K mTHP?
+> > >
+> > > Not quite.
 > >
-> >   /* v3d_sysfs.c */
-> >   int v3d_sysfs_init(struct device *dev);
->
-> [...]
->
-> > diff --git a/include/uapi/drm/v3d_drm.h b/include/uapi/drm/v3d_drm.h
-> > index 87fc5bb0a61e..960d392d75a3 100644
-> > --- a/include/uapi/drm/v3d_drm.h
-> > +++ b/include/uapi/drm/v3d_drm.h
-> > @@ -43,6 +43,7 @@ extern "C" {
-> >   #define DRM_V3D_PERFMON_GET_VALUES                0x0a
-> >   #define DRM_V3D_SUBMIT_CPU                        0x0b
-> >   #define DRM_V3D_PERFMON_GET_COUNTER               0x0c
-> > +#define DRM_V3D_PERFMON_SET_GLOBAL                0x0d
+> > Actually, I would expect it to be...
 > >
-> >   #define DRM_IOCTL_V3D_SUBMIT_CL           DRM_IOWR(DRM_COMMAND_BASE +=
- DRM_V3D_SUBMIT_CL, struct drm_v3d_submit_cl)
-> >   #define DRM_IOCTL_V3D_WAIT_BO             DRM_IOWR(DRM_COMMAND_BASE +=
- DRM_V3D_WAIT_BO, struct drm_v3d_wait_bo)
-> > @@ -61,6 +62,8 @@ extern "C" {
-> >   #define DRM_IOCTL_V3D_SUBMIT_CPU          DRM_IOW(DRM_COMMAND_BASE + =
-DRM_V3D_SUBMIT_CPU, struct drm_v3d_submit_cpu)
-> >   #define DRM_IOCTL_V3D_PERFMON_GET_COUNTER DRM_IOWR(DRM_COMMAND_BASE +=
- DRM_V3D_PERFMON_GET_COUNTER, \
-> >                                                  struct drm_v3d_perfmon=
-_get_counter)
-> > +#define DRM_IOCTL_V3D_PERFMON_SET_GLOBAL  DRM_IOW(DRM_COMMAND_BASE + D=
-RM_V3D_PERFMON_SET_GLOBAL, \
-> > +                                                struct drm_v3d_perfmon=
-_set_global)
+> > > > > Also readahead will swapin 4k folios AFAICT, so we don't need a
+> > > > > contiguous allocation like large folio swapin. So that could be
+> > > > > another factor why readahead may not reproduce the problem.
+> > >
+> > > Because of this ^.
 > >
-> >   #define DRM_V3D_SUBMIT_CL_FLUSH_CACHE             0x01
-> >   #define DRM_V3D_SUBMIT_EXTENSION              0x02
-> > @@ -765,6 +768,18 @@ struct drm_v3d_perfmon_get_counter {
-> >       __u8 reserved[7];
-> >   };
+> > ...this matters for the physical allocation, which might require more
+> > reclaim and compaction to produce the 32k. But an earlier version of
+> > Barry's patch did the cgroup margin fallback after the THP was already
+> > physically allocated, and it still helped.
 > >
-> > +/**
+> > So the issue in this test scenario seems to be mostly about cgroup
+> > volume. And then 8 4k charges should be equivalent to a singular 32k
+> > charge when it comes to cgroup pressure.
 >
-> Using /** means that you are writting a kernel-doc comment [1], so make
-> sure to describe each struct member, otherwise it's going to generate
-> build warnings with W=3D1.
->
+> In this test scenario, yes, because it's only exercising cgroup
+> pressure. But if we want a general solution that also addresses global
+> pressure, I expect large folios to be worse because of the contiguity
+> and the size (compared to default readahead window sizes). So I think
+> we shouldn't only test with readahead, as it won't cover some of the
+> large folio cases.
 
-Learned something new - thanks for sharing.
-
-> > + * struct drm_v3d_perfmon_set_global - ioctl to define a
-> > + * global performance counter that is used if a job has
-> > + * not assigned one on its own.
-> > + */
-> > +
-> > +#define DRM_V3D_PERFMON_CLEAR_GLOBAL    0x0001
->
-> I would keep this define above the struct comment.
->
-
-Sure .. have done it in v2 of the patch.
-
-> > +struct drm_v3d_perfmon_set_global {
-> > +     __u32 flags;
-> > +     __u32 id;
-> > +};
-> > +
-> >   #if defined(__cplusplus)
-> >   }
-> >   #endif
->
-> [1] https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html
->
-
---=20
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info/privacypolicy
+Thanks
+barry
 
