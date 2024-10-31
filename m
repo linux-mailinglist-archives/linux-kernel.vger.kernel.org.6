@@ -1,219 +1,160 @@
-Return-Path: <linux-kernel+bounces-391274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19819B84A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:51:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AB79B8484
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14792838AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4BDF1F2171D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20F31CCB36;
-	Thu, 31 Oct 2024 20:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2511CC897;
+	Thu, 31 Oct 2024 20:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="gMYsVa9x"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EkzwZDHD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F6514A4F3;
-	Thu, 31 Oct 2024 20:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C3E1AD3E0
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730407856; cv=none; b=JRZXw/0LklqENwPbSQLI1lFituLASmCEenXwiPv9utEf6c9oXhSz6bgEbjmhZfbcCWoR+XUri9zmSzKn7AvrRnDxeeLaTeRk81ailim51bUw0T/AITZZGwuWsXcrPJGz3f4XAgnWDLczRpJVgfSWg1oq71GZaCIWFrHUuYlF19I=
+	t=1730407341; cv=none; b=tniKlHpYIp5hnhFO6231/XcKfv6imipqJKJGtwon1VwpsSFhmODyeX2K+ff5LdxyJw6D94yID0jTf8XYegixxnSKHocHMSI2mcVWPxwv3e8ehpxwdL6bFM/BgJB7MNyxYDIrADI/x1m9FMbUACIWW+/gpxUJSgv8TUmPFKBGfpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730407856; c=relaxed/simple;
-	bh=4zbPd6N0MMmrRlIDYPnV9xe1iljTOJKsOO1hDW7GNzk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jm48s+gaoYx4CqDUjA+yhL+OWrmeVHtBkb+SpKjW+kanpmNG+AmUz0P8HdSP/yVrKEjH6BZOIN26jG5oZLIpw+r37o5TNYYkl5i3qSFl3S8dsCGR2eacYYu2Tj40IYWkUuKUeCESOySPuIdEKHk+e9js8jM18eF5WYDpM5Zr94Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=gMYsVa9x; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id 9DA141E000D;
-	Thu, 31 Oct 2024 23:42:33 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 9DA141E000D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1730407353; bh=f8wdmRjxhv+HtGLkF0t4xEscwB6K86okf8MRSzlwnWA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=gMYsVa9xfBrmvQ9j2KIhMpsMSXtFwIZIVD7RHrivgr+gqtGKJi2dnne6rgM5sqjp3
-	 HIYk1QzqJU5rU9FNAycs6dMD6R9Vjo/H2DvxvlrWx6eaAwgoK/bsv/DPoCIRjxNVcw
-	 UUhNtQgdq2hsepN60NV/YvkkhaEI9icGZHCu+QOZgEn+zTVtRhr66A8yAc/QD2WG3J
-	 XQ8y2qWwiqVCQWwfQUsrfv5pfNOi0Vwa3yqGVGjclRN8CcEKTp5fQEZwjVteSbVuhl
-	 MPn6ZKR9vsje8Ra9xYPeW1+NBOa+wF/YebnB8TUUxmkKw3e96h2p1b+N4WiW68kZiQ
-	 51pknVtAxvHSA==
-Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Thu, 31 Oct 2024 23:42:33 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.247.52) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Thu, 31 Oct
- 2024 23:42:30 +0300
-From: Murad Masimov <m.masimov@maxima.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Murad Masimov <m.masimov@maxima.ru>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de
- Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH 5.10] perf/x86/intel: Fix PEBS-via-PT reload base value for Extended PEBS
-Date: Thu, 31 Oct 2024 23:42:00 +0300
-Message-ID: <20241031204202.134-1-m.masimov@maxima.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1730407341; c=relaxed/simple;
+	bh=MFpNRpqRd9LH4pJmd0TDJFGlaMsED1SWhV9pcS+sRzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RiizxwRW/JrjFadLf2KyvYCVkhVmxAWIHIR+vTUrXt6yfKx+YhGYjZp8dx/OXdvtJBatJrHXCHHciM+fNOysF8iE3gjWGnWBF7dAHF+CuQR4acpRqoWM3Z7NEJMXMnxZea3n49t5rRxBDCHrRhD+8wLWEaMTvWQaHnHQgv7Ffmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EkzwZDHD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V9iYu7009596
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:42:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VqpxAZr42lt2krLgg+7vgLWAa8YGLnkwMHJCnyltXHU=; b=EkzwZDHDW41xH24/
+	YfOrcaQ7qo+aWFiEOuecSDsAuBBa8qBpkIF+bzhmCy/H4IWxl/LEP+OaHeNVIhGz
+	/HBbcsE6zqx8laj0Hx+KDtcDeEndAp2SbvVbQDxduLHeE84QrdOon50cSuXzokD4
+	IP3Sqax6SQb2INIIUP4aXjkvtC8Mvyn9j6hyOibgS/BVFK3r+6ltr9csq8mXYODp
+	wJEdvUUjrTBX03p2I/EsmXv1jYZ2WzgxKq6suwgknpy0j9phJt7wl15G3LgipMi0
+	DO+jiahfK/L+tRO8jBgTVjDV+xlIzMn4Cvynv8qHC7omg5O7Z3DcAXIviXdV8C7+
+	E6+Mug==
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kjm1d7e7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:42:18 +0000 (GMT)
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5ec1c46df37so183703eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:42:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730407338; x=1731012138;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqpxAZr42lt2krLgg+7vgLWAa8YGLnkwMHJCnyltXHU=;
+        b=tiVx+T3IHDrKDY7H9kQCuDt9ugyOEfTqNfXmMIqINL49g5nKFgcI/hffTL/fqOFJFq
+         p2bcR3S79O2+QvsfDbWkz+eZmQ27071/Vnn9U3Dc4GfProcIN7E61j79RcVVSndJKLxz
+         5rN7WsAOEHq05PQT0QIowFLv1zic+AGniqtny9OwLa8WhYTzLPu19icT3DgaHAy8UKyv
+         KnsajEm4mnV/EH8btGBA1eoHN44S+FNsryYKHSLl5qxo5XLPdB5gDnTQrCQM50PCv8+A
+         GegHlDngPK4oqrD4vCCG8h4huRrBbhkk700CnpOxKOgvmJILfXoATFgUO8x8Tlzwkbqd
+         C2Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsLbyq5CBTnpNvykC8Dd1vMhRkan69df4W05Tyzas1+xmgj4JOW3wMcrJi1tREl6XlbqMcM/W9JtpMgx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjp0E448q4AgRS4u6vUrk5AK1TtQvsnZu9e2jng59HHlMfve1i
+	iw57tCHuDUfQ9Itq8hnV92MO+1m/mqyBsLeDR/CgJA77QKNzJZvacIVlHUxAW/9XTtdeKBA8l0V
+	qvq/H27I4QMGf0d+fmN6Nn4m1wJdND6cxCAglylvsd5kGChJQePZ/r3PJuRraNIo=
+X-Received: by 2002:a05:6870:c094:b0:26f:d381:fd31 with SMTP id 586e51a60fabf-29051ade5c4mr4749689fac.1.1730407337694;
+        Thu, 31 Oct 2024 13:42:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOklbpgSQPKrzZF2v//gyCTkBydr6GONYtPoc+mNnrDmew/I2RgaNj2IMmRgOfpE340yIhvg==
+X-Received: by 2002:a05:6870:c094:b0:26f:d381:fd31 with SMTP id 586e51a60fabf-29051ade5c4mr4749678fac.1.1730407337342;
+        Thu, 31 Oct 2024 13:42:17 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c5348sm100834366b.49.2024.10.31.13.42.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 13:42:15 -0700 (PDT)
+Message-ID: <7a87ff33-2a88-4476-9116-69d6725b8d0c@oss.qualcomm.com>
+Date: Thu, 31 Oct 2024 21:42:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188865 [Oct 31 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;maxima.ru:7.1.1;81.200.124.62:7.1.2;ksmg02.maxima.ru:7.1.1;lkml.kernel.org:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/31 16:34:00
-X-KSMG-LinksScanning: Clean, bases: 2024/10/31 16:34:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/31 05:12:00 #26797869
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sar2130p: add QAR2130P board
+ file
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Krishna Kurapati <quic_kriskura@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241030-sar2130p-dt-v2-0-027364ca0e86@linaro.org>
+ <20241030-sar2130p-dt-v2-4-027364ca0e86@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241030-sar2130p-dt-v2-4-027364ca0e86@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: njNN4lc8tVnPAjPbXbdVJCONiCKpGhZM
+X-Proofpoint-ORIG-GUID: njNN4lc8tVnPAjPbXbdVJCONiCKpGhZM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310156
 
-From: Like Xu <like.xu.linux@gmail.com>
+On 30.10.2024 12:50 PM, Dmitry Baryshkov wrote:
+> Add board DT file for the Qualcomm Snapdragon AR2 Gen1 Smart Viewer
+> Development Kit.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-commit 4c58d922c0877e23cc7d3d7c6bff49b85faaca89 upstream.
+Please add newlines before status consistently
 
-If we use the "PEBS-via-PT" feature on a platform that supports
-extended PBES, like this:
+[...]
 
-    perf record -c 10000 \
-    -e '{intel_pt/branch=0/,branch-instructions/aux-output/p}' uname
+> +
+> +	wcn7850-pmu {
+> +		compatible = "qcom,wcn7850-pmu";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wlan_en_state>, <&bt_en_state>;
 
-we will encounter the following call trace:
+flip please
 
-[  250.906542] unchecked MSR access error: WRMSR to 0x14e1 (tried to write
-0x0000000000000000) at rIP: 0xffffffff88073624 (native_write_msr+0x4/0x20)
-[  250.920779] Call Trace:
-[  250.923508]  intel_pmu_pebs_enable+0x12c/0x190
-[  250.928359]  intel_pmu_enable_event+0x346/0x390
-[  250.933300]  x86_pmu_start+0x64/0x80
-[  250.937231]  x86_pmu_enable+0x16a/0x2f0
-[  250.941434]  perf_event_exec+0x144/0x4c0
-[  250.945731]  begin_new_exec+0x650/0xbf0
-[  250.949933]  load_elf_binary+0x13e/0x1700
-[  250.954321]  ? lock_acquire+0xc2/0x390
-[  250.958430]  ? bprm_execve+0x34f/0x8a0
-[  250.962544]  ? lock_is_held_type+0xa7/0x120
-[  250.967118]  ? find_held_lock+0x32/0x90
-[  250.971321]  ? sched_clock_cpu+0xc/0xb0
-[  250.975527]  bprm_execve+0x33d/0x8a0
-[  250.979452]  do_execveat_common.isra.0+0x161/0x1d0
-[  250.984673]  __x64_sys_execve+0x33/0x40
-[  250.988877]  do_syscall_64+0x3d/0x80
-[  250.992806]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[  250.998302] RIP: 0033:0x7fbc971d82fb
-[  251.002235] Code: Unable to access opcode bytes at RIP 0x7fbc971d82d1.
-[  251.009303] RSP: 002b:00007fffb8aed808 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-[  251.017478] RAX: ffffffffffffffda RBX: 00007fffb8af2f00 RCX: 00007fbc971d82fb
-[  251.025187] RDX: 00005574792aac50 RSI: 00007fffb8af2f00 RDI: 00007fffb8aed810
-[  251.032901] RBP: 00007fffb8aed970 R08: 0000000000000020 R09: 00007fbc9725c8b0
-[  251.040613] R10: 6d6c61632f6d6f63 R11: 0000000000000202 R12: 00005574792aac50
-[  251.048327] R13: 00007fffb8af35f0 R14: 00005574792aafdf R15: 00005574792aafe7
+[...]
 
-This is because the target reload msr address is calculated
-based on the wrong base msr and the target reload msr value
-is accessed from ds->pebs_event_reset[] with the wrong offset.
+> +
+> +&pon_resin {
+> +	status = "okay";
+> +
+> +	linux,code = <KEY_VOLUMEDOWN>;
 
-According to Intel SDM Table 2-14, for extended PBES feature,
-the reload msr for MSR_IA32_FIXED_CTRx should be based on
-MSR_RELOAD_FIXED_CTRx.
+and here
 
-For fixed counters, let's fix it by overriding the reload msr
-address and its value, thus avoiding out-of-bounds access.
+[...]
 
-Fixes: 42880f726c66("perf/x86/intel: Support PEBS output to PT")
-Signed-off-by: Like Xu <likexu@tencent.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20210621034710.31107-1-likexu@tencent.com
-Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
----
- arch/x86/events/intel/ds.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+> +
+> +	ptn3222: redriver@4f {
+> +		compatible = "nxp,ptn3222";
+> +		reg = <0x4f>;
+> +		#phy-cells = <0>;
+> +		vdd3v3-supply = <&vreg_l2a_3p1>;
+> +		vdd1v8-supply = <&vreg_l15a_1p8>;
+> +		reset-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 48f30ffef1f4..182908aebed0 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1093,6 +1093,9 @@ static void intel_pmu_pebs_via_pt_enable(struct perf_event *event)
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct hw_perf_event *hwc = &event->hw;
- 	struct debug_store *ds = cpuc->ds;
-+	u64 value = ds->pebs_event_reset[hwc->idx];
-+	u32 base = MSR_RELOAD_PMC0;
-+	unsigned int idx = hwc->idx;
- 
- 	if (!is_pebs_pt(event))
- 		return;
-@@ -1102,7 +1105,12 @@ static void intel_pmu_pebs_via_pt_enable(struct perf_event *event)
- 
- 	cpuc->pebs_enabled |= PEBS_OUTPUT_PT;
- 
--	wrmsrl(MSR_RELOAD_PMC0 + hwc->idx, ds->pebs_event_reset[hwc->idx]);
-+	if (hwc->idx >= INTEL_PMC_IDX_FIXED) {
-+		base = MSR_RELOAD_FIXED_CTR0;
-+		idx = hwc->idx - INTEL_PMC_IDX_FIXED;
-+		value = ds->pebs_event_reset[MAX_PEBS_EVENTS + idx];
-+	}
-+	wrmsrl(base + idx, value);
- }
- 
- void intel_pmu_pebs_enable(struct perf_event *event)
-@@ -1110,6 +1118,7 @@ void intel_pmu_pebs_enable(struct perf_event *event)
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct hw_perf_event *hwc = &event->hw;
- 	struct debug_store *ds = cpuc->ds;
-+	unsigned int idx = hwc->idx;
- 
- 	hwc->config &= ~ARCH_PERFMON_EVENTSEL_INT;
- 
-@@ -1128,19 +1137,18 @@ void intel_pmu_pebs_enable(struct perf_event *event)
- 		}
- 	}
- 
-+	if (idx >= INTEL_PMC_IDX_FIXED)
-+		idx = MAX_PEBS_EVENTS + (idx - INTEL_PMC_IDX_FIXED);
-+
- 	/*
- 	 * Use auto-reload if possible to save a MSR write in the PMI.
- 	 * This must be done in pmu::start(), because PERF_EVENT_IOC_PERIOD.
- 	 */
- 	if (hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) {
--		unsigned int idx = hwc->idx;
--
--		if (idx >= INTEL_PMC_IDX_FIXED)
--			idx = MAX_PEBS_EVENTS + (idx - INTEL_PMC_IDX_FIXED);
- 		ds->pebs_event_reset[idx] =
- 			(u64)(-hwc->sample_period) & x86_pmu.cntval_mask;
- 	} else {
--		ds->pebs_event_reset[hwc->idx] = 0;
-+		ds->pebs_event_reset[idx] = 0;
- 	}
- 
- 	intel_pmu_pebs_via_pt_enable(event);
--- 
-2.39.2
+Since I'm nitpicking hard already, please see the property order in romulus.dtsi
 
+Looks good otherwise, thanks!
+
+Konrad
 
