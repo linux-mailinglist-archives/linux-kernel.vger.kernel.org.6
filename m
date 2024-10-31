@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-390619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A88B9B7C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:05:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 156A49B7C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59741F22353
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1889282AEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628B81A00D6;
-	Thu, 31 Oct 2024 14:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3510119F111;
+	Thu, 31 Oct 2024 14:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KR2h0gI7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTD3lW8f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B446A84A3F;
-	Thu, 31 Oct 2024 14:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1777483;
+	Thu, 31 Oct 2024 14:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730383498; cv=none; b=CdvE1C2N6xrwuuqFLblzY0giVf6KcGfwey/uqJHXzTSlsxFEzO0nt0fIXTG/YqqEyi30FgNDRinQQzymwlXv/i9URgELP4HZiAOuE7Cp9GUpqQUg/khQ1Bt7xWQyiIlyURmnFYpBi3IPNE2V2drlBcjG0ENSEKssayoTKLh91PI=
+	t=1730383555; cv=none; b=XlLOKYOvJcz6u68zbJRv59f0Hw2TOJbsGIO+WFVjvukpvEYOJBjHPVWWDwGZ0U1dWaRy0goFDEsn7Zk0Dk6Jju0K/IxaXD+ANrupwntjWwJw8CYnHgBu/Hkav3eUXmg8Qp4p2pKkSJ02zpcjn9gkk5LGbPkr7YHWauvzCpr3/84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730383498; c=relaxed/simple;
-	bh=HVdeTGq8tw85YSsGdDSi8A8rnS3fMC4tuFjU7oRUbCE=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=LvLbTubyHqetNPaxzHRRKEvNCdZGz72iEuGnKx9EJtT9rbfs1jd3adp/ICuCgCeL5/Pjfcs2ur2sAEv7A3t9BKLwSza04gIvbnoSS3D2HwHhNF15ZbyN5VfTqBBui5IWyaL8U3e7Vyxd3Ycmze6yCDomnVPRDqNYMEZqz38CmA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KR2h0gI7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4F3C4FE0E;
-	Thu, 31 Oct 2024 14:04:55 +0000 (UTC)
+	s=arc-20240116; t=1730383555; c=relaxed/simple;
+	bh=tqhdXipXaApdyzH7wbucKGPUec8wdzKCSf8PtkJTxso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+Yu/v1ZE2nnzFB2f9H1kTX0EK8EjAB0nCz9Vkqby/sd8/tzJwLenwK7XaGZOFCr0KgLMB1vdh/AWrV3kaKUjxwn6XCBxpYpDmMzJrECWPVuCGfR2rjDpB3Y8nVdKQ+tQGLPdoPvfEzxNjNzE5SBtwhOatK/94YrthQbDbce2wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTD3lW8f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 129CBC4FF0D;
+	Thu, 31 Oct 2024 14:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730383498;
-	bh=HVdeTGq8tw85YSsGdDSi8A8rnS3fMC4tuFjU7oRUbCE=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=KR2h0gI7A/NUGYNKfPWgTn9tf/w10eoK/Joft+nluD7JFlW1HMjj3sRTe0LHHZJ3f
-	 Z1bAZW628FLFBnmBF5WI131W9+MKm+dd0atNbFZ1UWgmugJBEax7W+eOR34q2GGEQN
-	 c4x5uLp49Z9qhWFVQFHFAs1cMrFbdUWVDat1F7BG8QI8Yhk5Whs8tF2uN9dm26OxBQ
-	 cldGX7CbtH/s227j2bhjuAUbg/v2llPtimvIqUBpFiPSeIGj0iC1Vi9DGMNwSX39oO
-	 6cgTW4bOBWGbw2ne7LZHiQLPrWgW3bso+6+RKacs52gqPANAOEmL63jJsdO2kyxt4f
-	 H9yG+LOifqhPQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: <ath12k-devel-internal@qti.qualcomm.com>,  Jeff Johnson
- <jjohnson@kernel.org>,  Nathan Chancellor <nathan@kernel.org>,  Nick
- Desaulniers <ndesaulniers@google.com>,  Bill Wendling <morbo@google.com>,
-  Justin Stitt <justinstitt@google.com>,  Arnd Bergmann <arnd@kernel.org>,
-  <linux-wireless@vger.kernel.org>,  <ath12k@lists.infradead.org>,
-  <linux-kernel@vger.kernel.org>,  <llvm@lists.linux.dev>
-Subject: Re: [PATCH] wifi: ath12k: mark QMI driver event helpers as noinline
-References: <20241028-ath12k_qmi_driver_event_work-v1-1-0d532eb593fa@quicinc.com>
-Date: Thu, 31 Oct 2024 16:04:53 +0200
-In-Reply-To: <20241028-ath12k_qmi_driver_event_work-v1-1-0d532eb593fa@quicinc.com>
-	(Jeff Johnson's message of "Mon, 28 Oct 2024 07:08:40 -0700")
-Message-ID: <87bjz0fjwa.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1730383555;
+	bh=tqhdXipXaApdyzH7wbucKGPUec8wdzKCSf8PtkJTxso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BTD3lW8fWB74a1NtwyhYLGCCzQo3c0W2TfXSAtMh9Bnh4z9Oj1I8vdc28lu9B6MRS
+	 MQR7yy1N7WVEz+rmypsGxHSSDIlevHnq7EeTDlzHTvovlPGAK8l3dEVkgIuz5HJGgp
+	 46835ueeXuOZlqP2uEDIDGtrdUqplEEvmrQl3lng5yEZsTXGiDwFBQ8IMaxOrO/DfJ
+	 seH4cP++XQK4QU83l7G+uPD+J10Lecd3P6+BslCMw1+4sSXhHzn1FphODY4lEe90Xb
+	 edVruSFjliiI877b5B6BvS0mL84DHhLfJ1tsrgAxJAjppK4smpL6K9WMKuV+8voGO2
+	 ircghHwu0/29g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t6Vo8-000000004NO-3f8I;
+	Thu, 31 Oct 2024 15:05:52 +0100
+Date: Thu, 31 Oct 2024 15:05:52 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+Message-ID: <ZyOOwEPB9NLNtL4N@hovoldconsulting.com>
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <ZxYBa11Ig_HHQngV@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxYBa11Ig_HHQngV@hovoldconsulting.com>
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+On Mon, Oct 21, 2024 at 09:23:24AM +0200, Johan Hovold wrote:
+> On Fri, Oct 18, 2024 at 03:49:34PM +0300, Abel Vesa wrote:
+> > The assignment of the of_node to the aux bridge needs to mark the
+> > of_node as reused as well, otherwise resource providers like pinctrl will
+> > report a gpio as already requested by a different device when both pinconf
+> > and gpios property are present.
+> 
+> I don't think you need a gpio property for that to happen, right? And
+> this causes probe to fail IIRC?
+> 
+> > Fix that by using the device_set_of_node_from_dev() helper instead.
+> > 
+> > Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
+> 
+> This is not the commit that introduced the issue.
+> 
+> > Cc: stable@vger.kernel.org      # 6.8
+> 
+> I assume there are no existing devicetrees that need this since then we
+> would have heard about it sooner. Do we still need to backport it?
+> 
+> When exactly are you hitting this?
 
-> As described in [1], compiling the ath12k driver using clang with
-> KASAN enabled warns about some functions with excessive stack usage,
-> with the worst case being:
->
-> drivers/net/wireless/ath/ath12k/qmi.c:3546:13: warning: stack frame size (2456) exceeds limit (1024) in 'ath12k_qmi_driver_event_work' [-Wframe-larger-than]
->
-> Nathan [2] highlighted work done by Arnd [3] to address similar
-> issues in other portions of the kernel.
->
-> ath12k_qmi_driver_event_work() itself is a pretty lightweight
-> function, but it dispatches to several other functions which do the
-> real work:
-> ath12k_qmi_driver_event_work()
-> 	ath12k_qmi_event_server_arrive()
-> 		ath12k_qmi_host_cap_send()
-> 	ath12k_qmi_event_mem_request()
-> 		ath12k_qmi_respond_fw_mem_request()
-> 	ath12k_qmi_event_load_bdf()
-> 		ath12k_qmi_request_target_cap()
-> 		ath12k_qmi_load_bdf_qmi()
-> 		ath12k_qmi_wlanfw_m3_info_send()
->
-> Mark all of those underlying functions as 'noinline_for_stack' to
-> prevent them from being inlined in ath12k_qmi_driver_event_work(),
-> thereby eliminating the excessive stack usage.
->
-> Link: https://msgid.link/bc214795-1c51-4cb7-922f-67d6ef98bff2@quicinc.com # [1]
-> Link: https://msgid.link/20241025223321.GA3647469@thelio-3990X # [2]
-> Link: https://lore.kernel.org/all/?q=f:arnd@kernel.org+Wframe-larger-than # [3]
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Abel, even if Neil decided to give me the finger here, please answer the
+above so that it's recorded in the archives at least.
 
-Acked-by: Kalle Valo <kvalo@kernel.org>
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Johan
 
