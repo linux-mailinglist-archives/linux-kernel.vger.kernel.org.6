@@ -1,587 +1,284 @@
-Return-Path: <linux-kernel+bounces-391395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14199B861F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:35:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DE29B8627
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:38:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01A641C21016
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139CD1C20F73
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402861D0157;
-	Thu, 31 Oct 2024 22:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD511E04AB;
+	Thu, 31 Oct 2024 22:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JHzSLQo8"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zz7ioGDv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767891E481
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 22:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730414116; cv=none; b=KpzW4uBWKavWLSXIAb9ey/JhNcd6KlEabslk05d9OCkW1up+mqnM9RImc4Qn7Xa9C/4xTRIqLYCGc0eiRq3f8nu0hrWnvXlt7ameCzrn/MmRhYkZaJbgS4c/J3468iZAZ8S77cpZP41ZrcHajjlcEOE79Bn8tUwTxHidSqW5pMg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730414116; c=relaxed/simple;
-	bh=gksB+9p7mD3lGcgVSrGwEF4VBHu4ZqFeMnqk9Lgchgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NydtmSeD8bUt9asqK18vuu6O6dwI18Qdk+xae0P+3aD/j9ZBp/TPKaafznb6HdPz3WC9GUzoMt7jmh8/FYtXef1szvk3008HQHraWh4QYdd+R5F57Y13SJyw2PJndJi+2bGITRI2G4RtoGh22BAV3sxNdLMx7tTqh0v1CQi78Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JHzSLQo8; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e2e41bd08bso15584237b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730414108; x=1731018908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/41OVM2xcwWBkow/4jRlYjcEzYW3yWFtXG6Jn1l6IW4=;
-        b=JHzSLQo8R907k0uSuwhpk/7b4nDnyvSOVXKjoc0BHxIlsjugRlNUKn368scuYrW2pV
-         HQkOOmUmSc/wDp5uJzly3yHuGN2tldvLsJ22zCy0EYJ2nkvYEfK8zxNHM3a6t410BkZu
-         qmmK24Sf492IPj0mU32YcnEl1IaqIepEC3L5M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730414108; x=1731018908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/41OVM2xcwWBkow/4jRlYjcEzYW3yWFtXG6Jn1l6IW4=;
-        b=bgRnVF875pAlILiaRmF5nBkocn9rfhxBje3mD5Cinu5BYbg6fBz0sazSb4Zn2vOkie
-         0KVxv5fVNqeQd41jJMvttPXvelU4RyVEV5gRSVhggG/nwrB05AslG9f1im2GCjOOpO++
-         ePfVZAYiYET7Lwp48eu/jDE5E4ZzlVE6OreE4KqBdiuc7nonIUWAZo/ZHBvmrfYKclbS
-         wWZNoL1lp0cufkM8RzzhTXzMbPcdXKROPdqJf1nHKWHWOeRsYb7ibRb2tzrYfQ4O064q
-         HJmQaaspiQNNgSmxRbB1ICH+4inKeEQz4qxJPPsvAU68g8LAcrrRlpNW5wOUKxNq0EUx
-         kKmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9Wx4/VVgbfBvaL0Ak/fZIjus2ZdhNZQKbukTvwYwqqcYN0x0YegcK+0SQbSgHSuxO+bZDXvph+WiSdYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCStQ9oK38G5ZjCidAE9+2PO0LffPs4f3jELUnrTSptZUAaTWT
-	c1/xKZxxwS8MmI6OVQOOAjVcBo4Wu6ukm2SoergF/bKxxcAKKIwCYHAkVE2QfXbq2gogkCW0A9U
-	aIKHkUooODRXU9DQBZxrKqmVGHprxjktwAGzr
-X-Google-Smtp-Source: AGHT+IHFBLQx2c6IbqW7eGb36gJpxMLM5wEc1nfmvXVIuDaq5sXJUBYeVuAZVc9cthNIwPqSAsqyKDq6iI9hxMRt5xA=
-X-Received: by 2002:a05:690c:e05:b0:6e3:ed8:7f17 with SMTP id
- 00721157ae682-6ea64aec9b2mr22493057b3.16.1730414108422; Thu, 31 Oct 2024
- 15:35:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5401D1E63;
+	Thu, 31 Oct 2024 22:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730414261; cv=fail; b=OJfJ6mtg3XAQ9hUi2ntBR/sii7rswLA9vsrGMmek5w2mVVYc0GOzBdx3GftW+8RQRKJbV8LHR3N+L/NfRRfX2G3Yw4Q6jlUGe2sPRGwN39R8Ixzb4c3/unwzvryn44mETdneFvPbimCFmbz2M24WtRAWGPwUX61y14f5370s3cY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730414261; c=relaxed/simple;
+	bh=VKz/y+uiMBQwXwVllc0m5daTSHCjW+BqEb79dNm6nZA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BnuYg1/b/bEfDIzb/lrHu/9wiTxYj+lhkS69FNc+hVeYWYDqJKLsEQtMl7tD/ntZODyK7807QNfJ5/xnYzziDVmqHReWXyz9WDeGO+AOl73Wc/5NZkbC27NarMQiJPqbr1SoI/PjBOToT0jBQWLNZkCg83W9L5IWzmlzbFTKjzc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zz7ioGDv; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730414255; x=1761950255;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=VKz/y+uiMBQwXwVllc0m5daTSHCjW+BqEb79dNm6nZA=;
+  b=Zz7ioGDvl4rp4vTtoOlez5+iaCbyCYn0Bm1yeLNsByFbhMKNRkMhYhgN
+   KHbWM+D21JQt6g92lNWeXadyTojAEI+Gat3mFp/tLjAQjEAK91QTRj8gJ
+   tKBdyLIDIiqznhAyTYkYW191HjIxgVfRDnTZjIT1idqlC9AhR2r7/M7E8
+   7nX7fcA+nTN4IbvJqRD16bR7U2D5+Sf4D7dsoNGDsBayYA57n5vBiWKwS
+   uEVfFocLlOfBUOopvrr89+dce202AVGp3jRR4Jdvcd8FaufyENHx5UCN0
+   9iisk3hVwWPC+o9fnkg0MXRVUcWvKb3XQGz5yL8zDWo3WEUaK4hN+NCU+
+   A==;
+X-CSE-ConnectionGUID: 9J5FcYWAQyWQC7a5hq63Bw==
+X-CSE-MsgGUID: MadxeRv5Ty+egOPr+ai7mQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52745675"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="52745675"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 15:37:33 -0700
+X-CSE-ConnectionGUID: szvFZ/PWTmW17AwIN4g96A==
+X-CSE-MsgGUID: oKXX8GBJSeu2bXkEJbj87A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="87319626"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 31 Oct 2024 15:37:33 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 31 Oct 2024 15:37:33 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 31 Oct 2024 15:37:33 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 31 Oct 2024 15:37:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pTcSP6x7zQdaTW9GxvjOEdk7ECh5HiAlzqRUYA0JAchHp+IQXZrTg3i+WI6SUASYPnvRLE9Di3GsYB9ZHXQ8rF5Xn3EWi8X5+FCa3t9fNF4MyCvnX8jal5l7M97bxYCsG+Dq0no+eDmLEhuCY/kRwQ5cd9n85p37jD25sEWCZBtCpnvOLZwLT98EJd7Hu4wDaaL4DQLBhzO+jTUQyvc7GdW9cWpFxaC9nBMzm29I9Fjo7MZj6zI00wXf2XRXKyPaLkB1lteXJQ9U9zXhi0APU9FqrU7+zr1c7i7jtPpChH0ugyWFibGxlOrguBF7R53QMWAu4feBQWHIBgJWXlVzCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qLZMfsii5brXG2dEtoVJdL8wze/RlvCvSOLeJBGMcMA=;
+ b=djhdugEbGHHQgUc6N3pM3wTKgVmCh4vM3BrA/XGEMjffLHcxEyKkhysNo3UIbELGPjo7ylJwSpMZMVBr/VknfZUabEvwUTBEppnIRrpH5ov13MdqbKlhc5I+zyddPaQZQJIntN/xfcPj0gKmWMgMB1PAuMTWicPdnJzA956iX3qVgFXykQXE/4EsvkUCApGMd90gtLPkujzbGn8rs4DOWOQOL/C9QK2j8IvlbehAYB6+0gDETV0670j8w8Ra/shgVq7pnzZBclU1B2GinZtsnYAbnYQ91Mw5F+M/KSPLbYrh35f6v5Lb+kHZ+2ljiecWXs7UzpOgF/999/9lmDwVfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by CY5PR11MB6188.namprd11.prod.outlook.com (2603:10b6:930:24::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Thu, 31 Oct
+ 2024 22:37:27 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
+ 22:37:27 +0000
+Message-ID: <ebf9897e-dda6-4e74-b08b-5d266c6c0c1b@intel.com>
+Date: Fri, 1 Nov 2024 11:37:19 +1300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] KVM: VMX: Initialize TDX during KVM module load
+To: Dan Williams <dan.j.williams@intel.com>, "Hansen, Dave"
+	<dave.hansen@intel.com>, "seanjc@google.com" <seanjc@google.com>
+CC: "Lindgren, Tony" <tony.lindgren@intel.com>, "Edgecombe, Rick P"
+	<rick.p.edgecombe@intel.com>, "binbin.wu@linux.intel.com"
+	<binbin.wu@linux.intel.com>, "Chatre, Reinette" <reinette.chatre@intel.com>,
+	"Li, Xiaoyao" <xiaoyao.li@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kristen@linux.intel.com"
+	<kristen@linux.intel.com>
+References: <cover.1730120881.git.kai.huang@intel.com>
+ <f7394b88a22e52774f23854950d45c1bfeafe42c.1730120881.git.kai.huang@intel.com>
+ <ZyJOiPQnBz31qLZ7@google.com>
+ <46ea74bcd8eebe241a143e9280c65ca33cb8dcce.camel@intel.com>
+ <6723fc2070a96_60c3294dc@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+In-Reply-To: <6723fc2070a96_60c3294dc@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR06CA0022.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::35) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030212854.998318-1-abhishekpandit@chromium.org>
- <20241030142833.v2.5.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid> <zrgmtbmln3dyjzi7qsweptmeihijwbe6jqmsg2w2bcnzeaeprs@2u2emyenm23w>
-In-Reply-To: <zrgmtbmln3dyjzi7qsweptmeihijwbe6jqmsg2w2bcnzeaeprs@2u2emyenm23w>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Thu, 31 Oct 2024 15:34:56 -0700
-Message-ID: <CANFp7mWbtM-fhXEz5Cij+A-z3Tu-S3CvdhUhoX=v6fYn57zSBg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] platform/chrome: cros_ec_typec: Displayport support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, 
-	linux-usb@vger.kernel.org, chrome-platform@lists.linux.dev, jthies@google.com, 
-	akuchynski@google.com, pmalani@chromium.org, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|CY5PR11MB6188:EE_
+X-MS-Office365-Filtering-Correlation-Id: f69c4f8a-77ac-4bd0-113f-08dcf9fc98c1
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RmFxdEVJTkNGejdabmdyUkUreVF5eGdTYjdWNVJKM3RWZUtlSGNqejdHMFNR?=
+ =?utf-8?B?UjZ5TzV3VUJqdk1EL1Y0N0k4dHl5KytZM0J2K1NZaVNWdGNJcVlaekJKY2ht?=
+ =?utf-8?B?cXpCT1kvSy9jdFVKaVdRdnhneW1tOGdvSWpqZFhxdlhrTUs3NEV0UkZsQkFh?=
+ =?utf-8?B?NnhzejhLM25uZzBkZzVuSzhmeU03Z0RDaEFiRXZENTlUUGNBVWV1VHVibDRY?=
+ =?utf-8?B?ZDhkNEVsQTJ3V2cvaXppK3NwL1ZmZlYzcmdPYUs3VFpVMlpPL0tlb1FaREwy?=
+ =?utf-8?B?STZIVFlJVmRGSWNCOVhsZHJvY2F6NzgwcG1ndHpRSmZNU0R3NEN6R0xUazJz?=
+ =?utf-8?B?bkNVNjd2cXhCL0VwMHRQTU55ZXBqNFFxOFR3Sk1Zc0pSSlVXTXl6d1JWNlpW?=
+ =?utf-8?B?bDJ6VDUyV0pkamhDTlgxRDNQblJMS3VvajJsNlovSXRqNVcwRWkxNFpsSDlQ?=
+ =?utf-8?B?VlZEMGVmNm9XRUdRUG82SnY2WGNEejBCbUQ4NGJCdnl3cUtqMlJ0YmhDb1JP?=
+ =?utf-8?B?ZG82L1Q5N1E0aW1BZVdiTW9DVk4xcVNhaElCeVVyMFBkcVJvQ3IyREZqWjlY?=
+ =?utf-8?B?VU1YaWdjc2VFMUx4Wm5Fa1pEZWR5MEFVS05Sckpmc01xaDIxSWh0UTRmKzEv?=
+ =?utf-8?B?T2h2RGlzcnlaK3lMVXl3VkZSWWJEdG9nNFVaVWEyRTM3WDg1VWFVbG5oNXZ5?=
+ =?utf-8?B?RWlaZTVNa2tMWUV0bUNMT2hITW56Rm81bmxLSEk5Sm13ZldwZldsZ08xZ2Na?=
+ =?utf-8?B?eEhyb2hwVE1mUXE2UllaUXNML2RVSDJYblEyZ3JlUy9KbzVZS0tDRUxPVkMz?=
+ =?utf-8?B?aVJGSVBpelN6ZHBvK2xCeFlpd3cxU0hJU1FTekZSSlpDVDQzTitVMjR3aHNw?=
+ =?utf-8?B?VVVJbGlHaDRIc00zajlPQTc3M29nREpQRTUvZ3BsbXlCY0pFakJYaWdqckpF?=
+ =?utf-8?B?YVNHdFBZdlRBc2d1RmtwcmJEbzlueEtUT3BMZDQwMXc0MzZ3ZFg0VGRObFpO?=
+ =?utf-8?B?eEVLTlNnUVVrb3pUclVGOERWcHJiRHJBVWtQMHpDcjZsOU9XYkJEdzFCQmJw?=
+ =?utf-8?B?VU12L1pFWXl1NW5lbFdZdVRGZ0VHOEpnYVJucGNDSksxNCtkejVFVmc2Rmh4?=
+ =?utf-8?B?c2wzSVVpUlRrbk00U05vSXptRTVVVEdFa0dtVDhoci9JWE9nc2hYSU9jeXgr?=
+ =?utf-8?B?aC9uNnM2cjRJTUc5N0pQUTAxWkhqM2VEQVFIMVZWV0ZjaGtZWkM1VkszZXZp?=
+ =?utf-8?B?cUY5dllPZFY1eFlCRXZ1RXN1aGVUeDduQ3NpOGRKQ0NkU1hXczh2ejdpN05P?=
+ =?utf-8?B?S2htM3M3bmJNQjhnOVpwRjhRZ0tBUnFGaWhZdnU3MWwySThDY2hNeWpIeGtz?=
+ =?utf-8?B?eVQ4NjlYT0FhWnpxTUE2RU42VlBvQVZmcXhFdWJ0VEFrRGVRWHREWE1mbUJk?=
+ =?utf-8?B?NjA4S0xDOFh3dFFuS0krcGFUd2I4RHZtb1lhRy92TnV1djVGTWFxOGFzaUg3?=
+ =?utf-8?B?UGtPa0dIZWx6R0l0NzZrK2dXSXpwNkhOMENEUUJ6dUpoeFdhSFRNRnlTYytJ?=
+ =?utf-8?B?d1UrcnMyS294LzBqMHhaVlhxU2tNWFN4YjYvalYrdURKWUZXaTlBb3ZBQjZC?=
+ =?utf-8?B?c2dlU0wzWlhpZDRnS0tIUm5ESndqMmxoMnJBek1ZRW1vTjhlLzRGNTBvUnVx?=
+ =?utf-8?B?dnBRa0J6NkFNL1RaeC9kamJyUk5NdWNrUnN1RmM5RTZjbk5OOW1JeitYS1lz?=
+ =?utf-8?Q?drX3AG5WXeH6+9aF9U7KcMR8B19NoivcE1qP5+L?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZkJBVFVvODR0cDVEYVNOVmZvTkRlSHhpYmFQZEdFTXlUZ3htWHUvQmNRQVpU?=
+ =?utf-8?B?VE1BcFNMT0hQOG9MOFpveEwrZ3E3RG5BMkFTVVE4ZzlmdTdndGRKemQzL2Jy?=
+ =?utf-8?B?OWU2UWZ2R0s5T1B4NWRzKzRRaVNWZXVGSURvcUJva0lHci9zbkFvVUhRVHY5?=
+ =?utf-8?B?cGlHNWgxWm1xeXlTYlQ0R0RDMk1abTZIWU5NZ2R3L3dPZjdkMUI5R0tGV0FB?=
+ =?utf-8?B?czRkbVRBdm8zZ0xaL1JXMHJ2QmVvREZGK0VPRVpJbng3SWV4YkFUT1crRlpV?=
+ =?utf-8?B?RTQ3L0h4WU92WEZCTjVMNlRLblMzS0EyZjY0NXIzcTNLbkZyTjJ6eTV1NnVx?=
+ =?utf-8?B?RWtPbkVqeVNnZTdMUE9MK2hudFBrSjlRT0pkTDl3cTF5TlAybkQyQXpQYU15?=
+ =?utf-8?B?em8rN05oaGpOZlduR3JuOWN6TWZIUytBRnZYSm1WWFV2OGZwSWh3dXNXMFcy?=
+ =?utf-8?B?VWpTYmVvZWYzMkdIbG9Qam5IU1kxR09LUXRDZi9CUUVtWjFVV3plL3lHZ2Jt?=
+ =?utf-8?B?bG1NQVNjNzBLQTlZWk9aV09NbUxUYW1rOVMzVVd5NjBhdUFBazNxcnpidzBw?=
+ =?utf-8?B?MDR0cjd5L3BseVpzR3l2dkhGWUVGaTRaY2Noc0RYT2UwSnVpWFk4cFZqWGR3?=
+ =?utf-8?B?M1JPWlM5RmdrYVdGazJaVmdXUlNYWklvbDdDc1YyMUtaMzJ2VEdySUtBb1JD?=
+ =?utf-8?B?Yno5Mkc4N0k3dG44cEFGNUhzYm8zU21wRklvNG0vN2Z4MnVrYUZpekR5akJS?=
+ =?utf-8?B?NDg2cTJDSjRLTEd3WHd4a1lmazRFTndVcHkvT2d1LzJEakxlRXk3QndITGYw?=
+ =?utf-8?B?VWczcEYzY0xJMDVkNmgwRitwUCs3WWsraG0rOGo0RW14akhyODJNcGQvby9h?=
+ =?utf-8?B?enpFTVRveWkwTjA2bDA3OGRUQ2Iwa0habUh4aHJFNHRLYWMyU0hIZW8rcWVF?=
+ =?utf-8?B?RnUxWHcyN2lKekZPTUx5bmExRHlwdFRLZlFWQmUydGpBUDRjcXdmTVBUU1g5?=
+ =?utf-8?B?eVhRcGgrU0ZjbUJZaWw1VDhHcWRpb2o2UnlDWFhISEJCaFV2SXhlQVNPSzVU?=
+ =?utf-8?B?cHg3L3N4OVlHbi9HMFZEWUVUS29KSjV6VWljanpnZ3ZPMWVTQ0J4SnRMZDlm?=
+ =?utf-8?B?VWVURWl6eFRpcStYMW0wMkZMd1A4akNvS29BYjJSek9vdmpOV1NGRmtWdkhZ?=
+ =?utf-8?B?dWNocmFkLzB3VVdwcUVBdWhXV0NVYUlBcmdQdDZSelk1TXN5di9ERzBMRm5S?=
+ =?utf-8?B?M3lFbVJmWDNORnpSSHhkdG5FTkpmWFEyaFZYUkE5T3hvV0JvaW5Pbnk0UFRU?=
+ =?utf-8?B?YXNWdnhiTE00dElPMXh2ajdTMkdNWksvSm8zSFlBYUU5YURvUGU4QUxmcTJ4?=
+ =?utf-8?B?ZzF5YStrUG1GT1VmaUlnUG1pbWxnaGRGNFhFOVhhU1VRcm4zN1d4YnhZb01N?=
+ =?utf-8?B?eVloZHVFUmJmbmIreHFoSGV5aUZyUUVMVVVxdWd6MTc3c1ZjMG9SNDlEanlv?=
+ =?utf-8?B?dDh4TCtmUllHbjhscG5LYVpoaUhBVzVaUm5KSnNJc25tTEhodmJmYUNXcWFQ?=
+ =?utf-8?B?akxoVisvWFVzdURWQWNxTVJuZVQyQk9saVNWN3ptMExrenpIWitRalhic1d6?=
+ =?utf-8?B?RDhDREhjVmJTUEo0TmlqZDhqc1VwZWxseTViVm5OUlZkeUJZWWdaN1RYMzVa?=
+ =?utf-8?B?MjEyTHErR1E2Mi9QVXFzSUl6SmYrbm5ubkQrS0J4Z1czbnhINGdWMkxZNld4?=
+ =?utf-8?B?U3VjVlkxVTVtRVdmVkx3MXB6V2ZoN0IxUEllbHZZbTVCeDQ1UFpDdU4wQmRq?=
+ =?utf-8?B?YVAzNjg2cFYrdkNaWjRLYVEra2l4M0Y1UDRuV3hkTkx2Mzk3bncreW9rNDZD?=
+ =?utf-8?B?dW5xci9pRHMrRjZ1QWM4MHJCd3RBNXdoLzJWVjFxZHlhQW5oS0xyRmVTOWFu?=
+ =?utf-8?B?a2h0Q3RHWGJ6eVFiRUwxWHQzS2hMMTQwbjhpdHZ4Z0VpRTBjU1BjOGpBYThF?=
+ =?utf-8?B?QmhBMFh6ZTFCc2ltSlBsNUxOYTFjU0RDS0x0Y3IvSUs3Sy9nZ0F1T2dFeVA3?=
+ =?utf-8?B?VHJEWHJZejR3blFjYXExZVFvZm9tVFFWRmM2bzRqSlBUMWwwZHJOM3dPOGpH?=
+ =?utf-8?Q?b1o0ARdDNi0mhevRB2gQ+M2bK?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f69c4f8a-77ac-4bd0-113f-08dcf9fc98c1
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 22:37:27.1423
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yYAOwta9TStHz5nCMMe5uUJWwlu8UelPQK0x+AppcZ5N8cgpeoflCJ6wdCyqF4MAlPYkR7UOEDwht0P/fmdzdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6188
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 31, 2024 at 11:54=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Wed, Oct 30, 2024 at 02:28:36PM -0700, Abhishek Pandit-Subedi wrote:
-> > Add support for entering and exiting displayport alt-mode on systems
-> > using AP driven alt-mode.
-> >
-> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > ---
-> >
-> > Changes in v2:
-> > - Refactored displayport into cros_typec_altmode.c to extract common
-> >   implementation between altmodes
->
-> Thanks!
->
-> >
-> >  MAINTAINERS                                  |   3 +
-> >  drivers/platform/chrome/Makefile             |   3 +-
-> >  drivers/platform/chrome/cros_ec_typec.c      |  13 +-
-> >  drivers/platform/chrome/cros_ec_typec.h      |   1 +
-> >  drivers/platform/chrome/cros_typec_altmode.c | 277 +++++++++++++++++++
-> >  drivers/platform/chrome/cros_typec_altmode.h |  34 +++
-> >  6 files changed, 329 insertions(+), 2 deletions(-)
-> >  create mode 100644 drivers/platform/chrome/cros_typec_altmode.c
-> >  create mode 100644 drivers/platform/chrome/cros_typec_altmode.h
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index e9659a5a7fb3..de99bcbda7d4 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -5369,9 +5369,12 @@ F:     include/linux/platform_data/cros_usbpd_no=
-tify.h
-> >
-> >  CHROMEOS EC USB TYPE-C DRIVER
-> >  M:   Prashant Malani <pmalani@chromium.org>
-> > +M:   Benson Leung <bleung@chromium.org>
-> > +M:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> >  L:   chrome-platform@lists.linux.dev
-> >  S:   Maintained
-> >  F:   drivers/platform/chrome/cros_ec_typec.*
-> > +F:   drivers/platform/chrome/cros_typec_altmode.*
-> >  F:   drivers/platform/chrome/cros_typec_switch.c
-> >  F:   drivers/platform/chrome/cros_typec_vdm.*
-> >
-> > diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome=
-/Makefile
-> > index 2dcc6ccc2302..8b007404c024 100644
-> > --- a/drivers/platform/chrome/Makefile
-> > +++ b/drivers/platform/chrome/Makefile
-> > @@ -17,8 +17,9 @@ obj-$(CONFIG_CROS_EC_RPMSG)         +=3D cros_ec_rpms=
-g.o
-> >  obj-$(CONFIG_CROS_EC_SPI)            +=3D cros_ec_spi.o
-> >  obj-$(CONFIG_CROS_EC_UART)           +=3D cros_ec_uart.o
-> >  cros_ec_lpcs-objs                    :=3D cros_ec_lpc.o cros_ec_lpc_me=
-c.o
-> > -cros-ec-typec-objs                   :=3D cros_ec_typec.o cros_typec_v=
-dm.o
-> > +cros-ec-typec-objs                   :=3D cros_ec_typec.o cros_typec_v=
-dm.o cros_typec_altmode.o
-> >  obj-$(CONFIG_CROS_EC_TYPEC)          +=3D cros-ec-typec.o
-> > +
-> >  obj-$(CONFIG_CROS_EC_LPC)            +=3D cros_ec_lpcs.o
-> >  obj-$(CONFIG_CROS_EC_PROTO)          +=3D cros_ec_proto.o cros_ec_trac=
-e.o
-> >  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT) +=3D cros_kbd_led_backlight.o
-> > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform=
-/chrome/cros_ec_typec.c
-> > index 0c8db11bd8a4..7997e7136c4c 100644
-> > --- a/drivers/platform/chrome/cros_ec_typec.c
-> > +++ b/drivers/platform/chrome/cros_ec_typec.c
-> > @@ -18,6 +18,7 @@
-> >
-> >  #include "cros_ec_typec.h"
-> >  #include "cros_typec_vdm.h"
-> > +#include "cros_typec_altmode.h"
-> >
-> >  #define DRV_NAME "cros-ec-typec"
-> >
-> > @@ -293,12 +294,16 @@ static int cros_typec_register_port_altmodes(stru=
-ct cros_typec_data *typec,
-> >       desc.svid =3D USB_TYPEC_DP_SID;
-> >       desc.mode =3D USB_TYPEC_DP_MODE;
-> >       desc.vdo =3D DP_PORT_VDO;
-> > -     amode =3D typec_port_register_altmode(port->port, &desc);
-> > +     amode =3D cros_typec_register_displayport(port, &desc,
-> > +                                             typec->ap_driven_altmode)=
-;
-> >       if (IS_ERR(amode))
-> >               return PTR_ERR(amode);
-> >       port->port_altmode[CROS_EC_ALTMODE_DP] =3D amode;
-> > +
-> > +#if !IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
-> >       typec_altmode_set_drvdata(amode, port);
-> >       amode->ops =3D &port_amode_ops;
-> > +#endif
-> >
-> >       /*
-> >        * Register TBT compatibility alt mode. The EC will not enter the=
- mode
-> > @@ -575,6 +580,10 @@ static int cros_typec_enable_dp(struct cros_typec_=
-data *typec,
-> >       if (!ret)
-> >               ret =3D typec_mux_set(port->mux, &port->state);
-> >
-> > +     if (!ret)
-> > +             cros_typec_displayport_status_update(port->state.alt,
-> > +                                                  port->state.data);
-> > +
-> >       return ret;
-> >  }
-> >
-> > @@ -1254,6 +1263,8 @@ static int cros_typec_probe(struct platform_devic=
-e *pdev)
-> >
-> >       typec->typec_cmd_supported =3D cros_ec_check_features(ec_dev, EC_=
-FEATURE_TYPEC_CMD);
-> >       typec->needs_mux_ack =3D cros_ec_check_features(ec_dev, EC_FEATUR=
-E_TYPEC_MUX_REQUIRE_AP_ACK);
-> > +     typec->ap_driven_altmode =3D cros_ec_check_features(
-> > +             ec_dev, EC_FEATURE_TYPEC_REQUIRE_AP_MODE_ENTRY);
-> >
-> >       ret =3D cros_ec_cmd(typec->ec, 0, EC_CMD_USB_PD_PORTS, NULL, 0,
-> >                         &resp, sizeof(resp));
-> > diff --git a/drivers/platform/chrome/cros_ec_typec.h b/drivers/platform=
-/chrome/cros_ec_typec.h
-> > index deda180a646f..9fd5342bb0ad 100644
-> > --- a/drivers/platform/chrome/cros_ec_typec.h
-> > +++ b/drivers/platform/chrome/cros_ec_typec.h
-> > @@ -39,6 +39,7 @@ struct cros_typec_data {
-> >       struct work_struct port_work;
-> >       bool typec_cmd_supported;
-> >       bool needs_mux_ack;
-> > +     bool ap_driven_altmode;
-> >  };
-> >
-> >  /* Per port data. */
-> > diff --git a/drivers/platform/chrome/cros_typec_altmode.c b/drivers/pla=
-tform/chrome/cros_typec_altmode.c
-> > new file mode 100644
-> > index 000000000000..af2f077674f1
-> > --- /dev/null
-> > +++ b/drivers/platform/chrome/cros_typec_altmode.c
-> > @@ -0,0 +1,277 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Alt-mode implementation on ChromeOS EC.
-> > + *
-> > + * Copyright 2024 Google LLC
-> > + * Author: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > + */
-> > +#include "cros_ec_typec.h"
-> > +
-> > +#include <linux/usb/typec_dp.h>
-> > +#include <linux/usb/pd_vdo.h>
-> > +
-> > +#include "cros_typec_altmode.h"
-> > +
-> > +struct cros_typec_dp_data {
-> > +     struct typec_displayport_data data;
-> > +
-> > +     bool configured;
-> > +     bool pending_status_update;
-> > +};
-> > +
-> > +struct cros_typec_altmode_data {
-> > +     struct work_struct work;
-> > +     struct cros_typec_port *port;
-> > +     struct typec_altmode *alt;
-> > +     bool ap_mode_entry;
-> > +
-> > +     u32 header;
-> > +     u32 *vdo_data;
-> > +     u8 vdo_size;
-> > +
-> > +     u16 sid;
-> > +     u8 mode;
-> > +
-> > +     union am_specific {
-> > +             struct cros_typec_dp_data dp;
-> > +     } am_data;
->
-> Can this be done other way around?
->
-> struct cros_typec_dp_altmode_data {
->   struct cros_typec_altmode_data base;
->   struct cros_typec_dp_data dp;
-> };
 
-Ack -- expect in the next patch series.
+> However, I want to provide a counterpoint to this "_ANY_ kernel
+> component" dependency on being able to run a TDX guest. TDX Connect like
+> SEV-TIO offers device-security provisioning flows that are expected to
+> run before any confidential guest is being launched, and theoretically
+> may offer services independent of *ever* launching a guest (e.g. PCIe
+> link encrcyption without device assignment). So longer term, seamcalls
+> without kvm-intel.ko flexibility is useful, but in the near term a
+> coarse dependency on kvm-intel.ko is workable.
 
->
-> > +};
-> > +
-> > +static void cros_typec_altmode_work(struct work_struct *work)
-> > +{
-> > +     struct cros_typec_altmode_data *data =3D
-> > +             container_of(work, struct cros_typec_altmode_data, work);
-> > +
-> > +     if (typec_altmode_vdm(data->alt, data->header, data->vdo_data,
-> > +                           data->vdo_size))
-> > +             dev_err(&data->alt->dev, "VDM 0x%x failed", data->header)=
-;
-> > +
-> > +     data->header =3D 0;
-> > +     data->vdo_data =3D NULL;
-> > +     data->vdo_size =3D 0;
-> > +}
-> > +
-> > +static int cros_typec_altmode_enter(struct typec_altmode *alt, u32 *vd=
-o)
-> > +{
-> > +     struct cros_typec_altmode_data *data =3D typec_altmode_get_drvdat=
-a(alt);
-> > +     struct ec_params_typec_control req =3D {
-> > +             .port =3D data->port->port_num,
-> > +             .command =3D TYPEC_CONTROL_COMMAND_ENTER_MODE,
-> > +     };
-> > +     int svdm_version;
-> > +     int ret;
-> > +
-> > +     if (!data->ap_mode_entry) {
-> > +             const struct typec_altmode *partner =3D
-> > +                     typec_altmode_get_partner(alt);
-> > +             dev_warn(&partner->dev,
-> > +                      "EC does not support ap driven mode entry\n");
-> > +             return -EOPNOTSUPP;
-> > +     }
-> > +
-> > +     if (data->sid =3D=3D USB_TYPEC_DP_SID)
-> > +             req.mode_to_enter =3D CROS_EC_ALTMODE_DP;
-> > +     else
-> > +             return -EOPNOTSUPP;
-> > +
-> > +     ret =3D cros_ec_cmd(data->port->typec_data->ec, 0, EC_CMD_TYPEC_C=
-ONTROL,
-> > +                       &req, sizeof(req), NULL, 0);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     svdm_version =3D typec_altmode_get_svdm_version(alt);
-> > +     if (svdm_version < 0)
-> > +             return svdm_version;
-> > +
-> > +     data->header =3D VDO(data->sid, 1, svdm_version, CMD_ENTER_MODE);
-> > +     data->header |=3D VDO_OPOS(data->mode);
-> > +     data->header |=3D VDO_CMDT(CMDT_RSP_ACK);
-> > +
-> > +     data->vdo_data =3D NULL;
-> > +     data->vdo_size =3D 1;
-> > +
-> > +     schedule_work(&data->work);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int cros_typec_altmode_exit(struct typec_altmode *alt)
-> > +{
-> > +     struct cros_typec_altmode_data *data =3D typec_altmode_get_drvdat=
-a(alt);
-> > +     struct ec_params_typec_control req =3D {
-> > +             .port =3D data->port->port_num,
-> > +             .command =3D TYPEC_CONTROL_COMMAND_EXIT_MODES,
-> > +     };
-> > +     int svdm_version;
-> > +     int ret;
-> > +
-> > +     if (!data->ap_mode_entry) {
-> > +             const struct typec_altmode *partner =3D
-> > +                     typec_altmode_get_partner(alt);
-> > +             dev_warn(&partner->dev,
-> > +                      "EC does not support ap driven mode entry\n");
-> > +             return -EOPNOTSUPP;
-> > +     }
-> > +
-> > +     ret =3D cros_ec_cmd(data->port->typec_data->ec, 0, EC_CMD_TYPEC_C=
-ONTROL,
-> > +                       &req, sizeof(req), NULL, 0);
-> > +
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     svdm_version =3D typec_altmode_get_svdm_version(alt);
-> > +     if (svdm_version < 0)
-> > +             return svdm_version;
-> > +
-> > +     data->header =3D VDO(data->sid, 1, svdm_version, CMD_EXIT_MODE);
-> > +     data->header |=3D VDO_OPOS(data->mode);
-> > +     data->header |=3D VDO_CMDT(CMDT_RSP_ACK);
-> > +
-> > +     data->vdo_data =3D NULL;
-> > +     data->vdo_size =3D 1;
-> > +
-> > +     schedule_work(&data->work);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int cros_typec_displayport_vdm(struct typec_altmode *alt, u32 h=
-eader,
-> > +                                   const u32 *data, int count)
-> > +{
-> > +     struct cros_typec_altmode_data *adata =3D typec_altmode_get_drvda=
-ta(alt);
-> > +
-> > +     int cmd_type =3D PD_VDO_CMDT(header);
-> > +     int cmd =3D PD_VDO_CMD(header);
-> > +     int svdm_version;
-> > +
-> > +     if (!adata->ap_mode_entry) {
-> > +             const struct typec_altmode *partner =3D
-> > +                     typec_altmode_get_partner(alt);
-> > +             dev_warn(&partner->dev,
-> > +                      "EC does not support ap driven mode entry\n");
-> > +             return -EOPNOTSUPP;
-> > +     }
-> > +
-> > +     svdm_version =3D typec_altmode_get_svdm_version(alt);
-> > +     if (svdm_version < 0)
-> > +             return svdm_version;
-> > +
-> > +     switch (cmd_type) {
-> > +     case CMDT_INIT:
-> > +             if (PD_VDO_SVDM_VER(header) < svdm_version) {
-> > +                     typec_partner_set_svdm_version(adata->port->partn=
-er,
-> > +                                                    PD_VDO_SVDM_VER(he=
-ader));
-> > +                     svdm_version =3D PD_VDO_SVDM_VER(header);
-> > +             }
-> > +
-> > +             adata->header =3D VDO(adata->sid, 1, svdm_version, cmd);
-> > +             adata->header |=3D VDO_OPOS(adata->mode);
-> > +
-> > +             /*
-> > +              * DP_CMD_CONFIGURE: We can't actually do anything with t=
-he
-> > +              * provided VDO yet so just send back an ACK.
-> > +              *
-> > +              * DP_CMD_STATUS_UPDATE: We wait for Mux changes to send
-> > +              * DPStatus Acks.
-> > +              */
-> > +             switch (cmd) {
-> > +             case DP_CMD_CONFIGURE:
-> > +                     adata->am_data.dp.data.conf =3D *data;
-> > +                     adata->header |=3D VDO_CMDT(CMDT_RSP_ACK);
-> > +                     adata->am_data.dp.configured =3D true;
-> > +                     schedule_work(&adata->work);
-> > +                     break;
-> > +             case DP_CMD_STATUS_UPDATE:
-> > +                     adata->am_data.dp.pending_status_update =3D true;
-> > +                     break;
-> > +             default:
-> > +                     adata->header |=3D VDO_CMDT(CMDT_RSP_ACK);
-> > +                     schedule_work(&adata->work);
-> > +                     break;
-> > +             }
-> > +
-> > +             break;
-> > +     default:
-> > +             break;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int cros_typec_altmode_vdm(struct typec_altmode *alt, u32 heade=
-r,
-> > +                                   const u32 *data, int count)
-> > +{
-> > +     struct cros_typec_altmode_data *adata =3D typec_altmode_get_drvda=
-ta(alt);
-> > +
-> > +     if (adata->sid =3D=3D USB_TYPEC_DP_SID)
-> > +             return cros_typec_displayport_vdm(alt, header, data, coun=
-t);
-> > +
-> > +     return -EINVAL;
-> > +}
-> > +
-> > +static const struct typec_altmode_ops cros_typec_altmode_ops =3D {
-> > +     .enter =3D cros_typec_altmode_enter,
-> > +     .exit =3D cros_typec_altmode_exit,
-> > +     .vdm =3D cros_typec_altmode_vdm,
-> > +};
-> > +
-> > +#if IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
-> > +int cros_typec_displayport_status_update(struct typec_altmode *altmode=
-,
-> > +                                      struct typec_displayport_data *d=
-ata)
-> > +{
-> > +     struct cros_typec_altmode_data *adata =3D
-> > +             typec_altmode_get_drvdata(altmode);
-> > +
-> > +     if (!adata->am_data.dp.pending_status_update) {
-> > +             dev_dbg(&altmode->dev,
-> > +                     "Got DPStatus without a pending request");
-> > +             return 0;
-> > +     }
-> > +
-> > +     if (adata->am_data.dp.configured && adata->am_data.dp.data.conf !=
-=3D data->conf)
-> > +             dev_dbg(&altmode->dev,
-> > +                     "DP Conf doesn't match. Requested 0x%04x, Actual =
-0x%04x",
-> > +                     adata->am_data.dp.data.conf, data->conf);
-> > +
-> > +     adata->am_data.dp.data =3D *data;
-> > +     adata->am_data.dp.pending_status_update =3D false;
-> > +     adata->header |=3D VDO_CMDT(CMDT_RSP_ACK);
-> > +     adata->vdo_data =3D &adata->am_data.dp.data.status;
-> > +     adata->vdo_size =3D 2;
-> > +
-> > +     schedule_work(&adata->work);
-> > +     return 0;
-> > +}
-> > +
-> > +struct typec_altmode *
-> > +cros_typec_register_displayport(struct cros_typec_port *port,
-> > +                             struct typec_altmode_desc *desc,
-> > +                             bool ap_mode_entry)
-> > +{
-> > +     struct typec_altmode *alt;
-> > +     struct cros_typec_altmode_data *data;
-> > +
-> > +     alt =3D typec_port_register_altmode(port->port, desc);
-> > +     if (IS_ERR(alt))
-> > +             return alt;
-> > +
-> > +     data =3D devm_kzalloc(&alt->dev, sizeof(*data), GFP_KERNEL);
-> > +     if (!data) {
-> > +             typec_unregister_altmode(alt);
-> > +             return ERR_PTR(-ENOMEM);
-> > +     }
-> > +
-> > +     INIT_WORK(&data->work, cros_typec_altmode_work);
-> > +     data->alt =3D alt;
-> > +     data->port =3D port;
-> > +     data->ap_mode_entry =3D ap_mode_entry;
-> > +     data->sid =3D USB_TYPEC_DP_SID;
-> > +     data->mode =3D USB_TYPEC_DP_MODE;
-> > +
-> > +     data->am_data.dp.configured =3D false;
-> > +     typec_altmode_set_ops(alt, &cros_typec_altmode_ops);
-> > +     typec_altmode_set_drvdata(alt, data);
-> > +
-> > +     return alt;
-> > +}
-> > +#endif
-> > diff --git a/drivers/platform/chrome/cros_typec_altmode.h b/drivers/pla=
-tform/chrome/cros_typec_altmode.h
-> > new file mode 100644
-> > index 000000000000..c6f8fb02c99c
-> > --- /dev/null
-> > +++ b/drivers/platform/chrome/cros_typec_altmode.h
-> > @@ -0,0 +1,34 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +
-> > +#ifndef __CROS_TYPEC_ALTMODE_H__
-> > +#define __CROS_TYPEC_ALTMODE_H__
-> > +
-> > +struct cros_typec_port;
-> > +struct typec_altmode;
-> > +struct typec_altmode_desc;
-> > +struct typec_displayport_data;
-> > +
-> > +#if IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
-> > +struct typec_altmode *
-> > +cros_typec_register_displayport(struct cros_typec_port *port,
-> > +                             struct typec_altmode_desc *desc,
-> > +                             bool ap_mode_entry);
-> > +
-> > +int cros_typec_displayport_status_update(struct typec_altmode *altmode=
-,
-> > +                                      struct typec_displayport_data *d=
-ata);
-> > +#else
-> > +static inline struct typec_altmode *
-> > +cros_typec_register_displayport(struct cros_typec_port *port,
-> > +                             struct typec_altmode_desc *desc,
-> > +                             bool ap_mode_entry)
-> > +{
-> > +     return typec_port_register_altmode(port->port, desc);
-> > +}
-> > +
-> > +static inline int cros_typec_displayport_status_update(struct typec_al=
-tmode *altmode,
-> > +                                      struct typec_displayport_data *d=
-ata)
-> > +{
-> > +     return 0;
-> > +}
-> > +#endif
-> > +#endif /* __CROS_TYPEC_ALTMODE_H__ */
-> > --
-> > 2.47.0.163.g1226f6d8fa-goog
-> >
->
-> --
-> With best wishes
-> Dmitry
+Thanks for the info.
+
+So it seems we should keep INTEL_TDX_HOST but add a new KVM_INTEL_TDX:
+
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index f09f13c01c6b..bcf4a1243013 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -126,6 +126,16 @@ config X86_SGX_KVM
+
+           If unsure, say N.
+
++config KVM_INTEL_TDX
++       bool "Intel Trust Domain Extensions (TDX) support"
++       default y
++       depends on INTEL_TDX_HOST
++       help
++         Provides support for launching Intel Trust Domain Extensions
++         (TDX) confidential VMs on Intel processors.
++
++         If unsure, say N.
++
+  config KVM_AMD
+         tristate "KVM for AMD processors support"
+         depends on KVM && (CPU_SUP_AMD || CPU_SUP_HYGON)
+diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+index fec803aff7ad..a5d362c7b504 100644
+--- a/arch/x86/kvm/Makefile
++++ b/arch/x86/kvm/Makefile
+@@ -20,7 +20,7 @@ kvm-intel-y           += vmx/vmx.o vmx/vmenter.o 
+vmx/pmu_intel.o vmx/vmcs12.o \
+
+  kvm-intel-$(CONFIG_X86_SGX_KVM)        += vmx/sgx.o
+  kvm-intel-$(CONFIG_KVM_HYPERV) += vmx/hyperv.o vmx/hyperv_evmcs.o
+-kvm-intel-$(CONFIG_INTEL_TDX_HOST)     += vmx/tdx.o
++kvm-intel-$(CONFIG_KVM_INTEL_TDX)      += vmx/tdx.o
+
+  kvm-amd-y              += svm/svm.o svm/vmenter.o svm/pmu.o 
+svm/nested.o svm/avic.o
+
+One thing is currently INTEL_TDX_HOST depends on KVM_INTEL (with the 
+reason that for now only KVM will use TDX), we can either remove this 
+dependency together with the above diff, or we can have another patch in 
+the future to remove that when TDX Connect comes near.
+
+I think we can leave this part to the future.
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 007bab9f2a0e..acc5a14dfbbc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1974,7 +1974,6 @@ config INTEL_TDX_HOST
+         bool "Intel Trust Domain Extensions (TDX) host support"
+         depends on CPU_SUP_INTEL
+         depends on X86_64
+-       depends on KVM_INTEL
+         depends on X86_X2APIC
+         select ARCH_KEEP_MEMBLOCK
+         depends on CONTIG_ALLOC
+
 
