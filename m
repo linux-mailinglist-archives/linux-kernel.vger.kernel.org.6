@@ -1,205 +1,130 @@
-Return-Path: <linux-kernel+bounces-390110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7568F9B75A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:47:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73759B75A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:47:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04BBE1F26072
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149C51C2187A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5168216F8E7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978A4178370;
 	Thu, 31 Oct 2024 07:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="p/9aLeKN"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HET2Wo/Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266F814D6E1;
-	Thu, 31 Oct 2024 07:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36D21411C8;
+	Thu, 31 Oct 2024 07:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730360794; cv=none; b=iBRo/Z5C4iWWx1wBsUObJHJj4A7OADRic2RI3JF55v8Vcnelo/fNn766jqADBYKcOESUL6DrBrAetRti416IXd5cozz4/bPRpUIvDCv8vGqzlubOG0yq6PAqs7Fa+WnfjHNWZDg1KT57D2ggMLeGkyQnmuYQrOmB8n0x7l/FJnY=
+	t=1730360795; cv=none; b=LTzYkXkxiWx+Vwcua0DBwROErW6RJmphgQRk69pgV2AKR1Tx549X6wIgOrLcSV2k5uJ1wGnoi0XFJgULn00pGJ6WJ4RD/0ZXecfbf5IZTg1Y8PFIJ89BSK4GJ2qa5K62Fe5tnw0faL5K+OonJWQ7Rkzop9csifLcW8hNMpdesUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730360794; c=relaxed/simple;
-	bh=33phXrmK8nmqMHKYFyD3A7lDPDZpmvZXuiUrbzomsjs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VYY62HABN7zDxMfKgvqrOVbAssxSsxChrux8PqPdZYJq2+4llW3JA0OTTv3X2jUshcJdP/skSSXEyQeGscd3MlGbKl97+gCKpcNdbCzpoK0gsa/ijDW1W9Aoi1Ue0BDfOy6fjGvygN7BKNjT3qUU1jIPIqTVuiHxyP2IxHl6hVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=p/9aLeKN; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730360783; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=Yi5S3FvCJe7m8m05OvpuB+dWdFv2eUKXm00/bjW1XKs=;
-	b=p/9aLeKNdV7LAhkpLU0Yi0xqx/6MIYfXioKHCjax2wPa3KwsB5tWyUcjtW9Xu7oHJtba19gKZmq4Fnhrrr2vsBWMbXK0Fc9sKt1PCvg/NWP+jgQYkrQb06dkPb/btpTeRmSt2OHeFVUv4c2Y84ZmSwlpVnLfXn5Fe0/S1+cw53Q=
-Received: from localhost(mailfrom:guanjun@linux.alibaba.com fp:SMTPD_---0WIHewz0_1730360781 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 31 Oct 2024 15:46:22 +0800
-From: 'Guanjun' <guanjun@linux.alibaba.com>
-To: corbet@lwn.net,
-	axboe@kernel.dk,
-	mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	vgoyal@redhat.com,
-	stefanha@redhat.com,
-	miklos@szeredi.hu,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	akpm@linux-foundation.org,
-	paulmck@kernel.org,
-	thuth@redhat.com,
-	rostedt@goodmis.org,
-	bp@alien8.de,
-	xiongwei.song@windriver.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Cc: guanjun@linux.alibaba.com
-Subject: [PATCH RFC v1 2/2] genirq/cpuhotplug: Handle managed IRQs when the last CPU hotplug out in the affinity
-Date: Thu, 31 Oct 2024 15:46:18 +0800
-Message-ID: <20241031074618.3585491-3-guanjun@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
-References: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
+	s=arc-20240116; t=1730360795; c=relaxed/simple;
+	bh=5AqQVqv7cgLso2HdKLdGQKCHtmDv0AGSPgURJ2Jfg1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHPYmAQXjhoyi65CEczFYkd7AutMr1jvCHdxru7zUH4bwVtWFa5aS9Xbz3VTh8vbRFAWD/rFjBBRGF3ZMTqOizGMuD/l8x6fBKWY+Cc6mopcBX9oc4db+h189vMKie8MUAp1jBhhmQ635b5WyJSu2P+kZxWHSPVVFmrACVOMaak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HET2Wo/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D52BC4CED3;
+	Thu, 31 Oct 2024 07:46:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730360794;
+	bh=5AqQVqv7cgLso2HdKLdGQKCHtmDv0AGSPgURJ2Jfg1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HET2Wo/YxxVBW6EePmT6fedO9UFXcAxmiSSpwHlxZymOhlqDpCE1L2GjyDiDxbPzN
+	 R73fq9sjS7xM5ReBmdnyUVZGxEe3xSOCMERv4kmXvD6Nr6XUMKr7LeWT4ZZSVgamvg
+	 /ZvdCKsYljXR7htrFv7vpdA+lcDJTikN9Gsb2liYGF/m9/ypln7425q8GD2armUQD9
+	 QrvwXahuLe12l2H92j9c8CXsxJUBlQS7JRia8wY3UmxQvQev7LV5Z0gXuJbkyls9M+
+	 8ZbT6Wb1g6RQ6Eo1bWzrr0g0a8zPF2ULPWMrCkJWHUkcXUF0u7w2KpXxhc8M5ShJVn
+	 W5FJMcMEmgx4w==
+Date: Thu, 31 Oct 2024 08:46:30 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v5 01/10] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+Message-ID: <bt7kgzreebwyeyfsii2q6fci34vfqst6hrxk6anp6tzthlmc5o@t2ifzexazta7>
+References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241030110120.332802-2-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241030110120.332802-2-claudiu.beznea.uj@bp.renesas.com>
 
-From: Guanjun <guanjun@linux.alibaba.com>
+On Wed, Oct 30, 2024 at 01:01:11PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
+> the tamper detector and a small general usage memory of 128B.
+> 
+> The VBATTB controller controls the clock for the RTC on the Renesas
+> RZ/G3S. The HW block diagram for the clock logic is as follows:
+> 
+>            +----------+ XC   `\
+> RTXIN  --->|          |----->| \       +----+  VBATTCLK
+>            | 32K clock|      |  |----->|gate|----------->
+>            | osc      | XBYP |  |      +----+
+> RTXOUT --->|          |----->| /
+>            +----------+      ,/
+> 
+> One could connect as input to this HW block either a crystal or
+> an external clock device. This is board specific.
+> 
+> After discussions w/ Stephen Boyd the clock tree associated with this
+> hardware block was exported in Linux as:
+> 
+> input-xtal
+>   xbyp
+>   xc
+>      mux
+>         vbattclk
+> 
+> where:
+> - input-xtal is the input clock (connected to RTXIN, RTXOUT pins)
+> - xc, xbyp are mux inputs
+> - mux is the internal mux
+> - vbattclk is the gate clock that feeds in the end the RTC
+> 
+> to allow selecting the input of the MUX though assigned-clock DT
+> properties, using the already existing clock drivers and avoid adding
+> other DT properties.
+> 
+> This allows select the input of the mux based on the type of the
+> connected input clock:
+> - if the 32768 crystal is connected as input for the VBATTB,
+>   the input of the mux should be xc
+> - if an external clock device is connected as input for the VBATTB the
+>   input of the mux should be xbyp
+> 
+> Add bindings for the VBATTB controller.
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v5:
+> - used spaces in the diagram from the patch description
+> - added "This is board specific" in the board description to emphasize
+>   the usage of the assigned-clocks in the example
+> - added default for quartz-load-femtofarads
+> - collected tags
 
-Once we limit the number of managed interrupts, if the last online CPU in
-the affinity goes offline, it will result in the interrupt becoming unavailable
-util one of the assigned CPUs comes online again. So prevent the last online
-CPU in the affinity from going offline, and return -EBUSY in this situation.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Guanjun <guanjun@linux.alibaba.com>
----
- .../admin-guide/kernel-parameters.txt         |  3 ++
- include/linux/irq.h                           |  2 +
- kernel/cpu.c                                  |  2 +-
- kernel/irq/cpuhotplug.c                       | 51 +++++++++++++++++++
- 4 files changed, 57 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ac80f35d04c9..173598cbf4a6 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3244,6 +3244,9 @@
- 			interrupts cannot be properly allocated where a large
- 			number of devices are present. The default number is 0,
- 			that means no limit to the number of managed irqs.
-+			Once we limit the number of managed interrupts, the last
-+			online CPU in the affinity goes offline will fail with
-+			the error code -EBUSY.
- 			Format: integer between 0 and num_possible_cpus() / num_possible_nodes()
- 			Default: 0
- 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index fa711f80957b..68ce05a74079 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -615,8 +615,10 @@ extern int irq_set_vcpu_affinity(unsigned int irq, void *vcpu_info);
- #if defined(CONFIG_SMP) && defined(CONFIG_GENERIC_IRQ_MIGRATION)
- extern void irq_migrate_all_off_this_cpu(void);
- extern int irq_affinity_online_cpu(unsigned int cpu);
-+extern int irq_affinity_offline_cpu(unsigned int cpu);
- #else
- # define irq_affinity_online_cpu	NULL
-+# define irq_affinity_offline_cpu	NULL
- #endif
- 
- #if defined(CONFIG_SMP) && defined(CONFIG_GENERIC_PENDING_IRQ)
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index c4aaf73dec9e..672d920970b2 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2219,7 +2219,7 @@ static struct cpuhp_step cpuhp_hp_states[] = {
- 	[CPUHP_AP_IRQ_AFFINITY_ONLINE] = {
- 		.name			= "irq/affinity:online",
- 		.startup.single		= irq_affinity_online_cpu,
--		.teardown.single	= NULL,
-+		.teardown.single	= irq_affinity_offline_cpu,
- 	},
- 	[CPUHP_AP_PERF_ONLINE] = {
- 		.name			= "perf:online",
-diff --git a/kernel/irq/cpuhotplug.c b/kernel/irq/cpuhotplug.c
-index 15a7654eff68..e6f068198e4a 100644
---- a/kernel/irq/cpuhotplug.c
-+++ b/kernel/irq/cpuhotplug.c
-@@ -232,6 +232,31 @@ static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
- 		irq_set_affinity_locked(data, affinity, false);
- }
- 
-+static int irq_check_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
-+{
-+	struct irq_data *data = irq_desc_get_irq_data(desc);
-+	const struct cpumask *affinity = irq_data_get_affinity_mask(data);
-+	unsigned int cur;
-+
-+	if (!irqd_affinity_is_managed(data) || !desc->action ||
-+	    !irq_data_get_irq_chip(data) || !cpumask_test_cpu(cpu, affinity))
-+		return 0;
-+
-+	for_each_cpu(cur, affinity)
-+		if (cur != cpu && cpumask_test_cpu(cur, cpu_online_mask))
-+			return 0;
-+
-+	/*
-+	 * If the onging offline CPU is the last one in the affinity,
-+	 * the managed interrupts will be unavailable until one of
-+	 * the assigned CPUs comes online. To prevent this unavailability,
-+	 * return -EBUSY directly in this case.
-+	 */
-+	pr_warn("Affinity %*pbl of managed IRQ%u contains only one CPU%u that online\n",
-+		cpumask_pr_args(affinity), data->irq, cpu);
-+	return -EBUSY;
-+}
-+
- /**
-  * irq_affinity_online_cpu - Restore affinity for managed interrupts
-  * @cpu:	Upcoming CPU for which interrupts should be restored
-@@ -252,3 +277,29 @@ int irq_affinity_online_cpu(unsigned int cpu)
- 
- 	return 0;
- }
-+
-+/**
-+ * irq_affinity_offline_cpu - Check affinity for managed interrupts
-+ * to prevent the unavailability caused by taking the last CPU in the
-+ * affinity offline.
-+ * @cpu:	Upcoming CPU for which interrupts should be checked
-+ */
-+int irq_affinity_offline_cpu(unsigned int cpu)
-+{
-+	struct irq_desc *desc;
-+	unsigned int irq;
-+	int ret = 0;
-+
-+	irq_lock_sparse();
-+	for_each_active_irq(irq) {
-+		desc = irq_to_desc(irq);
-+		raw_spin_lock_irq(&desc->lock);
-+		ret = irq_check_affinity_of_irq(desc, cpu);
-+		raw_spin_unlock_irq(&desc->lock);
-+		if (ret < 0)
-+			break;
-+	}
-+	irq_unlock_sparse();
-+
-+	return ret;
-+}
--- 
-2.43.5
+Best regards,
+Krzysztof
 
 
