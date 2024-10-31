@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-390219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB149B7726
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:14:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711269B7718
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:09:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B4F91F24E29
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350D0282210
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56C01946A0;
-	Thu, 31 Oct 2024 09:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825B3193427;
+	Thu, 31 Oct 2024 09:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="cTxG0950"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IyOmfLW1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D99193427;
-	Thu, 31 Oct 2024 09:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE4415D1;
+	Thu, 31 Oct 2024 09:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366063; cv=none; b=HKuJPylaaUfLQyJrutCXfK9e98/edCDWmyY/VP9sJ0VIwmw9KGu7BBAfoO4Fmar/ZCqW8J2IMIjY/abJE+Rw9SMm+6tYxWHfXU9L1XZiOqdtgWT5sIvcB2bZbf6Sbd8mJewjvpF56ly81sgxWI3dwmRDrI+Aeq454utWrmFrw+I=
+	t=1730365765; cv=none; b=IFIXzpMtFJDj5eAHEYjS1mS+fdpBUNRTsAxDQcmvAeBwooodVMulN2toJIavPv3nPPdDQoiylNSxXr9eisU0fLT/pBWhsjAcnBog19J6OVkFg73AE70jHJtZMV7y8a2Tu23uVK0YHAwBIRs/2Xkk/EBenjm37eZglosPHh5/7fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366063; c=relaxed/simple;
-	bh=5Q45RTbSjOjBlp3SygGSMuq7WMqUe32chDxswiHpUtI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnELxlU95Xp5q4imsMWedvNqvrt4Pwq00HE04RSJ4X9nkis2vzrBlNtx95kW02PLfJmAsqNKzeKxadVQl15GbY75/EO7NBG6E46NuPO1Ce9T8N3/Ck/yU8FW1TKq8wGQy++EzjxxS8Cke0K6NyhQQ50VCtDrAnBJEaZdAQPqFtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=cTxG0950; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1730366054;
-	bh=jZ7hCTaVut3mZbCJbGFLXFGxd6/H6md/TZ1pj2DkSxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cTxG09503B4E3EcCq4Tlr4SOP5tpNriTxkwdgA9WRfof/7mfXUXVCXoPSxZAD016s
-	 pWjLrKck+Fp4TzbNIL8LqUXvy40pyL8aFRU5akeUvgGPLgXbMYo0dGRMEYsP4cM7fX
-	 VoWm48I03YvIOT2ZIL3KwES78aJGg64q+qbyXjOs=
-Received: from localhost ([223.70.160.239])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 2071D25C; Thu, 31 Oct 2024 17:08:07 +0800
-X-QQ-mid: xmsmtpt1730365687ths52uw97
-Message-ID: <tencent_9E86EA49928C177B25C1691D4454AAB21106@qq.com>
-X-QQ-XMAILINFO: Mv2ulet+XN3NjEpaj3v5W09FCOccoH6qPYx7PV2Ta6BCPoCNWGDsgtWOJkWFfO
-	 +d8s0sCqZai/8akJBW/WHSe8TuL+MPd9MtmADoh8r2aO5zjfy8Sw+6rWui8kYRPaYoHG7nJn7A/m
-	 WXYxSmIIK6teADp8GBz3H8kpLxl1h6P4Sqm3/8lbrf0fML6ig5nEdkaKin5fRCzVFtSBcHrJTctC
-	 Oj+i1zcOIcPxX+sv+C9Ke2ASZZbu6KplOeeXT/1QwUNBOmfNkPhayDZhPkvNm8LNCRff5bF9oXi1
-	 JMkKVJeGlLfYbzxGWJnSnNA67UyfXFxqgoFYfr5DzEIa9pmf+CaLB6t5skY094XvJL3J7Z+3+4jY
-	 7jL2OokJgGhk915PLRTilKBChtsixZLJS1qi0YoMgzKW2sNEiz5zSrdgLimbqL3gUbJBTUzCFQ9e
-	 t6x2WKy458q7RG+K1RRP6/kvXSjjeIfg/Qj3SIirZTCfsqtLRqTIxApGvKQlo43+e8elqyyBMM98
-	 yCFPV67gvxNgQMasq7bEfwfAhPolnjfhWYsafeoYUPU8gaFUWek7iJR9/6EgYqzH4CCLyiphTzOB
-	 dxJv65VdE4monD2F3BftXEWw/PmfOGtw/KVmV4bxSQcNU7jJeVrGDrd3QHF8QcY9ZCKARMtLU9JB
-	 bJxbtORXJMS9PUFpB+upja/MKGSK2bUrIOSGpwzN8tB9OQtPsI9BWzKeEbi8QUI17anhC4AnjzD2
-	 qEAc+L++kho0nbq0cvzZUoH/rW9IyNrh4yI0LH8MZeOPz2hLSDCOmLWjSB0L8d9fWbIu4SrFFBN3
-	 uYpYYOwF9tWfojTnZ9p7cDxWyQxtW2TtV9phE+1gm1NIYHZjWomZAxGY5GBeNoPrngF6pMAL037k
-	 SZGpLxYpMKAVwieQDvnaLJPu9wlToXJy4V+E1IZW5cUc1NQu/LEAyt3vlErw9g51wdAvCvxsBUla
-	 E21nUnl+h2V15IrZmV2agFJY6IOsHHhWMn3OCHyXLg4DQiFnEPORQPqtsksk+5DOiZ3G4tcQHtIt
-	 xgurRt82qQB1vdiCBUn1mqu1+hskY=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-Date: Thu, 31 Oct 2024 17:08:07 +0800
-From: Gang Yan <gang_yan@foxmail.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "miriam.rachel.korenblit" <miriam.rachel.korenblit@intel.com>,
-	kvalo <kvalo@kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Issue with iwlwifi Firmware Loading When Compiled into the Kernel
-X-OQ-MSGID: <ZyNI95gdvc-FKXe9@yangang-TM1701>
-References: <tencent_2C31282B61589DFCC908B3831384D569440A@qq.com>
- <7100cb98b8e46793cfb1197c3af0f151a9628c9d.camel@sipsolutions.net>
- <tencent_7DC9187727BD32FEEC99045E754751A0CA08@qq.com>
- <5fc092da11b3d81c99fc4bc4b78e87783280414f.camel@sipsolutions.net>
+	s=arc-20240116; t=1730365765; c=relaxed/simple;
+	bh=Kgf3BSsfk1NmCr+Am2gcyywRX+BwRXWH+SDDKnW/JrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jIILyGFUln4i1UNDclC7IXn9G5gttl2YZ5x0iarJhL+xbLebsQr8qyZhbwE2HObnum4BryCMhDSVbq24TU13uugiV0rqRqEo5CyjuSrBELX6fMUJ3qPV3ZTq+aYs7WmU0o7SNFDS8MeWmo/Zst7cT1W2nxCMjJcUx5Zxu0++DFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IyOmfLW1; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730365764; x=1761901764;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Kgf3BSsfk1NmCr+Am2gcyywRX+BwRXWH+SDDKnW/JrU=;
+  b=IyOmfLW1wiPGu+E43TpqhAtKoqhiBqPUQmBsdbTbut2fz1MpJvJPQ36y
+   aabss3myjScXX/K4wxelVbYSXzbIU9YOz6dMPYQfYeHH94gXZcazzPh7Y
+   QVQ2ICoyXAgJYSepW+AsW2iNgky4Yra+0H5AvnspyBVEIAj6tX9i+y+1C
+   oEAU9GkOTSR2SjLUA31VRy6ZI0wW/p1Yi8LGQy6HlvFBr/p9OmflHNbLs
+   lDp9atWF2KCznHx41BLKCw5URfjWDW0ESDrngOjmjMKhlDgnJsQuY6NVK
+   7dv5s4RCS7QuxoC+zNiMBf0XyqsqWHQb9BzMGPmPplb6c+UMeQhbmBQt+
+   g==;
+X-CSE-ConnectionGUID: nK+m/TByTlibDlOhN+YUjw==
+X-CSE-MsgGUID: FNsT8Q2PSu6UT9Z84JQVHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="32932267"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="32932267"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:09:23 -0700
+X-CSE-ConnectionGUID: 26OoygqFQ4eulXIQKu9YoA==
+X-CSE-MsgGUID: WPpWlX9rTNiWmCHUfh0JFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82733213"
+Received: from unknown (HELO [10.238.12.149]) ([10.238.12.149])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:09:20 -0700
+Message-ID: <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
+Date: Thu, 31 Oct 2024 17:09:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5fc092da11b3d81c99fc4bc4b78e87783280414f.camel@sipsolutions.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/25] KVM: TDX: Get system-wide info about TDX module
+ on initialization
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com
+Cc: yan.y.zhao@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ reinette.chatre@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+ <20241030190039.77971-17-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20241030190039.77971-17-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> On Thu, Oct 31, 2024 at 09:57:33AM +0100, Johannes Berg wrote:
-> On Thu, 2024-10-31 at 16:52 +0800, Gang Yan wrote:
-> > 
-> > In fact, I'm using Ubuntu's userspace, but I've simply replaced Ubuntu's 
-> > kernel with the mainline 6.12.rc2 version (x86_64_defconfig). By merely 
-> > changing CONFIG_IWLWIFI from 'm' to 'y', the network functionality normalized, 
-> > which is inevitably confusing. By the way, both of my computers encountered 
-> > this issue, with network devices being Intel Wireless 8265 and Intel AX210, respectively. 
-> 
-> Yeah well, so Ubuntu integrated everything in a certain way, and because
-> they build everything as modules they didn't integrated anything to make
-> it possible to build modules in the kernel.
-> 
-> When you change it, you own the integration. I gave you a few ways to
-> solve this, simplest is just specifying the firmware to build into the
-> kernel in the .config file.
-> 
-> > I still think some clarification will be helpful to make the configuration process
-> > here clearer.
-> 
-> I don't think we need to change anything. Whoever makes some changes to
-> a distro needs to actually do the integration too. This is in no way
-> specific to iwlwifi, every other devices with firmware has the problem,
-> and generic ways of fixing it already exist.
-> 
-> Johannes
-Thanks a lot, I understand what you mean now.
 
-Gang Yan
 
+
+On 10/31/2024 3:00 AM, Rick Edgecombe wrote:
+[...]
+> +static u32 tdx_set_guest_phys_addr_bits(const u32 eax, int addr_bits)
+> +{
+> +	return (eax & ~GENMASK(23, 16)) | (addr_bits & 0xff) << 16;
+> +}
+> +
+> +#define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
+> +
+> +static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char idx)
+> +{
+> +	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
+> +
+> +	entry->function = (u32)td_conf->cpuid_config_leaves[idx];
+> +	entry->index = td_conf->cpuid_config_leaves[idx] >> 32;
+> +	entry->eax = (u32)td_conf->cpuid_config_values[idx][0];
+> +	entry->ebx = td_conf->cpuid_config_values[idx][0] >> 32;
+> +	entry->ecx = (u32)td_conf->cpuid_config_values[idx][1];
+> +	entry->edx = td_conf->cpuid_config_values[idx][1] >> 32;
+> +
+> +	if (entry->index == KVM_TDX_CPUID_NO_SUBLEAF)
+> +		entry->index = 0;
+> +
+> +	/* Work around missing support on old TDX modules */
+> +	if (entry->function == 0x80000008)
+> +		entry->eax = tdx_set_guest_phys_addr_bits(entry->eax, 0xff);
+Is it necessary to set bit 16~23 to 0xff?
+It seems that when userspace wants to retrieve the value, the GPAW will
+be set in tdx_read_cpuid() anyway.
+
+> +}
+> +
+>
+[...]
 
