@@ -1,140 +1,131 @@
-Return-Path: <linux-kernel+bounces-389772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E679B7119
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:23:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A12C9B711C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 349F6B21B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA433B213B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C781EEE9;
-	Thu, 31 Oct 2024 00:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EEE41760;
+	Thu, 31 Oct 2024 00:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bKPfxDXD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b="psq1dtEy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T488zIJV"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3A68BFF
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A14653A7;
+	Thu, 31 Oct 2024 00:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730334145; cv=none; b=XHEEK02BizjyVJXa500MfC/jzzKGpDELGAKsf4OsDmqO/kEvRZUL6hPhFTGa9qy7rTxunRRczsLFhigBtebV68tquTIojPAV2g20ydqZ3qJFSEYu67rk5msiDogW977nQQQz90ksGa9k+nV0Lh0i2XhHAOnzrf2tyCREdNzO8vU=
+	t=1730334163; cv=none; b=Zqg+U83aAzC9gjFY0eU4Xy0fg2b4T70iS3aH4Dl9li37koYA5mPeM8uaytvqIpW+bs0W9AbxRGtIWoNxoeKe+jZESDbBOkNTRwLWAmLKg5Ss0yB4OagQqWiFHBfnKi5qE5u+MoYV7IoF7DNjT+LBzqlPbgZPl1zzAVIkW12Qmac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730334145; c=relaxed/simple;
-	bh=PRBu2ZtX+HqPmhTVBucOeCi246gXk/cTBWa4CUsxM1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gicq1Bi7yf45IDcZa5LytWFgltc3BmIw5bI0k2+uoXLWkOO3C3pwHCpylEjEcEJyOaeq9hStEg+o66F9Ik48+tG8GGlCrn7WINolWRKThlzKWk/HrLrLnIyBx0RRPQrxcEBk3GFdRGz4KbB2jG/2Ex9/ZNDf/rAK6f9ub5jLo8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bKPfxDXD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730334141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ylLHvS3B4DMeBiTkFxRK6FWUuGg+33emd5MdRJEeN5U=;
-	b=bKPfxDXDY0N/q599shzGsDe4qB7pfyv9dyUhpSbtiVIo/8OeS9BOgLp6PkvaP3xE6PDa+T
-	+MfRyB3Qatd+8R8Kwdj3kUvZP9O6moVEEV9S34WFATFjSMvp/j3Iavy6Ozxu1ulbjweZzu
-	nRvvnlQ9ErRMBcy2kn6slOt3iUIeq7o=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-265-jexB4D0sO7-vMym4mJV5Dg-1; Wed,
- 30 Oct 2024 20:22:17 -0400
-X-MC-Unique: jexB4D0sO7-vMym4mJV5Dg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 388F71955F43;
-	Thu, 31 Oct 2024 00:22:15 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.15])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B3E4196BB7E;
-	Thu, 31 Oct 2024 00:22:07 +0000 (UTC)
-Date: Thu, 31 Oct 2024 08:22:02 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Klara Modin <klarasmodin@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk,
-	akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-	dhowells@redhat.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	klara@kasm.eu
-Subject: Re: [PATCH] iov_iter: don't require contiguous pages in
- iov_iter_extract_bvec_pages
-Message-ID: <ZyLNqtmxsEt-VYIE@fedora>
-References: <20241024050021.627350-1-hch@lst.de>
- <fa2f2722-fab2-4108-8d3a-f7da87bb9efa@gmail.com>
- <ZyLL-eXIntwBY5q2@fedora>
+	s=arc-20240116; t=1730334163; c=relaxed/simple;
+	bh=mXzGNXOzoEpPANsKrOIIcMcCUBg6ySS5sQpL9j6eHwc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=if32XmnOjH0ZJK+a6zpm4wB1dB4C76tasX/lQQQye3uWxlILTN7OHs87i0r4ryMJC5gFk9XI6FWwUdnJAmP6ff1mmtCkJ82iDQKPwUdDwGGRF8s4P3v3qUvW9KkwfXsNMGT82LZIVGeOpC/iyAjNhTYnINe3ai2jDRQIUvt5mk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com; spf=pass smtp.mailfrom=justinweiss.com; dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b=psq1dtEy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T488zIJV; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=justinweiss.com
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 10166114011B;
+	Wed, 30 Oct 2024 20:22:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 30 Oct 2024 20:22:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=justinweiss.com;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1730334158; x=
+	1730420558; bh=mXzGNXOzoEpPANsKrOIIcMcCUBg6ySS5sQpL9j6eHwc=; b=p
+	sq1dtEyohfAF0pZGBiDIQQk8OQLqHw35qmi8Pvv9S+4+TqTxPvWfDNqSgMPj2+G3
+	oiZnRNUQeXgGQ5XhGCLfbdlyleOd6ADfaXvTgkUH532ErGiMFst5FmIv2tUkHYrN
+	g/hPkrOr4cDU33a8j91EvH+/egh81r6sDBG71BlNtF4cgOP51Ot9sMZhFFHO4kiE
+	F+EWlkcQ7Tr4g6Xbjv7qO9C+tYOYYnVseH0jbKw1UNWwsEuWeJyoNvitlW+T41C7
+	WO7D050FKxZO52P9CBUjv1JcNvuSJoLGqC/U++Xa8SGXUhZnBOLa7yNW1owwdn8t
+	IqOhEvoUcoZdbF/DkPLYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730334158; x=1730420558; bh=mXzGNXOzoEpPANsKrOIIcMcCUBg6ySS5sQp
+	L9j6eHwc=; b=T488zIJVHAc1m7tLA7Hi/TuO1NYBngJHw0EMzVgY5womohXZ6p4
+	8c2i4nO0q88Gg+uSBE/trqJDrpA/5C36IzPQAd7Y1WQtCHSIhGT6Bc8UbFtSpd80
+	vk0AnJ0YlwoDT/wVBVisEVMW8sm1bC2rD/c4DqhYPV1uxhDsDDM21YJx4NnwTIzM
+	c/pTiVWTtKeLXZe//D5HNmKbiNJ4aZF7uQ61Yd54mdd8DPLDbnpBuP5NW7PWs9VA
+	pFfvjsLo890XjKrkvmkW+FJ6H4H+Wi0eD4vGUFqVt4Qy6h29bQW9Qw/jhXB0HfVu
+	UN7XBqzCibJzgxcTrETy2nBl9yoEggzPtcQ==
+X-ME-Sender: <xms:zs0iZyXnnNTrqEKZCIIa8VOO4CJWot43KIc0SfsxM2GjXvieajLp5w>
+    <xme:zs0iZ-nEi_LZ21p_yYcCh6MNpLC53uNDAxOHs2f1R_xDJTP_SDpqk8KqDSLzhPute
+    32kC_feeTV0s69gig>
+X-ME-Received: <xmr:zs0iZ2aFmGQj4bGXrViD0_jVV8BZG16-zUZfOMv8CSsU-U8MWlglPejCf6DDswdFnmbg6NlgQg0ywt6Vp234fEJLjdeyHt3m0mM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgedgvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefujghffffkfgggtgesthdtredttdertden
+    ucfhrhhomheplfhushhtihhnucghvghishhsuceojhhushhtihhnsehjuhhsthhinhifvg
+    hishhsrdgtohhmqeenucggtffrrghtthgvrhhnpefgueegueeiheffkeektdetfffgffeu
+    ieekvdefieejvdefiefgvefhiefhfefgveenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehjuhhsthhinhesjhhushhtihhnfigvihhsshdrtgho
+    mhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hphhhilhhmsehmrghnjhgrrhhordhorhhgpdhrtghpthhtohepuggvrhgvkhhjohhhnhdr
+    tghlrghrkhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvges
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhiihhosehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgv
+    nhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegtohhnohhrodguth
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zs0iZ5XctY_SrqjklwQf19IP8Dh-X-AXzkYrKQhOGlzivlk3i8H0ng>
+    <xmx:zs0iZ8mNPGBUbdVeqg2zQP2-3rPp_VUpXoNADYclZ8yeyDBebHjLUw>
+    <xmx:zs0iZ-eQXeW1-n6bMPCOAu-TwPzhHtmzOc8hMw2gRn0CRlXxnCgOOg>
+    <xmx:zs0iZ-HNlxIGaxNdaBR-VxIuXChUyHNQXv8NKENiQ38-Bu8LDJAGYw>
+    <xmx:zs0iZ38Ixzg9ZB8fHZtL4bui3CWjtx3Vt0KGR6Xrd_5FU3Qc_ZeoCz7J>
+Feedback-ID: icf614246:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 30 Oct 2024 20:22:37 -0400 (EDT)
+From: Justin Weiss <justin@justinweiss.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,  Lars-Peter Clausen
+ <lars@metafoo.de>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>,
+  linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  "Derek J . Clark"
+ <derekjohn.clark@gmail.com>,  Philip =?utf-8?Q?M=C3=BCller?=
+ <philm@manjaro.org>
+Subject: Re: [PATCH v4 0/4] Add i2c driver for Bosch BMI260 IMU
+In-Reply-To: <20241028201817.71bebfee@jic23-huawei> (Jonathan Cameron's
+	message of "Mon, 28 Oct 2024 20:18:17 +0000")
+References: <20241027172029.160134-1-justin@justinweiss.com>
+	<20241028201817.71bebfee@jic23-huawei>
+Date: Wed, 30 Oct 2024 17:22:36 -0700
+Message-ID: <87a5elkto3.fsf@justinweiss.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyLL-eXIntwBY5q2@fedora>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain
 
-On Thu, Oct 31, 2024 at 08:14:49AM +0800, Ming Lei wrote:
-> On Wed, Oct 30, 2024 at 06:56:48PM +0100, Klara Modin wrote:
-> > Hi,
-> > 
-> > On 2024-10-24 07:00, Christoph Hellwig wrote:
-> > > From: Ming Lei <ming.lei@redhat.com>
-> > > 
-> > > The iov_iter_extract_pages interface allows to return physically
-> > > discontiguous pages, as long as all but the first and last page
-> > > in the array are page aligned and page size.  Rewrite
-> > > iov_iter_extract_bvec_pages to take advantage of that instead of only
-> > > returning ranges of physically contiguous pages.
-> > > 
-> > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > > [hch: minor cleanups, new commit log]
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > 
-> > With this patch (e4e535bff2bc82bb49a633775f9834beeaa527db in next-20241030),
-> > I'm unable to connect via nvme-tcp with this in the log:
-> > 
-> > nvme nvme1: failed to send request -5
-> > nvme nvme1: Connect command failed: host path error
-> > nvme nvme1: failed to connect queue: 0 ret=880
-> > 
-> > With the patch reverted it works as expected:
-> > 
-> > nvme nvme1: creating 24 I/O queues.
-> > nvme nvme1: mapped 24/0/0 default/read/poll queues.
-> > nvme nvme1: new ctrl: NQN
-> > "nqn.2018-06.eu.kasm.int:freenas:backup:parmesan.int.kasm.eu", addr
-> > [2001:0678:0a5c:1204:6245:cbff:fe9c:4f59]:4420, hostnqn:
-> > nqn.2018-06.eu.kasm.int:parmesan
-> 
-> I can't reproduce it by running blktest 'nvme_trtype=tcp ./check nvme/'
-> on both next tree & for-6.13/block.
-> 
-> Can you collect the following bpftrace log by running the script before
-> connecting to nvme-tcp?
+Jonathan Cameron <jic23@kernel.org> writes:
 
-And please try the following patch:
+> Applied with a few tweaks thanks to Andy's review.
+>
+> I'll push this out as testing to let 0-day poke at it before it goes
+> into linux-next in a few days time.
+>
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 9fc06f5fb748..c761f6db3cb4 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1699,6 +1699,7 @@ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
-                i->bvec++;
-                skip = 0;
-        }
-+       bi.bi_idx = 0;
-        bi.bi_size = maxsize + skip;
-        bi.bi_bvec_done = skip;
+Thank you, and thanks for all the help!
+Justin
 
-
-
-Thanks, 
-Ming
-
+> Thanks,
+>
+> Jonathan
 
