@@ -1,111 +1,156 @@
-Return-Path: <linux-kernel+bounces-391215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2A49B83E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:00:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BF09B83EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2571C21100
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:00:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF6FE1F215FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1AB1A3BC3;
-	Thu, 31 Oct 2024 20:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCC61CB521;
+	Thu, 31 Oct 2024 20:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qmx5JRG/"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1aFqk1k/"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBDF14D44D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA13A1465B4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730404844; cv=none; b=IndCjtyDQCsJbzhB1I2WzGdK3wTgK5RFYdJPF3ZXgZ162FjsHlHZSjYuwfAmQ+nIpeWMlVPFHmaEQqEI42lXi5T+T94PBrqxuXCdKl4AFZszWTIwk+VFRq606z3sNeWEJ2BrHEm8Wc1Keqd9ZgaXwZH5KyKzVc0Myyb5h2sLBrc=
+	t=1730404925; cv=none; b=GYzKg8eqIyOEgP3qUCqSV+Gwrvpxvaym42E694TO1FyWejx9Ye1LyVmOwDI2+VmKu5kvS8HOpYJT2gNe5t6f7700zUzk12hVZwHC0Y1z+hf23t1/c0iVHF8xzd106nuJ+6+KCMAU4+JdLohnKJHtsaH0LddcbSB1fwWZajWx2DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730404844; c=relaxed/simple;
-	bh=iDAzPgn9vQQIclwk4KVakaDzMOUp56nE/SfuLH3hk08=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o8To0/gG5y1hkkPF+aSGn39X0+uJtNSxpuuJ+CXtK3NiCq6qQRj5JyXGCuMID7ed5Za//M/q/S7ODQgxnx9Lwxi+hCay7e+oMDFljKnYFZOPHoFFhT2rOT7dVLQpVRXPnDtZLcolSWVgDR6j8IgspRkQxMvFTNnr8KHzLUYN4GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qmx5JRG/; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e66ba398so985e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:00:42 -0700 (PDT)
+	s=arc-20240116; t=1730404925; c=relaxed/simple;
+	bh=qxbmIB2837H8qrLnSe95Ux6ennyfvXtwA0OFnYRkLvs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Bc//3KtWkhUA07F9v5cf+ULaCJ8t9R2cyLotE4jfIOKX/T0aXMrqdWdFgNmnUdxwOSun4ZYDxjpFAMFZJt6HLg9RyF++VCRUfxNoIzkzCtFYsJwvOoMgkqAkmiCuKeKX5XvuHf7hbmC39rYM5d8GkQB494iyWjqKrDgjWvIdfGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1aFqk1k/; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d5689eea8so806514f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730404841; x=1731009641; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jkl3TjMzcf3dryOCaAILRFpWIEyfiit3GjcJM3g5SKw=;
-        b=Qmx5JRG/WvY08/igfKnIIa69WHbuc/1HW5WvS5i20r3Ai+ppafazCqQLnE8dxX3FV/
-         I1QY/ye7Og5rWWfPTtdXqbccGBxEQvnAIAtzkeScYnWZVCNygPnvCJOWOUpUssjqO+5K
-         J8IlybxA+IqOYd5c37tHWU3SA9S/jl3m9lCBrcJe1/sBRyWLLSqRMBuuTxT5mJdNZZni
-         sYo1izj3l6ptsaTZYCuLpfUgDNZtKLGPa4ysJdfV5Yvc+mML/5RElZfFbvGazsTh5qD1
-         E6+msdA1dxmRntK4BMjPS4x7RmgG+P/nlzQxMX0kWVcwLMeoVdnoCNY0AR4fsA6bEyaD
-         i5Pw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730404921; x=1731009721; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6j8cZykRmFGwmulqs2LykVsQ/aIy8AeVYklYfK3peyw=;
+        b=1aFqk1k/B+X6DB5vLhg9jlcqOAgb2NSMNn/JhQuA1Cjhlb51yPdSKmu/5aUpggXYbc
+         tsZJRJQyTWA7VLJPhM63FDsOaDdAF/jQBw4WfMhRq/sC0XIvNHwR4+f32i49MCkm3xHT
+         l1C6LQGSFIi03Q83pcOS7OFUR0AhoGOLBUWlEwq4MIsHq4suJT5MGxAtNBP6CANLfghP
+         8iN+PXUWRvxXSdZ2ntUKnCco7/iIMN2fRm79nQzDZuBH2XWTNJR2MX4ItOA3tdkaS1+3
+         CRvEzBg7ukmrO1nTfZWgZX60sV6aZZpbTSHVPMCrnF7azVn/lD3cbzf+rNKyQ7aNFhvd
+         f/Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730404841; x=1731009641;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730404921; x=1731009721;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jkl3TjMzcf3dryOCaAILRFpWIEyfiit3GjcJM3g5SKw=;
-        b=moLEfn+16SHLuKaO3sf5a3m5oWiTA/EITIcehmaKJrwywcSzWYpWvynYUoUPQsL1Ex
-         PoIx9pEPvNRimQumHkThB8sAYDPZihtxJmEAO5FPZD0ZT+pYIQAgzU7qiTTYs1w2N6K8
-         PzvwDTM45Cc9jqkHAF4gtOy+wemJEtR3PBMD70rT0XKg/Hrp5oULN9MB4nuTunmSjjbV
-         PiWMAG/XsQEAPf9Fg/e2OmWxu0wJSLryJri6sW2XCeJfdcSCDgdgcSMfMteHdI+Y0bhS
-         UrSuRUgcj8H6lFhaCBr7gQ1wUu3k3Qwl9SjeEcwiLYufuJMefMcFMag/8c70t9WJz654
-         I73Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXUVIeJNe/Sb+JBeQgZGtqMUnjtzibluu3Jo1ndq6AJZLqVm1eiRXS2Ra1wT91v+Y34ffk3PdPWB11V+6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+bSv4CdVgY+oF2fS5Areg4HmO+Nwvpnbfq70X4/v5eRCy6hDb
-	GvU7ca5O9U++9ly/W+Mx9iVdcj8z9ZovC1UXB6LU0aPkLDf5KZiEqKbUodBHYoU9oQpugjJ4aVr
-	K4+LB2fjIX8/jI8i5ARUD5d96sm2IPoqMJcAg
-X-Gm-Gg: ASbGncuRJ4v4lUJ6tv+tIDfylOYdv/sDGnLhHVz1jzMP4hdUFrHfcswhf/y8uylS1Tr
-	597R/l/jelSSaQdq2KrnvO7dmb5NkBi2FUw1VeE4np+GHG0GyQvIXiGeM5UWZbA==
-X-Google-Smtp-Source: AGHT+IEW2y5lzn/VGPepBdOsO+AzXleOvvzprjMKDOQXm2ENavWPeRp4bswreZ8MVte2QFNa89v1fS8lAyebQn8YFdc=
-X-Received: by 2002:a05:6512:4024:b0:53b:5ae5:a9c8 with SMTP id
- 2adb3069b0e04-53c7bb8e9f5mr385129e87.7.1730404840475; Thu, 31 Oct 2024
- 13:00:40 -0700 (PDT)
+        bh=6j8cZykRmFGwmulqs2LykVsQ/aIy8AeVYklYfK3peyw=;
+        b=a4aohroOiicf60hAjHhnwi6L1FiLLTPjDKDZdF5dvyT5UpSfrclptklOxOPLe6mdCn
+         uRcH4rpbi75w3BUswlrKRUqWOr03fPURI5OoPHVwcx6LulGUUcR81RM7tDLWUcTLxB72
+         /EYR9CzmvsmahQ0oHLsSFfvVMpBjM608JG3095ldBrmGGKMUD/9QC9qguVC/bmyLUM80
+         WyoK3z2I5hD6V/YLYiO54EaeifSJ771baUO1wwcXNeBBhIHuTBNXU7LZZh54KHdUR1x2
+         Y6d2A+pAOimqv75aBA/08UAengQG/l/LeO5xD2Z7VFBVE5nitU28J+eBDOn5v6u1/BFq
+         VbuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnNeGyiITslfusE1t4AWRFvdxQmGFetolmJoKt2tI0ofeYFIqdTPTyofM+5SWKvIg9cDlQd+6ADdGblOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd2z7dSD62Aihv81fq8itrdTdiPQ9rE3fomKT2baleKpsniboz
+	ZAsM7+EVFzsJzAU2QE2Ok2cxTCkFIAHEZenWM3sXBMYOIYtdWw6CuBruY6QoGSg=
+X-Google-Smtp-Source: AGHT+IGheJlSvcAzK6q13fzt7G1Onug1tc2dmLYoshhnduEuKT0Lktz5rPc9MnInrr7WyHpGQ9JKhQ==
+X-Received: by 2002:a5d:6902:0:b0:37d:4ebe:164f with SMTP id ffacd0b85a97d-38061200d23mr13358601f8f.46.1730404921008;
+        Thu, 31 Oct 2024 13:02:01 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:f39e:5519:d578:740])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c1189123sm3003993f8f.115.2024.10.31.13.02.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 13:02:00 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v4 0/5] gpio: sysfs: send character device notifications
+ for sysfs class events
+Date: Thu, 31 Oct 2024 21:01:50 +0100
+Message-Id: <20241031-gpio-notify-sysfs-v4-0-142021c2195c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
- <20241030-extended-modversions-v8-2-93acdef62ce8@google.com> <ZyNr--iMz_6Fj4yq@bombadil.infradead.org>
-In-Reply-To: <ZyNr--iMz_6Fj4yq@bombadil.infradead.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Thu, 31 Oct 2024 13:00:28 -0700
-Message-ID: <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC7iI2cC/23OSwqDMBCA4atI1k1JJj676j1KF4lJdKAYSSRUx
+ Ls3CgVLXf4D880sJBiPJpBbthBvIgZ0Q4r8kpG2l0NnKOrUBBjknAHQbkRHBzehnWmYgw1UKK1
+ tY9pWNpakvdEbi+/dfDxT9xgm5+f9ROTb9KvlJ1rklNGm5haqSpiqLu4vHKR3V+c7snERjkRxR
+ kAiCqW54oopYco/QhyJ8owQiZC6thwqzcH+frGu6wfLUSJsOQEAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2101;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=qxbmIB2837H8qrLnSe95Ux6ennyfvXtwA0OFnYRkLvs=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnI+I2emzdWrBOVH5+EIZyjUCN+vGX+8Aix8V5D
+ WwFfc5uccWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZyPiNgAKCRARpy6gFHHX
+ clxsD/49ML+9W9D6AcuIGJ0IKiedXv2FsGcIPameW8Hs3XVlcUm3Lcc9+fRvmWwB6ZNTMuCFV2R
+ FToyQvh7MRVwiuHsPXg+Tq3kig0DYqpk01u8PTponWJIeaEWAiIsuY3qsM8lpzwqsOgMEuc6foc
+ JulMso3XtNqDQWN8an17GpB442UTpeKIUdlygETlDSrS45mEgYDWJ6pSw/bNyzkE+WKIlOFr6K/
+ CdmgdqcGhcybD5VLK/TVAAf6cFGyve/NyevcoP9DoOpX+Gtum0AXqNb0GQSVqy2OWmx4n9W+f3K
+ qvrn6fNeLjWMVHTFwWIw6nzfATnHrXQVELOH1kVCHJ93U1KpsF3uXr2NTFLGalJ3goCU9Bar9g8
+ nUX8XSwFZUS1hb2xgUirQ2C2w76FN/KTzWY38Z5dAbu03D+Y9opET48hhKMw7mYB6UOJc03WfM2
+ CixEU08S9xVMe9mVLwA9p+YYcqbTpqxwFukVxhq82gbe/gM7taOILNtFHyCtm97fCwigxJqmb2Z
+ 8Z03czO1T6G7dUPonbXbUPffE2/D2pO/azccJUbfT65hU2mThV8LvUvp260GWOyq+kro56PzlI6
+ nIVUPKCZTV2xK11WwQRnOkhPnEqzn3de4oC9gT/OF3yjDN1G89eEQ+gZP/RChzmi1DUfj+3m/En
+ PBO3TSDMsyRozQQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-> The question is, if only extended moversions are used, what new tooling
-> requirements are there? Can you test using only extended modversions?
->
->   Luis
+This may be a total corner-case but for consistency and completeness I
+think it makes sense to also send out line state change events on actions
+triggered from the GPIO sysfs class.
 
-I'm not sure precisely what you're asking for. Do you want:
-1. A kconfig that suppresses the emission of today's MODVERSIONS
-format? This would be fairly easy to do, but I was leaving it enabled
-for compatibility's sake, at least until extended modversions become
-more common. This way existing `kmod` tools and kernels would continue
-to be able to load new-style modules.
-2. libkmod support for parsing the new format? I can do that fairly
-easily too, but wanted the format actually decided on and accepted
-before I started modifying things that read modversions.
-3. Something else? Maybe I'm not understanding your comment?
+The first two patches use cleanup helpers in sysfs code. The next three
+change the code to emit notifications on line export (unexport is
+already handled) and active_low & edge changes.
+
+One last thing I considered was also notifying user-space whenever
+gpiochip_un/lock_as_irq() is called but that doesn't make much sense as
+it's largely independent from the GPIO core and can be called for both
+requested and available lines whenever someone requests an interrupt
+from a GPIO controller.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v4:
+- don't use __free() in patch 2/5 as it causes issues when we jump over
+  the initialization of the managed pointer
+- Link to v3: https://lore.kernel.org/r/20241026-gpio-notify-sysfs-v3-0-ad8f127d12f5@linaro.org
+
+Changes in v3:
+- Keep the unusual order of operations in value_store()
+- Link to v2: https://lore.kernel.org/r/20241025-gpio-notify-sysfs-v2-0-5bd1b1b0b3e6@linaro.org
+
+Changes in v2:
+- Streamline the code even more by dropping unnecessary return code
+  assignments
+- use normal guards where scoped ones are overkill
+- Link to v1: https://lore.kernel.org/r/20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org
+
+---
+Bartosz Golaszewski (5):
+      gpio: sysfs: use cleanup guards for gpiod_data::mutex
+      gpio: sysfs: use cleanup guards for the sysfs_lock mutex
+      gpio: sysfs: emit chardev line-state events on GPIO export
+      gpio: sysfs: emit chardev line-state events on active-low changes
+      gpio: sysfs: emit chardev line-state events on edge store
+
+ drivers/gpio/gpiolib-sysfs.c | 161 +++++++++++++++++++------------------------
+ 1 file changed, 72 insertions(+), 89 deletions(-)
+---
+base-commit: f9f24ca362a4d84dd8aeb4b8f3ec28cb6c43dd06
+change-id: 20241022-gpio-notify-sysfs-3bddf9ecca9f
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
