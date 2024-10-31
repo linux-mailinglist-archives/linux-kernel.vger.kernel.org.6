@@ -1,119 +1,116 @@
-Return-Path: <linux-kernel+bounces-390481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C4E9B7A76
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:25:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FAE9B7A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5214F1F24E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C77451C21FC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FC219CC26;
-	Thu, 31 Oct 2024 12:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD03D19CC16;
+	Thu, 31 Oct 2024 12:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b="Bq2d1mL5"
-Received: from cloud.peff.net (cloud.peff.net [104.130.231.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQZ8Hmfl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9E119ADA4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.130.231.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A0C14831D;
+	Thu, 31 Oct 2024 12:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730377500; cv=none; b=ops/S14ihTwZZzYObWiVgXldl4vYZ58coEKvwJDqZcJGEmoshesTKWfpHo+drZ2fV/OcskY8xrWWQ9RyyJzihK7E+iMk1/80U1OX8hCCqX34T3oqrl3dLPQLdGwTJWrDJdzxgU1Q23AnUS+fqmdan1pKby3lNR5RCDgM5XCL8LQ=
+	t=1730377599; cv=none; b=on0oNr+Jwt+seVr0Nno8+MHEtnmsghat/KfRcwdVR/9K1pY3FoTzYCj5P/MZa4i0VuwYgBfZ17iuUkyWAuJccpWVEF8G78LtjAj0fnDHIXIFjdjXzD8c9GQx9WHBXB0Su7rCwzLtTNp4HrIeVk77a5G/fMtZpRJyw6kYuE+v3Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730377500; c=relaxed/simple;
-	bh=uuDgNKO6THZE3AKJ2QqsvwkGs+0CTZ9ihmdonQAshIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uHQ6v2APP2e4HtsYtrO2MQmFkAYwpYW0sL9vKj07yJqJ/IluhTsJ0U/3JeA6ZI0mHaF76i+YX4QN7ErCPc3qmJZPew5uzf3sshcJZxcjlIiUHfFk8TlOsji+5jPHCdr84EpHKKNH3NsgHzHUrsPJeu8XVC8jJmhStOwKsphbQg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net; spf=pass smtp.mailfrom=peff.net; dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b=Bq2d1mL5; arc=none smtp.client-ip=104.130.231.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peff.net
-Received: (qmail 18813 invoked by uid 109); 31 Oct 2024 12:24:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=peff.net; h=date:from:to:cc:subject:message-id:references:mime-version:content-type:in-reply-to; s=20240930; bh=uuDgNKO6THZE3AKJ2QqsvwkGs+0CTZ9ihmdonQAshIA=; b=Bq2d1mL5U95zbc9uyy9e3vXwjPW91GdgtNC4UhYA7aRFxR4O5lBpccEJIGZf8RqpNllue1uzYNoX6HjLEvTvnBnAlNZoxOZVID6kdPFlBUPL/cMHgBe9div6SnWIFyAFu3t+9KcjVdVRbaXMFLGdR28tYsVc1l/koAGOMD8GMiOQIDumS1fFVLCzmVXRI3akk2f+Kwo49KAFw3BHwEExQvVhGnjN477oxgCtQYZ+ZE4Y/rMTPfq7GJc9BaymptvyC4EaPPQLXWnP4+kOqOLeMpikRxZuTBjjX4L4SJNkQB1EOw9LtzTWSWllFU3aEQwqJwh7hx15zDBLTVWfAqWZNg==
-Received: from Unknown (HELO peff.net) (10.0.1.2)
- by cloud.peff.net (qpsmtpd/0.94) with ESMTP; Thu, 31 Oct 2024 12:24:57 +0000
-Authentication-Results: cloud.peff.net; auth=none
-Received: (qmail 32452 invoked by uid 111); 31 Oct 2024 12:24:56 -0000
-Received: from coredump.intra.peff.net (HELO coredump.intra.peff.net) (10.0.0.2)
- by peff.net (qpsmtpd/0.94) with (TLS_AES_256_GCM_SHA384 encrypted) ESMTPS; Thu, 31 Oct 2024 08:24:56 -0400
-Authentication-Results: peff.net; auth=none
-Date: Thu, 31 Oct 2024 08:24:56 -0400
-From: Jeff King <peff@peff.net>
-To: Rasmus Villemoes <ravi@prevas.dk>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	git@vger.kernel.org
-Subject: Re: [PATCH] setlocalversion: Add workaround for "git describe"
- performance issue
-Message-ID: <20241031122456.GB593548@coredump.intra.peff.net>
-References: <309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org>
- <87bjz0k17c.fsf@prevas.dk>
- <20241031114210.GA593548@coredump.intra.peff.net>
+	s=arc-20240116; t=1730377599; c=relaxed/simple;
+	bh=ROImIcKd26I37IIPZ7G3j3tGh80SEofFXW3tR61BJI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pV8cCQxMxOqN6fdzEhh8PImPZWk+Dv4N4ofbB5SKCd5IHgRuNM75S58XE9n18e6CtQrR7Yb6cKp05hEGbtYDHbSaiSntwXZnu6MsJVxbZxAEuMi1KT+tJ7uG6F1p3rlGH3k1Y4fgvjh2nZ+u+7MSMtlO93AJsX/wFIaercaB75Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQZ8Hmfl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E411C4FE0F;
+	Thu, 31 Oct 2024 12:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730377598;
+	bh=ROImIcKd26I37IIPZ7G3j3tGh80SEofFXW3tR61BJI8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VQZ8HmfllQmBOTiIj7AXghEbzCewVOl5UEKOTbuj/oF9tT8vmfaZti53DuzStqOFg
+	 KJLwrCdV/8Zky2cGPZckIQkZA8AdWyJDefksndBQIX7jeHyHjL9tTAT1pA0uWiWlyX
+	 49shJFYqGwYDWq8EqWvCfCruM5eDunH+FAymVk6Pseh4Sn1BJsTprZsLTh+wPQqCa9
+	 ZmAgHnUdnjvMXPRZdlnBCGi9QSbqmqv5aPpZ4krsVn0lzmxKRuQ4TS+IYT8hh9KGpK
+	 RxaNryz+eLxzGoVxwfdCzlO2TiSbEtw09YpJSXUgIzVQekmN46opDXkc3r/bCZgYoh
+	 VvCKISkHqgwOw==
+From: Conor Dooley <conor@kernel.org>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	rafal@milecki.pl,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guodong Xu <guodong@riscstar.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Michael Zhu <michael.zhu@starfivetech.com>,
+	Drew Fustini <drew@beagleboard.org>,
+	Alexandru Stan <ams@frame.work>,
+	Daniel Schaefer <dhs@frame.work>,
+	Sandie Cao <sandie.cao@deepcomputing.io>,
+	Yuning Liang <yuning.liang@deepcomputing.io>,
+	Huiming Qiu <huiming.qiu@deepcomputing.io>,
+	Alex Elder <elder@riscstar.com>,
+	linux@frame.work,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/5] Add DeepComputing FML13V01 board dts
+Date: Thu, 31 Oct 2024 12:26:19 +0000
+Message-ID: <20241031-synapse-cycling-0f7834a28b91@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241028082553.1989797-1-guodong@riscstar.com>
+References: <20241028082553.1989797-1-guodong@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241031114210.GA593548@coredump.intra.peff.net>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1245; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=zWFfzFih/Cg5hWs+WTraOfKNpKZTj9yvCQj0KE3sbQ0=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOnK5Tnr0tcHFdVmFD373qH2YlbwiYTsXRkHQrS1hP/vK /wnV7O7o5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABNJt2f4K2AbbrR6f+/1JZX7 5fafkVxq07NYwWKhboJmDSev+v4d2YwMSy6p1QWv3WqX6X99h+qK9XEWx5/lay3/1WOwI2y9kN5 /XgA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 07:42:10AM -0400, Jeff King wrote:
+From: Conor Dooley <conor.dooley@microchip.com>
 
-> That works, but I have a feeling that figured out what the heck is going
-> on with gave_up_on might produce a more elegant solution.
+On Mon, 28 Oct 2024 16:25:48 +0800, Guodong Xu wrote:
+> This series updates Device Tree related files to introduce the
+> FML13V10 board from DeepComputing, which incorporates a StarFive
+> JH7110 SoC.  This board is designed for use on the Framework Laptop 13
+> Chassis, which has (Framework) SKU FRANHQ0001.
+> 
+> The original three versions of this series were posted by Sandie Cao
+> from DeepComputing.  Her mailer configuration caused mail threading
+> errors, which led to some confusion.  After some discussion, we have
+> agreed to take over moving this series toward acceptance.
+> 
+> [...]
 
-OK, I think I might have made some sense of this.
+Applied to riscv-dt-for-next, thanks!
 
-In finish_depth_computation(), we traverse down "list" forever, passing
-flags up to our parents, until we find a commit that is marked with the
-same "within" flag as our candidate. And then if everything left has
-that same "within" flag set, we can bail.
+[1/5] riscv: dts: starfive: jh7110-common: revised device node
+      https://git.kernel.org/conor/c/5a5001d27065
+[2/5] riscv: dts: starfive: jh7110-common: move usb0 config to board dts
+      https://git.kernel.org/conor/c/817eac165ed4
+[3/5] dt-bindings: vendor: add deepcomputing
+      https://git.kernel.org/conor/c/e9b4ceedb5ae
+[4/5] dt-bindings: riscv: starfive: add deepcomputing,fml13v01
+      https://git.kernel.org/conor/c/e87fa39dbcb4
+[5/5] riscv: dts: starfive: add DeepComputing FML13V01 board device tree
+      https://git.kernel.org/conor/c/c8b72c301dbe
 
-So I _think_ the point is to basically count up what we'd get from this
-traversal:
-
-  $tag..$commit
-
-where "$tag" is the candidate tag we found, and "$commit" is what we're
-trying to describe (so imagine "git describe --match=$tag $commit").
-
-We can't just use the depth we found while traversing down to $tag,
-because there might be side branches we need to count up, too. And we
-don't start a new traversal, because we'd be repeating the bits we
-already went over when finding $tag in the first place.
-
-And we feed that "list" from the original traversal state. So if we
-break out of the traversal early but don't set gave_up_on, then we have
-nothing in that state that holds the "within" flag. So we just walk all
-of the commits down to the root, because nobody is propagating the flag
-to them.
-
-We have to feed at least one commit with the "within" flag into the
-traversal so that it can let us end things. But I don't think it really
-matters if that commit is the one we found, or if it's a parent of one
-that we happened to pass "within" bits down to.
-
-So I think we can just set "gave_up_on" to the final element we found
-(whether from max_candidates or from finding every possible name). I.e.,
-what I showed earlier, or what you were proposing.
-
-
-I was also a bit puzzled how this works when there are multiple tags.
-We feed only one "best" candidate to finish_depth_computation(), but
-gave_up_on does not necessarily have its flag set. But I think that case
-the point is that _some_ commit in the list does, and we literally add
-every commit to that list.
-
-I'm actually a bit skeptical that any of this is faster than simply
-starting over a new traversal of $tag..$commit to find the depth, since
-we are considering each commit anew. And there's a bunch of accidentally
-quadratic bits of finish_depth_computation(). But frankly I'm somewhat
-afraid to touch any of this more than necessary.
-
--Peff
+Thanks,
+Conor.
 
