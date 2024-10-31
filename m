@@ -1,126 +1,220 @@
-Return-Path: <linux-kernel+bounces-390218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5849B7724
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B6E9B7728
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F14B20EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0751B2466C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5D1193427;
-	Thu, 31 Oct 2024 09:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A3B1946A8;
+	Thu, 31 Oct 2024 09:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3cXMAKP9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CKko7n5T"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YjUbAVJh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEDD19341D;
-	Thu, 31 Oct 2024 09:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B4C193427;
+	Thu, 31 Oct 2024 09:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366037; cv=none; b=H6MQIiQhPZlHnstz0d12sQI7vwvwVXLpUkRBUx9cqWd73lF0i1/R4ax+bfgAA9Buo78yEEeMu/mkIpgL3IGUf+2Q8o9/f1W+DXtvP6xxtfIff8NrWoBzbVZ8K+DKV4M9jn520w+h+/iHzsX5HqdLYsai9TGgXzUnWa03weqJoBY=
+	t=1730366073; cv=none; b=sPnu9XSB3Rf7yiok0KBuKkMjjZDkntYri4R6remk8KtmRu4ymvhBhKl8t0fMvblR3MyJNuvUx5kXgQVGEf8wn1V1TbCNycE3txeEsGzp8pGTmXXlCp2Y9mO03bnPg09u9Wd8LaIOQ+mT1aNpD0PV3hylOCA/zRHqAd2sME4vcQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366037; c=relaxed/simple;
-	bh=zXT/PgNOBSorDcFpVKMfQwyGZVWmcB8yF73UsbQqhvU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=u13auRrSHZbFGChmDeONgjq/E5nrWAYP270pXe3Zf0BcUoiJpwJ+mT9KFQa3c84cCbv5EX4DXmpkN7sFqtETd/8uAIMHUSMR0GND0yvB/vEiYNkVp+booAUTuYVZbmbzSPlfYhzs0u1rFaUHIgAQ46Qa02FuUOXKIS5be+SBngk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3cXMAKP9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CKko7n5T; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730366034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DrD0ZfuHoa6x/lqplhytCjOw0Xel3ZOQUIA62v3IfKk=;
-	b=3cXMAKP9i9urmv40oh5aOvpiqjxr5tJ38d79UA5I636s3QeCC16+tHval5Nk0DSaNZCiJl
-	T8Z+RcZg8ciKTwXFm8lx/+KLg6t9af1W52MV7T8sXgZs49TMkcT/ax8VczQ/iEjfUWwigA
-	Mz6X/UV489Kg3iKgYFLBGTuTmBph7jXddgS721mzVgFIdzaotaQCSVt/v48VKFRBQ6AZh7
-	1K0UU6n6Ps1K67S0aMzPUl7vSW2sZwfc3Zdi9WIw0UGw9s79hVzIL5rgFgKQuwSj4AU5lJ
-	1bYpuo+LZRywXWAeNLvXlO/hsCWbf9IvO6PkEWe5Z1p0sQ9rbmxSyQ7Xmsss/w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730366034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DrD0ZfuHoa6x/lqplhytCjOw0Xel3ZOQUIA62v3IfKk=;
-	b=CKko7n5TAyXddi94osYz3Z1LksU9iEockc/SoL53s5olauKZSw6RBCaZD7sFQX1qqSo+eh
-	MU9CYrJuxciUi2Ag==
-To: Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Thomas
- Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Florian
- Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Wahren
- <wahrenst@gmx.net>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>, Kevin
- Hilman <khilman@baylibre.com>, Markus Schneider-Pargmann
- <msp@baylibre.com>, Ronald Wahl <ronald.wahl@raritan.com>, Udit Kumar
- <u-kumar1@ti.com>, Griffin Kroah-Hartman <griffin@kroah.com>, Rengarajan S
- <rengarajan.s@microchip.com>, Lino Sanfilippo <l.sanfilippo@kunbus.com>,
- Serge Semin <fancer.lancer@gmail.com>,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH tty-next v3 4/6] serial: 8250: Specify console context
- for rs485_start/stop_tx
-In-Reply-To: <91303556-2632-49ca-be5d-9105c75b8a63@kernel.org>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-5-john.ogness@linutronix.de>
- <91303556-2632-49ca-be5d-9105c75b8a63@kernel.org>
-Date: Thu, 31 Oct 2024 10:19:53 +0106
-Message-ID: <84plngljn2.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1730366073; c=relaxed/simple;
+	bh=tli3DYo2LvI+/T7xA8UfS2QU8a1u1b4z9XXM+Z0zBlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=twCvmYjOEco/fMn/hqrU0NIpqyMhV0mMaLtIaVM4BO6TipqS6MrcUdetwZu+sKqOGej3NbDsDocsgauHhlqfY/aVMZchw8hWRg5pzWNuxZuQYxGnWRacPYcVyKY064Ar2Cws4wO5I6MbYznME6ylSHVdyA+8Bn6KRi1qpMmFvd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YjUbAVJh; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730366071; x=1761902071;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=tli3DYo2LvI+/T7xA8UfS2QU8a1u1b4z9XXM+Z0zBlY=;
+  b=YjUbAVJhlruG5V2o4O5w66Qxs6Z8souR9Fv2ocsmKhMoBS4Dgw3PygfY
+   AYjQaP8AP2sJAkj4I2grH5GHFkGNcYVfA9fVbmA7N/hO8KA4j5BYLb0Ct
+   q4bYyt5Krhkupmuinwc0jHx0dxbhxn+YWrNZA3+8M3IfzdGA9zk8aF3wV
+   Qhi+aMzrAvd+XiBDQWbB7DLSHhWmJ+TXeiDFonG396xr2a/nI1QbgEKYQ
+   paWXt57Qk0lWle///QVLao34F9NfOoFwr6RctZZyECuQG7NSpBa20Q8xK
+   /XvFMGbgMa+50pmzSEOQV2yqI/mFc58fuh4mqAtQtCxsHzP9jXLxV1zyO
+   w==;
+X-CSE-ConnectionGUID: DvfuRDWPSnCGKZt8TQF2PA==
+X-CSE-MsgGUID: 3auvNBAoTEmyBFAcYE9oqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="30310936"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="30310936"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:14:27 -0700
+X-CSE-ConnectionGUID: x0ylb6c0TsOFfaAWP+/nkQ==
+X-CSE-MsgGUID: UTWKQdeNS+ewCl9ntXG/cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82485919"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:14:20 -0700
+Message-ID: <6e6bd96f-912a-40e4-b43e-53f6a99f4338@intel.com>
+Date: Thu, 31 Oct 2024 11:14:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 11/21] perf x86: Define arch_fetch_insn in NO_AUXTRACE
+ builds
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+ James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>,
+ Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+ Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova
+ <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich
+ <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>,
+ Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-12-irogers@google.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241031014252.753588-12-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-30, Jiri Slaby <jirislaby@kernel.org> wrote:
->> -void serial8250_em485_start_tx(struct uart_8250_port *up)
->> +void serial8250_em485_start_tx(struct uart_8250_port *up, bool in_con)
->>   {
->>   	unsigned char mcr = serial8250_in_MCR(up);
->>   
->> -	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
->> -		serial8250_stop_rx(&up->port);
->> +	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX)) {
->> +		/*
->> +		 * In console context, caller handles interrupt disabling. So
->> +		 * only LSR_DR masking is needed.
->> +		 */
->> +		if (in_con)
->> +			__serial8250_stop_rx_mask_dr(&up->port);
->> +		else
->> +			serial8250_stop_rx(&up->port);
->
-> Would it make sense to propagate in_con into serial8250_stop_rx() and do 
-> the logic there? That would effectively eliminate patch 2/6.
+On 31/10/24 03:42, Ian Rogers wrote:
+> archinsn.c containing arch_fetch_insn was only enabled with
+> CONFIG_AUXTRACE, but this meant that a NO_AUXTRACE build on x86 would
+> use the empty weak version of arch_fetch_insn - weak symbols are a
+> frequent source of errors like this and are outside of the C
+> specification. Change it so that archinsn.c is always built on x86 and
+> make the weak symbol empty version of arch_fetch_insn a strong one
+> guarded by ifdefs.
+> 
+> arch_fetch_insn on x86 depends on insn_decode which is a function
+> included then built into
+> intel-pt-insn-decoder.c. intel-pt-insn-decoder.c isn't built in a
+> NO_AUXTRACE=1 build. Separate the insn_decode function from
+> intel-pt-insn-decoder.c by just directly compiling the relevant
+> file. Guard this compilation to be for either always on x86 (because
+> of the use in arch_fetch_insn) or when auxtrace is enabled. Apply the
+> CFLAGS overrides as necessary, reducing the amount of code where
+> warnings are disabled.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-I considered this, however:
+For Intel PT
 
-1. The whole idea of stopping RX in order to do TX is an RS485
-issue. Modifying the general ->stop_rx() callback for this purpose is
-kind of out of place.
+Tested-by: Adrian Hunter <adrian.hunter@intel.com>
 
-2. The ->stop_rx() callback is a general uart_ops callback. Changing its
-prototype would literally affect all serial drivers. OTOH the
-->rs485_start_tx() callback is specific to the 8250 driver. (It seems
-each driver has implemented their own method for handling the RS485
-hacks.)
+> ---
+>  tools/perf/arch/x86/util/Build                 |  2 +-
+>  tools/perf/util/Build                          |  2 +-
+>  tools/perf/util/intel-pt-decoder/Build         | 18 ++++++++++++++----
+>  .../intel-pt-decoder/intel-pt-insn-decoder.c   |  3 ---
+>  tools/perf/util/trace-event-scripting.c        |  4 +++-
+>  5 files changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
+> index bc56a8e70f34..c5df4a2cf180 100644
+> --- a/tools/perf/arch/x86/util/Build
+> +++ b/tools/perf/arch/x86/util/Build
+> @@ -18,6 +18,6 @@ perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
+>  perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
+>  
+>  perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+> -perf-util-$(CONFIG_AUXTRACE) += archinsn.o
+> +perf-util-y += archinsn.o
+>  perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
+>  perf-util-$(CONFIG_AUXTRACE) += intel-bts.o
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 650974413849..340544a6f5ec 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -122,7 +122,7 @@ perf-util-y += iostat.o
+>  perf-util-y += stream.o
+>  perf-util-y += kvm-stat.o
+>  perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+> -perf-util-$(CONFIG_AUXTRACE) += intel-pt-decoder/
+> +perf-util-y += intel-pt-decoder/
+>  perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
+>  perf-util-$(CONFIG_AUXTRACE) += intel-bts.o
+>  perf-util-$(CONFIG_AUXTRACE) += arm-spe.o
+> diff --git a/tools/perf/util/intel-pt-decoder/Build b/tools/perf/util/intel-pt-decoder/Build
+> index 30793d08c6d4..f99d150059b9 100644
+> --- a/tools/perf/util/intel-pt-decoder/Build
+> +++ b/tools/perf/util/intel-pt-decoder/Build
+> @@ -9,14 +9,24 @@ $(OUTPUT)util/intel-pt-decoder/inat-tables.c: $(inat_tables_script) $(inat_table
+>  
+>  # Busybox's diff doesn't have -I, avoid warning in the case
+>  
+> -$(OUTPUT)util/intel-pt-decoder/intel-pt-insn-decoder.o: util/intel-pt-decoder/intel-pt-insn-decoder.c $(OUTPUT)util/intel-pt-decoder/inat-tables.c
+> +ifeq ($(SRCARCH),x86)
+> +  perf-util-y += inat.o insn.o
+> +else
+> +  perf-util-$(CONFIG_AUXTRACE) += inat.o insn.o
+> +endif
+> +
+> +$(OUTPUT)util/intel-pt-decoder/inat.o: $(srctree)/tools/arch/x86/lib/inat.c $(OUTPUT)util/intel-pt-decoder/inat-tables.c
+>  	$(call rule_mkdir)
+>  	$(call if_changed_dep,cc_o_c)
+>  
+> -CFLAGS_intel-pt-insn-decoder.o += -I$(OUTPUT)util/intel-pt-decoder
+> +CFLAGS_inat.o += -I$(OUTPUT)util/intel-pt-decoder
+> +
+> +$(OUTPUT)util/intel-pt-decoder/insn.o: $(srctree)/tools/arch/x86/lib/insn.c
+> +	$(call rule_mkdir)
+> +	$(call if_changed_dep,cc_o_c)
+>  
+>  ifeq ($(CC_NO_CLANG), 1)
+> -  CFLAGS_intel-pt-insn-decoder.o += -Wno-override-init
+> +  CFLAGS_insn.o += -Wno-override-init
+>  endif
+>  
+> -CFLAGS_intel-pt-insn-decoder.o += -Wno-packed
+> +CFLAGS_insn.o += -Wno-packed
+> diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+> index 47cf35799a4d..8fabddc1c0da 100644
+> --- a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+> +++ b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+> @@ -11,9 +11,6 @@
+>  #include <byteswap.h>
+>  #include "../../../arch/x86/include/asm/insn.h"
+>  
+> -#include "../../../arch/x86/lib/inat.c"
+> -#include "../../../arch/x86/lib/insn.c"
+> -
+>  #include "event.h"
+>  
+>  #include "intel-pt-insn-decoder.h"
+> diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
+> index 2e9da0b089ef..8d71998a9ecd 100644
+> --- a/tools/perf/util/trace-event-scripting.c
+> +++ b/tools/perf/util/trace-event-scripting.c
+> @@ -272,11 +272,13 @@ void setup_perl_scripting(void)
+>  #endif
+>  #endif
+>  
+> -__weak void arch_fetch_insn(struct perf_sample *sample __maybe_unused,
+> +#if !defined(__i386__) && !defined(__x86_64__)
+> +void arch_fetch_insn(struct perf_sample *sample __maybe_unused,
+>  		     struct thread *thread __maybe_unused,
+>  		     struct machine *machine __maybe_unused)
+>  {
+>  }
+> +#endif
+>  
+>  void script_fetch_insn(struct perf_sample *sample, struct thread *thread,
+>  		       struct machine *machine, bool native_arch)
 
-So I would prefer to keep the necessary RS485 changes 8250-specific for
-now.
-
-John
 
