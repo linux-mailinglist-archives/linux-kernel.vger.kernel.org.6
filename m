@@ -1,126 +1,131 @@
-Return-Path: <linux-kernel+bounces-390379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472699B791D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:54:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366009B7920
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:55:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E30F1B20FF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF09E281D47
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B359199EB4;
-	Thu, 31 Oct 2024 10:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEB1199E9C;
+	Thu, 31 Oct 2024 10:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mLHGFsMZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oorA59oK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpsh03mg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50EF13A25F;
-	Thu, 31 Oct 2024 10:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC513199EB0
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372076; cv=none; b=sC1rLUD3hy6Q5sJOm6umrvBWFM0s9JGd1dNUuxw1EBXkc8pnLL6ipgok8sgUHJYKnx9RGS6+VIn0OST0go9Ru1Wa3ca5pl9ylVR/STTWQQaK0yTNcShBYOAIxu8z2XX3gDufhtUSRKTgIt3JvVxIuJnqkRyLdLQCnjVSsqKAks8=
+	t=1730372113; cv=none; b=nkowcS2nbg5/T2cCXPBi+/bP+h9DOLm0qLLMkZ5CCFRZIJd2PAeNpd8vnOc0gXC7pD8rWFl6gOZ6hh5ETFwt4fd2E3x/oLSE1EaV6t2OPMKzoL4kzJvLFoGXiJFWQ2WkcNBcl0l/BxB4wRJq+qMlQ3NBPPpeQbyZ/rb1hb387jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372076; c=relaxed/simple;
-	bh=5WZdky7rPuKlew/RcJrq8DjI0BblXDblhtDQuTj8awU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tlBNeROPzsC77M+e1CY0AoG94nFTNoJV/g0gEHvSVRJ/lcVNgBrGPeL8vXMkk5KNaFosqUnDLLyzcn4dtjcK36W44DifPw/oQnenCTctrwCLmqAR4mGAzIIVuY5NGrY5M9nyvqr9fEz+VZdFkB0fR2Ptuyvo2wFMMHuNx0cx6XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mLHGFsMZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oorA59oK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 31 Oct 2024 10:54:32 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730372073;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4eopBclYZr+iwXymxEXnas8YQzfxQYie3/fuRR0vNE=;
-	b=mLHGFsMZqrdQXl/J9JxwC+BCpeE1zmqlvSmBkGKZ2ZTVF45/4HDzFF0hi0jsMkbyAbt/g8
-	fRpbAIKjRMMIfazkMj1H5gxJ2P/6alxXCsw99IeGVRSNNsf055Zf6j+dH2Foy2DbRYeTRB
-	B8u2UyN+d4h0y8ezTv8Xc3LsqhNjZoNWeM6DYEpPnjDD+Xdr+gG3HJi6qOzzcRVBLpg7Hd
-	meA8oogaCoUKWdW/HXoVPdcqOm80ZjDlwwoyWnwGOmz+x7NBNbx/orzP6BWdzajw7fIJt3
-	q8HHwunLTjmET+TeyDnAuU55lNy2r0rodKY9AUAn6kBolneZEf/GikpEMRd5VA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730372073;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4eopBclYZr+iwXymxEXnas8YQzfxQYie3/fuRR0vNE=;
-	b=oorA59oKzoFRLQ/6R0Pb+Q105JnnRNj49tnWrna0lhimOy+mvKRFEKU3xS8OBpYa0zqobt
-	EB4Hps9brV3LflDA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] timers: Add missing READ_ONCE() in __run_timer_base()
-Cc: kernel test robot <oliver.sang@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <87a5emyqk0.ffs@tglx>
-References: <87a5emyqk0.ffs@tglx>
+	s=arc-20240116; t=1730372113; c=relaxed/simple;
+	bh=ecYjbnODmCzrBa7RlMNJgPSwNS9hjFXL+H+kwpDNdrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BJ5cJbAB9NqAjk/9oXP9XVYVufwRJZ1AwlgzER0kVDn10ft71RqGCf2y0TXANl2Hgkv5rIKtbUnlucq/LSetGN3gVwRwLNqgwXSoLA62w7z9A0MuSGW+KYiMxUr88Y6O0ju3xjmlKFyRad+SSceFjRO0FPYT/AyoaKtSTIx+b58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpsh03mg; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730372111; x=1761908111;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ecYjbnODmCzrBa7RlMNJgPSwNS9hjFXL+H+kwpDNdrI=;
+  b=mpsh03mgzm+bKDIh+aAOCrQeKC22dQXlQdriEkKv5a+m9lCioFzVjkhQ
+   jdm7jIdOXniwgBe1e/hRmKZBykNeIM7/roNcXmEfTnM6dosC6ulYNkyms
+   I06yhEKjyKCBQGkprP9ln7dFGU2H6dHlFMU+ESv0cGWgf1SNSifuZkAu9
+   1Lt6mNQWTs4KeaE0L3jG+aU3LY6pHT4g+JT7CySVs5bj18yXrz+uBXSkf
+   0gfv3/q2x9KqFfXHHREY2U5x7L0IrUSXApGJmc6anZQf+efqRLPgQNHuh
+   JyWfDyPOZ1r0aOE7uYvzneWkSt2gi/ZVs4e8GtOWoyr8r5lL02IQt5oZg
+   g==;
+X-CSE-ConnectionGUID: dlC4o7VpSU2xRQAfoUfPTA==
+X-CSE-MsgGUID: 5xEfqxV8ReCqk83ZtlKDmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="47578512"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="47578512"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:55:11 -0700
+X-CSE-ConnectionGUID: 6W5owVfaQGWRl3fGJSBNGA==
+X-CSE-MsgGUID: ayhbZiP6Sp+/EtFSbZMMEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="87380423"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 31 Oct 2024 03:55:10 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6SpX-000g0e-1N;
+	Thu, 31 Oct 2024 10:55:07 +0000
+Date: Thu, 31 Oct 2024 18:55:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: include/linux/ioremap.h:21 is_ioremap_addr() warn: always true
+ condition '(addr >= (0)) => (0-u32max >= 0)'
+Message-ID: <202410311824.fJAhvOUy-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173037207205.3137.14718526161744864721.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The following commit has been merged into the timers/core branch of tip:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0fc810ae3ae110f9e2fcccce80fc8c8d62f97907
+commit: ac88ff6b9d7dea9f0907c86bdae204dde7d5c0e6 riscv: fix VMALLOC_START definition
+date:   11 months ago
+config: riscv-randconfig-r071-20241030 (https://download.01.org/0day-ci/archive/20241031/202410311824.fJAhvOUy-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
 
-Commit-ID:     1d4199cbbe95efaba51304cfd844bd0ccd224e61
-Gitweb:        https://git.kernel.org/tip/1d4199cbbe95efaba51304cfd844bd0ccd224e61
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 30 Oct 2024 08:53:51 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 31 Oct 2024 11:45:01 +01:00
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410311824.fJAhvOUy-lkp@intel.com/
 
-timers: Add missing READ_ONCE() in __run_timer_base()
+smatch warnings:
+include/linux/ioremap.h:21 is_ioremap_addr() warn: always true condition '(addr >= (0)) => (0-u32max >= 0)'
 
-__run_timer_base() checks base::next_expiry without holding
-base::lock. That can race with a remote CPU updating next_expiry under the
-lock. This is an intentional and harmless data race, but lacks a
-READ_ONCE(), so KCSAN complains about this.
+vim +21 include/linux/ioremap.h
 
-Add the missing READ_ONCE(). All other places are covered already.
+016fec91013cfb Baoquan He 2023-07-06   7  
+016fec91013cfb Baoquan He 2023-07-06   8  #if defined(CONFIG_HAS_IOMEM) || defined(CONFIG_GENERIC_IOREMAP)
+016fec91013cfb Baoquan He 2023-07-06   9  /*
+016fec91013cfb Baoquan He 2023-07-06  10   * Ioremap often, but not always uses the generic vmalloc area. E.g on
+016fec91013cfb Baoquan He 2023-07-06  11   * Power ARCH, it could have different ioremap space.
+016fec91013cfb Baoquan He 2023-07-06  12   */
+016fec91013cfb Baoquan He 2023-07-06  13  #ifndef IOREMAP_START
+016fec91013cfb Baoquan He 2023-07-06  14  #define IOREMAP_START   VMALLOC_START
+016fec91013cfb Baoquan He 2023-07-06  15  #define IOREMAP_END     VMALLOC_END
+016fec91013cfb Baoquan He 2023-07-06  16  #endif
+016fec91013cfb Baoquan He 2023-07-06  17  static inline bool is_ioremap_addr(const void *x)
+016fec91013cfb Baoquan He 2023-07-06  18  {
+016fec91013cfb Baoquan He 2023-07-06  19  	unsigned long addr = (unsigned long)kasan_reset_tag(x);
+016fec91013cfb Baoquan He 2023-07-06  20  
+016fec91013cfb Baoquan He 2023-07-06 @21  	return addr >= IOREMAP_START && addr < IOREMAP_END;
+016fec91013cfb Baoquan He 2023-07-06  22  }
+016fec91013cfb Baoquan He 2023-07-06  23  #else
+016fec91013cfb Baoquan He 2023-07-06  24  static inline bool is_ioremap_addr(const void *x)
+016fec91013cfb Baoquan He 2023-07-06  25  {
+016fec91013cfb Baoquan He 2023-07-06  26  	return false;
+016fec91013cfb Baoquan He 2023-07-06  27  }
+016fec91013cfb Baoquan He 2023-07-06  28  #endif
+016fec91013cfb Baoquan He 2023-07-06  29  
 
-Fixes: 79f8b28e85f8 ("timers: Annotate possible non critical data race of next_expiry")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/all/87a5emyqk0.ffs@tglx
-Closes: https://lore.kernel.org/oe-lkp/202410301205.ef8e9743-lkp@intel.com
----
- kernel/time/timer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+:::::: The code at line 21 was first introduced by commit
+:::::: 016fec91013cfb27c9f5a101a87ae8266537fed1 mm: move is_ioremap_addr() into new header file
 
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 02355b2..a283e52 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -2421,7 +2421,8 @@ static inline void __run_timers(struct timer_base *base)
- 
- static void __run_timer_base(struct timer_base *base)
- {
--	if (time_before(jiffies, base->next_expiry))
-+	/* Can race against a remote CPU updating next_expiry under the lock */
-+	if (time_before(jiffies, READ_ONCE(base->next_expiry)))
- 		return;
- 
- 	timer_base_lock_expiry(base);
+:::::: TO: Baoquan He <bhe@redhat.com>
+:::::: CC: Andrew Morton <akpm@linux-foundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
