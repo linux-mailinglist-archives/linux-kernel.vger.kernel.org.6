@@ -1,153 +1,204 @@
-Return-Path: <linux-kernel+bounces-390632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDB39B7C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:15:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCC09B7C8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:17:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1EF71C21317
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8BF1F223E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F2184A52;
-	Thu, 31 Oct 2024 14:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7595384A52;
+	Thu, 31 Oct 2024 14:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="ZFzwELqO"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="atALYINk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EA7745F4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917FE442C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730384113; cv=none; b=RtuphEFrR65pmF6txLJF+TxWjFNznKaQRwFvJzRKmlUTV1b7+rE7Q+F9SOYS/gB9lz57pX4PJq8hM7bab+8aZ9zZOsht0gYWj1G5PvQNLdQBbb8+6bxfbGp+sPwWNVsU2lBBrMOTn/+dFAGbl1VpJxorEfLHiIrIR4US8cRCNu8=
+	t=1730384213; cv=none; b=INRPZxzaY+Ebx3jU6up/NkvwzWtI4dJXTouZ4Li8FsFC4jibP2J9P16H7D0xQDBaC9fL619zpHfjtWXiXS0y79Jcs09MHbaZd2QipxOVePbKhEA5/nXGE4MNmCdyQ1Kd5H3ny9EbGJu30/kSgyrZv6JxeTD40QqlFjuyvgCczEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730384113; c=relaxed/simple;
-	bh=Kdog3okChVG+qtVt1DYFpPo7Ncm0Hjlct7/16T1KnLs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R7SwyvvBE7vMN+3fsusrhu4DVNtMbjOnO7eAj1rfoPDu+sk6DHiDe6kgh49wlczLV3O/sP31oeYd5xpPfTaCf5aWaKtkbzGosInL2aG1WGwi2nCM247eTii8lwG0VSArT65Ooa5GRQu/zgNP8yl1CMsZXo77zw8DrX9zjLoV+uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=ZFzwELqO; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
-	by cmsmtp with ESMTPS
-	id 6BnxtANRYnNFG6Vx3t1jby; Thu, 31 Oct 2024 14:15:05 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id 6VwztbR0fqHCr6Vx0tDQ6O; Thu, 31 Oct 2024 14:15:03 +0000
-X-Authority-Analysis: v=2.4 cv=epvZzJpX c=1 sm=1 tr=0 ts=672390e7
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=-pn6D5nKLtMA:10 a=6Ujbnq6iAAAA:8
- a=7CQSdrXTAAAA:8 a=vU9dKmh3AAAA:8 a=oUTu_NvtNUWWlwhRUWsA:9 a=QEXdDO2ut3YA:10
- a=-sNzveBoo8RYOSiOai2t:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=rsP06fVo5MYu2ilr0aT5:22
- a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GY6AwgdHxbopxTlrLA2vjYBTcxsL4277viuzwS9TPwk=; b=ZFzwELqOkrSNBIMVRTiDlSFHyU
-	uj5CcjhYb80VHZUVw7ln/7cP9qYhRKcYxMzRae/5d6Dmz47qP5nCVXEsYdZtSAdFgyVtwYmIRLd/z
-	Po/4rajeYeTvsjdgq1evjHmH3bwOiXAFu3GsqHKS6zwO3Uy90qgzB1rIR5hrv5W2GsrVH8o+8OAOJ
-	3baIK8SJmQAa7Fhi8mhpu2aWlNDzQm7YwS2/D8QNke3Op0VtQzkDqKyayfIflaAeVHfILbQXcXX2/
-	bT5K+wuHNoK3tKUqeK4yEWjN1XVqYT+WBlqD8Cy+AcG3kBgXa02V19AM5iFV8coPfp6h5j+viKvc1
-	cA8+nkxw==;
-Received: from [122.165.245.213] (port=51552 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1t6Vwq-0038ez-1T;
-	Thu, 31 Oct 2024 19:44:52 +0530
-Message-ID: <fd26dadb-1a55-49dd-9530-5a3e2a58e36a@linumiz.com>
-Date: Thu, 31 Oct 2024 19:44:48 +0530
+	s=arc-20240116; t=1730384213; c=relaxed/simple;
+	bh=cKLbfvOMqKQEtZ5qclELN1TR2T2jcygPLOGOX/rPHAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftDM7SSS4WWKRTAX6qF6SLne2xTOkY8/cHdfgV479w7W6p9311zyztwVwL3f12U5CoeTmeTRfxyQVUmMWtr5VSee9zeDYdabHFbjK7fs80/8537yTW/WfuJFggh/CJxRqCa5oG54tAytGchef2EUYTj/rmkQbiUVdVCA9v4zZjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=atALYINk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730384210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ovEB1StOJ3pznvYEcRDlXSyCfUgSPoZbfcLdse6q8W8=;
+	b=atALYINknt7RqpmCCZwAq7BMbWnVZnUlyUd2sRLL4jIw3O0pM0kW6/bEHZpTIn1p2cvXxI
+	Wfc9FpTx25MK65A+ABjNp4FXMpThId1xMYRLCURND6v8YxNsn913VZFb9l6qMLd6jZQQ2q
+	tzZ5+HoPovI0Fhbak9uMLF62tjIvE28=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-388-Wj53-5pNOvmOCrGwMscclQ-1; Thu, 31 Oct 2024 10:16:49 -0400
+X-MC-Unique: Wj53-5pNOvmOCrGwMscclQ-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-460c73093edso16053231cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:16:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730384209; x=1730989009;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ovEB1StOJ3pznvYEcRDlXSyCfUgSPoZbfcLdse6q8W8=;
+        b=m2DdH4nTg8KZA1heDe/SRdhVbuyW/PlzAu7pItvywllSoZ5wDgOXwg8a7bvhuDXoU0
+         tAXtLF0YfTksm2ZouWDIS26cnZeZnaHdHBGHXI9f8/sWXyTop5ooWN+N7GI03sIwuEnh
+         /jGsZcZSi7sCgoK1BPusUxfYbHGwXNp1mcZYLvxcbhVl5SYc5nUdXtzemadeC4v/n1gr
+         V3bNctvHbXgwXfwOP5bIw8m883G71KK5rMCkMLjtM8766BtsjS53Mjq2DklAICtH1BAc
+         jDsncQagrw3WP+LzcaIUcTVuRWzIZVvDCNIRXxodDanq291dE2QgHLh51RHXwo6ypW9V
+         QcaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs2Z7YMyaG721IS5ZHRCfO7w3UwFmw1bslxHX/Ol12c9HJyK5WXCbth36oIqQoAjyFUunursFga4bKAAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg8P7PvFTsuTjqqMMnHHupKWJ+jtHEYLX/SYUFnd844F2A/C+y
+	f/JL3+ScLDQxP0ktjUHgkWBdHZyABPbj+Vk0koQzCR0LYucZfsqxAjZP/8Z6OT+8Pq68ynysBc7
+	dE355UmJKVd4bNZ7lba3vNgW/elAH2u/W2bsdSGVVN0DXEWTg9Q5MMu2BL1nKMQ==
+X-Received: by 2002:ac8:5f54:0:b0:447:e769:76fc with SMTP id d75a77b69052e-462ab281dd7mr38992671cf.34.1730384208847;
+        Thu, 31 Oct 2024 07:16:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3kzGANbJFLZsZsBNtKFVvhMspBrZjxm8HkCv2R3gtqqOdYfj7lK8iIiAbmNobSSw7VhuhVA==
+X-Received: by 2002:ac8:5f54:0:b0:447:e769:76fc with SMTP id d75a77b69052e-462ab281dd7mr38991981cf.34.1730384208150;
+        Thu, 31 Oct 2024 07:16:48 -0700 (PDT)
+Received: from sgarzare-redhat ([5.179.173.225])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad1b42ffsm7879231cf.93.2024.10.31.07.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 07:16:47 -0700 (PDT)
+Date: Thu, 31 Oct 2024 15:16:43 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Konstantin Shkolnyy <kshk@linux.ibm.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
+Subject: Re: [PATCH v4 2/2] vsock/test: fix parameter types in
+ SO_VM_SOCKETS_* calls
+Message-ID: <7o2b3ggh7ojcoiyh5dcgu5y6436tqjarvmvavxmbm2id3fggdu@46rhdjnyqdpr>
+References: <20241029144954.285279-1-kshk@linux.ibm.com>
+ <20241029144954.285279-3-kshk@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>,
- Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/13] arm64: dts: allwinner: a100: add watchdog node
-To: Cody Eksal <masterr3c0rd@epochal.quest>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
- <20241031070232.1793078-3-masterr3c0rd@epochal.quest>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <20241031070232.1793078-3-masterr3c0rd@epochal.quest>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1t6Vwq-0038ez-1T
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:51552
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 1
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHRV7Qg0QziIEzPTbBaMPeXtbKErBS+F+ImMLODpyB5CHICelQEBXIdzuUWAeGidSi8Uknq9oPNRK/tZHNUsuY1b9tdPWEOVUoOQ6S+D7qfD4/oW+Mb9
- N8pWP1L6kZ0CX2DsRvpJ/oC3KiTYbu4AKtXTKExfHazn6Zq2zb78Pww72FTFyTKm4jImaR7PIvVUjoDsmtUlUffjODZF7PBdGPM=
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241029144954.285279-3-kshk@linux.ibm.com>
 
-On 10/31/24 12:32 PM, Cody Eksal wrote:
-> From: Yangtao Li <frank@allwinnertech.com>
-> 
-> Declare A100's watchdog in the device-tree.
-> 
-> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-Tested-by: Parthiban Nallathambi <parthiban@linumiz.com>
+On Tue, Oct 29, 2024 at 09:49:54AM -0500, Konstantin Shkolnyy wrote:
+>Change parameters of SO_VM_SOCKETS_* to uint64_t so that they are always
+
+In include/uapi/linux/vm_sockets.h we talk about "unsigned long long",
+but in the kernel code we use u64. IIUC "unsigned long long" should be 
+u64 on every architecture, at least till we will have some 128-bit cpu, 
+right?
+
+>64-bit, because the corresponding kernel code requires them to be at 
+>least
+>that large, no matter what architecture.
+>
+>Fixes: 5c338112e48a ("test/vsock: rework message bounds test")
+>Fixes: 685a21c314a8 ("test/vsock: add big message test")
+>Fixes: 542e893fbadc ("vsock/test: two tests to check credit update logic")
+>Fixes: 8abbffd27ced ("test/vsock: vsock_perf utility")
+>Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
+>---
+> tools/testing/vsock/vsock_perf.c |  2 +-
+> tools/testing/vsock/vsock_test.c | 19 ++++++++++++++-----
+> 2 files changed, 15 insertions(+), 6 deletions(-)
+>
+>diff --git a/tools/testing/vsock/vsock_perf.c b/tools/testing/vsock/vsock_perf.c
+>index 22633c2848cc..88f6be4162a6 100644
+>--- a/tools/testing/vsock/vsock_perf.c
+>+++ b/tools/testing/vsock/vsock_perf.c
+>@@ -33,7 +33,7 @@
+>
+> static unsigned int port = DEFAULT_PORT;
+> static unsigned long buf_size_bytes = DEFAULT_BUF_SIZE_BYTES;
+>-static unsigned long vsock_buf_bytes = DEFAULT_VSOCK_BUF_BYTES;
+>+static uint64_t vsock_buf_bytes = DEFAULT_VSOCK_BUF_BYTES;
+
+What about using `unsigned long long` as documented in the vm_sockets.h?
 
 Thanks,
-Parthiban
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> index 1eca7c220ede..adb11b26045f 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> @@ -144,6 +144,14 @@ ths_calibration: calib@14 {
->  			};
->  		};
->  
-> +		watchdog@30090a0 {
-> +			compatible = "allwinner,sun50i-a100-wdt",
-> +				     "allwinner,sun6i-a31-wdt";
-> +			reg = <0x030090a0 0x20>;
-> +			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&dcxo24M>;
-> +		};
-> +
->  		pio: pinctrl@300b000 {
->  			compatible = "allwinner,sun50i-a100-pinctrl";
->  			reg = <0x0300b000 0x400>;
+Stefano
+
+> static bool zerocopy;
+>
+> static void error(const char *s)
+>diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+>index 7fd25b814b4b..49a32515886f 100644
+>--- a/tools/testing/vsock/vsock_test.c
+>+++ b/tools/testing/vsock/vsock_test.c
+>@@ -429,7 +429,7 @@ static void test_seqpacket_msg_bounds_client(const struct test_opts *opts)
+>
+> static void test_seqpacket_msg_bounds_server(const struct test_opts *opts)
+> {
+>-	unsigned long sock_buf_size;
+>+	uint64_t sock_buf_size;
+> 	unsigned long remote_hash;
+> 	unsigned long curr_hash;
+> 	int fd;
+>@@ -634,7 +634,8 @@ static void test_seqpacket_timeout_server(const struct test_opts *opts)
+>
+> static void test_seqpacket_bigmsg_client(const struct test_opts *opts)
+> {
+>-	unsigned long sock_buf_size;
+>+	uint64_t sock_buf_size;
+>+	size_t buf_size;
+> 	socklen_t len;
+> 	void *data;
+> 	int fd;
+>@@ -655,13 +656,19 @@ static void test_seqpacket_bigmsg_client(const struct test_opts *opts)
+>
+> 	sock_buf_size++;
+>
+>-	data = malloc(sock_buf_size);
+>+	buf_size = (size_t) sock_buf_size; /* size_t can be < uint64_t */
+>+	if (buf_size != sock_buf_size) {
+>+		fprintf(stderr, "Returned BUFFER_SIZE too large\n");
+>+		exit(EXIT_FAILURE);
+>+	}
+>+
+>+	data = malloc(buf_size);
+> 	if (!data) {
+> 		perror("malloc");
+> 		exit(EXIT_FAILURE);
+> 	}
+>
+>-	send_buf(fd, data, sock_buf_size, 0, -EMSGSIZE);
+>+	send_buf(fd, data, buf_size, 0, -EMSGSIZE);
+>
+> 	control_writeln("CLISENT");
+>
+>@@ -1360,6 +1367,7 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
+> 	int recv_buf_size;
+> 	struct pollfd fds;
+> 	size_t buf_size;
+>+	uint64_t sock_buf_size;
+> 	void *buf;
+> 	int fd;
+>
+>@@ -1370,9 +1378,10 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
+> 	}
+>
+> 	buf_size = RCVLOWAT_CREDIT_UPD_BUF_SIZE;
+>+	sock_buf_size = buf_size; /* size_t can be < uint64_t */
+>
+> 	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
+>-		       &buf_size, sizeof(buf_size))) {
+>+		       &sock_buf_size, sizeof(sock_buf_size))) {
+> 		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
+> 		exit(EXIT_FAILURE);
+> 	}
+>-- 
+>2.34.1
+>
 
 
