@@ -1,205 +1,122 @@
-Return-Path: <linux-kernel+bounces-390403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866249B796A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:12:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC8F9B796D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1727B1F211FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DE151C21D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D53819ABB7;
-	Thu, 31 Oct 2024 11:11:53 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C7D19AA56;
+	Thu, 31 Oct 2024 11:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bp4jGK0o"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1390194C9E;
-	Thu, 31 Oct 2024 11:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7144545025
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730373112; cv=none; b=Cs+8WDkHPz16weJsnLieh7KjVnw0laF6oRGJfE1CsSn5t0QUrkOSXBhePALYiZiOFoJThBTC8SZW9pm+ow7SjJTVwpP1LP5S0hwLHvnpJxMFYobEBNwR1BZcpTIg0orTqZf7qaMGY2zuYutjrPhsjhg89TnEvUhlrRzsM4OrHgs=
+	t=1730373211; cv=none; b=Wq6mFi1oU8EzWrL8F0Tdrvm50DhVQYSz4jWAdPWFpG6taKHPlsHbmh6cHbj3aVpU09OdrguTGGbkCjlxZByGDZ8yNcE2PmFeisA7QIjOLyodKTTCUwGqFivC1lwCUuHlHeYy8O/mr9wqTRX5Ide42LYzbVmLv6NiLYD6LyoZZck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730373112; c=relaxed/simple;
-	bh=5JvpDc2N4S/qlEJkYG/qMnle/efP0ULHY3LjRmuVLMw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Yc0UBEY9t3pGHqswzvoGRZTgmkr7HSi0hFBvPRFq0yyS7dZZqKFAqX8kObbt8mwpvy/wfToF2MQTNHME4gaLOHr+IcwxzKuy2TDPhP2ZS5QIy+BFEo33VqCU13pvgfDJvw/R+iIMRoiXGGiIBwMREdgLa4oxHKAFPyatevfuOJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XfLsd4NbFz4f3jqL;
-	Thu, 31 Oct 2024 19:11:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4063A1A058E;
-	Thu, 31 Oct 2024 19:11:46 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgDHo4fxZSNnlzLTAQ--.891S3;
-	Thu, 31 Oct 2024 19:11:46 +0800 (CST)
-Subject: Re: [PATCH v3 6/6] md/raid10: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
- hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
- Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241031095918.99964-1-john.g.garry@oracle.com>
- <20241031095918.99964-7-john.g.garry@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <9ca4f8af-d826-ee33-dde8-f2984538971d@huaweicloud.com>
-Date: Thu, 31 Oct 2024 19:11:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730373211; c=relaxed/simple;
+	bh=UR+AZkACxbATXx2sqIfcnbBjwtoC++48d+OLHhNINNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ncYUTRJGacOSnwQ9xEfEVDsg0kP/3DV8kh00yHMCSZBLUy+JyiCIWg/RqjPgTGvCZfc0b0M+IgpIfGVEQ03s0qHreB0DWup5xF6Wv85gSdWZfer+piHebivrNGVq9jKShVJ45WDLBzmN+fJTZOXg31kDzVLVCkF2+705pZU6Gmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bp4jGK0o; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e58878f2so169261e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:13:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730373208; x=1730978008; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qz71vnw5/+cff0GcfCxZkyXlF45Rde5KArOUta65nkg=;
+        b=Bp4jGK0o7hpPwx/1bZUYwawQetPkA2Wvce3xZ7KQYt7kbltgWTZTFEbxtEeGjQt8M+
+         p9ExZ3y1vg1tIwghJudEyH4PlQw3fDoWEw3/f7XkUTCaMfAcEdi9+dWYHjmo8KIaFmLS
+         lxk7Pn/KaLoumkaQr2o7EhM48aPXV2gtFH9gYT9l25L67CvOXhUbi39Rq2SP1thA3RA6
+         csbfv4AEWEGEteOj5K6znzEorNOOWn9aozGTng9njKeJlxbBDm1EUm6di5T5iIb9Ap5B
+         ucdh4BntFTqjj8SggV2ENOdCJTnSaLVGMSEZkfEqxJk6/SEW8IpMnz87FIllJnXfAd9s
+         VsvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730373208; x=1730978008;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qz71vnw5/+cff0GcfCxZkyXlF45Rde5KArOUta65nkg=;
+        b=a6ukReeizr2lxIrieWRG+3dJseFbQGCHVQDgQQIKjOdV+QdKRG99f1M7l8RBn+hXU9
+         MkWP8uky6ZslV4GAoOxr5Bl65xMaQdXTvN3L8Q0XKqPzxHmzo88/H5WPI+IM1Fv3PoIr
+         2DIyufttynStShDqy6TIn9fYcduzmDvjdWMUsO97EQ3OFMIxZrGfmGsCgaqcAAVGLKtM
+         4v9UeB1XePfCRfjC/y/kZKq/du9qniJ6jzi39vAF/vFjirOy3bHHrgTtqsgy9t6LBsl0
+         AVGtq/K/2boY9lRaJqNEN92v1bD9l5kgIclJ/23v+w0p2m+STfV1LO1D8dhH6JzhwBjp
+         ta7g==
+X-Forwarded-Encrypted: i=1; AJvYcCX2kbsx5HYPk02mIlxVsCbLwRb2GCXxHI9pAp4BbQAa0CPnOeQ67SehVfFezJS1GJ0o0bHNON0zp5rIL5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2M63QrsOGfspqVhqMQR2iA4QwDr+Q1olJvyePNfI34KEs3tr4
+	yA7tTQoh70Ud5zGMyeYAmhzFIgkhOicVvfg5ub1CD95WmaNawlxF7DvT6Arm52I=
+X-Google-Smtp-Source: AGHT+IHMRW3LKj7hVd13fw0NA8R8RK3iFhWEx0wtfxCzkNV7xvC+GUbQfnGNOuOyF4KN9HvNqZ7bTA==
+X-Received: by 2002:a05:651c:b0a:b0:2fb:591d:3de1 with SMTP id 38308e7fff4ca-2fcbe0c1d42mr30158671fa.7.1730373207464;
+        Thu, 31 Oct 2024 04:13:27 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef61837dsm1875871fa.70.2024.10.31.04.13.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 04:13:26 -0700 (PDT)
+Message-ID: <f06dea2e-893b-4de5-89a3-e25af56afb31@linaro.org>
+Date: Thu, 31 Oct 2024 13:13:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241031095918.99964-7-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next] i2c: qcom-cci: Remove the unused variable
+ cci_clk_rate
+Content-Language: en-US
+To: Andi Shyti <andi.shyti@kernel.org>,
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: loic.poulain@linaro.org, rfoss@kernel.org, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Abaci Robot <abaci@linux.alibaba.com>
+References: <20241029020931.42311-1-jiapeng.chong@linux.alibaba.com>
+ <rql2u5k3esavdmpdzgo4l4up4ir7yjpdzc3qlmsvjvqalqzvjc@xspprcohlout>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <rql2u5k3esavdmpdzgo4l4up4ir7yjpdzc3qlmsvjvqalqzvjc@xspprcohlout>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHo4fxZSNnlzLTAQ--.891S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWfGr1DZw1fXFy8AFyDGFg_yoWrAw18pr
-	4qgF1rArW5JFZI9w13JFsrKasYyry0qrW2yrWxG34xJFnIqr98KF18XrWYgry5uFy5ury3
-	X3Z5ur4DC39rtFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJr
-	UvcSsGvfC2KfnxnUUI43ZEXa7IUbmii3UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-ÔÚ 2024/10/31 17:59, John Garry Ð´µÀ:
-> Add proper bio_split() error handling. For any error, call
-> raid_end_bio_io() and return. Except for discard, where we end the bio
-> directly.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   drivers/md/raid10.c | 47 ++++++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 46 insertions(+), 1 deletion(-)
-> 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+Hi Andi,
 
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index f3bf1116794a..ccd95459b192 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -1159,6 +1159,7 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
->   	int slot = r10_bio->read_slot;
->   	struct md_rdev *err_rdev = NULL;
->   	gfp_t gfp = GFP_NOIO;
-> +	int error;
->   
->   	if (slot >= 0 && r10_bio->devs[slot].rdev) {
->   		/*
-> @@ -1206,6 +1207,10 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      gfp, &conf->bio_split);
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		allow_barrier(conf);
->   		submit_bio_noacct(bio);
-> @@ -1236,6 +1241,11 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
->   	mddev_trace_remap(mddev, read_bio, r10_bio->sector);
->   	submit_bio_noacct(read_bio);
->   	return;
-> +err_handle:
-> +	atomic_dec(&rdev->nr_pending);
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R10BIO_Uptodate, &r10_bio->state);
-> +	raid_end_bio_io(r10_bio);
->   }
->   
->   static void raid10_write_one_disk(struct mddev *mddev, struct r10bio *r10_bio,
-> @@ -1347,9 +1357,10 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
->   				 struct r10bio *r10_bio)
->   {
->   	struct r10conf *conf = mddev->private;
-> -	int i;
-> +	int i, k;
->   	sector_t sectors;
->   	int max_sectors;
-> +	int error;
->   
->   	if ((mddev_is_clustered(mddev) &&
->   	     md_cluster_ops->area_resyncing(mddev, WRITE,
-> @@ -1482,6 +1493,10 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
->   	if (r10_bio->sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, r10_bio->sectors,
->   					      GFP_NOIO, &conf->bio_split);
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		allow_barrier(conf);
->   		submit_bio_noacct(bio);
-> @@ -1503,6 +1518,26 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
->   			raid10_write_one_disk(mddev, r10_bio, bio, true, i);
->   	}
->   	one_write_done(r10_bio);
-> +	return;
-> +err_handle:
-> +	for (k = 0;  k < i; k++) {
-> +		int d = r10_bio->devs[k].devnum;
-> +		struct md_rdev *rdev = conf->mirrors[d].rdev;
-> +		struct md_rdev *rrdev = conf->mirrors[d].replacement;
-> +
-> +		if (r10_bio->devs[k].bio) {
-> +			rdev_dec_pending(rdev, mddev);
-> +			r10_bio->devs[k].bio = NULL;
-> +		}
-> +		if (r10_bio->devs[k].repl_bio) {
-> +			rdev_dec_pending(rrdev, mddev);
-> +			r10_bio->devs[k].repl_bio = NULL;
-> +		}
-> +	}
-> +
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R10BIO_Uptodate, &r10_bio->state);
-> +	raid_end_bio_io(r10_bio);
->   }
->   
->   static void __make_request(struct mddev *mddev, struct bio *bio, int sectors)
-> @@ -1644,6 +1679,11 @@ static int raid10_handle_discard(struct mddev *mddev, struct bio *bio)
->   	if (remainder) {
->   		split_size = stripe_size - remainder;
->   		split = bio_split(bio, split_size, GFP_NOIO, &conf->bio_split);
-> +		if (IS_ERR(split)) {
-> +			bio->bi_status = errno_to_blk_status(PTR_ERR(split));
-> +			bio_endio(bio);
-> +			return 0;
-> +		}
->   		bio_chain(split, bio);
->   		allow_barrier(conf);
->   		/* Resend the fist split part */
-> @@ -1654,6 +1694,11 @@ static int raid10_handle_discard(struct mddev *mddev, struct bio *bio)
->   	if (remainder) {
->   		split_size = bio_sectors(bio) - remainder;
->   		split = bio_split(bio, split_size, GFP_NOIO, &conf->bio_split);
-> +		if (IS_ERR(split)) {
-> +			bio->bi_status = errno_to_blk_status(PTR_ERR(split));
-> +			bio_endio(bio);
-> +			return 0;
-> +		}
->   		bio_chain(split, bio);
->   		allow_barrier(conf);
->   		/* Resend the second split part */
+On 10/31/24 12:44, Andi Shyti wrote:
+> Hi Jiapeng,
+> 
+> On Tue, Oct 29, 2024 at 10:09:31AM +0800, Jiapeng Chong wrote:
+>> Variable ret is not effectively used, so delete it.
+>>
+>> drivers/i2c/busses/i2c-qcom-cci.c:526:16: warning: variable â€˜cci_clk_rateâ€™ set but not used.
+>>
+>> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+>> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11532
+>> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> 
+> thanks for your patch! Applied to i2c/i2c-host
+> 
+> Thanks,
+> Andi
 > 
 
+FWIW I've noticed that my Reviewed-by tag was added to the accepted change,
+while it was the conditional one... Actually I don't know how to be aware
+of such nuances, if only b4 tool is used, likely there is no way for it.
+
+Hopefully I'm not too picky with it.
+
+--
+Best wishes,
+Vladimir
 
