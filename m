@@ -1,107 +1,230 @@
-Return-Path: <linux-kernel+bounces-390262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D239B77A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:36:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3CA9B7820
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:59:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB60EB26631
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:36:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7664CB20E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5C2198E92;
-	Thu, 31 Oct 2024 09:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A82198E86;
+	Thu, 31 Oct 2024 09:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oGy4Z7hW"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eXRlWaiE"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C9B197A72
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C9F19538D;
+	Thu, 31 Oct 2024 09:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367339; cv=none; b=OH9QQL7vM6HNPake3b/jIRjZgMnrbj73pgELzS/CpdeKa7H2gVwB9v8X0qu2WuAVviNL14wAlLAbVTD4Ohccj17NQWVVtuUzsHiTmD0z6V7CNS/+GAVVglnspmy4wTdMkyfa9FT7N45OGSdH6zFtfn2VuVVCNBftgmxNUGWQ6+w=
+	t=1730368739; cv=none; b=ld0rCyOR5uDpQ+fxVppx06ZeT0dU1+F/JjkUMDJ9L+5LmBWIGyi1QosmHlGAzMDqbaN2/UKrc50ZKKvG7P1ZoeJR9YQSttbYPkwPRbQLtTdqyJpv15fTqtq0/CJ8tLhmql1rMNH9++2XRpAwWCat0Uqn8YhfaNfvWk3yRQEy4Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367339; c=relaxed/simple;
-	bh=NpzT3JWDffonMgDLHFUTtvaGe33OX2pz/Vl1gjN1qOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2M0GCSyxOZE94y5tzMl/TzLE9RkgwgAjDOBE+oZDdxrpDdY+V8gL2tVPcRBkDB/dvDya7MmZ9bUodunu4cgfWCeI2TlZB3IRRdZpvXFpBXasPNuCg98wy+oe7BtBD+4IqYPl/n70AOHTjWmn0312y4o5DGNtohu7VYjpCHyVRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oGy4Z7hW; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so6472281fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730367335; x=1730972135; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YhgiGZoPJM0Lh+sWMByCi6m5AEirWnOhOBuCUCkrPgA=;
-        b=oGy4Z7hWEcJ58VTN4+lFFLaMyC9qBblmq8DVMTHv/cgAc1GvtB4qyHNLNFWqXqzael
-         YYK7TtoCxipFqCKG7FweFzTYBfnvstXvAUrhj6BvScEd43uHK/0OE4zim5p4BbUwLaY2
-         e38/L/J0y6XM9JG+d7BgAhwlh1vTFlWnHtDrJP58YQg66OWS7BjbcPEFvzVeiSQHEHeH
-         4r+aJBP4z1bmoR2ifogKi+GEulMjgw63CcPeUXp3bz9NUIzEHb17WxVjJLlbwdzkAscm
-         RRz/DwrXg+Jb8tIKfOmWdOQZV/B30mGu7jmInUiv7RFVKzfW3nyExfihOXh8k31JMf1W
-         Ozxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730367335; x=1730972135;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YhgiGZoPJM0Lh+sWMByCi6m5AEirWnOhOBuCUCkrPgA=;
-        b=W2yzZHBrNiIs7iOq46ZgyqtZhMaUQTxZ9cJLAxfkEp9U/1cr/egy293mGohf9EE6dp
-         ClZHLpNlSUnfrNIN8Hamew9CoapZpBED4fMJUI7uigzODpayFWqVU5iqwNsHzniYbwTG
-         H6eJvTPR5OAf7dp96mJuFUvtuMwAusPgx7I60RAtt/ul6HrKPl8J8nFvRZgnxirTowP9
-         IazaY9h8rGU8PTDRKazrVpPylOQtHKFXWJt5hlgsqtCmUQn7u9c0wYK5L0gk4JHMTFrC
-         5OuHrVIxVzmrUstwK3D6uspUhGRpcAFIR27DZDoGGmfDN91kECJcdkLtoSITVCyhvO4z
-         QEUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxLovum8FX49gONOJBngCB4SAe8uLRSt7opqxBMX1Uw2WmbPDX2EHan/btYnr99woOdbelDOHZcNmUj+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPFuJhSlmjtBrMDP6ytm/h583nrRlrxuvVSx2cO8weg2WrUluA
-	VmdzC2CfAj6y3DcOyiqqTbWg4AfKZux31O2DWKg22xmaRnVFnO5vsjk7H8W5Yuk=
-X-Google-Smtp-Source: AGHT+IH0+JNp1lLF5VxJcufxgytij8dV/52O1hFK1UvQFy7QXqhMzwjcLwROl7GrDUg1tS78lPM41w==
-X-Received: by 2002:a2e:9fca:0:b0:2fb:55b2:b199 with SMTP id 38308e7fff4ca-2fcbe0776demr65130691fa.37.1730367335063;
-        Thu, 31 Oct 2024 02:35:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abf3sm1539406f8f.101.2024.10.31.02.35.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 02:35:34 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:35:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: Fix use after free in debug printk
-Message-ID: <8bad985d-4655-45d2-b448-2b3377a8438c@stanley.mountain>
-References: <7d0481da-5852-4566-9adb-3a8bb74cb159@stanley.mountain>
- <ZyNI3rQw6q4pkqpD@hovoldconsulting.com>
+	s=arc-20240116; t=1730368739; c=relaxed/simple;
+	bh=+ayMeQelMoVwDcllnti8Ixel1VjIXot/5wDHLedscUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iw/7Zj0o2EINQyqGM4NbjkQ1s1haxDhhEEnUwOjHM0FkCcBcZj5aAhoyXWWpMQQGA5407MiT34FcHWhA9AF+nandh6VksEw+kTihgiYvQUZxzxCxNQEFu6njK7k7dVjQa5QIj3t+FvBWIhXMZ6lzPq+0ppT/hfpYEr8vZnPD5mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eXRlWaiE; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V2jCEc000381;
+	Thu, 31 Oct 2024 09:58:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=XP3siNQlvKdGFWT11pXCzmzCXCjXmKichlPYLUtej
+	JM=; b=eXRlWaiEICtdKZRRheV6PLGPj0rV4kfKpMXgylIrBoaz6yzJZmwwpY4RB
+	nQ21heiameNEE01rV5W/dK0CQOnK4BlCjftkMAzJg8y3JB3LjhGoZuWqWEAVvekw
+	dBVSdgNJOn4cnOK0qoQhIE5JT1V2CfQra4EjNpYF+e86ofaRETLVaJU1iqRGPz1b
+	HNdBNuiycaXHA7y/B6WKumA4vU/7OCc/lp0p7E3V9n+pw768HlbB0W6QwuQv1Wzp
+	hwEzdFTWFWGD5XNpbxlJtf/reo5Kd0fNCfPSrgO8vsmvlsfZsSUkVtO2U1BsrGyK
+	Oq/ySKs8dqCqgDkVNSOM5yLOdjoQw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65q8vy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 09:58:55 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49V60oRX024560;
+	Thu, 31 Oct 2024 09:58:55 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hcyjm0v9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 09:58:55 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49V9wpUG39321910
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 09:58:51 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6D59E2029F;
+	Thu, 31 Oct 2024 09:35:41 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4746B2029D;
+	Thu, 31 Oct 2024 09:35:41 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 31 Oct 2024 09:35:41 +0000 (GMT)
+From: Steffen Eiden <seiden@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
+Subject: [PATCH v2] s390/uvdevice: Support longer secret lists
+Date: Thu, 31 Oct 2024 10:35:41 +0100
+Message-ID: <20241031093541.1641849-1-seiden@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyNI3rQw6q4pkqpD@hovoldconsulting.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: YPwz-f_llA14oVPVsJVOhwrb3eT1WLYl
+X-Proofpoint-GUID: YPwz-f_llA14oVPVsJVOhwrb3eT1WLYl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=937
+ impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310074
 
-On Thu, Oct 31, 2024 at 10:07:42AM +0100, Johan Hovold wrote:
-> On Thu, Oct 31, 2024 at 09:59:10AM +0300, Dan Carpenter wrote:
-> > The dev_dbg() call dereferences "urb" but it was already freed on the
-> > previous line.  Move the debug output earlier in the function.
-> 
-> Thanks for catching this, but please use a temporary variable for the
-> struct device pointer instead of changing the flow.
-> 
+Enable the list IOCTL to provide lists longer than on page (85 entries).
+The list IOCTL accepts argument length up to 8 pages in page granularity
+and will fill the argument up to this length with entries until the list
+ends. User space unaware of this enhancement will still receive one page
+of data and an uv_rc 0x0100.
 
-Why?  The output is the same either way and this way is cleaner code.
+Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+---
+Reworked the whole list-creation loop. Hardened+simplified the implementation.
+Now, only the actual data filled by the CP is copied to userspace.
 
-> Also make sure to include the driver name in the patch summary prefix
-> (i.e. "USB: serial: io_edgeport: ..."):
+ arch/s390/include/uapi/asm/uvdevice.h |  1 +
+ drivers/s390/char/uvdevice.c          | 72 ++++++++++++++++++++-------
+ 2 files changed, 54 insertions(+), 19 deletions(-)
 
-Sure.
-
-regards,
-dan carpenter
+diff --git a/arch/s390/include/uapi/asm/uvdevice.h b/arch/s390/include/uapi/asm/uvdevice.h
+index 4947f26ad9fb..c584250d4a35 100644
+--- a/arch/s390/include/uapi/asm/uvdevice.h
++++ b/arch/s390/include/uapi/asm/uvdevice.h
+@@ -71,6 +71,7 @@ struct uvio_uvdev_info {
+ #define UVIO_ATT_ADDITIONAL_MAX_LEN	0x8000
+ #define UVIO_ADD_SECRET_MAX_LEN		0x100000
+ #define UVIO_LIST_SECRETS_LEN		0x1000
++#define UVIO_LIST_SECRETS_MAX_LEN	0x8000
+ #define UVIO_RETR_SECRET_MAX_LEN	0x2000
+ 
+ #define UVIO_DEVICE_NAME "uv"
+diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
+index 1f90976293e8..667d573e54b0 100644
+--- a/drivers/s390/char/uvdevice.c
++++ b/drivers/s390/char/uvdevice.c
+@@ -297,6 +297,43 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+ 	return ret;
+ }
+ 
++/*
++ * Do the actual secret list creation. Calls the list-UVC until there is no more
++ * space in the user buffer, or the list ends.
++ */
++static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
++{
++	const size_t data_off = offsetof(struct uv_secret_list, secrets);
++	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
++	struct uv_secret_list *list = zpage;
++	u16 num_secrets_stored = 0;
++	size_t user_off = data_off;
++	size_t copy_len;
++
++	do {
++		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
++				&uv_ioctl->uv_rrc);
++		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
++		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
++			break;
++
++		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
++		WARN_ON(copy_len > sizeof(list->secrets));
++
++		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
++			return -EFAULT;
++
++		user_off += copy_len;
++		num_secrets_stored += list->num_secr_stored;
++	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA &&
++		 user_off + sizeof(*list) <= uv_ioctl->argument_len);
++
++	list->num_secr_stored = num_secrets_stored;
++	if (copy_to_user(user_buf, list, data_off))
++		return -EFAULT;
++	return 0;
++}
++
+ /** uvio_list_secrets() - perform a List Secret UVC
+  * @uv_ioctl: ioctl control block
+  *
+@@ -308,6 +345,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+  *
+  * The argument specifies the location for the result of the UV-Call.
+  *
++ * Argument len must be a multiple of a page; 1-8 pages allowed.
++ * The list secrets IOCTL will call the list UVC multiple times and fill
++ * the provided user-buffer with list elements until either the list ends or
++ * the buffer is full. The list header is merged over all list header from the
++ * individual UVCs.
++ *
+  * If the List Secrets UV facility is not present, UV will return invalid
+  * command rc. This won't be fenced in the driver and does not result in a
+  * negative return value.
+@@ -318,31 +361,22 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+  */
+ static int uvio_list_secrets(struct uvio_ioctl_cb *uv_ioctl)
+ {
+-	void __user *user_buf_arg = (void __user *)uv_ioctl->argument_addr;
+-	struct uv_cb_guest_addr uvcb = {
+-		.header.len = sizeof(uvcb),
+-		.header.cmd = UVC_CMD_LIST_SECRETS,
+-	};
+-	void *secrets = NULL;
+-	int ret = 0;
++	void *zpage = NULL;
++	int rc;
+ 
+-	if (uv_ioctl->argument_len != UVIO_LIST_SECRETS_LEN)
++	if (uv_ioctl->argument_len == 0 ||
++	    uv_ioctl->argument_len % UVIO_LIST_SECRETS_LEN != 0 ||
++	    uv_ioctl->argument_len > UVIO_LIST_SECRETS_MAX_LEN)
+ 		return -EINVAL;
+ 
+-	secrets = kvzalloc(UVIO_LIST_SECRETS_LEN, GFP_KERNEL);
+-	if (!secrets)
++	zpage = (void *)get_zeroed_page(GFP_KERNEL);
++	if (!zpage)
+ 		return -ENOMEM;
+ 
+-	uvcb.addr = (u64)secrets;
+-	uv_call_sched(0, (u64)&uvcb);
+-	uv_ioctl->uv_rc = uvcb.header.rc;
+-	uv_ioctl->uv_rrc = uvcb.header.rrc;
+-
+-	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
+-		ret = -EFAULT;
++	rc = uvio_get_list(zpage, uv_ioctl);
+ 
+-	kvfree(secrets);
+-	return ret;
++	free_page((unsigned long)zpage);
++	return rc;
+ }
+ 
+ /** uvio_lock_secrets() - perform a Lock Secret Store UVC
+-- 
+2.45.2
 
 
