@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-390226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84D99B7736
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:17:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BC99B7744
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65365B24BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164C32861AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DAC1946CF;
-	Thu, 31 Oct 2024 09:16:47 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10648194A54;
+	Thu, 31 Oct 2024 09:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JmqRqo0j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E6417B436;
-	Thu, 31 Oct 2024 09:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B5A2AE9A;
+	Thu, 31 Oct 2024 09:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366207; cv=none; b=ZKFYwQviOQC80xE6e/R0dvoRBBoss4RCi9ycghAlb/7NuUsHCZV8IkLWQkB6RG5SuMPFVbWZimdBXXncDtQ9CQoaqyD/vQnRSxepKdaFhNabNkX49UYrOym1Ci//miWZtfB6lwfZ0xZDZG1YrUBQDQKzgbvIPwTEQleorZHbbv4=
+	t=1730366318; cv=none; b=sHeP3jkpzQ5xaA9/pN8eAH5UxYYmRHAaOJsvPdeysLSiDnaAsUAWAE0nD0WoVuDO4ZmWJrP1bTWCzsOo8vUMDgjxotFFJ6nvcKtQ4oHdF/6ErBN8rNo4YU7LOu1Sl6fzk8v8RII0jtH1ZKY+0d0+VM1OHF/d0Rzd8s7roBfbtpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366207; c=relaxed/simple;
-	bh=XGhyzGfmtfsnkOjf3JGFkJYGQksRSZn8/6iLyeLRtME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Go5NVoQz0dSA6O31ufA3bTNUep6Dq85vPOXSRhaX8+vSbK7mT+aO1ATXVnx9lWC723l0KDu+K0ne1muTuhMnO3rN1qLwmUV7rG9x/XRW9kkpBOIXUToGlNLv65MAO9SZm9l7DdZULw25XqCGpLQBs+0vku97u27j0OVmvizaVgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XfJHF3MQRz2FbnW;
-	Thu, 31 Oct 2024 17:15:05 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id C3B461A0190;
-	Thu, 31 Oct 2024 17:16:38 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 31 Oct 2024 17:16:38 +0800
-Message-ID: <8f8de1f4-428d-4f0e-260f-cacea30fcdec@hisilicon.com>
-Date: Thu, 31 Oct 2024 17:16:37 +0800
+	s=arc-20240116; t=1730366318; c=relaxed/simple;
+	bh=nnZoIkjjw622a2YDeEvJHG5nJHoFJjgwKOcayU0QwJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q38NYrSBdDUmDSZf0qN3XCtClFNzObynsNzcYbkuzV9GL0dQMmiXn/rxkew5ipGQXgTh07nfAnYv4vmm+iBZZgzLKLxG04XDuSJmhIKH4zMqzs5GujoWrA7Yl8+/C+Xs+9ygtyHB6GxbTcAzYHJgUx4hA4AXWuHYJj+puF8flWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JmqRqo0j; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730366316; x=1761902316;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nnZoIkjjw622a2YDeEvJHG5nJHoFJjgwKOcayU0QwJ8=;
+  b=JmqRqo0j/RyoFvmhb+m4oxqvcLMaZUDo+mxTcxwalyFA37gBu/WKp8UJ
+   t/D84NQ2iiJQTw02tPNDg3X3g9LCNwroI7TtBJchcAsWBRMj1xoZZ8eDT
+   kbk5t8IY1x5IctiD8md/xWRdo+ic63xmTbRR2I5HDFTm0i3P0jWaaIlC1
+   IbAW0eMqX09rsceN41uA0PPjOedGTwlbCR+gvys/ButEkbPupo5K48xXX
+   TFslgbrHqfzxvvkiTZuaZltI3GCvgRvt1StTcpzhCjBuFwmHpxQSXnDIs
+   fUjGjoLxAOMtdNf+3G302h/UnuXgM6H0nskhYfUzCr+ovY1d+7DzUAdpO
+   g==;
+X-CSE-ConnectionGUID: zlEWCq5IRf+6/Dmqh0F3zQ==
+X-CSE-MsgGUID: FyilTmL8R/69k16s3tYhkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="34024457"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="34024457"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:18:35 -0700
+X-CSE-ConnectionGUID: uI5x9iQDRFK+YhxxJSnFPw==
+X-CSE-MsgGUID: /tj7/2fgRyysA9IXUGOEiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82999572"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.164])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:18:32 -0700
+Date: Thu, 31 Oct 2024 11:18:27 +0200
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, yan.y.zhao@intel.com, isaku.yamahata@gmail.com,
+	kai.huang@intel.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiaoyao.li@intel.com,
+	reinette.chatre@intel.com,
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Subject: Re: [PATCH v2 16/25] KVM: TDX: Get system-wide info about TDX module
+ on initialization
+Message-ID: <ZyNLYxNlD4WTABvq@tlindgre-MOBL1>
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+ <20241030190039.77971-17-rick.p.edgecombe@intel.com>
+ <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH v2 for-rc 3/5] RDMA/hns: Modify debugfs name
-Content-Language: en-US
-To: Leon Romanovsky <leon@kernel.org>
-CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>
-References: <20241024124000.2931869-1-huangjunxian6@hisilicon.com>
- <20241024124000.2931869-4-huangjunxian6@hisilicon.com>
- <20241030121258.GB17187@unreal>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20241030121258.GB17187@unreal>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
 
-
-
-On 2024/10/30 20:12, Leon Romanovsky wrote:
-> On Thu, Oct 24, 2024 at 08:39:58PM +0800, Junxian Huang wrote:
->> From: Yuyu Li <liyuyu6@huawei.com>
->>
->> The sub-directory of hns_roce debugfs is named after the device's
->> kernel name currently, but it will be inconvenient to use when
->> the device is renamed.
->>
->> Modify the name to pci name as users can always easily find the
->> correspondence between an RDMA device and its pci name.
->>
->> Fixes: eb7854d63db5 ("RDMA/hns: Support SW stats with debugfs")
->> Signed-off-by: Yuyu Li <liyuyu6@huawei.com>
->> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->> ---
->>  drivers/infiniband/hw/hns/hns_roce_debugfs.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_debugfs.c b/drivers/infiniband/hw/hns/hns_roce_debugfs.c
->> index e8febb40f645..b869cdc54118 100644
->> --- a/drivers/infiniband/hw/hns/hns_roce_debugfs.c
->> +++ b/drivers/infiniband/hw/hns/hns_roce_debugfs.c
->> @@ -5,6 +5,7 @@
->>  
->>  #include <linux/debugfs.h>
->>  #include <linux/device.h>
->> +#include <linux/pci.h>
->>  
->>  #include "hns_roce_device.h"
->>  
->> @@ -86,7 +87,7 @@ void hns_roce_register_debugfs(struct hns_roce_dev *hr_dev)
->>  {
->>  	struct hns_roce_dev_debugfs *dbgfs = &hr_dev->dbgfs;
->>  
->> -	dbgfs->root = debugfs_create_dir(dev_name(&hr_dev->ib_dev.dev),
->> +	dbgfs->root = debugfs_create_dir(pci_name(hr_dev->pci_dev),
->>  					 hns_roce_dbgfs_root);
+On Thu, Oct 31, 2024 at 05:09:17PM +0800, Binbin Wu wrote:
 > 
-> Let's take this change, but the more correct way is to add .rename()
-> callback to ib_device ops in similar way to what we do in ib_client
-> and call to debugfs_rename() from there.
 > 
-> See ib_device_rename() implementation for "lient->rename(ibdev, client_data);" call.
 > 
+> On 10/31/2024 3:00 AM, Rick Edgecombe wrote:
+> [...]
+> > +static u32 tdx_set_guest_phys_addr_bits(const u32 eax, int addr_bits)
+> > +{
+> > +	return (eax & ~GENMASK(23, 16)) | (addr_bits & 0xff) << 16;
+> > +}
+> > +
+> > +#define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
+> > +
+> > +static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char idx)
+> > +{
+> > +	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
+> > +
+> > +	entry->function = (u32)td_conf->cpuid_config_leaves[idx];
+> > +	entry->index = td_conf->cpuid_config_leaves[idx] >> 32;
+> > +	entry->eax = (u32)td_conf->cpuid_config_values[idx][0];
+> > +	entry->ebx = td_conf->cpuid_config_values[idx][0] >> 32;
+> > +	entry->ecx = (u32)td_conf->cpuid_config_values[idx][1];
+> > +	entry->edx = td_conf->cpuid_config_values[idx][1] >> 32;
+> > +
+> > +	if (entry->index == KVM_TDX_CPUID_NO_SUBLEAF)
+> > +		entry->index = 0;
+> > +
+> > +	/* Work around missing support on old TDX modules */
+> > +	if (entry->function == 0x80000008)
+> > +		entry->eax = tdx_set_guest_phys_addr_bits(entry->eax, 0xff);
+> Is it necessary to set bit 16~23 to 0xff?
+> It seems that when userspace wants to retrieve the value, the GPAW will
+> be set in tdx_read_cpuid() anyway.
 
-Thanks for applying and the guidance. I'll have a look at it.
+Leaving it out currently produces:
 
-Junxian
+qemu-system-x86_64: KVM_TDX_INIT_VM failed: Invalid argument
 
-> Thanks
+Regards,
+
+Tony
 
