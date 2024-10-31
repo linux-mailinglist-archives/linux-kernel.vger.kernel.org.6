@@ -1,59 +1,51 @@
-Return-Path: <linux-kernel+bounces-390846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBD59B7F11
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D08E9B7F23
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:53:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60835281485
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CAD3282417
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81101A4F0C;
-	Thu, 31 Oct 2024 15:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB5D1B3725;
+	Thu, 31 Oct 2024 15:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HuUkXO/x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rtj5Cvxz"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD4B19B59C;
-	Thu, 31 Oct 2024 15:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F21A08BC;
+	Thu, 31 Oct 2024 15:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389903; cv=none; b=FRp8X+uWC4nT+7ZhyCjL8+P+brQLBCf5JdsoAvWf5z0aCjVUabqseMrgzyeHtx+58VxjQfvv2IkiBz16DfN6ao5OcmhUTubVvGDuElLg8lmaLvZN9Yai8284NLfUKUwwg7r60D/gqiA+gi3KTkI6Nny4TfUNfi/q3YtzWqIfjSc=
+	t=1730389986; cv=none; b=JgQFeH2h7nf2CVNtULlPKtqg6h9GbwtAKHq7rTvE+2VmGrdbvOS71n6FNbZGj4LU0a2eDZFVA1dMzZu6piBXfvncXQxMJLXLvanMtnSxwz6nSXXTN/3LgI2YXaJk16f0wgCMYLYUxPa7dRQo+awU1JqAUNtRmg7/BtRNl1hH4JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389903; c=relaxed/simple;
-	bh=WivZL725Ki/1pUOgmZWpT/+Ixrb99680JnJjkTk1UM8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hjMc8h4gveKnnB6Zj8z4aJEYx5CmGGY2sr1CscwZmfPXlTSVzzjaY1r6lCNyBvQ4uUFGedXSiGjKzrng0MKm5932sWv0mVmg6gKrtSp+lowG83AdJ8PnSAwZAIsEFGY3x5gIEwPtoV7OTcgtAs7MouWpNgNbqO/W+C4fj1kjSjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HuUkXO/x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B32CC567E3;
-	Thu, 31 Oct 2024 15:51:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730389901;
-	bh=WivZL725Ki/1pUOgmZWpT/+Ixrb99680JnJjkTk1UM8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HuUkXO/xIJ8kZhK8e5Gr+HjAF2w75nBYAj0uypV++3m/LEDVkN+jFixZJ/CNq+8OQ
-	 DAJ9ZcZ6nUzO8eAWFV0Je1NWLfIjBlfiVApPuf8sdYl57G9Lsbn9SzpZTGzL1uhr3u
-	 bcvCJlTG+Vdho46cDkeShhkHJp7AyoWvURGp1X8ThZNwZFwYzuqYNBa94/UFdE+Yia
-	 bYW0lX1nGEm5CmQ1b11z9PoTjOZZycIGPv3nlx/rYU446KhGUt4ztk8lrzqvApsHBY
-	 awN6ycAnqx7VrOVLFhmLkoLLP2MZ9qgQavtyPaG8vj+xE8S2ZLpqDJbDRVh2crFaqP
-	 2tHk4BuPhHz1w==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Andre Przywara <andre.przywara@arm.com>
-Cc: devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Martin Botka <martin.botka@somainline.org>, 
- Chris Morgan <macromorgan@hotmail.com>
-In-Reply-To: <20241007001408.27249-1-andre.przywara@arm.com>
-References: <20241007001408.27249-1-andre.przywara@arm.com>
-Subject: Re: [PATCH v2 0/5] regulator: add X-Powers AXP323 support
-Message-Id: <173038989913.1784644.2617880426369954438.b4-ty@kernel.org>
-Date: Thu, 31 Oct 2024 15:51:39 +0000
+	s=arc-20240116; t=1730389986; c=relaxed/simple;
+	bh=N830fVWifhGbcBBF89ZXJ7M4a+ROGpe3UDtbyB5q86M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hcXYfC2gstsYCpu3pZtESAEEYHhbe8eFyL633enGod0g1Qezo8u2Stq9gRKgitneXhW1iTT7ZR6quwGO8Mj3MZrZfuoBAKRQjM9/5/RaxB9BkkcQhQ/lRn20tC/RSu0m9jGXgDkcbIIS2T91HK34X+xOcImtWGqCk6NCm+Zkz+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rtj5Cvxz; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 25C8B1C000A;
+	Thu, 31 Oct 2024 15:52:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730389975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cD7mOQi0O8DNIiJK2VQkN3iQGCMRlI3qOZoMIXSbWvw=;
+	b=Rtj5Cvxz36AnsVkCFlb4MRNYB7q8Soi6mUnk9GhLvpPSDKBmTqVlaCoOjijSTEkLwo+S0F
+	UKTK1LUQUddBuG9P/sJbQ0JGQTQ21We/IQqXfjqIgb7TjWIXC7g0PKl6yDKxOhN1AyDKBq
+	oh7U+6GTb1ms5598eT6xcRufgyWGTiERT/4/YJFycZ5x3OmW/bmCYKz5HkYG2vu7gl6mjT
+	yqZ0lkSngG9WHkY1a6Yozlon68IRKfg1DoaAj8Bk5abQ4fl90IuIjkl4IAJM2owtUvJFSO
+	qE0GtsiFO+doaKFQzkqBonoNzYT0L+0pVF4MQq78/15kJoF5Kz/9S/x63koVqA==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH 00/13] Usable clocks on Mobileye EyeQ5 & EyeQ6H
+Date: Thu, 31 Oct 2024 16:52:50 +0100
+Message-Id: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,36 +54,148 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+X-B4-Tracking: v=1; b=H4sIANKnI2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA2MD3dyknErd5Jxs3UQLc/M0Y3NL49QkIyWg8oKi1LTMCrBR0bG1tQD
+ VCv/qWgAAAA==
+X-Change-ID: 20241030-mbly-clk-a877f3793eb2
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Mon, 07 Oct 2024 01:14:03 +0100, Andre Przywara wrote:
-> A small update of version, just changing the regmap cache type to maple
-> tree, and adding the accrued tags (thanks to the reviewers!).
-> ================================
-> The X-Powers AXP323 is a close sibling to the AXP313a PMIC, only that it
-> allows to dual-phase the first two DC/DC converters. This is controlled
-> via a new register. On the first glance that would sound like a
-> compatible extension, but any random AXP313a driver would not know about
-> the potential dual-phase nature of the second DCDC rail, so might want
-> to turn that off, spoiling the whole setup. So this patchset introduces
-> a new compatible string, without any fallbacks.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/5] dt-bindings: mfd: x-powers,axp152: Document AXP323
-      commit: bd91530aee6007a979e52d816779a6e10ed8c00a
-[2/5] mfd: axp20x: ensure relationship between IDs and model names
-      commit: 697a4001d31a607a72c6297e4eb0f7918c6e6929
-[3/5] mfd: axp20x: Allow multiple regulators
-      commit: e37ec32188701efa01455b9be42a392adab06ce4
-[4/5] mfd: axp20x: Add support for AXP323
-      commit: 35fec94afe045856456faca4879b9c560e39d1e3
-[5/5] regulator: axp20x: add support for the AXP323
-      commit: a0f8a8898e120d5a3f14cd22289daa3709d83f5b
+Now that clk-eyeq is in the clk-next tree, we can add the small(-ish)
+details required to make the platform work fully. The work is mostly
+about updating devicetrees to rely on the system-controller nodes as
+clock providers.
 
 --
-Lee Jones [李琼斯]
+
+Things we do:
+
+ - In EyeQ5 devicetrees, remove all fixed-factor clocks that are derived
+   from clk-eyeq PLLs. We expose those directly from clk-eyeq (using
+   match data info). This is simpler to reason about.
+
+   [PATCH 02/13] dt-bindings: clock: eyeq: add Mobileye EyeQ5 core clocks
+   [PATCH 03/13] dt-bindings: clock: eyeq: add Mobileye EyeQ5 peripheral clocks
+   [PATCH 06/13] clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+   [PATCH 08/13] clk: eyeq: add fixed factor clocks infrastructure
+   [PATCH 09/13] clk: eyeq: add EyeQ5 fixed factor clocks
+   [PATCH 12/13] MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+
+ - EyeQ6H devicetrees used fixed-clocks and didn't have
+   system-controllers defined. Remove all that and define our syscons.
+
+   [PATCH 04/13] dt-bindings: clock: eyeq: add Mobileye EyeQ6H central clocks
+   [PATCH 05/13] dt-bindings: clock: eyeq: add Mobileye EyeQ6H west clocks
+   [PATCH 10/13] clk: eyeq: add EyeQ6H central fixed factor clocks
+   [PATCH 11/13] clk: eyeq: add EyeQ6H west fixed factor clocks
+   [PATCH 13/13] MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+ - Our bindings used to say that some compatibles require a clock cell
+   (those that expose multiple clocks) and others do not. Remove that
+   subtlety and enforce a clock cell for everyone.
+
+   The goal is to make it easier to add clocks to compatibles that
+   previously exposed a single one. It happens for two compatibles in
+   this patch series (EyeQ6H central and west).
+
+   This is a "revert". I had been advised in the initial patch that the
+   behavior was a bad idea. I 100% agree with those comments.
+
+   [PATCH 01/13] dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+   [PATCH 07/13] clk: eyeq: require clock index with phandle in all cases
+
+--
+
+In which tree patches should go:
+
+ - clk:
+   [PATCH 02/13] dt-bindings: clock: eyeq: add Mobileye EyeQ5 core clocks
+   [PATCH 03/13] dt-bindings: clock: eyeq: add Mobileye EyeQ5 peripheral clocks
+   [PATCH 04/13] dt-bindings: clock: eyeq: add Mobileye EyeQ6H central clocks
+   [PATCH 05/13] dt-bindings: clock: eyeq: add Mobileye EyeQ6H west clocks
+   [PATCH 06/13] clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+   [PATCH 07/13] clk: eyeq: require clock index with phandle in all cases
+   [PATCH 08/13] clk: eyeq: add fixed factor clocks infrastructure
+   [PATCH 09/13] clk: eyeq: add EyeQ5 fixed factor clocks
+   [PATCH 10/13] clk: eyeq: add EyeQ6H central fixed factor clocks
+   [PATCH 11/13] clk: eyeq: add EyeQ6H west fixed factor clocks
+
+ - MIPS:
+   [PATCH 01/13] dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+   [PATCH 12/13] MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+   [PATCH 13/13] MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+Reasoning: we need the clock indexes from dt-bindings headers to avoid
+breaking the driver build, so patches 2-5 must go in clk-next.
+
+Note about devicetree patches 12-13: other patches on the same
+devicetrees are in the mailing-lists, with which I expect conflicts.
+All should be straight-forward to resolve.
+
+--
+
+Question: I am a bit afraid about the process for clocks in the future.
+Say we want to add I2C on EyeQ5 [0]. Steps will be:
+ - The dt-bindings headers will get a new offset.
+ - The clk-eyeq driver will get its private clocks indexes updated.
+ - Then the clocks will be accessible from devicetree.
+
+Those are somewhat unrelated to a series that is enabling I2C on a
+platform. Should I expose the few clocks I already know we'll be
+needing soon enough (I2C, SPI, EMMC)? The rest, I am unsure about the
+structure and I'd prefer not exposing them.
+
+Thanks,
+Have a nice day,
+Théo
+
+[0]: https://lore.kernel.org/all/20241009-mbly-i2c-v3-0-e7fd13bcf1c4@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Théo Lebrun (13):
+      dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+      dt-bindings: clock: eyeq: add Mobileye EyeQ5 core clocks
+      dt-bindings: clock: eyeq: add Mobileye EyeQ5 peripheral clocks
+      dt-bindings: clock: eyeq: add Mobileye EyeQ6H central clocks
+      dt-bindings: clock: eyeq: add Mobileye EyeQ6H west clocks
+      clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+      clk: eyeq: require clock index with phandle in all cases
+      clk: eyeq: add fixed factor clocks infrastructure
+      clk: eyeq: add EyeQ5 fixed factor clocks
+      clk: eyeq: add EyeQ6H central fixed factor clocks
+      clk: eyeq: add EyeQ6H west fixed factor clocks
+      MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+      MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |  24 +-
+ arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi      | 270 ---------------------
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  30 ++-
+ .../boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi     |  52 ----
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  73 +++++-
+ drivers/clk/clk-eyeq.c                             | 204 ++++++++++++++--
+ drivers/clk/clk-fixed-factor.c                     |  11 +
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  17 ++
+ include/linux/clk-provider.h                       |   3 +
+ 9 files changed, 307 insertions(+), 377 deletions(-)
+---
+base-commit: 11713909beb7debd3d466a6dc302a33d91298be0
+change-id: 20241030-mbly-clk-a877f3793eb2
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
 
 
