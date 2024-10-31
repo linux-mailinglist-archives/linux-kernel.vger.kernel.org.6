@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-390779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDA09B7E69
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:29:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256989B7E6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5291F22248
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E861C2242F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1871D1BFDEC;
-	Thu, 31 Oct 2024 15:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1941C2DB8;
+	Thu, 31 Oct 2024 15:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VyMcOcy2"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rDECpU8L"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAA1BCA11
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E591BD501
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388442; cv=none; b=ARlqiu09Y8QIcMwruJJX3qAUYmZeSen9wzLZZpE5eMFhFEY+5laLArEotng5WLe3PdCMwXqIzsBqV1a87QqbFyp41SS09rQpodqy1LIhkLaS9xxyv/7QyRx3FN9i6zz4n/Qy+dGxtnALsCxUJCXWq3lMZLTf4q4bb9zro4uM9Rg=
+	t=1730388443; cv=none; b=p8Vp7coQ19XgPDkUdgItHzJNRsmgI7aM9jCNG+O/0Ky2Xzk5t9XREsWNa88FcD2E8Bil8ojOBFnVkFPQZ+27m0f3hV69G38TE3OmZPIdwztrqloE+NVH+BC53Mb6JHh551XWLAYONFYfOk/qkknjnwpHJaTZhR5FwiCKsxE7ymk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730388442; c=relaxed/simple;
-	bh=lNWa0KqaStuVBH6MPmyCH56JtdUmYjodW8Uzx50cst8=;
+	s=arc-20240116; t=1730388443; c=relaxed/simple;
+	bh=PmGalM7Ef6Ks5hbegfAqXArWEMF8OjNxmIq7YA4FlKk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MsqJRFRF0+uCgK5UXO0Q1r02rcK5msVttimaF0oIB/qdep6j/Zx7VSbWh+lPHh2QkVwcWpnpXBQen+6NgI7yceIhOd9kE6SUXg5tj3HEhrdSI6mwkBzsuro+Jg/5EoG1Po+ktxINaBXkF5wtT9C7SlEi7YtPyST99SKVp7xXoiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VyMcOcy2; arc=none smtp.client-ip=209.85.167.44
+	 In-Reply-To:To:Cc; b=DHlf0kX+SLuIfbbSxB8vg7a6C+gyZZMDfazlD/NRHBhyoGiVMZoUUoWfKBt7pXEcmSn4yASb/OuDvdLQpn4AuA11o9LILS4kxXUuLUE3iALaoQEnTgSSUMlsdWeWCScsfyNKy6KLoBlll2Cyyaoubxrhw8WCIxEWXMuvBXFHuvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rDECpU8L; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1350858e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:27:19 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315baec69eso8784485e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:27:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730388438; x=1730993238; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730388439; x=1730993239; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YFsb0303PjNI48V2V72P3jKH8c+L4bxDvzzJkb075Z8=;
-        b=VyMcOcy21a/eQSvIN5J/KFHyshrUk+xsffkJAjjYYyIxXEp2AX5wA4jTiWOB9l+eq5
-         64x5vrVKJ+SENIdwePNy4GPkYq/ff6Hqh+pEjIa6fcc6qb+L0TGe33LnvhNc9bIHjAuC
-         aJFawt8YlGv/uxpRrgp3rv6/DIEuhBWBdqmrRsZ9Gd1Q5Neh1AG/5xO16fmsu8AuGJpn
-         fGa+/9r4AVgsjVyx3a6QvQZzQrIZIVu0Mza5KQRcFoX+24g1fDbxK3Y3dOyj/SryKXhq
-         bfFawXoTVXo/Sb19uEsuSbpgUvnDBNGfkXdQD8mP8xW8y8wWLBnaTmwFqpuH99RiCBfF
-         sF4A==
+        bh=E+Wt5gEXGTTMFhAf0TDuO7kCimt1FNZkZpqrNk88/+4=;
+        b=rDECpU8LLFZNExbnFx3LPyTbxhRbjy+IHzff9CkDrdLdngzlmF3rVQgDWKISkXwNZo
+         siJueAzN6qWTeVGie1eIHUHv7RRWZ+3VMzQ1cQZwzzQfJs5r1HMpefIVIzF9473Scvyl
+         SvsoiVbCmVvVKi2ceFUAMPP1xqUI0x4k1x+ERF20OlH15hyLKW9dmgQwxhd/40LeOIvL
+         9J9zw/rsfEjBJ9k2BDpNedgjsUx+3PZPyPdG8t36vPUk5rkOs1EoDmIAlrOFzFOarEaQ
+         Eu0kd9xHmwUdQK5JeZgzlpqgc5WPGkGmhPu8+sNd9Kh9LfhynDwnSClH2Z1uy6msvXLj
+         RVhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730388438; x=1730993238;
+        d=1e100.net; s=20230601; t=1730388439; x=1730993239;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YFsb0303PjNI48V2V72P3jKH8c+L4bxDvzzJkb075Z8=;
-        b=STERTQlh55cOx6G2hXWKSNVqPlQa0uZ27LbwrCbPzvlfKOrK59fpBVwO7uM4FgD1Ys
-         uOFDGN5NcVdTXpRbXlg1a3cf+A1V5ALvAUDnw6bswqdQzRoq+NTfP5JJNaqe5zATzZJB
-         7RznoPOcTf0SC2dm5kMUNGt+VV3mVSKJSVdPjq/s73v7BU1bxim7FWrfl0g1ArC6iiNq
-         Mnm0I1omrrXGEXfPkT57Dqy1FljUUm/ipF0Lh5h7ZI8UnENgNci4U4RfRiw35hAw7tl3
-         cm1OBLvtJKleS3VRH8w9o7vAIWPxI65oB9gz7jdOZe1LSTz0mBUyBbyN7j1m7M+dF6zb
-         FqwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7cYvncVdJbncmI8n/62JZAWRK6k2Y4EoHege+dQp4ermAxaI1Yxja1n4Ch19MJhpwjcwPK4F9FTwxVdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUXnONSU/mZndB8hyYPE/+2HJROdzzyfNVeoOu0Jo2vwwv0NA6
-	MhO0CkX/+Pjon1kUUBU9C7sXgo5OML2YGYt+ak01ySlTG3+ENPxK7TiBHLq8/Zc=
-X-Google-Smtp-Source: AGHT+IGZJyt5pS0YUa3i9kFlv6G7+rYaLlulmcGcSn6EUiy6VmRiBhyhHkSniuvcZZRqwpxExeJiyg==
-X-Received: by 2002:a05:6512:1255:b0:539:dca9:19a2 with SMTP id 2adb3069b0e04-53b3491c152mr9322585e87.39.1730388437575;
-        Thu, 31 Oct 2024 08:27:17 -0700 (PDT)
+        bh=E+Wt5gEXGTTMFhAf0TDuO7kCimt1FNZkZpqrNk88/+4=;
+        b=P7gc8NE8IVxJh+m/3EF0WWX806j/zxFTaHZt2qcVr1nzKeG30Ue2+FWeZuzKyFa9cg
+         qUyFRWiuiYPeLEmsaJ1jXGitKU6T6hwAZLnNLUbgIO3CWtMJ7feYfQrTnCGcWkfr4XV1
+         2ezY5UXP3XrM6ER1CXy1Edg3cCmuCgnTxvNRc5pKljADzOoa+TjHVcOdgKHyXva1u/zZ
+         D4IS1014qLdErgdtFIbrK6gR5YSFWtNi4ER1+hy/sA0bvV1sADpObFCKui2X1w4M6hqU
+         8XAJKoodSXc497xyV+Uj1sFcpj2+716/UyBvtThGWaz2/3ql2128J8FBpdPjsyWsr9ea
+         ULBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfKzBJtGaFEbezV5t2zhrRFK8q2YNv9VPYUdpONlU00Gh+qVjFWDyYboxDU00WoeQ/Cw9gRh9A+ghzXrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznNWCx2nxELEsMgDfn+oJWies0k+gAVe/EaeLylcQftVbmUrEs
+	eniF+XqZrbNtIXWLvFGrfltUertZY6ld0pyJXk3rmiNpqPAUlEY/lsfq8/QRFxs=
+X-Google-Smtp-Source: AGHT+IEyu6FJS8+aBQtlI/2iMWr0qg8SLYMIc2U9veyCeAFrXBtLbW2/W+xR+K+a9Ow41bs7++cXAQ==
+X-Received: by 2002:a05:600c:3ca1:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-43283255489mr2254255e9.16.1730388438884;
+        Thu, 31 Oct 2024 08:27:18 -0700 (PDT)
 Received: from [192.168.1.64] (2a02-8428-e55b-1101-1e41-304e-170b-482f.rev.sfr.net. [2a02:8428:e55b:1101:1e41:304e:170b:482f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf429sm29399475e9.12.2024.10.31.08.27.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf429sm29399475e9.12.2024.10.31.08.27.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 08:27:17 -0700 (PDT)
+        Thu, 31 Oct 2024 08:27:18 -0700 (PDT)
 From: Julien Stephan <jstephan@baylibre.com>
-Date: Thu, 31 Oct 2024 16:27:05 +0100
-Subject: [PATCH v2 10/15] iio: imu: bmi323: use bool for event state
+Date: Thu, 31 Oct 2024 16:27:06 +0100
+Subject: [PATCH v2 11/15] iio: imu: st_lsm6dsx: use bool for event state
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-iio-fix-write-event-config-signature-v2-10-2bcacbb517a2@baylibre.com>
+Message-Id: <20241031-iio-fix-write-event-config-signature-v2-11-2bcacbb517a2@baylibre.com>
 References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
 In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
 To: Mudit Sharma <muditsharma.info@gmail.com>, 
@@ -107,53 +107,26 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.14.2
 
 Since the write_event_config callback now uses a bool for the state
-parameter, update the signatures of the functions it calls accordingly.
+parameter, update the signature of the function it calls accordingly.
 
 Signed-off-by: Julien Stephan <jstephan@baylibre.com>
 ---
- drivers/iio/imu/bmi323/bmi323_core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
-index 76a88e1ccc1d89988eb52d6b1be8da0f5005f0e6..161bb1d2e761688dd740635f8a2830e9562d1b59 100644
---- a/drivers/iio/imu/bmi323/bmi323_core.c
-+++ b/drivers/iio/imu/bmi323/bmi323_core.c
-@@ -467,7 +467,7 @@ static int bmi323_feature_engine_events(struct bmi323_data *data,
- 			    BMI323_FEAT_IO_STATUS_MSK);
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+index caefa15e559b8808051ff1c7f82c3f36c947933c..509e0169dcd54e773540c4e3f1b56e5b737f80c3 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+@@ -1865,7 +1865,7 @@ static int st_lsm6dsx_write_raw(struct iio_dev *iio_dev,
+ 	return err;
  }
  
--static int bmi323_step_wtrmrk_en(struct bmi323_data *data, int state)
-+static int bmi323_step_wtrmrk_en(struct bmi323_data *data, bool state)
+-static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, int state)
++static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, bool state)
  {
- 	enum bmi323_irq_pin step_irq;
- 	int ret;
-@@ -484,7 +484,7 @@ static int bmi323_step_wtrmrk_en(struct bmi323_data *data, int state)
- 	ret = bmi323_update_ext_reg(data, BMI323_STEP_SC1_REG,
- 				    BMI323_STEP_SC1_WTRMRK_MSK,
- 				    FIELD_PREP(BMI323_STEP_SC1_WTRMRK_MSK,
--					       state ? 1 : 0));
-+					       state));
- 	if (ret)
- 		return ret;
- 
-@@ -506,7 +506,7 @@ static int bmi323_motion_config_reg(enum iio_event_direction dir)
- }
- 
- static int bmi323_motion_event_en(struct bmi323_data *data,
--				  enum iio_event_direction dir, int state)
-+				  enum iio_event_direction dir, bool state)
- {
- 	unsigned int state_value = state ? BMI323_FEAT_XYZ_MSK : 0;
- 	int config, ret, msk, raw, field_value;
-@@ -570,7 +570,7 @@ static int bmi323_motion_event_en(struct bmi323_data *data,
- }
- 
- static int bmi323_tap_event_en(struct bmi323_data *data,
--			       enum iio_event_direction dir, int state)
-+			       enum iio_event_direction dir, bool state)
- {
- 	enum bmi323_irq_pin tap_irq;
- 	int ret, tap_enabled;
+ 	const struct st_lsm6dsx_reg *reg;
+ 	unsigned int data;
 
 -- 
 2.47.0
