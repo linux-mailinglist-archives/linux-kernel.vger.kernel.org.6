@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-389878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0D89B7260
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:09:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110279B726B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:16:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3981F2509E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D921C23248
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1972A84A51;
-	Thu, 31 Oct 2024 02:08:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02611BD9F7
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47AC86131;
+	Thu, 31 Oct 2024 02:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZQRg8/AO"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801082E401;
+	Thu, 31 Oct 2024 02:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730340535; cv=none; b=tvcN2tOhdgQjrtExHyAEKSqprfH/bFD+If1hPJimp39OIt38tTIrKr2zQM/pyI0RbEk7iNhW2z8TP+jRXEmCPkH1yqib0gQslOPadb1hPv8AnC0Fft5Ssmg4kBxwOwll924qdgrx1fvHEuPh3DD4YJRT7uInFrLZMQJ3hwQn0tk=
+	t=1730340985; cv=none; b=GfCZB3+OWQEGGfjq5WMgLJxhhkyrPAImjIEN5pFMlsvh+2Djnl7jpFpwVWthiMtA/EuQn3A55C+Ro0bqBW8TFwuxnEISoL0uJxgetRUQGQ+9CD3Wjo5D7IPPRFFRsnXSkDy3olki6UwdRKF+HInm5zru7TSXLehtm+NaDgaFqkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730340535; c=relaxed/simple;
-	bh=Su52DJjvaUEtS310hQDQCUdqq/9Ep6frU4psaYiiK40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mO4s58FDRf6B+Y75DWImB4AewoSD41u2zxchfnWPoo06sxaAWZ4+B84oEv2hh/Fnnu/hwMfLkWwiMtfPUvfYXzQ7J/f8M/hKQkdG2GbznI6kYm9AHpssKwNYeQxvTZfabMXXL0RQ8PgBRrysDK6eH4UQXixybJ3aZKr76Bzt13M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3ECDD1063;
-	Wed, 30 Oct 2024 19:09:21 -0700 (PDT)
-Received: from [10.0.0.145] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AF693F73B;
-	Wed, 30 Oct 2024 19:08:50 -0700 (PDT)
-Message-ID: <86b2aef1-8926-47c8-8a33-9f02e3dd7d72@arm.com>
-Date: Wed, 30 Oct 2024 21:08:50 -0500
+	s=arc-20240116; t=1730340985; c=relaxed/simple;
+	bh=vhdnE9JA5pT9fw4J2PrJS8MGAPAdj0Foe/ClAeCnIHw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XyOmrOp+/oc/SB3tJLQpzl7waaZ3wYhTTnD5jVc9NL5Xx2NFufeUtr8E7PCGO5CgPR+SXlMB9jvMBF6xmdfjzsvG1McOsa6OCJs+4Tqc3LFNaM8Ocnb+HnL5BdojwsnmATO4HthRzUp2k7ZbGivNbCopzuDkYRz9FnQcOxrQb/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZQRg8/AO; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49V2Fd382697773, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1730340939; bh=vhdnE9JA5pT9fw4J2PrJS8MGAPAdj0Foe/ClAeCnIHw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=ZQRg8/AO85UwWA3ecJ8u+bRapJZYuNJLVenU4VHcEL94itQGC8ceAqG/zQRQAoLSP
+	 StVYQ/GNYRF4nOeDbTbu5g9Q++a8GG9XzDx+qziz4WdUJXVknjHcq9n2TNIQk0FrBp
+	 t8mkfuBKktHaUSKJq8X3STyawXK4gmEv/hYAMBhQwAANnc2cPOsQbhfaCyG5P3TBgM
+	 c63zA0DOTLv4OH0Df24tbQlrgdvQKpl/+pZQgA7/6Nrgeda4Sjp5RPQXOht8q83rG7
+	 LxSzF4guIDltztjNfLIoVikuTU7DIBuVPwB4mliYWUrLNrUUsCe3/hDtwwi+iKmVRH
+	 3k1843z4AFf/w==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49V2Fd382697773
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 10:15:39 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 31 Oct 2024 10:15:39 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 31 Oct 2024 10:15:38 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Thu, 31 Oct 2024 10:15:38 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+CC: "kvalo@kernel.org" <kvalo@kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
+        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
+        "rtl8821cerfe2@gmail.com"
+	<rtl8821cerfe2@gmail.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com"
+	<syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
+Subject: Re: [PATCH V2] wifi: rtlwifi: Drastically reduce the attempts to read efuse in case of failures
+Thread-Topic: [PATCH V2] wifi: rtlwifi: Drastically reduce the attempts to
+ read efuse in case of failures
+Thread-Index: AQHbKtYZmZEqsJWd+ECeMgNDFqDflLKgHpmT
+Date: Thu, 31 Oct 2024 02:15:38 +0000
+Message-ID: <4d9471f600224d23bb1f49a8ed4943c2@realtek.com>
+References: <20241030141440.1153887-1-gpiccoli@igalia.com>
+In-Reply-To: <20241030141440.1153887-1-gpiccoli@igalia.com>
+Accept-Language: en-US, zh-TW
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: rsi: Add automatic arm-cca-guest module loading
-To: Gavin Shan <gshan@redhat.com>, linux-arm-kernel@lists.infradead.org
-Cc: steven.price@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com,
- will@kernel.org, sami.mujawar@arm.com, linux-kernel@vger.kernel.org
-References: <20241029141114.7207-1-jeremy.linton@arm.com>
- <32211eb5-eed5-4c71-b62a-362d32e1af47@redhat.com>
- <b62b9ba4-eaf9-4533-9a97-7d5e2929b1e8@arm.com>
- <98b47e47-9014-45d1-86c7-4b78ff36bf54@redhat.com>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <98b47e47-9014-45d1-86c7-4b78ff36bf54@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 10/30/24 5:48 PM, Gavin Shan wrote:
-> Hi Jeremy,
-> 
-> On 10/31/24 1:16 AM, Jeremy Linton wrote:
->> On 10/29/24 7:23 PM, Gavin Shan wrote:
->>> On 10/30/24 12:11 AM, Jeremy Linton wrote:
->>>> The TSM module provides both guest identification as well as
->>>> attestation when a guest is run in CCA mode. Lets assure by creating a
->>>> dummy platform device that the module is automatically loaded during
->>>> boot. Once it is in place it can be used earlier in the boot process
->>>> to say decrypt a LUKS rootfs.
->>>>
->>>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->>>> ---
->>>>   arch/arm64/include/asm/rsi.h                    |  2 ++
->>>>   arch/arm64/kernel/rsi.c                         | 15 +++++++++++++++
->>>>   drivers/virt/coco/arm-cca-guest/arm-cca-guest.c |  7 +++++++
->>>>   3 files changed, 24 insertions(+)
->>>>
->>>
->>> I don't understand how the TSM module is automatically loaded and 
->>> arm_cca_guest_init()
->>> is triggered because of the newly introduced platform device. Could 
->>> you please provide
->>> more details? Apart from it, some nick-picks as below.
->>
->> I think your asking how the module boilerplate here works, AKA how the 
->> standard uevent/udev/modalias/kmod stuff works? The short version is 
->> that the platform bus uevents an add device with a modalias and 
->> userspace udev + kmod finds matching modules, and their dependencies, 
->> and loads them which triggers the module_init() calls.
->>
->> The suse folks have a detailed description of how this works:
->> https://doc.opensuse.org/documentation/leap/reference/html/book- 
->> reference/cha-udev.html#sec-udev-kernel
->>
->> So, this is a fairly common misuse of the platform bus, in this case 
->> to avoid needing a HWCAP. Assuring the module exists in the initrd 
->> will then result in it being loaded along any other modules required 
->> for the rootfs pivot.
->>
->>
-> 
-> Thanks for the explanation and details. The module won't be 
-> automatically loaded if
-> udev daemon isn't in place or the DEV_ADD event is ignored for whatever 
-> reasons. For
-> example the corresponding ACTION for DEV_ADD of this particular device 
-> is null in the
-> udev rules. So it's not guranteed that the module can be automatically 
-> loaded until udev
-> is in place and udev rules have been configured properly. It's a best- 
-> effort attempt
-> if I don't miss anything.
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/efuse.c b/drivers/net/w=
+ireless/realtek/rtlwifi/efuse.c
+> index 82cf5fb5175f..f741066c06de 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/efuse.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/efuse.c
+> @@ -164,7 +164,17 @@ void read_efuse_byte(struct ieee80211_hw *hw, u16 _o=
+ffset, u8 *pbuf)
+>         struct rtl_priv *rtlpriv =3D rtl_priv(hw);
+>         u32 value32;
+>         u8 readbyte;
+> -       u16 retry;
+> +       u16 retry, max_attempts;
+> +
 
-This functionality has been standard in all but the most deeply 
-enmbedded linux systems for a couple decades now (AFAIK). The platform 
-and modalias logic should largely just work everywhere that its 
-appropriate to be building this as a module. And to be clear that is 
-without updating any of the existing rules.
-
-> 
-> Could you please update the change log to mention the automatic module 
-> loading depends
-> on udev and its rules? In this way, readers will know it's a best-effort 
-> attempt at least.
-> 
-> Thanks,
-> Gavin
-> 
-
+Declarations should be in reverse X'mas tree order.
+Just add max_attempts to a new line at proper position.=20
 
