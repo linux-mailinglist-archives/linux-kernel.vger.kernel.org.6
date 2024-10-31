@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-390265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FFD9B77B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:38:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC02B9B77B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F371B1C215F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:38:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47E5DB2168A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7A1195962;
-	Thu, 31 Oct 2024 09:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF6B195FEC;
+	Thu, 31 Oct 2024 09:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cy0BrY2P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ESlbbYyo"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAC91946CF;
-	Thu, 31 Oct 2024 09:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25E42AE9A;
+	Thu, 31 Oct 2024 09:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367487; cv=none; b=TJnvZhVbhmOE7Fie6NoQTBAobA/4Iz7MKLt+tfXsGyCEHi5Bqg4v8EPeAp/xax+BM2JIaBT2WrrE6j+AVwl2UTlBBHRPGjjXBiR3F4PCUCmSnyBQ7ycKmeKrmuNuyLaqyNhQvI0WMDMmBzRY5UkeUNrZkF6zmmGn+4FhtufQc08=
+	t=1730367550; cv=none; b=KNMgyPfYgtz1BxQsqzUqkV6dxk9LKPucbyqNPYTo335UuwtfRrp2IV7BiD3hcs95cRn8ZYfjgUf73zqRb84J6xZlNfwr5Az8+lFHT8GxOsXgA8k8GgFr0xw7UiW/qWk477ffG79z9+WoFd6gUjY6Mtu+dhX6WnKjPY7J1k0dryc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367487; c=relaxed/simple;
-	bh=hGJmDyB3p1Y6/eVa1XcO7bP2MXZb9GFzininqLTSFxw=;
+	s=arc-20240116; t=1730367550; c=relaxed/simple;
+	bh=LRz1h79bJN4EYNQ1JU/SY7GS2AoN+ilnUVUKkNbp1+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plcs28mvScUxE3PYhGbqJ1m8x27zhLXnDSA9wj21R5pXEog5fo4du7QK9H6KRxetVBr6yJOe+GyYjS4Ab9ZX/1mC4xpCus2GRT2emWSc6n4sHO9e0oRHWRmNuBnfsLNm4ikpa4pGyVqX+629TG7uieWg1WPZS7bd9dhh7k23u7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cy0BrY2P; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730367485; x=1761903485;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hGJmDyB3p1Y6/eVa1XcO7bP2MXZb9GFzininqLTSFxw=;
-  b=Cy0BrY2PMFUD4QKJr+Ei/51zOqKNjA9dNMYjDkd37h1fNF6vfF6BporH
-   nNsmFvHuHHNIxZlnfkfVUbubZqTYp9Xr5BLxEj2MZx4hd89EwmGNdoXjY
-   cA/YgEc10tR40jelJC6zs7n19Vtc7AcyavLsaE5jEn54u5mjZSxjaa87Y
-   C8oeKLJeWwrL+hLJbZmjBXck/gi3DYB+DoU36oFWlgUrvEu/jzLhKMNrl
-   O0DAinhgsrOPsaiknLuDhN/dHrQhAp90DUabCp5871u+zRKGwR9yWbrSO
-   5WBMzVHhqXHM4DE0XlQeazH/lgPMcsXeUbl83msM71K3R/NUKxXaktGml
-   g==;
-X-CSE-ConnectionGUID: wU/SsoaESlyM+RXp2r0/zA==
-X-CSE-MsgGUID: Jiim5T2PSNChpVhOHdx5OA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="34027227"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="34027227"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:38:04 -0700
-X-CSE-ConnectionGUID: fXyzVN9ZT7uVl5DrNiSfaA==
-X-CSE-MsgGUID: 1uqweDCwRXmsrNNn/tUcLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="82232403"
-Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.164])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:37:59 -0700
-Date: Thu, 31 Oct 2024 11:37:55 +0200
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
-	seanjc@google.com, yan.y.zhao@intel.com, isaku.yamahata@gmail.com,
-	kai.huang@intel.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, reinette.chatre@intel.com,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH v2 16/25] KVM: TDX: Get system-wide info about TDX module
- on initialization
-Message-ID: <ZyNP82ApuQQeNGJ3@tlindgre-MOBL1>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <20241030190039.77971-17-rick.p.edgecombe@intel.com>
- <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
- <bb60b05d-5ccc-49ab-9a0c-a7f87b0c827c@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oC/XemZiXqe0bBtL1cpQ8p4wqoTl2Fno+9u7kCvIh2nmfJDQuXaT+yDCjF5hnuIsvnz3//gL+nNtWvCc7ptzCTvMF5+MB2fX/HiNpkZHNlBoAtDNGAM3PUHElS5Ec0N+CY/KQ63WHXtxzN5zqbPHHgYCdszaeiB/Mb2K4DpaaF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ESlbbYyo; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D7AE29EC;
+	Thu, 31 Oct 2024 10:39:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730367543;
+	bh=LRz1h79bJN4EYNQ1JU/SY7GS2AoN+ilnUVUKkNbp1+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ESlbbYyoYhKGDZUFCQhHxFQx28YfAGaDtvJf0E5BG6Us8nDoBVE1sLhzB/C0wt8jH
+	 X8PVJ5860rPxXXg0u7kb5c8zxnMJzvogtvmhE6iGXC68+/MFjy1QJe3RzaIdJdYU3V
+	 wqFm3OheKqq96zZZCjGxny3uErcw6VWWdsj321mE=
+Date: Thu, 31 Oct 2024 11:38:59 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Stefan Klug <stefan.klug@ideasonboard.com>
+Cc: Umang Jain <umang.jain@ideasonboard.com>,
+	libcamera-devel@lists.libcamera.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH] media: imx283: Report correct V4L2_SEL_TGT_CROP
+Message-ID: <20241031093859.GB2473@pendragon.ideasonboard.com>
+References: <20241030163439.245035-1-stefan.klug@ideasonboard.com>
+ <04ae3f0b-c2f8-4553-9b49-302cc638c0c7@ideasonboard.com>
+ <nr7wzo7smtq2mbtorhw4slgtvmj6nyk3witjcymwzk7efrftlc@obgey7ky5hpp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <bb60b05d-5ccc-49ab-9a0c-a7f87b0c827c@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <nr7wzo7smtq2mbtorhw4slgtvmj6nyk3witjcymwzk7efrftlc@obgey7ky5hpp>
 
-On Thu, Oct 31, 2024 at 05:23:57PM +0800, Xiaoyao Li wrote:
-> here it is to initialize the configurable CPUID bits that get reported to
-> userspace. Though TDX module doesn't allow them to be set in TD_PARAM for
-> KVM_TDX_INIT_VM, they get set to 0xff because KVM reuse these bits
-> EBX[23:16] as the interface for userspace to configure GPAW of TD guest
-> (implemented in setup_tdparams_eptp_controls() in patch 19). That's why they
-> need to be set as all-1 to allow userspace to configure.
+Hello,
+
+On Thu, Oct 31, 2024 at 10:13:13AM +0100, Stefan Klug wrote:
+> On Thu, Oct 31, 2024 at 11:07:00AM +0530, Umang Jain wrote:
+> > On 30/10/24 10:04 pm, Stefan Klug wrote:
+> > > The target crop rectangle is initialized with the crop of the default
+> > > sensor mode. This is incorrect when a different sensor mode gets
+> > > selected. Fix that by updating the crop rectangle when changing the
+> > > sensor mode.
+> > > 
+> > > Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+> > > ---
+> > >   drivers/media/i2c/imx283.c | 4 ++++
+> > >   1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
+> > > index 3174d5ffd2d7..c8863c9e0ccf 100644
+> > > --- a/drivers/media/i2c/imx283.c
+> > > +++ b/drivers/media/i2c/imx283.c
+> > > @@ -1123,6 +1123,7 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
+> > >   				 struct v4l2_subdev_state *sd_state,
+> > >   				 struct v4l2_subdev_format *fmt)
+> > >   {
+> > > +	struct v4l2_rect *crop;
+> > >   	struct v4l2_mbus_framefmt *format;
+> > >   	const struct imx283_mode *mode;
+> > >   	struct imx283 *imx283 = to_imx283(sd);
+> > > @@ -1149,6 +1150,9 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
+> > >   	*format = fmt->format;
+> > > +	crop = v4l2_subdev_state_get_crop(sd_state, IMAGE_PAD);
+> > > +	*crop = mode->crop;
+> > > +
+> > 
+> > One thing to note, is the crop for binning modes.
+> > 
+> > Do you need to report
+> > 
+> >     mode->crop.width / mode->hbin_ratio
+> >     mode->crop.height / mode->vbin_ratio
+> > 
+> > for those modes?
 > 
-> And the comment above it is wrong and vague. we need to change it to
-> something like
+> Good point. I was naively assuming that it has the same semantics as we
+> use for ScalerCrop in libcamera where it is explicitly stated that the
+> coordinates are in sensor pixels without binning. That has the added
+> advantage that we can deduce the binning factor from TGT_CROP and the
+> actual output size. However I couldn't find a precise specification for
+> that in the linux docs. 
 > 
-> 	/*
->          * Though TDX module doesn't allow the configuration of guest
->          * phys addr bits (EBX[23:16]), KVM uses it as the interface for
->          * userspace to configure the GPAW. So need to report these bits
->          * as configurable to userspace.
->          */
+> Maybe Sakari or Laurent have a definiteve answer there?
 
-That sounds good to me.
+This is not standardized in V4L2, and different drivers implement
+different semantics. There's an ongoing effort to fix this, see
+https://lore.kernel.org/r/20241011075535.588140-1-sakari.ailus@linux.intel.com.
+Reviews are appreciated :-)
 
-Hmm so care to check if we can also just leave out another "old module"
-comment in tdx_read_cpuid()?
+> > >   	return 0;
+> > >   }
 
+-- 
 Regards,
 
-Tony
+Laurent Pinchart
 
