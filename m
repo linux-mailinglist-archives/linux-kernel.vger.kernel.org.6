@@ -1,217 +1,265 @@
-Return-Path: <linux-kernel+bounces-390543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EEF9B7B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:50:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 175839B7B1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2130F1C21C6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9DC286EC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCDB19D09C;
-	Thu, 31 Oct 2024 12:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBF419D087;
+	Thu, 31 Oct 2024 12:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EaUCFnxV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OJJ+ekAp"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6E719CC2E;
-	Thu, 31 Oct 2024 12:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD3A19CC2E;
+	Thu, 31 Oct 2024 12:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730379024; cv=none; b=J2rYjTm5kIuhoW1JcsivsPjsvtngPt+yM37MqAVzSEkL6IvpMry5wnXFqZmiLKAeieWyRARRAIAohjziuAdHIKToKIzrEc68OC5/Arlv7Xy+eVdF88jgbDKFNhBkhpGufp0mCsF+GRxpmO2/iub3WMjROUafhjR9TygNfWS2E0I=
+	t=1730379094; cv=none; b=YTzc/AkOP8nHPj12LQ7KjguVymcAgbBRFw5pIcMdFUP/iu9ITDLe4loBjoWH/lRDQGZXSeDwJooPhyZ0E3XMfspfyUQ9MshV79C2Fif7XvkZ/kAZGv499wtnE1rhUA8V8VtJtGxT0jrecL0WGYaN42eJJjjr8Kjom8lua1JQ+TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730379024; c=relaxed/simple;
-	bh=KgrT9gzJsrw9/tNeAkVtI+KmjUxOi5HWXxXHyw+9wMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMTzrAUA/pepVBfQKAwpAzC3UT8DaprTOugJtjzwaiYcTnNagM+7jil8CaP0t2ZLDkCK0VkRvct0topuzJ1WjQg0iuoZbTasVHeD41ALxtji5YMu6Sj/UaB0B7ZvlrztT8CW810y6GWbSuO2NZJvXO8Ead6WdS4jDvUeQuASSBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EaUCFnxV; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730379021; x=1761915021;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KgrT9gzJsrw9/tNeAkVtI+KmjUxOi5HWXxXHyw+9wMA=;
-  b=EaUCFnxV+HJ8CRYtp1fqdg/LyYzvAmzTjDdP8RAf/Ik6qCfkmCX54ajP
-   lngyagx3RcAhV/sw2Cw6Pd+0MzxOedA97/fhvIiaNzzkocWZIhHnML41b
-   w19WZXn0o7LbzOPJApmkhph7FAhEXpBaFU71XpyzBtX7QQlBIItNMuu2d
-   KjNVZKykDWTH8zcxVURu0OgdKWqapHB+FiayMBLeK8iVtkKlkKVczf4A4
-   TTQl0Y2pMEAzood+oRDVTSoBul1sa56SJgZabcR+w7TnSbQQdlAJRzlCh
-   nGFmDXlR66n4sNEHltbHO6/o3S0oJ2TOOxXYx3W9D8vPRsTCn92qNF6DA
-   g==;
-X-CSE-ConnectionGUID: LB29erhZTP+Rx8gay+s+4g==
-X-CSE-MsgGUID: XFg032BlQwGPEqCMjB2iIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29881011"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29881011"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 05:50:17 -0700
-X-CSE-ConnectionGUID: oAS+hGlITdSR4zd7htEH9A==
-X-CSE-MsgGUID: EiZWJb+XTKminnwpxAY9wA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="87158095"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 31 Oct 2024 05:50:15 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6Ucu-000g6e-2Z;
-	Thu, 31 Oct 2024 12:50:12 +0000
-Date: Thu, 31 Oct 2024 20:49:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hilda Wu <hildawu@realtek.com>, marcel@holtmann.org
-Cc: oe-kbuild-all@lists.linux.dev, luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	max.chou@realtek.com, alex_lu@realsil.com.cn, kidman@realtek.com
-Subject: Re: [PATCH] bluetooth: add quirk using packet size 60
-Message-ID: <202410312046.r3WbTClD-lkp@intel.com>
-References: <20241030100804.2743115-1-hildawu@realtek.com>
+	s=arc-20240116; t=1730379094; c=relaxed/simple;
+	bh=8WukueJglfIZ7V/2lN2zJBVmiF1G+XXvk8Aa2j1mF4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dDQ+HorGXxr/wNuQxVf4+bukP2k4OY86ufaBbl88wub+gUpqhWv6JU7x/oyabK6C97RkOED+1VaFjDbC7Asjl9uJfg/OJ7o4R8Itx9WzagxozXxSJLjwRN1c/Vb6tZx5P8i0prJak1Hba8d2qNY9ureWv0xU5IcNIGBm0jGBjWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OJJ+ekAp; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pHltMX9LLDodjoFNq4oyjQF0WKzjMpxw/dGQ9QZLO3U=; b=OJJ+ekApQQKAPl3CnRjns8iW2S
+	S/n/Va8F8V1WXrcXiImAuA+vEQshA/m+Cv7dqmFeIm9awtFnlw+hU5AHLfyV/LU2f6YUh/+nShGJo
+	OCgMWXkLbSlmKcjRpB64Flah7LH8M+iIORw9lYdUY+2xNN2VOhUKT+tYFroXnzsWg5tmrTQI6jBtr
+	1zPpm1by9rx+HJcpbmCVAE+XI2BescWnMbVMZYEIZuvQphyawBchAy2Kcsd4fPCdvqVbR5kLBojW6
+	Bm3bArrJ080zvH81YsQlxSXd0jHsyVVnzQLasmKnWqEeBXeXPCxcDRjyDVEMYNsqVvzlQfR/CHtYF
+	ZDK2pD3A==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t6Udt-00014M-Qd; Thu, 31 Oct 2024 13:51:14 +0100
+Message-ID: <899284fa-953f-48a1-af29-222d0d55881c@igalia.com>
+Date: Thu, 31 Oct 2024 09:51:05 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030100804.2743115-1-hildawu@realtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] mm: shmem: override mTHP shmem default with a
+ kernel parameter
+To: David Hildenbrand <david@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Barry Song <baohua@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang <ioworker0@gmail.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+References: <20241030130308.1066299-1-mcanal@igalia.com>
+ <20241030130308.1066299-4-mcanal@igalia.com>
+ <2c507326-3267-431e-936a-23e2ab6a3baf@redhat.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <2c507326-3267-431e-936a-23e2ab6a3baf@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Hilda,
+Hi David,
 
-kernel test robot noticed the following build warnings:
+On 31/10/24 09:37, David Hildenbrand wrote:
+> On 30.10.24 13:58, Maíra Canal wrote:
+>> Add the ``thp_shmem=`` kernel command line to allow specifying the
+>> default policy of each supported shmem hugepage size. The kernel 
+>> parameter
+>> accepts the following format:
+>>
+>> thp_shmem=<size>[KMG],<size>[KMG]:<policy>;<size>[KMG]- 
+>> <size>[KMG]:<policy>
+>>
+>> For example,
+>>
+>> thp_shmem=16K-64K:always;128K,512K:inherit;256K:advise;1M-2M:never;4M-8M:within_size
+>>
+>> By configuring the default policy of several shmem hugepages, the user
+>> can take advantage of mTHP before it's been configured through sysfs.
+>>
+>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+>> ---
+>>   .../admin-guide/kernel-parameters.txt         |  10 ++
+>>   Documentation/admin-guide/mm/transhuge.rst    |  17 +++
+>>   mm/shmem.c                                    | 109 +++++++++++++++++-
+>>   3 files changed, 135 insertions(+), 1 deletion(-)
+>>
 
-[auto build test WARNING on bluetooth/master]
-[also build test WARNING on bluetooth-next/master linus/master v6.12-rc5 next-20241031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hilda-Wu/bluetooth-add-quirk-using-packet-size-60/20241030-181008
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
-patch link:    https://lore.kernel.org/r/20241030100804.2743115-1-hildawu%40realtek.com
-patch subject: [PATCH] bluetooth: add quirk using packet size 60
-config: x86_64-randconfig-123-20241031 (https://download.01.org/0day-ci/archive/20241031/202410312046.r3WbTClD-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410312046.r3WbTClD-lkp@intel.com/reproduce)
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index dfcc88ec6e34..c2299fa0b345 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -136,6 +136,7 @@ static unsigned long huge_shmem_orders_always 
+>> __read_mostly;
+>>   static unsigned long huge_shmem_orders_madvise __read_mostly;
+>>   static unsigned long huge_shmem_orders_inherit __read_mostly;
+>>   static unsigned long huge_shmem_orders_within_size __read_mostly;
+>> +static bool shmem_orders_configured __initdata;
+>>   #endif
+>>   #ifdef CONFIG_TMPFS
+>> @@ -5027,7 +5028,8 @@ void __init shmem_init(void)
+>>        * Default to setting PMD-sized THP to inherit the global 
+>> setting and
+>>        * disable all other multi-size THPs.
+>>        */
+>> -    huge_shmem_orders_inherit = BIT(HPAGE_PMD_ORDER);
+>> +    if (!shmem_orders_configured)
+>> +        huge_shmem_orders_inherit = BIT(HPAGE_PMD_ORDER);
+>>   #endif
+>>       return;
+>> @@ -5180,6 +5182,26 @@ struct kobj_attribute thpsize_shmem_enabled_attr =
+>>   #if defined(CONFIG_TRANSPARENT_HUGEPAGE)
+>> +static inline int get_order_from_str(const char *size_str)
+>> +{
+>> +    unsigned long size;
+>> +    char *endptr;
+>> +    int order;
+>> +
+>> +    size = memparse(size_str, &endptr);
+>> +
+>> +    if (!is_power_of_2(size))
+>> +        goto err;
+>> +    order = get_order(size);
+>> +    if (BIT(order) & ~THP_ORDERS_ALL_FILE_DEFAULT)
+>> +        goto err;
+>> +
+>> +    return order;
+>> +err:
+>> +    pr_err("invalid size %s in thp_shmem boot parameter\n", size_str);
+>> +    return -EINVAL;
+>> +}
+> 
+> Hm, mostly copy and paste. You could reuse existing get_order_from_str() 
+> simply by passing in the supported orders and moving error reporting to 
+> the caller.
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410312046.r3WbTClD-lkp@intel.com/
+Can I use functions from mm/huge_memory.c here?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/bluetooth/btusb.c:2156:65: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le16 [usertype] wMaxPacketSize @@     got int @@
-   drivers/bluetooth/btusb.c:2156:65: sparse:     expected restricted __le16 [usertype] wMaxPacketSize
-   drivers/bluetooth/btusb.c:2156:65: sparse:     got int
-   drivers/bluetooth/btusb.c:2188:65: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le16 [usertype] wMaxPacketSize @@     got int @@
-   drivers/bluetooth/btusb.c:2188:65: sparse:     expected restricted __le16 [usertype] wMaxPacketSize
-   drivers/bluetooth/btusb.c:2188:65: sparse:     got int
->> drivers/bluetooth/btusb.c:2156:65: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le16 [usertype] wMaxPacketSize @@     got int @@
-   drivers/bluetooth/btusb.c:2156:65: sparse:     expected restricted __le16 [usertype] wMaxPacketSize
-   drivers/bluetooth/btusb.c:2156:65: sparse:     got int
-   drivers/bluetooth/btusb.c:2188:65: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le16 [usertype] wMaxPacketSize @@     got int @@
-   drivers/bluetooth/btusb.c:2188:65: sparse:     expected restricted __le16 [usertype] wMaxPacketSize
-   drivers/bluetooth/btusb.c:2188:65: sparse:     got int
+> static inline int get_order_from_str(const char *size_str,
+>          int valid_orders)
+> {
+>      ...
+>      if (!is_power_of_2(size))
+>          return -EINVAL;
+>      order = get_order(size);
+>      if (BIT(order) & ~valid_orders)
+>          return -EINVAL;
+>      return order;
+> }
+> 
+>> +
+>>   static int __init setup_transparent_hugepage_shmem(char *str)
+>>   {
+>>       int huge;
+>> @@ -5195,6 +5217,91 @@ static int __init 
+>> setup_transparent_hugepage_shmem(char *str)
+>>   }
+>>   __setup("transparent_hugepage_shmem=", 
+>> setup_transparent_hugepage_shmem);
+>> +static char str_dup[PAGE_SIZE] __initdata;
+>> +static int __init setup_thp_shmem(char *str)
+>> +{
+>> +    char *token, *range, *policy, *subtoken;
+>> +    unsigned long always, inherit, madvise, within_size;
+>> +    char *start_size, *end_size;
+>> +    int start, end, nr;
+>> +    char *p;
+>> +
+>> +    if (!str || strlen(str) + 1 > PAGE_SIZE)
+>> +        goto err;
+>> +    strscpy(str_dup, str);
+>> +
+>> +    always = huge_shmem_orders_always;
+>> +    inherit = huge_shmem_orders_inherit;
+>> +    madvise = huge_shmem_orders_madvise;
+>> +    within_size = huge_shmem_orders_within_size;
+>> +    p = str_dup;
+>> +    while ((token = strsep(&p, ";")) != NULL) {
+>> +        range = strsep(&token, ":");
+>> +        policy = token;
+>> +
+>> +        if (!policy)
+>> +            goto err;
+>> +
+>> +        while ((subtoken = strsep(&range, ",")) != NULL) {
+>> +            if (strchr(subtoken, '-')) {
+>> +                start_size = strsep(&subtoken, "-");
+>> +                end_size = subtoken;
+>> +
+>> +                start = get_order_from_str(start_size);
+>> +                end = get_order_from_str(end_size);
+>> +            } else {
+>> +                start = end = get_order_from_str(subtoken);
+>> +            }
+>> +
+>> +            if (start < 0 || end < 0 || start > end)
+>> +                goto err;
+>> +
+>> +            nr = end - start + 1;
+>> +            if (!strcmp(policy, "always")) {
+>> +                bitmap_set(&always, start, nr);
+>> +                bitmap_clear(&inherit, start, nr);
+>> +                bitmap_clear(&madvise, start, nr);
+>> +                bitmap_clear(&within_size, start, nr);
+>> +            } else if (!strcmp(policy, "advise")) {
+>> +                bitmap_set(&madvise, start, nr);
+>> +                bitmap_clear(&inherit, start, nr);
+>> +                bitmap_clear(&always, start, nr);
+>> +                bitmap_clear(&within_size, start, nr);
+>> +            } else if (!strcmp(policy, "inherit")) {
+>> +                bitmap_set(&inherit, start, nr);
+>> +                bitmap_clear(&madvise, start, nr);
+>> +                bitmap_clear(&always, start, nr);
+>> +                bitmap_clear(&within_size, start, nr);
+>> +            } else if (!strcmp(policy, "within_size")) {
+>> +                bitmap_set(&within_size, start, nr);
+>> +                bitmap_clear(&inherit, start, nr);
+>> +                bitmap_clear(&madvise, start, nr);
+>> +                bitmap_clear(&always, start, nr);
+>> +            } else if (!strcmp(policy, "never")) {
+>> +                bitmap_clear(&inherit, start, nr);
+>> +                bitmap_clear(&madvise, start, nr);
+>> +                bitmap_clear(&always, start, nr);
+>> +                bitmap_clear(&within_size, start, nr);
+>> +            } else {
+>> +                pr_err("invalid policy %s in thp_shmem boot 
+>> parameter\n", policy);
+>> +                goto err;
+>> +            }
+>> +        }
+>> +    }
+> 
+> 
+> Similarly, copy-paste. But not that easy to abstract :) So maybe we'll 
+> have to keep that as is for now.
 
-vim +2156 drivers/bluetooth/btusb.c
+On v2 [1], I abstracted to reduce copy and paste, but me and Barry
+agreed that adding this sort of header to linux/huge_mm.h was weird.
 
-  2126	
-  2127	static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
-  2128	{
-  2129		struct btusb_data *data = hci_get_drvdata(hdev);
-  2130		struct usb_interface *intf = data->isoc;
-  2131		struct usb_endpoint_descriptor *ep_desc;
-  2132		struct usb_host_interface *alt;
-  2133		int i, err;
-  2134	
-  2135		if (!data->isoc)
-  2136			return -ENODEV;
-  2137	
-  2138		/* For some Realtek chips, they actually have the altsetting 6, but its
-  2139		 * altsetting descriptor is not exposed. We can activate altsetting 6 by
-  2140		 * replacing the altsetting 5.
-  2141		 */
-  2142		if (altsetting == 6 && !btusb_find_altsetting(data, 6) &&
-  2143		    btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE)) {
-  2144			alt = NULL;
-  2145			for (i = 0; i < intf->num_altsetting; i++) {
-  2146				if (intf->altsetting[i].desc.bAlternateSetting == 5) {
-  2147					alt = &intf->altsetting[i];
-  2148					break;
-  2149				}
-  2150			}
-  2151			if (alt) {
-  2152				for (i = 0; i < alt->desc.bNumEndpoints; i++) {
-  2153					ep_desc = &alt->endpoint[i].desc;
-  2154					if (usb_endpoint_is_isoc_out(ep_desc) ||
-  2155					    usb_endpoint_is_isoc_in(ep_desc))
-> 2156						ep_desc->wMaxPacketSize = 63;
-  2157				}
-  2158				alt->desc.bAlternateSetting = 6;
-  2159				set_bit(BTUSB_ALT_CHANGED, &data->flags);
-  2160			}
-  2161		}
-  2162	
-  2163		err = usb_set_interface(data->udev, data->isoc_ifnum, altsetting);
-  2164		if (err < 0) {
-  2165			bt_dev_err(hdev, "setting interface failed (%d)", -err);
-  2166			return err;
-  2167		}
-  2168	
-  2169		data->isoc_altsetting = altsetting;
-  2170	
-  2171		data->isoc_tx_ep = NULL;
-  2172		data->isoc_rx_ep = NULL;
-  2173	
-  2174		/* Recover alt 5 desc if alt 0 is set. */
-  2175		if (!altsetting && test_bit(BTUSB_ALT_CHANGED, &data->flags)) {
-  2176			alt = NULL;
-  2177			for (i = 0; i < intf->num_altsetting; i++) {
-  2178				if (intf->altsetting[i].desc.bAlternateSetting == 6) {
-  2179					alt = &intf->altsetting[i];
-  2180					break;
-  2181				}
-  2182			}
-  2183			if (alt) {
-  2184				for (i = 0; i < alt->desc.bNumEndpoints; i++) {
-  2185					ep_desc = &alt->endpoint[i].desc;
-  2186					if (usb_endpoint_is_isoc_out(ep_desc) ||
-  2187					    usb_endpoint_is_isoc_in(ep_desc))
-  2188						ep_desc->wMaxPacketSize = 49;
-  2189				}
-  2190				alt->desc.bAlternateSetting = 5;
-  2191				clear_bit(BTUSB_ALT_CHANGED, &data->flags);
-  2192			}
-  2193		}
-  2194	
-  2195		for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
-  2196			ep_desc = &intf->cur_altsetting->endpoint[i].desc;
-  2197	
-  2198			if (!data->isoc_tx_ep && usb_endpoint_is_isoc_out(ep_desc)) {
-  2199				data->isoc_tx_ep = ep_desc;
-  2200				continue;
-  2201			}
-  2202	
-  2203			if (!data->isoc_rx_ep && usb_endpoint_is_isoc_in(ep_desc)) {
-  2204				data->isoc_rx_ep = ep_desc;
-  2205				continue;
-  2206			}
-  2207		}
-  2208	
-  2209		if (!data->isoc_tx_ep || !data->isoc_rx_ep) {
-  2210			bt_dev_err(hdev, "invalid SCO descriptors");
-  2211			return -ENODEV;
-  2212		}
-  2213	
-  2214		return 0;
-  2215	}
-  2216	
+[1] 
+https://lore.kernel.org/linux-mm/20241029002324.1062723-4-mcanal@igalia.com/
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best Regards,
+- Maíra
+
+> 
+> 
+
 
