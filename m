@@ -1,147 +1,129 @@
-Return-Path: <linux-kernel+bounces-390758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8909B7E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:19:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F10799B7E0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CEBE1C21A9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:19:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B002C28160B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038A71CCEF0;
-	Thu, 31 Oct 2024 15:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C251F1B140D;
+	Thu, 31 Oct 2024 15:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D/xG8kr+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D2pvWG87"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HBryv0aF"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7249E1CB307
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208351A3056
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730387717; cv=none; b=rm97Gnr8qTW1hg5SjNHxaFuuNKJiiGHGo5iN2l/cl0J+lYBYj2qHKscM/FtIlVXJy/vRELt3WrPN7N00WQtjppx7+t3XsHP7DlX9doKlzw5i00/1swT/NbQAGxjGQIGRIByKDbKrxH0N3syYMPEX97Bf9SNThYs8SzII3XyXXs0=
+	t=1730387705; cv=none; b=OMgoa9LfRJXgODU+Trz5bReEU6p1u34AA4wzd2w24xB6uE6xgCBTYsO6JUYyRXUKC0BB/SjnZfqPAgXykNdJbpJ2rGXnMb1wpgVhyLBopcbdCM6M0iu+e+Esgb0+mWW+vNdZF0BQtDHYfv/adisYUEj9p7maRc0tvqIuYLPmqfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730387717; c=relaxed/simple;
-	bh=fAmxbllysH9EcW872wKMtTlLhbFGHlUzSTQmmo+32mU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MIWyk9asLFeTO3rcM8+rMyQWYe+BSUK0QZ5r5cDKPbgFL0zRlJnosGP9X06jKjGWT33baSuxTN1LIOLvfQ6faqCIwFlFYg92RQpN6zz3Y4D6eJwnHFo/Ox9ZjtjGRyiRlaUc13L2jaxQthU3MNSyh0pkTa5xL1c6zrAk18LSCWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D/xG8kr+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D2pvWG87; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730387713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FyamRs/0EaIVuqQPB5WehumUy+LlGp/xnGmtDyoDFVM=;
-	b=D/xG8kr+UzsvOcpBfyWcjyng7sjzcG0K9EcKPyWNMvYeG261TZrnXlHKGVEei6kOb1mF9g
-	hrf9gXxIuOMPQRKyOSOVUxjL11yKt4rbweVKNokjzjIFnwVrW+5V2Cc/vuOAZ2fL4CTsCZ
-	iccJSgXg8Wtx8tp/N4FoCAyHAXDn9cSBwesyyv6Qh0is6BA1IN5r8JG47+fdncBCpv5tHD
-	GZtOfPE9YAEKqjwvnlpEVYJp8uihxzJnF3hTylqAqj47IkbIXhyap9W9XpR7hXpPj9b7ak
-	gR3um/D30x2wY5n+dA4mfvE6H1WXu7ybo7KKtsESP+2NzirZT49CCRQmUMs5Pg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730387713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FyamRs/0EaIVuqQPB5WehumUy+LlGp/xnGmtDyoDFVM=;
-	b=D2pvWG87LT2hKQ4zyhtS4dnMNig7h3FvWA2cslB8Pl369L5ZejnCak3vfTJBRhReZzEGAU
-	wlIlMFS825QVE4Aw==
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	x86@kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	John Stultz <jstultz@google.com>,
-	Nam Cao <namcao@linutronix.de>,
-	Oliver Hartkopp <socketcan@hartkopp.net>
-Subject: [RESEND PATCH v2 19/19] hrtimers: Delete hrtimer_init_on_stack()
-Date: Thu, 31 Oct 2024 16:14:33 +0100
-Message-Id: <510ce0d2944c4a382ea51e51d03dcfb73ba0f4f7.1730386209.git.namcao@linutronix.de>
-In-Reply-To: <cover.1730386209.git.namcao@linutronix.de>
-References: <cover.1730386209.git.namcao@linutronix.de>
+	s=arc-20240116; t=1730387705; c=relaxed/simple;
+	bh=CIqgAcLbJbz9DTJFXaDtE7u4mCfu6HFK2Ec4lMCXi2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=frKEzvOKI37LOHcVWTevPMa0FoR2DJiP9aWacqwcfksmqAaTZL8POVO/5nYJBxgHwWEcsOPSJzAqE2UOiSDKvUgTynfe7sgiJFfFxDrfc3XRDcWpalz8eeotM1ajIMaV98Z7EdJIQOaKgmtWsI78v6zIQjYh6d/CX7gynW3acgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HBryv0aF; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e5e5c43497so8585417b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:15:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730387702; x=1730992502; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsNfyZkAbUdRy3BMPYsQyztzSUGdi05Vyd/UT3Z4MOk=;
+        b=HBryv0aFYb5GtzJOnqslVXR/dnUvcIoz7+UMNrpcEzi5V09oMhgXwj0HhOBNrabF3Y
+         P2RaxlpRKRe3QhH/uo2TFSQSODC6y5HZBH8FaKt2oWiR99L5ajwSYGB6VplK8fPCONeW
+         Rnb1pWOq0Wl+SrxpKG6g6m+cTZB/hWhA8JRZyeVbdmiNe15frgShLXeIAO8Cuf4GVweJ
+         mlMUexdjKxlkD+9eohUj20XVn2ze7NpJAgAqIYvvb6BP3cTPVRo0sECxe7EDQaMFb9kY
+         EZk/M4YxmSWPEe/jqjnCcJLzLFJbhj/RO4c3+09xsiv6+No7ZXHbuTgdHBaBU46MRIAn
+         gllg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730387702; x=1730992502;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PsNfyZkAbUdRy3BMPYsQyztzSUGdi05Vyd/UT3Z4MOk=;
+        b=q8CH07sAU0Y6brs68uoykE+pzuTRnBP1mF3D7LwxZaXdqktxntU8JqxbFdSUrBck3C
+         4ZS6yIXAvjnCcIAKbiNkU577U5s7uyopcXnl69kNkntChGeV5iyH0OnKMqHLm0sZ9uIC
+         g3eji0NL+Ph1mhMtLxwHOMVN/jmKHjQsOqp8Jy8axgcFdGTBTBSxoEKiBQytXddt1amI
+         Ia/f07Rkvkofml192ozgjPGv8OCC8AC8KoPX3NZl+nLyRsLtWL8+s1a5jJIOaorxho7S
+         xsMkQMUG5SpB+ypE0dckAtQS55wgnpTlaL5MQ4eLch64ixDlgIVRlIHLR41vM7wjeqjJ
+         kokg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIZxeeswXlhlMXNnT3B84n7lNBDqH6h6cKC1xSs0aTWrLqAqurEMS/3XJ1fdtryINyURKKAdpFavw3AcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9oKfj1w7OuxfelwbgYnKlHUskX+pknImKTgrPX7HV5uGEdoZ6
+	bQwM6hB7RqjgzXyoj4lChaOlgzaFpGbbT9f1aGYrdV/iM+o4505Yg5jiYXo3zJiClGJZT0ohIH/
+	I7aYWEFvBsYC6/yHrOJqyhhG6ICGJesHIzte4Bg==
+X-Google-Smtp-Source: AGHT+IEzbgAkvn+Kbd1W59aqNXrS5kqasKo2UcyReXDn6RNKVnLzNobyJmTaqWwwzBvxE1e6RcSS33ZES6nefnm8xiY=
+X-Received: by 2002:a05:690c:3803:b0:6e5:625c:5ad8 with SMTP id
+ 00721157ae682-6ea52542f0dmr43442727b3.37.1730387701805; Thu, 31 Oct 2024
+ 08:15:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-8-4cfb96d779ae@quicinc.com>
+ <omn34rwurlxrjckb5d6xb2brg6zwcizonmqyfckvngk5msrfav@b3i2bdjk5vw7> <2aa768a4-b0e9-4b2f-8d74-736a88cf81cd@quicinc.com>
+In-Reply-To: <2aa768a4-b0e9-4b2f-8d74-736a88cf81cd@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 31 Oct 2024 17:14:57 +0200
+Message-ID: <CAA8EJppZyJt_MWrafSKReuCXy0RtEAQ6VE-kt_Fp41eFpsW2SA@mail.gmail.com>
+Subject: Re: [PATCH 08/11] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock
+ controller driver
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-hrtimer_init_on_stack() is now unused. Delete it.
+On Wed, 30 Oct 2024 at 20:04, Taniya Das <quic_tdas@quicinc.com> wrote:
+>
+>
+>
+> On 10/19/2024 1:58 AM, Dmitry Baryshkov wrote:
+> >> +static struct gdsc gx_gdsc = {
+> >> +    .gdscr = 0x100c,
+> >> +    .en_rest_wait_val = 0x2,
+> >> +    .en_few_wait_val = 0x2,
+> >> +    .clk_dis_wait_val = 0x2,
+> >> +    .pd = {
+> >> +            .name = "gx_gdsc",
+> > .power_on = gdsc_gx_do_nothing_enable ? Or is it controlled directly on
+> > this platform?
+> >
+>
+> On QCS615 the GPU clocks are directly controlled by high level OS.
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- include/linux/hrtimer.h |  2 --
- kernel/time/hrtimer.c   | 17 -----------------
- 2 files changed, 19 deletions(-)
+Is it one of the gmu-wrapper platforms?
 
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index 4e4f04b3c0c2..7ef5f7ef31a9 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -230,8 +230,6 @@ extern void hrtimer_init(struct hrtimer *timer, clockid=
-_t which_clock,
- 			 enum hrtimer_mode mode);
- extern void hrtimer_setup(struct hrtimer *timer, enum hrtimer_restart (*fu=
-nction)(struct hrtimer *),
- 			  clockid_t clock_id, enum hrtimer_mode mode);
--extern void hrtimer_init_on_stack(struct hrtimer *timer, clockid_t which_c=
-lock,
--				  enum hrtimer_mode mode);
- extern void hrtimer_setup_on_stack(struct hrtimer *timer,
- 				   enum hrtimer_restart (*function)(struct hrtimer *),
- 				   clockid_t clock_id, enum hrtimer_mode mode);
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 376b8182b72e..55e9ffbcd49a 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1629,23 +1629,6 @@ void hrtimer_setup(struct hrtimer *timer, enum hrtim=
-er_restart (*function)(struc
- }
- EXPORT_SYMBOL_GPL(hrtimer_setup);
-=20
--/**
-- * hrtimer_init_on_stack - initialize a timer in stack memory
-- * @timer:	The timer to be initialized
-- * @clock_id:	The clock to be used
-- * @mode:       The timer mode
-- *
-- * Similar to hrtimer_init(), except that this one must be used if struct =
-hrtimer is in stack
-- * memory.
-- */
--void hrtimer_init_on_stack(struct hrtimer *timer, clockid_t clock_id,
--			   enum hrtimer_mode mode)
--{
--	debug_init_on_stack(timer, clock_id, mode);
--	__hrtimer_init(timer, clock_id, mode);
--}
--EXPORT_SYMBOL_GPL(hrtimer_init_on_stack);
--
- /**
-  * hrtimer_setup_on_stack - initialize a timer on stack memory
-  * @timer:	The timer to be initialized
---=20
-2.39.5
+>
+> >> +    },
+> >> +    .pwrsts = PWRSTS_OFF_ON,
+> >> +    .flags = POLL_CFG_GDSCR,
+> >> +};
+> >> +
+>
+> --
+> Thanks & Regards,
+> Taniya Das.
 
+
+
+-- 
+With best wishes
+Dmitry
 
