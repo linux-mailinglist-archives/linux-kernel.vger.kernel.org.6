@@ -1,101 +1,180 @@
-Return-Path: <linux-kernel+bounces-390355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EEA9B78CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:38:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9647A9B78D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C404B2706A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:38:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83D01C24126
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE581993AE;
-	Thu, 31 Oct 2024 10:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD40A1993B9;
+	Thu, 31 Oct 2024 10:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JoIH9bPz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LT8Q80Eq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73B4198E83;
-	Thu, 31 Oct 2024 10:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C60518593C;
+	Thu, 31 Oct 2024 10:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730371103; cv=none; b=FaYdUbe11/umFadq0SlQG6blMdMEO1jxzuvwvphVPmoEyxzuhb+6mE2rnxRsBN+kpMQ3Q740X6aUT7BhS5zwu53PV3DDj8OfkVaLqZeQ1yOW+xvuLFtP7sp8LqBYmkTvT6cEDli94IcAW+2ofXquR5I8e2OLLjWUdY5HwZbRA4E=
+	t=1730371238; cv=none; b=tx5+jP552+PCGWhl9vSPiQ/5W/Xqdca1gsbiui5S8e9V8ZRqqXcHAcxTqwkkrOgnEPhUUCruZIY7Jg/gly1NQSbkE8hXUmUZpKmYFcQ2hGnCibaMG9GIVL2OcU/CvJkQyYuoMuch/RRA5uC5yvKX1/TlgUQ+K9aaTvVTsUrtreE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730371103; c=relaxed/simple;
-	bh=kP1jrl42ItV4kBif4xciDH0D5HyjEFhdlEhVXDJmBgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W9PretVhbsq6cz59tiM8sINvmKFBOodTSOrSneALx6WwPNOhUBicW8DuGQz9rDd1/0TZNQz2eKc90EwYO39u6TV/3e6evVPDZ0inT8RgNokbdsYVa/nV74ubc/p0OXDErPG/tesDMq0/3xrKBU4vD9cRA2W8dM8QPHLrgqQ0Tc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JoIH9bPz; arc=none smtp.client-ip=198.175.65.18
+	s=arc-20240116; t=1730371238; c=relaxed/simple;
+	bh=9pxHDuQFnahO7h4g4uLSVfsqa6hZ0lzOKmSrX1WNWDg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i2vJ6fXQq9LORvPhKbnNrluBnt3b0NBWskh7DX4jhFe38kf2jO8Z1oMO0lfp2b80eC2gbFU64OUR2dBkJ661VDkf/1Zri+DWMLZ1FW0MXP+YkKPwYl5d8toaSHYAjQ0F8B+1kwleH9idWywwmrgEpPxG5FZYPQqr2vpaWiBxeYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LT8Q80Eq; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730371102; x=1761907102;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kP1jrl42ItV4kBif4xciDH0D5HyjEFhdlEhVXDJmBgg=;
-  b=JoIH9bPztweCeHb5fIVgOq7jvSoNOvIJ3yJvl/QjLZNjUutTf+/zlnNq
-   9Kk11dDWT+RN0DxCa8mM74o11W0159SCc9cwE3UJ2Aq2UQtwghAw2hHdx
-   d/mzs8HEg7ry95muxb99FgrZQuHn4YzNN3yxSkys5T2I6KUzMf6x+7AqO
-   db6lXjrQVWuqEPP6dK7wg5OzjJzzN64ImcpMjhusNZlRleRQg11MOMzqo
-   vOvK6nZB73kxyHUKSJuoFKaKB8e6j9Yvvt1UvjXFUBRUOy2x8N4pnWPrh
-   wHhjGk8+e46WxFb0UhNe/lYVQeUYx8x2A0NQpx2ryXZeIPxRmZ782S7hR
+  t=1730371236; x=1761907236;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=9pxHDuQFnahO7h4g4uLSVfsqa6hZ0lzOKmSrX1WNWDg=;
+  b=LT8Q80Eqz8z7kU+a4TfKsdsCjNKJUqdSVkIdnzMhmlIR3Z8mLrgm5YlQ
+   PE5ra7PhvMR696GrgNJxkcpX1B/ig+DTxqmv7AiIATixQnUgoM2aHgQBQ
+   cCG9O0QIVjhTtA1gOsz9nXkqrNu9XU273mrYXspwrvOXsbBWgPee9BbPB
+   GTFOxE2CHTT8IVJGo/1JNMY0tsgZZD1V8pVznb1loB92epoul3aTm8bdz
+   CpN6dnXyHLzdii2y/HouhHvZ7mhHsN7vHPOYGiJzu3hUcnpvuFeUJm1EJ
+   XCRwwoECNSr7rCf3Tj7GYqL2aOp5o3LVo3E6dygixaStzMKBI7QiAe8XS
    w==;
-X-CSE-ConnectionGUID: +E/GmNf1QF208D/GWW9dbQ==
-X-CSE-MsgGUID: vNg1oeOKTrGK7dp+OyVutA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30294243"
+X-CSE-ConnectionGUID: nwtlbhs+T1mb6ci7nYuvwg==
+X-CSE-MsgGUID: RTuv/nKNQyuEBPCLMSVBQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30268133"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30294243"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:38:21 -0700
-X-CSE-ConnectionGUID: +VNJuCM9SfaWLB3ttEdn+A==
-X-CSE-MsgGUID: uB7/kGqIRpCItx1Ve7h5kQ==
+   d="scan'208";a="30268133"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:40:35 -0700
+X-CSE-ConnectionGUID: Qz2aoTdeS/+2QhzzpvKwvg==
+X-CSE-MsgGUID: tZ1v9YUhQtmW+KRDt4DLHg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="83394745"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 31 Oct 2024 03:38:21 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 107B017D; Thu, 31 Oct 2024 12:38:18 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v1 1/1] USB: bcma: Remove unused of_gpio.h
-Date: Thu, 31 Oct 2024 12:38:18 +0200
-Message-ID: <20241031103818.2451816-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+   d="scan'208";a="87133136"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.160])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:40:28 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 31 Oct 2024 12:40:26 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: Re: [PATCH v3 19/22] ACPI: platform_profile: Check all profile
+ handler to calculate next
+In-Reply-To: <20241031040952.109057-20-mario.limonciello@amd.com>
+Message-ID: <86d94339-3651-c4ea-306c-05589bee0040@linux.intel.com>
+References: <20241031040952.109057-1-mario.limonciello@amd.com> <20241031040952.109057-20-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-of_gpio.h is deprecated and subject to remove. The drivers in question
-don't use it, simply remove the unused header.
+On Wed, 30 Oct 2024, Mario Limonciello wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/usb/host/bcma-hcd.c | 1 -
- 1 file changed, 1 deletion(-)
+> As multiple platform profile handlers might not all support the same
+> profile, cycling to the next profile could have a different result
+> depending on what handler are registered.
+> 
+> Check what is active and supported by all handlers to decide what
+> to do.
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c | 35 ++++++++++++++++++++++-----------
+>  1 file changed, 23 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index 5baac1f9a9c0e..9b681884ae324 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -187,30 +187,41 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
+>  
+>  int platform_profile_cycle(void)
+>  {
+> +	enum platform_profile_option next = PLATFORM_PROFILE_LAST;
+> +	struct platform_profile_handler *handler;
+>  	enum platform_profile_option profile;
+> -	enum platform_profile_option next;
+> +	unsigned long choices;
+>  	int err;
+>  
+>  	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> -		if (!cur_profile)
+> -			return -ENODEV;
+> -
+> -		err = cur_profile->profile_get(cur_profile, &profile);
+> +		err = platform_profile_get_active(&profile);
 
-diff --git a/drivers/usb/host/bcma-hcd.c b/drivers/usb/host/bcma-hcd.c
-index 7558cc4d90cc..519386255886 100644
---- a/drivers/usb/host/bcma-hcd.c
-+++ b/drivers/usb/host/bcma-hcd.c
-@@ -25,7 +25,6 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/of_platform.h>
- #include <linux/usb/ehci_pdriver.h>
- #include <linux/usb/ohci_pdriver.h>
+If platform_profile_cycle() is called without any profiles registered, 
+platform_profile_get_active() will return success.
+
+I suppose you'd want check first that there is one registered and return 
+-EINVAL if none are, especially since this is an exported function.
+
+>  		if (err)
+>  			return err;
+>  
+> -		next = find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LAST,
+> -					  profile + 1);
+> +		choices = platform_profile_get_choices();
+>  
+> -		if (WARN_ON(next == PLATFORM_PROFILE_LAST))
+> -			return -EINVAL;
+> +		next = find_next_bit_wrap(&choices,
+> +					  PLATFORM_PROFILE_LAST,
+> +					  profile + 1);
+>  
+> -		err = cur_profile->profile_set(cur_profile, next);
+> -		if (err)
+> -			return err;
+> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+> +			err = handler->profile_set(handler, next);
+> +			if (err) {
+> +				pr_err("Failed to set profile for handler %s\n", handler->name);
+> +				break;
+> +			}
+> +		}
+> +		if (err) {
+
+Same here, instead of break you could goto to a rollback label to 
+deindent the rollback loop a lot and make the code flow more obvious too.
+
+> +			list_for_each_entry_continue_reverse(handler, &platform_profile_handler_list, list) {
+> +				err = handler->profile_set(handler, PLATFORM_PROFILE_BALANCED);
+> +				if (err)
+> +					pr_err("Failed to revert profile for handler %s\n", handler->name);
+> +			}
+> +		}
+>  	}
+>  
+>  	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_cycle);
+> 
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+ i.
 
 
