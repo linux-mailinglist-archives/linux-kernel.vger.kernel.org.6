@@ -1,120 +1,113 @@
-Return-Path: <linux-kernel+bounces-390351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB809B78C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:35:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8027B9B78C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3937B252B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:35:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16062B268D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B6B199939;
-	Thu, 31 Oct 2024 10:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6AA1993AE;
+	Thu, 31 Oct 2024 10:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bKbHW0rV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TLt1D345"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jGyx9i3X"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEDD198E83;
-	Thu, 31 Oct 2024 10:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBDA198E83;
+	Thu, 31 Oct 2024 10:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730370929; cv=none; b=LC6yqUNriMMqUcRbIrertu9cojfjpzXx4R3+oMR+uRqXdd9sfMi4ICV8rZsj2uxSraaVRM18h4E1uWlWX/nrGwrA+fRotJzU7TOLIAM+likRdKpoyMgnYeYkiAIExzTqhQ+EKjsgBF9l7/I6cqVARNBoaDxuCmYgwYGdRMGZP9U=
+	t=1730371034; cv=none; b=eqETrnEb/kc9uR2y+50iLgbOYSAaiRLdjAfLz/IX2H+AhfM1i5J2N+zH1w6G1vgo1M0poaUkfoTNCH3Alxq3NZ+RtR9DNSKTEkJJKmB3boBfX21MfLCVViCUCeOac2cDQasP+ijlpz3GGoF4WCbCVf0JUV1t4RsujfFk47GTjpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730370929; c=relaxed/simple;
-	bh=HGfYcbWzyY/pphTro6/s6a+Kh+oae02HLrDhGMTUe4o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C5rzc8nLJnk0tryJv6YNtFWtUUesqxoarSgL7ixQ1U8ch1ARxgBnWI2q/eX8VIqtgTN84X5Li3hSWOqgSWq98j5zhKTJG7w4QCfudADGMLe2gh4MO/O3THl1tcBEW2IrRertStEjrkXf4Xrz4YzujNSnxqSY7zue01KT3PbCCZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bKbHW0rV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TLt1D345; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730370925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rBPHRJ37/z1B53qNd6uBe1APGZjWPgW1reRRNqIUu/4=;
-	b=bKbHW0rVMi8RCIkVGzUpoDjf9iS5/VswyqW0KMK3cgemvAhIXknUVzbFicW3dRGfdfEIMa
-	vFLd/2n6A5lAZKAAzaD3kUq2GbxbJvX6orpz1LVCzZHKUubDM0EIs3Iz0e4yte5cRwZcXi
-	jcTY/VAGwFbVWkZrL55F0OvAYEVeuVOH4AJC/SxMYkfijsY7vgEWG4C610TEfmZQEnWJBT
-	zAFCXgoSW76EtgqvTvp1cH0RnK8Ojrq4ulIQIxJ9GSsf0tjOibsZfW3CFeaWh+0h+yfpgm
-	gCfAABNhAjvIb29dBcqBdu3GnXdamybTjSmY0JzwKwegKJ5S0zdjwgAOAxoN9w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730370925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rBPHRJ37/z1B53qNd6uBe1APGZjWPgW1reRRNqIUu/4=;
-	b=TLt1D345qYuyG6x5hkvMwOQmO/yYwc+NFGn0mEetJMcpkFBq1K14mR7VLbIfNAKZpKZDzi
-	adIbCVnaBBv2J6AQ==
-To: 'Guanjun' <guanjun@linux.alibaba.com>, corbet@lwn.net, axboe@kernel.dk,
- mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
- eperezma@redhat.com, vgoyal@redhat.com, stefanha@redhat.com,
- miklos@szeredi.hu, peterz@infradead.org, akpm@linux-foundation.org,
- paulmck@kernel.org, thuth@redhat.com, rostedt@goodmis.org, bp@alien8.de,
- xiongwei.song@windriver.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Cc: guanjun@linux.alibaba.com
-Subject: Re: [PATCH RFC v1 1/2] genirq/affinity: add support for limiting
- managed interrupts
-In-Reply-To: <20241031074618.3585491-2-guanjun@linux.alibaba.com>
-References: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
- <20241031074618.3585491-2-guanjun@linux.alibaba.com>
-Date: Thu, 31 Oct 2024 11:35:25 +0100
-Message-ID: <87v7x8woeq.ffs@tglx>
+	s=arc-20240116; t=1730371034; c=relaxed/simple;
+	bh=W62nW6o6roRgMZ6ptHYz8UTa1gqyavSGW73urSteeZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTSDnTNt6XSl7XSave/He3OgJFUsPaorbfXIJYaWoqQkYv8EQpfsh+YL9+EN6muGkTKOiEZXvSKc+ys31sJDNQm5D0r6N7UUlpsHTzIhhCS+uaXf9jiRrwhhONts8eRFZafkTGXQISEa1byvv1F8vTiwaHkgX76JZsV2Iga+8Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jGyx9i3X; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AA6C940E015F;
+	Thu, 31 Oct 2024 10:37:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id m9VOAnQDlvFp; Thu, 31 Oct 2024 10:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730371026; bh=Zoic+05z1WWqcWTpj/byU2dnEVpHhQVwPQpp8yGsvFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jGyx9i3XA2zDPhvjxO8Pbo8QDnQo4jKeeV35GnVMO1YQFXHF2R1NhW9SD5QGNX9jA
+	 b0ISQVdT2RbepTV/FBA2HmhiTutn8ivVBMePT0pCy9TbIMcq80iqP6sWRNFjLiiLO8
+	 i9S32o8IFOsYzEilbQoTppu3G7pTPwTysIpz3V0MRCXClOFbkY99TAuHIuPrNbVxXi
+	 hytf7Gw6Cb6YDouFXPnVp6j44ifzJ+s7Ihytu7HjoCesvLy2jxFJXX+HiGAvoJAWrn
+	 V9hKCjYK8ZWaDEwLpXQLu/lulEXVMGgDAOsdtnbBNqiAaNGWx5ti0+rVu1IAui9Mn8
+	 xKuEvij5Ig0Gr/U3G69wrAIwRE+iau68JrW1GPO5LrFzkxFbhPGN0VKTD5B1/jMr/d
+	 9F/9dywo4Ljij1FqpAOBfHfbPw37OWueSaGv3SlN/pE0ldWABD9Yy7rrYmbBlntnys
+	 FQolom8Wzqxrlr0tY3IS1HppV699YWFV8eGPiDTS5TE3VW2FywfijGVQAyjJKbHJAJ
+	 vYSYs29Mo/IOBZiP586sL22mEwnsMubEEc/eGlA+hHysDZirYst50a+02ElHc01BPY
+	 EslxuwMrfaaUkGdUNCr7Fqnxuo5u3G9IFFs3XEFzfA8zDfiJKwZBON6y93xhJ5eYJs
+	 V/AwSV+dPWWLU/9VKtbX3d4A=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DDDBA40E019C;
+	Thu, 31 Oct 2024 10:36:43 +0000 (UTC)
+Date: Thu, 31 Oct 2024 11:36:42 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Luck, Tony" <tony.luck@intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"avadhut.naik@amd.com" <avadhut.naik@amd.com>,
+	"john.allen@amd.com" <john.allen@amd.com>,
+	"mario.limonciello@amd.com" <mario.limonciello@amd.com>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"Shyam-sundar.S-k@amd.com" <Shyam-sundar.S-k@amd.com>,
+	"richard.gong@amd.com" <richard.gong@amd.com>,
+	"jdelvare@suse.com" <jdelvare@suse.com>,
+	"linux@roeck-us.net" <linux@roeck-us.net>,
+	"clemens@ladisch.de" <clemens@ladisch.de>,
+	"hdegoede@redhat.com" <hdegoede@redhat.com>,
+	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+	"naveenkrishna.chatradhi@amd.com" <naveenkrishna.chatradhi@amd.com>,
+	"carlos.bilbao.osdev@gmail.com" <carlos.bilbao.osdev@gmail.com>
+Subject: Re: [PATCH 02/16] x86/amd_nb: Restrict init function to AMD-based
+ systems
+Message-ID: <20241031103642.GCZyNdumQSdi76CA3w@fat_crate.local>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-3-yazen.ghannam@amd.com>
+ <CY8PR11MB71340D079448528FD548F73289552@CY8PR11MB7134.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CY8PR11MB71340D079448528FD548F73289552@CY8PR11MB7134.namprd11.prod.outlook.com>
 
-On Thu, Oct 31 2024 at 15:46, guanjun@linux.alibaba.com wrote:
->  #ifdef CONFIG_SMP
->  
-> +static unsigned int __read_mostly managed_irqs_per_node;
-> +static struct cpumask managed_irqs_cpumsk[MAX_NUMNODES] __cacheline_aligned_in_smp = {
-> +	[0 ... MAX_NUMNODES-1] = {CPU_BITS_ALL}
-> +};
->  
-> +static void __group_prepare_affinity(struct cpumask *premask,
-> +				     cpumask_var_t *node_to_cpumask)
-> +{
-> +	nodemask_t nodemsk = NODE_MASK_NONE;
-> +	unsigned int ncpus, n;
-> +
-> +	get_nodes_in_cpumask(node_to_cpumask, premask, &nodemsk);
-> +
-> +	for_each_node_mask(n, nodemsk) {
-> +		cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n], premask);
-> +		cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n], node_to_cpumask[n]);
+On Thu, Oct 31, 2024 at 08:09:14AM +0000, Zhuo, Qiuxu wrote:
+> This function could fail and return an error.
+> Is an early return with an error code needed if this function fails?
 
-How is this managed_irqs_cpumsk array protected against concurrency?
+No, grep for amd_northbridges.num checks in the code.
 
-> +		ncpus = cpumask_weight(&managed_irqs_cpumsk[n]);
-> +		if (ncpus < managed_irqs_per_node) {
-> +			/* Reset node n to current node cpumask */
-> +			cpumask_copy(&managed_irqs_cpumsk[n], node_to_cpumask[n]);
+-- 
+Regards/Gruss,
+    Boris.
 
-This whole logic is incomprehensible and aside of the concurrency
-problem it's broken when CPUs are made present at run-time because these
-cpu masks are static and represent the stale state of the last
-invocation.
-
-Given the limitations of the x86 vector space, which is not going away
-anytime soon, there are only two options IMO to handle such a scenario.
-
-   1) Tell the nvme/block layer to disable queue affinity management
-
-   2) Restrict the devices and queues to the nodes they sit on
-
-Thanks,
-
-        tglx
+https://people.kernel.org/tglx/notes-about-netiquette
 
