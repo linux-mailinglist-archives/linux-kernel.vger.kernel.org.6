@@ -1,106 +1,112 @@
-Return-Path: <linux-kernel+bounces-389986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142B29B741E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:21:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024A89B7429
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A2C51C21974
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 05:21:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6EE1F24DB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 05:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CABB13C906;
-	Thu, 31 Oct 2024 05:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D6213C9D9;
+	Thu, 31 Oct 2024 05:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caiZOHyS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OKpE+t+q"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81569126BFC;
-	Thu, 31 Oct 2024 05:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF0728E8;
+	Thu, 31 Oct 2024 05:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730352076; cv=none; b=cfyTfbhGJusm8WesRJ6BXKlhZcJ/dnToXPfPu2S1Nc/vdOA9YrRxB8mmHC6jVdsKpTJEH+orLcgtjEyvfwaEy0k2e3qAqjGWa25ID9k03zHVREGZug1/xkvPIxu9NU0hi3bHoDByLoHRjRoldojQvPUs2HoKZJwFz4AKH8AYCLs=
+	t=1730353029; cv=none; b=oXjvdrIZkGSDPCK5Vn7g/setnaUaYhErTqUlCUsCf9SxV1qVERUCWsAjcq7rjm51kHkDetdaX8J4fQx+Hu5ZLEG7IXoA8Ud1hLrc6XrEqjFtx790g//YDFjRx2PrW1ZWe7E7qZMQAV8CL5PiU3/rAPUHn4kdYdj4TdvqccyVT74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730352076; c=relaxed/simple;
-	bh=oKvzKHSIFV/9a64ZyFXNr4nz7kAn5pfeSQBzNS7WmCg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pd5nxHFwKkm7g8qhawsFvYuE2SuoIU6OY6OoImMJn3LKZW5mVnZbVoiQLiIeUS2/yAzrlxvsXbv15yx4+C6WG56wVyeszMXIF4H78rswMEjNBub36biIwxxw7vNkohkEhZQ+q0Iluj+XwJvyI8AEZ23NpB8rW36mRIjfWXyoKbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caiZOHyS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE78C4CEC3;
-	Thu, 31 Oct 2024 05:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730352076;
-	bh=oKvzKHSIFV/9a64ZyFXNr4nz7kAn5pfeSQBzNS7WmCg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=caiZOHyS42Gmy/N5hIh3F5TJLHa7uuNoOGhtp8aCIsFwS4zu/CDMaOaZagD+I791m
-	 umBpbe/HVeTlgmX9sTjx40wXeASJem12UVa22xfvhINX4WH+LdXv3DchJhTMGTpuCJ
-	 kUsy98+o/QOcdK9jOqEHe0vruZpJxUpPx5bo7OaRLWft8meWBp6b9+3JRxmVKt6jxZ
-	 rphERfYhjCK+GyYjGcEX0Vh5CmxX+KgxdBEhSccOJVNblIInleRdzznjPmSWSG4N/b
-	 sH596P1e521UefZSXg4HSDvW6KGQc3pKdD/OXEgnWt8dOCr134Gc3CrXDl0AG/i3r0
-	 ZqPWmhX1Igq5g==
-From: SeongJae Park <sj@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm/damon/core: avoid overflow in damon_feed_loop_next_input()
-Date: Wed, 30 Oct 2024 22:21:13 -0700
-Message-Id: <20241031052113.66155-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <4dd8ba2c-e994-417d-baa9-47e40b50c1b4@roeck-us.net>
-References: 
+	s=arc-20240116; t=1730353029; c=relaxed/simple;
+	bh=8ewBrgbIPlY7S598KZ4WcC1h6n5PO4F3mmIRKZ6AtM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U3+teACfZpSMeUpizkZwXmK0rDUhNbiR/2IlkHDQL71bgWnO8mY6COhPm0iOgtiJMdWN6cMNCOhCO12hzrA7Cc9wSnaBVOItDA+Tykwjqrxy/Nx0knf/lRXBuK2E+z0iYmFX/NIG+jLHV1WFdxbvU4BThyhGnYTEI0d37jNlF+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OKpE+t+q; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [IPV6:2405:201:2015:f873:c173:4b:4a04:3a21] (unknown [IPv6:2405:201:2015:f873:c173:4b:4a04:3a21])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4574C842;
+	Thu, 31 Oct 2024 06:37:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730353021;
+	bh=8ewBrgbIPlY7S598KZ4WcC1h6n5PO4F3mmIRKZ6AtM4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OKpE+t+qPMQOYoB57FJnYTYtjRaHdMyIEI4/ljy4cx0jWoNQ1VHVpXMdqkfJkz1Er
+	 YYeXe4r7f1x4AA3BZa+JW6jYE+/o3hJXIvzhiN74lxVEOli1gT99J3Xdt1dUwBm1FQ
+	 jHKHa2L5Zi5lMTqntp980qIGnqWWknJVdMLTasbM=
+Message-ID: <04ae3f0b-c2f8-4553-9b49-302cc638c0c7@ideasonboard.com>
+Date: Thu, 31 Oct 2024 11:07:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: imx283: Report correct V4L2_SEL_TGT_CROP
+To: Stefan Klug <stefan.klug@ideasonboard.com>,
+ libcamera-devel@lists.libcamera.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20241030163439.245035-1-stefan.klug@ideasonboard.com>
+Content-Language: en-US
+From: Umang Jain <umang.jain@ideasonboard.com>
+In-Reply-To: <20241030163439.245035-1-stefan.klug@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Guenter,
+Hi Stefan
 
-On Wed, 30 Oct 2024 21:18:51 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+On 30/10/24 10:04 pm, Stefan Klug wrote:
+> The target crop rectangle is initialized with the crop of the default
+> sensor mode. This is incorrect when a different sensor mode gets
+> selected. Fix that by updating the crop rectangle when changing the
+> sensor mode.
+>
+> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+> ---
+>   drivers/media/i2c/imx283.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
+> index 3174d5ffd2d7..c8863c9e0ccf 100644
+> --- a/drivers/media/i2c/imx283.c
+> +++ b/drivers/media/i2c/imx283.c
+> @@ -1123,6 +1123,7 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
+>   				 struct v4l2_subdev_state *sd_state,
+>   				 struct v4l2_subdev_format *fmt)
+>   {
+> +	struct v4l2_rect *crop;
+>   	struct v4l2_mbus_framefmt *format;
+>   	const struct imx283_mode *mode;
+>   	struct imx283 *imx283 = to_imx283(sd);
+> @@ -1149,6 +1150,9 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
+>   
+>   	*format = fmt->format;
+>   
+> +	crop = v4l2_subdev_state_get_crop(sd_state, IMAGE_PAD);
+> +	*crop = mode->crop;
+> +
 
-> On Thu, Sep 05, 2024 at 10:24:05AM -0700, SeongJae Park wrote:
-> > damon_feed_loop_next_input() is fragile to overflows.  Rewrite code to
-> > avoid overflows.  This is not yet well tested on 32bit archs.
-> > 
-> > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > Closes: https://lore.kernel.org/944f3d5b-9177-48e7-8ec9-7f1331a3fea3@roeck-us.net
-> > Fixes: 9294a037c015 ("mm/damon/core: implement goal-oriented feedback-driven quota auto-tuning")
-> > Signed-off-by: SeongJae Park <sj@kernel.org>
-> > ---
-> > As mentioned on the commit message, this is not yet sufficiently tested
-> > on 32bit machines.  That's why this is RFC.
-> 
-> Is that patch going anywhere ? I have been testing it on a lot of 32-bit architectures,
-> and I do not see any failures.
+One thing to note, is the crop for binning modes.
 
-Thank you for this nice reminder with the grateful test results, Guenter!
+Do you need to report
 
-I was recently cleaning up the code and commit message, and testing on my own
-with test setup.  I should confess that it took more than I expected in the
-last RFC posting.  Sorry for the delay, and thank you for your patience.
+     mode->crop.width / mode->hbin_ratio
+     mode->crop.height / mode->vbin_ratio
 
-I believe the patch is now in good form, but I was waiting just a couple of
-more days before posting it, for a case that I find any mistake on it.  So
-unless I find something wrong on the patch by Tomorrow morning (Pacific Time),
-I will post it after dropping the RFC tag.
+for those modes?
 
-The current version of the patch to be posted is available at my patches
-queue[1].  Please let me know if you find anything suspicious on it.
+>   	return 0;
+>   }
+>   
 
-Thank you again for your patience and nice reminder!
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/sj/damon-hack.git/tree/patches/next/mm-damon-core-avoid-overflow-in-damon_feed_loop_next.patch?id=fb13d053bfdd5249bebdd1c253417f97cd41471e
-
-
-Thanks,
-SJ
-
-> 
-> Guenter
 
