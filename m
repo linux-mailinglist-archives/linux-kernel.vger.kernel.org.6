@@ -1,72 +1,83 @@
-Return-Path: <linux-kernel+bounces-390274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8230C9B77CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:46:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7B89B77CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323921F233D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:46:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31921F2525B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3757193427;
-	Thu, 31 Oct 2024 09:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E794E198A2C;
+	Thu, 31 Oct 2024 09:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sFOG+idh"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F5cXVcJQ"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7030414B092
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D540198838
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367963; cv=none; b=mF6tvaOdS2CJ5Tj0cdOOBo0FXCiUImLq+SX8YVcIich4DOuAJ6yTNu5f/X8vOH+w5PcmKqRHDzEYVakccxtamw9KN1jVUplxjh3med/q97+/bESpfH1ePshkyL8SrqSPnIeX18fu8hy4s1X6ekZMaW+kuFc/NOENqCuCxrWD7PY=
+	t=1730367978; cv=none; b=NIDiZ4wbteQ1T2IxvgTBzUptX3cIjRum+gwRsFIt3bwiMszB2zKjA2666j94iFLLA3YoyXGCrbPn10kN6H+vpYb5LziDu3OEJf8gFl0UXhq+YGawiXIfmMSnr3nrsUmwjbPfU5ihLaPWsFb6GgZx6Q/y/IUoC/N2tqM6jAyjt8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367963; c=relaxed/simple;
-	bh=YH4+zXopf6v9RbC4fd4HXCu1ql50pAXAuYUE1VrEYtE=;
+	s=arc-20240116; t=1730367978; c=relaxed/simple;
+	bh=RYO4XHF8sMF3038u8wAdPH1o7kz6vt6GLH7D1TKqDCE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qil5pAXmbj/ktXVhXJfJ5Ox/4u57dqESNYQ6ipP/ajy6GRh9ft23S07y52Z+4M6c2VDVsN5KaYcyUy4j2utZgP4FgpEZvw1x6uCC9PVaZcsgTSMcBDFmnRWPlwyJ8k+yYw/NVtzDudlmzFEuSD6amS1FY6ScxDt4y9ScTwFeaAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sFOG+idh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7KDYcR2EWRkw7tyRb76XkWQQeArKRw2kIE2yXeLOiHs=; b=sFOG+idhqxoAbcciVhEFREAZQJ
-	YVqz728H3JSheP6FzP3hfVBQrHJIk8AhNZlUwPIy0dDgZ9Y9yULtWX5mWpmatx56puu1HndXPziZF
-	FBxN6bnlBNJaspSgMJ0ZIGtF9YxtZcbIRVbZiEY0AOs0RzZ8mqwQ39Xpzmqi7P6+ZeUu7OgkSsOwd
-	rcGEWbTauLbwKzcie2QXhh6Ayct5rX3rYYboewMzfvMBHG1/6rRg0ppnz4xWcK8ewWvTu+DAPaOkn
-	w8A/tJTFAjQK0WFs5/dMncjT9/t34/RPequoYVby0dwtL7xzjmZkKq4ZMmkmPg907q1TljgM388a6
-	E+U2s1xw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6RkV-0000000EXmg-3PVg;
-	Thu, 31 Oct 2024 09:45:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C3C3C300599; Thu, 31 Oct 2024 10:45:51 +0100 (CET)
-Date: Thu, 31 Oct 2024 10:45:51 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: Re: [PATCH 3/5] perf: Add pmu get/put
-Message-ID: <20241031094551.GT14555@noisy.programming.kicks-ass.net>
-References: <20241008183501.1354695-1-lucas.demarchi@intel.com>
- <20241008183501.1354695-4-lucas.demarchi@intel.com>
- <20241014173246.GI16066@noisy.programming.kicks-ass.net>
- <lunkl4llip7aafnyctwztggum37wsiznktb7z3ly73batmt6bu@m75kow4b4u6y>
- <20241014192519.GN16066@noisy.programming.kicks-ass.net>
- <20241016120302.GP33184@noisy.programming.kicks-ass.net>
- <qtivtftbdvarukcxdr4yfwstzvnh4z7eipukwxymi4e2x76y54@dxqn3y22u2pw>
- <20241022215210.GA31953@noisy.programming.kicks-ass.net>
- <aj62ufd6pjv74bhxsynyxvir3s5jdncsljczoucdjvibfkglp4@22nc72qnhpa2>
- <kouwyypgqthwklgdlckavoasu3bbjmustsxp3sncztztijmykd@djnbwa4sm4wz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=anyvyNGoLp6HhmiUQbrDYsNM/I4CotS+cHqWwJZa1K4llAFelkKQGIw6zVNnJnsh5En+VeyZqH+Gt79IVbUruXrCytURCp/tKAEnBoMg9iCBpM06VvrSYVxXDDiAh2pGfMyVNdND8DNAm/vZVTDhjxXrEJWT5mVtBG8oqAOXPJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F5cXVcJQ; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so6438365e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730367974; x=1730972774; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NEK6vwWEAJNHhYsycB2YCGu9gxW6fNQnXdwLB+q1lxM=;
+        b=F5cXVcJQLwLRDqAr7WTdO6G2cu+OO+Wm3sa1KIQXGPBH2Yli+JbGamADxAEFDSKsEI
+         H0FHhETnVxi1Kvy1o2JoZ0R/auzW9q8BC/XcM68xbSe+JvqF9QrFJuly1551B7B/HqSC
+         tWmknu+sET+RKVy/IKDIgp7HPAYC4/mpw/Fq+h1HMgWJw3F2K//h3ir6Qf4LsJ9VxTiB
+         T5qqwHR09dQULPJTkDTYoR8+yAleIh+x4T0v8syKLj+P3hsWZvDFNWsMa5Gub/oJKFm5
+         FzhSZdhzuWw0aNPmb7lByHlEFIvYFwwzUoRHI2bRXDZ8pxbJ9bO3DX6wMpRejfJmO9k0
+         JD8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730367974; x=1730972774;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NEK6vwWEAJNHhYsycB2YCGu9gxW6fNQnXdwLB+q1lxM=;
+        b=Oovqoo8oi79o+Nsy9+a3cXCLNNLrmAj1quxqMJYc3xnvwSTbQ7l3GRKCWLYsTwsUck
+         JVbgLyzkLkDyqCFzXS6VxB4RKSBdvIk7oocIcFncpsUOWDaP6nrX0gKI8q2A6FNDSmZb
+         rNy5PoqBocSuglW5cx0CtgYUOSSe4pQY7EJALCwgy2GYAw4ZFGD3n7yLf2j/74PYA4oI
+         oc43UNKBwZZ9JYAB7HcVeLsDOqKc5uuDJxaOaiiwd3x5xVnRY9USnsDKK9sNV745iGQQ
+         7VGSPW8cFlA+WhMSQg01QRVSvdbRWs1KTVx2bv06QZ416pY6YJyhNNV7iAbuNWXE2ps/
+         Dxhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHRHlR6fDfk0afRVGNv2M4+8ZLXhcllusOgg7yAFosjmN/3NnhjsM6yhAyya6qnIfaosA0YmWKl5Aj3Ug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztF7shQeDnavP6QsI9I57br1NMTex7A5iP1Zrx37At5mrfBNKa
+	4QDLOb/9m4PGvrpeUd6K6X/XkVJuQHuCfEePphp026TZARdzN/EF3m4uDGcR4Dg=
+X-Google-Smtp-Source: AGHT+IEdZ+urCQxf+7znEF1H9UI/lZQQmByTJ/RCUfklpAIbWk8uzsRa+zkNEnQ8IHX1S3NNI10CCw==
+X-Received: by 2002:a05:600c:524d:b0:431:5aea:969 with SMTP id 5b1f17b1804b1-4327b6fd631mr22079415e9.8.1730367974433;
+        Thu, 31 Oct 2024 02:46:14 -0700 (PDT)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4a46sm1581364f8f.41.2024.10.31.02.46.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 02:46:13 -0700 (PDT)
+Date: Thu, 31 Oct 2024 11:46:12 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
+	konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org,
+	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	conor+dt@kernel.org, srinivas.kandagatla@linaro.org,
+	quic_jjohnson@quicinc.com, jens.glathe@oldschoolsolutions.biz
+Subject: Re: [PATCH V3 0/3] X1E001DE Snapdragon Devkit for Windows
+Message-ID: <ZyNR5MD/HAS5w7N/@linaro.org>
+References: <20241025123227.3527720-1-quic_sibis@quicinc.com>
+ <86y1251q3b.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,42 +86,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <kouwyypgqthwklgdlckavoasu3bbjmustsxp3sncztztijmykd@djnbwa4sm4wz>
+In-Reply-To: <86y1251q3b.wl-maz@kernel.org>
 
-On Thu, Oct 31, 2024 at 12:07:42AM -0500, Lucas De Marchi wrote:
-> On Wed, Oct 23, 2024 at 12:07:58AM -0500, Lucas De Marchi wrote:
-> > On Tue, Oct 22, 2024 at 11:52:10PM +0200, Peter Zijlstra wrote:
-> > > On Fri, Oct 18, 2024 at 02:46:31PM -0500, Lucas De Marchi wrote:
-> > > 
-> > > > I will give this a try with i915 and/or xe.
-> > > 
-> > > Less horrible version here:
-> > > 
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/pmu-unregister
-> > > 
-> > > I've just pushed it out to the robots, but it builds, passes perf test
-> > > and your dummy_pmu testcase (for me, on my one testbox and .config
-> > > etc..)
+On 24-10-30 17:02:32, Marc Zyngier wrote:
+> On Fri, 25 Oct 2024 13:32:24 +0100,
+> Sibi Sankar <quic_sibis@quicinc.com> wrote:
 > > 
-> > It passed for me as well with both dummy_pmu and with i915. I have some
-> > changes to igt (i915/xe testsuite) that should bring some more coverage.
-> > I minimized the pending test changes I had and posted to trigger CI:
+> > Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001DE
+> > is the speed binned variant of X1E80100 that supports turbo boost up to
+> > 4.3 Ghz. The initial support includes the following:
 > > 
-> > https://patchwork.freedesktop.org/series/140355/
+> > -DSPs
+> > -Ethernet (RTL8125BG) over the pcie 5 instance.
+> > -NVme
+> > -Wifi
+> > -USB-C ports
+> > 
+> > V3:
+> > * Asked around and looked at the firmware, couldn't find a codename so
+> >   will keep it as DEVKIT. Will update it if someone from the community
+> >   finds something else.
 > 
-> Our CI also didn't trigger that pmu issue and the test could run
-> succesfully.
-
-Excellent.
-
-> I did get a report from kernel test robot though:
+> My machine has the following information as part of its DMI tables:
 > 
-> https://lore.kernel.org/all/202410281436.8246527d-lkp@intel.com/
+> Handle 0x0005, DMI type 1, 27 bytes
+> System Information
+> 	Manufacturer: Qualcomm
+> 	Product Name: Snapdragon-Devkit
+> 	Version: 2.1
+> 	Serial Number: 5
+> 	UUID: 63b5fc8b-9c50-89aa-fd0f-3fcef93dc291
+> 	Wake-up Type: Power Switch
+> 	SKU Number: 6
+> 	Family: SCP_HAMOA
+> 
+> So I guess that Snapdragon-Devkit is another possible name. But given
+> that it is a bit of a mouthful, devkit, Devkit, or any other variation
+> on the case would work for me.
 
-Yeah, I think I fixed that one, but the robot gifted me another one that
-I still need to find time to address. I'm hoping this weel.
+The point was to have something unique A codename would be unique.
+Naming it Snapdragon-Devkit (or just devkit) will be confusing since
+there was already a 2023 devkit (from Microsoft) with the Snapdragon
+8cx Gen 3, and probably the next compute platform will also have a devkit
+as well. So probably "X Elite devkit" could be the right option..
 
-I'll repost properly once I fix it.
-
-Thanks!
+> 
+> > * Update type c roles as reported by ucsi. [Dmitry]
+> > * Update THUNDERCOMM to Thundercomm. [Dmitry]
+> > * Update regulator names and sort Order. [Dmitry]
+> > * Add x1e001DE devkit to the safe list.
+> > * Mark regulator-nmve as boot enabled.
+> > 
+> > 
+> > V2:
+> > * Fix Ghz -> GHz  [Jeff]
+> > * Pick up Ab tag from Rob.
+> > * Use Vendor in ADSP/CDSP firmware path [Dmitry]
+> > * Fix reserved gpios [Dmitry]
+> > * Only port0 supports DRD update the dt accordingly [Dmitry]
+> > 
+> > Sibi Sankar (3):
+> >   dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
+> >   firmware: qcom: uefisecapp: Allow X1E Devkit devices
+> >   arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
+> > 
+> >  .../devicetree/bindings/arm/qcom.yaml         |   6 +
+> >  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+> >  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  | 814 ++++++++++++++++++
+> >  drivers/firmware/qcom/qcom_scm.c              |   1 +
+> >  4 files changed, 822 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+> 
+> FWIW, I'm running this as part of my KVM test rig with minor changes
+> to expose the SMMU and allow the ITS on pcie5, and things work as well
+> as you can expect. FWIW:
+> 
+> Acked-by: Marc Zyngier <maz@kernel.org>
+> Tested-by: Marc Zyngier <maz@kernel.org>
+> 
+> 	M.
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
