@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-390397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876339B795D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:08:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDA79B795F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BDF1C21CB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6D91C20CD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAA519A2BD;
-	Thu, 31 Oct 2024 11:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CD519AA56;
+	Thu, 31 Oct 2024 11:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puOpqcGi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXzZXaAX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEE3199FC6;
-	Thu, 31 Oct 2024 11:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C893345025;
+	Thu, 31 Oct 2024 11:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372865; cv=none; b=Nfbglmjn6pnndYuT/ytYNlX4EX7jtWHVyqzcFNZGU2axZAoG92S6O/hmKw1Tj04qOsSNlbhvtq1MI2qdPqdn05hyXBIg2udiBi6L4ay8sfpNe+Xvt8QDU7rOVNdodWr97fLajd6DUG6mbnfziOQushM5y121N3BP+kl9gVKU6/k=
+	t=1730372912; cv=none; b=aqJv9FUr6Sxi7XR0XpuEXGAUOU4gXv4IRjUP8vfmNr8HrfUU9jMppaA9jk6IAjnH0zVKVSw39fDvsa9hBGo2IrNhH57I1D7zqKUrWIa6iFv86RQo5MZP6uTAEPKnjzWBrwnqs9FJw/lEamtJETf7LMeEQpiBb2sLePbuup7xb9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372865; c=relaxed/simple;
-	bh=leojUiJLZWXxuOC+08VszmMv0L4JOxEVkD3Tg83V9BQ=;
+	s=arc-20240116; t=1730372912; c=relaxed/simple;
+	bh=FyM88rIx4eovE9oqQw0C4ws8wamIPhEuT4g/7ui8Pyg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IixI06ZBDUdOzPvFXuzIJMiIx6nF6EJBGTzLJHlYwKVX6eeCGxyooWGM43i4eM7J9qyVW2fHuAeRbcnwX0JRn/BwyVXTC0HmamU+RlifP0jaOsrz4+6QEoXtxlRzgNSWW6b/a2zUcesSe+A/H/0ufz7TNmcuN64A1RJB5MXNAkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puOpqcGi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04816C4CEF8;
-	Thu, 31 Oct 2024 11:07:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Vd15VjPdSDb/HjZYJCUiAbGwZk7oAuk8285K2jX9jUynLR2kvioJ/SjIwhak2uGHsvQwjRmXQaOk1ahTSd0U8PmQC+xszhR1YJ1Xex05cK/F8aO6OW5TTlT5D8S1ifxwEpFE2WDq/0JiYgKI5gu/g84Xgd8ON93BF9YambuiLw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXzZXaAX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7A4C4AF18;
+	Thu, 31 Oct 2024 11:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730372865;
-	bh=leojUiJLZWXxuOC+08VszmMv0L4JOxEVkD3Tg83V9BQ=;
+	s=k20201202; t=1730372911;
+	bh=FyM88rIx4eovE9oqQw0C4ws8wamIPhEuT4g/7ui8Pyg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=puOpqcGi2/Mcrryi48PxGkDSbqpn99IvInyyIrxA9HCmIP6uafGLzsVKd5niO7HuU
-	 nmHH4TudCTWVHsbpiRhTT326576px9zeqtUncTKweoN0/7sqIg/1Oj7TTB6ul3R6hQ
-	 8odMb84X3ytqSXrC3C3ohqcIS6R4+I2N71gCcSBk8N7Uj8/X+83rzZ0Y9ohXmfZLnr
-	 gj8OxIXnpQWu6/T3xI2Y2nlVQKfC/mS2NOruy04avBIszJCqdGRbCVJp7agy1viInG
-	 tISaAAbTG9Y3NPfI5zqQbKQYU1ZkRmYqWsP9X2hveyhPP3EXvL/o/qcPdjQ9OGRhhI
-	 loxg2Fw+PnyVQ==
-Message-ID: <9ffe66a3-f091-40c0-92ca-4950610dfd8a@kernel.org>
-Date: Thu, 31 Oct 2024 12:07:39 +0100
+	b=DXzZXaAXxSWYePvnYx0i2Wsq9cie8W0dt4u1M/d/5ZMzH5s8rF0tG6IHv78qqAWYm
+	 MEUsyMJCKlJ8CrRoATMZhOHdOJB9aiaS4Ds4IsT6QxoHIB2cfB/Z4KCvdlZEc4t14h
+	 cGZ74WCNH6X0hiRPCV638pBoLOg9ywRc2zKD7Lx7rJZN+l0PZpE7MHjwHei2Eeaen3
+	 YjWnZ6dhlVPn5qkQVU7/hmdF9o4soWzzzUalVIg+c27MaFr6Amy7QpoS7SITObntuE
+	 Rt00Y8FMVP5B2g/QHpkQze5aZ7n0tM8vmK7mdJLjOmHRyveus92cwOWl7FSOfKxuma
+	 aqD+oPg6BgG2A==
+Message-ID: <aab34ae4-0f6b-4720-b14e-69add0355daa@kernel.org>
+Date: Thu, 31 Oct 2024 12:08:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: automate 'soc' node release
- in cpg_mssr_reserved_init()
+Subject: Re: [PATCH 2/2] Bluetooth: btbcm: automate node cleanup in
+ btbcm_get_board_name()
 To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com>
- <20241031-clk-renesas-cpg-mssr-cleanup-v1-2-628274ecbfcb@gmail.com>
+ Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com>
+ <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,40 +103,44 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241031-clk-renesas-cpg-mssr-cleanup-v1-2-628274ecbfcb@gmail.com>
+In-Reply-To: <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/10/2024 00:25, Javier Carrasco wrote:
-> Switch to a more robust approach by means of the cleanup attribute,
-> which automates the calls to of_node_put() when 'soc' goes out of scope.
+On 30/10/2024 16:46, Javier Carrasco wrote:
+> Switch to a more robust approach by automating the node release when it
+> goes out of scope, removing the need for explicit calls to
+> of_node_put().
 > 
 > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/bluetooth/btbcm.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index 5dc89b1009fe..bf85501709f0 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
->  static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
->  					 const struct cpg_mssr_info *info)
+> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+> index 400c2663d6b0..a1153ada74d2 100644
+> --- a/drivers/bluetooth/btbcm.c
+> +++ b/drivers/bluetooth/btbcm.c
+> @@ -541,23 +541,19 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
+>  static const char *btbcm_get_board_name(struct device *dev)
 >  {
-> -	struct device_node *soc = of_find_node_by_path("/soc");
-> +	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
->  	struct device_node *node;
->  	uint32_t args[MAX_PHANDLE_ARGS];
->  	unsigned int *ids = NULL;
-> @@ -1022,7 +1022,6 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
+>  #ifdef CONFIG_OF
+> -	struct device_node *root;
+> +	struct device_node *root __free(device_node) = of_find_node_by_path("/");
+>  	char *board_type;
+>  	const char *tmp;
 >  
->  			ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
->  			if (!ids) {
-> -				of_node_put(soc);
+> -	root = of_find_node_by_path("/");
+>  	if (!root)
+>  		return NULL;
+>  
+> -	if (of_property_read_string_index(root, "compatible", 0, &tmp)) {
+> -		of_node_put(root);
 
 You just added this. Don't add code which is immediately removed. It's a
 noop or wrong code.
+
+
 
 Best regards,
 Krzysztof
