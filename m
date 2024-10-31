@@ -1,220 +1,149 @@
-Return-Path: <linux-kernel+bounces-390545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA8D9B7B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:53:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8419B9B7B21
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:54:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50E41F24108
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3597B1F24186
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BD219D089;
-	Thu, 31 Oct 2024 12:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970BB19D087;
+	Thu, 31 Oct 2024 12:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Iuo2UAlx"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2073.outbound.protection.outlook.com [40.107.101.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0y3Yf9S"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585D119CC2E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730379192; cv=fail; b=MwcNAhnx/pXGOMKH1L1iF+dZJYrSvBE33vKjuJE5u5GY4oY2RXYvmWV5Q+oAvN17Cr+zKAQhjheinrycOvW7OA6uIDyN8giODX/CTJpHUUba79CvWuc9TNGGaDMsDGV9xyD5Cxcn2UaXNQA9qlyMAyp92aAKCn2vpTUgMYH18+U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730379192; c=relaxed/simple;
-	bh=P6tRTQ4bY7rwnG3wFlY6m0Fze7h0H//IQXZrnQfxj+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=o2/VMCiBCARL1hlae2fTS5/2bla1/eqDBoQNmGKZ+4yilofcsTxHD0R73YDqQmLetNx2qvgV5IV5a7HHwVpD6/nE000u84BLBjrP68zvCh50S06oUL+LqDi1IC74T10U7IlXQRoQTKSipUapiz07Z9yYbOS6L3rnuEqwCNvl8Hk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Iuo2UAlx; arc=fail smtp.client-ip=40.107.101.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R8FmyhniHWiB4hcGtKI+7g/nAuHdjVTRVx9Ofpy/82VL3aYoMNkmeUJH6KA6mim1PJ8IHlq1e+hW8y0eh/KDvuM2RnBUTq6jSFn4g1yxULuuhaOjFoebHl2xvcCcQDiRZJLN+6JbIfvDD+FmX+AgHpdHWEm8BKO1f19QyHIoczGl17hL2EAAd606CX7wjshir6jJc4LbqJEj66S4Z4frCo32HiTPy422jQmXEBA/NW6MMJgGvUE03cm/3CO/l6zwUEjBwBhRgL6lXzygWX5hw1Crjcdj0IpkA4WnfSKItpA0hdo0bTg7FYr5d9Z+hYrTdZIc5GzJPz62tK4wr/OiLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KfVkgN9hdfKaLQVxiBJBiiSNb6rxN3Xj+MGEL6lg72k=;
- b=uUweA18RV5LVKeqqcegLYl1y6I5+9RCa5zugfIMbtAUvmOHjlfHr2JQcL6y/O0jd/UzVYHgB6ws2PfhpIcvEGlISk349z2tnODWrntV5OCAeBCBbkdH7uto+8rnkv+as1/GRmLGXxGE9X1Moc1xafMNpauevg/QHk2ELJoly6T2k+dJ8jydfozxXFxkCc+stmEYBSQDF+M7VcUNYYjM4ircLB+dJ/iJ1WJeXv/cQqvflXIPAcf2vhFoYyxtKfhAB59Ywr2VgSjmBLvfkNEfiqK9ZFHWGsQDmnHWxVOPygi2ZPwSrLjUkTI+q4eKbTYcQIVlvwAu1E9v4KOn1+hip6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KfVkgN9hdfKaLQVxiBJBiiSNb6rxN3Xj+MGEL6lg72k=;
- b=Iuo2UAlxuX4jvw1YBWC5noxQu8wSfWOQ6G0XqBZJ0OAjnZ2puxVRkpkClLH8jV7fwPHlWZCmeN2sAtALMzkboqaKiOwFQ9GPDZq9YW+Nxfc9Bq6drPgLhLvJ15AW1Cj7birovYwMfNjzW4kU0/5V8ENth8RU54Kk51fj3EdsGzmChthDbo9OuUAHM8/y2xvVWIWceJ3SXe3nWym70WaYJ5lHdr4akIgYXBBHkKzDNex6NqZojTsaGj14jSOk3SIu1fn+e1hcY4Ish9G21Jg+yn3rzHVuugNt2xAtr2mOOniFk8c+ESEvPFNlox3ftchL8+Y4xosocxBRvo9n2oiZfg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS7PR12MB9041.namprd12.prod.outlook.com (2603:10b6:8:ea::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Thu, 31 Oct
- 2024 12:53:07 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Thu, 31 Oct 2024
- 12:53:07 +0000
-Date: Thu, 31 Oct 2024 09:53:06 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
-	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
-	kumaranand@google.com
-Subject: Re: [PATCH v7 06/10] iommu/amd: Modify set_dte_entry() to use
- 256-bit DTE helpers
-Message-ID: <20241031125306.GF10193@nvidia.com>
-References: <20241031091624.4895-1-suravee.suthikulpanit@amd.com>
- <20241031091624.4895-7-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031091624.4895-7-suravee.suthikulpanit@amd.com>
-X-ClientProxiedBy: BL1PR13CA0302.namprd13.prod.outlook.com
- (2603:10b6:208:2c1::7) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C190619D88F
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730379273; cv=none; b=GIpOsE1yPwnG/+tTnWkGaDhQrTit67oa7pF0lSZXEiOLYv6tHCNp1llab6ONKDsLjR0VLg4lmc7Qbk/JEdTek/JBnJLLS1OPJ8RorkIMBdJPe7YPH/HiRTazY+W4dFribilq5yWkT/PHBe38X+k9dc3g0Nnh2kzWmV8ta5D28yY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730379273; c=relaxed/simple;
+	bh=yTGcm6xnkCvzDchL9iODKQALg0v7tzeBcQTH8YhCuWM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lCbpRtC9YZuUOp9NQuPYVeSxQ38pthIc2gIYmSgkIV4VQiw3MO0ynn1ymiQaj8TSCF3moIVVPgMJ3KvD3FkVFm+bWkHEJXzhTvnOGX39qzqNdVasqPuul0smYQ0OVsKotCEwVU/JP1x3D1ZH5n9NdDbv9sOclsWTfNyK21eBwMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0y3Yf9S; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so7916045e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730379269; x=1730984069; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5uCi3aO0BGmm0EDQgR0wYVCbitVHRTsTt34+mj1c9Ok=;
+        b=N0y3Yf9ScDpJm1LTbuDOGBR6VnGYlTnoSHZEcM1uUA1mpdclMrOB3yYuzqSVn1Sl0w
+         4QI5w0o0EaMn8ZqZ3YIbpdnSlgUvBydk5CE2TntFjdCuUjSnLJZCwoZK/WQSstCwMPBu
+         fuiO9ayY8+2wvtgNUufWGFr6Z/WP4mVxETFDT3J85Dkx/gNnxoEDqek9fUGYf6LSfF5P
+         OljYihl/PRfM3J9Uw/beurDvSmqHOIGJBfIHWluf67AwpE/F9w7UOJKNdEkAbSHkv+NP
+         SKgakhnvJhkOgNrv2v7Yw1FQYorbUoKtRoS5HJ4BSVC3z42SpbMi7NUpHiZHYXtps8xA
+         h42Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730379269; x=1730984069;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5uCi3aO0BGmm0EDQgR0wYVCbitVHRTsTt34+mj1c9Ok=;
+        b=KZ61YJZQrol0dQC9HTW6O0iEFJyam20UiusUlP/wgeWODqqggDM9O4MJtXmd6pTERS
+         jcocqjidZivncZzIix5ng3Uji+zJhOz2v4YnCEf7P5Z6CYoVWwq5l7JT2+w/QzFBchlq
+         aRPqBsPYdr8Uivt8Pmm4BJ0Y+QLO8+ZOe30IPJiabIEHiGCBp1rtI/alRAOAaMlZJfpX
+         kYhbLW7+uTi7Q1yS8sEO8cL6rUuSobC/zOz7ECriTW662KZPY27no76Vb2qNAuPTW33/
+         kiFjEliG/uW3gkENDDP8KK+U4hqY+E1sJuyK1vqcs5YD+Qcfgm3YKDpiIdOYIpvd9nGz
+         bxWw==
+X-Gm-Message-State: AOJu0YxCEs2PykosZQ8LpUPJYim2Gn9nL6LHxxWYv3cf6AJtXHLd6JYn
+	ZNArxAj89hQbLeeOLBKeRgUgFtLA1PwNmxy2yx2UAiKbofSqQZsG
+X-Google-Smtp-Source: AGHT+IELiP2wBm8hCwnDrACU2Pb0NQl8f7Q9rBRzNbkJeG2141pBXXBGQb3WuHTWZAFI5hQ7JOdGig==
+X-Received: by 2002:a05:600c:3507:b0:431:4e3f:9dee with SMTP id 5b1f17b1804b1-4327b6f46d3mr29514475e9.4.1730379268957;
+        Thu, 31 Oct 2024 05:54:28 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9a99c8sm55250505e9.29.2024.10.31.05.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 05:54:27 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Thu, 31 Oct 2024 13:54:23 +0100
+Subject: [PATCH v3] clocksource/drivers/timer-ti-dm: fix child node
+ refcount handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS7PR12MB9041:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf6bd0b3-4f0f-4f08-2420-08dcf9aaf7a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LN+z8GOTt1Pc0Y1+1ocr3EaBHmrmvctL2t1PhKZIXcvxQ31AG24qZv3uk4vc?=
- =?us-ascii?Q?pC1G2TthIEeFuGC6Ov+ZT/eveTJLYtzpuzKG6RxLNpVq3VJOk4BAmbKzNm9t?=
- =?us-ascii?Q?JRVqZ1WhM9uZ3cICkXMDFaD7zKk9xjMRvgAMQTY+Iz2eE+fddqM7MQYy6okW?=
- =?us-ascii?Q?IC4LclM0x235AZy8SBaFN3L8kX/AYjXtgu8Pqqj5kDbFWRvrc1fCRGfTHoMs?=
- =?us-ascii?Q?x0PlyZ2ASh02fzzXb7n0gDG3ieXZkOB0CJypLZlXxmOQQuuUkKks7FymOrED?=
- =?us-ascii?Q?Lofx56fPTBCh3SMd+LsyBqH+47akzBoj/4ui93j9OncZZLPf6ofe0dcWSvEN?=
- =?us-ascii?Q?qvUUHaEkHpVFdVbX0uAbigukkPf8gNFSnctnw7dWxfpJtDFybuBPjtlXLLJr?=
- =?us-ascii?Q?vPI2+D6kbfrvrAFo+ZxeTfShWwQO+8VsRN9TP8T9AWegRrtQZTbxkSap5a/u?=
- =?us-ascii?Q?s5U/pXta+SxuBzcx9Ny2nE2w+ztc3Ff/Y2+CqEQLdxplnKr1n7UzhjMggbga?=
- =?us-ascii?Q?ogm9VjNBTN424Kg0+PuaJGZyvydBn24LPTTtNTXStrUBp/iu4HgtEg8OLVLc?=
- =?us-ascii?Q?cuKeA/wu8+Lv2muq8cIetROyOHDSbjko8x/9nvraxw2AKVJiowFYPwUJSvzK?=
- =?us-ascii?Q?KuILa1KWJU0zTItTOZecPAbZqdMW2s8TZkrYg33C5D5K8eBs8xwJgumBjqnl?=
- =?us-ascii?Q?XET0mTlr9T+Bbx9o59rl1Po6gSvArX/MMwTCagD41te3bRejoxvUtwYEokW0?=
- =?us-ascii?Q?qZh0jvdEzIRSClSqlrwsaDWcaY2yojsi9RBfBDSWjn0ZMdFHRMdUqskR5uVV?=
- =?us-ascii?Q?/GbpOrySZG0ejE0q4xZJ7HdU+YFGaYauLTOEn/GphRxkA901QuCMRi3epnyw?=
- =?us-ascii?Q?mQ/2C8miIqRT20Y3Mwlxwfo6o4jj9Eudp6vil4O7nfA7dtA+tGpuoWLAeHvg?=
- =?us-ascii?Q?fpt59oZ1nGMoGpeAZFOEspSsdCwcRmX7nDmxEJW1cEgyxmyXSTzH9iVv6EA8?=
- =?us-ascii?Q?hxi86TsPp6WoMkZIcm9x60j5REMjBxm38bAXQcLVw7rjmDLsAvCP+efGoFo1?=
- =?us-ascii?Q?Elvyf1tAaWa5J66j1NlQsb0IFEyYa7e/5qrFoN0L5azj10IsEoxOcA8xMX92?=
- =?us-ascii?Q?AoFSMo6L6wzLNEf3WpM4PzXgfDvkutzdbNOu3BFBfa+a2X1kpB3fa1Zj7NqX?=
- =?us-ascii?Q?1ZZhGiVMZN9WahH5D/nr7WGErmc/OFMOmrybthdQypW0aHVJMaAl1q2iUIAJ?=
- =?us-ascii?Q?BP90ZuhwjSt8jpKTQoui5u+NybeosCEfP5u4YoO7Sltbn+JEjQhILzscu9b/?=
- =?us-ascii?Q?5PQBaU3hCuRiPCtNb2MdxC0H?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oqZnfQB5FbFvUhIM4+HkhPFv8yLrLxiQolJr5RCQHo9daSAVG928dht3Ea9g?=
- =?us-ascii?Q?v/62bnG2urBAnatvomdUc/yXPI7J8tC9gKF5Ic5/FVAWJlr+Y3AiGxg+E7y8?=
- =?us-ascii?Q?XukQ089IT+63K2eJb2eSxsIcgznKCWY/9qDSjWpmvXnyqcZS2ek30KtYy/li?=
- =?us-ascii?Q?3il5FhHZJ99w9OHq29k9mgtqH7LMJhdvtT96dnkhLOXFU6LbR2rsdamT25rs?=
- =?us-ascii?Q?iK7D0LGMv4uUfzJCmY02UR0i3D/cFcRkyEBkiVJhjH3QRrE1TofdnanUuwGX?=
- =?us-ascii?Q?dYwUacQ6OquRxeGOo7/zH82qfRsH1wErQweweQNXlrQy1BcHsN29PEAwkHqK?=
- =?us-ascii?Q?/1W51NOq1liT0AOUFSQ/9Cjm2yw3UuTE/S+jJPfaYZmo1sHNCAt5qrvP7Wmd?=
- =?us-ascii?Q?fg25AMYKWDP7ZMTsJUhmdRhu+XtAvzLvs4l47xM+tjv2QhJpASZJq/8JKIVf?=
- =?us-ascii?Q?SgZhngQuZRhwI8nnV0ys0NQ7Zo1D+95ROgkS/YE97xK0KE6HdKSu4Gkd8lhD?=
- =?us-ascii?Q?UWgOBvDmi+y0ZAtzJIkazgKwfOGCB6VoBBDYqpJDyFobw69ruRRW/jUnl6uL?=
- =?us-ascii?Q?AujNHTVjtGfE/gEtpZLP/k++QtBmLaUM5p+57cUEZJoJlRUjPKCqmlIEnDZ5?=
- =?us-ascii?Q?AZf8VH/vxQEND3hfpq2FfE2VduHm31OJe75+S0nzrTZcBNONEcPhUEVlPwdc?=
- =?us-ascii?Q?r153dPzPNdYSPmI4wgQcb1OeVhuJdHlJvUWLh21HOJR8Orymtg3XAZWhBjQ8?=
- =?us-ascii?Q?2nN6HBR/r6SQuQWdln1tHZE0Liy1mdArD9dwgls39+BSLKWJhAehn7DWXnAI?=
- =?us-ascii?Q?M4L/tcHK6dJz/R5PGQbjOGHp42Y9yL6qGmgAClAdK1eD8Fr9ZFrQlGipU9Ys?=
- =?us-ascii?Q?0yo/Ymz9ffFQnr0OYeQOrD/1pcCBOZPss9jKg+zBjKwbDA4P2WPlpksnfhcG?=
- =?us-ascii?Q?aIZVI0+6rDiBD0YoOhaud8Navst15gaMOKI/dLq2eU58zm87tHi47QLOAEDz?=
- =?us-ascii?Q?dviN+vOBzQroMjYAcgTMZVlKY+mwbO4YlVmNHlYtFnhAeWexnRjr8yCMNI+C?=
- =?us-ascii?Q?ZHdAtb34VOGQo4H73XBbexNPGcSb3tKteUCwnzahD2GkpMO8+nO5jV8ffQ7L?=
- =?us-ascii?Q?TTZAw8I9jjot7lZ+Ug0daXkQSgkWBHPoBpI2RNHkYz1/bzI/XvrZolQgfpyx?=
- =?us-ascii?Q?+bCVUg4yQjz/bXsYdhTzBNn3Xb+r80mn5jrXkf3K7X3kBK2FGCZylwKVkOSC?=
- =?us-ascii?Q?3VBgwIwEKpIYEwyrACl47ez/pqHqWUF1EZWeQ7i4j+0RnKds6n16GB7EzdTl?=
- =?us-ascii?Q?Arsq0MjLD706pEAYeAi8qCL70whvQtZudRjo6hOQ5nh0PbkLJ64wP3BVylun?=
- =?us-ascii?Q?MbK+gQ3zRrjSIYoYV7iCZUbVeTa0R6pH7o72xbbIYj/pw4QbTLsALeo6qgw7?=
- =?us-ascii?Q?nssBltlNx2KgNCL5p/0Mk8nPfC0oWKsu6GdywTr0nOAJLCbinvNSy5Pcdo09?=
- =?us-ascii?Q?UuQW2Y62EqQxi3uSvuaShwTZWLdNLdkX2YwVpJOEAxNEprLGah6A6Xj5xe9q?=
- =?us-ascii?Q?idHCvcUSK/f3hL1x0D8=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf6bd0b3-4f0f-4f08-2420-08dcf9aaf7a6
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 12:53:07.6156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YPbW5gK+APWxsV4JzccVp9RDYa9J6sR3izE1tyGF1P8u2XEHWnS8eR3g/1prtLco
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9041
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241031-timer-ti-dm-systimer-of_node_put-v3-1-063ee822b73a@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAP59I2cC/5XNTQ6CMBCG4auQrh3TH2yLK+9hDIEyQBOhpEUiI
+ dzdghuWupnkncXzLSSgtxjINVmIx8kG6/oY4pQQ0xZ9g2Cr2IRTnjLKBIy2Qx8vVB2EOXzT1Xn
+ vKsyH1whVypW4SK1kpklkBo+1fe8T90fs1obR+XlfnNj2/QOfGDCgpqYmK4SSOr01XWGfZ+M6s
+ uETP4Bc/wByoICyzApWihqlOoLrun4ABQZ89yEBAAA=
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Tony Lindgren <tony@atomide.com>
+Cc: linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730379267; l=2248;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=yTGcm6xnkCvzDchL9iODKQALg0v7tzeBcQTH8YhCuWM=;
+ b=kX7mPU3fN2z0kyvCg5OxaTngsR8eN3bTMbxh09uotxPsLFFjebUAA07VtpXilJgAJlSDIakA3
+ 9QAxptsf/ILA2S9JWxWIW1QbigYXga6cnMe/e85HBXxqf4yiSLCYGxh
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, Oct 31, 2024 at 09:16:20AM +0000, Suravee Suthikulpanit wrote:
-> @@ -1148,6 +1146,28 @@ static bool copy_device_table(void)
->  	return true;
->  }
->  
-> +struct dev_table_entry *amd_iommu_get_ivhd_dte_flags(u16 devid)
-> +{
-> +	u16 f = 0, l = 0xFFFF;
-> +	struct ivhd_dte_flags *e;
-> +	struct dev_table_entry *dte = NULL;
-> +
-> +	for_each_ivhd_dte_flags(e) {
+of_find_compatible_node() increments the node's refcount, and it must be
+decremented again with a call to of_node_put() when the pointer is no
+longer required to avoid leaking the resource.
 
-Maybe the list head should be on the iommu? I don't know how long it
-would be if it is worthwhile.
+Instead of adding the missing calls to of_node_put() in all execution
+paths, use the cleanup attribute for 'arm_timer' by means of the
+__free() macro, which automatically calls of_node_put() when the
+variable goes out of scope.
 
-> +		/*
-> +		 * Need to go through the whole list to find the smallest range,
-> +		 * which contains the devid. Then store it in f and l variables.
-> +		 */
-> +		if ((e->devid_first >= devid) && (e->devid_last <= devid)) {
-> +			if (f < e->devid_first)
-> +				f = e->devid_first;
-> +			if (e->devid_last < l)
-> +				l = e->devid_last;
-> +			dte = &(e->dte);
-> +		}
+Fixes: 25de4ce5ed02 ("clocksource/drivers/timer-ti-dm: Handle dra7 timer wrap errata i940")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+This series adds the missing calls to of_node_put(arm_timer) to release
+the resource, and then switches to the more robust approach that makes
+use of the automatic cleanup facility (not available for all stable
+kernels).
+---
+Changes in v3:
+- Squash patches for mainline solution without intermediate steps.
+- Link to v2: https://lore.kernel.org/r/20241028-timer-ti-dm-systimer-of_node_put-v2-0-e6b9a1b3fe67@gmail.com
 
-f and l are never used, why calculate them?
+Changes in v2:
+- Add second patch for automatic cleanup.
+- Link to v1: https://lore.kernel.org/r/20241013-timer-ti-dm-systimer-of_node_put-v1-1-0cf0c9a37684@gmail.com
+---
+ drivers/clocksource/timer-ti-dm-systimer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Isn't (e->devid_first >= devid) not the right way to check if devid
-falls within a range?
+diff --git a/drivers/clocksource/timer-ti-dm-systimer.c b/drivers/clocksource/timer-ti-dm-systimer.c
+index c2dcd8d68e45..d1c144d6f328 100644
+--- a/drivers/clocksource/timer-ti-dm-systimer.c
++++ b/drivers/clocksource/timer-ti-dm-systimer.c
+@@ -686,9 +686,9 @@ subsys_initcall(dmtimer_percpu_timer_startup);
+ 
+ static int __init dmtimer_percpu_quirk_init(struct device_node *np, u32 pa)
+ {
+-	struct device_node *arm_timer;
++	struct device_node *arm_timer __free(device_node) =
++		of_find_compatible_node(NULL, NULL, "arm,armv7-timer");
+ 
+-	arm_timer = of_find_compatible_node(NULL, NULL, "arm,armv7-timer");
+ 	if (of_device_is_available(arm_timer)) {
+ 		pr_warn_once("ARM architected timer wrap issue i940 detected\n");
+ 		return 0;
 
-Based on the comment it seems like you want something like this??
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241013-timer-ti-dm-systimer-of_node_put-d42735687698
 
-struct dev_table_entry *amd_iommu_get_ivhd_dte_flags(u16 devid)
-{
-	struct dev_table_entry *dte = NULL;
-	unsigned int best_len = UINT_MAX;
-	struct ivhd_dte_flags *e;
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-	for_each_ivhd_dte_flags(e) {
-		/*
-		 * Need to go through the whole list to find the smallest range,
-		 * which contains the devid. Then store it in f and l variables.
-		 */
-		if ((e->devid_first <= devid) && (e->devid_last >= devid)) {
-			unsigned int len = e->devid_last - e->devid_first;
-
-			if (len < best_len) {
-				dte = &(e->dte);
-				best_len = len;
-			}
-		}
-	}
-	return dte;
-}
-
-(and it would be smart to sort the linked list by size, but again I
-don't know how big it is if it is worthwile complexity)
-
-The DTE code looks OK
-
-Jason
 
