@@ -1,141 +1,112 @@
-Return-Path: <linux-kernel+bounces-389884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7589B727C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:24:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0858F9B7282
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DA21F2165B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D091C2353A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C2B12C552;
-	Thu, 31 Oct 2024 02:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081D712C489;
+	Thu, 31 Oct 2024 02:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="c4ZVLWI9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cE75NtXm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9B03C463;
-	Thu, 31 Oct 2024 02:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565F017BA3;
+	Thu, 31 Oct 2024 02:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730341449; cv=none; b=k0WEY4OuQ+fbuS/iA8zWI4EiMLN1BQuIPupSngOFuhGUHW8AW/Cz7o55x5fZXSGR0Q1Wf66/R6StiMFFkQNY5QlDlK7OSmFAWMVZnR0I/DrOzIJvB27MtywpUlzjeAVHIHZ5lm8CpSm6krJK7jaSF8wk+VGDg2Hkjt29BbkrWTU=
+	t=1730341689; cv=none; b=ngdLtJ1O7D0CIv/L05mi1mw7IdG4hUvr04vWPhvCHpk4ptZLmbbK1GlsFEKQCT1FY/AGeF0ijFKr4vBXWFD2QQQsmoGV17v4u6eFPtE3atB1RPh8gUYF4nYdKCcWx9mwsjU5q0zpc6y91LSQ3gDcOVw40nxY5Pe6gxUzzY/yubA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730341449; c=relaxed/simple;
-	bh=CpfpjeoHFq7UMSel8L39BpXOdU5xFOL1/GfnADwFstQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YZHTcJtyxknBnFP3c+P2iOMjEu6iIIBRsqfnRuUodpzUna+V5YfJL4rC5T+ZfwQ+KwpTdNclo99DqddoQQ1CVbKPjNi7M9mEwPelxJU8ry4eupm0bm+n6e+ebv7jRcnK8pLP6MVx/Jfr2hzPAXZ8lkNxV3KPH2jgRNF+Fr4Qoaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=c4ZVLWI9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730341442;
-	bh=/P2CzaVMCo0NXrWGQ9eXia4Ee/PM59wr7D5hNHndo0E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c4ZVLWI9hNTAHDI9jbEmkeirZQHQJzAhnoU5JsHOLOIeWjwuIToLh9V7RlZ3E5Emy
-	 Y9MFb8E19ZsBhRM39rjiA7D3nnAuWo5gAUNkhmzpti8H88dCziryJUtA/4Ok5K/lKs
-	 WjHLm80wrvu/6Bs5curLM11djyjZTo3S1sFn+5jwv+wM1s1xZMU6N2UY71Ff/aK5jm
-	 faMIq/7AhZyWmZdDldP4LwarHU1Lw75oUTaGiJBUYmPMy/qv920AqwchAYnkEFZUAu
-	 Ti1EY3fHARBZbmSpxFGhenI0OfTYh9nZpy8EbW8AW5gibIa+GXhdpem1IirONk5JY2
-	 ReoF4r6ma13KQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xf78y4FKsz4xN2;
-	Thu, 31 Oct 2024 13:24:02 +1100 (AEDT)
-Date: Thu, 31 Oct 2024 13:24:03 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg
- <johannes@sipsolutions.net>, Ben Greear <greearb@candelatech.com>, Emmanuel
- Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg
- <johannes.berg@intel.com>, Wireless <linux-wireless@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Miri Korenblit
- <miriam.rachel.korenblit@intel.com>, Networking <netdev@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Message-ID: <20241031132403.7b5a0ca5@canb.auug.org.au>
-In-Reply-To: <20241024115523.4cd35dde@canb.auug.org.au>
-References: <20241024115523.4cd35dde@canb.auug.org.au>
+	s=arc-20240116; t=1730341689; c=relaxed/simple;
+	bh=8BIQo0QykbY0+G6sL8ETJHJhiDHFJprVGPUxC/ITDK4=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=QZ/ICIWyra3f/wVXYtd9O3zTSyAC28TDH49D7cN/S3DAgtPfl/Zj3dh9yINv4pOym9SaRu3LOdN0i8yiu33Bjc3cJj3AON+4Na2EcFsgFxc6ytqdrYnjm9dXEelDh2s85h0YDvLpLiCPfT/8QcMQkMJVKsyHP9yP4iOdAtqMwDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cE75NtXm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D33C4CECE;
+	Thu, 31 Oct 2024 02:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730341688;
+	bh=8BIQo0QykbY0+G6sL8ETJHJhiDHFJprVGPUxC/ITDK4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=cE75NtXmm9H0Cj0sGlR0QefPCWdv+7PEk5ioaHjQAIk2rj/n0sjMU5Eo3ICqHuJbT
+	 UdVJGrKKdwahac91LK2LkBUEctzOTbXk1Fr7Qm5iUx2qFsIGF8Ab6Kh4jbmUiKfrKD
+	 wwVrtCfLZNOyBJxr66adtyaxmMSpYl+zJ1afknc6NVgm+osFuPirBq0fLKbJXwGjBK
+	 2dv/bgthqgGZ4lH2QDnr+GrjjQxGD56qJSt5Dqfr2+He6Uo4VFDyrYvQGV5Hs29L9n
+	 MV4Dy5BnwES/6exKxcPp6qkMntGDOPWdjmhAObRhqaxAQDTyLXh8AUophttUXUCQx8
+	 ec9FYXebp5zOA==
+Date: Wed, 30 Oct 2024 21:28:06 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CWEjHZMyWAED2ywnE75p_z=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ tudor.laurentiu.oss@gmail.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, Bryan.Kemp@dell.com, 
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>
+In-Reply-To: <20241030182153.16256-1-alex.vinarskis@gmail.com>
+References: <20241030182153.16256-1-alex.vinarskis@gmail.com>
+Message-Id: <173034159113.3085522.9879701637514263982.robh@kernel.org>
+Subject: Re: [PATCH v1 0/1] X1E Dell XPS 9345 Improvements 2
 
---Sig_/CWEjHZMyWAED2ywnE75p_z=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, 30 Oct 2024 19:19:35 +0100, Aleksandrs Vinarskis wrote:
+> Describe retimers for the said device. At the moment DP alt mode is
+> not working, but this still allows to use USB3.0 in both orientations.
+> Once msm-dp is fixed, DP-alt mode enabling patch will follow.
+> 
+> This patch depends on [1], which is still undergoing reviews. As it
+> appears to be close to its final state, sending this already so it can
+> be reviewed.
+> 
+> [1] https://lore.kernel.org/all/20241022-x1e80100-ps8830-v3-0-68a95f351e99@linaro.org/
+> 
+> Aleksandrs Vinarskis (1):
+>   arm64: dts: qcom: x1e80100-dell-xps13-9345: Introduce retimer support
+> 
+>  .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 293 +++++++++++++++++-
+>  1 file changed, 283 insertions(+), 10 deletions(-)
+> 
+> --
+> 2.45.2
+> 
+> 
+> 
 
-On Thu, 24 Oct 2024 11:55:23 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Today's linux-next merge of the wireless-next tree got a conflict in:
->=20
->   net/mac80211/cfg.c
->=20
-> between commit:
->=20
->   8dd0498983ee ("wifi: mac80211: Fix setting txpower with emulate_chanctx=
-")
->=20
-> from the wireless tree and commit:
->=20
->   c4382d5ca1af ("wifi: mac80211: update the right link for tx power")
->=20
-> from the wireless-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc net/mac80211/cfg.c
-> index 6dfc61a9acd4,6c0b228523cb..000000000000
-> --- a/net/mac80211/cfg.c
-> +++ b/net/mac80211/cfg.c
-> @@@ -3046,7 -3070,7 +3070,8 @@@ static int ieee80211_set_tx_power(struc
->   	enum nl80211_tx_power_setting txp_type =3D type;
->   	bool update_txp_type =3D false;
->   	bool has_monitor =3D false;
->  +	int old_power =3D local->user_power_level;
-> + 	int user_power_level;
->  =20
->   	lockdep_assert_wiphy(local->hw.wiphy);
 
-This is now a conflict between the net and net-next trees.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
---=20
-Cheers,
-Stephen Rothwell
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
---Sig_/CWEjHZMyWAED2ywnE75p_z=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
------BEGIN PGP SIGNATURE-----
+  pip3 install dtschema --upgrade
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmci6kMACgkQAVBC80lX
-0GyTsAf+PD2CF5n4o66iImXT68HZ9M5r/oFJa7DJvUBLuOH4IX0norUf3kqq63iP
-IpGFhd1ZOOqIKpYldQ3Gqo0tmfXPQpHoGIR36udXFcdBaWgeU/y5hjObttpN+mRL
-PHqLH2kNP7/FPFyZfGoZmZvsDSKa+aIXFUf9ha3/y+wmuXTaKhIHp+ejeS49DL0e
-Aog5tIeoB6vEG+vmX2vfgdSCVtk3zC2stmMg2Z9S57y0mqnsvwVlFoGNDbl2bXqX
-29X9p05vpMMrW0UivCuqXndcVPfdk3Xo32/u72U2/JZBGVC0gsjutlJI1BBZdGle
-nC16b97kWxP3EU7QYwH5j4IFb8oopg==
-=IDYd
------END PGP SIGNATURE-----
 
---Sig_/CWEjHZMyWAED2ywnE75p_z=--
+New warnings running 'make CHECK_DTBS=y qcom/x1e80100-dell-xps13-9345.dtb' for 20241030182153.16256-1-alex.vinarskis@gmail.com:
+
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: /soc@0/geniqup@bc0000/i2c@b8c000/typec-mux@8: failed to match any schema with compatible: ['parade,ps8830']
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: /soc@0/geniqup@bc0000/i2c@b9c000/typec-mux@8: failed to match any schema with compatible: ['parade,ps8830']
+
+
+
+
+
 
