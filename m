@@ -1,117 +1,224 @@
-Return-Path: <linux-kernel+bounces-390417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3939B7996
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:21:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2C69B799A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915331C216A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4723C285921
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA4919AD78;
-	Thu, 31 Oct 2024 11:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3E519C564;
+	Thu, 31 Oct 2024 11:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="N6yNuIJy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OEfhFKXb"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CB1175BF;
-	Thu, 31 Oct 2024 11:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EB3175BF
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730373658; cv=none; b=pf95BxZYdOHjn3xG5PCShsSw8AIaYAQn6Kv64XdeQP8R4w1C5ipVdAt4+kLeVfhQ9WPrcHNlMXFZzkE98SZkKrEibeEc4J/i+IbneNCY1bdJG5Gb+H19YPYTvcQbLlkG8QgSNAlBC/ziGOtJJHOSByAtgD+UlsnXo4hNPV6xuOU=
+	t=1730373666; cv=none; b=fvATuF6rJ5bXV1iEyZ+bTTcjsgAVASkIXRyBF1/QAoN49d6nP0uxX7NeyqzlWVWCCzGzL5RcXz+ZcdiH5LC0y08tUkevZX0g7pXz3far4b3G36KjusVmoX/FWSNOJOsV3OtuNu4l1UIyxumPsJ6H5kkAAAXpkPLxNZdpcqjH1K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730373658; c=relaxed/simple;
-	bh=upHPwx55hxxZ+6K0pfkfoQMLECjDZs0A7t7naqRPHvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9qs+oY16Z+G1+3susBSIuI+kzBWvtD7DmmJBKsxjy/JYzAvzLcwdOg9/Px7sNdseU4L5dbL4DKLwc7DVfSqvv5omAg3/htieFAWuNmBNo9KBYL6kIVipVaS3zaFM4aINyKeHTz/SpkA2mz4Id9E4MB8y4lE/oWLxi3WYydYaOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=N6yNuIJy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9093340E015F;
-	Thu, 31 Oct 2024 11:20:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id nxVPQm6v3gQU; Thu, 31 Oct 2024 11:20:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730373649; bh=4kgxj+Oy+aos2Q4VuRMB7uY4sjDqeuK8/GP9QzylIOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N6yNuIJyRW9ePKvpyv3Z9ShFCuOfo5KYH5g/0PVXJBZOYNwECXjty8dAkfmSP+E0E
-	 GJa02a/OuBOsDQLmP56rtp9pkEt+TSLapaGIz/8jwwDy2/ENCVo+wYmHmai18YZRtN
-	 TSIxbECsFVNpKqdquj086NZaCDkZL3E0w0etmSAFJsV+qWYi8Y4rdL5YLVdU54tRGr
-	 0ZMMblwbw4R0SYNuF3nRltNV9KNRH4QEeJa4NFVGmdZVsN/KV9uTlEOsVJ554PtZpf
-	 MX08LucSwAMCRWtWl8fmBvUB9EZU4IF7eFLAvUDhLJNjS4ttgy0H1GMtvtbQ/9++Qw
-	 i9GnKs4z86mZnB6+Cu94ZcPrS9HpQ98su9Az3bC8Jbah2upcYPvQB5MrG6L6s2Eh/q
-	 e1yfC1EiBxn6xVJ8fi5MghK3SxcDuWFqsAeNnOjeuq0P1yYwgGA757jwwSa9mgW5Rq
-	 gw1BNaGR25CDI381pYM8sPBdtgrds4+hr0awuzsoidTl07FKrMidgMYpMPOo6slR7n
-	 3SyZoPeE0LMs6S5pi3ZVdhG/Rxb7+sVtx9hIN77D4GBY753bQ91TDWmW/hJ4X3saSZ
-	 cmpmJYEBQbOzbwv2zSskPOdrXKvnfSf/suvcB6vr5Pvx4nFvE6tIieoIFtl97hv3Kh
-	 RaFpcyOX2H4dGHvr1xSpJp2g=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9791540E019C;
-	Thu, 31 Oct 2024 11:20:28 +0000 (UTC)
-Date: Thu, 31 Oct 2024 12:20:27 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
-	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
-	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
-Subject: Re: [PATCH 06/16] x86/amd_nb: Simplify root device search
-Message-ID: <20241031112027.GIZyNn-2JkbpnNJhw1@fat_crate.local>
-References: <20241023172150.659002-1-yazen.ghannam@amd.com>
- <20241023172150.659002-7-yazen.ghannam@amd.com>
+	s=arc-20240116; t=1730373666; c=relaxed/simple;
+	bh=Bs6tqblL7e2KLhnwDDEV072pjAp0SU1jfjcJDBlSE4A=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=EYebGlNCoUPY9/6dG10qlishjDmMo2Rsjg8wehZLbUHkqdOrth37C08OLFk8NGD4glGCV5n+eejF/WqWF94p3ezR/cr5Jls/h8BMmGX4YgbCkk8YG2uxCnRxU+gERZKcI/djZ44gxsJCqjA2xm8STnTJNj05NIv75lBtYxIcgHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OEfhFKXb; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cb47387ceso8087335ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1730373663; x=1730978463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SgD3pKPtdFzcz4t1a0u04lcW4uB7d9j6oqT5niate0A=;
+        b=OEfhFKXbpBEDhBEE0uLRjHKVolvNJE6q+zzkGhIZZKlDvIKtUEbXbNqunDyorCdA9g
+         gNCqvDBFRVYcQVITogA6Urt2wUXVAMCW+8ptAIUNP2b4I8/ymNhOxT5WkpUlEWbOV4My
+         R1bAKgtDFnh4Vk6Y6NZ+LL5YN8Chv4R4QGAcQrOs45UCN8NIGbApXWpPaGQtmqAgTPEJ
+         h9Ue4t82eVZW0RPceCFtiCG8VOj8FUgm7kxE6PZNcThfDJs3jevWo7OvjzAhnfE6DmvC
+         e2brnRkKgIOFf6+sVs9Kc0h6W+w9HHtUjogEcA3OYnRXitXfY0bQggVCG39Loq25bnDJ
+         b4pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730373663; x=1730978463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SgD3pKPtdFzcz4t1a0u04lcW4uB7d9j6oqT5niate0A=;
+        b=FQ5vHwRPa2gdZnDmxazuaX4jCMtno36egj4B+S7125JXMulpM+UblbxzZtnD5fcB/l
+         NwvghttTKHcnbNUN6P5s7yxBygJNP7BCdxuZBJU1dWn2s+r/VeLhf3vdDA3MItmA7u2K
+         J4xu3uO3QQ+zN5In3qy8RtyKW6zs3EgDKG/LLDAwNCXJWAihktK7Wggizp1K99F1knse
+         9oAbl7G7eO+FiBvgMtGzJb7s7vl9TazfxUCptRl+wxjavgwTE+DFrluh1YxWN7wZfPqI
+         51IRz5IKC+Oi4L5oSlk5X9D9Q2ZPYJ0GejC04CMh5QmQORCe7eArVka4yBvKryYP5VCL
+         rT4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVENnbJCc7YGiWczDzfE9iJ02qS14BrmiMDMJZHvLVmYdmBJLc3WB5kVdLWq321MhpbkuQE/KoMkfqrAH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEm5oXBgwIEfAp5qOmgoGOo51+h88jaf/L9D3rWfXwYxy607hM
+	W7s+Qavoib+WeflD8EyssswuTnY5fQKrZ6lPIj959unozPjf7uhHta24gTiqg8g=
+X-Google-Smtp-Source: AGHT+IF6rCp8uA7CIfzXSTYHLrzQK+lu+COWzmT52riKYUQh7Yt9+TYvl4AYGhI2GgQcWukgSatRcQ==
+X-Received: by 2002:a17:902:da82:b0:20c:cccd:17a3 with SMTP id d9443c01a7336-210c6c346a9mr224734955ad.46.1730373662606;
+        Thu, 31 Oct 2024 04:21:02 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.227])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056efd01sm7513455ad.52.2024.10.31.04.20.52
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 31 Oct 2024 04:21:02 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: punit.agrawal@bytedance.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	sudeep.holla@arm.com,
+	guohanjun@huawei.com,
+	prarit@redhat.com,
+	gshan@redhat.com,
+	cuiyunhui@bytedance.com,
+	dwmw@amazon.co.uk,
+	Jonathan.Cameron@huawei.com,
+	liuwei09@cestc.cn,
+	maobibo@loongson.cn,
+	sunilvl@ventanamicro.com,
+	alexghiti@rivosinc.com,
+	haibo1.xu@intel.com,
+	jeeheng.sia@starfivetech.com,
+	x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH] ACPI: fix the warning reported by the sparse
+Date: Thu, 31 Oct 2024 19:20:30 +0800
+Message-Id: <20241031112030.72647-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241023172150.659002-7-yazen.ghannam@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 05:21:40PM +0000, Yazen Ghannam wrote:
-> The "root" device search was introduced to support SMN access for Zen
-> systems. This device represents a PCIe root complex. It is not the
-> same as the "CPU/node" devices found at slots 0x18-0x1F.
-> 
-> There may be multiple PCIe root complexes within an AMD node. Such is
-> the case with server or HEDT systems, etc. Therefore it is not enough to
+All architectures use early_memremap() instead of early_ioremap().
+Therefore, to solve the warning detected by sparse:
+../arch/riscv/kernel/acpi.c:213:30: warning: incorrect type in return expression (different address spaces)
+../arch/riscv/kernel/acpi.c:213:30:    expected void [noderef] __iomem *
+../arch/riscv/kernel/acpi.c:213:30:    got void *
+../arch/riscv/kernel/acpi.c:221:24: warning: incorrect type in argument 1 (different address spaces)
+../arch/riscv/kernel/acpi.c:221:24:    expected void *addr
+../arch/riscv/kernel/acpi.c:221:24:    got void [noderef] __iomem *map
+The __iomem attribute of __acpi_map_table() is removed.
 
-HEDT?
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ arch/arm64/kernel/acpi.c     | 6 +++---
+ arch/loongarch/kernel/acpi.c | 2 +-
+ arch/riscv/kernel/acpi.c     | 6 +++---
+ arch/x86/kernel/acpi/boot.c  | 2 +-
+ drivers/acpi/osl.c           | 2 +-
+ include/linux/acpi.h         | 2 +-
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-...
-
-> +struct pci_dev *amd_node_get_root(u16 node)
-> +{
-> +	struct pci_dev *df_f0 __free(pci_dev_put) = NULL;
-> +	struct pci_dev *root;
-> +	u16 cntl_off;
-> +	u8 bus;
-> +
-> +	if (!boot_cpu_has(X86_FEATURE_ZEN))
-
-check_for_deprecated_apis: WARNING: arch/x86/kernel/amd_node.c:67: Do not use boot_cpu_has() - use cpu_feature_enabled() instead
-
-> +		return NULL;
-
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index e6f66491fbe9..69017dadb82d 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -88,10 +88,10 @@ static bool __init dt_is_stub(void)
+ }
+ 
+ /*
+- * __acpi_map_table() will be called before page_init(), so early_ioremap()
+- * or early_memremap() should be called here to for ACPI table mapping.
++ * __acpi_map_table() will be called before page_init(), so early_memremap()
++ * should be called here to for ACPI table mapping.
+  */
+-void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
++void __init *__acpi_map_table(unsigned long phys, unsigned long size)
+ {
+ 	if (!size)
+ 		return NULL;
+diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+index f1a74b80f22c..a29c1d86e274 100644
+--- a/arch/loongarch/kernel/acpi.c
++++ b/arch/loongarch/kernel/acpi.c
+@@ -34,7 +34,7 @@ u64 acpi_saved_sp;
+ 
+ struct acpi_madt_core_pic acpi_core_pic[MAX_CORE_PIC];
+ 
+-void __init __iomem * __acpi_map_table(unsigned long phys, unsigned long size)
++void __init *__acpi_map_table(unsigned long phys, unsigned long size)
+ {
+ 
+ 	if (!phys || !size)
+diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
+index 2fd29695a788..861ab56962a2 100644
+--- a/arch/riscv/kernel/acpi.c
++++ b/arch/riscv/kernel/acpi.c
+@@ -202,10 +202,10 @@ struct acpi_madt_rintc *acpi_cpu_get_madt_rintc(int cpu)
+ }
+ 
+ /*
+- * __acpi_map_table() will be called before paging_init(), so early_ioremap()
+- * or early_memremap() should be called here to for ACPI table mapping.
++ * __acpi_map_table() will be called before paging_init(), so early_memremap()
++ * should be called here to for ACPI table mapping.
+  */
+-void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
++void __init *__acpi_map_table(unsigned long phys, unsigned long size)
+ {
+ 	if (!size)
+ 		return NULL;
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 3a44a9dc3fb7..e1ed297552e7 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -105,7 +105,7 @@ static u32 isa_irq_to_gsi[NR_IRQS_LEGACY] __read_mostly = {
+  * This is just a simple wrapper around early_memremap(),
+  * with sanity checks for phys == 0 and size == 0.
+  */
+-void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
++void __init *__acpi_map_table(unsigned long phys, unsigned long size)
+ {
+ 
+ 	if (!phys || !size)
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index 70af3fbbebe5..a36486b59bca 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -334,7 +334,7 @@ void __iomem __ref
+ 	}
+ 
+ 	if (!acpi_permanent_mmap)
+-		return __acpi_map_table((unsigned long)phys, size);
++		return (void __iomem __force *)__acpi_map_table((unsigned long)phys, size);
+ 
+ 	mutex_lock(&acpi_ioremap_lock);
+ 	/* Check if there's a suitable mapping already. */
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 4d5ee84c468b..d4627d96c13b 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -207,7 +207,7 @@ static inline int acpi_debugger_notify_command_complete(void)
+ 		(!entry) || (unsigned long)entry + sizeof(*entry) > end ||  \
+ 		((struct acpi_subtable_header *)entry)->length < sizeof(*entry))
+ 
+-void __iomem *__acpi_map_table(unsigned long phys, unsigned long size);
++void *__acpi_map_table(unsigned long phys, unsigned long size);
+ void __acpi_unmap_table(void __iomem *map, unsigned long size);
+ int early_acpi_boot_init(void);
+ int acpi_boot_init (void);
 -- 
-Regards/Gruss,
-    Boris.
+2.39.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
