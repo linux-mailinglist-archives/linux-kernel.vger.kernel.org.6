@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-390076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C876C9B7533
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:18:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DF69B7539
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8830E286552
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901431F254E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F691547EE;
-	Thu, 31 Oct 2024 07:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50099161302;
+	Thu, 31 Oct 2024 07:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cMW1ujZN"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X9h3U7uu"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E02149005
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F206150981
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730359079; cv=none; b=Qp9gx15z6xnZ3bcrRZgJ+HOA8m5m5pxl+ZsHyjfH6PAUOuRuytIXss4yeGp2qy3YOw5YgeoDNxnioGbMl6UYePFiLyVhfGrguR2LehHSYaSGvdkzYkZill8HfuoRBKQqkzvKL9mwTMUaKtsXkB905XKLW3PsPbwUikkEsW2OKfo=
+	t=1730359081; cv=none; b=Fq5xkP80JlprZfSKffTLldG85ZuEOZsCVEraZVrj8nQjLeADpq8PW0pfbJn43zM3uaB9oS9S2OCXznI7TxlZ0AUQx8PyHJNefvitvwtdt84dtifvh4Puq9j7kLUB0qprhXgY8Tk4QJtx3KL1hVHWiR1ryPm88CPFyZ//9Q9D/No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730359079; c=relaxed/simple;
-	bh=Op2p8Q2E5igZsGlkYWqymbzX2Ifj7PSmb49r/ALp7lU=;
+	s=arc-20240116; t=1730359081; c=relaxed/simple;
+	bh=hRRz6Z3zhjYmY795aPCQsEcsvIGIKzWS3nJb+c+XP1I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gJ388S4uOpk96kDDNIbTc3Ui90/UwM0TXusfOiIk+XGOOMuisgJPYqEaK6fQo5NThE+ysuqbBq+BpkGGdQ2aIQoyk+QJES+EF6kW6Wimrq/q0hrYcDycxawTm0e+jm0FZQScg23Wwuh9Suiyao3G1n6GDFGGzgJ64xSxmdtBr+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cMW1ujZN; arc=none smtp.client-ip=209.85.221.41
+	 MIME-Version; b=lxCrs7TsRmFR7Wb2QBhbp44IRdXfCHqf3AqEituGPz9G3XvjEOEXfHPlUYf+RrjN5GIamYLR7uBQ895DiywV7ulmY3hFOFkdqqmi+X188Mm4wiFBviRxYP/kLDDv40q9qBuoxq4ckqGwUqfBSuiNu7mq2yN10KJb+VccgLBW5UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X9h3U7uu; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37ec4e349f4so393624f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:17:56 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso5081235e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730359075; x=1730963875; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730359076; x=1730963876; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I1pq/Bgv4QeCrwiPVa9U9DPj0A/SeEyPL96AcSHmLho=;
-        b=cMW1ujZNbrhUsB95uM8iS5Y66yMmzaqHwBPFll+On9vBj8euqJESQl596o9IleEmWd
-         ePwZ+Qrrk9gMDKteXQ3ULgYEU7hB7urb1vmNX5XBb2N5TbWea9ZP6N+uipU8fuYVRcWq
-         f3N+3xdXiiVYWgjbb7OpCv+sHvWKMrm7iN0v9+4eSuMsgdXT1ODczUlmmimjiz5bU7l+
-         CQKKrSxoPqEfcDNTGwJF7EAWhP/H2K2B3nm7xBc766OumapcsWVNKOkgv0INh2YaPg32
-         2pld/G1OgP9ozhnNCpimS5bZtUb0xvHGfcLVrRepiCKzJKgy8blka6baWqheMK5/MTIs
-         t0eQ==
+        bh=BeRlMEUtBMXjfsJVHTeMu8lQ8IK1457+K1awnOuwaZk=;
+        b=X9h3U7uu0eCiI6Ccz3GK3TAbR2t5XRQCjn4GLKQkgP+IVY5+eLrbgCKzEaZX7tncxb
+         lTWcL1iU1LwTxsmolYHjvfTWPVmrmXPlsrB70lNcaBoMU/8Zl8HDW5YFEg5t4f1zO7+u
+         GZ4ZbfYU04vyEaMKn12pkm3nM1l4gRGJO450xptGZ1n7d9rcFfBRpBSHRfHCxzZUtKz1
+         E11mqt2Nvcd8KDMInp0hqOMCdtv6oTXwQjXk/BUNermy57l0a8Cx8xm7PlRHWwV8Ww6+
+         rmwfWjLDXcC0hYEtwWZaarpXwMARe8UlDsD8OdbBDfx3yEKqptod1V4fE+UzB2bKDUgg
+         nOBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730359075; x=1730963875;
+        d=1e100.net; s=20230601; t=1730359076; x=1730963876;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I1pq/Bgv4QeCrwiPVa9U9DPj0A/SeEyPL96AcSHmLho=;
-        b=kGSAoaAmae92DzTgVpVqA3mwPuBY7+Fv/KotbiEJ65KWyxEFkCuBNHTHfZJyCGLmUm
-         67dYBoVt/lmAKG4QFBB5FK/WN5EhHHL8CD7JA+kJ+XBn1+fEmn5pH8YUuSpMulTm2gOF
-         bv03LGB7J3VAAOt3bDeLh+bIokkq9vmm4KF8M/5+Xq8fPAtRgER2NhUtbe6/Yz8v37km
-         96dSEWWf4SUQ7hgJGs5I818BbDII2bPg6kx0jUutmAEriSS7bNDlrFis20ZW4pBnTQe7
-         Fcld810tAJ8rG8mysztIzmVsjFdRXKh8+c22tB7w7UDph1ipI2vO9avZ0RSGFWY1ydcJ
-         MtlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBAcuU5LoCueY5MnGe8ggFOeNuDjXHpBHidt7kh2PLN82AVBtal9OPiNMbAxI+CoabMaptW3LEx8uv1M4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFUURGrxlVYU2CwuHNEhTRKYgPYdOdWA7zGv7pTU6uUpEiGE7I
-	WCd4QSEuUhyLOOG2+u/y/zhpv9q3bbx81O4BHBWnbM/zSZpyyHRlypc7L+v98TE=
-X-Google-Smtp-Source: AGHT+IGW7kCzNAoBXXZ34GznNmWRMdGAze3cMSGQu0oer+FnmY9AH27Byjv+q+Uux4qqJf3Mcgy/wA==
-X-Received: by 2002:a5d:6a4e:0:b0:37d:4e74:689 with SMTP id ffacd0b85a97d-380611ed135mr13359122f8f.47.1730359075031;
-        Thu, 31 Oct 2024 00:17:55 -0700 (PDT)
+        bh=BeRlMEUtBMXjfsJVHTeMu8lQ8IK1457+K1awnOuwaZk=;
+        b=v4uxSwkw9u949Vpl0q6x7SrynN4BUZireoCHd/xH57G6W0QYIGRVnxRz8TAjp/8y0b
+         Uq1Kg5yD9D9o5ed0dbuLIquxbU0Ff9xyyIocqbHTjSev78ppp+l5z+mAhICiHetu2v37
+         pEuLzESePNHeEDTleev6qA7k+SXnx+gmPWwGXNz+x2Bpqw+h8JO9CKSHP6pg45zxz7J7
+         ULWqYDQ860qz10QxyZKj4g7+PPy66D6CW5aVXfO7PF82v6GUSn7cmIdrzQYm3bJTPTSG
+         SHxFvGgckAzPyxJ05uBQqqH9Ri10gXop6AggTeFD5yJsG7qNrDPUDtyEkI+fw4Mwemro
+         X2sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPF7DYQe5iuIhJBpeYmqAtAje+1uAiJPHlIA0A7Fwgr5J5taNylTm6mf2OeVWNuIH1emNUJPm3DNFcOu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxHn8HaY6o7wHLvD4vpQO3tkt07X/sL2OWCnGu8yokZxOxxPkV
+	cIg+DQe9a3jM3B6sHcBY8zC9PiBThaEEkS1+gtU3EgrwtQ3KC8cQ4RaPVZuHSgg=
+X-Google-Smtp-Source: AGHT+IFXvK55d0CGj9OJo4gCkJhWNNTnKajsdZ89N392DRFUQyDEd53HDsOaPmhrhw5rLrryeaaweQ==
+X-Received: by 2002:a05:600c:3556:b0:431:5f1b:a7c4 with SMTP id 5b1f17b1804b1-4319ad29d0bmr169902125e9.34.1730359076424;
+        Thu, 31 Oct 2024 00:17:56 -0700 (PDT)
 Received: from axelh-ThinkPad-T450s.home (lfbn-nic-1-251-169.w2-15.abo.wanadoo.fr. [2.15.94.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e694sm1187547f8f.86.2024.10.31.00.17.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e694sm1187547f8f.86.2024.10.31.00.17.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 00:17:54 -0700 (PDT)
+        Thu, 31 Oct 2024 00:17:55 -0700 (PDT)
 From: ahaslam@baylibre.com
 To: lars@metafoo.de,
 	Michael.Hennerich@analog.com,
@@ -79,9 +79,9 @@ Cc: linux-iio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Axel Haslam <ahaslam@baylibre.com>
-Subject: [PATCH v3 4/6] iio: dac: ad5791: Add reset, clr and ldac gpios
-Date: Thu, 31 Oct 2024 08:17:44 +0100
-Message-Id: <20241031071746.848694-5-ahaslam@baylibre.com>
+Subject: [PATCH v3 5/6] iio: dac: ad5791: Use devm_regulator_get_enable_read_voltage
+Date: Thu, 31 Oct 2024 08:17:45 +0100
+Message-Id: <20241031071746.848694-6-ahaslam@baylibre.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241031071746.848694-1-ahaslam@baylibre.com>
 References: <20241031071746.848694-1-ahaslam@baylibre.com>
@@ -95,92 +95,121 @@ Content-Transfer-Encoding: 8bit
 
 From: Axel Haslam <ahaslam@baylibre.com>
 
-The ad7591 has reset, clr and ldac gpios. For the DAC to output data
-continuously written to the data register the state of these gpios needs
-to be set by the driver.
+Simplify probe by using of the devm_regulator_get_enable_read_voltage.
 
-Add these gpios to the driver making them optional in case they are fixed
-on the pcb.
-
+Suggested-by: David Lechner <dlechner@baylibre.com>
 Reviewed-by: David Lechner <dlechner@baylibre.com>
 Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
 ---
- drivers/iio/dac/ad5791.c | 34 +++++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+ drivers/iio/dac/ad5791.c | 58 ++++++++++------------------------------
+ 1 file changed, 14 insertions(+), 44 deletions(-)
 
 diff --git a/drivers/iio/dac/ad5791.c b/drivers/iio/dac/ad5791.c
-index f6b9a40241f3..c5d4d755d57a 100644
+index c5d4d755d57a..92d47e766fd3 100644
 --- a/drivers/iio/dac/ad5791.c
 +++ b/drivers/iio/dac/ad5791.c
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/fs.h>
- #include <linux/device.h>
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/spi/spi.h>
- #include <linux/slab.h>
-@@ -76,6 +77,9 @@ struct ad5791_chip_info {
-  * @spi:			spi_device
-  * @reg_vdd:		positive supply regulator
-  * @reg_vss:		negative supply regulator
-+ * @gpio_reset:		reset gpio
-+ * @gpio_clear:		clear gpio
-+ * @gpio_ldac:		load dac gpio
-  * @chip_info:		chip model specific constants
-  * @vref_mv:		actual reference voltage used
-  * @vref_neg_mv:	voltage of the negative supply
-@@ -88,6 +92,9 @@ struct ad5791_state {
- 	struct spi_device		*spi;
- 	struct regulator		*reg_vdd;
- 	struct regulator		*reg_vss;
-+	struct gpio_desc		*gpio_reset;
-+	struct gpio_desc		*gpio_clear;
-+	struct gpio_desc		*gpio_ldac;
- 	const struct ad5791_chip_info	*chip_info;
- 	unsigned short			vref_mv;
- 	unsigned int			vref_neg_mv;
-@@ -337,6 +344,22 @@ static int ad5791_probe(struct spi_device *spi)
- 	if (!indio_dev)
- 		return -ENOMEM;
- 	st = iio_priv(indio_dev);
+@@ -360,32 +360,6 @@ static int ad5791_probe(struct spi_device *spi)
+ 	if (IS_ERR(st->gpio_ldac))
+ 		return PTR_ERR(st->gpio_ldac);
+ 
+-	st->reg_vdd = devm_regulator_get(&spi->dev, "vdd");
+-	if (!IS_ERR(st->reg_vdd)) {
+-		ret = regulator_enable(st->reg_vdd);
+-		if (ret)
+-			return ret;
+-
+-		ret = regulator_get_voltage(st->reg_vdd);
+-		if (ret < 0)
+-			goto error_disable_reg_pos;
+-
+-		pos_voltage_uv = ret;
+-	}
+-
+-	st->reg_vss = devm_regulator_get(&spi->dev, "vss");
+-	if (!IS_ERR(st->reg_vss)) {
+-		ret = regulator_enable(st->reg_vss);
+-		if (ret)
+-			goto error_disable_reg_pos;
+-
+-		ret = regulator_get_voltage(st->reg_vss);
+-		if (ret < 0)
+-			goto error_disable_reg_neg;
+-
+-		neg_voltage_uv = ret;
+-	}
+-
+ 	st->pwr_down = true;
+ 	st->spi = spi;
+ 
+@@ -395,7 +369,17 @@ static int ad5791_probe(struct spi_device *spi)
+ 		use_rbuf_gain2 = device_property_read_bool(&spi->dev,
+ 							   "adi,rbuf-gain2-en");
+ 
+-	if (!IS_ERR(st->reg_vss) && !IS_ERR(st->reg_vdd)) {
++	pos_voltage_uv = devm_regulator_get_enable_read_voltage(&spi->dev, "vdd");
++	if (pos_voltage_uv < 0 && pos_voltage_uv != -ENODEV)
++		return dev_err_probe(&spi->dev, pos_voltage_uv,
++				     "failed to get vdd voltage\n");
 +
-+	st->gpio_reset = devm_gpiod_get_optional(&spi->dev, "reset",
-+						 GPIOD_OUT_HIGH);
-+	if (IS_ERR(st->gpio_reset))
-+		return PTR_ERR(st->gpio_reset);
++	neg_voltage_uv = devm_regulator_get_enable_read_voltage(&spi->dev, "vss");
++	if (neg_voltage_uv < 0 && neg_voltage_uv != -ENODEV)
++		return dev_err_probe(&spi->dev, neg_voltage_uv,
++				     "failed to get vss voltage\n");
 +
-+	st->gpio_clear = devm_gpiod_get_optional(&spi->dev, "clear",
-+						 GPIOD_OUT_LOW);
-+	if (IS_ERR(st->gpio_clear))
-+		return PTR_ERR(st->gpio_clear);
-+
-+	st->gpio_ldac = devm_gpiod_get_optional(&spi->dev, "ldac",
-+						GPIOD_OUT_HIGH);
-+	if (IS_ERR(st->gpio_ldac))
-+		return PTR_ERR(st->gpio_ldac);
-+
- 	st->reg_vdd = devm_regulator_get(&spi->dev, "vdd");
- 	if (!IS_ERR(st->reg_vdd)) {
- 		ret = regulator_enable(st->reg_vdd);
-@@ -382,9 +405,14 @@ static int ad5791_probe(struct spi_device *spi)
- 		dev_warn(&spi->dev, "reference voltage unspecified\n");
++	if (neg_voltage_uv >= 0 && pos_voltage_uv >= 0) {
+ 		st->vref_mv = (pos_voltage_uv + neg_voltage_uv) / 1000;
+ 		st->vref_neg_mv = neg_voltage_uv / 1000;
+ 	} else if (pdata) {
+@@ -411,7 +395,7 @@ static int ad5791_probe(struct spi_device *spi)
+ 	} else {
+ 		ret = ad5791_spi_write(st, AD5791_ADDR_SW_CTRL, AD5791_SWCTRL_RESET);
+ 		if (ret)
+-			goto error_disable_reg_neg;
++			return dev_err_probe(&spi->dev, ret, "fail to reset\n");
  	}
  
--	ret = ad5791_spi_write(st, AD5791_ADDR_SW_CTRL, AD5791_SWCTRL_RESET);
--	if (ret)
--		goto error_disable_reg_neg;
-+	if (st->gpio_reset) {
-+		fsleep(20);
-+		gpiod_set_value_cansleep(st->gpio_reset, 0);
-+	} else {
-+		ret = ad5791_spi_write(st, AD5791_ADDR_SW_CTRL, AD5791_SWCTRL_RESET);
-+		if (ret)
-+			goto error_disable_reg_neg;
-+	}
- 
  	st->chip_info = spi_get_device_match_data(spi);
- 	if (!st->chip_info)
+@@ -425,7 +409,7 @@ static int ad5791_probe(struct spi_device *spi)
+ 	ret = ad5791_spi_write(st, AD5791_ADDR_CTRL, st->ctrl |
+ 		AD5791_CTRL_OPGND | AD5791_CTRL_DACTRI);
+ 	if (ret)
+-		goto error_disable_reg_neg;
++		return dev_err_probe(&spi->dev, ret, "fail to write ctrl register\n");
+ 
+ 	spi_set_drvdata(spi, indio_dev);
+ 	indio_dev->info = &ad5791_info;
+@@ -435,30 +419,16 @@ static int ad5791_probe(struct spi_device *spi)
+ 	indio_dev->name = st->chip_info->name;
+ 	ret = iio_device_register(indio_dev);
+ 	if (ret)
+-		goto error_disable_reg_neg;
++		return dev_err_probe(&spi->dev, ret, "unable to register iio device\n");
+ 
+ 	return 0;
+-
+-error_disable_reg_neg:
+-	if (!IS_ERR(st->reg_vss))
+-		regulator_disable(st->reg_vss);
+-error_disable_reg_pos:
+-	if (!IS_ERR(st->reg_vdd))
+-		regulator_disable(st->reg_vdd);
+-	return ret;
+ }
+ 
+ static void ad5791_remove(struct spi_device *spi)
+ {
+ 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
+-	struct ad5791_state *st = iio_priv(indio_dev);
+ 
+ 	iio_device_unregister(indio_dev);
+-	if (!IS_ERR(st->reg_vdd))
+-		regulator_disable(st->reg_vdd);
+-
+-	if (!IS_ERR(st->reg_vss))
+-		regulator_disable(st->reg_vss);
+ }
+ 
+ static const struct of_device_id ad5791_of_match[] = {
 -- 
 2.34.1
 
