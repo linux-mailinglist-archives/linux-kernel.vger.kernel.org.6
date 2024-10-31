@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-391355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3F89B8587
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:43:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3229B8589
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:43:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35CD28523A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19461C21795
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7321D1E63;
-	Thu, 31 Oct 2024 21:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB641CEE92;
+	Thu, 31 Oct 2024 21:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/Bt12i6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIHKEIaG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B836C1D0E03;
-	Thu, 31 Oct 2024 21:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BE31CEAB4;
+	Thu, 31 Oct 2024 21:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730410939; cv=none; b=ow+3DV6WkzME2rNixwtZf2kdpAA312dQJJayVkeqTcumFeEA5YFLOomOavRXLX9oGcR/aYZndR2G6mWGJzmXpMiWwf6s7cEv9dqFnssQzice8hIJDV0to/i+Ho2zVYkaFyyUt/USFO32/nXkhd2bsA42fToWMSMfsaZnsvF7CiA=
+	t=1730410951; cv=none; b=YV/6+toHkzsPTUK/hbgSRXccmS0W4FLuMAEGdT0ulRVr7WKQAQNH7SO7JLvMByweF5sioGP0WJtvlGZ4hvug0yzleoQOiB3bA6kkMCISmc9KbIOB0107giKLvxnKKHLeBch2HlYjF2/I7acDTkb0oW9RmV9q9ef50pa9r7XWuKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730410939; c=relaxed/simple;
-	bh=1IUPJPksX/e73IKRaHj8GmjOeMBTHfHmBstwuyyR1QU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tc6rCNHla4Q7d8clZ5y2+k60iJqpo5V8VIDEMOQYYqK/7KcoaOoG6ZS8h3rG/XLw1f6YVp80QmDxqEpm21L1Zia9bvVDJ4UedLShfATgZSsX5p0Tf+nWrN1BDu46jAPX5XslIRFsz10gwN9vW4O5t0u7v8D6Fm+x0DvjABNFTRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/Bt12i6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF28C4CEC3;
-	Thu, 31 Oct 2024 21:42:19 +0000 (UTC)
+	s=arc-20240116; t=1730410951; c=relaxed/simple;
+	bh=M/nJ2l0fqJaVV84y2igSDBRemZ3z7pqu1T4s5N9kYyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JnbD3EOpuXWVhT8TGe+YoXh0cd8v9RXcWiFHqEJ/J+mC5n+OHZTCNEmVpaccOs8w8WaFu4PGULTiIJNrbEXmNb5ieQtjqsglUQsPlv2Rhe38NAY9mLsognS/YQFmYTas+HjI5YJ2bbzrjIwmqH3Y1PmM7v7mMK6JBwO3+1pU69o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIHKEIaG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E16C4CEC3;
+	Thu, 31 Oct 2024 21:42:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730410939;
-	bh=1IUPJPksX/e73IKRaHj8GmjOeMBTHfHmBstwuyyR1QU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z/Bt12i6yLdyktcy0Jlq9U2xcXTkDVkHLVNJhsAJoeOkP1J5czLSLZC5gZczohTcO
-	 myItrGlESPZRQ8eVq0os2KhQzyoxlYXkX6OCrd5wp+u4ro0QKJFyOwyth1jvAnpz45
-	 qhNW/AqYLryNKKwJRemkWOy+kaI8Oh1t3laUSddl40YpOC8wI5psIDva4RP0/Cn/V4
-	 hLy7Ix41NfZ9U+be2h1WMI6rESVN1Y5ebBb9vtzAdSrM5s6P33pJ2JWn5F29eSBoyn
-	 63q86w0Qk9LhQ4FxhIyS8eazCEmv/4Lt6Zt803La1AzmrzigkzuSIIi+6vfD4oLnNj
-	 uK0vrPwUE2u9Q==
-Date: Thu, 31 Oct 2024 14:42:18 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] ext4: Check for atomic writes support in write
- iter
-Message-ID: <20241031214218.GD21832@frogsfrogsfrogs>
-References: <cover.1730286164.git.ritesh.list@gmail.com>
- <dc9529514a5c2d1ad5e44d649697764831bbaa32.1730286164.git.ritesh.list@gmail.com>
+	s=k20201202; t=1730410951;
+	bh=M/nJ2l0fqJaVV84y2igSDBRemZ3z7pqu1T4s5N9kYyg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HIHKEIaG/N0k6BXnazG/NnR/G5+pbbbJAblF18UwoZHtODC8jDaPIwzAqOnoWFLXu
+	 Y1IT+tPcnRfBez/Y4MOhGqpdCowj3ctmdeH9EJBuLhQWyrflE8uoMKOnCNLya48j54
+	 9hUVy5CD5gMqxJ3oQ4gnk/tLw3aH0MdAkN6WS/aUHusFu9FJkjWN+aMfo6LGNefXps
+	 mNluhUIKsi52Y2Y2dG0tft/ePlhVH8M4FMGtVgTXfgSWXiodG+MLjvUq9mNAon7SDa
+	 HCfE9+g3bmKjLvxv1/y7UTlqD+HIN3defDA4dmlKHv2BPEvHqA7zvmtYz0HJ/gVXTw
+	 UfiudqkvgjjUA==
+Date: Thu, 31 Oct 2024 21:42:26 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad4000: fix reading unsigned data
+Message-ID: <20241031214226.47043d3f@jic23-huawei>
+In-Reply-To: <20241030-iio-adc-ad4000-fix-reading-unsigned-data-v1-1-2e28dd75fe29@baylibre.com>
+References: <20241030-iio-adc-ad4000-fix-reading-unsigned-data-v1-1-2e28dd75fe29@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc9529514a5c2d1ad5e44d649697764831bbaa32.1730286164.git.ritesh.list@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 09:27:39PM +0530, Ritesh Harjani (IBM) wrote:
-> Let's validate the given constraints for atomic write request.
-> Otherwise it will fail with -EINVAL. Currently atomic write is only
-> supported on DIO, so for buffered-io it will return -EOPNOTSUPP.
+On Wed, 30 Oct 2024 16:09:41 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> Fix reading unsigned data from the AD4000 ADC via the _raw sysfs
+> attribute by ensuring that *val is set before returning from
+> ad4000_single_conversion(). This was not being set in any code path
+> and was causing the attribute to return a random value.
 > 
-> Reviewed-by: John Garry <john.g.garry@oracle.com>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Fixes: 938fd562b974 ("iio: adc: Add support for AD4000")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Applied.
+> ---
+> FYI, there is also another unrelated bug I noticed but didn't fix.
+> 
+> We are calling iio_push_to_buffers_with_timestamp() but there isn't
+> actually a IIO_CHAN_SOFT_TIMESTAMP() channel. I assume the intention
+> was to have the timestamp channel?
 
-Looks decent,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
+Technically harmless as it can never be turned on, but indeed seems
+doubtful - maybe something to treat as a feature rather than a fix though
+given it was never there.
 
 > ---
->  fs/ext4/file.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  drivers/iio/adc/ad4000.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index f14aed14b9cf..a7b9b9751a3f 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -692,6 +692,20 @@ ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	if (IS_DAX(inode))
->  		return ext4_dax_write_iter(iocb, from);
->  #endif
-> +
-> +	if (iocb->ki_flags & IOCB_ATOMIC) {
-> +		size_t len = iov_iter_count(from);
-> +		int ret;
-> +
-> +		if (len < EXT4_SB(inode->i_sb)->s_awu_min ||
-> +		    len > EXT4_SB(inode->i_sb)->s_awu_max)
-> +			return -EINVAL;
-> +
-> +		ret = generic_atomic_write_valid(iocb, from);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	if (iocb->ki_flags & IOCB_DIRECT)
->  		return ext4_dio_write_iter(iocb, from);
->  	else
-> -- 
-> 2.46.0
+> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
+> index 6ea491245084..fc9c9807f89d 100644
+> --- a/drivers/iio/adc/ad4000.c
+> +++ b/drivers/iio/adc/ad4000.c
+> @@ -344,6 +344,8 @@ static int ad4000_single_conversion(struct iio_dev *indio_dev,
+>  
+>  	if (chan->scan_type.sign == 's')
+>  		*val = sign_extend32(sample, chan->scan_type.realbits - 1);
+> +	else
+> +		*val = sample;
+>  
+>  	return IIO_VAL_INT;
+>  }
 > 
+> ---
+> base-commit: fa4076314480bcb2bb32051027735b1cde07eea2
+> change-id: 20241030-iio-adc-ad4000-fix-reading-unsigned-data-88a1de88cf57
 > 
+> Best regards,
+
 
