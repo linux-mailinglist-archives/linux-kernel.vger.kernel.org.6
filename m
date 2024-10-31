@@ -1,218 +1,242 @@
-Return-Path: <linux-kernel+bounces-389886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5BE9B7284
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:28:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7E19B728B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 529661C23472
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:28:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6702B1C2345C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1541311B5;
-	Thu, 31 Oct 2024 02:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE704126F2A;
+	Thu, 31 Oct 2024 02:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okt6lcuP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aWn7S+Hp"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2047.outbound.protection.outlook.com [40.107.20.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D3B12D20D;
-	Thu, 31 Oct 2024 02:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730341691; cv=none; b=dWCo2lDEGXD96nqpDotCJ9iU1qGmMBvBSaqb+llnGlvu9Sd/PLMrE9gK5yzk5vSBy747n7bBY02mU/rs21RQa6qQXr+C0lbVSZJSrO/TFru0s6xUGqzvYxV7Z601saQAasT+YeOIhccVWjgeeKT4dqrIMYUwlMjQHnbKNFx7IwY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730341691; c=relaxed/simple;
-	bh=01Uc3zvzqd3XKCvxftrNCCaSDMkTv/ZTi6vvS6fRpeY=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=J4jSpMXVlgaAQKv/7vwEB9VJcZnq+xsAPZeOn6astoR7MXNkhtMISXdvhoiNCDG7uUS9rx53KOo9+k6uttErUxb4QFIRG5iHw/RV511GFOyPBVDJ2WtkLgb+Cx+xPKR9qOzo2UsocoVJD2wjLrjh0towEBSEdFicFblP9G3noUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okt6lcuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8722FC4CED0;
-	Thu, 31 Oct 2024 02:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730341690;
-	bh=01Uc3zvzqd3XKCvxftrNCCaSDMkTv/ZTi6vvS6fRpeY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=okt6lcuP7P1d7jmgXkcOoALiR2Qq6T0WCVjJEb1Ie7vKAJ3py6myNBfdF/crgzJKE
-	 Cm6vTMJYsSuekDKMBaVTxZomno4RguNyGaPzsvEOrWbeXWoY04q8t/bvdJnBhN9N5y
-	 tfyd0G0HO0BSQvfJptBJ0EUGQLwNARtO/fm5HthF/l4E53Aru6ZPZIu5j87Wz0c5oi
-	 B6AY1b+mPNGGgAhHkqSrAVJLIlqY6XhLm2Vy7GFGQw9QEbnKYZ8nQ7A+qaROFcFNz+
-	 qMtUU+4WJnrNSnBHfhrPPj6DkFmMAfLsIW/Ya8y2f9egrzGiWKaR7bvU+uc8t9XeGm
-	 ACqA0UYVQhhKg==
-Date: Wed, 30 Oct 2024 21:28:09 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DAD28373;
+	Thu, 31 Oct 2024 02:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730342239; cv=fail; b=eA9jTJTW/Zb4tkauW7TVTMG+vVWgy7/eWYrFObf+DBezNWVZkj7eiX8BrD+YkZvnnIB/Rx+eunFAgHIs0nVHQ2jGevdpH2bbjseqt+W4K908ViBtkvBT2jth2SJDc/bZUIbsYYBzy0MVoRAEVwI1GzPuVNFjQqloYqv4nJzgoME=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730342239; c=relaxed/simple;
+	bh=jsNYS4/QCiZ0Ig7DZDixEuCmFTpUOjBLee51ivZ25Ss=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ldU8mupP1piEWzC35x8A9CZZlv0FBZ5PSyIbKvWEw1xspNKvwH6pqiNtQNh22yLdNO+og3UlQmJwxC4qVt8wq55SMhoi46rDDU30UpM2cV8lPfggFDCkoJe10f5zbcv6HYGi3XWlYaNI33fDoGbd+Aymz5RXwTWiBh08ROULrGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aWn7S+Hp; arc=fail smtp.client-ip=40.107.20.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AMkeyy04gGBSogY2PJizhmhwkv98Xse2BG4MKqQrHjKpiLsnr4mtudLmbfBrDAvouLBLJveoKToElHUnAdlTC/rscfgxa8iySXgYBZjksz04Jop7W22QnKeyUHETbvbHMpsdzDog3JdnaxCligK+DNErFR8gNpttYhaqaoshrxRw4UoStBqk0vBCzK2T62gU0q2m39LDewEZu4Zo5zsFeXfwHX2PlQDIKFLP1xfjKgmGJ1f89iTRRHVg/E7//YJF8l0KjTleZbhaFGiQzhfwPla61Wa95HYKygj28O4ZNJ/lyyZNEco81z9kUo6RieABvwaybWRqtj9Qr+sCvkL3VA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jsNYS4/QCiZ0Ig7DZDixEuCmFTpUOjBLee51ivZ25Ss=;
+ b=ILN8vyUQKh3d7y2NyFRcXRdM6C5blCOa17DYU9+Z7dD4yjVlHfHdQeHiuWw4XRVYEeU+JTh/NsHcloYrApzqtnP2Yk8n6ipxw63kta4dneP+WgGgnhmkgp2NTWQcNRvedueUMazEQUEr3Vfw770iTiJ9wyy+tGvQ7Nfu4piqxXkiqGgKwidGuuCrOqxGsFtB+UXGAtCs82krdsBN1i+S8cS6AynFwMxyhu4nXR8cSkZSl+TY5u+ZQP/DX0Ut9BjPoSlT9i4ikImmTLO0pQACr513Y7LLl5tgudS42Xqn0KZA5etmFBGtnYc8NhdSIX4TYzf488IzQ4HRIWMd3N5s9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jsNYS4/QCiZ0Ig7DZDixEuCmFTpUOjBLee51ivZ25Ss=;
+ b=aWn7S+HpFg5cmJtfFQxFB+oOXUvjUryiRQYmFGwL1uIrSepClK5VcjUctIdIwejUjnsNOo7RScu+BQX+ZBimtIa3pZ2lQQJNS+jv1mdptNUM/WWZWrU5icNIh+AIGdvmqm7HQrzJK3WKWfUe4QL7nX9m/moWfQRZizzo/oxvVkrGamP5pCXQ457btb6TjmBZ2zOrDj2lcHY16ZLyr8eRG/VMZlgTaMmDDzBXttRPXv1r95DJEB4l6vubFmiV2uoO0trBwAbVtRTEK4fZEbqpuVwxBF5saCwfa1xDtCA2mjIkddHyodpbwX+Bw29DwVOENkJ9cINaW42q7L2yRgRD/w==
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by DU2PR04MB8824.eurprd04.prod.outlook.com (2603:10a6:10:2e3::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Thu, 31 Oct
+ 2024 02:37:14 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%7]) with mapi id 15.20.8093.024; Thu, 31 Oct 2024
+ 02:37:08 +0000
+From: Bough Chen <haibo.chen@nxp.com>
+To: Josua Mayer <josua@solid-run.com>, Adrian Hunter
+	<adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+CC: Mikhail Anikin <mikhail.anikin@solid-run.com>, Jon Nettleton
+	<jon@solid-run.com>, yazan.shhady <yazan.shhady@solid-run.com>, Rabeeh Khoury
+	<rabeeh@solid-run.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, dl-S32
+	<S32@nxp.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/2] mmc: host: sdhci-esdhc-imx: update esdhc sysctl
+ dtocv bitmask
+Thread-Topic: [PATCH v2 2/2] mmc: host: sdhci-esdhc-imx: update esdhc sysctl
+ dtocv bitmask
+Thread-Index: AQHbKtDtgomlsJCw90ycdwXZhBf8BbKfTgwAgADXh0A=
+Date: Thu, 31 Oct 2024 02:37:08 +0000
+Message-ID:
+ <DU0PR04MB94960BAD8A18149664F244C490552@DU0PR04MB9496.eurprd04.prod.outlook.com>
+References: <20241030-imx-emmc-reset-v2-0-b3a823393974@solid-run.com>
+ <20241030-imx-emmc-reset-v2-2-b3a823393974@solid-run.com>
+ <61fa7a34-fa77-4a7e-b6cb-45fb5e671249@solid-run.com>
+In-Reply-To: <61fa7a34-fa77-4a7e-b6cb-45fb5e671249@solid-run.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|DU2PR04MB8824:EE_
+x-ms-office365-filtering-correlation-id: b2c225ac-685b-4e0c-69dc-08dcf954ea2b
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?a2VZR0RjY3JMK2ZxUXFpYnNHeUlxS01uMDFjWTFrbVdsaHVlbmJJc3hITlZv?=
+ =?utf-8?B?OGQxRXoyOGxPdXVqZzE3eEFxT1dZcjd3KzdxU2FtOVRLVDAvR2JkSkNHSk9E?=
+ =?utf-8?B?UkdnUEhnemFreE04OUNuOFFmbUtGZ0dZOUhaTnVWUFlOSVhaMng4QTJoeENN?=
+ =?utf-8?B?aWd4Q20vbk9NSzZuWUZ6cGh3dGJteUV0Y3VNOFc0b3VjNGd5SUxxTVQ1aE9i?=
+ =?utf-8?B?WmtDNThiRG1URGhQWldyTDN1RUZZNkxOR3BaWGRpU0lJdVVjQVlFc2l3ZUt2?=
+ =?utf-8?B?aXJ1cERHM1V3a2RjVnJCTE5mTVJHTGRCSnFXNDdNVnZ6VU5HZFp3VUJhQlZE?=
+ =?utf-8?B?Y3c1cVhXblVHVk5iR2JlVGZEQ2haOW0yVklwSy9mTWdNU1hHc1Q2a2RYN2pE?=
+ =?utf-8?B?SHpyaUVNNkY0REZPVkU5TXgvNTVZWklNTXlCOUxuakNCVm9oa1NmMGhHMENZ?=
+ =?utf-8?B?SU56MkpnVzBhWFJPdzl1RW9LZGp6blpoaU5DZXR4cHZnUHlRV1pzMkVCU2F0?=
+ =?utf-8?B?ZzdIdUVSOFVPOTNSYS9OdmhpUldUNkdHeGpFZTdTTG0rSFZ3VVlEYlpEMVpN?=
+ =?utf-8?B?NHhOMFZpZGFLVWthN3lCM25OT0VxNFQ1OFREdWFPMTZaL1BualY0aUdPV01Q?=
+ =?utf-8?B?RE1CUTFnV3Z5ME80eFJjZm1QT0NqOHUvaHB6Nm1SdnhMRlRlcUtiVVRhZXNT?=
+ =?utf-8?B?ZERpVzFJZHZCVnJqWGJ1bXRrMVlvejRUaVllZDM0aXpRZm1MQ0NuNVduSVhH?=
+ =?utf-8?B?TmRka2w1SHFZUkI1NVEwTThNVi8xNVkydnVOQlZwR2hFenN3ZUlpclFrdWR2?=
+ =?utf-8?B?SitPQ2VON0REUWpyUUNsOG83Q3U4VVFseHRweEJteWZrdVB1aWZLcGkxUldX?=
+ =?utf-8?B?NGg4dWdKdWMzV3Y0cWZvS0NucVYyRWVqV1pmaEVmODFVcGlCNWcyRURNT0RE?=
+ =?utf-8?B?aHd6OGlSOVRaaCtuSkFNenRxaUNMTlN6djJKZjZNNXV5ck9oM2s3VmlacWNV?=
+ =?utf-8?B?NEJYSGVzU2VHMG1GTkdZZlFLcUxLMUg4WlNpUzZQWEU2ajV2dlFGM2VOSDk0?=
+ =?utf-8?B?OGRsQXk4UkxmNllwYk1iRit1YzFzNTA4SmhEb0h4cml4a1NoRE9pSGVPRk5N?=
+ =?utf-8?B?eno4bG9YRmJlVDBneTFTVFFKTVlPOEVOVndvcWpocGlrdWVheHE1OWFqbDVF?=
+ =?utf-8?B?bGFJYmhxQWJxRk9oUVRxVHdGY09lU2s2SnBYUVBXaWlNUFFLWmdPU0VOWU0x?=
+ =?utf-8?B?ZmNQWk9MN3lxQkN6aUdBTm5zN0ZmYXlFZjU5UEYxWlE3QjI2dW9RQnVWUWZn?=
+ =?utf-8?B?VkdMbkQzdDdhRUR4Y2c4bFBtWlROdC9BdlNWbW5welBpR2p6bmlXMllkK1dq?=
+ =?utf-8?B?Tkp0SmxXVmlIdlJRdjJ0b3ptNTVERDVrOWVZZXV4WFNJTi9iV0FTMjBHMGpx?=
+ =?utf-8?B?YjRHNzdtbmlPaVlFMFZvN2cvT0FEekN6ckRPU0VNcXg5MlF6K1g0RE55alBZ?=
+ =?utf-8?B?VElQV3d2VEcxSmVqbDlLQlFTaVhRbjE4N29JRmVpNFFwdU1XRzNiOW5tT1lX?=
+ =?utf-8?B?Zk91UDFkOXQ2RllhZzF0R1RoTUQvMkhxQVR0dVRGTlg2UEZtWkg2MmZtSmtG?=
+ =?utf-8?B?elFXTGtLOVcrSU14VStZbVIycjNSRHp5eXAxVU5XenZjQnhSaW1WU3BjenBR?=
+ =?utf-8?B?d1ZuRkdUSGFzenl2bzI2bjJFT0drbWNzeTdqZzVlNjhyNTNSTnFkaXFtdldj?=
+ =?utf-8?B?ZXJrVVhiMjZ5ZThqakR1Uzh5OE5DdlZUWUd5bVpDMk1CRzBUMEpudEdUYW5h?=
+ =?utf-8?Q?vBCD1pzFUjOyDv881g3iRhzBfB1IWGy1mTxf4=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?S0tPbE9ETjkxQWI3Q2NrRUxTZ2hqNmE5cHdqQStuYjVRcnVxOENRZ2lOQTVD?=
+ =?utf-8?B?eU5YU2JIbmlVYnNNQnYvWkpzbE1HZTJ0TWtzT0JoVm5wak1UYWhqU0dZUkNG?=
+ =?utf-8?B?bVZtSDBwZW1LNUp6RmZLOVNLWGkzOHVSd3dXN3RGN3BrR21VVytGZUg4QW92?=
+ =?utf-8?B?RnFGR2dJOVNyOHZtYXVsczEzSVRLeDhNcFU2TEJCemxCWHJiSmZVczU5SEls?=
+ =?utf-8?B?T0VBYUwwVnR0UitOOTZGMWx2UWM4ODZGNnVObmtXVWo5bnVsMSsyb2lHL1c4?=
+ =?utf-8?B?QWREM0RLZUhzUjJwWHUySm5BdFZCdmFHcmk0M05YMzRZdngxSm9qWlNmeFRw?=
+ =?utf-8?B?Ym1xNXd5a3pzQ3dpMzNzaE95OEJqMTJrK09TSUhxZDdoNjBMZyt3bGZZeEtW?=
+ =?utf-8?B?OWx3N283QTluOVBBYVNxMktKdENFU1FkZU13RG1aVVVPMjRFM3FoYzFjODdu?=
+ =?utf-8?B?ZFI0RGhzTmRzS0YxSW9ZK2NuZkNWMUp0bUYwc1VzeGNOL2hjZjJjT1dqc1Zs?=
+ =?utf-8?B?Vi91QytvUjRsdU1VVCt1TzZHeUIvT0JZdWxzZGpueFF4S1dMREx4YkNBcGlk?=
+ =?utf-8?B?WlVhNDFwL1dnVnN2RVVhR2YrWklpVUdPUm4xeGNxZ09oZU1kK2s5bWRWSnp3?=
+ =?utf-8?B?dUt2M1ZnZGZ4R2RhMXFhaTNPU3UvZVVXaTNIWmtkTDkyczBkb2VsWHhCdFZF?=
+ =?utf-8?B?ZW1jTGN0UDUyWExycDB4eEI3T2pMZWtFMDR3U2pxN1N4VHROU3FSVWdHZmpN?=
+ =?utf-8?B?b0EwVUFlVEdYWFBvMWZtbVN2c2xtVzV5N3pFSS9wYVp3UjI3cDZnWDRoc25U?=
+ =?utf-8?B?Mk01UStCaDFVY3NoQi9qRUw0QXBuWkFUWmw5TGd5eXJxYXlEaHJNeE1rSjFq?=
+ =?utf-8?B?NjdYMHUreGZiSlhBV0xydUFpSHNOajg4TFFkdHQyNzhFTWpnWGFGUUlQTHI4?=
+ =?utf-8?B?ek00UFdZdzV0aW5IZ1ZiRjdhVm5UVHRJTUpzQkhNT2NxRnBwTHMyWFlCelEw?=
+ =?utf-8?B?dTVnUWhQeVZ1dzBIRHdCUmdZNUU3cTc5MU90TUVDaGthR3dYMTVRZkxtdHBm?=
+ =?utf-8?B?c3hMTnJQSnM5Z1RFa2d0V2tqSFMrUjRGbTN2L1VXY2s4dVhqbHN3RzlOYWp4?=
+ =?utf-8?B?RnZnZXpxQzh4cmFBYlJONGQ2dXJ4ZlN0Tkp5UzJVaGl1R09MWGduOXBLSzcr?=
+ =?utf-8?B?dE5rSmNBOHFueGlwUTlkb1FkdUlIUHowSG4yOUxRY1BNajh6b2M5TXd3VDZn?=
+ =?utf-8?B?cUhOTmd2My9RcVZMNWM3UzBBOFpiTS9zRXZWcEM4Rlc4WkpBS3E2WWRSZlpm?=
+ =?utf-8?B?NnliNXJEd25jTXJ3NHNtSnBpNFBaR2FUY1RxZHpDV25JL1dJbm1TZEQ0Rk8w?=
+ =?utf-8?B?L2o2cmhZM3Mrc0FkSG9OQWI3aElJb2d0WUcvTURweDZoQ090Sk1BVEVSUGJR?=
+ =?utf-8?B?dTFkbGJra3FMSTRHWkFacHFnMHFWdXBvTnZ4eitVNERkVUZNdTh1OHA3ZWNx?=
+ =?utf-8?B?OUFDR0VTN2htb1A0K2t4TnJmaEhMREZMWng4TXRSbDBseHhJMG4wVkx6OGpj?=
+ =?utf-8?B?cUh2Tmd6U2NhakpEMmprQUY1YnlZU3JneUpRcys5ckNQSFJrL1dEQ2hPSDIw?=
+ =?utf-8?B?QkpXV2ZZYzlHbmZrcmh6R1h2aGdrSjdhL2s4WFF5VGUyU05YOGdNMkpkSXky?=
+ =?utf-8?B?TjRkVDZMZVZnNEh6SkFITmcyTE9JZGZmN1VBRGU2SHlNM2I2a3NEZkpQbkFx?=
+ =?utf-8?B?eCtKa1QzZ1BncGZoZU5hOHRtMjF1RldIaTVXYmZQTi9WWVNJWFliVVRzZlVF?=
+ =?utf-8?B?NnRvMnZiRm1IZkZaUFhMOFNOU1Z4d1ZrTW1uUUhMUjhPRStEZnNuM3lRcjg1?=
+ =?utf-8?B?bHFHME1PSDZRRzF1VjhWRWVML2hma1J0NXYyeng3UkJoVkFyRi9STTQxYVdk?=
+ =?utf-8?B?R1pwNFNoZGxIVVlqVFZ3RS9OMEZsTTlpUmw5MGlpU0UvQU0rd1pFMnhtaTRj?=
+ =?utf-8?B?eFNqM1Q3ZHdRYTF3c3lQTzR5S2EvZStlZVpIOU40Z0ZoWWRaR0lNL3dlbmhr?=
+ =?utf-8?B?dC9lQ0hUSHpWZHg0bWFNbk93K09LQ083NStpZ1M0SnRlNUd1clBjUTdTalpG?=
+ =?utf-8?Q?NtVQ=3D?=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- Matti Vaittinen <mazziesaccount@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, Sascha Hauer <s.hauer@pengutronix.de>
-In-Reply-To: <20241030232746.2644502-1-andreas@kemnade.info>
-References: <20241030232746.2644502-1-andreas@kemnade.info>
-Message-Id: <173034159281.3087396.381274219122389189.robh@kernel.org>
-Subject: Re: [PATCH v3 0/3] ARM: dts: add Kobo Clara 2E
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2c225ac-685b-4e0c-69dc-08dcf954ea2b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2024 02:37:08.0438
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: r/plEBYomIsR3P+arrPt5/inLZ0UvcTjym6HETA32+snmaBc2FXiO7J+LGchy1SlgnbkanjsY+nx/CNMqxovxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8824
 
-
-On Thu, 31 Oct 2024 00:27:43 +0100, Andreas Kemnade wrote:
-> Add a basic device tree for the Kobo Clara 2E Ebook reader.
-> It is equipped with an i.MX6SLL SoC. EPDC PMIC drivers
-> are not ready for mainline yet.
-> 
-> Changes in V3:
-> - removed 30MegaOhm current sense resistor nonsense
-> 
-> Changes in V2:
-> - improved commit message about devices without binding
-> 
-> Andreas Kemnade (3):
->   dt-bindings: arm: fsl: add compatible strings for Kobo Clara 2E
->   ARM: dts: imx: Add devicetree for Kobo Clara 2E
->   ARM: imx_v6_v7_defconfig: Enable drivers for Kobo Clara 2E
-> 
->  .../devicetree/bindings/arm/fsl.yaml          |   8 +
->  arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
->  .../dts/nxp/imx/imx6sll-kobo-clara2e-a.dts    |  23 +
->  .../dts/nxp/imx/imx6sll-kobo-clara2e-b.dts    |  23 +
->  .../nxp/imx/imx6sll-kobo-clara2e-common.dtsi  | 514 ++++++++++++++++++
->  arch/arm/configs/imx_v6_v7_defconfig          |   2 +
->  6 files changed, 572 insertions(+)
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-common.dtsi
-> 
-> --
-> 2.39.5
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y nxp/imx/imx6sll-kobo-clara2e-a.dtb nxp/imx/imx6sll-kobo-clara2e-b.dtb' for 20241030232746.2644502-1-andreas@kemnade.info:
-
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: spdif@2004000: compatible:0: 'fsl,imx6sl-spdif' is not one of ['fsl,imx35-spdif', 'fsl,vf610-spdif', 'fsl,imx6sx-spdif', 'fsl,imx8qm-spdif', 'fsl,imx8qxp-spdif', 'fsl,imx8mq-spdif', 'fsl,imx8mm-spdif', 'fsl,imx8mn-spdif', 'fsl,imx8ulp-spdif']
-	from schema $id: http://devicetree.org/schemas/sound/fsl,spdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: spdif@2004000: compatible: ['fsl,imx6sl-spdif', 'fsl,imx35-spdif'] is too long
-	from schema $id: http://devicetree.org/schemas/sound/fsl,spdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: spdif@2004000: clock-names:9: 'spba' was expected
-	from schema $id: http://devicetree.org/schemas/sound/fsl,spdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: /soc/bus@2000000/spba-bus@2000000/spdif@2004000: failed to match any schema with compatible: ['fsl,imx6sl-spdif', 'fsl,imx35-spdif']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: serial@2034000: dma-name: b'rx\x00tx\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: timer@2098000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['fsl,imx6sl-gpt'] is too short
-	'fsl,imx1-gpt' was expected
-	'fsl,imx21-gpt' was expected
-	'fsl,imx27-gpt' was expected
-	'fsl,imx31-gpt' was expected
-	'fsl,imx6sl-gpt' is not one of ['fsl,imx25-gpt', 'fsl,imx50-gpt', 'fsl,imx51-gpt', 'fsl,imx53-gpt', 'fsl,imx6q-gpt']
-	'fsl,imx6dl-gpt' was expected
-	'fsl,imx6sl-gpt' is not one of ['fsl,imx6ul-gpt', 'fsl,imx7d-gpt']
-	from schema $id: http://devicetree.org/schemas/timer/fsl,imxgpt.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: anatop@20c8000: '#address-cells', '#size-cells', 'regulator-3p0@20c8120' do not match any of the regexes: 'pinctrl-[0-9]+', 'regulator-((1p1)|(2p5)|(3p0)|(vddcore)|(vddpu)|(vddsoc))$'
-	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-anatop.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: regulator-3p0@20c8120: Unevaluated properties are not allowed ('reg' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/anatop-regulator.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: interrupt-controller@20dc000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['fsl,imx6sll-gpc', 'fsl,imx6q-gpc'] is too long
-	'fsl,imx6sll-gpc' is not one of ['fsl,imx6q-gpc']
-	'fsl,imx6sll-gpc' is not one of ['fsl,imx6qp-gpc', 'fsl,imx6sl-gpc', 'fsl,imx6sx-gpc', 'fsl,imx6ul-gpc']
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: interrupt-controller@20dc000: 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: interrupt-controller@20dc000: 'clock-names' is a required property
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: interrupt-controller@20dc000: 'pgc' is a required property
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: /soc/bus@2000000/interrupt-controller@20dc000: failed to match any schema with compatible: ['fsl,imx6sll-gpc', 'fsl,imx6q-gpc']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: pinctrl@20e0000: 'uart2grp-sleep' does not match any of the regexes: 'grp$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/fsl,imx35-pinctrl.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: /soc/bus@2000000/csi@20e8000: failed to match any schema with compatible: ['fsl,imx6sll-csi', 'fsl,imx6s-csi']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: /soc/bus@2000000/csi@20e8000: failed to match any schema with compatible: ['fsl,imx6sll-csi', 'fsl,imx6s-csi']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: lcd-controller@20f8000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['fsl,imx6sll-lcdif', 'fsl,imx28-lcdif'] is too long
-	'fsl,imx6sll-lcdif' is not one of ['fsl,imx23-lcdif', 'fsl,imx28-lcdif', 'fsl,imx6sx-lcdif', 'fsl,imx8mp-lcdif', 'fsl,imx93-lcdif']
-	'fsl,imx6sx-lcdif' was expected
-	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: lcd-controller@20f8000: clocks: [[2, 129], [2, 123], [2, 0]] is too long
-	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dtb: lcd-controller@20f8000: clock-names: ['pix', 'axi', 'disp_axi'] is too long
-	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: spdif@2004000: compatible:0: 'fsl,imx6sl-spdif' is not one of ['fsl,imx35-spdif', 'fsl,vf610-spdif', 'fsl,imx6sx-spdif', 'fsl,imx8qm-spdif', 'fsl,imx8qxp-spdif', 'fsl,imx8mq-spdif', 'fsl,imx8mm-spdif', 'fsl,imx8mn-spdif', 'fsl,imx8ulp-spdif']
-	from schema $id: http://devicetree.org/schemas/sound/fsl,spdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: spdif@2004000: compatible: ['fsl,imx6sl-spdif', 'fsl,imx35-spdif'] is too long
-	from schema $id: http://devicetree.org/schemas/sound/fsl,spdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: spdif@2004000: clock-names:9: 'spba' was expected
-	from schema $id: http://devicetree.org/schemas/sound/fsl,spdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: /soc/bus@2000000/spba-bus@2000000/spdif@2004000: failed to match any schema with compatible: ['fsl,imx6sl-spdif', 'fsl,imx35-spdif']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: serial@2034000: dma-name: b'rx\x00tx\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: timer@2098000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['fsl,imx6sl-gpt'] is too short
-	'fsl,imx1-gpt' was expected
-	'fsl,imx21-gpt' was expected
-	'fsl,imx27-gpt' was expected
-	'fsl,imx31-gpt' was expected
-	'fsl,imx6sl-gpt' is not one of ['fsl,imx25-gpt', 'fsl,imx50-gpt', 'fsl,imx51-gpt', 'fsl,imx53-gpt', 'fsl,imx6q-gpt']
-	'fsl,imx6dl-gpt' was expected
-	'fsl,imx6sl-gpt' is not one of ['fsl,imx6ul-gpt', 'fsl,imx7d-gpt']
-	from schema $id: http://devicetree.org/schemas/timer/fsl,imxgpt.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: anatop@20c8000: '#address-cells', '#size-cells', 'regulator-3p0@20c8120' do not match any of the regexes: 'pinctrl-[0-9]+', 'regulator-((1p1)|(2p5)|(3p0)|(vddcore)|(vddpu)|(vddsoc))$'
-	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-anatop.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: regulator-3p0@20c8120: Unevaluated properties are not allowed ('reg' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/anatop-regulator.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: interrupt-controller@20dc000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['fsl,imx6sll-gpc', 'fsl,imx6q-gpc'] is too long
-	'fsl,imx6sll-gpc' is not one of ['fsl,imx6q-gpc']
-	'fsl,imx6sll-gpc' is not one of ['fsl,imx6qp-gpc', 'fsl,imx6sl-gpc', 'fsl,imx6sx-gpc', 'fsl,imx6ul-gpc']
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: interrupt-controller@20dc000: 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: interrupt-controller@20dc000: 'clock-names' is a required property
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: interrupt-controller@20dc000: 'pgc' is a required property
-	from schema $id: http://devicetree.org/schemas/power/fsl,imx-gpc.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: /soc/bus@2000000/interrupt-controller@20dc000: failed to match any schema with compatible: ['fsl,imx6sll-gpc', 'fsl,imx6q-gpc']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: pinctrl@20e0000: 'uart2grp-sleep' does not match any of the regexes: 'grp$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/fsl,imx35-pinctrl.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: /soc/bus@2000000/csi@20e8000: failed to match any schema with compatible: ['fsl,imx6sll-csi', 'fsl,imx6s-csi']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: /soc/bus@2000000/csi@20e8000: failed to match any schema with compatible: ['fsl,imx6sll-csi', 'fsl,imx6s-csi']
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: lcd-controller@20f8000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['fsl,imx6sll-lcdif', 'fsl,imx28-lcdif'] is too long
-	'fsl,imx6sll-lcdif' is not one of ['fsl,imx23-lcdif', 'fsl,imx28-lcdif', 'fsl,imx6sx-lcdif', 'fsl,imx8mp-lcdif', 'fsl,imx93-lcdif']
-	'fsl,imx6sx-lcdif' was expected
-	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: lcd-controller@20f8000: clocks: [[2, 129], [2, 123], [2, 0]] is too long
-	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
-arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dtb: lcd-controller@20f8000: clock-names: ['pix', 'axi', 'disp_axi'] is too long
-	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
-
-
-
-
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKb3N1YSBNYXllciA8am9zdWFA
+c29saWQtcnVuLmNvbT4NCj4gU2VudDogMjAyNOW5tDEw5pyIMzDml6UgMjE6NDQNCj4gVG86IEFk
+cmlhbiBIdW50ZXIgPGFkcmlhbi5odW50ZXJAaW50ZWwuY29tPjsgQm91Z2ggQ2hlbg0KPiA8aGFp
+Ym8uY2hlbkBueHAuY29tPjsgVWxmIEhhbnNzb24gPHVsZi5oYW5zc29uQGxpbmFyby5vcmc+OyBT
+aGF3biBHdW8NCj4gPHNoYXduZ3VvQGtlcm5lbC5vcmc+OyBTYXNjaGEgSGF1ZXIgPHMuaGF1ZXJA
+cGVuZ3V0cm9uaXguZGU+Ow0KPiBQZW5ndXRyb25peCBLZXJuZWwgVGVhbSA8a2VybmVsQHBlbmd1
+dHJvbml4LmRlPjsgRmFiaW8gRXN0ZXZhbQ0KPiA8ZmVzdGV2YW1AZ21haWwuY29tPg0KPiBDYzog
+TWlraGFpbCBBbmlraW4gPG1pa2hhaWwuYW5pa2luQHNvbGlkLXJ1bi5jb20+OyBKb24gTmV0dGxl
+dG9uDQo+IDxqb25Ac29saWQtcnVuLmNvbT47IHlhemFuLnNoaGFkeSA8eWF6YW4uc2hoYWR5QHNv
+bGlkLXJ1bi5jb20+OyBSYWJlZWgNCj4gS2hvdXJ5IDxyYWJlZWhAc29saWQtcnVuLmNvbT47IGlt
+eEBsaXN0cy5saW51eC5kZXY7DQo+IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IGRsLVMzMiA8
+UzMyQG54cC5jb20+Ow0KPiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAyLzJd
+IG1tYzogaG9zdDogc2RoY2ktZXNkaGMtaW14OiB1cGRhdGUgZXNkaGMgc3lzY3RsDQo+IGR0b2N2
+IGJpdG1hc2sNCj4gDQo+IEFtIDMwLjEwLjI0IHVtIDE0OjM3IHNjaHJpZWIgSm9zdWEgTWF5ZXI6
+DQo+ID4gTlhQIEVTREhDIHN1cHBvcnRzIHNldHRpbmcgZGF0YSB0aW1lb3V0IHVzaW5nIHVTREhD
+eF9TWVNfQ1RSTCByZWdpc3Rlcg0KPiA+IERUT0NWIGJpdHMgKGJpdHMgMTYtMTkpLg0KPiA+IEN1
+cnJlbnRseSB0aGUgZHJpdmVyIGFjY2Vzc2VzIHRob3NlIGJpdHMgYnkgMzItYml0IHdyaXRlIHVz
+aW5nDQo+ID4gU0RIQ0lfVElNRU9VVF9DT05UUk9MICgweDJFKSBkZWZpbmVkIGluIGRyaXZlcnMv
+bW1jL2hvc3Qvc2RoY2kuaC4NCj4gPiBUaGlzIGlzIG9mZnNldCBieSB0d28gYnl0ZXMgcmVsYXRp
+dmUgdG8gdVNESEN4X1NZU19DVFJMICgweDJDKS4NCj4gPiBUaGUgZHJpdmVyIGFsc28gZGVmaW5l
+cyBFU0RIQ19TWVNfQ1RSTF9EVE9DVl9NQVNLIGFzIGZpcnN0IDQgYml0cywNCj4gPiB3aGljaCBp
+cyBjb3JyZWN0IHJlbGF0aXZlIHRvIFNESENJX1RJTUVPVVRfQ09OVFJPTCBidXQgbm90IHJlbGF0
+aXZlIHRvDQo+ID4gdVNESEN4X1NZU19DVFJMLiBUaGUgZGVmaW5pdGlvbiBjYXJyeWluZyBjb250
+cm9sIHJlZ2lzdGVyIGluIGl0cyBuYW1lDQo+ID4gaXMgdGhlcmVmb3JlIGluY29uc2lzdGVudC4N
+Cj4gPg0KPiA+IFVwZGF0ZSB0aGUgYml0bWFzayBkZWZpbml0aW9uIGZvciBiaXRzIDE2LTE5IHRv
+IGJlIGNvcnJlY3QgcmVsYXRpdmUgdG8NCj4gPiBjb250cm9sIHJlZ2lzdGVyIGJhc2UuDQo+ID4g
+VXBkYXRlIHRoZSBlc2RoY19zZXRfdGltZW91dCBmdW5jdGlvbiB0byBzZXQgdGltZW91dCB2YWx1
+ZSBhdCBjb250cm9sDQo+ID4gcmVnaXN0ZXIgYmFzZSwgbm90IHRpbWVvdXQgb2Zmc2V0Lg0KPiA+
+DQo+ID4gVGhpcyBzb2x2ZXMgYSBwdXJlbHkgY29zbWV0aWMgcHJvYmxlbS4NCj4gPg0KPiA+IFNp
+Z25lZC1vZmYtYnk6IEpvc3VhIE1heWVyIDxqb3N1YUBzb2xpZC1ydW4uY29tPg0KPiA+IC0tLQ0K
+PiA+ICBkcml2ZXJzL21tYy9ob3N0L3NkaGNpLWVzZGhjLWlteC5jIHwgNCArKy0tDQo+ID4gIDEg
+ZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1lc2RoYy1pbXguYw0KPiA+IGIvZHJp
+dmVycy9tbWMvaG9zdC9zZGhjaS1lc2RoYy1pbXguYw0KPiA+IGluZGV4DQo+ID4NCj4gYTgzMGQ5
+YTk0OTA0MDhkMzE0OGI5MjdiZjFhY2M3MTlhMTNlODk3NS4uMTAxZmVhYmIyNGZiNDFiZDEwYTJl
+Nzk2Zg0KPiA0ZjMNCj4gPiBmOGQ0MzU3ZGMyNDUgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9t
+bWMvaG9zdC9zZGhjaS1lc2RoYy1pbXguYw0KPiA+ICsrKyBiL2RyaXZlcnMvbW1jL2hvc3Qvc2Ro
+Y2ktZXNkaGMtaW14LmMNCj4gPiBAQCAtMzAsMTAgKzMwLDEwIEBADQo+ID4gICNpbmNsdWRlICJz
+ZGhjaS1lc2RoYy5oIg0KPiA+ICAjaW5jbHVkZSAiY3FoY2kuaCINCj4gPg0KPiA+IC0jZGVmaW5l
+IEVTREhDX1NZU19DVFJMX0RUT0NWX01BU0sJMHgwZg0KPiA+ICAjZGVmaW5lCUVTREhDX0NUUkxf
+RDNDRAkJCTB4MDgNCj4gPiAgI2RlZmluZSBFU0RIQ19CVVJTVF9MRU5fRU5fSU5DUgkJKDEgPDwg
+MjcpDQo+ID4gICNkZWZpbmUgRVNESENfU1lTX0NUUkwJCQkweDJjDQo+ID4gKyNkZWZpbmUgRVNE
+SENfU1lTX0NUUkxfRFRPQ1ZfTUFTSwlHRU5NQVNLKDE5LCAxNikNCj4gPiAgI2RlZmluZSBFU0RI
+Q19TWVNfQ1RSTF9JUFBfUlNUX04JQklUKDIzKQ0KPiA+ICAvKiBWRU5ET1IgU1BFQyByZWdpc3Rl
+ciAqLw0KPiA+ICAjZGVmaW5lIEVTREhDX1ZFTkRPUl9TUEVDCQkweGMwDQo+ID4gQEAgLTEzODcs
+NyArMTM4Nyw3IEBAIHN0YXRpYyB2b2lkIGVzZGhjX3NldF90aW1lb3V0KHN0cnVjdCBzZGhjaV9o
+b3N0DQo+ID4gKmhvc3QsIHN0cnVjdCBtbWNfY29tbWFuZCAqY21kKQ0KPiA+DQo+ID4gIAkvKiB1
+c2UgbWF4aW11bSB0aW1lb3V0IGNvdW50ZXIgKi8NCj4gPiAgCWVzZGhjX2NscnNldF9sZShob3N0
+LCBFU0RIQ19TWVNfQ1RSTF9EVE9DVl9NQVNLLA0KPiA+IC0JCQllc2RoY19pc191c2RoYyhpbXhf
+ZGF0YSkgPyAweEYgOiAweEUsDQo+ID4gKwkJCWVzZGhjX2lzX3VzZGhjKGlteF9kYXRhKSA/IDB4
+MEYwMDAwIDogMHgwRTAwMDAsDQo+ID4gIAkJCVNESENJX1RJTUVPVVRfQ09OVFJPTCk7DQo+IF5e
+IFRoZXJlIGlzIGEgbWlzdGFrZSBoZXJlLCBpbnRlbmRlZDogRVNESENfU1lTX0NUUkwgKEkgY2hh
+bmdlZCB0aGF0IGxhc3QNCj4gc2Vjb25kIHdoaWxlIHdyaXRpbmcgY29tbWl0IGRlc2NyaXB0aW9u
+IDooICkNCg0KWWVzLCBwbGVhc2UgZml4IHRoaXMuDQoNClJlZ2FyZHMNCkhhaWJvIENoZW4NCj4g
+PiAgfQ0KPiA+DQo+ID4NCg==
 
