@@ -1,237 +1,268 @@
-Return-Path: <linux-kernel+bounces-391089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9959B828A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7B79B8293
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71DE91F224A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD841F22979
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC031C9DC9;
-	Thu, 31 Oct 2024 18:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55781C9DF7;
+	Thu, 31 Oct 2024 18:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hHn6OlSe"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZNFKPfy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CB41C8FD7
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730399019; cv=none; b=fXh4UykPaGrU0QRQ39YEy9tXgx91kRcfmbxa+GiT6N6BpWS2nW+2Xr5Ln4YEf70z1qrTve9Cjp2b6+y3UbGEhEE9wE7JFBV939dVq5g3FGzPH6xM3M8PUR6xw+/ERCPsl/aFq/3Q9PjZNOqMoQdRXj6RZJP3pYorUnvdEss/5pI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730399019; c=relaxed/simple;
-	bh=VoxdWZfmcdWJRPW/HaB7XAAfa3I/K4iIPdRUGHgWLJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OIrY4LQr4bFXIfQ+qrEhd5tbW5UhHITn5PqOdaeGL4ee5+twemB0MlYcrhqN3SoSf+zZC9YU7+dWn/vci5YXKZtqICW2nprid47iSOiHTCb5ALz8D2KlPfeIgoHiDgKra+YWCFv0iESuF1VIcX5vqaVn5aTdmfwJh7lisKqK+w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hHn6OlSe; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e4e481692so1045274b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730399017; x=1731003817; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7NK89StELe6wDblT1ZyaO2kIyMs8gywtAduCxYOkkg4=;
-        b=hHn6OlSeN0IjQbYnAcZfFncePtklenElESeQyaWA9XvwmtQFjT1q4SOWcj8J16c5Jx
-         Ji6pyxiR3lm3H6tEp8PiiYnfuU6Tp9AbiI5ftq7kuZct4IiR4VAlJwoODVrs5k57rdfO
-         gsVcGTjSrKL+UwS2lcPxr8Bn/VMzwEd1+J7spdpTEGFZ1jMTD4D34JLdrutRJl6RO6q+
-         2Hh6Kr5Jd/PKwdegxfmlAZAK6Kh/UmDptyLsSv0MzVEKoSsMBsXLbmIpVXS/lZLNllnU
-         3o7L5dMj3p4TmIPT0Lhr8j3VjHzkwxRlqjZJBOype2uVQWt2LLwAwufcPsYlXBS3MSY8
-         NlCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730399017; x=1731003817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7NK89StELe6wDblT1ZyaO2kIyMs8gywtAduCxYOkkg4=;
-        b=hEIK5Zy4WeR4gm42FTdac6EjdnWfhfJwSogtbioVBw2o8topsEY3g4Mw3wjGmCuAze
-         f8lOPynkS+u0SHUNkXAyd+w2NA5H7fcc3dWAoN717LGIwbxDuZy7406mdAAn7oXUapNG
-         aFm0QUib9TQ7tBdKegY8MBNGET2IG0ZdA3J940e6wD8LdyoPi69+mREZkluiJfcYBduF
-         yOJtZ8o5i0uPJOhRi6c8JzdJKEnN68Qc2kx6wT8P7JPgsnXGGPyKjINQhQ7O6Qb9ryiy
-         KW/rtpTZ/RlYgJAwRjWfNjFMTLi1pUmfjKOqjGcUVKi9fqTOT+cykC1Xj1iW9s/Dzmtx
-         78rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvmx3l0V09YNjnJpjFX4/4mLOcDkaWdbc0kvZ0PQb6xGUycI7DVJdVl2e7ax5eYoH8QoQ/hA4+ex7MaoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnylsOc6yBGMFFIjqsMhnsXO/uifRQ7IznagRjgMSesR/xvcae
-	NJGDEzxGm3bKwY1NLse38U9p42EGFOPKXzzf+mdpUal2CJ0CzirvLJHthJ/tnLNnwR7OTmmJIRl
-	sJjyafph0C5xtAllbPoD7RdMYsZIbwprTl6/B8Q==
-X-Google-Smtp-Source: AGHT+IGHdF1FDbKzl7xn2p86hGefifqg+94+EcOjf8eJcethgiXYB5ygNrIb37oNGBM4vNGhYMgBUUFkMZmjtCgKq/Q=
-X-Received: by 2002:a05:6a20:d74d:b0:1d9:2894:a6bb with SMTP id
- adf61e73a8af0-1dba556fb98mr582112637.46.1730399017106; Thu, 31 Oct 2024
- 11:23:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47413ECF;
+	Thu, 31 Oct 2024 18:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730399199; cv=fail; b=KtPgFjeyusvcU+c8c6jzGIeEPZmFfOiAoJJhH8TbdElm/7SLk2lbx5Pn479rN9UbBxdY1TIce3j2SMDa7iSiTyCjrXWwaz4VVNcfKJk9IjTUqFNQoOsP/9LB5Xd95113kohqMUAJj1dF3MCpItYPzXQZQHKudGT/9wBuBMktfeg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730399199; c=relaxed/simple;
+	bh=mys+eoi9JQIMvn8WccsCnOCOrz6RYEWnAaiiHYnA2i0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sdUAnDiXXADvLaQde0xaw24nkk6sIeUp7AoV/5ymBGwzb6LCSRDeMCy1dKMCKvtmV8aHefx+dd+4mZA11KfSZSidjOcrc4hBCY6DKvJYAvOu5LiMvbg4hqRK75dv8C43Sq4Uxrx/3iCVTFSG9n6f+mec3FzUdRneqH7fYokdFPk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZNFKPfy; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730399197; x=1761935197;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=mys+eoi9JQIMvn8WccsCnOCOrz6RYEWnAaiiHYnA2i0=;
+  b=kZNFKPfyG4k6xrXOBlgXOUGr8g9GxXyf0+7/yEsb1A0EkfhCmkkuVq8m
+   mcWrBuZMy9hovOAT1VYpv/CUDew8t5zAqjHUPX+olXU0DIucQtjH8B+pk
+   yuy03zCQKmd31c3bFWL0ZV2pXJs5GA6ja369MaWIqK0zB8+4HRYMhGrgo
+   7OIiFA7wd8FsX/dMJj7CzurSv7X1XGGafutRdFrkGgPxeofb79ul8WuSq
+   HlH8Q3Fw++5PDO7WRgH7TFHK5hH+zgNsnpRi1mBi+6ne+iakRN4vh3ZG5
+   Nq0XoXNHHdEQPsUVQEW5vZqYjmrEoKRE9SnoUc5TS5VtBK0Xp2cfvROn7
+   A==;
+X-CSE-ConnectionGUID: mUcYPWxrSruWzXYJInCjFg==
+X-CSE-MsgGUID: f3YdtgL+SpyTmjuYpRGXzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="47634601"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="47634601"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 11:26:36 -0700
+X-CSE-ConnectionGUID: xjGM6+FZSX20NN2ylklAbA==
+X-CSE-MsgGUID: OMWqjyQWSFCkXuNc6w+5Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="106037445"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 31 Oct 2024 11:26:36 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 31 Oct 2024 11:26:35 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 31 Oct 2024 11:26:35 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.42) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 31 Oct 2024 11:26:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jCbhKhEtctZHbViikEW/UHppJxzDFgtQIsPU/pfxlOIaIbOGQt0/DwQ8yS4W+SD4GLvpUTdWY9oY+Z4yGXx7vI0poQ724LWL83gYVjl7Qcm0hUPq+qNPzjioIh2j2dw3OlmcgEixQfuqRxqK5SebemFv6eJZKz//WCNJegbewO53MsEF96aQCDIkw4nNOm6s4fKl+L0ZD/9aSMyID9yz/0y09ZOR+8K2ctSM3SAyZjof4bTuQVshnr/y8Gx+Y9zU1Q4qkH3SqJr4IgHYK8WcASFvXiCu/x8YhX9I7A84qp+pg5umbvWPS+Tl0KWR7iRP2zIm6Lk6kaL/ZlxA5Q1Tew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O+5J473wM4OqTsKZbTRYqEAXjr10nSn3I1VlWG+aE1s=;
+ b=bcyAL69BHLF/3Sf4xr2AICY+9cFDCzuTdX2Ei95yIK1WUDXkbtHk6momghbS0rERYdn2ffN3E3bf20zyj7/YW9/S0OKnpAiMQgU8B050AnM3nyIbG3i0kSIexOZGKrgaq2A+VazjoWWWZ2NDK/YrHM9VRdvQwcLp0peS7GRonbRV9cJV2eqFczEgI0454+czM/3uTlgLfBbycCOxdW+lpMn4zfWMZ6hY0/xRxI8ztML0wAZiS9o0zNFNxm5fzXQmK1RvWblot8EiexTuGjgYMQDmG1NfxiBGALklbQ6Gigv9OKEpcRR7mWveYRGdwU+pEF9tOjPRcGtYM0I2H3VvpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
+ by IA1PR11MB7175.namprd11.prod.outlook.com (2603:10b6:208:419::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Thu, 31 Oct
+ 2024 18:26:30 +0000
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b%5]) with mapi id 15.20.8114.023; Thu, 31 Oct 2024
+ 18:26:28 +0000
+Message-ID: <f9cd603d-8a3f-43fc-a670-75b4d9a6c729@intel.com>
+Date: Thu, 31 Oct 2024 11:26:27 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpufeature: Document cpu_feature_enabled() as the
+ default to use
+To: Borislav Petkov <bp@alien8.de>
+CC: Yazen Ghannam <yazen.ghannam@amd.com>, "Luck, Tony" <tony.luck@intel.com>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "avadhut.naik@amd.com"
+	<avadhut.naik@amd.com>, "john.allen@amd.com" <john.allen@amd.com>,
+	"mario.limonciello@amd.com" <mario.limonciello@amd.com>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "Shyam-sundar.S-k@amd.com"
+	<Shyam-sundar.S-k@amd.com>, "richard.gong@amd.com" <richard.gong@amd.com>,
+	"jdelvare@suse.com" <jdelvare@suse.com>, "linux@roeck-us.net"
+	<linux@roeck-us.net>, "clemens@ladisch.de" <clemens@ladisch.de>,
+	"hdegoede@redhat.com" <hdegoede@redhat.com>, "ilpo.jarvinen@linux.intel.com"
+	<ilpo.jarvinen@linux.intel.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-hwmon@vger.kernel.org"
+	<linux-hwmon@vger.kernel.org>, "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "naveenkrishna.chatradhi@amd.com"
+	<naveenkrishna.chatradhi@amd.com>, "carlos.bilbao.osdev@gmail.com"
+	<carlos.bilbao.osdev@gmail.com>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-4-yazen.ghannam@amd.com>
+ <20241025155830.GQZxvAJkJnfLfNpSRx@fat_crate.local>
+ <20241029143928.GA1011322@yaz-khff2.amd.com>
+ <20241029150847.GLZyD6f-Hk6pRTEt2c@fat_crate.local>
+ <SJ1PR11MB6083AA7B2E28F2DA24E4B456FC4B2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20241030142138.GA1304646@yaz-khff2.amd.com>
+ <c2894e47-f902-4603-84e7-a9aca545b18c@intel.com>
+ <20241031103401.GBZyNdGQ-ZyXKyzC_z@fat_crate.local>
+Content-Language: en-US
+From: Sohil Mehta <sohil.mehta@intel.com>
+In-Reply-To: <20241031103401.GBZyNdGQ-ZyXKyzC_z@fat_crate.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0177.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c7::32) To BYAPR11MB3320.namprd11.prod.outlook.com
+ (2603:10b6:a03:18::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028134454.1156852-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=Mc_PW32jNO+C5AEQK6ej_CsCSV-HY76aJoQ6bjZ=JPOtg@mail.gmail.com> <ZyNKpC_3E3GFsyXL@smile.fi.intel.com>
-In-Reply-To: <ZyNKpC_3E3GFsyXL@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 31 Oct 2024 19:23:23 +0100
-Message-ID: <CAMRc=MfJqqBvSj_RmRMfMRwkfz80iF1fA2Rvu+vBm4wSineufQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpio: Use traditional pattern when checking error codes
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|IA1PR11MB7175:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2820b261-ae68-40e9-d286-08dcf9d98930
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?d0xTclBXbUIyVkRpQWhmbVdpL2hVTTA1Z01nQmsvNG1ldnRIYmxzTXBKZW9U?=
+ =?utf-8?B?QXVESGd2RnBOQ2dOZ3BFcnoySmVsR21iQll0YnU1aDhhMFV6RzgraHVjNnZP?=
+ =?utf-8?B?aXYzUXpVaTZBZUtBOHNhRjhWa1RDRXVGZjVXSlJyZlFFT0lHa29FR3drLzR1?=
+ =?utf-8?B?UVZja0FMN1lNVXBYQzlUMFBkTk5KbTY0L1d2Znh4eEIzbzlLbk5sQVNXbml1?=
+ =?utf-8?B?TmplTmgySnJmRkxqL3pYaDBWYm1CdkwranU1YUYzaG1VbFZ1QlB5ajNNcFVV?=
+ =?utf-8?B?czlrU1hxQ1gza3hXYWVGZVliMFFOMEJuYWNvUlNvR2NReGtLcTgyT0JXaHdR?=
+ =?utf-8?B?NWNxcm1kYmJtZTFDZENDbUxnRkJXWlkwZXVRY3RZVmNSN3BoblJFbVhzdWlu?=
+ =?utf-8?B?SkJ5VlpJUjVvTzV2Y1hOR0NNSkJCOWVrSy8rMUdLZG1RUU9meEN4bmhtTVpj?=
+ =?utf-8?B?Y0FWVStjVnNKaUpkemtzby8zZUJrQmJnNmIyVFpYS2JrTDRIVHZ4ZTBBTFl4?=
+ =?utf-8?B?eHJjemYwRlM5dnQxeno5aVZSMmNOeEtPM1lIbkd2VEJESndwbkdVKzBqNGg1?=
+ =?utf-8?B?VkV2MmdSK1Y3QjlsVitLd1N0WUx6MTVlbnFyVkprMkVnYUZzR3ZzejdqOC9I?=
+ =?utf-8?B?NCtHZHhKVC9hcEN1SHROU0hMeS93eEhQQk9HTDJuR1o3cCtHU3EzU21DV3l2?=
+ =?utf-8?B?ODFnbnIvMEo3dXh1RG5ndUZZeWZUcGx3bDcyTU43NHh5ajE4Z2hWRkljYVhh?=
+ =?utf-8?B?V2VKSlRoeHltS0ZxYnl1UGtTMEdzazBlNmFISlZJQ1hVTVFHQzFSUVhUcTND?=
+ =?utf-8?B?TmpaUnRWS3huelh4WW1JOS9yclB6S2N6WWZ2eTgwQXFncnFxUFVZZU5SdWVx?=
+ =?utf-8?B?NzFLcm1jOTFxV0NDTWxRMkU3UUVNWFl5ZjZIQXV4OHR5TjBpbXZMenBYY1hl?=
+ =?utf-8?B?SU1GeW1kV25vRzBGMUVWRCtyVTNuUGk3S3JpeUYrTjJRdjBHK2kwNWV0Sklr?=
+ =?utf-8?B?b3MrVmduMHFuNEdXdURJZjNaS3FVdGJuZVgxU3lQc0Z3RFJqZnJuUU1FcnZi?=
+ =?utf-8?B?TDRkVUxaeDVlL1VVRzBaNnVPa2NaaUVSSWtFUjBZVURXMUl3aDZSdUtjUnMr?=
+ =?utf-8?B?Q3NOQU1UNTZieDU5R3FSM0NVMitVNzRycHpQMFl6T1c1STBRbm83TisrQlEz?=
+ =?utf-8?B?dkxvd2tGeWl5ZE5lK3VXY09xMDBBUWtlWnVNYmZQdXhRMHI0ellEMmM4UGVq?=
+ =?utf-8?B?N1RVam53QWEwQ091dnNRY0FZK0FQL2VkRUlkcTJXS09xUXdmZVNRSlhDUkNO?=
+ =?utf-8?B?cDlPN0JjcHRXUFBnRVhGSHVZQUlZL3E5YzlYMEhrNGQyYnlaTEFMRGpKVmMz?=
+ =?utf-8?B?eWhWamRSL1lQYjBXWTlub2tLVG9odUh6ajFoOW5Zd1BrMEE5aW40R1UyS3d6?=
+ =?utf-8?B?N1k2ZDFPZ1pxSkdMVklIcGQySGowa2JNTzVYNXVDRllGdzFmU0o3ZlhIckRt?=
+ =?utf-8?B?SGVWWEQwTHpXYTdPeDFnaWFpeHhhcXBZalRVSk9ObWhqMy9EeWUvM04yN2RT?=
+ =?utf-8?B?M1g0cFBTdFdVa2pVV1NmdTh6MTZBSW5RVFUyY1JHOTNIWEpmMi9SMHNsN0Nm?=
+ =?utf-8?B?Q3ZOanJrTU5lSU13Z1EvSkgvMnFjZThQcjhHNlVkcUJZWjE3V09SaDhOZWJO?=
+ =?utf-8?B?NWxEWlEvQzBxOHRyRi9xNjZpREl2aGEvUENWUVNPNnVrcHhJNG4zUGFtV2Q1?=
+ =?utf-8?Q?AJ2aF2l/onOliCqtCSGvRayUvsFLPtVyPpGBziW?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MFpIU3NBUEl4djltQVUzbWF1VktPRWJCNFpYbSs1cjFWeGpiREVGdG5FWC9B?=
+ =?utf-8?B?WWJUMGVRakhlRWM3RzZ2cEZMU0JITWRZL3pYV2JuRTNvWkNZdHJjY2JHNUNq?=
+ =?utf-8?B?bU1FWXFEUlJCamVNOWpFdUwxWk1FZ1BldmRDNnB6eHhTOWNRNUN0YTBTNGlB?=
+ =?utf-8?B?S0xQazcwYnpMM3UvUlBkTmdKNWRaSklxbGFiUnduT3pmNy9pZGRCR29GNHJ3?=
+ =?utf-8?B?UitNM2Vla0RwSUdSSnowaTZUc3BOeVhnYmh0djloZmUrdHNqZndsQklzZlcz?=
+ =?utf-8?B?YzlOcitFSEltOVRUWExqTDdidDUrMW5jUW1Semw2UVlmNUE3UDZKUmZQUWpl?=
+ =?utf-8?B?ZnRQMnJyZ0hDcU85OFZmL2JoZG5tRnhCaUNlbU5QS0syS2tiaDBPVlhVUnF3?=
+ =?utf-8?B?N2g2WldyNThveStubnY2Z2VoRWdOOHNhTEVWaUFSelVZbWswZmhpSXBURC91?=
+ =?utf-8?B?UE8xM0hJMWhJZnd5SUdwRzBYVkFUQzV6OFU4dll6NXFvdTAwczlWSUdtNlRU?=
+ =?utf-8?B?MmJGY1ZZUU1PejZFOWJVYUFEdUNxc2lXT2I1MUEwWEppTkdjcllxdFdtY3ky?=
+ =?utf-8?B?dUpySVJmaThMc05wQWQ4QzVjbjRiRWNaVVM5TlI5MS9xbDk2WnhmZC9rc20r?=
+ =?utf-8?B?RGhPbTZEb25MYjA2SFJSSmE3V2xuWXBOYUhrTFg5SXJzanhuSkhGQ2NjNlRy?=
+ =?utf-8?B?WXk3QXVHVUtRMjlDOStYTzR5QjYvaWdEL08ybVJsdGRZaExjZlZFdG9pN1Uw?=
+ =?utf-8?B?UVg2eitidnk4Q0ZjRnkvK08xY3NEN05TdGlaQXBwVFZKU3lOOWhzSndScU5o?=
+ =?utf-8?B?RmhNcWNsOGdnaG9MaHlhYnZ4bHMwcnNMcExLOHFzVkVHNG5QK0VUdW50NmVz?=
+ =?utf-8?B?VElhYWVBdjNkallabVVCTGFUSVpsdGNYS0dYN2lNdVZ5bHFpTFd3RGdKczhO?=
+ =?utf-8?B?STZ4TEI1QUx5UHliUG1NQ2cwRGlLTnMvZkxJNWl2d2hidjZYeU15RFJjUm5l?=
+ =?utf-8?B?RDBXSnloSExNSW40Nlh2RW1MTysxMG9kTUxKbUlXd3lzU0JFaVJxN3B5cy9x?=
+ =?utf-8?B?Tnp0elVJTWRWTllOY1NCWFo1bXlPS1RJdFRYNmcvTExwOXFQVytpVHAwaE12?=
+ =?utf-8?B?YUZuVFdkU2xLQTRoSWJRV0d2TlZrbk5RdVY3WFNybFc1dDhvOUFkSVpRWjdG?=
+ =?utf-8?B?UDVaRUNkQm1mTGhuVTlVL3ZidDJLdUgzc09LVXVlV3ZYREhTZlY0cXliTlhV?=
+ =?utf-8?B?d1lrb3JsNVNJSGZaRWxkUTBKOHcvQ2txSThyTTlNU1NDUWd0aGFGRU9lOTVs?=
+ =?utf-8?B?cXVFNkRLcTk1MWRoZmJmdlpOeDEyaDhaSmIycUpDc1BJMm44UERHTjlnbktI?=
+ =?utf-8?B?ekVkb3BSS1hVVlhHeXVleUxlTkszRWpqL25OOVc0QmliTmJYVjBnWW5LWCtI?=
+ =?utf-8?B?L3p4c3VWM0Y3VUpWYUxVM29velJnZUxpclRMdW8rcGRzcDNyNFpEMkp0Qzdu?=
+ =?utf-8?B?cjlxTXlGbXN2QldYaGxkaGNpdXFwajAyTWk1S2h4SElONXpCcnJtaXlkelN3?=
+ =?utf-8?B?T0pLbUd2TjJDb0RKd05pTDFUbFlwemJkUFRTandBV2Q4cU9BYVpISUdvSnJp?=
+ =?utf-8?B?REpFaTJYSm1uZS9XQTJrNytlUEdOS2taU0lKczdZV0Z6MVorcE1DcUFOa1lM?=
+ =?utf-8?B?dWMvbVBWMTJjMDFnbjE4UGtWREwvUXVDVzgrcVdnTi9ycTVNNHFMRWlIRyt3?=
+ =?utf-8?B?VjNhZVh4QisyOU5WUU15L2JFNmE0Rk80NW1IN0g4ekFZekd4eDVyUW9ZT2VJ?=
+ =?utf-8?B?UnRxZjdUZUgvVkRFaTgySDhYNUdTaWdLL0cyczEydzUxYVNTNFZEVE9JMGds?=
+ =?utf-8?B?NVZCbTE4Z2s3ZHNUUWlFdXFvUGtLR3FNMjhkSEt1YkVaZG1HdWxTVmFsaFZE?=
+ =?utf-8?B?c2V3NmJpUE5qdmhVRHc5enZWVlk0MktVU29ISjJoZjllV0NuYzhLK29YZUR3?=
+ =?utf-8?B?YlNuZmpZM0dBZmpUcW9kdUFEOVU3cXBjV1V3TmxLbTNISENJUE1CWXhsOHk2?=
+ =?utf-8?B?Z2V5cVI3cWVoTWtXS0VMekhvVDlTY3BpeElGNkxYUE9hVlNUL0xTTnZVU2Vv?=
+ =?utf-8?Q?rcTeKWbI7XvrtrFf4KEbn3GS3?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2820b261-ae68-40e9-d286-08dcf9d98930
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 18:26:28.5911
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e95YfhwGdqZcv/Kqe2XmCnnRpf8kO6HdGm4TleUjMOhdKHcbRyKDlC0+ujt8QGoVw2VYBfbxSsyyYgHEZ6bbAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7175
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 31, 2024 at 10:15=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Wed, Oct 30, 2024 at 09:20:45PM +0100, Bartosz Golaszewski wrote:
-> > On Mon, Oct 28, 2024 at 2:44=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > Instead of 'if (ret =3D=3D 0)' switch to "check for the error first" =
-rule.
-> >
-> > Well there's much more to this patch than that and I have some issues w=
-ith it.
-> >
-> > > While it gives a "+" (plus) statistics it makes the code easier to re=
-ad
-> >
-> > Not only does it increase the footprint but it also adds completely
-> > unnecessary goto labels.
->
-> These pieces can be dropped.
->
-> ...
->
-> > > and maintain (when, e.g., want to add somethning in between touched l=
-ines).
-> >
-> > The single line calls to the notifier chain are unlikely to be
-> > extended anytime soon but even then I think we should cross that
-> > bridge when we get there.
->
-> Okay.
->
-> ...
->
-> > > -       if (!ret)
-> > > -               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CO=
-NFIG);
-> > > +       if (ret)
-> > > +               return ret;
-> > >
-> > > -       return ret;
-> > > +       gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-> > > +       return 0;
-> > >  }
-> >
-> > I really don't see how this makes it better. The logic here is: if the
-> > underlying set config worked fine - emit the event. Otherwise continue
-> > with the function (even if there's nothing there now). If anything
-> > you're making it more difficult to modify later because logically the
-> > notification is just an optional step on the way to returning from the
-> > function.
->
-> Optional steps are covered by flags, and not by checking the previous cal=
-l for
-> failure. So, I barely see the "optionality" of the notifications in these=
- calls.
->
-> ...
->
-> > >         ret =3D gpiod_direction_input_nonotify(desc);
-> > > -       if (ret =3D=3D 0)
-> > > -               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CO=
-NFIG);
-> > > +       if (ret)
-> > > +               return ret;
-> >
-> > Ok, for consistency I could take it but please put this into a
-> > separate commit doing just that (here and elsewhere).
->
-> Based on the other comments from you in this email I'm not sure I underst=
-ood
-> this correctly. Do you want to reject the complete patch, or do you agree=
- on
-> some pieces out of it.
->
+On 10/31/2024 3:34 AM, Borislav Petkov wrote:
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+> 
+> cpu_feature_enabled() should be used in most cases when CPU feature
+> support needs to be tested in code. Document that.
+> 
+> Reported-by: Sohil Mehta <sohil.mehta@intel.com>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> ---
+>  arch/x86/include/asm/cpufeature.h | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+> 
 
-I want to reject most of the patch in this form. s/(ret =3D=3D 0)/(!ret)/
-is fine as a standalone change.
+Looks good (a minor nit below),
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
 
-> > > -       return ret;
-> > > +       gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-> > > +       return 0;
->
-> ...
->
-> > >         ret =3D gpio_do_set_config(desc, config);
-> > > -       if (!ret) {
-> > > -               /* These are the only options we notify the userspace=
- about. */
-> > > -               switch (pinconf_to_config_param(config)) {
-> > > -               case PIN_CONFIG_BIAS_DISABLE:
-> > > -               case PIN_CONFIG_BIAS_PULL_DOWN:
-> > > -               case PIN_CONFIG_BIAS_PULL_UP:
-> > > -               case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-> > > -               case PIN_CONFIG_DRIVE_OPEN_SOURCE:
-> > > -               case PIN_CONFIG_DRIVE_PUSH_PULL:
-> > > -               case PIN_CONFIG_INPUT_DEBOUNCE:
-> > > -                       gpiod_line_state_notify(desc,
-> > > -                                               GPIO_V2_LINE_CHANGED_=
-CONFIG);
-> > > -                       break;
-> > > -               default:
-> > > -                       break;
-> > > -               }
-> >
-> > If you really want to get rid of one level of indentation here,
-> > I suggest moving it into a separate function.
->
-> Perhaps you suggested a separate change for that?
->
 
-This doesn't really bother me but if it triggers you then feel free to
-change it like:
+> diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+> index 0b9611da6c53..de1ad09fe8d7 100644
+> --- a/arch/x86/include/asm/cpufeature.h
+> +++ b/arch/x86/include/asm/cpufeature.h
+> @@ -132,11 +132,12 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+>  	 x86_this_cpu_test_bit(bit, cpu_info.x86_capability))
+>  
+>  /*
+> - * This macro is for detection of features which need kernel
+> - * infrastructure to be used.  It may *not* directly test the CPU
+> - * itself.  Use the cpu_has() family if you want true runtime
+> - * testing of CPU features, like in hypervisor code where you are
+> - * supporting a possible guest feature where host support for it
+> + * This is the default CPU features testing macro to use in code.
+> + *
 
-if (!ret)
-    gpio_set_config_line_state_notify(desc);
+Does "default CPU feature testing macro" roll better than "default CPU
+features testing macro"?
 
-Bart
-
-> > > +       if (ret)
-> > > +               return ret;
-> > > +
-> > > +       /* These are the only options we notify the userspace about *=
-/
-> > > +       switch (pinconf_to_config_param(config)) {
-> > > +       case PIN_CONFIG_BIAS_DISABLE:
-> > > +       case PIN_CONFIG_BIAS_PULL_DOWN:
-> > > +       case PIN_CONFIG_BIAS_PULL_UP:
-> > > +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-> > > +       case PIN_CONFIG_DRIVE_OPEN_SOURCE:
-> > > +       case PIN_CONFIG_DRIVE_PUSH_PULL:
-> > > +       case PIN_CONFIG_INPUT_DEBOUNCE:
-> > > +               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CO=
-NFIG);
-> > > +               break;
-> > > +       default:
-> > > +               break;
-> > >         }
-> > >
-> > > -       return ret;
-> > > +       return 0;
->
-> ...
->
-> > Most of this is IMO pointless churn. You typically do a lot of great
-> > cleanups but this just doesn't make sense. Sorry but NAK.
->
-> OK, I do one change out of that with deduplication of the direction input=
- call,
-> the rest is up to you, let's it be less readable.
->
+> + * It is for detection of features which need kernel infrastructure to be
+> + * used.  It may *not* directly test the CPU itself.  Use the cpu_has() family
+> + * if you want true runtime testing of CPU features, like in hypervisor code
+> + * where you are supporting a possible guest feature where host support for it
+>   * is not relevant.
+>   */
 
