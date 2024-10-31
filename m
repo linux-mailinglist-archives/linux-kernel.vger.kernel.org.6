@@ -1,174 +1,217 @@
-Return-Path: <linux-kernel+bounces-391172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C389B8377
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:30:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182149B8379
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96AF1C24A38
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:30:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF46284218
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605BC1CB33D;
-	Thu, 31 Oct 2024 19:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6LmsYRQ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F161119FA8D;
+	Thu, 31 Oct 2024 19:32:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB01BBBF8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBC04C80
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730403014; cv=none; b=kfkUpOHq9uv9KlCR/SP428knyA13CKsqTiCiQ7KTK3pIGc9xs1PT+qcI9dkOmu8O9Q8YgIgzad3V7E7df0LvR/odSoBJxtZ/rAKtoo8ekT8EHt6XkdFsNYIYGYJeqcIrdvNPKUQIHBrPSnMU5dfkNuaAF9QAGzxG4U695D4uzSM=
+	t=1730403150; cv=none; b=cegjNhami47nVNQtEo7ETw8CysXJJlk54iuU5HVJ2FjkKHNM/IbtifjNc6aUbl9jJTMMEyjWAVkD7lgL+eQrl7Ulew4MytfuSwYdWe3J8U513VvbyKnlGdapm8hX/H4f1j7McEeCUTD9PrCiNddvTJ9/FZCHPljMLp1e6m/o6f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730403014; c=relaxed/simple;
-	bh=JEt1Up+INIfm+iJKDjNzXaZiC7OBpJytxAHxjP01YCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BmYLshT2ooZmyf79pstjddA+Apni4mvJ16pH3xNoL/NR6tbPRP2Rv9Ln6SQGe7LZ1XGYyhRs2UYbzC79sbZiKACGaiTA8RFP3I9tQgEig8f88hYwK32RI9f9RYYRGRWnXFHMsATs9YI1tb3MQZjJGB6Y0VqyaArQmi14packqiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6LmsYRQ; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e3f35268so1689371e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730403010; x=1731007810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=31snwxEgII8Vk6u+4+11z3gM5zDzJPBD0BIeCBrJcCw=;
-        b=N6LmsYRQPsbxTlgQ4Jd8czMlAOWqdy7WA6XC9tRN+pCFUm6oe8wP4kcOjn4fMuAAFv
-         Y+YoIpBZ/lY8z6BqJ+v4hlYioO9ekP1jwt5H/gLr2lt+ggRpDEbly7lG2T8eUFdBtnv7
-         RR9TzTant81/WB9j/F7YYiXHHNEULksAQB3rDb4y3ydH9PNBsXESUTWmm+po+IxpAgw5
-         BDV+mxmtW/EqK6hneHEFqFH+W7gPpTiK4cJTc18niGnqnpSFC3HGhQbU16941Q4Yd4Ba
-         SPVkaGNBVu7eSzV7eAsigJeLlWmY2LhucAMNXuG82MbVfEgDw01ORdIvMSBD9SYoRoQV
-         V4yg==
+	s=arc-20240116; t=1730403150; c=relaxed/simple;
+	bh=r1tLnTJ3PkKxqfQ8VQZhwgRSFZ2oHY+mhBKDujdy0pU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FVNhLOV5WW+OCozNv5xenJm5Upv3DfZDA3mZVPOwoHB70yOfBS1ZlKkQBdNtwND9lxGATPDjZlPFQp55i2Qc06dkz+196XTv0qVY2IDAEO9f6TE48HDpPD8O5u/uvwm6xfhAs2/RQS5HgjYAbJaqLpxuoQ7OeGVgjl7/p32EbAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6add3a52eso4237945ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:32:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730403010; x=1731007810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=31snwxEgII8Vk6u+4+11z3gM5zDzJPBD0BIeCBrJcCw=;
-        b=G6YZMBPkROE6X/+H5fnWaOkT8wFSAl+/8vmssHJ+KCWJgtf3oHEr9b/fjohsnRbwlx
-         fw63au3Iy7K+s87Hkbru9hIuX++k12r0QKN2EFSgI3ih2kAfsYqCO4gH0sIXEaK0EBhf
-         gJhMvCsdIPJGB/EPVDEWsx44TJK58GZnlKrFSYpNLwqKpnaXc3KAyTbm3gZ9eAHiFdZM
-         BYXLpGmNmcc59dF+FHph26Mh3HhQ3QDqdCm6HeiLcVqhLyIzoLPZ4BhCR73rCHUACoVx
-         Hix4pQmX+a4zWT6LxaWBJNEOr/6ZnVXL0AIKZzG6fd+G1FyguANPHqPaVS5mTpNexFE9
-         aDCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOI5QmUQNxRpWgFwMadk5NbfUzwktJXReS/jI5r760S/og2/LlsK+hxvW8V6hAwsJApSQf0cbOfpL6cRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymHWQ4+ARY7a4OTF/2Fw5MQJhmJ1OJbdfIkWBM2lkEU3Qgcqa7
-	P769mrsPrkOSAMIB5K9zCDydsa9jjcS3XwWkxDokoTmH1nfaLlFIgBFVvWtyYDw=
-X-Google-Smtp-Source: AGHT+IEXOiLypbvMGxd2hyzMiKYXFJFT2FTyEhMspQ58nB+nmG3OjYg+hM8a0VciWysPPE0vTAJ4cA==
-X-Received: by 2002:a05:6512:2315:b0:536:a6c6:33f with SMTP id 2adb3069b0e04-53d65df22e7mr753424e87.13.1730403010310;
-        Thu, 31 Oct 2024 12:30:10 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9bed5sm307283e87.74.2024.10.31.12.30.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 12:30:08 -0700 (PDT)
-Date: Thu, 31 Oct 2024 21:30:07 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org, robdclark@gmail.com, 
-	swboyd@chromium.org, airlied@gmail.com, quic_jesszhan@quicinc.com, lyude@redhat.com, 
-	simona@ffwll.ch, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child
- nodes
-Message-ID: <mlpiuko7n6rp3x55z4qterdns2wzqnfwgjxikbshrvakrscsak@antl2vzla5bd>
-References: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
- <CAA8EJppKou84MZm0JS_4bPveMO2UxpMs5ejCoL7OMWd-umtDmQ@mail.gmail.com>
- <92217ec6-c21c-462a-a934-9e93183c1230@quicinc.com>
+        d=1e100.net; s=20230601; t=1730403147; x=1731007947;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mWBfLUqmRVzaB5gmoSMl/IKqtWBVlT8PhQ9WpCfa1H8=;
+        b=WiS20rJJCpWmV+RlH8E485Bve8XGv7fpfoS1/F1SkBaTVTMqQ/FQkaSWc0b37Q9qpt
+         4iediAXyD5hvWuLazCqyjm96K7LLkJLtAvGJ41snXDnXe519EPq1bI8PN/2nY4+L+iQe
+         vlb0wGHMzBBQ34uijZMN6fB/sW2z1D3yzKMwwbce73EZb2OzN151fkoXqJDgrm7R/qcJ
+         cevzkEX9SBr8OKMNfc/8LNR4fLDSKWHoGzf6i7ylm8WaWYJx4anX9q5yllA/0l2lEcOU
+         8zOFo4gLMR0D9y4Q6YAVvFDk2Q6uK2u0ZWpYAew1vrAeEoFBA5szT/lX0v1/rEIBr6eP
+         b0aA==
+X-Forwarded-Encrypted: i=1; AJvYcCUREeCUs4V6x6KJEJNsOTMCiltre3vvYSsBXq1MTSi3n66cvkLYFZtzuxjyquUbwd8SzsOZCHizOFr27HE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCfdpq2woYJTGdj+zsruRwHs4VpIiNqcipmcpVDe4TlAhJ/iee
+	WxAJ6AFHoNT0IAgrhdyfsDK5RFVSHuoPrRDSClUC12B4cGd/b3l7ziM/dxZdsRNxKbOlXKcC64B
+	18PRiRe7Rln/R8QeOxxRJvgjHYPBsFHWLnfYy9RYvusHn6ZSHLM8smew=
+X-Google-Smtp-Source: AGHT+IG0aM2/1nEWp1URkw+xnzdmXk6hXnW/ExoUJu6dyH9Jj3laNX9lAwtjgqEi67byXpa8C6pTZAcktsHJSLk6yqspX4hpUHaI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92217ec6-c21c-462a-a934-9e93183c1230@quicinc.com>
+X-Received: by 2002:a05:6e02:13a3:b0:3a5:e0df:57ba with SMTP id
+ e9e14a558f8ab-3a6a947d5bemr24758385ab.1.1730403146834; Thu, 31 Oct 2024
+ 12:32:26 -0700 (PDT)
+Date: Thu, 31 Oct 2024 12:32:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6723db4a.050a0220.35b515.0168.GAE@google.com>
+Subject: [syzbot] [bpf?] WARNING: locking bug in trie_delete_elem
+From: syzbot <syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 31, 2024 at 11:45:53AM -0700, Abhinav Kumar wrote:
-> 
-> 
-> On 10/31/2024 11:23 AM, Dmitry Baryshkov wrote:
-> > On Wed, 30 Oct 2024 at 03:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
-> > > 
-> > > of_i2c_register_devices() adds all child nodes of a given i2c bus
-> > > however in certain device trees of_alias_from_compatible() and
-> > > of_property_read_u32() can fail as the child nodes of the device
-> > > might not be valid i2c client devices. One such example is the
-> > > i2c aux device for the DRM MST toplogy manager which uses the
-> > > display controller device node to add the i2c adaptor [1] leading
-> > > to an error spam like below
-> > > 
-> > > i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
-> > > i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
-> > > i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
-> > > i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
-> > > i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
-> > > i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
-> > > 
-> > > Add protection against invalid child nodes before trying to register
-> > > i2c devices for all child nodes.
-> > > 
-> > > [1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
-> > > 
-> > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > > ---
-> > >   drivers/i2c/i2c-core-of.c | 6 ++++++
-> > >   1 file changed, 6 insertions(+)
-> > > 
-> > > diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
-> > > index a6c407d36800..62a2603c3092 100644
-> > > --- a/drivers/i2c/i2c-core-of.c
-> > > +++ b/drivers/i2c/i2c-core-of.c
-> > > @@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
-> > >   {
-> > >          struct device_node *bus, *node;
-> > >          struct i2c_client *client;
-> > > +       u32 addr;
-> > > +       char temp[16];
-> > > 
-> > >          /* Only register child devices if the adapter has a node pointer set */
-> > >          if (!adap->dev.of_node)
-> > > @@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
-> > >                  if (of_node_test_and_set_flag(node, OF_POPULATED))
-> > >                          continue;
-> > > 
-> > > +               if (of_property_read_u32(node, "reg", &addr) ||
-> > > +                   of_alias_from_compatible(node, temp, sizeof(temp)))
-> > > +                       continue;
-> > 
-> > I think just of_property_read_u32() should be enough to skip
-> > non-I2C-device children. If of_alias_from_compatible() fails, it is a
-> > legit error.
-> > 
-> 
-> Thanks for the review.
-> 
-> of_alias_from_compatible() looks for a compatible string but all child nodes
-> such as ports will not have the compatible. Hence below error will still be
-> seen:
-> 
-> i2c i2c-20: of_i2c: modalias failure on
-> /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+Hello,
 
-But ports node don't have a reg property too, so it should be skipped
-based on that.
+syzbot found the following issue on:
 
-> 
-> > > +
-> > >                  client = of_i2c_register_device(adap, node);
-> > >                  if (IS_ERR(client)) {
-> > >                          dev_err(&adap->dev,
-> > > --
-> > > 2.34.1
-> > > 
-> > 
-> > 
+HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1387c6f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+dashboard link: https://syzkaller.appspot.com/bug?extid=b506de56cbbb63148c33
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1387655f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ac5540580000
 
--- 
-With best wishes
-Dmitry
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+
+=============================
+[ BUG: Invalid wait context ]
+6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
+-----------------------------
+swapper/0/0 is trying to lock:
+ffff8880261e7a00 (&trie->lock){....}-{3:3}, at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+other info that might help us debug this:
+context-{3:3}
+5 locks held by swapper/0/0:
+ #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3}, at: vp_vring_interrupt drivers/virtio/virtio_pci_common.c:80 [inline]
+ #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3}, at: vp_interrupt+0x142/0x200 drivers/virtio/virtio_pci_common.c:113
+ #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3}, at: stats_request+0x6f/0x230 drivers/virtio/virtio_balloon.c:438
+ #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: __queue_work+0x199/0xf50 kernel/workqueue.c:2259
+ #3: ffff8880b863dd18 (&pool->lock){-.-.}-{2:2}, at: __queue_work+0x759/0xf50
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2339 [inline]
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run1+0x1d6/0x520 kernel/trace/bpf_trace.c:2380
+stack backtrace:
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
+ check_wait_context kernel/locking/lockdep.c:4898 [inline]
+ __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+ trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+ bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+ bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
+ bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
+ trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue.h:59
+ __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
+ queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
+ queue_work include/linux/workqueue.h:662 [inline]
+ stats_request+0x1a3/0x230 drivers/virtio/virtio_balloon.c:441
+ vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
+ vp_vring_interrupt drivers/virtio/virtio_pci_common.c:82 [inline]
+ vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:113
+ __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
+ handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:247 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+ __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
+ common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
+ </IRQ>
+ <TASK>
+ asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+RIP: 0010:finish_task_switch+0x1ea/0x870 kernel/sched/core.c:5201
+Code: c9 50 e8 29 05 0c 00 48 83 c4 08 4c 89 f7 e8 4d 39 00 00 0f 1f 44 00 00 4c 89 f7 e8 a0 45 69 0a e8 4b 9e 38 00 fb 48 8b 5d c0 <48> 8d bb f8 15 00 00 48 89 f8 48 c1 e8 03 49 be 00 00 00 00 00 fc
+RSP: 0018:ffffffff8e607ae8 EFLAGS: 00000282
+RAX: 467bb178e56b5700 RBX: ffffffff8e6945c0 RCX: ffffffff9a3d4903
+RDX: dffffc0000000000 RSI: ffffffff8c0ad3a0 RDI: ffffffff8c604dc0
+RBP: ffffffff8e607b30 R08: ffffffff901d03b7 R09: 1ffffffff203a076
+R10: dffffc0000000000 R11: fffffbfff203a077 R12: 1ffff110170c7e74
+R13: dffffc0000000000 R14: ffff8880b863e580 R15: ffff8880b863f3a0
+ context_switch kernel/sched/core.c:5330 [inline]
+ __schedule+0x1857/0x4c30 kernel/sched/core.c:6707
+ schedule_idle+0x56/0x90 kernel/sched/core.c:6825
+ do_idle+0x567/0x5c0 kernel/sched/idle.c:353
+ cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:423
+ rest_init+0x2dc/0x300 init/main.c:747
+ start_kernel+0x47f/0x500 init/main.c:1102
+ x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
+ x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
+ common_startup_64+0x13e/0x147
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	c9                   	leave
+   1:	50                   	push   %rax
+   2:	e8 29 05 0c 00       	call   0xc0530
+   7:	48 83 c4 08          	add    $0x8,%rsp
+   b:	4c 89 f7             	mov    %r14,%rdi
+   e:	e8 4d 39 00 00       	call   0x3960
+  13:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+  18:	4c 89 f7             	mov    %r14,%rdi
+  1b:	e8 a0 45 69 0a       	call   0xa6945c0
+  20:	e8 4b 9e 38 00       	call   0x389e70
+  25:	fb                   	sti
+  26:	48 8b 5d c0          	mov    -0x40(%rbp),%rbx
+* 2a:	48 8d bb f8 15 00 00 	lea    0x15f8(%rbx),%rdi <-- trapping instruction
+  31:	48 89 f8             	mov    %rdi,%rax
+  34:	48 c1 e8 03          	shr    $0x3,%rax
+  38:	49                   	rex.WB
+  39:	be 00 00 00 00       	mov    $0x0,%esi
+  3e:	00 fc                	add    %bh,%ah
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
