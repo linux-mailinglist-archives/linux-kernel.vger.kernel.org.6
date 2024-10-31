@@ -1,172 +1,131 @@
-Return-Path: <linux-kernel+bounces-390809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656CA9B7EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:44:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056E99B7EDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E37E1C2161D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE912281391
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DAC1B5337;
-	Thu, 31 Oct 2024 15:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AFC1AC456;
+	Thu, 31 Oct 2024 15:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pYQcSpdB"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8c8Y6EK"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B5319DF4C
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF2B1A4F01;
+	Thu, 31 Oct 2024 15:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389417; cv=none; b=FRJDRpyv4u7wS5AK4dj+FTumWjf4+Tm2aiKIXUpPt25fHUvPISaWEjsIeBX7obdP3oJQc6U7EYCCu1WOXhk7STdlFAh/TPAESEN4TzRyMCT4SxNj4T6p3O+9wfp6MsrAK8Vvk8FKvsEfdWga4u+4g5MRVIuJaWnfJ37DEEzOvys=
+	t=1730389523; cv=none; b=PhcVF8iGPwcRi/JJW/7HSgjPOXnQYDUKeugOKck++n+mO3VkqikMnh5bw+oXVGmWVsxHhMYdtZ8ipmDABH0F3mWCzhTYc8R6uScdWmqJeSkO2g3NFuD8ldtYpl1UeC8VGawXH80RuLVep5IIiLfwNUn24UO4BpTo32l0vlhEg/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389417; c=relaxed/simple;
-	bh=vfsB3Thfd6DUJWh0LyamNbEnTDENOiTplgjgv49TJj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=skO+pa9tMbqraLykQvzwGUdGw2xNBLMwS3LKEkIvVfZNqcchWvoRwnYknEuceLmkj1TY0gBn9Th/brwA/aAZpUSdAltMKOuhFtoRHB+ZnUEsmy+oRr/6i6TWet+hY2IRpPu6ejN5BQof6ato1EPJRf6y8y1Ul50q48CZvTDoY0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pYQcSpdB; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso235325ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:43:35 -0700 (PDT)
+	s=arc-20240116; t=1730389523; c=relaxed/simple;
+	bh=4asKQz8BlpJNUrdZhQ29gzgZCv2VO5bREGlNaueBoVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oAJrB5gVpMCHipqBZCIRFPVfbMQdmcLzUW5krUskJ/Xwfwt8bMvZ6gDJCTrrswlAQecgirwDj433Sz4k6CORJOR1pld+5853EunmB6z/o/T8Dg2Q5SWIxBbPjqHy+8d8ut6/WOnZUFYke32s+6dJ3lf8+VWu0WmUmBMdHPESPDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8c8Y6EK; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7edb6879196so803941a12.3;
+        Thu, 31 Oct 2024 08:45:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730389415; x=1730994215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730389521; x=1730994321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Gak7b2hQidOQibyX7hkapEVVPckTY1xPlBaffa3Vjaw=;
-        b=pYQcSpdBOzo9l7fELgiR3gmQiAZNk0irHfm7MRiIfVBb9oYa+ca64vrNP8crsLtm+f
-         vpQaTBwf/qH/GODGdUH1oJcYEYXPr9B7J5JwHRqP5ZY8VxOKrlKw1wcm0KKtBJzvFSxx
-         wZy8nZjQmriJ3kdJGv3pOVRIVWwknNAjmZtcKYZ3bXyC+PAmYiDk25poet6B2agcw6aD
-         Trd3i2PqwCt3CUbzwefRD6r6uKCSx3W958CEYZu6aP6ETh3SsR1Z1jSdhlL0F4JKp8Qw
-         TKzSeUUoiNp4swVd5qChYspRHF/FFwELYLJLozV1zP1vy/7Lo/kb3lZJ7s+KM/c1tLpk
-         Sk1w==
+        bh=NcdrQiXH1Ai25k8tG5sWlTGqXb3UpGbFG/HnKOgIkSs=;
+        b=c8c8Y6EK+FjT4d0VvtZIfbthom8iQAWUtgj4GXKegGOnQOcsD4/fMnRJxnEAhwSkzR
+         Ks5fSh7ZOrFIy/hBQ30+thW03tx/xRjH29E5ITWEKNsrOQ2kV7fTrLuWIwdN9EYwjqbV
+         Jy/424HAGnA1ROnQOZE46yHbeTOUpC2+9elE78BV1Nx3azKDlTco3CoAKKA4Fw232dO6
+         70IwVu/eKGOzjcXHfwI7p5tyJLHOdg/TfwQHylPXLSANyF2fapjx8ykbWhSAEFJB9tuF
+         COk+Hr45tMQruH92QABJHtESPJaJM4z4YpdwNFnShBZE4TrgDAztOCmXmIJurWUvsdrJ
+         sH9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730389415; x=1730994215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730389521; x=1730994321;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Gak7b2hQidOQibyX7hkapEVVPckTY1xPlBaffa3Vjaw=;
-        b=LOCWvJl4G3J/IR3JGZP99YoXtkosVRd1gV+zjUQOCGB/8rnQBUCdTDtEGHPvD31ez7
-         Tsxk3kjZhDPmOzNkOMwqxiihC9hqqM9dccYta5vk7cKtVUEUAUjeiXcHPHF3m4hwBkhr
-         aVlSsbwmcVWoJVQaXM+60nIbVn4Mqa3RUhvFwYwByyZU8wSIQD0PThWjpdb6nqTDOhVN
-         Tc+Rfn1xd9o3tBIKKUIGG+LoX3mVjpI89mxTAn+a5UfiQmfPMzir9uQ+5tGg25jQJ4lI
-         C0IVO9eC1TLtvZZb3FEK0c3li0PkaiP8cIx4GqxshRNMWAUsM04/S3I7EOxzr+MQgBTO
-         FSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWv/ALS73fsdrfts8+2CBEkMe/RvFhnF72YaK0IpGO0B+qpllRTVdZ3PEVzf7/0bBMdUWqZC5CWSoC/C2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5IfgNIma7grClUPbezRcaH5JAA//DtdVnwHk3Sny3N8Cg41RO
-	iUB9lsMy+3nKL3aUHJ4PVSfz4xROqZB6qYBoc2/0Ayj1vQLqERPGckrJna/AlzGjmKwik0csiDv
-	bLKtkLcR6J46vShY5JqBsBGwPmV8ZKhaaVQE5
-X-Gm-Gg: ASbGnctJJNsU+4NRU5OSZWKXNFDyGt4CnHQEuoHlG4vau/VFoJZxKPKzssaMbNiJLHl
-	eEwPPLxmuWRti5C6Vu0sdkLYTOFII3o8=
-X-Google-Smtp-Source: AGHT+IFGBxBwu0pfOalxBOWa30kiZgTlDKwbfWjgsTYFAPFbqK7EZY7RwXMvypzXV/9plNHmg5dzWx3tW+rk7khqIv4=
-X-Received: by 2002:a05:6e02:1a08:b0:3a3:dab0:2399 with SMTP id
- e9e14a558f8ab-3a6a9414a07mr3022335ab.27.1730389414309; Thu, 31 Oct 2024
- 08:43:34 -0700 (PDT)
+        bh=NcdrQiXH1Ai25k8tG5sWlTGqXb3UpGbFG/HnKOgIkSs=;
+        b=ZkzZ3uqNqdhFiYqlOsctQAS6M5pDtZ68DmICz/ElOecpFHxgMMYQHxGIvQhGmOsMKQ
+         jnMt3TR3SqsfjYauN7X6FuOTrg4ZH+SrPu2gjvhkzgoZv/WETz2KfT+Q4t686g6l6gL5
+         FoZxfMOVkef4rA4m8WeAVUS1NkpvxovdCwuAmTRWZwfEVc5tAjocWRb0kHCTChNmTfbk
+         t0gSnegXNSjFUUkhQmsCBMzWSNurQsGm18c4OB+KyKx71BxgF3zFQqWXVx9xqQ9HBFT0
+         zwqdzFJGqz8FcESpniy39TWjaVYQT7gsnrdNP8G5I72RNGtVVHL0VoN1t+QV4MrFRCRd
+         cC4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeWthcQAaaw7KCgkRfoKLUDWg0fCDc7Y1fYHmFVtE94F1Dc/3RcIGRS0sfNkB1TE+7RKEZYQuAaz6DJCat26XD3h6pPg==@vger.kernel.org, AJvYcCXyiHbd9JxfmtWTJ1AFpTPkGc7+wQBvvpNNNajPIhji9m3jBLp4tHLYoP9P+gGJWmbiY6OUwfw4T0dAxH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXCgbQpmeILoJfdKO38RKGX+GJ9x1vhZ3mRqSfhrPSCI0zdwPe
+	vwaa/EOeAL2oRuPh5Pq/2GzeBI3jlCaKZ+hQcVdpQ8t+nzy6IUkB
+X-Google-Smtp-Source: AGHT+IH4fCkgmP7iojZ/BQoHL465KrlePVvyrnC+kpcoX/EnkLheoMocGoZWzuvJN6fNg6yBkkQiIw==
+X-Received: by 2002:a17:902:ea0b:b0:20c:f39e:4c15 with SMTP id d9443c01a7336-210c68c6dadmr236555115ad.22.1730389520780;
+        Thu, 31 Oct 2024 08:45:20 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0a53sm10142465ad.192.2024.10.31.08.45.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 08:45:20 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	pali@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [PATCH v2 2/2] dell-wmi-base: Handle META key Lock/Unlock events
+Date: Thu, 31 Oct 2024 12:44:42 -0300
+Message-ID: <20241031154441.6663-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241031154023.6149-2-kuurtb@gmail.com>
+References: <20241031154023.6149-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031045602.309600-1-avagin@google.com> <ZyNS9J7TOQ84AkYz@example.org>
-In-Reply-To: <ZyNS9J7TOQ84AkYz@example.org>
-From: Andrei Vagin <avagin@google.com>
-Date: Thu, 31 Oct 2024 08:43:22 -0700
-Message-ID: <CAEWA0a7W4u189wViEk2P9ZBgUe7DFGmSA8UKW0gKvCC8_pRiHw@mail.gmail.com>
-Subject: Re: [PATCH] ucounts: fix counter leak in inc_rlimit_get_ucounts()
-To: Alexey Gladkov <legion@kernel.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 2:50=E2=80=AFAM Alexey Gladkov <legion@kernel.org> =
-wrote:
->
-> On Thu, Oct 31, 2024 at 04:56:01AM +0000, Andrei Vagin wrote:
-> > The inc_rlimit_get_ucounts() increments the specified rlimit counter an=
-d
-> > then checks its limit. If the value exceeds the limit, the function
-> > returns an error without decrementing the counter.
-> >
-> > Fixes: 15bc01effefe ("ucounts: Fix signal ucount refcounting")
-> > Tested-by: Roman Gushchin <roman.gushchin@linux.dev>
-> > Co-debugged-by: Roman Gushchin <roman.gushchin@linux.dev>
-> > Cc: Kees Cook <kees@kernel.org>
-> > Cc: Andrei Vagin <avagin@google.com>
-> > Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> > Cc: Alexey Gladkov <legion@kernel.org>
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Andrei Vagin <avagin@google.com>
-> > ---
-> >  kernel/ucount.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/ucount.c b/kernel/ucount.c
-> > index 8c07714ff27d..16c0ea1cb432 100644
-> > --- a/kernel/ucount.c
-> > +++ b/kernel/ucount.c
-> > @@ -328,13 +328,12 @@ long inc_rlimit_get_ucounts(struct ucounts *ucoun=
-ts, enum rlimit_type type)
-> >               if (new !=3D 1)
-> >                       continue;
-> >               if (!get_ucounts(iter))
-> > -                     goto dec_unwind;
-> > +                     goto unwind;
-> >       }
-> >       return ret;
-> > -dec_unwind:
-> > +unwind:
-> >       dec =3D atomic_long_sub_return(1, &iter->rlimit[type]);
-> >       WARN_ON_ONCE(dec < 0);
-> > -unwind:
-> >       do_dec_rlimit_put_ucounts(ucounts, iter, type);
-> >       return 0;
-> >  }
->
-> Agree. The do_dec_rlimit_put_ucounts() decreases rlimit up to iter but
-> does not include it.
->
-> Except for a small NAK because the patch changes goto for get_ucounts()
-> and not for rlimit overflow check.
+Some Alienware devices have a key that locks/unlocks the Meta key. This
+key triggers a WMI event that should be ignored by the kernel, as it's
+handled by internally the firmware.
 
-Do you think it is better to rename the label and use dec_unwind? I don't
-think it makes a big difference, but if you think it does, I can send
-this version.
+There is no known way of changing this default behavior. The firmware
+would lock/unlock the Meta key, regardless of how the event is handled.
 
-BTW, while investigating this, we found another one. Currently,
-sigqueue_alloc enforces a counter limit even when override_rlimit is set
-to true. This was introduced by commit f3791f4df569ea ("Fix
-UCOUNT_RLIMIT_SIGPENDING counter leak"). This change in behavior has
-introduced regressions, causing failures in applications that previously
-functioned correctly.
+Tested on an Alienware x15 R1.
 
-For example, if the limit is reached and a process receives a SIGSEGV
-signal, sigqueue_alloc fails to allocate the necessary resources for the
-signal delivery, preventing the signal from being delivered with
-siginfo. This prevents the process from correctly identifying the fault
-address and handling the error. From the user-space perspective,
-applications are unaware that the limit has been reached and that the
-siginfo is effectively 'corrupted'. This can lead to unpredictable
-behavior and crashes, as we observed with java applications.
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+v2:
+ - Fixed entry style
+ - Commit message clarifies firmware behavior
+ - Commit message now has "Tested on"
+---
+ drivers/platform/x86/dell/dell-wmi-base.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-To address this, we think to restore the original logic for
-override_rlimit. This will ensure that kernel signals are always
-delivered correctly, regardless of the counter limit.  Does this
-approach seem reasonable? Do you have any concerns?
+diff --git a/drivers/platform/x86/dell/dell-wmi-base.c b/drivers/platform/x86/dell/dell-wmi-base.c
+index 502783a7a..ce421e51b 100644
+--- a/drivers/platform/x86/dell/dell-wmi-base.c
++++ b/drivers/platform/x86/dell/dell-wmi-base.c
+@@ -80,6 +80,12 @@ static const struct dmi_system_id dell_wmi_smbios_list[] __initconst = {
+ static const struct key_entry dell_wmi_keymap_type_0000[] = {
+ 	{ KE_IGNORE, 0x003a, { KEY_CAPSLOCK } },
+ 
++	/* Meta key lock */
++	{ KE_IGNORE, 0xe000, { KEY_RIGHTMETA } },
++
++	/* Meta key unlock */
++	{ KE_IGNORE, 0xe001, { KEY_RIGHTMETA } },
++
+ 	/* Key code is followed by brightness level */
+ 	{ KE_KEY,    0xe005, { KEY_BRIGHTNESSDOWN } },
+ 	{ KE_KEY,    0xe006, { KEY_BRIGHTNESSUP } },
+-- 
+2.47.0
 
-Thanks,
-Andrei
-
->
-> Acked-by: Alexey Gladkov <legion@kernel.org>
->
-> --
-> Rgrds, legion
->
 
