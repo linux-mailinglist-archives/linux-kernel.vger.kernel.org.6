@@ -1,119 +1,157 @@
-Return-Path: <linux-kernel+bounces-389933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E6A9B732E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:55:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C1E9B733D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69EAFB2369D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F05B285EF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9FB13A884;
-	Thu, 31 Oct 2024 03:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpKDXv+P"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36C212C489;
+	Thu, 31 Oct 2024 03:56:36 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E571BD9DC;
-	Thu, 31 Oct 2024 03:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D101BD9DC
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730346897; cv=none; b=DSRJuibNEfYBWbnHPOVeVski1MnDUsrQEJsxrmfzeSgzVuSaqe5ZwQ5FQuWvQGM7yGGl4QWdWnMZBqqeeDd+zI4rorLiH15YA8e8EF55EUkVPgPbKjaGlycTbz6mUTw0paP93tdeSiy+08DAKsO71gQPrG3UUj3pE/nXyZeaNLQ=
+	t=1730346996; cv=none; b=tcxqWfdN4ltMZv/MolMbN3cFpdlhqTGuP40gnyay/Z/NbmUtMH32SfhEBXb4TYTCwJ7t7SAtA9HPPwgS1BWnX+GqrojkHEoiBS4R2q09IS/Clytw6cLhliFtxUtOTh+/VcgPlLlCGKK5IFwusQ8o4sjI1ftpQlBdatomVoqoRPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730346897; c=relaxed/simple;
-	bh=96Iv6THCGP0JrhryaiJYFkXsq35hdKyqbJhSHwJ51QE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z9P/t1BfM1jrBAgID188OXUqTs2LYUjmr1JU8uDO7XtpiwAn1wwDC8YxmbYh6x6eHdUGyKUhA+d1QILSPk8HmPQA2YlNe31Vhvavf0OjvHijpTzvwa1CEryGiUm7LlHrE6z3YkfzBgzUU28/l94d8AyEnZHSgSvuX25/2aghOv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpKDXv+P; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso6570701fa.2;
-        Wed, 30 Oct 2024 20:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730346894; x=1730951694; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KD+YSmHeMO76TRixPhraqIR6tq9sHj0TxN2haMlVSMA=;
-        b=CpKDXv+P/lbJgWcxRJboepVApdAmpsQWCg1lUnJdTwroX+IqothI27Vgq96Hv9QBGo
-         HS34YTTUYYoyehO+K/ao/bCNtDHELS2Q1a8qfK38S/IOLlJA9Plq5Cq7ExCxRmk5Qgex
-         T3fVU3WRXRVx1sci2q5i3jc+HotpUehP398VHqGbiK5mSLEGRC02SrSqtQbkIwQHVsbJ
-         ePXTOQZd+h+NBeOXWgRJ8A40HzLyIgAcH0TkC0JHV2A42Car6mhoPLFJU4GRmG/hSB0F
-         Mby0tBuaOXKh4JxXQ7S8u4D0r3+Q7NHmHOzXHTk+x6q3XK5xbDqkG1j8Ai3TyGO+Lg+b
-         J0oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730346894; x=1730951694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KD+YSmHeMO76TRixPhraqIR6tq9sHj0TxN2haMlVSMA=;
-        b=Z5puFzqtSpofjobvPz0F5k74gw5PTiCRNe6+F/pRDiTrJtUrQoi9Cwi7zj3AwNDPTc
-         D5HsyyYcZtP+yr4cwlUoWoUm9cWYGq6HLYbmguoPkQ+3WAEQbhU5aqNUvGr+JMwtxEtG
-         836efXkZeCdDyUp97UrBZGYCgzz1FAT2RPFFhD9+TcIm1D6bqc8Ofn7EQ8ryu04kIlxo
-         bykXfQNSDpknxKiAVaWcOKp46RNe9qsT84wxRlvrBs5b8IBqeSkDLAQaz6P+SlUoHdaO
-         3sKX2JeEolg8IeLoGu9r72QxTwDRxRUkkKcyNaCYjjOXz9HeSLzukbAOBOXPFpjrXv03
-         3wvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0/hIUVH5pUtbOhddQ7zE2hnC3I6EWYNi1jE39Sg4oR+IyhOlPjMNrLEqU4LvO0HRDumVe9XBYRQxI+FU=@vger.kernel.org, AJvYcCWo36Ev8BX4dVy4BKYshrxZ/YxR7gbkJ2hYX7hjgnXhfvfBvrobw8fIrDB6SB9bKXTAAuVuC/Y/b7g=@vger.kernel.org, AJvYcCXKMQOKGSl/BWH6Osl0mLmyXqqW20YTu7ZmAsCG80v5n9EVHCJbiOsD/ee9Sm36aHgq4ARijEcqzytBesa3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpGbYnFm/ANBYPz67AeRtWrMirCNe+LXN6yeFfNlpXKoS6616a
-	wMYzLg9LAw62KQ2tAMb10VXVfhFuBCG0OE0H7SBjuTIC6UsXYUkXZD/xaJ8T4hrwCaiDn375FlZ
-	XH1iaNyP1V1KKLeO5HfX+IqiGl4M=
-X-Google-Smtp-Source: AGHT+IH1Qml0b81A/MqCwi0uUiAO5U4CKapC3bT+sUH9kMTSDUXGnNB3R5Ad+0AKCWifyCOhlyVORYWD/Q9HSfiN3ps=
-X-Received: by 2002:a05:651c:1990:b0:2fb:8c9a:fe3f with SMTP id
- 38308e7fff4ca-2fcd08bc0ebmr119476751fa.22.1730346893276; Wed, 30 Oct 2024
- 20:54:53 -0700 (PDT)
+	s=arc-20240116; t=1730346996; c=relaxed/simple;
+	bh=Qv6tb5Jb1T6QgohqMKTjIJDVuCufHrVpT7UOQFkGMvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iiJn1K5sElcEwpFtXtDxj9MMZJopxNvs6MAbFnFSh4q4M4vxY3lnGhzROt4YEu3MHWwnTWmUmsc8PSVmeyF01x51dfSMKRIKu+7ciZdbRqgJ0kytnLM1JCOvPSInfh+veatrxn/aYxsWKvvem9KgQBuSAG+GbHi05xmDWJ0PKgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xf99P0nw3zpXgL;
+	Thu, 31 Oct 2024 11:54:33 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7F04D180103;
+	Thu, 31 Oct 2024 11:56:28 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 31 Oct 2024 11:56:26 +0800
+Message-ID: <49e78df6-91bf-7c63-b2d0-f36a301535da@huawei.com>
+Date: Thu, 31 Oct 2024 11:56:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029235623.46990-1-yesanishhere@gmail.com>
- <fceef9c9-f928-47fe-a6e7-cdb28af62f71@sirena.org.uk> <CABCoZhAgnkDReqdMTgEjKYX4b9y0XqocEheQR1DhsBCtp7zpHg@mail.gmail.com>
- <874j4ts08p.fsf@trenco.lwn.net>
-In-Reply-To: <874j4ts08p.fsf@trenco.lwn.net>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Wed, 30 Oct 2024 20:54:41 -0700
-Message-ID: <CABCoZhA4AwbKCse3S-hBgJgUQ08Dy2sTAFYmP=TiZxnwtkewHg@mail.gmail.com>
-Subject: Re: [PATCH V2] ASoC: doc: update clocking
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-doc@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next v4 04/19] arm64: entry: Remove
+ __enter_from_kernel_mode()
+Content-Language: en-US
+To: Mark Rutland <mark.rutland@arm.com>
+CC: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <sstabellini@kernel.org>, <maz@kernel.org>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
+	<kees@kernel.org>, <wad@chromium.org>, <akpm@linux-foundation.org>,
+	<samitolvanen@google.com>, <arnd@arndb.de>, <ojeda@kernel.org>,
+	<rppt@kernel.org>, <hca@linux.ibm.com>, <aliceryhl@google.com>,
+	<samuel.holland@sifive.com>, <paulmck@kernel.org>, <aquini@redhat.com>,
+	<petr.pavlu@suse.com>, <viro@zeniv.linux.org.uk>,
+	<rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
+	<wangkefeng.wang@huawei.com>, <surenb@google.com>,
+	<linus.walleij@linaro.org>, <yangyj.ee@gmail.com>, <broonie@kernel.org>,
+	<mbenes@suse.cz>, <puranjay@kernel.org>, <pcc@google.com>,
+	<guohanjun@huawei.com>, <sudeep.holla@arm.com>,
+	<Jonathan.Cameron@huawei.com>, <prarit@redhat.com>, <liuwei09@cestc.cn>,
+	<dwmw@amazon.co.uk>, <oliver.upton@linux.dev>, <kristina.martsenko@arm.com>,
+	<ptosi@google.com>, <frederic@kernel.org>, <vschneid@redhat.com>,
+	<thiago.bauermann@linaro.org>, <joey.gouly@arm.com>,
+	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<xen-devel@lists.xenproject.org>
+References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
+ <20241025100700.3714552-5-ruanjinjie@huawei.com>
+ <ZyDzNmSgmYkXWcdD@J2N7QTR9R3.cambridge.arm.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZyDzNmSgmYkXWcdD@J2N7QTR9R3.cambridge.arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Wed, Oct 30, 2024 at 3:18=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> wr=
-ote:
->
-> anish kumar <yesanishhere@gmail.com> writes:
->
-> >> This feels like it is (or should be) duplicating the kerneldoc generat=
-ed
-> >> documentation - I'm not sure that we can cross reference the two
-> >> sensibly through?
-> >
-> > Jonathan, wondering if you know a way to link the clock functions defin=
-ed
-> > in https://github.com/torvalds/linux/blob/master/sound/soc/soc-dai.c he=
-re?
->
-> I'm not quite sure what your question is.  Kerneldoc comments can be
-> brought into the documentation, of course - that's a big part of what
-> the build system does.  You can link to that documentation just by
-> saying function() - nothing more required.  What else are you looking
-> for?
 
-Was missing this, thanks Jonathan.
 
-.. kernel-doc:: sound/soc/soc-dai.c
-   :identifiers:
+On 2024/10/29 22:37, Mark Rutland wrote:
+> On Fri, Oct 25, 2024 at 06:06:45PM +0800, Jinjie Ruan wrote:
+>> The __enter_from_kernel_mode() is only called by enter_from_kernel_mode(),
+>> remove it.
+> 
+> The point of this split is to cleanly separate the raw entry logic (in
+> __enter_from_kernel_mode() from pieces that run later and can safely be
+> instrumented (later in enter_from_kernel_mode()).
 
-Will send V2.
->
-> Thanks,
->
-> jon
+Hi, Mark,
+
+I reviewed your commit bc29b71f53b1 ("arm64: entry: clarify entry/exit
+helpers"), and keep these functions is to make instrumentation
+boundaries more clear, and will not change them.
+
+> 
+> I had expected that a later patch would replace
+> __enter_from_kernel_mode() with the generic equivalent, leaving
+> enter_from_kernel_mode() unchanged. It looks like patch 16 could do that
+> without this patch being necessary -- am I missing something?
+
+Yes, you are right! these useless cleanup patches will be removed.
+
+And when switched to generic syscall, I found that proper refactoring
+would also facilitate clear code switching.
+
+Thank you.
+
+> 
+> Mark.
+> 
+>>
+>> No functional changes.
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  arch/arm64/kernel/entry-common.c | 9 +--------
+>>  1 file changed, 1 insertion(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
+>> index ccf59b44464d..a7fd4d6c7650 100644
+>> --- a/arch/arm64/kernel/entry-common.c
+>> +++ b/arch/arm64/kernel/entry-common.c
+>> @@ -36,7 +36,7 @@
+>>   * This is intended to match the logic in irqentry_enter(), handling the kernel
+>>   * mode transitions only.
+>>   */
+>> -static __always_inline irqentry_state_t __enter_from_kernel_mode(struct pt_regs *regs)
+>> +static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
+>>  {
+>>  	irqentry_state_t ret = {
+>>  		.exit_rcu = false,
+>> @@ -55,13 +55,6 @@ static __always_inline irqentry_state_t __enter_from_kernel_mode(struct pt_regs
+>>  	rcu_irq_enter_check_tick();
+>>  	trace_hardirqs_off_finish();
+>>  
+>> -	return ret;
+>> -}
+>> -
+>> -static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
+>> -{
+>> -	irqentry_state_t ret = __enter_from_kernel_mode(regs);
+>> -
+>>  	mte_check_tfsr_entry();
+>>  	mte_disable_tco_entry(current);
+>>  
+>> -- 
+>> 2.34.1
+>>
+> 
 
