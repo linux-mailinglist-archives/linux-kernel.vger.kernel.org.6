@@ -1,49 +1,91 @@
-Return-Path: <linux-kernel+bounces-390356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3379B78CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:40:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D7A9B78D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C20C1F22C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:40:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC75B24CAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819981993B0;
-	Thu, 31 Oct 2024 10:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7369199945;
+	Thu, 31 Oct 2024 10:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7kOt/u8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWDERBAv"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA689198E83;
-	Thu, 31 Oct 2024 10:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EB31953A2;
+	Thu, 31 Oct 2024 10:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730371226; cv=none; b=SLEjx8AYX0bt2IPpY3o7X48+sch9mfVItrbOpQqnp7vnivkzHrR8Hg3VZXDF6LccxAEgC/B9kWfSsb7mIVaLFbqhnBgz3wf6Thz5gRBd7cS0Vj7lCZr4AXHSmSwf4WHCCWQAeWpwKvcZP7zxGpQe7YNL50MVhQUFnfAKhjZbbFU=
+	t=1730371316; cv=none; b=INgEIhL8w0DWcZIKF3OzpSFGgM0T/9httRsCARgOboN2q6hTVSu5PmNZPem/5fmQVIXVMrZ29tXIdEq/o1PIncdoaKIWIFIqarc542vE0bdr9d8xOf41/HP9/4A6avt2lKwNqtWlu/2jcV7y0J5iamnFpCAX98JD8g0diA6v8bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730371226; c=relaxed/simple;
-	bh=YLQ4UN5KY9nH6YRowLB7t4pE4jbaZEG6sqtB2Cq7H5U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=G821E6mUNdPy2LmMCSSXb2q+nWgUnOCVvjipcr83RmX5auObWRcRGgcvvpkdZPDmhyqIWKYDa2g3IhTsDKpNrwokgtGzfjiK9T21C6AZxjMZZEdeSmtjCpTMIOwiqLx0uFSAhvVE1dGHQm4hB4qtOapdLF5G/Zska6FinAG589Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7kOt/u8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF58C4CEC3;
-	Thu, 31 Oct 2024 10:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730371225;
-	bh=YLQ4UN5KY9nH6YRowLB7t4pE4jbaZEG6sqtB2Cq7H5U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=N7kOt/u8hT13Bd5zghXZUh/ki7NeFEcEy0oMr8L3Ph6b56YOS053MIP0o///G/sqo
-	 GX6879JFtHKHEeH2wTDW6aoiTpg3rS1dBgmDy6sXT4wFCn5aJ4vWnEZTzPmnbWyd/Z
-	 Ujj8swLYRLEhGOQYvy8ySGPRHCPn2J5OZqwZz1PXDVU3jZx4oQDSZf73qyRJ1AXBt8
-	 yGZRlxX+C+kKldGvhrGn/4/55E0+X3aeMxhsmw8T3myfmtZUY1hN4HvdqJclVw2UKw
-	 /O9bCvKr1r9xvcPIwlhgQ9TnAiwXGURVheIw//vL5l6rLe+CtWU8e9uOeMvWH1EIKg
-	 nrbEE74UnnqfA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7105E380AC02;
-	Thu, 31 Oct 2024 10:40:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730371316; c=relaxed/simple;
+	bh=q2m+OHJQe9VEbpZccvcxyWYrsG45lMP+Rd3vJL1KHms=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QkEhXis1RbKvlXm/XVt+4DGczv21uDuSo/7j/UT8ARTcqaU4tlYwJ0oaeA2KUnggkCyJYJMgWn2653NJlUDybVp2JKHGst9ApXVQA+EeCjKvlfPYZr6s/VSl9flP7f2sJ/dJN2l2/IPMq2/9zci+8wgQBhp/ZXIhxZcrNR2HiJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWDERBAv; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20e6981ca77so8681045ad.2;
+        Thu, 31 Oct 2024 03:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730371314; x=1730976114; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r5GNro7YWC/FjezeaKCH9xRHgSznLSEnftFlQE0TrdM=;
+        b=lWDERBAvcs16YHCtTdnWtu75E+sGf/YxzaJRFbEpZ5rma/jsYxaKsNHEIhNtXzbPFL
+         YgtvorLaxziu6Gx4YyFq3pm3TFLURiVzhnWVZFL68Pa35PNdrWujaIJg5rvFYsOy4Gje
+         08T1k9yh6B3NtY8mL3XMMf95wKPbctd5+kKfN6BR9IKs1ytmCjZ0itvnYlJh9MXC6Nfv
+         G3/lziIP75xqBQ/bnWPfkVh9RqzA+Zq3kF+8yjB12pNOd/vyKY+HhOHHg/87HC+ISwWQ
+         2dvPabZayxQ4AN7BNDVUMXglFzsJWZQgf72FAssCxV9xGv7c2kO1yBuI78xbPy0Yfvyc
+         yMcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730371314; x=1730976114;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r5GNro7YWC/FjezeaKCH9xRHgSznLSEnftFlQE0TrdM=;
+        b=GiwA6xs21Sh8MdUYRFCXizuGwGBGvinC8QjTRMbmMpJsNewMgRDHC5sjNz//JELR/D
+         KpiZujG5QXq9Yin6MRYoa8D/kCOhHgQ6afpjpgvjFDhPHFNj1/b+Nhr47c+R3iaDqq5g
+         pw63SnMH66mECIIH9dKNIn3XOTUQTYAOx2Ot/s1N0RnSnV24qv2ikgT1/OQ2PVu+kDFD
+         QoYZANtCwJHRtuuvBgVgiENKx545vqPnyCMKqSxMBmxpID5RgKx9GggRXKjdd+QBtbZi
+         Hb2LU58q7WzlSr4YFj6qtmunDwHqAL/clRC31zxZeWYvhUEV7cKNjoiSjdLPPU4BnYSp
+         yeUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKVn6v4bbThuXYQPc/dpzXPKZFbqWY2++X1FfbHvGqFRucND+aqSFY9WL/18MBc3LphYpEy0UlZkSRjw==@vger.kernel.org, AJvYcCVQHJ9Z3hhhT9hY0lywcWSsiLLaE131Aa3nMscodGyCstDgAJ41dLs6N6EfsieQTpPOaGGCGMedVC9qZnTN@vger.kernel.org, AJvYcCVqOSlJgyo3gRVLyhtMO1tlHSpuf4yyb2DPq8+NWnnUxTxXdkqsLwC+T9zAnq1qXS59R6KEPstNvB8Q@vger.kernel.org, AJvYcCXTfzmcbnD9aEJnDUkmT4Qmw+Ehf9qBQijvbVRQ8Ulk62kQGmONR02TIXRkdDSzDyAb6gOCdEKozsV40NmMs4le@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF4y+78KoqAFz4PLj8ckOCgwToecB6oOxauGDQI7HOcDylmnVG
+	6hTGIjj342bOIFlZiBouGnKdbqbR2yi67wNB32fsNmgl5QPxXc5Z
+X-Google-Smtp-Source: AGHT+IFxKgky6EqyTOIn7AIkk0TZ6xVCr1/Y3di4h7lNHH2Vcs437U3ctPeYZl6ScCv0XhCeKnA8vA==
+X-Received: by 2002:a17:902:ea04:b0:20c:f9ec:cd9e with SMTP id d9443c01a7336-21103c59c36mr32515255ad.41.1730371313557;
+        Thu, 31 Oct 2024 03:41:53 -0700 (PDT)
+Received: from mighty.kangaroo-insen.ts.net ([120.88.183.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ed995sm7067045ad.39.2024.10.31.03.41.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 03:41:52 -0700 (PDT)
+From: Mithil Bavishi <bavishimithil@gmail.com>
+To: andreas@kemnade.info
+Cc: aaro.koskinen@iki.fi,
+	bavishimithil@gmail.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	khilman@baylibre.com,
+	krzk+dt@kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	robh@kernel.org,
+	rogerq@kernel.org,
+	tony@atomide.com
+Subject: Re: [PATCH v2 2/6] arm/dts: Add common device tree for Samsung Galaxy Tab 2 series
+Date: Thu, 31 Oct 2024 10:41:45 +0000
+Message-ID: <20241031104146.4538-1-bavishimithil@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241031083248.043d25d0@akair>
+References: <20241031083248.043d25d0@akair>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,67 +93,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V3 net 0/9] There are some bugfix for the HNS3 ethernet driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173037123325.1922651.13719151078657706845.git-patchwork-notify@kernel.org>
-Date: Thu, 31 Oct 2024 10:40:33 +0000
-References: <20241025092938.2912958-1-shaojijie@huawei.com>
-In-Reply-To: <20241025092938.2912958-1-shaojijie@huawei.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
- shenjian15@huawei.com, salil.mehta@huawei.com, liuyonglong@huawei.com,
- wangpeiyang1@huawei.com, chenhao418@huawei.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+> well, that takes time, I wanted to start that on the right thing.
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Yes indeed, I'll be more careful the next time, again sorry for the 
+trouble, I am not used to the process of mailing lists and may have done
+some mistakes there as well.
 
-On Fri, 25 Oct 2024 17:29:29 +0800 you wrote:
-> There are some bugfix for the HNS3 ethernet driver
-> 
-> ---
-> ChangeLog:
-> v2 -> v3:
->   - Rewrite the commit logs of net: hns3: add sync command to sync io-pgtable' to
->     add more verbose explanation, suggested Paolo.
->   - Add fixes tag for hardware issue, suggested Paolo and Simon Horman.
-> v2: https://lore.kernel.org/all/20241018101059.1718375-1-shaojijie@huawei.com/
-> v1 -> v2:
->   - Pass IRQF_NO_AUTOEN to request_irq(), suggested by Jakub.
->   - Rewrite the commit logs of 'net: hns3: default enable tx bounce buffer when smmu enabled'
->     and 'net: hns3: add sync command to sync io-pgtable'.
-> v1: https://lore.kernel.org/all/20241011094521.3008298-1-shaojijie@huawei.com/
-> 
-> [...]
+> 1. make dtbs shows warnings
 
-Here is the summary with links:
-  - [V3,net,1/9] net: hns3: default enable tx bounce buffer when smmu enabled
-    https://git.kernel.org/netdev/net/c/e6ab19443b36
-  - [V3,net,2/9] net: hns3: add sync command to sync io-pgtable
-    https://git.kernel.org/netdev/net/c/f2c14899caba
-  - [V3,net,3/9] net: hns3: fixed reset failure issues caused by the incorrect reset type
-    https://git.kernel.org/netdev/net/c/3e0f7cc887b7
-  - [V3,net,4/9] net: hns3: fix missing features due to dev->features configuration too early
-    https://git.kernel.org/netdev/net/c/662ecfc46690
-  - [V3,net,5/9] net: hns3: Resolved the issue that the debugfs query result is inconsistent.
-    https://git.kernel.org/netdev/net/c/2758f18a83ef
-  - [V3,net,6/9] net: hns3: don't auto enable misc vector
-    https://git.kernel.org/netdev/net/c/5f62009ff108
-  - [V3,net,7/9] net: hns3: initialize reset_timer before hclgevf_misc_irq_init()
-    https://git.kernel.org/netdev/net/c/d1c2e2961ab4
-  - [V3,net,8/9] net: hns3: fixed hclge_fetch_pf_reg accesses bar space out of bounds issue
-    https://git.kernel.org/netdev/net/c/3e22b7de34cb
-  - [V3,net,9/9] net: hns3: fix kernel crash when 1588 is sent on HIP08 devices
-    https://git.kernel.org/netdev/net/c/2cf246143519
+> 2. make CHECK_DTBS=y ti/omap/omap4-samsung-espresso7.dtb is too noisy
+> (probably same for espresso10).
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> a lot comes from the dtsi files, so you need to ignore a lot, probably
+> either strip down the new dts to almost nothing besides dtsi includes
+> to determine the background noise or take a similar device, redirect
+> output and errors, diff that output with the full devicetree.
+> I am trying to clean that dtsi warning mess up, linux-next shows a lot
+> less warnings but that takes time.
 
+Oh, I was not aware of such tool, ran it and yeah there are a ton of
+warnings, where can I ask for assitance if I need it while fixing them.
 
+> One of the warnings that should be fixed:
+> dts/ti/omap/omap4-samsung-espresso7.dtb: lvds-encoder: compatible:
+> 'oneOf' conditional failed, one must be fixed: ['lvds-encoder'] is too
+> short 'lvds-encoder' is not one of ['ti,ds90c185', 'ti,ds90c187',
+> 'ti,sn75lvds83'] 'lvds-encoder' is not one of ['ti,ds90cf364a',
+> 'ti,ds90cf384a', 'ti,sn65lvds94'] 'lvds-encoder' is not one of
+> ['thine,thc63lvdm83d'] from schema $id:
+> 	http://devicetree.org/schemas/display/bridge/lvds-codec.yaml
+
+Ah right, I have to add the encoder (doestek, dtc34lm85am) in bindings and
+in vendor, this patchset may grow too big I assume.
+
+Best Regards,
+Mithil
 
