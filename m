@@ -1,178 +1,677 @@
-Return-Path: <linux-kernel+bounces-390295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7659B7807
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:53:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E289B7809
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:53:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E331C2088D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B6828989E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CCC198E65;
-	Thu, 31 Oct 2024 09:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E9A1991C2;
+	Thu, 31 Oct 2024 09:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EnNvSPtc"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PoK4tQVQ"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0CD19885F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF8419581F;
+	Thu, 31 Oct 2024 09:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368345; cv=none; b=E9KSVLeriGSEjSCV5fEsNvnsO5j0xvIGJFmKmcZRTBDjtN/uHxbOcaQA9kd0gMyUKux/rM77iVPcnBGjFBS8V7KQrmuFylN8mxhxmfHY5R7KKmrlAZbDhedn6zWhvUmPWyOvAq7rRFT/ZBGYeAXuoRYDHDhqlobbj9PZz1gAZDc=
+	t=1730368365; cv=none; b=DOQFzOtJ4mzPxuss31wz6ysLtZPKYzaMgagYwO5l7EaMroBD2LorHFDOK3yWUexJh8zgHYCgbE34DrPwC1etu9R/pqqG5VRpvTAZH2LXs2U8ci6gKbzbWH5NmiwiuB6bFGrqcWmsUtFzh6oAENRvQQbkJlJfDNas3mnaqct8E9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368345; c=relaxed/simple;
-	bh=sXhqVqcxxb74TbLCt/1k7rR1bz1IQfU6AYxlmBPwA6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IovQ6H3/nDi838GbByaSgCiqBgFGUAxBL0Npid+UudbWYYjokR5BwsMU6z3EBqQsChMPCHpHrWNQUTSmqiVi/kNUDs54zlyWQIcw0ZSCTtDjjb4UFCzX1JUuUHfVjmGCXNxFeYZQfiuzvMW2z0ub6ILoegdSg36eWk1TPbc9/BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EnNvSPtc; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1730368365; c=relaxed/simple;
+	bh=b1smCTn4I/y2j/amA5bA7acxeoS1NFp64xphyaolsI8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=A95RVwH3X2Y+Zt6U/HMVesl1ggkHoB+Fuf4HAxt19wYZu01TDExS7FERLjuHmCwtnIGTlQAEh7wylKfM5FRRWArffkEa+zqgmR716WuAoFIapN/2T1waRjnaeFxOmCkcRax090XEayMM+4H8T9Hz8Z047YECjFsVyY7TVlXba44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PoK4tQVQ; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730368342; x=1761904342;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sXhqVqcxxb74TbLCt/1k7rR1bz1IQfU6AYxlmBPwA6g=;
-  b=EnNvSPtcNDL4Jpo50eMdfDnImyxZ0E4r+YtQjHKxjxPCH/q5aCvb7Z2K
-   nH78c+ICii/qH059RqQViRTiqR5AinK0yNU4h9LZjD8WnWpPfpY1ZfX1r
-   xLMiXhokrKwalCpqBsB04bW+Lj1gfVAPDhBEHA/R8+/J0Kxshnu9eRFEm
-   HlrWRswXQXZo312CuhID9dXFs/QNcpmoLuZXDk7QEA2k5kL4rDZlgaOJy
-   asrRxUnr2/+F0dBOuWIWlL/jaRiRKZNHwkhEUkGdngHynZtdCrnGBbs4+
-   OftfISqyJDhNb7GM6ArA9YQQKDzbs9l+4j9XbPXMQqQ0qtRbh5bhmk9Gf
-   Q==;
-X-CSE-ConnectionGUID: X4R0xm4OStigI8IpvgdrnA==
-X-CSE-MsgGUID: nfbPrdvpSDuYD9UgP/U5YA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40645305"
+  t=1730368361; x=1761904361;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=b1smCTn4I/y2j/amA5bA7acxeoS1NFp64xphyaolsI8=;
+  b=PoK4tQVQs0G+t9McQ3Nx4DWlTp3CVFdECIDHOfn0XDsQigx4B+l1pvAj
+   cBkG5fHZ+a3MlR9THOIGcu06gvivUida1gQPUH8/qhw+kvfvJSVTwPIW5
+   6XUx8xhzciEqfQ3zg5zMarY4ubYX0v1FJEU4m0mOH0mCBJYu+YiyE0HUI
+   fPPzVF7f7cgphidW7hnNhNzRDK5gDkdi6AlFFdpMQsHWpPJpa5DmiKZWF
+   qzraC4KuNBL+mbpfqYuLlEPzspS3RQj9Vy6k74frmmHrZoT7u9j3IkOmZ
+   dGTEOJKkM2t2ZLidas4o0W8iRF+BjwRVJEcndvWPfTUOMiWqwUkAVXhCr
+   g==;
+X-CSE-ConnectionGUID: 8Gg7jslXRnGfVOXmCIVxJg==
+X-CSE-MsgGUID: /ZbDnDrKTsSpCdLjiDHJoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40645355"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40645305"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:52:21 -0700
-X-CSE-ConnectionGUID: THWkJZG7RwOEpVYIc1IJdA==
-X-CSE-MsgGUID: ljdJC5DjT4ucx/aEa89wXA==
+   d="scan'208";a="40645355"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:52:41 -0700
+X-CSE-ConnectionGUID: mGPvCDm7SJSlJCXKChK2vA==
+X-CSE-MsgGUID: jTTQcuK8TjGl52KuNbbSEw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="82702567"
-Received: from allen-sbox.sh.intel.com ([10.239.159.30])
-  by fmviesa008.fm.intel.com with ESMTP; 31 Oct 2024 02:52:19 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: iommu@lists.linux.dev
-Cc: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Yi Liu <yi.l.liu@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] iommu/vt-d: Drain PRQs when domain removed from RID
-Date: Thu, 31 Oct 2024 17:51:39 +0800
-Message-ID: <20241031095139.44220-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+   d="scan'208";a="83382963"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.160])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:52:37 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 31 Oct 2024 11:52:33 +0200 (EET)
+To: Arnd Bergmann <arnd@kernel.org>
+cc: Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
+    Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>, 
+    Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+    Suma Hegde <suma.hegde@amd.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] [v2] platform/x86/amd/hsmp: move hsmp_msg_desc_table[]
+ to hsmp.c
+In-Reply-To: <20241030210019.2858358-1-arnd@kernel.org>
+Message-ID: <582e3574-1823-0c1b-25a8-6a4a6bf73f63@linux.intel.com>
+References: <20241030210019.2858358-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1957550909-1730368353=:939"
 
-As this iommu driver now supports page faults for requests without
-PASID, page requests should be drained when a domain is removed from
-the RID2PASID entry.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This results in the intel_iommu_drain_pasid_prq() call being moved to
-intel_pasid_tear_down_entry(). This indicates that when a translation
-is removed from any PASID entry and the PRI has been enabled on the
-device, page requests are flushed in the domain detachment path.
+--8323328-1957550909-1730368353=:939
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-The intel_iommu_drain_pasid_prq() helper has been modified to support
-sending device TLB invalidation requests for both PASID and non-PASID
-cases.
+On Wed, 30 Oct 2024, Arnd Bergmann wrote:
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.c |  1 -
- drivers/iommu/intel/pasid.c |  1 +
- drivers/iommu/intel/prq.c   | 22 +++++++---------------
- 3 files changed, 8 insertions(+), 16 deletions(-)
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> After the file got split, there are now W=3D1 warnings for users that
+> include it without referencing hsmp_msg_desc_table:
+>=20
+> In file included from arch/x86/include/asm/amd_hsmp.h:6,
+>                  from drivers/platform/x86/amd/hsmp/plat.c:12:
+> arch/x86/include/uapi/asm/amd_hsmp.h:91:35: error: 'hsmp_msg_desc_table' =
+defined but not used [-Werror=3Dunused-const-variable=3D]
+>    91 | static const struct hsmp_msg_desc hsmp_msg_desc_table[] =3D {
+>       |                                   ^~~~~~~~~~~~~~~~~~~
+>=20
+> The array was never meant to be used by userspace code, but was
+> left in the header as a reference for userspace programmers.
+>=20
+> Move the contents of the array into the one file that actually needs
+> it, and instead leave the URL of the new location in the uapi header
+> in case anyone is looking for it.
+>=20
+> Fixes: e47c018a0ee6 ("platform/x86/amd/hsmp: Move platform device specifi=
+c code to plat.c")
+> Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> Link: https://lore.kernel.org/lkml/046687d8-1e2d-435b-adcb-26897bfd29f7@r=
+edhat.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 87a3563dfe54..3878f35be09d 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4069,7 +4069,6 @@ static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid,
- 	intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
- 	kfree(dev_pasid);
- 	intel_pasid_tear_down_entry(iommu, dev, pasid, false);
--	intel_iommu_drain_pasid_prq(dev, pasid);
- }
- 
- static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
-diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-index 7e76062a7ad2..31665fb62e1c 100644
---- a/drivers/iommu/intel/pasid.c
-+++ b/drivers/iommu/intel/pasid.c
-@@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
- 		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
- 
- 	devtlb_invalidation_with_pasid(iommu, dev, pasid);
-+	intel_iommu_drain_pasid_prq(dev, pasid);
- }
- 
- /*
-diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
-index 3c50c848893f..ae7f6f34462f 100644
---- a/drivers/iommu/intel/prq.c
-+++ b/drivers/iommu/intel/prq.c
-@@ -66,12 +66,8 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
- 	struct pci_dev *pdev;
- 	int head, tail;
- 	u16 sid, did;
--	int qdep;
- 
- 	info = dev_iommu_priv_get(dev);
--	if (WARN_ON(!info || !dev_is_pci(dev)))
--		return;
--
- 	if (!info->pri_enabled)
- 		return;
- 
-@@ -81,8 +77,6 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
- 	sid = PCI_DEVID(info->bus, info->devfn);
- 	did = domain ? domain_id_iommu(domain, iommu) : FLPT_DEFAULT_DID;
- 
--	qdep = pci_ats_queue_depth(pdev);
--
- 	/*
- 	 * Check and wait until all pending page requests in the queue are
- 	 * handled by the prq handling thread.
-@@ -114,15 +108,13 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
- 	desc[0].qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
- 			QI_IWD_FENCE |
- 			QI_IWD_TYPE;
--	desc[1].qw0 = QI_EIOTLB_PASID(pasid) |
--			QI_EIOTLB_DID(did) |
--			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
--			QI_EIOTLB_TYPE;
--	desc[2].qw0 = QI_DEV_EIOTLB_PASID(pasid) |
--			QI_DEV_EIOTLB_SID(sid) |
--			QI_DEV_EIOTLB_QDEP(qdep) |
--			QI_DEIOTLB_TYPE |
--			QI_DEV_IOTLB_PFSID(info->pfsid);
-+	qi_desc_piotlb(did, pasid, 0, -1, 0, &desc[1]);
-+	if (pasid == IOMMU_NO_PASID)
-+		qi_desc_dev_iotlb(sid, info->pfsid, info->ats_qdep, 0,
-+				  MAX_AGAW_PFN_WIDTH, &desc[2]);
-+	else
-+		qi_desc_dev_iotlb_pasid(sid, info->pfsid, pasid, info->ats_qdep,
-+					0, MAX_AGAW_PFN_WIDTH, &desc[2]);
- qi_retry:
- 	reinit_completion(&iommu->prq_complete);
- 	qi_submit_sync(iommu, desc, 3, QI_OPT_WAIT_DRAIN);
--- 
-2.43.0
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
+I'll leave it into patchwork for a few days if somebody has some still=20
+unvoiced opinions on this.
+
+--
+ i.
+
+> ---
+>  arch/x86/include/uapi/asm/amd_hsmp.h | 255 ++-------------------------
+>  drivers/platform/x86/amd/hsmp/hsmp.c | 245 +++++++++++++++++++++++++
+>  2 files changed, 255 insertions(+), 245 deletions(-)
+>=20
+> diff --git a/arch/x86/include/uapi/asm/amd_hsmp.h b/arch/x86/include/uapi=
+/asm/amd_hsmp.h
+> index e5d182c7373c..dfa6aa985ac4 100644
+> --- a/arch/x86/include/uapi/asm/amd_hsmp.h
+> +++ b/arch/x86/include/uapi/asm/amd_hsmp.h
+> @@ -1,5 +1,15 @@
+>  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> =20
+> +/*
+> + * See hsmp_msg_desc_table[] in:
+> + * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/drivers/platform/x86/amd/hsmp.c
+> + *
+> + * for some information on number of input- and output arguments
+> + * for the various functions.
+> + *
+> + * Please find the supported list of messages and message definition
+> + * in the HSMP chapter of respective family/model PPR.
+> + */
+>  #ifndef _UAPI_ASM_X86_AMD_HSMP_H_
+>  #define _UAPI_ASM_X86_AMD_HSMP_H_
+> =20
+> @@ -81,251 +91,6 @@ struct hsmp_msg_desc {
+>  =09enum hsmp_msg_type type;
+>  };
+> =20
+> -/*
+> - * User may use these comments as reference, please find the
+> - * supported list of messages and message definition in the
+> - * HSMP chapter of respective family/model PPR.
+> - *
+> - * Not supported messages would return -ENOMSG.
+> - */
+> -static const struct hsmp_msg_desc hsmp_msg_desc_table[] =3D {
+> -=09/* RESERVED */
+> -=09{0, 0, HSMP_RSVD},
+> -
+> -=09/*
+> -=09 * HSMP_TEST, num_args =3D 1, response_sz =3D 1
+> -=09 * input:  args[0] =3D xx
+> -=09 * output: args[0] =3D xx + 1
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_SMU_VER, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D smu fw ver
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_PROTO_VER, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D proto version
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_SOCKET_POWER, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D socket power in mWatts
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_SOCKET_POWER_LIMIT, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D power limit value in mWatts
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_SOCKET_POWER_LIMIT, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D socket power limit value in mWatts
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_SOCKET_POWER_LIMIT_MAX, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D maximuam socket power limit in mWatts
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_BOOST_LIMIT, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D apic id[31:16] + boost limit value in MHz[15:0]
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_BOOST_LIMIT_SOCKET, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D boost limit value in MHz
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_BOOST_LIMIT, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D apic id
+> -=09 * output: args[0] =3D boost limit value in MHz
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_PROC_HOT, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D proc hot status
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_XGMI_LINK_WIDTH, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D min link width[15:8] + max link width[7:0]
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_DF_PSTATE, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D df pstate[7:0]
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/* HSMP_SET_AUTO_DF_PSTATE, num_args =3D 0, response_sz =3D 0 */
+> -=09{0, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_FCLK_MCLK, num_args =3D 0, response_sz =3D 2
+> -=09 * output: args[0] =3D fclk in MHz, args[1] =3D mclk in MHz
+> -=09 */
+> -=09{0, 2, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_CCLK_THROTTLE_LIMIT, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D core clock in MHz
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_C0_PERCENT, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D average c0 residency
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_NBIO_DPM_LEVEL, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D nbioid[23:16] + max dpm level[15:8] + min dpm l=
+evel[7:0]
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_NBIO_DPM_LEVEL, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D nbioid[23:16]
+> -=09 * output: args[0] =3D max dpm level[15:8] + min dpm level[7:0]
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_DDR_BANDWIDTH, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D max bw in Gbps[31:20] + utilised bw in Gbps[19=
+:8] +
+> -=09 * bw in percentage[7:0]
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_TEMP_MONITOR, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D temperature in degree celsius. [15:8] integer =
+part +
+> -=09 * [7:5] fractional part
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_DIMM_TEMP_RANGE, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D DIMM address[7:0]
+> -=09 * output: args[0] =3D refresh rate[3] + temperature range[2:0]
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_DIMM_POWER, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D DIMM address[7:0]
+> -=09 * output: args[0] =3D DIMM power in mW[31:17] + update rate in ms[16=
+:8] +
+> -=09 * DIMM address[7:0]
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_DIMM_THERMAL, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D DIMM address[7:0]
+> -=09 * output: args[0] =3D temperature in degree celsius[31:21] + update =
+rate in ms[16:8] +
+> -=09 * DIMM address[7:0]
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_SOCKET_FREQ_LIMIT, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D frequency in MHz[31:16] + frequency source[15:=
+0]
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_CCLK_CORE_LIMIT, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D apic id [31:0]
+> -=09 * output: args[0] =3D frequency in MHz[31:0]
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_RAILS_SVI, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D power in mW[31:0]
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_SOCKET_FMAX_FMIN, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D fmax in MHz[31:16] + fmin in MHz[15:0]
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_IOLINK_BANDWITH, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D link id[15:8] + bw type[2:0]
+> -=09 * output: args[0] =3D io bandwidth in Mbps[31:0]
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_XGMI_BANDWITH, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D link id[15:8] + bw type[2:0]
+> -=09 * output: args[0] =3D xgmi bandwidth in Mbps[31:0]
+> -=09 */
+> -=09{1, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_GMI3_WIDTH, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D min link width[15:8] + max link width[7:0]
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_PCI_RATE, num_args =3D 1, response_sz =3D 1
+> -=09 * input: args[0] =3D link rate control value
+> -=09 * output: args[0] =3D previous link rate control value
+> -=09 */
+> -=09{1, 1, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_POWER_MODE, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D power efficiency mode[2:0]
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_SET_PSTATE_MAX_MIN, num_args =3D 1, response_sz =3D 0
+> -=09 * input: args[0] =3D min df pstate[15:8] + max df pstate[7:0]
+> -=09 */
+> -=09{1, 0, HSMP_SET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_METRIC_TABLE_VER, num_args =3D 0, response_sz =3D 1
+> -=09 * output: args[0] =3D metrics table version
+> -=09 */
+> -=09{0, 1, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_METRIC_TABLE, num_args =3D 0, response_sz =3D 0
+> -=09 */
+> -=09{0, 0, HSMP_GET},
+> -
+> -=09/*
+> -=09 * HSMP_GET_METRIC_TABLE_DRAM_ADDR, num_args =3D 0, response_sz =3D 2
+> -=09 * output: args[0] =3D lower 32 bits of the address
+> -=09 * output: args[1] =3D upper 32 bits of the address
+> -=09 */
+> -=09{0, 2, HSMP_GET},
+> -};
+> -
+>  /* Metrics table (supported only with proto version 6) */
+>  struct hsmp_metric_table {
+>  =09__u32 accumulation_counter;
+> diff --git a/drivers/platform/x86/amd/hsmp/hsmp.c b/drivers/platform/x86/=
+amd/hsmp/hsmp.c
+> index 82d8ba2e1204..5d21bc8b2fd7 100644
+> --- a/drivers/platform/x86/amd/hsmp/hsmp.c
+> +++ b/drivers/platform/x86/amd/hsmp/hsmp.c
+> @@ -37,6 +37,251 @@
+> =20
+>  static struct hsmp_plat_device hsmp_pdev;
+> =20
+> +/*
+> + * User may use these comments as reference, please find the
+> + * supported list of messages and message definition in the
+> + * HSMP chapter of respective family/model PPR.
+> + *
+> + * Not supported messages would return -ENOMSG.
+> + */
+> +static const struct hsmp_msg_desc hsmp_msg_desc_table[] =3D {
+> +=09/* RESERVED */
+> +=09{0, 0, HSMP_RSVD},
+> +
+> +=09/*
+> +=09 * HSMP_TEST, num_args =3D 1, response_sz =3D 1
+> +=09 * input:  args[0] =3D xx
+> +=09 * output: args[0] =3D xx + 1
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_SMU_VER, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D smu fw ver
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_PROTO_VER, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D proto version
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_SOCKET_POWER, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D socket power in mWatts
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_SOCKET_POWER_LIMIT, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D power limit value in mWatts
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_SOCKET_POWER_LIMIT, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D socket power limit value in mWatts
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_SOCKET_POWER_LIMIT_MAX, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D maximuam socket power limit in mWatts
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_BOOST_LIMIT, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D apic id[31:16] + boost limit value in MHz[15:0]
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_BOOST_LIMIT_SOCKET, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D boost limit value in MHz
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_BOOST_LIMIT, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D apic id
+> +=09 * output: args[0] =3D boost limit value in MHz
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_PROC_HOT, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D proc hot status
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_XGMI_LINK_WIDTH, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D min link width[15:8] + max link width[7:0]
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_DF_PSTATE, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D df pstate[7:0]
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/* HSMP_SET_AUTO_DF_PSTATE, num_args =3D 0, response_sz =3D 0 */
+> +=09{0, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_FCLK_MCLK, num_args =3D 0, response_sz =3D 2
+> +=09 * output: args[0] =3D fclk in MHz, args[1] =3D mclk in MHz
+> +=09 */
+> +=09{0, 2, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_CCLK_THROTTLE_LIMIT, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D core clock in MHz
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_C0_PERCENT, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D average c0 residency
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_NBIO_DPM_LEVEL, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D nbioid[23:16] + max dpm level[15:8] + min dpm l=
+evel[7:0]
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_NBIO_DPM_LEVEL, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D nbioid[23:16]
+> +=09 * output: args[0] =3D max dpm level[15:8] + min dpm level[7:0]
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_DDR_BANDWIDTH, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D max bw in Gbps[31:20] + utilised bw in Gbps[19=
+:8] +
+> +=09 * bw in percentage[7:0]
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_TEMP_MONITOR, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D temperature in degree celsius. [15:8] integer =
+part +
+> +=09 * [7:5] fractional part
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_DIMM_TEMP_RANGE, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D DIMM address[7:0]
+> +=09 * output: args[0] =3D refresh rate[3] + temperature range[2:0]
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_DIMM_POWER, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D DIMM address[7:0]
+> +=09 * output: args[0] =3D DIMM power in mW[31:17] + update rate in ms[16=
+:8] +
+> +=09 * DIMM address[7:0]
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_DIMM_THERMAL, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D DIMM address[7:0]
+> +=09 * output: args[0] =3D temperature in degree celsius[31:21] + update =
+rate in ms[16:8] +
+> +=09 * DIMM address[7:0]
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_SOCKET_FREQ_LIMIT, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D frequency in MHz[31:16] + frequency source[15:=
+0]
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_CCLK_CORE_LIMIT, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D apic id [31:0]
+> +=09 * output: args[0] =3D frequency in MHz[31:0]
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_RAILS_SVI, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D power in mW[31:0]
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_SOCKET_FMAX_FMIN, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D fmax in MHz[31:16] + fmin in MHz[15:0]
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_IOLINK_BANDWITH, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D link id[15:8] + bw type[2:0]
+> +=09 * output: args[0] =3D io bandwidth in Mbps[31:0]
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_XGMI_BANDWITH, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D link id[15:8] + bw type[2:0]
+> +=09 * output: args[0] =3D xgmi bandwidth in Mbps[31:0]
+> +=09 */
+> +=09{1, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_GMI3_WIDTH, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D min link width[15:8] + max link width[7:0]
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_PCI_RATE, num_args =3D 1, response_sz =3D 1
+> +=09 * input: args[0] =3D link rate control value
+> +=09 * output: args[0] =3D previous link rate control value
+> +=09 */
+> +=09{1, 1, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_POWER_MODE, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D power efficiency mode[2:0]
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_SET_PSTATE_MAX_MIN, num_args =3D 1, response_sz =3D 0
+> +=09 * input: args[0] =3D min df pstate[15:8] + max df pstate[7:0]
+> +=09 */
+> +=09{1, 0, HSMP_SET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_METRIC_TABLE_VER, num_args =3D 0, response_sz =3D 1
+> +=09 * output: args[0] =3D metrics table version
+> +=09 */
+> +=09{0, 1, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_METRIC_TABLE, num_args =3D 0, response_sz =3D 0
+> +=09 */
+> +=09{0, 0, HSMP_GET},
+> +
+> +=09/*
+> +=09 * HSMP_GET_METRIC_TABLE_DRAM_ADDR, num_args =3D 0, response_sz =3D 2
+> +=09 * output: args[0] =3D lower 32 bits of the address
+> +=09 * output: args[1] =3D upper 32 bits of the address
+> +=09 */
+> +=09{0, 2, HSMP_GET},
+> +};
+> +
+>  /*
+>   * Send a message to the HSMP port via PCI-e config space registers
+>   * or by writing to MMIO space.
+>=20
+--8323328-1957550909-1730368353=:939--
 
