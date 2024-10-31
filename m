@@ -1,135 +1,176 @@
-Return-Path: <linux-kernel+bounces-390977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED549B80C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:03:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53D69B80CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:04:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5AF9B22015
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:03:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57AC1C20C97
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3161BD4E5;
-	Thu, 31 Oct 2024 17:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180961BD519;
+	Thu, 31 Oct 2024 17:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Z4jMgQG2"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9Jh5sKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEC31990C7
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555771990AE;
+	Thu, 31 Oct 2024 17:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730394178; cv=none; b=kfkmJmObxcXI8idWfERtDva5inAQOhvJ68mGh4Qna99EVt3Qrd7pUHHdMhvNgREVfOCeV2WnLcMyc1T364JF4yLWJOqaDEz9DEw6H0EnWkxWnifJ4lmcTY4VcHgvafScdgwDQzF78KIeDyG1T/ZmKed9C6rkduDbkGj1oix6vlw=
+	t=1730394270; cv=none; b=pyU5k149zjzDdcwMdIZphyqY0h4qtle4Jccyrd2cvBJXfJoOtfvebZH2LG16DMZ86h8kG2U5PW/rQtDzeCUrkdmwip/qE9DHPnWETb2UUZ5ze/uQ2Tp7X4AIxM+AKl1/0HpRmukw1nO346Bs2VzAcMwRAlDmM7SA6W6nsQ/jX24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730394178; c=relaxed/simple;
-	bh=rkD19Bqc79gsPO5JVFTOqLgcccwuavxcVndttCcVjlg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/MEsu+qNV6QmtnI8uWmqQHWtCgnETrlsdDVWBADiOUTC/oyJSm5149SvKPNRWZDP3MF9ODW7YGcKw4GHJ5kcaTu+9+51kBqyyWijInkYfMH2QYMqe7enY9qE0G1HDxbOkMupNJ81tCS1jBczI8OLTsA0WkVwSkmkiSlkU6NSmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Z4jMgQG2; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f58c68c5so2192710e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:02:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730394175; x=1730998975; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=itclNzkuhsNhu+rLimeOXz9VP4f+jH+BEVTSGay6rCw=;
-        b=Z4jMgQG22yeSNkBwV+gYoJ2j2ep0LXQMNzfTrLdGWKmj8a+HpKvCuPOEu74hahtPZC
-         yvCsrFpvieMYs/dm8OdTlW7WLWhRayqM8hcMBLYwPyteZnKBBFKs1kOzwPOvmbg9Zv1o
-         J3VeQ2TiNf7+Q0dVkmXESoODFZjeONZR5Qn9Q6Ao+RD+0A/QARduMBOdQDS0IZ8ifK91
-         JaxyduackvfjcGbX9DWTWHJkNHzERp5TQCG5YaVztfqiDAlyA1krBxQGxlzW8EjIqbEg
-         Hygc2TC4Fzw+2jbZ2+orotyviyL2tzEs0NHFb/9cgZwjQk4+vxNq3KFX7EeUxI+Q6l1m
-         aolA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730394175; x=1730998975;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=itclNzkuhsNhu+rLimeOXz9VP4f+jH+BEVTSGay6rCw=;
-        b=FgjnaoFdwdLlvhbOOktQdAtzi2Ks7QwekYnjAPdTeVQa89cS4xWZ6SVYBHDaUbIyXm
-         4+6pagkZ0zaR5IEwc3gJVnXhd5wx6OMc3cAxuQshNCPYRFBZwHBgvDdCRu4dYb3LQZe/
-         dYbHp4ol90lBluHRsZEdbMYW1qgVOREP0NYE/q30/hC0BNR0jFP70XRRnJLQbPUjIHkG
-         IWO87oNg7AKv05tYotFpn85mN731MNADwolZRj2DFtOsZxfjgysT+SqXYwtATyMh9nP7
-         xNJwp+5btzye4OgtfmxDf5sorn3xTx2OWYLpNqjQrl4sfL9p7YZaI9Z0th1w9/eWySVr
-         gVbA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0chJCPj+VgtSbHeT8oLKT44VrfIZ8/CsU2sZD/In4x/umfroIqu7WA9YoDAM8/omghX7gzDqFCxoFgfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9eSX+w/5XALTiH0U5KE5ZQ8ae01FQ1oMh31YtnDdu5KjI6v4g
-	8sNvcoK5xoSpmQPTx15LWdRxRlrfTikOy2LrZ/tCZFzUkr321wXxzHb2hwcYSy54OYjvb1X+8Sc
-	B2Gz9ynZYcSs1vZPFpb98un8uLPMSDwr8EzIOrfZYiT2TnWl7kJI=
-X-Google-Smtp-Source: AGHT+IFkGhs17fk1WNgW2Lc1+p4at0/K/jnNWJKMySLeyD5thsCli3RrFU2Jul/rDz+A9y3BBriis/mOAyCzaxsMr+U=
-X-Received: by 2002:a05:6512:3a8b:b0:539:89a8:600f with SMTP id
- 2adb3069b0e04-53d65de5298mr761196e87.23.1730394174627; Thu, 31 Oct 2024
- 10:02:54 -0700 (PDT)
+	s=arc-20240116; t=1730394270; c=relaxed/simple;
+	bh=76iIYi9r6xA6vX/KYVnYOqiJXABJE4PH5Kls9Mk0HhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eZRvkFyD82XYSy3q97y9i3kBrqPkBQpj+eV5M+vOSzR72NRN8kSNRyv6+5U8OtJUC+pIoTDsa3hlR4Lsk1PxzWtpBTBW/ICTLjraA6Oq8e8Bdb6eHKGzqG1P2JGUuAnbx1FiEg6+yHsiozkIS16cdMApbom1CINB5GjwxFdTPaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9Jh5sKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A22B9C4CED0;
+	Thu, 31 Oct 2024 17:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730394269;
+	bh=76iIYi9r6xA6vX/KYVnYOqiJXABJE4PH5Kls9Mk0HhA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=U9Jh5sKjWEqDOVKayvj3wQwuDJJY8KF5B2A8ixi/Ps8E1ZDGak7rpwREw0Hb+frDS
+	 9ErlaLmaNxrHr0/EEVzIcXx+jV/DePCv4pSxHHTKytCy15uxP7wX6XVwpxeqopCrUj
+	 ngkwfhz44fe+2al5EplKqBqC++32wAzrr+McXt0gYqKkuJv92uZQ4tC2wQGEhGagb+
+	 k8xASwiFxc4orbWOIuuOsS1wUwIziv7rSnBABK67Bm0GXmsnTSKCNJksCj708EctuW
+	 +oWIBZSgtuMB1lraiAXVnN1COw6Uu3+fTDf4LEgJ37/HI5v1BVelKl25dR7iF6yaF/
+	 vG940zFG7emDA==
+Date: Thu, 31 Oct 2024 12:04:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jinjian Song <jinjian.song@fibocom.com>
+Cc: ryazanov.s.a@gmail.com, chandrashekar.devegowda@intel.com,
+	chiranjeevi.rapolu@linux.intel.com, haijun.liu@mediatek.com,
+	m.chetan.kumar@linux.intel.com, ricardo.martinez@linux.intel.com,
+	loic.poulain@linaro.org, johannes@sipsolutions.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, angelogioacchino.delregno@collabora.com,
+	bhelgaas@google.com, corbet@lwn.net, danielwinkler@google.com,
+	korneld@google.com, linasvepstas@gmail.com,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com, netdev@vger.kernel.org
+Subject: Re: [net-next v2] net: wwan: t7xx: reset device if suspend fails
+Message-ID: <20241031170428.GA1249507@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028125000.24051-1-johan+linaro@kernel.org> <20241028125000.24051-3-johan+linaro@kernel.org>
-In-Reply-To: <20241028125000.24051-3-johan+linaro@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 31 Oct 2024 18:02:43 +0100
-Message-ID: <CAMRc=Mf6yaZMsF5x=vPet=y9fa5ZTuWSAA=oi+Qw07TF8GEFbA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] gpiolib: fix debugfs dangling chip separator
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031130930.5583-1-jinjian.song@fibocom.com>
 
-On Mon, Oct 28, 2024 at 1:50=E2=80=AFPM Johan Hovold <johan+linaro@kernel.o=
-rg> wrote:
->
-> Add the missing newline after entries for recently removed gpio chips
-> so that the chip sections are separated by a newline as intended.
->
-> Fixes: e348544f7994 ("gpio: protect the list of GPIO devices with SRCU")
-> Cc: stable@vger.kernel.org      # 6.9
-> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/gpio/gpiolib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e27488a90bc9..2b02655abb56 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -4971,7 +4971,7 @@ static int gpiolib_seq_show(struct seq_file *s, voi=
-d *v)
->
->         gc =3D srcu_dereference(gdev->chip, &gdev->srcu);
->         if (!gc) {
-> -               seq_printf(s, "%s%s: (dangling chip)",
-> +               seq_printf(s, "%s%s: (dangling chip)\n",
->                            priv->newline ? "\n" : "",
->                            dev_name(&gdev->dev));
->                 return 0;
-> --
-> 2.45.2
->
+On Thu, Oct 31, 2024 at 09:09:30PM +0800, Jinjian Song wrote:
+> From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+> > On 29.10.2024 05:46, Jinjian Song wrote:
+> > > From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+> > > > On 22.10.2024 11:43, Jinjian Song wrote:
+> > > > > If driver fails to set the device to suspend, it means that the
+> > > > > device is abnormal. In this case, reset the device to recover
+> > > > > when PCIe device is offline.
+> > > > 
+> > > > Is it a reproducible or a speculative issue? Does the fix
+> > > > recover modem from a problematic state?
+> > > > 
+> > > > Anyway we need someone more familiar with this hardware (Intel
+> > > > or MediaTek engineer) to Ack the change to make sure we are not
+> > > > going to put a system in a more complicated state.
+> > > 
+> > > This is a very difficult issue to replicate onece occured and fixed.
+> > > 
+> > > The issue occured when driver and device lost the connection. I have
+> > > encountered this problem twice so far:
+> > > 1. During suspend/resume stress test, there was a probabilistic D3L2
+> > > time sequence issue with the BIOS, result in PCIe link down, driver
+> > > read and write the register of device invalid, so suspend failed.
+> > > This issue was eventually fixed in the BIOS and I was able to restore
+> > > it through the reset module after reproducing the problem.
+> > > 
+> > > 2. During idle test, the modem probabilistic hang up, result in PCIe
+> > > link down, driver read and write the register of device invalid, so
+> > > suspend failed. This issue was eventually fiex in device modem firmware
+> > > by adjust a certain power supply voltage, and reset modem as a workround
+> > > to restore when the MBIM port command timeout in userspace applycations.
+> > > 
+> > > Hardware reset modem to recover was discussed with MTK, and they said
+> > > that if we don't want to keep the on-site problem location in case of
+> > > suspend failure, we can use the recover solution.
+> > > Both the ocurred issues result in the PCIe link issue, driver can't
+> > > read and writer the register of WWAN device, so I want to add this
+> > > path
+> > > to restore, hardware reset modem can recover modem, but using the
+> > > pci_channle_offline() as the judgment is my inference.
+> > 
+> > Thank you for the clarification. Let me summarize what I've understood
+> > from the explanation:
+> > a) there were hardware (firmware) issues,
+> > b) issues already were solved,
+> > c) issues were not directly related to the device suspension procedure,
+> > d) you want to implement a backup plan to make the modem support robust.
+> > 
+> > If got it right, then I would like to recommend to implement a generic
+> > error handling solution for the PCIe interface. You can check this
+> > document: Documentation/PCI/pci-error-recovery.rst
+> 
+> Yes, got it right.
+> I want to identify the scenario and then recover by reset device,
+> otherwise suspend failure will aways prevent the system from suspending
+> if it occurs.
 
-But with this change we go from an incorrect:
+If a PCIe link goes down here's my understanding of what happens:
 
-# cat /sys/kernel/debug/gpio
-gpiochip0: (dangling chip)
-gpiochip1: (dangling chip)
-gpiochip2: (dangling chip)root@qemux86-64:~#
+  - Writes to the device are silently dropped.
 
-to still incorrect:
+  - Reads from the device return ~0 (PCI_POSSIBLE_ERROR()).
 
-# cat /sys/kernel/debug/gpio
-gpiochip0: (dangling chip)
+  - If the device is in a slot and pciehp is enabled, a Data Link
+    Layer State Changed interrupt will cause pciehp_unconfigure_device()
+    to detach the driver and remove the pci_dev.
 
-gpiochip1: (dangling chip)
+  - If AER is enabled, a failed access to the device will cause an AER
+    interrupt.  If the driver has registered pci_error_handlers, the
+    driver callbacks will be called, and based on what the driver
+    returns, the PCI core may reset the device.
 
-gpiochip2: (dangling chip)
+The pciehp and AER interrupts are *asynchronous* to link down events
+and to any driver access to the device, so they may be delayed an
+arbitrary amount of time.
 
-Bart
+Both interrupt paths may lead to the device being marked as "offline".
+Obviously this is asynchronous with respect to the driver.
+
+> > > > > +++ b/drivers/net/wwan/t7xx/t7xx_pci.c
+> > > > > @@ -427,6 +427,10 @@ static int __t7xx_pci_pm_suspend(struct
+> > > > > pci_dev *pdev)
+> > > > >       iowrite32(T7XX_L1_BIT(0), IREG_BASE(t7xx_dev) +
+> > > > > ENABLE_ASPM_LOWPWR);
+> > > > >       atomic_set(&t7xx_dev->md_pm_state, MTK_PM_RESUMED);
+> > > > >       t7xx_pcie_mac_set_int(t7xx_dev, SAP_RGU_INT);
+> > > > > +    if (pci_channel_offline(pdev)) {
+> > > > > +        dev_err(&pdev->dev, "Device offline, reset to recover\n");
+> > > > > +        t7xx_reset_device(t7xx_dev, PLDR);
+> > > > > +    }
+
+This looks like an unreliable way to detect issues.  It only works if
+AER is enabled, and the device is only marked "offline" some arbitrary
+length of time *after* a driver access to the device has failed.
+
+You can't reliably detect errors on writes to the device.
+
+You can only reliably detect errors on reads from the device by
+looking for PCI_POSSIBLE_ERROR().  Obviously ~0 might be a valid value
+to read from some registers, so you need device-specific knowledge to
+know whether ~0 is valid or indicates an error.
+
+If AER or DPC are enabled, the driver can be *notified* about read
+errors and some write errors via pci_error_handlers, but the
+notification is long after the error.
+
+Bjorn
 
