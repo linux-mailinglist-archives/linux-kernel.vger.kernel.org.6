@@ -1,73 +1,92 @@
-Return-Path: <linux-kernel+bounces-390531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891B09B7AF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:44:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92B09B7AF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3B21C21C6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:44:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18A681C21CA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AA519E81F;
-	Thu, 31 Oct 2024 12:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A81619EEC4;
+	Thu, 31 Oct 2024 12:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M97F/5F3"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="smlXXzfi"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76D51E871;
-	Thu, 31 Oct 2024 12:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD17119D084
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378609; cv=none; b=mwy+fWI9z2thCXNIwhoI3R0Zjb+jnsZrPQBTXNZdtDB9pMv35qyahsSvv3yVPrgErxdXuyrY9XGdO3Wrp49DdC6H5E8A8f5GhHCGvMDupUqGOZGocm3N61S/oG0m6loGUl4ecTfJ+3uGzbGPEaz0NZEhFqeuYCnDsEN6Z5PiKRE=
+	t=1730378611; cv=none; b=A7FPZaMvKCiINhSQzu8O+1W2Ew8AuIuvOVQrH32EAqhV0L7LTLGLSeEwb+1AG60ISaTA7TZUnSVKORgFODNvkcJyGWIRZlFYVL8TauSEhWNlw4NvlsRwiNzriqvtGk99b2Wl7rx8ENm0uKOKS0B3QX4MHqydV9TD89bgJB9Ie4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378609; c=relaxed/simple;
-	bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z2CPP8Fe8n3HgNRerhhODjALshm8wlwlvk1E1jM231A67vkIvOpUAvupFSMH7Gw9x8r2EJ3TuXknoBQp58uxPghDSW1KYB8Jks3VolgT32viVH/uOnhiswEgLop/8XqwXU3mtiM5blHIZR0TzWKa+MSXZobWIRpUQwZ7pIpTJa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M97F/5F3; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so626865f8f.0;
-        Thu, 31 Oct 2024 05:43:26 -0700 (PDT)
+	s=arc-20240116; t=1730378611; c=relaxed/simple;
+	bh=UN0TCpzuzjXzpuD/YbvswwIqzUFPFchbJ0W2UC09I5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q5Zx7LKpl8fRR8CLX6DUcbMWqEkzHRi4exj9LA3SJ8pZMpluyI4hWWUiknavony01wxNUSuqsw5tGiN0qm4XdEGdblfxKXntPcKccO/eOKg2K/tUOUhcXF6AaAIeSRUDPGkrDHSDHqhJsZKetn44EUgv1aLz3t1ok5vJdcCQhDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=smlXXzfi; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso6882845e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:43:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730378605; x=1730983405; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
-        b=M97F/5F3N+UC6jyrvEqN5JZOpkwa0m3w99GPE8xGV7N/V0aLhIBBFFBFKtklE9S84n
-         D0fUw+fzZeXyNzdC1goPBESkO30G/5p6ExgG7WLCD9Q+6Wc3HZ5nmNYo6nkQvXM2utAX
-         DvWo3CZ5MolavU4pTfFzmbL8pVxxdjRGTfprVqae+dgd6l+x2j51TE8wWYSWhKGHj/a4
-         7Pb4VigNZ3sE5jmURDMkE0VVW0ed28Qf0Ddt6uxfiP7ffPetAj8KCjVwJVnYNa1ONksA
-         V0XhSYMDHxZEOQfArsuu7S0EbYhsGLOwBaYJkbAJvtNbt3NT4bvYck1BUZM9BkvotUWi
-         XNlg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730378607; x=1730983407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9NvAiEcmr3Bkqwa+x+z3wqEtD01j06Ynm63RukDU9ec=;
+        b=smlXXzfimDFvtkg9sK5dCTfyrTy81XOVO4WfACg7zWxEsqJPKDPTuDAf3jZyWlcSmz
+         cQiqReJJA4c98pQIHupMKGMjI0V+JXbnRQHVJ21fCqWFZqNLKMXQl8LoKrSZ0dIoIdKo
+         jhT50KsKth4ykn659ZGM8MsfI5pl/FXhydTP+iSvs0KweghxlXpezZBLIx+1GY/XFHVy
+         LbMre91Sd5NaKzjnxJkzadUQw2/cG5SowYuYZ7NKe2m+pvqIai3DgJEKyTVbkxohsjdO
+         LywkvaTivxC6/FbA+y/Qr0pXPKyxJhlbOtE3tIgKyvGYS8lqidQweKalikreahxto7pq
+         c3QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730378605; x=1730983405;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
-        b=DyHAyIQd3MwUaDTrDR0f0TY6NdG/ydDJmOR09wKPK8FdiBA5R+PXNKuwxXRS3ryQAs
-         7AQqJQ3lU9RDkpPE+twmCXj5nehMIw1LRmQ/stoGhPJbuW/v3wuwqFBCuB2PPS1Gi3ZA
-         uLhELry5YB5H9Zz880abGTU6CMb7yLLUZ1MAQMgKpOToDms11a9v5B9wuyuAX34NDhbP
-         gCtqex6UJXK18jHXZMLGJVqcJ0WPHWcV+ZuRx4i5PK6p1AFJsZOH3gjwrn90JCOKFyIu
-         xezUC4LmkyZO70MpS3GNkZ2y39Gq1C+vd9Ywy5MJQD2tXzXtlf+X79qvBWsCt1TExlcA
-         G6EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVc7MPuIAFDoU2gUCh+nAzxRmrd+USZYgiFXsGQGt4oRj7ViEEoekmFdojyD3+PTkYopV5XnqGcJpc=@vger.kernel.org, AJvYcCXBUXd25F8wJbFvgvRwfyyxEe9t425RKW/MpKlYo1vRmqklKVwup1z1RcetzCL7D0PWoMczpqemzhagoNNy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/uN08U8w+XsUTecWm6z6C1Hm40twuHvlyl0YhQ/EBYpY4U/Ls
-	MwGp2/7dJDDw3xEm0ChyvSZ5jupzDe1JAszRiK5pwuBtz+4lPLkz
-X-Google-Smtp-Source: AGHT+IFEIVQ6pPS463YcejXrPDyaSA/UtTd61XxgHxKzbLgWYHBucBJA9TZFt3elDzGAGWQm/OFVzA==
-X-Received: by 2002:adf:fdd2:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-381b707641bmr5307715f8f.17.1730378604792;
-        Thu, 31 Oct 2024 05:43:24 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abdasm2021810f8f.97.2024.10.31.05.43.23
+        d=1e100.net; s=20230601; t=1730378607; x=1730983407;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9NvAiEcmr3Bkqwa+x+z3wqEtD01j06Ynm63RukDU9ec=;
+        b=BgF7+Dw0jbAs6Fbw+nwc6X+HwhGTaIo3Zi+vvMLE0oPqF2HX/fUjhTAZvtqP61tFJm
+         DI5I2vGsiX1xyvGszBFZVY52bqRKM4g7vxT+yg7erf4tqiwRY1vdEpLZryYcy03aBLHS
+         2oqw/DkCPbZgpkWvf73I76Xe+KMmx2AdC0FOJgfx8RFXI+uv5nz25bHRojhmKU6J9pcc
+         oW7S/Vu1JD5kTWjS/0TNSTBMYCCu1k85OecIc15AI3GoebUz5EFWg55c8ShNCzvydg7j
+         BzS7EWy4TdkNks8eT3RvNGJXfvptfVHHGc8wtohOiKRE83HrkYINqyN1iszvwHDInXsj
+         tz2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWqYW/0lP0cmKDU5PA92SfDWN9bT7K9tpzVMrMEu3Cxb0TebG5D1KMmNnvVkj/+k4xueGN2UzDTJTPaMX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdDDAc6M7NB+wPq5f6KRiUdCMcP3nDhmXOVoYF2VHA0kgnapxT
+	KfAyjDKkBF8n3pR4YaaONZgyBKyq7mo7WcS9sDkyVJXDGJLWVpegPV4TJNfpsWU=
+X-Google-Smtp-Source: AGHT+IF30i6ka1elJWPx3EArTq7Yjb50xuHjDZ5vtObnKFlbrvUrpV5QCfQF5TFFmJk617XgpXk/Vw==
+X-Received: by 2002:a5d:4441:0:b0:374:c56e:1d44 with SMTP id ffacd0b85a97d-3806121fdf9mr12656862f8f.48.1730378606974;
+        Thu, 31 Oct 2024 05:43:26 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a6bc:32f9:21fc:be97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c1185b4bsm1999195f8f.112.2024.10.31.05.43.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 05:43:23 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 31 Oct 2024 13:43:16 +0100
-Subject: [PATCH v2] clk: renesas: cpg-mssr: fix 'soc' node handling in
- cpg_mssr_reserved_init()
+        Thu, 31 Oct 2024 05:43:26 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	Arnd Bergmann <arnd@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] gpiolib: avoid format string weakness in workqueue interface
+Date: Thu, 31 Oct 2024 13:43:25 +0100
+Message-ID: <173037860284.7463.3619742464937960411.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241028142152.750650-1-arnd@kernel.org>
+References: <20241028142152.750650-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,67 +94,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-clk-renesas-cpg-mssr-cleanup-v2-1-0010936d1154@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGN7I2cC/42NQQ6CMBAAv2L27BraEhRP/sNwKMsCG6GQrhIN4
- e9WXuBx5jCzgnIUVrgeVoi8iMoUEtjjAaj3oWOUJjHYzOYmcwZpeGDkwOoVae5wVI1Jsg+vGU3
- pXNMWrqaSICXmyK289/y9StyLPqf42W+L+dk/w4vBDAt7seecqW6pvnWjl+FE0wjVtm1f95hVV
- sgAAAA=
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730378603; l=1720;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
- b=nmTqZwyudmz5MVr0qhXTgTM6WrccGhKYgvQPFOc06zJIc77Np2zcshJVVb7+oFt+kYmHvXAz4
- to57HC7fXWXAcYSj+HjgVn17U31E7DgDCAlrHsrOwSm/SAFrMJ7qptw
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Transfer-Encoding: 8bit
 
-A device_node reference obtained via of_find_node_by_path() requires
-explicit calls to of_node_put() after it is no longer required to avoid
-leaking the resource.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Instead of adding the missing calls to of_node_put() in all execution
-paths, use the cleanup attribute for 'soc' by means of the __free()
-macro, which automatically calls of_node_put() when the variable goes
-out of scope.
 
-Fixes: 6aa175476490 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Changes in v2:
-- Squash patches for mainline solution without intermediate steps.
-- Link to v1: https://lore.kernel.org/r/20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 28 Oct 2024 14:21:46 +0000, Arnd Bergmann wrote:
+> Using a string literal as a format string is a possible bug when the
+> string contains '%' characters:
+> 
+> drivers/gpio/gpiolib-cdev.c:2813:48: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
+>  2813 |         gdev->line_state_wq = alloc_ordered_workqueue(dev_name(&gdev->dev),
+>       |                                                       ^~~~~~~~~~~~~~~~~~~~
+> drivers/gpio/gpiolib-cdev.c:2813:48: note: treat the string as an argument to avoid this
+>  2813 |         gdev->line_state_wq = alloc_ordered_workqueue(dev_name(&gdev->dev),
+>       |                                                       ^
+>       |                                                       "%s",
+> 
+> [...]
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 79e7a90c3b1b..bf85501709f0 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
- static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 					 const struct cpg_mssr_info *info)
- {
--	struct device_node *soc = of_find_node_by_path("/soc");
-+	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
- 	struct device_node *node;
- 	uint32_t args[MAX_PHANDLE_ARGS];
- 	unsigned int *ids = NULL;
+Applied, thanks!
 
----
-base-commit: 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
-change-id: 20241031-clk-renesas-cpg-mssr-cleanup-1933df63bc9c
+[1/1] gpiolib: avoid format string weakness in workqueue interface
+      commit: a22c9dc26d6fc522357b73858b13e29c58f49d64
 
 Best regards,
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
