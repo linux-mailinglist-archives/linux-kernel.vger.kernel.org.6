@@ -1,93 +1,89 @@
-Return-Path: <linux-kernel+bounces-390328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAD29B7876
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:14:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D9E9B7878
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B50DB21328
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:14:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50D50B218AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728011990AB;
-	Thu, 31 Oct 2024 10:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C241990D8;
+	Thu, 31 Oct 2024 10:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g25zhrjW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ob2QxMwe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E6B12B169
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624FB12B169;
+	Thu, 31 Oct 2024 10:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730369657; cv=none; b=ZLsh9DMCWHFDgxo6SjSiD9PfKIqtzaJtUgMsQ73RKSOPt2uBFP2mI25P9tLmzP7us+8bYRsQUfIZjsFMTDJ+X5Mom/1DoiXeroYRVGs9ha5IPk1VjUx6pU6r12IFlkUnNIT7KtsPW97XLuzszVExB5xIU7SqAC1VcSbQkSOcUPA=
+	t=1730369688; cv=none; b=Top7Yp9EAr8NL6bAn6Z2L3+08AZ+dFD71PYwS+uogEuNM6YWG1L1wjnT16WN/QzcwJnkYkZDwBiKoX2ivnFQAlxPY8t06D0P1pegwEVU1Yj3tGw01U07co8CtbbvWM+03JEYUtPomQaeJ7H16RRYuUwtKNakU4uRV9EhwIvYyfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730369657; c=relaxed/simple;
-	bh=SfUOKiT/E6pzf63FvALfLtnrYKwCVgTIP4DrqgDHNhY=;
+	s=arc-20240116; t=1730369688; c=relaxed/simple;
+	bh=KUIrzRY/qSqo8rjn0vcLHeEKyxN6+0+rnc3xTHbrGAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCybs7UxvdAmxEJ/pcMB1631CSrVAJu5B5VdHvRxuSvlMcIKoKPaCBwZaEMFcRcR7PkvKEo1qzSAWXxNB1CsQN9uOiXEFbNvBqrqDB5pM0BVkPYvIyj5QU+vYJNSApykuuf2UKutf73oEhUF8MRGHCOzEqTbJCvP0TnTGgQk97U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g25zhrjW; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730369657; x=1761905657;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SfUOKiT/E6pzf63FvALfLtnrYKwCVgTIP4DrqgDHNhY=;
-  b=g25zhrjWYpMUQB36BafI/FKR7mMWKSvRJz3/0UpiVpRzHfWlUuDrYK2M
-   6GdTj+y909FRhY8l7YfdcQ39+K7SVQUvVwrIpH9gyHkaS+O9/LyaztmmQ
-   /e6IKSNxNH+9of9Ct/b5LfZKddak6P0tcUhkZqKGQwNGy2gBH1/ob3n1r
-   dHo1+TIztOYTnIqT8bfKezOqeCVg51N3qy0+Tms6OYVC8JShdkZdC8XV1
-   T9jwYKd7twICSE3ETKqkbEyXxxJLisdtvfYAzqhTRqLXyaxgb7aR9Ns2G
-   8/roAUKKx3Kumjh+I/cT37afCmUds6cRR4J2FblbJUJpurWrWv2zXoKMh
-   w==;
-X-CSE-ConnectionGUID: GF/pVbwtScy+u6s3lIZo3A==
-X-CSE-MsgGUID: ZXlAMbqxRAuufs5RIFTlIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29956527"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29956527"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:14:16 -0700
-X-CSE-ConnectionGUID: XNYJCng+Rk67WwN9YOHhaw==
-X-CSE-MsgGUID: zWMqq7EKSAG3n/N5/4FMnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="82743180"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 31 Oct 2024 03:14:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 730D21C4; Thu, 31 Oct 2024 12:14:11 +0200 (EET)
-Date: Thu, 31 Oct 2024 12:14:11 +0200
-From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>, 
-	David Hildenbrand <david@redhat.com>, Yang Shi <yang@os.amperecomputing.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] mm/huge_memory: buddy allocator like folio_split()
-Message-ID: <cqh3exrkag2mbdeluranstvakkzxjpu34kkjs77feuvexoevop@nlyq2otyygr2>
-References: <20241028180932.1319265-1-ziy@nvidia.com>
- <20241028180932.1319265-2-ziy@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ul+WEL4+Dv+EarOkLSYMifGBNDMd+p/jpv7ddEIKmREutW2ChQLi7w1BnSm/PVQXsZ5kKNiH2T+G7IZ8Ev0wqwS4Mj++MvRBjcEKZs9KITSalWXIJT5CL2uz3f5hyOWW8ulhOHUYkUapbQKEWqvyeGrSxPtAEuOnmIui3lJVyzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ob2QxMwe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B9B9C4CED0;
+	Thu, 31 Oct 2024 10:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730369687;
+	bh=KUIrzRY/qSqo8rjn0vcLHeEKyxN6+0+rnc3xTHbrGAI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ob2QxMwe3IvoWcQ4t+zyauZ0mNJqd552FzClpZAPIEjaPc4SSIAwXiXbcJxtBXEGA
+	 I7QM4RvPoCe+15GK5tplmZ1Z9vjIHwtm5WwTnv19274vkQpkYTZdYeMnAMD4k3tAau
+	 m0cegLVgXxTY3ajkgeWptdnTU7+gZKGcsFW2G3YPd8AGZoU7cKiNZconW7282DK3b8
+	 qGrIag7uuEPkio7MzhzDBEiwIL4DotfQDMMDfUS68tnlYJ4CNLIb9dzD6+CvPVTXoe
+	 Oxyfqe+OtUp4Zwa9mEMTUIgkFe9uU2c6HS81J4on6Gv+9OUZashTSNNuX/SSxcd/SW
+	 L7g2DMyww+xHA==
+Date: Thu, 31 Oct 2024 11:14:42 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, "Ma, Yu" <yu.ma@intel.com>, 
+	jack@suse.cz, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+Message-ID: <20241031-anraten-dorthin-4e01a39b46bf@brauner>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-2-yu.ma@intel.com>
+ <20240814213835.GU13701@ZenIV>
+ <d5c8edc6-68fc-44fd-90c6-5deb7c027566@intel.com>
+ <20240815034517.GV13701@ZenIV>
+ <CAGudoHEu07q72u_XFH61kGXyKr+vAqGFhn_tSSu6U2uMDABLdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241028180932.1319265-2-ziy@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHEu07q72u_XFH61kGXyKr+vAqGFhn_tSSu6U2uMDABLdw@mail.gmail.com>
 
-On Mon, Oct 28, 2024 at 02:09:30PM -0400, Zi Yan wrote:
->  mm/huge_memory.c | 604 +++++++++++++++++++++++++++++------------------
->  1 file changed, 372 insertions(+), 232 deletions(-)
+On Thu, Oct 31, 2024 at 08:42:18AM +0100, Mateusz Guzik wrote:
+> On Thu, Aug 15, 2024 at 5:45 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Thu, Aug 15, 2024 at 10:49:40AM +0800, Ma, Yu wrote:
+> >
+> > > Yes, thanks Al, fully agree with you. The if (error) could be removed here
+> > > as the above unlikely would make sure no 0 return here. Should I submit
+> > > another version of patch set to update it, or you may help to update it
+> > > directly during merge? I'm not very familiar with the rules, please let me
+> > > know if I'd update and I'll take action soon. Thanks again for your careful
+> > > check here.
+> >
+> > See the current work.fdtable...
+> 
+> this patchset seems to have fallen through the cracks. anything
+> holding up the merge?
 
-The patch is really hard to follow. Could you split it into multiple
-smaller patches?
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+It's in next for this merge window.
 
