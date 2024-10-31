@@ -1,259 +1,116 @@
-Return-Path: <linux-kernel+bounces-390422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056229B79A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:26:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D209B79A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:27:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E9C2B237F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76AF21F23719
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32AF19B3D7;
-	Thu, 31 Oct 2024 11:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30CF19ADA2;
+	Thu, 31 Oct 2024 11:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fd/IPDcH"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hz3vh/+D"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A3719ABD1;
-	Thu, 31 Oct 2024 11:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B1419ABBB
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730373990; cv=none; b=cIG/30W/ryNE+r2YRNAtQr1vdg6H7Reo/NZzXMvL47zFUs9hSRnUoRbnIa7DeBDvTJ7X+se9Ea0M5IthsVXH5acThH1jQllFz+4AyikFxhuejaLipQzxrM1DsrIlKvlMNfHK0ZS+qzxoh8XJoc+QCv0aYL4yH6a2j5Vn/0GKpFo=
+	t=1730374071; cv=none; b=gaYgc6b3mi8o+JeDvH7EB3wjTH+D9hfYRYsw1Si+kcjFwXo9wggVhN8HwIBsySK9H6sg8Q00unGSTzvlBEKybyhp9MzcOCZGeOfCTGuuKyw48K3u70sXRjJ+lfT1BK6MU1unHhSNvu+8t8SBtOedjqz2oVXNkQz7Zo7j6dE6Jtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730373990; c=relaxed/simple;
-	bh=hzudRnhY5g6fYzOL8bxyYrlk3c3jll8mroM69zcnwN8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=V8MvxKM1NGYoRA4t7blljconWWajBnZfLMKwkRKxCz/q9I0u4tVnbWlW5wqJByVJK3RcSHfHoOxpchKj7yna2oMOzHYP44dmVwL32X8XErJLxRBk1NC9OAdzzPfpWw8tNcN4eNwE45qsK26Xq1Z/xYxOySANse575fnvDSib5X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fd/IPDcH; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c9150f9ed4so1154602a12.0;
-        Thu, 31 Oct 2024 04:26:28 -0700 (PDT)
+	s=arc-20240116; t=1730374071; c=relaxed/simple;
+	bh=2/wxx2yPHeqzUl3bK4IWTgP7OiPHmrV9sMpSAgHj9dY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSHo51qBpAoMcnOBh2DO5mXi330nqkm+o9usuyAo/Y9NGtTjxMmzwhdyGi+Onvx8LvjpcayT92eehIdQE6Aa3yAfIfjE+eLD5tmwgYW42Ve+nzMRggX/u4BAJ0MjCvto3wtQarX9lAMWhZKQAfDkouuyThZCRMrz+njTuJHsgK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hz3vh/+D; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d47b38336so657403f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:27:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730373987; x=1730978787; darn=vger.kernel.org;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=du8RsPSSmfKdksX84UQ+FWRuhhilBEXtJldK005aAhw=;
-        b=fd/IPDcH6PUzEI5G13DQe1XGk/9ZQKbc7FF9+RFZrAktrag4Ds0BqMnOXaFxoheKsu
-         aq11VBVFEyPZLh5Lje/ljryOjTNpCz3T0lIWQZobOM2WBxg2PQEwCttkhLCOcBlRrozY
-         +vuq4VfZnhquDxRJHYFwivTmTEeDvwmoG5YIhL9MIQEKtPrwFdjullCF9ylM4Pliir9k
-         ysR+l+mJ32mqO0wlu31Itvwnv71vuyfDXujKtAvJgXHowWp9u8Q2dgXlHFlj3yBbr1Tp
-         ICSLaeQ2q09D1DvOLah7On4y954kZymoX2ShY0+IEjHBZRq8e9MKvE8o8YXHAtchu/5o
-         /gkg==
+        d=linaro.org; s=google; t=1730374067; x=1730978867; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Qinma5kqYmuHBjZm6H5Vna/9c51/QTVcMYek7K4+Gg=;
+        b=hz3vh/+DULH61ZS/p5Cp2thML0yxKqd7e73IBuRXFu6wKCViP6WlA2G4vqhKc23MjV
+         zqcd+UCDgVgp8ki0eeE2tYUmBYHtybT7IaeZdMIk6BnGM7z7JcLOCV8MtY2I3G6TmEYC
+         Q1DdLBCuKkV2lJXwuMugcdfFYOwxjQfy+OF3kgQskpb3T/h6Q3SDiQGe3sNr0QRCWI4l
+         YSHxCwvQJAUnTpMdyqbPeg+3lQd5Vs4hJsWl9BX+eUp7CsW3elwE6xFCt4n4KcdO8T7r
+         QBE1FboIr+l8GpyI7FcQ03hSMKOtoWo/qQ0BK2iMEdMuKpt3XEQWPpEI7ua8d4Hu2iqJ
+         oqjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730373987; x=1730978787;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=du8RsPSSmfKdksX84UQ+FWRuhhilBEXtJldK005aAhw=;
-        b=HVtWZfCjaAge98DqdlLbqUzYP2AnQ/bG14T1rmpoUQ90q+Cc/tiLMMubg0/cKN0VPv
-         H7nZTCkcOldUPgTtC3OxvFv00Zq3yERxR00x/b9Ur1f/ixDJxJBfbBSYHL//6i7W9fQA
-         04sqGsKxu8+3ut6PI3cdyb5mnHlNlnQQlq/7NIe95F2ta3aVUpnaTvl8TZzy/mvEKUcd
-         dJjZUjZvW/yun5Pi4xw7gXSu64e+Avqwfgg1pBl4kTK9mWJkCRafybl+SaU1ga2qbS+Q
-         HY7iaTMxIbmKmNCy+YgStL/Be644drf/eFhxsLmW5vGDDlbS0jmKIzN2p5vAumNhLgch
-         +spg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhhbDZycL6lpY08TA6Wca07lwEMMIshav8CklVedQmJbGnVdIhdUrMrYbyzqmA9z6ElsDRgy5eET9ahA==@vger.kernel.org, AJvYcCX+DolMKuR1vC4RQJ8dKEtJ78HT7GL57DK7SCqnODQX0H6pw66DlI63g0IyLmepWMzpBH1LTgMUIZtEIeKa@vger.kernel.org, AJvYcCX0ZEFzukkeQBI2O7x3p2+OdWM3+Gp2aJCaunlWCHTBpvcB0qI7EP9FstFAXsqZ1SdtyKJD4gBDrUM=@vger.kernel.org, AJvYcCXhjIsjjDHm3+E/+bFwRE/fa6ud9ys9vEfNK60j1O1o0uRPIS98jo+olr+AkJ3jS+JvE+ZPdHgNToo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtSzRJ+hi5RcvzhvDkWOrLT4oY9aePzidZ3WTGscJc27ptO3WV
-	blDOT+2kvvpmRQIbIYSpMPsuUZ81suvIr65IfpReQ7IfPmlRtEkS
-X-Google-Smtp-Source: AGHT+IGPM1ys92XJWy55iaMc+mkkiiSwTT3VmXdYtDiJ0hU+Inj8aTV0aI+/6k+hyeDL2q/6nruBXQ==
-X-Received: by 2002:a05:6402:3481:b0:5c9:2a5a:5f0e with SMTP id 4fb4d7f45d1cf-5cbbf94abacmr14848930a12.28.1730373986367;
-        Thu, 31 Oct 2024 04:26:26 -0700 (PDT)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac5cb8fbsm476840a12.0.2024.10.31.04.26.25
+        d=1e100.net; s=20230601; t=1730374067; x=1730978867;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Qinma5kqYmuHBjZm6H5Vna/9c51/QTVcMYek7K4+Gg=;
+        b=q3JUkAQsiwnr0cFbPQPeLAoZeJ+fXkIM+wXGw6WXoA+KN66Brgwn4U/XKjNx7JSb2f
+         geZ5UATu0GMnWC8X38puAs8p7t46XNFJAycGwNgUHiUJJwSGSthZUPkQc7gNkhoQx0kh
+         mS4PVKzfyG3tC1UgGvv1w0Bo0wnN1Zk8guI7MNPX6uHMCCmpP9ibpnRO5oIem4kD3X9i
+         NQiZklC1RoRB9EQ5luYCvgHD3QWs+WEMXvL18p4A7cD4zPsS+3t07brtGrpf7PuVGRcv
+         x+X15YNXxzW75iXEfqElNikUxzjxi8E9+4E0sd2saIvaFNg2kV9vrmFJZ+wxXc7ebats
+         re/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWOb7HTXfc9FVQDzVBF2jpy/b02IeDVYuAHqgNQXDG8O7le3S6rtHMbdBD+zC+8yJr2GOmLtdy0NiQcWiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUT09NO519bBajvBVQQqW4NCAzZTUmJsKUpBUBFCyy7xGzMdbj
+	zUUevoz53r3UAAuieGQSB9rMbARgmJes/giwKXbP4ffuJ08e6U+nVAbt2vuGpL4=
+X-Google-Smtp-Source: AGHT+IHMzU32/E5p1uwxhDrq7bFwkszQjYOIXlfcx9OzbVpxpXnCoF3yBkBjLJDocKcQhGQ24Jv1YQ==
+X-Received: by 2002:adf:9793:0:b0:367:9881:7d66 with SMTP id ffacd0b85a97d-380612008e6mr13984567f8f.41.1730374067469;
+        Thu, 31 Oct 2024 04:27:47 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e6b5sm1847280f8f.88.2024.10.31.04.27.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 04:26:25 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 31 Oct 2024 04:27:46 -0700 (PDT)
+Date: Thu, 31 Oct 2024 14:27:43 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux Regressions <regressions@lists.linux.dev>,
+	lkft-triage@lists.linaro.org,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>
+Subject: Re: next-20241028: gcc-8-defconfig : ERROR: modpost:
+ "__aeabi_uldivmod" [drivers/media/dvb-frontends/cxd2841er.ko] undefined!
+Message-ID: <d3903c31-21ae-4ffe-9969-6faa7e430cb5@stanley.mountain>
+References: <CA+G9fYvvNm-aYodLaAwwTjEGtX0YxR-1R14FOA5aHKt0sSVsYg@mail.gmail.com>
+ <456c79d2-5041-47c4-bed2-44d257524ddd@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241030203050.5cdf3450@jic23-huawei>
-References: <20241021-iio-read-avail-release-v5-0-b168713fab33@gmail.com> <20241021-iio-read-avail-release-v5-2-b168713fab33@gmail.com> <ZyJHFp6vbQ7deLFs@black.fi.intel.com> <173031260171.39393.109639772708550094@njaxe.localdomain> <20241030203050.5cdf3450@jic23-huawei>
-Subject: Re: [PATCH v5 2/5] iio: consumers: copy/release available info from producer to fix race
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Alisa-Dariana Roman <alisa.roman@analog.com>, Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>, Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
-To: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 31 Oct 2024 12:26:24 +0100
-Message-ID: <173037398492.12348.265826723028347056@njaxe.localdomain>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <456c79d2-5041-47c4-bed2-44d257524ddd@stanley.mountain>
 
-Quoting Jonathan Cameron (2024-10-30 21:30:50)
-> On Wed, 30 Oct 2024 19:23:21 +0100
-> Matteo Martelli <matteomartelli3@gmail.com> wrote:
->=20
-> > Quoting Andy Shevchenko (2024-10-30 15:47:50)
-> > > On Mon, Oct 21, 2024 at 02:54:15PM +0200, Matteo Martelli wrote: =20
-> > > > Consumers need to call the producer's read_avail_release_resource()
-> > > > callback after reading producer's available info. To avoid a race
-> > > > condition with the producer unregistration, change inkern
-> > > > iio_channel_read_avail() so that it copies the available info from =
-the
-> > > > producer and immediately calls its release callback with info_exists
-> > > > locked.
-> > > >=20
-> > > > Also, modify the users of iio_read_avail_channel_raw() and
-> > > > iio_read_avail_channel_attribute() to free the copied available buf=
-fers
-> > > > after calling these functions. To let users free the copied buffer =
-with
-> > > > a cleanup pattern, also add a iio_read_avail_channel_attr_retvals()
-> > > > consumer helper that is equivalent to iio_read_avail_channel_attrib=
-ute()
-> > > > but stores the available values in the returned variable. =20
-> > >=20
-> > > ...
-> > >  =20
-> > > > +static void dpot_dac_read_avail_release_res(struct iio_dev *indio_=
-dev,
-> > > > +                                         struct iio_chan_spec cons=
-t *chan,
-> > > > +                                         const int *vals, long mas=
-k)
-> > > > +{
-> > > > +     kfree(vals);
-> > > > +}
-> > > > +
-> > > >  static int dpot_dac_write_raw(struct iio_dev *indio_dev,
-> > > >                             struct iio_chan_spec const *chan,
-> > > >                             int val, int val2, long mask)
-> > > > @@ -125,6 +132,7 @@ static int dpot_dac_write_raw(struct iio_dev *i=
-ndio_dev,
-> > > >  static const struct iio_info dpot_dac_info =3D {
-> > > >       .read_raw =3D dpot_dac_read_raw,
-> > > >       .read_avail =3D dpot_dac_read_avail,
-> > > > +     .read_avail_release_resource =3D dpot_dac_read_avail_release_=
-res,
-> > > >       .write_raw =3D dpot_dac_write_raw,
-> > > >  }; =20
-> > >=20
-> > > I have a problem with this approach. The issue is that we allocate
-> > > memory in one place and must clear it in another. This is not well
-> > > designed thingy in my opinion. I was thinking a bit of the solution a=
-nd
-> > > at least these two comes to my mind:
-> > >=20
-> > > 1) having a special callback for .read_avail_with_copy (choose better
-> > > name) that will dump the data to the intermediate buffer and clean it
-> > > after all;
-> > >=20
-> > > 2) introduce a new type (or bit there), like IIO_AVAIL_LIST_ALLOC. =20
-> >=20
-> > Could you elaborate more about these potential solutions? Maybe with so=
-me
-> > usage examples?
-> >=20
-> > If I get it correctly, in both cases you are suggesting to pass ownersh=
-ip
-> > of the vals buffer to the caller, iio_read_channel_info_avail() in this
-> > case, so that it would take care of freeing the buffer after calling
-> > iio_format_after_*(). We considered this approach during an initial
-> > discussion with Jonathan (see read_avail_ext() in [1]), where he sugges=
-ted
-> > to let the driver keep the release control through a callback for two
-> > reasons:
-> >=20
-> > 1) Apparently it's a bad pattern to pass the buffer ownership to the co=
-re,
-> >    maybe Jonathan can elaborate why? The risk I can think of is that th=
-e driver
-> >    could still keep the buffer copy in its private data after giving it=
- away,
-> >    resulting in fact in a double ownership. However I think it would be=
- clear
-> >    enough in this case that the copy should be handled by the caller, o=
-r maybe
-> >    not?
-> Mostly the lack of desire to have to copy for the 95% of cases where it's
-> not needed and that it prevents any optimization like you mention.
+Arnd, can you take a look at this?
 
-I think the suggestion here is to add an additional .read_avail_with_copy()
-without replacing the original .read_avail(), so all the current drivers th=
-at
-use a constant avail list would not be affected. And I think this was the s=
-ame
-idea for the additional read_avail_ext() or the additional argument for the
-read_avail() we were considering in [1]. So I would think that
-iio_read_channel_info_avail() would do something like the following:
+This patch fixes the build, but obviously breaks the kernel so don't apply it.
+I don't know how do_div() works or what changed though.  All this code looks
+ancient.
 
-    if (indio_dev->info->read_avail_with_copy)
-        indio_dev->info->read_avail_with_copy(vals);
-    else
-        indio_dev->info->read_avail(vals);
+regards,
+dan carpenter
 
-    ...
-    iio_format_avail_list(vals);
-    ...
-
-    if (indio_dev->info->read_avail_with_copy)
-        kfree(vals);
-
-And the drivers would choose whether to define the read_avail or the
-read_avail_with_copy.
-
-What I was referring to is that, back then, you mentioned you would have
-preferred to avoid passing ownership of the buffer around:
-
-> That's a corner case we should think about closing. Would require an indi=
-cator
-> to read_avail that the buffer it has been passed is a snapshot that it sh=
-ould
-> free on completion of the string building.  I don't like passing ownership
-> of data around like that, but it is fiddly to do anything else given
-> any simple double buffering is subject to race conditions.
-
-I guess there is some other reason other than avoiding the copy when not
-necessary, since by introducing an additional function or argument or return
-type, most of the unnecessary copies would already be avoided right?
-
-Anyway any of this solutions would still prevent the potential optimization=
-s of
-point 2). It's worth mentioning that those kind of optimizations are curren=
-tly
-not adopted by any driver.
-
->=20
-> Jonathan
-> >=20
-> > 2) Some driver might want to avoid allocating a new copy of a big table=
- if
-> >    the race does not occur (e.g. with additional checks on buffer access
-> >    code) and thus wouldn't call a free() in the release callback.
-> >=20
-> > >=20
-> > > In any case it looks fragile and not scalable. I propose to drop this
-> > > and think again. =20
-> >=20
-> > I see your concerns, I am open to reconsider this in case we come up wi=
-th
-> > better solution after addressing the points above.
-> >=20
-> > > Yes, yes, I'm fully aware about the problem you are trying to solve a=
-nd
-> > > agree on the report, I think this solution is not good enough.
-> > >=20
-> > > --=20
-> > > With Best Regards,
-> > > Andy Shevchenko
-> > >  =20
-> >=20
-> > [1]: https://lore.kernel.org/linux-iio/20240729211100.0d602d6e@jic23-hu=
-awei/
-> >=20
-> > Best regards,
-> > Matteo Martelli
->=20
-
-I hope I've brought a little more clarity to the discussion by providing so=
-me
-history instead of making it more confusing.
-
-Best regards,
-Matteo Martelli
+diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/dvb-frontends/cxd2841er.c
+index d925ca24183b..e3131f5c6708 100644
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -314,7 +314,7 @@ static u32 cxd2841er_calc_iffreq_xtal(enum cxd2841er_xtal xtal, u32 ifhz)
+ 	u64 tmp;
+ 
+ 	tmp = (u64) ifhz * 16777216;
+-	do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
++//	do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
+ 
+ 	return (u32) tmp;
+ }
 
