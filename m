@@ -1,101 +1,307 @@
-Return-Path: <linux-kernel+bounces-390623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4775E9B7C69
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:07:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DA49B7C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793781C2095E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:07:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5EF1B2144E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290C119DF99;
-	Thu, 31 Oct 2024 14:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA7319F41D;
+	Thu, 31 Oct 2024 14:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="amrSdQ4v"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MtVep8SJ"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4427483
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DADE14901B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730383671; cv=none; b=bzdi+EZtphPdBA2FNv4eEhl/DkLrJN/mL4dd0R7pr1rXDuCDxoxj/kX/dKWtefeGbxei5TXl7UL3Fv04LdBqAqyWoVXmG/4c6j5wx8KwdYAdBK57kbiUA5UXCiECbYhrO18p0xYjWfjhdRqikhUV3PtTg+tmrexIiH6EMiPky3k=
+	t=1730383719; cv=none; b=NWDEr0ry2vRp/DrlgfCmZ46inol6RYAVvhXxj8sWjpZpk53E+7s/6E9kOWXhGGEDdK88aayE1gnw2UMZ4xzwzM0eGKvutgeBmsQdp7ae/ESHC083CBvADwouIp6OhKVfoSsH0yDMIH/X4ByHxx1VRV/mNLEDi5E91f/LbN+yW68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730383671; c=relaxed/simple;
-	bh=PbXrV50VmBOhRRoF05yp8g7L4tvtb2HeMZrOVURfQss=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tvL0VdU15vJJnad0HK5NPmXc3i5RJVQ6x93ZoJgvmST080OVOEbWIH8nt785MFH1Jw2WI1/Lgf6En5eP/na+cq2MYkA5VL/5zcgNpnWZ/x8rXmvNBnPeeHK0tPIQjxfjVba/bPiO9gFLJfLs+5FSECmekvQER7XotmeZ7KzNwgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=amrSdQ4v; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730383666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BoHAg1qZYHX6lePa8/xhJEWiDV/Xqyk+i/wwaWiTk98=;
-	b=amrSdQ4vTWalw+ipnhMrH/fVousg6iNhB05fsg39QegkSui6545BLh9vUwtK+k8sBCSTOT
-	Z7sIxb+NHD8Fd6/qVZ9GL5ifUyKe4VabUXMdB2YR/8+GfeheTtN3poEoDSgYcf6T4AhrjL
-	yJQQ5tgRpk0WpxDORQYC19ZmE3lgmbc=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH] drm/prime: drm_prime_sg_to_dma_addr_array(): Return -EINVAL on error
-Date: Thu, 31 Oct 2024 22:07:30 +0800
-Message-Id: <20241031140730.2406181-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1730383719; c=relaxed/simple;
+	bh=GNTLcIDFm+zq3H2ohorkYovzdb7O8XSlEBCPAd6IQMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GNr5p96jcv7Kbbm4ph6eRUe8x7DwGwnqZz6b8OYR9DGmwvn16oi/t6dB1q3o2yJqUUMB9hQAecrbC5r99FcyHeKG+BHE51tkxQvLLSni3TqefT/Mesjw+QoOkmlKkoQ9YNmZBvqW8Vky+dCZdW99ZbIJIBC6zAjrQzfi3Z5kVgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MtVep8SJ; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so3206069a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730383715; x=1730988515; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F38pONsR0NSmqh6o0LCuhYWWefsVGgY/5VJduMM0+/A=;
+        b=MtVep8SJ7T5NCg4mewdRCk4qDeoMDyDYXdpNa4b+Xmj4aJum/3I51GGkHBOpJLLD+V
+         f6tiae0UvwKyztgHD6yfTUZpSgDQ6uqgg6SunEDsrh26kWMvVTgSnyRRYNt85ttd18Dw
+         qbQ3ea4lQWRTubujZdB2Iebr7Us8kY/MDmZ9eXB/NJluIgfYG8eRshFYtzRpDwq5n7tQ
+         fvIibYxD22JE3XIifjg3ukRNOOf5/q9fQFn+Vvw2QsNwpENIMV1X7tkMiBg1WJMqkgf8
+         4DBKjIG0PUtx2z+Rmicfc0Uiikq8R5SKo1N6aPsiMGnN+SiHcjMtkPkFj8CJMsucLu6B
+         KdvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730383715; x=1730988515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F38pONsR0NSmqh6o0LCuhYWWefsVGgY/5VJduMM0+/A=;
+        b=DflQyPlFVBfcR4M0YT/TkcF5ogCsVGMZvFaRbyRi9vWUdNUdTgRc50Ghalyf2yEtN/
+         IB344wPyYLaRhiWF6F+8keHy8ZD1ctk6f3XxZ6mjT8KDbTY+iyss2AaMjpLvkFYqHHt2
+         Jy7Zao+9mQT3H01Ze8kUns6kSZXMbxFmpZJu2sCPGD+n/rJYEJQu6r0ex2S0xa24ms8Q
+         LXs4gcmpwnWeDUnFNz8ZgzJYZZ39Bfcyzu9BH03d33JY3rIKXaD4D41z0Ytx44CtPNTT
+         VdP+P//Xly24eaIBpZg1Hb25+P2UU3/KrI8AgrJNQA31Re9pw/YTbEkgQsrSW87f/52U
+         R7gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVde+X/y9Cf+3buLKayg39zr7PU8XgR7CSigiMB3h+2/8xgqCnsrSMdaBjX+6Zy3FwVG3HwB1OE65oN8dQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCYpPZEyEAt3EyEZwRuFrXiB8xhWQ5wUIN8qmuoGIWWYa9MH8H
+	NMPdbLE2Dde9tsBr2EGBnLuPHpOVS0utbEsVNzm/e9j10CvL6qzSgJTu0t3Mvy9zEfRCajVKLlK
+	+0LM4sPdQ790O0BMV1+XoFHxUe5iA2s8JtD/M
+X-Google-Smtp-Source: AGHT+IFuR2VfhsDLHd9RI5W/l/yK5frQLTYWZLBf3IWVb5SIDxZadJB89XF+cTTTnuLdJZDsO1KC2H0KpvK3yPMSgW0=
+X-Received: by 2002:a05:6402:440e:b0:5cb:6715:3498 with SMTP id
+ 4fb4d7f45d1cf-5ceabee80f2mr3249842a12.3.1730383714352; Thu, 31 Oct 2024
+ 07:08:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241031122344.2148586-1-wangliang74@huawei.com>
+In-Reply-To: <20241031122344.2148586-1-wangliang74@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 31 Oct 2024 15:08:20 +0100
+Message-ID: <CANn89i+KL0=p2mchoZCOsZ1YoF9xhoUoubkub6YyLOY2wpSJtg@mail.gmail.com>
+Subject: Re: [RFC PATCH net] net: fix data-races around sk->sk_forward_alloc
+To: Wang Liang <wangliang74@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	dsahern@kernel.org, yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'-EINVAL' stands for invalid argument, while '-1' will accidently be
-interpreted as '-EPERM' by the potential upper caller. Which does not
-describe the error case accurately, since such an error can happens when
-the caller pass a smaller number than actually needed size to describe
-the array passed-in. Such an error is invalid argument.
+On Thu, Oct 31, 2024 at 1:06=E2=80=AFPM Wang Liang <wangliang74@huawei.com>=
+ wrote:
+>
+> Syzkaller reported this warning:
 
-Take drm/vmwgfx driver as an example, the function call trace is:
+Was this a public report ?
 
-|- ttm_bo_vmap()
-|-- ttm_tt_populate()
-|--- bdev->funcs->ttm_tt_populate()
-|----- vmw_ttm_populate()
-|------ drm_prime_sg_to_dma_addr_array()
+> [   65.568203][    C0] ------------[ cut here ]------------
+> [   65.569339][    C0] WARNING: CPU: 0 PID: 16 at net/ipv4/af_inet.c:156 =
+inet_sock_destruct+0x1c5/0x1e0
+> [   65.575017][    C0] Modules linked in:
+> [   65.575699][    C0] CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainte=
+d 6.12.0-rc5 #26
+> [   65.577086][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 19=
+96), BIOS 1.15.0-1 04/01/2014
+> [   65.577094][    C0] RIP: 0010:inet_sock_destruct+0x1c5/0x1e0
+> [   65.577100][    C0] Code: 24 12 4c 89 e2 5b 48 c7 c7 98 ec bb 82 41 5c=
+ e9 d1 18 17 ff 4c 89 e6 5b 48 c7 c7 d0 ec bb 82 41 5c e9 bf 18 17 ff 0f 0b=
+ eb 83 <0f> 0b eb 97 0f 0b eb 87 0f 0b e9 68 ff ff ff 66 66 2e 0f 1f 84 00
+> [   65.577107][    C0] RSP: 0018:ffffc9000008bd90 EFLAGS: 00010206
+> [   65.577113][    C0] RAX: 0000000000000300 RBX: ffff88810b172a90 RCX: 0=
+000000000000007
+> [   65.577117][    C0] RDX: 0000000000000002 RSI: 0000000000000300 RDI: f=
+fff88810b172a00
+> [   65.577120][    C0] RBP: ffff88810b172a00 R08: ffff888104273c00 R09: 0=
+000000000100007
+> [   65.577123][    C0] R10: 0000000000020000 R11: 0000000000000006 R12: f=
+fff88810b172a00
+> [   65.577125][    C0] R13: 0000000000000004 R14: 0000000000000000 R15: f=
+fff888237c31f78
+> [   65.577131][    C0] FS:  0000000000000000(0000) GS:ffff888237c00000(00=
+00) knlGS:0000000000000000
+> [   65.592485][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   65.592489][    C0] CR2: 00007ffc63fecac8 CR3: 000000000342e000 CR4: 0=
+0000000000006f0
+> [   65.592491][    C0] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0=
+000000000000000
+> [   65.592492][    C0] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0=
+000000000000400
+> [   65.592495][    C0] Call Trace:
+> [   65.596277][    C0]  <TASK>
+> [   65.598171][    C0]  ? __warn+0x88/0x130
+> [   65.598874][    C0]  ? inet_sock_destruct+0x1c5/0x1e0
+> [   65.598879][    C0]  ? report_bug+0x18e/0x1a0
+> [   65.598883][    C0]  ? handle_bug+0x53/0x90
+> [   65.598886][    C0]  ? exc_invalid_op+0x18/0x70
+> [   65.598888][    C0]  ? asm_exc_invalid_op+0x1a/0x20
+> [   65.598893][    C0]  ? inet_sock_destruct+0x1c5/0x1e0
+> [   65.598897][    C0]  __sk_destruct+0x2a/0x200
+> [   65.604664][    C0]  rcu_do_batch+0x1aa/0x530
+> [   65.605450][    C0]  ? rcu_do_batch+0x13b/0x530
+> [   65.605456][    C0]  rcu_core+0x159/0x2f0
+> [   65.605466][    C0]  handle_softirqs+0xd3/0x2b0
+> [   65.607689][    C0]  ? __pfx_smpboot_thread_fn+0x10/0x10
+> [   65.607695][    C0]  run_ksoftirqd+0x25/0x30
+> [   65.607699][    C0]  smpboot_thread_fn+0xdd/0x1d0
+> [   65.610152][    C0]  kthread+0xd3/0x100
+> [   65.610158][    C0]  ? __pfx_kthread+0x10/0x10
+> [   65.610160][    C0]  ret_from_fork+0x34/0x50
+> [   65.610170][    C0]  ? __pfx_kthread+0x10/0x10
+> [   65.610172][    C0]  ret_from_fork_asm+0x1a/0x30
+> [   65.610181][    C0]  </TASK>
+> [   65.610182][    C0] ---[ end trace 0000000000000000 ]---
+>
+> Its possible that two threads call tcp_v6_do_rcv()/sk_forward_alloc_add()
+> concurrently when sk->sk_state =3D=3D TCP_LISTEN with sk->sk_lock unlocke=
+d,
+> which triggers a data-race around sk->sk_forward_alloc:
+> tcp_v6_rcv
+>     tcp_v6_do_rcv
+>         skb_clone_and_charge_r
+>             sk_rmem_schedule
+>                 __sk_mem_schedule
+>                     sk_forward_alloc_add()
+>             skb_set_owner_r
+>                 sk_mem_charge
+>                     sk_forward_alloc_add()
+>         __kfree_skb
+>             skb_release_all
+>                 skb_release_head_state
+>                     sock_rfree
+>                         sk_mem_uncharge
+>                             sk_forward_alloc_add()
+>                             sk_mem_reclaim
+>                                 // set local var reclaimable
+>                                 __sk_mem_reclaim
+>                                     sk_forward_alloc_add()
+>
+> In this syzkaller testcase, two threads call tcp_v6_do_rcv() with
+> skb->truesize=3D768, the sk_forward_alloc changes like this:
+>  (cpu 1)             | (cpu 2)             | sk_forward_alloc
+>  ...                 | ...                 | 0
+>  __sk_mem_schedule() |                     | +4096 =3D 4096
+>                      | __sk_mem_schedule() | +4096 =3D 8192
+>  sk_mem_charge()     |                     | -768  =3D 7424
+>                      | sk_mem_charge()     | -768  =3D 6656
+>  ...                 |    ...              |
+>  sk_mem_uncharge()   |                     | +768  =3D 7424
+>  reclaimable=3D7424    |                     |
+>                      | sk_mem_uncharge()   | +768  =3D 8192
+>                      | reclaimable=3D8192    |
+>  __sk_mem_reclaim()  |                     | -4096 =3D 4096
+>                      | __sk_mem_reclaim()  | -8192 =3D -4096 !=3D 0
+>
+> Add lock around tcp_v6_do_rcv() in tcp_v6_rcv() will have some the
+> performance impacts, only add lock when opt_skb clone occurs. In some
+> scenes, tcp_v6_do_rcv() is embraced by sk->sk_lock, add
+> TCP_SKB_CB(skb)->sk_lock_capability to avoid re-locking.
+>
+> Fixes: e994b2f0fb92 ("tcp: do not lock listener to process SYN packets")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> ---
+>  include/net/tcp.h   |  3 ++-
+>  net/ipv6/tcp_ipv6.c | 21 ++++++++++++++++-----
+>  2 files changed, 18 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> index d1948d357dad..110a23dda1eb 100644
+> --- a/include/net/tcp.h
+> +++ b/include/net/tcp.h
+> @@ -961,7 +961,8 @@ struct tcp_skb_cb {
+>         __u8            txstamp_ack:1,  /* Record TX timestamp for ack? *=
+/
+>                         eor:1,          /* Is skb MSG_EOR marked? */
+>                         has_rxtstamp:1, /* SKB has a RX timestamp       *=
+/
+> -                       unused:5;
+> +                       sk_lock_capability:1, /* Avoid re-lock flag */
+> +                       unused:4;
+>         __u32           ack_seq;        /* Sequence number ACK'd        *=
+/
+>         union {
+>                 struct {
 
-While ttm_bo_vmap() requires its callees return '-EINVAL' on invalid range,
-similier for other users or call path. Let's meet the requirement.
+Oh the horror, this is completely wrong and unsafe anyway.
 
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/drm_prime.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+TCP listen path MUST be lockless, and stay lockless.
 
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index 0e3f8adf162f..3f1d516a90b6 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -1055,7 +1055,7 @@ int drm_prime_sg_to_dma_addr_array(struct sg_table *sgt, dma_addr_t *addrs,
- 
- 	for_each_sgtable_dma_page(sgt, &dma_iter, 0) {
- 		if (WARN_ON(a - addrs >= max_entries))
--			return -1;
-+			return -EINVAL;
- 		*a++ = sg_page_iter_dma_address(&dma_iter);
- 	}
- 	return 0;
--- 
-2.34.1
+Ask yourself : Why would a listener even hold a pktoptions in the first pla=
+ce ?
 
+Normally, each request socket can hold an ireq->pktopts (see in
+tcp_v6_init_req())
+
+The skb_clone_and_charge_r() happen later in tcp_v6_syn_recv_sock()
+
+The correct fix is to _not_ call skb_clone_and_charge_r() for a
+listener socket, of course, this never made _any_ sense.
+
+The following patch should fix both TCP  and DCCP, and as a bonus make
+TCP SYN processing faster
+for listeners requesting these IPV6_PKTOPTIONS things.
+
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index da5dba120bc9a55c5fd9d6feda791b0ffc887423..d6649246188d72b3df6c7475077=
+9b7aa5910dcb7
+100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -618,7 +618,7 @@ static int dccp_v6_do_rcv(struct sock *sk, struct
+sk_buff *skb)
+           by tcp. Feel free to propose better solution.
+                                               --ANK (980728)
+         */
+-       if (np->rxopt.all)
++       if (np->rxopt.all && sk->sk_state !=3D DCCP_LISTEN)
+                opt_skb =3D skb_clone_and_charge_r(skb, sk);
+
+        if (sk->sk_state =3D=3D DCCP_OPEN) { /* Fast path */
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index d71ab4e1efe1c6598cf3d3e4334adf0881064ce9..e643dbaec9ccc92eb2d9103baf1=
+85c957ad1dd2e
+100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1605,25 +1605,12 @@ int tcp_v6_do_rcv(struct sock *sk, struct sk_buff *=
+skb)
+         *      is currently called with bh processing disabled.
+         */
+
+-       /* Do Stevens' IPV6_PKTOPTIONS.
+-
+-          Yes, guys, it is the only place in our code, where we
+-          may make it not affecting IPv4.
+-          The rest of code is protocol independent,
+-          and I do not like idea to uglify IPv4.
+-
+-          Actually, all the idea behind IPV6_PKTOPTIONS
+-          looks not very well thought. For now we latch
+-          options, received in the last packet, enqueued
+-          by tcp. Feel free to propose better solution.
+-                                              --ANK (980728)
+-        */
+-       if (np->rxopt.all)
+-               opt_skb =3D skb_clone_and_charge_r(skb, sk);
+
+        if (sk->sk_state =3D=3D TCP_ESTABLISHED) { /* Fast path */
+                struct dst_entry *dst;
+
++               if (np->rxopt.all)
++                       opt_skb =3D skb_clone_and_charge_r(skb, sk);
+                dst =3D rcu_dereference_protected(sk->sk_rx_dst,
+                                                lockdep_sock_is_held(sk));
+
+@@ -1656,13 +1643,13 @@ int tcp_v6_do_rcv(struct sock *sk, struct sk_buff *=
+skb)
+                                if (reason)
+                                        goto reset;
+                        }
+-                       if (opt_skb)
+-                               __kfree_skb(opt_skb);
+                        return 0;
+                }
+        } else
+                sock_rps_save_rxhash(sk, skb);
+
++       if (np->rxopt.all)
++               opt_skb =3D skb_clone_and_charge_r(skb, sk);
+        reason =3D tcp_rcv_state_process(sk, skb);
+        if (reason)
+                goto reset;
 
