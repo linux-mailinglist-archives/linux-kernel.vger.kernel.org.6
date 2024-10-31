@@ -1,139 +1,86 @@
-Return-Path: <linux-kernel+bounces-390695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E0A9B7D73
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:59:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0D19B7D6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:59:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B8B1281270
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:59:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D4121C209B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C701A42A5;
-	Thu, 31 Oct 2024 14:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBBC1A0BFA;
+	Thu, 31 Oct 2024 14:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LmMBR/uT"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFZZEVvB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3A119D899;
-	Thu, 31 Oct 2024 14:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2AD19F108
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386756; cv=none; b=LP17KpLQUqrcfN6Txlso/cWAdeWz/Hu96Sj7C5ENAJt2bfpbtzjzjnmPF6qN0/S5MFRk/L3yax5UReFMZ9VbeQWeq7ku0mnmd1OwWSgfE0FBf5lWjGoPoxyH0IPdZUwC45qqTniYhj5unMFT1WHbW3xM11hrlQlRnWVEHx4kiDQ=
+	t=1730386747; cv=none; b=ErkI7drQu+gUxb4Swh1WhobN8KhugSHITz4zvwYflbZI04LEq+yA45Cms4S7/ndzk6gI4XKRPAy2dyyypcbDnsKVIafq7B9Y5cBZxazjHG3yH1F261grV8Ocx8vICsrHD6GolWUQoSfxWVfMOLC5Y7ph7XUaE3J118Mn6j8ha1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386756; c=relaxed/simple;
-	bh=w08rSYQLpMv4/w9G1kNlicSmxpZKdDP9rwu7geEi2A0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dejAa9VqTuxlwp0V4o0Gr0D3hJaSWFaakPyjbF7P3NPzDifW/TqQXuWNSswaYh1ZqnVvGBPrDdxQ/1OeN9zTH4CtmaRqleRPdCkZgYP6OWBRr9z5/qrNvjDRR+T+8AaHZkB+GINvJ7mc0jm11qW+3bcqrI9EagfPftBMJp4w9lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LmMBR/uT; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V6ugLM011777;
-	Thu, 31 Oct 2024 14:59:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=u2NVl/
-	Oa2KdvVlgSYT5v0F71qHOJA76FTq1g7ZvxJfg=; b=LmMBR/uTs23YX83UdzHxtN
-	fdehUJm4XSBJcKDInlyM1OE25JCkVX7HQL/X7ESeb2LdRCtipWBeOtd2MTH4F6yw
-	d9koRAOpjOxKSFwsGMdLCAyFx/srfaJ5P9T8GlC5AOmL7Ksql5ldrT/VP0aEXoaK
-	+5EVAsXGOg/xiW5rzMcWdhhUHLG5Ome4EtJR3bLU6dY94U4Dn2tQNvAzamXj2ovk
-	fashobikz1meYPKNmiOgllFo6IwlV08D08jZCdwwhn5GWWJUQNSQy680omtz8h2p
-	XHS07tO/tzxH13th59kurpP7l/ZmAZes4OimQa1iDeeBX8qH2kjRT2YGzMfQAdWg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42m52ca13k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 14:59:04 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49VEv7G6032735;
-	Thu, 31 Oct 2024 14:59:04 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42m52ca137-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 14:59:04 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VDUEhC028181;
-	Thu, 31 Oct 2024 14:59:02 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hb4y5dt0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 14:59:02 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VEx1Cl52429088
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 14:59:01 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15EC958052;
-	Thu, 31 Oct 2024 14:59:01 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4FEE658045;
-	Thu, 31 Oct 2024 14:58:58 +0000 (GMT)
-Received: from li-479af74c-31f9-11b2-a85c-e4ddee11713b.ibm.com (unknown [9.67.19.177])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 31 Oct 2024 14:58:58 +0000 (GMT)
-Message-ID: <8dd6c82b5edab68d8c53fe0a7dd588cd2e93036c.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/7] Documentation: s390-diag.rst: document
- diag500(STORAGE LIMIT) subfunction
-From: Eric Farman <farman@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-s390@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik
- <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck
- <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio
- Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Date: Thu, 31 Oct 2024 10:58:57 -0400
-In-Reply-To: <20241025141453.1210600-3-david@redhat.com>
-References: <20241025141453.1210600-1-david@redhat.com>
-	 <20241025141453.1210600-3-david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1730386747; c=relaxed/simple;
+	bh=il+vTT1zegPkNKyDOCnKcj8+KV930RuzcPTENmcImlQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tPknTchz3zSC8EUnvMMrRQPGTaKQwBDXLAzfjXQ6kqey9gU+SNzQeh8FVDxMn6135vcBo4/8P6wpvLnc0/urn/s2hHfwyp/ZLesHucsvaJxvS5i9ru4CWXqHH2lC9+KB1dUodfymaIFCazJVIXspiV6wtJeHjan0h9b9z7HCONc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFZZEVvB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C67C4CEFA;
+	Thu, 31 Oct 2024 14:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730386747;
+	bh=il+vTT1zegPkNKyDOCnKcj8+KV930RuzcPTENmcImlQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jFZZEVvBN8QeUc0pACRZm/R3/7lQ7OQymyPw5470vqCYNlKFpftXyMwVGfaaa59rA
+	 hU7cS7DZ83qFPHkqks9rDdCAkEgn8gPhuZz/bf5tGzQUr+HzhPsSpELdhtrefaQkJA
+	 pz7guBwWppZIFTBDMqJcqSCPq1NX73QS1SzIH2IuJRqcfpTi4pE6n8OmTK6SulnEi3
+	 MaSEVltE7dmr7vVdFOwguptVVLbcvGTFc1SfL8G5HOwyFFWkC0pl6eq9/WYYEusy+E
+	 3EPUpu5ssaKgr5d8YkOKbpeImKTohq0KJ4IKfpaUtLECqgTlYGWUGNX9sTvwVedBtz
+	 x1wtvubofugzA==
+From: Lee Jones <lee@kernel.org>
+To: linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>
+In-Reply-To: <20241016105201.757024-1-andriy.shevchenko@linux.intel.com>
+References: <20241016105201.757024-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 0/4] mfd: intel_soc_pmic_bxtwc: A few cleanups
+Message-Id: <173038674598.1763751.11067388290170331649.b4-ty@kernel.org>
+Date: Thu, 31 Oct 2024 14:59:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: UMvKYKUyiDpa41PiwYQX0lg6bZooazFj
-X-Proofpoint-ORIG-GUID: _qHllUguooBsxg76tcbqCJ_tQXBigEhp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxlogscore=802 mlxscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- clxscore=1015 phishscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410310113
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Fri, 2024-10-25 at 16:14 +0200, David Hildenbrand wrote:
-> Let's document our new diag500 subfunction that can be implemented by
-> userspace.
->=20
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  Documentation/virt/kvm/s390/s390-diag.rst | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+On Wed, 16 Oct 2024 13:49:50 +0300, Andy Shevchenko wrote:
+> While working on the fixes series against the driver I have noticed some
+> places that can be improved using better APIs or approaches. Hence this
+> mini-series. The plus statistics is due to the patch 2 that brought
+> missed inclusions to the code (instead of using a proxy header).
+> 
+> Have been tested on Intel Joule device.
+> 
+> [...]
 
-Reviewed-by: Eric Farman <farman@linux.ibm.com>
+Applied, thanks!
+
+[1/4] mfd: intel_soc_pmic_bxtwc: Switch to use ATTRIBUTE_GROUPS()
+      commit: 1f9e418aafc6ee52aad25b85f1e799f031f8de67
+[2/4] mfd: intel_soc_pmic_bxtwc: Don't use "proxy" headers
+      commit: d2e77347ce9a4d70165f4e97d6a4133e48e678cc
+[3/4] mfd: intel_soc_pmic_bxtwc: Use temporary variable for struct device
+      commit: 3d6b7374f0d8b5f8945185e901a6f5e7ae887a16
+[4/4] mfd: intel_soc_pmic_bxtwc: Deduplicate error messages
+      commit: 4a8b3d48dad2ddbbb150602606c65bef3c2b3f8e
+
+--
+Lee Jones [李琼斯]
+
 
