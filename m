@@ -1,55 +1,81 @@
-Return-Path: <linux-kernel+bounces-391256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A039B847F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:40:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7B29B8478
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4239728259F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEA971C2180A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BC31CC17C;
-	Thu, 31 Oct 2024 20:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39EE1CBEAF;
+	Thu, 31 Oct 2024 20:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Sx49+CvE"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mQ2bfoG6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B270197A6C;
-	Thu, 31 Oct 2024 20:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEA2197A6C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730407231; cv=none; b=pGUVgtCnnT8syW5JsDfADDWwprYlza4MQxqqTQeFXOCD9dncpj8yZbOkoRoXA5AwYrX5zD9VmtCFciSZORW2AkdD0NQTB0MO3ijXErSRKZnK2953Nqo+fDyRjC9j0N3OlNGuJ7T5urb0PwWR/9e881qzLEvtzZddeh2vL5kjJZY=
+	t=1730407154; cv=none; b=hlhww6beFY3JtB1zNEAjE34/fLa9yUSboAZ3JY5pGcGghzfrLmL+FKzadL3pNQ4+oR3cTIyUww+OvoggloiEQ9iJNXNT6OVqnfT7w2hzL/F1TasAbcvuWZyflNR40URlGxIzdaFwnyjrSuxjFY719ERO42hb8qhamH/yRilvS/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730407231; c=relaxed/simple;
-	bh=MV2PZMdCgyZVwxQqXYwbEL4UaF0wRJVB3Wcckw8d4vo=;
+	s=arc-20240116; t=1730407154; c=relaxed/simple;
+	bh=K1/6IUAcgF3FNqyRUw5wJSzHRzVUC/gKclPJjhysEqk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DdtJ1zsJKkcw2tZi2dL2DNJIPX1IgKvjYH3nXOeONe0VyajFObE+G1DV/sTrcaJ5jJVyjIcHb6czeWGt/4o8OP+zqZYSGNtyKDWKE1NJpOCW4b6f+yMSH3Qzuf5gbCc/BhzVT6B77NHuRo4/J9PkJaAGnhVq+HGs+Z1RKFPMMlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Sx49+CvE; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730407150; x=1731011950; i=w_armin@gmx.de;
-	bh=BXG43c4ilcZXIfs6uhHqCHjCjELoxxdYvZiqLVDmo/M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Sx49+CvEpA1KmgUAoDY71gw3MySZfBSPPwuvxH7mXXvOFeugVuDwsi/Vt1jR8ueB
-	 dKiE0OV07v9Nz4CweI6fks+GZOYbo/kKS8kzp8RQ1YP9PtR1JXFwP3CI0KKPRtVvh
-	 shPA9z5/ZRoBynL184fKdoCZId0A9c2HVjMsmaCB/jNP9cAymYHpVuwbYgKttryPe
-	 oEl2K4iMn+IdY2nWHtPy7WB6dbyPdwV1fG7qszpJ68+ykWdAikVK5MudLhQOEVSzM
-	 PglRzG6jD2wsJPJ8QS0fbSb3NEo2mnRtD6t74EoVeQuhTAvdwYD3xYAEFzSBlo5iA
-	 BcB/d/2jBmOPobd1uA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MGQjH-1t5DQh2ISz-009IZ2; Thu, 31
- Oct 2024 21:39:10 +0100
-Message-ID: <40b52d41-e3d6-4223-b9e9-0db6b2a19265@gmx.de>
-Date: Thu, 31 Oct 2024 21:39:05 +0100
+	 In-Reply-To:Content-Type; b=nRxAZSnNNrheduncmHviAAw3OlxTd1lLNvfcijpOJgLThc4zQj0XnNsvpPwpMzCjdrnOu1jHMLDji/RFdudegbc9t1yY3jogqsz6WTo5iMOQQ1HBaIzg8XVBNTUkkr9E9BQafG7A3vrD1KJwbpupBKpnHVPxv8aG7kQLpCuAGKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mQ2bfoG6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VJD6dW005657
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:39:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Vl3oJJc/cyDkNw9XE3tervQuHfIVJB7nMeM0yzufPhA=; b=mQ2bfoG6rNCPalzn
+	mXeXCXct7d847/pM4w6e0iqHVnwFTwCxYszmlbOkjnjphui0fYSKQ72TWYkGql73
+	iR/6riJVjx6P14/ZaskNLHcaG/G638Lz/qT/zGd3x5Qk9v/RmgneNjT+VVwsHhe0
+	x9/eGTOj0Ux8d5snjLjPSsmU/0VwOi72yv7Hct/3gEmW0YxyGTagjY2HVfwnWmu1
+	XfG3P4PzHJ/SOubVaqWdT20pbbdVU1KJm4/m/8zU1dRwpTfTbI9SbSLfkTTNlQAB
+	27CypTNrz/HP4UhASLw3xXfNF10OcBUPEn1Hp5AWmIoXAdgQvkde12iycpf+plJD
+	jvQ+Hw==
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ku65bpwd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:39:11 +0000 (GMT)
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5ec0bc202d8so117667eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:39:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730407150; x=1731011950;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vl3oJJc/cyDkNw9XE3tervQuHfIVJB7nMeM0yzufPhA=;
+        b=ifHmoLrwumVEonEJYfbdYjeONtIZuOYTeAoAH1+tayIWktE2gKMVrtUG+1HiXqFltm
+         0tBFNilWFmmeXo46Z44aZodik64VLxdnHXYZkzsMi9yN/Ikd9qsJUKeBuUgjOSy/Bv4P
+         eRtVRO+yeHpfOYXC9eLfDQYjH8bER7zPX3KgAqz06uSlY2HXQlbEDLRcyRni+5YiDs7K
+         nISXD1m0tkc00illTB0xoZ0gugScal1hUxGO16J2MF0KU2C+xrsoVARWiin4v94yteFJ
+         NKKhtJczWf2dN/YWb6rPIUQd8yRcw2biRVSG8xfFCS8CIQkHIc5jzPCGnOs/o5swS2la
+         PeVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdlyGwdJz6M7TXlhjkClVLAnS62CK9x34nWSuFPfm3DPmNncn7yFPxwVdFJuUWkOnvNPvVhW2yRAQECzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8FS+z+d7nhTrlYSvzFoWJ5aAXQqmQySAtqP2GK76UkA9icECB
+	yMjvTT6zNEQCCTmIrYFLGeRvJIxnjcnxtRq6xENHCWxWjUgyHIR899InpMZ0SeJ/+K26Ee1hhoW
+	EkGIzHI7YttXGVqE7jOytSjUEJzelP5VqCVGhCXMEf9p9KWPPS0iEciqTGxq57Y4=
+X-Received: by 2002:a05:6870:eca2:b0:277:ed2c:55e4 with SMTP id 586e51a60fabf-29051adb5afmr5041617fac.3.1730407150495;
+        Thu, 31 Oct 2024 13:39:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEh92vS1YesBWPNs6htJ0tunGqjMsV32xDc/IV1ooiMYzOIzsetPmIlA1CF1NqiFvpbJxLzTQ==
+X-Received: by 2002:a05:6870:eca2:b0:277:ed2c:55e4 with SMTP id 586e51a60fabf-29051adb5afmr5041601fac.3.1730407150168;
+        Thu, 31 Oct 2024 13:39:10 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56643609sm101287266b.155.2024.10.31.13.39.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 13:39:08 -0700 (PDT)
+Message-ID: <8355dc9f-ec3b-4738-b4e1-41351af2fa91@oss.qualcomm.com>
+Date: Thu, 31 Oct 2024 21:39:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,89 +83,285 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/22] ACPI: platform_profile: Require handlers to
- support balanced profile
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241031040952.109057-1-mario.limonciello@amd.com>
- <20241031040952.109057-14-mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: sar2130p: add support for
+ SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Krishna Kurapati <quic_kriskura@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241030-sar2130p-dt-v2-0-027364ca0e86@linaro.org>
+ <20241030-sar2130p-dt-v2-3-027364ca0e86@linaro.org>
 Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241031040952.109057-14-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241030-sar2130p-dt-v2-3-027364ca0e86@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9zQAKx0lk662rnl5CmEQRvMpMRajJCGH1oxs7owsE6gIQ6QBDJu
- R1xPtxAIVX8LvLVwPX0Ryw6MXqZvUXhWZGdWd77LpjMcP5kd1EXMqXDOo0KBseV6VpA4XHG
- AoZz1o8KX0Xf6Jav9WRWfv/flQeOVorWOa3tv9nL8DDsCMMYm9aLKXhyoVzzGS9aqvejdev
- sTgUTU2uR6xLjKD+86+sg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:woXGqM+HeUU=;rAsgkzCdSQPkIiKVBZ8ELlIGNA0
- ad2TN95RxXYCaQHi5re4V03ES3MmMgIS2fAI5RQ6y5mOt9pEtmNrR09ynUGdAFBZTlutRyREP
- 4lKLiMXaGkrxgZSJK0KldHKcCpRg71js+MYvOtyhaiige+Uyxu1gO6r//8uOSTOpNNz1ItBtF
- hgh05YhOUuP6DE03kJpdmMNLD/iTK7+VadT3VdvHyC/cVKlX42sV7PT3JaRKaRWPFg2OAmwGD
- rpiTMoYizNDpLs+g6Eik7LHATLWH346LKT+Jc/gOi4qwqhb3beHEqOcwnRadqQ+YLtoKRx5kC
- dFry1ryhhzng/0s5sdyyzvvA95d4JkB/QJuqZOFKk2VrVTRwMvTCFuYA+VciA/jGmz/e50G8Y
- GyYySX8f1hcdn4FBuTgV4bSyePsK7oB0Ud7chfjWWmdUTtUh1yPUffUQa6pY/ogW0sF41vOtk
- WYJkdG1UR3/KyHmlY7dFa/Eah1f3//8GMri+ltldvqjwOX1PGvVhhB5nZzUvuwIDN4Li2+0vO
- dSiu71Pu9YPtwkgZnljh2Ex39oKNs80WdKKtA9F79Fikr/l2wK3coQeL0+lF//+4vdK2jfKXD
- rez5oYofBJy7LTtog5yN88Sebe0ARqDh8ojPeF3OhOuD170txjkOJH0Ae4X99OoAPAs6tdUeq
- pLg459TtF7yvYjrf9KgBHNFqcBkuICUfJRysQhxmYBidzZQcIGwOC9rol9W8KdrQinuBNoICM
- ETqdYV5Mbnry6jn3QOoPj+g8xdDD5LKZ19hCtJkQEsv0qwR1K9Ex7DQzFtdOYDlHHo3GuZRzn
- qUuPS9/30Se7172+Gsu56oew==
+X-Proofpoint-GUID: eV0McTrzOsPpjj_NtaV8eK3FG8Lo_FBH
+X-Proofpoint-ORIG-GUID: eV0McTrzOsPpjj_NtaV8eK3FG8Lo_FBH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 adultscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410310156
 
-Am 31.10.24 um 05:09 schrieb Mario Limonciello:
-
-> As support for multiple simultaneous platform handers is introduced it's
-> important they have at least the balanced profile in common.
->
-> This will be used as a fallback in case setting the profile across one of the
-> handlers happens to fail.
-
-Do we actually need this patch anymore now that we have the "custom" platform profile?
-If setting the platform profile fails for some handlers, then we simply display the current
-platform profile as "custom".
-
-Thanks,
-Armin Wolf
-
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Suggested-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On 30.10.2024 12:50 PM, Dmitry Baryshkov wrote:
+> Add DT file for the Qualcomm SAR2130P platform.
+> 
+> Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->   drivers/acpi/platform_profile.c | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index b70ceb11947d0..57c66d7dbf827 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -164,6 +164,10 @@ int platform_profile_register(struct platform_profile_handler *pprof)
->   		pr_err("platform_profile: handler is invalid\n");
->   		return -EINVAL;
->   	}
-> +	if (!test_bit(PLATFORM_PROFILE_BALANCED, pprof->choices)) {
-> +		pr_err("platform_profile: handler does not support balanced profile\n");
-> +		return -EINVAL;
-> +	}
->   	if (!pprof->dev) {
->   		pr_err("platform_profile: handler device is not set\n");
->   		return -EINVAL;
+>  arch/arm64/boot/dts/qcom/sar2130p.dtsi | 3091 ++++++++++++++++++++++++++++++++
+>  1 file changed, 3091 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sar2130p.dtsi b/arch/arm64/boot/dts/qcom/sar2130p.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d4f5514cbdaf2d0a1c1cd367be2d7a08246d203e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sar2130p.dtsi
+> @@ -0,0 +1,3091 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2024, Linaro Limited
+> + */
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +#include <dt-bindings/clock/qcom,sar2130p-gcc.h>
+> +#include <dt-bindings/clock/qcom,sar2130p-gpucc.h>
+> +#include <dt-bindings/clock/qcom,sm8550-tcsr.h>
+> +#include <dt-bindings/dma/qcom-gpi.h>
+> +#include <dt-bindings/interconnect/qcom,icc.h>
+> +#include <dt-bindings/interconnect/qcom,sar2130p-rpmh.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/mailbox/qcom-ipcc.h>
+> +#include <dt-bindings/phy/phy-qcom-qmp.h>
+> +#include <dt-bindings/power/qcom-rpmpd.h>
+> +#include <dt-bindings/power/qcom,rpmhpd.h>
+> +#include <dt-bindings/soc/qcom,gpr.h>
+> +#include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> +#include <dt-bindings/thermal/thermal.h>
+> +
+> +/ {
+> +	interrupt-parent = <&intc>;
+> +
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	chosen { };
+> +
+> +	clocks {
+> +		xo_board: xo-board {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <19200000>;
+> +		};
+> +
+> +		sleep_clk: sleep-clk {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <32000>;
+> +		};
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <2>;
+> +		#size-cells = <0>;
+> +
+> +		CPU0: cpu@0 {
+
+Krzysztof recently turned these lowercase, please follow suit
+
+[...]
+
+> +		/* secdata region can be reused by apps */
+
+This comment isn't very useful
+
+> +		smem: smem@80900000 {
+> +			compatible = "qcom,smem";
+> +			reg = <0x0 0x80900000 0x0 0x200000>;
+> +			hwlocks = <&tcsr_mutex 3>;
+> +			no-map;
+> +		};
+> +
+> +		cpucp_fw_mem: cpucp-fw-region@80b00000 {
+
+Not sure if we want -region everywhere. Krzysztof?
+
+[...]
+
+> +	soc: soc@0 {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges = <0 0 0 0 0x10 0>;
+> +		dma-ranges = <0 0 0 0 0x10 0>;
+> +		compatible = "simple-bus";
+
+Compatible first, please
+
+[...]
+
+> +			#size-cells = <2>;
+> +			ranges;
+> +			status = "disabled";
+
+A newline before status would be very cool
+
+[...]
+
+> +		pdc: interrupt-controller@b220000 {
+> +			compatible = "qcom,sar2130p-pdc", "qcom,pdc";
+> +			reg = <0x0 0x0b220000 0x0 0x30000>, <0x0 0x174000f0 0x0 0x64>;
+> +			qcom,pdc-ranges = <0 480 94>,
+> +					  <94 609 31>, <125 63 1>, <126 716 12>;
+
+Super weird line break
+
+[...]
+
+> +
+> +		apps_smmu: iommu@15000000 {
+> +			compatible = "qcom,sar2130p-smmu-500", "qcom,smmu-500", "arm,mmu-500";
+> +			reg = <0x0 0x15000000 0x0 0x100000>;
+> +			#iommu-cells = <2>;
+> +			#global-interrupts = <1>;
+> +			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 707 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 690 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 691 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 692 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 693 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 694 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 695 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 696 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 697 IRQ_TYPE_LEVEL_HIGH>;
+
+dma-coherent?
+
+Please check if this is the order they appear in originally, as they're
+ordered (although on some recent socs it appears they're accidentally
+sorted by design)
+
+
+> +		};
+> +
+> +		intc: interrupt-controller@17200000 {
+> +			compatible = "arm,gic-v3";
+> +			#interrupt-cells = <3>;
+> +			interrupt-controller;
+> +			#redistributor-regions = <1>;
+> +			redistributor-stride = <0x0 0x20000>;
+> +			reg = <0x0 0x17200000 0x0 0x10000>,     /* GICD */
+> +			      <0x0 0x17260000 0x0 0x100000>;    /* GICR * 8 */
+
+Please remove these comments
+
+[...]
+
+> +
+> +		/*
+> +		 * Bootloader expects just cache-controller node instead of
+> +		 * the typical system-cache-controller
+> +		 */
+
+Uh-oh..
+
+> +		llcc: cache-controller@19200000 {
+
+Konrad
 
