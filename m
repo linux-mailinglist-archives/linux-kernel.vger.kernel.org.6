@@ -1,259 +1,140 @@
-Return-Path: <linux-kernel+bounces-391289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2139B84C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:57:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548B89B84C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B8B1C22099
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:57:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B0521C21E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E03B1CCEF5;
-	Thu, 31 Oct 2024 20:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E181CCB3C;
+	Thu, 31 Oct 2024 20:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3bEnjPU"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fB+M9nsD"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FB91CCB36;
-	Thu, 31 Oct 2024 20:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0DD1CDA3F
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408270; cv=none; b=MY7a85b7hOWyl4SCu4G4fYp3BhVoYE1uZf5Idp3yz1+RSz9kPl1GTT0ijQxycCf2pL4cSKjUYwizbQKjHa1OyqrD9MH79BdfO2a84pqeqdRW1tLuH5y1cr1d+pj+tpJYVA6bz5/+LXFtpcs/UiFyomzGrFX8oKdB37Xqbfj3nHw=
+	t=1730408253; cv=none; b=L0d0JZ1syUUCNk6z3O6Mx4SIyhRASQBdfQh1uv0PY+OV2T1odIGXFU8+9e+20yKRytjDSV49bkys+MDtQXPCh2sv5RJYGKRh4F6rZXXetOfq0pat3NiXNmhVghyhK+kxiZ9M8U6H9Gh2GKCVEQuv2CKX5rQHWDqHtgV9sXrWkLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408270; c=relaxed/simple;
-	bh=d4yg9w/9Vw56lhG9Ydt399PjnwVlOwH171Y4XyoU32I=;
+	s=arc-20240116; t=1730408253; c=relaxed/simple;
+	bh=qqfmQwWGNi5gSLmw1HABwNExxBu+L4ODwUKeBji42II=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qHlnad1iYDGVnGGPXz5lZoYgK/h2tijCrVREu3tYH7hfKTkxqZrJQVGI5netbDflk8WREjwxN77wgwSElCakUdYlmXfLYt2TS02Up5BWbn5p46j9e+PXg+ttzmtOLj6FugvDSmtw23YZSBRF9QPWwIA/FMbKECwEBFUAi4+ExKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3bEnjPU; arc=none smtp.client-ip=209.85.208.50
+	 To:Cc:Content-Type; b=sYB8V5gl8L8Xs5br8Kd0j/WW5SVI4t0QYn7hrEpI+lkUugtgQgu696leYLzl6DdBBVsv+Jn02t8vNNuJdIGuM1CK3WNAfJxxqd4q75UY/FboK0JXbUpukH4Xu4JNN6XiyW8uATk/XS98h6LYi2mHutmv8QHxOdgcK5IHLzOZuR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fB+M9nsD; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so1516053a12.2;
-        Thu, 31 Oct 2024 13:57:44 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so1049207a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:57:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730408263; x=1731013063; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730408245; x=1731013045; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ygzEaG0i+IFdhWqyLLqbh8SUXHugvUXiylqcsVNMp68=;
-        b=l3bEnjPUkoJd7CZohYFpHbJ8FxodYponcFM/CkYCDc8zD6SSB9cRcyfKBYpbdQ4ZjS
-         NVsZWmicpyNTm3sEC3+LR6tvHv+3nMvW7rJwpshwtBwiXA9YlWCfNS04IltHOOSyPUvt
-         Dh+G8OinOA3g04ycRKuP+d73my5uTE8GTrzfPGaYDeWAECExpEfz4+UMf1khtxTe1oTH
-         MpxvzcMGhcie+3+6Wc8BFqBUoxGitqAvYUVhtg+8noWsw+U7p6IXKWZe9clJE/GOd5dq
-         yUx5FZGML6CIPRKE6IEkYrgmjav1y37AblJs9GTS2npDLgHMupUOvFGINVqJvMQjAg1E
-         7CNw==
+        bh=qqfmQwWGNi5gSLmw1HABwNExxBu+L4ODwUKeBji42II=;
+        b=fB+M9nsDtOlILkDLKoRzuOUo5z93+sm0d2iMi9dA7Zlb7qu/s48Pv1GYUU5C4K3YjX
+         ue08VMreXBV6EF68uZss9doev19K+/IdZD4uN3ezJjYFjqF4ChPBFI6MMtuddfIGejXt
+         iDLMRe0KTRgNyv0o27w9HeK2p+mo/GHJ+TA7V2WJFP/lTuJ5Viu7Spxi7LJ4FTUGdOKz
+         F42HlyIcLnGO6tPN/mRlqTerC2qNr3/Eh+LF5S3u4b7Q4mDa6qh8YGVwvkqjyGaLYzUq
+         fUVJcix6+cgMD8upvhxBKZmqLi80rxM+Z39mDIZ3vcjaM4iQINxw26r5euMoGVp3JZRk
+         KeIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408263; x=1731013063;
+        d=1e100.net; s=20230601; t=1730408245; x=1731013045;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ygzEaG0i+IFdhWqyLLqbh8SUXHugvUXiylqcsVNMp68=;
-        b=h2ozZDfhdPFHG+1Mx/FmHXIz7H7mh+wjv3nxpVL2P+TL9aoKB+NiH10cex3jJBm/a4
-         DpHc+RJkhLDfZmdddrlktFoq5cbt4T8EtDyDUezur1t1pgPSx5OWmZQWmVqSlvvc6Nl1
-         YBrPvYMzpxsKQhqnEr7eXxvetHnHhKc+CQqU0xbOaVm/cKbPJkJWkbBb/NOwZMePOE4N
-         uKZ5wFjFAOaXi3PRvkWIMr4yF8eJb72oFi++tOMwIytkNAnex4H8TAPvtHQoeYoBdnXJ
-         Pxlr4Jpyk+TbzyAA9xkIZPFEbxnbMDq7wDrIXWQ3POEHf6XJmnNHZxFmL2xRAEfj4EEF
-         E5rw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Bsr+5BSps0MraqMZQaTmuc1vLaoVgk2MuvnFMXlz4PTjMkcQLKhnnSNDUgR8ExtHC6I/nbaXRaN7pT4V9LsYFw==@vger.kernel.org, AJvYcCVIOrjcudhJtt9L1xW0gj+i5n13ssrSWbNFFY2rn0mGDKw3LlYVgh1bddBhh2V6a3L1F8vJlzJHZhoDQF+qT6TLgg==@vger.kernel.org, AJvYcCXogRhBGX3kOvMOQkpM3KoOZQbhNdODnS4vZTd8qMvrtUwVxQj57l4N4ZdYbLcpMc4WnGQwni0PBeJnqt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyc90yGHR1nakWdQhweLLCVXtI/mtdOb22cgdCD1ajavrbkaFh
-	HHLMNIzT2kQqLbcvfwSXMETliBiKTpR/FNwL2PBpWwWGZoBZuuaxLEXIrcNu3ez1NlhK2ND5Fke
-	c1WRfn7oJqZUhtTZFW0Jc+5o5reU=
-X-Google-Smtp-Source: AGHT+IHw2sp6E6xFgIKGilk2LAD/nLTHzg3NWYpmsoprLayI+JRpSVwQL1nl0nBLIDEYZjZAgd1AY/9F8bHDgQTTuQg=
-X-Received: by 2002:a17:907:1c29:b0:a99:e67a:d12d with SMTP id
- a640c23a62f3a-a9de61ce61bmr2021732766b.48.1730408262602; Thu, 31 Oct 2024
- 13:57:42 -0700 (PDT)
+        bh=qqfmQwWGNi5gSLmw1HABwNExxBu+L4ODwUKeBji42II=;
+        b=izWLluLWyan9/sbAQcS3A/SgQnDwvBZnNym/TTYFZVzmzT2aik9ZuBL0hdrXIVnJn/
+         qD6KJIu8XTwUqztkrmKDYRlSGsy2fT4re+G3ZsT6/r9mVV6q8ZW+AJ6CqLkg4WhIcLrc
+         w+KXi2UcTfAnY5Tv8dTSqjIBHKLtM38KzwL4D7AcRCJKEWRAXpoMmN2T8kpVeEiXZqjg
+         PheigYG8H6A62iYkhnPp+18T+DNIRkSNrqw7ZYAbbVznrCzyr/ME/zsH0aJgYVkSQu+z
+         QnSTkOqzkDjGYMuL6FGtZuA5oE8gOpB2EAW51D6uRvHnXX3ZtEH7acm2p+ZejVGAwzXz
+         ri8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVEdyovg20/GxT7FL3tuGiH70rL6PhXsiokCSFAc5UxVGFa8RrBdzxlU0wKdhdw4iF6KMH8XMu3CyXhclo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU6JGSchHxa5FWkYCnaBxLW8vShXTlH6QeDXa3AkM6rcBAsYF7
+	GFFxtRxGhHChZWIA2JCWa9d3laX6cZd3SaIWghXqCoS7CNJeywHfQtP6+WroR/JvzMu8Rt6lLDJ
+	55ScUEuWTwzyLhH+vqs8Vcr83occ=
+X-Google-Smtp-Source: AGHT+IFIw26pXtZcuM6AN/ZqMYbGVsCgRkzH5TP7hpaJgtgceL/sAoqy9JWxKl/WqX4itdzDFO11igw7MP0bP5zmrpA=
+X-Received: by 2002:a17:90b:5306:b0:2e2:c15f:1ffe with SMTP id
+ 98e67ed59e1d1-2e94bdf49acmr1809259a91.0.1730408245293; Thu, 31 Oct 2024
+ 13:57:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730150953.git.jpoimboe@kernel.org> <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com> <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
-In-Reply-To: <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 31 Oct 2024 13:57:10 -0700
-Message-ID: <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
-	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
-	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
-	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
+References: <20241020204156.113853-1-christian.gmeiner@gmail.com> <8f050428-53b0-401f-a60f-3d4732c0a75f@igalia.com>
+In-Reply-To: <8f050428-53b0-401f-a60f-3d4732c0a75f@igalia.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Date: Thu, 31 Oct 2024 21:57:13 +0100
+Message-ID: <CAH9NwWd8iWALZbVkcPUsMGWNZSgh-8ARgyHSTULJpOqVj+88zw@mail.gmail.com>
+Subject: Re: [PATCH] drm/v3d: Add DRM_IOCTL_V3D_PERFMON_SET_GLOBAL
+To: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
+Cc: Melissa Wen <mwen@igalia.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel-dev@igalia.com, 
+	Christian Gmeiner <cgmeiner@igalia.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 10:53=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.or=
-g> wrote:
->
-> On Tue, Oct 29, 2024 at 04:32:40PM -0700, Andrii Nakryiko wrote:
-> > It feels like this patch is trying to do too much. There is both new
-> > UAPI introduction, and SFrame format definition, and unwinder
-> > integration, etc, etc. Do you think it can be split further into more
-> > focused smaller patches?
->
-> True, let me see if I can split it up.
->
-> > > +
-> > > +                       if ((eppnt->p_flags & PF_X) && k < start_code=
-)
-> > > +                               start_code =3D k;
-> > > +
-> > > +                       if ((eppnt->p_flags & PF_X) && k + eppnt->p_f=
-ilesz > end_code)
-> > > +                               end_code =3D k + eppnt->p_filesz;
-> > > +                       break;
-> > > +               }
-> > > +               case PT_GNU_SFRAME:
-> > > +                       sframe_phdr =3D eppnt;
-> >
-> > if I understand correctly, there has to be only one sframe, is that
-> > right? Should we validate that?
->
-> Yes, there shouldn't be more than one PT_GNU_SFRAME for the executable
-> itself.  I can validate that.
->
-> > > +                       break;
-> > >                 }
-> > >         }
-> > >
-> > > +       if (sframe_phdr)
-> > > +               sframe_add_section(load_addr + sframe_phdr->p_vaddr,
-> > > +                                  start_code, end_code);
-> > > +
-> >
-> > no error checking?
->
-> Good point.  I remember discussing this with some people at Cauldon/LPC,
-> I just forgot to do it!
->
-> Right now it does all the validation at unwind, which could really slow
-> things down unnecessarily if the sframe isn't valid.
->
-> > > +#ifdef CONFIG_HAVE_UNWIND_USER_SFRAME
-> > > +
-> > > +#define INIT_MM_SFRAME .sframe_mt =3D MTREE_INIT(sframe_mt, 0),
-> > > +
-> > > +extern void sframe_free_mm(struct mm_struct *mm);
-> > > +
-> > > +/* text_start, text_end, file_name are optional */
-> >
-> > what file_name? was that an extra argument that got removed?
->
-> Indeed, that was for some old code.
->
-> > >         case PR_RISCV_SET_ICACHE_FLUSH_CTX:
-> > >                 error =3D RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
-> > >                 break;
-> > > +       case PR_ADD_SFRAME:
-> > > +               if (arg5)
-> > > +                       return -EINVAL;
-> > > +               error =3D sframe_add_section(arg2, arg3, arg4);
-> >
-> > wouldn't it be better to make this interface extendable from the get
-> > go? Instead of passing 3 arguments with fixed meaning, why not pass a
-> > pointer to an extendable binary struct like seems to be the trend
-> > nowadays with nicely extensible APIs. See [0] for one such example
-> > (specifically, struct procmap_query). Seems more prudent, as we'll
-> > most probably will be adding flags, options, extra information, etc)
-> >
-> >   [0] https://lore.kernel.org/linux-mm/20240627170900.1672542-3-andrii@=
-kernel.org/
->
-> This ioctl interface was admittedly hacked together.  I was hoping
-> somebody would suggest something better :-)  I'll take a look.
->
-> > > +static int find_fde(struct sframe_section *sec, unsigned long ip,
-> > > +                   struct sframe_fde *fde)
-> > > +{
-> > > +       struct sframe_fde __user *first, *last, *found =3D NULL;
-> > > +       u32 ip_off, func_off_low =3D 0, func_off_high =3D -1;
-> > > +
-> > > +       ip_off =3D ip - sec->sframe_addr;
-> >
-> > what if ip_off is larger than 4GB? ELF section can be bigger than 4GB, =
-right?
->
-> That's baked into sframe v2.
-
-I believe we do have large production binaries with more than 4GB of
-text, what are we going to do about them? It would be interesting to
-hear sframe people's opinion. Adding such a far-reaching new format in
-2024 with these limitations is kind of sad. At the very least maybe we
-should allow some form of chaining sframe definitions to cover more
-than 4GB segments? Please CC relevant folks, I'm wondering what
-they're thinking about this.
+Hi Ma=C3=ADra,
 
 >
-> > and also, does it mean that SFrame doesn't support executables with
-> > text bigger than 4GB?
+> I have one major issue with this approach: I don't think we should
+> introduce a `global_perfmon` in `struct v3d_perfmon_info`. `struct
+> v3d_perfmon_info` was created to store information about the counters,
+> such as total number of perfcnts supported and the description of the
+> counters.
 >
-> Yes, but is that a realistic concern?
 
-See above, yes. You'd be surprised. As somewhat corroborating
-evidence, there were tons of problems and churn (within at least Meta)
-with DWARF not supporting more than 2GB sizes, so yes, this is not an
-abstract problem for sure. Modern production applications can be
-ridiculously big.
+Ah okay.. got the idea of global_perfmon.
 
 >
-> > > +       } else {
-> > > +               struct vm_area_struct *vma, *text_vma =3D NULL;
-> > > +               VMA_ITERATOR(vmi, mm, 0);
-> > > +
-> > > +               for_each_vma(vmi, vma) {
-> > > +                       if (vma->vm_file !=3D sframe_vma->vm_file ||
-> > > +                           !(vma->vm_flags & VM_EXEC))
-> > > +                               continue;
-> > > +
-> > > +                       if (text_vma) {
-> > > +                               pr_warn_once("%s[%d]: multiple EXEC s=
-egments unsupported\n",
-> > > +                                            current->comm, current->=
-pid);
-> >
-> > is this just something that fundamentally can't be supported by SFrame
-> > format? Or just an implementation simplification?
+> I believe you should use `active_perfmon` in your implementation and
+> don't create `global_perfmon`. This is going to make the code less
+> tricky to understand and it's going to make sure that the hardware inner
+> working is transparent in software.
 >
-> It's a simplification I suppose.
-
-That's a rather random limitation, IMO... How hard would it be to not
-make that assumption?
-
 >
-> > It's not illegal to have an executable with multiple VM_EXEC segments,
-> > no? Should this be a pr_warn_once() then?
+> Only one perfmon can be active in a given moment of time, therefore,
+> let's use `active_perfmon` to represent it.
 >
-> I don't know, is it allowed?  I've never seen it in practice.  The
 
-I'm pretty sure you can do that with a custom linker script, at the
-very least. Normally this probably won't happen, but I don't think
-Linux dictates how many executable VMAs an application can have. And
-it probably just naturally happens for JIT-ted applications (Java, Go,
-etc).
+Relying solely on active_perfmon makes the code hard to follow. I need at
+least a flag to indicate whether we are in global perfmon mode.
 
-Linux kernel itself has two executable segments, for instance (though
-kernel is special, of course, but still).
-
-> pr_warn_once() is not reporting that it's illegal but rather that this
-> corner case actually exists and maybe needs to be looked at.
-
-This warn() will be logged across millions of machines in the fleet,
-triggering alarms, people looking at this, making custom internal
-patches to disable the known-to-happen warn. Why do we need all this?
-This is an issue that is trivial to trigger by user process that's not
-doing anything illegal. Why?
-
+> I couple more things came to my attention. First, I don't think we need
+> to limit the creation of other perfmons. We can create perfmons and
+> don't use it for a while. We only need to make sure that the user can't
+> attach perfmons to jobs, when the global perfmon is enabled.
 >
-> --
-> Josh
+> For sure, if we go through this strategy, there is no need to have a
+> count of all the perfmons that V3D has.
+>
+
+That is a fantastic idea.
+
+> I would prefer to treat the global perfmon as a state. Ideally, we would
+> enable and disable this state through the IOCTL.
+>
+> One last thing is: don't forget to stop the perfmons when you don't use
+> it anymore :)
+>
+
+I've sent v2 of this patch and hope I've addressed all your comments.
+
+--=20
+greets
+--
+Christian Gmeiner, MSc
+
+https://christian-gmeiner.info/privacypolicy
 
