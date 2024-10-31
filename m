@@ -1,74 +1,65 @@
-Return-Path: <linux-kernel+bounces-390728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37149B7DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:13:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 565DD9B7DEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F491F21B52
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01FA11F2201B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D0A1A3BC0;
-	Thu, 31 Oct 2024 15:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2071A726F;
+	Thu, 31 Oct 2024 15:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="BmD5msSk"
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="sX1MyztR"
 Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9B41A256B;
-	Thu, 31 Oct 2024 15:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14331A2C0B;
+	Thu, 31 Oct 2024 15:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730387574; cv=none; b=TOcQwmah/ue2ar1JhSDedRLgiDcjT/VmkVmw11ygJB1Iu2H0zFZqZv72p0DdjCdfV6g65r/wg0XN7QVauFiuQDf9mUx76MGrm0HjNrQEQhWg/U1V5ZQd0IKlsWw313J1+DOm+aGaWXLjV8cAJhNv4IZ34JgSxSk79NZIo9J4dUg=
+	t=1730387575; cv=none; b=AKWzH9xvf/UUUUaBDZZa1qNr4QVyxq/O/PvPzuMjyNPsxt7FtFVIu+yiWSldzTDtSUHM59mEK9CrgHHdRoKv/3+ywJvxtc+yDDiO+kC4wlJnulgeJfK3OdGy0M4eyGtB5aj6uLzAX0KV30zH/GPrjjagQqAJmEjYhGSJjcjZHGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730387574; c=relaxed/simple;
-	bh=r9CSq7x3KTWmr1h7p38PKShRWD7l3qTn9bRjkS2ldlM=;
+	s=arc-20240116; t=1730387575; c=relaxed/simple;
+	bh=+tb4/izulaz8mMVSG9eoJPnS/r8Ktb86Kc+teB6gjaM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fcQVA7vDampERB4X7t3iX0+7xyzPtPiwmAdNumeW/IjHBwqDZgvBBSZ0b8T2Nrs4QuRM1rOMhXsaXM8OPzOtsFZzozzIDNgZzz3LZJPT9S0skz1/I5G7dufXz2XJSyZOI5JqcOTe/Akk8kb2YlGifmiWr5Z6vBPUmVNUDMaTDvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=BmD5msSk; arc=none smtp.client-ip=85.214.62.61
+	 MIME-Version; b=AZzPfTlrpTviOY+qRGRDYzH7JjgBawZX1qzaoq6m9aN2Ir/lkwFUeCZBliUMb5OBWJtY36Q38qySk8fmxxxtZelIRQvdkCtkAAy+l5nCWm3+CwFKIkj2219eNS7n72AON42M2t25cUXNmnTQh3GwIT2LL23RWWlNvBBEvSBi0PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=sX1MyztR; arc=none smtp.client-ip=85.214.62.61
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Received: from localhost.localdomain (89-186-114-4.pool.digikabel.hu [89.186.114.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
 	(Authenticated sender: hs@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 4F8C789001;
-	Thu, 31 Oct 2024 16:12:49 +0100 (CET)
+	by phobos.denx.de (Postfix) with ESMTPSA id 7BD60891A9;
+	Thu, 31 Oct 2024 16:12:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1730387570;
-	bh=rPIDUcxc8CQi+Txja2mCBQNxz2FygCPkS59vb8Tf/X8=;
+	s=phobos-20191101; t=1730387572;
+	bh=uevbiNgUO6wSdVaAf7xsYSMjvK/4kt7IKBZ5U10VuEQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BmD5msSktaqXJMOff3T4gwOLUnicEjhrwwcZiBeoq6VYLoc+YSS6+eUq2LHBt/1jT
-	 zzTvsOOtjT3viGIDpjnlpTK+XTuzx4JEnR/n7OV/4S/ldVxsoEedPFiVO5zp521Af4
-	 vz3WIdN4HBfh/CSf7VE327QXUWSCJbs3wgZYZYoN4qGO9myb/rgant3FJ0WfGl3p1C
-	 FJZVwc4xQCeJqZ/X+yFJj5LvV+YVTPandGOmpgeMRaWleqTAxJkWCnLH5MUyhqPAkh
-	 82cAMSq/yRy3VVlfBB2n8MkJpF+esKWytXldQlV8LBI82QNr4J0De4O8lvpBHuj7A1
-	 bJ+HDls4eUWIg==
+	b=sX1MyztR4riwYZ7O8vwQ1YRR7Q3zHDTvgijYeRu3fGqWSk7E7lCzyDus0gqzuA0g/
+	 e35ChnAd7hXShkKxLNiLlrNQqXBgxJntzrnSk+ClnOcMYdfKX8tiPopetOuX/XKBMk
+	 g+7N2etqbEbZgLAomJrB9ol21vbO9sEAusnnuvflK75ZjWBoNMsChBnesLXd+swHnY
+	 fvdTDWbQ5DM81MFiW/x1f8ebgNt4OQndkQk1l0EuUpKcmagPXeqEcoEY+ZxkyEd85Y
+	 46zTh9WPV9jh7zt/pF+0MEogw6na70qFjrlZg7cmGkMHFYTIhNaUNUH8hLnnIw/aSH
+	 LRoEiuHIA4OcA==
 From: Heiko Schocher <hs@denx.de>
 To: linux-kernel@vger.kernel.org
 Cc: Heiko Schocher <hs@denx.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mathieu Othacehe <m.othacehe@gmail.com>,
-	Max Merchel <Max.Merchel@ew.tq-group.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
 	Rob Herring <robh@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Tim Harvey <tharvey@gateworks.com>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 1/3] dt-bindings: arm: fsl: Add ABB SoM and carrier
-Date: Thu, 31 Oct 2024 16:12:35 +0100
-Message-Id: <20241031151238.67753-2-hs@denx.de>
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v2 2/3] dt-bindings: pinctrl: sx150xq: allow gpio line naming
+Date: Thu, 31 Oct 2024 16:12:36 +0100
+Message-Id: <20241031151238.67753-3-hs@denx.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20241031151238.67753-1-hs@denx.de>
 References: <20241031151238.67753-1-hs@denx.de>
@@ -82,38 +73,45 @@ Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
 X-Virus-Status: Clean
 
-add support for the i.MX8MP based SoM and carrier from ABB.
+Adding gpio-line-names property works fine for this
+device node, but dtb check drops warning:
+
+'gpio-line-names' does not match any of the regexes: '-cfg$', 'pinctrl-[0-9]+'
+from schema $id: http://devicetree.org/schemas/pinctrl/semtech,sx1501q.yaml#
+
+Allow to add property gpio-line-names for this devices.
 
 Signed-off-by: Heiko Schocher <hs@denx.de>
+
 ---
+checkpatch shows
+WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+'gpio-line-names' does not match any of the regexes: '-cfg$', 'pinctrl-[0-9]+'
+
+Ignored, as it is a make output, which helps to understand the
+reason for adding this patch.
 
 Changes in v2:
-reworked the compatible strings for ABB imx8mp based boards
-called dtb checks, no errors for this patch
+patch dt-bindings: pinctrl: sx150xq: allow gpio line naming new in v2
 
- Documentation/devicetree/bindings/arm/fsl.yaml | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../devicetree/bindings/pinctrl/semtech,sx1501q.yaml          | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index b39a7e031177..b933788f756b 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -1090,6 +1090,15 @@ properties:
-               - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / BT Modules
-           - const: fsl,imx8mp
+diff --git a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+index 4214d7311f6b..fd0936545bb8 100644
+--- a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+@@ -26,6 +26,10 @@ properties:
+   reg:
+     maxItems: 1
  
-+      - description: ABB Boards with i.MX8M Plus Modules from ADLink
-+        items:
-+          - enum:
-+              - abb,imx8mp-aristanetos3-adpismarc # i.MX8MP ABB SoM on PI SMARC Board
-+              - abb,imx8mp-aristanetos3-helios    # i.MX8MP ABB SoM on helios Board
-+              - abb,imx8mp-aristanetos3-proton2s  # i.MX8MP ABB SoM on proton2s Board
-+          - const: abb,imx8mp-aristanetos3-som    # i.MX8MP ABB SoM
-+          - const: fsl,imx8mp
++  gpio-line-names:
++    minItems: 1
++    maxItems: 17
 +
-       - description: Avnet (MSC Branded) Boards with SM2S i.MX8M Plus Modules
-         items:
-           - const: avnet,sm2s-imx8mp-14N0600E-ep1 # SM2S-IMX8PLUS-14N0600E on SM2-MB-EP1 Carrier Board
+   interrupts:
+     maxItems: 1
+ 
 -- 
 2.20.1
 
