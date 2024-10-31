@@ -1,133 +1,158 @@
-Return-Path: <linux-kernel+bounces-390690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB879B7D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:57:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A749B7D64
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E621F21DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:57:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576ED1C219F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886DC1A2562;
-	Thu, 31 Oct 2024 14:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BDD1A263F;
+	Thu, 31 Oct 2024 14:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lypHGX20"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gKb5sIjT"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA1E1A0BF8;
-	Thu, 31 Oct 2024 14:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B333B1A0BF3;
+	Thu, 31 Oct 2024 14:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386617; cv=none; b=a/Y5izKX/swXqJdB1Yo4ucJTLJ2YiFj6qyHQY72o8mBnplAcP/PVGtTIwJSJ4pYq/8L53wj4ehA/yUnpdRXACCro+QFyCq8mZG5AS17tNkJRqmikTruut1tF129KU4qz2GG/qMj4v5d9T2dCCeYLXe18BheGDUYT0GCqeexLC7Q=
+	t=1730386631; cv=none; b=L1niVH0zDPyL/1JbxbXnbjc9l3CbahY2pWbEB2iQPCUyrkHz9wxajh9LlWZg6qDcKfHYGISyzMmy65ezQrbwXAV5+b7OlqwFB5muRpZfcuMQ2Andp59ZUVtAgQsWrlWsOMAOq4mqt3DjMNH6J/1VkBHrcPsWT09W8KtLsQ45Vjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386617; c=relaxed/simple;
-	bh=RYQD2k4t+eyKClYERlXtusVj0Pc67h5VYy59QS4+vVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KbERkVTB/wZAf6zyz2wmXBzZn1w3/ZeV6KZ8V58GVOumA8tVm5b4f7RVgF/khreCWy2qPQ23eQYerd7DD+iWTiyHF6rw8mmhoesTcFQzy+OeC/YT55rSxIB+VKMNgvuZ/goTMH5vLUnEbUR9EMYTgXxMUyElfcAvpSxEVX389oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lypHGX20; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8630C4FE14;
-	Thu, 31 Oct 2024 14:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730386616;
-	bh=RYQD2k4t+eyKClYERlXtusVj0Pc67h5VYy59QS4+vVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lypHGX20DvAPT4T4VePAdclHYWUYpdJ1hHA/RkIyIWCVbLgIfkcLBwBzCr9PAGbnb
-	 t5+nY9QFF/4G/2ArDljN26hKU3+hSc22AaxvahJjVndjBD3xKtRYpgfa1iMYfLwby0
-	 su3vtOePY7tdPQLIIYwCbeC3HSHndsrIjSUmVEUUgCmUN6YnrOwD4zmtsCLZ8ibGAp
-	 wOTmQ1JUJbG3Zq9EZObYdgGGshf8FvhLwBaRhgAOUDzeeYNkJYf8juK96OOeqXqACz
-	 4vGj+7eBG6oVOM4B3fngswws4Oidq7NlUwk2fpTERrS6QRtZGeurJjHMTyTpz6tvHg
-	 kM2d/10rTPQ1Q==
-Date: Thu, 31 Oct 2024 15:56:48 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Drain PRQs when domain removed from RID
-Message-ID: <oaho6355qyb7mjs7taturs6dkvtqhv2xlhoc6wgike7uodjbia@k5k6qltfhigi>
-References: <20241031095139.44220-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1730386631; c=relaxed/simple;
+	bh=Oy6TeBLIApre0Gsk9dKin2tfvWjYsksY1xGSRBNghAM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L2AM8J/RqveB63PLVI9wJMA/7U5UvYTNgb5Z8wqnuvsUuObSetMpivYGuuoSZlWu2aGNqDE2zPGqR/QGGshoktC1LH9ERCafNMJMk8/OMzXxmBgbGE4EUIfT7HNIXIxhXll5ZHiHFfl0NTsjtDP5LqFT/ttXjm/ppvNsTsyq6Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gKb5sIjT; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49VEurke128209;
+	Thu, 31 Oct 2024 09:56:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730386613;
+	bh=BKjhwn4Gv97R5OwiT9w7pG03w1Yp30seDCZWiI44ed4=;
+	h=From:To:CC:Subject:Date;
+	b=gKb5sIjTfDpiNQLsTYW7e5nI/RRRe6C/J4qZQFZtKhQwnccE1ACWDEs2vFdOPwtEG
+	 tfiuZ8tHUgVBdfNRqvb7XmqwBilcSTYS1i5BqrDGYQZ1plmZiYsdUHwkCfwMk8k5r/
+	 sZsx3Jedx0DX9wlyZypMS8y9dkzBMrMoxrTv3Pfs=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49VEur1o032678
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 31 Oct 2024 09:56:53 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 31
+ Oct 2024 09:56:52 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 31 Oct 2024 09:56:52 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49VEuqc7045558;
+	Thu, 31 Oct 2024 09:56:52 -0500
+From: Judith Mendez <jm@ti.com>
+To: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bin Liu <b-liu@ti.com>, Judith Mendez
+	<jm@ti.com>
+Subject: [PATCH RESEND v2] gpio: omap: Add omap_gpio_disable/enable_irq calls
+Date: Thu, 31 Oct 2024 09:56:52 -0500
+Message-ID: <20241031145652.342696-1-jm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031095139.44220-1-baolu.lu@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Oct 31, 2024 at 05:51:39PM +0800, Lu Baolu wrote:
-> As this iommu driver now supports page faults for requests without
-> PASID, page requests should be drained when a domain is removed from
-> the RID2PASID entry.
-> 
-> This results in the intel_iommu_drain_pasid_prq() call being moved to
-> intel_pasid_tear_down_entry(). This indicates that when a translation
-> is removed from any PASID entry and the PRI has been enabled on the
-> device, page requests are flushed in the domain detachment path.
-> 
-> The intel_iommu_drain_pasid_prq() helper has been modified to support
-> sending device TLB invalidation requests for both PASID and non-PASID
-> cases.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/intel/iommu.c |  1 -
->  drivers/iommu/intel/pasid.c |  1 +
->  drivers/iommu/intel/prq.c   | 22 +++++++---------------
->  3 files changed, 8 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 87a3563dfe54..3878f35be09d 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -4069,7 +4069,6 @@ static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid,
->  	intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
->  	kfree(dev_pasid);
->  	intel_pasid_tear_down_entry(iommu, dev, pasid, false);
-> -	intel_iommu_drain_pasid_prq(dev, pasid);
->  }
->  
->  static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
-> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-> index 7e76062a7ad2..31665fb62e1c 100644
-> --- a/drivers/iommu/intel/pasid.c
-> +++ b/drivers/iommu/intel/pasid.c
-> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
->  		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
->  
->  	devtlb_invalidation_with_pasid(iommu, dev, pasid);
-> +	intel_iommu_drain_pasid_prq(dev, pasid);
->  }
->  
->  /*
-> diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
-> index 3c50c848893f..ae7f6f34462f 100644
-> --- a/drivers/iommu/intel/prq.c
-> +++ b/drivers/iommu/intel/prq.c
-> @@ -66,12 +66,8 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
->  	struct pci_dev *pdev;
->  	int head, tail;
->  	u16 sid, did;
-> -	int qdep;
->  
->  	info = dev_iommu_priv_get(dev);
-> -	if (WARN_ON(!info || !dev_is_pci(dev)))
-You do this on purpose because
-1. It is not possible to go through this path without an iommu set in
-   the device
-2. PRI within the intel driver is only relevant for PCI
-3. There will always be a struct device_domain_info related to the
-   device iommu when doing PRI.
-right?
+From: Bin Liu <b-liu@ti.com>
 
-Best
+Add omap_gpio_disable_irq and omap_gpio_enable_irq
+calls in gpio-omap.
 
+Currently, kernel cannot disable gpio interrupts in
+case of a irq storm, so add omap_gpio_disable/enable_irq
+so that interrupts can be disabled/enabled.
+
+Signed-off-by: Bin Liu <b-liu@ti.com>
+[Judith: Add commit message]
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+Changes since v2:
+- Fix email header and commit message
+Changes since v1 RESEND:
+- split patch from series [0]
+- Add disable/enable calls without wrapper functions
+[0] https://lore.kernel.org/linux-omap/20241011173356.870883-1-jm@ti.com/
+
+Tested on am335x BeagleBone Black
+---
+ drivers/gpio/gpio-omap.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 76d5d87e9681e..137aabada26f9 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -711,6 +711,28 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
++static void omap_gpio_disable_irq(struct irq_data *d)
++{
++	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	unsigned int offset = d->hwirq;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&bank->lock, flags);
++	omap_set_gpio_irqenable(bank, offset, 0);
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
++}
++
++static void omap_gpio_enable_irq(struct irq_data *d)
++{
++	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	unsigned int offset = d->hwirq;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&bank->lock, flags);
++	omap_set_gpio_irqenable(bank, offset, 1);
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
++}
++
+ static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+@@ -723,6 +745,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
+ 	.irq_shutdown = omap_gpio_irq_shutdown,
+ 	.irq_mask = omap_gpio_mask_irq,
+ 	.irq_unmask = omap_gpio_unmask_irq,
++	.irq_disable = omap_gpio_disable_irq,
++	.irq_enable = omap_gpio_enable_irq,
+ 	.irq_set_type = omap_gpio_irq_type,
+ 	.irq_set_wake = omap_gpio_wake_enable,
+ 	.irq_bus_lock = omap_gpio_irq_bus_lock,
+@@ -737,6 +761,8 @@ static const struct irq_chip omap_gpio_irq_chip_nowake = {
+ 	.irq_shutdown = omap_gpio_irq_shutdown,
+ 	.irq_mask = omap_gpio_mask_irq,
+ 	.irq_unmask = omap_gpio_unmask_irq,
++	.irq_disable = omap_gpio_disable_irq,
++	.irq_enable = omap_gpio_enable_irq,
+ 	.irq_set_type = omap_gpio_irq_type,
+ 	.irq_bus_lock = omap_gpio_irq_bus_lock,
+ 	.irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
 -- 
+2.47.0
 
-Joel Granados
 
