@@ -1,98 +1,118 @@
-Return-Path: <linux-kernel+bounces-391151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3969B833F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:21:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A974D9B8342
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952E71F223F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E109281247
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781711CB335;
-	Thu, 31 Oct 2024 19:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D331CBE86;
+	Thu, 31 Oct 2024 19:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UwNTzx/O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAotM7qd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A19E347C7;
-	Thu, 31 Oct 2024 19:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB021CB50D;
+	Thu, 31 Oct 2024 19:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402502; cv=none; b=L2bJ/3En7xyqlkijFnHLxpwk3X3W5H3vdkhl6+WppvakC3hezUoL49VHubu8R8KbrhsqEkpbPoq9w3sNAGa9tDGLPfzAhlVupxRk15q5n6ermikiDTedhdPAae05mVNRErkGQu7bqNedaKBYKYxXJUMqZtVfANQ9cyXcO6UkZjU=
+	t=1730402505; cv=none; b=PY42mS2EibO2OCKTw0XKwiVv9Eg2ONQ9Z/DRQlkEXurzsIusUMNgvf0TAeYmFP++kRqFhvH26SyN4pMsTKp1VtPZwoPQcJntWThVSOqc9H/UXRFv3Lw2IZ09dzK54ujxLMF/Gqm3463LcHjsnKfuMERSmZpbvg2uS2oL+n03oMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402502; c=relaxed/simple;
-	bh=JwqlDQ+7L58U5/0cq+CtWtI4arvDFq1yUmmHNP3l1h8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k2GkmrHf7A7kym5z2EejUlxO0IBHaISyIKSRq0zqj3DPpUV64XPxNuDxyPVk7nKbVomJAZwVWsKPmp0YQ09SKNStlIpCxw/0iMmF+7OCUWXOU7L8FAqQcc+NG9NzIA4yFT92gt/RlyftNzYsMJRYYCJLNVaDj+GBA6B93jsZxZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UwNTzx/O; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730402500; x=1761938500;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JwqlDQ+7L58U5/0cq+CtWtI4arvDFq1yUmmHNP3l1h8=;
-  b=UwNTzx/OLXjml2EFolCceKjOM+mIac0pJpK6aoVZ+8JyuJM+Rel91+DJ
-   AwJSX1zrHtihOL+R/m5+jxEhOLGCoezOcYofCoUfRjPBovMYsz/wTePN3
-   /UqdMecyEC+3efaL2zsjzb6GOre3CkbjKA37Qpr+XOuQTJHlBZfT6CFsl
-   G+Q5bsM/ubxW3zjevjxvCVwrxIEEU1uhKnBIM2wvb8vbQDaWK3j6QrOjx
-   v5xTXBf8Z9YpsRvlXgJhxmarXXyRDpYLBe2qA4+5Rfe9t8ydEYVrEo8yh
-   s+vXC/JvtWMMXxKlGwq8qNZPt1A3M1kU4icFx3IDSACCDRHxjTWdp/sLv
-   Q==;
-X-CSE-ConnectionGUID: oolvr/WgTp21ONnjIOSR0g==
-X-CSE-MsgGUID: DUpChuD2TIm8mp5CQnKmeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="47639317"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="47639317"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 12:21:40 -0700
-X-CSE-ConnectionGUID: jkF4PW2gSZGOODde+mekIA==
-X-CSE-MsgGUID: QSV555ArS8SmfpM3S+iOOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="83069517"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 12:21:35 -0700
-Message-ID: <d0cf8fb2-9cff-40d0-8ffb-5d0ba9c86539@intel.com>
-Date: Thu, 31 Oct 2024 21:21:29 +0200
+	s=arc-20240116; t=1730402505; c=relaxed/simple;
+	bh=0ZSgsybRkNgA//hqHaFbgWNG+1PnzRnJxZ3UfA4h9Rs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=baj/cIlTsE3+H0jT3h9LQrr7BeBMrYUtsmOHzq4yX+9I98SLUz6lzMDcbxSGRHLUb5DMtA3bQ/4ih6iWsYjGHbywS9JEoDlQJfIIpIZFXq2v35x3p9aAdkN58Wb7iwJ/f58+RMg435LMvo5DD4adLi1Cu8ocZs7QfP4vq7hEISo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAotM7qd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D72CC4CED3;
+	Thu, 31 Oct 2024 19:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730402504;
+	bh=0ZSgsybRkNgA//hqHaFbgWNG+1PnzRnJxZ3UfA4h9Rs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=jAotM7qdJB81uguvOPNpxfpjVngo51BMHoiWwhXcNwIr86J2udKL3utXN7I8nPX9D
+	 0i5FNYPAvnweqqvT0bm0XYe1PtZ4mKOgF9eoqRskXUjc/MV0MJOAxvbjx8vDBLL7P1
+	 IznFmDgKZJ7m4+clMiJKYbYRyJU4OKXSAaSTe6KFtu/wypGH16NGKR5dtJ8HUyWrwK
+	 hP1l9PZWShs9wx8rvpOQOXdW8JG7Xn42JrzsKZWz6Qs/Eue1hHS889sSa5NlOJYFPo
+	 bqg91tOQdWR2/9gmviQwUdmeISpwPXAxxQ35CttsiqQfOsDQ8Q+NPVHYR5rKsPIGtb
+	 UOSjGJZfOXQSg==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 31 Oct 2024 19:21:38 +0000
+Subject: [PATCH] arm64/gcs: Fix outdated ptrace documentation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/25] TDX vCPU/VM creation
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
- seanjc@google.com
-Cc: yan.y.zhao@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
- reinette.chatre@intel.com
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241031-arm64-gcs-doc-disable-v1-1-d7f6ded62046@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMHYI2cC/x3MwQqDMAyA4VeRnA0krp2wVxkeahtdwLWjARHEd
+ 1/x+B3+/wSTqmLw6k6osqtpyQ3cdxA/Ia+CmpphoMExPRhD/T4drtEwlYhJLcyboDiKxOz9SAK
+ t/VVZ9Li/7+m6/vrBbvZnAAAA
+X-Change-ID: 20241031-arm64-gcs-doc-disable-e40c0115570e
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1804; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=0ZSgsybRkNgA//hqHaFbgWNG+1PnzRnJxZ3UfA4h9Rs=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnI9jG+FCHClvg5NARf9CZ3l7Gnyt4LVv9jrok91J5
+ qnOg2QOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZyPYxgAKCRAk1otyXVSH0GolB/
+ 9x7Rxxvu35bazi1kYivVoC5b5L6KYYjB5ulPK+yCDLHX1M2g2elshC33kBGGBQfzRF3JggFfO+88p8
+ n20h9PE6vHwLrVDuNFBtsQrhgsVJ/rw+HfLsPeYmQCRljuCtnUUcmGX23ZtPv6h3rfIYE2WJh+lqlj
+ vZWgVQyxmUNdT+moVsN+2SRNllvrhzUVbob4Z2ynSYARcreMguOwoOJ3tGLUAYLxNjshJuKLVF/DcL
+ 88+iglT8m6AMP5OQN0oWaVN14FBlUNvt8uL3JSwQaMEtO2wfKYq+r4HpnjmXb23NY7hbmSWihugV69
+ twT6cz31E1oSFzQJj4edC/qPaQK0Rz
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 30/10/24 21:00, Rick Edgecombe wrote:
-> Here is v2 of TDX VM/vCPU creation series. As discussed earlier, non-nits 
-> from v1[0] have been applied and it’s ready to hand off to Paolo. A few 
-> items remain that may be worth further discussion:
->  - Disable CET/PT in tdx_get_supported_xfam(), as these features haven’t 
->    been been tested.
+The ptrace documentation for GCS was written prior to the implementation of
+clone3() when we still blocked enabling of GCS via ptrace. This restriction
+was relaxed as part of implementing clone3() support since we implemented
+support for the GCS not being managed by the kernel but the documentation
+still mentions the restriction. Update the documentation to reflect what
+was merged.
 
-It seems for Intel PT we have no support for restoring host
-state.  IA32_RTIT_* MSR preservation is Init(XFAM(8)) which means
-the TDX Module sets the MSR to its RESET value after TD Enty/Exit.
-So it seems to me XFAM(8) does need to be disabled until that is
-supported.
+We have not yet merged clone3() itself but all the support other than in
+clone() itself is there.
+
+Fixes: 7058bf87cd59 ("arm64/gcs: Document the ABI for Guarded Control Stacks")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/arch/arm64/gcs.rst | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/arch/arm64/gcs.rst b/Documentation/arch/arm64/gcs.rst
+index af58d9151cb72df9058ddccadb2602127b479c95..1f65a3193e7765dce9bfd6ad88b9fbd6a225ed86 100644
+--- a/Documentation/arch/arm64/gcs.rst
++++ b/Documentation/arch/arm64/gcs.rst
+@@ -204,11 +204,8 @@ When returning from a signal handler:
+ * A new regset NT_ARM_GCS is defined for use with PTRACE_GETREGSET and
+   PTRACE_SETREGSET.
+ 
+-* Due to the complexity surrounding allocation and deallocation of stacks and
+-  lack of practical application it is not possible to enable GCS via ptrace.
+-  GCS may be disabled via the ptrace interface.
+-
+-* Other GCS modes may be configured via ptrace.
++* The GCS mode, including enable and disable, may be configured via ptrace.
++  If GCS is enabled via ptrace no new GCS will be allocated for the thread.
+ 
+ * Configuration via ptrace ignores locking of GCS mode bits.
+ 
+
+---
+base-commit: 9b9be78258511e67767e4aa51f587cf22feb5065
+change-id: 20241031-arm64-gcs-doc-disable-e40c0115570e
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
