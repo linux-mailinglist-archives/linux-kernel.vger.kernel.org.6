@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-390698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C400B9B7D7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:00:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E3D09B7DB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:05:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89503282122
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:00:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A0C2817BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8950D19F416;
-	Thu, 31 Oct 2024 15:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE8F1A726F;
+	Thu, 31 Oct 2024 15:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYXlmhIi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gqIhS/sv"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F04196C6C;
-	Thu, 31 Oct 2024 15:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A432B1A4F01;
+	Thu, 31 Oct 2024 15:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386831; cv=none; b=ZYVWXYMhW6+H09YMHhWj6FEZs1RZpr5M3yiGOR9P1HKrz+MWFWM24QZI0QQoloA785WvO/D+ngI9PhBSaW7R/LxZBpsng+q8xgCks9HcxhGRGqnEvJBkvPGcUq1rmNP0JPkyQh7dTHJ/rb2aP1S6jQewEX3FISnH1xASEfTWoA4=
+	t=1730386889; cv=none; b=A869d42GRwTbzsB5JyfIbPC4pgrD2Hi+JZE59mhRaHNZryJ5XLox9cbPap9kmFL/g7qNQKGATQnBbEHeE1A3mb5SNLt0e786QGksaVZZFgmaz+DMAYRBf4y5gBxz1bKmaaSeCBj3UkRYMR4XkQTQ3r6GPeddcDsUBcnxyvwdOeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386831; c=relaxed/simple;
-	bh=6aYTYpn8XYvD5hJGD3rYwwoC1Zt77qYWC4sWsNJymlw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QXDVQytBp93j8zofw3+uWrZdZQO/+WdvLWZaXb4NwDe4Kns6nKYbBEFl8Gao3ZFpvKFB5ZjKZouWzczjIuW44CQDgBypLphIJqOGvvTjJxHBWMRxgw3LO4KwZ6NFQxppg3L5wCzdOyVogHQrfPFMoyKfL8uaGe1ivjNKQFb7VEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYXlmhIi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F3EC4FF7B;
-	Thu, 31 Oct 2024 15:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730386831;
-	bh=6aYTYpn8XYvD5hJGD3rYwwoC1Zt77qYWC4sWsNJymlw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GYXlmhIitpA3Q1L9Yb5sY6LXMLNiQFfzOdP8QYt65rMJfXFBN/yOBgz4ZW0Eb0v1t
-	 KxReS+q2hHQxUWI4f6UMOGVwnHMTNUMPEfcjEwzu+dBHJzGdLO1nUxQeP1f7TtHWm4
-	 AbrBORmetYyssxt2VVDU6P1t6YAdINPqBZLdRXxDqJ+Eh+uyF/WmdlEFqP6Ej/t+pC
-	 BXbQrmwwxhEbWy7S/6jBaa+ziGgr1lK2Ulrd++2cbo91agKAUyIeVl7AMEuxcSbqkE
-	 rIWYyXmeZyZiHeWytosIIWPEv3g9LlCRHFceNnuSPG+CB9iRyv+LvGVlt7sun/mu9C
-	 3wZ9f3RHp3H3Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E40380AC0A;
-	Thu, 31 Oct 2024 15:00:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730386889; c=relaxed/simple;
+	bh=w1P9F7UnJdKp3E6r/SnKDquMCSMBRwxSkzH2UKLNezM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fPyclVoVaVoytxHHIAe9fuRU6MXlLH8MCV/C27M5P2RB1wIMRdmSnHojs+HsxQMpUE7KGaFSeLRE1+0u74Tsv3s71wmpStr0eMSQOigON/ZOjmnl9M1qDRiXAL6OzeNXdvuRR0DaPO7Gh8N9zFFau6WrmUD1nmptdHaN9TQn62o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gqIhS/sv; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 04398240005;
+	Thu, 31 Oct 2024 15:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730386884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s4onf2bSMCTiRypACag+YRENrFk/22U9sSVMhr4kt0Q=;
+	b=gqIhS/sv1tRrpuw3NlcXw1TySdU0wnYq6Qr4o9OyjEL9sKqrMSm/uuaW+sQ2+1GfqGkLIQ
+	+bOaBn5URTxXXSH4qQsNZF8t9C5aEKRapxux+Zo9AKwt98xxyLFSNDaau2V8FUbfGdHQrV
+	rYbPpEO/qykyjNg9GVfVfpu5M5YlnFR+aY9GWmi/l42bCKAbTOjGPN5xYjI7cfLWm0ggAk
+	5V2Tt/WTMNSufG2KAHx2oMtTj9ZBSnJJ0nLIYSTiXmDiDLKj6qZleBeywAgpYk+JMm6bPi
+	AS1JC3Mx9H7ic7qDh6qOPtB5MZTpV4wa6hmRLDvVnDTjmCiLytU15x1SqEKU4Q==
+Date: Thu, 31 Oct 2024 16:01:22 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Arnd Bergmann
+ <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Allan
+ Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 0/2] Fix dtc warnings when building the LAN966x
+ device tree overlay
+Message-ID: <20241031160122.40cf61e0@bootlin.com>
+In-Reply-To: <20241029084338.194942-1-herve.codina@bootlin.com>
+References: <20241029084338.194942-1-herve.codina@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: phy: dp83822: Configure RMII mode on DP83825
- devices
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173038683927.1988442.18235112192893672854.git-patchwork-notify@kernel.org>
-Date: Thu, 31 Oct 2024 15:00:39 +0000
-References: <aa62d081804f44b5af0e8de2372ae6bfe1affd34.camel@iris-sensing.com>
-In-Reply-To: <aa62d081804f44b5af0e8de2372ae6bfe1affd34.camel@iris-sensing.com>
-To: Erik Schumacher <erik.schumacher@iris-sensing.com>
-Cc: hkallweit1@gmail.com, andrew@lunn.ch, linux@armlinux.org.uk,
- davem@davemloft.net, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- kuba@kernel.org, edumazet@google.com, jeremie.dautheribes@bootlin.com,
- pabeni@redhat.com
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hello:
+Hi Philipp,
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
 
-On Thu, 24 Oct 2024 13:24:23 +0000 you wrote:
-> Like the DP83826, the DP83825 can also be configured as an RMII master or
-> slave via a control register. The existing function responsible for this
-> configuration is renamed to a general dp8382x function. The DP83825 only
-> supports RMII so nothing more needs to be configured.
+On Tue, 29 Oct 2024 09:43:34 +0100
+Herve Codina <herve.codina@bootlin.com> wrote:
+
+> dtc generates 3 kinds of warnings when it builds the LAN966x dtso.
 > 
-> With this change, the dp83822_driver list is reorganized according to the
-> device name.
+> - missing or empty reg/ranges property
+>     .../pci-ep-bus@0/cpu_clk: missing or empty reg/ranges property
+>     .../pci-ep-bus@0/ddr_clk: missing or empty reg/ranges property
+>     .../pci-ep-bus@0/sys_clk: missing or empty reg/ranges property
+>   Patch 1 in this series fixes these warnings
 > 
-> [...]
+> - Missing interrupt-parent
+>    .../pci-ep-bus@0/oic@e00c0120: Missing interrupt-parent
+>   This warning was quickly silenced by Philipp [1].
+>   Patch 2 in this series fixes the warning and should replace the patch
+>   applied by Philipp to silence the warning.
+> 
+> - Warning (avoid_unnecessary_addr_size)
+>    /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+>   This warning should be fixed in dtc.
+>   A patch has already be sent by Philip to fix it [2].
+> 
+> [1] https://lore.kernel.org/all/57793bb01e02f03e215dfa6f8783df18034ae2ea.camel@pengutronix.de/
+> [2] https://lore.kernel.org/devicetree-compiler/20241025161307.3629901-1-p.zabel@pengutronix.de/T/#u
+> 
 
-Here is the summary with links:
-  - [net-next] net: phy: dp83822: Configure RMII mode on DP83825 devices
-    https://git.kernel.org/netdev/net-next/c/9e114ec80840
+Both patches in this series have been reviewed by Rob.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+I think it is a green light to have them applied in the reset tree.
+Your opinion?
 
-
+Best regards,
+Hervé
 
