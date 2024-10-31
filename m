@@ -1,224 +1,158 @@
-Return-Path: <linux-kernel+bounces-390419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2C69B799A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:21:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320139B7998
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4723C285921
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:21:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9D91F233A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3E519C564;
-	Thu, 31 Oct 2024 11:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62CD19B5BE;
+	Thu, 31 Oct 2024 11:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OEfhFKXb"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gd42HFmq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EB3175BF
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F02119B595;
+	Thu, 31 Oct 2024 11:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730373666; cv=none; b=fvATuF6rJ5bXV1iEyZ+bTTcjsgAVASkIXRyBF1/QAoN49d6nP0uxX7NeyqzlWVWCCzGzL5RcXz+ZcdiH5LC0y08tUkevZX0g7pXz3far4b3G36KjusVmoX/FWSNOJOsV3OtuNu4l1UIyxumPsJ6H5kkAAAXpkPLxNZdpcqjH1K4=
+	t=1730373664; cv=none; b=nIRZAxyg39vlu84pA6zd81zZmcVC4+evwA5Jyyi+R9C2FO9ogszBXNT3ZAwr7vZolBMpJbI97e+Y6aWrcVAF1HnSsxhByDHWCSheAplDse3iW7XrfPoFjvPVNEawOhpF0LhgITlfZXbiFDlZKnKh4XZ/Z6o8pjww5lKY4x/ipxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730373666; c=relaxed/simple;
-	bh=Bs6tqblL7e2KLhnwDDEV072pjAp0SU1jfjcJDBlSE4A=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=EYebGlNCoUPY9/6dG10qlishjDmMo2Rsjg8wehZLbUHkqdOrth37C08OLFk8NGD4glGCV5n+eejF/WqWF94p3ezR/cr5Jls/h8BMmGX4YgbCkk8YG2uxCnRxU+gERZKcI/djZ44gxsJCqjA2xm8STnTJNj05NIv75lBtYxIcgHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OEfhFKXb; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cb47387ceso8087335ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1730373663; x=1730978463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SgD3pKPtdFzcz4t1a0u04lcW4uB7d9j6oqT5niate0A=;
-        b=OEfhFKXbpBEDhBEE0uLRjHKVolvNJE6q+zzkGhIZZKlDvIKtUEbXbNqunDyorCdA9g
-         gNCqvDBFRVYcQVITogA6Urt2wUXVAMCW+8ptAIUNP2b4I8/ymNhOxT5WkpUlEWbOV4My
-         R1bAKgtDFnh4Vk6Y6NZ+LL5YN8Chv4R4QGAcQrOs45UCN8NIGbApXWpPaGQtmqAgTPEJ
-         h9Ue4t82eVZW0RPceCFtiCG8VOj8FUgm7kxE6PZNcThfDJs3jevWo7OvjzAhnfE6DmvC
-         e2brnRkKgIOFf6+sVs9Kc0h6W+w9HHtUjogEcA3OYnRXitXfY0bQggVCG39Loq25bnDJ
-         b4pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730373663; x=1730978463;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SgD3pKPtdFzcz4t1a0u04lcW4uB7d9j6oqT5niate0A=;
-        b=FQ5vHwRPa2gdZnDmxazuaX4jCMtno36egj4B+S7125JXMulpM+UblbxzZtnD5fcB/l
-         NwvghttTKHcnbNUN6P5s7yxBygJNP7BCdxuZBJU1dWn2s+r/VeLhf3vdDA3MItmA7u2K
-         J4xu3uO3QQ+zN5In3qy8RtyKW6zs3EgDKG/LLDAwNCXJWAihktK7Wggizp1K99F1knse
-         9oAbl7G7eO+FiBvgMtGzJb7s7vl9TazfxUCptRl+wxjavgwTE+DFrluh1YxWN7wZfPqI
-         51IRz5IKC+Oi4L5oSlk5X9D9Q2ZPYJ0GejC04CMh5QmQORCe7eArVka4yBvKryYP5VCL
-         rT4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVENnbJCc7YGiWczDzfE9iJ02qS14BrmiMDMJZHvLVmYdmBJLc3WB5kVdLWq321MhpbkuQE/KoMkfqrAH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEm5oXBgwIEfAp5qOmgoGOo51+h88jaf/L9D3rWfXwYxy607hM
-	W7s+Qavoib+WeflD8EyssswuTnY5fQKrZ6lPIj959unozPjf7uhHta24gTiqg8g=
-X-Google-Smtp-Source: AGHT+IF6rCp8uA7CIfzXSTYHLrzQK+lu+COWzmT52riKYUQh7Yt9+TYvl4AYGhI2GgQcWukgSatRcQ==
-X-Received: by 2002:a17:902:da82:b0:20c:cccd:17a3 with SMTP id d9443c01a7336-210c6c346a9mr224734955ad.46.1730373662606;
-        Thu, 31 Oct 2024 04:21:02 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.227])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056efd01sm7513455ad.52.2024.10.31.04.20.52
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 31 Oct 2024 04:21:02 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: punit.agrawal@bytedance.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	sudeep.holla@arm.com,
-	guohanjun@huawei.com,
-	prarit@redhat.com,
-	gshan@redhat.com,
-	cuiyunhui@bytedance.com,
-	dwmw@amazon.co.uk,
-	Jonathan.Cameron@huawei.com,
-	liuwei09@cestc.cn,
-	maobibo@loongson.cn,
-	sunilvl@ventanamicro.com,
-	alexghiti@rivosinc.com,
-	haibo1.xu@intel.com,
-	jeeheng.sia@starfivetech.com,
-	x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH] ACPI: fix the warning reported by the sparse
-Date: Thu, 31 Oct 2024 19:20:30 +0800
-Message-Id: <20241031112030.72647-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1730373664; c=relaxed/simple;
+	bh=1JstP6bvNNsf3LRWG4yTTVkzl1OAIWojm11gpkcMya0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cwIwo0x6pe8qbFWE/yf9IOdDq6IjQ0pDeVHqnzesml4iUnM6mwwtVg4s0qzHTgQL+2YAxxvrLmBzshef9iYfLwNjhB/akZHGQj1e5U0poi0EYMI3DWv3yROkPW4VnzxrQpfNtxhqn+YvcTNd52HIayl3DoYLqyAn6dkkz3GC6qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gd42HFmq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA39C4E672;
+	Thu, 31 Oct 2024 11:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730373664;
+	bh=1JstP6bvNNsf3LRWG4yTTVkzl1OAIWojm11gpkcMya0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Gd42HFmqqUQLIphzHQ056DClzOQBkKInXIBJnt2vhYrEU65olAjaBlOIitVd2f4rK
+	 vU0gFSaIepRvnyczjQvsg1x6siOlfVf1Qo1fiZOeaB1gCs7o35hNpETvuBbhxbpFTn
+	 QM3qrR1OL+5QcfGMQhI/UtttL8mZb4tG+8J9tt0wlVwznop0umwwtBBhHGL/es8tBW
+	 UC5yxzKgsSRJMkB6Y+qQpw28vTPI9mJNJVWHKr85yo9H5OlH8N+Q/Np2N383ZCauW8
+	 vSwEaOXOSBbdItxB+XdCq6DsQ6MihTj1llMb64HJ2a8TUEOfUqwUP6atS4FVY5D/Vd
+	 PPyX7BKbXJi/Q==
+Message-ID: <7208f3a0-d62a-43b3-923f-c9e5080b97a5@kernel.org>
+Date: Thu, 31 Oct 2024 12:20:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] cpuidle: riscv-sbi: use cleanup attribute for np in
+ for_each_possible_cpu
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Anup Patel <anup@brainfault.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Atish Patra <atishp@rivosinc.com>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-pm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241030-cpuidle-riscv-sbi-cleanup-v1-0-5e08a22c9409@gmail.com>
+ <20241030-cpuidle-riscv-sbi-cleanup-v1-2-5e08a22c9409@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241030-cpuidle-riscv-sbi-cleanup-v1-2-5e08a22c9409@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-All architectures use early_memremap() instead of early_ioremap().
-Therefore, to solve the warning detected by sparse:
-../arch/riscv/kernel/acpi.c:213:30: warning: incorrect type in return expression (different address spaces)
-../arch/riscv/kernel/acpi.c:213:30:    expected void [noderef] __iomem *
-../arch/riscv/kernel/acpi.c:213:30:    got void *
-../arch/riscv/kernel/acpi.c:221:24: warning: incorrect type in argument 1 (different address spaces)
-../arch/riscv/kernel/acpi.c:221:24:    expected void *addr
-../arch/riscv/kernel/acpi.c:221:24:    got void [noderef] __iomem *map
-The __iomem attribute of __acpi_map_table() is removed.
+On 30/10/2024 07:44, Javier Carrasco wrote:
+> Simplify the code and make it more robust against new execution paths in
+> the loop by means of the cleanup attribute.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  drivers/cpuidle/cpuidle-riscv-sbi.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> index 2b3aec09b895..3a78d6b7598b 100644
+> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> @@ -504,23 +504,21 @@ static int sbi_cpuidle_probe(struct platform_device *pdev)
+>  	int cpu, ret;
+>  	struct cpuidle_driver *drv;
+>  	struct cpuidle_device *dev;
+> -	struct device_node *np, *pds_node;
+> +	struct device_node *pds_node;
+>  
+>  	/* Detect OSI support based on CPU DT nodes */
+>  	sbi_cpuidle_use_osi = true;
+>  	for_each_possible_cpu(cpu) {
+> -		np = of_cpu_device_node_get(cpu);
+> +		struct device_node *np __free(device_node) =
+> +			of_cpu_device_node_get(cpu);
+>  		if (np &&
+>  		    of_property_present(np, "power-domains") &&
+>  		    of_property_present(np, "power-domain-names")) {
+> -			of_node_put(np);
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- arch/arm64/kernel/acpi.c     | 6 +++---
- arch/loongarch/kernel/acpi.c | 2 +-
- arch/riscv/kernel/acpi.c     | 6 +++---
- arch/x86/kernel/acpi/boot.c  | 2 +-
- drivers/acpi/osl.c           | 2 +-
- include/linux/acpi.h         | 2 +-
- 6 files changed, 10 insertions(+), 10 deletions(-)
+You just added this. Don't add code which is immediately removed. It's a
+noop or wrong code.
 
-diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-index e6f66491fbe9..69017dadb82d 100644
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -88,10 +88,10 @@ static bool __init dt_is_stub(void)
- }
- 
- /*
-- * __acpi_map_table() will be called before page_init(), so early_ioremap()
-- * or early_memremap() should be called here to for ACPI table mapping.
-+ * __acpi_map_table() will be called before page_init(), so early_memremap()
-+ * should be called here to for ACPI table mapping.
-  */
--void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
-+void __init *__acpi_map_table(unsigned long phys, unsigned long size)
- {
- 	if (!size)
- 		return NULL;
-diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
-index f1a74b80f22c..a29c1d86e274 100644
---- a/arch/loongarch/kernel/acpi.c
-+++ b/arch/loongarch/kernel/acpi.c
-@@ -34,7 +34,7 @@ u64 acpi_saved_sp;
- 
- struct acpi_madt_core_pic acpi_core_pic[MAX_CORE_PIC];
- 
--void __init __iomem * __acpi_map_table(unsigned long phys, unsigned long size)
-+void __init *__acpi_map_table(unsigned long phys, unsigned long size)
- {
- 
- 	if (!phys || !size)
-diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
-index 2fd29695a788..861ab56962a2 100644
---- a/arch/riscv/kernel/acpi.c
-+++ b/arch/riscv/kernel/acpi.c
-@@ -202,10 +202,10 @@ struct acpi_madt_rintc *acpi_cpu_get_madt_rintc(int cpu)
- }
- 
- /*
-- * __acpi_map_table() will be called before paging_init(), so early_ioremap()
-- * or early_memremap() should be called here to for ACPI table mapping.
-+ * __acpi_map_table() will be called before paging_init(), so early_memremap()
-+ * should be called here to for ACPI table mapping.
-  */
--void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
-+void __init *__acpi_map_table(unsigned long phys, unsigned long size)
- {
- 	if (!size)
- 		return NULL;
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 3a44a9dc3fb7..e1ed297552e7 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -105,7 +105,7 @@ static u32 isa_irq_to_gsi[NR_IRQS_LEGACY] __read_mostly = {
-  * This is just a simple wrapper around early_memremap(),
-  * with sanity checks for phys == 0 and size == 0.
-  */
--void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
-+void __init *__acpi_map_table(unsigned long phys, unsigned long size)
- {
- 
- 	if (!phys || !size)
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index 70af3fbbebe5..a36486b59bca 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -334,7 +334,7 @@ void __iomem __ref
- 	}
- 
- 	if (!acpi_permanent_mmap)
--		return __acpi_map_table((unsigned long)phys, size);
-+		return (void __iomem __force *)__acpi_map_table((unsigned long)phys, size);
- 
- 	mutex_lock(&acpi_ioremap_lock);
- 	/* Check if there's a suitable mapping already. */
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 4d5ee84c468b..d4627d96c13b 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -207,7 +207,7 @@ static inline int acpi_debugger_notify_command_complete(void)
- 		(!entry) || (unsigned long)entry + sizeof(*entry) > end ||  \
- 		((struct acpi_subtable_header *)entry)->length < sizeof(*entry))
- 
--void __iomem *__acpi_map_table(unsigned long phys, unsigned long size);
-+void *__acpi_map_table(unsigned long phys, unsigned long size);
- void __acpi_unmap_table(void __iomem *map, unsigned long size);
- int early_acpi_boot_init(void);
- int acpi_boot_init (void);
--- 
-2.39.2
+If you want to backport something: send a backport. We work here on
+mainline and in mainline this is one logical change: fixing issue.
+Whether you fix issue with of_node_put or cleanup or by removing this
+code entirely, it does not matter. All of these are fixing the same, one
+issue. This is inflating mainline history with unnecessary commits.
+
+
+
+Best regards,
+Krzysztof
 
 
