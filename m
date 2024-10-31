@@ -1,318 +1,171 @@
-Return-Path: <linux-kernel+bounces-391111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227C09B82C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:45:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA739B82CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4480A1C21518
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:45:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408D61F22B76
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1492C1CDA3F;
-	Thu, 31 Oct 2024 18:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F0F1C9B9F;
+	Thu, 31 Oct 2024 18:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnN6ngtO"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fDGQLDhr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313F71CB31F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB98146580;
+	Thu, 31 Oct 2024 18:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730400223; cv=none; b=aE8wJO8g+VSSF02PsTM334cvWlkrHCJTwUQbNEaKdY6LybsvWS7VsbQa64IQfyfLVtldEVDz0E3Da+PIpCJ4R0IbICaPcK0CdNYAzObQ4+gJy0DUpQQiu4entjwKhnXwCUjClsi1vL0nE5acZ4dmI1twgJPKC4DBhx6kYH2PiNA=
+	t=1730400375; cv=none; b=OO058kzkbZ55S7vCBWni2P6pQc0KT+Jbcc1MPnDVxc1TXO2CwA7Cz2tSAFmpK425JfonYgjXjYtNS7Maxo8IM1f1MHaiQn9FD/s5zYGz9OD94icqoksvGSRb9UUYLNWxbJlVGn8fQNljCVFMe5f9afUxTYci46uupWwNryZbSPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730400223; c=relaxed/simple;
-	bh=AcYVPTr79bYFAZlOyEHLukCwc5wYCcNA5bdsMltFQkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EPdwNVa7s5CmDhmpf4d9RZ1xCJyJuc/lKDU9bvtfDIa/0lc43MeT89BebZSWqtF1ICkjF654Odi4weKOkkSmRXb9b5Yj+lYlAbLpkUVmkvNm6HnrJ/LmYpDw24fEDsqyNPs3VqNizkyHblpXMvD1fSOn5kY+vmOLX0/qldrgf+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnN6ngtO; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43193678216so11081785e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:43:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730400218; x=1731005018; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V31vfskpRrfJdFE1EVFRfNcmsrL0pL3G+Xn3v+VxvbA=;
-        b=JnN6ngtOXr9ulqyegMGgyohbZDeJ1wIOEMTlrFPi52OdQWzCn9A2bqRHTJ/85gMULl
-         OgDx6YktafqYyKwFEtytuNkKgOdZhORx/ev/Bu4X4ZIY0Iu4zT7m7UrPPQqMnSAYC6xj
-         1cA3N9zuyQo4C+UXN0tIsSxWX9PATtcqXb0cS6SLYB4cdM/SMUpkhZjMngcBs7wiWfup
-         Ine0CvuJ2KBMZtCt55piJxlpNLYbDJq3xT47b+CeQNpZzF1DcSy4+H2CTidwuSjeXkzw
-         HbIkue1mKDgxevrHrgkLc9vXwteNoww4axUcckJTBZFuqebMxTlgFncJtPifscUbVZeY
-         qnRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730400218; x=1731005018;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V31vfskpRrfJdFE1EVFRfNcmsrL0pL3G+Xn3v+VxvbA=;
-        b=BgbrCbo2JSvVCPxkJpGqeyuHWUy1Jm1Esn90gHUpuS9txoqn9Q2DSs89DDrtZBekHc
-         GXx0tVAc42ZJXpm5yKa2wMbWGyPbjCPEjlb+lttAx+U8wP3n0tFQgHckUfuElz3zJTsH
-         v3uHYimX3dbsniAPDhfeqWWgFQ8myxujrzlh3OlnogvEUwd6gWKXbFgDRE30eym2N2Lq
-         ieKJ6FKBgZGIAIUiPHsLKs5Kd2VBoxUyL2XqCDeuNprNyZ/GonRd0ckmpBE5WZKhqGn2
-         WtDyhF71lv7ju2ojD1HbtxAj9tY4Ekd4KwhSxwKivZy6tApOCQqlYpcfIGR/mUJo6AC6
-         8xeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGCf0lFZJZJz0BWaI4vXqHx5+e68UK3AX1hcNRoXuFq9ZyPhku2MLfLrF88844HRlM+QoU2k+Zof//bAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrO9DelOSxDs93frnCIOt5wSL43JIA4OujGEMX+qoZaX++8uLz
-	vdqLhJfuNNMhmzIWqjqazrB/uwf+BpZmdIRBAKoip2rGX48nX7Y4
-X-Google-Smtp-Source: AGHT+IE/Na2LPqcL69LDgazCyCUo27L72v5LbK3GcMUAyA6C18hGbb9UHk2BiEjCWo4HHMYdeVmHpw==
-X-Received: by 2002:a05:600c:350b:b0:42c:e0da:f15c with SMTP id 5b1f17b1804b1-4319acbb947mr157527225e9.20.1730400218118;
-        Thu, 31 Oct 2024 11:43:38 -0700 (PDT)
-Received: from fedora.. ([94.73.38.214])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c65b8sm34730155e9.18.2024.10.31.11.43.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 11:43:37 -0700 (PDT)
-From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To: louis.chauvet@bootlin.com
-Cc: airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	hamohammed.sa@gmail.com,
-	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mairacanal@riseup.net,
-	melissa.srw@gmail.com,
-	mripard@kernel.org,
-	rodrigosiqueiramelo@gmail.com,
-	simona.vetter@ffwll.ch,
-	simona@ffwll.ch,
-	thomas.petazzoni@bootlin.com,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v2] drm/vkms: Remove index parameter from init_vkms_output
-Date: Thu, 31 Oct 2024 19:43:35 +0100
-Message-ID: <20241031184336.3866-1-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <Zx9ebAggGouerl4A@fedora>
-References: <Zx9ebAggGouerl4A@fedora>
+	s=arc-20240116; t=1730400375; c=relaxed/simple;
+	bh=HpCgPvyq3D1zQCsDBCFTe5UMcNjGH31+kISIMtSvCRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qId4gKvtCwU0cOm+nU5Mz55XW7aocGtIWcwPZzoYe958W+37FcZCicrEXIKOswBeZuBjlgAOt3PLk+m6HqMzTE0VIABHcaBGStH/XS/si9Us3nCWMbHVSzpmAqtItDQHV2mua7z9oRuUry2VV1O+zftCWyWgIBuV88YOY75mMtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fDGQLDhr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VAj1pM013825;
+	Thu, 31 Oct 2024 18:45:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Mm/Oe0pdbfm+c0D+7q07xGwwgCfSZzA7iOSzYxAoNaE=; b=fDGQLDhrX6C3dkyF
+	nBjtJjPm8zRih7MUjJb2ddJEqLfDuEDgJfItimvuclErgqPcC5fg9i1ofrvJk4MG
+	ohTIFC6rt7vzE3KlLSqxCjzgC/GVuaUybGUhlsksPwq4H53pAq3354rkt3Tsjgr8
+	hhQy6jSkESWp2KxdWpr0gC1Oet7juPDvkfFVtmhg7cisxbmqV4dKzkMNvKuz3UFP
+	J0kSEh+vicYJJOKmM/D1ZBZ4DJdGzvYzSzjLPBjjcIyfX2lUXA5PNIqvPT5xePx6
+	i/XJVlmV6841mh3S1BZPkgy6zRiXyqRy1BfmyvSmhNjCnfWTADTe8yjb4o80B2DT
+	m5ijnQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ky6raus2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 18:45:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49VIjukp030495
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 18:45:56 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 31 Oct
+ 2024 11:45:55 -0700
+Message-ID: <92217ec6-c21c-462a-a934-9e93183c1230@quicinc.com>
+Date: Thu, 31 Oct 2024 11:45:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child
+ nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <freedreno@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <robdclark@gmail.com>, <swboyd@chromium.org>, <airlied@gmail.com>,
+        <quic_jesszhan@quicinc.com>, <lyude@redhat.com>, <simona@ffwll.ch>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
+ <CAA8EJppKou84MZm0JS_4bPveMO2UxpMs5ejCoL7OMWd-umtDmQ@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJppKou84MZm0JS_4bPveMO2UxpMs5ejCoL7OMWd-umtDmQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: oo3HTONEWP1LQges7eK9XE9x0b5G-9GR
+X-Proofpoint-ORIG-GUID: oo3HTONEWP1LQges7eK9XE9x0b5G-9GR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 phishscore=0 mlxscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310142
 
-> On 26/10/24 - 12:22, Maíra Canal wrote:
-> > Hi Louis,
-> > 
-> > On 10/10/24 14:27, Louis Chauvet wrote:
-> > > VKMS currently supports only one CRTC, so it make no sense to have this
-> > > index configurable. To avoid issues, replace this hardcoded index by
-> > > drm_crtc_mask when applicable.
-> > > 
-> > > There is no need to manually set a crtc mask on primary and cursor plane
-> > > as it is automatically set by drmm_crtc_alloc_with_planes.
-> > > 
-> > > In addition, this will remove the use of an uninitialized structure in
-> > > vkms_add_overlay_plane. This currently works by chance because two things:
-> > > - vkms_plane_init always set a possible_crtcs value, so the problematic
-> > >    branch is never used;
-> > > - drm_crtc_mask on an kzalloc'd drm_crtc returns BIT(0), and the VKMS CRTC
-> > >    always have this id.
-> > > 
-> > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > ---
-> > > Changes in v2:
-> > > - Applied comments from José
-> > > - Link to v1: https://lore.kernel.org/r/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com
-> > > ---
-> > >   drivers/gpu/drm/vkms/vkms_drv.c    |  2 +-
-> > >   drivers/gpu/drm/vkms/vkms_drv.h    |  8 ++----
-> > >   drivers/gpu/drm/vkms/vkms_output.c | 54 ++++++++++++++------------------------
-> > >   drivers/gpu/drm/vkms/vkms_plane.c  |  4 +--
-> > >   4 files changed, 24 insertions(+), 44 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> > > index 2d1e95cb66e5..0f6805b9fe7b 100644
-> > > --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> > > +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> > > @@ -174,7 +174,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
-> > >   	dev->mode_config.preferred_depth = 0;
-> > >   	dev->mode_config.helper_private = &vkms_mode_config_helpers;
-> > > -	return vkms_output_init(vkmsdev, 0);
-> > > +	return vkms_output_init(vkmsdev);
-> > >   }
-> > >   static int vkms_create(struct vkms_config *config)
-> > > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> > > index 672fe191e239..036101ee4ea1 100644
-> > > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > > @@ -212,21 +212,17 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
-> > >    * vkms_output_init() - Initialize all sub-components needed for a VKMS device.
-> > >    *
-> > >    * @vkmsdev: VKMS device to initialize
-> > > - * @index: CRTC which can be attached to the planes. The caller must ensure that
-> > > - *	   @index is positive and less or equals to 31.
-> > >    */
-> > > -int vkms_output_init(struct vkms_device *vkmsdev, int index);
-> > > +int vkms_output_init(struct vkms_device *vkmsdev);
-> > >   /**
-> > >    * vkms_plane_init() - Initialize a plane
-> > >    *
-> > >    * @vkmsdev: VKMS device containing the plane
-> > >    * @type: type of plane to initialize
-> > > - * @index: CRTC which can be attached to the plane. The caller must ensure that
-> > > - *	   @index is positive and less or equals to 31.
-> > >    */
-> > >   struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> > > -				   enum drm_plane_type type, int index);
-> > > +				   enum drm_plane_type type);
-> > >   /* CRC Support */
-> > >   const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
-> > > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> > > index 0a5a185aa0b0..5128aa3b2eb6 100644
-> > > --- a/drivers/gpu/drm/vkms/vkms_output.c
-> > > +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> > > @@ -32,29 +32,14 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
-> > >   	.get_modes    = vkms_conn_get_modes,
-> > >   };
-> > > -static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
-> > > -				  struct drm_crtc *crtc)
-> > > -{
-> > > -	struct vkms_plane *overlay;
-> > > -
-> > > -	overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY, index);
-> > > -	if (IS_ERR(overlay))
-> > > -		return PTR_ERR(overlay);
-> > > -
-> > > -	if (!overlay->base.possible_crtcs)
-> > > -		overlay->base.possible_crtcs = drm_crtc_mask(crtc);
-> > > -
-> > > -	return 0;
-> > > -}
-> > > -
-> > > -int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> > > +int vkms_output_init(struct vkms_device *vkmsdev)
-> > >   {
-> > >   	struct vkms_output *output = &vkmsdev->output;
-> > >   	struct drm_device *dev = &vkmsdev->drm;
-> > >   	struct drm_connector *connector = &output->connector;
-> > >   	struct drm_encoder *encoder = &output->encoder;
-> > >   	struct drm_crtc *crtc = &output->crtc;
-> > > -	struct vkms_plane *primary, *cursor = NULL;
-> > > +	struct vkms_plane *primary, *overlay, *cursor = NULL;
-> > >   	int ret;
-> > >   	int writeback;
-> > >   	unsigned int n;
-> > > @@ -65,34 +50,37 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> > >   	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
-> > >   	 * composition.
-> > >   	 */
-> > > -	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
-> > > +	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY);
-> > >   	if (IS_ERR(primary))
-> > >   		return PTR_ERR(primary);
-> > > -	if (vkmsdev->config->overlay) {
-> > > -		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
-> > > -			ret = vkms_add_overlay_plane(vkmsdev, index, crtc);
-> > > -			if (ret)
-> > > -				return ret;
-> > > -		}
-> > > -	}
-> > > -
-> > >   	if (vkmsdev->config->cursor) {
-> > > -		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, index);
-> > > +		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR);
-> > >   		if (IS_ERR(cursor))
-> > >   			return PTR_ERR(cursor);
-> > >   	}
-> > > -	/* [1]: Allocation of a CRTC, its index will be BIT(0) = 1 */
-> > >   	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
-> > >   	if (ret)
-> > >   		return ret;
-> > > +	if (vkmsdev->config->overlay) {
-> > > +		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
-> > > +			overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY);
-> > > +			if (IS_ERR(overlay)) {
-> > > +				DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
-> > > +				ret = PTR_ERR(overlay);
-> > > +				goto err_crtc;
-> > > +			}
-> > > +			overlay->base.possible_crtcs = drm_crtc_mask(crtc);
-> > > +		}
-> > > +	}
-> > > +
-> > >   	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
-> > >   				 DRM_MODE_CONNECTOR_VIRTUAL);
-> > >   	if (ret) {
-> > >   		DRM_ERROR("Failed to init connector\n");
-> > > -		goto err_connector;
-> > > +		goto err_crtc;
-> > >   	}
-> > >   	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
-> > > @@ -103,11 +91,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> > >   		DRM_ERROR("Failed to init encoder\n");
-> > >   		goto err_encoder;
-> > >   	}
-> > > -	/*
-> > > -	 * This is a hardcoded value to select crtc for the encoder.
-> > > -	 * BIT(0) here designate the first registered CRTC, the one allocated in [1]
-> > > -	 */
-> > > -	encoder->possible_crtcs = BIT(0);
-> > > +	encoder->possible_crtcs = drm_crtc_mask(crtc);
-> > >   	ret = drm_connector_attach_encoder(connector, encoder);
-> > >   	if (ret) {
-> > > @@ -131,7 +115,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> > >   err_encoder:
-> > >   	drm_connector_cleanup(connector);
-> > > -err_connector:
-> > > +err_crtc:
-> > >   	drm_crtc_cleanup(crtc);
-> > 
-> > Do we really need `drm_crtc_cleanup`? We are allocating the CRTC with
-> > `drmm_crtc_init_with_planes`.
+
+
+On 10/31/2024 11:23 AM, Dmitry Baryshkov wrote:
+> On Wed, 30 Oct 2024 at 03:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>> of_i2c_register_devices() adds all child nodes of a given i2c bus
+>> however in certain device trees of_alias_from_compatible() and
+>> of_property_read_u32() can fail as the child nodes of the device
+>> might not be valid i2c client devices. One such example is the
+>> i2c aux device for the DRM MST toplogy manager which uses the
+>> display controller device node to add the i2c adaptor [1] leading
+>> to an error spam like below
+>>
+>> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+>> i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+>> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+>> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+>> i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+>> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+>>
+>> Add protection against invalid child nodes before trying to register
+>> i2c devices for all child nodes.
+>>
+>> [1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
+>>
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> ---
+>>   drivers/i2c/i2c-core-of.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+>> index a6c407d36800..62a2603c3092 100644
+>> --- a/drivers/i2c/i2c-core-of.c
+>> +++ b/drivers/i2c/i2c-core-of.c
+>> @@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+>>   {
+>>          struct device_node *bus, *node;
+>>          struct i2c_client *client;
+>> +       u32 addr;
+>> +       char temp[16];
+>>
+>>          /* Only register child devices if the adapter has a node pointer set */
+>>          if (!adap->dev.of_node)
+>> @@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+>>                  if (of_node_test_and_set_flag(node, OF_POPULATED))
+>>                          continue;
+>>
+>> +               if (of_property_read_u32(node, "reg", &addr) ||
+>> +                   of_alias_from_compatible(node, temp, sizeof(temp)))
+>> +                       continue;
 > 
-> I agree, I'll check the previous discussions I've had on the mailing list, 
-> I have a little doubt that someone asked me to re-add this cleaning at 
-> some point.
-
-Oh! Good point. It looks like drm_crtc_cleanup() is a leftover from
-commit 99cc528ebe92 ("drm/vkms: Use drmm_crtc_init_with_planes()").
-
-Since the previous code in vkms_output.c was calling drm_crtc_cleanup()
-I assumed it was required. But Maíra is right, it is safe to drop it.
-
-I sent a simple patch dropping the call to drm_crtc_cleanup():
-https://lore.kernel.org/dri-devel/20241031183835.3633-1-jose.exposito89@gmail.com/T/#u
-
-About this patch, LGTM.
-
-Jose
-
-> Thanks,
-> Louis Chauvet
+> I think just of_property_read_u32() should be enough to skip
+> non-I2C-device children. If of_alias_from_compatible() fails, it is a
+> legit error.
 > 
-> > The rest looks fine to me.
-> >
-> > Best Regards,
-> > - Maíra
-> > 
-> > >   	return ret;
-> > > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> > > index e5c625ab8e3e..ad137c9a75f5 100644
-> > > --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> > > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> > > @@ -198,12 +198,12 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
-> > >   };
-> > >   struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> > > -				   enum drm_plane_type type, int index)
-> > > +				   enum drm_plane_type type)
-> > >   {
-> > >   	struct drm_device *dev = &vkmsdev->drm;
-> > >   	struct vkms_plane *plane;
-> > > -	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 1 << index,
-> > > +	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
-> > >   					   &vkms_plane_funcs,
-> > >   					   vkms_formats, ARRAY_SIZE(vkms_formats),
-> > >   					   NULL, type, NULL);
-> > > 
-> > > ---
-> > > base-commit: 33c255312660653cf54f8019896b5dca28e3c580
-> > > change-id: 20240906-vkms-remove-index-3a6e04c38e02
-> > > 
-> > > Best regards,
+
+Thanks for the review.
+
+of_alias_from_compatible() looks for a compatible string but all child 
+nodes such as ports will not have the compatible. Hence below error will 
+still be seen:
+
+i2c i2c-20: of_i2c: modalias failure on 
+/soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+
+>> +
+>>                  client = of_i2c_register_device(adap, node);
+>>                  if (IS_ERR(client)) {
+>>                          dev_err(&adap->dev,
+>> --
+>> 2.34.1
+>>
+> 
+> 
 
