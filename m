@@ -1,174 +1,324 @@
-Return-Path: <linux-kernel+bounces-391160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2F29B8350
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:24:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BD39B834D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C581F228E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:24:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F1F1C22F56
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383121CB332;
-	Thu, 31 Oct 2024 19:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834581CB335;
+	Thu, 31 Oct 2024 19:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="t0aZx8n5"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbqrnSiR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969191CB316;
-	Thu, 31 Oct 2024 19:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83BE1CB316;
+	Thu, 31 Oct 2024 19:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402665; cv=none; b=aUdaK8PaisiFW1JGUj2DZN3uTogcQrXgD4322xhcg82ht1wZH4YVe2q/E2ET6in6xp8OXpnlnrsTE1rRkuc1Ig3xXYVLWJLSmR8I9mWAcsN2g1sijlV6Hil/sWGhU6r0RfuGIlX3/wKxugyn7AkO4G3YcZaFMDJBCCw2SgdFSbQ=
+	t=1730402657; cv=none; b=bicR3aOcjePOjsWyXa8LXFuUSO4yjs7KZ21FSVHiUs+4qy7RCujk/wC+buUz7DVFu7tfeCLafc8i/Csdp4chkUtVwpZVT8wRkT1btCHHhH8AwmII/ddBthFUmg9Ve3qzr1nUUsr6xWI1xrDp+1hT4t3OAUgy9wgDeiTbsH3i4Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402665; c=relaxed/simple;
-	bh=Z0OXm8zr7PBtjSI2zcACzeGQatvaS4IUl5PQ4yPa3GM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LApMkX6AbsVugOsT0BZcz9ZTg7jplrwlbJtZxStsjAaU//FCiGz7DLZO8KWyNLVbrVJmOn0Un5fOQ0T++btlozQ8SgClHblJ1VIESSpga22XM5wQH/agQaw8oV9ZihZnzXVnEXegEkygVVOblAs1z7V48g4IkResf4ENvNW8Cz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=t0aZx8n5; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1730402652; x=1731007452;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=Z0OXm8zr7PBtjSI2zcACzeGQatvaS4IUl5PQ4yPa3GM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=t0aZx8n5LhpSehLErr/x+289ycoOMQUqIIQJjeFkpsOp2U33m46TAsmBJsygsYx+
-	 XuVkwGTjOmcSnVbIkT8EsMGWSau/ZeKVmZ7YCT+unBKpDn/HeDVvKMBMB/glU3Cwy
-	 bBviNQp1y18nXXfx/HDMaXqNg/XItYaA67ETJcTXvE2mlsCAPgRoIjtV5cgomTN/4
-	 6CWJhzEx4qCmrabJcCkusxx9r9p1NPKkUe3Y8VXs27pt8CC22RuoZTYB//GmPBagA
-	 AfEHYrV+VtVegHXgJBvVURO7iVNiJbLMGOf/tFI2t72crvn4TV2gI0bxo051qc4Mf
-	 kk8V3g0H/WllUHCWZg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N7yz7-1trybX0CJf-010XIE; Thu, 31 Oct 2024 20:24:12 +0100
-Message-ID: <6b5591ea-b575-4118-85f3-11c64dd9f449@oldschoolsolutions.biz>
-Date: Thu, 31 Oct 2024 20:24:08 +0100
+	s=arc-20240116; t=1730402657; c=relaxed/simple;
+	bh=WzpRpIob8QJ+SjaQ38OrD/oxcKrH/T/5ZQkzfobegfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=heSsFy311iinHfFTLPJII2HFrxzOAuSI7nVTTa5LTWSDq017pzvcvYnns89zPwm1p1P+YQV/SQIj1/4euMHkctjc5DBhInsmGVINaXiXXeT8ifNT37KFuudpPpa0/9rOfI7d5oTGc51F8s2QDGpFLeoXSDgz2CrgPP6/11hcPcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbqrnSiR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C52BAC4CED1;
+	Thu, 31 Oct 2024 19:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730402657;
+	bh=WzpRpIob8QJ+SjaQ38OrD/oxcKrH/T/5ZQkzfobegfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kbqrnSiRtA1aggiIf63a9U//G+uGJX52yNWbb0etaS+EPliwx3WawAsP90KmIlWsc
+	 rG7RkGNPBQy3zcZbHi9EAGvH+sdgx9h9p7v7Sk3Px0NxG5kFSuFLaD16GAIethyZV0
+	 ZNLdp7cpd6IYsG6/mq+0fdE/1YhGur+IDDHjWf2evMVSNSHl4/vbDFuFPNVBrQmFPK
+	 BOfxWirXhMLs+Q+zyDAYb6cBdY1+jx364R2S+Kvg+x6Pydz2lO8cfFwzEXj3d2snGG
+	 xA6kPiKJ6GHv1SS0jdApLx2NV+2+hIPtDdmGyPVxzf26ZdmajbvkM90tb1n3XdnNcY
+	 B0jqmMoiwLmGg==
+Date: Thu, 31 Oct 2024 16:24:13 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 05/21] perf kvm: Move functions used in util out of
+ builtin
+Message-ID: <ZyPZXUawgU9ZSGhP@x1>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
- definition for WDK2023
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Kalle Valo <kvalo@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Merck Hung <merckhung@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20241030-jg-blackrock-for-upstream-v6-0-7cd7f7d8d97c@oldschoolsolutions.biz>
- <20241030-jg-blackrock-for-upstream-v6-3-7cd7f7d8d97c@oldschoolsolutions.biz>
- <5a9e97ad-0f84-4e0c-85e6-5ed0a4d20568@quicinc.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <5a9e97ad-0f84-4e0c-85e6-5ed0a4d20568@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wP0AGbYNFvFC/WG14B0BL2KWGrDNWfSq/jWOqKMef4NbZe+tk9k
- k5Ni2JDOPbXlBoqK9AXhWqeAOmB+KOVTuJ/NbIVsHIChwSc8t303xK2UnrY+aTDoMTeFDh4
- cZnIt5oH5iOkowY1unZNn782l9U/SnhTIspERknuUD/BvkKNhbov0In2Xb6zRtjDxUKxNDa
- PYjpJ30mLHr7/u7BIvMEA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pIPv8XQmrdU=;Cx+fvPQdY5tEOX5F261EyO4XFIp
- 3apqfI7s1BlA975DfjZcsSYuHj8CQzdts6yAl0bJDrUfVe9vPquoj8MYRS5k0R14XNX9h1Wu7
- nshHHuwGc+HDov30hPqZsnTc+pe4DN0w8MlnxoBhOvP3AU0ns3BRF/O9gNHofmTn9WayPTMIm
- PPhSqk44mOKTvzc67liV2OGhekZJDrCaxtG3B+IiG1P97yhEhxtorI9FRq96gNmW36802g7nd
- hAaMv/0LQCthcpz7SLhyd0v01p0ijMY6Fbc4yUi7Ye5I0Umsghu17/h3LQZsTNE5RNTOcb8RU
- nHSxJG469Ec5oBRz0MJyFs3QiUpvCngKRpLTGPVQn/AinECOzs4oG340+jw+c5GegzzXfginL
- nEDqJ0KkbBQdV+qfGdpfJJrHZV5hytopkOfLIw4rzg9Z+yhVEloJ5Cztlv01kDER4ObO62v/q
- BHVvzWgwR3+FADigGkAaQF8+wDoJvBCaPJ4ytkpITg/3oreigrSWbW7H0cMG/jK54lwDbe6wJ
- npTcsMnY+9+AN2RqHwAU5feFs3EhsNfT8+NL7czINIDWEoF5vKRw8OYuVbh+rmpA4q9eNjt3N
- CaJJS3lPewnY39FAyrMPjkgu9yczyb3hetvqzculY591eFLfepaY/kcMYGtXKpfcgm45zGOkv
- 81ypx8PPccQdyf2TYnXceLifwr1JyU4TnVisF03LwfT+uwT3XtDBjdVP1CRlxicTc6EWVmh8V
- bsRoWSUYFta6CaPxB3sMYkFzG4/MJHiLQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031014252.753588-6-irogers@google.com>
 
-On 31.10.24 19:54, Krishna Kurapati wrote:
-> On 10/30/2024 4:32 PM, Jens Glathe via B4 Relay wrote:
->> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
->>
->> Device tree for the Microsoft Windows Dev Kit 2023. This work
->> is based on the initial work of Merck Hung <merckhung@gmail.com>.
->>
->> Original work:
->> https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3=
-.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
->>
->> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
->> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
->>
->> Supported features:
->> - USB type-c and type-a ports
->> - minidp connector
->> - built-in r8152 Ethernet adapter
->> - PCIe devices
->> - nvme
->> - ath11k WiFi (WCN6855)
->> - WCN6855 Bluetooth
->> - A690 GPU
->> - ADSP and CDSP
->> - GPIO keys
->> - Audio definition (works via USB)
->>
->> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
->> ---
->
-> [...]
->
->> +&usb_2 {
->> +=C2=A0=C2=A0=C2=A0 pinctrl-0 =3D <&usb2_en_state>;
->> +=C2=A0=C2=A0=C2=A0 pinctrl-names =3D "default";
->> +
->> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
->> +};
->> +
->> +&usb_2_dwc3 {
->> +=C2=A0=C2=A0=C2=A0 dr_mode =3D "host";
->> +=C2=A0=C2=A0=C2=A0 phy-names =3D "usb2-port0", "usb3-port0";
->> +=C2=A0=C2=A0=C2=A0 phys =3D <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
->> +
->> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
->> +};
->
-> From what I remember, the phy names for multiport must be "usb2-X"=C2=A0=
- or
-> "usb3-X". The above notation might compile but If I am not wrong, the
-> phys won't be active. How was USB tested in this case ?
->
-All 4 type-a ports are working at full capacity, I assume the phys are
-up. On one of these is the internal r8152 adapter. Actually when I
-started with the WDK the type-a ports were the most reliable ones. The
-box is my daily driver, so its extensively tested for ~18 months now.
+On Wed, Oct 30, 2024 at 06:42:36PM -0700, Ian Rogers wrote:
+> The util library code is used by the python module but doesn't have
+> access to the builtin files. Make a util/kvm-stat.c to match the
+> kvm-stat.h file that declares the functions and move the functions
+> there.
 
-> Moreover just marking status as "okay" for usb_2 must work like done
-> in [1] and [2] and there is no need for explicitly marking dr_mode as
-> host again and refactoring the phy-names.
->
-> [1]:
-> https://lore.kernel.org/all/20240707085624.3411961-1-quic_kriskura@quici=
-nc.com/
-> [2]:
-> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240501065641.=
-965-1-johan+linaro@kernel.org/
->
-> Please fix this up.
-
-will do, thank you for the hint.
-
-with best regards
-
-Jens
-
-> Regards,
-> Krishna,
+Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-kvm.c   | 61 ---------------------------------
+>  tools/perf/util/Build      |  1 +
+>  tools/perf/util/kvm-stat.c | 70 ++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/kvm-stat.h |  3 ++
+>  tools/perf/util/python.c   | 30 ----------------
+>  5 files changed, 74 insertions(+), 91 deletions(-)
+>  create mode 100644 tools/perf/util/kvm-stat.c
+> 
+> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+> index 099ce3ebf67c..e50cd04e3725 100644
+> --- a/tools/perf/builtin-kvm.c
+> +++ b/tools/perf/builtin-kvm.c
+> @@ -615,67 +615,6 @@ static const char *get_filename_for_perf_kvm(void)
+>  
+>  #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+>  
+> -void exit_event_get_key(struct evsel *evsel,
+> -			struct perf_sample *sample,
+> -			struct event_key *key)
+> -{
+> -	key->info = 0;
+> -	key->key  = evsel__intval(evsel, sample, kvm_exit_reason);
+> -}
+> -
+> -bool kvm_exit_event(struct evsel *evsel)
+> -{
+> -	return evsel__name_is(evsel, kvm_exit_trace);
+> -}
+> -
+> -bool exit_event_begin(struct evsel *evsel,
+> -		      struct perf_sample *sample, struct event_key *key)
+> -{
+> -	if (kvm_exit_event(evsel)) {
+> -		exit_event_get_key(evsel, sample, key);
+> -		return true;
+> -	}
+> -
+> -	return false;
+> -}
+> -
+> -bool kvm_entry_event(struct evsel *evsel)
+> -{
+> -	return evsel__name_is(evsel, kvm_entry_trace);
+> -}
+> -
+> -bool exit_event_end(struct evsel *evsel,
+> -		    struct perf_sample *sample __maybe_unused,
+> -		    struct event_key *key __maybe_unused)
+> -{
+> -	return kvm_entry_event(evsel);
+> -}
+> -
+> -static const char *get_exit_reason(struct perf_kvm_stat *kvm,
+> -				   struct exit_reasons_table *tbl,
+> -				   u64 exit_code)
+> -{
+> -	while (tbl->reason != NULL) {
+> -		if (tbl->exit_code == exit_code)
+> -			return tbl->reason;
+> -		tbl++;
+> -	}
+> -
+> -	pr_err("unknown kvm exit code:%lld on %s\n",
+> -		(unsigned long long)exit_code, kvm->exit_reasons_isa);
+> -	return "UNKNOWN";
+> -}
+> -
+> -void exit_event_decode_key(struct perf_kvm_stat *kvm,
+> -			   struct event_key *key,
+> -			   char *decode)
+> -{
+> -	const char *exit_reason = get_exit_reason(kvm, key->exit_reasons,
+> -						  key->key);
+> -
+> -	scnprintf(decode, KVM_EVENT_NAME_LEN, "%s", exit_reason);
+> -}
+> -
+>  static bool register_kvm_events_ops(struct perf_kvm_stat *kvm)
+>  {
+>  	struct kvm_reg_events_ops *events_ops = kvm_reg_events_ops;
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 1eedead5f2f2..650974413849 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -120,6 +120,7 @@ perf-util-y += spark.o
+>  perf-util-y += topdown.o
+>  perf-util-y += iostat.o
+>  perf-util-y += stream.o
+> +perf-util-y += kvm-stat.o
+>  perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+>  perf-util-$(CONFIG_AUXTRACE) += intel-pt-decoder/
+>  perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
+> diff --git a/tools/perf/util/kvm-stat.c b/tools/perf/util/kvm-stat.c
+> new file mode 100644
+> index 000000000000..38ace736db5c
+> --- /dev/null
+> +++ b/tools/perf/util/kvm-stat.c
+> @@ -0,0 +1,70 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "debug.h"
+> +#include "evsel.h"
+> +#include "kvm-stat.h"
+> +
+> +#if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+> +
+> +bool kvm_exit_event(struct evsel *evsel)
+> +{
+> +	return evsel__name_is(evsel, kvm_exit_trace);
+> +}
+> +
+> +void exit_event_get_key(struct evsel *evsel,
+> +			struct perf_sample *sample,
+> +			struct event_key *key)
+> +{
+> +	key->info = 0;
+> +	key->key  = evsel__intval(evsel, sample, kvm_exit_reason);
+> +}
+> +
+> +
+> +bool exit_event_begin(struct evsel *evsel,
+> +		      struct perf_sample *sample, struct event_key *key)
+> +{
+> +	if (kvm_exit_event(evsel)) {
+> +		exit_event_get_key(evsel, sample, key);
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +bool kvm_entry_event(struct evsel *evsel)
+> +{
+> +	return evsel__name_is(evsel, kvm_entry_trace);
+> +}
+> +
+> +bool exit_event_end(struct evsel *evsel,
+> +		    struct perf_sample *sample __maybe_unused,
+> +		    struct event_key *key __maybe_unused)
+> +{
+> +	return kvm_entry_event(evsel);
+> +}
+> +
+> +static const char *get_exit_reason(struct perf_kvm_stat *kvm,
+> +				   struct exit_reasons_table *tbl,
+> +				   u64 exit_code)
+> +{
+> +	while (tbl->reason != NULL) {
+> +		if (tbl->exit_code == exit_code)
+> +			return tbl->reason;
+> +		tbl++;
+> +	}
+> +
+> +	pr_err("unknown kvm exit code:%lld on %s\n",
+> +		(unsigned long long)exit_code, kvm->exit_reasons_isa);
+> +	return "UNKNOWN";
+> +}
+> +
+> +void exit_event_decode_key(struct perf_kvm_stat *kvm,
+> +			   struct event_key *key,
+> +			   char *decode)
+> +{
+> +	const char *exit_reason = get_exit_reason(kvm, key->exit_reasons,
+> +						  key->key);
+> +
+> +	scnprintf(decode, KVM_EVENT_NAME_LEN, "%s", exit_reason);
+> +}
+> +
+> +#endif
+> diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
+> index 3e9ac754c3d1..4249542544bb 100644
+> --- a/tools/perf/util/kvm-stat.h
+> +++ b/tools/perf/util/kvm-stat.h
+> @@ -115,6 +115,8 @@ struct kvm_reg_events_ops {
+>  	struct kvm_events_ops *ops;
+>  };
+>  
+> +#if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+> +
+>  void exit_event_get_key(struct evsel *evsel,
+>  			struct perf_sample *sample,
+>  			struct event_key *key);
+> @@ -127,6 +129,7 @@ bool exit_event_end(struct evsel *evsel,
+>  void exit_event_decode_key(struct perf_kvm_stat *kvm,
+>  			   struct event_key *key,
+>  			   char *decode);
+> +#endif
+>  
+>  bool kvm_exit_event(struct evsel *evsel);
+>  bool kvm_entry_event(struct evsel *evsel);
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 298f43981fc5..ab67abf3b607 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -1306,36 +1306,6 @@ PyMODINIT_FUNC PyInit_perf(void)
+>  /* The following are stubs to avoid dragging in builtin-* objects. */
+>  /* TODO: move the code out of the builtin-* file into util. */
+>  
+> -bool kvm_entry_event(struct evsel *evsel __maybe_unused)
+> -{
+> -	return false;
+> -}
+> -
+> -bool kvm_exit_event(struct evsel *evsel __maybe_unused)
+> -{
+> -	return false;
+> -}
+> -
+> -bool exit_event_begin(struct evsel *evsel __maybe_unused,
+> -		      struct perf_sample *sample  __maybe_unused,
+> -		      struct event_key *key  __maybe_unused)
+> -{
+> -	return false;
+> -}
+> -
+> -bool exit_event_end(struct evsel *evsel __maybe_unused,
+> -		    struct perf_sample *sample __maybe_unused,
+> -		    struct event_key *key __maybe_unused)
+> -{
+> -	return false;
+> -}
+> -
+> -void exit_event_decode_key(struct perf_kvm_stat *kvm __maybe_unused,
+> -			   struct event_key *key __maybe_unused,
+> -			   char *decode __maybe_unused)
+> -{
+> -}
+> -
+>  int find_scripts(char **scripts_array  __maybe_unused, char **scripts_path_array  __maybe_unused,
+>  		int num  __maybe_unused, int pathlen __maybe_unused)
+>  {
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
+> 
 
