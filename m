@@ -1,222 +1,143 @@
-Return-Path: <linux-kernel+bounces-391424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB229B8691
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:02:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01219B8692
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C5D1F2289A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B591C21E80
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9C31DBB36;
-	Thu, 31 Oct 2024 23:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED1A1C9EBC;
+	Thu, 31 Oct 2024 23:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f+SIniql"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNZiWT5q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133261CBE86
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBDB19F430;
+	Thu, 31 Oct 2024 23:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730415762; cv=none; b=NKtxXivtBFZhhIOSDkxjewef6jBirfkeodqZKZYdKwceSCr+sZJ394IMfrhYvwGGKPVMacDa1xhngSe/TRQgiP/EbtvJWfZxm4PNw4BwErC/KCbKglFjRFf/9iIec7bQWLrImws+70768xcDK+zfwpWPZ874F7uGFK0oYDty4zc=
+	t=1730415800; cv=none; b=Ni858ZVH5yfIdJQLp4F09hg83y4A5iHIbweJin6OCZUpRBOl8uvgw3+3cLT/NeGiNUq+BREcGwniXJAqa1WpRRYzsDgF//YlYePu+tKg9pUNR/Xo4DUNZKFfIMZfAU9FXiu9fwzn5UXJz2CLdYCdWnRPiD5Q9fRgkuWm9NNxRHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730415762; c=relaxed/simple;
-	bh=YJMoiuITKx4kZZN1MyOo8IM7Zsk4Dh12KYf4/TXSdCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SLlUwp+Frv39VGBHmRW58D0U9mcOD0jZzGrqT/3pKnLBkwI3viSynFvACJw4ubZdIy4eMpQyt6TWsSpK1mT4qQRS4CajmD6vP9zzuAGvdp3oYr+Y3VEliOgJOCPPiD1C+KCAPXKPAXbnYMaMyEFunMP4XG6p3sMkk5nZZCPgxqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=f+SIniql; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea5f68e17aso10096587b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:02:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730415755; x=1731020555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yMYC7exWmTyJhpPm7xOmYaN+skzwwWUWdttUcxWnw/4=;
-        b=f+SIniqlKIzpPiaRtTkegYSWVAIhQzDyGSpQfDAt4Or7+40API92+tr5hNRvLjNzpP
-         X6JEnxa3FvPnLqQrqXXKgzH7DCJzkXEk1NQm0Uh6Y0jw5dTUXEqpqAuKO+INp94vjI17
-         OwniUsVaf8cLhj8hS7GFGAtH3eTlwjo2MLW2I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730415755; x=1731020555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yMYC7exWmTyJhpPm7xOmYaN+skzwwWUWdttUcxWnw/4=;
-        b=LeFvXLkxDXVzjv8Bq6PRkct2jUd09o5wUO24DDOV+/GmAvJN/F1VrtCUV9Xcp2q+Y6
-         7iRudCLFYiDG1At8EmsoMUnUEaIZu+nUWBEdE4T1c3+0kBmIfgfyhC80NzhuFWi7V9NM
-         bOnLa4JQ56rhMM58Z8ynHtC+k+gGAYF/J5HEL1Imv/nJxa4y+65CkjzgaAoJcETF8OrY
-         CI9zWywEgtkNs4ugtXaInzmD0qZiqpngmFV4cfmDIJmtcH6yIAUMoA1Y5mLcLCSC37f1
-         /3GC0onQMhTsRJWZBGO5EhG5WYaECPSw9QBjPcd58fFZUtCvjhkY9R4PCEjpM30hK15P
-         vvrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVJD5ZjMPxPY9frK+kann+/J+euQmJjp/jdVG66xtAFzXwBPub+3mQBicMfweR45Erxa8o/wh/KPO2bRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTMRUrg+m6RbTr1GYt00RTXEIX1fe2EAZRB2PKijS6pokKEj2q
-	NLyDIxDcHzB3gKfTm9CDVW4eCh7qf1P6S50TueJUpHd128VkwZoVaVdAUlMAbwLby1/TtsQF5Nj
-	mHKIFbMziuCy3wMUL2pl6APsAl4trR7BAYtA0
-X-Google-Smtp-Source: AGHT+IG4YM8LKOjO55nzQrrLjyMEG7REdzSOaLfCCy8MD7xqt0nU0GVr7mIlsQYiOsMxcXUO3Jcav2dA5hqHsKPIKSU=
-X-Received: by 2002:a05:690c:6e01:b0:6e3:a7b:49b3 with SMTP id
- 00721157ae682-6e9d8ad571bmr236603137b3.41.1730415754723; Thu, 31 Oct 2024
- 16:02:34 -0700 (PDT)
+	s=arc-20240116; t=1730415800; c=relaxed/simple;
+	bh=eUDN0rTSziBFn916MG2w3mYW5lFHgOs2UPSLKU5r+8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuxHytk0TPb67+EEoKdUjpRu7IUgqfz5M58Xkm4SR3M+J+mGACcRpoCOsdVrdocWNZxrcenQ2jN27VQtcAA6uKh/NOBD8H5IRSxPptSKk+5Qzh5ESz0CThyg2NM48guNeMCJZcUA0xUKtgcffpXIllDFCiKQ6UKhJt4am85XHao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNZiWT5q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44064C4CEC3;
+	Thu, 31 Oct 2024 23:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730415800;
+	bh=eUDN0rTSziBFn916MG2w3mYW5lFHgOs2UPSLKU5r+8o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hNZiWT5qI/dBzEr1U4csl2pjgm5yps5GX6lxUio9BCuWf2M/2Vq5ToALyadBC/CwC
+	 E712bTQbeqPNAeh+FqpAYuRuz/xt+XO7WfgsaYI03YMhMBPiqE6zUDMmq9k8fbW0dq
+	 nDlVnc6gkpAIYOIo0BNYftWXAhD6/BmMg+k8zgHpnFwUvBy+MOesyVf1oFAQICTAYl
+	 KQP3MvFFbJ2Qedj9OpbY+5XK9d3GurWJGKYA4Q5WAw5LJ2wWtJjMpip6V64FgoY/+/
+	 uq1K/1+ql6CT7qjn0kVbawIi7Ca3sJFqHX4onF9sRDx/u6aXmNGcpLw/tBH6XNtFYu
+	 Mc4NNwT1ox/fA==
+Date: Thu, 31 Oct 2024 16:03:13 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241031230313.ubybve4r7mlbcbuu@jpoimboe>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+ <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
+ <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
+ <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030212854.998318-1-abhishekpandit@chromium.org>
- <20241030142833.v2.1.I3080b036e8de0b9957c57c1c3059db7149c5e549@changeid> <ZyOQJmF-PcFHgmeq@kuha.fi.intel.com>
-In-Reply-To: <ZyOQJmF-PcFHgmeq@kuha.fi.intel.com>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Thu, 31 Oct 2024 16:02:22 -0700
-Message-ID: <CANFp7mXhwMMwyqbKqxe=SgCRPUyXVhKnsJwf0xgJ2LefOvrtjg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] usb: typec: Add driver for Thunderbolt 3 Alternate Mode
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, dmitry.baryshkov@linaro.org, 
-	jthies@google.com, akuchynski@google.com, pmalani@chromium.org, 
-	Benson Leung <bleung@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
 
-On Thu, Oct 31, 2024 at 7:11=E2=80=AFAM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> Hi Abhishek,
->
-> On Wed, Oct 30, 2024 at 02:28:32PM -0700, Abhishek Pandit-Subedi wrote:
-> > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On Thu, Oct 31, 2024 at 01:57:10PM -0700, Andrii Nakryiko wrote:
+> > > what if ip_off is larger than 4GB? ELF section can be bigger than 4GB, right?
 > >
-> > Thunderbolt 3 Alternate Mode entry flow is described in
-> > USB Type-C Specification Release 2.0.
-> >
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Co-developed-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > ---
-> >
-> > Changes:
-> > * Delay cable + plug checks so that the module doesn't fail to probe
-> >   if cable + plug information isn't available by the time the partner
-> >   altmode is registered.
-> > * Remove unncessary brace after if (IS_ERR(plug))
-> >
-> > The rest of this patch should be the same as Heikki's original RFC.
-> >
-> >
-> > Changes in v2:
-> > - Use <linux/usb/typec_tbt.h> and add missing TBT_CABLE_ROUNDED
-> > - Pass struct typec_thunderbolt_data to typec_altmode_notify
-> > - Rename TYPEC_TBT_MODE to USB_TYPEC_TBT_MODE
-> > - Use USB_TYPEC_TBT_SID and USB_TYPEC_TBT_MODE for device id
-> > - Change module license to GPL due to checkpatch warning
-> >
-> >  drivers/platform/chrome/cros_ec_typec.c  |   2 +-
-> >  drivers/usb/typec/altmodes/Kconfig       |   9 +
-> >  drivers/usb/typec/altmodes/Makefile      |   2 +
-> >  drivers/usb/typec/altmodes/thunderbolt.c | 308 +++++++++++++++++++++++
-> >  include/linux/usb/typec_tbt.h            |   3 +-
-> >  5 files changed, 322 insertions(+), 2 deletions(-)
-> >  create mode 100644 drivers/usb/typec/altmodes/thunderbolt.c
-> >
-> > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform=
-/chrome/cros_ec_typec.c
-> > index c7781aea0b88..53d93baa36a8 100644
-> > --- a/drivers/platform/chrome/cros_ec_typec.c
-> > +++ b/drivers/platform/chrome/cros_ec_typec.c
-> > @@ -499,7 +499,7 @@ static int cros_typec_enable_tbt(struct cros_typec_=
-data *typec,
-> >       }
-> >
-> >       port->state.data =3D &data;
-> > -     port->state.mode =3D TYPEC_TBT_MODE;
-> > +     port->state.mode =3D USB_TYPEC_TBT_MODE;
-> >
-> >       return typec_mux_set(port->mux, &port->state);
-> >  }
->
-> The definition should be changed in a separate patch.
+> > That's baked into sframe v2.
+> 
+> I believe we do have large production binaries with more than 4GB of
+> text, what are we going to do about them? It would be interesting to
+> hear sframe people's opinion. Adding such a far-reaching new format in
+> 2024 with these limitations is kind of sad. At the very least maybe we
+> should allow some form of chaining sframe definitions to cover more
+> than 4GB segments? Please CC relevant folks, I'm wondering what
+> they're thinking about this.
 
-Ack -- will pull the rename out into its own patch.
+Personally I find the idea of a single 4GB+ text segment pretty
+surprising as I've never seen anything even close to that.
 
->
-> > +static const struct typec_device_id tbt_typec_id[] =3D {
-> > +     { USB_TYPEC_TBT_SID, USB_TYPEC_TBT_MODE },
-> > +     { }
-> > +};
-> > +MODULE_DEVICE_TABLE(typec, tbt_typec_id);
->
-> Now the mode would be the same thing as connector state, which is not
-> true. The connector state is supposed to reflect the pin assignment,
-> and the mode is the mode index used with the actual VDMs. For example,
-> DP alt mode has several different states, but only one mode.
->
-> The TBT3 altmode driver will not work with this patch alone, it will
-> never bind to the partner TBT3 alt mode because the mode does not
-> match.
->
-> Can you reorganise this series so that the patch 2/7 comes before this
-> one? Then I think you can just use the SVID unless I'm mistaken:
->
->         static const struct typec_device_id tbt_typec_id[] =3D {
->                 { USB_TYPEC_TBT_SID },
->                 { }
->         };
->         MODULE_DEVICE_TABLE(typec, tbt_typec_id);
->
-> Alternatively, just leave it to TYPEC_ANY_MODE for now.
->
+Anyway it's iterative development and not everybody's requirements are
+clear from day 1.  Which is why we're discussing it now.  I think there
+are already plans to do an sframe v3.
 
-Sure, I'll re-order the patches and get rid of the mode. I'm actually
-a bit confused as to how mode is supposed to be used since typec_dp.h
-defines USB_TYPEC_DP_MODE=3D1, typec_tbt.h defines
-USB_TYPEC_TBT_MODE=3DTYPEC_STATE_MODAL and it looks like USB state also
-starts from TYPEC_STATE_MODAL and continues.
-
-Is this documented in the spec somewhere? How should this mode value
-be used and shared between USB and various alt-modes? At least the DP
-case seems clear because as you said it describes different pin
-assignments. However, the term "mode" seems to be overloaded since
-it's used in other areas.
-
-> > +static struct typec_altmode_driver tbt_altmode_driver =3D {
-> > +     .id_table =3D tbt_typec_id,
-> > +     .probe =3D tbt_altmode_probe,
-> > +     .remove =3D tbt_altmode_remove,
-> > +     .driver =3D {
-> > +             .name =3D "typec-thunderbolt",
-> > +             .owner =3D THIS_MODULE,
-> > +     }
-> > +};
-> > +module_typec_altmode_driver(tbt_altmode_driver);
-> > +
-> > +MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_DESCRIPTION("Thunderbolt3 USB Type-C Alternate Mode");
-> > diff --git a/include/linux/usb/typec_tbt.h b/include/linux/usb/typec_tb=
-t.h
-> > index fa97d7e00f5c..3ff82641f6a0 100644
-> > --- a/include/linux/usb/typec_tbt.h
-> > +++ b/include/linux/usb/typec_tbt.h
-> > @@ -10,7 +10,7 @@
-> >  #define USB_TYPEC_TBT_SID            USB_TYPEC_VENDOR_INTEL
+> > > > +                       if (text_vma) {
+> > > > +                               pr_warn_once("%s[%d]: multiple EXEC segments unsupported\n",
+> > > > +                                            current->comm, current->pid);
+> > >
+> > > is this just something that fundamentally can't be supported by SFrame
+> > > format? Or just an implementation simplification?
 > >
-> >  /* Connector state for Thunderbolt3 */
-> > -#define TYPEC_TBT_MODE                       TYPEC_STATE_MODAL
-> > +#define USB_TYPEC_TBT_MODE           TYPEC_STATE_MODAL
->
-> I think USB_TYPEC_STATE_TBT would be better. But please change this in
-> a separate patch in any case.
+> > It's a simplification I suppose.
+> 
+> That's a rather random limitation, IMO... How hard would it be to not
+> make that assumption?
 
-Same question as above about mode vs state :)
+It's definitely not random, there's no need to complicate the code if
+this condition doesn't exist.
 
->
-> thanks,
->
-> --
-> heikki
+> > > It's not illegal to have an executable with multiple VM_EXEC segments,
+> > > no? Should this be a pr_warn_once() then?
+> >
+> > I don't know, is it allowed?  I've never seen it in practice.  The
+> 
+> I'm pretty sure you can do that with a custom linker script, at the
+> very least. Normally this probably won't happen, but I don't think
+> Linux dictates how many executable VMAs an application can have.
+> And it probably just naturally happens for JIT-ted applications (Java,
+> Go, etc).
+
+Actually I just double checked and even the kernel's ELF loader assumes
+that each executable has only a single text start+end address pair.
+
+> > pr_warn_once() is not reporting that it's illegal but rather that this
+> > corner case actually exists and maybe needs to be looked at.
+> 
+> This warn() will be logged across millions of machines in the fleet,
+> triggering alarms, people looking at this, making custom internal
+> patches to disable the known-to-happen warn. Why do we need all this?
+> This is an issue that is trivial to trigger by user process that's not
+> doing anything illegal. Why?
+
+There's no point in adding complexity to support some hypothetical.  I
+can remove the printk though.
+
+-- 
+Josh
 
