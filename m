@@ -1,143 +1,78 @@
-Return-Path: <linux-kernel+bounces-391425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01219B8692
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:03:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656479B8693
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B591C21E80
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB921C221FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED1A1C9EBC;
-	Thu, 31 Oct 2024 23:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB651E47A0;
+	Thu, 31 Oct 2024 23:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNZiWT5q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLwGor32"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBDB19F430;
-	Thu, 31 Oct 2024 23:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E0F1E2609;
+	Thu, 31 Oct 2024 23:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730415800; cv=none; b=Ni858ZVH5yfIdJQLp4F09hg83y4A5iHIbweJin6OCZUpRBOl8uvgw3+3cLT/NeGiNUq+BREcGwniXJAqa1WpRRYzsDgF//YlYePu+tKg9pUNR/Xo4DUNZKFfIMZfAU9FXiu9fwzn5UXJz2CLdYCdWnRPiD5Q9fRgkuWm9NNxRHo=
+	t=1730415802; cv=none; b=rYfJMp0mfR8hO65Ob8Byk19m5ExbrohzSv7BqPTlH4SdK43/T+m8UsASa287IsQIfMjPPZ4Zegv+JMPdFo8461nNBEJQk7fFfWSYjP7aDMO6wQe2oVlRKuYeKLgKYE4WcCQIgwHtSA6b5OLUwJOX8ZGkv/ZtQDRBhf8KHkEKTvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730415800; c=relaxed/simple;
-	bh=eUDN0rTSziBFn916MG2w3mYW5lFHgOs2UPSLKU5r+8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuxHytk0TPb67+EEoKdUjpRu7IUgqfz5M58Xkm4SR3M+J+mGACcRpoCOsdVrdocWNZxrcenQ2jN27VQtcAA6uKh/NOBD8H5IRSxPptSKk+5Qzh5ESz0CThyg2NM48guNeMCJZcUA0xUKtgcffpXIllDFCiKQ6UKhJt4am85XHao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNZiWT5q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44064C4CEC3;
-	Thu, 31 Oct 2024 23:03:16 +0000 (UTC)
+	s=arc-20240116; t=1730415802; c=relaxed/simple;
+	bh=2rUfUBn+uYHR56KeONuS8QIVGQCHI2ASS1aihF/lJWc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=kYqn9i5dYdluHBEeElFavleiKwBNJws71ytb5o11SL+RYWD/3fxKU4MSXB1RewM2ordOn/VqD/cmkNc4xO4YCaqSy53mJD2xA/eSkrWDv/9+Nep8k5T7abFIfUbVC+wxAokdZRU750hGff8Urk5eMG+F3cw2MmNuKDdeLJcu7HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLwGor32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CD5C4CEC3;
+	Thu, 31 Oct 2024 23:03:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730415800;
-	bh=eUDN0rTSziBFn916MG2w3mYW5lFHgOs2UPSLKU5r+8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hNZiWT5qI/dBzEr1U4csl2pjgm5yps5GX6lxUio9BCuWf2M/2Vq5ToALyadBC/CwC
-	 E712bTQbeqPNAeh+FqpAYuRuz/xt+XO7WfgsaYI03YMhMBPiqE6zUDMmq9k8fbW0dq
-	 nDlVnc6gkpAIYOIo0BNYftWXAhD6/BmMg+k8zgHpnFwUvBy+MOesyVf1oFAQICTAYl
-	 KQP3MvFFbJ2Qedj9OpbY+5XK9d3GurWJGKYA4Q5WAw5LJ2wWtJjMpip6V64FgoY/+/
-	 uq1K/1+ql6CT7qjn0kVbawIi7Ca3sJFqHX4onF9sRDx/u6aXmNGcpLw/tBH6XNtFYu
-	 Mc4NNwT1ox/fA==
-Date: Thu, 31 Oct 2024 16:03:13 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-Message-ID: <20241031230313.ubybve4r7mlbcbuu@jpoimboe>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
- <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
- <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
+	s=k20201202; t=1730415802;
+	bh=2rUfUBn+uYHR56KeONuS8QIVGQCHI2ASS1aihF/lJWc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=hLwGor325ZzCx+y1HvgeWaYyayb6fVNvs9+kNxKgPsNkN8ANg1VUsNCqMPG+8dkQm
+	 4a3RETLKK/ipL0Ch7hQKzew4yLdfSa2SpDspq5H4HO3TJekkXRQA4gVMG2UoTThPPi
+	 S4qYgJSH+2GJiP17TlA4oxxPTBLTToXCFu8rtfwl9+6bbXP7ZTMGm2leESwH8wQSTp
+	 I75BejdD+pkwpckllr7HpYqoM9JkBiaeqyvCr07Mu391m9pOl87N1P/9oa8/WEkHww
+	 d4w8Ps1z+6trpJqgjjsdQNacCtXl9/HdiruWLI2I3ufBWqKB5u7HRMmUdqWtiieybv
+	 TlYFco6tQNx1Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F15380AC02;
+	Thu, 31 Oct 2024 23:03:31 +0000 (UTC)
+Subject: Re: [GIT PULL] sound fixes for 6.12-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <87ldy4wr5x.wl-tiwai@suse.de>
+References: <87ldy4wr5x.wl-tiwai@suse.de>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87ldy4wr5x.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.12-rc6
+X-PR-Tracked-Commit-Id: e49370d769e71456db3fbd982e95bab8c69f73e8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 15cb732c16edd39ce00ce655710e34cc82bbcf2c
+Message-Id: <173041580991.2114557.18322611029599317227.pr-tracker-bot@kernel.org>
+Date: Thu, 31 Oct 2024 23:03:29 +0000
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
 
-On Thu, Oct 31, 2024 at 01:57:10PM -0700, Andrii Nakryiko wrote:
-> > > what if ip_off is larger than 4GB? ELF section can be bigger than 4GB, right?
-> >
-> > That's baked into sframe v2.
-> 
-> I believe we do have large production binaries with more than 4GB of
-> text, what are we going to do about them? It would be interesting to
-> hear sframe people's opinion. Adding such a far-reaching new format in
-> 2024 with these limitations is kind of sad. At the very least maybe we
-> should allow some form of chaining sframe definitions to cover more
-> than 4GB segments? Please CC relevant folks, I'm wondering what
-> they're thinking about this.
+The pull request you sent on Thu, 31 Oct 2024 10:35:54 +0100:
 
-Personally I find the idea of a single 4GB+ text segment pretty
-surprising as I've never seen anything even close to that.
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.12-rc6
 
-Anyway it's iterative development and not everybody's requirements are
-clear from day 1.  Which is why we're discussing it now.  I think there
-are already plans to do an sframe v3.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/15cb732c16edd39ce00ce655710e34cc82bbcf2c
 
-> > > > +                       if (text_vma) {
-> > > > +                               pr_warn_once("%s[%d]: multiple EXEC segments unsupported\n",
-> > > > +                                            current->comm, current->pid);
-> > >
-> > > is this just something that fundamentally can't be supported by SFrame
-> > > format? Or just an implementation simplification?
-> >
-> > It's a simplification I suppose.
-> 
-> That's a rather random limitation, IMO... How hard would it be to not
-> make that assumption?
-
-It's definitely not random, there's no need to complicate the code if
-this condition doesn't exist.
-
-> > > It's not illegal to have an executable with multiple VM_EXEC segments,
-> > > no? Should this be a pr_warn_once() then?
-> >
-> > I don't know, is it allowed?  I've never seen it in practice.  The
-> 
-> I'm pretty sure you can do that with a custom linker script, at the
-> very least. Normally this probably won't happen, but I don't think
-> Linux dictates how many executable VMAs an application can have.
-> And it probably just naturally happens for JIT-ted applications (Java,
-> Go, etc).
-
-Actually I just double checked and even the kernel's ELF loader assumes
-that each executable has only a single text start+end address pair.
-
-> > pr_warn_once() is not reporting that it's illegal but rather that this
-> > corner case actually exists and maybe needs to be looked at.
-> 
-> This warn() will be logged across millions of machines in the fleet,
-> triggering alarms, people looking at this, making custom internal
-> patches to disable the known-to-happen warn. Why do we need all this?
-> This is an issue that is trivial to trigger by user process that's not
-> doing anything illegal. Why?
-
-There's no point in adding complexity to support some hypothetical.  I
-can remove the printk though.
+Thank you!
 
 -- 
-Josh
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
