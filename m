@@ -1,166 +1,122 @@
-Return-Path: <linux-kernel+bounces-390683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087819B7D38
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:45:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923549B7D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0750281BDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:45:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ADEFB213B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127041A0BF8;
-	Thu, 31 Oct 2024 14:45:15 +0000 (UTC)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03381A0BFA;
+	Thu, 31 Oct 2024 14:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsUPYw+m"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869A51494AB;
-	Thu, 31 Oct 2024 14:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631295A79B;
+	Thu, 31 Oct 2024 14:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385914; cv=none; b=toF4KO6YInPI7PgocjliTnhFw8AdIP6Qf2KmMrm70QeNL1xTMe+gR9vewazX9fECYCrfVuufePvfSOshy6NztHW8cY5/WgyZ5SBDARVvBP7URuAUG1d3ylB0x/1AguA1RqqlOX0hS+hM72EGUhx+CDPt2Ugz19QTSFA7f1KpQ0E=
+	t=1730385987; cv=none; b=UM44zPmc5vU+T4KFIw9I9a7mS415d4PGVWboDZzAOVCWAyEKAuPQqb5HuGHGcStZ1wudkiQFikLhqk+j5hR7UnyeEb29XKL8ePajsP/+c5XfHDwjGpalCavL5HoPr9sMTJoI/v+DZIYiYiLY0FyturJ1uLkq0xuXcAwWCZQ+VkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385914; c=relaxed/simple;
-	bh=8pMDvHQAob58llAamwS7N/iZRX9fW8xGRAqSaiYFYEk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pd5J3oZ+rbRA757pKKR/+WmMjiH0ibtneqhjF/MnfEDheuv+tPhodqc9FK6eyxwHGTC7wlIXfv/DqEU9fvmePttQpDUOkJKJO/tEucfaDF/6ORgUg1TIw2TJMXIb8fB2Nox8KqzeibmG+zNBTy+Id8SrQekHh0e6T7fimRVscO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1730385987; c=relaxed/simple;
+	bh=G3k8YCPLvT/vD+woarb58oSt9eiPRkiyHHDZR/GB9XA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e0wMu5AOEy8Ov2FZa+GSSVBF411B2OPfiFSSsQy+p9JxCvfltLtgPZrMX5M+hGTBxDVHEyznUI6FyeWWNncS7YWOI9SfflXld30mfnZQTD+4rCanFjFqHZMQedRHXDQJmwqcBIZ9recu0rmThaQ1h0ihXRUAYOxGjHz5EKfez9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsUPYw+m; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb587d0436so11573851fa.2;
-        Thu, 31 Oct 2024 07:45:12 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d47eff9acso673304f8f.3;
+        Thu, 31 Oct 2024 07:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730385984; x=1730990784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w+R2z2Hq8YdiXOzRMQtJlJNAR8ul2IAPxkBdT8ZGZaI=;
+        b=EsUPYw+mN7HRSE8C7FFLIkXqmtMGt7p7x8ZcG7V6w4vnAYG42sgL1VpABunm/yEjyG
+         qtfIeqp/Z5LCbpc0Tw5gfyO37Z/FgyOmba5BSlSBr3Pg793Pl85YM1HKEJjFnqEMX6Wy
+         9bHG7cieYCkcXi4o9RzY4nnTMZ97qTrIPQqmMvMKcqIj+ijmqyhNQ1Y7YBv01J+y4IUo
+         riTSWVQoZYcQZWLmONWhQvgI6rKQIAqgCrLaAAtQFs6mISHy5T9W9B2g86MoWhd/4fIE
+         fKOTkWB3nOo47JllPywCQzpzaHBk2xuZ6kPdo5CFVB+ebvTPu58ilGRYNy+ZI8ZLc5Os
+         233g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730385911; x=1730990711;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MrXWCVeDKqKbudttL82vkicTuerPbo3lkRQbqLFBsV8=;
-        b=RkK4NW1jPLEQ+/CH36VAn/WsqqdHQ4X0TsVZ3Uq0h6L1n7zcu8nh1LDVhcv2x1vaav
-         aAVesYqF2rXKmLENIvP79ZjhUhI4g//L78eS8miso/Y9jITTZQCGb2T5IgFV3rAWyEq+
-         utT7e8hzdfmvnwXMFM1Ah0UVHvQf3SSNybtT9JteaLcPjvYRB7i05E+c1ch5ahdXKFyH
-         bK/b4Okx1t+XFGwvLYQJz9T7/33gT07eCm3RUiYoIOLZ7mrld6tYza4IB9ClwQUYf1fL
-         MUsE7JlFkHpInR+zEptUcF41j52vGN1Fb0+uS+CX+CObKHJUhIFYAdI75vkfnriMQSkd
-         nzvg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3GA0agC9Z/UvJ9m8KvjtT5ARzhLjgtY+ONeworQUfwSpj1zaN01PjCJ+G34PgldNsdiIDELj0PqnwpA==@vger.kernel.org, AJvYcCXezTJPiSGNlcorQxkDwUK3kWsPfHhoFuuVHdXflrJ4mKqArkCvql0JoX8ruJzQ+BIzJ+DHbUpA2rRt+lWt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFVUkee4yxxaJyD73oNFaI3GSshyiIMedgxcF3HSqHmZ5szWLU
-	NjaXsaygk2tDc79m8J2BoVz/RLiVn7KsSpgfUgTMIhcl6GY92v2T
-X-Google-Smtp-Source: AGHT+IG+YC4v1kqIrDdLWucSevyPreQkgj+9r+AjqJsmVrOIOvdtK5TfywiFoVIydO6nuyMoGu6xiQ==
-X-Received: by 2002:a2e:a545:0:b0:2fb:8df3:2291 with SMTP id 38308e7fff4ca-2fedb7a2e8fmr612321fa.16.1730385910299;
-        Thu, 31 Oct 2024 07:45:10 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f71fdb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71f:db00:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceaef1e71csm522293a12.38.2024.10.31.07.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 07:45:08 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: linux-block@vger.kernel.org,
-	John Garry <john.g.garry@oracle.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2] btrfs: handle bio_split() error
-Date: Thu, 31 Oct 2024 15:44:57 +0100
-Message-ID: <20241031144458.11497-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1730385984; x=1730990784;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w+R2z2Hq8YdiXOzRMQtJlJNAR8ul2IAPxkBdT8ZGZaI=;
+        b=XGYYmy+AHN8v4FROaXMMKxrl+9GuTcFczyWRG6byLqnHrHBx93tWLDnNrLf8LNHhCV
+         APJiDbcdH7kmdO/YNJ+LfZNDAd18V8dDU5tvMJaxlP8CEUl1uzQozy+bBZTFOWlr8zmt
+         CfYt7ieRAAczl/hE+swHgVnKrtbM1MpTW2OK4w5RiZS0wT4pfWiMzr1mMU0dlD8l3PUv
+         lWMRojbKLf2/U4z0KCfBfVn109Rygo4Vyq7IyVdc1gZ+0IMgV/b0ntW9KMAi8d8H5ZLk
+         ixGTno7mV0m46eGeINTEm7KN90gNUncxdXNn4Fo42H4Qwfu5i0Hox1UnFQRK8ocoZZlE
+         N5/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6dVq0RmseTX2lFrm+jYmC/LJ8h/c6Ha+39XQJ44Pyan70g9e8BNXzFPEbwmFbZ5K1ItXSI0y1@vger.kernel.org, AJvYcCUMGPqMwFD3ux3D3u0gs1uey8yXxYtW1Qs+rWd17aGurcqZjOspELsSgKcLUXxsTf/ObYSqRD0X2cXSpoU=@vger.kernel.org, AJvYcCWIvQYLuzTrPQmlO+qLfkRJRDtOBrE5j+Pw7pFvfq+VnU/GvNwofHwarNNcX/Bo1gecLTNvvzHGiRHr30URyUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzprEfrr9s8yakoeUj7YioPQrJ8JCNwsu3qZxPoohtsc2dZlWAT
+	f9Vb90cXajELKaAAoTAS5N7G27JW3gAYOn2b4duuZe+f+nXH542O
+X-Google-Smtp-Source: AGHT+IH9Re7qI11bFWjzdKhmKNOoTKp5aILEFXvdHmzSO7KktOHqim6bI57kv3Ke9l9/aFvrvDBnCQ==
+X-Received: by 2002:a5d:6da6:0:b0:37d:501f:483f with SMTP id ffacd0b85a97d-381c7ab2fb6mr155006f8f.44.1730385983595;
+        Thu, 31 Oct 2024 07:46:23 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:d7b9:afdb:c541:d023? (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d439esm2316878f8f.44.2024.10.31.07.46.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 07:46:23 -0700 (PDT)
+Message-ID: <fc0657cd-083c-4abe-8f27-0b5a49cdd35a@gmail.com>
+Date: Thu, 31 Oct 2024 15:46:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] wifi: brcmfmac: release 'root' node in all execution
+ paths
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Hector Martin <marcan@marcan.st>, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
+ <alsi@bang-olufsen.dk>, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241030-brcmfmac-of-cleanup-v1-1-0b90eefb4279@gmail.com>
+ <173038429759.539202.17634636965892286169.kvalo@kernel.org>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <173038429759.539202.17634636965892286169.kvalo@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On 31/10/2024 15:18, Kalle Valo wrote:
+> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> 
+>> The fixed patch introduced an additional condition to enter the scope
+>> where the 'root' device_node is released (!settings->board_type,
+>> currently 'err'), which avoid decrementing the refcount with a call to
+>> of_node_put() if that second condition is not satisfied.
+>>
+>> Move the call to of_node_put() to the point where 'root' is no longer
+>> required to avoid leaking the resource if err is not zero.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 7682de8b3351 ("wifi: brcmfmac: of: Fetch Apple properties")
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> 
+> Wireless patches go to wireless trees, not net. But no need to resend because
+> of this. And I think wireless-next is approriate for this fix.
+> 
 
-Now that bio_split() can return errors, add error handling for it in
-btrfs_split_bio() and ultimately btrfs_submit_chunk().
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
+Sorry, the second link from your signature explains very well what I
+should have done. I will keep that in mind for the next patch(es) to
+wireless.
 
-This is based on top of John Garry's series "bio_split() error handling
-rework" explicitly on the patch titled "block: Rework bio_split() return
-value", which are as of now (Tue Oct 29 10:02:16 2024) not yet merged into
-any tree.
-
-Changes to v1:
-- convert ERR_PTR to blk_status_t
-- correctly fail already split bbios
----
- fs/btrfs/bio.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index 1f216d07eff6..d2cfef5e4d4a 100644
---- a/fs/btrfs/bio.c
-+++ b/fs/btrfs/bio.c
-@@ -81,6 +81,9 @@ static struct btrfs_bio *btrfs_split_bio(struct btrfs_fs_info *fs_info,
- 
- 	bio = bio_split(&orig_bbio->bio, map_length >> SECTOR_SHIFT, GFP_NOFS,
- 			&btrfs_clone_bioset);
-+	if (IS_ERR(bio))
-+		return ERR_CAST(bio);
-+
- 	bbio = btrfs_bio(bio);
- 	btrfs_bio_init(bbio, fs_info, NULL, orig_bbio);
- 	bbio->inode = orig_bbio->inode;
-@@ -687,6 +690,10 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 
- 	if (map_length < length) {
- 		bbio = btrfs_split_bio(fs_info, bbio, map_length);
-+		if (IS_ERR(bbio)) {
-+			ret = errno_to_blk_status(PTR_ERR(bbio));
-+			goto fail;
-+		}
- 		bio = &bbio->bio;
- 	}
- 
-@@ -698,7 +705,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 		bbio->saved_iter = bio->bi_iter;
- 		ret = btrfs_lookup_bio_sums(bbio);
- 		if (ret)
--			goto fail;
-+			goto fail_split;
- 	}
- 
- 	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
-@@ -732,13 +739,13 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 
- 			ret = btrfs_bio_csum(bbio);
- 			if (ret)
--				goto fail;
-+				goto fail_split;
- 		} else if (use_append ||
- 			   (btrfs_is_zoned(fs_info) && inode &&
- 			    inode->flags & BTRFS_INODE_NODATASUM)) {
- 			ret = btrfs_alloc_dummy_sum(bbio);
- 			if (ret)
--				goto fail;
-+				goto fail_split;
- 		}
- 	}
- 
-@@ -746,7 +753,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- done:
- 	return map_length == length;
- 
--fail:
-+fail_split:
- 	btrfs_bio_counter_dec(fs_info);
- 	/*
- 	 * We have split the original bbio, now we have to end both the current
-@@ -760,6 +767,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 
- 		btrfs_bio_end_io(remaining, ret);
- 	}
-+fail:
- 	btrfs_bio_end_io(bbio, ret);
- 	/* Do not submit another chunk */
- 	return true;
--- 
-2.43.0
-
+Thank you and best regards,
+Javier Carrasco
 
