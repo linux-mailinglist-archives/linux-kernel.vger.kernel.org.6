@@ -1,161 +1,246 @@
-Return-Path: <linux-kernel+bounces-391161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293179B8353
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:25:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CECB9B835B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B091F22BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:25:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A18B4B23484
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2701CB502;
-	Thu, 31 Oct 2024 19:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EA21CB33D;
+	Thu, 31 Oct 2024 19:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="sN8VEMR4"
-Received: from mail-oo1-f65.google.com (mail-oo1-f65.google.com [209.85.161.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNvPsJTU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264431CB324
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382AA1C9DD5;
+	Thu, 31 Oct 2024 19:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402705; cv=none; b=rVnMVUsUXpSQHng6+lUq0P1yFjPGr8DlSUg5qsOo5twl2tnzxSj6eoMvITmStCLq1CXnxVJtM/m2G+nWz7/wuSMCmDQIlGiZ4R1KZ5Sc8cBA9apZX+02UJq9Mp31N8q9cVGPVOz+zSqJ9NVW2DZIEwoq7kGNk/zbGSr015wcBvE=
+	t=1730402735; cv=none; b=EgPbCb9rGW6J0RCsnCnxH/Gh8M7lZSoISgr8Zsax87AvikfnCwwuI89JGRk3tSRjTkdRiP+s91aoYsFXZx9HfmTuIMefDPXpjXS6oJaBAq1Yw3GCX4Z1Jvw21XiPP4hcWkLm3ZDh4KlrkMPn8aPA+KgiHX5JYt+qTacDWXury/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402705; c=relaxed/simple;
-	bh=rGuTVD1KWxFW/iVXJuMMGl1bde0QDjUWD3zqWMNpPpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkXeCJx73C3zPvevX7N7FYyLP3XADNFgJ67dpw3boN5E7frxLvtmre5TkX5nqsXrV1Fc4cHMkObgJpbvisdoDaqQE+pszufzyJSBrKbhuP2ITtux0DZAnLsJ6sGQQKm2wdiFPx3+sD08qny6WBMNsJLXd9ozANfJQu3tcq0A9wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=sN8VEMR4; arc=none smtp.client-ip=209.85.161.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-oo1-f65.google.com with SMTP id 006d021491bc7-5ebc4e89240so692128eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1730402701; x=1731007501; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uhUAE7CiIIKadT6/yqK22wb65HeoOWbYs2QkpH1TFEc=;
-        b=sN8VEMR417Sv2zxZVGodu5zpEft0CyrmVipctCPnfdFVkp4Mqx0L3F3o7bUmk5fco1
-         i239eIOpNudzF4SqjzOmgEaRjv2rNlvl0kfX3WsCBy3aGi9rg3tDXCRb/cnreUZpeqOX
-         l67u1aZ8tla0zgcWYzaxv7XL/UMskka9Wc9JwSj/JE/zlbAQ4O3iS7wRr8rNryRe2h1d
-         tYfVkt94uWjRz+cd+9zCcJhGFcvUg/jcp1Vc4dj/l+BL+BByZrKgtLXYhHL9BA2iwonO
-         /VrzSbimBPbz4lc5M1mMLGp+gfkqGHIxtcsuMCbRiXcoy04C05lEManarmsLeiLnZtpq
-         6/0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730402701; x=1731007501;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uhUAE7CiIIKadT6/yqK22wb65HeoOWbYs2QkpH1TFEc=;
-        b=hkHA6gsbKhQkAhKBpRcwXwO1yNGDwU8WH0E8lX29qcMrdF4YrPNoTisOezSRtdD91U
-         KeZ++jlkta4NOiIa3BFMlI4lw0ZOw2FhVkPnn6pznKyM21bK3/ewFQMrh9otwYu5/689
-         I+qIKpqwMd7JZomzjcLELDyMlF1ks38m+/23PNtrTFSRsypwUhVEDVW84V4+TZY4xgSb
-         alC72S0UVfImtYVudnDjOebbDLM4lOGp+7btsluTAbJDSkceYsXfUs+HTXS056d2hgD6
-         FNwRkHcElMGziycjgOeQZxE2nbQhFkTT+efgIM9ehGp0NBs0WE73vegF7+yXOp7CXQmc
-         Ulng==
-X-Forwarded-Encrypted: i=1; AJvYcCVheuu7oQsHmri0msi0tVYz2VXWb1fMqdfCtq1KkV1fo31LqrR7J/u2srg6nJxDIxBvSPF2oTZXgOUsRes=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6DnfWiKDAS4AmiighSH87wXM9y0XpA62p45gsQ1jNNUPe4aE/
-	F1id8vkhYAXzKLqc29O2aYfcUuF+f94XqgkSJEYvcW55MiA4MfapPchgmz7vlQ==
-X-Google-Smtp-Source: AGHT+IE4RL0Dif6O3Ry2HBvWKw4OdWKQa4QtWRA9GyvNzx3ILrwjuqWLN3eWXUD22moyPASJ4KXWIQ==
-X-Received: by 2002:a05:6358:9817:b0:1c2:fcd0:d20a with SMTP id e5c5f4694b2df-1c5f9a4b3bcmr97124455d.25.1730402701046;
-        Thu, 31 Oct 2024 12:25:01 -0700 (PDT)
-Received: from rowland.harvard.edu ([2607:fb60:2501:2805:c6d5:fe22:7fa3:ec54])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d35415b1d6sm10958586d6.76.2024.10.31.12.24.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 12:25:00 -0700 (PDT)
-Date: Thu, 31 Oct 2024 15:24:57 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: syzbot <syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com>,
-	akpm@linux-foundation.org, jannh@google.com,
-	liam.howlett@oracle.com, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	vbabka@suse.cz
-Subject: Re: [syzbot] [mm?] [input?] [usb?] INFO: rcu detected stall in brk
- (2)
-Message-ID: <c963fa8b-7892-4528-8ab7-a8a3a080afb7@rowland.harvard.edu>
-References: <c6b63e97-6839-4beb-bb94-e5914837a041@lucifer.local>
- <6723b31e.050a0220.35b515.0165.GAE@google.com>
- <2928b6e8-3928-411d-82b8-6b17be266deb@lucifer.local>
+	s=arc-20240116; t=1730402735; c=relaxed/simple;
+	bh=0dhCQRIzX+qyTds6/CRN/SjbYJIaKhjCWRSx6ZxfOMo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NQ+sOdD6+zCrXCGlHSmM7JOHYmO433NYB9FqQJoCDifwweje71PoRz68JG+I2l28/75ex8ue4bu9Xu7VjjyrjQ4JggObsASUu/v6Y61AibirL/+TFXOK82xPEIZbBXsN5D0U24oJIfVKGW+n7f4X7p7mEFCMXUlBENf6bvNsUPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNvPsJTU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9AFCC4CED1;
+	Thu, 31 Oct 2024 19:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730402734;
+	bh=0dhCQRIzX+qyTds6/CRN/SjbYJIaKhjCWRSx6ZxfOMo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=sNvPsJTU5iJvCgTMPLXqgMrEm0yKeWXGEVJfoVI0VLuZKILj/aBqLmZjVy8X/Gv70
+	 mw2Ehjt/c2GUbtVFld+eeZ0SGo7xb5Q4DBDjsftKaBczo91OuNY5NBHKtTdYD1YzmN
+	 aORqAvDXuO5H5xAHGm6wanEkq65nRLBX5bhp6VcNy0Jghe6J9nDX0XZ87RRUdAHr0i
+	 6575r+b5iCooy1zzCLSxxaVqMp5yOGgcbz83drADx/nUZwtrehC8Njw/3FHyNJmmq8
+	 gO/j0rJtgKZDh9/umPaQjxfY3d8tVTa7y9tyYhnI3GDfWxKkys+2OOznM2/rUa3knG
+	 RcbVbBwJ9Gpcw==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH RFT v12 0/8] fork: Support shadow stacks in clone3()
+Date: Thu, 31 Oct 2024 19:25:01 +0000
+Message-Id: <20241031-clone3-shadow-stack-v12-0-7183eb8bee17@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2928b6e8-3928-411d-82b8-6b17be266deb@lucifer.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI7ZI2cC/3XSTU7DMBAF4KtUXhPkGf+zYsUBEDvEwo7HbdQqQ
+ UkVQFXvjhMEKXKytC1/9jy9Cxuob2hgD7sL62lshqZr8wLwbsfqg2/3VDUxbzDkKICDq+pT15K
+ ohoOP3Uc1nH19rEBFySOGpIRm+eZ7T6n5nNlX9vz0wt7y5qEZzl3/NT81wnz0g6JYRUeoeBWtN
+ pGH7Ef+eKS+pdN91+9ncMQFAZDrCGYkaBDJagugVIGIGwT5OiIy4k2wFAWhr+sCkbeIXUdkRmx
+ AmxLJpI0uEPWLSI58IxOVEYFYa6ecJRkKRC+I3gpWZ8QRGWNFgBRcgZgFMQLWETNl4pRAopACx
+ AKxC2L5RiY2I9zXSZjaJ5BlsO4G2Sjf6KZxNEYjk3NSywIBfqPgxjzAp79ossaZ4KQsmwJ/pZX
+ Audpgptai1x5D1FEr+Mdcr9dvPdgCgXMDAAA=
+X-Change-ID: 20231019-clone3-shadow-stack-15d40d2bf536
+To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
+ Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, 
+ "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, jannh@google.com, bsegall@google.com, 
+ Yury Khrustalev <yury.khrustalev@arm.com>, 
+ Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, 
+ linux-api@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ Kees Cook <kees@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Shuah Khan <skhan@linuxfoundation.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7352; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=0dhCQRIzX+qyTds6/CRN/SjbYJIaKhjCWRSx6ZxfOMo=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhnTlmwtz2zdkbr6Xf1hZ4rvMOvd4m8YfF3d2Nm6odHm57Ru7
+ X4xBJ6MxCwMjF4OsmCLL2mcZq9LDJbbOfzT/FcwgViaQKQxcnAIwkT0R7P/zC1alCMn4BPKtvtW9Ma
+ blmtGbCTyunPI1/PETLvausah+15bIasHVzzjzXCxrt2Dzhv9nK/aIn7hVJDkhSCj/gm6bBQNraHGA
+ 8BWljqy1c6wLFgtVrnU5v/XAyQjJltSu7y7c3olcvN/nuc/m8s4/d+y0bbGNpXfIweAFUZI+i7bcN/
+ q6Kpar/VIHS99tS1P9iZEC4QYsJWxHuYzKGBYenvXj7AP1558089e3iIhkdtw6U7bmjfecr9b8HJtf
+ Zm38n13s5ekVF6HwzDX76arenV4972Xe51edajZki2qN9sjTbDPbnGEhIb7tNX/LzJdb283zd+w2Vb
+ GaN2/jxDcz0iOzlY88Nxc3XvIEAA==
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu, Oct 31, 2024 at 04:58:29PM +0000, Lorenzo Stoakes wrote:
-> +Alan re: USB stalls
-> 
-> On Thu, Oct 31, 2024 at 09:41:02AM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> >
-> > Reported-by: syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com
-> > Tested-by: syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com
-> >
-> > Tested on:
-> >
-> > commit:         cffcc47b mm/mlock: set the correct prev on failure
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/ mm-hotfixes-unstable
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1304a630580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=6648774f7c39d413
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=7402e6c8042635c93ead
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> >
-> > Note: no patches were applied.
-> > Note: testing is done by a robot and is best-effort only.
-> 
-> OK this seems likely to be intermittant (and unrelated to what's in
-> mm-unstable-fixes honestly) and does make me wonder if the fix referenced
-> in [0] really has sorted things out? Or whether it has perhaps help
-> mitigate the issue but not sufficiently in conjunction with debug things
-> that slow things down.
+The kernel has recently added support for shadow stacks, currently
+x86 only using their CET feature but both arm64 and RISC-V have
+equivalent features (GCS and Zicfiss respectively), I am actively
+working on GCS[1].  With shadow stacks the hardware maintains an
+additional stack containing only the return addresses for branch
+instructions which is not generally writeable by userspace and ensures
+that any returns are to the recorded addresses.  This provides some
+protection against ROP attacks and making it easier to collect call
+stacks.  These shadow stacks are allocated in the address space of the
+userspace process.
 
-This looks very different from the issues that were addressed by the fix 
-I mentioned in [0].  In particular, the log traces for this series of 
-bug reports all start with something like this:
+Our API for shadow stacks does not currently offer userspace any
+flexiblity for managing the allocation of shadow stacks for newly
+created threads, instead the kernel allocates a new shadow stack with
+the same size as the normal stack whenever a thread is created with the
+feature enabled.  The stacks allocated in this way are freed by the
+kernel when the thread exits or shadow stacks are disabled for the
+thread.  This lack of flexibility and control isn't ideal, in the vast
+majority of cases the shadow stack will be over allocated and the
+implicit allocation and deallocation is not consistent with other
+interfaces.  As far as I can tell the interface is done in this manner
+mainly because the shadow stack patches were in development since before
+clone3() was implemented.
 
- serial_out drivers/tty/serial/8250/8250.h:142 [inline]
- serial8250_console_fifo_write drivers/tty/serial/8250/8250_port.c:3322 [inline]
- serial8250_console_write+0xf9e/0x17c0 drivers/tty/serial/8250/8250_port.c:3393
- console_emit_next_record kernel/printk/printk.c:3092 [inline]
- console_flush_all+0x800/0xc60 kernel/printk/printk.c:3180
- __console_flush_and_unlock kernel/printk/printk.c:3239 [inline]
- console_unlock+0xd9/0x210 kernel/printk/printk.c:3279
- vprintk_emit+0x424/0x6f0 kernel/printk/printk.c:2407
- vprintk+0x7f/0xa0 kernel/printk/printk_safe.c:68
- _printk+0xc8/0x100 kernel/printk/printk.c:2432
- printk_stack_address arch/x86/kernel/dumpstack.c:72 [inline]
+Since clone3() is readily extensible let's add support for specifying a
+shadow stack when creating a new thread or process, keeping the current
+implicit allocation behaviour if one is not specified either with
+clone3() or through the use of clone().  The user must provide a shadow
+stack pointer, this must point to memory mapped for use as a shadow
+stackby map_shadow_stack() with an architecture specified shadow stack
+token at the top of the stack.
 
-indicating that perhaps the problem is related to the 8250 driver.  Or 
-perhaps that driver just happens to wait for long periods and so is more 
-likely to show up when the real problem occurs.
+Please note that the x86 portions of this code are build tested only, I
+don't appear to have a system that can run CET available to me.
 
-By contrast, the log traces for the [0] bug reports all show something 
-like this:
+[1] https://lore.kernel.org/linux-arm-kernel/20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org/T/#mc58f97f27461749ccf400ebabf6f9f937116a86b
 
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6767
- usb_kill_urb.part.0+0x1ca/0x250 drivers/usb/core/urb.c:713
- usb_kill_urb+0x83/0xa0 drivers/usb/core/urb.c:702
- usb_start_wait_urb+0x255/0x4c0 drivers/usb/core/message.c:65
- usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
- usb_control_msg+0x327/0x4b0 drivers/usb/core/message.c:154
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v12:
+- Add the regular prctl() to the userspace API document since arm64
+  support is queued in -next.
+- Link to v11: https://lore.kernel.org/r/20241005-clone3-shadow-stack-v11-0-2a6a2bd6d651@kernel.org
 
-because that bug involved usb_kill_urb() waiting indefinitely for an 
-event that never happens.
+Changes in v11:
+- Rebase onto arm64 for-next/gcs, which is based on v6.12-rc1, and
+  integrate arm64 support.
+- Rework the interface to specify a shadow stack pointer rather than a
+  base and size like we do for the regular stack.
+- Link to v10: https://lore.kernel.org/r/20240821-clone3-shadow-stack-v10-0-06e8797b9445@kernel.org
 
-Alan Stern
+Changes in v10:
+- Integrate fixes & improvements for the x86 implementation from Rick
+  Edgecombe.
+- Require that the shadow stack be VM_WRITE.
+- Require that the shadow stack base and size be sizeof(void *) aligned.
+- Clean up trailing newline.
+- Link to v9: https://lore.kernel.org/r/20240819-clone3-shadow-stack-v9-0-962d74f99464@kernel.org
 
-> [0]:https://lore.kernel.org/all/967f3aa0-447a-4121-b80b-299c926a33f5@rowland.harvard.edu/
+Changes in v9:
+- Pull token validation earlier and report problems with an error return
+  to parent rather than signal delivery to the child.
+- Verify that the top of the supplied shadow stack is VM_SHADOW_STACK.
+- Rework token validation to only do the page mapping once.
+- Drop no longer needed support for testing for signals in selftest.
+- Fix typo in comments.
+- Link to v8: https://lore.kernel.org/r/20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org
+
+Changes in v8:
+- Fix token verification with user specified shadow stack.
+- Don't track user managed shadow stacks for child processes.
+- Link to v7: https://lore.kernel.org/r/20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org
+
+Changes in v7:
+- Rebase onto v6.11-rc1.
+- Typo fixes.
+- Link to v6: https://lore.kernel.org/r/20240623-clone3-shadow-stack-v6-0-9ee7783b1fb9@kernel.org
+
+Changes in v6:
+- Rebase onto v6.10-rc3.
+- Ensure we don't try to free the parent shadow stack in error paths of
+  x86 arch code.
+- Spelling fixes in userspace API document.
+- Additional cleanups and improvements to the clone3() tests to support
+  the shadow stack tests.
+- Link to v5: https://lore.kernel.org/r/20240203-clone3-shadow-stack-v5-0-322c69598e4b@kernel.org
+
+Changes in v5:
+- Rebase onto v6.8-rc2.
+- Rework ABI to have the user allocate the shadow stack memory with
+  map_shadow_stack() and a token.
+- Force inlining of the x86 shadow stack enablement.
+- Move shadow stack enablement out into a shared header for reuse by
+  other tests.
+- Link to v4: https://lore.kernel.org/r/20231128-clone3-shadow-stack-v4-0-8b28ffe4f676@kernel.org
+
+Changes in v4:
+- Formatting changes.
+- Use a define for minimum shadow stack size and move some basic
+  validation to fork.c.
+- Link to v3: https://lore.kernel.org/r/20231120-clone3-shadow-stack-v3-0-a7b8ed3e2acc@kernel.org
+
+Changes in v3:
+- Rebase onto v6.7-rc2.
+- Remove stale shadow_stack in internal kargs.
+- If a shadow stack is specified unconditionally use it regardless of
+  CLONE_ parameters.
+- Force enable shadow stacks in the selftest.
+- Update changelogs for RISC-V feature rename.
+- Link to v2: https://lore.kernel.org/r/20231114-clone3-shadow-stack-v2-0-b613f8681155@kernel.org
+
+Changes in v2:
+- Rebase onto v6.7-rc1.
+- Remove ability to provide preallocated shadow stack, just specify the
+  desired size.
+- Link to v1: https://lore.kernel.org/r/20231023-clone3-shadow-stack-v1-0-d867d0b5d4d0@kernel.org
+
+---
+Mark Brown (8):
+      arm64/gcs: Return a success value from gcs_alloc_thread_stack()
+      Documentation: userspace-api: Add shadow stack API documentation
+      selftests: Provide helper header for shadow stack testing
+      fork: Add shadow stack support to clone3()
+      selftests/clone3: Remove redundant flushes of output streams
+      selftests/clone3: Factor more of main loop into test_clone3()
+      selftests/clone3: Allow tests to flag if -E2BIG is a valid error code
+      selftests/clone3: Test shadow stack support
+
+ Documentation/userspace-api/index.rst             |   1 +
+ Documentation/userspace-api/shadow_stack.rst      |  42 ++++
+ arch/arm64/include/asm/gcs.h                      |   8 +-
+ arch/arm64/kernel/process.c                       |   8 +-
+ arch/arm64/mm/gcs.c                               |  62 +++++-
+ arch/x86/include/asm/shstk.h                      |  11 +-
+ arch/x86/kernel/process.c                         |   2 +-
+ arch/x86/kernel/shstk.c                           |  57 +++++-
+ include/asm-generic/cacheflush.h                  |  11 ++
+ include/linux/sched/task.h                        |  17 ++
+ include/uapi/linux/sched.h                        |  10 +-
+ kernel/fork.c                                     |  96 +++++++--
+ tools/testing/selftests/clone3/clone3.c           | 226 ++++++++++++++++++----
+ tools/testing/selftests/clone3/clone3_selftests.h |  65 ++++++-
+ tools/testing/selftests/ksft_shstk.h              |  98 ++++++++++
+ 15 files changed, 633 insertions(+), 81 deletions(-)
+---
+base-commit: d17cd7b7cc92d37ee8b2df8f975fc859a261f4dc
+change-id: 20231019-clone3-shadow-stack-15d40d2bf536
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
