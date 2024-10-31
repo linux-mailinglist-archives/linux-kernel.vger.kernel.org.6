@@ -1,321 +1,98 @@
-Return-Path: <linux-kernel+bounces-391150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7A79B833E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:21:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3969B833F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:21:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953E21F21B91
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:21:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952E71F223F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692241CB32F;
-	Thu, 31 Oct 2024 19:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781711CB335;
+	Thu, 31 Oct 2024 19:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiMbIX9/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UwNTzx/O"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E8E347C7;
-	Thu, 31 Oct 2024 19:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A19E347C7;
+	Thu, 31 Oct 2024 19:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402488; cv=none; b=VMoM+gbCiikWqaMe3EkmgqD9vc9x19W2Ii6YW8GrUL+RNiWyZn8HoLvUHgHFcl1b5oRFdF/IoYsqP3rrUX/1RxJ7Z0oQvfHYHLZDckMcso2BdwMfkaH8XmNC97iKdrhHbwQfGCBJ6KYl1cObTq80ZcgXzRG2vAd9602pA2yG158=
+	t=1730402502; cv=none; b=L2bJ/3En7xyqlkijFnHLxpwk3X3W5H3vdkhl6+WppvakC3hezUoL49VHubu8R8KbrhsqEkpbPoq9w3sNAGa9tDGLPfzAhlVupxRk15q5n6ermikiDTedhdPAae05mVNRErkGQu7bqNedaKBYKYxXJUMqZtVfANQ9cyXcO6UkZjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402488; c=relaxed/simple;
-	bh=dqd150MSKx2SBTWueiBk9xFBLjPz6rjwiqIyVTOFSac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uCUtnF31tR8PTCmuiE5EmCbRMuvs3hM2AunSwxijlpKK/nZWCCx2VgxIUJ2vavP0r9jlQTTfvUMXBic4J0DPPAB0cEjWl/StjDZTTQotjW9hBW27zUzSliKU4BJFyDKFAIviZgNWGVVIADPsrXceaDegUPOJQ8ZQxYTA41Hp35E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiMbIX9/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F60C4CEC3;
-	Thu, 31 Oct 2024 19:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730402488;
-	bh=dqd150MSKx2SBTWueiBk9xFBLjPz6rjwiqIyVTOFSac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YiMbIX9/fg6OxkrLYmNGr3Pd/RTnpiE/EXohTlGt7upybfvZyQa7r9AooFAM0+9Hh
-	 lnBV/sdCL1xE8dRb0UdpUPrqRZYK9XHbtJJ2JF50nOmBhrzCbh9hBFc9S6O5o9ggg4
-	 y+Rhv6FXjQymLU3IVDzH5Z9vObWIhm55y8f/DXEl6x9ydTkxedhb7zNDyP4R+Jma7O
-	 qsg0N1OUGWDgDgOVI7kGqmgj/8aiOa2qXzPfAGYUVzqmWLTIF3s4xJyPX1LHGDD/i8
-	 GtWmT4AadV9wq1+FDsTL5R95HuAPHgT30w9shZEiojvOdzhPy8uhtg10Odz2A6Pq1/
-	 Hc/YXIGIFRQew==
-Date: Thu, 31 Oct 2024 16:21:24 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 02/21] perf python: Constify variables and parameters
-Message-ID: <ZyPYtE3dGYUFReVQ@x1>
-References: <20241031014252.753588-1-irogers@google.com>
- <20241031014252.753588-3-irogers@google.com>
+	s=arc-20240116; t=1730402502; c=relaxed/simple;
+	bh=JwqlDQ+7L58U5/0cq+CtWtI4arvDFq1yUmmHNP3l1h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k2GkmrHf7A7kym5z2EejUlxO0IBHaISyIKSRq0zqj3DPpUV64XPxNuDxyPVk7nKbVomJAZwVWsKPmp0YQ09SKNStlIpCxw/0iMmF+7OCUWXOU7L8FAqQcc+NG9NzIA4yFT92gt/RlyftNzYsMJRYYCJLNVaDj+GBA6B93jsZxZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UwNTzx/O; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730402500; x=1761938500;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JwqlDQ+7L58U5/0cq+CtWtI4arvDFq1yUmmHNP3l1h8=;
+  b=UwNTzx/OLXjml2EFolCceKjOM+mIac0pJpK6aoVZ+8JyuJM+Rel91+DJ
+   AwJSX1zrHtihOL+R/m5+jxEhOLGCoezOcYofCoUfRjPBovMYsz/wTePN3
+   /UqdMecyEC+3efaL2zsjzb6GOre3CkbjKA37Qpr+XOuQTJHlBZfT6CFsl
+   G+Q5bsM/ubxW3zjevjxvCVwrxIEEU1uhKnBIM2wvb8vbQDaWK3j6QrOjx
+   v5xTXBf8Z9YpsRvlXgJhxmarXXyRDpYLBe2qA4+5Rfe9t8ydEYVrEo8yh
+   s+vXC/JvtWMMXxKlGwq8qNZPt1A3M1kU4icFx3IDSACCDRHxjTWdp/sLv
+   Q==;
+X-CSE-ConnectionGUID: oolvr/WgTp21ONnjIOSR0g==
+X-CSE-MsgGUID: DUpChuD2TIm8mp5CQnKmeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="47639317"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="47639317"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 12:21:40 -0700
+X-CSE-ConnectionGUID: jkF4PW2gSZGOODde+mekIA==
+X-CSE-MsgGUID: QSV555ArS8SmfpM3S+iOOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="83069517"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 12:21:35 -0700
+Message-ID: <d0cf8fb2-9cff-40d0-8ffb-5d0ba9c86539@intel.com>
+Date: Thu, 31 Oct 2024 21:21:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031014252.753588-3-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/25] TDX vCPU/VM creation
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com
+Cc: yan.y.zhao@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ reinette.chatre@intel.com
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 06:42:33PM -0700, Ian Rogers wrote:
-> Opportunistically constify variables and parameters when possible.
+On 30/10/24 21:00, Rick Edgecombe wrote:
+> Here is v2 of TDX VM/vCPU creation series. As discussed earlier, non-nits 
+> from v1[0] have been applied and it’s ready to hand off to Paolo. A few 
+> items remain that may be worth further discussion:
+>  - Disable CET/PT in tdx_get_supported_xfam(), as these features haven’t 
+>    been been tested.
 
-Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
- 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/python.c | 55 +++++++++++++++++++++-------------------
->  1 file changed, 29 insertions(+), 26 deletions(-)
-> 
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 02279ab4967c..13dad27169a0 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -62,7 +62,7 @@ struct pyrf_event {
->  	sample_member_def(sample_period, period, T_ULONGLONG, "event period"),		 \
->  	sample_member_def(sample_cpu, cpu, T_UINT, "event cpu"),
->  
-> -static char pyrf_mmap_event__doc[] = PyDoc_STR("perf mmap event object.");
-> +static const char pyrf_mmap_event__doc[] = PyDoc_STR("perf mmap event object.");
->  
->  static PyMemberDef pyrf_mmap_event__members[] = {
->  	sample_members
-> @@ -77,7 +77,7 @@ static PyMemberDef pyrf_mmap_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_mmap_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_mmap_event__repr(const struct pyrf_event *pevent)
->  {
->  	PyObject *ret;
->  	char *s;
-> @@ -106,7 +106,7 @@ static PyTypeObject pyrf_mmap_event__type = {
->  	.tp_repr	= (reprfunc)pyrf_mmap_event__repr,
->  };
->  
-> -static char pyrf_task_event__doc[] = PyDoc_STR("perf task (fork/exit) event object.");
-> +static const char pyrf_task_event__doc[] = PyDoc_STR("perf task (fork/exit) event object.");
->  
->  static PyMemberDef pyrf_task_event__members[] = {
->  	sample_members
-> @@ -119,7 +119,7 @@ static PyMemberDef pyrf_task_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_task_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_task_event__repr(const struct pyrf_event *pevent)
->  {
->  	return PyUnicode_FromFormat("{ type: %s, pid: %u, ppid: %u, tid: %u, "
->  				   "ptid: %u, time: %" PRI_lu64 "}",
-> @@ -141,7 +141,7 @@ static PyTypeObject pyrf_task_event__type = {
->  	.tp_repr	= (reprfunc)pyrf_task_event__repr,
->  };
->  
-> -static char pyrf_comm_event__doc[] = PyDoc_STR("perf comm event object.");
-> +static const char pyrf_comm_event__doc[] = PyDoc_STR("perf comm event object.");
->  
->  static PyMemberDef pyrf_comm_event__members[] = {
->  	sample_members
-> @@ -152,7 +152,7 @@ static PyMemberDef pyrf_comm_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_comm_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_comm_event__repr(const struct pyrf_event *pevent)
->  {
->  	return PyUnicode_FromFormat("{ type: comm, pid: %u, tid: %u, comm: %s }",
->  				   pevent->event.comm.pid,
-> @@ -170,7 +170,7 @@ static PyTypeObject pyrf_comm_event__type = {
->  	.tp_repr	= (reprfunc)pyrf_comm_event__repr,
->  };
->  
-> -static char pyrf_throttle_event__doc[] = PyDoc_STR("perf throttle event object.");
-> +static const char pyrf_throttle_event__doc[] = PyDoc_STR("perf throttle event object.");
->  
->  static PyMemberDef pyrf_throttle_event__members[] = {
->  	sample_members
-> @@ -181,9 +181,10 @@ static PyMemberDef pyrf_throttle_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_throttle_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_throttle_event__repr(const struct pyrf_event *pevent)
->  {
-> -	struct perf_record_throttle *te = (struct perf_record_throttle *)(&pevent->event.header + 1);
-> +	const struct perf_record_throttle *te = (const struct perf_record_throttle *)
-> +		(&pevent->event.header + 1);
->  
->  	return PyUnicode_FromFormat("{ type: %sthrottle, time: %" PRI_lu64 ", id: %" PRI_lu64
->  				   ", stream_id: %" PRI_lu64 " }",
-> @@ -201,7 +202,7 @@ static PyTypeObject pyrf_throttle_event__type = {
->  	.tp_repr	= (reprfunc)pyrf_throttle_event__repr,
->  };
->  
-> -static char pyrf_lost_event__doc[] = PyDoc_STR("perf lost event object.");
-> +static const char pyrf_lost_event__doc[] = PyDoc_STR("perf lost event object.");
->  
->  static PyMemberDef pyrf_lost_event__members[] = {
->  	sample_members
-> @@ -210,7 +211,7 @@ static PyMemberDef pyrf_lost_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_lost_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_lost_event__repr(const struct pyrf_event *pevent)
->  {
->  	PyObject *ret;
->  	char *s;
-> @@ -236,7 +237,7 @@ static PyTypeObject pyrf_lost_event__type = {
->  	.tp_repr	= (reprfunc)pyrf_lost_event__repr,
->  };
->  
-> -static char pyrf_read_event__doc[] = PyDoc_STR("perf read event object.");
-> +static const char pyrf_read_event__doc[] = PyDoc_STR("perf read event object.");
->  
->  static PyMemberDef pyrf_read_event__members[] = {
->  	sample_members
-> @@ -245,7 +246,7 @@ static PyMemberDef pyrf_read_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_read_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_read_event__repr(const struct pyrf_event *pevent)
->  {
->  	return PyUnicode_FromFormat("{ type: read, pid: %u, tid: %u }",
->  				   pevent->event.read.pid,
-> @@ -266,7 +267,7 @@ static PyTypeObject pyrf_read_event__type = {
->  	.tp_repr	= (reprfunc)pyrf_read_event__repr,
->  };
->  
-> -static char pyrf_sample_event__doc[] = PyDoc_STR("perf sample event object.");
-> +static const char pyrf_sample_event__doc[] = PyDoc_STR("perf sample event object.");
->  
->  static PyMemberDef pyrf_sample_event__members[] = {
->  	sample_members
-> @@ -274,7 +275,7 @@ static PyMemberDef pyrf_sample_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_sample_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_sample_event__repr(const struct pyrf_event *pevent)
->  {
->  	PyObject *ret;
->  	char *s;
-> @@ -289,13 +290,13 @@ static PyObject *pyrf_sample_event__repr(struct pyrf_event *pevent)
->  }
->  
->  #ifdef HAVE_LIBTRACEEVENT
-> -static bool is_tracepoint(struct pyrf_event *pevent)
-> +static bool is_tracepoint(const struct pyrf_event *pevent)
->  {
->  	return pevent->evsel->core.attr.type == PERF_TYPE_TRACEPOINT;
->  }
->  
->  static PyObject*
-> -tracepoint_field(struct pyrf_event *pe, struct tep_format_field *field)
-> +tracepoint_field(const struct pyrf_event *pe, struct tep_format_field *field)
->  {
->  	struct tep_handle *pevent = field->event->tep;
->  	void *data = pe->sample.raw_data;
-> @@ -384,7 +385,7 @@ static PyTypeObject pyrf_sample_event__type = {
->  	.tp_getattro	= (getattrofunc) pyrf_sample_event__getattro,
->  };
->  
-> -static char pyrf_context_switch_event__doc[] = PyDoc_STR("perf context_switch event object.");
-> +static const char pyrf_context_switch_event__doc[] = PyDoc_STR("perf context_switch event object.");
->  
->  static PyMemberDef pyrf_context_switch_event__members[] = {
->  	sample_members
-> @@ -394,7 +395,7 @@ static PyMemberDef pyrf_context_switch_event__members[] = {
->  	{ .name = NULL, },
->  };
->  
-> -static PyObject *pyrf_context_switch_event__repr(struct pyrf_event *pevent)
-> +static PyObject *pyrf_context_switch_event__repr(const struct pyrf_event *pevent)
->  {
->  	PyObject *ret;
->  	char *s;
-> @@ -474,7 +475,7 @@ static PyTypeObject *pyrf_event__type[] = {
->  	[PERF_RECORD_SWITCH_CPU_WIDE]  = &pyrf_context_switch_event__type,
->  };
->  
-> -static PyObject *pyrf_event__new(union perf_event *event)
-> +static PyObject *pyrf_event__new(const union perf_event *event)
->  {
->  	struct pyrf_event *pevent;
->  	PyTypeObject *ptype;
-> @@ -542,7 +543,7 @@ static PySequenceMethods pyrf_cpu_map__sequence_methods = {
->  	.sq_item   = pyrf_cpu_map__item,
->  };
->  
-> -static char pyrf_cpu_map__doc[] = PyDoc_STR("cpu map object.");
-> +static const char pyrf_cpu_map__doc[] = PyDoc_STR("cpu map object.");
->  
->  static PyTypeObject pyrf_cpu_map__type = {
->  	PyVarObject_HEAD_INIT(NULL, 0)
-> @@ -611,7 +612,7 @@ static PySequenceMethods pyrf_thread_map__sequence_methods = {
->  	.sq_item   = pyrf_thread_map__item,
->  };
->  
-> -static char pyrf_thread_map__doc[] = PyDoc_STR("thread map object.");
-> +static const char pyrf_thread_map__doc[] = PyDoc_STR("thread map object.");
->  
->  static PyTypeObject pyrf_thread_map__type = {
->  	PyVarObject_HEAD_INIT(NULL, 0)
-> @@ -795,7 +796,7 @@ static PyMethodDef pyrf_evsel__methods[] = {
->  	{ .ml_name = NULL, }
->  };
->  
-> -static char pyrf_evsel__doc[] = PyDoc_STR("perf event selector list object.");
-> +static const char pyrf_evsel__doc[] = PyDoc_STR("perf event selector list object.");
->  
->  static PyTypeObject pyrf_evsel__type = {
->  	PyVarObject_HEAD_INIT(NULL, 0)
-> @@ -1078,7 +1079,7 @@ static PySequenceMethods pyrf_evlist__sequence_methods = {
->  	.sq_item   = pyrf_evlist__item,
->  };
->  
-> -static char pyrf_evlist__doc[] = PyDoc_STR("perf event selector list object.");
-> +static const char pyrf_evlist__doc[] = PyDoc_STR("perf event selector list object.");
->  
->  static PyTypeObject pyrf_evlist__type = {
->  	PyVarObject_HEAD_INIT(NULL, 0)
-> @@ -1100,10 +1101,12 @@ static int pyrf_evlist__setup_types(void)
->  
->  #define PERF_CONST(name) { #name, PERF_##name }
->  
-> -static struct {
-> +struct perf_constant {
->  	const char *name;
->  	int	    value;
-> -} perf__constants[] = {
-> +};
-> +
-> +static const struct perf_constant perf__constants[] = {
->  	PERF_CONST(TYPE_HARDWARE),
->  	PERF_CONST(TYPE_SOFTWARE),
->  	PERF_CONST(TYPE_TRACEPOINT),
-> -- 
-> 2.47.0.163.g1226f6d8fa-goog
-> 
+It seems for Intel PT we have no support for restoring host
+state.  IA32_RTIT_* MSR preservation is Init(XFAM(8)) which means
+the TDX Module sets the MSR to its RESET value after TD Enty/Exit.
+So it seems to me XFAM(8) does need to be disabled until that is
+supported.
+
 
