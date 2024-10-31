@@ -1,205 +1,166 @@
-Return-Path: <linux-kernel+bounces-390443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0D39B79F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:46:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017139B79F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17734B2599D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB33C285D22
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF7619B5B2;
-	Thu, 31 Oct 2024 11:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE48E19ABBF;
+	Thu, 31 Oct 2024 11:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clgaYSXp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CgvNDMgD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9037319ABC2;
-	Thu, 31 Oct 2024 11:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6FB153BC7;
+	Thu, 31 Oct 2024 11:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730375188; cv=none; b=iYAzSYp/0/FMzYiNBmIwJhRPDvP41umujrlvCRvPjGH5szO1e9PpTXobeTO0E0iLtAwzm/A/RPxKJBNMm1ZjK6zhxl4OUOUcdC2sf4zQQyicUsOkispQyj338DEIqzlfb9q8VvzF3L33cQHXS3xTSMayskwNiIsHJhKlagyWN6s=
+	t=1730375238; cv=none; b=HKeo/Z5ZcV+oPG6vM1gqSUTGlwzn2QbR6hNcbUXxapQ5WNaJ940AYf6lfbvdMS8HP8ze6KIVmHmN6kGf6ErhRiOiHEydJytyKs5w99u8LUmzGidyAvlUtUnoWHOpmkR97yuvosg+hfXHAvkPJW81rMfvd0z7NksXc/S0NZY4c84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730375188; c=relaxed/simple;
-	bh=1jKG/ZtSe2X1u9yvpJEpArPI5jFJt8rVIUMOW8xcXkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oGzl5W3by+CpC8JYj6mLFqAdNhbx9zwEiMKCtQ23QaxVvS+isCVmeTtJdiR/2+iZRkI7EdaCI1LqUR3dfAHqbyoZBqGcI7y2fvnJ2wwSkx6T7C9YTQDOB28M8qsbcjZYjwpZzlhWl1yj60LQ0TaWpOUCEPVJoJ2SoEyRH/cbgr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clgaYSXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59078C4CED2;
-	Thu, 31 Oct 2024 11:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730375187;
-	bh=1jKG/ZtSe2X1u9yvpJEpArPI5jFJt8rVIUMOW8xcXkg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=clgaYSXpeDVyfYuO45fv7TfP+JvPICNt0aYoi09jAXWYkcGLndpFQncY5BiDxJijK
-	 G/VMHvLhE3TUQzg9zw5bl/ofvqVO00+mF+n7sKZqzQkTa6KEZoI6vpH/Ns9wFM6dgw
-	 BthjWCD2sWnaaIWC/C0Zslh2QNCmb0q1rZygSsZjR65BbeqgU5gd4wdoqsCf0vvwj+
-	 fIln5lO5Y7mrcq3UPPV9sJs3tLM+2T/GwHn3iO6COtGzhDf6PvrdAOR3UmOpoaLbBo
-	 uVp3MW/u0azdy0gZCiShIUjuPBjkY/KLW/pOBsExeJi/FIXiJrbRANHt7BrlCJ/3ZE
-	 RchTpZXOS5Idw==
-Message-ID: <91b55df5-b023-4fbd-925e-7ac97f287ac4@kernel.org>
-Date: Thu, 31 Oct 2024 12:46:21 +0100
+	s=arc-20240116; t=1730375238; c=relaxed/simple;
+	bh=tQAhjuD6XraYLhlQEeJ31UaRObpRRUAvfmmoYCha3gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7Q9U28IWtnp1SHD9N135VV7o2K5TqMqLQdSFwF3R5Ietl9tZmkHMAWzhQb5et82t4xGpW+RJDEGQJtfYXWOLy1AjLx6Xl6RrMSIj6cPWBdFyQHcD2m/e0K78EdKucw2Ypqigxj05emWuiF01rga4GGNlCth++FCpifc0ugaAmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CgvNDMgD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730375234; x=1761911234;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tQAhjuD6XraYLhlQEeJ31UaRObpRRUAvfmmoYCha3gw=;
+  b=CgvNDMgD10aW7V5tILvT4nVGxRUy1Picrnt9SZudAr2+1HtLeksAUc+S
+   AKmokhQmkvJj4h5HjN/7RDEUDbZkq+KXYYIiFHEsa3PVBbB74wvaPOMGC
+   hbURuM67ChQkftrkz8G5TYvxEKJ4fuox7eJV6zZiJWSijM6lzdLwgfpOE
+   A8luKNLZx6MPNVqk2kOYmRAArvaG/raNi+FrBxNHPOw2B8YqgME1HnW5R
+   P8wRO2nDpPlMwK6yD3eR5Haa4OuQQ2Mpy3Zy422jr8bDno/vgh8u0peRU
+   h1JxKQIVZQ5TvarpM4QamtBe+p2XifzWUhHDznXeSdGykwQQpE3SBh2xy
+   g==;
+X-CSE-ConnectionGUID: WFJNqt8ETq+DPc3eeUuNVQ==
+X-CSE-MsgGUID: Q+YgL11rQeOYTw+UugzM8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40653960"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40653960"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 04:47:14 -0700
+X-CSE-ConnectionGUID: Lc9cumRjTDag4RIbvnkHAQ==
+X-CSE-MsgGUID: r67rYK7dTI+RlvpphCsdMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="113451514"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 31 Oct 2024 04:47:11 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6Tds-000g32-2f;
+	Thu, 31 Oct 2024 11:47:08 +0000
+Date: Thu, 31 Oct 2024 19:47:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <superm1@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Len Brown <lenb@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Ivan Shapovalov <intelfx@intelfx.name>,
+	Oleksandr Natalenko <oleksandr@natalenko.name>
+Subject: Re: [PATCH] ACPI: processor: Move arch_init_invariance_cppc() call
+ later
+Message-ID: <202410311924.XtRR5d9M-lkp@intel.com>
+References: <20241029174910.600482-1-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Bluetooth: btbcm: automate node cleanup in
- btbcm_get_board_name()
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com>
- <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
- <aab34ae4-0f6b-4720-b14e-69add0355daa@kernel.org>
- <07eef877-622a-4651-8a15-9e507146642c@gmail.com>
- <79c00d2c-8062-4c65-9bdf-1a87e7624e8b@kernel.org>
- <d9fcd228-8198-4e4c-8752-e950ab598013@kernel.org>
- <26d090ef-5630-4afd-8e77-e20019cd018a@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <26d090ef-5630-4afd-8e77-e20019cd018a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029174910.600482-1-superm1@kernel.org>
 
-On 31/10/2024 12:41, Javier Carrasco wrote:
-> On 31/10/2024 12:30, Krzysztof Kozlowski wrote:
->> On 31/10/2024 12:14, Krzysztof Kozlowski wrote:
->>> On 31/10/2024 12:10, Javier Carrasco wrote:
->>>> On 31/10/2024 12:08, Krzysztof Kozlowski wrote:
->>>>> On 30/10/2024 16:46, Javier Carrasco wrote:
->>>>>> Switch to a more robust approach by automating the node release when it
->>>>>> goes out of scope, removing the need for explicit calls to
->>>>>> of_node_put().
->>>>>>
->>>>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->>>>>> ---
->>>>>>  drivers/bluetooth/btbcm.c | 8 ++------
->>>>>>  1 file changed, 2 insertions(+), 6 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
->>>>>> index 400c2663d6b0..a1153ada74d2 100644
->>>>>> --- a/drivers/bluetooth/btbcm.c
->>>>>> +++ b/drivers/bluetooth/btbcm.c
->>>>>> @@ -541,23 +541,19 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
->>>>>>  static const char *btbcm_get_board_name(struct device *dev)
->>>>>>  {
->>>>>>  #ifdef CONFIG_OF
->>>>>> -	struct device_node *root;
->>>>>> +	struct device_node *root __free(device_node) = of_find_node_by_path("/");
->>>>>>  	char *board_type;
->>>>>>  	const char *tmp;
->>>>>>  
->>>>>> -	root = of_find_node_by_path("/");
->>>>>>  	if (!root)
->>>>>>  		return NULL;
->>>>>>  
->>>>>> -	if (of_property_read_string_index(root, "compatible", 0, &tmp)) {
->>>>>> -		of_node_put(root);
->>>>>
->>>>> You just added this. Don't add code which is immediately removed. It's a
->>>>> noop or wrong code.
->>>>>
->>>>>
->>>>>
->>>>> Best regards,
->>>>> Krzysztof
->>>>>
->>>>
->>>> Exactly, I added that code to fix the issue in stable kernels that don't
->>>
->>> Then send backport for stable.
->>>
->>>> support the __free() macro, and then I removed it to use a safer
->>>> approach from now on.
->>>
->>> This is not correct approach. We work here on mainline and in mainline
->>> this is one logical change: fixing issue. Whether you fix issue with
->>> of_node_put or cleanup or by removing of_find_node_by_path() call, it
->>> does not matter. All of these are fixing the same, one issue.
->>>
->>> If you think about stable kernels, then work on backports, not inflate
->>> mainline kernel with multiple commits doing the same, creating
->>> artificial history.
->>>
->>
->> And to clarify even more: these stable backports are close to useless,
->> because it does not matter for them. No impact, not much benefits,
->> nothing improved for users/developers. There is no need to backport
->> them, although of course there is no loss by doing so. Therefore entire
->> dance affects mainline kernel without any real benefits for stable.
->>
->> Your split suggests you don't really know what this dropping reference
->> is for.
-> 
-> Such splits were suggested in other threads, and they came exactly for
+Hi Mario,
 
-You mention it third time, but never provided a link. I tried to look
-briefly for it but failed. Can you share a lore link?
+kernel test robot noticed the following build errors:
 
-> those reasons: they could not be applied to stable. That was not my
-> first approach, which was just using __free() to fix the issue. I am not
-> looking forward to inflating any history, as that's in the end more work
-> for me.
-> 
-> If a simple patch that adds the cleanup attribute is enough, that's
-> awesome. I will go for that approach for all cases then, and use your
-> explanation as a reference if I am asked to split the fix again.
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.12-rc5 next-20241031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If maintainer asks you to split trivial things like of_node_put() for
-simple patches, feel free to Cc me, so I can provide counter arguments.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/ACPI-processor-Move-arch_init_invariance_cppc-call-later/20241030-015107
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241029174910.600482-1-superm1%40kernel.org
+patch subject: [PATCH] ACPI: processor: Move arch_init_invariance_cppc() call later
+config: i386-randconfig-141-20241031 (https://download.01.org/0day-ci/archive/20241031/202410311924.XtRR5d9M-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410311924.XtRR5d9M-lkp@intel.com/reproduce)
 
-Best regards,
-Krzysztof
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410311924.XtRR5d9M-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> drivers/acpi/processor_driver.c:273:2: error: call to undeclared function 'arch_init_invariance_cppc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     273 |         arch_init_invariance_cppc();
+         |         ^
+   1 error generated.
+
+
+vim +/arch_init_invariance_cppc +273 drivers/acpi/processor_driver.c
+
+   239	
+   240	/*
+   241	 * We keep the driver loaded even when ACPI is not running.
+   242	 * This is needed for the powernow-k8 driver, that works even without
+   243	 * ACPI, but needs symbols from this driver
+   244	 */
+   245	static enum cpuhp_state hp_online;
+   246	static int __init acpi_processor_driver_init(void)
+   247	{
+   248		int result = 0;
+   249	
+   250		if (acpi_disabled)
+   251			return 0;
+   252	
+   253		if (!cpufreq_register_notifier(&acpi_processor_notifier_block,
+   254					       CPUFREQ_POLICY_NOTIFIER)) {
+   255			acpi_processor_cpufreq_init = true;
+   256			acpi_processor_ignore_ppc_init();
+   257		}
+   258	
+   259		result = driver_register(&acpi_processor_driver);
+   260		if (result < 0)
+   261			return result;
+   262	
+   263		result = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+   264					   "acpi/cpu-drv:online",
+   265					   acpi_soft_cpu_online, NULL);
+   266		if (result < 0)
+   267			goto err;
+   268		hp_online = result;
+   269		cpuhp_setup_state_nocalls(CPUHP_ACPI_CPUDRV_DEAD, "acpi/cpu-drv:dead",
+   270					  NULL, acpi_soft_cpu_dead);
+   271	
+   272		acpi_processor_throttling_init();
+ > 273		arch_init_invariance_cppc();
+   274		return 0;
+   275	err:
+   276		driver_unregister(&acpi_processor_driver);
+   277		return result;
+   278	}
+   279	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
