@@ -1,101 +1,166 @@
-Return-Path: <linux-kernel+bounces-390190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35E99B76B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:47:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EDD9B76BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C3D1F2433C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873DF1F22D36
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9F3170A3D;
-	Thu, 31 Oct 2024 08:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79E21891B8;
+	Thu, 31 Oct 2024 08:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0c1NRGGX"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5MjTGoN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D968F5C
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E139D17BEA2
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730364424; cv=none; b=Dhb+WSTLeGydqHAgRc64PU36SjyHCQrAoveREl40nq6gR1G6c9KYOqDUTZbAuN1Q7S/V5UIaf7sb8fGk9AHiBrRIg5LPVFnMNl4KnXnv2L4kNS9g+rU4Ft6I+Etip/k83/Vz6gLPdtAl/vHzgyreyG2W0YLJOVscut7qXbHVLw4=
+	t=1730364607; cv=none; b=XBEi7oL0JlE5AKrFUhJJoEWVvsea45lggX1J6cvOHLa+3mJFTnsZ/bXsivqvgysnme1J3GTtyhkjLPUPrB6pyJmsjW10SwyKRdNNkBmjcH6f7IoTaTAtIEd9plJbIe7g7+Ty6My9RMJgcwsiYz6MtGevNoLaTfWQLCsSe/w+yNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730364424; c=relaxed/simple;
-	bh=0D4tVlRd687v0ISh56LHhdh4/Xc9l/Gat0sjfygQ0DY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMB0fyJdSIrUfNQ69jc5S5/YvA9VYffWQWIOLw+0kg0tnICVi++n8NjcMSCgxqiQZCrjHMRVqU8ILeFYu9KCX7ol1YlBO1b14vzL3oPvyIdCHx9+uXkxAW5k22XhaSUufxqXgpKt7yHKVWFrKlGCwuHo1UGixQEKuOCINiaLErM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0c1NRGGX; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d533b5412so436858f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730364420; x=1730969220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0D4tVlRd687v0ISh56LHhdh4/Xc9l/Gat0sjfygQ0DY=;
-        b=0c1NRGGXR585JoDEONKwdw78UWZX7CFGCy1WmkcAFY1RYxnQVsWcmkyJnjOJtTO60n
-         4AWFdteYfeqG8GXVun4D6YvrnOrLsKANfm7cQ0wfO3dt2+OmTPAQDRQO4l4MUakQRlBO
-         OY9kB7tlZpVd4aQw53ybTVYpCQPKl4oU7f2lQt9tUHRuOumQCHik/OaOU8Gsx2oKnBXE
-         zMqCK6QGPCJJ70eLj5TEwCDvlp71X7Pe9GQDTUX+XoyTBCCIl2T+OY41bvj2ABIgqLWw
-         DjJKB9Ro6H+jnIeugSitJ+00vx6PgnAlM8bgl+1DHVcl5IVRQZ5+X+6skkaGQrjLZQXm
-         70xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730364420; x=1730969220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0D4tVlRd687v0ISh56LHhdh4/Xc9l/Gat0sjfygQ0DY=;
-        b=lknk9KHKDqtG3qOyis7EIhRZt3kbZ1/RSr072MsaQKgHqmaFzYxtjz14jLBAGsWhfK
-         BX3eXlETcB0WKxssxSb1XOzJyIXZUmVbGt+mZ+f44ijOFut19J8j3UhiM7y6AkeQhiiJ
-         HOwkLfaNa9F48DuaMGHXYBw1/AxsBKDHb/DDEbxT5b/d86ZWOwUWgK/wDasyF8QkMbkM
-         sau1rNQsSf2hYfAqNP8L8rxx2JrUtuznxelHojbm35gULJXOCuKUTULo4y45MmcpqEQu
-         kIUDyLasdxrltrF+N4g5cydlBOQR/DWvyWt+uC7Yeb+aD2lvwgh4hUJd/xUBxZ+Hoh/4
-         6ipA==
-X-Forwarded-Encrypted: i=1; AJvYcCVo0wGb9bLEOdChXxWN+LTgSUXYmyRYCgJNrrTuOThxZLP5sgPkiLDSwruYUAjoarva18A4zOkureH1edY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTws3Ef9hJUQB+MY587tHXU2pydb71vv/7IANvZz1rnR2xDQ17
-	Dq4DkTxsEQuTw1k+a+0Jf5Dnj8WGV3W9EqOyGsih99qg3vGY3RCwolodu4Bh6ftHCmcGluBLOmk
-	3Ea2yLQI9cghLdzxnZy+tf90aahQta2d2yPW6
-X-Google-Smtp-Source: AGHT+IEdVuVJE104C7GRWDnjlwViWFa3jZJwm/j9uc/7w/AVQluSXMtXKgS/kWAB6Cvl+10e3bPt272n48PAR3m0zoI=
-X-Received: by 2002:a05:6000:1150:b0:37d:453f:4491 with SMTP id
- ffacd0b85a97d-380610f81c2mr11857437f8f.8.1730364420471; Thu, 31 Oct 2024
- 01:47:00 -0700 (PDT)
+	s=arc-20240116; t=1730364607; c=relaxed/simple;
+	bh=XvdhSg4zvXjRCuMSpLZ4dZs5CqzyZmykfta/uucnus0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MPtI+cS43mHb4AiqG/qXUWBJ0gtTvLnHdtH54afPMFR7N9putHaRB1m0mNbe4ehOog+hT8VfNlDnRs2sskQLywtGafFCjk3cJWzzhtskamN0eP2zxv2NOCE6PcBOYkPqtAbf1/fNTCJjoPdpnwc+RXgvaVL/I1PVEeg2EWYzWSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5MjTGoN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730364605; x=1761900605;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=XvdhSg4zvXjRCuMSpLZ4dZs5CqzyZmykfta/uucnus0=;
+  b=e5MjTGoNk+FpjZv3gTwjr7iAWpDqA9ACdBkm/nhVyMgRSsJXRzQOpyTz
+   MFvvyquFFCljfIcRHGWV1a/PUUihrixPXKiECMZ+IH+NdeXmo/PXjVvHa
+   zpEw6S+Wr4E6FVGFuu/ITmnfZZOX49vYnYP8oSi0q1NFX55MwZpzwHCZu
+   dczRuQl9giz6UTociIDAlAJPGBk6uLcm2v11ptOsI6+ZMIhL20LHjcuMK
+   pQE2R+JcKtJYursUrW+iJcltQg5BKvT15rj69DlRW7Vsz10BKNM2c/GG4
+   P60B+my3CrAF9WiZlJ0qCDAB99zqwCtDfeBiXMIjWiBz2wj/xQbaBW40I
+   A==;
+X-CSE-ConnectionGUID: 5Bl3FDryRAahsu/c8RX/6A==
+X-CSE-MsgGUID: rN+2AjX2T1WUFCyg8WkaoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30046886"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30046886"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 01:50:04 -0700
+X-CSE-ConnectionGUID: Qf3lhUz9SIuPilB/IJGPdA==
+X-CSE-MsgGUID: CFGXVKyiRViqyYPa0HrzQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82685000"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 31 Oct 2024 01:50:02 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id A2BE91C4; Thu, 31 Oct 2024 10:50:00 +0200 (EET)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH] x86/mm/doc: Add missing details in virtual memory layout
+Date: Thu, 31 Oct 2024 10:49:46 +0200
+Message-ID: <20241031084946.2243440-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-borrow-mut-v1-0-8f0ceaf78eaf@gmail.com> <20241030-borrow-mut-v1-2-8f0ceaf78eaf@gmail.com>
-In-Reply-To: <20241030-borrow-mut-v1-2-8f0ceaf78eaf@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 31 Oct 2024 09:46:48 +0100
-Message-ID: <CAH5fLghmVYwNKPGrtHzUQXhEyxiD=ZyF6LNHoWUREWH+dpK=DA@mail.gmail.com>
-Subject: Re: [PATCH 2/5] rust: types: avoid `as` casts, narrow unsafe scope
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 9:46=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> Replace `as` casts with `cast{,_const,_mut}` which are a bit safer.
->
-> Reduce the scope of unsafe blocks and add missing safety comments where
-> an unsafe block has been split into several unsafe blocks.
+Improve memory layout documentation:
 
-Reducing the scope of unsafe is good, but moving calls to "cast"
-outside of the scope is excessive IMO.
+ - Document 4kB guard hole at the end of userspace.
+   See TASK_SIZE_MAX definition.
 
-Alice
+ - Divide the description of the non-canonical hole into two parts:
+   userspace and kernel sides.
+
+ - Mention the effect of LAM on the non-canonical range.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ Documentation/arch/x86/x86_64/mm.rst | 35 +++++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/arch/x86/x86_64/mm.rst b/Documentation/arch/x86/x86_64/mm.rst
+index 35e5e18c83d0..f2db178b353f 100644
+--- a/Documentation/arch/x86/x86_64/mm.rst
++++ b/Documentation/arch/x86/x86_64/mm.rst
+@@ -29,15 +29,27 @@ Complete virtual memory map with 4-level page tables
+       Start addr    |   Offset   |     End addr     |  Size   | VM area description
+   ========================================================================================================================
+                     |            |                  |         |
+-   0000000000000000 |    0       | 00007fffffffffff |  128 TB | user-space virtual memory, different per mm
++   0000000000000000 |    0       | 00007fffffffefff | ~128 TB | user-space virtual memory, different per mm
++   00007ffffffff000 | ~128    TB | 00007fffffffffff |    4 kB | ... guard hole
+   __________________|____________|__________________|_________|___________________________________________________________
+                     |            |                  |         |
+-   0000800000000000 | +128    TB | ffff7fffffffffff | ~16M TB | ... huge, almost 64 bits wide hole of non-canonical
+-                    |            |                  |         |     virtual memory addresses up to the -128 TB
++   0000800000000000 | +128    TB | 7fffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -8 EB
+                     |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM relaxes canonicallity check allowing to create aliases
++                    |            |                  |         | for userspace memory here.
+   __________________|____________|__________________|_________|___________________________________________________________
+                                                               |
+                                                               | Kernel-space virtual memory, shared between all processes:
++  __________________|____________|__________________|_________|___________________________________________________________
++                    |            |                  |         |
++   8000000000000000 |   -8    EB | ffff7fffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -128 TB
++                    |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM_SUP relaxes canonicallity check allowing to create
++                    |            |                  |         | aliases for kernel memory here.
+   ____________________________________________________________|___________________________________________________________
+                     |            |                  |         |
+    ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
+@@ -88,15 +100,26 @@ Complete virtual memory map with 5-level page tables
+       Start addr    |   Offset   |     End addr     |  Size   | VM area description
+   ========================================================================================================================
+                     |            |                  |         |
+-   0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space virtual memory, different per mm
++   0000000000000000 |    0       | 00fffffffffff000 |  ~64 PB | user-space virtual memory, different per mm
++   00fffffffffff000 |  ~64    PB | 00ffffffffffffff |    4 kB | ... guard hole
+   __________________|____________|__________________|_________|___________________________________________________________
+                     |            |                  |         |
+-   0100000000000000 |  +64    PB | feffffffffffffff | ~16K PB | ... huge, still almost 64 bits wide hole of non-canonical
+-                    |            |                  |         |     virtual memory addresses up to the -64 PB
++   0100000000000000 |  +64    PB | 7fffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -8EB TB
+                     |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM relaxes canonicallity check allowing to create aliases
++                    |            |                  |         | for userspace memory here.
+   __________________|____________|__________________|_________|___________________________________________________________
+                                                               |
+                                                               | Kernel-space virtual memory, shared between all processes:
++  ____________________________________________________________|___________________________________________________________
++   8000000000000000 |   -8    EB | feffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -64 PB
++                    |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM_SUP relaxes canonicallity check allowing to create
++                    |            |                  |         | aliases for kernel memory here.
+   ____________________________________________________________|___________________________________________________________
+                     |            |                  |         |
+    ff00000000000000 |  -64    PB | ff0fffffffffffff |    4 PB | ... guard hole, also reserved for hypervisor
+-- 
+2.45.2
+
 
