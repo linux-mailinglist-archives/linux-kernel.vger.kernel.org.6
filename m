@@ -1,69 +1,46 @@
-Return-Path: <linux-kernel+bounces-391419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647EE9B866C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:59:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD6D9B8672
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8148A1C2108C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7485B1F227F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802471D0DE6;
-	Thu, 31 Oct 2024 22:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953221E3DFE;
+	Thu, 31 Oct 2024 22:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LNgey6bm"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C7C19CC05
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 22:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CA42Pkd8"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4797F1E1A33;
+	Thu, 31 Oct 2024 22:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730415552; cv=none; b=m6FkZ0a/3uXJuNZOwFtROKUcArfHE49z8TlU9Z4IOUL3cHw2NS4fe2D1mYIJTKZ4tBP/aMCq5h5UxLX1SUwDU1T3mq6zbDU0NEr7NrBuAEAau/soEara4HGfny8FME5cIKIVzpwyQNW7C+yzWLzaXuDslJceV4zpRgvfDqIjDCI=
+	t=1730415562; cv=none; b=Xyni5Ae/yW6OlP3s1vfTpNpJHqhIXeCSYKS3YnvwjhECPnTQIwx672VmREmERKUKf9Naqr8Mhb83WITSUDp0Mw2ns7Z45aC7ocfZqLAQ/di+Iuzwlv2LvoJibLAtMMZhCWVdgRhyrx+o1p23RBhrmyDHqa6rZXkVsgFkf7Gdgps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730415552; c=relaxed/simple;
-	bh=dMZYa1/BBUZnoALeQgDMIM11iIQRpTDtFxihjAneHaU=;
+	s=arc-20240116; t=1730415562; c=relaxed/simple;
+	bh=YhlhvI2YQgj/7M+uXnhLz4j5eWdRPCwjq4xSWx40Aro=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sLyKGDNAKKB/Rg3NsEYmRiTCAzjNaHXvJaRv9MAR1cgpGZN9A32YCurv9w0ATtaCelo7htOX4gsuCNwGb/r9LfyxQyA8s1gcC+07sLm4IL1lIJGYNWewf5OpfC/lHeHWNSOfgxNxyDGplTuOJCXf+HDVDF0FHo52VaInqNUIhbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LNgey6bm; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83ab6cbd8b1so54529839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:59:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730415546; x=1731020346; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lGefwQ1P0wOgvwKYhBBohTiaStRH2947+iO8xsolrDg=;
-        b=LNgey6bmAFeCGo8Dd9IBPFcCttwyuE3znebpAp/pm514p2y1DNRJtPsDYHwcEjR8fe
-         H4SX6272zCTHLVoADQeRpAkaDwMJL32c3TIOIG27s+dP474FzvKWyhY13rlK9ZE7aHSq
-         MKk9YZAflLoYf4V7ZPy55XsxUONIaqpUMEwMM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730415546; x=1731020346;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lGefwQ1P0wOgvwKYhBBohTiaStRH2947+iO8xsolrDg=;
-        b=RPQ1VkIrINm6TWIrjJXxjPM5v6nu4lJKo0n9rK6ytZdyGNPrWkyky67Z9CA48VcUy7
-         9s1/pgeYQ/MRFqj0eWUfMhao8cngDvvfjAEHstjQ/RdqqbdOG3RfwX2nv9Tf7f4V+xLo
-         uZ0b5oxgB9ajzsMXs9xsEAc55c5y24eAvzYCiqXpuCdvrmrrRXWP2uidazpgrocZ6nj5
-         u7NKDxMFL9ti7vIbOHhDJgkKjmzYymQahBT2zXEWWJoxczBnsGOShUwPmISPLoDTZ1kc
-         v5bk1fLDuyV/+K9Jppy3YaXdEgXm0BOAPl1HQXlOks79Jnr98NrrDLpLMrIw/zVRFrer
-         PNJA==
-X-Gm-Message-State: AOJu0Yx0p4ABgWh65uomlV20Fe01JfGQrMaw5bChW3sQK3T8ISQt5qVm
-	GSMjBbqPSx9BYe96Nds/QTy84FXOCaKbiN69/9xpO8bfvpPimYyhaieP8aT9Jas=
-X-Google-Smtp-Source: AGHT+IHuQJNDP+ErBhgVYHSWVNUoJRkBof+T43WABDbY78sBsPTZbY1yxTrj43O0mofFjkRzlnnYDA==
-X-Received: by 2002:a05:6602:168e:b0:837:7f1a:40af with SMTP id ca18e2360f4ac-83b719edb9bmr159104739f.14.1730415545623;
-        Thu, 31 Oct 2024 15:59:05 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de049a4e31sm483777173.143.2024.10.31.15.59.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 15:59:04 -0700 (PDT)
-Message-ID: <703c3b4f-399c-45a5-a1e1-45c628fb94fb@linuxfoundation.org>
-Date: Thu, 31 Oct 2024 16:59:04 -0600
+	 In-Reply-To:Content-Type; b=lnYdHcUFGI51KRZnSNWfte9SWzZMA33JcA6rpdF3vceCVEgC6JLU/ry6/svP2IT0QxC6CL9hCrR7lN/TMNums0H2dVPaig+jUiUDvrZQTLKkZ7xMA80mRrqGCUjaW/uxtP10Ouk55qzY9YKup8u5JWrDllg/Sr9g2mSPD306n3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CA42Pkd8; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0DC1F20C08A6;
+	Thu, 31 Oct 2024 15:59:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0DC1F20C08A6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1730415555;
+	bh=Igl9G1C4hOVKzBEFno2MrS2ZBovfo3EzzSumDWDVDac=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CA42Pkd8gk+aW8coxUfcz9FnbFPOm4DNzDPCYaaqMeDNXZyjHbYFoVBqFM2ra2QA0
+	 gQ3Ywty+9jx/fcSph8pm89kL2on5UwnczZAJca3EIIJcEGpMxIV/b5GDAGfOiBWB5W
+	 0uF5JXHULaaK+8SPYeqwgllQxC7n/jWbNL2sYcio=
+Message-ID: <aecdc98c-1f12-4f17-b145-9f02aebc01c2@linux.microsoft.com>
+Date: Thu, 31 Oct 2024 15:59:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,165 +48,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] selftests: clone3: Use the capget and capset syscall
- directly
-To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241030025045.1156941-1-zhouyuhang1010@163.com>
+Subject: Re: [PATCH 0/5] Add new headers for Hyper-V Dom0
+To: Easwar Hariharan <eahariha@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, iommu@lists.linux.dev,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org, virtualization@lists.linux.dev
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
+ luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+ bhelgaas@google.com, arnd@arndb.de, sgarzare@redhat.com,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com,
+ tyhicks@linux.microsoft.com
+References: <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <fc47d535-ed52-4ca5-80cc-30003efdd464@linux.microsoft.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241030025045.1156941-1-zhouyuhang1010@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <fc47d535-ed52-4ca5-80cc-30003efdd464@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/29/24 20:50, zhouyuhang wrote:
-> From: zhouyuhang <zhouyuhang@kylinos.cn>
+On 10/31/2024 12:05 PM, Easwar Hariharan wrote:
+> On 10/3/2024 12:50 PM, Nuno Das Neves wrote:
+>> To support Hyper-V Dom0 (aka Linux as root partition), many new
+>> definitions are required.
+>>
+>> The plan going forward is to directly import headers from
+>> Hyper-V. This is a more maintainable way to import definitions
+>> rather than via the TLFS doc. This patch series introduces
+>> new headers (hvhdk.h, hvgdk.h, etc, see patch #3) directly
+>> derived from Hyper-V code.
+>>
+>> This patch series replaces hyperv-tlfs.h with hvhdk.h, but only
+>> in Microsoft-maintained Hyper-V code where they are needed. This
+>> leaves the existing hyperv-tlfs.h in use elsewhere - notably for
+>> Hyper-V enlightenments on KVM guests.
+>>
+>> An intermediary header "hv_defs.h" is introduced to conditionally
+>> include either hyperv-tlfs.h or hvhdk.h. This is required because
+>> several headers which today include hyperv-tlfs.h, are shared
+>> between Hyper-V and KVM code (e.g. mshyperv.h).
+>>
+>> Summary:
+>> Patch 1-2: Cleanup patches
+>> Patch 3: Add the new headers (hvhdk.h, etc..) in include/hyperv/
+>> Patch 4: Add hv_defs.h and use it in mshyperv.h, svm.h,
+>>          hyperv_timer.h
+>> Patch 5: Switch to the new headers, only in Hyper-V code
+>>
+>> Nuno Das Neves (5):
+>>   hyperv: Move hv_connection_id to hyperv-tlfs.h
+>>   hyperv: Remove unnecessary #includes
+>>   hyperv: Add new Hyper-V headers
+>>   hyperv: Add hv_defs.h to conditionally include hyperv-tlfs.h or
+>>     hvhdk.h
+>>   hyperv: Use hvhdk.h instead of hyperv-tlfs.h in Hyper-V code
+>>
+
+Hi Easwar, thanks for the questions. I will attempt to clarify.
 > 
-> The libcap commit aca076443591 ("Make cap_t operations thread safe.")
-> added a __u8 mutex at the beginning of the struct _cap_struct, it changes
-> the offset of the members in the structure that breaks the assumption
-> made in the "struct libcap" definition in clone3_cap_checkpoint_restore.c.
-> This will cause the test case to fail with the following output:
+> What is the model for Hyper-V code that has both guest and host roles
+> where the corresponding hypercalls are available for both? As I
+> understand it, those are supposed to be in hvgdk*.h.
+>
+
+It's true that the naming of the files implies hvgdk*.h is for guests,
+and hvhdk*.h (which includes hvgdk*.h), is for hosts/dom0. But I would
+only take that as a rough guide.
+
+The real reason for keeping these names is to make it a easier to copy
+and maintain the definitions from the Windows code into Linux, by
+keeping the provenance of exactly where they came from.
+
+> For a specific example, IOMMU hypercalls can operate on stage 2 or stage
+> 1 translations depending on the role of the (hyper) caller and the input
+> values provided. Should a driver using these hypercalls import both
+> hvhdk* and hvgdk*? What about hyperv-tlfs?
+>
+
+I'd recommend importing hvhdk.h since it contains everything you need
+(including hvgdk*.h).
+
+The goal of this patchset is to move away from hyperv-tlfs.h, because by
+definition it should only contain definitions from the TLFS document.
+
+> Patches 4 and 5 seem to draw a bright line between host and guest roles
+> while the reality is more gray. Please do correct me if I'm wrong here,
+> perhaps the picture would be clearer if Stas' suggestion of a new header
+> file is implemented.
 > 
->   #  RUN           global.clone3_cap_checkpoint_restore ...
->   # clone3() syscall supported
->   # clone3_cap_checkpoint_restore.c:151:clone3_cap_checkpoint_restore:Child has PID 130508
->   cap_set_proc: Operation not permitted
 
-Sounds like EPERM is returned here. What's the error number from
-cap_set_proc().
-  
->   # clone3_cap_checkpoint_restore.c:160:clone3_cap_checkpoint_restore:Expected set_capability() (-1) == 0 (0)
+Patches 4 and 5 introduce the new headers in a way that avoids any
+potential impact on KVM and other non-Microsoft-maintained code.
 
-What's the error number here? Looks like this test simply
-uses perror - it is better to use strerror() which includes
-the error number.
+The 'line' is not between guest and host, but between Microsoft-maintained
+and non-Microsoft-maintained code.
 
-Is this related EPERM?
-  
->   # clone3_cap_checkpoint_restore.c:161:clone3_cap_checkpoint_restore:Could not set CAP_CHECKPOINT_RESTORE
->   # clone3_cap_checkpoint_restore: Test terminated by assertion
->   #          FAIL  global.clone3_cap_checkpoint_restore
-> 
-> Changing to using capget and capset syscall directly here can fix this error,
-> just like what the commit 663af70aabb7 ("bpf: selftests: Add helpers to directly
-> use the capget and capset syscall") does.
+Thanks,
+Nuno
 
-Is this still accurate for v3 - Does this patch match the
-bpf commit?
-
-What is the output with this patch? Include it in the change log.
-
-> 
-> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>> ---
-
-Please mention the changes from v2 to v3 here so it makes it
-easier for reviewers associating the changes to the reviewer.
-
-I had to go look up v1 and v2.
-
->   .../clone3/clone3_cap_checkpoint_restore.c    | 58 +++++++++----------
->   1 file changed, 27 insertions(+), 31 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> index 3c196fa86c99..8b61702bf721 100644
-> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> @@ -27,6 +27,13 @@
->   #include "../kselftest_harness.h"
->   #include "clone3_selftests.h"
->   
-> +/*
-> + * Prevent not being defined in the header file
-> + */
-> +#ifndef CAP_CHECKPOINT_RESTORE
-> +#define CAP_CHECKPOINT_RESTORE 40
-> +#endif
-> +
->   static void child_exit(int ret)
->   {
->   	fflush(stdout);
-> @@ -87,47 +94,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
->   	return ret;
->   }
->   
-> -struct libcap {
-> -	struct __user_cap_header_struct hdr;
-> -	struct __user_cap_data_struct data[2];
-> -};
-> -
->   static int set_capability(void)
->   {
-> -	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
-> -	struct libcap *cap;
-> -	int ret = -1;
-> -	cap_t caps;
-> -
-> -	caps = cap_get_proc();
-> -	if (!caps) {
-> -		perror("cap_get_proc");
-> +	struct __user_cap_data_struct data[2];
-> +	struct __user_cap_header_struct hdr = {
-> +		.version = _LINUX_CAPABILITY_VERSION_3,
-
-cap_validate_magic() handles _LINUX_CAPABILITY_VERSION_1,
-_LINUX_CAPABILITY_VERSION_2, and _LINUX_CAPABILITY_VERSION_3
-
-It would help to add a comment on why it is necessary to
-set the version here.
-
-> +	};
-> +	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
-> +	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
-
-Explain why this is necessary - a comment will help future
-maintenance of this code.
-
-> +	int ret;
-> +
-> +	ret = capget(&hdr, data);
-> +	if (ret) {
-> +		perror("capget");
-
-
->   		return -1;
->   	}
->   
->   	/* Drop all capabilities */
-> -	if (cap_clear(caps)) {
-> -		perror("cap_clear");
-> -		goto out;
-> -	}
-> -
-> -	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
-> -	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-> +	memset(&data, 0, sizeof(data));
->   
-> -	cap = (struct libcap *) caps;
-> +	data[0].effective |= cap0;
-> +	data[0].permitted |= cap0;
->   
-> -	/* 40 -> CAP_CHECKPOINT_RESTORE */
-> -	cap->data[1].effective |= 1 << (40 - 32);
-> -	cap->data[1].permitted |= 1 << (40 - 32);
-> +	data[1].effective |= cap1;
-> +	data[1].permitted |= cap1;
->   
-> -	if (cap_set_proc(caps)) {
-> -		perror("cap_set_proc");
-> -		goto out;
-> +	ret = capset(&hdr, data);
-> +	if (ret) {
-> +		perror("capset");
-> +		return -1;
->   	}
-> -	ret = 0;
-> -out:
-> -	if (cap_free(caps))
-> -		perror("cap_free");
->   	return ret;
->   }
->   
+> Thanks,
+> Easwar
 
 
