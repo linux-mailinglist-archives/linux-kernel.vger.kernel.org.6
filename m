@@ -1,192 +1,93 @@
-Return-Path: <linux-kernel+bounces-390327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8F09B7875
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:13:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CAD29B7876
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77701F2460E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B50DB21328
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D98C1990C8;
-	Thu, 31 Oct 2024 10:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728011990AB;
+	Thu, 31 Oct 2024 10:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z73tf9kf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g25zhrjW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E26C12B169
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E6B12B169
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730369610; cv=none; b=BdfQSJBtrp+F6+PvuYyqVbPfShcbSHgxwoHZu/yW2rBGTOG5LouY01M7CuCsGjAwfgeRrjOC7wgTiYaD5ZW/4ycKe38TrdcjpoB0Yfh8sNTz/ufJQ0XVJzX+8GpSZ2zvyAucjA6f99vWGIyLkJSl56fwfIcUnuadjv996DvHLYY=
+	t=1730369657; cv=none; b=ZLsh9DMCWHFDgxo6SjSiD9PfKIqtzaJtUgMsQ73RKSOPt2uBFP2mI25P9tLmzP7us+8bYRsQUfIZjsFMTDJ+X5Mom/1DoiXeroYRVGs9ha5IPk1VjUx6pU6r12IFlkUnNIT7KtsPW97XLuzszVExB5xIU7SqAC1VcSbQkSOcUPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730369610; c=relaxed/simple;
-	bh=fXxSVMz93g9pT9H5CH7uPNFmTLZeJHNmc6B1HbdMZts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rTsVBwe+tVFMkGbR3heB6+2QOyqm/6axnn20wPYTDGftswld/w/NfXCWQzAzBybbqRv1rgd62s9SF7gnq6Izywb86ZJufAGubYDBoMdL2r7OvWAzW4KdZVENeCb03SlhGb1Ia3e9dII8vI6PZZAkQ2gPRLjZ6rfDWAn68WHIE+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z73tf9kf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730369607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8qpsGLSEnI+XWmBEuuVMwNo+r2BaEC8hB8NVYcY+RYc=;
-	b=Z73tf9kfBwhD5MUXKsCWATHDPPC+DxZk/BRcxIRazXqBpyRoGS9bHpDbNaR1psrlXfQdpf
-	LRyHh7yIRXnc6Gt26B48p4aRaqn+hRiCmkgd1yrbv5dfH6dn21eLBOf8fu2IF3VuqgRfbf
-	KapxgCU1j6bzIxX+AYYA6gFOLDZ9V6c=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-tHcVau3gO-2PXuJyFHg5zQ-1; Thu, 31 Oct 2024 06:13:25 -0400
-X-MC-Unique: tHcVau3gO-2PXuJyFHg5zQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d3e8dccc9so432653f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:13:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730369605; x=1730974405;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8qpsGLSEnI+XWmBEuuVMwNo+r2BaEC8hB8NVYcY+RYc=;
-        b=RPnISo6mSdWjonyx93rrZdYrf4EAQg5rwutnyrBYETtCErWUgcTxEb7/X646st453T
-         CuhhteD+iiXCrqMj2qN9jQgdQOSacVsM1Dd2wJrQkGoGDe1LvwWzofnD9B9//0lci9xN
-         +GU0iI9A/W4zRXHooCFq/7O4Ttl37CGk010QfRKBmykQUU4VUxwN3DSYxAVfX66M921z
-         GgXcZSkl/WXTiad4Al1ZArWmgd8/bBJmzTFFA4O10ZJhuQHCEHUUKcUDgQGUll8j38+B
-         tYzdY7lRj/fRjtZmRGd4dF5c9NahDCI+4Ou3qJrORLMW8DEKXqXmNg/shpShDMbrN2Hj
-         FbvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu1m3okJBqCAAAElW5tt/cXH38A63sJTLg2wPoD1nh9si4ROM6cRaKGITBJYOtZauXPkUm7Xqer0Mh2bs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyigIO125V4Cpk2T8Ygy21vv9+DrWOVEUNAv4EtXdE+iwS4v6Qn
-	Ycp8Gh4Srhw2KF6evjktZ34V/juUTAqOcLQfUyGhvEY0jCstMvSSMC4QHq7l52HMn+nfI+o3HR+
-	zCkOEHQjTWUto29BAGD5vc59GXbQtYpCVOWMzviyLsk+0697FvbKuOSNF9qD0EQ==
-X-Received: by 2002:a05:6000:18a5:b0:369:9358:4634 with SMTP id ffacd0b85a97d-381be7c80a7mr2432251f8f.19.1730369604481;
-        Thu, 31 Oct 2024 03:13:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGR7Z4vtf7/u6NjtUKe9akOrVpf/NCyjOUCTQtYcxrwIu/laeojTfp3Q1NBwmWGlWwyZTZGmQ==
-X-Received: by 2002:a05:6000:18a5:b0:369:9358:4634 with SMTP id ffacd0b85a97d-381be7c80a7mr2432230f8f.19.1730369604041;
-        Thu, 31 Oct 2024 03:13:24 -0700 (PDT)
-Received: from [192.168.88.248] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e565csm1653659f8f.48.2024.10.31.03.13.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 03:13:23 -0700 (PDT)
-Message-ID: <0dc8c829-23f0-4904-8017-fc98c079f0ab@redhat.com>
-Date: Thu, 31 Oct 2024 11:13:22 +0100
+	s=arc-20240116; t=1730369657; c=relaxed/simple;
+	bh=SfUOKiT/E6pzf63FvALfLtnrYKwCVgTIP4DrqgDHNhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCybs7UxvdAmxEJ/pcMB1631CSrVAJu5B5VdHvRxuSvlMcIKoKPaCBwZaEMFcRcR7PkvKEo1qzSAWXxNB1CsQN9uOiXEFbNvBqrqDB5pM0BVkPYvIyj5QU+vYJNSApykuuf2UKutf73oEhUF8MRGHCOzEqTbJCvP0TnTGgQk97U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g25zhrjW; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730369657; x=1761905657;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SfUOKiT/E6pzf63FvALfLtnrYKwCVgTIP4DrqgDHNhY=;
+  b=g25zhrjWYpMUQB36BafI/FKR7mMWKSvRJz3/0UpiVpRzHfWlUuDrYK2M
+   6GdTj+y909FRhY8l7YfdcQ39+K7SVQUvVwrIpH9gyHkaS+O9/LyaztmmQ
+   /e6IKSNxNH+9of9Ct/b5LfZKddak6P0tcUhkZqKGQwNGy2gBH1/ob3n1r
+   dHo1+TIztOYTnIqT8bfKezOqeCVg51N3qy0+Tms6OYVC8JShdkZdC8XV1
+   T9jwYKd7twICSE3ETKqkbEyXxxJLisdtvfYAzqhTRqLXyaxgb7aR9Ns2G
+   8/roAUKKx3Kumjh+I/cT37afCmUds6cRR4J2FblbJUJpurWrWv2zXoKMh
+   w==;
+X-CSE-ConnectionGUID: GF/pVbwtScy+u6s3lIZo3A==
+X-CSE-MsgGUID: ZXlAMbqxRAuufs5RIFTlIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29956527"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29956527"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:14:16 -0700
+X-CSE-ConnectionGUID: XNYJCng+Rk67WwN9YOHhaw==
+X-CSE-MsgGUID: zWMqq7EKSAG3n/N5/4FMnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82743180"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 31 Oct 2024 03:14:13 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 730D21C4; Thu, 31 Oct 2024 12:14:11 +0200 (EET)
+Date: Thu, 31 Oct 2024 12:14:11 +0200
+From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yang Shi <yang@os.amperecomputing.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+	Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] mm/huge_memory: buddy allocator like folio_split()
+Message-ID: <cqh3exrkag2mbdeluranstvakkzxjpu34kkjs77feuvexoevop@nlyq2otyygr2>
+References: <20241028180932.1319265-1-ziy@nvidia.com>
+ <20241028180932.1319265-2-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v6] ipv6: Fix soft lockups in fib6_select_path under
- high next hop churn
-To: Omid Ehtemam-Haghighi <omid.ehtemamhaghighi@menlosecurity.com>,
- netdev@vger.kernel.org
-Cc: adrian.oliver@menlosecurity.com, Adrian Oliver <kernel@aoliver.ca>,
- "David S . Miller" <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Ido Schimmel <idosch@idosch.org>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Simon Horman <horms@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241025073003.2079945-1-omid.ehtemamhaghighi@menlosecurity.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241025073003.2079945-1-omid.ehtemamhaghighi@menlosecurity.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028180932.1319265-2-ziy@nvidia.com>
 
-On 10/25/24 09:30, Omid Ehtemam-Haghighi wrote:
-> Soft lockups have been observed on a cluster of Linux-based edge routers
-> located in a highly dynamic environment. Using the `bird` service, these
-> routers continuously update BGP-advertised routes due to frequently
-> changing nexthop destinations, while also managing significant IPv6
-> traffic. The lockups occur during the traversal of the multipath
-> circular linked-list in the `fib6_select_path` function, particularly
-> while iterating through the siblings in the list. The issue typically
-> arises when the nodes of the linked list are unexpectedly deleted
-> concurrently on a different core—indicated by their 'next' and
-> 'previous' elements pointing back to the node itself and their reference
-> count dropping to zero. This results in an infinite loop, leading to a
-> soft lockup that triggers a system panic via the watchdog timer.
-> 
-> Apply RCU primitives in the problematic code sections to resolve the
-> issue. Where necessary, update the references to fib6_siblings to
-> annotate or use the RCU APIs.
-> 
-> Include a test script that reproduces the issue. The script
-> periodically updates the routing table while generating a heavy load
-> of outgoing IPv6 traffic through multiple iperf3 clients. It
-> consistently induces infinite soft lockups within a couple of minutes.
-> 
-> Kernel log:
-> 
->  0 [ffffbd13003e8d30] machine_kexec at ffffffff8ceaf3eb
->  1 [ffffbd13003e8d90] __crash_kexec at ffffffff8d0120e3
->  2 [ffffbd13003e8e58] panic at ffffffff8cef65d4
->  3 [ffffbd13003e8ed8] watchdog_timer_fn at ffffffff8d05cb03
->  4 [ffffbd13003e8f08] __hrtimer_run_queues at ffffffff8cfec62f
->  5 [ffffbd13003e8f70] hrtimer_interrupt at ffffffff8cfed756
->  6 [ffffbd13003e8fd0] __sysvec_apic_timer_interrupt at ffffffff8cea01af
->  7 [ffffbd13003e8ff0] sysvec_apic_timer_interrupt at ffffffff8df1b83d
-> -- <IRQ stack> --
->  8 [ffffbd13003d3708] asm_sysvec_apic_timer_interrupt at ffffffff8e000ecb
->     [exception RIP: fib6_select_path+299]
->     RIP: ffffffff8ddafe7b  RSP: ffffbd13003d37b8  RFLAGS: 00000287
->     RAX: ffff975850b43600  RBX: ffff975850b40200  RCX: 0000000000000000
->     RDX: 000000003fffffff  RSI: 0000000051d383e4  RDI: ffff975850b43618
->     RBP: ffffbd13003d3800   R8: 0000000000000000   R9: ffff975850b40200
->     R10: 0000000000000000  R11: 0000000000000000  R12: ffffbd13003d3830
->     R13: ffff975850b436a8  R14: ffff975850b43600  R15: 0000000000000007
->     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
->  9 [ffffbd13003d3808] ip6_pol_route at ffffffff8ddb030c
-> 10 [ffffbd13003d3888] ip6_pol_route_input at ffffffff8ddb068c
-> 11 [ffffbd13003d3898] fib6_rule_lookup at ffffffff8ddf02b5
-> 12 [ffffbd13003d3928] ip6_route_input at ffffffff8ddb0f47
-> 13 [ffffbd13003d3a18] ip6_rcv_finish_core.constprop.0 at ffffffff8dd950d0
-> 14 [ffffbd13003d3a30] ip6_list_rcv_finish.constprop.0 at ffffffff8dd96274
-> 15 [ffffbd13003d3a98] ip6_sublist_rcv at ffffffff8dd96474
-> 16 [ffffbd13003d3af8] ipv6_list_rcv at ffffffff8dd96615
-> 17 [ffffbd13003d3b60] __netif_receive_skb_list_core at ffffffff8dc16fec
-> 18 [ffffbd13003d3be0] netif_receive_skb_list_internal at ffffffff8dc176b3
-> 19 [ffffbd13003d3c50] napi_gro_receive at ffffffff8dc565b9
-> 20 [ffffbd13003d3c80] ice_receive_skb at ffffffffc087e4f5 [ice]
-> 21 [ffffbd13003d3c90] ice_clean_rx_irq at ffffffffc0881b80 [ice]
-> 22 [ffffbd13003d3d20] ice_napi_poll at ffffffffc088232f [ice]
-> 23 [ffffbd13003d3d80] __napi_poll at ffffffff8dc18000
-> 24 [ffffbd13003d3db8] net_rx_action at ffffffff8dc18581
-> 25 [ffffbd13003d3e40] __do_softirq at ffffffff8df352e9
-> 26 [ffffbd13003d3eb0] run_ksoftirqd at ffffffff8ceffe47
-> 27 [ffffbd13003d3ec0] smpboot_thread_fn at ffffffff8cf36a30
-> 28 [ffffbd13003d3ee8] kthread at ffffffff8cf2b39f
-> 29 [ffffbd13003d3f28] ret_from_fork at ffffffff8ce5fa64
-> 30 [ffffbd13003d3f50] ret_from_fork_asm at ffffffff8ce03cbb
-> 
-> Fixes: 66f5d6ce53e6 ("ipv6: replace rwlock with rcu and spinlock in fib6_table")
-> Reported-by: Adrian Oliver <kernel@aoliver.ca>
-> Signed-off-by: Omid Ehtemam-Haghighi <omid.ehtemamhaghighi@menlosecurity.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: David Ahern <dsahern@gmail.com>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Ido Schimmel <idosch@idosch.org>
-> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Cc: Simon Horman <horms@kernel.org>
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+On Mon, Oct 28, 2024 at 02:09:30PM -0400, Zi Yan wrote:
+>  mm/huge_memory.c | 604 +++++++++++++++++++++++++++++------------------
+>  1 file changed, 372 insertions(+), 232 deletions(-)
 
-Given the issue is long-standing, and the fix is somewhat invasive, I
-suggest steering this patch on net-next.
+The patch is really hard to follow. Could you split it into multiple
+smaller patches?
 
-Would that be ok for you?
-
-Thanks,
-
-Paolo
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
