@@ -1,180 +1,145 @@
-Return-Path: <linux-kernel+bounces-390396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB649B795A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:07:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876339B795D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:08:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78CCE1F251C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BDF1C21CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A9419ABD1;
-	Thu, 31 Oct 2024 11:07:43 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAA519A2BD;
+	Thu, 31 Oct 2024 11:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puOpqcGi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34975199FC6;
-	Thu, 31 Oct 2024 11:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEE3199FC6;
+	Thu, 31 Oct 2024 11:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372862; cv=none; b=WA9wmZ9ixqOQGhnPme8ox+kqZiFlBV92s/NkDnub6gqTIPR5FQvlaqiYC+Z1DZ1DFTGil/JkfeuxM7x56iJITpvd9GT6Qe07f+baT0cOOKM40EDefksyC5HWq7euEWCX0Asg1hkw35zxCAHGsFVvMmFEn/vOPcGSuadN/Sv/Ia0=
+	t=1730372865; cv=none; b=Nfbglmjn6pnndYuT/ytYNlX4EX7jtWHVyqzcFNZGU2axZAoG92S6O/hmKw1Tj04qOsSNlbhvtq1MI2qdPqdn05hyXBIg2udiBi6L4ay8sfpNe+Xvt8QDU7rOVNdodWr97fLajd6DUG6mbnfziOQushM5y121N3BP+kl9gVKU6/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372862; c=relaxed/simple;
-	bh=0Bkyi8LyOxVMJKPva3Yc0QzscGVgkrh5AAmWRvQhFos=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rOi3Z7wAMlXhd9ZVsiOF5XKqdB1qD0NJrYbrC0VScm5MDzt8SgY0pg+g0NEnmxV/XVCncFGXrre4MSdcRu5YnQJJKfkDMouFhT2ghArSYk+CVO18SRNdBeBvAERxpRTmdwoEFFKI0dL8G8DZZ3xE7HDPoRfjkUGVR+cLLTVUxDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XfLmh5gXwz4f3n6Y;
-	Thu, 31 Oct 2024 19:07:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 583F41A07B6;
-	Thu, 31 Oct 2024 19:07:35 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgBHI4f1ZCNnDO7SAQ--.77S3;
-	Thu, 31 Oct 2024 19:07:35 +0800 (CST)
-Subject: Re: [PATCH v3 5/6] md/raid1: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
- hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
- Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241031095918.99964-1-john.g.garry@oracle.com>
- <20241031095918.99964-6-john.g.garry@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <4f6aac00-929c-ded3-aefe-47b477147b60@huaweicloud.com>
-Date: Thu, 31 Oct 2024 19:07:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730372865; c=relaxed/simple;
+	bh=leojUiJLZWXxuOC+08VszmMv0L4JOxEVkD3Tg83V9BQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IixI06ZBDUdOzPvFXuzIJMiIx6nF6EJBGTzLJHlYwKVX6eeCGxyooWGM43i4eM7J9qyVW2fHuAeRbcnwX0JRn/BwyVXTC0HmamU+RlifP0jaOsrz4+6QEoXtxlRzgNSWW6b/a2zUcesSe+A/H/0ufz7TNmcuN64A1RJB5MXNAkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puOpqcGi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04816C4CEF8;
+	Thu, 31 Oct 2024 11:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730372865;
+	bh=leojUiJLZWXxuOC+08VszmMv0L4JOxEVkD3Tg83V9BQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=puOpqcGi2/Mcrryi48PxGkDSbqpn99IvInyyIrxA9HCmIP6uafGLzsVKd5niO7HuU
+	 nmHH4TudCTWVHsbpiRhTT326576px9zeqtUncTKweoN0/7sqIg/1Oj7TTB6ul3R6hQ
+	 8odMb84X3ytqSXrC3C3ohqcIS6R4+I2N71gCcSBk8N7Uj8/X+83rzZ0Y9ohXmfZLnr
+	 gj8OxIXnpQWu6/T3xI2Y2nlVQKfC/mS2NOruy04avBIszJCqdGRbCVJp7agy1viInG
+	 tISaAAbTG9Y3NPfI5zqQbKQYU1ZkRmYqWsP9X2hveyhPP3EXvL/o/qcPdjQ9OGRhhI
+	 loxg2Fw+PnyVQ==
+Message-ID: <9ffe66a3-f091-40c0-92ca-4950610dfd8a@kernel.org>
+Date: Thu, 31 Oct 2024 12:07:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241031095918.99964-6-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHI4f1ZCNnDO7SAQ--.77S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWxKr4UtrWrKrW5XrWkWFg_yoW5ZryUpw
-	4jga1S9rW3JFWa9wsxta9F9a4rZF4vqFW2krWxJw1xJFnIqr98KF1UWFWYgry5ua45ury7
-	Aw1kCw4Duw42gFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: automate 'soc' node release
+ in cpg_mssr_reserved_init()
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com>
+ <20241031-clk-renesas-cpg-mssr-cleanup-v1-2-628274ecbfcb@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241031-clk-renesas-cpg-mssr-cleanup-v1-2-628274ecbfcb@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-ÔÚ 2024/10/31 17:59, John Garry Ð´µÀ:
-> Add proper bio_split() error handling. For any error, call
-> raid_end_bio_io() and return.
+On 31/10/2024 00:25, Javier Carrasco wrote:
+> Switch to a more robust approach by means of the cleanup attribute,
+> which automates the calls to of_node_put() when 'soc' goes out of scope.
 > 
-> For the case of an in the write path, we need to undo the increment in
-> the rdev pending count and NULLify the r1_bio->bios[] pointers.
-> 
-> For read path failure, we need to undo rdev pending count increment from
-> the earlier read_balance() call.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
->   drivers/md/raid1.c | 33 +++++++++++++++++++++++++++++++--
->   1 file changed, 31 insertions(+), 2 deletions(-)
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+> index 5dc89b1009fe..bf85501709f0 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
+>  static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
+>  					 const struct cpg_mssr_info *info)
+>  {
+> -	struct device_node *soc = of_find_node_by_path("/soc");
+> +	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
+>  	struct device_node *node;
+>  	uint32_t args[MAX_PHANDLE_ARGS];
+>  	unsigned int *ids = NULL;
+> @@ -1022,7 +1022,6 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
+>  
+>  			ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
+>  			if (!ids) {
+> -				of_node_put(soc);
 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 6c9d24203f39..7e023e9303c8 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1322,7 +1322,7 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	const enum req_op op = bio_op(bio);
->   	const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
->   	int max_sectors;
-> -	int rdisk;
-> +	int rdisk, error;
->   	bool r1bio_existed = !!r1_bio;
->   
->   	/*
-> @@ -1383,6 +1383,11 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      gfp, &conf->bio_split);
-> +
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
-> @@ -1410,6 +1415,13 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	read_bio->bi_private = r1_bio;
->   	mddev_trace_remap(mddev, read_bio, r1_bio->sector);
->   	submit_bio_noacct(read_bio);
-> +	return;
-> +
-> +err_handle:
-> +	atomic_dec(&mirror->rdev->nr_pending);
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
-> +	raid_end_bio_io(r1_bio);
->   }
->   
->   static void raid1_write_request(struct mddev *mddev, struct bio *bio,
-> @@ -1417,7 +1429,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   {
->   	struct r1conf *conf = mddev->private;
->   	struct r1bio *r1_bio;
-> -	int i, disks;
-> +	int i, disks, k, error;
->   	unsigned long flags;
->   	struct md_rdev *blocked_rdev;
->   	int first_clone;
-> @@ -1576,6 +1588,11 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      GFP_NOIO, &conf->bio_split);
-> +
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
-> @@ -1660,6 +1677,18 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   
->   	/* In case raid1d snuck in to freeze_array */
->   	wake_up_barrier(conf);
-> +	return;
-> +err_handle:
-> +	for (k = 0; k < i; k++) {
-> +		if (r1_bio->bios[k]) {
-> +			rdev_dec_pending(conf->mirrors[k].rdev, mddev);
-> +			r1_bio->bios[k] = NULL;
-> +		}
-> +	}
-> +
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
-> +	raid_end_bio_io(r1_bio);
->   }
->   
->   static bool raid1_make_request(struct mddev *mddev, struct bio *bio)
-> 
+You just added this. Don't add code which is immediately removed. It's a
+noop or wrong code.
+
+Best regards,
+Krzysztof
 
 
