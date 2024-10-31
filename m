@@ -1,109 +1,90 @@
-Return-Path: <linux-kernel+bounces-390514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950509B7ACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:39:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675719B7AE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:42:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63601C21E5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:39:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E786281316
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32A819EED6;
-	Thu, 31 Oct 2024 12:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jri/CprH"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782D91BBBF1;
+	Thu, 31 Oct 2024 12:39:24 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1856519D07A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18931B5325
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378307; cv=none; b=OV/j0xMrJAAFa4Ys3BxBMdtHIYGmB/6IYlC9rCvnd/TVGXZohy8I9iICZB6I+MwZbFm1CPlViuoNVc2mcktsXQ/CUNsE0RLSogJ4kdVjeMN3hSPi7bm3t55ES2iw4fldtiXKpOUScImfcTlxBWWLa6FcSaw6oCP93pDCJ2254mk=
+	t=1730378364; cv=none; b=FCHOw3O8FobXJJM5DXWfGU48k6dB69jiPM7T97tIJNzT9YbklTqUpjK6uFbe6EyECMWOB8/oTZgw+QJGnRQ6F1wox5QxtBNaGfb2UX/3q+ozJtDcjPfOOJmxNh1HpET+GwL/DGt6JGd+V9e3+LYOk27LSVtVqC3qldPqpzr+4pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378307; c=relaxed/simple;
-	bh=1cJTeyzn7vDLqCc8PIINomXm7QXgOrkmmDCiJ2+ovRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DbOLgR9n9Z5RTGGC5+YgykhwDMcNP6N6Lz/JhVLCDMO8WtoIQ++bpk5xASKGD2qU7+vyZNjTFjVNhHc++d7hiGWlo0Av55WaFFWA7DrrXSbYxj6igi61kSF+0Hy7tRthLaOipTEvzWC3nccGcuptNtn+mTHFWUeH7ZdPCCIePSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jri/CprH; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43158625112so7166085e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 05:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730378303; x=1730983103; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CmBF5h/TWefDrRULij++C6U7yHFjsi/cLL82N9hFyCw=;
-        b=jri/CprHhv++bxYADekYZ/5DOINN/mphtP+neVuQyCIDIkGxaq1Wks1xVaICPyskbs
-         +ZyGyHCXaxsAZRDoW+dSxO9Rrafj9STcw9CIHRZ/faDpTROc6Ss+ddy8aX5uDmKGmXVH
-         NCPtiy/l2RVVS7QxvBeuNXz5oWfnmCRqvZyh0u72l0P/xx/Hdo6rh1HYMXQA9jGjuNb5
-         Rsd4AdLn/bOUYJFqL+9o/pUN/xN5fY+3g2CeNS5V3D+FaZooRPQH+MXrqkziajaVzn3T
-         4noBKFf71Vx1PKGor+BXhbJg35f/3n4Tf/nAtNZv5QID1Nxdwzunk1qBpuaRSsZ1iska
-         bh/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730378303; x=1730983103;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CmBF5h/TWefDrRULij++C6U7yHFjsi/cLL82N9hFyCw=;
-        b=TPN3MtZru3w/nJCxzPQobfaTzeJRNxBApQnIjcQBvstB6VymOwKMK9nLtkpQu8p9R3
-         TDVz/9VWdFxrbIHbE9wmGdf+rRm41QCGEjuJYGmYf4t/cZ8RA4dibBASO9vPAL1AnbkO
-         5O+rWuPfYVhVwdnL/UcSxSEyUtPZm5Ce0YOWFikzyO0ApL9tpf7161orl4L92DVA0pK1
-         5zFBWSF+bPbdXqS903nFLqZn8DGeDKz0lGJUcsejgEFgBXOpdym8LwDiTNk8Y20pN64X
-         Qt5pY4XuUzYQu17AbGy3ZtAq1i5/lNEX8/y/aP51rSahsK0A2lV4Acc+SIYHSJVWsoVR
-         Tm9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrWg/UyW+LMJofkwoiXNwTEezS7PHsesxJqt0ARrToXv5RKXhAJo4re0nDGY+0dgN1WvKSnM/aP8f3Ny4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/SDC+cLdL/gDNMpheUvMPkfNzpToDQ4mVXfH6Ztzmetgqwf0a
-	GjKskMM7pGHtkNWrL37/qnN7ga8U12bf3x82O+5VDgY7ncHXFzT5bqICEkEMm/g=
-X-Google-Smtp-Source: AGHT+IEQ2s2Wn1EUmBJ4pYgNUgAtY8LV8iDEw8uwuEQMEgFeh5e058Ixt31/ZtENFYdEnTHUT3w/Qw==
-X-Received: by 2002:a05:600c:3c9a:b0:431:518a:683b with SMTP id 5b1f17b1804b1-4319acacb3cmr148709535e9.18.1730378303342;
-        Thu, 31 Oct 2024 05:38:23 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a6bc:32f9:21fc:be97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bb78b809sm67432055e9.1.2024.10.31.05.38.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 05:38:22 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Hoan Tran <hoan@os.amperecomputing.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] gpio: dwapb: Add ACPI HID for DWAPB GPIO controller on Fujitsu MONAKA
-Date: Thu, 31 Oct 2024 13:38:21 +0100
-Message-ID: <173037828242.6687.4733700709962580211.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241018015640.2924794-1-fj5100bi@fujitsu.com>
-References: <20241018015640.2924794-1-fj5100bi@fujitsu.com>
+	s=arc-20240116; t=1730378364; c=relaxed/simple;
+	bh=x+4k3ScXmc6pGd49ulluPwEZUnA9RxZJMnNu26rSZ3g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pEiy2q0uEDlqu69vzKkJLh8gzIZC7/3wp31gRZL7Vz81W9poViGHkc6ULDt6GwD1UQby4nJcwM7iPdWOqBF9MCGIx1jCm8Om8ATS10xh4ihzr5wEwijATn2Cc/UO5CfkAfJbETkZTv7VRQyy8zdvKYJzEXarMsgQtLYTNWHTqSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XfNn20clWz2Fbsd;
+	Thu, 31 Oct 2024 20:37:42 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 90A66140156;
+	Thu, 31 Oct 2024 20:39:15 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 31 Oct
+ 2024 20:39:14 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <vkoul@kernel.org>, <kishon@kernel.org>, <linus.walleij@linaro.org>,
+	<treding@nvidia.com>, <florian.fainelli@broadcom.com>,
+	<krzysztof.kozlowski@linaro.org>, <colin.foster@in-advantage.com>,
+	<davem@davemloft.net>, <linux-phy@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] phy: ocelot-serdes: Fix IS_ERR vs NULL bug in serdes_probe()
+Date: Thu, 31 Oct 2024 20:38:47 +0800
+Message-ID: <20241031123847.1356808-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+dev_get_regmap() return NULL and never return ERR_PTR().
+check NULL to fix it.
 
+Cc: stable@vger.kernel.org
+Fixes: 672faa7bbf60 ("phy: phy-ocelot-serdes: add ability to be used in a non-syscon configuration")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/phy/mscc/phy-ocelot-serdes.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Fri, 18 Oct 2024 01:56:40 +0000, Yoshihiro Furudera wrote:
-> This patch enables DWAPB GPIO controller support on Fujitsu MONAKA.
-> 
-> 
-
-No objections from DWAPB maintainer so applied, thanks!
-
-[1/1] gpio: dwapb: Add ACPI HID for DWAPB GPIO controller on Fujitsu MONAKA
-      commit: 4f61d7fdcbc422f82acddf33cc966a13de577ce1
-
-Best regards,
+diff --git a/drivers/phy/mscc/phy-ocelot-serdes.c b/drivers/phy/mscc/phy-ocelot-serdes.c
+index 1cd1b5db2ad7..77ca67ce6e91 100644
+--- a/drivers/phy/mscc/phy-ocelot-serdes.c
++++ b/drivers/phy/mscc/phy-ocelot-serdes.c
+@@ -512,8 +512,8 @@ static int serdes_probe(struct platform_device *pdev)
+ 						    res->name);
+ 	}
+ 
+-	if (IS_ERR(ctrl->regs))
+-		return PTR_ERR(ctrl->regs);
++	if (!ctrl->regs)
++		return -EINVAL;
+ 
+ 	for (i = 0; i < SERDES_MAX; i++) {
+ 		ret = serdes_phy_create(ctrl, i, &ctrl->phys[i]);
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.34.1
+
 
