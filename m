@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-390408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1699B7975
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:15:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62A69B797A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A631C2087C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B8C2818DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F9219AA43;
-	Thu, 31 Oct 2024 11:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D318479;
+	Thu, 31 Oct 2024 11:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4zTwhbo"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gnnaMnss"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6745C199936
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E0413DB99;
+	Thu, 31 Oct 2024 11:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730373292; cv=none; b=ZgkGw499WlFhfAYCo6JTPsO8mxDO159JVaHpyny09iZqnz3Prr+MJ9hFZPG1DdCH2eZpAsKmufeJpfCwIRDXDYO9tyJn100X9vOfDkuhdLqSY/hAYDfmoFOaiDnaGzXXbdv7NW6k0FcGsVoVo7hVIgKg1I6otxklziKm8d/pGf4=
+	t=1730373341; cv=none; b=o9hSUrEGB5VRMHHrBfA9649p76iFs0v7pr/DLcHA5yWjSY1CNnKvkq0GMLWbYnUuTs9tmIfiRUgyzosNRg8I1bU2Hr/QX1SCPVIT43GMPJUJ7um/6e2SmZMB+fqSqMoOLNhJUc1lRAwflHVLHrHU1MekTuleLAxZm/RO70IjgYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730373292; c=relaxed/simple;
-	bh=i5KsGLfkIQ1st1XLL8Kk1hexPW/9WP4R/osKjHtqkKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m2Mhy1J7J1l7awc/zm5blx2+9LN3gPyhMZ23PHAKdLRZrAEIJTycfdtW9hpnTE6kPsftpL0/Wm67pLEovmU9wbafVTJvrrm2mdh2S9Lyg/PKiaOiRw4K2HYmCbXethng+4EvSCdM2ImrJHgqMyM3Ydb2ZH4j1l3zmCdVcfUlLwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4zTwhbo; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4319399a411so6962885e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730373289; x=1730978089; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PozbzDh8fynP/sDrQGC3kD4ausHypQY0l1L7spYdSv4=;
-        b=D4zTwhbozES3+5qr34DOatjSlZZoeIm/C1f7zbSAo3GX4e/xMp8feK6aeo90/LaPTK
-         VXuhFX74is2chVall5PU1gdAmL1Ac90hIonC9jZJgTlpZfPVFE+zRM/i0cTEPECDSWBb
-         rxoypLKU9yGJeIQoJ7X++TQF5YT33/ADGYY+72QOWI1/iNNFPfen07YOAzyTwynCkYPd
-         S4+kEfrfFeT5xT86nWVYPd3xMluTiZIn00b5QgtrGZRknw8GU5gZnwiUM+9jD1BjCeCs
-         xvt8/lGmZpIyOHjCl+ZcaSga36kOu+m5ATAdH2lcfqT/PU5XlabGN6tYAeEIvy/DYAod
-         ISaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730373289; x=1730978089;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PozbzDh8fynP/sDrQGC3kD4ausHypQY0l1L7spYdSv4=;
-        b=Xiqb6CpqqnklS1s713pOF1BDdHCxvNVh6nkPyQh5C7CvtTLwLBX3OYjXTjRuZKE4/9
-         pBbRWN3FE8wqA9tN975E9PSZwvyqFPniRM/Q4t7bFe69Ap3Yr/6kEY4HMd5Z747GnyLU
-         V2fhpRMd5rX5ynEwedYpCueWWYsbV07fKCoyyHF3cgF1NQ9Vb0vVg6zimAErjNyLCmqp
-         wzVy10dAbwdkAdDCwuwhp8vlgDC7ib4CPspaKohluhG9XflpPA+GleQN9hZI9q0Nw0fn
-         bK/ao+JlmSKUKPzga/ZlywRL1YokzJSdj6AD3EJrzLGWNecSIXjsRK7G3A8IqwTk6/1j
-         dgdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMiAsKXnV93DYFFXmyAR3ZWu4FtMXoBNmt5WDT/mYhqfVDLRz0pOXq77qy88/6FLQ86yMJkUUGPbv/0tY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDWBxpHqpWT1BD656mfHeZwIYHEq7otAx6ahTM6UCt/GWcVU6b
-	giTj3ycHZXkN9yk6HVbNA/wvqSq4YvKuND3sw/JfCUKs2dTKZ3f7
-X-Google-Smtp-Source: AGHT+IGfEhgylwo9HDbgpkO/tkKXN2QtV74TWAjukaY+u8rp50OfYjIiD1MnYUAdd0nzH218OKjcjg==
-X-Received: by 2002:a05:600c:3b9c:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-4319ac70754mr181762525e9.1.1730373288597;
-        Thu, 31 Oct 2024 04:14:48 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:d7b9:afdb:c541:d023? (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca8eesm52772575e9.43.2024.10.31.04.14.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 04:14:48 -0700 (PDT)
-Message-ID: <99b12dee-43c3-4007-9c55-e2a884fc662b@gmail.com>
-Date: Thu, 31 Oct 2024 12:14:46 +0100
+	s=arc-20240116; t=1730373341; c=relaxed/simple;
+	bh=cnxrShd8egeuggH2MUREYrryY7UEfBJB45aOUcY6el8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dk1LOaJH9P8nmmzdojqAivsWxpCDkpEeviPDdahcT7PtfnXf+s9v/Urmc8iY9W5ry55fnooanX4pndg74E4JiRzxb4kkddQWithCKH+xIoxCjSo9xnYRA0CopqLDrGtiKb4l0otFjxJaV1Fd0rrJNHlU3uPoxM65VzjSQl6fAR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gnnaMnss; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C5DE640E0028;
+	Thu, 31 Oct 2024 11:15:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 0ve0OhI2yM8A; Thu, 31 Oct 2024 11:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730373331; bh=byN1H8y1tWnzMdNx6+Ui4XRnmn6lYDerMw/dcXPaHWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gnnaMnss/gqMVuzKyF/vEPXnZB3W6/YiiCck0PeUI3JrUmGbyqY1exwX8G/RICIFh
+	 jk8PEj2ySPWJ3ot4k53erWEQ+gFILwrCff6EzsQvNUQmpO3YEOV6fjnRmjqR+coEcd
+	 zxN/yg2A9HrLZMQYjnk4l+8ykkL70X58gEM8W1bVO4TA2AWnmFwn67mrnb1lFkzQNv
+	 O+trjiUorhg5tGI5tONB+9THEOLTdsbmM2JYuXygLrwz2GCxy3m2HO/wyGD/kwnSzq
+	 I1l45rh9QUMOOvmpQ+nkgZ0F1zeaeQfu/BP1pzxbq4oSh49YxkUmoG6U/dLPR2bDl5
+	 o44NeaFL61ExXZk9PoawHejYBvGFnfA7g458WozFqix0ydhTYOPuGMN+B791MNfC7i
+	 CqGxXhcpe5i1UpAKo0TYHzk+TNW7M8YGMdsh4lLXkuDUddbYQYD0faE6nLFSunHr9x
+	 fqIcoRpJBVOfbQyV8FTI4xWNUBPsms0esAiwgIXXeE0d8ZkUzXSMsA8VwWumVcgQpm
+	 O1TGQ7WeUwFPIoVXKZTI8S4lQfqSOVFkIy7egcD2p1y+O1awNj1ph330s8VWlR8V32
+	 lvIpFG49uCkOFaXzO6iDdJrq235u1RqxtUBriJaYeta2hzz05hx3OjRCOzJOJREfKl
+	 iNymN09MeAsoPPVuHNUaBN70=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6CFF340E021C;
+	Thu, 31 Oct 2024 11:15:10 +0000 (UTC)
+Date: Thu, 31 Oct 2024 12:15:05 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
+	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
+	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 05/16] x86/amd_nb: Simplify function 4 search
+Message-ID: <20241031111505.GHZyNmuQ79m-enfCgI@fat_crate.local>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-6-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drivers: soc: atmel: use automatic cleanup for
- device_node in atmel_soc_device_init()
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241030-soc-atmel-soc-cleanup-v1-0-32b9e0773b14@gmail.com>
- <20241030-soc-atmel-soc-cleanup-v1-2-32b9e0773b14@gmail.com>
- <dfa83464-4632-45cf-a257-b9d9739d37e2@kernel.org>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <dfa83464-4632-45cf-a257-b9d9739d37e2@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241023172150.659002-6-yazen.ghannam@amd.com>
 
-On 31/10/2024 12:07, Krzysztof Kozlowski wrote:
-> On 30/10/2024 18:10, Javier Carrasco wrote:
->> Switch to a more robust approach to automatically release the node when
->> it goes out of scope, dropping the need for explicit calls to
->> of_node_put().
+On Wed, Oct 23, 2024 at 05:21:39PM +0000, Yazen Ghannam wrote:
+> Use the newly added helper function to look up a CPU/Node function to
+> find "function 4" devices.
 > 
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+> This avoids the need to regularly add new PCI IDs for basic discovery.
+> The unique PCI IDs are still useful in case of quirks or functional
+> changes. And they should be used only in such a manner.
 > 
-> There is never a "drivers" prefix. Especially not first (because as
-> middle appears for FEW subsystems, not for SoC though).
-> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  arch/x86/include/asm/amd_nb.h |  1 +
+>  arch/x86/kernel/amd_nb.c      | 66 ++---------------------------------
+>  2 files changed, 4 insertions(+), 63 deletions(-)
 
-Thanks, I added that by mistake. I will fix that for v2.
+Nice cleanup.
 
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>  drivers/soc/atmel/soc.c | 7 ++-----
->>  1 file changed, 2 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/soc/atmel/soc.c b/drivers/soc/atmel/soc.c
->> index 64b1ad063073..298b542dd1c0 100644
->> --- a/drivers/soc/atmel/soc.c
->> +++ b/drivers/soc/atmel/soc.c
->> @@ -399,15 +399,12 @@ static const struct of_device_id at91_soc_allowed_list[] __initconst = {
->>  
->>  static int __init atmel_soc_device_init(void)
->>  {
->> -	struct device_node *np = of_find_node_by_path("/");
->> +	struct device_node *np __free(device_node) = of_find_node_by_path("/");
->>  
->> -	if (!of_match_node(at91_soc_allowed_list, np)) {
->> -		of_node_put(np);
-> 
-> You just added this code. Don't add code which immediately you remove.
-> Squash two patches.
-> 
-> Best regards,
-> Krzysztof
-> 
+-- 
+Regards/Gruss,
+    Boris.
 
-
-As I said in another thread, I split the solution into a first one to be
-applied to stable kernels, and a second one that uses a more robust
-approach that is not supported by all stable kernels.
-
-Best regards,
-Javier Carrasco
+https://people.kernel.org/tglx/notes-about-netiquette
 
