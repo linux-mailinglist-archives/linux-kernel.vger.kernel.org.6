@@ -1,146 +1,94 @@
-Return-Path: <linux-kernel+bounces-390723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE939B7DCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:07:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4689B7DD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B863B1C215C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F080F1F226DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626F01A262D;
-	Thu, 31 Oct 2024 15:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EF91A2554;
+	Thu, 31 Oct 2024 15:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VkQyjN8W"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1528TI2e"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6FB19C552
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E2A6A019
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730387227; cv=none; b=u7dXT5go0mG1Fby624UmD0Qzo9q/doSZbecALyKNyf2cdIezJfhRyQayD5EcGiarjYVR+o61oVYYU5dMPc+/+LZxP400Qo/FFFr1n2Ep2K4ecvbwOf6WJMIu+RnSspEcGpm836ARRsvJiAv4LyGe+UQWyJdvARLHt7pNXFmuDYI=
+	t=1730387385; cv=none; b=syjdmLEU38ekVMtQAwU0NxQcqWrba1VjaY0QBtth4eBOdheKr9tamEkYxIWtiOYy3WUjQRBTMEOYk5Myl0+BFMEbDYDyWKt6aaLoVSMf2Q40zRjz2rsbyj6gmBX7f2QP2ukfJAFLUjXiGxz0QF0dUZs0I2OvCK5A3uUSWnc1O6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730387227; c=relaxed/simple;
-	bh=RjuxSppiBq3w5/JKbYGq8GoAHjzsNyjHTYkHz/iAfBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PvPAMH3eM9iK9mnA/4CiL4e7ZwjBAAb4l8oGNqADC2lrM4/Gu4RozQrdsxzM7b5T14M1a8YI7ZlGS3FMK3PXsaWZM1YqCZZT0pHmQRFBa9VgR6J+qd/HKlD1kmI2UPJ1kKoFTQAtVkB4kUVaeXSwxqzsf7yU31U+iEuI5RlGJF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VkQyjN8W; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <751a4ab5-acbf-4e57-8cf4-51ab10206cc9@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730387220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w4U6SCFjDt3RFRuNzC5QvY8+3i7nEcu3/ZcBbDN5c4g=;
-	b=VkQyjN8WNBI0oCCjXz7F5Wp+EptgxTa3J6nnBjquraUwZAfRGV6npP7KRjnrzGC5S+YpNc
-	+sPNwwkDQLuts1YhSWuwfwyU38Mzgqj1rHgzyY8hsT79Oij0b1AMVi7c6JlWF7jr8LJRmX
-	AIOove+nInVVaCXBnxug+gsjRaMQBek=
-Date: Thu, 31 Oct 2024 23:06:38 +0800
+	s=arc-20240116; t=1730387385; c=relaxed/simple;
+	bh=ZXFHWFKHL4fETMV8i377mhV5u+xSvQW2if9PiOkGyys=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ouxQS1i2oBLtHh849b5JbKUKm+1hiagKuJxMMqzxyzv+rFgU94UtoSXDeQqru3SItdaCE5lTslCVGWzuTWKyVOZXcwQoelXHMOguV1jiCB6cX1bDlB6+26Xd89b0+bw69/qo7BrzITXUYrT6drGDh8At7eStbvoG4EqQB2YEpLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1528TI2e; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7ea8c2b257bso1243518a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730387383; x=1730992183; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9+Zs/48FaVXp/eqwzCE2pJ2xCzbPsm8EaasLiVupl5Q=;
+        b=1528TI2eoTtvG4M1gzziguAU+ZgS2/ZKfD5D+xDGlE+KVXLuGCze6Y8GskTBwOIoPs
+         L2eUOKSUqf0+Bl1x46tdTstp/rvE2RJnhNiFCieqAi6pcw5zuUQ0/tQQls9//pD+/gGs
+         /lkpe/nvmvqCh6dHBHJxgnMEVQetYSDtCJepXwof5suCpwYh9O98mBTcjhTk0hpnLGYO
+         ei3gFuag1jtbynJRqTESvSB2u96SgHLy/DC5LI+tUKldd1KI+QPpaSK0p01eD10JYV9b
+         BK8T+mBNjYGwn2gk+oe6MdMPfk8oOkORQDYRn4lz8BBfB+0NjxxszyWVDfKwOxRxJwG1
+         arZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730387383; x=1730992183;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9+Zs/48FaVXp/eqwzCE2pJ2xCzbPsm8EaasLiVupl5Q=;
+        b=kuyO+O1awJ69X0MYBk2khKWqJQYYWKKl28AL8pP6YLkBfk0BpzayLrRetlMjSF4HdR
+         cor8XHrp1Flmgz5MzD84VlevBOi3v+AEJpt1UhWBmaw2yPDGHxT3U0gaFAHFJEfVF6wt
+         NJNNt66Q2X/6pF46ViQkKabxfzcsdxuijJ2iHt0bM7tuy0AgCGmYwSKWB0W2HsBIOtDz
+         +YKxxk9ko+shZwc65R9rYUYYmdBXN94eNqiW7oxE/LhYlgE3zuE4k1TnU60uIS3xj8Cw
+         AjQ3oA6e8MFA4fOq5c0hh0/b2h+zXzVCFIDahIKLfiOvU178ZQpHOyrI7DR0ZNz7tp0X
+         Yjtw==
+X-Gm-Message-State: AOJu0YzP8K3ZtWzkHieS6Y+HzUV4JTP+F8FJGdLrPT10p3MqPXk7UfuW
+	b9BoauE+L+wgjdEPT9THg7v3BNEGLMnr0TULeJW85zmMFL5xNs/4kyKT5OWsrCNPtrf/IyrhUKi
+	/YQ==
+X-Google-Smtp-Source: AGHT+IF/JOczwYI7vGS8c8FFUvQ0c/vYG1oRhZCez199HGcXQyWe2bFWEMmM4uHSlUiNA3nzTJH8vgPqY4s=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:d64c:b0:2e2:d879:7cfd with SMTP id
+ 98e67ed59e1d1-2e93c119cf9mr18714a91.2.1730387382024; Thu, 31 Oct 2024
+ 08:09:42 -0700 (PDT)
+Date: Thu, 31 Oct 2024 08:09:40 -0700
+In-Reply-To: <682cefa6-9a74-4b8b-97e2-38a1c58c6e72@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-To: neil.armstrong@linaro.org, Andrzej Hajda <andrzej.hajda@intel.com>,
- Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
- <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
- <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20241008171156.11972-1-suravee.suthikulpanit@amd.com> <682cefa6-9a74-4b8b-97e2-38a1c58c6e72@amd.com>
+Message-ID: <ZyOdtFzfARpJ8_fj@google.com>
+Subject: Re: [PATCH] KVM: SVM: Increase X2AVIC limit to 4096 vcpus
+From: Sean Christopherson <seanjc@google.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
+	rkrcmar@redhat.com, jon.grimm@amd.com, santosh.shukla@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hi, Dears maintainers
+On Thu, Oct 31, 2024, Suravee Suthikulpanit wrote:
+> Hi All,
+> 
+> Any concerns for this patch?
 
-On 2024/10/31 20:31, Neil Armstrong wrote:
-> On 30/10/2024 15:49, Sui Jingfeng wrote:
->> Hi,
->>
->> On 2024/10/21 21:08, Neil Armstrong wrote:
->>> Hi,
->>>
->>> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
->>>> The assignment of the of_node to the aux bridge needs to mark the
->>>> of_node as reused as well, otherwise resource providers like 
->>>> pinctrl will
->>>> report a gpio as already requested by a different device when both 
->>>> pinconf
->>>> and gpios property are present.
->>>> Fix that by using the device_set_of_node_from_dev() helper instead.
->>>>
->>>>
->>>> [...]
->>> Thanks, Applied to 
->>> https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
->>
->>
->> It's quite impolite to force push patches that still under reviewing,
->> this prevent us to know what exactly its solves.
->
-> It's quite explicit.
->
->>
->> This also prevent us from finding a better solution.
->
-> Better solution of ? This needed to be fixed and backported to stable,
+Don't know, I haven't looked closely.  I am not planning on looking at this for
+3+ weeks, as I want to sort out the KVM_CAP_MAX_VCPUS mess first[*], along with
+a multitude of other bugs/flaws in the AVIC and posted interrupt code.  I have
+crude patches, but they need changelogs and more testing; I don't expect to post
+them for at least 2 weeks.
 
-We were thinking about
-
-1) if possible to add a proper DT binding for those drives.
-
-Or alternatively, as Laurent pointed out that
-
-2) Invent some extra techniques to move the idr allocation
-    procedure back to the AUX bus core. Make the core maintained
-    device ID happens can help to reduce some boilerplate.
-
-And those really deserve yet an another deeper thinking? no?
-    
-
-> if there's desire to redesign the driver, then it should be discussed 
-> in a separate thread.
->
-No, please don't misunderstanding. We are admire your work
-and we both admit that this patch is a valid fix.
-
-But I think Johan do need more times to understand what exactly
-the real problem is. We do need times to investigate new method.
-This bug can be a good chance to verify/test new ideas,
-at the least, allow us to talk and to discussion.
-
-
->>
->>> [1/1] drm/bridge: Fix assignment of the of_node of the parent to aux 
->>> bridge
->>> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/85e444a68126a631221ae32c63fce882bb18a262
->>>
->
--- 
-Best regards,
-Sui
-
+[*] https://lore.kernel.org/all/20230815213533.548732-1-seanjc@google.com
 
