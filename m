@@ -1,81 +1,55 @@
-Return-Path: <linux-kernel+bounces-391284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E269B84BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:56:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BD79B84C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089C4B249A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC14F1C2154F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86811CCECE;
-	Thu, 31 Oct 2024 20:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6851CCB4F;
+	Thu, 31 Oct 2024 20:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UAeAbSXa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Wx4K0Qzo"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F8B1CCEF8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7181CC88C;
+	Thu, 31 Oct 2024 20:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408162; cv=none; b=kHRIL2EaNRFU2e5T5eAU2gJ31MzzOfR3kQ0LYkwATD79uFhp9C1Swya83+7rWNDdD3X6ASMsgjmPnl57yS1mXf9zpImb2oV03dlyLWKR690OfSwJ3IJ+L+DJ2Qi8cpi0Jb5Yj1c6noitUjtrQFfdSKBHLVa1vVE2PXUr1LluyJs=
+	t=1730408243; cv=none; b=PI0ZGcjGgnPvSjwcnfB1W+f6FmruvMcwLWaHSP/bb5D34olBzbrK5++h0trZiW5+rrwZ3vIIbhIvaYa9TJ9WiIDiWtjHP+xv3LTOdng/IXAHoCRRXQehkO6CBztPEokYieV2ZU5hAkWHImR01WfUP+NPidYUZ4a7Oe3moAi9hqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408162; c=relaxed/simple;
-	bh=lUSUj5gpJWH3n+nu+zbQk0I/denqmKWaKjMGJHBTETQ=;
+	s=arc-20240116; t=1730408243; c=relaxed/simple;
+	bh=QgbSe05f+ATEfG8KM30/iC/kH3Z1TSyBeQwG7cSj8Y8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hur8SVxP3/O6Ix32rTca1k3xxUREaD8/OBVALRTRV97o6C4ooeJizLLsP9Vif6aMaMK/QdmX6bLAaJpA9Grt2XuLtMfXUg2kr3xS6xAfyV2MaNVNlqHxT4V4FkzuZAb1R8v939WcvjI1E0RJWfdJUc2o5Hoqy0xJfCV6TvDLtvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UAeAbSXa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VALRcM012752
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:55:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G/GsUlv6jLw8dS2ijmCbA4pqN85zB0IfE2xsC+GERb8=; b=UAeAbSXaq0jCy6fP
-	uniAzadaIqa+xq3xwFwk5c9EzLAgHLFpBgIg2WddDNvUNN3cbsyAzSa1eD/BuFHF
-	jmMPR+q2Y65kzBhYWHPS+3REjMVnuZvMuKOvwMgO/99w/vJ3yCM0WIUk4HKAdoN7
-	Eu0cxXLtU/pwCzHHhqhU4SXklTmU3pM3ACG+ON/KiVuAvhKNmcywbBxfHGJK5Cbd
-	8vNtvUWkgLiNHsxyOiSg6nwTbjQf23DO5/IlvED5/OYTWc7mI3JWsoqim8shQsWi
-	jD0I2nSCi28lw6yuPStmk+OemJtSrQ9T8JORQqPZspY/YpVX2GTfT5jJX5Oew7G/
-	t/OSAA==
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ky6rb4kc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:55:55 +0000 (GMT)
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5ec1c46df37so186675eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:55:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408155; x=1731012955;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/GsUlv6jLw8dS2ijmCbA4pqN85zB0IfE2xsC+GERb8=;
-        b=Oqe5aPQlfof/yC1DtPpVjx/gI8rAYG5G9bKqMSeXGSgtfX91UeW6ONnAIpQYmWCNlN
-         Y2j2HbUNyZGoFGK+5I5JcIrgD8+XpIdyQxMr4/k//n8y7XsRFoox4atEOghp9YhgPwTp
-         UF0RILi9w0MWCJ7i3N+3K7ZeafqD6ZMv5tVLJqZMWK+D/9dVaWthhFwLmX6pSdO2m3Xv
-         iVtpAu/fX9WOv4MAixUWGyxW0aeG9E6AFCErg9N6346bqSnflwdw41WaWg3lWf+JdqcT
-         Oxw1n4Y6k9m7ZUUEQ5t9BVwMdoY5oDUbZFa3FovCxdzVYJQOXmd4atAw+YBFEmdLUoDP
-         AKxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyt2jOhotng6Ksp7mjdmkpB6bR9FBLTo7li3Zj4RbsRbgf4lOOX0nkP0ikXmySAvw76F57Ypr/OqX62Lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE1/XKGS/XFUn5ij+h82DO2QKt0s5qTnpQdB5GMNDHDWbUYTYI
-	AWsB4Xn6Sp2QCi9r3lGXdz5agTLImqiAuhoNVq05p6UEmYkya2LRV8E73EvPLKmRXWlNgY3uwMx
-	QaBiVl8hsRg5n3d3dtggy4VPOWyaCWGzckvECM1K+WEehUVQ7ZbDQm5jKTD8UvaE=
-X-Received: by 2002:a05:6870:8321:b0:288:4747:6904 with SMTP id 586e51a60fabf-29051d35ad1mr5245840fac.10.1730408154734;
-        Thu, 31 Oct 2024 13:55:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFcabfjV3Q8jzqGajE+yo9p1xEPEdBIKwPgoG5DN9WtHI+OBzL6cWTytYzHNOkjOm8Pdwmg8Q==
-X-Received: by 2002:a05:6870:8321:b0:288:4747:6904 with SMTP id 586e51a60fabf-29051d35ad1mr5245837fac.10.1730408154506;
-        Thu, 31 Oct 2024 13:55:54 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56681a03sm102118466b.197.2024.10.31.13.55.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 13:55:53 -0700 (PDT)
-Message-ID: <0fa67f4e-8aab-477b-9e40-065fa815696f@oss.qualcomm.com>
-Date: Thu, 31 Oct 2024 21:55:51 +0100
+	 In-Reply-To:Content-Type; b=ZgsmTGYkA3kTwduPc20+N3P5TOUq8eNdX7Gi08Dld/qzrv5XaxAsic/AoTI5GYYYaX2ArGfwn7Q/22WySeMMnQu+yA5erT65ngt69i87kpIqnOy3nxgH2M5dKZqW6/uDotiyJFHVajvh3wYzeIf9n3f4ZaCodvR+qBgMdJ5o08s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Wx4K0Qzo; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730408163; x=1731012963; i=w_armin@gmx.de;
+	bh=P4uDQWrodIz2gl730ysQ/mtbqQ2/NQw4r8MOFCBC0zw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Wx4K0QzoE45FgTZ0wWkozSHHwKOBmKtYaOYDS7FLiEx/rHr5VA0HxGBT4Nlur/yc
+	 71Q7cheKaNMY4twA4ouIek6JBElw0TS4Ql0ImbhTfGi9qvHZlh7hZg4hdwU1v78Jl
+	 QHR/PCCTbz2XQKITGg2TO2vJs2jho9N8JxZO4cEtPz5vBLWLVYUPlg620ZNPSlX+r
+	 KlxBV4SRaM6nmbvJ2YUsyj85mja2WEVzLTik1+Pat4Da0W3byE/ovuYAlVnVLt2I5
+	 A2mtkxizc6FFNAs/2Flex2tKdP/hjkl7nNSH7bJnh0MMbXKSfIoNFtfNKMMXKLWRt
+	 1DBAleBgyv6pemaehA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MeU4s-1tglqJ1MLU-00fuiy; Thu, 31
+ Oct 2024 21:56:03 +0100
+Message-ID: <9fdcfdb4-bbdd-4f6a-9a69-73dceac7b14b@gmx.de>
+Date: Thu, 31 Oct 2024 21:55:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,39 +57,341 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: Adds SPMI support
-To: Tingguo Cheng <quic_tingguoc@quicinc.com>, quic_fenglinw@quicinc.com,
-        quic_tingweiz@quicinc.com, kernel@quicinc.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
- <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-1-f0778572ee41@quicinc.com>
+Subject: Re: [PATCH v3 20/22] ACPI: platform_profile: Register class device
+ for platform profile handlers
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241031040952.109057-1-mario.limonciello@amd.com>
+ <20241031040952.109057-21-mario.limonciello@amd.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-1-f0778572ee41@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: CvLVXS9nFqEqNFM628C0itFm-FhhjAzl
-X-Proofpoint-ORIG-GUID: CvLVXS9nFqEqNFM628C0itFm-FhhjAzl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- clxscore=1015 phishscore=0 mlxscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 mlxlogscore=842 lowpriorityscore=0 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310158
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241031040952.109057-21-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HUGvg3BSIktPNY0AM823fcuE7w7XZEIY4m2FaPR6+cmAYWEI8z8
+ eEzUydwAMi5wfzDi1tt1f5Sza3kb+zAPMUjksn41u/5I126vDhWlbqkkDos4oISP4VVJHAJ
+ XTgFdxOUr8HcqUUKufyBS/s9555glhCnVico66dRTYbB5SSjsT4TbAJ8JTDv4YZTgjKfXEr
+ aYRn9MTxtsz6NhWG38sVg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PJR475ov+SI=;AQQnA4pBdgULPm7RTkSBdLQ6MwI
+ boRlOagFvlRkx8Gv8US6dY1RKwu3FpTdl0xuH5YWD+mUDUN66iVa/dBPdlZXkp9tzKDnRy+eM
+ ndFj0mbwH93F1wxHUbh56XM8MicCizjp2rqXhGp68pxwyVGS73psIFcm4BDOYSe+K1uqKzNZp
+ 9t/0S0q7HdiAb86hZ/X4ml7SCc0SQ4o7BzR1evma0WrmQl6lNX52kT0Fb1s2y7jaYs+ZgB9Jh
+ tlXsL9XORe1VOvy3pQ5MP3nRhVRENhfdeGBFQAgUFHEpbRRUq+PLYfhGCFtLfgCUaoZO8vvPt
+ 4ZFQQwBPaonN+YOOezvxH73H03V8DWYrjNYzPzioF6Ut746ijbmGqFLG81O50+H5tJPvqTLXX
+ 4DgFotd90vQ7mbcUJY4Wf8z7nsgzZ513kJEPj0nH30jp/NCM15MreCUPTS4v9ejXb2a2u7VbI
+ UAyTFE2XBTNmgPecqBHNMWawfh+H2POlwWQvcOY2mu5LXv176w8fm8YSarMSW6sPLljFYFrRN
+ 4ugjccbYkR2tNyPYnONkG+HYahZ1EV5eW2vGnmyrPYdkG6YYcqz5cxAfs/7Dme1OK0q+m1sKb
+ f+inEDBDfCGc0N1OqIH2kY3Fbfoh39VRpdIW/RHWwwjqDUhJPXmQ1+vDcy+FDtLtS39KIqEXo
+ g0kJwVRCgWFFSaPddrwL2i09zKPr382ZhZzz2SHWBwAoTVMaErjRQ3axci5CEwMF2WMUy57Gm
+ UaF0aD24PkpoBIlnZPlxXCcffCIZ77dpjqlBO4XXHqmt1CtgscuYsxhrXhNw9ld10rjiTBeiF
+ QV7IvY9gLoeyyCqDO9K46D2eL5YItzxEHfGEkPqdTG+VU=
 
-On 28.10.2024 9:03 AM, Tingguo Cheng wrote:
-> Add the SPMI bus Arbiter node for the PMIC on QCS615 platforms.
-> 
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com> ---
+Am 31.10.24 um 05:09 schrieb Mario Limonciello:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> The "platform_profile" class device has the exact same semantics as the
+> platform profile files in /sys/firmware/acpi/ but it reflects values onl=
+y
+> present for a single platform profile handler.
+>
+> The expectation is that legacy userspace can change the profile for all
+> handlers in /sys/firmware/acpi/platform_profile and can change it for
+> individual handlers by /sys/class/platform_profile/*.
+>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/acpi/platform_profile.c  | 93 ++++++++++++++++++++++++++++----
+>   include/linux/platform_profile.h |  2 +
+>   2 files changed, 85 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
+file.c
+> index 9b681884ae324..1cc8182930dde 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -24,13 +24,24 @@ static const char * const profile_names[] =3D {
+>   };
+>   static_assert(ARRAY_SIZE(profile_names) =3D=3D PLATFORM_PROFILE_LAST);
+>
+> +static DEFINE_IDR(platform_profile_minor_idr);
+> +
+> +static const struct class platform_profile_class =3D {
+> +	.name =3D "platform-profile",
+> +};
+> +
+>   static bool platform_profile_is_registered(void)
+>   {
+>   	lockdep_assert_held(&profile_lock);
+>   	return !list_empty(&platform_profile_handler_list);
+>   }
+>
+> -static unsigned long platform_profile_get_choices(void)
+> +static bool platform_profile_is_class_device(struct device *dev)
+> +{
+> +	return dev && dev->class =3D=3D &platform_profile_class;
+> +}
+> +
+> +static unsigned long platform_profile_get_choices(struct device *dev)
+>   {
+>   	struct platform_profile_handler *handler;
+>   	unsigned long aggregate =3D 0;
+> @@ -40,6 +51,9 @@ static unsigned long platform_profile_get_choices(void=
+)
+>   	list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>   		unsigned long individual =3D 0;
+>
+> +		/* if called from a class attribute then only match that one */
+> +		if (platform_profile_is_class_device(dev) && handler->dev !=3D dev->p=
+arent)
+> +			continue;
 
-Konrad
+I do not like how the sysfs attributes for the platform-profile class are =
+handled:
+
+1. We should use .dev_groups instead of manually registering the sysfs att=
+ributes.
+2. Can we name the sysfs attributes for the class a bit differently ("prof=
+ile_choices" and "profile")
+    and use separate store/show functions for those?
+3. Why do we still need platform_profile_handler_list?
+
+This would allow us to get rid of platform_profile_is_class_device().
+
+>   		for_each_set_bit(i, handler->choices, PLATFORM_PROFILE_LAST)
+>   			individual |=3D BIT(i);
+>   		if (!aggregate)
+> @@ -51,7 +65,7 @@ static unsigned long platform_profile_get_choices(void=
+)
+>   	return aggregate;
+>   }
+>
+> -static int platform_profile_get_active(enum platform_profile_option *pr=
+ofile)
+> +static int platform_profile_get_active(struct device *dev, enum platfor=
+m_profile_option *profile)
+>   {
+>   	struct platform_profile_handler *handler;
+>   	enum platform_profile_option active =3D PLATFORM_PROFILE_LAST;
+> @@ -60,6 +74,8 @@ static int platform_profile_get_active(enum platform_p=
+rofile_option *profile)
+>
+>   	lockdep_assert_held(&profile_lock);
+>   	list_for_each_entry(handler, &platform_profile_handler_list, list) {
+> +		if (platform_profile_is_class_device(dev) && handler->dev !=3D dev->p=
+arent)
+> +			continue;
+>   		err =3D handler->profile_get(handler, &val);
+>   		if (err) {
+>   			pr_err("Failed to get profile for handler %s\n", handler->name);
+> @@ -69,6 +85,10 @@ static int platform_profile_get_active(enum platform_=
+profile_option *profile)
+>   		if (WARN_ON(val >=3D PLATFORM_PROFILE_LAST))
+>   			return -EINVAL;
+>
+> +		/*
+> +		 * If the profiles are different for class devices then this must
+> +		 * show "custom" to legacy sysfs interface
+> +		 */
+>   		if (active !=3D val && active !=3D PLATFORM_PROFILE_LAST) {
+>   			*profile =3D PLATFORM_PROFILE_CUSTOM;
+>   			return 0;
+> @@ -90,7 +110,7 @@ static ssize_t platform_profile_choices_show(struct d=
+evice *dev,
+>   	int i;
+>
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock)
+> -		choices =3D platform_profile_get_choices();
+> +		choices =3D platform_profile_get_choices(dev);
+>
+>   	for_each_set_bit(i, &choices, PLATFORM_PROFILE_LAST) {
+>   		if (len =3D=3D 0)
+> @@ -113,7 +133,7 @@ static ssize_t platform_profile_show(struct device *=
+dev,
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>   		if (!platform_profile_is_registered())
+>   			return -ENODEV;
+> -		err =3D platform_profile_get_active(&profile);
+> +		err =3D platform_profile_get_active(dev, &profile);
+>   		if (err)
+>   			return err;
+>   	}
+> @@ -138,12 +158,22 @@ static ssize_t platform_profile_store(struct devic=
+e *dev,
+>   		if (!platform_profile_is_registered())
+>   			return -ENODEV;
+>
+> -		/* Check that all handlers support this profile choice */
+> -		choices =3D platform_profile_get_choices();
+> +		/* don't allow setting custom to legacy sysfs interface */
+> +		if (!platform_profile_is_class_device(dev) &&
+> +		     i =3D=3D PLATFORM_PROFILE_CUSTOM) {
+> +			pr_warn("Custom profile not supported for legacy sysfs interface\n")=
+;
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* Check that applicable handlers support this profile choice */
+> +		choices =3D platform_profile_get_choices(dev);
+>   		if (!test_bit(i, &choices))
+>   			return -EOPNOTSUPP;
+>
+>   		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+> +			if (platform_profile_is_class_device(dev) &&
+> +			    handler->dev !=3D dev->parent)
+> +				continue;
+>   			err =3D handler->profile_set(handler, i);
+>   			if (err) {
+>   				pr_err("Failed to set profile for handler %s\n", handler->name);
+> @@ -152,6 +182,9 @@ static ssize_t platform_profile_store(struct device =
+*dev,
+>   		}
+>   		if (err) {
+>   			list_for_each_entry_continue_reverse(handler, &platform_profile_han=
+dler_list, list) {
+> +				if (platform_profile_is_class_device(dev) &&
+> +				    handler->dev !=3D dev->parent)
+> +					continue;
+>   				if (handler->profile_set(handler, PLATFORM_PROFILE_BALANCED))
+>   					pr_err("Failed to revert profile for handler %s\n",
+>   					       handler->name);
+> @@ -194,11 +227,11 @@ int platform_profile_cycle(void)
+>   	int err;
+>
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> -		err =3D platform_profile_get_active(&profile);
+> +		err =3D platform_profile_get_active(NULL, &profile);
+>   		if (err)
+>   			return err;
+>
+> -		choices =3D platform_profile_get_choices();
+> +		choices =3D platform_profile_get_choices(NULL);
+>
+>   		next =3D find_next_bit_wrap(&choices,
+>   					  PLATFORM_PROFILE_LAST,
+> @@ -228,6 +261,7 @@ EXPORT_SYMBOL_GPL(platform_profile_cycle);
+>
+>   int platform_profile_register(struct platform_profile_handler *pprof)
+>   {
+> +	bool registered;
+>   	int err;
+>
+>   	/* Sanity check the profile handler */
+> @@ -250,14 +284,49 @@ int platform_profile_register(struct platform_prof=
+ile_handler *pprof)
+>   	if (cur_profile)
+>   		return -EEXIST;
+>
+> -	err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
+> +	registered =3D platform_profile_is_registered();
+> +	if (!registered) {
+> +		/* class for individual handlers */
+> +		err =3D class_register(&platform_profile_class);
+> +		if (err)
+> +			return err;
+
+Why do we need to unregister the class here? From my point of view, having=
+ a empty class if no
+platform profiles are registered is totally fine.
+
+> +		/* legacy sysfs files */
+> +		err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
+> +		if (err)
+> +			goto cleanup_class;
+> +
+> +	}
+> +
+> +	/* create class interface for individual handler */
+> +	pprof->minor =3D idr_alloc(&platform_profile_minor_idr, pprof, 0, 0, G=
+FP_KERNEL);
+> +	pprof->class_dev =3D device_create(&platform_profile_class, pprof->dev=
+,
+> +					 MKDEV(0, pprof->minor), NULL, "platform-profile-%s",
+> +					 pprof->name);
+
+I would suggest that the name of the class devices should not contain the =
+platform profile name,
+as this would mean that two platform profile handlers cannot have the same=
+ name.
+
+Maybe using "platform-profile-<minor>" would be a better solution here? Th=
+e name can instead be
+read using an additional sysfs property.
+
+Thanks,
+Armin Wolf
+
+> +	if (IS_ERR(pprof->class_dev)) {
+> +		err =3D PTR_ERR(pprof->class_dev);
+> +		goto cleanup_legacy;
+> +	}
+> +	err =3D sysfs_create_group(&pprof->class_dev->kobj, &platform_profile_=
+group);
+>   	if (err)
+> -		return err;
+> +		goto cleanup_device;
+> +
+>   	list_add_tail(&pprof->list, &platform_profile_handler_list);
+>   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>
+>   	cur_profile =3D pprof;
+>   	return 0;
+> +
+> +cleanup_device:
+> +	device_destroy(&platform_profile_class, MKDEV(0, pprof->minor));
+> +
+> +cleanup_legacy:
+> +	if (!registered)
+> +		sysfs_remove_group(acpi_kobj, &platform_profile_group);
+> +cleanup_class:
+> +	if (!registered)
+> +		class_unregister(&platform_profile_class);
+> +
+> +	return err;
+>   }
+>   EXPORT_SYMBOL_GPL(platform_profile_register);
+>
+> @@ -270,6 +339,10 @@ int platform_profile_remove(struct platform_profile=
+_handler *pprof)
+>   	cur_profile =3D NULL;
+>
+>   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> +
+> +	sysfs_remove_group(&pprof->class_dev->kobj, &platform_profile_group);
+> +	device_destroy(&platform_profile_class, MKDEV(0, pprof->minor));
+> +
+>   	if (!platform_profile_is_registered())
+>   		sysfs_remove_group(acpi_kobj, &platform_profile_group);
+>
+> diff --git a/include/linux/platform_profile.h b/include/linux/platform_p=
+rofile.h
+> index da009c8a402c9..764c4812ef759 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -30,6 +30,8 @@ enum platform_profile_option {
+>   struct platform_profile_handler {
+>   	const char *name;
+>   	struct device *dev;
+> +	struct device *class_dev;
+> +	int minor;
+>   	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>   	struct list_head list;
+>   	int (*profile_get)(struct platform_profile_handler *pprof,
 
