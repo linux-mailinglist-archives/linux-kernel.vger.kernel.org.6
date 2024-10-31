@@ -1,187 +1,139 @@
-Return-Path: <linux-kernel+bounces-391006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88099B811A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:22:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE2F9B8120
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6A11F23896
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917D51F24207
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EA01BDAAF;
-	Thu, 31 Oct 2024 17:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A86D1C3F13;
+	Thu, 31 Oct 2024 17:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BhN3a2Mk"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J4ReKVPc"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EBA19DF60;
-	Thu, 31 Oct 2024 17:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3728519DF60;
+	Thu, 31 Oct 2024 17:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730395341; cv=none; b=m2NC5KmdqNyTnEguh0Eu6p8Dg8Uo5RNNQpr2fB2l9WPTIDQKXp3LIREn6fzW+JZ2dI64jKoUfc9mhfK+B65GxTpvET03Aduej84z9xJY9ByzidYUnVV7f4uVttKsQNsH8fyipuZlEqVF21CyumNK3xDR52tEHOmDdswWERd9Iu4=
+	t=1730395408; cv=none; b=TnAnhgTeDu1kxbj8r6r8p7yuHGcZqrHm3HddBbNlQa1K2wIRo/e/xuVM7OtGDH9EAK47nY99Gmr6m1NmkuGHk8HAyUKCTSRv7RhyITabUDpjWCNV9rAzViFFj/hpFRvPY9uwy0gTwOUYt6XMhKQ9Inqo7YJnpvdIbducJ8gpoOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730395341; c=relaxed/simple;
-	bh=gi6YJqLrQqmFLpsqmUIt3UQDuJw8TObOdOH5wGU8aHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeXH9v+PsdhuvWbIYzJZ191KYemX0eJpN8q+7GrDLa1NaxoT5QgFtt7SzgL0prCmn+1/5JA6DxZrCYXG432ARPXxjrp6KD3jtLKFZYoID7kuhc4lgKZAxqe5VZnnBIDQWgmT7W0PtD8cpuUrba56tfAovE2Cv2t0XsI/KBeEDU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BhN3a2Mk; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 24E9440003;
-	Thu, 31 Oct 2024 17:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730395330;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqxtyXYvVz4SALuwZ1hNCgm2VOAHSObz6R1DC5+jyEA=;
-	b=BhN3a2MkiW4FWXUFx/nh96+EAaetep4+zHuy/pWm0Xed9dxIaviLKT7+CeNSHDYYfoR8Vh
-	OSl24Jw4aRDwcg4RBzTnonM/p8ym11XUMW2FJ689Rau9tnYyFTEKIV0U9lt+UcN8xbNdxl
-	3iAWiQJBATvq8Ry5ziTLTvsnFdPAxFcXypzlwYExabBpWWaXaSBfNlQeNs5kHOhbBqwhKy
-	6GJIT/6e7vr8NBPsYKZ1TsljjaIFfoC2plWhZW03ubQjDlxmofA1Z6ink6whWdgOH7p4Aq
-	wd/+tOPWxFs3M5KLRUfkC8Qir2Lg2Y5YwywxnyuqkhWbOkDMBJTnAIA0aIQ1bw==
-Date: Thu, 31 Oct 2024 18:22:09 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH] mfd: rtc: bd7xxxx Drop IC name from IRQ
-Message-ID: <202410311722099104e7b6@mail.local>
-References: <ZvVNCfk10ih0YFLW@fedora>
+	s=arc-20240116; t=1730395408; c=relaxed/simple;
+	bh=aCDK/sXM3SgFDux9XvTqAvGfN/okqVMFQNUlKyGIalM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LjQgo2lmXWmUSkjO3HHWtN9kDDRekSS4n0BEJ5VidFwRujO0gUbmN6sXnIamnezP+KDcHSrgVyCIefKajtn7bWXD73zWYbJfVldKYlBt5BzD+SEIQ1cbE1tXDtw49OJDrjqAO60Xts+X0RJUtJOTdo4Ej8Qhnv1eP2n9gIUi9yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=J4ReKVPc; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49VHNFuM108643;
+	Thu, 31 Oct 2024 12:23:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730395395;
+	bh=pyc5mtkPJw5E2FWifYXQA9O+3uyDDN9DH0eaPCzh9Yo=;
+	h=From:To:CC:Subject:Date;
+	b=J4ReKVPcSi8juriugwCFk22wPKkmJcKj9iLZ7oGnTFySh0KePlR0jYY9QibQBWIfS
+	 B7eKoIgFcYr003hVkn2ZNzQcnilKRVYdnZ8JLXCFAWb/C7yPYmaB1dsU/zzq6ADCrH
+	 zjg2gtAn6WkboZuf62ysmd7F/+qMdBfV6r3C99kw=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49VHNF1J057526;
+	Thu, 31 Oct 2024 12:23:15 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 31
+ Oct 2024 12:23:15 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 31 Oct 2024 12:23:15 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49VHNF3o014863;
+	Thu, 31 Oct 2024 12:23:15 -0500
+From: Judith Mendez <jm@ti.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jirislaby@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Andreas Kemnade
+	<andreas@kemnade.info>, Andrew Davis <afd@ti.com>,
+        Bin Liu <b-liu@ti.com>, Judith Mendez <jm@ti.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2] serial: 8250: omap: Move pm_runtime_get_sync
+Date: Thu, 31 Oct 2024 12:23:15 -0500
+Message-ID: <20241031172315.453750-1-jm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvVNCfk10ih0YFLW@fedora>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 26/09/2024 15:01:13+0300, Matti Vaittinen wrote:
-> A few ROHM PMICs have an RTC block which can be controlled by the
-> rtc-bd70528 driver. The RTC driver needs the alarm interrupt information
-> from the parent MFD driver. The MFD driver provides the interrupt
-> information as a set of named interrupts, where the name is of form:
-> <PMIC model>-rtc-alm-<x>, where x is an alarm block number.
-> 
-> From the RTC driver point of view it is irrelevant what the PMIC name
-> is. It is sufficient to know this is alarm interrupt for a block X. The
-> PMIC model information is carried to RTC via the platform device ID.
-> Hence, having the PMIC model in the interrupt name is only making things
-> more complex because the RTC driver needs to request differently named
-> interrupts on different PMICs, making code unnecessary complicated.
-> 
-> Simplify this slightly by always using the RTC driver name 'bd70528' as
-> the prefix for alarm interrupts, no matter what the exact PMIC model is,
-> and always request the alarm interrupts of same name no matter what the
-> PMIC model is.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Bin Liu <b-liu@ti.com>
 
-> 
-> ---
-> This contains both the RTC and MFD changes in order to not break the
-> functionality between commits to different subsystems.
-> 
-> Changes are based to stuff being merged in for v6.12-rc1. I can rebase
-> and re-spin when 6.12-rc1 is out if needed.
-> ---
->  drivers/mfd/rohm-bd71828.c | 12 ++++++------
->  drivers/rtc/rtc-bd70528.c  |  5 +----
->  2 files changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
-> index 39f7514aa3d8..738d8b3b9ffe 100644
-> --- a/drivers/mfd/rohm-bd71828.c
-> +++ b/drivers/mfd/rohm-bd71828.c
-> @@ -32,15 +32,15 @@ static struct gpio_keys_platform_data bd71828_powerkey_data = {
->  };
->  
->  static const struct resource bd71815_rtc_irqs[] = {
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC0, "bd71815-rtc-alm-0"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC1, "bd71815-rtc-alm-1"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC2, "bd71815-rtc-alm-2"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC0, "bd70528-rtc-alm-0"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC1, "bd70528-rtc-alm-1"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC2, "bd70528-rtc-alm-2"),
->  };
->  
->  static const struct resource bd71828_rtc_irqs[] = {
-> -	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC0, "bd71828-rtc-alm-0"),
-> -	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC1, "bd71828-rtc-alm-1"),
-> -	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd71828-rtc-alm-2"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC0, "bd70528-rtc-alm-0"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC1, "bd70528-rtc-alm-1"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd70528-rtc-alm-2"),
->  };
->  
->  static struct resource bd71815_power_irqs[] = {
-> diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
-> index 59b627fc1ecf..954ac4ef53e8 100644
-> --- a/drivers/rtc/rtc-bd70528.c
-> +++ b/drivers/rtc/rtc-bd70528.c
-> @@ -236,7 +236,6 @@ static int bd70528_probe(struct platform_device *pdev)
->  {
->  	struct bd70528_rtc *bd_rtc;
->  	const struct rtc_class_ops *rtc_ops;
-> -	const char *irq_name;
->  	int ret;
->  	struct rtc_device *rtc;
->  	int irq;
-> @@ -259,7 +258,6 @@ static int bd70528_probe(struct platform_device *pdev)
->  
->  	switch (chip) {
->  	case ROHM_CHIP_TYPE_BD71815:
-> -		irq_name = "bd71815-rtc-alm-0";
->  		bd_rtc->reg_time_start = BD71815_REG_RTC_START;
->  
->  		/*
-> @@ -276,7 +274,6 @@ static int bd70528_probe(struct platform_device *pdev)
->  		hour_reg = BD71815_REG_HOUR;
->  		break;
->  	case ROHM_CHIP_TYPE_BD71828:
-> -		irq_name = "bd71828-rtc-alm-0";
->  		bd_rtc->reg_time_start = BD71828_REG_RTC_START;
->  		bd_rtc->bd718xx_alm_block_start = BD71828_REG_RTC_ALM_START;
->  		hour_reg = BD71828_REG_RTC_HOUR;
-> @@ -286,7 +283,7 @@ static int bd70528_probe(struct platform_device *pdev)
->  		return -ENOENT;
->  	}
->  
-> -	irq = platform_get_irq_byname(pdev, irq_name);
-> +	irq = platform_get_irq_byname(pdev, "bd70528-rtc-alm-0");
->  
->  	if (irq < 0)
->  		return irq;
-> 
-> base-commit: abf2050f51fdca0fd146388f83cddd95a57a008d
-> -- 
-> 2.45.2
-> 
-> 
-> -- 
-> Matti Vaittinen, Linux device drivers
-> ROHM Semiconductors, Finland SWDC
-> Kiviharjunlenkki 1E
-> 90220 OULU
-> FINLAND
-> 
-> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-> Simon says - in Latin please.
-> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-> Thanks to Simon Glass for the translation =] 
+Currently in omap_8250_shutdown, the dma->rx_running flag is
+set to zero in omap_8250_rx_dma_flush. Next pm_runtime_get_sync
+is called, which is a runtime resume call stack which can
+re-set the flag. When the call omap_8250_shutdown returns, the
+flag is expected to be UN-SET, but this is not the case. This
+is causing issues the next time UART is re-opened and
+omap_8250_rx_dma is called. Fix by moving pm_runtime_get_sync
+before the omap_8250_rx_dma_flush.
 
+cc: stable@vger.kernel.org
+Fixes: 0e31c8d173ab ("tty: serial: 8250_omap: add custom DMA-RX callback")
+Signed-off-by: Bin Liu <b-liu@ti.com>
+[Judith: Add commit message]
+Signed-off-by: Judith Mendez <jm@ti.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+---
+Issue seen on am335x devices so far [0].
+The patch has been tested with sanity boot test on am335x EVM,
+am335x-boneblack and am57xx-beagle-x15.
 
+Changes since v1 RESEND:
+- Fix email header and commit description length
+- Add fixes tag, add link [0], cc stable, add kevin's reviewed-by/tested-by's
+- Separate patch from patch series [1]
 
+[0] https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1365142/am3352-resume-from-standby-problem-with-kernel-6-1-46
+
+Link to v1 RESEND:
+[1] https://lore.kernel.org/linux-omap/20241011173356.870883-1-jm@ti.com/
+---
+ drivers/tty/serial/8250/8250_omap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 88b58f44e4e97..0dd68bdbfbcf7 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -776,12 +776,12 @@ static void omap_8250_shutdown(struct uart_port *port)
+ 	struct uart_8250_port *up = up_to_u8250p(port);
+ 	struct omap8250_priv *priv = port->private_data;
+ 
++	pm_runtime_get_sync(port->dev);
++
+ 	flush_work(&priv->qos_work);
+ 	if (up->dma)
+ 		omap_8250_rx_dma_flush(up);
+ 
+-	pm_runtime_get_sync(port->dev);
+-
+ 	serial_out(up, UART_OMAP_WER, 0);
+ 	if (priv->habit & UART_HAS_EFR2)
+ 		serial_out(up, UART_OMAP_EFR2, 0x0);
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.47.0
+
 
