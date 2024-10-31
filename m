@@ -1,186 +1,229 @@
-Return-Path: <linux-kernel+bounces-390872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A679B7F7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:59:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683399B7F81
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16BFF2820B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E176A1F2552F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ABE1A3BD7;
-	Thu, 31 Oct 2024 15:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DD21A38C2;
+	Thu, 31 Oct 2024 16:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6bUhdE0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OTIATky3"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C95533F7;
-	Thu, 31 Oct 2024 15:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173DF137905
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730390388; cv=none; b=K4NFSG3kd98VSEq0pdVeFaOl/+ZTbl45weAXmnUucQc7oONteG3nZ0p7dcZ70kjPxuB3t7ZL0qPfqyvhFxXFKTHZK7/f14FpCAzxytnfltJ2XpHX0lQfLaLgAk+ikq2r4QgyOGEi4FYvPmGNtcg4FZ9ayoXPIpB9X8clClj1MR0=
+	t=1730390426; cv=none; b=W/+VHiVgTnklQFLlNjrr78bdUJIp6ZMHu8YLTTj5luA7SSlG8ri9Y960+oxhFtbs0G+rGTgjNJKKc8Yej0+wqWjZa+QvQTb2CnJu1EiGkDScMPL+atgn6xFfveuacB1vPHEfmhQyy42m/bte1IMs8bJtEoGY5+uzBC2ULzunV58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730390388; c=relaxed/simple;
-	bh=tOO12zl0RJpVtTYagj3aN+QvKwGTYQJmTPx4jLOOHxg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=g8CUDTPl7Ozk0NWli0V29/Fuh5ZYfH6H+RTCWpFmi77AhBQDvtUj0YObbY2BOjLkXkOaPFxNtrnoeYADYnRaZXJktg1+7ewfaY59fiYMST5smVQB6yk2EUkZUOR9wJa8rLroJbqebJnYkiWMAto+DORCjcXcPZRhLiL+hn1qZOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6bUhdE0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39986C567F2;
-	Thu, 31 Oct 2024 15:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730390387;
-	bh=tOO12zl0RJpVtTYagj3aN+QvKwGTYQJmTPx4jLOOHxg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=M6bUhdE0HCz29KhcwN7FyCrOPaDlO/hgxjbmkwyvWlhgaWIN/bmV+Ir6h8hh4MqI6
-	 GL368qwJzmvfyikfoK1AMuiMNdDMn/pmhMF5/x+PkWNBe82zmjmNSEnOFjJefPiSbk
-	 46Ys9Gu6yBHCatM6+6bh6znWM/eSlC1Qx8Ltb3bnADGZ/EvW3KgeGH1jbbKHJe8ex8
-	 F93AxORwrGVwX5FX6/aPTutebG5NK+y9uT3IxRj+Cgez65GffgUQUnd8XuYdGUYom6
-	 QwbN8Y0UbVR3ro71EEwxAtIySLL3HxQBcizXUW12tN7ZjCJpKzMXw8QdYZ3vNSMr/Z
-	 0+kvuL56NeZkw==
+	s=arc-20240116; t=1730390426; c=relaxed/simple;
+	bh=N037QPcNODAt+T6LQFiIHYByKbWxv8lhGI5bnvDi5rU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uYG58jMRB7iyG/jtjz0zBRlCZPobu/U6xcU6MOrOuH+xNgpHQQHH+Gyo84kJOCibRG128vfxxWdcUYHwFDlXACaJMc2fBKGjixBQkwzQADxfpPtzTduc+oEzCiQaC28gNmlOUtl4zHq/ebbelhA1VOJU8+6PuIOWsILqygqyYqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OTIATky3; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cc03b649f2so7429436d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730390423; x=1730995223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N037QPcNODAt+T6LQFiIHYByKbWxv8lhGI5bnvDi5rU=;
+        b=OTIATky3HzU2vMSlE20ODaV8aQyBXXMk+YSIBByBZ69sVGZI3qRBJ5TuS4DhEdZOS7
+         p/UKDlUvq/K2as2UvQJ8DXCAk1DsSlmBUQuIgrtyvwOrLxSCinnpM8+W7j/Jv4VPygzz
+         NdtOZzvwSrfQg4P3HjGa0ntDZ4lk7JHYEOA9IbX7BXEWvmkI7NIQ2IkOpKLmtjE3uKvz
+         wD+np0OZc+vMX6MG7wXUIoFOem4KIesCg42kL3WnTNJFilsF6YXsl2Vvs1D0xfixzJzc
+         oLXeEQdWC8eR+QQ9Dr5DTmyX6PHKU6ielD1g6a8MfTOI8WQpb2ztiDmXhNgKttpmedcL
+         uutw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730390423; x=1730995223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N037QPcNODAt+T6LQFiIHYByKbWxv8lhGI5bnvDi5rU=;
+        b=Fu7/3VnDW82lMH2VSmm65+fufFFrc1A/rkCoQcHJbat0jOKjqneoEQhoS1l/5O3+5v
+         DNqYdg2XFPUnQWv5dxoV7rse/4H0oe0fNLw8sFn4G1KVRZ9pKIj3h1EpsdnIRrzMJjRy
+         nJuVNd+W5L7knBK/79RJqqRpy3OUMmMtFpAhUujCGv1iqXqVqeNVxd9Dplm7ak8xduhh
+         9tcRxKFy08oJoioXzpvkgXnI5D3vpybj+8pdzfqxZVHKI9plJJV/bA0GNDfw6gqTJk/b
+         RwLQvWNTYYdsROS1fdEEMkYLWUY7TV+tIu9L9i6ypmChILr1BHE8SDRPmcfmxid9j1yY
+         L3KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSUoFELxvzIIzBZBZd40y17o0kOhptkRANn9bGDnQM/Z5LCAFdnzd7oOJX8C//amjswwLuVioWV1V2DUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwStuyiQPynaOZm5NTgcl61nd1T31cxDYdBp5/HL5l9z3Do+xtP
+	03LfEKnEtLSebbojkbY4k2kJ5ahdxlLlz9MTdvZERZVGW88cloyKbwL5xQugOJBQwDFrzZ7jhNI
+	/Hs3v0No7Kr4FGyMXck0ZKGeRHKKqEY0/ed6q
+X-Google-Smtp-Source: AGHT+IFOamOItuF+r4b4reM3jE9mjWoU9TWypbyuHHQFG7gxgXonzt2LCi2MPyQTtx6nlN+Wun2ISIW3fyLX+bI78hc=
+X-Received: by 2002:a05:6214:3f88:b0:6c7:5e6d:3f79 with SMTP id
+ 6a1803df08f44-6d351b2fb6dmr49677566d6.48.1730390422509; Thu, 31 Oct 2024
+ 09:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20241027001444.3233-1-21cnbao@gmail.com> <33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
+ <CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
+ <e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com> <CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
+ <852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com> <CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
+ <c76635d7-f382-433a-8900-72bca644cdaa@gmail.com> <CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
+ <20241031153830.GA799903@cmpxchg.org>
+In-Reply-To: <20241031153830.GA799903@cmpxchg.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 31 Oct 2024 08:59:46 -0700
+Message-ID: <CAJD7tkZ_xQHMoze_w3yBHgjPhQeDynJ+vWddbYKFzi2c63sT7w@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
+ for nearly full memcg
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, 
+	David Hildenbrand <david@redhat.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 17:59:43 +0200
-Message-Id: <D5A473YHVE8A.W40YN3RC5BYN@kernel.org>
-Subject: Re: [PATCH] tpm: set TPM_CHIP_FLAG_SUSPENDED early
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jerry Snitselaar" <jsnitsel@redhat.com>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- <stable@vger.kernel.org>, "Mike Seo" <mikeseohyungjin@gmail.com>, "open
- list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, "open list"
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241029223647.35209-1-jarkko@kernel.org>
- <z4ggs22bzp76ire4yecy5cehlurlcll7hrf2bx4mksebtdmcmr@hpjardr6gwib>
- <D59JAI6RR2CD.G5E5T4ZCZ49W@kernel.org>
- <iq5qsrnu4v5hvndg5hxmsplyuqqgypgzqqyfa5kzsblkvr6mua@u572yggxguez>
- <cspzjpjurwlpgd7n45mt224saf5p3dq3nrhkmhbyhmnq7iky4q@ahc66xqfnnab>
-In-Reply-To: <cspzjpjurwlpgd7n45mt224saf5p3dq3nrhkmhbyhmnq7iky4q@ahc66xqfnnab>
 
-On Thu Oct 31, 2024 at 5:28 PM EET, Jerry Snitselaar wrote:
-> On Thu, Oct 31, 2024 at 08:02:37AM -0700, Jerry Snitselaar wrote:
-> > On Thu, Oct 31, 2024 at 01:36:46AM +0200, Jarkko Sakkinen wrote:
-> > > On Wed Oct 30, 2024 at 10:09 PM EET, Jerry Snitselaar wrote:
-> > > > On Wed, Oct 30, 2024 at 12:36:47AM +0200, Jarkko Sakkinen wrote:
-> > > > > Setting TPM_CHIP_FLAG_SUSPENDED in the end of tpm_pm_suspend() ca=
-n be racy
-> > > > > according to the bug report, as this leaves window for tpm_hwrng_=
-read() to
-> > > > > be called while the operation is in progress. Move setting of the=
- flag
-> > > > > into the beginning.
-> > > > >=20
-> > > > > Cc: stable@vger.kernel.org # v6.4+
-> > > > > Fixes: 99d464506255 ("tpm: Prevent hwrng from activating during r=
-esume")
-> > > > > Reported-by: Mike Seo <mikeseohyungjin@gmail.com>
-> > > > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219383
-> > > > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > > ---
-> > > > >  drivers/char/tpm/tpm-interface.c | 4 ++--
-> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > >=20
-> > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/=
-tpm-interface.c
-> > > > > index 8134f002b121..3f96bc8b95df 100644
-> > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > @@ -370,6 +370,8 @@ int tpm_pm_suspend(struct device *dev)
-> > > > >  	if (!chip)
-> > > > >  		return -ENODEV;
-> > > > > =20
-> > > > > +	chip->flags |=3D TPM_CHIP_FLAG_SUSPENDED;
-> > > > > +
-> > > > >  	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
-> > > > >  		goto suspended;
-> > > > > =20
-> > > > > @@ -390,8 +392,6 @@ int tpm_pm_suspend(struct device *dev)
-> > > > >  	}
-> > > > > =20
-> > > > >  suspended:
-> > > > > -	chip->flags |=3D TPM_CHIP_FLAG_SUSPENDED;
-> > > > > -
-> > > > >  	if (rc)
-> > > > >  		dev_err(dev, "Ignoring error %d while suspending\n", rc);
-> > > > >  	return 0;
-> > > > > --=20
-> > > > > 2.47.0
-> > > > >=20
-> > > >
-> > > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > >=20
-> > > Thanks but I actually started to look at the function:
-> > >=20
-> > > https://elixir.bootlin.com/linux/v6.11.5/source/drivers/char/tpm/tpm-=
-interface.c#L365
-> > >=20
-> > > The absolutely safe-play way considering concurrency would be
-> > > to do tpm_try_get_ops() before checking any flags. That way
-> > > tpm_hwrng_read() is guaranteed not conflict.
-> > >=20
-> > > So the way I would fix this instead would be to (untested
-> > > wrote inline here):
-> > >=20
-> > > int tpm_pm_suspend(struct device *dev)
-> > > {
-> > > 	struct tpm_chip *chip =3D dev_get_drvdata(dev);
-> > > 	int rc =3D 0;
-> > >=20
-> > > 	if (!chip)
-> > > 		return -ENODEV;
-> > >=20
-> > > 	rc =3D tpm_try_get_ops(chip);
-> > > 	if (rc) {
-> > > 		chip->flags =3D |=3D TPM_CHIP_FLAG_SUSPENDED;
-> > > 		return rc;
-> > > 	}
-> > >=20
-> > > 	/* ... */
-> > >=20
-> > > suspended:
-> > > 	chip->flags |=3D TPM_CHIP_FLAG_SUSPENDED;
-> > > 	tpm_put_ops(chip);
-> > >=20
-> > > It does not really affect performance but guarantees that
-> > > tpm_hwrng_read() is guaranteed either fully finish or
-> > > never happens given that both sides take chip->lock.
-> > >=20
-> > > So I'll put one more round of this and then this should be
-> > > stable and fully fixed.
-> > >=20
-> > > BR, Jarkko
-> >=20
-> > Ah, yeah better to set it while it has the mutex. That should still be
-> > 'if (!rc)' after the tpm_try_get_ops() right? (I'm assuming that is jus=
-t
-> > a transcription error).
-> >=20
-> > Regards,
-> > Jerry
-> >=20
+On Thu, Oct 31, 2024 at 8:38=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
+> wrote:
 >
-> It has been a while since I've looked at TPM code. Since
-> tpm_hwrng_read doesn't check the flag with the mutex held is there a
-> point later where it will bail out if the suspend has occurred? I'm
-> wondering if the check for the suspend flag in tpm_hwrng_read should
-> be after the tpm_find_get_ops in tpm_get_random.
+> On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
+> > On Wed, Oct 30, 2024 at 2:13=E2=80=AFPM Usama Arif <usamaarif642@gmail.=
+com> wrote:
+> > > On 30/10/2024 21:01, Yosry Ahmed wrote:
+> > > > On Wed, Oct 30, 2024 at 1:25=E2=80=AFPM Usama Arif <usamaarif642@gm=
+ail.com> wrote:
+> > > >>>> I am not sure that the approach we are trying in this patch is t=
+he right way:
+> > > >>>> - This patch makes it a memcg issue, but you could have memcg di=
+sabled and
+> > > >>>> then the mitigation being tried here wont apply.
+> > > >>>
+> > > >>> Is the problem reproducible without memcg? I imagine only if the
+> > > >>> entire system is under memory pressure. I guess we would want the=
+ same
+> > > >>> "mitigation" either way.
+> > > >>>
+> > > >> What would be a good open source benchmark/workload to test withou=
+t limiting memory
+> > > >> in memcg?
+> > > >> For the kernel build test, I can only get zswap activity to happen=
+ if I build
+> > > >> in cgroup and limit memory.max.
+> > > >
+> > > > You mean a benchmark that puts the entire system under memory
+> > > > pressure? I am not sure, it ultimately depends on the size of memor=
+y
+> > > > you have, among other factors.
+> > > >
+> > > > What if you run the kernel build test in a VM? Then you can limit i=
+s
+> > > > size like a memcg, although you'd probably need to leave more room
+> > > > because the entire guest OS will also subject to the same limit.
+> > > >
+> > >
+> > > I had tried this, but the variance in time/zswap numbers was very hig=
+h.
+> > > Much higher than the AMD numbers I posted in reply to Barry. So found
+> > > it very difficult to make comparison.
+> >
+> > Hmm yeah maybe more factors come into play with global memory
+> > pressure. I am honestly not sure how to test this scenario, and I
+> > suspect variance will be high anyway.
+> >
+> > We can just try to use whatever technique we use for the memcg limit
+> > though, if possible, right?
+>
+> You can boot a physical machine with mem=3D1G on the commandline, which
+> restricts the physical range of memory that will be initialized.
+> Double check /proc/meminfo after boot, because part of that physical
+> range might not be usable RAM.
+>
+> I do this quite often to test physical memory pressure with workloads
+> that don't scale up easily, like kernel builds.
+>
+> > > >>>> - Instead of this being a large folio swapin issue, is it more o=
+f a readahead
+> > > >>>> issue? If we zswap (without the large folio swapin series) and c=
+hange the window
+> > > >>>> to 1 in swap_vma_readahead, we might see an improvement in linux=
+ kernel build time
+> > > >>>> when cgroup memory is limited as readahead would probably cause =
+swap thrashing as
+> > > >>>> well.
+>
+> +1
+>
+> I also think there is too much focus on cgroup alone. The bigger issue
+> seems to be how much optimistic volume we swap in when we're under
+> pressure already. This applies to large folios and readahead; global
+> memory availability and cgroup limits.
 
-Right, I ignored that side in v2. Yeah, I agree that in both cases
-it would be best that all checks are done when the lock is taken.
+Agreed, although the characteristics of large folios and readahead are
+different. But yeah, different flavors of the same problem.
 
-It means open-coding tpm2_get_random() but I think it is anyway
-good idea (as tpm_get_random() is meant for outside callers).
+>
+> It happens to manifest with THP in cgroups because that's what you
+> guys are testing. But IMO, any solution to this problem should
+> consider the wider scope.
 
-> Regards,
-> Jerry
++1, and I really think this should be addressed separately, not just
+rely on large block compression/decompression to offset the cost. It's
+probably not just a zswap/zram problem anyway, it just happens to be
+what we support large folio swapin for.
 
-BR, Jarkko
+>
+> > > >>> I think large folio swapin would make the problem worse anyway. I=
+ am
+> > > >>> also not sure if the readahead window adjusts on memory pressure =
+or
+> > > >>> not.
+> > > >>>
+> > > >> readahead window doesnt look at memory pressure. So maybe the same=
+ thing is being
+> > > >> seen here as there would be in swapin_readahead?
+> > > >
+> > > > Maybe readahead is not as aggressive in general as large folio
+> > > > swapins? Looking at swap_vma_ra_win(), it seems like the maximum or=
+der
+> > > > of the window is the smaller of page_cluster (2 or 3) and
+> > > > SWAP_RA_ORDER_CEILING (5).
+> > > Yes, I was seeing 8 pages swapin (order 3) when testing. So might
+> > > be similar to enabling 32K mTHP?
+> >
+> > Not quite.
+>
+> Actually, I would expect it to be...
+>
+> > > > Also readahead will swapin 4k folios AFAICT, so we don't need a
+> > > > contiguous allocation like large folio swapin. So that could be
+> > > > another factor why readahead may not reproduce the problem.
+> >
+> > Because of this ^.
+>
+> ...this matters for the physical allocation, which might require more
+> reclaim and compaction to produce the 32k. But an earlier version of
+> Barry's patch did the cgroup margin fallback after the THP was already
+> physically allocated, and it still helped.
+>
+> So the issue in this test scenario seems to be mostly about cgroup
+> volume. And then 8 4k charges should be equivalent to a singular 32k
+> charge when it comes to cgroup pressure.
+
+In this test scenario, yes, because it's only exercising cgroup
+pressure. But if we want a general solution that also addresses global
+pressure, I expect large folios to be worse because of the contiguity
+and the size (compared to default readahead window sizes). So I think
+we shouldn't only test with readahead, as it won't cover some of the
+large folio cases.
 
