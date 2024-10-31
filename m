@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-391023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DC29B8150
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:33:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E38B9B8158
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:34:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9739D1F2571F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:33:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CEF2828F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEB31C3F3B;
-	Thu, 31 Oct 2024 17:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6401BF328;
+	Thu, 31 Oct 2024 17:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mv95/J2U"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XuThTd5m"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2961BE852;
-	Thu, 31 Oct 2024 17:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5A5198A16
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730396021; cv=none; b=CzGUp+LVFMOrC03Jsktfa36EdmrN1GjrjTqrlpGnlNRnARK2egaUSFM1YIsyUP+Tx33QYLDGXfg+w4DIZd8fo47ybjZQCBDtOr15SS7sZmSTYwsbRpY8fsnvXzT8qcAU4ieBTjssv+BntjT5MvV5IY3fiPNttCqmu2Zlaz5mHnI=
+	t=1730396089; cv=none; b=XQKju34rSE6P1eLEQxG3BrFIYDv3BSc8PYgkmlalfiEeK2jFJw7gEeagKNnbrs8prYl5O+pfBfk0Q84l4AngSfdX3syMXo4QOaxL9KQG2KYGjPEfWw/gFglwAwWusKuHyaLKOxo8rwcmHj400LTCIysQivpkaFAfnZzEc7U940Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730396021; c=relaxed/simple;
-	bh=Vbdsc32eBqxITXVogf5U5CY/g1QXmPCoJar1KLiagic=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h4STJMe30+zELjV3ZwAr7RwHti40rYBXdP2+QZ5iz/uM+TGB4/6s7mSrSfHfKui50ar1l+tyoG1ZgYzO0M7H9ar7+vj0lv8rxseB8kMgS1A4RHB4AtdIfWhwEG17aBG2voC2NV1e3EZF7Vm8psA+eLuhJImFGD6yaa6eY9nJCns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mv95/J2U; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso11478605ad.2;
-        Thu, 31 Oct 2024 10:33:39 -0700 (PDT)
+	s=arc-20240116; t=1730396089; c=relaxed/simple;
+	bh=cbeHlvePxEgJXbsgXRe4qLP1Qd5zm23lX6qTD8wO/iQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUEsI9OBsX2BeBz7kZGp0fChrndSRFESmldOuhhZapriYUTOT5uDeW20wrlgvERxrhgj30+SMuiz1JfEFJq51fx5PBxxpEaq0ebVH5k0aHBQhV4xgcxQQvk+bRWXN8H95PxAJferCTVkc6cd3M0IW6eWZ7WtcfIWOKtjQIV3ZFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XuThTd5m; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1511030e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:34:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730396018; x=1731000818; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dooei+hGMSIXrRTRlmIrE2a4OrlveyYhxXQpGK2hesE=;
-        b=mv95/J2Uu8QuD/WwXtnzJmuRAeBh1nL0lHHaiTsMnVQe3QtCl5NdEYVW/mgZeL2v1F
-         vSTodQ7iYIst5DrH2YMeOF8zjfij4HPvIJwWK/Z4XHAXfe/HnyCkKEJZws9B+I9semoD
-         ++3IodbY5T+i4qBi5iWtIxr1izNRoT2K+AF7b51/b59j10VUY/Te3vStRNW2gapnTyvb
-         0zWsnH1sFX9hTpGjaL4+BOlxws8a/8fqxXDv1TtfO4dIfmHVUp7/YZO5Fj101hI/ywm0
-         8IUQkgbNj0ryEVz4fXyf/rHXPjPdfsQotIA9Ens6E3KAjrLuVCKC6p54LSGktjoigZC0
-         X6Fw==
+        d=linaro.org; s=google; t=1730396086; x=1731000886; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fgyIh7I+uF+AidcQv9WavMCfOun0eWZrIXu6HKkgwI0=;
+        b=XuThTd5mIVhNtI5FPsxUVJeBmNlydpH937ZLsH8Ef0erRd5JIWqCwMqe3Du3hc8Q9Z
+         gdTzUVngScNPTRJskXyUsizbvQYzRw38JYD7O6JtMf5N8XIrO6E7Iwi1mVvlsmTiVyTo
+         doK4Dvy3uHICwzHGwmJOAuTZzqaLLBIw6GR7dCePTqP2IDIovt4WYkgQwtP4+EjetMYq
+         AaclW/hyn3uS6Q3o2T65BbBd3ruW/TVmmqMoVfklFCR0MnyLb+DAiGo9XyLEIn6aKdQS
+         XX7ke7FapJyGsNiZ/XknfyEHThbLdwIWiC7HLY62n7pV/bcRdjnPcuqt94iwBQU/3Bnl
+         5X7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730396018; x=1731000818;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dooei+hGMSIXrRTRlmIrE2a4OrlveyYhxXQpGK2hesE=;
-        b=EqVRIC9DvrIRIULPwrjoNFyHrLB7tfc719pm8Mr1kybHqjdYCxDzjdgv49RhL1+U5r
-         UyKe3as+xBBfLHUfZmmVnWLawrmO7r7uHqRtTwZQAG1cY3m7RMACHYkKL7wZ2MiXDwHV
-         +qQcLPQt8IAJ2fgQYrh3xATTKbqr4nW0prepTOiKDcmIaicy3Laru69x2FrERZqlLLg2
-         8JuliTDvVsklow4R9PZvcHYokoBSaXOLTOp5/ubaFmVYBCpNhfXkd9kXVxg6OfkthyBY
-         rmidRz2idQe/o1YrFXYtgpz98SQS5SQlqPR4WWO9LqEs1NmURHpuk9fyrPOn2E2PSqdj
-         Gh6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWWnctZgdY3G/myLC034ppJgkeQu6TG+0qN9jXPmSuKZDBoxA4MzWyhVDctcPBt1Lvzquofim6S+M26XI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYWQCOA1MZcMSehkyTCB5efeDtXvOWbOls9l5rcwV0u1WHHrWQ
-	LR10aM+tBWFhRYoBrGnglqdXJqqfQkcIw927IzcievMQ8FZzQEUMHIVimw==
-X-Google-Smtp-Source: AGHT+IHY2s86obO7paaXBVSJ3UsVQxUlMW+Tw2cHQxG/WIGb2eBSJGgB2phmWjClRUA7DK6j8AAQ6g==
-X-Received: by 2002:a17:903:2a90:b0:20c:79f1:feba with SMTP id d9443c01a7336-210c68784femr249600915ad.2.1730396017971;
-        Thu, 31 Oct 2024 10:33:37 -0700 (PDT)
-Received: from eldorado.. (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a7522sm10987315ad.156.2024.10.31.10.33.36
+        d=1e100.net; s=20230601; t=1730396086; x=1731000886;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fgyIh7I+uF+AidcQv9WavMCfOun0eWZrIXu6HKkgwI0=;
+        b=Ylv00kSVfU0RpGIxBHYUAHJ18Aq+Pj4/AeNKd1nONAtiReycx1R1XvGs7Bralljtkl
+         e3tnMHT/GpQDnyVtutf4Jhxg7X3rjMLhzmcLeqRg9DLDn8ShzJEQypRS8Rrw8bcBBrGj
+         bktaTBL2CAR80Yw6fFsZpdH3mdf/wjWm6VxCdCYCF5HyeH0NZ8xGczMlW98uUTNEXvLG
+         cW4LZgLD3FrfLQ1TRmHegNGxOntrbOPfCDj8AQHDFouUQ8YrbTddj5qJX+iTaR9mIE/5
+         8qP8oeXyMnd6egQDuejvORa0ObYV/Ih4gXHnWLnbupvydCZOGV/VqPGYaz3MuXAiTwcr
+         D4Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXFaTPwUEleGMpB4gWpPEPa9kpjn3YLHFJQZtk3c0RgfxM6FpAWJthmaeDM3sE4o/osbaQFbaUUQm42Omw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKScCMYWpMRn6JXBfge3XJpk0vCKZQQM5sigzqpNt49Kygj32a
+	Ts1umoZ4yE/1eaBhxRU4gM/mROXPQG7/UCTtF3bbJ+v0Qe6LdpNhMvumo173zh4=
+X-Google-Smtp-Source: AGHT+IEm54sjQQUUKBLUvmio+DiC1Z3Eoj2tBNEMV9t8/e5e/FsejRhG4++UnStFvHO5bn0kkfgjqw==
+X-Received: by 2002:a05:6512:3e26:b0:539:fbfe:418f with SMTP id 2adb3069b0e04-53b348deb5fmr11781880e87.32.1730396085526;
+        Thu, 31 Oct 2024 10:34:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc959e0sm272433e87.9.2024.10.31.10.34.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 10:33:37 -0700 (PDT)
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	olteanv@gmail.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net v2] MAINTAINERS: Remove self from DSA entry
-Date: Thu, 31 Oct 2024 10:33:29 -0700
-Message-ID: <20241031173332.3858162-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 31 Oct 2024 10:34:44 -0700 (PDT)
+Date: Thu, 31 Oct 2024 19:34:41 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: interrupt-controller: qcom,pdc: Add
+ SAR2130P compatible
+Message-ID: <t2trcojqskryzbuh6cbuqev35eioduarneskwtcm5aeeqlvbkv@3kj4x36ebkqk>
+References: <20241017-sar2130p-pdc-v1-1-cf9ccd9c37da@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017-sar2130p-pdc-v1-1-cf9ccd9c37da@linaro.org>
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-Changes in v2:
+On Thu, Oct 17, 2024 at 09:13:01PM +0300, Dmitry Baryshkov wrote:
+> Document compatible for PDC interrupt controller on SAR2130P platform.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-- add self to CREDITS
+Gracious ping, the patch has been acked by DT maintainers, but is still
+not present in linux-next and got no other reviews.
 
- CREDITS     | 4 ++++
- MAINTAINERS | 1 -
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Krzysztof mentioned that the patch should be picked up by Bjorn, but all
+previous patches for PDC schema were picked up by Rob Herring or by Marc
+Zyngier (and one stray patch was picked up by Linus Walleij).
 
-diff --git a/CREDITS b/CREDITS
-index 63f53feefa0a..96660c63f5b9 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -1204,6 +1204,10 @@ S: Dreisbachstrasse 24
- S: D-57250 Netphen
- S: Germany
- 
-+N: Florian Fainelli
-+E: f.fainelli@gmail.com
-+D: DSA
-+
- N: Rik Faith
- E: faith@acm.org
- D: Future Domain TMC-16x0 SCSI driver (author)
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6880a8fac74c..b59ee664f6d2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16024,7 +16024,6 @@ F:	drivers/net/wireless/
- 
- NETWORKING [DSA]
- M:	Andrew Lunn <andrew@lunn.ch>
--M:	Florian Fainelli <f.fainelli@gmail.com>
- M:	Vladimir Oltean <olteanv@gmail.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/dsa/
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> index b1ea08a41bb0c369985c5f2d5b4c4644367a88dd..a54da66a89e73212f7b965997dc487d9f0d421b0 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> @@ -29,6 +29,7 @@ properties:
+>            - qcom,qdu1000-pdc
+>            - qcom,sa8255p-pdc
+>            - qcom,sa8775p-pdc
+> +          - qcom,sar2130p-pdc
+>            - qcom,sc7180-pdc
+>            - qcom,sc7280-pdc
+>            - qcom,sc8180x-pdc
+> 
+> ---
+> base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+> change-id: 20241017-sar2130p-pdc-18d3f08abdbe
+> 
+> Best regards,
+> -- 
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
