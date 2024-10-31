@@ -1,87 +1,179 @@
-Return-Path: <linux-kernel+bounces-389759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D816B9B70D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:03:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CC99B70DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0401F21F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19A028397F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B19B3D6A;
-	Thu, 31 Oct 2024 00:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8413ECF;
+	Thu, 31 Oct 2024 00:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLxIo+Dp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="aYcRNT3l"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2D123A9;
-	Thu, 31 Oct 2024 00:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88CE1E871;
+	Thu, 31 Oct 2024 00:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730332988; cv=none; b=s0Jir0qP5eZo2h+lCVrtZbj/nLc9U6a/eUFCiE7MejPY9JdiZNQ7AhUVkiOc6BsFtKtqposSO+sOJmK839aufkTwcXnS+T/bm+VjcJfw76gOsYgqW2kfWVmmej4fb1kIpcRnlHJLC9ockY23heb01XMrNX8mv11/UHj6V/JDbt8=
+	t=1730333027; cv=none; b=b0JLm7RRRW6infKdshS/DEO8j1jWTtRiMgZqlZJCwSEGA1RoqV5qWrov/r5J3ld99w0yf7otZrBfWy2poOQiQRgIyvXqyQZXuG7O3kUSrZ48zDaJHlsgYAdDKUIarSbbSIqN+b/JVQ9TfcRUQdollzYr5l5dtRBOyO298MfLEpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730332988; c=relaxed/simple;
-	bh=CikwB/NrQnzTildOznPfkOjL6oOkxT3+G4YQT0qeZRI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=rq6X+EM8CL4HF+NPAM5Dzz5fivHnDkz8sobczFuwQ2lCBURgrGRgbe6Wce9RTCpzYyctNThcKIk0IusQ4FQ4fIZnYm5drCqPOafFzsW1zoveVPKsBkZmlCbzCXAOEVNoG5GmY0uWtl+BXxg6gsJ0mJ8lTMrjCUzVTchfW/S+WpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLxIo+Dp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A61CC4CECE;
-	Thu, 31 Oct 2024 00:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730332988;
-	bh=CikwB/NrQnzTildOznPfkOjL6oOkxT3+G4YQT0qeZRI=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=NLxIo+DpSSnW9OBIl9NeZHOUFuU1xSKFpCGbwFMwmkADoTzWYyJM6yo2yxJ3pn0MD
-	 q81tkzty3nJKy1yQqP0jX4FjuwRgItyHunBgRypEP28J8iPHNVB7RI4FqHo9KjpPdt
-	 YCCr5B6DipnsAhwzpIfdIHaDlEnJMdrsvLHUgfABUVvJVplJ8K8yvHTgsPTwF49NcB
-	 yEkqdNfXjn+63fbN7DpTu+bx194Eb/3Iy/4v8MpFf5wBwNnFnFyvOHnijvW7sFP6wB
-	 KfrUAyc/+pX6269PgRIag1H8NXSYqw1O9WrcoGWxwWCWgM8wTGCHn6fcvzmB89/UlY
-	 1atB+PI+o47Zw==
+	s=arc-20240116; t=1730333027; c=relaxed/simple;
+	bh=xc5ZhhXo/gWIrs2j2AOR39cKfT8DQtAKCu+KIkXurXA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SyilFSLySRGoWxBHSRWE0SQP9AjWLFyDBD4ml8A3iPjU/vpNNpkyqIWBm88trJkYOBjgf8xS2PQmYN/jJy5jHdv3bBNTSHY+sCHlHCiZgdT+4N9mjP4q25q59Cc2U19StLH5stCXznFBiBL+Bs8Nfh2ZqXRZFto5siO2jv15Nns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=aYcRNT3l; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1730333022;
+	bh=xc5ZhhXo/gWIrs2j2AOR39cKfT8DQtAKCu+KIkXurXA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=aYcRNT3lml8xgiJsfP5jRciAzTh4OloBLCinNRvj569OU5RdJfXowZFVzIuxPymyh
+	 RDyrevHTnjTJ27lML1OaqXBxhdpzO6iCkf51kyw0Xud2/IVdQc81CDzB+eMS3p/pIP
+	 IflWDu4NJdcO42e0vHX6GKO9Mo5c5cGQxGuKbyG7wfRJuwWo/pT0oZRrmrRZBtZVtj
+	 s7LIXLmO4/zDPohg6NCujM75c6Rv5/xxRh6DXlC4IZKGXMKHVzZ7fQ0zRxDVNhq8gx
+	 SQ156ib5ANwcNM/4P+Y/GdzFmtRV3EN3SUhkNNT4URKk1qql2X71b6dfx9OabDTHjs
+	 062bpRRwDEvaQ==
+Received: from [192.168.68.112] (ppp14-2-95-239.adl-apt-pir-bras31.tpg.internode.on.net [14.2.95.239])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 2BCE06A536;
+	Thu, 31 Oct 2024 08:03:41 +0800 (AWST)
+Message-ID: <f7148ed6d4ef835d60fd1aa7141b5f0a9cb69eff.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 2/2] watchdog: aspeed: Add support for SW restart
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, patrick@stwcx.xyz, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
+ wim@linux-watchdog.org, linux@roeck-us.net,
+ linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org,  linux-watchdog@vger.kernel.org
+Cc: Peter.Yin@quantatw.com, Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
+  DELPHINE_CHIU@wiwynn.com, bmc-sw@aspeedtech.com,
+ chnguyen@amperecomputing.com
+Date: Thu, 31 Oct 2024 10:33:40 +1030
+In-Reply-To: <20241030104717.168324-3-chin-ting_kuo@aspeedtech.com>
+References: <20241030104717.168324-1-chin-ting_kuo@aspeedtech.com>
+	 <20241030104717.168324-3-chin-ting_kuo@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 02:03:03 +0200
-Message-Id: <D59JUMVCDKC8.2ML39QBA5R5MG@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, <linux@treblig.org>,
- <dhowells@redhat.com>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: Remove unused asymmetric_keys functions
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241022002434.302518-1-linux@treblig.org>
- <D54YPO281JW8.SC38DUD3YEQX@kernel.org>
-In-Reply-To: <D54YPO281JW8.SC38DUD3YEQX@kernel.org>
+MIME-Version: 1.0
 
-On Fri Oct 25, 2024 at 5:38 PM EEST, Jarkko Sakkinen wrote:
-> On Tue Oct 22, 2024 at 3:24 AM EEST, linux wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >
-> > encrypt_blob(), decrypt_blob() and create_signature() were some of the
-> > functions added in 2018 by
-> > commit 5a30771832aa ("KEYS: Provide missing asymmetric key subops for n=
-ew
-> > key type ops [ver #2]")
-> > however, they've not been used.
-> >
-> > Remove them.
-> >
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
->
-> LGTM, thanks.
->
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+T24gV2VkLCAyMDI0LTEwLTMwIGF0IDE4OjQ3ICswODAwLCBDaGluLVRpbmcgS3VvIHdyb3RlOgo+
+IFNpbmNlIEFTVDI2MDAsIGV4Y2VwdCBmb3IgSFcgV0RUIGNvdW50ZXIgdGltZW91dCwgSFcgV0RU
+Cj4gcmVzZXQgY2FuIGFsc28gYmUgdHJpZ2dlcmVkIGJ5IGp1c3QgY2luZmlndXJpbmcgc29tZQo+
+IEhXIHJlZ2lzdGVycyBieSBTVyBkaXJlY3RseS4gV2UgbmFtZWQgaXQgIlNXIHJlc3RhcnQiLgo+
+IEFsdGhvdWdoIGl0IGlzICJTVyIgcmVzdGFydCwgaXRzIG1lY2hhbmlzbSBpcyBpbXBsZW1lbnRl
+ZAo+IGJ5IEhXLgo+IAo+IE9yaWdpbmFsbHksIHN5c3RlbSBjYW4gb25seSBrbm93IGl0IGlzIHJl
+c2V0IGJ5IFdEVAo+IHRocm91Z2ggYSByZXNldCBmbGFnLiBIb3dldmVyLCBzaW5jZSBBU1QyNjAw
+LCBTVyBjYW4KPiB0cmlnZ2VyIHRoZSByZXNldCBldmVudCBjb25zY2lvdXNseSBhbmQgZGlyZWN0
+bHkgd2l0aG91dAo+IHdhaXQgZm9yIFdEVCB0aW1lb3V0LiBXRFQgY291bnRlciBpcyBub3QgZW5h
+YmxlZCB3aGVuCj4gU1cgcmVzdGFydCBpcyBhZG9wdGVkLiBBZnRlciB0aGF0LCBhbiBpbmRlcGVu
+ZGVudCByZXNldAo+IGV2ZW50IGZsYWcgd2lsbCBiZSBzZXQgYWZ0ZXIgc3lzdGVtaXMgcmVzZXQg
+YnkgU1cuCj4gCj4gU2lnbmVkLW9mZi1ieTogQ2hpbi1UaW5nIEt1byA8Y2hpbi10aW5nX2t1b0Bh
+c3BlZWR0ZWNoLmNvbT4KPiAtLS0KPiDCoGRyaXZlcnMvd2F0Y2hkb2cvYXNwZWVkX3dkdC5jIHwg
+NDAKPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+IMKgMSBmaWxlIGNoYW5n
+ZWQsIDQwIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy93YXRjaGRvZy9h
+c3BlZWRfd2R0LmMKPiBiL2RyaXZlcnMvd2F0Y2hkb2cvYXNwZWVkX3dkdC5jCj4gaW5kZXggYWRk
+NzZiZTNlZTQyLi4xZTk4MDhkNDIwMjMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy93YXRjaGRvZy9h
+c3BlZWRfd2R0LmMKPiArKysgYi9kcml2ZXJzL3dhdGNoZG9nL2FzcGVlZF93ZHQuYwo+IEBAIC00
+Miw2ICs0Miw5IEBAIE1PRFVMRV9QQVJNX0RFU0Mobm93YXlvdXQsICJXYXRjaGRvZyBjYW5ub3Qg
+YmUKPiBzdG9wcGVkIG9uY2Ugc3RhcnRlZCAoZGVmYXVsdD0iCj4gwqAKPiDCoCNkZWZpbmUgV0RU
+X1JFR19PRkZTRVRfTUFTS8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDB4MDAwMDBmZmYKPiDCoAo+
+ICsvKiBXRFQgYmVoYXZpb3IgY29udHJvbCBmbGFnICovCj4gKyNkZWZpbmUgV0RUX1JFU1RBUlRf
+U1lTVEVNX1NXX1NVUFBPUlTCoMKgMHgwMDAwMDAwMQo+ICsKPiDCoHN0cnVjdCBhc3BlZWRfd2R0
+X3NjdSB7Cj4gwqDCoMKgwqDCoMKgwqDCoGNvbnN0IGNoYXIgKmNvbXBhdGlibGU7Cj4gwqDCoMKg
+wqDCoMKgwqDCoHUzMiByZXNldF9zdGF0dXNfcmVnOwo+IEBAIC01NSw2ICs1OCw3IEBAIHN0cnVj
+dCBhc3BlZWRfd2R0X2NvbmZpZyB7Cj4gwqDCoMKgwqDCoMKgwqDCoHUzMiBpcnFfc2hpZnQ7Cj4g
+wqDCoMKgwqDCoMKgwqDCoHUzMiBpcnFfbWFzazsKPiDCoMKgwqDCoMKgwqDCoMKgdTMyIHJlZ19z
+aXplOwo+ICvCoMKgwqDCoMKgwqDCoHUzMiBmbGFnczsKCldoeSBhZGQgdGhlIGZsYWdzIG1lbWJl
+ciByYXRoZXIgdGhhbiBjaGFuZ2UgdGhlIHJlc3RhcnQgY2FsbGJhY2sgZm9yCnRoZSAyNjAwPyBU
+aGUgbGF0dGVyIHNlZW1zIG1vcmUgZGlyZWN0IHRvIG1lLgoKPiDCoMKgwqDCoMKgwqDCoMKgc3Ry
+dWN0IGFzcGVlZF93ZHRfc2N1IHNjdTsKPiDCoH07Cj4gwqAKPiBAQCAtNzEsNiArNzUsNyBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IGFzcGVlZF93ZHRfY29uZmlnCj4gYXN0MjQwMF9jb25maWcgPSB7
+Cj4gwqDCoMKgwqDCoMKgwqDCoC5pcnFfc2hpZnQgPSAwLAo+IMKgwqDCoMKgwqDCoMKgwqAuaXJx
+X21hc2sgPSAwLAo+IMKgwqDCoMKgwqDCoMKgwqAucmVnX3NpemUgPSAweDIwLAo+ICvCoMKgwqDC
+oMKgwqDCoC5mbGFncyA9IDAsCj4gwqDCoMKgwqDCoMKgwqDCoC5zY3UgPSB7Cj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAuY29tcGF0aWJsZSA9ICJhc3BlZWQsYXN0MjQwMC1zY3Ui
+LAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLnJlc2V0X3N0YXR1c19yZWcgPSBB
+U1QyNDAwX1NDVV9TWVNfUkVTRVRfU1RBVFVTLAo+IEBAIC04NSw2ICs5MCw3IEBAIHN0YXRpYyBj
+b25zdCBzdHJ1Y3QgYXNwZWVkX3dkdF9jb25maWcKPiBhc3QyNTAwX2NvbmZpZyA9IHsKPiDCoMKg
+wqDCoMKgwqDCoMKgLmlycV9zaGlmdCA9IDEyLAo+IMKgwqDCoMKgwqDCoMKgwqAuaXJxX21hc2sg
+PSBHRU5NQVNLKDMxLCAxMiksCj4gwqDCoMKgwqDCoMKgwqDCoC5yZWdfc2l6ZSA9IDB4MjAsCj4g
+K8KgwqDCoMKgwqDCoMKgLmZsYWdzID0gMCwKPiDCoMKgwqDCoMKgwqDCoMKgLnNjdSA9IHsKPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC5jb21wYXRpYmxlID0gImFzcGVlZCxhc3Qy
+NTAwLXNjdSIsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAucmVzZXRfc3RhdHVz
+X3JlZyA9IEFTVDI0MDBfU0NVX1NZU19SRVNFVF9TVEFUVVMsCj4gQEAgLTk5LDYgKzEwNSw3IEBA
+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgYXNwZWVkX3dkdF9jb25maWcKPiBhc3QyNjAwX2NvbmZpZyA9
+IHsKPiDCoMKgwqDCoMKgwqDCoMKgLmlycV9zaGlmdCA9IDAsCj4gwqDCoMKgwqDCoMKgwqDCoC5p
+cnFfbWFzayA9IEdFTk1BU0soMzEsIDEwKSwKPiDCoMKgwqDCoMKgwqDCoMKgLnJlZ19zaXplID0g
+MHg0MCwKPiArwqDCoMKgwqDCoMKgwqAuZmxhZ3MgPSBXRFRfUkVTVEFSVF9TWVNURU1fU1dfU1VQ
+UE9SVCwKPiDCoMKgwqDCoMKgwqDCoMKgLnNjdSA9IHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoC5jb21wYXRpYmxlID0gImFzcGVlZCxhc3QyNjAwLXNjdSIsCj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAucmVzZXRfc3RhdHVzX3JlZyA9IEFTVDI2MDBfU0NVX1NZ
+U19SRVNFVF9TVEFUVVMsCj4gQEAgLTEzNiw2ICsxNDMsMTEgQEAgTU9EVUxFX0RFVklDRV9UQUJM
+RShvZiwgYXNwZWVkX3dkdF9vZl90YWJsZSk7Cj4gwqAjZGVmaW5lwqDCoCBXRFRfQ0xFQVJfVElN
+RU9VVF9BTkRfQk9PVF9DT0RFX1NFTEVDVElPTsKgwqDCoMKgQklUKDApCj4gwqAjZGVmaW5lIFdE
+VF9SRVNFVF9NQVNLMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMHgxYwo+IMKgI2Rl
+ZmluZSBXRFRfUkVTRVRfTUFTSzLCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDB4MjAK
+PiArI2RlZmluZSBXRFRfU1dfUkVTRVRfQ1RSTMKgwqDCoMKgwqDCoDB4MjQKPiArI2RlZmluZcKg
+wqAgV0RUX1NXX1JFU0VUX0NPVU5UX0NMRUFSwqDCoMKgwqDCoDB4REVBRERFQUQKPiArI2RlZmlu
+ZcKgwqAgV0RUX1NXX1JFU0VUX0VOQUJMRcKgwqAweEFFRURGMTIzCj4gKyNkZWZpbmUgV0RUX1NX
+X1JFU0VUX01BU0sxwqDCoMKgwqDCoDB4MjgKPiArI2RlZmluZSBXRFRfU1dfUkVTRVRfTUFTSzLC
+oMKgwqDCoMKgMHgyYwo+IMKgCj4gwqAvKgo+IMKgICogV0RUX1JFU0VUX1dJRFRIIGNvbnRyb2xz
+IHRoZSBjaGFyYWN0ZXJpc3RpY3Mgb2YgdGhlIGV4dGVybmFsCj4gcHVsc2UgKGlmCj4gQEAgLTI1
+NSwxMCArMjY3LDMxIEBAIHN0YXRpYyBpbnQgYXNwZWVkX3dkdF9zZXRfcHJldGltZW91dChzdHJ1
+Y3QKPiB3YXRjaGRvZ19kZXZpY2UgKndkZCwKPiDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIDA7Cj4g
+wqB9Cj4gwqAKPiArc3RhdGljIHZvaWQgYXNwZWVkX3dkdF9zd19yZXNldChzdHJ1Y3Qgd2F0Y2hk
+b2dfZGV2aWNlICp3ZGQpCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgYXNwZWVkX3dkdCAq
+d2R0ID0gdG9fYXNwZWVkX3dkdCh3ZGQpOwo+ICvCoMKgwqDCoMKgwqDCoHUzMiBjdHJsID0gV0RU
+X0NUUkxfUkVTRVRfTU9ERV9TT0MgfAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIFdEVF9DVFJMX1JFU0VUX1NZU1RFTTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgd3JpdGVsKGN0
+cmwsIHdkdC0+YmFzZSArIFdEVF9DVFJMKTsKPiArwqDCoMKgwqDCoMKgwqB3cml0ZWwoV0RUX1NX
+X1JFU0VUX0NPVU5UX0NMRUFSLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3ZHQtPmJh
+c2UgKyBXRFRfU1dfUkVTRVRfQ1RSTCk7Cj4gK8KgwqDCoMKgwqDCoMKgd3JpdGVsKFdEVF9TV19S
+RVNFVF9FTkFCTEUsIHdkdC0+YmFzZSArIFdEVF9TV19SRVNFVF9DVFJMKTsKPiArCj4gK8KgwqDC
+oMKgwqDCoMKgLyogc3lzdGVtIG11c3QgYmUgcmVzZXQgaW1tZWRpYXRlbHkgKi8KPiArwqDCoMKg
+wqDCoMKgwqBtZGVsYXkoMTAwMCk7Cj4gK30KPiArCj4gwqBzdGF0aWMgaW50IGFzcGVlZF93ZHRf
+cmVzdGFydChzdHJ1Y3Qgd2F0Y2hkb2dfZGV2aWNlICp3ZGQsCj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBsb25nIGFj
+dGlvbiwgdm9pZCAqZGF0YSkKPiDCoHsKPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IGFzcGVlZF93
+ZHQgKndkdCA9IHRvX2FzcGVlZF93ZHQod2RkKTsKPiArwqDCoMKgwqDCoMKgwqBjb25zdCBzdHJ1
+Y3QgYXNwZWVkX3dkdF9jb25maWcgKmNmZyA9IHdkdC0+Y2ZnOwo+ICsKPiArwqDCoMKgwqDCoMKg
+wqBpZiAoY2ZnLT5mbGFncyAmIFdEVF9SRVNUQVJUX1NZU1RFTV9TV19TVVBQT1JUKSB7Cj4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGFzcGVlZF93ZHRfc3dfcmVzZXQod2RkKTsKPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIDA7Cj4gK8KgwqDCoMKgwqDCoMKg
+fQo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoHdkdC0+Y3RybCAmPSB+V0RUX0NUUkxfQk9PVF9TRUNP
+TkRBUlk7Cj4gwqDCoMKgwqDCoMKgwqDCoGFzcGVlZF93ZHRfZW5hYmxlKHdkdCwgMTI4ICogV0RU
+X1JBVEVfMU1IWiAvIDEwMDApOwo+IEBAIC01MjksNiArNTYyLDEzIEBAIHN0YXRpYyBpbnQgYXNw
+ZWVkX3dkdF9wcm9iZShzdHJ1Y3QKPiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKG5yc3RtYXNrID4gMSkK
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgd3JpdGVsKHJlc2V0X21hc2tbMV0sIHdkdC0+YmFzZSArCj4gV0RUX1JFU0VUX01B
+U0syKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiArCj4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmICh3ZHQtPmNmZy0+ZmxhZ3MgJiBXRFRfUkVTVEFSVF9T
+WVNURU1fU1dfU1VQUE9SVCkKClRoaXMgY29uZGl0aW9uIGNvdWxkIGJlIGEgbWF0Y2ggYWdhaW5z
+dCB0aGUgY29tcGF0aWJsZSBpZiB5b3UgZHJvcCB0aGUKZmxhZ3MgbWVtYmVyLgoKT3IsIGFzc3Vt
+aW5nIHRoZSBzb2Z0d2FyZSByZXNldCBtYXNrcyBhcmUgbm90IGFkanVzdGVkIGVsc2V3aGVyZSwg
+bW92ZQp0aGUgY29waWVzIGJlbG93IGludG8gdGhlIGFzdDI2MDAtc3BlY2lmaWMgcmVzdGFydCBj
+YWxsYmFjawppbXBsZW1lbnRhdGlvbj8KCkFuZHJldwoKPiB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZWcgPSByZWFkbCh3ZHQtPmJhc2UgKyBXRFRf
+UkVTRVRfTUFTSzEpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgd3JpdGVsKHJlZywgd2R0LT5iYXNlICsgV0RUX1NXX1JFU0VUX01BU0sxKTsKPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9IHJlYWRsKHdk
+dC0+YmFzZSArIFdEVF9SRVNFVF9NQVNLMik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqB3cml0ZWwocmVnLCB3ZHQtPmJhc2UgKyBXRFRfU1dfUkVTRVRf
+TUFTSzIpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gwqDCoMKgwqDCoMKg
+wqDCoH0KPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqBpZiAoIW9mX3Byb3BlcnR5X3JlYWRfdTMyKG5w
+LCAiYXNwZWVkLGV4dC1wdWxzZS1kdXJhdGlvbiIsCj4gJmR1cmF0aW9uKSkgewoK
 
-Herbert, would you mind picking this up for you future crypto PR? I took
-by "mistake/reflex" to my master unintentionally.
-
-BR, Jarkko
 
