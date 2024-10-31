@@ -1,154 +1,92 @@
-Return-Path: <linux-kernel+bounces-391446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5B39B86FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:19:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FDB9B8700
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:19:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AD861C21873
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:19:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BE71C214ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4101E376F;
-	Thu, 31 Oct 2024 23:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEEF1E283F;
+	Thu, 31 Oct 2024 23:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="VK+zG2Aq"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DFj5fcrw"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC001CC8B7;
-	Thu, 31 Oct 2024 23:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E3E1DFD81;
+	Thu, 31 Oct 2024 23:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416763; cv=none; b=FvhySmAh0IdLzdvohVwUsnEnS2u9OwhalGW/5btrXLYJnXKb0niUoobNLvohJ+RdDH3ygT++6QqX6K3SKXIhVpIXAtakNlWV0B3AezPC+wJIzI8Th2JKanTNKjEKnn2/dfUoEfEL+KdDzPErerTIgIcH8+fECQrnZysy3vACOX4=
+	t=1730416783; cv=none; b=qWY4wfHIjwoqnEXvTCSc0LpCm0gKLeTzupnbItytxLQD1nU9LrS8w/oHwIIyFDgvAdj4dKmDIzGdIC+IQUhr6Dl32G7fkCq6nhK5pnHvP7bA/ZS1xmwvtGPtCNH25cHvmPcX4J7wzSwEKeLOrLDgGOSOOfkG6AfIzBzJX0SY/II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416763; c=relaxed/simple;
-	bh=6KIDZb+5oaGX4mUbgwRnthLHO4MVo1NCOHZJmN8ZyNE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mtDc1njCVQ2fFYDGGd9i8vBETKfuiasK8NUBy4GYnRE9ccWXsE6AD0GazJfQ3e/LPDtekZA+VSPiVxfbLkKQ7suDczrz0iQxR4b201ie7oUc1wC0s81vpTZrg1dX2ErG+nT+TtWpXXN4dMrNzeYbbLDj6HS3lj3ysc/qNFEQjBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=VK+zG2Aq; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=nnUspxdcJ+wye5pTkOAdTuW2AnGlQJx5dahyJ4Afb80=; b=VK+zG2Aqtt6pWna22UOV7lmdbK
-	dekcUmZ6Rp+UHH0JBucV9Y6sc9QP1UgSyMmEvFpHx/QGfJKilrlWqDbo5lZ5aPp4blfxVc9qeQrIv
-	MhtmFtN8YPC5JTsqLNDNTxu7lsi/ZTD1gjtY56p9HH9dfm410tQcaAXyFKkX+Myho+JyJrcgrZLA4
-	l/0jWw4sL2bv0MxfGjmfQ8shaD5a1E27RupkkRxesUPV1cs80wApbjHHznX/dxqOicOwsRAKaIw3O
-	yDkz4L1UPgm/v0Rq4tJZokY9RuYvXPU3/DTSbeIg8pZ82QdpgnMFZuvu//zOPR5n3zdcQTSDClcd8
-	HGNwUcdw==;
-Received: from 47.248.197.178.dynamic.cust.swisscom.net ([178.197.248.47] helo=localhost)
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t6eRd-000ISO-Iw; Fri, 01 Nov 2024 00:19:13 +0100
-From: Daniel Borkmann <daniel@iogearbox.net>
-To: torvalds@linux-foundation.org
-Cc: bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alexei.starovoitov@gmail.com,
-	andrii@kernel.org,
-	martin.lau@kernel.org
-Subject: [GIT PULL] bpf for v6.12-rc6
-Date: Fri,  1 Nov 2024 00:19:12 +0100
-Message-Id: <20241031231912.109589-1-daniel@iogearbox.net>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730416783; c=relaxed/simple;
+	bh=WbpxuzdF/aAPqb8D5YYBFYBBEyxXs9OMxENeJB48SX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oidEoFxq4AudwAMowKX1tFAQHEhiXXN+sQZ4+wCRLwKLBnp0zFMmq+yNpZ02m77A2eCl3u+U4J5wTyJHXKtZbni9HWVNAiV6JB3bW3Ugq2/fvnY9BiUrfGS1djdYqkqf5eoIt0M0eQF1wFGavEuugIAadkAcZiY0ebZnrsjFp7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DFj5fcrw; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3CDC9240003;
+	Thu, 31 Oct 2024 23:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730416775;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5z9zdQZdn+zNttfWGlxZQQmSzPWLPgZ9wK42vO4Z99Y=;
+	b=DFj5fcrwWedEAv97V+okKIg8EgYTOTDolTk3Nvj3qmgfej6r//dHGAp0SqAdaP4rLmiKup
+	n0wJud8KS5kmN+K4zr4GM5rtYaAHz1pnJj2AFcFgUy8TgGJPTALCfU4XqaMoK67d8tMHCj
+	vIahM1qbouOV8XMXRQO0gJjtJxVae6Dc3r1baVTYglsmfhu0NZhOHSMu4+kMDRbM2aNFKl
+	tWBQpijuPUOHBVrn1yYm0EmI1wksDAz7+7XeBErO3wHAH4t21mlkejdibXAKXqRe95q4w5
+	Z1yYxqrug/BCDmEdft5zY6oVKu3Mw6oyIecHOXJ5C7/EqMKzPVTB+SwhytVjww==
+Date: Fri, 1 Nov 2024 00:19:34 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mateusz =?utf-8?Q?Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: cmos: avoid taking rtc_lock for extended period of
+ time
+Message-ID: <173041676668.2394637.4445020791361338594.b4-ty@bootlin.com>
+References: <Zxv8QWR21AV4ztC5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27444/Thu Oct 31 09:34:36 2024)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxv8QWR21AV4ztC5@google.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Linus,
+On Fri, 25 Oct 2024 13:14:57 -0700, Dmitry Torokhov wrote:
+> On my device reading entirety of /sys/devices/pnp0/00:03/cmos_nvram0/nvmem
+> takes about 9 msec during which time interrupts are off on the CPU that
+> does the read and the thread that performs the read can not be migrated
+> or preempted by another higher priority thread (RT or not).
+> 
+> Allow readers and writers be preempted by taking and releasing rtc_lock
+> spinlock for each individual byte read or written rather than once per
+> read/write request.
+> 
+> [...]
 
-The following changes since commit ae90f6a6170d7a7a1aa4fddf664fbd093e3023bc:
+Applied, thanks!
 
-  Merge tag 'bpf-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf (2024-10-24 16:53:20 -0700)
+[1/1] rtc: cmos: avoid taking rtc_lock for extended period of time
+      https://git.kernel.org/abelloni/c/0a6efab33eab
 
-are available in the Git repository at:
+Best regards,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
-
-for you to fetch changes up to c40dd8c4732551605712985bc5b7045094c6458d:
-
-  bpf, test_run: Fix LIVE_FRAME frame update after a page has been recycled (2024-10-31 16:15:21 +0100)
-
-----------------------------------------------------------------
-BPF fixes:
-
-- Fix BPF verifier to force a checkpoint when the program's jump
-  history becomes too long (Eduard Zingerman)
-
-- Add several fixes to the BPF bits iterator addressing issues
-  like memory leaks and overflow problems (Hou Tao)
-
-- Fix an out-of-bounds write in trie_get_next_key (Byeonguk Jeong)
-
-- Fix BPF test infra's LIVE_FRAME frame update after a page has
-  been recycled (Toke Høiland-Jørgensen)
-
-- Fix BPF verifier and undo the 40-bytes extra stack space for
-  bpf_fastcall patterns due to various bugs (Eduard Zingerman)
-
-- Fix a BPF sockmap race condition which could trigger a NULL
-  pointer dereference in sock_map_link_update_prog (Cong Wang)
-
-- Fix tcp_bpf_recvmsg_parser to retrieve seq_copied from tcp_sk
-  under the socket lock (Jiayuan Chen)
-
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-
-----------------------------------------------------------------
-Alexei Starovoitov (1):
-      Merge branch 'fixes-for-bits-iterator'
-
-Byeonguk Jeong (2):
-      bpf: Fix out-of-bounds write in trie_get_next_key()
-      selftests/bpf: Add test for trie_get_next_key()
-
-Cong Wang (1):
-      sock_map: fix a NULL pointer dereference in sock_map_link_update_prog()
-
-Eduard Zingerman (3):
-      bpf: Force checkpoint when jmp history is too long
-      selftests/bpf: Test with a very short loop
-      bpf: disallow 40-bytes extra stack for bpf_fastcall patterns
-
-Hou Tao (5):
-      bpf: Free dynamically allocated bits in bpf_iter_bits_destroy()
-      bpf: Add bpf_mem_alloc_check_size() helper
-      bpf: Check the validity of nr_words in bpf_iter_bits_new()
-      bpf: Use __u64 to save the bits in bits iterator
-      selftests/bpf: Add three test cases for bits_iter
-
-Jiayuan Chen (1):
-      bpf: fix filed access without lock
-
-Toke Høiland-Jørgensen (1):
-      bpf, test_run: Fix LIVE_FRAME frame update after a page has been recycled
-
- include/linux/bpf_mem_alloc.h                      |   3 +
- kernel/bpf/helpers.c                               |  54 ++++++++--
- kernel/bpf/lpm_trie.c                              |   2 +-
- kernel/bpf/memalloc.c                              |  14 ++-
- kernel/bpf/verifier.c                              |  23 ++---
- net/bpf/test_run.c                                 |   1 +
- net/core/sock_map.c                                |   4 +
- net/ipv4/tcp_bpf.c                                 |   7 +-
- .../bpf/map_tests/lpm_trie_map_get_next_key.c      | 109 +++++++++++++++++++++
- .../selftests/bpf/progs/verifier_bits_iter.c       |  61 +++++++++++-
- .../selftests/bpf/progs/verifier_bpf_fastcall.c    |  55 -----------
- .../selftests/bpf/progs/verifier_search_pruning.c  |  23 +++++
- tools/testing/selftests/bpf/veristat.cfg           |   1 +
- 13 files changed, 269 insertions(+), 88 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
