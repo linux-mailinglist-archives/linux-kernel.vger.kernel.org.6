@@ -1,53 +1,80 @@
-Return-Path: <linux-kernel+bounces-390061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774019B7507
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:07:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4429B750B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98F371C21FB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A811F21CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23644149E13;
-	Thu, 31 Oct 2024 07:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D71714F123;
+	Thu, 31 Oct 2024 07:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hARDGmuB"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnWcrZ4T"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4145E1BD9CD
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF7F14EC46;
+	Thu, 31 Oct 2024 07:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730358262; cv=none; b=RZpMBR54HJ+LiFaMoFYF9L0UHqu5e1VOGySpgn3NVoYdkmmeWBA8pbtYh36epgqnofbPgxFzWKUHNaMk7pkfZO/L6jZV70HUWiZhFoUmv7DyQOBD8n10waLimzHKk/MdJruGklkDvBKlE0cJVHX+/UzJsA6wP88phIUOAYFK9B0=
+	t=1730358384; cv=none; b=bexkR0r6G1EVF8t6THtwKvF80OFggroqKgtk/tk11l3FdEvFPGEkaZFhSJunTRoTicIxnOGwf5R8SZaq8pQwe1nbiHMbQ+5YwoKHdBnhUDB212h8/hlCyTf/BY3nZqCdDcHcIbKevAXY2+ms9A7Ipb6RmNdP2pswsJclDIjkcxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730358262; c=relaxed/simple;
-	bh=lSzvawx5sLa63l++myP4DV/MegkWshek2ZXi9pZ8MEE=;
+	s=arc-20240116; t=1730358384; c=relaxed/simple;
+	bh=WVh0Nlf1V6976Dw5UI1yrKIiR6XvS7QUbd/H1sNnOG0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjnwxPAF4Rlinsj/OQwoR1kA2adrAabiyMFysW/iqcG3g2kzvPIgStMe9stmDRxfhqML0HNtLr50eYuhqwTDWfrpDS+QMTXpREQzUI2JHCAWwScDSQTEcWzFn/S3IZIlt/MIcSQ537WYRDXQef0Rmn+QCQr6cYj+8t8eIW4D43E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hARDGmuB; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 31 Oct 2024 03:04:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730358250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f8tgJxtDFneVuohN89fEM+pzmdzRCA/NbGzLbql6E1g=;
-	b=hARDGmuBETD0p9IZ/IwaxP5qvUZ3l/wzPUL/QIg0Hgt3LB6nTNs4Uw3wHie8y3ZGmxLdmu
-	CY7ZO4845nmKe9Fr/nfjlTAZgAZkC6T95oxKzIzUAe5omGBozYb9caX4X406aacZ91ePlJ
-	uuO3YUoGVSw3vvN/gXvoCp4ZBKwQhbE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+4d722d3c539d77c7bc82@syzkaller.appspotmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bkey_unpack_pos
-Message-ID: <noznkuwmznodskgral7ttq7dvncygedxuvuzq5xk5boldtqr7f@k75s5ldxcfxy>
-References: <67226139.050a0220.35b515.0070.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOlkzF9wijgLQu6ArYz6A7NZnU8FujmLgTzN2qvQIpjKnjtK9bsr4cua9LViBhX1rcL6/OqLlUNwT/IQS3Mi6EPo2R6LaEN2mWxpVrSkN0GvMKZW/oLBAhmYaiGf9SG5fZOOXJbrPoNRjHKZXtq4y4wBEdwE7CiGVhglWuuHDGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnWcrZ4T; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71ec997ad06so451596b3a.3;
+        Thu, 31 Oct 2024 00:06:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730358382; x=1730963182; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJLfnZmOtEngFbuMjXVkbmcsP/JNWafj+2zyMqVDyrk=;
+        b=XnWcrZ4TdYFCl8UAXrYsBw3XqJomvXDAA5h2p1uaOCQ/mzM+GWwxVbya08bnGZ8JeA
+         WWYSzPJ+21BEMww7ppXR05hp8QHd3lxFiOWZXFg5OUneGpv1DUXmqSZgy/mkHZxY0SlY
+         QCuIg1NBJnAdDLwR5IOxEoPBIzE1v+ThqthlMAJwHFJ9/C6fUkLplGVH7nMPpL+CBOLg
+         x7mvXsUJiAg5G5jvR55tV58h/LzluZulyKlZ9dVE1gu/cC+RVNQpsluhz66S6augj6Nk
+         Z8EXOU2kKKHvKAL/d90/SPZb7neERmzRxNasE/tNQGJEzz2W0Fg6JwdLZONW6Jm+T8rl
+         dw0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730358382; x=1730963182;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DJLfnZmOtEngFbuMjXVkbmcsP/JNWafj+2zyMqVDyrk=;
+        b=DELxEpBdpQJumqPn68c+f/eX7DZzv1cLwTHIcexc60pLp8nsyVQV3ZT6uVo/7yLoGQ
+         FXpgugmBLXAppuRC0juoZ3QApfsHVByc6Q3Jp2+nspW/lzfIpnzTV71NcCnK1VvybavD
+         ojdbTMbBv2aQAiSHGFRrET8ho9zYTTUlh3xWjpG1uaX/CWZQduco+5Zn+x323sYVpdKd
+         NmlDFevGNm4UsIVnYrULu4nfiS63bgaOt/MIT6df6jskFLBf50LkTtJKelfLAfPobdIe
+         1Lz4Wh6DG6cGxoysuCReZSE/TcPQ2Y/nMez6CiwJLqMIKEq5SYTZ+7T9bWni6F1bHeQi
+         5wIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTE7yMFo9TjmYHEYvrstvS8TywkMvdBRFvlsBuutCfHorcW92+ov1ocXGWfV9ZdSMMV73v9SFDYfTUChI/@vger.kernel.org, AJvYcCX9ulB5eKxe2pb6W7oyJWLuXx66+gcPmHJI9hMMHyukjfjgG1ubju3gAHkQsCIn42ak6yrL577JCGd8Yw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Bnu9Yehck+HL01s8ReXBQs7kN+D/RAhNjRoq7BopsbqsyIzF
+	sSfAMxyTynUtsZtu5NLrm7tJuxiGxAmGzXMPKQIpikn3L2EYUFkEncZm8UD7S9dzXA==
+X-Google-Smtp-Source: AGHT+IHU3TNDtsbgikSNwfPsWVl2aF/o3QVug5ZBr+ukvwyGdfztfNY64dbHPVrj6aIcnZZ/5YwsLA==
+X-Received: by 2002:a05:6a20:b40a:b0:1d9:29ab:9b49 with SMTP id adf61e73a8af0-1d9eee1e129mr6294432637.32.1730358382294;
+        Thu, 31 Oct 2024 00:06:22 -0700 (PDT)
+Received: from ux-UP-WHL01 ([240e:47e:2ed8:ab06:94f5:966b:9066:6b36])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c3e08sm622470b3a.105.2024.10.31.00.06.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 00:06:21 -0700 (PDT)
+Date: Thu, 31 Oct 2024 15:05:57 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: hbarnor@chromium.org, jikos@kernel.org, bentiss@kernel.org,
+	dianders@chromium.org, dan.carpenter@linaro.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: hid-goodix: Improve handling of HID feature reports
+Message-ID: <ZyMsVf9C4tVzKhE6@ux-UP-WHL01>
+References: <20241023082703.23525-1-charles.goodix@gmail.com>
+ <ZyLIZXnH1h4snkuB@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,178 +83,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67226139.050a0220.35b515.0070.GAE@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ZyLIZXnH1h4snkuB@google.com>
 
-On Wed, Oct 30, 2024 at 09:39:21AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    850925a8133c Merge tag '9p-for-6.12-rc5' of https://github..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13772a87980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4d722d3c539d77c7bc82
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160c44a7980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120e7e40580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-850925a8.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c831c931f29c/vmlinux-850925a8.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/85f584e52a7f/bzImage-850925a8.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/b2e9e371ca38/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4d722d3c539d77c7bc82@syzkaller.appspotmail.com
-> 
-> bcachefs (loop0): accounting_read... done
-> bcachefs (loop0): alloc_read... done
-> bcachefs (loop0): stripes_read... done
-> bcachefs (loop0): snapshots_read...
-> ------------[ cut here ]------------
-> kernel BUG at fs/bcachefs/bkey.c:297!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 5311 Comm: syz-executor213 Not tainted 6.12.0-rc4-syzkaller-00261-g850925a8133c #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:__bkey_unpack_pos+0x779/0x790 fs/bcachefs/bkey.c:297
-> Code: b6 e4 00 e9 ad fb ff ff e8 24 ea 83 fd 48 c7 c7 40 b1 f3 8e 4c 89 e6 48 89 da e8 f2 b5 e4 00 e9 f4 fc ff ff e8 08 ea 83 fd 90 <0f> 0b e8 00 ea 83 fd 90 0f 0b e8 f8 e9 83 fd 90 0f 0b 0f 1f 44 00
-> RSP: 0018:ffffc9000cdfe360 EFLAGS: 00010293
-> RAX: ffffffff84110068 RBX: 0000000000000001 RCX: ffff888000d4a440
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
-> RBP: 0000000000000000 R08: ffffffff8410f998 R09: 0000000000000000
-> R10: ffffc9000cdfe400 R11: fffff520019bfc82 R12: ffffc9000cdfe400
-> R13: dffffc0000000000 R14: 0000000000000001 R15: ffffc9000cdfe840
-> FS:  0000555574f49380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffc52831f40 CR3: 000000004475a000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  bkey_unpack_pos_format_checked fs/bcachefs/bkey.h:456 [inline]
->  __bch2_bkey_cmp_left_packed_format_checked fs/bcachefs/bkey.c:1029 [inline]
->  __bch2_bkey_cmp_left_packed+0xed/0x790 fs/bcachefs/bkey.c:1049
->  bkey_cmp_left_packed fs/bcachefs/bkey.h:88 [inline]
->  bch2_bkey_pack_pos_lossy+0xa08/0x1990 fs/bcachefs/bkey.c:532
->  bch2_btree_node_iter_init+0x894/0x4280 fs/bcachefs/bset.c:1313
->  __btree_path_level_init fs/bcachefs/btree_iter.c:615 [inline]
->  bch2_btree_path_level_init+0x4d2/0x9f0 fs/bcachefs/btree_iter.c:635
->  btree_path_lock_root fs/bcachefs/btree_iter.c:769 [inline]
->  bch2_btree_path_traverse_one+0x10de/0x2940 fs/bcachefs/btree_iter.c:1170
->  bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
->  __bch2_btree_iter_peek fs/bcachefs/btree_iter.c:2197 [inline]
->  bch2_btree_iter_peek_upto+0xb58/0x70e0 fs/bcachefs/btree_iter.c:2297
->  bch2_btree_iter_peek_upto_type fs/bcachefs/btree_iter.h:685 [inline]
->  bch2_snapshots_read+0x4ac/0x15f0 fs/bcachefs/snapshot.c:1785
->  bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
->  bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
->  bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:862
->  bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
->  bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
->  vfs_get_tree+0x90/0x2b0 fs/super.c:1800
->  do_new_mount+0x2be/0xb40 fs/namespace.c:3507
->  do_mount fs/namespace.c:3847 [inline]
->  __do_sys_mount fs/namespace.c:4057 [inline]
->  __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fe43d8e1cba
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fff67207cf8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007fff67207d10 RCX: 00007fe43d8e1cba
-> RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007fff67207d10
-> RBP: 0000000000000004 R08: 00007fff67207d50 R09: 0000000000005946
-> R10: 0000000001000000 R11: 0000000000000282 R12: 0000000001000000
-> R13: 00007fff67207d50 R14: 0000000000000003 R15: 0000000001000000
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__bkey_unpack_pos+0x779/0x790 fs/bcachefs/bkey.c:297
-> Code: b6 e4 00 e9 ad fb ff ff e8 24 ea 83 fd 48 c7 c7 40 b1 f3 8e 4c 89 e6 48 89 da e8 f2 b5 e4 00 e9 f4 fc ff ff e8 08 ea 83 fd 90 <0f> 0b e8 00 ea 83 fd 90 0f 0b e8 f8 e9 83 fd 90 0f 0b 0f 1f 44 00
-> RSP: 0018:ffffc9000cdfe360 EFLAGS: 00010293
-> RAX: ffffffff84110068 RBX: 0000000000000001 RCX: ffff888000d4a440
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
-> RBP: 0000000000000000 R08: ffffffff8410f998 R09: 0000000000000000
-> R10: ffffc9000cdfe400 R11: fffff520019bfc82 R12: ffffc9000cdfe400
-> R13: dffffc0000000000 R14: 0000000000000001 R15: ffffc9000cdfe840
-> FS:  0000555574f49380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffc52831f40 CR3: 000000004475a000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Hi Dmitry,
 
-#syz test
+On Wed, Oct 30, 2024 at 04:59:33PM -0700, Dmitry Torokhov wrote:
+> Hi Charles,
+> 
+> On Wed, Oct 23, 2024 at 04:27:03PM +0800, Charles Wang wrote:
+> > 1) Align with the i2c-hid driver by returning 0 instead of -EINVAL when
+> > an empty response is received, ensuring that userspace programs utilizing
+> > the hidraw node receive consistent return values.
+> > 
+> > 2) Implement the hid get/set feature report function using a separate
+> > address, rather than sharing an address with coordinate reporting, to
+> > prevent feature events from being overwritten by coordinate events.
+> 
+> These are 2 independent changes, they should be 2 separate patches. 
+> 
 
-commit ebd089435e043938bab81d6810ab43505adb8fb3
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Thu Oct 31 02:36:21 2024 -0400
+Ack,
 
-    bcachefs: Ancient versions with bad bkey_formats are no longer supported
-    
-    Syzbot found an assertion pop, by generating an ancient filesystem
-    version with an invalid bkey_format (with fields that can overflow) as
-    well as packed keys that aren't representable unpacked.
-    
-    This breaks key comparisons in all sorts of painful ways.
-    
-    Filesystems have been automatically rewriting nodes with such invalid
-    formats for years; we can safely drop support for them.
-    
-    Reported-by: syzbot+8a0109511de9d4b61217@syzkaller.appspotmail.com
-    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-diff --git a/fs/bcachefs/bkey.c b/fs/bcachefs/bkey.c
-index 587d7318a2e8..995ba32e9b6e 100644
---- a/fs/bcachefs/bkey.c
-+++ b/fs/bcachefs/bkey.c
-@@ -643,7 +643,7 @@ int bch2_bkey_format_invalid(struct bch_fs *c,
- 			     enum bch_validate_flags flags,
- 			     struct printbuf *err)
- {
--	unsigned i, bits = KEY_PACKED_BITS_START;
-+	unsigned bits = KEY_PACKED_BITS_START;
- 
- 	if (f->nr_fields != BKEY_NR_FIELDS) {
- 		prt_printf(err, "incorrect number of fields: got %u, should be %u",
-@@ -655,9 +655,8 @@ int bch2_bkey_format_invalid(struct bch_fs *c,
- 	 * Verify that the packed format can't represent fields larger than the
- 	 * unpacked format:
- 	 */
--	for (i = 0; i < f->nr_fields; i++) {
--		if ((!c || c->sb.version_min >= bcachefs_metadata_version_snapshot) &&
--		    bch2_bkey_format_field_overflows(f, i)) {
-+	for (unsigned i = 0; i < f->nr_fields; i++) {
-+		if (bch2_bkey_format_field_overflows(f, i)) {
- 			unsigned unpacked_bits = bch2_bkey_format_current.bits_per_field[i];
- 			u64 unpacked_max = ~((~0ULL << 1) << (unpacked_bits - 1));
- 			unsigned packed_bits = min(64, f->bits_per_field[i]);
+Thanks,
+Charles
 
