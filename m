@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-390818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CACD9B7EE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:46:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE1E9B7EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:46:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB9D281E5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:46:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B66B51F22701
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C6613AA5F;
-	Thu, 31 Oct 2024 15:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281791A303C;
+	Thu, 31 Oct 2024 15:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WhJGqM87";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dFAYgpMm"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SWFTd9ud";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4lO0nV6r"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F1C13A868
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15C9139579
 	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389587; cv=none; b=CrsacjUDJcM/nm1QjV/mAoRhz0bGp2yvq7Xd4Qkwm8sLxX6I1FnkP5tWXl1F75nUgRwORvha6eZbCTHmbUH0l1qP3G5KqTBanGoeemaP2uXdAQgcN3ZuK2qOPZ68T4W5QlwpCHjdwD8W9pqfjYBr0ChUcCoD1W96dCVeRqyOtcY=
+	t=1730389588; cv=none; b=Dv90dZfTtnsFsVcGpx2decL9TLUaQFFH1W3g1GBzzPi32H3vutPBejCwvr8KtT6CGNTuUgAntErCUr5AysVaXACokxMES8zSlcuP4qbvF2fcjVhAdpgtsvrplddBHKJ9y4880Vg+b+Z1QbgkI93fD9+0F3OJqOcVkB4P5Nbj+yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389587; c=relaxed/simple;
-	bh=55LonD5xfg1a0IwuGcBdhgqy4KsW5BIGCi4ikVYszm0=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=isDnGEF++yHK/F7gAQorJh1iO3P79jYEVUPGBwjy8Oy4pOYRdroQ1xnXI7mXSxA+YYLMTmf8oPp4wLcEFw9tJ0bb506hR4H1VbsV69LfNlPq/OjGW6GjvZNTiros/qD+ot/IorslUMndleWGtd3zQPXsYI8/02JgclWZs5A1J6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WhJGqM87; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dFAYgpMm; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1730389588; c=relaxed/simple;
+	bh=XRuhxhopLzO5Vu9qd4cNixf/PZpl4ZiPpEttVfHF2Cs=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=tFm6KH1GXiAjv4RE56YhxCp+9QkTsqKq0DzxC51qMfARjN6G7NfaX6EAqd/9oJPau3bFIBRPmLX+vCn5/E4hSrLobz7kw2Wxl2u+UrDT9sMnUfkYEyeZko7IUx3h1qKo+HUJZdUTO0VUalkX0Z+C8+HQPm6ymTgQ3Vvx3gp6dw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SWFTd9ud; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4lO0nV6r; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241031151625.361697424@linutronix.de>
+Message-ID: <20241031154424.613821401@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730389583;
+	s=2020; t=1730389584;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=M9HMlGng7838XBNWDxaJRmqIFBaqhNdM/IzDR2OrnTc=;
-	b=WhJGqM87V0+rmJ7jpzxrPIjXXzKFnwMmhX1eF8r9I8vd8+mrE9sYDOS4CMb/WioNOBRs1V
-	Z2Nv62+RGQYmxY7wtHiB/PjqasQ8zLYqR09LyCryRcB/gl+aUX1LivGv9VF8COts8KPKx8
-	MDwT5zUBgn4uhyHOdtwY3Y0NXQ0iqjSh90HM7GdejXqLV8EqfJddf6ocBdCzvApu1RnCtW
-	zhlZLwgA/8wBjqd8MdJcvJ0y2M2QeeZCOxTDx2W5/FOW25mD30K34O6v5aOQpm8ZsmcrLC
-	aDSjyQwpqtqrUIH4Yo1sndIL1k6Agfwnfw2mFnIki5j9YvMuFgCINvrlpsoqYA==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=s4k0a+5vBj3M/rE56Uz/IJf6Dawsk5+OJfCywabMbsY=;
+	b=SWFTd9udKnyNdBTtAYFS9SVIxTeSY9O3L7oqfH7eZ9jZeqfABsTzoh52oUz//RfDN4LNHW
+	1MVBvrMs9YAsQLvRuCYhTMqspzliS1cPiyEONbQ25p2oVzUjwi7SDyfaXgdelJlCE1o8wE
+	XCYwYtTgeMB4HLpyZqfp6k8CGOaVEGvqsxDPWyS1tqYKFcM3PtpMlTzTdDyq5U37l8g5uK
+	W6Mu4rMJ0cRlWk7zc/Qob905coT/NmM/hbIIsPrtMgFtI+pcDBvY4OcSU1Q+k1GOscNf59
+	CjiIWcSm1fS2KqqbOpLJIAF+e4KVMqOcgCuJJS1CRWRXNjh3XsVKoNy9Eg6VVQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730389583;
+	s=2020e; t=1730389584;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=M9HMlGng7838XBNWDxaJRmqIFBaqhNdM/IzDR2OrnTc=;
-	b=dFAYgpMmDH+osLLTsgabwjrwnpZfrT00qchtNe+EGIkP5cwbf2JvSqDDW1Rl72+6mKIk83
-	WgCOHJ/aaKCt6YBw==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=s4k0a+5vBj3M/rE56Uz/IJf6Dawsk5+OJfCywabMbsY=;
+	b=4lO0nV6rn0xzHpIkQufvGKFHb+GyogUdu6Qjti3e2/GzakIPfIWhytkPtHkFnlFaOLW/Yj
+	guwHC42mhX7BfnAA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
@@ -56,151 +59,200 @@ Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
  Stephen Boyd <sboyd@kernel.org>,
  Eric Biederman <ebiederm@xmission.com>,
  Oleg Nesterov <oleg@redhat.com>
-Subject: [patch v6 00/20] posix-timers: Cure the SIG_IGN mess
-Date: Thu, 31 Oct 2024 16:46:22 +0100 (CET)
+Subject: [patch v6 01/20] posix-timers: Make signal delivery consistent
+References: <20241031151625.361697424@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 31 Oct 2024 16:46:24 +0100 (CET)
 
-This are the remaining bits to cure the SIG_IGN mess. Version 5 can be found
-here:
+From: Thomas Gleixner <tglx@linutronix.de>
 
-   https://lore.kernel.org/lkml/20241001083138.922192481@linutronix.de
+Signals of timers which are reprogammed, disarmed or deleted can deliver
+signals related to the past. The POSIX spec is blury about this:
 
-Last year I reread a 15 years old comment about the SIG_IGN problem:
+ - "The effect of disarming or resetting a timer with pending expiration
+    notifications is unspecified."
 
- "FIXME: What we really want, is to stop this timer completely and restart
-  it in case the SIG_IGN is removed. This is a non trivial change which
-  involves sighand locking (sigh !), which we don't want to do late in the
-  release cycle.  ...  A more complex fix which solves also another related
-  inconsistency is already in the pipeline."
+ - "The disposition of pending signals for the deleted timer is
+    unspecified."
 
-The embarrasing part was that I put that comment in back then. So I went
-back and rumaged through old notes as I completely had forgotten why our
-attempts to fix this back then failed.
+In both cases it is reasonable to expect that pending signals are
+discarded. Especially in the reprogramming case it does not make sense to
+account for previous overruns or to deliver a signal for a timer which has
+been disarmed. This makes the behaviour consistent and understandable.
 
-It turned out that the comment is about right: sighand locking and life
-time issues. So I sat down with the old notes and started to wrap my head
-around this again.
+Remove the si_sys_private check from the signal delivery code and invoke
+posix_timer_deliver_signal() unconditionally for posix timer related
+signals.
 
-The problem to solve:
+Change posix_timer_deliver_signal() so it controls the actual signal
+delivery via the return value. It now instructs the signal code to drop the
+signal when:
 
-Posix interval timers are not rearmed automatically by the kernel for
-various reasons:
+  1) The timer does not longer exist in the hash table
 
-   1) To prevent DoS by extremly short intervals.
-   2) To avoid timer overhead when a signal is pending and has not
-      yet been delivered.
+  2) The timer signal_seq value is not the same as the si_sys_private value
+     which was set when the signal was queued.
 
-This is achieved by queueing the signal at timer expiry and rearming the
-timer at signal delivery to user space. This puts the rearming basically
-under scheduler control and the work happens in context of the task which
-asked for the signal.
+This is also a preparatory change to embed the sigqueue into the k_itimer
+structure, which in turn allows to remove the si_sys_private magic.
 
-There is a problem with that vs. SIG_IGN. If a signal has SIG_IGN installed
-as handler, the related signals are discarded. So in case of posix interval
-timers this means that such a timer is never rearmed even when SIG_IGN is
-replaced later with a real handler (including SIG_DFL).
-
-To work around that the kernel self rearms those timers and throttles them
-when the interval is smaller than a tick to prevent a DoS.
-
-That just keeps timers ticking, which obviously has effects on power and
-just creates work for nothing.
-
-So ideally these timers should be stopped and rearmed when SIG_IGN is
-replaced, which aligns with the regular handling of posix timers.
-
-Sounds trivial, but isn't:
-
-  1) Lock ordering.
-
-     The timer lock cannot be taken with sighand lock held which is
-     problematic vs. the atomicity of sigaction().
-
-  2) Life time rules
-
-     The timer and the sigqueue are separate entities which requires a
-     lookup of the timer ID in the signal rearm code. This can be handled,
-     but the separate life time rules are not necessarily robust.
-
-  3) Finding the relevant timers
-
-     Obviosly it is possible to walk the posix timer list under sighand
-     lock and handle it from there. That can be expensive especially in the
-     case that there are no affected timers as the walk would just end up
-     doing nothing.
-
-The following series is a new and this time actually working attempt to
-solve this. It addresses it by:
-
-  1) Embedding the preallocated sigqueue into struct k_itimer, which makes
-     the life time rules way simpler and just needs a trivial reference
-     count.
-
-  2) Having a separate list in task::signal on which ignored timers are
-     queued.
-
-     This avoids walking a potentially large timer list for nothing on a
-     SIG_IGN to handler transition.
-
-  3) Requeueing the timers signal in the relevant signal queue so the timer
-     is rearmed when the signal is actually delivered
-
-     That turned out to be the least complicated way to address the sighand
-     lock vs. timer lock ordering issue.
-
-With that timers which have their signal ignored are not longer self
-rearmed and the relevant workarounds including throttling for DoS
-prevention are removed.
-
-The series is based on:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip timers/core
-
-The series is also available from git:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git posixt-v6
-
-Changes vs. V5:
-
-    - Dropped the first 7 patches as they are queued already
-
-    - Fixed the conversion of the firing flag to boolean 
-
-    - Simplified the overrun accounting - Frederic
-
-    - Reset the timerq pointer in case that a signal is dropped - Frederic
-
-    - Dropped pointless sequence counter manipulation - Frederic
-
-    - Turned plain checks into warnings for state which should never
-      happen - Frederic
-
-    - Picked up Reviewed-by tags as appropriate
-
-Thanks,
-
-	tglx
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- drivers/power/supply/charger-manager.c |    3 
- fs/proc/base.c                         |    4 
- fs/timerfd.c                           |    4 
- include/linux/alarmtimer.h             |   10 -
- include/linux/posix-timers.h           |   57 +++++-
- include/linux/sched/signal.h           |    4 
- include/uapi/asm-generic/siginfo.h     |    2 
- init/init_task.c                       |    5 
- kernel/fork.c                          |    1 
- kernel/signal.c                        |  302 +++++++++++++++++++++------------
- kernel/time/alarmtimer.c               |   87 +--------
- kernel/time/posix-cpu-timers.c         |   50 ++---
- kernel/time/posix-timers.c             |  215 ++++++++++-------------
- kernel/time/posix-timers.h             |    2 
- net/netfilter/xt_IDLETIMER.c           |    4 
- 15 files changed, 401 insertions(+), 349 deletions(-)
+V6: Remove the sequence increment from delivery and turn the requeue
+    pending check into a WARN_ON_ONCE() (Frederic)
+    Move the sequence increment into the delete hook so that the exit
+    cleanup path is covered too
+---
+ include/linux/posix-timers.h   |    2 --
+ kernel/signal.c                |    6 ++----
+ kernel/time/posix-cpu-timers.c |    2 +-
+ kernel/time/posix-timers.c     |   28 ++++++++++++++++------------
+ 4 files changed, 19 insertions(+), 19 deletions(-)
+---
 
+--- a/include/linux/posix-timers.h
++++ b/include/linux/posix-timers.h
+@@ -137,8 +137,6 @@ static inline void clear_posix_cputimers
+ static inline void posix_cputimers_init_work(void) { }
+ #endif
+ 
+-#define REQUEUE_PENDING 1
+-
+ /**
+  * struct k_itimer - POSIX.1b interval timer structure.
+  * @list:		List head for binding the timer to signals->posix_timers
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -550,10 +550,8 @@ static void collect_signal(int sig, stru
+ 		list_del_init(&first->list);
+ 		copy_siginfo(info, &first->info);
+ 
+-		*resched_timer =
+-			(first->flags & SIGQUEUE_PREALLOC) &&
+-			(info->si_code == SI_TIMER) &&
+-			(info->si_sys_private);
++		*resched_timer = (first->flags & SIGQUEUE_PREALLOC) &&
++				 (info->si_code == SI_TIMER);
+ 
+ 		__sigqueue_free(first);
+ 	} else {
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -746,7 +746,7 @@ static void __posix_cpu_timer_get(struct
+ 	 *  - Timers which expired, but the signal has not yet been
+ 	 *    delivered
+ 	 */
+-	if (iv && ((timer->it_signal_seq & REQUEUE_PENDING) || sigev_none))
++	if (iv && timer->it_status != POSIX_TIMER_ARMED)
+ 		expires = bump_cpu_timer(timer, now);
+ 	else
+ 		expires = cpu_timer_getexpires(&timer->it.cpu);
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -269,7 +269,10 @@ bool posixtimer_deliver_signal(struct ke
+ 	if (!timr)
+ 		goto out;
+ 
+-	if (timr->it_interval && timr->it_signal_seq == info->si_sys_private) {
++	if (timr->it_signal_seq != info->si_sys_private)
++		goto out_unlock;
++
++	if (timr->it_interval && !WARN_ON_ONCE(timr->it_status != POSIX_TIMER_REQUEUE_PENDING)) {
+ 		timr->kclock->timer_rearm(timr);
+ 
+ 		timr->it_status = POSIX_TIMER_ARMED;
+@@ -281,6 +284,7 @@ bool posixtimer_deliver_signal(struct ke
+ 	}
+ 	ret = true;
+ 
++out_unlock:
+ 	unlock_timer(timr, flags);
+ out:
+ 	spin_lock(&current->sighand->siglock);
+@@ -293,19 +297,18 @@ bool posixtimer_deliver_signal(struct ke
+ int posix_timer_queue_signal(struct k_itimer *timr)
+ {
+ 	enum posix_timer_state state = POSIX_TIMER_DISARMED;
+-	int ret, si_private = 0;
+ 	enum pid_type type;
++	int ret;
+ 
+ 	lockdep_assert_held(&timr->it_lock);
+ 
+-	if (timr->it_interval) {
++	if (timr->it_interval)
+ 		state = POSIX_TIMER_REQUEUE_PENDING;
+-		si_private = ++timr->it_signal_seq;
+-	}
++
+ 	timr->it_status = state;
+ 
+ 	type = !(timr->it_sigev_notify & SIGEV_THREAD_ID) ? PIDTYPE_TGID : PIDTYPE_PID;
+-	ret = send_sigqueue(timr->sigq, timr->it_pid, type, si_private);
++	ret = send_sigqueue(timr->sigq, timr->it_pid, type, timr->it_signal_seq);
+ 	/* If we failed to send the signal the timer stops. */
+ 	return ret > 0;
+ }
+@@ -663,7 +666,7 @@ void common_timer_get(struct k_itimer *t
+ 	 * is a SIGEV_NONE timer move the expiry time forward by intervals,
+ 	 * so expiry is > now.
+ 	 */
+-	if (iv && (timr->it_signal_seq & REQUEUE_PENDING || sig_none))
++	if (iv && timr->it_status != POSIX_TIMER_ARMED)
+ 		timr->it_overrun += kc->timer_forward(timr, now);
+ 
+ 	remaining = kc->timer_remaining(timr, now);
+@@ -863,8 +866,6 @@ void posix_timer_set_common(struct k_iti
+ 	else
+ 		timer->it_interval = 0;
+ 
+-	/* Prevent reloading in case there is a signal pending */
+-	timer->it_signal_seq = (timer->it_signal_seq + 2) & ~REQUEUE_PENDING;
+ 	/* Reset overrun accounting */
+ 	timer->it_overrun_last = 0;
+ 	timer->it_overrun = -1LL;
+@@ -882,8 +883,6 @@ int common_timer_set(struct k_itimer *ti
+ 	if (old_setting)
+ 		common_timer_get(timr, old_setting);
+ 
+-	/* Prevent rearming by clearing the interval */
+-	timr->it_interval = 0;
+ 	/*
+ 	 * Careful here. On SMP systems the timer expiry function could be
+ 	 * active and spinning on timr->it_lock.
+@@ -933,6 +932,9 @@ static int do_timer_settime(timer_t time
+ 	if (old_spec64)
+ 		old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
+ 
++	/* Prevent signal delivery and rearming. */
++	timr->it_signal_seq++;
++
+ 	kc = timr->kclock;
+ 	if (WARN_ON_ONCE(!kc || !kc->timer_set))
+ 		error = -EINVAL;
+@@ -1001,7 +1003,6 @@ int common_timer_del(struct k_itimer *ti
+ {
+ 	const struct k_clock *kc = timer->kclock;
+ 
+-	timer->it_interval = 0;
+ 	if (kc->timer_try_to_cancel(timer) < 0)
+ 		return TIMER_RETRY;
+ 	timer->it_status = POSIX_TIMER_DISARMED;
+@@ -1012,6 +1013,9 @@ static inline int timer_delete_hook(stru
+ {
+ 	const struct k_clock *kc = timer->kclock;
+ 
++	/* Prevent signal delivery and rearming. */
++	timer->it_signal_seq++;
++
+ 	if (WARN_ON_ONCE(!kc || !kc->timer_del))
+ 		return -EINVAL;
+ 	return kc->timer_del(timer);
 
 
