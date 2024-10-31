@@ -1,122 +1,137 @@
-Return-Path: <linux-kernel+bounces-390684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923549B7D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:46:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB7C9B7D43
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ADEFB213B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F201F246F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03381A0BFA;
-	Thu, 31 Oct 2024 14:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B0D1A3047;
+	Thu, 31 Oct 2024 14:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsUPYw+m"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JigHa9wD"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631295A79B;
-	Thu, 31 Oct 2024 14:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DB21A256B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385987; cv=none; b=UM44zPmc5vU+T4KFIw9I9a7mS415d4PGVWboDZzAOVCWAyEKAuPQqb5HuGHGcStZ1wudkiQFikLhqk+j5hR7UnyeEb29XKL8ePajsP/+c5XfHDwjGpalCavL5HoPr9sMTJoI/v+DZIYiYiLY0FyturJ1uLkq0xuXcAwWCZQ+VkE=
+	t=1730385990; cv=none; b=rrZW9NprKXFFetYsBQWFMuHh3oVnz92iA8CDsTuU4X821T7CaG2syp5Ncj080JP4vFNNLPd5JdWYL70XW6z6a8PUCba+4u6FjuctcWs/y+v/UxAL6rVniPHHl8UavJVcDlE3sVzVZiJ5xd2PPrbo8N1GXjkQXCXKPktWaZ0kRF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385987; c=relaxed/simple;
-	bh=G3k8YCPLvT/vD+woarb58oSt9eiPRkiyHHDZR/GB9XA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e0wMu5AOEy8Ov2FZa+GSSVBF411B2OPfiFSSsQy+p9JxCvfltLtgPZrMX5M+hGTBxDVHEyznUI6FyeWWNncS7YWOI9SfflXld30mfnZQTD+4rCanFjFqHZMQedRHXDQJmwqcBIZ9recu0rmThaQ1h0ihXRUAYOxGjHz5EKfez9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsUPYw+m; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d47eff9acso673304f8f.3;
-        Thu, 31 Oct 2024 07:46:25 -0700 (PDT)
+	s=arc-20240116; t=1730385990; c=relaxed/simple;
+	bh=ehYS0/ZZQ0XEcholrijqQu2XW7HUON0Q4qS6E3K47wo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgzOurHySh6em8//CKIT0q2nmMSrJUufsc9hbS2mf4dud75Pi2pLG+jV2/KPSvCs0OWgOkgWYUAEfB+OEPxwEp5R0IYB/CjEFCOrvprembYtLNq1vP7pvCITq7X5dmTC5NhuqE+btwkScHIw4lNSx4RmYStp7VUzPCbctqjMpsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JigHa9wD; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a0472306cso131184266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:46:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730385984; x=1730990784; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w+R2z2Hq8YdiXOzRMQtJlJNAR8ul2IAPxkBdT8ZGZaI=;
-        b=EsUPYw+mN7HRSE8C7FFLIkXqmtMGt7p7x8ZcG7V6w4vnAYG42sgL1VpABunm/yEjyG
-         qtfIeqp/Z5LCbpc0Tw5gfyO37Z/FgyOmba5BSlSBr3Pg793Pl85YM1HKEJjFnqEMX6Wy
-         9bHG7cieYCkcXi4o9RzY4nnTMZ97qTrIPQqmMvMKcqIj+ijmqyhNQ1Y7YBv01J+y4IUo
-         riTSWVQoZYcQZWLmONWhQvgI6rKQIAqgCrLaAAtQFs6mISHy5T9W9B2g86MoWhd/4fIE
-         fKOTkWB3nOo47JllPywCQzpzaHBk2xuZ6kPdo5CFVB+ebvTPu58ilGRYNy+ZI8ZLc5Os
-         233g==
+        d=suse.com; s=google; t=1730385987; x=1730990787; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypveLFvkaXf1wJtqmx/51pwj85CYlxVe18qe346szto=;
+        b=JigHa9wDDYMdmPHgr+8ya+yp+Sb4oZUzO6K/SrPVfOarpc7h6ZnnXzh04hS3JYiLey
+         WQipQVDhew6IXjHPKfP9K8hRJU1DxsKYPEbb/0PXRo+Bi/JzUMf0jpVF6Xw2T5CKmW1+
+         5+8PZGu98bTTkO87Ksrnj5zTxQjd3EAbHvHIdCA5BUuH80md2o3GkOmga1Vo9SWx06KO
+         OVjykr+ciPOjC0lFGbGqEoyCbVkBCUZeTc/o6SrO5DZKaJBkyG8RNPB3msZ5cFo1adG1
+         KGubmZY1DF45W5i6yjL2m67KitUXsr+CToHq8mLHSlp+d60hbdbo7uB3gzN0GfseAWfx
+         I2gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730385984; x=1730990784;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+R2z2Hq8YdiXOzRMQtJlJNAR8ul2IAPxkBdT8ZGZaI=;
-        b=XGYYmy+AHN8v4FROaXMMKxrl+9GuTcFczyWRG6byLqnHrHBx93tWLDnNrLf8LNHhCV
-         APJiDbcdH7kmdO/YNJ+LfZNDAd18V8dDU5tvMJaxlP8CEUl1uzQozy+bBZTFOWlr8zmt
-         CfYt7ieRAAczl/hE+swHgVnKrtbM1MpTW2OK4w5RiZS0wT4pfWiMzr1mMU0dlD8l3PUv
-         lWMRojbKLf2/U4z0KCfBfVn109Rygo4Vyq7IyVdc1gZ+0IMgV/b0ntW9KMAi8d8H5ZLk
-         ixGTno7mV0m46eGeINTEm7KN90gNUncxdXNn4Fo42H4Qwfu5i0Hox1UnFQRK8ocoZZlE
-         N5/A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6dVq0RmseTX2lFrm+jYmC/LJ8h/c6Ha+39XQJ44Pyan70g9e8BNXzFPEbwmFbZ5K1ItXSI0y1@vger.kernel.org, AJvYcCUMGPqMwFD3ux3D3u0gs1uey8yXxYtW1Qs+rWd17aGurcqZjOspELsSgKcLUXxsTf/ObYSqRD0X2cXSpoU=@vger.kernel.org, AJvYcCWIvQYLuzTrPQmlO+qLfkRJRDtOBrE5j+Pw7pFvfq+VnU/GvNwofHwarNNcX/Bo1gecLTNvvzHGiRHr30URyUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzprEfrr9s8yakoeUj7YioPQrJ8JCNwsu3qZxPoohtsc2dZlWAT
-	f9Vb90cXajELKaAAoTAS5N7G27JW3gAYOn2b4duuZe+f+nXH542O
-X-Google-Smtp-Source: AGHT+IH9Re7qI11bFWjzdKhmKNOoTKp5aILEFXvdHmzSO7KktOHqim6bI57kv3Ke9l9/aFvrvDBnCQ==
-X-Received: by 2002:a5d:6da6:0:b0:37d:501f:483f with SMTP id ffacd0b85a97d-381c7ab2fb6mr155006f8f.44.1730385983595;
-        Thu, 31 Oct 2024 07:46:23 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:d7b9:afdb:c541:d023? (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d439esm2316878f8f.44.2024.10.31.07.46.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 07:46:23 -0700 (PDT)
-Message-ID: <fc0657cd-083c-4abe-8f27-0b5a49cdd35a@gmail.com>
-Date: Thu, 31 Oct 2024 15:46:21 +0100
+        d=1e100.net; s=20230601; t=1730385987; x=1730990787;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ypveLFvkaXf1wJtqmx/51pwj85CYlxVe18qe346szto=;
+        b=VifporBDXz2o8X75dTtkzy39L0KAOn4sulxBWLJEqbQ/s5FQ0DvMTc164wnC+DugaM
+         d/H2pQtneww++ncOkP9VkHnN230tZrk5TiMi+K40Y2muVcKZ5uP8fBIJ1V72KVsry0JN
+         2D88rnhpvBfx+SCY155idTouMrs2iM10OVMqB+mepELJz69BzdLeFFs1zDiF9UcWYFVa
+         3wVIoFtejts1gcYO6m270O5w72DZSyuvEYa/qGOMlpluSv9ssNU5q/lhbmBlDMLR/v6t
+         k9/CcGgETt6eZtyfc4N+W4tf2jNX4t3tadHmstUaDmKWx5hVUnMxxf9ywu9i9UJxnCMk
+         u44w==
+X-Forwarded-Encrypted: i=1; AJvYcCUzSEewkkIiFtgKXcSQ4OBhtsR/oZSeP8/zgWGemAvUYMQ4X2Guw6T3DrrD6tm47hfmIT1jm3jPBeIb/Tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqEOkFHnI4UuuaLRdvroQNVkdN3QoIVm/UoBoE70vgXa7IsQfJ
+	wGHj8Rd6ltUz6CUOptvBKY+msfMAVthwCpsDK4m2rY/m7Gm+X+5L4k/OejLd55g=
+X-Google-Smtp-Source: AGHT+IHO0u8NI+kPpq4+Wzny8mwJitAvu47tgJQ19gV0TI9gjpe3yY4DuzAFhy8aDC6EsCh5Rx123g==
+X-Received: by 2002:a17:907:3f9f:b0:a9a:2afc:e4d7 with SMTP id a640c23a62f3a-a9e50b948d0mr315152266b.44.1730385987116;
+        Thu, 31 Oct 2024 07:46:27 -0700 (PDT)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c6150sm74717766b.81.2024.10.31.07.46.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 07:46:26 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 31 Oct 2024 15:46:51 +0100
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 11/12] arm64: dts: bcm2712: Add external clock for RP1
+ chipset on Rpi5
+Message-ID: <ZyOYWxZZWkGnGknI@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <13ad41f172cc8605cb9b324ea0f22296c4c97033.1730123575.git.andrea.porta@suse.com>
+ <eb1b630a7ee8222322d213f72ceb1c23.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] wifi: brcmfmac: release 'root' node in all execution
- paths
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
- Hector Martin <marcan@marcan.st>, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
- <alsi@bang-olufsen.dk>, linux-wireless@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241030-brcmfmac-of-cleanup-v1-1-0b90eefb4279@gmail.com>
- <173038429759.539202.17634636965892286169.kvalo@kernel.org>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <173038429759.539202.17634636965892286169.kvalo@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb1b630a7ee8222322d213f72ceb1c23.sboyd@kernel.org>
 
-On 31/10/2024 15:18, Kalle Valo wrote:
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+Hi Stephen,
+
+On 13:49 Mon 28 Oct     , Stephen Boyd wrote:
+> Quoting Andrea della Porta (2024-10-28 07:07:28)
+> > diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> > index 6e5a984c1d4e..efdf9abf04c4 100644
+> > --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> > +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> > @@ -38,6 +38,13 @@ clk_emmc2: clk-emmc2 {
+> >                         clock-frequency = <200000000>;
+> >                         clock-output-names = "emmc2-clock";
+> >                 };
+> > +
+> > +               clk_rp1_xosc: clock-rp1-xosc {
 > 
->> The fixed patch introduced an additional condition to enter the scope
->> where the 'root' device_node is released (!settings->board_type,
->> currently 'err'), which avoid decrementing the refcount with a call to
->> of_node_put() if that second condition is not satisfied.
->>
->> Move the call to of_node_put() to the point where 'root' is no longer
->> required to avoid leaking the resource if err is not zero.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 7682de8b3351 ("wifi: brcmfmac: of: Fetch Apple properties")
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> 
-> Wireless patches go to wireless trees, not net. But no need to resend because
-> of this. And I think wireless-next is approriate for this fix.
-> 
+> The node name is preferred to be clock-50000000 now.
 
+Ack.
 
-Sorry, the second link from your signature explains very well what I
-should have done. I will keep that in mind for the next patch(es) to
-wireless.
-
-Thank you and best regards,
-Javier Carrasco
+Many thanks,
+Andrea
 
