@@ -1,191 +1,253 @@
-Return-Path: <linux-kernel+bounces-390658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302C99B7CE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:31:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841B49B7CE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531251C20A3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:31:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21141C20F53
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CFF12C522;
-	Thu, 31 Oct 2024 14:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b="n93P2e1Q"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2135.outbound.protection.outlook.com [40.107.236.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A431A08B8;
+	Thu, 31 Oct 2024 14:31:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC5E175BF
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.135
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385082; cv=fail; b=Hpo/7NwaefD7z81FlgvzjRb4PIL0dAbRoi6T7+FOolM0o0SVy0uVlGqhPZZreA+yKXNJ8wBLXvMBRKxfcjEiJYQTGfCUYKeg30T4DgsUGfD0pR3zIphF0jwPc9XMZ2TMM+T3ynTR/6I5wVuT6udt/w+p+8vTGQjLgK17d2YOzTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385082; c=relaxed/simple;
-	bh=kXOkFRrzzucnKxmC4NhZS+E0FGs/kTbwPMiMw0pe/JY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LNv1nR8qQoyb3lgSY1eqFN6vFXZ2o/r+QaDHQXs1l4fcxcCR7m7WK4Rag1uMp014arjf8G+8P0J7f+KSUzFhqOr9+PPsLSY5MWzIcBRlI2Kgfmb5QBtuD/ytKYfL5DrQYAqP/+K4yowgh8hB7uLL0ZLCkLcgKN6VVKqZM7eKp1s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com; spf=pass smtp.mailfrom=in-advantage.com; dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b=n93P2e1Q; arc=fail smtp.client-ip=40.107.236.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in-advantage.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uYwouUz24csRzZbPyYiuGJCCsd8KE3seI43DVFpA6jZ14a7wCHkbk8O4H4ZTshNo1RVjYqcevtCEhh2O+jxh5njd1OK9HBGLcYV6z+qSvjvHZNbxLuylPsYOMZMN9H7qxEtlstqEOoMFsmB8Dr1aY1bC0ByqQdDh8jgB17zVSialrG1bEddCeHtHHizSLgNQ9YTDjA/CFJoA28CcF+nSxTsrLB7fEXl7FSmZkaBDfEfqqPomOCLo1Ki0T9sIKeTtk81QSOZzsa5V+HxXGpQJ9HA2W0pXrPM93h7LWA+vU6PVXH1LAPQ601d0BbcJM7pZv8vFgS7k75VtbRy0GbVz4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gLreAuk+bolIm/Ha/C5GaDGLQt6CWuQAa2yZMB3Qmmk=;
- b=maEP9ooQJgbrGmVGyx4u5guA3s7LyoLrH+bBVGFrKDwpgzsDNvqW+CooZhbReXhf10EDLRtW+Y7dX3ADAyqLmTWL3l0SRA/aVSVCEWelYFCx4kvkumCmbJIGyk2zvZCkNm6MaWsBKnADdGv9NpWS0S7O9Vo2BZFl8VlxFDsNpnL7SnuryVpvjwRDNQeeeGaw+ZK4qmY19X+igWP/18C3bEYGGBOy6tIy8lEi+a0cAFuokoeZA7WqgVDOs+Kt55b/4Zz8h99Ogx5O+9nGVVFXl3uPYtlUYMSHMjWcSSmzjOyHrlSjmT8674A7SXSYE4BTNUlcE2IJS/gWohARzvn2kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=in-advantage.com; dmarc=pass action=none
- header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gLreAuk+bolIm/Ha/C5GaDGLQt6CWuQAa2yZMB3Qmmk=;
- b=n93P2e1QLMpUzIjGgGwblOZq5grB4IPSVP2n9RwIF49ybntjvu9G2KAuabB/MjDNATlF3tAnpH/tL8NCBQyBOJCYTd/eSLZbjQbjS1Hbu89SRMPUgXXhI528m0BlZJElxHL4TZCn9Ctp8qtYa5i9LkcNKc2YYypLfQAWkWXW+ks=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=in-advantage.com;
-Received: from DS0PR10MB6974.namprd10.prod.outlook.com (2603:10b6:8:148::12)
- by DS0PR10MB6894.namprd10.prod.outlook.com (2603:10b6:8:134::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Thu, 31 Oct
- 2024 14:31:15 +0000
-Received: from DS0PR10MB6974.namprd10.prod.outlook.com
- ([fe80::7603:d234:e4ab:3fea]) by DS0PR10MB6974.namprd10.prod.outlook.com
- ([fe80::7603:d234:e4ab:3fea%6]) with mapi id 15.20.8093.024; Thu, 31 Oct 2024
- 14:31:15 +0000
-Date: Thu, 31 Oct 2024 09:31:11 -0500
-From: Colin Foster <colin.foster@in-advantage.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, linus.walleij@linaro.org,
-	treding@nvidia.com, florian.fainelli@broadcom.com,
-	krzysztof.kozlowski@linaro.org, davem@davemloft.net,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: ocelot-serdes: Fix IS_ERR vs NULL bug in
- serdes_probe()
-Message-ID: <ZyOUr7iDa9nFBxgq@colin-ia-desktop>
-References: <20241031123847.1356808-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031123847.1356808-1-ruanjinjie@huawei.com>
-X-ClientProxiedBy: BL0PR02CA0139.namprd02.prod.outlook.com
- (2603:10b6:208:35::44) To DS0PR10MB6974.namprd10.prod.outlook.com
- (2603:10b6:8:148::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830E1126C00;
+	Thu, 31 Oct 2024 14:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730385099; cv=none; b=hzOsXfY4O6+OwwV9NaJ2ihnbq06nYD/KVOttiB2ASBGNsN2+5OG39sOsEpfcCLy5ToLyi2FE4mJLhCaC5IOXgkkY/eWyyn9d8CEQFZAS2ziK/FwxKsSL+809tR3SESqpple+NKyCxZWVh5amyO4b9yOLMjriN5QquZXb73eWcdQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730385099; c=relaxed/simple;
+	bh=PuDbDPSsaYw6fzKpOB6WGo3iQDhxrpPMSFphqPAYYpo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EN28I5JAEc6VDfn4PEbOzatLq94W/w6VmutorAxlxxp9PC5ywPodkbXL7ZdUHH747jHCVCo85UAHGn8QWGlw7kx6Y6txra/pOOYgSCoYOIJdzDcgLFCxEWfcAR/vL0wliXEEsDAqmZlcFV1vJV59hm+cGAJ+/5ds78hAV8H6QU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XfRBl4Tjhz6GDmf;
+	Thu, 31 Oct 2024 22:26:39 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 20CAB140136;
+	Thu, 31 Oct 2024 22:31:32 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 31 Oct
+ 2024 15:31:31 +0100
+Date: Thu, 31 Oct 2024 14:31:29 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@intel.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Alisa-Dariana Roman
+	<alisa.roman@analog.com>, Christian Eggers <ceggers@arri.de>, Peter Rosin
+	<peda@axentia.se>, Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel
+	<sre@kernel.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v5 2/5] iio: consumers: copy/release available info from
+ producer to fix race
+Message-ID: <20241031143129.0000014e@Huawei.com>
+In-Reply-To: <173037398492.12348.265826723028347056@njaxe.localdomain>
+References: <20241021-iio-read-avail-release-v5-0-b168713fab33@gmail.com>
+	<20241021-iio-read-avail-release-v5-2-b168713fab33@gmail.com>
+	<ZyJHFp6vbQ7deLFs@black.fi.intel.com>
+	<173031260171.39393.109639772708550094@njaxe.localdomain>
+	<20241030203050.5cdf3450@jic23-huawei>
+	<173037398492.12348.265826723028347056@njaxe.localdomain>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB6974:EE_|DS0PR10MB6894:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8779dfb-05fc-40db-9fbb-08dcf9b8acf7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VzoIBPvHtsBQZqjqdimtdUHhBySuRQhvM1o5YWQYQWZqIZoC4EIElaRUatLu?=
- =?us-ascii?Q?t51N16tIQAm6CaYFOlO5pelRaSaOCiDPIEABxx+e1CUGWJ/lO11jq9ol9Xji?=
- =?us-ascii?Q?18ZqE4KLxMS/X90p2bT/lxnY40A0hO9T2bejGYalwq259vLqtC0Au/m7Bj0e?=
- =?us-ascii?Q?GvEgE04MVN6B5Pbg0cEH3vbFM8Y5jkKBWAQqcxUheg33dpdt5BjzT5Xd2tjv?=
- =?us-ascii?Q?cqv+0POG2xJYhXIO8IyUWLN/RCeX96pPATM3DF9tiNk63F9fONZWB73GQnHy?=
- =?us-ascii?Q?jgy/U2kUBOKSoO7T+dGDuKRh7WbZ7XvRzArD8p4nqICYoUUAkCfxIPFJH2ZJ?=
- =?us-ascii?Q?KFMCdoEsyiI3hqYscKRCAX3St/khf91uZJ8ctQFdvVhAlI1P8DBGmyy1Fp1R?=
- =?us-ascii?Q?02GKw9VidqRLMNuM8LOdqMcz5SpMUlJqSI0CwnIw688stIY4C2FwEKmZfliu?=
- =?us-ascii?Q?YcCCsZFLFqaIqINNCTJsBsx9WcM8AE5htYSxivic187ybz1kgqfSN+4nWX13?=
- =?us-ascii?Q?aNfWXii4VCFZJoWM1keWeVO2Y0wg92F1Dm1kZ5fPv1T/ZvN8xp/sW+vJSxHo?=
- =?us-ascii?Q?nvpsVMxprzPkCpRfwD+Zn2+t5bKBcvtrFWAkBgWNz1AsWWmcCSnQ/0c7uaMx?=
- =?us-ascii?Q?5+KveH1ajjMt81FFR0BwiXcc5zFqCYdsVmm8YtFnQT6StnhnCUt76gtOLKqt?=
- =?us-ascii?Q?wEZqlq0XmA8H3mAg1xyfMjHh279ewN6CsFfLgB815WBxP/JCEyY72OqBzP7D?=
- =?us-ascii?Q?2r/gpK9wLpgdW57lHJxKY2pAhZsbZZDD3a7C0E8DQD9HcfALh24MNEjFyl/V?=
- =?us-ascii?Q?u0/BhbDk26M+y5zBUGlAlgL8K2VxOcjV0NmexsruP9hOPKu9cTwzj00cCyge?=
- =?us-ascii?Q?xm+1Ak9t8KtuD9BPOHBXK4oGaYXTdh9yRtXWnv4je5m2GJiFx0+Zeay1t29m?=
- =?us-ascii?Q?wFFk2cju32w3hsDocpAyXP80+9jrSVbxzac0ZdODv8JZ46ylBlf/JHnWwm3N?=
- =?us-ascii?Q?lh6XgEnNEV3Xxccr3eZHp8QgN/8W1PTMagY3WU5Xv9SoL6G1ov+h6V26By2C?=
- =?us-ascii?Q?BG7hXyKTDVLsdOx+nTkYTXXOCWztemk+POB6vm4+uThVg0cfLzmmGdxo4nn2?=
- =?us-ascii?Q?8Om/lbXVl6cSFmJyemqdxiTNxEbQlaKlz0Y6bZWiX+QhOq9GmFUVjWEIF0eD?=
- =?us-ascii?Q?EgLdXfd3wue/drD+eOX/9GfSkjmpTp7WrGhSeQ42uGfTGeABSC2ezUJQh+RL?=
- =?us-ascii?Q?kVhZHAzvsVh9FmEL+n5IwMIv2ZwFNfjjyEECRimE53UxtqRFlp2+COaLHKGh?=
- =?us-ascii?Q?JLYoErP67Wy1WPpm4kJC7vEo?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6974.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TPelnYdLnqADCHEFCPWhZoWeOCQzZXoUiU00Kvy5rYZEwM7n0sk/Db3QdLfu?=
- =?us-ascii?Q?8VYdnsMhKAinLKnKh8DuNASs64jDf4nyAsSJcEOMFz9gedeXcHjvGxg9/uTG?=
- =?us-ascii?Q?xFpenmrp/VIRJht9OVDVP4guLS9Lc6zjZ5L1Xgbt/+onv3p/rGDMGoDJVseC?=
- =?us-ascii?Q?mDh4xWm6KJKn1zNP/qny4e9ExahG1fmBMqb4Np88Nf7cfe8WHrzkxxMWHx4U?=
- =?us-ascii?Q?aClTZ+26ElRys9zZOfhH9CocxhwMgZmzZFXLNgCCNgxicOGhqFfe31i6om5n?=
- =?us-ascii?Q?94huKeq0rauX2aTHUQrJl0hLVjANpO9Kmkeuaue9IKa4QE9h2jx5s48Gv+iM?=
- =?us-ascii?Q?zC7sQ1RpjDStBgCPy9tiZxuuzNz84M3eq/MVsZ6Xo3alPoxamcIvrP+5XLlr?=
- =?us-ascii?Q?CziVM5hTG4dP42Q5xjk9YMzsKA6HBx0KlggZGmyWIy1v+bzatghAk+V2J/Oa?=
- =?us-ascii?Q?STr8hnjk+3IEZ1zNJYICCaELdpkcuyDeFNM7DgVgBrG2dybFBx0Vsb70wCsN?=
- =?us-ascii?Q?EBN5Ifz7XPfzEIREbylR3p0HIP4C1NpnqVJyX6WCdjuhuVSD8pReO/HuxkrE?=
- =?us-ascii?Q?PAtSF35vFNSwUUIuVK4Vrip57zSFUG3b9Owp0W60Noz7zD6CC0bUHBkWLkRa?=
- =?us-ascii?Q?+bSi+DBnAZIDl8fFhJlRkYREhhXQ6SCk4FoiTv6QRWcwifjWKd/PGDnHN7FC?=
- =?us-ascii?Q?YIjTzr6TySTkTDJdpii5b/gIZOvL76KfoLCHvOGn4R+DkJUKDk1xGrVEhIwV?=
- =?us-ascii?Q?x/NwEe/Xb7KHblu2pdK7k2u4kDygpSSZUgiK0NlLvnEbeYbtIgP9fm8Mo272?=
- =?us-ascii?Q?Mooc1K4F5iPvKUalm4go9Lo0E6z0s7AHAe+HbIrvm26vc/WKWewQFtYx2oOP?=
- =?us-ascii?Q?hJ5iurmT4+s//4fb9fTkjFHkzVcNAg9QXuxZSwj1pVSw97XCqNintmL8zRdW?=
- =?us-ascii?Q?IJhNIEoItYei4/hieEZiaoyEdiIbC+LI/U/V2rmQ8stPwb9Z2gP2h0EdSY0b?=
- =?us-ascii?Q?0r0Hd+TcQD4hU0ZyqrQ6JYxJ1lvAN6W96XFeTzNitoYkVhOfm0PK8gjsCzkX?=
- =?us-ascii?Q?g6EuKy8pKIam99QrGSZZ4qoVkhlZqJkHbhXmZAyN9T7WS+QHJ0/HSM8/tPeR?=
- =?us-ascii?Q?czdWrugMl49eetsr4yU0Jm0YfZ7zqES2+BmItthHt7WDsz9xKJOJkq5TQagl?=
- =?us-ascii?Q?bJTe6h8t/tgdxtMvWbOdwBZHh7WPVAwI0vvj2LB0AeRRqmfCGCzk40y6YntX?=
- =?us-ascii?Q?9Csizma7z3GqHeDEv0jxrKIeqNK9urwk+N4uN6186xLvCNKAqF2aYbyFMNOL?=
- =?us-ascii?Q?q11cG/5W1N899zZScd3/60E1RckXdzap1PxLyw9IUJJj8p+O6IMncoGm8GAt?=
- =?us-ascii?Q?G7WjFwHomFmtHmdVl8l7t7j6XNtYj4M4vZ1iY7QB3UsXozf9REzpYhaheyvm?=
- =?us-ascii?Q?RFlrr/ZaHPJ4df8IuPCtl2iz1Dbg0TEaZO047Vj7r+BF58Vp+lrgrSyo+Gjp?=
- =?us-ascii?Q?D3LxGWD+zc+y9AMezgW1BRhZ48oBsr7Nv10aUHsR1h5xefprLDFXZWo99PHr?=
- =?us-ascii?Q?Wg9qcjpZnS9r+oJxOspkRP+eZJQOJ4Umxt2N/a8d9L9UXv+zqvUUa1zpsZG3?=
- =?us-ascii?Q?Hpo6sw7hX+YUilDyHfN/84Y=3D?=
-X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8779dfb-05fc-40db-9fbb-08dcf9b8acf7
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6974.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 14:31:15.3111
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jaycrBqRrX9gB47J8JQ+4C8hd8IqlxcS7zG1gXuw5eMrsLno8RyE5wePcMCLLeUiMuHJPW53MlvnoC6HjiAmZmzsNYd/wDa9yzfvQi0V174=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6894
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Oct 31, 2024 at 08:38:47PM +0800, Jinjie Ruan wrote:
-> dev_get_regmap() return NULL and never return ERR_PTR().
-> check NULL to fix it.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 672faa7bbf60 ("phy: phy-ocelot-serdes: add ability to be used in a non-syscon configuration")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/phy/mscc/phy-ocelot-serdes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/mscc/phy-ocelot-serdes.c b/drivers/phy/mscc/phy-ocelot-serdes.c
-> index 1cd1b5db2ad7..77ca67ce6e91 100644
-> --- a/drivers/phy/mscc/phy-ocelot-serdes.c
-> +++ b/drivers/phy/mscc/phy-ocelot-serdes.c
-> @@ -512,8 +512,8 @@ static int serdes_probe(struct platform_device *pdev)
->  						    res->name);
->  	}
->  
-> -	if (IS_ERR(ctrl->regs))
-> -		return PTR_ERR(ctrl->regs);
-> +	if (!ctrl->regs)
-> +		return -EINVAL;
->  
->  	for (i = 0; i < SERDES_MAX; i++) {
->  		ret = serdes_phy_create(ctrl, i, &ctrl->phys[i]);
-> -- 
-> 2.34.1
-> 
+On Thu, 31 Oct 2024 12:26:24 +0100
+Matteo Martelli <matteomartelli3@gmail.com> wrote:
 
-Good find.
+> Quoting Jonathan Cameron (2024-10-30 21:30:50)
+> > On Wed, 30 Oct 2024 19:23:21 +0100
+> > Matteo Martelli <matteomartelli3@gmail.com> wrote:
+> >   
+> > > Quoting Andy Shevchenko (2024-10-30 15:47:50)  
+> > > > On Mon, Oct 21, 2024 at 02:54:15PM +0200, Matteo Martelli wrote:    
+> > > > > Consumers need to call the producer's read_avail_release_resource()
+> > > > > callback after reading producer's available info. To avoid a race
+> > > > > condition with the producer unregistration, change inkern
+> > > > > iio_channel_read_avail() so that it copies the available info from the
+> > > > > producer and immediately calls its release callback with info_exists
+> > > > > locked.
+> > > > > 
+> > > > > Also, modify the users of iio_read_avail_channel_raw() and
+> > > > > iio_read_avail_channel_attribute() to free the copied available buffers
+> > > > > after calling these functions. To let users free the copied buffer with
+> > > > > a cleanup pattern, also add a iio_read_avail_channel_attr_retvals()
+> > > > > consumer helper that is equivalent to iio_read_avail_channel_attribute()
+> > > > > but stores the available values in the returned variable.    
+> > > > 
+> > > > ...
+> > > >     
+> > > > > +static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
+> > > > > +                                         struct iio_chan_spec const *chan,
+> > > > > +                                         const int *vals, long mask)
+> > > > > +{
+> > > > > +     kfree(vals);
+> > > > > +}
+> > > > > +
+> > > > >  static int dpot_dac_write_raw(struct iio_dev *indio_dev,
+> > > > >                             struct iio_chan_spec const *chan,
+> > > > >                             int val, int val2, long mask)
+> > > > > @@ -125,6 +132,7 @@ static int dpot_dac_write_raw(struct iio_dev *indio_dev,
+> > > > >  static const struct iio_info dpot_dac_info = {
+> > > > >       .read_raw = dpot_dac_read_raw,
+> > > > >       .read_avail = dpot_dac_read_avail,
+> > > > > +     .read_avail_release_resource = dpot_dac_read_avail_release_res,
+> > > > >       .write_raw = dpot_dac_write_raw,
+> > > > >  };    
+> > > > 
+> > > > I have a problem with this approach. The issue is that we allocate
+> > > > memory in one place and must clear it in another. This is not well
+> > > > designed thingy in my opinion. I was thinking a bit of the solution and
+> > > > at least these two comes to my mind:
+> > > > 
+> > > > 1) having a special callback for .read_avail_with_copy (choose better
+> > > > name) that will dump the data to the intermediate buffer and clean it
+> > > > after all;
+> > > > 
+> > > > 2) introduce a new type (or bit there), like IIO_AVAIL_LIST_ALLOC.    
+> > > 
+> > > Could you elaborate more about these potential solutions? Maybe with some
+> > > usage examples?
+> > > 
+> > > If I get it correctly, in both cases you are suggesting to pass ownership
+> > > of the vals buffer to the caller, iio_read_channel_info_avail() in this
+> > > case, so that it would take care of freeing the buffer after calling
+> > > iio_format_after_*(). We considered this approach during an initial
+> > > discussion with Jonathan (see read_avail_ext() in [1]), where he suggested
+> > > to let the driver keep the release control through a callback for two
+> > > reasons:
+> > > 
+> > > 1) Apparently it's a bad pattern to pass the buffer ownership to the core,
+> > >    maybe Jonathan can elaborate why? The risk I can think of is that the driver
+> > >    could still keep the buffer copy in its private data after giving it away,
+> > >    resulting in fact in a double ownership. However I think it would be clear
+> > >    enough in this case that the copy should be handled by the caller, or maybe
+> > >    not?  
+> > Mostly the lack of desire to have to copy for the 95% of cases where it's
+> > not needed and that it prevents any optimization like you mention.  
+> 
+> I think the suggestion here is to add an additional .read_avail_with_copy()
+> without replacing the original .read_avail(), so all the current drivers that
+> use a constant avail list would not be affected. And I think this was the same
+> idea for the additional read_avail_ext() or the additional argument for the
+> read_avail() we were considering in [1]. So I would think that
+> iio_read_channel_info_avail() would do something like the following:
+> 
+>     if (indio_dev->info->read_avail_with_copy)
+>         indio_dev->info->read_avail_with_copy(vals);
+>     else
+>         indio_dev->info->read_avail(vals);
+> 
+>     ...
+>     iio_format_avail_list(vals);
+>     ...
+> 
+>     if (indio_dev->info->read_avail_with_copy)
+>         kfree(vals);
 
-Acked-by: colin.foster@in-advantage.com
-Revieved-by: colin.foster@in-advantage.com
+Ok, sure that would work, but...
+
+I don't really see this as being much less fragile than
+the existing solution + in cases that we do have where
+only some available are not const we will have to copy them
+all.
+
+If anything it's more complex than making it a driver problem
+to provide the release call however it wants to do it.
+ 
+
+> 
+> And the drivers would choose whether to define the read_avail or the
+> read_avail_with_copy.
+> 
+> What I was referring to is that, back then, you mentioned you would have
+> preferred to avoid passing ownership of the buffer around:
+> 
+> > That's a corner case we should think about closing. Would require an indicator
+> > to read_avail that the buffer it has been passed is a snapshot that it should
+> > free on completion of the string building.  I don't like passing ownership
+> > of data around like that, but it is fiddly to do anything else given
+> > any simple double buffering is subject to race conditions.  
+> 
+> I guess there is some other reason other than avoiding the copy when not
+> necessary, since by introducing an additional function or argument or return
+> type, most of the unnecessary copies would already be avoided right?
+
+It's not a strong reason beyond limiting scope of clever design +
+the key bit my mind is that the above is not substantially simpler and
+reduces our flexibility.
+
+> 
+> Anyway any of this solutions would still prevent the potential optimizations of
+> point 2). It's worth mentioning that those kind of optimizations are currently
+> not adopted by any driver.
+
+That one indeed not, but mixing dynamic and non dynamic is something
+you do in your pac1921 patch.
+
+Jonathan
+
+
+> 
+> > 
+> > Jonathan  
+> > > 
+> > > 2) Some driver might want to avoid allocating a new copy of a big table if
+> > >    the race does not occur (e.g. with additional checks on buffer access
+> > >    code) and thus wouldn't call a free() in the release callback.
+> > >   
+> > > > 
+> > > > In any case it looks fragile and not scalable. I propose to drop this
+> > > > and think again.    
+> > > 
+> > > I see your concerns, I am open to reconsider this in case we come up with
+> > > better solution after addressing the points above.
+> > >   
+> > > > Yes, yes, I'm fully aware about the problem you are trying to solve and
+> > > > agree on the report, I think this solution is not good enough.
+> > > > 
+> > > > -- 
+> > > > With Best Regards,
+> > > > Andy Shevchenko
+> > > >     
+> > > 
+> > > [1]: https://lore.kernel.org/linux-iio/20240729211100.0d602d6e@jic23-huawei/
+> > > 
+> > > Best regards,
+> > > Matteo Martelli  
+> >   
+> 
+> I hope I've brought a little more clarity to the discussion by providing some
+> history instead of making it more confusing.
+
+Sure, the code example in particular is useful.
+
+Jonathan
+
+> 
+> Best regards,
+> Matteo Martelli
+> 
+> 
 
 
