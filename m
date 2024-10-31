@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-391281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EE49B84B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:55:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E269B84BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB0831C2096D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089C4B249A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AD81CCB5E;
-	Thu, 31 Oct 2024 20:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86811CCECE;
+	Thu, 31 Oct 2024 20:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HdqSMMiQ"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UAeAbSXa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42521B3B2E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F8B1CCEF8
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408141; cv=none; b=FpJtxeBJK5R2HYUWyXIjQqrzElipotD0aVxfLMVva88z6FMY2GdZTzW6LVHT3XkeZHkvrEKE6J3lFVvuhkJUZ1+aU381EnCbDj0a2w86l8js4o7X0u7JlqYGM1gNxaHz+ymVR851AEsOFVeWdhKQ/h/3l0o8hdvMkP96u5EL4II=
+	t=1730408162; cv=none; b=kHRIL2EaNRFU2e5T5eAU2gJ31MzzOfR3kQ0LYkwATD79uFhp9C1Swya83+7rWNDdD3X6ASMsgjmPnl57yS1mXf9zpImb2oV03dlyLWKR690OfSwJ3IJ+L+DJ2Qi8cpi0Jb5Yj1c6noitUjtrQFfdSKBHLVa1vVE2PXUr1LluyJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408141; c=relaxed/simple;
-	bh=5QF1GfxDyoWq5h+USFwpYEnKgfZ8PnsYLlMZFcmmpNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDezSy3ogWVs5Vyg0axszYXlNWnjvsVPpTcaRJ+PlNN2wKBriG+caev2CeJoT9ma2uAoxbQ1Lk8onsdpvJg9arfsYbKPtZoyXaUaNOad2bmcP9NLpulMFpv6mZkrse1fNWeF7QTfXJBj/2jM/M5mN7hkUwyXgVIG30F9Rr56hTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HdqSMMiQ; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e8607c2aso1521168e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:55:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730408133; x=1731012933; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h164uvathdh9GwUZcWXqlrzCUWdwa05VF7nF2pa0Pnw=;
-        b=HdqSMMiQS0KjL7IyJNWmdzRNlUnOSYeWVwuRZf85FZsLXk4FOcD62UW0lpdqNIw+8/
-         mCarBGyn01PIlmdYQqa6+FFzl9ORXX70H+5b8HSrD8spM7ARe/sw5j1GOS8cyJ92OL34
-         BfiUxPPry+Qc4fYPjTU2JDb6ewzQqCbMEWFKzJX7gnqE1gTtxNi2BhBBTAL40rDZT6IU
-         qUYYAnmUroOU7FXI45kEVKkhBksI89zw5B3swMJvw5XazqHctqyCu3zK+wLMG31F5BZX
-         QngREXtv943TH/olNjB1Y9xRvcZv22tK0IqG7qSHiQgwpQ8xnfYKIEgHG/sna76AxeEw
-         sUbQ==
+	s=arc-20240116; t=1730408162; c=relaxed/simple;
+	bh=lUSUj5gpJWH3n+nu+zbQk0I/denqmKWaKjMGJHBTETQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hur8SVxP3/O6Ix32rTca1k3xxUREaD8/OBVALRTRV97o6C4ooeJizLLsP9Vif6aMaMK/QdmX6bLAaJpA9Grt2XuLtMfXUg2kr3xS6xAfyV2MaNVNlqHxT4V4FkzuZAb1R8v939WcvjI1E0RJWfdJUc2o5Hoqy0xJfCV6TvDLtvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UAeAbSXa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VALRcM012752
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:55:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	G/GsUlv6jLw8dS2ijmCbA4pqN85zB0IfE2xsC+GERb8=; b=UAeAbSXaq0jCy6fP
+	uniAzadaIqa+xq3xwFwk5c9EzLAgHLFpBgIg2WddDNvUNN3cbsyAzSa1eD/BuFHF
+	jmMPR+q2Y65kzBhYWHPS+3REjMVnuZvMuKOvwMgO/99w/vJ3yCM0WIUk4HKAdoN7
+	Eu0cxXLtU/pwCzHHhqhU4SXklTmU3pM3ACG+ON/KiVuAvhKNmcywbBxfHGJK5Cbd
+	8vNtvUWkgLiNHsxyOiSg6nwTbjQf23DO5/IlvED5/OYTWc7mI3JWsoqim8shQsWi
+	jD0I2nSCi28lw6yuPStmk+OemJtSrQ9T8JORQqPZspY/YpVX2GTfT5jJX5Oew7G/
+	t/OSAA==
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ky6rb4kc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:55:55 +0000 (GMT)
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5ec1c46df37so186675eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:55:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730408133; x=1731012933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h164uvathdh9GwUZcWXqlrzCUWdwa05VF7nF2pa0Pnw=;
-        b=tKU5GK4Q1FxAibQG2RnZO2mPq4VeYKEcm+zp1uxIKSKuxVlonlPYDfidtx1LIqcyOE
-         CraoL+Zs8InSFuN5/X6HQbc8tPElE2plHpl6zovpbRGTsss6RIZGpCOx4pF+H1FtrQZn
-         QC1UxDw8nOeSgcqdYoUO7xelTpgWIhAI6NLWoEzMj3vL8X4/lmY7HlMojfo2L3P94RbJ
-         mCMjPafYcCQW0zdmYmmr7UJCJ3VrR52Wg46JVlIoPguS0zJVryxqkOWXtffpDjFlHJ6R
-         om9QyTIubU4iCL2XRxa9IQwsTOJ5Xr+tI2tlygoaYlklMEnGRP0Q/frSvBz3tjWiElnn
-         LCJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYLofKxd8L/BpYoGNlxldp/k3Ke0abctAIIgtYDNuTz5dYwe0SmWiUPklAvrUxuvX3+hgNd61dC1XemLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBu0A8h+Ot5ENZIBme82fEeB+U/AO3HTKOoCC8Ep9TO5PZl1mG
-	C0CxnmEvSstFYd4pO2jDgHZRclqSZlrb6GKFiGllrsrhurXftfen9gJl8hkIUZs=
-X-Google-Smtp-Source: AGHT+IGJ+tWCwIEDayGEBAeK10meBPh3PGgEPOw1Qyld1seRLcMErL1vcpY7qkKPYdHBp7JrKlK46Q==
-X-Received: by 2002:a05:6512:32c7:b0:539:a353:279c with SMTP id 2adb3069b0e04-53b348d8f6cmr11419018e87.28.1730408133014;
-        Thu, 31 Oct 2024 13:55:33 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcbcf6sm320927e87.194.2024.10.31.13.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 13:55:31 -0700 (PDT)
-Date: Thu, 31 Oct 2024 22:55:30 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Guido =?utf-8?Q?G=C3=BAnther?= <agx@sigxcpu.org>, 
-	Robert Chiras <robert.chiras@nxp.com>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: display: nwl-dsi: Allow 'data-lanes'
- property for port@1
-Message-ID: <jfvvw7rnkxp4xbcmcikyxyfmisx3bmng6uqc7yqsvkzhc3hhgq@arfzqn6raxcg>
-References: <20241031194714.2398527-1-Frank.Li@nxp.com>
- <gz3ifraqt7ga4isxhx6negcmfngen5jmhmcecnvy7gu7mpfffw@j65umo6arwc7>
- <ZyPmeippTU8SQLkH@lizhi-Precision-Tower-5810>
+        d=1e100.net; s=20230601; t=1730408155; x=1731012955;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/GsUlv6jLw8dS2ijmCbA4pqN85zB0IfE2xsC+GERb8=;
+        b=Oqe5aPQlfof/yC1DtPpVjx/gI8rAYG5G9bKqMSeXGSgtfX91UeW6ONnAIpQYmWCNlN
+         Y2j2HbUNyZGoFGK+5I5JcIrgD8+XpIdyQxMr4/k//n8y7XsRFoox4atEOghp9YhgPwTp
+         UF0RILi9w0MWCJ7i3N+3K7ZeafqD6ZMv5tVLJqZMWK+D/9dVaWthhFwLmX6pSdO2m3Xv
+         iVtpAu/fX9WOv4MAixUWGyxW0aeG9E6AFCErg9N6346bqSnflwdw41WaWg3lWf+JdqcT
+         Oxw1n4Y6k9m7ZUUEQ5t9BVwMdoY5oDUbZFa3FovCxdzVYJQOXmd4atAw+YBFEmdLUoDP
+         AKxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyt2jOhotng6Ksp7mjdmkpB6bR9FBLTo7li3Zj4RbsRbgf4lOOX0nkP0ikXmySAvw76F57Ypr/OqX62Lw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE1/XKGS/XFUn5ij+h82DO2QKt0s5qTnpQdB5GMNDHDWbUYTYI
+	AWsB4Xn6Sp2QCi9r3lGXdz5agTLImqiAuhoNVq05p6UEmYkya2LRV8E73EvPLKmRXWlNgY3uwMx
+	QaBiVl8hsRg5n3d3dtggy4VPOWyaCWGzckvECM1K+WEehUVQ7ZbDQm5jKTD8UvaE=
+X-Received: by 2002:a05:6870:8321:b0:288:4747:6904 with SMTP id 586e51a60fabf-29051d35ad1mr5245840fac.10.1730408154734;
+        Thu, 31 Oct 2024 13:55:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcabfjV3Q8jzqGajE+yo9p1xEPEdBIKwPgoG5DN9WtHI+OBzL6cWTytYzHNOkjOm8Pdwmg8Q==
+X-Received: by 2002:a05:6870:8321:b0:288:4747:6904 with SMTP id 586e51a60fabf-29051d35ad1mr5245837fac.10.1730408154506;
+        Thu, 31 Oct 2024 13:55:54 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56681a03sm102118466b.197.2024.10.31.13.55.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 13:55:53 -0700 (PDT)
+Message-ID: <0fa67f4e-8aab-477b-9e40-065fa815696f@oss.qualcomm.com>
+Date: Thu, 31 Oct 2024 21:55:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyPmeippTU8SQLkH@lizhi-Precision-Tower-5810>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: Adds SPMI support
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>, quic_fenglinw@quicinc.com,
+        quic_tingweiz@quicinc.com, kernel@quicinc.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
+ <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-1-f0778572ee41@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-1-f0778572ee41@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: CvLVXS9nFqEqNFM628C0itFm-FhhjAzl
+X-Proofpoint-ORIG-GUID: CvLVXS9nFqEqNFM628C0itFm-FhhjAzl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 phishscore=0 mlxscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 mlxlogscore=842 lowpriorityscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310158
 
-On Thu, Oct 31, 2024 at 04:20:10PM -0400, Frank Li wrote:
-> On Thu, Oct 31, 2024 at 09:59:26PM +0200, Dmitry Baryshkov wrote:
-> > On Thu, Oct 31, 2024 at 03:47:14PM -0400, Frank Li wrote:
-> > > Change $ref of port@1 from 'port' to 'port-base' and add 'endpoint'
-> > > property referencing video-interfaces.yaml. Allow 'data-lanes' values
-> > > 1, 2, 3, and 4 for port@1.
-> > >
-> > > Fix below CHECK_DTB warnings:
-> > > arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx-lvds-tm070jvhg33.dtb:
-> > >  dsi@30a00000: ports:port@1:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpected)
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  .../bindings/display/bridge/nwl-dsi.yaml       | 18 +++++++++++++++++-
-> > >  1 file changed, 17 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > > index 350fb8f400f02..5952e6448ed47 100644
-> > > --- a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > > +++ b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > > @@ -111,11 +111,27 @@ properties:
-> > >          unevaluatedProperties: false
-> > >
-> > >        port@1:
-> > > -        $ref: /schemas/graph.yaml#/properties/port
-> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > +        unevaluatedProperties: false
-> > >          description:
-> > >            DSI output port node to the panel or the next bridge
-> > >            in the chain
-> > >
-> > > +        properties:
-> > > +          endpoint:
-> > > +            $ref: /schemas/media/video-interfaces.yaml#
-> > > +            unevaluatedProperties: false
-> > > +
-> > > +            properties:
-> > > +              data-lanes:
-> > > +                description: array of physical DSI data lane indexes.
-> > > +                minItems: 1
-> > > +                items:
-> > > +                  - const: 1
-> > > +                  - const: 2
-> > > +                  - const: 3
-> > > +                  - const: 4
-> >
-> > Why are they indexed starting from 1?
+On 28.10.2024 9:03 AM, Tingguo Cheng wrote:
+> Add the SPMI bus Arbiter node for the PMIC on QCS615 platforms.
 > 
-> Not sure, git grep -r data-lanes Documentation/devicetree/bindings/
-> Most start from 1. Not sure latest DT team's intention.
+> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com> ---
 
-They usually start from 1, because just before the property comes
-'clock-lanes = <0>'. Otherwise in most of the cases the lanes are
-indexed from 0.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> 
-> Frank
-> 
-> >
-> > > +
-> > >      required:
-> > >        - port@0
-> > >        - port@1
-> > > --
-> > > 2.34.1
-> > >
-> >
-> > --
-> > With best wishes
-> > Dmitry
-
--- 
-With best wishes
-Dmitry
+Konrad
 
