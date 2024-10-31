@@ -1,231 +1,159 @@
-Return-Path: <linux-kernel+bounces-391076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550B39B825A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F072E9B825F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5AF1F2350D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810F21F234A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8881C9B82;
-	Thu, 31 Oct 2024 18:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BC41C8FC8;
+	Thu, 31 Oct 2024 18:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qv7OuOK7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BilE1nSE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E8F1BD000;
-	Thu, 31 Oct 2024 18:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F271A2645;
+	Thu, 31 Oct 2024 18:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730398434; cv=none; b=m0ZuhdeEIQZQhmLxRsz22FmQ0FretvXdBb90snpwbU4DSZ++C3KlUa/U98FpvwketCKj5zXGNXE9PtU7JydXpeAcum2GLIUKjePwSphFji1EjO4JVPbiga82nLRajvLVgkG1ER6suFat/K0Q7zsK/PM4nxz2ckXLpHptiIgMHjg=
+	t=1730398464; cv=none; b=bryrkymk/u4AQ7J+VMjkEiCuRppcbw63wZmZ/+WMBWqAnxr2f+sZJPBHIhgwqMjNOFpTJOKwDxh51WXuZ5drguA/iCFqeodNZehsIzaNhxtplY0jUpiC7dm84hOM8G579eEiK8bKYC/pMX2fIQemxcT3mkc5VdOpP4LSxrRlWBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730398434; c=relaxed/simple;
-	bh=6TKrJg/emMufwx5afPy1lcRH0AYFrELgAHBnsPz+13k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYD3tSz6Z/DiYh6nMP3QTn0UJlNmugdDDIdubhGzuBP3GNuSNYRJnXY8gaSD7xcOIQ7hw7F+ne+f18kUT9kAQpRpFJdahr+RYp+llLlOFHlGHPJ5qk4kLRWYiRJukW7RVGu12xbRPwEh+h/AAidGiIaA0S0szgWGBL9LdRC6XP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qv7OuOK7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1B2C4CECF;
-	Thu, 31 Oct 2024 18:13:52 +0000 (UTC)
+	s=arc-20240116; t=1730398464; c=relaxed/simple;
+	bh=uMydNF3mGPp+CX5PZiAbKbqp2oOPqvb+qHLmhn0l32M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i43f/GeHQDCza3VlAQ5uwD0rGu/Rcg/3hi297otbXORqZGMaBNs45i93jngC5LGAfRBnIqM8STSMmuBSq+NuMwU/H7q4oUNW7DnA8u1uF8fcqDn2Gqdq2epUxmdtahB4TY5zpYTtdLs69YiXc4UaLZqOGciYOs+WweEZghQBwoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BilE1nSE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD687C4CEC3;
+	Thu, 31 Oct 2024 18:14:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730398434;
-	bh=6TKrJg/emMufwx5afPy1lcRH0AYFrELgAHBnsPz+13k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qv7OuOK7dRxA2KAheVIq5dKvVqLqATTcGnmL/q7E2/YS5FUtuSiEMEkwKcM9efYKj
-	 Tf0gnRnjBpXP9kIO3eoP/8buVf70rvZBbD7J+rHmsINEfZG25u3lz5UBMsI8QzhiTB
-	 /iVU1Yq2CFuICoRJH4CxHZ4AN5VC2uCV4RzOiRa4UaeSIgulISwrbW3O0Wq8BnwFjO
-	 7gM0vMwSuSJuyZg2yTNcpyBXwqgaM4exkA+VgFFWzBF1/q+xfki7jGZsi6TvMt47xm
-	 J/8OVUwSOkrrH29RJJxCB3U7Wv06tEnVy9nNd/vmlCY1Vika9gQFK0TdJM6k/66LwN
-	 DnqHjpblzXdoQ==
-Date: Thu, 31 Oct 2024 11:13:51 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com,
-	kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>, llvm@lists.linux.dev,
-	linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>
-Subject: Re: [PATCH v8 8/9] tmpfs: Expose filesystem features via sysfs
-Message-ID: <20241031181351.GA1181429@thelio-3990X>
-References: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
- <20241021-tonyk-tmpfs-v8-8-f443d5814194@igalia.com>
- <20241031051822.GA2947788@thelio-3990X>
- <c104f427-f9d9-498c-a719-ed6bf118226d@igalia.com>
+	s=k20201202; t=1730398464;
+	bh=uMydNF3mGPp+CX5PZiAbKbqp2oOPqvb+qHLmhn0l32M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BilE1nSEDAK7uOfkLeLHV6zoEOKrUi2hT/kjl1GSt4+6gezmdTsx3kA+RrNKlGP3c
+	 qoXpUHA+s3IvWzSFHSwoQtILSv4Pg8cJrBCOWKbA/4sde/caa8EPTT79TjEfgX2Hq9
+	 b0Bl3TYaNuKauc/p8FV5lJK+VjvChcyIMuZ8uzStvyVm+qhxrgCACv4IE/eEY4LYHR
+	 90J77lHhn7coZSiKzSo49N7Q6j+aeMiQARqbLo/Og9RPFf3M/U7fZmcf7vfpdKfuTz
+	 +z47uD2alXs8JSANSnHL6b3bHTOUgkGuArJsB3+JHzEkKlgXmXDwcpxAm9GPMg5iKi
+	 N+OkNKTawnJOA==
+Message-ID: <639d6ab8-688a-437c-adb9-9dea1fbd0c51@kernel.org>
+Date: Thu, 31 Oct 2024 19:14:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c104f427-f9d9-498c-a719-ed6bf118226d@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: sx150xq: allow gpio line
+ naming
+To: Heiko Schocher <hs@denx.de>, linux-kernel@vger.kernel.org
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20241031151238.67753-1-hs@denx.de>
+ <20241031151238.67753-3-hs@denx.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241031151238.67753-3-hs@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 02:31:21PM -0300, André Almeida wrote:
-> Hi Nathan,
+On 31/10/2024 16:12, Heiko Schocher wrote:
+> Adding gpio-line-names property works fine for this
+> device node, but dtb check drops warning:
 > 
-> Em 31/10/2024 02:18, Nathan Chancellor escreveu:
-> > Hi André,
-> > 
-> > On Mon, Oct 21, 2024 at 01:37:24PM -0300, André Almeida wrote:
-> > > Expose filesystem features through sysfs, so userspace can query if
-> > > tmpfs support casefold.
-> > > 
-> > > This follows the same setup as defined by ext4 and f2fs to expose
-> > > casefold support to userspace.
-> > > 
-> > > Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> > > Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-> > > ---
-> > >   mm/shmem.c | 37 +++++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 37 insertions(+)
-> > > 
-> > > diff --git a/mm/shmem.c b/mm/shmem.c
-> > > index ea01628e443423d82d44277e085b867ab9bf4b28..0739143d1419c732359d3a3c3457c3acb90c5b22 100644
-> > > --- a/mm/shmem.c
-> > > +++ b/mm/shmem.c
-> > > @@ -5546,3 +5546,40 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
-> > >   	return page;
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
-> > > +
-> > > +#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
-> > > +#if IS_ENABLED(CONFIG_UNICODE)
-> > > +static DEVICE_STRING_ATTR_RO(casefold, 0444, "supported");
-> > > +#endif
-> > > +
-> > > +static struct attribute *tmpfs_attributes[] = {
-> > > +#if IS_ENABLED(CONFIG_UNICODE)
-> > > +	&dev_attr_casefold.attr.attr,
-> > > +#endif
-> > > +	NULL
-> > > +};
-> > > +
-> > > +static const struct attribute_group tmpfs_attribute_group = {
-> > > +	.attrs = tmpfs_attributes,
-> > > +	.name = "features"
-> > > +};
-> > > +
-> > > +static struct kobject *tmpfs_kobj;
-> > > +
-> > > +static int __init tmpfs_sysfs_init(void)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
-> > > +	if (!tmpfs_kobj)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
-> > > +	if (ret)
-> > > +		kobject_put(tmpfs_kobj);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +fs_initcall(tmpfs_sysfs_init);
-> > > +#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
-> > > 
-> > > -- 
-> > > 2.47.0
-> > > 
-> > 
-> > This change as commit 5132f08bd332 ("tmpfs: Expose filesystem features
-> > via sysfs") in -next introduces a kCFI violation when accessing
-> > /sys/fs/tmpfs/features/casefold. An attribute group created with
-> > sysfs_create_group() has ->sysfs_ops() set to kobj_sysfs_ops, which has
-> > a ->show() value of kobj_attr_show(). When kobj_attr_show() goes to call
-> > the attribute's ->show() value after container_of(), there will be a
-> > type mismatch in the case of the casefold attr, as it was defined with a
-> > ->show() value of device_show_string() but that does not match the type
-> > of ->show() in 'struct kobj_attribute'.
-> > 
-> > I can easily reproduce this with the following commands:
-> > 
-> >    $ printf 'CONFIG_%s=y\n' CFI_CLANG UNICODE >kernel/configs/repro.config
-> > 
-> >    $ make -skj"$(nproc)" ARCH=arm64 LLVM=1 mrproper virtconfig repro.config Image.gz
-> >    ...
-> > 
-> >    $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20230707-182910/arm64-rootfs.cpio.zst | zstd -d >rootfs.cpio
-> > 
-> >    $ qemu-system-aarch64 \
-> >        -display none \
-> >        -nodefaults \
-> >        -cpu max,pauth-impdef=true \
-> >        -machine virt,gic-version=max,virtualization=true \
-> >        -append 'console=ttyAMA0 earlycon rdinit=/bin/sh' \
-> >        -kernel arch/arm64/boot/Image.gz \
-> >        -initrd rootfs.cpio \
-> >        -m 512m \
-> >        -serial mon:stdio
-> >    ...
-> >    # mount -t sysfs sys /sys
-> >    # cat /sys/fs/tmpfs/features/casefold
-> >    [   70.558496] CFI failure at kobj_attr_show+0x2c/0x4c (target: device_show_string+0x0/0x38; expected type: 0xc527b809)
-> >    [   70.560018] Internal error: Oops - CFI: 00000000f2008228 [#1] PREEMPT SMP
-> >    [   70.560647] Modules linked in:
-> >    [   70.561770] CPU: 0 UID: 0 PID: 46 Comm: cat Not tainted 6.12.0-rc4-00008-g5132f08bd332 #1
-> >    [   70.562429] Hardware name: linux,dummy-virt (DT)
-> >    [   70.562897] pstate: 21402009 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> >    [   70.563377] pc : kobj_attr_show+0x2c/0x4c
-> >    [   70.563674] lr : sysfs_kf_seq_show+0xb4/0x130
-> >    [   70.563987] sp : ffff80008043bac0
-> >    [   70.564236] x29: ffff80008043bac0 x28: 000000007ffff001 x27: 0000000000000000
-> >    [   70.564877] x26: 0000000001000000 x25: 000000007ffff001 x24: 0000000000000001
-> >    [   70.565339] x23: fff000000238a000 x22: ffff9fa31a3996f8 x21: fff00000023fc000
-> >    [   70.565806] x20: fff000000201df80 x19: fff000000238b000 x18: 0000000000000000
-> >    [   70.566273] x17: 00000000c527b809 x16: 00000000df43c25c x15: fff000001fef8200
-> >    [   70.566727] x14: 0000000000000000 x13: fff00000022450f0 x12: 0000000000001000
-> >    [   70.567177] x11: fff00000023fc000 x10: 0000000000000000 x9 : ffff9fa31a18fac4
-> >    [   70.567682] x8 : ffff9fa319badde4 x7 : 0000000000000000 x6 : 000000000000003f
-> >    [   70.568138] x5 : 0000000000000040 x4 : 0000000000000000 x3 : 0000000000000004
-> >    [   70.568585] x2 : fff00000023fc000 x1 : ffff9fa31a881f90 x0 : fff000000201df80
-> >    [   70.569169] Call trace:
-> >    [   70.569389]  kobj_attr_show+0x2c/0x4c
-> >    [   70.569706]  sysfs_kf_seq_show+0xb4/0x130
-> >    [   70.570020]  kernfs_seq_show+0x44/0x54
-> >    [   70.570280]  seq_read_iter+0x14c/0x4b0
-> >    [   70.570543]  kernfs_fop_read_iter+0x60/0x198
-> >    [   70.570820]  copy_splice_read+0x1f0/0x2f4
-> >    [   70.571092]  splice_direct_to_actor+0xf4/0x2e0
-> >    [   70.571376]  do_splice_direct+0x68/0xb8
-> >    [   70.571626]  do_sendfile+0x1e8/0x488
-> >    [   70.571874]  __arm64_sys_sendfile64+0xe0/0x12c
-> >    [   70.572161]  invoke_syscall+0x58/0x114
-> >    [   70.572424]  el0_svc_common+0xa8/0xdc
-> >    [   70.572676]  do_el0_svc+0x1c/0x28
-> >    [   70.572910]  el0_svc+0x38/0x68
-> >    [   70.573132]  el0t_64_sync_handler+0x90/0xfc
-> >    [   70.573394]  el0t_64_sync+0x190/0x19
-> >    [   70.574001] Code: 72970131 72b8a4f1 6b11021f 54000040 (d4304500)
-> >    [   70.574635] ---[ end trace 0000000000000000 ]---
-> > 
-> > I am not sure if there is a better API exists or if a local copy should
-> > be rolled but I think the current scheme is definitely wrong because
-> > there is no 'struct device' here.
-> > 
+> 'gpio-line-names' does not match any of the regexes: '-cfg$', 'pinctrl-[0-9]+'
+> from schema $id: http://devicetree.org/schemas/pinctrl/semtech,sx1501q.yaml#
 > 
-> Thank you for the report, I'm trying to fix it, it seems I have used
-> something for device drivers in a filesystem. I wonder how btrfs doesn't get
-> this error, since tmpfs_sysfs_init() is very similar to btrfs_init_sysfs().
+> Allow to add property gpio-line-names for this devices.
+> 
+> Signed-off-by: Heiko Schocher <hs@denx.de>
+> 
+> ---
+> checkpatch shows
+> WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+> 'gpio-line-names' does not match any of the regexes: '-cfg$', 'pinctrl-[0-9]+'
 
-Upon a quick glance, it looks like all of the btrfs sysfs functions
-properly match the ->show() and ->store() type in kobj_attribute, so
-there is no type mismatch when they are called indirectly.
+No worries, this can be ignored. Warning messages can pass the limit (up
+to some point).
 
-Cheers,
-Nathan
+> 
+> Ignored, as it is a make output, which helps to understand the
+> reason for adding this patch.
+> 
+> Changes in v2:
+> patch dt-bindings: pinctrl: sx150xq: allow gpio line naming new in v2
+> 
+>  .../devicetree/bindings/pinctrl/semtech,sx1501q.yaml          | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+> index 4214d7311f6b..fd0936545bb8 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+> @@ -26,6 +26,10 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  gpio-line-names:
+> +    minItems: 1
+
+I think gpio-line-names should always match the actual number of GPIOs
+for given device. Do you have here devices with 1 gpio? This could be
+further constrained in if:then sections.
+
+
+Best regards,
+Krzysztof
+
 
