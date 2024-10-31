@@ -1,252 +1,222 @@
-Return-Path: <linux-kernel+bounces-390925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB039B801A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:29:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0581E9B800E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5F81F228A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C6F283B36
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14EA1CB307;
-	Thu, 31 Oct 2024 16:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CDF1BDAAE;
+	Thu, 31 Oct 2024 16:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MPVfBtPv"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2045.outbound.protection.outlook.com [40.107.21.45])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gcEJKgEM"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92671C9EC6;
-	Thu, 31 Oct 2024 16:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730392063; cv=fail; b=AIxQ6xcI3JlYLQJ8IxFwh88U0AAqf+/0OISBBfbfrbTLJG+CWZ4y7QBYJVNWRE314LpqFZNkZxAkbL5DL4UrvOQTYGzyOPoe44iJSj9GsjQHst30PtthvuS9iXU6PuPN0CUHBVQauVQQd5FPIlCn3PE3ICnnMNsP6mC1jXVG0E0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730392063; c=relaxed/simple;
-	bh=QXAZUTo25wHxfm2hPmZ2UTgDrVKcvTZyNirR6BThLKo=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=K8w40xb2v3Yn96LLK/w44L5Cvl1WaGneav04vHlQJch+SCcjrqXSVyKsR0LqX6JpPnjIfbF97qoEpR4uvue8Gv6wYEkK1KFSZRj+xk07qWGJ19qEtn7N+bu09znMeBgYAUzBaU6T8InQLzAUdHjxK0CKAJkqNEBfwL6GoDhIrDs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MPVfBtPv; arc=fail smtp.client-ip=40.107.21.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PUxCIuKqdmCDTModtyCkmeEz2bnXhTbBBsIcfio1iyA8hTZS7PPGJuXe7WMJiff6Fas17ecGSpOgypYlTHG3Srp2txVyV8MBwVI2iP47262I/ztsB3mQlzA7m8J3J6/oLmqDo/1t3K4eKtghwBK2RtMS3v0jMG44I1jof6YiTWzE6LvBwLt7VJZ+mViMilpsvrUsraDKTsVbtMakKVykFRHgFUvxQm6PvVU4xnQBRx65KQutqEV4ohQbMtRejof/37mF4tbqOWMTJpUkVm7gnDThI58VT4MtBUCcFSoSmGbapTAjW07fNLvjPBVZXCRsbcKE0xHg9XcT6FwL0J0v+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3XsfDMu3OuLSSl5vBa2X1Qbhd1a7N+LYSe23dI9037Y=;
- b=PI1CHFsL3qF4WTopF3MlBfYI0/Fuz93szg/Ura9QW4JzcENEqyrjHrkbkj4XTK6Dj7JVMMqljvAmt1PzqHj9EPysH4Lkym2fPKO3BlN7FoxL7JGo6zuRzgvMD31rN1BpfUVHI7j8Iglzon4KY12CxGgW5A8V9c60WY0ZFupZ+5gdvashc+FahN3FASGAaI78dAhL6vWSKGYDR6CROOahyqyKpsfsTf6Vrw3ANdASXKXS0iwIRXV9ck4dqyvOMoOXnpstwLvWNacRMqRAmriJ/B8UfDaEflhY3VZCO7zhlgu5JD9f9Tk44480HiGqABs/oZuSh/rJ7ib6ARwr/4fFiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3XsfDMu3OuLSSl5vBa2X1Qbhd1a7N+LYSe23dI9037Y=;
- b=MPVfBtPvQyXmC1OCKcgIjhxQ+3e3lZMkNCXPjTEF2gxDH1zOD/xRr7be/u0ZJAWo+GkD0ZmHJDLwrElXIsGafqYi0V+1nyWep0O8UIBPwZKW5+VKC4cEq/66S++8Qot62ivihejNAmCuUENHeZeYFU3PYvO/xh3szpkncqx4PksbdgpES4h8yiOg2YRx25YmW38GmlIoBNLALk/hn1veIULG2gMqpbJgCJn02j+Vca4mocBlyaNn9SZPJjT1NKWGgo1M9ZBPzbWtMUrxneeSaESP6edH00TN75eWW5p0UG7+JezSfeb9Wq486AxAgxuc8Pbe7ycOWESYyhHh3O5KGA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA1PR04MB11081.eurprd04.prod.outlook.com (2603:10a6:102:485::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Thu, 31 Oct
- 2024 16:27:31 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
- 16:27:31 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Thu, 31 Oct 2024 12:27:04 -0400
-Subject: [PATCH v4 5/5] tools: PCI: Add 'B' option for test doorbell
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-ep-msi-v4-5-717da2d99b28@nxp.com>
-References: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
-In-Reply-To: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, 
- maz@kernel.org, tglx@linutronix.de, jdmason@kudzu.us, 
- Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730392028; l=1804;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=QXAZUTo25wHxfm2hPmZ2UTgDrVKcvTZyNirR6BThLKo=;
- b=BQijpRRjBWhkiRVjXCG9igHmC6uR8sz0/GFvhgRsJ8HN54IWhy9aDPakxpCM3SJFG892FIb6I
- iQgBv1l3WBqBuS4OdfyuX4I+xZ2jOX9dUmetDCRJ3QQKjqqe4LkrSfi
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: BYAPR08CA0056.namprd08.prod.outlook.com
- (2603:10b6:a03:117::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8602C1BBBEA;
+	Thu, 31 Oct 2024 16:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730392043; cv=none; b=OntE6zcxOHI/UR+qYM2brRk3xAG7ypV7KEkn7QoM3oA2T9oIYaIJkb97w5oHvxSnHUPkFJwldIYVQTpTspBhCH6WVw+g1jrumPVRouSuS7dkkU4UVOTkf685NEob4lkCZ2nRf2SRhOe/WapPpG0VgYv3Uq01Kt9betJ4F4siKmE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730392043; c=relaxed/simple;
+	bh=iH150H7FJWPWLYdUaAdEfQ/13mpK7ahZMpkRQ1FD1a8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OWBlgwzYyk2xKO7qASaXG8NdPjw9hBmgDwcqUlpje8wAAPgAnLDxIe3Se0z2YcTKu+NhqtfKcMupBsGXnAXa+OCsuEskCMbx30GWY0ovTW32/+Rzb44iUR4GetwFBhDdKAMni9Aw32DZzbcsADPsn9B5ghurWqCDKQUf1Jefb2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gcEJKgEM; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VFvV8u013288;
+	Thu, 31 Oct 2024 16:27:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=zjAryE
+	KOETloLGYkEAicJv4Ye9LzgIY+dPDahJh00aE=; b=gcEJKgEMejrm5iqP0v7tYM
+	BWMvCeiJg5ESHTTh2J2QG7m9dmvuUyn4rtC5N0pXMc8B0ARkcqjECWrRxRkuVT/H
+	qJKKaYspyo0hpdOBhygBs8F98X1nXJ4bvEEk/qK1I5mQx9XwCj8jzr94eIaeoZEl
+	db7dilRan6XoCnh1GKH5HjcndQAeDMcOutFK6gyDhb137IMwJEcDavqhKZrwxiNM
+	IOjZ0RVLEGwzF2RwK5i2Ye6eAmV08a7y14fr5g4J3XHCkXf+LDgsjKk+USXEP+Ib
+	oVHWQIpybx4dwom7lkX00oRgiqMXuEC57UoxFbv3c5FAz3+nBGZhTtC3dD8PPoqg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42kkbn6vt0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 16:27:11 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49VGRAee010519;
+	Thu, 31 Oct 2024 16:27:10 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42kkbn6vst-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 16:27:10 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VFYgsw015899;
+	Thu, 31 Oct 2024 16:27:09 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hdf1n9xu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 16:27:09 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VGR66Q33948176
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 16:27:06 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F93C2004B;
+	Thu, 31 Oct 2024 16:27:06 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BD43120040;
+	Thu, 31 Oct 2024 16:27:05 +0000 (GMT)
+Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.155.203.167])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 31 Oct 2024 16:27:05 +0000 (GMT)
+Date: Thu, 31 Oct 2024 17:27:04 +0100
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v3 0/7] virtio-mem: s390 support
+Message-ID: <ZyOv2E-WEcppbf3G@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+References: <20241025141453.1210600-1-david@redhat.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241025141453.1210600-1-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: KkOr9GvzLSxQCyUeFHljQwa7fRHX3lDZ
+X-Proofpoint-GUID: YSSxnDKxiBsunEDZsaYs1a7k8GlH0CKE
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB11081:EE_
-X-MS-Office365-Filtering-Correlation-Id: 345de0ef-540f-42a2-754f-08dcf9c8eafb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dVJyUW5IYmZja2E3THZ2ci9nSmxleFBMdEpyeFM5cGdQOXQrUk8raHJqZUdJ?=
- =?utf-8?B?djc5VDl4QWJRODdqTS9wRXpOcHlKRllieEdXbzdQNnV1MEtWa3EzMUp3aFhk?=
- =?utf-8?B?V1ZrRjU4U1BSNVl4ZzBEbkF3Q0lwcmNxc3puNzZsUWlYOW9sdGZEZGlxWDBn?=
- =?utf-8?B?NzErS1F0RjJnbWN3TGdLNWVmQTh5U2djT2J6U3AxamV5QnpTb2RQOS9NZEJD?=
- =?utf-8?B?Q0hFWUl5Yy9oa2dmdmNYdFVON2FyeE5zWVhGMmtMVUlMZ09zbVNFcGo2VzdY?=
- =?utf-8?B?cnFOWFVTMDVQRmpPYlpSWHhyMlBwVGJvTldpdFh3Z0hDb0xNVFl5dEtvTFB0?=
- =?utf-8?B?dDNVMUdJa082TWcyMC84aEVnemcvcVp1Mmp6cVBtdy8vcUFXbDM0Si92V0Vw?=
- =?utf-8?B?ZTlRK01PUTI5RmQzOGQyOTJ6dWNXcFF5OGtzUFZ1L2NPTDFtQ0RRWVV4NXRN?=
- =?utf-8?B?NjNEUGpDTGxrclpvZ2VOWE00ZzNIMVVBUXpNU0RLK3ZLbXdPUG9DUlZpa3E0?=
- =?utf-8?B?MlFiT0VrelpXZThWTTNiY2xCVGdCdFBTNXgzRi9EejFRQlV1WFFsRnhVaXo0?=
- =?utf-8?B?bjBIazZoNkNQVFRaWU1pUmtxV2EvUzRqVDNjYVlaWEk4ZGp1SmRBWGZpTG5D?=
- =?utf-8?B?LzNyUzF3dWx6RmFYNEVMSmZtVGJITk9KQ3Nid3hoRFJtaTUzTkxKcFdHQ05C?=
- =?utf-8?B?ak1IaUtYc01IUU5SSjQzYlRSK24wUG5mRHBXYnA0eTF0d1JqaEt1bGdhNTJt?=
- =?utf-8?B?WnZkZmtwaVNwOTMwMXZkY2ZYN0R6SElPTEtZendzTXl4MHRDSjRiUTN0TFRh?=
- =?utf-8?B?dk0rN1piSDVGZTNocXZhc0xhVmxRWFFtd0dMSG5OaGl2ZTNyMy9BSW5MbEF2?=
- =?utf-8?B?eW9DcVNSMkl6ZGxRTVA1SjR2YytKelBoclE2VWRGQytMTi84b3hYT0lMWVhi?=
- =?utf-8?B?UHNwYm15RGRtTmg4clNKWVpRMkwwTnBnamJ1MXJKQXBhekZ6REwxYTdDWmhG?=
- =?utf-8?B?dWpnc1VJbGl6Zk5HQWNGT01zQ1NUeVVnMkEzakpNTmgzL1gwaTFXVURyNCsy?=
- =?utf-8?B?OHk3MnhYcVVqbTRqU1g5WFYwN2hZTlRmck1BKzNvNEpqSVUyM1A4ZGxTS0ha?=
- =?utf-8?B?Yjd1TjdtWFVJSVV3eFZBbkJpRW9VQ1YrS3RJU1IxdnZtN3hhTkZaTEJUTlVy?=
- =?utf-8?B?eW9XTEk1cjh6SjZpbVExTDBUY3dPSFN4dmFuclZXTW9SL2dTT0ZOVTZid3JE?=
- =?utf-8?B?dzc1L2FhMnhFdlpCbnRPcUtoaWJVWXVqSFAzbU8vQUpQZzZSSmYza3NZREJY?=
- =?utf-8?B?NHVrQ09ZR3U2bVNLZlRQc2hmdktHLzdCbk96Q0NBeW9ZbWM2dWZkUUVXSDB2?=
- =?utf-8?B?dHJJSms5TFRmTkZyZWR0akpPK3o5M2d0czhVWHR6QjNmRjd3VFRxMGxZMWJH?=
- =?utf-8?B?dFVlMWQ4L054TzZRRW1zVm1XeTU5dFplSXNrMHJDUmEwKzRoeWx3ZnZBSS8v?=
- =?utf-8?B?M2FiWFFGNlFFYTZiL1hZcFBtNmJhWGVPTFN4L2JnWE10S1hlTWE5K1FtOG5w?=
- =?utf-8?B?aVJKNWQvMnVFV01aN0czMDNJZWZlcGczc2x6U0VLRTRKVDJjMFhlWXhaVHlk?=
- =?utf-8?B?M21WTzIwUlQ2c1FrZVhjbW1IejNQVFRCUlJQT3hEZmpnNzNIeklqM1VxMlVE?=
- =?utf-8?B?cGl3c3RmS0tNclVXNHBRcnNVSEpUK0VwZXFUMjVRSmRBeFhNV1VKQ1VTV3Bz?=
- =?utf-8?B?Q0RXeTQzb29YNVZmcVphUnNGdlAvUFh3YzdlaUhIUmxZRk84bm9vU0E3RWxk?=
- =?utf-8?Q?9N25jCC4rfen0jOa0lFzBZsCp+vfqJUsM1EBA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bkwralhHSUt0RlAvNXhieXV4TXkxYk1xZWlVdVlmTi9udkNMRjlFTEdGTnhC?=
- =?utf-8?B?di9ET2g2cDNGbkFkNVJBS0p3U3dzbjVlMENkd2RhUUF5a1ZxNlJxMFpmWDFQ?=
- =?utf-8?B?YUdjQWxKT1ZRczhHd25mcmVxa0MwQkYyemtDL2Q5MHA2eitkcHk0NndCcnZi?=
- =?utf-8?B?NE1LcGhhakh4dmgxZmNYTWhhSWJiN1ltdi9BdmhJVG1EL2FnVFJ5TGRRby81?=
- =?utf-8?B?alJzWXhnUVp0MlBURE9jNXRJNkhhZGtVb3o1Nk1CUUVIU3o3S2Q5ZUR2Yk4r?=
- =?utf-8?B?RVZmVFlJOTVsQ2VCcXE0UnI5NzM5UHRESlRvU2tmdnRPQmlQbFQwaFpRSS9P?=
- =?utf-8?B?SGduOUdmSklkdnhCZWNsUCt5L0R4SVJ4VkFyWC9TSUxhMUwzN2Mra29XMzg3?=
- =?utf-8?B?bmUxV3FhdndkRkIxNHB2dXMwK1hKUWN0ZTdoa2NMcndBSk1SRms1M2tpUGhS?=
- =?utf-8?B?NTIwbXN5OHA3UjlkcHpIY0lkQWM5b0lXMkhWbUI5KzJqYU5TbjJRYXFRTHFy?=
- =?utf-8?B?TnR0OXVDRFYyUHU2VzV5eWNaS3dubnBkOW56NXNtMWN4SmZZdFN2RFhncWR2?=
- =?utf-8?B?V3ZxTkRhelhDdS9PZzBFMnUzYTJJazdjbHp6TVNad2RJSnhLdFVTYjdnMmdQ?=
- =?utf-8?B?OTBZTlF5M3Y5akNsMkJ0T1duTDFJci8rbjNlWDZuS0c2cXVPRXc2bzI5Wmwz?=
- =?utf-8?B?U1dzQkticnZxak8vaHRwa054OWtrdVNhY2NTT25KV2VKS0RWTlphSHlOQXow?=
- =?utf-8?B?eUdWYkpIcXcybi94SGFjdFRRQWwzbCtNV0pCWFNLTVYxZmM3Mm9ENk5XRlMx?=
- =?utf-8?B?ZExBbHlYdWJZVk1IdlJPNUVhVGoyclQyN2hHNjNQR2lWZGRGZzdYa1JmVktX?=
- =?utf-8?B?ZmhJL2xLUEN3RjV3SThiVitWaDRnWktzOWlkaDRMdit2OG1ZcU5nTXpiZTN2?=
- =?utf-8?B?eW1CYkJjeU51cGc1eStpUTRoTGxhaGphOGZPOSt0WWlJc1JXS01uUFdqaXBy?=
- =?utf-8?B?dVJLRmZLZTdjclZEdmFWRm1NYU1OV1JuVFlzR3NGTHhqN0wzZStMOTZ3RDdB?=
- =?utf-8?B?K1lNNk9DL1ZCTmp5UnhJMERzNkZBaWtpNnhXa1RwQUpSakRUemxYQks0VjVn?=
- =?utf-8?B?NW1hMEJwZ3V6U0o3NWkzbTczVnVZN1ZHbVRoaW1UbEU0MUFUVTVGcEhiYkJv?=
- =?utf-8?B?ZUczQXhPaTloZjlVY2l0dTh0UWc1WmdlVHRMbEhVOWc5YUFBVFJPNzVxL281?=
- =?utf-8?B?UDM3am5zNzZaQjR1cEhkSStYektmd25jYmxCNytFN3llNE10ZFBLM2R5ay9W?=
- =?utf-8?B?TS9KWUVoR29qaFk1bUhpdTZvd2V1bEIyNGJQamJlejVPaVdOcGE5c01lV1pB?=
- =?utf-8?B?VHFLdmpQSVBGMWh3clBPU3hvQUdtSmpjZ1hyL2lBSXYyQ2w5Yi9KSTY4WkdR?=
- =?utf-8?B?a3JnUjRqUVdSVjJ4MTI2SXQvbXp5cjFabTBrL1YwcmlEbVVzVFNhME9OSm9V?=
- =?utf-8?B?V1JsMXlmNjBVc1ZlZjVEQllhbGI1RUpNSlVoY3VvenV2dTFmWnZJUnRyT2J3?=
- =?utf-8?B?amYzaG04K0RJWmU3Y0tld0w2WkdzNCs2ZmZuV0NDSDRZV2JvdDVaZnJGaWVS?=
- =?utf-8?B?Wk1hcnBoQU54WEJyWXAxV3FtYzNVbkxtVVdaVE9PQ0prQ3VSS0xJZ2pVSmJ3?=
- =?utf-8?B?QzBxU2hMa1RZNlNGWENYWS9qb2JqVE55V3g5U2NzRWZtZnVpcWhhMUhpdExo?=
- =?utf-8?B?YXlCZ1I3dGtMS2hLSDNvK1NjMFFqQ0NPNXRILzh5YXQ5NmQ1cFE3ekx1K2Zn?=
- =?utf-8?B?bkVpRFRCS0hjUEVCZ2dobDQrb3RKZEpFekI1ekx6K0YzT1JmQ2dNOXFwT1J4?=
- =?utf-8?B?NjJDS3dIdmVoWXJxRDI2dkFHeExtTlo4N25ZdVBvTXRCbzYwR2hSUTlpbzlm?=
- =?utf-8?B?MUNScmNmRnA2R3ZzajdwYngvU2N0MGlJd3cxci90VGtWZ2NXcFNVV3FJUUpi?=
- =?utf-8?B?S1R0QytvU0g1amF3dHR3Wm5vRWpqYnF0NjI0MkdkY3R3VEZ2QWUzYkxaSkVk?=
- =?utf-8?B?dDVzWGI4Qk5ocWhOOWhPRDJ6eHZ1R3VjVWV4VXF6OUV5cjZRNUF6VG1QNjI5?=
- =?utf-8?Q?csFI=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 345de0ef-540f-42a2-754f-08dcf9c8eafb
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 16:27:31.1832
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oFGAb8Ivl5lUQGVialAs8G0BY+IwyQ2FWqlS3p48nGxmhyL/aYCtND+8lBvErXyt4LxDzWS0+zOdfUs2KMwlkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB11081
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310121
 
-Add doorbell test support.
+On Fri, Oct 25, 2024 at 04:14:45PM +0200, David Hildenbrand wrote:
+> Let's finally add s390 support for virtio-mem; my last RFC was sent
+> 4 years ago, and a lot changed in the meantime.
+> 
+> The latest QEMU series is available at [1], which contains some more
+> details and a usage example on s390 (last patch).
+> 
+> There is not too much in here: The biggest part is querying a new diag(500)
+> STORAGE_LIMIT hypercall to obtain the proper "max_physmem_end".
+> 
+> The last three patches are not strictly required but certainly nice-to-have.
+> 
+> Note that -- in contrast to standby memory -- virtio-mem memory must be
+> configured to be automatically onlined as soon as hotplugged. The easiest
+> approach is using the "memhp_default_state=" kernel parameter or by using
+> proper udev rules. More details can be found at [2].
+> 
+> I have reviving+upstreaming a systemd service to handle configuring
+> that on my todo list, but for some reason I keep getting distracted ...
+> 
+> I tested various things, including:
+>  * Various memory hotplug/hotunplug combinations
+>  * Device hotplug/hotunplug
+>  * /proc/iomem output
+>  * reboot
+>  * kexec
+>  * kdump: make sure we properly enter the "kdump mode" in the virtio-mem
+>    driver
+> 
+> kdump support for virtio-mem memory on s390 will be sent out separately.
+> 
+> v2 -> v3
+> * "s390/kdump: make is_kdump_kernel() consistently return "true" in kdump
+>    environments only"
+>  -> Sent out separately [3]
+> * "s390/physmem_info: query diag500(STORAGE LIMIT) to support QEMU/KVM memory
+>    devices"
+>  -> No query function for diag500 for now.
+>  -> Update comment above setup_ident_map_size().
+>  -> Optimize/rewrite diag500_storage_limit() [Heiko]
+>  -> Change handling in detect_physmem_online_ranges [Alexander]
+>  -> Improve documentation.
+> * "s390/sparsemem: provide memory_add_physaddr_to_nid() with CONFIG_NUMA"
+>  -> Added after testing on systems with CONFIG_NUMA=y
+> 
+> v1 -> v2:
+> * Document the new diag500 subfunction
+> * Use "s390" instead of "s390x" consistently
+> 
+> [1] https://lkml.kernel.org/r/20241008105455.2302628-1-david@redhat.com
+> [2] https://virtio-mem.gitlab.io/user-guide/user-guide-linux.html
+> [3] https://lkml.kernel.org/r/20241023090651.1115507-1-david@redhat.com
+> 
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Thomas Huth <thuth@redhat.com>
+> Cc: Cornelia Huck <cohuck@redhat.com>
+> Cc: Janosch Frank <frankja@linux.ibm.com>
+> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> Cc: "Eugenio P?rez" <eperezma@redhat.com>
+> Cc: Eric Farman <farman@linux.ibm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> 
+> David Hildenbrand (7):
+>   Documentation: s390-diag.rst: make diag500 a generic KVM hypercall
+>   Documentation: s390-diag.rst: document diag500(STORAGE LIMIT)
+>     subfunction
+>   s390/physmem_info: query diag500(STORAGE LIMIT) to support QEMU/KVM
+>     memory devices
+>   virtio-mem: s390 support
+>   lib/Kconfig.debug: default STRICT_DEVMEM to "y" on s390
+>   s390/sparsemem: reduce section size to 128 MiB
+>   s390/sparsemem: provide memory_add_physaddr_to_nid() with CONFIG_NUMA
+> 
+>  Documentation/virt/kvm/s390/s390-diag.rst | 35 +++++++++++++----
+>  arch/s390/boot/physmem_info.c             | 47 ++++++++++++++++++++++-
+>  arch/s390/boot/startup.c                  |  7 +++-
+>  arch/s390/include/asm/physmem_info.h      |  3 ++
+>  arch/s390/include/asm/sparsemem.h         | 10 ++++-
+>  drivers/virtio/Kconfig                    | 12 +++---
+>  lib/Kconfig.debug                         |  2 +-
+>  7 files changed, 98 insertions(+), 18 deletions(-)
+> 
+> 
+> base-commit: ae90f6a6170d7a7a1aa4fddf664fbd093e3023bc
+> -- 
+> 2.46.1
+> 
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v3 to v4
-- none
----
- tools/pci/pcitest.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Tested successfully various memory hotplug operations on lpar.
 
-diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
-index 470258009ddc2..bbe26ebbfd945 100644
---- a/tools/pci/pcitest.c
-+++ b/tools/pci/pcitest.c
-@@ -34,6 +34,7 @@ struct pci_test {
- 	bool		copy;
- 	unsigned long	size;
- 	bool		use_dma;
-+	bool		doorbell;
- };
- 
- static int run_test(struct pci_test *test)
-@@ -147,6 +148,15 @@ static int run_test(struct pci_test *test)
- 			fprintf(stdout, "%s\n", result[ret]);
- 	}
- 
-+	if (test->doorbell) {
-+		ret = ioctl(fd, PCITEST_DOORBELL, 0);
-+		fprintf(stdout, "Ringing doorbell on the EP\t\t");
-+		if (ret < 0)
-+			fprintf(stdout, "TEST FAILED\n");
-+		else
-+			fprintf(stdout, "%s\n", result[ret]);
-+	}
-+
- 	fflush(stdout);
- 	close(fd);
- 	return (ret < 0) ? ret : 1 - ret; /* return 0 if test succeeded */
-@@ -172,7 +182,7 @@ int main(int argc, char **argv)
- 	/* set default endpoint device */
- 	test->device = "/dev/pci-endpoint-test.0";
- 
--	while ((c = getopt(argc, argv, "D:b:m:x:i:deIlhrwcs:")) != EOF)
-+	while ((c = getopt(argc, argv, "D:b:m:x:i:BdeIlhrwcs:")) != EOF)
- 	switch (c) {
- 	case 'D':
- 		test->device = optarg;
-@@ -222,6 +232,9 @@ int main(int argc, char **argv)
- 	case 'd':
- 		test->use_dma = true;
- 		continue;
-+	case 'B':
-+		test->doorbell = true;
-+		continue;
- 	case 'h':
- 	default:
- usage:
-@@ -241,6 +254,7 @@ int main(int argc, char **argv)
- 			"\t-w			Write buffer test\n"
- 			"\t-c			Copy buffer test\n"
- 			"\t-s <size>		Size of buffer {default: 100KB}\n"
-+			"\t-B			Doorbell test\n"
- 			"\t-h			Print this help message\n",
- 			argv[0]);
- 		return -EINVAL;
-
--- 
-2.34.1
-
+Tested-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
 
