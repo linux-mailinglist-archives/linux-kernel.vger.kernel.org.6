@@ -1,252 +1,393 @@
-Return-Path: <linux-kernel+bounces-390213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2FF9B771C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:10:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36BF9B771D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78721F24E2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:10:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81AFE285929
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1898E2AE9A;
-	Thu, 31 Oct 2024 09:10:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBC2193439;
+	Thu, 31 Oct 2024 09:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imOs9yrV"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162471EB48
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3517C192B70
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730365831; cv=none; b=nzJNKY5fGr9Y6vm6YqeP6orweYtZEwy0woC8k3ogp8R4D1ew4KYWHkV4BnBdUtTbGG8VoSFBw5EIApKgmYI7ePVsj4nzQLncYJ5AQooqlZzchuEw1X+rJGjWIsdWhrTaGosCn1JxhRzzoh3ffKJ4guNIqRyY2iqP9v8uekqeulw=
+	t=1730365862; cv=none; b=hNnuYStYe8VGDRECqZM3fyxQ/rKRbXTa9WYr+siUY+5pBZ6Un64d05DuMiKUux2ms6zPJv2aDJKDWqCOjUA97AXhx50wkRBlR7fWdzWoC1lB1eJdppcmg5KTl6tku9LKfCi3lEVJ15vxz/0ej93U71tEJcQX+n8aztrA1FU0RVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730365831; c=relaxed/simple;
-	bh=UXBKbN8Q03vwk0wBIECiFjMe0MiEs6y1L9qwO/mBlKc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FzSFuOk6QHWz3fNFxB/AnfG9NZxiGrzZCKA9MKwfSx1CQI1Ppv0g2I8PE51WHCMiyhqAHOVkRof5b1RaQydZwTtnXM6IiuS51/TcR1ck48wuTXr5TPcVy1zMIECDf0PXvD384aXi+fTodtEeKgAw4ln5kz+XdSnuXu5l4Y3KOEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so6901515ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:10:28 -0700 (PDT)
+	s=arc-20240116; t=1730365862; c=relaxed/simple;
+	bh=+rhQJSaEcLe8ujK1QpogNyPBY4hFSxaPhQvhmc/d4Ds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AqR3U/lBspbQrz0h2OtJfo5lStlfFi2IBXooOYeBoUiiFVwYmGUpvnx05XecDjxH13AjynXRBX4ZgqOBre8JWS1EiydPca9Q/EkKbg0NrGu+yOVuOyuBRTX8Qj7giwUv3wTjtDqvnb8SzOyNPha+cPL3YgKbXHnVn4qf1yNgwS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imOs9yrV; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315b957ae8so783515e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730365857; x=1730970657; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wehjQiiMov4faMfJ+SamoSwv5BMC9NmSWUnj3789iPQ=;
+        b=imOs9yrVRVaQ9xdErtbQfPspaRVMjtytUW7//v8m9wJQ4j6eX65ljTgAHHHxTy/xug
+         4QqG6WruHoFvxGE8tg0BJTBESwCGVuKod7dOW2WDR+USslUCUpnjhrFKl8ROCa0kVzkn
+         xMluV9MorYZF+ZbxrREKFnlhZqsroYcSUFi2m/eppjYTZ2akWyHym6MoSOyH+/G/O6S8
+         5QxBQxb/pdhQx9OQyeyFVrneRZeyUnJJek9o8dir4vLJ3GGiRkqpYnWj+urAzrifv0+4
+         7qFgLhE7pFzi7NmrH9UK0FJqA9HydgVs52cZ7h8pHyx2VeW9czWNrTbGbToTyjBURA3h
+         dpVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730365828; x=1730970628;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=un1eeePGJnb2fPMV/1p78PMykBsZecZQWVcVVauCuIk=;
-        b=empT5v3fXMi/ITOsZ8yJuvkkq03+rkEgW5FbQdV9R6G2cGVsVlbyh9SsjM+jzQKEPw
-         RKGt900owZQVQrzYrGSNWp0VvB1PBIhYj8OPKBDQGUXEdjQhdO1qBSGpfKbe6uqak66W
-         NDYtMKgTWwFM9N0fjtbqF+zvFNxH4JlEUiEhbegPHhnCUFIMHaVIAGNP2yvMwdhwPzq9
-         M48GaSJWlyV8vMvfB51mOxLECyTwGKoJMhg2R8s00fJ2Sb1ZOLDE3loYZUFdBcjiijjh
-         1cr4Ez1pgNuqTgbMHrjW35XiseSkygB/JoaFdWL36egYi5xqGSaqb1JZrX+b1kqhz54S
-         GAsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEnOkKa0UHd0f+gUwNCkKhod2ngO1TTwq9zYt8hOunoa2xVE85VKoq6ymc6iAql87wvGrHez1ircJyr2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOtLXclgkryuW5B7NhQGZeY6MGUnubqz2qYgTh52RjngdUHx25
-	2B69Vu8mgmjwAtEWSL4IegkyJ6tHzG51EZIYUuv79B8tqYSSPH7dFEFwHdAliS03nH8qqaVj/hx
-	PlTJ/hTMUp7V15+tNyqhvY1wV2jgTQd+RKafDerQLh7GEEUpjvhHS/F4=
-X-Google-Smtp-Source: AGHT+IHKbdI2YKoxhIOU43ZBO3m56hgzYZhb+ATsLKvhK0upVCL7byKUGEq9NXKs0/LOo8/F+S4y+us9cbWmOmJrGo7C2VtUrvox
+        d=1e100.net; s=20230601; t=1730365857; x=1730970657;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wehjQiiMov4faMfJ+SamoSwv5BMC9NmSWUnj3789iPQ=;
+        b=lfCvNT3g0LlHQs/x0vvsZXcuhWHHT+TgFSnyFyAZylPF79j12M1S9t0One9+FEYn4R
+         ImzMATIp4i5vIq0/ipR885uwamWrNrTnLfY78r6IjkbiBiagbhh4AjisNFHKR9mrS4j8
+         cTeISR+6Dlu+AkWtRnnEvpZEqY1DmnJ3k13tEZ+WxscduSIMfCtcxhXcLZR1ivqIJz5X
+         YIMUtcRFph0Y+lfIstiVAN/N5dawwhVrhXpkhc5mTG2rx3aOxe58+eDjD1Expvswg65o
+         7FUyFTCb9PSA6ESoGLadNnD2kFqBzo1Sv4+bYWI6nEqYyCMyWqd+FbICrPNxwX8n65eI
+         rH0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXPNmYsFeiis6wzsBk/SUJdZOAq2wEAHFy4iUi4Aun0z6MgdPIC4gZTbWOk5Yz7kFhgJ1q6sMr5Q3Pi9GY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKAVYwFhHlCwCw9tdplNs2HzeRCyomKUOPKuGqkXhRAi6Z+Y0y
+	JULzVuxSQ1DvTxfaRP2DTqwejk4uk11z8afiqlxNfpgUVnI5hPxe0lBaWFLgwWQqRZ2QJ+kkqDg
+	Kn63OjZwgutUHL1iRagzcwaDQYvE=
+X-Google-Smtp-Source: AGHT+IGtKSys/PIsbUyw7CPyLhG+B6hUTyx7IAEHwh07oCLiZB+YP5jAjNztLapjvIlS0uRKZjOa5IrxxSHiSNenBr4=
+X-Received: by 2002:a5d:5f94:0:b0:374:bde8:3b46 with SMTP id
+ ffacd0b85a97d-380611a7665mr7497299f8f.2.1730365857003; Thu, 31 Oct 2024
+ 02:10:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b47:b0:3a0:9c20:8070 with SMTP id
- e9e14a558f8ab-3a4ed2f6686mr189239605ab.20.1730365828282; Thu, 31 Oct 2024
- 02:10:28 -0700 (PDT)
-Date: Thu, 31 Oct 2024 02:10:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67234984.050a0220.3c8d68.076e.GAE@google.com>
-Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in hci_send_acl (2)
-From: syzbot <syzbot+0279a044abc93c9c0684@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241030103136.2874140-1-yi.sun@unisoc.com> <20241030103136.2874140-5-yi.sun@unisoc.com>
+ <CACOAw_zn0ov0b2h9+zHn2gYVCDVGYPkXFNcx-j7OkhU0Y=i94g@mail.gmail.com> <CALpufv0ZBd5WMPgcXub2osrGRKdSzXvC5+3By5uNRFc4xXp=eQ@mail.gmail.com>
+In-Reply-To: <CALpufv0ZBd5WMPgcXub2osrGRKdSzXvC5+3By5uNRFc4xXp=eQ@mail.gmail.com>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Thu, 31 Oct 2024 17:10:45 +0800
+Message-ID: <CAHJ8P3Kx3=cYygX13LFVv5ATAejpYF+Q9mKO7BwGDmX05b640Q@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v2 4/5] f2fs: add parameter @len to f2fs_invalidate_blocks()
+To: yi sun <sunyibuaa@gmail.com>
+Cc: Daeho Jeong <daeho43@gmail.com>, Yi Sun <yi.sun@unisoc.com>, chao@kernel.org, 
+	jaegeuk@kernel.org, ke.wang@unisoc.com, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, hao_hao.wang@unisoc.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+yi sun <sunyibuaa@gmail.com> =E4=BA=8E2024=E5=B9=B410=E6=9C=8831=E6=97=A5=
+=E5=91=A8=E5=9B=9B 11:00=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Thu, Oct 31, 2024 at 1:00=E2=80=AFAM Daeho Jeong <daeho43@gmail.com> w=
+rote:
+> >
+> > On Wed, Oct 30, 2024 at 3:35=E2=80=AFAM Yi Sun <yi.sun@unisoc.com> wrot=
+e:
+> > >
+> > > New function can process some consecutive blocks at a time.
+> > >
+> > > Function f2fs_invalidate_blocks()->down_write() and up_write()
+> > > are very time-consuming, so if f2fs_invalidate_blocks() can
+> > > process consecutive blocks at one time, it will save a lot of time.
+> > >
+> > > Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+> > > ---
+> > >  fs/f2fs/compress.c |  4 +--
+> > >  fs/f2fs/f2fs.h     |  3 +-
+> > >  fs/f2fs/file.c     |  8 +++---
+> > >  fs/f2fs/node.c     |  4 +--
+> > >  fs/f2fs/segment.c  | 69 ++++++++++++++++++++++++++++++++++++++------=
+--
+> > >  5 files changed, 68 insertions(+), 20 deletions(-)
+> > >
+> > > diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> > > index e607a7885b57..02ad0ff29cf2 100644
+> > > --- a/fs/f2fs/compress.c
+> > > +++ b/fs/f2fs/compress.c
+> > > @@ -1374,7 +1374,7 @@ static int f2fs_write_compressed_pages(struct c=
+ompress_ctx *cc,
+> > >                         if (blkaddr =3D=3D COMPRESS_ADDR)
+> > >                                 fio.compr_blocks++;
+> > >                         if (__is_valid_data_blkaddr(blkaddr))
+> > > -                               f2fs_invalidate_blocks(sbi, blkaddr);
+> > > +                               f2fs_invalidate_blocks(sbi, blkaddr, =
+1);
+> > >                         f2fs_update_data_blkaddr(&dn, COMPRESS_ADDR);
+> > >                         goto unlock_continue;
+> > >                 }
+> > > @@ -1384,7 +1384,7 @@ static int f2fs_write_compressed_pages(struct c=
+ompress_ctx *cc,
+> > >
+> > >                 if (i > cc->valid_nr_cpages) {
+> > >                         if (__is_valid_data_blkaddr(blkaddr)) {
+> > > -                               f2fs_invalidate_blocks(sbi, blkaddr);
+> > > +                               f2fs_invalidate_blocks(sbi, blkaddr, =
+1);
+> > >                                 f2fs_update_data_blkaddr(&dn, NEW_ADD=
+R);
+> > >                         }
+> > >                         goto unlock_continue;
+> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > index addd49af57ec..4bb459157adf 100644
+> > > --- a/fs/f2fs/f2fs.h
+> > > +++ b/fs/f2fs/f2fs.h
+> > > @@ -3716,7 +3716,8 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, =
+nid_t ino);
+> > >  int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
+> > >  int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
+> > >  void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool f=
+ree);
+> > > -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+> > > +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr,
+> > > +                                               unsigned int len);
+> > >  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blk=
+addr);
+> > >  int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
+> > >  void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
+> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > index 75a8b22da664..13594bb502d1 100644
+> > > --- a/fs/f2fs/file.c
+> > > +++ b/fs/f2fs/file.c
+> > > @@ -652,7 +652,7 @@ void f2fs_truncate_data_blocks_range(struct dnode=
+_of_data *dn, int count)
+> > >                                 valid_blocks++;
+> > >                 }
+> > >
+> > > -               f2fs_invalidate_blocks(sbi, blkaddr);
+> > > +               f2fs_invalidate_blocks(sbi, blkaddr, 1);
+> > >
+> > >                 if (!released || blkaddr !=3D COMPRESS_ADDR)
+> > >                         nr_free++;
+> > > @@ -750,7 +750,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, =
+u64 from, bool lock)
+> > >                 unsigned int i;
+> > >
+> > >                 for (i =3D 0; i < ei.len; i++)
+> > > -                       f2fs_invalidate_blocks(sbi, ei.blk + i);
+> > > +                       f2fs_invalidate_blocks(sbi, ei.blk + i, 1);
+> > >
+> > >                 dec_valid_block_count(sbi, inode, ei.len);
+> > >                 f2fs_update_time(sbi, REQ_TIME);
+> > > @@ -1319,7 +1319,7 @@ static int __roll_back_blkaddrs(struct inode *i=
+node, block_t *blkaddr,
+> > >                 ret =3D f2fs_get_dnode_of_data(&dn, off + i, LOOKUP_N=
+ODE_RA);
+> > >                 if (ret) {
+> > >                         dec_valid_block_count(sbi, inode, 1);
+> > > -                       f2fs_invalidate_blocks(sbi, *blkaddr);
+> > > +                       f2fs_invalidate_blocks(sbi, *blkaddr, 1);
+> > >                 } else {
+> > >                         f2fs_update_data_blkaddr(&dn, *blkaddr);
+> > >                 }
+> > > @@ -1571,7 +1571,7 @@ static int f2fs_do_zero_range(struct dnode_of_d=
+ata *dn, pgoff_t start,
+> > >                         break;
+> > >                 }
+> > >
+> > > -               f2fs_invalidate_blocks(sbi, dn->data_blkaddr);
+> > > +               f2fs_invalidate_blocks(sbi, dn->data_blkaddr, 1);
+> > >                 f2fs_set_data_blkaddr(dn, NEW_ADDR);
+> > >         }
+> > >
+> > > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > > index af36c6d6542b..db15d6a90f67 100644
+> > > --- a/fs/f2fs/node.c
+> > > +++ b/fs/f2fs/node.c
+> > > @@ -916,7 +916,7 @@ static int truncate_node(struct dnode_of_data *dn=
+)
+> > >         }
+> > >
+> > >         /* Deallocate node address */
+> > > -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
+> > > +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
+> > >         dec_valid_node_count(sbi, dn->inode, dn->nid =3D=3D dn->inode=
+->i_ino);
+> > >         set_node_addr(sbi, &ni, NULL_ADDR, false);
+> > >
+> > > @@ -2761,7 +2761,7 @@ int f2fs_recover_xattr_data(struct inode *inode=
+, struct page *page)
+> > >         if (err)
+> > >                 return err;
+> > >
+> > > -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
+> > > +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
+> > >         dec_valid_node_count(sbi, inode, false);
+> > >         set_node_addr(sbi, &ni, NULL_ADDR, false);
+> > >
+> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > index 92ddff285a65..67f2bfdeb6ec 100644
+> > > --- a/fs/f2fs/segment.c
+> > > +++ b/fs/f2fs/segment.c
+> > > @@ -245,7 +245,7 @@ static int __replace_atomic_write_block(struct in=
+ode *inode, pgoff_t index,
+> > >                 if (!__is_valid_data_blkaddr(new_addr)) {
+> > >                         if (new_addr =3D=3D NULL_ADDR)
+> > >                                 dec_valid_block_count(sbi, inode, 1);
+> > > -                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr);
+> > > +                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr, =
+1);
+> > >                         f2fs_update_data_blkaddr(&dn, new_addr);
+> > >                 } else {
+> > >                         f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
+> > > @@ -2558,29 +2558,76 @@ static void update_sit_entry(struct f2fs_sb_i=
+nfo *sbi, block_t blkaddr, int del)
+> > >                 get_sec_entry(sbi, segno)->valid_blocks +=3D del;
+> > >  }
+> > >
+> > > -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+> > > +static void __f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
+> > > +                                       block_t addr, block_t end)
+> > >  {
+> > >         unsigned int segno =3D GET_SEGNO(sbi, addr);
+> > >         struct sit_info *sit_i =3D SIT_I(sbi);
+> > > +       unsigned int seg_num =3D GET_SEGNO(sbi, end) - segno + 1;
+> > > +       unsigned int i =3D 1, max_blocks =3D sbi->blocks_per_seg, len=
+;
+> > > +       block_t addr_start =3D addr;
+> > >
+> > > -       f2fs_bug_on(sbi, addr =3D=3D NULL_ADDR);
+> > > -       if (addr =3D=3D NEW_ADDR || addr =3D=3D COMPRESS_ADDR)
+> > > -               return;
+> > > -
+> > > -       f2fs_invalidate_internal_cache(sbi, addr, 1);
+> > > +       f2fs_invalidate_internal_cache(sbi, addr, end - addr + 1);
+> > >
+> > >         /* add it into sit main buffer */
+> > >         down_write(&sit_i->sentry_lock);
+> > >
+> > > -       update_segment_mtime(sbi, addr, 0);
+> > > -       update_sit_entry(sbi, addr, -1);
+> > > +       if (seg_num =3D=3D 1)
+> > > +               len =3D end - addr + 1;
+> > > +       else
+> > > +               len =3D max_blocks - GET_BLKOFF_FROM_SEG0(sbi, addr);
+> > >
+> > > -       /* add it into dirty seglist */
+> > > -       locate_dirty_segment(sbi, segno);
+> > > +       do {
+> > > +               update_segment_mtime(sbi, addr_start, 0);
+> > > +               update_sit_entry(sbi, addr_start, -len);
+> > > +
+> > > +               /* add it into dirty seglist */
+> > > +               locate_dirty_segment(sbi, segno);
+> > > +
+> > > +               /* update @addr_start and @len and @segno */
+> > > +               addr_start =3D START_BLOCK(sbi, ++segno);
+> > > +               if (++i =3D=3D seg_num)
+> > > +                       len =3D GET_BLKOFF_FROM_SEG0(sbi, end) + 1;
+> > > +               else
+> > > +                       len =3D max_blocks;
+> > > +       } while (i <=3D seg_num);
+> > >
+> > >         up_write(&sit_i->sentry_lock);
+> > >  }
+> > >
+> > > +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
+> > > +                               block_t addr, unsigned int len)
+> > > +{
+> > > +       unsigned int i;
+> > > +       /* Temporary record location */
+> > > +       block_t addr_start =3D addr, addr_end;
+> > > +
+> > > +       if (len =3D=3D 0)
+> > > +               return;
+> > > +
+> > > +       for (i =3D 0; i < len; i++) {
+> > > +               addr_end =3D addr + i;
+> > > +
+> > > +               f2fs_bug_on(sbi, addr_end =3D=3D NULL_ADDR);
+> >
+> > Looks like this line should be out of this loop, right?
+> >
+> > > +
+> > > +               if (addr_end =3D=3D NEW_ADDR || addr_end =3D=3D COMPR=
+ESS_ADDR) {
+> >
+> > ditto?
+>
+> The original f2fs_invalidate_blocks() can only process one block at a tim=
+e,
+> and it will check NULL_ADDR, NEW_ADDR and COMPRESS_ADDR for
+> each input block.
+>
+> The new f2fs_invalidate_blocks() can process multiple blocks at a time.
+> In order to keep it consistent with the original f2fs_invalidate_blocks()=
+,
+> the new function will also check NULL_ADDR, NEW_ADDR and COMPRESS_ADDR
+> for each block, so these two lines are placed in the loop.
+>
+> > Could you help with enhancing the readability here? a little bit
+> > confused with using addr_start, addr_end and NEW_ADDR, COMPRESS_ADDR,
+> > here.
+> >
+>
+> The addr_start and addr_end will continue to move to filter out the range=
+ of
+> all valid data blkaddr and pass it to __f2fs_invalidate_blocks() for
+> further processing.
+>
+> Assume that the input  parameters of f2fs_invalidate_blocks() are addr=3D=
+N, len=3D4,
+> and there is a blkaddr =3D NEW_ADDR.
+>
+> Like this:
+>           |      N       |    N+1    |NEW_ADDR|N+3|
 
-syzbot found the following issue on:
+Is this actually not a continuous address case?
 
-HEAD commit:    b423f5a9a61f Merge tag 'acpi-6.12-rc5' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d87287980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a34ca8ca33c0e535
-dashboard link: https://syzkaller.appspot.com/bug?extid=0279a044abc93c9c0684
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fd2685b6666a/disk-b423f5a9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c1f63783bd3d/vmlinux-b423f5a9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4881955fd575/bzImage-b423f5a9.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0279a044abc93c9c0684@syzkaller.appspotmail.com
-
-Bluetooth: hci4: command 0x0406 tx timeout
-==================================================================
-BUG: KASAN: slab-use-after-free in hci_send_acl+0xc03/0xd30 net/bluetooth/hci_core.c:3236
-Read of size 8 at addr ffff8880278fe418 by task kworker/u9:3/16375
-
-CPU: 1 UID: 0 PID: 16375 Comm: kworker/u9:3 Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: hci4 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- hci_send_acl+0xc03/0xd30 net/bluetooth/hci_core.c:3236
- l2cap_send_cmd+0x6e5/0x920 net/bluetooth/l2cap_core.c:973
- cmd_reject_invalid_cid net/bluetooth/l2cap_core.c:4201 [inline]
- l2cap_disconnect_req+0x440/0x4e0 net/bluetooth/l2cap_core.c:4439
- l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4780 [inline]
- l2cap_sig_channel net/bluetooth/l2cap_core.c:5535 [inline]
- l2cap_recv_frame+0x1ee5/0x8da0 net/bluetooth/l2cap_core.c:6817
- l2cap_recv_acldata+0x9b4/0xb70 net/bluetooth/l2cap_core.c:7506
- hci_acldata_packet net/bluetooth/hci_core.c:3799 [inline]
- hci_rx_work+0xb1c/0x16c0 net/bluetooth/hci_core.c:4036
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 13060:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- hci_chan_create+0xa6/0x3d0 net/bluetooth/hci_conn.c:2732
- l2cap_conn_add.part.0+0x1a/0xa60 net/bluetooth/l2cap_core.c:6856
- l2cap_conn_add net/bluetooth/l2cap_core.c:69 [inline]
- l2cap_connect_cfm+0x428/0xf80 net/bluetooth/l2cap_core.c:7237
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- hci_remote_features_evt+0x4f2/0x980 net/bluetooth/hci_event.c:3721
- hci_event_func net/bluetooth/hci_event.c:7443 [inline]
- hci_event_packet+0x9eb/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x16c0 net/bluetooth/hci_core.c:4031
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Freed by task 5148:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x14f/0x4b0 mm/slub.c:4727
- l2cap_conn_del+0x43a/0x730 net/bluetooth/l2cap_core.c:1795
- l2cap_connect_cfm+0x9e6/0xf80 net/bluetooth/l2cap_core.c:7233
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- hci_conn_failed+0x1c3/0x340 net/bluetooth/hci_conn.c:1265
- hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5592
- abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2917
- hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-The buggy address belongs to the object at ffff8880278fe400
- which belongs to the cache kmalloc-128 of size 128
-The buggy address is located 24 bytes inside of
- freed 128-byte region [ffff8880278fe400, ffff8880278fe480)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880278fe500 pfn:0x278fe
-flags: 0xfff00000000200(workingset|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000200 ffff88801b041a00 ffffea0001f91950 ffffea000080d9d0
-raw: ffff8880278fe500 000000000010000d 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x252800(GFP_NOWAIT|__GFP_NORETRY|__GFP_COMP|__GFP_THISNODE), pid 11, tgid 11 (kworker/u8:0), ts 9319502921, free_ts 9295059343
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x101e/0x3070 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4733
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_slab_page mm/slub.c:2414 [inline]
- allocate_slab mm/slub.c:2578 [inline]
- new_slab+0xca/0x3f0 mm/slub.c:2631
- ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __kmalloc_cache_node_noprof+0xf1/0x350 mm/slub.c:4303
- kmalloc_node_noprof include/linux/slab.h:901 [inline]
- blk_alloc_flush_queue+0x94/0x2b0 block/blk-flush.c:483
- blk_mq_alloc_hctx block/blk-mq.c:3790 [inline]
- blk_mq_alloc_and_init_hctx+0xc28/0x11a0 block/blk-mq.c:4249
- blk_mq_realloc_hw_ctxs+0x4bf/0x630 block/blk-mq.c:4282
- blk_mq_init_allocated_queue+0x39e/0x11f0 block/blk-mq.c:4330
- blk_mq_alloc_queue+0x1f8/0x2f0 block/blk-mq.c:4158
- scsi_alloc_sdev+0x897/0xd90 drivers/scsi/scsi_scan.c:337
- scsi_probe_and_add_lun+0x789/0xda0 drivers/scsi/scsi_scan.c:1210
- __scsi_scan_target+0x1ea/0x580 drivers/scsi/scsi_scan.c:1757
- scsi_scan_channel drivers/scsi/scsi_scan.c:1845 [inline]
- scsi_scan_channel+0x149/0x1e0 drivers/scsi/scsi_scan.c:1821
-page last free pid 46 tgid 46 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0x5f4/0xdc0 mm/page_alloc.c:2638
- vfree+0x17a/0x890 mm/vmalloc.c:3361
- delayed_vfree_work+0x56/0x70 mm/vmalloc.c:3282
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff8880278fe300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06 fc
- ffff8880278fe380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8880278fe400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff8880278fe480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880278fe500: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> loop1  addr_start
+>            addr_end
+>
+> loop2                  addr_end
+>
+> loop3                                  addr_end
+>                                            At this point we need to
+> pass range [addr_start, addr_end - 1] into __f2fs_invalidate_blocks()
+> for processing.
+>
+> loop4
+>                                                            addr_start
+>                                                            addr_end
+>
+> > > +                       if (addr_start =3D=3D addr_end) {
+> > > +                               addr_end =3D addr_start =3D addr_end =
++ 1;
+> > > +                               continue;
+> > > +                       }
+> > > +
+> > > +                       __f2fs_invalidate_blocks(sbi, addr_start, add=
+r_end - 1);
+> > > +                       addr_end =3D addr_start =3D addr_end + 1;
+> > > +               }
+> > > +       }
+> > > +
+> > > +       if (addr_end >=3D (addr + len))
+> > > +               return;
+> > > +
+> > > +       __f2fs_invalidate_blocks(sbi, addr_start, addr_end);
+> > > +
+> > > +}
+> > > +
+> > >  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blk=
+addr)
+> > >  {
+> > >         struct sit_info *sit_i =3D SIT_I(sbi);
+> > > --
+> > > 2.25.1
+> > >
+> > >
+> > >
+> > > _______________________________________________
+> > > Linux-f2fs-devel mailing list
+> > > Linux-f2fs-devel@lists.sourceforge.net
+> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
