@@ -1,100 +1,120 @@
-Return-Path: <linux-kernel+bounces-389784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0722B9B713F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:44:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C969B7148
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67A61F21C16
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:44:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3172825BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B4F1EB48;
-	Thu, 31 Oct 2024 00:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF25B1EB48;
+	Thu, 31 Oct 2024 00:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkMaPnDg"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TrV3EIYK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86ECE156CF
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A288C2FD;
+	Thu, 31 Oct 2024 00:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730335479; cv=none; b=Me2n006uFnOnWNn1f2FtHCGbdUZkSsNd9yJnpEWiKz6RHLioPnF3nSPJpPsER+DbxCkyh05Q+3lHlgku3xCxCio4gBL67Z3G3Rzns+DG63Q3J52ko4XvlSTFs20xXtuNyRqR/FfTFTItrEufcwtONxhIArF01BFS3QySWylwyBc=
+	t=1730335550; cv=none; b=axfkpejWxDlxF3LynBByCS0rlsInuh/tF9FNEkL7AfyiKEwPMxFZlgKQ9Dy/Qj+sZb7MvHNDbf/TpvFmXKjeNkBJSkWzVUw87EGOuFqJEluIZPXZjkLdF0s93/3S/mfXQrch705RC4bPjprmubAoUNof2pDPuFA0bUiW9p+jMkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730335479; c=relaxed/simple;
-	bh=AYrQGfs68cSYHvk/bWCY9a535fP/g1hcVwiIR8S3CBs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=F0YpuiwKgFMKr/k8G3VBt5EmyEcpR1r5zYC4usRAUiRfKZkSKXHGuHX1u8VhEigX3FgUfMwzQbXNzKPtQxCnF8w9uenaSsheLSaSIR2dXwDgqQSpfY19tyOu+8DvGgrT/oGMck4MAQLZAO6aGSiIJWgBhADW63v+9ADE3EvRrx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hkMaPnDg; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1159159528so2403842276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 17:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730335476; x=1730940276; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wJ3E/0287ZVUuvLonUQTrfab1e+06UVSv7RU40m2Do=;
-        b=hkMaPnDgPr8URhZBAgjJIWTv7MrLlm/H8vm3K7LYZBC8/8cm22hddZROnaG3316wOZ
-         MNjHKNW3HOSxwW7uYHo1Wgr0okhOW43OVs7PUb8Y/lVYabEjfiagDfupTZr2rcwP+0UC
-         aryQXMl2dmKYwTL4DwBf3fDTBOp2SsemFnd7v+9rHTr2UhPnixku+MGDeiGUohbSMSQ8
-         tHM4DuD0Jbvhfh9ODfPbnwkCeKFC/nizAM0UGsC7l8Hmfg/TkoSzsATQalGR6Ix8a19R
-         9I0AcLD7WRz5L9C4QPLBiC40Qh5nDiRcSJtGQJGczQKgv0DUR5yWdfwMYWNrGSJVdcSL
-         nFBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730335476; x=1730940276;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wJ3E/0287ZVUuvLonUQTrfab1e+06UVSv7RU40m2Do=;
-        b=ID2Ru0DYZ0HIGI6XirBmbrjLOg2VG+b8q0S0anaAb808QIRNvGhHapoB8Z1gOcS9TJ
-         7cs0DlsxC+4FglcyYhF7bMHPOaN9+alWoljMS20JfUmRU/FxwqNsrutADypfZh3DWAEf
-         jfv6mji39kA5use9VSpxKmgVvqe3004DLWgVU++QejTSOZrYx2kX7GhF/SQYQMRdZaah
-         gPEUELPVIUwl980Y5lRUNko099H/k8fLu3vpKewfFuk4+feYvPJlRbPuHRwq3mrND2UR
-         4/siXpkMaeT1o3MHl/Mzxp4r43VLC6KY6KGag1YHTPlks3d1KUoQD1RhK/poeUiZs5A6
-         5a0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXC3CZLlkXW18qUjjOn+wfKd7SwCYBXZv3sno89CHxt/LFqxnLKCSQseEv0hQgnT/U6uqSnZcszDthyOis=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx28V4QUOQeEw5mS5Z1otIAYwleBOX/G3sPtHyVSwDUaKvXfk3U
-	JWEdB7g/CDJBBalrDx3cp8qmgOlnJBSD3c46tFpk7nUEcL/DYNwYpwDVdRjzxIsmIssjRS4zmt6
-	0Yw==
-X-Google-Smtp-Source: AGHT+IEwJjx+aJ0B2DwkgIuFUqCAGGX8/N+fiKgpfgymEMaJd1081DiN10Kva8XOo5JzXSPIfh2Rrskky5c=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:d348:0:b0:e30:b89f:e3d with SMTP id
- 3f1490d57ef6-e30e8c2d094mr4435276.1.1730335476075; Wed, 30 Oct 2024 17:44:36
- -0700 (PDT)
-Date: Wed, 30 Oct 2024 17:44:34 -0700
-In-Reply-To: <20240906221824.491834-3-mlevitsk@redhat.com>
+	s=arc-20240116; t=1730335550; c=relaxed/simple;
+	bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MH3XKgoXTRAaGL4+Hp8MG5sKnA4nNviJzK+SeWAFEZD5mq+X8hTqgz+fOreSwcrrLj7xzRG0HO/AYdte/d94Q6E3OPwotgLfVZIghaW5eRuNl5HPjiQz6EhcROQOgxLputjOrb9Lh0EVbW8x8B+2iPZa3apmzjkmH24xpbRUoiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TrV3EIYK; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730335548; x=1761871548;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
+  b=TrV3EIYKA05jJUu3v56RFE41aWGRuc8AZK9WjXOc0LgVijBropSuoGYh
+   mEoZzccSFGb5SFvqVPhfevntmY+TZo5PEusSpjDhDwOWk8NM3nbwEwugl
+   h0NxEXQAaVQc8Y5tfpYBusAyn9D9fV6+96B5CMJEuI8P/kclCV5yEjonh
+   HLB1zTP7qt/gkWUpikt+ktfvkaoHLzHRuspIJkXUtaj6UZ1Xx3o4ErlGL
+   aBDIrvP9vB3rV3JS9mDC73MvPapNoU7qV8Z4moz3RwWgjMZhg65dG00Gl
+   B/zCuCpi6XJ+PdNlN0ZaUzEzY2qy55wwwCKWwkXEVeV7KoL4Lu9sYnN7o
+   g==;
+X-CSE-ConnectionGUID: pBbrpmWVTxy5luXuIjeOpA==
+X-CSE-MsgGUID: HOhj0uCgSF2aE7SRWOyvxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40637955"
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="40637955"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 17:45:47 -0700
+X-CSE-ConnectionGUID: X4k+Gr8wTfSo4COVZJWTZg==
+X-CSE-MsgGUID: bS1Vd3qcQn2WxqGo5GafTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="82790697"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 30 Oct 2024 17:45:43 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6JJk-000fSq-2D;
+	Thu, 31 Oct 2024 00:45:40 +0000
+Date: Thu, 31 Oct 2024 08:44:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
+Message-ID: <202410310827.OOitgPg0-lkp@intel.com>
+References: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240906221824.491834-1-mlevitsk@redhat.com> <20240906221824.491834-3-mlevitsk@redhat.com>
-Message-ID: <ZyLS8kxMW3WySRu2@google.com>
-Subject: Re: [PATCH v4 2/4] KVM: x86: implement emul_is_noncanonical_address
- using is_noncanonical_address
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, linux-kernel@vger.kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
 
-On Fri, Sep 06, 2024, Maxim Levitsky wrote:
-> Implement the emul_is_noncanonical_address() using
-> is_noncanonical_address().
-> 
-> This will allow to extend the is_noncanonical_address() to support
-> different flavors of canonical checks.
-> 
-> Also add X86EMUL_F_MSR and X86EMUL_F_DT_LOAD emulation flags which will be
-> used to indicate an emulation of a msr or a segment base load, which
-> will affect the required canonical check.
+Hi Ryan,
 
-Adding the flags belongs in a separate patch, there's no reason to squeeze them
-into this patch.  Just an FYI, I'll split/fixup when applying.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc5 next-20241030]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241028-133255
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241028053018.2579200-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
+config: csky-randconfig-001-20241031 (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410310827.OOitgPg0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   csky-linux-ld: drivers/clk/clk-ast2700.o: in function `ast2700_soc_clk_probe':
+   clk-ast2700.c:(.text+0x530): undefined reference to `aspeed_reset_controller_register'
+>> csky-linux-ld: clk-ast2700.c:(.text+0x558): undefined reference to `aspeed_reset_controller_register'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
