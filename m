@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-390078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DF69B7539
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:19:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87DD9B7538
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901431F254E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 698ED2865FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50099161302;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C5B1547F5;
 	Thu, 31 Oct 2024 07:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X9h3U7uu"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SLmNCP0p"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F206150981
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A51114AD0D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730359081; cv=none; b=Fq5xkP80JlprZfSKffTLldG85ZuEOZsCVEraZVrj8nQjLeADpq8PW0pfbJn43zM3uaB9oS9S2OCXznI7TxlZ0AUQx8PyHJNefvitvwtdt84dtifvh4Puq9j7kLUB0qprhXgY8Tk4QJtx3KL1hVHWiR1ryPm88CPFyZ//9Q9D/No=
+	t=1730359081; cv=none; b=smj4LHWxqPZfbOGBxeunnTUNLz1k10XQP8lsu0+ux2YLnqAKVd+BgOLPxR3R3Spz1M4YlZgkRRMjq+pNPuBr6zGZdYGYLcXEg2nP9oEZBIxDycsHGPrU4k/c1kYJeJM48DBFlim1Rok3RLDYPb82dIOuwlyq1+I6SvNFfdVhC0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730359081; c=relaxed/simple;
-	bh=hRRz6Z3zhjYmY795aPCQsEcsvIGIKzWS3nJb+c+XP1I=;
+	bh=Wpo8Oj/klmyH5vH0z1jaegb5OcJIFZ72Wg0pt5glQAc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lxCrs7TsRmFR7Wb2QBhbp44IRdXfCHqf3AqEituGPz9G3XvjEOEXfHPlUYf+RrjN5GIamYLR7uBQ895DiywV7ulmY3hFOFkdqqmi+X188Mm4wiFBviRxYP/kLDDv40q9qBuoxq4ckqGwUqfBSuiNu7mq2yN10KJb+VccgLBW5UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X9h3U7uu; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=HU3PC8AccPW4vcr5n/IUcejeR1TfTlO7vXIOH6JmbWfEMONOoAcBpypgHXJdj6c9VaMPyTAfHBxlO1+R/z7m2toFapl+Jwcw3HbeiWf0+YRFV1gw7IDvS+oxp1JP4xOyr1q/9/2TyLjoaAB67rTTUxoEEVScCj89c01UwBaCbAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SLmNCP0p; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso5081235e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:17:57 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so4738125e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:17:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730359076; x=1730963876; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730359078; x=1730963878; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BeRlMEUtBMXjfsJVHTeMu8lQ8IK1457+K1awnOuwaZk=;
-        b=X9h3U7uu0eCiI6Ccz3GK3TAbR2t5XRQCjn4GLKQkgP+IVY5+eLrbgCKzEaZX7tncxb
-         lTWcL1iU1LwTxsmolYHjvfTWPVmrmXPlsrB70lNcaBoMU/8Zl8HDW5YFEg5t4f1zO7+u
-         GZ4ZbfYU04vyEaMKn12pkm3nM1l4gRGJO450xptGZ1n7d9rcFfBRpBSHRfHCxzZUtKz1
-         E11mqt2Nvcd8KDMInp0hqOMCdtv6oTXwQjXk/BUNermy57l0a8Cx8xm7PlRHWwV8Ww6+
-         rmwfWjLDXcC0hYEtwWZaarpXwMARe8UlDsD8OdbBDfx3yEKqptod1V4fE+UzB2bKDUgg
-         nOBg==
+        bh=ta8KKdF2jcNVKVs5pCv9tj8EzXOBx+/a1iWRb1D6Seo=;
+        b=SLmNCP0pbhwRhyQijQmytLoOPxPwgYWw6lRGZ841HjhOHC030QRUGftl9jVcK/77/r
+         n3D4Uy2s0V3LNcm3w9JKgNL31pOmIHGm7N9D7RKKxXLaamunoXVGzkftDvkNhydly/vT
+         6CCF8hfbDTT4y61/U5UORJKqiNQqdehlXxuv1mAYgmewffpUMZH9sPMjHgAI6XXlRbu8
+         ubQpFiVpG+6+wTcDVapuEqFExWBlXX7xMT0eJpj+rl2K22/8pcw7ITIBfxvqJq6Ui+Kg
+         XeDZ6Z6wH34oDsX6j/lpc9hHIbJo+1vgzGsN4bPAuILjwwjcV1ULO5qz8ODlGL6rRxwq
+         FjVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730359076; x=1730963876;
+        d=1e100.net; s=20230601; t=1730359078; x=1730963878;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BeRlMEUtBMXjfsJVHTeMu8lQ8IK1457+K1awnOuwaZk=;
-        b=v4uxSwkw9u949Vpl0q6x7SrynN4BUZireoCHd/xH57G6W0QYIGRVnxRz8TAjp/8y0b
-         Uq1Kg5yD9D9o5ed0dbuLIquxbU0Ff9xyyIocqbHTjSev78ppp+l5z+mAhICiHetu2v37
-         pEuLzESePNHeEDTleev6qA7k+SXnx+gmPWwGXNz+x2Bpqw+h8JO9CKSHP6pg45zxz7J7
-         ULWqYDQ860qz10QxyZKj4g7+PPy66D6CW5aVXfO7PF82v6GUSn7cmIdrzQYm3bJTPTSG
-         SHxFvGgckAzPyxJ05uBQqqH9Ri10gXop6AggTeFD5yJsG7qNrDPUDtyEkI+fw4Mwemro
-         X2sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPF7DYQe5iuIhJBpeYmqAtAje+1uAiJPHlIA0A7Fwgr5J5taNylTm6mf2OeVWNuIH1emNUJPm3DNFcOu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxHn8HaY6o7wHLvD4vpQO3tkt07X/sL2OWCnGu8yokZxOxxPkV
-	cIg+DQe9a3jM3B6sHcBY8zC9PiBThaEEkS1+gtU3EgrwtQ3KC8cQ4RaPVZuHSgg=
-X-Google-Smtp-Source: AGHT+IFXvK55d0CGj9OJo4gCkJhWNNTnKajsdZ89N392DRFUQyDEd53HDsOaPmhrhw5rLrryeaaweQ==
-X-Received: by 2002:a05:600c:3556:b0:431:5f1b:a7c4 with SMTP id 5b1f17b1804b1-4319ad29d0bmr169902125e9.34.1730359076424;
-        Thu, 31 Oct 2024 00:17:56 -0700 (PDT)
+        bh=ta8KKdF2jcNVKVs5pCv9tj8EzXOBx+/a1iWRb1D6Seo=;
+        b=MR/Ok/IHY2Ydu6hORrxcjNV4c2OqIzOTTNyjZSqavloKNgcLlwo5CcJymEmWpa7Nxp
+         pLRUrzN3Xsvjm53ZII5fnILIoe0sOKF9oPwfvyoHIZcL3SzPRPtWJUqQj63xAqkhU1b3
+         uuEcWjOCJM6dGNqnd2CjOARYv6ETYhQRGL9t6W61RjSx0asRABfgnGdKr2yF0zaYx+WN
+         WQRqIBZlzdlKB4yd5WtdrT0Y3A1dY1f3dRDMKXJzVVqj6muyk3mmPB997/W5OgwJiQ1P
+         qHQaZ3hH/5M+l9MnTJzUxGuVNnA4goO8vt/43vvgInhMS0ZYQpH7KagVSUGEGCuYZ8Jp
+         L0+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWyh3pKB2txPqv1ygBy6Krt34/RIkp0wSH9mk4WIm2sFaUVrt+vKM4QmPB5sXrCJ5GsA8GVStl3C9YkH7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmMZUHY1L/Qj5Ml69KnxFo7faE+uURSlYcZqvCAjuwxuUQ5eWc
+	FdxVmferUs0rsfcLCvIs2zqEEu7ruYMzD6eCd+DA2+Q0jcruOJTyXdkU6F3lyAs=
+X-Google-Smtp-Source: AGHT+IFApzsnUKOt+RjkBsEFLWnDMKMhhkMDsz9e5PgIwP+GShRdVqxyiVYzdBFrvcfuDkSiF/a0ww==
+X-Received: by 2002:a05:600c:4ecd:b0:431:6060:8b22 with SMTP id 5b1f17b1804b1-431bb9855a2mr50657975e9.10.1730359077813;
+        Thu, 31 Oct 2024 00:17:57 -0700 (PDT)
 Received: from axelh-ThinkPad-T450s.home (lfbn-nic-1-251-169.w2-15.abo.wanadoo.fr. [2.15.94.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e694sm1187547f8f.86.2024.10.31.00.17.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e694sm1187547f8f.86.2024.10.31.00.17.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 00:17:55 -0700 (PDT)
+        Thu, 31 Oct 2024 00:17:56 -0700 (PDT)
 From: ahaslam@baylibre.com
 To: lars@metafoo.de,
 	Michael.Hennerich@analog.com,
@@ -79,9 +79,9 @@ Cc: linux-iio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Axel Haslam <ahaslam@baylibre.com>
-Subject: [PATCH v3 5/6] iio: dac: ad5791: Use devm_regulator_get_enable_read_voltage
-Date: Thu, 31 Oct 2024 08:17:45 +0100
-Message-Id: <20241031071746.848694-6-ahaslam@baylibre.com>
+Subject: [PATCH v3 6/6] iio: dac: ad5791: Use devm_iio_device_register
+Date: Thu, 31 Oct 2024 08:17:46 +0100
+Message-Id: <20241031071746.848694-7-ahaslam@baylibre.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241031071746.848694-1-ahaslam@baylibre.com>
 References: <20241031071746.848694-1-ahaslam@baylibre.com>
@@ -95,121 +95,55 @@ Content-Transfer-Encoding: 8bit
 
 From: Axel Haslam <ahaslam@baylibre.com>
 
-Simplify probe by using of the devm_regulator_get_enable_read_voltage.
+Use devm_iio_device_register to automatically free the iio device.
+since this is the last remaining resource that was not automatically
+freed, we can drop the ".remove" callback.
 
 Suggested-by: David Lechner <dlechner@baylibre.com>
 Reviewed-by: David Lechner <dlechner@baylibre.com>
 Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
 ---
- drivers/iio/dac/ad5791.c | 58 ++++++++++------------------------------
- 1 file changed, 14 insertions(+), 44 deletions(-)
+ drivers/iio/dac/ad5791.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
 diff --git a/drivers/iio/dac/ad5791.c b/drivers/iio/dac/ad5791.c
-index c5d4d755d57a..92d47e766fd3 100644
+index 92d47e766fd3..57374f78f6b8 100644
 --- a/drivers/iio/dac/ad5791.c
 +++ b/drivers/iio/dac/ad5791.c
-@@ -360,32 +360,6 @@ static int ad5791_probe(struct spi_device *spi)
- 	if (IS_ERR(st->gpio_ldac))
- 		return PTR_ERR(st->gpio_ldac);
- 
--	st->reg_vdd = devm_regulator_get(&spi->dev, "vdd");
--	if (!IS_ERR(st->reg_vdd)) {
--		ret = regulator_enable(st->reg_vdd);
--		if (ret)
--			return ret;
--
--		ret = regulator_get_voltage(st->reg_vdd);
--		if (ret < 0)
--			goto error_disable_reg_pos;
--
--		pos_voltage_uv = ret;
--	}
--
--	st->reg_vss = devm_regulator_get(&spi->dev, "vss");
--	if (!IS_ERR(st->reg_vss)) {
--		ret = regulator_enable(st->reg_vss);
--		if (ret)
--			goto error_disable_reg_pos;
--
--		ret = regulator_get_voltage(st->reg_vss);
--		if (ret < 0)
--			goto error_disable_reg_neg;
--
--		neg_voltage_uv = ret;
--	}
--
- 	st->pwr_down = true;
- 	st->spi = spi;
- 
-@@ -395,7 +369,17 @@ static int ad5791_probe(struct spi_device *spi)
- 		use_rbuf_gain2 = device_property_read_bool(&spi->dev,
- 							   "adi,rbuf-gain2-en");
- 
--	if (!IS_ERR(st->reg_vss) && !IS_ERR(st->reg_vdd)) {
-+	pos_voltage_uv = devm_regulator_get_enable_read_voltage(&spi->dev, "vdd");
-+	if (pos_voltage_uv < 0 && pos_voltage_uv != -ENODEV)
-+		return dev_err_probe(&spi->dev, pos_voltage_uv,
-+				     "failed to get vdd voltage\n");
-+
-+	neg_voltage_uv = devm_regulator_get_enable_read_voltage(&spi->dev, "vss");
-+	if (neg_voltage_uv < 0 && neg_voltage_uv != -ENODEV)
-+		return dev_err_probe(&spi->dev, neg_voltage_uv,
-+				     "failed to get vss voltage\n");
-+
-+	if (neg_voltage_uv >= 0 && pos_voltage_uv >= 0) {
- 		st->vref_mv = (pos_voltage_uv + neg_voltage_uv) / 1000;
- 		st->vref_neg_mv = neg_voltage_uv / 1000;
- 	} else if (pdata) {
-@@ -411,7 +395,7 @@ static int ad5791_probe(struct spi_device *spi)
- 	} else {
- 		ret = ad5791_spi_write(st, AD5791_ADDR_SW_CTRL, AD5791_SWCTRL_RESET);
- 		if (ret)
--			goto error_disable_reg_neg;
-+			return dev_err_probe(&spi->dev, ret, "fail to reset\n");
- 	}
- 
- 	st->chip_info = spi_get_device_match_data(spi);
-@@ -425,7 +409,7 @@ static int ad5791_probe(struct spi_device *spi)
- 	ret = ad5791_spi_write(st, AD5791_ADDR_CTRL, st->ctrl |
- 		AD5791_CTRL_OPGND | AD5791_CTRL_DACTRI);
+@@ -411,24 +411,12 @@ static int ad5791_probe(struct spi_device *spi)
  	if (ret)
--		goto error_disable_reg_neg;
-+		return dev_err_probe(&spi->dev, ret, "fail to write ctrl register\n");
+ 		return dev_err_probe(&spi->dev, ret, "fail to write ctrl register\n");
  
- 	spi_set_drvdata(spi, indio_dev);
+-	spi_set_drvdata(spi, indio_dev);
  	indio_dev->info = &ad5791_info;
-@@ -435,30 +419,16 @@ static int ad5791_probe(struct spi_device *spi)
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 	indio_dev->channels = &st->chip_info->channel;
+ 	indio_dev->num_channels = 1;
  	indio_dev->name = st->chip_info->name;
- 	ret = iio_device_register(indio_dev);
- 	if (ret)
--		goto error_disable_reg_neg;
-+		return dev_err_probe(&spi->dev, ret, "unable to register iio device\n");
- 
- 	return 0;
+-	ret = iio_device_register(indio_dev);
+-	if (ret)
+-		return dev_err_probe(&spi->dev, ret, "unable to register iio device\n");
 -
--error_disable_reg_neg:
--	if (!IS_ERR(st->reg_vss))
--		regulator_disable(st->reg_vss);
--error_disable_reg_pos:
--	if (!IS_ERR(st->reg_vdd))
--		regulator_disable(st->reg_vdd);
--	return ret;
- }
- 
- static void ad5791_remove(struct spi_device *spi)
- {
- 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
--	struct ad5791_state *st = iio_priv(indio_dev);
- 
- 	iio_device_unregister(indio_dev);
--	if (!IS_ERR(st->reg_vdd))
--		regulator_disable(st->reg_vdd);
+-	return 0;
+-}
 -
--	if (!IS_ERR(st->reg_vss))
--		regulator_disable(st->reg_vss);
+-static void ad5791_remove(struct spi_device *spi)
+-{
+-	struct iio_dev *indio_dev = spi_get_drvdata(spi);
+-
+-	iio_device_unregister(indio_dev);
++	return devm_iio_device_register(&spi->dev, indio_dev);
  }
  
  static const struct of_device_id ad5791_of_match[] = {
+@@ -457,7 +445,6 @@ static struct spi_driver ad5791_driver = {
+ 		   .of_match_table = ad5791_of_match,
+ 		   },
+ 	.probe = ad5791_probe,
+-	.remove = ad5791_remove,
+ 	.id_table = ad5791_id,
+ };
+ module_spi_driver(ad5791_driver);
 -- 
 2.34.1
 
