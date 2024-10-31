@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-391217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC259B83ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:02:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFB19B83EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:02:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E59B20D82
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D92D28277D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD531CC151;
-	Thu, 31 Oct 2024 20:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423DE1CCB41;
+	Thu, 31 Oct 2024 20:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="csgL3F1F"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="A1vdRIA/"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F9619ABB4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583531CB33B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730404926; cv=none; b=FuZHq+/OVuctYEjy2sttrxbQdcNMzF/KNDxuChV9fFl1ZHRa7j2dZ3shSwPM3Liq5uibuID6S1XDZ/cldbfCq2yboFdcOhIt16y2Qy5KYYWIwiCni9Wtf7FgYM6gai1woghu/zG243T13F5hXWIU+dA1NiIcaJJ3OB0jv3xS2YY=
+	t=1730404927; cv=none; b=ctjnv0920y+Qqq5M7QqKXCnFH9U2BDBE0mYQuTSg1c6Y9njL1lYHltGtKOPbP2+/aBGQOkRg2xAQD1oVRhuBXyY5hbnFHFglhxMKgJ4GTm86rGvQSmbAy5F40wmbKYD4q22QnNcopG2D8kRNQIYaL60yCEHHC622HNOO+hxNIi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730404926; c=relaxed/simple;
-	bh=3eGsWj3tldB6ErshJTowvNjw6P+DOV6RwonJQjhOJvE=;
+	s=arc-20240116; t=1730404927; c=relaxed/simple;
+	bh=lxfcHFlINBm4B273RJGWT9N7EfQtgO45pd+YAFioyAU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dai0cVM3Bl/vUQ9JX0Jzu9/VoxcXXCPFk4uy0D5G59j9aCvgPIuI8miu2KJGLdiTJedUbjQZ6nLpf71e4jUpMHk5Gtdj/bGUzbrOTnBrBtcfRobyt2g4ovboh/AUfMuAjwyNOJvJkqYa94MnB16SOB+YFUWwEFnmutEuqiJG7EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=csgL3F1F; arc=none smtp.client-ip=209.85.221.42
+	 In-Reply-To:To:Cc; b=chD+gVKStXQB2m1WncjdOFLPIoTZ0yG3B8cB1JqBQdFI/160wr+bfKwHpqUKdAEcu8uu6/h7j1ZQ70SnwyrEkiv72V7PgKUQUEh805HLz+v0z03uV/uhgT3G19ynLz5g0SRTHKFfa2xi3Ct+koN7FKOuvvjrfG3Ly/U1VRU9oQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=A1vdRIA/; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d47eff9acso867666f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:02:03 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so11800945e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:02:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730404922; x=1731009722; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730404923; x=1731009723; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Y6mBZytrDKEzQaEmUgMpFJx27tSq4OYxz5Qwnw3leeA=;
-        b=csgL3F1FFyjMSD/rfYDkQ0WNDyVi7kAkxOYqo6eTVx6+7PQT1oTjzsokHQcB4iEeX4
-         Zo57jVqbBHGUDvqXKmkhcWXPiMdt536cKXUkiTOeXC1crR7kKTt/6dfX1ie3WzWm3vS+
-         /YERwsx05YWnsQsr0JqBa4SWariRFsDioOdRID2C3nOlfyoPiwux1ec5BDnAOR4kR1ra
-         dRSmyLXjAYBGuwORnMmSXuRJPb6CqxaRXO8oUZLcZ1aNHe6uLqBiNvr1mTFl6cgMM1Eh
-         AI0TRFIK25iVtYrEixqR3WHms84CW/G/pjq4tCazBosR518A1lSIuYMbg5zbic7+qCuB
-         1M6Q==
+        bh=yzrxfr7wPhfTvrfVJLIuoZ9JjJdY5AB7ATojPjTFoR4=;
+        b=A1vdRIA/j6CFHA585KI3akgUqOsi94+PdSdv9J0zO10hiDR2DX0XI4dljLleAgg9Nr
+         X4PGJwG+YZk2aht6+NFEjLFE0poCcIkv2ApIejkVUUwP8P8cp1xyK5viAF7OUHIP0LBm
+         JGayKPkwKHeyy666jM9WwzAOOXO3p7xK/dXk8f/MMTTqV9g43H9tJjnc+TRF9wd2l3+b
+         IuVDgmtM960x98VBn45t3Obg7eFZ0tRACBoYvS1ePGDZvhc3ZkwPCxF8uKbro1EZC7G3
+         aQPawEFtEqPHUBksukHt5KpbN2QwJHgC6Z8TCHlF5dVduZADBToPmTq5RD9sbrzIt6WM
+         u1NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730404922; x=1731009722;
+        d=1e100.net; s=20230601; t=1730404923; x=1731009723;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y6mBZytrDKEzQaEmUgMpFJx27tSq4OYxz5Qwnw3leeA=;
-        b=X6fTdy2TdSikTMAg7GAmmk/WeE6hGgjTX6LB59sTGHPytpYUYQrqW4TIBktn1Sr6FL
-         9EMRohOJQAPSkpUSiQwTLoL1/9Ua3wpbCjQ61BMcOgOmTE/qAdXqNMI8hxVMOmYRJrKp
-         wg4EKDSYaepevow0IDEEqUG/ukX/3RSG3pD6mzn8Fs8W2xdd21AKu3IXmPscPPXhhVJg
-         WpjuF6Ls75bUUF6lRSHo+hUKmlAIGROIFjMVv4LFczoGx3c3ir/J+X2tCfbWG+nBwK10
-         TFrS2EBN+T0k4yRz7g4khqTtizuJR3ZMfhkOVnYZeUsji910Yhqd0fTm5bUMVrx0VZIE
-         11Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYftAeFTyBKq6xYKvKHAPIpi0cR9oaBF6WFc9bwrYImnTRDOxusttqPlnNf36462z73mYRv/TIDiHBq1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVlJHaRfgkpaaVl+Pt+nT4etBTiKrr410+tJhSISHqhESzIrBZ
-	NLvHU8ykPUe2vZJKTIiRevoxFdWYiZpuOmr2PUsm4ENm+y4LxUjw+YgBwRqPMsI=
-X-Google-Smtp-Source: AGHT+IGAZj09jlUVqaVWH2c9zCPhNV/xPpwAFq1+xmwxeDkiFGYkJBU61+Cwv42I1Tc9EE4zbt3vqA==
-X-Received: by 2002:a5d:6c63:0:b0:37d:3973:cb8d with SMTP id ffacd0b85a97d-381c7a5e9d5mr977708f8f.24.1730404922353;
-        Thu, 31 Oct 2024 13:02:02 -0700 (PDT)
+        bh=yzrxfr7wPhfTvrfVJLIuoZ9JjJdY5AB7ATojPjTFoR4=;
+        b=iPgxiwkWCXtVKnj0dQ/be6oGIS5QY8GXUuI+FJPE+T5iOLywRXpRiKkD0fHJrwqc5D
+         QtxkDmTj2TajA4xzXr+mjSPzHau6UOCMZd9IZkAxLw9ZBoQmIwiZQQ1nkxuU5E4xUDWY
+         UMHws5cy6wQfR78dB5FZ+IxPkNiWXYBoC4ePV7WgaGQMh1dU1Y6ro5qsBMgSmp/FiMgt
+         X4yjjiGofnvH7Mdv7PfGYYefIp0uScukVoTCSUpS6d/bOB5kvUV7xfOi40tXMfoMi/d0
+         iTg07Gm+3ku4wxhtzuxnXDgQ773oj73bX/kwMoUMcNzDFDlbpMzkHL5KXtnzx/ctJELt
+         zb5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWN6RLE21CZG8unNA7G5z/k9IQH75LkT8ZQKsHSEcVsVp1P2RezP3FlZSO7TykcPr7e3A6bThyMzh3/zPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJmj0T4OBRAjwAwGm1tg93mxSWCKDNYmjvfEROcBvruWpcUe1T
+	xJJMOm7zkDUd/WPuDxsAhq0kWP0cgZUeIELULfnZoU4FcIhSRtWzv/M9r5hkb4w=
+X-Google-Smtp-Source: AGHT+IGgFm4zjZjWhXC7650nVqWNS1PFsWNFmkOgJQXkZXvXD+FgAP7Ug+L614sjMLXKokJuGBunpw==
+X-Received: by 2002:a5d:5988:0:b0:37d:30e7:3865 with SMTP id ffacd0b85a97d-381be7d63e0mr3768793f8f.34.1730404923552;
+        Thu, 31 Oct 2024 13:02:03 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:f39e:5519:d578:740])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c1189123sm3003993f8f.115.2024.10.31.13.02.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c1189123sm3003993f8f.115.2024.10.31.13.02.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 13:02:01 -0700 (PDT)
+        Thu, 31 Oct 2024 13:02:02 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 31 Oct 2024 21:01:51 +0100
-Subject: [PATCH v4 1/5] gpio: sysfs: use cleanup guards for
- gpiod_data::mutex
+Date: Thu, 31 Oct 2024 21:01:52 +0100
+Subject: [PATCH v4 2/5] gpio: sysfs: use cleanup guards for the sysfs_lock
+ mutex
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-gpio-notify-sysfs-v4-1-142021c2195c@linaro.org>
+Message-Id: <20241031-gpio-notify-sysfs-v4-2-142021c2195c@linaro.org>
 References: <20241031-gpio-notify-sysfs-v4-0-142021c2195c@linaro.org>
 In-Reply-To: <20241031-gpio-notify-sysfs-v4-0-142021c2195c@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -86,194 +86,146 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4303;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2976;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=JtNYy2XqnFeY+eoUoR6vsJSZlTSzQbTj5jXZS6NTCW8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnI+I2Pd20JG6ct2Q64CVWKREET3/J/otoQpcx9
- i8hzT2hHImJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZyPiNgAKCRARpy6gFHHX
- cvnQEADGPCnvjn8sKxmXZbnLjy/kg3253RNE4qwGiWrwgF4giPL4rsiGz8l9e5dTq9J8ZEoREp9
- r9XjOoVC6ZCx3Zc5mmnYLahVVYle8h2hDTtiy482PuU/nBDAxkDB96ihhAfaQiBtQEFUuc9No7k
- PJy5kVfs+n6x99lxIxpKEvXBwD3UX4rAF88N77rEOCOcK+OqDrLtlZT7FV1HDtHpswH9B0f8lhJ
- rUHGDCVXtGd9dWWcJeSw6EWDQtafbIAzeF33B4OCGzz6RKd822/uRaxaEjHKGMtbztQKpsjZreF
- QD3pUX5+cKoJFBgdBUPyGVwVnEdjQsGRk52FYSuzugcmSeCCbyi+S0Q8ILYxWR3R0DFOFrBEUsY
- BrSsqUhdQ8EmIz3MnO8gv4bpaOfanbHR+8HeLlNQB641fKgjh4GI2laBJbupSbOVmeMgwkaLbZg
- OM3/t+zVJVmKS3h58SqukHCpAIIMuYQgSdFV6bQVakJH4gsuHL9oWOn8550uEB2dxWqjqnYx392
- 1UPHGZP/VUYUrIfbvmV0eHAQ5ffThHf2iVE/ZZTVLSD3O7u4KZqDf7JuzuZ2n271hUr3xNj99Sr
- BE4YgiHF50xyzlc+mTHDYQPgwxTRl9AQBFn4ZRU55riHsVYoIu+ik0OMhhl2ZWPVL5Mw6HIA9lE
- QXhFjVEMn6Cz5KA==
+ bh=hQbFwd1QT9qA/6G04ep+yw6mU1491E7zvhbWfpDUDoM=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnI+I2RfXIbXJmBgVj3RdDRuu1VHrPbMrDmhip1
+ i4/Nv5KCieJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZyPiNgAKCRARpy6gFHHX
+ cuR0EADJxy3vXb63V7EH/zHNUnjvJN4b/Jnp/CIAd6WwUskF72NdGGNHTRQzMXEMvcgewrEk2hR
+ 14WOrVchK+ryfS85FkruV8qf94ButgWv0rjh7tf8DvkI+kqQD69+tC70yTCZ4pHOte0Z5zEc2JB
+ PNXUjSFL9RhoeBXWPE4ZsprN5UmtRx9XrNjCCKolq1PrDaGeBnZYrF9DYcGf00hrpTwufg1CbRH
+ mSJ5PnXmCOzGbVVP5J/4dZ4M8RgXYDHr67ZRUAkwRWvginLBwNA5ZZCDKl+LRWbXeSxdhO9uK4C
+ F3Vgeu2H1LBBD96tIzyGVu+rwFlnl+rYBk1Z4xIph6tyfa5vgFfaoMaxBLfKcrZVKj+OHdOZpvl
+ /znYWNXA26/7FinsE5rwGOfKlgJ4NFYrtzsds98qre84LJUw8ZDKwDdaayU7jPP+9siATW0hu4Q
+ jPBJuanaliUmNcxiJNeBvpxqHn2VEs3z+44kvOx/qYZoHg/os6TWE7Un1hKvQorNldyIqZqhHpK
+ 0uW6Q8yuREGLdr4ez609UwHl8Z9XY2BK6oafvDoN1aay7an4wYP1ex8WBvHoy9zge+nlppY8E9G
+ ZA/J09WyVgumZ5XgKYXsyczyHTyAbOePwFViM0D0iEHNWmRQieoyiOAV843wD3yLDfyVnN5cvQZ
+ fK96CAgt4iPXWDQ==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Shrink the code and drop some goto labels by using lock guards around
-gpiod_data::mutex.
+Shrink the code and remove some goto labels by using guards around the
+sysfs_lock mutex.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-sysfs.c | 82 ++++++++++++++++----------------------------
- 1 file changed, 30 insertions(+), 52 deletions(-)
+ drivers/gpio/gpiolib-sysfs.c | 55 ++++++++++++++++++--------------------------
+ 1 file changed, 22 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 0c713baa7784..a0926a1061ae 100644
+index a0926a1061ae..e6c1e26f302d 100644
 --- a/drivers/gpio/gpiolib-sysfs.c
 +++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -77,12 +77,10 @@ static ssize_t direction_show(struct device *dev,
- 	struct gpio_desc *desc = data->desc;
- 	int value;
+@@ -575,24 +575,24 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
  
--	mutex_lock(&data->mutex);
+ 	gdev = desc->gdev;
+ 
+-	mutex_lock(&sysfs_lock);
++	guard(mutex)(&sysfs_lock);
+ 
+ 	/* check if chip is being removed */
+ 	if (!gdev->mockdev) {
+ 		status = -ENODEV;
+-		goto err_unlock;
++		goto err_clear_bit;
+ 	}
+ 
+ 	if (!test_bit(FLAG_REQUESTED, &desc->flags)) {
+ 		gpiod_dbg(desc, "%s: unavailable (not requested)\n", __func__);
+ 		status = -EPERM;
+-		goto err_unlock;
++		goto err_clear_bit;
+ 	}
+ 
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data) {
+ 		status = -ENOMEM;
+-		goto err_unlock;
++		goto err_clear_bit;
+ 	}
+ 
+ 	data->desc = desc;
+@@ -610,13 +610,11 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+ 		goto err_free_data;
+ 	}
+ 
+-	mutex_unlock(&sysfs_lock);
+ 	return 0;
+ 
+ err_free_data:
+ 	kfree(data);
+-err_unlock:
+-	mutex_unlock(&sysfs_lock);
++err_clear_bit:
+ 	clear_bit(FLAG_EXPORT, &desc->flags);
+ 	gpiod_dbg(desc, "%s: status %d\n", __func__, status);
+ 	return status;
+@@ -680,36 +678,28 @@ void gpiod_unexport(struct gpio_desc *desc)
+ 		return;
+ 	}
+ 
+-	mutex_lock(&sysfs_lock);
++	scoped_guard(mutex, &sysfs_lock) {
++		if (!test_bit(FLAG_EXPORT, &desc->flags))
++			return;
+ 
+-	if (!test_bit(FLAG_EXPORT, &desc->flags))
+-		goto err_unlock;
++		dev = class_find_device(&gpio_class, NULL, desc, match_export);
++		if (!dev)
++			return;
+ 
+-	dev = class_find_device(&gpio_class, NULL, desc, match_export);
+-	if (!dev)
+-		goto err_unlock;
++		data = dev_get_drvdata(dev);
++		clear_bit(FLAG_EXPORT, &desc->flags);
++		device_unregister(dev);
+ 
+-	data = dev_get_drvdata(dev);
 -
--	gpiod_get_direction(desc);
--	value = !!test_bit(FLAG_IS_OUT, &desc->flags);
+-	clear_bit(FLAG_EXPORT, &desc->flags);
 -
--	mutex_unlock(&data->mutex);
-+	scoped_guard(mutex, &data->mutex) {
-+		gpiod_get_direction(desc);
-+		value = !!test_bit(FLAG_IS_OUT, &desc->flags);
+-	device_unregister(dev);
+-
+-	/*
+-	 * Release irq after deregistration to prevent race with edge_store.
+-	 */
+-	if (data->irq_flags)
+-		gpio_sysfs_free_irq(dev);
+-
+-	mutex_unlock(&sysfs_lock);
++		/*
++		 * Release irq after deregistration to prevent race with
++		 * edge_store.
++		 */
++		if (data->irq_flags)
++			gpio_sysfs_free_irq(dev);
 +	}
  
- 	return sysfs_emit(buf, "%s\n", value ? "out" : "in");
+ 	put_device(dev);
+ 	kfree(data);
+-
+-	return;
+-
+-err_unlock:
+-	mutex_unlock(&sysfs_lock);
  }
-@@ -94,7 +92,7 @@ static ssize_t direction_store(struct device *dev,
- 	struct gpio_desc *desc = data->desc;
- 	ssize_t			status;
+ EXPORT_SYMBOL_GPL(gpiod_unexport);
  
--	mutex_lock(&data->mutex);
-+	guard(mutex)(&data->mutex);
+@@ -750,9 +740,8 @@ int gpiochip_sysfs_register(struct gpio_device *gdev)
+ 	if (IS_ERR(dev))
+ 		return PTR_ERR(dev);
  
- 	if (sysfs_streq(buf, "high"))
- 		status = gpiod_direction_output_raw(desc, 1);
-@@ -105,8 +103,6 @@ static ssize_t direction_store(struct device *dev,
- 	else
- 		status = -EINVAL;
+-	mutex_lock(&sysfs_lock);
++	guard(mutex)(&sysfs_lock);
+ 	gdev->mockdev = dev;
+-	mutex_unlock(&sysfs_lock);
  
--	mutex_unlock(&data->mutex);
--
- 	return status ? : size;
+ 	return 0;
  }
- static DEVICE_ATTR_RW(direction);
-@@ -118,11 +114,8 @@ static ssize_t value_show(struct device *dev,
- 	struct gpio_desc *desc = data->desc;
- 	ssize_t			status;
- 
--	mutex_lock(&data->mutex);
--
--	status = gpiod_get_value_cansleep(desc);
--
--	mutex_unlock(&data->mutex);
-+	scoped_guard(mutex, &data->mutex)
-+		status = gpiod_get_value_cansleep(desc);
- 
- 	if (status < 0)
- 		return status;
-@@ -140,18 +133,17 @@ static ssize_t value_store(struct device *dev,
- 
- 	status = kstrtol(buf, 0, &value);
- 
--	mutex_lock(&data->mutex);
-+	guard(mutex)(&data->mutex);
- 
--	if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
--		status = -EPERM;
--	} else if (status == 0) {
--		gpiod_set_value_cansleep(desc, value);
--		status = size;
--	}
-+	if (!test_bit(FLAG_IS_OUT, &desc->flags))
-+		return -EPERM;
- 
--	mutex_unlock(&data->mutex);
-+	if (status)
-+		return status;
- 
--	return status;
-+	gpiod_set_value_cansleep(desc, value);
-+
-+	return size;
- }
- static DEVICE_ATTR_PREALLOC(value, S_IWUSR | S_IRUGO, value_show, value_store);
- 
-@@ -253,11 +245,8 @@ static ssize_t edge_show(struct device *dev,
- 	struct gpiod_data *data = dev_get_drvdata(dev);
- 	int flags;
- 
--	mutex_lock(&data->mutex);
--
--	flags = data->irq_flags;
--
--	mutex_unlock(&data->mutex);
-+	scoped_guard(mutex, &data->mutex)
-+		flags = data->irq_flags;
- 
- 	if (flags >= ARRAY_SIZE(trigger_names))
- 		return 0;
-@@ -276,26 +265,22 @@ static ssize_t edge_store(struct device *dev,
- 	if (flags < 0)
- 		return flags;
- 
--	mutex_lock(&data->mutex);
-+	guard(mutex)(&data->mutex);
- 
--	if (flags == data->irq_flags) {
--		status = size;
--		goto out_unlock;
--	}
-+	if (flags == data->irq_flags)
-+		return size;
- 
- 	if (data->irq_flags)
- 		gpio_sysfs_free_irq(dev);
- 
--	if (flags) {
--		status = gpio_sysfs_request_irq(dev, flags);
--		if (!status)
--			status = size;
--	}
-+	if (!flags)
-+		return size;
- 
--out_unlock:
--	mutex_unlock(&data->mutex);
-+	status = gpio_sysfs_request_irq(dev, flags);
-+	if (status)
-+		return status;
- 
--	return status;
-+	return size;
- }
- static DEVICE_ATTR_RW(edge);
- 
-@@ -330,11 +315,8 @@ static ssize_t active_low_show(struct device *dev,
- 	struct gpio_desc *desc = data->desc;
- 	int value;
- 
--	mutex_lock(&data->mutex);
--
--	value = !!test_bit(FLAG_ACTIVE_LOW, &desc->flags);
--
--	mutex_unlock(&data->mutex);
-+	scoped_guard(mutex, &data->mutex)
-+		value = !!test_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 
- 	return sysfs_emit(buf, "%d\n", value);
- }
-@@ -350,13 +332,9 @@ static ssize_t active_low_store(struct device *dev,
- 	if (status)
- 		return status;
- 
--	mutex_lock(&data->mutex);
-+	guard(mutex)(&data->mutex);
- 
--	status = gpio_sysfs_set_active_low(dev, value);
--
--	mutex_unlock(&data->mutex);
--
--	return status ? : size;
-+	return gpio_sysfs_set_active_low(dev, value) ?: size;
- }
- static DEVICE_ATTR_RW(active_low);
- 
 
 -- 
 2.45.2
