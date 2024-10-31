@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-390437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E959B79E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:41:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32F69B79E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 726BAB23BDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:41:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E547A1C213EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD9219B586;
-	Thu, 31 Oct 2024 11:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A5E19B5B4;
+	Thu, 31 Oct 2024 11:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhDZsBHP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b="fwxKkXyz"
+Received: from cloud.peff.net (cloud.peff.net [104.130.231.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C13A19AD48;
-	Thu, 31 Oct 2024 11:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0304B19AD7B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.130.231.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730374890; cv=none; b=g/9aI2nREngUHT7HRWBWzlkLvZvNlPuBuXIss5Id+xvjgeM9Ik6KVvdmygf1uF9aAdI2iM3h2Bk7NFUVkucxJXsohxjBNaa2uisJXoXD2rPlpnTmMK3bRS4ROGVipgGKkzPnOVNqFzG5YwA+ZruK3dHdme7MBvJz0oS+v5ht52I=
+	t=1730374941; cv=none; b=qwT//tjFJN4fFGGwsI52MJFwUne6YwzfF9Xp0W8PPP0bFY2ct+pYhYJSSEwe/iBc+n4xbVdt+ceJ/Vu7FUKM67P0ZsIIFNHi09/wiwvUaxDmw41ZIaoXWSbAawWqFJudni92DmDrp1VWVsdPz8jWVCKCFIQARbc0Al0Dz4secOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730374890; c=relaxed/simple;
-	bh=4qxINBYrqhRsnSoU5fBGCoMBvbFJVkEOPzAlUqBRcjo=;
+	s=arc-20240116; t=1730374941; c=relaxed/simple;
+	bh=cVVRcU+P8ZGqLgExz0weQRByb+6+IgTbUCtNjAVQhHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENYhXAQzDmQc91gpKO/2YGYaF+uAQtqgdRt5D3HOsmrcA6GB51he3j5a8pJsxDr6NAepqjvhvNjaFRrE3VOUIp7npdcKaKkYDGfEMakBWpqA0QckhUtoHWoKMGoyjkzPzKvOzqpFTgeYvmItpHUtKFLzFriWyXPWkqn5Arwf2Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhDZsBHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F05EFC4AF11;
-	Thu, 31 Oct 2024 11:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730374889;
-	bh=4qxINBYrqhRsnSoU5fBGCoMBvbFJVkEOPzAlUqBRcjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bhDZsBHPysWc7FfvPbbnO1f4jvAefqTta5h3XXvSKyvP1Ul/R0e8g7E8vYmj8SWgS
-	 4lUK7K0UNIG8TYVhvGBhHHAtAMyBWlvg6+FZWbHgOTXDqm8huBa9TBasvng98KB5UO
-	 WNTrfVJ1nF1UpYe4ixMDBC9NFVjGam20R8C92VmvvA/FKZx589d0FJRiFm1y/TWQbF
-	 JrfGoo9WesTUlldDbGpZ3c9e+2jarZBQM8D7u0yf0r1kgmd9Dqdq0G4wlBha5fLnUv
-	 jm1NJ2W045ZyFxaEN/mtLeK+0bIBBN2tWPirHbuiyLVBe+Roy8dDsS9ct5lVl2zvSL
-	 Ji3klRuB4CL4A==
-Date: Thu, 31 Oct 2024 12:41:25 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, 
-	loic.poulain@linaro.org, rfoss@kernel.org, linux-i2c@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH v2 -next] i2c: qcom-cci: Remove the unused variable
- cci_clk_rate
-Message-ID: <7f5amyf7ljvtfjyksfe7cad25wu7qdg4e45mdite6bdxx63ge5@ov37ohc7qtai>
-References: <20241029020931.42311-1-jiapeng.chong@linux.alibaba.com>
- <rql2u5k3esavdmpdzgo4l4up4ir7yjpdzc3qlmsvjvqalqzvjc@xspprcohlout>
- <f06dea2e-893b-4de5-89a3-e25af56afb31@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHE6l30pnvN7zFc8rwi2GSueJmvbCE+yrCyAjNhWHKXzvgtcp9sw9De9ZHTpdxoLD/nVg2qfKRPMoKIuCBrtHRD6OXNgd0cq5ulYSMB7RTCuTQ71S/WGgr8tVgrGNyxtu5VTZecPo0iGpXr+S7GmWN6dM1gIxTXgdFd0/N1BSAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net; spf=pass smtp.mailfrom=peff.net; dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b=fwxKkXyz; arc=none smtp.client-ip=104.130.231.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peff.net
+Received: (qmail 18591 invoked by uid 109); 31 Oct 2024 11:42:11 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=peff.net; h=date:from:to:cc:subject:message-id:references:mime-version:content-type:in-reply-to; s=20240930; bh=cVVRcU+P8ZGqLgExz0weQRByb+6+IgTbUCtNjAVQhHM=; b=fwxKkXyziyAut/7iaXZpMaJ9YrGrd6FnqlxMnpfUmk7mm1Z6vESj/oVdOh9BYj1g/caCuy1BiLQVGoiW4Zti4YhvBvyJrOOQRfDo8P42JkbqsiXGyqeV1TCv3hBgJd1GpSRwnyeY2kQabITSTuX+QcctW9dMupPADG9oS9Wj16USiC7LNGOKVVbfiR4A/q++pJnKVBT2//KVcoIPg+3TIs3k38eQ+xmYYhjSITfZL92FYLrO4KCXt8fSU+wvCsEYL6MgQSNHxsIC4Z/LBgDlGQI5mj9euQ7ZC6RT9FAPWqzpt0Qrjci76ZjW19VuW/TVOciazMse0W1NqNbK545xXQ==
+Received: from Unknown (HELO peff.net) (10.0.1.2)
+ by cloud.peff.net (qpsmtpd/0.94) with ESMTP; Thu, 31 Oct 2024 11:42:11 +0000
+Authentication-Results: cloud.peff.net; auth=none
+Received: (qmail 31677 invoked by uid 111); 31 Oct 2024 11:42:10 -0000
+Received: from coredump.intra.peff.net (HELO coredump.intra.peff.net) (10.0.0.2)
+ by peff.net (qpsmtpd/0.94) with (TLS_AES_256_GCM_SHA384 encrypted) ESMTPS; Thu, 31 Oct 2024 07:42:10 -0400
+Authentication-Results: peff.net; auth=none
+Date: Thu, 31 Oct 2024 07:42:10 -0400
+From: Jeff King <peff@peff.net>
+To: Rasmus Villemoes <ravi@prevas.dk>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	git@vger.kernel.org
+Subject: Re: [PATCH] setlocalversion: Add workaround for "git describe"
+ performance issue
+Message-ID: <20241031114210.GA593548@coredump.intra.peff.net>
+References: <309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org>
+ <87bjz0k17c.fsf@prevas.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,47 +59,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f06dea2e-893b-4de5-89a3-e25af56afb31@linaro.org>
+In-Reply-To: <87bjz0k17c.fsf@prevas.dk>
 
-Hi Vladimir,
+On Thu, Oct 31, 2024 at 11:37:27AM +0100, Rasmus Villemoes wrote:
 
-On Thu, Oct 31, 2024 at 01:13:24PM +0200, Vladimir Zapolskiy wrote:
-> Hi Andi,
+> and that "gave up" commit is v4.18-rc4, the eleventh commit
+> encountered. That also explains why you have to add a "dummy" second
+> --match to make --candidates=1 have the expected behaviour.
 > 
-> On 10/31/24 12:44, Andi Shyti wrote:
-> > Hi Jiapeng,
-> > 
-> > On Tue, Oct 29, 2024 at 10:09:31AM +0800, Jiapeng Chong wrote:
-> > > Variable ret is not effectively used, so delete it.
-> > > 
-> > > drivers/i2c/busses/i2c-qcom-cci.c:526:16: warning: variable ‘cci_clk_rate’ set but not used.
-> > > 
-> > > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> > > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11532
-> > > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> > 
-> > thanks for your patch! Applied to i2c/i2c-host
-> > 
-> > Thanks,
-> > Andi
-> > 
+> Perhaps the logic should instead be that as soon as match_cnt hits
+> max_candidates (i.e. all the tags we're going to consider have actually
+> been visited), we break out. That is, the last "else" above should
+> instead be replaced by
 > 
-> FWIW I've noticed that my Reviewed-by tag was added to the accepted change,
-> while it was the conditional one... Actually I don't know how to be aware
-> of such nuances, if only b4 tool is used, likely there is no way for it.
+>   if (match_cnt == max_candidates) {
+>     ... /* ? , gave_up_on is now a misnomer */
+>     break;
+>   }
 
-I thought the change that made your r-b conditional was the
-Fixes tag, right? That is added. Have I missed anything?
+Yes, I agree that is the right direction. Replacing the "else" entirely
+feels a little weird, because it is part of the:
 
-(I noticed later the v3, but it's basically identical to the one
-I pushed).
+  if (!tags && !all && n->prio < 2)
+	...
+  else if (match_cnt < max_candidates)
+	...
+  else
+	...
 
-> Hopefully I'm not too picky with it.
+So we'd now run that check even if we triggered the first block. But I
+don't think it should matter in practice. We only increment match_cnt in
+the else-if here. So the "else" block could go away, and the check for
+giving up could go inside the else-if.
 
-Absolutely not! Please, keep pinging me if you see anything I
-might have missed.
+It does seem like gave_up_on is now pointless, but I'm not sure I
+understand all of the code here. I assumed that it was only used to
+report "this is where we gave up", and to give you the extra bit of
+information that there _were_ other candidates that we omitted (and not
+just exactly max_candidates). Of course we don't show that without
+--debug. So it seems silly to spend a bunch of extra CPU for that.
 
-Thanks,
-Andi
+But the plot thickens.
+
+What I was going to suggest is that if we wanted to retain that one bit
+of information, what we could do instead is: independent of
+max_candidates, see if we've found all of the possible names we expanded
+from --match. Then max_candidates would work as it does now, but we'd
+avoid fruitlessly searching when there are no more names to find.
+
+Counting the number of expanded names is a little weird. We use them to
+annotate the commits, but of course multiple names can point to a single
+commit, and there's a priority override system. I think the final number
+we can find is the number of entries in the "names" hash.
+
+So I expected this to work:
+
+diff --git a/builtin/describe.c b/builtin/describe.c
+index 7330a77b38..70a11072de 100644
+--- a/builtin/describe.c
++++ b/builtin/describe.c
+@@ -380,6 +380,9 @@ static void describe_commit(struct object_id *oid, struct strbuf *dst)
+ 				c->object.flags |= t->flag_within;
+ 				if (n->prio == 2)
+ 					annotated_cnt++;
++
++				if (match_cnt == hashmap_get_size(&names))
++					break;
+ 			}
+ 			else {
+ 				gave_up_on = c;
+
+but it's still slow! If we set "gave_up_on = c", then it gets fast. I'm
+not sure why that is. Later we do:
+
+        if (gave_up_on) {
+                commit_list_insert_by_date(gave_up_on, &list);
+                seen_commits--;
+        }
+        seen_commits += finish_depth_computation(&list, &all_matches[0]);
+
+but I don't at all understand why adding gave_up_on lets that finish
+sooner. So I'm worried we're missing something about how it is used.
+
+One hack is to just, like the max_candidates case, let us look at one
+_more_ commit before bailing. Like this:
+
+diff --git a/builtin/describe.c b/builtin/describe.c
+index 7330a77b38..177c8232f6 100644
+--- a/builtin/describe.c
++++ b/builtin/describe.c
+@@ -365,6 +365,11 @@ static void describe_commit(struct object_id *oid, struct strbuf *dst)
+ 		struct commit_list *parents = c->parents;
+ 		struct commit_name **slot;
+ 
++		if (match_cnt == hashmap_get_size(&names)) {
++			gave_up_on = c;
++			break;
++		}
++
+ 		seen_commits++;
+ 		slot = commit_names_peek(&commit_names, c);
+ 		n = slot ? *slot : NULL;
+
+
+That works, but I have a feeling that figured out what the heck is going
+on with gave_up_on might produce a more elegant solution.
+
+> Then as a further DWIM aid, wherever the initialization logic is could
+> be updated so that, after expanding all the --match= wildcards, if the
+> number of tags is less than max_candidates, automatically lower
+> max_candidates to that number (which in the setlocalversion case will
+> always be 1 because we're not actually passing a wildcard).
+
+Yeah, I had the same thought (though if we do a separate hashmap check
+as above, it wouldn't be needed).
+
+-Peff
 
