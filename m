@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-391440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BF99B86CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:14:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5529B86D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F76B1F220E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:14:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9BBCB22121
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900B81CF280;
-	Thu, 31 Oct 2024 23:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j7T+fE8k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0741E32C9;
+	Thu, 31 Oct 2024 23:15:28 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF521E1A23;
-	Thu, 31 Oct 2024 23:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2552ECF;
+	Thu, 31 Oct 2024 23:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416424; cv=none; b=qBMkqSFSSCcxKftDYa72y6s0KhWqh6YjJnWOzS2bjtw7geBBS8Md5LRzE3A5BM+jTZMjoBIfbXgNrkdyfP8Jbsslpf2ldQ3nAwro2boYzUQLQcOx4q05VOKzsSOpIJc5GRFcPlzoePzF5Ch+7gyMQKiXt14/i25VMwBLEr9YW8M=
+	t=1730416528; cv=none; b=jGFFFc22sUFKT/nkPHETjzNXP66D46+SeK5RhdHnkenVafc0VLmceeA7uYhrtfg3Y+gHtvKQnl83LKPIeZfY017yNp+4Y78q4ATV6gNE8LDByQQOM/GGp6Y7JSGylQnMaoGXsqBrn8umckXRSzdggAncOVcArspf2E4vM7xnfNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416424; c=relaxed/simple;
-	bh=PK+1p6s/avx7imwFKci0SiByVtzGXBl6H2kZeOjRglg=;
+	s=arc-20240116; t=1730416528; c=relaxed/simple;
+	bh=n+ofn+IZQGqt0nNbyFaFX0NIR/Sl6Ip5PYCmvfDHYD8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFwDeGelq2mnv8+60We9z/0yeBdmXYgHuIM/+rNKmbUa2VRWUMVAB4AidFhRkRmqV2fKIThG2E+nykFuFdTbhOl77m/WzYgPHedvstqSVt+qLn1cgqV1g2k7XqhxAPC1Bx5Vt1LU3YESph/iP7aMC35HlNXtSx7KMhdOEsgiUm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j7T+fE8k; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730416420; x=1761952420;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PK+1p6s/avx7imwFKci0SiByVtzGXBl6H2kZeOjRglg=;
-  b=j7T+fE8k5tZCe6gY3URZfAh09D27OoDUoroE80RYDp1YDg/Lcuymy3fN
-   ZS4+r+0H5MhIAU8aotMe4KaAHQEXzrJOmubefWTmBUZT+O/M2CJZvBmO9
-   hR7wAOWVAK4fd9BNNsTfIn/cjwaf229BQTk1ebpk4NB1FH38HScqSGBtu
-   WQeef3ExHMvMd2NkyZ9S6UiOeW71R4u8RHP73d6YflBsqZwzPUgt7z51I
-   4YMWWeIiMyQB4l/nUH4/zOW3WwY++LBQM/RFKDirDR0wFs/CXHgvmz7vT
-   /nW38tjRQgnhVHPircCdth46Vk3j7zP0eF2FvKnk1qkfx8OaUJXSC7rK8
-   g==;
-X-CSE-ConnectionGUID: VWAZsNVpSgO+LsR9+fLpLw==
-X-CSE-MsgGUID: epF5WaEYRnqyjJcADlfHRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34115017"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="34115017"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 16:13:38 -0700
-X-CSE-ConnectionGUID: Od6sHebZR8iOh+dngIWUSA==
-X-CSE-MsgGUID: 5mo4JC8tQGeruZYHg5dlqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="87604745"
-Received: from adande-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.235])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 16:13:38 -0700
-Date: Thu, 31 Oct 2024 16:13:32 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Amit Shah <amit@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-	linux-doc@vger.kernel.org, amit.shah@amd.com,
-	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
-	peterz@infradead.org, jpoimboe@kernel.org, corbet@lwn.net,
-	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
-	seanjc@google.com, pbonzini@redhat.com,
-	daniel.sneddon@linux.intel.com, kai.huang@intel.com,
-	sandipan.das@amd.com, boris.ostrovsky@oracle.com,
-	Babu.Moger@amd.com, david.kaplan@amd.com
-Subject: Re: [PATCH 2/2] x86: kvm: svm: add support for ERAPS and
- FLUSH_RAP_ON_VMRUN
-Message-ID: <20241031231332.tdfbjcesjnkq435k@desk>
-References: <20241031153925.36216-1-amit@kernel.org>
- <20241031153925.36216-3-amit@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8GJ7AfMejFpCzndkTOhyhZMpUCnKEsdFjuMSV1RIhOrzwDcPj0qSTj6kDi1xcHkHp4kTTtwLTm+/+7UOyTV7ntrDJG+hP3IQJl+Iw2a7UP2RNmomwCYbpD3fLaJGfsXYNa5IOEcwiaVHDjxub6D8K1TrYoWD67w8783rY0Ew2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=40956 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1t6eNh-00HKVf-Ac; Fri, 01 Nov 2024 00:15:15 +0100
+Date: Fri, 1 Nov 2024 00:15:08 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+	linux-security-module@vger.kernel.org, jmorris@namei.org,
+	serge@hallyn.com, keescook@chromium.org,
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org,
+	audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
+Message-ID: <ZyQPfFvPD72rx4ME@calendula>
+References: <20241023212158.18718-3-casey@schaufler-ca.com>
+ <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241031153925.36216-3-amit@kernel.org>
+In-Reply-To: <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
+X-Spam-Score: -1.9 (-)
 
-On Thu, Oct 31, 2024 at 04:39:25PM +0100, Amit Shah wrote:
-> @@ -3559,6 +3582,27 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  
->  		trace_kvm_nested_vmexit(vcpu, KVM_ISA_SVM);
->  
-> +		if (boot_cpu_has(X86_FEATURE_ERAPS)
-> +		    && vmcb_is_larger_rap(svm->vmcb01.ptr)) {
-		    ^
-		    This should be at the end of previous line.
+Hi Paul,
+
+This patch breaks nf_conntrack_netlink, Casey mentioned that he will
+post another series.
+
+On Thu, Oct 31, 2024 at 06:53:38PM -0400, Paul Moore wrote:
+> On Oct 23, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > 
+> > Replace the (secctx,seclen) pointer pair with a single
+> > lsm_context pointer to allow return of the LSM identifier
+> > along with the context and context length. This allows
+> > security_release_secctx() to know how to release the
+> > context. Callers have been modified to use or save the
+> > returned data from the new structure.
+> > 
+> > security_secid_to_secctx() and security_lsmproc_to_secctx()
+> > will now return the length value on success instead of 0.
+> > 
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: netdev@vger.kernel.org
+> > Cc: audit@vger.kernel.org
+> > Cc: netfilter-devel@vger.kernel.org
+> > Cc: Todd Kjos <tkjos@google.com>
+> > ---
+> >  drivers/android/binder.c                |  5 ++-
+> >  include/linux/lsm_hook_defs.h           |  5 ++-
+> >  include/linux/security.h                |  9 +++---
+> >  include/net/scm.h                       |  5 ++-
+> >  kernel/audit.c                          |  9 +++---
+> >  kernel/auditsc.c                        | 16 ++++------
+> >  net/ipv4/ip_sockglue.c                  |  4 +--
+> >  net/netfilter/nf_conntrack_netlink.c    |  8 ++---
+> >  net/netfilter/nf_conntrack_standalone.c |  4 +--
+> >  net/netfilter/nfnetlink_queue.c         | 27 +++++++---------
+> >  net/netlabel/netlabel_unlabeled.c       | 14 +++------
+> >  net/netlabel/netlabel_user.c            |  3 +-
+> >  security/apparmor/include/secid.h       |  5 ++-
+> >  security/apparmor/secid.c               | 26 +++++++--------
+> >  security/security.c                     | 34 +++++++++-----------
+> >  security/selinux/hooks.c                | 23 +++++++++++---
+> >  security/smack/smack_lsm.c              | 42 +++++++++++++++----------
+> >  17 files changed, 118 insertions(+), 121 deletions(-)
+> 
+> See my note on patch 1/5, merging into lsm/dev.
+
 
