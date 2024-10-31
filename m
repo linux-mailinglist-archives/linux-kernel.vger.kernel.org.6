@@ -1,143 +1,107 @@
-Return-Path: <linux-kernel+bounces-390361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2539B78E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:43:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE159B78E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94DA61F23503
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:43:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF1A1C21E73
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C62199EB0;
-	Thu, 31 Oct 2024 10:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5592519ABAB;
+	Thu, 31 Oct 2024 10:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gCWTZaSm"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cFRIpANt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PrbjYQaH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C619F199E81
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E7819A292;
+	Thu, 31 Oct 2024 10:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730371373; cv=none; b=cRFkvqrIri1BVQeHP718iXTeMoQGrySE2v72qQeg9Pu7jG3DyBW/LGIqhF6hTte6YX3kKeTe4iLBF4LwxBuFgdZBTls25V6bm1dM5BPWIszFEFG3vVucyttdgv5kJH8ER9k8x1E7BS7+BnS/LNMI4+CWIq83LB+Why8QNNPxctY=
+	t=1730371353; cv=none; b=WHpe7rZ+amhWlMTKJ7Kq4x8sMSaOfmjOsjcxboVkUCQX980eR9Pdya+xOAm0aXcQyb1mEKsH4Q/dzyffrNfLjdbWdlFRVAmUkGywgdMpgrnOGov/CbW4LxkBVoAGzU6euhFmNTwmxjhxvlcIC2osNm27iFyK2b15vAFvAYd/aP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730371373; c=relaxed/simple;
-	bh=h1EbepRwORafz4QvAsQccvMuAxqd52e/hAeVw51HNgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ewO8cneehHJr0zMxXCttBd5A6uRZoHoK6pS/ZPWEjkQbyCDEQ8L1T2PErIWH1zlzxIbxcVRYKyK2Pxh23BuJdXfZumBsVybG1II99wD/h9diNrrqVlOdVWEc4D5m3Sxxw8YmX0ED1WRP1CUgKAXXm7JmZQfo+UvkqhFKbQS+Ieo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gCWTZaSm; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ea50585bf2so8525997b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:42:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730371369; x=1730976169; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oMMEeFMPWK3k1Mj3t6erHGHrl705TGgxaOatuH/c4Nw=;
-        b=gCWTZaSmCs/c71HaKGqGr3sVpdamuI8o566NBsdpHcJ4O18cUqeWn6f9H3ZBb/29JJ
-         OAypna0UjKMznbU4pyWQPP75IfvFmSx8XNepecbNXuTF1a/pTmq+3r6Wo8zK4FbIg5iy
-         iUPH8207HrtP8KJezYGygr9Cb50yF738FJxDhKSOiDsK3UNiuwg7AhSCC82gg7Zpv4ad
-         JjcMMy3h5Q9tXiofCRNT6PUhM8V8henSji1zjOo40PrM0wopl8zn8zW/IMcSoPY9XoCP
-         1KLgZ1ivkEQYXVeUoaGijfHRWb5hKDmckKDoiWSjR0Wm4lsEyB9oGJGj/wkaHU6RPqGz
-         QXWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730371369; x=1730976169;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oMMEeFMPWK3k1Mj3t6erHGHrl705TGgxaOatuH/c4Nw=;
-        b=If7PNz5TsIjbWcBjpzk6HLydUQeyxXBqfDEXVhIHB7nNhyUoF0WY5LhVH+zK/FqRRV
-         1qXpD9EiY1tKkalEwifDypSXjarFjychWw1UuQfaGYXtmACPRQoasXlJdFJgIYH+1LKb
-         YnBjvp4tzDg1oW3+HwUYqCvLg82TtahjqK4hnuwvmcuEUiPHPLm09AWI3VCBPwLQpbhg
-         82pm2CES/OOIJsPQ3u4d/GTC1oha6LaXqepvscc3G1P985eYF+8uH4uXgSoD2+cfBqq1
-         MwIjP22JgsJdNFEIS9++ykobV0PuBjtLaJQW5iakhjJFO/ETmKxanhHSKUFqD2M1iFnu
-         MBYA==
-X-Gm-Message-State: AOJu0YzuW/kjv2oCdfuF7PNi5A0iE26WsWJm65TZPzqaOWw6FlrU0MzV
-	X67wK05j39zqeCcEqkshHq6ENkKTIH7DLVTy7waqo0VK0lra2RequwXgkHaIFDb/6ovlRUtSbYO
-	Xuiuuc9S5gkQS+le31pEFtDu6NPkfEZomq7jpgA==
-X-Google-Smtp-Source: AGHT+IGyiL6eL7R/DPiVFZpGqii4rrnifN6ppsdutYkmenhnXdSBL9hr48zxfp3pOkfOu5iicApNUvdcgoemDUYz7Tg=
-X-Received: by 2002:a05:690c:4989:b0:6db:deb7:d693 with SMTP id
- 00721157ae682-6e9d8a6ce53mr203324727b3.22.1730371368586; Thu, 31 Oct 2024
- 03:42:48 -0700 (PDT)
+	s=arc-20240116; t=1730371353; c=relaxed/simple;
+	bh=w8SM03Soo92p7J/ulrQ18OgXCFF12QqL6256J+h7OY4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B+2GKZ/UpUQC3h6T4JQAYqrdsYVf7U2kL5A7ALAW1o6b/PrZgSmpUTRoocBEn8k+F/92iTg7BUKOcnV092WWQuQ58g57HF/lnlB5LQH0T848Yy2zJyAjAv88umBvvUxJt1RXY8IoWp/eKTeh5Hf+PRlZE5okXD857quJEr+aoMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cFRIpANt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PrbjYQaH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730371350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uQ2852SIBLZ55jYpM8pe/ulD60t0c9GE/dvFw1Spiq0=;
+	b=cFRIpANtDdtqy4wVeyUftYfX+3K6iAeHLYHbrhbjQDewDLfFxiTRAWBpLABLpSV/D1nKoX
+	Wk+NfWIT0Th1PtumMMsKOGceAYI86AU0/eVQLUo/JdueUDK6mTO8gndDcQDwWpAlcdvlKx
+	3zlURNVKNzYwkTYSrZRVKvVgFFut9pePG7Yi5sFUHmPtz3zgeow/cfVwkC8cRC0tvK2N9z
+	ZsOM8KSjcuq8lrbqaUoAOLSAuiq9ZYBNBlgIDzTTV0RHjTq4n0OgJF3AWotNwFtUwQt0x/
+	TtHrpm1PFM2JE0s/CeuRo8/9ib3uTQh9uz5XOUAcz8j8fO7LVAj3x7+k91hMLA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730371350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uQ2852SIBLZ55jYpM8pe/ulD60t0c9GE/dvFw1Spiq0=;
+	b=PrbjYQaHayM1BR2KDeqfwmwwH+YaLRQVslv5TNNxy548ptz/ne1W/M0I8ZbloOONg2kQs5
+	KJsCwHYidFFwoQCw==
+To: Frederic Weisbecker <frederic@kernel.org>, Naresh Kamboju
+ <naresh.kamboju@linaro.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, open list
+ <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, Linux
+ Regressions <regressions@lists.linux.dev>, rcu <rcu@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Dan
+ Carpenter <dan.carpenter@linaro.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Mark Brown <broonie@kernel.org>, Alex
+ =?utf-8?Q?Benn=C3=A9e?=
+ <alex.bennee@linaro.org>, Peter Maydell <peter.maydell@linaro.org>, "Paul
+ E. McKenney" <paulmck@kernel.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Anders Roxell <anders.roxell@linaro.org>,
+ Aishwarya TCV <aishwarya.tcv@arm.com>
+Subject: Re: next-20241031: kernel/time/clockevents.c:455
+ clockevents_register_device
+In-Reply-To: <ZyNUR4oi8TXeEpYi@lothringen>
+References: <CA+G9fYtb5vAnEiHupwsnaeZ7uzdko_WAcjw9ZAFkHNXBVhi1EA@mail.gmail.com>
+ <ZyNUR4oi8TXeEpYi@lothringen>
+Date: Thu, 31 Oct 2024 11:42:30 +0100
+Message-ID: <87r07wwo2x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025160430.4113467-1-dario.binacchi@amarulasolutions.com>
-In-Reply-To: <20241025160430.4113467-1-dario.binacchi@amarulasolutions.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 31 Oct 2024 11:42:12 +0100
-Message-ID: <CAPDyKFqeibF4JAzYZgimUgRN0Lj9K8qSdorxx6DA=j_c5PE9bw@mail.gmail.com>
-Subject: Re: [PATCH v2] pmdomain: imx: gpcv2: replace dev_err() with dev_err_probe()
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Michael Trimarchi <michael@amarulasolutions.com>, Marco Felsch <m.felsch@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Fri, 25 Oct 2024 at 18:04, Dario Binacchi
-<dario.binacchi@amarulasolutions.com> wrote:
+On Thu, Oct 31 2024 at 10:56, Frederic Weisbecker wrote:
+> On Thu, Oct 31, 2024 at 02:10:14PM +0530, Naresh Kamboju wrote:
+>> <4>[ 0.220657] WARNING: CPU: 1 PID: 0 at kernel/time/clockevents.c:455
+>> clockevents_register_device (kernel/time/clockevents.c:455
 >
-> The patch standardizes the probe() code by replacing the two occurrences
-> of dev_err() with dev_err_probe(). Indeed, dev_err_probe() was used in all
-> other error paths of the probe() function.
-> Note that dev_err_probe() has advantages even if the error code is not
-> EPROBE_DEFER, such as the symbolic output of the error code. Therefore,
-> it should generally be preferred over dev_err().
->
-> Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+> It's possible that I messed up something with clockevents.
 
-Applied for next, thanks!
+Yes. You added the warning :)
 
-Kind regards
-Uffe
+> Can you try to reproduce with:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+> 	timers/core
 
->
-> ---
->
-> Changes in v2:
-> - Improve the commit message.
-> - Add 'Reviewed-by' tag of Marco Felsch.
->
->  drivers/pmdomain/imx/gpcv2.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
-> index 963d61c5af6d..6e6ecbf2e152 100644
-> --- a/drivers/pmdomain/imx/gpcv2.c
-> +++ b/drivers/pmdomain/imx/gpcv2.c
-> @@ -1356,7 +1356,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
->
->         ret = pm_genpd_init(&domain->genpd, NULL, true);
->         if (ret) {
-> -               dev_err(domain->dev, "Failed to init power domain\n");
-> +               dev_err_probe(domain->dev, ret, "Failed to init power domain\n");
->                 goto out_domain_unmap;
->         }
->
-> @@ -1367,7 +1367,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
->         ret = of_genpd_add_provider_simple(domain->dev->of_node,
->                                            &domain->genpd);
->         if (ret) {
-> -               dev_err(domain->dev, "Failed to add genpd provider\n");
-> +               dev_err_probe(domain->dev, ret, "Failed to add genpd provider\n");
->                 goto out_genpd_remove;
->         }
->
-> --
-> 2.43.0
->
+I force pushed the branch with the warning removed.
+
+> I wish I could reproduce on my own but I don't have easy
+> access to such hardware.
+
+apt-get install qemu-system
+
+gives you access to all supported architectures :)
+
+
+
 
