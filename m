@@ -1,201 +1,130 @@
-Return-Path: <linux-kernel+bounces-390430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF069B79BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:34:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D995E9B79C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA9C2849F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989D12810AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE0519C547;
-	Thu, 31 Oct 2024 11:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FDE19AD94;
+	Thu, 31 Oct 2024 11:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnf/3hqB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RuhWtM4M"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68F319ABBB
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4AF149C53
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730374446; cv=none; b=MmW0XcHnlsAgQoawRXBEZnkHlDrzonZVtmgxu+qNIUTCbqSf30+A5OP5GXICKqwUFwFeUxT4zKQ85SvRvi1dgTVkQ6qNPlcGqElP9G/jZc3v+YN/TNuzq7lcMMnlFtfyNstS2T3NRouANsCLD56FpU7Oom/U8gxmUK1V4ax60bw=
+	t=1730374524; cv=none; b=Ma1gHBtWwzZQEc8WW4PqKfhHH6h2a3JGKIxNA/MaR7cu074dIfbFTcgFYDEOEHA0IBUcbRL9qWFKyp/ZsSxEI09zXzXpi+GWE5lMnwjrzv/Y32xVYLpKN2bNmTeEqXKpHJYRWs0cSylyLTxfc7LBQDW0Wzy6j/KTkhcggXdg05U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730374446; c=relaxed/simple;
-	bh=rad7u463xWi2MhcMG4ACZLpipTH5MAEkEWxnR7IUYzI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kYdOxxSJE3zYq3glx3gBlpOzr1CTF0HYigSWmpCV3UFdKJkFNq0/u6ZJLTlbQdQcl5yeUNWZkITFlXkXVgYj2+HEXvEgoVl1NYTSw0afDJmm/r9lBgE7AU+ZaNm5qykdYBxztFQ/0BJQX8EpgDPOFmTRJdKeNef8bCn5xRzm3+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnf/3hqB; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730374443; x=1761910443;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=rad7u463xWi2MhcMG4ACZLpipTH5MAEkEWxnR7IUYzI=;
-  b=fnf/3hqBrUp7nek6inX+8wAcZ7PhWFb3xgK/ElS/+Ww1eFDMcHmXKE6/
-   MMsrR8Hjr2TerIiRr5CYRa/x7LLKMiZ7Z+AjEAmHx1bZeXVfeTuq7bj+c
-   io9E1ysWlQKzfS9cm27UIt9wUL0zPjugBnm58VXI/XFitA8W92KyT5yjh
-   +ww3X6z4Ty9/zk3gXf3QfLCw6Q1GGAoFy8VlGzN5+dNg5qtpy3TB5+p7m
-   9PUy7N83MGlifYJTr1H2WqDvhSFtfqmNHojtmFdWhaKdXrvaeY3DOeqUt
-   4TS6xu0noTOqvwNF2NTxqELr5PM/JfoZVzl2Pp8Cau2HVEETHqRmixID/
-   Q==;
-X-CSE-ConnectionGUID: DBWKIEfYRqGvAYOgAGDFjg==
-X-CSE-MsgGUID: /hFiem//RhS/KyrJVvTtXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="17748621"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="17748621"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 04:34:02 -0700
-X-CSE-ConnectionGUID: n9sV0ysrS3+sj260hNjB0A==
-X-CSE-MsgGUID: H+CxxR49Tbedvhi14tGNmw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="87202121"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.204])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 04:33:58 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Sergey
- Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [RFC][PATCH] drm: i915: do not NULL deref hdmi attached_connector
-In-Reply-To: <20241031105145.2140590-1-senozhatsky@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241031105145.2140590-1-senozhatsky@chromium.org>
-Date: Thu, 31 Oct 2024 13:33:55 +0200
-Message-ID: <87y124jyl8.fsf@intel.com>
+	s=arc-20240116; t=1730374524; c=relaxed/simple;
+	bh=iQpKNxvIb05MpQm+y9atDzZmLOvTbkp1qlvo2yvur2A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WwvbER99BccQ0i1+xtDorx39FMPIT8X+4Hq+TiKM2wa5BRbSfTXP1OPLFJUgWfOCmohVUuLAoNWqPOlAjqJDp0N/uLK3Pb/mlFYPVllYS5LRqqJM6Hnd5kLUe1kBu2CmKiwyz+eWzbPAy23XP5jGT+vWfd6QM0vpjVd5JBJIVEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RuhWtM4M; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d570728ebso120277f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730374520; x=1730979320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0oRUOTicU+bHDCCOkusRo0Ym1My1gU89AdDAdqUCKaU=;
+        b=RuhWtM4MQ+6JT+gGq3QMhqlW1cciglvcSaXqceckw/JU+rdv0EV4F/KD2gt+ID/hfS
+         i7gWLnWZofvKcdUeyZ3O9xbAjXG6wmFL35cL53B/jodtzAyDSPGsjPb8fmETf07wP7MB
+         YOvioj8roppfUBvtuLCt2lsP2e80nGxyNuEGcFwXzjMaNDNvFHGGQ50nbi5cX+EmbEVC
+         LgrPRPJqPIxAWrkzbmZL32uYpDVIupG/LkbkwzhJvuGcKXYcRx2yJEMETxqGxQLcKWe5
+         RENQYWjvo+xW5yodJP+/kcQxLgU3HPVHNy8P86Ew9BRNoPxkR2wtiQs9bwuVQr3nNblZ
+         mMlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730374520; x=1730979320;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0oRUOTicU+bHDCCOkusRo0Ym1My1gU89AdDAdqUCKaU=;
+        b=W2Xgh9bZriGVkF+DVaHRbJ2kj83nLUm5ihg7e5ZP9ZU0nhgO2Zcirm7nNfMbjsgUkh
+         Wb0X89gurHS41nnx3ur62fAAPCNPHkDdUhtQmJfjqmLDuwreWMYFonQ4uhDMDpQzKK90
+         sILz13iwXc3m8BsOkxOfGkEryvvaXvz15DtuZjYWp4EfM31fct/BCLaKoqEcfXacF1Qj
+         F4Cm6IQtwH5J8Elh1mkXTk3oubMd3cNFttOl/gIY+tvq6zfvCxebianaHus1TEKR7MdS
+         67cZgEd7qYMM1Q4JNKY/9PfsZeyBawquD5b47gQiFQepceWfYq4Zb4AYLcHmHtseCzRY
+         aSPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFbpYtpxPepOt6sTWJcj68ZdlLA+x5mTE/gX9EsBzv9lmjneIgrA8wharMh/5ts41kvOgmeeYsdOrYcjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaSw21D8mDSJbxJOHRx7sBNiLdv7fOoSJxKvzDaaUblbPkx4ca
+	/9I5OVDZYEqfiyiVuezUYmfuYOcXaE/R/x7xy2yP0Mv2yTkE5xmJnI5iE8qVqFQ=
+X-Google-Smtp-Source: AGHT+IE5oeYC3TyYTIVtGeqMzi9DBlOsLAWU0F4mADy0vxIex1yr/ftV9jZNdZ9z35z0wVUuKtmR+Q==
+X-Received: by 2002:a5d:6c6d:0:b0:37d:47f6:6fda with SMTP id ffacd0b85a97d-3806117dde8mr6744778f8f.7.1730374519947;
+        Thu, 31 Oct 2024 04:35:19 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bcce59csm167540e87.149.2024.10.31.04.35.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 04:35:19 -0700 (PDT)
+Message-ID: <2131e750-f5e9-43e8-816f-924516336fce@linaro.org>
+Date: Thu, 31 Oct 2024 13:35:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next] i2c: qcom-cci: Remove the unused variable
+ cci_clk_rate
+Content-Language: en-US
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: loic.poulain@linaro.org, rfoss@kernel.org, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Abaci Robot <abaci@linux.alibaba.com>,
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+References: <20241029020931.42311-1-jiapeng.chong@linux.alibaba.com>
+ <rql2u5k3esavdmpdzgo4l4up4ir7yjpdzc3qlmsvjvqalqzvjc@xspprcohlout>
+ <f06dea2e-893b-4de5-89a3-e25af56afb31@linaro.org>
+In-Reply-To: <f06dea2e-893b-4de5-89a3-e25af56afb31@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024, Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
-> 	*** RFC ***
->
-> intel_ddi_init() may skip connector initialization, for instance,
-> both intel_ddi_init_dp_connector() and intel_ddi_init_hdmi_connector()
-> are optional.  This leads to situation that ->attached_connector may
-> be NULL for some connectors.  For instance, on my setup 'DDI A/PHY A'
-> and 'DDI TC1/PHY TC1' are not initialized.
->
-> However, functions like intel_dp_dual_mode_set_tmds_output() and
-> friends don't take this into consideration.  This leads to NULL
-> ptr-derefs:
->
-> KASAN: null-ptr-deref in range [0x0000000000000848-0x000000000000084f]
-> RIP: 0010:intel_hdmi_encoder_shutdown+0x105/0x230
-> Call Trace:
-> <TASK>
-> i915_driver_shutdown+0x2d8/0x490
-> pci_device_shutdown+0x83/0x150
-> device_shutdown+0x4ad/0x660
-> __se_sys_reboot+0x29c/0x4d0
-> do_syscall_64+0x60/0x90
->
-> Add a new helper to avoid NULL ->attached_connector derefs and
-> switch some intel_hdmi function to it.  I'm not sure if we need
-> to switch all or just intel_dp_dual_mode_set_tmds_output() (I
-> have only seen this one doing NULL derefs so far).
+On 10/31/24 13:13, Vladimir Zapolskiy wrote:
+> Hi Andi,
+> 
+> On 10/31/24 12:44, Andi Shyti wrote:
+>> Hi Jiapeng,
+>>
+>> On Tue, Oct 29, 2024 at 10:09:31AM +0800, Jiapeng Chong wrote:
+>>> Variable ret is not effectively used, so delete it.
+>>>
+>>> drivers/i2c/busses/i2c-qcom-cci.c:526:16: warning: variable ‘cci_clk_rate’ set but not used.
+>>>
+>>> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+>>> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11532
+>>> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+>>
+>> thanks for your patch! Applied to i2c/i2c-host
+>>
+>> Thanks,
+>> Andi
+>>
+> 
+> FWIW I've noticed that my Reviewed-by tag was added to the accepted change,
+> while it was the conditional one... Actually I don't know how to be aware
+> of such nuances, if only b4 tool is used, likely there is no way for it.
+> 
+> Hopefully I'm not too picky with it.
 
-I think the question is, what are we doing running this code if the
-connector initialization was skipped?
+If it still matters, this one apparently unnoticed candidate would
+have been a better choice:
 
-BR,
-Jani.
+https://lore.kernel.org/linux-i2c/20241031095339.76535-1-jiapeng.chong@linux.alibaba.com
 
->
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  drivers/gpu/drm/i915/display/intel_hdmi.c | 27 ++++++++++++++++++-----
->  1 file changed, 22 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
-> index e1a1351bc94f..c089dd20972b 100644
-> --- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-> +++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-> @@ -1256,12 +1256,19 @@ static void hsw_set_infoframes(struct intel_encoder *encoder,
->  			      &crtc_state->infoframes.drm);
->  }
->  
-> +static struct i2c_adapter *to_ddc(struct intel_hdmi *hdmi)
-> +{
-> +	if (hdmi->attached_connector)
-> +		return hdmi->attached_connector->base.ddc;
-> +	return NULL;
-> +}
-> +
->  void intel_dp_dual_mode_set_tmds_output(struct intel_hdmi *hdmi, bool enable)
->  {
->  	struct intel_display *display = to_intel_display(hdmi);
-> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
-> +	struct i2c_adapter *ddc = to_ddc(hdmi);
->  
-> -	if (hdmi->dp_dual_mode.type < DRM_DP_DUAL_MODE_TYPE2_DVI)
-> +	if (!ddc || hdmi->dp_dual_mode.type < DRM_DP_DUAL_MODE_TYPE2_DVI)
->  		return;
->  
->  	drm_dbg_kms(display->drm, "%s DP dual mode adaptor TMDS output\n",
-> @@ -1275,7 +1282,7 @@ static int intel_hdmi_hdcp_read(struct intel_digital_port *dig_port,
->  				unsigned int offset, void *buffer, size_t size)
->  {
->  	struct intel_hdmi *hdmi = &dig_port->hdmi;
-> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
-> +	struct i2c_adapter *ddc = to_ddc(hdmi);
->  	int ret;
->  	u8 start = offset & 0xff;
->  	struct i2c_msg msgs[] = {
-> @@ -1292,6 +1299,10 @@ static int intel_hdmi_hdcp_read(struct intel_digital_port *dig_port,
->  			.buf = buffer
->  		}
->  	};
-> +
-> +	if (!ddc)
-> +		return -EINVAL;
-> +
->  	ret = i2c_transfer(ddc, msgs, ARRAY_SIZE(msgs));
->  	if (ret == ARRAY_SIZE(msgs))
->  		return 0;
-> @@ -1302,11 +1313,14 @@ static int intel_hdmi_hdcp_write(struct intel_digital_port *dig_port,
->  				 unsigned int offset, void *buffer, size_t size)
->  {
->  	struct intel_hdmi *hdmi = &dig_port->hdmi;
-> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
-> +	struct i2c_adapter *ddc = to_ddc(hdmi);
->  	int ret;
->  	u8 *write_buf;
->  	struct i2c_msg msg;
->  
-> +	if (!ddc)
-> +		return -EINVAL;
-> +
->  	write_buf = kzalloc(size + 1, GFP_KERNEL);
->  	if (!write_buf)
->  		return -ENOMEM;
-> @@ -1335,9 +1349,12 @@ int intel_hdmi_hdcp_write_an_aksv(struct intel_digital_port *dig_port,
->  {
->  	struct intel_display *display = to_intel_display(dig_port);
->  	struct intel_hdmi *hdmi = &dig_port->hdmi;
-> -	struct i2c_adapter *ddc = hdmi->attached_connector->base.ddc;
-> +	struct i2c_adapter *ddc = to_ddc(hdmi);
->  	int ret;
->  
-> +	if (!ddc)
-> +		return -EINVAL;
-> +
->  	ret = intel_hdmi_hdcp_write(dig_port, DRM_HDCP_DDC_AN, an,
->  				    DRM_HDCP_AN_LEN);
->  	if (ret) {
+--
+Best wishes,
+Vladimir
 
--- 
-Jani Nikula, Intel
 
