@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-390512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A679B7AC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:39:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC999B7AC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8DA1F22C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C1B1C2342B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E3C19CCF9;
-	Thu, 31 Oct 2024 12:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA6619E98E;
+	Thu, 31 Oct 2024 12:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRSn412O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T1WMjQNN"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC4E19D07E;
-	Thu, 31 Oct 2024 12:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D1819E81F;
+	Thu, 31 Oct 2024 12:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378297; cv=none; b=rwrxpI5qdQOD8LH9mcryY0jG4mmSU3xKr7phI99plFnr6xuK0O7as1eDIlWuTOmtAScdo4JdAt+gDPVOI2YGDooSI8Xqgs7ht7k9rPNyl0MwQNtiBrqLEFbNUYfH383oZtW3VixzEbgwBTRPG2Grh5aCoVJJSSNKxuETp7kNhxc=
+	t=1730378305; cv=none; b=sdJ9mvN3B/aMJVlsyUYFPiu5xYm8XWbauFwv1xA7dCsEPSGDLrte5He9Oz0Px+HpO1anNV7d4xitbk5hGOTp3933WYu/8+C68gED8fw8lD/T2FBpqtxfYVhKFi5d4H6jvbU+jVk2Zi8Y1gChCVJHTeE+NV+073ExciRisRzIe6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378297; c=relaxed/simple;
-	bh=6zINfUhcq11skpHNYXg2rHHDLkTZ5uPjWErNSLSYvfA=;
+	s=arc-20240116; t=1730378305; c=relaxed/simple;
+	bh=zmCuAac+R8y48cQD0tvCZMIKDNoqWcL7q6ckuRch6DM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6FKevVgoipiI4dPV8ZesAhzAfN0ul3geOtCBZGIh+dQMUZo1Z9oOMRQvBSrwL1Ur7XOoG5rO4k1ESOMI0g3yxxYrju/CjytkKjsvalSMwNUHPHqycvmra9wGRTyxzgbuKBp1Dw0mZXZQ4uYTFvDLZG4L/0ITLfnf8YTL+hirmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRSn412O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAB11C4CED1;
-	Thu, 31 Oct 2024 12:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730378296;
-	bh=6zINfUhcq11skpHNYXg2rHHDLkTZ5uPjWErNSLSYvfA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NRSn412O09IxxRHRbjZCA85hxExQTsyRkLKhBlg7kn2tMf+s3si5Wtz/R7t+1CEaF
-	 AhQtCH+9h6ZjixbmrtmudnlAakAA5RCI37MtRDWHznNgymxCYByKvnFCCZBZK8MJvA
-	 np0SsqnTBTMdWV3auWHlSdVy8Y48n2Y4g9IAhdHFn4r351RIVia+phwNrMnLXn9ImV
-	 1aatHUw13d5gFgXm85kUnKwwwT5uP2bxsuWLDbHfPmn1+Jlp3IX2HOTiwcBZO3l8nr
-	 sMEa0V5iGxC8UnWGdeH3lc6sXZuAVzxSdx2RoMDgZV/tNGpbohHe8XxlIpn3/WiV8M
-	 9B1BcKQp2kvaw==
-Date: Thu, 31 Oct 2024 12:38:10 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Inochi Amaoto <inochiama@outlook.com>, Guo Ren <guoren@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: interrupt-controller: Add Sophgo
- SG2044 ACLINT SSWI
-Message-ID: <20241031-armored-marbled-36cfb6d599e3@spud>
-References: <20241031060859.722258-1-inochiama@gmail.com>
- <20241031060859.722258-2-inochiama@gmail.com>
- <esuteqvz37blehx6wa5cj5ixlglcbullhuls3rcvjtuiviqqpb@ojho3arlnwst>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfJHG6JbmYRbtN3GLP8JDcTuGz0fj63cnKjm1BQxvPNDDy2hEFN0P0GMYsk8MrABIUqYJDM57BKgJsBTZngi5g3K0Q3B7ApuwVdf7ebdC0L5IPLbQjflpQOSYYvZHt4a1dHb6xkEsJPAnGZ8au1S2o5LQu07wEPy9dv1vdUo5x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T1WMjQNN; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V2jFDN000416;
+	Thu, 31 Oct 2024 12:38:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=yKP7qLgubDSPbkug/ChDspf/T3yphb
+	IOZkkS4+Yezn0=; b=T1WMjQNNgf8jeyPwZyLutq75g4ja+vEzQJk8vPVKiAFCzf
+	uoCJEbJr2tSupFNJ/j2amhL5k3LTMuGXikpkXxSzufttWXmdFrqBdZa1Ogcz9NJT
+	L2xeFkBikV8ou8JiWj4Iwbxr6FEDHWHvrpPMUSlJ6v7e5Uozj0sAlsbl/4xi/8ZI
+	Oh4BWHaKhm2oBUlGaBw/kvB5GbB7cyzP1FVa7Yyks+yoEpEml4BgitusmeXR6pwa
+	3XTeqkLZrwR6Sy2+kcHTQ0006depmRrUph+oYKURDXaFkyJFsCV+pIy0EHFkpI8F
+	+DjJiKHVA8cm4fFZs+zJn5w55QLwkasexLTEN9BQ==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65qvpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 12:38:22 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VA5F3B013506;
+	Thu, 31 Oct 2024 12:38:21 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hbrn4u1j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 12:38:21 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VCcHHs25494022
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 12:38:17 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AC2912004B;
+	Thu, 31 Oct 2024 12:38:17 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 38A9120049;
+	Thu, 31 Oct 2024 12:38:17 +0000 (GMT)
+Received: from osiris (unknown [9.171.15.29])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 31 Oct 2024 12:38:17 +0000 (GMT)
+Date: Thu, 31 Oct 2024 13:38:15 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
+        agordeev@linux.ibm.com, gor@linux.ibm.com, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] s390/kvm: mask extra bits from program interrupt
+ code
+Message-ID: <20241031123815.8297-A-hca@linux.ibm.com>
+References: <20241031120316.25462-1-imbrenda@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QH+DklLw2VTXfWnH"
-Content-Disposition: inline
-In-Reply-To: <esuteqvz37blehx6wa5cj5ixlglcbullhuls3rcvjtuiviqqpb@ojho3arlnwst>
-
-
---QH+DklLw2VTXfWnH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241031120316.25462-1-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tMzgJntMPRCwD6easqXiRmG1M0dcfyKb
+X-Proofpoint-GUID: tMzgJntMPRCwD6easqXiRmG1M0dcfyKb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=654
+ impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310095
 
-On Thu, Oct 31, 2024 at 02:14:40PM +0800, Inochi Amaoto wrote:
-> On Thu, Oct 31, 2024 at 02:08:57PM +0800, Inochi Amaoto wrote:
-> > Sophgo SG2044 has a new version of T-HEAD C920, which implement
-> > a fully featured T-HEAD ACLINT device. This ACLINT device contains
-> > a SSWI device to support fast S-mode IPI.
-> >=20
-> > Add necessary compatible string for the T-HEAD ACLINT sswi device.
-> >=20
-> > Link: https://www.xrvm.com/product/xuantie/C920
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
->=20
-> Hi, Conor,
->=20
-> Could you review it again? I have updated the description of
-> the binding and mark the device is T-HEAD specific.
+On Thu, Oct 31, 2024 at 01:03:16PM +0100, Claudio Imbrenda wrote:
+> The program interrupt code has some extra bits that are sometimes set
+> by hardware for various reasons; those bits should be ignored when the
+> program interrupt number is needed for interrupt handling.
+> 
+> Fixes: ce2b276ebe51 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
+> Reported-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> ---
+>  arch/s390/kvm/kvm-s390.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 8b3afda99397..f2d1351f6992 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -4737,7 +4737,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
+>  	if (kvm_s390_cur_gmap_fault_is_write())
+>  		flags = FAULT_FLAG_WRITE;
+>  
+> -	switch (current->thread.gmap_int_code) {
+> +	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {
 
-Only thing I would say is that
-title: Sophgo sg2044 ACLINT Supervisor-level Software Interrupt Device
-should probably be
-title: T-Head c900 ACLINT Supervisor-level Software Interrupt Device
-or similar, since this isn't Sophgo's IP.
+Can you give an example? When reviewing your patch I was aware of this, but
+actually thought we do want to know when this happens, since the kernel did
+something which causes such bits to be set; e.g. single stepping with PER
+on the sie instruction. If that happens then such program interruptions
+should not be passed for kvm handling, since that would indicate a host
+kernel bug (the sie instruction is not allowed to be single stepped).
 
-w/ that,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-(dunno if Thomas is willing to change that on application)
-
---QH+DklLw2VTXfWnH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyN6MgAKCRB4tDGHoIJi
-0iNMAQC8918qceXht4v+i90x6glN4L4mOHgWG7iUzkRIq6wpuwD+PUBMu/Kdjoxt
-jsgV7kPADBYAj4UKKBuMWJ1JrevOjAY=
-=40NK
------END PGP SIGNATURE-----
-
---QH+DklLw2VTXfWnH--
+Or in other words: this should never happen. Of course I might have missed
+something; so when could this happen where this is not a bug and the bits
+should be ignored?
 
