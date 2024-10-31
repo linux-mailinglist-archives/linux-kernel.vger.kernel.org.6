@@ -1,164 +1,159 @@
-Return-Path: <linux-kernel+bounces-391407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A98A9B8640
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:47:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8529B8643
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494331C213B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:47:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A61B21FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679DA1D1F7A;
-	Thu, 31 Oct 2024 22:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13401D130B;
+	Thu, 31 Oct 2024 22:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRbMg9by"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIQkmEMx"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2234013D8AC;
-	Thu, 31 Oct 2024 22:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B159D1CF5E2
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 22:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730414837; cv=none; b=k1FageP0xEh7BEIABqlbcfRMCoSd2VM4QlKh7nNng1MapsSvR3z5Olcv0Vlj2cryYmFgvBeD19i0/caadEg5WOzBaFf56PbPjui47+SCl8agMalcz2QpAU8k4lN1o/n03SO8Ss8cYdSGSDkDjCq1u/xl/MdcNfQotYK1BQECXSU=
+	t=1730414890; cv=none; b=SkRtWM2zl4nLBatohOq23TAF5mx6i2pTZ7Hu7XecerXojxrAEa+H0LnxEcP+vLMCvdFMlDZXtJf0NPtMvUbMDXOGW0aCio7tgVbKr0DXKD0jgPdStWXuw4Orf5ds8kNjrCHlcLljE7ffuWLU7k69n1CunKN5zJsvSxv9mnKo26E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730414837; c=relaxed/simple;
-	bh=ZP6nBZqbC05NsUiSMvtmgAFARItsZ76FKZK56Ia0yY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjueJDOqqX7asAQ4MPSwY66cDYZCRWmBciaGoXKMeCnGLfOGKeUq3Cg8d3fWgfMJCLc9oUavWAMim5UmnpYirriWgHfU5MsChl+Ak8x3aoTg6L4u4n9UzXSdCV/b3HgOSEZO7Hz54Qwc1uXWTrJsLzKJ9ZHIrxBRoejXUrQdAds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRbMg9by; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c805a0753so14014605ad.0;
-        Thu, 31 Oct 2024 15:47:11 -0700 (PDT)
+	s=arc-20240116; t=1730414890; c=relaxed/simple;
+	bh=dKICqskpU+lDAaVFQjimpvgZuImNCCQ5RSIvqwp71xE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=uPW2XjoJoCJgG7swHPBZ4HKw0b50wTWEyYQn/9AKaBx4h23dZS3W+dWICtSfZ6WCPtvpyaG1P6wxr/107XsIbnl5YyrEOFBuVm7Qv9y0H4eOThy52aXvCI6q6UyOqi55NlLJ9YW/W9l3jFG0pftSFTFF1gThUx9n9biqk3N4s80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIQkmEMx; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43158625112so12029265e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:48:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730414831; x=1731019631; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wQCrudqNvXdy7lrxuF49N08JEGcOIqKAEAmppY5ECKA=;
-        b=TRbMg9byooxf3vfHg4jBUBsSD4K9IZnR9/5bdSaVcIExWW/axVZdZWvi/86nXDsrfg
-         0yHosV2aK3RMr61khEjJiYO60Ff3DbiH3p/gunNP9ode8J2eXRWygtBTcUVSnsfZUqP6
-         JXL4dB6SnEQF6gAfNMQ4LKGUv/EAIpIy6x/ljlEwvizgSXev1/6yuEqPm5RXCaZbpExK
-         z7AIQphgDjS1RZlcRdSgiBiJUGxijxGM+VkpRhqo3nnhUxu9RxPOPq3qaXGlEX5fOCwK
-         ecuRRLcAo+GRduMwLUkW5tvXlH+scDhJdTG7GAV43dTHIn1TJSqrzsmHroC4bLr8nBuw
-         WJTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730414831; x=1731019631;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1730414881; x=1731019681; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wQCrudqNvXdy7lrxuF49N08JEGcOIqKAEAmppY5ECKA=;
-        b=RUP2fVykZ9t5fxDQPV0WyRxmqUHGjtWqN+tguwOra/ZoG2xoSiWoggFJ25VDbSm6H2
-         u3BbCX2NRznnWTe95Wuun5WXY76axWiDLvpskCw+OvU9+SVHHxzxX+8rQJtHTtxbFNh7
-         tr+EqYU97lnMFyuZjVjnzlRsP5dA5LJeR22tpaW+/cqq343N9NorolQ54DZygiKQokp1
-         /jiIDigyQnW1tlpRRVzS5tBkg4inKH0DvOZTRiuaHLvB5Oxztv7itxG8Le+eAA1n7eWk
-         UcNcobkKBICS8ja9ixUApGRGGpm2I/DqDVOIvQwVOppWnvTSJkC4tnqcmWnGw3Wqo7cy
-         DbeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdw9Xy7h/vThf+YUY/BzpvCc7q9UhvErdQKIbA4iGBd376kMPbqkSaoWGAKxXgdTc6EGXnkI9Bhpbk6qBw@vger.kernel.org, AJvYcCWal0MAJyu4XXE/mtmB56yecIPYnKjsN1Z9wyAZlTwK/XwD6TqwXH9hXdDHCk0yie3AJB0SrOxW@vger.kernel.org, AJvYcCWeQIIFMrtOTKwqCqilotNSu1O3HsRwtdBiHoQGcv8BXRXIHRH9sYv3mvMmekbeANMEBl9NvBIgWvwp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPbHN/iJ7AbnxjFEYICxIImaGene9qryr7d4kZ0LLzGbfnpGPz
-	I6m6aWYwKCr9aj+on1CmGvPcIoRuhMe2Zo3rrIG4xCkK7ZnF/UVA
-X-Google-Smtp-Source: AGHT+IHG/sKyN58dDIoIT5G3OVlXe0NhTIIngTp1CVkh2jnU+eHCNSuLvxChS6xstMqP1z4RZCpBEw==
-X-Received: by 2002:a17:902:e5c2:b0:20b:6188:fc5e with SMTP id d9443c01a7336-210c6ae9baemr269872565ad.28.1730414830985;
-        Thu, 31 Oct 2024 15:47:10 -0700 (PDT)
-Received: from localhost ([121.250.214.124])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93daacb29sm1700296a91.14.2024.10.31.15.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 15:47:10 -0700 (PDT)
-Date: Fri, 1 Nov 2024 06:46:39 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Richard Cochran <richardcochran@gmail.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>, 
-	Longbin Li <looong.bin@gmail.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] riscv: dts: sophgo: Add ethernet configuration for cv18xx
-Message-ID: <nkydxanwucqmbzzz2fb24xyelrouj6gvhuuou2ssbf4tvvhfea@6uiuueim7m3a>
-References: <20241028011312.274938-1-inochiama@gmail.com>
- <87e215a7-0b27-4336-9f9c-e63ade0772ef@lunn.ch>
- <wgggariprpp2wczsljy3vw6kp7vhnrifg6soxdgiio2seyctym@4owbzlg3ngum>
- <ftfp2rwkytqmzruogcx66d5qkn4tzrgyjtlz4hdduxhwit3tok@kczgzrjdxx46>
- <e389a60d-2fe3-46fd-946c-01dd3a0a0f6f@lunn.ch>
+        bh=eTGe9PwYvoojfRJpUZgUhAxbJHxiXthHeHJW83hgHu8=;
+        b=BIQkmEMxnpj+5iaC/CJK6UU8d4cJ8C2yB2NauBlOmp03k5MYdgr0yGjGgJ4m9NuWES
+         GUT8TX45unHLjBQeFEYD/WamKwJd2vFET+aei9cV9AIr1HXEhTPjpREZg5bfC6HQXCg6
+         MY6r1yA2I8lmH5qLl+FL22iPSe9e9O/wzCm3UrBm545gl/m//I39pVbxaGmEsE9f1xCl
+         EQbE5dZ20ks+BeeMnDM6uUmCVUPCARw9OZVt6BnRlc8HaIsIUJZpC93MlhPEbV5mN/gg
+         HBo3lFlQpn1cENHD2ssErDLurTFB3v/qqwOwOwNQWPSc9JIynweHYAEqadAms0CojruC
+         KH3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730414881; x=1731019681;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eTGe9PwYvoojfRJpUZgUhAxbJHxiXthHeHJW83hgHu8=;
+        b=RMcIaW9vVizbfw6ypvEqQUt2Oua8pWre8OOIYMRoNFvHc0PunhCFU9xht/5oKCt8vA
+         mkX2lCO+xWlVrLZD5IdcsL/ysFnfapIIMntbjmeaGc3gt0iuVe6UJk3u4oKtXMUug9Fq
+         eLw8iGw5/MK5W7HfadV+qIrJbVio4bS8Rc1c84trpFA2aT2DcxOXt5gJ4JZQVf/083gs
+         22NFUHY8fSn2toaQbBfZQ9bhC8rcCt0DtzfAEHC7oDUFtAaG5LShK4h9aXl9OVr4YqSl
+         V3nG4/CAWhGFv9NXlc5Ynv09nZ8hWSKYpBwooZfAlkhOrkrjrGHOlyCUqBa6Ba6+fljq
+         Qprw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaDgNnlI305eQolOMUbpYuScwib/vrv5Xf7NI4gaRSq6+2iVNX1tsHjhCJSj38OarDzdSvm2YG9gge9oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp7nL2q+X1H4QNIPqEvA+7Rx+D4p7nEsji5jsan4inAFoUh/jN
+	H4pavvtfmTK4opQl3hlbII36vHUb9VzEh5KZY5tLiEPZekhai3eLIcVzsXuMfuQ=
+X-Google-Smtp-Source: AGHT+IEmzHNzE7hvDqBmKYm1F0qTKl7W/SJiQtEF8C1xj5fDoK069HdbTE+fuTkxJTbnplMq+3q1PA==
+X-Received: by 2002:a05:600c:1d21:b0:431:518a:683b with SMTP id 5b1f17b1804b1-43283255a45mr13080605e9.18.1730414880954;
+        Thu, 31 Oct 2024 15:48:00 -0700 (PDT)
+Received: from localhost ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d439esm3327963f8f.44.2024.10.31.15.47.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 15:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e389a60d-2fe3-46fd-946c-01dd3a0a0f6f@lunn.ch>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 31 Oct 2024 22:47:58 +0000
+Message-Id: <D5ACVOXF0KJK.1ZUDOAK4X9EP8@linaro.org>
+Cc: <lgirdwood@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
+ <perex@perex.cz>, <tiwai@suse.com>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
+ <krzysztof.kozlowski@linaro.org>, <caleb.connolly@linaro.org>,
+ <linux-kernel@vger.kernel.org>, <a39.skl@gmail.com>
+Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: qrb4210-rb2: add HDMI audio
+ playback support
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>,
+ <linux-sound@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
+ <broonie@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241018025452.1362293-1-alexey.klimov@linaro.org>
+ <20241018025452.1362293-6-alexey.klimov@linaro.org>
+ <33736e2e-7ac2-4ec1-9d83-eb8360942bbb@oss.qualcomm.com>
+In-Reply-To: <33736e2e-7ac2-4ec1-9d83-eb8360942bbb@oss.qualcomm.com>
 
-On Thu, Oct 31, 2024 at 02:04:31PM +0100, Andrew Lunn wrote:
-> > > > > +		gmac0: ethernet@4070000 {
-> > > > > +			compatible = "snps,dwmac-3.70a";
-> > > > > +			reg = <0x04070000 0x10000>;
-> > > > > +			clocks = <&clk CLK_AXI4_ETH0>, <&clk CLK_ETH0_500M>;
-> > > > > +			clock-names = "stmmaceth", "ptp_ref";
-> > > > > +			interrupts = <31 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > +			interrupt-names = "macirq";
-> > > > > +			phy-handle = <&phy0>;
-> > > > > +			phy-mode = "rmii";
-> > > > > +			rx-fifo-depth = <8192>;
-> > > > > +			tx-fifo-depth = <8192>;
-> > > > > +			snps,multicast-filter-bins = <0>;
-> > > > > +			snps,perfect-filter-entries = <1>;
-> > > > > +			snps,aal;
-> > > > > +			snps,txpbl = <8>;
-> > > > > +			snps,rxpbl = <8>;
-> > > > > +			snps,mtl-rx-config = <&gmac0_mtl_rx_setup>;
-> > > > > +			snps,mtl-tx-config = <&gmac0_mtl_tx_setup>;
-> > > > > +			snps,axi-config = <&gmac0_stmmac_axi_setup>;
-> > > > > +			status = "disabled";
-> > > > > +
-> > > > > +			mdio {
-> > > > > +				compatible = "snps,dwmac-mdio";
-> > > > > +				#address-cells = <1>;
-> > > > > +				#size-cells = <0>;
-> > > > > +
-> > > > > +				phy0: phy@0 {
-> > > > > +					compatible = "ethernet-phy-ieee802.3-c22";
-> > > > > +					reg = <0>;
-> > > > > +				};
-> > > > > +			};
-> > > > 
-> > > > It is not clear to me what cv18xx.dtsi represents, 
-> > > 
-> > > This is a include file to define common ip for the whole
-> > > cv18xx series SoCs (cv1800b, cv1812h, sg2000, sg2000).
-> > > 
-> > > > and where the PHY node should be, here, or in a .dts file. 
-> > > > Is this a SOM, and the PHY is on the SOM? 
-> > > 
-> > > The phy is on the SoC, it is embedded, and no external phy
-> > > is supported. So I think the phy node should stay here, not 
-> > > in the dts file.
-> > 
-> > There is a mistake, Some package supports external rmii/mii
-> > phy. So I will move this phy definition to board specific.
-> 
-> When there is an external PHY, does the internal PHY still exists? If
-> it does, it should be listed, even if it is not used.
-> 
-> Do the internal and external PHY share the same MDIO bus? 
+On Fri Oct 25, 2024 at 8:09 PM BST, Konrad Dybcio wrote:
+> On 18.10.2024 4:54 AM, Alexey Klimov wrote:
+> > Add sound node and dsp-related piece to enable HDMI audio
+> > playback support on Qualcomm QRB4210 RB2 board. That is the
+> > only sound output supported for now.
+> >=20
+> > The audio playback is verified using the following commands:
+> >=20
+> > amixer -c0 cset iface=3DMIXER,name=3D'SEC_MI2S_RX Audio Mixer MultiMedi=
+a1' 1
+> > aplay -D hw:0,0 /usr/share/sounds/alsa/Front_Center.wav
+> >=20
+> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 55 ++++++++++++++++++++++++
+> >  1 file changed, 55 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot=
+/dts/qcom/qrb4210-rb2.dts
+> > index 1888d99d398b..5f671b9c8fb9 100644
+> > --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> > +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> > @@ -6,6 +6,8 @@
+> >  /dts-v1/;
+> > =20
+> >  #include <dt-bindings/leds/common.h>
+> > +#include <dt-bindings/sound/qcom,q6afe.h>
+> > +#include <dt-bindings/sound/qcom,q6asm.h>
+> >  #include <dt-bindings/usb/pd.h>
+> >  #include "sm4250.dtsi"
+> >  #include "pm6125.dtsi"
+> > @@ -103,6 +105,51 @@ led-wlan {
+> >  		};
+> >  	};
+> > =20
+> > +	sound {
+> > +		compatible =3D "qcom,qrb4210-rb2-sndcard";
+> > +		pinctrl-0 =3D <&lpi_i2s2_active>;
+> > +		pinctrl-names =3D "default";
+> > +		model =3D "Qualcomm-RB2-WSA8815-Speakers-DMIC0";
+> > +		audio-routing =3D "MM_DL1",  "MultiMedia1 Playback",
+> > +				"MM_DL2",  "MultiMedia2 Playback";
+>
+> I'm seeing a lot of double spaces in this patch
+>
+> > +
+> > +		mm1-dai-link {
+> > +			link-name =3D "MultiMedia1";
+> > +			cpu {
+>
+> Please add a newline between the subnode
+>
+> Looks nice otherwise
 
-They share the same MDIO bus and phy id setting. When an external phy
-is select, the internal one is not initialized and can not be accessed
-by the SoC.
+Thanks for noticing this! I'll update it and resend.
+I put one space between audio-routing widgets, not sure if even one
+is needed though, maybe there should be no space at all.
 
-> I've seen some SoCs with complex MDIO muxes for internal vs external
-> PHYs.
-> 
-> 	Andrew
-
-There is a switch register on the SoC to decide which phy/mode is used. 
-By defaut is internal one with rmii mode. I think a driver is needed to
-handle this properly.
-
-Regards,
-Inochi
+Best regards,
+Alexey
 
