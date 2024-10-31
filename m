@@ -1,70 +1,59 @@
-Return-Path: <linux-kernel+bounces-390241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048289B7751
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:20:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2D69B7781
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9CD28669F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:20:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417E51C21EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A291957E1;
-	Thu, 31 Oct 2024 09:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E1w/a6LW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EE619580B;
+	Thu, 31 Oct 2024 09:29:20 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7C5194C96
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF73188599;
+	Thu, 31 Oct 2024 09:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366433; cv=none; b=flfD4WkvIEKwRV0h6PuY2/UoqziXj7GVJdVA2UfkA/p7+JMVcS0qYws5WvkB0NgNDjR1PEQCVAs+xZlclUHTmcD2PN19LbgTUcpjz3yPdmHRyKu8O+UplMAawa1KxfS05z9ZiCr58AwpHUsULgig8cYJ3C+Xq1Mosz+RlpCwo/o=
+	t=1730366959; cv=none; b=q7ofCePxn49QDRdYuKH1QDHPIJ3N/p4atW6V+HmyY1FyThlt+xJ3X+lTkccs6AYPQaQjKR/OiZBDvUBsFKw3LwXAauomwk9yZm8bMQKAyd5z9DmC3td3CGyPqTh/dDsgkqGrGOnnCtKcj90cIDCtmVcVoOXkPOCHa/vvD56D1Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366433; c=relaxed/simple;
-	bh=PCNhOZ7FjPcuLH06KFlsCRmNhIA+2CJAVbgl+hQwgKs=;
+	s=arc-20240116; t=1730366959; c=relaxed/simple;
+	bh=dZHxgnrIkdMO2LldTpzDLOjBpT2bck5vMllRHMoj9aE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=soLIGyMLQ/FzSDeeSXeQwzt/7YZIl/x7sRboIOcOxqkH5YwK+Z+FTTen2o8a431UeEj2H8JFLrOL3in9b+4bwwHh+qcYWra/cIMgfYahe+6c9/6t7FMnqpseFD1D4HTF6xYGll6mEW/wDWBPO0MUAeNNAO5hLtEGVJWJ7ooS3LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=E1w/a6LW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1q52zKliJkMThvPumU3SPfBPY2krJYFtdl0Hl6uLP8c=; b=E1w/a6LWlcQSKW0TIr267belFF
-	SHzLhrZMs+5bifyGCPvhFZ3lLOGPyjzuiGghPgrOSxPqlkamceocJ5BJEQ6mwrd+NxR3Z1nx7reuW
-	sLBlMOA5aTGcNCI57BweswkLj9wCMg7o1TKNjezmOpHQK3Xrnq6fTiyqgA7CA0V/5Z+aIH+MAmgfN
-	en0EkrOF5q4zbsj45O5LLXLnvkvxFT+9lDrRoJ+kqs3nQR9ScoJgsCIwXMRzsTKVefCfEq6OzDtmG
-	GSYxawQaiRWYMUhIhmPpQMoTr2nibaXmKfpZ3aoVIKAv18Fa7AoB9l/HuH8e3sbk2/u4BmvjrjFm5
-	uNlzrJZw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6RLu-0000000EWbk-2fUW;
-	Thu, 31 Oct 2024 09:20:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D573D300599; Thu, 31 Oct 2024 10:20:26 +0100 (CET)
-Date: Thu, 31 Oct 2024 10:20:26 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>
-Subject: Re: [PATCH] kcsan, seqlock: Support seqcount_latch_t
-Message-ID: <20241031092026.GU33184@noisy.programming.kicks-ass.net>
-References: <20241029083658.1096492-1-elver@google.com>
- <20241029114937.GT14555@noisy.programming.kicks-ass.net>
- <CANpmjNPyXGRTWHhycVuEXdDfe7MoN19MeztdQaSOJkzqhCD69Q@mail.gmail.com>
- <20241029134641.GR9767@noisy.programming.kicks-ass.net>
- <ZyFKUU1LpFfLrVXb@elver.google.com>
- <20241030204815.GQ14555@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGdN975s6lLsgRr5pj2lIBInFqIUPl+Sw1HYSnyOX0mGGJ/Eql8Ke/Y4qnY4BYAX0r8PSX98vmZqcXHBWbWxeSslzIybmpaf03ELJngZLWuDU6Xj/R4fV46MAgcU28uicyGKaMYWGHRNSp1ZcftJloPhJ1DHze1vjIoS6uQOWtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 0872F68B05; Thu, 31 Oct 2024 10:21:14 +0100 (CET)
+Date: Thu, 31 Oct 2024 10:21:13 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 00/17] Provide a new two step DMA mapping API
+Message-ID: <20241031092113.GA1791@lst.de>
+References: <cover.1730298502.git.leon@kernel.org> <3144b6e7-5c80-46d2-8ddc-a71af3c23072@kernel.dk> <20241031083450.GA30625@lst.de> <20241031090530.GC7473@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,57 +62,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030204815.GQ14555@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241031090530.GC7473@unreal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Oct 30, 2024 at 09:48:15PM +0100, Peter Zijlstra wrote:
-> diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-> index 68d6c1190ac7..4958b40ba6c9 100644
-> --- a/kernel/time/sched_clock.c
-> +++ b/kernel/time/sched_clock.c
-> @@ -102,7 +102,9 @@ unsigned long long notrace sched_clock(void)
->  {
->  	unsigned long long ns;
->  	preempt_disable_notrace();
-> +	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);
->  	ns = sched_clock_noinstr();
-> +	kcsan_atomic_next(0);
->  	preempt_enable_notrace();
->  	return ns;
->  }
+On Thu, Oct 31, 2024 at 11:05:30AM +0200, Leon Romanovsky wrote:
+> This series is a subset of the series you tested and doesn't include the
+> block layer changes which most likely were the cause of the performance
+> regression.
+> 
+> This is why I separated the block layer changes from the rest of the series
+> and marked them as RFC.
+> 
+> The current patch set is viable for HMM and VFIO. Can you please retest
+> only this series and leave the block layer changes for later till Christoph
+> finds the answer for the performance regression?
 
-You might want to consider also folding something like this in.
-That should give this instrumented version instrumentation :-)
+As the subset doesn't touch block code or code called by block I don't
+think we need Jens to benchmark it, unless he really wants to.
 
-
-diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-index 68d6c1190ac7..db26f343233f 100644
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -80,7 +80,7 @@ notrace int sched_clock_read_retry(unsigned int seq)
- 	return raw_read_seqcount_latch_retry(&cd.seq, seq);
- }
- 
--unsigned long long noinstr sched_clock_noinstr(void)
-+static __always_inline unsigned long long __sched_clock(void)
- {
- 	struct clock_read_data *rd;
- 	unsigned int seq;
-@@ -98,11 +98,16 @@ unsigned long long noinstr sched_clock_noinstr(void)
- 	return res;
- }
- 
-+unsigned long long noinstr sched_clock_noinstr(void)
-+{
-+	return __sched_clock();
-+}
-+
- unsigned long long notrace sched_clock(void)
- {
- 	unsigned long long ns;
- 	preempt_disable_notrace();
--	ns = sched_clock_noinstr();
-+	ns = __sched_clock();
- 	preempt_enable_notrace();
- 	return ns;
- }
 
