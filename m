@@ -1,157 +1,76 @@
-Return-Path: <linux-kernel+bounces-389934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C1E9B733D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:56:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32229B7340
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:57:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F05B285EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F281C2202F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36C212C489;
-	Thu, 31 Oct 2024 03:56:36 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B1813A863;
+	Thu, 31 Oct 2024 03:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Keq2akpR"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D101BD9DC
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577881BD9DC
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730346996; cv=none; b=tcxqWfdN4ltMZv/MolMbN3cFpdlhqTGuP40gnyay/Z/NbmUtMH32SfhEBXb4TYTCwJ7t7SAtA9HPPwgS1BWnX+GqrojkHEoiBS4R2q09IS/Clytw6cLhliFtxUtOTh+/VcgPlLlCGKK5IFwusQ8o4sjI1ftpQlBdatomVoqoRPc=
+	t=1730347019; cv=none; b=a85+7wXQptLCz+Thhk9pqkUiKmLJ15RIQjWZdV0KUutOXj82uriKBZr+6ZEHPqf9pPzgOWHWZLTQ/h87awkvD2bHVcgzG+uMfLVlYdMW05RLukyFu1Wv7YpX6Rbud0npb+Ong94v7wyg6x+I6lv7fdS3TOdr1B0FdWrEhrutMPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730346996; c=relaxed/simple;
-	bh=Qv6tb5Jb1T6QgohqMKTjIJDVuCufHrVpT7UOQFkGMvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iiJn1K5sElcEwpFtXtDxj9MMZJopxNvs6MAbFnFSh4q4M4vxY3lnGhzROt4YEu3MHWwnTWmUmsc8PSVmeyF01x51dfSMKRIKu+7ciZdbRqgJ0kytnLM1JCOvPSInfh+veatrxn/aYxsWKvvem9KgQBuSAG+GbHi05xmDWJ0PKgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xf99P0nw3zpXgL;
-	Thu, 31 Oct 2024 11:54:33 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7F04D180103;
-	Thu, 31 Oct 2024 11:56:28 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 31 Oct 2024 11:56:26 +0800
-Message-ID: <49e78df6-91bf-7c63-b2d0-f36a301535da@huawei.com>
-Date: Thu, 31 Oct 2024 11:56:25 +0800
+	s=arc-20240116; t=1730347019; c=relaxed/simple;
+	bh=puUUnHirdOGkIP+flQZQCpVcmqzF+xFJwMhHdoeI1BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0jlFQ1/7/ZEQrH4A5pURfwTt1ba7Ml/SiENH2iTHR2BW7Orv4gq/bZw5VxxsVCSjMdkGIzH2YIf2mk+BfXN/Mxep9U4tTzYzZEojmbLa3SS/fxXxn8Smxqgo94b3sTPKKFz/tHNb25BoOhbRSE36HHehgWnarZnRlwNS/OM604=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Keq2akpR; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EqJ9jh64pPM8Qyg36I/QTxitIm8h1HrUf1S+E9Or9yU=; b=Keq2akpRHvVnvh8fXcYKV4XB4I
+	ArivbGRWCw5PPatcDIuL2SbXDtgmLwd8ZDs2QcOJQ5O6Kvb3v0eeHmMV5kWw8onrxNKZLDdSKJMtA
+	XkeqpmfM29NtRA5dX/+c8DI7CLr1/XfIjwkbQOywjZ/1feZeUej5RG8KH4WMZKy3QkIsQajutDz64
+	s5RaUfZFUbJWeqxZpKZnqkn4FvkSwIzPhlpElbTJaRmstOa0mnBqmsRb7LU5CcpflO2WUy4I+hVLI
+	02MDuG04rlpKgSAfhKFiJsOEpfju/L02RnYRvzXevXK7ccH3K2P2e3fErHDT+2A6sjv39ZGENXwKF
+	XSl8UKAg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6MIi-0000000EEJ7-0CBS;
+	Thu, 31 Oct 2024 03:56:48 +0000
+Date: Thu, 31 Oct 2024 03:56:47 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kassey Li <quic_yingangl@quicinc.com>
+Cc: akpm@linux-foundation.org, vbabka@kernel.org, minchan@kernel.org,
+	vbabka@suse.cz, iamjoonsoo.kim@lge.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] trace/events/page_ref: add page info to page_ref trace
+ event
+Message-ID: <ZyL__1ClDcInaen9@casper.infradead.org>
+References: <20241031024222.505844-1-quic_yingangl@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next v4 04/19] arm64: entry: Remove
- __enter_from_kernel_mode()
-Content-Language: en-US
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <sstabellini@kernel.org>, <maz@kernel.org>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
-	<kees@kernel.org>, <wad@chromium.org>, <akpm@linux-foundation.org>,
-	<samitolvanen@google.com>, <arnd@arndb.de>, <ojeda@kernel.org>,
-	<rppt@kernel.org>, <hca@linux.ibm.com>, <aliceryhl@google.com>,
-	<samuel.holland@sifive.com>, <paulmck@kernel.org>, <aquini@redhat.com>,
-	<petr.pavlu@suse.com>, <viro@zeniv.linux.org.uk>,
-	<rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
-	<wangkefeng.wang@huawei.com>, <surenb@google.com>,
-	<linus.walleij@linaro.org>, <yangyj.ee@gmail.com>, <broonie@kernel.org>,
-	<mbenes@suse.cz>, <puranjay@kernel.org>, <pcc@google.com>,
-	<guohanjun@huawei.com>, <sudeep.holla@arm.com>,
-	<Jonathan.Cameron@huawei.com>, <prarit@redhat.com>, <liuwei09@cestc.cn>,
-	<dwmw@amazon.co.uk>, <oliver.upton@linux.dev>, <kristina.martsenko@arm.com>,
-	<ptosi@google.com>, <frederic@kernel.org>, <vschneid@redhat.com>,
-	<thiago.bauermann@linaro.org>, <joey.gouly@arm.com>,
-	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<xen-devel@lists.xenproject.org>
-References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
- <20241025100700.3714552-5-ruanjinjie@huawei.com>
- <ZyDzNmSgmYkXWcdD@J2N7QTR9R3.cambridge.arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZyDzNmSgmYkXWcdD@J2N7QTR9R3.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031024222.505844-1-quic_yingangl@quicinc.com>
 
-
-
-On 2024/10/29 22:37, Mark Rutland wrote:
-> On Fri, Oct 25, 2024 at 06:06:45PM +0800, Jinjie Ruan wrote:
->> The __enter_from_kernel_mode() is only called by enter_from_kernel_mode(),
->> remove it.
+On Thu, Oct 31, 2024 at 10:42:22AM +0800, Kassey Li wrote:
+> This followed
+> commit 53d884a6675b ("mm, tracing: unify PFN format strings")
+> to add page info.
 > 
-> The point of this split is to cleanly separate the raw entry logic (in
-> __enter_from_kernel_mode() from pieces that run later and can safely be
-> instrumented (later in enter_from_kernel_mode()).
+> In many kernel code we are talking with page other than pfn,
+> here we added page algin with pfn.
 
-Hi, Mark,
-
-I reviewed your commit bc29b71f53b1 ("arm64: entry: clarify entry/exit
-helpers"), and keep these functions is to make instrumentation
-boundaries more clear, and will not change them.
-
-> 
-> I had expected that a later patch would replace
-> __enter_from_kernel_mode() with the generic equivalent, leaving
-> enter_from_kernel_mode() unchanged. It looks like patch 16 could do that
-> without this patch being necessary -- am I missing something?
-
-Yes, you are right! these useless cleanup patches will be removed.
-
-And when switched to generic syscall, I found that proper refactoring
-would also facilitate clear code switching.
-
-Thank you.
-
-> 
-> Mark.
-> 
->>
->> No functional changes.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  arch/arm64/kernel/entry-common.c | 9 +--------
->>  1 file changed, 1 insertion(+), 8 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
->> index ccf59b44464d..a7fd4d6c7650 100644
->> --- a/arch/arm64/kernel/entry-common.c
->> +++ b/arch/arm64/kernel/entry-common.c
->> @@ -36,7 +36,7 @@
->>   * This is intended to match the logic in irqentry_enter(), handling the kernel
->>   * mode transitions only.
->>   */
->> -static __always_inline irqentry_state_t __enter_from_kernel_mode(struct pt_regs *regs)
->> +static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
->>  {
->>  	irqentry_state_t ret = {
->>  		.exit_rcu = false,
->> @@ -55,13 +55,6 @@ static __always_inline irqentry_state_t __enter_from_kernel_mode(struct pt_regs
->>  	rcu_irq_enter_check_tick();
->>  	trace_hardirqs_off_finish();
->>  
->> -	return ret;
->> -}
->> -
->> -static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
->> -{
->> -	irqentry_state_t ret = __enter_from_kernel_mode(regs);
->> -
->>  	mte_check_tfsr_entry();
->>  	mte_disable_tco_entry(current);
->>  
->> -- 
->> 2.34.1
->>
-> 
+It's generally a bad idea to print pointers to kernel memory, so no I
+don't like this patch.
 
