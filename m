@@ -1,169 +1,160 @@
-Return-Path: <linux-kernel+bounces-392122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A898E9B8FF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E739B913A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7111C214FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6588E1C215F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7418A196C7B;
-	Fri,  1 Nov 2024 11:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCC019E982;
+	Fri,  1 Nov 2024 12:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTwdqT2l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MxPiJU5d"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7F115A84E;
-	Fri,  1 Nov 2024 11:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFE119E7F7
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730459188; cv=none; b=TJL1dCvv5mkQcVDVU/Ow/OAd0tupPSR7lBhD9BpEHAHbv5QFFUyVguv0JrcHLUfLbnfa6q+YCb9LwkcbxkRsx+em3OgG2L8wIFgeHECdHs/hL0ljrW8qGDd57oaOsHKL2h+3ZWr1zkUZfdVitaUpsgTI2sQ7PI09JlncflS8c1M=
+	t=1730464905; cv=none; b=MS0gw5JvfVSTNQp9N51V+5nivqQ83AjYUjhVtkiXItHArg6jufrqyIrznLOsi35fhG4A+XoRkhw5phQVRHDWhzULJYvyZPEl4EjKMwltvZWjtRgJSWPNMJcBRZeiZTBgzf2N2AR+PsrUfjg25FsWCcSXR2SdDs9HomulmAi6xNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730459188; c=relaxed/simple;
-	bh=4cdN8oppOPWY/v1yFlCvkKvAwOHnBpBM0oBxJMPVYLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bd1upij3ZOVN/YpuqY1CHtCZs1lx2H0ISbiSPaUPS+zpR0eh/vsqe8Bz+Jf+uinhjqCaq7tbk4UFWRD5wrrRiQwQuvGqzcj4Vh+G3uYInw6oY6ZGCVFY7b++Jh9f+DAjRKKHNFOMOYfxVqDPwYZHDI/jSZFzG9j454vCdn/APdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTwdqT2l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C58C4CECD;
-	Fri,  1 Nov 2024 11:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730459188;
-	bh=4cdN8oppOPWY/v1yFlCvkKvAwOHnBpBM0oBxJMPVYLk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CTwdqT2l5uk5gwpVRS10I7uPpizsb/hBcBKWekYNb0/1/xyMQmvvfagsufSNIp0+H
-	 St+9WxVL8pwKleCrfHfZOuVkWSULd6MySOeEWfvsCSV0bHUjeaV4Ap2L+3O8raqwIS
-	 p8YZpzpRR2xY/A6EMSIL/RHlUwRsD/PxD5D4If7Zj2eoCfoQV5qXib+WWg4KhvHw2Z
-	 saicJOq/ogsv1rxc7raI5JADLpXusjkRSrgZdWf1j6772wyPuX/i0FTrFjRY3w286B
-	 PjBi7Ma3lUD9gnl/JBiWlvccuEDx1UcX9zpXWH1OJeH3wNcgUidQmhlFlXz687wucc
-	 p44pH3kVnbTcg==
-Date: Fri, 1 Nov 2024 13:06:22 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 08/17] dma-mapping: add a dma_need_unmap helper
-Message-ID: <20241101110622.GD88858@unreal>
-References: <cover.1730298502.git.leon@kernel.org>
- <00385b3557fa074865d37b0ac613d2cb28bcb741.1730298502.git.leon@kernel.org>
- <7e362d8b-c02a-4327-9c5d-af1c4725ddc7@arm.com>
+	s=arc-20240116; t=1730464905; c=relaxed/simple;
+	bh=cUk/xskTKjjrCsTBnZaPMW40XSVSKDz2IZgnZtLZzk4=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YasdJvImS4AscEZlDWCVCCGQjAZaHf64vimK6ib1AADiDyPWqhhWZvXe1HN36CJvzVr3reDsDh1BoIiWubrTjvwk2joCnocWGTK2cBiQ9VGw7NvFr2nEZGfeuivApkN6hbclx3Lz84a0wmM9YuspVqcWkHrn2GmsCC530s2scHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MxPiJU5d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730464901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=daCi0NDDhzj7qIkfaAgOyXECPMHal4Ju0DlZnZ8lsZU=;
+	b=MxPiJU5dke9ObnSkNAemjMdaqbxjZ5s9qLlI86m+2pPyYDVQW25/VgezV5lb+Ss00uLugv
+	k1UPjZmT9apkzAm3wHBfK58okhOhzCEwa83n3KW8BYXgXUmvV4FkqwOp4So4HDr++zeJr2
+	w0ax+/1Lo2lNsUAkVMD+zS8uIkLES3E=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-283-78Us7ikaMoC8Ws47TUKAsQ-1; Fri, 01 Nov 2024 08:41:40 -0400
+X-MC-Unique: 78Us7ikaMoC8Ws47TUKAsQ-1
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e30cf48435fso3700519276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:41:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730464899; x=1731069699;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=daCi0NDDhzj7qIkfaAgOyXECPMHal4Ju0DlZnZ8lsZU=;
+        b=CS6B5XScDtWL9jjHVQ2/IUblWuz7mydDkE3GfEqyWzOjVEBY4xvkV5qx0YSJu5yzIw
+         1VwJBsiSijSV4pjCRNpvht6JQtn0PLv6c9BFjwqXftpEg09YroQVavmaSJ7Z+sjmnYcH
+         ep85AzrTpCLrcfcNutbt8a5hj1r9dB+yIp+aFjq1zUh1/uaKMjnKROtoDiZDGGCiB/hM
+         gzy/7Rw9Rtz/toNo+l2LqLVp2wCay5y2pRh6uKM7Uvk3ChUqc8ABs4dbuPxbqjvTIbWk
+         yI1Tk65ax/yS/uXcw4QTREB/xtKwcifgmbl0ZNVjftKaWt0yzCFeZ8ibb3dV0CoJ9Qgn
+         MwFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0+fhRYz57JofPKf6Rl0yidc2/75kTch7gXNg3kOdN/w9DA8gRR5CZKL01tRwoIfdqpkEvV3NY6LEkMmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzloPtVdpcU798D4UUsZOC0WWiyBh++I6au6dos4vMxITrkg+Yf
+	S1XMrT9SZ5+Iy/sawn1eeqFh5GZUxSwMuhaKSgG+zyPZmYyIDWtDY2goBU0YDxs+qFqgqJSFGRn
+	4SBghdw5V1t0OEqyzhf128NFYK8Rmxq1QCVOn/Au1phMP+ajIZm0VlYtSvfZdIDvrXQnD9A==
+X-Received: by 2002:a05:6902:124b:b0:e2b:d131:f293 with SMTP id 3f1490d57ef6-e30cf4eca13mr11168982276.51.1730464899639;
+        Fri, 01 Nov 2024 05:41:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDPtyPPrkq7Jk1C7LfKXl054BEA2PIAAJUUrPjUHIXRdxQdc1sCRTl2Ysmi678HByvzevNcA==
+X-Received: by 2002:a05:6902:124b:b0:e2b:d131:f293 with SMTP id 3f1490d57ef6-e30cf4eca13mr11168958276.51.1730464899337;
+        Fri, 01 Nov 2024 05:41:39 -0700 (PDT)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad161f33sm18073491cf.78.2024.11.01.05.41.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 05:41:38 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <bcad4168-52a0-44cc-b0f0-9346f30d8d80@redhat.com>
+Date: Thu, 31 Oct 2024 16:18:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e362d8b-c02a-4327-9c5d-af1c4725ddc7@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 PATCH 0/4] futex: Add support task local hash maps.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Valentin Schneider <vschneid@redhat.com>
+References: <20241028121921.1264150-1-bigeasy@linutronix.de>
+ <20241031155640.Fhtm3uFD@linutronix.de>
+Content-Language: en-US
+In-Reply-To: <20241031155640.Fhtm3uFD@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 09:18:11PM +0000, Robin Murphy wrote:
-> On 30/10/2024 3:12 pm, Leon Romanovsky wrote:
-> > From: Christoph Hellwig <hch@lst.de>
-> > 
-> > Add helper that allows a driver to skip calling dma_unmap_*
-> > if the DMA layer can guarantee that they are no-nops.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >   include/linux/dma-mapping.h |  5 +++++
-> >   kernel/dma/mapping.c        | 20 ++++++++++++++++++++
-> >   2 files changed, 25 insertions(+)
-> > 
-> > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> > index 8074a3b5c807..6906edde505d 100644
-> > --- a/include/linux/dma-mapping.h
-> > +++ b/include/linux/dma-mapping.h
-> > @@ -410,6 +410,7 @@ static inline bool dma_need_sync(struct device *dev, dma_addr_t dma_addr)
-> >   {
-> >   	return dma_dev_need_sync(dev) ? __dma_need_sync(dev, dma_addr) : false;
-> >   }
-> > +bool dma_need_unmap(struct device *dev);
-> >   #else /* !CONFIG_HAS_DMA || !CONFIG_DMA_NEED_SYNC */
-> >   static inline bool dma_dev_need_sync(const struct device *dev)
-> >   {
-> > @@ -435,6 +436,10 @@ static inline bool dma_need_sync(struct device *dev, dma_addr_t dma_addr)
-> >   {
-> >   	return false;
-> >   }
-> > +static inline bool dma_need_unmap(struct device *dev)
-> > +{
-> > +	return false;
-> > +}
-> >   #endif /* !CONFIG_HAS_DMA || !CONFIG_DMA_NEED_SYNC */
-> >   struct page *dma_alloc_pages(struct device *dev, size_t size,
-> > diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> > index 864a1121bf08..daa97a650778 100644
-> > --- a/kernel/dma/mapping.c
-> > +++ b/kernel/dma/mapping.c
-> > @@ -442,6 +442,26 @@ bool __dma_need_sync(struct device *dev, dma_addr_t dma_addr)
-> >   }
-> >   EXPORT_SYMBOL_GPL(__dma_need_sync);
-> > +/**
-> > + * dma_need_unmap - does this device need dma_unmap_* operations
-> > + * @dev: device to check
-> > + *
-> > + * If this function returns %false, drivers can skip calling dma_unmap_* after
-> > + * finishing an I/O.  This function must be called after all mappings that might
-> > + * need to be unmapped have been performed.
-> 
-> In terms of the unmap call itself, why don't we just use dma_skip_sync to
-> short-cut dma_direct_unmap_*() and make sure it's as cheap as possible?
+On 10/31/24 11:56 AM, Sebastian Andrzej Siewior wrote:
+> On 2024-10-28 13:13:54 [+0100], To linux-kernel@vger.kernel.org wrote:
+>>                                                             Need to do
+>> more testing.
+> So there is "perf bench futex hash". On a 256 CPU NUMA box:
+> 	perf bench futex hash -t 240 -m -s -b $hb
+> and hb 2 … 131072 (moved the allocation to kvmalloc) I get the following
+> (averaged over 3 three runs)
+>
+> buckets op/sec
+>        2     9158.33
+>        4    21665.66	+ ~136%
+>        8    44686.66	+ ~106
+>       16    84144.33	+ ~ 88
+>       32   139998.33	+ ~ 66
+>       64   279957.0	+ ~ 99
+>      128   509533.0	+ ~100
+>      256  1019846.0	+ ~100
+>      512  1634940.0	+ ~ 60
+>     1024  1834859.33	+ ~ 12
+>           1868129.33 (global hash, 65536 hash)
+>     2048  1912071.33	+ ~  4
+>     4096  1918686.66	+ ~  0
+>     8192  1922285.66	+ ~  0
+>    16384  1923017.0	+ ~  0
+>    32768  1923319.0	+ ~  0
+>    65536  1932906.0	+ ~  0
+>   131072  2042571.33	+ ~  5
+>
+> By doubling the hash size the ops/sec almost double until 256 slots.
+> After 2048 slots the increase is almost noise (except for the last
+> entry).
+>
+> Pinning the bench to individual CPUs belonging to a NUMA node and
+> running the same test with 110 threads only (avg over 5 runs):
+>            ops/sec global	ops/sec local
+> node 0		2278572.2	2534827.4
+> node 1		2229838.6	2437498.8
+> node 0+1	2542602.4	2535749.8
 
-From what I see dma_skip_sync is not available when kernel is built
-without CONFIG_DMA_NEED_SYNC.
+Looking at the performance data, we should probably use the global hash 
+table to maximize throughput if latency isn't important.
 
-> 
-> In terms of not having to unmap implying not having to store addresses at
-> all, it doesn't seem super-useful when you still have to store them for long
-> enough to find out that you don't :/
+AFAICT, the reason why patch 4 allocates a local hash whenever the first 
+thread is created to avoid a race between the same futex hashed on both 
+the local and global hash tables. Correct me if my understanding is 
+incorrect. That will enforce all multithreaded processes to use local 
+hash tables for private futexes even if they don't care about latency.
 
-Why? The decision if DMA addresses are needed is taken when allocating
-relevant arrays, before we have any DMA address to store. If we know
-that we don't need to unmap, we can skip allocation of the array for
-free. So what and when "you still have to store them"?
+Maybe we should limit the auto local hash table allocation only to RT 
+processes. To avoid the race, we could add a flag to indicate if  a 
+private futex has ever been hashed in the kernel and avoid local hash 
+creation in this case and probably also when the prctl() is being called 
+to create local hash table.
 
-Thanks
+My 2 cents.
 
-> 
-> Thanks,
-> Robin.
-> 
-> > + */
-> > +bool dma_need_unmap(struct device *dev)
-> > +{
-> > +	if (!dma_map_direct(dev, get_dma_ops(dev)))
-> > +		return true;
-> > +#ifdef CONFIG_DMA_NEED_SYNC
-> > +	if (!dev->dma_skip_sync)
-> > +		return true;
-> > +#endif
-> > +	return IS_ENABLED(CONFIG_DMA_API_DEBUG);
-> > +}
-> > +EXPORT_SYMBOL_GPL(dma_need_unmap);
-> > +
-> >   static void dma_setup_need_sync(struct device *dev)
-> >   {
-> >   	const struct dma_map_ops *ops = get_dma_ops(dev);
-> 
+Cheers,
+
 
