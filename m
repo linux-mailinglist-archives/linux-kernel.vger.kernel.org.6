@@ -1,201 +1,443 @@
-Return-Path: <linux-kernel+bounces-390449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA329B7A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:55:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF539B7A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:57:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F351F24AAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:55:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFE611C21E82
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBA619B5B2;
-	Thu, 31 Oct 2024 11:55:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6089E153BC7;
-	Thu, 31 Oct 2024 11:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F7719C556;
+	Thu, 31 Oct 2024 11:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJX3MAv9"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3460F153BC7;
+	Thu, 31 Oct 2024 11:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730375750; cv=none; b=PBpqqP6h4jcBdxhVPVW/XYqFUuuGdHzz63EwYHlDV0iLsxcRs5fwiFpcMbzx8syNiL1G8ZxYTSe0MmVUzBE00BlTqCPYIXJvB3OCcLbvZYHU+xf2S+oV7gjq8KpdFVOWXs+PygIDZtQWFeWWrVmdoQ1SkHWwc1anvcXqbXvCwh0=
+	t=1730375842; cv=none; b=MQeTElwoV4nwChZFKTHpTY8XBbiAONnVW0dnjVtHIw05asesOp7V3xI01WPYO77q44i/rIYiZLCM3KblYgLIh6stMjdVqZFyz3NkAGcSv94qGlfD8QwGDo8MXo91W4Vz17dIPhwx0FcAOjSQ1bntIWa3ftRrlutehGMU2EMjWkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730375750; c=relaxed/simple;
-	bh=HF9tcwUfe782XO6YdA7ur8TkbltTTgtyLaEj8vf9SN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rUCq5Z+hfMHQ8WyfeZmfVryP7dpZFOQ48sT9qXcuhRV0bn8xfBqYXGUF3iUa1u/JY3EmMidZYtLcLhN4EqYz8eoQYpNbAoGxry2UAGmQkyVQM5O06cNSyAeIXG3fyBJastKYLiXB+BxIxseptvj23/ikz8NFr5uClRs8j+6ntwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C851497;
-	Thu, 31 Oct 2024 04:56:17 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E397D3F66E;
-	Thu, 31 Oct 2024 04:55:43 -0700 (PDT)
-Date: Thu, 31 Oct 2024 11:55:40 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Maxime Ripard <mripard@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>, Parthiban
- <parthiban@linumiz.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/13] arm64: dts: allwinner: a100: add usb related
- nodes
-Message-ID: <20241031115540.3f8edd1b@donnerap.manchester.arm.com>
-In-Reply-To: <20241031070232.1793078-7-masterr3c0rd@epochal.quest>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-	<20241031070232.1793078-7-masterr3c0rd@epochal.quest>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1730375842; c=relaxed/simple;
+	bh=BTN38ve7ZHiN9RoGPVE/D2FFgtrmU/y8viJLtxkciaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ID1KdfxuwcHlYIKF+B3aZU3O6kWVV/+Qd7tcNk8fJ0CnyhsaR+bJsjfRSGTQXb58SlTwqQvfSK45ghQ/R1Qtx4ZYZzJSsv3jN4XzEgX/A7zadzIrCYJQtnidwcVI+GcHQZSCnYRR6YlDJeHu7w/nAN+aVIBpr8HaAQK4vwjfzMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJX3MAv9; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0f198d38so127434866b.1;
+        Thu, 31 Oct 2024 04:57:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730375837; x=1730980637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lKIyLE2zQdyO5Hcqyq1E5hXSPBVJ2YpMPKsp9FVyOPU=;
+        b=IJX3MAv9505Q/Z/COVY8OhdlwJMiTZ+8XNZR6iQBqToItYgXmHxYRac+6ktXVrdsqw
+         rESVQZmKU+ljbIsx32WEt3SFkY7tylxPAtZnFMt3CL9sQG8ftrl9NkEn9ldhUSxO848V
+         JNWRg5ieaIcLTEBkMuCPwPJb88SziHfbr9HjLdEFu/6RR3LMH5eR34pkj+fehK0yuA7d
+         R+cm4fu/1+VhvwZ2j9XtH396T5akQYM5oTlvw7ZEFXevlYYGY27CjuEMNf6Ektwam/we
+         YtdE9kXGe5CklL3fgZPzDZbFd0aibWrBqZaqmpHkQ3mBSrNKnZ7jt0DERRrTDfL2wCK8
+         YWZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730375837; x=1730980637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lKIyLE2zQdyO5Hcqyq1E5hXSPBVJ2YpMPKsp9FVyOPU=;
+        b=RuC64TyDPm9gR2Z153Sf0qaSZyiF1DN1ZkouV9v04daoB//Qj+84RHsW+Dmu8Qva2z
+         CmRV8AgH8KavznzFpkO1xRhdNKLKcqoSxdp+rvZGCpEKV/9kiAS3AOu3FKIMY4iaR4/6
+         jXz7Ffu8sef75LNOugPbno0kZU5kf5cYFq0/CST5xl7gbSxbQ/LSe7WR1aQNyZNnPWTg
+         5gxWHGXbmzQvI1id7MZaDk2yjL5mQ5MNoPR9Rgf+2rvN9NdQIQSmviJ2HQsM0EjNk094
+         w+fOtHNZZcYtjKdLjo9yyHzcwI9ySuycCFQcHLNfmRaRAmkgPq/qbl9k/H81PY6zKHPW
+         CLgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUABKuuKdogrvcnYhKnchCTfAs711RIknU6/7ImIffYxq/nKZOlJkYsWK3IZRsKc6LSWmefQC9GlW0N6YRSVvQR@vger.kernel.org, AJvYcCUttNSRv2L0Ts0amAe14eKeso5VjbBpomALwr3TVCMGxJuvNQ+ufuLms25QHhS3x59yWTpDyHLo92vcu/U1@vger.kernel.org, AJvYcCW/8PUgWmjqYeQrc9BV/IGRZxg0j758bGvus0Dh0KXTBpuEbbkfzwwKvSohTiqxo58nhdM=@vger.kernel.org, AJvYcCX0/xahe4ed9MW9+4U5AV7tMZlQsfJhhMY+2dqGepsQiXBjACCepgKngzlk9Q7FL0JHMDzuTSe02qYHJjOsq4wvTiLo@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoc2eJg1RohJ5kzlW/vX1Hh26Q8txAqdgTPt5rhsZppXEabJD+
+	FgeX9XF3nKUxzvLW3+zlV4fbnFmkuKgHTsJBzDNWwK2LXaoma1Ys2Mn7SLHX62PlfEb140hwk5J
+	D76mOrGqTiC09Q1PpRwBz2Uz/iok=
+X-Google-Smtp-Source: AGHT+IFVyWMCJp4ypcB1SCqphOPxg+DYfnGVczoC6vL3foJeAnIkQEYAte0Ok85oC+uL77BHORxI763WhPk+Tyctfk8=
+X-Received: by 2002:a17:906:6a09:b0:a99:8edf:a367 with SMTP id
+ a640c23a62f3a-a9de61eb5a1mr2034895966b.57.1730375837082; Thu, 31 Oct 2024
+ 04:57:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241029002208.1947947-1-dolinux.peng@gmail.com>
+ <20241029002208.1947947-3-dolinux.peng@gmail.com> <CAEf4BzYBffp+47SLaV5sMWVAVSbxyDX3DnNoOju1y9wr+wupeQ@mail.gmail.com>
+ <CAErzpmsyV46Pexj3CUCSaX+MzckoKSAe9D3eeEcTGK8m5BKJUg@mail.gmail.com> <CAEf4BzY=vfFBPFUNPy3LfrCTM0qpU=L0dgY+aK4GkGhkjPGw3A@mail.gmail.com>
+In-Reply-To: <CAEf4BzY=vfFBPFUNPy3LfrCTM0qpU=L0dgY+aK4GkGhkjPGw3A@mail.gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Thu, 31 Oct 2024 19:57:01 +0800
+Message-ID: <CAErzpms+do7vuFtDcxAEJx-ZxyrEZjRT+KAAkt9wfqfPfqrydg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] bpf: Using binary search to improve the
+ performance of btf_find_by_name_kind
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 31 Oct 2024 04:02:19 -0300
-Cody Eksal <masterr3c0rd@epochal.quest> wrote:
+On Thu, Oct 31, 2024 at 1:33=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Wed, Oct 30, 2024 at 8:00=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.=
+com> wrote:
+> >
+> > On Wed, Oct 30, 2024 at 6:13=E2=80=AFAM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Mon, Oct 28, 2024 at 5:22=E2=80=AFPM Donglin Peng <dolinux.peng@gm=
+ail.com> wrote:
+> > > >
+> > > > Currently, we are only using the linear search method to find the t=
+ype id
+> > > > by the name, which has a time complexity of O(n). This change invol=
+ves
+> > > > sorting the names of btf types in ascending order and using binary =
+search,
+> > > > which has a time complexity of O(log(n)). This idea was inspired by=
+ the
+> > > > following patch:
+> > > >
+> > > > 60443c88f3a8 ("kallsyms: Improve the performance of kallsyms_lookup=
+_name()").
+> > > >
+> > > > At present, this improvement is only for searching in vmlinux's and
+> > > > module's BTFs.
+> > > >
+> > > > Another change is the search direction, where we search the BTF fir=
+st and
+> > > > then its base, the type id of the first matched btf_type will be re=
+turned.
+> > > >
+> > > > Here is a time-consuming result that finding 87590 type ids by thei=
+r names in
+> > > > vmlinux's BTF.
+> > > >
+> > > > Before: 158426 ms
+> > > > After:     114 ms
+> > > >
+> > > > The average lookup performance has improved more than 1000x in the =
+above scenario.
+> > > >
+> > > > Tested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> > > > ---
+> > > > v4:
+> > > >  - move the modification of libbpf to another patch
+> > > >
+> > > > v3:
+> > > >  - Link: https://lore.kernel.org/all/20240608140835.965949-1-dolinu=
+x.peng@gmail.com/
+> > > >  - Sort btf_types during build process other than during boot, to r=
+educe the
+> > > >    overhead of memory and boot time.
+> > > >
+> > > > v2:
+> > > >  - Link: https://lore.kernel.org/all/20230909091646.420163-1-pengdo=
+nglin@sangfor.com.cn
+> > > > ---
+> > > >  include/linux/btf.h |   1 +
+> > > >  kernel/bpf/btf.c    | 157 ++++++++++++++++++++++++++++++++++++++++=
+----
+> > > >  2 files changed, 147 insertions(+), 11 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/btf.h b/include/linux/btf.h
+> > > > index b8a583194c4a..64c35aaa22fa 100644
+> > > > --- a/include/linux/btf.h
+> > > > +++ b/include/linux/btf.h
+> > > > @@ -216,6 +216,7 @@ bool btf_is_module(const struct btf *btf);
+> > > >  bool btf_is_vmlinux(const struct btf *btf);
+> > > >  struct module *btf_try_get_module(const struct btf *btf);
+> > > >  u32 btf_nr_types(const struct btf *btf);
+> > > > +u32 btf_type_cnt(const struct btf *btf);
+> > > >  struct btf *btf_base_btf(const struct btf *btf);
+> > > >  bool btf_member_is_reg_int(const struct btf *btf, const struct btf=
+_type *s,
+> > > >                            const struct btf_member *m,
+> > > > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > > > index 5cd1c7a23848..6d0d58989640 100644
+> > > > --- a/kernel/bpf/btf.c
+> > > > +++ b/kernel/bpf/btf.c
+> > > > @@ -262,6 +262,7 @@ struct btf {
+> > > >         u32 data_size;
+> > > >         refcount_t refcnt;
+> > > >         u32 id;
+> > > > +       u32 nr_types_sorted;
+> > > >         struct rcu_head rcu;
+> > > >         struct btf_kfunc_set_tab *kfunc_set_tab;
+> > > >         struct btf_id_dtor_kfunc_tab *dtor_kfunc_tab;
+> > > > @@ -548,23 +549,102 @@ u32 btf_nr_types(const struct btf *btf)
+> > > >         return total;
+> > > >  }
+> > > >
+> > > > -s32 btf_find_by_name_kind(const struct btf *btf, const char *name,=
+ u8 kind)
+> > > > +u32 btf_type_cnt(const struct btf *btf)
+> > > > +{
+> > > > +       return btf->start_id + btf->nr_types;
+> > > > +}
+> > > > +
+> > > > +static s32 btf_find_by_name_bsearch(const struct btf *btf, const c=
+har *name,
+> > > > +                                   int *start, int *end)
+> > > >  {
+> > > >         const struct btf_type *t;
+> > > > -       const char *tname;
+> > > > -       u32 i, total;
+> > > > +       const char *name_buf;
+> > > > +       int low, low_start, mid, high, high_end;
+> > > > +       int ret, start_id;
+> > > > +
+> > > > +       start_id =3D btf->base_btf ? btf->start_id : 1;
+> > > > +       low_start =3D low =3D start_id;
+> > > > +       high_end =3D high =3D start_id + btf->nr_types_sorted - 1;
+> > > > +
+> > > > +       while (low <=3D high) {
+> > > > +               mid =3D low + (high - low) / 2;
+> > > > +               t =3D btf_type_by_id(btf, mid);
+> > > > +               name_buf =3D btf_name_by_offset(btf, t->name_off);
+> > > > +               ret =3D strcmp(name, name_buf);
+> > > > +               if (ret > 0)
+> > > > +                       low =3D mid + 1;
+> > > > +               else if (ret < 0)
+> > > > +                       high =3D mid - 1;
+> > > > +               else
+> > > > +                       break;
+> > > > +       }
+> > > >
+> > > > -       total =3D btf_nr_types(btf);
+> > > > -       for (i =3D 1; i < total; i++) {
+> > > > -               t =3D btf_type_by_id(btf, i);
+> > > > -               if (BTF_INFO_KIND(t->info) !=3D kind)
+> > > > -                       continue;
+> > > > +       if (low > high)
+> > > > +               return -ESRCH;
+> > > >
+> > > > -               tname =3D btf_name_by_offset(btf, t->name_off);
+> > > > -               if (!strcmp(tname, name))
+> > > > -                       return i;
+> > > > +       if (start) {
+> > > > +               low =3D mid;
+> > > > +               while (low > low_start) {
+> > > > +                       t =3D btf_type_by_id(btf, low-1);
+> > > > +                       name_buf =3D btf_name_by_offset(btf, t->nam=
+e_off);
+> > > > +                       if (strcmp(name, name_buf))
+> > > > +                               break;
+> > > > +                       low--;
+> > > > +               }
+> > > > +               *start =3D low;
+> > > > +       }
+> > > > +
+> > > > +       if (end) {
+> > > > +               high =3D mid;
+> > > > +               while (high < high_end) {
+> > > > +                       t =3D btf_type_by_id(btf, high+1);
+> > > > +                       name_buf =3D btf_name_by_offset(btf, t->nam=
+e_off);
+> > > > +                       if (strcmp(name, name_buf))
+> > > > +                               break;
+> > > > +                       high++;
+> > > > +               }
+> > > > +               *end =3D high;
+> > > >         }
+> > > >
+> > >
+> > > this is an overcomplicated implementation, you need something like
+> > > find_linfo() implementation in kernel/bpf/log.c. Note how much shorte=
+r
+> > > and leaner it is.
+> > >
+> > > I also don't think you need to return `end`. Given you always start
+> > > from start and linearly scan forward, you just need to make sure that
+> > > you never go beyond the BTF type array, for which you can use
+> > > btf_type_cnt(). So no need for doing this linear scan twice.
+> >
+> > Thank you, but the situation here is different. When
+> > the btf file is sorted, the btf_types with a name are
+> > placed at the beginning of the file, while those without
+> > a name are placed at the end. Additionally, if there
+> > are multiple btf_types with the same name in a btf file,
+> > they will have different kinds, and these btf_types with
+> > the same name will be grouped together. For example, in
+> > the following case:
+> >
+> > ...
+> > [13561] FUNC 'bp_constraints_unlock' type_id=3D105264 linkage=3Dstatic
+> > [13562] STRUCT 'bp_cpuinfo' size=3D20 vlen=3D2
+> >         'cpu_pinned' type_id=3D66670 bits_offset=3D0
+> >         'tsk_pinned' type_id=3D13568 bits_offset=3D32
+> > [13563] VAR 'bp_cpuinfo' type_id=3D103076, linkage=3Dstatic
+> > [13564] FUNC 'bp_init_aperfmperf' type_id=3D70013 linkage=3Dstatic
+> > [13565] STRUCT 'bp_patching_desc' size=3D16 vlen=3D3
+> > ...
+> >
+> > Both 13562 and 13563 have the name 'bp_cpuinfo', but their
+> > kinds are different. Therefore, when using the btf_find_by_name_bsearch
+> > function to find the btf_type named 'bp_cpuinfo', the start
+> > parameter will be set to 11562 and the end parameter will
+> > be set to 11563. We can then check their kind to obtain the
+> > correct btf_type.
+>
+> I understand that, thank you. find_linfo() shows an example of binary
+> search to find the rightmost item that's <=3D than requested search key.
+> You have a similar problem here. You need to find the leftmost item
+> that's equal to the search key.
 
-> From: Yangtao Li <frank@allwinnertech.com>
-> 
-> The Allwinner A100 has two HCI USB controllers, a OTG controller and a
-> USB PHY. The PHY is compatible with that used by the D1, while the OTG
-> controller is compatible with the A33. Add nodes for these to the base
-> DTSI.
-> 
-> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
-> [masterr3c0rd@epochal.quest: fallback to a33-musb and d1-usb-phy, edited message]
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+Thank you, I will modify it.
 
-Thanks for the changes, looks good to me now.
+>
+> Both of these problems are solved by binary search without any extra
+> post-processing and linear scans.
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Thank you, I get it.
 
-Cheers,
-Andre
+>
+> >
+> > >
+> > > > +       return mid;
+> > > > +}
+> > > > +
+> > > > +s32 btf_find_by_name_kind(const struct btf *btf, const char *name,=
+ u8 kind)
+> > > > +{
+> > > > +       const struct btf_type *t;
+> > > > +       const char *tname;
+> > > > +       int start, end;
+> > > > +       s32 id, total;
+> > > > +
+> > > > +       do {
+> > > > +               if (btf->nr_types_sorted) {
+> > > > +                       /* binary search */
+> > > > +                       id =3D btf_find_by_name_bsearch(btf, name, =
+&start, &end);
+> > > > +                       if (id > 0) {
+> > > > +                               while (start <=3D end) {
+> > > > +                                       t =3D btf_type_by_id(btf, s=
+tart);
+> > > > +                                       if (BTF_INFO_KIND(t->info) =
+=3D=3D kind)
+> > > > +                                               return start;
+> > > > +                                       start++;
+> > > > +                               }
+> > > > +                       }
+> > > > +               } else {
+> > > > +                       /* linear search */
+> > > > +                       total =3D btf_type_cnt(btf);
+> > > > +                       for (id =3D btf->base_btf ? btf->start_id :=
+ 1;
+> > > > +                               id < total; id++) {
+> > > > +                               t =3D btf_type_by_id(btf, id);
+> > > > +                               if (BTF_INFO_KIND(t->info) !=3D kin=
+d)
+> > > > +                                       continue;
+> > > > +
+> > > > +                               tname =3D btf_name_by_offset(btf, t=
+->name_off);
+> > > > +                               if (!strcmp(tname, name))
+> > > > +                                       return id;
+> > > > +                       }
+> > > > +               }
+> > > > +               btf =3D btf->base_btf;
+> > > > +       } while (btf);
+> > > > +
+> > > >         return -ENOENT;
+> > > >  }
+> > > >
+> > > > @@ -6141,6 +6221,53 @@ int get_kern_ctx_btf_id(struct bpf_verifier_=
+log *log, enum bpf_prog_type prog_ty
+> > > >         return kctx_type_id;
+> > > >  }
+> > > >
+> > > > +static int btf_check_sort(struct btf *btf, int start_id)
+> > > > +{
+> > > > +       int i, n, nr_names =3D 0;
+> > > > +
+> > > > +       n =3D btf_nr_types(btf);
+> > > > +       for (i =3D start_id; i < n; i++) {
+> > > > +               const struct btf_type *t;
+> > > > +               const char *name;
+> > > > +
+> > > > +               t =3D btf_type_by_id(btf, i);
+> > > > +               if (!t)
+> > > > +                       return -EINVAL;
+> > > > +
+> > > > +               name =3D btf_str_by_offset(btf, t->name_off);
+> > > > +               if (!str_is_empty(name))
+> > > > +                       nr_names++;
+> > > > +       }
+> > > > +
+> > >
+> > > this loop makes zero sense to me, what are you trying to achieve with
+> > > it and why?
+> >
+> > As previously mentioned, if the btf file is sorted, the
+> > btf_type with a name will be placed at the beginning of
+> > the file in ascending order, while those without a name
+> > will be placed at the end. Therefore, we can verify if
+> > the btf file is sorted by following these steps:
+> >
+> > Step 1: Count the number of btf_types with a name and
+> >              store it as nr_names.
+> >
+> > Step 2: Inspect the first nr_names btf_types. If any of
+> >             the following cases occur, it indicates that the
+> >             btf file is not sorted:
+> >            1. A btf_type without a name is encountered.
+> >            2. The name of the current btf_type is greater  than
+> >                the name of the next btf_type.
+>
+> This is convoluted and unnecessary. Just go over all items and
+> validate that each pair maintains the sorting criteria.
 
-> ---
-> Changes in V2:
->  - Fix sizes of reg definitions in usbphy
->  - Move #phy-cells to the end of usbphy
->  - Order nodes by MMIO address
->  - Remove dr_mode
-> 
->  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi | 91 +++++++++++++++++++
->  1 file changed, 91 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> index adb11b26045f..f6162a107641 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> @@ -302,6 +302,97 @@ ths: thermal-sensor@5070400 {
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> +		usb_otg: usb@5100000 {
-> +			compatible = "allwinner,sun50i-a100-musb",
-> +				     "allwinner,sun8i-a33-musb";
-> +			reg = <0x05100000 0x0400>;
-> +			clocks = <&ccu CLK_BUS_OTG>;
-> +			resets = <&ccu RST_BUS_OTG>;
-> +			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "mc";
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			extcon = <&usbphy 0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		usbphy: phy@5100400 {
-> +			compatible = "allwinner,sun50i-a100-usb-phy",
-> +				     "allwinner,sun20i-d1-usb-phy";
-> +			reg = <0x05100400 0x100>,
-> +			      <0x05101800 0x100>,
-> +			      <0x05200800 0x100>;
-> +			reg-names = "phy_ctrl",
-> +				    "pmu0",
-> +				    "pmu1";
-> +			clocks = <&ccu CLK_USB_PHY0>,
-> +				 <&ccu CLK_USB_PHY1>;
-> +			clock-names = "usb0_phy",
-> +				      "usb1_phy";
-> +			resets = <&ccu RST_USB_PHY0>,
-> +				 <&ccu RST_USB_PHY1>;
-> +			reset-names = "usb0_reset",
-> +				      "usb1_reset";
-> +			status = "disabled";
-> +			#phy-cells = <1>;
-> +		};
-> +
-> +		ehci0: usb@5101000 {
-> +			compatible = "allwinner,sun50i-a100-ehci",
-> +				     "generic-ehci";
-> +			reg = <0x05101000 0x100>;
-> +			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI0>,
-> +				 <&ccu CLK_BUS_EHCI0>,
-> +				 <&ccu CLK_USB_OHCI0>;
-> +			resets = <&ccu RST_BUS_OHCI0>,
-> +				 <&ccu RST_BUS_EHCI0>;
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
-> +		ohci0: usb@5101400 {
-> +			compatible = "allwinner,sun50i-a100-ohci",
-> +				     "generic-ohci";
-> +			reg = <0x05101400 0x100>;
-> +			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI0>,
-> +				 <&ccu CLK_USB_OHCI0>;
-> +			resets = <&ccu RST_BUS_OHCI0>;
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
-> +		ehci1: usb@5200000 {
-> +			compatible = "allwinner,sun50i-a100-ehci",
-> +				     "generic-ehci";
-> +			reg = <0x05200000 0x100>;
-> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI1>,
-> +				 <&ccu CLK_BUS_EHCI1>,
-> +				 <&ccu CLK_USB_OHCI1>;
-> +			resets = <&ccu RST_BUS_OHCI1>,
-> +				 <&ccu RST_BUS_EHCI1>;
-> +			phys = <&usbphy 1>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
-> +		ohci1: usb@5200400 {
-> +			compatible = "allwinner,sun50i-a100-ohci",
-> +				     "generic-ohci";
-> +			reg = <0x05200400 0x100>;
-> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI1>,
-> +				 <&ccu CLK_USB_OHCI1>;
-> +			resets = <&ccu RST_BUS_OHCI1>;
-> +			phys = <&usbphy 1>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
->  		r_ccu: clock@7010000 {
->  			compatible = "allwinner,sun50i-a100-r-ccu";
->  			reg = <0x07010000 0x300>;
+Thank you, I will modify it.
 
+>
+> >
+> > >
+> > > > +       for (i =3D 0; i < nr_names - 1; i++) {
+> > >
+> > > just start from start_id + 1, all the way to n, and check that sortin=
+g
+> > > invariant holds for all items
+> > >
+> > > > +               const struct btf_type *t1, *t2;
+> > > > +               const char *s1, *s2;
+> > > > +
+> > > > +               t1 =3D btf_type_by_id(btf, start_id + i);
+> > > > +               if (!t1)
+> > > > +                       return -EINVAL;
+> > > > +
+> > > > +               s1 =3D btf_str_by_offset(btf, t1->name_off);
+> > > > +               if (str_is_empty(s1))
+> > > > +                       goto out;
+> > > > +
+> > > > +               t2 =3D btf_type_by_id(btf, start_id + i + 1);
+> > > > +               if (!t2)
+> > > > +                       return -EINVAL;
+> > > > +
+> > > > +               s2 =3D btf_str_by_offset(btf, t2->name_off);
+> > > > +               if (str_is_empty(s2))
+> > > > +                       goto out;
+> > > > +
+> > > > +               if (strcmp(s1, s2) > 0)
+> > > > +                       goto out;
+> > > > +       }
+> > > > +
+> > > > +       btf->nr_types_sorted =3D nr_names;
+> > > > +out:
+> > > > +       return 0;
+> > > > +}
+> > >
+> > > [...]
 
