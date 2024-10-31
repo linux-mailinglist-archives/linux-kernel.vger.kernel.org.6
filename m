@@ -1,301 +1,89 @@
-Return-Path: <linux-kernel+bounces-390947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B41E9B805A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:40:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D0F9B8061
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:41:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7467CB22CC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:40:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E70B22642
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E921C1AD0;
-	Thu, 31 Oct 2024 16:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="c8Huos25"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2082.outbound.protection.outlook.com [40.107.22.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F111BCA1B;
+	Thu, 31 Oct 2024 16:41:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD6C1BF7F9;
-	Thu, 31 Oct 2024 16:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730392782; cv=fail; b=lgMH+KbxYprPExXFkcO0ebzmvWC++5JlJL+Og8VgAyWXxIjW+cFV0Tv9cwGQ8I9zTQaJbbH6vK8UKcOcN08DNJwkKBY+1+cP5+LcrePGq0/XxqC5CJMa1ohInlLKrgdc+wOrOj/Zm4QBm4hZ5Yo6RLuH/aFrlup9PRZg1LM9c/A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730392782; c=relaxed/simple;
-	bh=EVM4QozZ8LAQPxDqaucvv0zaVmYWYa5QxUnjFDmBVC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UIq+MtmdwyXLllIoqNg3s1viuzZjMgDdJMnNA/0sB/KbWIGYBKxRvoMUR9a7CMtgETJJtwwAWgnYeHT6TcakTIbCMPhzJWj4fE8qwlGAYHrkBjxn89p3Id4u5QF5YREd0FeZQY2fxAP+1J3vk1xqo1elfXTnPhgweypISl4SeJI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=c8Huos25; arc=fail smtp.client-ip=40.107.22.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=icAHdMpixzt5wLmw9iFyXVbLGmsOwMOdwExXVHVQW7A10L2xno3SVHLzXAc/AZ5AKfikLNtjr0iArBGHu6OR7+j8TMet2/b8lMWmS893c/1zxn0IsNTF0U9IHit93rGFSKdEJcOksuD5EBb4LgWfNs5wdK9QTlvV8MMGubMSdssN5YBm/FcrMlH0J5gDNkC3inOTuJmhVjJFF4fFaYtyvKspLLGb5xykZRWcSMF1BuoOkwZsirHZKOIsaGThwja5sbsyrk/DXYJPSVfdQN01REYFph1xS9mvcF7PEvh1h5sZBweZhlmSVXTs2Z1x7tsMcEM04NF3OZWodAQmfRLYJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KIrVvLsHj3eP9WO3Jt3d6wo/IY+hmmkP/dlATpGk3OA=;
- b=H3w59wKBu6WHumFyMWi6Smt8auXq9RsNVKbMudvh2C1EkjflshqOTIUCRZT5hBTQyIPD/SAtlpfzll2pRR8fGdFV30dJJwNZ0NU3Fg4hUGu8c7t2ZcIsCx7G/T2C7kpW2cspIv3pG+zFOO1bNrzk5czHyLTVRypqz+sbcF0jis9i2YvHPjRnEsTJ268nVocwP2O+r8WlGtIjlKd8OPPtHZMc+rND+JtiXCNlUjnXjwv6Zh1FXvJrzlfOUewpnb8umMYa35xqCFU1v10Cogzt/y9fgcnIa5UEt/vy3u2xv4rpfOy5KAMhTv55mWdqAdcNwUkGRSJIPSUu6svGQF+rbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KIrVvLsHj3eP9WO3Jt3d6wo/IY+hmmkP/dlATpGk3OA=;
- b=c8Huos25BZmZx4fYg8gwl5ccnQu+2fePKtE2rJU28hlqYjR5+tHvFzBaawktSDrtK5+nDophfIYqkxFOCQuhYwFSnYC2h31QTAyF0MWjgbadeM7f2aLv3KDrKsxfBIv9aGvNlqUnpFxqAez5IGf693Jj3i53pUPreIOQ2Hp4lQvrNxf3xsSNpz4BzkHrYiH1O8GuhEq55FRDv+W1CC1FmdB+BM6AhyA3UckxXmKdPAnZd5JsUXcd5yQrxgWJZPdQw5yoBh7jy8UuDPhfHJTFlqTjGCnEfVfTRqthftK3if0sxvUct3clf1xv+8ixuSE5jE5vm1b3DrkZX3dZEDhW+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB9487.eurprd04.prod.outlook.com (2603:10a6:102:27c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Thu, 31 Oct
- 2024 16:39:35 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
- 16:39:35 +0000
-Date: Thu, 31 Oct 2024 12:39:26 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
- SoCs
-Message-ID: <ZyOyvgw0qZ4YKwTi@lizhi-Precision-Tower-5810>
-References: <20241031083557.2156751-1-ciprianmarian.costea@oss.nxp.com>
- <20241031083557.2156751-2-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031083557.2156751-2-ciprianmarian.costea@oss.nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0334.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FFC1BBBD8
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730392865; cv=none; b=JZqezJiApCLRsVRZ0Cblz3jxiKrmrzaY5jSRIdVgIMl36kPPphXxMqIgLqZvM9xJsmwxofE+jI7RsYlZ8eSYt2xVpB6c0fUGrklmsv1y7Xm1dZW3L/pF53ZHe+ftHcelb2Lq1DkCnOVokMDBh+Dx3F5xlqHU/o7TSFZhduv4SHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730392865; c=relaxed/simple;
+	bh=+T8lN1gLzbQbrwa76oDCjzsFDN/dUBtdXM0uxc+LlPs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ROZTGbhtvgZTHAe3ckzQgZKb0HM6LqmuRVhrPA8EM6y6CinwB5/BPuZpk/KngVefv+7nq3MyM8UmQXiFi/hY9oiPcjzDrpvMi9H6RK3vaaSuEre8bqYWWt8U242VL4C/vSJpQ/XnqjfR3Bs/c0oRRfBxCTGifCeLORAjfgL1EK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so9153455ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:41:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730392863; x=1730997663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S5kf59B9cpnpRcxM0Wk+olT2viW8x/tZqSOwO5xKyJ8=;
+        b=tEx2KwGbFxZ+26tNjLwG+0h2oKd/gHu4uDSMcvSWczdyLwloyKC6KVcfz01Z3swPMx
+         72h/dcSsqBKZvVFE12QaDGtWEVbe4lPLvUWfD/yT/UmjTKIhJybg7f5b5IMG1zcWIepw
+         rLmLNQyYHWLO+vTl80Jwd3R6S8xmqovF/03ww/ibQ9I4WGygi57/veU7MZP8MyNKCve+
+         4t1FZ4a5emEKJrlBDckYVW8NCO5ssdSXm9PYX4f2kCnClA43nXfv9IOnTna7PVNkZJa2
+         0wtvt4A1yuu+Il0RAVuTn2hiFhRDd8BkVpHFfc0DMoNG+sYZkTc2RUJnmjhBWc86IV0d
+         +Llw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvAmTEZRevFRD+9mXYmmzJn7C87HJ3aEjHQ4miuryJeKMDepl5X3OCVK7N+tDtGye68CCW8s7cu+tXw60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpKrNLbtaEKzTCwqgq7ri7d2h9G4WoHyPznsdOzaG9FvfmeISX
+	AabzlJddTx2V17Y2Av4MGv83krsAY77Wkd+gcy36gOYEBV2DMnLzs9kOvvOF5KLQZQr6brwQiq5
+	3HLwKwb5JR1Xn5kUdK8akb7HHlK8u2Ql/fY+Fv882kT8ZTZqr36nBnhE=
+X-Google-Smtp-Source: AGHT+IF7vDX78RdpCp96aKe/0IDWhbKJMsM8GMsk5dPvk8HvTRPiy3lCOgNmo7/5JinNDCI88x1azOXCsGSpofcokwYdSk67hVPQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB9487:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23adf39d-8884-4fad-2487-08dcf9ca9a5a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TyYuSpsyGKIl046IFKQsvZwVLv/RAYeB7yKC1maR8/J0TOMDX9Ic/eQDcTT8?=
- =?us-ascii?Q?YAUUlPWJKvlhejch7acJHtT7fymG6A/her0ZnBaApKBZZy1+pe9nfWJAHpMD?=
- =?us-ascii?Q?cPAzIogOjDxjqbj+hqHYjuqjFQd8ZuRJpj67jtJrbXqhPSl4VPWNVfXekIAr?=
- =?us-ascii?Q?TneeSUdUjMYKrGloGrF5rOeqCJyOgb2I/l7nJgHOmlDIZU7XCa7Z41QyIa3U?=
- =?us-ascii?Q?q477zd4LyJQ4Y/RC04mC2J9DaXyGYQXvvetAKSR0EH5jtMNYw6Ow/353G55k?=
- =?us-ascii?Q?TzeU24kUwdvoxQKW/fa9afCi6gbId8uHaqMubB+yv4i3mwrqKnUR09bYEvbi?=
- =?us-ascii?Q?6aiS9oUcsFmBoKFyzo9QSRstFC557c+FD1YC3AznHLIkeCWSVos5KFipoQhM?=
- =?us-ascii?Q?RteD9GrBDLGyzeAlyaHeCJ6t53uilBTN3UFmK9mGWog5QXWcy2p2368lPquc?=
- =?us-ascii?Q?dn2jZluBaCqqdON5To5fjBUXtVvogWC57wNoapCPdtSLGNJMb3EqIz/P53P7?=
- =?us-ascii?Q?9cVbnwBZdb9kqjtgU64bXewfP6meq/Jcnbzon2fWkTfyJx60hSZLnogNSfSE?=
- =?us-ascii?Q?urG3HVVzrlTsylYxPmHDnOOyMF0a5veblzSJxuQTwpNc9YFkRvRzV9MkMyMr?=
- =?us-ascii?Q?iQLd4de6wcMtB1/Q3DaOlUBt59cSTgS6Kt02IIiwyiObYHJqNK3GRJVAr3GX?=
- =?us-ascii?Q?GOVtPhKt5bjheOFKKv/DtG8ZfQofsYa9JvmV7Bo0FLaFUJu6tdEJ8bQvABBz?=
- =?us-ascii?Q?KLpMTSVyx1zd9kE1vejKZhKhOVgiSVOTDZDYJx6KnWrY/5Buj+9wTVhRqo6L?=
- =?us-ascii?Q?U4ljLRr4ZlX0NcGaF5hov4257sOz9UDtvTymxYhx4uiI+MUoYU7g/bIpcJFf?=
- =?us-ascii?Q?LDZS5TBYyRflux3zw4RU2vuBiGJOIwhWNbPOqMFGkgDBy3LFLtKpalu+b63V?=
- =?us-ascii?Q?DI/tuT0KHfITKbcpg3flu2iQenn4Qwqx4gHtnn18eZtBzICOOgQtvh0IxJPK?=
- =?us-ascii?Q?ARzKz7Nmrx4NLeSZweOqCVwuun/0ZL51YZT3Bsj7L1PfwHLgfUC4viW1q9Uy?=
- =?us-ascii?Q?lYnqHJUlFQZuUYczLo+6bZf+MsekBJaJpsHPUYOqvDde8cSoGGYabe8La9fC?=
- =?us-ascii?Q?T023N2VMm96ApCsWMjMgEGcKc3ptd1wm/LQxdb5p/MVcHj23z8hNjulNmC9P?=
- =?us-ascii?Q?ooBBjdxYdORr7qJP0MK0gfxDAwMwC9sE/tbB7dFtaqvxg6yNpJXlBS3vtDZb?=
- =?us-ascii?Q?z7qsr+0z06yxbwcnB3MfJFVPRpA36LxUV6Lha/YyE0fc9btLvIxNWoh2Ia15?=
- =?us-ascii?Q?eC7ioZ2iT3xPAOKRGZ89gElW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o5Ebiap6YRnK+ar+f3WdmjAn3/DColZzijQEZBJrabjZJR6VghRpdpyszkTp?=
- =?us-ascii?Q?AmMVty2QXRp8Q4A02MGnrQDm6QHvnryNW/iqRfRCNySVyQLtxu4KIegXBE93?=
- =?us-ascii?Q?FOnV04vsEaE7N4U64TGyBq7UahwQ8PGcxIecyETt9mpfUoXSV/zPIK+H21dz?=
- =?us-ascii?Q?V/Er5tU54aJuGp/+wfTPc5iZfjoqk6XBp6FNj79c84X2Dd/jhB2leYjXQS+9?=
- =?us-ascii?Q?YSvCnED/VoeyY6WvhuiJ35HbfPQOxckaXmwImEDhWVGUvhoRZ2kMV0yMlhrq?=
- =?us-ascii?Q?r6+rPbmm9F7U1gYecbJ7IuIFyaQPFRSKdslGH8CanF+ywHWT8lQibzUEFwg4?=
- =?us-ascii?Q?qgzSbeH2TuzolxXMyN02+3Umkym/1VVeE7ejRujAN5qOwp7SHo1KeLJlVhU4?=
- =?us-ascii?Q?5G6XoF8IH4hl7KuLKB2FIvTm+vfhYgccvEuLDL9YyABiwyR3ml7auxDAqUrp?=
- =?us-ascii?Q?5EPUQ4MKApIeki8eaIh55pKTPm5bvozQZsDs4r3LLi+TeN+KP97fCxW9h/3s?=
- =?us-ascii?Q?jflahVjU5t4bP/ezJSe0b1xiBEMK4trLJJaPs5NWW5Vj6pfRm/ZWrNJAwCPp?=
- =?us-ascii?Q?l5KvY7Ur1bU/XaycCllWZRJxE74cRN95711abAk5SFaYoOuEVzHpLCp7bDvX?=
- =?us-ascii?Q?xqqb8T0q2tX60bKIsgo1Ut+xEvbk+7zyvddvR51g0R87uO9py5qSJMjWguXF?=
- =?us-ascii?Q?Mr8KLT3ve37l/w3mR54PnsotsLDDT+g1EBLj+Hk0dSlK/i/8f5t3BM73v2yR?=
- =?us-ascii?Q?vyh4sI2tPJdjkjNViW7rRz8wIu9wPBMXo3lHN7xihfin6Bbo52l5fMIood5d?=
- =?us-ascii?Q?I4vPgie7te+d75UMBYeW3w/nXby2Q2q6396xlXnxtHYrTZdiEHLGnHLooryd?=
- =?us-ascii?Q?pCKa+AbenE+HAxBR2zBmr0u4JxXIbrRXsgBPeYZ++WHOj+ZCXQufbIVSGitU?=
- =?us-ascii?Q?WrP8/xRpGNQVfuSlN3g6ydnGRrRCd+Jz/VVQFJCQpZzNFjvfirOoAmpIC9kb?=
- =?us-ascii?Q?1tpvnH/z2ifUWRYQptI1xNm6C/lfgVnz0SMY8dieENO/6BKVjufxkcLhf5hx?=
- =?us-ascii?Q?gcwd1r63hJHfvfLZXdgywDXrBLPMUu779fwkxzB3rPNXI8T0inBF9H+b0UrP?=
- =?us-ascii?Q?ciC1Zorp5X/xEEdOTDucaYhBbEYZoA2QfDzkdW1yWJzK7TaZKwtksJeXXAbN?=
- =?us-ascii?Q?j9yw9SLjfG/0K0PQFXCTHOSLipb/CCgFuzocojQjytm2v77rvWc9AIwfKfkU?=
- =?us-ascii?Q?3onFdfKO0L10r3OsN/tcGumsnslIIErWu8A2ZQPf0czXugEdIFbgE/xkxWU5?=
- =?us-ascii?Q?q1S8ptz1sWPjEGrH2gjCVG1veWrjBlOKmV/X52nwIs5l2hRf6OEP4AL0kOy6?=
- =?us-ascii?Q?rLyOvx5Wm681IMZAq9yhv6eMrIvZlqMMsKwrPkq0OsEzlLLcccyzaVLFT0Kw?=
- =?us-ascii?Q?IiFOOdknjrs+ymBCyUABiuyIuHp/Uo0h69ENwEMRwDDsPFyXd7/x7p66gcw+?=
- =?us-ascii?Q?s5wgtgq6RbooBt0Qgs0k7DLb2qUWC07wJOUp5A1SKitegRC+pM/HiEQ7Nncr?=
- =?us-ascii?Q?84AFMuUr8OEN2rSMqIiNqiOpaIvMmhwZAs7OXbDa?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23adf39d-8884-4fad-2487-08dcf9ca9a5a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 16:39:34.9601
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g5wjKxNMCnV6mxjHmyBQTZDEgjhLDU4t/xtTucXkeIS/JfaJyJi/3fD2b+USULLgY8bmPow9zrXfTBeVAMvNyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9487
+X-Received: by 2002:a05:6e02:160b:b0:3a4:d94f:5b53 with SMTP id
+ e9e14a558f8ab-3a6b0384ea3mr6044505ab.19.1730392862708; Thu, 31 Oct 2024
+ 09:41:02 -0700 (PDT)
+Date: Thu, 31 Oct 2024 09:41:02 -0700
+In-Reply-To: <c6b63e97-6839-4beb-bb94-e5914837a041@lucifer.local>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6723b31e.050a0220.35b515.0165.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [input?] [usb?] INFO: rcu detected stall in brk (2)
+From: syzbot <syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, jannh@google.com, liam.howlett@oracle.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-usb@vger.kernel.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 31, 2024 at 10:35:54AM +0200, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->
-> This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
->
-> Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
+Hello,
 
-next time you can cc imx@lists.linux.dev
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
->  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 99 +++++++++++++++++++
->  1 file changed, 99 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> new file mode 100644
-> index 000000000000..3694af883dc7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP S32G2/S32G3 Real Time Clock (RTC)
-> +
-> +maintainers:
-> +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nxp,s32g2-rtc
-> +      - items:
-> +          - const: nxp,s32g3-rtc
-> +          - const: nxp,s32g2-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
+Reported-by: syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com
+Tested-by: syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com
 
-Does your RTC is clock provider? why need #clock-cells
+Tested on:
 
-> +
-> +  clocks:
-> +    items:
-> +      - description: ipg clock drives the access to the
-> +          RTC iomapped registers
-> +
-> +  clock-names:
-> +    items:
-> +      - const: ipg
-> +
-> +  assigned-clocks:
-> +    minItems: 1
-> +    items:
-> +      - description: Runtime clock source. It must be a clock
-> +            source for the RTC module. It will be disabled by hardware
-> +            during Standby/Suspend.
-> +      - description: Standby/Suspend clock source. It is optional
-> +            and can be used in case the RTC will continue ticking during
-> +            platform/system suspend. RTC hardware module contains a
-> +            hardware mux for clock source selection.
-> +
-> +  assigned-clock-parents:
-> +    description: List of phandles to each parent clock.
-> +
-> +  assigned-clock-rates:
-> +    description: List of frequencies for RTC clock sources.
-> +            RTC module contains 2 hardware divisors which can be
-> +            enabled or not. Hence, available frequencies are the following
-> +            parent_freq, parent_freq / 512, parent_freq / 32 or
-> +            parent_freq / (512 * 32)
+commit:         cffcc47b mm/mlock: set the correct prev on failure
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/ mm-hotfixes-unstable
+console output: https://syzkaller.appspot.com/x/log.txt?x=1304a630580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6648774f7c39d413
+dashboard link: https://syzkaller.appspot.com/bug?extid=7402e6c8042635c93ead
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Needn't assigned-*
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    rtc0: rtc@40060000 {
-
-needn't label
-
-> +        compatible = "nxp,s32g3-rtc",
-> +                   "nxp,s32g2-rtc";
-> +        reg = <0x40060000 0x1000>;
-> +        interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> +        #clock-cells = <1>;
-> +        clocks = <&clks 54>;
-> +        clock-names = "ipg";
-> +        /*
-> +         * Configuration of default parent clocks.
-> +         * 'assigned-clocks' 0-3 IDs are Runtime clock sources
-> +         * 4-7 IDs are Suspend/Standby clock sources.
-> +         */
-> +        assigned-clocks = <&rtc0 2>, <&rtc0 4>;
-> +        assigned-clock-parents = <&clks 56>, <&clks 55>;
-> +        /*
-> +         * Clock frequency can be divided by value
-> +         * 512 or 32 (or both) via hardware divisors.
-> +         * Below configuration:
-> +         * Runtime clock source: FIRC (51 MHz) / 512 (DIV512)
-> +         * Suspend/Standby clock source: SIRC (32 KHz)
-> +         */
-> +        assigned-clock-rates = <99609>, <32000>;
-> +    };
-> --
-> 2.45.2
->
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
