@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-389799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2768F9B717C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:09:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2968C9B7180
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:10:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF96FB21696
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B1B1C21051
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602A13D994;
-	Thu, 31 Oct 2024 01:08:56 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295692110E;
-	Thu, 31 Oct 2024 01:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB7943AD9;
+	Thu, 31 Oct 2024 01:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EpvHI4EF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4221D186A;
+	Thu, 31 Oct 2024 01:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730336936; cv=none; b=DPR4OPcgSgvBmIaDqkiOczlOAUc6ySwAs1b/gUUfm7I6tCwNT0RR+hV3Dgdu+wLihNmVpAJ5n/WTcSNNbTvHeSWzEVIw/mrFGo1OBem2JteTmIOUvJ0Z+iNMXe3jcOXNciy8rvHnE5Gi7pHcR5Pqp6lXhIYm7Uf/edZP3NgVNkg=
+	t=1730337001; cv=none; b=hTwG7CpIafAz2WVWBkylT0oUzRZhVNypodP3I06JbF1La1qjEp0wLZTWrvN11626euHE9QwZRaOw7qb9QG1FkGPqhscZk8cohM6JtSA5SO6VxDIDx3MU+KIYA5Jv3Fqgpt/HCWml3zVq2EVhMM/nY2+EsCP6ObtacTn1Kg7N/0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730336936; c=relaxed/simple;
-	bh=9Cebry7tKliR9PhYmpGR8QNY5H718CjFL9eBYVRfdK8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UIOuU2exCWUvBhqz5DDU04njeaLlRvRwzix58C1qLWVKD/EgpB8RSWRT5cQ9Hf9b89ERXw9N4bE1jg0jRpQoB275AJbKQq8Vvf7hKL5TWuN+uvChUOZ64UBJKn3ncw657kUn3nTwLEV3G43UDuN6HZ2ESjr0BjDQEg1fLCGOkXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxMK+a2CJn4d4fAA--.41853S3;
-	Thu, 31 Oct 2024 09:08:42 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMAxreCX2CJn3b8rAA--.6898S3;
-	Thu, 31 Oct 2024 09:08:41 +0800 (CST)
-Subject: Re: [PATCH v2] mm: define general function pXd_init()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-mm@kvack.org, kasan-dev@googlegroups.com,
- Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- WANG Xuerui <kernel@xen0n.name>
-References: <20241030063905.2434824-1-maobibo@loongson.cn>
- <20241030164123.ff63a1c0e7666ad1a4f8944e@linux-foundation.org>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <836c4d86-3b93-06fc-8ac1-6f636a244753@loongson.cn>
-Date: Thu, 31 Oct 2024 09:08:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1730337001; c=relaxed/simple;
+	bh=yYhWaamNjlqFFpqW425S0NndidrwKuVwYYQUsXnnGNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FhRPNoqwBBoX1gatW6PhyfWL/nBEw1kKT14u8ydPoAzK+eDNZDkxqGK3U3Z+DoUzPIynkZmf12p0HLhOKIZoIdHF2Bt87YLB0sTk359tQ1p8UBFy3cctZRLF9h5tubOdulQ6iCi7FESOVdyisgQfaD0xKJMwP+26PlT3ty1sd+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EpvHI4EF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDqCSK032239;
+	Thu, 31 Oct 2024 01:09:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ikH4uFBlJjlet4b79cIIFpIAty3aXL85MXeU+eUJ9DI=; b=EpvHI4EFQjtGOEMi
+	dUdajScTt7ttuYYMQbUO6NltnaoW0Wb7SFeM4oTdr66aHcW2LujJErOJ29cCFrMn
+	BgLakobwN8d/rETQhB9fgU0UPx8GrLrOX20HRAw+hfT7VCN0VIoVkF+7wBK5Hfaw
+	2AN17wJiZ844oJX+u8wQAwBRc6p6eftvytF6vcCypPU7qVfVsxVl4M1TmEwl4f2J
+	I/FJ3TJrSIa/KbGbPJnZ+YlA+HTV+VvuBsEuSw3KrkQLgaSYIQNbj2Ed4k8Buxr4
+	bWQyZLZkX/AoBAYVFH+UO5gjXY+XhpPMn25T8WbGh/WdkJxnJ2JVI5YMCzAdRjGQ
+	qY5vTw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kp2g9jwd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 01:09:54 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49V19rlp029422
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 01:09:53 GMT
+Received: from [10.216.12.123] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 18:09:48 -0700
+Message-ID: <d25ee628-7a05-4d53-ad4a-e4feddfe6591@quicinc.com>
+Date: Thu, 31 Oct 2024 06:39:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241030164123.ff63a1c0e7666ad1a4f8944e@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] clk: qcom: gcc: Add support for QCS615 GCC clocks
+To: Taniya Das <quic_tdas@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com>
+ <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxreCX2CJn3b8rAA--.6898S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrKry7ZrykuF13CF18Cry5KFX_yoWfXFg_W3
-	Z7Zws5u3ykGay2gFWqkry5Cr4UGayrJF4vyw1UWr92k3s3tr45Jws0gFyfXrs09Fs2vr9x
-	uayvvan8Zrn8WosvyTuYvTs0mTUanT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbDkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
-	JVW8Jr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: v6NDmE9WzrAc2MEA6LAr8yETYietvM_Z
+X-Proofpoint-GUID: v6NDmE9WzrAc2MEA6LAr8yETYietvM_Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxscore=0 priorityscore=1501 clxscore=1011 suspectscore=0 impostorscore=0
+ mlxlogscore=939 adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410310008
 
 
 
-On 2024/10/31 上午7:41, Andrew Morton wrote:
-> On Wed, 30 Oct 2024 14:39:05 +0800 Bibo Mao <maobibo@loongson.cn> wrote:
+On 10/22/2024 5:22 PM, Taniya Das wrote:
+> Add the global clock controller support for QCS615 SoC.
 > 
->> --- a/arch/loongarch/include/asm/pgtable.h
->> +++ b/arch/loongarch/include/asm/pgtable.h
->> @@ -267,8 +267,11 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
->>    * Initialize a new pgd / pud / pmd table with invalid pointers.
->>    */
->>   extern void pgd_init(void *addr);
->> +#define pud_init pud_init
->>   extern void pud_init(void *addr);
->> +#define pmd_init pmd_init
->>   extern void pmd_init(void *addr);
->> +#define kernel_pte_init kernel_pte_init
->>   extern void kernel_pte_init(void *addr);
-> 
-> Nitlet: don't we usually put the #define *after* the definition?
-> 
-> void foo(void);
-> #define foo() foo()
-yes, it should be so. Will modify it in next version.
-
-Regards
-Bibo Mao
-> 
-> ?
-> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>   drivers/clk/qcom/Kconfig      |    9 +
+>   drivers/clk/qcom/Makefile     |    1 +
+>   drivers/clk/qcom/gcc-qcs615.c | 3034 +++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 3044 insertions(+)
 > 
 
+Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+
+Thanks,
+Imran
 
