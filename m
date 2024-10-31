@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-390063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8F99B750D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:07:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6BF9B750F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:08:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A1A284752
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797421F2535E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D86148855;
-	Thu, 31 Oct 2024 07:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8E51487FE;
+	Thu, 31 Oct 2024 07:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DAGeQ4hS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NG88voDa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE391487E5;
-	Thu, 31 Oct 2024 07:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D0D1BD9D4;
+	Thu, 31 Oct 2024 07:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730358454; cv=none; b=QndNXy0835HtE0vyJkT1d65GpIV0omkakUEv/8nt/C+eLVxs3IDSwCTpad8gpuFHv52pNfdjdtefktiHXD2vZoIqRWz8fEzkcOSJ0pth1Hzktzba4Q+fzLK6CZ/8dqG5Yk56e0RhqMFmpwOrpQWBXdxqXn5KMxjuExpzps5AuYo=
+	t=1730358527; cv=none; b=LYE2tCz9hKJJbKq1ZjbEDN9nxf9VCBcZ/DqThZmgsHnYf06w9kLO9zONwasT1N3l9cgBDFghKEwbmTg5MbABDAOZDYJ7T+IRfROXxRjRkYX0CidT7MCzkua1o2rOBV6oPxpDQSE/0xiwuHVDbfEs4JJnYRwCx4Wc5+bCCXPXp+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730358454; c=relaxed/simple;
-	bh=cVb6lHhTocSAbTwN2Yn8J5X2Ab/FN0hVW8k6lizXiZw=;
+	s=arc-20240116; t=1730358527; c=relaxed/simple;
+	bh=IDn+0uw1n+KZJJDlQX9EkB0sPuZecc7OMwI8wYbJWX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOyT4IxDsuVMag5dl5RkYn0Lmebnj9UU9D9AV1NnMj5/5KKzDIoMtKOA0B8YM9jrVyfQCSO9aE/BOsH6QugXy/58e11ObXmJygPkX9aR/GO35TsVhMbmD+OKS8qNYSWfNlk2kxFzx2QEUwrIK8EXXbDgKzC1A3TYWT1BRKhe2W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DAGeQ4hS; arc=none smtp.client-ip=192.198.163.8
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/yPSWpI0KvWY54HZOlMr1rJYx77WGez1l1XGcEL2Q+GZJQstbxNeZzGjimchOOXT/9WUO9tgCFUy0TlOXo7nuSTOz9nT1qJYGbUb3GS3J8CB2jU2+yk6BCqpI6yjLTjFxTqr+gXVaaK8heKezI66cCAf4gEoagvXDRvfU/iKaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NG88voDa; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730358453; x=1761894453;
+  t=1730358525; x=1761894525;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=cVb6lHhTocSAbTwN2Yn8J5X2Ab/FN0hVW8k6lizXiZw=;
-  b=DAGeQ4hS3IzK5LhsyJ5p0LrzZM78++sm329sj2jcixc0+q4M+vcqj+2y
-   6l44B4K7IBBvedErB2Vr7aCMS+cHVjbmi8s7qi7fieBIv/lKXTGKkF+ts
-   SK7DjyzoDxMQDvR0FI77Adv/0+9gkThckkelU7/UFSLs7MmAMN9CF4ovM
-   WxQkyJ9rJS1hij5SSohLEO+QSq6iaI6XPWG5dvAcAADjVD5NYBarzCNu5
-   neK9u9IMB7gMFmAoWyN0PTx6YvUJ0KYwCylQhy+pivE7Q9AIIHGBTOcS5
-   H5HxChSoNtpK8uPbNcw41iYAVaAzissfOAEGkWQaALuR92BkbcO2mmqYl
-   A==;
-X-CSE-ConnectionGUID: 3PeBe0UKTYasQOoAtwtUAQ==
-X-CSE-MsgGUID: llpYUJQsSi6pSIUkfpQ+ZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="47558492"
+  bh=IDn+0uw1n+KZJJDlQX9EkB0sPuZecc7OMwI8wYbJWX8=;
+  b=NG88voDawtWDBcgQd+/sz8grvcvsCKmb0vMXGEneuTj5CMIseS7JpDFW
+   3QqRu0kJpwrmlUcvY26VBYF7/4wIJksLzMF2PSHgvlXhlVeDzIJEapBWA
+   fWTR0jSfAYpW1DYidyidItv4/1CFm4uuWcY/+efMHHjWBRTrOY8FeUmUT
+   MuNsAbkJnSc4b9cSKXDLdovrn2u7HSvAu6zdNo2ETMxJPtfgkPNv9nz1c
+   tzbXk5dpNMePrzt7w7ufR9U6P9o+OrrTW6EUe41NtHABEsX4vM6VEHGmo
+   DDVX13nLjsjB8AK35awPtyS8/Si5+iBON1mtCBXCASktZBGm0G+fLRz+l
+   g==;
+X-CSE-ConnectionGUID: KFRpWEAsQLOYiFLqlGpCmg==
+X-CSE-MsgGUID: bfBZ/AknTa+q6/cQ5Qs+Lg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="55480938"
 X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="47558492"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 00:07:32 -0700
-X-CSE-ConnectionGUID: CbGEroigStKku2couUKRjA==
-X-CSE-MsgGUID: TAJg7JVvRcKGaMI/L3UUwg==
+   d="scan'208";a="55480938"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 00:08:45 -0700
+X-CSE-ConnectionGUID: /XCVvICMThKo0AR8Zd9vLw==
+X-CSE-MsgGUID: zFVmURDrSjiv7WVGPLOtAQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="82194911"
+   d="scan'208";a="87327784"
 Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 00:07:30 -0700
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 00:08:43 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t6PHD-00000009KN3-3pNm;
-	Thu, 31 Oct 2024 09:07:27 +0200
-Date: Thu, 31 Oct 2024 09:07:27 +0200
+	id 1t6PIO-00000009KOC-1J0c;
+	Thu, 31 Oct 2024 09:08:40 +0200
+Date: Thu, 31 Oct 2024 09:08:40 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, loongarch@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	WANG Xuerui <kernel@xen0n.name>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1 1/1] cpufreq: loongson: Check for error code from
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH v1 1/1] ACPI: battery: Check for error code from
  devm_mutex_init() call
-Message-ID: <ZyMsr0JrXne-h4r8@smile.fi.intel.com>
-References: <20241030162930.2111255-1-andriy.shevchenko@linux.intel.com>
- <CAAhV-H6bOZLur8Eq2CyFaeQp7R1LwiRqf0ODqnftg6+zAbDoYg@mail.gmail.com>
+Message-ID: <ZyMs-Ao8lUfMqYdB@smile.fi.intel.com>
+References: <20241030162754.2110946-1-andriy.shevchenko@linux.intel.com>
+ <63b16433-9f80-492f-9389-633a9852a223@weissschuh.net>
+ <ZyJtXzIReSHfKkd_@smile.fi.intel.com>
+ <550e1dd5-91fb-44ae-bbd5-a10ce1b73ad4@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H6bOZLur8Eq2CyFaeQp7R1LwiRqf0ODqnftg6+zAbDoYg@mail.gmail.com>
+In-Reply-To: <550e1dd5-91fb-44ae-bbd5-a10ce1b73ad4@weissschuh.net>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Oct 31, 2024 at 09:29:52AM +0800, Huacai Chen wrote:
-> On Thu, Oct 31, 2024 at 12:29â€¯AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Oct 30, 2024 at 12:29:31PM -0600, Thomas Weißschuh wrote:
+> Oct 30, 2024 11:31:21 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
+> > On Wed, Oct 30, 2024 at 10:42:18AM -0600, Thomas Weißschuh wrote:
+> >> Oct 30, 2024 10:28:03 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
 
 ...
 
-> > -       for (i = 0; i < MAX_PACKAGES; i++)
-> > -               devm_mutex_init(&pdev->dev, &cpufreq_mutex[i]);
-> > +       for (i = 0; i < MAX_PACKAGES; i++) {
-> > +               ret = devm_mutex_init(&pdev->dev, &cpufreq_mutex[i]);
-> > +               if (ret)
-> Good catch, but I think "if (ret < 0)" is better? Sometimes a positive
-> return value is legal, even if not in this case.
+> >> wouldn't it make sense to mark devm_mutex_init() as __must_check?
+> >
+> > It's macro, any idea how to do that for the macros?
+> 
+> It should work on __devm_mutex_init().
+> I don't think the expression macro  in between should interfere.
+> Unfortunately I can't test it myself right now.
 
-I disagree on this.
-
-During a tons of reviews I have done in the past this kind of check is
-impediment and always rises the Q "why?" It means that the author hasn't
-fully thought through the code and most likely done something is a cargo cult.
-On top of that, if the callee is changed at some point to actually return
-a positive code(s), the caller most likely has to be at least aware of that
-change. The proposed modification makes this silently compile and hides
-possible important details from the caller(s).
-
-> And it is better to use loongson3 rather than loongson because there
->  is another loongson2 driver.
-
-Thanks, I will change that in v2 (I believe you are talking about Subject?).
-
-> > +                       return ret;
-> > +       }
+Okay, when you have a patch, feel free to Cc me for review.
 
 -- 
 With Best Regards,
