@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-391441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5529B86D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:15:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAA29B86E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9BBCB22121
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C191F229C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0741E32C9;
-	Thu, 31 Oct 2024 23:15:28 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A3D1E283F;
+	Thu, 31 Oct 2024 23:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bn2fG+8+"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2552ECF;
-	Thu, 31 Oct 2024 23:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41CC1CC8B7;
+	Thu, 31 Oct 2024 23:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416528; cv=none; b=jGFFFc22sUFKT/nkPHETjzNXP66D46+SeK5RhdHnkenVafc0VLmceeA7uYhrtfg3Y+gHtvKQnl83LKPIeZfY017yNp+4Y78q4ATV6gNE8LDByQQOM/GGp6Y7JSGylQnMaoGXsqBrn8umckXRSzdggAncOVcArspf2E4vM7xnfNQ=
+	t=1730416658; cv=none; b=DR/A2L1EedYNlL/eei+LkJuN/ifjJuLnbgphEvyfuikPuO13BI8/VOXK7dqxZlK2rgMqWFAWam0o9O5CIp0gwQyJLp/ytRhhfnsIM4kBMuqEhJ6y3FJs/s8dDzz4JGoMP3LL653XirTiIJYLRbGLv9uzGBoNPKwa/WndlMr1diI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416528; c=relaxed/simple;
-	bh=n+ofn+IZQGqt0nNbyFaFX0NIR/Sl6Ip5PYCmvfDHYD8=;
+	s=arc-20240116; t=1730416658; c=relaxed/simple;
+	bh=guKQZ269YoJkWNOHN8n+zpW1sLw/rcZPJRVDIFG7ssQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8GJ7AfMejFpCzndkTOhyhZMpUCnKEsdFjuMSV1RIhOrzwDcPj0qSTj6kDi1xcHkHp4kTTtwLTm+/+7UOyTV7ntrDJG+hP3IQJl+Iw2a7UP2RNmomwCYbpD3fLaJGfsXYNa5IOEcwiaVHDjxub6D8K1TrYoWD67w8783rY0Ew2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=40956 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t6eNh-00HKVf-Ac; Fri, 01 Nov 2024 00:15:15 +0100
-Date: Fri, 1 Nov 2024 00:15:08 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>,
-	linux-security-module@vger.kernel.org, jmorris@namei.org,
-	serge@hallyn.com, keescook@chromium.org,
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org,
-	audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
-Message-ID: <ZyQPfFvPD72rx4ME@calendula>
-References: <20241023212158.18718-3-casey@schaufler-ca.com>
- <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IcRUiFMJJrI9Onyh7j/raIVjbloR6cdzrFBSwhFT34ri8UarMq1XOSP45o9BuMjh9HlXPdH/iH5FyJ6f5QGCBD5ouBYb3eNbFIOKEtPQ0v3ykaMKgtX8HH8QED3sZXVYemQ2B+4LvYMhNebuuNgSVm6mgLF6fNFaaSdAp/b0eXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bn2fG+8+; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 038AE20002;
+	Thu, 31 Oct 2024 23:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730416650;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q2N3NKmH49hjRiqnrVgcxvKSV4bVv8lUQzTG26S2d3Y=;
+	b=bn2fG+8+pXP2OIG5T46ZntHVHumfx4xU2hVMnhQuJ0sX3uPBQlHbiUl8Tr+WHUjbwvYqPP
+	sx+mKsfBDuoCjVzFeyumLm7B+ttWP5/ZzPeTO9f1D3KWdkJ1RehsIGLwytozpfoGFnZZ8j
+	atWicNRrYbfkVY+jje2eoTo3oSby7g4dOgJnU6LBHvhPIm5awdpcj0Gl9c4erLIIj4VrK1
+	gQMvCk0NZ3DZ4+aE98JcxX5+5ws5Pju+ox4zxRNI62UNW/chM/4iKZPCBV+rjfO3M5UVAd
+	4qaWLxpxrLJY/c+Cx95/wPVuJbFtPjnCbrlpcCJwCS1k05muZTYVjEiST3utQg==
+Date: Fri, 1 Nov 2024 00:17:28 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: (subset) [PATCH v5 00/10] Add RTC support for the Renesas RZ/G3S
+ SoC
+Message-ID: <173041660392.2394403.11154347678487291985.b4-ty@bootlin.com>
+References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
-X-Spam-Score: -1.9 (-)
+In-Reply-To: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Paul,
-
-This patch breaks nf_conntrack_netlink, Casey mentioned that he will
-post another series.
-
-On Thu, Oct 31, 2024 at 06:53:38PM -0400, Paul Moore wrote:
-> On Oct 23, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > 
-> > Replace the (secctx,seclen) pointer pair with a single
-> > lsm_context pointer to allow return of the LSM identifier
-> > along with the context and context length. This allows
-> > security_release_secctx() to know how to release the
-> > context. Callers have been modified to use or save the
-> > returned data from the new structure.
-> > 
-> > security_secid_to_secctx() and security_lsmproc_to_secctx()
-> > will now return the length value on success instead of 0.
-> > 
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Cc: netdev@vger.kernel.org
-> > Cc: audit@vger.kernel.org
-> > Cc: netfilter-devel@vger.kernel.org
-> > Cc: Todd Kjos <tkjos@google.com>
-> > ---
-> >  drivers/android/binder.c                |  5 ++-
-> >  include/linux/lsm_hook_defs.h           |  5 ++-
-> >  include/linux/security.h                |  9 +++---
-> >  include/net/scm.h                       |  5 ++-
-> >  kernel/audit.c                          |  9 +++---
-> >  kernel/auditsc.c                        | 16 ++++------
-> >  net/ipv4/ip_sockglue.c                  |  4 +--
-> >  net/netfilter/nf_conntrack_netlink.c    |  8 ++---
-> >  net/netfilter/nf_conntrack_standalone.c |  4 +--
-> >  net/netfilter/nfnetlink_queue.c         | 27 +++++++---------
-> >  net/netlabel/netlabel_unlabeled.c       | 14 +++------
-> >  net/netlabel/netlabel_user.c            |  3 +-
-> >  security/apparmor/include/secid.h       |  5 ++-
-> >  security/apparmor/secid.c               | 26 +++++++--------
-> >  security/security.c                     | 34 +++++++++-----------
-> >  security/selinux/hooks.c                | 23 +++++++++++---
-> >  security/smack/smack_lsm.c              | 42 +++++++++++++++----------
-> >  17 files changed, 118 insertions(+), 121 deletions(-)
+On Wed, 30 Oct 2024 13:01:10 +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> See my note on patch 1/5, merging into lsm/dev.
+> Hi,
+> 
+> On the Renesas RZ/G3S SoC the RTC clock is provided by the VBATTB
+> IP. A 32 KHz crystall oscillator could be connected to the VBATTB
+> input pins. The logic to control this clock (and pass it to RTC)
+> is inside the VBATTB IP. For this, the clk-vbattb driver was added
+> (patches 01-03/12).
+> 
+> [...]
 
+Applied, thanks!
+
+[04/10] dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RTCA-3 IP
+        https://git.kernel.org/abelloni/c/71c61a45c951
+[05/10] rtc: renesas-rtca3: Add driver for RTCA-3 available on Renesas RZ/G3S SoC
+        https://git.kernel.org/abelloni/c/d4488377609e
+
+Best regards,
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
