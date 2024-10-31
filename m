@@ -1,143 +1,197 @@
-Return-Path: <linux-kernel+bounces-390245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE689B7759
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:24:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392BE9B7760
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:25:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E015D288516
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48B21F23419
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112AE1448E4;
-	Thu, 31 Oct 2024 09:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE69819580B;
+	Thu, 31 Oct 2024 09:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cE5XeWDt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hIjH2sJj"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CFE1BD9ED;
-	Thu, 31 Oct 2024 09:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095CA1448E4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366647; cv=none; b=hFTbreDJ93j47XNFCwyuxmvrHPttDH2GfgaK1wstgHJPYyGpmFTs5yXpWnPkPt3a3eZK2iPEgfsHbFMGyQe5wkD7lN7xrfgIp79jdvc5NYgo041pPqaFFoY0DhBq45QvIj+Y8XK95ol3cFaXAuGKOWVI5Y8gveG9ub3RHbWDaSc=
+	t=1730366717; cv=none; b=lrna++p97G9fLqCGM+c1si4idPBt7DB9iXtgqaVENB1Yv4jdc0tUeRw5WBAzR16LpXcm7FXk3/JYz2FI7T0iK/qURFm0xe+aL3E95qKDIQDRao8jlzHqLn86uQ3xPWVTcCyAIHCDgRY7rsxL7XG18tGzXj4A930w18OQfkrTX9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366647; c=relaxed/simple;
-	bh=nWEBW4vG5RFt9y/V/HxLxjTkrY1/5Kav632LVfcQ+lM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ilN9k50JuO920YXRqpYq8Wt/cwxaYOeVSA+7VjCg0DQrjZA8bNFhU4rHOjhnMQfll2kd92B+hXJHa30F2CaIWjLK2rooRvhEDA4rtKZGMji3eCer4tHVTgP5qBKuwPPzVTI7MqSKGDKM8CmbPdf0B+Mchy2v11k7XUgDukITL1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cE5XeWDt; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730366645; x=1761902645;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nWEBW4vG5RFt9y/V/HxLxjTkrY1/5Kav632LVfcQ+lM=;
-  b=cE5XeWDts5qr1sSXCPQwfXsJxVCRxLzBtoDjIEMUM4QWQ3bG4UZiUGo6
-   UQQXogsqSLOPShtCLCifRNeJYAYlJ4xbcjOA3y93g3lLRjb8K9/pXkeae
-   +m4nUN/x93wPtMihPqweWi1qAxI2EQGRRleFRBC7HpJcbSQj/92Ysg/w7
-   SEaeUtm+EXRIC+Ptk2RwnEGldcnh7z1s92r8hgsrdL9C7amtVmg7HxYvT
-   3RgHYLhoCTP96SbZ9+IGh7oIPB7gPRg6WDxZoS6Ili5qUH9mJbrO7vFvT
-   IrpDfCNe0fdje84eHzzAJ2+MyvnjtgaUxoRXz+EYi+33bBux3p9iuAIKh
-   g==;
-X-CSE-ConnectionGUID: hYNvuuflRIyGSqv7wOjpzw==
-X-CSE-MsgGUID: dZnjQvLqSDmjByvCjjhCVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="47572093"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="47572093"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:24:04 -0700
-X-CSE-ConnectionGUID: NNtXuiCNT8CJybqP5jFu+w==
-X-CSE-MsgGUID: rqVLvLnfQzaJ8YTbk1jnmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="87363647"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:24:01 -0700
-Message-ID: <bb60b05d-5ccc-49ab-9a0c-a7f87b0c827c@intel.com>
-Date: Thu, 31 Oct 2024 17:23:57 +0800
+	s=arc-20240116; t=1730366717; c=relaxed/simple;
+	bh=f1HdzsV7YLGVcnFKYBqESX9JVFF3pHrZctef8EYPBBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=je0mdHmKk//QrAhjYRYBztYdrqBheKSy27jp4mrT0NvVfWbsgYfBiSDRBNg2kElpCNOV6Z8STjxf9vgt1JQU0pVLmSuT9uYkLKK2j+7iIf0WghpmcKewcGT/Ot9WnsLBKU2xHkIf56XlR705IDhfNvyiafCf/eWSu4i4JOnQwQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hIjH2sJj; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso502801a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730366713; x=1730971513; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lcLB4HIZIK9oMvpqdAO2JM1v5FMdpcqxSsSVqe7+kq0=;
+        b=hIjH2sJjYXgRh2d/cZHKE1fVLWmbkUHiB29dCGH6onGlS3oRhMncWZEaH50x7bjmGX
+         AglZgDbHIsGVoj3vp1tkeGyeuSy5uvtrSfrmj7uSKNf4HCejiXZgyPhAHhRSIMKasU2v
+         lSoYTioSaNphcFncA6+0sEcX5gcFWkKnX7Egc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730366713; x=1730971513;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lcLB4HIZIK9oMvpqdAO2JM1v5FMdpcqxSsSVqe7+kq0=;
+        b=ti0RDTOGlzOrZR2h+29rMxeNmNfbqFml4zIneiXceykHjSfhv8lFVWWI3O9KmDyOhR
+         oXFtkZC2WhmiOIb7e+LSfDVLjoRNfu/nGToepAsa6PkbK2eNKHspFShKMUuSNmd99mM/
+         jKe04N4Y7V6foSl1HS3Uq/PVpYC6+rmngK7p2TncoS/MG2/95RKqDyi3fRigUZ2Oaw2l
+         hl9uYQLg0h/WGILbZqcksL3203Jog4kqyg4iO/KAvBmOw9v22doKgtCumJV+53Z9X27w
+         5ebbVnjHgTbeOOcJp1DilNSQyCIDAgqai73rq0BY7ejuEuPF1dVbudZchb9L6x5dZA0k
+         LdPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsjM/xm3l7haNoUU90db6OtkDPCYRox/p5zMpAAhO2EkJ9wYL8UKfh2sq1xmYg58A1UqJWaalbCXLMT5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC8yi4kI4DuWj4loG8LxG8frqpCf4SRG2bKB7BmVXSTnJ7ihJi
+	y9S5I6U89ZpXOTOwwFC0XqQEsXHH6W2oVLJutrehtujudoTSoVVTIB1fNRdM3A==
+X-Google-Smtp-Source: AGHT+IFRvrb9zsW85LZDqilyIUEvRLLhdyBSF+TWI+xHMtdLZ26nlm2NAngIK5apmSpEcozgXAu4Hw==
+X-Received: by 2002:a17:90a:1f87:b0:2e2:d3f6:6efc with SMTP id 98e67ed59e1d1-2e8f10a8890mr20553638a91.28.1730366713299;
+        Thu, 31 Oct 2024 02:25:13 -0700 (PDT)
+Received: from li-cloudtop.c.googlers.com.com (51.193.125.34.bc.googleusercontent.com. [34.125.193.51])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbe707fsm3074953a91.37.2024.10.31.02.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 02:25:12 -0700 (PDT)
+From: Li Li <dualli@chromium.org>
+To: dualli@google.com,
+	corbet@lwn.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	donald.hunter@gmail.com,
+	gregkh@linuxfoundation.org,
+	arve@android.com,
+	tkjos@android.com,
+	maco@android.com,
+	joel@joelfernandes.org,
+	brauner@kernel.org,
+	cmllamas@google.com,
+	surenb@google.com,
+	arnd@arndb.de,
+	masahiroy@kernel.org,
+	bagasdotme@gmail.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	hridya@google.com,
+	smoreland@google.com
+Cc: kernel-team@android.com
+Subject: [PATCH net-next v7 0/2] binder: report txn errors via generic netlink
+Date: Thu, 31 Oct 2024 02:25:02 -0700
+Message-ID: <20241031092504.840708-1-dualli@chromium.org>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/25] KVM: TDX: Get system-wide info about TDX module
- on initialization
-To: Binbin Wu <binbin.wu@linux.intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
- seanjc@google.com
-Cc: yan.y.zhao@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- tony.lindgren@linux.intel.com, reinette.chatre@intel.com,
- Isaku Yamahata <isaku.yamahata@intel.com>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <20241030190039.77971-17-rick.p.edgecombe@intel.com>
- <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/31/2024 5:09 PM, Binbin Wu wrote:
-> 
-> 
-> 
-> On 10/31/2024 3:00 AM, Rick Edgecombe wrote:
-> [...]
->> +static u32 tdx_set_guest_phys_addr_bits(const u32 eax, int addr_bits)
->> +{
->> +    return (eax & ~GENMASK(23, 16)) | (addr_bits & 0xff) << 16;
->> +}
->> +
->> +#define KVM_TDX_CPUID_NO_SUBLEAF    ((__u32)-1)
->> +
->> +static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, 
->> unsigned char idx)
->> +{
->> +    const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
->> +
->> +    entry->function = (u32)td_conf->cpuid_config_leaves[idx];
->> +    entry->index = td_conf->cpuid_config_leaves[idx] >> 32;
->> +    entry->eax = (u32)td_conf->cpuid_config_values[idx][0];
->> +    entry->ebx = td_conf->cpuid_config_values[idx][0] >> 32;
->> +    entry->ecx = (u32)td_conf->cpuid_config_values[idx][1];
->> +    entry->edx = td_conf->cpuid_config_values[idx][1] >> 32;
->> +
->> +    if (entry->index == KVM_TDX_CPUID_NO_SUBLEAF)
->> +        entry->index = 0;
->> +
->> +    /* Work around missing support on old TDX modules */
->> +    if (entry->function == 0x80000008)
->> +        entry->eax = tdx_set_guest_phys_addr_bits(entry->eax, 0xff);
-> Is it necessary to set bit 16~23 to 0xff?
-> It seems that when userspace wants to retrieve the value, the GPAW will
-> be set in tdx_read_cpuid() anyway.
+From: Li Li <dualli@google.com>
 
-here it is to initialize the configurable CPUID bits that get reported 
-to userspace. Though TDX module doesn't allow them to be set in TD_PARAM 
-for KVM_TDX_INIT_VM, they get set to 0xff because KVM reuse these bits 
-EBX[23:16] as the interface for userspace to configure GPAW of TD guest 
-(implemented in setup_tdparams_eptp_controls() in patch 19). That's why 
-they need to be set as all-1 to allow userspace to configure.
+It's a known issue that neither the frozen processes nor the system
+administration process of the OS can correctly deal with failed binder
+transactions. The reason is that there's no reliable way for the user
+space administration process to fetch the binder errors from the kernel
+binder driver.
 
-And the comment above it is wrong and vague. we need to change it to 
-something like
+Android is such an OS suffering from this issue. Since cgroup freezer
+was used to freeze user applications to save battery, innocent frozen
+apps have to be killed when they receive sync binder transactions or
+when their async binder buffer is running out.
 
-	/*
-          * Though TDX module doesn't allow the configuration of guest
-          * phys addr bits (EBX[23:16]), KVM uses it as the interface for
-          * userspace to configure the GPAW. So need to report these bits
-          * as configurable to userspace.
-          */
->> +}
->> +
->>
-> [...]
+This patch introduces the Linux generic netlink messages into the binder
+driver so that the Linux/Android system administration process can
+listen to important events and take corresponding actions, like stopping
+a broken app from attacking the OS by sending huge amount of spamming
+binder transactiions.
+
+The 1st version uses a global generic netlink for all binder contexts,
+raising potential security concerns. There were a few other feedbacks
+like request to kernel docs and test code. The thread can be found at
+https://lore.kernel.org/lkml/20240812211844.4107494-1-dualli@chromium.org/
+
+The 2nd version fixes those issues and has been tested on the latest
+version of AOSP. See https://r.android.com/3305462 for how userspace is
+going to use this feature and the test code. It can be found at
+https://lore.kernel.org/lkml/20241011064427.1565287-1-dualli@chromium.org/
+
+The 3rd version replaces the handcrafted netlink source code with the
+netlink protocal specs in YAML. It also fixes the documentation issues.
+https://lore.kernel.org/lkml/20241021182821.1259487-1-dualli@chromium.org/
+
+The 4th version just containsi trivial fixes, making the subject of the
+patch aligned with the subject of the cover letter.
+https://lore.kernel.org/lkml/20241021191233.1334897-1-dualli@chromium.org/
+
+The 5th version incorporates the suggested fixes to the kernel doc and
+the init function. It also removes the unsupported uapi-header in YAML
+that contains "/" for subdirectory.
+https://lore.kernel.org/lkml/20241025075102.1785960-1-dualli@chromium.org/
+
+The 6th version has some trivial kernel doc fixes, without modifying
+any other source code.
+https://lore.kernel.org/lkml/20241028101952.775731-1-dualli@chromium.org/
+
+The 7th version breaks the binary struct netlink message into individual
+attributes to better support automatic error checking. Thanks Jakub for
+improving ynl-gen.
+
+v1: add a global binder genl socket for all contexts
+v2: change to per-context binder genl for security reason
+    replace the new ioctl with a netlink command
+    add corresponding doc Documentation/admin-guide/binder_genl.rst
+    add user space test code in AOSP
+v3: use YNL spec (./tools/net/ynl/ynl-regen.sh)
+    fix documentation index
+v4: change the subject of the patch and remove unsed #if 0
+v5: improve the kernel doc and the init function
+    remove unsupported uapi-header in YAML
+v6: fix some trivial kernel doc issues
+v7: break the binary struct binder_report into individual attributes
+
+Jakub Kicinski (1):
+  tools: ynl-gen: allow uapi headers in sub-dirs
+
+Li Li (1):
+  binder: report txn errors via generic netlink
+
+ Documentation/admin-guide/binder_genl.rst    |  93 ++++++
+ Documentation/admin-guide/index.rst          |   1 +
+ Documentation/netlink/specs/binder_genl.yaml | 114 +++++++
+ drivers/android/Kconfig                      |   1 +
+ drivers/android/Makefile                     |   2 +-
+ drivers/android/binder.c                     | 313 ++++++++++++++++++-
+ drivers/android/binder_genl.c                |  38 +++
+ drivers/android/binder_genl.h                |  18 ++
+ drivers/android/binder_internal.h            |  22 ++
+ drivers/android/binder_trace.h               |  35 +++
+ drivers/android/binderfs.c                   |   4 +
+ include/uapi/linux/android/binder.h          |  31 ++
+ include/uapi/linux/android/binder_genl.h     |  56 ++++
+ tools/net/ynl/ynl-gen-c.py                   |   1 +
+ 14 files changed, 721 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/admin-guide/binder_genl.rst
+ create mode 100644 Documentation/netlink/specs/binder_genl.yaml
+ create mode 100644 drivers/android/binder_genl.c
+ create mode 100644 drivers/android/binder_genl.h
+ create mode 100644 include/uapi/linux/android/binder_genl.h
+
+
+base-commit: d30b56c8666d2543112152dd5d93d052eafd6bc2
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
 
