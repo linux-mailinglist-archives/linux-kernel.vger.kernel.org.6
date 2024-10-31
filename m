@@ -1,89 +1,121 @@
-Return-Path: <linux-kernel+bounces-389867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574969B7249
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:57:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C4D9B7238
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EC261F24DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:57:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD83DB23F2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C484D29;
-	Thu, 31 Oct 2024 01:57:31 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D6781AD7;
+	Thu, 31 Oct 2024 01:47:38 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560FE80025;
-	Thu, 31 Oct 2024 01:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6111A3FB8B;
+	Thu, 31 Oct 2024 01:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730339850; cv=none; b=CrhT+cW26i+JwSq29+g6KsGQUuxVqx6VSZlHeE/aSX9mzTNHijj68RPLE5cqSlnA/jf9EmQjZ6tTRzDZ5c3ggenY2OtmxMirUqtSvRIlQrfl0e1QthlHnYg7eqSLxWsNrSqNPoDjDGtfrNRu4jvhuKiN437SV1y5EugQj0Jx25w=
+	t=1730339258; cv=none; b=Ha1PO3vdmW5Clxg/knLY+tjzGCEq4rqM5ruZKt/1+Hg/TtfwiK7SgoPnowRXM/cxHkpR8m9Fu7LZTEysdaHncF16LDCleaySWCiq6QCgA17W/fNe9gBkZdu74L25tq8ZBCABb/7Rf1hxv7LGc6PkDYKEFT3btHB9Ny8lnPE25Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730339850; c=relaxed/simple;
-	bh=v5PD1ALo2kUOkuvSB43wsqgWRa1dMsEL670Ujginra0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ONaTcs6Z2ZZY1YlxKEeCk5FFi/SaduwxmAnYNPjkGd/3qlX3/v6TbUGqixv52W6I/OS22xVCUHzNsnh5J7zjwesGSfMoFw383w+SAMrmS0zDvXmxAPSbrFzByZLotzYxbUAboP7pL0s/Avl5RUXYJJqNdhLlNZiv0Qtzf44e4Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1730339258; c=relaxed/simple;
+	bh=Q5MfpmGX5hkWyHpglOjQkPw/CXGNuTq7gRN5CV+ND6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ul/Vp5+E3ipYdiUQk1ifWOyUqaz+RJxhm9P8BRvlPC6wuasSHxE2RpC00SoA15vsf9Ap5R2IUVNMWqAvoUUN5M0+ynJrEPyWp1E0/5RKLa9XOqVEFPsiy7Y+zt/76pT3OdzRjRY9Wj82xhVZ1e+iXHEfm7QHWCppABUvqFqimEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xf6Ww20XxzpXdx;
-	Thu, 31 Oct 2024 09:55:24 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id AE3FF14011F;
-	Thu, 31 Oct 2024 09:57:19 +0800 (CST)
-Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
- (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 31 Oct
- 2024 09:57:19 +0800
-From: Zicheng Qu <quzicheng@huawei.com>
-To: <mazziesaccount@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
-Subject: [PATCH] iio: fix infinite loop for gain_to_scaletables()
-Date: Thu, 31 Oct 2024 01:46:26 +0000
-Message-ID: <20241031014626.2313077-1-quzicheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xf6Jv0zByzyTxZ;
+	Thu, 31 Oct 2024 09:45:51 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id E1C421800DB;
+	Thu, 31 Oct 2024 09:47:30 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 31 Oct 2024 09:47:30 +0800
+Message-ID: <0ccbb6b9-27a2-7afc-c47e-4ac9c71a23b6@huawei.com>
+Date: Thu, 31 Oct 2024 09:47:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] tracing: Replace strncpy() with strscpy() when copying
+ comm
+Content-Language: en-US
+To: Steven Rostedt <rostedt@goodmis.org>
+CC: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+References: <20240731075058.617588-1-ruanjinjie@huawei.com>
+ <20241030194006.4d29417c@rorschach.local.home>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20241030194006.4d29417c@rorschach.local.home>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-In iio_gts_build_avail_time_table(), it is checked that gts->num_itime is
-non-zero, but gts->num_itime is not checked in gain_to_scaletables(). The
-variable time_idx is initialized as gts->num_itime - 1. This implies that
-time_idx might initially be set to -1 (0 - 1 = -1). Consequently, using
-while (time_idx--) could lead to an infinite loop.
 
-Cc: stable@vger.kernel.org # v6.6+
-Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
-Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
----
- drivers/iio/industrialio-gts-helper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
-index 59d7615c0f56..f3acd392f4fc 100644
---- a/drivers/iio/industrialio-gts-helper.c
-+++ b/drivers/iio/industrialio-gts-helper.c
-@@ -205,7 +205,7 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
- 	memcpy(all_gains, gains[time_idx], gain_bytes);
- 	new_idx = gts->num_hwgain;
- 
--	while (time_idx--) {
-+	while (time_idx-- > 0) {
- 		for (j = 0; j < gts->num_hwgain; j++) {
- 			int candidate = gains[time_idx][j];
- 			int chk;
--- 
-2.34.1
+On 2024/10/31 7:40, Steven Rostedt wrote:
+> On Wed, 31 Jul 2024 15:50:58 +0800
+> Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+> 
+>> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+>> index 6ece1308d36a..4ee0e64719fa 100644
+>> --- a/kernel/trace/trace_events_hist.c
+>> +++ b/kernel/trace/trace_events_hist.c
+>> @@ -1599,7 +1599,7 @@ static inline void save_comm(char *comm, struct task_struct *task)
+>>  		return;
+>>  	}
+>>  
+>> -	strncpy(comm, task->comm, TASK_COMM_LEN);
+>> +	strscpy(comm, task->comm);
+>>  }
+>>  
+> 
+> Was this even compiled?
 
+Sorry, the trace_events_hist.c was left out, will fix it.
+
+> 
+> In file included from /work/git/test-linux.git/include/linux/container_of.h:5,
+>                  from /work/git/test-linux.git/include/linux/list.h:5,
+>                  from /work/git/test-linux.git/include/linux/module.h:12,
+>                  from /work/git/test-linux.git/kernel/trace/trace_events_hist.c:8:
+> /work/git/test-linux.git/kernel/trace/trace_events_hist.c: In function ‘save_comm’:
+> /work/git/test-linux.git/include/linux/build_bug.h:16:51: error: negative width in bit-field ‘<anonymous>’
+>    16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+>       |                                                   ^
+> /work/git/test-linux.git/include/linux/compiler.h:243:33: note: in expansion of macro ‘BUILD_BUG_ON_ZERO’
+>   243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+>       |                                 ^~~~~~~~~~~~~~~~~
+> /work/git/test-linux.git/include/linux/string.h:79:47: note: in expansion of macro ‘__must_be_array’
+>    79 |         sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +    \
+>       |                                               ^~~~~~~~~~~~~~~
+> /work/git/test-linux.git/include/linux/args.h:25:24: note: in expansion of macro ‘__strscpy0’
+>    25 | #define __CONCAT(a, b) a ## b
+>       |                        ^
+> /work/git/test-linux.git/include/linux/args.h:26:27: note: in expansion of macro ‘__CONCAT’
+>    26 | #define CONCATENATE(a, b) __CONCAT(a, b)
+>       |                           ^~~~~~~~
+> /work/git/test-linux.git/include/linux/string.h:113:9: note: in expansion of macro ‘CONCATENATE’
+>   113 |         CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
+>       |         ^~~~~~~~~~~
+> /work/git/test-linux.git/kernel/trace/trace_events_hist.c:1602:9: note: in expansion of macro ‘strscpy’
+>  1602 |         strscpy(comm, task->comm);
+>       |         ^~~~~~~
+> 
+> Bah!
+> 
+> -- Steve
+> 
 
