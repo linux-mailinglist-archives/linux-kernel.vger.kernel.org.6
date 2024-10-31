@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-391071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3329B824D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:09:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D129B824F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A62280D4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D2D1F23333
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BD51C9B82;
-	Thu, 31 Oct 2024 18:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2976C1C1AC9;
+	Thu, 31 Oct 2024 18:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fAaJ5huc"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hBDmvD4i"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E0A1C9B95
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B7F13DDB9
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730398151; cv=none; b=P/znO6qCzz9UrEkIDEXwVeifjzANrrIWI/5R3E+9P0vHjVjzW7loag6clOM67t9Hld+EOE3z6yvOkCMqvfM50lTgPqIP7gv+TCvGghZarn2N94eT0VRk/abLtXQqvPiqh+lBW8H5I5Jbdie9bDzfi1eceBJHWd0bgk2A5M51YJw=
+	t=1730398205; cv=none; b=YimnpvE2U8xHO+nawXVnKKeU0BDuzPmfjPPf3Abdvr2VabBOrFQydERg9UdmaECOZpBGvXF1x4PKjXCRmmP7jrl4Dzv++liYd2G8DgL9B/U9DLYR+3gebi2QjB8YJr2p3iifOxi5YanN78JuDDrNTnQEQWOsjbu4kzgjirFFuGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730398151; c=relaxed/simple;
-	bh=pnbU4m92rARoAQneTzD5Jf7lxArdrciMF5RdRrZAC90=;
+	s=arc-20240116; t=1730398205; c=relaxed/simple;
+	bh=hbTUrlcOE5nRR9NElb/9zmfhU1oUp6dXMa+Aes8gI5w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pp3liKhrMORlV55vmIkPDRXZw5rxQsUqxy7ytpb2pGqgKsW40xpA2VC59pv2FDqGEnacEx+e07gaysW5pWBJl1fFJGGQRInUSR+T12iz6WqX4j/8Ji/TF6IOA66QNcM709UyOmEPCf7/ncsdCNM5bxAjpxQJqzT4y1wAnG1U3Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fAaJ5huc; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so10678675e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730398147; x=1731002947; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ww423lfHl3RJq60oXMLHUaPgCkzs8qQvv8BPeWX9FNU=;
-        b=fAaJ5hucJLzb9BJ0BTeSBPSlS5JAPc1/GQ/iYI2MQTLAz54G3icBNlpUwSXt3trkOl
-         LofHTRleJfPRqvxrGi2vOVvWEh7phBLqlq4CbFhs/qIT97IAk9ZOLtDEZhSGCnzj7LCC
-         wygsc9SBMsnXEIRxByN0J2yVs50/MXi/1UM3W2epC2gaUGXPCzMWCXUkuSLKcG2qNxcX
-         Fq4M9f1jq8siskRcrFfK0sf7e1Q1FAyR1FAATkrPNurKcnpD0j2ZW9L1DfN6wWYD+AqB
-         AqjWH1ObbQseKhLERSS0PC6eDEaIMhWx9HWJNabqbr7ZZL/M3ds8piULfrY14rHx35o9
-         aoJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730398147; x=1731002947;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ww423lfHl3RJq60oXMLHUaPgCkzs8qQvv8BPeWX9FNU=;
-        b=p9/nL4pyRUSNj0ctz2RQoMyX7Mkr79lnZ+KYJWLTny/HevCjuqFoX/0OCQCIS88IZ3
-         LqqmT4Z3Mn5rGLvLyO5lT15YIpQVwhNK0Ct3DpaH9JmfhJKc1E+a7MOIniY1enq5zBwk
-         mK5kBlgkmkCMAPh4/xYv8ok++Cva6EJ2EZhD7ZfX/UoANXBoa4mZtAbqqCSn510cGm4u
-         dWnosNRiXln9RggKmVBHzxs0hChK5XRUuQZ5McTW1w0S4iAOpmPTdq8OSWJA/Jb2aInv
-         R7di18g3skROCbG1PnmGwtAVSN8/vmUHQUmcj0INdiZZf406PdOxU8OV7vuWcJXYa9j+
-         scAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJa5jsomfnqZGR0Z5siNYyPLbRVt2d6XoOMYGla95cfHwdbXV//L9qdrMiqaDg45inX3k07a4Lv+IXcT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTDu61BShMrddtWfJ47qAIw1qoeGcWkSNQ4gCTu9t0sbzp2+wk
-	eccYw7YqLIkeW0kAY2iSJM62FDJk7NuWCfthJA4blLgE/ncayoLESAVxGmuzCWU=
-X-Google-Smtp-Source: AGHT+IGUTRQz69TQsAsuaTFQLcFekqsDLfAz6CitU1HfJ7lLbNV0dp4jvalOgtIpFWbq8+MW+JPV4w==
-X-Received: by 2002:a05:600c:4f4a:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-4319ac70637mr167227885e9.4.1730398146724;
-        Thu, 31 Oct 2024 11:09:06 -0700 (PDT)
-Received: from [192.168.0.17] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d473bsm2833645f8f.35.2024.10.31.11.09.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 11:09:05 -0700 (PDT)
-Message-ID: <299befa1-63f9-4fff-8d5a-0753ae620c11@linaro.org>
-Date: Thu, 31 Oct 2024 18:09:04 +0000
+	 In-Reply-To:Content-Type; b=VNxnbI5I7PFHdEWZ5bE7hPv5PgnJTOoDCqXN2DUbRbSE1qRNKc71rTAqeoB4Vttz9xmdiY74k/i/LKxv4Fo2xNh67tHGjivLQOmKnwMVrR2xtNNLF2U8Mr080Bk7Cxb8GakZZs1G9Mh3orxeUNslM6elOtuUKFs/m8NVwGgRM6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hBDmvD4i; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730398159; x=1731002959; i=markus.elfring@web.de;
+	bh=hbTUrlcOE5nRR9NElb/9zmfhU1oUp6dXMa+Aes8gI5w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=hBDmvD4iv54XWGawiHaCfmRLOaYdO6Yfon8wjXTduLpqspXGmFjtrqUTrDSYKO3h
+	 pZjtX5iVnBm/1VcdyaLQy7+dOgjUMPPVmpZtIwnNQwF+5xVG3Eq/ikLV/c89iAMjv
+	 82c0fzghigJFxjsAmdJ/LxyBrpcLXijI1TErJXj4tI6JQX2AWZHA9o2R99lQHeQ1c
+	 dHv2VTzVhmdojNjdlhsR+U1QnkjdEX3TCZ6iTN9zinZeA/h+JdV/zQTuHwZMiorFx
+	 GBlRwPkNKJ6FD52dNVz+KE38mU5uzmqa/aJggB3Qo51FN0Rt9MCtrE98AgYPaeZHs
+	 xpFzS0ffpB/qlTwwTQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MeDMR-1tfttI1pqh-00oysz; Thu, 31
+ Oct 2024 19:09:19 +0100
+Message-ID: <9d381d9a-3d4e-455e-a1e0-ac737f8d7852@web.de>
+Date: Thu, 31 Oct 2024 19:09:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,54 +57,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] arm64: dts: qcom: sc7280: Add support for camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
- <20241030105347.2117034-6-quic_vikramsa@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241030105347.2117034-6-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: phy: ocelot-serdes: Fix IS_ERR vs NULL bug in serdes_probe()
+To: Colin Foster <colin.foster@in-advantage.com>,
+ Jinjie Ruan <ruanjinjie@huawei.com>, linux-phy@lists.infradead.org,
+ "David S. Miller" <davem@davemloft.net>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Thierry Reding
+ <treding@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <ZyOUr7iDa9nFBxgq@colin-ia-desktop>
+ <28bef742-84ca-4d52-8d19-258f1a3d695b@web.de>
+ <ZyPCgOByeVNZC5rt@colin-ia-desktop>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ZyPCgOByeVNZC5rt@colin-ia-desktop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+LG3F+RQYC31y0sVjd1hbg5gYPRvEU+8+SbwOqPe4CV6Is0MbBo
+ MAzl+hiGQUUtBcqPBD5RC7yjGbSwbWyS4hf4mwiuZDdR4MQXsUUVwngz2Z8LhDV5pcbf1YX
+ x+iFbUQZa/+BZypRJoh3GV9ALtq3IwIIa6WPTs8TcaaXmyWfQsi8UGt1C4BlgctKVKuseLk
+ oltyh8T4/4H6tP5yu94QA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ta5smnulrjM=;5oSH9lof834HbK0DxHCC72BC4gx
+ u5CoTN0D4fNYxK4WLuTsQk/oH1Lg5LB1Ly+t2tNnMLqV4JcbbQzqBrch63g9tA61bbRcG3kml
+ bZ62wpGk/PL3SuvIBvIOQrMNvlEhP1GL6CCJ/yJJbEh2m5ylsQH9KJ28Kn5HzvlfTZoZ4wWK8
+ sjmbfhQa6ih3zVhHVVrD9MJTvqRtuK28kB3FkJU3heKdTIY2gsi9vefA+3uO/XqXT++VaiMmd
+ SaIK+KOhsgO08zMBsbDk/nALPf4T8ZxcBV9b4AkvAja5nxuAMNGw9ySILhfQ0kDEsl19luRYx
+ CYDutT0vG8b77n5sBeFQ+xxSdQBrRFZoG1xEEQj1U7z3gIxBzDPjtx55rnZgboO/s+dPb+lkb
+ QRB3oDRwC+FOTY7IanyaNXS7VBXqUhTB3txSA0t6IdQghWI9q2ps1/6fNjHXXDuPtqGl5t+Wt
+ 4/3IDa437tb/dH/ElvlXml1Qe1h5Bma6NsVLBZkp/x4P2O5gQdbT8MYJTVkz7SXdHWtwDsrsv
+ /Js6IcXE4Y2dFeIAlHoNZJZMZHiiomYXGnWmy+jadnln5kp7TL/+Wc2+l0HI6ttu8ngLTW4F7
+ NBiAj3SwgbOLZ+VMSJYSrmUFcOpugwYfGP2Zq09+JdHkVYFituWbxFeRerWgdv4jokSmYv01T
+ 19UBLW7+Lvbd+xBxbutJg6fdBavN+RH6HVmfvkG4ynJhd2hEhLB3LnkF0p3W7v3loXMb+4yjP
+ R3C6g33g73IzEzjQkvJ0st5/WOruvwKb4cgQm5vq+kAMzlEhgvkHLkt6tv5lE1AZpnlTlwvFZ
+ iG9FnBSkYAJhWs4ghvAZmI+g==
 
-On 30/10/2024 10:53, Vikram Sharma wrote:
-> Add changes to support the camera subsystem on the SC7280.
-> 
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/sc7280.dtsi | 175 +++++++++++++++++++++++++++
->   1 file changed, 175 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 55db1c83ef55..690051708dec 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -4426,6 +4426,181 @@ cci1_i2c1: i2c-bus@1 {
->   			};
->   		};
->   
-> +		camss: camss@acaf000 {
-> +			compatible = "qcom,sc7280-camss";
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
+> You're absolutely right. Apologies.
+>
+> Acked-by: Colin Foster <colin.foster@in-advantage.com>
+> Revieved-by: Colin Foster <colin.foster@in-advantage.com>
+Please choose one of these tags (without a typo).
 
-
-Order of declaration of the nodes needs to conform to
-
-Documentation/devicetree/bindings/dts-coding-style.rst
-
-i.e. reg should come first after compatible
-
----
-bod
+Regards,
+Markus
 
