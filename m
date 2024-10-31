@@ -1,81 +1,57 @@
-Return-Path: <linux-kernel+bounces-390267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB339B77B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E150A9B77BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 062F6B23C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:39:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BEBBB251D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BBA198E6F;
-	Thu, 31 Oct 2024 09:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8D7197A72;
+	Thu, 31 Oct 2024 09:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBGZSJi6"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2q/BaCs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E13198853
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CAD194C8F
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367557; cv=none; b=qqd9/F4F7wdfPGWIUr3GZJ878WYt53rnxxSL6a0ArU4UpasVcDSOD47NBL96j0xSXyiRsl7DnD5bAkCWFSNtClWW5PqnZTzk9p0rULdj5zguz49J7g7M61vkC+LXMRoaQWPx8Tlj2IC+Jk8wOMVs6d3BNPgYgcOhTSDqXVGZbyQ=
+	t=1730367600; cv=none; b=FryidfcBoZVbGWyEnVsf6Cw/fNwlQQXkdpqpwMtAz/WmvtCIYuyXNpwPL3as3qEnuoUc5Senh02jojicoVXZK6Fxg8DoOxmNqb0V3F2fd+brRUer63wFGfpIn73ffh83r1j62d3/G8T/g1EBaftZvGmL9CriZXEvFYltOmxWCDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367557; c=relaxed/simple;
-	bh=/o4MggE+AzcXkavFkmQNZ85Um2Lx9dIx/mjXbk/xSWQ=;
+	s=arc-20240116; t=1730367600; c=relaxed/simple;
+	bh=vKIaj0aijU4XjLmVObUic0stD9F+UK51qt/abR2zG+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a65Sy+52rPRCB9kZZ0g7lrCVn97zNYsCe/u+wmxtXx0b8EcpB/yRMSIq4T05ydfhF4HvwIkK1jafE473scme5+Ce1/VEcJGZ/GUn1JfI5dFNw2R6VYy+w5UV4pHUkP7/bj46gJZHd5NTuA7wuDRnAnwxgYelP8lkBHvVincj+/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBGZSJi6; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d5689eea8so465076f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730367554; x=1730972354; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i42WZwPkLvBRfNlQLAxPTVFJmRSkrVUk9wWE2BSDhqk=;
-        b=rBGZSJi6YwyQmBItYrXzf+ClrldPGHHPdOlQjwfPmzBsg347PhHi33xepCNJgTxRze
-         fxJAW1O865AZNUsbqu++RWjvRYVwLnkZpi/ijLai3HFKJCd10NBpoGvGLHHEao+QkHyw
-         9Naxwi9r/Z1gGhQCcrpPY3+W6b0nju6D1XBvPr+IT4sH7EWXj+bQHCCJztMymZM/4HaK
-         xTsIoDtVA+1W48VEcHJ6P3VOnAKQCTD7GcIPJXjqY/Ib7+l6nvcAHXUvQNENXHUB5+Fh
-         k1/jZGycbX0PnlKnjqAVxq3QjOOtAAjcwHRQPnQYmOmtcRwwhyACPtMt1PC6WLpCYa++
-         0djA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730367554; x=1730972354;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i42WZwPkLvBRfNlQLAxPTVFJmRSkrVUk9wWE2BSDhqk=;
-        b=V/aqmOtipN+tm0+JQ11GqRDbuXWW9gKkoiL815KRvTl6475iejm4nfK40EXG650TK4
-         lcmPRU1MHIN0CJK9Kz5xk4qDurNgju66CLWAeyVBFDYS7mHDPM5VIMljo60gQFbI0zQN
-         /XojoCMDJbXjhddz9ee5euo/5rU2HaKSUkgaw5h3OebMff85O8ih82J3X3t/xBoSVXSf
-         61q7iEO9yVO3KBJ3xuQZcxhK1j+oMjbSz37UafYPrV4f2k57XFENRaMOBCJJcobj/d+4
-         rj34eGuTfkjfJ+1ZeTGlbsAhwc6oaVyliT1xwLxo37PIHy1cEgd0I9ybPjftxc9D7uCa
-         FI0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWTFabV/X9ddE3Ol3aWK0k0RWcH0Vap6w9FK9NN5nFG8HAfclhWodxixiyCim/TNBKtdDByM1nnGFiKgxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyK0IbjY7ekq5Y0xR29krV4oMXWjmHTjisacp8eyJrlf6BfcWY
-	1SEep+4TIN0jtiS1P8g7ThHek83Lvq7LYtq//F5zMsfZmpkgOFmb4rbP3yG8NxM=
-X-Google-Smtp-Source: AGHT+IHVBYXZHIeFVSzJKMyjPPRTI538bYROcADmMmloUIXdIkyVOxBgB4ul/54dATOWsHi6/eAB+g==
-X-Received: by 2002:adf:fd4f:0:b0:37d:5130:b384 with SMTP id ffacd0b85a97d-3806119cdd9mr12579318f8f.35.1730367553824;
-        Thu, 31 Oct 2024 02:39:13 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c08sm1561130f8f.17.2024.10.31.02.39.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 02:39:13 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:39:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: Fix use after free in debug printk
-Message-ID: <490dc872-fc62-49da-89ff-4eba067df8c0@stanley.mountain>
-References: <7d0481da-5852-4566-9adb-3a8bb74cb159@stanley.mountain>
- <ZyNI3rQw6q4pkqpD@hovoldconsulting.com>
- <8bad985d-4655-45d2-b448-2b3377a8438c@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qhLnC7ND+QCIdFKOGqDL6l83ZL0PLg59oLBPir5+HHbXFgaUh/UEjMab3UnqoQwPrCUr86uQ6E94CGKzq8MQ7gUv7/ECG620AJW33w6V7JugwkwF7x/UJH18UXJ7lTjo18iLmjGiLuEVq8K47HGAzXw9MxG8yEG7wABqHMPOmMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2q/BaCs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC37C4CEC3;
+	Thu, 31 Oct 2024 09:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730367599;
+	bh=vKIaj0aijU4XjLmVObUic0stD9F+UK51qt/abR2zG+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M2q/BaCsSHZEiLE7uSZkWaRfCOHJchAnY9ZLmMdHjWG+6VN/dIuBZliWhON+hEBtl
+	 oq4Ia5pqNj2gSIvHrXvS0IcIAjm8q8tK1dJ2qpHu4BfH6B6viobG5nGteM9yXKw3Zn
+	 uXzIwAZPXul6S1mXD5z3+v6QovD7F//OlLSlR5e/LfZLh8/qXouXyWZV1oejC2LbFr
+	 i25vm95aKr/4vOunLDfS5CbYvLqfy2u4Xo0H8FSg9BMhHS/3AdcXw3YuS+Ut1K2GZi
+	 nF+bg3AGaM27o52XRtxERTmc3hiPIjXLL/4VqOu+co/Cjg2+utyqpEPp4a7idRINw2
+	 s05r/mqtpq1ag==
+Date: Thu, 31 Oct 2024 10:39:39 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Wen Yang <wen.yang@linux.dev>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Christian Brauner <brauner@kernel.org>, 
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: Re: [RESEND PATCH v3] sysctl: simplify the min/max boundary check
+Message-ID: <4rrwkbj5sh4anblrxzhehcir2z2w5qhrdxfu4gc4irfg4ubb7q@hjt3e6agz42i>
+References: <20240905134818.4104-1-wen.yang@linux.dev>
+ <5yfnu64fqsuahcmifvqdaynvdesqvaehhikhjff46ndoaacxyd@jvjrd3ivdpyz>
+ <4cce154a-1115-4371-a9f2-8bdb4879ea16@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,25 +60,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8bad985d-4655-45d2-b448-2b3377a8438c@stanley.mountain>
+In-Reply-To: <4cce154a-1115-4371-a9f2-8bdb4879ea16@linux.dev>
 
-On Thu, Oct 31, 2024 at 12:35:31PM +0300, Dan Carpenter wrote:
-> On Thu, Oct 31, 2024 at 10:07:42AM +0100, Johan Hovold wrote:
-> > On Thu, Oct 31, 2024 at 09:59:10AM +0300, Dan Carpenter wrote:
-> > > The dev_dbg() call dereferences "urb" but it was already freed on the
-> > > previous line.  Move the debug output earlier in the function.
-> > 
-> > Thanks for catching this, but please use a temporary variable for the
-> > struct device pointer instead of changing the flow.
+On Wed, Oct 30, 2024 at 12:26:17AM +0800, Wen Yang wrote:
+> 
+> 
+> On 2024/10/23 03:12, Joel Granados wrote:
+> > On Thu, Sep 05, 2024 at 09:48:18PM +0800, Wen Yang wrote:
+...
+
+> >> @@ -936,10 +921,10 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+> >>   int proc_douintvec_minmax(const struct ctl_table *table, int write,
+> >>   			  void *buffer, size_t *lenp, loff_t *ppos)
+> >>   {
+> >> -	struct do_proc_douintvec_minmax_conv_param param = {
+> >> -		.min = (unsigned int *) table->extra1,
+> >> -		.max = (unsigned int *) table->extra2,
+> >> -	};
+> >> +	struct proc_minmax_conv_param param;
+> >> +
+> >> +	param.min = (table->extra1) ? *(unsigned int *) table->extra1 : 0;
+> >> +	param.max = (table->extra2) ? *(unsigned int *) table->extra2 : UINT_MAX;
+> > This is one of the cases where there is potential issues. Here, if the
+> >  value of table->extra{1,2}'s value is greater than when
+> > the maximum value of a signed long, then the value assigned would be
+> > incorrect. Note that the problem does not go away if you remove the
+> > "unsigned" qualifier; it remains if table->extra{1,2} are originally
+> > unsigned.
 > > 
 > 
-> Why?  The output is the same either way and this way is cleaner code.
+> I set up a CentOS 7.9 32-bit VM on Virtuanbox:
+> # uname  -a
+> Linux osboxes.org 3.10.0-1160.2.2.el7.centos.plus.i686 #1 SMP Mon Oct 26 
+> 11:56:29 UTC 2020 i686 i686 i386 GNU/Linux
 > 
+> And the following test code:
+> 
+> #include <stdio.h>
+> #include <stdlib.h>
+> 
+> int main()
+> {
+> 	unsigned int i = 4294967294;
+> 	long j = i;
+> 
+> 	printf("original hex(i) = 0x%x\n", i);
+> 	printf("unsigned int(i) = %lu\n", i);
+> 	printf("---------------------\n");
+> 	printf("hex(j) = 0x%x\n", j);
+> 	printf("long(j) = %ld\n", j);
+> 	printf("unsigned long(j) = %lu\n", j);
+> 	printf("int(j) = %d\n", j);
+> 	printf("unsigned int(j) = %lu\n", j);
+> 	return 0;
+> }
+> 
+> 
+> ./a.out
+> 
+> original hex(i) = 0xfffffffe
+> unsigned int(i) = 4294967294
+> ---------------------
+> hex(j) = 0xfffffffe
+> long(j) = -2
+This ^^^^^ is exactly what I expected. Thx for the test!
 
-Nah, you're right.  A temporary variable is nicer.  It avoids having two if
-statements.
+When you transfer that to your patch, it means that for certain cases
+[1] the value resulting from the interpretation of param.{min,max}
+(signed long) is going to be different than the value resulting from the
+interpretation of table-extra{1,2} (unsigned int).
 
-regards,
-dan carpenter
+Here is another way of thinking about it:
+We are avoiding bugs where a developer thinks they are handling longs,
+when in reality they are handling unsinged ints; The result of
+subtracting 1 from (-2) is very different from subtracting 1 from
+4294967294.
 
+> unsigned long(j) = 4294967294
+> int(j) = -2
+> unsigned int(j) = 4294967294
+> 
+> 
+> The original hexadecimal values are the same, using unsigned int, int, 
+> unsigned long, or long is just interpreted in different ways.
+Exactly. Hex remains the same but the interpretation changes. And it is
+there where pain lies.
+
+Please re-work the patch without merging everything into
+do_proc_douintvec_minmax_conv_param
+
+> 
+> We also ensure consistency in numerical writing and type conversion in 
+> the patch. For example, in proc_rointvec_jiffies, convert to int; And in 
+> proc_rouintvec_minmax, it is converted to unsigned int.
+> 
+> 
+> --
+> Best wishes,
+> Wen
+> 
+> 
+> > I'm not sure if there are more, but just having one of these things
+> > around make me uncomfortable. Please re-work the patch in order to
+> > remove this issue in order to continue review.
+> > 
+> > best
+> > 
+Best
+
+[1] This is one case that I can imagine
+  1. On 32 bit architectures
+  2. Where UINT_MAX > LONG_MAX
+  3. The value being assigned is greater LONG_MAX
+
+-- 
+
+Joel Granados
 
