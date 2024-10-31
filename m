@@ -1,375 +1,270 @@
-Return-Path: <linux-kernel+bounces-390769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3B89B7E52
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:26:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27859B7E59
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36192856FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6277628572F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D18A1A286D;
-	Thu, 31 Oct 2024 15:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC181A704B;
+	Thu, 31 Oct 2024 15:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="TGlZly+v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EvYgsp6+"
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IzinpzcT"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C1E14901B;
-	Thu, 31 Oct 2024 15:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85DD19E819
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388356; cv=none; b=PWBCRfQ2EQNKiDbX+sYmgwBlWtkpXUb3Gv8a7zExMCLJQgjDS+jeWhCq7GV+feA/2eLHTapHeBYKb8pWOKKcyOyEbnVvTnwJmzUPnEVcYxvFD/flP1pwZiub4YsIp0WVNAC7LSQ7hBCGz+cGPU0O0Kfao4gBNpeWBa+mc/JLZjo=
+	t=1730388433; cv=none; b=tycrAgFuIuXw9cEAdUeKQBYf8qwULL/yo+JSbL4swvBWx6TYPxAAoEFoxladAOt7f6jmOoAY9JfKnuEHkpTeliIcJcSJVQUMtf6g7+fIuIDlV9wp0ZX6msqjHEQ0GjE675z6MKnrMwaSRvY1j+71DapUO/w0v7YNYmTiiNbGr6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730388356; c=relaxed/simple;
-	bh=zLgXAY+IyfURML/rOrbDqAFSsQ+qWA8xLdSWIymvDug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RADn8bvUBycuTH5iGOHcV5cG1nixJK1u17K5mxtCOD2avyn0Nf2Kx2APX8WSmHWpHUzzmuPb0uLbtbVUA0s5AuT+PS0/2484x27SrGAEkVktrKF5W/PnYtiBmCaTUl9Gcr0n0Wkli8TVjFjnvKAlsCamsRaxSAfTRnSNZQb6JIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=TGlZly+v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EvYgsp6+; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id 61F63200A0A;
-	Thu, 31 Oct 2024 11:25:50 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Thu, 31 Oct 2024 11:25:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730388350; x=
-	1730391950; bh=4jAwy/FJmIagUUK1GwikobWyx2JBEH7eHzXn79DRuCw=; b=T
-	GlZly+vH/Ku/xu3tiu7PFbH+dydnmqU+ldrxdE3bVoVYS8RuYb6rjibL19lr38CJ
-	jCwmUyxEydRwnc9+aMS3FY7iTn53kO/rflZXhWVgyjfXWF/Yg1lXwYsG6OT7tgrm
-	yhYPd5WfslV/UrJA2Uh795dP781rk1d6b823Ey5CS5nilJM195QZM5DMKLo/2RXF
-	ihPzjTvqv4l/5tCNTtveAe2lGYXl7SRl7kXmEkrXuJDoT278o/1XrIHY9w9rSXCq
-	6HQNdk9J9TUgoyuWrP57Sr+lbHdDJuTT6qHqMtQSxr4xeqsCKY/Fp5Uc94tSI7Z1
-	cyPfoq1nx+R/nsMwtd3oA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730388350; x=1730391950; bh=4jAwy/FJmIagUUK1GwikobWyx2JBEH7eHzX
-	n79DRuCw=; b=EvYgsp6+up1yXJB3PIE8Jj9sIGBkHDdV1I7EzuW0GGA6p4OfFoC
-	sM/x6RSDuefeTOX3h9RUOEoJr6t32aWCLNod5IxHpkaYC6uLfi0E5Jihz9168qL4
-	2slqeTIw7v43iRT8UflrNStZc+BvvMuY9wtR5quRYIerIZE7xlNHRnGDYJJXQJKd
-	Z9h4xkkHkvzGtEc+HuPid6ubP+J74KvR3rZBOMpDurzGx7JI+3WfwErsBhKRDF5E
-	YuTKA2ixfEbbZyeiZOuuMW6Qn+fblk1kPt2Nf8wFe2hWPyi9ZcbN8lYvbCW5ttT9
-	9W3sgCWJKDGiluGeP3eg8n/xNHGkOgCcJKw==
-X-ME-Sender: <xms:faEjZ3nduXheRs29qRKuNvxNLTBTbSe-enJ-SwC1KsKw8aggKPm1nw>
-    <xme:faEjZ60eoMXqdpMoh7DODg5DTWrTCAdwa_3TM9CkmG_AefbGEIQQ0IWh8aIFdPyBJ
-    zt8C36JMp43MWtfvzw>
-X-ME-Received: <xmr:faEjZ9rVmEVIsXBIXJZEASCkTfo3lk4V6eGUDp9zuMGjq2VdYjalsJgq1qMq>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekiedgudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
-    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepveejheeugfeutddufffggeejfeelkedu
-    heegvdejhffgudehtdevuedvjefffeejnecuffhomhgrihhnpehskhgptggsrdhskhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsugesqhhu
-    vggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopegrnhhtohhnihhosehophgvnhhvphhnrdhnvghtpdhrtghp
-    thhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrg
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhmpdhrtg
-    hpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhihrgiirghn
-    ohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnh
-    drtghhpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:faEjZ_lVEGhl6zpl_-2MBSuLbnJn8gXMa_dviN6yTX8KL_kuIj-ZnQ>
-    <xmx:faEjZ10VAmjzVzBTb2gapDFt7pCBOipSlzvU8sjoF4IdZtWom1dmjA>
-    <xmx:faEjZ-tCtwAp7w3i1vzpRkf0_N6PyWgvVbPejyQYxwJJGcE4jn00zQ>
-    <xmx:faEjZ5UxaOG0Dex5KC9ECQcly9qBt4wepT_t4JMMb3BqOXxyeVadCw>
-    <xmx:fqEjZ-Lo8LtUGI-PP07l-hr6hLstsMR0NEZXJ-se2k25hhpoAJBNpTSJ>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 31 Oct 2024 11:25:49 -0400 (EDT)
-Date: Thu, 31 Oct 2024 16:25:47 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 12/23] ovpn: implement TCP transport
-Message-ID: <ZyOhe3yKTiqCF2TH@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-12-de4698c73a25@openvpn.net>
+	s=arc-20240116; t=1730388433; c=relaxed/simple;
+	bh=f1d8I7fA7sw+sUfmK05uH6O9ujVnIEfnleGw3Ox4pGs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tUiYR5dYXA43j84kMQ5OaGGWnUBc+iCr+hE6Co7d1kr8oLGiGhG8WxMUqbn/yhiHZYrds1Auf9OK1gF4iZYqBeFWR6waFGu/lpqEd4r7iH8wxV/DIn7hAUDFa2FlTB5hadA5V5TARK73NjA75pEz7JcjY+KyqZVkocGXJ24iX9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IzinpzcT; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d63a79bb6so733111f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730388428; x=1730993228; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0WwNTu1vlvbHuN9HbKDO0xkQz2gUitr+1C+jlofiLKI=;
+        b=IzinpzcTT1TCK0CezgXhsW7B+6LyRTXIaG4CK3eP0rGMzIWi93aN1swt+5R8nsYbFW
+         vSAQdQKHFHa+Pw/4m+qLreKyH2UgZGD9EP4fDqm7ONxbYt2mEx6yHigmO70C4cpzs1v+
+         zeAVo0xEw5HTpR22N5y6CAVXwandBxLvSyik/EAoiyFjjbwg1Py/Tbb8AoR0CR62YyFI
+         0jkI0mG4q/KPp5gQ1kmy04Cwx6iBJG4Ov53JipYqunExCDym4IdMhJ8/czJQvvreOino
+         SAX08x8BlpWqHANxuinxfsI/B6jjrwo2WSH2InZef1TS6/H95GpzfwMOPlYvZNP8voZy
+         DaPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730388428; x=1730993228;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0WwNTu1vlvbHuN9HbKDO0xkQz2gUitr+1C+jlofiLKI=;
+        b=pOtyJQQxSi0jJZQfJDMR0TLM7TmmrInSnASDpdV4XO3ux5TbknVA/sZB/zlL78r1UC
+         EHN2yufWP5bK8yXZ59o1zfXsABRn3Weub14iONGf7fgcl3nDRXlxCZBIKbgC0BxeiuSG
+         ADQsaWghZTBfsKnOTdk4G4v5marhqoRdavINV/wGpQf4QAPoXwRTEMZ6Y6dT/KeEYqN/
+         NlVhMo2CIlpdB/KZ4Fb04+LP9vkh/551mSdeAayLPvxkPLNHuZkucgxf6WwV/CcEcVXT
+         BHdphYVNlAK/dwnhPJsm0bkMwoVAmZrCXZmRwEDaIaHu4P9NzqVKL627vAkF8EdByKkT
+         HVrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYCIqDB3VCFxoNoaH5HlWWcUKtx0mjj4P/Pr1dorsz18kmlUuD7kdRwU14Bu+/mhG/OqY4eouJBlMR1cM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPvKrrYNwpxguz76H7GWTBlFAsMHjAsO2reXtjtnsDydKltkjH
+	poEaunXU/Ls8qOvuNcXdo6TCaBfrgnfrBH2NRsp9yr3Kkw2IYVkzlr4a/PLyUSM=
+X-Google-Smtp-Source: AGHT+IFb1d7/9RTsGMROhFf+wqRTbx7hjNdlDFSlqM1RaxGhrI/oNHTEKXbi327qzy4zNRL3SmwMYg==
+X-Received: by 2002:a05:6000:1888:b0:37d:50e1:a2c1 with SMTP id ffacd0b85a97d-381bea1bf05mr3054559f8f.46.1730388427847;
+        Thu, 31 Oct 2024 08:27:07 -0700 (PDT)
+Received: from [192.168.1.64] (2a02-8428-e55b-1101-1e41-304e-170b-482f.rev.sfr.net. [2a02:8428:e55b:1101:1e41:304e:170b:482f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf429sm29399475e9.12.2024.10.31.08.27.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 08:27:07 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH v2 00/15] iio: fix write_event_config signature
+Date: Thu, 31 Oct 2024 16:26:55 +0100
+Message-Id: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029-b4-ovpn-v11-12-de4698c73a25@openvpn.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL+hI2cC/43PwQ7CIAyA4VcxnK0BtsXoyfcwOwwoWxMFBYYuy
+ 95dnHr3+Ddpv3RmEQNhZMfNzAJmiuRdCbndMD10rkcgU5pJLmvBZQVEHiw94REoIWBGl0B7Z6m
+ HSL3r0hgQhNLCNtIaNJaVU7eAZWdlzm3pgWLyYVrVLN7TH1D/B2QBHPZGHrDpKqE4P6luupAKu
+ NP+ytrlgwa8j+Wl9JWX5QVpKE728AAAAA==
+X-Change-ID: 20241023-iio-fix-write-event-config-signature-1bc1f52fdedf
+To: Mudit Sharma <muditsharma.info@gmail.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Anshul Dalal <anshulusr@gmail.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, 
+ Ramona Gradinariu <ramona.gradinariu@analog.com>, 
+ Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+ Dan Robertson <dan@dlrobertson.com>, 
+ Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+ Matteo Martelli <matteomartelli3@gmail.com>, 
+ Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, 
+ Jagath Jog J <jagathjog1996@gmail.com>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
+ Kevin Tsai <ktsai@capellamicro.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev, 
+ Julien Stephan <jstephan@baylibre.com>, 
+ Julia Lawall <julia.lawall@inria.fr>
+X-Mailer: b4 0.14.2
 
-2024-10-29, 11:47:25 +0100, Antonio Quartulli wrote:
-> +static void ovpn_socket_release_work(struct work_struct *work)
-> +{
-> +	struct ovpn_socket *sock = container_of(work, struct ovpn_socket, work);
-> +
-> +	ovpn_socket_detach(sock->sock);
-> +	kfree_rcu(sock, rcu);
-> +}
-> +
-> +static void ovpn_socket_schedule_release(struct ovpn_socket *sock)
-> +{
-> +	INIT_WORK(&sock->work, ovpn_socket_release_work);
-> +	schedule_work(&sock->work);
+Hello,
 
-How does module unloading know that it has to wait for this work to
-complete? Will ovpn_cleanup get stuck until some refcount gets
-released by this work?
+This series update the write_event_config callback signature to use
+a boolean instead of an int for state variable. iio_ev_state_store
+is actually using kstrtobool to check user input, then gives the
+converted boolean value to write_event_config.
 
+First, fix the write_event_config callbacks from iio drivers that are
+checking state input, or that are converting state to bool. This is
+useless code, then update signature.
 
-[...]
-> +static void ovpn_tcp_rcv(struct strparser *strp, struct sk_buff *skb)
-> +{
-> +	struct ovpn_peer *peer = container_of(strp, struct ovpn_peer, tcp.strp);
-> +	struct strp_msg *msg = strp_msg(skb);
-> +	size_t pkt_len = msg->full_len - 2;
-> +	size_t off = msg->offset + 2;
-> +
-> +	/* ensure skb->data points to the beginning of the openvpn packet */
-> +	if (!pskb_pull(skb, off)) {
-> +		net_warn_ratelimited("%s: packet too small\n",
-> +				     peer->ovpn->dev->name);
-> +		goto err;
-> +	}
-> +
-> +	/* strparser does not trim the skb for us, therefore we do it now */
-> +	if (pskb_trim(skb, pkt_len) != 0) {
-> +		net_warn_ratelimited("%s: trimming skb failed\n",
-> +				     peer->ovpn->dev->name);
-> +		goto err;
-> +	}
-> +
-> +	/* we need the first byte of data to be accessible
-> +	 * to extract the opcode and the key ID later on
-> +	 */
-> +	if (!pskb_may_pull(skb, 1)) {
-> +		net_warn_ratelimited("%s: packet too small to fetch opcode\n",
-> +				     peer->ovpn->dev->name);
-> +		goto err;
-> +	}
-> +
-> +	/* DATA_V2 packets are handled in kernel, the rest goes to user space */
-> +	if (likely(ovpn_opcode_from_skb(skb, 0) == OVPN_DATA_V2)) {
-> +		/* hold reference to peer as required by ovpn_recv().
-> +		 *
-> +		 * NOTE: in this context we should already be holding a
-> +		 * reference to this peer, therefore ovpn_peer_hold() is
-> +		 * not expected to fail
-> +		 */
-> +		if (WARN_ON(!ovpn_peer_hold(peer)))
-> +			goto err;
-> +
-> +		ovpn_recv(peer, skb);
-> +	} else {
-> +		/* The packet size header must be there when sending the packet
-> +		 * to userspace, therefore we put it back
-> +		 */
-> +		skb_push(skb, 2);
-> +		ovpn_tcp_to_userspace(peer, strp->sk, skb);
-> +	}
-> +
-> +	return;
-> +err:
-> +	netdev_err(peer->ovpn->dev,
-> +		   "cannot process incoming TCP data for peer %u\n", peer->id);
+This patch has been partially written using coccinelle with the
+following script:
 
-This should also be ratelimited, and maybe just combined with the
-net_warn_ratelimited just before each goto.
+$ cat iio-bool.cocci
+// Options: --all-includes
 
-> +	dev_core_stats_rx_dropped_inc(peer->ovpn->dev);
-> +	kfree_skb(skb);
-> +	ovpn_peer_del(peer, OVPN_DEL_PEER_REASON_TRANSPORT_ERROR);
-> +}
+virtual patch
 
-[...]
-> +void ovpn_tcp_socket_detach(struct socket *sock)
-> +{
-[...]
-> +	/* restore CBs that were saved in ovpn_sock_set_tcp_cb() */
-> +	sock->sk->sk_data_ready = peer->tcp.sk_cb.sk_data_ready;
-> +	sock->sk->sk_write_space = peer->tcp.sk_cb.sk_write_space;
-> +	sock->sk->sk_prot = peer->tcp.sk_cb.prot;
-> +	sock->sk->sk_socket->ops = peer->tcp.sk_cb.ops;
-> +	rcu_assign_sk_user_data(sock->sk, NULL);
-> +
-> +	rcu_read_unlock();
-> +
-> +	/* cancel any ongoing work. Done after removing the CBs so that these
-> +	 * workers cannot be re-armed
-> +	 */
+@c1@
+identifier iioinfo;
+identifier wecfunc;
+@@
+ static const struct iio_info iioinfo = {
+        ...,
+        .write_event_config =
+(
+ wecfunc
+|
+ &wecfunc
+),
+        ...,
+ };
 
-I'm not sure whether a barrier is needed to prevent compiler/CPU
-reordering here.
+@@
+identifier c1.wecfunc;
+identifier indio_dev, chan, type, dir, state;
+@@
+ int wecfunc(struct iio_dev *indio_dev, const struct iio_chan_spec *chan, enum iio_event_type type, enum iio_event_direction dir,
+-int
++bool
+ state) {
+  ...
+ }
 
-> +	cancel_work_sync(&peer->tcp.tx_work);
-> +	strp_done(&peer->tcp.strp);
-> +}
-> +
-> +static void ovpn_tcp_send_sock(struct ovpn_peer *peer)
-> +{
-> +	struct sk_buff *skb = peer->tcp.out_msg.skb;
-> +
-> +	if (!skb)
-> +		return;
-> +
-> +	if (peer->tcp.tx_in_progress)
-> +		return;
-> +
-> +	peer->tcp.tx_in_progress = true;
+make coccicheck MODE=patch COCCI=iio-bool.cocci M=drivers/iio
 
-Sorry, I never answered your question about my concerns in a previous
-review here.
+Unfortunately, this script didn't match all files:
+* all write_event_config callbacks using iio_device_claim_direct_scoped
+  were not detected and not patched.
+* all files that do not assign and declare the write_event_config
+  callback in the same file.
 
-We can reach ovpn_tcp_send_sock in two different contexts:
- - lock_sock (either from ovpn_tcp_sendmsg or ovpn_tcp_tx_work)
- - bh_lock_sock (from ovpn_tcp_send_skb, ie "data path")
+iio.h was also manually updated.
 
-These are not fully mutually exclusive. lock_sock grabs bh_lock_sock
-(a spinlock) for a brief period to mark the (sleeping/mutex) lock as
-taken, and then releases it.
+The patch was build tested using allmodconfig config.
 
-So when bh_lock_sock is held, it's not possible to grab lock_sock. But
-when lock_sock is taken, it's still possible to grab bh_lock_sock.
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Changes in v2:
+- removed commits that were already applied
+- added new commits to fix comments from Jonathan Cameron: cleanup code
+  in few callbacks to update driver internal function signature to also use
+  bool for state and update the driver internal state variable to bool.
+- few minor fixes along the way on different driver
+- Link to v1: https://lore.kernel.org/r/20241024-iio-fix-write-event-config-signature-v1-0-7d29e5a31b00@baylibre.com
 
+---
+Julien Stephan (15):
+      iio: light: ltr390: simplify code in write_event_config callback
+      iio: proximity: hx9023s: simplify code in write_event_config callback
+      iio: light: tsl2772: simplify code in write_event_config callback
+      iio: proximity: irsd200: simplify code in write_event_config callback
+      iio: proximity: sx9500: simplify code in write_event_config callback
+      iio: light: adux1020: write_event_config: use local variable for interrupt value
+      iio: fix write_event_config signature
+      iio: accel: mma9551: use bool for event state
+      iio: accel: sca3000: use bool for event state
+      iio: imu: bmi323: use bool for event state
+      iio: imu: st_lsm6dsx: use bool for event state
+      iio: light: apds9300: use bool for event state
+      iio: light: apds9306: simplifies if branch in apds9306_write_event_config
+      iio: light: apds9960: convert als_int and pxs_int to bool
+      iio: light: apds9960: remove useless return
 
-The buggy scenario would be:
+ drivers/iio/accel/adxl367.c                    |  2 +-
+ drivers/iio/accel/adxl372.c                    |  2 +-
+ drivers/iio/accel/adxl380.c                    |  2 +-
+ drivers/iio/accel/bma400_core.c                |  2 +-
+ drivers/iio/accel/bmc150-accel-core.c          |  2 +-
+ drivers/iio/accel/fxls8962af-core.c            |  2 +-
+ drivers/iio/accel/kxcjk-1013.c                 |  2 +-
+ drivers/iio/accel/mma8452.c                    |  2 +-
+ drivers/iio/accel/mma9551.c                    |  8 ++++----
+ drivers/iio/accel/mma9553.c                    |  3 ++-
+ drivers/iio/accel/sca3000.c                    |  6 +++---
+ drivers/iio/adc/ad7091r-base.c                 |  3 ++-
+ drivers/iio/adc/ad7291.c                       |  2 +-
+ drivers/iio/adc/ad799x.c                       |  2 +-
+ drivers/iio/adc/hi8435.c                       |  2 +-
+ drivers/iio/adc/max1363.c                      |  2 +-
+ drivers/iio/adc/pac1921.c                      |  3 ++-
+ drivers/iio/adc/palmas_gpadc.c                 |  2 +-
+ drivers/iio/adc/ti-ads1015.c                   |  2 +-
+ drivers/iio/adc/xilinx-ams.c                   |  2 +-
+ drivers/iio/adc/xilinx-xadc-events.c           |  2 +-
+ drivers/iio/adc/xilinx-xadc.h                  |  2 +-
+ drivers/iio/cdc/ad7150.c                       |  2 +-
+ drivers/iio/dac/ad5421.c                       |  2 +-
+ drivers/iio/dac/ad8460.c                       |  2 +-
+ drivers/iio/dummy/iio_simple_dummy.h           |  2 +-
+ drivers/iio/dummy/iio_simple_dummy_events.c    |  2 +-
+ drivers/iio/gyro/bmg160_core.c                 |  2 +-
+ drivers/iio/imu/bmi323/bmi323_core.c           | 10 +++++-----
+ drivers/iio/imu/inv_mpu6050/inv_mpu_core.c     |  2 +-
+ drivers/iio/imu/kmx61.c                        |  2 +-
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c   |  4 ++--
+ drivers/iio/light/adux1020.c                   | 11 ++++++-----
+ drivers/iio/light/apds9300.c                   | 10 +++++-----
+ drivers/iio/light/apds9306.c                   |  7 ++-----
+ drivers/iio/light/apds9960.c                   |  8 +++-----
+ drivers/iio/light/bh1745.c                     |  2 +-
+ drivers/iio/light/cm36651.c                    |  2 +-
+ drivers/iio/light/gp2ap002.c                   |  2 +-
+ drivers/iio/light/gp2ap020a00f.c               |  2 +-
+ drivers/iio/light/iqs621-als.c                 |  2 +-
+ drivers/iio/light/ltr390.c                     |  7 ++-----
+ drivers/iio/light/ltr501.c                     |  2 +-
+ drivers/iio/light/max44009.c                   |  2 +-
+ drivers/iio/light/opt3001.c                    |  2 +-
+ drivers/iio/light/stk3310.c                    |  2 +-
+ drivers/iio/light/tcs3472.c                    |  2 +-
+ drivers/iio/light/tsl2563.c                    |  2 +-
+ drivers/iio/light/tsl2591.c                    |  2 +-
+ drivers/iio/light/tsl2772.c                    |  6 +++---
+ drivers/iio/light/us5182d.c                    |  2 +-
+ drivers/iio/light/vcnl4000.c                   |  5 +++--
+ drivers/iio/light/veml6030.c                   |  2 +-
+ drivers/iio/position/iqs624-pos.c              |  2 +-
+ drivers/iio/proximity/aw96103.c                |  2 +-
+ drivers/iio/proximity/cros_ec_mkbp_proximity.c |  2 +-
+ drivers/iio/proximity/hx9023s.c                |  4 ++--
+ drivers/iio/proximity/irsd200.c                |  5 +++--
+ drivers/iio/proximity/sx9500.c                 |  6 +++---
+ drivers/iio/proximity/sx_common.c              |  2 +-
+ drivers/iio/proximity/sx_common.h              |  2 +-
+ drivers/iio/proximity/vcnl3020.c               |  2 +-
+ drivers/iio/temperature/mcp9600.c              |  2 +-
+ drivers/iio/temperature/tmp007.c               |  2 +-
+ include/linux/iio/iio.h                        |  2 +-
+ 65 files changed, 100 insertions(+), 102 deletions(-)
+---
+base-commit: ce2785a44e784240e3dbb142942c9d88c2cac3d0
+change-id: 20241023-iio-fix-write-event-config-signature-1bc1f52fdedf
 
-  (data path encrypt)                       (sendmsg)
-  ovpn_tcp_send_skb                         lock_sock
-                                              bh_lock_sock + owned=1 + bh_unlock_sock
-  bh_lock_sock
-  ovpn_tcp_send_sock_skb                      ovpn_tcp_send_sock_skb
-    !peer->tcp.out_msg.skb                      !peer->tcp.out_msg.skb
-    peer->tcp.out_msg.skb = ...                 peer->tcp.out_msg.skb = ...
-    ovpn_tcp_send_sock                          ovpn_tcp_send_sock
-      !peer->tcp.tx_in_progress                   !peer->tcp.tx_in_progress
-      peer->tcp.tx_in_progress = true             peer->tcp.tx_in_progress = true
-      // proceed                                  // proceed
-
-
-That's 2 similar races, one on out_msg.skb and one on tx_in_progress.
-It's a bit unlikely (but not impossible) that we'll have 2 cpus trying
-to call skb_send_sock_locked at the same time, but if they just
-overwrite each other's skb/len it's already pretty bad. The end of
-ovpn_tcp_send_sock might also reset peer->tcp.out_msg.* just as
-ovpn_tcp_send_skb -> ovpn_tcp_send_sock_skb starts setting it up
-(peer->tcp.out_msg.skb gets cleared, ovpn_tcp_send_sock_skb proceeds
-and sets skb+len, then maybe len gets reset to 0 by
-ovpn_tcp_send_sock).
-
-
-To avoid this problem, esp_output_tcp_finish (net/ipv4/esp4.c) does:
-
-	bh_lock_sock(sk);
-	if (sock_owned_by_user(sk))
-		err = espintcp_queue_out(sk, skb);
-	else
-		err = espintcp_push_skb(sk, skb);
-	bh_unlock_sock(sk);
-
-
-(espintcp_push_skb is roughly equivalent to ovpn_tcp_send_sock_skb)
-
-
-> +	do {
-> +		int ret = skb_send_sock_locked(peer->sock->sock->sk, skb,
-> +					       peer->tcp.out_msg.offset,
-> +					       peer->tcp.out_msg.len);
-> +		if (unlikely(ret < 0)) {
-> +			if (ret == -EAGAIN)
-> +				goto out;
-> +
-> +			net_warn_ratelimited("%s: TCP error to peer %u: %d\n",
-> +					     peer->ovpn->dev->name, peer->id,
-> +					     ret);
-> +
-> +			/* in case of TCP error we can't recover the VPN
-> +			 * stream therefore we abort the connection
-> +			 */
-> +			ovpn_peer_del(peer,
-> +				      OVPN_DEL_PEER_REASON_TRANSPORT_ERROR);
-> +			break;
-> +		}
-> +
-> +		peer->tcp.out_msg.len -= ret;
-> +		peer->tcp.out_msg.offset += ret;
-> +	} while (peer->tcp.out_msg.len > 0);
-> +
-> +	if (!peer->tcp.out_msg.len)
-> +		dev_sw_netstats_tx_add(peer->ovpn->dev, 1, skb->len);
-> +
-> +	kfree_skb(peer->tcp.out_msg.skb);
-> +	peer->tcp.out_msg.skb = NULL;
-> +	peer->tcp.out_msg.len = 0;
-> +	peer->tcp.out_msg.offset = 0;
-> +
-> +out:
-> +	peer->tcp.tx_in_progress = false;
-> +}
-> +
-> +static void ovpn_tcp_tx_work(struct work_struct *work)
-> +{
-> +	struct ovpn_peer *peer;
-> +
-> +	peer = container_of(work, struct ovpn_peer, tcp.tx_work);
-> +
-> +	lock_sock(peer->sock->sock->sk);
-> +	ovpn_tcp_send_sock(peer);
-> +	release_sock(peer->sock->sock->sk);
-> +}
-> +
-> +void ovpn_tcp_send_sock_skb(struct ovpn_peer *peer, struct sk_buff *skb)
-> +{
-> +	if (peer->tcp.out_msg.skb)
-> +		return;
-
-That's leaking the skb? (and not counting the drop)
-
-> +
-> +	peer->tcp.out_msg.skb = skb;
-> +	peer->tcp.out_msg.len = skb->len;
-> +	peer->tcp.out_msg.offset = 0;
-> +
-> +	ovpn_tcp_send_sock(peer);
-> +}
-> +
-> +static int ovpn_tcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
-> +{
-[...]
-> +	ret = skb_copy_datagram_from_iter(skb, 0, &msg->msg_iter, size);
-> +	if (ret) {
-> +		kfree_skb(skb);
-> +		net_err_ratelimited("%s: skb copy from iter failed: %d\n",
-> +				    sock->peer->ovpn->dev->name, ret);
-> +		goto unlock;
-> +	}
-> +
-> +	ovpn_tcp_send_sock_skb(sock->peer, skb);
-
-If we didn't send the packet (because one was already queued/in
-progress), we should either stash it, or tell userspace that it wasn't
-sent and it should retry later.
-
-> +	ret = size;
-> +unlock:
-> +	release_sock(sk);
-> +peer_free:
-> +	ovpn_peer_put(peer);
-> +	return ret;
-> +}
-
+Best regards,
 -- 
-Sabrina
+Julien Stephan <jstephan@baylibre.com>
+
 
