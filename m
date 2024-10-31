@@ -1,92 +1,105 @@
-Return-Path: <linux-kernel+bounces-391447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FDB9B8700
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:19:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086A89B870D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BE71C214ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2551F22B97
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEEF1E283F;
-	Thu, 31 Oct 2024 23:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6890E1E2609;
+	Thu, 31 Oct 2024 23:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DFj5fcrw"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="lYq4ChgE"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E3E1DFD81;
-	Thu, 31 Oct 2024 23:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17D719CC1D;
+	Thu, 31 Oct 2024 23:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730416783; cv=none; b=qWY4wfHIjwoqnEXvTCSc0LpCm0gKLeTzupnbItytxLQD1nU9LrS8w/oHwIIyFDgvAdj4dKmDIzGdIC+IQUhr6Dl32G7fkCq6nhK5pnHvP7bA/ZS1xmwvtGPtCNH25cHvmPcX4J7wzSwEKeLOrLDgGOSOOfkG6AfIzBzJX0SY/II=
+	t=1730416951; cv=none; b=ceUcM42JNkH3b1RnnaOQ5QWrI0K36peyQ6M84sme8R/VptOKutcrQ55ipyvXeSQa39vR3y+7wMaORpTxi/qYrkaEP2oR+PIjGiQU8jRirwxGuuRjBMnEZCZd+TqfjJePwfZ7GCsfOxah/0wFEDdZKigWxZmDTSOQSyC7vuhLgIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730416783; c=relaxed/simple;
-	bh=WbpxuzdF/aAPqb8D5YYBFYBBEyxXs9OMxENeJB48SX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oidEoFxq4AudwAMowKX1tFAQHEhiXXN+sQZ4+wCRLwKLBnp0zFMmq+yNpZ02m77A2eCl3u+U4J5wTyJHXKtZbni9HWVNAiV6JB3bW3Ugq2/fvnY9BiUrfGS1djdYqkqf5eoIt0M0eQF1wFGavEuugIAadkAcZiY0ebZnrsjFp7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DFj5fcrw; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3CDC9240003;
-	Thu, 31 Oct 2024 23:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730416775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5z9zdQZdn+zNttfWGlxZQQmSzPWLPgZ9wK42vO4Z99Y=;
-	b=DFj5fcrwWedEAv97V+okKIg8EgYTOTDolTk3Nvj3qmgfej6r//dHGAp0SqAdaP4rLmiKup
-	n0wJud8KS5kmN+K4zr4GM5rtYaAHz1pnJj2AFcFgUy8TgGJPTALCfU4XqaMoK67d8tMHCj
-	vIahM1qbouOV8XMXRQO0gJjtJxVae6Dc3r1baVTYglsmfhu0NZhOHSMu4+kMDRbM2aNFKl
-	tWBQpijuPUOHBVrn1yYm0EmI1wksDAz7+7XeBErO3wHAH4t21mlkejdibXAKXqRe95q4w5
-	Z1yYxqrug/BCDmEdft5zY6oVKu3Mw6oyIecHOXJ5C7/EqMKzPVTB+SwhytVjww==
-Date: Fri, 1 Nov 2024 00:19:34 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mateusz =?utf-8?Q?Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Joy Chakraborty <joychakr@google.com>, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: cmos: avoid taking rtc_lock for extended period of
- time
-Message-ID: <173041676668.2394637.4445020791361338594.b4-ty@bootlin.com>
-References: <Zxv8QWR21AV4ztC5@google.com>
+	s=arc-20240116; t=1730416951; c=relaxed/simple;
+	bh=+Z4iN86Z4sP0/Af7qZpvdU+IIp0ofPGG1Ql6RNWQGL8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Os+bES/0kjpyh6qjm4o0igslM8hNOZtxky51D68dYyS82wHvZhhcqcJqhqNqNil49cCFVumvTvHdBvm5mjCXVo86b5a81DWPLsai8pBCgat8F+RsKDEyxAjDoHBAGxByEpKLmXdLbbUrvBQxwUo8G7amzE7olW3qH58SMrPGdMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=lYq4ChgE; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=e4iljxadsnbirew3sd46p5tn5u.protonmail; t=1730416941; x=1730676141;
+	bh=KtHmkKZMjJydMhLVdKkO4pAHwZNrPcw8CiV3Cx5IwYI=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=lYq4ChgEAXuo66LfPkwh+cfO5rrSP2NHr+JsqDoArg9ads7Qv3E13eqoqVsUugklj
+	 EhclY/U7ia6wGxhPtZ1Qa3cjbNhn75n9CM87qUUW3tSlKUomnKJDLvl9YjIJYn5Uol
+	 mrPjTXrj53AUYgbXsmbbC0tg5ZJIAodTfasJlBxwf5SmBulOFAkFvjemTGIJGEV8ba
+	 eYaBGLAeWeaLwyppgb9Kg1afqcNswnoQnddum+I9hf0P1kSVvWj/fagnAIThxUUKsL
+	 kYD3dh2ia3zd9N7HfQwvgU3B73P5edtxO/pM7Pxmouao+R/cRM4IY5Fvrwwqjc3Mn0
+	 n3sGYWDpEoOlA==
+Date: Thu, 31 Oct 2024 23:22:17 +0000
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+Subject: [PATCH] Fix wrong max check in bch2_opt_validate
+Message-ID: <20241031231823.688918-2-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 4d769bad408fc179d6a5f012744d1ab5cc8b95a7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zxv8QWR21AV4ztC5@google.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 25 Oct 2024 13:14:57 -0700, Dmitry Torokhov wrote:
-> On my device reading entirety of /sys/devices/pnp0/00:03/cmos_nvram0/nvmem
-> takes about 9 msec during which time interrupts are off on the CPU that
-> does the read and the thread that performs the read can not be migrated
-> or preempted by another higher priority thread (RT or not).
-> 
-> Allow readers and writers be preempted by taking and releasing rtc_lock
-> spinlock for each individual byte read or written rather than once per
-> read/write request.
-> 
-> [...]
+Use opt->max-1 in bch2_opt_validate when option type is BCH_OPT_STR. When
+option type is BCH_OPT_STR, real option's max is one less than the max
+value stored in option structure.
 
-Applied, thanks!
+Reported-by: syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Dbee87a0c3291c06aa8c6
+Fixes: 63c4b2545382 ("bcachefs: Better superblock opt validation")
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+---
+ fs/bcachefs/opts.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-[1/1] rtc: cmos: avoid taking rtc_lock for extended period of time
-      https://git.kernel.org/abelloni/c/0a6efab33eab
+diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
+index 83f55cf99d46..bffcbe6a6fd0 100644
+--- a/fs/bcachefs/opts.c
++++ b/fs/bcachefs/opts.c
+@@ -290,6 +290,8 @@ static int bch2_mount_opt_lookup(const char *name)
+=20
+ int bch2_opt_validate(const struct bch_option *opt, u64 v, struct printbuf=
+ *err)
+ {
++=09const u64 opt_max =3D opt->type =3D=3D BCH_OPT_STR ? opt->max - 1 : opt=
+->max;
++
+ =09if (v < opt->min) {
+ =09=09if (err)
+ =09=09=09prt_printf(err, "%s: too small (min %llu)",
+@@ -297,10 +299,10 @@ int bch2_opt_validate(const struct bch_option *opt, u=
+64 v, struct printbuf *err)
+ =09=09return -BCH_ERR_ERANGE_option_too_small;
+ =09}
+=20
+-=09if (opt->max && v >=3D opt->max) {
++=09if (opt->max && v >=3D opt_max) {
+ =09=09if (err)
+ =09=09=09prt_printf(err, "%s: too big (max %llu)",
+-=09=09=09       opt->attr.name, opt->max);
++=09=09=09       opt->attr.name, opt_max);
+ =09=09return -BCH_ERR_ERANGE_option_too_big;
+ =09}
+=20
+--=20
+2.47.0
 
-Best regards,
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
