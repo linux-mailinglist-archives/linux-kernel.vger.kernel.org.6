@@ -1,322 +1,232 @@
-Return-Path: <linux-kernel+bounces-391301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE219B84ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:06:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81D99B84EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EEB51C2162E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BCA21F224F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F391CCEF0;
-	Thu, 31 Oct 2024 21:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D41CCEF0;
+	Thu, 31 Oct 2024 21:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iiniXS9t"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kd6/1DXm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9082E13A87C;
-	Thu, 31 Oct 2024 21:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730408805; cv=none; b=jlAgZ2/LTprklO2I5ZurPPBAmEkIzzqwCj+dPBf/jo6Digii8iVBO1aFLWSMp/YOMoZIT+YfE8pP9a0bbRU4a/cT9B3iKIrajFPO0f4kob93LihVJ8jZfELGC7nKCXvF6MS9y4ck95w/8bmxGG9JRSfu9tjqjc2yAYBbPBJpaCs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730408805; c=relaxed/simple;
-	bh=JYp+fyknPW8dimBPN339BuKak/diiWfixerUQ6rrTKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TdMlmkArvGR3mraYgDwjsZFeIt0wZoSlcLWdfyRGnI6XZ9D+9GxsOVXuzaGdESwbtmG1c6QUVJX1kTXQjNvRoDsu1a3mia98lsA8tZkgs9QHIbc8kVL6E1Hm6Gn8Wt7imCEbvFuaCg618tNYgObUbzThWjce2bh95xvdqjG8WdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iiniXS9t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V9ET8d020425;
-	Thu, 31 Oct 2024 21:06:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ttpBt+TvrTplOEFw0OZQmZ0OXUZGOnJ8+0DNKAJghII=; b=iiniXS9ti44rDGeU
-	K3iU1qFgzlGxRtHGG5YP+CTFibAoUgsNByAQ0PPcAzo2dmrfWvLy4EmZ4yYk2NFR
-	rUX7c+NWxRCJMQQXRwJ/ZvhDStVA1NnQl4LNJma9HTcg7bx9LYl4SJ+m299fNC8B
-	5mvrKfTuWs9K4uPC5gkAsdyANNxQ5667VFXVqk4///caBWns5UimPNgd7oFMAwxU
-	l1R1Xgc/uMQNqnwDNcnbjEYVOYiohvm1ke9Ha9GJ4Z+UOS87i0N2O2o2kltGgeMs
-	YMy4KVFyOmfekG3bnixl49LCg9nIKO5FA2dZct4KeLs54TGn0HH8ESeZuzPnDpE5
-	UZWFvA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgus0aa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 21:06:10 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49VL694b009191
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 21:06:09 GMT
-Received: from [10.71.109.85] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 31 Oct
- 2024 14:06:05 -0700
-Message-ID: <8c987a26-d499-4ceb-905e-750bb24fcb08@quicinc.com>
-Date: Thu, 31 Oct 2024 14:05:58 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F38D13A87C;
+	Thu, 31 Oct 2024 21:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730408794; cv=fail; b=WbKoZZfPRVKpNZ782aTloLZLajc723aQ8xh+0istEEZTPflkxO/uK0mQHmLUErQo7i8IqEwMZ/FaVu2C24yw/o9cbdzqd7oRxeSY9IPd8F2jTSlimPvh4avJyl7p6I1GZaZ2qvaoOTzojGbj4Jg5EHp+UaHM+TivK1XO91VV+cw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730408794; c=relaxed/simple;
+	bh=A1jlGzLcr7WV9CbhyYa775thr6T/0JpT2HRjYMzYsJk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gARo2ZiaNVPePFZ7aTXJL3LVTfGjN09d/veO4WKoPJCrIEeRmw/LMWUlrMCmR9Hh1bJkjb+yMkp6J/TRF3R5S41aW6ywMzgLwuzy8RbQV329BIiWHmEZ4ITlNUCzQhGB3wd//WZAddsWNW8k0YncIuv9wmwJQgWRdzDFNACCwrU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kd6/1DXm; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730408789; x=1761944789;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=A1jlGzLcr7WV9CbhyYa775thr6T/0JpT2HRjYMzYsJk=;
+  b=Kd6/1DXm4GVbLGhLoRpzD1IGUME2HV/zrsczlqp2MbTGA2+A1hnQDQ4j
+   viv+X3iznXThmSW1T+e342E1oBpzCjoXmeCwszDnnouGkt5vTkvwkkPyx
+   nGLQYf3Slv5t/7SHjT/0aKyH7osVfMvGriMvFXrmrNaqYthsRn86KR7FC
+   OIlwU1fa2ZH72b4W39YDhqT/1O+mwWGULUa4/JgkcT8daqO6V7rRtp/Wy
+   sIyjok7brt6e7C7ctJrU2c4dWiaY/CHXhBl5+KSL7ot17g9q+4FoKIFQ1
+   zbiHKZk+iyL3xaJqKzkUoS3P04goJQCdC3F+5F8HRBxqy7jDNZ7pl31hQ
+   w==;
+X-CSE-ConnectionGUID: BUb58C87QqmwPhljraDjrA==
+X-CSE-MsgGUID: A3xl1OhEQZSRgW/mczJrdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52738654"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="52738654"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 14:06:18 -0700
+X-CSE-ConnectionGUID: Ad3YupPtQLOiwh+6O1ZOjg==
+X-CSE-MsgGUID: Ufltr/OBSXOVmyRK4uNsWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="113540346"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 31 Oct 2024 14:06:17 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 31 Oct 2024 14:06:15 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 31 Oct 2024 14:06:15 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 31 Oct 2024 14:06:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ukp/c2zo7BUbxQIq1fziJ2tnppgXVpgRiBduwCl+K0wSTXPS2o3qMFudsEickR8XyvH0BxLXvvjL6/O9Od7w6t2REX7zWXaO4BMNAyhnsJ5ep/y+GXkV6IdY7jmR9BQA3IKdfh3M0W3RCS9VoJKYit57+wNUAICZbpOHrp7IUV2T/jch267B2XdPuhZnj/GIN5/J7l8/eFRfeOIfvalAg537kPA4JErL5DXSz1e+1yNt3NsmmaYYragUH7eSCJJKU5S9eUgZUsXJmCLDg3a8zdlnrhaxIyniZBA1vGKLvN0LyphGhHM7FaJwJyZo0flWhS+LoGWEGxnkL3wbGRWmwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A1jlGzLcr7WV9CbhyYa775thr6T/0JpT2HRjYMzYsJk=;
+ b=l7fORxCRRS888xgEZv2a3RGIu/J4cKwOqvOod3ax2Ixnq6fRD0bik8W6bOwa9uiq8DiVZSIITwqhCe96kFRtyj3NrobmDv8YLqeG1ywu1ezU3wJ9P+CAGuZBwjleZDLxo2dyJMTlN1KEDrRP1ZEwQLn25bX1QvvjHEmbWUxbyrV00SWJfbRpWczMbFWEubKGteJRl7VmAKndyxoA+ZW9dqSIsmGBNeRYDOzjDThjst7Q6n7+7hnMNDtRxaYXj50jk5ErkQfssDvOBPTMaKnInyuCuoO3mtdHfgm8GVO4WwYy03A3qWQufi4HTvSFjWKxAmRfYVRITaxRsYtdlYQ+nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by SA1PR11MB5947.namprd11.prod.outlook.com (2603:10b6:806:23b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.22; Thu, 31 Oct
+ 2024 21:06:11 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
+ 21:06:09 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"broonie@kernel.org" <broonie@kernel.org>, "Szabolcs.Nagy@arm.com"
+	<Szabolcs.Nagy@arm.com>, "brauner@kernel.org" <brauner@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>, "mgorman@suse.de"
+	<mgorman@suse.de>, "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "vschneid@redhat.com" <vschneid@redhat.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "bp@alien8.de" <bp@alien8.de>,
+	"bsegall@google.com" <bsegall@google.com>, "x86@kernel.org" <x86@kernel.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>
+CC: "yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, "jannh@google.com"
+	<jannh@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>, "kees@kernel.org"
+	<kees@kernel.org>
+Subject: Re: [PATCH RFT v12 0/8] fork: Support shadow stacks in clone3()
+Thread-Topic: [PATCH RFT v12 0/8] fork: Support shadow stacks in clone3()
+Thread-Index: AQHbK8qwrNRMzTtafEWNeVWV00PA77KhWdMA
+Date: Thu, 31 Oct 2024 21:06:09 +0000
+Message-ID: <fe6cc8010b2b35aaa2629c4c5e972dc1c90c43c3.camel@intel.com>
+References: <20241031-clone3-shadow-stack-v12-0-7183eb8bee17@kernel.org>
+In-Reply-To: <20241031-clone3-shadow-stack-v12-0-7183eb8bee17@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SA1PR11MB5947:EE_
+x-ms-office365-filtering-correlation-id: d29c806e-ff08-46e6-8bd4-08dcf9efd7d9
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|921020;
+x-microsoft-antispam-message-info: =?utf-8?B?YlNDQ1ZVYkZqbkZMU2dXS0ZxcW1zOEZucVRPUytyYVVLR1FRbC9JdktPVmsr?=
+ =?utf-8?B?SW4zVUJHZDJBdjFWSTBVc01NTjg3bjYzY091UlJuUHYrWUN0a1FZOXBVbm91?=
+ =?utf-8?B?MUhyV2sxQnlDblluK1p0dWg5WXByRXhoYUcyaEVxWFZtaDI0Q2xnTm1FU0ht?=
+ =?utf-8?B?MnlrNlQyRjQ3S1RObjJTWFNnOXlxTVBFWTFMYXBTYm5UZUpVY01qUzJhb0s1?=
+ =?utf-8?B?YkxVYURWZXQvMHVPT2ZGTDdCQk1xQVlDUHFIaXh3RjdmbzBreXgyL1k0OHlS?=
+ =?utf-8?B?OFFXdWhLY0N6aUtMbmppZ3BLZ05QaU5EbTZSVStnTTdPaUR2aVozdnZlRXhS?=
+ =?utf-8?B?ZTVZb2p4cE1YKzAvUTdzeVVRdlF1NEJOSXlOYTVrSlZOODQyOXozVHJrTmdl?=
+ =?utf-8?B?ZSt1aDRxaUlRUEVPSEQrc3NGUUpENllDVGpxR0dDeU9YRDVKMkYzcDRWbjVk?=
+ =?utf-8?B?RHdVZ3JGRE13bXZVYTZJRktoNGtwMVFraTM0M0hqa3gycHgxMjZzL080ZVhC?=
+ =?utf-8?B?aGptT3dVNHRaTHBFOXFNbkxpUWxaTWNjZWZVV1c4VTVVdEdhaERtcXRFNnBQ?=
+ =?utf-8?B?WnBodFlUczRieGQ0cGtlZUJORUpsOWFnRk5ISGlHaElteHZHc3AyUExacEM3?=
+ =?utf-8?B?YitoalJ5bW5tMkZKUnd0ZXNZdmNaK3dHZXFnVWREQmNVRkZ3bWo4ZHM5SkM2?=
+ =?utf-8?B?UGJWWUlkcEc3UGZTdnNWOTF3ck42MGFkZVBtWWpPU1kyMzNwaWY5UEdJenlz?=
+ =?utf-8?B?emxEM0o5RmxWTTlMRzYxbGZxYVU4YVFmVGpLWGtPd2hkQlJpWDZ3b2VYM3Z1?=
+ =?utf-8?B?VkZFZjFkY2hhemZuc2ZEYVNpMDVFRVh0QkhDL2xYcFR1anI3VTFFbjRHa1lw?=
+ =?utf-8?B?ci9PSmpCSHEyWjNrcjkxRHJJV25JTG5SaitFejBBd2tJVmswalhIQkxPenk0?=
+ =?utf-8?B?eUszaTBmMWNCT1Y1cWV0SlZlREUyM0hIcWlZMFRFeTlNelp3dDNtekppVkVi?=
+ =?utf-8?B?NEdEeGIwVVp1aUkxcUxJN2RmaEMwNGFYazE4cHA4MmRISXNPU1laZnRKMk9B?=
+ =?utf-8?B?Wlp1ejVrN1pGQUpvQkdnUTJ0TWpZUEl4WGVjWCt1bnpxdUpQc3hDc204dGxk?=
+ =?utf-8?B?L00raWIvSm16ZWtwc1AvN2swOGI5dWVSS0JwSWtIVHdrNFF3dzlvdEtCOFRl?=
+ =?utf-8?B?WkFFb0VUdE1MRGRNdlRDc09Oc043bUozY2JnUElCa3BCSithakxnbUp5c1Fq?=
+ =?utf-8?B?dkRoZXVTUmJ6VVJZckthZ2FtU2FCSmpHMjczVlVjWUpoQWVBVjNzUFE4ZVBs?=
+ =?utf-8?B?MGYwQkhzNWh5QmRRZkdmS1ljM3FBWW51VEZpY0NLTUxwcFpUQzRQYUM1Smgv?=
+ =?utf-8?B?RktZQUtIWk5GRjRCRUVpUXVFVW13N2RLTVBwUTFjWUYrNHBDaTRTNnZVdUNm?=
+ =?utf-8?B?dHdud09KcnlIbG1iMkJDNE1YaEtxMk9rSG1JclRwdHVjTGVnU0NTN3pKeVFt?=
+ =?utf-8?B?YmhrYXl3ZWs4TVdCNE14UjYzWC84WERZdW9TczJOWGdqQlJXRWdqSlRwNFFU?=
+ =?utf-8?B?ZUhkRjVNb1RxVWYxbTI4aGlPdUVmR2ZpUGtkSWRBSGJMNE5Tbkd4VmpoUlFJ?=
+ =?utf-8?B?OVBjSFlmcEdwWlRYUWJsRWo5WitCWUxydVFWR0VFR1I3aERpLzR0YmVjbWFX?=
+ =?utf-8?B?MnhsdlBCd3pROTdNQVcvZXhicTduQlluZHlYYytiNExLRm5WZ3h4YU0xdnZh?=
+ =?utf-8?B?Ty9iN3d4QkpHNjh0Y3V2S0JqZmtWdUxkV1NwbUkrRFRPbURhTmZCaDU2QTlI?=
+ =?utf-8?B?bU1QNlF2U2NYRVB5YytuNXkxUGRCN0xMTjdDVEpnUGI5bmVXNmZLMmY1bWVG?=
+ =?utf-8?Q?0UGaoOh9pMVOp?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?a3ZVMlZQQ2tLN3EyRVl3UmRIWCtYVzlaYXFnL1BJbzZjbWJTOTZZMERJMmVz?=
+ =?utf-8?B?eENUdHZneXVlUG9xU283SFJEUVhINGtoZnJ4TEM3d0lIeEdYUmkwZGMrdWVa?=
+ =?utf-8?B?RWVpV0FkcVRoTzlNU29LNk5Yd3M3VTVxMkNUQnkzaWZiV1lmOGFWcmx2eThq?=
+ =?utf-8?B?NklkeWUvbnF6OHBKVVB5VWhnaTlmcUxhZTZuV1RxTFNmbEFoQVJNbngxZ1Ew?=
+ =?utf-8?B?V28wMXVCWGhHVkJIOUNvZzIyMlQxRGRjNGpKSGlWR0FhczVRcWpoTks0ZWJX?=
+ =?utf-8?B?b1ZLSENpYWdIRWNYQWpjNlZ6RXpZamt4ZEc1cTk5b2ovUDFhaG9FVEl0ZE9q?=
+ =?utf-8?B?RTlGUURQV01HUXZNcGRqdVRRNEF2bzJYV0h6bVNIYlNmY0ZJc21hblY1UHlO?=
+ =?utf-8?B?cDE4ZGxya3V4YzIvR3RycFBDaW9oMGdwVE9XZG5lN21yd3pMM0VFTit4N29l?=
+ =?utf-8?B?NGFJcjlOQzkzNTFMVDFnK3FsT01zbjJSdzVsaDBSNmJ0dVY5bCtpYzZCL3ZZ?=
+ =?utf-8?B?L0pZM0VoWG5RWE9MSmJkVmhrd1hDdXV0T2V0RDhCdUk1cjdGdmdabkM2R0ts?=
+ =?utf-8?B?Qi9ra08waUg3Tm1nZDVnRkpKR2U4aDUreXBFL0hWU05ZQ2Jqb1BSYk9NQTNX?=
+ =?utf-8?B?OFpQNDdzdVBTZ2VLUlVvVUU5RDRMeGViaUdRVVRXckxQVlJIT1YyUGZpTTI0?=
+ =?utf-8?B?N3FqUXduSitzcWlwaTYzVGplRFRKdmZrbkNDcmluSUI4ZDNXUDFmVllNNEVi?=
+ =?utf-8?B?bE5NZXNCOFVsdnB4RkEyeC9WT3BmUmpEL3FTMTk3NXh3WjJ2Q1A2SUtQbGtt?=
+ =?utf-8?B?RSt6Q0c5dVFKOUdIL0oySkFOdUx1TEhlRUdtTmkzRnM4bFA5NlkrYk13cmhx?=
+ =?utf-8?B?NmcyaUZYTEpBMjIxTEF2U3ZWbEpLVmVtcDhSNkplaHM5Rnlmd2RFVzVJS1Nm?=
+ =?utf-8?B?TnpiaGVaeTNRYXB3WXJKM2F3ZjlkRk41aXZiQkJTSVlaaUpDZ2hhWS9BSUJk?=
+ =?utf-8?B?dHVubzdnMGpuMUhWRkVsSFJpcEpDNGVLWlk1bTYzU2I0ZWtBcUNHSjVjbUVI?=
+ =?utf-8?B?STcxV0piRmlhc2ROS1dhT0ZEdnZvWHh5bDJjR25vblVxditqSWRnVGZ0N1E0?=
+ =?utf-8?B?Ti8zQ1Mrd2dZaXU1NWRJNkwvODlMbEpjWnlzMmFQcFhVVm0zMzFCQ0kySjRU?=
+ =?utf-8?B?TUdxQ1MrZStDYVY2TXpTbFF5Qit2VlJqVVVGZ3BhZlNWZTJZY3V1cG1zcVlP?=
+ =?utf-8?B?NmZsVXJFK3I0VnJOQkFPcGJYMW1scnlPOGhYZ0Q4SGZ1L3ZpbFlvK0ZYSVY4?=
+ =?utf-8?B?bUU2M1k2OUxvTlZjdDBZTC9wdXNWdVRrYjIxeDdySU9mNlVRaWt1Vno4a1Vq?=
+ =?utf-8?B?azd3c1dEQ0dtUGV4S0JndnZzYWxRRUZzazZDZmVNVmRRT2tHdVNETmVlK0JZ?=
+ =?utf-8?B?Z2RYdlpOZW1HanZSTllybzRubnRmak5HNFRMdlZnWFRPVTRMV1VISHk2allp?=
+ =?utf-8?B?cEttczMyMWNTVFlsNlo0bWpSSGdFK050aTB2SUZSRVVLdFllS3graS85dU85?=
+ =?utf-8?B?c0VFQlJDeitoNFFVblVGWGR5Yjc1Ni9iYXNscmFtS1pQallSdnVaOFYrU2Jz?=
+ =?utf-8?B?MTFNRkYvU09nekxjdlh1eHU3L2Y2K0VKVlVIak0zczF6eERYRlJoZ0VRZmpL?=
+ =?utf-8?B?WTBOdEJ4ckc2MU9PSHZjVVpVRk9kZktPWTNmNXFFdDBDY0kyRUh5dGJ5c09y?=
+ =?utf-8?B?VGt3NklRckJpTUhqRUNqS1h1eGF1Yk50Z2RMLzZlTGY1bTNjUnRJSlVoZTZJ?=
+ =?utf-8?B?aE1KTEkycms2aGZQSjJnM2pZaWg0Q3BkM3ptL3RpUk44aW5pbzNwTXI5ZmdK?=
+ =?utf-8?B?c2JNTC9Yc3FWbmlXb2pUeEp1bk1iSTBUZUl2SEJ1dGFBWnloYWg2cGt3Nk0y?=
+ =?utf-8?B?M0tRTGdJckY2TGRWRFNic1VLZUVESTY2ajlHTkZFbVZsUndlNE1SbmIyTlNM?=
+ =?utf-8?B?Q1hmK1oxK05TbzRaSFFGN2hwTlMvd1o5ajV4ZVlvMUpXOStBUnNEdituQ1FS?=
+ =?utf-8?B?K0V6UENveGZ2MWhUWGltdjYybm5uMXZvMytjWVVnbHBxZHpqaXNiY014RCth?=
+ =?utf-8?B?SkVTS0UxRTUyS1kwQytFQzdrMFRscE94eGMwZ28xMVhtQ2pWd2U4YytPTDda?=
+ =?utf-8?B?MkE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <40547855F566B14B9CBC971926569448@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/2] of: reserved_mem: Restruture how the reserved
- memory regions are processed
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: <robh@kernel.org>, <aisheng.dong@nxp.com>, <andy@black.fi.intel.com>,
-        <catalin.marinas@arm.com>, <devicetree@vger.kernel.org>, <hch@lst.de>,
-        <iommu@lists.linux.dev>, <kernel@quicinc.com>, <klarasmodin@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <m.szyprowski@samsung.com>,
-        <quic_ninanaik@quicinc.com>, <robin.murphy@arm.com>,
-        <saravanak@google.com>, <will@kernel.org>
-References: <20241008220624.551309-1-quic_obabatun@quicinc.com>
- <20241008220624.551309-2-quic_obabatun@quicinc.com>
- <CAMuHMdUXj4QiSKdhf61xdDeu94=Hv0BXuCxykDpQwdY81_h2vw@mail.gmail.com>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <CAMuHMdUXj4QiSKdhf61xdDeu94=Hv0BXuCxykDpQwdY81_h2vw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jENReLuDKfucV4YzQeUetUH7khIbXGBL
-X-Proofpoint-GUID: jENReLuDKfucV4YzQeUetUH7khIbXGBL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410310159
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d29c806e-ff08-46e6-8bd4-08dcf9efd7d9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2024 21:06:09.3565
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0F6/L1/xB9Jqt+Cms/a9Icys0PnfMbMtQDQ2XukmXJc/90CSH9uUURw96Jj5F1t36M+A3ILqsIoqKpvbpe9ob3Un7sPGoEYxKdkWmKlLSak=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5947
+X-OriginatorOrg: intel.com
 
-
-On 10/29/2024 5:41 AM, Geert Uytterhoeven wrote:
-> Hi Oreoluwa,
->
-> On Wed, Oct 9, 2024 at 12:08 AM Oreoluwa Babatunde
-> <quic_obabatun@quicinc.com> wrote:
->> Reserved memory regions defined in the devicetree can be broken up into
->> two groups:
->> i) Statically-placed reserved memory regions
->> i.e. regions defined with a static start address and size using the
->>      "reg" property.
->> ii) Dynamically-placed reserved memory regions.
->> i.e. regions defined by specifying an address range where they can be
->>      placed in memory using the "alloc_ranges" and "size" properties.
->>
->> These regions are processed and set aside at boot time.
->> This is done in two stages as seen below:
->>
->> Stage 1:
->> At this stage, fdt_scan_reserved_mem() scans through the child nodes of
->> the reserved_memory node using the flattened devicetree and does the
->> following:
->>
->> 1) If the node represents a statically-placed reserved memory region,
->>    i.e. if it is defined using the "reg" property:
->>    - Call memblock_reserve() or memblock_mark_nomap() as needed.
->>    - Add the information for that region into the reserved_mem array
->>      using fdt_reserved_mem_save_node().
->>      i.e. fdt_reserved_mem_save_node(node, name, base, size).
->>
->> 2) If the node represents a dynamically-placed reserved memory region,
->>    i.e. if it is defined using "alloc-ranges" and "size" properties:
->>    - Add the information for that region to the reserved_mem array with
->>      the starting address and size set to 0.
->>      i.e. fdt_reserved_mem_save_node(node, name, 0, 0).
->>    Note: This region is saved to the array with a starting address of 0
->>    because a starting address is not yet allocated for it.
->>
->> Stage 2:
->> After iterating through all the reserved memory nodes and storing their
->> relevant information in the reserved_mem array,fdt_init_reserved_mem() is
->> called and does the following:
->>
->> 1) For statically-placed reserved memory regions:
->>    - Call the region specific init function using
->>      __reserved_mem_init_node().
->> 2) For dynamically-placed reserved memory regions:
->>    - Call __reserved_mem_alloc_size() which is used to allocate memory
->>      for each of these regions, and mark them as nomap if they have the
->>      nomap property specified in the DT.
->>    - Call the region specific init function.
->>
->> The current size of the resvered_mem array is 64 as is defined by
->> MAX_RESERVED_REGIONS. This means that there is a limitation of 64 for
->> how many reserved memory regions can be specified on a system.
->> As systems continue to grow more and more complex, the number of
->> reserved memory regions needed are also growing and are starting to hit
->> this 64 count limit, hence the need to make the reserved_mem array
->> dynamically sized (i.e. dynamically allocating memory for the
->> reserved_mem array using membock_alloc_*).
->>
->> On architectures such as arm64, memory allocated using memblock is
->> writable only after the page tables have been setup. This means that if
->> the reserved_mem array is going to be dynamically allocated, it needs to
->> happen after the page tables have been setup, not before.
->>
->> Since the reserved memory regions are currently being processed and
->> added to the array before the page tables are setup, there is a need to
->> change the order in which some of the processing is done to allow for
->> the reserved_mem array to be dynamically sized.
->>
->> It is possible to process the statically-placed reserved memory regions
->> without needing to store them in the reserved_mem array until after the
->> page tables have been setup because all the information stored in the
->> array is readily available in the devicetree and can be referenced at
->> any time.
->> Dynamically-placed reserved memory regions on the other hand get
->> assigned a start address only at runtime, and hence need a place to be
->> stored once they are allocated since there is no other referrence to the
->> start address for these regions.
->>
->> Hence this patch changes the processing order of the reserved memory
->> regions in the following ways:
->>
->> Step 1:
->> fdt_scan_reserved_mem() scans through the child nodes of
->> the reserved_memory node using the flattened devicetree and does the
->> following:
->>
->> 1) If the node represents a statically-placed reserved memory region,
->>    i.e. if it is defined using the "reg" property:
->>    - Call memblock_reserve() or memblock_mark_nomap() as needed.
->>
->> 2) If the node represents a dynamically-placed reserved memory region,
->>    i.e. if it is defined using "alloc-ranges" and "size" properties:
->>    - Call __reserved_mem_alloc_size() which will:
->>      i) Allocate memory for the reserved region and call
->>      memblock_mark_nomap() as needed.
->>      ii) Call the region specific initialization function using
->>      fdt_init_reserved_mem_node().
->>      iii) Save the region information in the reserved_mem array using
->>      fdt_reserved_mem_save_node().
->>
->> Step 2:
->> 1) This stage of the reserved memory processing is now only used to add
->>    the statically-placed reserved memory regions into the reserved_mem
->>    array using fdt_scan_reserved_mem_reg_nodes(), as well as call their
->>    region specific initialization functions.
->>
->> 2) This step has also been moved to be after the page tables are
->>    setup. Moving this will allow us to replace the reserved_mem
->>    array with a dynamically sized array before storing the rest of
->>    these regions.
->>
->> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-> Thanks for your patch, which is now commit 8a6e02d0c00e7b62
-> ("of: reserved_mem: Restructure how the reserved memory regions
-> are processed") in dt-rh/for-next.
->
-> I have bisected a boot issue on RZ/Five to this commit.
-> With "earlycon keep_bootcon" (else there is no output):
->
->     Oops - store (or AMO) access fault [#1]
->     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted
-> 6.12.0-rc1-00015-g8a6e02d0c00e #201
->     Hardware name: Renesas SMARC EVK based on r9a07g043f01 (DT)
->     epc : __memset+0x60/0x100
->      ra : __dma_alloc_from_coherent+0x150/0x17a
->     epc : ffffffff8062d2bc ra : ffffffff80053a94 sp : ffffffc60000ba20
->      gp : ffffffff812e9938 tp : ffffffd601920000 t0 : ffffffc6000d0000
->      t1 : 0000000000000000 t2 : ffffffffe9600000 s0 : ffffffc60000baa0
->      s1 : ffffffc6000d0000 a0 : ffffffc6000d0000 a1 : 0000000000000000
->      a2 : 0000000000001000 a3 : ffffffc6000d1000 a4 : 0000000000000000
->      a5 : 0000000000000000 a6 : ffffffd601adacc0 a7 : ffffffd601a841a8
->      s2 : ffffffd6018573c0 s3 : 0000000000001000 s4 : ffffffd6019541e0
->      s5 : 0000000200000022 s6 : ffffffd6018f8410 s7 : ffffffd6018573e8
->      s8 : 0000000000000001 s9 : 0000000000000001 s10: 0000000000000010
->      s11: 0000000000000000 t3 : 0000000000000000 t4 : ffffffffdefe62d1
->      t5 : 000000001cd6a3a9 t6 : ffffffd601b2aad6
->     status: 0000000200000120 badaddr: ffffffc6000d0000 cause: 0000000000000007
->     [<ffffffff8062d2bc>] __memset+0x60/0x100
->     [<ffffffff80053e1a>] dma_alloc_from_global_coherent+0x1c/0x28
->     [<ffffffff80053056>] dma_direct_alloc+0x98/0x112
->     [<ffffffff8005238c>] dma_alloc_attrs+0x78/0x86
->     [<ffffffff8035fdb4>] rz_dmac_probe+0x3f6/0x50a
->     [<ffffffff803a0694>] platform_probe+0x4c/0x8a
->     [<ffffffff8039ea16>] really_probe+0xe4/0x1c8
->     [<ffffffff8039ebc4>] __driver_probe_device+0xca/0xce
->     [<ffffffff8039ec48>] driver_probe_device+0x34/0x92
->     [<ffffffff8039ede8>] __driver_attach+0xb4/0xbe
->     [<ffffffff8039ce58>] bus_for_each_dev+0x60/0xa0
->     [<ffffffff8039e26a>] driver_attach+0x1a/0x22
->     [<ffffffff8039dc20>] bus_add_driver+0xa4/0x184
->     [<ffffffff8039f65c>] driver_register+0x8a/0xb4
->     [<ffffffff803a051c>] __platform_driver_register+0x1c/0x24
->     [<ffffffff808202f6>] rz_dmac_driver_init+0x1a/0x22
->     [<ffffffff80800ef6>] do_one_initcall+0x64/0x134
->     [<ffffffff8080122e>] kernel_init_freeable+0x200/0x202
->     [<ffffffff80638126>] kernel_init+0x1e/0x10a
->     [<ffffffff8063d58e>] ret_from_fork+0xe/0x18
->     Code: 1007 82b3 40e2 0797 0000 8793 00e7 8305 97ba 8782 (b023) 00b2
->     ---[ end trace 0000000000000000 ]---
->     Kernel panic - not syncing: Fatal exception in interrupt
->     ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
->
-> Nothing really stands out in the kernel log, except for a delayed
-> initialization of the reserved mem nodes (they are the same
-> before/after):
->
->  printk: debug: ignoring loglevel setting.
-> -OF: reserved mem: 0x0000000000030000..0x000000000003ffff (64 KiB)
-> nomap non-reusable mmode_resv0@30000
-> -OF: reserved mem: 0x0000000000040000..0x000000000004ffff (64 KiB)
-> nomap non-reusable mmode_resv1@40000
-> -OF: reserved mem: 0x0000000044000000..0x000000004403ffff (256 KiB)
-> nomap non-reusable mmode_resv3@44000000
-> -OF: reserved mem: 0x0000000044040000..0x000000004405ffff (128 KiB)
-> nomap non-reusable mmode_resv2@44040000
-> +earlycon: scif0 at MMIO 0x000000001004b800 (options '115200n8')
-> +printk: legacy bootconsole [scif0] enabled
-> +printk: debug: skip boot console de-registration.
->  Reserved memory: created DMA memory pool at 0x0000000058000000, size 128 MiB
->  OF: reserved mem: initialized node pma_resv0@58000000, compatible id
-> shared-dma-pool
->  OF: reserved mem: 0x0000000058000000..0x000000005fffffff (131072 KiB)
-> nomap non-reusable pma_resv0@58000000
-> +OF: reserved mem: 0x0000000000030000..0x000000000003ffff (64 KiB)
-> nomap non-reusable mmode_resv0@30000
-> +OF: reserved mem: 0x0000000000040000..0x000000000004ffff (64 KiB)
-> nomap non-reusable mmode_resv1@40000
-> +OF: reserved mem: 0x0000000044040000..0x000000004405ffff (128 KiB)
-> nomap non-reusable mmode_resv2@44040000
-> +OF: reserved mem: 0x0000000044000000..0x000000004403ffff (256 KiB)
-> nomap non-reusable mmode_resv3@44000000
->  Zone ranges:
->    DMA32    [mem 0x0000000048000000-0x000000007fffffff]
->    Normal   empty
->
-> Reverting commits 00c9a452a235c61f ("of: reserved_mem: Add code to
-> dynamically allocate reserved_mem array") and 8a6e02d0c00e7b62 fixes
-> the issue.
->
-> root@smarc-rzfive:/sys/firmware/devicetree/base/reserved-memory# ls -l
-> total 0
-> -r--r--r-- 1 root root  4 Oct 29 12:37 #address-cells
-> -r--r--r-- 1 root root  4 Oct 29 12:37 #size-cells
-> drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv0@30000
-> drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv1@40000
-> drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv2@44040000
-> drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv3@44000000
-> -r--r--r-- 1 root root 16 Oct 29 12:37 name
-> drwxr-xr-x 2 root root  0 Oct 29 12:37 pma_resv0@58000000
-> -r--r--r-- 1 root root  0 Oct 29 12:37 ranges
-Hi Geert,
-
-Thanks for reaching out and sorry you're seeing this issue.
-
-Please can you provide reproduction steps? I tried booting up
-risc-v arch with qemu but did not run into the issue you are
-seeing.
-
-Regards,
-Oreoluwa
+T24gVGh1LCAyMDI0LTEwLTMxIGF0IDE5OjI1ICswMDAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiAt
+LS0NCj4gYmFzZS1jb21taXQ6IGQxN2NkN2I3Y2M5MmQzN2VlOGIyZGY4Zjk3NWZjODU5YTI2MWY0
+ZGMNCg0KV2hlcmUgY2FuIEkgZmluZCB0aGlzIGJhc2UgY29tbWl0Pw0KDQo+IGNoYW5nZS1pZDog
+MjAyMzEwMTktY2xvbmUzLXNoYWRvdy1zdGFjay0xNWQ0MGQyYmY1MzYNCg0K
 
