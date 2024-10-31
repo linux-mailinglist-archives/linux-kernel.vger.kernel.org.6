@@ -1,202 +1,152 @@
-Return-Path: <linux-kernel+bounces-391242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152E39B844A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:23:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2D09B844C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FC3B1C2237B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58D071F23F72
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B8D1CC14A;
-	Thu, 31 Oct 2024 20:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8D41CC147;
+	Thu, 31 Oct 2024 20:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="UgpzEkf8"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJyHgGYo"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0088C1A2562;
-	Thu, 31 Oct 2024 20:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196CF1A2562;
+	Thu, 31 Oct 2024 20:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730406204; cv=none; b=lfr9fmQV0BncfGrdcfeqlbI/Eb+iv6M6ufptLQTKHuVYIWyfBEwVjLuuQGlIownsqkbAMMo5CYUwvZdbNoUHFc7G8l1UTtNzNGwgjI4IrOxM910yOYBMhygNm3oIOFOeGm5N3U1zmat/QRdBMJAkHE4UG78NQXdleJMhzG+X4uE=
+	t=1730406278; cv=none; b=g1DCIi2TqZGqr0w9u2+7MJNLS1sd95boGfws9U+qZbTX9JMhJ0kDBTvQ503qvL/NsQ8/2i8Kt1C9PTkga4Gy1lpemIjI73kXvkto/xmaO1h/GcVtOHsOgWm5OzpSNMBsV17fWAJyFvixb1tPUN5GnAFES9phzfBmzk/H39f8aJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730406204; c=relaxed/simple;
-	bh=0gHri73JxXQLKIznefuoF0DInf+P6LqeXuRxZkKjpy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3rS4jccYATingbbmlyX1WFaCuieB6Vk/4GL702LDTPFH5NjJe1UtyJ0Mf/H7LTu4qwzVOpCpqlbVp6OBnqZDhZnmbTQVPIgq9HU1mvBXVUQixVevWvaRKNkGuJK9yMue0fFnqidQm91QvcECAqnaFo5kk0YpUpcfR3/Voov9Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=UgpzEkf8; arc=none smtp.client-ip=212.227.17.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1730406278; c=relaxed/simple;
+	bh=wrFSEeZQV9brU3Dbe6yQ2USyHr8bTrVEo03V9uBxbN8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XVRObGLKhhRxfJhGuSuUv6NH1uT7S6ndzC3K58H5AKdUR+v3X+pL6b326PzEi52AKgDVcWjyU9kXU5WqcVxNhiOcuHiC6FcpLkuIQa3aHhpESoGCeF5GwRHTb1r3N7T6FjmhBdOz/PFdcpOME5Uk5Hhjc2EDDO5mHz6hzpgl5zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BJyHgGYo; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdbe608b3so14460205ad.1;
+        Thu, 31 Oct 2024 13:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1730406179; x=1731010979;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=jLI5KRJQSbDEC5WSLvIji4e/VUU2TikNoPPCsm/Q3Nw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UgpzEkf8gAw831l3ie5fTmDW1X5WdDKAK9EIezDfgLBFZwUdr+x6nhM8Q4lQF0zD
-	 zLA6UGYENGd+ArcTe04RdUbnXconASwYmAXc5Glh1YKcCA7QY27PrsuKyGeKNM/Fu
-	 +WvOUgKDavPdcYJS5N3lYV56WXMZVo0FdWDMHGHrDMHh9aDxuk9kEUdl6Xs6bkIEc
-	 hnd6tu0uFWZYN/uPWgEOfziY4HIGjHMkiZHuoM3iJ8nRDBdEl94uU1J05y5V4PEQ/
-	 J7F6+F0/r0VS98xIHxA7cf/j5ForlMNFlftTA59HW4Ou+uj/auFFHNJ5UU/+fh0bT
-	 E7M5uHWxNk/m19rirw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([62.226.38.42]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1Mf0FY-1tlk0f13Ag-00cWky; Thu, 31 Oct 2024 21:22:59 +0100
-Message-ID: <108c5fb7-fe36-4d07-979e-409cd4539879@oldschoolsolutions.biz>
-Date: Thu, 31 Oct 2024 21:22:58 +0100
+        d=gmail.com; s=20230601; t=1730406275; x=1731011075; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bvul/ButslL/SfFParCrQ24MY7VsrtOizUyLtg7jpC0=;
+        b=BJyHgGYovkjJXTVC8qs95XGyYadvHragMpecxTkiuknvQt7DXYpNwCrOv1hv2M0FRV
+         2thAbeC3QxF5G3jzHTv7PpJ6pLB/kRGBjEzeyYAVs1BZyzg/Qkn/hSSlKnnoQRwvnayB
+         sb/hq9mwSuGLcldySxWcWnEOtzPRrZrOvntOzxDG9x2IRbinn4RqTO6iZYdoyO//6SC/
+         GnDwA45kY+8+noVbs7YxaKIfNURkSZN/HkJXO/tDcEpa1rxhi6q6dcOcOiI9aaCrPMpF
+         hTZUGv0h9rh/p93NrLzo//Zs/tldtOvMTbbmxbgRMgDZ8G2K1pN4CsTUGXwSgPBaw5lH
+         dq5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730406275; x=1731011075;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bvul/ButslL/SfFParCrQ24MY7VsrtOizUyLtg7jpC0=;
+        b=o/d5Cy+96u+EmD5CNe6T0k1P7l/5UHLKURSTd8cfIYYSyYyuJjwcQrqr71KsICAlE3
+         YMvUfmx94ptzOuJmpnDUB/QcpKsxGJGgz9RI8qy/KRl+3BOFGn4HRPSHshoYajn/QQxv
+         ShCevxqTa/Rt6pN+dRCNtwHBUSKzY9ZxjjuyktSZ3dz+/Wy5R9ZhEWrlm0ruRJTTyc2i
+         5Q1CLAiSoFBPQEv5hHJ8sNgjQskjn1hshl4PpqDqW+K4VEsVkbIKI7iFMxco1AP1ye+Y
+         vBhMvt+XqpfjcG05A40o0xmzakGEH1O9G77gVDiSi1fwg0+I2ntPlHUCO+RvwEN/dxUt
+         Jojg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2b8J2TKQKARrw98hEAobGO+xdPq4l5f2lrlThruZFgEhRFrF94CqFfMvwV8M0GGZ03pKOzUrw5odTcjcd@vger.kernel.org, AJvYcCW9cZFW4qAYDaznI0d6Dkrc//juwRQMYVu9DJucPoVWyqXuzWJG7VCwAhBwcJlj+lo8mPqsvn6cGHb4@vger.kernel.org, AJvYcCXabIgK/6WcMWrtYFckDgVUcQhxMhhdMJXtoEeR7lM7bcwwnwHzn+ihsAXph5B7y/w9gz0pWJ5zsg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXXjjibfbNutovyPDOUGrqc7dx0GgFDBYj4ldKr53qYX5+DrRh
+	Fzn9HT03/peLjq4afz4Q3aPxld+y/tKqr4t541hVwTrq702cZJFX
+X-Google-Smtp-Source: AGHT+IF8/Jj1mz6ZXbFcpAc6WbNpTLEt+rE2mRrtARP8nrTGarcDw9XqiTfO/Gph0pGEN4+53/cH6w==
+X-Received: by 2002:a17:902:f68a:b0:20c:c880:c3b0 with SMTP id d9443c01a7336-210f751dd47mr104971915ad.21.1730406275259;
+        Thu, 31 Oct 2024 13:24:35 -0700 (PDT)
+Received: from fan ([2601:646:8f03:9fee:1a14:7759:606e:c90])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2531sm12413625ad.139.2024.10.31.13.24.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 13:24:34 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Thu, 31 Oct 2024 13:24:18 -0700
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v2 01/14] PCI/AER: Introduce 'struct cxl_err_handlers'
+ and add to 'struct pci_driver'
+Message-ID: <ZyPncuiISDL7ubqN@fan>
+References: <20241025210305.27499-1-terry.bowman@amd.com>
+ <20241025210305.27499-2-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
- definition for WDK2023
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kalle Valo <kvalo@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Merck Hung <merckhung@gmail.com>
-References: <20241030-jg-blackrock-for-upstream-v6-0-7cd7f7d8d97c@oldschoolsolutions.biz>
- <20241030-jg-blackrock-for-upstream-v6-3-7cd7f7d8d97c@oldschoolsolutions.biz>
- <0bceeb9c-1604-408a-a465-e7ac4d05b3f3@oss.qualcomm.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <0bceeb9c-1604-408a-a465-e7ac4d05b3f3@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oFPpdjyPlwQjU6bA5zVSYSk9O5UrZCQBiVVlckc/F3qjdV30xwK
- 2btUsr5L0pb4yq20xoQZjm5JCH//qyW6paKE3fugSDEdfM0GFXgNbZNzk6cD5ZXiEpoOpI6
- hkXsegqucdHZKGvFnJGdbt71gjvfHnzcMWNPtINjPP3xtJ4H7E78yKzXPCfaQHrX6piFitM
- 82xQbwRr6KBX2zo3nHmJQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DXq5uMogUAM=;vm2abjfptZrIuC401zJTGqajEcH
- WA/EUAl1lplM66P/sojo2H5AOMpwuqu9SGkwGzVIaSGSJzlFBpFjRvPjuPmURZWtrTa5a826L
- Zj6JyJgbsrU811YRtJwPQHqvYVQUly5YwCcBS94hPlwjYxf4mFOZSX9L/UDXzDKaM7KSY/ZKW
- h/xOhtLqLbJGdUFFNfbFLvZTViEaVee0V4qXpSCYYSjOovEXR364AGZwkeapK25l3Tm7ltDgF
- acEVDJglw8tCQ+1+JSzbGIyT1vPeppHLnYUshztjSOjA2/FhwHvU3Sa1IIUp184DVJu9ZBRXl
- PebdVS7a4x3EL81v1d1ngQ9YQnGZMgBll/TlKAS2GrwOxA2dfqBb1vwZVQl0/j/bOst+F46C8
- BHsLm4zsZtCcjB3p8ZO3/f4/6l/DTKApgRdD6JgaQ3IL/wq/6NXHTDEHY80ronL3tKt7UjMf/
- s0WLtVOfODqoNpOoEeOAX0XLzgGlxXKxUr4hD0+QSI2C0MExQMphRgTkJSFh1aWb4o1SaKBH/
- Y1Vr9mfMjIzl/pCOJFiygI6eGNBb7m8Kc+hMKTcZShURWuJY1I3woP4+fGuVCDdzQsIwS0Y96
- gGrIIk4y4+7oBfzoFWo2H2w1ZVBoIe1WuDCVcSdVWSgHBSv0u2JbmN2WVuMrg6d/hagH+wxv1
- Cys1cNcJfiv2dqqX1HFEsHPmCXeX8Oi01emkLBuImSghafOHGk7Xl2Fcn61jTpfE0Ua6zAp/Z
- Bqm+8lJ1zYQxPvIKLYHWrFCZiWj+EV8lw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025210305.27499-2-terry.bowman@amd.com>
 
-On 31.10.24 21:15, Konrad Dybcio wrote:
-> On 30.10.2024 12:02 PM, Jens Glathe via B4 Relay wrote:
->> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
->>
->> Device tree for the Microsoft Windows Dev Kit 2023. This work
->> is based on the initial work of Merck Hung <merckhung@gmail.com>.
->>
->> Original work: https://github.com/merckhung/linux_ms_dev_kit/blob/ms-de=
-v-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023=
-.dts
->>
->> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
->> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
->>
->> Supported features:
->> - USB type-c and type-a ports
->> - minidp connector
->> - built-in r8152 Ethernet adapter
->> - PCIe devices
->> - nvme
->> - ath11k WiFi (WCN6855)
->> - WCN6855 Bluetooth
->> - A690 GPU
->> - ADSP and CDSP
->> - GPIO keys
->> - Audio definition (works via USB)
->>
->> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
->> ---
-> [...]
->
->> +	wcn6855-pmu {
->> +		compatible =3D "qcom,wcn6855-pmu";
->> +
->> +		pinctrl-0 =3D <&bt_default>, <&wlan_en>;
->> +		pinctrl-names =3D "default";
->> +
->> +		wlan-enable-gpios =3D <&tlmm 134 GPIO_ACTIVE_HIGH>;
->> +		bt-enable-gpios =3D <&tlmm 133 GPIO_ACTIVE_HIGH>;
->> +
->> +		vddio-supply =3D <&vreg_s10b>;
->> +		vddaon-supply =3D <&vreg_s12b>;
->> +		vddpmu-supply =3D <&vreg_s12b>;
->> +		vddrfa0p95-supply =3D <&vreg_s12b>;
->> +		vddrfa1p3-supply =3D <&vreg_s11b>;
->> +		vddrfa1p9-supply =3D <&vreg_s1c>;
->> +		vddpcie1p3-supply =3D <&vreg_s11b>;
->> +		vddpcie1p9-supply =3D <&vreg_s1c>;
-> Please update this atop
->
-> <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
->
-> most notably including a new supply (which will likely be identical)
+On Fri, Oct 25, 2024 at 04:02:52PM -0500, Terry Bowman wrote:
+> CXL.io provides PCIe like protocol error implementation, but CXL.io and
+> PCIe have different handling requirements.
+> 
+> The PCIe AER service driver may attempt recovering PCIe devices with
+> uncorrectable errors while recovery is not used for CXL.io. Recovery is not
+> used in the CXL.io recovery because of the potential for corruption on
+> what can be system memory.
+> 
+> Create pci_driver::cxl_err_handlers similar to pci_driver::error_handler.
+> Create handlers for correctable and uncorrectable CXL.io error
+> handling.
+> 
+> The CXL error handlers will be used in future patches adding CXL PCIe
+> port protocol error handling.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
 
-okay, thanks
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
->> +	compatible =3D "qcom,sc8280xp-sndcard";
->> +	model =3D "microsoft/blackrock";
->> +	audio-routing =3D
-> Please don't break the line, see e.g. x1e80100-crd.dts
->
->> +		"SpkrLeft IN", "WSA_SPK1 OUT",
->> +		"SpkrRight IN", "WSA_SPK2 OUT",
-> Oh, this thing has a speaker!
+>  include/linux/pci.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 573b4c4c2be6..106ac83e3a7b 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -886,6 +886,14 @@ struct pci_error_handlers {
+>  	void (*cor_error_detected)(struct pci_dev *dev);
+>  };
+>  
+> +/* CXL bus error event callbacks */
+> +struct cxl_error_handlers {
+> +	/* CXL bus error detected on this device */
+> +	bool (*error_detected)(struct pci_dev *dev);
+> +
+> +	/* Allow device driver to record more details of a correctable error */
+> +	void (*cor_error_detected)(struct pci_dev *dev);
+> +};
+>  
+>  struct module;
+>  
+> @@ -956,6 +964,7 @@ struct pci_driver {
+>  	int  (*sriov_set_msix_vec_count)(struct pci_dev *vf, int msix_vec_count); /* On PF */
+>  	u32  (*sriov_get_vf_total_msix)(struct pci_dev *pf);
+>  	const struct pci_error_handlers *err_handler;
+> +	const struct cxl_error_handlers *cxl_err_handler;
+>  	const struct attribute_group **groups;
+>  	const struct attribute_group **dev_groups;
+>  	struct device_driver	driver;
+> -- 
+> 2.34.1
+> 
 
-Well, no. Will take another look at it. Interestingly, the SnapDragon
-Dev Kit (x1e) has a panel for speakers. So, maybe they are there on an
-unused panel.
-
-> [...]
->
->> +&pmc8280_1_gpios {
->> +	edp_bl_en: edp-bl-en-state {
->> +		pins =3D "gpio8";
->> +		function =3D "normal";
->> +	};
->> +
->> +	edp_bl_reg_en: edp-bl-reg-en-state {
->> +		pins =3D "gpio9";
->> +		function =3D "normal";
->> +	};
->> +
->> +	misc_3p3_reg_en: misc-3p3-reg-en-state {
->> +		pins =3D "gpio1";
->> +		function =3D "normal";
->> +	};
-> Sorting GPIOs by their number is preferred
->
-> https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-=
-of-nodes
->
-> [...]
-Will sort.
->> +&tlmm {
->> +	gpio-reserved-ranges =3D <70 2>, <74 6>, <125 2>, <128 2>, <154 4>;
-> Do we know what these are for? If so, please describe it (also
-> like in x1e80100-crd.dts)
->
-> Konrad
-
-Will check and amend if necessary.
-
-with best regards
-
-Jens
-
+-- 
+Fan Ni
 
