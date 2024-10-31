@@ -1,187 +1,138 @@
-Return-Path: <linux-kernel+bounces-390673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017599B7D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:37:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9EC9B7D1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247D21C21768
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026EA1F22AA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E81A0BDC;
-	Thu, 31 Oct 2024 14:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1DA1A0BDC;
+	Thu, 31 Oct 2024 14:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O5K4f5fW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bZfojVZX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1561419C556;
-	Thu, 31 Oct 2024 14:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C11442AA5;
+	Thu, 31 Oct 2024 14:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385459; cv=none; b=g5exGW4+c5jXBOFQ3S8+PsjOILRuaqMMJqqOKtBOSlztYy9hxXf8rEMMVxpu1FgmqoYeHEht9vCsIhCyxIE525GzVgpK/XqP63Py+aPnftVWVENI1NBUwvHYB0eCmLrPXv4Fa8KY6RfKYvevbKFHRC2r1UmQB62mFCEf0GX7qgA=
+	t=1730385603; cv=none; b=r6DOgHB7WuSTyooQjlhTch7GTNU340nfvZEyYQOMTDKMjRbjc8OD9oypw/LF979uTQ1tFgBLFxXWR1vejIjA/WGJ92JUrKB/7AZGH+TFyIGnYMK1Qb6dlGJcKGrpx8apgXD5nTskvsypc9DN3kotJ58u6cVqaGd24MpL64cmUvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385459; c=relaxed/simple;
-	bh=eRfzzU7Y4YIFR/gbChiOoc36llvu+XnhL4vpNp490ls=;
+	s=arc-20240116; t=1730385603; c=relaxed/simple;
+	bh=JhopF/i9cpnpqNEITlZhLDwM+uA+vF0rA4LzpkSXVls=;
 	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GtR2CXzYp29auchGsZz6fbPUt9scoKaN/p29ViIXmM1oerloWipW+LKe4dyiRDm6h+x5MAVQVk2zGsksJkg+cm8dQthHQQrG3+h5Dm6jRt9tYPL4SAiNeRTvyvQInSiLvSRRz5OYwcRiTQYyM09TDfR1X7kAct3IeimxuQhzzoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O5K4f5fW; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version:Content-Type; b=UAusyiWH5eIgXIKb6UTQeFyGD+aGu9MfaNu0fC+8Pbw5TGxQqDohlVQFeCTlSmnmFM72nvK1Eoho7qaY0HxPLQudkVcArDNHx5zxexZd7DWWoOcNlGrl9gHeg56dudHlOqvdphkbJArYZbU1OEF4U4GF52JKfnHe68vfxo7CdZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bZfojVZX; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730385457; x=1761921457;
+  t=1730385602; x=1761921602;
   h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=eRfzzU7Y4YIFR/gbChiOoc36llvu+XnhL4vpNp490ls=;
-  b=O5K4f5fW0OEsQgafEBwF9vlNgfXPl2hGeeFxrP9MbF04v3Ko6GcPzU+V
-   8G3mF2YAP/JEf/sLN+QupfI9ANnu3gk6FE0IxY4TyxmYAjx91P6H6D00C
-   tsuTaO6bjSxFQUSZtD5mhTI2Sh+JVFcXYkSnO1/dlwzMZ9jVsdQxeVXar
-   MTWYOxPGyQmYm2Jn9XHjNGYAlwfwvvW1vlaHkrZ5nCIE3DDlBdyBAV/8Q
-   gMBZSPwAK9Ne2WeOV1EBwOoZko4mZPh3ggEAG7MPWWsUa9usEudQwkhpr
-   DK4lPtc6eCr+XuMmcSMj6zT5DjIo3UAXCuw6gPsWP6IyDXEiA9RupGKSp
-   g==;
-X-CSE-ConnectionGUID: QeBTmxD9QjyL6Bf+ToTcQw==
-X-CSE-MsgGUID: jlrdfVMRQdir2ZC47j9U6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30342952"
+   references:mime-version;
+  bh=JhopF/i9cpnpqNEITlZhLDwM+uA+vF0rA4LzpkSXVls=;
+  b=bZfojVZXC8Z72SgmMGu/MsDuJ8r8ckLYyezmPINjuMsDpZLsSXJ5N1xr
+   cIJmiS0yf6T66miUQlO6I0IIiA6IMmXzkpoaKK0Gwj/FC2pqlWNfUwPdq
+   SqXZ7KvZSf1CyJsBIvKcruONXqovQVoOQyLc8FqJbzCFthsMweHhScD++
+   v9uoAtij4qnEhlGH9YmCj6K+o5jH+1YqS3ICiNtfaDlkTSocRyccoFFFa
+   ORrfDK3at8XBpTUcJREfg224SeS/ECmjCrjBNS173BgywXRXYQy5NLg1D
+   eRF1+q7eRRWX8+FE2JXHS6WKco5NEowl1Pq/hU7hcDZpjXFT0xNvZwVAC
+   A==;
+X-CSE-ConnectionGUID: XG0EtLebQ5isKvUNM5Ixyg==
+X-CSE-MsgGUID: FZf/3SPsQDaQNDzejJLAyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="47599555"
 X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="30342952"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 07:37:36 -0700
-X-CSE-ConnectionGUID: CgLXysXHQ++XgolJCKLHlQ==
-X-CSE-MsgGUID: 9dpsncoXS6a/lyAuIIEAXA==
+   d="scan'208";a="47599555"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 07:40:00 -0700
+X-CSE-ConnectionGUID: eqeK1ZfcRhKKl+MSdWLLDg==
+X-CSE-MsgGUID: 6QYH84dITx2w8Gn6sFM76Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="86563874"
+   d="scan'208";a="113492665"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.160])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 07:37:29 -0700
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 07:39:57 -0700
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 31 Oct 2024 16:37:26 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>
-Subject: Re: [PATCH v3 16/22] ACPI: platform_profile: Set profile for all
- registered handlers
-In-Reply-To: <362d8939-20ed-40c2-95b4-f687dc20f6cc@amd.com>
-Message-ID: <0fd4c5ec-3645-300e-baee-cb6468039f75@linux.intel.com>
-References: <20241031040952.109057-1-mario.limonciello@amd.com> <20241031040952.109057-17-mario.limonciello@amd.com> <7e2c26ab-9172-fa82-cd96-7f725d6c7687@linux.intel.com> <362d8939-20ed-40c2-95b4-f687dc20f6cc@amd.com>
+Date: Thu, 31 Oct 2024 16:39:53 +0200 (EET)
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc: Masahiro Yamada <masahiroy@kernel.org>, 
+    Tero Kristo <tero.kristo@linux.intel.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-kbuild@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, 
+    David Gow <davidgow@google.com>
+Subject: Re: [PATCH v2 1/1] platform/x86: intel: Add 'intel' prefix to the
+ modules automatically
+In-Reply-To: <Zx-MLAyyNWiQg-sq@smile.fi.intel.com>
+Message-ID: <77eaee7a-4544-01e1-44b9-9173e670679f@linux.intel.com>
+References: <20241016105950.785820-2-andriy.shevchenko@linux.intel.com> <Zx9uSIWOwTgclmBF@smile.fi.intel.com> <CAK7LNAS1xg2CLvTB-9dwGikAGNZRFOhknE_sbkxqyw=f6BNNog@mail.gmail.com> <Zx-MLAyyNWiQg-sq@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-364525015-1730385262=:939"
-Content-ID: <d485431b-9418-e081-4e25-b15ce09f2744@linux.intel.com>
+Content-Type: multipart/mixed; boundary="8323328-1484629555-1730385593=:939"
 
   This message is in MIME format.  The first part should be readable text,
   while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-364525015-1730385262=:939
-Content-Type: text/plain; CHARSET=ISO-8859-15
+--8323328-1484629555-1730385593=:939
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <082be37d-f769-5437-5cec-9d8440aa3114@linux.intel.com>
 
-On Thu, 31 Oct 2024, Mario Limonciello wrote:
+On Mon, 28 Oct 2024, Andy Shevchenko wrote:
 
-> On 10/31/2024 05:25, Ilpo J=E4rvinen wrote:
-> > On Wed, 30 Oct 2024, Mario Limonciello wrote:
+> On Mon, Oct 28, 2024 at 01:49:52PM +0100, Masahiro Yamada wrote:
+> > On Mon, Oct 28, 2024 at 11:58=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Wed, Oct 16, 2024 at 01:59:51PM +0300, Andy Shevchenko wrote:
+> > > > Rework Makefile to add 'intel' prefix to the modules automatically.
+> > > > This removes a lot of boilerplate code in it and also makes robust
+> > > > against mistypos in the prefix.
+> > >
+> > > > ---
+> > > >
+> > > > v2: fixed obvious typos (LKP), Cc'ed to Kbuild ML (Ilpo), dropped R=
+FC marker
+> > > >
+> > > > Note to Kbuild people: TBH I rather want to have something like thi=
+s
+> > > > to be available on the level of Kbuild for any of the subdirectorie=
+s
+> > > > in question.
+> > >
+> > > Anyone, any comments on this?
+> > > This already passed a CI tests without failure so far. Perhaps it's g=
+ood
+> > > to apply to show the demand of such a feature in Kbuild in the future=
+?
+> > > Because I want to do the same for various */tests/ folders where we h=
+ave
+> > > tons of test*, *kunit modules effectively duplicating the folder name=
+=2E
 > >=20
-> > > If multiple platform profile handlers have been registered then when
-> > > setting a profile verify that all profile handlers support the reques=
-ted
-> > > profile and set it to each handler.
-> > >=20
-> > > If this fails for any given handler, revert all profile handlers back=
- to
-> > > balanced and log an error into the kernel ring buffer.
-> > >=20
-> > > Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > ---
-> > >   drivers/acpi/platform_profile.c | 25 ++++++++++++++++++++-----
-> > >   1 file changed, 20 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/drivers/acpi/platform_profile.c
-> > > b/drivers/acpi/platform_profile.c
-> > > index 90cbc0de4d5bc..c2bb325ba531c 100644
-> > > --- a/drivers/acpi/platform_profile.c
-> > > +++ b/drivers/acpi/platform_profile.c
-> > > @@ -99,6 +99,8 @@ static ssize_t platform_profile_store(struct device
-> > > *dev,
-> > >   =09=09=09    struct device_attribute *attr,
-> > >   =09=09=09    const char *buf, size_t count)
-> > >   {
-> > > +=09struct platform_profile_handler *handler;
-> > > +=09unsigned long choices;
-> > >   =09int err, i;
-> > >     =09/* Scan for a matching profile */
-> > > @@ -107,16 +109,29 @@ static ssize_t platform_profile_store(struct de=
-vice
-> > > *dev,
-> > >   =09=09return -EINVAL;
-> > >     =09scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
-> > > &profile_lock) {
-> > > -=09=09if (!cur_profile)
-> > > +=09=09if (!platform_profile_is_registered())
-> > >   =09=09=09return -ENODEV;
-> > >   -=09=09/* Check that platform supports this profile choice */
-> > > -=09=09if (!test_bit(i, cur_profile->choices))
-> > > +=09=09/* Check that all handlers support this profile choice */
-> > > +=09=09choices =3D platform_profile_get_choices();
-> > > +=09=09if (!test_bit(i, &choices))
-> > >   =09=09=09return -EOPNOTSUPP;
-> > >   -=09=09err =3D cur_profile->profile_set(cur_profile, i);
-> > > -=09=09if (err)
-> > > +=09=09list_for_each_entry(handler, &platform_profile_handler_list,
-> > > list) {
-> > > +=09=09=09err =3D handler->profile_set(handler, i);
-> > > +=09=09=09if (err) {
-> > > +=09=09=09=09pr_err("Failed to set profile for handler
-> > > %s\n", handler->name);
-> > > +=09=09=09=09break;
-> > > +=09=09=09}
-> > > +=09=09}
-> > > +=09=09if (err) {
-> > > +=09=09=09list_for_each_entry_continue_reverse(handler,
-> > > &platform_profile_handler_list, list) {
-> >=20
-> > Too long line.
-> >=20
-> > This looks an error rollback though so instead of break inside the loop
-> > you could goto into a label at the end of the function and have much le=
-ss
-> > indentation to begin with.
+> > I do not like what you are doing here,
 >=20
-> How does the scoped_cond_guard interact with a goto?  With the jump I had
-> guessed it goes out of scope, but I wasn't really sure what the compiler =
-does.
+> That's why the question is to Kbuild if it's possible to have this featur=
+e
+> available treewide for users in a form that you like?
 >=20
-> I guess in the goto label I'll need another scoped_cond_guard()?
+> > but it is up to you whatever you do in Makefiles you maintain.
+>=20
+> Thanks! Ilpo, what do you think about applying this in its current form?
 
-Ah, the scope problem is a good point.
-
-Perhaps you could instead add e.g. platform_profile_reset_default() and=20
-call that before break, both patches that had the rollback did the same=20
-thing anyway so it can be reused too.
+I applied this patch now to review-ilpo branch. Hopefully we'll one day=20
+have a generic mechanism for this but until then this will have to do.
 
 --=20
  i.
---8323328-364525015-1730385262=:939--
+
+--8323328-1484629555-1730385593=:939--
 
