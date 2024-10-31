@@ -1,260 +1,293 @@
-Return-Path: <linux-kernel+bounces-391323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B6D9B8530
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:22:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 533699B8533
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44A0282301
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72301F22611
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B198C1925A2;
-	Thu, 31 Oct 2024 21:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91451CB521;
+	Thu, 31 Oct 2024 21:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A+8s7gxq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QN9RlTkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84D31CBE97;
-	Thu, 31 Oct 2024 21:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730409718; cv=fail; b=QR3W4/1mLT5MnNDbHsTxp3Ms9suZbQU9cCj0dpjBIxFVlgSesZnjKN2khv3aJ4JQKfAtcmlHBNt/miXaaMji0F+Y11JI2CEVvF/8g/PLpSOsCXttDGTKdfAVqEOSv4IAu4FJPJNkRz+1L+ZkCBCFFJl1fzKWi6wCqyeycqHR/Jo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730409718; c=relaxed/simple;
-	bh=kP801fBJbT9N16hS+kRWZuwtTjSk1UcnP6y+JuziKe8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uRoLAV0EJgHGqup6GM5TEj8IHj9q9+u6VO96cVYnlhWX32RDDcf7AOnCwfWe3p+HuDTmX5VbEVq8TNGk7mgPD/1yy4vE2/Sr88zq5CKQrN5kmpO45p93puYvEbtm7HVg+8SDhlltpESu7Db3TcW5dapJ4Pc8+9essUoTB7jxCLA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A+8s7gxq; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730409714; x=1761945714;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=kP801fBJbT9N16hS+kRWZuwtTjSk1UcnP6y+JuziKe8=;
-  b=A+8s7gxq71fawZ2xcL9BhjVt13BK7SSqgQUAWhMTlwbOvkL2W8xlqoks
-   Ad+A0j1jJjksCyJPtN5+5fBWECHak8jJQB0c61JUbb+JQb9qOypT6FRFk
-   3v0HwbCi09tdYRjYLfqcHfv0kuK8RqhTdd6LEkCbvfB3Ujc/+Hvcj4010
-   WLGrV57WceT3umTo7o5pBrGl/1J6gXd6OfgxA5IPIzlkr+5UL5eiDI3IO
-   nBLhWP9XE9ORV4l/A+4Cj6ad9OOU+rowkw1jOSaTmC/7NDdJR79E6u4tM
-   fiZTe8OYJJXh6BSZFzOLbzqQwAeGp4IFaXpymwqaGKbrFzjUiKTHx4YaE
-   Q==;
-X-CSE-ConnectionGUID: 8pmjSCP0QwaZ2MczrnXDaQ==
-X-CSE-MsgGUID: O5fxwtaDT72SGaBJ+M8APA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30288335"
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="30288335"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 14:21:50 -0700
-X-CSE-ConnectionGUID: vXnmNIo1Qvm8o7r0B9GOgg==
-X-CSE-MsgGUID: w0yqLm8SS+y6gyGuxb1xUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="82917608"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 31 Oct 2024 14:21:49 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 31 Oct 2024 14:21:48 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 31 Oct 2024 14:21:48 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 31 Oct 2024 14:21:47 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IbWvTJSIhra5yQY6XjVulvUrot7b7J0jOmxFUQGUE8hEO6PnXx5XFwBrfpMrpKgytb6LUhXwpe1l4bC7WKqntZb8PsJQBmS4zMVXfdt1NsGndoE9MZEjFyls3nwkX56ZB7/lkbGg2M48TZA42EcWPPt/DbAnMNjQIU+Yg2WOYuhHdn0xTmbQ6a8Q4e1GDL2hMQGIFn1uBx4HMfA4HJ52XHJe1wFvmC9lsqD/BsIwLpElBCChIIuCEyxHIlBT12N+/MdEGRMtRlk1vsneGQwJt+sbv2sGR3xbcp0FAcxbpsNFNyhRrbIps31dNMtDG3Z2cgqQZgP6Y3VxtF7qHFLe2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kn8K4FbLJKLSF33Tyh4Ww5S2TDURsAyLrBDYm7wA3BI=;
- b=HXQNepCSMilq8reyFh3/vH4CnFkAOhYlxqseg9Z/SivWFv+y/H2quVDPUVJ2r2uc7XJAmFeJEfaWWFH9OcDpOhZ7ahhRkuBp9A/Y5uUd23girJMuUZGaRxoW3Dw1KJxL1jXAQ/+N1yC1bu0G55+cMpUBGVS1foBb2Nza3wApkdcBSnuahk1Y6dyTbR/taCAbiaFHSpHqdRhpq0gdcr8vbC9f3o/Cfa5v8FCLWLAMdbbEIm8OpxXr8Tzz4T/okRz1Ew1TQPjHeYKq0W0Tz8RiG4e4Ie3e8hqSjbpC9exCe3dcvVD/fqNx0Xau6qVMN1ReLcEVJnCRbU5S+Iz0LwYWAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by BL1PR11MB5221.namprd11.prod.outlook.com (2603:10b6:208:310::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Thu, 31 Oct
- 2024 21:21:45 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.8093.027; Thu, 31 Oct 2024
- 21:21:45 +0000
-Message-ID: <2f56b5c7-f722-450b-9da8-1362700b77ef@intel.com>
-Date: Fri, 1 Nov 2024 10:21:36 +1300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] KVM: VMX: Initialize TDX during KVM module load
-To: Sean Christopherson <seanjc@google.com>
-CC: "Williams, Dan J" <dan.j.williams@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "Lindgren, Tony" <tony.lindgren@intel.com>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "binbin.wu@linux.intel.com"
-	<binbin.wu@linux.intel.com>, "Chatre, Reinette" <reinette.chatre@intel.com>,
-	"Li, Xiaoyao" <Xiaoyao.Li@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"Hunter, Adrian" <adrian.hunter@intel.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kristen@linux.intel.com"
-	<kristen@linux.intel.com>
-References: <cover.1730120881.git.kai.huang@intel.com>
- <f7394b88a22e52774f23854950d45c1bfeafe42c.1730120881.git.kai.huang@intel.com>
- <ZyJOiPQnBz31qLZ7@google.com>
- <46ea74bcd8eebe241a143e9280c65ca33cb8dcce.camel@intel.com>
- <ZyPnC3K9hjjKAWCM@google.com>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <ZyPnC3K9hjjKAWCM@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY1P220CA0010.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:59d::12) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE3015665E;
+	Thu, 31 Oct 2024 21:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730409740; cv=none; b=nzOKDAZujjEYYUeOpeNC+EHy4CR5ao28CgA2D0QCL+iDs7gs+v9aWgBKgNCt6N7eo7atX4iB5lI9xLhGoyQTPwkHzprPfYHewcCcQK+giTgkuow2AbjVKlKUDz42MuxR11DbdML7mggnUwvcaF13e0Sz7S52SArsbgCl9zezP/Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730409740; c=relaxed/simple;
+	bh=BOOl39CI37M2c8ebIw1rX3CdU7DQHOb8JkInrd0Ub9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j+HnB2GC/nEEUwojU5Tcj1UewFwmACMWsz/6c7JlaUmcBZEEKsUl+GgnR8V3ce8uJL9FZC/fcUAry3Sr+YVGPvuw+8exBq8N1XuLVwvce97Rv47uC9h9QZzvyT9dxRK9BqfG0gqF5FbNeDJ4MPIb8fs5F9pXQruOteZvos6as8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QN9RlTkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC6EC4CEC3;
+	Thu, 31 Oct 2024 21:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730409738;
+	bh=BOOl39CI37M2c8ebIw1rX3CdU7DQHOb8JkInrd0Ub9c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QN9RlTkR5RI1odq1MwBZq2ETR2R/w+v+GuquDQkZMTsQXu0s36th5ZQ9YruOI5vXZ
+	 jcFfgC1JRjHDHIBNhy3DjXJhw1E2bPdtiVgUdo8g24BHl8XZ0tJPFvM5ayTezdOyG2
+	 F/4zwtX07ma1BbnZfuYKHqTFUebn8CnoU1jfg92eA2fWQk3/KMEmnFhAPKPN+DDGY+
+	 t71MdttzP5a3CAHFWRyapF/vhQznzEG5lA2zxlZa9dWCOo0gDrlHw4eVIO0SkuKx2p
+	 tzQK98/bytqF4bDbpHjR9cyUE6lu+ifLxpHUlZXzjpkUp0z04n/u1AdcevFWKRkQih
+	 3OnlG6X/CVCag==
+Date: Thu, 31 Oct 2024 21:22:09 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Angelo Dureghello <angelo@kernel-space.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dlechner@baylibre.com, Mark Brown
+ <broonie@kernel.org>, Angelo Dureghello <adureghello@baylibre.com>
+Subject: Re: [PATCH v9 4/8] iio: dac: adi-axi-dac: extend features
+Message-ID: <20241031212209.3d94c18c@jic23-huawei>
+In-Reply-To: <2e343f2da60b8ad4da9f24d0d42a961abf2dc30f.camel@gmail.com>
+References: <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-0-f6960b4f9719@kernel-space.org>
+	<20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-4-f6960b4f9719@kernel-space.org>
+	<51afb385d291d27ea4e5d8b1f5f3389573b119d5.camel@gmail.com>
+	<20241029211737.6486e0d6@jic23-huawei>
+	<2e343f2da60b8ad4da9f24d0d42a961abf2dc30f.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|BL1PR11MB5221:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21fb9f95-1474-4ac4-fe5c-08dcf9f20599
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZHNjb3o1T0c4NzRTTGxRL0FkSkJqMDBvUitXd1htU0lOWjlZMDhhQ3lyaW5k?=
- =?utf-8?B?M1Z2TzdWOXJHYWNBZUsvcitOV3F2U3A5bjFEd0FFNm5ZUUUvT0paclZIWTZm?=
- =?utf-8?B?K01VZllXT3djZi95UEtjcGtNdUJSK004QkwxdCtqRHlWbGhMZUl1alE4MkNM?=
- =?utf-8?B?eTdIc3U2Vi8wSGRPeUtic0Z1T2dIMHNsU09BcEpjY2YvWTZQYTE4RzcyMnFT?=
- =?utf-8?B?WmloSityU2dyTWFEV1hXZHgvdUxxQ0w5ZnVWU2xhemR5OFNCUTgvWjhzTUtj?=
- =?utf-8?B?ZER2Q1VwWnY1MjJJL3phb2pCZmlWTy9nUWZYVUdYYjZuTjlLblRpM2NrZ3h5?=
- =?utf-8?B?OVNMWXhkem16TkFTUFlUNnZYMm9DWUlubmJRTERoTzZzdjVGUW9BZjlySU94?=
- =?utf-8?B?S21wRTZUME9oMERSbjVBODV4TmtsTFpLdVBVc1U1V3pvUTRJa0k3eTNZbnhD?=
- =?utf-8?B?OVZPL2Jtb3M4bC9iZXN3ZzA1MzNVdG5aeU0vK2hhUTBFa1VRRm04R3E0OGJK?=
- =?utf-8?B?a0ZmSTNVZ01sclZldk0yeGFWZFMyZHg2TEYrUjgzQmszU2gxeVRhQW41SC9O?=
- =?utf-8?B?YnZOSUkyZTYxdWhPcHlPZkRlaTJYcGtOQnRqOWZQRzhXMmhNRWxaWEZ3MS9m?=
- =?utf-8?B?U0V2TTBsVHIvdWpiNllLR0ZHMVl1UFMrcURyUEI0eG1zdisyWFF3U3E5RUZr?=
- =?utf-8?B?UFcyMUFuRWxWUzJMWXNPOXUzMXNpSmh1alFENHJnOVFYN3h1dktUaCthTWE5?=
- =?utf-8?B?cnRWTHVoc2ovMEJwY1Bld0FyeTdSVU1ZRFFxblFvWDlQL0tJa2lOQWJ1NEth?=
- =?utf-8?B?UXZhbXBrbWU4UnBaYkhNWGZnZEhUaXdqQ3hiSkFUVnVIWkRQNjR3WFNOakRW?=
- =?utf-8?B?S2t2ajdTakdnRFcyWUp4TlRXb3dIUWdQMGlxU295VFlMcVpsUDZWdDdCTGZX?=
- =?utf-8?B?WlkySHJuOW1NR1U0ditFUE5xUVVMYnBIMEcrVzMxL2F3cHF5YXIvVWhXZmtL?=
- =?utf-8?B?TDV0dTJGOEFOOE50cGNPKzJtWmRGVkNkMVNVWVVkTlF0WXhwSXdDU21RMno2?=
- =?utf-8?B?bjFSOUVEbldWTHhBTjFFNFN3U25IZVcvOWxHZGZ3enZwNFlIZ2pqaTFLRFJQ?=
- =?utf-8?B?VDk0eG83M0w3Vk5CM2ZmTVpHWEFJK3BhMFhRcXorV2prSmxia0hMbEVvRWRK?=
- =?utf-8?B?a1gzc1l5WU50c2V3b29pS1hQSytZMndNVW4ybTBRWC9HTEp4MTd1WDV0WnU3?=
- =?utf-8?B?VmpQL0xZYWJoRDU2NGNYM050dnFVVWVZenVRVlJzVFBhMWwzTlozaGVYYTFn?=
- =?utf-8?B?enVTTDZMYmdwcjBpaENEMS94ODVma3NMWXNpQW9Gbk5wR0FnSDE5S00yUmJV?=
- =?utf-8?B?M24xdUlGbUxMMkorODBEYnYrN1BqckhoZEJjZytDdFZDek9WU0tXSUplMmtJ?=
- =?utf-8?B?WlFkUHdsaTA3UU5JZFlUb3h1ZEdsVUFndkx6SHdJUXhqMThNMS91cVZLbjBn?=
- =?utf-8?B?bm00MktDcjZNNW1rT2dKNm8zZ0Z4UzdBZ3pCdkNWV21qWkU4WjV3WGo5TW9w?=
- =?utf-8?B?eWpPZWJSRS96d3lValp2YjdySklqMENpckx1R1YzUVVtMVBXZzVyejRoOGYy?=
- =?utf-8?B?c2l2ek9kOE5mZlNtRVYwZlRMaG1JK1E5YkFQWlBtOURsYTVtSW1PODFYRndF?=
- =?utf-8?B?QklQcUtCOUhwdWNtZWljdExmcVd0ZnFEL0VUdXZJWWhDZ3FxVUc4WTc5L00x?=
- =?utf-8?Q?9JGqE7c+L+YS23qqeYxk0C5G0gjhY1cCSdPfgdD?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RDVRblZiUVFCMk1tWjFYUlRibXpUZkhhSUFIQ3NkZ3c2QUk3aVhRamYvU09i?=
- =?utf-8?B?aDBUVllYaW9ydmtaRGxzYThiV0dRUTdZT1NCQWMxQy94YzV4Vjk1QkdiY2VJ?=
- =?utf-8?B?dGhndUxQbTdvL1IxR1Z1bE1aRjgyRk5RSnh2RlZka2NSY1lBSjhZVG1lcVZ3?=
- =?utf-8?B?cndwL2hpZGsxVkRFTElOTGlCMDN6SGwvUWYrODU3QzRBMExOL1ZiV2RpMVFL?=
- =?utf-8?B?MkYyTHhYWHhNaEp1Z1NqVlplQVpUT1QrWnNyQWxjUFM1RDVhTU9aeHNTWURG?=
- =?utf-8?B?MFZ0YUFNN2lwMGgxbGZCeVBMYzdBVGFCWFVwNUVOakwzV1cra2NMQ2owRGl3?=
- =?utf-8?B?UEhEaklYRGYxazkzVkhMTUhITTVxMjh0K2kyZ0R2Y3FGVzJaVFhid3dMZDY3?=
- =?utf-8?B?QUNDMjM4Z3ZuVnpMTWZ4ZS9yNUNIT2g0eHFhemFSdDhDK0ZRS1ZCTmRmbUdI?=
- =?utf-8?B?UFk0STV5VzZrRG1UVlZ1eHE3V1A5V0JGTUFZVVJ6UGdzaThvWnZKODRQSGEz?=
- =?utf-8?B?S1VaWUNRRHdPYzQwbmNPNVFseEVESnB6cHZIdzNhdDVwTmpONkRJR2Q3VlJw?=
- =?utf-8?B?b05QOFdjTU9nVDJuamxubXlHT2c3T3h1RElxZTRjSnhJcEQ3S1RBQjBqczFv?=
- =?utf-8?B?bHNlWllZa21qeGNQdHNwQ0hnWTBqRENOb3RlYjZyamp0OU9hU2dZNXVhZ1Rr?=
- =?utf-8?B?RnNTcWREd0FUSFpoaUdVZU1kNUFsUjZVSTVBUHVjWHVnR1dYUURXc01qQlBR?=
- =?utf-8?B?eS9pOGZiQ0Q5KzFSanJYaXgxYXh5Y2h2YTZGUzhuSDVKQXBIMzljVGo4THdp?=
- =?utf-8?B?YU1qNFRyYWxCbGlqaTRrZGRUK2U3VWcxY21DQUo5b2F6ZDl5ZWZJZC9zbkdW?=
- =?utf-8?B?dmtQdjlMUVpPWEpUQ0ppZSt1NzNXRkRtSVhEelh4aG1HOG5kWkhjbUdUd0Fw?=
- =?utf-8?B?d045eVdhZlJLR3kzd1U3NHNEVzZ3bDdRdDZmMUo5OUlxeDZQMlkzT3RvNnYy?=
- =?utf-8?B?MC9XYXJyTGRLOXZFK0xDc3FFYytLbjI4MUVWRHYydXYvc09LdG1oQ0Fxei9y?=
- =?utf-8?B?a0RUeUVGeVVpTzZPYXRQbnRVZlltQy8rTDIxTkR4T0FxTGZ5RVE3azJoV2RK?=
- =?utf-8?B?blNkTlVQTVBkQ013bit6Z3hxbmI5a2xWb1NaYXBFejR0QWlWeUFJVmh6Wldn?=
- =?utf-8?B?cVBaZHhaTHBEUlRZb3UxN0VMejZTR281VW5XTVlyZlp2U0lnc01mNnNoR1J5?=
- =?utf-8?B?WHpKZEZpZzJSdGh2OWwwT21McTlqaWRtaFRRa2dwZkgzYzB5VkkvWkh3dnB4?=
- =?utf-8?B?T2hudjFaS2ErNnl5N2w5MkVRamZPNGcxeEJrc3ZieFp6RENEdnFQTFdEaVZT?=
- =?utf-8?B?czlnbGRDMXQwWmZVZThiNW84RlRhU1BqWDc0RW9zdFY4TnFBVC9tQ2ZGZjFS?=
- =?utf-8?B?Qk1Ea2hoQUsrb2MwbVdjcUhaMHdQaGdWdS9GZVIzTEk4RExUMXFQSTV6K1BE?=
- =?utf-8?B?T0cwMlNGaEltM2llZW9RejZtUmVoSlJkRGlFU1lidEJYaFRmaUdoK21uYkNC?=
- =?utf-8?B?VXVyMXRZc0VtUG5QRW93eDhSa21Tc0F0UVl1UmRVbkVBcFZIMHgrMERPVHE1?=
- =?utf-8?B?aFZ2NW5BR3JHYlVRRDVVZUh0WXoyWm1YazZSM1NsN0xHMlpreTdjWmNDV1pk?=
- =?utf-8?B?VENLZUhzcXJyNmxmZHdMZjU4TEU5UVd3L3g1NSs3cDBHd2xVazBwa281MlJR?=
- =?utf-8?B?c296bjRWbThlODdETm9Nb1VNLzNGU0hpZnZVaXNBMXMvOStkMjFKUXM0SnhU?=
- =?utf-8?B?eUE5cFo3T3JIQ3FTeG5wTWVXa1ZVd1Q2YVk1NGJra002QWM0ZzMzOUZCZitW?=
- =?utf-8?B?M3VHOVpUZ0V1RWVkTkRyRHF3eG9PYW1NTUUzTUtabkV3SmpUMzgzQ1pUYnlR?=
- =?utf-8?B?WXBOOTZUZkhxeklrNzBlT1dUMWdSK01QWXRTdlZFa3dYSWRrZ3cwRkd3bmtq?=
- =?utf-8?B?bS9SQi9DRWJmUndyeEdxQWFkNUpWKzFKbVBPWEdzR2FWMUZFT2FEbW1HVEx0?=
- =?utf-8?B?eDJKSGtRM1NYdmZNUnE2TkY4cG95Wm5kZlhSYjU4UWQ5enIxMlRwcGtlOTFW?=
- =?utf-8?Q?JMYPwLs09TrqHzrVMRxWcLAy5?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21fb9f95-1474-4ac4-fe5c-08dcf9f20599
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 21:21:45.3245
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C8e/dOYpRCKkkCQW38Nbd/dxq1srz8H47oGOND9LPDvj60fh5u1mV7q51IfdaVdXyN8I4QiS/yiMyd+veauE9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5221
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 31 Oct 2024 07:35:41 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+
+> On Tue, 2024-10-29 at 21:17 +0000, Jonathan Cameron wrote:
+> > On Tue, 29 Oct 2024 09:13:42 +0100
+> > Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+> >  =20
+> > > On Mon, 2024-10-28 at 22:45 +0100, Angelo Dureghello wrote: =20
+> > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > >=20
+> > > > Extend AXI-DAC backend with new features required to interface
+> > > > to the ad3552r DAC. Mainly, a new compatible string is added to
+> > > > support the ad3552r-axi DAC IP, very similar to the generic DAC
+> > > > IP but with some customizations to work with the ad3552r.
+> > > >=20
+> > > > Then, a series of generic functions has been added to match with
+> > > > ad3552r needs. Function names has been kept generic as much as
+> > > > possible, to allow re-utilization from other frontend drivers.
+> > > >=20
+> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > ---=C2=A0  =20
+> > >=20
+> > > Hi Angelo,
+> > >=20
+> > > Small stuff that Jonathan might be able to change while applying... W=
+ith that:
+> > >=20
+> > > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> > >  =20
+> > > > =C2=A0drivers/iio/dac/adi-axi-dac.c | 256 +++++++++++++++++++++++++=
+++++++++++++++--
+> > > > -
+> > > > =C2=A01 file changed, 242 insertions(+), 14 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-ax=
+i-dac.c
+> > > > index 04193a98616e..155d04ca2315 100644
+> > > > --- a/drivers/iio/dac/adi-axi-dac.c
+> > > > +++ b/drivers/iio/dac/adi-axi-dac.c
+> > > > @@ -46,9 +46,28 @@
+> > > > =C2=A0#define AXI_DAC_CNTRL_1_REG			0x0044
+> > > > =C2=A0#define=C2=A0=C2=A0 AXI_DAC_CNTRL_1_SYNC			BIT(0)
+> > > > =C2=A0#define AXI_DAC_CNTRL_2_REG			0x0048
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
+> > > > =C2=A0#define=C2=A0=C2=A0 ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
+> > > > +#define AXI_DAC_STATUS_1_REG			0x0054
+> > > > +#define AXI_DAC_STATUS_2_REG			0x0058
+> > > > =C2=A0#define AXI_DAC_DRP_STATUS_REG			0x0074
+> > > > =C2=A0#define=C2=A0=C2=A0 AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
+> > > > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
+> > > > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
+> > > > +#define AXI_DAC_UI_STATUS_REG			0x0088
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
+> > > > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
+> > > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
+> > > > +
+> > > > +#define
+> > > > AXI_DAC_CUSTOM_CTRL_STREAM_ENABLE	(AXI_DAC_CUSTOM_CTRL_TRANSFER_DAT=
+A | \
+> > > > +						 AXI_DAC_CUSTOM_CTRL_STREAM)
+> > > > =C2=A0
+> > > > =C2=A0/* DAC Channel controls */
+> > > > =C2=A0#define AXI_DAC_CHAN_CNTRL_1_REG(c)		(0x0400 + (c) * 0x40)
+> > > > @@ -63,12 +82,21 @@
+> > > > =C2=A0#define AXI_DAC_CHAN_CNTRL_7_REG(c)		(0x0418 + (c) * 0x40)
+> > > > =C2=A0#define=C2=A0=C2=A0 AXI_DAC_CHAN_CNTRL_7_DATA_SEL		GENMASK(3,=
+ 0)
+> > > > =C2=A0
+> > > > +#define AXI_DAC_RD_ADDR(x)			(BIT(7) | (x))
+> > > > +
+> > > > =C2=A0/* 360 degrees in rad */
+> > > > =C2=A0#define AXI_DAC_2_PI_MEGA			6283190
+> > > > =C2=A0
+> > > > =C2=A0enum {
+> > > > =C2=A0	AXI_DAC_DATA_INTERNAL_TONE,
+> > > > =C2=A0	AXI_DAC_DATA_DMA =3D 2,
+> > > > +	AXI_DAC_DATA_INTERNAL_RAMP_16BIT =3D 11,
+> > > > +};
+> > > > +
+> > > > +struct axi_dac_info {
+> > > > +	unsigned int version;
+> > > > +	const struct iio_backend_info *backend_info;
+> > > > +	bool has_dac_clk;
+> > > > =C2=A0};
+> > > > =C2=A0
+> > > > =C2=A0struct axi_dac_state {
+> > > > @@ -79,9 +107,11 @@ struct axi_dac_state {
+> > > > =C2=A0	 * data/variables.
+> > > > =C2=A0	 */
+> > > > =C2=A0	struct mutex lock;
+> > > > +	const struct axi_dac_info *info;
+> > > > =C2=A0	u64 dac_clk;
+> > > > =C2=A0	u32 reg_config;
+> > > > =C2=A0	bool int_tone;
+> > > > +	int dac_clk_rate;
+> > > > =C2=A0};
+> > > > =C2=A0
+> > > > =C2=A0static int axi_dac_enable(struct iio_backend *back)
+> > > > @@ -471,6 +501,11 @@ static int axi_dac_data_source_set(struct iio_=
+backend
+> > > > *back, unsigned int chan,
+> > > > =C2=A0					=C2=A0 AXI_DAC_CHAN_CNTRL_7_REG(chan),
+> > > > =C2=A0					=C2=A0 AXI_DAC_CHAN_CNTRL_7_DATA_SEL,
+> > > > =C2=A0					=C2=A0 AXI_DAC_DATA_DMA);
+> > > > +	case IIO_BACKEND_INTERNAL_RAMP_16BIT:
+> > > > +		return regmap_update_bits(st->regmap,
+> > > > +					=C2=A0 AXI_DAC_CHAN_CNTRL_7_REG(chan),
+> > > > +					=C2=A0 AXI_DAC_CHAN_CNTRL_7_DATA_SEL,
+> > > > +					=C2=A0 AXI_DAC_DATA_INTERNAL_RAMP_16BIT);
+> > > > =C2=A0	default:
+> > > > =C2=A0		return -EINVAL;
+> > > > =C2=A0	}
+> > > > @@ -528,6 +563,154 @@ static int axi_dac_reg_access(struct iio_back=
+end *back,
+> > > > unsigned int reg,
+> > > > =C2=A0	return regmap_write(st->regmap, reg, writeval);
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > +static int axi_dac_ddr_enable(struct iio_backend *back)
+> > > > +{
+> > > > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > > > +
+> > > > +	return regmap_clear_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > > > +				 AXI_DAC_CNTRL_2_SDR_DDR_N);
+> > > > +}
+> > > > +
+> > > > +static int axi_dac_ddr_disable(struct iio_backend *back)
+> > > > +{
+> > > > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > > > +
+> > > > +	return regmap_set_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SDR_DDR_N);
+> > > > +}
+> > > > +
+> > > > +static int axi_dac_data_stream_enable(struct iio_backend *back)
+> > > > +{
+> > > > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > > > +
+> > > > +	return regmap_set_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_STREAM=
+_ENABLE);
+> > > > +}
+> > > > +
+> > > > +static int axi_dac_data_stream_disable(struct iio_backend *back)
+> > > > +{
+> > > > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > > > +
+> > > > +	return regmap_clear_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > > > +				 AXI_DAC_CUSTOM_CTRL_STREAM_ENABLE);
+> > > > +}
+> > > > +
+> > > > +static int axi_dac_data_transfer_addr(struct iio_backend *back, u3=
+2 address)
+> > > > +{
+> > > > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > > > +
+> > > > +	if (address > FIELD_MAX(AXI_DAC_CUSTOM_CTRL_ADDRESS))
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	/*
+> > > > +	 * Sample register address, when the DAC is configured, or stream
+> > > > +	 * start address when the FSM is in stream state.
+> > > > +	 */
+> > > > +	return regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > > > +				=C2=A0 AXI_DAC_CUSTOM_CTRL_ADDRESS,
+> > > > +				=C2=A0 FIELD_PREP(AXI_DAC_CUSTOM_CTRL_ADDRESS,
+> > > > +				=C2=A0 address));
+> > > > +}
+> > > > +
+> > > > +static int axi_dac_data_format_set(struct iio_backend *back, unsig=
+ned int ch,
+> > > > +				=C2=A0=C2=A0 const struct iio_backend_data_fmt *data)
+> > > > +{
+> > > > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > > > +
+> > > > +	switch (data->type) {
+> > > > +	case IIO_BACKEND_DATA_UNSIGNED:
+> > > > +		return regmap_clear_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > > > +					 AXI_DAC_CNTRL_2_UNSIGNED_DATA);
+> > > > +	default:
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +}
+> > > > +
+> > > > +static int axi_dac_bus_reg_write_locked(struct iio_backend *back, =
+u32 reg,
+> > > > +					u32 val, size_t data_size)=C2=A0  =20
+> > >=20
+> > > nit: this is actually unlocked and needs to be locked from the outsid=
+e. So,
+> > > unlocked could be a better suffix. But more importantly is the extra =
+call to
+> > > iio_backend_get_priv(). We can just pass *st directly from the outer =
+function. =20
+> >=20
+> > This naming always gets confusing. Are we naming the state, or what hap=
+pens?
+> >=20
+> > A lockdep marking just inside the function can be used to make it obvio=
+us
+> > or the old __ prefix to say 'special, check the rules'.
+> >  =20
+>=20
+>=20
+> Yeah, personally I would prefer the __ prefix...
+I've tweaked it to __axi_dac_bus_reg_write() whilst applying.
 
 
-
-On 1/11/2024 9:22 am, Sean Christopherson wrote:
-> On Thu, Oct 31, 2024, Kai Huang wrote:
->> On Wed, 2024-10-30 at 08:19 -0700, Sean Christopherson wrote:
->>>> +void __init tdx_bringup(void)
->>>> +{
->>>> +	enable_tdx = enable_tdx && !__tdx_bringup();
->>>
->>> Ah.  I don't love this approach because it mixes "failure" due to an unsupported
->>> configuration, with failure due to unexpected issues.  E.g. if enabling virtualization
->>> fails, loading KVM-the-module absolutely should fail too, not simply disable TDX.
->>
->> Thanks for the comments.
->>
->> I see your point.  However for "enabling virtualization failure" kvm_init() will
->> also try to do (default behaviour), so if it fails it will result in module
->> loading failure eventually.  So while I guess it would be slightly better to
->> make module loading fail if "enabling virtualization fails" in TDX, it is a nit
->> issue to me.
->>
->> I think "enabling virtualization failure" is the only "unexpected issue" that
->> should result in module loading failure.  For any other TDX-specific
->> initialization failure (e.g., any memory allocation in future patches) it's
->> better to only disable TDX.
-> 
-> I disagree.  The platform owner wants TDX to be enabled, KVM shouldn't silently
-> disable TDX because of a transient, unrelated failure.
-> 
-> If TDX _can't_ be supported, e.g. because EPT or MMIO SPTE caching was explicitly
-> disable, then that's different.  And that's the general pattern throughout KVM.
-> If a requested feature isn't supported, then KVM continues on updates the module
-> param accordingly.  But if something outright fails during setup, KVM aborts the
-> entire sequence.
-> 
->> So I can change to "make loading KVM-the-module fail if enabling virtualization
->> fails in TDX", but I want to confirm this is what you want?
-> 
-> I would prefer the logic to be: reject loading kvm-intel.ko if an operation that
-> would normally succeed, fails.
-
-OK will change to what you suggested.  I'll need to take a deeper look 
-though since later patches will add more checks.
-
-Thanks for the comments!
+>=20
+> - Nuno S=C3=A1
+>=20
+>=20
+>=20
 
 
