@@ -1,122 +1,94 @@
-Return-Path: <linux-kernel+bounces-391431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072959B869D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:06:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A899B869C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0DC1F21AEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:06:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA0DDB21BB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03F01D12E0;
-	Thu, 31 Oct 2024 23:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15891197A87;
+	Thu, 31 Oct 2024 23:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XkIovhKV"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dBMu/PYg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC94197A87
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B621CDFB4;
+	Thu, 31 Oct 2024 23:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730415987; cv=none; b=HCTkz6k61IZZY4F8MpahRPX5roxx7BLOZ/PGqQRQuZvvlRTTq7iKCeLw0M4zhJvd3JjpkmieswqqdMWUqMfUu4buGXKO7hRza45nocrky1HYd9vZG1+CikoaTPULv1zhVppLAFSkMkvx8ndXWdDVrSa7xFuUwCIzmSjrg3IxIUs=
+	t=1730415966; cv=none; b=WJW9lIQcHRvOVD9QSQgBPvjl97T77N6rrCw+7oVH2fdpNk8hZWozK8RHjyAYSn5eSfjIAqh1KhKc4RIGBIYCpF7YdzlZ7xFTA3LIXcD/t4+WXrmHDgpCyvOC2oH2/AS2TR1UW1dFzdficLe5pOKJPO04W0XFc/U+oQTfgwlv5gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730415987; c=relaxed/simple;
-	bh=PPVDI2IVlfWT3HYsIyOCojyn1W68WzuwhUUMNivVEl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=faMYR4CfzeZn2GAJBMZ2PUEiN5Q+alCx/nu1f0HBVHJ/t/8NhDt5AOIjKI793yuG53RZbxSYZ+vhQ9n6yVNfylCb+e9nspRsYDTt0vnIScN/H+8HqVbTrqQAqORSPYwOg5UPIgpcQLkndjfX8rPyEpuxq6NUxPN62225wRTvlUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XkIovhKV; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so24038551fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730415979; x=1731020779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PPVDI2IVlfWT3HYsIyOCojyn1W68WzuwhUUMNivVEl0=;
-        b=XkIovhKVV+JjFcU2gKPyvDN4/jfmYC69D5uam+fjtt1Dv0+Z8o24DM/V6LnNDdybfc
-         MdMK/l5cxW09xsiCI0zSg+BlTDcsUGcfp8MNzeOO+k2eg6mdRe6KhHKRaNBgottDuDh6
-         aoV3juzSE6+x0miXGJPeTBvRvloVlQRGBTS2g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730415979; x=1731020779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PPVDI2IVlfWT3HYsIyOCojyn1W68WzuwhUUMNivVEl0=;
-        b=B76gadTJpSVDajHJWTsuCLUBbyFqsG6WPLgdjhdf48O8zBSr63ZvYTHZnorHbAEE54
-         7fqplPOHMKbqGLIVSqdNfwb5wg9TjcoLeKgvw95D9IrLZbSIekYD3PYvyZ+UffasLcdT
-         gJpLQQCovlRYMKgjF2AX4fTo8hfrG2u0cVrwED2q6aeze8XcdNdjBsZHbCPGtsgKyGhX
-         Gm9vc6+f7AnpPANQxKX+ye18m/R+0N8yISdfFHJHp5zV2d12STMYU15/cCFQOgU+e6Tl
-         JuIRnW/1Ng4TllAZxjLZeKMhc4xW9rUzUPaODLlGg3JI1WS6N5WcTFhUbuDb2pDReHqp
-         9+Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNFm4ccrhYamx23IFyUiMrbE/Zv4garlXoKOQ8cgTQ0WLZ7mSQpooQhXTJkaWXknVZSV9fTrSekBKb50w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXcHie1gUbYi7tCRdEQ85JaRS2ab0JWgQpJ9GTIK+iyVyCsWmm
-	wI2GbXx2Wq2oNou7FjhS4HXW1uapCH0jETYEytPYk44qx+K9O+q2CHfcFT75GzHTLFvgtWoC9sz
-	A7oDX
-X-Google-Smtp-Source: AGHT+IH1PgVO1N9o/lxB3/QVzOWHbZl/lLNDDcwXsvVhFEm3d5ljHV9Y7cd9ow00vcA3tllm9o8b3g==
-X-Received: by 2002:a2e:bc1d:0:b0:2fa:ce0d:ec34 with SMTP id 38308e7fff4ca-2fdef231127mr13724481fa.2.1730415978752;
-        Thu, 31 Oct 2024 16:06:18 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef3aeca7sm3514221fa.16.2024.10.31.16.06.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 16:06:18 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53c78ebe580so1545650e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:06:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKCJdAlHcqIFxwQ2mdrxEdby16k1Ne9XJQtqmHOtWmgpzEmn5gTwX+5QVOjYDiwsAb2JQZ0FVUGCZYDj8=@vger.kernel.org
-X-Received: by 2002:a05:6512:3b86:b0:539:f6b1:2d05 with SMTP id
- 2adb3069b0e04-53d65d96802mr508896e87.9.1730415977461; Thu, 31 Oct 2024
- 16:06:17 -0700 (PDT)
+	s=arc-20240116; t=1730415966; c=relaxed/simple;
+	bh=eiOA2ir69JdE0DAQx5hUj8uF0lZxuN/074mQOsVdbMY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=iBgy8DHpANVEfBllrM0Nej8xc1nsRnoq3yqwzXEF7LK9c8QitLcm2A/sqkRIvBz13M+ZscNYdpm4ctxgX9JmwXbqCh+3Pvq77aSMunPi5fD2GonxyROXQcaBnnUHW3Pbt720fdLzbroySivwAHlSt9BY12e7+8wxSEeYv1yDN+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dBMu/PYg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EC8EC4CEC3;
+	Thu, 31 Oct 2024 23:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730415965;
+	bh=eiOA2ir69JdE0DAQx5hUj8uF0lZxuN/074mQOsVdbMY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dBMu/PYg97a2NKvVHbrjBWh2mNwSXmrIiiuWc7RkO7KcIjMUlkrCOvUdL1tbtpl6P
+	 U/WI/rrgKK3NpKFPkwLG95EgA9//Em21Sb6D6CpSWT8JPPepjf60rcSdyiuCTu5A54
+	 9dFL7m1gAeuYyjSGGUaOGwjOG9CqnH5G+xf9wXC0=
+Date: Thu, 31 Oct 2024 16:06:04 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kinsey Ho <kinseyho@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt
+ <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, Pasha
+ Tatashin <pasha.tatashin@soleen.com>, David Rientjes <rientjes@google.com>,
+ willy@infradead.org, Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand
+ <david@redhat.com>, Joel Granados <joel.granados@kernel.org>, Kaiyang Zhao
+ <kaiyang2@cs.cmu.edu>, Sourav Panda <souravpanda@google.com>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH mm-unstable v1 0/2] Track pages allocated for struct
+Message-Id: <20241031160604.bcd5740390f05a01409b64f3@linux-foundation.org>
+In-Reply-To: <20241031224551.1736113-1-kinseyho@google.com>
+References: <20241031224551.1736113-1-kinseyho@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241031192350.GA26688@lichtman.org>
-In-Reply-To: <20241031192350.GA26688@lichtman.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 31 Oct 2024 16:06:03 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WC-ce14rgrYsVbg75dNX5tL6Saj5T8YqpAWm2ndLGdXA@mail.gmail.com>
-Message-ID: <CAD=FV=WC-ce14rgrYsVbg75dNX5tL6Saj5T8YqpAWm2ndLGdXA@mail.gmail.com>
-Subject: Re: [PATCH] kdb: Fix incorrect naming of history arrow keys in code
-To: Nir Lichtman <nir@lichtman.org>
-Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+hm.
 
-On Thu, Oct 31, 2024 at 12:23=E2=80=AFPM Nir Lichtman <nir@lichtman.org> wr=
-ote:
->
-> Problem: The kdb CLI code that handles the history up and down
-> navigation incorrectly names the up and down arrows as ctrl p and n.
->
-> Details: This could be some kind of left over legacy.
-> (maybe inspired by ddb which only reacts to ctrl p and n for history nav)=
-.
-> kdb doesn't react to ctrl p and n, and following the code flow with GDB
-> reveals that these values map to the up and down arrows.
+On Thu, 31 Oct 2024 22:45:49 +0000 Kinsey Ho <kinseyho@google.com> wrote:
 
-Really? kdb reacts to "ctrl-P" and "ctrl-N" for me. It also reacts to
-"ctrl-F" and "ctrl-B".
+> We noticed high overhead for pages allocated for struct swap_cgroup in
+> our fleet.
 
-I think the code as-is is fine. The arrow key code just converts to
-the arrow keys to the (also working) ctrl keys and by the time we're
-here we just need to react to Ctrl keys. Ctrl keys are 64 less than
-non-ctrl keys and so the definitions of Ctrl-N and Ctrl-P are correct:
+This is scanty.  Please describe the problem further.
 
->>> ord('N') - 64
-14
+> This patchset adds the number of pages allocated for struct
+> swap_cgroup to vmstat. This can be a useful metric for identifying
+> unneeded overhead on systems which configure swap.
 
->>> ord('P') - 64
-16
+Possibly dumb question: can we switch swap_cgroup_prepare to kmalloc()
+(or kmem-cache_alloc()) and use slab's accounting to satisfy this
+requirement?
 
--Doug
+> Before adding the new stat, Patch 1 introduces a generic system-wide
+> counting interface. 
+
+I don't really understand this one and would like to hear much more
+about the motivation.
+
+And: "the existing use case" is OK with a global counter, but what about
+future use cases?
+
+And: what are the future use cases?
+
+Thanks.
 
