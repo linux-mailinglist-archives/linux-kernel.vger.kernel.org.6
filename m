@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-390066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8259B7514
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FA19B7516
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4036E1C21EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362971C21E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E125514883F;
-	Thu, 31 Oct 2024 07:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD0A14883F;
+	Thu, 31 Oct 2024 07:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cvxhs6lI"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MqbiO2Uw"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281EC1487D1;
-	Thu, 31 Oct 2024 07:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EC3148314
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730358805; cv=none; b=A7pcfSqYIcTBRqKiA0y8Pz36T+dbh+gXbv8O3PJm8edn6d8yiOFNOQGK8/jB8tTZmWu72T69YEaRhgiACHrC51nTyyef9iqDJ9VtaFXTiURe/JMSIbAGwQFKJxCKJI5y9LCOcGFRfLHV5X8L8ua+glAAICV90tgVxPit/Mlyml4=
+	t=1730358852; cv=none; b=JFWgPkVovkbGJT+TAbHzxQ7Nulj+gYEslwwD4oZaPFfad5IV8hNIA9GHNKl4ddEMddfs2JnO93+d8CpyP+UTdyl+3jfP78qNs4/nKm47KHTrRfRjvGxQcWIMJxQaYMAEnEpR3APC32mXICbfK3pTlsmBcb7pcuk93oc/xoAzK0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730358805; c=relaxed/simple;
-	bh=n5s7BqFiTVpjwTRoFk2o50PhU1UZYPkhkSQjRdzBSsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GZuHDjGBTUDNfXx1tDR5/Nfro0/YTG6w9+0l0i9/4XyMOryijJLs/mfcBoyLyL9i9sQ/ASYs0iksqmY8IPNXrGWRSM3vq5vKAykmq5e+KTHLqYyOgxEwqFlV2QrUxETqqwOjZcWHPczKEKCUeVwO68fAz21M1QhYSb9tRfEm9eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cvxhs6lI; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53c779ef19cso633262e87.3;
-        Thu, 31 Oct 2024 00:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730358801; x=1730963601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xYNKPpW5+LOAj9rPQp09PnGF4rkl3/FgO55cWEjPbcI=;
-        b=Cvxhs6lIdsOxZAmEV5Fpssss4TNO+ZyPMVewKhno7oijkwdxzhoEiUPb/1FR8oZPTs
-         7Pfukg4WLw5XT68E5cTzPl5mWUK8rd4JtVgc0MlCtpAHC+7hUlE67UztcWw1OsTjB7EQ
-         NtZwT6ayrAVk6e599B0T/ByHDHZ3I7cdsTvZMb48nkxxsjtsdWO/Z3ahAy0xArLoqnQj
-         yFXQD01BxxFrHNQ5Tgx2M3X7XF+q5dwbfUck+JrUfQeskyshazWTCeXqdSniQN4RVnl+
-         a66jxwsLWP77C1Hq6MspWbzbmztsIiMbw5NEiDAPmXZAQgLDeLlV+DiqkXHP+zWtgdRP
-         TOww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730358801; x=1730963601;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYNKPpW5+LOAj9rPQp09PnGF4rkl3/FgO55cWEjPbcI=;
-        b=uMHlsyCROt4oW43wDoYq4osxWqJiwyglOgqiv6/Y/vTXzBLwVIo5xvimn7quBX3xR9
-         2wrPq7LSt7CIDIlV39GNQGtXzuMERfXd6bXjB4tGMqixEyApuYA4/RiEXe0aTOaPoZ2V
-         cS/c5H5AE4AINMWRref6RUbBPlGrSqq3mluTOEp6GIHH73MjGpxqjpdp3RlGLtT6J9J0
-         l22IF+RWUgVqNzt8Xe9q/aGphBBUK/jlJxc3mJGmH5nkJ7yHN2FbZ2o+aT8TBJItgiQH
-         sC5qJqRnMGuUHygwRdc8jTbTI7l7qnlYX0yvRL2evTQia4znennXWlK+MmIQPCN+vrY9
-         nGTg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0yqtQsp8SVmz28icHEJXHd9jk2uJPE4oj4uz6DceK6RR86GLzTAxM+zmTAfuKGn9j7yBcOQciabI=@vger.kernel.org, AJvYcCXrkm7XRTZ2zJgqebk9KmkRF+H3n2YHB1dIflC3Bf6K+bb2KzvrIzFcABFhH7JHnDdVqVAsPl8kTVeuEksR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy99QSAj6QxjJp24ORFP7/Ix2SPlH6o9dk2eP2Um0wNF4ReX8T2
-	z7q2lkq/aKq5KlU6FK4kWZEGGVlHGjqEDA/7xCEzRZlMKJcomFIHJD8+g5A2
-X-Google-Smtp-Source: AGHT+IGaq/3cf1ZA6yndcd7zOvzovZRCdC7n8N9ta65eO3kLRkR97DVsBL2jOkPLcT0ci6t/nnvjeg==
-X-Received: by 2002:a05:6512:4012:b0:539:f26f:d285 with SMTP id 2adb3069b0e04-53c79e15c9fmr963931e87.3.1730358800885;
-        Thu, 31 Oct 2024 00:13:20 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcbfa6sm108212e87.208.2024.10.31.00.13.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 00:13:19 -0700 (PDT)
-Message-ID: <5f80c1a2-118a-4685-ac1b-81b3479f5064@gmail.com>
-Date: Thu, 31 Oct 2024 09:13:16 +0200
+	s=arc-20240116; t=1730358852; c=relaxed/simple;
+	bh=jjAgEfHNrdOpfB3uC1aNDsZWx/qupbfDbB9XPQA2A0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CH/KyopJJfSJYMWnsazWym7l3/JtLw1RtxnuK7r48jcDM5X5UMWcYP3N1fwGMHpen3lN0gHcF7A7S3OHsJex3hv1XZdtV2i1cnhrISF14fnkipMqItqvlxgs22+w61caqVt8KHFNfx9euHOZ7PnbDCHaAYzAreIEQr1EQMisLsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MqbiO2Uw; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 31 Oct 2024 03:14:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730358847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3h0vamvXQdriRj2Gf9Z7cLBPSBRv5r0hK6ZnJtzjOzc=;
+	b=MqbiO2Uwj6WZcnCMemA9djWgdQ2hdxqZldyU6rSlypc4R0I+uzn+skSWnxQHQhaey+wjE1
+	aHFR7zOBKg65tyurd8g8qgA5rRWHVVv+GgMUnZVbPXiVSlMBO6rvqZmbMaQ7pmbQGMKyxP
+	X4xp51AQ8mEP+lYUVsdrF9U5I/6x4Kc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	xiaopeitux@foxmail.com
+Subject: Re: [PATCH] bcachefs: add check NULL return of bio_kmalloc in
+ journal_read_bucket
+Message-ID: <dp2ysiljektn5cibzvcuohkttw2fzm7ir2svkj7cr7xqcvyyni@esmrfmz4c44m>
+References: <62a857230cd1bf17105fb7d3858b3c22098573d3.1730274320.git.xiaopei01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: Fix uninitialized symbol 'ret'
-To: Zicheng Qu <quzicheng@huawei.com>, jic23@kernel.org, lars@metafoo.de,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
-References: <20241031014505.2313035-1-quzicheng@huawei.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241031014505.2313035-1-quzicheng@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62a857230cd1bf17105fb7d3858b3c22098573d3.1730274320.git.xiaopei01@kylinos.cn>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Zicheng,
-
-Thanks for the patch.
-
-On 31/10/2024 03:45, Zicheng Qu wrote:
-> Initialize the variable ret at the time of declaration to prevent it from
-> being returned without a defined value. Fixes smatch warning:
-> drivers/iio/industrialio-gts-helper.c:256 gain_to_scaletables() error:
-> uninitialized symbol 'ret'.
+On Wed, Oct 30, 2024 at 03:48:01PM +0800, Pei Xiao wrote:
+> bio_kmalloc may return NULL, will cause NULL pointer dereference.
+> Add check NULL return for bio_kmalloc in journal_read_bucket.
 > 
-> Cc: stable@vger.kernel.org # v6.6+
-> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> Fixes: ac10a9611d87 ("bcachefs: Some fixes for building in userspace")
+
+Thanks - applied.
+
 > ---
->   drivers/iio/industrialio-gts-helper.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/bcachefs/errcode.h    | 1 +
+>  fs/bcachefs/journal_io.c | 2 ++
+>  2 files changed, 3 insertions(+)
 > 
-> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
-> index 59d7615c0f56..c5dc5b51693d 100644
-> --- a/drivers/iio/industrialio-gts-helper.c
-> +++ b/drivers/iio/industrialio-gts-helper.c
-> @@ -167,7 +167,7 @@ static int iio_gts_gain_cmp(const void *a, const void *b)
->   
->   static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->   {
-> -	int ret, i, j, new_idx, time_idx;
-> +	int i, j, new_idx, time_idx, ret = 0;
->   	int *all_gains;
->   	size_t gain_bytes;
->   
-
-So, if I read it right, this handles a (corner) case where there is no 
-times given. I am not sure how well such use has been considered because 
-the point of GTS is helping out with cases where the gain and 
-integration time both impact to scale.
-
-How do you see the benefits of the gts if there is no such shared impact 
-to scale? Sure the gts could still provide the 'standard table format' 
-to present the gains (or times), and conversions from the register 
-values to gains (or times), and perhaps the available scale table(s) - 
-but I suppose it also brings a lot of unused code and some 
-initialization overhead. (I have a vague feeling this was discussed with 
-Jonathan during the reviews).
-
-Reason I am asking these questions is that I wonder if the usage should 
-be limited to cases where we have both gains and times? We could check 
-this in the iio_gts_sanity_check(). (And, I am actually a bit surprized 
-this check was not implemented).
-
-Well, initialization fixes a potential bug here and does not really cost 
-much - so big thanks to you :)
-
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
-Yours,
-  -- Matti Vaittinen
-
+> diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
+> index f2736e830007..ae75cb0a842c 100644
+> --- a/fs/bcachefs/errcode.h
+> +++ b/fs/bcachefs/errcode.h
+> @@ -83,6 +83,7 @@
+>  	x(ENOMEM,			ENOMEM_fs_other_alloc)			\
+>  	x(ENOMEM,			ENOMEM_dev_alloc)			\
+>  	x(ENOMEM,			ENOMEM_disk_accounting)			\
+> +	x(ENOMEM,                       ENOMEM_journal_read_bucket)             \
+>  	x(ENOSPC,			ENOSPC_disk_reservation)		\
+>  	x(ENOSPC,			ENOSPC_bucket_alloc)			\
+>  	x(ENOSPC,			ENOSPC_disk_label_add)			\
+> diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
+> index fcb68f111079..667a2bb9e20b 100644
+> --- a/fs/bcachefs/journal_io.c
+> +++ b/fs/bcachefs/journal_io.c
+> @@ -1014,6 +1014,8 @@ static int journal_read_bucket(struct bch_dev *ca,
+>  			nr_bvecs = buf_pages(buf->data, sectors_read << 9);
+>  
+>  			bio = bio_kmalloc(nr_bvecs, GFP_KERNEL);
+> +			if (!bio)
+> +				return -BCH_ERR_ENOMEM_journal_read_bucket;
+>  			bio_init(bio, ca->disk_sb.bdev, bio->bi_inline_vecs, nr_bvecs, REQ_OP_READ);
+>  
+>  			bio->bi_iter.bi_sector = offset;
+> -- 
+> 2.34.1
+> 
 
