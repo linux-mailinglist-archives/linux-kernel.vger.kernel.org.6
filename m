@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-390615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121BE9B7C43
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:00:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278B29B7C49
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C673B281015
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B991C214A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB1F19F487;
-	Thu, 31 Oct 2024 13:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23A119C54C;
+	Thu, 31 Oct 2024 14:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MO6FtS8I"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNaRND/I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7926D19F121;
-	Thu, 31 Oct 2024 13:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150F684A3F;
+	Thu, 31 Oct 2024 14:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730383192; cv=none; b=rV9LNvjmNN4U0beO8ruXjHGKQ895S1ogZ5wCk6V6THdsyPmJDAb6mLId7aZrJsATO/kF7cwevBkNXEkhq8S1f0OsM55+iG6GDXPJqT9tcvVLk/gZs4N/FdcQiL0MVZ1GurpbQnwsCpr4UXBcMYQ8IDxPAMD1O5cn/SE7poNNLAw=
+	t=1730383379; cv=none; b=IHFC5Dom1AhDdQcpVetAJErt/zaNGHRJHiPudI3+rZqF5emmLlj9li9QATE6dFAZ7CGhB3LLc111ltf83j0d+xvXzY2ZoBQnTZDsX8RUu39YaJ1J3cG2jv3fb7q9u4znKr/Bi45Gdde2nPcMupY9fMYxsWcGEaBaNrA4iVPhP0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730383192; c=relaxed/simple;
-	bh=YUnvh8XF+mERUGDnm5G9QT/jKJiunfYK7/Oby1r+6x8=;
+	s=arc-20240116; t=1730383379; c=relaxed/simple;
+	bh=rM7JeFz9gUYAeFhBr3i1Nmo+zAAoRiN+ZzEeAmzgmoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dv12oZv+UIc/VgBw4YXQiaNN1mv1/2DaSzPPup4cdAO6Bo8GZu7U5FaUfc4hJ6I5CvG4QresPjFdtfkHM0qL18TeNeBFEH6+cptzo1HHqmlIJJ70IEv+gS001cqdFY2p7NxlrpqvPKMuA9cJG1V7P2BArWMPC9xovi1nDaTT1is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MO6FtS8I; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2FE7C40E0219;
-	Thu, 31 Oct 2024 13:59:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id j-JhUJ7QuuxX; Thu, 31 Oct 2024 13:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730383182; bh=qjpAzN9T7MYnXqarN64Vq83eSL0IXuYgi5LpW86thBY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y1DRUXqncKB18Kno8JYtWBiyhq5XjcCv8rkntyFjWwDaVBbel/pjfEM0bxqOjAmW3tKabj1mbmyoN6ShpZua0KcmQMAy7oc/7Ka7s91YDW9jLN8683+RvcZRhNo+uenlDEJK9dHjls8xIwRSaUtdxppD69AjPe+xvQRN3NTFLJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNaRND/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E98BC4CED0;
+	Thu, 31 Oct 2024 14:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730383378;
+	bh=rM7JeFz9gUYAeFhBr3i1Nmo+zAAoRiN+ZzEeAmzgmoE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MO6FtS8IBNmCcNevgYmmHgQHvmWrb04DfBAVzajW5kF5U4DjzCWLd1F0rfUQaSQhk
-	 z4Znl4RW/Yhdzo6Vzgx/EysxKBF9lrKvbPI3lN4GIAIyoGekmRX7mPv44tGx6aBRUY
-	 XDOR0g6Tf4QTnEN7hwizSwhF51bMAGIC9UylRFa2Oj/znhCpdzKXLfwA3wXxWKzl3L
-	 q25F/W7y5Ky4ecOUoxRRlLUF5OX8MXWBAvw5xgtEDmJ9E3TIzl1Rf34qKqcUctBt/z
-	 5y7T1dE7/fVyy04j80afsVK14fRMMJrBp9zOkW/lvfEUzI+ojqiy+yO+W6vfmAcyyu
-	 qzY+V37WmEJS1/G106pwvOyDEKY9I7JrH8dAp4kUHbCR05h/BO6uS0odh2XJux4JUd
-	 ACV9JEF9F6HIWg0LPN+WY3WIzvRzJoSSD0c0sBnZpbchk/BN4WsFJxfx9wqaTKTt4m
-	 amS1sqOoyoiNCiIfzS1fwCe3L7at13+543E4f9sJYE40kD5vbFEEOGNDBf7vwXgkHa
-	 Cx3DtdQSnb+7YBWpkc5WA9prVB2vGTTbWGv5KsYrauDfCyinlefE+mzCcYNub2sEoJ
-	 5yh6wqJzG+BTF28u+WPBqHv1Qae+5110IbE8E4lwyUACMg+AWRZDtK5bkNOr8T7u2Q
-	 wmZuyQpt9ONZ5uc0JTL1TDQQ=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CE3CA40E0028;
-	Thu, 31 Oct 2024 13:59:23 +0000 (UTC)
-Date: Thu, 31 Oct 2024 14:59:16 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	b=gNaRND/I1qBIq+wxeeLp1W8IrXNFVkeVr16EJ1tTYRm9sd/vefEzYw5RfDzGyiCqQ
+	 zEbCuZ7MjZMdvzuZdShZ3v54Lk/GuDcyC35jCrNJfrgVhUbHdFXolCT/pE30UMY1+u
+	 1P79uF/lp7QOOvB2E388qNQpOX0IIOggV6XO6Nb43zMwAy28B9yTP9LLX2SJ7Fgnfg
+	 0pOsteXjLYtVw5LF8m+AKXiuQwdCwRJbPbICXSr13yenl7TeStlLf2IntYHnTZj2Ev
+	 utVev3D1dlXbXCTSv2jc2HSeu1gFanS0O8vZVGeINOACvF4QmQxeTjeV1eEGsUyz9Q
+	 riutsoBiCmDcg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t6VlI-000000004Jl-0qBS;
+	Thu, 31 Oct 2024 15:02:56 +0100
+Date: Thu, 31 Oct 2024 15:02:56 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Sui Jingfeng <sui.jingfeng@linux.dev>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sean Christopherson <seanjc@google.com>,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCHv4, REBASED 1/4] x86/mm/ident_map: Fix virtual address
- wrap to zero
-Message-ID: <20241031135916.GDZyONNENEDAViMSOZ@fat_crate.local>
-References: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
- <20241016111458.846228-2-kirill.shutemov@linux.intel.com>
- <20241030114712.GCZyIcwF9MyQacmRf1@fat_crate.local>
- <3rmdms6czfsa4hwfx5egcf5rheojpwhdhwq2gxkn2ffvvymfir@dv7x4cmby6sz>
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+Message-ID: <ZyOOEGsnjYreKQN8@hovoldconsulting.com>
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
+ <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+ <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3rmdms6czfsa4hwfx5egcf5rheojpwhdhwq2gxkn2ffvvymfir@dv7x4cmby6sz>
+In-Reply-To: <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
 
-On Thu, Oct 31, 2024 at 12:11:52PM +0200, Kirill A. Shutemov wrote:
-> Do we have magic words for that?
-
-No clue.
-
-> I tried to express that in the second paragraph: "no such users in the
-> upstream".
-
-Right, so perhaps better to spell it out explicitly:
-
-"Backporter's note:
-
-This fixes a theoretical issue only and there's no need to backport it to
-stable."
-
-at the end of the commit message.
-
-> > And which commit is it fixing?
+On Thu, Oct 31, 2024 at 01:31:47PM +0100, Neil Armstrong wrote:
+> On 30/10/2024 15:49, Sui Jingfeng wrote:
+> > On 2024/10/21 21:08, Neil Armstrong wrote:
+> >> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
+> >>> The assignment of the of_node to the aux bridge needs to mark the
+> >>> of_node as reused as well, otherwise resource providers like pinctrl will
+> >>> report a gpio as already requested by a different device when both pinconf
+> >>> and gpios property are present.
+> >>> Fix that by using the device_set_of_node_from_dev() helper instead.
+> >>>
+> >>>
+> >>> [...]
+> >> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
 > > 
-> > aece27851d44 ("x86, 64bit, mm: Add generic kernel/ident mapping helper")
-> > perhaps?
+> > 
+> > It's quite impolite to force push patches that still under reviewing,
+> > this prevent us to know what exactly its solves.
 > 
-> This one is closer:
-> 
-> e4630fdd4763 ("x86/power/64: Always create temporary identity mapping correctly")
-> 
-> It adds x86_mapping_info::offset.
+> It's quite explicit.
 
-But aece27851d44 has the faulty check...
+It's still disrespectful and prevents reviewers' work from being
+acknowledged as I told you off-list when you picked up the patch.
 
--- 
-Regards/Gruss,
-    Boris.
+You said it would not happen again, and I had better things to do so I
+let this one pass, but now it seems you insist that you did nothing
+wrong here.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+We do development in public and we should have had that discussion in
+public, if only so that no one thinks I'm ok with this.
+
+Johan
 
