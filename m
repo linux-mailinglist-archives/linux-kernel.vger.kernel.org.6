@@ -1,116 +1,274 @@
-Return-Path: <linux-kernel+bounces-390903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0146E9B7FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:19:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB399B7FD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6CFF2823DC
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94323B2123A
 	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BB71BBBE4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459C41BBBD4;
 	Thu, 31 Oct 2024 16:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="el+SnhpX"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BIWfTZAh"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2080.outbound.protection.outlook.com [40.107.220.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8041B6541
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CCF1AD5D8
 	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 16:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730391548; cv=none; b=dPiV8QovI7G/Ki9nMAEDbMVNlVMMDfI6oQbcNj7x6CzxXSyidDHd/i4dYFvWpSbZI2w0g3EFvzlnrtToI8Kk+BAU4RRFYBX5Da5AyksCJKOt5GUF2vnf1lemnBqVachBDXcx29jYTYh2KdlRAOnmfqWSaL+bfiRHZ8tgzjh+fJQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730391548; cv=fail; b=dyfJu6jaTYa6QfxWCctaEve+6u2c2kmhatWtz9UYmUkM5BM4DS6MRauKfulKBgI7Ctc+9yBb82Jxiot2TCOVfkRyg8jfiV9wa/ghxXoWT/Hz6aMt/x2BIhbWAo+u3HA+252OUXK9rScbHvW1tbalXk41vwHDPL+A9i3wo9XbwvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730391548; c=relaxed/simple;
-	bh=yFWSmwfok6oEYTTLTKkQ9rZWC2l0aHvY4z6ZJ+NQcCE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PpxhJxHqhYLhi3ccExCMFeK5Ehra0xqvHgUifg/xw4AV8lEJPcJ28fE2+bLekM7ZieiLvxMHnHBu+h2f90Bwz29ybpn+Ki7cybXuE4vTAb6cEKq/+IC7NaQg+LI+AD03fUKjHYX5A9FNZPvtUh2mUDrnoitRg0WBiKIF7uAUqY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=el+SnhpX; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c94cee0c8so994335ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730391546; x=1730996346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MjLvyMXm9JZDYRseN0Kp+gNlDM9ARjQNJ6AjRKfsYIw=;
-        b=el+SnhpXLGdThIHmAg93So/sSCsGkGv3wbCgcL4qXSNxrkCCwKDN0XBaayxDiPwGXc
-         YOovLShvH38oOAPN5+vNWRYfZu3yly/29Yf+bIh/1A9PMXVdG8wYmKy1i6QCs89oPlOy
-         LscWrPSFBaenATWRLIVMP6ZK3obt1MK0/dWqc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730391546; x=1730996346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MjLvyMXm9JZDYRseN0Kp+gNlDM9ARjQNJ6AjRKfsYIw=;
-        b=ECkVX9QSdcnLsTSns4QGu5n4+aLKKd8VIdQRGIkv2/1RzaEtLiIKPUzXzs+9Ickhxg
-         8K48nPCj/9sLswnIalRF7FOda+IBiA/UI84dX4U/ulwXEpNNPkkuBH3vGeSV3kYr2o2s
-         1bj1jnJL7zKOcRCEwAtR71vVNZWO9+pyVI9rlb2KQg+FqicDZL/7IpPorI9RnyV6prhu
-         vlnOg3uyA12UtE8jtLskUj4vSMGncCSXDYOi5vf7ij9U8wM5N/92mLtCSZokIWYZWPLW
-         HsmBrOeS/zS6b797nmUZ70cx81jb9tGdOwbCkKV3Fq9nGZguFu1sBQd+tQIqZ+4/7fGw
-         257g==
-X-Forwarded-Encrypted: i=1; AJvYcCUAmmX6Vp9YXW9lxHhe7OZe7LwpPILrPJocLeLSROkFshfcaz4GtaIWRADtcQ1CExc3hYQtRRG/v19MNYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6o3nAuTjCgexztyfzOuL/EqnJ9vMt8nzLnkBOPvKBvh9yXuQG
-	OpEuBCYZii+Mzzw6rxM3DFVEzdKOL8E85oynCPVTYxRhCm58pxHcQyv3v8vm749WQtmpZ7gipBj
-	lQjsG/5u4lAe0VeVeSXMWFhfiU3thwy0ft+7f
-X-Google-Smtp-Source: AGHT+IEYEulEG8uwOdZ6nHWVRi6xht4GwFzjK7BexdW1RrCf5iD6UAW7Vc5bcQ9XIli0/7HCgS3q1a8Cpyo8PwB8l68=
-X-Received: by 2002:a17:903:1104:b0:20b:99cd:c27e with SMTP id
- d9443c01a7336-210c68866afmr117631165ad.3.1730391546355; Thu, 31 Oct 2024
- 09:19:06 -0700 (PDT)
+	bh=9y8qTXcmUzvphbGniSmafheHLVWQRvb4POmGl1oHTK8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MWOvhO/WZK0I1c6hwZCb8hwMuJcCQXCxfUEZKqEkESiVZljz6/mVRXUrIci59/u1FKonhcOFIzYFOV7UdUDp6p2zswPVkoOkdzPiV0svNK3n0NCl69rSsr5yKCuRxNoaqrQtWV9smY/3yoW0BEt7woy6zldPRf5kkGLY4tvdI6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BIWfTZAh; arc=fail smtp.client-ip=40.107.220.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gkBQwRnlL3nCCN0ntM89wog2fBSXhuib1xuAnweh2TGNsVxkwYd9s1LthrjMk5W1UiojRqAq+ygJKcBPnYZdoY0MaOgPq56KN/+E6i5Klz67y2iChZPUyUTU26eJLOHchPWwKDIhPGdFDNE7V53SQbJe33mxzAF8bv2NZG9BF+g57cMiYECxEA6hBLj53nqMjLZmZw2CwE7efKG1LHACAhOyzzDcl9UI6u+WazN9whHS44hAvB06X5MrLmAmjikS52pazMBVC7wQxTRA25/CAicMUn82fJthbRTl0MqUqVuawzi74u22ymieZT2SfPnmjxg+FhUXx+E4Q8B6eXGvpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8nGOUW/V8kFpZ9juw+FVAZ59pt8k3J07uM8gBksgbY4=;
+ b=zWrl2wRu3x240lkfN6X3JBpmGtYCy+IdBHAZGOwDWDRUMDec3lXas/FdfTqHyaQ+09MoNYw/uvmicJ8QPPc42KslQ1Z9f0bBIiZx5c6bsaxwkvSVYNdBNrX7GI5RgGuSrODlxB2v1P9B6rI1JdtzohnYs8TPpIMZYvTAZlMbkOpCmYbK7QFJTL/eSiyRiJLyrk1lsdnAXxLXM68lkwc9cpsWU3JpFK8tbBoFvTJEvUqTdGVdVqWQ9Ja3PT+6aNH1C52l7kW3Zj3/FmQgZSz0k9llcYwHUylOtY0lZRL1BlWAxpJPgjIT5yYerv5MzDXTml2RSCL6mlTMB+DiRnEyOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8nGOUW/V8kFpZ9juw+FVAZ59pt8k3J07uM8gBksgbY4=;
+ b=BIWfTZAh6QxRRwxEJRpdaq5pwXH71LdQaGHVYwyfFFBlkdKypaU9T0cc5I3jLNMVsZwMPJ7Srt6wLqD73XNfqnSXU04kULKFlMXqY5JoD73M2DDaHNWvZrZFLqCK5EgcAlyGZGWps+N7qD0Ga229GUkJMxxVss8y3F44H4nJkiE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ DS0PR12MB8295.namprd12.prod.outlook.com (2603:10b6:8:f6::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.20; Thu, 31 Oct 2024 16:19:03 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%4]) with mapi id 15.20.8114.015; Thu, 31 Oct 2024
+ 16:19:03 +0000
+Message-ID: <afe4a171-784c-4ca8-9bbe-d113f9e27313@amd.com>
+Date: Thu, 31 Oct 2024 23:18:55 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/10] iommu/amd: Modify set_dte_entry() to use 256-bit
+ DTE helpers
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+ robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
+ jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+ kumaranand@google.com
+References: <20241031091624.4895-1-suravee.suthikulpanit@amd.com>
+ <20241031091624.4895-7-suravee.suthikulpanit@amd.com>
+ <20241031125306.GF10193@nvidia.com>
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <20241031125306.GF10193@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0176.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::32) To DM8PR12MB5445.namprd12.prod.outlook.com
+ (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028195343.2104-1-rabbelkin@mail.ru> <20241028195343.2104-3-rabbelkin@mail.ru>
- <b5aed7cd-3a1b-4d0a-a9fe-e8a2a7778cdd@linux.dev>
-In-Reply-To: <b5aed7cd-3a1b-4d0a-a9fe-e8a2a7778cdd@linux.dev>
-From: Florent Revest <revest@chromium.org>
-Date: Thu, 31 Oct 2024 17:18:55 +0100
-Message-ID: <CABRcYmKyrDEwGiwWiixsjc49g9ypkVVBQAYEsHu-QifiFSvWLw@mail.gmail.com>
-Subject: Re: [PATCH bpf v2 2/2] selftests/bpf: Add test cases for various
- pointer specifiers
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: Ilya Shchipletsov <rabbelkin@mail.ru>, bpf@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Nikita Marushkin <hfggklm@gmail.com>, lvc-project@linuxtesting.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|DS0PR12MB8295:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b692bca-9915-4eb3-009f-08dcf9c7bc07
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cENRazhHUVl0M2xBMmFyM3AwZU9ZM0ljRlN4SnpIOEx6Q2xadjFzMWR0MUZD?=
+ =?utf-8?B?dlNnTUU4VUNyaU9KRXgzMXZ0cWhHM0E4MlpGWXhHVDFkVnhZZmxHcWVhTHZP?=
+ =?utf-8?B?d3RpNlhuMTdwdENnSWVqUldmdU5TTzJXR1ZxVUlLRE5uNm8zRm9tM24xN3h6?=
+ =?utf-8?B?SXQ5Z1lWaTB2eWhUUTZPLzczWksxSEdrZllBNE5xWlRUenFSS0MyMXhOU2Zi?=
+ =?utf-8?B?QnJIdnFFVi9VZFpnNXk2VjlVZDQ2OFZ6d1cyeEF0MEt0MEo4ZEVmK3RyZE9x?=
+ =?utf-8?B?VE5hb0pmWE5IOGlpaE4yK1VpUURnc1UveHp0N2hmVkViMm95OHplS1ZSb3JB?=
+ =?utf-8?B?M1NTcXZadGNFVkdVSnhNb3hMcUxtcVR4eXk1WE9OUFEvSjdzck04YVZOU2dY?=
+ =?utf-8?B?M1RaOTVHMGZNV2wvVGhKSnZKalBpTTI1ZFpRY3VIQjR0TTNTMzFFcjd1M09m?=
+ =?utf-8?B?QnUrbEZsWUMwMU1CWFBBcTJNNFo0eWtlcEtyVEVVZVVpUnIybTVBaVRUVVly?=
+ =?utf-8?B?SW4rVUdLZEdheHFCRUNDQ3Z0WHZyTzlIR2pIMncxNE9OSE52TWhKSHgwWWQw?=
+ =?utf-8?B?cXZESkFlcm90RTQ4VkJmYm1rMkx3cm9ORW9FeUEwWW9lRXhtM2pMNThIYUFR?=
+ =?utf-8?B?SkJCejdHdEZWUUxNRi8vUDc1RmtIZW1SaTExL0x1RTZwcWZpNXhOOTZoKzNJ?=
+ =?utf-8?B?UkxYSmZmSEppUmNKYXNXNTIyaEJXNGpmdkJkdzBMaTIwdmwxOEtteWVQR2dw?=
+ =?utf-8?B?ZnBqWDZmUXR3KzFadHMxTGo3eHgwc3ltSzhQemRQRU9oa2NsZSt0U2FwWG1q?=
+ =?utf-8?B?K25CamNCVHRlY3FZMlFnS0pNbEp1VjdTS1hzVE5GRGk3dXNxTkpoTlhRYnAy?=
+ =?utf-8?B?UThLSnlYVXBFTHBxT1UvUHRwaVA1QmZPRlpPTDZSa2FOQ2dWajF2Sm5XMEZD?=
+ =?utf-8?B?Z2xPV3RVREFPVDI4eTVUUWlJQXNTRXNQczhjZC9ncVJNdGx4azZ0VHVjdGMy?=
+ =?utf-8?B?ZTlFa1hJTlh6S01NL2R6M0xwYW9HME1IVnpXKzE4aTg5bUJFcGlOSnNZbkhz?=
+ =?utf-8?B?ODFIeDNSeldydFRnODB5ak05MnJXV2FzVytFZ3VwcmJGVWV2Ymo0bld2cU01?=
+ =?utf-8?B?UktzY0xqT0MvbERDUUdlOFNmZkRsSWpTMFRWcWlBbUViU1FtR0tTaWlyN3Rm?=
+ =?utf-8?B?YUJ5TEp5a3BxRE9RRis3ZjYwMXdTcUFyRjlDUTFVbFFVREZadnNTVm1xemIw?=
+ =?utf-8?B?azVSbThmUU5pdzJ4azNtcW5jUzlPWS9jY2UzUStMRnlNRVBIckRLaW8wNmlH?=
+ =?utf-8?B?RllDNTQwSjcvQjY3eXo1UTBjZS9HN05NT3ZDUEVZdkJQZTlkZEpBRyt0MUht?=
+ =?utf-8?B?Wld5eGNLV0dyaHRwNHc1SiswaE1BQjlMUlhhNmNPNFZzTDIxVjdCT2JJc0dV?=
+ =?utf-8?B?RUdvSjk4U0xYY1E3dGdmczAvMVA1dkV6SUxQdlVuRVZ1bGxXeS9pSi9YMGxD?=
+ =?utf-8?B?OVVtcjdUYzZLTlV4Y2pZeFNSWVFTekNmRGRoV3QvUzVnV3hwOUQvcURmOVF2?=
+ =?utf-8?B?TTI3N09LYjgydHZXZDZ5Q3hITFd5Mi9ZT2FhTWFKMDErZG1WRS82MVZBYm9D?=
+ =?utf-8?B?N1UvTklmSExzNXdRTk10NzNwZHoxZnU5U2tqOTlPeHVCN3FmR085Q3NrUlU4?=
+ =?utf-8?B?VFhnWDVucWtzQ0RlRzlsVjFiZ1hCVW1OVW9PT2R4L2ZrWTl2TDRabUZMaTgw?=
+ =?utf-8?Q?a9hFr9M00cKXGEoQT8W7bKyxWhnypo19HFNcJj6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q0drSWZEWGxqNDNZWjhHRDNkRUl0citvM1FYbDQrMmRVRnRtRVVzOTdycmtF?=
+ =?utf-8?B?cGh1cG91TzFEaDVXNUliVk5heHBRRFpINVcvWVVFUEk4MmdabU1iVnFWY0Nz?=
+ =?utf-8?B?TG5VQnBNTDcyM0IvVEVPZk1ZUjNxS1hFZGJMcHY2bjFTNm9sQVRZTjFnTCtD?=
+ =?utf-8?B?OVBYeTlXWHBjVS9xWmxzSklYV05KL0h0VFNBV2tNYVhiT2dYUE1xdmNGY25k?=
+ =?utf-8?B?SnRtc2E2dGo1bmMwTi9DWUk0bXhXTDhIREtwRm0yRXdWU1UwZWxCb3hmdXJl?=
+ =?utf-8?B?Y1BUanRWQndDb0pRZmRUdk9ac1NZblIvZWlQOWlLUDVNWUpLQkRxMEF6RGx4?=
+ =?utf-8?B?ZE04amQ2ekJjOGRiQ1dWbHFRd0gvTDRWUWZqRnh2bUdYVVFObFljREhWbGs1?=
+ =?utf-8?B?Ukh1bExvZTBCNTBJSGEyM2htbDBpQzlpalkrcCsyS01GeUF4Z2orUXRweFR6?=
+ =?utf-8?B?b2xZTCt5Z3ZSRDlabjdPMkgxT1VROGovWmVodG1lZW5yVk9ROUxwc3ZYM2Jo?=
+ =?utf-8?B?OHU1V0xZRUhBZ3lLMWpUdURnWE5mRFV1S3kxTkxLQmh2aU01NEFsS3ZzZmht?=
+ =?utf-8?B?NE5FQkN2Rm96Tm9aWWhzWEFTZDNwV2dabGhmczMyeXRrdEkzdEVweFFwRUhr?=
+ =?utf-8?B?eDFWSjErT0VKMXovQmkycStubWRodytXaGY0Q0lGTlB1QkRVckdJSjVOd3FN?=
+ =?utf-8?B?RGRncE4wSUdHd2dKZWQ4ZHN0RzRTZnprbllXSzJQNEFpYUlHRkM2Z0h2b1Bk?=
+ =?utf-8?B?UXZybmwxTzFHSDU3dXVVb01XdnhocXpERVNMVEx5ZTJpWDZQcVN2OVFTQlNo?=
+ =?utf-8?B?UnpHaE9wTURIVGJBSWJpcE5xN2xzVGpjWXZmZGpWTXRVcDkrTU14dDFlN1Rx?=
+ =?utf-8?B?MGdPcnEwcm95aUljTjFibUdaQ1lGMEdRR1Z6UFZZdnMxTWRIcmxHYjg5RjhB?=
+ =?utf-8?B?RVVXR2JqV0htWkFzN012TTR0cXBaZDBIOUkvdHg4c1FQcEdZeGU5Nk1XM1lm?=
+ =?utf-8?B?RERBMEJpUS9vdjYwZFBrdXRzQkVvUWtUN2QvTkJUVW1EaC93TEJIZDZZQ001?=
+ =?utf-8?B?cnNJWnA1cVBkWHFLdEdxOTBma2RBVUthL05QWGY5US9ZU2pTMDlQRkFnZ1RZ?=
+ =?utf-8?B?dnhkSTJlS2xjMTRncVR5cUZyUDlWVDdPSGszOUhGc3BKK2tyWTM2VGtRZHgv?=
+ =?utf-8?B?UmRCTTFTMjRscUhZV3YraWJRTVdpdnFqcFRHUzEwM2dLTG1BamdsbDZMOEgr?=
+ =?utf-8?B?amxWOVJLdFo4bk9Bd2t2Wi9XMzZjTnAzS3Y1Q2V5Z1NUNGRCbkFSVFNENWRi?=
+ =?utf-8?B?T0RFMkFoRVlTQ24vazVrZEJxRXp6RSszVWxSTnZVaFBIMFE2VFZhQ1R1Unk2?=
+ =?utf-8?B?bmZYK2hIaThuTDJnNW9vY2ZrMUtqUXBjMEdEWE9QcXoyOE5NQjV3SkRtY1dp?=
+ =?utf-8?B?S0dCbHdYMExmWkFBR05lM3oydmJQdXp4QWNZWndzMnFuSGZFV0tPd2FtbUtY?=
+ =?utf-8?B?MVpOZEJsQlFRYlp1T1g1SUEvWjh3ZlUzQUVxMi9uZ0ZUd2o5Rnphb0xRSTgz?=
+ =?utf-8?B?c3FsS1puRXV1Y0VFaTZvTTBWOVprWi9Kc0RRZE5ZMU1SUXR2U3FyNHp4aUpv?=
+ =?utf-8?B?MXlHS2hpV29Fc3BPS05ocE5DWnZqWkQ2QzlsMmdpNG5FSGRrbnB6YnNsQ01s?=
+ =?utf-8?B?RDkyaWlyQXZ1cS80SFJWOHdJTU1zUS9IdHpmRWd0ZHV5VTUvVnVTSXZZUTdu?=
+ =?utf-8?B?T0lLa1RiMVBLZ2QyeG5jeFdqaHlaVlptT2QvMWx3RlFVOFZrQ3dUZElmcTI1?=
+ =?utf-8?B?U3NhWlFxRlFlNXpWSEhMUW5KdGppazZXdUdOaEVCVis5K1JHczNFSVRQamda?=
+ =?utf-8?B?WDJnTWRDVU1DWmhLd0NYTDZteXlXNjAvRVkrQWkwcnl4dWZHdnRtYWJNZnh1?=
+ =?utf-8?B?R21KOVprblN3V005OTk1YUovMHBXNVpyWldmK0picysxa0xodW9rOEQvTHp3?=
+ =?utf-8?B?ZnA4TTFubGpsb1N3NjJuSjJqR1l0VWxvRGVjRE4yazAveEJIN3dMOGhZUFV4?=
+ =?utf-8?B?Zm5OUnNzQW1RUkJobGY5NTFkMEQvNVBqVXV5RzJDL3JXVnhKZGJqNEkrc0ly?=
+ =?utf-8?Q?6+Gi8P1QUKo2VzFCeunSA/MR0?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b692bca-9915-4eb3-009f-08dcf9c7bc07
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 16:19:03.2049
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uuc4UoN7CBgFZUb3xY5XiOfLoeneWDdau578hmCKwnPAmnoV2hdltjSzP+h7mx+wwpDSnrSODaMO1g7BYQJKUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8295
 
-Thank you!
+On 10/31/2024 7:53 PM, Jason Gunthorpe wrote:
+> On Thu, Oct 31, 2024 at 09:16:20AM +0000, Suravee Suthikulpanit wrote:
+>> @@ -1148,6 +1146,28 @@ static bool copy_device_table(void)
+>>   	return true;
+>>   }
+>>   
+>> +struct dev_table_entry *amd_iommu_get_ivhd_dte_flags(u16 devid)
+>> +{
+>> +	u16 f = 0, l = 0xFFFF;
+>> +	struct ivhd_dte_flags *e;
+>> +	struct dev_table_entry *dte = NULL;
+>> +
+>> +	for_each_ivhd_dte_flags(e) {
+> 
+> Maybe the list head should be on the iommu? I don't know how long it
+> would be if it is worthwhile.
+> 
+>> +		/*
+>> +		 * Need to go through the whole list to find the smallest range,
+>> +		 * which contains the devid. Then store it in f and l variables.
+>> +		 */
+>> +		if ((e->devid_first >= devid) && (e->devid_last <= devid)) {
+>> +			if (f < e->devid_first)
+>> +				f = e->devid_first;
+>> +			if (e->devid_last < l)
+>> +				l = e->devid_last;
+>> +			dte = &(e->dte);
+>> +		}
+> 
+> f and l are never used, why calculate them?
+> 
+> Isn't (e->devid_first >= devid) not the right way to check if devid
+> falls within a range?
 
-Acked-by: Florent Revest <revest@chromium.org>
+Actually, I missed one line. I intended to do:
 
-On Tue, Oct 29, 2024 at 7:19=E2=80=AFAM Yonghong Song <yonghong.song@linux.=
-dev> wrote:
->
->
-> On 10/28/24 12:53 PM, Ilya Shchipletsov wrote:
-> > Extend snprintf negative tests to cover pointer specifiers to prevent p=
-ossible
-> > invalid handling of %p% from happening again.
-> >
-> >   ./test_progs -t snprintf
-> >   #302/1   snprintf/snprintf_positive:OK
-> >   #302/2   snprintf/snprintf_negative:OK
-> >   #302     snprintf:OK
-> >   #303     snprintf_btf:OK
-> >   Summary: 2/2 PASSED, 0 SKIPPED, 0 FAILED
-> >
-> > Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
-> > Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
-> > Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
->
-> Acked-by: Yonghong Song <yonghong.song@linux.dev>
->
++         if ((e->devid_first >= devid) && (e->devid_last <= devid) &&
++             (f <= e->devid_first) && (e->devid_last <= l)) {
+
+The IVHD device entry can be defined for a range of devices (range 
+entry) or for a selected device (dev entry). So, a particular devid 
+could fall into both a range entry and a dev entry. For example:
+
+AMD-Vi: device: 0000:00:00.2 cap: 0040 flags: 30 info 0000
+AMD-Vi:   DEV_SELECT_RANGE_START       devid: 0000:00:00.3 flags: 0x0
+AMD-Vi:   DEV_RANGE_END                devid: 0000:1f:1f.6
+AMD-Vi:   DEV_SPECIAL(HPET[0])         devid: 0000:00:14.0, flags: 0x0
+AMD-Vi:   DEV_SPECIAL(IOAPIC[128])     devid: 0000:00:14.0, flags: 0xd7
+AMD-Vi:   DEV_SPECIAL(IOAPIC[242])     devid: 0000:00:00.1, flags: 0x0
+AMD-Vi:   DEV_ACPI_HID(AMDI0020[ID00]) devid: 0000:00:14.5, flags: 0x40
+AMD-Vi:   DEV_ACPI_HID(AMDI0020[ID01]) devid: 0000:00:14.5, flags: 0x40
+AMD-Vi:   DEV_ACPI_HID(AMDI0020[ID02]) devid: 0000:00:14.5, flags: 0x40
+AMD-Vi:   DEV_ACPI_HID(AMDI0020[ID03]) devid: 0000:00:14.5, flags: 0x40
+AMD-Vi:   DEV_ACPI_HID(AMDI0095[ID00]) devid: 0000:00:00.4, flags: 0x30
+
+Note that the logic only store the entry w/ flags != 0.
+
+For devid 0000:00:14.0, we want to get the dev entry
+
+     DEV_SPECIAL(IOAPIC[128])     devid: 0000:00:14.0, flags: 0xd7
+
+> Based on the comment it seems like you want something like this??
+> 
+> struct dev_table_entry *amd_iommu_get_ivhd_dte_flags(u16 devid)
+> {
+> 	struct dev_table_entry *dte = NULL;
+> 	unsigned int best_len = UINT_MAX;
+> 	struct ivhd_dte_flags *e;
+> 
+> 	for_each_ivhd_dte_flags(e) {
+> 		/*
+> 		 * Need to go through the whole list to find the smallest range,
+> 		 * which contains the devid. Then store it in f and l variables.
+> 		 */
+> 		if ((e->devid_first <= devid) && (e->devid_last >= devid)) {
+> 			unsigned int len = e->devid_last - e->devid_first;
+> 
+> 			if (len < best_len) {
+> 				dte = &(e->dte);
+> 				best_len = len;
+> 			}
+> 		}
+> 	}
+> 	return dte;
+> }
+
+This logic would work also. Thanks.
+
+> (and it would be smart to sort the linked list by size, but again I
+> don't know how big it is if it is worthwile complexity)
+
+The list should not be too long (only a few entries). So, I think it 
+would be okay to just keep one list for the whole system.
+
+However, we would need to also add logic to check PCI segment ID, since 
+the device table is per PCI segment.
+
+I will update and send out V8.
+
+Thanks,
+Suravee
 
