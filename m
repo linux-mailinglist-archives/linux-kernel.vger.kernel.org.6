@@ -1,230 +1,205 @@
-Return-Path: <linux-kernel+bounces-390303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3CA9B7820
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:59:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CAFA9B779E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7664CB20E76
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0691C21F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A82198E86;
-	Thu, 31 Oct 2024 09:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D60119341D;
+	Thu, 31 Oct 2024 09:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eXRlWaiE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bYFuX0Af";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gkq2147k";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bYFuX0Af";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gkq2147k"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C9F19538D;
-	Thu, 31 Oct 2024 09:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9DB197556;
+	Thu, 31 Oct 2024 09:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368739; cv=none; b=ld0rCyOR5uDpQ+fxVppx06ZeT0dU1+F/JjkUMDJ9L+5LmBWIGyi1QosmHlGAzMDqbaN2/UKrc50ZKKvG7P1ZoeJR9YQSttbYPkwPRbQLtTdqyJpv15fTqtq0/CJ8tLhmql1rMNH9++2XRpAwWCat0Uqn8YhfaNfvWk3yRQEy4Sg=
+	t=1730367294; cv=none; b=CoduAJNdAohzgrfwR+NPaoK+dBt84zWXSrSjg4R3ZCcCSRAi7C65oOmf67blFfSEcB9X3MJP4+9IMck4eRw3xFgG4Gv8k2KCX1GS2lZ7GvuplGGmkUqwKnmmDz3xhG++reh1sltqocjqX4FWDSXHCSOR3t6Q1EAE2txyYtGXs50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368739; c=relaxed/simple;
-	bh=+ayMeQelMoVwDcllnti8Ixel1VjIXot/5wDHLedscUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iw/7Zj0o2EINQyqGM4NbjkQ1s1haxDhhEEnUwOjHM0FkCcBcZj5aAhoyXWWpMQQGA5407MiT34FcHWhA9AF+nandh6VksEw+kTihgiYvQUZxzxCxNQEFu6njK7k7dVjQa5QIj3t+FvBWIhXMZ6lzPq+0ppT/hfpYEr8vZnPD5mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eXRlWaiE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V2jCEc000381;
-	Thu, 31 Oct 2024 09:58:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=XP3siNQlvKdGFWT11pXCzmzCXCjXmKichlPYLUtej
-	JM=; b=eXRlWaiEICtdKZRRheV6PLGPj0rV4kfKpMXgylIrBoaz6yzJZmwwpY4RB
-	nQ21heiameNEE01rV5W/dK0CQOnK4BlCjftkMAzJg8y3JB3LjhGoZuWqWEAVvekw
-	dBVSdgNJOn4cnOK0qoQhIE5JT1V2CfQra4EjNpYF+e86ofaRETLVaJU1iqRGPz1b
-	HNdBNuiycaXHA7y/B6WKumA4vU/7OCc/lp0p7E3V9n+pw768HlbB0W6QwuQv1Wzp
-	hwEzdFTWFWGD5XNpbxlJtf/reo5Kd0fNCfPSrgO8vsmvlsfZsSUkVtO2U1BsrGyK
-	Oq/ySKs8dqCqgDkVNSOM5yLOdjoQw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65q8vy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 09:58:55 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49V60oRX024560;
-	Thu, 31 Oct 2024 09:58:55 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hcyjm0v9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 09:58:55 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49V9wpUG39321910
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 09:58:51 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6D59E2029F;
-	Thu, 31 Oct 2024 09:35:41 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4746B2029D;
-	Thu, 31 Oct 2024 09:35:41 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 31 Oct 2024 09:35:41 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
-Subject: [PATCH v2] s390/uvdevice: Support longer secret lists
-Date: Thu, 31 Oct 2024 10:35:41 +0100
-Message-ID: <20241031093541.1641849-1-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730367294; c=relaxed/simple;
+	bh=niiZTCgRtzfWSVRbWqD1/QkJo5ax0robeVdIJMAjaxE=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=q5tTVXD31i0MV5gyc+ZKZuiJxmBvOOAmuVp9GuxIQ1QpaXk7RwXo/EWczCISceMWNUWhUDHdr5W5xmQq3C1upbhV3BlQc56oFZr94ylIZKNjnlqrE1q0W4w2Q9Mekyew3SOhgAz0N0E16RxkM9VfXnj3mIKmPF50vkTh40O3GYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bYFuX0Af; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gkq2147k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bYFuX0Af; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gkq2147k; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 76A6F1F7D4;
+	Thu, 31 Oct 2024 09:34:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730367290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7LQqGi+STaQS8efhJJrG9XShYj6w+9H2fAdBtqwECtI=;
+	b=bYFuX0AfkEkr9XlUJSS0b6d7hHmtN85C2mzQc7/yhAjNSkX8CT1VBta/uf1oIWDma6UNg3
+	XNXA5ScLVqNyDO48V/FFw+hdrQM09m2zQKLo/vf7U8SjVF6DeYLu3OqgiPOAfJdQbxgbz2
+	agSclZHHaJJskBf38H726ieWwY3cJvk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730367290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7LQqGi+STaQS8efhJJrG9XShYj6w+9H2fAdBtqwECtI=;
+	b=gkq2147kiDhak+pIHRXaNvY5qTLuCzJowRjShbsLq7xH9jbNwTgmhZhmaESTJLsUR4LezR
+	rKP6IVTiVHcmN1AA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bYFuX0Af;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=gkq2147k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730367290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7LQqGi+STaQS8efhJJrG9XShYj6w+9H2fAdBtqwECtI=;
+	b=bYFuX0AfkEkr9XlUJSS0b6d7hHmtN85C2mzQc7/yhAjNSkX8CT1VBta/uf1oIWDma6UNg3
+	XNXA5ScLVqNyDO48V/FFw+hdrQM09m2zQKLo/vf7U8SjVF6DeYLu3OqgiPOAfJdQbxgbz2
+	agSclZHHaJJskBf38H726ieWwY3cJvk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730367290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7LQqGi+STaQS8efhJJrG9XShYj6w+9H2fAdBtqwECtI=;
+	b=gkq2147kiDhak+pIHRXaNvY5qTLuCzJowRjShbsLq7xH9jbNwTgmhZhmaESTJLsUR4LezR
+	rKP6IVTiVHcmN1AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C17C13A53;
+	Thu, 31 Oct 2024 09:34:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ni8YETpPI2cVLAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 31 Oct 2024 09:34:50 +0000
+Date: Thu, 31 Oct 2024 10:35:54 +0100
+Message-ID: <87ldy4wr5x.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.12-rc6
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: YPwz-f_llA14oVPVsJVOhwrb3eT1WLYl
-X-Proofpoint-GUID: YPwz-f_llA14oVPVsJVOhwrb3eT1WLYl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=937
- impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310074
+X-Rspamd-Queue-Id: 76A6F1F7D4
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
+X-Spam-Flag: NO
 
-Enable the list IOCTL to provide lists longer than on page (85 entries).
-The list IOCTL accepts argument length up to 8 pages in page granularity
-and will fill the argument up to this length with entries until the list
-ends. User space unaware of this enhancement will still receive one page
-of data and an uv_rc 0x0100.
+Linus,
 
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+please pull sound fixes for v6.12-rc6 from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.12-rc6
+
+The topmost commit is e49370d769e71456db3fbd982e95bab8c69f73e8
+
+----------------------------------------------------------------
+
+sound fixes for 6.12-rc6
+
+Here we see slightly more commits than wished, but basically all are
+small and mostly trivial fixes.  The only core change is the
+workaround for __counted_by() usage in ASoC DAPM code, while the rest
+are device-specific fixes for Intel Baytrail devices, Cirrus and
+wcd937x codecs, and HD-audio / USB-audio devices.
+
+----------------------------------------------------------------
+
+Aleksei Vetrov (1):
+      ASoC: dapm: fix bounds checker error in dapm_widget_list_create
+
+Alexey Klimov (2):
+      ASoC: codecs: wcd937x: add missing LO Switch control
+      ASoC: codecs: wcd937x: relax the AUX PDM watchdog
+
+Christoffer Sandberg (2):
+      ALSA: hda/realtek: Fix headset mic on TUXEDO Gemini 17 Gen3
+      ALSA: hda/realtek: Fix headset mic on TUXEDO Stellaris 16 Gen6 mb1
+
+Christophe JAILLET (1):
+      ASoC: cs42l51: Fix some error handling paths in cs42l51_probe()
+
+Dmitry Yashin (1):
+      ASoC: dt-bindings: rockchip,rk3308-codec: add port property
+
+Hans de Goede (5):
+      ASoC: codecs: rt5640: Always disable IRQs from rt5640_cancel_work()
+      ASoC: Intel: bytcr_rt5640: Add support for non ACPI instantiated codec
+      ASoC: Intel: bytcr_rt5640: Add DMI quirk for Vexia Edu Atla 10 tablet
+      ASoC: Intel: sst: Support LPE0F28 ACPI HID
+      ASoC: Intel: sst: Fix used of uninitialized ctx to log an error
+
+Jan Schär (1):
+      ALSA: usb-audio: Add quirks for Dell WD19 dock
+
+Kailang Yang (1):
+      ALSA: hda/realtek: Limit internal Mic boost on Dell platform
+
+Piyush Raj Chouhan (1):
+      ALSA: hda/realtek: Add subwoofer quirk for Infinix ZERO BOOK 13
+
 ---
-Reworked the whole list-creation loop. Hardened+simplified the implementation.
-Now, only the actual data filled by the CP is copied to userspace.
-
- arch/s390/include/uapi/asm/uvdevice.h |  1 +
- drivers/s390/char/uvdevice.c          | 72 ++++++++++++++++++++-------
- 2 files changed, 54 insertions(+), 19 deletions(-)
-
-diff --git a/arch/s390/include/uapi/asm/uvdevice.h b/arch/s390/include/uapi/asm/uvdevice.h
-index 4947f26ad9fb..c584250d4a35 100644
---- a/arch/s390/include/uapi/asm/uvdevice.h
-+++ b/arch/s390/include/uapi/asm/uvdevice.h
-@@ -71,6 +71,7 @@ struct uvio_uvdev_info {
- #define UVIO_ATT_ADDITIONAL_MAX_LEN	0x8000
- #define UVIO_ADD_SECRET_MAX_LEN		0x100000
- #define UVIO_LIST_SECRETS_LEN		0x1000
-+#define UVIO_LIST_SECRETS_MAX_LEN	0x8000
- #define UVIO_RETR_SECRET_MAX_LEN	0x2000
- 
- #define UVIO_DEVICE_NAME "uv"
-diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
-index 1f90976293e8..667d573e54b0 100644
---- a/drivers/s390/char/uvdevice.c
-+++ b/drivers/s390/char/uvdevice.c
-@@ -297,6 +297,43 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
- 	return ret;
- }
- 
-+/*
-+ * Do the actual secret list creation. Calls the list-UVC until there is no more
-+ * space in the user buffer, or the list ends.
-+ */
-+static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
-+{
-+	const size_t data_off = offsetof(struct uv_secret_list, secrets);
-+	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
-+	struct uv_secret_list *list = zpage;
-+	u16 num_secrets_stored = 0;
-+	size_t user_off = data_off;
-+	size_t copy_len;
-+
-+	do {
-+		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
-+				&uv_ioctl->uv_rrc);
-+		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
-+		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
-+			break;
-+
-+		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
-+		WARN_ON(copy_len > sizeof(list->secrets));
-+
-+		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
-+			return -EFAULT;
-+
-+		user_off += copy_len;
-+		num_secrets_stored += list->num_secr_stored;
-+	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA &&
-+		 user_off + sizeof(*list) <= uv_ioctl->argument_len);
-+
-+	list->num_secr_stored = num_secrets_stored;
-+	if (copy_to_user(user_buf, list, data_off))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- /** uvio_list_secrets() - perform a List Secret UVC
-  * @uv_ioctl: ioctl control block
-  *
-@@ -308,6 +345,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  *
-  * The argument specifies the location for the result of the UV-Call.
-  *
-+ * Argument len must be a multiple of a page; 1-8 pages allowed.
-+ * The list secrets IOCTL will call the list UVC multiple times and fill
-+ * the provided user-buffer with list elements until either the list ends or
-+ * the buffer is full. The list header is merged over all list header from the
-+ * individual UVCs.
-+ *
-  * If the List Secrets UV facility is not present, UV will return invalid
-  * command rc. This won't be fenced in the driver and does not result in a
-  * negative return value.
-@@ -318,31 +361,22 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  */
- static int uvio_list_secrets(struct uvio_ioctl_cb *uv_ioctl)
- {
--	void __user *user_buf_arg = (void __user *)uv_ioctl->argument_addr;
--	struct uv_cb_guest_addr uvcb = {
--		.header.len = sizeof(uvcb),
--		.header.cmd = UVC_CMD_LIST_SECRETS,
--	};
--	void *secrets = NULL;
--	int ret = 0;
-+	void *zpage = NULL;
-+	int rc;
- 
--	if (uv_ioctl->argument_len != UVIO_LIST_SECRETS_LEN)
-+	if (uv_ioctl->argument_len == 0 ||
-+	    uv_ioctl->argument_len % UVIO_LIST_SECRETS_LEN != 0 ||
-+	    uv_ioctl->argument_len > UVIO_LIST_SECRETS_MAX_LEN)
- 		return -EINVAL;
- 
--	secrets = kvzalloc(UVIO_LIST_SECRETS_LEN, GFP_KERNEL);
--	if (!secrets)
-+	zpage = (void *)get_zeroed_page(GFP_KERNEL);
-+	if (!zpage)
- 		return -ENOMEM;
- 
--	uvcb.addr = (u64)secrets;
--	uv_call_sched(0, (u64)&uvcb);
--	uv_ioctl->uv_rc = uvcb.header.rc;
--	uv_ioctl->uv_rrc = uvcb.header.rrc;
--
--	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
--		ret = -EFAULT;
-+	rc = uvio_get_list(zpage, uv_ioctl);
- 
--	kvfree(secrets);
--	return ret;
-+	free_page((unsigned long)zpage);
-+	return rc;
- }
- 
- /** uvio_lock_secrets() - perform a Lock Secret Store UVC
--- 
-2.45.2
+ .../bindings/sound/rockchip,rk3308-codec.yaml      |  4 ++
+ sound/hda/intel-dsp-config.c                       |  4 ++
+ sound/pci/hda/patch_realtek.c                      | 35 +++++++++++-
+ sound/soc/codecs/cs42l51.c                         |  7 ++-
+ sound/soc/codecs/rt5640.c                          | 27 +++++----
+ sound/soc/codecs/wcd937x.c                         | 12 +++-
+ sound/soc/codecs/wcd937x.h                         |  4 ++
+ sound/soc/intel/atom/sst/sst_acpi.c                | 64 +++++++++++++++++++---
+ sound/soc/intel/boards/bytcr_rt5640.c              | 48 +++++++++++++++-
+ sound/soc/soc-dapm.c                               |  2 +
+ sound/usb/mixer_quirks.c                           |  3 +
+ 11 files changed, 179 insertions(+), 31 deletions(-)
 
 
