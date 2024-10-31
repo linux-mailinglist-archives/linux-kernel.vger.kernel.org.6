@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-390279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1958D9B77DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:48:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3E89B77E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B33C1B24CEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:48:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510831C24B47
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F271198A2F;
-	Thu, 31 Oct 2024 09:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDCB198A2F;
+	Thu, 31 Oct 2024 09:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FAzIx1n0"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEgCRQti"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE629193439
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C61881E;
+	Thu, 31 Oct 2024 09:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368118; cv=none; b=mIlNQoekgnSEPgwxw03CI7T0PDP0NMiJXOWjyZ/xGKkoVnDBX1ngOSibspRfuWL+2xpi7v5dH0Vxd3YFEEN2m/j4C+rL1qVHToBKE2a2/T2EJ00JY1YtASprDL5LIotlUQkcndwOSnGnDsrDKXlak0OaDd8afVxSzEnPHrHQG5s=
+	t=1730368148; cv=none; b=k2t5GTogPbp0SXDW1XEbYJ3bphZBUPw5HY86XbwhUTOwNb14i3mQWX3u3jdSjtHzyc2DkHWVuoGvuSZJrLe9WnJzw7KuDxI7NAHCJniNa7beoC0ZrChsv0/ZlrnoQrqawkDkL2ts3dQrEwzAQ6Lu0MKgVRkqeibh/w/AfVkTqr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368118; c=relaxed/simple;
-	bh=hFyuHVXE7Cz0qm3Tp1AuH1uPL3q7XxKfNijEB1y1rRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=R/slBheQeoZyCmrWuu3jpgU+OaFwr4bhudk5PE5Jgcdp4zTEhVdly+NayQs1GvJhuxNjOmkW6vDcXbrxbtcZmuvXaDNDrTFPBsfdepTB2lodqn506MHz4P2mYK5obDqpy9sG7nYbj8slcmvyXnyu8RYYWf+t2FvjFMcZKbTqAaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FAzIx1n0; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4c482844so454806f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730368114; x=1730972914; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aa5olyViLFOojnVkbBw9OEdbllf8/WSVMeqMqmVU3qY=;
-        b=FAzIx1n0LalqJbEpPVEW6D8y3W+Qm0r/LFHg3iaat9dhHTnT7yjUs1JxMtgwjJ+SSS
-         f0FF8aKvjcuXXsZzIPTUWZD89/ctTY0GJr9OCenu2RMi5AzxGmsBgtSDVvRHGdvH9UAe
-         K1hZItVRNrNgM9/bY8y2D/IALOWqJ3Qh64VehHAsLeRR3ne6fG4ZompxRAqz5H+acAnU
-         Retk+MlXtu8wiJovnF1QACeff198pAnZQvg1xf1dsnM5IHYe2bnMdAKGUv8Mmkl2Fbmm
-         zDb7H9q9TrFb2kGTdjh8JcOCdYUgdwtPRuWvsglBZeIBsHhjYE0BX5MtGom+kuPCu1wC
-         tfTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730368114; x=1730972914;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aa5olyViLFOojnVkbBw9OEdbllf8/WSVMeqMqmVU3qY=;
-        b=Cm2xQ/YEzOCbo7qBjCLVZtMHFxzNwr3fIcDZM824UgIhb0pzsLiCajt3KMP6CkezVv
-         cWL9FCOwHJTd5WauKCb9yaWDSbuhdj05l96tfhiTrwcuey15I0bs5K2UmFw8RfW/HwY9
-         UZFmfUvfj/jiOMW10O4Ro5d8HivpjhXNkWigx10rn22wRMsrfiiXIF6GdiMGtFrJHNKg
-         PWmM5CRpd+h0+qrRPJsC61R4K9O216vZj0BJbKXoHHy5eXwC00dSQAyk3Uqt//R1PiC6
-         V5qKURkZLZscflHkgjIDFXznB8AIMvU87uR1ZEaFr2clEcUroLzbApNrzJS9tSaRJHE5
-         lItQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGNUK//DsonarnXkcugpK8nBRwLe786O2wpaactZDbwg1a+nVXN/N9Uq2ejldVjAng5Cb+uuRQOWUZAiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyXJA5ZoFZdy7hb5PAbPlMbXSvtO/VKn9dBLGtVnziJaojdcLK
-	lcp0GrCd99M9n/lFNYQ9RuSDtJy3Sov+xZ7FbbV1msiGfZmZjcNlWh0K23IiTJQ=
-X-Google-Smtp-Source: AGHT+IGDxQJ/A5r0ClIpNqfZIzOIlvOQbqpKCuPfpxpKxXQvewn/QL8mRGK7ukGONcoXjVByhTIArA==
-X-Received: by 2002:a5d:5146:0:b0:37d:5496:290c with SMTP id ffacd0b85a97d-380610f255fmr13644733f8f.7.1730368114185;
-        Thu, 31 Oct 2024 02:48:34 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d437bsm1589665f8f.30.2024.10.31.02.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 02:48:33 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:48:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] USB: serial: io_edgeport: Fix use after free in debug
- printk
-Message-ID: <93490900-d2c6-45e6-b008-8d264e4c11b0@stanley.mountain>
+	s=arc-20240116; t=1730368148; c=relaxed/simple;
+	bh=U2CTtbVD42+J2rWSDZ/dXeRVdT7Po9urr393OHVzYI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S8hGNiSpudmjSiighWICyOwwgwaVrhBf9lFhWHzkE33XJrm658RqLJv48NuN8iyPEAcy0ZMHlq5UwSzg94P/Xz3jGSQbI2r7BTppASXreO6kfK4v4y/PaRc3JqAK7adclWrU34Q+e/fxVspS+WSKQWAdNzVS4hNbMIn1YqyRqbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEgCRQti; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9502C4CEC3;
+	Thu, 31 Oct 2024 09:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730368148;
+	bh=U2CTtbVD42+J2rWSDZ/dXeRVdT7Po9urr393OHVzYI0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oEgCRQtitJKe9TeBSOeAze3r5/VzVFrnsS8NSBTkDijD0gtzIpt26JTaRZj0hVKn4
+	 PRrW3HjVK5pF9kJHPmFvQSwu1y2PnNs5MVPipjfsD4XH/yXiS6Y1YFrXrcF8JgDMn9
+	 XoYSRHUfXz7y/7FfsUrFnTT19ov7axXWPtFTsTGnHemsPMbyeMss9XFx7mPmt/8FH8
+	 bI8rk31PWsdlRwyFS3vK1ViAQh2pJm4hkC7A0D1D4xAHltAf3KWLqmFLwf2uCaphCg
+	 Nr/CIy4V+ccw22npdI3aYpk5a2UKNgNBbnDNehw8FMDQtGfIZX3JbyZLOyg1YreyBJ
+	 jC/erwzHSKTSA==
+Message-ID: <b3d51c31-3bcc-4319-8857-e16ddb636328@kernel.org>
+Date: Thu, 31 Oct 2024 10:49:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] dt-bindings: omap: Add Samaung Galaxy Tab 2 7.0
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Mithil Bavishi <bavishimithil@gmail.com>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20241030211847.413-1-bavishimithil@gmail.com>
+ <46rktrrcnpl53nt3o7qe24cd4wp3cjq2v4sbno5oxdrgyazzfj@uqr5kt7pm2x5>
+ <20241031092448.174402c3@akair>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241031092448.174402c3@akair>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The "dev_dbg(&urb->dev->dev, ..." which happens after usb_free_urb(urb)
-is a use after free of the "urb" pointer.  Store the "dev" pointer at the
-start of the function to avoid this issue.
+On 31/10/2024 09:24, Andreas Kemnade wrote:
+> Am Thu, 31 Oct 2024 09:18:49 +0100
+> schrieb Krzysztof Kozlowski <krzk@kernel.org>:
+> 
+>> On Wed, Oct 30, 2024 at 09:18:43PM +0000, Mithil Bavishi wrote:
+>>> Add samsung-espresso7 codename for the 7 inch variant
+>>>
+>>> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/arm/ti/omap.yaml | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>  
+>>
+>> This is v2, so where is the changelog? Same for all other patches. No
+>> cover letter, no changelogs in patches.
+>>
+> The cover letter including changelog is here:
+> https://lore.kernel.org/linux-omap/20241030211215.347710-1-bavishimithil@gmail.com/T/#t
+> 
+> seems like it was ripped apart somehow.
 
-Fixes: 984f68683298 ("USB: serial: io_edgeport.c: remove dbg() usage")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: Fix the subsystem prefix and use a "dev" pointer.  It brings the
-style in line with the rest of the file, and it's more future proof in
-case someone adds a new dev_dbg() later.
+It's not attached to this thread. I don't have it in my mailbox. Neither
+did b4 when applying entire thread for review. Sending something
+separately or making it not accessible for review means it does not exist.
 
- drivers/usb/serial/io_edgeport.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-index c7d6b5e3f898..28c71d99e857 100644
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -770,11 +770,12 @@ static void edge_bulk_out_data_callback(struct urb *urb)
- static void edge_bulk_out_cmd_callback(struct urb *urb)
- {
- 	struct edgeport_port *edge_port = urb->context;
-+	struct device *dev = &urb->dev->dev;
- 	int status = urb->status;
- 
- 	atomic_dec(&CmdUrbs);
--	dev_dbg(&urb->dev->dev, "%s - FREE URB %p (outstanding %d)\n",
--		__func__, urb, atomic_read(&CmdUrbs));
-+	dev_dbg(dev, "%s - FREE URB %p (outstanding %d)\n", __func__, urb,
-+		atomic_read(&CmdUrbs));
- 
- 
- 	/* clean up the transfer buffer */
-@@ -784,8 +785,7 @@ static void edge_bulk_out_cmd_callback(struct urb *urb)
- 	usb_free_urb(urb);
- 
- 	if (status) {
--		dev_dbg(&urb->dev->dev,
--			"%s - nonzero write bulk status received: %d\n",
-+		dev_dbg(dev, "%s - nonzero write bulk status received: %d\n",
- 			__func__, status);
- 		return;
- 	}
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
