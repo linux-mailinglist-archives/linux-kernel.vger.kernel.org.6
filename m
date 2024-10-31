@@ -1,207 +1,134 @@
-Return-Path: <linux-kernel+bounces-390090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5A79B755C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:29:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DDE9B755F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F33D2834DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:29:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3F4E1C24223
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5757C1487FE;
-	Thu, 31 Oct 2024 07:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B16148850;
+	Thu, 31 Oct 2024 07:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ILN2j9mp"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nq5i3TbZ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7339F14831D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7101C10A3E;
+	Thu, 31 Oct 2024 07:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730359788; cv=none; b=qS5rR/lgO/hDv+jYteW9HyCLZXCkVigrHq/dUqDkCfScFXz/uF7EdwWCVIYcVIzmFd/v7CPF/5fr7S57FnLiJfTLbEZJ/9UQ6wSuYZ1Od9Wlm8LuNx3Eui58ydRlRG4K5TDX7vZTm4/NTwaCTad0JnNFK11IlXu7RxQC1USXqUY=
+	t=1730359852; cv=none; b=c8Kx59ZUyDn3hzYlmlTYqaPOpl6k6HEvHDFZLnpHDrjS7Z3rBy44HHGkbvQtsKeKAhTWLWT7s2Nd7QGusKPKH1k+JviXGyFhIZ8+kbvwVNsqAwIx/pYUYlgeo7RRl7y+khGg6bvnrmPQiMS46PDyCpU6aaEoFu5KYaXs+DTrokw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730359788; c=relaxed/simple;
-	bh=qHg3yPC6JsDWVOlCop4kgMmpz7D6PUbZ0/6Q58pp9eY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LbeEEgkpSV9x33Ng1pIU3bsY++9TZDnmSVSpKk6PTn8dmzhwiisjKvYdJu3cs+qQGcmxovb3Qak1+R2zAnRh7JJBwl50MyVygENH7QPu1n025Zzc4Kl079rAhcGedjRCRAaqSbhdy9uwptAortXsfwJzhgFRls80ThVmGe8plFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ILN2j9mp; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315855ec58so938465e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 00:29:46 -0700 (PDT)
+	s=arc-20240116; t=1730359852; c=relaxed/simple;
+	bh=zjxK4DTqZw9IhZIdod8GJ4JXuFeeFqZAEZ5JbU83ryo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+7rMoXYV7FXrMxUVyRBNiJkiWwdMl1LqfyVjr47oij2qmAwz8Ekk2IOkNLVmGOLvCfzkCTOs9CBcIq1zTjCbjPXJAzy92AS8LuiiMECOcoklI0VO+ZI88fiYx2W5YlZNHA/4WgWFw8jiAPonolzQpmpAShvZNkPwltjbORkZMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nq5i3TbZ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a628b68a7so84121666b.2;
+        Thu, 31 Oct 2024 00:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730359785; x=1730964585; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4bH+wg5G2FUMWqf3hp2GcWVL2nyr1Nl5oE3ia7C2WU=;
-        b=ILN2j9mpScxmDFE4Bq7OCe33SOMFBi0mwrgE/c2pS6u7OroY5sCixsL/yp7/27Nu43
-         wl8Lyv8NRt0SBD34ygdUKGGRcG3MGNwyEOiBbLvnW0ItxPzYpM0fK7ZsqaQ5jfCss267
-         iX9qcEF8P9vuCQimSUaBhNeMn/ONfGvOJwD0S4PzStGvz+9dXeHqtm500CKFQN5cR8Ns
-         CBDo7/N+HR0/PRQwna8qlg5zkp0SbxMHsvnL5p9kxpG0/D+TCibZ238YxlQ1/1PKb3YG
-         amXuXGoeTj/3eRy8XTM0JfwAbEFjdueV26NBfs/6xM8STTygNxSXvqy8NaokBnw4Iz+C
-         3yxw==
+        d=gmail.com; s=20230601; t=1730359849; x=1730964649; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/eLyIHEDLmnqKBkl9EZ/QS1fOPZWds5n1WBxINpUw5s=;
+        b=nq5i3TbZhMj289A7RC0u+7E78XBFk67wAP8Zy8heDdalUruthxWSCm5ViqRs1KUdKj
+         Gi3acAffUR1OKOMAx1KNZo2is4D6KqV7AIXlL2G3x64kTzjthZyH5XtaJYwesoYawbn4
+         jd+JSEcLGMl4Zc9I81Rx6XrwHDxQrxva6KKs1zc7PHh8zu2J+J/cDtLWI99MgaVtN5/g
+         9yApVkHDiyhx0vNty2m7th2Z+uWgmffyvV8xyBVj9g2L1lT+IaS7aREVx9ohug9Cz0YL
+         QXFe73ETdWkFEDU6aPvVqF74P7bNVK/sqg6yGeTIFajiEwUQkY76V8uSldQDey0w6wAE
+         hWng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730359785; x=1730964585;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g4bH+wg5G2FUMWqf3hp2GcWVL2nyr1Nl5oE3ia7C2WU=;
-        b=EdcKpTEnH258pPZqokZ/99rEGAGRIXPD3T6nuBuuBnPhmaJWgkfesvIFBmIHDJhf4Y
-         17ltRWa1vG+ws3LAozddYkw6rEPkRk4hk1Uq6o4mljHo029YNO5KslTe0sdZFp4fZ1bN
-         qA3H1keyjgmiJRoYCq+kdJYA1VKkLbWPLU4qQ/WEjV5dZJNAUhHaRiNCg0eB3+mm/Agf
-         Rzn6ThGcAkljyUqD4+/ToZN35eqrrE0YPJM86v8AJtVCYZL1rd6EUv9iiKwg62Xgeeh0
-         vAgrWPMXkoi3Pwu8DIirBZiBsGWqRbzrIuD2ofdtfVLDdib2RCjiPKDp3rXKNUTJRnU0
-         0XHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfOg/gvrv/QV3JsvaIYEGbbXywhqIvH7UCAM04n7/i3OIWW9+hRJ3BxPljzkxhapyHVuL9v8UjK/yr2OQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqkTnKErDzlh+1c0RHXCw1/XSvFsfIx2WLkLou10BxbOsRRwex
-	Jm1U9qiVw+GN/0LSkozCOm40d1QBV1vYEJhgGUCj6nszGXUW2KIE9iJxDuItIhbUuK5IlCw8ALo
-	i
-X-Google-Smtp-Source: AGHT+IFhD6i/b4ZM7V4zrEX7VlSvfDLiDU4pm2rmziW/2CW8rOFJFN35CQgSLYSiHawWbt5XIrauew==
-X-Received: by 2002:a05:600c:5121:b0:42c:b63d:df3 with SMTP id 5b1f17b1804b1-4319ab9776dmr67742905e9.0.1730359784785;
-        Thu, 31 Oct 2024 00:29:44 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ac387sm15428055e9.1.2024.10.31.00.29.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 00:29:44 -0700 (PDT)
-Message-ID: <db7b7745-404d-45f7-a429-c1c747de8e6b@linaro.org>
-Date: Thu, 31 Oct 2024 08:29:42 +0100
+        d=1e100.net; s=20230601; t=1730359849; x=1730964649;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/eLyIHEDLmnqKBkl9EZ/QS1fOPZWds5n1WBxINpUw5s=;
+        b=Se2WTUVui3shmHuRMx6iaJyVdi6Ggeq83/SACfqNoxMItl/OOMiQZkYfAUWmF4RIKU
+         xrYAgN2kL/AXJCyIr+m2bw15jghlcDyTUoS5auz9s3j0uYIKLAC4CaTSh4fwS3MbQubC
+         KABo9j2Vx4RvvSVHH2fYa0t1JzHRyqK07b8MeuVF5TCdsAhSRJDh6I7iXdxKmreWyAs/
+         EhhLJiHVMDH/FI8x0hgTl5IYeuQFUmKTMabJoLiAUu9lAma3RvjPJkd3//0PRny1ARWE
+         GgrzTbqYRGqbygh1LLO+izs7aYnaFPq2ejsRTBDOEZWr4iw+H0o/Qq0PfNIOjcAKPv0j
+         fBPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1GBtL2zgjANOJWdSUsaH7WjtbCd/hvSHl63BzZ4OGhSOzI9PsSQPoDak2W4sHN8dwfOPDadmGeAV83SQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEme2pqQio5t+dRP9lUNEKx2XS4/IgkvtCynQvaDjbLze4EjsM
+	FFHpf+HziXF81CwXYQ5ypKlgQY8Ytt142hnKCb2FAawjG+e/+Qro
+X-Google-Smtp-Source: AGHT+IEc9E2xS94xaD1VTkOKzTYVeevxnLXidGIu1k9elFl5LfpBJ21mQ6g00F4tlmDxQntuwkCllQ==
+X-Received: by 2002:a17:907:94c1:b0:a99:4ca4:4ff4 with SMTP id a640c23a62f3a-a9de5d98002mr1480023466b.23.1730359848554;
+        Thu, 31 Oct 2024 00:30:48 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e566797a7sm36034666b.190.2024.10.31.00.30.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 00:30:48 -0700 (PDT)
+Date: Thu, 31 Oct 2024 08:30:46 +0100
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: sprd: sc2731: fix bat-detect-gpios
+ property
+Message-ID: <ZyMyJrSPTfFrSC-t@standask-GA-A55M-S2HP>
+References: <cover.1723716331.git.stano.jakubek@gmail.com>
+ <e57ee9b94f128753d156d77015f6cc3dc24fd9e8.1723716331.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: rng: add binding for BCM74110 RNG
-To: Markus Mayer <mmayer@broadcom.com>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Aurelien Jarno <aurelien@aurel32.net>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Golle <daniel@makrotopia.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Device Tree Mailing List <devicetree@vger.kernel.org>,
- Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20241030213400.802264-1-mmayer@broadcom.com>
- <20241030213400.802264-2-mmayer@broadcom.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20241030213400.802264-2-mmayer@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e57ee9b94f128753d156d77015f6cc3dc24fd9e8.1723716331.git.stano.jakubek@gmail.com>
 
-On 30/10/2024 22:33, Markus Mayer wrote:
-> Add a binding for the random number generator used on the BCM74110.
+On Thu, Aug 15, 2024 at 12:13:18PM +0200, Stanislav Jakubek wrote:
+> According to DT bindings, the property is called bat-detect-gpios, not
+> bat-detect-gpio. Update the property as such.
 > 
-> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 > ---
->  .../bindings/rng/brcm,bcm74110.yaml           | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml
+>  arch/arm64/boot/dts/sprd/sc2731.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml b/Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml
-> new file mode 100644
-> index 000000000000..acd0856cee72
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml
+> diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
+> index 12136e68dada..c8b30c0479fd 100644
+> --- a/arch/arm64/boot/dts/sprd/sc2731.dtsi
+> +++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
+> @@ -97,7 +97,7 @@ pmic_adc: adc@480 {
+>  		fuel-gauge@a00 {
+>  			compatible = "sprd,sc2731-fgu";
+>  			reg = <0xa00>;
+> -			bat-detect-gpio = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
+> +			bat-detect-gpios = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
+>  			io-channels = <&pmic_adc 3>, <&pmic_adc 6>;
+>  			io-channel-names = "bat-temp", "charge-vol";
+>  			monitored-battery = <&bat>;
+> -- 
+> 2.34.1
+> 
 
-Filename as compatible.
+Hi all,
 
-> @@ -0,0 +1,35 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rng/brcm,bcm74110.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: BCM74110 Random number generator
-> +
-> +description: |
+looking at this patch again, it seems there's some confusion going on.
+The bindings specify the property as "battery-detect-gpios", but the driver
+checks for "bat-detect" [1]. I assume the DTS was added with "bat-detect"
+to make it work, even though it's not conformant to bindings.
+It has been this way since the bindings/driver/DTS were introduced
+back in 2018/2019.
 
-Do not need '|' unless you need to preserve formatting.
+What would be the correct way to fix this? Change the bindings to
+"bat-detect-gpios" or change the driver/DTS to "battery-detect-gpios"?
 
-> +  Random number generator used on the BCM74110.
-> +
-> +maintainers:
-> +  - Markus Mayer <mmayer@broadcom.com>
-> +  - Florian Fainelli <florian.fainelli@broadcom.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - brcm,bcm74110-rng
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/power/supply/sc27xx_fuel_gauge.c?h=v6.11#n1186
 
-That's not what you have in DTS.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    rng: rng@83ba000 {
-
-Drop unused label.
-
-
-
-Best regards,
-Krzysztof
-
+Regards,
+Stanislav
 
