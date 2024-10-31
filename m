@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-390205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E139B76EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:57:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C23119B76FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3A591C21F56
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8669C285971
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1839B1891B2;
-	Thu, 31 Oct 2024 08:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CF31891B8;
+	Thu, 31 Oct 2024 09:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Nj30kEgX"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bzxat93o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4D2153836;
-	Thu, 31 Oct 2024 08:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066D5145B07
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730365059; cv=none; b=Rbiba82ejaLIptov7M0aI6g0KBFTwQZ0hjQKOYjcc+R0qDBcgOiTY5fmPCXgEjDS4dkROU7Sec8/Ce9Bqi1Xf6NfUwBvmp+NUQPOSqImIz4+j4eWXLKSSPFkTgPNsNgGHdDWnJAQvQm+9WxGPnO8fbdxRMiNTpf/+Vf9Dae6JBk=
+	t=1730365330; cv=none; b=Pd1D7JYF4VkI1NhRhhBO3unfqaaF16xXI0Mzsq6sqE5ikkL+DzIdFwCgvWiGtA0T8j0nAZTTAH15hyuk9xCqWJlJ+++5aey2iYjJxvg+1emM8oWM8J9PqkAUiHSJBu10sfsMaDdNH0U78Nz0AOcduEFSYsHtO435QTGLSEBzmjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730365059; c=relaxed/simple;
-	bh=Twx6Crm80z64xzTeY2/dQLvMK9L9SpCg8NqAAwAtz5A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PB7xu75V0svY3BLidPItX5/cdimpoedurIlyvz+75rD7xSrivhmA6aDMdBodI1BKGNfx4gwkZfxeFRTZGFg3zA/TCXO2cep3UWucDBP0OlSO+Mtjo+is7TySLnyPDbpIZAGnAW+B8JGq9QmmZxHEtEZo5pemhFPnoIUUCXUMmNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Nj30kEgX; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=Twx6Crm80z64xzTeY2/dQLvMK9L9SpCg8NqAAwAtz5A=;
-	t=1730365057; x=1731574657; b=Nj30kEgXbesWsWEamPX3+aUVP0HoT16vD0kofdkXWT+8Vkt
-	t8rfsG0LME/vmjwZThzp6VICoaeVuI2Nu5bFkBrqpcydQ/eqvSctvVNIN6heGOnXcRa/R0NxvPb+I
-	e4NxN6dfX1erw6TvvJrSo/27W7QGDuUgTNLQaLzHp9VYoQdbAbtfkwH5b8t5b4mYVpSUZIB3kBCmq
-	WavMULykMWmEKbObseHKmo6S6pQluqVA6UgT1Us8JOzC93PSLdLeg1qZfabD7vsiKykd4c2HWln2t
-	SKM35pyikuKosORYTlFzcO1b11RPgLCVh0CAjnuYJd2t1JwKQ0yWsoc4qsbdr7yw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1t6Qzm-0000000AMpa-1K7e;
-	Thu, 31 Oct 2024 09:57:34 +0100
-Message-ID: <5fc092da11b3d81c99fc4bc4b78e87783280414f.camel@sipsolutions.net>
-Subject: Re: Issue with iwlwifi Firmware Loading When Compiled into the
- Kernel
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Gang Yan <gang_yan@foxmail.com>, "miriam.rachel.korenblit"
-	 <miriam.rachel.korenblit@intel.com>, kvalo <kvalo@kernel.org>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, linux-kernel
-	 <linux-kernel@vger.kernel.org>
-Date: Thu, 31 Oct 2024 09:57:33 +0100
-In-Reply-To: <tencent_7DC9187727BD32FEEC99045E754751A0CA08@qq.com>
-References: <tencent_2C31282B61589DFCC908B3831384D569440A@qq.com>
-	 <7100cb98b8e46793cfb1197c3af0f151a9628c9d.camel@sipsolutions.net>
-	 <tencent_7DC9187727BD32FEEC99045E754751A0CA08@qq.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1730365330; c=relaxed/simple;
+	bh=/n84PVy4YbxIQu6M1YNauirYO2NoxZN4HxZ03Pp+Pzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sOWy9WzOQmM16/kxQJ76TFRx62YNrjLwm36IqcpkdCJnA2MFo8AA4QRDBcYvaiYEs+e049oKHES8JzkOM7ksnMEy4CHdidIphwUGFQqN7VnBs4IO7Ee9WCWRgI2tXt0rHEk8j1qR//JfXZClJik9gmqXTKsfVPFQQekRQsW0Pgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bzxat93o; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730365327; x=1761901327;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/n84PVy4YbxIQu6M1YNauirYO2NoxZN4HxZ03Pp+Pzc=;
+  b=Bzxat93oyPoqEcIw/i5h7ANuMbcW5EbbYv5aEjagrmVHWLAGfK/m+TW/
+   VyGeQvDxOhFMGP2Q0wApryQHpRtU80Un5M2e864Fz89gh6gSBZucF2U8/
+   zWoVooNHVC8WB7yX725rWqAs212+2bf9Txq8+Vvd6iY3d86LYwLslFPes
+   mJ1y5dOqnZjbZiupK7BZEOCPLMjoE8dvOQXbMxlXFYtUYkN2VXHDi3iHg
+   mKLYVA89kXxJNziFym6ZoutW3bWAJqwJtyauuUV4WaIeAsOqD2ueYrTLh
+   7emhEdvrwdOtO2wNJt+nmSLKKsm7dhQK0ihQMJaCgn1AFjUHCdcssu3HU
+   Q==;
+X-CSE-ConnectionGUID: qeiR6HJYTrSBiBHkmBA4Xw==
+X-CSE-MsgGUID: lxP7DuOoR3m9hktEYr1/RA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40705624"
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="40705624"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:02:06 -0700
+X-CSE-ConnectionGUID: /Udoi9zqQiOSRfx3k09MHQ==
+X-CSE-MsgGUID: wlBJBE6ZTFeVUvXQZ81jNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="105885892"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 31 Oct 2024 02:02:05 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6R47-000ftW-1E;
+	Thu, 31 Oct 2024 09:02:03 +0000
+Date: Thu, 31 Oct 2024 17:01:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: kernel/bpf/token.c:50:6-27: WARNING: atomic_dec_and_test variation
+ before object free at line 54.
+Message-ID: <202410311704.yIRxjp0C-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 2024-10-31 at 16:52 +0800, Gang Yan wrote:
->=20
-> In fact, I'm using Ubuntu's userspace, but I've simply replaced Ubuntu's=
-=20
-> kernel with the mainline 6.12.rc2 version (x86_64_defconfig). By merely=
-=20
-> changing CONFIG_IWLWIFI from 'm' to 'y', the network functionality normal=
-ized,=20
-> which is inevitably confusing. By the way, both of my computers encounter=
-ed=20
-> this issue, with network devices being Intel Wireless 8265 and Intel AX21=
-0, respectively.=20
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0fc810ae3ae110f9e2fcccce80fc8c8d62f97907
+commit: 35f96de04127d332a5c5e8a155d31f452f88c76d bpf: Introduce BPF token object
+date:   9 months ago
+config: i386-randconfig-051-20241031 (https://download.01.org/0day-ci/archive/20241031/202410311704.yIRxjp0C-lkp@intel.com/config)
+compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
 
-Yeah well, so Ubuntu integrated everything in a certain way, and because
-they build everything as modules they didn't integrated anything to make
-it possible to build modules in the kernel.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410311704.yIRxjp0C-lkp@intel.com/
 
-When you change it, you own the integration. I gave you a few ways to
-solve this, simplest is just specifying the firmware to build into the
-kernel in the .config file.
+cocci warnings: (new ones prefixed by >>)
+>> kernel/bpf/token.c:50:6-27: WARNING: atomic_dec_and_test variation before object free at line 54.
 
-> I still think some clarification will be helpful to make the configuratio=
-n process
-> here clearer.
+vim +50 kernel/bpf/token.c
 
-I don't think we need to change anything. Whoever makes some changes to
-a distro needs to actually do the integration too. This is in no way
-specific to iwlwifi, every other devices with firmware has the problem,
-and generic ways of fixing it already exist.
+    44	
+    45	void bpf_token_put(struct bpf_token *token)
+    46	{
+    47		if (!token)
+    48			return;
+    49	
+  > 50		if (!atomic64_dec_and_test(&token->refcnt))
+    51			return;
+    52	
+    53		INIT_WORK(&token->work, bpf_token_put_deferred);
+  > 54		schedule_work(&token->work);
+    55	}
+    56	
 
-johannes
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
