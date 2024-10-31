@@ -1,109 +1,227 @@
-Return-Path: <linux-kernel+bounces-391084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BF49B827A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:20:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D999B827E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F442819CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:20:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C27B2345F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4E31C9B82;
-	Thu, 31 Oct 2024 18:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5341C9DD5;
+	Thu, 31 Oct 2024 18:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyofyD93"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aln31iLM"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4451EA90;
-	Thu, 31 Oct 2024 18:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CFD1C9B6D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730398820; cv=none; b=WyqPiWi0DS85jzsXqOQ97iMT49Kb99I9D18iD2JaMPdrDpizV3cu8b8atXPVcuam+DDHbrJPyshCZpH9aNuS89pS58vVE5ZH9L+/vdCHOC3vJlaRSgqe03oofgWXuzBqVHaxGLNwWHVYL7dSf0JllHIT7bWBQ/qpvHT+hUp8UcY=
+	t=1730398854; cv=none; b=FxCDh1LPCcubFje+cmqvECVfS/1keFQGyBaEkNhNuc9wwa3lEn+3sIhHDxmg84o7fGrnutnbjWiVTX8yUnUuLbxVvTwMpxEG5QU6ta9FMjB9KR+RjbDLgaAxnHrS80bIf6N5Uica6NLnCiIZG+DUr0/v3cleuAgEpxw1fHaLncQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730398820; c=relaxed/simple;
-	bh=t1Qaw+eHLk+0ELHD31Y2cC89+Y0/KawO1t9fK9DxfPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvIB4U9gp25sD83tMtTmYDs/bcvIF4di2c7e3+yv3JiCTZUlsJWUtaSPcpotlro4Mhgkmq1nzRBRpxs0hWBFFJNdATKMLnz3mXq5ukVje1Ry1C3ArHcslYQlF8CIyI8rkqfD7aOyD6TruCcBsILChA5lBHqUpuY1dDiKbFTnqAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyofyD93; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E5FC4CEC3;
-	Thu, 31 Oct 2024 18:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730398819;
-	bh=t1Qaw+eHLk+0ELHD31Y2cC89+Y0/KawO1t9fK9DxfPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HyofyD93LK7jqPeXVdvN6sBeqdVCbn+3uV3h57GOLnyp+H4YuGONRNBjnJ4qxhvjF
-	 KrnLKNqQaRRlLwyR4jSx/YPoV4VaCHaWaW8O2s81tVwnwx1jf4ctv5KZD3OhoDirBj
-	 m43UaA9HRJC0rmcJkXoqYzHgq33822kpyyMrl83k+AU9GM/HAdvGd2YkJdA7/lk4W1
-	 +wgv6KS6yL71mybwfOEHSvta0AIIdCMhnQvVOa31aBSVJDfzrneM7y/kAlc49im/ID
-	 N2/0EMrsNtW5ceB08GkcnGval6jZ0zdV6LUgyJ72lciNK2rG1tnH9KKWc4AOSlXmGi
-	 75HFjeFX1tF5Q==
-Received: by pali.im (Postfix)
-	id 390FF83D; Thu, 31 Oct 2024 19:20:13 +0100 (CET)
-Date: Thu, 31 Oct 2024 19:20:13 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: Dell.Client.Kernel@dell.com, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, w_armin@gmx.de
-Subject: Re: [PATCH v2 1/2] dell-smbios-base: Extends support to Alienware
- products
-Message-ID: <20241031182013.i2ze3h45c4ldgfbj@pali>
-References: <20241031154023.6149-2-kuurtb@gmail.com>
+	s=arc-20240116; t=1730398854; c=relaxed/simple;
+	bh=FyWu/MmruUKcYDBZtwz3BWZ6sqrZ2UBNz2oBRpi4PAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cUp9edyYfugKUmdoUM7XWUTYeNA5WYvFi+pu5v4grN7gaS4TCpwbtY9vGvaAZJ8aCWnz19R9z4IDRBqJ/0N0S5IyJv647sOFh4cztWmVRr0DQC5YPh0CSu9DIl/QW2dYHAINZTLlkeaXqBTuFlx61YxcG15YqxRpZ3tYMg8reB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aln31iLM; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so11319627b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730398851; x=1731003651; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WLDUJfbR6R9Q78ZWppjQCRBcAEdo3kQLDzuM0lwJU0g=;
+        b=Aln31iLMzqOqdYV5Cu0h2Q6mWZYoIDO4Lmg8+HGaYQ4OrKF9EYeb5cQoNJSfEqpy/l
+         gtWU4UuNN0fize5kCYFFMO6djBF62+KA8ixeoUFPe4dRqoOu2kLunlNJmySplDhz4Wkj
+         NVVknNsyemdeG/ZpsYAZt+bbPJzV4GvW5cIFpR6h7djqxkdYVZdtJPOr620bI58WcPJl
+         jTIjxiZkh+rXDKQzbyrruOmnzfyk8ju6QTDW3hFGR66VA3g8GgHVN+xLZ/BWos3vvcMd
+         SqWydAHyxmD72WOd/90cqYAl8fJxciIj5phl3hHkS8w3Y+CCxRnKl/6TDfJ8MVJnNL86
+         ZtbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730398851; x=1731003651;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WLDUJfbR6R9Q78ZWppjQCRBcAEdo3kQLDzuM0lwJU0g=;
+        b=sa/ufEgWloqgNdccX5LsTkoNGPCwlGk41BvC49RyRl/xzV4LvCjIBSwpdjQbbdaB3V
+         DlTob+TNo4pLdUh7EWRLPII50W5HHMJmcgHzVLFs7R9uh7PUau+vrOO49FcXFyUGYeR6
+         SgC8cy+2nS65b4eV8obsehU4n95SPoei16qUCbXC9MYM5SupMPI4Qki/7VE7K7Yl9mQX
+         Lvtc+w+4930N+KjFJ/DoG7OUnqTRED/1h5xxvTYZhUDVSKJ0701wpPxvpmceF2OVXQ4j
+         OVye5ObUmFJpdh6fK0RmAQeDLV1ITSoLkM5SxNQtKvy7O93t89QDaYnu8qjbLCe46c6r
+         gekw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCpAJh4RD82FK6l6jHlipp9SLNBPmzxuLL3mPWXdGpcZQ8nXHDbdiXEZyYS/ejZ2eZcexbmljo4F7ZtDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfXAHHp3JcfMi/2CUdf+/PM9a+XW7WXih5zUf3LuGnQguID4Tv
+	2QqRFScHakMVdtPqGB4161wsY3OOCB1iMWUu3wX9rmePbIQxzz2rlofD7Nke4NTVT2b8jRJkSKy
+	tVPiVttd6qRDLe96BHfkm914B2ZL1B7z28WlaRg==
+X-Google-Smtp-Source: AGHT+IFAsMwssl3CsGQHQvM8bMdP93YVWcDHIhkTXiHlpvS1lZLveTm8hn3cb6TISveDQA5kxCdXkhevk4P4DApB+UQ=
+X-Received: by 2002:a05:690c:fd5:b0:6e3:116c:ec0c with SMTP id
+ 00721157ae682-6e9d8aa40bcmr195925997b3.30.1730398850667; Thu, 31 Oct 2024
+ 11:20:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241031154023.6149-2-kuurtb@gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20241028023740.19732-1-victor.liu@nxp.com> <CAA8EJprFBbC_=kBHi86j-nE_K68QeG+c2OBzJCbUyNWs5zQK0Q@mail.gmail.com>
+ <TY3PR01MB11346F956733032EC10E997AF864A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <5ycxltnw3vhik3iype6ncuh4nelwwtom745o5dlf32qyiqh5bv@yjj5l6kb2psm>
+ <1e8526e5-d9b7-42ac-9db3-13b42ccc4fbe@nxp.com> <CAA8EJppAnfiVqNYN6CxaU1Q5fMwDgWhSsPU9qQz7KHb6px=grA@mail.gmail.com>
+ <TY3PR01MB113467D658D6680491662BA3586542@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB113467D658D6680491662BA3586542@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 31 Oct 2024 20:20:39 +0200
+Message-ID: <CAA8EJpryBmTXb53M1i5o9u+94du48AZnDeFQqXZtgxvOuoYR9A@mail.gmail.com>
+Subject: Re: [PATCH v4 00/13] Add ITE IT6263 LVDS to HDMI converter support
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Liu Ying <victor.liu@nxp.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
+	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, 
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, 
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>, 
+	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>, 
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "arnd@arndb.de" <arnd@arndb.de>, 
+	"nfraprado@collabora.com" <nfraprado@collabora.com>, 
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	"sam@ravnborg.org" <sam@ravnborg.org>, "marex@denx.de" <marex@denx.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thursday 31 October 2024 12:40:24 Kurt Borja wrote:
-> Fixes the following error:
-> 
-> dell_smbios: Unable to run on non-Dell system
-> 
-> Which is triggered after dell-wmi driver fails to initialize on
-> Alienware systems, as it depends on dell-smbios.
-> 
-> This effectively extends dell-wmi, dell-smbios and dcdbas support to
-> Alienware devices, that might share some features of the SMBIOS intereface
-> calling interface with other Dell products.
-> 
-> Tested on an Alienware X15 R1.
-> 
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+On Wed, 30 Oct 2024 at 11:02, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+>
+> Hi Dmitry Baryshkov,
+>
+> > -----Original Message-----
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Sent: 30 October 2024 03:17
+> > Subject: Re: [PATCH v4 00/13] Add ITE IT6263 LVDS to HDMI converter support
+> >
+> > On Tue, 29 Oct 2024 at 04:41, Liu Ying <victor.liu@nxp.com> wrote:
+> > >
+> > > On 10/28/2024, Dmitry Baryshkov wrote:
+> > > > On Mon, Oct 28, 2024 at 11:12:00AM +0000, Biju Das wrote:
+> > > >> Hi Dmitry, Liu,
+> > > >>
+> > > >>> -----Original Message-----
+> > > >>> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > >>> Sent: 28 October 2024 10:20
+> > > >>> Subject: Re: [PATCH v4 00/13] Add ITE IT6263 LVDS to HDMI
+> > > >>> converter support
+> > > >>>
+> > > >>> Hi,
+> > > >>>
+> > > >>> On Mon, 28 Oct 2024 at 04:37, Liu Ying <victor.liu@nxp.com> wrote:
+> > > >>>>
+> > > >>>> Hi,
+> > > >>>>
+> > > >>>> This patch series aims to add ITE IT6263 LVDS to HDMI converter
+> > > >>>> on i.MX8MP EVK.  Combined with LVDS receiver and HDMI 1.4a
+> > > >>>> transmitter, the IT6263 supports LVDS input and HDMI 1.4 output
+> > > >>>> by conversion function.  IT6263 product link can be found at [1].
+> > > >>>>
+> > > >>>> Patch 1 is a preparation patch to allow display mode of an
+> > > >>>> existing panel to pass the added mode validation logic in patch 3.
+> > > >>>>
+> > > >>>> Patch 2 allows i.MX8MP LVDS Display Bridge(LDB) bridge driver to
+> > > >>>> find the next non-panel bridge, that is the IT6263 in this case.
+> > > >>>>
+> > > >>>> Patch 3 adds mode validation logic to i.MX8MP LDB bridge driver
+> > > >>>> against "ldb" clock so that it can filter out unsupported display
+> > > >>>> modes read from EDID.
+> > > >>>>
+> > > >>>> Patch 4 adds MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG,JEIDA} support,
+> > > >>>> as they are supported by IT6263(with LVDS data bit reversed order).
+> > > >>>>
+> > > >>>> Patch 5 makes drm_of.c use MEDIA_BUS_FMT_RGB101010_1X7X5_{JEIDA,SPWG}.
+> > > >>>>
+> > > >>>> Patch 6 supports getting dual-link LVDS pixel order for the sink
+> > > >>>> side as needed by IT6263 driver.
+> > > >>>>
+> > > >>>> Patch 7 documents jeida-30 and vesa-30 data mappings in
+> > > >>>> lvds-data-mapping.yaml, as needed by IT6263 DT binding.
+> > > >>>>
+> > > >>>> Patch 8 extracts common dual-link LVDS display properties into
+> > > >>>> new lvds-dual-ports.yaml so that IT6263 DT binding can reference it.
+> > > >>>>
+> > > >>>> Patch 9 adds DT binding for IT6263.
+> > > >>>>
+> > > >>>> Patch 10 adds IT6263 bridge driver.  Only video output is supported.
+> > > >>>>
+> > > >>>> Patch 11 adds DT overlays to support NXP adapter cards[2][3] with
+> > > >>>> IT6263 populated.
+> > > >>>>
+> > > >>>> Patch 12 enables the IT6263 bridge driver in defconfig.
+> > > >>>>
+> > > >>>> Patch 13 updates MAINTAINERS to add maintainer for IT6263 driver.
+> > > >>>
+> > > >>> This has pretty complicated structure from the merging point of view.
+> > > >>>
+> > > >>> I propose we take patches 6, 8, 9 (without 30-bit formats, they
+> > > >>> can be dropped while applying), 11, 12
+> > > >>> (?) and 13 through drm-misc in one batch (once DT maintainers
+> > > >>> review the binding parts). This looks like a minimal set, having no extra dependencies.
+> > > >>
+> > > >>>
+> > > >>> The second set might be 4, 5 + new patch, re-adding 30-bit formats
+> > > >>> to
+> > > >>> IT6263 binding (no driver changes are necessary). This can go in
+> > > >>> separately, after an Ack from media maintainers.
+> > > >>>
+> > > >>> Of course both sets can go together if linux-media maintainers
+> > > >>> reacts quickly and ack merging media- formats patch through drm-misc tree.
+> > >
+> > > I'm fine with merging the two sets through drm-misc tree as long as
+> > > linux-media and dri-devel maintainers accept this.  Up to them.
+> > >
+> > > >>>
+> > > >>> The rest of the patches don't have such strong dependencies and go in once ready / reviewed.
+> > > >>>
+> > > >>> WDYT?
+> > > >>
+> > > >> I guess, 6,8,9(without 30-bit formats), 10, 12 and 13.
+> > > >>
+> > > >> 11 may have dependency on 1, 2 and 3 as it is SoC specific.
+> > > >
+> > > > Yes, of course, 10, not 11.
+> > > >
+> > > >> Then 4, 5 + new patch, re-adding 30-bit formats to IT6263 binding.
+> > >
+> > > I think it would be good to directly support 30-bit formats in
+> > > IT6263 DT binding, not re-add them to it.  This way, we'll have one
+> > > version of the binding, not two.  So, a better first set would contain
+> > > patch 6, 7(one existing A-b from Krzysztof), 8, 9, 10, 12 and 13.
+> >
+> > I'm not sure that 7 can go without an ack from linux-media maintainers.
+>
+> You mean in describing jeida-30 and vesa-30 format in
+> patch#7, is valid only if patch#4 is ok with media people
+> or they provide an ack for patch#7 to take it through drm tree?
 
-Acked-by: Pali Rohár <pali@kernel.org>
+The former one. I'd prefer an ack from linux-media maintainers to
+accept bindings based on those names.
 
-> ---
-> v2:
->  - Commit message reflects Alienware devices may not necessarily support
->    the SMBIOS interface
->  - Commit message now has "Tested on"
-> ---
->  drivers/platform/x86/dell/dell-smbios-base.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
-> index 73e41eb69..01c72b91a 100644
-> --- a/drivers/platform/x86/dell/dell-smbios-base.c
-> +++ b/drivers/platform/x86/dell/dell-smbios-base.c
-> @@ -576,6 +576,7 @@ static int __init dell_smbios_init(void)
->  	int ret, wmi, smm;
->  
->  	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
-> +	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Alienware", NULL) &&
->  	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
->  		pr_err("Unable to run on non-Dell system\n");
->  		return -ENODEV;
-> -- 
-> 2.47.0
-> 
+-- 
+With best wishes
+Dmitry
 
