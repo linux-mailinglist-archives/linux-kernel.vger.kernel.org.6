@@ -1,122 +1,189 @@
-Return-Path: <linux-kernel+bounces-391253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A993E9B846B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:32:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CB39B8473
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E587DB25D1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:32:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18891F240E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7571D1C9EA3;
-	Thu, 31 Oct 2024 20:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595241BCA0F;
+	Thu, 31 Oct 2024 20:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NDRsLbkw"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IX4HBNS9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5991494D9
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885FD146A66;
+	Thu, 31 Oct 2024 20:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730406739; cv=none; b=HvJWeejsqP3mBXgYmbRxUOEWrr1WjbF1IqB/lSpiGMW8OSxxlQfYvY1ojNDyz2pJmROsNVZMWC1eLDzitEPGRnQFymbG+YRi//fwFyO/S18in8sdWMZvR60ssedPRmTuyB6+qjuVblI8FYjzRw2TXMEtFKGfy3aEu7d9ABTpuNs=
+	t=1730406871; cv=none; b=Wjp4u6unWa7/ftmlJekLXw5wzEqw5dG5pdDb3Zn/M4fUYuEbEuR1J/215rsoXfhhQsQjqmFTU6rjyY/lTTwF4FMnpR9D0+IrN7HxufSuRozNJu44PlHYB0SygMMqhONQu7lFbc+25V7FAagFjcYtyxm7l0XaQ00+5ZXaSAvRdjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730406739; c=relaxed/simple;
-	bh=Ci+gadG9vK91lwDAZWto+nvmTJoDDX1wy8w81KMkbw0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lSOQUC8MLIgl2zvcPH5AH7GeS3bjaqk3A6+pSmywcLfqxIn4Qz4z2TuglPq4Ehd/Kv2K9zjE+zIU5dB41q/ncItfdt5D0ZIvSw8keumE+W4/SOeKRke9CgSjcu9QzpgCYwcgBiFuk6NZ+Xo8TXIXnMoJCatNa+5ocINdscpP/bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NDRsLbkw; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e578061ffso1933662b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 13:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730406737; x=1731011537; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qgEcY/iu+PuV+Ho8Elw8cqw/X4GJ2SmTQdt9g4Zs0NE=;
-        b=NDRsLbkwRp+O1pU2unKGTj8MSDdbhxs/sxe3W5QULonEhN0JVOgYNnoB4Ygx/hVdtq
-         rRet5Ro/7xwVNfSJ/ic6PB5Wt5ApgKB5D1dA/px7MHXr2+c+tQ/TH9tlpEz6oYegGfGL
-         jOG2LxjZsjxD7NnAZkivdfQpyMfSSEiE9Lpp9EXllyJO2wFga20uWhUs0kOBE8Hgi8fg
-         9hKDve939dJOkEMoVMyrix42s7B+TghxEuNUPh41MkheRs5jS7OPB4XV+lZwE69PxogM
-         uxjtWywxpINaSY0gHxYmQXzEQi6yKQrYwg+xjhrnYJ/mv1ZkAmqL/dNRsnUBcWXHTVDU
-         bP7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730406737; x=1731011537;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qgEcY/iu+PuV+Ho8Elw8cqw/X4GJ2SmTQdt9g4Zs0NE=;
-        b=LHrL5FGBgeJn/l3e1KnTGImDMRyUokNEGiBK7CqEDBBrpWTlXCi9TTUgdzwaA3uoFf
-         NOD5DdLm+mFsRySEuuKoCueczJ0XH/DNUxR0i/GXLZUfQkqMYqkWI+fyqemH8vLqONJA
-         pXDkcW/rfBqLVixsJX724WvgsIq6K25rhAN7zGYCmNg4kZ7p8Jm70lMYIXNSSJN3JC7h
-         LD7tv2IAUzEFjHb1aAvU//V0OjRrKfcn/L5TnUsvh2DKhrE0D90rLrzZvqxooh+sMb+C
-         uumHJv6fjE9qU1fgRO2y0SsSWEWAKtG9JTekcSp/rdzWO4x8QaQ8VlgOqWgqhhR0iLmw
-         gv9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJthmpZMAXBG3q2lgl3fkZMi3jWFCkyLvzK2r2iSnzu7L1NeaiK5O2ymSUTNmrVM/7tm/g6v8+PBV4hVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9CqmyVxPUrX5XKRWir7HynbFWxcywlmZoRx10KDWnek0gxEgm
-	390JLWVeSEVZGMEPz7Lnh0PyzP22ysYW0JclPpCRptNvs8p7k7axrCPTcbcOvaHxXKNr5zVHCLW
-	7CA==
-X-Google-Smtp-Source: AGHT+IF+C75ZCAmHvmxAjzhcUtAXvoh5HpQaB44u3ZGPOz1JZ+/WF0cVumwkJeFwB4JXlQHlXveEb82zZuo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:aa7:87cf:0:b0:71e:5f55:86ed with SMTP id
- d2e1a72fcca58-720ab508471mr16104b3a.3.1730406736852; Thu, 31 Oct 2024
- 13:32:16 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 31 Oct 2024 13:32:14 -0700
+	s=arc-20240116; t=1730406871; c=relaxed/simple;
+	bh=t3hCvbfzuZ4R1fdeegEZFGmVI5GxAInqbwI/XyrlHNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Al6IufzjtHLTu9UbOP6PaqIAB8YJgApNBuMGiawg0aZvgySv93NllJZjjVYNf4iSouG+78BpsT5kcmbijU47AEWXE5k6+OrhokIyQdsqFLb/2QvKF6mITvABRK3TS65BGxYCcR0hCW2amVIb25jijTCMy7h9n1IVpp/UOGkHxV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IX4HBNS9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VAHosw009566;
+	Thu, 31 Oct 2024 20:34:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mMLJI7Zwou0AIfa5DBCGV8tXsi5TaBK6b4xbCUPc4mA=; b=IX4HBNS9ubgXkUOY
+	ll0KEMC3Rr0iZW2NE6WNZWzir+ImtEys8M/LfgiMvAGOEfGIscVArTwRQvcwCleS
+	bAlF4EPEiACxL0TQTDBudVQVokvCFIp+GiDOXocVfsuv6fhq1KkjXj2pIIcNBZ3L
+	7mf05NSfO0a4QpkGj8zqLse4gW1e2WGOWCE3QLA/LwqUMyyQaWupMTD2GWBwCg9o
+	0lPV+MXuyuacf+qipoIFInK9U8U+fbHsdzX+VRBaxMorL+bXGMpTmhakKi02f0Zf
+	uRMbUzIKrscR/GbbPRphSfHQAiihWA5b3dTXtVSNneExZ9pFRTMjRjuTEkOKE06x
+	3rwNNw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kjm1d6x9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 20:34:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49VKYKXg007835
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 20:34:20 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 31 Oct
+ 2024 13:34:19 -0700
+Message-ID: <52f47e00-8da8-4b02-8a36-bbfad015ed66@quicinc.com>
+Date: Thu, 31 Oct 2024 13:34:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241031203214.1585751-1-seanjc@google.com>
-Subject: [PATCH] KVM: SVM: Propagate error from snp_guest_req_init() to userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] i2c: skip of_i2c_register_device() for invalid child
+ nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <freedreno@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <robdclark@gmail.com>, <swboyd@chromium.org>, <airlied@gmail.com>,
+        <quic_jesszhan@quicinc.com>, <lyude@redhat.com>, <simona@ffwll.ch>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241030010723.3520941-1-quic_abhinavk@quicinc.com>
+ <CAA8EJppKou84MZm0JS_4bPveMO2UxpMs5ejCoL7OMWd-umtDmQ@mail.gmail.com>
+ <92217ec6-c21c-462a-a934-9e93183c1230@quicinc.com>
+ <mlpiuko7n6rp3x55z4qterdns2wzqnfwgjxikbshrvakrscsak@antl2vzla5bd>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <mlpiuko7n6rp3x55z4qterdns2wzqnfwgjxikbshrvakrscsak@antl2vzla5bd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _lT_b00_izNCYu-5d_JS0vLEL-HnIb-V
+X-Proofpoint-ORIG-GUID: _lT_b00_izNCYu-5d_JS0vLEL-HnIb-V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310155
 
-If snp_guest_req_init() fails, return the provided error code up the
-stack to userspace, e.g. so that userspace can log that KVM_SEV_INIT2
-failed, as opposed to some random operation later in VM setup failing
-because SNP wasn't actually enabled for the VM.
 
-Note, KVM itself doesn't consult the return value from __sev_guest_init(),
-i.e. the fallout is purely that userspace may be confused.
 
-Fixes: 88caf544c930 ("KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202410192220.MeTyHPxI-lkp@intel.com
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/sev.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+On 10/31/2024 12:30 PM, Dmitry Baryshkov wrote:
+> On Thu, Oct 31, 2024 at 11:45:53AM -0700, Abhinav Kumar wrote:
+>>
+>>
+>> On 10/31/2024 11:23 AM, Dmitry Baryshkov wrote:
+>>> On Wed, 30 Oct 2024 at 03:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>>>
+>>>> of_i2c_register_devices() adds all child nodes of a given i2c bus
+>>>> however in certain device trees of_alias_from_compatible() and
+>>>> of_property_read_u32() can fail as the child nodes of the device
+>>>> might not be valid i2c client devices. One such example is the
+>>>> i2c aux device for the DRM MST toplogy manager which uses the
+>>>> display controller device node to add the i2c adaptor [1] leading
+>>>> to an error spam like below
+>>>>
+>>>> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+>>>> i2c i2c-20: of_i2c: modalias failure on /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+>>>> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+>>>> i2c i2c-20: of_i2c: register /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+>>>> i2c i2c-20: of_i2c: invalid reg on /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+>>>> i2c i2c-20: Failed to create I2C device for /soc@0/display-subsystem@ae00000/display-controller@ae01000/opp-table
+>>>>
+>>>> Add protection against invalid child nodes before trying to register
+>>>> i2c devices for all child nodes.
+>>>>
+>>>> [1] : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_mst_topology.c#L5985
+>>>>
+>>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>>> ---
+>>>>    drivers/i2c/i2c-core-of.c | 6 ++++++
+>>>>    1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+>>>> index a6c407d36800..62a2603c3092 100644
+>>>> --- a/drivers/i2c/i2c-core-of.c
+>>>> +++ b/drivers/i2c/i2c-core-of.c
+>>>> @@ -86,6 +86,8 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+>>>>    {
+>>>>           struct device_node *bus, *node;
+>>>>           struct i2c_client *client;
+>>>> +       u32 addr;
+>>>> +       char temp[16];
+>>>>
+>>>>           /* Only register child devices if the adapter has a node pointer set */
+>>>>           if (!adap->dev.of_node)
+>>>> @@ -101,6 +103,10 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+>>>>                   if (of_node_test_and_set_flag(node, OF_POPULATED))
+>>>>                           continue;
+>>>>
+>>>> +               if (of_property_read_u32(node, "reg", &addr) ||
+>>>> +                   of_alias_from_compatible(node, temp, sizeof(temp)))
+>>>> +                       continue;
+>>>
+>>> I think just of_property_read_u32() should be enough to skip
+>>> non-I2C-device children. If of_alias_from_compatible() fails, it is a
+>>> legit error.
+>>>
+>>
+>> Thanks for the review.
+>>
+>> of_alias_from_compatible() looks for a compatible string but all child nodes
+>> such as ports will not have the compatible. Hence below error will still be
+>> seen:
+>>
+>> i2c i2c-20: of_i2c: modalias failure on
+>> /soc@0/display-subsystem@ae00000/display-controller@ae01000/ports
+> 
+> But ports node don't have a reg property too, so it should be skipped
+> based on that.
+> 
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index c6c852485900..9cfa953088ce 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -450,8 +450,11 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
- 		goto e_free;
- 
- 	/* This needs to happen after SEV/SNP firmware initialization. */
--	if (vm_type == KVM_X86_SNP_VM && snp_guest_req_init(kvm))
--		goto e_free;
-+	if (vm_type == KVM_X86_SNP_VM) {
-+		ret = snp_guest_req_init(kvm);
-+		if (ret)
-+			goto e_free;
-+	}
- 
- 	INIT_LIST_HEAD(&sev->regions_list);
- 	INIT_LIST_HEAD(&sev->mirror_vms);
+hmmm this is a good point. I see that individual port@ nodes do have a 
+reg but ports node does not.
 
-base-commit: e466901b947d529f7b091a3b00b19d2bdee206ee
--- 
-2.47.0.163.g1226f6d8fa-goog
+I will re-test this once without the of_alias_from_compatible() and drop 
+the of_alias_from_compatible in v2.
 
+>>
+>>>> +
+>>>>                   client = of_i2c_register_device(adap, node);
+>>>>                   if (IS_ERR(client)) {
+>>>>                           dev_err(&adap->dev,
+>>>> --
+>>>> 2.34.1
+>>>>
+>>>
+>>>
+> 
 
