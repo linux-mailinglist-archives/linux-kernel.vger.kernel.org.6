@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-390692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297FD9B7D67
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:57:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38409B7D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:59:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD24428224F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A88B21F211FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AA61A303E;
-	Thu, 31 Oct 2024 14:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721FB1A286D;
+	Thu, 31 Oct 2024 14:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W+boXa2k"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lyORiaDp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614D81A01C6;
-	Thu, 31 Oct 2024 14:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B523719D899;
+	Thu, 31 Oct 2024 14:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386632; cv=none; b=GZt4PbneADZ6TwDGQ0n4Bku8cggsJVBK+IKz4YELmhqeHLk00OTvtI5vlb5LqvvDVxqoppvWxKFoyVnVTVKHEhc9gqaFS8xc754nYcb/zrTDl7tkYyHuRk58iwaM/5jQ96nGwJDqAeS4q/XD1XluqUcj9Xmf1O1PJa0yLMunKMI=
+	t=1730386748; cv=none; b=i84oAtsuP94Q6bS4Zsd6yRdfdEzyMdi2mkceyJJlasgS9eoYIDJKr+eIDLweUfh+bQlTol2+S8AAtT7agDmJOtZGEagUAFmYbPdpAEZyGZchRDC2I+nWUKFeT76etXjgU4QM/RcibEYcr7dCzOJttlWKXXX5jh/l/0mRO6EhFwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386632; c=relaxed/simple;
-	bh=1yQ5OPuuQi/uXkPJsoL1Q6gToqNfv0k7XkIu1spX//4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LA1slQWUNIaM32Wy42J1K5OsE9zUniAApdgsrPPKzIOsI5YA20GKuMvvAtZdgwBnk7jT8WeDAZzGqzEkZDpyNLq3cO5kbLPwhyLthoIm6FnVGhJHwtOyBfrBOHJlCThinMRfdjrydpErBePyCGLuhrmwTx0MvcBNg0uYm0vXIQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W+boXa2k; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V2jDmC000401;
-	Thu, 31 Oct 2024 14:56:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=LSh8xK
-	5yqliL0HYBXZmT0bHiP4UGC1lgBePWTbzhDl0=; b=W+boXa2ks9A85zEPDlwg2T
-	3k2d89L7aOopYe9WHjEgbhAFmx26IiEQfrYvRogMIkADaeH0oQdVSjJJorjspcf4
-	EQDs69ej2EP9a0WKVgv6t80CKT3BsL+r54qbaPku0CGNFKiwZ0ZpT9ezP8slWFHu
-	+BMzqo1/SSsNq0QVSMx3tlu3R5aGZC49/2/KZY2/VYIoAJHRjoMryqJNuxlqFUG3
-	5KCALLkGcHBlzqzXlOyvoA+zuUOt9tRYOTyp4NxEkOTdA2U2vaa2etD/WHnIhG/W
-	Bzpyqjkgt6k7hz/1/VO9FwlLacb/V0F5x+oSsxHzTweOKVmgRqGNyZ8GneaTpwRw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65rfu7-1
+	s=arc-20240116; t=1730386748; c=relaxed/simple;
+	bh=aXQzHB0l2eJKfWz2KXkH3lMLBqVUQna2/zvn8aisx14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bnrd27U6mOWI7Ntdw3kTnXviEOj5pdEi9ToWELN4Nxa71bP3N8fjsrOTCmyiuKaUeIpMXt8CoOKZAz0PBxsAbjFNdCMD2FOucA/vS9b//hYlKC5aKY+g43MM70rqpukGB//rnruzVCJJtOGOZISl4gvWONRK/Jcg+EkVN1jrwec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lyORiaDp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VAVYLs012647;
+	Thu, 31 Oct 2024 14:58:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8t0//s2p6v4uv3QH6EBO5L5mclmjif12h2X4xx7nKWc=; b=lyORiaDpi4Agu78x
+	zVjoJg0uSp7KjU+OT2Jb88N2LiaXHg5VjPxEgPsZBVSe/zY8RvIz3ENpY44vviTa
+	7vTkT9VQ0kUU7KE9inDQJzjetC2UkCbT7Tkg1Nb4RirVTKCKcqot8UGvyLDTbQBn
+	ymTN2jDPkdJM1yhOkdhx5/2g7tdxfYjOD5Tmt6H9cX6soRb758ND3sYjKHdu1Y9G
+	eKmfgr8i2L8jyi/FAiCDZxbsO9KXipbFSp/grkptRARuYNI8xj45gHYqOzhIJA7m
+	W9sUwEKa3Q3MbwFpL6DM/mZv0iBqg09ZLvM8pKZXp5sIO0uO5ss4jozxO8vVCbnV
+	kiO7Mg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ky6ra8se-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 14:56:58 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49VEuvtw018322;
-	Thu, 31 Oct 2024 14:56:57 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jb65rfu1-1
+	Thu, 31 Oct 2024 14:58:58 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49VEwvRU017613
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 14:56:57 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VEG86S013670;
-	Thu, 31 Oct 2024 14:56:57 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hbrn5a23-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 14:56:57 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VEuuTj49545726
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Oct 2024 14:56:56 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 03C1058056;
-	Thu, 31 Oct 2024 14:56:56 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2DF0758052;
-	Thu, 31 Oct 2024 14:56:54 +0000 (GMT)
-Received: from li-479af74c-31f9-11b2-a85c-e4ddee11713b.ibm.com (unknown [9.67.19.177])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 31 Oct 2024 14:56:53 +0000 (GMT)
-Message-ID: <7aa84534df1a6637bebd60e628500f6dbad47c05.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 1/7] Documentation: s390-diag.rst: make diag500 a
- generic KVM hypercall
-From: Eric Farman <farman@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-s390@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik
- <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck
- <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio
- Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Date: Thu, 31 Oct 2024 10:56:53 -0400
-In-Reply-To: <20241025141453.1210600-2-david@redhat.com>
-References: <20241025141453.1210600-1-david@redhat.com>
-	 <20241025141453.1210600-2-david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	Thu, 31 Oct 2024 14:58:57 GMT
+Received: from [10.48.242.225] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 31 Oct
+ 2024 07:58:57 -0700
+Message-ID: <bb1c77cb-7efc-4c85-a946-5394b9105416@quicinc.com>
+Date: Thu, 31 Oct 2024 07:58:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 1T_xI4u9IKJpgvf4LBInHV3e2-xkpAfW
-X-Proofpoint-GUID: n_TgE2SuFctjzTmTDSTHmywe8zj19dOf
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: add support for QCA6698AQ
+To: Miaoqing Pan <quic_miaoqing@quicinc.com>, <kvalo@kernel.org>
+CC: <ath11k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241031000541.3331606-1-quic_miaoqing@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20241031000541.3331606-1-quic_miaoqing@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xvUkR7xcZWE866uKdW0vEvZpQ3NEQ1Zn
+X-Proofpoint-ORIG-GUID: xvUkR7xcZWE866uKdW0vEvZpQ3NEQ1Zn
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=634
- impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310110
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 phishscore=0 mlxscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 mlxlogscore=755 lowpriorityscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410310113
 
-On Fri, 2024-10-25 at 16:14 +0200, David Hildenbrand wrote:
-> Let's make it a generic KVM hypercall, allowing other subfunctions to
-> be more independent of virtio.
->=20
-> While at it, document that unsupported/unimplemented subfunctions result
-> in a SPECIFICATION exception.
->=20
-> This is a preparation for documenting a new hypercall.
+On 10/30/2024 5:05 PM, Miaoqing Pan wrote:
+> QCA6698AQ IP core is the same as WCN6855 hw2.1, they share the same
+> PCI device ID, the same major and minor version numbers, the same
+> register address, and same HAL descriptors, etc. The most significant
+> difference is that QCA6698AQ has different RF, IPA, thermal, etc.
+> 
+> Follow the approach done in commit 5dc9d1a55e95 ("wifi: ath11k: add
+> support for QCA2066"), enumerate the subversion number to identify the
+> specific card.
+> 
+> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04479-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> 
+> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
 
-s/hypercall/subfunction/ ?
+Am I correct that this satisfies at least a subset of the devices you were
+trying to support with the following?
+https://lore.kernel.org/all/20241024002514.92290-1-quic_miaoqing@quicinc.com/
 
->=20
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  Documentation/virt/kvm/s390/s390-diag.rst | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
+If so, can you reply to that thread, pointing to this new patch, and elaborate
+on what is now supported and what still requires ath11k to support
+board-specific firmware overrides?
 
-Reviewed-by: Eric Farman <farman@linux.ibm.com>
+/jeff
 
