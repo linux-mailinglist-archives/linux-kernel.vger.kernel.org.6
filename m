@@ -1,172 +1,144 @@
-Return-Path: <linux-kernel+bounces-390637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D8A9B7CA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:19:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065F99B7CAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249881C20A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07C91F21E06
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366E11A0732;
-	Thu, 31 Oct 2024 14:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282271A08B5;
+	Thu, 31 Oct 2024 14:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PWs9TC7W"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g4a/OJvR"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF741A0718
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ECF126BEF;
+	Thu, 31 Oct 2024 14:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730384390; cv=none; b=iBsGX2CGkOMg8roLzWjjvqlST6GA29JZR5Zgu07ZYOqm0sBlEimZuwW4WbVfzKB9JqnowtcTGDMK8W5ErG1lgH9ku3li87a/z2etjLHOkKTVpznPDpQSfHJbrXTO8n8Cv+awy7uK+jOTNbBn5QGbDKPO+jwZaRXWpKIJrn1blHA=
+	t=1730384429; cv=none; b=ZjdcaxUSkUCcb9UyoTd6VDEy8lLj6qadMepkeX3Csjz9c08dEl0niT7e7F777RanV4Vf1ZW5HpdEtIduPrento5VjY17L3u83wOxVCD/19cm7CHkfBJ5LjMenzPAr7BAmm2hh+fBFsKd69zz2s33DXGVR+R/Br75DLC9PZjUzbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730384390; c=relaxed/simple;
-	bh=PWQX7SnfjbZidOlrXf4jY4+SlsOeBgBtUEt8Ddtd0jg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WjIcubudhlIgR6lqb5vAHbR5rzCqY4JX0E2E+dfBl4eAF/8OyW7BL8UF0eSNMciqa1mXXfmcJM1UaMDU177/5LV2mxlUM5hwGmaN8BKronGI9w2mcfEe914Wm7IV0+q93iuCmVkZMLeAKV6jD5Wn0CVKis8SI9E21ztjiPgjJK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PWs9TC7W; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5c957d8bce2so614290a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:19:47 -0700 (PDT)
+	s=arc-20240116; t=1730384429; c=relaxed/simple;
+	bh=WubJgVoi6PG6mHA8Hf3mBv1Yym6DwrDwuVi/BNcnArg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ndlZJm4N/E6oVRucRmUIWiKAzAG6RMQvrEDYfZWuCN1YjuZUHV+OlSFzh0OWhNWgXg57svSxC/G8EBetjWDtMGsJptq9r8rxds9qDKF2iWQ3zxXmTX2X8MZopsyqARrFuEhzsqeMorIZ3CNH7eb0y5NXx7yH6QokV0ZzW+3gQwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g4a/OJvR; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so8065025e9.3;
+        Thu, 31 Oct 2024 07:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730384386; x=1730989186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PVUmTxmFHTbxuLXdUJhPx7kX3ILoUiW3IeTmfpkoY6o=;
-        b=PWs9TC7W258qgA7r2mOpVUFUNwAFjm4i3dxxATRXQbbiBW1++MEMpazUw+9ZCf2xKi
-         eAB+wO5fGKu+mhRO2gxTbELc8o+t0FEh34rAkU7Znd0Zo1oJvtk8enu+nGFPg8uOYACW
-         UWoHG/7QcnBn6eJU6fNCHoUhyAG0DB1wG6OY/dI8TzfE9XagEzJ+YNtLSIS7udOYyjZC
-         zhVPx8Q6dgjDyHstru6HNuCk6Jpo53glBlas8AOsMakwpWCDIQ0mv+olK89J8sHSmZ70
-         uw1WFPynGqB8/e+qooW/g9cu+slA4tw8r8y1APUkYwQ088NUPAqM3RVYwg9FXIxBnFpb
-         90Wg==
+        d=gmail.com; s=20230601; t=1730384426; x=1730989226; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=djH3xY8dq5iylljAgal9aGEEdDS+uM5AxS6wGMBJ2o8=;
+        b=g4a/OJvRQa6Cagm7H+jIS8GSQJRNxkOqJvhsLacS1Ya6DDW2O6g977g7sUpSUVuZx4
+         6amB9+qZwG6IJF4paaM4jT4+E7fiWpby3BAxfTGQo4cKgnYSxuMFgEFedvVoY3MToDtH
+         kgBlT9/EkfuOxuIT1FPfFKuX81dlNGLQVr9eMC82OrvNwY46m51mv+8+Smej5CLtedQ8
+         6jLyCI2PBraWFTq3IIufmJIIK/6Np/P76jG9ZDS8qUsHI1GXVaE7kvvFD7WIRbwaCTl4
+         7pojgZ9QzytBcrsGukaVnekFc+7M6c/JozivmkUP+5NQkN/50IiiMRoNpeV+nx/cEXwX
+         OgxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730384386; x=1730989186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PVUmTxmFHTbxuLXdUJhPx7kX3ILoUiW3IeTmfpkoY6o=;
-        b=A3/yn0BtDvigZNi2axpFh5b5ccuMgC6DTufyFtqNdHQomAAeuhkDhY7YbQPrAnXOvq
-         DmphJ+xavCgr0Xo1PbkAczQebD+nqaLBesnUW6q4+nOjqq9DPrtuuEUXO5uwDRqld72x
-         GNPfks/GsjdV+Ttn625DwALIoKThJAGcVbe3EZihG3LrF0rTO3suqVHOe8EtRUQGjRTq
-         qhogu05ImFpI7DhFgnRb1Ir7v60C+FD/Zp54sq/JhY3gzRXLdGAmcC09bggP+M2yJ6XT
-         lAXtY2uPZFEIG83VeHunhKdlXgNyZt2WY1kr0VjtNUe/dSAlRljVtBYfe2BzabUkUNvM
-         S1kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAHTWnsNEAFXmPMY4U3e+jnljZxM71Po/xqbLGo6tUF/52qsgeJsUMWivf2XPjN6ZCVMILOPOJfCQcq9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5g3VvTR6kCdAUPOST6pZSYfrr2dPB3nQMPU/58g6H5Bvffa4k
-	MEe5PPdBFhl4NPovMLErq44+C32AK9TUuRLGuKSrGncxXs+9L0tsWbo0VxVwVXs=
-X-Google-Smtp-Source: AGHT+IFBlmMQ8BF9VGOE8p6eOCCFYLNGVsY0KuYK2zU9xVixT1ZKB8UzaLusANFsmSbOvc8av3xycg==
-X-Received: by 2002:a05:6402:278e:b0:5c9:5745:de9a with SMTP id 4fb4d7f45d1cf-5cbbf8a40c4mr17455994a12.9.1730384386255;
-        Thu, 31 Oct 2024 07:19:46 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7700dbsm627152a12.34.2024.10.31.07.19.45
+        d=1e100.net; s=20230601; t=1730384426; x=1730989226;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=djH3xY8dq5iylljAgal9aGEEdDS+uM5AxS6wGMBJ2o8=;
+        b=f/JiZQet3G1B3CvPQidGI8fIS56A23Y1jh/S5U1dSn1S9C078dxx3jmDEfqk+BoEVa
+         p1z9xaePx7U+KtTHW0HD5x41Am2dnkEy/1+BwpxRF/+vSHBTOjmQh68HRq4hFixajr0G
+         bhBymTrzE9UcEOgyDWU4tkG8M1kNf/LUKilIEi9YOCK6h4lbo1rOzwr/9JL5klvaCfLs
+         J29XXQHxHVjg7bwxvuYT24nRMphWUjKEQeN0A54Pd71Y8pjwXTo0PPrOH4z/dXyZpPHx
+         Y1wJmdnZGNgFT794ebc5rpjkl29jnZLA0uDhI8ZIlyksNC3wJOqcyDUQK8vSQhTl3Y7S
+         5rhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKIno9qUmd2mjIRWpP91zyiAZs7k/3YTLdw3C+H9+TgIfP3O1HNRZHETs8VWI2N0LcfwgWiWCOnIY=@vger.kernel.org, AJvYcCVEsbg77Xj2ixTGvGnnLz4qnbbzUP5tx7ialHmQ1a8DGUbf5ft+mbGWM0/VvoTeUvIRlPxaWTnU6ccspsYr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+CuRUaI5pOveQ5gYWDs0ar9x24woUXWyIV8eKAasFkSxqTEc6
+	ZXKhqadskCogh1btc8jIwhSH0X0s2RaLvN++46HJjRHHXkKXt4dR
+X-Google-Smtp-Source: AGHT+IHnnWWxWqwFHUA8ebQJ9jzEPeDxBePOMzMIocOqw7uibyVZhqpa7EYoXeri/foB3J0gggPd5w==
+X-Received: by 2002:a05:6000:18ac:b0:37d:51a2:accd with SMTP id ffacd0b85a97d-381c7973bf8mr145305f8f.0.1730384425443;
+        Thu, 31 Oct 2024 07:20:25 -0700 (PDT)
+Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abc0sm2215836f8f.94.2024.10.31.07.20.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 07:19:45 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 31 Oct 2024 15:20:10 +0100
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 03/12] dt-bindings: pci: Add common schema for devices
- accessible through PCI BARs
-Message-ID: <ZyOSGgJ4zb31Posb@apocalypse>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <2948fdf8ccf8d83f59814d0b2a85ce8dac938764.1730123575.git.andrea.porta@suse.com>
- <fwqcbnub36fk4abmhbtuwsoxdlf64mx4v65mxahsxmiv2sz6er@bfjddapvb75v>
+        Thu, 31 Oct 2024 07:20:24 -0700 (PDT)
+Message-ID: <4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
+Subject: Re: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and
+ ring_xfer
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Zicheng Qu <quzicheng@huawei.com>, jic23@kernel.org, nuno.sa@analog.com,
+  lars@metafoo.de, Michael.Hennerich@analog.com, djunho@gmail.com, 
+ alexandru.ardelean@analog.com, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
+Date: Thu, 31 Oct 2024 15:20:24 +0100
+In-Reply-To: <20241029134637.2261336-1-quzicheng@huawei.com>
+References: <20241028142357.1032380-1-quzicheng@huawei.com>
+	 <20241029134637.2261336-1-quzicheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fwqcbnub36fk4abmhbtuwsoxdlf64mx4v65mxahsxmiv2sz6er@bfjddapvb75v>
 
-Hi Krzysztof,
+On Tue, 2024-10-29 at 13:46 +0000, Zicheng Qu wrote:
+> The AD7923 was updated to support devices with 8 channels, but the size
+> of tx_buf and ring_xfer was not increased accordingly, leading to a
+> potential buffer overflow in ad7923_update_scan_mode().
+>=20
+> Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the ad7908/ad7918=
+/ad7928")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Nuno S=C3=A1 <noname.nuno@gmail.com>
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> ---
 
-On 08:28 Tue 29 Oct     , Krzysztof Kozlowski wrote:
-> On Mon, Oct 28, 2024 at 03:07:20PM +0100, Andrea della Porta wrote:
-> > Common YAML schema for devices that exports internal peripherals through
-> > PCI BARs. The BARs are exposed as simple-buses through which the
-> > peripherals can be accessed.
-> > 
-> > This is not intended to be used as a standalone binding, but should be
-> > included by device specific bindings.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 58 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 59 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> > new file mode 100644
-> > index 000000000000..e532621f226b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> > @@ -0,0 +1,58 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Common Properties for PCI MFD Endpoints with Peripherals Addressable from BARs
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta  <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  Define a generic node representing a PCI endpoint which contains several sub-
-> > +  peripherals. The peripherals can be accessed through one or more BARs.
-> > +  This common schema is intended to be referenced from device tree bindings, and
-> 
-> Please wrap code according to coding style (checkpatch is not a coding
-> style description but only a tool).
-> 
-> Above applies to all places here and other bindings.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Are you referring to the title being longer than 80 column here, right?
-Because the description seems correctly wrapped... or should I add a
-newline for each paragraph?
+> v2:
+> - Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due to=
+=20
+> insufficient tx_buf and ring_xfer size for 8-channel devices.
+> - Issue: Original patch attempted to fix the overflow by limiting the=20
+> length, but did not address the root cause of buffer size mismatch.
+> - Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno to=
+=20
+> support all 8 channels, ensuring adequate buffer capacity.
+> - Previous patch link:=20
+> https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@huaw=
+ei.com/T/#u
+> =C2=A0drivers/iio/adc/ad7923.c | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
+> index 09680015a7ab..acc44cb34f82 100644
+> --- a/drivers/iio/adc/ad7923.c
+> +++ b/drivers/iio/adc/ad7923.c
+> @@ -48,7 +48,7 @@
+> =C2=A0
+> =C2=A0struct ad7923_state {
+> =C2=A0	struct spi_device		*spi;
+> -	struct spi_transfer		ring_xfer[5];
+> +	struct spi_transfer		ring_xfer[9];
+> =C2=A0	struct spi_transfer		scan_single_xfer[2];
+> =C2=A0	struct spi_message		ring_msg;
+> =C2=A0	struct spi_message		scan_single_msg;
+> @@ -64,7 +64,7 @@ struct ad7923_state {
+> =C2=A0	 * Length =3D 8 channels + 4 extra for 8 byte timestamp
+> =C2=A0	 */
+> =C2=A0	__be16				rx_buf[12] __aligned(IIO_DMA_MINALIGN);
+> -	__be16				tx_buf[4];
+> +	__be16				tx_buf[8];
+> =C2=A0};
+> =C2=A0
+> =C2=A0struct ad7923_chip_info {
 
-Many thanks,
-Andrea
-
-> 
-> Best regards,
-> Krzysztof
-> 
 
