@@ -1,151 +1,182 @@
-Return-Path: <linux-kernel+bounces-390435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247479B79D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:38:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5577A9B79DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29E61F24A4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:38:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AA7B22012
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEB119B595;
-	Thu, 31 Oct 2024 11:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F242A19B3E2;
+	Thu, 31 Oct 2024 11:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="J4wFSb9v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YSWouGBP"
-Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7MJdVaG"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A548919AD7B;
-	Thu, 31 Oct 2024 11:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299E519AD48;
+	Thu, 31 Oct 2024 11:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730374686; cv=none; b=gWjAUunUa+XjsTQVxpOvnxWgyJ38T+/9VNJ4ASiFoosPOHPWbMJAG9678akrxNKWN+X2QjJUXXLFj/3HLAuMNBVSds25r/o0uhuxiaScrhdoHFMBOABSW6rWhMAHEvNE+CS/orY0J0s5+tzfM+XQRn+Zh6sNSrfmjLOVL5ucNHQ=
+	t=1730374878; cv=none; b=h5sFfVM1pTvOi7XFJK9RBM1uZOFvT35FTcDOMfAMQWSKy6VmverL9xcOJVkuaGMoXCNt4fKE7nBSSul1WCPGmgqZJLm4lhrZA9BWVhZvHvCDYfCzqLblpCMz8OQi4ah397+rshD03XJSKiy9PYhuhB0yKf0MIdfVR9FvHQ8GoSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730374686; c=relaxed/simple;
-	bh=+2ezm7ikVucZRjDp6jFTKSXMVY5RmXRwW8UnOs7DnYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3k2hfWKOvsQ2x4a3licqZ9r5bdZhNDqbLpQG4cX57IgdVJNU85dTJe6iNZoT5yoPhrCEQ61ViGfKy3wQ3zBJSbB85xk/II+olpMKX28NYpB8buRPOYwqmIX60AjJMGk8uMXQYaBZ3d33SQcKxhOrGh9Iims4C92ucTbPAl4MNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=J4wFSb9v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YSWouGBP; arc=none smtp.client-ip=202.12.124.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailflow.stl.internal (Postfix) with ESMTP id 3CA761D40124;
-	Thu, 31 Oct 2024 07:38:02 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Thu, 31 Oct 2024 07:38:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730374682; x=
-	1730378282; bh=TNLMgpoB1+iWpOPaw3Q130oc/9fY2QyTB1Nrw4iWw7Y=; b=J
-	4wFSb9vij9wJagIGTAwjZ5II3rw9gI6oaKM1uOYXkJH3Whx+p+ti4Q+FDycKchZE
-	t7/ewJNUuKAVZzTSapqYVvf3navn71aevh4ST+adKu3NMFOZVmasi6OswSo3hUCM
-	WQIhqmfomZyIrkW/6OXd3Mp+8Pc9KTo5kL9JEOlJijAYyrqZLjx1fau8dpfOGUVW
-	Jn10d9N2sSM7PetFgPWTlTGmGA9c/UUsKhn1Fz29H66bl2Fdjevuy7EtCA2wGg+z
-	fUTNOTOU35IhukGvsyS3CvN7xmtflPtS8rWaC5UUzUJrCmVs7/5zaAl3Rvx2AQzh
-	BY2VkyzFJlWcRge3AfXbw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730374682; x=1730378282; bh=TNLMgpoB1+iWpOPaw3Q130oc/9fY2QyTB1N
-	rw4iWw7Y=; b=YSWouGBPqA0WW4YbxjcBVOvN/O7QhOQyIaSnyzYcbfv40yJiAhx
-	ZwAP5UNbpG5v2hXkcf7YPfm4kIYmV1DQto5cpEORvPX0W4PKfGgPfX0DGw0jqjxM
-	tX1FI2fPVa+FbHuQPOyQQxIKCwvBfPlgzNdm1+ugh3J/wxeAdX4L+G5u29sjNs53
-	Sw1bxY4KDU/Ta0KSdwGTmwddt/R9pAjUuFdRftcCdD9AmNhNhUqGnq/eg60fXDR3
-	UbBk4g1kerTN5J2fsjstrcD0zBypgW67ydPdtfp+2fLR2J1tN6+G/wOKn6Mz1/LS
-	XW0FwfwzGSJv/Xft3PLTZI8QF6IrAxmq9Vg==
-X-ME-Sender: <xms:GWwjZxCdZFecVJaTxPc3O3PBYhLf9t7b1PQgq6CgXa7aXqzJV5_Wsw>
-    <xme:GWwjZ_hbqY1eodqqtqbuycw47ue9Qm7s43ei4VSdJYA-sDYaE73SMsu9tX4MrTctP
-    n_cFECfYp_laERoMvE>
-X-ME-Received: <xmr:GWwjZ8lQvUmyRa4rtdv4pFmRrV2HO3-efH1Av4OSCZeEQGTMm3wCcWTi2K2T>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekhedgvdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
-    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfek
-    geetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnthhonh
-    hiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhg
-    lhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhh
-    uhhnthgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdp
-    rhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehnvghtuggvvh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:GWwjZ7xnX4g9sGsfueA5YeryZ9AxtW_J0s9a4UxLJXWN4d1RWHUy8g>
-    <xmx:GWwjZ2TXZa15e2xv1xbdb19xxAg92nqqEolOSYugi4rd5Aq8UOGzFg>
-    <xmx:GWwjZ-Yp9xw0dSeY8OM_ImII2S79R8iSiZmRedoixJI_S9gVeRjJiw>
-    <xmx:GWwjZ3QMh-taBfW19_Q6-MGcfA8W-4AR44nOrliUksbJu-UjPbMRnA>
-    <xmx:GWwjZ5H9dWbKWOg8maVDdJbw6vE9WWxXtkTXFedm_K_SzO6KUoeGaZZq>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 31 Oct 2024 07:38:01 -0400 (EDT)
-Date: Thu, 31 Oct 2024 12:37:59 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 11/23] ovpn: store tunnel and transport
- statistics
-Message-ID: <ZyNsFyx3fUtVxSSy@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-11-de4698c73a25@openvpn.net>
+	s=arc-20240116; t=1730374878; c=relaxed/simple;
+	bh=qs/vs5euDjjwFioyX5BytC1xNzDzmT8fgcVHapa7FPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OJt4XcOLRH6o7N+ULsom9illlSoEDdK2Td0FSEXKj6QAzBDeJ/WNkIqj0PNBUurEN+ankFAV3i1Ov9+83f24y7c83FWKPU0fmTvSTyTMuSt2yG3aFL38LCuydW7w74h/Bf/Kex0B9lop+wW40Dd+gKioS3Kdu4W35R21W3cnkFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7MJdVaG; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so7238195e9.1;
+        Thu, 31 Oct 2024 04:41:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730374873; x=1730979673; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p3aW+8vTh8hvIzvALduxjp4emnARDKQVvsl7R/XJ6jc=;
+        b=Y7MJdVaGIRPibTxhf9roOiu/61hJg4RWiWmsQ96QOv8rEeeU0X7MyMdrXp/8M7rbyc
+         lDWW5PZqYTfSFtUPNTpvhUDZqOMoeB2GGSdbI4y9xYF2Jc70kQWWCcP118SwKcdcJup0
+         iC/vHCHcaRR8j+F/o4/W9L+eYtAwIpCaq+pVrMSKlK4/zr0N/SzVSeEnzgamJ9XHsij3
+         fKtExCMPNq1yTF9oNr7hCH0OhGdJr/GXMkE2+T2e0os9AvqVXC5OZU5hRWWHFHyT/ZMR
+         YqLszApYEt8XOh+HxxN39x4EEooErgvCFHJBQ5OivjWRhurM3lYV5WL9gAkP4Au6U8eS
+         6NEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730374873; x=1730979673;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p3aW+8vTh8hvIzvALduxjp4emnARDKQVvsl7R/XJ6jc=;
+        b=rD7TSY1pWHYZAxoJSAh/aaeZ8zu1+FZrMjAOribyvduWbX4SdGJH/BAexdPIJoluym
+         zYeWLARrNQZ61GMZIhfkyoedHv/1fvar8k47URRx54GbuPY+YTeXOQsJDmetB0MHtPH0
+         HDNZKd/Dkx+gS/t+MJ4MFIlVayKc8UI0oPAayE3E3rcfZFtMZmdy104z+Yuh8ErWMsYl
+         FWdr/I/alsnb5EBLGTrAxzLHeIMTcFqFpIlQJPSt1A+k1DXp6omf3V17D88CmATq5G+I
+         BNpF4TLuS35SYP1WehWCydYuzzFeDdAA5eNfz15U9YtVdNrHlNBsArXiaNDvC4MV4t8s
+         aXgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBcz5NRc6PEoGrI2osSRZfPHwROGfAwSZR6nVaFXHQdjBZcOxl7Ok0tlwdLuavkHFzZ+oUNhUWWxbHmpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySS3fgKTSpkC5CgzUhFRfYTopfAcEsC8yWg2ibr7zK/fiZuzZS
+	c5VexpYcJ1O5RUcrAxchQenkWGtr2cdsvmovR1TITgCwHjGICy4n
+X-Google-Smtp-Source: AGHT+IGaRIRBbPwnci1Swwg5WnBbqpRcOMc4XvyHwk+XAykUgcn+Y3pEyVzuQJOxBp4tmJAFEafoEw==
+X-Received: by 2002:a05:600c:3b9c:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-4319ac70754mr182575115e9.1.1730374872840;
+        Thu, 31 Oct 2024 04:41:12 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:d7b9:afdb:c541:d023? (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9aa83asm53718265e9.31.2024.10.31.04.41.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 04:41:12 -0700 (PDT)
+Message-ID: <26d090ef-5630-4afd-8e77-e20019cd018a@gmail.com>
+Date: Thu, 31 Oct 2024 12:41:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029-b4-ovpn-v11-11-de4698c73a25@openvpn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Bluetooth: btbcm: automate node cleanup in
+ btbcm_get_board_name()
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com>
+ <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
+ <aab34ae4-0f6b-4720-b14e-69add0355daa@kernel.org>
+ <07eef877-622a-4651-8a15-9e507146642c@gmail.com>
+ <79c00d2c-8062-4c65-9bdf-1a87e7624e8b@kernel.org>
+ <d9fcd228-8198-4e4c-8752-e950ab598013@kernel.org>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <d9fcd228-8198-4e4c-8752-e950ab598013@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-2024-10-29, 11:47:24 +0100, Antonio Quartulli wrote:
-> @@ -136,6 +139,10 @@ void ovpn_decrypt_post(void *data, int ret)
->  		goto drop;
->  	}
->  
-> +	/* increment RX stats */
-> +	ovpn_peer_stats_increment_rx(&peer->vpn_stats, skb->len);
-> +	ovpn_peer_stats_increment_rx(&peer->link_stats, orig_len);
+On 31/10/2024 12:30, Krzysztof Kozlowski wrote:
+> On 31/10/2024 12:14, Krzysztof Kozlowski wrote:
+>> On 31/10/2024 12:10, Javier Carrasco wrote:
+>>> On 31/10/2024 12:08, Krzysztof Kozlowski wrote:
+>>>> On 30/10/2024 16:46, Javier Carrasco wrote:
+>>>>> Switch to a more robust approach by automating the node release when it
+>>>>> goes out of scope, removing the need for explicit calls to
+>>>>> of_node_put().
+>>>>>
+>>>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>>>>> ---
+>>>>>  drivers/bluetooth/btbcm.c | 8 ++------
+>>>>>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+>>>>> index 400c2663d6b0..a1153ada74d2 100644
+>>>>> --- a/drivers/bluetooth/btbcm.c
+>>>>> +++ b/drivers/bluetooth/btbcm.c
+>>>>> @@ -541,23 +541,19 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
+>>>>>  static const char *btbcm_get_board_name(struct device *dev)
+>>>>>  {
+>>>>>  #ifdef CONFIG_OF
+>>>>> -	struct device_node *root;
+>>>>> +	struct device_node *root __free(device_node) = of_find_node_by_path("/");
+>>>>>  	char *board_type;
+>>>>>  	const char *tmp;
+>>>>>  
+>>>>> -	root = of_find_node_by_path("/");
+>>>>>  	if (!root)
+>>>>>  		return NULL;
+>>>>>  
+>>>>> -	if (of_property_read_string_index(root, "compatible", 0, &tmp)) {
+>>>>> -		of_node_put(root);
+>>>>
+>>>> You just added this. Don't add code which is immediately removed. It's a
+>>>> noop or wrong code.
+>>>>
+>>>>
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>> Exactly, I added that code to fix the issue in stable kernels that don't
+>>
+>> Then send backport for stable.
+>>
+>>> support the __free() macro, and then I removed it to use a safer
+>>> approach from now on.
+>>
+>> This is not correct approach. We work here on mainline and in mainline
+>> this is one logical change: fixing issue. Whether you fix issue with
+>> of_node_put or cleanup or by removing of_find_node_by_path() call, it
+>> does not matter. All of these are fixing the same, one issue.
+>>
+>> If you think about stable kernels, then work on backports, not inflate
+>> mainline kernel with multiple commits doing the same, creating
+>> artificial history.
+>>
+> 
+> And to clarify even more: these stable backports are close to useless,
+> because it does not matter for them. No impact, not much benefits,
+> nothing improved for users/developers. There is no need to backport
+> them, although of course there is no loss by doing so. Therefore entire
+> dance affects mainline kernel without any real benefits for stable.
+> 
+> Your split suggests you don't really know what this dropping reference
+> is for.
 
-[I don't know much about the userspace implementation, so maybe this
-is a silly question]
+Such splits were suggested in other threads, and they came exactly for
+those reasons: they could not be applied to stable. That was not my
+first approach, which was just using __free() to fix the issue. I am not
+looking forward to inflating any history, as that's in the end more work
+for me.
 
-What's the value of keeping track of 2 separate stats if they are
-incremented exactly at the same time? Packet count will be the same,
-and the difference in bytes will be just measuring the encap overhead.
+If a simple patch that adds the cleanup attribute is enough, that's
+awesome. I will go for that approach for all cases then, and use your
+explanation as a reference if I am asked to split the fix again.
 
-Should one of them be "packets/individual messages that get received
-over the UDP/TCP link" and the other "packets that get passed up to
-the stack"?
+> Best regards,
+> Krzysztof
+> 
 
-
-> @@ -197,6 +206,8 @@ void ovpn_encrypt_post(void *data, int ret)
->  		goto err;
->  
->  	skb_mark_not_on_list(skb);
-> +	ovpn_peer_stats_increment_tx(&peer->link_stats, skb->len);
-> +	ovpn_peer_stats_increment_tx(&peer->vpn_stats, orig_len);
->  
->  	switch (peer->sock->sock->sk->sk_protocol) {
->  	case IPPROTO_UDP:
-
-And on TX maybe something like "packets that the stack wants to send
-through the tunnel" and "packets that actually make it onto the
-UDP/TCP socket after encap/encrypt"?
-
--- 
-Sabrina
+Thanks for your feedback and best regards,
+Javier Carrasco
 
