@@ -1,185 +1,183 @@
-Return-Path: <linux-kernel+bounces-389837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAB69B7214
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1351D9B7216
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4422867B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62E9285E55
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C3A823AC;
-	Thu, 31 Oct 2024 01:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8810178B60;
+	Thu, 31 Oct 2024 01:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S6EPMqUn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="btAST+VR"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE0417557;
-	Thu, 31 Oct 2024 01:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2681802B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 01:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730338928; cv=none; b=sR90fS5myBszyjLVx3+BIOcXWvS7uNffyqBW53g6IBsGyZxlnj0R9LVFD2GJxwcleNXfBZGVhiOBPQ8uiBTkjzQvILInnhuSveQqAbriuh5XqXjbVYRK1LPGLGxm0e5ly8Gw8FWG2GZZhiWGsLz6on+NRa6EVdnKruPUOWWTlnU=
+	t=1730339001; cv=none; b=K4TFX7Oz2wmm7AiFYrP1PDU5Isn4ikKZ2hmdXbRgG/QzEYWeARtYHpQAw7Yb+zt1UUrCzpFi59kwRxt72vIHG7i+6RhJsHFKPleHyz6rCjQYDrdfsZYARxqzLW2CsOAEtuD8OWkJvOwWW997O3VC9gkjQczjcwe0lTXftPIz8RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730338928; c=relaxed/simple;
-	bh=uiuGDGOOsQVFk2/pTqh06oxqVDJv0u7YalXmTsxrZn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jyvuSrXG6x1IKL/jltrB/QhxWzrmbvfw6gUd4fnzF4VGhanJ8OrmBqcxd9aF8KiV1WAY4I3Y45ypRtsml78qzYzV1u8CO+Qr4MNej8SyRUoUm95aS9D44YH8hQO9qpQF6g4uHoMlXBXPmlCoZOCUCflJjXYK0NnvuZTeSXkvsJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S6EPMqUn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=fq4kJNH2CAE848TPhhysdxKjBpD694h5FnzeuEmb1qg=; b=S6EPMqUnjSMOY2vNcllwd8p6Ox
-	BPtRyDbTyKdeu8zN7/wLUeNEzO4yOt1VTpHholffpA3y2fXCRmfGBwbaq+MhS7i6uXvZPqK8EWMf1
-	vdnR+ykKcs42+hETXuNdH86QIsFdTsFb5DdA2bI/GBKPhibpWGo8LZ3PBdnL6MNt66IGi5rIDxwfh
-	Nm4PIrdldIDwzVjNZc3a6VarZ5m10jD/+0k0wQ6vaP/5ECeWPGuh0sdOuXzd7qA+HFGDz97uZOAV8
-	aVCodx/6OFerCofoyBUjDKwTi3nqK7mNz0BN5W9cwhuz4xTFN0XerCsGsF3834u0w+0svVHPsvvbO
-	Jz1tZyPw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6KBm-0000000E8Yj-17R7;
-	Thu, 31 Oct 2024 01:41:31 +0000
-Message-ID: <19cf7d58-4a28-4ce8-9524-8c99fdc79062@infradead.org>
-Date: Wed, 30 Oct 2024 18:41:21 -0700
+	s=arc-20240116; t=1730339001; c=relaxed/simple;
+	bh=YfcM0Xrt0PalwpXImDWKF3dTRPshhIqm6qd/DaBm8gw=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=iOy//EseExYBd//f1+QuRj2SJYUwRJ6s+WwNZ/1Bzu6TXJYkNEe7Lpmqi/cCObmJKy3pJjEwLrz5BxO2XX/XH9Zfapcx6BQ67h6r0kY/Kke2ujMfowamDNrFudu11zcWsQWACTTTtkIf9sGZGMkwSSCh0FaOTxgqd69t8eX2nk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=btAST+VR; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e321d26b38so8917777b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 18:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730338999; x=1730943799; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZtNNxKnf46vb/RPjOvFlimy8+1dXdMuSuVfKG4urPBw=;
+        b=btAST+VRnyIQYLexBVagWnf2sxtnzraCHuAfQXB81YkUaE/FPxBuR/vc0F1Bm5WJTn
+         BDhq8pvM9RjHP3aqKq17WYvl9i5/M44k0ZPgep20fQtdvANRg3EwHZYoK89+3sKSqS51
+         7/AjXMBYRqViPwNtvATrwiaA7Nrgb3WmS0YXO5eBmRlL1+Z6uzu6WXyb9tgtojUa61KW
+         QPnhGPfpW1r34ILK93/b/JyyN27z/AhofipV08oaAjlwhyVPnws2awDMVdAfCptURcrA
+         9yk1gdfvQWTR94eYgupFm5LasfHta0uSfW168VS/BLEdJzixcWxVuosDQHu1DNxlXOm1
+         QzEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730338999; x=1730943799;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZtNNxKnf46vb/RPjOvFlimy8+1dXdMuSuVfKG4urPBw=;
+        b=Te2GIRsnJmPBnBo/jXgX6Nq0LMDutexQKoEJDo5siyIY4UVLF84/OcDFH1aARtFIR8
+         mr9tgf9pWZChiEoAF6qznN00mKt6DSpxbYkMPKigkVfo1Tj+OdQiQHaKFsRxC3YWYtse
+         TD/k8aEAsWKTnkTnrmwKB+dBDsDhXw4EZEkV3413xOKe4Agq9wBmqgLdyVJJdljOQ1TK
+         Lw3EEPvOza7IT/TzINBZYIINdqv78xijQgOp7+6WkBIizOfwhn1FGj/97ymizZT64pp2
+         wqex8u7MT/82P8jgUQ7oHin4VNh14t3kJy5aKuLl0VS2xU6eh4ABojIkiESvwMBSfvbq
+         7m3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU8nu9yA0kYfafrxWaRrF0hMrncXRnKxisv3S2UKFOgSmWdRZ79uM9j9UaS0NuhzZEb6WlW49b0/36cv3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAxpb9ytqL6AaI8aSirVJa26tHukpLvHp4gItF6UX6ZTyK4rYS
+	t8NaCY8wibFGrQJ7XFaET1Hqz0jzIdmB4JFrqbCK4Xm4fuA9FiVUW6/95fGNPoVSPo8R1rQ9Jiv
+	b5ZiV+A==
+X-Google-Smtp-Source: AGHT+IHP52gG9qo1zc0+AD6vEbyOjx2Zq87cXbTJCMawo9GqyrUTETA4YlZ8aJvCxuAtan7BbQmEMYs4JNIi
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ad0f:67e7:f1a6:84c4])
+ (user=irogers job=sendgmr) by 2002:a05:690c:67ca:b0:6e3:d670:f62a with SMTP
+ id 00721157ae682-6ea52518e31mr38777b3.3.1730338998359; Wed, 30 Oct 2024
+ 18:43:18 -0700 (PDT)
+Date: Wed, 30 Oct 2024 18:42:31 -0700
+Message-Id: <20241031014252.753588-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 09/17] docs: core-api: document the IOVA-based API
-To: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Cc: Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
- iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1730298502.git.leon@kernel.org>
- <881ef0bcf9aa971e995fbdd00776c5140a7b5b3d.1730298502.git.leon@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <881ef0bcf9aa971e995fbdd00776c5140a7b5b3d.1730298502.git.leon@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Subject: [PATCH v5 00/21] Python module cleanup
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-(nits)
+This patch:
+ - removes workarounds for Python 2 module support due to long
+   deprecation and challenges in developing new code;
+ - constifies variables and parameters to functions;
+ - removes python.c stub code which existed due to missing functions
+   that are defined in the builtin-* files, in general the builtin-*
+   code is moved into util;
+ - remove bench and test perf C code from the python module;
+ - adds parse_events to the python perf module.
+ - improves upon some of the existing python perf module functins.
 
-On 10/30/24 8:12 AM, Leon Romanovsky wrote:
-> From: Christoph Hellwig <hch@lst.de>
-> 
-> Add an explanation of the newly added IOVA-based mapping API.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  Documentation/core-api/dma-api.rst | 70 ++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
-> 
-> diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/dma-api.rst
-> index 8e3cce3d0a23..6095696a65a7 100644
-> --- a/Documentation/core-api/dma-api.rst
-> +++ b/Documentation/core-api/dma-api.rst
-> @@ -530,6 +530,76 @@ routines, e.g.:::
->  		....
->  	}
->  
-> +Part Ie - IOVA-based DMA mappings
-> +---------------------------------
-> +
-> +These APIs allow a very efficient mapping when using an IOMMU.  They are an
-> +optional path that requires extra code and are only recommended for drivers
-> +where DMA mapping performance, or the space usage for storing the DMA addresses
-> +matter.  All the consideration from the previous section apply here as well.
+v5. Rebase. Fix NO_LIBBPF and NO_AUXTRACE related build failures
+    caught by Arnaldo and the build-test. Fix NO_AUXTRACE x86
+    arch_fetch_insn in the process, which was incorrectly using an
+    empty weak symbol stub.
+v4. Rebase. Fix the parse events evsel to be embedded in a
+    pyrf_evsel. Add __str__/__repr__ functions to evlist and
+    evsel. Throw an exception for a bad evlist index.
+v3. Move is_directory_at to patch 6 rather than patch 7, respond to
+    review feedback on the list from Namhyung.
+v2. Add the bottom 4 bullet points - 13 more patches.
 
-                    considerations
+Ian Rogers (21):
+  perf python: Remove python 2 scripting support
+  perf python: Constify variables and parameters
+  perf python: Remove unused #include
+  perf script: Move scripting_max_stack out of builtin
+  perf kvm: Move functions used in util out of builtin
+  perf script: Move find_scripts to browser/scripts.c
+  perf stat: Move stat_config into config.c
+  perf script: Move script_spec code to trace-event-scripting.c
+  perf script: Move script_fetch_insn to trace-event-scripting.c
+  perf script: Move perf_sample__sprintf_flags to
+    trace-event-scripting.c
+  perf x86: Define arch_fetch_insn in NO_AUXTRACE builds
+  perf intel-pt: Remove stale build comment
+  perf env: Move arch errno function to only use in env
+  perf lock: Move common lock contention code to new file
+  perf bench: Remove reference to cmd_inject
+  perf kwork: Make perf_kwork_add_work a callback
+  perf build: Remove test library from python shared object
+  perf python: Add parse_events function
+  perf python: Add __str__ and __repr__ functions to evlist
+  perf python: Add __str__ and __repr__ functions to evsel
+  perf python: Correctly throw IndexError
 
-> +
-> +::
-> +
-> +    bool dma_iova_try_alloc(struct device *dev, struct dma_iova_state *state,
-> +		phys_addr_t phys, size_t size);
-> +
-> +Is used to try to allocate IOVA space for mapping operation.  If it returns
-> +false this API can't be used for the given device and the normal streaming
-> +DMA mapping API should be used.  The ``struct dma_iova_state`` is allocated
-> +by the driver and must be kept around until unmap time.
-> +
-> +::
-> +
-> +    static inline bool dma_use_iova(struct dma_iova_state *state)
-> +
-> +Can be used by the driver to check if the IOVA-based API is used after a
-> +call to dma_iova_try_alloc.  This can be useful in the unmap path.
-> +
-> +::
-> +
-> +    int dma_iova_link(struct device *dev, struct dma_iova_state *state,
-> +		phys_addr_t phys, size_t offset, size_t size,
-> +		enum dma_data_direction dir, unsigned long attrs);
-> +
-> +Is used to link ranges to the IOVA previously allocated.  The start of all
-> +but the first call to dma_iova_link for a given state must be aligned
-> +to the DMA merge boundary returned by ``dma_get_merge_boundary())``, and
-> +the size of all but the last range must be aligned to the DMA merge boundary
-> +as well.
-> +
-> +::
-> +
-> +    int dma_iova_sync(struct device *dev, struct dma_iova_state *state,
-> +		size_t offset, size_t size);
-> +
-> +Must be called to sync the IOMMU page tables for IOVA-range mapped by one or
-> +more calls to ``dma_iova_link()``.
-> +
-> +For drivers that use a one-shot mapping, all ranges can be unmapped and the
-> +IOVA freed by calling:
-> +
-> +::
-> +
-> +   void dma_iova_destroy(struct device *dev, struct dma_iova_state *state,
-> +		enum dma_data_direction dir, unsigned long attrs);
-> +
-> +Alternatively drivers can dynamically manage the IOVA space by unmapping
-> +and mapping individual regions.  In that case
-> +
-> +::
-> +
-> +    void dma_iova_unlink(struct device *dev, struct dma_iova_state *state,
-> +		size_t offset, size_t size, enum dma_data_direction dir,
-> +		unsigned long attrs);
-> +
-> +is used to unmap a range previous mapped, and
-
-                            previously
-
-> +
-> +::
-> +
-> +   void dma_iova_free(struct device *dev, struct dma_iova_state *state);
-> +
-> +is used to free the IOVA space.  All regions must have been unmapped using
-> +``dma_iova_unlink()`` before calling ``dma_iova_free()``.
->  
->  Part II - Non-coherent DMA allocations
->  --------------------------------------
+ tools/perf/Makefile.perf                      |   7 +-
+ tools/perf/arch/x86/util/Build                |   2 +-
+ tools/perf/bench/inject-buildid.c             |  13 +-
+ tools/perf/builtin-kvm.c                      |  61 ----
+ tools/perf/builtin-kwork.c                    |   3 +-
+ tools/perf/builtin-lock.c                     | 137 +------
+ tools/perf/builtin-script.c                   | 304 +---------------
+ tools/perf/builtin-stat.c                     |  27 --
+ tools/perf/builtin-trace.c                    |   1 -
+ tools/perf/builtin.h                          |   6 -
+ .../scripts/python/Perf-Trace-Util/Context.c  |  20 +-
+ tools/perf/tests/stat.c                       |  16 +-
+ tools/perf/trace/beauty/arch_errno_names.sh   |   3 +-
+ tools/perf/ui/browsers/scripts.c              | 177 ++++++++-
+ tools/perf/util/Build                         |   4 +-
+ tools/perf/util/bpf_kwork.c                   |   2 +-
+ tools/perf/util/bpf_kwork_top.c               |   2 +-
+ tools/perf/util/bpf_lock_contention.c         |   2 +-
+ tools/perf/util/cgroup.c                      |   2 +-
+ tools/perf/util/config.c                      |  27 ++
+ tools/perf/util/dlfilter.c                    |   3 +-
+ tools/perf/util/env.c                         |   4 +
+ tools/perf/util/env.h                         |   2 -
+ tools/perf/util/evsel.c                       |  19 +-
+ tools/perf/util/evsel.h                       |   2 +-
+ tools/perf/util/intel-pt-decoder/Build        |  18 +-
+ .../intel-pt-decoder/intel-pt-insn-decoder.c  |   3 -
+ tools/perf/util/kvm-stat.c                    |  70 ++++
+ tools/perf/util/kvm-stat.h                    |   3 +
+ tools/perf/util/kwork.h                       |   6 +-
+ tools/perf/util/lock-contention.c             | 170 +++++++++
+ tools/perf/util/lock-contention.h             |  37 +-
+ tools/perf/util/path.c                        |  10 +
+ tools/perf/util/path.h                        |   1 +
+ tools/perf/util/python.c                      | 338 ++++++++----------
+ .../scripting-engines/trace-event-python.c    |  63 +---
+ tools/perf/util/stat.h                        |   3 +-
+ tools/perf/util/trace-event-scripting.c       | 177 +++++++++
+ tools/perf/util/trace-event.h                 |   5 +-
+ 39 files changed, 872 insertions(+), 878 deletions(-)
+ create mode 100644 tools/perf/util/kvm-stat.c
+ create mode 100644 tools/perf/util/lock-contention.c
 
 -- 
-~Randy
+2.47.0.163.g1226f6d8fa-goog
 
 
