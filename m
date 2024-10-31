@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-390141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C25D9B7615
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:10:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4889B75F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF924B211BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20374285FD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 08:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB780153836;
-	Thu, 31 Oct 2024 08:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467DE1547ED;
+	Thu, 31 Oct 2024 07:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="jP1K4KOJ"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSE0qfi9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D6D13B592;
-	Thu, 31 Oct 2024 08:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8248314D2BD;
+	Thu, 31 Oct 2024 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730362213; cv=none; b=duRxPZhJDDcDwRhY/06kPf3C3Lpf92vCFcMsFtN3lwg8ocnH7z0MGrChetF1shoVJO6Sl6vcPMIcsPUQY1rmMD134AI47zuTcX/wnd0BTcW/zkpceRk4w3QPMoACypyJ9sXaPiNz+q3GRt5anCyG6vu3/IkQjCNwYvHgUSUMSK0=
+	t=1730361574; cv=none; b=i7N6c3wlAu6Ko939RcrInEo/CXNNxvXvDyC/rrPZeZj2gQwJ0uJFagrSzR/YpozNJtd7tu76zZ3nERmRaBsazblCJbVJ4iyskMWj5myvbbcl1ItUkQ+F83wmj0icyfpc7dn9oo9rYr45eBtV1kX6iFEinnCyHGRATOTE3Eo8hDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730362213; c=relaxed/simple;
-	bh=u0zFcieJJl0UQTPUsFEEH8w12flh7zNg0ag0l4Sfq6k=;
-	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
-	 Content-Disposition; b=pTDLZTMqaQNDSy2H8Z/2RcVguEm7cfytH1sLx13sP2Dwod9VBUIxU2PMkTPOMRwD5VioR+etcA5KLy6B1odyzKStqV3Wb8sl0SlnPIXsWq8gAT4MYuw7cBrKk/it4qoMc7wiexYZP2BV7CURu4bhQITRFEf5BFtp+GxXKaRkB6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=jP1K4KOJ; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1730361902;
-	bh=qUbaFb4MFBE/T7Ht8F3AzaMcELszwC4DmF2bIEdangs=;
-	h=Date:From:To:Cc:Subject;
-	b=jP1K4KOJeekM3nPqKdua/QGr6nPwylx1Ikl/EqIzlnYgI2WqkMi/U3Ebz0suLWgYX
-	 AsFAJbVCz9cmNfTSoyeYNEVGB21AivQ514/3mZq8DchgiU/c+x9/Ro/JHwv6NL25ZN
-	 JCR33V5xuB6hCE7ij+Fqbd95prZGNJ7FO06E0vCY=
-Received: from localhost ([223.70.160.239])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id EB12561D; Thu, 31 Oct 2024 15:58:49 +0800
-X-QQ-mid: xmsmtpt1730361529t99aoe8ge
-Message-ID: <tencent_99262A4B390D43E22441268D3D8CC0AF2E05@qq.com>
-X-QQ-XMAILINFO: M9VsxC5s0NEwFtHcyBd85QE1DUV1fQrmY0tQ+gIl85UsPr34Dk9SMUBfjr/mXc
-	 4e3+ebYpzUZRrebZXm2YYpYhGY0s8mTKXH1mEhQjD7s37houAa1xKf3+N4UhG1CKhuAg/hqlQBhm
-	 bwCWmoOAQAV445XKIEvgMETXEOZ4VsBFegw6japE9w0JOX3zwGfVZJtTczCCafyEJD9mQDxOgQED
-	 PHAwvkzmo+qJ8fEY7gJIbTJl6eFViIlAeeRI1H4SC/cDUD2gL8P4P/bs3K4gg+yZiILJXxuuGsQ7
-	 q25cUNHlPFMhSSNlcoBdrAefUUtWjs3OyedhpTkq+weHFaA0bXwSNBT7DkUEaqWgues6PSWkt8AP
-	 uLL84MHX8HlVD7ppucUai0Xdcd1wZo9pd3yG0O4Ab/c549AMc0R16yXa3NqtXWNVyKu+08BUYVuJ
-	 YUy4QHDVcAX8aJmGpwDFT5mzZhEPnoIDvodlUBstrqYOjtbN5uOTYSFTKNN2P/z8fy703ts6BKi8
-	 oYPdGQeTf6qVvxvL60+XCycfxa95fYZ0kYFqRoPAM5ARHAoEv4Vjo07lSxXDCBUSkcf9SOreZrsn
-	 9AySzJJhk+DCeNVNsPETuw70lWdJKbTSu9JeLa+BhkFRiE4Qd6RmuR8PLO+Mw3Zzz2ROQQugSpqy
-	 0ETDS2hrL9lWN+08fueqdW4xySgS+7u8r6SArmD9RTwonWfbx0RBhBteIiNx7jK3xYu3Gx5j6NTD
-	 v1+MhjYLC8jJRmB/3GDonCmvCsadGPrTVOYOs29X99SeUJ8EC07NaYxQj4oYo/p/JgHTVLSoRIa9
-	 DA1pxTLDmfv5d5YMfhF/MTyFNYR2Zjp/uoOoxJm6GPRafRQcWQxgplY2GETXpDdUVkIBTANt+Hhk
-	 qhh6ct4rQzNf7e5Cd/4SyPRkM6eTXiLrZN/qc0c6UCV5ivMic4KXe8+UgQeKn+X2nDPcwxpvAXHT
-	 N7O63/Eh5DNNU3okhBQ9oOTHhRQ+YLve/7+0Q+qGx3fg4t01UBUoXUuOoHxo5T/LSENolhGmEECw
-	 iR8fsMRG3yTPa89C5UT01Ky48jYPzb7c2kdDwvpLbizvfZ+V95bKkQuYH8Sg0=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-Date: Thu, 31 Oct 2024 15:58:49 +0800
-From: Gang Yan <gang_yan@foxmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Inquiry Regarding PXE Installation Issue with Network Driver
- Configuration
-X-OQ-MSGID: <ZyM4uTK5OUiOLEJz@yangang-TM1701>
+	s=arc-20240116; t=1730361574; c=relaxed/simple;
+	bh=r4WvFfTJfMdRUmFzrlSoIGEf8BKQg/IhRD4qnokJQvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsnBx/V7/NQ5tIcul5WSbkatoRqNQMlug8lvecIHPIJ8ogC+GOg9YuGCC6JB0uzN1sdLUvN0Xk7YpsKIa9jeoOEBfhrOV6biQWi5vpQfR2S++TQcyQqlpsT5m1kf/fymy3cybNCLslirgt/Jptpa7Pm6wgWtp5Rae0L4hlL57GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSE0qfi9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31A22C4CEC3;
+	Thu, 31 Oct 2024 07:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730361574;
+	bh=r4WvFfTJfMdRUmFzrlSoIGEf8BKQg/IhRD4qnokJQvg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YSE0qfi9lLOBn1EH9BGdBYxYLpBIBHIK0QaNCb5Z2f/3ZU0SiPGduT5S8BZpZzVhE
+	 QsE8znEvky7HGyINHWNHZtUimXc0OyWjetPBBGPw4IpeX6whHRZ0Squq75I9D2OXoh
+	 Dj4A2PcDjtD53WxZ8CfoENNGNXS3uZ1vTjYJ05qe8rdIM0RAaKg01VZUsT2btH90gN
+	 3IfJ20Y+iAFHW1y+lpY5HZMEPNs5tEjpoTUkB7qMwux7hxpqN1+o4tJ7RVpOBKxrIT
+	 w9KRIYFGI2KFLA4w2wF7IkinK0w9y+ewKYwfXPBFWw7JG53t4IL192NVOKYAlQAK8j
+	 0+j+mdz3I8PxQ==
+Date: Thu, 31 Oct 2024 09:59:28 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 09/17] docs: core-api: document the IOVA-based API
+Message-ID: <20241031075928.GA7473@unreal>
+References: <cover.1730298502.git.leon@kernel.org>
+ <881ef0bcf9aa971e995fbdd00776c5140a7b5b3d.1730298502.git.leon@kernel.org>
+ <19cf7d58-4a28-4ce8-9524-8c99fdc79062@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <19cf7d58-4a28-4ce8-9524-8c99fdc79062@infradead.org>
 
-Dear Maintainers:
+On Wed, Oct 30, 2024 at 06:41:21PM -0700, Randy Dunlap wrote:
+> (nits)
+> 
+> On 10/30/24 8:12 AM, Leon Romanovsky wrote:
+> > From: Christoph Hellwig <hch@lst.de>
+> > 
+> > Add an explanation of the newly added IOVA-based mapping API.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> >  Documentation/core-api/dma-api.rst | 70 ++++++++++++++++++++++++++++++
+> >  1 file changed, 70 insertions(+)
 
-I am writing to seek your expertise regarding an issue I have encountered 
-recently while using PXE (Preboot Execution Environment) for system 
-installation.
+<...>
 
-Specifically, the problem arises when the PXE network card driver is 
-compiled as a kernel module (.ko file). During the installation process, 
-the kernel gets stuck in the 'ip_auto_config' stage, waiting for the network
-interface to become ready, displaying the message "Waiting up to xx more 
-seconds for network." However, it appears that the system does not proceed 
-to the ramdisk stage to load the .ko driver, ultimately leading to a failed
- installation.
+> > +These APIs allow a very efficient mapping when using an IOMMU.  They are an
+> > +optional path that requires extra code and are only recommended for drivers
+> > +where DMA mapping performance, or the space usage for storing the DMA addresses
+> > +matter.  All the consideration from the previous section apply here as well.
+> 
+>                     considerations
 
-Based on my analysis, it seems that for a successful PXE installation,
- the corresponding network card driver must be compiled directly into the 
-kernel rather than as a loadable module. I would like to confirm if my
- understanding is correct. If so, would it be necessary to adjust the 
-relevant code? Because it is not suitable to compile too much ehernet drivers into vmlinux.
+<...>
 
-Best regards,
+> > +is used to unmap a range previous mapped, and
+> 
+>                             previously
 
-Gang Yan
-
+Thanks
 
