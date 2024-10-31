@@ -1,180 +1,123 @@
-Return-Path: <linux-kernel+bounces-391175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47359B837D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:35:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942FD9B837E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DC41C2102E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491C028207E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FB41CB50B;
-	Thu, 31 Oct 2024 19:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32521CB320;
+	Thu, 31 Oct 2024 19:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPjKOWLu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I6gpoXGk"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049251CB320;
-	Thu, 31 Oct 2024 19:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415DF1C9DFC
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 19:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730403298; cv=none; b=c/lazZDNwF2QD/X68/tdK29H5wGkEDT+fZOzRYAqVHIP73/iT5dpn4brXbeGQXbuUqB0W35Z96Q8Q8+MjZI372imOZEq9HcpKP6VjNm5vQZkFlgzhZpoaI1GcHhzcF0MCH0VryjugnTDyYYDIzsyFZ6YamVkHf5ybJMBzvKbXd8=
+	t=1730403315; cv=none; b=ARL8lQyOxwyyUyah+bu+FG9VK4yNQqHvN/pFSkFLrX9Wg5TsrN/2ub9vB4yW4sNO+Z7ZYdFxURI6UuQ4rixgQyWJjo0gZHi20AGSgmYGMjHrwmqeG+Dnyc4QE1Hp2llxNhwTjUS+6samNvmLCyy0ZjZH39Jq6QzY5AtdDsM/3eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730403298; c=relaxed/simple;
-	bh=KZV72x+uPb/4NWiZ+qO56AMv3VJRMCWlj/lK/kggwCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5/wXeJ4A92YBM6fyGkr4x/5fr9ceLqEIp4BAdyXUYBJ79z+ejz1xfNKJv3ITeCO1zaCS2H2aGn5wylrke2rIicNvSAmovL+6afJCJwdS4GpXZGbRaiNy07a/2VWOuB3fO+G+kdcXUN1VLOaPB13N5fEA4/wj1YVCeVcE1Au5VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPjKOWLu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B52E7C4CEC3;
-	Thu, 31 Oct 2024 19:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730403297;
-	bh=KZV72x+uPb/4NWiZ+qO56AMv3VJRMCWlj/lK/kggwCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cPjKOWLu32tupKE1j2UGTyYe0bkI0cG0tJ/AhgDZbZdHXjnUSBg2hrWP93XIZ0LEU
-	 DJb8dUUrcaseVlz0fqUOUqoQG56I4tSxhQJNd39h646WM0FG/dDAjCcpo6BK56/Hhw
-	 YdsGej0v3/ER/AzSTjOZPVZB3LA6YJXycY+xS2fJdbQ+t8CTNzhgQZakktAtuUn6s+
-	 tI1X4pEpALPI45dqo4uUoBoN4RdfmxsicwnonDpC9iZlTHxzGmVRoUQD0UuGXlTTUl
-	 9HJxxbO0J4OLGbIL7DGGIxyWNq+M/YSF7ivu0B4V4Vnavs5kPLMFUOjVQkyHDEE1Yf
-	 jURp0tk0MD9sw==
-Date: Thu, 31 Oct 2024 16:34:53 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 13/21] perf env: Move arch errno function to only use
- in env
-Message-ID: <ZyPb3ckI9-wRA1hE@x1>
-References: <20241031014252.753588-1-irogers@google.com>
- <20241031014252.753588-14-irogers@google.com>
+	s=arc-20240116; t=1730403315; c=relaxed/simple;
+	bh=BCXAO6MrcBYVJSUeWAqVK0/QIlQriCU+ES43nF0ki/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SIYmUgCrRepLnXUdAqhJV6ENG9+ynWZpYBZKU1YtFRBk9wNFdYQGw0+66yhPCAIJwGml2gmJ5fx7hy8eNtUEg0ovy9cppZVBnQ9VcwQ5agzxpol3iyFFsm05vo1M4LM4n46Z8HO+npfP275dwkZGuvDpNomL/0h5hDFg2k6CRtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I6gpoXGk; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730403310;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7k0lhlqVUH2PRuKZimC+zuSQ9tywYvWdXQj8NJnprjw=;
+	b=I6gpoXGk4WpkxHpqqw7B0hi70vPzUkPh1qxplJi+Yww9CwVFeFqJQDR4mycBdi0D6ZBbqu
+	ccQdynerUPnHzj3IKoShuccqmsyFi7CDokBvhRmxXrKiG2UzT7r4Oxfb+qZt3C3IOqrA9h
+	y9e1FBHwej5C57edUWznZzAULvg9XNc=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: kvmarm@lists.linux.dev,
+	Oliver Upton <oliver.upton@linux.dev>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH v4 00/18] KVM: arm64: nv: Support for EL2 PMU controls
+Date: Thu, 31 Oct 2024 19:34:55 +0000
+Message-ID: <173040329116.3311297.4818685036404939787.b4-ty@linux.dev>
+In-Reply-To: <20241025182354.3364124-1-oliver.upton@linux.dev>
+References: <20241025182354.3364124-1-oliver.upton@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031014252.753588-14-irogers@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 30, 2024 at 06:42:44PM -0700, Ian Rogers wrote:
-> Move arch_syscalls__strerrno_function out of builtin-trace.c to env.c
-> so that there isn't a util to builtin function call. This allows the
-> python.c stub to be removed. Also, remove declaration/prototype from
-> env.h and make static to reduce scope. The include is moved inside
-> ifdefs to avoid, "defined but unused warnings".
+On Fri, 25 Oct 2024 18:23:35 +0000, Oliver Upton wrote:
+> v3 -> v4:
+>  - Align sysreg definitions with DDI0601 2024-09
+>  - Fix 'accessible' counter mask construction
+>  - Fix MDCR_EL2.MTPME RES0 logic
+> 
+> v3: https://lore.kernel.org/kvmarm/20241007174559.1830205-1-oliver.upton@linux.dev/
+> 
+> [...]
 
-Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
- 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/builtin-trace.c                  | 1 -
->  tools/perf/trace/beauty/arch_errno_names.sh | 3 ++-
->  tools/perf/util/env.c                       | 4 ++++
->  tools/perf/util/env.h                       | 2 --
->  tools/perf/util/python.c                    | 6 ------
->  5 files changed, 6 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 748b061f8678..5d0345480140 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -1108,7 +1108,6 @@ static bool syscall_arg__strtoul_btf_type(char *bf __maybe_unused, size_t size _
->  	    .strtoul	= STUL_STRARRAY_FLAGS, \
->  	    .parm	= &strarray__##array, }
->  
-> -#include "trace/beauty/arch_errno_names.c"
->  #include "trace/beauty/eventfd.c"
->  #include "trace/beauty/futex_op.c"
->  #include "trace/beauty/futex_val3.c"
-> diff --git a/tools/perf/trace/beauty/arch_errno_names.sh b/tools/perf/trace/beauty/arch_errno_names.sh
-> index 30d3889b2957..b22890b8d272 100755
-> --- a/tools/perf/trace/beauty/arch_errno_names.sh
-> +++ b/tools/perf/trace/beauty/arch_errno_names.sh
-> @@ -57,7 +57,8 @@ create_arch_errno_table_func()
->  	archlist="$1"
->  	default="$2"
->  
-> -	printf 'arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch)\n'
-> +	printf 'static arch_syscalls__strerrno_t *\n'
-> +	printf 'arch_syscalls__strerrno_function(const char *arch)\n'
->  	printf '{\n'
->  	for arch in $archlist; do
->  		arch_str=$(arch_string "$arch")
-> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-> index ccb464026642..e58f56412fbb 100644
-> --- a/tools/perf/util/env.c
-> +++ b/tools/perf/util/env.c
-> @@ -470,6 +470,10 @@ const char *perf_env__arch(struct perf_env *env)
->  	return normalize_arch(arch_name);
->  }
->  
-> +#if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
-> +#include "trace/beauty/arch_errno_names.c"
-> +#endif
-> +
->  const char *perf_env__arch_strerrno(struct perf_env *env __maybe_unused, int err __maybe_unused)
->  {
->  #if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
-> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-> index ae604c4edbb7..e9db89395dab 100644
-> --- a/tools/perf/util/env.h
-> +++ b/tools/perf/util/env.h
-> @@ -56,8 +56,6 @@ struct pmu_caps {
->  
->  typedef const char *(arch_syscalls__strerrno_t)(int err);
->  
-> -arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch);
-> -
->  struct perf_env {
->  	char			*hostname;
->  	char			*os_release;
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 77e02fcc51dd..35d84a96dbec 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -16,7 +16,6 @@
->  #include "thread_map.h"
->  #include "trace-event.h"
->  #include "mmap.h"
-> -#include "util/env.h"
->  #include "util/kwork.h"
->  #include "util/sample.h"
->  #include "util/lock-contention.h"
-> @@ -1305,11 +1304,6 @@ PyMODINIT_FUNC PyInit_perf(void)
->  /* The following are stubs to avoid dragging in builtin-* objects. */
->  /* TODO: move the code out of the builtin-* file into util. */
->  
-> -arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch __maybe_unused)
-> -{
-> -	return NULL;
-> -}
-> -
->  struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
->  				       struct kwork_class *class __maybe_unused,
->  				       struct kwork_work *key  __maybe_unused)
-> -- 
-> 2.47.0.163.g1226f6d8fa-goog
-> 
+Applied to kvmarm/next, thanks!
+
+[01/18] KVM: arm64: Extend masking facility to arbitrary registers
+        https://git.kernel.org/kvmarm/kvmarm/c/a0162020095e
+[02/18] arm64: sysreg: Describe ID_AA64DFR2_EL1 fields
+        https://git.kernel.org/kvmarm/kvmarm/c/93d7356e4b30
+[03/18] arm64: sysreg: Migrate MDCR_EL2 definition to table
+        https://git.kernel.org/kvmarm/kvmarm/c/641630313e9c
+[04/18] arm64: sysreg: Add new definitions for ID_AA64DFR0_EL1
+        https://git.kernel.org/kvmarm/kvmarm/c/3ecb1fe3842c
+[05/18] KVM: arm64: Describe RES0/RES1 bits of MDCR_EL2
+        https://git.kernel.org/kvmarm/kvmarm/c/eb609638da55
+[06/18] KVM: arm64: nv: Allow coarse-grained trap combos to use complex traps
+        https://git.kernel.org/kvmarm/kvmarm/c/18aeeeb57b93
+[07/18] KVM: arm64: nv: Rename BEHAVE_FORWARD_ANY
+        https://git.kernel.org/kvmarm/kvmarm/c/a4063b5aa0bd
+[08/18] KVM: arm64: nv: Reinject traps that take effect in Host EL0
+        https://git.kernel.org/kvmarm/kvmarm/c/d97e66fbcba7
+[09/18] KVM: arm64: nv: Honor MDCR_EL2.{TPM, TPMCR} in Host EL0
+        https://git.kernel.org/kvmarm/kvmarm/c/4ee5d5ff4b4d
+[10/18] KVM: arm64: nv: Describe trap behaviour of MDCR_EL2.HPMN
+        https://git.kernel.org/kvmarm/kvmarm/c/336afe0c832d
+[11/18] KVM: arm64: nv: Advertise support for FEAT_HPMN0
+        https://git.kernel.org/kvmarm/kvmarm/c/166b77a2f423
+[12/18] KVM: arm64: Rename kvm_pmu_valid_counter_mask()
+        https://git.kernel.org/kvmarm/kvmarm/c/a3034dab74fc
+[13/18] KVM: arm64: nv: Adjust range of accessible PMCs according to HPMN
+        https://git.kernel.org/kvmarm/kvmarm/c/9a1c58cfefb0
+[14/18] KVM: arm64: Add helpers to determine if PMC counts at a given EL
+        https://git.kernel.org/kvmarm/kvmarm/c/9d15f8290a22
+[15/18] KVM: arm64: nv: Honor MDCR_EL2.HPME
+        https://git.kernel.org/kvmarm/kvmarm/c/fe827f916662
+[16/18] KVM: arm64: nv: Honor MDCR_EL2.HLP
+        https://git.kernel.org/kvmarm/kvmarm/c/16535d55e91f
+[17/18] KVM: arm64: nv: Apply EL2 event filtering when in hyp context
+        https://git.kernel.org/kvmarm/kvmarm/c/8a34979030f6
+[18/18] KVM: arm64: nv: Reprogram PMU events affected by nested transition
+        https://git.kernel.org/kvmarm/kvmarm/c/ae323e035801
+
+--
+Best,
+Oliver
 
