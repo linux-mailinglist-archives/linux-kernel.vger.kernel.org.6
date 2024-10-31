@@ -1,126 +1,77 @@
-Return-Path: <linux-kernel+bounces-390028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80B39B74AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:39:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAB79B74AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0E91C24069
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:39:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951A2B21421
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60B3146A9F;
-	Thu, 31 Oct 2024 06:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0ED1474AF;
+	Thu, 31 Oct 2024 06:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWHZIGM9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hLk5HnSZ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AA014430E;
-	Thu, 31 Oct 2024 06:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E51465B4;
+	Thu, 31 Oct 2024 06:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730356755; cv=none; b=Az8qOOWrM6pWsIoF+OpkQm9SMbD28g84UvjHo/Us8bmVpr0rQ1x35IGLaWNSRnvCKHOymlhz4u051nZZVrtPgfMsXKh9pGx6ipK+1KtwCHPsdeaEk5eruOSmXMEtOTwkpOwJPiHASwwRWALIFWqfZz6HCkHRpac4+P8OqRey1aU=
+	t=1730356991; cv=none; b=d8WcXg+QLgBMzVuiXx5w5VrZFQmooN1RwJR4eGbAHGU4gAgvaKZurePOe5PcKZPT/+sM+sANSJziid5bC/36v3vvjlzQdWMfS2BTTX35MGqwIS6R/A3N8QNtVRbms9PuhfrPAIhpdlajsbHoFrtisgSuHG0qYu+Q4ZfLUmlHDd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730356755; c=relaxed/simple;
-	bh=wmZlcSfbiMvha+zyF3fElD72hUqYGvHQwam70xsM8Nw=;
+	s=arc-20240116; t=1730356991; c=relaxed/simple;
+	bh=IUEIAQA7P1uYn/zqdUVz7OLKFK36rMIQuwpNjaL1YH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jun/SJatXyJC+LG1q8eJzjEVj3Tm1bSrsTnjFrNfvoKfsuFFaCBqSjvsYWNP4qlgQI06opWpB6o/mcPlCEEgyeD6lNABYOWE90sXvu/m+IEOLfV85qKSqUASR/cUbQlAi/PhPDzHb+7uM0K698ZMbqlR/MaPFk8l/FDTohIXGu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWHZIGM9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD7DC4CEC3;
-	Thu, 31 Oct 2024 06:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730356753;
-	bh=wmZlcSfbiMvha+zyF3fElD72hUqYGvHQwam70xsM8Nw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pWHZIGM9ygudLPKNds16EL4U5Y5A7GuA0hyOetdXS/Ccxy30pVVnqN8iPNuCh2Vm/
-	 MWV3nI9qyFOsg8WO2aTpZZJIcf0irYLZh/bdLYJ7HJrQkACWos5oX+L0CV+Q9PYiuv
-	 0+Kc/W4tMP7koUAN2KrpOfyDzUn6FFxmrcHnHHkhBOx7cI19scqVjv38b14apXMpll
-	 bhKW6BKPt+YcoR3sVbwMcmHYSdOnk7DzqBp2vuJPd6epl0qmGO0C1krQvM13h5aeJw
-	 jMuYQHLl7uln38ISnEcRJd0tlsnjYsCP9OknBELTNv/DCNWM0ZR5MyuIDOLR3kewHJ
-	 +EhJ0biRI+Ewg==
-Date: Wed, 30 Oct 2024 23:39:11 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@rivosinc.com>
-Subject: Re: [PATCH] perf, riscv: Wire up perf trace support for RISC-V
-Message-ID: <ZyMmD1SdqpIg8Wox@google.com>
-References: <20241024190353.46737-1-bjorn@kernel.org>
- <ZyF_whZ4Ez-jwd-W@google.com>
- <faa08151-3090-4c36-b4af-32f5378ac5a6@ghiti.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/s5vJ2eNYo4qmjFgdgk403KFyasYWLeMONWok3H5nHwiWYJtzsgJMbRN9tXxqytSvASHo9CZ66pUw6KrYI/mR3PIN9Fz4Z9nHUvYKfzyKCwpfn/1qalRPV4ztFTCTazdnBreKoZHCzln/CmSUONaX29pwlmtbPSe4Swpf5gsO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hLk5HnSZ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CKiWvVEKmcC8Dyu608fHEAVQab08HJJoh41UJxZAbKc=; b=hLk5HnSZMZpyA1kqw6NAcrrsvm
+	TS+SBFgi2BGJCOLpuwWQTiWMznyzeCqr8jDL2zhCJhH2Bl/y4xPqqH6Nx/SglwbcrtoGXeOY/rlBd
+	4JGfgqunSKi49YudMFaQLaUp88/JbpnEdfroehCvjM5P1v3eATZnUD799qwJmMyfwv5LGcEgJvVLG
+	/iJRt1L1k7Lg/P1xYlzxz8msh8BE+pmjBFnXgBk6xQ+2WJHu8E6flAqUJP2xa3cGZZ5XdF58U05Xe
+	AbgoqIHSOG61oATdEVkZtxtoCdySXiKHZpbcmG5lr2eGtsyzJBIeyVccz2v+S0rV6CyQmcG20EGR+
+	gXZTrjuQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6Ote-00000009gYV-3PM1;
+	Thu, 31 Oct 2024 06:43:06 +0000
+Date: Thu, 31 Oct 2024 06:43:06 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next][V2] xattr: remove redundant check on variable err
+Message-ID: <20241031064306.GK1350452@ZenIV>
+References: <20241030182547.3103729-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <faa08151-3090-4c36-b4af-32f5378ac5a6@ghiti.fr>
+In-Reply-To: <20241030182547.3103729-1-colin.i.king@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello,
+On Wed, Oct 30, 2024 at 06:25:47PM +0000, Colin Ian King wrote:
+> Curretly in function generic_listxattr the for_each_xattr_handler loop
+> checks err and will return out of the function if err is non-zero.
+> It's impossible for err to be non-zero at the end of the function where
+> err is checked again for a non-zero value. The final non-zero check is
+> therefore redundant and can be removed. Also move the declaration of
+> err into the loop.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-On Wed, Oct 30, 2024 at 08:31:35AM +0100, Alexandre Ghiti wrote:
-> Hi Bjorn, Namhyung,
-> 
-> On 30/10/2024 01:37, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Thu, Oct 24, 2024 at 12:03:51PM -0700, Björn Töpel wrote:
-> > > From: Björn Töpel <bjorn@rivosinc.com>
-> > > 
-> > > RISC-V does not currently support perf trace, since the system call
-> > > table is not generated.
-> > > 
-> > > Perform the copy/paste exercise, wiring up RISC-V system call table
-> > > generation.
-> > Can anybody with RISC-V please test this?
-> 
-> 
-> So before this patch, I get:
-> 
-> Error::5File /sys/kernel/tracing//events/raw_syscalls/sys_(enter|exit) not
-> found.
-> Hint:    Perhaps this kernel misses some CONFIG_ setting to enable this
-> feature?.
-> 
-> After applying this patch, I get a proper trace:
-> ....
-> 
->      7.435 ( 0.332 ms): ls/1307 openat(dfd: CWD, filename: 0xb36ef668,
-> flags: RDONLY|CLOEXEC)         = 3
->      8.023 ( 0.454 ms): ls/1307 mmap(len: 23171, prot: READ, flags: PRIVATE,
-> fd: 3)                   = 0x7fffb36cd000
->      8.558 ( 0.065 ms): ls/1307 close(fd:
-> 3)                                                          = 0
->      8.850 ( 0.294 ms): ls/1307 openat(dfd: CWD, filename: 0xb36f9f80,
-> flags: RDONLY|CLOEXEC)         = 3
->      9.223 ( 0.152 ms): ls/1307 read(fd: 3, buf: 0x7fffe27b3c20, count: 832)
-> 
-> ...
-> 
-> So you can add:
-> 
-> Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks for your test!
-Namhyung
-
+Applied (viro/vfs.git #work.xattr2)
 
