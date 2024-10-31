@@ -1,161 +1,138 @@
-Return-Path: <linux-kernel+bounces-389890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025839B7297
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:42:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1599B729B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8569285E9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:42:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F53B237B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B3112C489;
-	Thu, 31 Oct 2024 02:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFFE13698B;
+	Thu, 31 Oct 2024 02:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g2vIdfwy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="XApF2sli"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618FF4689
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A4012C465
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730342570; cv=none; b=ij2+oVP5RqMeDiBQOV/0Cr6tXurxGHBD5j6drjbzBmhOuNK8FpCIPYceF7KQjNREG7IU1vGg5XfHkzsF882XAwOQZNAug/HXdKkxx90YjGJpmPctVcG2r45xtuLvK3c86yZ0pTkYYzJp/F5QPEYRaH18nY0I6U+VB63Xn/psU3k=
+	t=1730342669; cv=none; b=r3KBpN1DH6DSQjry5XVI9hAEyVWga2qIhtHgLvVKfJoWdnCCjObQK2+XIkHhKfRH7RGqh/vJEoKnmqsNEGZs6pCTRGF6wU+PDBqQ4zsVs+EogkgVhUtCYDLFSeXa0SkeozYfPVxynsFSW37N4YjbGBYvv3iQBoZkdwv/iFY/mhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730342570; c=relaxed/simple;
-	bh=LDHRoTtshFiAmUCz06O6JZlHmksy5yY0Xp2QZ5YM/7k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KLUTX6a7kY7xftN/6UocMEP8uxvhXCQNVByY+NbN2mWzQRCQloa7cBdaHoxJX0CypWtBpfgTLOdrCIkWNhbRzsZgswpstUUw6CY0zJhnETFRL28u4NWiAC6bZL7TQxLfwubitwZuDXJ3K8Xv+R9QxwNn5zmbeFKvirVWM8WAu7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g2vIdfwy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDW0aW002939;
-	Thu, 31 Oct 2024 02:42:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=VoeMw0FW+IRO+n76hZY1fl
-	Baj/L0y7QsbJuQOvp6PX0=; b=g2vIdfwywMhojD1fSRrMaKvLyJTxcDuZigejPM
-	uFmd5Pzd5S0dg5/5jH4Z7fgj7tD8pSWjzdKUAslAloB3SFyrBGUimSi5D7MKoWIK
-	UUtwqMTPTcYdI1QJO28Ku5hl1ENTyKN3DbDGrzBqcGSNxF7EcsyWnzHObw1r35jG
-	iWau4m8oN5kTXjWSGhr7GBTnJ+Miyw4JnpMG0vb1vWQL0OwbDynLLbA/tK3MHGQe
-	2GJY1WVLaHmusNXfS8q0KpWpr86r6MPtVfMOgFRwYn+pD/RgqC8xBLZGYisxiisx
-	k/eWOm7bHpoL7YlfdsBun5nks0zxIvJPnMTJD0EaPih6kEVA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kns3hufb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 02:42:35 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49V2gZK6023815
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 02:42:35 GMT
-Received: from maow2-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 30 Oct 2024 19:42:32 -0700
-From: Kassey Li <quic_yingangl@quicinc.com>
-To: <akpm@linux-foundation.org>, <vbabka@kernel.org>
-CC: <minchan@kernel.org>, <vbabka@suse.cz>, <iamjoonsoo.kim@lge.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <quic_yingangl@quicinc.com>
-Subject: [PATCH] trace/events/page_ref: add page info to page_ref trace event
-Date: Thu, 31 Oct 2024 10:42:22 +0800
-Message-ID: <20241031024222.505844-1-quic_yingangl@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730342669; c=relaxed/simple;
+	bh=8AtT8YEFyRyHbeCzOHAzfEyWKhHdPX8SGO4p9v6hc5w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kso7cipGyVSe+ZyUb7G+OUZeZxGa8iqovBQIhL9d3TxqlzrFKL+NldohnKJ9Kky68H54EpgAii6Yl1Ud4xs6DqrbjLAS95/NbXxfvckeg2Ka7eI+Nmcq1Go5MflIiOvLbpGGf6lieRlTb2CsHx/iSy7D7FAVpBsAlfxbuoywwB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=XApF2sli; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1730342662;
+	bh=8AtT8YEFyRyHbeCzOHAzfEyWKhHdPX8SGO4p9v6hc5w=;
+	h=From:Subject:Date:To:Cc:From;
+	b=XApF2sli1RJhht12/2Cov6k96jP7OjyvBdg/8Cyd9yU+uvuAlJC11CB6r5aCg8pte
+	 mTceOzyRdvxvxm7PHNRfbkPM3zjuaLWC4QUruaP8pqpQUHlLYA1NckdBngJLMRXHFu
+	 kBWDvlsLh/bsVTa4zMZGHR/OTu0lmx+mFffoAlfQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH RFC 00/10] sysfs: constify struct bin_attribute (Part 1)
+Date: Thu, 31 Oct 2024 02:43:49 +0000
+Message-Id: <20241031-sysfs-const-bin_attr-v1-0-2281afa7f055@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yHC0Sl4KRjJY-8XbBSO5xS_I2Fc41cJj
-X-Proofpoint-ORIG-GUID: yHC0Sl4KRjJY-8XbBSO5xS_I2Fc41cJj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- adultscore=0 spamscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410310020
+X-B4-Tracking: v=1; b=H4sIAOXuImcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAyML3eLK4rRi3eT8vOIS3aTMvPjEkpIi3UQDAwtLMxMLwxSDJCWg1oK
+ i1LTMCrCx0UpBbs5KsRDBotTCUqAVJRCZ2NpaAMyfSdWAAAAA
+X-Change-ID: 20241028-sysfs-const-bin_attr-a00896481d0b
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730342657; l=3307;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=8AtT8YEFyRyHbeCzOHAzfEyWKhHdPX8SGO4p9v6hc5w=;
+ b=+0orQpJ2VcD7pMRj9s5+VuhwlBoS1z1cM/RJ76YDJIrc95VkSwKwHUDdslBwqTO6Vy1fsBWoG
+ WX0RwBXi9NoDCA7+zz1MQt91jDdOPksn6rYtNdEjxJS2GjKDMlViKtc
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-This followed
-commit 53d884a6675b ("mm, tracing: unify PFN format strings")
-to add page info.
+struct bin_attribute contains a bunch of pointer members, which when
+overwritten by accident or malice can lead to system instability and
+security problems.
+Moving the definitions of struct bin_attribute to read-only memory
+makes these modifications impossible.
+The same change has been performed for many other structures in the
+past. (struct class, struct ctl_table...)
 
-In many kernel code we are talking with page other than pfn,
-here we added page algin with pfn.
+For the structure definitions throughout the core to be moved to
+read-only memory the following steps are necessary.
 
-Signed-off-by: Kassey Li <quic_yingangl@quicinc.com>
+1) Change all callbacks invoked from the sysfs core to only pass const
+   pointers
+2) Adapt the sysfs core to only work in terms of const pointers
+3) Adapt the sysfs core APIs to allow const pointers
+4) Change all structure definitions through the core to const
+
+This series provides the foundation for step 1) above.
+It converts some callbacks in a single step to const and provides a
+foundation for those callbacks where a single step is not possible.
+
+This series is marked as RFC and only sent to the sysfs maintainers to
+get some feedback on the general aproach.
+The same techniques employed by this series can later be reused for the
+same change for 'struct attribute'.
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- include/trace/events/page_ref.h | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Thomas Weißschuh (10):
+      sysfs: explicitly pass size to sysfs_add_bin_file_mode_ns()
+      sysfs: introduce callback attribute_group::bin_size
+      PCI/sysfs: Calculate bin_attribute size through bin_size()
+      nvmem: core: calculate bin_attribute size through bin_size()
+      sysfs: treewide: constify attribute callback of bin_is_visible()
+      sysfs: treewide: constify attribute callback of bin_attribute::mmap()
+      sysfs: drop callback bin_attribute::llseek
+      sysfs: implement all BIN_ATTR_* macros in terms of __BIN_ATTR()
+      sysfs: bin_attribute: add const read/write callback variants
+      driver core: Constify attribute arguments of binary attributes
 
-diff --git a/include/trace/events/page_ref.h b/include/trace/events/page_ref.h
-index fe33a255b7d0..76df13b2a5b3 100644
---- a/include/trace/events/page_ref.h
-+++ b/include/trace/events/page_ref.h
-@@ -18,6 +18,7 @@ DECLARE_EVENT_CLASS(page_ref_mod_template,
- 
- 	TP_STRUCT__entry(
- 		__field(unsigned long, pfn)
-+		__field(const struct page *, page)
- 		__field(unsigned long, flags)
- 		__field(int, count)
- 		__field(int, mapcount)
-@@ -28,6 +29,7 @@ DECLARE_EVENT_CLASS(page_ref_mod_template,
- 
- 	TP_fast_assign(
- 		__entry->pfn = page_to_pfn(page);
-+		__entry->page = page;
- 		__entry->flags = page->flags;
- 		__entry->count = page_ref_count(page);
- 		__entry->mapcount = atomic_read(&page->_mapcount);
-@@ -36,8 +38,9 @@ DECLARE_EVENT_CLASS(page_ref_mod_template,
- 		__entry->val = v;
- 	),
- 
--	TP_printk("pfn=0x%lx flags=%s count=%d mapcount=%d mapping=%p mt=%d val=%d",
-+	TP_printk("pfn=0x%lx page=%p flags=%s count=%d mapcount=%d mapping=%p mt=%d val=%d",
- 		__entry->pfn,
-+		__entry->page,
- 		show_page_flags(__entry->flags & PAGEFLAGS_MASK),
- 		__entry->count,
- 		__entry->mapcount, __entry->mapping, __entry->mt,
-@@ -66,6 +69,7 @@ DECLARE_EVENT_CLASS(page_ref_mod_and_test_template,
- 
- 	TP_STRUCT__entry(
- 		__field(unsigned long, pfn)
-+		__field(const struct page *, page)
- 		__field(unsigned long, flags)
- 		__field(int, count)
- 		__field(int, mapcount)
-@@ -77,6 +81,7 @@ DECLARE_EVENT_CLASS(page_ref_mod_and_test_template,
- 
- 	TP_fast_assign(
- 		__entry->pfn = page_to_pfn(page);
-+		__entry->page = page;
- 		__entry->flags = page->flags;
- 		__entry->count = page_ref_count(page);
- 		__entry->mapcount = atomic_read(&page->_mapcount);
-@@ -86,8 +91,9 @@ DECLARE_EVENT_CLASS(page_ref_mod_and_test_template,
- 		__entry->ret = ret;
- 	),
- 
--	TP_printk("pfn=0x%lx flags=%s count=%d mapcount=%d mapping=%p mt=%d val=%d ret=%d",
-+	TP_printk("pfn=0x%lx page=%p flags=%s count=%d mapcount=%d mapping=%p mt=%d val=%d ret=%d",
- 		__entry->pfn,
-+		__entry->page,
- 		show_page_flags(__entry->flags & PAGEFLAGS_MASK),
- 		__entry->count,
- 		__entry->mapcount, __entry->mapping, __entry->mt,
+ drivers/base/node.c                     |   4 +-
+ drivers/base/topology.c                 |   4 +-
+ drivers/cxl/port.c                      |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |   2 +-
+ drivers/infiniband/hw/qib/qib_sysfs.c   |   2 +-
+ drivers/misc/ocxl/sysfs.c               |   2 +-
+ drivers/mtd/spi-nor/sysfs.c             |   2 +-
+ drivers/nvmem/core.c                    |  16 ++++-
+ drivers/pci/p2pdma.c                    |   2 +-
+ drivers/pci/pci-sysfs.c                 |  36 +++++++-----
+ drivers/pci/vpd.c                       |   2 +-
+ drivers/platform/x86/amd/hsmp.c         |   2 +-
+ drivers/platform/x86/intel/pmt/class.c  |   2 +-
+ drivers/platform/x86/intel/sdsi.c       |   2 +-
+ drivers/scsi/scsi_sysfs.c               |   2 +-
+ drivers/uio/uio_hv_generic.c            |   2 +-
+ drivers/usb/core/sysfs.c                |   2 +-
+ fs/sysfs/file.c                         |  32 +++++-----
+ fs/sysfs/group.c                        |   5 +-
+ fs/sysfs/sysfs.h                        |   2 +-
+ include/linux/sysfs.h                   | 100 +++++++++++++++++++-------------
+ 21 files changed, 132 insertions(+), 93 deletions(-)
+---
+base-commit: e42b1a9a2557aa94fee47f078633677198386a52
+change-id: 20241028-sysfs-const-bin_attr-a00896481d0b
+
+Best regards,
 -- 
-2.25.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
