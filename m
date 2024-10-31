@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-390616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278B29B7C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:03:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85869B7C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B991C214A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:03:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 546F6B214EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23A119C54C;
-	Thu, 31 Oct 2024 14:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10911991CB;
+	Thu, 31 Oct 2024 14:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNaRND/I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2x67lOBd"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150F684A3F;
-	Thu, 31 Oct 2024 14:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABBD7483
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730383379; cv=none; b=IHFC5Dom1AhDdQcpVetAJErt/zaNGHRJHiPudI3+rZqF5emmLlj9li9QATE6dFAZ7CGhB3LLc111ltf83j0d+xvXzY2ZoBQnTZDsX8RUu39YaJ1J3cG2jv3fb7q9u4znKr/Bi45Gdde2nPcMupY9fMYxsWcGEaBaNrA4iVPhP0U=
+	t=1730383431; cv=none; b=QIf2IewpG5sc4g4vMfjDczZlkl+MJXtReZ1bii4FpAx/NV6/OQbbd26dHnTmxdSRteFXa+XNx2IeVi31Rg/BKZoenhYt9xLRjIprSGUVcff2qiAZNo/Ao2SHj7Jifk0bBW0Wdlk/NY7g/raLa5nrfyGWw886psx5oELFc/BGnMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730383379; c=relaxed/simple;
-	bh=rM7JeFz9gUYAeFhBr3i1Nmo+zAAoRiN+ZzEeAmzgmoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1DRUXqncKB18Kno8JYtWBiyhq5XjcCv8rkntyFjWwDaVBbel/pjfEM0bxqOjAmW3tKabj1mbmyoN6ShpZua0KcmQMAy7oc/7Ka7s91YDW9jLN8683+RvcZRhNo+uenlDEJK9dHjls8xIwRSaUtdxppD69AjPe+xvQRN3NTFLJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNaRND/I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E98BC4CED0;
-	Thu, 31 Oct 2024 14:02:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730383378;
-	bh=rM7JeFz9gUYAeFhBr3i1Nmo+zAAoRiN+ZzEeAmzgmoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gNaRND/I1qBIq+wxeeLp1W8IrXNFVkeVr16EJ1tTYRm9sd/vefEzYw5RfDzGyiCqQ
-	 zEbCuZ7MjZMdvzuZdShZ3v54Lk/GuDcyC35jCrNJfrgVhUbHdFXolCT/pE30UMY1+u
-	 1P79uF/lp7QOOvB2E388qNQpOX0IIOggV6XO6Nb43zMwAy28B9yTP9LLX2SJ7Fgnfg
-	 0pOsteXjLYtVw5LF8m+AKXiuQwdCwRJbPbICXSr13yenl7TeStlLf2IntYHnTZj2Ev
-	 utVev3D1dlXbXCTSv2jc2HSeu1gFanS0O8vZVGeINOACvF4QmQxeTjeV1eEGsUyz9Q
-	 riutsoBiCmDcg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t6VlI-000000004Jl-0qBS;
-	Thu, 31 Oct 2024 15:02:56 +0100
-Date: Thu, 31 Oct 2024 15:02:56 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Sui Jingfeng <sui.jingfeng@linux.dev>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
- parent to aux bridge
-Message-ID: <ZyOOEGsnjYreKQN8@hovoldconsulting.com>
-References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
- <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
- <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
- <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+	s=arc-20240116; t=1730383431; c=relaxed/simple;
+	bh=/ujG1cezyJOLtrJGpOSVlHT/h9268ICutSdVP2Ou40Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TE7NJ6ESDXKtLCV7eEnTqOMkxQmhKvrQMI6yq6Ke+EBw3WKrUFMZBOsYxumvNBpD9u+3Q4SY+546R7iXF6bGsfgqbl4W7xkImLr9qKiZICYVuPM3IGB2hzyvHl1p1JeG2HptAuFhkU7zt7jrdihZ5igEv84NZgBRwJaCum4W3I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2x67lOBd; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d49a7207cso701237f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 07:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730383426; x=1730988226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ujG1cezyJOLtrJGpOSVlHT/h9268ICutSdVP2Ou40Q=;
+        b=2x67lOBd4axvrilCA99OAdT7oI3WqCHOv0489EHHahjCpiaunmirfy+sxdvBwJ2w6G
+         BxaHxZf0VVqKeE7ISXJ2Oh+fLobtsO5QWFkQ3rqiuKrDw1F/UBrUavAAutOq2RgzkT8w
+         Zaco5TZLD4b+nDRs3jCoVJ4So4mal3miuJQgW5I3nTlBj9vH6Px3NwyKV1oSSvszHgL+
+         DEnqu6zj6C6PuzSpfSLY91IDglEy/1OXNkv84blfPSSF0FKSwP+JtljPBSCp31yRzm8W
+         vQC0q/XNe96/8WQTsOi+uJ+Oi4p8hM7ZCN1Uu9HODB4ZZlJEDL9LlY+pr0uc0zrx8xiS
+         H+UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730383426; x=1730988226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ujG1cezyJOLtrJGpOSVlHT/h9268ICutSdVP2Ou40Q=;
+        b=WE1V2mWuWS2n6Xv4aw5i1/NxMIBqmkHZrG0AlxxEBNcQ7HXbyRkg/pZryw5BvLMelp
+         Jx6Iz0zPP8cnwBu6w0l6APCzMYeYqBl9KSj0TVDPBKxknQDNJyG1a1w1E2Z4Vkdm1NQe
+         FSNeBaN2NyICpPJ+/9Vo8+xiCPZSrDivCDlkWgQ7+GqwZiVWGJUNhJiXEJaI4hmdEAfO
+         z+3rx1RTXoZ44etcTzw3DyvGLvkbeZglWXOQE+0p+nH/Y8ApAbwbpiZlmlI29Aq/JIZx
+         wik99HqbeJSSKmE8NT21CZLwrSfwJPXNL7RgZHXV+8rCPHzbDkwgn913DOnbTsgrR+BQ
+         kFyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKXv1jJnhINobVUGIBGfr99PS31l/bM6Q+BPD3lkkjxlbTkWCFNKNJGPvyNYVCd8MVKU1GsORekon6adY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbRDiiPV5seWT5wT7t4Y2893HJVkr7ft1ULyjHeD2+usUVDc9h
+	gUgWagHxP0GIML80/hXHLof43MHhCgbPjlfh3ncBD0vwUKyKd0SHEnpIZIUaKuEsNotmKH7VQQh
+	4CmQbtjWsI2e+g5oOfQW0VGK8vgt2Mf/g+o39
+X-Google-Smtp-Source: AGHT+IHf/f0WMGY5XNed4m51/xvXz/jJNZeXwlI9IFRgtvyFISoVvCcIb42ZBfoVHnQGnw0bffjs/1UKGO7A1p8T41g=
+X-Received: by 2002:a05:6000:1569:b0:37d:5103:8894 with SMTP id
+ ffacd0b85a97d-381c7aa4a56mr46347f8f.42.1730383426371; Thu, 31 Oct 2024
+ 07:03:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-11-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-11-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 31 Oct 2024 15:03:33 +0100
+Message-ID: <CAH5fLgj1rd3b4aaMj8b6Rs77_t+LZApxK-dmP2gk98L-NjFyWw@mail.gmail.com>
+Subject: Re: [PATCH v3 10/16] rust: add devres abstraction
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 01:31:47PM +0100, Neil Armstrong wrote:
-> On 30/10/2024 15:49, Sui Jingfeng wrote:
-> > On 2024/10/21 21:08, Neil Armstrong wrote:
-> >> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
-> >>> The assignment of the of_node to the aux bridge needs to mark the
-> >>> of_node as reused as well, otherwise resource providers like pinctrl will
-> >>> report a gpio as already requested by a different device when both pinconf
-> >>> and gpios property are present.
-> >>> Fix that by using the device_set_of_node_from_dev() helper instead.
-> >>>
-> >>>
-> >>> [...]
-> >> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
-> > 
-> > 
-> > It's quite impolite to force push patches that still under reviewing,
-> > this prevent us to know what exactly its solves.
-> 
-> It's quite explicit.
+On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> Add a Rust abstraction for the kernel's devres (device resource
+> management) implementation.
+>
+> The Devres type acts as a container to manage the lifetime and
+> accessibility of device bound resources. Therefore it registers a
+> devres callback and revokes access to the resource on invocation.
+>
+> Users of the Devres abstraction can simply free the corresponding
+> resources in their Drop implementation, which is invoked when either the
+> Devres instance goes out of scope or the devres callback leads to the
+> resource being revoked, which implies a call to drop_in_place().
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-It's still disrespectful and prevents reviewers' work from being
-acknowledged as I told you off-list when you picked up the patch.
+How is this intended to be used? Every single field I add of this type
+is going to result in an additional synchronize_rcu() call in my
+destructor. Those calls are pretty expensive.
 
-You said it would not happen again, and I had better things to do so I
-let this one pass, but now it seems you insist that you did nothing
-wrong here.
-
-We do development in public and we should have had that discussion in
-public, if only so that no one thinks I'm ok with this.
-
-Johan
+Alice
 
