@@ -1,119 +1,89 @@
-Return-Path: <linux-kernel+bounces-389876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D12B9B725E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:04:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574969B7249
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE2D282252
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EC261F24DE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860C212C489;
-	Thu, 31 Oct 2024 02:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="GOr8QYFE"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C484D29;
+	Thu, 31 Oct 2024 01:57:31 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A048127B56;
-	Thu, 31 Oct 2024 02:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560FE80025;
+	Thu, 31 Oct 2024 01:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730340246; cv=none; b=CfN5eAy+JcEfC0eZrs1MqCOfiPW4x8J2QTgVvDdbT3ZnSNiFFvw+ZN3ZmEIpJGbrye+sLXPzFR4zuFSnLPTnyiYK5XXhE5gfRImqmcvdssMYbXFYpCSKY8u6ddySY4FyB6el3rk9P3RD/6bHxkL8kgnByX5L696s+MWLs6tNcGI=
+	t=1730339850; cv=none; b=CrhT+cW26i+JwSq29+g6KsGQUuxVqx6VSZlHeE/aSX9mzTNHijj68RPLE5cqSlnA/jf9EmQjZ6tTRzDZ5c3ggenY2OtmxMirUqtSvRIlQrfl0e1QthlHnYg7eqSLxWsNrSqNPoDjDGtfrNRu4jvhuKiN437SV1y5EugQj0Jx25w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730340246; c=relaxed/simple;
-	bh=coOSyXg6EbQFCWH/PFmV5fJm1pNJUz/lixQd5SpBsfc=;
-	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
-	 Content-Disposition; b=qBVOIpROiThWpy+8qmvvOp97QD5meIuOaafSl6EzWb+BTwLEjpQ/LsCj+QrpLgr+so4dQZu5wWhPTINtRqnl+I5WhGNhyRhx1kbyFeOfVQy6SUN6uMSpBQ4Rs9QjxYhpEQxy7yfsldss2gFY8SgKh8kG2+BhFUHMCsGFaKce/b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=GOr8QYFE; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1730340232;
-	bh=nz1VeNJmnk+dwVzkTdHNGyLZrMjSHNKwznA5lELwHJw=;
-	h=Date:From:To:Cc:Subject;
-	b=GOr8QYFEn+3YgjI/Z8b6nkXKiWk0lf7bMoN9w4+O37OUF7gQKEQZHmCHD7qAj1/wz
-	 UOD1c1rFzO+iHqbLMbZcujUb4mVyvtpnP6DhjUpKqfxECHy42c7dK4CKpJnxxwynCO
-	 CeeCnkwCShESIIlIFlUfX9anRN3NAUHQBmno3bnM=
-Received: from localhost ([223.70.160.239])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id B948C40E; Thu, 31 Oct 2024 09:46:20 +0800
-X-QQ-mid: xmsmtpt1730339180t1d1olfe9
-Message-ID: <tencent_2C31282B61589DFCC908B3831384D569440A@qq.com>
-X-QQ-XMAILINFO: Ne8lhFKlu2UFrwnzn+3o0cr+KNLAKnNNbHOcTH/lsB/1JprnO622QlW010NUAt
-	 qCLxaf5yYFPUanMunJajzaAgMkRP9yEtr8h7PkyBog4kNcZfwQWdJweaMtL7qSktN8omnsf5kjyd
-	 dOYwJHQuh4hGXluaPqkJ9YDqMrdMFZwjNKMFpKm5GGlBloEA+XiLwgaMDD1srWjcSl05Ov5OtpLG
-	 qdGOVb8vXu2JZw8fffTXivAoVBbiRHkBPfXrh0htHF4DHn8ARX1v8azUyHQq57fuYH3RMjRLhbFB
-	 0C6kYDyRV/kJ8U56tadjH196dck4Wv3t9MjN9krzFkw8bB/M1oYh8gRpSZekA4M1i9rtLw09+4OF
-	 MdHz7MU9PCEWYERQN+KoZ3bdh1oEZbi1FBbEF5Sql71dUmTCpuP7rnrH2LTK/w2snPGq1EfOE/S5
-	 WawfTt4EYjaKDFskB0XbeJ+YYE74rLa107isAf9PPt4rbrjwAYoeumyXDUBwxx/LQ+h0paez47wP
-	 VTXh0Zqx26AQf90lVmyiV/MvRuL9ADpuseLbLQttmyYkDfWc+GVznKaGl6MpOGhtstkJGjxva38y
-	 NnwmxfO3MW3V/BGDnUAkAlRw2Xwlu9BtJBS23aIf6aUAFhuo/87J66HgNhiBOu8v31ZlLkwY/M/H
-	 +6ApiTdweq9N4nCEY9qbnj+YY3GOBoSeE7VluyMTdlhbVZvbinHnL6HB4gXm3gtfoVRDUHMHuxty
-	 VJ1EQfnUJm3aObkKxd4LMa1KKyP2B5A1HRBWECFRA8m3lp2IkJlgXVhDtnqjIvMDy/HtoYXwXMIP
-	 NsZI3SyDb8BXekZMsFaz+gqP0GrSPSJgHIaaSKoL23ZW5ZMiy1fOeAARciVVY5P4kfP4vFQk7u6x
-	 bLw5VufRroQJ5eCHHTep6KaZcnLe5MOzglw2w32vPBa1UyDkygubnPQDc11tgWxpjM44qbs757P0
-	 ajTEKAjyGRlU1heaQksQ0sWHA2SubtT2uHuZbQppAVUj2zS4yMBNpcxdXE9jemVsppQtRJpAtBqz
-	 VDXe2FZw==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-Date: Thu, 31 Oct 2024 09:46:20 +0800
-From: Gang Yan <gang_yan@foxmail.com>
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Issue with iwlwifi Firmware Loading When Compiled into the Kernel
-X-OQ-MSGID: <ZyLhbA2t-oiQZnpL@yangang-TM1701>
+	s=arc-20240116; t=1730339850; c=relaxed/simple;
+	bh=v5PD1ALo2kUOkuvSB43wsqgWRa1dMsEL670Ujginra0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ONaTcs6Z2ZZY1YlxKEeCk5FFi/SaduwxmAnYNPjkGd/3qlX3/v6TbUGqixv52W6I/OS22xVCUHzNsnh5J7zjwesGSfMoFw383w+SAMrmS0zDvXmxAPSbrFzByZLotzYxbUAboP7pL0s/Avl5RUXYJJqNdhLlNZiv0Qtzf44e4Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xf6Ww20XxzpXdx;
+	Thu, 31 Oct 2024 09:55:24 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id AE3FF14011F;
+	Thu, 31 Oct 2024 09:57:19 +0800 (CST)
+Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
+ (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 31 Oct
+ 2024 09:57:19 +0800
+From: Zicheng Qu <quzicheng@huawei.com>
+To: <mazziesaccount@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
+	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
+Subject: [PATCH] iio: fix infinite loop for gain_to_scaletables()
+Date: Thu, 31 Oct 2024 01:46:26 +0000
+Message-ID: <20241031014626.2313077-1-quzicheng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200012.china.huawei.com (7.221.188.145)
 
-Dear Maintainer,
+In iio_gts_build_avail_time_table(), it is checked that gts->num_itime is
+non-zero, but gts->num_itime is not checked in gain_to_scaletables(). The
+variable time_idx is initialized as gts->num_itime - 1. This implies that
+time_idx might initially be set to -1 (0 - 1 = -1). Consequently, using
+while (time_idx--) could lead to an infinite loop.
 
-Recently, I met an issue that I would like to bring to your attention and 
-seek your expertise on.
+Cc: stable@vger.kernel.org # v6.6+
+Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
+Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+---
+ drivers/iio/industrialio-gts-helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When I compile the iwlwifi driver directly into the kernel by setting 
-[CONFIG_IWLWIFI=y], I encounter an error message stating, "iwlwifi direct 
-firmware load for iwlwifi-so-XXXX failed." However, the relevant firmware 
-files are present in the /lib/firmware directory.
-
-Based on my observations, I suspect that when iwlwifi is compiled into the 
-kernel, it attempts to load the firmware before the /lib/firmware directory
-mounted. Consequently, the firmware cannot be found. Once the filesystem is
- mounted, iwlwifi does not attempt to reload the firmware.
-
-To address this issue, I have considered two potential solutions:
-
-1、Modify the Driver Code: Implement a mechanism, such as delayed_work, to 
-give iwlwifi another chance to load the firmware after the filesystem has 
-been mounted. This would involve adding additional logic to the driver to 
-handle retries for firmware loading.
-
-2、Modify the Kconfig: Change the configuration to allow iwlwifi to be 
-compiled only as a module [CONFIG_IWLWIFI=m]. This way, the module can be 
-loaded after the filesystem is fully mounted, ensuring that the firmware
- can be found and loaded successfully.
-
-From my perspective, unless there are compelling reasons to pursue the first
-option, I would recommend implementing the second solution. It seems more 
-straightforward and avoids potential complications that might arise from 
-modifying the driver's core functionality.
-
-I would greatly appreciate your insights on whether my understanding of the
-issue is correct and whether such modifications are deemed necessary. 
-
-Thank you for your time and consideration.
-
-Best regards,
-
-Gang Yan
+diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
+index 59d7615c0f56..f3acd392f4fc 100644
+--- a/drivers/iio/industrialio-gts-helper.c
++++ b/drivers/iio/industrialio-gts-helper.c
+@@ -205,7 +205,7 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
+ 	memcpy(all_gains, gains[time_idx], gain_bytes);
+ 	new_idx = gts->num_hwgain;
+ 
+-	while (time_idx--) {
++	while (time_idx-- > 0) {
+ 		for (j = 0; j < gts->num_hwgain; j++) {
+ 			int candidate = gains[time_idx][j];
+ 			int chk;
+-- 
+2.34.1
 
 
