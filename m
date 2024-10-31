@@ -1,51 +1,80 @@
-Return-Path: <linux-kernel+bounces-390457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498DB9B7A2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:02:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832E29B7A2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5111C21CA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD121F21352
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535AB19AD94;
-	Thu, 31 Oct 2024 12:02:19 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD6E19B5A3;
+	Thu, 31 Oct 2024 12:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qqJjygng"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181A31BC20;
-	Thu, 31 Oct 2024 12:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9007E1BC20;
+	Thu, 31 Oct 2024 12:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376139; cv=none; b=cbdFOn4kt/hA8G1KnWoIK14RE22VpwDphg+Q/gvmzR3nt7PJS0MaxiCgdKJhgW0m6ERYVjpvh+ajHAWzK3fI+JKZfesmD2pujl4XwBqGqbS1WOKc6qosSVod6pfBHPalhjH3Cb4r+vLgFAoSPIXUEI+M9aihdvtNjbi5zOh5cjk=
+	t=1730376204; cv=none; b=d2xqgD4ZKL0yA9W/NE51u9qNGSvL26eqKt4WULYHElyJ12W/t1JjTwQ6vFo6MKAxBz2NDHpWQbfy35QNU5/Wg3xiUpOJXzmVVs6HS19irJOjhoSgr5Q/OhlQMpqRg/cwN88gl1EwLK7pWVgAyl06uBUDrQdbNamgm6Lzgzj+v9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376139; c=relaxed/simple;
-	bh=VpCrCjMHklWhFAHP3FL48PZf9Vh5YLINmbeBg1Ukv+c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZPOKbQt4bUQ2ToAaBIiu9dBlZTnxDYBL7SQfbICXjBbC8ofkQ/KJBweOmGQD3p5JcGDzx8voQzpFSy8u3xBLxKrOJx0N5kotM0nQwSizKNNrRuSr6YMzFRM9asP5/3aFksh6GDKl4e/JAM9l2eF7ZlgST1o/HsWg/HI7GHx9LtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XfMyn44LbzQsFF;
-	Thu, 31 Oct 2024 20:01:05 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41B96140137;
-	Thu, 31 Oct 2024 20:02:06 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 31 Oct
- 2024 20:02:05 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v2] tracing: Replace strncpy() with strscpy() when copying comm
-Date: Thu, 31 Oct 2024 20:01:39 +0800
-Message-ID: <20241031120139.1343025-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730376204; c=relaxed/simple;
+	bh=Qg4mJxs4fXCmXS7KB5laOTg+7yxkd7M8r4nAAkZ9adQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KfM96zXXUrJF/f1vlUD0A3Q9pLyLAzcIQOU8PV5WSBc8vHGlJVfipmG+l61EPehHqdhvfPBWl0b6mpJoC4Qitjhrw5VJKfMSpjQn9XMqfjcT0CYymYdJ4zrT9WPcyUHJWoBn7K3aqI4gYfZgqPqZBfN0V88W9UO7V2foHS9xg9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qqJjygng; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49V6vL49013181;
+	Thu, 31 Oct 2024 12:03:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=9APeEwQXPLuuVKK42xBYkPKUFePEi9WFCzuJSO91+
+	GE=; b=qqJjygngaYB5kwBLfuqTHlQH2fza25uBLy7IB6m9ylAPeEqz0yOhQaZq2
+	7uwmZC6QGWzFT1tKjtfO5FkcvRUJGtQ8RaQij8zpSdj7/UbltIBWGVrKwYgIMm0C
+	Npjg9W6nyFaxazNelj5q37KZR3sbafLkFMnKAELpLCFRHdvAOrXF1mVeAi2XG3U2
+	s3FaGsr6Zz1qoM7/X0ZbzvaLrO16SCVCCTyzaEqZXxW0K3BEqgNDXMvIyWTztiu8
+	aqJPYRPsyLvMbYIshgr1F4Sbxtf4y+V8Ey0wyyDshM5oqp26DEKwbhWGxmxM0otW
+	yUpFhl1JM8WvFR6qyAdHtV6HrFpqg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42m52c97rk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 12:03:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49VBI8p4015899;
+	Thu, 31 Oct 2024 12:03:20 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hdf1mbxg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 12:03:20 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49VC3H0t40698144
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Oct 2024 12:03:17 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F66320043;
+	Thu, 31 Oct 2024 12:03:17 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 83FAC2004B;
+	Thu, 31 Oct 2024 12:03:16 +0000 (GMT)
+Received: from p-imbrenda.ibmuc.com (unknown [9.171.69.120])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 31 Oct 2024 12:03:16 +0000 (GMT)
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
+        frankja@linux.ibm.com, seiden@linux.ibm.com, hca@linux.ibm.com,
+        agordeev@linux.ibm.com, gor@linux.ibm.com, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [PATCH v1 1/1] s390/kvm: mask extra bits from program interrupt code
+Date: Thu, 31 Oct 2024 13:03:16 +0100
+Message-ID: <20241031120316.25462-1-imbrenda@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,73 +82,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Qj_0wnjad3No7P3g8mDomxTi9CIg2yz4
+X-Proofpoint-ORIG-GUID: Qj_0wnjad3No7P3g8mDomxTi9CIg2yz4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxlogscore=587 mlxscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ clxscore=1015 phishscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410310091
 
-Replace the depreciated[1] strncpy() calls with strscpy()
-when copying comm.
+The program interrupt code has some extra bits that are sometimes set
+by hardware for various reasons; those bits should be ignored when the
+program interrupt number is needed for interrupt handling.
 
-Link: https://github.com/KSPP/linux/issues/90 [1]
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Fixes: ce2b276ebe51 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
+Reported-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 ---
-v2:
-- Fix the trace_events_hist.c build problem.
----
- kernel/trace/trace.c              | 2 +-
- kernel/trace/trace_events_hist.c  | 4 ++--
- kernel/trace/trace_sched_switch.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/s390/kvm/kvm-s390.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index a8f52b6527ca..cb2c66554212 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1934,7 +1934,7 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 	max_data->critical_start = data->critical_start;
- 	max_data->critical_end = data->critical_end;
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 8b3afda99397..f2d1351f6992 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -4737,7 +4737,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
+ 	if (kvm_s390_cur_gmap_fault_is_write())
+ 		flags = FAULT_FLAG_WRITE;
  
--	strncpy(max_data->comm, tsk->comm, TASK_COMM_LEN);
-+	strscpy(max_data->comm, tsk->comm);
- 	max_data->pid = tsk->pid;
- 	/*
- 	 * If tsk == current, then use current_uid(), as that does not use
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 5f9119eb7c67..8e370bc4faa4 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1599,7 +1599,7 @@ static inline void save_comm(char *comm, struct task_struct *task)
- 		return;
- 	}
- 
--	strncpy(comm, task->comm, TASK_COMM_LEN);
-+	strscpy(comm, task->comm, TASK_COMM_LEN);
- }
- 
- static void hist_elt_data_free(struct hist_elt_data *elt_data)
-@@ -3405,7 +3405,7 @@ static bool cond_snapshot_update(struct trace_array *tr, void *cond_data)
- 	elt_data = context->elt->private_data;
- 	track_elt_data = track_data->elt.private_data;
- 	if (elt_data->comm)
--		strncpy(track_elt_data->comm, elt_data->comm, TASK_COMM_LEN);
-+		strscpy(track_elt_data->comm, elt_data->comm, TASK_COMM_LEN);
- 
- 	track_data->updated = true;
- 
-diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
-index 8a407adb0e1c..573b5d8e8a28 100644
---- a/kernel/trace/trace_sched_switch.c
-+++ b/kernel/trace/trace_sched_switch.c
-@@ -187,7 +187,7 @@ static inline char *get_saved_cmdlines(int idx)
- 
- static inline void set_cmdline(int idx, const char *cmdline)
- {
--	strncpy(get_saved_cmdlines(idx), cmdline, TASK_COMM_LEN);
-+	strscpy(get_saved_cmdlines(idx), cmdline, TASK_COMM_LEN);
- }
- 
- static void free_saved_cmdlines_buffer(struct saved_cmdlines_buffer *s)
+-	switch (current->thread.gmap_int_code) {
++	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {
+ 	case 0:
+ 		vcpu->stat.exit_null++;
+ 		break;
 -- 
-2.34.1
+2.47.0
 
 
