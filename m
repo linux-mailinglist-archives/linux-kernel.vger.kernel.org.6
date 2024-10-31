@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-391450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0639B8719
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:24:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D59B8726
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68421F22B83
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:24:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A861C21A37
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 23:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C9B1E47B9;
-	Thu, 31 Oct 2024 23:24:03 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279FE1E47B6;
+	Thu, 31 Oct 2024 23:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbGb8gwV"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268301C2DA4;
-	Thu, 31 Oct 2024 23:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52971BD9DC;
+	Thu, 31 Oct 2024 23:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730417043; cv=none; b=SbWOHzJGy9aHXbPrSq+gnbCfE0cbnwZhpaTDYH7uuEPEjA6KMyJ9nC2IutKsU69L6ovBiYGU2SSx8oyRDm+oR4xdNB+fpfCXz037MC6IsmRPSFx2dkkkFxQXPaceLLCtXSoadxkWa0LWl8HFVYHHRHPatC6JHRx1QIvBEauKXMA=
+	t=1730417311; cv=none; b=eZCcx9y0QMfc7gheGWy3TFODLRuOldrDXo2gQzlrWSPnA6YEnqfUURBQsK/9CekhD1zXQvwbCCEHHO1Rl7fiHzQgPfLzGarVLT8C9QMl81yhB4V8vFt4MIoj2LnTPMjbzfWQXxIfmYdVBiy0thucMO7D+a2fGB1Uf20f6oYtdX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730417043; c=relaxed/simple;
-	bh=yA8/PxB1ZNGlnijaN4Aqh0lVtHlcXbLEsy1Fm/LvYek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ms9v9EhBblHC1MGsY+RBp7bBPwPCF+CdJAs6goGFvi1PQGBXztq8ZNFYz8YaMGQvz00xX7hjHGAeE2AxFzcUUDw2BEZdJoR6arWud3w202cV2EdiTgs4CYsSEEeCH6yXp74fq1qN3G8s0XXd6EEKPESncw/B7iTQabxmii3K51k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=49206 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t6eW1-00HMRV-MX; Fri, 01 Nov 2024 00:23:52 +0100
-Date: Fri, 1 Nov 2024 00:23:44 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>,
-	linux-security-module@vger.kernel.org, jmorris@namei.org,
-	serge@hallyn.com, keescook@chromium.org,
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org,
-	audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
-Message-ID: <ZyQRgL_jWdvKgRl-@calendula>
-References: <20241023212158.18718-3-casey@schaufler-ca.com>
- <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
- <ZyQPfFvPD72rx4ME@calendula>
+	s=arc-20240116; t=1730417311; c=relaxed/simple;
+	bh=ihn1bJ13O+ICGeD46Kou/82Z2V4tl7Akt0tFFGiiYtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dpz3P2xUDynmzE5bsXtGHRFfAXV73j1Nf1EvC+urbDjIehJFyG340zazHv+yU5EUvkN4+qbM3Pod8lz9UR10Ge1JeEnjGZ+yxrqMSUJnHtGN+lnFmeO59VnY3sIuzu/81SdeFcxd1MQ+Y/Or5JoHy9yDnzDhBsMgrNNBAS935+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbGb8gwV; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a16b310f5so213266866b.0;
+        Thu, 31 Oct 2024 16:28:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730417304; x=1731022104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hefIWSSLnXcBqftg5nsPi5v85nNJiSjiEC3JHtAntbU=;
+        b=VbGb8gwV/IQsp1Lo1OwhLFzeSitoqjIwCDqBDyIQ7Ts+PntsZjITgTSSfJYSC4ySPV
+         2IspDADeVcvLwytmapb/Xr81Qk6oTFnucPdJAVy4hFtmq/CO6O4VLvUBbnmtXOx1oUyU
+         GfqKfeiNeHTyltWjUOnuUvdtd+wtKga2v1geQZeFXXZojguSotS4/jY+tcyIr47QzaOl
+         TKhj/ziaC37fO/QdrvTHYcL5ufbWnjlFG99c8z3wbmHYzpCpbTwZSlo8TMuZ9dEuFrFe
+         Q9aF4aMQKnZlV2wyKWEeNGDKHaoidU6fVqYOBPTj/Em3mmQJaavRq86MVLWHKdIEgz7N
+         /uQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730417304; x=1731022104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hefIWSSLnXcBqftg5nsPi5v85nNJiSjiEC3JHtAntbU=;
+        b=gM1+iLHS1yxLgYwtBOtloG2UiCJci2NUeA9ocpTkqw3T0/OIK+KvmyesM4vSVGwk5a
+         hT+dkSWTVWUFAS/WcFpzaLnUJ/WXPNOGkux+1rzwi4xqAci6b0gsjfcJOIVgAoNPah0s
+         UbPpGhIWwp+QCcunW2d6bhzE8YPG2dEMxuU4Ss5hs59XZ0lpH7xyVvgMaCW/OhNkZfdX
+         HgT3KnSyR4Zn1XrrsPJUNkMd/FHk6M6kg9cea1E5yKy6PtBbKx+e6Eg/jysjtcewLZY3
+         RJ8Nvc5zU89oobBN7jJYtewuXuUZRjeE5n9oTP97NKx6aNgN5WHB+9Piqi59RMb0eJ1v
+         F/9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWRGb++4D79PJ6KXmlYOECXHIC/owXICFmAaDQWISyNXbxnwcjvURmJfaIOn/DLLmftYbZdZ+xQVJE5xOh2AFojA==@vger.kernel.org, AJvYcCVU0eTX2ks2wzeh4je0nUi6HTtUB05YVXbNZoNLnH5o9CCGCy9oBDSP46aGvZ0bLliCU35Q/GvLKVHpcDY=@vger.kernel.org, AJvYcCVWMat6zcVDsRrFBdgy9KY5Be+trJvICBFP0I0E3VMDFRZvNKOB8S1fliNM1gyW8zEBwa0HCrM7q48km0LfQvBugg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycO0WIDwUh+NcWXIQTyHgo/d38oTFLMPLrFxUDQFy4O/QIM3Nk
+	3AYOLFNusOkYwdEfdFGZLQQjgCH3zrINWFf40P6iEfNdcqjrjwrV/23uaSvzJI8caViRqO/f3pd
+	gZx9E8ELsaSbbuV/v5o93PH7mxuE=
+X-Google-Smtp-Source: AGHT+IGTC95RMplTXIl7pdwB3Xefp6E7/dapQh+1QehK1yKeaffEy3sTOv2KING0JBmtpOOXvlQk7L+Z39psP0sM3qk=
+X-Received: by 2002:a17:907:72cc:b0:a9a:3ca0:d55a with SMTP id
+ a640c23a62f3a-a9e50cae005mr432051466b.57.1730417303621; Thu, 31 Oct 2024
+ 16:28:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZyQPfFvPD72rx4ME@calendula>
-X-Spam-Score: -1.9 (-)
+References: <cover.1730150953.git.jpoimboe@kernel.org> <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
+ <CAEf4BzY3xJ=W2qPD8i6UbSB=zNqpiA1gSd+SC3wKxQAJWjeHhA@mail.gmail.com>
+ <20241030061043.eo2vuqgsoqmjytjr@treble.attlocal.net> <CAEf4BzYd5OT9COBS4va435jqMzkjvvAHbe55AR6giv8pitUvAg@mail.gmail.com>
+ <20241031231320.h2hwns367e5byvyy@jpoimboe>
+In-Reply-To: <20241031231320.h2hwns367e5byvyy@jpoimboe>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 31 Oct 2024 16:28:08 -0700
+Message-ID: <CAEf4BzZksT=GTs268KBiCsYxUcvWz5KUghjKQQR8OxGdoBt=6A@mail.gmail.com>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
+	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
+	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
+	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 12:15:16AM +0100, Pablo Neira Ayuso wrote:
-> Hi Paul,
-> 
-> This patch breaks nf_conntrack_netlink, Casey mentioned that he will
-> post another series.
+On Thu, Oct 31, 2024 at 4:13=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
+> wrote:
+>
+> On Thu, Oct 31, 2024 at 02:22:48PM -0700, Andrii Nakryiko wrote:
+> > > Problem is, the unwinder doesn't know in advance which tasks will be
+> > > unwound.
+> > >
+> > > Its first clue is unwind_user_register(), would it make sense for the
+> > > caller to clarify whether all tasks need to be unwound or only a
+> > > specific subset?
+> > >
+> > > Its second clue is unwind_user_deferred(), which is called for the ta=
+sk
+> > > itself.  But by then it's too late because it needs to access the
+> > > per-task data from (potentially) irq context so it can't do a lazy
+> > > allocation.
+> > >
+> > > I'm definitely open to ideas...
+> >
+> > The laziest thing would be to perform GFP_ATOMIC allocation, and if
+> > that fails, oops, too bad, no stack trace for you (but, generally
+> > speaking, no big deal). Advantages are clear, though, right? Single
+> > pointer in task_struct, which most of the time will be NULL, so no
+> > unnecessary overheads.
+>
+> GFP_ATOMIC is limited, I don't think we want the unwinder to trigger
+> OOM.
+>
 
-Please, see:
+So all task_structs on the system using 104 bytes more, *permanently*
+and *unconditionally*, is not a concern, but lazy GFP_ATOMIC
+allocation when you actually need it is?
 
-https://lore.kernel.org/netfilter-devel/ZxpxZuErvXSLApsf@calendula/
+> > It's the last point that's important to make usability so much
+> > simpler, avoiding unnecessary custom timeouts and stuff like that.
+> > Regardless whether stack trace capture is success or not, user is
+> > guaranteed to get a "notification" about the outcome.
+> >
+> > Hope this helps.
+> >
+> > But basically, if I I called unwind_user_deferred(), I expect to get
+> > some callback, guaranteed, with the result or failure. The only thing
+> > that's not guaranteed (and which makes timeouts bad) is *when* this
+> > will happen. Because stack trace capture can be arbitrarily delayed
+> > and stuff. That's fine, but that also shows why timeout is tricky and
+> > necessarily fragile.
+>
+> That sounds reasonable.  In the OOM error case I can just pass a small
+> (stack allocated) one-entry trace with only regs->ip.
+>
 
-> On Thu, Oct 31, 2024 at 06:53:38PM -0400, Paul Moore wrote:
-> > On Oct 23, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > 
-> > > Replace the (secctx,seclen) pointer pair with a single
-> > > lsm_context pointer to allow return of the LSM identifier
-> > > along with the context and context length. This allows
-> > > security_release_secctx() to know how to release the
-> > > context. Callers have been modified to use or save the
-> > > returned data from the new structure.
-> > > 
-> > > security_secid_to_secctx() and security_lsmproc_to_secctx()
-> > > will now return the length value on success instead of 0.
-> > > 
-> > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Cc: netdev@vger.kernel.org
-> > > Cc: audit@vger.kernel.org
-> > > Cc: netfilter-devel@vger.kernel.org
-> > > Cc: Todd Kjos <tkjos@google.com>
-> > > ---
-> > >  drivers/android/binder.c                |  5 ++-
-> > >  include/linux/lsm_hook_defs.h           |  5 ++-
-> > >  include/linux/security.h                |  9 +++---
-> > >  include/net/scm.h                       |  5 ++-
-> > >  kernel/audit.c                          |  9 +++---
-> > >  kernel/auditsc.c                        | 16 ++++------
-> > >  net/ipv4/ip_sockglue.c                  |  4 +--
-> > >  net/netfilter/nf_conntrack_netlink.c    |  8 ++---
-> > >  net/netfilter/nf_conntrack_standalone.c |  4 +--
-> > >  net/netfilter/nfnetlink_queue.c         | 27 +++++++---------
-> > >  net/netlabel/netlabel_unlabeled.c       | 14 +++------
-> > >  net/netlabel/netlabel_user.c            |  3 +-
-> > >  security/apparmor/include/secid.h       |  5 ++-
-> > >  security/apparmor/secid.c               | 26 +++++++--------
-> > >  security/security.c                     | 34 +++++++++-----------
-> > >  security/selinux/hooks.c                | 23 +++++++++++---
-> > >  security/smack/smack_lsm.c              | 42 +++++++++++++++----------
-> > >  17 files changed, 118 insertions(+), 121 deletions(-)
-> > 
-> > See my note on patch 1/5, merging into lsm/dev.
-> 
+SGTM
+
+> --
+> Josh
+>
 
