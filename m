@@ -1,83 +1,104 @@
-Return-Path: <linux-kernel+bounces-391146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EB19B833A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:20:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9FE9B833B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9643B283931
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:20:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4B01C21A37
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927A81CB30F;
-	Thu, 31 Oct 2024 19:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CA91CB339;
+	Thu, 31 Oct 2024 19:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpnSi1XI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USC4OVyN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA641C9EC4;
-	Thu, 31 Oct 2024 19:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B0E1CB32A;
+	Thu, 31 Oct 2024 19:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402400; cv=none; b=jXizNRqJXAxZeO+stk7eHj4L07fcOhiALNWoxJrHgXSyuJJ2Y5iTccCIN9IAe1pFg1TnEHWCN/jtDinprkff62ijJz6g+VDtpKKenofCHY049baEDgg9BUVjJLwzUlX38VV6+L3wcgy6JIpLlseOeMdWnMgaOexWgHWiXN+W90U=
+	t=1730402401; cv=none; b=bHzFELn/dlw+USI0AR4nY1sY39KoQcTcv/j18CGfB3y5n/IzWDT40Llz6gIfKFM6jFUAiBVU4qObYK0iSwJClBjFDvC8HFB7LapqoFTCD+fBpfCYiHmDNXZSDlD0hbc60UajLxFLT/TM2Jdfu9Hb1iLoolGEYd750Ss1PwGQbq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402400; c=relaxed/simple;
-	bh=TXUrvY9NYQzXz3pIPouqhA1TPXabG66RSQ4mri6lwjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KuXuF2w+0M4Mr54OnuWXo0z7Og5kwI/wOXj8ZxeyZfdjv9EvN84nYi4SNRw5Pu/CjAd8U7Vr19w1HjljuJvazxFBMJuIqIDH0V8RngwcW1wMJ/xrO4/J5dITqFK9qortVjU+adTVoVmk9j6XEL7hQ2viVRMH+bUUpaXy9xLz6vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpnSi1XI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C03C4CEC3;
-	Thu, 31 Oct 2024 19:19:56 +0000 (UTC)
+	s=arc-20240116; t=1730402401; c=relaxed/simple;
+	bh=QFy9O6IaZMSEtd3GTV+0L27WTpq3fi3FtH6zYLLmmzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQkrZu03vL3QQ0xwRLFUnwgJQbAV9czt/y5xPgL1bvJMm18oAt91XPokzfqNXWGWyCzWyAQyLiXT8GiGvrKJUKJkwt+OHsCkbC3BfQ2MHEOWEOz9nj9d4ZbwHiIjZ5ZGFyUQHMS6L+UzuU/PsELm1Ho3LT35TyQAhVKK8iOqJXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USC4OVyN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF223C4CED2;
+	Thu, 31 Oct 2024 19:19:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730402399;
-	bh=TXUrvY9NYQzXz3pIPouqhA1TPXabG66RSQ4mri6lwjU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kpnSi1XILxwkbp+wL2sJUVmQSSA0Vtdmb00iGv81gkEUi8OEObuERwXhCRB+ZUR5T
-	 X82eKlFYYZHhBrlfU4uDnekQCDD0PYO+xeS5IYrtGssI0Gk9Pc8+aMaB1hNxC7nhQS
-	 sFVd6jf99sU/FKdHWyQweJCUShKDj+Lxym3iVknLCdEcEhABpEUfb5Wu+tbHmLUAq9
-	 ymHSbCAcc62mLbhFo+JXvPWjmMeQF+96qg5d6TlFLLOU9ioRrBIumnPUWbSHmvgZB/
-	 6UBK+VV8o5LQyPlKsRDzgV6/i95UhRdG9Gerj2jvQeD3RR2lcb7SGkN+WZ+4ijNaTo
-	 DWdFIvSUYwg1Q==
-Date: Thu, 31 Oct 2024 19:19:52 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Matteo Martelli <matteomartelli3@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>
-Subject: Re: [PATCH v1 0/2] iio: adc: Check for error from devm_mutex_init()
-Message-ID: <20241031191952.149d033b@jic23-huawei>
-In-Reply-To: <20241030162013.2100253-1-andriy.shevchenko@linux.intel.com>
-References: <20241030162013.2100253-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730402400;
+	bh=QFy9O6IaZMSEtd3GTV+0L27WTpq3fi3FtH6zYLLmmzc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USC4OVyNY7cY6HBpw4dvNWS61VXM7JC5cjRWzEdsWv5He0JeMTBwh9JC5zAHC3VND
+	 2dHd2OfLSgtkYjzUya6gNtj+33o3lA2/TGQPwFVdQUK3z5QMJEghVtDuOmz0hAEaLt
+	 JQVqCs0C4+A+TZzwr2u3kER41X9wx6Bv2dVPJIuBvKyYbbXuOLYgVvkyouB7HPsFP7
+	 lsO9nmNx2DT0QzHye7KNAsomnQzmQ8hzFb77Uvi0ZBXxNkvLVkqf+mieZwavMRv/mW
+	 KE4uCYZiU98s4lRNUJgYNj/uNgfRCsbKwswtyxTl+2H4UZeiU4DO+7oeMM3IawQ0qa
+	 gNz2b5BZejTqQ==
+Date: Thu, 31 Oct 2024 16:19:56 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 03/21] perf python: Remove unused #include
+Message-ID: <ZyPYXK79F5NTslE1@x1>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031014252.753588-4-irogers@google.com>
 
-On Wed, 30 Oct 2024 18:19:17 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Oct 30, 2024 at 06:42:34PM -0700, Ian Rogers wrote:
+> Remove unused #include of bpf-filter.h.
 
-> Ignoring error checking from devm calls is a bad practice in general.
-> While not critical today, it may become a problem tomorrow.
-> Fix this for devm_mutex_init().
+Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/python.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> Andy Shevchenko (2):
->   iio: adc: ad4000: Check for error code from devm_mutex_init() call
->   iio: adc: pac1921: Check for error code from devm_mutex_init() call
-> 
-Oops. Missed this in review obviously.
-
-Applied.
->  drivers/iio/adc/ad4000.c  | 4 +++-
->  drivers/iio/adc/pac1921.c | 4 +++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 13dad27169a0..974578a04099 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -16,7 +16,6 @@
+>  #include "thread_map.h"
+>  #include "trace-event.h"
+>  #include "mmap.h"
+> -#include "util/bpf-filter.h"
+>  #include "util/env.h"
+>  #include "util/kvm-stat.h"
+>  #include "util/kwork.h"
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
 
