@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-389800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2968C9B7180
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:10:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC629B7183
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 02:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B1B1C21051
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:10:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3837BB21789
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB7943AD9;
-	Thu, 31 Oct 2024 01:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A5B45026;
+	Thu, 31 Oct 2024 01:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EpvHI4EF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcZW1tB7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4221D186A;
-	Thu, 31 Oct 2024 01:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129803BBE2;
+	Thu, 31 Oct 2024 01:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730337001; cv=none; b=hTwG7CpIafAz2WVWBkylT0oUzRZhVNypodP3I06JbF1La1qjEp0wLZTWrvN11626euHE9QwZRaOw7qb9QG1FkGPqhscZk8cohM6JtSA5SO6VxDIDx3MU+KIYA5Jv3Fqgpt/HCWml3zVq2EVhMM/nY2+EsCP6ObtacTn1Kg7N/0Y=
+	t=1730337028; cv=none; b=TPsQ4DcNOdVp0MlbmxAG//mg1jh4MMPic/vN4D122JX53MARhNq3YhsexSh3lyyJhGLyfpPOHWj54FzicxtW4DqgW0A7h+140Wq6kTkeex3UtmUQvmwiVElAXb4i0nzxm8Gi5pfBBAySBCyj7uv5nFXH4QMr9FgnwWJeAzpwpkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730337001; c=relaxed/simple;
-	bh=yYhWaamNjlqFFpqW425S0NndidrwKuVwYYQUsXnnGNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FhRPNoqwBBoX1gatW6PhyfWL/nBEw1kKT14u8ydPoAzK+eDNZDkxqGK3U3Z+DoUzPIynkZmf12p0HLhOKIZoIdHF2Bt87YLB0sTk359tQ1p8UBFy3cctZRLF9h5tubOdulQ6iCi7FESOVdyisgQfaD0xKJMwP+26PlT3ty1sd+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EpvHI4EF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDqCSK032239;
-	Thu, 31 Oct 2024 01:09:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ikH4uFBlJjlet4b79cIIFpIAty3aXL85MXeU+eUJ9DI=; b=EpvHI4EFQjtGOEMi
-	dUdajScTt7ttuYYMQbUO6NltnaoW0Wb7SFeM4oTdr66aHcW2LujJErOJ29cCFrMn
-	BgLakobwN8d/rETQhB9fgU0UPx8GrLrOX20HRAw+hfT7VCN0VIoVkF+7wBK5Hfaw
-	2AN17wJiZ844oJX+u8wQAwBRc6p6eftvytF6vcCypPU7qVfVsxVl4M1TmEwl4f2J
-	I/FJ3TJrSIa/KbGbPJnZ+YlA+HTV+VvuBsEuSw3KrkQLgaSYIQNbj2Ed4k8Buxr4
-	bWQyZLZkX/AoBAYVFH+UO5gjXY+XhpPMn25T8WbGh/WdkJxnJ2JVI5YMCzAdRjGQ
-	qY5vTw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kp2g9jwd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 01:09:54 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49V19rlp029422
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Oct 2024 01:09:53 GMT
-Received: from [10.216.12.123] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 18:09:48 -0700
-Message-ID: <d25ee628-7a05-4d53-ad4a-e4feddfe6591@quicinc.com>
-Date: Thu, 31 Oct 2024 06:39:38 +0530
+	s=arc-20240116; t=1730337028; c=relaxed/simple;
+	bh=o9iyYc/C1RIvijh/llnoBsHUv63/+tNy2AxkwT0LKMc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=m3Jqcen48521zCpujQXWpVTVW13OwpL+kQvwrI4mkrljNSj5f72AyFxRavmekb3LPif8O5/r3ZBcJWeHQd7Kb4PCBTTLLPghP6JcPfPsidQOKFF0Wc3s4eQ5yxvjQPN+kQJEZqzxRyeEdnC1h2U80dZoAqpv09CBOi+94nhk2Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcZW1tB7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F5DAC4CECE;
+	Thu, 31 Oct 2024 01:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730337025;
+	bh=o9iyYc/C1RIvijh/llnoBsHUv63/+tNy2AxkwT0LKMc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bcZW1tB7cctWMxuw11mzIUQ4oxm80L8JYaMBwpGjgjKzVI/W4hboJu2rz0JZI0zVo
+	 1mJrfzKNYh2jcRBpLzCUPmV4CanPZaluhPbVnwGW3ScpGxcJRI422OUQRArbtWYU3p
+	 yGF+rUMn5P6V8l/VjIBevMhSt5a2dJRmAmNhwjmHVijvqi/ifYcvBecWl0xPLV/Zyf
+	 b+dqoV3tuaQSDw/6axyLhtSbLqV4srrCCTXMuM10iganHu1W1ik6CgMwAa8ywTc4ou
+	 LgLEoGNC3lQycW9XE3zYP4EdhuH7AIYk+H9igBwasZBKr1Er3595hxVap4DYu6DI8l
+	 qfnbCf3jJGLwA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7164D380AC22;
+	Thu, 31 Oct 2024 01:10:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] clk: qcom: gcc: Add support for QCS615 GCC clocks
-To: Taniya Das <quic_tdas@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran
-	<richardcochran@gmail.com>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com>
- <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v6NDmE9WzrAc2MEA6LAr8yETYietvM_Z
-X-Proofpoint-GUID: v6NDmE9WzrAc2MEA6LAr8yETYietvM_Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxscore=0 priorityscore=1501 clxscore=1011 suspectscore=0 impostorscore=0
- mlxlogscore=939 adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410310008
+Content-Transfer-Encoding: 8bit
+Subject: Re: [net-next PATCH v4 0/4] Refactoring RVU NIC driver
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173033703326.1512423.9132461037726826431.git-patchwork-notify@kernel.org>
+Date: Thu, 31 Oct 2024 01:10:33 +0000
+References: <20241023161843.15543-1-gakula@marvell.com>
+In-Reply-To: <20241023161843.15543-1-gakula@marvell.com>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+ davem@davemloft.net, pabeni@redhat.com, jiri@resnulli.us,
+ edumazet@google.com, sgoutham@marvell.com, sbhatta@marvell.com,
+ hkelam@marvell.com
 
+Hello:
 
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 10/22/2024 5:22 PM, Taniya Das wrote:
-> Add the global clock controller support for QCS615 SoC.
+On Wed, 23 Oct 2024 21:48:39 +0530 you wrote:
+> This is a preparation pathset for follow-up "Introducing RVU representors driver"
+> patches. The RVU representor driver creates representor netdev of each rvu device
+> when switch dev mode is enabled.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->   drivers/clk/qcom/Kconfig      |    9 +
->   drivers/clk/qcom/Makefile     |    1 +
->   drivers/clk/qcom/gcc-qcs615.c | 3034 +++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 3044 insertions(+)
+> RVU representor and NIC have a similar set of HW resources(NIX_LF,RQ/SQ/CQ)
+> and implements a subset of NIC functionality.
+> This patch set groups hw resources and queue configuration code into single API
+> and export the existing functions so, that code can be shared between NIC and
+> representor drivers.
 > 
+> [...]
 
-Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+Here is the summary with links:
+  - [net-next,v4,1/4] octeontx2-pf: Define common API for HW resources configuration
+    https://git.kernel.org/netdev/net-next/c/fbc704b3104b
+  - [net-next,v4,2/4] octeontx2-pf: Add new APIs for queue memory alloc/free.
+    https://git.kernel.org/netdev/net-next/c/03d80a1ba526
+  - [net-next,v4,3/4] octeontx2-pf: Reuse PF max mtu value
+    https://git.kernel.org/netdev/net-next/c/dec6f5ebd724
+  - [net-next,v4,4/4] octeontx2-pf: Move shared APIs to header file
+    https://git.kernel.org/netdev/net-next/c/78bd5d81241e
 
-Thanks,
-Imran
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
