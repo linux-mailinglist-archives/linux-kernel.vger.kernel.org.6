@@ -1,300 +1,251 @@
-Return-Path: <linux-kernel+bounces-390034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04DF9B74B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:52:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7E19B74BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8432818D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631401F24B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D96146D6E;
-	Thu, 31 Oct 2024 06:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f1CHPdMq"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F38014830C;
+	Thu, 31 Oct 2024 06:54:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB99E13D516
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D6313B7B3
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730357544; cv=none; b=dJpdi34PiaOHO6ItgdUwmZ21hFkYxeDKw4ZqukrXnTX3v/jNPsIyjcaL14W/h1kmmlRH3LWoYPu3VWIAfw7+TTDSWPt6lvVoUT3WEUO9/KIGUcqfBONOwpindh2LcELXLiXzaL8iZpIuSnR3bknukf0gL6utRvR+MCflzymDLv4=
+	t=1730357669; cv=none; b=bxWbzjG2VM2tnzsTGfos2Xl4bOIJli+aLuLJCgetok2UmoBr+pTv1E4moTqvzpxWHXEC42/N9cwb9AJ6ys7EYqmLT0ap8jINTgzoe2Xw7t9/CRT3fDNHbifDJgzN3Vrw6yArAqJ49N2LNP43hyzo2AtghHrJioZfzL4+s63wW74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730357544; c=relaxed/simple;
-	bh=Hpc19UvuOAgM7DLU7J0IV7Im2WpnYRLz2nMo8Iaf7pI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=een4KO4VYUyRoTHhQa02rTFfU6vRIQvUrtbkhUHqRifQM2aq8TBmIA/TCpGMAJLN/gPMQYwxyjfTmylZY0+s9+6trUlYynXcGoL1KgVVppnwSmA7ryOXRlKF8sPup2saEQ8cyHuqB2t0hHGTQNBITyIY/skKjl6R7jDgfN6lHnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f1CHPdMq; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43169902057so4768325e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 23:52:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730357538; x=1730962338; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IizVsT/GHCokG6ch8Vz2KAn7z8iSbuR7G4okx8PJozc=;
-        b=f1CHPdMqdedRkgfRiFs5PZwIDlbKdOz+VnU9AIDdB/d5V3r9zKYDA7lnNuNFx2qLd5
-         xfgpkJGzskm6/1ldTd5stlvPHBjWRHdCT0WXdgMGr4vheT/vQJvWF1sCqAspHzkarV/r
-         OFgYlo+S/HVe0ziclA3D5yCXWPJWVppegbUxe7lN0GcjpuwqoXz9wW8c+bmGZDUwAsY8
-         GbscZ49Rm7YadC8fOJpY8TVkaen2qCqZNFyZ8xDVu4ys4Qmg18KK3W0o2QjjybVtZ+I4
-         g/C3KndYSP4+ZSSNvWfrF6foLaopoP3Wi/lelGFwKVK8zyH/CMu0OIcOQJBlbffvfSOS
-         0WxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730357538; x=1730962338;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IizVsT/GHCokG6ch8Vz2KAn7z8iSbuR7G4okx8PJozc=;
-        b=Dr23MW6hnMJ/FjNE7GoVaw1Zum0vXuKIpX3mv0v5KhWtjd/WDBfXx8F3+FjQFLB/CG
-         leZDAeG8gG8d0W3VFC+leNOLS6GOOuEoDJqn4RiQlRAXTHyfhi+RI0UXvS9JBmNTjpn3
-         2WdvASPek6CAl5uofP1ZrjiAORwopAxGBNZcnUn09jcYTibj19996srZOEqJcJs0rzNM
-         470g4zrN9SCsKjWtSsQu15nWRRUxdzSAtdF+LGx6lJ187yw/DBTlyQyrzQ+eKJfSJBlP
-         eC6qbpxm3sGvF7z8Vhf0Uh6jtDITdR+AZaKa5tKS0fNn/BeY528jd/xLQHve9Y/Z0o4l
-         07Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYIXNDh54r8OI0CqAUU2ljQAfT32Qf3bmVR3x6jcdyIE8Z5BgUmJpywwtoG0iieKxeXp9UXMDq7gaqa1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9lQHb1e9K6NLnDhdTwmeedkUgdtxrJsp6vvQPUKnMkgU9XBtz
-	HDs3mNlF7qwHRaQ6M5ifjlzT1uDYBPg+kp9ztkwKwJSzsA7ypTX8Z/hTJd/CYKM=
-X-Google-Smtp-Source: AGHT+IH4qddoN1+U0MbhWmJDa+VnavcPzI2xaGtcVbjz7mSSqTDKJfqNz6qwKOPhNncZR4OKRDuBwA==
-X-Received: by 2002:a05:600c:1c29:b0:431:588a:4498 with SMTP id 5b1f17b1804b1-431bb985df9mr48408435e9.14.1730357538111;
-        Wed, 30 Oct 2024 23:52:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7d15sm1117170f8f.8.2024.10.30.23.52.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 23:52:17 -0700 (PDT)
-Date: Thu, 31 Oct 2024 09:52:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Anup Patel <apatel@ventanamicro.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
-Subject: drivers/irqchip/irq-riscv-imsic-state.c:854 imsic_setup_state()
- error: we previously assumed 'mmios_va' could be null (see line 745)
-Message-ID: <d954517a-ec1d-43b6-beef-b15f9f289612@stanley.mountain>
+	s=arc-20240116; t=1730357669; c=relaxed/simple;
+	bh=7pZk6xURsLrp/rp1VDQ/01OCJzqZvLcza5ZMTiODdUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8ARiGbhoE8QAO3AoDleLRz73letW04PV2FlrpTPL4rLy4WVOC6bBdlKj2ggHloAd79ee5O+xb6Dky1ZfmcHNFCvKqEEB8dL6ueaucX1gzC+rHytxM6hskeW9pCoWPdkqt32crBULfn2ZwpdFcOLGKF9HV1e/ubGCfrIctJbIzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6P4M-0004us-N9; Thu, 31 Oct 2024 07:54:10 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6P4K-001JmE-1m;
+	Thu, 31 Oct 2024 07:54:08 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6P4K-0069fz-1O;
+	Thu, 31 Oct 2024 07:54:08 +0100
+Date: Thu, 31 Oct 2024 07:54:08 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v2 15/18] net: pse-pd: Add support for
+ getting and setting port priority
+Message-ID: <ZyMpkJRHZWYsszh2@pengutronix.de>
+References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
+ <20241030-feature_poe_port_prio-v2-15-9559622ee47a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241030-feature_poe_port_prio-v2-15-9559622ee47a@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Anup,
+>  struct pse_control_status {
+>  	u32 pse_id;
+> @@ -74,6 +83,10 @@ struct pse_control_status {
+>  	u32 c33_avail_pw_limit;
+>  	struct ethtool_c33_pse_pw_limit_range *c33_pw_limit_ranges;
+>  	u32 c33_pw_limit_nb_ranges;
+> +	u32 c33_prio_supp_modes;
+> +	enum pse_port_prio_modes c33_prio_mode;
+> +	u32 c33_prio_max;
+> +	u32 c33_prio;
+>  };
+>  
+>  /**
+> @@ -93,6 +106,8 @@ struct pse_control_status {
+>   *			  set_current_limit regulator callback.
+>   *			  Should not return an error in case of MAX_PI_CURRENT
+>   *			  current value set.
+> + * @pi_set_prio: Configure the PSE PI priority.
+> + * @pi_get_pw_req: Get the power requested by a PD before enabling the PSE PI
+>   */
+>  struct pse_controller_ops {
+>  	int (*ethtool_get_status)(struct pse_controller_dev *pcdev,
+> @@ -107,6 +122,9 @@ struct pse_controller_ops {
+>  				    int id);
+>  	int (*pi_set_current_limit)(struct pse_controller_dev *pcdev,
+>  				    int id, int max_uA);
+> +	int (*pi_set_prio)(struct pse_controller_dev *pcdev, int id,
+> +			   unsigned int prio);
+> +	int (*pi_get_pw_req)(struct pse_controller_dev *pcdev, int id);
+>  };
+>  
+>  struct module;
+> @@ -141,6 +159,10 @@ struct pse_pi_pairset {
+>   * @rdev: regulator represented by the PSE PI
+>   * @admin_state_enabled: PI enabled state
+>   * @pw_d: Power domain of the PSE PI
+> + * @prio: Priority of the PSE PI. Used in static port priority mode
+> + * @pw_enabled: PSE PI power status in static port priority mode
+> + * @pw_allocated: Power allocated to a PSE PI to manage power budget in
+> + *	static port priority mode
+>   */
+>  struct pse_pi {
+>  	struct pse_pi_pairset pairset[2];
+> @@ -148,6 +170,9 @@ struct pse_pi {
+>  	struct regulator_dev *rdev;
+>  	bool admin_state_enabled;
+>  	struct pse_power_domain *pw_d;
+> +	int prio;
+> +	bool pw_enabled;
+> +	int pw_allocated;
+>  };
+>  
+>  /**
+> @@ -165,6 +190,9 @@ struct pse_pi {
+>   * @pi: table of PSE PIs described in this controller device
+>   * @no_of_pse_pi: flag set if the pse_pis devicetree node is not used
+>   * @id: Index of the PSE
+> + * @pis_prio_max: Maximum value allowed for the PSE PIs priority
+> + * @port_prio_supp_modes: Bitfield of port priority mode supported by the PSE
+> + * @port_prio_mode: Current port priority mode of the PSE
+>   */
+>  struct pse_controller_dev {
+>  	const struct pse_controller_ops *ops;
+> @@ -179,6 +207,9 @@ struct pse_controller_dev {
+>  	struct pse_pi *pi;
+>  	bool no_of_pse_pi;
+>  	int id;
+> +	unsigned int pis_prio_max;
+> +	u32 port_prio_supp_modes;
+> +	enum pse_port_prio_modes port_prio_mode;
+>  };
 
-First bad commit (maybe != root cause):
+> diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
+> index a1ad257b1ec1..22664b1ea4a2 100644
+> --- a/include/uapi/linux/ethtool.h
+> +++ b/include/uapi/linux/ethtool.h
+> @@ -1002,11 +1002,35 @@ enum ethtool_c33_pse_pw_d_status {
+>   * enum ethtool_c33_pse_events - event list of the C33 PSE controller.
+>   * @ETHTOOL_C33_PSE_EVENT_OVER_CURRENT: PSE output current is too high.
+>   * @ETHTOOL_C33_PSE_EVENT_OVER_TEMP: PSE in over temperature state.
+> + * @ETHTOOL_C33_PSE_EVENT_CONNECTED: PD detected on the PSE.
+> + * @ETHTOOL_C33_PSE_EVENT_DISCONNECTED: PD has been disconnected on the PSE.
+> + * @ETHTOOL_C33_PSE_EVENT_PORT_PRIO_STATIC_ERROR: PSE faced an error in static
+> + *	port priority management mode.
+>   */
+>  
+>  enum ethtool_c33_pse_events {
+> -	ETHTOOL_C33_PSE_EVENT_OVER_CURRENT =	1 << 0,
+> -	ETHTOOL_C33_PSE_EVENT_OVER_TEMP =	1 << 1,
+> +	ETHTOOL_C33_PSE_EVENT_OVER_CURRENT =		1 << 0,
+> +	ETHTOOL_C33_PSE_EVENT_OVER_TEMP =		1 << 1,
+> +	ETHTOOL_C33_PSE_EVENT_CONNECTED =		1 << 2,
+> +	ETHTOOL_C33_PSE_EVENT_DISCONNECTED =		1 << 3,
+> +	ETHTOOL_C33_PSE_EVENT_PORT_PRIO_STATIC_ERROR =	1 << 4,
+> +};
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   4236f913808cebef1b9e078726a4e5d56064f7ad
-commit: 0eebc69db358fd2f6fe34cc4db6428df6a540dd7 RISC-V: Select APLIC and IMSIC drivers
-date:   7 months ago
-config: riscv-randconfig-r071-20241030 (https://download.01.org/0day-ci/archive/20241031/202410310641.Nrmy8Sr0-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+Same here, priority concept is not part of the spec, so the C33 prefix
+should be removed.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202410310641.Nrmy8Sr0-lkp@intel.com/
+> +
+> +/**
+> + * enum pse_port_prio_modes - PSE port priority modes.
+> + * @ETHTOOL_PSE_PORT_PRIO_DISABLED: Port priority disabled.
+> + * @ETHTOOL_PSE_PORT_PRIO_STATIC: PSE static port priority. Port priority
+> + *	based on the power requested during PD classification. This mode
+> + *	is managed by the PSE core.
+> + * @ETHTOOL_PSE_PORT_PRIO_DYNAMIC: PSE dynamic port priority. Port priority
+> + *	based on the current consumption per ports compared to the total
+> + *	power budget. This mode is managed by the PSE controller.
+> + */
 
-New smatch warnings:
-drivers/irqchip/irq-riscv-imsic-state.c:854 imsic_setup_state() error: we previously assumed 'mmios_va' could be null (see line 745)
+This part will need some clarification about behavior with mixed port
+configurations. Here is my proposal:
 
-vim +/mmios_va +854 drivers/irqchip/irq-riscv-imsic-state.c
+ * Expected behaviors in mixed port priority configurations:
+ * - When ports are configured with a mix of disabled, static, and dynamic
+ *   priority modes, the following behaviors are expected:
+ *     - Ports with priority disabled (ETHTOOL_PSE_PORT_PRIO_DISABLED) are
+ *       treated with lowest priority, receiving power only if the budget
+ *       remains after static and dynamic ports have been served.
+ *     - Static-priority ports are allocated power up to their requested
+ *       levels during PD classification, provided the budget allows.
+ *     - Dynamic-priority ports receive power based on real-time consumption,
+ *       as monitored by the PSE controller, relative to the remaining budget
+ *       after static ports.
+ *
+ * Handling scenarios where power budget is exceeded:
+ * - Hot-plug behavior: If a new device is added that causes the total power
+ *   demand to exceed the PSE budget, the newly added device is de-prioritized
+ *   and shut down to maintain stability for previously connected devices.
+ *   This behavior ensures that existing connections are not disrupted, though
+ *   it may lead to inconsistent behavior if the device is disconnected and
+ *   reconnected (hot-plugged).
+ *
+ * - Startup behavior (boot): When the system initializes with attached devices,
+ *   the PSE allocates power based on a predefined order (e.g., by port index)
+ *   until the budget is exhausted. Devices connected later in this order may
+ *   not be enabled if they would exceed the power budget, resulting in consistent
+ *   behavior during startup but potentially differing from runtime behavior
+ *   (hot-plug).
+ *
+ * - Consistency challenge: These two scenarios—hot-plug vs. system boot—may lead
+ *   to different handling of devices. During system boot, power is allocated
+ *   sequentially, potentially leaving out high-priority devices added later due to
+ *   a first-come-first-serve approach. In contrast, hot-plug behavior favors the
+ *   status quo, maintaining stability for initially connected devices, which
+ *   might not align with the system's prioritization policy.
+ *
 
-21a8f8a0eb35ce Anup Patel 2024-03-07  691  int __init imsic_setup_state(struct fwnode_handle *fwnode)
-21a8f8a0eb35ce Anup Patel 2024-03-07  692  {
-21a8f8a0eb35ce Anup Patel 2024-03-07  693  	u32 i, j, index, nr_parent_irqs, nr_mmios, nr_handlers = 0;
-21a8f8a0eb35ce Anup Patel 2024-03-07  694  	struct imsic_global_config *global;
-21a8f8a0eb35ce Anup Patel 2024-03-07  695  	struct imsic_local_config *local;
-21a8f8a0eb35ce Anup Patel 2024-03-07  696  	void __iomem **mmios_va = NULL;
-21a8f8a0eb35ce Anup Patel 2024-03-07  697  	struct resource *mmios = NULL;
-21a8f8a0eb35ce Anup Patel 2024-03-07  698  	unsigned long reloff, hartid;
-21a8f8a0eb35ce Anup Patel 2024-03-07  699  	phys_addr_t base_addr;
-21a8f8a0eb35ce Anup Patel 2024-03-07  700  	int rc, cpu;
-21a8f8a0eb35ce Anup Patel 2024-03-07  701  
-21a8f8a0eb35ce Anup Patel 2024-03-07  702  	/*
-21a8f8a0eb35ce Anup Patel 2024-03-07  703  	 * Only one IMSIC instance allowed in a platform for clean
-21a8f8a0eb35ce Anup Patel 2024-03-07  704  	 * implementation of SMP IRQ affinity and per-CPU IPIs.
-21a8f8a0eb35ce Anup Patel 2024-03-07  705  	 *
-21a8f8a0eb35ce Anup Patel 2024-03-07  706  	 * This means on a multi-socket (or multi-die) platform we
-21a8f8a0eb35ce Anup Patel 2024-03-07  707  	 * will have multiple MMIO regions for one IMSIC instance.
-21a8f8a0eb35ce Anup Patel 2024-03-07  708  	 */
-21a8f8a0eb35ce Anup Patel 2024-03-07  709  	if (imsic) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  710  		pr_err("%pfwP: already initialized hence ignoring\n", fwnode);
-21a8f8a0eb35ce Anup Patel 2024-03-07  711  		return -EALREADY;
-21a8f8a0eb35ce Anup Patel 2024-03-07  712  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  713  
-21a8f8a0eb35ce Anup Patel 2024-03-07  714  	if (!riscv_isa_extension_available(NULL, SxAIA)) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  715  		pr_err("%pfwP: AIA support not available\n", fwnode);
-21a8f8a0eb35ce Anup Patel 2024-03-07  716  		return -ENODEV;
-21a8f8a0eb35ce Anup Patel 2024-03-07  717  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  718  
-21a8f8a0eb35ce Anup Patel 2024-03-07  719  	imsic = kzalloc(sizeof(*imsic), GFP_KERNEL);
-21a8f8a0eb35ce Anup Patel 2024-03-07  720  	if (!imsic)
-21a8f8a0eb35ce Anup Patel 2024-03-07  721  		return -ENOMEM;
-21a8f8a0eb35ce Anup Patel 2024-03-07  722  	imsic->fwnode = fwnode;
-21a8f8a0eb35ce Anup Patel 2024-03-07  723  	global = &imsic->global;
-21a8f8a0eb35ce Anup Patel 2024-03-07  724  
-21a8f8a0eb35ce Anup Patel 2024-03-07  725  	global->local = alloc_percpu(typeof(*global->local));
-21a8f8a0eb35ce Anup Patel 2024-03-07  726  	if (!global->local) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  727  		rc = -ENOMEM;
-21a8f8a0eb35ce Anup Patel 2024-03-07  728  		goto out_free_priv;
-21a8f8a0eb35ce Anup Patel 2024-03-07  729  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  730  
-21a8f8a0eb35ce Anup Patel 2024-03-07  731  	/* Parse IMSIC fwnode */
-21a8f8a0eb35ce Anup Patel 2024-03-07  732  	rc = imsic_parse_fwnode(fwnode, global, &nr_parent_irqs, &nr_mmios);
-21a8f8a0eb35ce Anup Patel 2024-03-07  733  	if (rc)
-21a8f8a0eb35ce Anup Patel 2024-03-07  734  		goto out_free_local;
-21a8f8a0eb35ce Anup Patel 2024-03-07  735  
-21a8f8a0eb35ce Anup Patel 2024-03-07  736  	/* Allocate MMIO resource array */
-21a8f8a0eb35ce Anup Patel 2024-03-07  737  	mmios = kcalloc(nr_mmios, sizeof(*mmios), GFP_KERNEL);
-21a8f8a0eb35ce Anup Patel 2024-03-07  738  	if (!mmios) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  739  		rc = -ENOMEM;
-21a8f8a0eb35ce Anup Patel 2024-03-07  740  		goto out_free_local;
-21a8f8a0eb35ce Anup Patel 2024-03-07  741  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  742  
-21a8f8a0eb35ce Anup Patel 2024-03-07  743  	/* Allocate MMIO virtual address array */
-21a8f8a0eb35ce Anup Patel 2024-03-07  744  	mmios_va = kcalloc(nr_mmios, sizeof(*mmios_va), GFP_KERNEL);
-21a8f8a0eb35ce Anup Patel 2024-03-07 @745  	if (!mmios_va) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  746  		rc = -ENOMEM;
-21a8f8a0eb35ce Anup Patel 2024-03-07  747  		goto out_iounmap;
-
-mmios_va is NULL here.
-
-21a8f8a0eb35ce Anup Patel 2024-03-07  748  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  749  
-21a8f8a0eb35ce Anup Patel 2024-03-07  750  	/* Parse and map MMIO register sets */
-21a8f8a0eb35ce Anup Patel 2024-03-07  751  	for (i = 0; i < nr_mmios; i++) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  752  		rc = imsic_get_mmio_resource(fwnode, i, &mmios[i]);
-21a8f8a0eb35ce Anup Patel 2024-03-07  753  		if (rc) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  754  			pr_err("%pfwP: unable to parse MMIO regset %d\n", fwnode, i);
-21a8f8a0eb35ce Anup Patel 2024-03-07  755  			goto out_iounmap;
-21a8f8a0eb35ce Anup Patel 2024-03-07  756  		}
-21a8f8a0eb35ce Anup Patel 2024-03-07  757  
-21a8f8a0eb35ce Anup Patel 2024-03-07  758  		base_addr = mmios[i].start;
-21a8f8a0eb35ce Anup Patel 2024-03-07  759  		base_addr &= ~(BIT(global->guest_index_bits +
-21a8f8a0eb35ce Anup Patel 2024-03-07  760  				   global->hart_index_bits +
-21a8f8a0eb35ce Anup Patel 2024-03-07  761  				   IMSIC_MMIO_PAGE_SHIFT) - 1);
-21a8f8a0eb35ce Anup Patel 2024-03-07  762  		base_addr &= ~((BIT(global->group_index_bits) - 1) <<
-21a8f8a0eb35ce Anup Patel 2024-03-07  763  			       global->group_index_shift);
-21a8f8a0eb35ce Anup Patel 2024-03-07  764  		if (base_addr != global->base_addr) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  765  			rc = -EINVAL;
-21a8f8a0eb35ce Anup Patel 2024-03-07  766  			pr_err("%pfwP: address mismatch for regset %d\n", fwnode, i);
-21a8f8a0eb35ce Anup Patel 2024-03-07  767  			goto out_iounmap;
-21a8f8a0eb35ce Anup Patel 2024-03-07  768  		}
-21a8f8a0eb35ce Anup Patel 2024-03-07  769  
-21a8f8a0eb35ce Anup Patel 2024-03-07  770  		mmios_va[i] = ioremap(mmios[i].start, resource_size(&mmios[i]));
-21a8f8a0eb35ce Anup Patel 2024-03-07  771  		if (!mmios_va[i]) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  772  			rc = -EIO;
-21a8f8a0eb35ce Anup Patel 2024-03-07  773  			pr_err("%pfwP: unable to map MMIO regset %d\n", fwnode, i);
-21a8f8a0eb35ce Anup Patel 2024-03-07  774  			goto out_iounmap;
-21a8f8a0eb35ce Anup Patel 2024-03-07  775  		}
-21a8f8a0eb35ce Anup Patel 2024-03-07  776  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  777  
-21a8f8a0eb35ce Anup Patel 2024-03-07  778  	/* Initialize local (or per-CPU )state */
-21a8f8a0eb35ce Anup Patel 2024-03-07  779  	rc = imsic_local_init();
-21a8f8a0eb35ce Anup Patel 2024-03-07  780  	if (rc) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  781  		pr_err("%pfwP: failed to initialize local state\n",
-21a8f8a0eb35ce Anup Patel 2024-03-07  782  		       fwnode);
-21a8f8a0eb35ce Anup Patel 2024-03-07  783  		goto out_iounmap;
-21a8f8a0eb35ce Anup Patel 2024-03-07  784  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  785  
-21a8f8a0eb35ce Anup Patel 2024-03-07  786  	/* Configure handlers for target CPUs */
-21a8f8a0eb35ce Anup Patel 2024-03-07  787  	for (i = 0; i < nr_parent_irqs; i++) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  788  		rc = imsic_get_parent_hartid(fwnode, i, &hartid);
-21a8f8a0eb35ce Anup Patel 2024-03-07  789  		if (rc) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  790  			pr_warn("%pfwP: hart ID for parent irq%d not found\n", fwnode, i);
-21a8f8a0eb35ce Anup Patel 2024-03-07  791  			continue;
-21a8f8a0eb35ce Anup Patel 2024-03-07  792  		}
-21a8f8a0eb35ce Anup Patel 2024-03-07  793  
-21a8f8a0eb35ce Anup Patel 2024-03-07  794  		cpu = riscv_hartid_to_cpuid(hartid);
-21a8f8a0eb35ce Anup Patel 2024-03-07  795  		if (cpu < 0) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  796  			pr_warn("%pfwP: invalid cpuid for parent irq%d\n", fwnode, i);
-21a8f8a0eb35ce Anup Patel 2024-03-07  797  			continue;
-21a8f8a0eb35ce Anup Patel 2024-03-07  798  		}
-21a8f8a0eb35ce Anup Patel 2024-03-07  799  
-21a8f8a0eb35ce Anup Patel 2024-03-07  800  		/* Find MMIO location of MSI page */
-21a8f8a0eb35ce Anup Patel 2024-03-07  801  		index = nr_mmios;
-21a8f8a0eb35ce Anup Patel 2024-03-07  802  		reloff = i * BIT(global->guest_index_bits) *
-21a8f8a0eb35ce Anup Patel 2024-03-07  803  			 IMSIC_MMIO_PAGE_SZ;
-21a8f8a0eb35ce Anup Patel 2024-03-07  804  		for (j = 0; nr_mmios; j++) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  805  			if (reloff < resource_size(&mmios[j])) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  806  				index = j;
-21a8f8a0eb35ce Anup Patel 2024-03-07  807  				break;
-21a8f8a0eb35ce Anup Patel 2024-03-07  808  			}
-21a8f8a0eb35ce Anup Patel 2024-03-07  809  
-21a8f8a0eb35ce Anup Patel 2024-03-07  810  			/*
-21a8f8a0eb35ce Anup Patel 2024-03-07  811  			 * MMIO region size may not be aligned to
-21a8f8a0eb35ce Anup Patel 2024-03-07  812  			 * BIT(global->guest_index_bits) * IMSIC_MMIO_PAGE_SZ
-21a8f8a0eb35ce Anup Patel 2024-03-07  813  			 * if holes are present.
-21a8f8a0eb35ce Anup Patel 2024-03-07  814  			 */
-21a8f8a0eb35ce Anup Patel 2024-03-07  815  			reloff -= ALIGN(resource_size(&mmios[j]),
-21a8f8a0eb35ce Anup Patel 2024-03-07  816  			BIT(global->guest_index_bits) * IMSIC_MMIO_PAGE_SZ);
-21a8f8a0eb35ce Anup Patel 2024-03-07  817  		}
-21a8f8a0eb35ce Anup Patel 2024-03-07  818  		if (index >= nr_mmios) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  819  			pr_warn("%pfwP: MMIO not found for parent irq%d\n", fwnode, i);
-21a8f8a0eb35ce Anup Patel 2024-03-07  820  			continue;
-21a8f8a0eb35ce Anup Patel 2024-03-07  821  		}
-21a8f8a0eb35ce Anup Patel 2024-03-07  822  
-21a8f8a0eb35ce Anup Patel 2024-03-07  823  		local = per_cpu_ptr(global->local, cpu);
-21a8f8a0eb35ce Anup Patel 2024-03-07  824  		local->msi_pa = mmios[index].start + reloff;
-21a8f8a0eb35ce Anup Patel 2024-03-07  825  		local->msi_va = mmios_va[index] + reloff;
-21a8f8a0eb35ce Anup Patel 2024-03-07  826  
-21a8f8a0eb35ce Anup Patel 2024-03-07  827  		nr_handlers++;
-21a8f8a0eb35ce Anup Patel 2024-03-07  828  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  829  
-21a8f8a0eb35ce Anup Patel 2024-03-07  830  	/* If no CPU handlers found then can't take interrupts */
-21a8f8a0eb35ce Anup Patel 2024-03-07  831  	if (!nr_handlers) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  832  		pr_err("%pfwP: No CPU handlers found\n", fwnode);
-21a8f8a0eb35ce Anup Patel 2024-03-07  833  		rc = -ENODEV;
-21a8f8a0eb35ce Anup Patel 2024-03-07  834  		goto out_local_cleanup;
-21a8f8a0eb35ce Anup Patel 2024-03-07  835  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  836  
-21a8f8a0eb35ce Anup Patel 2024-03-07  837  	/* Initialize matrix allocator */
-21a8f8a0eb35ce Anup Patel 2024-03-07  838  	rc = imsic_matrix_init();
-21a8f8a0eb35ce Anup Patel 2024-03-07  839  	if (rc) {
-21a8f8a0eb35ce Anup Patel 2024-03-07  840  		pr_err("%pfwP: failed to create matrix allocator\n", fwnode);
-21a8f8a0eb35ce Anup Patel 2024-03-07  841  		goto out_local_cleanup;
-21a8f8a0eb35ce Anup Patel 2024-03-07  842  	}
-21a8f8a0eb35ce Anup Patel 2024-03-07  843  
-21a8f8a0eb35ce Anup Patel 2024-03-07  844  	/* We don't need MMIO arrays anymore so let's free-up */
-21a8f8a0eb35ce Anup Patel 2024-03-07  845  	kfree(mmios_va);
-21a8f8a0eb35ce Anup Patel 2024-03-07  846  	kfree(mmios);
-21a8f8a0eb35ce Anup Patel 2024-03-07  847  
-21a8f8a0eb35ce Anup Patel 2024-03-07  848  	return 0;
-21a8f8a0eb35ce Anup Patel 2024-03-07  849  
-21a8f8a0eb35ce Anup Patel 2024-03-07  850  out_local_cleanup:
-21a8f8a0eb35ce Anup Patel 2024-03-07  851  	imsic_local_cleanup();
-21a8f8a0eb35ce Anup Patel 2024-03-07  852  out_iounmap:
-21a8f8a0eb35ce Anup Patel 2024-03-07  853  	for (i = 0; i < nr_mmios; i++) {
-21a8f8a0eb35ce Anup Patel 2024-03-07 @854  		if (mmios_va[i])
-                                                            ^^^^^^^^^^^
-NULL dereference.  It's unfortunate that the zero day bot doesn't include the
-next lines in the email...
-
-   881                          iounmap(mmios_va[i]);
-   882          }
-
-Add a new label here.
-
-   883          kfree(mmios_va);
-   884          kfree(mmios);
-   885  out_free_local:
-   886          free_percpu(imsic->global.local);
-   887  out_free_priv:
-   888          kfree(imsic);
-   889          imsic = NULL;
-   890          return rc;
-   891  }
-
-
+> +enum pse_port_prio_modes {
+> +	ETHTOOL_PSE_PORT_PRIO_DISABLED,
+> +	ETHTOOL_PSE_PORT_PRIO_STATIC,
+> +	ETHTOOL_PSE_PORT_PRIO_DYNAMIC,
+>  };
+ 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
