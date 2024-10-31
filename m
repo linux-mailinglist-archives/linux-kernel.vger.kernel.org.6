@@ -1,96 +1,67 @@
-Return-Path: <linux-kernel+bounces-390628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6849B7C7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:12:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B086B9B7C81
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8BE2282EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7585C282ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 14:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384A81A073F;
-	Thu, 31 Oct 2024 14:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480C41A0728;
+	Thu, 31 Oct 2024 14:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AX/Jvp8M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyiZT4Ya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6143B1993B2;
-	Thu, 31 Oct 2024 14:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D2C1993B2;
+	Thu, 31 Oct 2024 14:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730383954; cv=none; b=NsrUxYELOmeGl7d6wW6eqO93Wf7JpFY8Od51d2UJCdeyl9qv6ys8rrAjIxB4/PQF+tlcs7c0cNTVYil7fr6SBtV+/ilpoY92+M/0R+oK0eu1hJE07yUJ0ue8JVROIeMr4I3NAk/rpIw38n2CA/kpZ5M/QvLKMofz+anrE9g1SIk=
+	t=1730383968; cv=none; b=F5Lld9QQBkYZ3icJMz+Dnuf0XFU6VyAhk+p/MbLmGWybw99B0yQZIZy2OiESTQDCqjj/XloZlXg/eXvGdM0oycEL9jmvY+bb86DgIx6O36v3Y050KIVeda+ASM1rGmIAM3nzdPeAsy+AvhKwfkhdoDe/XB3WY1l7b4EWrDp9vVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730383954; c=relaxed/simple;
-	bh=A3ycCJbTERSDiBEUqrjApoZ6yv8BBa5XIMOLrpaNGik=;
+	s=arc-20240116; t=1730383968; c=relaxed/simple;
+	bh=ZBxXT6yqiTiK4rpdSgTpaZMBXpgDcFgXwOMVCui9Tes=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBLKer9/F4chcNAjJ16N5PVXC+CWSA42j2Otnj+AEPFVFfQq6YBQNxEKP6AEgrxeEt9AzGK+Pnf0vrIiNk4Auo0lobrw5c+5qRzIVgvoqfM0JQzkfmGK1BSejTuwp+S9XOjUw33lZi+dmdE2euDwipXvLRyB0U3PUJEiX9OWs64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AX/Jvp8M; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730383953; x=1761919953;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A3ycCJbTERSDiBEUqrjApoZ6yv8BBa5XIMOLrpaNGik=;
-  b=AX/Jvp8MsrpnfbTUVexsVPjliCkL91H2mFafbxLCXjY8GeE04MT641/T
-   uH8a+k5Hcv2oPJWCIHXcLbSd4fzoBKCYIYgsXUvcCtBXyQ5G9duMMQeCf
-   4yjWiT991mh7blfZKUaYiY1xe6ddJzJHVcDZATbGW8eefL3ZtyIdxq6J5
-   aylc547rFzodPnRA0y1CDa5tsse2k8Iw+PV4hBAxR19u6dc/hF1vsz7yF
-   VnB+SMu3V7x7lV3MXZ/hAvEXxUcG19VE64GauPsic770scAsSuZvBa03l
-   E73KZT89pYLSlg3OmuX5DgpoNiVBMdTjvcp0b038T1+HK2m5+fhjp0zVA
-   g==;
-X-CSE-ConnectionGUID: hVAbKjLNQWKuSiQG6j0Aww==
-X-CSE-MsgGUID: s9VeSMnETgGCVZ3UwTqkpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52679354"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="52679354"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 07:12:32 -0700
-X-CSE-ConnectionGUID: CkchJSSSRamoQEo9lN09jQ==
-X-CSE-MsgGUID: OdlONHy/Q9mJuz9JbSaeHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="86560456"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 31 Oct 2024 07:12:25 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6VuR-000gH7-13;
-	Thu, 31 Oct 2024 14:12:23 +0000
-Date: Thu, 31 Oct 2024 22:12:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v3 07/12] clk: rp1: Add support for clocks provided by RP1
-Message-ID: <202410312134.vf7iY2Sz-lkp@intel.com>
-References: <c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUV/NvMxw87QXAMtfnTjSrilfCcbEotQ+HFeKtjBD44flqwct8TPU4mX/kNo06KoDleitXPnPdfd0cp7M9NzRCWezGK0BNJwKxo0eYb+Cndv08JkCHjupZNY4vxsJKho62EQM5NZH5IIzD8FBYH0EMxmGIEWGjtWGwIong1IKQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyiZT4Ya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE616C4CED6;
+	Thu, 31 Oct 2024 14:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730383968;
+	bh=ZBxXT6yqiTiK4rpdSgTpaZMBXpgDcFgXwOMVCui9Tes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jyiZT4Ya10y2A4ctvcIen2W3fK0LLMEUuTbrBiHkkOjXjukzGm/EBezbZENmE3vNv
+	 USSyTQrgjWsiuMJJGZoEAMGE3Trug3Lr2U4ZoV8Zx9t78F/RF5UwbaPZIMUAxUT5O3
+	 SZ4teg0Jqk1DcxldPj2RWneUcS2R3LW27kSZ3m1knM9m7fyG6jDd+ojpjNUD3RILtN
+	 rqeJySriFx/JbVxaHGAlnoBD5F5lFtoCBCmrZeRoeEgAVxMTus39BjH0IRwNQU/Y2C
+	 pxuofxo6lRQrGeSj1RDY00lAH4EdgII9Jj2lFOZZSqQ/0kC1HDtIDoiPZzt12mdLBb
+	 AaY3LoeEazIyw==
+Date: Thu, 31 Oct 2024 15:12:43 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, yangxingui <yangxingui@huawei.com>,
+	axboe@kernel.dk, John Garry <john.g.garry@oracle.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"yukuai (C)" <yukuai3@huawei.com>,
+	"yangerkun@huawei.com" <yangerkun@huawei.com>
+Subject: Re: [bug report] block: Non-NCQ commands will never be executed
+ while fio is continuously running
+Message-ID: <ZyOQWyyai2JkKyzy@ryzen>
+References: <eef1e927-c9b2-c61d-7f48-92e65d8b0418@huawei.com>
+ <922e3d52-9567-4371-9a43-6d51f716a370@kernel.org>
+ <129e1e4b-426f-3d5b-b95c-d386c90cfe06@huawei.com>
+ <5b4a15be-1cb2-4477-8f17-b808612d10d5@kernel.org>
+ <0e78cce0-3f4c-3ddf-4d5b-ee2b5c8d7e1a@huawei.com>
+ <ZuAtLK5jIPEjhXmU@ryzen.lan>
+ <7f179f49-a57b-45bf-92f0-f577aa0b8565@kernel.org>
+ <04cf3f31-4bd8-3ce9-867a-41628e56e861@huaweicloud.com>
+ <e1ff5ccc-8204-44d8-ba62-84c8bd204fa0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,55 +70,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta@suse.com>
+In-Reply-To: <e1ff5ccc-8204-44d8-ba62-84c8bd204fa0@kernel.org>
 
-Hi Andrea,
+On Thu, Sep 19, 2024 at 04:14:15PM +0200, Damien Le Moal wrote:
+> On 2024/09/19 14:26, Yu Kuai wrote:
+> > 
+> > Does libata return a specific value in this case? If so, maybe we can
+> > stop other hctx untill this IO is handled.
+> > 
+> > For now, I think libata should use single hctx, it just doesn't support
+> > multiple hctx yet.
+> 
+> libata does not care/know about hctx. It only issues commands to ATA devices,
+> which always are single queue. And pure SATA adapters like AHCI are always
+> single queue.
+> 
+> The issue at hand can happen only for libsas based SAS HBAs that have multiple
+> command submission queues (with a shared tag set). Commands for the same device
+> may end up being submitted through different queues, and when the submitted
+> commands include a mix of NCQ and non-NCQ commands, the problem happens without
+> libata being able to easily do anything about it, and not possible control
+> possible at the scsi layer either since the commands submitted are SCSI (not yet
+> translated to ATA commands) which do not have any NCQ/non-NCQ exclusion
+> knowledge at all. NCQ is an ATA concept unknown to the scsi and block layer.
+> 
+> We (Niklas and I) are trying to find a solution, but that may not be within
+> libata itself. It may need changes to libsas as well. Not sure yet. Still exploring.
 
-kernel test robot noticed the following build errors:
+Hello Xingui,
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus robh/for-next linus/master v6.12-rc5]
-[cannot apply to next-20241031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I send a proposed solution to this problem here:
+https://lore.kernel.org/linux-ide/20241031140731.224589-4-cassel@kernel.org/
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20241028-221122
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta%40suse.com
-patch subject: [PATCH v3 07/12] clk: rp1: Add support for clocks provided by RP1
-config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20241031/202410312134.vf7iY2Sz-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410312134.vf7iY2Sz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410312134.vf7iY2Sz-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/clk-rp1.c: In function 'rp1_pll_set_rate':
->> drivers/clk/clk-rp1.c:399:19: error: implicit declaration of function 'FIELD_PREP'; did you mean 'FIELD_SET'? [-Wimplicit-function-declaration]
-     399 |         (_reg) |= FIELD_PREP(mask, (_val));     \
-         |                   ^~~~~~~~~~
-   drivers/clk/clk-rp1.c:621:9: note: in expansion of macro 'FIELD_SET'
-     621 |         FIELD_SET(prim, PLL_PRIM_DIV1_MASK, prim_div1);
-         |         ^~~~~~~~~
+Please test and see if it addresses your problem.
 
 
-vim +399 drivers/clk/clk-rp1.c
-
-   394	
-   395	#define FIELD_SET(_reg, _mask, _val)		\
-   396	do {						\
-   397		u32 mask = (_mask);			\
-   398		(_reg) &= ~mask;			\
- > 399		(_reg) |= FIELD_PREP(mask, (_val));	\
-   400	} while (0)
-   401	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kind regards,
+Niklas
 
